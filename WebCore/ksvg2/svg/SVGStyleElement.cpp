@@ -96,13 +96,8 @@ void SVGStyleElement::childrenChanged()
         m_sheet = 0;
 
     m_loading = false;
-    const AtomicString &mediaDomString = media();
-    DeprecatedString _media = mediaDomString.deprecatedString();
-    if((type().isEmpty() || type() == "text/css") && (_media.isNull() ||
-        _media.contains(DeprecatedString::fromLatin1("screen")) ||
-        _media.contains(DeprecatedString::fromLatin1("all")) |
-        _media.contains(DeprecatedString::fromLatin1("print"))))
-    {
+    const AtomicString& _media = media();
+    if ((type().isEmpty() || type() == "text/css") && (_media.isNull() || _media.contains("screen") || _media.contains("all") || _media.contains("print"))) {
         ownerDocument()->addPendingSheet();
 
         m_loading = true;
@@ -110,7 +105,7 @@ void SVGStyleElement::childrenChanged()
         m_sheet = new CSSStyleSheet(this);
         m_sheet->parseString(textContent(), false);//!getDocument()->inCompatMode());
 
-        MediaList *mediaList = new MediaList(m_sheet.get(), mediaDomString);
+        MediaList *mediaList = new MediaList(m_sheet.get(), _media);
         m_sheet->setMedia(mediaList);
         m_loading = false;
     }

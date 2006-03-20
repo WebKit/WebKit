@@ -60,7 +60,7 @@ bool SVGURIReference::parseMappedAttribute(MappedAttribute *attr)
 
 DeprecatedString SVGURIReference::getTarget(const DeprecatedString &url)
 {
-    if(url.startsWith(DeprecatedString::fromLatin1("url("))) // URI References, ie. fill:url(#target)
+    if(url.startsWith("url(")) // URI References, ie. fill:url(#target)
     {
         unsigned int start = url.find('#') + 1;
         unsigned int end = url.findRev(')');

@@ -80,12 +80,22 @@ static void removeFromRequestsByDocument(Document* doc, XMLHttpRequest* req)
     }
 }
 
-static inline DeprecatedString getMIMEType(const DeprecatedString& contentTypeString)
+static inline String getMIMEType(const String& contentTypeString)
 {
-    return DeprecatedStringList::split(";", contentTypeString, true)[0].stripWhiteSpace();
+    String mimeType;
+    unsigned length = contentTypeString.length();
+    for (unsigned offset = 0; offset < length; offset++) {
+        QChar c = contentTypeString[offset];
+        if (c == ';')
+            break;
+        else if (c.isSpace())
+            continue;
+        mimeType += String(c);
+    }
+    return mimeType;
 }
 
-static DeprecatedString getCharset(const DeprecatedString& contentTypeString)
+static String getCharset(const String& contentTypeString)
 {
     int pos = 0;
     int length = (int)contentTypeString.length();
@@ -118,39 +128,39 @@ static DeprecatedString getCharset(const DeprecatedString& contentTypeString)
         while (pos != length && contentTypeString[endpos] > ' ' && contentTypeString[endpos] != '"' && contentTypeString[endpos] != '\'' && contentTypeString[endpos] != ';')
             ++endpos;
     
-        return contentTypeString.mid(pos, endpos-pos);
+        return contentTypeString.substring(pos, endpos-pos);
     }
     
-    return DeprecatedString();
+    return String();
 }
 
 XMLHttpRequestState XMLHttpRequest::getReadyState() const
 {
-    return state;
+    return m_state;
 }
 
 String XMLHttpRequest::getResponseText() const
 {
-    return response;
+    return m_response;
 }
 
 Document* XMLHttpRequest::getResponseXML() const
 {
-    if (state != Completed)
+    if (m_state != Completed)
         return 0;
 
-    if (!createdDocument) {
+    if (!m_createdDocument) {
         if (responseIsXML()) {
-            responseXML = doc->implementation()->createDocument();
-            responseXML->open();
-            responseXML->write(response);
-            responseXML->finishParsing();
-            responseXML->close();
+            m_responseXML = m_doc->implementation()->createDocument();
+            m_responseXML->open();
+            m_responseXML->write(m_response);
+            m_responseXML->finishParsing();
+            m_responseXML->close();
         }
-        createdDocument = true;
+        m_createdDocument = true;
     }
 
-    return responseXML.get();
+    return m_responseXML.get();
 }
 
 EventListener* XMLHttpRequest::onReadyStateChangeListener() const
@@ -174,116 +184,116 @@ void XMLHttpRequest::setOnLoadListener(EventListener* eventListener)
 }
 
 XMLHttpRequest::XMLHttpRequest(Document *d)
-    : doc(d)
-    , async(true)
-    , job(0)
-    , state(Uninitialized)
-    , createdDocument(false)
-    , aborted(false)
+    : m_doc(d)
+    , m_async(true)
+    , m_job(0)
+    , m_state(Uninitialized)
+    , m_createdDocument(false)
+    , m_aborted(false)
 {
-    ASSERT(doc);
-    addToRequestsByDocument(doc, this);
+    ASSERT(m_doc);
+    addToRequestsByDocument(m_doc, this);
 }
 
 XMLHttpRequest::~XMLHttpRequest()
 {
-    if (doc)
-        removeFromRequestsByDocument(doc, this);
+    if (m_doc)
+        removeFromRequestsByDocument(m_doc, this);
 }
 
 void XMLHttpRequest::changeState(XMLHttpRequestState newState)
 {
-    if (state != newState) {
-        state = newState;
+    if (m_state != newState) {
+        m_state = newState;
         callReadyStateChangeListener();
     }
 }
 
 void XMLHttpRequest::callReadyStateChangeListener()
 {
-    if (doc && doc->frame() && m_onReadyStateChangeListener) {
+    if (m_doc && m_doc->frame() && m_onReadyStateChangeListener) {
         ExceptionCode ec;
-        RefPtr<Event> ev = doc->createEvent("HTMLEvents", ec);
+        RefPtr<Event> ev = m_doc->createEvent("HTMLEvents", ec);
         ev->initEvent(readystatechangeEvent, true, true);
         m_onReadyStateChangeListener->handleEvent(ev.get(), true);
     }
     
-    if (doc && doc->frame() && state == Completed && m_onLoadListener) {
+    if (m_doc && m_doc->frame() && m_state == Completed && m_onLoadListener) {
         ExceptionCode ec;
-        RefPtr<Event> ev = doc->createEvent("HTMLEvents", ec);
+        RefPtr<Event> ev = m_doc->createEvent("HTMLEvents", ec);
         ev->initEvent(loadEvent, true, true);
         m_onLoadListener->handleEvent(ev.get(), true);
     }
 }
 
-bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& _url) const
+bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& url) const
 {
-  KURL documentURL(doc->URL());
+  KURL documentURL(m_doc->URL());
 
     // a local file can load anything
     if (documentURL.protocol().lower() == "file")
         return true;
 
     // but a remote document can only load from the same port on the server
-    if (documentURL.protocol().lower() == _url.protocol().lower()
-            && documentURL.host().lower() == _url.host().lower()
-            && documentURL.port() == _url.port())
+    if (documentURL.protocol().lower() == url.protocol().lower()
+            && documentURL.host().lower() == url.host().lower()
+            && documentURL.port() == url.port())
         return true;
 
     return false;
 }
 
-void XMLHttpRequest::open(const String& _method, const KURL& _url, bool _async, const String& user, const String& password)
+void XMLHttpRequest::open(const String& method, const KURL& url, bool async, const String& user, const String& password)
 {
     abort();
-    aborted = false;
+    m_aborted = false;
 
     // clear stuff from possible previous load
-    requestHeaders = DeprecatedString();
-    responseHeaders = DeprecatedString();
-    response = DeprecatedString();
-    createdDocument = false;
-    responseXML = 0;
+    m_requestHeaders = DeprecatedString();
+    m_responseHeaders = String();
+    m_response = DeprecatedString();
+    m_createdDocument = false;
+    m_responseXML = 0;
 
     changeState(Uninitialized);
 
-    if (aborted)
+    if (m_aborted)
         return;
 
-    if (!urlMatchesDocumentDomain(_url))
+    if (!urlMatchesDocumentDomain(url))
         return;
 
-    url = _url;
+    m_url = url;
 
     if (!user.isNull())
-        url.setUser(user.deprecatedString());
+        m_url.setUser(user.deprecatedString());
 
     if (!password.isNull())
-        url.setPass(password.deprecatedString());
+        m_url.setPass(password.deprecatedString());
 
-    method = _method.deprecatedString();
-    async = _async;
+    m_method = method.deprecatedString();
+    m_async = async;
 
     changeState(Loading);
 }
 
-void XMLHttpRequest::send(const String& _body)
+void XMLHttpRequest::send(const String& body)
 {
-    if (!doc)
+    if (!m_doc)
         return;
 
-    if (state != Loading)
+    if (m_state != Loading)
         return;
   
-    // FIXME: Should this abort instead if we already have a job going?
-    if (job)
+    // FIXME: Should this abort instead if we already have a m_job going?
+    if (m_job)
         return;
 
-    aborted = false;
+    m_aborted = false;
 
-    if (!_body.isNull() && method.lower() != "get" && method.lower() != "head" && (url.protocol().lower() == "http" || url.protocol().lower() == "https")) {
+    if (!body.isNull() && m_method.lower() != "get" && m_method.lower() != "head" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
         DeprecatedString contentType = getRequestHeader("Content-Type");
-        DeprecatedString charset;
+        String charset;
         if (contentType.isEmpty())
             setRequestHeader("Content-Type", "application/xml");
         else
@@ -292,22 +302,22 @@ void XMLHttpRequest::send(const String& _body)
         if (charset.isEmpty())
             charset = "UTF-8";
       
-        TextEncoding encoding = TextEncoding(charset.latin1());
-        if (!encoding.isValid())   // FIXME: report an error?
-            encoding = TextEncoding(UTF8Encoding);
+        TextEncoding m_encoding = TextEncoding(charset.deprecatedString().latin1());
+        if (!m_encoding.isValid())   // FIXME: report an error?
+            m_encoding = TextEncoding(UTF8Encoding);
 
-        job = new TransferJob(async ? this : 0, method, url, encoding.fromUnicode(_body.deprecatedString()));
+        m_job = new TransferJob(m_async ? this : 0, m_method, m_url, m_encoding.fromUnicode(body.deprecatedString()));
     } else {
-        // HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
-        if (method.lower() == "head")
-            method = "GET";
-        job = new TransferJob(async ? this : 0, method, url);
+        // FIXME: HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
+        if (m_method.lower() == "head")
+            m_method = "GET";
+        m_job = new TransferJob(m_async ? this : 0, m_method, m_url);
     }
 
-    if (requestHeaders.length())
-        job->addMetaData("customHTTPHeader", requestHeaders);
+    if (m_requestHeaders.length())
+        m_job->addMetaData("customHTTPHeader", m_requestHeaders);
 
-    if (!async) {
+    if (!m_async) {
         DeprecatedByteArray data;
         KURL finalURL;
         DeprecatedString headers;
@@ -315,10 +325,10 @@ void XMLHttpRequest::send(const String& _body)
         {
             // avoid deadlock in case the loader wants to use JS on a background thread
             KJS::JSLock::DropAllLocks dropLocks;
-            data = KWQServeSynchronousRequest(Cache::loader(), doc->docLoader(), job, finalURL, headers);
+            data = KWQServeSynchronousRequest(Cache::loader(), m_doc->docLoader(), m_job, finalURL, headers);
         }
 
-        job = 0;
+        m_job = 0;
         processSyncLoadResults(data, finalURL, headers);
     
         return;
@@ -333,19 +343,19 @@ void XMLHttpRequest::send(const String& _body)
         gcProtectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
     }
   
-    job->start(doc->docLoader());
+    m_job->start(m_doc->docLoader());
 }
 
 void XMLHttpRequest::abort()
 {
-    bool hadJob = job;
+    bool hadJob = m_job;
 
     if (hadJob) {
-        job->kill();
-        job = 0;
+        m_job->kill();
+        m_job = 0;
     }
-    decoder = 0;
-    aborted = true;
+    m_decoder = 0;
+    m_aborted = true;
 
     if (hadJob) {
         {
@@ -358,38 +368,38 @@ void XMLHttpRequest::abort()
 
 void XMLHttpRequest::overrideMIMEType(const String& override)
 {
-    MIMETypeOverride = override.deprecatedString();
+    m_mimeTypeOverride = override.deprecatedString();
 }
 
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value)
 {
-    if (requestHeaders.length() > 0)
-        requestHeaders += "\r\n";
-    requestHeaders += name.deprecatedString();
-    requestHeaders += ": ";
-    requestHeaders += value.deprecatedString();
+    if (m_requestHeaders.length() > 0)
+        m_requestHeaders += "\r\n";
+    m_requestHeaders += name.deprecatedString();
+    m_requestHeaders += ": ";
+    m_requestHeaders += value.deprecatedString();
 }
 
 DeprecatedString XMLHttpRequest::getRequestHeader(const DeprecatedString& name) const
 {
-    return getSpecificHeader(requestHeaders, name);
+    return getSpecificHeader(m_requestHeaders, name);
 }
 
 String XMLHttpRequest::getAllResponseHeaders() const
 {
-    if (responseHeaders.isEmpty())
+    if (m_responseHeaders.isEmpty())
         return String();
 
-    int endOfLine = responseHeaders.find("\n");
+    int endOfLine = m_responseHeaders.find("\n");
     if (endOfLine == -1)
         return String();
 
-    return responseHeaders.mid(endOfLine + 1) + "\n";
+    return m_responseHeaders.substring(endOfLine + 1) + "\n";
 }
 
 String XMLHttpRequest::getResponseHeader(const String& name) const
 {
-    return getSpecificHeader(responseHeaders, name.deprecatedString());
+    return getSpecificHeader(m_responseHeaders.deprecatedString(), name.deprecatedString());
 }
 
 DeprecatedString XMLHttpRequest::getSpecificHeader(const DeprecatedString& headers, const DeprecatedString& name)
@@ -415,9 +425,9 @@ DeprecatedString XMLHttpRequest::getSpecificHeader(const DeprecatedString& heade
 
 bool XMLHttpRequest::responseIsXML() const
 {
-    DeprecatedString mimeType = getMIMEType(MIMETypeOverride);
+    String mimeType = getMIMEType(m_mimeTypeOverride);
     if (mimeType.isEmpty())
-        mimeType = getMIMEType(getResponseHeader("Content-Type").deprecatedString());
+        mimeType = getMIMEType(getResponseHeader("Content-Type"));
     if (mimeType.isEmpty())
         mimeType = "text/xml";
     return DOMImplementation::isXMLMIMEType(mimeType);
@@ -425,17 +435,17 @@ bool XMLHttpRequest::responseIsXML() const
 
 int XMLHttpRequest::getStatus() const
 {
-    if (responseHeaders.isEmpty())
+    if (m_responseHeaders.isEmpty())
         return -1;
   
-    int endOfLine = responseHeaders.find("\n");
-    DeprecatedString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
+    int endOfLine = m_responseHeaders.find("\n");
+    String firstLine = endOfLine == -1 ? m_responseHeaders : m_responseHeaders.substring(0, endOfLine);
     int codeStart = firstLine.find(" ");
     int codeEnd = firstLine.find(" ", codeStart + 1);
     if (codeStart == -1 || codeEnd == -1)
         return -1;
   
-    DeprecatedString number = firstLine.mid(codeStart + 1, codeEnd - (codeStart + 1));
+    String number = firstLine.substring(codeStart + 1, codeEnd - (codeStart + 1));
     bool ok = false;
     int code = number.toInt(&ok);
     if (!ok)
@@ -445,18 +455,17 @@ int XMLHttpRequest::getStatus() const
 
 String XMLHttpRequest::getStatusText() const
 {
-    if (responseHeaders.isEmpty())
+    if (m_responseHeaders.isEmpty())
         return String();
   
-    int endOfLine = responseHeaders.find("\n");
-    DeprecatedString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
+    int endOfLine = m_responseHeaders.find("\n");
+    String firstLine = endOfLine == -1 ? m_responseHeaders : m_responseHeaders.substring(0, endOfLine);
     int codeStart = firstLine.find(" ");
     int codeEnd = firstLine.find(" ", codeStart + 1);
     if (codeStart == -1 || codeEnd == -1)
         return String();
   
-    DeprecatedString statusText = firstLine.mid(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
-    return String(statusText);
+    return firstLine.substring(codeEnd + 1, endOfLine - (codeEnd + 1)).deprecatedString().stripWhiteSpace();
 }
 
 void XMLHttpRequest::processSyncLoadResults(const DeprecatedByteArray &data, const KURL &finalURL, const DeprecatedString &headers)
@@ -466,16 +475,16 @@ void XMLHttpRequest::processSyncLoadResults(const DeprecatedByteArray &data, con
     return;
   }
   
-  responseHeaders = headers;
+  m_responseHeaders = headers;
   changeState(Loaded);
-  if (aborted)
+  if (m_aborted)
     return;
   
   const char *bytes = (const char *)data.data();
   int len = (int)data.size();
 
   receivedData(0, bytes, len);
-  if (aborted)
+  if (m_aborted)
     return;
 
   receivedAllData(0);
@@ -483,20 +492,20 @@ void XMLHttpRequest::processSyncLoadResults(const DeprecatedByteArray &data, con
 
 void XMLHttpRequest::receivedAllData(TransferJob*)
 {
-    if (responseHeaders.isEmpty() && job)
-        responseHeaders = job->queryMetaData("HTTP-Headers");
+    if (m_responseHeaders.isEmpty() && m_job)
+        m_responseHeaders = m_job->queryMetaData("HTTP-Headers");
 
-    if (state < Loaded)
+    if (m_state < Loaded)
         changeState(Loaded);
 
-    if (decoder)
-        response += decoder->flush();
+    if (m_decoder)
+        m_response += m_decoder->flush();
 
-    bool hadJob = job;
-    job = 0;
+    bool hadJob = m_job;
+    m_job = 0;
 
     changeState(Completed);
-    decoder = 0;
+    m_decoder = 0;
 
     if (hadJob) {
         {
@@ -507,33 +516,33 @@ void XMLHttpRequest::receivedAllData(TransferJob*)
     }
 }
 
-void XMLHttpRequest::receivedRedirect(TransferJob*, const KURL& url)
+void XMLHttpRequest::receivedRedirect(TransferJob*, const KURL& m_url)
 {
-    if (!urlMatchesDocumentDomain(url))
+    if (!urlMatchesDocumentDomain(m_url))
         abort();
 }
 
 void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
 {
-    if (responseHeaders.isEmpty() && job)
-        responseHeaders = job->queryMetaData("HTTP-Headers");
+    if (m_responseHeaders.isEmpty() && m_job)
+        m_responseHeaders = m_job->queryMetaData("HTTP-Headers");
 
-    if (state < Loaded)
+    if (m_state < Loaded)
         changeState(Loaded);
   
-    if (!decoder) {
-        encoding = getCharset(MIMETypeOverride);
-        if (encoding.isEmpty())
-            encoding = getCharset(getResponseHeader("Content-Type").deprecatedString());
-        if (encoding.isEmpty() && job)
-            encoding = job->queryMetaData("charset");
+    if (!m_decoder) {
+        m_encoding = getCharset(m_mimeTypeOverride);
+        if (m_encoding.isEmpty())
+            m_encoding = getCharset(getResponseHeader("Content-Type"));
+        if (m_encoding.isEmpty() && m_job)
+            m_encoding = m_job->queryMetaData("charset");
     
-        decoder = new Decoder;
-        if (!encoding.isEmpty())
-            decoder->setEncodingName(encoding.latin1(), Decoder::EncodingFromHTTPHeader);
+        m_decoder = new Decoder;
+        if (!m_encoding.isEmpty())
+            m_decoder->setEncodingName(m_encoding.deprecatedString().latin1(), Decoder::EncodingFromHTTPHeader);
         else
-            // only allow Decoder to look inside the response if it's XML
-            decoder->setEncodingName("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
+            // only allow Decoder to look inside the m_response if it's XML
+            m_decoder->setEncodingName("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
     }
     if (len == 0)
         return;
@@ -541,12 +550,12 @@ void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
     if (len == -1)
         len = strlen(data);
 
-    DeprecatedString decoded = decoder->decode(data, len);
+    DeprecatedString decoded = m_decoder->decode(data, len);
 
-    response += decoded;
+    m_response += decoded;
 
-    if (!aborted) {
-        if (state != Interactive)
+    if (!m_aborted) {
+        if (m_state != Interactive)
             changeState(Interactive);
         else
             // Firefox calls readyStateChanged every time it receives data, 4449442
@@ -554,9 +563,9 @@ void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
     }
 }
 
-void XMLHttpRequest::cancelRequests(Document* doc)
+void XMLHttpRequest::cancelRequests(Document* m_doc)
 {
-    RequestsSet* requests = requestsByDocument().get(doc);
+    RequestsSet* requests = requestsByDocument().get(m_doc);
     if (!requests)
         return;
     RequestsSet copy = *requests;
@@ -565,15 +574,15 @@ void XMLHttpRequest::cancelRequests(Document* doc)
         (*it)->abort();
 }
 
-void XMLHttpRequest::detachRequests(Document* doc)
+void XMLHttpRequest::detachRequests(Document* m_doc)
 {
-    RequestsSet* requests = requestsByDocument().get(doc);
+    RequestsSet* requests = requestsByDocument().get(m_doc);
     if (!requests)
         return;
-    requestsByDocument().remove(doc);
+    requestsByDocument().remove(m_doc);
     RequestsSet::const_iterator end = requests->end();
     for (RequestsSet::const_iterator it = requests->begin(); it != end; ++it) {
-        (*it)->doc = 0;
+        (*it)->m_doc = 0;
         (*it)->abort();
     }
     delete requests;

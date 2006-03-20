@@ -54,7 +54,7 @@ public:
     virtual void deref(CachedObjectClient*);
 
     virtual void data(DeprecatedByteArray&, bool atEnd);
-    virtual void error(int code, const char* message);
+    virtual void error();
 
     bool isErrorImage() const { return m_errorOccurred; }
 

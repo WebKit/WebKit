@@ -239,8 +239,7 @@ bool HTMLFormElement::formData(FormData &form_data) const
                     // if the current type is FILE, then we also need to
                     // include the filename
                     if (current->hasLocalName(inputTag) &&
-                        static_cast<HTMLInputElement*>(current)->inputType() == HTMLInputElement::FILE)
-                    {
+                        static_cast<HTMLInputElement*>(current)->inputType() == HTMLInputElement::FILE) {
                         DeprecatedString path = static_cast<HTMLInputElement*>(current)->value().deprecatedString();
 
                         // FIXME: This won't work if the filename includes a " mark,
@@ -251,9 +250,8 @@ bool HTMLFormElement::formData(FormData &form_data) const
                         hstr += encoding.fromUnicode(path.mid(path.findRev('/') + 1), true);
                         hstr += "\"";
 
-                        if(!static_cast<HTMLInputElement*>(current)->value().isEmpty())
-                        {
-                            DeprecatedString mimeType = frame ? frame->mimeTypeForFileName(path) : DeprecatedString();
+                        if (!static_cast<HTMLInputElement*>(current)->value().isEmpty()) {
+                            DeprecatedString mimeType = frame ? frame->mimeTypeForFileName(path).deprecatedString() : DeprecatedString();
                             if (!mimeType.isEmpty()) {
                                 hstr += "\r\nContent-Type: ";
                                 hstr += mimeType.ascii();

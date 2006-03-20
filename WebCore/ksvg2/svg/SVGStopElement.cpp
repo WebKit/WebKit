@@ -54,7 +54,7 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute *attr)
 {
     String value(attr->value());
     if (attr->name() == SVGNames::offsetAttr) {
-        if(value.deprecatedString().endsWith(DeprecatedString::fromLatin1("%")))
+        if(value.deprecatedString().endsWith("%"))
             offset()->setBaseVal(value.deprecatedString().left(value.length() - 1).toDouble() / 100.);
         else
             offset()->setBaseVal(value.deprecatedString().toDouble());

@@ -104,7 +104,7 @@ namespace WebCore
 
         virtual void setCharset(const DeprecatedString&) {}
         virtual void data(DeprecatedByteArray&, bool atEnd) = 0;
-        virtual void error(int code, const char* message) = 0;
+        virtual void error() = 0;
 
         const String &url() const { return m_url; }
         Type type() const { return m_type; }

@@ -67,11 +67,11 @@ float SVGAngle::value() const
 // calc m_value
 void SVGAngle::calculate()
 {
-    if(m_unitType == SVG_ANGLETYPE_GRAD)
+    if (m_unitType == SVG_ANGLETYPE_GRAD)
         m_value = m_valueInSpecifiedUnits / deg2grad;
-    else if(m_unitType == SVG_ANGLETYPE_RAD)
+    else if (m_unitType == SVG_ANGLETYPE_RAD)
         m_value = m_valueInSpecifiedUnits / deg2rad;
-    else if(m_unitType == SVG_ANGLETYPE_UNSPECIFIED || m_unitType == SVG_ANGLETYPE_DEG)
+    else if (m_unitType == SVG_ANGLETYPE_UNSPECIFIED || m_unitType == SVG_ANGLETYPE_DEG)
         m_value = m_valueInSpecifiedUnits;
 }
 
@@ -90,19 +90,16 @@ void SVGAngle::setValueAsString(StringImpl *valueAsString)
 {
     m_valueAsString = String(valueAsString);
 
-    DeprecatedString s = m_valueAsString.deprecatedString();
-
     bool bOK;
-    m_valueInSpecifiedUnits = s.toDouble(&bOK);
+    m_valueInSpecifiedUnits = m_valueAsString.deprecatedString().toDouble(&bOK);
     m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
 
-    if(!bOK)
-    {
-        if(s.endsWith(DeprecatedString::fromLatin1("deg")))
+    if (!bOK) {
+        if (m_valueAsString.endsWith("deg"))
             m_unitType = SVG_ANGLETYPE_DEG;
-        else if(s.endsWith(DeprecatedString::fromLatin1("grad")))
+        else if (m_valueAsString.endsWith("grad"))
             m_unitType = SVG_ANGLETYPE_GRAD;
-        else if(s.endsWith(DeprecatedString::fromLatin1("rad")))
+        else if (m_valueAsString.endsWith("rad"))
             m_unitType = SVG_ANGLETYPE_RAD;
     }
     
@@ -111,19 +108,18 @@ void SVGAngle::setValueAsString(StringImpl *valueAsString)
 
 StringImpl *SVGAngle::valueAsString() const
 {
-    m_valueAsString.deprecatedString().setNum(m_valueInSpecifiedUnits);
+    m_valueAsString = DeprecatedString::number(m_valueInSpecifiedUnits);
 
-    switch(m_unitType)
-    {
+    switch(m_unitType) {
         case SVG_ANGLETYPE_UNSPECIFIED:
         case SVG_ANGLETYPE_DEG:
-            m_valueAsString.deprecatedString() += DeprecatedString::fromLatin1("deg");
+            m_valueAsString += "deg";
             break;
         case SVG_ANGLETYPE_RAD:
-            m_valueAsString.deprecatedString() += DeprecatedString::fromLatin1("rad");
+            m_valueAsString += "rad";
             break;
         case SVG_ANGLETYPE_GRAD:
-            m_valueAsString.deprecatedString() += DeprecatedString::fromLatin1("grad");
+            m_valueAsString += "grad";
             break;
     }
     
@@ -139,20 +135,20 @@ void SVGAngle::newValueSpecifiedUnits(unsigned short unitType, float valueInSpec
 
 void SVGAngle::convertToSpecifiedUnits(unsigned short unitType)
 {
-    if(m_unitType == unitType)
+    if (m_unitType == unitType)
         return;
 
-    if(m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_RAD)
+    if (m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_RAD)
         m_valueInSpecifiedUnits *= deg2rad;
-    else if(m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_RAD)
+    else if (m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_RAD)
         m_valueInSpecifiedUnits /= rad2grad;
-    else if(m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_GRAD)
+    else if (m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_GRAD)
         m_valueInSpecifiedUnits *= deg2grad;
-    else if(m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_GRAD)
+    else if (m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_GRAD)
         m_valueInSpecifiedUnits *= rad2grad;
-    else if(m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_DEG)
+    else if (m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_DEG)
         m_valueInSpecifiedUnits /= deg2rad;
-    else if(m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_DEG)
+    else if (m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_DEG)
         m_valueInSpecifiedUnits /= deg2grad;
 
     m_unitType = unitType;
@@ -173,7 +169,7 @@ double SVGAngle::shortestArcBisector(double angle1, double angle2)
 {
     double bisector = (angle1 + angle2) / 2;
 
-    if(fabs(angle1 - angle2) > 180)
+    if (fabs(angle1 - angle2) > 180)
         bisector += 180;
 
     return bisector;

@@ -81,7 +81,7 @@ void RenderTextField::updateFromElement()
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element());
         String value = input->value().copy();
         if (value.isNull())
-            value = String("");
+            value = "";
         unsigned ml = input->maxLength();
         bool valueHasChanged = false;
         if (value.length() > ml) {

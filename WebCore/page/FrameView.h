@@ -23,11 +23,13 @@
    Boston, MA 02111-1307, USA.
 */
 
-#ifndef FRAMEVIEW_H
-#define FRAMEVIEW_H
+#ifndef FrameView_H
+#define FrameView_H
 
-#include "DeprecatedString.h"
 #include "ScrollView.h"
+#include "IntSize.h"
+#include "PlatformString.h"
+#include <kxmlcore/RefPtr.h>
 
 class DeprecatedStringList;
 
@@ -65,6 +67,7 @@ class RenderPartObject;
 class RenderStyle;
 class RenderWidget;
 class PlatformWheelEvent;
+class String;
 
 template <typename T> class Timer;
 
@@ -95,25 +98,17 @@ public:
 
     Frame* frame() const { return m_frame.get(); }
 
-    int frameWidth() const { return _width; }
-
-    void setMarginWidth(int x);
+    int frameWidth() const { return m_size.width(); }
 
     /**
-     * Returns the margin width.
+     * Gets/Sets the margin width/height
      *
      * A return value of -1 means the default value will be used.
      */
-    int marginWidth() const { return _marginWidth; }
-
-    void setMarginHeight(int y);
-
-    /**
-     * Returns the margin height.
-     *
-     * A return value of -1 means the default value will be used.
-     */
-    int marginHeight() { return _marginHeight; }
+    int marginWidth() const { return m_margins.width(); }
+    int marginHeight() { return  m_margins.height(); }
+    void setMarginWidth(int);
+    void setMarginHeight(int);
 
     virtual void setVScrollBarMode(ScrollBarMode);
     virtual void setHScrollBarMode(ScrollBarMode);
@@ -128,11 +123,11 @@ public:
 
     bool needsFullRepaint() const;
     
-    void addRepaintInfo(RenderObject* o, const IntRect& r);
+    void addRepaintInfo(RenderObject*, const IntRect&);
 
     void resetScrollBars();
 
-     void clear();
+    void clear();
 
 public:
     void clearPart();
@@ -176,8 +171,8 @@ public:
     void updateDashboardRegions();
 #endif
 
-    void ref() { ++_refCount; }
-    void deref() { if (!--_refCount) delete this; }
+    void ref() { ++m_refCount; }
+    void deref() { if (!--m_refCount) delete this; }
     
 private:
     void cleared();
@@ -196,8 +191,8 @@ private:
      * you only need to enable the media type in the view and if necessary
      * add the media type dependent changes to the renderer.
      */
-    void setMediaType(const DeprecatedString&);
-    DeprecatedString mediaType() const;
+    void setMediaType(const String&);
+    String mediaType() const;
 
     bool scrollTo(const IntRect&);
 
@@ -213,8 +208,8 @@ private:
 
     void restoreScrollBar();
 
-    DeprecatedStringList formCompletionItems(const DeprecatedString &name) const;
-    void addFormCompletionItem(const DeprecatedString &name, const DeprecatedString &value);
+    DeprecatedStringList formCompletionItems(const String& name) const;
+    void addFormCompletionItem(const String& name, const String& value);
 
     MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const PlatformMouseEvent&);
 
@@ -229,18 +224,13 @@ private:
 
     void updateBorder();
 
-    unsigned _refCount;
-
-    int _width;
-    int _height;
-
-    int _marginWidth;
-    int _marginHeight;
-
+    unsigned m_refCount;
+    
+    IntSize m_size;
+    IntSize m_margins;
+    
     RefPtr<Frame> m_frame;
     FrameViewPrivate* d;
-
-    DeprecatedString m_medium; // media type
 };
 
 }

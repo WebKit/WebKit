@@ -766,10 +766,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     NSString *documentTypeString = nil;
     Document *doc = m_frame->document();
     if (doc) {
-        DocumentType *doctype = doc->realDocType();
-        if (doctype) {
-            documentTypeString = doctype->toString().deprecatedString().getNSString();
-        }
+        if (DocumentType *doctype = doc->realDocType())
+            documentTypeString = doctype->toString();
     }
     return documentTypeString;
 }
@@ -821,16 +819,16 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (NSString *)selectedString
 {
-    DeprecatedString text = m_frame->selectedText();
+    String text = m_frame->selectedText();
     text.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
-    return [[text.getNSString() copy] autorelease];
+    return [[(NSString*)text copy] autorelease];
 }
 
 - (NSString *)stringForRange:(DOMRange *)range
 {
-    DeprecatedString text = plainText([range _range]);
+    String text = plainText([range _range]);
     text.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
-    return [[text.getNSString() copy] autorelease];
+    return [[(NSString*)text copy] autorelease];
 }
 
 - (void)selectAll
@@ -1228,12 +1226,12 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)advanceToNextMisspelling
 {
-    return m_frame->advanceToNextMisspelling().getNSString();
+    return m_frame->advanceToNextMisspelling();
 }
 
 - (NSString *)advanceToNextMisspellingStartingJustBeforeSelection
 {
-    return m_frame->advanceToNextMisspelling(true).getNSString();
+    return m_frame->advanceToNextMisspelling(true);
 }
 
 - (void)unmarkAllMisspellings
@@ -1420,9 +1418,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSString *)domain
 {
     Document *doc = m_frame->document();
-    if (doc && doc->isHTMLDocument()) {
-        return doc->domain().deprecatedString().getNSString();
-    }
+    if (doc && doc->isHTMLDocument())
+        return doc->domain();
     return nil;
 }
 

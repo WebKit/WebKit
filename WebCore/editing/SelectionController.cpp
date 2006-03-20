@@ -674,11 +674,11 @@ void SelectionController::setNeedsLayout(bool flag)
 String SelectionController::type() const
 {
     if (isNone())
-        return String("None");
+        return "None";
     else if (isCaret())
-        return String("Caret");
+        return "Caret";
     else
-        return String("Range");
+        return "Range";
 }
 
 String SelectionController::toString() const

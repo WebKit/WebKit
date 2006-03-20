@@ -1,3 +1,394 @@
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Remove many, many uses of DeprecatedString.
+        Fix various style issues throughout the touched code.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMRange _text]):
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameMac.h:
+        (WebCore::FrameMac::bridge):
+        (WebCore::FrameMac::markedTextRange):
+        (WebCore::Mac):
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::openURLRequest):
+        (WebCore::FrameMac::searchForLabelsAboveCell):
+        (WebCore::FrameMac::searchForLabelsBeforeElement):
+        (WebCore::FrameMac::matchLabelsAgainstElement):
+        (WebCore::FrameMac::findString):
+        (WebCore::FrameMac::submitForm):
+        (WebCore::FrameMac::urlSelected):
+        (WebCore::FrameMac::objectContentType):
+        (WebCore::FrameMac::createPlugin):
+        (WebCore::FrameMac::createFrame):
+        (WebCore::FrameMac::setTitle):
+        (WebCore::FrameMac::setStatusBarText):
+        (WebCore::FrameMac::advanceToNextMisspelling):
+        (WebCore::FrameMac::userAgent):
+        (WebCore::FrameMac::mimeTypeForFileName):
+        (WebCore::FrameMac::openURLFromPageCache):
+        (WebCore::FrameMac::incomingReferrer):
+        (WebCore::FrameMac::attributedString):
+        (WebCore::FrameMac::overrideMediaType):
+        (WebCore::FrameMac::shouldClose):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge _documentTypeString]):
+        (-[WebCoreFrameBridge selectedString]):
+        (-[WebCoreFrameBridge stringForRange:]):
+        (-[WebCoreFrameBridge advanceToNextMisspelling]):
+        (-[WebCoreFrameBridge advanceToNextMisspellingStartingJustBeforeSelection]):
+        (-[WebCoreFrameBridge domain]):
+        * bridge/mac/WebCoreSettings.mm:
+        (-[WebCoreSettings setStandardFontFamily:]):
+        (-[WebCoreSettings setFixedFontFamily:]):
+        (-[WebCoreSettings setSerifFontFamily:]):
+        (-[WebCoreSettings setSansSerifFontFamily:]):
+        (-[WebCoreSettings setCursiveFontFamily:]):
+        (-[WebCoreSettings setFantasyFontFamily:]):
+        (-[WebCoreSettings setUserStyleSheetLocation:]):
+        (-[WebCoreSettings setDefaultTextEncoding:]):
+        * css/css_valueimpl.cpp:
+        (WebCore::quoteStringIfNeeded):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::setEncodedURL):
+        (WebCore::cleanpath):
+        (WebCore::checkPseudoState):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        (WebCore::convertToLength):
+        (WebCore::colorForCSSValue):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/cssstyleselector.h:
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::toString):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * dom/Document.h:
+        (WebCore::Document::baseTarget):
+        (WebCore::Document::setBaseTarget):
+        * dom/dom_elementimpl.cpp:
+        (WebCore::Element::openTagStartToString):
+        * dom/xml_tokenizer.cpp:
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLTokenizer::startElementNs):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::type):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::TextIterator::handleNonTextNode):
+        (WebCore::TextIterator::exitNode):
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode):
+        (WebCore::CharacterIterator::advance):
+        (WebCore::WordAwareIterator::advance):
+        (WebCore::WordAwareIterator::length):
+        (WebCore::WordAwareIterator::characters):
+        (WebCore::CircularSearchBuffer::CircularSearchBuffer):
+        (WebCore::CircularSearchBuffer::append):
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        (WebCore::findPlainText):
+        * editing/TextIterator.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        * khtml/ecma/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScriptIfNeeded):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Location::getValueProperty):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::fillPaintServer):
+        (WebCore::KSVGPainterFactory::strokePaintServer):
+        * ksvg2/svg/SVGAngle.cpp:
+        (SVGAngle::calculate):
+        (SVGAngle::setValueAsString):
+        (SVGAngle::valueAsString):
+        (SVGAngle::convertToSpecifiedUnits):
+        (SVGAngle::shortestArcBisector):
+        * ksvg2/svg/SVGAngle.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (SVGAnimationElement::targetElement):
+        (SVGAnimationElement::parseMappedAttribute):
+        (SVGAnimationElement::parseClockValue):
+        (SVGAnimationElement::targetAttribute):
+        (SVGAnimationElement::setTargetAttribute):
+        (SVGAnimationElement::detectAnimationMode):
+        (SVGAnimationElement::calculateCurrentValueItem):
+        (SVGAnimationElement::calculateRelativeTimePercentage):
+        * ksvg2/svg/SVGColor.cpp:
+        (SVGColor::setRGBColor):
+        * ksvg2/svg/SVGDOMImplementation.cpp:
+        (svgFeatureSet):
+        (SVGDOMImplementation::self):
+        (SVGDOMImplementation::hasFeature):
+        (SVGDOMImplementation::createDocumentType):
+        (SVGDOMImplementation::createDocument):
+        * ksvg2/svg/SVGDOMImplementation.h:
+        * ksvg2/svg/SVGPaint.cpp:
+        (SVGPaint::cssText):
+        * ksvg2/svg/SVGPathSegClosePath.h:
+        (WebCore::SVGPathSegClosePath::toString):
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        (SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        (SVGPreserveAspectRatio::getCTM):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (SVGStopElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (SVGStyleElement::childrenChanged):
+        * ksvg2/svg/SVGURIReference.cpp:
+        (SVGURIReference::getTarget):
+        * kwq/ClipboardMac.mm:
+        (WebCore::ClipboardMac::setData):
+        (WebCore::ClipboardMac::types):
+        (WebCore::ClipboardMac::setEffectAllowed):
+        (WebCore::cocoaOpFromIEOp):
+        (WebCore::IEOpFromCocoaOp):
+        (WebCore::ClipboardMac::sourceOperation):
+        (WebCore::ClipboardMac::destinationOperation):
+        * kwq/KWQCString.cpp:
+        (DeprecatedCString::append):
+        * kwq/KWQKHTMLSettings.h:
+        (KHTMLSettings::stdFontName):
+        (KHTMLSettings::fixedFontName):
+        (KHTMLSettings::serifFontName):
+        (KHTMLSettings::sansSerifFontName):
+        (KHTMLSettings::cursiveFontName):
+        (KHTMLSettings::fantasyFontName):
+        (KHTMLSettings::minFontSize):
+        (KHTMLSettings::minLogicalFontSize):
+        (KHTMLSettings::mediumFontSize):
+        (KHTMLSettings::mediumFixedFontSize):
+        (KHTMLSettings::autoLoadImages):
+        (KHTMLSettings::isJavaScriptEnabled):
+        (KHTMLSettings::JavaScriptCanOpenWindowsAutomatically):
+        (KHTMLSettings::isJavaEnabled):
+        (KHTMLSettings::isPluginsEnabled):
+        (KHTMLSettings::encoding):
+        (KHTMLSettings::userStyleSheet):
+        (KHTMLSettings::shouldPrintBackgrounds):
+        (KHTMLSettings::textAreasAreResizable):
+        (KHTMLSettings::setStdFontName):
+        (KHTMLSettings::setFixedFontName):
+        (KHTMLSettings::setSerifFontName):
+        (KHTMLSettings::setSansSerifFontName):
+        (KHTMLSettings::setCursiveFontName):
+        (KHTMLSettings::setFantasyFontName):
+        (KHTMLSettings::setMinFontSize):
+        (KHTMLSettings::setMinLogicalFontSize):
+        (KHTMLSettings::setMediumFontSize):
+        (KHTMLSettings::setMediumFixedFontSize):
+        (KHTMLSettings::setAutoLoadImages):
+        (KHTMLSettings::setIsJavaScriptEnabled):
+        (KHTMLSettings::setIsJavaEnabled):
+        (KHTMLSettings::setArePluginsEnabled):
+        (KHTMLSettings::setJavaScriptCanOpenWindowsAutomatically):
+        (KHTMLSettings::setEncoding):
+        (KHTMLSettings::setUserStyleSheet):
+        (KHTMLSettings::setShouldPrintBackgrounds):
+        (KHTMLSettings::setTextAreasAreResizable):
+        * kwq/KWQLoader.mm:
+        (KWQServeSynchronousRequest):
+        * kwq/KWQTextStream.cpp:
+        (QTextStream::QTextStream):
+        (QTextStream::operator<<):
+        (QTextStream::precision):
+        * kwq/KWQTextStream.h:
+        * kwq/RenderTreeAsText.cpp:
+        (operator<<):
+        (quoteAndEscapeNonPrintables):
+        (writeTextRun):
+        (write):
+        (writeSelection):
+        * loader/Cache.cpp:
+        (WebCore::Cache::init):
+        (WebCore::Cache::requestImage):
+        (WebCore::Cache::requestStyleSheet):
+        (WebCore::Cache::preloadStyleSheet):
+        (WebCore::Cache::requestScript):
+        (WebCore::Cache::preloadScript):
+        (WebCore::Cache::requestXSLStyleSheet):
+        (WebCore::Cache::requestXBLDocument):
+        (WebCore::Cache::remove):
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::error):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::error):
+        * loader/CachedImage.h:
+        * loader/CachedObject.h:
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::checkNotify):
+        (WebCore::CachedScript::error):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::error):
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::error):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::DocLoader):
+        (WebCore::DocLoader::~DocLoader):
+        (WebCore::DocLoader::needReload):
+        (WebCore::DocLoader::requestImage):
+        (WebCore::DocLoader::requestStyleSheet):
+        (WebCore::DocLoader::requestScript):
+        (WebCore::DocLoader::requestXSLStyleSheet):
+        (WebCore::DocLoader::requestXBLDocument):
+        (WebCore::DocLoader::setAutoloadImages):
+        (WebCore::DocLoader::setShowAnimations):
+        (WebCore::DocLoader::removeCachedObject):
+        * loader/loader.cpp:
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::receivedResponse):
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::setStyleSheet):
+        (WebCore::Frame::didOpenURL):
+        (WebCore::Frame::setMetaRefreshEnabled):
+        (WebCore::Frame::setAutoloadImages):
+        (WebCore::Frame::autoloadImages):
+        (WebCore::Frame::clear):
+        (WebCore::Frame::receivedFirstData):
+        (WebCore::Frame::begin):
+        (WebCore::Frame::write):
+        (WebCore::Frame::baseTarget):
+        (WebCore::Frame::completeURL):
+        (WebCore::Frame::scheduleRedirection):
+        (WebCore::Frame::scheduleLocationChange):
+        (WebCore::Frame::scheduleHistoryNavigation):
+        (WebCore::Frame::changeLocation):
+        (WebCore::Frame::redirectionTimerFired):
+        (WebCore::Frame::encoding):
+        (WebCore::Frame::gotoAnchor):
+        (WebCore::Frame::setStandardFont):
+        (WebCore::Frame::setFixedFont):
+        (WebCore::Frame::selectedText):
+        (WebCore::Frame::selection):
+        (WebCore::Frame::dragCaret):
+        (WebCore::Frame::setSelection):
+        (WebCore::Frame::setDragCaret):
+        (WebCore::Frame::paintCaret):
+        (WebCore::Frame::paintDragCaret):
+        (WebCore::Frame::urlSelected):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::requestObject):
+        (WebCore::Frame::shouldUsePlugin):
+        (WebCore::Frame::loadPlugin):
+        (WebCore::Frame::loadSubframe):
+        (WebCore::Frame::submitForm):
+        (WebCore::Frame::lastModified):
+        (WebCore::Frame::reparseConfiguration):
+        (WebCore::Frame::shouldChangeSelection):
+        (WebCore::Frame::appliedEditing):
+        (WebCore::Frame::unappliedEditing):
+        (WebCore::Frame::reappliedEditing):
+        (WebCore::Frame::executeScript):
+        (WebCore::updateState):
+        (WebCore::Frame::isCharacterSmartReplaceExempt):
+        (WebCore::Frame::openURL):
+        (WebCore::Frame::didNotOpenURL):
+        (WebCore::Frame::setEncoding):
+        (WebCore::Frame::saveInterpreterBuiltins):
+        (WebCore::Frame::restoreInterpreterBuiltins):
+        (WebCore::Frame::mutableInstances):
+        (WebCore::Frame::setPolicyBaseURL):
+        (WebCore::Frame::addMetaData):
+        (WebCore::Frame::scrollToAnchor):
+        (WebCore::Frame::setMediaType):
+        (WebCore::Frame::highlightAllMatchesForString):
+        (WebCore::Frame::tree):
+        * page/Frame.h:
+        (WebCore::Frame::instances):
+        * page/FramePrivate.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::init):
+        (WebCore::FrameView::setMarginWidth):
+        (WebCore::FrameView::setMarginHeight):
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::dispatchDragEvent):
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::setMediaType):
+        (WebCore::FrameView::mediaType):
+        (WebCore::FrameView::setResizingFrameSet):
+        (WebCore::FrameView::setIgnoreWheelEvents):
+        * page/FrameView.h:
+        (WebCore::FrameView::frameWidth):
+        (WebCore::FrameView::marginWidth):
+        (WebCore::FrameView::marginHeight):
+        (WebCore::FrameView::ref):
+        (WebCore::FrameView::deref):
+        * page/ResourceRequest.h:
+        (WebCore::ResourceRequest::contentType):
+        (WebCore::ResourceRequest::setContentType):
+        * platform/FontFamily.h:
+        * platform/Image.h:
+        * platform/KURL.cpp:
+        (KURL::KURL):
+        (KURL::parse):
+        (urlcmp):
+        (KURL::encode_string):
+        (encodeHostname):
+        * platform/KURL.h:
+        * platform/PlatformString.h:
+        (WebCore::String::left):
+        (WebCore::String::right):
+        * platform/String.cpp:
+        (WebCore::String::toInt):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::toInt):
+        * platform/TransferJob.cpp:
+        (WebCore::TransferJob::queryMetaData):
+        (WebCore::TransferJob::addMetaData):
+        * platform/TransferJob.h:
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::supportsType):
+        * platform/mac/TransferJobMac.mm:
+        (WebCore::TransferJob::start):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::information):
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::updateFromElement):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::getMIMEType):
+        (WebCore::getCharset):
+        (WebCore::XMLHttpRequest::getReadyState):
+        (WebCore::XMLHttpRequest::getResponseText):
+        (WebCore::XMLHttpRequest::getResponseXML):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::~XMLHttpRequest):
+        (WebCore::XMLHttpRequest::changeState):
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::urlMatchesDocumentDomain):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::overrideMIMEType):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::getRequestHeader):
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        (WebCore::XMLHttpRequest::responseIsXML):
+        (WebCore::XMLHttpRequest::getStatus):
+        (WebCore::XMLHttpRequest::getStatusText):
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        (WebCore::XMLHttpRequest::receivedAllData):
+        (WebCore::XMLHttpRequest::receivedRedirect):
+        (WebCore::XMLHttpRequest::receivedData):
+        (WebCore::XMLHttpRequest::cancelRequests):
+        (WebCore::XMLHttpRequest::detachRequests):
+        * xml/xmlhttprequest.h:
+
 2006-03-20  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

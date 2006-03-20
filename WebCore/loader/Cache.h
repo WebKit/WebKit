@@ -66,14 +66,14 @@ namespace WebCore
          * if the DocLoader is zero, the url must be full-qualified.
          * Otherwise, it is automatically base-url expanded
          */
-        static CachedImage* requestImage(DocLoader*, const WebCore::String& URL, bool reload = false, time_t expireDate = 0);
+        static CachedImage* requestImage(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0);
         static CachedImage* requestImage(DocLoader*, const KURL& url, bool reload = false, time_t expireDate = 0);
 
         /**
          * Ask the cache for some url. Will return a cachedObject, and
          * load the requested data in case it's not cached
          */
-        static CachedCSSStyleSheet* requestStyleSheet(DocLoader*, const WebCore::String& URL, bool reload = false, time_t expireDate = 0, const DeprecatedString& charset = DeprecatedString::null);
+        static CachedCSSStyleSheet* requestStyleSheet(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0, const DeprecatedString& charset = DeprecatedString::null);
 
         /**
          * Pre-loads a stylesheet into the cache.
@@ -84,7 +84,7 @@ namespace WebCore
          * Ask the cache for some url. Will return a cachedObject, and
          * load the requested data in case it's not cahced
          */
-        static CachedScript* requestScript(DocLoader*, const WebCore::String& URL, bool reload = false, time_t expireDate = 0, const DeprecatedString& charset = DeprecatedString::null);
+        static CachedScript* requestScript(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0, const DeprecatedString& charset = DeprecatedString::null);
 
         /**
          * Pre-loads a script into the cache.
@@ -93,12 +93,12 @@ namespace WebCore
 
 #ifdef KHTML_XSLT
         // Ask the cache for an XSL stylesheet.
-        static CachedXSLStyleSheet* requestXSLStyleSheet(DocLoader*, const WebCore::String& URL, bool reload = false, time_t expireDate = 0);
+        static CachedXSLStyleSheet* requestXSLStyleSheet(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0);
 #endif
 
 #ifndef KHTML_NO_XBL
         // Ask the cache for an XBL document.
-        static CachedXBLDocument* requestXBLDocument(DocLoader*, const WebCore::String& URL, bool reload = false, time_t expireDate = 0);
+        static CachedXBLDocument* requestXBLDocument(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0);
 #endif
 
         /**
@@ -114,7 +114,7 @@ namespace WebCore
         static int maxCacheableObjectSize() { return maxCacheable; }
 
         // Get an existing cache entry by URL.
-        static CachedObject* get(const WebCore::String& URL);
+        static CachedObject* get(const String& URL);
 
         // Remove an existing cache entry.
         static void remove(CachedObject*);

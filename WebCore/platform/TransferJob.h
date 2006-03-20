@@ -70,10 +70,10 @@ public:
 
     int error() const;
     void setError(int);
-    DeprecatedString errorText() const;
+    String errorText() const;
     bool isErrorPage() const;
-    DeprecatedString queryMetaData(const DeprecatedString&) const;
-    void addMetaData(const DeprecatedString& key, const DeprecatedString& value);
+    String queryMetaData(const String&) const;
+    void addMetaData(const String& key, const String& value);
     void addMetaData(const HashMap<String, String>&);
     void kill();
 

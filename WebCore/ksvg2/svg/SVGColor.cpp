@@ -222,26 +222,25 @@ void SVGColor::setRGBColor(StringImpl *rgbColor)
         return;
 
     DeprecatedString parse = m_rgbColor.deprecatedString().stripWhiteSpace();
-    if(parse.startsWith(DeprecatedString::fromLatin1("rgb(")))
+    if(parse.startsWith("rgb("))
     {
         DeprecatedStringList colors = DeprecatedStringList::split(',', parse);
         DeprecatedString r = colors[0].right((colors[0].length() - 4));
         DeprecatedString g = colors[1];
         DeprecatedString b = colors[2].left((colors[2].length() - 1));
     
-        if(r.contains(DeprecatedString::fromLatin1("%")))
-        {
+        if(r.contains("%")) {
             r = r.left(r.length() - 1);
             r = DeprecatedString::number(int((double(255 * r.toDouble()) / 100.0)));
         }
 
-        if(g.contains(DeprecatedString::fromLatin1("%")))
+        if(g.contains("%"))
         {
             g = g.left(g.length() - 1);
             g = DeprecatedString::number(int((double(255 * g.toDouble()) / 100.0)));
         }
     
-        if(b.contains(DeprecatedString::fromLatin1("%")))
+        if(b.contains("%"))
         {
             b = b.left(b.length() - 1);
             b = DeprecatedString::number(int((double(255 * b.toDouble()) / 100.0)));

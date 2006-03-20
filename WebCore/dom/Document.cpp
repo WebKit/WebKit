@@ -805,7 +805,7 @@ void Document::recalcStyle(StyleChange change)
             const KHTMLSettings *settings = m_view->frame()->settings();
             if (printing() && !settings->shouldPrintBackgrounds())
                 _style->setForceBackgroundsToWhite(true);
-            DeprecatedString stdfont = settings->stdFontName();
+            const AtomicString& stdfont = settings->stdFontName();
             if (!stdfont.isEmpty()) {
                 fontDescription.firstFamily().setFamily(stdfont);
                 fontDescription.firstFamily().appendFamily(0);

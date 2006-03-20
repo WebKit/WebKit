@@ -405,7 +405,7 @@ static inline void handleElementAttributes(Element *newElement, const xmlChar **
         String attrValue = toQString(attributes[i].value, valueLength);
         String attrPrefix = toQString(attributes[i].prefix);
         String attrURI = attrPrefix.isEmpty() ? String() : toQString(attributes[i].uri);
-        String attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + String(":") + attrLocalName;
+        String attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + ":" + attrLocalName;
         
         newElement->setAttributeNS(attrURI, attrQName, attrValue, ec);
         if (ec) // exception setting attributes
@@ -425,7 +425,7 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
     String localName = toQString(xmlLocalName);
     String uri = toQString(xmlURI);
     String prefix = toQString(xmlPrefix);
-    String qName = prefix.isEmpty() ? localName : prefix + DeprecatedString::fromLatin1(":") + localName;
+    String qName = prefix.isEmpty() ? localName : prefix + ":" + localName;
     
     if (m_parsingFragment && uri.isEmpty()) {
         if (!prefix.isEmpty())

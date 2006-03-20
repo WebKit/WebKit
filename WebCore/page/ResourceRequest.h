@@ -41,8 +41,8 @@ namespace WebCore {
         const KURL& url() const { return m_url; }
         void setURL(const KURL& url) { m_url = url; }
 
-        DeprecatedString contentType() const { return m_contentType; }
-        void setContentType(const DeprecatedString &t) { m_contentType = t; }
+        String contentType() const { return m_contentType; }
+        void setContentType(const String& t) { m_contentType = t; }
         
         bool doPost() const { return m_doPost; }
         void setDoPost(bool post) { m_doPost = post; }
@@ -55,7 +55,7 @@ namespace WebCore {
 
         // FIXME: these two parameters are specific to frame opening,
         // should move to FrameRequest once we have that
-        DeprecatedString frameName;
+        String frameName;
     private:
         bool m_lockHistory;
 
@@ -69,7 +69,7 @@ namespace WebCore {
     private:
         KURL m_url;
         String m_referrer;
-        DeprecatedString m_contentType;
+        String m_contentType;
         bool m_doPost;
     };
 

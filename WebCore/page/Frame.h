@@ -25,8 +25,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef FRAME_H
-#define FRAME_H
+#ifndef Frame_H
+#define Frame_H
 
 #include "BrowserExtension.h"
 #include "Color.h"
@@ -115,12 +115,12 @@ public:
   /**
    * Returns a pointer to the @ref BrowserExtension.
    */
-  BrowserExtension *browserExtension() const;
+  BrowserExtension* browserExtension() const;
 
   /**
    * Returns a pointer to the HTML document's view.
    */
-  FrameView *view() const;
+  FrameView* view() const;
 
   virtual void setView(FrameView*);
 
@@ -142,7 +142,7 @@ public:
   /**
    * Enable/disable the automatic forwarding by <meta http-equiv="refresh" ....>
    */
-  void setMetaRefreshEnabled( bool enable );
+  void setMetaRefreshEnabled(bool enable);
 
   /**
    * Returns @p true if automtaic forwarding is enabled.
@@ -165,7 +165,7 @@ public:
    *
    * @note Request will be ignored if called before @ref begin().
    */
-  void setAutoloadImages( bool enable );
+  void setAutoloadImages(bool enable);
   /**
    * Returns whether images contained in the document are loaded automatically
    * or not.
@@ -175,26 +175,26 @@ public:
   bool autoloadImages() const;
 
   KURL baseURL() const;
-  DeprecatedString baseTarget() const;
+  String baseTarget() const;
 
   /**
    * Schedules a redirection after @p delay seconds.
    */
-  void scheduleRedirection(double delay, const DeprecatedString &url, bool lockHistory = true);
+  void scheduleRedirection(double delay, const DeprecatedString& url, bool lockHistory = true);
 
   /**
    * Make a location change, or schedule one for later.
    * These are used for JavaScript-triggered location changes.
    */
-  void changeLocation(const DeprecatedString &URL, const DeprecatedString &referrer, bool lockHistory = true, bool userGesture = false);
-  void scheduleLocationChange(const DeprecatedString &url, const DeprecatedString &referrer, bool lockHistory = true, bool userGesture = false);
+  void changeLocation(const DeprecatedString& URL, const DeprecatedString& referrer, bool lockHistory = true, bool userGesture = false);
+  void scheduleLocationChange(const DeprecatedString& url, const DeprecatedString& referrer, bool lockHistory = true, bool userGesture = false);
   bool isScheduledLocationChangePending() const;
 
   /**
    * Schedules a history navigation operation (go forward, go back, etc.).
    * This is used for JavaScript-triggered location changes.
    */
-  void scheduleHistoryNavigation( int steps );
+  void scheduleHistoryNavigation(int steps);
 
   /**
    * Clears the widget and prepares it for new content.
@@ -202,7 +202,7 @@ public:
    * If you want @ref url() to return
    * for example "file:/tmp/test.html", you can use the following code:
    * <PRE>
-   * view->begin( KURL("file:/tmp/test.html" ) );
+   * view->begin(KURL("file:/tmp/test.html"));
    * </PRE>
    *
    * @param url is the url of the document to be displayed.  Even if you
@@ -212,7 +212,7 @@ public:
    * All child frames and the old document are removed if you call
    * this method.
    */
-  virtual void begin( const KURL &url = KURL());
+  virtual void begin(const KURL& url = KURL());
 
   /**
    * Writes another part of the HTML code to the widget.
@@ -229,12 +229,12 @@ public:
    * you're using isn't utf-16, you can safely leave out the length
    * parameter.
    *
-   * Attention: Don't mix calls to @ref write( const char *) with calls
-   * to @ref write( const DeprecatedString & ).
+   * Attention: Don't mix calls to @ref write(const char*) with calls
+   * to @ref write(const DeprecatedString&  ).
    *
    * The result might not be what you want.
    */
-  virtual void write( const char *str, int len = -1 );
+  virtual void write(const char* str, int len = -1);
 
   /**
    * Writes another part of the HTML code to the widget.
@@ -243,7 +243,7 @@ public:
    * this function many times in sequence. But remember: The fewer calls
    * you make, the faster the widget will be.
    */
-  virtual void write( const DeprecatedString &str );
+  virtual void write(const DeprecatedString& str);
 
   /**
    * Call this after your last call to @ref write().
@@ -259,7 +259,7 @@ public:
 
   void paint(GraphicsContext*, const IntRect&);
 
-  void setEncoding(const DeprecatedString &encoding, bool userChosen);
+  void setEncoding(const DeprecatedString& encoding, bool userChosen);
 
   /**
    * Returns the encoding the page currently uses.
@@ -275,7 +275,7 @@ public:
    * This gives a wide range of possibilities to
    * change the layout of the page.
    */
-  void setUserStyleSheet(const KURL &url);
+  void setUserStyleSheet(const KURL& url);
 
   /**
    * Sets a user defined style sheet to be used on top of the HTML 4
@@ -284,14 +284,14 @@ public:
    * This gives a wide range of possibilities to
    * change the layout of the page.
    */
-  void setUserStyleSheet(const DeprecatedString &styleSheet);
+  void setUserStyleSheet(const DeprecatedString& styleSheet);
 
   /**
    * Sets the standard font style.
    *
    * @param name The font name to use for standard text.
    */
-  void setStandardFont( const DeprecatedString &name );
+  void setStandardFont(const String& name);
 
   /**
    * Sets the fixed font style.
@@ -299,7 +299,7 @@ public:
    * @param name The font name to use for fixed text, e.g.
    * the <tt>&lt;pre&gt;</tt> tag.
    */
-  void setFixedFont( const DeprecatedString &name );
+  void setFixedFont(const String& name);
 
   /**
    * Finds the anchor named @p name.
@@ -308,7 +308,7 @@ public:
    * scrolls to the closest position. Returns @p if the anchor has
    * been found.
    */
-  bool gotoAnchor( const DeprecatedString &name );
+  bool gotoAnchor(const String& name);
 
   /**
    * Sets the Zoom factor. The value is given in percent, larger values mean a
@@ -330,7 +330,7 @@ public:
   /**
    * Returns the text the user has marked.
    */
-  virtual DeprecatedString selectedText() const;
+  virtual String selectedText() const;
 
   /**
    * Returns the granularity of the selection (character, word, line, paragraph).
@@ -345,32 +345,32 @@ public:
   /**
    * Returns the drag caret of the HTML.
    */
-  const SelectionController &dragCaret() const;
+  const SelectionController& dragCaret() const;
 
   /**
    * Sets the current selection.
    */
-  void setSelection(const SelectionController &, bool closeTyping = true, bool keepTypingStyle = false);
+  void setSelection(const SelectionController&, bool closeTyping = true, bool keepTypingStyle = false);
 
   /**
    * Returns whether selection can be changed.
    */
-  bool shouldChangeSelection(const SelectionController &) const;
+  bool shouldChangeSelection(const SelectionController&) const;
 
   /**
    * Returns a mark, to be used as emacs uses it.
    */
-  const Selection &mark() const;
+  const Selection& mark() const;
 
   /**
    * Returns the mark.
    */
-  void setMark(const Selection &);
+  void setMark(const Selection&);
 
   /**
    * Sets the current drag caret.
    */
-  void setDragCaret(const SelectionController &);
+  void setDragCaret(const SelectionController&);
   
   /**
    * Transposes characters either side of caret selection.
@@ -420,12 +420,12 @@ public:
   /**
    * Returns whether editing should end in the given range
    */
-  virtual bool shouldBeginEditing(const Range *) const;
+  virtual bool shouldBeginEditing(const Range*) const;
 
   /**
    * Returns whether editing should end in the given range
    */
-  virtual bool shouldEndEditing(const Range *) const;
+  virtual bool shouldEndEditing(const Range*) const;
 
   /**
    * Called when editing has begun.
@@ -450,27 +450,27 @@ public:
   /**
    * Called when editing has been applied.
    */
-  void appliedEditing(EditCommandPtr &);
+  void appliedEditing(EditCommandPtr&);
 
   /**
    * Called when editing has been unapplied.
    */
-  void unappliedEditing(EditCommandPtr &);
+  void unappliedEditing(EditCommandPtr&);
 
   /**
    * Called when editing has been reapplied.
    */
-  void reappliedEditing(EditCommandPtr &);
+  void reappliedEditing(EditCommandPtr&);
 
   /**
    * Returns the typing style for the document.
    */
-  CSSMutableStyleDeclaration *typingStyle() const;
+  CSSMutableStyleDeclaration* typingStyle() const;
 
   /**
    * Sets the typing style for the document.
    */
-  void setTypingStyle(CSSMutableStyleDeclaration *);
+  void setTypingStyle(CSSMutableStyleDeclaration*);
 
   /**
    * Clears the typing style for the document.
@@ -494,7 +494,7 @@ public:
   /**
    * Last-modified date (in raw string format), if received in the [HTTP] headers.
    */
-  DeprecatedString lastModified() const;
+  String lastModified() const;
 
   bool isPointInsideSelection(int x, int y);
 
@@ -512,18 +512,18 @@ public:
   void undo();
   virtual bool canRedo() const = 0;
   virtual bool canUndo() const = 0;
-  void computeAndSetTypingStyle(CSSStyleDeclaration *, EditAction editingAction=EditActionUnspecified);
-  void applyStyle(CSSStyleDeclaration *, EditAction editingAction=EditActionUnspecified);
-  void applyParagraphStyle(CSSStyleDeclaration *, EditAction editingAction=EditActionUnspecified);
-  TriState selectionHasStyle(CSSStyleDeclaration *) const;
-  bool selectionStartHasStyle(CSSStyleDeclaration *) const;
+  void computeAndSetTypingStyle(CSSStyleDeclaration* , EditAction editingAction=EditActionUnspecified);
+  void applyStyle(CSSStyleDeclaration* , EditAction editingAction=EditActionUnspecified);
+  void applyParagraphStyle(CSSStyleDeclaration* , EditAction editingAction=EditActionUnspecified);
+  TriState selectionHasStyle(CSSStyleDeclaration*) const;
+  bool selectionStartHasStyle(CSSStyleDeclaration*) const;
   String selectionStartStylePropertyValue(int stylePropertyID) const;
   void applyEditingStyleToBodyElement() const;
   void removeEditingStyleFromBodyElement() const;
-  void applyEditingStyleToElement(Element *) const;
-  void removeEditingStyleFromElement(Element *) const;
+  void applyEditingStyleToElement(Element*) const;
+  void removeEditingStyleFromElement(Element*) const;
   virtual void print() = 0;
-  virtual bool isCharacterSmartReplaceExempt(const QChar &, bool);
+  virtual bool isCharacterSmartReplaceExempt(const QChar&, bool);
 
   // Used to keep the part alive when running a script that might destroy it.
   void keepAlive();
@@ -534,7 +534,7 @@ public:
    * returns a KURL object for the given url. Use when
    * you know what you're doing.
    */
-  KURL completeURL( const DeprecatedString &url );
+  KURL completeURL(const DeprecatedString& url);
 
   virtual void handleMouseReleaseDoubleClickEvent(const MouseEventWithHitTestResults&);
   virtual void handleMousePressEvent(const MouseEventWithHitTestResults&);
@@ -543,21 +543,21 @@ public:
   
   void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode, int x, int y);
 
-  virtual void urlSelected(const DeprecatedString& url, const DeprecatedString& target);
-  virtual void urlSelected(const ResourceRequest&, const DeprecatedString& target);
+  virtual void urlSelected(const DeprecatedString& url, const String& target);
+  virtual void urlSelected(const ResourceRequest&, const String& target);
 
 
   // Methods with platform-specific overrides (and no base class implementation).
-  virtual void setTitle(const String &) = 0;
+  virtual void setTitle(const String&) = 0;
   virtual void handledOnloadEvents() = 0;
-  virtual DeprecatedString userAgent() const = 0;
-  virtual DeprecatedString incomingReferrer() const = 0;
-  virtual DeprecatedString mimeTypeForFileName(const DeprecatedString &) const = 0;
-  virtual KJS::Bindings::Instance *getEmbedInstanceForWidget(Widget*) = 0;
-  virtual KJS::Bindings::Instance *getObjectInstanceForWidget(Widget*) = 0;
-  virtual KJS::Bindings::Instance *getAppletInstanceForWidget(Widget*) = 0;
-  virtual void markMisspellingsInAdjacentWords(const VisiblePosition &) = 0;
-  virtual void markMisspellings(const SelectionController &) = 0;
+  virtual String userAgent() const = 0;
+  virtual String incomingReferrer() const = 0;
+  virtual String mimeTypeForFileName(const String&) const = 0;
+  virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*) = 0;
+  virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*) = 0;
+  virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*) = 0;
+  virtual void markMisspellingsInAdjacentWords(const VisiblePosition&) = 0;
+  virtual void markMisspellings(const SelectionController&) = 0;
   virtual void addMessageToConsole(const String& message,  unsigned int lineNumber, const String& sourceID) = 0;
   virtual void runJavaScriptAlert(const String& message) = 0;
   virtual bool runJavaScriptConfirm(const String& message) = 0;
@@ -570,9 +570,9 @@ public:
   virtual void scheduleClose() = 0;
   virtual void unfocusWindow() = 0;
   virtual void createEmptyDocument() = 0;
-  virtual Range *markedTextRange() const = 0;
-  virtual void registerCommandForUndo(const EditCommandPtr &) = 0;
-  virtual void registerCommandForRedo(const EditCommandPtr &) = 0;
+  virtual Range* markedTextRange() const = 0;
+  virtual void registerCommandForUndo(const EditCommandPtr&) = 0;
+  virtual void registerCommandForRedo(const EditCommandPtr&) = 0;
   virtual void clearUndoRedoOperations() = 0;
   virtual void issueUndoCommand() = 0;
   virtual void issueRedoCommand() = 0;
@@ -581,9 +581,9 @@ public:
   virtual void issuePasteCommand() = 0;
   virtual void issuePasteAndMatchStyleCommand() = 0;
   virtual void issueTransposeCommand() = 0;
-  virtual void respondToChangedSelection(const SelectionController &oldSelection, bool closeTyping) = 0;
+  virtual void respondToChangedSelection(const SelectionController& oldSelection, bool closeTyping) = 0;
   virtual void respondToChangedContents() = 0;
-  virtual bool shouldChangeSelection(const SelectionController &oldSelection, const SelectionController &newSelection, EAffinity affinity, bool stillSelecting) const = 0;
+  virtual bool shouldChangeSelection(const SelectionController& oldSelection, const SelectionController& newSelection, EAffinity affinity, bool stillSelecting) const = 0;
   virtual void partClearedInBegin() = 0; 
   virtual void saveDocumentState() = 0;
   virtual void restoreDocumentState() = 0;
@@ -592,13 +592,13 @@ public:
   virtual void submitForm(const ResourceRequest&) = 0;
   virtual void urlSelected(const ResourceRequest&) = 0;
   virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframePart = 0) = 0;
-  virtual bool passWheelEventToChildWidget(Node *) = 0;
+  virtual bool passWheelEventToChildWidget(Node*) = 0;
   virtual bool lastEventIsMouseUp() const = 0;
-  virtual DeprecatedString overrideMediaType() const = 0;
+  virtual String overrideMediaType() const = 0;
 protected:
-  virtual Plugin* createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const DeprecatedString& mimeType) = 0;
-  virtual Frame* createFrame(const KURL& url, const DeprecatedString& name, RenderPart* renderer, const String& referrer) = 0;
-  virtual ObjectContentType objectContentType(const KURL& url, const DeprecatedString& mimeType) = 0;
+  virtual Plugin* createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const String& mimeType) = 0;
+  virtual Frame* createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer) = 0;
+  virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
 
     virtual void redirectionTimerFired(Timer<Frame>*);
 
@@ -640,21 +640,21 @@ private:
   void selectionLayoutChanged();
     void caretBlinkTimerFired(Timer<Frame>*);
 
-  bool shouldUsePlugin(Node* element, const KURL& url, const DeprecatedString& mimeType, bool hasFallback, bool& useFallback);
-  bool loadPlugin(RenderPart* renderer, const KURL &url, const DeprecatedString &mimeType, 
+  bool shouldUsePlugin(Node* element, const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback);
+  bool loadPlugin(RenderPart* renderer, const KURL& url, const String& mimeType, 
                   const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, bool useFallback);
-  Frame* loadSubframe(RenderPart* renderer, const KURL& url, const DeprecatedString& name, const String& referrer);
+  Frame* loadSubframe(RenderPart* renderer, const KURL& url, const String& name, const String& referrer);
 
 public:
-  void submitForm(const char *action, const DeprecatedString &url, const FormData &formData,
-                  const DeprecatedString &target, const DeprecatedString& contentType = DeprecatedString::null,
-                  const DeprecatedString& boundary = DeprecatedString::null );
+  void submitForm(const char* action, const String& url, const FormData& formData,
+                  const String& target, const String& contentType = String(),
+                  const String& boundary = String());
   
-  bool requestObject(RenderPart *frame, const DeprecatedString &url, const DeprecatedString &frameName,
-                     const DeprecatedString &serviceType, const DeprecatedStringList &paramNames, const DeprecatedStringList &paramValues);
-  bool requestFrame(RenderPart *frame, const DeprecatedString &url, const DeprecatedString &frameName);
+  bool requestObject(RenderPart* frame, const String& url, const AtomicString& frameName,
+                     const String& serviceType, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues);
+  bool requestFrame(RenderPart* frame, const String& url, const AtomicString& frameName);
 
-  Document *document() const;
+  Document* document() const;
   void setDocument(Document* newDoc);
 
   // Workaround for the fact that it's hard to delete a frame.
@@ -669,21 +669,21 @@ private:
   void cancelRedirection(bool newLoadInProgress = false);
 
  public:
-  KJS::JSValue* executeScript(const DeprecatedString& filename, int baseLine, Node*, const DeprecatedString& script);
-  KJSProxy *jScript();
-  Frame *opener();
-  void setOpener(Frame *_opener);
+  KJS::JSValue* executeScript(const String& filename, int baseLine, Node*, const DeprecatedString& script);
+  KJSProxy* jScript();
+  Frame* opener();
+  void setOpener(Frame* _opener);
   bool openedByJS();
   void setOpenedByJS(bool _openedByJS);
 
-  void setSettings(KHTMLSettings *);
+  void setSettings(KHTMLSettings*);
 
   void provisionalLoadStarted();
   bool userGestureHint();
-  void didNotOpenURL(const KURL &);
-  void addData(const char *bytes, int length);
-  void addMetaData(const DeprecatedString &key, const DeprecatedString &value);
-  void setMediaType(const DeprecatedString &);
+  void didNotOpenURL(const KURL&);
+  void addData(const char* bytes, int length);
+  void addMetaData(const String& key, const String& value);
+  void setMediaType(const String&);
 
   // root renderer for the document contained in this frame
   RenderObject* renderer() const;
@@ -696,9 +696,9 @@ private:
   FloatRect visibleSelectionRect() const;
   bool isFrameSet() const;
 
-  HTMLFormElement *currentForm() const;
+  HTMLFormElement* currentForm() const;
 
-  RenderStyle *styleForSelectionStart(Node *&nodeToRemove) const;
+  RenderStyle* styleForSelectionStart(Node* &nodeToRemove) const;
 
   // Scrolls as necessary to reveal the selection
   void revealSelection();
@@ -708,26 +708,26 @@ private:
 
   bool scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity granularity);
 
-  void adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit);
+  void adjustPageHeight(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
 
   bool canCachePage();
-  KJS::PausedTimeouts *pauseTimeouts();
-  void resumeTimeouts(KJS::PausedTimeouts *);
-  void saveWindowProperties(KJS::SavedProperties *windowProperties);
-  void saveLocationProperties(KJS::SavedProperties *locationProperties);
-  void restoreWindowProperties(KJS::SavedProperties *windowProperties);
-  void restoreLocationProperties(KJS::SavedProperties *locationProperties);
-  void saveInterpreterBuiltins(KJS::SavedBuiltins &interpreterBuiltins);
-  void restoreInterpreterBuiltins(const KJS::SavedBuiltins &interpreterBuiltins);
+  KJS::PausedTimeouts* pauseTimeouts();
+  void resumeTimeouts(KJS::PausedTimeouts*);
+  void saveWindowProperties(KJS::SavedProperties* windowProperties);
+  void saveLocationProperties(KJS::SavedProperties* locationProperties);
+  void restoreWindowProperties(KJS::SavedProperties* windowProperties);
+  void restoreLocationProperties(KJS::SavedProperties* locationProperties);
+  void saveInterpreterBuiltins(KJS::SavedBuiltins& interpreterBuiltins);
+  void restoreInterpreterBuiltins(const KJS::SavedBuiltins& interpreterBuiltins);
 
-  static Frame *frameForWidget(const Widget *);
-  static Node *nodeForWidget(const Widget *);
-  static Frame *frameForNode(Node *);
+  static Frame* frameForWidget(const Widget*);
+  static Node* nodeForWidget(const Widget*);
+  static Frame* frameForNode(Node*);
 
-  static void clearDocumentFocus(Widget *);
+  static void clearDocumentFocus(Widget*);
 
-  static const DeprecatedPtrList<Frame> &instances() { return mutableInstances(); }    
-  static DeprecatedPtrList<Frame> &mutableInstances();
+  static const DeprecatedPtrList<Frame>& instances() { return mutableInstances(); }    
+  static DeprecatedPtrList<Frame>& mutableInstances();
 
   void updatePolicyBaseURL();
   void setPolicyBaseURL(const String&);
@@ -738,14 +738,14 @@ private:
   void sendResizeEvent();
   void sendScrollEvent();
   bool scrollbarsVisible();
-  void scrollToAnchor(const KURL &);
+  void scrollToAnchor(const KURL&);
   bool canMouseDownStartSelect(Node*);
   bool passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&, bool isDoubleClick);
   bool passWidgetMouseDownEventToWidget(RenderWidget*);
   virtual bool passMouseDownEventToWidget(Widget*) = 0;
 
   void clearTimers();
-  static void clearTimers(FrameView *);
+  static void clearTimers(FrameView*);
 
   bool displaysWithFocusAttributes() const;
   virtual void setDisplaysWithFocusAttributes(bool flag);
@@ -756,12 +756,12 @@ private:
 
   DeprecatedValueList<MarkedTextUnderline> markedTextUnderlines() const;  
   bool markedTextUsesUnderlines() const;
-  unsigned highlightAllMatchesForString(const DeprecatedString &, bool caseFlag);
+  unsigned highlightAllMatchesForString(const String&, bool caseFlag);
 
   // Call this method before handling a new user action, like on a mouse down or key down.
   // Currently, all this does is clear the "don't submit form twice" data member.
   void prepareForUserAction();
-  Node *mousePressNode();
+  Node* mousePressNode();
   
   void clearRecordedFormValues();
   void recordFormValue(const String& name, const String& value, PassRefPtr<HTMLFormElement>);
@@ -769,7 +769,7 @@ private:
   bool isComplete() const;
   bool isLoadingMainResource() const;
   
-  void replaceContentsWithScriptResult(const KURL &url);
+  void replaceContentsWithScriptResult(const KURL& url);
 
     void disconnectOwnerRenderer();
 
@@ -799,7 +799,7 @@ protected:
   void handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
   void handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
-  CSSComputedStyleDeclaration *selectionComputedStyle(Node *&nodeToRemove) const;
+  CSSComputedStyleDeclaration* selectionComputedStyle(Node* &nodeToRemove) const;
 
     virtual void setStatusBarText(const String&);
     
@@ -810,7 +810,7 @@ public:
   friend class FrameWin;
 
   void checkEmitLoadEvent();
-  bool didOpenURL(const KURL &);
+  bool didOpenURL(const KURL&);
   virtual void didFirstLayout() {}
 
   virtual void frameDetached();

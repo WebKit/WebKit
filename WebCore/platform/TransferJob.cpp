@@ -61,13 +61,7 @@ void TransferJob::setError(int e)
     d->status = e;
 }
 
-DeprecatedString TransferJob::errorText() const
-{
-    LOG(NotYetImplemented, "not yet implemented");
-    return DeprecatedString::null;
-}
-
-DeprecatedString TransferJob::queryMetaData(const DeprecatedString &key) const
+String TransferJob::queryMetaData(const String& key) const
 {
     if (key == "HTTP-Headers") {
         assembleResponseHeaders();
@@ -78,10 +72,10 @@ DeprecatedString TransferJob::queryMetaData(const DeprecatedString &key) const
         // this will put it in the regular metadata dictionary
         retrieveCharset();
 
-    return d->metaData.get(key).deprecatedString(); 
+    return d->metaData.get(key); 
 }
 
-void TransferJob::addMetaData(const DeprecatedString &key, const DeprecatedString &value)
+void TransferJob::addMetaData(const String& key, const String& value)
 {
     d->metaData.set(key, value);
 }

@@ -83,9 +83,8 @@ static String quoteStringIfNeeded(const String &string)
 {
     // For now, just do this for strings that start with "#" to fix Korean font names that start with "#".
     // Post-Tiger, we should isLegalIdentifier instead after working out all the ancillary issues.
-    if (string[0] != '#') {
+    if (string[0] != '#')
         return string;
-    }
 
     // FIXME: Also need to transform control characters into \ sequences.
     DeprecatedString s = string.deprecatedString();

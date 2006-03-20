@@ -23,6 +23,7 @@
 #define XMLHTTPREQUEST_H_
 
 #include "KURL.h"
+#include "PlatformString.h"
 #include "TransferJobClient.h"
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/HashSet.h>
@@ -86,29 +87,29 @@ namespace WebCore {
     void changeState(XMLHttpRequestState newState);
     void callReadyStateChangeListener();
 
-    Document* doc;
+    Document* m_doc;
     RefPtr<EventListener> m_onReadyStateChangeListener;
     RefPtr<EventListener> m_onLoadListener;
 
-    KURL url;
-    DeprecatedString method;
-    bool async;
-    DeprecatedString requestHeaders;
+    KURL m_url;
+    DeprecatedString m_method;
+    bool m_async;
+    DeprecatedString m_requestHeaders;
 
-    TransferJob* job;
+    TransferJob* m_job;
 
-    XMLHttpRequestState state;
+    XMLHttpRequestState m_state;
 
-    RefPtr<Decoder> decoder;
-    DeprecatedString encoding;
-    DeprecatedString responseHeaders;
-    DeprecatedString MIMETypeOverride;
+    RefPtr<Decoder> m_decoder;
+    String m_encoding;
+    String m_responseHeaders;
+    String m_mimeTypeOverride;
 
-    DeprecatedString response;
-    mutable bool createdDocument;
-    mutable RefPtr<Document> responseXML;
+    DeprecatedString m_response;
+    mutable bool m_createdDocument;
+    mutable RefPtr<Document> m_responseXML;
 
-    bool aborted;
+    bool m_aborted;
   };
 
 } // namespace

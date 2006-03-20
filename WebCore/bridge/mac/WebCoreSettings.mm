@@ -80,7 +80,7 @@ using namespace WebCore;
     }
     [standardFontFamily release];
     standardFontFamily = [s copy];
-    settings->setStdFontName(DeprecatedString::fromNSString(s));
+    settings->setStdFontName(s);
     [self _updateAllViews];
 }
 
@@ -91,12 +91,11 @@ using namespace WebCore;
 
 - (void)setFixedFontFamily:(NSString *)s
 {
-    if ([fixedFontFamily isEqualToString:s]) {
+    if ([fixedFontFamily isEqualToString:s])
         return;
-    }
     [fixedFontFamily release];
     fixedFontFamily = [s copy];
-    settings->setFixedFontName(DeprecatedString::fromNSString(s));
+    settings->setFixedFontName(s);
     [self _updateAllViews];
 }
 
@@ -107,12 +106,11 @@ using namespace WebCore;
 
 - (void)setSerifFontFamily:(NSString *)s
 {
-    if ([serifFontFamily isEqualToString:s]) {
+    if ([serifFontFamily isEqualToString:s])
         return;
-    }
     [serifFontFamily release];
     serifFontFamily = [s copy];
-    settings->setSerifFontName(DeprecatedString::fromNSString(s));
+    settings->setSerifFontName(s);
     [self _updateAllViews];
 }
 
@@ -123,12 +121,11 @@ using namespace WebCore;
 
 - (void)setSansSerifFontFamily:(NSString *)s
 {
-    if ([sansSerifFontFamily isEqualToString:s]) {
+    if ([sansSerifFontFamily isEqualToString:s])
         return;
-    }
     [sansSerifFontFamily release];
     sansSerifFontFamily = [s copy];
-    settings->setSansSerifFontName(DeprecatedString::fromNSString(s));
+    settings->setSansSerifFontName(s);
     [self _updateAllViews];
 }
 
@@ -139,12 +136,11 @@ using namespace WebCore;
 
 - (void)setCursiveFontFamily:(NSString *)s
 {
-    if ([cursiveFontFamily isEqualToString:s]) {
+    if ([cursiveFontFamily isEqualToString:s])
         return;
-    }
     [cursiveFontFamily release];
     cursiveFontFamily = [s copy];
-    settings->setCursiveFontName(DeprecatedString::fromNSString(s));
+    settings->setCursiveFontName(s);
     [self _updateAllViews];
 }
 
@@ -155,12 +151,11 @@ using namespace WebCore;
 
 - (void)setFantasyFontFamily:(NSString *)s
 {
-    if ([fantasyFontFamily isEqualToString:s]) {
+    if ([fantasyFontFamily isEqualToString:s])
         return;
-    }
     [fantasyFontFamily release];
     fantasyFontFamily = [s copy];
-    settings->setFantasyFontName(DeprecatedString::fromNSString(s));
+    settings->setFantasyFontName(s);
     [self _updateAllViews];
 }
 
@@ -286,9 +281,8 @@ using namespace WebCore;
 
 - (void)setUserStyleSheetLocation:(NSString *)s
 {
-    if ([userStyleSheetLocation isEqualToString:s]) {
+    if ([userStyleSheetLocation isEqualToString:s])
         return;
-    }
     [userStyleSheetLocation release];
     userStyleSheetLocation = [s copy];
     settings->setUserStyleSheet(DeprecatedString::fromNSString(s));
@@ -324,9 +318,8 @@ using namespace WebCore;
 
 - (void)setDefaultTextEncoding:(NSString *)s
 {
-    if ([defaultTextEncoding isEqualToString:s]) {
+    if ([defaultTextEncoding isEqualToString:s])
         return;
-    }
     [defaultTextEncoding release];
     defaultTextEncoding = [s copy];
     settings->setEncoding(DeprecatedString::fromNSString(s));

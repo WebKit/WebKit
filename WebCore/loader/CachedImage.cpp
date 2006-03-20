@@ -154,7 +154,7 @@ void CachedImage::data(DeprecatedByteArray& data, bool eof)
     }
 }
 
-void CachedImage::error( int /*err*/, const char */*text*/ )
+void CachedImage::error()
 {
     clear();
     m_errorOccurred = true;

@@ -148,7 +148,7 @@ bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
 
 JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
 {
-  DeprecatedString userAgent = m_frame->userAgent();
+  String userAgent = m_frame->userAgent();
   switch (token) {
   case AppCodeName:
     return jsString("Mozilla");
@@ -161,7 +161,7 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
     return jsUndefined();
   case AppVersion:
     // We assume the string is something like Mozilla/version (properties)
-    return jsString(userAgent.mid(userAgent.find('/') + 1));
+    return jsString(userAgent.substring(userAgent.find('/') + 1));
   case Product:
     // When acting normal, we pretend to be "Gecko".
     if (userAgent.find("Mozilla/5.0") >= 0 && userAgent.find("compatible") == -1)

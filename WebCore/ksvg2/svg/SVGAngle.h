@@ -65,7 +65,7 @@ namespace WebCore
         unsigned short m_unitType;
         float m_value;
         float m_valueInSpecifiedUnits;
-        String m_valueAsString;
+        mutable String m_valueAsString;
         const SVGStyledElement *m_context;
 
         void calculate();

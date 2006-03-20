@@ -219,13 +219,12 @@ String ClipboardMac::getData(const String &type, bool &success) const
 
 bool ClipboardMac::setData(const String &type, const String &data)
 {
-    if (m_policy != Writable) {
+    if (m_policy != Writable)
         return false;
-    }
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
-    NSString *cocoaData = data.deprecatedString().getNSString();
+    NSString *cocoaData = data;
 
     if ([cocoaType isEqualToString:NSURLPboardType]) {
         [m_pasteboard addTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
@@ -253,17 +252,15 @@ bool ClipboardMac::setData(const String &type, const String &data)
 
 DeprecatedStringList ClipboardMac::types() const
 {
-    if (m_policy != Readable && m_policy != TypesReadable) {
+    if (m_policy != Readable && m_policy != TypesReadable)
         return DeprecatedStringList();
-    }
 
     NSArray *types = [m_pasteboard types];
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != [m_pasteboard changeCount]) {
+    if (m_changeCount != [m_pasteboard changeCount])
         return DeprecatedStringList();
-    }
 
     DeprecatedStringList result;
     if (types) {
@@ -271,14 +268,12 @@ DeprecatedStringList ClipboardMac::types() const
         unsigned i;
         for (i = 0; i < count; i++) {
             NSString *pbType = [types objectAtIndex:i];
-            if ([pbType isEqualToString:@"NeXT plain ascii pasteboard type"]) {
+            if ([pbType isEqualToString:@"NeXT plain ascii pasteboard type"])
                 continue;   // skip this ancient type that gets auto-supplied by some system conversion
-            }
 
             DeprecatedString qstr = MIMETypeFromCocoaType(pbType);
-            if (!result.contains(qstr)) {
+            if (!result.contains(qstr))
                 result.append(qstr);
-            }
         }
     }
     return result;
@@ -382,9 +377,8 @@ WebCore::String ClipboardMac::effectAllowed() const
 
 void ClipboardMac::setEffectAllowed(const WebCore::String &s)
 {
-    if (m_policy == Writable) {
+    if (m_policy == Writable)
         m_effectAllowed = s;
-    }
 }
 
 // These "conversion" methods are called by the bridge and part, and never make sense to JS, so we don't
@@ -408,9 +402,8 @@ static NSDragOperation cocoaOpFromIEOp(const String &op) {
         return NSDragOperationLink | NSDragOperationGeneric | NSDragOperationMove;
     } else if (op == "all") {
         return NSDragOperationEvery;
-    } else {
+    } else
         return NSDragOperationPrivate;  // really a marker for "no conversion"
-    }
 }
 
 static const String IEOpFromCocoaOp(NSDragOperation op) {
@@ -431,16 +424,15 @@ static const String IEOpFromCocoaOp(NSDragOperation op) {
         return "copy";
     } else if (op & NSDragOperationLink) {
         return "link";
-    } else {
+    } else
         return "none";
-    }
 }
 
 bool ClipboardMac::sourceOperation(NSDragOperation *op) const
 {
-    if (m_effectAllowed.isNull()) {
+    if (m_effectAllowed.isNull())
         return false;
-    } else {
+    else {
         *op = cocoaOpFromIEOp(m_effectAllowed);
         return true;
     }
@@ -448,9 +440,9 @@ bool ClipboardMac::sourceOperation(NSDragOperation *op) const
 
 bool ClipboardMac::destinationOperation(NSDragOperation *op) const
 {
-    if (m_dropEffect.isNull()) {
+    if (m_dropEffect.isNull())
         return false;
-    } else {
+    else {
         *op = cocoaOpFromIEOp(m_dropEffect);
         return true;
     }

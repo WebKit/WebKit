@@ -237,9 +237,8 @@ DeprecatedCString& DeprecatedCString::append(const char *s)
         if (len2) {
             detach();
             unsigned len1 = length();
-            if (DeprecatedByteArray::resize(len1 + len2 + 1)) {
+            if (DeprecatedByteArray::resize(len1 + len2 + 1))
                 memcpy(data() + len1, s, len2 + 1);
-            }
         }
     }
 

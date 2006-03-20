@@ -185,7 +185,7 @@ void FrameMac::openURLRequest(const ResourceRequest& request)
             referrer:referrer
               reload:request.reload
          userGesture:userGestureHint()
-              target:request.frameName.getNSString()
+              target:request.frameName
      triggeringEvent:nil
                 form:nil
           formValues:nil];
@@ -283,14 +283,12 @@ NSString *FrameMac::searchForLabelsAboveCell(RegularExpression *regExp, HTMLTabl
             if (aboveCell) {
                 // search within the above cell we found for a match
                 for (Node *n = aboveCell->firstChild(); n; n = n->traverseNextNode(aboveCell)) {
-                    if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
-                    {
+                    if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
                         // For each text chunk, run the regexp
                         DeprecatedString nodeString = n->nodeValue().deprecatedString();
                         int pos = regExp->searchRev(nodeString);
-                        if (pos >= 0) {
+                        if (pos >= 0)
                             return nodeString.mid(pos, regExp->matchedLength()).getNSString();
-                        }
                     }
                 }
             }
@@ -342,11 +340,10 @@ NSString *FrameMac::searchForLabelsBeforeElement(NSArray *labels, Element *eleme
                 nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
             }
             int pos = regExp->searchRev(nodeString);
-            if (pos >= 0) {
+            if (pos >= 0)
                 return nodeString.mid(pos, regExp->matchedLength()).getNSString();
-            } else {
+            else
                 lengthSearched += nodeString.length();
-            }
         }
     }
 
@@ -385,39 +382,35 @@ NSString *FrameMac::matchLabelsAgainstElement(NSArray *labels, Element *element)
         }
     } while (pos != -1);
 
-    if (bestPos != -1) {
+    if (bestPos != -1)
         return name.mid(bestPos, bestLength).getNSString();
-    }
     return nil;
 }
 
 // Searches from the beginning of the document if nothing is selected.
 bool FrameMac::findString(NSString *string, bool forward, bool caseFlag, bool wrapFlag)
 {
-    DeprecatedString target = DeprecatedString::fromNSString(string);
-    if (target.isEmpty()) {
+    String target = string;
+    if (target.isEmpty())
         return false;
-    }
     
     // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
     RefPtr<Range> searchRange(rangeOfContents(document()));
     if (selection().start().node()) {
-        if (forward) {
+        if (forward)
             setStart(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
-        } else {
+        else
             setEnd(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
-        }
     }
     RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
     
     // If we re-found the (non-empty) selected range, then search again starting just past the selected range.
     if (selection().start().node() && *resultRange == *selection().toRange()) {
         searchRange = rangeOfContents(document());
-        if (forward) {
+        if (forward)
             setStart(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
-        } else {
+        else
             setEnd(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
-        }
         resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
     }
     
@@ -433,9 +426,8 @@ bool FrameMac::findString(NSString *string, bool forward, bool caseFlag, bool wr
         // this should be a success case instead, so we'll just fall through in that case.
     }
 
-    if (resultRange->collapsed(exception)) {
+    if (resultRange->collapsed(exception))
         return false;
-    }
 
     setSelection(SelectionController(resultRange.get(), DOWNSTREAM));
     revealSelection();
@@ -456,7 +448,7 @@ void FrameMac::submitForm(const ResourceRequest& request)
     // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
     // needed any more now that we reset d->m_submittedFormURL on each mouse or key down event.
-    WebCoreFrameBridge *target = request.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:request.frameName.getNSString()];
+    WebCoreFrameBridge *target = request.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:request.frameName];
     Frame *targetPart = [target impl];
     bool willReplaceThisFrame = false;
     for (Frame *p = this; p; p = p->tree()->parent()) {
@@ -476,7 +468,7 @@ void FrameMac::submitForm(const ResourceRequest& request)
                 referrer:[_bridge referrer] 
                   reload:request.reload
              userGesture:true
-                  target:request.frameName.getNSString()
+                  target:request.frameName
          triggeringEvent:_currentEvent
                     form:_formAboutToBeSubmitted
               formValues:_formValuesAboutToBeSubmitted];
@@ -484,9 +476,9 @@ void FrameMac::submitForm(const ResourceRequest& request)
         ASSERT(request.contentType().startsWith("Content-Type: "));
         [_bridge postWithURL:request.url().getNSURL()
                     referrer:[_bridge referrer] 
-                      target:request.frameName.getNSString()
+                      target:request.frameName
                         data:arrayFromFormData(request.postData)
-                 contentType:request.contentType().mid(14).getNSString()
+                 contentType:request.contentType().substring(14)
              triggeringEvent:_currentEvent
                         form:_formAboutToBeSubmitted
                   formValues:_formValuesAboutToBeSubmitted];
@@ -520,7 +512,7 @@ void FrameMac::urlSelected(const ResourceRequest& request)
             referrer:referrer
               reload:request.reload
          userGesture:true
-              target:request.frameName.getNSString()
+              target:request.frameName
      triggeringEvent:_currentEvent
                 form:nil
           formValues:nil];
@@ -528,27 +520,27 @@ void FrameMac::urlSelected(const ResourceRequest& request)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-ObjectContentType FrameMac::objectContentType(const KURL& url, const DeprecatedString& mimeType)
+ObjectContentType FrameMac::objectContentType(const KURL& url, const String& mimeType)
 {
-    return (ObjectContentType)[_bridge determineObjectFromMIMEType:mimeType.getNSString() URL:url.getNSURL()];
+    return (ObjectContentType)[_bridge determineObjectFromMIMEType:mimeType URL:url.getNSURL()];
 }
 
 
-Plugin* FrameMac::createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const DeprecatedString& mimeType)
+Plugin* FrameMac::createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const String& mimeType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     return new Plugin(new Widget([_bridge viewForPluginWithURL:url.getNSURL()
                                   attributeNames:paramNames.getNSArray()
                                   attributeValues:paramValues.getNSArray()
-                                  MIMEType:mimeType.getNSString()]));
+                                  MIMEType:mimeType]));
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return 0;
 }
 
 
-Frame* FrameMac::createFrame(const KURL& url, const DeprecatedString& name, RenderPart* renderer, const String& referrer)
+Frame* FrameMac::createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -562,7 +554,7 @@ Frame* FrameMac::createFrame(const KURL& url, const DeprecatedString& name, Rend
         marginHeight = o->getMarginHeight();
     }
 
-    WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:name.getNSString()
+    WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:name
                                                              withURL:url.getNSURL()
                                                             referrer:referrer 
                                                           renderPart:renderer
@@ -607,21 +599,21 @@ void FrameMac::setView(FrameView *view)
 
 void FrameMac::setTitle(const String &title)
 {
-    DeprecatedString text = title.deprecatedString();
+    String text = title;
     text.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge setTitle:text.getNSString()];
+    [_bridge setTitle:text];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void FrameMac::setStatusBarText(const String& status)
 {
-    DeprecatedString text = status.deprecatedString();
+    String text = status;
     text.replace(QChar('\\'), backslashAsCurrencySymbol());
-
+    
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge setStatusText:text.getNSString()];
+    [_bridge setStatusText:text];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -641,7 +633,7 @@ void FrameMac::unfocusWindow()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-DeprecatedString FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
+String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
 {
     int exception = 0;
 
@@ -668,7 +660,7 @@ DeprecatedString FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     if (!editableNode->isContentEditable()) {
         editableNode = editableNode->nextEditable();
         if (!editableNode) {
-            return DeprecatedString();
+            return String();
         }
         searchRange->setStartBefore(editableNode, exception);
         startedWithSelection = false;   // won't need to wrap
@@ -688,12 +680,12 @@ DeprecatedString FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
     }
     
     if (searchRange->collapsed(exception))
-        return DeprecatedString();       // nothing to search in
+        return String();       // nothing to search in
     
     // Get the spell checker if it is available
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (checker == nil)
-        return DeprecatedString();
+        return String();
         
     WordAwareIterator it(searchRange.get());
     bool wrapped = false;
@@ -746,7 +738,7 @@ DeprecatedString FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
         }   
     }
     
-    return DeprecatedString();
+    return String();
 }
 
 bool FrameMac::wheelEvent(NSEvent *event)
@@ -853,24 +845,22 @@ void FrameMac::redirectionTimerFired(Timer<Frame>* timer)
     Frame::redirectionTimerFired(timer);
 }
 
-DeprecatedString FrameMac::userAgent() const
+String FrameMac::userAgent() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return DeprecatedString::fromNSString([_bridge userAgentForURL:url().getNSURL()]);
+    return [_bridge userAgentForURL:url().getNSURL()];
     END_BLOCK_OBJC_EXCEPTIONS;
          
-    return DeprecatedString();
+    return String();
 }
 
-DeprecatedString FrameMac::mimeTypeForFileName(const DeprecatedString &fileName) const
+String FrameMac::mimeTypeForFileName(const String& fileName) const
 {
-    NSString *ns = fileName.getNSString();
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return DeprecatedString::fromNSString([_bridge MIMETypeForPath:ns]);
+    return [_bridge MIMETypeForPath:fileName];
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return DeprecatedString();
+    return String();
 }
 
 NSView *FrameMac::nextKeyViewInFrame(Node *node, KWQSelectionDirection direction)
@@ -1125,8 +1115,8 @@ void FrameMac::openURLFromPageCache(KWQPageState *state)
     
     // delete old status bar msg's from kjs (if it _was_ activated on last URL)
     if (d->m_bJScriptEnabled) {
-        d->m_kjsStatusBarText = DeprecatedString::null;
-        d->m_kjsDefaultStatusBarText = DeprecatedString::null;
+        d->m_kjsStatusBarText = String();
+        d->m_kjsDefaultStatusBarText = String();
     }
 
     ASSERT(kurl);
@@ -1206,13 +1196,13 @@ void FrameMac::restoreDocumentState()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-DeprecatedString FrameMac::incomingReferrer() const
+String FrameMac::incomingReferrer() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return DeprecatedString::fromNSString([_bridge incomingReferrer]);
+    return [_bridge incomingReferrer];
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return DeprecatedString();
+    return String();
 }
 
 void FrameMac::runJavaScriptAlert(const String& message)
@@ -2219,9 +2209,8 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
 
     Node * _startNode = _start;
 
-    if (_startNode == nil) {
+    if (!_startNode)
         return nil;
-    }
 
     result = [[[NSMutableAttributedString alloc] init] autorelease];
 
@@ -2268,9 +2257,8 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                 if (renderer->isText()) {
                     if (!style->collapseWhiteSpace()) {
                         if (needSpace && !addedSpace) {
-                            if (text.isEmpty() && linkStartLocation == [result length]) {
+                            if (text.isEmpty() && linkStartLocation == [result length])
                                 ++linkStartLocation;
-                            }
                             [result appendAttributedString:pendingStyledSpace];
                         }
                         int runStart = (start == -1) ? 0 : start;
@@ -2296,18 +2284,15 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                                 runEnd = kMin(runEnd, box->m_start + box->m_len);
                                 if (runStart >= box->m_start &&
                                     runStart < box->m_start + box->m_len) {
-                                    if (box == textObj->firstTextBox() && box->m_start == runStart && runStart > 0) {
+                                    if (box == textObj->firstTextBox() && box->m_start == runStart && runStart > 0)
                                         needSpace = true; // collapsed space at the start
-                                    }
                                     if (needSpace && !addedSpace) {
                                         if (pendingStyledSpace != nil) {
-                                            if (text.isEmpty() && linkStartLocation == [result length]) {
+                                            if (text.isEmpty() && linkStartLocation == [result length])
                                                 ++linkStartLocation;
-                                            }
                                             [result appendAttributedString:pendingStyledSpace];
-                                        } else {
+                                        } else
                                             text += ' ';
-                                        }
                                     }
                                     DeprecatedString runText = str.mid(runStart, runEnd - runStart);
                                     runText.replace('\n', ' ');
@@ -2854,12 +2839,12 @@ void FrameMac::setBridge(WebCoreFrameBridge *bridge)
     _bridge = bridge;
 }
 
-DeprecatedString FrameMac::overrideMediaType() const
+String FrameMac::overrideMediaType() const
 {
     NSString *overrideType = [_bridge overrideMediaType];
     if (overrideType)
-        return DeprecatedString::fromNSString(overrideType);
-    return DeprecatedString();
+        return overrideType;
+    return String();
 }
 
 void FrameMac::setDisplaysWithFocusAttributes(bool flag)
@@ -3378,10 +3363,10 @@ bool FrameMac::shouldClose()
     if (event->result().isNull())
         return true;
 
-    DeprecatedString text = event->result().deprecatedString();
+    String text = event->result();
     text.replace(QChar('\\'), backslashAsCurrencySymbol());
 
-    return [_bridge runBeforeUnloadConfirmPanelWithMessage:text.getNSString()];
+    return [_bridge runBeforeUnloadConfirmPanelWithMessage:text];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 

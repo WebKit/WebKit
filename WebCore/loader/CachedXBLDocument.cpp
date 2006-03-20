@@ -107,7 +107,7 @@ void CachedXBLDocument::checkNotify()
         c->setXBLDocument(m_url, m_document);
 }
 
-void CachedXBLDocument::error( int /*err*/, const char */*text*/ )
+void CachedXBLDocument::error()
 {
     m_loading = false;
     checkNotify();

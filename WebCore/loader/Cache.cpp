@@ -83,16 +83,16 @@ void Cache::init()
     if (!cache)
         cache = new CacheMap;
 
-    if ( !docloader )
+    if (!docloader)
         docloader = new DeprecatedPtrList<DocLoader>;
 
-    if ( !nullImage )
+    if (!nullImage)
         nullImage = new Image;
 
-    if ( !brokenImage )
+    if (!brokenImage)
         brokenImage = Image::loadResource("missing_image");
 
-    if ( !m_loader )
+    if (!m_loader)
         m_loader = new Loader();
 }
 
@@ -110,18 +110,18 @@ void Cache::clear()
     delete docloader; docloader = 0;
 }
 
-CachedImage *Cache::requestImage( DocLoader* dl, const String & url, bool reload, time_t _expireDate )
+CachedImage *Cache::requestImage(DocLoader* dl, const String& url, bool reload, time_t expireDate)
 {
     // this brings the _url to a standard form...
     KURL kurl;
     if (dl)
-        kurl = dl->m_doc->completeURL( url.deprecatedString() );
+        kurl = dl->m_doc->completeURL(url.deprecatedString());
     else
         kurl = url.deprecatedString();
-    return requestImage(dl, kurl, reload, _expireDate);
+    return requestImage(dl, kurl, reload, expireDate);
 }
 
-CachedImage *Cache::requestImage( DocLoader* dl, const KURL & url, bool reload, time_t _expireDate )
+CachedImage *Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, time_t expireDate)
 {
     KIO::CacheControl cachePolicy;
     if (dl)
@@ -131,20 +131,18 @@ CachedImage *Cache::requestImage( DocLoader* dl, const KURL & url, bool reload, 
 
     // Checking if the URL is malformed is lots of extra work for little benefit.
 
-    if (!dl->doc()->shouldCreateRenderers()){
+    if (!dl->doc()->shouldCreateRenderers())
         return 0;
-    }
 
     CachedObject *o = 0;
     if (!reload)
         o = cache->get(String(url.url()).impl());
-    if(!o)
-    {
+    if (!o) {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache: new: " << url.url() << endl;
+        kdDebug(6060) << "Cache: new: " << url.url() << endl;
 #endif
-        CachedImage *im = new CachedImage(dl, url.url(), cachePolicy, _expireDate);
-        if ( dl && dl->autoloadImages() ) Cache::loader()->load(dl, im, true);
+        CachedImage *im = new CachedImage(dl, url.url(), cachePolicy, expireDate);
+        if (dl && dl->autoloadImages()) Cache::loader()->load(dl, im, true);
         if (cacheDisabled)
             im->setFree(true);
         else {
@@ -159,33 +157,30 @@ CachedImage *Cache::requestImage( DocLoader* dl, const KURL & url, bool reload, 
         return 0;
 
 #ifdef CACHE_DEBUG
-    if( o->status() == CachedObject::Pending )
-        kdDebug( 6060 ) << "Cache: loading in progress: " << kurl.url() << endl;
+    if (o->status() == CachedObject::Pending)
+        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
-        kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << ", status " << o->status() << endl;
+        kdDebug(6060) << "Cache: using cached: " << kurl.url() << ", status " << o->status() << endl;
 #endif
 
     moveToHeadOfLRUList(o);
-    if ( dl ) {
-        dl->m_docObjects.remove( o );
+    if (dl) {
+        dl->m_docObjects.remove(o);
         if (!cacheDisabled)
-        dl->m_docObjects.append( o );
+        dl->m_docObjects.append(o);
     }
     return static_cast<CachedImage *>(o);
 }
 
-CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const String & url, bool reload, time_t _expireDate, const DeprecatedString& charset)
+CachedCSSStyleSheet *Cache::requestStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
 {
     // this brings the _url to a standard form...
     KURL kurl;
     KIO::CacheControl cachePolicy;
-    if ( dl )
-    {
-        kurl = dl->m_doc->completeURL( url.deprecatedString() );
+    if (dl) {
+        kurl = dl->m_doc->completeURL(url.deprecatedString());
         cachePolicy = dl->cachePolicy();
-    }
-    else
-    {
+    } else {
         kurl = url.deprecatedString();
         cachePolicy = KIO::CC_Verify;
     }
@@ -193,12 +188,11 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const String & url
     // Checking if the URL is malformed is lots of extra work for little benefit.
 
     CachedObject *o = cache->get(String(kurl.url()).impl());
-    if(!o)
-    {
+    if (!o) {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
 #endif
-        CachedCSSStyleSheet *sheet = new CachedCSSStyleSheet(dl, kurl.url(), cachePolicy, _expireDate, charset);
+        CachedCSSStyleSheet *sheet = new CachedCSSStyleSheet(dl, kurl.url(), cachePolicy, expireDate, charset);
         if (cacheDisabled)
             sheet->setFree(true);
         else {
@@ -209,31 +203,31 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const String & url
     }
 
     
-    if(o->type() != CachedObject::CSSStyleSheet)
+    if (o->type() != CachedObject::CSSStyleSheet)
     {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache::Internal Error in requestStyleSheet url=" << kurl.url() << "!" << endl;
+        kdDebug(6060) << "Cache::Internal Error in requestStyleSheet url=" << kurl.url() << "!" << endl;
 #endif
         return 0;
     }
 
 #ifdef CACHE_DEBUG
-    if( o->status() == CachedObject::Pending )
-        kdDebug( 6060 ) << "Cache: loading in progress: " << kurl.url() << endl;
+    if (o->status() == CachedObject::Pending)
+        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
-        kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
 
     moveToHeadOfLRUList(o);
-    if ( dl ) {
-        dl->m_docObjects.remove( o );
+    if (dl) {
+        dl->m_docObjects.remove(o);
         if (!cacheDisabled)
-        dl->m_docObjects.append( o );
+        dl->m_docObjects.append(o);
     }
     return static_cast<CachedCSSStyleSheet *>(o);
 }
 
-void Cache::preloadStyleSheet(const DeprecatedString &url, const DeprecatedString &stylesheet_data)
+void Cache::preloadStyleSheet(const DeprecatedString& url, const DeprecatedString& stylesheet_data)
 {
     CachedObject *o = cache->get(String(url).impl());
     if (o)
@@ -241,18 +235,15 @@ void Cache::preloadStyleSheet(const DeprecatedString &url, const DeprecatedStrin
     cache->set(String(url).impl(), new CachedCSSStyleSheet(url, stylesheet_data));
 }
 
-CachedScript *Cache::requestScript( DocLoader* dl, const WebCore::String &url, bool reload, time_t _expireDate, const DeprecatedString& charset)
+CachedScript *Cache::requestScript(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
 {
     // this brings the _url to a standard form...
     KURL kurl;
     KIO::CacheControl cachePolicy;
-    if ( dl )
-    {
-        kurl = dl->m_doc->completeURL( url.deprecatedString() );
+    if (dl) {
+        kurl = dl->m_doc->completeURL(url.deprecatedString());
         cachePolicy = dl->cachePolicy();
-    }
-    else
-    {
+    } else {
         kurl = url.deprecatedString();
         cachePolicy = KIO::CC_Verify;
     }
@@ -260,58 +251,56 @@ CachedScript *Cache::requestScript( DocLoader* dl, const WebCore::String &url, b
     // Checking if the URL is malformed is lots of extra work for little benefit.
 
     CachedObject *o = cache->get(String(kurl.url()).impl());
-    if(!o)
+    if (!o)
     {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
 #endif
-        CachedScript *script = new CachedScript(dl, kurl.url(), cachePolicy, _expireDate, charset);
+        CachedScript *script = new CachedScript(dl, kurl.url(), cachePolicy, expireDate, charset);
         if (cacheDisabled)
             script->setFree(true);
         else {
-            cache->set(String(kurl.url()).impl(), script );
+            cache->set(String(kurl.url()).impl(), script);
             moveToHeadOfLRUList(script);
         }
         o = script;
     }
 
     
-    if(!(o->type() == CachedObject::Script))
-    {
+    if (!(o->type() == CachedObject::Script)) {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache::Internal Error in requestScript url=" << kurl.url() << "!" << endl;
+        kdDebug(6060) << "Cache::Internal Error in requestScript url=" << kurl.url() << "!" << endl;
 #endif
         return 0;
     }
     
     
 #ifdef CACHE_DEBUG
-    if( o->status() == CachedObject::Pending )
-        kdDebug( 6060 ) << "Cache: loading in progress: " << kurl.url() << endl;
+    if (o->status() == CachedObject::Pending)
+        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
-        kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
 
     moveToHeadOfLRUList(o);
-    if ( dl ) {
-        dl->m_docObjects.remove( o );
+    if (dl) {
+        dl->m_docObjects.remove(o);
         if (!cacheDisabled)
-        dl->m_docObjects.append( o );
+            dl->m_docObjects.append(o);
     }
     return static_cast<CachedScript *>(o);
 }
 
-void Cache::preloadScript(const DeprecatedString &url, const DeprecatedString &script_data)
+void Cache::preloadScript(const DeprecatedString& url, const DeprecatedString& script_data)
 {
     CachedObject *o = cache->get(String(url).impl());
-    if(o)
+    if (o)
         remove(o);
     cache->set(String(url).impl(), new CachedScript(url, script_data));
 }
 
 #ifdef KHTML_XSLT
-CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String & url, bool reload, 
-                                                 time_t _expireDate)
+CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate)
 {
     // this brings the _url to a standard form...
     KURL kurl;
@@ -330,9 +319,9 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String & u
     CachedObject *o = cache->get(String(kurl.url()).impl());
     if (!o) {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
 #endif
-        CachedXSLStyleSheet* doc = new CachedXSLStyleSheet(dl, kurl.url(), cachePolicy, _expireDate);
+        CachedXSLStyleSheet* doc = new CachedXSLStyleSheet(dl, kurl.url(), cachePolicy, expireDate);
         if (cacheDisabled)
             doc->setFree(true);
         else {
@@ -345,31 +334,31 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String & u
     
     if (o->type() != CachedObject::XSLStyleSheet) {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache::Internal Error in requestXSLStyleSheet url=" << kurl.url() << "!" << endl;
+        kdDebug(6060) << "Cache::Internal Error in requestXSLStyleSheet url=" << kurl.url() << "!" << endl;
 #endif
         return 0;
     }
     
 #ifdef CACHE_DEBUG
     if (o->status() == CachedObject::Pending)
-        kdDebug( 6060 ) << "Cache: loading in progress: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
-        kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
     
     moveToHeadOfLRUList(o);
     if (dl) {
-        dl->m_docObjects.remove( o );
+        dl->m_docObjects.remove(o);
         if (!cacheDisabled)
-            dl->m_docObjects.append( o );
+            dl->m_docObjects.append(o);
     }
     return static_cast<CachedXSLStyleSheet*>(o);
 }
 #endif
 
 #ifndef KHTML_NO_XBL
-CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String & url, bool reload, 
-                                             time_t _expireDate)
+CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, bool reload, 
+                                             time_t expireDate)
 {
     // this brings the _url to a standard form...
     KURL kurl;
@@ -377,8 +366,7 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String & url, 
     if (dl) {
         kurl = dl->m_doc->completeURL(url.deprecatedString());
         cachePolicy = dl->cachePolicy();
-    }
-    else {
+    } else {
         kurl = url.deprecatedString();
         cachePolicy = KIO::CC_Verify;
     }
@@ -386,12 +374,11 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String & url, 
     // Checking if the URL is malformed is lots of extra work for little benefit.
     
     CachedObject *o = cache->get(String(kurl.url()).impl());
-    if(!o)
-    {
+    if (!o) {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: new: " << kurl.url() << endl;
 #endif
-        CachedXBLDocument* doc = new CachedXBLDocument(dl, kurl.url(), cachePolicy, _expireDate);
+        CachedXBLDocument* doc = new CachedXBLDocument(dl, kurl.url(), cachePolicy, expireDate);
         if (cacheDisabled)
             doc->setFree(true);
         else {
@@ -402,26 +389,25 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String & url, 
     }
     
     
-    if(o->type() != CachedObject::XBL)
-    {
+    if (o->type() != CachedObject::XBL) {
 #ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache::Internal Error in requestXBLDocument url=" << kurl.url() << "!" << endl;
+        kdDebug(6060) << "Cache::Internal Error in requestXBLDocument url=" << kurl.url() << "!" << endl;
 #endif
         return 0;
     }
     
 #ifdef CACHE_DEBUG
-    if( o->status() == CachedObject::Pending )
-        kdDebug( 6060 ) << "Cache: loading in progress: " << kurl.url() << endl;
+    if (o->status() == CachedObject::Pending)
+        kdDebug(6060) << "Cache: loading in progress: " << kurl.url() << endl;
     else
-        kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << endl;
+        kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
     
     moveToHeadOfLRUList(o);
-    if ( dl ) {
-        dl->m_docObjects.remove( o );
+    if (dl) {
+        dl->m_docObjects.remove(o);
         if (!cacheDisabled)
-            dl->m_docObjects.append( o );
+            dl->m_docObjects.append(o);
     }
     return static_cast<CachedXBLDocument*>(o);
 }
@@ -462,7 +448,7 @@ void Cache::setSize(int bytes)
     flush(true);
 }
 
-void Cache::remove( CachedObject *object )
+void Cache::remove(CachedObject *object)
 {
   // this indicates the deref() method of CachedObject to delete itself when the reference counter
   // drops down to zero
@@ -472,10 +458,10 @@ void Cache::remove( CachedObject *object )
   removeFromLRUList(object);
 
   const DocLoader* dl;
-  for ( dl=docloader->first(); dl; dl=docloader->next() )
-      dl->removeCachedObject( object );
+  for (dl=docloader->first(); dl; dl=docloader->next())
+      dl->removeCachedObject(object);
 
-  if ( object->canDelete() )
+  if (object->canDelete())
      delete object;
 }
 

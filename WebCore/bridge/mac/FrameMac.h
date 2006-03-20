@@ -122,32 +122,32 @@ public:
     
     void clear();
 
-    void setBridge(WebCoreFrameBridge *p);
-    WebCoreFrameBridge *bridge() const { return _bridge; }
+    void setBridge(WebCoreFrameBridge* p);
+    WebCoreFrameBridge* bridge() const { return _bridge; }
     virtual void setView(FrameView*);
     virtual void frameDetached();
 
-    virtual bool openURL(const KURL &);
+    virtual bool openURL(const KURL&);
     
     virtual void openURLRequest(const ResourceRequest&);
     virtual void submitForm(const ResourceRequest&);
 
-    DeprecatedString advanceToNextMisspelling(bool startBeforeSelection = false);
+    String advanceToNextMisspelling(bool startBeforeSelection = false);
     
-    virtual void setTitle(const String &);
+    virtual void setTitle(const String&);
     virtual void setStatusBarText(const String&);
 
     virtual void urlSelected(const ResourceRequest&);
 
-    virtual ObjectContentType objectContentType(const KURL& url, const DeprecatedString& mimeType);
-    virtual Plugin* createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const DeprecatedString& mimeType);
-    virtual Frame* createFrame(const KURL& url, const DeprecatedString& name, RenderPart* renderer, const String& referrer);
+    virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
+    virtual Plugin* createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const String& mimeType);
+    virtual Frame* createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer);
 
     virtual void scheduleClose();
 
     virtual void unfocusWindow();
     
-    void openURLFromPageCache(KWQPageState *state);
+    void openURLFromPageCache(KWQPageState* state);
 
     virtual void saveDocumentState();
     virtual void restoreDocumentState();
@@ -155,16 +155,16 @@ public:
     virtual void addMessageToConsole(const String& message,  unsigned int lineNumber, const String& sourceID);
     virtual void setDisplaysWithFocusAttributes(bool flag);
     
-    NSView *nextKeyView(Node *startingPoint, KWQSelectionDirection);
-    NSView *nextKeyViewInFrameHierarchy(Node *startingPoint, KWQSelectionDirection);
-    static NSView *nextKeyViewForWidget(Widget *startingPoint, KWQSelectionDirection);
+    NSView* nextKeyView(Node* startingPoint, KWQSelectionDirection);
+    NSView* nextKeyViewInFrameHierarchy(Node* startingPoint, KWQSelectionDirection);
+    static NSView* nextKeyViewForWidget(Widget* startingPoint, KWQSelectionDirection);
     static bool currentEventIsKeyboardOptionTab();
-    static bool handleKeyboardOptionTabInView(NSView *view);
+    static bool handleKeyboardOptionTabInView(NSView* view);
     
     virtual bool tabsToLinks() const;
     virtual bool tabsToAllControls() const;
     
-    static bool currentEventIsMouseDownInWidget(Widget *candidate);
+    static bool currentEventIsMouseDownInWidget(Widget* candidate);
     
     virtual void runJavaScriptAlert(const String& message);
     virtual bool runJavaScriptConfirm(const String& message);
@@ -179,43 +179,43 @@ public:
 
     virtual void createEmptyDocument();
 
-    static WebCoreFrameBridge *bridgeForWidget(const Widget *);
+    static WebCoreFrameBridge* bridgeForWidget(const Widget*);
     
-    virtual DeprecatedString incomingReferrer() const;
-    virtual DeprecatedString userAgent() const;
+    virtual String incomingReferrer() const;
+    virtual String userAgent() const;
 
-    virtual DeprecatedString mimeTypeForFileName(const DeprecatedString &) const;
+    virtual String mimeTypeForFileName(const String&) const;
 
-    NSImage *selectionImage() const;
-    NSImage *snapshotDragImage(Node *node, NSRect *imageRect, NSRect *elementRect) const;
+    NSImage* selectionImage() const;
+    NSImage* snapshotDragImage(Node* node, NSRect* imageRect, NSRect* elementRect) const;
 
     bool dispatchDragSrcEvent(const AtomicString &eventType, const PlatformMouseEvent&) const;
 
-    NSFont *fontForSelection(bool *hasMultipleFonts) const;
-    NSDictionary *fontAttributesForSelectionStart() const;
+    NSFont* fontForSelection(bool* hasMultipleFonts) const;
+    NSDictionary* fontAttributesForSelectionStart() const;
     
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
-    virtual void markMisspellingsInAdjacentWords(const VisiblePosition &);
-    virtual void markMisspellings(const SelectionController &);
+    virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
+    virtual void markMisspellings(const SelectionController&);
 
-    NSFileWrapper *fileWrapperForElement(Element *);
-    NSAttributedString *attributedString(Node *startNode, int startOffset, Node *endNode, int endOffset);
+    NSFileWrapper* fileWrapperForElement(Element*);
+    NSAttributedString* attributedString(Node* startNode, int startOffset, Node* endNode, int endOffset);
 
-    void mouseDown(NSEvent *);
-    void mouseDragged(NSEvent *);
-    void mouseUp(NSEvent *);
-    void mouseMoved(NSEvent *);
-    bool keyEvent(NSEvent *);
-    bool wheelEvent(NSEvent *);
+    void mouseDown(NSEvent*);
+    void mouseDragged(NSEvent*);
+    void mouseUp(NSEvent*);
+    void mouseMoved(NSEvent*);
+    bool keyEvent(NSEvent*);
+    bool wheelEvent(NSEvent*);
 
-    void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
+    void sendFakeEventsAfterWidgetTracking(NSEvent* initiatingEvent);
 
     virtual bool lastEventIsMouseUp() const;
     void setActivationEventNumber(int num) { _activationEventNumber = num; }
 
     bool dragHysteresisExceeded(float dragLocationX, float dragLocationY) const;
-    bool eventMayStartDrag(NSEvent *) const;
+    bool eventMayStartDrag(NSEvent*) const;
     void dragSourceMovedTo(const PlatformMouseEvent&);
     void dragSourceEndedAt(const PlatformMouseEvent&, NSDragOperation);
 
@@ -226,37 +226,37 @@ public:
     bool tryCopy();
     bool tryPaste();
     
-    bool sendContextMenuEvent(NSEvent *);
+    bool sendContextMenuEvent(NSEvent*);
 
-    virtual bool passMouseDownEventToWidget(Widget *);
+    virtual bool passMouseDownEventToWidget(Widget*);
     virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframePart);
-    virtual bool passWheelEventToChildWidget(Node *);
+    virtual bool passWheelEventToChildWidget(Node*);
     
-    NSString *searchForLabelsAboveCell(RegularExpression *regExp, HTMLTableCellElement *cell);
-    NSString *searchForLabelsBeforeElement(NSArray *labels, Element *element);
-    NSString *matchLabelsAgainstElement(NSArray *labels, Element *element);
+    NSString* searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell);
+    NSString* searchForLabelsBeforeElement(NSArray* labels, Element* element);
+    NSString* matchLabelsAgainstElement(NSArray* labels, Element* element);
 
-    bool findString(NSString *str, bool forward, bool caseFlag, bool wrapFlag);
+    bool findString(NSString* str, bool forward, bool caseFlag, bool wrapFlag);
 
     virtual void tokenizerProcessedData();
 
-    virtual DeprecatedString overrideMediaType() const;
+    virtual String overrideMediaType() const;
     
-    NSColor *bodyBackgroundColor() const;
+    NSColor* bodyBackgroundColor() const;
     
     WebCoreKeyboardUIMode keyboardUIMode() const;
 
     void didTellBridgeAboutLoad(const String& URL);
     bool haveToldBridgeAboutLoad(const String& URL);
 
-    virtual KJS::Bindings::Instance *getEmbedInstanceForWidget(Widget*);
-    virtual KJS::Bindings::Instance *getObjectInstanceForWidget(Widget*);
-    virtual KJS::Bindings::Instance *getAppletInstanceForWidget(Widget*);
-    void addPluginRootObject(const KJS::Bindings::RootObject *root);
+    virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);
+    virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
+    virtual KJS::Bindings::Instance* getAppletInstanceForWidget(Widget*);
+    void addPluginRootObject(const KJS::Bindings::RootObject* root);
     void cleanupPluginRootObjects();
     
-    virtual void registerCommandForUndo(const EditCommandPtr &);
-    virtual void registerCommandForRedo(const EditCommandPtr &);
+    virtual void registerCommandForUndo(const EditCommandPtr&);
+    virtual void registerCommandForRedo(const EditCommandPtr&);
     virtual void clearUndoRedoOperations();
     virtual void issueUndoCommand();
     virtual void issueRedoCommand();
@@ -269,30 +269,30 @@ public:
     virtual void respondToChangedContents();
     virtual bool isContentEditable() const;
     virtual bool shouldChangeSelection(const SelectionController &oldSelection, const SelectionController &newSelection, EAffinity affinity, bool stillSelecting) const;
-    virtual bool shouldBeginEditing(const Range *) const;
-    virtual bool shouldEndEditing(const Range *) const;
+    virtual bool shouldBeginEditing(const Range*) const;
+    virtual bool shouldEndEditing(const Range*) const;
     virtual void didBeginEditing() const;
     virtual void didEndEditing() const;
 
-    KJS::Bindings::RootObject *executionContextForDOM();
-    KJS::Bindings::RootObject *bindingRootObject();
+    KJS::Bindings::RootObject* executionContextForDOM();
+    KJS::Bindings::RootObject* bindingRootObject();
     
-    WebScriptObject *windowScriptObject();
-    NPObject *windowScriptNPObject();
+    WebScriptObject* windowScriptObject();
+    NPObject* windowScriptNPObject();
     
     virtual void partClearedInBegin();
     
     // Implementation of CSS property -khtml-user-drag == auto
     virtual bool shouldDragAutoNode(Node*, int x, int y) const;
 
-    void setMarkedTextRange(const Range *, NSArray *attributes, NSArray *ranges);
-    virtual Range *markedTextRange() const { return m_markedTextRange.get(); }
+    void setMarkedTextRange(const Range* , NSArray* attributes, NSArray* ranges);
+    virtual Range* markedTextRange() const { return m_markedTextRange.get(); }
 
     virtual bool canGoBackOrForward(int distance) const;
 
     virtual void didFirstLayout();
     
-    NSMutableDictionary *dashboardRegionsDictionary();
+    NSMutableDictionary* dashboardRegionsDictionary();
     void dashboardRegionsChanged();
     
     virtual bool isCharacterSmartReplaceExempt(const QChar &, bool);
@@ -316,14 +316,14 @@ private:
     virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
     virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
     
-    NSView *mouseDownViewIfStillGood();
+    NSView* mouseDownViewIfStillGood();
 
-    NSView *nextKeyViewInFrame(Node *startingPoint, KWQSelectionDirection);
-    static NSView *documentViewForNode(Node *);
+    NSView* nextKeyViewInFrame(Node* startingPoint, KWQSelectionDirection);
+    static NSView* documentViewForNode(Node*);
     
     bool dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::AccessPolicy policy);
 
-    NSImage *imageFromRect(NSRect rect) const;
+    NSImage* imageFromRect(NSRect rect) const;
 
     void freeClipboard();
 
@@ -331,9 +331,9 @@ private:
 
     virtual void detachFromView();
 
-    WebCoreFrameBridge *_bridge;
+    WebCoreFrameBridge* _bridge;
     
-    NSView *_mouseDownView;
+    NSView* _mouseDownView;
     bool _mouseDownWasInSubframe;
     bool _sendingEventToSubview;
     bool _mouseDownMayStartDrag;
@@ -344,10 +344,10 @@ private:
     float _mouseDownTimestamp;
     int _activationEventNumber;
     
-    static NSEvent *_currentEvent;
+    static NSEvent* _currentEvent;
 
-    NSMutableDictionary *_formValuesAboutToBeSubmitted;
-    ObjCDOMElement *_formAboutToBeSubmitted;
+    NSMutableDictionary* _formValuesAboutToBeSubmitted;
+    ObjCDOMElement* _formAboutToBeSubmitted;
 
     bool _haveUndoRedoOperations;
     
@@ -355,11 +355,11 @@ private:
 
     friend class Frame;
 
-    KJS::Bindings::RootObject *_bindingRoot;  // The root object used for objects
+    KJS::Bindings::RootObject* _bindingRoot;  // The root object used for objects
                                             // bound outside the context of a plugin.
     DeprecatedPtrList<KJS::Bindings::RootObject> rootObjects;
-    WebScriptObject *_windowScriptObject;
-    NPObject *_windowScriptNPObject;
+    WebScriptObject* _windowScriptObject;
+    NPObject* _windowScriptNPObject;
     
     RefPtr<Node> _dragSrc;     // element that may be a drag source, for the current mouse gesture
     bool _dragSrcIsLink;
@@ -372,8 +372,8 @@ private:
     RefPtr<Range> m_markedTextRange;
 };
 
-inline FrameMac *Mac(Frame *frame) { return static_cast<FrameMac *>(frame); }
-inline const FrameMac *Mac(const Frame *frame) { return static_cast<const FrameMac *>(frame); }
+inline FrameMac* Mac(Frame* frame) { return static_cast<FrameMac*>(frame); }
+inline const FrameMac* Mac(const Frame* frame) { return static_cast<const FrameMac*>(frame); }
 
 }
 

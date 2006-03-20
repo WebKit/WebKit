@@ -77,17 +77,15 @@ bool TransferJob::start(DocLoader* docLoader)
     id <WebCoreResourceHandle> handle;
 
     NSDictionary* headerDict = nil;
-    DeprecatedString headerString = queryMetaData("customHTTPHeader");
+    String headerString = queryMetaData("customHTTPHeader");
 
     if (!headerString.isEmpty())
-        headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
+        headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString];
 
-    if (postData().count() > 0) {
-        handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict
-            postData:arrayFromFormData(postData())];
-    } else {
+    if (postData().count() > 0)
+        handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict postData:arrayFromFormData(postData())];
+    else
         handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict];
-    }
     [resourceLoader setHandle:handle];
     [resourceLoader release];
     return handle != nil;

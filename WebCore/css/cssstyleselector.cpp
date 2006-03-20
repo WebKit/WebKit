@@ -197,8 +197,7 @@ CSSStyleSheet *CSSStyleSelector::svgSheet = 0;
 static CSSStyleSelector::Encodedurl *currentEncodedURL = 0;
 static PseudoState pseudoState;
 
-CSSStyleSelector::CSSStyleSelector( Document* doc, DeprecatedString userStyleSheet, StyleSheetList *styleSheets,
-                                    bool _strictParsing )
+CSSStyleSelector::CSSStyleSelector(Document* doc, DeprecatedString userStyleSheet, StyleSheetList *styleSheets, bool _strictParsing)
 {
     init();
 
@@ -207,7 +206,7 @@ CSSStyleSelector::CSSStyleSelector( Document* doc, DeprecatedString userStyleShe
     settings = view ? view->frame()->settings() : 0;
     if (!defaultStyle)
         loadDefaultStyle();
-    m_medium = view ? view->mediaType() : DeprecatedString("all");
+    m_mediaType = view ? view->mediaType() : String("all");
 
     m_userStyle = 0;
     m_userSheet = 0;
@@ -218,7 +217,7 @@ CSSStyleSelector::CSSStyleSelector( Document* doc, DeprecatedString userStyleShe
         m_userSheet->parseString(String(userStyleSheet), strictParsing);
 
         m_userStyle = new CSSRuleSet();
-        m_userStyle->addRulesFromSheet( m_userSheet, m_medium );
+        m_userStyle->addRulesFromSheet(m_userSheet, m_mediaType);
     }
 
     // add stylesheets from document
@@ -227,22 +226,23 @@ CSSStyleSelector::CSSStyleSelector( Document* doc, DeprecatedString userStyleShe
     DeprecatedPtrListIterator<StyleSheet> it(styleSheets->styleSheets);
     for (; it.current(); ++it)
         if (it.current()->isCSSStyleSheet() && !it.current()->disabled())
-            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(it.current()), m_medium);
+            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(it.current()), m_mediaType);
 
     m_ruleList = 0;
     m_collectRulesOnly = false;
 }
 
-CSSStyleSelector::CSSStyleSelector( CSSStyleSheet *sheet )
+CSSStyleSelector::CSSStyleSelector(CSSStyleSheet *sheet)
 {
     init();
 
-    if(!defaultStyle) loadDefaultStyle();
+    if (!defaultStyle)
+        loadDefaultStyle();
     FrameView *view = sheet->doc()->view();
-    m_medium =  view ? view->mediaType() : DeprecatedString("all");
+    m_mediaType =  view ? view->mediaType() : String("all");
 
     m_authorStyle = new CSSRuleSet();
-    m_authorStyle->addRulesFromSheet( sheet, m_medium );
+    m_authorStyle->addRulesFromSheet(sheet, m_mediaType);
 }
 
 void CSSStyleSelector::init()
@@ -256,16 +256,16 @@ void CSSStyleSelector::setEncodedURL(const KURL& url)
 {
     KURL u = url;
 
-    u.setQuery( DeprecatedString::null );
-    u.setRef( DeprecatedString::null );
+    u.setQuery(DeprecatedString::null);
+    u.setRef(DeprecatedString::null);
     encodedurl.file = u.url();
     int pos = encodedurl.file.findRev('/');
     encodedurl.path = encodedurl.file;
-    if ( pos > 0 ) {
-        encodedurl.path.truncate( pos );
+    if (pos > 0) {
+        encodedurl.path.truncate(pos);
         encodedurl.path += '/';
     }
-    u.setPath( DeprecatedString::null );
+    u.setPath(DeprecatedString::null);
     encodedurl.host = u.url();
 }
 
@@ -514,16 +514,16 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
 static void cleanpath(DeprecatedString &path)
 {
     int pos;
-    while ( (pos = path.find( "/../" )) != -1 ) {
+    while ((pos = path.find("/../")) != -1) {
         int prev = 0;
-        if ( pos > 0 )
-            prev = path.findRev( "/", pos -1 );
+        if (pos > 0)
+            prev = path.findRev("/", pos -1);
         // don't remove the host, i.e. http://foo.org/../foo.html
         if (prev < 0 || (prev > 3 && path.findRev("://", prev-1) == prev-2))
-            path.remove( pos, 3);
+            path.remove(pos, 3);
         else
             // matching directory found ?
-            path.remove( prev, pos- prev + 3 );
+            path.remove(prev, pos- prev + 3);
     }
     pos = 0;
     
@@ -532,22 +532,22 @@ static void cleanpath(DeprecatedString &path)
     // We don't want to waste a function call on the search for the the anchor
     // in the vast majority of cases where there is no "//" in the path.
     int refPos = -2;
-    while ( (pos = path.find( "//", pos )) != -1) {
+    while ((pos = path.find("//", pos)) != -1) {
         if (refPos == -2)
             refPos = path.find("#");
         if (refPos > 0 && pos >= refPos)
             break;
         
-        if ( pos == 0 || path[pos-1] != ':' )
-            path.remove( pos, 1 );
+        if (pos == 0 || path[pos-1] != ':')
+            path.remove(pos, 1);
         else
             pos += 2;
     }
-    while ( (pos = path.find( "/./" )) != -1)
-        path.remove( pos, 2 );
+    while ((pos = path.find("/./")) != -1)
+        path.remove(pos, 2);
 }
 
-static void checkPseudoState( Element *e, bool checkVisited = true )
+static void checkPseudoState(Element *e, bool checkVisited = true)
 {
     if (!e->isLink()) {
         pseudoState = PseudoNone;
@@ -567,14 +567,14 @@ static void checkPseudoState( Element *e, bool checkVisited = true )
     
     QConstString cu(attr.unicode(), attr.length());
     DeprecatedString u = cu.string();
-    if ( !u.contains("://") ) {
-        if ( u[0] == '/' )
+    if (!u.contains("://")) {
+        if (u[0] == '/')
             u.prepend(currentEncodedURL->host);
-        else if ( u[0] == '#' )
+        else if (u[0] == '#')
             u.prepend(currentEncodedURL->file);
         else
             u.prepend(currentEncodedURL->path);
-        cleanpath( u );
+        cleanpath(u);
     }
     pseudoState = historyContains(u) ? PseudoVisited : PseudoLink;
 }
@@ -732,7 +732,7 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
         matchRules(defaultQuirksStyle, firstUARule, lastUARule);
     
     // 3. If our medium is print, then we match rules from the print sheet.
-    if (m_medium == "print")
+    if (m_mediaType == "print")
         matchRules(defaultPrintStyle, firstUARule, lastUARule);
 
     // 4. Now we check user sheet rules.
@@ -1046,7 +1046,7 @@ RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool auth
             matchRules(defaultQuirksStyle, firstUARule, lastUARule);
         
         // If our medium is print, then we match rules from the print sheet.
-        if (m_medium == "print")
+        if (m_mediaType == "print")
             matchRules(defaultPrintStyle, firstUARule, lastUARule);
 
         // Now we check user sheet rules.
@@ -1618,11 +1618,11 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet *sheet, const String &medium)
 // -------------------------------------------------------------------------------------
 // this is mostly boring stuff on how to apply a certain rule to the renderstyle...
 
-static Length convertToLength( CSSPrimitiveValue *primitiveValue, RenderStyle *style, bool *ok = 0 )
+static Length convertToLength(CSSPrimitiveValue *primitiveValue, RenderStyle *style, bool *ok = 0)
 {
     Length l;
-    if ( !primitiveValue ) {
-        if ( ok )
+    if (!primitiveValue) {
+        if (ok)
             *ok = false;
     } else {
         int type = primitiveValue->primitiveType();
@@ -1632,7 +1632,7 @@ static Length convertToLength( CSSPrimitiveValue *primitiveValue, RenderStyle *s
             l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)), Percent);
         else if(type == CSSPrimitiveValue::CSS_NUMBER)
             l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)*100), Percent);
-        else if ( ok )
+        else if (ok)
             *ok = false;
     }
     return l;
@@ -1697,13 +1697,13 @@ static const colorMap cmap[] = {
 };
 
 
-static Color colorForCSSValue( int css_value )
+static Color colorForCSSValue(int css_value)
 {
     // try the regular ones first
     const colorMap *col = cmap;
-    while ( col->css_value && col->css_value != css_value )
+    while (col->css_value && col->css_value != css_value)
         ++col;
-    if ( col->css_value )
+    if (col->css_value)
         return col->color;
 
     return Color();
@@ -1748,7 +1748,7 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
     }
 }
 
-void CSSStyleSelector::applyProperty( int id, CSSValue *value )
+void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 {
     CSSPrimitiveValue *primitiveValue = 0;
     if(value->isPrimitiveValue()) primitiveValue = static_cast<CSSPrimitiveValue *>(value);
@@ -2027,7 +2027,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
         HANDLE_INHERIT_AND_INITIAL(listStylePosition, ListStylePosition)
         if (!primitiveValue) return;
         if (primitiveValue->getIdent())
-            style->setListStylePosition( (EListStylePosition) (primitiveValue->getIdent() - CSS_VAL_OUTSIDE) );
+            style->setListStylePosition((EListStylePosition) (primitiveValue->getIdent() - CSS_VAL_OUTSIDE));
         return;
     }
 
@@ -2039,7 +2039,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
         {
             EListStyleType t;
             int id = primitiveValue->getIdent();
-            if ( id == CSS_VAL_NONE) { // important!!
+            if (id == CSS_VAL_NONE) { // important!!
               t = LNONE;
             } else {
               t = EListStyleType(id - CSS_VAL_DISC);
@@ -2143,7 +2143,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
             p = AbsolutePosition; break;
         case CSS_VAL_FIXED:
             {
-                if ( view )
+                if (view)
                     view->useSlowRepaints();
                 p = FixedPosition;
                 break;
@@ -2158,16 +2158,16 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
     case CSS_PROP_TABLE_LAYOUT: {
         HANDLE_INHERIT_AND_INITIAL(tableLayout, TableLayout)
 
-        if ( !primitiveValue->getIdent() )
+        if (!primitiveValue->getIdent())
             return;
 
         ETableLayout l = RenderStyle::initialTableLayout();
-        switch( primitiveValue->getIdent() ) {
+        switch(primitiveValue->getIdent()) {
             case CSS_VAL_FIXED:
                 l = TFIXED;
                 // fall through
             case CSS_VAL_AUTO:
-                style->setTableLayout( l );
+                style->setTableLayout(l);
             default:
                 break;
         }
@@ -2212,15 +2212,15 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
     {
         HANDLE_INHERIT_AND_INITIAL(visibility, Visibility)
 
-        switch( primitiveValue->getIdent() ) {
+        switch(primitiveValue->getIdent()) {
         case CSS_VAL_HIDDEN:
-            style->setVisibility( HIDDEN );
+            style->setVisibility(HIDDEN);
             break;
         case CSS_VAL_VISIBLE:
-            style->setVisibility( VISIBLE );
+            style->setVisibility(VISIBLE);
             break;
         case CSS_VAL_COLLAPSE:
-            style->setVisibility( COLLAPSE );
+            style->setVisibility(COLLAPSE);
         default:
             break;
         }
@@ -2795,12 +2795,12 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
           int type = primitiveValue->primitiveType();
           Length l;
           if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
-            l = Length(primitiveValue->computeLength(style), Fixed );
+            l = Length(primitiveValue->computeLength(style), Fixed);
           else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            l = Length( int( primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) ), Percent );
+            l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)), Percent);
 
-          style->setVerticalAlign( LENGTH );
-          style->setVerticalAlignLength( l );
+          style->setVerticalAlign(LENGTH);
+          style->setVerticalAlignLength(l);
         }
         break;
 
@@ -2920,7 +2920,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
         Length lineHeight;
         int type = primitiveValue->primitiveType();
         if (primitiveValue->getIdent() == CSS_VAL_NORMAL)
-            lineHeight = Length( -100, Percent );
+            lineHeight = Length(-100, Percent);
         else if (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
             double multiplier = 1.0;
             // Scale for the font zoom factor only for types other than "em" and "ex", since those are
@@ -2930,7 +2930,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
             }
             lineHeight = Length(primitiveValue->computeLength(style, multiplier), Fixed);
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            lineHeight = Length( (style->fontSize() * int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)) ) / 100, Fixed );
+            lineHeight = Length((style->fontSize() * int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE))) / 100, Fixed);
         else if (type == CSSPrimitiveValue::CSS_NUMBER)
             lineHeight = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)*100), Percent);
         else
@@ -2945,7 +2945,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
         HANDLE_INHERIT_AND_INITIAL(textAlign, TextAlign)
         if (!primitiveValue) return;
         if (primitiveValue->getIdent())
-            style->setTextAlign( (ETextAlign) (primitiveValue->getIdent() - CSS_VAL__KHTML_AUTO) );
+            style->setTextAlign((ETextAlign) (primitiveValue->getIdent() - CSS_VAL__KHTML_AUTO));
         return;
     }
 
@@ -2971,18 +2971,18 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
         } else if (isInitial) {
             hasClip = false;
             top = right = bottom = left = Length();
-        } else if ( !primitiveValue ) {
+        } else if (!primitiveValue) {
             break;
-        } else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RECT ) {
+        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RECT) {
             RectImpl *rect = primitiveValue->getRectValue();
-            if ( !rect )
+            if (!rect)
                 break;
             top = convertToLength(rect->top(), style);
             right = convertToLength(rect->right(), style);
             bottom = convertToLength(rect->bottom(), style);
             left = convertToLength(rect->left(), style);
 
-        } else if ( primitiveValue->getIdent() != CSS_VAL_AUTO ) {
+        } else if (primitiveValue->getIdent() != CSS_VAL_AUTO) {
             break;
         }
         style->setClip(top, right, bottom, left);
@@ -3068,8 +3068,8 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
             CSSValue *item = list->item(i);
             if(!item->isPrimitiveValue()) continue;
             CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue *>(item);
-            DeprecatedString face;
-            if( val->primitiveType() == CSSPrimitiveValue::CSS_STRING )
+            AtomicString face;
+            if(val->primitiveType() == CSSPrimitiveValue::CSS_STRING)
                 face = static_cast<FontFamilyValue *>(val)->fontName();
             else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT) {
                 switch (val->getIdent()) {
@@ -3099,7 +3099,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
                 }
             }
     
-            if ( !face.isEmpty() ) {
+            if (!face.isEmpty()) {
                 if (!currFamily) {
                     // Filling in the first family.
                     firstFamily.setFamily(face);
@@ -3291,10 +3291,10 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
             style->setLineHeight(RenderStyle::initialLineHeight());
             if (style->setFontDescription(fontDescription))
                 fontDirty = true;
-        } else if ( value->isFontValue() ) {
+        } else if (value->isFontValue()) {
             FontValue *font = static_cast<FontValue *>(value);
-            if ( !font->style || !font->variant || !font->weight ||
-                 !font->size || !font->lineHeight || !font->family )
+            if (!font->style || !font->variant || !font->weight ||
+                 !font->size || !font->lineHeight || !font->family)
                 return;
             applyProperty(CSS_PROP_FONT_STYLE, font->style.get());
             applyProperty(CSS_PROP_FONT_VARIANT, font->variant.get());
@@ -3549,7 +3549,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValue *value )
             if (item->color) {
                 int ident = item->color->getIdent();
                 if (ident)
-                    col = colorForCSSValue( ident );
+                    col = colorForCSSValue(ident);
                 else if (item->color->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
                     col.setRgb(item->color->getRGBColorValue());
             }
@@ -4265,8 +4265,8 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
         else if (ident == CSS_VAL__KHTML_ACTIVELINK)
             col = element->getDocument()->activeLinkColor();
         else
-            col = colorForCSSValue( ident );
-    } else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR )
+            col = colorForCSSValue(ident);
+    } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
         col.setRgb(primitiveValue->getRGBColorValue());
     return col;    
 }

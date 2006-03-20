@@ -115,7 +115,7 @@ void CachedCSSStyleSheet::checkNotify()
     }
 }
 
-void CachedCSSStyleSheet::error( int /*err*/, const char */*text*/ )
+void CachedCSSStyleSheet::error()
 {
     m_loading = false;
     checkNotify();

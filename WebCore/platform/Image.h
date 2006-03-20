@@ -111,7 +111,7 @@ public:
     ~Image();
     
     static Image* loadResource(const char *name);
-    static bool supportsType(const DeprecatedString& type);
+    static bool supportsType(const String& type);
 
     bool isNull() const;
 

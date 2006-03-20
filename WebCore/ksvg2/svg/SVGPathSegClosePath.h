@@ -36,7 +36,7 @@ namespace WebCore
 
         virtual unsigned short pathSegType() const { return PATHSEG_CLOSEPATH; }
         virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("Z"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("Z"); }
+        virtual DeprecatedString toString() const { return "Z"; }
     };
 };
 

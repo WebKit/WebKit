@@ -1968,7 +1968,7 @@ static ListenerMap *listenerMap;
 
 - (NSString *)_text
 {
-    return [self _range]->text().deprecatedString().getNSString();
+    return [self _range]->text();
 }
 
 @end

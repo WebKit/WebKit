@@ -1531,22 +1531,21 @@ DeprecatedString RenderObject::information() const
     if (needsLayout()) ts << "nl ";
     if (m_recalcMinMax) ts << "rmm ";
     if (style() && style()->zIndex()) ts << "zI: " << style()->zIndex();
-    if (element() && element()->active()) ts << "act ";
-    if (element() && element()->isLink()) ts << "anchor ";
-    if (element() && element()->focused()) ts << "focus ";
-    if (element()) ts << " <" <<  element()->localName().deprecatedString() << ">";
-    ts << " (" << xPos() << "," << yPos() << "," << width() << "," << height() << ")"
-        << (isTableCell() ?
-            ( DeprecatedString::fromLatin1(" [r=") +
-              DeprecatedString::number( static_cast<const RenderTableCell *>(this)->row() ) +
-              DeprecatedString::fromLatin1(" c=") +
-              DeprecatedString::number( static_cast<const RenderTableCell *>(this)->col() ) +
-              DeprecatedString::fromLatin1(" rs=") +
-              DeprecatedString::number( static_cast<const RenderTableCell *>(this)->rowSpan() ) +
-              DeprecatedString::fromLatin1(" cs=") +
-              DeprecatedString::number( static_cast<const RenderTableCell *>(this)->colSpan() ) +
-              DeprecatedString::fromLatin1("]") ) : DeprecatedString::null );
-        return str;
+    if (element()) {
+        if (element()->active())
+            ts << "act ";
+        if (element()->isLink())
+            ts << "anchor ";
+        if (element()->focused())
+            ts << "focus ";
+        ts << " <" <<  element()->localName().deprecatedString() << ">";
+        ts << " (" << xPos() << "," << yPos() << "," << width() << "," << height() << ")";
+        if (isTableCell()) {
+            const RenderTableCell* cell = static_cast<const RenderTableCell *>(this);
+            ts << " [r=" << cell->row() << " c=" + cell->col() << " rs=" + cell->rowSpan() << " cs=" + cell->colSpan() << "]";
+        }
+    }
+    return str;
 }
 
 void RenderObject::dump(QTextStream *stream, DeprecatedString ind) const

@@ -28,8 +28,8 @@
 #include <kdom/Helper.h>
 #include <kdom/Namespace.h>
 #include <kdom/core/DOMException.h>
-#include <kdom/core/Element.h>
 #include <kdom/kdom.h>
+#include <kxmlcore/HashSet.h>
 
 #include "Document.h"
 #include "DocumentType.h"
@@ -44,7 +44,59 @@
 using namespace WebCore;
 
 SVGDOMImplementation *SVGDOMImplementation::s_instance = 0;
-DeprecatedStringList SVGDOMImplementation::s_features;
+
+static const HashSet<String>& svgFeatureSet()
+{
+    static HashSet<String>* svgFeatures = 0;
+    if (!svgFeatures) {
+        svgFeatures = new HashSet<String>;
+        
+        // 1.1 features
+        svgFeatures->add("SVG");
+        svgFeatures->add("SVGDOM");
+        svgFeatures->add("SVG-STATIC");
+        svgFeatures->add("SVGDOM-STATIC");
+        svgFeatures->add("SVG-ANIMATION");
+        svgFeatures->add("SVGDOM-ANIMATION");
+        svgFeatures->add("SVG-DYNAMIC");
+        svgFeatures->add("COREATTRIBUTE");
+        svgFeatures->add("STRUCTURE");
+        svgFeatures->add("CONTAINERATTRIBUTE");
+        svgFeatures->add("CONDITIOANLPROCESSING");
+        svgFeatures->add("IMAGE");
+        svgFeatures->add("STYLE");
+        svgFeatures->add("VIEWPORTATTRIBUTE");
+        svgFeatures->add("SHAPE");
+        svgFeatures->add("TEXT");
+        svgFeatures->add("PAINTATTRIBUTE");
+        svgFeatures->add("OPACITYATTRIBUTE");
+        svgFeatures->add("GRAPHICSATTRIBUTE");
+        svgFeatures->add("MARKER");
+        svgFeatures->add("COLORPROFILE");
+        svgFeatures->add("GRADIENT");
+        svgFeatures->add("PATTERN");
+        svgFeatures->add("CLIP");
+        svgFeatures->add("MASK");
+        svgFeatures->add("FILTER");
+        svgFeatures->add("XLINKATTRIBUTE");
+        svgFeatures->add("FONT");
+        svgFeatures->add("EXTENSIBILITY");
+
+        // 1.0 features
+        //svgFeatures->add("SVG");
+        svgFeatures->add("SVG.STATIC");
+        svgFeatures->add("SVG.ANIMATION");
+        svgFeatures->add("SVG.DYNAMIC");
+        svgFeatures->add("DOM");
+        svgFeatures->add("DOM.SVG");
+        svgFeatures->add("DOM.SVG.STATIC");
+        svgFeatures->add("DOM.SVG.ANIMATION");
+        svgFeatures->add("DOM.SVG.DYNAMIC");
+        svgFeatures->add("SVG.ALL");
+        svgFeatures->add("DOM.SVG.ALL");
+    }
+    return *svgFeatures;
+}
 
 SVGDOMImplementation::SVGDOMImplementation() : DOMImplementation()
 {
@@ -59,74 +111,24 @@ SVGDOMImplementation::~SVGDOMImplementation()
 
 SVGDOMImplementation *SVGDOMImplementation::self()
 {
-    if(!s_instance)
-    {
+    if (!s_instance)
         s_instance = new SVGDOMImplementation();
-        
-        // 1.1 features
-        s_features.append(DeprecatedString::fromLatin1("SVG"));
-        s_features.append(DeprecatedString::fromLatin1("SVGDOM"));
-        s_features.append(DeprecatedString::fromLatin1("SVG-STATIC"));
-        s_features.append(DeprecatedString::fromLatin1("SVGDOM-STATIC"));
-        s_features.append(DeprecatedString::fromLatin1("SVG-ANIMATION"));
-        s_features.append(DeprecatedString::fromLatin1("SVGDOM-ANIMATION"));
-        s_features.append(DeprecatedString::fromLatin1("SVG-DYNAMIC"));
-        s_features.append(DeprecatedString::fromLatin1("COREATTRIBUTE"));
-        s_features.append(DeprecatedString::fromLatin1("STRUCTURE"));
-        s_features.append(DeprecatedString::fromLatin1("CONTAINERATTRIBUTE"));
-        s_features.append(DeprecatedString::fromLatin1("CONDITIOANLPROCESSING"));
-        s_features.append(DeprecatedString::fromLatin1("IMAGE"));
-        s_features.append(DeprecatedString::fromLatin1("STYLE"));
-        s_features.append(DeprecatedString::fromLatin1("VIEWPORTATTRIBUTE"));
-        s_features.append(DeprecatedString::fromLatin1("SHAPE"));
-        s_features.append(DeprecatedString::fromLatin1("TEXT"));
-        s_features.append(DeprecatedString::fromLatin1("PAINTATTRIBUTE"));
-        s_features.append(DeprecatedString::fromLatin1("OPACITYATTRIBUTE"));
-        s_features.append(DeprecatedString::fromLatin1("GRAPHICSATTRIBUTE"));
-        s_features.append(DeprecatedString::fromLatin1("MARKER"));
-        s_features.append(DeprecatedString::fromLatin1("COLORPROFILE"));
-        s_features.append(DeprecatedString::fromLatin1("GRADIENT"));
-        s_features.append(DeprecatedString::fromLatin1("PATTERN"));
-        s_features.append(DeprecatedString::fromLatin1("CLIP"));
-        s_features.append(DeprecatedString::fromLatin1("MASK"));
-        s_features.append(DeprecatedString::fromLatin1("FILTER"));
-        s_features.append(DeprecatedString::fromLatin1("XLINKATTRIBUTE"));
-        s_features.append(DeprecatedString::fromLatin1("FONT"));
-        s_features.append(DeprecatedString::fromLatin1("EXTENSIBILITY"));
-
-        // 1.0 features
-        //s_features.append(DeprecatedString::fromLatin1("SVG"));
-        s_features.append(DeprecatedString::fromLatin1("SVG.STATIC"));
-        s_features.append(DeprecatedString::fromLatin1("SVG.ANIMATION"));
-        s_features.append(DeprecatedString::fromLatin1("SVG.DYNAMIC"));
-        s_features.append(DeprecatedString::fromLatin1("DOM"));
-        s_features.append(DeprecatedString::fromLatin1("DOM.SVG"));
-        s_features.append(DeprecatedString::fromLatin1("DOM.SVG.STATIC"));
-        s_features.append(DeprecatedString::fromLatin1("DOM.SVG.ANIMATION"));
-        s_features.append(DeprecatedString::fromLatin1("DOM.SVG.DYNAMIC"));
-        s_features.append(DeprecatedString::fromLatin1("SVG.ALL"));
-        s_features.append(DeprecatedString::fromLatin1("DOM.SVG.ALL"));
-    }
 
     return s_instance;
 }
 
 bool SVGDOMImplementation::hasFeature(StringImpl *featureImpl, StringImpl *versionImpl) const
 {
-    DeprecatedString feature = (featureImpl ? String(featureImpl).upper().deprecatedString() : DeprecatedString::null);
+    String feature = (featureImpl ? featureImpl->upper(): String());
     String version(versionImpl);
 
-    if((version.isEmpty() || version == "1.1") &&
-       feature.startsWith(DeprecatedString::fromLatin1("HTTP://WWW.W3.ORG/TR/SVG11/FEATURE#")))
-    {
-        if(s_features.contains(feature.right(feature.length() - 35)))
+    if ((version.isEmpty() || version == "1.1") && feature.startsWith("HTTP://WWW.W3.ORG/TR/SVG11/FEATURE#")) {
+        if (svgFeatureSet().contains(feature.right(feature.length() - 35)))
             return true;
     }
 
-    if((version.isEmpty() || version == "1.0") &&
-       feature.startsWith(DeprecatedString::fromLatin1("ORG.W3C.")))
-    {
-        if(s_features.contains(feature.right(feature.length() - 8)))
+    if ((version.isEmpty() || version == "1.0") && feature.startsWith("ORG.W3C.")) {
+        if (svgFeatureSet().contains(feature.right(feature.length() - 8)))
             return true;
     }
 
@@ -138,13 +140,13 @@ PassRefPtr<DocumentType> SVGDOMImplementation::createDocumentType(StringImpl *qu
     String qualifiedName(qualifiedNameImpl);
 #if 0
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    if(!qualifiedName.isEmpty() && !Helper::ValidateAttributeName(qualifiedNameImpl)) {
+    if (!qualifiedName.isEmpty() && !Helper::ValidateAttributeName(qualifiedNameImpl)) {
         ec = INVALID_CHARACTER_ERR;
         return 0;
     }
 
     // NAMESPACE_ERR: Raised if no qualifiedName supplied (not mentioned in the spec!)
-    if(qualifiedName.isEmpty()) {
+    if (qualifiedName.isEmpty()) {
         ec = NAMESPACE_ERR;
         return 0;
     }
@@ -165,7 +167,7 @@ PassRefPtr<Document> SVGDOMImplementation::createDocument(StringImpl *namespaceU
 {
     String namespaceURI(namespaceURIImpl);
     String qualifiedName(qualifiedNameImpl);
-    if((namespaceURI != SVGNames::svgNamespaceURI) || (qualifiedName != "svg" && qualifiedName != "svg:svg"))
+    if ((namespaceURI != SVGNames::svgNamespaceURI) || (qualifiedName != "svg" && qualifiedName != "svg:svg"))
         return DOMImplementation::instance()->createDocument(namespaceURIImpl, qualifiedNameImpl, doctype, ec);
 
 #if 0
@@ -175,7 +177,7 @@ PassRefPtr<Document> SVGDOMImplementation::createDocument(StringImpl *namespaceU
 
     // WRONG_DOCUMENT_ERR: Raised if docType has already been used with a different
     //                     document or was created from a different implementation.
-    if(doctype != 0 && doctype->ownerDocument() != 0) {
+    if (doctype != 0 && doctype->ownerDocument() != 0) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }

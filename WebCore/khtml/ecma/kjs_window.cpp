@@ -2072,7 +2072,7 @@ JSValue *Location::getValueProperty(ExecState *exec, int token) const
   KURL url = m_frame->url();
   switch (token) {
   case Hash:
-    return jsString(url.ref().isNull() ? DeprecatedString("") : "#" + url.ref());
+    return jsString(url.ref().isNull() ? "" : "#" + url.ref());
   case Host: {
     // Note: this is the IE spec. The NS spec swaps the two, it says
     // "The hostname property is the concatenation of the host and port properties, separated by a colon."
@@ -2090,11 +2090,11 @@ JSValue *Location::getValueProperty(ExecState *exec, int token) const
     else
       return jsString(url.prettyURL());
   case Pathname:
-    return jsString(url.path().isEmpty() ? DeprecatedString("/") : url.path());
+    return jsString(url.path().isEmpty() ? "/" : url.path());
   case Port:
-    return jsString(url.port() ? DeprecatedString::number((int)url.port()) : DeprecatedString::fromLatin1(""));
+    return jsString(url.port() ? DeprecatedString::number((int)url.port()) : "");
   case Protocol:
-    return jsString(url.protocol()+":");
+    return jsString(url.protocol() + ":");
   case Search:
     return jsString(url.query());
   default:

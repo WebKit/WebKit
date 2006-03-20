@@ -75,36 +75,35 @@ void SVGPreserveAspectRatio::parsePreserveAspectRatio(StringImpl *strImpl)
     DeprecatedString str = s.deprecatedString();
     DeprecatedStringList params = DeprecatedStringList::split(' ', str.simplifyWhiteSpace());
 
-    if(params[0].compare(DeprecatedString::fromLatin1("none")) == 0)
+    if (params[0] == "none")
         m_align = SVG_PRESERVEASPECTRATIO_NONE;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMinYMin")) == 0)
+    else if (params[0] == "xMinYMin")
         m_align = SVG_PRESERVEASPECTRATIO_XMINYMIN;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMidYMin")) == 0)
+    else if (params[0] == "xMidYMin")
         m_align = SVG_PRESERVEASPECTRATIO_XMIDYMIN;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMaxYMin")) == 0)
+    else if (params[0] == "xMaxYMin")
         m_align = SVG_PRESERVEASPECTRATIO_XMAXYMIN;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMinYMid")) == 0)
+    else if (params[0] == "xMinYMid")
         m_align = SVG_PRESERVEASPECTRATIO_XMINYMID;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMidYMid")) == 0)
+    else if (params[0] == "xMidYMid")
         m_align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMaxYMid")) == 0)
+    else if (params[0] == "xMaxYMid")
         m_align = SVG_PRESERVEASPECTRATIO_XMAXYMID;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMinYMax")) == 0)
+    else if (params[0] == "xMinYMax")
         m_align = SVG_PRESERVEASPECTRATIO_XMINYMAX;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMidYMax")) == 0)
+    else if (params[0] == "xMidYMax")
         m_align = SVG_PRESERVEASPECTRATIO_XMIDYMAX;
-    else if(params[0].compare(DeprecatedString::fromLatin1("xMaxYMax")) == 0)
+    else if (params[0] == "xMaxYMax")
         m_align = SVG_PRESERVEASPECTRATIO_XMAXYMAX;
 
-    if(m_align != SVG_PRESERVEASPECTRATIO_NONE)
-    {
-        if((params.count() > 1) && params[1].compare(DeprecatedString::fromLatin1("slice")) == 0)
+    if (m_align != SVG_PRESERVEASPECTRATIO_NONE) {
+        if ((params.count() > 1) && (params[1] == "slice"))
             m_meetOrSlice = SVG_MEETORSLICE_SLICE;
         else
             m_meetOrSlice = SVG_MEETORSLICE_MEET;
     }
 
-    if(m_context)
+    if (m_context)
         m_context->notifyAttributeChange();
 }
 
@@ -113,24 +112,24 @@ SVGMatrix *SVGPreserveAspectRatio::getCTM(float logicX, float logicY, float logi
 {
     SVGMatrix *temp = SVGSVGElement::createSVGMatrix();
 
-    if(align() == SVG_PRESERVEASPECTRATIO_UNKNOWN)
+    if (align() == SVG_PRESERVEASPECTRATIO_UNKNOWN)
         return temp;
 
     float vpar = logicWidth / logicHeight;
     float svgar = physWidth / physHeight;
 
-    if(align() == SVG_PRESERVEASPECTRATIO_NONE)
+    if (align() == SVG_PRESERVEASPECTRATIO_NONE)
     {
         temp->scaleNonUniform(physWidth / logicWidth, physHeight / logicHeight);
         temp->translate(-logicX, -logicY);
     }
-    else if(vpar < svgar && (meetOrSlice() == SVG_MEETORSLICE_MEET) || vpar >= svgar && (meetOrSlice() == SVG_MEETORSLICE_SLICE))
+    else if (vpar < svgar && (meetOrSlice() == SVG_MEETORSLICE_MEET) || vpar >= svgar && (meetOrSlice() == SVG_MEETORSLICE_SLICE))
     {
         temp->scale(physHeight / logicHeight);
 
-        if(align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVG_PRESERVEASPECTRATIO_XMINYMAX)
+        if (align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVG_PRESERVEASPECTRATIO_XMINYMAX)
             temp->translate(-logicX, -logicY);
-        else if(align() == SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVG_PRESERVEASPECTRATIO_XMIDYMAX)
+        else if (align() == SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVG_PRESERVEASPECTRATIO_XMIDYMAX)
             temp->translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight) / 2, -logicY);
         else
             temp->translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight), -logicY);
@@ -139,9 +138,9 @@ SVGMatrix *SVGPreserveAspectRatio::getCTM(float logicX, float logicY, float logi
     {
         temp->scale(physWidth / logicWidth);
 
-        if(align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVG_PRESERVEASPECTRATIO_XMAXYMIN)
+        if (align() == SVG_PRESERVEASPECTRATIO_XMINYMIN || align() == SVG_PRESERVEASPECTRATIO_XMIDYMIN || align() == SVG_PRESERVEASPECTRATIO_XMAXYMIN)
             temp->translate(-logicX, -logicY);
-        else if(align() == SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVG_PRESERVEASPECTRATIO_XMAXYMID)
+        else if (align() == SVG_PRESERVEASPECTRATIO_XMINYMID || align() == SVG_PRESERVEASPECTRATIO_XMIDYMID || align() == SVG_PRESERVEASPECTRATIO_XMAXYMID)
             temp->translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth) / 2);
         else
             temp->translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth));

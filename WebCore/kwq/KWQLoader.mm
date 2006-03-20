@@ -135,11 +135,10 @@ DeprecatedByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoa
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSDictionary *headerDict = nil;
-    DeprecatedString headerString = job->queryMetaData("customHTTPHeader");
+    String headerString = job->queryMetaData("customHTTPHeader");
 
-    if (!headerString.isEmpty()) {
-        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()] retain];
-    }
+    if (!headerString.isEmpty())
+        headerDict = [[NSDictionary _webcore_dictionaryWithHeaderString:headerString] retain];
 
     NSArray *postData = nil;
     if (job->postData().count() > 0)

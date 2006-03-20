@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_SETTINGS_H_
-#define KHTML_SETTINGS_H_
+#ifndef WebCoreSettings_H
+#define WebCoreSettings_H
 
-#include "DeprecatedString.h"
-#include "DeprecatedStringList.h"
+#include "PlatformString.h"
 #include "Font.h"
 
 class KHTMLSettings
@@ -39,88 +38,76 @@ public:
         KAnimationEnabled
     };
     
-    KHTMLSettings() { }
+    const WebCore::AtomicString& stdFontName() const { return m_stdFontName; }
+    const WebCore::AtomicString& fixedFontName() const { return m_fixedFontName; }
+    const WebCore::AtomicString& serifFontName() const { return m_serifFontName; }
+    const WebCore::AtomicString& sansSerifFontName() const { return m_sansSerifFontName; }
+    const WebCore::AtomicString& cursiveFontName() const { return m_cursiveFontName; }
+    const WebCore::AtomicString& fantasyFontName() const { return m_fantasyFontName; }
+
+    int minFontSize() const { return m_minimumFontSize; }
+    int minLogicalFontSize() const { return m_minimumLogicalFontSize; }
+    int mediumFontSize() const { return m_defaultFontSize; }
+    int mediumFixedFontSize() const { return m_defaultFixedFontSize; }
+
+    bool autoLoadImages() const { return m_willLoadImagesAutomatically; }
+
+    bool isJavaScriptEnabled() const { return m_javaScriptEnabled; }
+    bool JavaScriptCanOpenWindowsAutomatically() const { return m_javaScriptCanOpenWindowsAutomatically; }
+    bool isJavaEnabled() const { return m_javaEnabled; }
+    bool isPluginsEnabled() const { return m_pluginsEnabled; }
     
-    const DeprecatedString &stdFontName() const { return _stdFontName; }
-    const DeprecatedString &fixedFontName() const { return _fixedFontName; }
-    const DeprecatedString &serifFontName() const { return _serifFontName; }
-    const DeprecatedString &sansSerifFontName() const { return _sansSerifFontName; }
-    const DeprecatedString &cursiveFontName() const { return _cursiveFontName; }
-    const DeprecatedString &fantasyFontName() const { return _fantasyFontName; }
+    const DeprecatedString& encoding() const { return m_encoding; }
 
-    int minFontSize() const { return _minimumFontSize; }
-    int minLogicalFontSize() const { return _minimumLogicalFontSize; }
-    int mediumFontSize() const { return _defaultFontSize; }
-    int mediumFixedFontSize() const { return _defaultFixedFontSize; }
+    DeprecatedString userStyleSheet() const { return m_userStyleSheetLocation; }
+    bool shouldPrintBackgrounds() const { return m_shouldPrintBackgrounds; }
+    bool textAreasAreResizable() const { return m_textAreasAreResizable; }
 
-    static bool changeCursor() { return true; }
-
-    static bool isFormCompletionEnabled() { return false; }
-    static int maxFormCompletionItems() { return 0; }
-
-    bool autoLoadImages() const { return _willLoadImagesAutomatically; }
-    static KAnimationAdvice showAnimations() { return KAnimationEnabled; }
-
-    bool isJavaScriptEnabled() const { return _JavaScriptEnabled; }
-    bool JavaScriptCanOpenWindowsAutomatically() const { return _JavaScriptCanOpenWindowsAutomatically; }
-    bool isJavaScriptEnabled(const DeprecatedString &host) const { return _JavaScriptEnabled; }
-    bool isJavaEnabled() const { return _JavaEnabled; }
-    bool isJavaEnabled(const DeprecatedString &host) const { return _JavaEnabled; }
-    bool isPluginsEnabled() const { return _pluginsEnabled; }
-    bool isPluginsEnabled(const DeprecatedString &host) const { return _pluginsEnabled; }
+    void setStdFontName(const WebCore::AtomicString& s) { m_stdFontName = s; }
+    void setFixedFontName(const WebCore::AtomicString& s) { m_fixedFontName = s; }
+    void setSerifFontName(const WebCore::AtomicString& s) { m_serifFontName = s; }
+    void setSansSerifFontName(const WebCore::AtomicString& s) { m_sansSerifFontName = s; }
+    void setCursiveFontName(const WebCore::AtomicString& s) { m_cursiveFontName = s; }
+    void setFantasyFontName(const WebCore::AtomicString& s) { m_fantasyFontName = s; }
     
-    const DeprecatedString &encoding() const { return _encoding; }
-
-    const DeprecatedString &userStyleSheet() const { return _userStyleSheetLocation; }
-    bool shouldPrintBackgrounds() const { return _shouldPrintBackgrounds; }
-    bool textAreasAreResizable() const { return _textAreasAreResizable; }
-
-    void setStdFontName(const DeprecatedString &s) { _stdFontName = s; }
-    void setFixedFontName(const DeprecatedString &s) { _fixedFontName = s; }
-    void setSerifFontName(const DeprecatedString &s) { _serifFontName = s; }
-    void setSansSerifFontName(const DeprecatedString &s) { _sansSerifFontName = s; }
-    void setCursiveFontName(const DeprecatedString &s) { _cursiveFontName = s; }
-    void setFantasyFontName(const DeprecatedString &s) { _fantasyFontName = s; }
+    void setMinFontSize(int s) { m_minimumFontSize = s; }
+    void setMinLogicalFontSize(int s) { m_minimumLogicalFontSize = s; }
+    void setMediumFontSize(int s) { m_defaultFontSize = s; }
+    void setMediumFixedFontSize(int s) { m_defaultFixedFontSize = s; }
     
-    void setMinFontSize(int s) { _minimumFontSize = s; }
-    void setMinLogicalFontSize(int s) { _minimumLogicalFontSize = s; }
-    void setMediumFontSize(int s) { _defaultFontSize = s; }
-    void setMediumFixedFontSize(int s) { _defaultFixedFontSize = s; }
-    
-    void setAutoLoadImages(bool f) { _willLoadImagesAutomatically = f; }
-    void setIsJavaScriptEnabled(bool f) { _JavaScriptEnabled = f; }
-    void setIsJavaEnabled(bool f) { _JavaEnabled = f; }
-    void setArePluginsEnabled(bool f) { _pluginsEnabled = f; }
-    void setJavaScriptCanOpenWindowsAutomatically(bool f) { _JavaScriptCanOpenWindowsAutomatically = f; }
+    void setAutoLoadImages(bool f) { m_willLoadImagesAutomatically = f; }
+    void setIsJavaScriptEnabled(bool f) { m_javaScriptEnabled = f; }
+    void setIsJavaEnabled(bool f) { m_javaEnabled = f; }
+    void setArePluginsEnabled(bool f) { m_pluginsEnabled = f; }
+    void setJavaScriptCanOpenWindowsAutomatically(bool f) { m_javaScriptCanOpenWindowsAutomatically = f; }
 
-    void setEncoding(const DeprecatedString &s) { _encoding = s; }
+    void setEncoding(const DeprecatedString& s) { m_encoding = s; }
 
-    void setUserStyleSheet(const DeprecatedString &s) { _userStyleSheetLocation = s; }
-    void setShouldPrintBackgrounds(bool f) { _shouldPrintBackgrounds = f; }
-    void setTextAreasAreResizable(bool f) { _textAreasAreResizable = f; }
+    void setUserStyleSheet(const DeprecatedString& s) { m_userStyleSheetLocation = s; }
+    void setShouldPrintBackgrounds(bool f) { m_shouldPrintBackgrounds = f; }
+    void setTextAreasAreResizable(bool f) { m_textAreasAreResizable = f; }
     
 private:
-    DeprecatedString _stdFontName;
-    DeprecatedString _fixedFontName;
-    DeprecatedString _serifFontName;
-    DeprecatedString _sansSerifFontName;
-    DeprecatedString _cursiveFontName;
-    DeprecatedString _fantasyFontName;
-    DeprecatedString _encoding;
-    DeprecatedString _userStyleSheetLocation;
+    WebCore::AtomicString m_stdFontName;
+    WebCore::AtomicString m_fixedFontName;
+    WebCore::AtomicString m_serifFontName;
+    WebCore::AtomicString m_sansSerifFontName;
+    WebCore::AtomicString m_cursiveFontName;
+    WebCore::AtomicString m_fantasyFontName;
+    DeprecatedString m_encoding; // FIXME: TextEncoding takes a latin1 string, which String & AtomicString don't easily produce
+    DeprecatedString m_userStyleSheetLocation; // FIXME: KURLs still use DeprecatedString
     
-    int _minimumFontSize;
-    int _minimumLogicalFontSize;
-    int _defaultFontSize;
-    int _defaultFixedFontSize;
-    bool _JavaEnabled : 1;
-    bool _willLoadImagesAutomatically : 1;
-    bool _pluginsEnabled : 1;
-    bool _JavaScriptEnabled : 1;
-    bool _JavaScriptCanOpenWindowsAutomatically : 1;
-    bool _shouldPrintBackgrounds : 1;
-    bool _textAreasAreResizable : 1;
-    
+    int m_minimumFontSize;
+    int m_minimumLogicalFontSize;
+    int m_defaultFontSize;
+    int m_defaultFixedFontSize;
+    bool m_javaEnabled : 1;
+    bool m_willLoadImagesAutomatically : 1;
+    bool m_pluginsEnabled : 1;
+    bool m_javaScriptEnabled : 1;
+    bool m_javaScriptCanOpenWindowsAutomatically : 1;
+    bool m_shouldPrintBackgrounds : 1;
+    bool m_textAreasAreResizable : 1;
 };
 
 #endif

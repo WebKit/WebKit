@@ -62,6 +62,7 @@ public:
         : m_hasBorder(false)
         , layoutTimer(view, &FrameView::layoutTimerFired)
         , hoverTimer(view, &FrameView::hoverTimerFired)
+        , m_mediaType("screen")
     {
         repaintRects = 0;
         isTransparent = false;
@@ -144,13 +145,14 @@ public:
     
     RefPtr<Node> dragTarget;
     RefPtr<HTMLFrameSetElement> resizingFrameSet;
+    
+    String m_mediaType;
 };
 
 FrameView::FrameView(Frame *frame)
-    : _refCount(1)
+    : m_refCount(1)
     , m_frame(frame)
     , d(new FrameViewPrivate(this))
-    , m_medium("screen")
 {
     init();
 
@@ -161,7 +163,7 @@ FrameView::~FrameView()
 {
     resetScrollBars();
 
-    ASSERT(_refCount == 0);
+    ASSERT(m_refCount == 0);
 
     if (d->hoverTimer.isActive())
         d->hoverTimer.stop();
@@ -194,10 +196,8 @@ void FrameView::resetScrollBars()
 
 void FrameView::init()
 {
-    _marginWidth = -1; // undefined
-    _marginHeight = -1;
-    _width = 0;
-    _height = 0;
+    m_margins = IntSize(-1, -1); // undefined
+    m_size = IntSize();
 }
 
 void FrameView::clear()
@@ -231,13 +231,13 @@ void FrameView::initScrollBars()
 void FrameView::setMarginWidth(int w)
 {
     // make it update the rendering area when set
-    _marginWidth = w;
+    m_margins.setWidth(w);
 }
 
 void FrameView::setMarginHeight(int h)
 {
     // make it update the rendering area when set
-    _marginHeight = h;
+    m_margins.setHeight(h);
 }
 
 void FrameView::adjustViewSize()
@@ -246,7 +246,7 @@ void FrameView::adjustViewSize()
         Document *document = m_frame->document();
 
         RenderCanvas* root = static_cast<RenderCanvas *>(document->renderer());
-        if ( !root )
+        if (!root)
             return;
         
         int docw = root->docWidth();
@@ -312,16 +312,16 @@ void FrameView::layout()
     d->delayedLayout = false;
 
     if (!m_frame) {
-        // FIXME: Do we need to set _width here?
-        // FIXME: Should we set _height here too?
-        _width = visibleWidth();
+        // FIXME: Do we need to set m_size.width here?
+        // FIXME: Should we set m_size.height here too?
+        m_size.setWidth(visibleWidth());
         return;
     }
 
     Document* document = m_frame->document();
     if (!document) {
-        // FIXME: Should we set _height here too?
-        _width = visibleWidth();
+        // FIXME: Should we set m_size.height here too?
+        m_size.setWidth(visibleWidth());
         return;
     }
 
@@ -334,7 +334,7 @@ void FrameView::layout()
 
     RenderCanvas* root = static_cast<RenderCanvas*>(document->renderer());
     if (!root) {
-        // FIXME: Do we need to set _width or _height here?
+        // FIXME: Do we need to set m_size here?
         d->layoutSchedulingEnabled = true;
         return;
     }
@@ -398,13 +398,11 @@ void FrameView::layout()
         suppressScrollBars(false, true);
     }
 
-    int oldHeight = _height;
-    int oldWidth = _width;
-    
-    _height = visibleHeight();
-    _width = visibleWidth();
+    IntSize oldSize = m_size;
 
-    if (oldHeight != _height || oldWidth != _width)
+    m_size = IntSize(visibleWidth(), visibleHeight());
+
+    if (oldSize != m_size)
         d->doFullRepaint = true;
     
     RenderLayer* layer = root->layer();
@@ -435,7 +433,7 @@ void FrameView::layout()
         // if they ever do full repaints.
         RenderObject::RepaintInfo* r;
         DeprecatedPtrListIterator<RenderObject::RepaintInfo> it(*d->repaintRects);
-        for ( ; (r = it.current()); ++it)
+        for (; (r = it.current()); ++it)
             r->m_object->repaintRectangle(r->m_repaintRect);
         d->repaintRects->clear();
     }
@@ -449,7 +447,6 @@ void FrameView::layout()
 #endif
 
     if (root->needsLayout()) {
-        //qDebug("needs layout, delaying repaint");
         scheduleRelayout();
         return;
     }
@@ -682,7 +679,7 @@ void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     invalidateClick();
 }
 
-bool FrameView::dispatchDragEvent(const AtomicString &eventType, Node *dragTarget, const PlatformMouseEvent& event, Clipboard *clipboard)
+bool FrameView::dispatchDragEvent(const AtomicString& eventType, Node *dragTarget, const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     int clientX, clientY;
     viewportToContents(event.x(), event.y(), clientX, clientY);
@@ -745,7 +742,7 @@ Node* FrameView::nodeUnderMouse() const
     return d->underMouse.get();
 }
 
-bool FrameView::scrollTo(const IntRect &bounds)
+bool FrameView::scrollTo(const IntRect& bounds)
 {
     d->scrollingSelf = true; // so scroll events get ignored
 
@@ -768,11 +765,11 @@ bool FrameView::scrollTo(const IntRect &bounds)
         xe = x + curWidth - d->borderX;
 
     // is xpos of target left of the view's border?
-    if (x < contentsX() + d->borderX )
+    if (x < contentsX() + d->borderX)
         deltax = x - contentsX() - d->borderX;
     // is xpos of target right of the view's right border?
     else if (xe + d->borderX > contentsX() + curWidth)
-        deltax = xe + d->borderX - ( contentsX() + curWidth );
+        deltax = xe + d->borderX - (contentsX() + curWidth);
     else
         deltax = 0;
 
@@ -781,7 +778,7 @@ bool FrameView::scrollTo(const IntRect &bounds)
         deltay = y - contentsY() - d->borderY;
     // is ypos of target below lower border?
     else if (ye + d->borderY > contentsY() + curHeight)
-        deltay = ye + d->borderY - ( contentsY() + curHeight );
+        deltay = ye + d->borderY - (contentsY() + curHeight);
     else
         deltay = 0;
 
@@ -888,20 +885,19 @@ void FrameView::focusNextPrevNode(bool next)
     m_frame->document()->setFocusNode(newFocusNode);
 }
 
-void FrameView::setMediaType( const DeprecatedString &medium )
+void FrameView::setMediaType(const String& mediaType)
 {
-    m_medium = medium;
+    d->m_mediaType = mediaType;
 }
 
-DeprecatedString FrameView::mediaType() const
+String FrameView::mediaType() const
 {
     // See if we have an override type.
-    DeprecatedString overrideType = m_frame->overrideMediaType();
+    String overrideType = m_frame->overrideMediaType();
     if (!overrideType.isNull())
         return overrideType;
-    return m_medium;
+    return d->m_mediaType;
 }
-
 
 void FrameView::useSlowRepaints()
 {
@@ -934,7 +930,7 @@ void FrameView::restoreScrollBar()
     suppressScrollBars(false);
 }
 
-void FrameView::setResizingFrameSet(HTMLFrameSetElement *frameSet)
+void FrameView::setResizingFrameSet(HTMLFrameSetElement* frameSet)
 {
     d->resizingFrameSet = frameSet;
 }
@@ -1009,7 +1005,7 @@ bool FrameView::dispatchMouseEvent(const AtomicString& eventType, Node* targetNo
     return swallowEvent;
 }
 
-void FrameView::setIgnoreWheelEvents( bool e )
+void FrameView::setIgnoreWheelEvents(bool e)
 {
     d->ignoreWheelEvents = e;
 }

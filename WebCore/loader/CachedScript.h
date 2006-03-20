@@ -46,7 +46,7 @@ namespace WebCore {
 
         virtual void setCharset(const DeprecatedString&);
 	virtual void data(DeprecatedByteArray&, bool atEnd);
-	virtual void error(int code, const char* message);
+	virtual void error();
 
         virtual bool schedule() const { return false; }
         

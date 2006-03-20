@@ -151,7 +151,7 @@ void KJSProxy::initScriptIfNeeded()
   m_script = new ScriptInterpreter(globalObject, m_frame);
   globalObject->put(m_script->globalExec(), "debug", new TestFunctionImp(), Internal);
 
-  DeprecatedString userAgent = m_frame->userAgent();
+  String userAgent = m_frame->userAgent();
   if (userAgent.find("Microsoft") >= 0 || userAgent.find("MSIE") >= 0)
     m_script->setCompatMode(Interpreter::IECompat);
   else

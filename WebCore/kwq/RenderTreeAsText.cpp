@@ -218,30 +218,30 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
     }
     
     if (o.isTableCell()) {
-        const RenderTableCell &c = static_cast<const RenderTableCell &>(o);
+        const RenderTableCell& c = static_cast<const RenderTableCell&>(o);
         ts << " [r=" << c.row() << " c=" << c.col() << " rs=" << c.rowSpan() << " cs=" << c.colSpan() << "]";
     }
 
     return ts;
 }
 
-static DeprecatedString quoteAndEscapeNonPrintables(const DeprecatedString &s)
+static String quoteAndEscapeNonPrintables(const String& s)
 {
     DeprecatedString result;
     result += '"';
     for (unsigned i = 0; i != s.length(); ++i) {
-        QChar c = s.at(i);
-        if (c == '\\') {
+        QChar c = s[i];
+        if (c == '\\')
             result += "\\\\";
-        } else if (c == '"') {
+        else if (c == '"')
             result += "\\\"";
-        } else if (c == '\n' || c.unicode() == 0x00A0) {
+        else if (c == '\n' || c.unicode() == 0x00A0)
             result += ' ';
-        } else {
+        else {
             unsigned short u = c.unicode();
-            if (u >= 0x20 && u < 0x7F) {
+            if (u >= 0x20 && u < 0x7F)
                 result += c;
-            } else {
+            else {
                 DeprecatedString hex;
                 hex.sprintf("\\x{%X}", u);
                 result += hex;
@@ -252,7 +252,7 @@ static DeprecatedString quoteAndEscapeNonPrintables(const DeprecatedString &s)
     return result;
 }
 
-static void writeTextRun(QTextStream &ts, const RenderText &o, const InlineTextBox &run)
+static void writeTextRun(QTextStream& ts, const RenderText& o, const InlineTextBox& run)
 {
     ts << "text run at (" << run.m_x << "," << run.m_y << ") width " << run.m_width;
     if (run.m_reversed || run.m_dirOverride) {
@@ -261,7 +261,7 @@ static void writeTextRun(QTextStream &ts, const RenderText &o, const InlineTextB
             ts << " override";
     }
     ts << ": "
-        << quoteAndEscapeNonPrintables(o.data().deprecatedString().mid(run.m_start, run.m_len))
+        << quoteAndEscapeNonPrintables(o.data().substring(run.m_start, run.m_len))
         << "\n"; 
 }
 
@@ -270,11 +270,11 @@ void write(QTextStream &ts, const RenderObject &o, int indent)
 #if SVG_SUPPORT
     // FIXME:  A hackish way to doing our own "virtual" dispatch
     if (o.isRenderPath()) {
-        write(ts, static_cast<const RenderPath &>(o), indent);
+        write(ts, static_cast<const RenderPath&>(o), indent);
         return;
     }
     if (o.isKCanvasContainer()) {
-        write(ts, static_cast<const KCanvasContainer &>(o), indent);
+        write(ts, static_cast<const KCanvasContainer&>(o), indent);
         return;
     }
 #endif
@@ -283,25 +283,24 @@ void write(QTextStream &ts, const RenderObject &o, int indent)
     ts << o << "\n";
     
     if (o.isText() && !o.isBR()) {
-        const RenderText &text = static_cast<const RenderText &>(o);
+        const RenderText& text = static_cast<const RenderText&>(o);
         for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
             writeIndent(ts, indent+1);
             writeTextRun(ts, text, *box);
         }
     }
 
-    for (RenderObject *child = o.firstChild(); child; child = child->nextSibling()) {
-        if (child->layer()) {
+    for (RenderObject* child = o.firstChild(); child; child = child->nextSibling()) {
+        if (child->layer())
             continue;
-        }
         write(ts, *child, indent + 1);
     }
     
     if (o.isWidget()) {
-        Widget *widget = static_cast<const RenderWidget &>(o).widget();
+        Widget* widget = static_cast<const RenderWidget&>(o).widget();
         if (widget && widget->isFrameView()) {
-            FrameView *view = static_cast<FrameView *>(widget);
-            RenderObject *root = view->frame()->renderer();
+            FrameView* view = static_cast<FrameView*>(widget);
+            RenderObject* root = view->frame()->renderer();
             if (root) {
                 view->layout();
                 RenderLayer* l = root->layer();
@@ -406,7 +405,7 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     if (!n || !n->isDocumentNode())
         return;
 
-    Document *doc = static_cast<Document *>(n);
+    Document *doc = static_cast<Document*>(n);
     Frame *frame = doc->frame();
     if (!frame)
         return;

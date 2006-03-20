@@ -30,7 +30,7 @@
 #import "FloatRect.h"
 #import "Image.h"
 #import "PDFDocumentImage.h"
-#import <DeprecatedString.h>
+#import "PlatformString.h"
 
 #import "WebCoreImageRendererFactory.h"
 
@@ -98,9 +98,9 @@ Image* Image::loadResource(const char *name)
     return 0;
 }
 
-bool Image::supportsType(const DeprecatedString& type)
+bool Image::supportsType(const String& type)
 {
-    return [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:type.getNSString()];
+    return [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:type];
 }
 
 // Drawing Routines

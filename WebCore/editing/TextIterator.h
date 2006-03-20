@@ -47,8 +47,8 @@ inline bool isCollapsibleWhitespace(const QChar& c)
     }
 }
 
-DeprecatedString plainText(const Range *);
-PassRefPtr<Range> findPlainText(const Range *, const DeprecatedString &, bool forward, bool caseSensitive);
+DeprecatedString plainText(const Range*);
+PassRefPtr<Range> findPlainText(const Range*, const String&, bool forward, bool caseSensitive);
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
 // at points where replaced elements break up the text flow.  The text comes back in

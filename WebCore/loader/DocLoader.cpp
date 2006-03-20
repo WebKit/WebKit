@@ -52,12 +52,12 @@ DocLoader::DocLoader(Frame *frame, Document* doc)
     m_loadInProgress = false;
 
     Cache::init();
-    Cache::docloader->append( this );
+    Cache::docloader->append(this);
 }
 
 DocLoader::~DocLoader()
 {
-    Cache::docloader->remove( this );
+    Cache::docloader->remove(this);
 }
 
 void DocLoader::setExpireDate(time_t _expireDate)
@@ -65,26 +65,20 @@ void DocLoader::setExpireDate(time_t _expireDate)
     m_expireDate = _expireDate;
 }
 
-bool DocLoader::needReload(const KURL &fullURL)
+bool DocLoader::needReload(const KURL& fullURL)
 {
     bool reload = false;
-    if (m_cachePolicy == KIO::CC_Verify)
-    {
-       if (!m_reloadedURLs.contains(fullURL.url()))
-       {
+    if (m_cachePolicy == KIO::CC_Verify) {
+       if (!m_reloadedURLs.contains(fullURL.url())) {
           CachedObject* existing = Cache::get(fullURL.url());
-          if (existing && existing->isExpired())
-          {
+          if (existing && existing->isExpired()) {
              Cache::remove(existing);
              m_reloadedURLs.append(fullURL.url());
              reload = true;
           }
        }
-    }
-    else if ((m_cachePolicy == KIO::CC_Reload) || (m_cachePolicy == KIO::CC_Refresh))
-    {
-       if (!m_reloadedURLs.contains(fullURL.url()))
-       {
+    } else if ((m_cachePolicy == KIO::CC_Reload) || (m_cachePolicy == KIO::CC_Refresh)) {
+       if (!m_reloadedURLs.contains(fullURL.url())) {
           CachedObject* existing = Cache::get(fullURL.url());
           if (existing)
              Cache::remove(existing);
@@ -95,13 +89,12 @@ bool DocLoader::needReload(const KURL &fullURL)
     return reload;
 }
 
-CachedImage *DocLoader::requestImage(const WebCore::String &url)
+CachedImage *DocLoader::requestImage(const String& url)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
-    if (KWQCheckIfReloading(this)) {
+    if (KWQCheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
-    }
 
     bool reload = needReload(fullURL);
 
@@ -110,13 +103,12 @@ CachedImage *DocLoader::requestImage(const WebCore::String &url)
     return cachedObject;
 }
 
-CachedCSSStyleSheet *DocLoader::requestStyleSheet( const WebCore::String &url, const DeprecatedString& charset)
+CachedCSSStyleSheet *DocLoader::requestStyleSheet(const String& url, const DeprecatedString& charset)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
-    if (KWQCheckIfReloading(this)) {
+    if (KWQCheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
-    }
 
     bool reload = needReload(fullURL);
 
@@ -125,13 +117,12 @@ CachedCSSStyleSheet *DocLoader::requestStyleSheet( const WebCore::String &url, c
     return cachedObject;
 }
 
-CachedScript *DocLoader::requestScript( const WebCore::String &url, const DeprecatedString& charset)
+CachedScript *DocLoader::requestScript(const String& url, const DeprecatedString& charset)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
 
-    if (KWQCheckIfReloading(this)) {
+    if (KWQCheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
-    }
 
     bool reload = needReload(fullURL);
 
@@ -141,7 +132,7 @@ CachedScript *DocLoader::requestScript( const WebCore::String &url, const Deprec
 }
 
 #ifdef KHTML_XSLT
-CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const WebCore::String &url)
+CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const String& url)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
     
@@ -157,16 +148,15 @@ CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const WebCore::String &url)
 #endif
 
 #ifndef KHTML_NO_XBL
-CachedXBLDocument* DocLoader::requestXBLDocument(const WebCore::String &url)
+CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 {
     KURL fullURL = m_doc->completeURL(url.deprecatedString());
     
     // FIXME: Is this right for XBL?
     if (m_frame && m_frame->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
     
-    if (KWQCheckIfReloading(this)) {
+    if (KWQCheckIfReloading(this))
         setCachePolicy(KIO::CC_Reload);
-    }
     
     bool reload = needReload(fullURL);
     
@@ -176,22 +166,22 @@ CachedXBLDocument* DocLoader::requestXBLDocument(const WebCore::String &url)
 }
 #endif
 
-void DocLoader::setAutoloadImages( bool enable )
+void DocLoader::setAutoloadImages(bool enable)
 {
-    if ( enable == m_bautoloadImages )
+    if (enable == m_bautoloadImages)
         return;
 
     m_bautoloadImages = enable;
 
-    if ( !m_bautoloadImages ) return;
+    if (!m_bautoloadImages)
+        return;
 
-    for ( const CachedObject* co=m_docObjects.first(); co; co=m_docObjects.next() )
-        if ( co->type() == CachedObject::ImageResource )
-        {
-            CachedImage *img = const_cast<CachedImage*>( static_cast<const CachedImage *>( co ) );
+    for (const CachedObject* co=m_docObjects.first(); co; co=m_docObjects.next())
+        if (co->type() == CachedObject::ImageResource) {
+            CachedImage *img = const_cast<CachedImage*>(static_cast<const CachedImage *>(co));
 
             CachedObject::Status status = img->status();
-            if ( status != CachedObject::Unknown )
+            if (status != CachedObject::Unknown)
                 continue;
 
             Cache::loader()->load(this, img, true);
@@ -211,17 +201,16 @@ void DocLoader::setShowAnimations(KHTMLSettings::KAnimationAdvice showAnimations
 
     const CachedObject* co;
     for (co=m_docObjects.first(); co; co = m_docObjects.next())
-        if (co->type() == CachedObject::ImageResource)
-        {
+        if (co->type() == CachedObject::ImageResource) {
             CachedImage *img = const_cast<CachedImage*>(static_cast<const CachedImage*>(co));
 
             img->setShowAnimations(showAnimations);
         }
 }
 
-void DocLoader::removeCachedObject( CachedObject* o ) const
+void DocLoader::removeCachedObject(CachedObject* o) const
 {
-    m_docObjects.removeRef( o );
+    m_docObjects.removeRef(o);
 }
 
 void DocLoader::setLoadInProgress(bool load)

@@ -65,7 +65,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     
     const KURL& url = request.url();
 
-    NSString *frameName = request.frameName.length() == 0 ? nil : request.frameName.getNSString();
+    NSString *frameName = request.frameName.isEmpty() ? nil : (NSString*)request.frameName;
     if (frameName) {
         // FIXME: Can't we just use m_frame->findFrame?
         if (WebCoreFrameBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
@@ -106,7 +106,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     
     WebCoreFrameBridge *bridge = [page mainFrame];
     if ([bridge impl])
-	[bridge impl]->tree()->setName(request.frameName);
+	[bridge impl]->tree()->setName(AtomicString(request.frameName));
     
     if (partResult)
 	*partResult = [bridge impl];

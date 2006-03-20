@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KWQTextStream.h"
 
-#include "DeprecatedString.h"
+#include "PlatformString.h"
 #include "Logging.h"
 
 const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
@@ -34,137 +34,139 @@ const char *precisionFormats[] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f
 const int maxPrecision = 6; // must match to precisionFormats
 const int defaultPrecision = 6; // matches qt and sprintf(.., "%f", ...) behaviour
 
-QTextStream::QTextStream(const DeprecatedByteArray &ba)
-    : _hasByteArray(true), _byteArray(ba), _string(0), _precision(defaultPrecision)
+QTextStream::QTextStream(const DeprecatedByteArray& ba)
+    : m_hasByteArray(true), m_byteArray(ba), m_string(0), m_precision(defaultPrecision)
 {
 }
 
-QTextStream::QTextStream(DeprecatedString *s)
-    : _hasByteArray(false), _string(s), _precision(defaultPrecision)
+QTextStream::QTextStream(DeprecatedString* s)
+    : m_hasByteArray(false), m_string(s), m_precision(defaultPrecision)
 {
 }
 
-QTextStream &QTextStream::operator<<(char c)
+QTextStream& QTextStream::operator<<(char c)
 {
-    if (_hasByteArray) {
-        unsigned oldSize = _byteArray.size();
-        _byteArray.resize(oldSize + 1);
-        _byteArray[oldSize] = c;
+    if (m_hasByteArray) {
+        unsigned oldSize = m_byteArray.size();
+        m_byteArray.resize(oldSize + 1);
+        m_byteArray[oldSize] = c;
     }
-    if (_string) {
-        _string->append(QChar(c));
-    }
+    if (m_string)
+        m_string->append(QChar(c));
     return *this;
 }
 
-QTextStream &QTextStream::operator<<(short i)
+QTextStream& QTextStream::operator<<(short i)
 {
     char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%d", i);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(unsigned short i)
+QTextStream& QTextStream::operator<<(unsigned short i)
 {
     char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%u", i);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(int i)
+QTextStream& QTextStream::operator<<(int i)
 {
     char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%d", i);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(unsigned i)
+QTextStream& QTextStream::operator<<(unsigned i)
 {
     char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%u", i);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(long i)
+QTextStream& QTextStream::operator<<(long i)
 {
     char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%ld", i);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(unsigned long i)
+QTextStream& QTextStream::operator<<(unsigned long i)
 {
     char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%lu", i);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(float f)
+QTextStream& QTextStream::operator<<(float f)
 {
     char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, precisionFormats[_precision], f);
+    sprintf(buffer, precisionFormats[m_precision], f);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(double d)
+QTextStream& QTextStream::operator<<(double d)
 {
     char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, precisionFormats[_precision], d);
+    sprintf(buffer, precisionFormats[m_precision], d);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(const char *s)
+QTextStream& QTextStream::operator<<(const char* s)
 {
-    if (_hasByteArray) {
+    if (m_hasByteArray) {
         unsigned length = strlen(s);
-        unsigned oldSize = _byteArray.size();
-        _byteArray.resize(oldSize + length);
-        memcpy(_byteArray.data() + oldSize, s, length);
+        unsigned oldSize = m_byteArray.size();
+        m_byteArray.resize(oldSize + length);
+        memcpy(m_byteArray.data() + oldSize, s, length);
     }
-    if (_string) {
-        _string->append(s);
-    }
+    if (m_string)
+        m_string->append(s);
     return *this;
 }
 
-QTextStream &QTextStream::operator<<(const DeprecatedCString &qcs)
+QTextStream& QTextStream::operator<<(const DeprecatedCString& qcs)
 {
     const char *s = qcs;
     return *this << s;
 }
 
-QTextStream &QTextStream::operator<<(const DeprecatedString &s)
+QTextStream& QTextStream::operator<<(const DeprecatedString& s)
 {
-    if (_hasByteArray) {
+    if (m_hasByteArray) {
         unsigned length = s.length();
-        unsigned oldSize = _byteArray.size();
-        _byteArray.resize(oldSize + length);
-        memcpy(_byteArray.data() + oldSize, s.latin1(), length);
+        unsigned oldSize = m_byteArray.size();
+        m_byteArray.resize(oldSize + length);
+        memcpy(m_byteArray.data() + oldSize, s.latin1(), length);
     }
-    if (_string) {
-        _string->append(s);
-    }
+    if (m_string)
+        m_string->append(s);
     return *this;
 }
 
-QTextStream &QTextStream::operator<<(void *p)
+QTextStream& QTextStream::operator<<(const WebCore::String& s)
+{
+    return (*this) << s.deprecatedString();
+}
+
+QTextStream& QTextStream::operator<<(void* p)
 {
     char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%p", p);
     return *this << buffer;
 }
 
-QTextStream &QTextStream::operator<<(const QTextStreamManipulator &m) 
+QTextStream& QTextStream::operator<<(const QTextStreamManipulator& m) 
 {
     return m(*this);
 }
 
 int QTextStream::precision(int p) 
 {
-    int oldPrecision = _precision;
+    int oldPrecision = m_precision;
     
     if (p >= 0 && p <= maxPrecision)
-        _precision = p;
+        m_precision = p;
 
     return oldPrecision;
 }

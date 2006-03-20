@@ -136,7 +136,7 @@ namespace WebCore {
 
         String m_kjsStatusBarText;
         String m_kjsDefaultStatusBarText;
-        DeprecatedString m_lastModified;
+        String m_lastModified;
 
         bool m_bComplete : 1;
         bool m_bLoadingMainResource : 1;
@@ -166,11 +166,11 @@ namespace WebCore {
 
         struct SubmitForm {
             const char* submitAction;
-            DeprecatedString submitUrl;
+            String submitUrl;
             FormData submitFormData;
-            DeprecatedString target;
-            DeprecatedString submitContentType;
-            DeprecatedString submitBoundary;
+            String target;
+            String submitContentType;
+            String submitBoundary;
         };
         SubmitForm* m_submitForm;
 

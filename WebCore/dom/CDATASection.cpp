@@ -70,7 +70,7 @@ Text *CDATASection::createNew(StringImpl *_str)
 String CDATASection::toString() const
 {
     // FIXME: substitute entity references as needed!
-    return String("<![CDATA[") + nodeValue() + "]]>";
+    return "<![CDATA[" + nodeValue() + "]]>";
 }
 
 } // namespace WebCore

@@ -120,9 +120,9 @@ public:
         m_cachedSheet->deref(this);
     }
 private:
-    virtual void setStyleSheet(const String&, const String &sheet)
+    virtual void setStyleSheet(const String&, const String& sheet)
     {
-        m_frame->setUserStyleSheet(sheet.deprecatedString());
+        m_frame->setUserStyleSheet(sheet);
     }
     Frame* m_frame;
     CachedCSSStyleSheet* m_cachedSheet;
@@ -215,7 +215,7 @@ Frame::~Frame()
     d = 0;
 }
 
-bool Frame::didOpenURL(const KURL &url)
+bool Frame::didOpenURL(const KURL& url)
 {
   if (d->m_scheduledRedirection == locationChangeScheduledDuringLoad) {
     // A redirect was shceduled before the document was created. This can happen
@@ -248,14 +248,14 @@ bool Frame::didOpenURL(const KURL &url)
   d->m_kjsStatusBarText = String();
   d->m_kjsDefaultStatusBarText = String();
 
-  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(url.host());
-  d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
-  d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(url.host());
+  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled();
+  d->m_bJavaEnabled = d->m_settings->isJavaEnabled();
+  d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled();
 
   // initializing d->m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
   // data arrives) (Simon)
   d->m_url = url;
-  if(d->m_url.protocol().startsWith("http") && !d->m_url.host().isEmpty() && d->m_url.path().isEmpty())
+  if (d->m_url.protocol().startsWith("http") && !d->m_url.host().isEmpty() && d->m_url.path().isEmpty())
     d->m_url.setPath("/");
   d->m_workingURL = d->m_url;
 
@@ -348,7 +348,7 @@ bool Frame::jScriptEnabled() const
   return d->m_bJScriptEnabled;
 }
 
-void Frame::setMetaRefreshEnabled( bool enable )
+void Frame::setMetaRefreshEnabled(bool enable)
 {
   d->m_metaRefreshEnabled = enable;
 }
@@ -428,18 +428,18 @@ bool Frame::pluginsEnabled() const
   return d->m_bPluginsEnabled;
 }
 
-void Frame::setAutoloadImages( bool enable )
+void Frame::setAutoloadImages(bool enable)
 {
-  if ( d->m_doc && d->m_doc->docLoader()->autoloadImages() == enable )
+  if (d->m_doc && d->m_doc->docLoader()->autoloadImages() == enable)
     return;
 
-  if ( d->m_doc )
-    d->m_doc->docLoader()->setAutoloadImages( enable );
+  if (d->m_doc)
+    d->m_doc->docLoader()->setAutoloadImages(enable);
 }
 
 bool Frame::autoloadImages() const
 {
-  if ( d->m_doc )
+  if (d->m_doc)
     return d->m_doc->docLoader()->autoloadImages();
 
   return true;
@@ -447,7 +447,7 @@ bool Frame::autoloadImages() const
 
 void Frame::clear(bool clearWindowProperties)
 {
-  if ( d->m_bCleared )
+  if (d->m_bCleared)
     return;
   d->m_bCleared = true;
   d->m_mousePressNode = 0;
@@ -461,7 +461,7 @@ void Frame::clear(bool clearWindowProperties)
   if (clearWindowProperties && d->m_jscript)
     d->m_jscript->clear();
 
-  if ( d->m_view )
+  if (d->m_view)
     d->m_view->clear();
 
   // do not drop the document before the jscript and view are cleared, as some destructors
@@ -482,7 +482,7 @@ void Frame::clear(bool clearWindowProperties)
 
   d->m_bMousePressed = false;
 
-  if ( !d->m_haveEncoding )
+  if (!d->m_haveEncoding)
     d->m_encoding = DeprecatedString::null;
 }
 
@@ -515,45 +515,39 @@ void Frame::receivedFirstData()
     DeprecatedString qData;
 
     // Support for http-refresh
-    qData = d->m_job->queryMetaData("http-refresh");
-    if(!qData.isEmpty() && d->m_metaRefreshEnabled) {
+    qData = d->m_job->queryMetaData("http-refresh").deprecatedString();
+    if (!qData.isEmpty() && d->m_metaRefreshEnabled) {
       double delay;
-      int pos = qData.find( ';' );
-      if ( pos == -1 )
-        pos = qData.find( ',' );
+      int pos = qData.find(';');
+      if (pos == -1)
+        pos = qData.find(',');
 
-      if( pos == -1 )
-      {
+      if (pos == -1) {
         delay = qData.stripWhiteSpace().toDouble();
         // We want a new history item if the refresh timeout > 1 second
-        scheduleRedirection( delay, d->m_url.url(), delay <= 1);
-      }
-      else
-      {
+        scheduleRedirection(delay, d->m_url.url(), delay <= 1);
+      } else {
         int end_pos = qData.length();
         delay = qData.left(pos).stripWhiteSpace().toDouble();
-        while ( qData[++pos] == ' ' );
-        if ( qData.find( "url", pos, false ) == pos )
-        {
+        while (qData[++pos] == ' ');
+        if (qData.find("url", pos, false) == pos) {
           pos += 3;
-          while (qData[pos] == ' ' || qData[pos] == '=' )
+          while (qData[pos] == ' ' || qData[pos] == '=')
               pos++;
-          if ( qData[pos] == '"' )
-          {
+          if (qData[pos] == '"') {
               pos++;
               int index = end_pos-1;
-              while( index > pos )
-              {
-                if ( qData[index] == '"' )
+              while (index > pos) {
+                if (qData[index] == '"')
                     break;
                 index--;
               }
-              if ( index > pos )
+              if (index > pos)
                 end_pos = index;
           }
         }
         // We want a new history item if the refresh timeout > 1 second
-        scheduleRedirection( delay, d->m_doc->completeURL( qData.mid( pos, end_pos ) ), delay <= 1);
+        scheduleRedirection(delay, d->m_doc->completeURL(qData.mid(pos, end_pos)), delay <= 1);
       }
       d->m_bHTTPRefresh = true;
     }
@@ -595,7 +589,7 @@ const ResourceRequest& Frame::resourceRequest() const
     return d->m_request;
 }
 
-void Frame::begin(const KURL &url)
+void Frame::begin(const KURL& url)
 {
   if (d->m_workingURL.isEmpty())
     createEmptyDocument(); // Creates an empty document if we don't have one already
@@ -626,34 +620,34 @@ void Frame::begin(const KURL &url)
     d->m_doc = DOMImplementation::instance()->createHTMLDocument(d->m_view.get());
 
   if (!d->m_doc->attached())
-    d->m_doc->attach( );
-  d->m_doc->setURL( d->m_url.url() );
+    d->m_doc->attach();
+  d->m_doc->setURL(d->m_url.url());
   // We prefer m_baseURL over d->m_url because d->m_url changes when we are
   // about to load a new page.
-  d->m_doc->setBaseURL( baseurl.url() );
+  d->m_doc->setBaseURL(baseurl.url());
   if (d->m_decoder)
     d->m_doc->setDecoder(d->m_decoder.get());
-  d->m_doc->docLoader()->setShowAnimations( d->m_settings->showAnimations() );
+  d->m_doc->docLoader()->setShowAnimations(KHTMLSettings::KAnimationEnabled);
 
   updatePolicyBaseURL();
 
-  setAutoloadImages( d->m_settings->autoLoadImages() );
-  DeprecatedString userStyleSheet = d->m_settings->userStyleSheet();
+  setAutoloadImages(d->m_settings->autoLoadImages());
+  String userStyleSheet = d->m_settings->userStyleSheet();
 
-  if ( !userStyleSheet.isEmpty() )
-    setUserStyleSheet( KURL( userStyleSheet ) );
+  if (!userStyleSheet.isEmpty())
+    setUserStyleSheet(KURL(userStyleSheet));
 
   restoreDocumentState();
 
   d->m_doc->implicitOpen();
   // clear widget
   if (d->m_view)
-    d->m_view->resizeContents( 0, 0 );
+    d->m_view->resizeContents(0, 0);
 }
 
 void Frame::write(const char* str, int len)
 {
-    if ( !d->m_decoder ) {
+    if (!d->m_decoder) {
         d->m_decoder = new Decoder;
         if (!d->m_encoding.isNull())
             d->m_decoder->setEncodingName(d->m_encoding.latin1(),
@@ -664,43 +658,44 @@ void Frame::write(const char* str, int len)
         if (d->m_doc)
             d->m_doc->setDecoder(d->m_decoder.get());
     }
-  if ( len == 0 )
+  if (len == 0)
     return;
 
-  if ( len == -1 )
-    len = strlen( str );
+  if (len == -1)
+    len = strlen(str);
 
-  DeprecatedString decoded = d->m_decoder->decode( str, len );
+  DeprecatedString decoded = d->m_decoder->decode(str, len);
 
-  if(decoded.isEmpty()) return;
+  if (decoded.isEmpty())
+    return;
 
-  if(d->m_bFirstData) {
+  if (d->m_bFirstData) {
       // determine the parse mode
-      d->m_doc->determineParseMode( decoded );
+      d->m_doc->determineParseMode(decoded);
       d->m_bFirstData = false;
 
       // ### this is still quite hacky, but should work a lot better than the old solution
-      if(d->m_decoder->visuallyOrdered()) d->m_doc->setVisuallyOrdered();
-      d->m_doc->recalcStyle( Node::Force );
+      if (d->m_decoder->visuallyOrdered()) d->m_doc->setVisuallyOrdered();
+      d->m_doc->recalcStyle(Node::Force);
   }
 
   if (Tokenizer* t = d->m_doc->tokenizer())
-      t->write( decoded, true );
+      t->write(decoded, true);
 }
 
-void Frame::write( const DeprecatedString &str )
+void Frame::write(const DeprecatedString& str)
 {
-  if ( str.isNull() )
+  if (str.isNull())
     return;
 
-  if(d->m_bFirstData) {
+  if (d->m_bFirstData) {
       // determine the parse mode
-      d->m_doc->setParseMode( Document::Strict );
+      d->m_doc->setParseMode(Document::Strict);
       d->m_bFirstData = false;
   }
   Tokenizer* t = d->m_doc->tokenizer();
-  if(t)
-    t->write( str, true );
+  if (t)
+    t->write(str, true);
 }
 
 void Frame::end()
@@ -865,14 +860,14 @@ KURL Frame::baseURL() const
     return d->m_doc->baseURL();
 }
 
-DeprecatedString Frame::baseTarget() const
+String Frame::baseTarget() const
 {
     if (!d->m_doc)
         return DeprecatedString();
     return d->m_doc->baseTarget();
 }
 
-KURL Frame::completeURL(const DeprecatedString &url)
+KURL Frame::completeURL(const DeprecatedString& url)
 {
     if (!d->m_doc)
         return url;
@@ -880,11 +875,11 @@ KURL Frame::completeURL(const DeprecatedString &url)
     return KURL(d->m_doc->completeURL(url));
 }
 
-void Frame::scheduleRedirection( double delay, const DeprecatedString &url, bool doLockHistory)
+void Frame::scheduleRedirection(double delay, const DeprecatedString& url, bool doLockHistory)
 {
     if (delay < 0 || delay > INT_MAX / 1000)
       return;
-    if ( d->m_scheduledRedirection == noRedirectionScheduled || delay <= d->m_delayRedirect )
+    if (d->m_scheduledRedirection == noRedirectionScheduled || delay <= d->m_delayRedirect)
     {
        d->m_scheduledRedirection = redirectionScheduled;
        d->m_delayRedirect = delay;
@@ -899,7 +894,7 @@ void Frame::scheduleRedirection( double delay, const DeprecatedString &url, bool
     }
 }
 
-void Frame::scheduleLocationChange(const DeprecatedString &url, const DeprecatedString &referrer, bool lockHistory, bool userGesture)
+void Frame::scheduleLocationChange(const DeprecatedString& url, const DeprecatedString& referrer, bool lockHistory, bool userGesture)
 {
     // Handle a location change of a page with no document as a special case.
     // This may happen when a frame changes the location of another frame.
@@ -936,7 +931,7 @@ bool Frame::isScheduledLocationChangePending() const
     return false;
 }
 
-void Frame::scheduleHistoryNavigation( int steps )
+void Frame::scheduleHistoryNavigation(int steps)
 {
     // navigation will always be allowed in the 0 steps case, which is OK because
     // that's supposed to force a reload.
@@ -964,7 +959,7 @@ void Frame::cancelRedirection(bool cancelWithLoadInProgress)
     }
 }
 
-void Frame::changeLocation(const DeprecatedString &URL, const DeprecatedString &referrer, bool lockHistory, bool userGesture)
+void Frame::changeLocation(const DeprecatedString& URL, const DeprecatedString& referrer, bool lockHistory, bool userGesture)
 {
     if (URL.find("javascript:", 0, false) == 0) {
         DeprecatedString script = KURL::decode_string(URL.mid(11));
@@ -996,7 +991,7 @@ void Frame::redirectionTimerFired(Timer<Frame>*)
         // in both IE and NS (but not in Mozilla).... we can't easily do that
         // in Konqueror...
         if (d->m_scheduledHistoryNavigationSteps == 0) // add && parent() to get only frames, but doesn't matter
-            openURL( url() ); /// ## need args.reload=true?
+            openURL(url()); /// ## need args.reload=true?
         else {
             if (d->m_extension) {
                 d->m_extension->goBackOrForward(d->m_scheduledHistoryNavigationSteps);
@@ -1029,7 +1024,7 @@ DeprecatedString Frame::encoding() const
         return d->m_encoding;
 
     if (d->m_decoder && d->m_decoder->encoding().isValid())
-        return DeprecatedString(d->m_decoder->encodingName());
+        return d->m_decoder->encodingName();
 
     return settings()->encoding();
 }
@@ -1050,12 +1045,12 @@ void Frame::setUserStyleSheet(const DeprecatedString& styleSheet)
         d->m_doc->setUserStyleSheet(styleSheet);
 }
 
-bool Frame::gotoAnchor( const DeprecatedString &name )
+bool Frame::gotoAnchor(const String& name)
 {
   if (!d->m_doc)
     return false;
 
-  Node *n = d->m_doc->getElementById(name);
+  Node *n = d->m_doc->getElementById(AtomicString(name));
   if (!n) {
     HTMLCollection *anchors =
         new HTMLCollection(d->m_doc.get(), HTMLCollection::DOC_ANCHORS);
@@ -1072,10 +1067,10 @@ bool Frame::gotoAnchor( const DeprecatedString &name )
 
   // We need to update the layout before scrolling, otherwise we could
   // really mess things up if an anchor scroll comes at a bad moment.
-  if ( d->m_doc ) {
+  if (d->m_doc) {
     d->m_doc->updateRendering();
     // Only do a layout if changes have occurred that make it necessary.      
-    if ( d->m_view && d->m_doc->renderer() && d->m_doc->renderer()->needsLayout() ) {
+    if (d->m_view && d->m_doc->renderer() && d->m_doc->renderer()->needsLayout()) {
       d->m_view->layout();
     }
   }
@@ -1100,17 +1095,17 @@ bool Frame::gotoAnchor( const DeprecatedString &name )
   return true;
 }
 
-void Frame::setStandardFont( const DeprecatedString &name )
+void Frame::setStandardFont(const String& name)
 {
-    d->m_settings->setStdFontName(name);
+    d->m_settings->setStdFontName(AtomicString(name));
 }
 
-void Frame::setFixedFont( const DeprecatedString &name )
+void Frame::setFixedFont(const String& name)
 {
-    d->m_settings->setFixedFontName(name);
+    d->m_settings->setFixedFontName(AtomicString(name));
 }
 
-DeprecatedString Frame::selectedText() const
+String Frame::selectedText() const
 {
     return plainText(selection().toRange().get());
 }
@@ -1120,7 +1115,7 @@ bool Frame::hasSelection() const
     return d->m_selection.isCaretOrRange();
 }
 
-SelectionController &Frame::selection() const
+SelectionController& Frame::selection() const
 {
     return d->m_selection;
 }
@@ -1135,7 +1130,7 @@ void Frame::setSelectionGranularity(TextGranularity granularity) const
     d->m_selectionGranularity = granularity;
 }
 
-const SelectionController &Frame::dragCaret() const
+const SelectionController& Frame::dragCaret() const
 {
     return d->m_dragCaret;
 }
@@ -1150,7 +1145,7 @@ void Frame::setMark(const Selection& s)
     d->m_mark = s;
 }
 
-void Frame::setSelection(const SelectionController &s, bool closeTyping, bool keepTypingStyle)
+void Frame::setSelection(const SelectionController& s, bool closeTyping, bool keepTypingStyle)
 {
     if (d->m_selection == s) {
         return;
@@ -1179,7 +1174,7 @@ void Frame::setSelection(const SelectionController &s, bool closeTyping, bool ke
     respondToChangedSelection(oldSelection, closeTyping);
 }
 
-void Frame::setDragCaret(const SelectionController &dragCaret)
+void Frame::setDragCaret(const SelectionController& dragCaret)
 {
     if (d->m_dragCaret != dragCaret) {
         d->m_dragCaret.needsCaretRepaint();
@@ -1303,25 +1298,25 @@ void Frame::caretBlinkTimerFired(Timer<Frame>*)
     d->m_selection.needsCaretRepaint();
 }
 
-void Frame::paintCaret(GraphicsContext* p, const IntRect &rect) const
+void Frame::paintCaret(GraphicsContext* p, const IntRect& rect) const
 {
     if (d->m_caretPaint)
         d->m_selection.paintCaret(p, rect);
 }
 
-void Frame::paintDragCaret(GraphicsContext* p, const IntRect &rect) const
+void Frame::paintDragCaret(GraphicsContext* p, const IntRect& rect) const
 {
     d->m_dragCaret.paintCaret(p, rect);
 }
 
-void Frame::urlSelected(const DeprecatedString& url, const DeprecatedString& target)
+void Frame::urlSelected(const DeprecatedString& url, const String& target)
 {
     urlSelected(ResourceRequest(completeURL(url)), target);
 }
 
-void Frame::urlSelected(const ResourceRequest& request, const DeprecatedString& _target)
+void Frame::urlSelected(const ResourceRequest& request, const String& _target)
 {
-  DeprecatedString target = _target;
+  String target = _target;
   if (target.isEmpty() && d->m_doc)
     target = d->m_doc->baseTarget();
 
@@ -1348,8 +1343,9 @@ void Frame::urlSelected(const ResourceRequest& request, const DeprecatedString& 
   urlSelected(requestCopy);
 }
 
-bool Frame::requestFrame(RenderPart* renderer, const DeprecatedString& _url, const DeprecatedString& frameName)
+bool Frame::requestFrame(RenderPart* renderer, const String& urlParam, const AtomicString& frameName)
 {
+    DeprecatedString _url = urlParam.deprecatedString();
     // Support for <frame src="javascript:string">
     KURL scriptURL;
     KURL url;
@@ -1377,12 +1373,12 @@ bool Frame::requestFrame(RenderPart* renderer, const DeprecatedString& _url, con
     return true;
 }
 
-bool Frame::requestObject(RenderPart* renderer, const DeprecatedString& url, const DeprecatedString& frameName,
-                          const DeprecatedString& mimeType, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues)
+bool Frame::requestObject(RenderPart* renderer, const String& url, const AtomicString& frameName,
+                          const String& mimeType, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues)
 {
     KURL completedURL;
     if (!url.isEmpty())
-        completedURL = completeURL(url);
+        completedURL = completeURL(url.deprecatedString());
     
     if (url.isEmpty() && mimeType.isEmpty())
         return true;
@@ -1395,7 +1391,7 @@ bool Frame::requestObject(RenderPart* renderer, const DeprecatedString& url, con
     return loadSubframe(renderer, completedURL, frameName, d->m_referrer);
 }
 
-bool Frame::shouldUsePlugin(Node* element, const KURL& url, const DeprecatedString& mimeType, bool hasFallback, bool& useFallback)
+bool Frame::shouldUsePlugin(Node* element, const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback)
 {
     useFallback = false;
     ObjectContentType objectType = objectContentType(url, mimeType);
@@ -1409,7 +1405,7 @@ bool Frame::shouldUsePlugin(Node* element, const KURL& url, const DeprecatedStri
 }
 
 
-bool Frame::loadPlugin(RenderPart *renderer, const KURL &url, const DeprecatedString &mimeType, 
+bool Frame::loadPlugin(RenderPart *renderer, const KURL& url, const String& mimeType, 
                        const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, bool useFallback)
 {
     if (useFallback) {
@@ -1432,7 +1428,7 @@ bool Frame::loadPlugin(RenderPart *renderer, const KURL &url, const DeprecatedSt
     return true;
 }
 
-Frame* Frame::loadSubframe(RenderPart* renderer, const KURL& url, const DeprecatedString& name, const String& referrer)
+Frame* Frame::loadSubframe(RenderPart* renderer, const KURL& url, const String& name, const String& referrer)
 {
     Frame* frame = createFrame(url, name, renderer, referrer);
     if (!frame)  {
@@ -1483,9 +1479,9 @@ void Frame::submitFormAgain()
     delete form;
 }
 
-void Frame::submitForm(const char *action, const DeprecatedString &url, const FormData &formData, const DeprecatedString &_target, const DeprecatedString& contentType, const DeprecatedString& boundary)
+void Frame::submitForm(const char *action, const String& url, const FormData& formData, const String& _target, const String& contentType, const String& boundary)
 {
-  KURL u = completeURL( url );
+  KURL u = completeURL(url.deprecatedString());
 
   if (!u.isValid())
     // ### ERROR HANDLING!
@@ -1562,8 +1558,8 @@ void Frame::submitForm(const char *action, const DeprecatedString &url, const Fo
       request.setContentType("Content-Type: " + contentType + "; boundary=" + boundary);
   }
 
-  if ( d->m_doc->parsing() || d->m_runningScripts > 0 ) {
-    if(d->m_submitForm)
+  if (d->m_doc->parsing() || d->m_runningScripts > 0) {
+    if (d->m_submitForm)
         return;
     d->m_submitForm = new FramePrivate::SubmitForm;
     d->m_submitForm->submitAction = action;
@@ -1640,29 +1636,28 @@ DeprecatedString Frame::referrer() const
    return d->m_referrer;
 }
 
-DeprecatedString Frame::lastModified() const
+String Frame::lastModified() const
 {
   return d->m_lastModified;
 }
 
-
 void Frame::reparseConfiguration()
 {
-  setAutoloadImages( d->m_settings->autoLoadImages() );
+  setAutoloadImages(d->m_settings->autoLoadImages());
   if (d->m_doc)
-     d->m_doc->docLoader()->setShowAnimations( d->m_settings->showAnimations() );
+     d->m_doc->docLoader()->setShowAnimations(KHTMLSettings::KAnimationEnabled);
 
-  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(d->m_url.host());
-  d->m_bJavaEnabled = d->m_settings->isJavaEnabled(d->m_url.host());
-  d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(d->m_url.host());
+  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled();
+  d->m_bJavaEnabled = d->m_settings->isJavaEnabled();
+  d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled();
 
   DeprecatedString userStyleSheet = d->m_settings->userStyleSheet();
-  if ( !userStyleSheet.isEmpty() )
-    setUserStyleSheet( KURL( userStyleSheet ) );
+  if (!userStyleSheet.isEmpty())
+    setUserStyleSheet(KURL(userStyleSheet));
   else
-    setUserStyleSheet( DeprecatedString() );
+    setUserStyleSheet(DeprecatedString());
 
-  if(d->m_doc) d->m_doc->updateStyleSelector();
+  if (d->m_doc) d->m_doc->updateStyleSelector();
 }
 
 bool Frame::shouldDragAutoNode(Node *node, int x, int y) const
@@ -1939,7 +1934,7 @@ bool Frame::selectContentsOfNode(Node* node)
     return false;
 }
 
-bool Frame::shouldChangeSelection(const SelectionController &newselection) const
+bool Frame::shouldChangeSelection(const SelectionController& newselection) const
 {
     return shouldChangeSelection(d->m_selection, newselection, newselection.affinity(), false);
 }
@@ -1976,7 +1971,7 @@ void dispatchEditableContentChangedEvent(Node* root)
     EventTargetNodeCast(root)->dispatchEvent(evt, ec, true);
 }
 
-void Frame::appliedEditing(EditCommandPtr &cmd)
+void Frame::appliedEditing(EditCommandPtr& cmd)
 {
     SelectionController sel(cmd.endingSelection());
     if (shouldChangeSelection(sel)) {
@@ -2009,7 +2004,7 @@ void Frame::appliedEditing(EditCommandPtr &cmd)
     respondToChangedContents();
 }
 
-void Frame::unappliedEditing(EditCommandPtr &cmd)
+void Frame::unappliedEditing(EditCommandPtr& cmd)
 {
     SelectionController sel(cmd.startingSelection());
     if (shouldChangeSelection(sel)) {
@@ -2023,7 +2018,7 @@ void Frame::unappliedEditing(EditCommandPtr &cmd)
     d->m_lastEditCommand = EditCommandPtr::emptyCommand();
 }
 
-void Frame::reappliedEditing(EditCommandPtr &cmd)
+void Frame::reappliedEditing(EditCommandPtr& cmd)
 {
     SelectionController sel(cmd.endingSelection());
     if (shouldChangeSelection(sel)) {
@@ -2052,7 +2047,7 @@ void Frame::clearTypingStyle()
     d->m_typingStyle = 0;
 }
 
-JSValue* Frame::executeScript(const DeprecatedString& filename, int baseLine, Node* n, const DeprecatedString &script)
+JSValue* Frame::executeScript(const String& filename, int baseLine, Node* n, const DeprecatedString& script)
 {
   // FIXME: This is missing stuff that the other executeScript has.
   // --> d->m_runningScripts and submitFormAgain.
@@ -2200,7 +2195,7 @@ void Frame::applyParagraphStyle(CSSStyleDeclaration *style, EditAction editingAc
     }
 }
 
-static void updateState(CSSMutableStyleDeclaration *desiredStyle, CSSComputedStyleDeclaration *computedStyle, bool &atStart, Frame::TriState &state)
+static void updateState(CSSMutableStyleDeclaration *desiredStyle, CSSComputedStyleDeclaration *computedStyle, bool& atStart, Frame::TriState& state)
 {
     DeprecatedValueListConstIterator<CSSProperty> end;
     for (DeprecatedValueListConstIterator<CSSProperty> it = desiredStyle->valuesIterator(); it != end; ++it) {
@@ -2389,7 +2384,7 @@ void Frame::removeEditingStyleFromElement(Element *element) const
 }
 
 
-bool Frame::isCharacterSmartReplaceExempt(const QChar &, bool)
+bool Frame::isCharacterSmartReplaceExempt(const QChar&, bool)
 {
     // no smart replace
     return true;
@@ -2568,13 +2563,13 @@ bool Frame::isFrameSet() const
     return body && body->renderer() && body->hasTagName(framesetTag);
 }
 
-bool Frame::openURL(const KURL &URL)
+bool Frame::openURL(const KURL& URL)
 {
     ASSERT_NOT_REACHED();
     return true;
 }
 
-void Frame::didNotOpenURL(const KURL &URL)
+void Frame::didNotOpenURL(const KURL& URL)
 {
     if (d->m_submittedFormURL == URL)
         d->m_submittedFormURL = KURL();
@@ -2620,7 +2615,7 @@ HTMLFormElement *Frame::currentForm() const
     return start ? scanForForm(start) : 0;
 }
 
-void Frame::setEncoding(const DeprecatedString &name, bool userChosen)
+void Frame::setEncoding(const DeprecatedString& name, bool userChosen)
 {
     if (!d->m_workingURL.isEmpty())
         receivedFirstData();
@@ -2854,13 +2849,13 @@ void Frame::restoreLocationProperties(SavedProperties *locationProperties)
     }
 }
 
-void Frame::saveInterpreterBuiltins(SavedBuiltins &interpreterBuiltins)
+void Frame::saveInterpreterBuiltins(SavedBuiltins& interpreterBuiltins)
 {
     if (jScript())
         jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
 }
 
-void Frame::restoreInterpreterBuiltins(const SavedBuiltins &interpreterBuiltins)
+void Frame::restoreInterpreterBuiltins(const SavedBuiltins& interpreterBuiltins)
 {
     if (jScript())
         jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
@@ -2901,7 +2896,7 @@ void Frame::clearDocumentFocus(Widget *widget)
     node->getDocument()->setFocusNode(0);
 }
 
-DeprecatedPtrList<Frame> &Frame::mutableInstances()
+DeprecatedPtrList<Frame>& Frame::mutableInstances()
 {
     static DeprecatedPtrList<Frame> instancesList;
     return instancesList;
@@ -2915,7 +2910,7 @@ void Frame::updatePolicyBaseURL()
         setPolicyBaseURL(d->m_url.url());
 }
 
-void Frame::setPolicyBaseURL(const String &s)
+void Frame::setPolicyBaseURL(const String& s)
 {
     if (document())
         document()->setPolicyBaseURL(s);
@@ -2991,14 +2986,14 @@ bool Frame::scrollbarsVisible()
     return true;
 }
 
-void Frame::addMetaData(const DeprecatedString &key, const DeprecatedString &value)
+void Frame::addMetaData(const String& key, const String& value)
 {
     d->m_job->addMetaData(key, value);
 }
 
 // This does the same kind of work that Frame::openURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
-void Frame::scrollToAnchor(const KURL &URL)
+void Frame::scrollToAnchor(const KURL& URL)
 {
     d->m_url = URL;
     started();
@@ -3154,7 +3149,7 @@ RenderStyle *Frame::styleForSelectionStart(Node *&nodeToRemove) const
     return styleElement->renderer()->style();
 }
 
-void Frame::setMediaType(const DeprecatedString &type)
+void Frame::setMediaType(const String& type)
 {
     if (d->m_view)
         d->m_view->setMediaType(type);
@@ -3248,11 +3243,10 @@ DeprecatedValueList<MarkedTextUnderline> Frame::markedTextUnderlines() const
     return d->m_markedTextUnderlines;
 }
 
-unsigned Frame::highlightAllMatchesForString(const DeprecatedString &target, bool caseFlag)
+unsigned Frame::highlightAllMatchesForString(const String& target, bool caseFlag)
 {
-    if (target.isEmpty()) {
+    if (target.isEmpty())
         return 0;
-    }
     
     RefPtr<Range> searchRange(rangeOfContents(document()));
     
@@ -3296,7 +3290,7 @@ bool Frame::isLoadingMainResource() const
 
 FrameTree *Frame::tree() const
 {
-    return &d->m_treeNode;
+    return& d->m_treeNode;
 }
 
 void Frame::detachFromView()

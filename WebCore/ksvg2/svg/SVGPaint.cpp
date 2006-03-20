@@ -85,7 +85,7 @@ String SVGPaint::cssText() const
     else if(m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
         return "currentColor";
     else if(m_paintType == SVG_PAINTTYPE_URI)
-        return String(DeprecatedString::fromLatin1("url(") + m_uri.deprecatedString() + DeprecatedString::fromLatin1(")"));
+        return "url(" + m_uri + ")";
 
     return SVGColor::cssText();
 }
