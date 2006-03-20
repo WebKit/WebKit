@@ -88,6 +88,7 @@ my %exceptions = (
 my %otherRenames = (
     "MouseEvent" => "PlatformMouseEvent",
     "WheelEvent" => "PlatformWheelEvent",
+    "KeyEvent" => "PlatformKeyboardEvent",
     "XSLTProcessor" => "JSXSLTProcessor",
     "_History" => "History_",
     "_Location" => "Location_",
@@ -141,10 +142,10 @@ my %otherRenames = (
     "KWQValueList" => "DeprecatedValueList",
     "QValueList" => "DeprecatedValueList",
     "QString" => "DeprecatedString",
+    "qstring" => "deprecatedString",
     "QCString" => "DeprecatedCString",
     "Array" => "DeprecatedArray",
     "ByteArray" => "DeprecatedByteArray",
-    "KURL" => "DeprecatedURL",
     "QStringList" => "DeprecatedStringList",
     "KWQPtrList" => "DeprecatedPtrList",
     "QPtrList" => "DeprecatedPtrList",
@@ -182,7 +183,7 @@ my %otherRenames = (
     "css_grammar" => "CSSGrammar",
     "css_computedstyle" => "CSSComputedStyleDeclaration",
     "cssproperties" => "CSSPropertyNames",
-    "cssvalues" => "CSSValueStrings",
+    "cssvalues" => "CSSValueKeywords",
     "KSVGCSSParser" => "SVGCSSParser",
     "dispatchKHTMLEditableContentChanged" => "dispatchEditableContentChangedEvent",
     "khtmlMousePressEvent" => "handleMousePressEvent",
@@ -253,7 +254,7 @@ for my $file (sort @paths) {
             $newContents =~ s/\#define DOMStringImpl StringImpl\n//;
             $newContents =~ s/\bDOMString\b/String/g;
             $newContents =~ s/\bDOMStringImpl\b/StringImpl/g;
-            $newContents =~ s/\#define String String\n/#define DOMString String\n#define QString DeprecatedString\n/;
+            $newContents =~ s/\#define String String\n/#define DOMString String\n#define QString DeprecatedString\n#define qstring() deprecatedString()\n/;
         }
     }
 
@@ -291,10 +292,10 @@ for my $file (sort @paths) {
 
     $newContents =~ s/XMLHttpRequest, XMLSerializer, JSDOMParser, JSXSLTProcessor/XMLHttpRequest, XMLSerializer, DOMParser_, XSLTProcessor_/;
 
-    $newContents =~ s/JSDOMParser (\s*Window::)JSDOMParser /DOMParser_$1DOMParser_/;
+    $newContents =~ s/JSDOMParser(\s+Window::)JSDOMParser /DOMParser$1DOMParser_/;
     $newContents =~ s/case JSDOMParser(:[^:])/case DOMParser_$1/g;
 
-    $newContents =~ s/JSXSLTProcessor (\s*Window::)JSXSLTProcessor /XSLTProcessor_$1XSLTProcessor_/;
+    $newContents =~ s/JSXSLTProcessor(\s+Window::)JSXSLTProcessor /XSLTProcessor$1XSLTProcessor_/;
     $newContents =~ s/case JSXSLTProcessor(:[^:])/case XSLTProcessor_$1/g;
 
     if ($newContents ne $contents) {
