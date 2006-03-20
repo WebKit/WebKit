@@ -1,3 +1,19 @@
+2006-03-20  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=3439
+         mouseover effects can get stuck sometimes due to missing events
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5764
+         DIV mouseOver and mouseOut triggered too often
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7701
+         mouseout sent to the wrong element when layout changes simultaneously
+
+        * fast/events/mouseover-mouseout-expected.txt: Added.
+        * fast/events/mouseover-mouseout.html: Added.
+        * fast/events/mouseover-mouseout2-expected.txt: Added.
+        * fast/events/mouseover-mouseout2.html: Added.
+
 2006-03-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele

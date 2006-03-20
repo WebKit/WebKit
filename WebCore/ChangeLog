@@ -1,3 +1,44 @@
+2006-03-20  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=3439
+         mouseover effects can get stuck sometimes due to missing events
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7701
+         mouseout sent to the wrong element when layout changes simultaneously
+        
+        Implemented saving the previous node under the mouse, so that we don't need to 
+        recalculate it, which is slow and even not really possible. This has fixed a number 
+        of issues with mouse event dispatching when the content changes.
+        The code still needs refactoring and cleanup, see bug 3439 for comments.
+
+        Tests (both files perform multiple checks):
+        - fast/events/mouseover-mouseout.html
+        - fast/events/mouseover-mouseout2.html
+
+        * page/Frame.h: Added a Frame parameter to passSubframeEventToSubframe(),
+        used for mouseMoved events.
+        * bridge/mac/FrameMac.h: Ditto.
+        * bridge/mac/FrameMac.mm: 
+        (WebCore::FrameMac::passSubframeEventToSubframe): Use the passed subframe to target 
+        NSMouseMoved events.
+        * page/FrameView.h: Added a prepareMouseEvent() helper that does viewportToContents translation.
+        * page/FrameView.cpp: Added data members for storing the previous node and subframe 
+        under the mouse to FrameViewPrivate. Removed the now unused prevMouseX/prevMouseY.
+        (WebCore::FrameViewPrivate::reset): Reset the new data members.
+        (WebCore::subframeForEvent): A temporary place for the code that extracts a subframe
+        pointer from MouseEventWithHitTestResults, moved from FrameMac::passSubframeEventToSubframe().
+        (WebCore::FrameView::prepareMouseEvent): The new helper.
+        (WebCore::FrameView::handleMousePressEvent): Use the new helper.
+        (WebCore::FrameView::handleMouseDoubleClickEvent): Ditto.
+        (WebCore::FrameView::handleMouseReleaseEvent): Ditto.
+        (WebCore::FrameView::updateDragAndDrop): Ditto.
+        (WebCore::FrameView::hoverTimerFired): Ditto.
+        (WebCore::FrameView::dispatchMouseEvent): Store and use the oldUnder node, don't store 
+        or use prevMouseX/Y.
+        (WebCore::FrameView::handleMouseMoveEvent): Rewrote dispatching events to subframes using 
+        a stored oldSubframe reference. Protect "this" from being removed while in this function.
+
 2006-03-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

@@ -54,6 +54,7 @@ class IntRect;
 class PlatformKeyboardEvent;
 class FrameMac;
 class PlatformMouseEvent;
+class MouseEventWithHitTestResults;
 class Node;
 class RenderBox;
 class RenderCanvas;
@@ -214,6 +215,8 @@ private:
 
     DeprecatedStringList formCompletionItems(const DeprecatedString &name) const;
     void addFormCompletionItem(const DeprecatedString &name, const DeprecatedString &value);
+
+    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const PlatformMouseEvent&);
 
     bool dispatchMouseEvent(const AtomicString& eventType, Node* target,
         bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);

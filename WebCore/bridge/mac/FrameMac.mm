@@ -1831,24 +1831,13 @@ void FrameMac::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event
     _sendingEventToSubview = false;
 }
 
-bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults &event)
+bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame* subframePart)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     switch ([_currentEvent type]) {
         case NSMouseMoved: {
-            Node *node = event.innerNode();
-            if (!node)
-                return false;
-            RenderObject *renderer = node->renderer();
-            if (!renderer || !renderer->isWidget())
-                return false;
-            Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
-            if (!widget || !widget->isFrameView())
-                return false;
-            Frame *subframePart = static_cast<FrameView *>(widget)->frame();
-            if (!subframePart)
-                return false;
+            ASSERT(subframePart);
             [Mac(subframePart)->bridge() mouseMoved:_currentEvent];
             return true;
         }

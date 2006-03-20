@@ -591,7 +591,7 @@ public:
   virtual void openURLRequest(const ResourceRequest&) = 0;
   virtual void submitForm(const ResourceRequest&) = 0;
   virtual void urlSelected(const ResourceRequest&) = 0;
-  virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&) = 0;
+  virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframePart = 0) = 0;
   virtual bool passWheelEventToChildWidget(Node *) = 0;
   virtual bool lastEventIsMouseUp() const = 0;
   virtual DeprecatedString overrideMediaType() const = 0;
