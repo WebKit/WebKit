@@ -2,6 +2,20 @@
 
         Reviewed by Eric.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7854
+          CanvasGradient leaks
+
+        * html/CanvasGradient.cpp: (WebCore::CanvasGradient::platformShading):
+        Don't make the CG shading object keep a reference to the DOM gradient object.
+        I got confused because in the case of a CanvasPattern, the pattern does need
+        to keep a reference to the DOM pattern object, but the object lifetime is
+        handled differently here. The CG shading object is used right away, not set
+        in a graphics context.
+
+2006-03-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
         - attempt to fix the buildbot by handling DOMImplementation another way
 
         * WebCore.xcodeproj/project.pbxproj: Added DOMImplementationFront.h/cpp.
