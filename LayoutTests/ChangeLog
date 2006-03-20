@@ -1,3 +1,16 @@
+2006-03-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele
+
+        I added a close comment tag to this layout test so that the layout 
+        would not longer be affected by the unclosed <style> tag bug since 
+        that is not the original aim of this test anyway.
+
+        * tables/mozilla/bugs/bug43854-2-expected.checksum:
+        * tables/mozilla/bugs/bug43854-2-expected.png:
+        * tables/mozilla/bugs/bug43854-2-expected.txt:
+        * tables/mozilla/bugs/bug43854-2.html:
+
 2006-03-20  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
