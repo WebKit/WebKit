@@ -1,3 +1,32 @@
+2006-03-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele
+
+        Updating pixel results for a few tables tests that have changed 
+        with Hyatt's recent table work. Moving two of said tests into the 
+        expected successes folder because they now completely pass. Yay!
+
+        * tables/mozilla/bugs/bug46268-5-expected.checksum: Added.
+        * tables/mozilla/bugs/bug46268-5-expected.png: Added.
+        * tables/mozilla/bugs/bug46268-5-expected.txt: Added.
+        * tables/mozilla/bugs/bug46268-5.html: Added.
+        * tables/mozilla/bugs/bug46268-expected.checksum: Added.
+        * tables/mozilla/bugs/bug46268-expected.png: Added.
+        * tables/mozilla/bugs/bug46268-expected.txt: Added.
+        * tables/mozilla/bugs/bug46268.html: Added.
+        * tables/mozilla_expected_failures/bugs/bug46268-5-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/bugs/bug46268-5-expected.png: Removed.
+        * tables/mozilla_expected_failures/bugs/bug46268-5-expected.txt: Removed.
+        * tables/mozilla_expected_failures/bugs/bug46268-5.html: Removed.
+        * tables/mozilla_expected_failures/bugs/bug46268-expected.checksum: Removed.
+        * tables/mozilla_expected_failures/bugs/bug46268-expected.png: Removed.
+        * tables/mozilla_expected_failures/bugs/bug46268-expected.txt: Removed.
+        * tables/mozilla_expected_failures/bugs/bug46268.html: Removed.
+        * tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.png:
+
 2006-03-19  Darin Adler  <darin@apple.com>
 
         - changed these tests to be expected failures because I had to roll
