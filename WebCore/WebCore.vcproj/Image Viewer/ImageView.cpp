@@ -8,7 +8,7 @@
 #include <cairo.h>
 #include "Image.h"
 #include "FloatRect.h"
-#include "IntSize.h"
+#include "IntRect.h"
 #include "GraphicsContext.h"
 #include "FrameWin.h"
 
@@ -88,7 +88,7 @@ void ImageView::OnDraw(CDC* pDC)
     cairo_t* context = cairo_create(surface);
     GraphicsContext gc(context);
     // Fill with white.
-    gc.fillRect(0, 0, rect.right, rect.bottom, Brush(Color::white));
+    gc.fillRect(IntRect(0, 0, rect.right, rect.bottom), Brush(Color::white));
 
     // Comment in to test overlapping.
     bool overlapping = false; // true;
@@ -109,9 +109,9 @@ void ImageView::OnDraw(CDC* pDC)
     FloatRect dstRect(FloatPoint(left, top), FloatSize(width, height));
     FloatRect imageRect(srcPoint, image->size());
     if (tile)
-        gc.drawTiledImage(image, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height(), srcPoint.x(), srcPoint.y());
+        gc.drawTiledImage(image, IntRect(left, top, width, height), srcPoint.x(), srcPoint.y());
     else {
-        gc.drawFloatImage(image, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height(),
+        gc.drawImage(image, dstRect,
             imageRect.x(), imageRect.y(), imageRect.width(), imageRect.height(), Image::CompositeSourceOver);
     //    if (overlapping)
      //       image->drawInRect(FloatRect(dstRect.x() + dstRect.width()/2, dstRect.y(), dstRect.width(), dstRect.height()),

@@ -283,7 +283,7 @@ void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, in
     IntSize runSize = hackishExtentForString(dc, font, str, len, offset, length, tabWidth, xpos);
 
     // FIXME: this const_cast should be removed when this code is made real.
-    const_cast<GraphicsContext*>(context)->fillRect(x, y, runSize.width(), runSize.height(), backgroundColor);
+    const_cast<GraphicsContext*>(context)->fillRect(IntRect(IntPoint(x, y), runSize), backgroundColor);
 }
 
 IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, const QChar* str, int slen,
@@ -337,7 +337,8 @@ int Font::checkSelectionPoint(const QChar* str, int slen, int offset, int len, i
 void Font::drawLineForText(const GraphicsContext* context, int x, int y, int yOffset, int width) const
 {
     IntPoint origin(x, y + yOffset + 1);
-    const_cast<GraphicsContext*>(context)->drawLine(origin.x(), origin.y(), origin.x() + width, origin.y());
+    IntPoint endPoint = origin + IntPoint(width, 0);
+    const_cast<GraphicsContext*>(context)->drawLine(origin, endPoint);
 }
 
 void Font::drawLineForMisspelling(const GraphicsContext* context, int x, int y, int width) const

@@ -59,7 +59,7 @@ static inline void setColor(cairo_t* cr, const Color& col)
 static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const Color& col)
 {
     setColor(cr, col);
-    cairo_rectangle(cr, x, y, w, h);
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_fill(cr);
 }
@@ -221,7 +221,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     if (patWidth) {
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
-        if (x1 == x2) {
+        if (isVerticalLine) {
             fillRectSourceOver(context, FloatRect(p1.x()-width/2, p1.y()-width, width, width), pen().color());
             fillRectSourceOver(context, FloatRect(p2.x()-width/2, p2.y(), width, width), pen().color());
         } else {
@@ -414,11 +414,6 @@ void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
         fillRectSourceOver(m_data->context, rect, brush.color());
 }
 
-void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
-{
-    fillRect(rect.x(), rect.y(), rect.width(), rect.height(), brush);
-}
-
 void GraphicsContext::addClip(const IntRect& rect)
 {
     if (paintingDisabled())
@@ -429,27 +424,18 @@ void GraphicsContext::addClip(const IntRect& rect)
     cairo_clip(context);
 }
 
-void GraphicsContext::setPaintingDisabled(bool f)
-{
-    paintingDisabled() = f;
-}
-
-bool GraphicsContext::paintingDisabled() const
-{
-    return paintingDisabled();
-}
-
 void GraphicsContext::drawFocusRing(const Color& color)
 {
     if (paintingDisabled())
         return;
-    int radius = (m_focusRingWidth - 1) / 2;
-    int offset = radius + m_focusRingOffset;
+    int radius = (focusRingWidth() - 1) / 2;
+    int offset = radius + focusRingOffset();
     
-    unsigned rectCount = m_focusRingRects.size();
+    const Vector<IntRect>& rects = focusRingRects();
+    unsigned rectCount = rects.size();
     IntRect finalFocusRect;
     for (unsigned i = 0; i < rectCount; i++) {
-        IntRect focusRect = m_focusRingRects[i];
+        IntRect focusRect = rects[i];
         focusRect.inflate(offset);
         finalFocusRect.unite(focusRect);
     }

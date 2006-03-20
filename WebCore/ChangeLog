@@ -1,3 +1,21 @@
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix win32 compile.
+
+        * Viewer/ImageView.cpp:
+        * platform/GraphicsContext.cpp:
+        (WebCore::WebCore::GraphicsContext::createGraphicsContextPrivate):
+        (WebCore::WebCore::GraphicsContext::destroyGraphicsContextPrivate):
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::fillRectSourceOver):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::drawLineForText):
+
 2006-03-19  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Eric.
