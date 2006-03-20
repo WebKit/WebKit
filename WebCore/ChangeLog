@@ -1,5 +1,27 @@
 2006-03-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - attempt to fix the buildbot by handling DOMImplementation another way
+
+        * WebCore.xcodeproj/project.pbxproj: Added DOMImplementationFront.h/cpp.
+
+        * bindings/objc/DOMImplementationFront.cpp: Added.
+        * bindings/objc/DOMImplementationFront.h: Added.
+
+        * bindings/objc/DOMInternal.h: Use DOMImplementationFront, not DOMImplementation.
+        * bindings/objc/DOM.mm:
+        (-[DOMImplementation dealloc]): Ditto.
+        (-[DOMImplementation finalize]): Ditto.
+        (-[DOMImplementation _initWithDOMImplementation:]): Ditto.
+        (+[DOMImplementation _DOMImplementationWith:]): Ditto.
+        (-[DOMImplementation _DOMImplementation]): Ditto.
+        (-[DOMDocument implementation]): Call implementationFront from the
+        DOMImplementationFront header instead of using the real implementation
+        function on the Document.
+
+2006-03-19  Darin Adler  <darin@apple.com>
+
         - global rename, done by script
 
         * <lots of files>: Renamed XXXImpl to XXX, and a number of other renames.

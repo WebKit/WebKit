@@ -31,7 +31,7 @@
 #import "ContainerNode.h"
 #import "DOMEventsInternal.h"
 #import "DOMHTML.h"
-#import "DOMImplementation.h"
+#import "DOMImplementationFront.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
 #import "DocumentFragment.h"
@@ -63,6 +63,7 @@ using WebCore::CharacterData;
 using WebCore::Document;
 using WebCore::DocumentFragment;
 using WebCore::DocumentType;
+using WebCore::DOMImplementationFront;
 using WebCore::Element;
 using WebCore::Entity;
 using WebCore::Event;
@@ -87,8 +88,6 @@ using WebCore::TreeWalker;
 
 using namespace WebCore::HTMLNames;
 
-typedef class WebCore::DOMImplementation WebCoreDOMImplementation;
-
 @interface DOMAttr (WebCoreInternal)
 + (DOMAttr *)_attrWith:(Attr *)impl;
 - (Attr *)_attr;
@@ -99,8 +98,8 @@ typedef class WebCore::DOMImplementation WebCoreDOMImplementation;
 @end
 
 @interface DOMImplementation (WebCoreInternal)
-+ (DOMImplementation *)_DOMImplementationWith:(WebCoreDOMImplementation *)impl;
-- (WebCoreDOMImplementation *)_DOMImplementation;
++ (DOMImplementation *)_DOMImplementationWith:(DOMImplementationFront *)impl;
+- (DOMImplementationFront *)_DOMImplementation;
 @end
 
 @interface DOMNamedNodeMap (WebCoreInternal)
@@ -871,17 +870,15 @@ static ListenerMap *listenerMap;
 
 - (void)dealloc
 {
-    if (_internal) {
-        DOM_cast<WebCoreDOMImplementation *>(_internal)->deref();
-    }
+    if (_internal)
+        DOM_cast<DOMImplementationFront *>(_internal)->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
-    if (_internal) {
-        DOM_cast<WebCoreDOMImplementation *>(_internal)->deref();
-    }
+    if (_internal)
+        DOM_cast<DOMImplementationFront *>(_internal)->deref();
     [super finalize];
 }
 
@@ -935,7 +932,7 @@ static ListenerMap *listenerMap;
  
 @implementation DOMImplementation (WebCoreInternal)
 
-- (id)_initWithDOMImplementation:(WebCoreDOMImplementation *)impl
+- (id)_initWithDOMImplementation:(DOMImplementationFront *)impl
 {
     ASSERT(impl);
 
@@ -946,7 +943,7 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-+ (DOMImplementation *)_DOMImplementationWith:(WebCoreDOMImplementation *)impl
++ (DOMImplementation *)_DOMImplementationWith:(DOMImplementationFront *)impl
 {
     if (!impl)
         return nil;
@@ -959,9 +956,9 @@ static ListenerMap *listenerMap;
     return [[[self alloc] _initWithDOMImplementation:impl] autorelease];
 }
 
-- (WebCoreDOMImplementation *)_DOMImplementation
+- (DOMImplementationFront *)_DOMImplementation
 {
-    return DOM_cast<WebCoreDOMImplementation *>(_internal);
+    return DOM_cast<DOMImplementationFront *>(_internal);
 }
 
 @end
@@ -1007,7 +1004,7 @@ static ListenerMap *listenerMap;
 
 - (DOMImplementation *)implementation
 {
-    return [DOMImplementation _DOMImplementationWith:[self _document]->implementation()];
+    return [DOMImplementation _DOMImplementationWith:implementationFront([self _document])];
 }
 
 - (DOMElement *)documentElement
