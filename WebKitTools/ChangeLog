@@ -1,3 +1,19 @@
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix win32 build.
+
+        * Spinneret/Spinneret/Spinneret.vcproj:
+        * Spinneret/Spinneret/WebFrame.h:
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::mouseMoved):
+        (WebKit::WebView::mouseDown):
+        (WebKit::WebView::mouseUp):
+        (WebKit::WebView::mouseDoubleClick):
+        (WebKit::WebView::keyPress):
+        (WebKit::WebViewWndProc):
+
 2006-03-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

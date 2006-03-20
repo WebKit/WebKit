@@ -28,11 +28,11 @@
 
 #include "WebFrame.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "FrameView.h"
 #include "IntRect.h"
-#include "KeyEvent.h"
-#include "MouseEvent.h"
+#include "PlatformKeyboardEvent.h"
+#include "PlatformMouseEvent.h"
 #include "Resource.h"
 #include "SelectionController.h"
 #include "TypingCommand.h"
@@ -127,36 +127,36 @@ WebFrame* WebView::mainFrame()
 
 void WebView::mouseMoved(WPARAM wParam, LPARAM lParam)
 {
-    MouseEvent mouseEvent(windowHandle(), wParam, lParam, 0);
-    d->mainFrame->viewImpl()->viewportMouseMoveEvent(mouseEvent);
+    PlatformMouseEvent mouseEvent(windowHandle(), wParam, lParam, 0);
+    d->mainFrame->viewImpl()->handleMouseMoveEvent(mouseEvent);
 }
 
 void WebView::mouseDown(WPARAM wParam, LPARAM lParam)
 {
-    MouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
-    d->mainFrame->viewImpl()->viewportMousePressEvent(mouseEvent);
+    PlatformMouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
+    d->mainFrame->viewImpl()->handleMousePressEvent(mouseEvent);
 }
 
 void WebView::mouseUp(WPARAM wParam, LPARAM lParam)
 {
-    MouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
-    d->mainFrame->viewImpl()->viewportMouseReleaseEvent(mouseEvent);
+    PlatformMouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
+    d->mainFrame->viewImpl()->handleMouseReleaseEvent(mouseEvent);
 }
 
 void WebView::mouseDoubleClick(WPARAM wParam, LPARAM lParam)
 {
-    MouseEvent mouseEvent(windowHandle(), wParam, lParam, 2);
-    d->mainFrame->viewImpl()->viewportMouseReleaseEvent(mouseEvent);
+    PlatformMouseEvent mouseEvent(windowHandle(), wParam, lParam, 2);
+    d->mainFrame->viewImpl()->handleMouseReleaseEvent(mouseEvent);
 }
 
 bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
 {
-    KeyEvent keyEvent(windowHandle(), wParam, lParam);
+    PlatformKeyboardEvent keyEvent(windowHandle(), wParam, lParam);
 
     FrameWin* frame = static_cast<FrameWin*>(d->mainFrame->impl());
     bool handled = frame->keyPress(keyEvent);
     if (!handled && !keyEvent.isKeyUp()) {
-        NodeImpl* start = frame->selection().start().node();
+        Node* start = frame->selection().start().node();
         if (start && start->isContentEditable()) {
             switch(keyEvent.WindowsKeyCode()) {
             case VK_BACK:
@@ -262,13 +262,13 @@ LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         webview->mouseDoubleClick(wParam, lParam);
         break;
     case WM_HSCROLL: {
-        ScrollView* view = webview->mainFrame()->impl()->view();
+        ScrollView* view = webview->mainFrame()->viewImpl();
         view->scrollBy(calculateScrollDelta(wParam, view->contentsX(), view->visibleWidth()), 0);
         webview->mainFrame()->impl()->sendScrollEvent();
         break;
     }
     case WM_VSCROLL: {
-        ScrollView* view = webview->mainFrame()->impl()->view();
+        ScrollView* view = webview->mainFrame()->viewImpl();
         view->scrollBy(0, calculateScrollDelta(wParam, view->contentsY(), view->visibleHeight()));
         webview->mainFrame()->impl()->sendScrollEvent();
         break;

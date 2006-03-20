@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#include "QString.h"
 #include "TransferJobClient.h"
 #include "FrameWin.h"
 
@@ -45,7 +44,7 @@ namespace WebKit {
     void loadFilePath(char*);
     void loadHTMLString(char* html, char* baseURL = 0);
 
-    virtual void openURL(const QString&);
+    virtual void openURL(const DeprecatedString&);
 
     void loadURL(const char*);
     
