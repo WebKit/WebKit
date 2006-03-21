@@ -1,5 +1,12 @@
 2006-03-21  Beth Dakin  <bdakin@apple.com>
 
+        Reducing the amount of time this test waits for the frame to fully
+        load per Justin's request.
+
+        * fast/events/focusingUnloadedFrame.html:
+
+2006-03-21  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Maciej
 
         Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7223
