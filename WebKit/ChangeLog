@@ -1,3 +1,33 @@
+2006-03-21  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher and Darin.
+
+        <rdar://problem/4427068> LMGetCurApRefNum, CloseConnection and GetDiskFragment deprecated, used in Netscape
+        plugin code
+
+        * Plugins/WebNetscapeDeprecatedFunctions.h: Added.
+        * Plugins/WebNetscapeDeprecatedFunctions.c: Added.
+        Added wrappers for deprecated CFM and LowMem functions.  These exist in a separate file so that we can set
+        -Wno-deprecated-declarations on this one file without ignoring other deprecated function usage elsewhere.
+        (WebGetDiskFragment):
+        (WebCloseConnection):
+        (WebLMGetCurApRefNum):
+        (WebLMSetCurApRefNum):
+
+        * Plugins/WebNetscapePluginPackage.h:
+        Don't include connID ivar in 64-bit, since CFM is not supported in 64-bit.
+        * Plugins/WebNetscapePluginPackage.m:
+        (+[WebNetscapePluginPackage initialize]):
+        Don't bother setting the resource refNum in 64-bit, because the API to get and set it does not exist.
+        A theoretical 64-bit plugin couldn't possibly rely this, since there is no API.
+        (-[WebNetscapePluginPackage unloadWithoutShutdown]):
+        No need to close the connID in 64-bit.
+        (-[WebNetscapePluginPackage load]):
+        Don't load CFM bundles in 64-bit, because CFM is not supported.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Added WebNetscapeDeprecatedFunctions.[hm].
+
 2006-03-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker.

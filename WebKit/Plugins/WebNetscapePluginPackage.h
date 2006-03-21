@@ -44,7 +44,10 @@ typedef enum {
     uint16 pluginSize;
     uint16 pluginVersion;
         
+#if !__LP64__
+    // CFM is not supported in 64-bit
     CFragConnectionID connID;
+#endif
     
     SInt16 resourceRef;
     

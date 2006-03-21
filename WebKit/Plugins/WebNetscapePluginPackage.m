@@ -32,6 +32,8 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 
+#import "WebNetscapeDeprecatedFunctions.h"
+
 #import <JavaScriptCore/npruntime_impl.h>
 
 typedef void (* FunctionPointer) (void);
@@ -48,21 +50,23 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 @implementation WebNetscapePluginPackage
 
+#if !__LP64__
 + (void)initialize
 {
     // The Shockwave plugin requires a valid file in CurApRefNum.
     // But it doesn't seem to matter what file it is.
     // If we're called inside a Cocoa application which won't have a
     // CurApRefNum, we set it to point to the system resource file.
-    if (LMGetCurApRefNum() == -1) {
+    if (WebLMGetCurApRefNum() == -1) {
         // To get the refNum for the system resource file, we have to do
         // UseResFile(kSystemResFile) and then look at CurResFile().
         short savedCurResFile = CurResFile();
         UseResFile(kSystemResFile);
-        LMSetCurApRefNum(CurResFile());
+        WebLMSetCurApRefNum(CurResFile());
         UseResFile(savedCurResFile);
     }
 }
+#endif
 
 - (SInt16)openResourceFile
 {
@@ -280,7 +284,10 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if (isBundle) {
         CFBundleUnloadExecutable(cfBundle);
     } else {
-        CloseConnection(&connID);
+#if !__LP64__
+        // CFM is not supported in 64-bit
+        WebCloseConnection(&connID);
+#endif
     }
 
     LOG(Plugins, "Plugin Unloaded");
@@ -308,7 +315,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NP_InitializeFuncPtr NP_Initialize = NULL;
     MainFuncPtr pluginMainFunc;
     NPError npErr;
-    OSErr err;
 
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
@@ -344,9 +350,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             }
         }
     } else {
+#if __LP64__
+        // CFM is not supported in 64-bit
+        goto abort;
+#else
         // single CFM file
         FSSpec spec;
         FSRef fref;
+        OSErr err;
         
         err = FSPathMakeRef((UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if (err != noErr) {
@@ -358,16 +369,16 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             ERROR("FSGetCatalogInfo failed. Error=%d", err);
             goto abort;
         }
-        err = GetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
+        err = WebGetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if (err != noErr) {
-            ERROR("GetDiskFragment failed. Error=%d", err);
+            ERROR("WebGetDiskFragment failed. Error=%d", err);
             goto abort;
         }
 #if !LOG_DISABLED
         CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
         CFAbsoluteTime duration = currentTime - start;
 #endif
-        LOG(Plugins, "%f GetDiskFragment took %f seconds", currentTime, duration);
+        LOG(Plugins, "%f WebGetDiskFragment took %f seconds", currentTime, duration);
         isLoaded = YES;
         
         pluginMainFunc = (MainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
@@ -378,6 +389,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         // NOTE: pluginMainFunc is freed after it is called. Be sure not to return before that.
         
         isCFM = TRUE;
+#endif /* __LP64__ */
     }
     
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
