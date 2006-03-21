@@ -39,7 +39,7 @@
 
 using namespace WebCore;
 
-SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const WebCore::QualifiedName& tagName, WebCore::Document* doc) : 
+SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document* doc) : 
 SVGFilterPrimitiveStandardAttributes(tagName, doc)
 {
     m_filterEffect = 0;
@@ -80,7 +80,7 @@ SVGAnimatedNumber* SVGFEDisplacementMapElement::scale() const
     return lazy_create<SVGAnimatedNumber>(m_scale, dummy);
 }
 
-KCChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(WebCore::String& key)
+KCChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {
     if(key == "R")
         return CS_RED;
@@ -94,9 +94,9 @@ KCChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(WebCore::Stri
     return (KCChannelSelectorType)-1;
 }
 
-void SVGFEDisplacementMapElement::parseMappedAttribute(WebCore::MappedAttribute* attr)
+void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    WebCore::String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::xChannelSelectorAttr)
         xChannelSelector()->setBaseVal(stringToChannel(value));
     else if (attr->name() == SVGNames::yChannelSelectorAttr)
@@ -119,8 +119,8 @@ KCanvasFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect() const
         return 0;
     m_filterEffect->setXChannelSelector((KCChannelSelectorType)(xChannelSelector()->baseVal()));
     m_filterEffect->setYChannelSelector((KCChannelSelectorType)(yChannelSelector()->baseVal()));
-    m_filterEffect->setIn(WebCore::String(in1()->baseVal()).deprecatedString());
-    m_filterEffect->setIn2(WebCore::String(in2()->baseVal()).deprecatedString());
+    m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
+    m_filterEffect->setIn2(String(in2()->baseVal()).deprecatedString());
     m_filterEffect->setScale(scale()->baseVal());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;

@@ -58,7 +58,7 @@ SVGAnimatedString *SVGAElement::target() const
 
 void SVGAElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const AtomicString& value(attr->value());
     if (attr->name() == SVGNames::targetAttr) {
         target()->setBaseVal(value.impl());
     } else {
@@ -94,7 +94,7 @@ void SVGAElement::defaultEventHandler(Event *evt)
             return;
         }
         url = parseURL(href()->baseVal()).deprecatedString();
-        utarget = String(getAttribute(SVGNames::targetAttr)).deprecatedString();
+        utarget = getAttribute(SVGNames::targetAttr).deprecatedString();
 
         if(e && e->button() == 1)
             utarget = "_blank";

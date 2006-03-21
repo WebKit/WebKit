@@ -71,7 +71,7 @@ static int propertyID(const String &s)
     int id = getPropertyID(buffer, len);
 #if SVG_SUPPORT
     if (id == 0)
-        id = getSVGCSSPropertyID(buffer, len);
+        id = SVG::getSVGCSSPropertyID(buffer, len);
 #endif
     return id;
 }

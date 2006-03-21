@@ -72,7 +72,7 @@ SVGAnimatedNumber *SVGFEOffsetElement::dy() const
 
 void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::dxAttr)
         dx()->setBaseVal(value.deprecatedString().toDouble());
     else if (attr->name() == SVGNames::dyAttr)

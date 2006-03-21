@@ -99,7 +99,7 @@ SVGAnimatedNumber *SVGFECompositeElement::k4() const
 
 void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::operatorAttr)
     {
         if(value == "over")

@@ -67,7 +67,7 @@ SVGAnimatedPreserveAspectRatio *SVGFEImageElement::preserveAspectRatio() const
 
 void SVGFEImageElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::preserveAspectRatioAttr)
         preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.impl());
     else

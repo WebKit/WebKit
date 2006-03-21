@@ -61,17 +61,17 @@ SVGAnimateTransformElement::~SVGAnimateTransformElement()
 
 void SVGAnimateTransformElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
     if (attr->name() == SVGNames::typeAttr) {
-        if(value == "translate")
+        const String& value = attr->value();
+        if (value == "translate")
             m_type = SVG_TRANSFORM_TRANSLATE;
-        else if(value == "scale")
+        else if (value == "scale")
             m_type = SVG_TRANSFORM_SCALE;
-        else if(value == "rotate")
+        else if (value == "rotate")
             m_type = SVG_TRANSFORM_ROTATE;
-        else if(value == "skewX")
+        else if (value == "skewX")
             m_type = SVG_TRANSFORM_SKEWX;
-        else if(value == "skewY")
+        else if (value == "skewY")
             m_type = SVG_TRANSFORM_SKEWY;
     } else {
         SVGAnimationElement::parseMappedAttribute(attr);

@@ -77,7 +77,7 @@ void SVGFEGaussianBlurElement::setStdDeviation(float stdDeviationX, float stdDev
 
 void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::stdDeviationAttr) {
         DeprecatedStringList numbers = DeprecatedStringList::split(' ', value.deprecatedString());
         stdDeviationX()->setBaseVal(numbers[0].toDouble());

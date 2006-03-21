@@ -197,7 +197,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
             aeDesc = [NSAppleEventDescriptor descriptorWithBoolean:jsValue->getBoolean()];
             break;
         case StringType:
-            aeDesc = [NSAppleEventDescriptor descriptorWithString:jsValue->getString().domString()];
+            aeDesc = [NSAppleEventDescriptor descriptorWithString:String(jsValue->getString())];
             break;
         case NumberType: {
             Float64 value = jsValue->getNumber();
@@ -1301,7 +1301,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!result || !result->isString())
         return 0;
     JSLock lock;
-    return result->getString().domString();
+    return String(result->getString());
 }
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string

@@ -30,12 +30,14 @@
 #include "RegularExpression.h"
 #include "TextEncoding.h"
 #include <kjs/dtoa.h>
+#include <kjs/identifier.h>
 #include <stdio.h>
 #include <stdarg.h>
 #ifdef WIN32
 #include "Windows.h"
 #endif
 
+using namespace KJS;
 using namespace WebCore;
 
 #define CHECK_FOR_HANDLE_LEAKS 0
@@ -2657,3 +2659,42 @@ DeprecatedCString DeprecatedString::utf8(int& length) const
     return result;
 }
 
+DeprecatedString::DeprecatedString(const Identifier& str)
+{
+    if (str.isNull()) {
+        internalData.deref();
+        dataHandle = makeSharedNullHandle();
+        dataHandle[0]->ref();
+    } else {
+        dataHandle = allocateHandle();
+        *dataHandle = &internalData;
+        internalData.initialize(reinterpret_cast<const QChar*>(str.data()), str.size());
+    }
+}
+
+DeprecatedString::DeprecatedString(const UString& str)
+{
+    if (str.isNull()) {
+        internalData.deref();
+        dataHandle = makeSharedNullHandle();
+        dataHandle[0]->ref();
+    } else {
+        dataHandle = allocateHandle();
+        *dataHandle = &internalData;
+        internalData.initialize(reinterpret_cast<const QChar*>(str.data()), str.size());
+    }
+}
+
+DeprecatedString::operator Identifier() const
+{
+    if (isNull())
+        return Identifier();
+    return Identifier(reinterpret_cast<const KJS::UChar*>(unicode()), length());
+}
+
+DeprecatedString::operator UString() const
+{
+    if (isNull())
+        return UString();
+    return UString(reinterpret_cast<const KJS::UChar*>(unicode()), length());
+}

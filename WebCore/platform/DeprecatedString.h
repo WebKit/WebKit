@@ -44,6 +44,11 @@ class NSString;
 #endif
 #endif
 
+namespace KJS {
+    class Identifier;
+    class UString;
+}
+
 class QChar {
 public:
 
@@ -401,11 +406,9 @@ private:
     KWQStringData &operator=(const KWQStringData &);
 };
 
-#define QSTRING_NULL DeprecatedString()
-
 class DeprecatedString {
 public:
-    static const char * const null; // not a DeprecatedString as in Qt (can't have static constructor), but close enough to be compatible in most cases
+    static const char * const null;
 
     DeprecatedString();
     DeprecatedString(QChar);
@@ -413,11 +416,16 @@ public:
     DeprecatedString(const QChar *, unsigned);
     DeprecatedString(const char *);
     DeprecatedString(const char *, int len);
+    DeprecatedString(const KJS::Identifier&);
+    DeprecatedString(const KJS::UString&);
     
     DeprecatedString(const DeprecatedString &);
     DeprecatedString &operator=(const DeprecatedString &);
 
     ~DeprecatedString();
+
+    operator KJS::Identifier() const;
+    operator KJS::UString() const;
 
     static DeprecatedString fromLatin1(const char *);
     static DeprecatedString fromLatin1(const char *, int len);

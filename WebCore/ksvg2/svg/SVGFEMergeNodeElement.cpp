@@ -46,7 +46,7 @@ SVGAnimatedString *SVGFEMergeNodeElement::in1() const
 
 void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::inAttr)
         in1()->setBaseVal(value.impl());
     else

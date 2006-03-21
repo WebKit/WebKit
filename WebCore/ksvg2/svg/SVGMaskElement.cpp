@@ -86,7 +86,7 @@ void SVGMaskElement::childrenChanged()
 
 void SVGMaskElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
         x()->baseVal()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)

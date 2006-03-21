@@ -56,7 +56,7 @@ SVGPointList *SVGPolyElement::animatedPoints() const
 void SVGPolyElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::pointsAttr)
-        parsePoints(String(attr->value()).deprecatedString());
+        parsePoints(attr->value().deprecatedString());
     else
     {
         if(SVGTests::parseMappedAttribute(attr)) return;

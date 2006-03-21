@@ -377,7 +377,7 @@ static bool getString(JSValue* result, DeprecatedString& string)
     UString ustring;
     if (!result->getString(ustring))
         return false;
-    string = ustring.deprecatedString();
+    string = ustring;
     return true;
 }
 
@@ -603,9 +603,9 @@ void Frame::begin(const KURL& url)
   d->m_bLoadingMainResource = true;
 
   KURL ref(url);
-  ref.setUser(QSTRING_NULL);
-  ref.setPass(QSTRING_NULL);
-  ref.setRef(QSTRING_NULL);
+  ref.setUser(DeprecatedString());
+  ref.setPass(DeprecatedString());
+  ref.setRef(DeprecatedString());
   d->m_referrer = ref.url();
   d->m_url = url;
   KURL baseurl;

@@ -54,6 +54,8 @@ protected:
     StringImpl() : l(0), s(0), _hash(0), _inTable(false) { }
 public:
     StringImpl(const DeprecatedString&);
+    StringImpl(const KJS::Identifier&);
+    StringImpl(const KJS::UString&);
     StringImpl(const QChar*, unsigned len);
     StringImpl(const char*);
     StringImpl(const char*, unsigned len);

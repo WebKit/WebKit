@@ -72,13 +72,13 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
             switch (args.size()) {
                 case 1:
                     if (args[0]->isString())
-                        context->setStrokeColor(args[0]->toString(exec).domString());
+                        context->setStrokeColor(args[0]->toString(exec));
                     else
                         context->setStrokeColor(args[0]->toNumber(exec));
                     break;
                 case 2:
                     if (args[0]->isString())
-                        context->setStrokeColor(args[0]->toString(exec).domString(), args[1]->toNumber(exec));
+                        context->setStrokeColor(args[0]->toString(exec), args[1]->toNumber(exec));
                     else
                         context->setStrokeColor(args[0]->toNumber(exec), args[1]->toNumber(exec));
                     break;
@@ -104,13 +104,13 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
             switch (args.size()) {
                 case 1:
                     if (args[0]->isString())
-                        context->setFillColor(args[0]->toString(exec).domString());
+                        context->setFillColor(args[0]->toString(exec));
                     else
                         context->setFillColor(args[0]->toNumber(exec));
                     break;
                 case 2:
                     if (args[0]->isString())
-                        context->setFillColor(args[0]->toString(exec).domString(), args[1]->toNumber(exec));
+                        context->setFillColor(args[0]->toString(exec), args[1]->toNumber(exec));
                     else
                         context->setFillColor(args[0]->toNumber(exec), args[1]->toNumber(exec));
                     break;
@@ -143,7 +143,7 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
                 case 4:
                     if (args[3]->isString())
                         context->setShadow(args[0]->toNumber(exec), args[1]->toNumber(exec),
-                            args[2]->toNumber(exec), args[3]->toString(exec).domString());
+                            args[2]->toNumber(exec), args[3]->toString(exec));
                     else
                         context->setShadow(args[0]->toNumber(exec), args[1]->toNumber(exec),
                             args[2]->toNumber(exec), args[3]->toNumber(exec));
@@ -151,7 +151,7 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
                 case 5:
                     if (args[3]->isString())
                         context->setShadow(args[0]->toNumber(exec), args[1]->toNumber(exec),
-                            args[2]->toNumber(exec), args[3]->toString(exec).domString(),
+                            args[2]->toNumber(exec), args[3]->toString(exec),
                             args[4]->toNumber(exec));
                     else
                         context->setShadow(args[0]->toNumber(exec), args[1]->toNumber(exec),
@@ -217,7 +217,7 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
                 args[3]->toNumber(exec), args[4]->toNumber(exec),
                 args[5]->toNumber(exec), args[6]->toNumber(exec),
                 args[7]->toNumber(exec), args[8]->toNumber(exec),
-                args[9]->toString(exec).domString());
+                args[9]->toString(exec));
             break;
         }
         case JSCanvasRenderingContext2DBase::CreatePattern:
@@ -228,7 +228,7 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
                 return throwError(exec, TypeError);
             return toJS(exec,
                 context->createPattern(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
-                args[1]->toString(exec).domString()).get());
+                args[1]->toString(exec)).get());
     }
 
     return jsUndefined();
@@ -254,7 +254,7 @@ static JSValue* toJS(ExecState* exec, CanvasStyle* style)
 static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState* exec, JSValue* value)
 {
     if (value->isString())
-        return new CanvasStyle(value->toString(exec).domString());
+        return new CanvasStyle(value->toString(exec));
     if (!value->isObject())
         return 0;
     JSObject* object = static_cast<JSObject*>(value);

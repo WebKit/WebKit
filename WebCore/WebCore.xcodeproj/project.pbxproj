@@ -247,7 +247,7 @@
 		93EEC20609C2877700C515D1 /* Notation.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F409C2877700C515D1 /* Notation.idl */; };
 		93EEC20709C2877700C515D1 /* ProcessingInstruction.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */; };
 		93EEC20809C2877700C515D1 /* Text.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F609C2877700C515D1 /* Text.idl */; };
-		93EEC20909C2877700C515D1 /* PlatformWheelEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F709C2877700C515D1 /* PlatformWheelEvent.idl */; };
+		93EEC20909C2877700C515D1 /* WheelEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F709C2877700C515D1 /* WheelEvent.idl */; };
 		93EEC26F09C3218000C515D1 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */; };
 		93EEC27109C3218800C515D1 /* CanvasStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC27009C3218800C515D1 /* CanvasStyle.cpp */; };
 		93F198CE08245E59001E9ABC /* kjs_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D1F502DE4369018635CA /* kjs_binding.h */; };
@@ -1408,7 +1408,7 @@
 		93EEC1F409C2877700C515D1 /* Notation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Notation.idl; sourceTree = "<group>"; };
 		93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProcessingInstruction.idl; sourceTree = "<group>"; };
 		93EEC1F609C2877700C515D1 /* Text.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Text.idl; sourceTree = "<group>"; };
-		93EEC1F709C2877700C515D1 /* PlatformWheelEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PlatformWheelEvent.idl; sourceTree = "<group>"; };
+		93EEC1F709C2877700C515D1 /* WheelEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WheelEvent.idl; sourceTree = "<group>"; };
 		93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPattern.cpp; sourceTree = "<group>"; };
 		93EEC27009C3218800C515D1 /* CanvasStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasStyle.cpp; sourceTree = "<group>"; };
 		93F19B1908245E59001E9ABC /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3834,7 +3834,6 @@
 				A81872160977D3C0005826D9 /* NodeList.cpp */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
 				93EEC1F409C2877700C515D1 /* Notation.idl */,
-				93EEC1F709C2877700C515D1 /* PlatformWheelEvent.idl */,
 				BE91FC8C06133666005E3790 /* Position.cpp */,
 				BE91FC8B06133666005E3790 /* Position.h */,
 				93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */,
@@ -3846,6 +3845,7 @@
 				6550B69B099DF0270090D781 /* Text.cpp */,
 				6550B69C099DF0270090D781 /* Text.h */,
 				93EEC1F609C2877700C515D1 /* Text.idl */,
+				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
 				F523D30902DE4476018635CA /* xml_tokenizer.cpp */,
 				F523D30A02DE4476018635CA /* xml_tokenizer.h */,
 			);
@@ -4635,7 +4635,7 @@
 				93EEC20609C2877700C515D1 /* Notation.idl in Resources */,
 				93EEC20709C2877700C515D1 /* ProcessingInstruction.idl in Resources */,
 				93EEC20809C2877700C515D1 /* Text.idl in Resources */,
-				93EEC20909C2877700C515D1 /* PlatformWheelEvent.idl in Resources */,
+				93EEC20909C2877700C515D1 /* WheelEvent.idl in Resources */,
 				930CAAD709C495B600229C04 /* CanvasRenderingContext2D.idl in Resources */,
 				930CAB8909C49EFA00229C04 /* CanvasGradient.idl in Resources */,
 				930CAB9009C49F1B00229C04 /* CanvasPattern.idl in Resources */,
@@ -5044,7 +5044,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ksvg2/scripts/make_names.pl --tags ksvg2/svg/svgtags.in --attrs ksvg2/svg/svgattrs.in \\\n    --namespace SVG --cppNamespace KSVG --namespaceURI \"http://www.w3.org/2000/svg\" \\\n    --factory --attrsNullNamespace --output \"$DERIVED_FILE_DIR\"\ntouch WebCore+SVG/SVGNamesWrapper.cpp\ntouch WebCore+SVG/SVGElementFactoryWrapper.cpp\n";
+			shellScript = "ksvg2/scripts/make_names.pl --tags ksvg2/svg/svgtags.in --attrs ksvg2/svg/svgattrs.in \\\n    --namespace SVG --cppNamespace WebCore --namespaceURI \"http://www.w3.org/2000/svg\" \\\n    --factory --attrsNullNamespace --output \"$DERIVED_FILE_DIR\"\ntouch WebCore+SVG/SVGNamesWrapper.cpp\ntouch WebCore+SVG/SVGElementFactoryWrapper.cpp\n";
 		};
 		A88AD52509524A34001DD196 /* XLinkNames */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5063,7 +5063,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ksvg2/scripts/make_names.pl --attrs ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace DOM --namespaceURI \"http://www.w3.org/1999/xlink\" --output \"$DERIVED_FILE_DIR\"\ntouch WebCore+SVG/XLinkNamesWrapper.cpp";
+			shellScript = "ksvg2/scripts/make_names.pl --attrs ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI \"http://www.w3.org/1999/xlink\" --output \"$DERIVED_FILE_DIR\"\ntouch WebCore+SVG/XLinkNamesWrapper.cpp";
 		};
 		A88AD52909524A4A001DD196 /* ksvgcssproperties.c/h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5081,7 +5081,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"First checking for duplicate CSSPropertyNames between html and SVG...\"\ncat css/CSSPropertyNames.in ksvg2/css/CSSPropertyNames.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'\nif [ $? -eq 0 ]; then\n\techo \"Duplicate property!\";\n\texit 1;\nfi\n\ncat ksvg2/css/CSSPropertyNames.in > \"$DERIVED_FILE_DIR/ksvgcssproperties.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/ksvg2/scripts/cssmakeprops\" -n KSVG -f ksvgcssproperties.in";
+			shellScript = "cat css/CSSPropertyNames.in ksvg2/css/CSSPropertyNames.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'\nif [ $? -eq 0 ]; then\n\techo \"Duplicate property!\";\n\texit 1;\nfi\n\ncat ksvg2/css/CSSPropertyNames.in > \"$DERIVED_FILE_DIR/ksvgcssproperties.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/ksvg2/scripts/cssmakeprops\" -n SVG -f ksvgcssproperties.in\n";
 		};
 		A88AD52B09524A52001DD196 /* ksvgcssvalues.c/h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5099,7 +5099,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"First checking for duplicate CSSValueKeywords between html and SVG...\"\ncat css/CSSValueKeywords.in ksvg2/css/CSSValueKeywords.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'\nif [ $? -eq 0 ]; then\n\techo \"Duplicate value!\";\n\texit 1;\nfi\n\n# Lower case all the values, as CSS values are case-insensitive\ncat ksvg2/css/CSSValueKeywords.in | perl -pe '$_ = lc;' > \"$DERIVED_FILE_DIR/ksvgcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/ksvg2/scripts/cssmakevalues\" -n KSVG -f ksvgcssvalues.in";
+			shellScript = "cat css/CSSValueKeywords.in ksvg2/css/CSSValueKeywords.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'\nif [ $? -eq 0 ]; then\n\techo \"Duplicate value!\";\n\texit 1;\nfi\n\n# Lower case all the values, as CSS values are case-insensitive\ncat ksvg2/css/CSSValueKeywords.in | perl -pe '$_ = lc;' > \"$DERIVED_FILE_DIR/ksvgcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/ksvg2/scripts/cssmakevalues\" -n SVG -f ksvgcssvalues.in\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

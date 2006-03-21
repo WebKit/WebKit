@@ -831,7 +831,7 @@ property:
         $$ = getPropertyID( str.lower().latin1(), str.length() );
 #if SVG_SUPPORT
       if ($$ == 0)
-          $$ = getSVGCSSPropertyID(str.lower().latin1(), str.length());
+          $$ = SVG::getSVGCSSPropertyID(str.lower().latin1(), str.length());
 #endif
     }
   ;
@@ -887,7 +887,7 @@ term:
       $$.id = getValueID( str.lower().latin1(), str.length() );
 #if SVG_SUPPORT
       if ($$.id == 0)
-          $$.id = getSVGCSSValueID(str.lower().latin1(), str.length());
+          $$.id = SVG::getSVGCSSValueID(str.lower().latin1(), str.length());
 #endif
       $$.unit = CSSPrimitiveValue::CSS_IDENT;
       $$.string = $1;

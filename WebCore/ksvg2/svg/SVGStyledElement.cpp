@@ -80,12 +80,12 @@ RenderObject *SVGStyledElement::createRenderer(RenderArena *arena, RenderStyle *
 
 void SVGStyledElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     // id and class are handled by StyledElement
     DeprecatedString qProp = attr->name().localName().deprecatedString();
-    int propId = WebCore::getPropertyID(qProp.ascii(), qProp.length());
+    int propId = getPropertyID(qProp.ascii(), qProp.length());
     if (propId == 0)
-        propId = getSVGCSSPropertyID(qProp.ascii(), qProp.length());
+        propId = SVG::getSVGCSSPropertyID(qProp.ascii(), qProp.length());
     if(propId > 0) {
         addCSSProperty(attr, propId, value);
         setChanged();

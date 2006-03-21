@@ -184,14 +184,14 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject* th
   case JSXMLHttpRequest::GetResponseHeader:
     if (args.size() != 1)
       return jsUndefined();
-    return jsStringOrUndefined(request->m_impl->getResponseHeader(args[0]->toString(exec).domString()));
+    return jsStringOrUndefined(request->m_impl->getResponseHeader(args[0]->toString(exec)));
   case JSXMLHttpRequest::Open:
     {
       if (args.size() < 2 || args.size() > 5)
         return jsUndefined();
     
-      String method = args[0]->toString(exec).domString();
-      KURL url = KURL(Window::retrieveActive(exec)->frame()->document()->completeURL(args[1]->toString(exec).deprecatedString()));
+      String method = args[0]->toString(exec);
+      KURL url = KURL(Window::retrieveActive(exec)->frame()->document()->completeURL(DeprecatedString(args[1]->toString(exec))));
 
       bool async = true;
       if (args.size() >= 3)
@@ -199,11 +199,11 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject* th
     
       String user;
       if (args.size() >= 4)
-        user = args[3]->toString(exec).domString();
+        user = args[3]->toString(exec);
       
       String password;
       if (args.size() >= 5)
-        password = args[4]->toString(exec).domString();
+        password = args[4]->toString(exec);
 
       request->m_impl->open(method, url, async, user, password);
 
@@ -225,7 +225,7 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject* th
           if (exec->hadException())
             exec->clearException();
           else
-            body = args[0]->toString(exec).domString();
+            body = args[0]->toString(exec);
         }
       }
 
@@ -236,12 +236,12 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject* th
   case JSXMLHttpRequest::SetRequestHeader:
     if (args.size() != 2)
       return jsUndefined();
-    request->m_impl->setRequestHeader(args[0]->toString(exec).domString(), args[1]->toString(exec).domString());
+    request->m_impl->setRequestHeader(args[0]->toString(exec), args[1]->toString(exec));
     return jsUndefined();
   case JSXMLHttpRequest::OverrideMIMEType:
     if (args.size() != 1)
       return jsUndefined();
-    request->m_impl->overrideMIMEType(args[0]->toString(exec).domString());
+    request->m_impl->overrideMIMEType(args[0]->toString(exec));
     return jsUndefined();
   }
 

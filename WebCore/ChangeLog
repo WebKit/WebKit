@@ -1,3 +1,256 @@
+2006-03-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7867
+          get rid of macro hacks for DOM, KDOM, KSVG, khtml, DOMString, QString
+
+        * config.h: Remove the defines for DOM, KDOM, KSVG, khtml, DOMString, QString,
+        and qstring().
+
+        * WebCore.xcodeproj/project.pbxproj: Pass in WebCore instead of KSVG as the
+        namespace for SVG names.
+        * ksvg2/scripts/make_names.pl: Made a couple changes to trick the SVG names into
+        recompiling, since they are in a different namespace now.
+
+        * ForwardingHeaders/kjs/identifier.h: Added.
+
+        * dom/PlatformWheelEvent.idl: Removed.
+        * dom/WheelEvent.idl: Added. This file was renamed by accident.
+
+        * bindings/js/JSDOMCore.cpp:
+        * bindings/js/JSDOMEvents.cpp:
+        * bindings/js/JSDOMHTML.cpp:
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/Entity.idl:
+        * dom/MutationEvent.idl:
+        * dom/Notation.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/Text.idl:
+        * html/CanvasGradient.idl:
+        * html/CanvasPattern.idl:
+        * html/CanvasRenderingContext2D.idl:
+        Touched, to get CodeGeneratorJS.pm changes to take effect.
+ 
+        * css/CSSGrammar.y:
+        * css/css_valueimpl.cpp: (WebCore::propertyID):
+        Changed calls to get CSS property values to use an explicit SVG:: namespace,
+        to match what the script writes out.
+
+        * khtml/ecma/kjs_binding.h: Added forward declaration of WebCore::String.
+
+        * ksvg2/scripts/cssmakeget rid of macro hacks for DOM, KDOM, KSVG, khtml, DOMString, QString
+          props: Made this compile with warnings and strict turned on.
+        Really just a trick to get properties to recompile, which turned out to be unneeded.
+        * ksvg2/scripts/cssmakevalues: Ditto.
+
+        * ksvg2/svg/SVGAElement.cpp:
+        (SVGAElement::parseMappedAttribute):
+        (SVGAElement::defaultEventHandler):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (SVGAnimateTransformElement::parseMappedAttribute):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (SVGAnimationElement::parseMappedAttribute):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::parseMappedAttribute):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (SVGComponentTransferFunctionElement::parseMappedAttribute):
+        * ksvg2/svg/SVGExternalResourcesRequired.cpp:
+        (SVGExternalResourcesRequired::parseMappedAttribute):
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        (SVGFEBlendElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (SVGFEColorMatrixElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        (SVGFEComponentTransferElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        (SVGFECompositeElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        (SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (SVGFEDisplacementMapElement::stringToChannel):
+        (SVGFEDisplacementMapElement::parseMappedAttribute):
+        (SVGFEDisplacementMapElement::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElement.h:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (SVGFEFloodElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        (SVGFEGaussianBlurElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        (SVGFEImageElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFELightElement.cpp:
+        (SVGFELightElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEMergeNodeElement.cpp:
+        (SVGFEMergeNodeElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        (SVGFEOffsetElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        (SVGFESpecularLightingElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFETileElement.cpp:
+        (SVGFETileElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        (SVGFETurbulenceElement::parseMappedAttribute):
+        * ksvg2/svg/SVGFilterElement.cpp:
+        (SVGFilterElement::parseMappedAttribute):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::parseMappedAttribute):
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (SVGPolyElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (SVGStopElement::parseMappedAttribute):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTests.cpp:
+        (WebCore::SVGTests::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (SVGTextContentElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        (SVGTextPositioningElement::parseMappedAttribute):
+        * ksvg2/svg/SVGViewElement.cpp:
+        (SVGViewElement::parseMappedAttribute):
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+        (SVGZoomAndPan::parseMappedAttribute):
+        Changed code that converts an AtomicString to a String to do it in a
+        more-efficient fashion that works even with all the new conversions.
+
+        * page/Frame.cpp:
+        (WebCore::getString): Removed unneeded .deprecatedString().
+        (WebCore::Frame::begin): Removed the only use of QSTRING_NULL.
+
+        * platform/AtomicString.h: Added conversion to and from KJS::Identifier
+        and KJS::UString.
+        * platform/AtomicString.cpp:
+        (WebCore::AtomicString::add): Added overloads for Identifier and UString.
+        (WebCore::AtomicString::operator Identifier): Added.
+        (WebCore::AtomicString::operator UString): Added.
+
+        * platform/DeprecatedString.h: Added conversion to and from KJS::Identifier
+        and KJS::UString.
+        * platform/DeprecatedString.cpp:
+        (DeprecatedString::DeprecatedString): Added overloads for Identifier and UString.
+        (DeprecatedString::operator Identifier): Added.
+        (DeprecatedString::operator UString): Added.
+
+        * platform/PlatformString.h: Added conversion to and from KJS::Identifier
+        and KJS::UString.
+        * platform/String.cpp:
+        (WebCore::String::String): Added overloads for Identifier and UString.
+        (WebCore::String::operator Identifier): Added.
+        (WebCore::String::operator UString): Added.
+
+        * platform/StringImpl.h: Added constructors that take KJS::Identifier
+        and KJS::UString
+        * platform/StringImpl.cpp:
+        (WebCore::getWordBreakIterator): Changed a use of UChar to say ::UChar
+        instead because of ambiguity with KJS::UChar.
+        (WebCore::StringImpl::StringImpl): Added overloads for Identifier and String.
+
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp:
+        (WebCore::JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction):
+        (WebCore::toHTMLCanvasStyle):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (aeDescFromJSValue):
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::toString):
+        * khtml/ecma/JSDOMParser.cpp:
+        (KJS::DOMParserProtoFunc::callAsFunction):
+        * khtml/ecma/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestProtoFunc::callAsFunction):
+        * khtml/ecma/JSXSLTProcessor.cpp:
+        (KJS::XSLTProcessorProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::valueToStringWithNullCheck):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::cssPropertyName):
+        (KJS::DOMCSSStyleDeclaration::put):
+        (KJS::DOMCSSStyleDeclarationProtoFunc::callAsFunction):
+        (KJS::DOMStyleSheetList::nameGetter):
+        (KJS::DOMStyleSheetList::getOwnPropertySlot):
+        (KJS::DOMMediaList::put):
+        (KJS::KJS::DOMMediaListProtoFunc::callAsFunction):
+        (KJS::DOMCSSStyleSheetProtoFunc::callAsFunction):
+        (KJS::DOMCSSRule::putValueProperty):
+        (KJS::DOMCSSRuleFunc::callAsFunction):
+        (KJS::DOMCSSValue::put):
+        (KJS::DOMCSSPrimitiveValueProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMNode::toString):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        (KJS::DOMEventTargetNodeProtoFunc::callAsFunction):
+        (KJS::DOMNodeList::nameGetter):
+        (KJS::DOMNodeList::getOwnPropertySlot):
+        (KJS::DOMDocument::putValueProperty):
+        (KJS::DOMDocumentProtoFunc::callAsFunction):
+        (KJS::DOMElement::attributeGetter):
+        (KJS::DOMElement::getOwnPropertySlot):
+        (KJS::DOMNamedNodeMap::nameGetter):
+        (KJS::DOMNamedNodeMap::getOwnPropertySlot):
+        (KJS::DOMNamedNodeMapProtoFunc::callAsFunction):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::DOMEvent::getValueProperty):
+        (KJS::DOMEventProtoFunc::callAsFunction):
+        (KJS::DOMUIEventProtoFunc::callAsFunction):
+        (KJS::DOMMouseEventProtoFunc::callAsFunction):
+        (KJS::DOMKeyboardEventProtoFunc::callAsFunction):
+        (KJS::Clipboard::putValueProperty):
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocFunction::callAsFunction):
+        (KJS::JSHTMLDocument::namedItemGetter):
+        (KJS::JSHTMLDocument::getOwnPropertySlot):
+        (KJS::JSHTMLDocument::putValueProperty):
+        (KJS::JSHTMLElement::framesetNameGetter):
+        (KJS::JSHTMLElement::getOwnPropertySlot):
+        (KJS::HTMLElementFunction::callAsFunction):
+        (KJS::JSHTMLElement::putValueProperty):
+        (KJS::JSHTMLCollection::callAsFunction):
+        (KJS::JSHTMLCollection::getNamedItems):
+        (KJS::HTMLCollectionProtoFunc::callAsFunction):
+        (KJS::OptionConstructorImp::construct):
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Plugins::nameGetter):
+        (KJS::Plugins::getOwnPropertySlot):
+        (KJS::MimeTypes::nameGetter):
+        (KJS::MimeTypes::getOwnPropertySlot):
+        (KJS::Plugin::nameGetter):
+        (KJS::Plugin::getOwnPropertySlot):
+        * khtml/ecma/kjs_proxy.cpp:
+        (WebCore::KJSProxy::evaluate):
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRangeProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractViewProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::parseModalDialogFeatures):
+        (KJS::showModalDialog):
+        (KJS::Window::childFrameGetter):
+        (KJS::Window::namedFrameGetter):
+        (KJS::Window::namedItemGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::put):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::ScheduledAction::execute):
+        (KJS::Window::installTimeout):
+        (KJS::FrameArray::nameGetter):
+        (KJS::FrameArray::getOwnPropertySlot):
+        (KJS::Location::put):
+        (KJS::LocationFunc::callAsFunction):
+        (KJS::SelectionFunc::callAsFunction):
+        Removed explicit calls to domString(), sometimes replacing with explicit calls to the
+        String() constructor. Other similar changes for AtomicString and DeprecatedString use.
+
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

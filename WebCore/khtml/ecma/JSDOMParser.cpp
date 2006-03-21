@@ -83,8 +83,8 @@ JSValue *DOMParserProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, 
         if (args.size() != 2)
             return jsUndefined();
 
-      DeprecatedString str = args[0]->toString(exec).deprecatedString();
-      DeprecatedString contentType = args[1]->toString(exec).deprecatedString().stripWhiteSpace();
+      DeprecatedString str = args[0]->toString(exec);
+      DeprecatedString contentType = DeprecatedString(args[1]->toString(exec)).stripWhiteSpace();
 
       if (DOMImplementation::isXMLMIMEType(contentType)) {
         RefPtr<Document> doc = parser->doc->implementation()->createDocument();

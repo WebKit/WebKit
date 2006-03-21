@@ -27,9 +27,12 @@
 #endif
 
 #include "AtomicString.h"
-#include "StaticConstructors.h"
 
+#include "StaticConstructors.h"
+#include <kjs/identifier.h>
 #include <kxmlcore/HashSet.h>
+
+using namespace KJS;
 
 namespace WebCore {
    
@@ -157,6 +160,25 @@ void AtomicString::remove(StringImpl* r)
     stringTable->remove(r);
 }
 
+StringImpl* AtomicString::add(const KJS::Identifier& str)
+{
+    return add(reinterpret_cast<const QChar*>(str.data()), str.size());
+}
+
+StringImpl* AtomicString::add(const KJS::UString& str)
+{
+    return add(reinterpret_cast<const QChar*>(str.data()), str.size());
+}
+
+AtomicString::operator Identifier() const
+{
+    return domString();
+}
+
+AtomicString::operator UString() const
+{
+    return domString();
+}
 
 DEFINE_GLOBAL(AtomicString, nullAtom)
 DEFINE_GLOBAL(AtomicString, emptyAtom, "")

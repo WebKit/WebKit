@@ -131,7 +131,7 @@ void SVGFilterElement::setFilterRes(unsigned long, unsigned long) const
 
 void SVGFilterElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::filterUnitsAttr)
     {
         if(value == "userSpaceOnUse")

@@ -34,6 +34,7 @@ namespace WebCore {
     class Event;
     class Frame;
     class Node;
+    class String;
 
     typedef int ExceptionCode;
 }

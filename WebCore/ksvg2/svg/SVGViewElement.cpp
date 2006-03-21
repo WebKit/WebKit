@@ -52,7 +52,7 @@ SVGStringList *SVGViewElement::viewTarget() const
 
 void SVGViewElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::viewTargetAttr) {
         viewTarget()->reset(value.deprecatedString());
     } else {

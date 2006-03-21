@@ -23,6 +23,10 @@
 #include "config.h"
 #include "PlatformString.h"
 
+#include <kjs/identifier.h>
+
+using namespace KJS;
+
 namespace WebCore {
 
 String::String(const QChar* str, unsigned len)
@@ -192,8 +196,6 @@ String String::copy() const
     return m_impl->copy();
 }
 
-// ------------------------------------------------------------------------
-
 bool String::isEmpty() const
 {
     return (!m_impl || m_impl->l == 0);
@@ -216,8 +218,6 @@ const char *String::ascii() const
 }
 #endif
 
-//-----------------------------------------------------------------------------
-
 bool operator==(const String& a, const DeprecatedString& b)
 {
     unsigned l = a.length();
@@ -226,6 +226,42 @@ bool operator==(const String& a, const DeprecatedString& b)
     if (!memcmp(a.unicode(), b.unicode(), l * sizeof(QChar)))
         return true;
     return false;
+}
+
+String::String(const Identifier& str)
+{
+    if (str.isNull())
+        return;
+    
+    if (str.isEmpty())
+        m_impl = StringImpl::empty();
+    else 
+        m_impl = new StringImpl(reinterpret_cast<const QChar*>(str.data()), str.size());
+}
+
+String::String(const UString& str)
+{
+    if (str.isNull())
+        return;
+    
+    if (str.isEmpty())
+        m_impl = StringImpl::empty();
+    else 
+        m_impl = new StringImpl(reinterpret_cast<const QChar*>(str.data()), str.size());
+}
+
+String::operator Identifier() const
+{
+    if (!m_impl)
+        return Identifier();
+    return Identifier(reinterpret_cast<const KJS::UChar*>(m_impl->unicode()), m_impl->length());
+}
+
+String::operator UString() const
+{
+    if (!m_impl)
+        return UString();
+    return UString(reinterpret_cast<const KJS::UChar*>(m_impl->unicode()), m_impl->length());
 }
 
 }

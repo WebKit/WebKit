@@ -42,7 +42,7 @@ namespace KJS {
 
 static String cssPropertyName(const Identifier &p, bool *hadPixelOrPosPrefix = 0)
 {
-    DeprecatedString prop = p.deprecatedString();
+    DeprecatedString prop = p;
 
     int i = prop.length();
     while (--i) {
@@ -182,17 +182,17 @@ JSValue *DOMCSSStyleDeclaration::getValueProperty(ExecState *exec, int token)
 void DOMCSSStyleDeclaration::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr )
 {
 #ifdef KJS_VERBOSE
-  kdDebug(6070) << "DOMCSSStyleDeclaration::put " << propertyName.deprecatedString() << endl;
+  kdDebug(6070) << "DOMCSSStyleDeclaration::put " << propertyName << endl;
 #endif
   DOMExceptionTranslator exception(exec);
   CSSStyleDeclaration &styleDecl = *m_impl;
   if (propertyName == "cssText") {
-    styleDecl.setCssText(value->toString(exec).domString(), exception);
+    styleDecl.setCssText(value->toString(exec), exception);
   } else {
     if (isCSSPropertyName(propertyName)) {
       bool pixelOrPos;
       String prop = cssPropertyName(propertyName, &pixelOrPos);
-      String propvalue = value->toString(exec).domString();
+      String propvalue = value->toString(exec);
       if (pixelOrPos)
 	propvalue += "px";
 #ifdef KJS_VERBOSE
@@ -223,7 +223,7 @@ JSValue *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, JSObje
   DOMExceptionTranslator exception(exec);
   CSSStyleDeclaration &styleDecl = *static_cast<DOMCSSStyleDeclaration *>(thisObj)->impl();
   UString str = args[0]->toString(exec);
-  WebCore::String s = str.domString();
+  WebCore::String s = str;
 
   switch (id) {
     case DOMCSSStyleDeclaration::GetPropertyValue:
@@ -239,7 +239,7 @@ JSValue *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, JSObje
     case DOMCSSStyleDeclaration::IsPropertyImplicit:
       return jsBoolean(styleDecl.isPropertyImplicit(s));
     case DOMCSSStyleDeclaration::SetProperty:
-      styleDecl.setProperty(s, args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception);
+      styleDecl.setProperty(s, args[1]->toString(exec), args[2]->toString(exec), exception);
       return jsUndefined();
     case DOMCSSStyleDeclaration::Item:
       return jsStringOrNull(styleDecl.item(args[0]->toInt32(exec)));
@@ -364,7 +364,7 @@ JSValue *DOMStyleSheetList::indexGetter(ExecState *exec, JSObject *originalObjec
 JSValue *DOMStyleSheetList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMStyleSheetList *thisObj = static_cast<DOMStyleSheetList *>(slot.slotBase());
-  Element *element = thisObj->m_doc->getElementById(propertyName.domString().impl());
+  Element *element = thisObj->m_doc->getElementById(propertyName);
   return toJS(exec, static_cast<HTMLStyleElement *>(element)->sheet());
 }
 
@@ -398,7 +398,7 @@ bool DOMStyleSheetList::getOwnPropertySlot(ExecState *exec, const Identifier& pr
   // ### Bad implementation because returns a single element (are IDs always unique?)
   // and doesn't look for name attribute (see implementation above).
   // But unicity of stylesheet ids is good practice anyway ;)
-  Element *element = m_doc->getElementById(propertyName.domString().impl());
+  Element *element = m_doc->getElementById(propertyName);
   if (element && element->hasTagName(styleTag)) {
     slot.setCustom(this, nameGetter);
     return true;
@@ -504,7 +504,7 @@ void DOMMediaList::put(ExecState *exec, const Identifier &propertyName, JSValue 
 {
   MediaList &mediaList = *m_impl;
   if (propertyName == "mediaText")
-    mediaList.setMediaText(value->toString(exec).domString());
+    mediaList.setMediaText(value->toString(exec));
   else
     DOMObject::put(exec, propertyName, value, attr);
 }
@@ -523,10 +523,10 @@ JSValue *KJS::DOMMediaListProtoFunc::callAsFunction(ExecState *exec, JSObject *t
     case DOMMediaList::Item:
       return jsStringOrNull(mediaList.item(args[0]->toInt32(exec)));
     case DOMMediaList::DeleteMedium:
-      mediaList.deleteMedium(args[0]->toString(exec).domString());
+      mediaList.deleteMedium(args[0]->toString(exec));
       return jsUndefined();
     case DOMMediaList::AppendMedium:
-      mediaList.appendMedium(args[0]->toString(exec).domString());
+      mediaList.appendMedium(args[0]->toString(exec));
       return jsUndefined();
     default:
       return jsUndefined();
@@ -593,13 +593,13 @@ JSValue *DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState *exec, JSObject *th
   CSSStyleSheet &styleSheet = *static_cast<CSSStyleSheet *>(static_cast<DOMCSSStyleSheet *>(thisObj)->impl());
   switch (id) {
     case DOMCSSStyleSheet::InsertRule:
-      return jsNumber(styleSheet.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec), exception));
+      return jsNumber(styleSheet.insertRule(args[0]->toString(exec), args[1]->toInt32(exec), exception));
     case DOMCSSStyleSheet::DeleteRule:
       styleSheet.deleteRule(args[0]->toInt32(exec), exception);
       return jsUndefined();
     case DOMCSSStyleSheet::AddRule: {
       int index = args.size() >= 3 ? args[2]->toInt32(exec) : -1;
-      styleSheet.addRule(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), index, exception);
+      styleSheet.addRule(args[0]->toString(exec), args[1]->toString(exec), index, exception);
       // As per Microsoft documentation, always return -1.
       return jsNumber(-1);
     }
@@ -848,17 +848,17 @@ void DOMCSSRule::putValueProperty(ExecState *exec, int token, JSValue *value, in
   switch (token) {
   // for STYLE_RULE:
   case Style_SelectorText:
-    static_cast<CSSStyleRule *>(m_impl.get())->setSelectorText(value->toString(exec).domString());
+    static_cast<CSSStyleRule *>(m_impl.get())->setSelectorText(value->toString(exec));
     return;
 
   // for PAGE_RULE:
   case Page_SelectorText:
-    static_cast<CSSPageRule *>(m_impl.get())->setSelectorText(value->toString(exec).domString());
+    static_cast<CSSPageRule *>(m_impl.get())->setSelectorText(value->toString(exec));
     return;
 
   // for CHARSET_RULE:
   case Charset_Encoding:
-    static_cast<CSSCharsetRule *>(m_impl.get())->setEncoding(value->toString(exec).domString());
+    static_cast<CSSCharsetRule *>(m_impl.get())->setEncoding(value->toString(exec));
     return;
   }
 }
@@ -872,7 +872,7 @@ JSValue *DOMCSSRuleFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
   if (cssRule.type() == WebCore::MEDIA_RULE) {
     CSSMediaRule &rule = static_cast<CSSMediaRule &>(cssRule);
     if (id == DOMCSSRule::Media_InsertRule)
-      return jsNumber(rule.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec)));
+      return jsNumber(rule.insertRule(args[0]->toString(exec), args[1]->toInt32(exec)));
     else if (id == DOMCSSRule::Media_DeleteRule)
       rule.deleteRule(args[0]->toInt32(exec));
   }
@@ -969,7 +969,7 @@ void DOMCSSValue::put(ExecState *exec, const Identifier &propertyName, JSValue *
 {
   CSSValue &cssValue = *m_impl;
   if (propertyName == "cssText")
-    cssValue.setCssText(value->toString(exec).domString());
+    cssValue.setCssText(value->toString(exec));
   else
     DOMObject::put(exec, propertyName, value, attr);
 }
@@ -1081,7 +1081,7 @@ JSValue *DOMCSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, JSObject
     case DOMCSSPrimitiveValue::GetFloatValue:
       return jsNumber(val.getFloatValue(args[0]->toInt32(exec)));
     case DOMCSSPrimitiveValue::SetStringValue:
-      val.setStringValue(args[0]->toInt32(exec), args[1]->toString(exec).domString(), exception);
+      val.setStringValue(args[0]->toInt32(exec), args[1]->toString(exec), exception);
       return jsUndefined();
     case DOMCSSPrimitiveValue::GetStringValue:
       return jsStringOrNull(val.getStringValue());

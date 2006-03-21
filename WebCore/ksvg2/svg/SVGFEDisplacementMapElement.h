@@ -17,8 +17,6 @@
  Boston, MA 02111-1307, USA.
  */
 
-
-
 #ifndef KSVG_SVGFEDisplacementMapElementImpl_H
 #define KSVG_SVGFEDisplacementMapElementImpl_H
 #if SVG_SUPPORT
@@ -26,16 +24,14 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "KCanvasFilters.h"
 
-namespace WebCore
-{
+namespace WebCore {
     class SVGAnimatedNumber;
     class SVGAnimatedString;
     class SVGAnimatedEnumeration;
     
-    class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes
-    {
-public:
-        SVGFEDisplacementMapElement(const WebCore::QualifiedName& tagName, WebCore::Document *doc);
+    class SVGFEDisplacementMapElement : public SVGFilterPrimitiveStandardAttributes {
+    public:
+        SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
         virtual ~SVGFEDisplacementMapElement();
         
         // 'SVGFEDisplacementMapElement' functions
@@ -45,23 +41,22 @@ public:
         SVGAnimatedEnumeration* yChannelSelector() const;
         SVGAnimatedNumber* scale() const;
         
-        static KCChannelSelectorType stringToChannel(WebCore::String &key);
+        static KCChannelSelectorType stringToChannel(const String&);
         
         // Derived from: 'Element'
-        virtual void parseMappedAttribute(WebCore::MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
         
         virtual KCanvasFEDisplacementMap* filterEffect() const;
         
-private:
+    private:
         mutable RefPtr<SVGAnimatedString> m_in1;
         mutable RefPtr<SVGAnimatedString> m_in2;
         mutable RefPtr<SVGAnimatedEnumeration> m_xChannelSelector;
         mutable RefPtr<SVGAnimatedEnumeration> m_yChannelSelector;
         mutable RefPtr<SVGAnimatedNumber> m_scale;
-        mutable KCanvasFEDisplacementMap *m_filterEffect;
+        mutable KCanvasFEDisplacementMap* m_filterEffect;
     };
-};
+}
 
 #endif // SVG_SUPPORT
 #endif // KSVG_SVGFEDisplacementMapElementImpl_H
-

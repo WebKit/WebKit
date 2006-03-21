@@ -400,7 +400,7 @@ print <<END
 ${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
     if (!doc)
-        return 0; // Don't allow elements to ever be made without having a doc.
+        return 0; // Do not allow elements to ever be made without having a doc.
 
     createFunctionMapIfNecessary();
     ConstructorFunc func = gFunctionMap->get(qName.localName().impl());
@@ -456,5 +456,3 @@ namespace ${cppNamespace}
 
 	restoreSTDOUT();
 }
-
-

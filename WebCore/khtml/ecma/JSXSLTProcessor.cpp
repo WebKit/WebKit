@@ -113,9 +113,9 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
         {
             if (args[1]->isUndefinedOrNull() || args[2]->isUndefinedOrNull())
                 return jsUndefined(); // Throw exception?
-            String namespaceURI = args[0]->toString(exec).domString();
-            String localName = args[1]->toString(exec).domString();
-            String value = args[2]->toString(exec).domString();
+            String namespaceURI = args[0]->toString(exec);
+            String localName = args[1]->toString(exec);
+            String value = args[2]->toString(exec);
             processor.setParameter(namespaceURI.impl(), localName.impl(), value.impl());
             return jsUndefined();
         }
@@ -123,8 +123,8 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
         {
             if (args[1]->isUndefinedOrNull())
                 return jsUndefined();
-            String namespaceURI = args[0]->toString(exec).domString();
-            String localName = args[1]->toString(exec).domString();
+            String namespaceURI = args[0]->toString(exec);
+            String localName = args[1]->toString(exec);
             StringImpl *value = processor.getParameter(namespaceURI.impl(), localName.impl()).get();
             if (value)
                 return jsString(UString(String(value)));
@@ -134,8 +134,8 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
         {
             if (args[1]->isUndefinedOrNull())
                 return jsUndefined();
-            String namespaceURI = args[0]->toString(exec).domString();
-            String localName = args[1]->toString(exec).domString();
+            String namespaceURI = args[0]->toString(exec);
+            String localName = args[1]->toString(exec);
             processor.removeParameter(namespaceURI.impl(), localName.impl());
             return jsUndefined();
         }

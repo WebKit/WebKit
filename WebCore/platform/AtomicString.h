@@ -37,6 +37,8 @@ public:
     AtomicString(const QChar* s, int length) : m_string(add(s, length)) { }
     AtomicString(const unsigned short* s, int length) : m_string(add((QChar*)s, length)) { }
     AtomicString(const DeprecatedString& s) : m_string(add(s.unicode(), s.length())) { }
+    AtomicString(const KJS::UString& s) : m_string(add(s)) { }
+    AtomicString(const KJS::Identifier& s) : m_string(add(s)) { }
     AtomicString(StringImpl* imp) : m_string(add(imp)) { }
     AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
     explicit AtomicString(const String& s) : m_string(add(s.impl())) { }
@@ -45,6 +47,9 @@ public:
     const String& domString() const { return m_string; };
     DeprecatedString deprecatedString() const { return m_string.deprecatedString(); };
     
+    operator KJS::Identifier() const;
+    operator KJS::UString() const;
+
     AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl *>(m_string.impl()); }
     
     const QChar* unicode() const { return m_string.unicode(); }
@@ -86,6 +91,8 @@ private:
     static StringImpl* add(const char*);
     static StringImpl* add(const QChar*, int length);
     static StringImpl* add(StringImpl*);
+    static StringImpl* add(const KJS::UString&);
+    static StringImpl* add(const KJS::Identifier&);
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }

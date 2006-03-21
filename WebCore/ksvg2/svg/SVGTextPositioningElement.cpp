@@ -69,7 +69,7 @@ SVGAnimatedNumberList *SVGTextPositioningElement::rotate() const
 
 void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     
     if (attr->name() == SVGNames::xAttr)
         x()->baseVal()->parse(value.deprecatedString(), this, LM_WIDTH);

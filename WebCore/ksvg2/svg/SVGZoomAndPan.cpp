@@ -52,7 +52,7 @@ void SVGZoomAndPan::setZoomAndPan(unsigned short zoomAndPan)
 
 bool SVGZoomAndPan::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::zoomAndPanAttr) {
         if(value == "disable")
             setZoomAndPan(SVG_ZOOMANDPAN_DISABLE);

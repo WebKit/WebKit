@@ -77,7 +77,7 @@ SVGAnimatedEnumeration *SVGGradientElement::spreadMethod() const
 
 void SVGGradientElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::gradientUnitsAttr) {
         if(value == "userSpaceOnUse")
             gradientUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);

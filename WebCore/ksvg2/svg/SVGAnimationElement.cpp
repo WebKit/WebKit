@@ -128,11 +128,11 @@ double SVGAnimationElement::getSimpleDuration() const
 
 void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name().matches(XLinkNames::hrefAttr))
-            m_href = value.deprecatedString();
+        m_href = value.deprecatedString();
     else if (attr->name() == SVGNames::attributeNameAttr)
-            m_attributeName = value.deprecatedString();
+        m_attributeName = value.deprecatedString();
     else if (attr->name() == SVGNames::attributeTypeAttr)
     {
         if (value == "CSS")

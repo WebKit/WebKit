@@ -771,12 +771,12 @@ sub JSValueToNative
   } elsif ($type eq "float") {
     return "$value->toNumber(exec)";
   } elsif ($type eq "AtomicString") {
-    return "AtomicString($value->toString(exec).domString())";
+    return "$value->toString(exec)";
   } elsif ($type eq "DOMString") {
     if ($signature->extendedAttributes->{"ConvertNullToNullString"}) {
       return "valueToStringWithNullCheck(exec, $value)";
     } else {
-      return "$value->toString(exec).domString()";
+      return "$value->toString(exec)";
     }
   } elsif ($type eq "views::AbstractView") {
     $implIncludes{"kjs_views.h"} = 1;

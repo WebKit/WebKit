@@ -45,8 +45,13 @@ public:
     String() { } // gives null string, distinguishable from an empty string
     String(const QChar*, unsigned length);
     String(const DeprecatedString&);
+    String(const KJS::Identifier&);
+    String(const KJS::UString&);
     String(const char*);
     String(StringImpl* i) : m_impl(i) { }
+
+    operator KJS::Identifier() const;
+    operator KJS::UString() const;
 
     String& operator +=(const String&);
 

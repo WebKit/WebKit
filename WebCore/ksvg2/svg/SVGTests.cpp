@@ -86,7 +86,7 @@ bool SVGTests::isValid() const
 
 bool SVGTests::parseMappedAttribute(MappedAttribute *attr)
 {
-    String value(attr->value());
+    const String& value = attr->value();
     if (attr->name() == SVGNames::requiredFeaturesAttr) {
         requiredFeatures()->reset(value.deprecatedString());
         return true;
