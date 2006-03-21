@@ -1,3 +1,11 @@
+2006-03-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::visiblePositionForIndex):
+        When calculating the VisiblePosition for the first position in the text field, it
+        makes more sense for the position to have a downstream affinity.
+
 2006-03-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -177,7 +177,7 @@ void RenderTextField::setSelectionRange(int start, int end)
 VisiblePosition RenderTextField::visiblePositionForIndex(int index)
 {    
     if (index <= 0)
-        return VisiblePosition(m_div.get(), 0, UPSTREAM);
+        return VisiblePosition(m_div.get(), 0, DOWNSTREAM);
     ExceptionCode ec = 0;
     RefPtr<Range> range = new Range(document());
     range->selectNodeContents(m_div.get(), ec);
