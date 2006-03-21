@@ -1,3 +1,16 @@
+2006-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - test case for <rdar://problem/4446749> 10.4.4: safari crash in DOM::NamedAttrMapImpl::setNamedItem
+        (and some similar cases that I also fixed)
+
+        * fast/dom/Element/attr-param-typechecking-expected.txt: Added.
+        * fast/dom/Element/attr-param-typechecking.html: Added.
+        * fast/dom/Element/resources: Added.
+        * fast/dom/Element/resources/TEMPLATE.html: Added.
+        * fast/dom/Element/resources/attr-param-typechecking.js: Added.
+
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
@@ -12,19 +25,6 @@
         * fast/tokenizer/write-external-script-open.html: Added.
         * fast/tokenizer/write-inline-script-open-expected.txt: Added.
         * fast/tokenizer/write-inline-script-open.html: Added.
-
-2006-03-20  Maciej Stachowiak  <mjs@apple.com>
-
-        Reviewed by Anders.
-        
-        - test case for <rdar://problem/4446749> 10.4.4: safari crash in DOM::NamedAttrMapImpl::setNamedItem
-        (and some similar cases that I also fixed)
-
-        * fast/dom/Element/attr-param-typechecking-expected.txt: Added.
-        * fast/dom/Element/attr-param-typechecking.html: Added.
-        * fast/dom/Element/resources: Added.
-        * fast/dom/Element/resources/TEMPLATE.html: Added.
-        * fast/dom/Element/resources/attr-param-typechecking.js: Added.
 
 2006-03-20  Maciej Stachowiak  <mjs@apple.com>
 
