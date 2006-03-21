@@ -26,6 +26,16 @@
 
 2006-03-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Adele.
+        
+        <rdar://problem/4362396> REGRESSION: (417-420) stopPropagation is not working for click event listener (onclick works fine)
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent): make sure to fire capturing listeners
+        as well as bubbling ones on the target.
+
+2006-03-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         <rdar://problem/4458568> WebCore should not disclose https referrers

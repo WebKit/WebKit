@@ -1,3 +1,15 @@
+2006-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+        
+        - test case for <rdar://problem/4362396> REGRESSION: (417-420) stopPropagation is not working for click event listener (onclick works fine)
+
+        Make sure that capturing event listeners trigger on the target and that if they
+        stopPropagation, then bubbling listeners on ancestors do not trigger.
+        
+        * fast/events/capture-on-target-expected.txt: Added.
+        * fast/events/capture-on-target.html: Added.
+
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by adele & ggaren.

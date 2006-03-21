@@ -1,0 +1,10 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This tests checks that capturing event handlers trigger on the node that is the target of the event, and that stopPropagation in such a handler prevents further bubble handlers from triggering.
+
+Click here
+
+targetClickFired: true
+containerClickFired: false
+test passed
+
