@@ -1,3 +1,13 @@
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by justing.
+
+        Re-enable previously failing test.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6560
+
+        * dom/xhtml/level2/html/HTMLIFrameElement11.xhtml: Added.
+        * dom/xhtml/level2/html/HTMLIFrameElement11.xhtml-disabled: Removed.
+
 2006-03-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele
