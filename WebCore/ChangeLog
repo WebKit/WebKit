@@ -1,3 +1,21 @@
+2006-03-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <rdar://problem/3997958> 
+        REGRESSION (Mail): Mail takes half of forever to paste >1500 lines - replaceSelectionWithNode
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream): Avoid calling previous() when we know that 
+        it will 1) end the search and 2) be expensive to compute.
+        (WebCore::Position::downstream): Removed some dead code.
+        (WebCore::Position::inRenderedText): Return false for offsets inside composed characters.
+        * dom/Position.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::init): If there are two visually equivalent candidates, we choose
+        the one that occurs first in document order.  Using upstream() to find the one that occurs first is
+        much faster than the old code.
+
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by adele & ggaren.

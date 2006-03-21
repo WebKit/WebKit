@@ -283,15 +283,7 @@ static bool isStreamer(const Position &pos)
     return pos.offset() == 0;
 }
 
-// AFAIK no one has a clear, complete definition for this method and how it is used.
-// Here is what I have come to understand from re-working the code after fixing PositionIterator
-// for <rdar://problem/4103339>.  See also Ken's comments in the header.  Fundamentally, upstream()
-// scans backward in the DOM starting at "this" to return the closest previous visible DOM position
-// that is either in a text node, or just after a replaced or BR element (btw downstream() also
-// considers empty blocks).  The search is limited to the enclosing block.  If the search would
-// otherwise have entered into a part of the DOM with a different enclosing block, including a
-// nested one, the search stops and this function returns the highest previous visible DOM position
-// that is either in an atomic node (i.e. text) or is the end of a non-atomic node.
+// p.upstream() returns the start of the range of positions that map to the same VisiblePosition as P.
 Position Position::upstream() const
 {
     // start at equivalent deep position
@@ -305,12 +297,12 @@ Position Position::upstream() const
     Position lastVisible = *this;
     Position currentPos = start;
     RootInlineBox *lastRoot = 0;
-    for (; !currentPos.atStart(); currentPos = currentPos.previous()) {
+    for (; !currentPos.atStart(); currentPos = currentPos.previous(UsingComposedCharacters)) {
         Node *currentNode = currentPos.node();
         int currentOffset = currentPos.offset();
 
-        // limit traversal to block or table enclosing the original element
-        // NOTE: This includes not going into nested blocks
+        // Don't enter a new enclosing block flow or table element.  There is code below that
+        // terminates early if we're about to leave an enclosing block flow or table element.
         if (block != currentNode->enclosingBlockFlowOrTableElement())
             return lastVisible;
 
@@ -334,6 +326,13 @@ Position Position::upstream() const
         // track last visible streamer position
         if (isStreamer(currentPos))
             lastVisible = currentPos;
+        
+        // Don't leave a block flow or table element.  We could rely on code above to terminate and 
+        // return lastVisible on the next iteration, but we terminate early to avoid calling previous()
+        // beceause previous() for an offset 0 position calls nodeIndex(), which is O(n).
+        // FIXME: Avoid calling previous on other offset 0 positions.
+        if (currentNode == currentNode->enclosingBlockFlowOrTableElement() && currentOffset == 0)
+            return lastVisible;
             
         // return position after replaced or BR elements
         // NOTE: caretMaxOffset() can be less than childNodeCount()!!
@@ -372,15 +371,7 @@ Position Position::upstream() const
     return lastVisible;
 }
 
-// AFAIK no one has a clear, complete definition for this method and how it is used.
-// Here is what I have come to understand from re-working the code after fixing PositionIterator
-// for <rdar://problem/4103339>.  See also Ken's comments in the header.  Fundamentally, downstream()
-// scans forward in the DOM starting at "this" to return the first visible DOM position that is
-// either in a text node, or just before a replaced, BR element, or empty block flow element (i.e.
-// non-text nodes with no children).  The search is limited to the enclosing block.  If the search
-// would otherwise have entered into a part of the DOM with a different enclosing block, including a
-// nested one, the search stops and this function returns the first previous position that is either
-// in an atomic node (i.e. text) or is at offset 0.
+// P.downstream() returns the end of the range of positions that map to the same VisiblePosition as P.
 Position Position::downstream() const
 {
     Position start = VisiblePosition::deepEquivalent(*this);
@@ -393,7 +384,7 @@ Position Position::downstream() const
     Position lastVisible = *this;
     Position currentPos = start;
     RootInlineBox *lastRoot = 0;
-    for (; !currentPos.atEnd(); currentPos = currentPos.next()) {   
+    for (; !currentPos.atEnd(); currentPos = currentPos.next(UsingComposedCharacters)) {   
         Node *currentNode = currentPos.node();
         int currentOffset = currentPos.offset();
 
@@ -402,9 +393,7 @@ Position Position::downstream() const
         if (currentNode->hasTagName(bodyTag) && currentOffset >= (int) currentNode->childNodeCount())
             break;
             
-        // limit traversal to block or table enclosing the original element
-        // return the last visible streamer position
-        // NOTE: This includes not going into nested blocks
+        // Do not enter a new enclosing block flow or table element, and don't leave the original one.
         if (block != currentNode->enclosingBlockFlowOrTableElement())
             return lastVisible;
 
@@ -428,28 +417,6 @@ Position Position::downstream() const
         // track last visible streamer position
         if (isStreamer(currentPos))
             lastVisible = currentPos;
-            
-        // if now at a offset 0 of a rendered block flow element...
-        //      - return current position if the element has no children (i.e. is a leaf)
-        //      - return child node, offset 0, if the first visible child is not a block flow element
-        //      - otherwise, skip this position (first visible child is a block, and we will
-        //          get there eventually via the iterator)
-        if ((currentNode != startNode && renderer->isBlockFlow()) && (currentOffset == 0)) {
-            if (!currentNode->firstChild())
-                return currentPos;
-                
-            for (Node *child = currentNode->firstChild(); child; child = child->nextSibling()) {
-                RenderObject *r = child->renderer();
-                if (r && r->style()->visibility() == VISIBLE) {
-                    if (r->isBlockFlow())
-                        break; // break causes continue code below to run.
-
-                    return Position(child, 0);
-                }
-            }
-
-            continue;
-        }
 
         // return position before replaced or BR elements
         if (editingIgnoresContent(currentNode) || renderer->isBR() || isTableElement(currentNode)) {
@@ -545,7 +512,8 @@ bool Position::inRenderedText() const
             return false;
         }
         if (offset() >= box->m_start && offset() <= box->m_start + box->m_len)
-            return true;
+            // Return false for offsets inside composed characters.
+            return offset() == 0 || offset() == textRenderer->nextOffset(textRenderer->previousOffset(offset()));
     }
     
     return false;

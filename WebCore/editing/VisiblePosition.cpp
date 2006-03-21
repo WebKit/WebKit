@@ -69,13 +69,11 @@ void VisiblePosition::init(const Position &pos, EAffinity affinity)
     pos.node()->getDocument()->updateLayoutIgnorePendingStylesheets();
     Position deepPos = deepEquivalent(pos);
     if (deepPos.inRenderedContent()) {
-        m_deepPosition = deepPos;
-        Position previous = previousVisiblePosition(deepPos);
-        if (previous.isNotNull()) {
-            Position next = nextVisiblePosition(previous);
-            if (next.isNotNull())
-                m_deepPosition = next;
-        }
+        // If two visually equivalent positions are both candidates for being made the m_deepPosition,
+        // (this can happen when two rendered positions have only collapsed whitespace between them for example),
+        // we always choose the one that occurs first in the DOM to canonicalize VisiblePositions.
+        Position upstreamPosition = deepPos.upstream();
+        m_deepPosition = upstreamPosition.inRenderedContent() ? upstreamPosition : deepPos;
     } else {
         Position next = nextVisiblePosition(deepPos);
         Position prev = previousVisiblePosition(deepPos);
