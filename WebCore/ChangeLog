@@ -1,5 +1,9 @@
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
+        * ksvg2/css/SVGCSSParser.h: Removed unused file.
+
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Fix tokenizer crash when document.open() is called from an external script:
