@@ -381,7 +381,7 @@ tt, code, kbd, samp {
     font-family: monospace
 }
       
-pre, xmp, plaintext {
+pre, xmp, plaintext, listing {
     display: block;
     font-family: monospace;
     white-space: pre;

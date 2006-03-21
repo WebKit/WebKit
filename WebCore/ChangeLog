@@ -1,3 +1,36 @@
+2006-03-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim O.
+
+        - fixed <rdar://problem/4251515> REGRESSION: listing tag broken in TOT
+
+        Test: fast/html/listing.html
+
+        * html/HTMLNames.h: Add listing tag.
+
+        * bindings/objc/DOM.mm: (+[DOMNode _nodeWith:]):
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::attributedString):
+        * css/html4.css:
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::isProbablyBlock):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleNonTextNode):
+        (WebCore::TextIterator::exitNode):
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode):
+        * editing/markup.cpp:
+        (WebCore::startMarkup):
+        (WebCore::createMarkup):
+        * html/HTMLElement.cpp: (WebCore::blockTagList):
+        * html/HTMLElementFactory.cpp:
+        (WebCore::addTag):
+        (WebCore::createFunctionMap):
+        (WebCore::HTMLElementFactory::createHTMLElement):
+        * html/HTMLParser.cpp: (WebCore::HTMLParser::isAffectedByResidualStyle):
+        * html/HTMLTokenizer.cpp: (WebCore::HTMLTokenizer::parseTag):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        Add listing tags everywhere pre tags are listed.
+
 2006-03-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

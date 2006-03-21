@@ -919,25 +919,26 @@ bool HTMLParser::isAffectedByResidualStyle(const AtomicString& tagName)
 
     static HashSet<AtomicStringImpl*> affectedBlockTags;
     if (affectedBlockTags.isEmpty()) {
+        affectedBlockTags.add(addressTag.localName().impl());
+        affectedBlockTags.add(blockquoteTag.localName().impl());
+        affectedBlockTags.add(centerTag.localName().impl());
+        affectedBlockTags.add(ddTag.localName().impl());
+        affectedBlockTags.add(divTag.localName().impl());
+        affectedBlockTags.add(dlTag.localName().impl());
+        affectedBlockTags.add(dtTag.localName().impl());
+        affectedBlockTags.add(formTag.localName().impl());
         affectedBlockTags.add(h1Tag.localName().impl());
         affectedBlockTags.add(h2Tag.localName().impl());
         affectedBlockTags.add(h3Tag.localName().impl());
         affectedBlockTags.add(h4Tag.localName().impl());
         affectedBlockTags.add(h5Tag.localName().impl());
         affectedBlockTags.add(h6Tag.localName().impl());
-        affectedBlockTags.add(pTag.localName().impl());
-        affectedBlockTags.add(divTag.localName().impl());
-        affectedBlockTags.add(blockquoteTag.localName().impl());
-        affectedBlockTags.add(addressTag.localName().impl());
-        affectedBlockTags.add(centerTag.localName().impl());
-        affectedBlockTags.add(ulTag.localName().impl());
-        affectedBlockTags.add(olTag.localName().impl());
         affectedBlockTags.add(liTag.localName().impl());
-        affectedBlockTags.add(dlTag.localName().impl());
-        affectedBlockTags.add(dtTag.localName().impl());
-        affectedBlockTags.add(ddTag.localName().impl());
+        affectedBlockTags.add(listingTag.localName().impl());
+        affectedBlockTags.add(olTag.localName().impl());
+        affectedBlockTags.add(pTag.localName().impl());
         affectedBlockTags.add(preTag.localName().impl());
-        affectedBlockTags.add(formTag.localName().impl());
+        affectedBlockTags.add(ulTag.localName().impl());
     }
     
     return affectedBlockTags.contains(tagName.impl());

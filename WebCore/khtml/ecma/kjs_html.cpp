@@ -526,6 +526,7 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(legendTag.localName().impl(), &legend_info);
         classInfoMap.set(liTag.localName().impl(), &li_info);
         classInfoMap.set(linkTag.localName().impl(), &link_info);
+        classInfoMap.set(listingTag.localName().impl(), &pre_info);
         classInfoMap.set(mapTag.localName().impl(), &map_info);
         classInfoMap.set(marqueeTag.localName().impl(), &marquee_info);
         classInfoMap.set(menuTag.localName().impl(), &menu_info);
@@ -661,6 +662,7 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(legendTag.localName().impl(), &legend_accessors);
         accessorMap.add(liTag.localName().impl(), &li_accessors);
         accessorMap.add(linkTag.localName().impl(), &link_accessors);
+        accessorMap.set(listingTag.localName().impl(), &pre_accessors);
         accessorMap.add(mapTag.localName().impl(), &map_accessors);
         accessorMap.add(marqueeTag.localName().impl(), &marquee_accessors);
         accessorMap.add(menuTag.localName().impl(), &menu_accessors);

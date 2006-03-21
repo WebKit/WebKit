@@ -1232,7 +1232,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 
             RefPtr<Node> n = processToken();
 
-            if (tagName == preTag) {
+            if (tagName == preTag || tagName == listingTag) {
                 if (beginTag)
                     state.setDiscardLF(true); // Discard the first LF after we open a pre.
             } else if (tagName == scriptTag) {

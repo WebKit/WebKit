@@ -150,14 +150,14 @@ static DeprecatedString renderedText(const Node *node, const Range *range)
 static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclaration *defaultStyle)
 {
     bool documentIsHTML = node->getDocument()->isHTMLDocument();
-    Node::NodeType type = node->nodeType();
-    switch (type) {
+    switch (node->nodeType()) {
         case Node::TEXT_NODE: {
-            if (node->parentNode()) {
-                if (node->parentNode()->hasTagName(preTag) ||
-                    node->parentNode()->hasTagName(scriptTag) ||
-                    node->parentNode()->hasTagName(styleTag) ||
-                    node->parentNode()->hasTagName(textareaTag))
+            if (Node* parent = node->parentNode()) {
+                if (parent->hasTagName(listingTag)
+                        || parent->hasTagName(preTag)
+                        || parent->hasTagName(scriptTag)
+                        || parent->hasTagName(styleTag)
+                        || parent->hasTagName(textareaTag))
                     return stringValueForRange(node, range).deprecatedString();
             }
             DeprecatedString markup = annotate ? escapeTextForMarkup(renderedText(node, range)) : escapeTextForMarkup(stringValueForRange(node, range).deprecatedString());            
@@ -193,44 +193,42 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             return static_cast<const ProcessingInstruction *>(node)->toString().deprecatedString();
         case Node::ELEMENT_NODE: {
             DeprecatedString markup = QChar('<') + node->nodeName().deprecatedString();
-            if (type == Node::ELEMENT_NODE) {
-                const Element *el = static_cast<const Element *>(node);
-                String additionalStyle;
-                if (defaultStyle && el->isHTMLElement()) {
-                    RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(const_cast<Element *>(el), 0).computedStyle();
-                    RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
-                    defaultStyle->diff(style.get());
-                    if (style->length() > 0) {
-                        CSSMutableStyleDeclaration *inlineStyleDecl = static_cast<const HTMLElement *>(el)->inlineStyleDecl();
-                        if (inlineStyleDecl)
-                            inlineStyleDecl->diff(style.get());
-                        additionalStyle = style->cssText();
-                    }
+            const Element* el = static_cast<const Element*>(node);
+            String additionalStyle;
+            if (defaultStyle && el->isHTMLElement()) {
+                RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(const_cast<Element *>(el), 0).computedStyle();
+                RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
+                defaultStyle->diff(style.get());
+                if (style->length() > 0) {
+                    CSSMutableStyleDeclaration *inlineStyleDecl = static_cast<const HTMLElement *>(el)->inlineStyleDecl();
+                    if (inlineStyleDecl)
+                        inlineStyleDecl->diff(style.get());
+                    additionalStyle = style->cssText();
                 }
-                NamedAttrMap *attrs = el->attributes();
-                unsigned length = attrs->length();
-                if (length == 0 && additionalStyle.length() > 0) {
-                    // FIXME: Handle case where additionalStyle has illegal characters in it, like "
-                    markup += " " +  styleAttr.localName().deprecatedString() + "=\"" + additionalStyle.deprecatedString() + "\"";
-                }
-                else {
-                    for (unsigned int i=0; i<length; i++) {
-                        Attribute *attr = attrs->attributeItem(i);
-                        String value = attr->value();
-                        if (attr->name() == styleAttr && additionalStyle.length() > 0)
-                            value += "; " + additionalStyle;
-                        // FIXME: Handle case where value has illegal characters in it, like "
-                        if (documentIsHTML)
-                            markup += " " + attr->name().localName().deprecatedString();
-                        else
-                            markup += " " + attr->name().toString().deprecatedString();
-                        markup += "=\"" + escapeTextForMarkup(value.deprecatedString()) + "\"";
-                    }
+            }
+            NamedAttrMap *attrs = el->attributes();
+            unsigned length = attrs->length();
+            if (length == 0 && additionalStyle.length() > 0) {
+                // FIXME: Handle case where additionalStyle has illegal characters in it, like "
+                markup += " " +  styleAttr.localName().deprecatedString() + "=\"" + additionalStyle.deprecatedString() + "\"";
+            }
+            else {
+                for (unsigned int i=0; i<length; i++) {
+                    Attribute *attr = attrs->attributeItem(i);
+                    String value = attr->value();
+                    if (attr->name() == styleAttr && additionalStyle.length() > 0)
+                        value += "; " + additionalStyle;
+                    // FIXME: Handle case where value has illegal characters in it, like "
+                    if (documentIsHTML)
+                        markup += " " + attr->name().localName().deprecatedString();
+                    else
+                        markup += " " + attr->name().toString().deprecatedString();
+                    markup += "=\"" + escapeTextForMarkup(value.deprecatedString()) + "\"";
                 }
             }
             
-            if (shouldSelfClose(node)) {
-                if (node->isHTMLElement())
+            if (shouldSelfClose(el)) {
+                if (el->isHTMLElement())
                     markup += " "; // XHTML 1.0 <-> HTML compatibility.
                 markup += "/>";
             } else
@@ -437,8 +435,11 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
             bool breakAtEnd = false;
             if (commonAncestorBlock == ancestor) {
                 // Include ancestors that are required to retain the appearance of the copied markup.
-                if (ancestor->hasTagName(preTag) || ancestor->hasTagName(tableTag) ||
-                    ancestor->hasTagName(olTag) || ancestor->hasTagName(ulTag)) {
+                if (ancestor->hasTagName(listingTag)
+                        || ancestor->hasTagName(olTag)
+                        || ancestor->hasTagName(preTag)
+                        || ancestor->hasTagName(tableTag)
+                        || ancestor->hasTagName(ulTag)) {
                     breakAtEnd = true;
                 } else {
                     break;

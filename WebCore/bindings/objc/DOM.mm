@@ -558,7 +558,7 @@ static ListenerMap *listenerMap;
                     wrapperClass = [DOMHTMLHeadingElement class];
                 else if (htmlElt->hasLocalName(qTag))
                     wrapperClass = [DOMHTMLQuoteElement class];
-                else if (htmlElt->hasLocalName(preTag))
+                else if (htmlElt->hasLocalName(preTag) || htmlElt->hasLocalName(listingTag))
                     wrapperClass = [DOMHTMLPreElement class];
                 else if (htmlElt->hasLocalName(brTag))
                     wrapperClass = [DOMHTMLBRElement class];

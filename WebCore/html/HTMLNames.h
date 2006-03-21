@@ -86,6 +86,7 @@ namespace WebCore { namespace HTMLNames {
     macro(legend) \
     macro(li) \
     macro(link) \
+    macro(listing) \
     macro(map) \
     macro(marquee) \
     macro(menu) \

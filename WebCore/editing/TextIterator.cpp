@@ -359,16 +359,25 @@ bool TextIterator::handleNonTextNode()
     } else if (m_node->hasTagName(tdTag) || m_node->hasTagName(thTag)) {
         if (m_lastCharacter != '\n' && m_lastTextNode)
             emitCharacter('\t', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
-    } else if (m_node->hasTagName(blockquoteTag) || m_node->hasTagName(ddTag) ||
-               m_node->hasTagName(divTag) ||
-               m_node->hasTagName(dlTag) || m_node->hasTagName(dtTag) || 
-               m_node->hasTagName(h1Tag) || m_node->hasTagName(h2Tag) ||
-               m_node->hasTagName(h3Tag) || m_node->hasTagName(h4Tag) ||
-               m_node->hasTagName(h5Tag) || m_node->hasTagName(h6Tag) ||
-               m_node->hasTagName(hrTag) || m_node->hasTagName(liTag) ||
-               m_node->hasTagName(olTag) || m_node->hasTagName(pTag) ||
-               m_node->hasTagName(preTag) || m_node->hasTagName(trTag) ||
-               m_node->hasTagName(ulTag)) {
+    } else if (m_node->hasTagName(blockquoteTag)
+                || m_node->hasTagName(ddTag)
+                || m_node->hasTagName(divTag)
+                || m_node->hasTagName(dlTag)
+                || m_node->hasTagName(dtTag)
+                || m_node->hasTagName(h1Tag)
+                || m_node->hasTagName(h2Tag)
+                || m_node->hasTagName(h3Tag)
+                || m_node->hasTagName(h4Tag)
+                || m_node->hasTagName(h5Tag)
+                || m_node->hasTagName(h6Tag)
+                || m_node->hasTagName(hrTag)
+                || m_node->hasTagName(liTag)
+                || m_node->hasTagName(listingTag)
+                || m_node->hasTagName(olTag)
+                || m_node->hasTagName(pTag)
+                || m_node->hasTagName(preTag) 
+                || m_node->hasTagName(trTag)
+                || m_node->hasTagName(ulTag)) {
         if (m_lastCharacter != '\n' && m_lastTextNode)
             emitCharacter('\n', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
     }
@@ -381,18 +390,26 @@ void TextIterator::exitNode()
     bool endLine = false;
     bool addNewline = false;
 
-    if (m_node->hasTagName(blockquoteTag) || m_node->hasTagName(ddTag) ||
-               m_node->hasTagName(divTag) ||
-               m_node->hasTagName(dlTag) || m_node->hasTagName(dtTag) || 
-               m_node->hasTagName(hrTag) || m_node->hasTagName(liTag) ||
-               m_node->hasTagName(olTag) ||
-               m_node->hasTagName(preTag) || m_node->hasTagName(trTag) ||
-               m_node->hasTagName(ulTag))
+    if (m_node->hasTagName(blockquoteTag)
+            || m_node->hasTagName(ddTag)
+            || m_node->hasTagName(divTag)
+            || m_node->hasTagName(dlTag)
+            || m_node->hasTagName(dtTag)
+            || m_node->hasTagName(hrTag)
+            || m_node->hasTagName(liTag)
+            || m_node->hasTagName(listingTag)
+            || m_node->hasTagName(olTag)
+            || m_node->hasTagName(preTag)
+            || m_node->hasTagName(trTag)
+            || m_node->hasTagName(ulTag))
         endLine = true;
-    else if (m_node->hasTagName(h1Tag) || m_node->hasTagName(h2Tag) ||
-             m_node->hasTagName(h3Tag) || m_node->hasTagName(h4Tag) ||
-             m_node->hasTagName(h5Tag) || m_node->hasTagName(h6Tag) ||
-             m_node->hasTagName(pTag)) {
+    else if (m_node->hasTagName(h1Tag)
+            || m_node->hasTagName(h2Tag)
+            || m_node->hasTagName(h3Tag)
+            || m_node->hasTagName(h4Tag)
+            || m_node->hasTagName(h5Tag)
+            || m_node->hasTagName(h6Tag)
+            || m_node->hasTagName(pTag)) {
         endLine = true;
 
         // In certain cases, emit a new newline character for this node
@@ -641,17 +658,27 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
 {
     if (m_node->hasTagName(brTag))
         emitNewlineForBROrText();
-    else if (m_node->hasTagName(tdTag) || m_node->hasTagName(thTag) ||
-             m_node->hasTagName(blockquoteTag) || m_node->hasTagName(ddTag) ||
-             m_node->hasTagName(divTag) ||
-             m_node->hasTagName(dlTag) || m_node->hasTagName(dtTag) || 
-             m_node->hasTagName(h1Tag) || m_node->hasTagName(h2Tag) ||
-             m_node->hasTagName(h3Tag) || m_node->hasTagName(h4Tag) ||
-             m_node->hasTagName(h5Tag) || m_node->hasTagName(h6Tag) ||
-             m_node->hasTagName(hrTag) || m_node->hasTagName(liTag) ||
-             m_node->hasTagName(olTag) || m_node->hasTagName(pTag) ||
-             m_node->hasTagName(preTag) || m_node->hasTagName(trTag) ||
-             m_node->hasTagName(ulTag)) {
+    else if (m_node->hasTagName(blockquoteTag)
+            || m_node->hasTagName(ddTag)
+            || m_node->hasTagName(divTag)
+            || m_node->hasTagName(dlTag)
+            || m_node->hasTagName(dtTag)
+            || m_node->hasTagName(h1Tag)
+            || m_node->hasTagName(h2Tag)
+            || m_node->hasTagName(h3Tag)
+            || m_node->hasTagName(h4Tag)
+            || m_node->hasTagName(h5Tag)
+            || m_node->hasTagName(h6Tag)
+            || m_node->hasTagName(hrTag)
+            || m_node->hasTagName(liTag)
+            || m_node->hasTagName(listingTag)
+            || m_node->hasTagName(olTag)
+            || m_node->hasTagName(pTag)
+            || m_node->hasTagName(preTag)
+            || m_node->hasTagName(tdTag)
+            || m_node->hasTagName(thTag)
+            || m_node->hasTagName(trTag)
+            || m_node->hasTagName(ulTag)) {
         // Emit a space to "break up" content. Any word break
         // character will do.
         emitCharacter(' ', m_node, 0, 0);

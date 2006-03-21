@@ -2407,26 +2407,27 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                     if (!hasNewLine)
                         text += "\n";
                     hasNewLine = true;
-                } else if (n->hasTagName(tdTag) ||
-                           n->hasTagName(thTag) ||
-                           n->hasTagName(hrTag) ||
-                           n->hasTagName(ddTag) ||
-                           n->hasTagName(dlTag) ||
-                           n->hasTagName(dtTag) ||
-                           n->hasTagName(preTag) ||
-                           n->hasTagName(blockquoteTag) ||
-                           n->hasTagName(divTag)) {
+                } else if (n->hasTagName(blockquoteTag)
+                        || n->hasTagName(ddTag)
+                        || n->hasTagName(divTag)
+                        || n->hasTagName(dlTag)
+                        || n->hasTagName(dtTag)
+                        || n->hasTagName(hrTag)
+                        || n->hasTagName(listingTag)
+                        || n->hasTagName(preTag)
+                        || n->hasTagName(tdTag)
+                        || n->hasTagName(thTag)) {
                     if (!hasNewLine)
                         text += '\n';
                     hasNewLine = true;
-                } else if (n->hasTagName(pTag) ||
-                           n->hasTagName(trTag) ||
-                           n->hasTagName(h1Tag) ||
-                           n->hasTagName(h2Tag) ||
-                           n->hasTagName(h3Tag) ||
-                           n->hasTagName(h4Tag) ||
-                           n->hasTagName(h5Tag) ||
-                           n->hasTagName(h6Tag)) {
+                } else if (n->hasTagName(h1Tag)
+                        || n->hasTagName(h2Tag)
+                        || n->hasTagName(h3Tag)
+                        || n->hasTagName(h4Tag)
+                        || n->hasTagName(h5Tag)
+                        || n->hasTagName(h6Tag)
+                        || n->hasTagName(pTag)
+                        || n->hasTagName(trTag)) {
                     if (!hasNewLine)
                         text += '\n';
                     
@@ -2509,15 +2510,16 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                 if (!hasNewLine)
                     text += '\n';
                 hasNewLine = true;
-            } else if (n->hasTagName(tdTag) ||
-                       n->hasTagName(thTag) ||
-                       n->hasTagName(hrTag) ||
+            } else if (n->hasTagName(blockquoteTag) ||
                        n->hasTagName(ddTag) ||
+                       n->hasTagName(divTag) ||
                        n->hasTagName(dlTag) ||
                        n->hasTagName(dtTag) ||
+                       n->hasTagName(hrTag) ||
+                       n->hasTagName(listingTag) ||
                        n->hasTagName(preTag) ||
-                       n->hasTagName(blockquoteTag) ||
-                       n->hasTagName(divTag)) {
+                       n->hasTagName(tdTag) ||
+                       n->hasTagName(thTag)) {
                 if (!hasNewLine)
                     text += '\n';
                 hasNewLine = true;

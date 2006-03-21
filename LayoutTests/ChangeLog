@@ -1,3 +1,13 @@
+2006-03-21  Darin Adler  <darin@apple.com>
+
+        - test for <rdar://problem/4251515> REGRESSION: listing tag broken in TOT
+
+        * fast/html: Added.
+        * fast/html/listing-expected.checksum: Added.
+        * fast/html/listing-expected.png: Added.
+        * fast/html/listing-expected.txt: Added.
+        * fast/html/listing.html: Added.
+
 2006-03-21  Beth Dakin  <bdakin@apple.com>
 
         Reducing the amount of time this test waits for the frame to fully
