@@ -43,11 +43,13 @@ namespace KJS {
         
         void refresh(bool reload);
 
+    protected:
+        static void cachePluginDataIfNecessary();
         static Vector<PluginInfo*> *plugins;
         static Vector<MimeClassInfo*> *mimes;
 
     private:
-        static int m_refCount;
+        static int m_plugInCacheRefCount;
     };
 
 
@@ -117,7 +119,7 @@ const ClassInfo MimeType::info = { "MimeType", 0, &MimeTypeTable, 0 };
 
 Vector<PluginInfo*> *KJS::PluginBase::plugins = 0;
 Vector<MimeClassInfo*> *KJS::PluginBase::mimes = 0;
-int KJS::PluginBase::m_refCount = 0;
+int KJS::PluginBase::m_plugInCacheRefCount = 0;
 
 const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
 /*
@@ -196,8 +198,7 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
 
 /*******************************************************************/
 
-PluginBase::PluginBase(ExecState *exec)
-  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype() )
+void PluginBase::cachePluginDataIfNecessary()
 {
     if (!plugins) {
         plugins = new Vector<PluginInfo*>;
@@ -220,32 +221,47 @@ PluginBase::PluginBase(ExecState *exec)
                 mimes->append(*itr);
         }
     }
+}
 
-    m_refCount++;
+PluginBase::PluginBase(ExecState *exec)
+  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype() )
+{
+    cachePluginDataIfNecessary();
+    m_plugInCacheRefCount++;
 }
 
 PluginBase::~PluginBase()
 {
-    m_refCount--;
-    if ( m_refCount==0 ) {
-        deleteAllValues(*plugins);
-        delete plugins;
-        deleteAllValues(*mimes);
-        delete mimes;
-        plugins = 0;
-        mimes = 0;
+    m_plugInCacheRefCount--;
+    if (!m_plugInCacheRefCount) {
+        if (plugins) {
+            deleteAllValues(*plugins);
+            delete plugins;
+            plugins = 0;
+        }
+        if (mimes) {
+            deleteAllValues(*mimes);
+            delete mimes;
+            mimes = 0;
+        }
     }
 }
 
 void PluginBase::refresh(bool reload)
 {
-    deleteAllValues(*plugins);
-    delete plugins;
-    deleteAllValues(*mimes);
-    delete mimes;
-    plugins = 0;
-    mimes = 0;
+    if (plugins) {
+        deleteAllValues(*plugins);
+        delete plugins;
+        plugins = 0;
+    }
+    if (mimes) {
+        deleteAllValues(*mimes);
+        delete mimes;
+        mimes = 0;
+    }
+    
     refreshPlugins(reload);
+    cachePluginDataIfNecessary();
 }
 
 

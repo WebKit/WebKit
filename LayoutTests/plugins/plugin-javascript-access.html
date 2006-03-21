@@ -8,12 +8,14 @@
 if (window.layoutTestController)
     layoutTestController.dumpAsText()
 
-navigator.plugins.refresh(false); // Supposedly helps if new plug-ins were added.
+var plugins = navigator.plugins;
+
+plugins.refresh(false); // Supposedly helps if new plug-ins were added.
 
 var foundTestPlugin = false;
 
-for (var pi = 0; pi != navigator.plugins.length; pi++) {
-    var plugin = navigator.plugins[pi];
+for (var pi = 0; pi != plugins.length; pi++) {
+    var plugin = plugins[pi];
     
     // We can only guarantee that the Test PlugIn is installed.
     if (plugin.name != "WebKit Test PlugIn")

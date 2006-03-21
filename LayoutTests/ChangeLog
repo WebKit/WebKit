@@ -1,5 +1,14 @@
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by adele & ggaren.
+
+        Modified test case to cover crasher:
+         <rdar://problem/4480571> Safari crashed at exit at KXMLCore::deleteAllValues + 24
+
+        * plugins/plugin-javascript-access.html:
+
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by justing.
 
         Re-enable previously failing test.

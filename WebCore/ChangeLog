@@ -1,3 +1,21 @@
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by adele & ggaren.
+
+        Added new cachePluginDataIfNecessary function to update
+        plugins and mimes arrays.  Made sure to call this in
+        constructor as well as refresh.  The crash was caused by
+        a refresh rendering a "plugins" object invalid.
+        Changed existing test case to depend on this new correct behavior.
+        
+        <rdar://problem/4480571> Safari crashed at exit at KXMLCore::deleteAllValues + 24
+
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::PluginBase::cachePluginDataIfNecessary):
+        (KJS::PluginBase::PluginBase):
+        (KJS::PluginBase::~PluginBase):
+        (KJS::PluginBase::refresh):
+
 2006-03-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.
