@@ -1,3 +1,14 @@
+2006-03-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by vicki
+     
+        Testcase for fix for:   
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7363>
+        REGRESSION (r12872): Repro crash when clicking the Quick Reply box in Gmail
+        
+        * fast/forms/textfield-focus-out-expected.txt: Added.
+        * fast/forms/textfield-focus-out.html: Added.
+
 2006-03-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
