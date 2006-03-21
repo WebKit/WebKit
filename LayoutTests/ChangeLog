@@ -1,3 +1,18 @@
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Test for: <rdar://problem/4483882> REGRESSION (417.8-TOT): crash at yourmovies.com.au in WebCore::HTMLTokenizer::reset() + 92 (7818)
+
+        * fast/tokenizer/external-script-document-open-expected.txt: Added.
+        * fast/tokenizer/external-script-document-open.html: Added.
+        * fast/tokenizer/resources/external-script-document-open.js: Added.
+        * fast/tokenizer/resources/write-external-script-open.js: Added.
+        * fast/tokenizer/write-external-script-open-expected.txt: Added.
+        * fast/tokenizer/write-external-script-open.html: Added.
+        * fast/tokenizer/write-inline-script-open-expected.txt: Added.
+        * fast/tokenizer/write-inline-script-open.html: Added.
+
 2006-03-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

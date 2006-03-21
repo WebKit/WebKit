@@ -95,6 +95,7 @@ public:
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
     virtual bool processingData() const;
+    virtual int executingScript() const { return m_executingScript; }
 
 private:
     class State;

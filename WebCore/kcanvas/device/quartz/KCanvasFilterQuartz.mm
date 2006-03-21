@@ -81,12 +81,9 @@ KCanvasFilterQuartz::~KCanvasFilterQuartz()
 
 void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
 {
-    if (bbox.isEmpty() || !KRenderingDeviceQuartz::filtersEnabled())
+    if (bbox.isEmpty() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
         return;
 
-    if (m_effects.isEmpty())
-        return;
-    
     CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(renderingDevice())->currentCGContext();
     
     // get a CIContext, and CGLayer for drawing in.

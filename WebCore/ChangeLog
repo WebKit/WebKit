@@ -1,3 +1,21 @@
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix tokenizer crash when document.open() is called from an external script:
+        <rdar://problem/4483882> REGRESSION (417.8-TOT): crash at yourmovies.com.au in WebCore::HTMLTokenizer::reset() + 92 (7818)
+
+        * dom/Document.cpp:
+        (WebCore::Document::open): Check to make sure the current tokenizer isn't executing a script
+        * dom/xml_tokenizer.h:
+        (WebCore::Tokenizer::executingScript): Add a way for others to know if scripts are executing.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution): Wire into existing m_executingScript member var.
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::executingScript):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::prepareFilter): Unrelated code cleanup.
+
 2006-03-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

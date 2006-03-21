@@ -490,11 +490,10 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const DeprecatedString& str,
         // because we want to prepend to pendingSrc rather than appending
         // if there's no previous prependingSrc
         if (state.loadingExtScript()) {
-            if (currentPrependingSrc) {
+            if (currentPrependingSrc)
                 currentPrependingSrc->append(prependingSrc);
-            } else {
+            else
                 pendingSrc.prepend(prependingSrc);
-            }
         } else {
             m_state = state;
             write(prependingSrc, false);

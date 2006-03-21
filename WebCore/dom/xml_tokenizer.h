@@ -51,6 +51,7 @@ public:
     virtual bool isWaitingForScripts() const = 0;
     virtual void stopParsing() { m_parserStopped = true; }
     virtual bool processingData() const { return false; }
+    virtual int executingScript() const { return 0; }
 
 protected:
     // The tokenizer has buffers, so parsing may continue even after
