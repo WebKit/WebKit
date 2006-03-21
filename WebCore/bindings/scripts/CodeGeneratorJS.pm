@@ -766,7 +766,7 @@ sub TypeCanFailConversion
   my $type = $signature->type;
 
   if ($type eq "boolean") {
-    return 1;
+    return 0;
   } elsif ($type eq "unsigned long" or $type eq "long") {
     return 0; # or can it?
   } elsif ($type eq "unsigned short") {
@@ -780,15 +780,15 @@ sub TypeCanFailConversion
   } elsif ($type eq "DOMString") {
       return 0;
   } elsif ($type eq "views::AbstractView") {
-      return 1;
+      return 0;
   } elsif ($type eq "Node") {
-      return 1;
+      return 0;
   } elsif ($type eq "Attr") {
       return 1;
   } elsif ($type eq "DocumentType") {
-      return 1;
+      return 0;
   } elsif ($type eq "Range") {
-      return 1;
+      return 0;
   } else {
     die "Don't know whether a JS value can fail conversion to type $type."
   }
@@ -799,7 +799,7 @@ sub JSValueToNative
   my $signature = shift;
   my $value = shift;
   my $okParam = shift;
-  my $maybeOkParam = "${okParam}" ? ", ${okParam}" : "";
+  my $maybeOkParam = $okParam ? ", ${okParam}" : "";
   
   my $type = $signature->type;
 

@@ -17,6 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+// This file needs to be touched every once in a while.
+
 #include "config.h"
 #include "JSCanvasRenderingContext2DBase.h"
 

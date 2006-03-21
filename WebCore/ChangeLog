@@ -1,3 +1,15 @@
+2006-03-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - fix horrible build fallout from my attr fix
+
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp:
+        * bindings/js/JSDOMCore.cpp:
+        * bindings/js/JSDOMEvents.cpp:
+        * bindings/js/JSDOMHTML.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2006-03-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej
