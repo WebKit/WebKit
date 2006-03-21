@@ -1,5 +1,11 @@
 2006-03-20  Maciej Stachowiak  <mjs@apple.com>
 
+        - touch this file in hopes of fixing build
+
+        * bindings/js/JSDOMCore.cpp:
+
+2006-03-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders.
         
         - fixed <rdar://problem/4446749> 10.4.4: safari crash in DOM::NamedAttrMapImpl::setNamedItem
