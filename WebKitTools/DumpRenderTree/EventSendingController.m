@@ -42,7 +42,8 @@ NSPoint lastMousePosition;
             || aSelector == @selector(mouseUp)
             || aSelector == @selector(mouseClick)
             || aSelector == @selector(mouseMoveToX:Y:)
-            || aSelector == @selector(leapForward:))
+            || aSelector == @selector(leapForward:)
+            || aSelector == @selector(keyDown:withModifiers:))
         return NO;
     return YES;
 }
@@ -53,6 +54,8 @@ NSPoint lastMousePosition;
         return @"mouseMoveTo";
     if (aSelector == @selector(leapForward:))
         return @"leapForward";
+    if (aSelector == @selector(keyDown:withModifiers:))
+        return @"keyDown";
     return nil;
 }
 
@@ -188,6 +191,46 @@ NSPoint lastMousePosition;
         [NSApp postEvent:mouseUpEvent atStart:NO];
         [subView mouseDown:mouseDownEvent];
         lastClick = [mouseUpEvent timestamp];
+    }
+}
+
+- (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers
+{
+    NSString *modifier = nil;
+    int mask = 0;
+    
+    for (unsigned i = 0; modifiers && [modifiers webScriptValueAtIndex:i]; i++) {
+        modifier = (NSString *)[modifiers webScriptValueAtIndex:i];
+        if ([modifier isEqual:@"ctrlKey"])
+            mask |= NSControlKeyMask;
+        else if ([modifier isEqual:@"shiftKey"])
+            mask |= NSShiftKeyMask;
+        else if ([modifier isEqual:@"altKey"])
+            mask |= NSAlternateKeyMask;
+        else if ([modifier isEqual:@"metaKey"])
+            mask |= NSCommandKeyMask;
+        else
+            break;
+    }
+
+    [[[frame frameView] documentView] layout];
+    
+    NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
+                        location:NSMakePoint(5, 5)
+                        modifierFlags:mask
+                        timestamp:[self currentEventTime]
+                        windowNumber:[[[frame webView] window] windowNumber]
+                        context:[NSGraphicsContext currentContext]
+                        characters:character
+                        charactersIgnoringModifiers:character
+                        isARepeat:NO
+                        keyCode:0];
+    
+
+    NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
+    if (subView) {
+        [subView keyDown:event];
+        down = YES;
     }
 }
 

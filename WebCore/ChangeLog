@@ -1,3 +1,14 @@
+2006-03-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7223 
+        Reproducible crash when tabbing to a frame that has not been loaded
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::nextKeyViewInFrame): When a renderer doesn't 
+        have a widget, skip it in the focus loop.
+
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

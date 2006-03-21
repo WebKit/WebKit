@@ -879,11 +879,14 @@ NSView *FrameMac::nextKeyViewInFrame(Node *node, KWQSelectionDirection direction
         if (renderer->isWidget()) {
             RenderWidget *renderWidget = static_cast<RenderWidget *>(renderer);
             Widget *widget = renderWidget->widget();
+            if (!widget)
+                continue;
+            
             FrameView *childFrameWidget = widget->isFrameView() ? static_cast<FrameView *>(widget) : 0;
             NSView *view = nil;
             if (childFrameWidget)
                 view = Mac(childFrameWidget->frame())->nextKeyViewInFrame(0, direction);
-            else if (widget)
+            else
                 view = widget->getView();
             if (view)
                 return view;

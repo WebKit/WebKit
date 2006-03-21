@@ -1,3 +1,15 @@
+2006-03-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7223
+
+        * fast/events/focusingUnloadedFrame-expected.checksum: Added.
+        * fast/events/focusingUnloadedFrame-expected.png: Added.
+        * fast/events/focusingUnloadedFrame-expected.txt: Added.
+        * fast/events/focusingUnloadedFrame.html: Added.
+        * fast/events/resources/frontpage.html: Added.
+
 2006-03-21  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

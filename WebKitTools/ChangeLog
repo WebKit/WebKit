@@ -1,3 +1,16 @@
+2006-03-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+        Add support for keyDown() to DumpRenderTree.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Set the preference for tabbing to links.
+        * DumpRenderTree/EventSendingController.m:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController keyDown:withModifiers:]):
+
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

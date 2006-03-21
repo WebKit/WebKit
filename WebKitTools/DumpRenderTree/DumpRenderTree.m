@@ -243,6 +243,8 @@ int main(int argc, const char *argv[])
     [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
     
+    [[webView preferences] setTabsToLinks:YES];
+    
     NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
     [[WebPluginDatabase installedPlugins] refresh];
