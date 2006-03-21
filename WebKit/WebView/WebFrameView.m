@@ -236,11 +236,6 @@ enum {
     return _private->frameScrollView;
 }
 
-- (NSClipView *)_contentView
-{
-    return [[self _scrollView] contentView];
-}
-
 - (float)_verticalPageScrollDistance
 {
     float overlap = [self _verticalKeyboardScrollDistance];
@@ -926,6 +921,11 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
     
     return largest;
+}
+
+- (NSClipView *)_contentView
+{
+    return [[self _scrollView] contentView];
 }
 
 @end

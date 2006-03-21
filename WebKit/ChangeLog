@@ -1,3 +1,15 @@
+2006-03-20  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Moved -_contentView from WebFrameViewInternal to WebFrameViewPrivate.  Safari
+        needs this.
+
+        * WebView/WebFrameView.m:
+        (-[WebFrameView _contentView]):
+        * WebView/WebFrameViewInternal.h:
+        * WebView/WebFrameViewPrivate.h:
+
 2006-03-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by Beth.

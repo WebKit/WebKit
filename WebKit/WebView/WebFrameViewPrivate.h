@@ -72,4 +72,10 @@
  */
 - (BOOL)_hasScrollBars;
 
+/*!
+    @method _contentView
+    @result The content view (NSClipView) of the WebFrameView's scroll view.
+ */
+- (NSClipView *)_contentView;
+
 @end
