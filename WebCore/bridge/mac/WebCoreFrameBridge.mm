@@ -596,8 +596,11 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     BOOL referrerIsWebURL = hasCaseInsensitivePrefix(referrer, @"http:") || hasCaseInsensitivePrefix(referrer, @"https:");
     BOOL referrerIsLocalURL = hasCaseInsensitivePrefix(referrer, @"file:") || hasCaseInsensitivePrefix(referrer, @"applewebdata:");
     BOOL URLIsFileURL = [URL scheme] != NULL && [[URL scheme] compare:@"file" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+    BOOL referrerIsSecureURL = hasCaseInsensitivePrefix(referrer, @"https:");
+    BOOL URLIsSecureURL = [URL scheme] != NULL && [[URL scheme] compare:@"https" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+
     
-    *hideReferrer = !referrerIsWebURL;
+    *hideReferrer = !referrerIsWebURL || (referrerIsSecureURL && !URLIsSecureURL);
     return !URLIsFileURL || referrerIsLocalURL;
 }
 

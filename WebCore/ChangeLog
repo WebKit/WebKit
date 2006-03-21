@@ -1,3 +1,13 @@
+2006-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/4458568> WebCore should not disclose https referrers
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge canLoadURL:fromReferrer:hideReferrer:]):
+        Don't send https URLs as referrers to non-secure http sites.
+
 2006-03-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
