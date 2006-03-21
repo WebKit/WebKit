@@ -116,10 +116,9 @@ Node* NodeList::itemById(const AtomicString& elementId) const
     }
 
     unsigned l = length();
-
     for (unsigned i = 0; i < l; i++) {
-        Node* node = item(i);        
-        if (static_cast<Element *>(node)->getIDAttribute() == elementId)
+        Node* node = item(i);
+        if (node->isElementNode() && static_cast<Element*>(node)->getIDAttribute() == elementId)
             return node;
     }
 

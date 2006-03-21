@@ -1,3 +1,15 @@
+2006-03-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix a unsafe static cast causing intermittent crashes.
+        <rdar://problem/4411663> crash at KXMLCore::RefPtr<WebCore::DOMStringImpl>::get() const + 20 (RefPtr.h:45)
+
+        Test: fast/dom/NodeList/item-by-id-with-no-document.html
+
+        * dom/NodeList.cpp:
+        (WebCore::NodeList::itemById): fix unsafe static cast.
+
 2006-03-20  Maciej Stachowiak  <mjs@apple.com>
 
         - touch this file in hopes of fixing build

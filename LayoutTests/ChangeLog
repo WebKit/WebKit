@@ -1,3 +1,13 @@
+2006-03-21  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Test case for: <rdar://problem/4411663> crash at KXMLCore::RefPtr<WebCore::DOMStringImpl>::get() const + 20 (RefPtr.h:45)
+
+        * fast/dom/NodeList: Added.
+        * fast/dom/NodeList/item-by-id-with-no-document-expected.txt: Added.
+        * fast/dom/NodeList/item-by-id-with-no-document.html: Added.
+
 2006-03-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by vicki
