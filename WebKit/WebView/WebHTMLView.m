@@ -2345,6 +2345,9 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
+    if (![string length])
+        return NO;
+
     return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag];
 }
 

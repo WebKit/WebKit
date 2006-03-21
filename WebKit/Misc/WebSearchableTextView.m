@@ -37,6 +37,9 @@
 
 - (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag wrap: (BOOL)wrapFlag;
 {
+    if (![string length])
+        return NO;
+
     BOOL lastFindWasSuccessful = NO;
     NSString *textContents = [self string];
     unsigned textLength;

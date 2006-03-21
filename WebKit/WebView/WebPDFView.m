@@ -494,6 +494,9 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
+    if (![string length])
+        return NO;
+
     // Our search algorithm, used in WebCore also, is to search in the selection first. If the found text is the
     // entire selection, then we search again from just past the selection.
 

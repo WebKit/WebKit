@@ -1,3 +1,28 @@
+2006-03-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin Decker.
+        
+        - fixed <rdar://problem/4485637> Implementors of searchFor:direction:caseSensitive:wrap: should bail 
+        out early if search string is empty
+        
+        This doesn't change any existing behavior, but avoids unnecessary work.
+
+        * Misc/WebSearchableTextView.m:
+        (-[WebSearchableTextView searchFor:direction:caseSensitive:wrap:]):
+        bail out immediately (returning NO) if search string is empty
+        
+        * WebView/WebHTMLView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        ditto
+        
+        * WebView/WebPDFView.m:
+        (-[WebPDFView searchFor:direction:caseSensitive:wrap:]):
+        ditto
+        
+        * WebView/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        ditto
+
 2006-03-20  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.
