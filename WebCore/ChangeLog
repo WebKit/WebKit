@@ -1,3 +1,18 @@
+2006-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - fixed <rdar://problem/4446749> 10.4.4: safari crash in DOM::NamedAttrMapImpl::setNamedItem
+
+        * bindings/scripts/CodeGeneratorJS.pm: Add a framework for typechecking method
+        arguments. For now only use it for parameters of type Attr.
+        * dom/Element.idl: Arbitrary change to make it regenerate.
+        * dom/dom_elementimpl.cpp:
+        (WebCore::Element::setAttributeNode): ASSERT that attr is not null
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::toAttr): add bool ok parameter
+        * khtml/ecma/kjs_dom.h:
+
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
         * ksvg2/css/SVGCSSParser.h: Removed unused file.

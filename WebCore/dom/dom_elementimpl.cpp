@@ -751,6 +751,7 @@ void Element::formatForDebugger(char *buffer, unsigned length) const
 
 PassRefPtr<Attr> Element::setAttributeNode(Attr *attr, ExceptionCode& ec)
 {
+    ASSERT(attr);
     return static_pointer_cast<Attr>(attributes(false)->setNamedItem(attr, ec));
 }
 

@@ -658,7 +658,13 @@ sub GenerateImplementation
       
       foreach my $parameter (@{$function->parameters}) {
         my $name = $parameter->name;
-        push(@implContent, "        " . GetNativeType($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]") . ";\n");        
+        push(@implContent, "        bool ${name}Ok;\n") if TypeCanFailConversion($parameter);
+        push(@implContent, "        " . GetNativeType($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]", TypeCanFailConversion($parameter) ? "${name}Ok" : undef) . ";\n");        
+	if (TypeCanFailConversion($parameter)) {
+	    push(@implContent, "        if (!${name}Ok) {\n");
+	    push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+	    push(@implContent, "            return jsUndefined();\n        }\n");
+	}          
         
         # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
         # exception        
@@ -753,10 +759,47 @@ sub GetNativeType
   }
 }
 
+sub TypeCanFailConversion
+{
+  my $signature = shift;
+  
+  my $type = $signature->type;
+
+  if ($type eq "boolean") {
+    return 1;
+  } elsif ($type eq "unsigned long" or $type eq "long") {
+    return 0; # or can it?
+  } elsif ($type eq "unsigned short") {
+    return 0; # or can it?
+  } elsif ($type eq "CompareHow") {
+    return 0; # or can it?
+  } elsif ($type eq "float") {
+    return 0;
+  } elsif ($type eq "AtomicString") {
+      return 0;
+  } elsif ($type eq "DOMString") {
+      return 0;
+  } elsif ($type eq "views::AbstractView") {
+      return 1;
+  } elsif ($type eq "Node") {
+      return 1;
+  } elsif ($type eq "Attr") {
+      return 1;
+  } elsif ($type eq "DocumentType") {
+      return 1;
+  } elsif ($type eq "Range") {
+      return 1;
+  } else {
+    die "Don't know whether a JS value can fail conversion to type $type."
+  }
+}
+
 sub JSValueToNative
 {
   my $signature = shift;
   my $value = shift;
+  my $okParam = shift;
+  my $maybeOkParam = "${okParam}" ? ", ${okParam}" : "";
   
   my $type = $signature->type;
 
@@ -786,7 +829,7 @@ sub JSValueToNative
     return "toNode($value)";
   } elsif ($type eq "Attr") {
     $implIncludes{"kjs_dom.h"} = 1;
-    return "toAttr($value)";
+    return "toAttr($value${maybeOkParam})";
   } elsif ($type eq "DocumentType") {
       $implIncludes{"kjs_dom.h"} = 1;
       return "toDocumentType($value)";
