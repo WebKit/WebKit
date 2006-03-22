@@ -1,3 +1,12 @@
+2006-03-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for <rdar://problem/4483856> REGRESSION (417.8-TOT): onclick handler cannot call a function named OnClick (7143)
+
+        * fast/dom/Element/onclick-case-expected.txt: Added.
+        * fast/dom/Element/onclick-case.html: Added.
+
 2006-03-21  Adele Peterson  <adele@apple.com>
 
         Tests for:

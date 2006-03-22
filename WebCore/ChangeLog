@@ -1,3 +1,19 @@
+2006-03-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix <rdar://problem/4483856> REGRESSION (417.8-TOT): onclick handler cannot call a function named OnClick (7143)
+
+        Test: fast/dom/Element/onclick-case.html
+
+        We discussed this with Maciej. In the long run we may need to remove the "all attributes
+        show up as properties in JavaScript" feature entirely. Gecko does not do it, and it's
+        not really the same thing IE does either.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMElement::attributeGetter): Use getAttributeNS so we're case sensitive.
+        (KJS::DOMElement::getOwnPropertySlot): Ditto.
+
 2006-03-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by beth.
