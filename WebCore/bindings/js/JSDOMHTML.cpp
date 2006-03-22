@@ -1,6 +1,6 @@
 #include "config.h"
 
-// This file needs to be touched every once in a while.
+// This file needs to be touched once in a while.
 
 #include "JSCanvasGradient.cpp"
 #include "JSCanvasPattern.cpp"
