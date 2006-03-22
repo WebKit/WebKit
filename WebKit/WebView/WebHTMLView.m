@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1623,10 +1623,13 @@ static WebHTMLView *lastHitView = nil;
     // Also, this is responsible for letting the bridge know if the window has gained or lost focus
     // so we can send focus and blur events.
 
-    BOOL windowIsKey = [[self window] isKeyWindow];
+    NSWindow *window = [self window];
+    BOOL windowIsKey = [window isKeyWindow];
+    BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
+
     BOOL displaysWithFocusAttributes = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
     
-    [[self _bridge] setWindowHasFocus:windowIsKey];
+    [[self _bridge] setWindowHasFocus:windowOrSheetIsKey];
     [[self _bridge] setDisplaysWithFocusAttributes:displaysWithFocusAttributes];
 }
 
@@ -2139,9 +2142,9 @@ static WebHTMLView *lastHitView = nil;
     NSWindow *window = [self window];
     if (window) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeKey:)
-            name:NSWindowDidBecomeKeyNotification object:window];
+            name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignKey:)
-            name:NSWindowDidResignKeyNotification object:window];
+            name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:)
             name:NSWindowWillCloseNotification object:window];
     }
@@ -2152,9 +2155,9 @@ static WebHTMLView *lastHitView = nil;
     NSWindow *window = [self window];
     if (window) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidBecomeKeyNotification object:window];
+            name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidResignKeyNotification object:window];
+            name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowWillCloseNotification object:window];
     }
@@ -2556,17 +2559,26 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
 {
-    ASSERT([notification object] == [self window]);
-    [self addMouseMovedObserver];
-    [self _updateFocusState];
+    NSWindow *keyWindow = [notification object];
+
+    if (keyWindow == [self window])
+        [self addMouseMovedObserver];
+
+    if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
+        [self _updateFocusState];
 }
 
-- (void)windowDidResignKey: (NSNotification *)notification
+- (void)windowDidResignKey:(NSNotification *)notification
 {
-    ASSERT([notification object] == [self window]);
-    [_private->compController endRevertingChange:NO moveLeft:NO];
-    [self removeMouseMovedObserver];
-    [self _updateFocusState];
+    NSWindow *formerKeyWindow = [notification object];
+
+    if (formerKeyWindow == [self window])
+        [self removeMouseMovedObserver];
+
+    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
+        [self _updateFocusState];
+        [_private->compController endRevertingChange:NO moveLeft:NO];
+    }
 }
 
 - (void)windowWillClose:(NSNotification *)notification

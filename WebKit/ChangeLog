@@ -1,3 +1,16 @@
+2006-03-21  Darin Adler  <darin@apple.com>
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3784
+          <rdar://problem/4483827> JavaScript save dialog disappears right away (sheet triggers blur event) (3784)
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateFocusState]): Treat window as having focus if its sheet is key.
+        (-[WebHTMLView addWindowObservers]): Observe all focus notifications, not just the ones involving this window.
+        (-[WebHTMLView removeWindowObservers]): Ditto.
+        (-[WebHTMLView windowDidBecomeKey:]): Add checks so that we call the methods only when appropriate,
+        since this will now be called for all windows.
+        (-[WebHTMLView windowDidResignKey:]): Ditto.
+
 2006-03-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
