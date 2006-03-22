@@ -410,14 +410,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\ecma\kjs_range.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\ecma\kjs_range.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\khtml\ecma\kjs_traversal.cpp"
 					>
 				</File>

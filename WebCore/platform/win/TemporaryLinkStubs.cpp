@@ -159,7 +159,7 @@ void FrameWin::issueCopyCommand() { notImplemented(); }
 void FrameWin::openURLRequest(struct WebCore::ResourceRequest const&) { notImplemented(); }
 bool FrameWin::passWheelEventToChildWidget(Node*) { notImplemented(); return 0; }
 void FrameWin::issueUndoCommand() { notImplemented(); }
-DeprecatedString FrameWin::mimeTypeForFileName(DeprecatedString const&) const { notImplemented(); return DeprecatedString(); }
+String FrameWin::mimeTypeForFileName(String const&) const { notImplemented(); return String(); }
 void FrameWin::issuePasteCommand() { notImplemented(); }
 void FrameWin::scheduleClose() { notImplemented(); }
 void FrameWin::markMisspellings(WebCore::SelectionController const&) { notImplemented(); }
@@ -169,10 +169,10 @@ bool FrameWin::statusbarVisible() { notImplemented(); return 0; }
 bool FrameWin::toolbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueTransposeCommand() { notImplemented(); }
 bool FrameWin::canPaste() const { notImplemented(); return 0; }
-enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,DeprecatedString const&) { notImplemented(); return (ObjectContentType)0; }
+enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,String const&) { notImplemented(); return (ObjectContentType)0; }
 bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
-Plugin* FrameWin::createPlugin(KURL const&,DeprecatedStringList const&,DeprecatedStringList const&,DeprecatedString const&) { notImplemented(); return 0; }
+Plugin* FrameWin::createPlugin(KURL const&,DeprecatedStringList const&,DeprecatedStringList const&,String const&) { notImplemented(); return 0; }
 
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
 void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
@@ -212,21 +212,21 @@ void WebCore::TransferJob::retrieveCharset() const { }
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }
 void FrameWin::createEmptyDocument() { }
-DeprecatedString FrameWin::overrideMediaType() const { return DeprecatedString(); }
+String FrameWin::overrideMediaType() const { return String(); }
 void FrameWin::setTitle(String const&) { }
 void FrameWin::handledOnloadEvents() { }
 Range* FrameWin::markedTextRange() const { return 0; }
-bool FrameWin::passSubframeEventToSubframe(WebCore::MouseEventWithHitTestResults&) { return false; }
+bool FrameWin::passSubframeEventToSubframe(WebCore::MouseEventWithHitTestResults&, Frame*) { return false; }
 bool FrameWin::lastEventIsMouseUp() const { return false; }
 void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
 bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool) const { return true; }
 void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { }
 static int frameNumber = 0;
-Frame* FrameWin::createFrame(KURL const&,DeprecatedString const&,RenderPart*,String const&) { return 0; }
+Frame* FrameWin::createFrame(KURL const&,String const&,RenderPart*,String const&) { return 0; }
 void FrameWin::saveDocumentState(void) { }
 void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { }
 void FrameWin::clearUndoRedoOperations(void) { }
-DeprecatedString FrameWin::incomingReferrer() const { return DeprecatedString(); }
+String FrameWin::incomingReferrer() const { return String(); }
 void FrameWin::clearRecordedFormValues() { }
 void FrameWin::recordFormValue(DeprecatedString const&,DeprecatedString const&,WebCore::HTMLFormElement*) { }
 void FrameWin::submitForm(struct WebCore::ResourceRequest const&) { }

@@ -49,9 +49,9 @@ public:
 
     virtual void setTitle(const String&);
 
-    virtual ObjectContentType objectContentType(const KURL& url, const DeprecatedString& mimeType);
-    virtual Plugin* createPlugin(const KURL&, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const DeprecatedString& mimeType);
-    virtual Frame* createFrame(const KURL&, const DeprecatedString& name, RenderPart* renderer, const String& referrer);
+    virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
+    virtual Plugin* createPlugin(const KURL&, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const String& mimeType);
+    virtual Frame* createFrame(const KURL&, const String& name, RenderPart* renderer, const String& referrer);
 
     virtual void scheduleClose();
 
@@ -74,23 +74,23 @@ public:
     virtual void createEmptyDocument();
     virtual Range* markedTextRange() const;
 
-    virtual DeprecatedString incomingReferrer() const;
-    virtual DeprecatedString userAgent() const;
+    virtual String incomingReferrer() const;
+    virtual String userAgent() const;
 
-    virtual DeprecatedString mimeTypeForFileName(const DeprecatedString&) const;
+    virtual String mimeTypeForFileName(const String&) const;
 
     virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
     virtual void markMisspellings(const SelectionController&);
 
     virtual bool lastEventIsMouseUp() const;
 
-    virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults &);
+    virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults &, Frame* subframePart = 0);
     virtual bool passWheelEventToChildWidget(Node*);
     
     virtual void clearRecordedFormValues();
     virtual void recordFormValue(const DeprecatedString& name, const DeprecatedString& value, HTMLFormElement*);
 
-    virtual DeprecatedString overrideMediaType() const;
+    virtual String overrideMediaType() const;
 
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);

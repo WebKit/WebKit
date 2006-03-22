@@ -1,3 +1,25 @@
+2006-03-21  Justin Haygood and Bjoern Graf  <jhaygood@spsu.edu> <bjoern.graf@gmail.com>
+
+        Reviewed by Eric and Darin.
+
+        - get Windows building again
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::userAgent):
+        * bridge/win/FrameWin.h:
+        * platform/GraphicsContext.h:
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::supportsType):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::mimeTypeForFileName):
+        (FrameWin::objectContentType):
+        (FrameWin::createPlugin):
+        (FrameWin::overrideMediaType):
+        (FrameWin::passSubframeEventToSubframe):
+        (FrameWin::createFrame):
+        (FrameWin::incomingReferrer):
+
 2006-03-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

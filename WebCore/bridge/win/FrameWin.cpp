@@ -64,7 +64,7 @@ void FrameWin::urlSelected(const ResourceRequest& request)
         m_client->openURL(request.url().url());
 }
 
-DeprecatedString FrameWin::userAgent() const
+String FrameWin::userAgent() const
 {
     return "Mozilla/5.0 (PC; U; Intel; Windows; en) AppleWebKit/420+ (KHTML, like Gecko)";
 }
