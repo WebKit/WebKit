@@ -656,8 +656,8 @@
 				65B1749909D0FEB700820339 /* array_object.lut.h */,
 			);
 			name = "Derived Sources";
-			path = /Volumes/Data/mjs/Work/symroots/Debug/DerivedSources/JavaScriptCore;
-			sourceTree = "<absolute>";
+			path = DerivedSources/JavaScriptCore;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		65162EF108E6A21C007556CD /* kxmlcore */ = {
 			isa = PBXGroup;
@@ -1085,9 +1085,9 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			targets = (
-				65FB3F6609D11E9100F49DEB /* Derived Sources */,
 				932F5B3E0822A1C700736975 /* include */,
 				935F69F508244FEA003D1A45 /* dftables */,
+				65FB3F6609D11E9100F49DEB /* Derived Sources */,
 				932F5BDA0822A1C700736975 /* testkjs */,
 				932F5BE30822A1C700736975 /* All */,
 			);
@@ -1268,7 +1268,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					icu,
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources",
+					"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
@@ -1305,7 +1305,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					icu,
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources",
+					"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
@@ -1342,7 +1342,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					icu,
-					"$(BUILT_PRODUCTS_DIR)/DerivedSources",
+					"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";

@@ -1,3 +1,9 @@
+2006-03-22  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix the build
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2006-03-21  Maciej Stachowiak  <mjs@apple.com>
 
         * kjs/generate-derived-sources: Set executable property.
