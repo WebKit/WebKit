@@ -1,3 +1,14 @@
+2006-03-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
+        <rdar://problem/4486417> REGRESSION: Mail linked against TOT WebKit crashes when composing a message
+
+        No test possible.
+
+        * bridge/mac/WebCoreSettings.mm:
+        (-[WebCoreSettings init]): call AtomicString::init()
+
 2006-03-21  Darin Adler  <darin@apple.com>
 
         - fix buildbot (and everyone else)

@@ -57,8 +57,10 @@ using namespace WebCore;
     [super finalize];
 }
 
-- init
+- (id)init
 {
+    // A Frame may not have been created yet, so we initialize the AtomicString hash before we try and use it in KHTMLSettings.
+    AtomicString::init();
     settings = new KHTMLSettings();
     return [super init];
 }
