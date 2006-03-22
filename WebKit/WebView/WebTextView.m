@@ -326,6 +326,11 @@
     return [self _elementAtWindowPoint:[self convertPoint:point toView:nil]];
 }
 
+- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow
+{
+    return [self elementAtPoint:point];
+}
+
 - (BOOL)dragSelectionWithEvent:(NSEvent *)event offset:(NSSize)mouseOffset slideBack:(BOOL)slideBack
 {
     // Mark webview as initiating the drag so dropping the text back on this webview never tries to navigate.

@@ -53,6 +53,7 @@ public:
 
     void subtreeHasChanged();
     String text();
+    void forwardEvent(Event*);
 
 private:
     VisiblePosition visiblePositionForIndex(int index);

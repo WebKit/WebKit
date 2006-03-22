@@ -60,6 +60,7 @@
 
 @protocol WebDocumentElement <NSObject>
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
+- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 @end
 
 /* Used to save and restore state in the view, typically when going back/forward */

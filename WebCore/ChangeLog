@@ -1,3 +1,50 @@
+2006-03-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6813
+        elementAtPoint needs to return input element when clicking on new text field
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7799
+        New text fields don't respect the disabled attribute
+
+        - Tests:
+        fast/forms/input-appearance-disabled.html
+        fast/forms/input-appearance-elementFromPoint.html
+        fast/forms/input-appearance-preventDefault.html
+
+        * bridge/mac/WebCoreFrameBridge.h: Added allowShadowContent parameter to getInnerNonSharedNode so new elementAtPoint method in WebKit can call this.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getInnerNonSharedNode:innerNode:URLElement:atPoint:allowShadowContent:]): Passes allowShadowContent parameter to nodeInfoAtPoint.
+        (-[WebCoreFrameBridge _visiblePositionForPoint:]): Updated to call nodeInfoAtPoint allowing shadow content.
+        (-[WebCoreFrameBridge RenderObject::nodeInfoAtPoint:allowShadowContent:]): Added allowShadowContent parameter.
+
+        * dom/Node.h:
+        (WebCore::Node::isShadowNode): Added.
+        (WebCore::Node::shadowParentNode): Added.
+        * dom/Node.cpp: (WebCore::Node::shadowAncestorNode): Added.  If an ancestor is a shadow node, return its shadow parent node.
+        * html/HTMLTextFieldInnerElement.h: (WebCore::HTMLTextFieldInnerElement::isShadowNode): Added.
+
+        * dom/Document.cpp: (WebCore::Document::elementFromPoint): Gets the shadowAncestorNode (so we get the input element, and not the inner div).
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isKeyboardFocusable): If text fields are focusable, then they should be keyboard focusable.  This works for the
+        old text fields because HTMLGenericFormElement::isKeyboardFocusable does the right thing for RenderWidgets.  That's not needed for the new form
+        elements.
+        (WebCore::HTMLInputElement::defaultEventHandler): let the renderer forward drag, mouse, and wheel events.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateDragAndDrop): Send drag events to the shadowAncestorNode.
+        (WebCore::FrameView::dispatchMouseEvent): Send mouse events to the shadowAncestorNode.
+        (WebCore::FrameView::handleWheelEvent): Send wheel events to the shadowAncestorNode.
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::forwardEvent): forwards events to the inner div element.
+        * rendering/RenderTextField.h: Added forwardEvent method.
+
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityHitTest:]): Gets the  shadowAncestorNode (so we get the input element, and not the inner div).
+        (-[WebCoreAXObject role]): Gets the right role for text fields, since we no longer get that from AppKit.
+        (-[WebCoreAXObject roleDescription]): Gets the right description for text fields.
+
 2006-03-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim O.

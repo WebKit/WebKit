@@ -1,3 +1,22 @@
+2006-03-21  Adele Peterson  <adele@apple.com>
+
+        Tests for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6813
+        elementAtPoint needs to return input element when clicking on new text field
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7799
+        New text fields don't respect the disabled attribute
+
+        * fast/forms/input-appearance-disabled-expected.checksum: Added.
+        * fast/forms/input-appearance-disabled-expected.png: Added.
+        * fast/forms/input-appearance-disabled-expected.txt: Added.
+        * fast/forms/input-appearance-disabled.html: Added.
+        * fast/forms/input-appearance-elementFromPoint-expected.txt: Added.
+        * fast/forms/input-appearance-elementFromPoint.html: Added.
+        * fast/forms/input-appearance-preventDefault-expected.checksum: Added.
+        * fast/forms/input-appearance-preventDefault-expected.png: Added.
+        * fast/forms/input-appearance-preventDefault-expected.txt: Added.
+        * fast/forms/input-appearance-preventDefault.html: Added.
+
 2006-03-21  Darin Adler  <darin@apple.com>
 
         - test for <rdar://problem/4251515> REGRESSION: listing tag broken in TOT

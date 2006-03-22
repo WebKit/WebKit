@@ -342,6 +342,8 @@ using namespace HTMLNames;
             return NSAccessibilityRadioButtonRole;
         if (input->isTextButton())
             return NSAccessibilityButtonRole;
+        if (input->inputType() == HTMLInputElement::TEXT)
+            return NSAccessibilityTextFieldRole;
     }
     
     if (m_renderer->isBlockFlow())
@@ -391,6 +393,9 @@ using namespace HTMLNames;
         
     if ([role isEqualToString:NSAccessibilityRadioButtonRole])
         return NSAccessibilityRoleDescription(NSAccessibilityRadioButtonRole, nil);
+        
+    if ([role isEqualToString:NSAccessibilityTextFieldRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityTextFieldRole, nil);
 
     if ([role isEqualToString:@"AXWebArea"])
         return UI_STRING("web area", "accessibility role description for web area");
@@ -1770,7 +1775,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     m_renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
     if (!nodeInfo.innerNode())
         return NSAccessibilityUnignoredAncestor(self);
-    RenderObject* obj = nodeInfo.innerNode()->renderer();
+    Node* node = nodeInfo.innerNode()->shadowAncestorNode();
+    RenderObject* obj = node->renderer();
     if (!obj)
         return NSAccessibilityUnignoredAncestor(self);
     

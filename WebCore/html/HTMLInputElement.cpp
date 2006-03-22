@@ -102,6 +102,10 @@ const AtomicString& HTMLInputElement::name() const
 
 bool HTMLInputElement::isKeyboardFocusable() const
 {
+    // If text fields can be focused, then they should always be keyboardFocusable
+    if (m_type == TEXT && renderer() && renderer()->style()->appearance() == TextFieldAppearance)
+        return HTMLGenericFormElement::isFocusable();
+        
     // If the base class says we can't be focused, then we can stop now.
     if (!HTMLGenericFormElement::isKeyboardFocusable())
         return false;
@@ -1190,6 +1194,9 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
             text.truncate(ml - currentLength);
         }        
     }
+    
+    if (m_type == TEXT && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent()) && renderer() && renderer()->style()->appearance() == TextFieldAppearance)
+        static_cast<RenderTextField*>(renderer())->forwardEvent(evt);
     
     HTMLGenericFormElement::defaultEventHandler(evt);
 }

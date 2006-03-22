@@ -225,6 +225,11 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
         nil];
 }
 
+- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow
+{
+    return [self elementAtPoint:point];
+}
+
 - (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent
 {
     NSMutableArray *copiedItems = [NSMutableArray array];

@@ -248,6 +248,11 @@
         frame,                                  WebElementFrameKey, nil];
 }
 
+- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow
+{
+    return [self elementAtPoint:point];
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     WebView *webView = [self webView];

@@ -1159,7 +1159,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc operation:(NSDragOperation)op event:(NSEvent *)mouseDraggedEvent sourceIsDHTML:(BOOL)srcIsDHTML DHTMLWroteData:(BOOL)dhtmlWroteData
 {
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
-    NSDictionary *element = [self elementAtPoint:mouseDownPoint];
+    NSDictionary *element = [self elementAtPoint:mouseDownPoint allowShadowContent:YES];
 
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
@@ -1305,7 +1305,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_mayStartDragAtEventLocation:(NSPoint)location
 {
     NSPoint mouseDownPoint = [self convertPoint:location fromView:nil];
-    NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint];
+    NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint allowShadowContent:YES];
 
     ASSERT([self _webView]);
     if ([mouseDownElement objectForKey: WebElementImageKey] != nil &&
@@ -2589,7 +2589,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_isSelectionEvent:(NSEvent *)event
 {
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-    return [[[self elementAtPoint:point] objectForKey:WebElementIsSelectedKey] boolValue];
+    return [[[self elementAtPoint:point allowShadowContent:YES] objectForKey:WebElementIsSelectedKey] boolValue];
 }
 
 - (void)_setMouseDownEvent:(NSEvent *)event
@@ -2790,7 +2790,7 @@ done:
     }
     
     NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
-    NSDictionary *element = [self elementAtPoint:point];
+    NSDictionary *element = [self elementAtPoint:point allowShadowContent:YES];
     if ([[self _webView] isEditable] || [[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
         if (_private->initiatedDrag && [[element objectForKey:WebElementIsSelectedKey] boolValue]) {
             // Can't drag onto the selection being dragged.
@@ -2897,10 +2897,15 @@ done:
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
+    return [self elementAtPoint:point allowShadowContent:NO];
+}
+
+- (NSDictionary *)elementAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
+{
     DOMNode *innerNode = nil;
     DOMNode *innerNonSharedNode = nil;
     DOMElement *URLElement = nil;
-    [[self _bridge] getInnerNonSharedNode:&innerNonSharedNode innerNode:&innerNode URLElement:&URLElement atPoint:point];
+    [[self _bridge] getInnerNonSharedNode:&innerNonSharedNode innerNode:&innerNode URLElement:&URLElement atPoint:point allowShadowContent:allow];
     return [[[WebElementDictionary alloc] initWithInnerNonSharedNode:innerNonSharedNode innerNode:innerNode URLElement:URLElement andPoint:point] autorelease];
 }
 

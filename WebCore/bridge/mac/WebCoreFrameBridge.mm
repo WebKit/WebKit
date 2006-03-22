@@ -126,7 +126,7 @@ NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
 @interface WebCoreFrameBridge (WebCoreBridgeInternal)
 - (RootObject *)executionContextForView:(NSView *)aView;
-- (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point;
+- (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 @end
 
 static RootObject *rootForView(void *v)
@@ -1176,7 +1176,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->matchLabelsAgainstElement(labels, [element _element]);
 }
 
-- (void)getInnerNonSharedNode:(DOMNode **)innerNonSharedNode innerNode:(DOMNode **)innerNode URLElement:(DOMElement **)URLElement atPoint:(NSPoint)point
+- (void)getInnerNonSharedNode:(DOMNode **)innerNonSharedNode innerNode:(DOMNode **)innerNode URLElement:(DOMElement **)URLElement atPoint:(NSPoint)point allowShadowContent:(BOOL) allow
 {
     RenderObject *renderer = m_frame->renderer();
     if (!renderer) {
@@ -1186,7 +1186,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     }
 
-    RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point];
+    RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point allowShadowContent:allow];
     *innerNonSharedNode = [DOMNode _nodeWith:nodeInfo.innerNonSharedNode()];
     *innerNode = [DOMNode _nodeWith:nodeInfo.innerNode()];
     *URLElement = [DOMElement _elementWith:nodeInfo.URLElement()];
@@ -2068,7 +2068,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return VisiblePosition();
     }
     
-    RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point];
+    RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point allowShadowContent:YES];
     
     Node *node = nodeInfo.innerNode();
     if (!node || !node->renderer())
@@ -2453,7 +2453,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
     return root;
 }
 
-- (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point
+- (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow
 {
     RenderObject *renderer = m_frame->renderer();
 
@@ -2485,6 +2485,16 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
         nodeInfo = widgetNodeInfo;
     }
     
+    if (!allow) {
+        Node* node = nodeInfo.innerNode();
+        if (node)
+            node = node->shadowAncestorNode();
+        nodeInfo.setInnerNode(node);
+        node = nodeInfo.innerNonSharedNode();
+        if (node)
+            node = node->shadowAncestorNode();
+        nodeInfo.setInnerNonSharedNode(node); 
+    }
     return nodeInfo;
 }
 

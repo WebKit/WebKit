@@ -620,6 +620,8 @@ Element* Document::elementFromPoint(int x, int y) const
     Node* n = nodeInfo.innerNode();
     while (n && !n->isElementNode())
         n = n->parentNode();
+    if (n)
+        n = n->shadowAncestorNode();
     return static_cast<Element*>(n);
 }
 

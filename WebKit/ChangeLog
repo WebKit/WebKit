@@ -1,3 +1,23 @@
+2006-03-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6813
+        elementAtPoint needs to return input element when clicking on new text field
+
+        * WebView/WebDocumentInternal.h: Added elementAtPoint:allowShadowContent:
+        * WebView/WebHTMLView.m:
+        (-[NSArray elementAtPoint:]): Does not allow shadow content.  This way, by default, callers would get the input element instead of the inner div.
+        (-[NSArray elementAtPoint:allowShadowContent:]): Allows callers to specify whether or not the element can be a shadow node.
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]): Allows shadow content when getting element.
+        (-[WebHTMLView _mayStartDragAtEventLocation:]): ditto.
+        (-[NSArray _isSelectionEvent:]): ditto.
+        (-[NSArray _canProcessDragWithDraggingInfo:]): ditto.
+        * WebView/WebFrame.m: (-[WebFrame _actionInformationForNavigationType:event:originalURL:]): Does not allow shadow content when getting element.
+        * WebView/WebImageView.m: (-[WebImageView elementAtPoint:allowShadowContent:]): Added to conform to the WebDocumentElement protocol.
+        * WebView/WebPDFView.m: (-[WebPDFView elementAtPoint:allowShadowContent:]): ditto.
+        * WebView/WebTextView.m: (-[WebTextView elementAtPoint:allowShadowContent:]): ditto.
+
 2006-03-21  Tim Omernick  <timo@apple.com>
 
         Reviewed by Tim Hatcher and Darin.
