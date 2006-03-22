@@ -1046,9 +1046,11 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     // The end result will be: <b>...</b><p><b>Foo</b>Goo</p>
     //
     // Step 1: Remove |blockElem| from its parent, doing a batch detach of all the kids.
+    if (form)
+        form->setPreserveAcrossRemove(true);
     if (isBlockStillInTree)
         blockElem->parentNode()->removeChild(blockElem, ec);
-        
+
     // Step 2: Clone |residualElem|.
     RefPtr<Node> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
 
@@ -1113,6 +1115,9 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 
     reopenResidualStyleTags(residualStyleStack, 0); // FIXME: Deal with stray table content some day
                                                     // if it becomes necessary to do so.
+                                                    
+    if (form)
+        form->setPreserveAcrossRemove(false);
 }
 
 void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTableParent)

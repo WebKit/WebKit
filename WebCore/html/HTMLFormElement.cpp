@@ -58,6 +58,7 @@ HTMLFormElement::HTMLFormElement(Document *doc)
     m_enctype = "application/x-www-form-urlencoded";
     m_boundary = "----------0xKhTmLbOuNdArY";
     m_malformed = false;
+    m_preserveAcrossRemove = false;
 }
 
 HTMLFormElement::~HTMLFormElement()

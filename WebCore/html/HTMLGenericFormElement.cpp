@@ -128,7 +128,7 @@ void HTMLGenericFormElement::removedFromTree(bool deep)
 {
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.
-    if (m_form && findRoot(this) != findRoot(m_form)) {
+    if (m_form && !m_form->preserveAcrossRemove() && findRoot(this) != findRoot(m_form)) {
         m_form->removeFormElement(this);
         m_form = 0;
     }

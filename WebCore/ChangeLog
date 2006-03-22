@@ -1,3 +1,21 @@
+2006-03-22  David Hyatt  <hyatt@apple.com>
+
+        Fix for residual style problem where form elements lose their connection
+        to a degenerate table form because of a residual style fixup.  This is
+        Radar bug #4330765.
+
+        Reviewed by eric
+
+        * khtml/html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        * khtml/html/HTMLFormElement.h:
+        (WebCore::HTMLFormElement::setPreserveFormConnectionAcrossRemove):
+        (WebCore::HTMLFormElement::preserveFormConnectionAcrossRemove):
+        * khtml/html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::removedFromTree):
+        * khtml/html/htmlparser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+
 2006-03-22  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Adele.
