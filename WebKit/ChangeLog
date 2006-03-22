@@ -1,3 +1,16 @@
+2006-03-22  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Better fix for <rdar://problem/4432562> REGRESSION (TOT): Safari's "stop loading" active, "view source" inactive after page load [7058]
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        Cancel the client redirect when we commit the provisional load, if we were waiting for a redirect.
+        This is a better fix for 7058 (<rdar://problem/4432562>).  The original fix for 7058 changed the timing of the redirect cancel
+        in such a way that WebKit was precluded from ever reusing back/forward list entries for redirects.  Clearing the redirect state
+        here actually makes logical sense, as the redirect's target page is being committed at this point.
+
 2006-03-21  Darin Adler  <darin@apple.com>
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3784

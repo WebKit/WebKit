@@ -1,3 +1,28 @@
+2006-03-22  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Part of <rdar://problem/4351664> REGRESSION (420+): extra URL in b/f list - navigating back to previous page fails at apple.com/retail/)
+        This also fixes <rdar://problem/4477821> REGRESSION (10.4.5-TOT): meta tag specifying refresh is being added to history.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        Removed redirectionTimerFired().  This was added as attempt to fix <http://bugzilla.opendarwin.org/show_bug.cgi?id=7058>.  The
+        aim was to cause Safari and WebKit to update their loading status after a redirect.  Unfortunately, the fix had a bad side
+        effect.  Calling -reportClientRedirectCancelled: on a successful redirect causes WebKit to forget that the redirect was supposed
+        to lock history (i.e. reuse the current back/forward entry for the new page).  The end result was that intermediate "quick" redirects
+        were creating back/forward entries when they should not have been.  See 4351664.  That fix was almost correct, in that we do need to
+        notify the frame load delegate when a redirect ends, either because it succeeded or because it was cancelled.  However, this is the
+        wrong place to do it.  WebCore's redirect notification logic did not need to change to fix 7058.  The never-ending spinning indicators
+        problem was actually caused by a bug at the WebKit level.
+
+        * manual-tests/redirectHistory: Added.
+        * manual-tests/redirectHistory/redir-1.html: Added.
+        * manual-tests/redirectHistory/redir-2.html: Added.
+        * manual-tests/redirectHistory/redir-3.html: Added.
+        Manual test case.  I couldn't figure out how to create a layout test for this, because it involves navigation through history and
+        it was unclear how/when to tell DumpRenderTree to dump its output.
+
 2006-03-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
