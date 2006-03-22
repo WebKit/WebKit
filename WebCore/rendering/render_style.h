@@ -1350,10 +1350,9 @@ public:
         region.offset.bottom = b;
         region.offset.left = l;
         region.type = type;
-        if (!append) {
-            css3NonInheritedData.access()->m_dashboardRegions.clear ();
-        }
-        css3NonInheritedData.access()->m_dashboardRegions.append (region);
+        if (!append)
+            css3NonInheritedData.access()->m_dashboardRegions.clear();
+        css3NonInheritedData.access()->m_dashboardRegions.append(region);
     }
 
     void resetBorder() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); resetBorderRadius(); }

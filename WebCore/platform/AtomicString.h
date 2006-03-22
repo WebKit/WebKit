@@ -33,6 +33,7 @@ public:
     static void init();
     
     AtomicString() { }
+    AtomicString(QChar c) : m_string(add(&c, 1)) { }
     AtomicString(const char* s) : m_string(add(s)) { }
     AtomicString(const QChar* s, int length) : m_string(add(s, length)) { }
     AtomicString(const unsigned short* s, int length) : m_string(add((QChar*)s, length)) { }

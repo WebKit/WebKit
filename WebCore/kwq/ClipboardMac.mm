@@ -74,21 +74,17 @@ static NSString *cocoaTypeFromMIMEType(const String &type)
     DeprecatedString qType = type.deprecatedString().stripWhiteSpace();
 
     // two special cases for IE compatibility
-    if (qType == "Text") {
+    if (qType == "Text")
         return NSStringPboardType;
-    }
-    if (qType == "URL") {
+    if (qType == "URL")
         return NSURLPboardType;
-    } 
 
     // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue
-    if (qType == "text/plain" || qType.startsWith("text/plain;")) {
+    if (qType == "text/plain" || qType.startsWith("text/plain;"))
         return NSStringPboardType;
-    }
-    if (qType == "text/uri-list") {
+    if (qType == "text/uri-list")
         // special case because UTI doesn't work with Cocoa's URL type
         return NSURLPboardType; // note special case in getData to read NSFilenamesType
-    }
     
     // Try UTI now
     NSString *mimeType = qType.getNSString();
@@ -96,9 +92,8 @@ static NSString *cocoaTypeFromMIMEType(const String &type)
     if (UTIType) {
         CFStringRef pbType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassNSPboardType);
         CFRelease(UTIType);
-        if (pbType) {
+        if (pbType)
             return KWQCFAutorelease(pbType);
-        }
     }
 
    // No mapping, just pass the whole string though

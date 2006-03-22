@@ -331,14 +331,12 @@ NSString *FrameMac::searchForLabelsBeforeElement(NSArray *labels, Element *eleme
                 return result;
             }
             searchedCellAbove = true;
-        } else if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
-        {
+        } else if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
             // For each text chunk, run the regexp
             DeprecatedString nodeString = n->nodeValue().deprecatedString();
             // add 100 for slop, to make it more likely that we'll search whole nodes
-            if (lengthSearched + nodeString.length() > maxCharsSearched) {
+            if (lengthSearched + nodeString.length() > maxCharsSearched)
                 nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
-            }
             int pos = regExp->searchRev(nodeString);
             if (pos >= 0)
                 return nodeString.mid(pos, regExp->matchedLength()).getNSString();
@@ -525,14 +523,22 @@ ObjectContentType FrameMac::objectContentType(const KURL& url, const String& mim
     return (ObjectContentType)[_bridge determineObjectFromMIMEType:mimeType URL:url.getNSURL()];
 }
 
+static NSArray* nsArray(const Vector<String>& vector)
+{
+    unsigned len = vector.size();
+    NSMutableArray* array = [NSMutableArray arrayWithCapacity:len];
+    for (unsigned x = 0; x < len; x++)
+        [array addObject:vector[x]];
+    return array;
+}
 
-Plugin* FrameMac::createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const String& mimeType)
+Plugin* FrameMac::createPlugin(const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     return new Plugin(new Widget([_bridge viewForPluginWithURL:url.getNSURL()
-                                  attributeNames:paramNames.getNSArray()
-                                  attributeValues:paramValues.getNSArray()
+                                  attributeNames:nsArray(paramNames)
+                                  attributeValues:nsArray(paramValues)
                                   MIMEType:mimeType]));
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -1041,7 +1047,7 @@ KJS::Bindings::RootObject *FrameMac::executionContextForDOM()
 
 KJS::Bindings::RootObject *FrameMac::bindingRootObject()
 {
-    assert(d->m_bJScriptEnabled);
+    assert(jScriptEnabled());
     if (!_bindingRoot) {
         JSLock lock;
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
@@ -1055,7 +1061,7 @@ KJS::Bindings::RootObject *FrameMac::bindingRootObject()
 
 WebScriptObject *FrameMac::windowScriptObject()
 {
-    if (!d->m_bJScriptEnabled)
+    if (!jScriptEnabled())
         return 0;
 
     if (!_windowScriptObject) {
@@ -1070,7 +1076,7 @@ WebScriptObject *FrameMac::windowScriptObject()
 NPObject *FrameMac::windowScriptNPObject()
 {
     if (!_windowScriptNPObject) {
-        if (d->m_bJScriptEnabled) {
+        if (jScriptEnabled()) {
             // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
             // object.
             KJS::JSObject *win = KJS::Window::retrieveWindow(this);
@@ -1088,7 +1094,7 @@ NPObject *FrameMac::windowScriptNPObject()
 
 void FrameMac::partClearedInBegin()
 {
-    if (d->m_bJScriptEnabled)
+    if (jScriptEnabled())
         [_bridge windowObjectCleared];
 }
 
@@ -1117,7 +1123,7 @@ void FrameMac::openURLFromPageCache(KWQPageState *state)
     d->m_bLoadEventEmitted = true;
     
     // delete old status bar msg's from kjs (if it _was_ activated on last URL)
-    if (d->m_bJScriptEnabled) {
+    if (jScriptEnabled()) {
         d->m_kjsStatusBarText = String();
         d->m_kjsDefaultStatusBarText = String();
     }

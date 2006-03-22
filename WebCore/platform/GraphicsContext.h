@@ -159,7 +159,7 @@ namespace WebCore {
 #if __APPLE__
         static CGContextRef currentCGContext();
         static int getCompositeOperation(CGContextRef);
-        static void setCompositeOperation(CGContextRef, const DeprecatedString& operation);
+        static void setCompositeOperation(CGContextRef, const String& operation);
         static void setCompositeOperation(CGContextRef, int operation);
 #endif
 

@@ -67,7 +67,8 @@ void CachedCSSStyleSheet::ref(CachedObjectClient *c)
 {
     CachedObject::ref(c);
 
-    if(!m_loading) c->setStyleSheet( m_url, m_sheet );
+    if (!m_loading)
+        c->setStyleSheet(m_url, m_sheet);
 }
 
 void CachedCSSStyleSheet::deref(CachedObjectClient *c)

@@ -69,17 +69,15 @@ using namespace WebCore;
 {
     for (DeprecatedPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
         FrameMac *frame = Mac(it.current());
-        if (frame->settings() == settings) {
+        if (frame->settings() == settings)
             [frame->bridge() setNeedsReapplyStyles];
-        }
     }
 }
 
 - (void)setStandardFontFamily:(NSString *)s
 {
-    if ([standardFontFamily isEqualToString:s]) {
+    if ([standardFontFamily isEqualToString:s])
         return;
-    }
     [standardFontFamily release];
     standardFontFamily = [s copy];
     settings->setStdFontName(s);
@@ -168,9 +166,8 @@ using namespace WebCore;
 
 - (void)setMinimumFontSize:(float)size
 {
-    if (minimumFontSize == size) {
+    if (minimumFontSize == size)
         return;
-    }
     minimumFontSize = size;
     settings->setMinFontSize((int)rint(size));
     [self _updateAllViews];
@@ -183,9 +180,8 @@ using namespace WebCore;
 
 - (void)setMinimumLogicalFontSize:(float)size
 {
-    if (minimumLogicalFontSize == size) {
+    if (minimumLogicalFontSize == size)
         return;
-    }
     minimumLogicalFontSize = size;
     settings->setMinLogicalFontSize((int)rint(size));
     [self _updateAllViews];
@@ -198,9 +194,8 @@ using namespace WebCore;
 
 - (void)setDefaultFontSize:(float)size
 {
-    if (defaultFontSize == size) {
+    if (defaultFontSize == size)
         return;
-    }
     defaultFontSize = size;
     settings->setMediumFontSize((int)rint(size));
     [self _updateAllViews];
@@ -213,9 +208,8 @@ using namespace WebCore;
 
 - (void)setDefaultFixedFontSize:(float)size
 {
-    if (defaultFixedFontSize == size) {
+    if (defaultFixedFontSize == size)
         return;
-    }
     defaultFixedFontSize = size;
     settings->setMediumFixedFontSize((int)rint(size));
     [self _updateAllViews];
@@ -287,7 +281,7 @@ using namespace WebCore;
         return;
     [userStyleSheetLocation release];
     userStyleSheetLocation = [s copy];
-    settings->setUserStyleSheet(DeprecatedString::fromNSString(s));
+    settings->setUserStyleSheetLocation(DeprecatedString::fromNSString(s));
     [self _updateAllViews];
 }
 

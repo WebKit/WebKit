@@ -322,13 +322,11 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     JSObject *eval = NULL;
     if (state->context().imp()) {  // "eval" won't work without context (i.e. at global scope)
         JSValue *v = globObj->get(state, "eval");
-        if (v->isObject() && static_cast<JSObject *>(v)->implementsCall()) {
+        if (v->isObject() && static_cast<JSObject *>(v)->implementsCall())
             eval = static_cast<JSObject *>(v);
-        }
-        else {
+        else
             // no "eval" - fallback operates on global exec state
             state = interp->globalExec();
-        }
     }
 
     JSValue *savedException = state->exception();
@@ -341,15 +339,12 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         List args;
         args.append(jsString(code));
         result = eval->call(state, NULL, args);
-    }
-    else {
+    } else
         // no "eval", or no context (i.e. global scope) - use global fallback
         result = interp->imp()->evaluate(code.data(), code.size(), globObj, UString(), 0).value();
-    }
 
-    if (state->hadException()) {
+    if (state->hadException())
         result = state->exception();    // (may be redundant depending on which eval path was used)
-    }
     state->setException(savedException);
 
     return [self _convertValueToObjcValue:result];

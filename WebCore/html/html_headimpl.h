@@ -135,13 +135,12 @@ protected:
     RefPtr<CSSStyleSheet> m_sheet;
     String m_url;
     String m_type;
-    DeprecatedString m_media;
+    String m_media;
     int m_disabledState; // 0=unset(default), 1=enabled via script, 2=disabled
     bool m_loading : 1;
     bool m_alternate : 1;
     bool m_isStyleSheet : 1;
     bool m_isIcon : 1;
-    DeprecatedString m_data; // needed for temporarily storing the loaded style sheet data
 };
 
 // -------------------------------------------------------------------------
@@ -265,7 +264,7 @@ protected:
     RefPtr<CSSStyleSheet> m_sheet;
     bool m_loading;
     String m_type;
-    DeprecatedString m_media;
+    String m_media;
 };
 
 // -------------------------------------------------------------------------

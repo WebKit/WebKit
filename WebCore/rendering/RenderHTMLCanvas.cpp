@@ -147,9 +147,8 @@ void RenderHTMLCanvas::paint(PaintInfo& i, int _tx, int _ty)
     bool isPrinting = i.p->printing();
     bool drawSelectionTint = (selectionState() != SelectionNone) && !isPrinting;
     if (i.phase == PaintActionSelection) {
-        if (selectionState() == SelectionNone) {
+        if (selectionState() == SelectionNone)
             return;
-        }
         drawSelectionTint = false;
     }
 

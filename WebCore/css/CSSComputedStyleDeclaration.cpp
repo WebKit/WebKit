@@ -954,7 +954,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         return valueForTextAlign(style->textAlign());
     case CSS_PROP_TEXT_DECORATION:
     {
-        DeprecatedString string;
+        String string;
         if (style->textDecoration() & UNDERLINE)
             string += "underline";
         if (style->textDecoration() & OVERLINE) {
@@ -978,7 +978,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     }
     case CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT:
     {
-        DeprecatedString string;
+        String string;
         if (style->textDecorationsInEffect() & UNDERLINE)
             string += "underline";
         if (style->textDecorationsInEffect() & OVERLINE) {

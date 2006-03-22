@@ -78,9 +78,7 @@ class StyledElement;
          * goes through all StyleSheets defined in the document and
          * creates a list of rules it needs to apply to objects
          */
-        CSSStyleSelector(Document* doc, DeprecatedString userStyleSheet, 
-                         StyleSheetList *styleSheets,
-                         bool _strictParsing);
+        CSSStyleSelector(Document*, const String& userStyleSheet, StyleSheetList *styleSheets, bool strictParsing);
         /**
          * same as above but for a single stylesheet.
          */

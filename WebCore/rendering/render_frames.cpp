@@ -677,9 +677,9 @@ RenderPartObject::RenderPartObject(HTMLElement* element)
     m_hasFallbackContent = false;
 }
 
-static bool isURLAllowed(WebCore::Document *doc, const DeprecatedString &url)
+static bool isURLAllowed(WebCore::Document *doc, const String &url)
 {
-    KURL newURL(doc->completeURL(url));
+    KURL newURL(doc->completeURL(url.deprecatedString()));
     newURL.setRef(DeprecatedString::null);
     
     if (doc->frame()->page()->frameCount() >= 200)
@@ -700,7 +700,7 @@ static bool isURLAllowed(WebCore::Document *doc, const DeprecatedString &url)
     return true;
 }
 
-static inline void mapClassIdToServiceType(const DeprecatedString &classId, DeprecatedString &serviceType)
+static inline void mapClassIdToServiceType(const String& classId, String& serviceType)
 {
     // It is ActiveX, but the nsplugin system handling
     // should also work, that's why we don't override the
@@ -726,10 +726,10 @@ static inline void mapClassIdToServiceType(const DeprecatedString &classId, Depr
 
 void RenderPartObject::updateWidget()
 {
-  DeprecatedString url;
-  DeprecatedString serviceType;
-  DeprecatedStringList paramNames;
-  DeprecatedStringList paramValues;
+  String url;
+  String serviceType;
+  Vector<String> paramNames;
+  Vector<String> paramValues;
   Frame *frame = m_view->frame();
 
   setNeedsLayoutAndMinMaxRecalc();
@@ -746,11 +746,10 @@ void RenderPartObject::updateWidget()
           if (child->hasTagName(embedTag)) {
               embed = static_cast<HTMLEmbedElement *>( child );
               break;
-          } else if (child->hasTagName(objectTag)) {
+          } else if (child->hasTagName(objectTag))
               child = child->nextSibling();         // Don't descend into nested OBJECT tags
-          } else {
+          else
               child = child->traverseNextNode(o);   // Otherwise descend (EMBEDs may be inside COMMENT tags)
-          }
       }
       
       // Use the attributes from the EMBED tag instead of the OBJECT tag including WIDTH and HEIGHT.
@@ -758,26 +757,21 @@ void RenderPartObject::updateWidget()
       if (embed) {
           embedOrObject = (HTMLElement *)embed;
           String attribute = embedOrObject->getAttribute(widthAttr);
-          if (!attribute.isEmpty()) {
+          if (!attribute.isEmpty())
               o->setAttribute(widthAttr, attribute);
-          }
           attribute = embedOrObject->getAttribute(heightAttr);
-          if (!attribute.isEmpty()) {
+          if (!attribute.isEmpty())
               o->setAttribute(heightAttr, attribute);
-          }
           url = embed->url;
           serviceType = embed->serviceType;
-      } else {
+      } else
           embedOrObject = (HTMLElement *)o;
-      }
       
       // If there was no URL or type defined in EMBED, try the OBJECT tag.
-      if (url.isEmpty()) {
+      if (url.isEmpty())
           url = o->url;
-      }
-      if (serviceType.isEmpty()) {
+      if (serviceType.isEmpty())
           serviceType = o->serviceType;
-      }
       
       HashSet<StringImpl*, CaseInsensitiveHash> uniqueParamNames;
       
@@ -790,18 +784,17 @@ void RenderPartObject::updateWidget()
               HTMLParamElement *p = static_cast<HTMLParamElement *>(child);
               String name = p->name().lower();
               if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url"))
-                  url = p->value().deprecatedString();
+                  url = p->value();
               if (serviceType.isEmpty() && name == "type") {
-                  serviceType = p->value().deprecatedString();
-                  int pos = serviceType.find( ";" );
-                  if (pos != -1) {
+                  serviceType = p->value();
+                  int pos = serviceType.find(";");
+                  if (pos != -1)
                       serviceType = serviceType.left(pos);
-                  }
               }
               if (!embed && !name.isEmpty()) {
                   uniqueParamNames.add(p->name().impl());
-                  paramNames.append(p->name().deprecatedString());
-                  paramValues.append(p->value().deprecatedString());
+                  paramNames.append(p->name());
+                  paramValues.append(p->value());
               }
           }
           child = child->nextSibling();
@@ -825,15 +818,15 @@ void RenderPartObject::updateWidget()
               Attribute* it = attributes->attributeItem(i);
               const AtomicString& name = it->name().localName();
               if (embed || !uniqueParamNames.contains(name.impl())) {
-                  paramNames.append(name.deprecatedString());
-                  paramValues.append(it->value().deprecatedString());
+                  paramNames.append(name.domString());
+                  paramValues.append(it->value().domString());
               }
           }
       }
       
       // If we still don't have a type, try to map from a specific CLASSID to a type.
       if (serviceType.isEmpty() && !o->classId.isEmpty())
-          mapClassIdToServiceType(o->classId.deprecatedString(), serviceType);
+          mapClassIdToServiceType(o->classId, serviceType);
       
       // If no URL and type, abort.
       if (url.isEmpty() && serviceType.isEmpty())
@@ -848,7 +841,7 @@ void RenderPartObject::updateWidget()
               (child->isTextNode() && !static_cast<Text*>(child)->containsOnlyWhitespace()))
               m_hasFallbackContent = true;
       }
-      bool success = frame->requestObject(this, url, o->name().deprecatedString(), serviceType, paramNames, paramValues);
+      bool success = frame->requestObject(this, url, AtomicString(o->name()), serviceType, paramNames, paramValues);
       if (!success && m_hasFallbackContent)
           o->renderFallbackContent();
   } else if (element()->hasTagName(embedTag)) {
@@ -866,21 +859,21 @@ void RenderPartObject::updateWidget()
       if (a) {
           for (unsigned i = 0; i < a->length(); ++i) {
               Attribute* it = a->attributeItem(i);
-              paramNames.append(it->name().localName().deprecatedString());
-              paramValues.append(it->value().deprecatedString());
+              paramNames.append(it->name().localName().domString());
+              paramValues.append(it->value().domString());
           }
       }
-      frame->requestObject(this, url, o->getAttribute(nameAttr).deprecatedString(), serviceType, paramNames, paramValues);
+      frame->requestObject(this, url, o->getAttribute(nameAttr), serviceType, paramNames, paramValues);
   } else {
       assert(element()->hasTagName(iframeTag));
       HTMLIFrameElement *o = static_cast<HTMLIFrameElement *>(element());
-      url = o->m_URL.deprecatedString();
+      url = o->m_URL;
       if (!isURLAllowed(document(), url))
           return;
       if (url.isEmpty())
           url = "about:blank";
       FrameView *v = static_cast<FrameView *>(m_view);
-      v->frame()->requestFrame(this, url, o->m_name.deprecatedString());
+      v->frame()->requestFrame(this, url, o->m_name);
   }
 }
 

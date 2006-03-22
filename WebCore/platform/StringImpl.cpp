@@ -164,10 +164,12 @@ void StringImpl::truncate(int len)
 void StringImpl::remove(unsigned pos, int len)
 {
     assert(!_inTable);
-    if(len <= 0) return;
-    if(pos >= l ) return;
-    if((unsigned)len > l - pos)
-    len = l - pos;
+    if (len <= 0)
+        return;
+    if (pos >= l )
+        return;
+    if ((unsigned)len > l - pos)
+        len = l - pos;
 
     unsigned newLen = l-len;
     QChar* c = newQCharVector(newLen);
@@ -248,9 +250,9 @@ static Length parseLength(const QChar* s, unsigned int l)
         ++i;
 
     if (ok) {
-        if (i == l) {
+        if (i == l)
             return Length(r, Fixed);
-        } else {
+        else {
             const QChar* next = s+i;
 
             if (*next == '%')
@@ -636,6 +638,26 @@ StringImpl* StringImpl::replace(QChar oldC, QChar newC)
     }
 
     return c;
+}
+
+StringImpl* StringImpl::replace(unsigned index, unsigned len, const StringImpl* str)
+{
+    StringImpl* s = copy();
+    s->remove(index, len);
+    s->insert(str, index);
+    return s;
+}
+
+StringImpl* StringImpl::replace(QChar pattern, const StringImpl* str)
+{
+    int slen = str ? str->length() : 0;
+    int index = 0;
+    StringImpl* result = this;
+    while ((index = result->find(pattern, index)) >= 0) {
+        result = result->replace(index, 1, str);
+        index += slen;
+    }
+    return result;
 }
 
 bool equal(const StringImpl* a, const StringImpl* b)

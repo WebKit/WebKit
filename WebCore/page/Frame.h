@@ -41,6 +41,7 @@
 #include <qscrollbar.h>
 #include <DeprecatedStringList.h>
 #include <kxmlcore/Noncopyable.h>
+#include <kxmlcore/Vector.h>
 
 class KHTMLSettings;
 
@@ -138,16 +139,6 @@ public:
    * Returns true if plugins are enabled, false otherwise.
    */
   bool pluginsEnabled() const;
-  
-  /**
-   * Enable/disable the automatic forwarding by <meta http-equiv="refresh" ....>
-   */
-  void setMetaRefreshEnabled(bool enable);
-
-  /**
-   * Returns @p true if automtaic forwarding is enabled.
-   */
-  bool metaRefreshEnabled() const;
 
   /**
    * Execute the specified snippet of JavaScript code.
@@ -269,23 +260,12 @@ public:
   DeprecatedString encoding() const;
 
   /**
-   * Sets a user defined style sheet to be used on top of the HTML 4
-   * default style sheet.
-   *
-   * This gives a wide range of possibilities to
-   * change the layout of the page.
+   * Sets a user defined style sheet to be used on top of the HTML4,
+   * SVG and printing default style sheets.
    */
   void setUserStyleSheetLocation(const KURL& url);
-
-  /**
-   * Sets a user defined style sheet to be used on top of the HTML 4
-   * default style sheet.
-   *
-   * This gives a wide range of possibilities to
-   * change the layout of the page.
-   */
-  void setUserStyleSheet(const DeprecatedString& styleSheet);
-
+  void setUserStyleSheet(const String& styleSheetData);
+  
   /**
    * Sets the standard font style.
    *
@@ -596,7 +576,7 @@ public:
   virtual bool lastEventIsMouseUp() const = 0;
   virtual String overrideMediaType() const = 0;
 protected:
-  virtual Plugin* createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const String& mimeType) = 0;
+  virtual Plugin* createPlugin(const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType) = 0;
   virtual Frame* createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
 
@@ -642,7 +622,7 @@ private:
 
   bool shouldUsePlugin(Node* element, const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback);
   bool loadPlugin(RenderPart* renderer, const KURL& url, const String& mimeType, 
-                  const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, bool useFallback);
+                  const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
   Frame* loadSubframe(RenderPart* renderer, const KURL& url, const String& name, const String& referrer);
 
 public:
@@ -651,7 +631,7 @@ public:
                   const String& boundary = String());
   
   bool requestObject(RenderPart* frame, const String& url, const AtomicString& frameName,
-                     const String& serviceType, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues);
+                     const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
   bool requestFrame(RenderPart* frame, const String& url, const AtomicString& frameName);
 
   Document* document() const;

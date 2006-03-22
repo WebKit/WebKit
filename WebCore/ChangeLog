@@ -1,3 +1,158 @@
+2006-03-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Replace more DeprecatedString with String.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7907
+
+        * WebCore+SVG/kdom.h:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:]):
+        * bridge/BrowserExtension.h:
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::setTypedIconURL):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::searchForLabelsBeforeElement):
+        (WebCore::nsArray):
+        (WebCore::FrameMac::createPlugin):
+        (WebCore::FrameMac::bindingRootObject):
+        (WebCore::FrameMac::windowScriptObject):
+        (WebCore::FrameMac::windowScriptNPObject):
+        (WebCore::FrameMac::partClearedInBegin):
+        (WebCore::FrameMac::openURLFromPageCache):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge openURL:reload:contentType:refresh:lastModified:pageCache:]):
+        (-[WebCoreFrameBridge scrollToAnchor:]):
+        (-[WebCoreFrameBridge URLWithAttributeString:]):
+        (-[WebCoreFrameBridge highlightAllMatchesForString:caseSensitive:]):
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+        * bridge/mac/WebCoreSettings.mm:
+        (-[WebCoreSettings _updateAllViews]):
+        (-[WebCoreSettings setStandardFontFamily:]):
+        (-[WebCoreSettings setMinimumFontSize:]):
+        (-[WebCoreSettings setMinimumLogicalFontSize:]):
+        (-[WebCoreSettings setDefaultFontSize:]):
+        (-[WebCoreSettings setDefaultFixedFontSize:]):
+        (-[WebCoreSettings setUserStyleSheetLocation:]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSGrammar.y:
+        * css/css_stylesheetimpl.cpp:
+        (WebCore::MediaList::setMediaText):
+        * css/css_valueimpl.cpp:
+        (WebCore::quoteStringIfNeeded):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseColor):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        * css/cssstyleselector.h:
+        * dom/Document.cpp:
+        (WebCore::Document::resetActiveLinkColor):
+        (WebCore::Document::nextState):
+        (WebCore::Document::setUserStyleSheet):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        (WebCore::Document::userStyleSheet):
+        (WebCore::Document::setPrintStyleSheet):
+        (WebCore::Document::printStyleSheet):
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        (WebCore::createFragmentFromMarkup):
+        (WebCore::createFragmentFromText):
+        * editing/markup.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setGlobalCompositeOperation):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        * html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElement::openURL):
+        (WebCore::HTMLFrameElement::attach):
+        * html/html_headimpl.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::setStyleSheet):
+        * html/html_headimpl.h:
+        * html/html_imageimpl.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/html_imageimpl.h:
+        (WebCore::HTMLImageElement::compositeOperator):
+        * html/html_objectimpl.cpp:
+        (WebCore::HTMLAppletElement::createRenderer):
+        * ksvg2/svg/SVGStringList.cpp:
+        (SVGStringList::reset):
+        * kwq/AccessibilityObjectCache.h:
+        * kwq/AccessibilityObjectCache.mm:
+        (AccessibilityObjectCache::textMarkerForVisiblePosition):
+        (AccessibilityObjectCache::postNotificationToTopWebArea):
+        (AccessibilityObjectCache::postNotification):
+        * kwq/ClipboardMac.mm:
+        (WebCore::cocoaTypeFromMIMEType):
+        * kwq/KWQKHTMLSettings.h:
+        (KHTMLSettings::userStyleSheetLocation):
+        (KHTMLSettings::setUserStyleSheetLocation):
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::selectedText):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::ref):
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::setStyleSheet):
+        (WebCore::Frame::jScriptEnabled):
+        (WebCore::Frame::javaEnabled):
+        (WebCore::Frame::pluginsEnabled):
+        (WebCore::Frame::receivedFirstData):
+        (WebCore::Frame::begin):
+        (WebCore::Frame::setUserStyleSheet):
+        (WebCore::Frame::requestObject):
+        (WebCore::Frame::loadPlugin):
+        (WebCore::Frame::referrer):
+        (WebCore::Frame::lastModified):
+        (WebCore::Frame::reparseConfiguration):
+        (WebCore::Frame::handleMousePressEventSingleClick):
+        (WebCore::Frame::appliedEditing):
+        (WebCore::Frame::unappliedEditing):
+        (WebCore::Frame::reappliedEditing):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        * platform/AtomicString.h:
+        (WebCore::AtomicString::AtomicString):
+        * platform/DeprecatedString.cpp:
+        (DeprecatedString::replace):
+        * platform/GraphicsContext.h:
+        * platform/Image.h:
+        * platform/KURL.cpp:
+        * platform/KURL.h:
+        * platform/PlatformString.h:
+        (WebCore::String::String):
+        (WebCore::String::replace):
+        * platform/String.cpp:
+        (WebCore::operator+):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::remove):
+        (WebCore::parseLength):
+        (WebCore::StringImpl::replace):
+        * platform/StringImpl.h:
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::setCompositeOperation):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paint):
+        * rendering/render_form.cpp:
+        (WebCore::RenderSelect::updateFromElement):
+        * rendering/render_frames.cpp:
+        (WebCore::isURLAllowed):
+        (WebCore::mapClassIdToServiceType):
+        (WebCore::RenderPartObject::updateWidget):
+        * rendering/render_style.h:
+        (WebCore::RenderStyle::setDashboardRegion):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::getCharset):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::overrideMIMEType):
+
 2006-03-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt

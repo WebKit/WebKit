@@ -49,7 +49,6 @@ public:
     KURL(const char*);
     KURL(const KURL&, const DeprecatedString&, const WebCore::TextEncoding& encoding = WebCore::TextEncoding(WebCore::UTF8Encoding));
     KURL(const DeprecatedString&);
-    KURL(const WebCore::String&);
 #if __APPLE__
     KURL(NSURL*);
 #endif

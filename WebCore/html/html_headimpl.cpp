@@ -212,7 +212,7 @@ void HTMLLinkElement::process()
     if (!inDocument())
         return;
 
-    DeprecatedString type = m_type.deprecatedString().lower();
+    String type = m_type.lower();
     
     Frame *frame = getDocument()->frame();
 
@@ -275,7 +275,7 @@ void HTMLLinkElement::setStyleSheet(const String &url, const String &sheetStr)
     m_sheet->parseString(sheetStr, !getDocument()->inCompatMode());
 
     MediaList *media = new MediaList(m_sheet.get(), m_media);
-    m_sheet->setMedia( media );
+    m_sheet->setMedia(media);
 
     m_loading = false;
 

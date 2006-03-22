@@ -69,7 +69,7 @@ public:
                                  Frame*& part) = 0;
     
     virtual void setIconURL(const KURL&) = 0;
-    virtual void setTypedIconURL(const KURL&, const DeprecatedString& type) = 0;
+    virtual void setTypedIconURL(const KURL&, const String& type) = 0;
     
     virtual int getHistoryLength() = 0;
     virtual void goBackOrForward(int distance) = 0;

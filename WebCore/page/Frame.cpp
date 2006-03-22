@@ -120,7 +120,7 @@ public:
         m_cachedSheet->deref(this);
     }
 private:
-    virtual void setStyleSheet(const String&, const String& sheet)
+    virtual void setStyleSheet(const String& /*URL*/, const String& sheet)
     {
         m_frame->setUserStyleSheet(sheet.deprecatedString());
     }
@@ -345,17 +345,7 @@ void Frame::setView(FrameView* view)
 
 bool Frame::jScriptEnabled() const
 {
-  return d->m_bJScriptEnabled;
-}
-
-void Frame::setMetaRefreshEnabled(bool enable)
-{
-  d->m_metaRefreshEnabled = enable;
-}
-
-bool Frame::metaRefreshEnabled() const
-{
-  return d->m_metaRefreshEnabled;
+    return d->m_bJScriptEnabled;
 }
 
 KJSProxy *Frame::jScript()
@@ -416,16 +406,12 @@ JSValue* Frame::executeScript(Node* n, const DeprecatedString& script, bool forc
 
 bool Frame::javaEnabled() const
 {
-#ifndef Q_WS_QWS
-  return d->m_bJavaEnabled;
-#else
-  return false;
-#endif
+    return d->m_settings->isJavaEnabled();
 }
 
 bool Frame::pluginsEnabled() const
 {
-  return d->m_bPluginsEnabled;
+    return d->m_bPluginsEnabled;
 }
 
 void Frame::setAutoloadImages(bool enable)
@@ -516,7 +502,7 @@ void Frame::receivedFirstData()
 
     // Support for http-refresh
     qData = d->m_job->queryMetaData("http-refresh").deprecatedString();
-    if (!qData.isEmpty() && d->m_metaRefreshEnabled) {
+    if (!qData.isEmpty()) {
       double delay;
       int pos = qData.find(';');
       if (pos == -1)
@@ -632,7 +618,7 @@ void Frame::begin(const KURL& url)
   updatePolicyBaseURL();
 
   setAutoloadImages(d->m_settings->autoLoadImages());
-  String userStyleSheet = d->m_settings->userStyleSheet();
+  const KURL& userStyleSheet = d->m_settings->userStyleSheetLocation();
 
   if (!userStyleSheet.isEmpty())
     setUserStyleSheetLocation(KURL(userStyleSheet));
@@ -1037,7 +1023,7 @@ void Frame::setUserStyleSheetLocation(const KURL& url)
         d->m_userStyleSheetLoader = new UserStyleSheetLoader(this, url.url(), d->m_doc->docLoader());
 }
 
-void Frame::setUserStyleSheet(const DeprecatedString& styleSheet)
+void Frame::setUserStyleSheet(const String& styleSheet)
 {
     delete d->m_userStyleSheetLoader;
     d->m_userStyleSheetLoader = 0;
@@ -1374,7 +1360,7 @@ bool Frame::requestFrame(RenderPart* renderer, const String& urlParam, const Ato
 }
 
 bool Frame::requestObject(RenderPart* renderer, const String& url, const AtomicString& frameName,
-                          const String& mimeType, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues)
+                          const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     KURL completedURL;
     if (!url.isEmpty())
@@ -1406,7 +1392,7 @@ bool Frame::shouldUsePlugin(Node* element, const KURL& url, const String& mimeTy
 
 
 bool Frame::loadPlugin(RenderPart *renderer, const KURL& url, const String& mimeType, 
-                       const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, bool useFallback)
+                       const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
     if (useFallback) {
         checkEmitLoadEvent();
@@ -1633,31 +1619,29 @@ String Frame::jsDefaultStatusBarText() const
 
 DeprecatedString Frame::referrer() const
 {
-   return d->m_referrer;
+    return d->m_referrer;
 }
 
 String Frame::lastModified() const
 {
-  return d->m_lastModified;
+    return d->m_lastModified;
 }
 
 void Frame::reparseConfiguration()
 {
-  setAutoloadImages(d->m_settings->autoLoadImages());
-  if (d->m_doc)
-     d->m_doc->docLoader()->setShowAnimations(KHTMLSettings::KAnimationEnabled);
+    setAutoloadImages(d->m_settings->autoLoadImages());
+    if (d->m_doc)
+        d->m_doc->docLoader()->setShowAnimations(KHTMLSettings::KAnimationEnabled);
+        
+    d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled();
+    d->m_bJavaEnabled = d->m_settings->isJavaEnabled();
+    d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled();
 
-  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled();
-  d->m_bJavaEnabled = d->m_settings->isJavaEnabled();
-  d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled();
-
-  DeprecatedString userStyleSheet = d->m_settings->userStyleSheet();
-  if (!userStyleSheet.isEmpty())
-    setUserStyleSheetLocation(KURL(userStyleSheet));
-  else
-    setUserStyleSheet(DeprecatedString());
-
-  if (d->m_doc) d->m_doc->updateStyleSelector();
+    const KURL& userStyleSheetLocation = d->m_settings->userStyleSheetLocation();
+    if (!userStyleSheetLocation.isEmpty())
+        setUserStyleSheetLocation(userStyleSheetLocation);
+    else
+        setUserStyleSheet(String());
 }
 
 bool Frame::shouldDragAutoNode(Node *node, int x, int y) const
@@ -1796,15 +1780,13 @@ void Frame::handleMousePressEventSingleClick(const MouseEventWithHitTestResults&
                 // was created right-to-left
                 Position start = sel.start();
                 short before = Range::compareBoundaryPoints(pos.node(), pos.offset(), start.node(), start.offset());
-                if (before <= 0) {
+                if (before <= 0)
                     sel.setBaseAndExtent(pos.node(), pos.offset(), sel.end().node(), sel.end().offset());
-                } else {
+                else
                     sel.setBaseAndExtent(start.node(), start.offset(), pos.node(), pos.offset());
-                }
 
-                if (d->m_selectionGranularity != CharacterGranularity) {
+                if (d->m_selectionGranularity != CharacterGranularity)
                     sel.expandUsingGranularity(d->m_selectionGranularity);
-                }
                 d->m_beganSelectingText = true;
             } else {
                 sel = SelectionController(visiblePos);
@@ -1974,9 +1956,8 @@ void dispatchEditableContentChangedEvent(Node* root)
 void Frame::appliedEditing(EditCommandPtr& cmd)
 {
     SelectionController sel(cmd.endingSelection());
-    if (shouldChangeSelection(sel)) {
+    if (shouldChangeSelection(sel))
         setSelection(sel, false);
-    }
     
     dispatchEditableContentChangedEvent(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
 
@@ -2007,9 +1988,8 @@ void Frame::appliedEditing(EditCommandPtr& cmd)
 void Frame::unappliedEditing(EditCommandPtr& cmd)
 {
     SelectionController sel(cmd.startingSelection());
-    if (shouldChangeSelection(sel)) {
+    if (shouldChangeSelection(sel))
         setSelection(sel, true);
-    }
     
     dispatchEditableContentChangedEvent(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
         
@@ -2021,9 +2001,8 @@ void Frame::unappliedEditing(EditCommandPtr& cmd)
 void Frame::reappliedEditing(EditCommandPtr& cmd)
 {
     SelectionController sel(cmd.endingSelection());
-    if (shouldChangeSelection(sel)) {
+    if (shouldChangeSelection(sel))
         setSelection(sel, true);
-    }
     
     dispatchEditableContentChangedEvent(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
         

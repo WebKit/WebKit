@@ -356,9 +356,9 @@ int GraphicsContext::getCompositeOperation(CGContextRef context)
     return (int)[[WebCoreImageRendererFactory sharedFactory] CGCompositeOperationInContext:context];
 }
 
-void GraphicsContext::setCompositeOperation (CGContextRef context, const DeprecatedString& op)
+void GraphicsContext::setCompositeOperation (CGContextRef context, const String& op)
 {
-    [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperationFromString:op.getNSString() inContext:context];
+    [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperationFromString:op inContext:context];
 }
 
 void GraphicsContext::setCompositeOperation (CGContextRef context, int op)

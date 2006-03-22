@@ -159,13 +159,13 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute *attr)
     if (attrName == altAttr) {
         if (renderer())
             static_cast<RenderImage*>(renderer())->updateAltText();
-    } else if (attrName == srcAttr) {
+    } else if (attrName == srcAttr)
         m_imageLoader.updateFromElement();
-    } else if (attrName == widthAttr) {
+    else if (attrName == widthAttr)
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
-    } else if (attrName == heightAttr) {
+    else if (attrName == heightAttr)
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attrName == borderAttr) {
+    else if (attrName == borderAttr) {
         // border="noborder" -> border="0"
         if(attr->value().toInt()) {
             addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value());
@@ -180,27 +180,27 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attrName == hspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-    } else if (attrName == alignAttr) {
+    } else if (attrName == alignAttr)
         addHTMLAlignment(attr);
-    } else if (attrName == valignAttr) {
+    else if (attrName == valignAttr)
         addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
-    } else if (attrName == usemapAttr) {
+    else if (attrName == usemapAttr) {
         if (attr->value().domString()[0] == '#')
             usemap = attr->value();
         else
             usemap = getDocument()->completeURL(parseURL(attr->value()));
         m_isLink = !attr->isNull();
-    } else if (attrName == ismapAttr) {
+    } else if (attrName == ismapAttr)
         ismap = true;
-    } else if (attrName == onabortAttr) {
+    else if (attrName == onabortAttr)
         setHTMLEventListener(abortEvent, attr);
-    } else if (attrName == onerrorAttr) {
+    else if (attrName == onerrorAttr)
         setHTMLEventListener(errorEvent, attr);
-    } else if (attrName == onloadAttr) {
+    else if (attrName == onloadAttr)
         setHTMLEventListener(loadEvent, attr);
-    } else if (attrName == compositeAttr) {
-        _compositeOperator = attr->value().deprecatedString();
-    } else if (attrName == nameAttr) {
+    else if (attrName == compositeAttr)
+        _compositeOperator = attr->value().domString();
+    else if (attrName == nameAttr) {
         String newNameAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocument* doc = static_cast<HTMLDocument*>(getDocument());

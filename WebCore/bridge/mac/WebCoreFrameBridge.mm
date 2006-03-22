@@ -531,18 +531,18 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     ResourceRequest request(m_frame->resourceRequest());
     request.reload = reload;
     if (contentType)
-        request.m_responseMIMEType = DeprecatedString::fromNSString(contentType);
+        request.m_responseMIMEType = contentType;
     m_frame->setResourceRequest(request);
 
     // opening the URL
     if (m_frame->didOpenURL(URL)) {
         // things we have to set up after calling didOpenURL
         if (refresh) {
-            m_frame->addMetaData("http-refresh", DeprecatedString::fromNSString(refresh));
+            m_frame->addMetaData("http-refresh", refresh);
         }
         if (lastModified) {
             NSString *modifiedString = [lastModified descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
-            m_frame->addMetaData("modified", DeprecatedString::fromNSString(modifiedString));
+            m_frame->addMetaData("modified", modifiedString);
         }
     }
 }
@@ -737,9 +737,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         frameView->setMarginHeight(mh);
 }
 
-- (void)scrollToAnchor:(NSString *)a
+- (void)scrollToAnchor:(NSString *)anchor
 {
-    m_frame->gotoAnchor(DeprecatedString::fromNSString(a));
+    m_frame->gotoAnchor(anchor);
 }
 
 - (BOOL)isSelectionEditable
@@ -1200,11 +1200,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
     Document *doc = m_frame->document();
-    if (!doc) {
+    if (!doc)
         return nil;
-    }
     // FIXME: is parseURL appropriate here?
-    DeprecatedString rel = parseURL(DeprecatedString::fromNSString(string)).deprecatedString();
+    DeprecatedString rel = parseURL(string).deprecatedString();
     return KURL(doc->completeURL(rel)).getNSURL();
 }
 
@@ -1215,7 +1214,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
 {
-    return m_frame->highlightAllMatchesForString(DeprecatedString::fromNSString(string), caseFlag);
+    return m_frame->highlightAllMatchesForString(string, caseFlag);
 }
 
 - (void)clearHighlightedMatches

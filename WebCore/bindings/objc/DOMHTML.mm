@@ -510,7 +510,7 @@ using namespace WebCore::HTMLNames;
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup([self _document], DeprecatedString::fromNSString(markupString), DeprecatedString::fromNSString(baseURLString));
+    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup([self _document], markupString, baseURLString);
     return [DOMDocumentFragment _documentFragmentWith:fragment.get()];
 }
 

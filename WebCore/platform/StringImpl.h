@@ -72,6 +72,7 @@ public:
     void insert(const StringImpl*, unsigned pos);
     void truncate(int len);
     void remove(unsigned pos, int len = 1);
+    
     StringImpl* split(unsigned pos);
     StringImpl* copy() const { return new StringImpl(s, l); }
 
@@ -101,8 +102,10 @@ public:
     bool startsWith(const StringImpl* s, bool caseSensitive = true) const { return find(s, 0, caseSensitive) == 0; }
     bool endsWith(const StringImpl*, bool caseSensitive = true) const;
 
-    // This modifies the string in place if there is only one ref, makes a new string otherwise.
+    // Does not modify the string.
     StringImpl* replace(QChar, QChar);
+    StringImpl* replace(QChar a, const StringImpl* b);
+    StringImpl* replace(unsigned index, unsigned len, const StringImpl*);
 
     static StringImpl* empty();
 

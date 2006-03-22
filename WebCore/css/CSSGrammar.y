@@ -828,7 +828,7 @@ declaration:
 property:
     IDENT maybe_space {
         DeprecatedString str = qString($1);
-        $$ = getPropertyID( str.lower().latin1(), str.length() );
+        $$ = getPropertyID(str.lower().latin1(), str.length());
 #if SVG_SUPPORT
       if ($$ == 0)
           $$ = SVG::getSVGCSSPropertyID(str.lower().latin1(), str.length());

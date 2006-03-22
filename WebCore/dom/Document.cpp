@@ -367,7 +367,7 @@ void Document::resetVisitedLinkColor()
 
 void Document::resetActiveLinkColor()
 {
-    m_activeLinkColor.setNamedColor(DeprecatedString("red"));
+    m_activeLinkColor.setNamedColor("red");
 }
 
 void Document::setDocType(PassRefPtr<DocumentType> docType)
@@ -715,8 +715,7 @@ Node::NodeType Document::nodeType() const
 DeprecatedString Document::nextState()
 {
    DeprecatedString state;
-   if (!m_state.isEmpty())
-   {
+   if (!m_state.isEmpty()) {
       state = m_state.first();
       m_state.remove(m_state.begin());
    }
@@ -1327,7 +1326,7 @@ void Document::setStyleSheet(const String &url, const String &sheet)
     updateStyleSelector();
 }
 
-void Document::setUserStyleSheet(const DeprecatedString& sheet)
+void Document::setUserStyleSheet(const String& sheet)
 {
     if (m_usersheet != sheet) {
         m_usersheet = sheet;
@@ -1578,9 +1577,7 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
         m_selectedStylesheetSet = content;
         m_preferredStylesheetSet = content;
         updateStyleSelector();
-    }
-    else if (equalIgnoringCase(equiv, "refresh") && frame->metaRefreshEnabled())
-    {
+    } else if (equalIgnoringCase(equiv, "refresh")) {
         // get delay and url
         DeprecatedString str = content.deprecatedString().stripWhiteSpace();
         int pos = str.find(RegularExpression("[;,]"));
@@ -1593,7 +1590,8 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
             int delay = 0;
             delay = str.toInt(&ok);
             // We want a new history item if the refresh timeout > 1 second
-            if(ok && frame) frame->scheduleRedirection(delay, frame->url().url(), delay <= 1);
+            if (ok && frame)
+                frame->scheduleRedirection(delay, frame->url().url(), delay <= 1);
         } else {
             double delay = 0;
             bool ok = false;
@@ -1612,22 +1610,16 @@ void Document::processHttpEquiv(const String &equiv, const String &content)
                 // We want a new history item if the refresh timeout > 1 second
                 frame->scheduleRedirection(delay, completeURL(str), delay <= 1);
         }
-    }
-    else if (equalIgnoringCase(equiv, "expires"))
-    {
+    } else if (equalIgnoringCase(equiv, "expires")) {
         DeprecatedString str = content.deprecatedString().stripWhiteSpace();
         time_t expire_date = str.toInt();
         if (m_docLoader)
             m_docLoader->setExpireDate(expire_date);
-    }
-    else if ((equalIgnoringCase(equiv, "pragma") || equalIgnoringCase(equiv, "cache-control")) && frame)
-    {
+    } else if ((equalIgnoringCase(equiv, "pragma") || equalIgnoringCase(equiv, "cache-control")) && frame) {
         DeprecatedString str = content.deprecatedString().lower().stripWhiteSpace();
         KURL url = frame->url();
-    }
-    else if (equalIgnoringCase(equiv, "set-cookie"))
-    {
-        // ### make setCookie work on XML documents too; e.g. in case of <html:meta .....>
+    } else if (equalIgnoringCase(equiv, "set-cookie")) {
+        // ### FIXME: make setCookie work on XML documents too; e.g. in case of <html:meta .....>
         if (isHTMLDocument())
             static_cast<HTMLDocument *>(this)->setCookie(content);
     }
@@ -1910,7 +1902,7 @@ void Document::recalcStyleSelector()
 
     // Create a new style selector
     delete m_styleSelector;
-    DeprecatedString usersheet = m_usersheet;
+    String usersheet = m_usersheet;
     if (m_view && m_view->mediaType() == "print")
         usersheet += m_printSheet;
     m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), !inCompatMode());

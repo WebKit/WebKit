@@ -162,10 +162,10 @@ void BrowserExtensionMac::setIconURL(const KURL &url)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void BrowserExtensionMac::setTypedIconURL(const KURL &url, const DeprecatedString &type)
+void BrowserExtensionMac::setTypedIconURL(const KURL &url, const String &type)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_frame->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+    [m_frame->bridge() setIconURL:url.getNSURL() withType:type];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

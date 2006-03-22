@@ -40,14 +40,11 @@ SVGStringList::~SVGStringList()
 void SVGStringList::reset(const DeprecatedString &str)
 {
     DeprecatedStringList list = DeprecatedStringList::split(' ', str);
-    if(list.count() == 0)
-    {
+    if (list.count() == 0) {
         StringImpl *item = new StringImpl(str);
         item->ref();
         appendItem(item);
-    }
-    else for(DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it)
-    {
+    } else for(DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it) {
         StringImpl *item = new StringImpl((*it));
         item->ref();
         appendItem(item);

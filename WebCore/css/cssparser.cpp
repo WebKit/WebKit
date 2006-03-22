@@ -2084,9 +2084,8 @@ bool CSSParser::parseColor(const DeprecatedString &name, RGBA32& rgb)
 {
     int len = name.length();
 
-    if ( !len )
+    if (!len)
         return false;
-
 
     bool ok;
 

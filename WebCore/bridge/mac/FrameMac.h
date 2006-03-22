@@ -140,7 +140,7 @@ public:
     virtual void urlSelected(const ResourceRequest&);
 
     virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
-    virtual Plugin* createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const String& mimeType);
+    virtual Plugin* createPlugin(const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
     virtual Frame* createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer);
 
     virtual void scheduleClose();

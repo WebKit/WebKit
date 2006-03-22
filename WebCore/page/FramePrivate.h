@@ -62,7 +62,6 @@ namespace WebCore {
             , m_bJScriptEnabled(true)
             , m_bJavaEnabled(true)
             , m_bPluginsEnabled(true)
-            , m_metaRefreshEnabled(true)
             , m_settings(0)
             , m_job(0)
             , m_bComplete(true)
@@ -128,7 +127,6 @@ namespace WebCore {
         bool m_bJScriptEnabled : 1;
         bool m_bJavaEnabled : 1;
         bool m_bPluginsEnabled : 1;
-        bool m_metaRefreshEnabled : 1;
 
         KHTMLSettings* m_settings;
 

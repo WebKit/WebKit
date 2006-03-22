@@ -329,7 +329,7 @@ void HTMLFrameElement::openURL()
     if (Frame* childFrame = parentFrame->tree()->child(m_name))
         childFrame->openURL(getDocument()->completeURL(relativeURL.deprecatedString()));
     else
-        parentFrame->requestFrame(static_cast<RenderFrame *>(renderer()), relativeURL.deprecatedString(), m_name.deprecatedString());
+        parentFrame->requestFrame(static_cast<RenderFrame *>(renderer()), relativeURL, m_name);
 }
 
 
@@ -424,7 +424,7 @@ void HTMLFrameElement::attach()
     m_name = frame->tree()->uniqueChildName(m_name);
 
     // load the frame contents
-    frame->requestFrame(static_cast<RenderFrame*>(renderer()), relativeURL.deprecatedString(), m_name.deprecatedString());
+    frame->requestFrame(static_cast<RenderFrame*>(renderer()), relativeURL, m_name);
 }
 
 void HTMLFrameElement::close()

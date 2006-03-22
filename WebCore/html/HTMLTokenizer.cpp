@@ -386,11 +386,10 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     currentPrependingSrc = &prependingSrc;
     if (!parser->skipMode() && !followingFrameset) {
         if (cs) {
-            if (savedPrependingSrc) {
+            if (savedPrependingSrc)
                 savedPrependingSrc->append(src);
-            } else {
+            else
                 pendingSrc.prepend(src);
-            }
             setSrc(SegmentedString());
             scriptCodeSize = scriptCodeResync = 0;
 

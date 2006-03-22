@@ -103,7 +103,7 @@ static String getCharset(const String& contentTypeString)
     while (pos < length) {
         pos = contentTypeString.find("charset", pos, false);
         if (pos <= 0)
-            return DeprecatedString();
+            return String();
         
         // is what we found a beginning of a word?
         if (contentTypeString[pos-1] > ' ' && contentTypeString[pos-1] != ';') {
@@ -292,7 +292,7 @@ void XMLHttpRequest::send(const String& body)
     m_aborted = false;
 
     if (!body.isNull() && m_method.lower() != "get" && m_method.lower() != "head" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
-        DeprecatedString contentType = getRequestHeader("Content-Type");
+        String contentType = getRequestHeader("Content-Type");
         String charset;
         if (contentType.isEmpty())
             setRequestHeader("Content-Type", "application/xml");
@@ -368,7 +368,7 @@ void XMLHttpRequest::abort()
 
 void XMLHttpRequest::overrideMIMEType(const String& override)
 {
-    m_mimeTypeOverride = override.deprecatedString();
+    m_mimeTypeOverride = override;
 }
 
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value)

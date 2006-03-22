@@ -29,14 +29,11 @@
 #import "WebCoreAXObject.h"
 #import <kxmlcore/Assertions.h>
 #import "FoundationExtras.h"
-#import "DeprecatedString.h"
 #import "RenderObject.h"
 #import "WebCoreViewFactory.h"
 #import "Document.h"
 
-using WebCore::EAffinity;
-using WebCore::RenderObject;
-using WebCore::VisiblePosition;
+using namespace WebCore;
 
 // The simple Cocoa calls in this file don't throw exceptions.
 
@@ -44,7 +41,7 @@ bool AccessibilityObjectCache::gAccessibilityEnabled = false;
 
 typedef struct KWQTextMarkerData  {
     WebCoreAXID  axObjectID;
-    WebCore::Node*  nodeImpl;
+    Node*  nodeImpl;
     int             offset;
     EAffinity       affinity;
 };
@@ -159,14 +156,14 @@ void AccessibilityObjectCache::removeAXObjectID(WebCoreAXObject* accObject)
 
 WebCoreTextMarker *AccessibilityObjectCache::textMarkerForVisiblePosition (const VisiblePosition &visiblePos)
 {
-    WebCore::Position deepPos = visiblePos.deepEquivalent();
-    WebCore::Node* domNode = deepPos.node();
+    Position deepPos = visiblePos.deepEquivalent();
+    Node* domNode = deepPos.node();
     ASSERT(domNode != NULL);
     if (domNode == NULL)
         return nil;
     
     // locate the renderer, which must exist for a visible dom node
-    WebCore::RenderObject* renderer = domNode->renderer();
+    RenderObject* renderer = domNode->renderer();
     ASSERT(renderer != NULL);
     
     // find or create an accessibility object for this renderer
@@ -213,18 +210,18 @@ void AccessibilityObjectCache::childrenChanged(RenderObject* renderer)
     [obj childrenChanged];
 }
 
-void AccessibilityObjectCache::postNotificationToTopWebArea(RenderObject* renderer, const DeprecatedString& msg)
+void AccessibilityObjectCache::postNotificationToTopWebArea(RenderObject* renderer, const String& msg)
 {
     if (renderer) {
         RenderObject * obj = renderer->document()->topDocument()->renderer();
-        NSAccessibilityPostNotification(accObject(obj), msg.getNSString());
+        NSAccessibilityPostNotification(accObject(obj), msg);
     }
 }
 
-void AccessibilityObjectCache::postNotification(RenderObject* renderer, const DeprecatedString& msg)
+void AccessibilityObjectCache::postNotification(RenderObject* renderer, const String& msg)
 {
     if (renderer)
-        NSAccessibilityPostNotification(accObject(renderer), msg.getNSString());
+        NSAccessibilityPostNotification(accObject(renderer), msg);
 }
 
 void AccessibilityObjectCache::handleFocusedUIElementChanged()

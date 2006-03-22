@@ -31,8 +31,6 @@
 #include "DeprecatedArray.h"
 #include "IntSize.h"
 
-class DeprecatedString;
-
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
 #if __OBJC__

@@ -88,6 +88,36 @@ String operator+(const String& a, const String& b)
     return c;
 }
 
+String operator+(const String& s, const char* cs)
+{
+    return s + String(cs);
+}
+
+String operator+(const char* cs, const String& s)
+{
+    return String(cs) + s;
+}
+
+String operator+(const String& s, QChar c)
+{
+    return s + String(c);
+}
+
+String operator+(QChar c, const String& s)
+{
+    return String(c) + s;
+}
+
+String operator+(const String& s, char c)
+{
+    return s + String(c);
+}
+
+String operator+(char c, const String& s)
+{
+    return String(c) + s;
+}
+
 void String::insert(const String& str, unsigned pos)
 {
     if (!m_impl)

@@ -25,9 +25,6 @@
 #define KDOM_H
 #if SVG_SUPPORT
 
-#include "DeprecatedString.h"
-#include "PlatformString.h"
-
 /**
  * @short General namespace specific definitions.
  */

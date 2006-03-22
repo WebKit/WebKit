@@ -210,14 +210,14 @@ int QLineEdit::selectionStart() const
     return -1;
 }
 
-DeprecatedString QLineEdit::selectedText() const
+String QLineEdit::selectedText() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSRange range = [m_controller selectedRange];
     NSString *str = [m_controller string];
-    return DeprecatedString::fromNSString([str substringWithRange:range]);
+    return [str substringWithRange:range];
     END_BLOCK_OBJC_EXCEPTIONS;
-    return DeprecatedString();
+    return String();
 }
 
 void QLineEdit::setSelection(int start, int length)

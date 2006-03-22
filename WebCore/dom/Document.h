@@ -280,10 +280,10 @@ public:
 
     // from cachedObjectClient
     virtual void setStyleSheet(const String& url, const String& sheetStr);
-    void setUserStyleSheet(const DeprecatedString& sheet);
-    DeprecatedString userStyleSheet() const { return m_usersheet; }
-    void setPrintStyleSheet(const DeprecatedString& sheet) { m_printSheet = sheet; }
-    DeprecatedString printStyleSheet() const { return m_printSheet; }
+    void setUserStyleSheet(const String& sheet);
+    const String& userStyleSheet() const { return m_usersheet; }
+    void setPrintStyleSheet(const String& sheet) { m_printSheet = sheet; }
+    const String& printStyleSheet() const { return m_printSheet; }
 
     CSSStyleSheet* elementSheet();
     virtual Tokenizer* createTokenizer();
@@ -547,8 +547,8 @@ protected:
     RefPtr<DOMImplementation> m_implementation;
 
     RefPtr<StyleSheet> m_sheet;
-    DeprecatedString m_usersheet;
-    DeprecatedString m_printSheet;
+    String m_usersheet;
+    String m_printSheet;
     DeprecatedStringList m_availableSheets;
 
     // Track the number of currently loading top-level stylesheets.  Sheets

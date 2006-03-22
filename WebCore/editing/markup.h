@@ -39,7 +39,7 @@ namespace WebCore {
 enum EChildrenOnly { IncludeNode, ChildrenOnly };
 
 PassRefPtr<WebCore::DocumentFragment> createFragmentFromText(WebCore::Document *document, const DeprecatedString &text);
-PassRefPtr<WebCore::DocumentFragment> createFragmentFromMarkup(WebCore::Document *document, const DeprecatedString &markup, const DeprecatedString &baseURL);
+PassRefPtr<WebCore::DocumentFragment> createFragmentFromMarkup(WebCore::Document *document, const String &markup, const String &baseURL);
 PassRefPtr<WebCore::DocumentFragment> createFragmentFromNodeList(WebCore::Document *document, const DeprecatedPtrList<WebCore::Node> &nodeList);
 
 DeprecatedString createMarkup(const WebCore::Range *range,

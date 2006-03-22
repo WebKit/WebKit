@@ -2176,7 +2176,7 @@ DeprecatedString &DeprecatedString::remove(unsigned index, unsigned len)
     return *this;
 }
 
-DeprecatedString &DeprecatedString::replace( unsigned index, unsigned len, const DeprecatedString &str )
+DeprecatedString &DeprecatedString::replace(unsigned index, unsigned len, const DeprecatedString& str)
 {
     return remove(index, len).insert(index, str);
 }
@@ -2192,7 +2192,6 @@ DeprecatedString &DeprecatedString::replace(char pattern, const DeprecatedString
     return *this;
 }
 
-
 DeprecatedString &DeprecatedString::replace(QChar pattern, const DeprecatedString &str)
 {
     int slen = str.dataHandle[0]->_length;
@@ -2203,7 +2202,6 @@ DeprecatedString &DeprecatedString::replace(QChar pattern, const DeprecatedStrin
     }
     return *this;
 }
-
 
 DeprecatedString &DeprecatedString::replace(const DeprecatedString &pattern, const DeprecatedString &str)
 {

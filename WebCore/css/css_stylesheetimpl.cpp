@@ -336,12 +336,11 @@ WebCore::String MediaList::mediaText() const
 void MediaList::setMediaText(const WebCore::String &value)
 {
     m_lstMedia.clear();
-    DeprecatedStringList list = DeprecatedStringList::split( ',', value.deprecatedString() );
-    for ( DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it )
-    {
+    DeprecatedStringList list = DeprecatedStringList::split(',', value.deprecatedString());
+    for (DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it) {
         String medium = (*it).stripWhiteSpace();
         if (!medium.isEmpty())
-            m_lstMedia.append( medium );
+            m_lstMedia.append(medium);
     }
 }
 

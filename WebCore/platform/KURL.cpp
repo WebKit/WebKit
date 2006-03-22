@@ -259,23 +259,6 @@ KURL::KURL(const DeprecatedString &url)
         parse(url.ascii(), &url);
 }
 
-KURL::KURL(const String& stringURL)
-{
-    DeprecatedString url = stringURL.deprecatedString();
-    if (!url.isEmpty() && url[0] == '/') {
-        // 5 for "file:", 1 for terminator
-        Vector<char, 2048> buffer(url.length() + 6);
-        buffer[0] = 'f';
-        buffer[1] = 'i';
-        buffer[2] = 'l';
-        buffer[3] = 'e';
-        buffer[4] = ':';
-        url.copyLatin1(&buffer[5]);
-        parse(buffer, 0);
-    } else
-        parse(url.ascii(), &url);
-}
-
 KURL::KURL(const KURL &base, const DeprecatedString &relative, const WebCore::TextEncoding& encoding)
 {
     // Allow at lest absolute URLs to resolve against an empty URL.

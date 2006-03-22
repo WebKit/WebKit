@@ -95,7 +95,7 @@ public:
     
     virtual bool isURLAttribute(Attribute*) const;
 
-    Image::CompositeOperator compositeOperator() const { return Image::compositeOperatorFromString(_compositeOperator.ascii()); }
+    Image::CompositeOperator compositeOperator() const { return Image::compositeOperatorFromString(_compositeOperator); }
 
     CachedImage* cachedImage() const { return m_imageLoader.image(); }
     
@@ -144,7 +144,7 @@ protected:
     bool ismap;
     HTMLFormElement* m_form;
     String oldNameAttr;
-    DeprecatedString _compositeOperator;
+    String _compositeOperator;
 };
 
 //------------------------------------------------------------------

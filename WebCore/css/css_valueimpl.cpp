@@ -87,7 +87,7 @@ static String quoteStringIfNeeded(const String &string)
         return string;
 
     // FIXME: Also need to transform control characters into \ sequences.
-    DeprecatedString s = string.deprecatedString();
+    String s = string;
     s.replace('\\', "\\\\");
     s.replace('\'', "\\'");
     return '\'' + s + '\'';
