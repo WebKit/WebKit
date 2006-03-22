@@ -1,3 +1,20 @@
+2006-03-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        Ensure that generated source dependencies are handled properly, as follows:
+        
+        - Made an external script that generates the sources into a
+          DerivedSources dir in the build products directory.
+        - Added a new build target that builds all the generated sources
+          if needed. Sadly it has to be a target, not a phase for Xcode to notice changes.
+        - Added the DerivedSources dir in question to the include path.
+        - Added the new DerivedSources dir and its contents to the project as build-relative.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/generate-derived-sources: Added. Based on the windows version - maybe someday they
+        can share more.
+
 2006-03-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

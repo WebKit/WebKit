@@ -1,0 +1,47 @@
+#!/bin/sh
+
+DerivedSourcesDir="${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore"
+
+mkdir -p "${DerivedSourcesDir}"
+
+# Invoke the create_hash_table perl script to create all of our lookup tables
+
+if [ kjs/array_object.cpp -nt "$DerivedSourcesDir/array_object.lut.h" -o kjs/create_hash_table -nt "$DerivedSourcesDir/array_object.lut.h" ]; then
+  kjs/create_hash_table kjs/array_object.cpp > "$DerivedSourcesDir/array_object.lut.h" -i
+fi
+
+if [ kjs/date_object.cpp -nt "$DerivedSourcesDir/date_object.lut.h" -o kjs/create_hash_table -nt "$DerivedSourcesDir/date_object.lut.h" ]; then
+  kjs/create_hash_table kjs/date_object.cpp > "$DerivedSourcesDir/date_object.lut.h" -i
+fi
+
+if [ kjs/math_object.cpp -nt "$DerivedSourcesDir/math_object.lut.h" -o kjs/create_hash_table -nt "$DerivedSourcesDir/math_object.lut.h" ]; then
+  kjs/create_hash_table kjs/math_object.cpp > "$DerivedSourcesDir/math_object.lut.h" -i
+fi
+
+if [ kjs/number_object.cpp -nt "$DerivedSourcesDir/number_object.lut.h" -o kjs/create_hash_table -nt "$DerivedSourcesDir/number_object.lut.h" ]; then
+  kjs/create_hash_table kjs/number_object.cpp > "$DerivedSourcesDir/number_object.lut.h" -i
+fi
+
+if [ kjs/regexp_object.cpp -nt "$DerivedSourcesDir/regexp_object.lut.h" -o kjs/create_hash_table -nt "$DerivedSourcesDir/regexp_object.lut.h" ]; then
+  kjs/create_hash_table kjs/regexp_object.cpp > "$DerivedSourcesDir/regexp_object.lut.h" -i
+fi
+
+if [ kjs/string_object.cpp -nt "$DerivedSourcesDir/string_object.lut.h" -o kjs/create_hash_table -nt "$DerivedSourcesDir/string_object.lut.h" ]; then
+  kjs/create_hash_table kjs/string_object.cpp > "$DerivedSourcesDir/string_object.lut.h" -i
+fi
+
+if [ kjs/keywords.table -nt "$DerivedSourcesDir/lexer.lut.h" -o kjs/create_hash_table -nt "$DerivedSourcesDir/lexer.lut.h" ]; then
+  kjs/create_hash_table kjs/keywords.table > "$DerivedSourcesDir/lexer.lut.h" -i
+fi
+
+# Generate the grammar using bison
+if [ kjs/grammar.y -nt "$DerivedSourcesDir/grammar.cpp" -o kjs/grammar.y -nt "$DerivedSourcesDir/grammar.h" ]; then
+  echo "Generating the JS grammar using bison..."
+  bison -d -p kjsyy kjs/grammar.y -o "$DerivedSourcesDir/grammar.cpp"
+  mv "$DerivedSourcesDir/grammar.cpp.h" "$DerivedSourcesDir/grammar.h"
+fi
+
+if [ "$BUILT_PRODUCTS_DIR/dftables" -nt "$DerivedSourcesDir/chartables.c" ]; then
+  echo "Generating chartables.c using dftables..."
+  "$BUILT_PRODUCTS_DIR/dftables" "$DerivedSourcesDir/chartables.c"
+fi

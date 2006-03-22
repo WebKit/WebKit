@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		65FB3F6609D11E9100F49DEB /* Derived Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 65FB3F7709D11EBD00F49DEB /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
+			buildPhases = (
+				65FB3F6509D11E9100F49DEB /* Generate Derived Sources */,
+			);
+			buildSettings = {
+				PRODUCT_NAME = "Generate Derived Sources";
+			};
+			dependencies = (
+			);
+			name = "Derived Sources";
+			productName = "Generate Derived Sources";
+		};
 		932F5BE30822A1C700736975 /* All */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 149C276C08902AFE008A9EFC /* Build configuration list for PBXAggregateTarget "All" */;
@@ -42,6 +56,10 @@
 		6580F796094070560082C219 /* PassRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6580F795094070560082C219 /* PassRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6592C318098B7DE10003D4F6 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 6592C316098B7DE10003D4F6 /* Vector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6592C319098B7DE10003D4F6 /* VectorTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 6592C317098B7DE10003D4F6 /* VectorTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65B1749A09D0FEB700820339 /* array_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B1749909D0FEB700820339 /* array_object.lut.h */; };
+		65B174F509D100FA00820339 /* math_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F109D100FA00820339 /* math_object.lut.h */; };
+		65B174F609D100FA00820339 /* number_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F209D100FA00820339 /* number_object.lut.h */; };
+		65B174F809D100FA00820339 /* string_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B174F409D100FA00820339 /* string_object.lut.h */; };
 		65C647B4093EF8D60022C380 /* RefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C647B3093EF8D60022C380 /* RefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D6D87F09B5A32E0002E4D7 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D6D87E09B5A32E0002E4D7 /* Platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65D7D19C08F10B5B0015ABD8 /* FastMallocInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */; };
@@ -57,6 +75,11 @@
 		65E217C008E7EECC0023E5F6 /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217BA08E7EECC0023E5F6 /* FastMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65EA4C9B092AF9E20093D800 /* JSLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EA4C99092AF9E20093D800 /* JSLock.cpp */; };
 		65EA4C9C092AF9E20093D800 /* JSLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EA4C9A092AF9E20093D800 /* JSLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65FB3EB309D109F000F49DEB /* lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3EB209D109F000F49DEB /* lexer.lut.h */; };
+		65FB3F4F09D11B2400F49DEB /* date_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4709D11B2400F49DEB /* date_object.lut.h */; };
+		65FB3F5009D11B2400F49DEB /* grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB3F4809D11B2400F49DEB /* grammar.cpp */; };
+		65FB3F5109D11B2400F49DEB /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4909D11B2400F49DEB /* grammar.h */; };
+		65FB3F5409D11B2400F49DEB /* regexp_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FB3F4C09D11B2400F49DEB /* regexp_object.lut.h */; };
 		9303F568099118FA00AD71B8 /* OwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F567099118FA00AD71B8 /* OwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5690991190000AD71B8 /* Noncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9303F5A509911A5800AD71B8 /* OwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -194,7 +217,6 @@
 		932FC11D0824A6A3005B3C75 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (Private, ); }; };
 		935F69FE08245057003D1A45 /* dftables.c in Sources */ = {isa = PBXBuildFile; fileRef = 6541720E039E08B90058BFEB /* dftables.c */; };
 		93AA4F780957251F0084B3A7 /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AA4F770957251F0084B3A7 /* AlwaysInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93DE3E420868DCAB00B8897C /* grammar.y in Sources */ = {isa = PBXBuildFile; fileRef = 933A3499038AE7C6008635CE /* grammar.y */; };
 		93E26BCA08B1511900F85226 /* pcre_ord2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BC908B1511900F85226 /* pcre_ord2utf8.c */; };
 		93E26BCE08B1512600F85226 /* pcre_ucp_findchar.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BCD08B1512600F85226 /* pcre_ucp_findchar.c */; };
 		93E26BD108B1513800F85226 /* pcre_try_flipped.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BD008B1513800F85226 /* pcre_try_flipped.c */; };
@@ -262,6 +284,13 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
+		65FB3F7D09D11EF300F49DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Generate Derived Sources";
+		};
 		932F5BE60822A1C700736975 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -354,8 +383,14 @@
 		6580F795094070560082C219 /* PassRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PassRefPtr.h; sourceTree = "<group>"; tabWidth = 8; };
 		6592C316098B7DE10003D4F6 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		6592C317098B7DE10003D4F6 /* VectorTraits.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VectorTraits.h; sourceTree = "<group>"; };
+		65B1749909D0FEB700820339 /* array_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = array_object.lut.h; sourceTree = "<group>"; };
+		65B174BE09D1000200820339 /* chartables.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 30; path = chartables.c; sourceTree = "<group>"; };
+		65B174F109D100FA00820339 /* math_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = math_object.lut.h; sourceTree = "<group>"; };
+		65B174F209D100FA00820339 /* number_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = number_object.lut.h; sourceTree = "<group>"; };
+		65B174F409D100FA00820339 /* string_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = string_object.lut.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; tabWidth = 8; };
 		65C647B3093EF8D60022C380 /* RefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RefPtr.h; sourceTree = "<group>"; tabWidth = 8; };
+		65D2CD9C09D1F54E009AB1A1 /* generate-derived-sources */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; path = "generate-derived-sources"; sourceTree = SOURCE_ROOT; };
 		65D6D87E09B5A32E0002E4D7 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FastMallocInternal.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92A08EA173A00F7300B /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -370,6 +405,11 @@
 		65E217BA08E7EECC0023E5F6 /* FastMalloc.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FastMalloc.h; sourceTree = "<group>"; tabWidth = 8; };
 		65EA4C99092AF9E20093D800 /* JSLock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLock.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		65EA4C9A092AF9E20093D800 /* JSLock.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSLock.h; sourceTree = "<group>"; tabWidth = 8; };
+		65FB3EB209D109F000F49DEB /* lexer.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = lexer.lut.h; sourceTree = "<group>"; };
+		65FB3F4709D11B2400F49DEB /* date_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = date_object.lut.h; sourceTree = "<group>"; };
+		65FB3F4809D11B2400F49DEB /* grammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = grammar.cpp; sourceTree = "<group>"; };
+		65FB3F4909D11B2400F49DEB /* grammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = grammar.h; sourceTree = "<group>"; };
+		65FB3F4C09D11B2400F49DEB /* regexp_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = regexp_object.lut.h; sourceTree = "<group>"; };
 		700DA117065984CE00747C0B /* WebScriptObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = WebScriptObjectPrivate.h; path = bindings/objc/WebScriptObjectPrivate.h; sourceTree = "<group>"; tabWidth = 8; };
 		704FD35305697E6D003DBED9 /* bool_object.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = bool_object.h; sourceTree = "<group>"; tabWidth = 8; };
 		704FD44505698F17003DBED9 /* runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime.cpp; path = bindings/runtime.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -393,7 +433,7 @@
 		932F5BD80822A1C700736975 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; };
 		932F5BD90822A1C700736975 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		932F5BE10822A1C700736975 /* testkjs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testkjs; sourceTree = BUILT_PRODUCTS_DIR; };
-		933A3499038AE7C6008635CE /* grammar.y */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.yacc; path = grammar.y; sourceTree = "<group>"; tabWidth = 8; };
+		933A3499038AE7C6008635CE /* grammar.y */ = {isa = PBXFileReference; explicitFileType = sourcecode.yacc; fileEncoding = 4; indentWidth = 4; path = grammar.y; sourceTree = "<group>"; tabWidth = 8; };
 		933A349A038AE7C6008635CE /* identifier.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = identifier.h; sourceTree = "<group>"; tabWidth = 8; };
 		933A349D038AE80F008635CE /* identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		935F69F608244FEA003D1A45 /* dftables */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dftables; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -522,6 +562,8 @@
 				65162EF108E6A21C007556CD /* kxmlcore */,
 				51856D950562EE9C008B9D83 /* bindings */,
 				65417203039E01F90058BFEB /* pcre */,
+				65D2CD9C09D1F54E009AB1A1 /* generate-derived-sources */,
+				650FDF8D09D0FCA700769E54 /* Derived Sources */,
 				932FC3C20824BB70005B3C75 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				932FC3C10824BB61005B3C75 /* Intermediates */,
@@ -598,6 +640,24 @@
 			);
 			name = bindings;
 			sourceTree = "<group>";
+		};
+		650FDF8D09D0FCA700769E54 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				65FB3F4709D11B2400F49DEB /* date_object.lut.h */,
+				65FB3F4809D11B2400F49DEB /* grammar.cpp */,
+				65FB3F4909D11B2400F49DEB /* grammar.h */,
+				65FB3F4C09D11B2400F49DEB /* regexp_object.lut.h */,
+				65FB3EB209D109F000F49DEB /* lexer.lut.h */,
+				65B174F109D100FA00820339 /* math_object.lut.h */,
+				65B174F209D100FA00820339 /* number_object.lut.h */,
+				65B174F409D100FA00820339 /* string_object.lut.h */,
+				65B174BE09D1000200820339 /* chartables.c */,
+				65B1749909D0FEB700820339 /* array_object.lut.h */,
+			);
+			name = "Derived Sources";
+			path = /Volumes/Data/mjs/Work/symroots/Debug/DerivedSources/JavaScriptCore;
+			sourceTree = "<absolute>";
 		};
 		65162EF108E6A21C007556CD /* kxmlcore */ = {
 			isa = PBXGroup;
@@ -871,24 +931,24 @@
 				14ABB455099C2A0F00E2A24F /* JSType.h in Headers */,
 				65D6D87F09B5A32E0002E4D7 /* Platform.h in Headers */,
 				93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */,
+				65B1749A09D0FEB700820339 /* array_object.lut.h in Headers */,
+				65B174F509D100FA00820339 /* math_object.lut.h in Headers */,
+				65B174F609D100FA00820339 /* number_object.lut.h in Headers */,
+				65B174F809D100FA00820339 /* string_object.lut.h in Headers */,
+				65FB3EB309D109F000F49DEB /* lexer.lut.h in Headers */,
+				65FB3F4F09D11B2400F49DEB /* date_object.lut.h in Headers */,
+				65FB3F5109D11B2400F49DEB /* grammar.h in Headers */,
+				65FB3F5409D11B2400F49DEB /* regexp_object.lut.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		932F5B3E0822A1C700736975 /* JavaScriptCore */ = {
+		932F5B3E0822A1C700736975 /* include */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */;
+			buildConfigurationList = 149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "include" */;
 			buildPhases = (
-				93F1982F08245B92001E9ABC /* array_object.lut.h */,
-				93396BB50824516200AB803D /* chartables.c */,
-				93F1983708245BAA001E9ABC /* date_object.lut.h */,
-				93F197EC08245819001E9ABC /* lexer.lut.h */,
-				93F1983308245BA1001E9ABC /* math_object.lut.h */,
-				93F1983108245B9E001E9ABC /* number_object.lut.h */,
-				14F6037308FB039300E9E573 /* regexp_object.lut.h */,
-				93F1983508245BA6001E9ABC /* string_object.lut.h */,
 				932F5B3F0822A1C700736975 /* Headers */,
 				932F5B910822A1C700736975 /* Sources */,
 				932F5BD20822A1C700736975 /* Frameworks */,
@@ -944,8 +1004,9 @@
 			};
 			dependencies = (
 				93396B9D082450C500AB803D /* PBXTargetDependency */,
+				65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */,
 			);
-			name = JavaScriptCore;
+			name = include;
 			productInstallPath = "${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks";
 			productName = JavaScriptCore;
 			productReference = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */;
@@ -1024,7 +1085,8 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			targets = (
-				932F5B3E0822A1C700736975 /* JavaScriptCore */,
+				65FB3F6609D11E9100F49DEB /* Derived Sources */,
+				932F5B3E0822A1C700736975 /* include */,
 				935F69F508244FEA003D1A45 /* dftables */,
 				932F5BDA0822A1C700736975 /* testkjs */,
 				932F5BE30822A1C700736975 /* All */,
@@ -1033,140 +1095,19 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		14F6037308FB039300E9E573 /* regexp_object.lut.h */ = {
+		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				kjs/create_hash_table,
-				kjs/regexp_object.cpp,
 			);
-			name = regexp_object.lut.h;
+			name = "Generate Derived Sources";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/regexp_object.lut.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "kjs/create_hash_table kjs/regexp_object.cpp -i > \"$DERIVED_FILE_DIR/regexp_object.lut.h\"";
-		};
-		93396BB50824516200AB803D /* chartables.c */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/dftables",
-			);
-			name = chartables.c;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/chartables.c",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$BUILT_PRODUCTS_DIR/dftables\" \"$DERIVED_FILE_DIR/chartables.c\"";
-		};
-		93F197EC08245819001E9ABC /* lexer.lut.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-				kjs/create_hash_table,
-				kjs/keywords.table,
-			);
-			name = lexer.lut.h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/lexer.lut.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "kjs/create_hash_table kjs/keywords.table -i > \"$DERIVED_FILE_DIR/lexer.lut.h\"";
-		};
-		93F1982F08245B92001E9ABC /* array_object.lut.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-				kjs/create_hash_table,
-				kjs/array_object.cpp,
-			);
-			name = array_object.lut.h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/array_object.lut.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "kjs/create_hash_table kjs/array_object.cpp -i > \"$DERIVED_FILE_DIR/array_object.lut.h\"";
-		};
-		93F1983108245B9E001E9ABC /* number_object.lut.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				kjs/create_hash_table,
-				kjs/number_object.cpp,
-			);
-			name = number_object.lut.h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/number_object.lut.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "kjs/create_hash_table kjs/number_object.cpp -i > \"$DERIVED_FILE_DIR/number_object.lut.h\"";
-		};
-		93F1983308245BA1001E9ABC /* math_object.lut.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				kjs/create_hash_table,
-				kjs/math_object.cpp,
-			);
-			name = math_object.lut.h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/math_object.lut.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "kjs/create_hash_table kjs/math_object.cpp -i > \"$DERIVED_FILE_DIR/math_object.lut.h\"";
-		};
-		93F1983508245BA6001E9ABC /* string_object.lut.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				kjs/create_hash_table,
-				kjs/string_object.cpp,
-			);
-			name = string_object.lut.h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/string_object.lut.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "kjs/create_hash_table kjs/string_object.cpp -i > \"$DERIVED_FILE_DIR/string_object.lut.h\"";
-		};
-		93F1983708245BAA001E9ABC /* date_object.lut.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				kjs/create_hash_table,
-				kjs/date_object.cpp,
-			);
-			name = date_object.lut.h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/date_object.lut.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "kjs/create_hash_table kjs/date_object.cpp -i > \"$DERIVED_FILE_DIR/date_object.lut.h\"";
+			shellScript = "./generate-derived-sources\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1183,7 +1124,6 @@
 				932F5B970822A1C700736975 /* error_object.cpp in Sources */,
 				932F5B980822A1C700736975 /* function_object.cpp in Sources */,
 				932F5B990822A1C700736975 /* function.cpp in Sources */,
-				93DE3E420868DCAB00B8897C /* grammar.y in Sources */,
 				932F5B9A0822A1C700736975 /* internal.cpp in Sources */,
 				932F5B9B0822A1C700736975 /* interpreter.cpp in Sources */,
 				932F5B9C0822A1C700736975 /* lexer.cpp in Sources */,
@@ -1250,6 +1190,7 @@
 				65EA4C9B092AF9E20093D800 /* JSLock.cpp in Sources */,
 				14760864099C633800437128 /* JSImmediate.cpp in Sources */,
 				93F0B3AB09BB4DC00068FCE3 /* Parser.cpp in Sources */,
+				65FB3F5009D11B2400F49DEB /* grammar.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1272,9 +1213,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 65FB3F7D09D11EF300F49DEB /* PBXContainerItemProxy */;
+		};
 		932F5BE70822A1C700736975 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
+			target = 932F5B3E0822A1C700736975 /* include */;
 			targetProxy = 932F5BE60822A1C700736975 /* PBXContainerItemProxy */;
 		};
 		932F5BE90822A1C700736975 /* PBXTargetDependency */ = {
@@ -1322,6 +1268,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					icu,
+					"$(BUILT_PRODUCTS_DIR)/DerivedSources",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
@@ -1358,6 +1305,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					icu,
+					"$(BUILT_PRODUCTS_DIR)/DerivedSources",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
@@ -1394,6 +1342,7 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					icu,
+					"$(BUILT_PRODUCTS_DIR)/DerivedSources",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
@@ -1589,6 +1538,35 @@
 			};
 			name = Production;
 		};
+		65FB3F7809D11EBD00F49DEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Generate Derived Sources";
+			};
+			name = Debug;
+		};
+		65FB3F7909D11EBD00F49DEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = "Generate Derived Sources";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		65FB3F7A09D11EBD00F49DEB /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Generate Derived Sources";
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1602,7 +1580,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */ = {
+		149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "include" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				149C275E08902AFE008A9EFC /* Debug */,
@@ -1638,6 +1616,16 @@
 				149C277208902AFE008A9EFC /* Debug */,
 				149C277308902AFE008A9EFC /* Release */,
 				149C277508902AFE008A9EFC /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		65FB3F7709D11EBD00F49DEB /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65FB3F7809D11EBD00F49DEB /* Debug */,
+				65FB3F7909D11EBD00F49DEB /* Release */,
+				65FB3F7A09D11EBD00F49DEB /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
