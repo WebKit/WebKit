@@ -1,3 +1,19 @@
+2006-03-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for <rdar://problem/4471984> repro crash CSS position for html/
+        table=relative causes crash when hiding table
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle): If an object is 
+        positioned, relatively positioned, or transparent, it should always 
+        have auto indexing. Auto z-index for the root should always be 0.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::removeChild): This is not part of the bug 
+        fix; just using a local variable that was created for the stacking 
+        context instead of recalculating it.
+
 2006-03-22  David Hyatt  <hyatt@apple.com>
 
         Fix for residual style problem where form elements lose their connection

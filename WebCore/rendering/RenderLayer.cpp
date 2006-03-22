@@ -452,7 +452,7 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
     // from the main layer tree, so we need to null-check the |stackingContext| value.
     RenderLayer* stackingContext = oldChild->stackingContext();
     if (stackingContext)
-        oldChild->stackingContext()->dirtyZOrderLists();
+        stackingContext->dirtyZOrderLists();
     
     oldChild->setPreviousSibling(0);
     oldChild->setNextSibling(0);

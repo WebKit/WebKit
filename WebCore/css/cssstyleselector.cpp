@@ -972,17 +972,13 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
 
     // Make sure our z-index value is only applied if the object is positioned,
     // relatively positioned, or transparent.
-    if (style->position() == StaticPosition && style->opacity() == 1.0f) {
-        if (e && e->getDocument()->documentElement() == e)
-            style->setZIndex(0); // The root has a z-index of 0 if not positioned or transparent.
-        else
-            style->setHasAutoZIndex(); // Everyone else gets an auto z-index.
-    }
+    if (style->position() == StaticPosition && style->opacity() == 1.0f)
+        style->setHasAutoZIndex();
 
-    // Auto z-index becomes 0 for transparent objects.  This prevents cases where
-    // objects that should be blended as a single unit end up with a non-transparent object
-    // wedged in between them.
-    if (style->opacity() < 1.0f && style->hasAutoZIndex())
+    // Auto z-index becomes 0 for the root element and transparent objects.  This prevents
+    // cases where objects that should be blended as a single unit end up with a non-transparent
+    // object wedged in between them.
+    if (style->hasAutoZIndex() && ((e && e->getDocument()->documentElement() == e) || style->opacity() < 1.0f))
         style->setZIndex(0);
     
     // Button, legend, input, select and textarea all consider width values of 'auto' to be 'intrinsic'.
