@@ -1,3 +1,18 @@
+2006-03-22  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7747
+          REGRESSION: Background tab/window auto-refresh in GMail will take focus.
+
+        * manual-tests/named-window-blank-target.html: Added.
+        * manual-tests/resources/named-window-blank-target-step2.html: Added.
+        * manual-tests/resources/named-window-blank-target-step3.html: Added.
+        * manual-tests/resources/named-window-blank-target-step4.html: Added.
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::find): If the given name is empty, just return our frame,
+        even if it has a name.
+
 2006-03-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

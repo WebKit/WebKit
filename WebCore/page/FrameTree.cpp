@@ -166,7 +166,7 @@ Frame* FrameTree::child(const AtomicString& name) const
 
 Frame* FrameTree::find(const AtomicString& name) const
 {
-    if (name == "_self" || name == "_current")
+    if (name == "_self" || name == "_current" || name.isEmpty())
         return m_thisFrame;
     
     if (name == "_top")
