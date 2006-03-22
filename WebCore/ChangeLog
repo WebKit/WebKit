@@ -2,7 +2,8 @@
 
         Reviewed by Adele.
 
-        - fix <rdar://problem/4483856> REGRESSION (417.8-TOT): onclick handler cannot call a function named OnClick (7143)
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7143
+          <rdar://problem/4483856> REGRESSION (417.8-TOT): onclick handler cannot call a function named OnClick (7143)
 
         Test: fast/dom/Element/onclick-case.html
 
