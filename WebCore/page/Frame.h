@@ -275,7 +275,7 @@ public:
    * This gives a wide range of possibilities to
    * change the layout of the page.
    */
-  void setUserStyleSheet(const KURL& url);
+  void setUserStyleSheetLocation(const KURL& url);
 
   /**
    * Sets a user defined style sheet to be used on top of the HTML 4

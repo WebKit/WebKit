@@ -1,3 +1,19 @@
+2006-03-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7884
+          REGRESSION: Selecting a custom style sheet crashes 20/3 nightly
+
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::setStyleSheet): This was calling the function
+        that sets the stylesheet URL, passing it the actual stylesheet.
+        (WebCore::Frame::begin):
+        (WebCore::Frame::setUserStyleSheetLocation): Renamed the version of
+        setUserStyleSheet() that takes a URL to this.
+        (WebCore::Frame::reparseConfiguration):
+        * page/Frame.h:
+
 2006-03-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
