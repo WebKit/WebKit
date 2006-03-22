@@ -904,7 +904,6 @@ JSValue *DOMDocument::getValueProperty(ExecState *exec, int token) const
         return jsString(frame->settings()->encoding());
     return jsUndefined();
   case StyleSheets:
-    //kdDebug() << "DOMDocument::StyleSheets, returning " << doc.styleSheets().length() << " stylesheets" << endl;
     return getDOMStyleSheetList(exec, doc.styleSheets(), &doc);
   case PreferredStylesheetSet:
     return jsStringOrNull(doc.preferredStylesheetSet());

@@ -101,7 +101,7 @@ enum HitTestAction {
 
 struct DashboardRegionValue
 {
-    DeprecatedString label;
+    String label;
     IntRect bounds;
     IntRect clip;
     int type;

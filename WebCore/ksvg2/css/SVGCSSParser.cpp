@@ -344,25 +344,18 @@ CSSValue *CSSParser::parseSVGPaint()
 {
     KDOMCSSValue *value = valueList->current();
     if(!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
-       value->fValue >= 0. && value->fValue < 1000000.)
-    {
+       value->fValue >= 0. && value->fValue < 1000000.) {
         DeprecatedString str;
         str.sprintf("%06d", (int)(value->fValue+.5));
         return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, new StringImpl(str));
-    }
-    else if(value->unit == CSSPrimitiveValue::CSS_RGBCOLOR)
-    {
-        DeprecatedString str = DeprecatedString::fromLatin1("#") + qString(value->string);
-        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, new StringImpl(str));
-    }
-    else if(value->unit == CSSPrimitiveValue::CSS_IDENT ||
+    } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR) {
+        String str = "#" + domString(value->string);
+        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, str.impl());
+    } else if (value->unit == CSSPrimitiveValue::CSS_IDENT ||
            (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION))
-    {
-        DeprecatedString str = qString(value->string);
-        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, new StringImpl(str));
-    }
+        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, domString(value->string).impl());
     else if(value->unit == KDOMCSSValue::Function && value->function->args != 0 &&
-            qString(value->function->name).lower() == "rgb(")
+            domString(value->function->name).lower() == "rgb(")
     {
         KDOMCSSValueList *args = value->function->args;
         KDOMCSSValue *v = args->current();
@@ -400,23 +393,16 @@ CSSValue *CSSParser::parseSVGColor()
 {
     KDOMCSSValue *value = valueList->current();
     if(!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
-       value->fValue >= 0. && value->fValue < 1000000.)
-    {
+       value->fValue >= 0. && value->fValue < 1000000.) {
         DeprecatedString str;
         str.sprintf("%06d", (int)(value->fValue+.5));
         return new SVGColor(new StringImpl(str));
-    }
-    else if(value->unit == CSSPrimitiveValue::CSS_RGBCOLOR)
-    {
-        DeprecatedString str = DeprecatedString::fromLatin1("#") + qString(value->string);
-        return new SVGColor(new StringImpl(str));
-    }
-    else if(value->unit == CSSPrimitiveValue::CSS_IDENT ||
-           (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION))
+    } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR) {
+        String str = "#" + domString(value->string);
+        return new SVGColor(str.impl());
+    } else if (value->unit == CSSPrimitiveValue::CSS_IDENT || (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION))
         return new SVGColor(domString(value->string).impl());
-    else if(value->unit == KDOMCSSValue::Function && value->function->args != 0 &&
-            qString(value->function->name).lower() == "rgb(")
-    {
+    else if (value->unit == KDOMCSSValue::Function && value->function->args != 0 && domString(value->function->name).lower() == "rgb(") {
         KDOMCSSValueList *args = value->function->args;
         KDOMCSSValue *v = args->current();
         if(!validUnit(v, FInteger|FPercent, true))

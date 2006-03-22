@@ -58,7 +58,7 @@ CSSParser* CSSParser::currentParser = 0;
 CSSParser::CSSParser(bool strictParsing)
 {
 #ifdef CSS_DEBUG
-    kdDebug( 6080 ) << "CSSParser::CSSParser this=" << this << endl;
+    kdDebug(6080) << "CSSParser::CSSParser this=" << this << endl;
 #endif
     strict = strictParsing;
 
@@ -156,8 +156,7 @@ PassRefPtr<CSSRule> CSSParser::parseRule(CSSStyleSheet *sheet, const String &str
     return rule.release();
 }
 
-bool CSSParser::parseValue( CSSMutableStyleDeclaration *declaration, int _id, const String &string,
-                            bool _important)
+bool CSSParser::parseValue(CSSMutableStyleDeclaration *declaration, int _id, const String &string, bool _important)
 {
     styleElement = declaration->stylesheet();
 
@@ -206,7 +205,7 @@ RGBA32 CSSParser::parseColor(const String &string)
     return color;
 }
 
-bool CSSParser::parseColor( CSSMutableStyleDeclaration *declaration, const String &string )
+bool CSSParser::parseColor(CSSMutableStyleDeclaration *declaration, const String &string)
 {
     styleElement = declaration->stylesheet();
 
@@ -226,7 +225,7 @@ bool CSSParser::parseColor( CSSMutableStyleDeclaration *declaration, const Strin
     return ok;
 }
 
-bool CSSParser::parseDeclaration( CSSMutableStyleDeclaration *declaration, const String &string )
+bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration *declaration, const String &string)
 {
     styleElement = declaration->stylesheet();
 
@@ -281,19 +280,19 @@ Document *CSSParser::document() const
 
 bool CSSParser::validUnit(Value* value, Units unitflags, bool strict)
 {
-    if ( unitflags & FNonNeg && value->fValue < 0 )
+    if (unitflags & FNonNeg && value->fValue < 0)
         return false;
 
     bool b = false;
-    switch( value->unit ) {
+    switch(value->unit) {
     case CSSPrimitiveValue::CSS_NUMBER:
         b = (unitflags & FNumber);
-        if ( !b && ( (unitflags & FLength) && (value->fValue == 0 || !strict ) ) ) {
+        if (!b && ((unitflags & FLength) && (value->fValue == 0 || !strict))) {
             value->unit = CSSPrimitiveValue::CSS_PX;
             b = true;
         }
-        if ( !b && ( unitflags & FInteger ) &&
-             (value->fValue - (int)value->fValue) < 0.001 )
+        if (!b && (unitflags & FInteger) &&
+             (value->fValue - (int)value->fValue) < 0.001)
             b = true;
         break;
     case CSSPrimitiveValue::CSS_PERCENTAGE:
@@ -326,13 +325,14 @@ bool CSSParser::validUnit(Value* value, Units unitflags, bool strict)
     return b;
 }
 
-bool CSSParser::parseValue( int propId, bool important )
+bool CSSParser::parseValue(int propId, bool important)
 {
-    if ( !valueList ) return false;
+    if (!valueList)
+        return false;
 
     Value *value = valueList->current();
 
-    if ( !value )
+    if (!value)
         return false;
 
     int id = value->id;
@@ -367,45 +367,45 @@ bool CSSParser::parseValue( int propId, bool important )
             valid_primitive = true;
         break;
     case CSS_PROP_UNICODE_BIDI:         // normal | embed | bidi-override | inherit
-        if ( id == CSS_VAL_NORMAL ||
+        if (id == CSS_VAL_NORMAL ||
              id == CSS_VAL_EMBED ||
-             id == CSS_VAL_BIDI_OVERRIDE )
+             id == CSS_VAL_BIDI_OVERRIDE)
             valid_primitive = true;
         break;
 
     case CSS_PROP_POSITION:             // static | relative | absolute | fixed | inherit
-        if ( id == CSS_VAL_STATIC ||
+        if (id == CSS_VAL_STATIC ||
              id == CSS_VAL_RELATIVE ||
              id == CSS_VAL_ABSOLUTE ||
-             id == CSS_VAL_FIXED )
+             id == CSS_VAL_FIXED)
             valid_primitive = true;
         break;
 
     case CSS_PROP_PAGE_BREAK_AFTER:     // auto | always | avoid | left | right | inherit
     case CSS_PROP_PAGE_BREAK_BEFORE:    // auto | always | avoid | left | right | inherit
-        if ( id == CSS_VAL_AUTO ||
+        if (id == CSS_VAL_AUTO ||
              id == CSS_VAL_ALWAYS ||
              id == CSS_VAL_AVOID ||
              id == CSS_VAL_LEFT ||
-             id == CSS_VAL_RIGHT )
+             id == CSS_VAL_RIGHT)
             valid_primitive = true;
         break;
 
     case CSS_PROP_PAGE_BREAK_INSIDE:    // avoid | auto | inherit
-        if ( id == CSS_VAL_AUTO ||
-             id == CSS_VAL_AVOID )
+        if (id == CSS_VAL_AUTO ||
+             id == CSS_VAL_AVOID)
             valid_primitive = true;
         break;
 
     case CSS_PROP_EMPTY_CELLS:          // show | hide | inherit
-        if ( id == CSS_VAL_SHOW ||
-             id == CSS_VAL_HIDE )
+        if (id == CSS_VAL_SHOW ||
+             id == CSS_VAL_HIDE)
             valid_primitive = true;
         break;
 
     case CSS_PROP_CONTENT:              // [ <string> | <uri> | <counter> | attr(X) | open-quote |
         // close-quote | no-open-quote | no-close-quote ]+ | inherit
-        return parseContent( propId, important );
+        return parseContent(propId, important);
         break;
 
     case CSS_PROP_WHITE_SPACE:          // normal | pre | nowrap | inherit
@@ -418,16 +418,16 @@ bool CSSParser::parseValue( int propId, bool important )
         break;
 
     case CSS_PROP_CLIP:                 // <shape> | auto | inherit
-        if ( id == CSS_VAL_AUTO )
+        if (id == CSS_VAL_AUTO)
             valid_primitive = true;
-        else if ( value->unit == Value::Function )
-            return parseShape( propId, important );
+        else if (value->unit == Value::Function)
+            return parseShape(propId, important);
         break;
 
 #if __APPLE__
     case CSS_PROP__KHTML_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
-        if ( value->unit == Value::Function || id == CSS_VAL_NONE)
-            return parseDashboardRegions( propId, important );
+        if (value->unit == Value::Function || id == CSS_VAL_NONE)
+            return parseDashboardRegions(propId, important);
         break;
 #endif
 
@@ -441,7 +441,7 @@ bool CSSParser::parseValue( int propId, bool important )
         break;
 
     case CSS_PROP_BORDER_COLLAPSE:      // collapse | separate | inherit
-        if ( id == CSS_VAL_COLLAPSE || id == CSS_VAL_SEPARATE )
+        if (id == CSS_VAL_COLLAPSE || id == CSS_VAL_SEPARATE)
             valid_primitive = true;
         break;
 
@@ -457,7 +457,7 @@ bool CSSParser::parseValue( int propId, bool important )
         break;
 
     case CSS_PROP_LIST_STYLE_POSITION:  // inside | outside | inherit
-        if ( id == CSS_VAL_INSIDE || id == CSS_VAL_OUTSIDE )
+        if (id == CSS_VAL_INSIDE || id == CSS_VAL_OUTSIDE)
             valid_primitive = true;
         break;
 
@@ -479,7 +479,7 @@ bool CSSParser::parseValue( int propId, bool important )
         break;
 
     case CSS_PROP_DIRECTION:            // ltr | rtl | inherit
-        if ( id == CSS_VAL_LTR || id == CSS_VAL_RTL )
+        if (id == CSS_VAL_LTR || id == CSS_VAL_RTL)
             valid_primitive = true;
         break;
 
@@ -489,21 +489,21 @@ bool CSSParser::parseValue( int propId, bool important )
         break;
 
     case CSS_PROP_FLOAT:                // left | right | none | inherit + center for buggy CSS
-        if ( id == CSS_VAL_LEFT || id == CSS_VAL_RIGHT ||
+        if (id == CSS_VAL_LEFT || id == CSS_VAL_RIGHT ||
              id == CSS_VAL_NONE || id == CSS_VAL_CENTER)
             valid_primitive = true;
         break;
 
     case CSS_PROP_CLEAR:                // none | left | right | both | inherit
-        if ( id == CSS_VAL_NONE || id == CSS_VAL_LEFT ||
+        if (id == CSS_VAL_NONE || id == CSS_VAL_LEFT ||
              id == CSS_VAL_RIGHT|| id == CSS_VAL_BOTH)
             valid_primitive = true;
         break;
 
     case CSS_PROP_TEXT_ALIGN:
         // left | right | center | justify | khtml_left | khtml_right | khtml_center | <string> | inherit
-        if ( ( id >= CSS_VAL__KHTML_AUTO && id <= CSS_VAL__KHTML_CENTER ) ||
-             value->unit == CSSPrimitiveValue::CSS_STRING )
+        if ((id >= CSS_VAL__KHTML_AUTO && id <= CSS_VAL__KHTML_CENTER) ||
+             value->unit == CSSPrimitiveValue::CSS_STRING)
             valid_primitive = true;
         break;
 
@@ -525,12 +525,12 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id >= CSS_VAL_NORMAL && id <= CSS_VAL_900) {
             // Allready correct id
             valid_primitive = true;
-        } else if ( validUnit( value, FInteger|FNonNeg, false ) ) {
+        } else if (validUnit(value, FInteger|FNonNeg, false)) {
             int weight = (int)value->fValue;
-            if ( (weight % 100) )
+            if ((weight % 100))
                 break;
             weight /= 100;
-            if ( weight >= 1 && weight <= 9 ) {
+            if (weight >= 1 && weight <= 9) {
                 id = CSS_VAL_100 + weight - 1;
                 valid_primitive = true;
             }
@@ -565,12 +565,12 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_SCROLLBAR_DARKSHADOW_COLOR:   // IE5.5
     case CSS_PROP_SCROLLBAR_TRACK_COLOR:        // IE5.5
     case CSS_PROP_SCROLLBAR_ARROW_COLOR:        // IE5.5
-        if ( strict )
+        if (strict)
             break;
         /* nobreak */
     case CSS_PROP_OUTLINE_COLOR:        // <color> | invert | inherit
         // outline has "invert" as additional keyword.
-        if ( propId == CSS_PROP_OUTLINE_COLOR && id == CSS_VAL_INVERT ) {
+        if (propId == CSS_PROP_OUTLINE_COLOR && id == CSS_VAL_INVERT) {
             valid_primitive = true;
             break;
         }
@@ -587,12 +587,12 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id == CSS_VAL__KHTML_TEXT)
             valid_primitive = true; // Always allow this, even when strict parsing is on,
                                     // since we use this in our UA sheets.
-        else if ( id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT || id == CSS_VAL_MENU ||
-             (id >= CSS_VAL_GREY && id < CSS_VAL__KHTML_TEXT && !strict) ) {
+        else if (id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT || id == CSS_VAL_MENU ||
+             (id >= CSS_VAL_GREY && id < CSS_VAL__KHTML_TEXT && !strict)) {
             valid_primitive = true;
         } else {
             parsedValue = parseColor();
-            if ( parsedValue )
+            if (parsedValue)
                 valueList->next();
         }
         break;
@@ -640,7 +640,7 @@ bool CSSParser::parseValue( int propId, bool important )
         }
         else if (value->unit == CSSPrimitiveValue::CSS_URI) {
             // ### allow string in non strict mode?
-            String uri = parseURL( domString( value->string ) );
+            String uri = parseURL(domString(value->string));
             if (!uri.isEmpty()) {
                 parsedValue = new CSSImageValue(
                     String(KURL(styleElement->baseURL().deprecatedString(), uri.deprecatedString()).url()),
@@ -658,15 +658,15 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id == CSS_VAL_THIN || id == CSS_VAL_MEDIUM || id == CSS_VAL_THICK)
             valid_primitive = true;
         else
-            valid_primitive = ( validUnit( value, FLength, strict ) );
+            valid_primitive = validUnit(value, FLength, strict);
         break;
 
     case CSS_PROP_LETTER_SPACING:       // normal | <length> | inherit
     case CSS_PROP_WORD_SPACING:         // normal | <length> | inherit
-        if ( id == CSS_VAL_NORMAL )
+        if (id == CSS_VAL_NORMAL)
             valid_primitive = true;
         else
-            valid_primitive = validUnit( value, FLength, strict );
+            valid_primitive = validUnit(value, FLength, strict);
         break;
 
     case CSS_PROP_WORD_WRAP:           // normal | break-word
@@ -675,7 +675,7 @@ bool CSSParser::parseValue( int propId, bool important )
         break;
 
     case CSS_PROP__KHTML_FONT_SIZE_DELTA:           // <length>
-           valid_primitive = validUnit( value, FLength, strict );
+           valid_primitive = validUnit(value, FLength, strict);
         break;
 
     case CSS_PROP__KHTML_NBSP_MODE:     // normal | space
@@ -699,7 +699,7 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_PADDING_BOTTOM:       //   <length> | <percentage>
     case CSS_PROP_PADDING_LEFT:         ////
     case CSS_PROP__KHTML_PADDING_START:
-        valid_primitive = ( !id && validUnit( value, FLength|FPercent, strict ) );
+        valid_primitive = (!id && validUnit(value, FLength|FPercent, strict));
         break;
 
     case CSS_PROP_MAX_HEIGHT:           // <length> | <percentage> | none | inherit
@@ -714,7 +714,7 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id == CSS_VAL_INTRINSIC || id == CSS_VAL_MIN_INTRINSIC)
             valid_primitive = true;
         else
-            valid_primitive = ( !id && validUnit( value, FLength|FPercent|FNonNeg, strict ) );
+            valid_primitive = (!id && validUnit(value, FLength|FPercent|FNonNeg, strict));
         break;
 
     case CSS_PROP_FONT_SIZE:
@@ -722,16 +722,16 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id >= CSS_VAL_XX_SMALL && id <= CSS_VAL_LARGER)
             valid_primitive = true;
         else
-            valid_primitive = ( validUnit( value, FLength|FPercent, strict ) );
+            valid_primitive = (validUnit(value, FLength|FPercent, strict));
         break;
 
     case CSS_PROP_FONT_STYLE:           // normal | italic | oblique | inherit
-        if ( id == CSS_VAL_NORMAL || id == CSS_VAL_ITALIC || id == CSS_VAL_OBLIQUE)
+        if (id == CSS_VAL_NORMAL || id == CSS_VAL_ITALIC || id == CSS_VAL_OBLIQUE)
             valid_primitive = true;
         break;
 
     case CSS_PROP_FONT_VARIANT:         // normal | small-caps | inherit
-        if ( id == CSS_VAL_NORMAL || id == CSS_VAL_SMALL_CAPS)
+        if (id == CSS_VAL_NORMAL || id == CSS_VAL_SMALL_CAPS)
             valid_primitive = true;
         break;
 
@@ -739,10 +739,10 @@ bool CSSParser::parseValue( int propId, bool important )
         // baseline | sub | super | top | text-top | middle | bottom | text-bottom |
         // <percentage> | <length> | inherit
 
-        if ( id >= CSS_VAL_BASELINE && id <= CSS_VAL__KHTML_BASELINE_MIDDLE )
+        if (id >= CSS_VAL_BASELINE && id <= CSS_VAL__KHTML_BASELINE_MIDDLE)
             valid_primitive = true;
         else
-            valid_primitive = ( !id && validUnit( value, FLength|FPercent, strict ) );
+            valid_primitive = (!id && validUnit(value, FLength|FPercent, strict));
         break;
 
     case CSS_PROP_HEIGHT:               // <length> | <percentage> | auto | inherit
@@ -751,7 +751,7 @@ bool CSSParser::parseValue( int propId, bool important )
             valid_primitive = true;
         else
             // ### handle multilength case where we allow relative units
-            valid_primitive = ( !id && validUnit( value, FLength|FPercent|FNonNeg, strict ) );
+            valid_primitive = (!id && validUnit(value, FLength|FPercent|FNonNeg, strict));
         break;
 
     case CSS_PROP_BOTTOM:               // <length> | <percentage> | auto | inherit
@@ -763,15 +763,14 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_MARGIN_BOTTOM:        //   <length> | <percentage> | auto | inherit
     case CSS_PROP_MARGIN_LEFT:          ////
     case CSS_PROP__KHTML_MARGIN_START:
-        if ( id == CSS_VAL_AUTO )
+        if (id == CSS_VAL_AUTO)
             valid_primitive = true;
         else
-            valid_primitive = ( !id && validUnit( value, FLength|FPercent, strict ) );
+            valid_primitive = (!id && validUnit(value, FLength|FPercent, strict));
         break;
 
     case CSS_PROP_Z_INDEX:              // auto | <integer> | inherit
-        // qDebug("parsing z-index: id=%d, fValue=%f", id, value->fValue );
-        if ( id == CSS_VAL_AUTO ) {
+        if (id == CSS_VAL_AUTO) {
             valid_primitive = true;
             break;
         }
@@ -779,14 +778,14 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_ORPHANS:              // <integer> | inherit
     case CSS_PROP_WIDOWS:               // <integer> | inherit
         // ### not supported later on
-        valid_primitive = ( !id && validUnit( value, FInteger, false ) );
+        valid_primitive = (!id && validUnit(value, FInteger, false));
         break;
 
     case CSS_PROP_LINE_HEIGHT:          // normal | <number> | <length> | <percentage> | inherit
-        if ( id == CSS_VAL_NORMAL )
+        if (id == CSS_VAL_NORMAL)
             valid_primitive = true;
         else
-            valid_primitive = ( !id && validUnit( value, FNumber|FLength|FPercent, strict ) );
+            valid_primitive = (!id && validUnit(value, FNumber|FLength|FPercent, strict));
         break;
     case CSS_PROP_FONT_FAMILY:
         // [[ <family-name> | <generic-family> ],]* [<family-name> | <generic-family>] | inherit
@@ -803,32 +802,30 @@ bool CSSParser::parseValue( int propId, bool important )
         } else {
             CSSValueList *list = new CSSValueList;
             bool is_valid = true;
-            while( is_valid && value ) {
-                switch ( value->id ) {
+            while(is_valid && value) {
+                switch (value->id) {
                 case CSS_VAL_BLINK:
                     break;
                 case CSS_VAL_UNDERLINE:
                 case CSS_VAL_OVERLINE:
                 case CSS_VAL_LINE_THROUGH:
-                    list->append( new CSSPrimitiveValue( value->id ) );
+                    list->append(new CSSPrimitiveValue(value->id));
                     break;
                 default:
                     is_valid = false;
                 }
                 value = valueList->next();
             }
-            //kdDebug( 6080 ) << "got " << list->length() << "d decorations" << endl;
             if(list->length() && is_valid) {
                 parsedValue = list;
                 valueList->next();
-            } else {
+            } else
                 delete list;
-            }
         }
         break;
 
     case CSS_PROP_TABLE_LAYOUT:         // auto | fixed | inherit
-        if ( id == CSS_VAL_AUTO || id == CSS_VAL_FIXED )
+        if (id == CSS_VAL_AUTO || id == CSS_VAL_FIXED)
             valid_primitive = true;
         break;
 
@@ -860,8 +857,8 @@ bool CSSParser::parseValue( int propId, bool important )
                     break;
                 valueList->next();
             }
-            if ( values->length() ) {
-                addProperty( propId, values, important );
+            if (values->length()) {
+                addProperty(propId, values, important);
                 valueList->next();
                 return true;
             }
@@ -1174,26 +1171,19 @@ bool CSSParser::parseValue( int propId, bool important )
         break;
     }
 
-    if ( valid_primitive ) {
-        if ( id != 0 ) {
-            // qDebug(" new value: id=%d", id );
-            parsedValue = new CSSPrimitiveValue( id );
-        } else if ( value->unit == CSSPrimitiveValue::CSS_STRING )
-            parsedValue = new CSSPrimitiveValue( domString( value->string ),
-                                                     (CSSPrimitiveValue::UnitTypes) value->unit );
-        else if ( value->unit >= CSSPrimitiveValue::CSS_NUMBER &&
-                  value->unit <= CSSPrimitiveValue::CSS_KHZ ) {
-            // qDebug(" new value: value=%.2f, unit=%d", value->fValue, value->unit );
-            parsedValue = new CSSPrimitiveValue( value->fValue,
-                                                     (CSSPrimitiveValue::UnitTypes) value->unit );
-        } else if ( value->unit >= Value::Q_EMS ) {
-            // qDebug(" new quirks value: value=%.2f, unit=%d", value->fValue, value->unit );
-            parsedValue = new CSSQuirkPrimitiveValue( value->fValue, CSSPrimitiveValue::CSS_EMS );
-        }
+    if (valid_primitive) {
+        if (id != 0)
+            parsedValue = new CSSPrimitiveValue(id);
+        else if (value->unit == CSSPrimitiveValue::CSS_STRING)
+            parsedValue = new CSSPrimitiveValue(domString(value->string), (CSSPrimitiveValue::UnitTypes) value->unit);
+        else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
+            parsedValue = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
+        else if (value->unit >= Value::Q_EMS)
+            parsedValue = new CSSQuirkPrimitiveValue(value->fValue, CSSPrimitiveValue::CSS_EMS);
         valueList->next();
     }
-    if ( parsedValue ) {
-        addProperty( propId, parsedValue, important );
+    if (parsedValue) {
+        addProperty(propId, parsedValue, important);
         return true;
     }
     return false;
@@ -1320,7 +1310,7 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
         found = false;
         for (int propIndex = 0; !found && propIndex < numProperties; ++propIndex) {
             if (!fnd[propIndex]) {
-                if (parseValue( properties[propIndex], important))
+                if (parseValue(properties[propIndex], important))
                     fnd[propIndex] = found = true;
             }
         }
@@ -1434,7 +1424,7 @@ bool CSSParser::parseContent(int propId, bool important)
         } else if (val->unit == Value::Function) {
             // attr(X)
             ValueList *args = val->function->args;
-            DeprecatedString fname = qString(val->function->name).lower();
+            String fname = domString(val->function->name).lower();
             if (fname != "attr(" || !args)
                 return false;
             if (args->size() != 1)
@@ -1704,23 +1694,23 @@ failed:
 
 static Value *skipCommaInDashboardRegion (ValueList *args)
 {
-    if ( args->size() == (DASHBOARD_REGION_NUM_PARAMETERS*2-1) ||
+    if (args->size() == (DASHBOARD_REGION_NUM_PARAMETERS*2-1) ||
          args->size() == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
         Value *current = args->current();
-        if (current->unit == Value::Operator && current->iValue == ',' )
+        if (current->unit == Value::Operator && current->iValue == ',')
             return args->next();
     }
     return args->current();
 }
 
-bool CSSParser::parseDashboardRegions( int propId, bool important )
+bool CSSParser::parseDashboardRegions(int propId, bool important)
 {
     bool valid = true;
     
     Value *value = valueList->current();
 
     if (value->id == CSS_VAL_NONE) {
-        addProperty( propId, new CSSPrimitiveValue( value->id ), important );
+        addProperty(propId, new CSSPrimitiveValue(value->id), important);
         return valid;
     }
         
@@ -1736,7 +1726,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
             region = nextRegion.get();
         }
         
-        if ( value->unit != Value::Function) {
+        if (value->unit != Value::Function) {
             valid = false;
             break;
         }
@@ -1755,8 +1745,8 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
             break;
         }
         
-        DeprecatedString fname = qString( value->function->name ).lower();
-        if (fname != "dashboard-region(" ) {
+        String fname = domString(value->function->name).lower();
+        if (fname != "dashboard-region(") {
             valid = false;
             break;
         }
@@ -1768,7 +1758,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
             break;
         }
             
-        region->m_label = qString(arg->string);
+        region->m_label = domString(arg->string);
 
         // Second arg is a type.
         arg = args->next();
@@ -1778,7 +1768,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
             break;
         }
 
-        DeprecatedString geometryType = qString(arg->string).lower();
+        String geometryType = domString(arg->string).lower();
         if (geometryType == "circle")
             region->m_isCircle = true;
         else if (geometryType == "rectangle")
@@ -1788,17 +1778,17 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
             break;
         }
             
-        region->m_geometryType = qString(arg->string);
+        region->m_geometryType = domString(arg->string);
 
         if (numArgs == DASHBOARD_REGION_SHORT_NUM_PARAMETERS || numArgs == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
             CSSPrimitiveValue *amount = arg->id == CSS_VAL_AUTO ?
                 new CSSPrimitiveValue(CSS_VAL_AUTO) :
-                new CSSPrimitiveValue((double)0, (CSSPrimitiveValue::UnitTypes) arg->unit );
+                new CSSPrimitiveValue((double)0, (CSSPrimitiveValue::UnitTypes) arg->unit);
                 
-            region->setTop( amount );
-            region->setRight( amount );
-            region->setBottom( amount );
-            region->setLeft( amount );
+            region->setTop(amount);
+            region->setRight(amount);
+            region->setBottom(amount);
+            region->setLeft(amount);
         }
         else {
             // Next four arguments must be offset numbers
@@ -1807,22 +1797,22 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
                 arg = args->next();
                 arg = skipCommaInDashboardRegion (args);
 
-                valid = arg->id == CSS_VAL_AUTO || validUnit( arg, FLength, strict );
-                if ( !valid )
+                valid = arg->id == CSS_VAL_AUTO || validUnit(arg, FLength, strict);
+                if (!valid)
                     break;
                     
                 CSSPrimitiveValue *amount = arg->id == CSS_VAL_AUTO ?
                     new CSSPrimitiveValue(CSS_VAL_AUTO) :
-                    new CSSPrimitiveValue(arg->fValue, (CSSPrimitiveValue::UnitTypes) arg->unit );
+                    new CSSPrimitiveValue(arg->fValue, (CSSPrimitiveValue::UnitTypes) arg->unit);
                     
-                if ( i == 0 )
-                    region->setTop( amount );
-                else if ( i == 1 )
-                    region->setRight( amount );
-                else if ( i == 2 )
-                    region->setBottom( amount );
+                if (i == 0)
+                    region->setTop(amount);
+                else if (i == 1)
+                    region->setRight(amount);
+                else if (i == 2)
+                    region->setBottom(amount);
                 else
-                    region->setLeft( amount );
+                    region->setLeft(amount);
             }
         }
 
@@ -1836,39 +1826,39 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
 }
 #endif
 
-bool CSSParser::parseShape( int propId, bool important )
+bool CSSParser::parseShape(int propId, bool important)
 {
     Value *value = valueList->current();
     ValueList *args = value->function->args;
-    DeprecatedString fname = qString( value->function->name ).lower();
-    if ( fname != "rect(" || !args )
+    String fname = domString(value->function->name).lower();
+    if (fname != "rect(" || !args)
         return false;
 
-    // rect( t, r, b, l ) || rect( t r b l )
-    if ( args->size() != 4 && args->size() != 7 )
+    // rect(t, r, b, l) || rect(t r b l)
+    if (args->size() != 4 && args->size() != 7)
         return false;
     RectImpl *rect = new RectImpl();
     bool valid = true;
     int i = 0;
     Value *a = args->current();
-    while ( a ) {
-        valid = a->id == CSS_VAL_AUTO || validUnit( a, FLength, strict );
-        if ( !valid )
+    while (a) {
+        valid = a->id == CSS_VAL_AUTO || validUnit(a, FLength, strict);
+        if (!valid)
             break;
         CSSPrimitiveValue *length = a->id == CSS_VAL_AUTO ?
             new CSSPrimitiveValue(CSS_VAL_AUTO) :
-            new CSSPrimitiveValue( a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit );
-        if ( i == 0 )
-            rect->setTop( length );
-        else if ( i == 1 )
-            rect->setRight( length );
-        else if ( i == 2 )
-            rect->setBottom( length );
+            new CSSPrimitiveValue(a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit);
+        if (i == 0)
+            rect->setTop(length);
+        else if (i == 1)
+            rect->setRight(length);
+        else if (i == 2)
+            rect->setBottom(length);
         else
-            rect->setLeft( length );
+            rect->setLeft(length);
         a = args->next();
-        if ( a && args->size() == 7 ) {
-            if ( a->unit == Value::Operator && a->iValue == ',' ) {
+        if (a && args->size() == 7) {
+            if (a->unit == Value::Operator && a->iValue == ',') {
                 a = args->next();
             } else {
                 valid = false;
@@ -1877,8 +1867,8 @@ bool CSSParser::parseShape( int propId, bool important )
         }
         i++;
     }
-    if ( valid ) {
-        addProperty( propId, new CSSPrimitiveValue( rect ), important );
+    if (valid) {
+        addProperty(propId, new CSSPrimitiveValue(rect), important);
         valueList->next();
         return true;
     }
@@ -1887,143 +1877,133 @@ bool CSSParser::parseShape( int propId, bool important )
 }
 
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'
-bool CSSParser::parseFont( bool important )
+bool CSSParser::parseFont(bool important)
 {
     bool valid = true;
     Value *value = valueList->current();
     FontValue *font = new FontValue;
     // optional font-style, font-variant and font-weight
-    while ( value ) {
+    while (value) {
         int id = value->id;
-        if ( id ) {
-            if ( id == CSS_VAL_NORMAL ) {
+        if (id) {
+            if (id == CSS_VAL_NORMAL) {
                 // do nothing, it's the inital value for all three
             }
             /*
-              else if ( id == CSS_VAL_INHERIT ) {
+              else if (id == CSS_VAL_INHERIT) {
               // set all non set ones to inherit
               // This is not that simple as the inherit could also apply to the following font-size.
               // very ahrd to tell without looking ahead.
               inherit = true;
                 } */
-            else if ( id == CSS_VAL_ITALIC || id == CSS_VAL_OBLIQUE ) {
-                if ( font->style )
+            else if (id == CSS_VAL_ITALIC || id == CSS_VAL_OBLIQUE) {
+                if (font->style)
                     goto invalid;
-                font->style = new CSSPrimitiveValue( id );
-            } else if ( id == CSS_VAL_SMALL_CAPS ) {
-                if ( font->variant )
+                font->style = new CSSPrimitiveValue(id);
+            } else if (id == CSS_VAL_SMALL_CAPS) {
+                if (font->variant)
                     goto invalid;
-                font->variant = new CSSPrimitiveValue( id );
-            } else if ( id >= CSS_VAL_BOLD && id <= CSS_VAL_LIGHTER ) {
-                if ( font->weight )
+                font->variant = new CSSPrimitiveValue(id);
+            } else if (id >= CSS_VAL_BOLD && id <= CSS_VAL_LIGHTER) {
+                if (font->weight)
                     goto invalid;
-                font->weight = new CSSPrimitiveValue( id );
+                font->weight = new CSSPrimitiveValue(id);
             } else {
                 valid = false;
             }
-        } else if ( !font->weight && validUnit( value, FInteger|FNonNeg, true ) ) {
+        } else if (!font->weight && validUnit(value, FInteger|FNonNeg, true)) {
             int weight = (int)value->fValue;
             int val = 0;
-            if ( weight == 100 )
+            if (weight == 100)
                 val = CSS_VAL_100;
-            else if ( weight == 200 )
+            else if (weight == 200)
                 val = CSS_VAL_200;
-            else if ( weight == 300 )
+            else if (weight == 300)
                 val = CSS_VAL_300;
-            else if ( weight == 400 )
+            else if (weight == 400)
                 val = CSS_VAL_400;
-            else if ( weight == 500 )
+            else if (weight == 500)
                 val = CSS_VAL_500;
-            else if ( weight == 600 )
+            else if (weight == 600)
                 val = CSS_VAL_600;
-            else if ( weight == 700 )
+            else if (weight == 700)
                 val = CSS_VAL_700;
-            else if ( weight == 800 )
+            else if (weight == 800)
                 val = CSS_VAL_800;
-            else if ( weight == 900 )
+            else if (weight == 900)
                 val = CSS_VAL_900;
 
-            if ( val )
-                font->weight = new CSSPrimitiveValue( val );
+            if (val)
+                font->weight = new CSSPrimitiveValue(val);
             else
                 valid = false;
         } else {
             valid = false;
         }
-        if ( !valid )
+        if (!valid)
             break;
         value = valueList->next();
     }
-    if ( !value )
+    if (!value)
         goto invalid;
 
     // set undefined values to default
-    if ( !font->style )
-        font->style = new CSSPrimitiveValue( CSS_VAL_NORMAL );
-    if ( !font->variant )
-        font->variant = new CSSPrimitiveValue( CSS_VAL_NORMAL );
-    if ( !font->weight )
-        font->weight = new CSSPrimitiveValue( CSS_VAL_NORMAL );
-
-//     kdDebug( 6080 ) << "  got style, variant and weight current=" << valueList->currentValue << endl;
+    if (!font->style)
+        font->style = new CSSPrimitiveValue(CSS_VAL_NORMAL);
+    if (!font->variant)
+        font->variant = new CSSPrimitiveValue(CSS_VAL_NORMAL);
+    if (!font->weight)
+        font->weight = new CSSPrimitiveValue(CSS_VAL_NORMAL);
 
     // now a font size _must_ come
     // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
-    if ( value->id >= CSS_VAL_XX_SMALL && value->id <= CSS_VAL_LARGER )
-        font->size = new CSSPrimitiveValue( value->id );
-    else if ( validUnit( value, FLength|FPercent, strict ) ) {
-        font->size = new CSSPrimitiveValue( value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit );
-    }
+    if (value->id >= CSS_VAL_XX_SMALL && value->id <= CSS_VAL_LARGER)
+        font->size = new CSSPrimitiveValue(value->id);
+    else if (validUnit(value, FLength|FPercent, strict))
+        font->size = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
     value = valueList->next();
-    if ( !font->size || !value )
+    if (!font->size || !value)
         goto invalid;
 
-    // kdDebug( 6080 ) << "  got size" << endl;
-
-    if ( value->unit == Value::Operator && value->iValue == '/' ) {
+    if (value->unit == Value::Operator && value->iValue == '/') {
         // line-height
         value = valueList->next();
-        if ( !value )
+        if (!value)
             goto invalid;
-        if ( value->id == CSS_VAL_NORMAL ) {
+        if (value->id == CSS_VAL_NORMAL) {
             // default value, nothing to do
-        } else if ( validUnit( value, FNumber|FLength|FPercent, strict ) ) {
-            font->lineHeight = new CSSPrimitiveValue( value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit );
-        } else {
+        } else if (validUnit(value, FNumber|FLength|FPercent, strict))
+            font->lineHeight = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
+        else
             goto invalid;
-        }
         value = valueList->next();
-        if ( !value )
+        if (!value)
             goto invalid;
     }
     
     if (!font->lineHeight)
-        font->lineHeight = new CSSPrimitiveValue( CSS_VAL_NORMAL );
+        font->lineHeight = new CSSPrimitiveValue(CSS_VAL_NORMAL);
 
-//     kdDebug( 6080 ) << "  got line height current=" << valueList->currentValue << endl;
     // font family must come now
     font->family = parseFontFamily();
 
-    if ( valueList->current() || !font->family )
+    if (valueList->current() || !font->family)
         goto invalid;
-//     kdDebug( 6080 ) << "  got family, parsing ok!" << endl;
 
-    addProperty( CSS_PROP_FONT, font, important );
+    addProperty(CSS_PROP_FONT, font, important);
     return true;
 
  invalid:
-//     kdDebug(6080) << "   -> invalid" << endl;
     delete font;
     return false;
 }
 
 CSSValueList *CSSParser::parseFontFamily()
 {
-//     kdDebug( 6080 ) << "CSSParser::parseFontFamily current=" << valueList->currentValue << endl;
     CSSValueList *list = new CSSValueList;
     Value *value = valueList->current();
     FontFamilyValue* currFamily = 0;
-    while ( value ) {
+    while (value) {
         Value* nextValue = valueList->next();
         bool nextValBreaksFont = !nextValue ||
                                  (nextValue->unit == Value::Operator && nextValue->iValue == ',');
@@ -2034,27 +2014,27 @@ CSSValueList *CSSParser::parseFontFamily()
         if (value->id >= CSS_VAL_SERIF && value->id <= CSS_VAL__KHTML_BODY) {
             if (currFamily) {
                 currFamily->parsedFontName += ' ';
-                currFamily->parsedFontName += qString(value->string);
+                currFamily->parsedFontName += deprecatedString(value->string);
             }
             else if (nextValBreaksFont || !nextValIsFontName)
                 list->append(new CSSPrimitiveValue(value->id));
             else
-                list->append(currFamily = new FontFamilyValue(qString(value->string)));
+                list->append(currFamily = new FontFamilyValue(deprecatedString(value->string)));
         }
         else if (value->unit == CSSPrimitiveValue::CSS_STRING) {
             // Strings never share in a family name.
             currFamily = 0;
-            list->append(new FontFamilyValue(qString( value->string)));
+            list->append(new FontFamilyValue(deprecatedString(value->string)));
         }
         else if (value->unit == CSSPrimitiveValue::CSS_IDENT) {
             if (currFamily) {
                 currFamily->parsedFontName += ' ';
-                currFamily->parsedFontName += qString(value->string);
+                currFamily->parsedFontName += deprecatedString(value->string);
             }
             else if (nextValBreaksFont || !nextValIsFontName)
-                list->append(new FontFamilyValue(qString( value->string)));
+                list->append(new FontFamilyValue(deprecatedString(value->string)));
             else
-                list->append(currFamily = new FontFamilyValue(qString(value->string)));
+                list->append(currFamily = new FontFamilyValue(deprecatedString(value->string)));
         }
         else {
             break;
@@ -2072,7 +2052,7 @@ CSSValueList *CSSParser::parseFontFamily()
         else
             break;
     }
-    if ( !list->length() ) {
+    if (!list->length()) {
         delete list;
         list = 0;
     }
@@ -2127,80 +2107,79 @@ CSSPrimitiveValue *CSSParser::parseColor()
 CSSPrimitiveValue *CSSParser::parseColorFromValue(Value* value)
 {
     RGBA32 c = Color::transparent;
-    if ( !strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
-        value->fValue >= 0. && value->fValue < 1000000. ) {
+    if (!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
+        value->fValue >= 0. && value->fValue < 1000000.) {
         DeprecatedString str;
-        str.sprintf( "%06d", (int)(value->fValue+.5) );
-        if (!CSSParser::parseColor( str, c ))
+        str.sprintf("%06d", (int)(value->fValue+.5));
+        if (!CSSParser::parseColor(str, c))
             return 0;
     } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR ||
                 value->unit == CSSPrimitiveValue::CSS_IDENT ||
                 (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION)) {
-        if (!CSSParser::parseColor( qString( value->string ), c))
+        if (!CSSParser::parseColor(deprecatedString(value->string), c))
             return 0;
-    }
-    else if ( value->unit == Value::Function &&
+    } else if (value->unit == Value::Function &&
                 value->function->args != 0 &&
                 value->function->args->size() == 5 /* rgb + two commas */ &&
-                qString( value->function->name ).lower() == "rgb(" ) {
+                domString(value->function->name).lower() == "rgb(") {
         ValueList *args = value->function->args;
         Value *v = args->current();
-        if ( !validUnit( v, FInteger|FPercent, true ) )
+        if (!validUnit(v, FInteger|FPercent, true))
             return 0;
-        int r = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
+        int r = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
         v = args->next();
-        if ( v->unit != Value::Operator && v->iValue != ',' )
-            return 0;
-        v = args->next();
-        if ( !validUnit( v, FInteger|FPercent, true ) )
-            return 0;
-        int g = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
-        v = args->next();
-        if ( v->unit != Value::Operator && v->iValue != ',' )
+        if (v->unit != Value::Operator && v->iValue != ',')
             return 0;
         v = args->next();
-        if ( !validUnit( v, FInteger|FPercent, true ) )
+        if (!validUnit(v, FInteger|FPercent, true))
             return 0;
-        int b = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
-        r = kMax( 0, kMin( 255, r ) );
-        g = kMax( 0, kMin( 255, g ) );
-        b = kMax( 0, kMin( 255, b ) );
-        c = makeRGB( r, g, b );
+        int g = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
+        v = args->next();
+        if (v->unit != Value::Operator && v->iValue != ',')
+            return 0;
+        v = args->next();
+        if (!validUnit(v, FInteger|FPercent, true))
+            return 0;
+        int b = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
+        r = kMax(0, kMin(255, r));
+        g = kMax(0, kMin(255, g));
+        b = kMax(0, kMin(255, b));
+        c = makeRGB(r, g, b);
     }
-    else if ( value->unit == Value::Function &&
+    else if (value->unit == Value::Function &&
               value->function->args != 0 &&
               value->function->args->size() == 7 /* rgba + three commas */ &&
-              qString( value->function->name ).lower() == "rgba(" ) {
+              domString(value->function->name).lower() == "rgba(") {
         ValueList *args = value->function->args;
         Value *v = args->current();
-        if ( !validUnit( v, FInteger|FPercent, true ) )
+        if (!validUnit(v, FInteger|FPercent, true))
             return 0;
-        int r = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
+        int r = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
         v = args->next();
-        if ( v->unit != Value::Operator && v->iValue != ',' )
-            return 0;
-        v = args->next();
-        if ( !validUnit( v, FInteger|FPercent, true ) )
-            return 0;
-        int g = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
-        v = args->next();
-        if ( v->unit != Value::Operator && v->iValue != ',' )
+        if (v->unit != Value::Operator && v->iValue != ',')
             return 0;
         v = args->next();
-        if ( !validUnit( v, FInteger|FPercent, true ) )
+        if (!validUnit(v, FInteger|FPercent, true))
             return 0;
-        int b = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
+        int g = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
         v = args->next();
-        if ( v->unit != Value::Operator && v->iValue != ',' )
+        if (v->unit != Value::Operator && v->iValue != ',')
             return 0;
         v = args->next();
-        if ( !validUnit( v, FNumber, true ) )
+        if (!validUnit(v, FInteger|FPercent, true))
             return 0;
-        r = kMax( 0, kMin( 255, r ) );
-        g = kMax( 0, kMin( 255, g ) );
-        b = kMax( 0, kMin( 255, b ) );
-        int a = (int)(kMax( 0.0, kMin( 1.0, v->fValue ) ) * 255);
-        c = makeRGBA( r, g, b, a );
+        int b = (int) (v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.));
+        v = args->next();
+        if (v->unit != Value::Operator && v->iValue != ',')
+            return 0;
+        v = args->next();
+        if (!validUnit(v, FNumber, true))
+            return 0;
+        r = kMax(0, kMin(255, r));
+        g = kMax(0, kMin(255, g));
+        b = kMax(0, kMin(255, b));
+        int a = (int)(kMax(0.0, kMin(1.0, v->fValue)) * 255);
+        c = makeRGBA(r, g, b, a);
     }
     else
         return 0;
@@ -2522,7 +2501,7 @@ bool CSSParser::parseBorderImage(int propId, bool important)
 
 static inline int yyerror(const char *str)
 {
-    kdDebug( 6080 ) << "CSS parse error " << str << endl;
+    kdDebug(6080) << "CSS parse error " << str << endl;
     return 1;
 }
 
@@ -2536,16 +2515,16 @@ static inline int yyerror(const char*) { return 1; }
 
 #include "CSSGrammar.h"
 
-int CSSParser::lex( void *_yylval ) {
+int CSSParser::lex(void *_yylval) {
     YYSTYPE *yylval = (YYSTYPE *)_yylval;
     int token = lex();
     int length;
-    unsigned short *t = text( &length );
+    unsigned short *t = text(&length);
 
 #ifdef TOKEN_DEBUG
-    qDebug("CSSTokenizer: got token %d: '%s'", token, token == END_TOKEN ? "" : DeprecatedString( (QChar *)t, length ).latin1() );
+    qDebug("CSSTokenizer: got token %d: '%s'", token, token == END_TOKEN ? "" : DeprecatedString((QChar *)t, length).latin1());
 #endif
-    switch( token ) {
+    switch(token) {
     case WHITESPACE:
     case SGML_CD:
     case INCLUDES:
@@ -2596,8 +2575,7 @@ int CSSParser::lex( void *_yylval ) {
     case PERCENTAGE:
         length--;
     case NUMBER:
-        yylval->val = DeprecatedString( (QChar *)t, length ).toDouble();
-        //qDebug("value = %s, converted=%.2f", DeprecatedString( (QChar *)t, length ).latin1(), yylval->val );
+        yylval->val = DeprecatedString((QChar *)t, length).toDouble();
         break;
 
     default:
@@ -2622,7 +2600,7 @@ unsigned short *CSSParser::text(int *length)
 {
     unsigned short *start = yytext;
     int l = yyleng;
-    switch( yyTok ) {
+    switch(yyTok) {
     case STRING:
         l--;
         /* nobreak */
@@ -2638,20 +2616,20 @@ unsigned short *CSSParser::text(int *length)
         start += 4;
         l -= 5;
         // strip {w}
-        while ( l &&
+        while (l &&
                 (*start == ' ' || *start == '\t' || *start == '\r' ||
-                 *start == '\n' || *start == '\f' ) ) {
+                 *start == '\n' || *start == '\f')) {
             start++; l--;
         }
-        if ( *start == '"' || *start == '\'' ) {
+        if (*start == '"' || *start == '\'') {
             start++; l--;
         }
-        while ( l &&
+        while (l &&
                 (start[l-1] == ' ' || start[l-1] == '\t' || start[l-1] == '\r' ||
-                 start[l-1] == '\n' || start[l-1] == '\f' ) ) {
+                 start[l-1] == '\n' || start[l-1] == '\f')) {
             l--;
         }
-        if ( l && (start[l-1] == '\"' || start[l-1] == '\'' ) )
+        if (l && (start[l-1] == '\"' || start[l-1] == '\''))
              l--;
 
     default:
@@ -2662,17 +2640,17 @@ unsigned short *CSSParser::text(int *length)
     unsigned short *out = start;
     unsigned short *escape = 0;
 
-    for ( int i = 0; i < l; i++ ) {
+    for (int i = 0; i < l; i++) {
         unsigned short *current = start+i;
-        if ( escape == current - 1 ) {
-            if ( ( *current >= '0' && *current <= '9' ) ||
-                 ( *current >= 'a' && *current <= 'f' ) ||
-                 ( *current >= 'A' && *current <= 'F' ) )
+        if (escape == current - 1) {
+            if ((*current >= '0' && *current <= '9') ||
+                 (*current >= 'a' && *current <= 'f') ||
+                 (*current >= 'A' && *current <= 'F'))
                 continue;
-            if ( yyTok == STRING &&
-                 ( *current == '\n' || *current == '\r' || *current == '\f' ) ) {
+            if (yyTok == STRING &&
+                 (*current == '\n' || *current == '\r' || *current == '\f')) {
                 // ### handle \r\n case
-                if ( *current != '\r' )
+                if (*current != '\r')
                     escape = 0;
                 continue;
             }
@@ -2682,54 +2660,54 @@ unsigned short *CSSParser::text(int *length)
             escape = 0;
             continue;
         }
-        if ( escape == current - 2 && yyTok == STRING &&
-             *(current-1) == '\r' && *current == '\n' ) {
+        if (escape == current - 2 && yyTok == STRING &&
+             *(current-1) == '\r' && *current == '\n') {
             escape = 0;
             continue;
         }
-        if ( escape > current - 7 &&
-             ( ( *current >= '0' && *current <= '9' ) ||
-               ( *current >= 'a' && *current <= 'f' ) ||
-               ( *current >= 'A' && *current <= 'F' ) ) )
+        if (escape > current - 7 &&
+             ((*current >= '0' && *current <= '9') ||
+               (*current >= 'a' && *current <= 'f') ||
+               (*current >= 'A' && *current <= 'F')))
             continue;
-        if ( escape ) {
+        if (escape) {
             // add escaped char
             int uc = 0;
             escape++;
-            while ( escape < current ) {
+            while (escape < current) {
                 uc *= 16;
-                uc += toHex( *escape );
+                uc += toHex(*escape);
                 escape++;
             }
             // can't handle chars outside ucs2
-            if ( uc > 0xffff )
+            if (uc > 0xffff)
                 uc = 0xfffd;
             *(out++) = (unsigned short)uc;
             escape = 0;
-            if ( *current == ' ' ||
+            if (*current == ' ' ||
                  *current == '\t' ||
                  *current == '\r' ||
                  *current == '\n' ||
-                 *current == '\f' )
+                 *current == '\f')
                 continue;
         }
-        if ( !escape && *current == '\\' ) {
+        if (!escape && *current == '\\') {
             escape = current;
             continue;
         }
         *(out++) = *current;
     }
-    if ( escape ) {
+    if (escape) {
         // add escaped char
         int uc = 0;
         escape++;
-        while ( escape < start+l ) {
+        while (escape < start+l) {
             uc *= 16;
-            uc += toHex( *escape );
+            uc += toHex(*escape);
             escape++;
         }
         // can't handle chars outside ucs2
-        if ( uc > 0xffff )
+        if (uc > 0xffff)
             uc = 0xfffd;
         *(out++) = (unsigned short)uc;
     }

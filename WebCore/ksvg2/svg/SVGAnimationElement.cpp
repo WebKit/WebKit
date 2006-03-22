@@ -157,17 +157,14 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
             if (current.startsWith("accessKey")) {
                 // Register keyDownEventListener for the character
                 DeprecatedString character = current.mid(current.length() - 2, 1);
-
-                //kdDebug() << k_funcinfo << " Supposed to register accessKey Character: " << character << " UNSUPPORTED!" << endl;
+                // FIXME: Not implemented! Supposed to register accessKey character
             } else if (current.startsWith("wallclock")) {
                 int firstBrace = current.find('(');
                 int secondBrace = current.find(')');
 
                 DeprecatedString wallclockValue = current.mid(firstBrace + 1, secondBrace - firstBrace - 2);
-                //kdDebug() << k_funcinfo << " Supposed to use wallClock value: " << wallclockValue << " UNSUPPORTED!" << endl;
-            }
-            else if (current.contains('.'))
-            {
+                // FIXME: Not implemented! Supposed to use wallClock value
+            } else if (current.contains('.')) {
                 int dotPosition = current.find('.');
 
                 DeprecatedString element = current.mid(0, dotPosition);
@@ -189,27 +186,19 @@ void SVGAnimationElement::parseMappedAttribute(MappedAttribute *attr)
 
                     DeprecatedString event = current.mid(dotPosition + 1, plusMinusPosition - dotPosition - 1);
                     clockValue = current.mid(dotPosition + event.length() + 1);
-
-                    //kdDebug() << k_funcinfo << " Supposed to use DOM Event: " << event << " UNSUPPORTED!" << endl;
+                    // FIXME: supposed to use DOM Event
                 }
-            }
-            else
-            {
-                if (attr->name() == SVGNames::beginAttr)
-                {
+            } else {
+                if (attr->name() == SVGNames::beginAttr) {
                     m_begin = parseClockValue(current);
                     if (!isIndefinite(m_begin))
                         m_begin *= 1000.0;
-
-                    //kdDebug() << k_funcinfo << " Setting begin time to " << m_begin << " ms!" << endl;
-                }
-                else
-                {
+                    // FIXME: supposed to set begin time
+                } else {
                     m_end = parseClockValue(current);
                     if (!isIndefinite(m_end))
                         m_end *= 1000.0;
-
-                    //kdDebug() << k_funcinfo << " Setting end time to " << m_end << " ms!" << endl;
+                    // FIXME: supposed to set end time
                 }
             }
         }

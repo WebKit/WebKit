@@ -1,3 +1,72 @@
+2006-03-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Remove more DeprecatedString usage.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7882
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::attributedString):
+        (WebCore::FrameMac::fontForSelection):
+        (WebCore::FrameMac::tokenizerProcessedData):
+        (WebCore::FrameMac::registerCommandForUndoOrRedo):
+        (WebCore::FrameMac::markMisspellings):
+        (WebCore::FrameMac::respondToChangedSelection):
+        (WebCore::FrameMac::dashboardRegionsDictionary):
+        (WebCore::FrameMac::dragSourceMovedTo):
+        * css/CSSGrammar.y:
+        * css/css_valueimpl.h:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::parseShorthand):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::skipCommaInDashboardRegion):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseColorFromValue):
+        (WebCore::yyerror):
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::text):
+        * css/cssparser.h:
+        (WebCore::deprecatedString):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMDocument::getValueProperty):
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (SVGAnimationElement::parseMappedAttribute):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::newLine):
+        * rendering/RenderCanvas.cpp:
+        (WebCore::RenderCanvas::absolutePosition):
+        (WebCore::RenderCanvas::paint):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderObject.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::bidiReorderLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/render_form.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/render_style.h:
+        (WebCore::RenderStyle::setDashboardRegion):
+        * rendering/table_layout.cpp:
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::insertSpanCell):
+        (WebCore::AutoTableLayout::layout):
+        (WebCore::AutoTableLayout::calcPercentages):
+
 2006-03-22  Tim Omernick  <timo@apple.com>
 
         Reviewed by Kevin Decker.

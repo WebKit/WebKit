@@ -2437,9 +2437,8 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                 }
                 else if (n->hasTagName(imgTag)) {
                     if (pendingStyledSpace != nil) {
-                        if (linkStartLocation == [result length]) {
+                        if (linkStartLocation == [result length])
                             ++linkStartLocation;
-                        }
                         [result appendAttributedString:pendingStyledSpace];
                         [pendingStyledSpace release];
                         pendingStyledSpace = nil;
@@ -2461,9 +2460,8 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
             break;
 
         Node *next = n->firstChild();
-        if (!next) {
+        if (!next)
             next = n->nextSibling();
-        }
 
         while (!next && n->parentNode()) {
             DeprecatedString text;
@@ -2716,7 +2714,7 @@ NSFont *FrameMac::fontForSelection(bool *hasMultipleFonts) const
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
             NSFont *f = renderer->style()->font().getNSFont();
-            if (font == nil) {
+            if (!font) {
                 font = f;
                 if (!hasMultipleFonts)
                     break;
@@ -2820,9 +2818,8 @@ NSWritingDirection FrameMac::baseWritingDirectionForSelectionStart() const
 
 void FrameMac::tokenizerProcessedData()
 {
-    if (d->m_doc) {
+    if (d->m_doc)
         checkCompleted();
-    }
     [_bridge tokenizerProcessedData];
 }
 
@@ -2979,9 +2976,8 @@ void FrameMac::registerCommandForUndoOrRedo(const EditCommandPtr &cmd, bool isRe
     NSUndoManager *undoManager = [_bridge undoManager];
     [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:kwq];
     NSString *actionName = [_bridge nameForUndoAction:static_cast<WebUndoAction>(cmd.editingAction())];
-    if (actionName != nil) {
+    if (actionName != nil)
         [undoManager setActionName:actionName];
-    }
     _haveUndoRedoOperations = YES;
 }
 
@@ -3096,9 +3092,8 @@ void FrameMac::markMisspellings(const SelectionController &selection)
             // Loop over the chunk to find each misspelling in it.
             while (startIndex < len) {
                 NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
-                if (misspelling.length == 0) {
+                if (misspelling.length == 0)
                     break;
-                }
                 else {
                     // Build up result range and string.  Note the misspelling may span many text nodes,
                     // but the CharIterator insulates us from this complexity
@@ -3145,18 +3140,16 @@ void FrameMac::respondToChangedSelection(const SelectionController &oldSelection
                 // markMisspellings function is prepared to handler larger ranges.
 
                 // When typing we check spelling elsewhere, so don't redo it here.
-                if (closeTyping) {
+                if (closeTyping)
                     markMisspellings(oldAdjacentWords);
-                }
 
                 // This only erases a marker in the first word of the selection.
                 // Perhaps peculiar, but it matches AppKit.
                 document()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
             }
-        } else {
+        } else
             // When continuous spell checking is off, no markers appear after the selection changes.
             document()->removeMarkers(DocumentMarker::Spelling);
-        }
     }
 
     [_bridge respondToChangedSelection];
@@ -3291,18 +3284,8 @@ NSMutableDictionary *FrameMac::dashboardRegionsDictionary()
 
         if (region.type == StyleDashboardRegion::None)
             continue;
-            
-        NSRect clip;
-        clip.origin.x = region.clip.x();
-        clip.origin.y = region.clip.y();
-        clip.size.width = region.clip.width();
-        clip.size.height = region.clip.height();
-        NSRect rect;
-        rect.origin.x = region.bounds.x();
-        rect.origin.y = region.bounds.y();
-        rect.size.width = region.bounds.width();
-        rect.size.height = region.bounds.height();
-        NSString *label = region.label.getNSString();
+        
+        NSString *label = region.label;
         WebDashboardRegionType type = WebDashboardRegionTypeNone;
         if (region.type == StyleDashboardRegion::Circle)
             type = WebDashboardRegionTypeCircle;
@@ -3314,7 +3297,7 @@ NSMutableDictionary *FrameMac::dashboardRegionsDictionary()
             [webRegions setObject:regionValues forKey:label];
         }
         
-        WebDashboardRegion *webRegion = [[[WebDashboardRegion alloc] initWithRect:rect clip:clip type:type] autorelease];
+        WebDashboardRegion *webRegion = [[[WebDashboardRegion alloc] initWithRect:region.bounds clip:region.clip type:type] autorelease];
         [regionValues addObject:webRegion];
     }
     
@@ -3372,10 +3355,9 @@ bool FrameMac::shouldClose()
 
 void FrameMac::dragSourceMovedTo(const PlatformMouseEvent& event)
 {
-    if (_dragSrc && _dragSrcMayBeDHTML) {
+    if (_dragSrc && _dragSrcMayBeDHTML)
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(dragEvent, event);
-    }
 }
 
 void FrameMac::dragSourceEndedAt(const PlatformMouseEvent& event, NSDragOperation operation)

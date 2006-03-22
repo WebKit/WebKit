@@ -135,10 +135,8 @@ bool RenderCanvas::absolutePosition(int &xPos, int &yPos, bool f)
     if ( f && m_view) {
         xPos = m_view->contentsX();
         yPos = m_view->contentsY();
-    }
-    else {
+    } else
         xPos = yPos = 0;
-    }
     return true;
 }
 
@@ -149,9 +147,8 @@ void RenderCanvas::paint(PaintInfo& i, int _tx, int _ty)
 #endif
     
     // Cache the print rect because the dirty rect could get changed during painting.
-    if (m_printingMode) {
+    if (m_printingMode)
         setPrintRect(i.r);
-    }
     
     // 1. paint background, borders etc
     if (i.phase == PaintActionBlockBackground) {

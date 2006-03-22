@@ -827,7 +827,7 @@ declaration:
 
 property:
     IDENT maybe_space {
-        DeprecatedString str = qString($1);
+        DeprecatedString str = deprecatedString($1);
         $$ = getPropertyID(str.lower().latin1(), str.length());
 #if SVG_SUPPORT
       if ($$ == 0)
@@ -883,8 +883,8 @@ term:
   | unary_operator unary_term { $$ = $2; $$.fValue *= $1; }
   | STRING maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_STRING; }
   | IDENT maybe_space {
-      DeprecatedString str = qString( $1 );
-      $$.id = getValueID( str.lower().latin1(), str.length() );
+      DeprecatedString str = deprecatedString($1);
+      $$.id = getValueID(str.lower().latin1(), str.length());
 #if SVG_SUPPORT
       if ($$.id == 0)
           $$.id = SVG::getSVGCSSValueID(str.lower().latin1(), str.length());

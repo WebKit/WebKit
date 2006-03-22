@@ -356,7 +356,7 @@ public:
 
 struct StyleDashboardRegion
 {
-    DeprecatedString label;
+    String label;
     LengthBox offset;
     int type;
     
@@ -1342,7 +1342,7 @@ public:
 
     DeprecatedValueList<StyleDashboardRegion> dashboardRegions() const { return css3NonInheritedData->m_dashboardRegions; }
     void setDashboardRegions(DeprecatedValueList<StyleDashboardRegion> regions) { SET_VAR(css3NonInheritedData,m_dashboardRegions,regions); }
-    void setDashboardRegion (int type, DeprecatedString label, Length t, Length r, Length b, Length l, bool append) {
+    void setDashboardRegion(int type, const String& label, Length t, Length r, Length b, Length l, bool append) {
         StyleDashboardRegion region;
         region.label = label;
         region.offset.top  = t;

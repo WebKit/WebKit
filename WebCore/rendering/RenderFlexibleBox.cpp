@@ -302,8 +302,6 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
     layoutPositionedObjects(relayoutChildren || isRoot());
 
-    //kdDebug() << renderName() << " layout width=" << m_width << " height=" << m_height << endl;
-
     if (!isFloatingOrPositioned() && m_height == 0) {
         // We are a block with no border and padding and a computed height
         // of 0.  The CSS spec states that zero-height blocks collapse their margins

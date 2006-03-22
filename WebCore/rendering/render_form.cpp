@@ -397,8 +397,6 @@ RenderObject* RenderFieldset::findLegend()
 
 void RenderFieldset::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 {
-    //kdDebug( 6040 ) << renderName() << "::paintDecorations()" << endl;
-
     int w = width();
     int h = height() + borderTopExtra() + borderBottomExtra();
     RenderObject* legend = findLegend();

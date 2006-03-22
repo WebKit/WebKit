@@ -348,8 +348,8 @@ public:
     DashboardRegion() : m_isCircle(0), m_isRectangle(0) { }
 
     RefPtr<DashboardRegion> m_next;
-    DeprecatedString m_label;
-    DeprecatedString m_geometryType;
+    String m_label;
+    String m_geometryType;
     bool m_isCircle : 1;
     bool m_isRectangle : 1;
 };
