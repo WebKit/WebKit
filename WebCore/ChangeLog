@@ -1,5 +1,20 @@
 2006-03-22  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        Fix attribute mutation events to not fire for "style" attributes.
+        We lazily update style attributes, so sending mutation events for them makes no sense anymore.
+        <rdar://problem/4474910> repro assertion failure @ apple.com/store: !eventDispatchForbidden()
+
+        Test: fast/events/delayed-style-mutation-event-crash.html
+
+        * dom/dom_elementimpl.cpp:
+        (WebCore::Element::dispatchAttrRemovalEvent): add assert
+        (WebCore::Element::dispatchAttrAdditionEvent): add assert
+        (WebCore::NamedAttrMap::addAttribute):
+
+2006-03-22  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         Remove more DeprecatedString usage.

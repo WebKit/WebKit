@@ -621,6 +621,7 @@ bool Element::childTypeAllowed(NodeType type)
 
 void Element::dispatchAttrRemovalEvent(Attribute*)
 {
+    assert(!eventDispatchForbidden());
 #if 0
     if (!getDocument()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
         return;
@@ -632,6 +633,7 @@ void Element::dispatchAttrRemovalEvent(Attribute*)
 
 void Element::dispatchAttrAdditionEvent(Attribute *attr)
 {
+    assert(!eventDispatchForbidden());
 #if 0
     if (!getDocument()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
         return;
@@ -1025,7 +1027,8 @@ void NamedAttrMap::detachFromElement()
 NamedAttrMap& NamedAttrMap::operator=(const NamedAttrMap& other)
 {
     // clone all attributes in the other map, but attach to our element
-    if (!element) return *this;
+    if (!element)
+        return *this;
 
     // If assigning the map changes the id attribute, we need to call
     // updateId.
@@ -1033,9 +1036,8 @@ NamedAttrMap& NamedAttrMap::operator=(const NamedAttrMap& other)
     Attribute *oldId = getAttributeItem(idAttr);
     Attribute *newId = other.getAttributeItem(idAttr);
 
-    if (oldId || newId) {
+    if (oldId || newId)
         element->updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
-    }
 
     clearAttributes();
     len = other.len;
@@ -1080,8 +1082,11 @@ void NamedAttrMap::addAttribute(Attribute *attribute)
     if (element) {
         RefPtr<Attribute> a = attribute;
         element->attributeChanged(a.get());
-        element->dispatchAttrAdditionEvent(a.get());
-        element->dispatchSubtreeModifiedEvent(false);
+        // Because of our updateStyleAttributeIfNeeded() style modification events are never sent at the right time, so don't bother sending them.
+        if (a->name() != styleAttr) {
+            element->dispatchAttrAdditionEvent(a.get());
+            element->dispatchSubtreeModifiedEvent(false);
+        }
     }
 }
 
@@ -1104,8 +1109,7 @@ void NamedAttrMap::removeAttribute(const QualifiedName& name)
         fastFree(attrs);
         attrs = 0;
         len = 0;
-    }
-    else {
+    } else {
         Attribute **newAttrs = static_cast<Attribute **>(fastMalloc((len - 1) * sizeof(Attribute *)));
         unsigned i;
         for (i = 0; i < unsigned(index); i++)
