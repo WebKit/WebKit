@@ -65,11 +65,12 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     return result;
 }
 
-- (NSMenuItem *)menuItemWithTag:(int)tag target:(id)target
+- (NSMenuItem *)menuItemWithTag:(int)tag target:(id)target representedObject:(id)representedObject
 {
     NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
     [menuItem setTag:tag];
     [menuItem setTarget:target]; // can be nil
+    [menuItem setRepresentedObject:representedObject];
     
     NSString *title = nil;
     SEL action = NULL;
@@ -199,10 +200,10 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     
     if (linkURL) {
         if([WebView _canHandleRequest:[NSURLRequest requestWithURL:linkURL]]) {
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLinkInNewWindow target:self]];
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadLinkToDisk target:self]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLinkInNewWindow target:self representedObject:element]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadLinkToDisk target:self representedObject:element]];
         }
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard target:self]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard target:self representedObject:element]];
     }
     
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
@@ -212,10 +213,10 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         if (linkURL) {
             [menuItems addObject:[NSMenuItem separatorItem]];
         }
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenImageInNewWindow target:self]];
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadImageToDisk target:self]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenImageInNewWindow target:self representedObject:element]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadImageToDisk target:self representedObject:element]];
         if ([imageURL isFileURL] || [[webFrame dataSource] _fileWrapperForURL:imageURL]) {
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyImageToClipboard target:self]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyImageToClipboard target:self representedObject:element]];
         }
     }
     
@@ -227,8 +228,8 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             // The Spotlight and Google items are implemented in WebView, and require that the
             // current document view conforms to WebDocumentText
             ASSERT([[[webFrame frameView] documentView] conformsToProtocol:@protocol(WebDocumentText)]);
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil]];
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
             [menuItems addObject:[NSMenuItem separatorItem]];
 
             // FIXME 4184640: The Look Up in Dictionary item is only implemented in WebHTMLView, and so is present but
@@ -236,25 +237,25 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             // be better not to include it in the menu if the documentView isn't a WebHTMLView, but that could break 
             // existing clients that have code that relies on it being present (unlikely for clients outside of Apple, 
             // but Safari has such code).
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil]];            
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element]];            
             [menuItems addObject:[NSMenuItem separatorItem]];
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy target:nil]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy target:nil representedObject:element]];
         } else {
             WebView *wv = [webFrame webView];
             if ([wv canGoBack]) {
-                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoBack target:wv]];
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoBack target:wv representedObject:element]];
             }
             if ([wv canGoForward]) {
-                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoForward target:wv]];
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoForward target:wv representedObject:element]];
             }
             if ([wv isLoading]) {
-                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagStop target:wv]];
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagStop target:wv representedObject:element]];
             } else {
-                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagReload target:wv]];
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagReload target:wv representedObject:element]];
             }
             
             if (webFrame != [wv mainFrame]) {
-                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow target:self]];
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow target:self representedObject:element]];
             }
         }
     }
@@ -262,9 +263,6 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     // Add the default items at the end, if any, after a separator
     [self appendDefaultItems:defaultMenuItems toArray:menuItems];
 
-    // Attach element as the represented object to each item.
-    [menuItems makeObjectsPerformSelector:@selector(setRepresentedObject:) withObject:element];
-    
     return menuItems;
 }
 
@@ -283,29 +281,29 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             NSEnumerator *enumerator = [guesses objectEnumerator];
             NSString *guess;
             while ((guess = [enumerator nextObject]) != nil) {
-                item = [self menuItemWithTag:WebMenuItemTagSpellingGuess target:nil];
+                item = [self menuItemWithTag:WebMenuItemTagSpellingGuess target:nil representedObject:element];
                 [item setTitle:guess];
                 [menuItems addObject:item];
             }
         } else {
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagNoGuessesFound target:nil]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagNoGuessesFound target:nil representedObject:element]];
         }
         [menuItems addObject:[NSMenuItem separatorItem]];
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagIgnoreSpelling target:nil]];
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLearnSpelling target:nil]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagIgnoreSpelling target:nil representedObject:element]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLearnSpelling target:nil representedObject:element]];
         [menuItems addObject:[NSMenuItem separatorItem]];
     }
     
     // Add items that aren't in our nib, originally because they were Tiger-only.
     // FIXME: We should update the nib to include these.
-    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil]];
-    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil]];
+    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
+    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
     [menuItems addObject:[NSMenuItem separatorItem]];
     // FIXME: The NSTextView behavior for looking text up in the dictionary is different if
     // there was a selection before you clicked than if the selection was created as part of
     // the click. This is desired by the dictionary folks apparently, though it seems bizarre.
     // It might be tricky to pull this off in WebKit.
-    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil]];
+    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element]];
     [menuItems addObject:[NSMenuItem separatorItem]];
     
     // Load our NSTextView-like context menu nib.

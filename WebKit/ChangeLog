@@ -10,6 +10,23 @@
 
 2006-03-22  Tim Omernick  <timo@apple.com>
 
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4439752> TinyMCE: "Search in Google" context menu is active but fails to work when selection is active
+        in textarea field.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]):
+        Added a representedObject parameter, which is set on the newly created menu item.
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        Instead of setting the representedObject on each menu item after creating them all, pass the element to
+        -menuItemWithTag:target:representedObject:.
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+        ditto.  This fixes 4439752 because this method failed to set the representedObject on the menu items as
+        -contextMenuItemsForElement:defaultMenuItems: did.
+
+2006-03-22  Tim Omernick  <timo@apple.com>
+
         Reviewed by Kevin Decker.
 
         Even better fix for <rdar://problem/4432562>.  We need to notify the frame delegate of a finished redirect for both
