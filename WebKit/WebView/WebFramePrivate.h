@@ -112,7 +112,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
 
 - (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
-- (void)_clientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
+- (void)_clientRedirectCancelledOrFinished:(BOOL)cancelWithLoadInProgress;
 
 - (void)_defersCallbacksChanged;
 

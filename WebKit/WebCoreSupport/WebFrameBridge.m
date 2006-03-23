@@ -609,7 +609,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
-    [_frame _clientRedirectCancelled:cancelWithLoadInProgress];
+    [_frame _clientRedirectCancelledOrFinished:cancelWithLoadInProgress];
 }
 
 - (void)close

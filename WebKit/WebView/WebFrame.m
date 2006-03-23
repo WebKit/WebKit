@@ -191,6 +191,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebFrameLoadType policyLoadType;
 
     BOOL quickRedirectComing;
+    BOOL sentRedirectNotification;
     BOOL isStoppingLoad;
     BOOL delegateIsHandlingProvisionalLoadError;
     BOOL delegateIsDecidingNavigationPolicy;
@@ -851,11 +852,12 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     
     [self _transitionToCommitted:pageCache];
 
-    // Call -_clientRedirectCancelled: here so that the frame load delegate is notified that the redirect's
+    // Call -_clientRedirectCancelledOrFinished: here so that the frame load delegate is notified that the redirect's
     // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
     // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are
     // just about to commit a new page, there cannot possibly be a pending redirect at this point.
-    [self _clientRedirectCancelled:NO];
+    if (_private->sentRedirectNotification)
+        [self _clientRedirectCancelledOrFinished:NO];
     
     NSURL *baseURL = [[provisionalDataSource request] _webDataRequestBaseURL];        
     NSURL *URL = baseURL ? baseURL : [response URL];
@@ -2023,6 +2025,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                                          delay:seconds
                                                       fireDate:date
                                                       forFrame:self];
+                                                      
+    // Remember that we sent a redirect notification to the frame load delegate so that when we commit
+    // the next provisional load, we can send a corresponding -webView:didCancelClientRedirectForFrame:
+    _private->sentRedirectNotification = YES;
+    
     // If a "quick" redirect comes in an, we set a special mode so we treat the next
     // load as part of the same navigation.
 
@@ -2037,12 +2044,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
-- (void)_clientRedirectCancelled:(BOOL)cancelWithLoadInProgress
+- (void)_clientRedirectCancelledOrFinished:(BOOL)cancelWithLoadInProgress
 {
+    // Note that -webView:didCancelClientRedirectForFrame: is called on the frame load delegate even if
+    // the redirect succeeded.  We should either rename this API, or add a new method, like
+    // -webView:didFinishClientRedirectForFrame:
     [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                didCancelClientRedirectForFrame:self];
     if (!cancelWithLoadInProgress)
         _private->quickRedirectComing = NO;
+        
+    _private->sentRedirectNotification = NO;
+    
     LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
 }
 
@@ -2257,7 +2270,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
         // need to report that the client redirect was cancelled.
         if (_private->quickRedirectComing)
-            [self _clientRedirectCancelled:NO];
+            [self _clientRedirectCancelledOrFinished:NO];
 
         [self _setPolicyDataSource:nil];
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 

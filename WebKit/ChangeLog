@@ -2,6 +2,33 @@
 
         Reviewed by John Sullivan.
 
+        At John's suggestion, renamed a private WebFrame method and tightened up some of the redirect logic I recently touched.
+
+        * WebView/WebFramePrivate.h:
+        Renamed -_clientRedirectCancelled: to -_clientRedirectCancelledOrFinished:, since we call this both when a redirect is
+        cancelled and when a redirect is successfully committed.
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge reportClientRedirectCancelled:]):
+        Call renamed WebFrame method.
+        * WebView/WebFrame.m:
+        Added sentRedirectNotification flag to WebFramePrivate.  This flag is set when we notify the frame load delegate that a
+        redirect will occur.  We check this flag when committing a provisional load to ensure that the frame load delegate is
+        notified that the redirect finished.
+        (-[WebFrame _commitProvisionalLoad:]):
+        After committing a provisional load, make sure that the frame load delegate is notified that there is no longer a pending
+        redirect.
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        Set the new sentRedirectNotification flag.
+        (-[WebFrame _clientRedirectCancelledOrFinished:]):
+        Renamed method.
+        Clear the sentRedirectNotification flag.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        Call renamed method.
+
+2006-03-23  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
         <rdar://problem/4439752> TinyMCE: "Search in Google" context menu is active but fails to work when selection is active
         in textarea field.
 
