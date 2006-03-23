@@ -42,7 +42,7 @@ fi
 if [ css/CSSGrammar.y -nt "$DerivedSourcesDir/CSSGrammar.cpp" ]; then
   echo "Generating the CSS grammar using bison..."
   bison -d -p cssyy css/CSSGrammar.y -o "$DerivedSourcesDir/CSSGrammar.cpp"
-  cat "$DerivedSourcesDir/CSSGrammar.cpp.h" "$DerivedSourcesDir/CSSGrammar.hpp" > "$DerivedSourcesDir/CSSGrammar.h"
+  cat "$DerivedSourcesDir/CSSGrammar.cpp.h" "$DerivedSourcesDir/CSSGrammar.hpp" > "$DerivedSourcesDir/CSSGrammar.h" 2>/dev/null
   rm -f "$DerivedSourcesDir/CSSGrammar.cpp.h" "$DerivedSourcesDir/CSSGrammar.hpp"
 fi
 

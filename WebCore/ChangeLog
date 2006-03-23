@@ -1,6 +1,12 @@
 2006-03-22  Maciej Stachowiak  <mjs@apple.com>
 
-        * generate-derived-sources: Added.
+        Reviewed by Eric.
+        
+        * generate-derived-sources: Suppress warning.
+
+2006-03-22  Maciej Stachowiak  <mjs@apple.com>
+
+        * generate-derived-sources: Added svn:executable property.
 
 2006-03-22  Maciej Stachowiak  <mjs@apple.com>
 
