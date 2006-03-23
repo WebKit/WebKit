@@ -2,6 +2,19 @@
 
         Reviewed by Kevin Decker.
 
+        Even better fix for <rdar://problem/4432562>.  We need to notify the frame delegate of a finished redirect for both
+        "fast" and "slow" redirects, after committing the load.  My previous change only notified for "fast", history-locking
+        redirects.  Now we notify the frame delegate after committing any kind of provisional load, not just in the case of
+        a fast redirect.
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _commitProvisionalLoad:]):
+
+2006-03-22  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Kevin Decker.
+
         Better fix for <rdar://problem/4432562> REGRESSION (TOT): Safari's "stop loading" active, "view source" inactive after page load [7058]
 
         * WebView/WebFrame.m:

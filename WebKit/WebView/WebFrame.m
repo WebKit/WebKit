@@ -778,13 +778,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                         // We must also clear out form data so we don't try to restore it into the incoming page,
                         // see -_opened
                     }
-
-                    // This dataSource was a client redirect (we checked above, remember?).  Now that it is being
-                    // committed, there can no longer be a pending redirect.  Call -_clientRedirectCancelled: here
-                    // so that the frame load delegate is notified that the redirect's status has changed.  The
-                    // frame load delegate may have saved some state about the redirect in its
-                    // -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.
-                    [self _clientRedirectCancelled:NO];
                 }
                 [self _makeDocumentView];
                 break;
@@ -857,6 +850,12 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [provisionalDataSource _makeRepresentation];
     
     [self _transitionToCommitted:pageCache];
+
+    // Call -_clientRedirectCancelled: here so that the frame load delegate is notified that the redirect's
+    // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
+    // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are
+    // just about to commit a new page, there cannot possibly be a pending redirect at this point.
+    [self _clientRedirectCancelled:NO];
     
     NSURL *baseURL = [[provisionalDataSource request] _webDataRequestBaseURL];        
     NSURL *URL = baseURL ? baseURL : [response URL];
