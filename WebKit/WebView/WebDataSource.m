@@ -161,7 +161,9 @@
 
 - (DOMElement *)_imageElementWithImageResource:(WebResource *)resource
 {
-    ASSERT(resource);
+    if (!resource)
+        return 0;
+
     [self addSubresource:resource];
     
     DOMElement *imageElement = [[[self _bridge] DOMDocument] createElement:@"img"];
@@ -175,8 +177,11 @@
 
 - (DOMDocumentFragment *)_documentFragmentWithImageResource:(WebResource *)resource
 {
+    DOMElement *imageElement = [self _imageElementWithImageResource:resource];
+    if (!imageElement)
+        return 0;
     DOMDocumentFragment *fragment = [[[self _bridge] DOMDocument] createDocumentFragment];
-    [fragment appendChild:[self _imageElementWithImageResource:resource]];
+    [fragment appendChild:imageElement];
     return fragment;
 }
 
