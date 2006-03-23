@@ -36,12 +36,14 @@ using namespace HTMLNames;
 
 void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e)
 {
-    // Force inline to be inline-block
-    if (style->display() == INLINE)
+    // Force inline and table display styles to be inline-block (except for table- which is block)
+    if (style->display() == INLINE || style->display() == INLINE_TABLE || style->display() == TABLE_ROW_GROUP || 
+        style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_FOOTER_GROUP ||
+        style->display() == TABLE_ROW || style->display() == TABLE_COLUMN_GROUP || style->display() == TABLE_COLUMN || 
+        style->display() == TABLE_CELL || style->display() == TABLE_CAPTION)
         style->setDisplay(INLINE_BLOCK);
-    else if (style->display() == COMPACT || style->display() == RUN_IN || style->display() == LIST_ITEM)
+    else if (style->display() == COMPACT || style->display() == RUN_IN || style->display() == LIST_ITEM || style->display() == TABLE)
         style->setDisplay(BLOCK);
-    // FIXME: Do we really want to honor table display styles?
     
     // Call the appropriate style adjustment method based off the appearance value.
     switch (style->appearance()) {

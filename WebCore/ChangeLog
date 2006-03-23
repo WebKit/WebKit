@@ -1,3 +1,17 @@
+2006-03-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7935
+        <rdar://problem/4489010>
+        Infinite recursion in table code when button or new text fields get display:table-row
+
+        Test:
+        fast/forms/button-table-styles.html
+
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::adjustStyle):
+        The theme should disallow table display styles form elements. 
+
 2006-03-23  Darin Adler  <darin@apple.com>
 
         * generate-derived-sources: Tweaked formatting a tiny bit and removed a stray
