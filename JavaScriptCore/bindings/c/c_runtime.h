@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,38 +22,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_C_RUNTIME_H_
-#define _BINDINGS_C_RUNTIME_H_
 
-#include <CoreFoundation/CoreFoundation.h>
+#ifndef BINDINGS_C_RUNTIME_H_
+#define BINDINGS_C_RUNTIME_H_
 
-#include <npruntime.h>
-#include <npruntime_impl.h>
+#include "npruntime.h"
+#include "runtime.h"
 
-#include <runtime.h>
-#include <ustring.h>
+namespace KJS {
+namespace Bindings {
 
-namespace KJS
-{
-
-namespace Bindings
-{
-
-class CInstance;
-
-class CField : public Field
-{
+class CField : public Field {
 public:
-    CField(NPIdentifier ident) : Field() {
-        _fieldIdentifier = ident;
-    };
-    
-    virtual JSValue *valueFromInstance(ExecState *exec, const Instance *instance) const;
-    virtual void setValueToInstance(ExecState *exec, const Instance *instance, JSValue *aValue) const;
-    
-    virtual const char *name() const { return _NPN_UTF8FromIdentifier(_fieldIdentifier); }
+    CField(NPIdentifier ident) : _fieldIdentifier(ident) { _fieldIdentifier = ident; }
+
+    virtual JSValue* valueFromInstance(ExecState*, const Instance*) const;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValue*) const;
+    virtual const char* name() const;
     virtual RuntimeType type() const { return ""; }
-    
+
 private:
     NPIdentifier _fieldIdentifier;
 };
@@ -62,41 +49,16 @@ private:
 class CMethod : public Method
 {
 public:
-    CMethod() : Method(), _methodIdentifier(0) {};
+    CMethod(NPIdentifier ident) : _methodIdentifier(ident) { }
 
-    CMethod(NPIdentifier ident) : Method(), _methodIdentifier(ident) {};
-    
-    virtual const char *name() const { return _NPN_UTF8FromIdentifier(_methodIdentifier); };
-
-    virtual int numParameters() const { return 0; };
+    virtual const char* name() const;
+    virtual int numParameters() const { return 0; }
 
 private:
     NPIdentifier _methodIdentifier;
 };
 
-#if 0
-class CArray : public Array
-{
-public:
-    CArray (ObjectStructPtr a);
-
-    CArray (const CArray &other);
-
-    CArray &operator=(const CArray &other);
-    
-    virtual void setValueAt(ExecState *exec, unsigned int index, JSValue *aValue) const;
-    virtual JSValue *valueAt(ExecState *exec, unsigned int index) const;
-    virtual unsigned int getLength() const;
-    
-    virtual ~CArray();
-
-private:
-};
-#endif
-
-
 } // namespace Bindings
-
 } // namespace KJS
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,53 +22,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _NP_RUNTIME_PRIV_H_
-#define _NP_RUNTIME_PRIV_H_
 
-NPBool NPN_VariantIsVoid (const NPVariant *variant);
-NPBool NPN_VariantIsNull (const NPVariant *variant);
-NPBool NPN_VariantIsUndefined (const NPVariant *variant);
-NPBool NPN_VariantIsBool (const NPVariant *variant);
-NPBool NPN_VariantIsInt32 (const NPVariant *variant);
-NPBool NPN_VariantIsDouble (const NPVariant *variant);
-NPBool NPN_VariantIsString (const NPVariant *variant);
-NPBool NPN_VariantIsObject (const NPVariant *variant);
-NPBool NPN_VariantToBool (const NPVariant *variant, NPBool *result);
-NPBool NPN_VariantToInt32 (const NPVariant *variant, int32_t *result);
-NPBool NPN_VariantToDouble (const NPVariant *variant, double *result);
-NPString NPN_VariantToString (const NPVariant *variant);
-NPString NPN_VariantToStringCopy (const NPVariant *variant);
-NPBool NPN_VariantToObject (const NPVariant *variant, NPObject **result);
+#ifndef NP_RUNTIME_PRIV_H_
+#define NP_RUNTIME_PRIV_H_
 
-/*
-    NPVariants initialized with the NPN_InitializeVariantXXX() functions
-    must be released using the NPN_ReleaseVariantValue() function.
-*/
-void NPN_InitializeVariantAsVoid (NPVariant *variant);
-void NPN_InitializeVariantAsNull (NPVariant *variant);
-void NPN_InitializeVariantAsUndefined (NPVariant *variant);
-void NPN_InitializeVariantWithBool (NPVariant *variant, NPBool value);
-void NPN_InitializeVariantWithInt32 (NPVariant *variant, int32_t value);
-void NPN_InitializeVariantWithDouble (NPVariant *variant, double value);
-
-/*
-    NPN_InitializeVariantWithString() does not copy string data.  However
-    the string data will be deallocated by calls to NPReleaseVariantValue().
-*/
-void NPN_InitializeVariantWithString (NPVariant *variant, const NPString *value);
+#include "npruntime.h"
 
 /*
     NPN_InitializeVariantWithStringCopy() will copy string data.  The string data
     will be deallocated by calls to NPReleaseVariantValue().
 */
-void NPN_InitializeVariantWithStringCopy (NPVariant *variant, const NPString *value);
-
-/*
-    NPN_InitializeVariantWithObject() retains the NPObject.  The object will be released
-    by calls to NPReleaseVariantValue();
-*/
-void NPN_InitializeVariantWithObject (NPVariant *variant, NPObject *value);
-
-void NPN_InitializeVariantWithVariant (NPVariant *destination, const NPVariant *source);
+void NPN_InitializeVariantWithStringCopy(NPVariant*, const NPString*);
 
 #endif

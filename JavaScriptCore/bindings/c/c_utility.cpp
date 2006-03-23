@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,14 @@
 
 #include "config.h"
 #include "c_utility.h"
-#include <unicode/ucnv.h>
 
-#include "JSType.h"
 #include "NP_jsobject.h"
 #include "c_instance.h" 
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
+#include "runtime_object.h"
+#include "runtime_root.h"
+#include <unicode/ucnv.h>
 
 namespace KJS { namespace Bindings {
 
@@ -99,29 +100,24 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
         UString ustring = value->toString(exec);
         CString cstring = ustring.UTF8String();
         NPString string = { (const NPUTF8 *)cstring.c_str(), cstring.size() };
-        NPN_InitializeVariantWithStringCopy(result, &string );
-    }
-    else if (type == NumberType) {
-        NPN_InitializeVariantWithDouble(result, value->toNumber(exec));
-    }
-    else if (type == BooleanType) {
-        NPN_InitializeVariantWithBool(result, value->toBoolean(exec));
-    }
-    else if (type == UnspecifiedType) {
-        NPN_InitializeVariantAsUndefined(result);
-    }
-    else if (type == NullType) {
-        NPN_InitializeVariantAsNull(result);
-    }
-    else if (type == ObjectType) {
+        NPN_InitializeVariantWithStringCopy(result, &string);
+    } else if (type == NumberType) {
+        DOUBLE_TO_NPVARIANT(value->toNumber(exec), *result);
+    } else if (type == BooleanType) {
+        BOOLEAN_TO_NPVARIANT(value->toBoolean(exec), *result);
+    } else if (type == UnspecifiedType) {
+        VOID_TO_NPVARIANT(*result);
+    } else if (type == NullType) {
+        NULL_TO_NPVARIANT(*result);
+    } else if (type == ObjectType) {
         JSObject *objectImp = static_cast<JSObject*>(value);
         if (objectImp->classInfo() == &RuntimeObjectImp::info) {
-            RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value);
-            CInstance *instance = static_cast<CInstance*>(imp->getInternalInstance());
-            NPN_InitializeVariantWithObject(result, instance->getObject());
-        }
-	else {
-
+            RuntimeObjectImp* imp = static_cast<RuntimeObjectImp *>(value);
+            CInstance* instance = static_cast<CInstance*>(imp->getInternalInstance());
+            NPObject* obj = instance->getObject();
+            _NPN_RetainObject(obj);
+	    OBJECT_TO_NPVARIANT(obj, *result);
+        } else {
 	    Interpreter *originInterpreter = exec->interpreter();
             const Bindings::RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
 
@@ -140,63 +136,45 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
                 executionContext = newExecutionContext;
             }
     
-	    NPObject *obj = (NPObject *)exec->interpreter()->createLanguageInstanceForValue(exec, Instance::CLanguage, value->toObject(exec), originExecutionContext, executionContext);
-	    NPN_InitializeVariantWithObject(result, obj);
-	    _NPN_ReleaseObject(obj);
+	    NPObject* obj = (NPObject *)exec->interpreter()->createLanguageInstanceForValue(exec, Instance::CLanguage, value->toObject(exec), originExecutionContext, executionContext);
+	    OBJECT_TO_NPVARIANT(obj, *result);
 	}
     }
     else
-        NPN_InitializeVariantAsUndefined(result);
+        VOID_TO_NPVARIANT(*result);
 }
 
-JSValue *convertNPVariantToValue(ExecState*, const NPVariant*variant)
+JSValue *convertNPVariantToValue(ExecState*, const NPVariant* variant)
 {
     NPVariantType type = variant->type;
 
-    if (type == NPVariantType_Bool) {
-        NPBool aBool;
-        if (NPN_VariantToBool(variant, &aBool))
-            return jsBoolean(aBool);
-        return jsBoolean(false);
-    }
-    else if (type == NPVariantType_Null) {
+    if (type == NPVariantType_Bool)
+        return jsBoolean(NPVARIANT_TO_BOOLEAN(*variant));
+    if (type == NPVariantType_Null)
         return jsNull();
-    }
-    else if (type == NPVariantType_Void) {
+    if (type == NPVariantType_Void)
         return jsUndefined();
-    }
-    else if (type == NPVariantType_Int32) {
-        int32_t anInt;
-        if (NPN_VariantToInt32(variant, &anInt))
-            return jsNumber(anInt);
-        return jsNumber(0);
-    }
-    else if (type == NPVariantType_Double) {
-        double aDouble;
-        if (NPN_VariantToDouble(variant, &aDouble))
-            return jsNumber(aDouble);
-        return jsNumber(0);
-    }
-    else if (type == NPVariantType_String) {
+    if (type == NPVariantType_Int32)
+        return jsNumber(NPVARIANT_TO_INT32(*variant));
+    if (type == NPVariantType_Double)
+        return jsNumber(NPVARIANT_TO_DOUBLE(*variant));
+    if (type == NPVariantType_String) {
         NPUTF16 *stringValue;
         unsigned int UTF16Length;
-        convertNPStringToUTF16(&variant->value.stringValue, &stringValue, &UTF16Length);    // requires free() of returned memory.
+        convertNPStringToUTF16(&variant->value.stringValue, &stringValue, &UTF16Length); // requires free() of returned memory
         UString resultString((const UChar *)stringValue,UTF16Length);
         free(stringValue);
         return jsString(resultString);
     }
-    else if (type == NPVariantType_Object) {
+    if (type == NPVariantType_Object) {
         NPObject *obj = variant->value.objectValue;
         
-        if (obj->_class == NPScriptObjectClass) {
+        if (obj->_class == NPScriptObjectClass)
             // Get JSObject from NP_JavaScriptObject.
-            JavaScriptObject *o = (JavaScriptObject *)obj;
-            return const_cast<JSObject*>(o->imp);
-        }
-        else {
-            //  Wrap NPObject in a CInstance.
-            return Instance::createRuntimeObject(Instance::CLanguage, obj);
-        }
+            return ((JavaScriptObject *)obj)->imp;
+
+        // Wrap NPObject in a CInstance.
+        return Instance::createRuntimeObject(Instance::CLanguage, obj);
     }
     
     return jsUndefined();

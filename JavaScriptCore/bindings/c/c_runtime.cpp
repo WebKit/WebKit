@@ -24,50 +24,57 @@
  */
 
 #include "config.h"
-#include <JavaScriptCore/internal.h>
+#include "c_runtime.h"
 
-#include <c_instance.h>
-#include <c_runtime.h>
-#include <c_utility.h>
+#include "c_instance.h"
+#include "c_utility.h"
+#include "npruntime_impl.h"
 
-#include <runtime_array.h>
-#include <runtime_object.h>
-
-using namespace KJS;
-using namespace KJS::Bindings;
+namespace KJS {
+namespace Bindings {
 
 // ---------------------- CMethod ----------------------
 
-
+const char* CMethod::name() const
+{
+    PrivateIdentifier *i = (PrivateIdentifier *)_methodIdentifier;
+    return i->isString ? i->value.string : 0;
+}
 
 // ---------------------- CField ----------------------
 
-JSValue *CField::valueFromInstance(ExecState *exec, const Instance *inst) const
+const char* CField::name() const
 {
-    const CInstance *instance = static_cast<const CInstance*>(inst);
-    NPObject *obj = instance->getObject();
-    JSValue *aValue;
-    NPVariant property;
-    VOID_TO_NPVARIANT(property);
+    PrivateIdentifier *i = (PrivateIdentifier *)_fieldIdentifier;
+    return i->isString ? i->value.string : 0;
+}
+
+JSValue* CField::valueFromInstance(ExecState* exec, const Instance* inst) const
+{
+    const CInstance* instance = static_cast<const CInstance*>(inst);
+    NPObject* obj = instance->getObject();
     if (obj->_class->getProperty) {
-        obj->_class->getProperty (obj, _fieldIdentifier, &property);
-        aValue = convertNPVariantToValue (exec, &property);
+        NPVariant property;
+        VOID_TO_NPVARIANT(property);
+        if (obj->_class->getProperty(obj, _fieldIdentifier, &property)) {
+            JSValue* result = convertNPVariantToValue(exec, &property);
+            _NPN_ReleaseVariantValue(&property);
+            return result;
+        }
     }
-    else {
-        aValue = jsUndefined();
-    }
-    return aValue;
+    return jsUndefined();
 }
 
 void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue *aValue) const
 {
-    const CInstance *instance = static_cast<const CInstance*>(inst);
-    NPObject *obj = instance->getObject();
+    const CInstance* instance = static_cast<const CInstance*>(inst);
+    NPObject* obj = instance->getObject();
     if (obj->_class->setProperty) {
         NPVariant variant;
-        convertValueToNPVariant (exec, aValue, &variant);
-        obj->_class->setProperty (obj, _fieldIdentifier, &variant);
+        convertValueToNPVariant(exec, aValue, &variant);
+        obj->_class->setProperty(obj, _fieldIdentifier, &variant);
+        _NPN_ReleaseVariantValue(&variant);
     }
 }
 
-// ---------------------- CArray ----------------------
+} }

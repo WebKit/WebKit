@@ -22,55 +22,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_C_CLASS_H_
-#define _BINDINGS_C_CLASS_H_
 
-#include <CoreFoundation/CoreFoundation.h>
+#ifndef BINDINGS_C_CLASS_H_
+#define BINDINGS_C_CLASS_H_
 
-
-#include <runtime.h>
-#include <npruntime.h>
-#include <c_runtime.h>
+#include "npruntime.h"
+#include "runtime.h"
 
 namespace KJS {
-
 namespace Bindings {
 
-class CClass : public KJS::Bindings::Class
-{
+class CClass : public Class {
 protected:
-    CClass(NPClass *aClass); // Use classForIsA to create a CClass.
+    CClass(NPClass*); // Use classForIsA to create a CClass.
     
 public:
-    ~CClass();
+    static CClass* classForIsA(NPClass*);
+    virtual ~CClass();
 
-    // Return the cached ObjC of the specified name.
-    static CClass *classForIsA(NPClass *aClass);
-    
-    virtual const char *name() const;
-    
-    virtual MethodList methodsNamed(const char *name, Instance *instance) const;
-    
-    virtual Field *fieldNamed(const char *name, Instance *instance) const;
-    
-    virtual Constructor *constructorAt(int) const {
-        return 0;
-    };
-    
-    virtual int numConstructors() const { return 0; };
-        
+    virtual const char* name() const;    
+    virtual MethodList methodsNamed(const char* name, Instance*) const;
+    virtual Field* fieldNamed(const char* name, Instance*) const;
+
+    virtual Constructor* constructorAt(int) const { return 0; }
+    virtual int numConstructors() const { return 0; }
+
 private:
-    CClass(); // prohibit default construction
-    CClass(const CClass &other); // prohibit copying
-    CClass &operator=(const CClass &other); // ditto
-    
-    NPClass *_isa;
-    CFDictionaryRef _methods;
-    CFDictionaryRef _fields;
+    CClass(const CClass&); // prohibit copying
+    CClass& operator=(const CClass&); // prohibit assignment
+
+    NPClass* _isa;
+    CFMutableDictionaryRef _methods;
+    CFMutableDictionaryRef _fields;
 };
 
 } // namespace Bindings
-
 } // namespace KJS
 
 #endif

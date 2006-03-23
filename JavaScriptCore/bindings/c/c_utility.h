@@ -22,22 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _C_UTILITY_H_
-#define _C_UTILITY_H_
 
-#include <npruntime.h>
+#ifndef C_UTILITY_H_
+#define C_UTILITY_H_
 
-#include <runtime.h>
-#include <runtime_object.h>
-#include <runtime_root.h>
+#include "npruntime.h"
 
-namespace KJS { namespace Bindings {
+namespace KJS {
+
+class ExecState;
+class JSValue;
+
+namespace Bindings {
 
 typedef uint16_t NPUTF16;
-NPUTF16 *NPN_UTF16FromString (NPString *obj);
 
-typedef enum 
-{
+enum NP_ValueType {
     NP_NumberValueType,
     NP_StringValueType,
     NP_BooleanValueType,
@@ -45,22 +45,21 @@ typedef enum
     NP_UndefinedValueType,
     NP_ObjectValueType,
     NP_InvalidValueType
-} NP_ValueType;
+};
 
-void convertNPStringToUTF16(const NPString *string, NPUTF16 **UTF16Chars, unsigned int *UTF16Length);
-void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16Chars, unsigned int *UTF16Length);
-void coerceValueToNPVariantStringType(KJS::ExecState *exec, KJS::JSValue *value, NPVariant *result);
-void convertValueToNPVariant(KJS::ExecState *exec, KJS::JSValue *value, NPVariant *result);
-KJS::JSValue *convertNPVariantToValue(KJS::ExecState *exec, const NPVariant *variant);
+void convertNPStringToUTF16(const NPString*, NPUTF16** UTF16Chars, unsigned int* UTF16Length);
+void convertUTF8ToUTF16(const NPUTF8* UTF8Chars, int UTF8Length, NPUTF16** UTF16Chars, unsigned int* UTF16Length);
+void coerceValueToNPVariantStringType(ExecState*, JSValue*, NPVariant* result);
+void convertValueToNPVariant(ExecState*, JSValue*, NPVariant* result);
+JSValue* convertNPVariantToValue(ExecState*, const NPVariant*);
 
-typedef struct 
-{
+struct PrivateIdentifier {
     union {
-        const NPUTF8 *string;
+        const NPUTF8* string;
         int32_t number;
     } value;
     bool isString;
-} PrivateIdentifier;
+};
 
 } }
 

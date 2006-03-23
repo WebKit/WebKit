@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "c_class.h"
+#include "config.h"
 #include "c_instance.h"
+
+#include "c_class.h"
 #include "c_runtime.h"
 #include "c_utility.h"
-#include "config.h"
+#include "list.h"
 #include "npruntime_impl.h"
-#include "npruntime_priv.h"
-
-#ifdef NDEBUG
-#define C_LOG(formatAndArgs...) ((void)0)
-#else
-#define C_LOG(formatAndArgs...) { \
-    fprintf (stderr, "%s:%d -- %s:  ", __FILE__, __LINE__, __FUNCTION__); \
-    fprintf(stderr, formatAndArgs); \
-}
-#endif
+#include <kxmlcore/Vector.h>
 
 namespace KJS {
 namespace Bindings {
 
-CInstance::CInstance (NPObject *o) 
+CInstance::CInstance(NPObject* o) 
 {
-    _object = _NPN_RetainObject (o);
+    _object = _NPN_RetainObject(o);
     _class = 0;
-    setExecutionContext (0);
+    setExecutionContext(0);
 }
 
-CInstance::~CInstance () 
+CInstance::~CInstance() 
 {
-    _NPN_ReleaseObject (_object);
+    _NPN_ReleaseObject(_object);
 }
 
-
-CInstance::CInstance (const CInstance &other) : Instance() 
+CInstance::CInstance(const CInstance &other) : Instance()
 {
-    _object = _NPN_RetainObject (other._object);
+    _object = _NPN_RetainObject(other._object);
     _class = 0;
-    setExecutionContext (other.executionContext());
-};
+    setExecutionContext(other.executionContext());
+}
 
-CInstance &CInstance::operator=(const CInstance &other){
+CInstance &CInstance::operator=(const CInstance& other)
+{
     if (this == &other)
         return *this;
-    
-    NPObject *_oldObject = _object;
-    _object= _NPN_RetainObject (other._object);
-    _NPN_ReleaseObject (_oldObject);
+
+    NPObject* _oldObject = _object;
+    _object = _NPN_RetainObject(other._object);
+    _NPN_ReleaseObject(_oldObject);
     _class = 0;
-    
+
     return *this;
-};
+}
 
 Class *CInstance::getClass() const
 {
-    if (!_class) {
+    if (!_class)
         _class = CClass::classForIsA(_object->_class);
-    }
     return _class;
 }
-
 
 void CInstance::begin()
 {
@@ -94,135 +85,96 @@ void CInstance::end()
     // Do nothing.
 }
 
-JSValue *CInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
+JSValue* CInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const List& args)
 {
-    JSValue *resultValue;
-
     // Overloading methods are not allowed by NPObjects.  Should only be one
     // name match for a particular method.
-    assert (methodList.length() == 1);
+    assert(methodList.length() == 1);
 
-    CMethod *method = 0;
-    method = static_cast<CMethod*>(methodList.methodAt(0));
+    CMethod* method = static_cast<CMethod*>(methodList.methodAt(0));
 
-    NPIdentifier ident = _NPN_GetStringIdentifier (method->name());
-    if (!_object->_class->hasMethod (_object, ident)) {
+    NPIdentifier ident = _NPN_GetStringIdentifier(method->name());
+    if (!_object->_class->hasMethod(_object, ident))
         return jsUndefined();
-    }
 
-    unsigned i, count = args.size();
-    NPVariant *cArgs;
-    NPVariant localBuffer[128];
-    if (count > 128)
-        cArgs = (NPVariant *)malloc (sizeof(NPVariant)*count);
-    else
-        cArgs = localBuffer;
-    
-    for (i = 0; i < count; i++) {
-        convertValueToNPVariant (exec, args.at(i), &cArgs[i]);
-    }
+    unsigned count = args.size();
+    Vector<NPVariant, 128> cArgs(count);
+
+    unsigned i;
+    for (i = 0; i < count; i++)
+        convertValueToNPVariant(exec, args.at(i), &cArgs[i]);
 
     // Invoke the 'C' method.
     NPVariant resultVariant;
     VOID_TO_NPVARIANT(resultVariant);
-    _object->_class->invoke (_object, ident, cArgs, count, &resultVariant);
+    _object->_class->invoke(_object, ident, cArgs, count, &resultVariant);
 
-    for (i = 0; i < count; i++) {
-        _NPN_ReleaseVariantValue (&cArgs[i]);
-    }
+    for (i = 0; i < count; i++)
+        _NPN_ReleaseVariantValue(&cArgs[i]);
 
-    if (cArgs != localBuffer)
-        free ((void *)cArgs);
-            
-    if (!NPVARIANT_IS_VOID(resultVariant)) {
-        resultValue = convertNPVariantToValue (exec, &resultVariant);
-        
-        _NPN_ReleaseVariantValue (&resultVariant);
-        
-        return resultValue;
-    }
-    
-    return jsUndefined();
+    JSValue* resultValue = convertNPVariantToValue(exec, &resultVariant);
+    _NPN_ReleaseVariantValue(&resultVariant);
+    return resultValue;
 }
 
 
-JSValue *CInstance::invokeDefaultMethod (ExecState *exec, const List &args)
+JSValue* CInstance::invokeDefaultMethod(ExecState* exec, const List& args)
 {
-    JSValue *resultValue;
+    if (!_object->_class->invokeDefault)
+        return jsUndefined();
 
-    if (_object->_class->invokeDefault) {     
-        unsigned i, count = args.size();
-        NPVariant *cArgs;
-        NPVariant localBuffer[128];
-        if (count > 128)
-            cArgs = (NPVariant *)malloc (sizeof(NPVariant)*count);
-        else
-            cArgs = localBuffer;
-        
-        for (i = 0; i < count; i++) {
-            convertValueToNPVariant (exec, args.at(i), &cArgs[i]);
-        }
+    unsigned count = args.size();
+    Vector<NPVariant, 128> cArgs(count);
 
-        // Invoke the 'C' method.
-        NPVariant resultVariant;
-        VOID_TO_NPVARIANT(resultVariant);
-        _object->_class->invokeDefault (_object, cArgs, count, &resultVariant);
+    unsigned i;
+    for (i = 0; i < count; i++)
+        convertValueToNPVariant(exec, args.at(i), &cArgs[i]);
 
-        for (i = 0; i < count; i++) {
-            _NPN_ReleaseVariantValue (&cArgs[i]);
-        }
+    // Invoke the 'C' method.
+    NPVariant resultVariant;
+    VOID_TO_NPVARIANT(resultVariant);
+    _object->_class->invokeDefault(_object, cArgs, count, &resultVariant);
 
-        if (cArgs != localBuffer)
-            free ((void *)cArgs);
-                
-        if (!NPVARIANT_IS_VOID(resultVariant)) {
-            resultValue = convertNPVariantToValue (exec, &resultVariant);
-            
-            _NPN_ReleaseVariantValue (&resultVariant);
-            
-            return resultValue;
-        }
-    }
-    
-    return jsUndefined();
+    for (i = 0; i < count; i++)
+        _NPN_ReleaseVariantValue(&cArgs[i]);
+
+    JSValue* resultValue = convertNPVariantToValue(exec, &resultVariant);
+    _NPN_ReleaseVariantValue(&resultVariant);
+    return resultValue;
 }
 
 
-JSValue *CInstance::defaultValue (JSType hint) const
+JSValue* CInstance::defaultValue(JSType hint) const
 {
-    if (hint == StringType) {
+    if (hint == StringType)
         return stringValue();
-    }
-    else if (hint == NumberType) {
+    if (hint == NumberType)
         return numberValue();
-    }
-    else if (hint == BooleanType) {
+   if (hint == BooleanType)
         return booleanValue();
-    }
-    
     return valueOf();
 }
 
-JSValue *CInstance::stringValue() const
+JSValue* CInstance::stringValue() const
 {
     char buf[1024];
-    snprintf(buf, 1024, "NPObject %p, NPClass %p", _object, _object->_class);
+    snprintf(buf, sizeof(buf), "NPObject %p, NPClass %p", _object, _object->_class);
     return jsString(buf);
 }
 
-JSValue *CInstance::numberValue() const
+JSValue* CInstance::numberValue() const
 {
-    // FIXME:  Implement something sensible
+    // FIXME: Implement something sensible.
     return jsNumber(0);
 }
 
-JSValue *CInstance::booleanValue() const
+JSValue* CInstance::booleanValue() const
 {
-    // FIXME:  Implement something sensible
+    // FIXME: Implement something sensible.
     return jsBoolean(false);
 }
 
-JSValue *CInstance::valueOf() const 
+JSValue* CInstance::valueOf() const 
 {
     return stringValue();
 }

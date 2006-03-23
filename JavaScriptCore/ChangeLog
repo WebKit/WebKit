@@ -1,3 +1,63 @@
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7805
+          LEAK: method name leaks in KJS::Bindings::CInstance::invokeMethod
+
+        * bindings/c/c_utility.h: Remove NPN_UTF16FromString declaration (not implemented).
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant): Use DOUBLE_TO_NPVARIANT,
+        BOOLEAN_TO_NPVARIANT, VOID_TO_NPVARIANT, NULL_TO_NPVARIANT, and
+        OBJECT_TO_NPVARIANT. In the case of OBJECT, call _NPN_RetainObject in
+        one case and remove a _NPN_ReleaseObject in another because this
+        should return a retained value.
+        (KJS::Bindings::convertNPVariantToValue): Use NPVARIANT_TO_BOOLEAN,
+        NPVARIANT_TO_INT32, and NPVARIANT_TO_DOUBLE.
+
+        * bindings/c/c_runtime.h: Removed implementations of CMethod::name and
+        CField::name that called _NPN_UTF8FromIdentifier and hence leaked.
+        * bindings/c/c_runtime.cpp:
+        (KJS::Bindings::CMethod::name): Added. Returns the string from inside the
+        method object.
+        (KJS::Bindings::CField::name): Added. Returns the string from inside the
+        field object.
+        (KJS::Bindings::CField::valueFromInstance): Added call to _NPN_ReleaseVariantValue
+        on the result of getProperty after using it to fix a storage leak.
+        (KJS::Bindings::CField::setValueToInstance): Added call to _NPN_ReleaseVariantValue
+        after pasing a value to setProperty now that the conversion function does a retain.
+
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::invokeMethod): Changed to use Vector for a local
+        stack buffer. Removed special case for NPVARIANT_IS_VOID because the
+        convertNPVariantToValue function handles that properly.
+        (KJS::Bindings::CInstance::invokeDefaultMethod): Ditto.
+
+        * bindings/NP_jsobject.h: Formatting changes only.
+        * bindings/NP_jsobject.cpp:
+        (jsDeallocate): Changed parameter type so we don't need a function cast.
+        (_NPN_InvokeDefault): Use VOID_TO_NPVARIANT.
+        (_NPN_Invoke): Use NULL_TO_NPVARIANT and VOID_TO_NPVARIANT.
+        (_NPN_Evaluate): Use VOID_TO_NPVARIANT.
+        (_NPN_GetProperty): Use NULL_TO_NPVARIANT and VOID_TO_NPVARIANT.
+
+        * bindings/c/c_class.cpp: Formatting changes only.
+        * bindings/c/c_class.h: Formatting changes only.
+
+        * bindings/npruntime_priv.h: Removed obsolete and now-unused functions:
+        NPN_VariantIsVoid, NPN_VariantIsNull, NPN_VariantIsUndefined,
+        NPN_VariantIsBool, NPN_VariantIsInt32, NPN_VariantIsDouble,
+        NPN_VariantIsString, NPN_VariantIsObject, NPN_VariantToBool,
+        NPN_VariantToInt32, NPN_VariantToDouble, NPN_VariantToString,
+        NPN_VariantToStringCopy, NPN_VariantToObject, NPN_InitializeVariantAsVoid,
+        NPN_InitializeVariantAsNull, NPN_InitializeVariantAsUndefined,
+        NPN_InitializeVariantWithBool, NPN_InitializeVariantWithInt32,
+        NPN_InitializeVariantWithDouble, NPN_InitializeVariantWithString,
+        NPN_InitializeVariantWithObject, and NPN_InitializeVariantWithVariant.
+        * bindings/npruntime.cpp:
+        (getIntIdentifierDictionary): Don't bother creating custom callbacks for the
+        integer dictionary since the default behavior is fine for integers.
+
 2006-03-23  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed and landed by Maciej.
