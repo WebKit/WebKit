@@ -1,14 +1,4 @@
-2006-03-23  Darin Adler  <darin@apple.com>
-
-        Reviewed by Eric.
-
-        - fix <rdar://problem/4380465> repro crash when unsuccessfully attempting to import image from Services menu
-
-        * WebView/WebDataSource.m:
-        (-[WebDataSource _imageElementWithImageResource:]): Quietly do nothing if passed nil.
-        (-[WebDataSource _documentFragmentWithImageResource:]): Ditto.
-
-2006-03-22  Tim Omernick  <timo@apple.com>
+2006-03-23  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.
 
@@ -24,6 +14,16 @@
         (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
         ditto.  This fixes 4439752 because this method failed to set the representedObject on the menu items as
         -contextMenuItemsForElement:defaultMenuItems: did.
+
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix <rdar://problem/4380465> repro crash when unsuccessfully attempting to import image from Services menu
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _imageElementWithImageResource:]): Quietly do nothing if passed nil.
+        (-[WebDataSource _documentFragmentWithImageResource:]): Ditto.
 
 2006-03-22  Tim Omernick  <timo@apple.com>
 
