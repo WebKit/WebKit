@@ -1,5 +1,9 @@
 2006-03-22  Maciej Stachowiak  <mjs@apple.com>
 
+        * generate-derived-sources: Added.
+
+2006-03-22  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
         
         Handle dependencies for derived sources properly.
