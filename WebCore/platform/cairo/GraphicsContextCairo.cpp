@@ -232,7 +232,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         // Example: 80 pixels with a width of 30 pixels.
         // Remainder is 20.  The maximum pixels of line we could paint
         // will be 50 pixels.
-        int distance = (isVerticalLine ? (p2.y() - p1.y()) : (p2.x() - p1.x())) - 2*(int)width;
+        int distance = (isVerticalLine ? (point2.y() - point1.y()) : (point2.x() - point1.x())) - 2*(int)width;
         int remainder = distance%patWidth;
         int coverage = distance-remainder;
         int numSegments = coverage/patWidth;

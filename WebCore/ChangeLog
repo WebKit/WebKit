@@ -1,3 +1,17 @@
+2006-03-23  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        REGRESSION: Dashed borders paint with the wrong phase
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7879
+
+        Test: Already covered by css1/box_properties/border_style.html
+
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLine):
+
 2006-03-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
