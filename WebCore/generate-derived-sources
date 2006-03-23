@@ -6,8 +6,9 @@ WebCoreSourceRoot="${SRCROOT}"
 mkdir -p "${DerivedSourcesDir}"
 
 # Rebuild CSSPropertyNames.h and CSSValueKeywords.h if the .in files have changed
+
 if [ css/CSSPropertyNames.in -nt "$DerivedSourcesDir/CSSPropertyNames.h" -o css/makeprop -nt "$DerivedSourcesDir/CSSPropertyNames.h" ]; then
-  echo "Generating CSS properties table..."
+  echo "Generating CSS properties table"
   cat css/CSSPropertyNames.in > "$DerivedSourcesDir/CSSPropertyNames.in"
   cd "$DerivedSourcesDir"
   sh "$WebCoreSourceRoot/css/makeprop"
@@ -15,7 +16,7 @@ if [ css/CSSPropertyNames.in -nt "$DerivedSourcesDir/CSSPropertyNames.h" -o css/
 fi
 
 if [ css/CSSValueKeywords.in -nt "$DerivedSourcesDir/CSSValueKeywords.h"  -o css/makevalues -nt "$DerivedSourcesDir/CSSValueKeywords.h" ]; then
-  echo "Generating CSS values table..."
+  echo "Generating CSS values table"
   cat css/CSSValueKeywords.in > "$DerivedSourcesDir/CSSValueKeywords.in"
   cd "$DerivedSourcesDir"
   sh "$WebCoreSourceRoot/css/makevalues"
@@ -23,43 +24,49 @@ if [ css/CSSValueKeywords.in -nt "$DerivedSourcesDir/CSSValueKeywords.h"  -o css
 fi
 
 if [ html/DocTypeStrings.gperf -nt "$DerivedSourcesDir/DocTypeStrings.cpp" ]; then
-  echo "Generating doctype string table..."
+  echo "Generating doctype string table"
   gperf -CEot -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards html/DocTypeStrings.gperf > "$DerivedSourcesDir/DocTypeStrings.cpp"
 fi
 
 if [ html/HTMLEntityNames.gperf -nt "$DerivedSourcesDir/HTMLEntityNames.c" ]; then
-  echo "Generating entities table..."
+  echo "Generating entities table"
   gperf -a -L ANSI-C -C -G -c -o -t -k '*' -NfindEntity -D -s 2 html/HTMLEntityNames.gperf > "$DerivedSourcesDir/HTMLEntityNames.c"
 fi
 
 # Generate the CSS tokenizer using flex
+
 if [ css/tokenizer.flex -nt "$DerivedSourcesDir/tokenizer.cpp" ]; then
-  echo "Generating the CSS tokenizer using flex..."
+  echo "Generating the CSS tokenizer using flex"
   flex -t css/tokenizer.flex | perl css/maketokenizer > "$DerivedSourcesDir/tokenizer.cpp"
 fi
 
 # Generate the CSS grammar using bison
+
 if [ css/CSSGrammar.y -nt "$DerivedSourcesDir/CSSGrammar.cpp" ]; then
-  echo "Generating the CSS grammar using bison..."
+  echo "Generating the CSS grammar using bison"
   bison -d -p cssyy css/CSSGrammar.y -o "$DerivedSourcesDir/CSSGrammar.cpp"
   cat "$DerivedSourcesDir/CSSGrammar.cpp.h" "$DerivedSourcesDir/CSSGrammar.hpp" > "$DerivedSourcesDir/CSSGrammar.h" 2>/dev/null
   rm -f "$DerivedSourcesDir/CSSGrammar.cpp.h" "$DerivedSourcesDir/CSSGrammar.hpp"
 fi
 
+# Convert the style sheets to C arrays
+
 if [ css/make-css-file-arrays.pl -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/html4.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/quirks.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/svg.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" ]; then
-  echo "Re-generating the user agent stylesheet files..."
+  echo "Re-generating the user agent stylesheet files"
   css/make-css-file-arrays.pl "$DerivedSourcesDir/UserAgentStyleSheets.h" "$DerivedSourcesDir/UserAgentStyleSheetsData.cpp" css/html4.css css/quirks.css css/svg.css
-  touch css/UserAgentStyleSheets.cpp
 fi
+
 # Generate the color data table.
+
 if [ platform/ColorData.gperf -nt "$DerivedSourcesDir/ColorData.c" ]; then
-  echo "Generating the color table data for the Color class..."
+  echo "Generating the color table data for the Color class"
   gperf -CDEot -L 'ANSI-C' -k '*' -N findColor platform/ColorData.gperf > "$DerivedSourcesDir/ColorData.c"
 fi
 
 # Generate the charset name table
+
 if [ platform/character-sets.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/mac/mac-encodings.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/make-charset-table.pl -nt "$DerivedSourcesDir/CharsetData.cpp" ]; then
-  echo "Generating character set name table..."
+  echo "Generating character set name table"
   platform/make-charset-table.pl platform/character-sets.txt platform/mac/mac-encodings.txt kCFStringEncoding > "$DerivedSourcesDir/CharsetData.cpp"
 fi
 
@@ -121,13 +128,10 @@ if [ ksvg2/svg/svgtags.in -nt "$DerivedSourcesDir/SVGNames.cpp" -o ksvg2/svg/svg
   ksvg2/scripts/make_names.pl --tags ksvg2/svg/svgtags.in --attrs ksvg2/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output "$DerivedSourcesDir"
 fi
 
-
 if [ ksvg2/misc/xlinkattrs.in -nt "$DerivedSourcesDir/XLinkNames.cpp" -o ksvg2/scripts/make_names.pl -nt "$DerivedSourcesDir/XLinkNames.cpp" ]; then
   ksvg2/scripts/make_names.pl --attrs ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output "$DerivedSourcesDir"
-touch WebCore+SVG/XLinkNamesWrapper.cpp
+  touch WebCore+SVG/XLinkNamesWrapper.cpp
 fi
-
-
 
 if [ ksvg2/scripts/cssmakeprops -nt "$DerivedSourcesDir/ksvgcssproperties.h" -o ksvg2/css/CSSPropertyNames.in -nt "$DerivedSourcesDir/ksvgcssproperties.h" ]; then
   cat css/CSSPropertyNames.in ksvg2/css/CSSPropertyNames.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'
@@ -141,7 +145,6 @@ if [ ksvg2/scripts/cssmakeprops -nt "$DerivedSourcesDir/ksvgcssproperties.h" -o 
   cd "$WebCoreSourceRoot"
 fi
 
-
 if [ ksvg2/css/CSSValueKeywords.in -nt "$DerivedSourcesDir/ksvgcssvalues.h" -o ksvg2/scripts/cssmakevalues -nt "$DerivedSourcesDir/ksvgcssvalues.h" ]; then
   cat css/CSSValueKeywords.in ksvg2/css/CSSValueKeywords.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'
   if [ $? -eq 0 ]; then
@@ -154,7 +157,6 @@ if [ ksvg2/css/CSSValueKeywords.in -nt "$DerivedSourcesDir/ksvgcssvalues.h" -o k
   "$WebCoreSourceRoot/ksvg2/scripts/cssmakevalues" -n SVG -f ksvgcssvalues.in
   cd "$WebCoreSourceRoot"
 fi
-
 
 if [ dom/Attr.idl -nt "$DerivedSourcesDir/JSAttr.h" -o \
      bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSAttr.h" -o \
@@ -299,4 +301,3 @@ if [ html/CanvasRenderingContext2D.idl -nt "$DerivedSourcesDir/JSCanvasRendering
      bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSCanvasRenderingContext2D.h" ]; then
   perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" html/CanvasRenderingContext2D.idl
 fi
-

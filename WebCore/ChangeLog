@@ -1,3 +1,8 @@
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        * generate-derived-sources: Tweaked formatting a tiny bit and removed a stray
+        touch that was left in here.
+
 2006-03-23  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
@@ -28,13 +33,13 @@
         
         Handle dependencies for derived sources properly.
 
-        - Made a new generate-derived-sources script that does all the depedency checking
+        - Made a new generate-derived-sources script that does all the dependency checking
         and source generation.
         - Put this script in a subtarget instead of a phase.
         - Made derived sources go in the build root, not a source root.
         - Added derived sources to the project.
         - Removed files whose sole purpose was to include and compile derived sources,
-        just compile those directly for now.
+        just compile those directly now.
         - Tweaked the IDL code generator so it can handle one IDL at a time, to make
         it easier to get the dependencies right.
         
