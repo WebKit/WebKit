@@ -1,3 +1,15 @@
+2006-03-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6431 
+        REGRESSION: style change where :hover changes only an :after style 
+        doesn't work
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff): Need to call diff() on the before and after 
+        styles if we have them.
+
 2006-03-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

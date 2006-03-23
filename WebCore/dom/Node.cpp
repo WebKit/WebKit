@@ -626,17 +626,26 @@ Node::StyleChange Node::diff( WebCore::RenderStyle *s1, WebCore::RenderStyle *s2
     // style in cases where you need to.
     StyleChange ch = NoInherit;
     EDisplay display1 = s1 ? s1->display() : NONE;
-    bool fl1 = s1 ? s1->hasPseudoStyle(RenderStyle::FIRST_LETTER) : false;
+    bool fl1 = s1 && s1->hasPseudoStyle(RenderStyle::FIRST_LETTER);
     EDisplay display2 = s2 ? s2->display() : NONE;
-    bool fl2 = s2 ? s2->hasPseudoStyle(RenderStyle::FIRST_LETTER) : false;
+    bool fl2 = s2 && s2->hasPseudoStyle(RenderStyle::FIRST_LETTER);
+        
     if (display1 != display2 || fl1 != fl2)
         ch = Detach;
-    else if ( !s1 || !s2 )
+    else if (!s1 || !s2)
         ch = Inherit;
-    else if ( *s1 == *s2 )
+    else if (*s1 == *s2)
         ch = NoChange;
-    else if ( s1->inheritedNotEqual( s2 ) )
+    else if (s1->inheritedNotEqual(s2))
         ch = Inherit;
+    
+    // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
+    // because setStyle will do the right thing with anything else.
+    if (ch == NoChange && s1->hasPseudoStyle(RenderStyle::BEFORE))
+        ch = diff(s1->getPseudoStyle(RenderStyle::BEFORE), s2->getPseudoStyle(RenderStyle::BEFORE));
+    if (ch == NoChange && s1->hasPseudoStyle(RenderStyle::AFTER))
+        ch = diff(s1->getPseudoStyle(RenderStyle::AFTER), s2->getPseudoStyle(RenderStyle::AFTER));
+    
     return ch;
 }
 
