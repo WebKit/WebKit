@@ -40,54 +40,25 @@ use CodeGenerator;
 my @idlDirectories;
 my $outputDirectory;
 my $generator;
-my $forceGeneration = 0;
 
-GetOptions('idldir=s@' => \@idlDirectories,
-			  'outputdir=s' => \$outputDirectory,
-			  'generator=s' => \$generator,
-			  'force-generation' => \$forceGeneration);
+GetOptions('include=s@' => \@idlDirectories,
+           'outputdir=s' => \$outputDirectory,
+           'generator=s' => \$generator);
 
-if (!defined($generator)) {
-  die('Must specify generator')
-}
+my $idlFile = $ARGV[0];
 
-if (!@idlDirectories or !defined($outputDirectory)) {
-	die('Must specify both idldir and outputdir');
-}
+die('Must specify input file.') unless defined($idlFile);
+die('Must specify IDL search path.') unless @idlDirectories;
+die('Must specify generator') unless defined($generator);
+die('Must specify input file.') unless defined($idlFile);
+die('Must specify output directory.') unless defined($outputDirectory);
 
-my @idlFiles;
 
-sub addIdlFiles {
-  my ($dir) = @_;
-  my @dirs = ();
-
-  opendir DIR, $dir or die "Can't open directory $dir.\n";
-  while (my $file = readdir DIR) {
-    next if $file =~ /^\./;
-    if (-d "$dir/$file") {
-      push @dirs, "$dir/$file";
-    } elsif ($file =~ /\.idl$/) {
-      push @idlFiles, "$dir/$file";
-    }
-  }
-  closedir DIR;
-  
-  for my $subdir (@dirs) {
-    addIdlFiles($subdir);
-  }
-}
-
-foreach my $idlDirectory (@idlDirectories) {
-  addIdlFiles($idlDirectory);
-}
-
-for my $idlPath (@idlFiles) {   
-	# Parse the given IDL file.
-	my $parser = IDLParser->new(1);
+# Parse the given IDL file.
+my $parser = IDLParser->new(1);
 	
-	my $document = $parser->Parse($idlPath);
+my $document = $parser->Parse($idlFile);
 	
-	# Generate desired output for given IDL file.
-	my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory);
-	$codeGen->ProcessDocument($document, $forceGeneration);
-}
+# Generate desired output for given IDL file.
+my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory);
+$codeGen->ProcessDocument($document);

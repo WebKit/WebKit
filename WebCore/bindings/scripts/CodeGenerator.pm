@@ -61,7 +61,6 @@ sub ProcessDocument
 {
   my $object = shift;
   $useDocument = shift;
-  $forceGeneration = shift;
   
   my $ifaceName = $useGenerator;
   $ifaceName =~ s/\b(\w)/\U$1/g; # Make first letter of each word uppercase
@@ -80,11 +79,8 @@ sub ProcessDocument
   foreach(@$arrayRef) {
     my $class = $_;
 
-    if ($forceGeneration || $codeGenerator->ShouldGenerateFiles($useDocument, $class->name)) {
-      print " |- Processing interface \"" . $class->name . "\"...\n";
-
-      $codeGenerator->GenerateInterface($class);
-    }
+    print "Generating code for IDL interface \"" . $class->name . "\"...\n";
+    $codeGenerator->GenerateInterface($class);
   }
 
   $codeGenerator->finish();

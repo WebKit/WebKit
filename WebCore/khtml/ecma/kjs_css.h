@@ -68,7 +68,7 @@ namespace KJS {
 
   class DOMStyleSheet : public DOMObject {
   public:
-    DOMStyleSheet(ExecState *, WebCore::StyleSheet *ss) : m_impl(ss) { }
+    DOMStyleSheet(ExecState *, WebCore::StyleSheet *ss);
     virtual ~DOMStyleSheet();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
@@ -80,7 +80,7 @@ namespace KJS {
     WebCore::StyleSheet *impl() const { return m_impl.get(); }
   protected:
     // Constructor for derived classes; doesn't set up a prototype.
-    DOMStyleSheet(WebCore::StyleSheet *ss) : m_impl(ss) { }
+    DOMStyleSheet(WebCore::StyleSheet *ss);
   private:
     RefPtr<WebCore::StyleSheet> m_impl;
   };
@@ -89,8 +89,7 @@ namespace KJS {
 
   class DOMStyleSheetList : public DOMObject {
   public:
-    DOMStyleSheetList(ExecState *, WebCore::StyleSheetList *ssl, WebCore::Document *doc)
-      : m_impl(ssl), m_doc(doc) { }
+    DOMStyleSheetList(ExecState *, WebCore::StyleSheetList *ssl, WebCore::Document *doc);
     virtual ~DOMStyleSheetList();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
@@ -145,7 +144,7 @@ namespace KJS {
 
   class DOMCSSRuleList : public DOMObject {
   public:
-    DOMCSSRuleList(ExecState *, WebCore::CSSRuleList *rl) : m_impl(rl) { }
+    DOMCSSRuleList(ExecState *, WebCore::CSSRuleList *rl);
     virtual ~DOMCSSRuleList();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
@@ -164,7 +163,7 @@ namespace KJS {
 
   class DOMCSSRule : public DOMObject {
   public:
-    DOMCSSRule(ExecState *, WebCore::CSSRule *r) : m_impl(r) { }
+    DOMCSSRule(ExecState*, WebCore::CSSRule* r);
     virtual ~DOMCSSRule();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;

@@ -75,43 +75,6 @@ sub finish
   $object->WriteData();
 }
 
-sub FileIsNewer
-{
-  my $fileName = shift;
-  my $mtime = shift;
-  
-  my $statInfo = stat($fileName);
-  
-  if (!defined($statInfo)) {
-    # If the file doesn't exist it can't be newer
-    return 0;
-  }
-  
-  return ($statInfo->mtime > $mtime);
-}
-
-sub ShouldGenerateFiles
-{
-  my $object = shift;
-  my $dataNode = shift;  
-  my $name = shift;
-
-  my $idlmtime = stat($dataNode->fileName)->mtime;
-  
-  if (FileIsNewer("$outputDir/JS$name.h", $idlmtime)) {
-    return 0;
-  }
-
-  if (FileIsNewer("$outputDir/JS$name.cpp", $idlmtime)) {
-    return 0;
-  }
-  
-#  my $headerFileName = ;
-#  my $implFileName = "$outputDir/JS$name.cpp";
-
-  return 1;
-}
-
 # Params: 'domClass' struct
 sub GenerateInterface
 {
@@ -121,10 +84,7 @@ sub GenerateInterface
   # FIXME: Check dates to see if we need to re-generate anything
   
   # Start actual generation..
-#  print "  |  |>  Generating header...\n";
   $object->GenerateHeader($dataNode);
-  
-#  print "  |  |>  Generating implementation...\n";
   $object->GenerateImplementation($dataNode);
 
   my $name = $dataNode->name;
@@ -135,8 +95,6 @@ sub GenerateInterface
 
   open($IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
   open($HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
-
-#  print " |-\n |\n";
 }
 
 # Params: 'idlDocument' struct
@@ -193,7 +151,7 @@ sub AddIncludesForType
   } elsif ($type eq "Attr" or
            $type eq "Element") {
     $implIncludes{"dom_elementimpl.h"} = 1;
-  } elsif ($type eq "CSSStyleSheet") {
+  } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
   } elsif ($type eq "HTMLDocument") {
     $implIncludes{"HTMLDocument.h"} = 1;
@@ -410,6 +368,7 @@ sub GenerateImplementation
   # - Add default header template
   @implContentHeader = split("\r", $headerTemplate);
   push(@implContentHeader, "\n");
+  push(@implContentHeader,, "#include \"config.h\"\n");
   push(@implContentHeader, "#include \"$className.h\"\n\n");
 
 
@@ -784,6 +743,7 @@ sub TypeCanFailConversion
   } elsif ($type eq "Node") {
       return 0;
   } elsif ($type eq "Attr") {
+      $implIncludes{"ExceptionCode.h"} = 1;
       return 1;
   } elsif ($type eq "DocumentType") {
       return 0;
@@ -885,6 +845,7 @@ sub NativeToJSValue
     return "toJS(exec, $value)";
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     # Add necessary includes
+    $implIncludes{"css_stylesheetimpl.h"} = 1;
     $implIncludes{"css_ruleimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value)";    
@@ -898,7 +859,7 @@ sub NativeToJSValue
     $implIncludes{"HTMLCanvasElement.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "CanvasGradient") {
-    $implIncludes{"kjs_html.h"} = 1;
+    $implIncludes{"JSCanvasGradient.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "Range") {
     $implIncludes{"JSRange.h"} = 1;

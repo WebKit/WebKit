@@ -57,6 +57,10 @@ Range::Range(Document* ownerDocument,
 {
 }
 
+Range::~Range()
+{
+}
+
 Node *Range::startContainer(ExceptionCode& ec) const
 {
     if (m_detached) {

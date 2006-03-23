@@ -1,3 +1,38 @@
+2006-03-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        Handle dependencies for derived sources properly.
+
+        - Made a new generate-derived-sources script that does all the depedency checking
+        and source generation.
+        - Put this script in a subtarget instead of a phase.
+        - Made derived sources go in the build root, not a source root.
+        - Added derived sources to the project.
+        - Removed files whose sole purpose was to include and compile derived sources,
+        just compile those directly for now.
+        - Tweaked the IDL code generator so it can handle one IDL at a time, to make
+        it easier to get the dependencies right.
+        
+        * generate-derived-sources: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMCore.cpp: Removed.
+        * bindings/js/JSDOMEvents.cpp: Removed.
+        * bindings/js/JSDOMHTML.cpp: Removed.
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/generate-bindings.pl:
+        * css/UserAgentStyleSheets.cpp: Removed.
+        * dom/Range.cpp:
+        (WebCore::Range::~Range):
+        * dom/Range.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMStyleSheet::DOMStyleSheet):
+        (KJS::DOMStyleSheetList::DOMStyleSheetList):
+        (KJS::DOMCSSRuleList::DOMCSSRuleList):
+        (KJS::DOMCSSRule::DOMCSSRule):
+        * khtml/ecma/kjs_css.h:
+
 2006-03-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
