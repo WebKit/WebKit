@@ -1,3 +1,19 @@
+2006-03-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7904>
+        Avoid a layout after test insertion and remove isProbablyBlock
+        
+        Added:
+        * editing/pasteboard/display-block-on-spans-expected.txt: Added.
+        * editing/pasteboard/display-block-on-spans-expected.png: Added.
+        * editing/pasteboard/display-block-on-spans-expected.checksum: Added.
+        * editing/pasteboard/display-block-on-spans.html: Added.
+        
+        I'm disabling this layout test because of 7899:
+        * editing/pasteboard/paste-empty-startcontainer.html
+
 2006-03-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

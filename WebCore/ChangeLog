@@ -1,3 +1,27 @@
+2006-03-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7904>
+        Avoid a layout after test insertion and remove isProbablyBlock
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplacementFragment::~ReplacementFragment):
+        (WebCore::ReplacementFragment::firstChild):
+        (WebCore::ReplacementFragment::lastChild):
+        (WebCore::ReplacementFragment::mergeStartNode):
+        (WebCore::ReplacementFragment::enclosingBlock):
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        (WebCore::ReplacementFragment::computeAndStoreNodeStyles):
+        (WebCore::ReplacementFragment::removeUnrenderedNodes):
+        (WebCore::ReplacementFragment::renderedBlocks):
+        (WebCore::ReplacementFragment::removeStyleNodes):
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplacementFragment::root):
+
 2006-03-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

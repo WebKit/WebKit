@@ -1,0 +1,27 @@
+<head>
+<script src=../editing.js  type="text/javascript"></script>
+<script type="text/javascript">
+function editingTest() {
+    extendSelectionForwardByLineCommand();
+    extendSelectionForwardByWordCommand();
+    copyCommand();
+    pasteCommand();
+}
+</script>
+<title>Pasting spans with display:block</title> 
+</head> 
+<body>
+
+This is a testcase for the fix for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7904">http://bugzilla.opendarwin.org/show_bug.cgi?id=7904</a>.  ReplaceSelectionCommand used to guess whether or not nodes in the fragment to be pasted were blocks.  It now knows for sure.  Before the fix, ReplaceSelectionCommand blew away content of the div below after copy/pasting it over itself.
+
+<hr>
+
+<div contenteditable id="test">
+<span style="display:block"><b>This is a paragraph.</b></span>
+<span style="display:block"><b>This is another paragraph.</b></span>
+</div>
+
+<script>runEditingTest();</script>
+
+</body>
+</html>
