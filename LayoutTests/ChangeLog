@@ -1,3 +1,14 @@
+2006-03-23  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed, tweaked, and landed by Beth.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6431
+
+        * fast/css-generated-content/hover-style-change-expected.checksum: Added.
+        * fast/css-generated-content/hover-style-change-expected.png: Added.
+        * fast/css-generated-content/hover-style-change-expected.txt: Added.
+        * fast/css-generated-content/hover-style-change.html: Added.
+
 2006-03-23  Adele Peterson  <adele@apple.com>
 
         - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7935
