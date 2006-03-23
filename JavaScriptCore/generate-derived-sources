@@ -38,7 +38,7 @@ fi
 if [ kjs/grammar.y -nt "$DerivedSourcesDir/grammar.cpp" -o kjs/grammar.y -nt "$DerivedSourcesDir/grammar.h" ]; then
   echo "Generating the JS grammar using bison..."
   bison -d -p kjsyy kjs/grammar.y -o "$DerivedSourcesDir/grammar.cpp"
-  mv "$DerivedSourcesDir/grammar.cpp.h" "$DerivedSourcesDir/grammar.h"
+  cat "$DerivedSourcesDir/grammar.cpp.h" "$DerivedSourcesDir/grammar.hpp" > "$DerivedSourcesDir/grammar.h" 2>/dev/null
 fi
 
 if [ "$BUILT_PRODUCTS_DIR/dftables" -nt "$DerivedSourcesDir/chartables.c" ]; then

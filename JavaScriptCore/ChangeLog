@@ -1,3 +1,13 @@
+2006-03-23  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed and landed by Maciej.
+
+        - WebKit no longer builds with bison 2.1
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7923
+
+        * generate-derived-sources:  Handle generated header named either grammar.cpp.h
+        or grammar.hpp.
+
 2006-03-22  Maciej Stachowiak  <mjs@apple.com>
 
         - fix the build
