@@ -2698,20 +2698,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
     case CSS_PROP_MAX_HEIGHT:
-        if(primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE)
+        if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE) {
+            l = Length(undefinedLength, Fixed);
             apply = true;
+        }
     case CSS_PROP_HEIGHT:
     case CSS_PROP_MIN_HEIGHT:
         if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_INTRINSIC) {
             l = Length(Intrinsic);
             apply = true;
-        }
-        else if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_MIN_INTRINSIC) {
+        } else if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_MIN_INTRINSIC) {
             l = Length(MinIntrinsic);
             apply = true;
-        }
-        if(id != CSS_PROP_MAX_HEIGHT && primitiveValue &&
-           primitiveValue->getIdent() == CSS_VAL_AUTO)
+        } else if (id != CSS_PROP_MAX_HEIGHT && primitiveValue && primitiveValue->getIdent() == CSS_VAL_AUTO)
             apply = true;
         if (isInherit) {
             HANDLE_INHERIT_COND(CSS_PROP_MAX_HEIGHT, maxHeight, MaxHeight)
@@ -2719,41 +2718,35 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             HANDLE_INHERIT_COND(CSS_PROP_MIN_HEIGHT, minHeight, MinHeight)
             return;
         }
-        else if (isInitial) {
+        if (isInitial) {
             HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MAX_HEIGHT, MaxHeight, MaxSize)
             HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_HEIGHT, Height, Size)
             HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_MIN_HEIGHT, MinHeight, MinSize)
             return;
         }
 
-        if (primitiveValue && !apply)
-        {
-            int type = primitiveValue->primitiveType();
-            if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
+        if (primitiveValue && !apply) {
+            unsigned short type = primitiveValue->primitiveType();
+            if (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
                 l = Length(primitiveValue->computeLength(style), Fixed);
-            else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            {
-                // ### compute from parents height!!!
+            else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 l = Length((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-            }
             else
                 return;
             apply = true;
         }
-        if(!apply) return;
-        switch(id)
-        {
-        case CSS_PROP_MAX_HEIGHT:
-            style->setMaxHeight(l); break;
-        case CSS_PROP_HEIGHT:
-            style->setHeight(l); break;
-        case CSS_PROP_MIN_HEIGHT:
-            style->setMinHeight(l); break;
-        default:
-            return;
-        }
-        return;
-
+        if (apply)
+            switch (id) {
+                case CSS_PROP_MAX_HEIGHT:
+                    style->setMaxHeight(l);
+                    break;
+                case CSS_PROP_HEIGHT:
+                    style->setHeight(l);
+                    break;
+                case CSS_PROP_MIN_HEIGHT:
+                    style->setMinHeight(l);
+                    break;
+            }
         break;
 
     case CSS_PROP_VERTICAL_ALIGN:

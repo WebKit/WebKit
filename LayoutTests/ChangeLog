@@ -1,3 +1,14 @@
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - test for <rdar://problem/4335038> REGRESSION: when max-height is none, height value is ignored
+
+        * fast/css/max-height-none-expected.checksum: Added.
+        * fast/css/max-height-none-expected.txt: Added.
+        * fast/css/max-height-none.html: Added.
+        * fast/css/max-height-none-expected.png: Added.
+
 2006-03-23  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed, tweaked, and landed by Beth.

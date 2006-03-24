@@ -1,3 +1,14 @@
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - fix <rdar://problem/4335038> REGRESSION: when max-height is none, height value is ignored
+
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::applyProperty):
+        For max-height of none, set it to Length(undefinedLength, Fixed), which
+        is the correct value (same as the default). Also did some formatting fixes
+        to the height section.
+
 2006-03-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin
