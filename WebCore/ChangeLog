@@ -3,7 +3,7 @@
         Reviewed by mjs.
 
         Fix win32 build.
-        Uninify mac/win dependency handling.
+        Unify mac/win dependency handling.
         Fix class vs. struct linker problem for win32.
 
         * WebCore.vcproj/WebCore/WebCore.vcproj: Add DerivedSources
