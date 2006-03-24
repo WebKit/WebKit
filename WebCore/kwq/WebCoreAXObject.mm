@@ -142,7 +142,7 @@ using namespace HTMLNames;
     RenderObject* currRenderer;
     for (currRenderer = m_renderer; currRenderer && !currRenderer->element(); currRenderer = currRenderer->parent()) {
         if (currRenderer->continuation())
-            return [currRenderer->document()->getAccObjectCache()->accObject(currRenderer->continuation()) anchorElement];
+            return [currRenderer->document()->getAccObjectCache()->get(currRenderer->continuation()) anchorElement];
     }
     
     // bail of none found
@@ -199,38 +199,38 @@ using namespace HTMLNames;
 {
     if (!m_renderer || !m_renderer->firstChild())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->firstChild());
+    return m_renderer->document()->getAccObjectCache()->get(m_renderer->firstChild());
 }
 
 -(WebCoreAXObject*)lastChild
 {
     if (!m_renderer || !m_renderer->lastChild())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->lastChild());
+    return m_renderer->document()->getAccObjectCache()->get(m_renderer->lastChild());
 }
 
 -(WebCoreAXObject*)previousSibling
 {
     if (!m_renderer || !m_renderer->previousSibling())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->previousSibling());
+    return m_renderer->document()->getAccObjectCache()->get(m_renderer->previousSibling());
 }
 
 -(WebCoreAXObject*)nextSibling
 {
     if (!m_renderer || !m_renderer->nextSibling())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->nextSibling());
+    return m_renderer->document()->getAccObjectCache()->get(m_renderer->nextSibling());
 }
 
 -(WebCoreAXObject*)parentObject
 {
     if (m_areaElement)
-        return m_renderer->document()->getAccObjectCache()->accObject(m_renderer);
+        return m_renderer->document()->getAccObjectCache()->get(m_renderer);
 
     if (!m_renderer || !m_renderer->parent())
         return nil;
-    return m_renderer->document()->getAccObjectCache()->accObject(m_renderer->parent());
+    return m_renderer->document()->getAccObjectCache()->get(m_renderer->parent());
 }
 
 -(WebCoreAXObject*)parentObjectUnignored
@@ -820,7 +820,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             while (curr) {
                 RenderObject *obj = curr->renderer();
                 if (obj) {
-                    WebCoreAXObject *axobj = obj->document()->getAccObjectCache()->accObject(obj);
+                    WebCoreAXObject *axobj = obj->document()->getAccObjectCache()->get(obj);
                     ASSERT([[axobj role] isEqualToString:@"AXLink"]);
                     if (![axobj accessibilityIsIgnored])
                         [links addObject: axobj];
@@ -962,7 +962,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (!obj)
         return nil;
     
-    return obj->document()->getAccObjectCache()->accObject(obj);
+    return obj->document()->getAccObjectCache()->get(obj);
 }
 
 - (id)doAXTextMarkerRangeForUIElement: (id) uiElement
@@ -1275,12 +1275,12 @@ static WebCoreAXObject *AXLinkElementForNode (Node *node)
     if (!obj)
         return nil;
 
-    WebCoreAXObject *axObj = obj->document()->getAccObjectCache()->accObject(obj);
+    WebCoreAXObject *axObj = obj->document()->getAccObjectCache()->get(obj);
     HTMLAnchorElement* anchor = [axObj anchorElement];
     if (!anchor || !anchor->renderer())
         return nil;
 
-    return anchor->renderer()->document()->getAccObjectCache()->accObject(anchor->renderer());
+    return anchor->renderer()->document()->getAccObjectCache()->get(anchor->renderer());
 }
 
 static void AXAttributedStringAppendText (NSMutableAttributedString *attrString, Node *nodeImpl, const QChar *chars, int length)
@@ -1326,7 +1326,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     }
         
     // create an AX object, but skip it if it is not supposed to be seen
-    WebCoreAXObject *obj = replacedNode->renderer()->document()->getAccObjectCache()->accObject(replacedNode->renderer());
+    WebCoreAXObject *obj = replacedNode->renderer()->document()->getAccObjectCache()->get(replacedNode->renderer());
     if ([obj accessibilityIsIgnored])
         return;
     
@@ -1780,8 +1780,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!obj)
         return NSAccessibilityUnignoredAncestor(self);
     
-    WebCoreAXObject * accObject = obj->document()->getAccObjectCache()->accObject(obj);
-    return NSAccessibilityUnignoredAncestor(accObject);
+    return NSAccessibilityUnignoredAncestor(obj->document()->getAccObjectCache()->get(obj));
 }
 
 - (RenderObject *) rendererForView:(NSView *)view
@@ -1824,7 +1823,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!renderer)
         return nil;
         
-    WebCoreAXObject* obj = renderer->document()->getAccObjectCache()->accObject(renderer);
+    WebCoreAXObject* obj = renderer->document()->getAccObjectCache()->get(renderer);
     return [obj parentObjectUnignored];
 }
 
@@ -1835,7 +1834,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!focusNode || !focusNode->renderer())
         return nil;
 
-    WebCoreAXObject* obj = focusNode->renderer()->document()->getAccObjectCache()->accObject(focusNode->renderer());
+    WebCoreAXObject* obj = focusNode->renderer()->document()->getAccObjectCache()->get(focusNode->renderer());
     
     // the HTML element, for example, is focusable but has an AX object that is ignored
     if ([obj accessibilityIsIgnored])
@@ -1921,22 +1920,21 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     m_children = nil;
 }
 
--(WebCoreAXID)axObjectID
+-(AXID)axObjectID
 {
-    return m_accObjectID;
+    return m_id;
 }
 
--(void)setAXObjectID:(WebCoreAXID) axObjectID
+-(void)setAXObjectID:(AXID) axObjectID
 {
-    m_accObjectID = axObjectID;
+    m_id = axObjectID;
 }
 
 - (void)removeAXObjectID
 {
-    if (!m_accObjectID)
+    if (!m_id)
         return;
-
-    m_renderer->document()->getAccObjectCache()->removeAXObjectID(self);
+    m_renderer->document()->getAccObjectCache()->removeAXID(self);
 }
 
 @end

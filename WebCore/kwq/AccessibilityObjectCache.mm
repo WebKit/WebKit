@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,208 +23,159 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "AccessibilityObjectCache.h"
 
-#import "WebCoreAXObject.h"
-#import <kxmlcore/Assertions.h>
-#import "FoundationExtras.h"
-#import "RenderObject.h"
-#import "WebCoreViewFactory.h"
 #import "Document.h"
-
-using namespace WebCore;
+#import "RenderObject.h"
+#import "VisiblePosition.h"
+#import "WebCoreAXObject.h"
+#import "WebCoreViewFactory.h"
+#import <kxmlcore/Assertions.h>
 
 // The simple Cocoa calls in this file don't throw exceptions.
 
-bool AccessibilityObjectCache::gAccessibilityEnabled = false;
+namespace WebCore {
 
-typedef struct KWQTextMarkerData  {
-    WebCoreAXID  axObjectID;
-    Node*  nodeImpl;
-    int             offset;
-    EAffinity       affinity;
+struct TextMarkerData  {
+    AXID axID;
+    Node* node;
+    int offset;
+    EAffinity affinity;
 };
 
-AccessibilityObjectCache::AccessibilityObjectCache()
-{
-    accCache = NULL;
-    accCacheByID = NULL;
-    accObjectIDSource = 0;
-}
+bool AccessibilityObjectCache::gAccessibilityEnabled = false;
 
 AccessibilityObjectCache::~AccessibilityObjectCache()
 {
-    // Destroy the dictionary
-    if (accCache)
-        CFRelease(accCache);
-        
-    // Destroy the ID lookup dictionary
-    if (accCacheByID) {
-        // accCacheByID should have been emptied by releasing accCache
-        ASSERT(CFDictionaryGetCount(accCacheByID) == 0);
-        CFRelease(accCacheByID);
+    HashMap<RenderObject*, WebCoreAXObject*>::iterator end = m_objects.end();
+    for (HashMap<RenderObject*, WebCoreAXObject*>::iterator it = m_objects.begin(); it != end; ++it) {
+        WebCoreAXObject* obj = (*it).second;
+        [obj detach];
+        CFRelease(obj);
     }
 }
 
-WebCoreAXObject* AccessibilityObjectCache::accObject(RenderObject* renderer)
+WebCoreAXObject* AccessibilityObjectCache::get(RenderObject* renderer)
 {
-    if (!accCache)
-        // No need to retain/free either impl key, or id value.
-        accCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    
-    WebCoreAXObject* obj = (WebCoreAXObject*)CFDictionaryGetValue(accCache, renderer);
-    if (!obj) {
-        obj = [[WebCoreAXObject alloc] initWithRenderer: renderer]; // Initial ref happens here.
-        setAccObject(renderer, obj);
-    }
+    WebCoreAXObject* obj = m_objects.get(renderer);
+    if (obj)
+        return obj;
 
+    obj = [[WebCoreAXObject alloc] initWithRenderer:renderer];
+    CFRetain(obj);
+    m_objects.set(renderer, obj);
+    [obj release];
     return obj;
 }
 
-void AccessibilityObjectCache::setAccObject(RenderObject* impl, WebCoreAXObject* accObject)
+void AccessibilityObjectCache::remove(RenderObject* renderer)
 {
-    if (!accCache)
-        // No need to retain/free either impl key, or id value.
-        accCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    
-    CFDictionarySetValue(accCache, (const void *)impl, accObject);
-    ASSERT(!accCacheByID || CFDictionaryGetCount(accCache) >= CFDictionaryGetCount(accCacheByID));
-}
-
-void AccessibilityObjectCache::removeAccObject(RenderObject* impl)
-{
-    if (!accCache)
+    HashMap<RenderObject*, WebCoreAXObject*>::iterator it = m_objects.find(renderer);
+    if (it == m_objects.end())
         return;
+    WebCoreAXObject* obj = (*it).second;
+    [obj detach];
+    CFRelease(obj);
+    m_objects.remove(it);
 
-    WebCoreAXObject* obj = (WebCoreAXObject*)CFDictionaryGetValue(accCache, impl);
-    if (obj) {
-        [obj detach];
-        [obj release];
-        CFDictionaryRemoveValue(accCache, impl);
-    }
-
-    ASSERT(!accCacheByID || CFDictionaryGetCount(accCache) >= CFDictionaryGetCount(accCacheByID));
+    ASSERT(m_objects.size() >= m_idsInUse.size());
 }
 
-WebCoreAXID AccessibilityObjectCache::getAccObjectID(WebCoreAXObject* accObject)
+AXID AccessibilityObjectCache::getAXID(WebCoreAXObject* obj)
 {
-    WebCoreAXID  axObjectID;
-
-    // create the ID table as needed
-    if (accCacheByID == NULL)
-        accCacheByID = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    
     // check for already-assigned ID
-    axObjectID = [accObject axObjectID];
-    if (axObjectID != 0) {
-        ASSERT(CFDictionaryContainsKey(accCacheByID, (const void *)axObjectID));
-        return axObjectID;
+    AXID objID = [obj axObjectID];
+    if (objID) {
+        ASSERT(m_idsInUse.contains(objID));
+        return objID;
     }
-    
+
     // generate a new ID
-    axObjectID = accObjectIDSource + 1;
-    while (axObjectID == 0 || CFDictionaryContainsKey(accCacheByID, (const void *)axObjectID)) {
-        ASSERT(axObjectID != accObjectIDSource);   // check for exhaustion
-        axObjectID += 1;
-    }
-    accObjectIDSource = axObjectID;
+    static AXID lastUsedID = 0;
+    objID = lastUsedID;
+    do
+        ++objID;
+    while (objID == 0 || objID == AXIDHashTraits::deletedValue() || m_idsInUse.contains(objID));
+    m_idsInUse.add(objID);
+    lastUsedID = objID;
+    [obj setAXObjectID:objID];
 
-    // assign the new ID to the object
-    [accObject setAXObjectID:axObjectID];
-    
-    // add the object to the ID table
-    CFDictionarySetValue(accCacheByID, (const void *)axObjectID, accObject);
-    ASSERT(CFDictionaryContainsKey(accCacheByID, (const void *)axObjectID));
-    
-    return axObjectID;
+    return objID;
 }
 
-void AccessibilityObjectCache::removeAXObjectID(WebCoreAXObject* accObject)
+void AccessibilityObjectCache::removeAXID(WebCoreAXObject* obj)
 {
-    // retrieve and clear the ID from the object, nothing to do if it was never assigned
-    WebCoreAXID  axObjectID = [accObject axObjectID];
-    if (axObjectID == 0)
+    AXID objID = [obj axObjectID];
+    if (objID == 0)
         return;
-    [accObject setAXObjectID:0];
-    
-    // remove the element from the lookup table
-    ASSERT(accCacheByID != NULL);
-    ASSERT(CFDictionaryContainsKey(accCacheByID, (const void *)axObjectID));
-    CFDictionaryRemoveValue(accCacheByID, (const void *)axObjectID);
+    ASSERT(objID != AXIDHashTraits::deletedValue());
+    ASSERT(m_idsInUse.contains(objID));
+    [obj setAXObjectID:0];
+    m_idsInUse.remove(objID);
 }
 
-WebCoreTextMarker *AccessibilityObjectCache::textMarkerForVisiblePosition (const VisiblePosition &visiblePos)
+WebCoreTextMarker* AccessibilityObjectCache::textMarkerForVisiblePosition(const VisiblePosition& visiblePos)
 {
     Position deepPos = visiblePos.deepEquivalent();
     Node* domNode = deepPos.node();
-    ASSERT(domNode != NULL);
-    if (domNode == NULL)
+    ASSERT(domNode);
+    if (!domNode)
         return nil;
     
     // locate the renderer, which must exist for a visible dom node
     RenderObject* renderer = domNode->renderer();
-    ASSERT(renderer != NULL);
+    ASSERT(renderer);
     
     // find or create an accessibility object for this renderer
-    WebCoreAXObject* accObject = this->accObject(renderer);
+    WebCoreAXObject* obj = get(renderer);
     
     // create a text marker, adding an ID for the WebCoreAXObject if needed
-    KWQTextMarkerData textMarkerData;
-    textMarkerData.axObjectID = getAccObjectID(accObject);
-    textMarkerData.nodeImpl = domNode;
+    TextMarkerData textMarkerData;
+    textMarkerData.axID = getAXID(obj);
+    textMarkerData.node = domNode;
     textMarkerData.offset = deepPos.offset();
     textMarkerData.affinity = visiblePos.affinity();
     return [[WebCoreViewFactory sharedFactory] textMarkerWithBytes:&textMarkerData length:sizeof(textMarkerData)]; 
 }
 
-VisiblePosition AccessibilityObjectCache::visiblePositionForTextMarker(WebCoreTextMarker *textMarker)
+VisiblePosition AccessibilityObjectCache::visiblePositionForTextMarker(WebCoreTextMarker* textMarker)
 {
-    KWQTextMarkerData textMarkerData;
+    TextMarkerData textMarkerData;
     
     if (![[WebCoreViewFactory sharedFactory] getBytes:&textMarkerData fromTextMarker:textMarker length:sizeof(textMarkerData)])
         return VisiblePosition();
-    
+
     // return empty position if the text marker is no longer valid
-    if (!accCacheByID || !CFDictionaryContainsKey(accCacheByID, (const void *)textMarkerData.axObjectID))
+    if (!m_idsInUse.contains(textMarkerData.axID))
         return VisiblePosition();
 
     // return the position from the data we stored earlier
-    return VisiblePosition(textMarkerData.nodeImpl, textMarkerData.offset, textMarkerData.affinity);
-}
-
-void AccessibilityObjectCache::detach(RenderObject* renderer)
-{
-    removeAccObject(renderer);
+    return VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
 }
 
 void AccessibilityObjectCache::childrenChanged(RenderObject* renderer)
 {
-    if (!accCache)
-        return;
-    
-    WebCoreAXObject* obj = (WebCoreAXObject*)CFDictionaryGetValue(accCache, renderer);
-    if (!obj)
-        return;
-    
-    [obj childrenChanged];
+    WebCoreAXObject* obj = m_objects.get(renderer);
+    if (obj)
+        [obj childrenChanged];
 }
 
-void AccessibilityObjectCache::postNotificationToTopWebArea(RenderObject* renderer, const String& msg)
-{
-    if (renderer) {
-        RenderObject * obj = renderer->document()->topDocument()->renderer();
-        NSAccessibilityPostNotification(accObject(obj), msg);
-    }
-}
-
-void AccessibilityObjectCache::postNotification(RenderObject* renderer, const String& msg)
+void AccessibilityObjectCache::postNotificationToTopWebArea(RenderObject* renderer, const String& message)
 {
     if (renderer)
-        NSAccessibilityPostNotification(accObject(renderer), msg);
+        NSAccessibilityPostNotification(get(renderer->document()->topDocument()->renderer()), message);
+}
+
+void AccessibilityObjectCache::postNotification(RenderObject* renderer, const String& message)
+{
+    if (renderer)
+        NSAccessibilityPostNotification(get(renderer), message);
 }
 
 void AccessibilityObjectCache::handleFocusedUIElementChanged()
 {
     [[WebCoreViewFactory sharedFactory] accessibilityHandleFocusChanged];
+}
+
 }

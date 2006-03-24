@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __APPLE__
-
-#include <CoreFoundation/CoreFoundation.h>
-
-#include "VisiblePosition.h"
+#include <kxmlcore/HashMap.h>
+#include <kxmlcore/HashSet.h>
 
 #ifdef __OBJC__
 @class WebCoreAXObject;
@@ -38,48 +35,55 @@ class WebCoreTextMarker;
 #endif
 
 namespace WebCore {
+
     class RenderObject;
+    class String;
     class VisiblePosition;
-}
 
-typedef unsigned int        WebCoreAXID;
+    typedef unsigned AXID;
 
-class AccessibilityObjectCache
-{
-public:
-    AccessibilityObjectCache();
-    ~AccessibilityObjectCache();
-    
-    WebCoreAXObject* accObject(WebCore::RenderObject* renderer);
-    void setAccObject(WebCore::RenderObject* renderer, WebCoreAXObject* obj);
-    void removeAccObject(WebCore::RenderObject* renderer);
+    struct AXIDHashTraits : KXMLCore::GenericHashTraits<unsigned> {
+        static TraitType deletedValue() { return UINT_MAX; }
+    };
 
-    WebCoreAXID getAccObjectID(WebCoreAXObject* accObject);
-    void removeAXObjectID(WebCoreAXObject* accObject);
+    class AccessibilityObjectCache {
+    public:
+        ~AccessibilityObjectCache();
 
-    WebCoreTextMarker *textMarkerForVisiblePosition(const WebCore::VisiblePosition &);
-    WebCore::VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker *textMarker);
+        WebCoreAXObject* get(RenderObject*);
+        void remove(RenderObject*);
 
-    void detach(WebCore::RenderObject* renderer);
-    
-    void childrenChanged(WebCore::RenderObject* renderer);
+        void removeAXID(WebCoreAXObject*);
 
-    void postNotification(WebCore::RenderObject* renderer, const WebCore::String& msg);
-    void postNotificationToTopWebArea(WebCore::RenderObject* renderer, const WebCore::String& msg);
-    void handleFocusedUIElementChanged(void);
-    
-    static void enableAccessibility() { gAccessibilityEnabled = true; }
-    static bool accessibilityEnabled() { return gAccessibilityEnabled; }
+        WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition&);
+        VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker*);
+        
+        void childrenChanged(RenderObject*);
+        void postNotification(RenderObject*, const String& message);
+        void postNotificationToTopWebArea(RenderObject*, const String& message);
+        void handleFocusedUIElementChanged();
+        
+        static void enableAccessibility() { gAccessibilityEnabled = true; }
+        static bool accessibilityEnabled() { return gAccessibilityEnabled; }
 
-private:
-    static bool gAccessibilityEnabled;
+    private:
+        static bool gAccessibilityEnabled;
 
-private:
-    CFMutableDictionaryRef accCache;
-    CFMutableDictionaryRef accCacheByID;
-    WebCoreAXID accObjectIDSource;
-};
-#else
-class AccessibilityObjectCache;
+        AXID getAXID(WebCoreAXObject*);
+
+        HashMap<RenderObject*, WebCoreAXObject*> m_objects;
+        HashSet<AXID, PtrHash<AXID>, AXIDHashTraits> m_idsInUse;
+    };
+
+#ifndef __APPLE__
+    inline AccessibilityObjectCache::~AccessibilityObjectCache() { }
+    inline WebCoreAXObject* AccessibilityObjectCache::get(RenderObject*) { return 0; }
+    inline void AccessibilityObjectCache::remove(RenderObject*) { }
+    inline void AccessibilityObjectCache::removeAXID(WebCoreAXObject*) { }
+    inline void AccessibilityObjectCache::childrenChanged(RenderObject*) { }
+    inline void AccessibilityObjectCache::postNotification(RenderObject*, const String&) { }
+    inline void AccessibilityObjectCache::postNotificationToTopWebArea(RenderObject*, const String&) { }
+    inline void AccessibilityObjectCache::handleFocusedUIElementChanged() { }
 #endif
 
+}

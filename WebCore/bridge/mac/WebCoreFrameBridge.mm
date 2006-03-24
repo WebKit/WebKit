@@ -1554,13 +1554,15 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         view->adjustViewSize();
 }
 
--(id)accessibilityTree
+- (id)accessibilityTree
 {
     AccessibilityObjectCache::enableAccessibility();
-    if (!m_frame || !m_frame->document()) return nil;
+    if (!m_frame || !m_frame->document())
+        return nil;
     RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
-    if (!root) return nil;
-    return m_frame->document()->getAccObjectCache()->accObject(root);
+    if (!root)
+        return nil;
+    return m_frame->document()->getAccObjectCache()->get(root);
 }
 
 - (void)setDrawsBackground:(BOOL)drawsBackground

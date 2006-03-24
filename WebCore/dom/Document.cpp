@@ -341,7 +341,7 @@ Document::~Document()
 
     deleteAllValues(m_markers);
 
-    if (m_accCache){
+    if (m_accCache) {
         delete m_accCache;
         m_accCache = 0;
     }
@@ -932,10 +932,8 @@ void Document::detach()
     setRenderer(0);
     
     if (m_inPageCache) {
-#if __APPLE__
         if (render)
-            getAccObjectCache()->detach(render);
-#endif
+            getAccObjectCache()->remove(render);
         return;
     }
 
@@ -991,9 +989,8 @@ void Document::removeAllDisconnectedNodeEventListeners()
     m_disconnectedNodesWithEventListeners.clear();
 }
 
-AccessibilityObjectCache* Document::getAccObjectCache()
+AccessibilityObjectCache* Document::getAccObjectCache() const
 {
-#if __APPLE__
     // The only document that actually has a AccessibilityObjectCache is the top-level
     // document.  This is because we need to be able to get from any WebCoreAXObject
     // to any other WebCoreAXObject on the same page.  Using a single cache allows
@@ -1012,13 +1009,12 @@ AccessibilityObjectCache* Document::getAccObjectCache()
     }
 
     // ask the top-level document for its cache
-    Document *doc = topDocument();
+    Document* doc = topDocument();
     if (doc != this)
         return doc->getAccObjectCache();
     
     // this is the top-level document, so install a new cache
     m_accCache = new AccessibilityObjectCache;
-#endif
     return m_accCache;
 }
 
@@ -2339,7 +2335,7 @@ void Document::imageLoadEventTimerFired(Timer<Document>*)
     dispatchImageLoadEventsNow();
 }
 
-Element *Document::ownerElement()
+Element *Document::ownerElement() const
 {
     if (!frame())
         return 0;

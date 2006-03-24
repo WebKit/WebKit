@@ -2031,21 +2031,17 @@ void RenderObject::removeFromObjectLists()
 
 RenderArena* RenderObject::renderArena() const
 {
-    WebCore::Document* doc = document();
+    Document* doc = document();
     return doc ? doc->renderArena() : 0;
 }
 
 void RenderObject::remove()
 {
-#if __APPLE__
-    // Delete our accessibility object if we have one.
-    document()->getAccObjectCache()->detach(this);
-#endif
+    document()->getAccObjectCache()->remove(this);
 
     removeFromObjectLists();
 
     if (parent())
-        //have parent, take care of the tree integrity
         parent()->removeChild(this);
     
     deleteLineBoxWrapper();

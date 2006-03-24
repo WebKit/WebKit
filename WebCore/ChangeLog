@@ -1,5 +1,66 @@
 2006-03-23  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - fix <rdar://problem/4484787> KWQAccObject dangles under GC
+
+        * kwq/AccessibilityObjectCache.h: Moved AccessibilityObjectCache into the WebCore
+        namespace. Renamed accObject to get, removed setAccObject, renamed removeAccObject
+        to remove, removed getAccObjectID, renamed removeAXObjectID to removeAXID, change
+        from CF dictionaries to HashMap and HashSet.
+        * kwq/AccessibilityObjectCache.mm:
+        (WebCore::AccessibilityObjectCache::~AccessibilityObjectCache): Detach all objects
+        and call CFRelease on all of them.
+        (WebCore::AccessibilityObjectCache::get): Call CFRetain on objects before putting
+        them in the HashMap, rather than assuming that retain == CFRetain. This is what
+        fixes the GC issue.
+        (WebCore::AccessibilityObjectCache::remove): Detach and call CFRelease when removing.
+        (WebCore::AccessibilityObjectCache::getAXID): Change to use a single global variable
+        for the AXIDs, which makes it so we won't reuse the same AXID as much as we did before.
+        (WebCore::AccessibilityObjectCache::removeAXID): Updated to use HashSet.
+        (WebCore::AccessibilityObjectCache::textMarkerForVisiblePosition): Updated for other changes.
+        (WebCore::AccessibilityObjectCache::visiblePositionForTextMarker): Ditto.
+        (WebCore::AccessibilityObjectCache::childrenChanged): Ditto.
+        (WebCore::AccessibilityObjectCache::postNotificationToTopWebArea): Ditto.
+        (WebCore::AccessibilityObjectCache::postNotification): Ditto.
+
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge accessibilityTree]):
+        Change to use functions by new names.
+
+        * dom/Document.h: AccessibilityObjectCache is now in the WebCore namespace.
+        getAccObjectCache and ownerElement are const member functions, and m_accCache
+        is a mutable data member.
+        * dom/Document.cpp:
+        (WebCore::Document::getAccObjectCache): Make const.
+        (WebCore::Document::ownerElement): Make const.
+
+        * kwq/WebCoreAXObject.h: Changed WebCoreAXID to WebCore::AXID.
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject anchorElement]): Update for function name change.
+        (-[WebCoreAXObject firstChild]): Ditto.
+        (-[WebCoreAXObject lastChild]): Ditto.
+        (-[WebCoreAXObject previousSibling]): Ditto.
+        (-[WebCoreAXObject nextSibling]): Ditto.
+        (-[WebCoreAXObject parentObject]): Ditto.
+        (-[WebCoreAXObject accessibilityAttributeValue:]): Ditto.
+        (-[WebCoreAXObject doAXUIElementForTextMarker:]): Ditto.
+        (AXLinkElementForNode): Ditto.
+        (AXAttributedStringAppendReplaced): Ditto.
+        (-[WebCoreAXObject accessibilityHitTest:]): Ditto.
+        (-[WebCoreAXObject _accessibilityParentForSubview:]): Ditto.
+        (-[WebCoreAXObject accessibilityFocusedUIElement]): Ditto.
+        (-[WebCoreAXObject axObjectID]): Change field name to m_id.
+        (-[WebCoreAXObject setAXObjectID:]): Ditto.
+        (-[WebCoreAXObject removeAXObjectID]): Ditto.
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode): Remove ifdefs.
+        (WebCore::RenderContainer::appendChildNode): Ditto.
+        (WebCore::RenderContainer::insertChildNode): Ditto.
+        * rendering/RenderObject.cpp: (WebCore::RenderObject::remove): Ditto.
+
+2006-03-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7726
