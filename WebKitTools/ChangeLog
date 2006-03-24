@@ -1,3 +1,12 @@
+2006-03-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Build fix.
+
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::openURL): replace QString with DeprecatedString
+
 2006-03-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej

@@ -102,7 +102,7 @@ void WebFrame::loadHTMLString(char *html, char *baseURL)
     d->frame->end();
 }
 
-void WebFrame::openURL(const QString& str)
+void WebFrame::openURL(const DeprecatedString& str)
 {
    updateLocationBar(str.ascii());
    loadURL(str.ascii());
