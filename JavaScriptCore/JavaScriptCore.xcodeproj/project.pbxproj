@@ -558,11 +558,11 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				65D2CD9C09D1F54E009AB1A1 /* generate-derived-sources */,
 				65417200039E01BA0058BFEB /* kjs */,
 				65162EF108E6A21C007556CD /* kxmlcore */,
 				51856D950562EE9C008B9D83 /* bindings */,
 				65417203039E01F90058BFEB /* pcre */,
-				65D2CD9C09D1F54E009AB1A1 /* generate-derived-sources */,
 				650FDF8D09D0FCA700769E54 /* Derived Sources */,
 				932FC3C20824BB70005B3C75 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
@@ -945,9 +945,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		932F5B3E0822A1C700736975 /* include */ = {
+		932F5B3E0822A1C700736975 /* JavaScriptCore */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "include" */;
+			buildConfigurationList = 149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */;
 			buildPhases = (
 				932F5B3F0822A1C700736975 /* Headers */,
 				932F5B910822A1C700736975 /* Sources */,
@@ -1006,7 +1006,7 @@
 				93396B9D082450C500AB803D /* PBXTargetDependency */,
 				65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */,
 			);
-			name = include;
+			name = JavaScriptCore;
 			productInstallPath = "${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks";
 			productName = JavaScriptCore;
 			productReference = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */;
@@ -1085,7 +1085,7 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			targets = (
-				932F5B3E0822A1C700736975 /* include */,
+				932F5B3E0822A1C700736975 /* JavaScriptCore */,
 				935F69F508244FEA003D1A45 /* dftables */,
 				65FB3F6609D11E9100F49DEB /* Derived Sources */,
 				932F5BDA0822A1C700736975 /* testkjs */,
@@ -1220,7 +1220,7 @@
 		};
 		932F5BE70822A1C700736975 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 932F5B3E0822A1C700736975 /* include */;
+			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
 			targetProxy = 932F5BE60822A1C700736975 /* PBXContainerItemProxy */;
 		};
 		932F5BE90822A1C700736975 /* PBXTargetDependency */ = {
@@ -1276,6 +1276,7 @@
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
 					libobjc,
+					"-Wl,-Y,3",
 				);
 				PRODUCT_NAME = JavaScriptCore;
 				STYLE_LDFLAGS = "";
@@ -1313,6 +1314,7 @@
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
 					libobjc,
+					"-Wl,-Y,3",
 				);
 				PRODUCT_NAME = JavaScriptCore;
 				STYLE_LDFLAGS = "";
@@ -1350,6 +1352,7 @@
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
 					libobjc,
+					"-Wl,-Y,3",
 				);
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = (
@@ -1580,7 +1583,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "include" */ = {
+		149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				149C275E08902AFE008A9EFC /* Debug */,

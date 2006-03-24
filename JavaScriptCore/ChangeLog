@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        - fix buildbot
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Change target name to JavaScriptCore (it was "include"!?).
+        Also add -Y 3 option for linker.
+
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7726
           REGRESSION: orbitz calendar fails (JavaScript function serialization/parsing)
 
