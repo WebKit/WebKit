@@ -31,18 +31,18 @@ using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 
-class TimeScheduler;
 class Document;
 class EventListener;
-class String;
 class Node;
+class String;
+class TimeScheduler;
 
 class SVGDocumentExtensions {
 public:
     SVGDocumentExtensions(Document*);
     ~SVGDocumentExtensions();
     
-    PassRefPtr<EventListener> createSVGEventListener(const String& code, Node*);
+    PassRefPtr<EventListener> createSVGEventListener(const String& functionName, const String& code, Node*);
 
     TimeScheduler* timeScheduler() const { return m_timeScheduler; }
     

@@ -42,12 +42,11 @@ SVGDocumentExtensions::~SVGDocumentExtensions()
     delete m_timeScheduler;
 }
 
-PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const String& code, Node *node)
+PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const String& functionName, const String& code, Node *node)
 {
-    if (Frame *frame = m_doc->frame()) {
-        if (KJSProxy *proxy = frame->jScript())
-            return proxy->createSVGEventHandler(code, node);
-    }
+    if (Frame* frame = m_doc->frame())
+        if (KJSProxy* proxy = frame->jScript())
+            return proxy->createSVGEventHandler(functionName, code, node);
     return 0;
 }
 

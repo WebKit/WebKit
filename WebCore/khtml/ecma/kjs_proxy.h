@@ -42,9 +42,9 @@ public:
     ~KJSProxy();
     KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code, Node*);
     void clear();
-    EventListener* createHTMLEventHandler(const String& code, Node*);
+    EventListener* createHTMLEventHandler(const String& functionName, const String& code, Node*);
 #if SVG_SUPPORT
-    EventListener* createSVGEventHandler(const String& code, Node*);
+    EventListener* createSVGEventHandler(const String& functionName, const String& code, Node*);
 #endif
     void finishedWithEvent(Event*);
     KJS::ScriptInterpreter *interpreter();

@@ -405,7 +405,7 @@ public:
     void removeWindowEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
     bool hasWindowEventListener(const AtomicString& eventType);
 
-    PassRefPtr<EventListener> createHTMLEventListener(const String& code, Node*);
+    PassRefPtr<EventListener> createHTMLEventListener(const String& functionName, const String& code, Node*);
     
     /**
      * Searches through the document, starting from fromNode, for the next selectable element that comes after fromNode.

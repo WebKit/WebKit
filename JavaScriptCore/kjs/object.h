@@ -3,7 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -369,8 +369,8 @@ namespace KJS {
     /**
      * Implementation of the [[Construct]] internal property
      */
-    virtual JSObject *construct(ExecState *exec, const List &args);
-    virtual JSObject *construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
+    virtual JSObject* construct(ExecState* exec, const List& args);
+    virtual JSObject* construct(ExecState* exec, const List& args, const Identifier& functionName, const UString& sourceURL, int lineNumber);
 
     /**
      * Whether or not the object implements the call() method. If this returns

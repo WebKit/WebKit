@@ -2278,18 +2278,18 @@ bool Document::hasWindowEventListener(const AtomicString &eventType)
     return false;
 }
 
-PassRefPtr<EventListener> Document::createHTMLEventListener(const String& code, Node *node)
+PassRefPtr<EventListener> Document::createHTMLEventListener(const String& functionName, const String& code, Node *node)
 {
-    if (Frame *frm = frame()) {
-        if (KJSProxy *proxy = frm->jScript())
-            return proxy->createHTMLEventHandler(code, node);
-    }
+    if (Frame* frm = frame())
+        if (KJSProxy* proxy = frm->jScript())
+            return proxy->createHTMLEventHandler(functionName, code, node);
     return 0;
 }
 
 void Document::setHTMLWindowEventListener(const AtomicString& eventType, Attribute* attr)
 {
-    setHTMLWindowEventListener(eventType, createHTMLEventListener(attr->value(), 0));
+    setHTMLWindowEventListener(eventType,
+        createHTMLEventListener(attr->localName().domString(), attr->value(), 0));
 }
 
 void Document::dispatchImageLoadEventSoon(HTMLImageLoader *image)

@@ -1,3 +1,12 @@
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7726
+          REGRESSION: orbitz calendar fails (JavaScript function serialization/parsing)
+
+        * fast/js/resources/function-names.js: Added.
+        * fast/js/function-names.html: Generated.
+        * fast/js/function-names-expected.txt: Generated.
+
 2006-03-23  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

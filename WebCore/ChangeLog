@@ -1,3 +1,51 @@
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7726
+          REGRESSION: orbitz calendar fails (JavaScript function serialization/parsing)
+
+        Test: fast/js/function-names.html
+
+        * dom/Document.h: Add function name parameter to createHTMLEventListener.
+        * dom/Document.cpp:
+        (WebCore::Document::createHTMLEventListener): Pass function name when calling
+        createHTMLEventHandler.
+        (WebCore::Document::setHTMLWindowEventListener): Pass attribute name as function name
+        when calling createHTMLEventListener.
+
+        * html/HTMLElement.cpp: (WebCore::HTMLElement::setHTMLEventListener): Pass attribute
+        name as function name when calling createHTMLEventListener.
+
+        * khtml/ecma/kjs_events.h: Add a function name parameter to JSLazyEventListener.
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSLazyEventListener::JSLazyEventListener): Take and store a function name.
+        (KJS::JSLazyEventListener::parseCode): Pass function name when constructing the function.
+
+        * khtml/ecma/kjs_proxy.h: Add a function name parameter to createHTMLEventHandler and
+        createSVGEventHandler.
+        * khtml/ecma/kjs_proxy.cpp:
+        (WebCore::KJSProxy::createHTMLEventHandler): Pass function name when creating
+        a JSLazyEventListener.
+        (WebCore::KJSProxy::createSVGEventHandler): Ditto.
+
+        * ksvg2/events/JSSVGLazyEventListener.h: Add a function name parameter to
+        JSSVGLazyEventListener.
+        * ksvg2/events/JSSVGLazyEventListener.cpp:
+        (WebCore::JSSVGLazyEventListener::JSSVGLazyEventListener): Pass the function name
+        on to the base class constructor.
+
+        * ksvg2/misc/SVGDocumentExtensions.h: Add function name parameter to createSVGEventListener.
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::createSVGEventListener): Pass function name when
+        calling createSVGEventHandler.
+
+        * ksvg2/svg/SVGElement.cpp: (WebCore::SVGElement::addSVGEventListener):
+        * ksvg2/svg/SVGSVGElement.cpp: (WebCore::SVGSVGElement::addSVGWindowEventListner):
+        Pass attribute name as function name when calling createSVGEventListener.
+
+        * WebCore.xcodeproj/project.pbxproj: Moved generation script to the top.
+
 2006-03-23  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

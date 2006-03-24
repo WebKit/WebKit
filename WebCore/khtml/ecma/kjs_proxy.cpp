@@ -92,19 +92,19 @@ void KJSProxy::clear() {
   }
 }
 
-EventListener *KJSProxy::createHTMLEventHandler(const String& code, Node *node)
+EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node *node)
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSLazyEventListener(code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
+    return new JSLazyEventListener(functionName, code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
 }
 
 #if SVG_SUPPORT
-EventListener *KJSProxy::createSVGEventHandler(const String& code, Node *node)
+EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const String& code, Node *node)
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSSVGLazyEventListener(code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
+    return new JSSVGLazyEventListener(functionName, code, Window::retrieveWindow(m_frame), node, m_handlerLineno);
 }
 #endif
 

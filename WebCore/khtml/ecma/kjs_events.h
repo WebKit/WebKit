@@ -80,12 +80,13 @@ namespace KJS {
 
     class JSLazyEventListener : public JSEventListener {
     public:
-        JSLazyEventListener(const WebCore::String& code, Window*, WebCore::Node*, int lineno = 0);
-        virtual JSObject *listenerObj() const;
+        JSLazyEventListener(const WebCore::String& functionName, const WebCore::String& code, Window*, WebCore::Node*, int lineno = 0);
+        virtual JSObject* listenerObj() const;
     private:
-        virtual JSValue *eventParameterName() const;
+        virtual JSValue* eventParameterName() const;
         void parseCode() const;
 
+        mutable WebCore::String m_functionName;
         mutable WebCore::String code;
         mutable bool parsed;
         int lineNumber;

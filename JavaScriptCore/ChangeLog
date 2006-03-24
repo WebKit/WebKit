@@ -2,6 +2,28 @@
 
         Reviewed by Maciej.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7726
+          REGRESSION: orbitz calendar fails (JavaScript function serialization/parsing)
+
+        * kjs/object.h: Take function name, as well as source URL and line number, when
+        using the special overloaded construct for making functions.
+        * kjs/object.cpp: (KJS::JSObject::construct): Ditto.
+        * kjs/function_object.h: Ditto.
+        * kjs/function_object.cpp: (FunctionObjectImp::construct): Pass a name when
+        constructing the function rather than null. Use "anonymous" when making a
+        function using the default function constructor.
+
+        * kjs/nodes2string.cpp: (FuncDeclNode::streamTo): Put a line break just before
+        a function declaration.
+
+        - unrelated fix
+
+        * kxmlcore/HashMapPtrSpec.h: Add missing needed friend declaration.
+
+2006-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7805
           LEAK: method name leaks in KJS::Bindings::CInstance::invokeMethod
 

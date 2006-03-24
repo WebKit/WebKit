@@ -3,7 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -415,13 +415,13 @@ bool JSObject::implementsConstruct() const
   return false;
 }
 
-JSObject *JSObject::construct(ExecState */*exec*/, const List &/*args*/)
+JSObject* JSObject::construct(ExecState*, const List& /*args*/)
 {
   assert(false);
   return NULL;
 }
 
-JSObject *JSObject::construct(ExecState *exec, const List &args, const UString &/*sourceURL*/, int /*lineNumber*/)
+JSObject* JSObject::construct(ExecState* exec, const List& args, const Identifier& /*functionName*/, const UString& /*sourceURL*/, int /*lineNumber*/)
 {
   return construct(exec, args);
 }

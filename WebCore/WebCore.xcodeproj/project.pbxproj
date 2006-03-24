@@ -2487,6 +2487,7 @@
 			isa = PBXGroup;
 			children = (
 				65C97AF208EA908800ACD273 /* config.h */,
+				651B2B6209D12891008808C6 /* generate-derived-sources */,
 				F58EF58E02DFDFB7018635CA /* WebCore.exp */,
 				BC1A3790097C6F970019F3D8 /* bindings */,
 				65BF021F097480EF00C43196 /* bridge */,
@@ -2504,7 +2505,6 @@
 				F523D2F302DE443B018635CA /* rendering */,
 				A8C0F6DC089701F100BA5114 /* WebCore+SVG */,
 				E1F0424309839389006694EA /* xml */,
-				651B2B6209D12891008808C6 /* generate-derived-sources */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,

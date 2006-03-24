@@ -790,7 +790,8 @@ bool HTMLElement::checkDTD(const Node* newChild)
 
 void HTMLElement::setHTMLEventListener(const AtomicString& eventType, Attribute* attr)
 {
-    Element::setHTMLEventListener(eventType, getDocument()->createHTMLEventListener(attr->value(), this));
+    Element::setHTMLEventListener(eventType,
+        getDocument()->createHTMLEventListener(attr->localName().domString(), attr->value(), this));
 }
 
 }
