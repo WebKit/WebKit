@@ -49,7 +49,8 @@ namespace WebCore {
 // exceptions for those.
 
 
-struct GraphicsContextPlatformPrivate {
+class GraphicsContextPlatformPrivate {
+public:
     GraphicsContextPlatformPrivate();
     ~GraphicsContextPlatformPrivate();
     

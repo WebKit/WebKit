@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\bindings\js&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\html&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\bridge\win&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\DerivedSources\WebCore&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\bindings\js&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\html&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\bridge\win&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\bindings\js&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\html&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\bridge\win&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\DerivedSources\WebCore&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\bindings\js&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\html&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\bridge\win&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -151,7 +151,43 @@
 			Name="kwq"
 			>
 			<File
+				RelativePath="..\..\kwq\AccessibilityObjectCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\BlockExceptions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\ClipboardMac.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\DeprecatedPtrList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\DeprecatedPtrListImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\DeprecatedPtrListImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\DeprecatedValueList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\DeprecatedValueListImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\DeprecatedValueListImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\JavaAppletWidget.h"
 				>
 			</File>
 			<File
@@ -175,10 +211,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\BlockExceptions.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQFileButton.h"
 				>
 			</File>
@@ -188,10 +220,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQKHTMLSettings.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\JavaAppletWidget.h"
 				>
 			</File>
 			<File
@@ -211,14 +239,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\DeprecatedPtrListImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedPtrListImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQLoader.h"
 				>
 			</File>
@@ -227,11 +247,39 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\DeprecatedPtrList.h"
+				RelativePath="..\..\kwq\KWQPtrQueue.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPtrQueue.h"
+				RelativePath="..\..\kwq\KWQResourceLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQScrollBar.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQSlider.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQTextEdit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQTextStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQTextStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQWindowWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQWMatrix.h"
 				>
 			</File>
 			<File
@@ -251,63 +299,91 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQResourceLoader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQScrollBar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQSlider.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\WebCoreTextArea.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQTextEdit.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kwq\WebCoreTextField.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\kwq\KWQTextStream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQTextStream.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedValueList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedValueListImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedValueListImpl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQWindowWidget.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQWMatrix.h"
-				>
-			</File>
 		</Filter>
 		<Filter
-			Name="Generated Files"
+			Name="DerivedSources"
 			>
 			<File
-				RelativePath="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources\CSSGrammar.cpp"
+				RelativePath="..\..\DerivedSources\WebCore\ColorData.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\CSSGrammar.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\HTMLEntityNames.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSAttr.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCanvasGradient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCanvasPattern.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCanvasRenderingContext2D.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCharacterData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDocumentType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDOMImplementation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSEntity.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSMutationEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSNotation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSProcessingInstruction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSRange.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSWheelEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\UserAgentStyleSheetsData.cpp"
 				>
 			</File>
 		</Filter>
@@ -351,6 +427,22 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\ecma\JSXMLHttpRequest.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\ecma\JSXMLSerializer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\ecma\JSXMLSerializer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\ecma\JSXSLTProcessor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\ecma\JSXSLTProcessor.h"
 					>
 				</File>
 				<File
@@ -431,22 +523,6 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\ecma\kjs_window.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\ecma\JSXMLSerializer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\ecma\JSXMLSerializer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\ecma\JSXSLTProcessor.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\ecma\JSXSLTProcessor.h"
 					>
 				</File>
 			</Filter>
@@ -619,10 +695,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\DeprecatedArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\ArrayImpl.cpp"
 				>
 			</File>
@@ -668,6 +740,26 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Cursor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedArray.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedString.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedStringList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedStringList.h"
 				>
 			</File>
 			<File
@@ -767,10 +859,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\PlatformKeyboardEvent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\KURL.cpp"
 				>
 			</File>
@@ -795,10 +883,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\PlatformMouseEvent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\Path.h"
 				>
 			</File>
@@ -811,27 +895,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\PlatformKeyboardEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\PlatformMouseEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\PlatformString.h"
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\PlatformWheelEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\PlugInInfoStore.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\DeprecatedString.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\DeprecatedString.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\DeprecatedStringList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\DeprecatedStringList.h"
 				>
 			</File>
 			<File
@@ -924,10 +1004,6 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\TransferJobInternal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\PlatformWheelEvent.h"
 				>
 			</File>
 			<File
@@ -1775,18 +1851,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\CSSComputedStyleDeclaration.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\css\CSSComputedStyleDeclaration.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\css\CSSGrammar.y"
-				>
-			</File>
-			<File
 				RelativePath="..\..\css\css_ruleimpl.cpp"
 				>
 			</File>
@@ -1808,6 +1872,18 @@
 			</File>
 			<File
 				RelativePath="..\..\css\css_valueimpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\CSSComputedStyleDeclaration.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\CSSComputedStyleDeclaration.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\CSSGrammar.y"
 				>
 			</File>
 			<File
@@ -1907,11 +1983,75 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\rendering\render_button.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_button.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_form.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_form.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_frames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_frames.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_line.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_line.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_list.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_list.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_replaced.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_replaced.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_style.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\render_style.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\rendering\RenderArena.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderArena.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderBlock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderBlock.h"
 				>
 			</File>
 			<File
@@ -1931,14 +2071,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_button.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_button.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderCanvas.cpp"
 				>
 			</File>
@@ -1947,11 +2079,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderHTMLCanvas.cpp"
+				RelativePath="..\..\rendering\RenderContainer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderHTMLCanvas.h"
+				RelativePath="..\..\rendering\RenderContainer.h"
 				>
 			</File>
 			<File
@@ -1971,19 +2103,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_form.cpp"
+				RelativePath="..\..\rendering\RenderHTMLCanvas.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_form.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_frames.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_frames.h"
+				RelativePath="..\..\rendering\RenderHTMLCanvas.h"
 				>
 			</File>
 			<File
@@ -2011,67 +2135,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_line.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_line.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_list.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_list.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderObject.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderObject.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_replaced.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_replaced.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_style.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_style.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderTheme.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderTheme.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderBlock.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderBlock.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderContainer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderContainer.h"
 				>
 			</File>
 			<File
@@ -2139,6 +2207,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\rendering\RenderTheme.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTheme.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\rendering\RenderThemeWin.cpp"
 				>
 			</File>
@@ -2168,36 +2244,16 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="bindings"
-			>
-			<Filter
-				Name="js"
-				>
-				<File
-					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DBase.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DBase.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSDOMCore.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSDOMEvents.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSDOMHTML.cpp"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
 			Name="dom"
 			>
+			<File
+				RelativePath="..\..\dom\AbstractView.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\AbstractView.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\dom\AtomicStringList.h"
 				>
@@ -2255,19 +2311,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DocumentFragment.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\DocumentFragment.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\dom\Document.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\dom\Document.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\DocumentFragment.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\DocumentFragment.h"
 				>
 			</File>
 			<File
@@ -2287,14 +2343,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\Range.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\Range.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\dom\dom2_traversalimpl.cpp"
 				>
 			</File>
@@ -2303,27 +2351,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\AbstractView.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\AbstractView.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\dom\dom_elementimpl.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\dom\dom_elementimpl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\Position.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\Position.h"
 				>
 			</File>
 			<File
@@ -2403,11 +2435,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\Position.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Position.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\QualifiedName.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\dom\QualifiedName.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Range.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Range.h"
 				>
 			</File>
 			<File
@@ -2531,19 +2579,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\HTMLInterchange.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\editing\HTMLInterchange.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\editing\htmlediting.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\editing\htmlediting.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\HTMLInterchange.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\HTMLInterchange.h"
 				>
 			</File>
 			<File
@@ -2739,19 +2787,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\TypingCommand.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\editing\TypingCommand.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\editing\TextIterator.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\editing\TextIterator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\TypingCommand.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\TypingCommand.h"
 				>
 			</File>
 			<File
@@ -2847,22 +2895,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\html\HTMLCanvasElement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\HTMLCanvasElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\HTMLDocument.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\HTMLDocument.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\html\html_headimpl.cpp"
 				>
 			</File>
@@ -2927,11 +2959,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\html\HTMLCanvasElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLCanvasElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\html\HTMLCollection.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\html\HTMLCollection.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLDocument.h"
 				>
 			</File>
 			<File
@@ -3102,6 +3150,22 @@
 				RelativePath="..\..\html\HTMLTokenizer.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="bindings"
+			>
+			<Filter
+				Name="js"
+				>
+				<File
+					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DBase.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

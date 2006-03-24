@@ -35,6 +35,7 @@
 #include "RenderThemeWin.h"
 #include "TextBoundaries.h"
 #include "RenderHTMLCanvas.h"
+#include "AccessibilityObjectCache.h"
 
 using namespace WebCore;
 
@@ -86,7 +87,7 @@ void QLineEdit::selectAll() { notImplemented(); }
 void QLineEdit::addSearchResult() { notImplemented(); }
 int QLineEdit::selectionStart() const { notImplemented(); return 0; }
 bool QLineEdit::hasSelectedText() const { notImplemented(); return 0; }
-DeprecatedString QLineEdit::selectedText() const { notImplemented(); return DeprecatedString(); }
+String QLineEdit::selectedText() const { notImplemented(); return String(); }
 void QLineEdit::setAutoSaveName(String const&) { notImplemented(); }
 bool QLineEdit::checksDescendantsForFocus() const { notImplemented(); return false; }
 void QLineEdit::setSelection(int,int) { notImplemented(); }
@@ -172,7 +173,7 @@ bool FrameWin::canPaste() const { notImplemented(); return 0; }
 enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,String const&) { notImplemented(); return (ObjectContentType)0; }
 bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
-Plugin* FrameWin::createPlugin(KURL const&,DeprecatedStringList const&,DeprecatedStringList const&,String const&) { notImplemented(); return 0; }
+Plugin* FrameWin::createPlugin(KURL const&, const Vector<String>&, const Vector<String>&,String const&) { notImplemented(); return 0; }
 
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
 void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
@@ -189,6 +190,8 @@ void RenderHTMLCanvas::setNeedsImageUpdate() { notImplemented(); }
 /********************************************************/
 static Cursor localCursor;
 const Cursor& WebCore::moveCursor() { return localCursor; }
+
+bool AccessibilityObjectCache::gAccessibilityEnabled = false;
 
 bool WebCore::historyContains(DeprecatedString const&) { return false; }
 String WebCore::submitButtonDefaultLabel() { return "Submit"; }
@@ -234,7 +237,7 @@ void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) 
 void FrameWin::respondToChangedContents() { }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
-void BrowserExtensionWin::setTypedIconURL(KURL const&,DeprecatedString const&) { }
+void BrowserExtensionWin::setTypedIconURL(KURL const&, const String&) { }
 void BrowserExtensionWin::setIconURL(KURL const&) { }
 int BrowserExtensionWin::getHistoryLength() { return 0; }
 

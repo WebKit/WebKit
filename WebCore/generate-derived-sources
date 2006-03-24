@@ -3,7 +3,10 @@
 DerivedSourcesDir="${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore"
 WebCoreSourceRoot="${SRCROOT}"
 
+echo "Generating files into \"${DerivedSourcesDir}\""
 mkdir -p "${DerivedSourcesDir}"
+
+cd "$SRCROOT"
 
 # Rebuild CSSPropertyNames.h and CSSValueKeywords.h if the .in files have changed
 
@@ -65,9 +68,13 @@ fi
 
 # Generate the charset name table
 
-if [ platform/character-sets.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/mac/mac-encodings.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/make-charset-table.pl -nt "$DerivedSourcesDir/CharsetData.cpp" ]; then
+ENCODINGS_FILE="platform/mac/mac-encodings.txt"
+ENCODINGS_PREFIX="kCFStringEncoding"
+`which sw_vers 2>&1 > /dev/null` || ENCODINGS_FILE="platform/win/win-encodings.txt" && ENCODINGS_PREFIX=""
+
+if [ platform/character-sets.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o "$ENCODINGS_FILE" -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/make-charset-table.pl -nt "$DerivedSourcesDir/CharsetData.cpp" ]; then
   echo "Generating character set name table"
-  platform/make-charset-table.pl platform/character-sets.txt platform/mac/mac-encodings.txt kCFStringEncoding > "$DerivedSourcesDir/CharsetData.cpp"
+  platform/make-charset-table.pl platform/character-sets.txt "${ENCODINGS_FILE}" "${ENCODINGS_PREFIX}" > "$DerivedSourcesDir/CharsetData.cpp"
 fi
 
 # Generate the lookup tables for the JS bindings

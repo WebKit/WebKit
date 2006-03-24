@@ -41,7 +41,8 @@
 
 namespace WebCore {
 
-struct GraphicsContextPlatformPrivate {
+class GraphicsContextPlatformPrivate {
+public:
     GraphicsContextPlatformPrivate();
     ~GraphicsContextPlatformPrivate();
 

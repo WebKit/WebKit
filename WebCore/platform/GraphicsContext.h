@@ -47,7 +47,7 @@ class QChar;
 namespace WebCore {
 
     class Font;
-    struct GraphicsContextPrivate;
+    class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;
     class IntPoint;
     class IntPointArray;

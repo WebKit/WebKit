@@ -1,3 +1,28 @@
+2006-03-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix win32 build.
+        Uninify mac/win dependency handling.
+        Fix class vs. struct linker problem for win32.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Add DerivedSources
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * bridge/win/BrowserExtensionWin.h:
+        * bridge/win/FrameWin.h:
+        * generate-derived-sources:
+        * kwq/AccessibilityObjectCache.h:
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createGraphicsContextPrivate):
+        (WebCore::GraphicsContext::destroyGraphicsContextPrivate):
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        * platform/mac/GraphicsContextMac.mm:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QLineEdit::selectedText):
+        (FrameWin::createPlugin):
+        (BrowserExtensionWin::setTypedIconURL):
+
 2006-03-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
