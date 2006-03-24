@@ -1,5 +1,23 @@
 2006-03-23  Darin Adler  <darin@apple.com>
 
+        - removed merge artifacts from .checksum files
+
+        * fast/block/float/vertical-move-relayout-expected.checksum:
+        * fast/css/first-letter-detach-expected.checksum:
+        * fast/css/hover-subselector-expected.checksum:
+        * fast/dom/Element/class-attribute-whitespace-expected.checksum:
+        * fast/events/event-sender-mouse-moved-expected.checksum:
+        * fast/forms/form-hides-table-expected.checksum:
+        * fast/invalid/missing-address-end-tag-expected.checksum:
+        * fast/invalid/missing-dl-end-tag-expected.checksum:
+        * fast/invalid/missing-dt-end-tag-expected.checksum:
+        * fast/invalid/missing-font-end-tag-expected.checksum:
+        * fast/text/in-rendered-text-rtl-expected.checksum:
+        * fast/tokenizer/missing-title-end-tag-1-expected.checksum:
+        * fast/tokenizer/missing-title-end-tag-2-expected.checksum:
+
+2006-03-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Beth.
 
         - test for <rdar://problem/4335038> REGRESSION: when max-height is none, height value is ignored
