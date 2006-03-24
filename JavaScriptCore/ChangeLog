@@ -1,3 +1,14 @@
+2006-03-23  David Carson <dacarson@gmail.com>
+
+        Reviewed by Darin.
+        
+        - JSObject in LiveConnect not working.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7917
+
+        * bindings/jni_jsobject.cpp:
+        (JavaJSObject::convertJObjectToValue): Was trying to retrieve the native pointer from the wrong base
+        class, and the GetFieldID was using the wrong signature.
+
 2006-03-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

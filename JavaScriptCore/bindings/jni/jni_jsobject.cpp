@@ -405,12 +405,15 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     // figure 22-4.
     jobject classOfInstance = callJNIObjectMethod(theObject, "getClass", "()Ljava/lang/Class;");
     jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
-        
-    if (strcmp(Bindings::JavaString(className).UTF8String(), "netscape.javascript.JSObject") == 0) {
+    
+    // Only the sun.plugin.javascript.webkit.JSObject has a member called nativeJSObject. This class is
+    // created above to wrap internal browser objects. The constructor of this class takes the native
+    // pointer and stores it in this object, so that it can be retrieved below.
+    if (strcmp(Bindings::JavaString(className).UTF8String(), "sun.plugin.javascript.webkit.JSObject") == 0) {
         // Pull the nativeJSObject value from the Java instance.  This is a
         // pointer to the JSObject.
         JNIEnv *env = getJNIEnv();
-        jfieldID fieldID = env->GetFieldID((jclass)classOfInstance, "nativeJSObject", "int");
+        jfieldID fieldID = env->GetFieldID((jclass)classOfInstance, "nativeJSObject", "J");
         if (fieldID == NULL) {
             return jsUndefined();
         }
