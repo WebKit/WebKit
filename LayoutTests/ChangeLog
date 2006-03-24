@@ -1,3 +1,15 @@
+2006-03-23  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+        Layout test for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7691>
+
+        * fast/forms/button-default-title-expected.checksum: Added.
+        * fast/forms/button-default-title-expected.png: Added.
+        * fast/forms/button-default-title-expected.txt: Added.
+        * fast/forms/button-default-title.html: Added.
+
 2006-03-23  Darin Adler  <darin@apple.com>
 
         - removed merge artifacts from .checksum files

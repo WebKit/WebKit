@@ -894,7 +894,7 @@ String HTMLInputElement::value() const
 String HTMLInputElement::valueWithDefault() const
 {
     String v = value();
-    if (v.isEmpty()) {
+    if (v.isNull()) {
         switch (m_type) {
             case RESET:
                 v = resetButtonDefaultLabel();

@@ -1,3 +1,15 @@
+2006-03-23  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7691>
+        REGRESSION: imdb.com search button looks wrong because "Submit" is drawn
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueWithDefault):
+        Only use the default button title if no title was specified; previously we'd use the default
+        button title if the specified title was empty, which is not what Firefox does.
+        
 2006-03-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.
