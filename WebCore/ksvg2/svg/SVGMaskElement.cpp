@@ -37,7 +37,7 @@
 #include "cssstyleselector.h"
 #include "ksvg.h"
 #include <kcanvas/KCanvas.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 namespace WebCore {
 

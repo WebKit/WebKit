@@ -32,6 +32,7 @@
 #include "ApplyStyleCommand.h"
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
+#include "Element.h"
 #include "Range.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"

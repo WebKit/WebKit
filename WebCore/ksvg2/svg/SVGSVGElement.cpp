@@ -57,7 +57,7 @@
 #include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/RenderPath.h>
 #include <kcanvas/device/KRenderingDevice.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 #include <kdom/core/NamedAttrMap.h>
 #include <qtextstream.h>
 

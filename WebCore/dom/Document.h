@@ -26,13 +26,14 @@
 #ifndef DOM_DocumentImpl_h
 #define DOM_DocumentImpl_h
 
+#include "Attr.h"
 #include "Color.h"
+#include "ContainerNode.h"
 #include "DocumentMarker.h"
 #include "Shared.h"
 #include "Timer.h"
 #include "decoder.h"
 #include "dom2_traversalimpl.h"
-#include "dom_elementimpl.h"
 #include <KURL.h>
 #include <kxmlcore/HashCountedSet.h>
 #include <kxmlcore/HashMap.h>
@@ -51,8 +52,8 @@ namespace WebCore {
 
     class AccessibilityObjectCache;
     class AbstractView;
-    class Attr;
     class CDATASection;
+    class CSSStyleDeclaration;
     class CSSStyleSelector;
     class CSSStyleSheet;
     class Comment;

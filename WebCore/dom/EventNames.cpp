@@ -29,9 +29,6 @@
 #include "EventNames.h"
 #include "StaticConstructors.h"
 
-using WebCore::AtomicString;
-using WebCore::nullAtom;
-
 namespace WebCore { namespace EventNames {
 
 #define DEFINE_EVENT_GLOBAL(name) \

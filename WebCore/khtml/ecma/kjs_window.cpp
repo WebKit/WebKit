@@ -22,6 +22,7 @@
 #include "config.h"
 #include "kjs_window.h"
 
+#include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
@@ -45,7 +46,6 @@
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "dom2_eventsimpl.h"
-#include "dom_elementimpl.h"
 #include "htmlediting.h"
 #include "khtml_settings.h"
 #include "kjs_css.h"
@@ -795,11 +795,10 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return jsUndefined();
 #endif
     case FrameElement:
-      if (Document *doc = m_frame->document())
-        if (Element *fe = doc->ownerElement())
-          if (checkNodeSecurity(exec, fe)) {
+      if (Document* doc = m_frame->document())
+        if (Element* fe = doc->ownerElement())
+          if (checkNodeSecurity(exec, fe))
             return toJS(exec, fe);
-          }
       return jsUndefined();
    }
 

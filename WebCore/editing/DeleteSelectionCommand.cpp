@@ -27,6 +27,7 @@
 #include "DeleteSelectionCommand.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "Logging.h"
 #include "CSSComputedStyleDeclaration.h"

@@ -27,6 +27,7 @@
 
 #include "DOMImplementation.h"
 #include "Document.h"
+#include "NamedNodeMap.h"
 
 namespace WebCore {
 

@@ -24,8 +24,8 @@
 #define KSVG_SVGElementImpl_H
 #if SVG_SUPPORT
 
+#include "StyledElement.h"
 #include "SVGNames.h"
-#include <kdom/core/XMLElement.h>
 
 namespace WebCore {
     class SVGMatrix;
@@ -33,9 +33,8 @@ namespace WebCore {
     class SVGStyledElement;
     class Ecma;
     class DocumentPtr;
-    typedef StyledElement XMLElement;
 
-    class SVGElement : public XMLElement
+    class SVGElement : public StyledElement
     {
     public:
         SVGElement(const QualifiedName& tagName, Document *doc);

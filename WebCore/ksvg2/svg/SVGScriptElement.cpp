@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "PlatformString.h"
 //#include <kdom/ecma/Ecma.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 #include "StringImpl.h"
 
 #include "ksvg.h"

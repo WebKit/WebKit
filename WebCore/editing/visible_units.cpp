@@ -27,12 +27,12 @@
 #include "visible_units.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "InlineTextBox.h"
 #include "DeprecatedString.h"
 #include "RenderBlock.h"
 #include "TextBoundaries.h"
 #include "VisiblePosition.h"
-#include "dom_elementimpl.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"
 #include "TextIterator.h"

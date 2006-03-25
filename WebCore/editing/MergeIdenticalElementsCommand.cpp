@@ -25,8 +25,7 @@
 
 #include "config.h"
 #include "MergeIdenticalElementsCommand.h"
-
-#include "dom_elementimpl.h"
+#include "Element.h"
 
 #include <kxmlcore/Assertions.h>
 

@@ -146,11 +146,10 @@ sub AddIncludesForType
       $type eq "CharacterData" or
       $type eq "CanvasPattern" or
       $type eq "Range" or
-      $type eq "DocumentFragment") {
+      $type eq "DocumentFragment" or
+      $type eq "Attr" or
+      $type eq "Element") {
     $implIncludes{"${type}.h"} = 1;
-  } elsif ($type eq "Attr" or
-           $type eq "Element") {
-    $implIncludes{"dom_elementimpl.h"} = 1;
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
   } elsif ($type eq "HTMLDocument") {

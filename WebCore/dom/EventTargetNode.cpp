@@ -27,6 +27,7 @@
 #include "EventTargetNode.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"

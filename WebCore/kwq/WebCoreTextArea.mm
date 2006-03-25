@@ -29,11 +29,11 @@
 #import "DOMCSS.h"
 #import "DOMHTML.h"
 #import "EventNames.h"
+#import "Element.h"
 #import "KWQKHTMLSettings.h"
 #import "KWQTextEdit.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
-#import "dom_elementimpl.h"
 #import "render_replaced.h"
 #import <kxmlcore/Assertions.h>
 

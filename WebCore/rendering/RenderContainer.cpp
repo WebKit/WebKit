@@ -40,7 +40,6 @@
 // For accessibility
 #include "AccessibilityObjectCache.h" 
 
-using WebCore::Position;
 namespace WebCore {
 
 RenderContainer::RenderContainer(WebCore::Node* node)

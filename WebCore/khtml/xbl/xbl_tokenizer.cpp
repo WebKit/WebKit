@@ -28,7 +28,6 @@
 #ifndef KHTML_NO_XBL
 
 #include "dom/dom_node.h"
-#include "dom_elementimpl.h"
 
 #include "xbl_tokenizer.h"
 #include "xbl_docimpl.h"

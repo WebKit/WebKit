@@ -25,14 +25,9 @@
 
 #include "config.h"
 #include "SplitElementCommand.h"
-
-#include "dom_elementimpl.h"
+#include "Element.h"
 
 #include <kxmlcore/Assertions.h>
-
-using WebCore::Document;
-using WebCore::Element;
-using WebCore::Node;
 
 namespace WebCore {
 

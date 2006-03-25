@@ -25,7 +25,7 @@
 #ifndef HTMLElementImpl_H
 #define HTMLElementImpl_H
 
-#include "dom_elementimpl.h"
+#include "StyledElement.h"
 
 namespace WebCore {
 

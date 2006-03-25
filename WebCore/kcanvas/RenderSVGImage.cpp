@@ -33,7 +33,7 @@
 #include "SVGAnimatedLength.h"
 #include "SVGImageElement.h"
 #include <kcanvas/KCanvas.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 #include "SVGImageElement.h"
 

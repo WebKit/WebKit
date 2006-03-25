@@ -27,14 +27,12 @@
 #include "config.h"
 #include "TextIterator.h"
 
+#include "Document.h"
+#include "Element.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Position.h"
 #include "Range.h"
-#include "Document.h"
-
-using namespace WebCore::HTMLNames;
-using namespace WebCore;
 
 // FIXME: These classes should probably use the render tree and not the DOM tree, since elements could
 // be hidden using CSS, or additional generated content could be added.  For now, we just make sure
@@ -42,6 +40,8 @@ using namespace WebCore;
 // stripped out properly and obey CSS visibility for text runs.
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 const unsigned short nonBreakingSpace = 0xA0;
 

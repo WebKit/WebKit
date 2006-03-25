@@ -30,9 +30,6 @@
 
 #include <kxmlcore/Assertions.h>
 
-using WebCore::Document;
-using WebCore::Text;
-
 namespace WebCore {
 
 DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(Document *document, Text *node, int offset, int count)

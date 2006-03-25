@@ -23,7 +23,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include <kdom/core/domattrs.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 #include "StringImpl.h"
 
 #include "ksvg.h"

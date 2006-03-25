@@ -30,7 +30,7 @@
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 namespace WebCore {
 

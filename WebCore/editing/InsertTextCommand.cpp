@@ -27,6 +27,7 @@
 #include "InsertTextCommand.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "EditingText.h"
 #include "Frame.h"
 #include "Logging.h"

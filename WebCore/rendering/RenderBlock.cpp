@@ -25,6 +25,7 @@
 #include "RenderBlock.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"

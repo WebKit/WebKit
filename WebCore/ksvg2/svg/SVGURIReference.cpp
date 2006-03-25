@@ -23,7 +23,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "Node.h"
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 #include "SVGNames.h"
 #include "XLinkNames.h"

@@ -27,6 +27,7 @@
 #include "SelectionController.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -37,7 +38,6 @@
 #include "VisiblePosition.h"
 #include "dom2_eventsimpl.h"
 #include "Range.h"
-#include "dom_elementimpl.h"
 #include "htmlediting.h"
 #include "RenderCanvas.h"
 #include "RenderObject.h"

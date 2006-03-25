@@ -24,8 +24,8 @@
 
 #include "config.h"
 #include "NameNodeList.h"
-#include "dom_elementimpl.h"
 
+#include "Element.h"
 #include "HTMLNames.h"
 
 using namespace WebCore;
@@ -34,7 +34,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-NameNodeList::NameNodeList(Node *n, const String &t )
+NameNodeList::NameNodeList(Node *n, const String &t)
   : NodeList(n), nodeName(t)
 {
 }
@@ -44,14 +44,14 @@ unsigned NameNodeList::length() const
     return recursiveLength();
 }
 
-Node *NameNodeList::item ( unsigned index ) const
+Node *NameNodeList::item (unsigned index) const
 {
-    return recursiveItem( index );
+    return recursiveItem(index);
 }
 
 bool NameNodeList::nodeMatches(Node *testNode) const
 {
-    return static_cast<Element *>(testNode)->getAttribute(nameAttr) == nodeName;
+    return static_cast<Element*>(testNode)->getAttribute(nameAttr) == nodeName;
 }
 
 }

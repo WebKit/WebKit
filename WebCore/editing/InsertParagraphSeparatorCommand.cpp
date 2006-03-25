@@ -30,7 +30,6 @@
 #include "Logging.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
-#include "dom_elementimpl.h"
 #include "Position.h"
 #include "Text.h"
 #include "htmlediting.h"

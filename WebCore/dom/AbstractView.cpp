@@ -25,9 +25,9 @@
 #include "AbstractView.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "cssstyleselector.h"
-#include "dom_elementimpl.h"
 
 namespace WebCore {
 

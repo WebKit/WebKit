@@ -30,10 +30,6 @@
 
 #include <kxmlcore/Assertions.h>
 
-using WebCore::CSSStyleDeclaration;
-using WebCore::String;
-using WebCore::Document;
-
 namespace WebCore {
 
 RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(Document *document, CSSStyleDeclaration *decl, int property)

@@ -44,6 +44,7 @@
 #include "HTMLNames.h"
 #include "loader.h"
 #include "render_frames.h"
+#include "MappedAttribute.h"
 
 namespace WebCore {
 

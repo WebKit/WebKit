@@ -25,7 +25,7 @@
 #include <float.h>
 
 #include <kdom/kdom.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 #include "Document.h"
 #include "DOMImplementation.h"
 #include "css_valueimpl.h"

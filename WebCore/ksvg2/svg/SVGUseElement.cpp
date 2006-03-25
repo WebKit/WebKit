@@ -23,7 +23,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include <kdom/Namespace.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"

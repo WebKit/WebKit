@@ -49,7 +49,6 @@
 #import "Range.h"
 #import "dom2_traversalimpl.h"
 #import "AbstractView.h"
-#import "dom_elementimpl.h"
 #import "dom_xmlimpl.h"
 #import "HTMLNames.h"
 #import "RenderImage.h"

@@ -24,6 +24,7 @@
 #include "config.h"
 #include "bidi.h"
 #include "Document.h"
+#include "Element.h"
 #include "break_lines.h"
 #include "FrameView.h"
 #include <kxmlcore/AlwaysInline.h>

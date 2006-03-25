@@ -24,7 +24,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 #include <kdom/core/DOMConfiguration.h>
 #include <kdom/parser/KDOMParser.h>
 

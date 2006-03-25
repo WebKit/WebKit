@@ -27,6 +27,7 @@
 #include "Position.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "DeprecatedString.h"
@@ -35,7 +36,6 @@
 #include "css_valueimpl.h"
 #include "Range.h"
 #include "AbstractView.h"
-#include "dom_elementimpl.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"
 #include "RenderFlow.h"

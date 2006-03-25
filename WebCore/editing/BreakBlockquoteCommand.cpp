@@ -26,11 +26,12 @@
 #include "config.h"
 #include "BreakBlockquoteCommand.h"
 
-#include "dom_elementimpl.h"
-#include "Text.h"
-#include "htmlediting.h"
+#include "Element.h"
 #include "HTMLNames.h"
+#include "Text.h"
 #include "VisiblePosition.h"
+#include "htmlediting.h"
+
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {

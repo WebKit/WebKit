@@ -28,7 +28,6 @@
 #ifndef KHTML_NO_XBL
 
 #include "dom_docimpl.h"
-#include "dom_elementimpl.h"
 #include "rendering/render_style.h"
 #include "xbl_binding_manager.h"
 #include "xbl_binding.h"

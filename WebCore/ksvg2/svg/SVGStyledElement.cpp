@@ -25,7 +25,7 @@
 #include "SVGStyledElement.h"
 
 #include <kdom/kdom.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 #include <kdom/core/domattrs.h>
 #include "PlatformString.h"
 #include "Document.h"

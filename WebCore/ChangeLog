@@ -1,5 +1,154 @@
 2006-03-25  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by andersca.
+
+        Split dom_elementimpl.* into multiple files (one per class).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7978
+
+        * ForwardingHeaders/kdom/core/Attr.h: Removed.
+        * ForwardingHeaders/kdom/core/Element.h: Removed.
+        * ForwardingHeaders/kdom/core/XMLElement.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMHTML.mm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/AbstractView.cpp:
+        * dom/Attr.cpp: Added.
+        * dom/Attr.h: Added.
+        * dom/Attribute.cpp: Added.
+        * dom/Attribute.h: Added.
+        * dom/CSSMappedAttributeDeclaration.cpp: Added.
+        * dom/CSSMappedAttributeDeclaration.h: Added.
+        * dom/DOMImplementation.cpp:
+        * dom/Document.h:
+        * dom/DocumentType.cpp:
+        * dom/Element.cpp: Added.
+        (WebCore::Element::Element):
+        (WebCore::Element::~Element):
+        * dom/Element.h: Added.
+        * dom/EventNames.cpp:
+        * dom/EventTargetNode.cpp:
+        * dom/MappedAttribute.cpp: Added.
+        * dom/MappedAttribute.h: Added.
+        * dom/MappedAttributeEntry.h: Added.
+        (WebCore::):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        (WebCore::NameNodeList::item):
+        (WebCore::NameNodeList::nodeMatches):
+        * dom/NamedAttrMap.cpp: Added.
+        * dom/NamedAttrMap.h: Added.
+        * dom/NamedMappedAttrMap.cpp: Added.
+        (WebCore::NamedMappedAttrMap::NamedMappedAttrMap):
+        * dom/NamedMappedAttrMap.h: Added.
+        * dom/Node.cpp:
+        * dom/NodeList.cpp:
+        * dom/Position.cpp:
+        * dom/StyledElement.cpp: Added.
+        * dom/StyledElement.h: Added.
+        * dom/dom_elementimpl.cpp: Removed.
+        * dom/dom_elementimpl.h: Removed.
+        * editing/BreakBlockquoteCommand.cpp:
+        * editing/CompositeEditCommand.cpp:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        * editing/DeleteSelectionCommand.cpp:
+        * editing/InsertLineBreakCommand.cpp:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        * editing/InsertTextCommand.cpp:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        * editing/ModifySelectionListLevelCommand.cpp:
+        * editing/MoveSelectionCommand.cpp:
+        * editing/RemoveCSSPropertyCommand.cpp:
+        * editing/RemoveNodeAttributeCommand.cpp:
+        * editing/Selection.cpp:
+        * editing/SelectionController.cpp:
+        * editing/SetNodeAttributeCommand.cpp:
+        * editing/SplitElementCommand.cpp:
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        * editing/TextIterator.cpp:
+        * editing/TypingCommand.cpp:
+        * editing/VisiblePosition.cpp:
+        * editing/visible_units.cpp:
+        * html/HTMLElement.h:
+        * html/HTMLTokenizer.h:
+        * html/html_baseimpl.cpp:
+        * kcanvas/RenderSVGImage.cpp:
+        * khtml/ecma/kjs_views.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * khtml/xbl/xbl_binding_manager.cpp:
+        * khtml/xbl/xbl_tokenizer.cpp:
+        * ksvg2/misc/SVGImageLoader.cpp:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        * ksvg2/svg/SVGCircleElement.cpp:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        * ksvg2/svg/SVGCursorElement.cpp:
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        * ksvg2/svg/SVGExternalResourcesRequired.cpp:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        * ksvg2/svg/SVGFEMergeNodeElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGLangSpace.cpp:
+        * ksvg2/svg/SVGLineElement.cpp:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGPathElement.cpp:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        * ksvg2/svg/SVGRectElement.cpp:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * ksvg2/svg/SVGScriptElement.cpp:
+        * ksvg2/svg/SVGStopElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        * ksvg2/svg/SVGSwitchElement.cpp:
+        * ksvg2/svg/SVGTests.cpp:
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        * ksvg2/svg/SVGTextPositioningElement.cpp:
+        * ksvg2/svg/SVGTransformable.cpp:
+        * ksvg2/svg/SVGURIReference.cpp:
+        * ksvg2/svg/SVGUseElement.cpp:
+        * ksvg2/svg/SVGViewElement.cpp:
+        * ksvg2/svg/SVGZoomAndPan.cpp:
+        * kwq/WebCoreTextArea.mm:
+        * platform/Widget.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderCanvas.cpp:
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderTextField.cpp:
+        * rendering/RenderThemeMac.mm:
+        * rendering/bidi.cpp:
+        * rendering/render_replaced.cpp:
+
+2006-03-25  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Fix RenderStyle creation to avoid floating RenderStyle objects.

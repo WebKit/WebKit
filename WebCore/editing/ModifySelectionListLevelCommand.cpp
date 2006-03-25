@@ -28,6 +28,7 @@
 
 #include "CompositeEditCommand.h"
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "RenderObject.h"
 #include "SelectionController.h"

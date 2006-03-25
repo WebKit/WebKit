@@ -26,6 +26,7 @@
 #include "DOMImplementation.h"
 
 #include "DocumentType.h"
+#include "Element.h"
 #include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "css_stylesheetimpl.h"

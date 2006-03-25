@@ -29,6 +29,7 @@
 #include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
 #include "Document.h"
+#include "Element.h"
 #include "dom2_eventsimpl.h"
 #include "Frame.h"
 #include "InsertLineBreakCommand.h"

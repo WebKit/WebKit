@@ -25,6 +25,7 @@
 #include "render_replaced.h"
 
 #include "Document.h" // ### remove dependency
+#include "Element.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"

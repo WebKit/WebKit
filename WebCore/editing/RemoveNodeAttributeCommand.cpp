@@ -25,15 +25,9 @@
 
 #include "config.h"
 #include "RemoveNodeAttributeCommand.h"
-
-#include "dom_elementimpl.h"
+#include "Element.h"
 
 #include <kxmlcore/Assertions.h>
-
-using WebCore::Document;
-using WebCore::Element;
-using WebCore::Node;
-using WebCore::QualifiedName;
 
 namespace WebCore {
 

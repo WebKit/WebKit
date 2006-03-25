@@ -25,16 +25,9 @@
 
 #include "config.h"
 #include "SetNodeAttributeCommand.h"
-
-#include "dom_elementimpl.h"
+#include "Element.h"
 
 #include <kxmlcore/Assertions.h>
-
-using WebCore::Document;
-using WebCore::Element;
-using WebCore::Node;
-using WebCore::String;
-using WebCore::QualifiedName;
 
 namespace WebCore {
 

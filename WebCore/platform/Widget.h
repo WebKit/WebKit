@@ -159,9 +159,9 @@ namespace WebCore {
 
 }
 
-using WebCore::IntPoint; // remove when we move everything into the WebCore namespace
-using WebCore::IntRect; // remove when we move everything into the WebCore namespace
-using WebCore::IntSize; // remove when we move everything into the WebCore namespace
-using WebCore::Widget; // remove when we move everything into the WebCore namespace
+using WebCore::IntPoint; // FIXME: remove when we move everything into the WebCore namespace
+using WebCore::IntRect; // FIXME: remove when we move everything into the WebCore namespace
+using WebCore::IntSize; // FIXME: remove when we move everything into the WebCore namespace
+using WebCore::Widget; // FIXME: remove when we move everything into the WebCore namespace
 
 #endif

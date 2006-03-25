@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include <DeprecatedStringList.h>
 
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"

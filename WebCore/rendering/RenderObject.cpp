@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "Document.h"
+#include "Element.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -43,7 +44,6 @@
 #include "RenderText.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
-#include "dom_elementimpl.h"
 #include "Position.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"

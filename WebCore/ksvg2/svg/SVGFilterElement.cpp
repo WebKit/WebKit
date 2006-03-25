@@ -22,7 +22,7 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasResources.h>

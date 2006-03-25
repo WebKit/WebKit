@@ -28,7 +28,6 @@
 #include "HTMLNames.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextFieldInnerElement.h"
-#include "dom_elementimpl.h"
 #include "SelectionController.h"
 #include "VisiblePosition.h"
 #include "TextIterator.h"

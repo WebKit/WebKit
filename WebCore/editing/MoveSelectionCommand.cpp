@@ -31,11 +31,6 @@
 
 #include <kxmlcore/Assertions.h>
 
-using WebCore::Document;
-using WebCore::DocumentFragment;
-using WebCore::Node;
-using WebCore::Position;
-
 namespace WebCore {
 
 MoveSelectionCommand::MoveSelectionCommand(Document *document, DocumentFragment *fragment, Position &position, bool smartMove) 

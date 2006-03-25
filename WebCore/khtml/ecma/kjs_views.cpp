@@ -24,15 +24,12 @@
 #include "kjs_css.h"
 
 #include "AbstractView.h"
+#include "Element.h"
 #include "Document.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/css_ruleimpl.h"
 
-using WebCore::AbstractView;
-using WebCore::Document;
-using WebCore::Element;
-using WebCore::Node;
-using WebCore::CSSRuleList;
+using namespace WebCore;
 
 #include "kjs_views.lut.h"
 

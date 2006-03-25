@@ -27,6 +27,7 @@
 #include "Selection.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "htmlediting.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"

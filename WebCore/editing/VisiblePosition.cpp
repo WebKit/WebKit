@@ -25,14 +25,15 @@
 
 #include "config.h"
 #include "VisiblePosition.h"
-#include "visible_units.h"
-#include "htmlediting.h"
-#include "HTMLNames.h"
-#include "render_line.h"
-#include "RenderObject.h"
-#include "InlineTextBox.h"
 #include "Document.h"
+#include "Element.h"
+#include "HTMLNames.h"
+#include "InlineTextBox.h"
 #include "Range.h"
+#include "RenderObject.h"
+#include "htmlediting.h"
+#include "render_line.h"
+#include "visible_units.h"
 
 #include <kxmlcore/Assertions.h>
 #include "Logging.h"

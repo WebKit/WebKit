@@ -26,7 +26,7 @@
 #include <DeprecatedStringList.h>
 #include <kxmlcore/RefPtr.h>
 
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/RenderPath.h>

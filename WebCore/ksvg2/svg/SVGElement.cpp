@@ -35,7 +35,7 @@
 #include "ksvg.h"
 #include "PlatformString.h"
 #include <kdom/Namespace.h>
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 #include <kdom/core/domattrs.h>
 #include <kdom/events/EventListener.h>
 #include <kdom/kdom.h>
@@ -46,7 +46,7 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace EventNames;
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document *doc) : XMLElement(tagName, doc), m_closed(false)
+SVGElement::SVGElement(const QualifiedName& tagName, Document *doc) : StyledElement(tagName, doc), m_closed(false)
 {
 }
 

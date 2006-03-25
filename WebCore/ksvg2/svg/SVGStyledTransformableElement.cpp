@@ -25,7 +25,7 @@
 #include <qregexp.h>
 #include <DeprecatedStringList.h>
 
-#include <kdom/core/Attr.h>
+#include "Attr.h"
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/RenderPath.h>
