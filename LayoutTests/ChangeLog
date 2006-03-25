@@ -1,3 +1,15 @@
+2006-03-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7955>
+        REGRESSION: Content with an interchange newline lost when pasted at the end of the document
+        
+        * editing/pasteboard/7955-expected.checksum: Added.
+        * editing/pasteboard/7955-expected.png: Added.
+        * editing/pasteboard/7955-expected.txt: Added.
+        * editing/pasteboard/7955.html: Added.
+
 2006-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Harrison.

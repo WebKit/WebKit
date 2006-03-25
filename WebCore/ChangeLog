@@ -1,9 +1,47 @@
+<<<<<<< .mine
+2006-03-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7955>
+        REGRESSION: Content with an interchange newline lost when pasted at the end of the document
+        
+        There's no safe place in the document to keep the fragment while pasting, so I avoid
+        isProbablyBlock by saving whether or not something was blockFlow during the test 
+        insertion.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplacementFragment::~ReplacementFragment):
+        (WebCore::ReplacementFragment::firstChild):
+        (WebCore::ReplacementFragment::lastChild):
+        (WebCore::ReplacementFragment::mergeStartNode):
+        (WebCore::ReplacementFragment::enclosingBlock):
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        (WebCore::ReplacementFragment::restoreTestRenderingNodesToFragment):
+        (WebCore::ReplacementFragment::isBlockFlow):
+        (WebCore::ReplaceSelectionCommand::fixupNodeStyles):
+        (WebCore::styleForNode):
+        (WebCore::ReplacementFragment::saveRenderingInfo):
+        (WebCore::ReplacementFragment::removeUnrenderedNodes):
+        (WebCore::ReplacementFragment::renderedBlocks):
+        (WebCore::ReplacementFragment::removeStyleNodes):
+        (WebCore::RenderingInfo::RenderingInfo):
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::RenderingInfo::isBlockFlow):
+        (WebCore::ReplacementFragment::renderingInfo):
+        (WebCore::ReplacementFragment::nodes):
+
+=======
 2006-03-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by justing.
 
         * generate-derived-sources: fix clean builds on mac.
 
+>>>>>>> .r13474
 2006-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Harrison.
