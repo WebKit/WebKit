@@ -61,6 +61,8 @@ chdirWebKit();
 # Argument handling
 my $testOnlySVGs = '';
 my $pixelTests = '';
+my $repaintTests = '';
+my $repaintSweepHorizontally = '';
 my $checkLeaks = '';
 my $guardMalloc = '';
 my $verbose = 0;
@@ -74,6 +76,8 @@ my $testResultsDirectory = "/tmp/layout-test-results";
 
 GetOptions('svg' => \$testOnlySVGs, 
     'pixel-tests|p' => \$pixelTests,
+    'repaint-tests|r' => \$repaintTests,
+    'horizontal-sweep|h' => \$repaintSweepHorizontally,
     'leaks|l' => \$checkLeaks,
     'guard-malloc|g' => \$guardMalloc,
     'verbose|v' => \$verbose,
@@ -88,7 +92,11 @@ GetOptions('svg' => \$testOnlySVGs,
 my $dumpToolName = "DumpRenderTree";
 my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
 exit $result if $result;
-if ($testOnlySVGs) {
+if ($repaintSweepHorizontally) {
+    $repaintTests = 1;
+}
+
+if ($testOnlySVGs || $repaintTests) {
     $pixelTests = 1; # Pixel tests are always on for SVG.
 }
 
@@ -164,6 +172,14 @@ my @toolArgs = ();
 
 if ($pixelTests) {
     push @toolArgs, "--pixel-tests";
+}
+
+if ($repaintTests) {
+    push @toolArgs, "--repaint";
+}
+
+if ($repaintSweepHorizontally) {
+    push @toolArgs, "--horizontal-sweep";
 }
 
 push @toolArgs, "-";

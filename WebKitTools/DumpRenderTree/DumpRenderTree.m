@@ -80,6 +80,10 @@ static BOOL waitToDump;
 static BOOL dumpAsText;
 static BOOL dumpTitleChanges;
 static int dumpPixels = NO;
+static int testRepaintDefault = NO;
+static BOOL testRepaint = NO;
+static int repaintSweepHorizontallyDefault = NO;
+static BOOL repaintSweepHorizontally = NO;
 static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
@@ -181,6 +185,8 @@ int main(int argc, const char *argv[])
         {"pixel-tests", no_argument, &dumpPixels, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"notree", no_argument, &dumpTree, NO},
+        {"repaint", no_argument, &testRepaintDefault, YES},
+        {"horizontal-sweep", no_argument, &repaintSweepHorizontallyDefault, YES},
         {NULL, 0, NULL, 0}
     };
 
@@ -364,7 +370,21 @@ static void dump(void)
             NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
             [NSGraphicsContext saveGraphicsState];
             [NSGraphicsContext setCurrentContext:nsContext];
-            [view displayRectIgnoringOpacity:NSMakeRect(0, 0, webViewSize.width, webViewSize.height) inContext:nsContext];
+            if (!testRepaint)
+                [view displayRectIgnoringOpacity:NSMakeRect(0, 0, webViewSize.width, webViewSize.height) inContext:nsContext];
+            else if (!repaintSweepHorizontally) {
+                NSRect line = NSMakeRect(0, 0, webViewSize.width, 1);
+                while (line.origin.y < webViewSize.height) {
+                    [view displayRectIgnoringOpacity:line inContext:nsContext];
+                    line.origin.y++;
+                }
+            } else {
+                NSRect column = NSMakeRect(0, 0, 1, webViewSize.height);
+                while (column.origin.x < webViewSize.width) {
+                    [view displayRectIgnoringOpacity:column inContext:nsContext];
+                    column.origin.x++;
+                }
+            }
             [NSGraphicsContext restoreGraphicsState];
             
             // has the actual hash to compare to the expected image's hash
@@ -491,7 +511,9 @@ static void dump(void)
             || aSelector == @selector(dumpAsText)
             || aSelector == @selector(dumpTitleChanges)
             || aSelector == @selector(setWindowIsKey:)
-            || aSelector == @selector(setMainFrameIsFirstResponder:))
+            || aSelector == @selector(setMainFrameIsFirstResponder:)
+            || aSelector == @selector(testRepaint)
+            || aSelector == @selector(repaintSweepHorizontally))
         return NO;
     return YES;
 }
@@ -546,6 +568,16 @@ static void dump(void)
         [(WebHTMLView *)documentView _updateFocusState];
 }
 
+- (void)testRepaint
+{
+    testRepaint = YES;
+}
+
+- (void)repaintSweepHorizontally
+{
+    repaintSweepHorizontally = YES;
+}
+
 - (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args
 {
     return nil;
@@ -578,6 +610,8 @@ static void dumpRenderTree(const char *pathOrURL)
     waitToDump = NO;
     dumpAsText = NO;
     dumpTitleChanges = NO;
+    testRepaint = testRepaintDefault;
+    repaintSweepHorizontally = repaintSweepHorizontallyDefault;
     if (currentTest != nil)
         CFRelease(currentTest);
     currentTest = (NSString *)pathOrURLString;

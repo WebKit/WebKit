@@ -1,3 +1,22 @@
+2006-03-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7947
+          Add repaint testing support to run-webkit-tests
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Added --repaint and --horizontal-sweep options.
+        (dump): Repaint line-by-line or column-by-column when the appropriate option
+        is selected.
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]): Added testRepaint()
+        and repaintSweepHorizontally() methods to layoutTestController.
+        (-[LayoutTestController testRepaint]):
+        (-[LayoutTestController repaintSweepHorizontally]):
+        (dumpRenderTree):
+        * Scripts/run-webkit-tests: Added --repaint and --horizontal-sweep options
+        to force these settings on tests that do not ask for them.
+
 2006-03-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
