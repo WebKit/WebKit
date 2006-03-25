@@ -2,6 +2,14 @@
 
         Reviewed by andersca.
 
+        Build fix.
+
+        * bindings/scripts/CodeGeneratorJS.pm: include Element.h
+
+2006-03-25  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
         Split dom_elementimpl.* into multiple files (one per class).
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7978
 

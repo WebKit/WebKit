@@ -837,6 +837,7 @@ sub NativeToJSValue
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"Node.h"} = 1;
+    $implIncludes{"Element.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
     # Add necessary includes
