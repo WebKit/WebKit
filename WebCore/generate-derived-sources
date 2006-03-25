@@ -70,7 +70,10 @@ fi
 
 ENCODINGS_FILE="platform/mac/mac-encodings.txt"
 ENCODINGS_PREFIX="kCFStringEncoding"
-`which sw_vers 2>&1 > /dev/null` || ENCODINGS_FILE="platform/win/win-encodings.txt" && ENCODINGS_PREFIX=""
+if [ `which sw_vers 2>&1 > /dev/null` ]; then
+    ENCODINGS_FILE="platform/win/win-encodings.txt";
+    ENCODINGS_PREFIX=""
+fi
 
 if [ platform/character-sets.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o "$ENCODINGS_FILE" -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/make-charset-table.pl -nt "$DerivedSourcesDir/CharsetData.cpp" ]; then
   echo "Generating character set name table"
