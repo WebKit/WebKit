@@ -885,8 +885,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 char* ptr = cBuffer;
                 unsigned int len = cBufferPos;
                 cBuffer[cBufferPos] = '\0';
-                if ((cBufferPos > 0) && (*ptr == '/'))
-                {
+                if ((cBufferPos > 0) && (*ptr == '/')) {
                     // End Tag
                     beginTag = false;
                     ptr++;
@@ -901,7 +900,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     ptr[--len] = '\0';
 
                 // Now that we've shaved off any invalid / that might have followed the name), make the tag.
-                if (ptr[0] != '!' && strcmp(ptr, "!doctype") != 0) {
+                // FIXME: FireFox and WinIE turn !foo nodes into comments, we ignore comments. (fast/parser/tag-with-exclamation-point.html)
+                if (ptr[0] != '!') {
                     currToken.tagName = AtomicString(ptr);
                     currToken.beginTag = beginTag;
                 }

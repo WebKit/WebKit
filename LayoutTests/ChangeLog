@@ -1,3 +1,13 @@
+2006-03-23  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Shave .2% on PLT by removing bogus strcmp.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7938
+
+        * fast/parser/tag-with-exclamation-point-expected.txt: Added.
+        * fast/parser/tag-with-exclamation-point.html: Added.
+
 2006-03-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

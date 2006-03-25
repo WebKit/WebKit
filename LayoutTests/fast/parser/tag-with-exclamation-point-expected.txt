@@ -1,0 +1,13 @@
+!foo elements count: 0
+
+!doctype elements count: 0
+
+!foo with id "foo": null
+
+!doctype with id "doctype": null
+
+!foo div child count: 0
+
+!doctype div child count: 0
+
+
