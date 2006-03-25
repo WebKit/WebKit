@@ -1,3 +1,40 @@
+2006-03-25  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix RenderStyle creation to avoid floating RenderStyle objects.
+        This also fixes a bug, were SVG to ever start sharing RenderStyles
+        between elements, code would have crashed as there were improperly
+        paired style->deref() statements in SVG code.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7976
+
+        No test possible (no functionality change).
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::createStyleForElement):
+        (WebCore::CSSStyleSelector::createPseudoStyleForElement):
+        * css/cssstyleselector.h:
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        (WebCore::Node::createStyleForRenderer):
+        * dom/Node.h:
+        * dom/dom_elementimpl.cpp:
+        (WebCore::Element::createStyleForRenderer):
+        (WebCore::Element::recalcStyle):
+        * dom/dom_elementimpl.h:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::rebuildStops):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::selectStartNode):
+        (WebCore::RenderObject::draggableNode):
+        (WebCore::RenderObject::getPseudoStyle):
+
 2006-03-23  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

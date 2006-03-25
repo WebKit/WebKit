@@ -497,9 +497,9 @@ bool Element::isURLAttribute(Attribute *attr) const
     return false;
 }
 
-RenderStyle *Element::styleForRenderer(RenderObject *parentRenderer)
+RenderStyle *Element::createStyleForRenderer(RenderObject *parentRenderer)
 {
-    return getDocument()->styleSelector()->styleForElement(this);
+    return getDocument()->styleSelector()->createStyleForElement(this);
 }
 
 RenderObject *Element::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -559,8 +559,7 @@ void Element::recalcStyle( StyleChange change )
     bool hasParentRenderer = parent() ? parent()->renderer() : false;
     
     if ( hasParentRenderer && (change >= Inherit || changed()) ) {
-        RenderStyle *newStyle = getDocument()->styleSelector()->styleForElement(this);
-        newStyle->ref();
+        RenderStyle *newStyle = getDocument()->styleSelector()->createStyleForElement(this);
         StyleChange ch = diff( _style, newStyle );
         if (ch == Detach) {
             if (attached()) detach();

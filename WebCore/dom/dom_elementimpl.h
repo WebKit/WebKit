@@ -231,7 +231,7 @@ public:
     virtual DeprecatedString state() { return DeprecatedString::null; }
 
     virtual void attach();
-    virtual RenderStyle *styleForRenderer(RenderObject *parent);
+    virtual RenderStyle *createStyleForRenderer(RenderObject *parent);
     virtual RenderObject *createRenderer(RenderArena *, RenderStyle *);
     virtual void recalcStyle( StyleChange = NoChange );
 

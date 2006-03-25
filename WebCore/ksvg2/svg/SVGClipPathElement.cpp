@@ -91,13 +91,12 @@ KCanvasClipper *SVGClipPathElement::canvasResource()
 
     bool bbox = clipPathUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
-    RenderStyle *clipPathStyle = styleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
-    for (Node *n = firstChild(); n != 0; n = n->nextSibling())
-    {
+    RenderStyle *clipPathStyle = createStyleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
+    for (Node *n = firstChild(); n != 0; n = n->nextSibling()) {
         SVGElement *e = svg_dynamic_cast(n);
         if (e && e->isStyled()) {
             SVGStyledElement *styled = static_cast<SVGStyledElement *>(e);
-            RenderStyle *pathStyle = getDocument()->styleSelector()->styleForElement(styled, clipPathStyle);
+            RenderStyle *pathStyle = getDocument()->styleSelector()->createStyleForElement(styled, clipPathStyle);
             if (KCanvasPath* pathData = styled->toPathData())
                 m_clipper->addClipData(pathData, (KCWindRule) pathStyle->svgStyle()->clipRule(), bbox);
             pathStyle->deref(canvas()->renderArena());
