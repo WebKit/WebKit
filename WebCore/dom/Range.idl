@@ -84,6 +84,11 @@ module ranges {
         void detach()
             raises(dom::DOMException);
 
+        // extensions
+
+        DocumentFragment createContextualFragment(in DOMString html)
+            raises(dom::DOMException);
+
     };
 
 }

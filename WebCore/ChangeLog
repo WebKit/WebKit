@@ -1,3 +1,14 @@
+2006-03-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7942
+          nightlies after r13387 break js createcontextualfragment
+
+        Test: fast/dom/Range/create-contextual-fragment.html
+
+        * dom/Range.idl: Add createContextualFragment.
+
 2006-03-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
