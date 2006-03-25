@@ -1,0 +1,94 @@
+<html>
+<head>
+<script src=../editing.js language="JavaScript" type="text/JavaScript"></script>
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+function editingTest() {
+        
+    var s = window.getSelection();
+    var d;
+    
+    if (window.layoutTestController)
+        window.layoutTestController.dumpAsText();
+    
+    // Fully select the line in the first div.
+    d = document.getElementById("test1");
+    s.setPosition(d, 0);
+    extendSelectionForwardByLineCommand();
+    unlinkCommand();
+    
+    log(d.innerHTML);
+
+    // Select the second word in the second div  
+    d = document.getElementById("test2");
+    s.setPosition(d, 0);
+    moveSelectionForwardByWordCommand();
+    extendSelectionForwardByWordCommand();
+    unlinkCommand();
+    
+    log(d.innerHTML);
+    
+    // Select part of a link (and a bit of trailing non-linked text)
+    d = document.getElementById("test3");
+    var e = document.getElementById("test3start");
+    s.setPosition(e, 0);
+    extendSelectionForwardByLineCommand();
+    unlinkCommand();
+    
+    log(d.innerHTML);
+    
+    // Link an editable region containing lists, tables, images, etc.
+    d = document.getElementById("test4");
+    s.setPosition(d, 0);
+    selectAllCommand();
+    createLinkCommand("http://www.google.com/");
+    // Now unlink a portion of it
+    var end = document.getElementById("test4end");
+    s.setBaseAndExtent(d, 0, end, 0);
+    unlinkCommand();
+    
+    log(d.innerHTML);
+    
+}
+</script>
+</head>
+
+<body style="font-size: 12px;">
+<p>This is a test of execCommand("Unlink").  It tests:</p>
+<ol>
+<li>Completely unlinking a link.</li>
+<li>Unlinking a single word inside of a link.</li>
+<li>Unlinking a selection containing linked and unlinked text.</li>
+<li>Unlinking a selection that partially selects a linked table.</li>
+</ol>
+<p>The editable regions below describe what their content should be after the test.</p>
+<ol>
+<li><div id="test1" contenteditable="true"><a href="http://www.apple.com/">This paragraph should should end up unlinked.</a></div></li>
+<li><div id="test2" contenteditable="true"><a href="http://www.apple.com/">The second word in this paragraph should end up being unlinked, everything else should be a link.</a></div></li>
+<li><div id="test3" contenteditable="true">This paragraph starts with <a href="http://www.google.com"><i>a</i><span id="test3start"> link</span></a> in the middle.  Only the 'a' in the previous sentence should be linked after the test.</div></li>
+<li><div id="test4" contenteditable="true">
+<p>This <i>editable region</i> contains lists, tables, styled text, and images.  Everything in this region that is not selected should be a link, nothing that is selected should be a link.</p>
+<ul>
+<li>Item 1</li>
+<li>Item 2</li>
+</ul>
+<table border=1><tr><td>1</td><td>2</td><td><span id="test4end">3</span></td></tr></table>
+<br>
+This <b>line</b> contains <img src="../resources/abe.jpg"> an image.
+</div></li>
+</ol>
+<p>The innerHTML of editable regions after the test:</p>
+<ol id="console"></ol>
+<script>
+runEditingTest();
+</script>
+</body>
+
+</html>

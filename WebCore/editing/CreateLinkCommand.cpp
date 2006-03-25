@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CreateLinkCommand.h"
 
-#include "css_valueimpl.h"
-#include "Document.h"
 #include "html_inlineimpl.h"
 #include <kxmlcore/Assertions.h>
 
@@ -41,10 +39,11 @@ CreateLinkCommand::CreateLinkCommand(Document* document, const String& url)
 
 void CreateLinkCommand::doApply()
 {
+    pushPartiallySelectedAnchorElementsDown();
+
     HTMLAnchorElement* anchorElement = new HTMLAnchorElement(document());
     anchorElement->setHref(m_url);
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), new CSSMutableStyleDeclaration(), static_cast<Element*>(anchorElement)));
-    applyCommandToComposite(cmd);
+    applyStyledElement(anchorElement);
 }
 
 }

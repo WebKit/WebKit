@@ -103,13 +103,25 @@ void CompositeEditCommand::applyCommandToComposite(EditCommandPtr &cmd)
 
 void CompositeEditCommand::applyStyle(CSSStyleDeclaration *style, EditAction editingAction)
 {
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, 0, editingAction));
+    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction));
     applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommand::applyStyle(CSSStyleDeclaration *style, Position start, Position end, EditAction editingAction)
 {
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, 0, start, end, editingAction));
+    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, start, end, editingAction));
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommand::applyStyledElement(Element* element)
+{
+    EditCommandPtr cmd(new ApplyStyleCommand(document(), element, false));
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommand::removeStyledElement(Element* element)
+{
+    EditCommandPtr cmd(new ApplyStyleCommand(document(), element, true));
     applyCommandToComposite(cmd);
 }
 
@@ -584,6 +596,49 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
             break;
         moveNode = next;
     }
+}
+
+Node* enclosingAnchorElement(Node* node)
+{
+    while (node && !(node->isElementNode() && node->isLink()))
+        node = node->parentNode();
+    
+    return node;
+}
+
+void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
+{
+    if (!anchorNode)
+        return;
+    
+    ASSERT(anchorNode->isLink());
+    
+    setEndingSelection(Selection::selectionFromContentsOfNode(anchorNode));
+    applyStyledElement(static_cast<Element*>(anchorNode));
+}
+
+// We must push partially selected anchors down before creating or removing
+// links from a selection to create fully selected chunks that can be removed.
+// ApplyStyleCommand doesn't do this for us because styles can be nested.
+// Anchors cannot be nested.
+void CompositeEditCommand::pushPartiallySelectedAnchorElementsDown()
+{
+    Selection originalSelection = endingSelection();
+    VisiblePosition visibleStart(originalSelection.start());
+    VisiblePosition visibleEnd(originalSelection.end());
+    
+    Node* startAnchor = enclosingAnchorElement(originalSelection.start().node());
+    VisiblePosition startOfStartAnchor(Position(startAnchor, 0));
+    if (startAnchor && startOfStartAnchor != visibleStart)
+        pushAnchorElementDown(startAnchor);
+
+    Node* endAnchor = enclosingAnchorElement(originalSelection.end().node());
+    VisiblePosition endOfEndAnchor(Position(endAnchor, 0));
+    if (endAnchor && endOfEndAnchor != visibleEnd)
+        pushAnchorElementDown(endAnchor);
+
+    ASSERT(originalSelection.start().node()->inDocument() && originalSelection.end().node()->inDocument());
+    setEndingSelection(originalSelection);
 }
 
 PassRefPtr<Element> createBlockPlaceholderElement(Document* document)

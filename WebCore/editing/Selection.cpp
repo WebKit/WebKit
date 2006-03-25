@@ -63,6 +63,11 @@ Selection::Selection(const Position &base, const Position &extent, EAffinity aff
     validate();
 }
 
+Selection Selection::selectionFromContentsOfNode(Node* node)
+{
+    return Selection(Position(node, 0), Position(node, maxDeepOffset(node)), DOWNSTREAM);
+}
+
 PassRefPtr<Range> Selection::toRange() const
 {
     if (isNone())

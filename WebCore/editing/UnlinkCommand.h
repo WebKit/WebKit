@@ -23,23 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CreateLinkCommand_h
-#define CreateLinkCommand_h
+#ifndef UnlinkCommand_h
+#define UnlinkCommand_h
 
 #include "CompositeEditCommand.h"
 
 namespace WebCore {
 
-class CreateLinkCommand : public CompositeEditCommand
+class UnlinkCommand : public CompositeEditCommand
 {
 public:
-    CreateLinkCommand(WebCore::Document*, const String&);
+    UnlinkCommand(WebCore::Document*);
     virtual void doApply();
 private:
-    String m_url;
 
 };
 
-} // namespace WebCore
+} // namespace khtml
 
-#endif // CreateLinkCommand_h
+#endif // UnlinkCommand_h

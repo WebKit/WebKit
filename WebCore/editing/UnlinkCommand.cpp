@@ -23,23 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CreateLinkCommand_h
-#define CreateLinkCommand_h
+#include "config.h"
+#include "UnlinkCommand.h"
 
-#include "CompositeEditCommand.h"
+#include "html_inlineimpl.h"
+#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
-class CreateLinkCommand : public CompositeEditCommand
+UnlinkCommand::UnlinkCommand(Document* document)
+    : CompositeEditCommand(document)
 {
-public:
-    CreateLinkCommand(WebCore::Document*, const String&);
-    virtual void doApply();
-private:
-    String m_url;
+}
 
-};
+void UnlinkCommand::doApply()
+{
+    pushPartiallySelectedAnchorElementsDown();
 
-} // namespace WebCore
+    HTMLAnchorElement* anchorElement = new HTMLAnchorElement(document());
+    removeStyledElement(anchorElement);
+}
 
-#endif // CreateLinkCommand_h
+}

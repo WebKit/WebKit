@@ -15,6 +15,9 @@ function editingTest() {
     var s = window.getSelection();
     var d;
     
+    if (window.layoutTestController)
+        window.layoutTestController.dumpAsText();
+    
     // Fully select the line in the first div.
     d = document.getElementById("test1");
     s.setPosition(d, 0);

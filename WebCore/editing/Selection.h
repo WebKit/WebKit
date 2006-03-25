@@ -44,6 +44,8 @@ public:
     Selection();
     Selection(const Position &, EAffinity);
     Selection(const Position &, const Position &, EAffinity);
+    
+    static Selection selectionFromContentsOfNode(Node*);
 
     EState state() const { return m_state; }
 

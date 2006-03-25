@@ -27,6 +27,7 @@
 #include "JSEditor.h"
 
 #include "CreateLinkCommand.h"
+#include "UnlinkCommand.h"
 #include "Document.h"
 #include "Frame.h"
 #include "SelectionController.h"
@@ -406,6 +407,12 @@ bool execUndo(Frame *frame, bool userInterface, const String &value)
     return true;
 }
 
+bool execUnlink(Frame *frame, bool userInterface, const String &value)
+{
+    EditCommandPtr(new UnlinkCommand(frame->document())).apply();
+    return true;
+}
+
 bool execUnselect(Frame *frame, bool userInterface, const String &value)
 {
     // FIXME: 6498 Should just be able to call m_frame->selection().clear()
@@ -589,6 +596,7 @@ CommandMap *createCommandDictionary()
         { "Transpose", { execTranspose, enabled, stateNone, valueNull } },
         { "Underline", { execUnderline, enabledAnySelection, stateUnderline, valueNull } },
         { "Undo", { execUndo, enabledUndo, stateNone, valueNull } },
+        { "Unlink", { execUnlink, enabledRangeSelection, stateNone, valueNull } },
         { "Unselect", { execUnselect, enabledAnySelection, stateNone, valueNull } }
 
         //
@@ -644,7 +652,6 @@ CommandMap *createCommandDictionary()
         // Stop (not supported)
         // StopImage (not supported)
         // Unbookmark (not supported)
-        // Unlink (not supported)
     };
 
     CommandMap *commandMap = new CommandMap;

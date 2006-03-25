@@ -1,3 +1,47 @@
+2006-03-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7683>
+        TinyMCE: execCommand("Unlink") unimplemented
+        
+        Added code to push partially selected anchor elements down before 
+        creating or removing links to create fully selected chunks that can be removed.
+        Changed __create_link_command_h__ to CreateLinkCommand_h
+        Gave styled element application/removal its own ApplyStyleCommand constructor.
+        Still need to add new EditActions (7974).
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::ApplyStyleCommand):
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/ApplyStyleCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::applyStyle):
+        (WebCore::CompositeEditCommand::applyStyledElement):
+        (WebCore::CompositeEditCommand::removeStyledElement):
+        (WebCore::enclosingAnchorElement):
+        (WebCore::CompositeEditCommand::pushAnchorElementDown):
+        (WebCore::CompositeEditCommand::pushPartiallySelectedAnchorElementsDown):
+        * editing/CompositeEditCommand.h:
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply):
+        * editing/CreateLinkCommand.h:
+        * editing/JSEditor.cpp:
+        * editing/Selection.cpp:
+        (WebCore::Selection::selectionFromContentsOfNode):
+        * editing/Selection.h:
+        * editing/UnlinkCommand.cpp: Added.
+        (WebCore::UnlinkCommand::UnlinkCommand):
+        (WebCore::UnlinkCommand::doApply):
+        * editing/UnlinkCommand.h: Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::selectContentsOfNode):
+        (WebCore::Frame::computeAndSetTypingStyle):
+        (WebCore::Frame::applyStyle):
+        (WebCore::Frame::applyParagraphStyle):
+
 2006-03-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

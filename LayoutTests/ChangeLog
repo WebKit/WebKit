@@ -1,3 +1,18 @@
+2006-03-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7683>
+        TinyMCE: execCommand("Unlink") unimplemented
+
+        * editing/editing.js:
+        * editing/execCommand/createLink-expected.checksum: Removed.
+        * editing/execCommand/createLink-expected.png: Removed.
+        * editing/execCommand/createLink-expected.txt:
+        * editing/execCommand/createLink.html:
+        * editing/execCommand/unlink-expected.txt: Added.
+        * editing/execCommand/unlink.html: Added.
+
 2006-03-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

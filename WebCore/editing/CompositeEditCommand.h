@@ -54,6 +54,8 @@ protected:
     void applyCommandToComposite(EditCommandPtr &);
     void applyStyle(WebCore::CSSStyleDeclaration *style, EditAction editingAction=EditActionChangeAttributes);
     void applyStyle(WebCore::CSSStyleDeclaration *style, WebCore::Position start, WebCore::Position end, EditAction editingAction=EditActionChangeAttributes);
+    void applyStyledElement(Element*);
+    void removeStyledElement(Element*);
     void deleteKeyPressed();
     void deleteSelection(bool smartDelete=false, bool mergeBlocksAfterDelete=true);
     void deleteSelection(const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
@@ -94,6 +96,9 @@ protected:
     WebCore::Node *findBlockPlaceholder(WebCore::Node *);
 
     void moveParagraphContentsToNewBlockIfNecessary(const WebCore::Position &);
+    
+    void pushAnchorElementDown(WebCore::Node*);
+    void pushPartiallySelectedAnchorElementsDown();
 
     DeprecatedValueList<EditCommandPtr> m_cmds;
 };
