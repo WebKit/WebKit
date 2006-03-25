@@ -1,4 +1,3 @@
-<<<<<<< .mine
 2006-03-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
@@ -33,15 +32,13 @@
         (WebCore::RenderingInfo::isBlockFlow):
         (WebCore::ReplacementFragment::renderingInfo):
         (WebCore::ReplacementFragment::nodes):
-
-=======
+        
 2006-03-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by justing.
 
         * generate-derived-sources: fix clean builds on mac.
-
->>>>>>> .r13474
+        
 2006-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Harrison.
