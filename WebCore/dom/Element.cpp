@@ -25,10 +25,10 @@
 #include "config.h"
 #include "Element.h"
 
-#include "CSSStyleSelector.h"
+#include "cssstyleselector.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "Frame.h"
 #include "htmlnames.h"
 #include "NamedAttrMap.h"

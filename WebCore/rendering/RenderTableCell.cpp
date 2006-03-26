@@ -685,15 +685,6 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* p, int _tx, int _ty,
     }
 }
 
-IntRect RenderTableCell::getAbsoluteRepaintRect()
-{
-    int ow = style() ? style()->outlineSize() : 0;
-    IntRect r(-ow, -ow - borderTopExtra(), 
-            overflowWidth(false) + ow * 2, overflowHeight(false) + borderTopExtra() + borderBottomExtra() + ow * 2);
-    computeAbsoluteRepaintRect(r);
-    return r;
-}
-
 void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& i, int _tx, int _ty, RenderObject* backgroundObject)
 {
     if (!backgroundObject)

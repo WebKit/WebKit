@@ -768,7 +768,7 @@ void RenderBox::setInlineBoxWrapper(InlineBox* b)
 
 IntRect RenderBox::getAbsoluteRepaintRect()
 {
-    IntRect r(0, 0, overflowWidth(false), overflowHeight(false));
+    IntRect r = overflowRect(false);
     if (style()) {
         if (style()->hasAppearance())
             // The theme may wish to inflate the rect used when repainting.

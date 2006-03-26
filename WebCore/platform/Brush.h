@@ -37,7 +37,7 @@ public:
         SolidPattern,
     };
 
-    Brush::Brush(const Color &c = Color::black, BrushStyle style = SolidPattern)
+    Brush(const Color &c = Color::black, BrushStyle style = SolidPattern)
         : brushColor(c), brushStyle(style) { }
 
     const Color &color() const { return brushColor; }

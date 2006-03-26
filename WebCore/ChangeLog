@@ -1,3 +1,24 @@
+2006-03-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7916
+          Box repaint rect does not include the left overflow
+
+        * manual-tests/left-overflow-repaint.html: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowRect): Changed m_overflowWidth and m_overflowHeight
+        to overflowWidth() and overflowHeight() since RenderTable overrides the latter.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::getAbsoluteRepaintRect): Include top and left overflows.
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::getAbsoluteRepaintRect): Removed redundant code.
+        * rendering/RenderTableCell.cpp: Removed subclass implementation of
+        getAbsoluteRepaintRect().
+        * rendering/RenderTableCell.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Include left overflow in repaint rect.
+
 2006-03-25  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

@@ -1713,7 +1713,8 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     checkLinesForOverflow();
 
     if (useRepaintRect) {
-        repaintRect.setWidth(kMax((int)m_width, m_overflowWidth));
+        repaintRect.setX(m_overflowLeft);
+        repaintRect.setWidth(kMax((int)m_width, m_overflowWidth) - m_overflowLeft);
         if (repaintRect.height() == 0)
             repaintRect.setHeight(kMax(oldLineBottom, m_overflowHeight) - repaintRect.y());
     }

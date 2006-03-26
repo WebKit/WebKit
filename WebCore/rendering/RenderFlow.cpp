@@ -506,19 +506,8 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
         }
         
         return r;
-    }
-    else {
-        if (firstLineBox() && firstLineBox()->topOverflow() < 0) {
-            int ow = style() ? style()->outlineSize() : 0;
-            IntRect r(-ow, -ow+firstLineBox()->topOverflow(),
-                    overflowWidth(false)+ow*2,
-                    overflowHeight(false)+ow*2-firstLineBox()->topOverflow());
-            computeAbsoluteRepaintRect(r);
-            return r;
-        }
-    }
-
-    return RenderContainer::getAbsoluteRepaintRect();
+    } else
+        return RenderContainer::getAbsoluteRepaintRect();
 }
 
 int
