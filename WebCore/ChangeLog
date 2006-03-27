@@ -1,3 +1,13 @@
+2006-03-27  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7868>
+        REGRESSION: Extraneous focus ring drawn at the end of the page
+        
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::addFocusRingRect): Don't add a focus ring for an empty rect.
+
 2006-03-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

@@ -294,7 +294,7 @@ void GraphicsContext::clearFocusRing()
 
 void GraphicsContext::addFocusRingRect(const IntRect& rect)
 {
-    if (paintingDisabled())
+    if (paintingDisabled() || rect.isEmpty())
         return;
     m_common->m_focusRingRects.append(rect);
 }

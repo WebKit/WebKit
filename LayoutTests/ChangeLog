@@ -1,3 +1,15 @@
+2006-03-27  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7868>
+        REGRESSION: Extraneous focus ring drawn at the end of the page        
+        
+        * fast/css/outline-auto-empty-rects-expected.checksum: Added.
+        * fast/css/outline-auto-empty-rects-expected.png: Added.
+        * fast/css/outline-auto-empty-rects-expected.txt: Added.
+        * fast/css/outline-auto-empty-rects.html: Added.
+
 2006-03-23  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
