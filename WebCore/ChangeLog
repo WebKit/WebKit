@@ -1,5 +1,16 @@
 2006-03-26  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Fix win32 build.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * editing/CompositeEditCommand.cpp:
+        * editing/InsertTextCommand.cpp:
+        * generate-derived-sources:
+
+2006-03-26  Eric Seidel  <eseidel@apple.com>
+
         * dom/Element.cpp: fix include case, fixing build.
 
 2006-03-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>

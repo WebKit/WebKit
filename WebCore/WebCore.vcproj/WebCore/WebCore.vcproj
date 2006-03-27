@@ -1934,10 +1934,6 @@
 				RelativePath="..\..\css\tokenizer.flex"
 				>
 			</File>
-			<File
-				RelativePath="..\..\css\UserAgentStyleSheets.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="rendering"
@@ -2259,6 +2255,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\Attr.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Attr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Attribute.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Attribute.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\BeforeTextInsertedEvent.cpp"
 				>
 			</File>
@@ -2307,6 +2319,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\CSSMappedAttributeDeclaration.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\CSSMappedAttributeDeclaration.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\DocPtr.h"
 				>
 			</File>
@@ -2351,14 +2371,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom_elementimpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\dom_elementimpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\dom\dom_xmlimpl.cpp"
 				>
 			</File>
@@ -2383,6 +2395,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\Element.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Element.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\EventListener.h"
 				>
 			</File>
@@ -2404,6 +2424,34 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\ExceptionCode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MappedAttribute.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MappedAttribute.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MappedAttributeEntry.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NamedAttrMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NamedAttrMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NamedMappedAttrMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NamedMappedAttrMap.h"
 				>
 			</File>
 			<File
@@ -2456,6 +2504,14 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\Range.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\StyledElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\StyledElement.h"
 				>
 			</File>
 			<File
@@ -2800,6 +2856,14 @@
 			</File>
 			<File
 				RelativePath="..\..\editing\TypingCommand.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\UnlinkCommand.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\UnlinkCommand.h"
 				>
 			</File>
 			<File

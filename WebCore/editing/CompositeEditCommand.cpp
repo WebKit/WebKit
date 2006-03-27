@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CompositeEditCommand.h"
 
+#include "css_valueimpl.h"
 #include "Document.h"
 #include "InlineTextBox.h"
 #include "AppendNodeCommand.h"

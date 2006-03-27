@@ -70,7 +70,8 @@ fi
 
 ENCODINGS_FILE="platform/mac/mac-encodings.txt"
 ENCODINGS_PREFIX="kCFStringEncoding"
-if [ `which sw_vers 2>&1 > /dev/null` ]; then
+which sw_vers 2>&1 > /dev/null  # Check if we're on os x
+if [ $? ]; then
     ENCODINGS_FILE="platform/win/win-encodings.txt";
     ENCODINGS_PREFIX=""
 fi
