@@ -59,6 +59,8 @@ namespace WebCore {
         EditActionPasteFont,
         EditActionPasteRuler,
         EditActionTyping,
+        EditActionCreateLink,
+        EditActionUnlink,
     } EditAction;    
 }
 

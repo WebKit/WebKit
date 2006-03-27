@@ -1,3 +1,17 @@
+2006-03-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darn
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7974>
+        Add EditActions and WebUndoActions for CreateLink and Unlink
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * editing/CreateLinkCommand.h:
+        (WebCore::CreateLinkCommand::editingAction):
+        * editing/EditAction.h:
+        * editing/UnlinkCommand.h:
+        (WebCore::UnlinkCommand::editingAction):
+
 2006-03-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

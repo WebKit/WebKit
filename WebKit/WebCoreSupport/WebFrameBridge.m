@@ -1569,6 +1569,8 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
         case WebUndoActionPasteFont: return UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
         case WebUndoActionPasteRuler: return UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
         case WebUndoActionTyping: return UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
+        case WebUndoActionCreateLink: return UI_STRING_KEY("Create Link", "Create Link (Undo action name)", "Undo action name");
+        case WebUndoActionUnlink: return UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
     }
     return nil;
 }

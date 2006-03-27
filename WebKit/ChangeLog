@@ -1,3 +1,14 @@
+2006-03-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7974>
+        Add EditActions and WebUndoActions for CreateLink and Unlink
+
+        * English.lproj/Localizable.strings:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge nameForUndoAction:]):
+
 2006-03-23  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.
