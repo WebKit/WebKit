@@ -1,3 +1,21 @@
+2006-03-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4427002> REGRESSION: VoiceOver doesn't read heading level text in Safari (Range selectNodeContents broken)
+
+        Range::selectNodeContents() was erroneously using childNodeCount, which is always 0 for text
+        nodes.  Turns out that [WebCoreAXObject textUnderElement] is the only code that ends up calling
+        selectNodeContents on a text node.
+
+        Test cases added: None.  Manual AX testing is way too awkward, and automated testing
+        is not possible.  See following bug...
+            <rdar://problem/4256882> Need automated testing support for accessibility APIs
+
+        * dom/Range.cpp:
+        (WebCore::Range::selectNodeContents):
+        Use maxDeepOffset instead of childNodeCount, so that text node content is selected.
+
 2006-03-27  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by darin

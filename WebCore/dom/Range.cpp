@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "htmlediting.h"
 #include "HTMLElement.h"
 #include "RenderBlock.h"
 #include "VisiblePosition.h"
@@ -1078,7 +1079,7 @@ void Range::selectNodeContents( Node *refNode, ExceptionCode& ec)
     m_startContainer = refNode;
     m_startOffset = 0;
     m_endContainer = refNode;
-    m_endOffset = refNode->childNodeCount();
+    m_endOffset = maxDeepOffset(refNode);
 }
 
 void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
