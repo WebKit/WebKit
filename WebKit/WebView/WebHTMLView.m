@@ -2967,13 +2967,13 @@ done:
     
     if (view == nil) {
         view = [super nextValidKeyView];
-        // If there's no next view wired up, we must be in the last subframe.
+        // If there's no next view wired up, we must be in the last subframe, or we are
+        // being called at an unusual time when the views have not yet been wired together.
         // There's no direct link to the next valid key view; get it from the bridge.
         // Note that view == self here when nextKeyView returns nil, due to AppKit oddness.
         // We'll check for both nil and self in case the AppKit oddness goes away.
         // WebFrameView has this same kind of logic for the previousValidKeyView case.
         if (view == nil || view == self) {
-            ASSERT([self _frame] != [[self _webView] mainFrame]);
             view = [[self _bridge] nextValidKeyViewOutsideWebFrameViews];
         }
     }

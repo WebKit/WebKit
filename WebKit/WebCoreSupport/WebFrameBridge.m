@@ -802,13 +802,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSView *)_nextKeyViewOutsideWebFrameViewsWithValidityCheck:(BOOL)mustBeValid
 {
-    if (_inNextKeyViewOutsideWebFrameViews) {
-        // We should never get here, but unrepro bug 3997185 says we sometimes do.
-        // So we'll fail on debug builds to try to catch the problem, but on
-        // deployment builds we'll return nil to avoid recursing forever.
-        ASSERT_NOT_REACHED();
+    // We can get here in unusual situations such as the one listed in 4451831, so we
+    // return nil to avoid an infinite recursion.
+    if (_inNextKeyViewOutsideWebFrameViews)
         return nil;
-    }
     
     _inNextKeyViewOutsideWebFrameViews = YES;
     WebView *webView = [self webView];
