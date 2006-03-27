@@ -1,3 +1,7 @@
+2006-03-26  Eric Seidel  <eseidel@apple.com>
+
+        * dom/Element.cpp: fix include case, fixing build.
+
 2006-03-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin.  Landed by eseidel.
