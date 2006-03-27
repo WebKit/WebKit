@@ -1,3 +1,15 @@
+2006-03-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler and Tim Omernick
+        
+        - fixed <rdar://problem/4406505> REGRESSION: (japanese text) Clauses is unexpectedly 
+        confirmed while typing on Safari.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _displayedValue]):
+        Avoid calling stringValue on the focused NSTextField. This will soon be obsolete, but
+        for now it fixes this regression.
+
 2006-03-27  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by darin

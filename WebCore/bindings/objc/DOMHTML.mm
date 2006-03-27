@@ -4004,8 +4004,15 @@ static NSView *viewForElement(DOMElement *element)
     // point appears between what you typed and the autocompleted part of the text). I think the DOM element's
     // stored value isn't updated until the text in the field is committed when losing focus or perhaps on Enter.
     // Maybe when we switch over to not using NSTextField here then [_element value] will be good enough and
-    // we can get rid of this method.
-    return [(NSTextField *)viewForElement(self) stringValue];
+    // we can get rid of this method. Otherwise we'll have to convert it to work in the NSTextField-free world.
+    
+    // Don't read the stringValue directly from the focused text field, as this breaks international input (4406505).
+    NSTextField *textField = (NSTextField *)viewForElement(self);
+    NSText *fieldEditor = [textField currentEditor];
+    if (!fieldEditor)
+        return [textField stringValue];
+    
+    return [fieldEditor string];
 }
 
 - (BOOL)_isTextField
