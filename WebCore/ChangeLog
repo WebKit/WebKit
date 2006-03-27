@@ -1,5 +1,13 @@
 2006-03-27  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Anders.
+        
+        - fixed <rdar://problem/4489745> REGRESSION: Safari crashes at to display http://www.lgphilips-lcd.com/
+
+        * manual-tests/empty-script-crash.html: Added.
+
+2006-03-27  Maciej Stachowiak  <mjs@apple.com>
+
         Build fix:
         
         - reverted fix for <rdar://problem/4362396> capturing listeners do not fire on the target node

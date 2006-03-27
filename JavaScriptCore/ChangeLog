@@ -1,3 +1,12 @@
+2006-03-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - fixed <rdar://problem/4489745> REGRESSION: Safari crashes at to display http://www.lgphilips-lcd.com/
+
+        * kjs/nodes.cpp:
+        (Node::deref): take into account the case where the extra refcount table was never created
+
 2006-03-23  David Carson <dacarson@gmail.com>
 
         Reviewed by Darin.

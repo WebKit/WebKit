@@ -140,6 +140,11 @@ void Node::ref()
 void Node::deref()
 {
     ASSERT(!newNodes || !newNodes->contains(this));
+    
+    if (!nodeExtraRefCounts) {
+        delete this;
+        return;
+    }
 
     HashCountedSet<Node*>::iterator it = nodeExtraRefCounts->find(this);
     if (it == nodeExtraRefCounts->end())
