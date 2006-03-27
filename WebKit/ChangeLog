@@ -1,3 +1,18 @@
+2006-03-27  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Removed tabs & reformatted code.
+        
+        * Carbon/HIViewAdapter.m:
+        (+[NSView bindHIViewToNSView:nsView:]):
+        (+[NSView getHIViewForNSView:]):
+        (+[NSView unbindNSView:]):
+        (-[NSView setNeedsDisplay:]):
+        (-[NSView setNeedsDisplayInRect:]):
+        (-[NSView nextValidKeyView]):
+        (SetViewNeedsDisplay):
+
 2006-03-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
