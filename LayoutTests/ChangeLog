@@ -1,3 +1,12 @@
+2006-03-27  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by darin
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6520
+        the IE extension insertAdjacentElement
+
+        * fast/dynamic/insertAdjacentElement.html: Added.
+
 2006-03-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by beth and geoff

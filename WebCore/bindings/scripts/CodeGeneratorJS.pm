@@ -147,6 +147,7 @@ sub AddIncludesForType
       $type eq "CanvasPattern" or
       $type eq "Range" or
       $type eq "DocumentFragment" or
+      $type eq "Node" or
       $type eq "Attr" or
       $type eq "Element") {
     $implIncludes{"${type}.h"} = 1;

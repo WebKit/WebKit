@@ -256,6 +256,38 @@ void Element::setPrefix(const AtomicString &_prefix, ExceptionCode& ec)
     m_tagName.setPrefix(_prefix);
 }
 
+Node* Element::insertAdjacentElement(const String& where, Node* newChild, int& exception)
+{
+    if (!newChild) {
+        // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative
+        exception = TYPE_MISMATCH_ERR;
+        return 0;
+    }
+    
+    // In Internet Explorer if the element has no parent and where is "beforeBegin" or "afterEnd",
+    // a document fragment is created and the elements appended in the correct order. This document
+    // fragment isn't returned anywhere.
+    //
+    // This is impossible for us to implement as the DOM tree does not allow for such structures,
+    // Opera also appears to disallow such usage.
+    
+    if (equalIgnoringCase(where, "beforeBegin")) {
+        if (Node* p = parent())
+            return p->insertBefore(newChild, this, exception) ? newChild : 0;
+    } else if (equalIgnoringCase(where, "afterBegin")) {
+        return insertBefore(newChild, firstChild(), exception) ? newChild : 0;
+    } else if (equalIgnoringCase(where, "beforeEnd")) {
+        return appendChild(newChild, exception) ? newChild : 0;
+    } else if (equalIgnoringCase(where, "afterEnd")) {
+        if (Node* p = parent())
+            return p->insertBefore(newChild, nextSibling(), exception) ? newChild : 0;
+    } else {
+        // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative
+        exception = NOT_SUPPORTED_ERR;
+    }
+    return 0;
+}
+
 void Element::createAttributeMap() const
 {
     namedAttrMap = new NamedAttrMap(const_cast<Element*>(this));

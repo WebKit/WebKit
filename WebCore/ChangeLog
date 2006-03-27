@@ -1,3 +1,16 @@
+2006-03-27  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by darin
+
+        Implement the IE extension insertAdjacentElement
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6520
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Element.cpp:
+        (WebCore::ElementImpl::insertAdjacentElement):
+        * dom/Element.h:
+        * dom/Element.idl:
+
 2006-03-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Tim Hatcher.

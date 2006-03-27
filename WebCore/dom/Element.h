@@ -122,7 +122,7 @@ public:
     virtual void recalcStyle( StyleChange = NoChange );
 
     virtual bool childTypeAllowed(NodeType);
- 
+
     virtual Attribute* createAttribute(const QualifiedName& name, StringImpl* value);
     
     void dispatchAttrRemovalEvent(Attribute *attr);
@@ -142,6 +142,8 @@ public:
     virtual void formatForDebugger(char *buffer, unsigned length) const;
 #endif
 
+    Node* insertAdjacentElement(const String& where, Node* newChild, int& exception);
+ 
 protected:
     virtual void createAttributeMap() const;
     String openTagStartToString() const;
