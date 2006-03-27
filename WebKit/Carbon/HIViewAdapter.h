@@ -29,7 +29,7 @@
 #import <WebKit/WebKit.h>
 #include <HIToolbox/HIView.h>
 
-@interface HIViewAdapter : NSView
+@interface HIViewAdapter : NSObject
 
 + (void)bindHIViewToNSView:(HIViewRef)hiView nsView:(NSView*)nsView;
 + (void)unbindNSView:(NSView*)nsView;

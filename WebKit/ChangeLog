@@ -1,3 +1,22 @@
+2006-03-27  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Part of <rdar://problem/4448350> Deprecated ObjC language API used in JavaScriptCore, WebCore,
+        WebKit and WebBrowser
+
+        * Carbon/HIViewAdapter.h:
+        HIViewAdapter is no longer an NSView subclass, since we no longer pose it as NSView.
+        * Carbon/HIViewAdapter.m:
+        (+[NSView bindHIViewToNSView:nsView:]):
+        Replace individual NSView methods instead of posing as NSView.
+        (_webkit_NSView_setNeedsDisplay):
+        Replacement implementation of -[NSView setNeedsDisplay:].
+        (_webkit_NSView_setNeedsDisplayInRect):
+        Replacement implementation of -[NSView setNeedsDisplayInRect:]
+        (_webkit_NSView_nextValidKeyView):
+        Replacement implementation of -[NSView nextValidKeyView]
+
 2006-03-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

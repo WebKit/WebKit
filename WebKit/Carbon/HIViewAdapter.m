@@ -28,6 +28,11 @@
 
 #import "HIViewAdapter.h"
 
+#import <objc/objc.h>
+#import <objc/objc-class.h>
+
+#import "WebAssertions.h"
+
 static void SetViewNeedsDisplay(HIViewRef inView, RgnHandle inRegion, Boolean inNeedsDisplay);
 
 #define WATCH_INVALIDATION 0
@@ -40,13 +45,53 @@ static void SetViewNeedsDisplay(HIViewRef inView, RgnHandle inRegion, Boolean in
 
 static CFMutableDictionaryRef sViewMap;
 
+static IMP oldNSViewSetNeedsDisplayIMP;
+static IMP oldNSViewSetNeedsDisplayInRectIMP;
+static IMP oldNSViewNextValidKeyViewIMP;
+
+static void _webkit_NSView_setNeedsDisplay(id self, SEL _cmd, BOOL flag);
+static void _webkit_NSView_setNeedsDisplayInRect(id self, SEL _cmd, NSRect invalidRect);
+static NSView *_webkit_NSView_nextValidKeyView(id self, SEL _cmd);
+
 + (void)bindHIViewToNSView:(HIViewRef)hiView nsView:(NSView*)nsView
 {
     if (sViewMap == NULL) {
-        [HIViewAdapter poseAsClass:[NSView class]];
         sViewMap = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+
+        // Override -[NSView setNeedsDisplay:]
+        Method setNeedsDisplayMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(setNeedsDisplay:));
+        ASSERT(setNeedsDisplayMethod);
+        ASSERT(!oldNSViewSetNeedsDisplayIMP);
+#if OBJC_API_VERSION > 0
+        oldNSViewSetNeedsDisplayIMP = method_setImplementation(setNeedsDisplayMethod, (IMP)_webkit_NSView_setNeedsDisplay);
+#else
+        oldNSViewSetNeedsDisplayIMP = setNeedsDisplayMethod->method_imp;
+        setNeedsDisplayMethod->method_imp = (IMP)_webkit_NSView_setNeedsDisplay;
+#endif
+
+        // Override -[NSView setNeedsDisplayInRect:]
+        Method setNeedsDisplayInRectMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(setNeedsDisplayInRect:));
+        ASSERT(setNeedsDisplayInRectMethod);
+        ASSERT(!oldNSViewSetNeedsDisplayInRectIMP);
+#if OBJC_API_VERSION > 0
+        oldNSViewSetNeedsDisplayInRectIMP = method_setImplementation(setNeedsDisplayInRectMethod, (IMP)_webkit_NSView_setNeedsDisplayInRect);
+#else
+        oldNSViewSetNeedsDisplayInRectIMP = setNeedsDisplayInRectMethod->method_imp;
+        setNeedsDisplayInRectMethod->method_imp = (IMP)_webkit_NSView_setNeedsDisplayInRect;
+#endif
+
+        // Override -[NSView nextValidKeyView]
+        Method nextValidKeyViewMethod = class_getInstanceMethod(objc_getClass("NSView"), @selector(nextValidKeyView));
+        ASSERT(nextValidKeyViewMethod);
+        ASSERT(!oldNSViewNextValidKeyViewIMP);
+#if OBJC_API_VERSION > 0
+        oldNSViewNextValidKeyViewIMP = method_setImplementation(nextValidKeyViewMethod, (IMP)_webkit_NSView_nextValidKeyView);
+#else
+        oldNSViewNextValidKeyViewIMP = nextValidKeyViewMethod->method_imp;
+        nextValidKeyViewMethod->method_imp = (IMP)_webkit_NSView_nextValidKeyView;
+#endif
     }
-    
+
     CFDictionaryAddValue(sViewMap, nsView, hiView);
 }
 
@@ -60,10 +105,10 @@ static CFMutableDictionaryRef sViewMap;
     CFDictionaryRemoveValue(sViewMap, inView);
 }
 
-- (void)setNeedsDisplay:(BOOL)flag
+static void _webkit_NSView_setNeedsDisplay(id self, SEL _cmd, BOOL flag)
 {
-    [super setNeedsDisplay:flag];
-    
+    oldNSViewSetNeedsDisplayIMP(self, _cmd, flag);
+
     if (!flag) {
         HIViewRef hiView = NULL;
         NSRect targetBounds = [self visibleRect];
@@ -103,10 +148,10 @@ static CFMutableDictionaryRef sViewMap;
     }
 }
 
-- (void)setNeedsDisplayInRect:(NSRect)invalidRect
+static void _webkit_NSView_setNeedsDisplayInRect(id self, SEL _cmd, NSRect invalidRect)
 {
     invalidRect = NSUnionRect(invalidRect, [self _dirtyRect]);
-    [super setNeedsDisplayInRect:invalidRect];
+    oldNSViewSetNeedsDisplayInRectIMP(self, _cmd, invalidRect);
     
     if (!NSIsEmptyRect(invalidRect)) {
         HIViewRef hiView = NULL;
@@ -145,16 +190,16 @@ static CFMutableDictionaryRef sViewMap;
                 }
             }
         } else
-            [_window setViewsNeedDisplay:YES];
+            [[self window] setViewsNeedDisplay:YES];
     }
 }
 
-- (NSView *)nextValidKeyView
+static NSView *_webkit_NSView_nextValidKeyView(id self, SEL _cmd)
 {
     if ([HIViewAdapter getHIViewForNSView:self])
-        return [_window contentView];
+        return [[self window] contentView];
     else
-        return [super nextValidKeyView];
+        return oldNSViewNextValidKeyViewIMP(self, _cmd);
 }
 
 @end
