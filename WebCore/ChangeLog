@@ -1,3 +1,13 @@
+2006-03-15  Darin Adler  <darin@apple.com>
+
+        At the request of Michael Emmel <mike.emmel@gmail.com>.
+
+        - fix compilation for Linux
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=8013
+
+        * rendering/render_style.h: Add declaration of CSSStyleSelector. Also tweaked
+        formatting a bit and removed some extraneous WebCore:: prefixes.
+
 2006-03-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler and Tim Omernick
@@ -1175,6 +1185,7 @@
         * bindings/js/JSDOMHTML.cpp:
         * bindings/scripts/CodeGeneratorJS.pm:
 
+>>>>>>> .r13497
 2006-03-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej
