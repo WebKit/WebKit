@@ -1,3 +1,16 @@
+2006-03-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Build fix:
+        
+        - reverted fix for <rdar://problem/4362396> capturing listeners do not fire on the target node
+        It turns out that the behavior we had was standards-compliant and
+        Moz will be changing to match.
+        
+        Also added a note so this doesn't get reverted again.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+
 2006-03-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darn
