@@ -1,3 +1,24 @@
+2006-03-28  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3694090> -[WebBaseNetscapePluginView finalize] is incorrect; design change needed
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView initWithFrame:]):
+        Don't observe preferences changes here -- we only want to observe preferences while the view is 
+        installed in the view hierarchy.  Plugins will appropriately start and stop themselves when added to
+        or removed from a window.
+        (-[WebBaseNetscapePluginView dealloc]):
+        Don't remove observers here -- they should have been removed when the view was removed from its
+        window.
+        (-[WebBaseNetscapePluginView finalize]):
+        ditto
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]):
+        Stop observing preferences when the view is removed from its window.
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]):
+        Start observing preferences when the view is added to a window.
+
 2006-03-27  Tim Omernick  <timo@apple.com>
 
         Reviewed by Eric.
