@@ -1,3 +1,19 @@
+2006-03-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Beth.
+        
+        - test cases for <rdar://problem/4279765> REGRESSION: "More..." links on flickr groups pages have hover issues (flickr.com)
+
+        * fast/block/float/float-in-float-hit-testing-expected.checksum: Added.
+        * fast/block/float/float-in-float-hit-testing-expected.png: Added.
+        * fast/block/float/float-in-float-hit-testing-expected.txt: Added.
+        * fast/block/float/float-in-float-hit-testing.html: Added.
+        * fast/block/float/float-in-float-painting-expected.checksum: Added.
+        * fast/block/float/float-in-float-painting-expected.png: Added.
+        * fast/block/float/float-in-float-painting-expected.txt: Added.
+        * fast/block/float/float-in-float-painting.html: Added.
+        * fast/events/capture-on-target.html:
+
 2006-03-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

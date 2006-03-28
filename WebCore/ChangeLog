@@ -1,3 +1,17 @@
+2006-03-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Beth.
+
+        - fixed <rdar://problem/4279765> REGRESSION: "More..." links on flickr groups pages have hover issues (flickr.com)
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::floatRect): Rewrote in terms of rects, and made it consider child floatRects
+        as well as their overflowRects.
+        * platform/IntRect.h:
+        (WebCore::unionRect): useful helper
+        * platform/FloatRect.h:
+        (WebCore::unionRect): added same for FloatRect just because
+
 2006-03-27  Darin Adler  <darin@apple.com>
 
         Based on a patch by Michael Emmel <mike.emmel@gmail.com>.

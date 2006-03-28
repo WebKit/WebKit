@@ -2062,21 +2062,9 @@ IntRect RenderBlock::floatRect() const
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (; (r = it.current()); ++it) {
         if (!r->noPaint && !r->node->layer()) {
-            // Check this float.
-            int bottomDelta = kMax(0, r->startY + r->node->marginTop() + r->node->overflowHeight(false) - result.bottom());
-            if (bottomDelta)
-                result.setHeight(result.height() + bottomDelta);
-            int rightDelta = kMax(0, r->left + r->node->marginLeft() + r->node->overflowWidth(false) - result.right());
-            if (rightDelta)
-                result.setWidth(result.width() + rightDelta);
-            
-            // Now check left and top
-            int topDelta = kMin(0, r->startY + r->node->marginTop() - result.y());
-            if (topDelta < 0)
-                result.inflateY(-topDelta);
-            int leftDelta = kMin(0, r->left + r->node->marginLeft() - result.x());
-            if (leftDelta < 0)
-                result.inflateX(-leftDelta);
+            IntRect childRect = unionRect(r->node->floatRect(), r->node->overflowRect());
+            childRect.move(r->left + r->node->marginLeft(), r->startY + r->node->marginTop());
+            result.unite(childRect);
         }
     }
 

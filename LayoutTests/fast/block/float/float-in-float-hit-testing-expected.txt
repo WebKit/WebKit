@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x100
+        RenderText {TEXT} at (0,0) size 248x18
+          text run at (0,0) width 248: "This test checks for regressions against "
+        RenderInline {A} at (0,0) size 775x36 [color=#0000EE]
+          RenderText {TEXT} at (248,0) size 775x36
+            text run at (248,0) width 527: "Radar 4279765: REGRESSION: \"More...\" links on flickr groups pages have hover"
+            text run at (0,18) width 115: "issues (flickr.com)"
+        RenderText {TEXT} at (115,18) size 397x18
+          text run at (115,18) width 397: ". Click on the word TEST below and it should turn into PASS."
+      RenderBlock {DIV} at (0,100) size 784x200
+        RenderBlock (floating) {DIV} at (0,0) size 245x200
+          RenderImage {IMG} at (0,0) size 100x100
+          RenderText {TEXT} at (100,86) size 4x18
+            text run at (100,86) width 4: " "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderBlock (floating) {H1} at (0,171) size 245x115
+            RenderInline {A} at (0,0) size 245x115 [color=#0000EE]
+              RenderText {TEXT} at (0,0) size 245x115
+                text run at (0,0) width 245: "PASS"
+          RenderText {TEXT} at (0,0) size 0x0
+        RenderBR {BR} at (245,0) size 0x18

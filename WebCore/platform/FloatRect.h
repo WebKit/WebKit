@@ -119,6 +119,13 @@ inline FloatRect intersection(const FloatRect& a, const FloatRect& b)
     return c;
 }
 
+inline FloatRect unionRect(const FloatRect& a, const FloatRect& b)
+{
+    FloatRect c = a;
+    c.unite(b);
+    return c;
+}
+
 inline bool operator==(const FloatRect& a, const FloatRect& b)
 {
     return a.location() == b.location() && a.size() == b.size();
