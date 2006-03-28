@@ -2,6 +2,24 @@
 
         Reviewed by Eric.
 
+        <rdar://problem/3694086> -[WebBaseNetscapePluginStream finalize] is incorrect; design change needed
+
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream dealloc]):
+        Assert that the stream file path either never existed, or was deleted and NULL-ed out.  The stream file
+        is now deleted immediately after calling NPP_StreamAsFile().
+        (-[WebBaseNetscapePluginStream finalize]):
+        ditto
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        Delete the file after calling NPP_StreamAsFile(), instead of in -dealloc/-finalize.  It should be OK
+        to delete the file here -- NPP_StreamAsFile() is always called immediately before NPP_DestroyStream()
+        (the stream destruction function), so there can be no expectation that a plugin will read the stream file
+        asynchronously after NPP_StreamAsFile() is called.
+
+2006-03-27  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Eric.
+
         <rdar://problem/3694093> -[WebBasePluginPackage finalize] is incorrect; design change needed
 
         Call -unload on plug-in packages instead of relying on -dealloc/-finalize to do it.  Currently

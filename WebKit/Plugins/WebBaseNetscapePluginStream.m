@@ -108,12 +108,8 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     ASSERT(isTerminated);
     ASSERT(stream.ndata == nil);
 
-    // FIXME: It's generally considered bad style to do work, like deleting a file,
-    // at dealloc time. We should change things around so that this is done at a
-    // more well-defined time rather than when the last release happens.
-    if (path) {
-        unlink(path);
-    }
+    // The stream file should have been deleted, and the path freed, in -_destroyStream
+    ASSERT(!path);
 
     [requestURL release];
     [responseURL release];
@@ -132,10 +128,8 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     ASSERT(isTerminated);
     ASSERT(stream.ndata == nil);
 
-    // FIXME: Bad for all the reasons mentioned above, but even worse for GC.
-    if (path) {
-        unlink(path);
-    }
+    // The stream file should have been deleted, and the path freed, in -_destroyStream
+    ASSERT(!path);
 
     free((void *)stream.url);
     free(path);
@@ -274,6 +268,14 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             const char *carbonPath = CarbonPathFromPOSIXPath(path);
             ASSERT(carbonPath != NULL);
             NPP_StreamAsFile(instance, &stream, carbonPath);
+
+            // Delete the file after calling NPP_StreamAsFile(), instead of in -dealloc/-finalize.  It should be OK
+            // to delete the file here -- NPP_StreamAsFile() is always called immediately before NPP_DestroyStream()
+            // (the stream destruction function), so there can be no expectation that a plugin will read the stream
+            // file asynchronously after NPP_StreamAsFile() is called.
+            unlink(path);
+            free(path);
+            path = NULL;
             LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", responseURL, carbonPath);
         }
         
