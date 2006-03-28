@@ -18,7 +18,7 @@ if [ css/CSSPropertyNames.in -nt "$DerivedSourcesDir/CSSPropertyNames.h" -o css/
   cd "$WebCoreSourceRoot"
 fi
 
-if [ css/CSSValueKeywords.in -nt "$DerivedSourcesDir/CSSValueKeywords.h"  -o css/makevalues -nt "$DerivedSourcesDir/CSSValueKeywords.h" ]; then
+if [ css/CSSValueKeywords.in -nt "$DerivedSourcesDir/CSSValueKeywords.h" -o css/makevalues -nt "$DerivedSourcesDir/CSSValueKeywords.h" ]; then
   echo "Generating CSS values table"
   cat css/CSSValueKeywords.in > "$DerivedSourcesDir/CSSValueKeywords.in"
   cd "$DerivedSourcesDir"
@@ -83,7 +83,7 @@ fi
 
 # Generate the lookup tables for the JS bindings
 
-if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/JSDOMParser.lut.h" -o khtml/ecma/JSDOMParser.cpp -nt "$DerivedSourcesDir/JSDOMParser.lut.h" ]; then
+if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/JSDOMParser.lut.h" -o khtml/ecma/JSDOMParser.cpp -nt "$DerivedSourcesDir/JSDOMParser.lut.h" ]; then
   "$CREATE_HASH_TABLE" khtml/ecma/JSDOMParser.cpp > "$DerivedSourcesDir/JSDOMParser.lut.h"
 fi
 

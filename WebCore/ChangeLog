@@ -1,3 +1,12 @@
+2006-03-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Moved the derived sources script to an agregate target. Fixes internal builds.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * generate-derived-sources: was missing a use of $CREATE_HASH_TABLE
+
 2006-03-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

@@ -6,6 +6,23 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		DD041FBE09D9DDBE0010AF2A /* Derived Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DD041FC109D9DDDC0010AF2A /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
+			buildPhases = (
+				DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */,
+			);
+			buildSettings = {
+				PRODUCT_NAME = "Derived Sources";
+			};
+			dependencies = (
+			);
+			name = "Derived Sources";
+			productName = "Derived Sources";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; };
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
@@ -1192,12 +1209,12 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		6565826B09D156A2000E61D7 /* PBXContainerItemProxy */ = {
+		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 6565825D09D15666000E61D7;
-			remoteInfo = Derived;
+			remoteGlobalIDString = DD041FBE09D9DDBE0010AF2A;
+			remoteInfo = "Derived Sources";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1291,7 +1308,6 @@
 		6565820E09D15111000E61D7 /* ksvgcssvalues.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.gperf; sourceTree = "<group>"; };
 		6565820F09D15111000E61D7 /* ksvgcssvalues.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ksvgcssvalues.h; sourceTree = "<group>"; };
 		6565821009D15111000E61D7 /* ksvgcssvalues.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ksvgcssvalues.in; sourceTree = "<group>"; };
-		6565825E09D15666000E61D7 /* Derived.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = Derived.o; sourceTree = BUILT_PRODUCTS_DIR; };
 		65743B50097076F8001E7CEF /* RenderSVGText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGText.cpp; sourceTree = "<group>"; };
 		65743B51097076F8001E7CEF /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
 		6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingMac.cpp; sourceTree = "<group>"; };
@@ -2515,7 +2531,6 @@
 			isa = PBXGroup;
 			children = (
 				93F19B1A08245E5A001E9ABC /* WebCore.framework */,
-				6565825E09D15666000E61D7 /* Derived.o */,
 			);
 			name = Products;
 			sourceTree = SOURCE_ROOT;
@@ -2655,10 +2670,10 @@
 				6565814609D13043000E61D7 /* CSSValueKeywords.c */,
 				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
 				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
+				6565814C09D13043000E61D7 /* tokenizer.cpp */,
 				6565814909D13043000E61D7 /* CSSValueKeywords.in */,
 				6565814A09D13043000E61D7 /* CSSValueKeywords.strip */,
 				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
-				6565814C09D13043000E61D7 /* tokenizer.cpp */,
 				6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */,
 				656580ED09D12B20000E61D7 /* CSSPropertyNames.c */,
 				656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */,
@@ -4787,35 +4802,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		6565825D09D15666000E61D7 /* Derived Sources */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6565825F09D15685000E61D7 /* Build configuration list for PBXNativeTarget "Derived Sources" */;
-			buildPhases = (
-				6565826309D1568B000E61D7 /* Generate Derived Sources */,
-			);
-			buildRules = (
-			);
-			buildSettings = {
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = Derived;
-			};
-			dependencies = (
-			);
-			name = "Derived Sources";
-			productName = Derived;
-			productReference = 6565825E09D15666000E61D7 /* Derived.o */;
-			productType = "com.apple.product-type.objfile";
-		};
 		93F198A508245E59001E9ABC /* WebCore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C283908902B11008A9EFC /* Build configuration list for PBXNativeTarget "WebCore" */;
@@ -4882,7 +4868,7 @@
 				);
 			};
 			dependencies = (
-				6565826C09D156A2000E61D7 /* PBXTargetDependency */,
+				DD041FF109D9E3250010AF2A /* PBXTargetDependency */,
 			);
 			name = WebCore;
 			productInstallPath = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
@@ -4918,7 +4904,7 @@
 			projectDirPath = "";
 			targets = (
 				93F198A508245E59001E9ABC /* WebCore */,
-				6565825D09D15666000E61D7 /* Derived Sources */,
+				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
 			);
 		};
 /* End PBXProject section */
@@ -4976,7 +4962,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6565826309D1568B000E61D7 /* Generate Derived Sources */ = {
+		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4988,7 +4974,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./generate-derived-sources\n";
+			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nelse\n    export CREATE_HASH_TABLE=${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nfi\n./generate-derived-sources\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -5509,10 +5495,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6565826C09D156A2000E61D7 /* PBXTargetDependency */ = {
+		DD041FF109D9E3250010AF2A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6565825D09D15666000E61D7 /* Derived Sources */;
-			targetProxy = 6565826B09D156A2000E61D7 /* PBXContainerItemProxy */;
+			target = DD041FBE09D9DDBE0010AF2A /* Derived Sources */;
+			targetProxy = DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -5724,68 +5710,32 @@
 			};
 			name = Production;
 		};
-		6565826009D15685000E61D7 /* Debug */ = {
+		DD041FC209D9DDDC0010AF2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = Derived;
+				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Debug;
 		};
-		6565826109D15685000E61D7 /* Release */ = {
+		DD041FC309D9DDDC0010AF2A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = Derived;
+				PRODUCT_NAME = "Derived Sources";
 				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
-		6565826209D15685000E61D7 /* Production */ = {
+		DD041FC409D9DDDC0010AF2A /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = Derived;
+				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Production;
 		};
@@ -5812,12 +5762,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		6565825F09D15685000E61D7 /* Build configuration list for PBXNativeTarget "Derived Sources" */ = {
+		DD041FC109D9DDDC0010AF2A /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6565826009D15685000E61D7 /* Debug */,
-				6565826109D15685000E61D7 /* Release */,
-				6565826209D15685000E61D7 /* Production */,
+				DD041FC209D9DDDC0010AF2A /* Debug */,
+				DD041FC309D9DDDC0010AF2A /* Release */,
+				DD041FC409D9DDDC0010AF2A /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
