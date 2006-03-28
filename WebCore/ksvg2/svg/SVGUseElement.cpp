@@ -111,18 +111,17 @@ void SVGUseElement::closeRenderer()
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _w = width()->baseVal()->value(), _h = height()->baseVal()->value();
     
-    String wString = DeprecatedString::number(_w);
-    String hString = DeprecatedString::number(_h);
+    String wString = String::number(_w);
+    String hString = String::number(_h);
     
     ExceptionCode ec;
-    DeprecatedString trans = DeprecatedString::fromLatin1("translate(%1, %2)").arg(_x).arg(_y);
-    if(target->hasTagName(SVGNames::symbolTag))
-    {
+    String trans = String::sprintf("translate(%f, %f)", _x, _y);
+    if(target->hasTagName(SVGNames::symbolTag)) {
         RefPtr<SVGElement> dummy = new SVGSVGElement(SVGNames::svgTag, getDocument());
-        if(_w > 0)
-            dummy->setAttribute(SVGNames::widthAttr, wString.impl());
-        if(_h > 0)
-            dummy->setAttribute(SVGNames::heightAttr, hString.impl());
+        if (_w > 0)
+            dummy->setAttribute(SVGNames::widthAttr, wString);
+        if (_h > 0)
+            dummy->setAttribute(SVGNames::heightAttr, hString);
         
         SVGSymbolElement *symbol = static_cast<SVGSymbolElement *>(target);
         if (symbol->hasAttribute(SVGNames::viewBoxAttr)) {
@@ -132,28 +131,24 @@ void SVGUseElement::closeRenderer()
         target->cloneChildNodes(dummy.get());
 
         RefPtr<SVGElement> dummy2 = new SVGDummyElement(SVGNames::gTag, getDocument());
-        dummy2->setAttribute(SVGNames::transformAttr, String(trans));
+        dummy2->setAttribute(SVGNames::transformAttr, trans);
         
         appendChild(dummy2, ec);
         dummy2->appendChild(dummy, ec);
-    }
-    else if(target->hasTagName(SVGNames::svgTag))
-    {
+    } else if(target->hasTagName(SVGNames::svgTag)) {
         RefPtr<SVGDummyElement> dummy = new SVGDummyElement(SVGNames::gTag, getDocument());
-        dummy->setAttribute(SVGNames::transformAttr, String(trans));
+        dummy->setAttribute(SVGNames::transformAttr, trans);
         
         RefPtr<SVGElement> root = static_pointer_cast<SVGElement>(target->cloneNode(true));
         if(hasAttribute(SVGNames::widthAttr))
-            root->setAttribute(SVGNames::widthAttr, wString.impl());
+            root->setAttribute(SVGNames::widthAttr, wString);
             
         if(hasAttribute(SVGNames::heightAttr))
-            root->setAttribute(SVGNames::heightAttr, hString.impl());
+            root->setAttribute(SVGNames::heightAttr, hString);
             
         appendChild(dummy, ec);
         dummy->appendChild(root.release(), ec);
-    }
-    else
-    {
+    } else {
         RefPtr<SVGDummyElement> dummy = new SVGDummyElement(SVGNames::gTag, getDocument());
         dummy->setAttribute(SVGNames::transformAttr, trans);
         

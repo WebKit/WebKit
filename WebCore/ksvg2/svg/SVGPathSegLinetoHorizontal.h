@@ -35,8 +35,8 @@ namespace WebCore
         virtual ~SVGPathSegLinetoHorizontalAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_ABS; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("H"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("H %1").arg(m_x); }
+        virtual String pathSegTypeAsLetter() const { return "H"; }
+        virtual String toString() const { return String::sprintf("H %.6lg", m_x); }
 
         void setX(double);
         double x() const;
@@ -52,8 +52,8 @@ namespace WebCore
         virtual ~SVGPathSegLinetoHorizontalRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_LINETO_HORIZONTAL_REL; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("h"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("h %1").arg(m_x); }
+        virtual String pathSegTypeAsLetter() const { return "h"; }
+        virtual String toString() const { return String::sprintf("h %.6lg", m_x); }
 
         void setX(double);
         double x() const;

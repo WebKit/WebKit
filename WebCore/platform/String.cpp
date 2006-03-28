@@ -24,6 +24,7 @@
 #include "PlatformString.h"
 
 #include <kjs/identifier.h>
+#include <kxmlcore/Vector.h>
 
 using namespace KJS;
 
@@ -207,6 +208,73 @@ DeprecatedString String::deprecatedString() const
     if (!m_impl->unicode())
         return DeprecatedString("", 0);
     return DeprecatedString(m_impl->unicode(), m_impl->length());
+}
+
+String String::sprintf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    Vector<char, 256> buffer;
+#if PLATFORM(WIN_OS)
+    // Windows vnsprintf does not return the expected size on overflow
+    // So we just have to keep looping until our vsprintf call works!
+    int result = 0;
+    do {
+        if (result < 0)
+            buffer.resize(buffer.size() * 2);
+        result = vsnprintf(buffer.data(), buffer.size(), format, args);
+        // Windows vnsprintf returns -1 both for all errors.  There is no
+        // way to distinguish between "not enough room" and "invalid format"
+        // we just keep trying until we hit an arbitrary size and then stop.
+    } while (result < 0 && (buffer.size() * 2) < 2048);
+    if (result == 0)
+        return String("");
+    else if (result < 0)
+        return String();
+    unsigned len = result;
+#else
+    // Do the format once to get the length.
+    char ch;
+    int result = vsnprintf(&ch, 1, format, args);
+    if (result == 0)
+        return String("");
+    else if (result < 0)
+        return String();
+    unsigned len = result;
+    buffer.resize(len + 1);
+    
+    // Now do the formatting again, guaranteed to fit.
+    vsnprintf(buffer.data(), buffer.size(), format, args);
+#endif
+    va_end(args);
+    
+    return new StringImpl(buffer.data(), len);
+}
+
+String String::number(int n)
+{
+    return String::sprintf("%d", n);
+}
+
+String String::number(unsigned n)
+{
+    return String::sprintf("%u", n);
+}
+
+String String::number(long n)
+{
+    return String::sprintf("%ld", n);
+}
+
+String String::number(unsigned long n)
+{
+    return String::sprintf("%lu", n);
+}
+
+String String::number(double n)
+{
+    return String::sprintf("%.6lg", n);
 }
 
 int String::toInt(bool* ok) const

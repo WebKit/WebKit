@@ -536,15 +536,15 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
 
     if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber() && m_lastErrorColumn != columnNumber())) {
 
-        DeprecatedString format;
+        const char* format;
         switch (type) {
             case warning:
-                format = DeprecatedString("warning on line %2 at column %3: %1");
+                format = "warning on line %d at column %d: %s";
                 break;
             case fatal:
                 // fall through
             case nonFatal:
-                format = DeprecatedString("error on line %2 at column %3: %1");
+                format = "error on line %d at column %d: %s";
         }
 
 #if WIN32
@@ -554,7 +554,7 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
         char *m;
         vasprintf(&m, message, args);
 #endif
-        m_errorMessages += format.arg(m).arg(lineNumber()).arg(columnNumber());
+        m_errorMessages += String::sprintf(format, lineNumber(), columnNumber(), m);
 #if !WIN32
         free(m);
 #endif

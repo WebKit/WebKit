@@ -50,8 +50,8 @@ namespace WebCore
         float valueInSpecifiedUnits() const;
         void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
 
-        StringImpl *valueAsString() const;
-        void setValueAsString(StringImpl *valueAsString);
+        String valueAsString() const;
+        void setValueAsString(const String&);
 
         void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
         void convertToSpecifiedUnits(unsigned short unitType);

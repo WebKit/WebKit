@@ -71,7 +71,7 @@ public:
     bool endsWith(const AtomicString& s, bool caseSensitive = true) const
         { return m_string.endsWith(s.domString(), caseSensitive); }
     
-    int toInt() const { return m_string.toInt(); }
+    int toInt(bool* ok = 0) const { return m_string.toInt(ok); }
     bool percentage(int& p) const { return m_string.percentage(p); }
     Length* toLengthArray(int& len) const { return m_string.toLengthArray(len); }
     Length* toCoordsArray(int& len) const { return m_string.toCoordsArray(len); }

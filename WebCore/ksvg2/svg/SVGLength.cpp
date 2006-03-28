@@ -109,13 +109,12 @@ float SVGLength::valueInSpecifiedUnits() const
     return m_valueInSpecifiedUnits;
 }                                                
 
-void SVGLength::setValueAsString(StringImpl* s)
+void SVGLength::setValueAsString(const String& s)
 {
-    String valueAsString(s);
-    if(valueAsString.isEmpty())
+    if(s.isEmpty())
         return;
 
-    DeprecatedString valueAsQString = valueAsString.deprecatedString();
+    DeprecatedString valueAsQString = s.deprecatedString();
 
     double convertedNumber = 0;
     const char *start = valueAsQString.latin1();
@@ -123,27 +122,26 @@ void SVGLength::setValueAsString(StringImpl* s)
     m_valueInSpecifiedUnits = convertedNumber;
 
     unsigned int diff = end - start;
-    if(diff < valueAsQString.length())
-    {
-        if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_PX]))
+    if (diff < valueAsQString.length()) {
+        if (s.endsWith(UnitText[SVG_LENGTHTYPE_PX]))
             m_unitType = SVG_LENGTHTYPE_PX;
-        else if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_CM]))
+        else if (s.endsWith(UnitText[SVG_LENGTHTYPE_CM]))
             m_unitType = SVG_LENGTHTYPE_CM;
-        else if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_PC]))
+        else if (s.endsWith(UnitText[SVG_LENGTHTYPE_PC]))
             m_unitType = SVG_LENGTHTYPE_PC;
-        else if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_MM]))
+        else if (s.endsWith(UnitText[SVG_LENGTHTYPE_MM]))
             m_unitType = SVG_LENGTHTYPE_MM;
-        else if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_IN]))
+        else if (s.endsWith(UnitText[SVG_LENGTHTYPE_IN]))
             m_unitType = SVG_LENGTHTYPE_IN;
-        else if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_PT]))
+        else if (s.endsWith(UnitText[SVG_LENGTHTYPE_PT]))
             m_unitType = SVG_LENGTHTYPE_PT;
-         else if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_PERCENTAGE]))
+         else if (s.endsWith(UnitText[SVG_LENGTHTYPE_PERCENTAGE]))
             m_unitType = SVG_LENGTHTYPE_PERCENTAGE;
-        else if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_EMS]))
+        else if (s.endsWith(UnitText[SVG_LENGTHTYPE_EMS]))
             m_unitType = SVG_LENGTHTYPE_EMS;
-        else if(valueAsQString.endsWith(UnitText[SVG_LENGTHTYPE_EXS]))
+        else if (s.endsWith(UnitText[SVG_LENGTHTYPE_EXS]))
             m_unitType = SVG_LENGTHTYPE_EXS;
-        else if(valueAsQString.isEmpty())
+        else if (s.isEmpty())
             m_unitType = SVG_LENGTHTYPE_NUMBER;
         else
             m_unitType = SVG_LENGTHTYPE_UNKNOWN;
@@ -154,9 +152,9 @@ void SVGLength::setValueAsString(StringImpl* s)
     updateValue();
 }
 
-StringImpl *SVGLength::valueAsString() const
+String SVGLength::valueAsString() const
 {
-    return new StringImpl(DeprecatedString::number(m_valueInSpecifiedUnits) + UnitText[m_unitType]);
+    return String::number(m_valueInSpecifiedUnits) + UnitText[m_unitType];
 }
 
 void SVGLength::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)

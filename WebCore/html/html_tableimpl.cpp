@@ -397,8 +397,7 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
             border=1;
 #endif
             m_noBorder = !border;
-            String v = DeprecatedString::number( border );
-            addCSSLength(attr, CSS_PROP_BORDER_WIDTH, v );
+            addCSSLength(attr, CSS_PROP_BORDER_WIDTH, String::number(border));
         }
     } else if (attr->name() == bgcolorAttr) {
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
@@ -1147,7 +1146,7 @@ void HTMLTableCellElement::setChOff(const String &value)
 
 void HTMLTableCellElement::setColSpan(int n)
 {
-    setAttribute(colspanAttr, DeprecatedString::number(n));
+    setAttribute(colspanAttr, String::number(n));
 }
 
 String HTMLTableCellElement::headers() const
@@ -1182,7 +1181,7 @@ void HTMLTableCellElement::setNoWrap(bool b)
 
 void HTMLTableCellElement::setRowSpan(int n)
 {
-    setAttribute(rowspanAttr, DeprecatedString::number(n));
+    setAttribute(rowspanAttr, String::number(n));
 }
 
 String HTMLTableCellElement::scope() const
@@ -1278,7 +1277,7 @@ void HTMLTableColElement::setChOff(const String &value)
 
 void HTMLTableColElement::setSpan(int n)
 {
-    setAttribute(spanAttr, DeprecatedString::number(n));
+    setAttribute(spanAttr, String::number(n));
 }
 
 String HTMLTableColElement::vAlign() const

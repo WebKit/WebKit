@@ -35,8 +35,8 @@ namespace WebCore
         virtual ~SVGPathSegMovetoAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_ABS; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("M"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("M %1 %2").arg(m_x).arg(m_y); }
+        virtual String pathSegTypeAsLetter() const { return "M"; }
+        virtual String toString() const { return String::sprintf("M %.6lg %.6lg", m_x, m_y); }
 
         void setX(double);
         double x() const;
@@ -56,8 +56,8 @@ namespace WebCore
         virtual ~SVGPathSegMovetoRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_REL; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("m"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("m %1 %2").arg(m_x).arg(m_y); }
+        virtual String pathSegTypeAsLetter() const { return "m"; }
+        virtual String toString() const { return String::sprintf("m %.6lg %.6lg", m_x, m_y); }
 
         void setX(double);
         double x() const;

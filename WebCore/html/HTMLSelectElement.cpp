@@ -465,7 +465,7 @@ void HTMLSelectElement::setMultiple(bool multiple)
 
 void HTMLSelectElement::setSize(int size)
 {
-    setAttribute(sizeAttr, DeprecatedString::number(size));
+    setAttribute(sizeAttr, String::number(size));
 }
     
 } // namespace

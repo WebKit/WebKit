@@ -118,16 +118,14 @@ String::String(NSString *str)
     else {
         UniChar fixedSizeBuffer[1024];
         UniChar *buffer;
-        if (size > static_cast<CFIndex>(sizeof(fixedSizeBuffer) / sizeof(UniChar))) {
+        if (size > static_cast<CFIndex>(sizeof(fixedSizeBuffer) / sizeof(UniChar)))
             buffer = static_cast<UniChar *>(fastMalloc(size * sizeof(UniChar)));
-        } else {
+        else
             buffer = fixedSizeBuffer;
-        }
         CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer);
         m_impl = new StringImpl(reinterpret_cast<const QChar *>(buffer), (unsigned)size);
-        if (buffer != fixedSizeBuffer) {
+        if (buffer != fixedSizeBuffer)
             fastFree(buffer);
-        }
     }
 }
 

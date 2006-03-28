@@ -1116,7 +1116,7 @@ void RenderSlider::updateFromElement()
     if (!equalIgnoringCase(precision, "float"))
         val = (int)(val + 0.5);
 
-    element()->setValue(DeprecatedString::number(val));
+    element()->setValue(String::number(val));
 
     QSlider* slider = (QSlider*)widget();
      
@@ -1138,7 +1138,7 @@ void RenderSlider::valueChanged(Widget*)
     if (!equalIgnoringCase(precision, "float"))
         val = (int)(val + 0.5);
 
-    element()->setValue(DeprecatedString::number(val));
+    element()->setValue(String::number(val));
     
     // Fire the "input" DOM event.
     element()->dispatchHTMLEvent(inputEvent, true, false);

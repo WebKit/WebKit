@@ -297,10 +297,10 @@ void CSSComputedStyleDeclaration::setCssText(const String&, ExceptionCode& ec)
 }
 
 // Display integers in integer format instead of "1.0".
-static DeprecatedString numberAsString(double n)
+static String numberAsString(double n)
 {
     long i = static_cast<long>(n);
-    return i == n ? DeprecatedString::number(i) : DeprecatedString::number(n);
+    return i == n ? String::number(i) : String::number(n);
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID) const
@@ -391,10 +391,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(CSS_VAL_SEPARATE);
     case CSS_PROP_BORDER_SPACING:
     {
-        DeprecatedString string(numberAsString(style->horizontalBorderSpacing()) + 
-            "px " + 
-            numberAsString(style->verticalBorderSpacing()) +
-            "px");
+        String string(numberAsString(style->horizontalBorderSpacing()) + "px " + numberAsString(style->verticalBorderSpacing()) + "px");
         return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
     }
     case CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING:

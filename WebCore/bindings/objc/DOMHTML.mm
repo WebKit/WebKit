@@ -1478,8 +1478,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setCols:(int)cols
 {
-    String value(DeprecatedString::number(cols));
-    [self _textAreaElement]->setAttribute(colsAttr, value);
+    [self _textAreaElement]->setAttribute(colsAttr, String::number(cols));
 }
 
 - (BOOL)disabled
@@ -1519,8 +1518,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setRows:(int)rows
 {
-    String value(DeprecatedString::number(rows));
-    [self _textAreaElement]->setAttribute(rowsAttr, value);
+    [self _textAreaElement]->setAttribute(rowsAttr, String::number(rows));
 }
 
 - (int)tabIndex
@@ -1777,8 +1775,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setStart:(int)start
 {
-    String value(DeprecatedString::number(start));
-    [self _oListElement]->setAttribute(startAttr, value);
+    [self _oListElement]->setAttribute(startAttr, String::number(start));
 }
 
 - (NSString *)type
@@ -1969,8 +1966,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setWidth:(int)width
 {
-    String string(DeprecatedString::number(width));
-    [self _preElement]->setAttribute(widthAttr, string);
+    [self _preElement]->setAttribute(widthAttr, String::number(width));
 }
 
 @end
@@ -2357,8 +2353,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setHeight:(int)height
 {
-    String string(DeprecatedString::number(height));
-    [self _imageElement]->setAttribute(heightAttr, string);
+    [self _imageElement]->setAttribute(heightAttr, String::number(height));
 }
 
 - (int)hspace
@@ -2368,8 +2363,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setHspace:(int)hspace
 {
-    String string(DeprecatedString::number(hspace));
-    [self _imageElement]->setAttribute(hspaceAttr, string);
+    [self _imageElement]->setAttribute(hspaceAttr, String::number(hspace));
 }
 
 - (BOOL)isMap
@@ -2424,8 +2418,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setVspace:(int)vspace
 {
-    String string(DeprecatedString::number(vspace));
-    [self _imageElement]->setAttribute(vspaceAttr, string);
+    [self _imageElement]->setAttribute(vspaceAttr, String::number(vspace));
 }
 
 - (int)width
@@ -2435,8 +2428,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setWidth:(int)width
 {
-    String string(DeprecatedString::number(width));
-    [self _imageElement]->setAttribute(widthAttr, string);
+    [self _imageElement]->setAttribute(widthAttr, String::number(width));
 }
 
 @end
@@ -2557,8 +2549,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setHspace:(int)hspace
 {
-    String string(DeprecatedString::number(hspace));
-    [self _objectElement]->setAttribute(hspaceAttr, string);
+    [self _objectElement]->setAttribute(hspaceAttr, String::number(hspace));
 }
 
 - (NSString *)name
@@ -2588,8 +2579,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setTabIndex:(int)tabIndex
 {
-    String string(DeprecatedString::number(tabIndex));
-    [self _objectElement]->setAttribute(tabindexAttr, string);
+    [self _objectElement]->setAttribute(tabindexAttr, String::number(tabIndex));
 }
 
 - (NSString *)type
@@ -2619,8 +2609,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setVspace:(int)vspace
 {
-    String string(DeprecatedString::number(vspace));
-    [self _objectElement]->setAttribute(vspaceAttr, string);
+    [self _objectElement]->setAttribute(vspaceAttr, String::number(vspace));
 }
 
 - (NSString *)width
@@ -2769,8 +2758,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setHspace:(int)hspace
 {
-    String string(DeprecatedString::number(hspace));
-    [self _appletElement]->setAttribute(hspaceAttr, string);
+    [self _appletElement]->setAttribute(hspaceAttr, String::number(hspace));
 }
 
 - (NSString *)name
@@ -2800,8 +2788,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setVspace:(int)vspace
 {
-    String string(DeprecatedString::number(vspace));
-    [self _appletElement]->setAttribute(vspaceAttr, string);
+    [self _appletElement]->setAttribute(vspaceAttr, String::number(vspace));
 }
 
 - (NSString *)width
@@ -2926,8 +2913,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setTabIndex:(int)tabIndex
 {
-    String string(DeprecatedString::number(tabIndex));
-    [self _areaElement]->setAttribute(tabindexAttr, string);
+    [self _areaElement]->setAttribute(tabindexAttr, String::number(tabIndex));
 }
 
 - (NSString *)target
@@ -3372,8 +3358,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setSpan:(int)span
 {
-    String string(DeprecatedString::number(span));
-    [self _tableColElement]->setAttribute(spanAttr, string);
+    [self _tableColElement]->setAttribute(spanAttr, String::number(span));
 }
 
 - (NSString *)vAlign
@@ -3562,8 +3547,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setColSpan:(int)colSpan
 {
-    String string(DeprecatedString::number(colSpan));
-    [self _tableCellElement]->setAttribute(colspanAttr, string);
+    [self _tableCellElement]->setAttribute(colspanAttr, String::number(colSpan));
 }
 
 - (NSString *)headers
@@ -3603,8 +3587,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setRowSpan:(int)rowSpan
 {
-    String string(DeprecatedString::number(rowSpan));
-    [self _tableCellElement]->setAttribute(rowspanAttr, string);
+    [self _tableCellElement]->setAttribute(rowspanAttr, String::number(rowSpan));
 }
 
 - (NSString *)scope
@@ -3926,8 +3909,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setHeight:(int)height
 {
-    String string(DeprecatedString::number(height));
-    [self _embedElement]->setAttribute(heightAttr, string);
+    [self _embedElement]->setAttribute(heightAttr, String::number(height));
 }
 
 - (NSString *)name
@@ -3967,8 +3949,7 @@ using namespace WebCore::HTMLNames;
 
 - (void)setWidth:(int)width
 {
-    String string(DeprecatedString::number(width));
-    [self _embedElement]->setAttribute(widthAttr, string);
+    [self _embedElement]->setAttribute(widthAttr, String::number(width));
 }
 
 @end

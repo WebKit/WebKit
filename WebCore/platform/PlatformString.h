@@ -96,6 +96,18 @@ public:
 
     const QChar* unicode() const;
     DeprecatedString deprecatedString() const;
+    
+    static String number(int);
+    static String number(unsigned);
+    static String number(long);
+    static String number(unsigned long);
+    static String number(double);
+    
+    static String sprintf(const char *, ...)
+#if __GNUC__
+    __attribute__ ((format (printf, 1, 2)))
+#endif
+    ;
 
     int toInt(bool* ok = 0) const;
     Length* toLengthArray(int& len) const;

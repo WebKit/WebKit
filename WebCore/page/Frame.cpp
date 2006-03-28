@@ -1521,11 +1521,10 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
          tmpbody.replace('+', ' ');
          tmpbody = KURL::decode_string(tmpbody);  // Decode the rest of it
          bodyEnc = KURL::encode_string(tmpbody);  // Recode for the URL
-      } else {
+      } else
          bodyEnc = KURL::encode_string(formData.flattenToString());
-      }
 
-      nvps.append(DeprecatedString("body=%1").arg(bodyEnc));
+      nvps.append(String::sprintf("body=%s", bodyEnc.latin1()).deprecatedString());
       q = nvps.join("&");
       u.setQuery(q);
   } 

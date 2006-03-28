@@ -164,7 +164,7 @@ void HTMLHRElement::parseMappedAttribute(MappedAttribute *attr)
         if (size <= 1)
             addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_WIDTH, String("0"));
         else
-            addCSSLength(attr, CSS_PROP_HEIGHT, String(DeprecatedString::number(size-2)));
+            addCSSLength(attr, CSS_PROP_HEIGHT, String::number(size-2));
     } else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -320,7 +320,7 @@ int HTMLPreElement::width() const
 
 void HTMLPreElement::setWidth(int width)
 {
-    setAttribute(widthAttr, DeprecatedString::number(width));
+    setAttribute(widthAttr, String::number(width));
 }
 
 bool HTMLPreElement::wrap() const

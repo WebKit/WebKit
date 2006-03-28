@@ -35,8 +35,8 @@ namespace WebCore
         virtual ~SVGPathSegArcAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_ARC_ABS; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("A"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("A %1 %2 %3 %4 %5 %6 %7").arg(m_r1).arg(m_r2).arg(m_angle).arg(m_largeArcFlag).arg(m_sweepFlag).arg(m_x).arg(m_y); }
+        virtual String pathSegTypeAsLetter() const { return "A"; }
+        virtual String toString() const { return String::sprintf("A %.6lg %.6lg %.6lg %d %d %.6lg %.6lg", m_r1, m_r2, m_angle, m_largeArcFlag, m_sweepFlag, m_x, m_y); }
 
         void setX(double x);
         double x() const;
@@ -77,8 +77,8 @@ namespace WebCore
         virtual ~SVGPathSegArcRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_ARC_REL; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("a"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("a %1 %2 %3 %4 %5 %6 %7").arg(m_r1).arg(m_r2).arg(m_angle).arg(m_largeArcFlag).arg(m_sweepFlag).arg(m_x).arg(m_y); }
+        virtual String pathSegTypeAsLetter() const { return "a"; }
+        virtual String toString() const { return String::sprintf("a %.6lg %.6lg %.6lg %d %d %.6lg %.6lg", m_r1, m_r2, m_angle, m_largeArcFlag, m_sweepFlag, m_x, m_y); }
 
         void setX(double x);
         double x() const;

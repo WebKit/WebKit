@@ -1,3 +1,177 @@
+2006-03-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Replace more DeprecatedString with String.
+        Add String::sprintf() and String::number()
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8009
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLTextAreaElement setCols:]):
+        (-[DOMHTMLTextAreaElement setRows:]):
+        (-[DOMHTMLOListElement setStart:]):
+        (-[DOMHTMLPreElement setWidth:]):
+        (-[DOMHTMLImageElement setHeight:]):
+        (-[DOMHTMLImageElement setHspace:]):
+        (-[DOMHTMLImageElement setVspace:]):
+        (-[DOMHTMLImageElement setWidth:]):
+        (-[DOMHTMLObjectElement setHspace:]):
+        (-[DOMHTMLObjectElement setTabIndex:]):
+        (-[DOMHTMLObjectElement setVspace:]):
+        (-[DOMHTMLAppletElement setHspace:]):
+        (-[DOMHTMLAppletElement setVspace:]):
+        (-[DOMHTMLAreaElement setTabIndex:]):
+        (-[DOMHTMLTableColElement setSpan:]):
+        (-[DOMHTMLTableCellElement setColSpan:]):
+        (-[DOMHTMLTableCellElement setRowSpan:]):
+        (-[DOMHTMLEmbedElement setHeight:]):
+        (-[DOMHTMLEmbedElement setWidth:]):
+        * bindings/objc/DOMInternal.mm:
+        (String::String):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::numberAsString):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * dom/Position.cpp:
+        (WebCore::Position::formatForDebugger):
+        * dom/Range.cpp:
+        (WebCore::Range::formatForDebugger):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor):
+        * dom/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::error):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::findMatchingState):
+        (WebCore::HTMLGenericFormElement::setTabIndex):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setMaxLength):
+        (WebCore::HTMLInputElement::setSize):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSize):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setCols):
+        (WebCore::HTMLTextAreaElement::setRows):
+        * html/html_baseimpl.cpp:
+        (WebCore::HTMLBodyElement::insertedIntoDocument):
+        * html/html_blockimpl.cpp:
+        (WebCore::HTMLHRElement::parseMappedAttribute):
+        (WebCore::HTMLPreElement::setWidth):
+        * html/html_imageimpl.cpp:
+        (WebCore::HTMLImageElement::width):
+        (WebCore::HTMLImageElement::height):
+        (WebCore::HTMLImageElement::setBorder):
+        (WebCore::HTMLImageElement::setHeight):
+        (WebCore::HTMLImageElement::setHspace):
+        (WebCore::HTMLImageElement::setVspace):
+        (WebCore::HTMLImageElement::setWidth):
+        (WebCore::HTMLAreaElement::setTabIndex):
+        * html/html_inlineimpl.cpp:
+        (WebCore::HTMLAnchorElement::setTabIndex):
+        * html/html_listimpl.cpp:
+        (WebCore::HTMLOListElement::setStart):
+        (WebCore::HTMLLIElement::setValue):
+        * html/html_objectimpl.cpp:
+        (WebCore::HTMLObjectElement::setTabIndex):
+        * html/html_tableimpl.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        (WebCore::HTMLTableCellElement::setColSpan):
+        (WebCore::HTMLTableCellElement::setRowSpan):
+        (WebCore::HTMLTableColElement::setSpan):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::isSafeScript):
+        (KJS::Location::getValueProperty):
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * ksvg2/svg/SVGAngle.cpp:
+        (SVGAngle::setValueAsString):
+        (SVGAngle::valueAsString):
+        * ksvg2/svg/SVGAngle.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (SVGLength::setValueAsString):
+        (SVGLength::valueAsString):
+        * ksvg2/svg/SVGLength.h:
+        * ksvg2/svg/SVGPathSeg.h:
+        (WebCore::SVGPathSeg::pathSegTypeAsLetter):
+        (WebCore::SVGPathSeg::toString):
+        * ksvg2/svg/SVGPathSegArc.h:
+        (WebCore::SVGPathSegArcAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegArcAbs::toString):
+        (WebCore::SVGPathSegArcRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegArcRel::toString):
+        * ksvg2/svg/SVGPathSegClosePath.h:
+        (WebCore::SVGPathSegClosePath::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegClosePath::toString):
+        * ksvg2/svg/SVGPathSegCurvetoCubic.h:
+        (WebCore::SVGPathSegCurvetoCubicAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoCubicAbs::toString):
+        (WebCore::SVGPathSegCurvetoCubicRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoCubicRel::toString):
+        * ksvg2/svg/SVGPathSegCurvetoCubicSmooth.h:
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::toString):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::toString):
+        * ksvg2/svg/SVGPathSegCurvetoQuadratic.h:
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::toString):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::toString):
+        * ksvg2/svg/SVGPathSegCurvetoQuadraticSmooth.h:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::toString):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::toString):
+        * ksvg2/svg/SVGPathSegLineto.h:
+        (WebCore::SVGPathSegLinetoAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoAbs::toString):
+        (WebCore::SVGPathSegLinetoRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoRel::toString):
+        * ksvg2/svg/SVGPathSegLinetoHorizontal.h:
+        (WebCore::SVGPathSegLinetoHorizontalAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoHorizontalAbs::toString):
+        (WebCore::SVGPathSegLinetoHorizontalRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoHorizontalRel::toString):
+        * ksvg2/svg/SVGPathSegLinetoVertical.h:
+        (WebCore::SVGPathSegLinetoVerticalAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoVerticalAbs::toString):
+        (WebCore::SVGPathSegLinetoVerticalRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegLinetoVerticalRel::toString):
+        * ksvg2/svg/SVGPathSegMoveto.h:
+        (WebCore::SVGPathSegMovetoAbs::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegMovetoAbs::toString):
+        (WebCore::SVGPathSegMovetoRel::pathSegTypeAsLetter):
+        (WebCore::SVGPathSegMovetoRel::toString):
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (SVGPolyElement::notifyAttributeChange):
+        * ksvg2/svg/SVGStopElement.cpp:
+        (SVGStopElement::parseMappedAttribute):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (SVGUseElement::closeRenderer):
+        * platform/AtomicString.h:
+        (WebCore::AtomicString::toInt):
+        * platform/Color.cpp:
+        (WebCore::Color::name):
+        * platform/Color.h:
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::sprintf):
+        (WebCore::String::number):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::initWithChar):
+        (WebCore::StringImpl::initWithQChar):
+        (WebCore::StringImpl::containsOnlyWhitespace):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        * rendering/render_form.cpp:
+        (WebCore::RenderSlider::updateFromElement):
+        (WebCore::RenderSlider::valueChanged):
+
 2006-03-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs

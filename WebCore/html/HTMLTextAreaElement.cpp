@@ -268,12 +268,12 @@ void HTMLTextAreaElement::setAccessKey(const String &value)
 
 void HTMLTextAreaElement::setCols(int cols)
 {
-    setAttribute(colsAttr, DeprecatedString::number(cols));
+    setAttribute(colsAttr, String::number(cols));
 }
 
 void HTMLTextAreaElement::setRows(int rows)
 {
-    setAttribute(rowsAttr, DeprecatedString::number(rows));
+    setAttribute(rowsAttr, String::number(rows));
 }
 
 } // namespace

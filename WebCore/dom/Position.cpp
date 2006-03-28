@@ -689,12 +689,12 @@ void Position::formatForDebugger(char *buffer, unsigned length) const
 {
     String result;
     
-    if (isNull()) {
+    if (isNull())
         result = "<null>";
-    } else {
+    else {
         char s[1024];
         result += "offset ";
-        result += DeprecatedString::number(m_offset);
+        result += String::number(m_offset);
         result += " of ";
         m_node->formatForDebugger(s, sizeof(s));
         result += s;

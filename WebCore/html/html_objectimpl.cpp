@@ -1005,7 +1005,7 @@ int HTMLObjectElement::tabIndex() const
 
 void HTMLObjectElement::setTabIndex(int tabIndex)
 {
-    setAttribute(tabindexAttr, DeprecatedString::number(tabIndex));
+    setAttribute(tabindexAttr, String::number(tabIndex));
 }
 
 String HTMLObjectElement::type() const

@@ -1302,18 +1302,17 @@ void Range::formatForDebugger(char *buffer, unsigned length) const
     String result;
     String s;
     
-    if (!m_startContainer || !m_endContainer) {
+    if (!m_startContainer || !m_endContainer)
         result = "<empty>";
-    }
     else {
         char s[FormatBufferSize];
         result += "from offset ";
-        result += DeprecatedString::number(m_startOffset);
+        result += String::number(m_startOffset);
         result += " of ";
         m_startContainer->formatForDebugger(s, FormatBufferSize);
         result += s;
         result += " to offset ";
-        result += DeprecatedString::number(m_endOffset);
+        result += String::number(m_endOffset);
         result += " of ";
         m_endContainer->formatForDebugger(s, FormatBufferSize);
         result += s;

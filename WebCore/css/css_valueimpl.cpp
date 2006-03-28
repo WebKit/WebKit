@@ -296,7 +296,6 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
         return getShortHandValue( properties, 3 );
     }
     }
-    //kdDebug() << k_funcinfo << "property not found:" << propertyID << endl;
     return String();
 }
 
@@ -938,55 +937,55 @@ String CSSPrimitiveValue::cssText() const
             // ###
             break;
         case CSS_NUMBER:
-            text = DeprecatedString::number(m_value.num);
+            text = String::number(m_value.num);
             break;
         case CSS_PERCENTAGE:
-            text = DeprecatedString::number(m_value.num) + "%";
+            text = String::number(m_value.num) + "%";
             break;
         case CSS_EMS:
-            text = DeprecatedString::number(m_value.num) + "em";
+            text = String::number(m_value.num) + "em";
             break;
         case CSS_EXS:
-            text = DeprecatedString::number(m_value.num) + "ex";
+            text = String::number(m_value.num) + "ex";
             break;
         case CSS_PX:
-            text = DeprecatedString::number(m_value.num) + "px";
+            text = String::number(m_value.num) + "px";
             break;
         case CSS_CM:
-            text = DeprecatedString::number(m_value.num) + "cm";
+            text = String::number(m_value.num) + "cm";
             break;
         case CSS_MM:
-            text = DeprecatedString::number(m_value.num) + "mm";
+            text = String::number(m_value.num) + "mm";
             break;
         case CSS_IN:
-            text = DeprecatedString::number(m_value.num) + "in";
+            text = String::number(m_value.num) + "in";
             break;
         case CSS_PT:
-            text = DeprecatedString::number(m_value.num) + "pt";
+            text = String::number(m_value.num) + "pt";
             break;
         case CSS_PC:
-            text = DeprecatedString::number(m_value.num) + "pc";
+            text = String::number(m_value.num) + "pc";
             break;
         case CSS_DEG:
-            text = DeprecatedString::number(m_value.num) + "deg";
+            text = String::number(m_value.num) + "deg";
             break;
         case CSS_RAD:
-            text = DeprecatedString::number(m_value.num) + "rad";
+            text = String::number(m_value.num) + "rad";
             break;
         case CSS_GRAD:
-            text = DeprecatedString::number(m_value.num) + "grad";
+            text = String::number(m_value.num) + "grad";
             break;
         case CSS_MS:
-            text = DeprecatedString::number(m_value.num) + "ms";
+            text = String::number(m_value.num) + "ms";
             break;
         case CSS_S:
-            text = DeprecatedString::number(m_value.num) + "s";
+            text = String::number(m_value.num) + "s";
             break;
         case CSS_HZ:
-            text = DeprecatedString::number(m_value.num) + "hz";
+            text = String::number(m_value.num) + "hz";
             break;
         case CSS_KHZ:
-            text = DeprecatedString::number(m_value.num) + "khz";
+            text = String::number(m_value.num) + "khz";
             break;
         case CSS_DIMENSION:
             // ###
@@ -1021,11 +1020,11 @@ String CSSPrimitiveValue::cssText() const
                 text = "rgba(";
             else
                 text = "rgb(";
-            text += DeprecatedString::number(color.red()) + ", ";
-            text += DeprecatedString::number(color.green()) + ", ";
-            text += DeprecatedString::number(color.blue());
+            text += String::number(color.red()) + ", ";
+            text += String::number(color.green()) + ", ";
+            text += String::number(color.blue());
             if (color.alpha() < 0xFF)
-                text += ", " + DeprecatedString::number((float)color.alpha() / 0xFF);
+                text += ", " + String::number((float)color.alpha() / 0xFF);
             text += ")";
             break;
         }

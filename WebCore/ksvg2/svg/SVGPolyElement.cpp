@@ -86,7 +86,7 @@ void SVGPolyElement::notifyAttributeChange() const
     int len = points()->numberOfItems();
     for (int i = 0; i < len; ++i) {
         SVGPoint *p = points()->getItem(i);
-        _points += DeprecatedString("%1 %2 ").arg(p->x()).arg(p->y());
+        _points += String::sprintf("%.6lg %.6lg ", p->x(), p->y());
     }
 
     String p("points");

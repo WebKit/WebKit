@@ -326,15 +326,16 @@ void StyledElement::addCSSLength(MappedAttribute* attr, int id, const String &va
 void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String &c)
 {
     // this is the only case no color gets applied in IE.
-    if ( !c.length() )
+    if (!c.length())
         return;
 
-    if (!attr->decl()) createMappedDecl(attr);
+    if (!attr->decl())
+        createMappedDecl(attr);
     
-    if (attr->decl()->setProperty(id, c, false) )
+    if (attr->decl()->setProperty(id, c, false))
         return;
     
-    DeprecatedString color = c.deprecatedString();
+    String color = c.copy();
     // not something that fits the specs.
     
     // we're emulating IEs color parser here. It maps transparent to black, otherwise it tries to build a rgb value
@@ -352,30 +353,30 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String &c)
     // used as a normalization point to normalize to values between 0
     // and 255.
     
-    if ( color.lower() != "transparent" ) {
-        if ( color[0] == '#' )
-            color.remove( 0,  1 );
+    if (color.lower() != "transparent") {
+        if (color[0] == '#')
+            color.remove(0, 1);
         int basicLength = (color.length() + 2) / 3;
-        if ( basicLength > 1 ) {
+        if (basicLength > 1) {
             // IE ignores colors with three digits or less
             int colors[3] = { 0, 0, 0 };
             int component = 0;
             int pos = 0;
             int maxDigit = basicLength-1;
-            while ( component < 3 ) {
+            while (component < 3) {
                 // search forward for digits in the string
                 int numDigits = 0;
-                while ( pos < (int)color.length() && numDigits < basicLength ) {
-                    int hex = toHex( color[pos] );
+                while (pos < (int)color.length() && numDigits < basicLength) {
+                    int hex = toHex(color[pos]);
                     colors[component] = (colors[component] << 4);
-                    if ( hex > 0 ) {
+                    if (hex > 0) {
                         colors[component] += hex;
-                        maxDigit = kMin( maxDigit, numDigits );
+                        maxDigit = kMin(maxDigit, numDigits);
                     }
                     numDigits++;
                     pos++;
                 }
-                while ( numDigits++ < basicLength )
+                while (numDigits++ < basicLength)
                     colors[component] <<= 4;
                 component++;
             }
@@ -386,10 +387,10 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String &c)
             colors[0] >>= 4*maxDigit;
             colors[1] >>= 4*maxDigit;
             colors[2] >>= 4*maxDigit;
-            // assert( colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100 );
+            // assert(colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100);
             
-            color.sprintf("#%02x%02x%02x", colors[0], colors[1], colors[2] );
-            if ( attr->decl()->setProperty(id, String(color), false) )
+            color = String::sprintf("#%02x%02x%02x", colors[0], colors[1], colors[2]);
+            if (attr->decl()->setProperty(id, color, false))
                 return;
         }
     }

@@ -138,7 +138,7 @@ void HTMLOListElement::setCompact(bool b)
 
 void HTMLOListElement::setStart(int start)
 {
-    setAttribute(startAttr, DeprecatedString::number(start));
+    setAttribute(startAttr, String::number(start));
 }
 
 String HTMLOListElement::type() const
@@ -236,7 +236,7 @@ int HTMLLIElement::value() const
 
 void HTMLLIElement::setValue(int value)
 {
-    setAttribute(valueAttr, DeprecatedString::number(value));
+    setAttribute(valueAttr, String::number(value));
 }
 
 // -------------------------------------------------------------------------

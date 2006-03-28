@@ -303,7 +303,7 @@ int HTMLAnchorElement::tabIndex() const
 
 void HTMLAnchorElement::setTabIndex(int tabIndex)
 {
-    setAttribute(tabindexAttr, DeprecatedString::number(tabIndex));
+    setAttribute(tabindexAttr, String::number(tabIndex));
 }
 
 String HTMLAnchorElement::target() const

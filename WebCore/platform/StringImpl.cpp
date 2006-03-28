@@ -71,12 +71,12 @@ StringImpl::StringImpl(const char* str)
     initWithChar(str, strlen(str));
 }
 
-StringImpl::StringImpl(const char* str, unsigned int len)
+StringImpl::StringImpl(const char* str, unsigned len)
 {
     initWithChar(str, len);
 }
 
-void StringImpl::initWithChar(const char* str, unsigned int len)
+void StringImpl::initWithChar(const char* str, unsigned len)
 {
     m_hash = 0;
     m_inTable = false;
@@ -93,7 +93,7 @@ void StringImpl::initWithChar(const char* str, unsigned int len)
         *ptr++ = *str++;
 }
 
-void StringImpl::initWithQChar(const QChar* str, unsigned int len)
+void StringImpl::initWithQChar(const QChar* str, unsigned len)
 {
     m_hash = 0;
     m_inTable = false;
@@ -199,7 +199,7 @@ bool StringImpl::containsOnlyWhitespace() const
     return containsOnlyWhitespace(0, m_length);
 }
 
-bool StringImpl::containsOnlyWhitespace(unsigned int from, unsigned int len) const
+bool StringImpl::containsOnlyWhitespace(unsigned from, unsigned len) const
 {
     if (!m_data)
         return true;

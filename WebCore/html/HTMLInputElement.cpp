@@ -1274,12 +1274,12 @@ void HTMLInputElement::setAlt(const String &value)
 
 void HTMLInputElement::setMaxLength(int _maxLength)
 {
-    setAttribute(maxlengthAttr, DeprecatedString::number(_maxLength));
+    setAttribute(maxlengthAttr, String::number(_maxLength));
 }
 
 void HTMLInputElement::setSize(unsigned _size)
 {
-    setAttribute(sizeAttr, DeprecatedString::number(_size));
+    setAttribute(sizeAttr, String::number(_size));
 }
 
 String HTMLInputElement::src() const

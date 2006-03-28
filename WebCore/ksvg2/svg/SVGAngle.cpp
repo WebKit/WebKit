@@ -86,9 +86,9 @@ float SVGAngle::valueInSpecifiedUnits() const
     return m_valueInSpecifiedUnits;
 }
 
-void SVGAngle::setValueAsString(StringImpl *valueAsString)
+void SVGAngle::setValueAsString(const String& s)
 {
-    m_valueAsString = String(valueAsString);
+    m_valueAsString = s;
 
     bool bOK;
     m_valueInSpecifiedUnits = m_valueAsString.deprecatedString().toDouble(&bOK);
@@ -106,9 +106,9 @@ void SVGAngle::setValueAsString(StringImpl *valueAsString)
     calculate();
 }
 
-StringImpl *SVGAngle::valueAsString() const
+String SVGAngle::valueAsString() const
 {
-    m_valueAsString = DeprecatedString::number(m_valueInSpecifiedUnits);
+    m_valueAsString = String::number(m_valueInSpecifiedUnits);
 
     switch(m_unitType) {
         case SVG_ANGLETYPE_UNSPECIFIED:
@@ -123,7 +123,7 @@ StringImpl *SVGAngle::valueAsString() const
             break;
     }
     
-    return m_valueAsString.impl();
+    return m_valueAsString;
 }
 
 void SVGAngle::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)

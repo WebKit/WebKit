@@ -166,16 +166,10 @@ void HTMLBodyElement::insertedIntoDocument()
     // FIXME: perhaps this code should be in attach() instead of here
 
     FrameView *w = getDocument()->view();
-    if (w && w->marginWidth() != -1) {
-        DeprecatedString s;
-        s.sprintf("%d", w->marginWidth());
-        setAttribute(marginwidthAttr, s);
-    }
-    if (w && w->marginHeight() != -1) {
-        DeprecatedString s;
-        s.sprintf("%d", w->marginHeight());
-        setAttribute(marginheightAttr, s);
-    }
+    if (w && w->marginWidth() != -1)
+        setAttribute(marginwidthAttr, String::number(w->marginWidth()));
+    if (w && w->marginHeight() != -1)
+        setAttribute(marginheightAttr, String::number(w->marginHeight()));
 
     if (w)
         w->scheduleRelayout();

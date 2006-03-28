@@ -345,9 +345,8 @@ CSSValue *CSSParser::parseSVGPaint()
     KDOMCSSValue *value = valueList->current();
     if(!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
        value->fValue >= 0. && value->fValue < 1000000.) {
-        DeprecatedString str;
-        str.sprintf("%06d", (int)(value->fValue+.5));
-        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, new StringImpl(str));
+        String str = String::sprintf("%06d", (int)(value->fValue+.5));
+        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, str.impl());
     } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR) {
         String str = "#" + domString(value->string);
         return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, str.impl());
@@ -379,9 +378,8 @@ CSSValue *CSSParser::parseSVGPaint()
         r = kMax(0, kMin(255, r));
         g = kMax(0, kMin(255, g));
         b = kMax(0, kMin(255, b));
-        DeprecatedString str;
-        str.sprintf("rgb(%d, %d, %d)", r, g, b);
-        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, new StringImpl(str));
+        
+        return new SVGPaint(SVG_PAINTTYPE_RGBCOLOR, 0, String::sprintf("rgb(%d, %d, %d)", r, g, b).impl());
     }
     else
         return 0;
@@ -392,12 +390,9 @@ CSSValue *CSSParser::parseSVGPaint()
 CSSValue *CSSParser::parseSVGColor()
 {
     KDOMCSSValue *value = valueList->current();
-    if(!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
-       value->fValue >= 0. && value->fValue < 1000000.) {
-        DeprecatedString str;
-        str.sprintf("%06d", (int)(value->fValue+.5));
-        return new SVGColor(new StringImpl(str));
-    } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR) {
+    if (!strict && value->unit == CSSPrimitiveValue::CSS_NUMBER && value->fValue >= 0. && value->fValue < 1000000.)
+        return new SVGColor(String::sprintf("%06d", (int)(value->fValue+.5)).impl());
+    else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR) {
         String str = "#" + domString(value->string);
         return new SVGColor(str.impl());
     } else if (value->unit == CSSPrimitiveValue::CSS_IDENT || (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION))
@@ -425,9 +420,8 @@ CSSValue *CSSParser::parseSVGColor()
         r = kMax(0, kMin(255, r));
         g = kMax(0, kMin(255, g));
         b = kMax(0, kMin(255, b));
-        DeprecatedString str;
-        str.sprintf("rgb(%d, %d, %d)", r, g, b);
-        return new SVGColor(new StringImpl(str));
+        
+        return new SVGColor(String::sprintf("rgb(%d, %d, %d)", r, g, b).impl());
     }
     else
         return 0;

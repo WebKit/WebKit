@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "Shared.h"
-#include "StringImpl.h"
+#include "PlatformString.h"
 
 #include "ksvg.h"
 
@@ -40,8 +40,8 @@ namespace WebCore
         virtual ~SVGPathSeg();
 
         virtual unsigned short pathSegType() const { return PATHSEG_UNKNOWN; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl(""); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1(""); }
+        virtual String pathSegTypeAsLetter() const { return ""; }
+        virtual String toString() const { return ""; }
 
     protected:
         const SVGStyledElement *m_context;

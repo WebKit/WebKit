@@ -54,15 +54,14 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::offsetAttr) {
-        if(value.deprecatedString().endsWith("%"))
+        if(value.endsWith("%"))
             offset()->setBaseVal(value.deprecatedString().left(value.length() - 1).toDouble() / 100.);
         else
             offset()->setBaseVal(value.deprecatedString().toDouble());
     } else
         SVGStyledElement::parseMappedAttribute(attr);
 
-    if(!ownerDocument()->parsing() && attached())
-    {
+    if (!ownerDocument()->parsing() && attached()) {
         recalcStyle(Force);
         
         SVGStyledElement *parentStyled = static_cast<SVGStyledElement *>(parentNode());

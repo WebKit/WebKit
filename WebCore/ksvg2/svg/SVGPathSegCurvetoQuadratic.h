@@ -35,8 +35,8 @@ namespace WebCore
         virtual ~SVGPathSegCurvetoQuadraticAbs();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_ABS; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("Q"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("Q %1 %2 %3 %4").arg(m_x1).arg(m_y1).arg(m_x).arg(m_y); }
+        virtual String pathSegTypeAsLetter() const { return "Q"; }
+        virtual String toString() const { return String::sprintf("Q %.6lg %.6lg %.6lg %.6lg", m_x1, m_y1, m_x, m_y); }
 
         void setX(double);
         double x() const;
@@ -64,8 +64,8 @@ namespace WebCore
         virtual ~SVGPathSegCurvetoQuadraticRel();
 
         virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_REL; }
-        virtual StringImpl *pathSegTypeAsLetter() const { return new StringImpl("q"); }
-        virtual DeprecatedString toString() const { return DeprecatedString::fromLatin1("q %1 %2 %3 %4").arg(m_x1).arg(m_y1).arg(m_x).arg(m_y); }
+        virtual String pathSegTypeAsLetter() const { return "q"; }
+        virtual String toString() const { return String::sprintf("q %.6lg %.6lg %.6lg %.6lg", m_x1, m_y1, m_x, m_y); }
  
         void setX(double);
         double x() const;

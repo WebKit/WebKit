@@ -511,9 +511,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
             currentFontSize = computedFontSize(node);
         }
         if (currentFontSize != desiredFontSize) {
-            DeprecatedString desiredFontSizeString = DeprecatedString::number(desiredFontSize);
-            desiredFontSizeString += "px";
-            inlineStyleDecl->setProperty(CSS_PROP_FONT_SIZE, desiredFontSizeString, false, false);
+            inlineStyleDecl->setProperty(CSS_PROP_FONT_SIZE, String::number(desiredFontSize) + "px", false, false);
             setNodeAttribute(elem, styleAttr, inlineStyleDecl->cssText());
         }
         if (inlineStyleDecl->length() == 0) {
