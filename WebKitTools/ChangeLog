@@ -1,3 +1,9 @@
+2006-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * Scripts/check-for-global-initializers: Added.
+
 2006-03-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin.  Landed by eseidel.
