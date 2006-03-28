@@ -1,3 +1,11 @@
+2006-03-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
+        fixes <rdar://problem/4458539> Unable to include Security(public) and WebKit(private) headers
+
+        * bindings/npapi.h: added #defines after the #ifndefs
+
 2006-03-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

@@ -105,19 +105,26 @@
 /*----------------------------------------------------------------------*/
 
 #ifndef _UINT16
+#define _UINT16
 typedef unsigned short uint16;
 #endif
+
 #ifndef _UINT32
+#define _UINT32
 #if __LP64__
 typedef unsigned int uint32;
 #else /* __LP64__ */
 typedef unsigned long uint32;
 #endif /* __LP64__ */
 #endif
+
 #ifndef _INT16
+#define _INT16
 typedef short int16;
 #endif
+
 #ifndef _INT32
+#define _INT32
 #if __LP64__
 typedef int int32;
 #else /* __LP64__ */
