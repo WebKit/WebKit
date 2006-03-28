@@ -185,8 +185,8 @@ void NamedAttrMap::clearAttributes()
 {
     if (attrs) {
         for (unsigned i = 0; i < len; i++) {
-            if (attrs[i]->m_impl)
-                attrs[i]->m_impl->m_element = 0;
+            if (attrs[i]->attr())
+                attrs[i]->attr()->m_element = 0;
             attrs[i]->deref();
         }
         fastFree(attrs);
@@ -252,7 +252,7 @@ void NamedAttrMap::addAttribute(Attribute *attribute)
     attrs[len++] = attribute;
     attribute->ref();
 
-    Attr * const attr = attribute->m_impl;
+    Attr * const attr = attribute->attr();
     if (attr)
         attr->m_element = element;
 
@@ -282,8 +282,8 @@ void NamedAttrMap::removeAttribute(const QualifiedName& name)
 
     // Remove the attribute from the list
     Attribute* attr = attrs[index];
-    if (attrs[index]->m_impl)
-        attrs[index]->m_impl->m_element = 0;
+    if (attrs[index]->attr())
+        attrs[index]->attr()->m_element = 0;
     if (len == 1) {
         fastFree(attrs);
         attrs = 0;

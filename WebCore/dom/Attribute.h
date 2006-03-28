@@ -33,7 +33,10 @@
 
 namespace WebCore {
 
+class Attr;
 class CSSStyleDeclaration;
+class Element;
+class NamedAttrMap;
 
 // this has no counterpart in DOM, purely internal
 // representation of the nodevalue of an Attr.
@@ -41,10 +44,9 @@ class CSSStyleDeclaration;
 // is only allocated on demand by the DOM bindings.
 // Any use of Attr inside khtml should be avoided.
 class Attribute : public Shared<Attribute> {
-    friend class NamedAttrMap;
-    friend class Element;
     friend class Attr;
-
+    friend class Element;
+    friend class NamedAttrMap;
 public:
     // null value is forbidden !
     Attribute(const QualifiedName& name, const AtomicString& value)
@@ -65,7 +67,7 @@ public:
     const QualifiedName& name() const { return m_name; }
     
     Attr* attr() const { return m_impl; }
-    PassRefPtr<Attr> createAttrIfNeeded(Element* e);
+    PassRefPtr<Attr> createAttrIfNeeded(Element*);
 
     bool isNull() const { return m_value.isNull(); }
     bool isEmpty() const { return m_value.isEmpty(); }

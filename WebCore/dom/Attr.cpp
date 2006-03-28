@@ -38,14 +38,14 @@ Attr::Attr(Element* element, Document* docPtr, Attribute* a)
       m_attribute(a),
       m_ignoreChildrenChanged(0)
 {
-    assert(!m_attribute->m_impl);
+    assert(!m_attribute->attr());
     m_attribute->m_impl = this;
     m_specified = true;
 }
 
 Attr::~Attr()
 {
-    assert(m_attribute->m_impl == this);
+    assert(m_attribute->attr() == this);
     m_attribute->m_impl = 0;
 }
 

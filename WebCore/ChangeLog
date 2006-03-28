@@ -1,3 +1,24 @@
+2006-03-28  Michael Emmel  <mike.emmel@gmail.com>
+
+        Reviewed, tweaked, landed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8023
+          Attribute.h missing class predeclaration
+
+        * dom/Attribute.h: Add declarations for classes so that the friend
+        declaration is not the only one. There's an issue with either an earlier
+        or later version of gcc, which is why we see this only on certain platforms.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::Attr):
+        (WebCore::Attr::~Attr):
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::clearAttributes):
+        (WebCore::NamedAttrMap::addAttribute):
+        (WebCore::NamedAttrMap::removeAttribute):
+        Change places where practical to use attr() instead of m_impl in the vain
+        hope of removing the need for the friend declarations.
+
 2006-03-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
