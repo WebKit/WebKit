@@ -211,7 +211,8 @@ static NSArray *pluginLocations(void)
             LOG(Plugins, "Removed plugins:\n%@", pluginsToUnload);
         }
         [reallyNewPlugins release];
-#endif   
+#endif
+        [pluginsToUnload makeObjectsPerformSelector:@selector(unload)];
         [plugins minusSet:pluginsToUnload];
         [plugins unionSet:newPlugins];   
         [pluginsToUnload release];

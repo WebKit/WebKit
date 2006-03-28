@@ -28,6 +28,7 @@
 
 #import <WebKit/WebBasePluginPackage.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -239,7 +240,7 @@
 
 - (void)dealloc
 {
-    [self unload];
+    ASSERT(!isLoaded);
     
     [name release];
     [path release];
@@ -260,9 +261,8 @@
 
 - (void)finalize
 {
-    // FIXME: Bad design to unload at dealloc/finalize time.
-    // Must be fixed for GC.
-    [self unload];
+    ASSERT(!isLoaded);
+
     [super finalize];
 }
 

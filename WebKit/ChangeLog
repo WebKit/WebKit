@@ -1,5 +1,25 @@
 2006-03-27  Tim Omernick  <timo@apple.com>
 
+        Reviewed by Eric.
+
+        <rdar://problem/3694093> -[WebBasePluginPackage finalize] is incorrect; design change needed
+
+        Call -unload on plug-in packages instead of relying on -dealloc/-finalize to do it.  Currently
+        the only place plug-in packages are deallocated is when refreshing the set of plugins, as when
+        handling JavaScript's navigator.plugins.refresh().
+
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage dealloc]):
+        Assert that the plug-in has been unloaded by the time -dealloc is called.
+        (-[WebBasePluginPackage finalize]):
+        ditto
+
+        * Plugins/WebPluginDatabase.m:
+        (-[WebPluginDatabase refresh]):
+        Call -unload on the plug-in packages before releasing them.
+
+2006-03-27  Tim Omernick  <timo@apple.com>
+
         Reviewed by Tim Hatcher.
 
         Part of <rdar://problem/4448350> Deprecated ObjC language API used in JavaScriptCore, WebCore,
