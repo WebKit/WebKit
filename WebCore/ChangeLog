@@ -1,3 +1,29 @@
+2006-03-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        <http://bugzilla.opendarwin.org/attachment.cgi?id=7322>
+        REGRESSION: Select All does not highlight table if it's last in the document
+        
+        * rendering/RenderCanvas.cpp:
+        (WebCore::rendererAfterPosition): 
+        Added, returns the render object that a pre-order traversal over a range 
+        of render objects ending at the input position should stop at.
+        (WebCore::RenderCanvas::selectionRect): 
+        Stop at rendererAfterPosition(m_selectionEnd, m_selectionEndPos), moved code 
+        for traversal to nextInPreOrder. Also, the travesal doesn't need to fetch the
+        next object before doing work, since the work it does will never change what 
+        the next object in the traversal will be.
+        (WebCore::RenderCanvas::setSelection): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::nextInPreOrder): Renamed from nextRenderer, cleaned up the logic a little.
+        (WebCore::RenderObject::nextInPreOrderAfterChildren): Added.
+        (WebCore::RenderObject::previousInPreOrder): Renamed from previousRenderer.
+        (WebCore::RenderObject::childAt): Added.
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setText):
+
 2006-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Justin.

@@ -136,8 +136,10 @@ public:
     virtual RenderObject *firstChild() const { return 0; }
     virtual RenderObject *lastChild() const { return 0; }
 
-    RenderObject *nextRenderer() const; 
-    RenderObject *previousRenderer() const; 
+    RenderObject* nextInPreOrder() const;
+    RenderObject* nextInPreOrderAfterChildren() const;
+    RenderObject* previousInPreOrder() const;
+    RenderObject* childAt(unsigned) const;
 
     RenderObject *nextEditable() const; 
     RenderObject *previousEditable() const; 

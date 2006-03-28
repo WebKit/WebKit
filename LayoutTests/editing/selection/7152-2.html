@@ -1,0 +1,15 @@
+<html>
+<head>
+<title>REGRESSION: Select All does not highlight table if it's last in the document</title>
+<script src=../editing.js type="text/javascript"></script>
+<script>
+function editingTest() {
+    selectAllCommand();
+}
+</script>
+</head>
+<body id="test" contenteditable="true" onLoad="runEditingTest();">
+<table border="1" ><tr><td>This should be selected.</td></tr><tr><td>This should be selected.</td></tr></table>
+<hr>
+<p>This is a testcase for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7152">http://bugzilla.opendarwin.org/show_bug.cgi?id=7152</a>.  Adding visible candidates after tables, at [table, numberOfChildren], threw RenderCanvas::setSelection for a loop because it assumed the end of a selection would be inside an atomic node.  It didn't make the same assumption about start of a selection, but for good measure, we also test a selection that starts at a position before a table.</p>
+</body></html>

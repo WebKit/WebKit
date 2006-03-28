@@ -1,3 +1,19 @@
+2006-03-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7152>
+        REGRESSION: Select All does not highlight table if it's last in the document
+
+        * editing/selection/7152-1-expected.checksum: Added.
+        * editing/selection/7152-1-expected.png: Added.
+        * editing/selection/7152-1-expected.txt: Added.
+        * editing/selection/7152-1.html: Added.
+        * editing/selection/7152-2-expected.checksum: Added.
+        * editing/selection/7152-2-expected.png: Added.
+        * editing/selection/7152-2-expected.txt: Added.
+        * editing/selection/7152-2.html: Added.
+        
 2006-03-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Beth.

@@ -882,7 +882,7 @@ void RenderText::setText(StringImpl *text, bool force)
                     // find previous text renderer if one exists
                     RenderObject* o;
                     QChar previous = ' ';
-                    for (o = previousRenderer(); o && o->isInlineFlow(); o = o->previousRenderer())
+                    for (o = previousInPreOrder(); o && o->isInlineFlow(); o = o->previousInPreOrder())
                         ;
                     if (o && o->isText()) {
                         StringImpl* prevStr = static_cast<RenderText*>(o)->string();
