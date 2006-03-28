@@ -261,6 +261,8 @@ bool Frame::didOpenURL(const KURL& url)
 
   started();
 
+  begin(d->m_workingURL);
+
   return true;
 }
 
@@ -492,8 +494,6 @@ void Frame::setDocument(Document* newDoc)
 
 void Frame::receivedFirstData()
 {
-    begin(d->m_workingURL);
-
     d->m_doc->docLoader()->setCachePolicy(d->m_cachePolicy);
     d->m_workingURL = KURL();
 
@@ -602,8 +602,10 @@ void Frame::begin(const KURL& url)
 
   if (DOMImplementation::isXMLMIMEType(d->m_request.m_responseMIMEType))
     d->m_doc = DOMImplementation::instance()->createDocument(d->m_view.get());
-  else
+  else if (d->m_request.m_responseMIMEType == "text/html")
     d->m_doc = DOMImplementation::instance()->createHTMLDocument(d->m_view.get());
+  else
+    return;
 
   if (!d->m_doc->attached())
     d->m_doc->attach();
@@ -696,11 +698,11 @@ void Frame::endIfNotLoading()
         return;
 
     // make sure nothing's left in there...
-    if (d->m_decoder)
-        write(d->m_decoder->flush());
-    if (d->m_doc)
+    if (d->m_doc) {
+        if (d->m_decoder)
+            write(d->m_decoder->flush());
         d->m_doc->finishParsing();
-    else
+    } else
         // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but
         // WebCore is enough involved that we need to checkCompleted() in order for m_bComplete to
         // become true.  An example is when a subframe is a pure text doc, and that subframe is the

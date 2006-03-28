@@ -1,3 +1,19 @@
+2006-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Justin.
+        
+        - fixed <rdar://problem/4483851> REGRESSION: parse mode gets set to strict after going back from non-HTML content (7102)
+
+        Reshuffled things to arrange for m_doc to be cleared somewhat earlier than before.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL):
+        (WebCore::Frame::receivedFirstData):
+        (WebCore::Frame::begin):
+        (WebCore::Frame::endIfNotLoading): 
+        * manual-tests/accidental-strict-mode.html: Added. I don't think an
+        automated test is possible.
+
 2006-03-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
