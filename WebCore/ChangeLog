@@ -1,3 +1,12 @@
+2006-03-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+        
+        Build fix.
+
+        * dom/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::error):
+
 2006-03-28  Michael Emmel  <mike.emmel@gmail.com>
 
         Reviewed, tweaked, landed by Darin.

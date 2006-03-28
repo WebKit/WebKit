@@ -2973,7 +2973,7 @@ void FrameMac::registerCommandForUndoOrRedo(const EditCommandPtr &cmd, bool isRe
     NSUndoManager *undoManager = [_bridge undoManager];
     [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:kwq];
     NSString *actionName = [_bridge nameForUndoAction:static_cast<WebUndoAction>(cmd.editingAction())];
-    if (actionName != nil)
+    if (actionName)
         [undoManager setActionName:actionName];
     _haveUndoRedoOperations = YES;
 }

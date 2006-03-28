@@ -535,18 +535,6 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
         return;
 
     if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber() && m_lastErrorColumn != columnNumber())) {
-
-        const char* format;
-        switch (type) {
-            case warning:
-                format = "warning on line %d at column %d: %s";
-                break;
-            case fatal:
-                // fall through
-            case nonFatal:
-                format = "error on line %d at column %d: %s";
-        }
-
 #if WIN32
         char m[1024];
         vsnprintf(m, sizeof(m) - 1, message, args);
@@ -554,7 +542,14 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
         char *m;
         vasprintf(&m, message, args);
 #endif
-        m_errorMessages += String::sprintf(format, lineNumber(), columnNumber(), m);
+        switch (type) {
+            case warning:
+                m_errorMessages += String::sprintf("warning on line %d at column %d: %s", lineNumber(), columnNumber(), m);
+                break;
+            case fatal:
+            case nonFatal:
+                m_errorMessages += String::sprintf("error on line %d at column %d: %s", lineNumber(), columnNumber(), m);
+        }
 #if !WIN32
         free(m);
 #endif
