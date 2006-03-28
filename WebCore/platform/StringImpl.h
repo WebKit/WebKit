@@ -40,18 +40,21 @@
 
 namespace WebCore {
 
+class AtomicString;
+struct QCharBufferTranslator;
+struct CStringTranslator;
 struct Length;
 
 class StringImpl : public Shared<StringImpl>
 {
 private:
     struct WithOneRef { };
-    StringImpl(WithOneRef) : l(0), s(0), _hash(0), _inTable(false) { ref(); }
+    StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false) { ref(); }
     void initWithChar(const char*, unsigned len);
     void initWithQChar(const QChar*, unsigned len);
 
 protected:
-    StringImpl() : l(0), s(0), _hash(0), _inTable(false) { }
+    StringImpl() : m_length(0), m_data(0), m_hash(0), m_inTable(false) { }
 public:
     StringImpl(const DeprecatedString&);
     StringImpl(const KJS::Identifier&);
@@ -61,10 +64,10 @@ public:
     StringImpl(const char*, unsigned len);
     ~StringImpl();
 
-    QChar* unicode() const { return s; } // will be changed to const QChar* eventually
-    unsigned length() const { return l; }
+    const QChar* unicode() const { return m_data; }
+    unsigned length() const { return m_length; }
     
-    unsigned hash() const { if (_hash == 0) _hash = computeHash(s, l); return _hash; }
+    unsigned hash() const { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
     static unsigned computeHash(const QChar*, unsigned len);
     static unsigned computeHash(const char*);
     
@@ -74,11 +77,11 @@ public:
     void remove(unsigned pos, int len = 1);
     
     StringImpl* split(unsigned pos);
-    StringImpl* copy() const { return new StringImpl(s, l); }
+    StringImpl* copy() const { return new StringImpl(m_data, m_length); }
 
     StringImpl* substring(unsigned pos, unsigned len = UINT_MAX);
 
-    const QChar& operator[] (int pos) const { return s[pos]; }
+    const QChar& operator[] (int pos) const { return m_data[pos]; }
 
     Length toLength() const;
     
@@ -99,7 +102,7 @@ public:
     int find(QChar, int index = 0) const;
     int find(const StringImpl*, int index, bool caseSensitive = true) const;
 
-    bool startsWith(const StringImpl* s, bool caseSensitive = true) const { return find(s, 0, caseSensitive) == 0; }
+    bool startsWith(const StringImpl* m_data, bool caseSensitive = true) const { return find(m_data, 0, caseSensitive) == 0; }
     bool endsWith(const StringImpl*, bool caseSensitive = true) const;
 
     // Does not modify the string.
@@ -112,11 +115,19 @@ public:
     // For debugging only, leaks memory.
     const char* ascii() const;
 
-    unsigned l;
-    QChar* s;
-    mutable unsigned _hash;
-    bool _inTable;
+private:
+    unsigned m_length;
+    QChar* m_data;
 
+private:
+    friend class AtomicString;
+    friend struct QCharBufferTranslator;
+    friend struct CStringTranslator;
+    
+    mutable unsigned m_hash;
+    bool m_inTable;
+
+public:
 #if __APPLE__
     StringImpl(CFStringRef);
     CFStringRef createCFString() const;
@@ -178,26 +189,26 @@ namespace KXMLCore {
         // http://www.azillionmonkeys.com/qed/hash.html
         static unsigned hash(const WebCore::StringImpl* str)
         {
-            unsigned l = str->length();
-            const QChar* s = str->unicode();
+            unsigned m_length = str->length();
+            const QChar* m_data = str->unicode();
             uint32_t hash = PHI;
             uint32_t tmp;
             
-            int rem = l & 1;
-            l >>= 1;
+            int rem = m_length & 1;
+            m_length >>= 1;
             
             // Main loop
-            for (; l > 0; l--) {
-                hash += s[0].lower().unicode();
-                tmp = (s[1].lower().unicode() << 11) ^ hash;
+            for (; m_length > 0; m_length--) {
+                hash += m_data[0].lower().unicode();
+                tmp = (m_data[1].lower().unicode() << 11) ^ hash;
                 hash = (hash << 16) ^ tmp;
-                s += 2;
+                m_data += 2;
                 hash += hash >> 11;
             }
             
             // Handle end case
             if (rem) {
-                hash += s[0].lower().unicode();
+                hash += m_data[0].lower().unicode();
                 hash ^= hash << 11;
                 hash += hash >> 17;
             }
@@ -224,26 +235,26 @@ namespace KXMLCore {
             // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
             // were 16-bit chunks, which will give matching results.
 
-            unsigned l = length;
-            const char* s = str;
+            unsigned m_length = length;
+            const char* m_data = str;
             uint32_t hash = PHI;
             uint32_t tmp;
             
-            int rem = l & 1;
-            l >>= 1;
+            int rem = m_length & 1;
+            m_length >>= 1;
             
             // Main loop
-            for (; l > 0; l--) {
-                hash += QChar(s[0]).lower().unicode();
-                tmp = (QChar(s[1]).lower().unicode() << 11) ^ hash;
+            for (; m_length > 0; m_length--) {
+                hash += QChar(m_data[0]).lower().unicode();
+                tmp = (QChar(m_data[1]).lower().unicode() << 11) ^ hash;
                 hash = (hash << 16) ^ tmp;
-                s += 2;
+                m_data += 2;
                 hash += hash >> 11;
             }
             
             // Handle end case
             if (rem) {
-                hash += QChar(s[0]).lower().unicode();
+                hash += QChar(m_data[0]).lower().unicode();
                 hash ^= hash << 11;
                 hash += hash >> 17;
             }

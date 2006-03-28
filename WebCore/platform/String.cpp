@@ -129,16 +129,16 @@ void String::insert(const String& str, unsigned pos)
 const QChar& String::operator[](unsigned i) const
 {
     static const QChar nullChar = 0;
-    if (!m_impl || i >= m_impl->l )
+    if (!m_impl || i >= m_impl->length() )
         return nullChar;
-    return *(m_impl->s+i);
+    return *(m_impl->unicode()+i);
 }
 
 unsigned String::length() const
 {
     if (!m_impl)
         return 0;
-    return m_impl->l;
+    return m_impl->length();
 }
 
 void String::truncate(unsigned len)
@@ -183,30 +183,30 @@ String String::upper() const
 
 bool String::percentage(int& result) const
 {
-    if (!m_impl || !m_impl->l)
+    if (!m_impl || !m_impl->length())
         return false;
 
-    if (*(m_impl->s+m_impl->l-1) != '%')
+    if (*(m_impl->unicode()+m_impl->length()-1) != '%')
        return false;
 
-    result = QConstString(m_impl->s, m_impl->l-1).string().toInt();
+    result = QConstString(m_impl->unicode(), m_impl->length()-1).string().toInt();
     return true;
 }
 
-QChar* String::unicode() const
+const QChar* String::unicode() const
 {
     if (!m_impl)
         return 0;
-    return m_impl->s;
+    return m_impl->unicode();
 }
 
 DeprecatedString String::deprecatedString() const
 {
     if (!m_impl)
         return DeprecatedString::null;
-    if (!m_impl->s)
+    if (!m_impl->unicode())
         return DeprecatedString("", 0);
-    return DeprecatedString(m_impl->s, m_impl->l);
+    return DeprecatedString(m_impl->unicode(), m_impl->length());
 }
 
 int String::toInt(bool* ok) const
@@ -228,7 +228,7 @@ String String::copy() const
 
 bool String::isEmpty() const
 {
-    return (!m_impl || m_impl->l == 0);
+    return (!m_impl || m_impl->length() == 0);
 }
 
 Length* String::toCoordsArray(int& len) const 

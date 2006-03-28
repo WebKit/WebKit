@@ -104,7 +104,7 @@ void raiseDOMException(ExceptionCode ec)
 
 StringImpl::operator NSString *() const
 {
-    return [NSString stringWithCharacters:reinterpret_cast<const unichar *>(s) length:l];
+    return [NSString stringWithCharacters:reinterpret_cast<const unichar *>(m_data) length:m_length];
 }
 
 String::String(NSString *str)

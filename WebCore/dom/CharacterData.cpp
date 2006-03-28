@@ -81,7 +81,7 @@ void CharacterData::setData( const String &_data, ExceptionCode& ec)
 
 unsigned CharacterData::length() const
 {
-    return str->l;
+    return str->length();
 }
 
 String CharacterData::substringData( const unsigned offset, const unsigned count, ExceptionCode& ec)
@@ -109,7 +109,7 @@ void CharacterData::appendData( const String &arg, ExceptionCode& ec)
     str->ref();
     str->append(arg.impl());
     if (renderer())
-        static_cast<RenderText*>(renderer())->setTextWithOffset(str, oldStr->l, 0);
+        static_cast<RenderText*>(renderer())->setTextWithOffset(str, oldStr->length(), 0);
     
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
@@ -167,8 +167,8 @@ void CharacterData::replaceData( const unsigned offset, const unsigned count, co
         return;
 
     unsigned realCount;
-    if (offset + count > str->l)
-        realCount = str->l-offset;
+    if (offset + count > str->length())
+        realCount = str->length()-offset;
     else
         realCount = count;
 
@@ -236,7 +236,7 @@ void CharacterData::checkCharDataOperation( const unsigned offset, ExceptionCode
 
     // INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than the number of 16-bit
     // units in data.
-    if (offset > str->l) {
+    if (offset > str->length()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -273,7 +273,7 @@ unsigned CharacterData::caretMaxRenderedOffset() const
 
 bool CharacterData::rendererIsNeeded(RenderStyle *style)
 {
-    if (!str || str->l == 0)
+    if (!str || str->length() == 0)
         return false;
     return EventTargetNode::rendererIsNeeded(style);
 }

@@ -1628,7 +1628,7 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
     DeprecatedString name = currToken.tagName.deprecatedString();
     DeprecatedString text;
     if(currToken.text)
-        text = QConstString(currToken.text->s, currToken.text->l).deprecatedString();
+        text = QConstString(currToken.text->unicode(), currToken.text->length()).deprecatedString();
 
     kdDebug( 6036 ) << "Token --> " << name << endl;
     if (currToken.flat)

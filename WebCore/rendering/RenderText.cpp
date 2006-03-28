@@ -484,7 +484,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font *f, int start, int len, 
         return w;
     }
     
-    return f->width(str->s, str->l, start, len, tabWidth, xpos);
+    return f->width(str->unicode(), str->length(), start, len, tabWidth, xpos);
 }
 
 void RenderText::trimmedMinMaxWidth(int leadWidth,
@@ -591,8 +591,8 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     // FIXME: not 100% correct for first-line
     const Font *f = font(false);
     int wordSpacing = style()->wordSpacing();
-    int len = str->l;
-    QChar *txt = str->s;
+    int len = str->length();
+    const QChar *txt = str->unicode();
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
@@ -975,27 +975,28 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, int xpos, bo
 {
     if (from >= str->length())
         return 0;
-    if ( from + len > str->length() ) len = str->length() - from;
+    if (from + len > str->length())
+        len = str->length() - from;
 
     const Font *f = font(firstLine);
-    return width( from, len, f, xpos );
+    return width(from, len, f, xpos);
 }
 
 unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *f, int xpos) const
 {
-    if(!str->s || from > str->l ) return 0;
-    if ( from + len > str->l ) len = str->l - from;
+    if (!str->unicode() || from > str->length())
+        return 0;
+    if (from + len > str->length())
+        len = str->length() - from;
 
     int w;
-    if (!style()->preserveNewline() && f == &style()->font() && from == 0 && len == str->l ) {
+    if (!style()->preserveNewline() && f == &style()->font() && from == 0 && len == str->length())
         w = m_maxWidth;
-    } else if (f == &style()->font()) {
+    else if (f == &style()->font())
         w = widthFromCache(f, from, len, tabWidth(), xpos);
-    } else {
-        w = f->width(str->s, str->l, from, len, tabWidth(), xpos );
-    }
+    else
+        w = f->width(str->unicode(), str->length(), from, len, tabWidth(), xpos );
         
-    //kdDebug( 6040 ) << "RenderText::width(" << from << ", " << len << ") = " << w << endl;
     return w;
 }
 

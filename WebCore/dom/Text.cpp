@@ -54,7 +54,7 @@ Text *Text::splitText(unsigned offset, ExceptionCode& ec)
 
     // INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than
     // the number of 16-bit units in data.
-    if (offset > str->l) {
+    if (offset > str->length()) {
         ec = INDEX_SIZE_ERR;
         return 0;
     }
@@ -66,17 +66,17 @@ Text *Text::splitText(unsigned offset, ExceptionCode& ec)
     }
 
     StringImpl *oldStr = str;
-    Text *newText = createNew(str->substring(offset,str->l-offset));
+    Text *newText = createNew(str->substring(offset, str->length()-offset));
     str = str->copy();
     str->ref();
-    str->remove(offset,str->l-offset);
+    str->remove(offset, str->length()-offset);
 
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
 
     if (parentNode())
-        parentNode()->insertBefore(newText,nextSibling(), ec );
-    if ( ec )
+        parentNode()->insertBefore(newText,nextSibling(), ec);
+    if (ec)
         return 0;
 
     if (renderer())

@@ -296,11 +296,13 @@ short Range::compareBoundaryPoints( Node *containerA, int offsetA, Node *contain
     // see DOM2 traversal & range section 2.5
 
     // case 1: both points have the same container
-    if( containerA == containerB )
-    {
-        if( offsetA == offsetB )  return 0;    // A is equal to B
-        if( offsetA < offsetB )  return -1;    // A is before B
-        else  return 1;                        // A is after B
+    if(containerA == containerB) {
+        if (offsetA == offsetB)
+            return 0;           // A is equal to B
+        if (offsetA < offsetB)
+            return -1;          // A is before B
+        else
+            return 1;           // A is after B
     }
 
     // case 2: node C (container B or an ancestor) is a child node of A
@@ -315,8 +317,10 @@ short Range::compareBoundaryPoints( Node *containerA, int offsetA, Node *contain
             n = n->nextSibling();
         }
 
-        if( offsetA <= offsetC )  return -1;    // A is before B
-        else  return 1;                        // A is after B
+        if (offsetA <= offsetC)
+            return -1;              // A is before B
+        else
+            return 1;               // A is after B
     }
 
     // case 3: node C (container A or an ancestor) is a child node of B
@@ -331,8 +335,10 @@ short Range::compareBoundaryPoints( Node *containerA, int offsetA, Node *contain
             n = n->nextSibling();
         }
 
-        if( offsetC < offsetB )  return -1;    // A is before B
-        else  return 1;                        // A is after B
+        if(offsetC < offsetB)
+            return -1;              // A is before B
+        else
+            return 1;               // A is after B
     }
 
     // case 4: containers A & B are siblings, or children of siblings

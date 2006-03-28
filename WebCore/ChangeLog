@@ -1,3 +1,48 @@
+2006-03-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Give StringImpl a little privacy.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8022
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::length):
+        (WebCore::CharacterData::appendData):
+        (WebCore::CharacterData::replaceData):
+        (WebCore::CharacterData::checkCharDataOperation):
+        (WebCore::CharacterData::rendererIsNeeded):
+        * dom/Range.cpp:
+        (WebCore::Range::compareBoundaryPoints):
+        * dom/Text.cpp:
+        (WebCore::Text::splitText):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processToken):
+        * platform/AtomicString.cpp:
+        (WebCore::operator==):
+        * platform/String.cpp:
+        (WebCore::String::operator[]):
+        (WebCore::String::length):
+        (WebCore::String::percentage):
+        (WebCore::String::unicode):
+        (WebCore::String::deprecatedString):
+        (WebCore::String::isEmpty):
+        * platform/StringImpl.cpp:
+        (WebCore::equal):
+        (WebCore::equalIgnoringCase):
+        * platform/StringImpl.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::calcMinMaxWidth):
+        (WebCore::RenderText::width):
+
 2006-03-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Beth.
