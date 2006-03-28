@@ -2,6 +2,22 @@
 
         Reviewed by Eric.
 
+        <rdar://problem/3694090> -[WebBaseNetscapePluginView finalize] is incorrect; design change needed
+
+        * ChangeLog:
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView dealloc]):
+        Instead of calling -stop, assert that the plugin is not running.  A plugin view cannot be deallocated
+        until it is removed from its window.  When a plugin view is removed from its window, it calls -stop
+        on itself.  Therefore I believe that this call to -stop is unnecessary; if I'm wrong, then the
+        assertion will help catch any edge cases.
+        (-[WebBaseNetscapePluginView finalize]):
+        ditto
+
+2006-03-27  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Eric.
+
         <rdar://problem/3694086> -[WebBaseNetscapePluginStream finalize] is incorrect; design change needed
 
         * Plugins/WebBaseNetscapePluginStream.m:

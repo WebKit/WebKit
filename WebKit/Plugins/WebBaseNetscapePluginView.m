@@ -1216,7 +1216,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [self stop];
+    ASSERT(!isStarted);
 
     [plugin release];
     [streams release];
@@ -1233,9 +1233,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    // FIXME: Bad to stop at finalize time. Need to restructure code
-    // so that we're already stopped before we get to this point.
-    [self stop];
+    ASSERT(!isStarted);
 
     [self freeAttributeKeysAndValues];
 
