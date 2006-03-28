@@ -52,12 +52,12 @@ DocLoader::DocLoader(Frame *frame, Document* doc)
     m_loadInProgress = false;
 
     Cache::init();
-    Cache::docloader->append(this);
+    Cache::docloaders->add(this);
 }
 
 DocLoader::~DocLoader()
 {
-    Cache::docloader->remove(this);
+    Cache::docloaders->remove(this);
 }
 
 void DocLoader::setExpireDate(time_t _expireDate)

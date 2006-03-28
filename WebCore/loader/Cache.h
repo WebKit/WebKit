@@ -24,13 +24,14 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_Cache_h
-#define KHTML_Cache_h
+#ifndef Cache_h
+#define Cache_h
 
+#include "DeprecatedString.h"
 #include "PlatformString.h"
 #include <kio/global.h>
 #include <qptrlist.h>
-#include <DeprecatedString.h>
+#include <kxmlcore/HashSet.h>
 
 class KURL;
 
@@ -169,7 +170,7 @@ namespace WebCore
         static void checkLRUAndUncacheableListIntegrity();
 
     private:
-        static DeprecatedPtrList<DocLoader>* docloader;
+        static HashSet<DocLoader*>* docloaders;
     
         static int maxSize;
         static int maxCacheable;

@@ -206,17 +206,16 @@ RegularExpression *regExpForLabels(NSArray *labels)
     // that the app will use is equal to the number of locales is used in searching.
     static const unsigned int regExpCacheSize = 4;
     static NSMutableArray *regExpLabels = nil;
-    static DeprecatedPtrList <RegularExpression> regExps;
+    static Vector<RegularExpression*> regExps;
     static RegularExpression wordRegExp = RegularExpression("\\w");
 
     RegularExpression *result;
-    if (!regExpLabels) {
+    if (!regExpLabels)
         regExpLabels = [[NSMutableArray alloc] initWithCapacity:regExpCacheSize];
-    }
     unsigned int cacheHit = [regExpLabels indexOfObject:labels];
-    if (cacheHit != NSNotFound) {
+    if (cacheHit != NSNotFound)
         result = regExps.at(cacheHit);
-    } else {
+    else {
         DeprecatedString pattern("(");
         unsigned int numLabels = [labels count];
         unsigned int i;
@@ -230,9 +229,8 @@ RegularExpression *regExpForLabels(NSArray *labels)
                 endsWithWordChar = wordRegExp.search(label.at(label.length() - 1)) >= 0;
             }
             
-            if (i != 0) {
+            if (i != 0)
                 pattern.append("|");
-            }
             // Search for word boundaries only if label starts/ends with "word characters".
             // If we always searched for word boundaries, this wouldn't work for languages
             // such as Japanese.
@@ -2953,20 +2951,19 @@ KJS::Bindings::Instance *FrameMac::getObjectInstanceForWidget(Widget *widget)
     return getInstanceForView(widget->getView());
 }
 
-void FrameMac::addPluginRootObject(const KJS::Bindings::RootObject *root)
+void FrameMac::addPluginRootObject(KJS::Bindings::RootObject *root)
 {
-    rootObjects.append (root);
+    m_rootObjects.append(root);
 }
 
 void FrameMac::cleanupPluginRootObjects()
 {
     JSLock lock;
 
-    KJS::Bindings::RootObject *root;
-    while ((root = rootObjects.getLast())) {
-        root->removeAllNativeReferences();
-        rootObjects.removeLast();
-    }
+    unsigned count = m_rootObjects.size();
+    for (unsigned i = 0; i < count; i++)
+        m_rootObjects[i]->removeAllNativeReferences();
+    m_rootObjects.clear();
 }
 
 void FrameMac::registerCommandForUndoOrRedo(const EditCommandPtr &cmd, bool isRedo)

@@ -63,7 +63,7 @@ typedef HashMap<RefPtr<StringImpl>, CachedObject*> CacheMap;
 
 static CacheMap* cache = 0;
 
-DeprecatedPtrList<DocLoader>* Cache::docloader = 0;
+HashSet<DocLoader*>* Cache::docloaders = 0;
 Loader *Cache::m_loader = 0;
 
 int Cache::maxSize = defaultCacheSize;
@@ -83,8 +83,8 @@ void Cache::init()
     if (!cache)
         cache = new CacheMap;
 
-    if (!docloader)
-        docloader = new DeprecatedPtrList<DocLoader>;
+    if (!docloaders)
+        docloaders = new HashSet<DocLoader*>;
 
     if (!nullImage)
         nullImage = new Image;
@@ -106,8 +106,9 @@ void Cache::clear()
     delete cache; cache = 0;
     delete nullImage; nullImage = 0;
     delete brokenImage; brokenImage = 0;
-    delete m_loader;   m_loader = 0;
-    delete docloader; docloader = 0;
+    delete m_loader; m_loader = 0;
+    ASSERT(docloaders->isEmpty());
+    delete docloaders; docloaders = 0;
 }
 
 CachedImage *Cache::requestImage(DocLoader* dl, const String& url, bool reload, time_t expireDate)
@@ -457,9 +458,9 @@ void Cache::remove(CachedObject *object)
   cache->remove(object->url().impl());
   removeFromLRUList(object);
 
-  const DocLoader* dl;
-  for (dl=docloader->first(); dl; dl=docloader->next())
-      dl->removeCachedObject(object);
+  HashSet<DocLoader*>::iterator end = docloaders->end();
+  for (HashSet<DocLoader*>::iterator itr = docloaders->begin(); itr != end; ++itr)
+      (*itr)->removeCachedObject(object);
 
   if (object->canDelete())
      delete object;
