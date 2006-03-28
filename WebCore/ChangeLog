@@ -1,3 +1,12 @@
+2006-03-27  Darin Adler  <darin@apple.com>
+
+        Based on a patch by Michael Emmel <mike.emmel@gmail.com>.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8012
+          TransferJob.cpp includes non-existent "String.h" (capital S)
+
+        * platform/TransferJob.cpp: Remove unneeded include of "String.h".
+
 2006-03-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
@@ -12,9 +21,9 @@
         (WebCore::Range::selectNodeContents):
         Use maxOffset if offsetInCharacters, otherwise use childNodeCount.
 
-2006-03-15  Darin Adler  <darin@apple.com>
+2006-03-27  Darin Adler  <darin@apple.com>
 
-        At the request of Michael Emmel <mike.emmel@gmail.com>.
+        Based on a patch by Michael Emmel <mike.emmel@gmail.com>.
 
         - fix compilation for Linux
           http://bugzilla.opendarwin.org/show_bug.cgi?id=8013
