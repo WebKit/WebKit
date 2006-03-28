@@ -1,3 +1,17 @@
+2006-03-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4427002> REGRESSION: VoiceOver doesn't read heading level text in Safari (Range selectNodeContents broken)
+
+        Better fix than previous checkin, since maxDeepOffset is really an editing hack.
+
+        * editing/selection/selectNodeContents-textNode.html: Added.
+
+        * dom/Range.cpp:
+        (WebCore::Range::selectNodeContents):
+        Use maxOffset if offsetInCharacters, otherwise use childNodeCount.
+
 2006-03-15  Darin Adler  <darin@apple.com>
 
         At the request of Michael Emmel <mike.emmel@gmail.com>.
