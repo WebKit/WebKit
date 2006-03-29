@@ -204,8 +204,10 @@ void HTMLInputElement::setInputType(const String& t)
             if (wasAttached)
                 detach();
             bool didStoreValue = storesValueSeparateFromAttribute();
+            bool didMaintainState = maintainsState();
             m_type = newType;
             bool willStoreValue = storesValueSeparateFromAttribute();
+            bool willMaintainState = maintainsState();
             if (didStoreValue && !willStoreValue && !m_value.isNull()) {
                 setAttribute(valueAttr, m_value);
                 m_value = String();
@@ -213,6 +215,10 @@ void HTMLInputElement::setInputType(const String& t)
             if (!didStoreValue && willStoreValue) {
                 m_value = getAttribute(valueAttr);
             }
+            if (willMaintainState && !didMaintainState)
+                document()->registerMaintainsState(this);
+            else if (!willMaintainState && didMaintainState)
+                document()->deregisterMaintainsState(this);
             if (wasAttached)
                 attach();
                 

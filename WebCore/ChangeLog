@@ -1,3 +1,13 @@
+2006-03-29  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        If the input type is dynamically changed, reevaluate whether the element maintains its state
+        (this decision is based on the input's type).  Fixes an assertion error when leaving a page
+        with a text field that had been dynamically changed to a password field.
+
 2006-03-29  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
