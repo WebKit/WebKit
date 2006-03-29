@@ -1,3 +1,11 @@
+2006-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - make the global initializer check work on Xcode 2.1 (although it's better on 2.2)
+
+        * Scripts/check-for-global-initializers: Use NATIVE_ARCH if there is no CURRENT_ARCH.
+
 2006-03-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

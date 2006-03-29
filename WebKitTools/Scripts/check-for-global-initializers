@@ -39,11 +39,8 @@ my $configuration = $ENV{'CONFIGURATION'};
 my $target = $ENV{'TARGET_NAME'};
 my $variant = $ENV{'CURRENT_VARIANT'};
 
-if (!$arch) {
-    print "Not checking for global initializers because CURRENT_ARCH is not defined.\n";
-    print "Probably means you have Xcode 2.1.\n";
-    exit;
-}
+$arch = $ENV{'NATIVE_ARCH'} if !$arch; # for Xcode 2.1, which does not have CURRENT_ARCH
+$variant = "normal" if !$variant; # for Xcode 2.1, which does not have CURRENT_VARIANT
 
 my $list = $ENV{"LINK_FILE_LIST_${variant}_${arch}"};
 
