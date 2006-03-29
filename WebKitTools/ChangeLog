@@ -1,5 +1,13 @@
 2006-03-28  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        Exit gracefully if $ENV{'CURRENT_ARCH'} is undefined. Rolling out my previous change.
+
+        * Scripts/check-for-global-initializers:
+
+2006-03-28  Timothy Hatcher  <timothy@apple.com>
+
         Build fix. Turn off uninitialized warnings for the first block of code.
 
         * Scripts/check-for-global-initializers:
