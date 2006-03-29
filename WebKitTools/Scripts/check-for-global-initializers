@@ -34,6 +34,8 @@
 use warnings;
 use strict;
 
+no warnings 'uninitialized'; # FIXME: turn off uninitialized warnings so the following code works
+
 my $arch = $ENV{'CURRENT_ARCH'};
 my $configuration = $ENV{'CONFIGURATION'};
 my $target = $ENV{'TARGET_NAME'};
@@ -45,6 +47,9 @@ if (!open LIST, $list) {
     print "Could not open $list\n";
     exit 1;
 }
+
+use warnings; # turn all warnings back on
+
 my @files = <LIST>;
 chomp @files;
 close LIST;

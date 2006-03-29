@@ -1,3 +1,9 @@
+2006-03-28  Timothy Hatcher  <timothy@apple.com>
+
+        Build fix. Turn off uninitialized warnings for the first block of code.
+
+        * Scripts/check-for-global-initializers:
+
 2006-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
