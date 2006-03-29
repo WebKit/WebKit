@@ -69,7 +69,14 @@ void CharacterData::setData( const String &_data, ExceptionCode& ec)
     if(str == _data.impl()) return; // ### fire DOMCharacterDataModified if modified?
     StringImpl *oldStr = str;
     str = _data.impl();
-    if(str) str->ref();
+    if (str)
+        str->ref();
+    
+    if (!renderer() && attached()) {
+        detach();
+        attach();
+    }
+    
     if (renderer())
         static_cast<RenderText*>(renderer())->setText(str);
     
@@ -108,6 +115,12 @@ void CharacterData::appendData( const String &arg, ExceptionCode& ec)
     str = str->copy();
     str->ref();
     str->append(arg.impl());
+
+    if (!renderer() && attached()) {
+        detach();
+        attach();
+    }
+
     if (renderer())
         static_cast<RenderText*>(renderer())->setTextWithOffset(str, oldStr->length(), 0);
     
@@ -126,6 +139,12 @@ void CharacterData::insertData( const unsigned offset, const String &arg, Except
     str = str->copy();
     str->ref();
     str->insert(arg.impl(), offset);
+
+    if (!renderer() && attached()) {
+        detach();
+        attach();
+    }
+
     if (renderer())
         static_cast<RenderText*>(renderer())->setTextWithOffset(str, offset, 0);
     
@@ -177,6 +196,12 @@ void CharacterData::replaceData( const unsigned offset, const unsigned count, co
     str->ref();
     str->remove(offset,realCount);
     str->insert(arg.impl(), offset);
+
+    if (!renderer() && attached()) {
+        detach();
+        attach();
+    }
+
     if (renderer())
         static_cast<RenderText*>(renderer())->setTextWithOffset(str, offset, count);
     

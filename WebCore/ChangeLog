@@ -1,3 +1,18 @@
+2006-03-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4616
+          Setting nodeValue on a textnode with collapsed whitespace only has no visual effect
+
+        Test: fast/dom/space-to-text.html
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData): Create a renderer if it's needed, but missing.
+        (WebCore::CharacterData::appendData): Ditto.
+        (WebCore::CharacterData::insertData): Ditto.
+        (WebCore::CharacterData::replaceData): Ditto.
+
 2006-03-28  Tim Omernick  <timo@apple.com>
 
         Reviewed by Maciej.

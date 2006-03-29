@@ -1,3 +1,13 @@
+2006-03-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4616
+          Setting nodeValue on a textnode with collapsed whitespace only has no visual effect
+
+        * fast/dom/space-to-text-expected.txt: Added.
+        * fast/dom/space-to-text.html: Added.
+
 2006-03-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
