@@ -1263,6 +1263,8 @@ void Document::write(const DeprecatedString &text)
     if (!m_tokenizer) {
         open();
         assert(m_tokenizer);
+        if (!m_tokenizer)
+            return;
         write(DeprecatedString("<html>"));
     }
     m_tokenizer->write(text, false);

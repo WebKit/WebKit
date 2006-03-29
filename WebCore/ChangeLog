@@ -2,6 +2,15 @@
 
         Reviewed by darin.
 
+        <rdar://problem/4402170> CrashTracer: 499 crashes in Safari at com.apple.WebCore: DOM::DocumentImpl::open + 16
+
+        * dom/Document.cpp:
+        (WebCore::Document::write): Fix unreproducible infinite recursion.
+
+2006-03-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         Remove global initializers.
 
         * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
