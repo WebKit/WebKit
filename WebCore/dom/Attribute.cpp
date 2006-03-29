@@ -39,7 +39,7 @@ PassRefPtr<Attr> Attribute::createAttrIfNeeded(Element* e)
 {
     RefPtr<Attr> r(m_impl);
     if (!r) {
-        r = new Attr(e, e->getDocument(), this);
+        r = new Attr(e, e->document(), this);
         r->createTextChild();
     }
     return r.release();

@@ -1,3 +1,44 @@
+2006-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - replace getDocument with document in a few places that Geoff missed
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Attr.cpp:
+        (WebCore::Attr::createTextChild):
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::cloneNode):
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::createAttrIfNeeded):
+        * dom/Element.cpp:
+        (WebCore::Element::cloneNode):
+        (WebCore::inHTMLDocument):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeMap):
+        (WebCore::Element::createStyleForRenderer):
+        (WebCore::Element::createRenderer):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::dispatchAttrRemovalEvent):
+        (WebCore::Element::dispatchAttrAdditionEvent):
+        (WebCore::Element::updateId):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::focus):
+        (WebCore::Element::blur):
+        * dom/NamedAttrMap.cpp:
+        (WebCore::inHTMLDocument):
+        (WebCore::NamedAttrMap::setNamedItem):
+        * dom/NamedMappedAttrMap.cpp:
+        (WebCore::NamedMappedAttrMap::parseClassAttribute):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::parseMappedAttribute):
+        (WebCore::StyledElement::createMappedDecl):
+
+        - added missing include that seems to be breaking the Windows build
+
+        * platform/String.cpp: Include <stdarg.h>.
+
 2006-03-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Beth.

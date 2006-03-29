@@ -4948,20 +4948,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate Derived Sources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nelse\n    export CREATE_HASH_TABLE=${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nfi\n./generate-derived-sources\n";
-		};
 		939D050109D9FF6B00984996 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -4975,6 +4961,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
+		};
+		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Derived Sources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nelse\n    export CREATE_HASH_TABLE=${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nfi\n./generate-derived-sources\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

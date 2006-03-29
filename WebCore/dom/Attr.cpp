@@ -55,7 +55,7 @@ void Attr::createTextChild()
     if (!m_attribute->value().isEmpty()) {
         ExceptionCode ec = 0;
         m_ignoreChildrenChanged++;
-        appendChild(getDocument()->createTextNode(m_attribute->value().impl()), ec);
+        appendChild(document()->createTextNode(m_attribute->value().impl()), ec);
         m_ignoreChildrenChanged--;
     }
 }
@@ -120,7 +120,7 @@ void Attr::setValue( const String& v, ExceptionCode& ec)
     int e = 0;
     m_ignoreChildrenChanged++;
     removeChildren();
-    appendChild(getDocument()->createTextNode(v.impl()), e);
+    appendChild(document()->createTextNode(v.impl()), e);
     m_ignoreChildrenChanged--;
     
     m_attribute->setValue(v.impl());
@@ -136,7 +136,7 @@ void Attr::setNodeValue(const String& v, ExceptionCode& ec)
 
 PassRefPtr<Node> Attr::cloneNode(bool /*deep*/)
 {
-    RefPtr<Attr> clone = new Attr(0, getDocument(), m_attribute->clone());
+    RefPtr<Attr> clone = new Attr(0, document(), m_attribute->clone());
     cloneChildNodes(clone.get());
     return clone.release();
 }

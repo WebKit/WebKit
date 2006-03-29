@@ -52,7 +52,7 @@ Element::~Element()
 PassRefPtr<Node> Element::cloneNode(bool deep)
 {
     ExceptionCode ec = 0;
-    RefPtr<Element> clone = getDocument()->createElementNS(namespaceURI(), nodeName(), ec);
+    RefPtr<Element> clone = document()->createElementNS(namespaceURI(), nodeName(), ec);
     assert(!ec);
     
     // clone attributes
@@ -153,7 +153,7 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
 
 static inline bool inHTMLDocument(const Element* e)
 {
-    return e && e->getDocument()->isHTMLDocument();
+    return e && e->document()->isHTMLDocument();
 }
 
 const AtomicString& Element::getAttribute(const String& name) const
@@ -180,7 +180,7 @@ void Element::setAttribute(const String& name, const String& value, ExceptionCod
 void Element::setAttribute(const QualifiedName& name, StringImpl* value, ExceptionCode& ec)
 {
     if (inDocument())
-        getDocument()->incDOMTreeVersion();
+        document()->incDOMTreeVersion();
 
     // allocate attributemap if necessary
     Attribute* old = attributes(false)->getAttributeItem(name);
@@ -212,7 +212,7 @@ Attribute* Element::createAttribute(const QualifiedName& name, StringImpl* value
 void Element::setAttributeMap(NamedAttrMap* list)
 {
     if (inDocument())
-        getDocument()->incDOMTreeVersion();
+        document()->incDOMTreeVersion();
 
     // If setting the whole map changes the id attribute, we need to call updateId.
 
@@ -300,12 +300,12 @@ bool Element::isURLAttribute(Attribute *attr) const
 
 RenderStyle *Element::createStyleForRenderer(RenderObject *parentRenderer)
 {
-    return getDocument()->styleSelector()->createStyleForElement(this);
+    return document()->styleSelector()->createStyleForElement(this);
 }
 
 RenderObject *Element::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    if (getDocument()->documentElement() == this && style->display() == NONE) {
+    if (document()->documentElement() == this && style->display() == NONE) {
         // Ignore display: none on root elements.  Force a display of block in that case.
         RenderBlock* result = new (arena) RenderBlock(this);
         if (result) result->setStyle(style);
@@ -360,7 +360,7 @@ void Element::recalcStyle( StyleChange change )
     bool hasParentRenderer = parent() ? parent()->renderer() : false;
     
     if ( hasParentRenderer && (change >= Inherit || changed()) ) {
-        RenderStyle *newStyle = getDocument()->styleSelector()->createStyleForElement(this);
+        RenderStyle *newStyle = document()->styleSelector()->createStyleForElement(this);
         StyleChange ch = diff( _style, newStyle );
         if (ch == Detach) {
             if (attached()) detach();
@@ -369,14 +369,14 @@ void Element::recalcStyle( StyleChange change )
             // attach recalulates the style for all children. No need to do it twice.
             setChanged( false );
             setHasChangedChild( false );
-            newStyle->deref(getDocument()->renderArena());
+            newStyle->deref(document()->renderArena());
             return;
         }
         else if (ch != NoChange) {
             if (renderer() && newStyle)
                 renderer()->setStyle(newStyle);
         }
-        else if (changed() && renderer() && newStyle && (getDocument()->usesSiblingRules() || getDocument()->usesDescendantRules())) {
+        else if (changed() && renderer() && newStyle && (document()->usesSiblingRules() || document()->usesDescendantRules())) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
             // fooled into believing this style is the same.  This is only necessary if the document actually uses
             // sibling/descendant rules, since otherwise it isn't possible for ancestor styles to affect sharing of
@@ -384,10 +384,10 @@ void Element::recalcStyle( StyleChange change )
             renderer()->setStyleInternal(newStyle);
         }
 
-        newStyle->deref(getDocument()->renderArena());
+        newStyle->deref(document()->renderArena());
 
         if ( change != Force) {
-            if (getDocument()->usesDescendantRules())
+            if (document()->usesDescendantRules())
                 change = Force;
             else
                 change = ch;
@@ -423,11 +423,11 @@ void Element::dispatchAttrRemovalEvent(Attribute*)
 {
     assert(!eventDispatchForbidden());
 #if 0
-    if (!getDocument()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
+    if (!document()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
         return;
     ExceptionCode ec = 0;
     dispatchEvent(new MutationEvent(DOMAttrModifiedEvent, true, false, attr, attr->value(),
-        attr->value(), getDocument()->attrName(attr->id()), MutationEvent::REMOVAL), ec);
+        attr->value(), document()->attrName(attr->id()), MutationEvent::REMOVAL), ec);
 #endif
 }
 
@@ -435,11 +435,11 @@ void Element::dispatchAttrAdditionEvent(Attribute *attr)
 {
     assert(!eventDispatchForbidden());
 #if 0
-    if (!getDocument()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
+    if (!document()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
         return;
     ExceptionCode ec = 0;
     dispatchEvent(new MutationEvent(DOMAttrModifiedEvent, true, false, attr, attr->value(),
-        attr->value(),getDocument()->attrName(attr->id()), MutationEvent::ADDITION), ec);
+        attr->value(),document()->attrName(attr->id()), MutationEvent::ADDITION), ec);
 #endif
 }
 
@@ -497,7 +497,7 @@ void Element::updateId(const AtomicString& oldId, const AtomicString& newId)
     if (oldId == newId)
         return;
 
-    Document* doc = getDocument();
+    Document* doc = document();
     if (!oldId.isEmpty())
         doc->removeElementById(oldId, this);
     if (!newId.isEmpty())
@@ -563,7 +563,7 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr *attr, ExceptionCode& ec)
         ec = NOT_FOUND_ERR;
         return 0;
     }
-    if (getDocument() != attr->getDocument()) {
+    if (document() != attr->document()) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
@@ -637,7 +637,7 @@ CSSStyleDeclaration *Element::style()
 
 void Element::focus()
 {
-    Document* doc = getDocument();
+    Document* doc = document();
     doc->updateLayout();
     if (isFocusable()) {
         doc->setFocusNode(this);
@@ -652,7 +652,7 @@ void Element::focus()
 
 void Element::blur()
 {
-    Document* doc = getDocument();
+    Document* doc = document();
     if (doc->focusNode() == this)
         doc->setFocusNode(0);
 }

@@ -25,6 +25,7 @@
 
 #include <kjs/identifier.h>
 #include <kxmlcore/Vector.h>
+#include <stdarg.h>
 
 using namespace KJS;
 
