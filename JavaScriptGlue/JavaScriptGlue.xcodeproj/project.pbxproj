@@ -193,6 +193,7 @@
 				DD66F3BA08F73ED700C75FD7 /* Headers */,
 				DD66F3C208F73ED700C75FD7 /* Resources */,
 				DD66F3C408F73ED700C75FD7 /* Sources */,
+				939D055E09DA033400984996 /* Check For Global Initializers */,
 				DD66F3CD08F73ED700C75FD7 /* Frameworks */,
 			);
 			buildRules = (
@@ -265,6 +266,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		939D055E09DA033400984996 /* Check For Global Initializers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Global Initializers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		DD66F3C408F73ED700C75FD7 /* Sources */ = {

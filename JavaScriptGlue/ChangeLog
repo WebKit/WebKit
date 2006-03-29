@@ -1,3 +1,12 @@
+2006-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - added a build step that checks for init routines
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj: Added a custom build phase that invokes the
+        check-for-global-initializers script.
+
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, but I noticed these trivial extra changes were needed to avoid

@@ -1152,20 +1152,6 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildRule section */
-		937C34E90868E468006F4B22 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			fileType = sourcecode.yacc;
-			isEditable = 1;
-			outputFiles = (
-				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
-				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
-			);
-			script = "bison -d -p cssyy \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || printf \"\"";
-		};
-/* End PBXBuildRule section */
-
 /* Begin PBXBuildStyle section */
 		014CEA440018CDF011CA2923 /* Development */ = {
 			isa = PBXBuildStyle;
@@ -4809,10 +4795,10 @@
 				93F198A608245E59001E9ABC /* Headers */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				93F19A0C08245E59001E9ABC /* Sources */,
+				939D050109D9FF6B00984996 /* Check For Global Initializers */,
 				93F19B1208245E59001E9ABC /* Frameworks */,
 			);
 			buildRules = (
-				937C34E90868E468006F4B22 /* PBXBuildRule */,
 			);
 			buildSettings = {
 				CREATE_HASH_TABLE = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table;
@@ -4975,6 +4961,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nelse\n    export CREATE_HASH_TABLE=${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nfi\n./generate-derived-sources\n";
+		};
+		939D050109D9FF6B00984996 /* Check For Global Initializers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Global Initializers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1355,6 +1355,7 @@
 				9398100D0824BF01008DF038 /* Headers */,
 				939810B20824BF01008DF038 /* Resources */,
 				939810BB0824BF01008DF038 /* Sources */,
+				939D054F09DA02D500984996 /* Check For Global Initializers */,
 				939811270824BF01008DF038 /* Frameworks */,
 			);
 			buildRules = (
@@ -1542,6 +1543,20 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "ln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
+		};
+		939D054F09DA02D500984996 /* Check For Global Initializers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Global Initializers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
 		};
 		93AF528708254B33005D0156 /* DOM.h */ = {
 			isa = PBXShellScriptBuildPhase;

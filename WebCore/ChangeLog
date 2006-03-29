@@ -1,3 +1,13 @@
+2006-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - added a build step that checks for init routines
+
+        * WebCore.xcodeproj/project.pbxproj: Deleted now-unused custom build rule that
+        was replaced by the generate-derived-sources script a while back. Added a custom
+        build phase that invokes the check-for-global-initializers script.
+
 2006-03-28  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
