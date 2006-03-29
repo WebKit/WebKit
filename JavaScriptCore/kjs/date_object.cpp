@@ -130,12 +130,13 @@ const double hoursPerDay = 24;
 const double minutesPerHour = 60;
 const double secondsPerMinute = 60;
 const double msPerSecond = 1000;
-const double msPerMinute = msPerSecond * secondsPerMinute;
-const double msPerHour = msPerMinute * minutesPerHour;
-const double msPerDay = msPerHour * hoursPerDay;
+const double msPerMinute = 60 * 1000;
+const double msPerHour = 60 * 60 * 1000;
+const double msPerDay = 24 * 60 * 60 * 1000;
+
 static const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 static const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-    
+
 static double makeTime(tm *, double ms, bool utc);
 static double parseDate(const UString &);
 static double timeClip(double);

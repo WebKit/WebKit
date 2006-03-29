@@ -232,20 +232,6 @@
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildRule section */
-		937C34BA0868E21B006F4B22 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			fileType = sourcecode.yacc;
-			isEditable = 1;
-			outputFiles = (
-				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
-				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
-			);
-			script = "bison -d -p kjsyy \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || printf \"\"";
-		};
-/* End PBXBuildRule section */
-
 /* Begin PBXBuildStyle section */
 		014CEA440018CDF011CA2923 /* Development */ = {
 			isa = PBXBuildStyle;
@@ -951,10 +937,10 @@
 			buildPhases = (
 				932F5B3F0822A1C700736975 /* Headers */,
 				932F5B910822A1C700736975 /* Sources */,
+				9319586B09D9F91A00A56FD4 /* Check For Global Initializers */,
 				932F5BD20822A1C700736975 /* Frameworks */,
 			);
 			buildRules = (
-				937C34BA0868E21B006F4B22 /* PBXBuildRule */,
 			);
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
@@ -1108,6 +1094,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./generate-derived-sources\n";
+		};
+		9319586B09D9F91A00A56FD4 /* Check For Global Initializers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Global Initializers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 

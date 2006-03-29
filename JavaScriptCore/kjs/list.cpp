@@ -24,7 +24,6 @@
 
 #include "internal.h"
 #include <algorithm>
-#include <kxmlcore/OwnArrayPtr.h>
 
 #define DUMP_STATISTICS 0
 
@@ -42,7 +41,7 @@ struct ListImp : ListImpBase
 {
     ListImpState state;
     int capacity;
-    OwnArrayPtr<JSValue*> overflow;
+    JSValue** overflow;
 
     union {
         JSValue *values[inlineValuesSize];
@@ -171,6 +170,8 @@ List::List() : _impBase(allocateListImp()), _needsMarking(false)
     imp->refCount = 1;
     imp->valueRefCount = 1;
     imp->capacity = 0;
+    imp->overflow = 0;
+
 #if DUMP_STATISTICS
     if (++numLists > numListsHighWaterMark)
         numListsHighWaterMark = numLists;
@@ -185,6 +186,7 @@ List::List(bool needsMarking) : _impBase(allocateListImp()), _needsMarking(needs
     imp->refCount = 1;
     imp->valueRefCount = !needsMarking;
     imp->capacity = 0;
+    imp->overflow = 0;
 
 #if DUMP_STATISTICS
     if (++numLists > numListsHighWaterMark)
@@ -210,7 +212,8 @@ void List::release()
             ++numListsBiggerThan[i];
 #endif
 
-    imp->overflow.clear();
+    delete [] imp->overflow;
+    imp->overflow = 0;
 
     if (imp->state == usedInPool) {
         imp->state = unusedInPool;
@@ -271,12 +274,13 @@ void List::append(JSValue *v)
     
     if (i >= imp->capacity) {
         int newCapacity = i * 2;
-        OwnArrayPtr<JSValue*> newOverflow(new JSValue* [newCapacity - inlineValuesSize]);
-        JSValue** oldOverflow = imp->overflow.get();
+        JSValue** newOverflow = new JSValue* [newCapacity - inlineValuesSize];
+        JSValue** oldOverflow = imp->overflow;
         int oldOverflowSize = i - inlineValuesSize;
         for (int j = 0; j != oldOverflowSize; j++)
             newOverflow[j] = oldOverflow[j];
-        imp->overflow.swap(newOverflow);
+        delete [] oldOverflow;
+        imp->overflow = newOverflow;
         imp->capacity = newCapacity;
     }
     
@@ -300,7 +304,7 @@ void List::copyFrom(const List& other)
     for (int i = 0; i != inlineSize; ++i)
         append(imp->values[i]);
 
-    JSValue** overflow = imp->overflow.get();
+    JSValue** overflow = imp->overflow;
     int overflowSize = size - inlineSize;
     for (int i = 0; i != overflowSize; ++i)
         append(overflow[i]);
@@ -319,7 +323,7 @@ List List::copyTail() const
     for (int i = 1; i < inlineSize; ++i)
         copy.append(imp->values[i]);
 
-    JSValue** overflow = imp->overflow.get();
+    JSValue** overflow = imp->overflow;
     int overflowSize = size - inlineSize;
     for (int i = 0; i < overflowSize; ++i)
         copy.append(overflow[i]);
