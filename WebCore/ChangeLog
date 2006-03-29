@@ -2,6 +2,22 @@
 
         Reviewed by Darin.
 
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8055
+          Fix most CSS grammar conflicts.
+
+        Gets the number of shift/reduce and reduce/reduce conflicts down from 37+4 to 7+0.
+
+        I have fixed the reduce/reduce conflicts, then noticed that two of the fixes
+        were already made in KDE tree (the other two are different because declaration
+        blocks are described in quite different ways). Shift/reduce fixes are just
+        merged from KDE, r332845 by Michael Matz.
+
+        * css/CSSGrammar.y:
+
+2006-03-29  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7157
           An asterisk in a CSS property name breaks CSS handling 
           (Many layout problems at letras.terra.com.br)

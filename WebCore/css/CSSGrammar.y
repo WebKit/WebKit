@@ -144,6 +144,8 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 
 //%expect 37
 
+%left UNIMPORTANT_TOK
+
 %token WHITESPACE SGML_CD
 
 %token INCLUDES
@@ -154,14 +156,15 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 
 %token <string> STRING
 
-%token <string> IDENT
+%right <string> IDENT
 
-%token <string> HASH
-%token ':'
-%token '.'
-%token '['
-
-%token <string> '*'
+%nonassoc <string> HASH
+%nonassoc ':'
+%nonassoc '.'
+%nonassoc '['
+%nonassoc <string> '*'
+%nonassoc error
+%left '|'
 
 %token IMPORT_SYM
 %token PAGE_SYM
@@ -289,7 +292,7 @@ khtml_value:
 ;
 
 maybe_space:
-    /* empty */
+    /* empty */ %prec UNIMPORTANT_TOK
   | maybe_space WHITESPACE
   ;
 
@@ -380,10 +383,7 @@ maybe_media_list:
 
 
 media_list:
-    /* empty */ {
-        $$ = 0;
-    }
-    | medium {
+    medium {
         $$ = static_cast<CSSParser*>(parser)->createMediaList();
         $$->appendMedium( domString($1).lower() );
     }
@@ -400,6 +400,9 @@ media_list:
 media:
     MEDIA_SYM maybe_space media_list '{' maybe_space ruleset_list '}' {
         $$ = static_cast<CSSParser*>(parser)->createMediaRule($3, $6);
+    }
+    | MEDIA_SYM maybe_space '{' maybe_space ruleset_list '}' {
+        $$ = static_cast<CSSParser*>(parser)->createMediaRule(0, $5);
     }
     ;
 
@@ -474,10 +477,10 @@ ruleset:
   ;
 
 selector_list:
-    selector {
+    selector %prec UNIMPORTANT_TOK {
         $$ = $1;
     }
-    | selector_list ',' maybe_space selector {
+    | selector_list ',' maybe_space selector %prec UNIMPORTANT_TOK {
         if ($1 && $4) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = $1;
@@ -522,9 +525,9 @@ selector:
     ;
 
 namespace_selector:
-    /* empty */ { $$.string = 0; $$.length = 0; }
-    | '*' { static unsigned short star = '*'; $$.string = &star; $$.length = 1; }
-    | IDENT { $$ = $1; }
+    /* empty */ '|' { $$.string = 0; $$.length = 0; }
+    | '*' '|' { static unsigned short star = '*'; $$.string = &star; $$.length = 1; }
+    | IDENT '|' { $$ = $1; }
 ;
 
 simple_selector:
@@ -546,32 +549,32 @@ simple_selector:
         if ($$ && p->defaultNamespace != starAtom)
             $$->tag = QualifiedName(nullAtom, starAtom, p->defaultNamespace);
     }
-    | namespace_selector '|' element_name maybe_space {
+    | namespace_selector element_name maybe_space {
         AtomicString namespacePrefix = atomicString($1);
         CSSParser *p = static_cast<CSSParser *>(parser);
         $$ = p->createFloatingSelector();
         if (p->styleElement && p->styleElement->isCSSStyleSheet())
             $$->tag = QualifiedName(namespacePrefix,
-                                    atomicString($3),
+                                    atomicString($2),
                                     static_cast<CSSStyleSheet*>(p->styleElement)->determineNamespace(namespacePrefix));
         else // FIXME: Shouldn't this case be an error?
-            $$->tag = QualifiedName(nullAtom, atomicString($3), p->defaultNamespace);
+            $$->tag = QualifiedName(nullAtom, atomicString($2), p->defaultNamespace);
     }
-    | namespace_selector '|' element_name specifier_list maybe_space {
-        $$ = $4;
+    | namespace_selector element_name specifier_list maybe_space {
+        $$ = $3;
         if ($$) {
             AtomicString namespacePrefix = atomicString($1);
             CSSParser *p = static_cast<CSSParser *>(parser);
             if (p->styleElement && p->styleElement->isCSSStyleSheet())
                 $$->tag = QualifiedName(namespacePrefix,
-                                        atomicString($3),
+                                        atomicString($2),
                                         static_cast<CSSStyleSheet*>(p->styleElement)->determineNamespace(namespacePrefix));
             else // FIXME: Shouldn't this case be an error?
-                $$->tag = QualifiedName(nullAtom, atomicString($3), p->defaultNamespace);
+                $$->tag = QualifiedName(nullAtom, atomicString($2), p->defaultNamespace);
         }
     }
-    | namespace_selector '|' specifier_list maybe_space {
-        $$ = $3;
+    | namespace_selector specifier_list maybe_space {
+        $$ = $2;
         if ($$) {
             AtomicString namespacePrefix = atomicString($1);
             CSSParser *p = static_cast<CSSParser *>(parser);
@@ -669,24 +672,24 @@ attrib:
         $$->match = (CSSSelector::Match)$4;
         $$->value = atomicString($6);
     }
-    | '[' maybe_space namespace_selector '|' attr_name ']' {
+    | '[' maybe_space namespace_selector attr_name ']' {
         AtomicString namespacePrefix = atomicString($3);
         CSSParser *p = static_cast<CSSParser *>(parser);
         $$ = p->createFloatingSelector();
         $$->attr = QualifiedName(namespacePrefix,
-                                 atomicString($5),
+                                 atomicString($4),
                                  static_cast<CSSStyleSheet*>(p->styleElement)->determineNamespace(namespacePrefix));
         $$->match = CSSSelector::Set;
     }
-    | '[' maybe_space namespace_selector '|' attr_name match maybe_space ident_or_string maybe_space ']' {
+    | '[' maybe_space namespace_selector attr_name match maybe_space ident_or_string maybe_space ']' {
         AtomicString namespacePrefix = atomicString($3);
         CSSParser *p = static_cast<CSSParser *>(parser);
         $$ = p->createFloatingSelector();
         $$->attr = QualifiedName(namespacePrefix,
-                                 atomicString($5),
+                                 atomicString($4),
                                  static_cast<CSSStyleSheet*>(p->styleElement)->determineNamespace(namespacePrefix));
-        $$->match = (CSSSelector::Match)$6;
-        $$->value = atomicString($8);
+        $$->match = (CSSSelector::Match)$5;
+        $$->value = atomicString($7);
     }
   ;
 
@@ -818,7 +821,7 @@ declaration:
         $$ = false;
     }
     |
-    prio {
+    IMPORTANT_SYM maybe_space {
         /* Handle this case: div { text-align: center; !important } Just reduce away the stray !important. */
         $$ = false;
     }
