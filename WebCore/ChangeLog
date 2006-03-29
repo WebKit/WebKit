@@ -1,5 +1,12 @@
 2006-03-29  Darin Adler  <darin@apple.com>
 
+        - an attempt to fix the buildbot
+
+        * platform/mac/mac-encodings.txt: Touched this file so the character encodings
+        files will be regenerated.
+
+2006-03-29  Darin Adler  <darin@apple.com>
+
         - a quick cut at fixing the windows build
 
         * WebCore.vcproj/WebCore/WebCore.vcproj: Added a few recently-added files.

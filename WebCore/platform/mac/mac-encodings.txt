@@ -147,8 +147,8 @@ KOI8_U: KOI8-U
 EBCDIC_US
 EBCDIC_CP037: cp037
 
-# I got these additional items from the Perl module I18N-Charset-1.17,
-# but could not figure out what to do with them.
+# I found these additional character set names from the Perl module I18N-Charset-1.17,
+# but could not figure out whether I should do anything with them. -Darin
 #
 # Adobe-Standard-Encoding === adobe-standard
 # Adobe-Symbol-Encoding === adobe-symbol
