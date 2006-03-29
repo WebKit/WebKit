@@ -26,8 +26,8 @@ module events {
         readonly attribute views::AbstractView  view;
         readonly attribute long                 detail;
         
-        readonly attribute long                 keyCode
-        readonly attribute long                 charCode
+        readonly attribute long                 keyCode;
+        readonly attribute long                 charCode;
         readonly attribute long                 layerX;
         readonly attribute long                 layerY;
         readonly attribute long                 pageX;

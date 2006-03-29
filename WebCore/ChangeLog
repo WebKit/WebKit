@@ -1,3 +1,22 @@
+2006-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed <rdar://problem/4477126> TOT REGRESSION: with release
+        build, maps.google.com zoom slider always zooms fully out
+
+        There were 2 problems: (1) A syntax error in the UIEvent IDL file
+        prevented some things from showing up in the bindings; (2)
+        MouseEvent had a duplicate isSimulated property that shadowed
+        MouseRelatedEvent's isSimulated property, and MouseEvent failed to
+        initialize MouseRelatedEvent's isSimulated property.
+
+        * dom/UIEvent.idl:
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::MouseEvent::MouseEvent):
+        * dom/dom2_eventsimpl.h:
+
 2006-03-29  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

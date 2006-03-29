@@ -1,0 +1,17 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This page tests whether a click event propogates with the correct target and positioning. See rdar://problem/4477126.
+
+click inside the red box:[]
+PASS: event target should be [object SPAN] and is
+PASS: event.pageX should be 175 and is
+PASS: event.pageY should be 105 and is
+PASS: event.clientX should be 175 and is
+PASS: event.clientY should be 105 and is
+PASS: event.layerX should be 7 and is
+PASS: event.layerY should be 5 and is
+PASS: event.offsetX should be 7 and is
+PASS: event.offsetY should be 5 and is
+PASS: event.x should be 175 and is
+PASS: event.y should be 105 and is
+

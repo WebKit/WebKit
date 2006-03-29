@@ -212,7 +212,7 @@ int UIEvent::which() const
 
 MouseRelatedEvent::MouseRelatedEvent()
     : m_screenX(0), m_screenY(0), m_clientX(0), m_clientY(0)
-    , m_pageX(0), m_pageY(0), m_layerX(0), m_layerY(0), m_offsetX(0), m_offsetY(0), m_isSimulated(0)
+    , m_pageX(0), m_pageY(0), m_layerX(0), m_layerY(0), m_offsetX(0), m_offsetY(0), m_isSimulated(false)
 {
 }
 
@@ -234,6 +234,7 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString &eventType,
         ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
     , m_screenX(screenXArg), m_screenY(screenYArg)
     , m_clientX(clientXArg), m_clientY(clientYArg)
+    , m_isSimulated(isSimulated)
 {
     initCoordinates();
 }
@@ -349,11 +350,10 @@ MouseEvent::MouseEvent(const AtomicString& eventType,
                                bool isSimulated)
     : MouseRelatedEvent(eventType, canBubbleArg, cancelableArg, viewArg, detailArg,
         screenXArg, screenYArg, clientXArg, clientYArg,
-        ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
+        ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, isSimulated)
     , m_button(buttonArg)
     , m_relatedTarget(relatedTargetArg)
     , m_clipboard(clipboardArg)
-    , m_isSimulated(isSimulated)
 {
 }
 
