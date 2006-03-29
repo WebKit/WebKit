@@ -7,7 +7,7 @@
         cellspacing value
 
         Some callers of CSSPrimitiveValue::computeLength() expect an int, 
-        and others a short. This patch splits computerLength() into 
+        and others a short. This patch splits computeLength() into 
         computeIntLength() and computeShortLength() so that the appropriate 
         bounds can be checked. 
 
