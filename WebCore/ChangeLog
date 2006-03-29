@@ -1,5 +1,24 @@
 2006-03-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - another cut at fixing the buildbot
+
+        * generate-derived-sources: Fix if statement that was always following
+        the Windows case. I believe this is the main problem.
+
+        * WebCore.xcodeproj/project.pbxproj: Added CharsetData.h and added CharsetData.cpp
+        to the target.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Similar changes.
+
+        * platform/CharsetData.h: Added.
+        * platform/CharsetNames.cpp: Moved the actual character set data out into a
+        separate source file instead of include a .cpp file.
+
+        * platform/make-charset-table.pl: Changed to generate a file that can stand alone.
+
+2006-03-29  Darin Adler  <darin@apple.com>
+
         - an attempt to fix the buildbot
 
         * platform/mac/mac-encodings.txt: Touched this file so the character encodings

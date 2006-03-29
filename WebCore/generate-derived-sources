@@ -68,10 +68,10 @@ fi
 
 # Generate the charset name table
 
-ENCODINGS_FILE="platform/mac/mac-encodings.txt"
-ENCODINGS_PREFIX="kCFStringEncoding"
-which sw_vers 2>&1 > /dev/null  # Check if we're on os x
-if [ $? ]; then
+if which sw_vers 2>&1 > /dev/null; then
+    ENCODINGS_FILE="platform/mac/mac-encodings.txt"
+    ENCODINGS_PREFIX="kCFStringEncoding"
+else
     ENCODINGS_FILE="platform/win/win-encodings.txt";
     ENCODINGS_PREFIX=""
 fi

@@ -311,6 +311,10 @@
 			Name="DerivedSources"
 			>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\CharsetData.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\ColorData.c"
 				>
 			</File>
