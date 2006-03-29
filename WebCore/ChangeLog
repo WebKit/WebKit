@@ -1,3 +1,16 @@
+2006-03-29  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7157
+          An asterisk in a CSS property name breaks CSS handling 
+          (Many layout problems at letras.terra.com.br)
+
+        Test: fast/css/error-in-last-decl.html
+
+        * css/CSSGrammar.y: Added a rule for the case when the last CSS rule 
+          has a syntax error, and doesn't end with a semicolon.
+
 2006-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

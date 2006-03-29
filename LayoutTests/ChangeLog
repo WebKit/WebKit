@@ -1,3 +1,16 @@
+2006-03-29  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7157
+          An asterisk in a CSS property name breaks CSS handling 
+          (Many layout problems at letras.terra.com.br)
+
+        * fast/css/error-in-last-decl-expected.checksum: Added.
+        * fast/css/error-in-last-decl-expected.png: Added.
+        * fast/css/error-in-last-decl-expected.txt: Added.
+        * fast/css/error-in-last-decl.html: Added.
+
 2006-03-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
