@@ -795,22 +795,56 @@ void CSSPrimitiveValue::cleanup()
     m_type = 0;
 }
 
-int CSSPrimitiveValue::computeLength(RenderStyle *style)
+int CSSPrimitiveValue::computeIntLength(RenderStyle *style)
 {
     double result = computeLengthFloat(style);
+    
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
-    int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
-    return intResult;    
+    result += result < 0 ? -0.01 : +0.01;
+    
+    if (result > INT_MAX || result < INT_MIN)
+        return 0;
+    return (int)result;    
 }
 
-int CSSPrimitiveValue::computeLength(RenderStyle *style, double multiplier)
+short CSSPrimitiveValue::computeShortLength(RenderStyle *style)
 {
-    double result = multiplier * computeLengthFloat(style);
+    double result = computeLengthFloat(style);
+    
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
-    int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
-    return intResult;    
+    result += result < 0 ? -0.01 : +0.01;
+    
+    if (result > SHRT_MAX || result < SHRT_MIN)
+        return 0;
+    return (short)result;    
+}
+
+int CSSPrimitiveValue::computeIntLength(RenderStyle *style, double multiplier)
+{
+    double result = multiplier * computeLengthFloat(style);
+    
+    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
+    // need to go ahead and round if we're really close to the next integer value.
+    result += result < 0 ? -0.01 : +0.01;
+    
+    if (result > INT_MAX || result < INT_MIN)
+        return 0;
+    return (int)result;  
+}
+
+short CSSPrimitiveValue::computeShortLength(RenderStyle *style, double multiplier)
+{
+    double result = multiplier * computeLengthFloat(style);
+    
+    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
+    // need to go ahead and round if we're really close to the next integer value.
+    result += result < 0 ? -0.01 : +0.01;
+    
+    if (result > SHRT_MAX || result < SHRT_MIN)
+        return 0;
+    return (short)result;  
 }
 
 double CSSPrimitiveValue::computeLengthFloat(RenderStyle *style, bool applyZoomFactor)

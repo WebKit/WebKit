@@ -1,3 +1,36 @@
+2006-03-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for <rdar://problem/4493218> repro crash in 
+        khtml::RenderBlock::repaintFloatingDescendants with giant 
+        cellspacing value
+
+        Some callers of CSSPrimitiveValue::computeLength() expect an int, 
+        and others a short. This patch splits computerLength() into 
+        computeIntLength() and computeShortLength() so that the appropriate 
+        bounds can be checked. 
+
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSPrimitiveValue::computeIntLength): Return 0 if not 
+        within int bounds.
+        (WebCore::CSSPrimitiveValue::computeShortLength): Return 0 if not 
+        within short bounds.
+        * css/css_valueimpl.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::convertToLength): Switch to appropriate computeLength() 
+        call.
+        (WebCore::CSSStyleSelector::applyProperty): Same.
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition): Same.
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition): Same.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::repaintFloatingDescendants): Nil check 
+        m_floatingObjects and add an assertion. This is not necessary for 
+        the fix, it is just because we are not sure that it is safe not to 
+        nil-check, and we want to prevent potential problems in release 
+        builds, and catch them with the assertion in debug builds.
+        (WebCore::RenderBlock::addOverhangingFloats): Same as above.
+
 2006-03-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

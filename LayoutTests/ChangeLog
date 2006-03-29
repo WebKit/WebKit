@@ -1,3 +1,18 @@
+2006-03-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+        Layout test for <rdar://problem/4493218> repro crash in 
+        khtml::RenderBlock::repaintFloatingDescendants with giant 
+        cellspacing value
+
+        * fast/block/float/4145535Crash-expected.txt: Change expected 
+        results for old test for a similar fix.
+        * fast/table/giantCellspacing-expected.checksum: Added.
+        * fast/table/giantCellspacing-expected.png: Added.
+        * fast/table/giantCellspacing-expected.txt: Added.
+        * fast/table/giantCellspacing.html: Added.
+
 2006-03-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
