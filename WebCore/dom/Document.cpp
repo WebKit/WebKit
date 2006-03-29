@@ -216,7 +216,7 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     , m_createRenderers(true)
     , m_inPageCache(false)
 {
-    document.resetSkippingRef(this);
+    m_document.resetSkippingRef(this);
 
     m_printing = false;
 
@@ -311,7 +311,7 @@ Document::~Document()
     if (m_docChanged && changedDocuments)
         changedDocuments->remove(this);
     delete m_tokenizer;
-    document.resetSkippingRef(0);
+    m_document.resetSkippingRef(0);
     delete m_styleSelector;
     delete m_docLoader;
     
@@ -400,7 +400,7 @@ PassRefPtr<Element> Document::createElement(const String &name, ExceptionCode& e
 
 PassRefPtr<DocumentFragment> Document::createDocumentFragment()
 {
-    return new DocumentFragment(getDocument());
+    return new DocumentFragment(document());
 }
 
 PassRefPtr<Text> Document::createTextNode(const String &data)
@@ -546,7 +546,7 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
     }
                 
     for (Node* node = source.get(); node; node = node->traverseNextNode(source.get())) {
-        KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->getDocument(), this);
+        KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->document(), this);
         node->setDocument(this);
     }
 
@@ -580,7 +580,7 @@ PassRefPtr<Element> Document::createElementNS(const String &_namespaceURI, const
 #endif
     
     if (!e)
-        e = new Element(qName, getDocument());
+        e = new Element(qName, document());
     
     return e.release();
 }
@@ -1540,7 +1540,7 @@ Node *Document::previousFocusNode(Node *fromNode)
 
 int Document::nodeAbsIndex(Node *node)
 {
-    assert(node->getDocument() == this);
+    assert(node->document() == this);
 
     int absIndex = 0;
     for (Node *n = node; n && n != this; n = n->traversePreviousNode())
@@ -2004,7 +2004,7 @@ static Widget *widgetForNode(Node *focusNode)
 bool Document::setFocusNode(PassRefPtr<Node> newFocusNode)
 {    
     // Make sure newFocusNode is actually in this document
-    if (newFocusNode && (newFocusNode->getDocument() != this))
+    if (newFocusNode && (newFocusNode->document() != this))
         return true;
 
     if (m_focusNode == newFocusNode)
@@ -2918,7 +2918,7 @@ Document *Document::topDocument() const
     Document *doc = const_cast<Document *>(this);
     Element *element;
     while ((element = doc->ownerElement()) != 0)
-        doc = element->getDocument();
+        doc = element->document();
     
     return doc;
 }

@@ -211,7 +211,7 @@ void SVGSVGElement::setCurrentScale(float scale)
 //    {
 //        float oldzoom = canvasView()->zoom();
 //        canvasView()->setZoom(scale);
-//        getDocument()->dispatchZoomEvent(oldzoom, scale);
+//        document()->dispatchZoomEvent(oldzoom, scale);
 //    }
 }
 
@@ -227,9 +227,9 @@ void SVGSVGElement::addSVGWindowEventListner(const AtomicString& eventType, cons
 {
     // FIXME: None of these should be window events long term.
     // Once we propertly support SVGLoad, etc.
-    RefPtr<EventListener> listener = getDocument()->accessSVGExtensions()->
+    RefPtr<EventListener> listener = document()->accessSVGExtensions()->
         createSVGEventListener(attr->localName().domString(), attr->value(), this);
-    getDocument()->setHTMLWindowEventListener(eventType, listener.release());
+    document()->setHTMLWindowEventListener(eventType, listener.release());
 }
 
 void SVGSVGElement::parseMappedAttribute(MappedAttribute *attr)

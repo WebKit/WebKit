@@ -93,7 +93,7 @@ void Position::clear()
 Element* Position::documentElement() const
 {
     if (Node* n = node())
-        if (Element* e = n->getDocument()->documentElement())
+        if (Element* e = n->document()->documentElement())
             return e;
     return 0;
 }

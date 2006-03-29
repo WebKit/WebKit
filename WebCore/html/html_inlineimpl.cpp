@@ -100,10 +100,10 @@ bool HTMLAnchorElement::isKeyboardFocusable() const
     if (!isFocusable())
         return false;
     
-    if (!getDocument()->frame())
+    if (!document()->frame())
         return false;
 
-    return getDocument()->frame()->tabsToLinks();
+    return document()->frame()->tabsToLinks();
 }
 
 void HTMLAnchorElement::defaultEventHandler(Event *evt)
@@ -168,8 +168,8 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
             }
         }
         if (!evt->defaultPrevented()) {
-            if (getDocument()->frame())
-                getDocument()->frame()->urlSelected(url, utarget);
+            if (document()->frame())
+                document()->frame()->urlSelected(url, utarget);
         }
         evt->setDefaultHandled();
     }
@@ -238,7 +238,7 @@ String HTMLAnchorElement::href() const
     String href = getAttribute(hrefAttr);
     if (href.isNull())
         return href;
-    return getDocument()->completeURL(href);
+    return document()->completeURL(href);
 }
 
 void HTMLAnchorElement::setHref(const String &value)
@@ -328,14 +328,14 @@ void HTMLAnchorElement::setType(const String &value)
 
 void HTMLAnchorElement::blur()
 {
-    Document *d = getDocument();
+    Document *d = document();
     if (d->focusNode() == this)
         d->setFocusNode(0);
 }
 
 void HTMLAnchorElement::focus()
 {
-    getDocument()->setFocusNode(this);
+    document()->setFocusNode(this);
 }
 
 // -------------------------------------------------------------------------

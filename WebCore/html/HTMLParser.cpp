@@ -119,7 +119,7 @@ HTMLParser::HTMLParser(Document* doc)
 }
 
 HTMLParser::HTMLParser(DocumentFragment* frag)
-    : document(frag->getDocument())
+    : document(frag->document())
     , current(0)
     , currentIsReferenced(false)
     , blockStack(0)

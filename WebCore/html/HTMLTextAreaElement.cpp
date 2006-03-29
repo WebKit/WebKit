@@ -51,7 +51,7 @@ HTMLTextAreaElement::HTMLTextAreaElement(Document *doc, HTMLFormElement *f)
 
 HTMLTextAreaElement::~HTMLTextAreaElement()
 {
-    getDocument()->deregisterMaintainsState(this);
+    document()->deregisterMaintainsState(this);
 }
 
 String HTMLTextAreaElement::type() const
@@ -242,7 +242,7 @@ void HTMLTextAreaElement::setDefaultValue(const String &defaultValue)
         RefPtr<Node> n = it.current();
         removeChild(n.get(), ec);
     }
-    insertBefore(getDocument()->createTextNode(defaultValue), firstChild(), ec);
+    insertBefore(document()->createTextNode(defaultValue), firstChild(), ec);
     setValue(defaultValue);
 }
 

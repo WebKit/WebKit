@@ -245,7 +245,7 @@ HTMLParagraphElement::HTMLParagraphElement(Document *doc)
 
 bool HTMLParagraphElement::checkDTD(const Node* newChild)
 {
-    return inInlineTagList(newChild) || (getDocument()->inCompatMode() && newChild->hasTagName(tableTag));
+    return inInlineTagList(newChild) || (document()->inCompatMode() && newChild->hasTagName(tableTag));
 }
 
 bool HTMLParagraphElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

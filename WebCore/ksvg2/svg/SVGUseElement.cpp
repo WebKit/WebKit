@@ -104,7 +104,7 @@ void SVGUseElement::closeRenderer()
     SVGElement *target = svg_dynamic_cast(targetElement);
     if (!target)
     {
-        //getDocument()->addForwardReference(this);
+        //document()->addForwardReference(this);
         return;
     }
 
@@ -117,7 +117,7 @@ void SVGUseElement::closeRenderer()
     ExceptionCode ec;
     String trans = String::sprintf("translate(%f, %f)", _x, _y);
     if(target->hasTagName(SVGNames::symbolTag)) {
-        RefPtr<SVGElement> dummy = new SVGSVGElement(SVGNames::svgTag, getDocument());
+        RefPtr<SVGElement> dummy = new SVGSVGElement(SVGNames::svgTag, document());
         if (_w > 0)
             dummy->setAttribute(SVGNames::widthAttr, wString);
         if (_h > 0)
@@ -130,13 +130,13 @@ void SVGUseElement::closeRenderer()
         }
         target->cloneChildNodes(dummy.get());
 
-        RefPtr<SVGElement> dummy2 = new SVGDummyElement(SVGNames::gTag, getDocument());
+        RefPtr<SVGElement> dummy2 = new SVGDummyElement(SVGNames::gTag, document());
         dummy2->setAttribute(SVGNames::transformAttr, trans);
         
         appendChild(dummy2, ec);
         dummy2->appendChild(dummy, ec);
     } else if(target->hasTagName(SVGNames::svgTag)) {
-        RefPtr<SVGDummyElement> dummy = new SVGDummyElement(SVGNames::gTag, getDocument());
+        RefPtr<SVGDummyElement> dummy = new SVGDummyElement(SVGNames::gTag, document());
         dummy->setAttribute(SVGNames::transformAttr, trans);
         
         RefPtr<SVGElement> root = static_pointer_cast<SVGElement>(target->cloneNode(true));
@@ -149,7 +149,7 @@ void SVGUseElement::closeRenderer()
         appendChild(dummy, ec);
         dummy->appendChild(root.release(), ec);
     } else {
-        RefPtr<SVGDummyElement> dummy = new SVGDummyElement(SVGNames::gTag, getDocument());
+        RefPtr<SVGDummyElement> dummy = new SVGDummyElement(SVGNames::gTag, document());
         dummy->setAttribute(SVGNames::transformAttr, trans);
         
         RefPtr<Node> root = target->cloneNode(true);

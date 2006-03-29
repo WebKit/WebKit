@@ -326,7 +326,7 @@ public:
 
     // don't even think about making this method virtual!
     Node* element() const { return m_isAnonymous ? 0 : m_node; }
-    Document* document() const { return m_node->getDocument(); }
+    Document* document() const { return m_node->document(); }
     void setNode(Node* node) { m_node = node; }
     Node* node() const { return m_node; }
     

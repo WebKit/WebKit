@@ -165,7 +165,7 @@ String::String(NSString *str)
     Node *nodeImpl = [n _node];
 
     // Dig up Interpreter and ExecState.
-    Frame *frame = nodeImpl->getDocument()->frame();
+    Frame *frame = nodeImpl->document()->frame();
     Interpreter *interpreter = frame->jScript()->interpreter();
     ExecState *exec = interpreter->globalExec();
     

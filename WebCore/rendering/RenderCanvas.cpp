@@ -65,7 +65,7 @@ RenderCanvas::RenderCanvas(Node* node, FrameView *view)
     m_selectionEndPos = -1;
 
     // Create a new root layer for our layer hierarchy.
-    m_layer = new (node->getDocument()->renderArena()) RenderLayer(this);
+    m_layer = new (node->document()->renderArena()) RenderLayer(this);
 }
 
 RenderCanvas::~RenderCanvas()
@@ -181,7 +181,7 @@ void RenderCanvas::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 {
     // Check to see if we are enclosed by a transparent layer.  If so, we cannot blit
     // when scrolling, and we need to use slow repaints.
-    Element* elt = element()->getDocument()->ownerElement();
+    Element* elt = element()->document()->ownerElement();
     if (view() && elt) {
         RenderLayer* layer = elt->renderer()->enclosingLayer();
         if (layer->isTransparent() || layer->transparentAncestor())
@@ -209,7 +209,7 @@ void RenderCanvas::repaintViewRectangle(const IntRect& ur, bool immediate)
         // We always just invalidate the root view, since we could be an iframe that is clipped out
         // or even invisible.
         IntRect r = intersection(ur, vr);
-        Element* elt = element()->getDocument()->ownerElement();
+        Element* elt = element()->document()->ownerElement();
         if (!elt)
             m_view->repaintRectangle(r, immediate);
         else {

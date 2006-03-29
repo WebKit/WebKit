@@ -123,7 +123,7 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
     if (m_document->frame()) {
         Node* selectionStartNode = m_document->frame()->selection().start().node();
         if (selectionStartNode && selectionStartNode->rootEditableElement()) {
-            RefPtr<Range> range = new Range(holder->getDocument());
+            RefPtr<Range> range = new Range(holder->document());
             ExceptionCode ec = 0;
             range->selectNodeContents(holder.get(), ec);
             String text = plainText(range.get());
@@ -331,7 +331,7 @@ void ReplaceSelectionCommand::fixupNodeStyles(const NodeVector& nodes, const Ren
         String matchColorCheck = desiredStyle->getPropertyValue(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
         if (matchColorCheck == matchNearestBlockquoteColorString()) {
             Node *blockquote = nearestMailBlockquote(node);
-            Position pos(blockquote ? blockquote : node->getDocument()->documentElement(), 0);
+            Position pos(blockquote ? blockquote : node->document()->documentElement(), 0);
             RefPtr<CSSComputedStyleDeclaration> style = pos.computedStyle();
             String desiredColor = desiredStyle->getPropertyValue(CSS_PROP_COLOR);
             String nearestColor = style->getPropertyValue(CSS_PROP_COLOR);
@@ -373,7 +373,7 @@ static PassRefPtr<CSSMutableStyleDeclaration> styleForNode(Node *node)
             return style.release();
         }
     }
-    Node *documentElement = node->getDocument()->documentElement();
+    Node *documentElement = node->document()->documentElement();
     RefPtr<CSSComputedStyleDeclaration> documentStyle = Position(documentElement, 0).computedStyle();
     bool match = (documentStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR));
     if (match)

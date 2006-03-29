@@ -138,7 +138,7 @@ Node::NodeType EntityReference::nodeType() const
 
 PassRefPtr<Node> EntityReference::cloneNode(bool deep)
 {
-    RefPtr<EntityReference> clone = new EntityReference(getDocument(), m_entityName.get());
+    RefPtr<EntityReference> clone = new EntityReference(document(), m_entityName.get());
     // ### make sure children are readonly
     // ### since we are a reference, should we clone children anyway (even if not deep?)
     if (deep)
@@ -266,7 +266,7 @@ void ProcessingInstruction::setNodeValue(const String& nodeValue, ExceptionCode&
 PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
 {
     // ### copy m_localHref
-    return new ProcessingInstruction(getDocument(), m_target.get(), m_data.get());
+    return new ProcessingInstruction(document(), m_target.get(), m_data.get());
 }
 
 // DOM Section 1.1.1
@@ -320,17 +320,17 @@ bool ProcessingInstruction::checkStyleSheet()
             {
                 // ### some validation on the URL?
                 // ### FIXME charset
-                if (getDocument()->frame()) {
+                if (document()->frame()) {
                     m_loading = true;
-                    getDocument()->addPendingSheet();
+                    document()->addPendingSheet();
                     if (m_cachedSheet)
                         m_cachedSheet->deref(this);
 #if KHTML_XSLT
                     if (m_isXSL)
-                        m_cachedSheet = getDocument()->docLoader()->requestXSLStyleSheet(getDocument()->completeURL(href));
+                        m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href));
                     else
 #endif
-                    m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href), DeprecatedString::null);
+                    m_cachedSheet = document()->docLoader()->requestStyleSheet(document()->completeURL(href), DeprecatedString::null);
                     if (m_cachedSheet)
                         m_cachedSheet->ref( this );
 #if KHTML_XSLT
@@ -357,7 +357,7 @@ bool ProcessingInstruction::isLoading() const
 void ProcessingInstruction::sheetLoaded()
 {
     if (!isLoading())
-        getDocument()->stylesheetLoaded();
+        document()->stylesheetLoaded();
 }
 
 void ProcessingInstruction::setStyleSheet(const String &url, const String &sheet)
@@ -377,7 +377,7 @@ void ProcessingInstruction::setStyleSheet(const String &url, const String &sheet
 
     // Tell the doc about the sheet.
     if (!isLoading() && m_sheet)
-        getDocument()->stylesheetLoaded();
+        document()->stylesheetLoaded();
 }
 
 String ProcessingInstruction::toString() const

@@ -62,7 +62,7 @@ String HTMLElement::nodeName() const
 {
     // FIXME: Would be nice to have an atomicstring lookup based off uppercase chars that does not have to copy
     // the string on a hit in the hash.
-    if (getDocument()->isHTMLDocument())
+    if (document()->isHTMLDocument())
         return m_tagName.localName().impl()->upper();
     return Element::nodeName();
 }
@@ -91,7 +91,7 @@ int HTMLElement::tagPriority() const
 
 PassRefPtr<Node> HTMLElement::cloneNode(bool deep)
 {
-    RefPtr<HTMLElement> clone = HTMLElementFactory::createHTMLElement(m_tagName.localName(), getDocument(), 0, false);
+    RefPtr<HTMLElement> clone = HTMLElementFactory::createHTMLElement(m_tagName.localName(), document(), 0, false);
     if (!clone)
         return 0;
 
@@ -222,7 +222,7 @@ String HTMLElement::outerHTML() const
 String HTMLElement::innerText() const
 {
     // We need to update layout, since plainText uses line boxes in the render tree.
-    getDocument()->updateLayoutIgnorePendingStylesheets();
+    document()->updateLayoutIgnorePendingStylesheets();
     return plainText(rangeOfContents(const_cast<HTMLElement *>(this)).get());
 }
 
@@ -246,9 +246,9 @@ PassRefPtr<DocumentFragment> HTMLElement::createContextualFragment(const String 
         hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
         return 0;
 
-    RefPtr<DocumentFragment> fragment = new DocumentFragment(getDocument());
+    RefPtr<DocumentFragment> fragment = new DocumentFragment(document());
     
-    if (getDocument()->isHTMLDocument())
+    if (document()->isHTMLDocument())
          parseHTMLDocumentFragment(html, fragment.get());
     else {
         if (!parseXMLDocumentFragment(html, fragment.get(), this))
@@ -337,7 +337,7 @@ void HTMLElement::setInnerText(const String &text, ExceptionCode& ec)
     }
 
     removeChildren();
-    appendChild(new Text(getDocument(), text), ec);
+    appendChild(new Text(document(), text), ec);
 }
 
 void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
@@ -363,7 +363,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
         return;
     }
 
-    RefPtr<Text> t = new Text(getDocument(), text);
+    RefPtr<Text> t = new Text(document(), text);
     ec = 0;
     parent->replaceChild(t, this, ec);
     if (ec)
@@ -437,10 +437,10 @@ bool HTMLElement::isFocusable() const
 
 bool HTMLElement::isContentEditable() const 
 {
-    if (getDocument()->frame() && getDocument()->frame()->isContentEditable())
+    if (document()->frame() && document()->frame()->isContentEditable())
         return true;
 
-    getDocument()->updateRendering();
+    document()->updateRendering();
 
     if (!renderer()) {
         if (parentNode())
@@ -454,7 +454,7 @@ bool HTMLElement::isContentEditable() const
 
 String HTMLElement::contentEditable() const 
 {
-    getDocument()->updateRendering();
+    document()->updateRendering();
 
     if (!renderer())
         return "false";
@@ -530,7 +530,7 @@ void HTMLElement::accessKeyAction(bool sendToAnyElement)
 
 String HTMLElement::toString() const
 {
-    if (!hasChildNodes() && getDocument()->isHTMLDocument()) {
+    if (!hasChildNodes() && document()->isHTMLDocument()) {
         String result = openTagStartToString();
         result += ">";
 
@@ -608,7 +608,7 @@ bool HTMLElement::childAllowed(Node *newChild)
         return false;
 
     // For XML documents, we are non-validating and do not check against a DTD, even for HTML elements.
-    if (!getDocument()->isHTMLDocument())
+    if (!document()->isHTMLDocument())
         return true;
 
     // Future-proof for XML content inside HTML documents (we may allow this some day).
@@ -791,7 +791,7 @@ bool HTMLElement::checkDTD(const Node* newChild)
 void HTMLElement::setHTMLEventListener(const AtomicString& eventType, Attribute* attr)
 {
     Element::setHTMLEventListener(eventType,
-        getDocument()->createHTMLEventListener(attr->localName().domString(), attr->value(), this));
+        document()->createHTMLEventListener(attr->localName().domString(), attr->value(), this));
 }
 
 }

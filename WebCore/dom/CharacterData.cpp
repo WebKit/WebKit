@@ -76,7 +76,7 @@ void CharacterData::setData( const String &_data, ExceptionCode& ec)
     dispatchModifiedEvent(oldStr);
     if(oldStr) oldStr->deref();
     
-    getDocument()->removeMarkers(this);
+    document()->removeMarkers(this);
 }
 
 unsigned CharacterData::length() const
@@ -134,7 +134,7 @@ void CharacterData::insertData( const unsigned offset, const String &arg, Except
     
     // update the markers for spell checking and grammar checking
     unsigned length = arg.length();
-    getDocument()->shiftMarkers(this, offset, length);
+    document()->shiftMarkers(this, offset, length);
 }
 
 void CharacterData::deleteData( const unsigned offset, const unsigned count, ExceptionCode& ec)
@@ -155,8 +155,8 @@ void CharacterData::deleteData( const unsigned offset, const unsigned count, Exc
     oldStr->deref();
 
     // update the markers for spell checking and grammar checking
-    getDocument()->removeMarkers(this, offset, count);
-    getDocument()->shiftMarkers(this, offset + count, -count);
+    document()->removeMarkers(this, offset, count);
+    document()->shiftMarkers(this, offset + count, -count);
 }
 
 void CharacterData::replaceData( const unsigned offset, const unsigned count, const String &arg, ExceptionCode& ec)
@@ -185,8 +185,8 @@ void CharacterData::replaceData( const unsigned offset, const unsigned count, co
     
     // update the markers for spell checking and grammar checking
     int diff = arg.length() - count;
-    getDocument()->removeMarkers(this, offset, count);
-    getDocument()->shiftMarkers(this, offset + count, diff);
+    document()->removeMarkers(this, offset, count);
+    document()->shiftMarkers(this, offset + count, diff);
 }
 
 String CharacterData::nodeValue() const
@@ -218,7 +218,7 @@ void CharacterData::dispatchModifiedEvent(StringImpl *prevValue)
 {
     if (parentNode())
         parentNode()->childrenChanged();
-    if (!getDocument()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
+    if (!document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
         return;
 
     StringImpl *newValue = str->copy();

@@ -80,7 +80,7 @@ Element *HTMLLabelElement::formElement()
     }
     if (formElementId.isEmpty())
         return 0;
-    return getDocument()->getElementById(formElementId);
+    return document()->getElementById(formElementId);
 }
 
 void HTMLLabelElement::focus()

@@ -57,7 +57,7 @@ String HTMLOptionElement::text() const
     String text;
 
     // WinIE does not use the label attribute, so as a quirk, we ignore it.
-    if (!getDocument()->inCompatMode()) {
+    if (!document()->inCompatMode()) {
         String text = getAttribute(labelAttr);
         if (!text.isEmpty())
             return text;
@@ -87,7 +87,7 @@ void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
     }
 
     removeChildren();
-    appendChild(new Text(getDocument(), text), ec);
+    appendChild(new Text(document(), text), ec);
 }
 
 int HTMLOptionElement::index() const

@@ -90,7 +90,7 @@ CSSStyleSheet::CSSStyleSheet(CSSStyleSheet *parentSheet, String href)
 CSSStyleSheet::CSSStyleSheet(Node *parentNode, String href, bool _implicit)
     : StyleSheet(parentNode, href)
 {
-    m_doc = parentNode->getDocument();
+    m_doc = parentNode->document();
     m_implicit = _implicit; 
     m_namespaces = 0;
 }

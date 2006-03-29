@@ -1,3 +1,463 @@
+2006-03-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+
+        - Global replace of getDocument() with document(). Darin suggested this
+        in his review of my EventTargetNode patch. It matches the style of
+        methods like ownerDocument().
+
+        - Changed getDocument() to document(); changed data member document to
+        m_document; changed stack variable document to doc.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode ownerDocument]):
+        (-[DOMNode KJS::Bindings::]):
+        (-[DOMElement _getURLAttribute:]):
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLElement titleDisplayString]):
+        (-[DOMHTMLInputElement altDisplayString]):
+        (-[DOMHTMLAnchorElement blur]):
+        (-[DOMHTMLAnchorElement focus]):
+        (-[DOMHTMLImageElement altDisplayString]):
+        (-[DOMHTMLAppletElement altDisplayString]):
+        (-[DOMHTMLAreaElement altDisplayString]):
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::attributedString):
+        * bridge/mac/FrameViewMac.mm:
+        (WebCore::FrameView::updateDashboardRegions):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge initSubframeWithRenderer:]):
+        (-[WebCoreFrameBridge setSelectedDOMRange:affinity:closeTyping:]):
+        (-[WebCoreFrameBridge smartDeleteRangeForProposedRange:]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/css_base.cpp:
+        (WebCore::StyleBase::baseURL):
+        * css/css_stylesheetimpl.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::CSSStyleSelector::createStyleForElement):
+        (WebCore::CSSStyleSelector::createPseudoStyleForElement):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundImage):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * dom/AbstractView.cpp:
+        (WebCore::AbstractView::AbstractView):
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::cloneNode):
+        (WebCore::CDATASection::createNew):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData):
+        (WebCore::CharacterData::insertData):
+        (WebCore::CharacterData::deleteData):
+        (WebCore::CharacterData::replaceData):
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/Comment.cpp:
+        (WebCore::Comment::cloneNode):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::addChild):
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::createDocumentFragment):
+        (WebCore::Document::adoptNode):
+        (WebCore::Document::createElementNS):
+        (WebCore::Document::nodeAbsIndex):
+        (WebCore::Document::setFocusNode):
+        (WebCore::Document::topDocument):
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::cloneNode):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::~EventTargetNode):
+        (WebCore::EventTargetNode::insertedIntoDocument):
+        (WebCore::EventTargetNode::removedFromDocument):
+        (WebCore::EventTargetNode::addEventListener):
+        (WebCore::EventTargetNode::removeEventListener):
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        (WebCore::EventTargetNode::dispatchEvent):
+        (WebCore::EventTargetNode::dispatchSubtreeModifiedEvent):
+        (WebCore::EventTargetNode::dispatchWindowEvent):
+        (WebCore::EventTargetNode::dispatchUIEvent):
+        (WebCore::EventTargetNode::dispatchKeyEvent):
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        (WebCore::EventTargetNode::dispatchWheelEvent):
+        (WebCore::EventTargetNode::removeHTMLEventListener):
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        (WebCore::Node::setDocument):
+        (WebCore::Node::setChanged):
+        (WebCore::Node::checkSetPrefix):
+        (WebCore::Node::checkAddChild):
+        (WebCore::Node::attach):
+        (WebCore::Node::detach):
+        (WebCore::Node::createRendererIfNeeded):
+        (WebCore::Node::rendererIsNeeded):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::ownerDocument):
+        (WebCore::Node::setTextContent):
+        * dom/Node.h:
+        (WebCore::Node::document):
+        (WebCore::Node::inDocument):
+        * dom/NodeList.cpp:
+        (WebCore::NodeList::itemById):
+        * dom/Position.cpp:
+        (WebCore::Position::documentElement):
+        * dom/Range.cpp:
+        (WebCore::Range::commonAncestorContainer):
+        (WebCore::Range::setStart):
+        (WebCore::Range::setEnd):
+        (WebCore::Range::compareBoundaryPoints):
+        (WebCore::Range::insertNode):
+        (WebCore::Range::text):
+        (WebCore::Range::setStartAfter):
+        (WebCore::Range::setEndBefore):
+        (WebCore::Range::setEndAfter):
+        (WebCore::Range::surroundContents):
+        (WebCore::Range::setStartBefore):
+        (WebCore::rangeOfContents):
+        * dom/Text.cpp:
+        (WebCore::Text::cloneNode):
+        (WebCore::Text::createNew):
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::MouseRelatedEvent::receivedTarget):
+        * dom/dom2_traversalimpl.cpp:
+        (WebCore::NodeIterator::NodeIterator):
+        * dom/dom_elementimpl.cpp:
+        (WebCore::Attribute::createAttrIfNeeded):
+        (WebCore::Attr::createTextChild):
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::cloneNode):
+        (WebCore::Element::cloneNode):
+        (WebCore::inHTMLDocument):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeMap):
+        (WebCore::Element::createStyleForRenderer):
+        (WebCore::Element::createRenderer):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::dispatchAttrRemovalEvent):
+        (WebCore::Element::dispatchAttrAdditionEvent):
+        (WebCore::Element::updateId):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::focus):
+        (WebCore::Element::blur):
+        (WebCore::NamedAttrMap::setNamedItem):
+        (WebCore::NamedMappedAttrMap::parseClassAttribute):
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::parseMappedAttribute):
+        (WebCore::StyledElement::createMappedDecl):
+        * dom/dom_xmlimpl.cpp:
+        (WebCore::EntityReference::cloneNode):
+        (WebCore::ProcessingInstruction::cloneNode):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::sheetLoaded):
+        (WebCore::ProcessingInstruction::setStyleSheet):
+        * dom/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplaceSelectionCommand::fixupNodeStyles):
+        (WebCore::styleForNode):
+        * editing/Selection.cpp:
+        (WebCore::Selection::toRange):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::~SelectionController):
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::xPosForVerticalArrowNavigation):
+        (WebCore::SelectionController::frame):
+        (WebCore::SelectionController::layout):
+        (WebCore::SelectionController::needsCaretRepaint):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::range):
+        (WebCore::SimplifiedBackwardsTextIterator::range):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::init):
+        (WebCore::makeRange):
+        * editing/markup.cpp:
+        (WebCore::startMarkup):
+        (WebCore::shouldSelfClose):
+        (WebCore::markup):
+        (WebCore::createMarkup):
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        (WebCore::inSameDocument):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::resetCollectionInfo):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName):
+        (WebCore::HTMLElement::cloneNode):
+        (WebCore::HTMLElement::innerText):
+        (WebCore::HTMLElement::createContextualFragment):
+        (WebCore::HTMLElement::setInnerText):
+        (WebCore::HTMLElement::setOuterText):
+        (WebCore::HTMLElement::isContentEditable):
+        (WebCore::HTMLElement::contentEditable):
+        (WebCore::HTMLElement::toString):
+        (WebCore::HTMLElement::childAllowed):
+        (WebCore::HTMLElement::setHTMLEventListener):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formWouldHaveSecureSubmission):
+        (WebCore::HTMLFormElement::attach):
+        (WebCore::HTMLFormElement::insertedIntoDocument):
+        (WebCore::HTMLFormElement::removedFromDocument):
+        (WebCore::HTMLFormElement::formData):
+        (WebCore::HTMLFormElement::prepareSubmit):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        (WebCore::HTMLFormElement::registerFormElement):
+        (WebCore::HTMLFormElement::removeFormElement):
+        * html/HTMLGenericFormElement.cpp:
+        (WebCore::HTMLGenericFormElement::attach):
+        (WebCore::HTMLGenericFormElement::insertedIntoTree):
+        (WebCore::HTMLGenericFormElement::isKeyboardFocusable):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::isKeyboardFocusable):
+        (WebCore::HTMLInputElement::focus):
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::attach):
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::preDispatchEventHandler):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::src):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::appendFormData):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::formElement):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::text):
+        (WebCore::HTMLOptionElement::setText):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::~HTMLSelectElement):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::~HTMLTextAreaElement):
+        (WebCore::HTMLTextAreaElement::setDefaultValue):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        * html/html_baseimpl.cpp:
+        (WebCore::HTMLBodyElement::createLinkDecl):
+        (WebCore::HTMLBodyElement::mapToEntry):
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        (WebCore::HTMLBodyElement::insertedIntoDocument):
+        (WebCore::HTMLFrameElement::isURLAllowed):
+        (WebCore::HTMLFrameElement::openURL):
+        (WebCore::HTMLFrameElement::attach):
+        (WebCore::HTMLFrameElement::close):
+        (WebCore::HTMLFrameElement::contentFrame):
+        (WebCore::HTMLFrameElement::frameWidth):
+        (WebCore::HTMLFrameElement::frameHeight):
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+        (WebCore::HTMLIFrameElement::insertedIntoDocument):
+        (WebCore::HTMLIFrameElement::removedFromDocument):
+        (WebCore::HTMLIFrameElement::attach):
+        (WebCore::HTMLIFrameElement::src):
+        * html/html_blockimpl.cpp:
+        (WebCore::HTMLParagraphElement::checkDTD):
+        * html/html_headimpl.cpp:
+        (WebCore::HTMLBaseElement::removedFromDocument):
+        (WebCore::HTMLBaseElement::process):
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::setStyleSheet):
+        (WebCore::HTMLLinkElement::sheetLoaded):
+        (WebCore::HTMLLinkElement::href):
+        (WebCore::HTMLMetaElement::process):
+        (WebCore::HTMLScriptElement::childrenChanged):
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        (WebCore::HTMLScriptElement::evaluateScript):
+        (WebCore::HTMLScriptElement::setText):
+        (WebCore::HTMLScriptElement::src):
+        (WebCore::HTMLStyleElement::insertedIntoDocument):
+        (WebCore::HTMLStyleElement::removedFromDocument):
+        (WebCore::HTMLStyleElement::childrenChanged):
+        (WebCore::HTMLStyleElement::sheetLoaded):
+        (WebCore::HTMLTitleElement::insertedIntoDocument):
+        (WebCore::HTMLTitleElement::removedFromDocument):
+        (WebCore::HTMLTitleElement::childrenChanged):
+        (WebCore::HTMLTitleElement::setText):
+        * html/html_imageimpl.cpp:
+        (WebCore::HTMLImageLoader::~HTMLImageLoader):
+        (WebCore::HTMLImageLoader::updateFromElement):
+        (WebCore::HTMLImageLoader::notifyFinished):
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        (WebCore::HTMLImageElement::insertedIntoDocument):
+        (WebCore::HTMLImageElement::removedFromDocument):
+        (WebCore::HTMLImageElement::width):
+        (WebCore::HTMLImageElement::height):
+        (WebCore::HTMLImageElement::src):
+        (WebCore::HTMLMapElement::~HTMLMapElement):
+        (WebCore::HTMLMapElement::parseMappedAttribute):
+        (WebCore::HTMLAreaElement::href):
+        * html/html_inlineimpl.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::href):
+        (WebCore::HTMLAnchorElement::blur):
+        (WebCore::HTMLAnchorElement::focus):
+        * html/html_objectimpl.cpp:
+        (WebCore::HTMLAppletElement::parseMappedAttribute):
+        (WebCore::HTMLAppletElement::insertedIntoDocument):
+        (WebCore::HTMLAppletElement::removedFromDocument):
+        (WebCore::HTMLAppletElement::createRenderer):
+        (WebCore::HTMLAppletElement::getAppletInstance):
+        (WebCore::HTMLEmbedElement::getEmbedInstance):
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        (WebCore::HTMLEmbedElement::insertedIntoDocument):
+        (WebCore::HTMLEmbedElement::removedFromDocument):
+        (WebCore::HTMLObjectElement::getObjectInstance):
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+        (WebCore::HTMLObjectElement::insertedIntoDocument):
+        (WebCore::HTMLObjectElement::removedFromDocument):
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+        (WebCore::HTMLParamElement::parseMappedAttribute):
+        * html/html_tableimpl.cpp:
+        (WebCore::HTMLTableElement::createTHead):
+        (WebCore::HTMLTableElement::createTFoot):
+        (WebCore::HTMLTableElement::createCaption):
+        (WebCore::HTMLTableElement::insertRow):
+        (WebCore::HTMLTableElement::addChild):
+        (WebCore::HTMLTableElement::mapToEntry):
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecl):
+        (WebCore::HTMLTableElement::getSharedCellDecl):
+        (WebCore::HTMLTablePartElement::mapToEntry):
+        (WebCore::HTMLTablePartElement::parseMappedAttribute):
+        (WebCore::HTMLTableSectionElement::insertRow):
+        (WebCore::HTMLTableRowElement::insertCell):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::~DOMNode):
+        (KJS::DOMNode::mark):
+        (KJS::DOMElement::getValueProperty):
+        (KJS::DOMElementProtoFunc::callAsFunction):
+        (KJS::checkNodeSecurity):
+        (KJS::toJS):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::JSHTMLElement::implementsCall):
+        (KJS::JSHTMLElement::bodyGetter):
+        (KJS::JSHTMLElement::anchorGetter):
+        (KJS::JSHTMLElement::getValueProperty):
+        (KJS::JSHTMLElement::bodySetter):
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractViewProtoFunc::callAsFunction):
+        * khtml/xbl/xbl_binding.cpp:
+        (XBL::XBLBindingChain::failed):
+        (XBL::m_nextBinding):
+        (XBL::XBLBinding::setXBLDocument):
+        * khtml/xbl/xbl_protobinding.cpp:
+        (XBL::XBLPrototypeBinding::document):
+        * khtml/xsl/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+        * khtml/xsl/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+        (WebCore::xmlDocPtrFromNode):
+        (WebCore::XSLTProcessor::transformToString):
+        * ksvg2/svg/SVGAElement.cpp:
+        (SVGAElement::defaultEventHandler):
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (SVGAnimateColorElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateElement.cpp:
+        (SVGAnimateElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (SVGAnimateTransformElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (SVGAnimationElement::closeRenderer):
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::addSVGEventListener):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::rebuildStops):
+        * ksvg2/svg/SVGHelper.cpp:
+        (SVGHelper::PercentageOfViewport):
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        (SVGLinearGradientElement::buildGradient):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::buildGradient):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentScale):
+        (WebCore::SVGSVGElement::addSVGWindowEventListner):
+        * ksvg2/svg/SVGSetElement.cpp:
+        (SVGSetElement::handleTimerEvent):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (SVGStyleElement::childrenChanged):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::canvas):
+        * ksvg2/svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::closeRenderer):
+        (WebCore::SVGTitleElement::insertedIntoDocument):
+        (WebCore::SVGTitleElement::removedFromDocument):
+        (WebCore::SVGTitleElement::childrenChanged):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (SVGUseElement::closeRenderer):
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityPerformAction:]):
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        * page/Frame.cpp:
+        (WebCore::parentFromOwnerRenderer):
+        (WebCore::Frame::frameForNode):
+        (WebCore::Frame::clearDocumentFocus):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchMouseEvent):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        * rendering/RenderCanvas.cpp:
+        (WebCore::RenderCanvas::RenderCanvas):
+        (WebCore::RenderCanvas::paintBoxDecorations):
+        (WebCore::RenderCanvas::repaintViewRectangle):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageMap):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::isRoot):
+        (WebCore::RenderObject::backslashAsCurrencySymbol):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::document):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isFocused):
+        * rendering/render_applet.cpp:
+        (WebCore::RenderApplet::createWidgetIfNecessary):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::RenderWidget):
+        (WebCore::RenderWidget::focusIn):
+        (WebCore::RenderWidget::focusOut):
+
 2006-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

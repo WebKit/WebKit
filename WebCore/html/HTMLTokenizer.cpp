@@ -153,7 +153,7 @@ HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag)
     , scriptCodeResync(0)
     , m_executingScript(0)
     , m_timer(this, &HTMLTokenizer::timerFired)
-    , m_doc(frag->getDocument())
+    , m_doc(frag->document())
     , inWrite(false)
     , m_fragment(true)
 {

@@ -78,7 +78,7 @@ PassRefPtr<Range> Selection::toRange() const
     // in the course of running edit commands which modify the DOM.
     // Failing to call this can result in equivalentXXXPosition calls returning
     // incorrect results.
-    m_start.node()->getDocument()->updateLayout();
+    m_start.node()->document()->updateLayout();
 
     Position s, e;
     if (isCaret()) {
@@ -114,7 +114,7 @@ PassRefPtr<Range> Selection::toRange() const
     }
 
     ExceptionCode ec = 0;
-    RefPtr<Range> result(new Range(s.node()->getDocument()));
+    RefPtr<Range> result(new Range(s.node()->document()));
     result->setStart(s.node(), s.offset(), ec);
     if (ec) {
         LOG_ERROR("Exception setting Range start from Selection: %d", ec);

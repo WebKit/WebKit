@@ -263,7 +263,7 @@ void MouseRelatedEvent::receivedTarget()
     ASSERT(targ);
 
     // Must have an updated render tree for this math to work correctly.
-    targ->getDocument()->updateRendering();
+    targ->document()->updateRendering();
 
     // FIXME: clientX/Y should not be the same as pageX/Y!
     // Currently the passed-in clientX and clientY are incorrectly actually

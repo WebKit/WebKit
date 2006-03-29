@@ -2474,7 +2474,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                 // will have corrected any illegally nested <a> elements.
                 if (linkStartNode && n == linkStartNode) {
                     String href = parseURL(linkStartNode->getAttribute(hrefAttr));
-                    KURL kURL = Mac(linkStartNode->getDocument()->frame())->completeURL(href.deprecatedString());
+                    KURL kURL = Mac(linkStartNode->document()->frame())->completeURL(href.deprecatedString());
                     
                     NSURL *URL = kURL.getNSURL();
                     NSRange tempRange = { linkStartLocation, [result length]-linkStartLocation }; // workaround for 4213314

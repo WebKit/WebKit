@@ -85,7 +85,7 @@ JSValue *DOMAbstractViewProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
         if (!arg0)
           return jsUndefined(); // throw exception?
         else {
-          arg0->getDocument()->updateLayoutIgnorePendingStylesheets();
+          arg0->document()->updateLayoutIgnorePendingStylesheets();
           return toJS(exec, abstractView.getComputedStyle(arg0, WebCore::String(args[1]->toString(exec)).impl()));
         }
       }

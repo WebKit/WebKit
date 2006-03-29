@@ -257,10 +257,10 @@ public:
 
     // Returns the document associated with this node. This method never returns NULL, except in the case 
     // of a DocumentType node that is not used with any Document yet. A Document node returns itself.
-    Document* getDocument() const 
+    Document* document() const 
     { 
-      ASSERT(document || nodeType() == DOCUMENT_TYPE_NODE && !inDocument());
-      return document.get(); 
+      ASSERT(m_document || nodeType() == DOCUMENT_TYPE_NODE && !inDocument());
+      return m_document.get(); 
     }
     void setDocument(Document*);
 
@@ -268,7 +268,7 @@ public:
     // node tree, false otherwise.
     bool inDocument() const 
     { 
-      ASSERT(document || !m_inDocument);
+      ASSERT(m_document || !m_inDocument);
       return m_inDocument; 
     }
     
@@ -448,7 +448,7 @@ public:
     PassRefPtr<NodeList> getElementsByTagNameNS(const String& namespaceURI, const String& localName);
 
 private: // members
-    DocPtr<Document> document;
+    DocPtr<Document> m_document;
     Node* m_previous;
     Node* m_next;
     RenderObject* m_renderer;

@@ -103,7 +103,7 @@ void SVGStyleElement::childrenChanged()
         m_loading = true;
  
         m_sheet = new CSSStyleSheet(this);
-        m_sheet->parseString(textContent(), false);//!getDocument()->inCompatMode());
+        m_sheet->parseString(textContent(), false);//!document()->inCompatMode());
 
         MediaList *mediaList = new MediaList(m_sheet.get(), _media);
         m_sheet->setMedia(mediaList);
@@ -111,7 +111,7 @@ void SVGStyleElement::childrenChanged()
     }
 
     if(!isLoading() && m_sheet)
-        getDocument()->stylesheetLoaded();
+        document()->stylesheetLoaded();
 }
 
 bool SVGStyleElement::isLoading() const

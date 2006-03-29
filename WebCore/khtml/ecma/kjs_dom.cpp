@@ -111,7 +111,7 @@ DOMNode::DOMNode(Node *n)
 
 DOMNode::~DOMNode()
 {
-  ScriptInterpreter::forgetDOMNodeForDocument(m_impl->getDocument(), m_impl.get());
+  ScriptInterpreter::forgetDOMNodeForDocument(m_impl->document(), m_impl.get());
 }
 
 void DOMNode::mark()
@@ -146,7 +146,7 @@ void DOMNode::mark()
   // Mark the whole tree; use the global set of roots to avoid reentering.
   markingRoots.add(root);
   for (Node *nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
-    DOMNode *wrapper = ScriptInterpreter::getDOMNodeForDocument(m_impl->getDocument(), nodeToMark);
+    DOMNode *wrapper = ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark);
     if (wrapper) {
       if (!wrapper->marked())
         wrapper->mark();
@@ -1103,7 +1103,7 @@ JSValue *DOMElement::getValueProperty(ExecState *exec, int token) const
         // no DOM standard -- IE extension
         
         // Make sure our layout is up to date before we allow a query on these attributes.
-        element->getDocument()->updateLayoutIgnorePendingStylesheets();
+        element->document()->updateLayoutIgnorePendingStylesheets();
         
         RenderObject *rend = element->renderer();
         
@@ -1214,7 +1214,7 @@ JSValue *DOMElementProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj,
         return jsUndefined();
       case DOMElement::ScrollByLines:
       case DOMElement::ScrollByPages:
-        element.getDocument()->updateLayoutIgnorePendingStylesheets();
+        element.document()->updateLayoutIgnorePendingStylesheets();
         if (RenderObject *rend = element.renderer())
           if (rend->hasOverflowClip()) {
             KWQScrollDirection direction = KWQScrollDown;
@@ -1382,7 +1382,7 @@ bool checkNodeSecurity(ExecState *exec, Node *n)
     return false;
 
   // Check to see if the currently executing interpreter is allowed to access the specified node
-  Window *win = Window::retrieveWindow(n->getDocument()->frame());
+  Window *win = Window::retrieveWindow(n->document()->frame());
   return win && win->isSafeScript(exec);
 }
 
@@ -1393,7 +1393,7 @@ JSValue *toJS(ExecState *exec, PassRefPtr<Node> node)
   if (!n)
     return jsNull();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
-  Document *doc = n->getDocument();
+  Document *doc = n->document();
 
   if ((ret = interp->getDOMNodeForDocument(doc, n)))
     return ret;

@@ -168,7 +168,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             }
         }
         
-        getDocument()->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
+        document()->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
         m_connected = true;
 
         return;
@@ -320,7 +320,7 @@ void SVGAnimateTransformElement::handleTimerEvent(double timePercentage)
             return;
         }
 
-        getDocument()->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
+        document()->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
         m_connected = false;
 
         // Reset...

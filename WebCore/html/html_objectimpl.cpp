@@ -111,18 +111,18 @@ void HTMLAppletElement::parseMappedAttribute(MappedAttribute *attr)
         addHTMLAlignment(attr);
     } else if (attr->name() == nameAttr) {
         String newNameAttr = attr->value();
-        if (inDocument() && getDocument()->isHTMLDocument()) {
-            HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-            document->removeNamedItem(oldNameAttr);
-            document->addNamedItem(newNameAttr);
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+            doc->removeNamedItem(oldNameAttr);
+            doc->addNamedItem(newNameAttr);
         }
         oldNameAttr = newNameAttr;
     } else if (attr->name() == idAttr) {
         String newIdAttr = attr->value();
-        if (inDocument() && getDocument()->isHTMLDocument()) {
-            HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-            document->removeDocExtraNamedItem(oldIdAttr);
-            document->addDocExtraNamedItem(newIdAttr);
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+            doc->removeDocExtraNamedItem(oldIdAttr);
+            doc->addDocExtraNamedItem(newIdAttr);
         }
         oldIdAttr = newIdAttr;
         // also call superclass
@@ -133,10 +133,10 @@ void HTMLAppletElement::parseMappedAttribute(MappedAttribute *attr)
 
 void HTMLAppletElement::insertedIntoDocument()
 {
-    if (getDocument()->isHTMLDocument()) {
-        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-        document->addNamedItem(oldNameAttr);
-        document->addDocExtraNamedItem(oldIdAttr);
+    if (document()->isHTMLDocument()) {
+        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+        doc->addNamedItem(oldNameAttr);
+        doc->addDocExtraNamedItem(oldIdAttr);
     }
 
     HTMLElement::insertedIntoDocument();
@@ -144,10 +144,10 @@ void HTMLAppletElement::insertedIntoDocument()
 
 void HTMLAppletElement::removedFromDocument()
 {
-    if (getDocument()->isHTMLDocument()) {
-        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-        document->removeNamedItem(oldNameAttr);
-        document->removeDocExtraNamedItem(oldIdAttr);
+    if (document()->isHTMLDocument()) {
+        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+        doc->removeNamedItem(oldNameAttr);
+        doc->removeDocExtraNamedItem(oldIdAttr);
     }
 
     HTMLElement::removedFromDocument();
@@ -160,7 +160,7 @@ bool HTMLAppletElement::rendererIsNeeded(RenderStyle *style)
 
 RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
 
     if (frame && frame->javaEnabled()) {
         HashMap<String, String> args;
@@ -169,14 +169,14 @@ RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle 
         const AtomicString& codeBase = getAttribute(codebaseAttr);
         if(!codeBase.isNull())
             args.set("codeBase", codeBase);
-        const AtomicString& name = getAttribute(getDocument()->htmlMode() != Document::XHtml ? nameAttr : idAttr);
+        const AtomicString& name = getAttribute(document()->htmlMode() != Document::XHtml ? nameAttr : idAttr);
         if (!name.isNull())
             args.set("name", name);
         const AtomicString& archive = getAttribute(archiveAttr);
         if (!archive.isNull())
             args.set("archive", archive);
 
-        args.set("baseURL", getDocument()->baseURL());
+        args.set("baseURL", document()->baseURL());
 
         const AtomicString& mayScript = getAttribute(mayscriptAttr);
         if (!mayScript.isNull())
@@ -184,18 +184,18 @@ RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle 
 
         // Other arguments (from <PARAM> tags) are added later.
         
-        return new (getDocument()->renderArena()) RenderApplet(this, args);
+        return new (document()->renderArena()) RenderApplet(this, args);
     }
 
     // ### remove me. we should never show an empty applet, instead
     // render the alternative content given by the webpage
-    return new (getDocument()->renderArena()) RenderEmptyApplet(this);
+    return new (document()->renderArena()) RenderEmptyApplet(this);
 }
 
 #if __APPLE__
 KJS::Bindings::Instance *HTMLAppletElement::getAppletInstance() const
 {
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
     if (!frame || !frame->javaEnabled())
         return 0;
 
@@ -369,7 +369,7 @@ bool HTMLEmbedElement::checkDTD(const Node* newChild)
 #if __APPLE__
 KJS::Bindings::Instance *HTMLEmbedElement::getEmbedInstance() const
 {
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
     if (!frame)
         return 0;
 
@@ -463,10 +463,10 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute *attr)
         }
     } else if (attr->name() == nameAttr) {
         String newNameAttr = attr->value();
-        if (inDocument() && getDocument()->isHTMLDocument()) {
-            HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-            document->removeNamedItem(oldNameAttr);
-            document->addNamedItem(newNameAttr);
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+            doc->removeNamedItem(oldNameAttr);
+            doc->addNamedItem(newNameAttr);
         }
         oldNameAttr = newNameAttr;
     } else
@@ -475,7 +475,7 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute *attr)
 
 bool HTMLEmbedElement::rendererIsNeeded(RenderStyle *style)
 {
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
     if (!frame || !frame->pluginsEnabled())
         return false;
 
@@ -511,9 +511,9 @@ void HTMLEmbedElement::detach()
 
 void HTMLEmbedElement::insertedIntoDocument()
 {
-    if (getDocument()->isHTMLDocument()) {
-        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-        document->addNamedItem(oldNameAttr);
+    if (document()->isHTMLDocument()) {
+        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+        doc->addNamedItem(oldNameAttr);
     }
 
     HTMLElement::insertedIntoDocument();
@@ -521,9 +521,9 @@ void HTMLEmbedElement::insertedIntoDocument()
 
 void HTMLEmbedElement::removedFromDocument()
 {
-    if (getDocument()->isHTMLDocument()) {
-        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-        document->removeNamedItem(oldNameAttr);
+    if (document()->isHTMLDocument()) {
+        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+        doc->removeNamedItem(oldNameAttr);
     }
 
     HTMLElement::removedFromDocument();
@@ -564,7 +564,7 @@ bool HTMLObjectElement::checkDTD(const Node* newChild)
 #if __APPLE__
 KJS::Bindings::Instance *HTMLObjectElement::getObjectInstance() const
 {
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
     if (!frame)
         return 0;
 
@@ -662,18 +662,18 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
         setHTMLEventListener(unloadEvent, attr);
     } else if (attr->name() == nameAttr) {
             String newNameAttr = attr->value();
-            if (isDocNamedItem() && inDocument() && getDocument()->isHTMLDocument()) {
-                HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-                document->removeNamedItem(oldNameAttr);
-                document->addNamedItem(newNameAttr);
+            if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {
+                HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+                doc->removeNamedItem(oldNameAttr);
+                doc->addNamedItem(newNameAttr);
             }
             oldNameAttr = newNameAttr;
     } else if (attr->name() == idAttr) {
         String newIdAttr = attr->value();
-        if (isDocNamedItem() && inDocument() && getDocument()->isHTMLDocument()) {
-            HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-            document->removeDocExtraNamedItem(oldIdAttr);
-            document->addDocExtraNamedItem(newIdAttr);
+        if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+            doc->removeDocExtraNamedItem(oldIdAttr);
+            doc->addDocExtraNamedItem(newIdAttr);
         }
         oldIdAttr = newIdAttr;
         // also call superclass
@@ -693,7 +693,7 @@ bool HTMLObjectElement::rendererIsNeeded(RenderStyle *style)
     if (m_useFallbackContent || isImageType())
         return HTMLElement::rendererIsNeeded(style);
 
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
     if (!frame || !frame->pluginsEnabled())
         return false;
     
@@ -770,10 +770,10 @@ void HTMLObjectElement::detach()
 
 void HTMLObjectElement::insertedIntoDocument()
 {
-    if (isDocNamedItem() && getDocument()->isHTMLDocument()) {
-        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-        document->addNamedItem(oldNameAttr);
-        document->addDocExtraNamedItem(oldIdAttr);
+    if (isDocNamedItem() && document()->isHTMLDocument()) {
+        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+        doc->addNamedItem(oldNameAttr);
+        doc->addDocExtraNamedItem(oldIdAttr);
     }
 
     HTMLElement::insertedIntoDocument();
@@ -781,10 +781,10 @@ void HTMLObjectElement::insertedIntoDocument()
 
 void HTMLObjectElement::removedFromDocument()
 {
-    if (isDocNamedItem() && getDocument()->isHTMLDocument()) {
-        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
-        document->removeNamedItem(oldNameAttr);
-        document->removeDocExtraNamedItem(oldIdAttr);
+    if (isDocNamedItem() && document()->isHTMLDocument()) {
+        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
+        doc->removeNamedItem(oldNameAttr);
+        doc->removeDocExtraNamedItem(oldIdAttr);
     }
 
     HTMLElement::removedFromDocument();
@@ -865,14 +865,14 @@ void HTMLObjectElement::updateDocNamedItem()
             isNamedItem = false;
         child = child->nextSibling();
     }
-    if (isNamedItem != wasNamedItem && getDocument()->isHTMLDocument()) {
-        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
+    if (isNamedItem != wasNamedItem && document()->isHTMLDocument()) {
+        HTMLDocument *doc = static_cast<HTMLDocument *>(document());
         if (isNamedItem) {
-            document->addNamedItem(oldNameAttr);
-            document->addDocExtraNamedItem(oldIdAttr);
+            doc->addNamedItem(oldNameAttr);
+            doc->addDocExtraNamedItem(oldIdAttr);
         } else {
-            document->removeNamedItem(oldNameAttr);
-            document->removeDocExtraNamedItem(oldIdAttr);
+            doc->removeNamedItem(oldNameAttr);
+            doc->removeDocExtraNamedItem(oldIdAttr);
         }
     }
     m_docNamedItem = isNamedItem;
@@ -1064,7 +1064,7 @@ void HTMLParamElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == idAttr) {
         // Must call base class so that hasID bit gets set.
         HTMLElement::parseMappedAttribute(attr);
-        if (getDocument()->htmlMode() != Document::XHtml)
+        if (document()->htmlMode() != Document::XHtml)
             return;
         m_name = attr->value();
     } else if (attr->name() == nameAttr) {

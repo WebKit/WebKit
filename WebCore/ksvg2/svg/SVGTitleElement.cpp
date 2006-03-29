@@ -41,27 +41,27 @@ String SVGTitleElement::title() const
 void SVGTitleElement::closeRenderer()
 {
     SVGStyledElement::closeRenderer();
-    getDocument()->setTitle(textContent(), this);
+    document()->setTitle(textContent(), this);
 }
 
 void SVGTitleElement::insertedIntoDocument()
 {
     SVGStyledElement::insertedIntoDocument();
     if (firstChild())
-        getDocument()->setTitle(textContent(), this);
+        document()->setTitle(textContent(), this);
 }
 
 void SVGTitleElement::removedFromDocument()
 {
     SVGElement::removedFromDocument();
-    getDocument()->removeTitle(this);
+    document()->removeTitle(this);
 }
 
 void SVGTitleElement::childrenChanged()
 {
     SVGElement::childrenChanged();
     if (inDocument())
-        getDocument()->setTitle(textContent(), this);
+        document()->setTitle(textContent(), this);
 }
 
 }

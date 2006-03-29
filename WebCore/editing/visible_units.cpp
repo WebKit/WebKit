@@ -47,7 +47,7 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     Node *n = pos.node();
     if (!n)
         return VisiblePosition();
-    Document *d = n->getDocument();
+    Document *d = n->document();
     Node *de = d->documentElement();
     if (!de)
         return VisiblePosition();
@@ -126,7 +126,7 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     Node *n = pos.node();
     if (!n)
         return VisiblePosition();
-    Document *d = n->getDocument();
+    Document *d = n->document();
     Node *de = d->documentElement();
     if (!de)
         return VisiblePosition();
@@ -375,7 +375,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     if (!node)
         return VisiblePosition();
     
-    node->getDocument()->updateLayoutIgnorePendingStylesheets();
+    node->document()->updateLayoutIgnorePendingStylesheets();
     
     RenderObject *renderer = node->renderer();
     if (!renderer)
@@ -438,7 +438,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     if (!node)
         return VisiblePosition();
     
-    node->getDocument()->updateLayoutIgnorePendingStylesheets();
+    node->document()->updateLayoutIgnorePendingStylesheets();
 
     RenderObject *renderer = node->renderer();
     if (!renderer)
@@ -755,7 +755,7 @@ bool inSameDocument(const VisiblePosition &a, const VisiblePosition &b)
     if (an == bn)
         return true;
 
-    return an->getDocument() == bn->getDocument();
+    return an->document() == bn->document();
 }
 
 bool isStartOfDocument(const VisiblePosition &p)

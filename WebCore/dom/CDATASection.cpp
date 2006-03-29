@@ -53,7 +53,7 @@ Node::NodeType CDATASection::nodeType() const
 PassRefPtr<Node> CDATASection::cloneNode(bool /*deep*/)
 {
     ExceptionCode ec = 0;
-    return getDocument()->createCDATASection(str, ec);
+    return document()->createCDATASection(str, ec);
 }
 
 // DOM Section 1.1.1
@@ -64,7 +64,7 @@ bool CDATASection::childTypeAllowed(NodeType)
 
 Text *CDATASection::createNew(StringImpl *_str)
 {
-    return new CDATASection(getDocument(), _str);
+    return new CDATASection(document(), _str);
 }
 
 String CDATASection::toString() const

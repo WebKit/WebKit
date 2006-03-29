@@ -801,12 +801,12 @@ void
 RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 {
     if (hasScrollbar && !m_hBar) {
-        FrameView* scrollView = m_object->element()->getDocument()->view();
+        FrameView* scrollView = m_object->element()->document()->view();
         m_hBar = new QScrollBar(HorizontalScrollBar);
         m_hBar->setClient(this);
         scrollView->addChild(m_hBar, 0, -50000);
     } else if (!hasScrollbar && m_hBar) {
-        FrameView* scrollView = m_object->element()->getDocument()->view();
+        FrameView* scrollView = m_object->element()->document()->view();
         scrollView->removeChild(m_hBar);
         delete m_hBar;
         m_hBar = 0;
@@ -817,12 +817,12 @@ void
 RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 {
     if (hasScrollbar && !m_vBar) {
-        FrameView* scrollView = m_object->element()->getDocument()->view();
+        FrameView* scrollView = m_object->element()->document()->view();
         m_vBar = new QScrollBar(VerticalScrollBar);
         m_vBar->setClient(this);
         scrollView->addChild(m_vBar, 0, -50000);
     } else if (!hasScrollbar && m_vBar) {
-        FrameView* scrollView = m_object->element()->getDocument()->view();
+        FrameView* scrollView = m_object->element()->document()->view();
         scrollView->removeChild(m_vBar);
         delete m_vBar;
         m_vBar = 0;

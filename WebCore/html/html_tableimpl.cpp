@@ -133,7 +133,7 @@ HTMLElement *HTMLTableElement::createTHead(  )
     if(!head)
     {
         ExceptionCode ec = 0;
-        head = new HTMLTableSectionElement(theadTag, getDocument(), true /* implicit */);
+        head = new HTMLTableSectionElement(theadTag, document(), true /* implicit */);
         if(foot)
             insertBefore( head, foot, ec );
         else if(firstBody)
@@ -160,7 +160,7 @@ HTMLElement *HTMLTableElement::createTFoot(  )
     if (!foot)
     {
         ExceptionCode ec = 0;
-        foot = new HTMLTableSectionElement(tfootTag, getDocument(), true /*implicit */);
+        foot = new HTMLTableSectionElement(tfootTag, document(), true /*implicit */);
         if (firstBody)
             insertBefore( foot, firstBody, ec );
         else
@@ -185,7 +185,7 @@ HTMLElement *HTMLTableElement::createCaption(  )
     if(!tCaption)
     {
         ExceptionCode ec = 0;
-        tCaption = new HTMLTableCaptionElement(getDocument());
+        tCaption = new HTMLTableCaptionElement(document());
         insertBefore( tCaption, firstChild(), ec );
     }
     return tCaption;
@@ -209,7 +209,7 @@ HTMLElement *HTMLTableElement::insertRow( int index, ExceptionCode& ec)
     // (note: this is different from "if the table has no sections", since we can have
     // <TABLE><TR>)
     if(!firstBody && !head && !foot)
-        setTBody( new HTMLTableSectionElement(tbodyTag, getDocument(), true /* implicit */) );
+        setTBody( new HTMLTableSectionElement(tbodyTag, document(), true /* implicit */) );
 
     // IE treats index=-1 as default value meaning 'append after last'
     // This isn't in the DOM. So, not implemented yet.
@@ -305,7 +305,7 @@ ContainerNode* HTMLTableElement::addChild(PassRefPtr<Node> child)
     // The creation of <tbody> elements relies on the "childAllowed" check,
     // so we need to do it even for XML documents.
     assert(child->nodeType() != DOCUMENT_FRAGMENT_NODE);
-    if (!getDocument()->isHTMLDocument() && !childAllowed(child.get()))
+    if (!document()->isHTMLDocument() && !childAllowed(child.get()))
         return 0;
 
     ContainerNode* container = HTMLElement::addChild(child.get());
@@ -337,7 +337,7 @@ void HTMLTableElement::childrenChanged()
 bool HTMLTableElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == backgroundAttr) {
-        result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
+        result = (MappedAttributeEntry)(eLastEntry + document()->docID());
         return false;
     }
     
@@ -414,7 +414,7 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == backgroundAttr) {
         String url = WebCore::parseURL(attr->value());
         if (!url.isEmpty())
-            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
+            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url));
     } else if (attr->name() == frameAttr) {
     } else if (attr->name() == rulesAttr) {
     } else if (attr->name() == cellspacingAttr) {
@@ -456,7 +456,7 @@ CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
         decl = new CSSMappedAttributeDeclaration(0);
-        decl->setParent(getDocument()->elementSheet());
+        decl->setParent(document()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
@@ -482,7 +482,7 @@ CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
         decl = new CSSMappedAttributeDeclaration(0);
-        decl->setParent(getDocument()->elementSheet());
+        decl->setParent(document()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
@@ -626,7 +626,7 @@ void HTMLTableElement::setWidth(const String &value)
 bool HTMLTablePartElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == backgroundAttr) {
-        result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
+        result = (MappedAttributeEntry)(eLastEntry + document()->docID());
         return false;
     }
     
@@ -653,7 +653,7 @@ void HTMLTablePartElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == backgroundAttr) {
         String url = WebCore::parseURL(attr->value());
         if (!url.isEmpty())
-            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
+            addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, document()->completeURL(url));
     } else if (attr->name() == bordercolorAttr) {
         if (!attr->value().isEmpty()) {
             addCSSColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
@@ -724,7 +724,7 @@ HTMLElement *HTMLTableSectionElement::insertRow( int index, ExceptionCode& ec)
     }
     else
     {
-        r = new HTMLTableRowElement(getDocument());
+        r = new HTMLTableRowElement(document());
         if ( numRows == index || index == -1 )
             appendChild(r, ec);
         else {
@@ -902,7 +902,7 @@ HTMLElement *HTMLTableRowElement::insertCell( int index, ExceptionCode& ec)
         ec = INDEX_SIZE_ERR; // per the DOM
     else
     {
-        c = new HTMLTableCellElement(tdTag, getDocument());
+        c = new HTMLTableCellElement(tdTag, document());
         if(numCells == index || index == -1)
             appendChild(c, ec);
         else {

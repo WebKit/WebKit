@@ -188,7 +188,7 @@ static void freeXsltParamArray(const char **params)
 
 RefPtr<Document> XSLTProcessor::createDocumentFromSource(const DeprecatedString &sourceString, const DeprecatedString &sourceEncoding, const DeprecatedString &sourceMIMEType, Node *sourceNode, FrameView *view)
 {
-    RefPtr<Document> ownerDocument = sourceNode->getDocument();
+    RefPtr<Document> ownerDocument = sourceNode->document();
     bool sourceIsDocument = (sourceNode == ownerDocument.get());
     DeprecatedString documentSource = sourceString;
 
@@ -266,7 +266,7 @@ static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet> &cachedStyl
 
 static inline xmlDocPtr xmlDocPtrFromNode(Node *sourceNode, bool &shouldDelete)
 {
-    RefPtr<Document> ownerDocument = sourceNode->getDocument();
+    RefPtr<Document> ownerDocument = sourceNode->document();
     bool sourceIsDocument = (sourceNode == ownerDocument.get());
     
     xmlDocPtr sourceDoc = 0;
@@ -300,7 +300,7 @@ static inline DeprecatedString resultMIMEType(xmlDocPtr resultDoc, xsltStyleshee
 
 bool XSLTProcessor::transformToString(Node *sourceNode, DeprecatedString &mimeType, DeprecatedString &resultString, DeprecatedString &resultEncoding)
 {
-    RefPtr<Document> ownerDocument = sourceNode->getDocument();
+    RefPtr<Document> ownerDocument = sourceNode->document();
     RefPtr<XSLStyleSheet> cachedStylesheet = m_stylesheet;
     
     setXSLTLoadCallBack(docLoaderFunc, this, ownerDocument->docLoader());

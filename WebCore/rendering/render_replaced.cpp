@@ -244,7 +244,7 @@ RenderWidget::RenderWidget(WebCore::Node* node)
     m_widget = 0;
     // a replaced element doesn't support being anonymous
     ASSERT(node);
-    m_view = node->getDocument()->view();
+    m_view = node->document()->view();
 
     canvas()->addWidget(this);
 
@@ -393,7 +393,7 @@ void RenderWidget::focusIn(Widget*)
     RenderArena* arena = ref();
     RefPtr<Node> elem = element();
     if (elem)
-        elem->getDocument()->setFocusNode(elem);
+        elem->document()->setFocusNode(elem);
     deref(arena);
 }
 
@@ -401,8 +401,8 @@ void RenderWidget::focusOut(Widget*)
 {
     RenderArena* arena = ref();
     RefPtr<Node> elem = element();
-    if (elem && elem == elem->getDocument()->focusNode())
-        elem->getDocument()->setFocusNode(0);
+    if (elem && elem == elem->document()->focusNode())
+        elem->document()->setFocusNode(0);
     deref(arena);
 }
 

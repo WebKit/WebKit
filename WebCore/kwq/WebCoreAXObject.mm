@@ -715,7 +715,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         if (!actionElement)
             return;
 
-        if (Frame* f = actionElement->getDocument()->frame())
+        if (Frame* f = actionElement->document()->frame())
             Mac(f)->prepareForUserAction();
 
         actionElement->accessKeyAction(true);
@@ -842,7 +842,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         if (anchor) {
             DeprecatedString s = anchor->getAttribute(hrefAttr).deprecatedString();
             if (!s.isNull()) {
-                s = anchor->getDocument()->completeURL(s);
+                s = anchor->document()->completeURL(s);
                 return s.getNSString();
             }
         }

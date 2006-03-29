@@ -83,7 +83,7 @@ void RenderObject::operator delete(void* ptr, size_t sz)
 RenderObject *RenderObject::createObject(Node* node,  RenderStyle* style)
 {
     RenderObject *o = 0;
-    RenderArena* arena = node->getDocument()->renderArena();
+    RenderArena* arena = node->document()->renderArena();
     switch(style->display())
     {
     case NONE:
@@ -161,7 +161,7 @@ m_positioned( false ),
 m_relPositioned( false ),
 m_paintBackground( false ),
 
-m_isAnonymous( node == node->getDocument() ),
+m_isAnonymous( node == node->document() ),
 m_recalcMinMax( false ),
 m_isText( false ),
 m_inline( true ),
@@ -193,7 +193,7 @@ bool RenderObject::hasAncestor(const RenderObject *obj) const
 bool RenderObject::isRoot() const
 {
     return element() && element()->renderer() == this &&
-           element()->getDocument()->documentElement() == element();
+           element()->document()->documentElement() == element();
 }
 
 bool RenderObject::isBody() const
@@ -2504,7 +2504,7 @@ bool RenderObject::usesLineWidth() const
 QChar RenderObject::backslashAsCurrencySymbol() const
 {
     if (Node *node = element())
-        if (Decoder *decoder = node->getDocument()->decoder())
+        if (Decoder *decoder = node->document()->decoder())
             return decoder->encoding().backslashAsCurrencySymbol();
     return '\\';
 }

@@ -470,7 +470,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (!(self = [super init]))
         return nil;
     
-    m_frame = new FrameMac(renderer->node()->getDocument()->frame()->page(), renderer);
+    m_frame = new FrameMac(renderer->node()->document()->frame()->page(), renderer);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
     return self;
@@ -1695,7 +1695,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     Node *endContainer = [[range endContainer] _node];
     ASSERT(startContainer);
     ASSERT(endContainer);
-    ASSERT(startContainer->getDocument() == endContainer->getDocument());
+    ASSERT(startContainer->document() == endContainer->document());
     
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
@@ -1843,7 +1843,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (startContainer == nil || endContainer == nil)
         return nil;
 
-    ASSERT(startContainer->getDocument() == endContainer->getDocument());
+    ASSERT(startContainer->document() == endContainer->document());
     
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 

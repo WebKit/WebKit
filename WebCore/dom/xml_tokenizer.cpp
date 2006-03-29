@@ -258,7 +258,7 @@ XMLTokenizer::XMLTokenizer(Document *_doc, FrameView *_view)
 }
 
 XMLTokenizer::XMLTokenizer(DocumentFragment *fragment, Element *parentElement)
-    : m_doc(fragment->getDocument())
+    : m_doc(fragment->document())
     , m_view(0)
     , m_context(0)
     , m_currentNode(fragment)

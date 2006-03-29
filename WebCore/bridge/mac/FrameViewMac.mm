@@ -43,11 +43,11 @@ void FrameView::updateBorder()
 
 void FrameView::updateDashboardRegions()
 {
-    Document* document = m_frame->document();
-    if (document->hasDashboardRegions()) {
-        DeprecatedValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
-        DeprecatedValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
-        document->setDashboardRegions(newRegions);
+    Document* doc = m_frame->document();
+    if (doc->hasDashboardRegions()) {
+        DeprecatedValueList<DashboardRegionValue> newRegions = doc->renderer()->computeDashboardRegions();
+        DeprecatedValueList<DashboardRegionValue> currentRegions = doc->dashboardRegions();
+        doc->setDashboardRegions(newRegions);
         Mac(m_frame.get())->dashboardRegionsChanged();
     }
 }

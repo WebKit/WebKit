@@ -54,14 +54,14 @@ EventTargetNode::EventTargetNode(Document *doc)
 EventTargetNode::~EventTargetNode()
 {
     if (m_regdListeners && !m_regdListeners->isEmpty() && !inDocument())
-        getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
+        document()->unregisterDisconnectedNodeWithEventListeners(this);
     delete m_regdListeners;
 }
 
 void EventTargetNode::insertedIntoDocument()
 {
     if (m_regdListeners && !m_regdListeners->isEmpty())
-        getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
+        document()->unregisterDisconnectedNodeWithEventListeners(this);
     
     Node::insertedIntoDocument();
 }
@@ -69,14 +69,14 @@ void EventTargetNode::insertedIntoDocument()
 void EventTargetNode::removedFromDocument()
 {
     if (m_regdListeners && !m_regdListeners->isEmpty())
-        getDocument()->registerDisconnectedNodeWithEventListeners(this);
+        document()->registerDisconnectedNodeWithEventListeners(this);
 
     Node::removedFromDocument();
 }
 
 void EventTargetNode::addEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener, const bool useCapture)
 {
-    if (!getDocument()->attached())
+    if (!document()->attached())
         return;
     
     Document::ListenerType type = static_cast<Document::ListenerType>(0);
@@ -95,7 +95,7 @@ void EventTargetNode::addEventListener(const AtomicString &eventType, PassRefPtr
     else if (eventType == DOMCharacterDataModifiedEvent)
         type = Document::DOMCHARACTERDATAMODIFIED_LISTENER;
     if (type)
-        getDocument()->addListenerType(type);
+        document()->addListenerType(type);
     
     if (!m_regdListeners) {
         m_regdListeners = new DeprecatedPtrList<RegisteredEventListener>;
@@ -108,7 +108,7 @@ void EventTargetNode::addEventListener(const AtomicString &eventType, PassRefPtr
     
     // adding the first one
     if (m_regdListeners->isEmpty() && !inDocument())
-        getDocument()->registerDisconnectedNodeWithEventListeners(this);
+        document()->registerDisconnectedNodeWithEventListeners(this);
     
     m_regdListeners->append(new RegisteredEventListener(eventType, listener.get(), useCapture));
 }
@@ -126,7 +126,7 @@ void EventTargetNode::removeEventListener(const AtomicString &eventType, EventLi
             m_regdListeners->removeRef(it.current());
             // removed last
             if (m_regdListeners->isEmpty() && !inDocument())
-                getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
+                document()->unregisterDisconnectedNodeWithEventListeners(this);
             return;
         }
 }
@@ -252,7 +252,7 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, 
     // way to retrieve it from javascript if a script does not already
     // have a reference to it in a variable.  So there is no need for
     // the interpreter to keep the event in it's cache
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
     if (tempEvent && frame && frame->jScript())
         frame->jScript()->finishedWithEvent(evt.get());
     
@@ -269,7 +269,7 @@ bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool
     }
     evt->setTarget(this);
     
-    RefPtr<FrameView> view = getDocument()->view();
+    RefPtr<FrameView> view = document()->view();
     
     return dispatchGenericEvent(evt.release(), ec, tempEvent);
 }
@@ -285,7 +285,7 @@ bool EventTargetNode::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
     } else
         notifyNodeListsAttributeChanged(); // FIXME: Can do better some day. Really only care about the name attribute changing.
     
-    if (!getDocument()->hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
+    if (!document()->hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
         return false;
     ExceptionCode ec = 0;
     return dispatchEvent(new MutationEvent(DOMSubtreeModifiedEvent,
@@ -297,7 +297,7 @@ void EventTargetNode::dispatchWindowEvent(const AtomicString &eventType, bool ca
     assert(!eventDispatchForbidden());
     ExceptionCode ec = 0;
     RefPtr<Event> evt = new Event(eventType, canBubbleArg, cancelableArg);
-    RefPtr<Document> doc = getDocument();
+    RefPtr<Document> doc = document();
     evt->setTarget(doc.get());
     doc->handleWindowEvent(evt.get(), false);
     
@@ -322,7 +322,7 @@ bool EventTargetNode::dispatchUIEvent(const AtomicString &eventType, int detail)
     bool cancelable = eventType == DOMActivateEvent;
     
     ExceptionCode ec = 0;
-    UIEvent* evt = new UIEvent(eventType, true, cancelable, getDocument()->defaultView(), detail);
+    UIEvent* evt = new UIEvent(eventType, true, cancelable, document()->defaultView(), detail);
     return dispatchEvent(evt, ec, true);
 }
 
@@ -330,7 +330,7 @@ bool EventTargetNode::dispatchKeyEvent(const PlatformKeyboardEvent& key)
 {
     assert(!eventDispatchForbidden());
     ExceptionCode ec = 0;
-    RefPtr<KeyboardEvent> keyboardEvent = new KeyboardEvent(key, getDocument()->defaultView());
+    RefPtr<KeyboardEvent> keyboardEvent = new KeyboardEvent(key, document()->defaultView());
     bool r = dispatchEvent(keyboardEvent,ec,true);
     
     // we want to return false if default is prevented (already taken care of)
@@ -349,7 +349,7 @@ bool EventTargetNode::dispatchMouseEvent(const PlatformMouseEvent& _mouse, const
     
     int clientX = 0;
     int clientY = 0;
-    if (FrameView *view = getDocument()->view())
+    if (FrameView *view = document()->view())
         view->viewportToContents(_mouse.x(), _mouse.y(), clientX, clientY);
     
     return dispatchMouseEvent(eventType, _mouse.button(), detail,
@@ -389,7 +389,7 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     
     bool swallowEvent = false;
     
-    RefPtr<Event> me = new MouseEvent(eventType, true, cancelable, getDocument()->defaultView(),
+    RefPtr<Event> me = new MouseEvent(eventType, true, cancelable, document()->defaultView(),
                                               detail, screenX, screenY, clientX, clientY,
                                               ctrlKey, altKey, shiftKey, metaKey, button,
                                               relatedTarget, 0, isSimulated);
@@ -404,7 +404,7 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute.  This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == clickEvent && detail == 2) {
-        me = new MouseEvent(dblclickEvent, true, cancelable, getDocument()->defaultView(),
+        me = new MouseEvent(dblclickEvent, true, cancelable, document()->defaultView(),
                                 detail, screenX, screenY, clientX, clientY,
                                 ctrlKey, altKey, shiftKey, metaKey, button,
                                 relatedTarget, 0, isSimulated);
@@ -428,7 +428,7 @@ void EventTargetNode::dispatchWheelEvent(PlatformWheelEvent& e)
     if (e.delta() == 0)
         return;
     
-    FrameView *view = getDocument()->view();
+    FrameView *view = document()->view();
     if (!view)
         return;
     
@@ -437,7 +437,7 @@ void EventTargetNode::dispatchWheelEvent(PlatformWheelEvent& e)
     view->viewportToContents(e.x(), e.y(), x, y);
     
     RefPtr<WheelEvent> we = new WheelEvent(e.isHorizontal(), e.delta(),
-                                                   getDocument()->defaultView(), e.globalX(), e.globalY(), x, y,
+                                                   document()->defaultView(), e.globalX(), e.globalY(), x, y,
                                                    e.ctrlKey(), e.altKey(), e.shiftKey(), e.metaKey());
     
     ExceptionCode ec = 0;
@@ -463,7 +463,7 @@ void EventTargetNode::removeHTMLEventListener(const AtomicString &eventType)
             m_regdListeners->removeRef(it.current());
             // removed last
             if (m_regdListeners->isEmpty() && !inDocument())
-                getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
+                document()->unregisterDisconnectedNodeWithEventListeners(this);
             return;
         }
 }

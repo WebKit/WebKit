@@ -476,12 +476,12 @@ PassRefPtr<Range> TextIterator::range() const
             m_positionEndOffset += index;
             m_positionOffsetBaseNode = 0;
         }
-        return new Range(m_positionNode->getDocument(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+        return new Range(m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
     }
 
     // otherwise, return the end of the overall range we were given
     if (m_endContainer)
-        return new Range(m_endContainer->getDocument(), m_endContainer, m_endOffset, m_endContainer, m_endOffset);
+        return new Range(m_endContainer->document(), m_endContainer, m_endOffset, m_endContainer, m_endOffset);
         
     return 0;
 }
@@ -724,9 +724,9 @@ void SimplifiedBackwardsTextIterator::emitNewlineForBROrText()
 PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const
 {
     if (m_positionNode)
-        return new Range(m_positionNode->getDocument(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+        return new Range(m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
     
-    return new Range(m_startNode->getDocument(), m_startNode, m_startOffset, m_startNode, m_startOffset);
+    return new Range(m_startNode->document(), m_startNode, m_startOffset, m_startNode, m_startOffset);
 }
 
 CharacterIterator::CharacterIterator()

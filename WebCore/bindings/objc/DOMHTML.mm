@@ -261,7 +261,7 @@ using namespace WebCore::HTMLNames;
 
 - (NSString *)titleDisplayString
 {
-    return [self _HTMLElement]->title().replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
+    return [self _HTMLElement]->title().replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
 }
 
 - (void)setTitle:(NSString *)title
@@ -1292,7 +1292,7 @@ using namespace WebCore::HTMLNames;
 
 - (NSString *)altDisplayString
 {
-    return [self _inputElement]->alt().replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
+    return [self _inputElement]->alt().replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
 }
 
 - (void)setAlt:(NSString *)alt
@@ -2281,14 +2281,14 @@ using namespace WebCore::HTMLNames;
 - (void)blur
 {
     HTMLAnchorElement *impl = [self _anchorElement];
-    if (impl->getDocument()->focusNode() == impl)
-        impl->getDocument()->setFocusNode(0);
+    if (impl->document()->focusNode() == impl)
+        impl->document()->setFocusNode(0);
 }
 
 - (void)focus
 {
     HTMLAnchorElement *impl = [self _anchorElement];
-    impl->getDocument()->setFocusNode(static_cast<Element*>(impl));
+    impl->document()->setFocusNode(static_cast<Element*>(impl));
 }
 
 @end
@@ -2328,7 +2328,7 @@ using namespace WebCore::HTMLNames;
 - (NSString *)altDisplayString
 {
     String alt = [self _imageElement]->getAttribute(altAttr);
-    return alt.replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
+    return alt.replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
 }
 
 - (void)setAlt:(NSString *)alt
@@ -2703,7 +2703,7 @@ using namespace WebCore::HTMLNames;
 - (NSString *)altDisplayString
 {
     String alt = [self _appletElement]->getAttribute(altAttr);
-    return alt.replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
+    return alt.replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
 }
 
 - (void)setAlt:(NSString *)alt
@@ -2853,7 +2853,7 @@ using namespace WebCore::HTMLNames;
 - (NSString *)altDisplayString
 {
     String alt = [self _areaElement]->getAttribute(altAttr);
-    return alt.replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
+    return alt.replace('\\', [self _element]->document()->backslashAsCurrencySymbol());
 }
 
 - (void)setAlt:(NSString *)alt

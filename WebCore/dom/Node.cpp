@@ -108,7 +108,7 @@ int gEventDispatchForbidden = 0;
 #endif NDEBUG
 
 Node::Node(Document *doc)
-    : document(doc),
+    : m_document(doc),
       m_previous(0),
       m_next(0),
       m_renderer(0),
@@ -141,7 +141,7 @@ void Node::setDocument(Document *doc)
     if (inDocument())
         return;
     
-    document = doc;
+    m_document = doc;
 }
 
 Node::~Node()
@@ -347,7 +347,7 @@ void Node::setChanged(bool b)
             p->setHasChangedChild( true );
             p = p->parentNode();
         }
-        getDocument()->setDocumentChanged(true);
+        document()->setDocumentChanged(true);
     }
 }
 
@@ -529,7 +529,7 @@ void Node::checkSetPrefix(const AtomicString &_prefix, ExceptionCode& ec)
     //   the namespaceURI of this node is different from "http://www.w3.org/2000/xmlns/",
     // - or if this node is an attribute and the qualifiedName of this node is "xmlns" [Namespaces].
     if ((namespacePart(id()) == noNamespace && id() > ID_LAST_TAG) ||
-        (_prefix == "xml" && String(getDocument()->namespaceURI(id())) != "http://www.w3.org/XML/1998/namespace")) {
+        (_prefix == "xml" && String(document()->namespaceURI(id())) != "http://www.w3.org/XML/1998/namespace")) {
         ec = NAMESPACE_ERR;
         return;
     }*/
@@ -558,7 +558,7 @@ void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
     // created this node.
     // We assume that if newChild is a DocumentFragment, all children are created from the same document
     // as the fragment itself (otherwise they could not have been added as children)
-    if (newChild->getDocument() != getDocument()) {
+    if (newChild->document() != document()) {
         // but if the child is not in a document yet then loosen the
         // restriction, so that e.g. creating an element with the Option()
         // constructor and then adding it to a different document works,
@@ -598,8 +598,8 @@ void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
     // change the document pointer of newChild and all of its children to be the new document
     if (shouldAdoptChild) {
         for (Node* node = newChild; node; node = node->traverseNextNode(newChild)) {
-            KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->getDocument(), getDocument());
-            node->setDocument(getDocument());
+            KJS::ScriptInterpreter::updateDOMNodeDocument(node, node->document(), document());
+            node->setDocument(document());
         }
     }
 }
@@ -681,7 +681,7 @@ void Node::attach()
 {
     assert(!attached());
     assert(!renderer() || (renderer()->style() && renderer()->parent()));
-    getDocument()->incDOMTreeVersion();
+    document()->incDOMTreeVersion();
     m_attached = true;
 }
 
@@ -698,7 +698,7 @@ void Node::detach()
         renderer()->destroy();
     setRenderer(0);
 
-    Document* doc = getDocument();
+    Document* doc = document();
     if (m_hovered)
         doc->hoveredNodeDetached(this);
     if (m_inActiveChain)
@@ -872,7 +872,7 @@ Node *Node::nextLeafNode() const
 
 void Node::createRendererIfNeeded()
 {
-    if (!getDocument()->shouldCreateRenderers())
+    if (!document()->shouldCreateRenderers())
         return;
     
     assert(!attached());
@@ -890,16 +890,16 @@ void Node::createRendererIfNeeded()
         RenderStyle* style = createStyleForRenderer(parentRenderer);
 #ifndef KHTML_NO_XBL
         bool resolveStyle = false;
-        if (getDocument()->bindingManager()->loadBindings(this, style->bindingURIs(), true, &resolveStyle) && 
+        if (document()->bindingManager()->loadBindings(this, style->bindingURIs(), true, &resolveStyle) && 
             rendererIsNeeded(style)) {
             if (resolveStyle) {
-                style->deref(document->renderArena());
+                style->deref(document()->renderArena());
                 style = createStyleForRenderer(parentRenderer);
             }
 #else
         if (rendererIsNeeded(style)) {
 #endif
-            setRenderer(createRenderer(getDocument()->renderArena(), style));
+            setRenderer(createRenderer(document()->renderArena(), style));
             if (renderer()) {
                 renderer()->setStyle(style);
                 parentRenderer->addChild(renderer(), nextRenderer());
@@ -909,7 +909,7 @@ void Node::createRendererIfNeeded()
 #else
         }
 #endif
-        style->deref(getDocument()->renderArena());
+        style->deref(document()->renderArena());
     }
 }
 
@@ -922,7 +922,7 @@ RenderStyle *Node::createStyleForRenderer(RenderObject *parent)
 
 bool Node::rendererIsNeeded(RenderStyle *style)
 {
-    return (getDocument()->documentElement() == this) || (style->display() != NONE);
+    return (document()->documentElement() == this) || (style->display() != NONE);
 }
 
 RenderObject *Node::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -1085,7 +1085,7 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String &namespaceURI, co
         return 0; // FIXME: Who relies on getting 0 instead of a node list in this case?
     
     String name = localName;
-    if (getDocument()->isHTMLDocument())
+    if (document()->isHTMLDocument())
         name = localName.lower();
     return new TagNodeList(this, AtomicString(namespaceURI), AtomicString(name));
 }
@@ -1097,7 +1097,7 @@ bool Node::isSupported(const String &feature, const String &version)
 
 Document *Node::ownerDocument() const
 {
-    Document *doc = getDocument();
+    Document *doc = document();
     return doc == this ? 0 : doc;
 }
 
@@ -1381,7 +1381,7 @@ void Node::setTextContent(const String &text, ExceptionCode& ec)
             container->removeChildren();
             
             if (!text.isEmpty())
-                appendChild(getDocument()->createTextNode(text), ec);
+                appendChild(document()->createTextNode(text), ec);
             break;
         }
         case DOCUMENT_NODE:

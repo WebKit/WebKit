@@ -152,7 +152,7 @@ void SVGGradientElement::rebuildStops() const
                 SVGStopElement *stop = static_cast<SVGStopElement *>(element);
                 float stopOffset = stop->offset()->baseVal();
                 
-                RenderStyle *stopStyle = getDocument()->styleSelector()->createStyleForElement(stop, gradientStyle);
+                RenderStyle *stopStyle = document()->styleSelector()->createStyleForElement(stop, gradientStyle);
                 Color c = stopStyle->svgStyle()->stopColor();
                 float opacity = stopStyle->svgStyle()->stopOpacity();
                 

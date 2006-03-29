@@ -332,7 +332,7 @@ void JSNodeFilterCondition::mark()
 short JSNodeFilterCondition::acceptNode(Node* filterNode) const
 {
     Node *node = filterNode;
-    Frame *frame = node->getDocument()->frame();
+    Frame *frame = node->document()->frame();
     KJSProxy *proxy = frame->jScript();
     if (proxy && filter->implementsCall()) {
         JSLock lock;

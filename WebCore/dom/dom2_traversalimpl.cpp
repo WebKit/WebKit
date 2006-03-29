@@ -79,7 +79,7 @@ NodeIterator::NodeIterator(Node *rootNode, unsigned whatToShow, PassRefPtr<NodeF
     : Traversal(rootNode, whatToShow, filter, expandEntityReferences)
     , m_beforeReferenceNode(true)
     , m_detached(false)
-    , m_doc(rootNode ? rootNode->getDocument() : 0)
+    , m_doc(rootNode ? rootNode->document() : 0)
 {
     if (document())
         document()->attachNodeIterator(this);

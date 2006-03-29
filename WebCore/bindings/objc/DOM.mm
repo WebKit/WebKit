@@ -269,7 +269,7 @@ static ListenerMap *listenerMap;
 
 - (DOMDocument *)ownerDocument
 {
-    return [DOMDocument _documentWith:[self _node]->getDocument()];
+    return [DOMDocument _documentWith:[self _node]->document()];
 }
 
 - (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild
@@ -665,7 +665,7 @@ static ListenerMap *listenerMap;
 - (const KJS::Bindings::RootObject *)_executionContext
 {
     if (Node *n = [self _node])
-        if (FrameMac *f = Mac(n->getDocument()->frame()))
+        if (FrameMac *f = Mac(n->document()->frame()))
             return f->executionContextForDOM();
 
     return 0;
@@ -1547,7 +1547,7 @@ static ListenerMap *listenerMap;
     ASSERT(name);
     Element *e = [self _element];
     ASSERT(e);
-    return KURL(e->getDocument()->completeURL(parseURL(e->getAttribute(name)).deprecatedString())).getNSURL();
+    return KURL(e->document()->completeURL(parseURL(e->getAttribute(name)).deprecatedString())).getNSURL();
 }
 
 @end

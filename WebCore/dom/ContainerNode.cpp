@@ -208,7 +208,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         child = nextChild.release();
     }
 
-    getDocument()->setDocumentChanged(true);
+    document()->setDocumentChanged(true);
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -314,7 +314,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     }
 
     // ### set style in case it's attached
-    getDocument()->setDocumentChanged(true);
+    document()->setDocumentChanged(true);
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -363,7 +363,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     RefPtr<Node> child = oldChild;
     
     // dispatch pre-removal mutation events
-    if (getDocument()->hasListenerType(Document::DOMNODEREMOVED_LISTENER)) {
+    if (document()->hasListenerType(Document::DOMNODEREMOVED_LISTENER)) {
         EventTargetNodeCast(child.get())->dispatchEvent(new MutationEvent(DOMNodeRemovedEvent, true, false,
             this, String(), String(), String(), 0), ec, true);
         if (ec)
@@ -411,7 +411,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     allowEventDispatch();
 
-    getDocument()->setDocumentChanged(true);
+    document()->setDocumentChanged(true);
 
     // Dispatch post-removal mutation events
     dispatchSubtreeModifiedEvent();
@@ -529,7 +529,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
         child = nextChild.release();
     }
 
-    getDocument()->setDocumentChanged(true);
+    document()->setDocumentChanged(true);
     dispatchSubtreeModifiedEvent();
     return true;
 }
@@ -545,7 +545,7 @@ ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
     // It does not send any DOM mutation events.
 
     // Check for consistency with DTD, but only when parsing HTML.
-    if (getDocument()->isHTMLDocument() && !childAllowed(newChild.get()))
+    if (document()->isHTMLDocument() && !childAllowed(newChild.get()))
         return 0;
 
     forbidEventDispatch();
@@ -675,7 +675,7 @@ bool ContainerNode::getUpperLeftCorner(int &xPos, int &yPos) const
     // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
     // at the end of the document.  Scroll to the bottom.
     if (!o) {
-        yPos += getDocument()->view()->contentsHeight();
+        yPos += document()->view()->contentsHeight();
         return true;
     }
     return false;
@@ -839,7 +839,7 @@ static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
     assert(!eventDispatchForbidden());
 
     RefPtr<Node> c = child;
-    RefPtr<Document> doc = child->getDocument();
+    RefPtr<Document> doc = child->document();
 
     if (c->parentNode() && c->parentNode()->inDocument())
         c->insertedIntoDocument();
@@ -873,7 +873,7 @@ static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
 static void dispatchChildRemovalEvents(Node* child, ExceptionCode& ec)
 {
     RefPtr<Node> c = child;
-    RefPtr<Document> doc = child->getDocument();
+    RefPtr<Document> doc = child->document();
 
     // update auxiliary doc info (e.g. iterators) to note that node is being removed
     doc->notifyBeforeNodeRemoval(child); // ### use events instead

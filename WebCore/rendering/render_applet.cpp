@@ -83,7 +83,7 @@ void RenderApplet::createWidgetIfNecessary()
                     HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
                     m_args.set(p->name(), p->value());
                 }
-            setWidget(new JavaAppletWidget(IntSize(width, height), element()->getDocument()->frame(), m_args));
+            setWidget(new JavaAppletWidget(IntSize(width, height), element()->document()->frame(), m_args));
         }
     }
 }

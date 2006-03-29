@@ -49,7 +49,7 @@ HTMLImageLoader::~HTMLImageLoader()
 {
     if (m_image)
         m_image->deref(this);
-    m_element->getDocument()->removeImage(this);
+    m_element->document()->removeImage(this);
 }
 
 void HTMLImageLoader::setLoadingImage(CachedImage *loadingImage)
@@ -64,7 +64,7 @@ void HTMLImageLoader::updateFromElement()
     // If we're not making renderers for the page, then don't load images.  We don't want to slow
     // down the raw HTML parsing case by loading images we don't intend to display.
     Element* elem = element();
-    Document* doc = elem->getDocument();
+    Document* doc = elem->document();
     if (!doc->renderer())
         return;
 
@@ -104,7 +104,7 @@ void HTMLImageLoader::notifyFinished(CachedObject *image)
 {
     m_imageComplete = true;
     Element* elem = element();
-    Document* doc = elem->getDocument();
+    Document* doc = elem->document();
     doc->dispatchImageLoadEventSoon(this);
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (!doc->ownerElement())
@@ -188,7 +188,7 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute *attr)
         if (attr->value().domString()[0] == '#')
             usemap = attr->value();
         else
-            usemap = getDocument()->completeURL(parseURL(attr->value()));
+            usemap = document()->completeURL(parseURL(attr->value()));
         m_isLink = !attr->isNull();
     } else if (attrName == ismapAttr)
         ismap = true;
@@ -202,8 +202,8 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute *attr)
         _compositeOperator = attr->value().domString();
     else if (attrName == nameAttr) {
         String newNameAttr = attr->value();
-        if (inDocument() && getDocument()->isHTMLDocument()) {
-            HTMLDocument* doc = static_cast<HTMLDocument*>(getDocument());
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument* doc = static_cast<HTMLDocument*>(document());
             doc->removeNamedItem(oldNameAttr);
             doc->addNamedItem(newNameAttr);
         }
@@ -239,7 +239,7 @@ void HTMLImageElement::attach()
 
 void HTMLImageElement::insertedIntoDocument()
 {
-    Document* doc = getDocument();
+    Document* doc = document();
     if (doc->isHTMLDocument())
         static_cast<HTMLDocument*>(doc)->addNamedItem(oldNameAttr);
 
@@ -248,7 +248,7 @@ void HTMLImageElement::insertedIntoDocument()
 
 void HTMLImageElement::removedFromDocument()
 {
-    Document* doc = getDocument();
+    Document* doc = document();
     if (doc->isHTMLDocument())
         static_cast<HTMLDocument*>(doc)->removeNamedItem(oldNameAttr);
 
@@ -269,7 +269,7 @@ int HTMLImageElement::width(bool ignorePendingStylesheets) const
             return m_imageLoader.image()->imageSize().width();
     }
 
-    Document* doc = getDocument();
+    Document* doc = document();
     if (ignorePendingStylesheets)
         doc->updateLayoutIgnorePendingStylesheets();
     else
@@ -292,7 +292,7 @@ int HTMLImageElement::height(bool ignorePendingStylesheets) const
             return m_imageLoader.image()->imageSize().height();        
     }
 
-    Document* doc = getDocument();
+    Document* doc = document();
     if (ignorePendingStylesheets)
         doc->updateLayoutIgnorePendingStylesheets();
     else
@@ -385,7 +385,7 @@ void HTMLImageElement::setLongDesc(const String& value)
 
 String HTMLImageElement::src() const
 {
-    return getDocument()->completeURL(getAttribute(srcAttr));
+    return document()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLImageElement::setSrc(const String& value)
@@ -453,7 +453,7 @@ HTMLMapElement::HTMLMapElement(Document *doc)
 
 HTMLMapElement::~HTMLMapElement()
 {
-    getDocument()->removeImageMap(this);
+    document()->removeImageMap(this);
 }
 
 bool HTMLMapElement::checkDTD(const Node* newChild)
@@ -476,7 +476,7 @@ void HTMLMapElement::parseMappedAttribute(MappedAttribute *attr)
 {
     const QualifiedName& attrName = attr->name();
     if (attrName == idAttr || attrName == nameAttr) {
-        Document* doc = getDocument();
+        Document* doc = document();
         if (attrName == idAttr) {
             // Call base class so that hasID bit gets set.
             HTMLElement::parseMappedAttribute(attr);
@@ -658,7 +658,7 @@ void HTMLAreaElement::setCoords(const String& value)
 
 String HTMLAreaElement::href() const
 {
-    return getDocument()->completeURL(getAttribute(hrefAttr));
+    return document()->completeURL(getAttribute(hrefAttr));
 }
 
 void HTMLAreaElement::setHref(const String& value)

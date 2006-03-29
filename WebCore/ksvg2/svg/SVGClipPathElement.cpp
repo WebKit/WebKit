@@ -96,7 +96,7 @@ KCanvasClipper *SVGClipPathElement::canvasResource()
         SVGElement *e = svg_dynamic_cast(n);
         if (e && e->isStyled()) {
             SVGStyledElement *styled = static_cast<SVGStyledElement *>(e);
-            RenderStyle *pathStyle = getDocument()->styleSelector()->createStyleForElement(styled, clipPathStyle);
+            RenderStyle *pathStyle = document()->styleSelector()->createStyleForElement(styled, clipPathStyle);
             if (KCanvasPath* pathData = styled->toPathData())
                 m_clipper->addClipData(pathData, (KCWindRule) pathStyle->svgStyle()->clipRule(), bbox);
             pathStyle->deref(canvas()->renderArena());

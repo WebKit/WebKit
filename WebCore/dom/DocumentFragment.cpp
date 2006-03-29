@@ -68,7 +68,7 @@ String DocumentFragment::toString() const
 
 PassRefPtr<Node> DocumentFragment::cloneNode(bool deep)
 {
-    RefPtr<DocumentFragment> clone = new DocumentFragment(getDocument());
+    RefPtr<DocumentFragment> clone = new DocumentFragment(document());
     if (deep)
         cloneChildNodes(clone.get());
     return clone.release();

@@ -39,8 +39,8 @@ HTMLCollection::HTMLCollection(Node *_base, int _type)
       idsDone(false),
       m_ownsInfo(false)
 {
-    if (_base->isDocumentNode() && _base->getDocument()->isHTMLDocument())
-        info = static_cast<HTMLDocument*>(_base->getDocument())->collectionInfo(type);
+    if (_base->isDocumentNode() && _base->document()->isHTMLDocument())
+        info = static_cast<HTMLDocument*>(_base->document())->collectionInfo(type);
 }
 
 HTMLCollection::~HTMLCollection()
@@ -77,7 +77,7 @@ void HTMLCollection::CollectionInfo::reset()
 
 void HTMLCollection::resetCollectionInfo() const
 {
-    unsigned int docversion = static_cast<HTMLDocument*>(m_base->getDocument())->domTreeVersion();
+    unsigned int docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
 
     if (!info) {
         info = new CollectionInfo;

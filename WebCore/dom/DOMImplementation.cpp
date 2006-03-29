@@ -132,7 +132,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     
     // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
     // created from a different implementation.
-    if (doctype && (doctype->getDocument() || doctype->implementation() != this)) {
+    if (doctype && (doctype->document() || doctype->implementation() != this)) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }

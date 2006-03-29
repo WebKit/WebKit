@@ -960,7 +960,7 @@ bool FrameView::dispatchMouseEvent(const AtomicString& eventType, Node* targetNo
 
     // mouseout/mouseover
     if (setUnder) {
-        if (d->oldUnder && d->oldUnder->getDocument() != frame()->document())
+        if (d->oldUnder && d->oldUnder->document() != frame()->document())
             d->oldUnder = 0;
 
         if (d->oldUnder != targetNode) {

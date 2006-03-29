@@ -79,8 +79,8 @@ void HTMLBaseElement::removedFromDocument()
 
     // Since the document doesn't have a base element...
     // (This will break in the case of multiple base elements, but that's not valid anyway (?))
-    getDocument()->setBaseURL( DeprecatedString::null );
-    getDocument()->setBaseTarget( DeprecatedString::null );
+    document()->setBaseURL( DeprecatedString::null );
+    document()->setBaseTarget( DeprecatedString::null );
 }
 
 void HTMLBaseElement::process()
@@ -88,11 +88,11 @@ void HTMLBaseElement::process()
     if (!inDocument())
 	return;
 
-    if(!m_href.isEmpty() && getDocument()->frame())
-	getDocument()->setBaseURL( KURL( getDocument()->frame()->url(), m_href.deprecatedString() ).url() );
+    if(!m_href.isEmpty() && document()->frame())
+	document()->setBaseURL( KURL( document()->frame()->url(), m_href.deprecatedString() ).url() );
 
     if(!m_target.isEmpty())
-	getDocument()->setBaseTarget( m_target.deprecatedString() );
+	document()->setBaseTarget( m_target.deprecatedString() );
 
     // ### should changing a document's base URL dynamically automatically update all images, stylesheets etc?
 }
@@ -136,11 +136,11 @@ void HTMLLinkElement::setDisabledState(bool _disabled)
             // a main sheet or a sheet that was previously enabled via script, then we need
             // to remove it from the list of pending sheets.
             if (m_disabledState == 2 && (!m_alternate || oldDisabledState == 1))
-                getDocument()->stylesheetLoaded();
+                document()->stylesheetLoaded();
 
             // Check #2: An alternate sheet becomes enabled while it is still loading.
             if (m_alternate && m_disabledState == 1)
-                getDocument()->addPendingSheet();
+                document()->addPendingSheet();
 
             // Check #3: A main sheet becomes enabled while it was still loading and
             // after it was disabled via script.  It takes really terrible code to make this
@@ -148,7 +148,7 @@ void HTMLLinkElement::setDisabledState(bool _disabled)
             // virtualplastic.net, which manages to do about 12 enable/disables on only 3
             // sheets. :)
             if (!m_alternate && m_disabledState == 1 && oldDisabledState == 2)
-                getDocument()->addPendingSheet();
+                document()->addPendingSheet();
 
             // If the sheet is already loading just bail.
             return;
@@ -158,7 +158,7 @@ void HTMLLinkElement::setDisabledState(bool _disabled)
         if (!m_sheet && m_disabledState == 1)
             process();
         else
-            getDocument()->updateStyleSelector(); // Update the style selector.
+            document()->updateStyleSelector(); // Update the style selector.
     }
 }
 
@@ -168,7 +168,7 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
         tokenizeRelAttribute(attr->value());
         process();
     } else if (attr->name() == hrefAttr) {
-        m_url = getDocument()->completeURL(parseURL(attr->value()));
+        m_url = document()->completeURL(parseURL(attr->value()));
 	process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();
@@ -214,7 +214,7 @@ void HTMLLinkElement::process()
 
     String type = m_type.lower();
     
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
 
     // IE extension: location of small icon for locationbar / bookmarks
     if (frame && m_isIcon && !m_url.isEmpty() && !frame->tree()->parent()) {
@@ -226,7 +226,7 @@ void HTMLLinkElement::process()
 
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
-    if (m_disabledState != 2 && (type.contains("text/css") || m_isStyleSheet) && getDocument()->frame()) {
+    if (m_disabledState != 2 && (type.contains("text/css") || m_isStyleSheet) && document()->frame()) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
 	// also, don't load style sheets for standalone documents
@@ -235,17 +235,17 @@ void HTMLLinkElement::process()
             // Add ourselves as a pending sheet, but only if we aren't an alternate 
             // stylesheet.  Alternate stylesheets don't hold up render tree construction.
             if (!isAlternate())
-                getDocument()->addPendingSheet();
+                document()->addPendingSheet();
             
             DeprecatedString chset = getAttribute(charsetAttr).deprecatedString();
             if (m_cachedSheet) {
                 if (m_loading) {
-                    getDocument()->stylesheetLoaded();
+                    document()->stylesheetLoaded();
                 }
                 m_cachedSheet->deref(this);
             }
             m_loading = true;
-            m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(m_url, chset);
+            m_cachedSheet = document()->docLoader()->requestStyleSheet(m_url, chset);
             if (m_cachedSheet)
                 m_cachedSheet->ref(this);
         }
@@ -253,7 +253,7 @@ void HTMLLinkElement::process()
     else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
         m_sheet = 0;
-        getDocument()->updateStyleSelector();
+        document()->updateStyleSelector();
     }
 }
 
@@ -272,7 +272,7 @@ void HTMLLinkElement::removedFromDocument()
 void HTMLLinkElement::setStyleSheet(const String &url, const String &sheetStr)
 {
     m_sheet = new CSSStyleSheet(this, url);
-    m_sheet->parseString(sheetStr, !getDocument()->inCompatMode());
+    m_sheet->parseString(sheetStr, !document()->inCompatMode());
 
     MediaList *media = new MediaList(m_sheet.get(), m_media);
     m_sheet->setMedia(media);
@@ -281,7 +281,7 @@ void HTMLLinkElement::setStyleSheet(const String &url, const String &sheetStr)
 
     // Tell the doc about the sheet.
     if (!isLoading() && m_sheet && !isDisabled() && !isAlternate())
-        getDocument()->stylesheetLoaded();
+        document()->stylesheetLoaded();
 }
 
 bool HTMLLinkElement::isLoading() const
@@ -296,7 +296,7 @@ bool HTMLLinkElement::isLoading() const
 void HTMLLinkElement::sheetLoaded()
 {
     if (!isLoading() && !isDisabled() && !isAlternate())
-        getDocument()->stylesheetLoaded();
+        document()->stylesheetLoaded();
 }
 
 bool HTMLLinkElement::isURLAttribute(Attribute *attr) const
@@ -326,7 +326,7 @@ void HTMLLinkElement::setCharset(const String &value)
 
 String HTMLLinkElement::href() const
 {
-    return getDocument()->completeURL(getAttribute(hrefAttr));
+    return document()->completeURL(getAttribute(hrefAttr));
 }
 
 void HTMLLinkElement::setHref(const String &value)
@@ -429,7 +429,7 @@ void HTMLMetaElement::process()
     // Get the document to process the tag, but only if we're actually part of DOM tree (changing a meta tag while
     // it's not in the tree shouldn't have any effect on the document)
     if (inDocument() && !m_equiv.isNull() && !m_content.isNull())
-	getDocument()->processHttpEquiv(m_equiv,m_content);
+	document()->processHttpEquiv(m_equiv,m_content);
 }
 
 String HTMLMetaElement::content() const
@@ -496,7 +496,7 @@ void HTMLScriptElement::childrenChanged()
     // and the script element has been inserted in the document
     // we evaluate the script.
     if (!m_createdByParser && inDocument() && firstChild())
-        evaluateScript(getDocument()->URL(), text());
+        evaluateScript(document()->URL(), text());
 }
 
 void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
@@ -508,13 +508,13 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
 
         // FIXME: Evaluate scripts in viewless documents.
         // See http://bugzilla.opendarwin.org/show_bug.cgi?id=5727
-        if (!getDocument()->frame())
+        if (!document()->frame())
             return;
     
         const AtomicString& url = attr->value();
         if (!url.isEmpty()) {
             DeprecatedString charset = getAttribute(charsetAttr).deprecatedString();
-            m_cachedScript = getDocument()->docLoader()->requestScript(url, charset);
+            m_cachedScript = document()->docLoader()->requestScript(url, charset);
             m_cachedScript->ref(this);
         }
     } else if (attrName == onerrorAttr) {
@@ -546,13 +546,13 @@ void HTMLScriptElement::insertedIntoDocument()
     // FIXME: Eventually we'd like to evaluate scripts which are inserted into a 
     // viewless document but this'll do for now.
     // See http://bugzilla.opendarwin.org/show_bug.cgi?id=5727
-    if (!getDocument()->frame())
+    if (!document()->frame())
         return;
     
     const AtomicString& url = getAttribute(srcAttr);
     if (!url.isEmpty()) {
         DeprecatedString charset = getAttribute(charsetAttr).deprecatedString();
-        m_cachedScript = getDocument()->docLoader()->requestScript(url, charset);
+        m_cachedScript = document()->docLoader()->requestScript(url, charset);
         m_cachedScript->ref(this);
         return;
     }
@@ -562,7 +562,7 @@ void HTMLScriptElement::insertedIntoDocument()
     // it should be evaluated, and evaluateScript only evaluates a script once.
     String scriptString = text();    
     if (!scriptString.isEmpty())
-        evaluateScript(getDocument()->URL(), scriptString);
+        evaluateScript(document()->URL(), scriptString);
 }
 
 void HTMLScriptElement::removedFromDocument()
@@ -597,7 +597,7 @@ void HTMLScriptElement::evaluateScript(const String& URL, const String& script)
     if (m_evaluated)
         return;
     
-    Frame *frame = getDocument()->frame();
+    Frame *frame = document()->frame();
     if (frame) {
         KJSProxy *proxy = frame->jScript();
         if (proxy) {
@@ -634,7 +634,7 @@ void HTMLScriptElement::setText(const String &value)
         removeChildren();
     }
     
-    appendChild(getDocument()->createTextNode(value.impl()), ec);
+    appendChild(document()->createTextNode(value.impl()), ec);
 }
 
 String HTMLScriptElement::htmlFor() const
@@ -681,7 +681,7 @@ void HTMLScriptElement::setDefer(bool defer)
 
 String HTMLScriptElement::src() const
 {
-    return getDocument()->completeURL(getAttribute(srcAttr));
+    return document()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLScriptElement::setSrc(const String &value)
@@ -721,14 +721,14 @@ void HTMLStyleElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
     if (m_sheet)
-        getDocument()->updateStyleSelector();
+        document()->updateStyleSelector();
 }
 
 void HTMLStyleElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
     if (m_sheet)
-        getDocument()->updateStyleSelector();
+        document()->updateStyleSelector();
 }
 
 void HTMLStyleElement::childrenChanged()
@@ -741,24 +741,24 @@ void HTMLStyleElement::childrenChanged()
 
     if (m_sheet) {
         if (static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading())
-            getDocument()->stylesheetLoaded(); // Remove ourselves from the sheet list.
+            document()->stylesheetLoaded(); // Remove ourselves from the sheet list.
         m_sheet = 0;
     }
 
     m_loading = false;
     if ((m_type.isEmpty() || m_type == "text/css") // Type must be empty or CSS
          && (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print"))) {
-        getDocument()->addPendingSheet();
+        document()->addPendingSheet();
         m_loading = true;
         m_sheet = new CSSStyleSheet(this);
-        m_sheet->parseString(text, !getDocument()->inCompatMode());
+        m_sheet->parseString(text, !document()->inCompatMode());
         MediaList *media = new MediaList(m_sheet.get(), m_media);
         m_sheet->setMedia(media);
         m_loading = false;
     }
 
     if (!isLoading() && m_sheet)
-        getDocument()->stylesheetLoaded();
+        document()->stylesheetLoaded();
 }
 
 bool HTMLStyleElement::isLoading() const
@@ -773,7 +773,7 @@ bool HTMLStyleElement::isLoading() const
 void HTMLStyleElement::sheetLoaded()
 {
     if (!isLoading())
-        getDocument()->stylesheetLoaded();
+        document()->stylesheetLoaded();
 }
 
 bool HTMLStyleElement::disabled() const
@@ -820,13 +820,13 @@ HTMLTitleElement::~HTMLTitleElement()
 void HTMLTitleElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-    getDocument()->setTitle(m_title, this);
+    document()->setTitle(m_title, this);
 }
 
 void HTMLTitleElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
-    getDocument()->removeTitle(this);
+    document()->removeTitle(this);
 }
 
 void HTMLTitleElement::childrenChanged()
@@ -837,7 +837,7 @@ void HTMLTitleElement::childrenChanged()
 	if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE)
 	    m_title += c->nodeValue();
     if (inDocument())
-        getDocument()->setTitle(m_title, this);
+        document()->setTitle(m_title, this);
 }
 
 String HTMLTitleElement::text() const
@@ -864,7 +864,7 @@ void HTMLTitleElement::setText(const String &value)
             removeChildren();
         }
     
-        appendChild(getDocument()->createTextNode(value.impl()), ec);
+        appendChild(document()->createTextNode(value.impl()), ec);
     }
 }
 

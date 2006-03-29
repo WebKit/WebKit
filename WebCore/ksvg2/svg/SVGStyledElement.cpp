@@ -118,7 +118,7 @@ void SVGStyledElement::attributeChanged(Attribute *attr, bool preserveDecls)
 
 RenderCanvas *SVGStyledElement::canvas() const
 {
-    return static_cast<RenderCanvas *>(getDocument()->renderer());
+    return static_cast<RenderCanvas *>(document()->renderer());
 }
 
 void SVGStyledElement::updateCanvasItem()

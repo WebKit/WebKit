@@ -104,7 +104,7 @@ Node* NodeList::recursiveItem(unsigned offset, Node* start) const
 Node* NodeList::itemById(const AtomicString& elementId) const
 {
     if (rootNode->isDocumentNode() || rootNode->inDocument()) {
-        Node* node = rootNode->getDocument()->getElementById(elementId);
+        Node* node = rootNode->document()->getElementById(elementId);
 
         if (!node || !nodeMatches(node))
             return 0;
