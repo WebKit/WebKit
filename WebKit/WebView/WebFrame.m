@@ -651,6 +651,14 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [[self _bridge] didNotOpenURL:failedURL pageCache:pageCache];
         // We're assuming that WebCore invalidates its pageCache state in didNotOpen:pageCache:
         [[_private currentItem] setHasPageCache:NO];
+        
+        // Call -_clientRedirectCancelledOrFinished: here so that the frame load delegate is notified that the redirect's
+        // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
+        // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are definitely
+        // not going to use this provisional resource, as it was cancelled, notify the frame load delegate that the redirect
+        // has ended.
+        if (_private->sentRedirectNotification)
+            [self _clientRedirectCancelledOrFinished:NO];
     }
 }
 

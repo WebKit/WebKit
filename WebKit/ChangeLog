@@ -1,3 +1,21 @@
+2006-03-29  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4495316> REGRESSION (420+): After page has loaded, spinning progress indicator is displayed on
+        tab at versiontracker.com
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _receivedMainResourceError:]):
+        Call -_clientRedirectCancelledOrFinished: here so that the frame load delegate is notified that the redirect's
+        status has changed, if there was a redirect.  The frame load delegate may have saved some state about
+        the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are definitely
+        not going to use this provisional resource, as it was cancelled, notify the frame load delegate that the redirect
+        has ended.
+        The fix for 4432562 was similar to this, but only took care of the case where the redirect load was actually
+        committed to the frame.  The new call to -_clientRedirectCancelledOrFinished: handles the case where the redirect
+        load was successful, but was not committed.  This happens with downloads.
+        
 2006-03-29  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
