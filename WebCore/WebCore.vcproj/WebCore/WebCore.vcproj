@@ -359,7 +359,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSKeyboardEvent.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSMutationEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSMouseEvent.cpp"
 				>
 			</File>
 			<File
@@ -376,6 +384,10 @@
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSUIEvent.cpp"
 				>
 			</File>
 			<File

@@ -1,3 +1,9 @@
+2006-03-29  Darin Adler  <darin@apple.com>
+
+        - a quick cut at fixing the windows build
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added a few recently-added files.
+
 2006-03-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
