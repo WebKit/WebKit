@@ -231,7 +231,7 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:NO],   WebKitRespectStandardStyleKeyEquivalentsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowsURLsInToolTipsPreferenceKey,
         @"1",                           WebKitPDFDisplayModePreferenceKey,
-        @"1.0",                         WebKitPDFScaleFactorPreferenceKey,
+        @"0",                           WebKitPDFScaleFactorPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above

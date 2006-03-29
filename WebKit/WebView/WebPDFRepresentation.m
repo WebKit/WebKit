@@ -35,7 +35,6 @@
 #import <WebKit/WebPDFView.h>
 
 #import <PDFKit/PDFDocument.h>
-#import <PDFKit/PDFView.h>
 
 @implementation WebPDFRepresentation
 
@@ -121,7 +120,7 @@
 
     WebPDFView *view = (WebPDFView *)[[[dataSource webFrame] frameView] documentView];
     PDFDocument *doc = [[[[self class] PDFDocumentClass] alloc] initWithData:data];
-    [[view PDFSubview] setDocument:doc];
+    [view setPDFDocument:doc];
     [doc release];
 }
 

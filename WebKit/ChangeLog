@@ -1,3 +1,41 @@
+2006-03-29  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - fixed these bugs:
+        <rdar://problem/4483806> REGRESSION (417.8-TOT): PDFs don't scale correctly with auto-size (5356)
+        <rdar://problem/3874856> Safari PDF display should be full width by default rather than 
+        sized to show the entire page
+
+        * WebView/WebPDFRepresentation.m:
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]):
+        Let the WebPDFView handle setting the document, because that's the best time to apply
+        the sizing-related preferences.
+        
+        * WebView/WebPDFView.h:
+        eliminated firstLayoutDone ivar and -PDFSubview public method; added -setPDFDocument:
+        
+        * WebView/WebPDFView.m:
+        (-[WebPDFView initWithFrame:]):
+        eliminate use of obsolete firstLayoutDone ivar
+        (-[WebPDFView _applyPDFDefaults]):
+        renamed from _readPDFDefaults for clarity
+        (-[WebPDFView layout]):
+        removed code that applied the preferences here. This was too early to handle auto-sizing correctly,
+        because -layout can be called before the document exists, and calling setAutoSize:YES at that
+        point confuses PDFView into setting the scale factor to 20 (the maximum).
+        (-[WebPDFView setPDFDocument:]):
+        New method, does what WebPDFRepresentation used to do and also applies the preferences here.
+        This is a good place to apply them because the document is guaranteed to now exist (of course).
+        (-[WebPDFView PDFSubview]):
+        Moved this into a new FileInternal category because it's still needed by another class in
+        this file but no longer needs to be public.
+        
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        Change WebKitPDFScaleFactorPreferenceKey to 0, which represents auto-size. This fixes 3874856,
+        but wasn't feasible until 4483806 was fixed.
+
 2006-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

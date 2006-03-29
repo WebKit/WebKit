@@ -51,6 +51,10 @@
 // QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
 // Even if that was fixed, we'd have to tweak compile options to include QuartzPrivate.h. (3957839)
 
+@interface WebPDFView (FileInternal)
+- (PDFView *)PDFSubview;
+@end;
+
 // This is a class that forwards everything it gets to a target and updates the PDF viewing prefs after
 // each of those messages.  We use it as a way to hook all the places that the PDF viewing attrs change.
 @interface PDFPrefUpdatingProxy : NSProxy {
@@ -111,7 +115,6 @@ NSString *_NSPathForSystemFramework(NSString *framework);
         [self addSubview:PDFSubview];
         [PDFSubview setDelegate:self];
         written = NO;
-        firstLayoutDone = NO;
         // Messaging this proxy is the same as messaging PDFSubview, with the side effect that the
         // PDF viewing defaults are updated afterwards
         PDFSubviewProxy = (PDFView *)[[PDFPrefUpdatingProxy alloc] initWithView:self];
@@ -126,11 +129,6 @@ NSString *_NSPathForSystemFramework(NSString *framework);
     [path release];
     [PDFSubviewProxy release];
     [super dealloc];
-}
-
-- (PDFView *)PDFSubview
-{
-    return PDFSubview;
 }
 
 - (void)copy:(id)sender
@@ -364,7 +362,7 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     [self setFrame:[[self superview] frame]];
 }
 
-- (void)_readPDFDefaults
+- (void)_applyPDFDefaults
 {
     // Set up default viewing params
     WebPreferences *prefs = [[self _webView] preferences];
@@ -388,15 +386,14 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
 
 - (void)layout
 {
-    if (!firstLayoutDone) {
-        firstLayoutDone = YES;
-        // Be wary of moving the point where we do this restore.  PDFKit apparently has some ordering issues
-        // as to when this is done.  For example, if you do it in this class' init method, it sometimes has no
-        // effect.  When I tried it in setDataSource:, the window got in a weird state where no more drawing
-        // ever occurred, but the app was not hung.
-        [self _readPDFDefaults];
-    }
 }
+
+- (void)setPDFDocument:(PDFDocument *)doc
+{
+    [PDFSubview setDocument:doc];
+    [self _applyPDFDefaults];
+}
+
 
 - (void)_trackFirstResponder
 {
@@ -909,6 +906,15 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 
 
 @end
+
+@implementation WebPDFView (FileInternal)
+
+- (PDFView *)PDFSubview
+{
+    return PDFSubview;
+}
+
+@end;
 
 @implementation PDFPrefUpdatingProxy
 

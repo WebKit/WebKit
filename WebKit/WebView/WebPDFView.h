@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@class PDFDocument;
 @class PDFView;
 @class WebDataSource;
 @class PDFPrefUpdatingProxy;
@@ -42,12 +43,12 @@
     NSString *path;
     id trackedFirstResponder;
     BOOL written;
-    BOOL firstLayoutDone;
     PDFView *PDFSubviewProxy;
 }
 
 + (NSArray *)supportedMIMETypes;
 + (NSBundle *)PDFKitBundle;
-- (PDFView *)PDFSubview;
+
+- (void)setPDFDocument:(PDFDocument *)doc;
 
 @end
