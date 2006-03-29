@@ -1,35 +1,5 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,39) size 784x522 [color=#555555]
-      RenderBlock {DIV} at (39,0) size 706x123
-        RenderBlock {DIV} at (0,0) size 706x22 [color=#000000]
-          RenderText {TEXT} at (0,0) size 69x22
-            text run at (0,0) width 69: "testname"
-        RenderBlock {BLOCKQUOTE} at (40,38) size 626x18
-          RenderText {TEXT} at (0,0) size 265x18
-            text run at (0,0) width 265: "testdescription \x{2014} from file \x{201C}testfilename\x{201D}."
-        RenderTable {TABLE} at (0,72) size 706x51 [color=#222222] [bgcolor=#F5F5F5] [border: (1px solid #222222)]
-          RenderTableSection {THEAD} at (1,1) size 0x24
-            RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TH} at (0,0) size 212x24 [bgcolor=#CCCCCC] [r=0 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (63,3) size 86x18
-                  text run at (63,3) width 86: "MIME Type"
-              RenderTableCell {TH} at (212,0) size 352x24 [bgcolor=#CCCCCC] [border: none (1px solid #AAAAAA)] [r=0 c=1 rs=1 cs=1]
-                RenderText {TEXT} at (137,3) size 78x18
-                  text run at (137,3) width 78: "Description"
-              RenderTableCell {TH} at (564,0) size 140x24 [bgcolor=#CCCCCC] [border: none (1px solid #AAAAAA)] [r=0 c=2 rs=1 cs=1]
-                RenderText {TEXT} at (34,3) size 73x18
-                  text run at (34,3) width 73: "Extensions"
-          RenderTableSection {TBODY} at (1,25) size 0x25
-            RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,0) size 212x25 [border: (1px solid #AAAAAA) none] [r=0 c=0 rs=1 cs=1]
-                RenderText {TEXT} at (3,4) size 48x18
-                  text run at (3,4) width 48: "testtype"
-              RenderTableCell {TD} at (212,0) size 352x25 [border: (1px solid #AAAAAA) none (1px solid #AAAAAA)] [r=0 c=1 rs=1 cs=1]
-                RenderText {TEXT} at (4,4) size 90x18
-                  text run at (4,4) width 90: "testdescription"
-              RenderTableCell {TD} at (564,0) size 140x25 [border: (1px solid #AAAAAA) none (1px solid #AAAAAA)] [r=0 c=2 rs=1 cs=1]
-                RenderText {TEXT} at (35,4) size 70x18
-                  text run at (35,4) width 70: "testsuffixes"
+testname
+testdescription — from file “testfilename”.
+MIME Type	Description	Extensions
+testtype	testdescription	testsuffixes
+
