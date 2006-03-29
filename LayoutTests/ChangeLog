@@ -1,3 +1,15 @@
+2006-03-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        Test cases for Element.contains, including testing fix for
+        <rdar://problem/4405353> JavaScript flickers popups onmouseover
+
+        * fast/dom/Element/contains-method-expected.txt: Added.
+        * fast/dom/Element/contains-method.html: Added.
+        * fast/dom/Element/resources/contains-method.js: Added.
+        * fast/events/capture-on-target.html:
+
 2006-03-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej

@@ -79,13 +79,14 @@ module core {
         void focus();
         void blur();
 
-        // IE only extension
-        Node insertAdjacentElement(in DOMString position, 
-                                   in Node newAttr)
-            raises(DOMException);
-
         readonly attribute CSSStyleDeclaration style;
 
+        // IE only extensions
+        Node insertAdjacentElement(in DOMString position, 
+                                   in Node newElement)
+            raises(DOMException);
+        
+        boolean contains(in Element element);
     };
 
 }

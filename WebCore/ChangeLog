@@ -1,3 +1,25 @@
+2006-03-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - fixed  <rdar://problem/4454976> repro crash in -[NSTextView(NSSharing) setSelectedRanges:affinity:stillSelecting:] when navigating
+        
+        Also fixed other issues with contains. The problem that caused the bug was:
+        - contains should return true for the element itself, unlike isAncestor
+        
+        Other problems I fixed:
+        - contains shouldn't be present on non-Element nodes
+        - contains should return false when passed a non-Element node
+        - contains should return false when passed a non-Node
+
+        * bindings/scripts/CodeGeneratorJS.pm: Handle Element as a parameter.
+        * dom/Element.cpp:
+        (WebCore::Element::contains): Added new implementation.
+        * dom/Element.h: Added prototype for contains.
+        * dom/Element.idl: Added IDL declaration for contains.
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction): Added old wrong contains().
+
 2006-03-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej

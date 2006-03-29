@@ -87,8 +87,6 @@ namespace KJS {
   isDefaultNamespace    DOMNode::IsDefaultNamespace DontDelete|Function 1
   lookupNamespaceURI    DOMNode::LookupNamespaceURI DontDelete|Function 1
   lookupPrefix  DOMNode::LookupPrefix   DontDelete|Function 1
-# IE extension
-  contains      DOMNode::Contains       DontDelete|Function 1
 # "DOM level 0" (from Gecko DOM reference; also in WinIE)
   item          DOMNode::Item           DontDelete|Function 1
 @end
@@ -320,13 +318,6 @@ JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
      if (node.replaceChild(toNode(args[0]), toNode(args[1]), exception))
         return args[1];
       return jsNull();
-    case DOMNode::Contains:
-      if (node.isElementNode())
-        if (Node *node0 = toNode(args[0]))
-          return jsBoolean(node.isAncestor(node0));
-      // FIXME: Is there a good reason to return undefined rather than false
-      // when the parameter is not a node? When the object is not an element?
-      return jsUndefined();
     case DOMNode::Item:
       return thisObj->get(exec, args[0]->toInt32(exec));
   }

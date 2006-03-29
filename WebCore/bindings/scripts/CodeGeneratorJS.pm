@@ -710,6 +710,7 @@ sub GetNativeType
   } elsif ($type eq "views::AbstractView") {
     return "AbstractView*";
   } elsif ($type eq "Node" or
+           $type eq "Element" or
            $type eq "Attr" or
            $type eq "DocumentType" or
            $type eq "Range") {
@@ -746,6 +747,8 @@ sub TypeCanFailConversion
   } elsif ($type eq "views::AbstractView") {
       return 0;
   } elsif ($type eq "Node") {
+      return 0;
+  } elsif ($type eq "Element") {
       return 0;
   } elsif ($type eq "Attr") {
       $implIncludes{"ExceptionCode.h"} = 1;
@@ -806,6 +809,9 @@ sub JSValueToNative
   } elsif ($type eq "Range") {
       $implIncludes{"JSRange.h"} = 1;
       return "toRange($value)";
+  } elsif ($type eq "Element") {
+    $implIncludes{"kjs_dom.h"} = 1;
+    return "toElement($value)";
   } else {
     die "Don't know how to convert a JS value of type $type."
   }
