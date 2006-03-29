@@ -4024,7 +4024,8 @@ void CSSStyleSelector::mapBackgroundRepeat(BackgroundLayer* layer, CSSValue* val
         return;
     }
     
-    if (!value->isPrimitiveValue()) return;
+    if (!value->isPrimitiveValue())
+        return;
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch(primitiveValue->getIdent()) {
         case CSS_VAL_REPEAT:
@@ -4051,7 +4052,8 @@ void CSSStyleSelector::mapBackgroundXPosition(BackgroundLayer* layer, CSSValue* 
         return;
     }
     
-    if (!value->isPrimitiveValue()) return;
+    if (!value->isPrimitiveValue())
+        return;
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Length l;
     int type = primitiveValue->primitiveType();
@@ -4071,7 +4073,8 @@ void CSSStyleSelector::mapBackgroundYPosition(BackgroundLayer* layer, CSSValue* 
         return;
     }
     
-    if (!value->isPrimitiveValue()) return;
+    if (!value->isPrimitiveValue())
+        return;
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Length l;
     int type = primitiveValue->primitiveType();

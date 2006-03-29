@@ -27,6 +27,8 @@
 #include "Frame.h"
 #include "JSMutationEvent.h"
 #include "JSWheelEvent.h"
+#include "JSMouseEvent.h"
+#include "JSKeyboardEvent.h"
 #include "dom2_eventsimpl.h"
 #include "AbstractView.h"
 #include "html_imageimpl.h"
@@ -369,25 +371,25 @@ KJS_IMPLEMENT_PROTOTYPE("DOMEvent", DOMEventProto, DOMEventProtoFunc)
 DOMEvent::DOMEvent(ExecState *exec, Event *e)
   : m_impl(e), clipboard(0) 
 {
-  setPrototype(DOMEventProto::self(exec));
+    setPrototype(DOMEventProto::self(exec));
 }
 
 DOMEvent::~DOMEvent()
 {
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
+    ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
 // pass marks through to JS objects we hold during garbage collection
-void DOMMouseEvent::mark()
+void DOMEvent::mark()
 {
-    JSObject::mark();
+    DOMObject::mark();
     if (clipboard && !clipboard->marked())
         clipboard->mark();
 }
 
 bool DOMEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticValueSlot<DOMEvent, DOMObject>(exec, &DOMEventTable, this, propertyName, slot);
+    return getStaticValueSlot<DOMEvent, DOMObject>(exec, &DOMEventTable, this, propertyName, slot);
 }
 
 JSValue *DOMEvent::getValueProperty(ExecState *exec, int token) const
@@ -417,36 +419,31 @@ JSValue *DOMEvent::getValueProperty(ExecState *exec, int token) const
   {
     if (event.isClipboardEvent()) {
       ClipboardEvent *impl = static_cast<ClipboardEvent *>(&event);
-      if (!clipboard) {
+      if (!clipboard)
         clipboard = new Clipboard(exec, impl->clipboard());
-      }
       return clipboard;
-    } else {
+    } else
       return jsUndefined();
-    }
   }
   case DataTransfer:
   {
     if (event.isDragEvent()) {
       MouseEvent *impl = static_cast<MouseEvent *>(&event);
-      if (!clipboard) {
+      if (!clipboard)
         clipboard = new Clipboard(exec, impl->clipboard());
-      }
       return clipboard;
-    } else {
+    } else
       return jsUndefined();
-    }
   }
   default:
-    return NULL;
+    return 0;
   }
 }
 
 void DOMEvent::put(ExecState *exec, const Identifier &propertyName,
                       JSValue *value, int attr)
 {
-  lookupPut<DOMEvent, DOMObject>(exec, propertyName, value, attr,
-                                          &DOMEventTable, this);
+    lookupPut<DOMEvent, DOMObject>(exec, propertyName, value, attr, &DOMEventTable, this);
 }
 
 void DOMEvent::putValueProperty(ExecState *exec, int token, JSValue *value, int)
@@ -494,13 +491,13 @@ JSValue *toJS(ExecState *exec, Event *e)
   DOMObject *ret = interp->getDOMObject(e);
   if (!ret) {
     if (e->isKeyboardEvent())
-      ret = new DOMKeyboardEvent(exec, static_cast<KeyboardEvent *>(e));
+      ret = new JSKeyboardEvent(exec, static_cast<KeyboardEvent *>(e));
     else if (e->isMouseEvent())
-      ret = new DOMMouseEvent(exec, static_cast<MouseEvent *>(e));
+      ret = new JSMouseEvent(exec, static_cast<MouseEvent *>(e));
     else if (e->isWheelEvent())
       ret = new JSWheelEvent(exec, static_cast<WheelEvent *>(e));
     else if (e->isUIEvent())
-      ret = new DOMUIEvent(exec, static_cast<UIEvent *>(e));
+      ret = new JSUIEvent(exec, static_cast<UIEvent *>(e));
     else if (e->isMutationEvent())
       ret = new JSMutationEvent(exec, static_cast<MutationEvent *>(e));
     else
@@ -542,273 +539,6 @@ JSValue *EventExceptionConstructor::getValueProperty(ExecState *, int token) con
 JSValue *getEventExceptionConstructor(ExecState *exec)
 {
   return cacheGlobalObject<EventExceptionConstructor>(exec, "[[eventException.constructor]]");
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMUIEvent::info = { "UIEvent", &DOMEvent::info, &DOMUIEventTable, 0 };
-/*
-@begin DOMUIEventTable 8
-  view          DOMUIEvent::View        DontDelete|ReadOnly
-  detail        DOMUIEvent::Detail      DontDelete|ReadOnly
-  keyCode       DOMUIEvent::KeyCode     DontDelete|ReadOnly
-  charCode      DOMUIEvent::CharCode    DontDelete|ReadOnly
-  layerX        DOMUIEvent::LayerX      DontDelete|ReadOnly
-  layerY        DOMUIEvent::LayerY      DontDelete|ReadOnly
-  pageX         DOMUIEvent::PageX       DontDelete|ReadOnly
-  pageY         DOMUIEvent::PageY       DontDelete|ReadOnly
-  which         DOMUIEvent::Which       DontDelete|ReadOnly
-@end
-@begin DOMUIEventProtoTable 1
-  initUIEvent   DOMUIEvent::InitUIEvent DontDelete|Function 5
-@end
-*/
-KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMUIEventProto, DOMEventProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMUIEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMUIEvent", DOMUIEventProto, DOMUIEventProtoFunc)
-
-DOMUIEvent::DOMUIEvent(ExecState *exec, UIEvent *e)
-  : DOMEvent(exec, e)
-{
-  setPrototype(DOMUIEventProto::self(exec));
-}
-
-bool DOMUIEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMUIEvent, DOMEvent>(exec, &DOMUIEventTable, this, propertyName, slot);
-}
-
-JSValue *DOMUIEvent::getValueProperty(ExecState *exec, int token) const
-{
-  UIEvent &event = *static_cast<UIEvent *>(impl());
-  switch (token) {
-  case View:
-    return toJS(exec, event.view());
-  case Detail:
-    return jsNumber(event.detail());
-  case KeyCode:
-    return jsNumber(event.keyCode());
-  case CharCode:
-    return jsNumber(event.charCode());
-  case LayerX:
-    return jsNumber(event.layerX());
-  case LayerY:
-    return jsNumber(event.layerY());
-  case PageX:
-    return jsNumber(event.pageX());
-  case PageY:
-    return jsNumber(event.pageY());
-  case Which:
-    return jsNumber(event.which());
-  default:
-    return jsUndefined();
-  }
-}
-
-JSValue *DOMUIEventProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&DOMUIEvent::info))
-    return throwError(exec, TypeError);
-  UIEvent &uiEvent = *static_cast<UIEvent *>(static_cast<DOMUIEvent *>(thisObj)->impl());
-  switch (id) {
-    case DOMUIEvent::InitUIEvent:
-      uiEvent.initUIEvent(AtomicString(args[0]->toString(exec)),
-                          args[1]->toBoolean(exec),
-                          args[2]->toBoolean(exec),
-                          toAbstractView(args[3]),
-                          args[4]->toInt32(exec));
-      return jsUndefined();
-  }
-  return jsUndefined();
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMMouseEvent::info = { "MouseEvent", &DOMUIEvent::info, &DOMMouseEventTable, 0 };
-
-/*
-@begin DOMMouseEventTable 16
-  screenX       DOMMouseEvent::ScreenX  DontDelete|ReadOnly
-  screenY       DOMMouseEvent::ScreenY  DontDelete|ReadOnly
-  clientX       DOMMouseEvent::ClientX  DontDelete|ReadOnly
-  x             DOMMouseEvent::X        DontDelete|ReadOnly
-  clientY       DOMMouseEvent::ClientY  DontDelete|ReadOnly
-  y             DOMMouseEvent::Y        DontDelete|ReadOnly
-  offsetX       DOMMouseEvent::OffsetX  DontDelete|ReadOnly
-  offsetY       DOMMouseEvent::OffsetY  DontDelete|ReadOnly
-  ctrlKey       DOMMouseEvent::CtrlKey  DontDelete|ReadOnly
-  shiftKey      DOMMouseEvent::ShiftKey DontDelete|ReadOnly
-  altKey        DOMMouseEvent::AltKey   DontDelete|ReadOnly
-  metaKey       DOMMouseEvent::MetaKey  DontDelete|ReadOnly
-  button        DOMMouseEvent::Button   DontDelete|ReadOnly
-  relatedTarget DOMMouseEvent::RelatedTarget DontDelete|ReadOnly
-  fromElement   DOMMouseEvent::FromElement DontDelete|ReadOnly
-  toElement     DOMMouseEvent::ToElement        DontDelete|ReadOnly
-@end
-@begin DOMMouseEventProtoTable 1
-  initMouseEvent        DOMMouseEvent::InitMouseEvent   DontDelete|Function 15
-@end
-*/
-KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMMouseEventProto, DOMUIEventProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMMouseEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMMouseEvent", DOMMouseEventProto, DOMMouseEventProtoFunc)
-
-DOMMouseEvent::DOMMouseEvent(ExecState *exec, MouseEvent *e)
-  : DOMUIEvent(exec, e)
-{
-  setPrototype(DOMMouseEventProto::self(exec));
-}
-
-bool DOMMouseEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMMouseEvent, DOMUIEvent>(exec, &DOMMouseEventTable, this, propertyName, slot);
-}
-
-JSValue *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
-{
-  MouseEvent &event = *static_cast<MouseEvent *>(impl());
-  switch (token) {
-  case ScreenX:
-    return jsNumber(event.screenX());
-  case ScreenY:
-    return jsNumber(event.screenY());
-  case ClientX:
-    return jsNumber(event.clientX());
-  case ClientY:
-    return jsNumber(event.clientY());
-  case OffsetX:
-    return jsNumber(event.offsetX());
-  case OffsetY:
-    return jsNumber(event.offsetY());
-  case CtrlKey:
-    return jsBoolean(event.ctrlKey());
-  case ShiftKey:
-    return jsBoolean(event.shiftKey());
-  case AltKey:
-    return jsBoolean(event.altKey());
-  case MetaKey:
-    return jsBoolean(event.metaKey());
-  case Button:
-    return jsNumber(event.button());
-  case ToElement:
-    return toJS(exec, event.toElement());
-  case FromElement:
-    return toJS(exec, event.fromElement());
-  case RelatedTarget:
-    return toJS(exec, event.relatedTarget());
-  case X:
-    return jsNumber(event.x());
-  case Y:
-    return jsNumber(event.y());
-  default:
-    return NULL;
-  }
-}
-
-JSValue *DOMMouseEventProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&DOMMouseEvent::info))
-    return throwError(exec, TypeError);
-  MouseEvent &mouseEvent = *static_cast<MouseEvent *>(static_cast<DOMMouseEvent *>(thisObj)->impl());
-  switch (id) {
-    case DOMMouseEvent::InitMouseEvent:
-      mouseEvent.initMouseEvent(AtomicString(args[0]->toString(exec)), // typeArg
-                                args[1]->toBoolean(exec), // canBubbleArg
-                                args[2]->toBoolean(exec), // cancelableArg
-                                toAbstractView(args[3]), // viewArg
-                                args[4]->toInt32(exec), // detailArg
-                                args[5]->toInt32(exec), // screenXArg
-                                args[6]->toInt32(exec), // screenYArg
-                                args[7]->toInt32(exec), // clientXArg
-                                args[8]->toInt32(exec), // clientYArg
-                                args[9]->toBoolean(exec), // ctrlKeyArg
-                                args[10]->toBoolean(exec), // altKeyArg
-                                args[11]->toBoolean(exec), // shiftKeyArg
-                                args[12]->toBoolean(exec), // metaKeyArg
-                                args[13]->toInt32(exec), // buttonArg
-                                toNode(args[14])); // relatedTargetArg
-      return jsUndefined();
-  }
-  return jsUndefined();
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMKeyboardEvent::info = { "KeyboardEvent", &DOMUIEvent::info, &DOMKeyboardEventTable, 0 };
-
-/*
-@begin DOMKeyboardEventTable 5
-  keyIdentifier DOMKeyboardEvent::KeyIdentifier DontDelete|ReadOnly
-  keyLocation   DOMKeyboardEvent::KeyLocation   DontDelete|ReadOnly
-  ctrlKey       DOMKeyboardEvent::CtrlKey       DontDelete|ReadOnly
-  shiftKey      DOMKeyboardEvent::ShiftKey      DontDelete|ReadOnly
-  altKey        DOMKeyboardEvent::AltKey        DontDelete|ReadOnly
-  metaKey       DOMKeyboardEvent::MetaKey       DontDelete|ReadOnly
-  altGraphKey   DOMKeyboardEvent::AltGraphKey   DontDelete|ReadOnly
-@end
-@begin DOMKeyboardEventProtoTable 1
-  initKeyboardEvent     DOMKeyboardEvent::InitKeyboardEvent     DontDelete|Function 11
-@end
-*/
-KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMKeyboardEventProto, DOMUIEventProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMKeyboardEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMKeyboardEvent", DOMKeyboardEventProto, DOMKeyboardEventProtoFunc)
-
-DOMKeyboardEvent::DOMKeyboardEvent(ExecState *exec, KeyboardEvent *e)
-  : DOMUIEvent(exec, e)
-{
-  setPrototype(DOMKeyboardEventProto::self(exec));
-}
-
-bool DOMKeyboardEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMKeyboardEvent, DOMUIEvent>(exec, &DOMKeyboardEventTable, this, propertyName, slot);
-}
-
-JSValue *DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
-{
-  KeyboardEvent &event = *static_cast<KeyboardEvent *>(impl());
-  switch (token) {
-  case KeyIdentifier:
-    return jsString(event.keyIdentifier());
-  case KeyLocation:
-    return jsNumber(event.keyLocation());
-  case CtrlKey:
-    return jsBoolean(event.ctrlKey());
-  case ShiftKey:
-    return jsBoolean(event.shiftKey());
-  case AltKey:
-    return jsBoolean(event.altKey());
-  case MetaKey:
-    return jsBoolean(event.metaKey());
-  case AltGraphKey:
-    return jsBoolean(event.altGraphKey());
-  default:
-    return NULL;
-  }
-}
-
-JSValue *DOMKeyboardEventProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&DOMKeyboardEvent::info))
-    return throwError(exec, TypeError);
-  KeyboardEvent &event = *static_cast<KeyboardEvent *>(static_cast<DOMUIEvent *>(thisObj)->impl());
-  switch (id) {
-    case DOMKeyboardEvent::InitKeyboardEvent:
-      event.initKeyboardEvent(AtomicString(args[0]->toString(exec)), // typeArg
-                              args[1]->toBoolean(exec), // canBubbleArg
-                              args[2]->toBoolean(exec), // cancelableArg
-                              toAbstractView(args[3]), // viewArg
-                              args[4]->toString(exec), // keyIdentifier
-                              args[5]->toInt32(exec), // keyLocationArg
-                              args[6]->toBoolean(exec), // ctrlKeyArg
-                              args[7]->toBoolean(exec), // altKeyArg
-                              args[8]->toBoolean(exec), // shiftKeyArg
-                              args[9]->toBoolean(exec), // metaKeyArg
-                              args[10]->toBoolean(exec)); // altGraphKeyArg
-      return jsUndefined();
-  }
-  return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
@@ -856,9 +586,9 @@ JSValue *Clipboard::getValueProperty(ExecState *exec, int token) const
         case Types:
         {
             DeprecatedStringList qTypes = clipboard->types();
-            if (qTypes.isEmpty()) {
+            if (qTypes.isEmpty())
                 return jsNull(); 
-            } else {
+            else {
                 List list;
                 for (DeprecatedStringList::Iterator it = qTypes.begin(); it != qTypes.end(); ++it) {
                     list.append(jsString(UString(*it)));
@@ -906,34 +636,29 @@ JSValue *ClipboardProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, 
             } else if (args.size() == 1) {
                 cb->clipboard->clearData(args[0]->toString(exec));
                 return jsUndefined();
-            } else {
+            } else
                 return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
-            }
         case Clipboard::GetData:
         {
             if (args.size() == 1) {
                 bool success;
                 WebCore::String result = cb->clipboard->getData(args[0]->toString(exec), success);
-                if (success) {
+                if (success)
                     return jsString(result);
-                } else {
+                else
                     return jsUndefined();
-                }
-            } else {
+            } else
                 return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
-            }
         }
         case Clipboard::SetData:
-            if (args.size() == 2) {
+            if (args.size() == 2)
                 return jsBoolean(cb->clipboard->setData(args[0]->toString(exec), args[1]->toString(exec)));
-            } else {
+            else
                 return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
-            }
         case Clipboard::SetDragImage:
         {
-            if (!cb->clipboard->isForDragging()) {
+            if (!cb->clipboard->isForDragging())
                 return jsUndefined();
-            }
 
             if (args.size() != 3)
                 return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");

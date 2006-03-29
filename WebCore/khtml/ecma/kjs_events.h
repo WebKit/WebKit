@@ -123,6 +123,7 @@ namespace KJS {
                // MS IE equivalents
                SrcElement, ReturnValue, CancelBubble, ClipboardData, DataTransfer };
         WebCore::Event *impl() const { return m_impl.get(); }
+        virtual void mark();
     protected:
         RefPtr<WebCore::Event> m_impl;
         mutable Clipboard* clipboard;
@@ -146,44 +147,7 @@ namespace KJS {
     };
 
     JSValue* getEventExceptionConstructor(ExecState*);
-
-    class DOMUIEvent : public DOMEvent {
-    public:
-        DOMUIEvent(ExecState*, WebCore::UIEvent*);
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-        // no put - all read-only
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-        enum { View, Detail, KeyCode, CharCode, LayerX, LayerY, PageX, PageY, Which, InitUIEvent };
-    };
-
-    class DOMMouseEvent : public DOMUIEvent {
-    public:
-        DOMMouseEvent(ExecState*, WebCore::MouseEvent *me);
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-        virtual void mark();
-        // no put - all read-only
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-        enum { ScreenX, ScreenY, ClientX, X, ClientY, Y, OffsetX, OffsetY,
-               CtrlKey, ShiftKey, AltKey,
-               MetaKey, Button, RelatedTarget, FromElement, ToElement,
-               InitMouseEvent };
-    };
-
-    class DOMKeyboardEvent : public DOMUIEvent {
-    public:
-        DOMKeyboardEvent(ExecState*, WebCore::KeyboardEvent *ke);
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-        // no put - all read-only
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-        enum { KeyIdentifier, KeyLocation, CtrlKey, ShiftKey, AltKey, MetaKey, AltGraphKey, InitKeyboardEvent};
-    };
-
+ 
     class Clipboard : public DOMObject {
     friend class ClipboardProtoFunc;
     public:

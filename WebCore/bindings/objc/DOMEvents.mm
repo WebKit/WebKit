@@ -34,11 +34,7 @@
 #import "AbstractView.h"
 #import <kxmlcore/Assertions.h>
 
-using WebCore::Event;
-using WebCore::ExceptionCode;
-using WebCore::MouseEvent;
-using WebCore::MutationEvent;
-using WebCore::UIEvent;
+using namespace WebCore;
 
 ALLOW_DOM_CAST(Event)
 
@@ -74,7 +70,7 @@ ALLOW_DOM_CAST(Event)
     return [self _event]->cancelable();
 }
 
-- (DOMTimeStamp)timeStamp
+- (::DOMTimeStamp)timeStamp
 {
     return [self _event]->timeStamp();
 }
@@ -198,11 +194,14 @@ ALLOW_DOM_CAST(Event)
 
 - (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(int)detailArg :(int)screenXArg :(int)screenYArg :(int)clientX :(int)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg
 {
-    DOMNode *relatedTarget = relatedTargetArg;
+    DOMNode *relatedTargetObjc = relatedTargetArg;
+    Node* relTargetNode = [relatedTargetObjc _node];
+    EventTargetNode* relatedTarget = (relTargetNode && relTargetNode->isEventTargetNode()) ? static_cast<EventTargetNode*>(relTargetNode) : 0;
+    
     [self _mouseEvent]->initMouseEvent(typeArg, canBubbleArg, cancelableArg,
         [viewArg _abstractView], detailArg, screenXArg, screenYArg, clientX, clientY,
         shiftKeyArg, ctrlKeyArg, altKeyArg, metaKeyArg, buttonArg,
-        [relatedTarget _node]);
+        relatedTarget);
 }
 
 @end

@@ -1,3 +1,38 @@
+2006-03-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Switch UIEvent, MouseEvent and KeyboardEvent over to
+        be new auto-generated bindings.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7928
+
+        Updated test: fast/dom/prototype-chain.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMEvents.mm:
+        (-[DOMEvent ::]):
+        (-[DOMMouseEvent initMouseEvent:::::::::::::::]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        * dom/KeyboardEvent.idl: Added.
+        * dom/MouseEvent.idl: Added.
+        * dom/UIEvent.idl: Added.
+        * dom/WheelEvent.idl:
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        * dom/dom2_eventsimpl.h:
+        (WebCore::MouseEvent::relatedTarget):
+        (WebCore::MouseEvent::clipboard):
+        * generate-derived-sources:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::toEventTargetNode):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::toJS):
+        * khtml/ecma/kjs_events.h:
+
 2006-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

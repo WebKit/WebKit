@@ -156,6 +156,9 @@ sub AddIncludesForType
   } elsif ($type eq "HTMLDocument") {
     $implIncludes{"HTMLDocument.h"} = 1;
   } elsif ($type eq "MutationEvent" or
+           $type eq "KeyboardEvent" or
+           $type eq "MouseEvent" or
+           $type eq "UIEvent" or
            $type eq "WheelEvent") {
     $implIncludes{"dom2_eventsimpl.h"} = 1;
   } elsif ($type eq "ProcessingInstruction" or
@@ -713,8 +716,10 @@ sub GetNativeType
     return "${type}*";
   } elsif ($type eq "CompareHow") {
     return "Range::CompareHow";
+  } elsif ($type eq "EventTarget") {
+    return "EventTargetNode*";
   } else {
-    die "Don't know how the native type of $type";
+    die "Don't know the native type of $type";
   }
 }
 
@@ -747,7 +752,9 @@ sub TypeCanFailConversion
       return 1;
   } elsif ($type eq "DocumentType") {
       return 0;
-  } elsif ($type eq "Range") {
+  } elsif ($type eq "EventTarget") {
+      return 0;
+  }  elsif ($type eq "Range") {
       return 0;
   } else {
     die "Don't know whether a JS value can fail conversion to type $type."
@@ -787,7 +794,10 @@ sub JSValueToNative
   } elsif ($type eq "Node") {
     $implIncludes{"kjs_dom.h"} = 1;
     return "toNode($value)";
-  } elsif ($type eq "Attr") {
+  } elsif ($type eq "EventTarget") {
+    $implIncludes{"kjs_dom.h"} = 1;
+    return "toEventTargetNode($value)";
+  }  elsif ($type eq "Attr") {
     $implIncludes{"kjs_dom.h"} = 1;
     return "toAttr($value${maybeOkParam})";
   } elsif ($type eq "DocumentType") {
@@ -840,6 +850,11 @@ sub NativeToJSValue
     $implIncludes{"Node.h"} = 1;
     $implIncludes{"Element.h"} = 1;
     return "toJS(exec, $value)";
+  } elsif ($type eq "EventTarget") {
+    # Add necessary includes
+    $implIncludes{"kjs_dom.h"} = 1;
+    $implIncludes{"EventTargetNode.h"} = 1;
+    return "toJS(exec, $value)";
   } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;
@@ -864,6 +879,9 @@ sub NativeToJSValue
     return "toJS(exec, $value)";
   } elsif ($type eq "Range") {
     $implIncludes{"JSRange.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "views::AbstractView") {
+    $implIncludes{"kjs_views.h"} = 1;
     return "toJS(exec, $value)";
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";

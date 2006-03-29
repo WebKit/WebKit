@@ -330,7 +330,7 @@ MouseEvent::MouseEvent()
 {
 }
 
-MouseEvent::MouseEvent(const AtomicString &eventType,
+MouseEvent::MouseEvent(const AtomicString& eventType,
                                bool canBubbleArg,
                                bool cancelableArg,
                                AbstractView *viewArg,
@@ -344,8 +344,8 @@ MouseEvent::MouseEvent(const AtomicString &eventType,
                                bool shiftKeyArg,
                                bool metaKeyArg,
                                unsigned short buttonArg,
-                               Node *relatedTargetArg,
-                               Clipboard *clipboardArg,
+                               EventTargetNode* relatedTargetArg,
+                               Clipboard* clipboardArg,
                                bool isSimulated)
     : MouseRelatedEvent(eventType, canBubbleArg, cancelableArg, viewArg, detailArg,
         screenXArg, screenYArg, clientXArg, clientYArg,
@@ -361,10 +361,10 @@ MouseEvent::~MouseEvent()
 {
 }
 
-void MouseEvent::initMouseEvent(const AtomicString &typeArg,
+void MouseEvent::initMouseEvent(const AtomicString& typeArg,
                                     bool canBubbleArg,
                                     bool cancelableArg,
-                                    AbstractView *viewArg,
+                                    AbstractView* viewArg,
                                     int detailArg,
                                     int screenXArg,
                                     int screenYArg,
@@ -375,7 +375,7 @@ void MouseEvent::initMouseEvent(const AtomicString &typeArg,
                                     bool shiftKeyArg,
                                     bool metaKeyArg,
                                     unsigned short buttonArg,
-                                    Node *relatedTargetArg)
+                                    EventTargetNode* relatedTargetArg)
 {
     if (dispatched())
         return;

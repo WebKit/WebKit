@@ -19,7 +19,7 @@
 
 module events {
 
-    interface [LegacyParent=KJS::DOMUIEvent] WheelEvent : UIEvent {
+    interface WheelEvent : UIEvent {
 
         readonly attribute boolean altKey;
         readonly attribute long    clientX;

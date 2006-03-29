@@ -1,8 +1,14 @@
+2006-03-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * fast/dom/prototype-chain-expected.txt:
+
 2006-03-25  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by adele.
 
-        Make plug-ins test dump as test.
+        Make plug-ins test dump as text.
 
         * fast/dom/Window/Plug-ins-expected.txt:
         * fast/dom/Window/Plug-ins.html:

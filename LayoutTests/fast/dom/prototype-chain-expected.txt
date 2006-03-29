@@ -30,7 +30,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEvent]
 
-[object DOMUIEvent]
+[object JSUIEvent]
 
 ----- [object MouseEvent] (4 prototypes) -----
 
@@ -38,9 +38,9 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEvent]
 
-[object DOMUIEvent]
+[object JSUIEvent]
 
-[object DOMMouseEvent]
+[object JSMouseEvent]
 
 ----- [object KeyboardEvent] (4 prototypes) -----
 
@@ -48,8 +48,8 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEvent]
 
-[object DOMUIEvent]
+[object JSUIEvent]
 
-[object DOMKeyboardEvent]
+[object JSKeyboardEvent]
 
 

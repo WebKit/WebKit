@@ -1,0 +1,58 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module events {
+
+    interface MouseEvent : UIEvent {
+
+        readonly attribute long             screenX;
+        readonly attribute long             screenY;
+        readonly attribute long             clientX;
+        readonly attribute long             clientY;
+        readonly attribute long             offsetX;
+        readonly attribute long             offsetY;
+        readonly attribute long             x;
+        readonly attribute long             y;
+        readonly attribute boolean          ctrlKey;
+        readonly attribute boolean          shiftKey;
+        readonly attribute boolean          altKey;
+        readonly attribute boolean          metaKey;
+        readonly attribute unsigned short   button;
+        readonly attribute EventTarget      relatedTarget;
+        readonly attribute Node             fromElement;
+        readonly attribute Node             toElement;
+        
+        void               initMouseEvent(in AtomicString typeArg, 
+                                          in boolean canBubbleArg, 
+                                          in boolean cancelableArg, 
+                                          in views::AbstractView viewArg, 
+                                          in long detailArg, 
+                                          in long screenXArg, 
+                                          in long screenYArg, 
+                                          in long clientXArg, 
+                                          in long clientYArg, 
+                                          in boolean ctrlKeyArg, 
+                                          in boolean altKeyArg, 
+                                          in boolean shiftKeyArg, 
+                                          in boolean metaKeyArg, 
+                                          in unsigned short buttonArg, 
+                                          in EventTarget relatedTargetArg);
+    };
+
+}

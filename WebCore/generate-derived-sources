@@ -232,6 +232,15 @@ if [ dom/MutationEvent.idl -nt "$DerivedSourcesDir/JSMutationEvent.h" -o \
   perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/MutationEvent.idl
 fi
 
+if [ dom/UIEvent.idl -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
+     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
+     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
+     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
+     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
+     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSUIEvent.h" ]; then
+  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/UIEvent.idl
+fi
+
 if [ dom/Notation.idl -nt "$DerivedSourcesDir/JSNotation.h" -o \
      bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSNotation.h" -o \
      bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSNotation.h" -o \
@@ -268,13 +277,22 @@ if [ dom/Text.idl -nt "$DerivedSourcesDir/JSText.h" -o \
   perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/Text.idl
 fi
 
-if [ dom/WheelEvent.idl -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSWheelEvent.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/WheelEvent.idl
+if [ dom/KeyboardEvent.idl -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
+     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
+     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
+     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
+     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
+     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSKeyboardEvent.h" ]; then
+  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/KeyboardEvent.idl
+fi
+
+if [ dom/MouseEvent.idl -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
+     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
+     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
+     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
+     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
+     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSMouseEvent.h" ]; then
+  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/MouseEvent.idl
 fi
 
 if [ dom/WheelEvent.idl -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
