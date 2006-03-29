@@ -1,3 +1,9 @@
+2006-03-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * Scripts/check-for-global-initializers: remove svg exceptions.
+
 2006-03-28  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

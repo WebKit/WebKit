@@ -94,10 +94,6 @@ for my $file (sort @files) {
             next if $shortName eq "FastMalloc.o";
         }
         if ($target eq "WebCore") {
-            next if $shortName eq "KCanvasFilterQuartz.o";
-            next if $shortName eq "SVGAngle.o";
-            next if $shortName eq "SVGColor.o";
-            next if $shortName eq "SVGLength.o";
             next if $shortName eq "StringImpl.o";
         }
 

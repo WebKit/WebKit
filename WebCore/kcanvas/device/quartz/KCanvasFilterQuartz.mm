@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-static DeprecatedString KCPreviousFilterOutputName = "__previousOutput__";
+static const char* const KCPreviousFilterOutputName = "__previousOutput__";
 
 static inline CIColor *ciColor(const Color &c)
 {

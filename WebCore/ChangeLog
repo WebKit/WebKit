@@ -2,6 +2,17 @@
 
         Reviewed by darin.
 
+        Remove global initializers.
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        * ksvg2/svg/SVGAngle.cpp:
+        * ksvg2/svg/SVGColor.cpp:
+        * ksvg2/svg/SVGLength.cpp:
+
+2006-03-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         Switch UIEvent, MouseEvent and KeyboardEvent over to
         be new auto-generated bindings.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7928

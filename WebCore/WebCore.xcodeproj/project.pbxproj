@@ -574,6 +574,12 @@
 		A823A75C09B6E53900B60641 /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A823A75B09B6E53900B60641 /* GraphicsContext.cpp */; };
 		A83C81A3091189B9009BF4A7 /* JSXSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = A83C819F091189B9009BF4A7 /* JSXSLTProcessor.h */; };
 		A83C81A4091189B9009BF4A7 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83C81A0091189B9009BF4A7 /* JSXSLTProcessor.cpp */; };
+		A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629C909DA2B47009633A5 /* JSUIEvent.h */; };
+		A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */; };
+		A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CB09DA2B47009633A5 /* JSMouseEvent.h */; };
+		A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */; };
+		A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */; };
+		A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */; };
 		A88AD3860952486D001DD196 /* KRenderingDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB54089701F700BA5114 /* KRenderingDevice.cpp */; };
 		A88AD3870952486D001DD196 /* KRenderingDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB55089701F700BA5114 /* KRenderingDevice.h */; };
 		A88AD3880952486D001DD196 /* KRenderingFillPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB59089701F700BA5114 /* KRenderingFillPainter.cpp */; };
@@ -1755,6 +1761,12 @@
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A85D7A8C0879EC64006A9172 /* KWQWMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQWMatrix.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQWMatrix.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A86629C909DA2B47009633A5 /* JSUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSUIEvent.h; sourceTree = "<group>"; };
+		A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEvent.cpp; sourceTree = "<group>"; };
+		A86629CB09DA2B47009633A5 /* JSMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMouseEvent.h; sourceTree = "<group>"; };
+		A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEvent.cpp; sourceTree = "<group>"; };
+		A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSKeyboardEvent.h; sourceTree = "<group>"; };
+		A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyboardEvent.cpp; sourceTree = "<group>"; };
 		A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGNamesWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElementFactoryWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283C09308C1C00B6D461 /* kdom.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kdom.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2589,22 +2601,46 @@
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				656581AC09D14EE6000E61D7 /* CharsetData.cpp */,
+				656581AD09D14EE6000E61D7 /* ColorData.c */,
+				6565814409D13043000E61D7 /* CSSGrammar.cpp */,
+				650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */,
+				656580ED09D12B20000E61D7 /* CSSPropertyNames.c */,
+				656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */,
+				656580EF09D12B20000E61D7 /* CSSPropertyNames.h */,
+				656580F009D12B20000E61D7 /* CSSPropertyNames.in */,
+				656580F109D12B20000E61D7 /* CSSPropertyNames.strip */,
+				6565814609D13043000E61D7 /* CSSValueKeywords.c */,
+				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
+				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
+				6565814909D13043000E61D7 /* CSSValueKeywords.in */,
+				6565814A09D13043000E61D7 /* CSSValueKeywords.strip */,
+				6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */,
+				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
+				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
+				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */,
 				65DF323409D1DE65000BE325 /* JSCanvasGradient.h */,
 				65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */,
 				65DF323609D1DE65000BE325 /* JSCanvasPattern.h */,
 				65DF323709D1DE65000BE325 /* JSCanvasRenderingContext2D.cpp */,
 				65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */,
-				65DF322D09D1DDBC000BE325 /* JSEntity.cpp */,
-				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
+				656581D509D1508D000E61D7 /* JSCanvasRenderingContext2DBaseTable.cpp */,
 				65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */,
 				65DF31E009D1CC60000BE325 /* JSCharacterData.h */,
 				65DF31E109D1CC60000BE325 /* JSDocumentType.cpp */,
 				65DF31E209D1CC60000BE325 /* JSDocumentType.h */,
 				65DF31E309D1CC60000BE325 /* JSDOMImplementation.cpp */,
 				65DF31E409D1CC60000BE325 /* JSDOMImplementation.h */,
+				656581D609D1508D000E61D7 /* JSDOMParser.lut.h */,
 				65DF31E509D1CC60000BE325 /* JSElement.cpp */,
 				65DF31E609D1CC60000BE325 /* JSElement.h */,
+				65DF322D09D1DDBC000BE325 /* JSEntity.cpp */,
+				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
+				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
+				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
+				A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */,
+				A86629CB09DA2B47009633A5 /* JSMouseEvent.h */,
 				65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */,
 				65DF31E809D1CC60000BE325 /* JSMutationEvent.h */,
 				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
@@ -2615,23 +2651,10 @@
 				65DF31EE09D1CC60000BE325 /* JSRange.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
+				A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */,
+				A86629C909DA2B47009633A5 /* JSUIEvent.h */,
 				65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */,
 				65DF31F209D1CC60000BE325 /* JSWheelEvent.h */,
-				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
-				65DF31D909D1C123000BE325 /* JSAttr.h */,
-				650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */,
-				6565829209D157FA000E61D7 /* WebCore */,
-				656581AC09D14EE6000E61D7 /* CharsetData.cpp */,
-				656581AD09D14EE6000E61D7 /* ColorData.c */,
-				656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */,
-				656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */,
-				6565814409D13043000E61D7 /* CSSGrammar.cpp */,
-				6565820D09D15111000E61D7 /* ksvgcssvalues.c */,
-				6565820E09D15111000E61D7 /* ksvgcssvalues.gperf */,
-				6565820F09D15111000E61D7 /* ksvgcssvalues.h */,
-				6565821009D15111000E61D7 /* ksvgcssvalues.in */,
-				656581D509D1508D000E61D7 /* JSCanvasRenderingContext2DBaseTable.cpp */,
-				656581D609D1508D000E61D7 /* JSDOMParser.lut.h */,
 				656581D709D1508D000E61D7 /* JSXMLHttpRequest.lut.h */,
 				656581D809D1508D000E61D7 /* JSXMLSerializer.lut.h */,
 				656581D909D1508D000E61D7 /* JSXSLTProcessor.lut.h */,
@@ -2647,25 +2670,20 @@
 				656581E309D1508D000E61D7 /* ksvgcssproperties.gperf */,
 				656581E409D1508D000E61D7 /* ksvgcssproperties.h */,
 				656581E509D1508D000E61D7 /* ksvgcssproperties.in */,
+				6565820D09D15111000E61D7 /* ksvgcssvalues.c */,
+				6565820E09D15111000E61D7 /* ksvgcssvalues.gperf */,
+				6565820F09D15111000E61D7 /* ksvgcssvalues.h */,
+				6565821009D15111000E61D7 /* ksvgcssvalues.in */,
 				656581E609D1508D000E61D7 /* SVGElementFactory.cpp */,
 				656581E709D1508D000E61D7 /* SVGElementFactory.h */,
 				656581E809D1508D000E61D7 /* SVGNames.cpp */,
 				656581E909D1508D000E61D7 /* SVGNames.h */,
+				6565814C09D13043000E61D7 /* tokenizer.cpp */,
+				656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */,
+				656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */,
+				6565829209D157FA000E61D7 /* WebCore */,
 				656581EA09D1508D000E61D7 /* XLinkNames.cpp */,
 				656581EB09D1508D000E61D7 /* XLinkNames.h */,
-				6565814609D13043000E61D7 /* CSSValueKeywords.c */,
-				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
-				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
-				6565814C09D13043000E61D7 /* tokenizer.cpp */,
-				6565814909D13043000E61D7 /* CSSValueKeywords.in */,
-				6565814A09D13043000E61D7 /* CSSValueKeywords.strip */,
-				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
-				6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */,
-				656580ED09D12B20000E61D7 /* CSSPropertyNames.c */,
-				656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */,
-				656580EF09D12B20000E61D7 /* CSSPropertyNames.h */,
-				656580F009D12B20000E61D7 /* CSSPropertyNames.in */,
-				656580F109D12B20000E61D7 /* CSSPropertyNames.strip */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebCore;
@@ -4782,6 +4800,9 @@
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */,
+				A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */,
+				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
+				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5489,6 +5510,9 @@
 				A8C4A80A09D563270003AC8D /* CSSMappedAttributeDeclaration.cpp in Sources */,
 				A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */,
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
+				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
+				A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */,
+				A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -42,14 +42,14 @@ using namespace WebCore;
 using namespace std;
 
 // keep track of textual description of the unit type
-DeprecatedString UnitText[] =
+static const char* UnitText[] =
 {
-    DeprecatedString::fromLatin1(""), DeprecatedString::fromLatin1(""),
-    DeprecatedString::fromLatin1("%"), DeprecatedString::fromLatin1("em"),
-    DeprecatedString::fromLatin1("ex"), DeprecatedString::fromLatin1("px"),
-    DeprecatedString::fromLatin1("cm"), DeprecatedString::fromLatin1("mm"),
-    DeprecatedString::fromLatin1("in"), DeprecatedString::fromLatin1("pt"),
-    DeprecatedString::fromLatin1("pc")
+    "", "",
+    "%", "em",
+    "ex", "px",
+    "cm", "mm",
+    "in", "pt",
+    "pc"
 };
 
 SVGLength::SVGLength(const SVGStyledElement *context, LengthMode mode, const SVGElement *viewport) : Shared<SVGLength>()
