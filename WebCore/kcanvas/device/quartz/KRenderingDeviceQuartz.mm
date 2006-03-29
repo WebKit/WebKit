@@ -25,23 +25,22 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
-#import "KCanvasMaskerQuartz.h"
-#import "KCanvasResourcesQuartz.h"
+
+#import "FoundationExtras.h"
 #import "KCanvasFilterQuartz.h"
-#import "KRenderingPaintServerQuartz.h"
-#import "QuartzSupport.h"
-
-#import "kcanvas/KCanvas.h"
-#import "KCanvasMatrix.h"
 #import "KCanvasItemQuartz.h"
+#import "KCanvasMaskerQuartz.h"
+#import "KCanvasMatrix.h"
+#import "KCanvasPathQuartz.h"
+#import "KCanvasResourcesQuartz.h"
 #import "KRenderingFillPainter.h"
+#import "KRenderingPaintServerQuartz.h"
 #import "KRenderingStrokePainter.h"
-
-#import <AppKit/NSGraphicsContext.h>
-
 #import "Logging.h"
+#import "QuartzSupport.h"
+#import "RenderCanvas.h"
+#import <Cocoa/Cocoa.h>
 
 namespace WebCore {
 
@@ -53,7 +52,7 @@ KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef contex
 KRenderingDeviceContextQuartz::~KRenderingDeviceContextQuartz()
 {
     CGContextRelease(m_cgContext);
-    [m_nsGraphicsContext release];
+    KWQRelease(m_nsGraphicsContext);
 }
 
 KCanvasMatrix KRenderingDeviceContextQuartz::concatCTM(const KCanvasMatrix &worldMatrix)
@@ -94,7 +93,7 @@ void KRenderingDeviceContextQuartz::addPath(const KCanvasPath *path)
 NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
 {
     if (!m_nsGraphicsContext && m_cgContext)
-        m_nsGraphicsContext = [[NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:YES] retain];
+        m_nsGraphicsContext = KWQRetain([NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:YES]);
     return m_nsGraphicsContext;
 }
 

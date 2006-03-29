@@ -1,3 +1,39 @@
+2006-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8026
+          A particular animated SVG crashes in filter code
+          <rdar://problem/4494775> A particular animated SVG crashes in filter code
+
+        - fix some code that is not handling references correctly for GC
+
+        Test: svg/custom/empty-merge.svg
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::KCanvasFilterQuartz): Use KWQRetainNSRelease to
+        properly retain a reference to an Objective-C object in a C++ class.
+        (WebCore::KCanvasFilterQuartz::~KCanvasFilterQuartz): Use KWQRelease instead of
+        release.
+        (WebCore::KCanvasFilterQuartz::prepareFilter): Use KWQRetain instead of retain.
+        (WebCore::KCanvasFilterQuartz::applyFilter): Use KWQRelease instead of release.
+        (WebCore::KCanvasFilterQuartz::imageForName): Use objectForKey: instead of
+        valueForKey: on the dictionary to sidestep a bug in valueForKey: on empty strings
+        and because what we're doing with a dictionary here has nothing to do with
+        key value encoding.
+
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceContextQuartz::~KRenderingDeviceContextQuartz):
+        Use KWQRelease instead of release.
+        (WebCore::KRenderingDeviceContextQuartz::nsGraphicsContext): Use KWQRetain
+        instead of retain to properly retain a reference to an Objective-C object
+        in a C++ class.
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::invalidateNativeData): Use CFRelease instead of release.
+        (WebCore::Image::getNSImage): Use KWQRetainNSRelease to properly retain
+        a reference to an Objective-C object in a C++ class.
+
 2006-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

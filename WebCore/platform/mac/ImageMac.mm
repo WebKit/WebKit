@@ -24,15 +24,16 @@
  */
 
 #import "config.h"
-#import <kxmlcore/Vector.h>
-#import "DeprecatedArray.h"
-#import "IntSize.h"
-#import "FloatRect.h"
 #import "Image.h"
+
+#import "DeprecatedArray.h"
+#import "FloatRect.h"
+#import "FoundationExtras.h"
+#import "IntSize.h"
 #import "PDFDocumentImage.h"
 #import "PlatformString.h"
-
 #import "WebCoreImageRendererFactory.h"
+#import <kxmlcore/Vector.h>
 
 namespace WebCore {
 
@@ -71,7 +72,7 @@ void Image::invalidateNativeData()
         return;
 
     if (m_nsImage) {
-        [m_nsImage release];
+        CFRelease(m_nsImage);
         m_nsImage = 0;
     }
 
@@ -194,7 +195,7 @@ NSImage* Image::getNSImage()
     if (!data)
         return 0;
     
-    m_nsImage = [[NSImage alloc] initWithData:(NSData*)data];
+    m_nsImage = KWQRetainNSRelease([[NSImage alloc] initWithData:(NSData*)data]);
     return m_nsImage;
 }
 

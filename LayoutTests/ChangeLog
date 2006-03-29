@@ -1,3 +1,16 @@
+2006-03-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8026
+          A particular animated SVG crashes in filter code
+          <rdar://problem/4494775> A particular animated SVG crashes in filter code
+
+        * svg/custom/empty-merge-expected.checksum: Added.
+        * svg/custom/empty-merge-expected.png: Added.
+        * svg/custom/empty-merge-expected.txt: Added.
+        * svg/custom/empty-merge.svg: Added.
+
 2006-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         - Layout test for <rdar://problem/4477126> TOT REGRESSION: with

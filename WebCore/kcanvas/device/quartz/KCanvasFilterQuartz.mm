@@ -28,13 +28,14 @@
 #if SVG_SUPPORT
 #import "KCanvasFilterQuartz.h"
 
+#import "BlockExceptions.h"
 #import "CachedImage.h"
+#import "FoundationExtras.h"
 #import "Image.h"
 #import "IntRect.h"
 #import "KCanvasMatrix.h"
 #import "KCanvasRenderingStyle.h"
 #import "KRenderingDeviceQuartz.h"
-#import "BlockExceptions.h"
 #import "QuartzSupport.h"
 #import "WKArithmeticFilter.h"
 #import "WKDiffuseLightingFilter.h"
@@ -69,14 +70,16 @@ static inline CIVector *ciVector(FloatPoint point)
     return [CIVector vectorWithX:point.x() Y:point.y()];
 }
 
-KCanvasFilterQuartz::KCanvasFilterQuartz() : m_filterCIContext(0), m_filterCGLayer(0), m_imagesByName(0)
+KCanvasFilterQuartz::KCanvasFilterQuartz() : m_filterCIContext(0), m_filterCGLayer(0)
 {
-    m_imagesByName = [[NSMutableDictionary alloc] init];
+    m_imagesByName = KWQRetainNSRelease([[NSMutableDictionary alloc] init]);
 }
 
 KCanvasFilterQuartz::~KCanvasFilterQuartz()
 {
-    [m_imagesByName release];
+    ASSERT(!m_filterCGLayer);
+    ASSERT(!m_filterCIContext);
+    KWQRelease(m_imagesByName);
 }
 
 void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
@@ -93,7 +96,7 @@ void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
     if (useSoftware)
         contextOptions = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], kCIContextUseSoftwareRenderer, nil];
     
-    m_filterCIContext = [[CIContext contextWithCGContext:cgContext options:contextOptions] retain];
+    m_filterCIContext = KWQRetain([CIContext contextWithCGContext:cgContext options:contextOptions]);
     m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
     
     KRenderingDeviceContext *filterContext = new KRenderingDeviceContextQuartz(CGLayerGetContext(m_filterCGLayer));
@@ -130,7 +133,10 @@ void KCanvasFilterQuartz::applyFilter(const FloatRect &bbox)
     }
     
     CGLayerRelease(m_filterCGLayer);
-    [m_filterCIContext release];
+    m_filterCGLayer = 0;
+
+    KWQRelease(m_filterCIContext);
+    m_filterCIContext = 0;
 }
 
 NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
@@ -153,7 +159,7 @@ NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
 
 CIImage *KCanvasFilterQuartz::imageForName(const DeprecatedString& name) const
 {
-    return [m_imagesByName valueForKey:name.getNSString()];
+    return [m_imagesByName objectForKey:name.getNSString()];
 }
 
 void KCanvasFilterQuartz::setImageForName(CIImage *image, const DeprecatedString &name)

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+              "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="7.5cm" height="5cm" viewBox="0 0 100 100"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <title>TestCase for empty feMerge component</title>
+  <defs>
+    <filter id="MyFilter" filterUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <feMerge>
+        <feMergeNode/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect x="1" y="1" width="100" height="100" fill="#888888" stroke="blue" />
+  <g filter="url(#MyFilter)" >
+    <rect fill="green" stroke="blue" x="0" y="0" width="100" height="100"/>
+  </g>
+</svg>
