@@ -1,3 +1,22 @@
+2006-03-28  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4454976> repro crash in -[NSTextView(NSSharing) setSelectedRanges:affinity:stillSelecting:] when navigating
+        to another page while selecting inside textarea inside iframe
+
+        * kwq/WebCoreTextArea.mm:
+        (-[WebCoreTextArea mouseDown:]):
+        Guard super's -mouseDown: with calls to Widget::beforeMouseDown() and Widget::afterMouseDown().
+        Other widgets do this to protect against being removed from the page and deallocated while handling
+        mouse down events.
+        (-[WebCoreTextView mouseDown:]):
+        ditto
+
+        * manual-tests/textarea-iframe-navigation.html: Added.
+        * manual-tests/textarea-iframe-navigation2.html: Added.
+        Manual test case for this fix.
+
 2006-03-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

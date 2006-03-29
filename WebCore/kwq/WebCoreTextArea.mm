@@ -687,7 +687,9 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
         }
     }
     
+    Widget::beforeMouseDown(self);
     [super mouseDown:event];
+    Widget::afterMouseDown(self);
 }
 
 - (void)drawRect:(NSRect)rect
@@ -1033,7 +1035,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (disabled)
         return;
     
-    if ([[self _enclosingTextArea] _textViewShouldHandleResizing]) {
+    WebCoreTextArea *enclosingTextArea = [self _enclosingTextArea];
+    if ([enclosingTextArea _textViewShouldHandleResizing]) {
         NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
         // FIXME Radar 4118599: With this "bottom right corner" design, we might want to distinguish between a click in text
         // and a drag-to-resize. This code currently always does the drag-to-resize behavior.
@@ -1043,7 +1046,10 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         }
     }
     
+    Widget::beforeMouseDown(enclosingTextArea);
     [super mouseDown:event];
+    Widget::afterMouseDown(enclosingTextArea);
+    
     if (widget)
         widget->sendConsumedMouseUp();
     if (widget && widget->client())
