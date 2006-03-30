@@ -200,6 +200,7 @@ static int calculateScrollDelta(WPARAM wParam, int oldPosition, int pageSize)
         case SB_LINEDOWN: 
             return LINE_SCROLL_SIZE;
         case SB_THUMBPOSITION: 
+        case SB_THUMBTRACK:
             return HIWORD(wParam) - oldPosition; 
     }
     return 0;
