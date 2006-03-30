@@ -1,5 +1,13 @@
 2006-03-29  Adele Peterson  <adele@apple.com>
 
+        Justin pointed out that this test should use an old-style form element,
+        so I changed the test to use <input type="password">.
+
+        * fast/events/event-sender-mouse-click-expected.txt:
+        * fast/events/event-sender-mouse-click.html:
+
+2006-03-29  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Updated tests for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6986

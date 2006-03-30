@@ -1,5 +1,4 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV to 0 of DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+
 Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7583 DRT hangs when doing eventSender.mouseDown on native widgets. This tests eventSender.mouseClick().
 
 Test result: PASS.
