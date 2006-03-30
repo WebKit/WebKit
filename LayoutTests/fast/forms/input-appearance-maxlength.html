@@ -3,9 +3,7 @@
 <script>
 
 function test()
-{
-    document.getElementById('sp').focus();
-    
+{ 
     var res = "";
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
@@ -19,6 +17,7 @@ function test()
     
     document.getElementById('sp').value = "123";
     
+    document.getElementById('sp').focus();
     document.execCommand("InsertText", false, 'abcd');
     document.execCommand("InsertText", false, 'efghi');
     

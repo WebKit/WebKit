@@ -73,6 +73,7 @@ public:
     virtual int tagPriority() const { return 0; }
 
     virtual bool isKeyboardFocusable() const;
+    virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const { return inputType() != IMAGE; }
     virtual void focus();
 

@@ -527,7 +527,7 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintIn
 
     [textField setControlView: nil];
     
-    return true;
+    return false;
 }
 
 void RenderThemeMac::setTextFieldCellState(const RenderObject* o, const IntRect& r)
@@ -539,21 +539,9 @@ void RenderThemeMac::setTextFieldCellState(const RenderObject* o, const IntRect&
 
 void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    // FIXME: If the style has a border, then turn off the aqua appearance.
-    
-    // FIXME: This should be in html4.css when we flip the switch
-    style->setPaddingTop(Length(3, Fixed));
-    style->setPaddingBottom(Length(3, Fixed));
-    style->setPaddingRight(Length(3, Fixed));
-    style->setPaddingLeft(Length(3, Fixed));
-    
-    style->setMarginTop(Length(2, Fixed));
-    style->setMarginBottom(Length(2, Fixed));
-    style->setMarginLeft(Length(2, Fixed));
-    style->setMarginRight(Length(2, Fixed));
-    
-    if (!style->hasBackground())
-        style->setBackgroundColor(Color(Color::white));
+    // Add in intrinsic margins if the font size isn't too small
+    if (style->fontSize() >= 11)
+        addIntrinsicMargins(style, NSRegularControlSize);
 }
 
 }

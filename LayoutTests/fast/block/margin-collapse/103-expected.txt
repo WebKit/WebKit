@@ -29,11 +29,11 @@ layer at (0,0) size 785x1691
             RenderBlock (floating) {SPAN} at (0,26) size 325x20 [color=#333333]
               RenderText {TEXT} at (0,2) size 68x20
                 text run at (0,2) width 68: "Your Name*"
-            RenderLineEdit {INPUT} at (325,26) size 180x19
+            RenderTextField {INPUT} at (325,26) size 180x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderBlock (floating) {SPAN} at (0,47) size 325x20 [color=#333333]
               RenderText {TEXT} at (0,2) size 120x20
                 text run at (0,2) width 120: "Your e-mail address*"
-            RenderLineEdit {INPUT} at (325,47) size 180x19
+            RenderTextField {INPUT} at (325,47) size 180x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderBlock (floating) {SPAN} at (0,68) size 325x20 [color=#333333]
               RenderText {TEXT} at (0,2) size 128x20
                 text run at (0,2) width 128: "Your degree program*"
@@ -145,3 +145,7 @@ layer at (0,0) size 785x1691
           RenderBlock {SPAN} at (0,16) size 600x20 [color=#333333]
             RenderText {TEXT} at (247,2) size 106x20
               text run at (247,2) width 106: "\x{A9}2003 Kevin Davis"
+layer at (440,301) size 174x13
+  RenderBlock {DIV} at (3,3) size 174x13
+layer at (440,322) size 174x13
+  RenderBlock {DIV} at (3,3) size 174x13

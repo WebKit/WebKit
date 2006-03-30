@@ -1,3 +1,130 @@
+2006-03-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updated tests for: http://bugzilla.opendarwin.org/show_bug.cgi?id=6986
+        Switch to use new text field implementation for <input type="text">
+
+        The new text field implementation uses RenderTextFielda instead of RenderLineEdits,
+        and this accounts for many of the changes here.  
+
+        Also, background color and border properties are now dumped as part of the RenderTextField.
+
+        There is also an outstanding bug that affects many tests that make a selection in a text field.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8068
+        Editing delegate should not be notified when selection change involved new text field
+
+        Now that we support box-sizing, we count border and padding when calculating size, so some
+        of the tests that specify border size have different text field sizes.
+
+        * editing/selection/3690703-2-expected.checksum:
+        * editing/selection/3690703-2-expected.png:
+        * editing/selection/3690703-2-expected.txt:
+        * editing/selection/3690703-expected.checksum:
+        * editing/selection/3690703-expected.png:
+        * editing/selection/3690703-expected.txt:
+        * editing/selection/3690719-expected.checksum:
+        * editing/selection/3690719-expected.png:
+        * editing/selection/3690719-expected.txt:
+        * fast/block/float/032-expected.checksum:
+        * fast/block/float/032-expected.png:
+        * fast/block/float/032-expected.txt:
+        * fast/block/margin-collapse/103-expected.txt:
+        * fast/events/div-focus-expected.txt:
+        * fast/events/event-sender-mouse-click-expected.txt:
+        * fast/forms/access-key-expected.txt:
+        * fast/forms/element-by-name-expected.txt:
+        * fast/forms/focus-expected.txt:
+        * fast/forms/form-element-geometry-expected.checksum:
+        * fast/forms/form-element-geometry-expected.png:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/indeterminate-expected.checksum:
+        * fast/forms/indeterminate-expected.png:
+        * fast/forms/input-appearance-bkcolor-expected.checksum:
+        * fast/forms/input-appearance-bkcolor-expected.png:
+        * fast/forms/input-appearance-bkcolor-expected.txt:
+        * fast/forms/input-appearance-default-bkcolor-expected.checksum:
+        * fast/forms/input-appearance-default-bkcolor-expected.png:
+        * fast/forms/input-appearance-default-bkcolor-expected.txt:
+        * fast/forms/input-appearance-disabled-expected.checksum:
+        * fast/forms/input-appearance-disabled-expected.png:
+        * fast/forms/input-appearance-disabled-expected.txt:
+        * fast/forms/input-appearance-focus-expected.checksum:
+        * fast/forms/input-appearance-focus-expected.png:
+        * fast/forms/input-appearance-focus-expected.txt:
+        * fast/forms/input-appearance-maxlength-expected.txt:
+        * fast/forms/input-appearance-maxlength.html:
+        * fast/forms/input-appearance-minWidth-expected.checksum:
+        * fast/forms/input-appearance-minWidth-expected.png:
+        * fast/forms/input-appearance-minWidth-expected.txt:
+        * fast/forms/input-appearance-preventDefault-expected.checksum:
+        * fast/forms/input-appearance-preventDefault-expected.png:
+        * fast/forms/input-appearance-preventDefault-expected.txt:
+        * fast/forms/input-appearance-selection-expected.checksum:
+        * fast/forms/input-appearance-selection-expected.png:
+        * fast/forms/input-appearance-selection-expected.txt:
+        * fast/forms/input-appearance-visibility-expected.checksum:
+        * fast/forms/input-appearance-visibility-expected.png:
+        * fast/forms/input-appearance-visibility-expected.txt:
+        * fast/forms/input-appearance-width-expected.checksum:
+        * fast/forms/input-appearance-width-expected.png:
+        * fast/forms/input-appearance-width-expected.txt:
+        * fast/forms/input-baseline-expected.checksum:
+        * fast/forms/input-baseline-expected.png:
+        * fast/forms/input-baseline-expected.txt:
+        * fast/forms/input-changing-value-expected.txt:
+        * fast/forms/input-value-expected.txt:
+        * fast/forms/input-width-expected.txt:
+        * fast/forms/legend-access-key-expected.txt:
+        * fast/forms/selection-functions-expected.txt:
+        * fast/forms/textfield-focus-out-expected.txt:
+        * fast/replaced/width100percent-expected.checksum:
+        * fast/replaced/width100percent-expected.png:
+        * fast/replaced/width100percent-expected.txt:
+        * fast/table/003-expected.txt:
+        * fast/table/colspanMinWidth-expected.txt:
+        * fast/table/spanOverlapRepaint-expected.txt:
+        * tables/mozilla/bugs/45621-expected.txt:
+        * tables/mozilla/bugs/bug1188-expected.checksum:
+        * tables/mozilla/bugs/bug1188-expected.png:
+        * tables/mozilla/bugs/bug1188-expected.txt:
+        * tables/mozilla/bugs/bug12384-expected.checksum:
+        * tables/mozilla/bugs/bug12384-expected.png:
+        * tables/mozilla/bugs/bug12384-expected.txt:
+        * tables/mozilla/bugs/bug18359-expected.checksum:
+        * tables/mozilla/bugs/bug18359-expected.png:
+        * tables/mozilla/bugs/bug18359-expected.txt:
+        * tables/mozilla/bugs/bug24200-expected.txt:
+        * tables/mozilla/bugs/bug2479-3-expected.txt:
+        * tables/mozilla/bugs/bug2479-4-expected.txt:
+        * tables/mozilla/bugs/bug28928-expected.txt:
+        * tables/mozilla/bugs/bug4382-expected.txt:
+        * tables/mozilla/bugs/bug4527-expected.txt:
+        * tables/mozilla/bugs/bug46368-1-expected.txt:
+        * tables/mozilla/bugs/bug46368-2-expected.txt:
+        * tables/mozilla/bugs/bug51037-expected.txt:
+        * tables/mozilla/bugs/bug55545-expected.checksum:
+        * tables/mozilla/bugs/bug55545-expected.png:
+        * tables/mozilla/bugs/bug55545-expected.txt:
+        * tables/mozilla/bugs/bug59354-expected.txt:
+        * tables/mozilla/bugs/bug7342-expected.checksum:
+        * tables/mozilla/bugs/bug7342-expected.png:
+        * tables/mozilla/bugs/bug7342-expected.txt:
+        * tables/mozilla/bugs/bug96334-expected.checksum:
+        * tables/mozilla/bugs/bug96334-expected.png:
+        * tables/mozilla/bugs/bug96334-expected.txt:
+        * tables/mozilla/bugs/bug99948-expected.txt:
+        * tables/mozilla/dom/tableDom-expected.txt:
+        * tables/mozilla/other/move_row-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug2479-2-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug2479-2-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug2479-2-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug45621-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug45621-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug45621-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+
 2006-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

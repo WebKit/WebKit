@@ -1,5 +1,5 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 This is a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7363. Taking focus away from a text field that no longer had focus was crashing Safari.
 
- 
 Success: finished the test without crashing.
 

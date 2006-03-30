@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             text run at (0,2) width 47: "Search"
         RenderText {TEXT} at (47,2) size 4x18
           text run at (47,2) width 4: " "
-        RenderLineEdit {INPUT} at (53,2) size 134x19
+        RenderTextField {INPUT} at (53,2) size 134x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {TEXT} at (189,2) size 4x18
           text run at (189,2) width 4: " "
         RenderSelect {SELECT} at (195,3) size 77x18
@@ -25,3 +25,5 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x0
       RenderBlock {FORM} at (0,93) size 784x22
         RenderSelect {SELECT} at (2,2) size 230x18
+layer at (64,31) size 128x13
+  RenderBlock {DIV} at (3,3) size 128x13

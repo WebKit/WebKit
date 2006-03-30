@@ -53,7 +53,8 @@ void HTMLTextFieldInnerElement::defaultEventHandler(Event* evt)
             static_cast<HTMLInputElement*>(shadowParentNode())->defaultEventHandler(evt);
 
         if (evt->type() == khtmlEditableContentChangedEvent) {
-            if (shadowParentNode()->renderer()->style()->appearance() == TextFieldAppearance) 
+            // FIXME:  When other text fields switch to the Non-NSView implementation, we may beed to add them here.
+            if (static_cast<HTMLInputElement*>(shadowParentNode())->inputType() == HTMLInputElement::TEXT) 
                 static_cast<RenderTextField*>(shadowParentNode()->renderer())->subtreeHasChanged();
         }
     }

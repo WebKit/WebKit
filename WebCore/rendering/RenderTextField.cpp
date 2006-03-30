@@ -71,6 +71,9 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->setOverflow(OHIDDEN);
     divStyle->setWhiteSpace(NOWRAP);
     divStyle->setUserModify(READ_WRITE);
+    // We're adding this extra pixel of padding to match WinIE.
+    divStyle->setPaddingLeft(Length(1, Fixed));
+    divStyle->setPaddingRight(Length(1, Fixed));
     return divStyle;
 }
 
@@ -95,8 +98,6 @@ void RenderTextField::updateFromElement()
             m_div->setRenderer(divRenderer);
             m_div->setAttached();
             m_div->setInDocument(true);
-            // FIXME:  Address focus and event problems with this shadow DOM.
-            // For example, events should appear to occur on the input element, but must take affect on this div.
             
             RenderStyle* divStyle = createDivStyle(style());
             divRenderer->setStyle(divStyle); 
@@ -105,22 +106,13 @@ void RenderTextField::updateFromElement()
             RenderBlock::addChild(divRenderer);
         }
         
-        Text* text = static_cast<Text*>(m_div->firstChild());
-        if (!text) {
-            // Add text node to DOM tree
-            text = new Text(document(), value.impl());
-            int exception = 0;
-            m_div->appendChild(text, exception);
-        }
-        
         if (!input->valueMatchesRenderer()) {
             String oldText = this->text();
             value.replace(QChar('\\'), backslashAsCurrencySymbol());
             if (value != oldText) {
-                int exception = 0;
-                text->setData(value, exception);
+                ExceptionCode ec = 0;
+                m_div->setInnerText(value, ec);
                 setEdited(false);
-                //FIXME: Update cursor as necessary
             }
             input->setValueMatchesRenderer();
         }
@@ -143,18 +135,17 @@ int RenderTextField::selectionEnd()
 
 void RenderTextField::setSelectionStart(int start)
 {
-    setSelectionRange(start, selectionEnd());
+    setSelectionRange(start, max(start, selectionEnd()));
 }
  
 void RenderTextField::setSelectionEnd(int end)
 {
-    setSelectionRange(selectionStart(), end);
+    setSelectionRange(min(end, selectionStart()), end);
 }
     
 void RenderTextField::select()
 {
-    if (m_div)
-        document()->frame()->selectContentsOfNode(m_div.get());
+    setSelectionRange(0, text().length());
 }
 
 void RenderTextField::setSelectionRange(int start, int end)
@@ -162,15 +153,16 @@ void RenderTextField::setSelectionRange(int start, int end)
     end = max(end, 0);
     start = min(max(start, 0), end);
     
+    document()->updateLayout();
+    
     VisiblePosition startPosition = visiblePositionForIndex(start);
     VisiblePosition endPosition = visiblePositionForIndex(end);
     
     ASSERT(startPosition.isNotNull() && endPosition.isNotNull());
     ASSERT(startPosition.deepEquivalent().node()->rootEditableElement() == m_div && endPosition.deepEquivalent().node()->rootEditableElement() == m_div);
     
-    SelectionController sel = SelectionController(startPosition, endPosition);    
-    if (document()->frame()->shouldChangeSelection(sel))
-        document()->frame()->setSelection(sel);
+    SelectionController sel = SelectionController(startPosition, endPosition);
+    document()->frame()->setSelection(sel, false);
 }
 
 VisiblePosition RenderTextField::visiblePositionForIndex(int index)
@@ -221,7 +213,10 @@ void RenderTextField::calcMinMaxWidth()
     if (size <= 0)
         size = 20;
     
-    m_minWidth = m_maxWidth = style()->font().width("0") * size + paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    QChar ch[1];
+    ch[0] = '0';
+    m_minWidth = m_maxWidth = (int)ceilf(style()->font().floatWidth(ch, 1, 0, 1, 0, 0) * size) + paddingLeft() + paddingRight() + 
+                borderLeft() + borderRight() + m_div->renderer()->paddingLeft() + m_div->renderer()->paddingRight();
     setMinMaxKnown();
 }
 

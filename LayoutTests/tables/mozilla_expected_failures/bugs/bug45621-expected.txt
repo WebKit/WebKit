@@ -1,15 +1,17 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x79
-  RenderBlock {HTML} at (0,0) size 800x79
-    RenderBody {BODY} at (8,8) size 784x63
-      RenderTable {TABLE} at (0,0) size 392x63 [bgcolor=#C0C0C0]
-        RenderTableSection {TBODY} at (0,0) size 0x63
+layer at (0,0) size 800x71
+  RenderBlock {HTML} at (0,0) size 800x71
+    RenderBody {BODY} at (8,8) size 784x55
+      RenderTable {TABLE} at (0,0) size 392x55 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 0x55
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 392x23 [bgcolor=#808080] [r=0 c=0 rs=1 cs=1]
-              RenderLineEdit {INPUT} at (0,2) size 392x19 [bgcolor=#FFC0CB]
+            RenderTableCell {TD} at (0,0) size 392x15 [bgcolor=#808080] [r=0 c=0 rs=1 cs=1]
+              RenderTextField {INPUT} at (0,0) size 392x15 [bgcolor=#FFC0CB]
               RenderText {TEXT} at (0,0) size 0x0
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,23) size 392x40 [bgcolor=#808080] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,15) size 392x40 [bgcolor=#808080] [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 392x40 [bgcolor=#00FFFF]
               RenderText {TEXT} at (0,0) size 0x0
+layer at (9,9) size 390x13
+  RenderBlock {DIV} at (1,1) size 390x13

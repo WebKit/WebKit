@@ -1,3 +1,45 @@
+2006-03-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6986
+        Switch to use new text field implementation for <input type="text">
+
+        * css/html4.css: Added default style info for new text fields.
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::createDivStyle): Added an extra 1px of padding on the left & right to match Win IE & the latest Mozilla.
+        (WebCore::RenderTextField::updateFromElement): Removed some outdated comments.  Cleaned up the way we add text nodes to the div.
+        (WebCore::RenderTextField::setSelectionStart): Tweaked selection code to better match Mozilla behavior.
+        (WebCore::RenderTextField::setSelectionEnd): ditto.
+        (WebCore::RenderTextField::select): Cleaned this up by having it call setSelectionRange.
+        (WebCore::RenderTextField::setSelectionRange): Calls updateLayout now in case this is called in an onload handler, and no other layout has occurred.
+        (WebCore::RenderTextField::calcMinMaxWidth): Use floatWidth to calculate the width of the "0" character.
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::isControlStyled): If the text field's specified border is different from 
+         the default border, then treat the control as styled, so the engine knows to turn off the aqua appearance.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintTextField): return false so the engine knows not to try to draw the border.
+        (WebCore::RenderThemeMac::adjustTextFieldStyle): text field style info has been moved to html4.css. 
+         We also add intrinsic margins here if the font size is large enough.
+        * html/HTMLTextFieldInnerElement.cpp: (WebCore::HTMLTextFieldInnerElement::defaultEventHandler):
+         No longer check for appearance. All text fields with m_type == TEXT will use the new implementation.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isKeyboardFocusable): ditto.
+        (WebCore::HTMLInputElement::focus): ditto.
+        (WebCore::HTMLInputElement::selectionStart): ditto.
+        (WebCore::HTMLInputElement::selectionEnd): ditto.
+        (WebCore::HTMLInputElement::setSelectionStart): ditto.
+        (WebCore::HTMLInputElement::setSelectionEnd): ditto.
+        (WebCore::HTMLInputElement::select): ditto.
+        (WebCore::HTMLInputElement::setSelectionRange): ditto.
+        (WebCore::HTMLInputElement::createRenderer): ditto.
+        (WebCore::HTMLInputElement::defaultEventHandler): ditto.
+        (WebCore::HTMLInputElement::isMouseFocusable): Added.  Old text fields relied on the widget to provide a focus policy.  
+         A text field that is focusable should be mouse focusable, and shouldn't need to ask the base class.
+        * html/HTMLInputElement.h: Added isMouseFocusable.
+        * html/HTMLGenericFormElement.cpp: (WebCore::HTMLGenericFormElement::isMouseFocusable):
+         Removed specific text field code since that is now done in HTMLInputElement::isMouseFocusable.
+        * dom/Document.cpp: (WebCore::Document::clearSelectionIfNeeded): Check that the new selection is does not have a shadowAncestorNode that is focused.
+
 2006-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

@@ -215,9 +215,7 @@ bool HTMLGenericFormElement::isKeyboardFocusable() const
 bool HTMLGenericFormElement::isMouseFocusable() const
 {
     if (isFocusable()) {
-        if (renderer()->style()->appearance() == TextFieldAppearance)
-            return true;
-        else if (renderer()->isWidget()) {
+        if (renderer()->isWidget()) {
             return static_cast<RenderWidget*>(renderer())->widget() &&
                 (static_cast<RenderWidget*>(renderer())->widget()->focusPolicy() & Widget::ClickFocus);
         } 
