@@ -64,7 +64,16 @@ ScrollView::~ScrollView()
 
 void ScrollView::updateContents(const IntRect& updateRect, bool now)
 {
-    RECT dirtyRect = RECT(updateRect);
+    IntRect adjustedDirtyRect(updateRect);
+    adjustedDirtyRect.move(-m_data->scrollPoint.x(), -m_data->scrollPoint.y());
+
+    RECT dirtyRect = RECT(adjustedDirtyRect);
+#if PAINT_FLASHING_DEBUG
+    HDC dc = GetDC(windowHandle());
+    FillRect(dc, &dirtyRect, (HBRUSH)GetStockObject(BLACK_BRUSH));
+    ReleaseDC(windowHandle(), dc);
+#endif
+
     InvalidateRect(windowHandle(), &dirtyRect, true);
     if (now)
         UpdateWindow(windowHandle());
