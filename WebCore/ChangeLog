@@ -1,3 +1,15 @@
+2006-03-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8076
+          REGRESSION: native text fields are reversed on "visual Hebrew" pages
+
+        * fast/forms/visual-hebrew-text-field-expected.checksum: Added.
+        * fast/forms/visual-hebrew-text-field-expected.png: Added.
+        * fast/forms/visual-hebrew-text-field-expected.txt: Added.
+        * fast/forms/visual-hebrew-text-field.html: Added.
+
 2006-03-30  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by John Sullivan.

@@ -1,3 +1,16 @@
+2006-03-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/forms/visual-hebrew-text-field.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8076
+          REGRESSION: native text fields are reversed on "visual Hebrew" pages
+
+        * css/html4.css: Set the -kthml-rtl-ordering property to "logical" for all
+        input elements. This should help also with future conversions from AppKit to
+        native.
+
 2006-03-30  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by John Sullivan.
