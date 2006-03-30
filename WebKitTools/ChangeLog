@@ -1,3 +1,17 @@
+2006-03-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix html editing input & basic form submission.
+
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::submitForm):
+        (WebKit::WebFrame::loadURL):
+        * Spinneret/Spinneret/WebFrame.h:
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::keyPress):
+        (WebKit::WebViewWndProc):
+
 2006-03-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

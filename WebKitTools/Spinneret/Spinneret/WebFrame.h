@@ -27,9 +27,13 @@
 #include "TransferJobClient.h"
 #include "FrameWin.h"
 
+class KURL;
+
 namespace WebCore {
+    class FormData;
     class Frame;
     class FrameView;
+    class String;
     class TransferJob;
 }
 
@@ -45,6 +49,7 @@ namespace WebKit {
     void loadHTMLString(char* html, char* baseURL = 0);
 
     virtual void openURL(const DeprecatedString&);
+    virtual void submitForm(const WebCore::String& method, const KURL&, const WebCore::FormData*);
 
     void loadURL(const char*);
     

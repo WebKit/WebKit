@@ -55,6 +55,7 @@ public:
 };
 
 const LPCWSTR kWebViewWindowClassName = L"WebViewWindowClass";
+static bool nextCharIsInputText = false;
 
 LRESULT CALLBACK WebViewWndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -178,7 +179,7 @@ bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
                 frame->selection().modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphGranularity);
                 break;
             default:
-                TypingCommand::insertText(frame->document(), keyEvent.text(), false);
+                nextCharIsInputText = true;
             }
             handled = true;
         }
@@ -280,10 +281,18 @@ LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         // through to the top level webview and do things like scrolling
         if (webview->keyPress(wParam, lParam))
             break;
-
         WORD wScrollNotify = scrollMessageForKey(wParam);
         if (wScrollNotify != -1)
             SendMessage(hWnd, WM_VSCROLL, MAKELONG(wScrollNotify, 0), 0L);
+        break;
+    }
+    case WM_CHAR: {
+        // FIXME: We need to use WM_UNICHAR to support international text.
+        if (nextCharIsInputText) {
+            TypingCommand::insertText(webview->mainFrame()->impl()->document(), QChar(wParam), false);
+            nextCharIsInputText = false;
+        }
+        break;
     }
     case WM_KEYUP: {
         webview->keyPress(wParam, lParam);

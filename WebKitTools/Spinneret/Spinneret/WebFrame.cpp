@@ -30,6 +30,7 @@
 #include "WebView.h"
 #include "Spinneret.h"
 
+#include "Document.h"
 #include "FrameView.h"
 #include "FrameWin.h"
 #include "GraphicsContext.h"
@@ -108,12 +109,25 @@ void WebFrame::openURL(const DeprecatedString& str)
    loadURL(str.ascii());
 }
 
+void WebFrame::submitForm(const String& method, const KURL& url, const FormData* submitFormData)
+{
+    // FIXME: This is a dumb implementation, doesn't handle subframes, etc.
+    d->frame->didOpenURL(url);
+    d->frame->begin(url);
+    TransferJob* job;
+    if (method == "GET" || !submitFormData)
+        job = new TransferJob(this, method, url);
+    else
+        job = new TransferJob(this, method, url, *submitFormData);
+    job->start(d->frame->document()->docLoader());
+}
+
 void WebFrame::loadURL(const char* URL)
 {
     d->frame->didOpenURL(URL);
     d->frame->begin(URL);
     WebCore::TransferJob* job = new TransferJob(this, "GET", URL);
-    job->start(0);
+    job->start(d->frame->document()->docLoader());
 }
     
 void WebFrame::receivedData(WebCore::TransferJob*, const char* data, int length)
