@@ -1,5 +1,17 @@
 2006-03-30  Dave Hyatt <hyatt@apple.com>
 
+        Roll out the fix to 7102 and reopen it to get Spinneret working
+        again.
+
+        Reviewed by justin
+
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL):
+        (WebCore::Frame::receivedFirstData):
+        (WebCore::Frame::begin):
+
+2006-03-30  Dave Hyatt <hyatt@apple.com>
+
         Land support for JPEG image decoding on Win32.
 
         * WebCore.vcproj/WebCore/WebCore.vcproj:
