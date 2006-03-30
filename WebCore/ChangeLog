@@ -1,3 +1,19 @@
+2006-03-30  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4444693> REGRESSION: Deleting empty lines causes quoted text to mistakenly get "unquoted"
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        Formatting.
+        (WebCore::DeleteSelectionCommand::moveNodesAfterNode):
+        Generalize check that preserves nesting when deleting to the beginning of an ancestor block.
+
+        * editing/deleting/delete-block-merge-contents-022.html: Added.
+        * editing/deleting/delete-block-merge-contents-023.html: Added.
+        * editing/deleting/delete-block-merge-contents-024.html: Added.
+
 2006-03-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

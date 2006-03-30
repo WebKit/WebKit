@@ -410,7 +410,6 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 }
             }
         }
-
         
         if (m_downstreamEnd.node() != m_startNode && !m_upstreamStart.node()->isAncestor(m_downstreamEnd.node()) && m_downstreamEnd.node()->inDocument() && m_downstreamEnd.offset() >= m_downstreamEnd.node()->caretMinOffset()) {
             if (m_downstreamEnd.offset() >= maxDeepOffset(m_downstreamEnd.node())) {
@@ -511,10 +510,10 @@ void DeleteSelectionCommand::moveNodesAfterNode()
         return;
 
     Node *startBlock = startNode->enclosingBlockFlowElement();
-    if (isTableStructureNode(startBlock)) {
-        // Do not move content between parts of a table.
+
+    // Do not move content between parts of a table.
+    if (isTableStructureNode(startBlock))
         return;
-    }
     
     // Now that we are about to add content, check to see if a placeholder element
     // can be removed.
@@ -526,9 +525,9 @@ void DeleteSelectionCommand::moveNodesAfterNode()
     // Insert after the subtree containing dstNode
     Node *refNode = dstNode->enclosingInlineElement();
 
-    // Nothing to do if start is already at the beginning of dstBlock
+    // Preserve nesting when deleting to the beginning of an ancestor block
     Node *dstBlock = refNode->enclosingBlockFlowElement();
-    if (startBlock == dstBlock->firstChild())
+    if (startBlock->isAncestor(dstBlock) && isStartOfBlock(VisiblePosition(m_upstreamStart)))
         return;
 
     // Do the move.
