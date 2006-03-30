@@ -63,7 +63,7 @@ public:
     void setIncludeInNextFrame(bool n) { m_includeInNextFrame = n; }
     void setHasAlpha(bool alpha) { m_hasAlpha = alpha; }
 
-    static void setRGBA(unsigned& pos, unsigned r, unsigned b, unsigned g, unsigned a)
+    static void setRGBA(unsigned& pos, unsigned r, unsigned g, unsigned b, unsigned a)
     {
         // We store this data pre-multiplied.
         if (a == 0)
@@ -121,6 +121,9 @@ public:
     // decoder plugin will decode as much of the frame as it can before handing
     // back the buffer.
     virtual RGBA32Buffer* frameBufferAtIndex(size_t index) = 0;
+
+    // Whether or not the underlying image format even supports alpha transparency.
+    virtual bool supportsAlpha() const { return true; }
 
     bool failed() const { return m_failed; }
     void setFailed() { m_failed = true; }

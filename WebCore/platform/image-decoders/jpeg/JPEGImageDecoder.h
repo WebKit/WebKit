@@ -45,14 +45,23 @@ public:
     // Whether or not the size information has been decoded yet.
     virtual bool isSizeAvailable() const;
 
-    // Requests the size.
-    virtual IntSize size() const;
-
     virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+    
+    virtual bool supportsAlpha() const { return false; }
 
     void decode(bool sizeOnly = false) const;
 
     JPEGImageReader* reader() { return m_reader; }
+
+    void setSize(int width, int height) {
+        if (!m_sizeAvailable) {
+            m_sizeAvailable = true;
+            m_size = IntSize(width, height);
+        }
+    }
+
+    bool outputScanlines();
+    void jpegComplete();
 
 private:
     mutable JPEGImageReader* m_reader;

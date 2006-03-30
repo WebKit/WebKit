@@ -28,6 +28,7 @@
 #include <cairo.h>
 #include "GIFImageDecoder.h"
 #include "PNGImageDecoder.h"
+#include "JPEGImageDecoder.h"
 #include "IntSize.h"
 
 namespace WebCore {
@@ -58,7 +59,7 @@ ImageDecoder* createDecoder(const DeprecatedByteArray& data)
     if (uContents[0]==0xFF &&
         uContents[1]==0xD8 &&
         uContents[2]==0xFF)
-        return 0;
+        return new JPEGImageDecoder();
 
     // BMP
     if (strncmp(contents, "BM", 2) == 0) {
@@ -161,7 +162,7 @@ float ImageSource::frameDurationAtIndex(size_t index)
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
-    if (!m_decoder)
+    if (!m_decoder || !m_decoder->supportsAlpha())
         return false;
 
     RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);

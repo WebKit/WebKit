@@ -310,7 +310,7 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
             unsigned red = colorMap[colorIndex];
             unsigned green = colorMap[colorIndex + 1];
             unsigned blue = colorMap[colorIndex + 2];
-            RGBA32Buffer::setRGBA(*currDst, red, blue, green, 255);
+            RGBA32Buffer::setRGBA(*currDst, red, green, blue, 255);
         } else {
             if (!sawAlpha) {
                 sawAlpha = true;

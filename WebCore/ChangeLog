@@ -1,3 +1,38 @@
+2006-03-30  Dave Hyatt <hyatt@apple.com>
+
+        Land support for JPEG image decoding on Win32.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/cairo/ImageSourceCairo.cpp:
+        (WebCore::createDecoder):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::setRGBA):
+        (WebCore::ImageDecoder::supportsAlpha):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::JPEGImageReader):
+        (WebCore::JPEGImageReader::close):
+        (WebCore::JPEGImageReader::skipBytes):
+        (WebCore::JPEGImageReader::decode):
+        (WebCore::JPEGImageReader::info):
+        (WebCore::JPEGImageReader::samples):
+        (WebCore::JPEGImageReader::decoder):
+        (WebCore::error_exit):
+        (WebCore::init_source):
+        (WebCore::skip_input_data):
+        (WebCore::fill_input_buffer):
+        (WebCore::term_source):
+        (WebCore::JPEGImageDecoder::decode):
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        (WebCore::JPEGImageDecoder::jpegComplete):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        (WebCore::JPEGImageDecoder::supportsAlpha):
+        (WebCore::JPEGImageDecoder::setSize):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable):
+
 2006-03-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
