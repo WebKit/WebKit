@@ -1,3 +1,14 @@
+2006-03-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8083
+        REGRESSION: Repro crash when dragging to select over a new text field
+
+        * editing/Selection.cpp: (WebCore::Selection::adjustForEditableContent):
+        When searching for non-editable content, if the end of the selection is in a 
+        shadow tree, then we need to jump out of that first.
+
 2006-03-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
