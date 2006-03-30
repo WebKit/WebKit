@@ -34,6 +34,7 @@ class FrameWinClient
 {
 public:
     virtual void openURL(const DeprecatedString&) = 0;
+    virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
 };
 
 class FrameWin : public Frame
@@ -87,9 +88,6 @@ public:
     virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults &, Frame* subframePart = 0);
     virtual bool passWheelEventToChildWidget(Node*);
     
-    virtual void clearRecordedFormValues();
-    virtual void recordFormValue(const DeprecatedString& name, const DeprecatedString& value, HTMLFormElement*);
-
     virtual String overrideMediaType() const;
 
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);

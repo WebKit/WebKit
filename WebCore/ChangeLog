@@ -1,3 +1,20 @@
+2006-03-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix text form controls, and add basic submit support!
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::submitForm):
+        * bridge/win/FrameWin.h:
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::keyIdentifierForWindowsKeyCode):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::incomingReferrer):
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJob::start):
+
 2006-03-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.

@@ -32,6 +32,7 @@
 #include "KWQKHTMLSettings.h"
 #include "render_frames.h"
 #include "Plugin.h"
+#include "TransferJob.h"
 #include "FramePrivate.h"
 #include <windows.h>
 
@@ -62,6 +63,19 @@ void FrameWin::urlSelected(const ResourceRequest& request)
 {
     if (m_client)
         m_client->openURL(request.url().url());
+}
+
+void FrameWin::submitForm(const ResourceRequest& request)
+{
+    // FIXME: this is a hack inherited from FrameMac, and should be pushed into Frame
+    if (d->m_submittedFormURL == request.url())
+        return;
+    d->m_submittedFormURL = request.url();
+
+    if (m_client)
+        m_client->submitForm(request.doPost() ? "POST" : "GET", request.url(), &d->m_submitForm->submitFormData);
+
+    clearRecordedFormValues();
 }
 
 String FrameWin::userAgent() const
