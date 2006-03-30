@@ -1,0 +1,13 @@
+<p>Only the line break after the image should be selected.</p>
+<hr>
+<div contenteditable="true" id="div"><img src="../resources/abe.jpg"><br>foo</div>
+
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpSelectionRect();
+    
+var e = document.getElementById("div");
+var s = window.getSelection();
+// Select the line break
+s.setBaseAndExtent(e, 1, e, 2);
+</script>

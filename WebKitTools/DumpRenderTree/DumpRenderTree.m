@@ -38,6 +38,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebPluginDatabase.h>
 
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
@@ -78,6 +79,7 @@ static NavigationController *navigationController;
 static BOOL readyToDump;
 static BOOL waitToDump;
 static BOOL dumpAsText;
+static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
 static int dumpPixels = NO;
 static int testRepaintDefault = NO;
@@ -385,6 +387,13 @@ static void dump(void)
                     column.origin.x++;
                 }
             }
+            if (dumpSelectionRect) {
+                NSView *documentView = [[frame frameView] documentView];
+                if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
+                    [[NSColor redColor] set];
+                    [NSBezierPath strokeRect:[documentView convertRect:[(id <WebDocumentSelection>)documentView selectionRect] fromView:nil]];
+                }
+            }
             [NSGraphicsContext restoreGraphicsState];
             
             // has the actual hash to compare to the expected image's hash
@@ -512,6 +521,7 @@ static void dump(void)
             || aSelector == @selector(dumpTitleChanges)
             || aSelector == @selector(setWindowIsKey:)
             || aSelector == @selector(setMainFrameIsFirstResponder:)
+            || aSelector == @selector(dumpSelectionRect)
             || aSelector == @selector(testRepaint)
             || aSelector == @selector(repaintSweepHorizontally))
         return NO;
@@ -542,6 +552,11 @@ static void dump(void)
 - (void)dumpAsText
 {
     dumpAsText = YES;
+}
+
+- (void)dumpSelectionRect
+{
+    dumpSelectionRect = YES;
 }
 
 - (void)dumpTitleChanges
@@ -609,6 +624,7 @@ static void dumpRenderTree(const char *pathOrURL)
     readyToDump = NO;
     waitToDump = NO;
     dumpAsText = NO;
+    dumpSelectionRect = NO;
     dumpTitleChanges = NO;
     testRepaint = testRepaintDefault;
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;

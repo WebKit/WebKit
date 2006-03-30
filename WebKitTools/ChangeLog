@@ -1,3 +1,18 @@
+2006-03-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <rdar://problem/4402375>
+        REGRESSION (417.8-TOT): selectionRect sometimes includes adjacent images
+
+        Added an option to draw the selectionRect.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dump):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController dumpSelectionRect]):
+        (dumpRenderTree):
+        
 2006-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

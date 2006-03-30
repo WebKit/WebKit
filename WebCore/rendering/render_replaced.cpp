@@ -70,7 +70,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
     // Early exit if the element touches the edges.
     int top = ty;
     int bottom = ty + m_height;
-    if (m_selectionState != SelectionNone && m_inlineBoxWrapper) {
+    if (isSelected() && m_inlineBoxWrapper) {
         int selTop = _ty + m_inlineBoxWrapper->root()->selectionTop();
         int selBottom = _ty + selTop + m_inlineBoxWrapper->root()->selectionHeight();
         top = kMin(selTop, top);
@@ -165,7 +165,7 @@ VisiblePosition RenderReplaced::positionForCoordinates(int _x, int _y)
 
 IntRect RenderReplaced::selectionRect()
 {
-    if (selectionState() == SelectionNone)
+    if (!isSelected())
         return IntRect();
     if (!m_inlineBoxWrapper)
         // We're a block-level replaced element.  Just return our own dimensions.
@@ -195,7 +195,7 @@ void RenderReplaced::setSelectionState(SelectionState s)
     if (m_inlineBoxWrapper) {
         RootInlineBox* line = m_inlineBoxWrapper->root();
         if (line)
-            line->setHasSelectedChildren(s != SelectionNone);
+            line->setHasSelectedChildren(isSelected());
     }
     
     containingBlock()->setSelectionState(s);
@@ -466,7 +466,7 @@ void RenderWidget::setSelectionState(SelectionState s)
         RenderReplaced::setSelectionState(s);
         m_selectionState = s;
         if (m_widget)
-            m_widget->setIsSelected(m_selectionState != SelectionNone);
+            m_widget->setIsSelected(isSelected());
     }
 }
 

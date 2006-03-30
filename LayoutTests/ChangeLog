@@ -1,3 +1,30 @@
+2006-03-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8067>
+        REGRESSION: selectionRect includes next/previous replaced elements
+        <rdar://problems/4402375&4474871&4474871>
+        
+        * editing/selection/4402375-expected.checksum: Added.
+        * editing/selection/4402375-expected.png: Added.
+        * editing/selection/4402375-expected.txt: Added.
+        * editing/selection/4402375.html: Added.
+        Turned on dumpSelectionRect for these tests:
+        * editing/selection/replaced-boundaries-1-expected.checksum:
+        * editing/selection/replaced-boundaries-1-expected.png:
+        * editing/selection/replaced-boundaries-1.html:
+        * editing/selection/replaced-boundaries-2-expected.checksum:
+        * editing/selection/replaced-boundaries-2-expected.png:
+        * editing/selection/replaced-boundaries-2.html:
+        * editing/selection/replaced-boundaries-3-expected.checksum:
+        * editing/selection/replaced-boundaries-3-expected.png:
+        * editing/selection/replaced-boundaries-3.html:
+        * editing/selection/image-before-linebreak-expected.checksum: Added.
+        * editing/selection/image-before-linebreak-expected.png: Added.
+        * editing/selection/image-before-linebreak-expected.txt: Added.
+        * editing/selection/image-before-linebreak.html: Added.
+
 2006-03-29  Adele Peterson  <adele@apple.com>
 
         Justin pointed out that this test should use an old-style form element,

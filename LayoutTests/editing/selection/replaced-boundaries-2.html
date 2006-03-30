@@ -3,6 +3,8 @@
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 <script>
 function editingTest() {
+    if (window.layoutTestController)
+        window.layoutTestController.dumpSelectionRect();
     selectAllCommand();
     moveSelectionBackwardByCharacterCommand();
     extendSelectionForwardByCharacterCommand();

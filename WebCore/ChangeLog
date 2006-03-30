@@ -1,3 +1,26 @@
+2006-03-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8067>
+        REGRESSION: selectionRect includes next/previous replaced elements
+        Also fixes: <rdar://problems/4402375&4474871&4474871>
+        
+        In the case where a selection starts at the end or ends at the start
+        of o, o->selectionState() != SelectionNone, but o isn't really selected.  
+        Constraining the selection with upstream and downstream eliminates these
+        types of endpoints, but constraining endpoints that occur at the 
+        start or end of a paragraph creates positions inside containers - some 
+        of which the selection painting code isn't equipped to handle.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateSelection):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        (WebCore::RenderReplaced::selectionRect):
+        (WebCore::RenderReplaced::setSelectionState):
+        (WebCore::RenderWidget::setSelectionState):
+
 2006-03-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

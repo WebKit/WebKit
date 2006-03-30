@@ -1046,8 +1046,10 @@ void Document::updateSelection()
     }
     
 #if __APPLE__
-    // send the AXSelectedTextChanged notification only if the new selection is non-null,
-    // because null selections are only transitory (e.g. when starting an EditCommand, currently)
+    // FIXME: We shouldn't post this AX notification here since updateSelection() is called far to often: every time Safari gains
+    // or loses focus, and once for every low level change to the selection during an editing operation.
+    // FIXME: We no longer blow away the selection before starting an editing operation, so the isNotNull checks below are no 
+    // longer a correct way to check for user-level selection changes.
     if (AccessibilityObjectCache::accessibilityEnabled() && s.start().isNotNull() && s.end().isNotNull()) {
         getAccObjectCache()->postNotificationToTopWebArea(renderer(), "AXSelectedTextChanged");
     }
