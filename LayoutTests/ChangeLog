@@ -1,3 +1,13 @@
+2006-03-30  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by John Sullivan.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8051
+          Empty forms are submitted incorrectly
+
+        * fast/forms/empty-get-expected.txt: Added.
+        * fast/forms/empty-get.html: Added.
+
 2006-03-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

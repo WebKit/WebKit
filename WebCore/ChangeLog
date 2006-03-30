@@ -1,3 +1,15 @@
+2006-03-30  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8051
+          Empty forms are submitted incorrectly
+
+        Test: fast/forms/empty-get.html
+
+        * platform/KURL.cpp:
+        (KURL::setQuery): Add a question mark for empty query strings, too.
+
 2006-03-30  Dave Hyatt <hyatt@apple.com>
 
         Roll out the fix to 7102 and reopen it to get Spinneret working
