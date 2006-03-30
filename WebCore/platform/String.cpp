@@ -223,12 +223,12 @@ String String::sprintf(const char *format, ...)
     int result = 0;
     do {
         if (result < 0)
-            buffer.resize(buffer.size() * 2);
-        result = vsnprintf(buffer.data(), buffer.size(), format, args);
+            buffer.resize(buffer.capacity() * 2);
+        result = vsnprintf(buffer.data(), buffer.capacity(), format, args);
         // Windows vnsprintf returns -1 both for all errors.  There is no
         // way to distinguish between "not enough room" and "invalid format"
         // we just keep trying until we hit an arbitrary size and then stop.
-    } while (result < 0 && (buffer.size() * 2) < 2048);
+    } while (result < 0 && (buffer.capacity() * 2) < 2048);
     if (result == 0)
         return String("");
     else if (result < 0)
