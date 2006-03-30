@@ -1,5 +1,15 @@
 2006-03-30  Tim Omernick  <timo@apple.com>
 
+        Reviewed by NOBODY (just fixing copyrights)
+
+        * DumpRenderTree/ObjCPlugin.h:
+        Fixed copyright.
+        * DumpRenderTree/ObjCPlugin.m: ditto
+        * DumpRenderTree/ObjCPluginFunction.h: ditto
+        * DumpRenderTree/ObjCPluginFunction.m: ditto
+
+2006-03-30  Tim Omernick  <timo@apple.com>
+
         Reviewed by Geoff.
 
         * DumpRenderTree/DumpRenderTree.m:
