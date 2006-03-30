@@ -1,3 +1,30 @@
+2006-03-30  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:windowScriptObjectAvailable:]):
+        Add "objCPlugin", "objCPluginFunction" properties to the window.  objCPlugin simulates
+        an Objective C object exposed to JS; objCPluginFunction simulates an Objective C method
+        exposed to JS as a callable object.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Added ObjCPlugin.[hm], ObjCPluginFunction.[hm].
+
+        * DumpRenderTree/ObjCPlugin.h: Added.
+        * DumpRenderTree/ObjCPlugin.m: Added.
+        * DumpRenderTree/ObjCPluginFunction.h: Added.
+        * DumpRenderTree/ObjCPluginFunction.m: Added.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        Added a new method, "removeDefaultMethod", which removes the default method from the
+        plugin object's class.  The effect is that the plugin object is mutated from a callable
+        function to a simple object.
+        (pluginInvoke):
+        Handle "removeDefaultMethod".
+        (pluginInvokeDefault):
+        Made the default method actually do something (return 1).
+
 2006-03-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

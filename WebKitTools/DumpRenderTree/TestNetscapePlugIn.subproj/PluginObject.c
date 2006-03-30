@@ -75,12 +75,15 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 
 #define ID_TEST_CALLBACK_METHOD     0
 #define ID_TEST_GETURL              1
-#define NUM_METHOD_IDENTIFIERS      2
+#define ID_REMOVE_DEFAULT_METHOD    2
+
+#define NUM_METHOD_IDENTIFIERS      3
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testCallback",
-    "getURL"
+    "getURL",
+    "removeDefaultMethod",
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant *variant)
@@ -159,6 +162,10 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
             VOID_TO_NPVARIANT(*result);
             return true;
         }
+    } else if (name == pluginMethodIdentifiers[ID_REMOVE_DEFAULT_METHOD]) {
+        pluginClass.invokeDefault = 0;
+        VOID_TO_NPVARIANT(*result);
+        return true;
     }
 
     return false;
@@ -166,7 +173,8 @@ static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *a
 
 static bool pluginInvokeDefault(NPObject *obj, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
-    return false;
+    INT32_TO_NPVARIANT(1, *result);
+    return true;
 }
 
 static void pluginInvalidate(NPObject *obj)

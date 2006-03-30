@@ -55,6 +55,8 @@
 #import "AppleScriptController.h"
 #import "EventSendingController.h"
 #import "EditingDelegate.h"
+#import "ObjCPlugin.h"
+#import "ObjCPluginFunction.h"
 
 @interface DumpRenderTreeWindow : NSWindow
 @end
@@ -468,16 +470,28 @@ static void dump(void)
     LayoutTestController *ltc = [[LayoutTestController alloc] init];
     [obj setValue:ltc forKey:@"layoutTestController"];
     [ltc release];
+    
     EventSendingController *esc = [[EventSendingController alloc] init];
     [obj setValue:esc forKey:@"eventSender"];
     [esc release];
+    
     TextInputController *tic = [[TextInputController alloc] initWithWebView:sender];
     [obj setValue:tic forKey:@"textInputController"];
     [tic release];
+    
     AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:sender];
     [obj setValue:asc forKey:@"appleScriptController"];
     [asc release];
+    
     [obj setValue:navigationController forKey:@"navigationController"];
+    
+    ObjCPlugin *plugin = [[ObjCPlugin alloc] init];
+    [obj setValue:plugin forKey:@"objCPlugin"];
+    [plugin release];
+    
+    ObjCPluginFunction *pluginFunction = [[ObjCPluginFunction alloc] init];
+    [obj setValue:pluginFunction forKey:@"objCPluginFunction"];
+    [pluginFunction release];
 }
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message
