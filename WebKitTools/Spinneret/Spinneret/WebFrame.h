@@ -59,7 +59,6 @@ namespace WebKit {
     void paint();
 
     WebCore::Frame* impl();
-    WebCore::FrameView* viewImpl();
 
     private:
         class WebFramePrivate;

@@ -1,5 +1,21 @@
 2006-03-30  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by ggaren.
+
+        Remove WebFrame::viewImpl(), setMainFrame on page.
+
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::WebFrame):
+        * Spinneret/Spinneret/WebFrame.h:
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::mouseMoved):
+        (WebKit::WebView::mouseDown):
+        (WebKit::WebView::mouseUp):
+        (WebKit::WebView::mouseDoubleClick):
+        (WebKit::WebViewWndProc):
+
+2006-03-30  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         Fix html editing input & basic form submission.

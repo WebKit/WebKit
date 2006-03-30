@@ -129,25 +129,25 @@ WebFrame* WebView::mainFrame()
 void WebView::mouseMoved(WPARAM wParam, LPARAM lParam)
 {
     PlatformMouseEvent mouseEvent(windowHandle(), wParam, lParam, 0);
-    d->mainFrame->viewImpl()->handleMouseMoveEvent(mouseEvent);
+    d->mainFrame->impl()->view()->handleMouseMoveEvent(mouseEvent);
 }
 
 void WebView::mouseDown(WPARAM wParam, LPARAM lParam)
 {
     PlatformMouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
-    d->mainFrame->viewImpl()->handleMousePressEvent(mouseEvent);
+    d->mainFrame->impl()->view()->handleMousePressEvent(mouseEvent);
 }
 
 void WebView::mouseUp(WPARAM wParam, LPARAM lParam)
 {
     PlatformMouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
-    d->mainFrame->viewImpl()->handleMouseReleaseEvent(mouseEvent);
+    d->mainFrame->impl()->view()->handleMouseReleaseEvent(mouseEvent);
 }
 
 void WebView::mouseDoubleClick(WPARAM wParam, LPARAM lParam)
 {
     PlatformMouseEvent mouseEvent(windowHandle(), wParam, lParam, 2);
-    d->mainFrame->viewImpl()->handleMouseReleaseEvent(mouseEvent);
+    d->mainFrame->impl()->view()->handleMouseReleaseEvent(mouseEvent);
 }
 
 bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
@@ -264,13 +264,13 @@ LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         webview->mouseDoubleClick(wParam, lParam);
         break;
     case WM_HSCROLL: {
-        ScrollView* view = webview->mainFrame()->viewImpl();
+        ScrollView* view = webview->mainFrame()->impl()->view();
         view->scrollBy(calculateScrollDelta(wParam, view->contentsX(), view->visibleWidth()), 0);
         webview->mainFrame()->impl()->sendScrollEvent();
         break;
     }
     case WM_VSCROLL: {
-        ScrollView* view = webview->mainFrame()->viewImpl();
+        ScrollView* view = webview->mainFrame()->impl()->view();
         view->scrollBy(0, calculateScrollDelta(wParam, view->contentsY(), view->visibleHeight()));
         webview->mainFrame()->impl()->sendScrollEvent();
         break;

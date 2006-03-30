@@ -64,6 +64,7 @@ WebFrame::WebFrame(char* name, WebView* view)
     d->webView = view;
     Page *page = new Page();
     d->frame = new FrameWin(page, 0, this);
+    page->setMainFrame(d->frame);
     d->frameView = new FrameView(d->frame);
     d->frame->setView(d->frameView);
     d->frameView->setWindowHandle(view->windowHandle());
@@ -182,11 +183,6 @@ void WebFrame::paint()
 WebCore::Frame* WebFrame::impl()
 {
     return d->frame;
-}
-
-WebCore::FrameView* WebFrame::viewImpl()
-{
-    return d->frameView;
 }
 
 }
