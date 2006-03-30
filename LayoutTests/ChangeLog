@@ -1,3 +1,22 @@
+2006-03-30  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4444693> REGRESSION: Deleting empty lines causes quoted text to mistakenly get "unquoted"
+
+        * editing/deleting/delete-block-merge-contents-022-expected.checksum: Added.
+        * editing/deleting/delete-block-merge-contents-022-expected.png: Added.
+        * editing/deleting/delete-block-merge-contents-022-expected.txt: Added.
+        * editing/deleting/delete-block-merge-contents-022.html: Added.
+        * editing/deleting/delete-block-merge-contents-023-expected.checksum: Added.
+        * editing/deleting/delete-block-merge-contents-023-expected.png: Added.
+        * editing/deleting/delete-block-merge-contents-023-expected.txt: Added.
+        * editing/deleting/delete-block-merge-contents-023.html: Added.
+        * editing/deleting/delete-block-merge-contents-024-expected.checksum: Added.
+        * editing/deleting/delete-block-merge-contents-024-expected.png: Added.
+        * editing/deleting/delete-block-merge-contents-024-expected.txt: Added.
+        * editing/deleting/delete-block-merge-contents-024.html: Added.
+
 2006-03-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/forms/visual-hebrew-text-field.html
