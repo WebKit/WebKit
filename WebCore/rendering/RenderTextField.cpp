@@ -70,7 +70,7 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->setDisplay(BLOCK);
     divStyle->setOverflow(OHIDDEN);
     divStyle->setWhiteSpace(NOWRAP);
-    divStyle->setUserModify(READ_WRITE);
+    divStyle->setUserModify(READ_WRITE_PLAINTEXT_ONLY);
     // We're adding this extra pixel of padding to match WinIE.
     divStyle->setPaddingLeft(Length(1, Fixed));
     divStyle->setPaddingRight(Length(1, Fixed));

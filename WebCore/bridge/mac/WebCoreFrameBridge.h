@@ -320,6 +320,7 @@ typedef enum {
 - (DOMHTMLElement *)frameElement;
 
 - (BOOL)isSelectionEditable;
+- (BOOL)isSelectionRichlyEditable;
 - (WebSelectionState)selectionState;
 
 - (NSAttributedString *)selectedAttributedString;

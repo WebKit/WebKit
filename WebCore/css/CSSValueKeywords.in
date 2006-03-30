@@ -379,6 +379,7 @@ unfurl
 #
 read-only
 read-write
+read-write-plaintext-only
 
 #
 # CSS_PROP__KHTML_USER_DRAG

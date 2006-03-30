@@ -1,3 +1,23 @@
+2006-03-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6989
+        REGRESSION: Plain-text mode needed for contenteditable area used in new text field
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _canEditRichly]): Added.
+        (-[WebHTMLView _canIncreaseSelectionListLevel]): Use _canEditRichly
+        (-[WebHTMLView _canDecreaseSelectionListLevel]): Ditto.
+        (-[WebHTMLView _increaseSelectionListLevel]):
+        (-[WebHTMLView _decreaseSelectionListLevel]):
+        (-[NSArray validateUserInterfaceItem:]): 
+        Split rich text editing actions off from ones that can be applied anywhere.
+        (-[NSArray _applyStyleToSelection:withUndoAction:]):
+        (-[NSArray _applyParagraphStyleToSelection:withUndoAction:]):
+        (-[NSArray _alignSelectionUsingCSSValue:withUndoAction:]):
+        * WebView/WebHTMLViewPrivate.h:
+
 2006-03-29  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

@@ -1,3 +1,17 @@
+2006-03-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6989
+        REGRESSION: Plain-text mode needed for contenteditable area used in new text field
+
+        * fast/forms/plaintext-mode-1-expected.txt: Added.
+        * fast/forms/plaintext-mode-1.html: Added.
+        * fast/forms/plaintext-mode-2-expected.checksum: Added.
+        * fast/forms/plaintext-mode-2-expected.png: Added.
+        * fast/forms/plaintext-mode-2-expected.txt: Added.
+        * fast/forms/plaintext-mode-2.html: Added.
+
 2006-03-30  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

@@ -1,3 +1,45 @@
+2006-03-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6989
+        REGRESSION: Plain-text mode needed for contenteditable area used in new text field
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge isSelectionEditable]):
+        (-[WebCoreFrameBridge isSelectionRichlyEditable]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * dom/Node.cpp:
+        (WebCore::Node::isContentRichlyEditable):
+        * dom/Node.h:
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        * editing/JSEditor.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/Selection.h:
+        (WebCore::Selection::rootEditableElement):
+        (WebCore::Selection::isContentEditable):
+        (WebCore::Selection::isContentRichlyEditable):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::rootEditableElement):
+        (WebCore::SelectionController::isContentEditable):
+        (WebCore::SelectionController::isContentRichlyEditable):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isContentEditable):
+        (WebCore::HTMLElement::contentEditable):
+        (WebCore::HTMLElement::setContentEditable):
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::createDivStyle):
+        * rendering/render_style.h:
+        (WebCore::):
+        
 2006-03-30  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

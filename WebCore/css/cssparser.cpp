@@ -994,7 +994,7 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         break;
     case CSS_PROP__KHTML_USER_MODIFY: // read-only | read-write
-        if (id == CSS_VAL_READ_ONLY || id == CSS_VAL_READ_WRITE)
+        if (id == CSS_VAL_READ_ONLY || id == CSS_VAL_READ_WRITE || CSS_VAL_READ_WRITE_PLAINTEXT_ONLY)
             valid_primitive = true;
         break;
     case CSS_PROP__KHTML_USER_SELECT: // auto | none | text

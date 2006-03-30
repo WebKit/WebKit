@@ -206,7 +206,25 @@ void EditCommand::apply()
     ASSERT(state() == NotApplied);
  
     Frame *frame = m_document->frame();
-
+    
+    bool topLevel = !isCompositeStep();
+    if (topLevel) {
+        if (!endingSelection().isContentRichlyEditable()) {
+            switch (editingAction()) {
+                case EditActionTyping:
+                case EditActionPaste:
+                case EditActionDrag:
+                case EditActionSetWritingDirection:
+                case EditActionCut:
+                case EditActionUnspecified:
+                    break;
+                default:
+                    ASSERT_NOT_REACHED();
+                    return;
+            }
+        }
+    }
+    
     doApply();
     
     m_state = Applied;
@@ -216,7 +234,7 @@ void EditCommand::apply()
     if (!preservesTypingStyle())
         setTypingStyle(0);
 
-    if (!isCompositeStep()) {
+    if (topLevel) {
         updateLayout();
         EditCommandPtr cmd(this);
         frame->appliedEditing(cmd);

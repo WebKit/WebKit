@@ -243,6 +243,7 @@ public:
     virtual bool isIndeterminate() const { return false; }
 
     virtual bool isContentEditable() const;
+    virtual bool isContentRichlyEditable() const;
     virtual IntRect getRect() const;
 
     enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };

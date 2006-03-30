@@ -449,7 +449,7 @@ bool HTMLElement::isContentEditable() const
             return false;
     }
     
-    return renderer()->style()->userModify() == READ_WRITE;
+    return renderer()->style()->userModify() == READ_WRITE || renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY;
 }
 
 String HTMLElement::contentEditable() const 
@@ -464,6 +464,8 @@ String HTMLElement::contentEditable() const
             return "true";
         case READ_ONLY:
             return "false";
+        case READ_WRITE_PLAINTEXT_ONLY:
+            return "plaintext-only";
         default:
             return "inherit";
     }
@@ -488,6 +490,11 @@ void HTMLElement::setContentEditable(MappedAttribute* attr)
         attr->decl()->removeProperty(CSS_PROP_WORD_WRAP, false);
         attr->decl()->removeProperty(CSS_PROP__KHTML_NBSP_MODE, false);
         attr->decl()->removeProperty(CSS_PROP__KHTML_LINE_BREAK, false);
+    } else if (equalIgnoringCase(enabled, "plaintext-only")) {
+        addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE_PLAINTEXT_ONLY);
+        addCSSProperty(attr, CSS_PROP_WORD_WRAP, CSS_VAL_BREAK_WORD);
+        addCSSProperty(attr, CSS_PROP__KHTML_NBSP_MODE, CSS_VAL_SPACE);
+        addCSSProperty(attr, CSS_PROP__KHTML_LINE_BREAK, CSS_VAL_AFTER_WHITE_SPACE);
     }
 }
 

@@ -1451,6 +1451,11 @@ static WebHTMLView *lastHitView = nil;
     return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
 }
 
+- (BOOL)_canEditRichly
+{
+    return [self _canEdit] && [[self _bridge] isSelectionRichlyEditable];
+}
+
 - (BOOL)_canAlterCurrentSelection
 {
     return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
@@ -1581,17 +1586,17 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_canIncreaseSelectionListLevel
 {
-    return ([self _canEdit] && [[self _bridge] canIncreaseSelectionListLevel]);
+    return ([self _canEditRichly] && [[self _bridge] canIncreaseSelectionListLevel]);
 }
 
 - (BOOL)_canDecreaseSelectionListLevel
 {
-    return ([self _canEdit] && [[self _bridge] canDecreaseSelectionListLevel]);
+    return ([self _canEditRichly] && [[self _bridge] canDecreaseSelectionListLevel]);
 }
 
 - (void)_increaseSelectionListLevel
 {
-    if (![self _canEdit])
+    if (![self _canEditRichly])
         return;
         
     WebFrameBridge *bridge = [self _bridge];
@@ -1600,7 +1605,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_decreaseSelectionListLevel
 {
-    if (![self _canEdit])
+    if (![self _canEditRichly])
         return;
         
     WebFrameBridge *bridge = [self _bridge];
@@ -1872,15 +1877,9 @@ static WebHTMLView *lastHitView = nil;
 {
     SEL action = [item action];
     WebFrameBridge *bridge = [self _bridge];
-    
-    if (action == @selector(alignCenter:)
-            || action == @selector(alignLeft:)
-            || action == @selector(alignJustified:)
-            || action == @selector(alignRight:)
-            || action == @selector(changeAttributes:)
-            || action == @selector(changeBaseWritingDirection:) // FIXME: check menu item based on writing direction
-            || action == @selector(changeColor:)
-            || action == @selector(changeFont:)
+  
+
+    if (action == @selector(changeBaseWritingDirection:) // FIXME: check menu item based on writing direction
             || action == @selector(changeSpelling:)
             || action == @selector(_changeSpellingFromMenu:)
             || action == @selector(checkSpelling:)
@@ -1947,6 +1946,14 @@ static WebHTMLView *lastHitView = nil;
             || action == @selector(yank:)
             || action == @selector(yankAndSelect:)) {
         return [self _canEdit];
+    } else if (action == @selector(alignCenter:)
+            || action == @selector(alignLeft:)
+            || action == @selector(alignJustified:)
+            || action == @selector(alignRight:)
+            || action == @selector(changeAttributes:)
+            || action == @selector(changeColor:)        
+            || action == @selector(changeFont:)) {
+        return [self _canEditRichly];
     } else if (action == @selector(capitalizeWord:)
                || action == @selector(lowercaseWord:)
                || action == @selector(uppercaseWord:)) {
@@ -1957,7 +1964,7 @@ static WebHTMLView *lastHitView = nil;
                || action == @selector(setMark:)) {
         return [self _hasSelection] || ([self _isEditable] && [self _hasInsertionPoint]);
     } else if (action == @selector(changeDocumentBackgroundColor:)) {
-        return [[self _webView] isEditable];
+        return [[self _webView] isEditable] && [self _canEditRichly];
     } else if (action == @selector(copy:)) {
         return [bridge mayDHTMLCopy] || [self _canCopy];
     } else if (action == @selector(cut:)) {
@@ -1983,7 +1990,7 @@ static WebHTMLView *lastHitView = nil;
             [style setVerticalAlign:@"sub"];
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
-        return [self _canEdit];
+        return [self _canEditRichly];
     } else if (action == @selector(superscript:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -1991,7 +1998,7 @@ static WebHTMLView *lastHitView = nil;
             [style setVerticalAlign:@"super"];
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
-        return [self _canEdit];
+        return [self _canEditRichly];
     } else if (action == @selector(underline:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -1999,7 +2006,7 @@ static WebHTMLView *lastHitView = nil;
             [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
-        return [self _canEdit];
+        return [self _canEditRichly];
     } else if (action == @selector(unscript:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -2007,7 +2014,7 @@ static WebHTMLView *lastHitView = nil;
             [style setVerticalAlign:@"baseline"];
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
-        return [self _canEdit];
+        return [self _canEditRichly];
     } else if (action == @selector(_lookUpInDictionaryFromMenu:)) {
         return [self _hasSelection];
     }
@@ -3808,7 +3815,7 @@ done:
 
 - (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
-    if (style == nil || [style length] == 0 || ![self _canEdit])
+    if (style == nil || [style length] == 0 || ![self _canEditRichly])
         return;
     WebView *webView = [self _webView];
     WebFrameBridge *bridge = [self _bridge];
@@ -3819,7 +3826,7 @@ done:
 
 - (void)_applyParagraphStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
-    if (style == nil || [style length] == 0 || ![self _canEdit])
+    if (style == nil || [style length] == 0 || ![self _canEditRichly])
         return;
     WebView *webView = [self _webView];
     WebFrameBridge *bridge = [self _bridge];
@@ -4208,7 +4215,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue withUndoAction:(WebUndoAction)undoAction
 {
-    if (![self _canEdit])
+    if (![self _canEditRichly])
         return;
         
     DOMCSSStyleDeclaration *style = [self _emptyStyle];

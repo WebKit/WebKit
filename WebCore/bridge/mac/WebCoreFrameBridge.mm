@@ -744,9 +744,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (BOOL)isSelectionEditable
 {
-    // EDIT FIXME: This needs to consider the entire selected range
-    Node *startNode = m_frame->selection().start().node();
-    return startNode ? startNode->isContentEditable() : NO;
+    return m_frame->selection().isContentEditable();
+}
+
+- (BOOL)isSelectionRichlyEditable
+{
+    return m_frame->selection().isContentRichlyEditable();
 }
 
 - (WebSelectionState)selectionState

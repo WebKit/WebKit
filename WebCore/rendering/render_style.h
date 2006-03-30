@@ -638,7 +638,7 @@ struct BindingURI {
 // CSS3 User Modify Properties
 
 enum EUserModify {
-    READ_ONLY, READ_WRITE
+    READ_ONLY, READ_WRITE, READ_WRITE_PLAINTEXT_ONLY
 };
 
 // CSS3 User Drag Values
