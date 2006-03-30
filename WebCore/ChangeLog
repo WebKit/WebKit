@@ -80,6 +80,45 @@
 
         Reviewed by Darin.
 
+        - WebCore side of fix for <rdar://problem/4308243> 8F36 Regression: 
+        crash in malloc_consolidate if you use a .PAC file
+
+        (1) To ensure thread-safe deallocation, set the "unsafe to destroy on 
+        non-main threads" bit in the DOMObject constructor.
+
+        (2) Made all binding objects inherit from DOMObject, because the
+        WebCore data structures they wrap are not thread-safe. "DOMObject" is
+        a slightly awkward name for things like the Window object, but the 
+        DOM spec is considering adding a Window object, and creating a whole
+        new base class for this purpose seemed like overkill.
+
+        * khtml/ecma/JSDOMParser.h:
+        * khtml/ecma/JSXMLHttpRequest.h:
+        * khtml/ecma/JSXMLSerializer.cpp:
+        (KJS::XMLSerializerConstructorImp::XMLSerializerConstructorImp):
+        * khtml/ecma/JSXMLSerializer.h:
+        * khtml/ecma/JSXSLTProcessor.h:
+        * khtml/ecma/kjs_binding.h:
+        (KJS::DOMObject::DOMObject): Unset the "safe to collect on non-main
+        threads bit" to ensure thread-safe deallocation.
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Navigator::Navigator):
+        (KJS::PluginBase::PluginBase):
+        * khtml/ecma/kjs_navigator.h:
+        * khtml/ecma/kjs_proxy.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::History::History):
+        (KJS::FrameArray::FrameArray):
+        (KJS::Screen::Screen):
+        (KJS::Window::Window):
+        (KJS::BarInfo::BarInfo):
+        * khtml/ecma/kjs_window.h:
+
+2006-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
         - Fixed <rdar://problem/4477126> TOT REGRESSION: with release
         build, maps.google.com zoom slider always zooms fully out
 

@@ -125,9 +125,8 @@ ScriptInterpreter *KJSProxy::interpreter()
 }
 
 // Implementation of the debug() function
-class TestFunctionImp : public JSObject {
+class TestFunctionImp : public DOMObject {
 public:
-  TestFunctionImp() : JSObject() {}
   virtual bool implementsCall() const { return true; }
   virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 };

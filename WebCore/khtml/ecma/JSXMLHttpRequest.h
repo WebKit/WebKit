@@ -32,7 +32,7 @@ namespace WebCore {
 
 namespace KJS {
 
-  class JSXMLHttpRequestConstructorImp : public JSObject {
+  class JSXMLHttpRequestConstructorImp : public DOMObject {
   public:
     JSXMLHttpRequestConstructorImp(ExecState *exec, WebCore::Document *d);
     ~JSXMLHttpRequestConstructorImp();

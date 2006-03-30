@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace KJS {
 
-    class PluginBase : public JSObject {
+    class PluginBase : public DOMObject {
     public:
         PluginBase(ExecState *exec);
         virtual ~PluginBase();
@@ -141,8 +141,11 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
 */
 KJS_IMPLEMENT_PROTOFUNC(NavigatorFunc)
 
-Navigator::Navigator(ExecState *exec, Frame *p)
-  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()), m_frame(p) { }
+Navigator::Navigator(ExecState *exec, Frame *f) 
+    : m_frame(f)
+{
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+}
 
 bool Navigator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
@@ -224,8 +227,9 @@ void PluginBase::cachePluginDataIfNecessary()
 }
 
 PluginBase::PluginBase(ExecState *exec)
-  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype() )
 {
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+
     cachePluginDataIfNecessary();
     m_plugInCacheRefCount++;
 }

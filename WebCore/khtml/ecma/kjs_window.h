@@ -67,7 +67,7 @@ namespace KJS {
 
     class DOMWindowTimer;
 
-  class Screen : public JSObject {
+  class Screen : public DOMObject {
   public:
     enum { Height, Width, ColorDepth, PixelDepth, AvailLeft, AvailTop, AvailHeight, AvailWidth };
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
@@ -80,7 +80,7 @@ namespace KJS {
     WebCore::Frame* m_frame;
   };
 
-  class Window : public JSObject {
+  class Window : public DOMObject {
     friend class Location;
     friend class WindowFunc;
     friend class ScheduledAction;
@@ -218,7 +218,7 @@ namespace KJS {
         DeprecatedString m_code;
     };
 
-  class Location : public JSObject {
+  class Location : public DOMObject {
   public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
@@ -236,7 +236,7 @@ namespace KJS {
     WebCore::Frame* m_frame;
   };
 
-  class Selection : public JSObject {
+  class Selection : public DOMObject {
   public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
@@ -254,7 +254,7 @@ namespace KJS {
     WebCore::Frame* m_frame;
   };
 
-  class BarInfo : public JSObject {
+  class BarInfo : public DOMObject {
   public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;

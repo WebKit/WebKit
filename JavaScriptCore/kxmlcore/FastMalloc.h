@@ -32,7 +32,7 @@ namespace KXMLCore {
     void *fastCalloc(size_t n_elements, size_t element_size);
     void fastFree(void* p);
     void *fastRealloc(void* p, size_t n);
-    
+
 } // namespace KXMLCore
 
 using KXMLCore::fastMalloc;

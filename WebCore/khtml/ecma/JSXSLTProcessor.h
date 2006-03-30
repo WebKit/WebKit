@@ -57,7 +57,7 @@ private:
     RefPtr<WebCore::XSLTProcessor> m_impl;
 };
 
-class XSLTProcessorConstructorImp : public JSObject {
+class XSLTProcessorConstructorImp : public DOMObject {
 public:
     XSLTProcessorConstructorImp(ExecState *);
     virtual bool implementsConstruct() const { return true; }

@@ -21,6 +21,7 @@
 #ifndef KJS_Navigator_H
 #define KJS_Navigator_H
 
+#include "kjs_binding.h"
 #include <kjs/object.h>
 
 namespace WebCore {
@@ -29,7 +30,7 @@ namespace WebCore {
 
 namespace KJS {
 
-  class Navigator : public JSObject {
+  class Navigator : public DOMObject {
   public:
     Navigator(ExecState *exec, WebCore::Frame *p);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);

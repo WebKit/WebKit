@@ -26,7 +26,7 @@
 
 namespace KJS {
 
-  class DOMParserConstructorImp : public JSObject {
+  class DOMParserConstructorImp : public DOMObject {
   public:
     DOMParserConstructorImp(ExecState*, WebCore::Document*);
     virtual bool implementsConstruct() const;

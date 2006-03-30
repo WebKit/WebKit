@@ -443,7 +443,6 @@ bool Collector::collect()
   if (InterpreterImp::s_hook) {
     InterpreterImp *scr = InterpreterImp::s_hook;
     do {
-      //fprintf( stderr, "Collector marking interpreter %p\n",(void*)scr);
       scr->mark();
       scr = scr->next;
     } while (scr != InterpreterImp::s_hook);
@@ -460,6 +459,12 @@ bool Collector::collect()
   size_t emptyBlocks = 0;
   size_t numLiveObjects = heap.numLiveObjects;
 
+#if USE(MULTIPLE_THREADS)
+  bool currentThreadIsMainThread = !pthread_is_threaded_np() || pthread_main_np();
+#else
+  bool currentThreadIsMainThread = true;
+#endif
+  
   for (size_t block = 0; block < heap.usedBlocks; block++) {
     CollectorBlock *curBlock = heap.blocks[block];
 
@@ -473,7 +478,7 @@ bool Collector::collect()
         JSCell *imp = reinterpret_cast<JSCell *>(cell);
         if (imp->m_marked) {
           imp->m_marked = false;
-        } else {
+        } else if (currentThreadIsMainThread || imp->m_destructorIsThreadSafe) {
           imp->~JSCell();
           --usedCells;
           --numLiveObjects;
@@ -494,7 +499,7 @@ bool Collector::collect()
           JSCell *imp = reinterpret_cast<JSCell *>(cell);
           if (imp->m_marked) {
             imp->m_marked = false;
-          } else {
+          } else if (currentThreadIsMainThread || imp->m_destructorIsThreadSafe) {
             imp->~JSCell();
             --usedCells;
             --numLiveObjects;

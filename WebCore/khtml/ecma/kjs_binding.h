@@ -46,9 +46,11 @@ namespace KJS {
    */
   class DOMObject : public JSObject {
   protected:
-    DOMObject() : JSObject() {}
+      // DOMObject Destruction is not thread-safe because JS DOM objects 
+      // wrap unsafe WebCore DOM data structures
+      DOMObject() : JSObject(false) {}
   public:
-    virtual UString toString(ExecState *exec) const;
+      virtual UString toString(ExecState *exec) const;
   };
 
   class DOMNode;

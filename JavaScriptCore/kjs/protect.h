@@ -43,12 +43,14 @@ namespace KJS {
 
     inline void gcProtectNullTolerant(JSValue *val) 
     {
-        if (val) gcProtect(val);
+        if (val) 
+            gcProtect(val);
     }
 
     inline void gcUnprotectNullTolerant(JSValue *val) 
     {
-        if (val) gcUnprotect(val);
+        if (val) 
+            gcUnprotect(val);
     }
     
     // FIXME: Share more code with RefPtr template? The only differences are the ref/deref operation

@@ -1,3 +1,42 @@
+2006-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - JavaScriptCore side of fix for <rdar://problem/4308243> 8F36 
+        Regression: crash in malloc_consolidate if you use a .PAC file
+
+        The crash was a result of threaded deallocation of thread-unsafe
+        objects. Pure JS objects are thread-safe because all JS execution
+        is synchronized through JSLock. However, JS objects that wrap WebCore 
+        objects are thread-unsafe because JS and WebCore execution are not 
+        synchronized.  That unsafety comes into play when the collector 
+        deallocates a JS object that wraps a WebCore object, thus causing the 
+        WebCore object to be deallocated.
+
+        The solution here is to have each JSCell know whether it is safe to
+        collect on a non-main thread, and to avoid collecting unsafe cells
+        when on a non-main thread.
+
+        We don't have a way to test PAC files yet, so there's no test
+        attached to this patch.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        (1) Added the test "currentThreadIsMainThread || 
+        imp->m_destructorIsThreadSafe". 
+
+        * kjs/protect.h:
+        (KJS::gcProtectNullTolerant):
+        (KJS::gcUnprotectNullTolerant):
+        * kjs/value.h:
+        (KJS::JSCell::JSCell): The bools here must be bitfields, otherwise
+        m_destructorIsThreadSafe becomes another whole word, ruining the
+        collector optimizations we've made based on the size of a JSObject.
+        * kxmlcore/FastMalloc.cpp:
+        (KXMLCore::currentThreadIsMainThread):
+        (KXMLCore::fastMallocRegisterThread):
+        * kxmlcore/FastMalloc.h:
+
 2006-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
