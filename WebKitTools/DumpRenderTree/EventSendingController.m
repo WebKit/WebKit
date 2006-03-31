@@ -27,7 +27,9 @@
  */
 
 #import "EventSendingController.h"
+
 #import "DumpRenderTree.h"
+#import "DumpRenderTreeDraggingInfo.h"
 
 #import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
 #import <WebKit/WebKit.h>

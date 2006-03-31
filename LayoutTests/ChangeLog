@@ -1,3 +1,19 @@
+2006-03-31  Darin Adler  <darin@apple.com>
+
+        - updated results for tests that involve scrolling
+
+        * editing/selection/focus_editable_html-expected.txt: Added expected scroll position.
+        * fast/dom/focus-contenteditable-expected.txt: Ditto.
+        * fast/overflow/scrollRevealButton.html: Ditto.
+
+        - updated results for tests that involve new exception names
+
+        * fast/dom/Element/attr-param-typechecking-expected.txt: Updated.
+
+        * fast/dynamic/insertAdjacentElement-expected.txt: Updated.
+        * fast/dynamic/insertAdjacentElement-expected.png: Added.
+        * fast/dynamic/insertAdjacentElement-expected.checksum: Added.
+
 2006-03-31  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/4472371> REGRESSION(417.9-TOT): 

@@ -20,3 +20,4 @@ layer at (0,0) size 2008x2070
         RenderText {TEXT} at (0,0) size 0x0
 selection start: position 1 of child 0 {TEXT} of child 0 {BODY} of child 0 {HTML} of document
 selection end:   position 42 of child 4 {TEXT} of child 0 {BODY} of child 0 {HTML} of document
+scrolled to 0,8

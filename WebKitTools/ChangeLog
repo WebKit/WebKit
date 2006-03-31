@@ -1,3 +1,26 @@
+2006-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - added a "--reset-results" option to run-webkit-tests so you can reset
+          the results without first deleting expected results
+        - <rdar://problem/4185878> add scroll position to dumpRenderTree
+
+        * Scripts/run-webkit-tests: Rearranged the code a bit to make the sequence
+        more logical. Moved all the subroutines to the end of the file. Added a
+        "--force" option.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Added a new --dump-all-pixels option, used when forcing run-webkit-tests
+        to generate new output for all tests it runs.
+        (dump): Dump the scroll position if it's non-zero. Always dump the image when
+        the --dump-all-pixels option is passed. Also tightened up the image dumping
+        code and replaced the incorrect use of +[NSGraphicsContext saveGraphicsState]
+        with code to save and restore the context.
+
+        * DumpRenderTree/DumpRenderTree.h: Tweaked includes a bit and added (void).
+        * DumpRenderTree/EventSendingController.m: Added now-needed include.
+
 2006-03-30  Tim Omernick  <timo@apple.com>
 
         Reviewed by NOBODY (just fixing copyrights)

@@ -50,13 +50,14 @@
 #import <getopt.h>
 #import <malloc/malloc.h>
 
-#import "TextInputController.h"
-#import "NavigationController.h"
 #import "AppleScriptController.h"
-#import "EventSendingController.h"
+#import "DumpRenderTreeDraggingInfo.h"
 #import "EditingDelegate.h"
+#import "EventSendingController.h"
+#import "NavigationController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
+#import "TextInputController.h"
 
 @interface DumpRenderTreeWindow : NSWindow
 @end
@@ -84,6 +85,7 @@ static BOOL dumpAsText;
 static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
 static int dumpPixels = NO;
+static int dumpAllPixels = NO;
 static int testRepaintDefault = NO;
 static BOOL testRepaint = NO;
 static int repaintSweepHorizontallyDefault = NO;
@@ -99,7 +101,7 @@ static CGColorSpaceRef sharedColorSpace;
 const unsigned maxViewHeight = 600;
 const unsigned maxViewWidth = 800;
 
-BOOL doneLoading()
+BOOL doneLoading(void)
 {
     return done;
 }
@@ -186,11 +188,12 @@ int main(int argc, const char *argv[])
     class_poseAs(objc_getClass("DumpRenderTreeWindow"), objc_getClass("NSWindow"));
     
     struct option options[] = {
-        {"pixel-tests", no_argument, &dumpPixels, YES},
-        {"tree", no_argument, &dumpTree, YES},
-        {"notree", no_argument, &dumpTree, NO},
-        {"repaint", no_argument, &testRepaintDefault, YES},
+        {"dump-all-pixels", no_argument, &dumpAllPixels, YES},
         {"horizontal-sweep", no_argument, &repaintSweepHorizontallyDefault, YES},
+        {"notree", no_argument, &dumpTree, NO},
+        {"pixel-tests", no_argument, &dumpPixels, YES},
+        {"repaint", no_argument, &testRepaintDefault, YES},
+        {"tree", no_argument, &dumpTree, YES},
         {NULL, 0, NULL, 0}
     };
 
@@ -349,31 +352,31 @@ static void dump(void)
         
         if (!result)
             printf("ERROR: nil result from %s", dumpAsText ? "[documentElement innerText]" : "[frame renderTreeAsExternalRepresentation]");
-        else
+        else {
             fputs([result UTF8String], stdout);
-        
+            if (!dumpAsText) {
+                NSPoint scrollPosition = [[[[frame frameView] documentView] superview] bounds].origin;
+                if (scrollPosition.x != 0 || scrollPosition.y != 0)
+                    printf("scrolled to %0.f,%0.f\n", scrollPosition.x, scrollPosition.y);
+            }
+        }
+
         if (printSeparators)
             puts("#EOF");
     }
     
     if (dumpPixels) {
         if (!dumpAsText) {
-            // FIXME: It's unfortunate that we hardcode the file naming scheme here.
-            // At one time, the perl script had all the knowledge about file layout.
-            // Some day we should restore that setup by passing in more parameters to this tool.
-
-            NSString *baseTestPath = [currentTest stringByDeletingPathExtension];
-            NSString *baselineHashPath = [baseTestPath stringByAppendingString:@"-expected.checksum"];
-            NSString *baselineHash = [NSString stringWithContentsOfFile:baselineHashPath encoding:NSUTF8StringEncoding error:nil];
-            NSString *baselineImagePath = [baseTestPath stringByAppendingString:@"-expected.png"];
-            
             // grab a bitmap from the view
-            WebView *view = [frame webView];
-            NSSize webViewSize = [[frame webView] frame].size;
+            WebView* view = [frame webView];
+            NSSize webViewSize = [view frame].size;
+
             CGContextRef cgContext = CGBitmapContextCreate(screenCaptureBuffer, webViewSize.width, webViewSize.height, 8, webViewSize.width * 4, sharedColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast);
-            NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
-            [NSGraphicsContext saveGraphicsState];
+
+            NSGraphicsContext* savedContext = [[[NSGraphicsContext currentContext] retain] autorelease];
+            NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
             [NSGraphicsContext setCurrentContext:nsContext];
+
             if (!testRepaint)
                 [view displayRectIgnoringOpacity:NSMakeRect(0, 0, webViewSize.width, webViewSize.height) inContext:nsContext];
             else if (!repaintSweepHorizontally) {
@@ -396,16 +399,35 @@ static void dump(void)
                     [NSBezierPath strokeRect:[documentView convertRect:[(id <WebDocumentSelection>)documentView selectionRect] fromView:nil]];
                 }
             }
-            [NSGraphicsContext restoreGraphicsState];
+
+            [NSGraphicsContext setCurrentContext:savedContext];
             
-            // has the actual hash to compare to the expected image's hash
             CGImageRef bitmapImage = CGBitmapContextCreateImage(cgContext);
+            CGContextRelease(cgContext);
+
+            // compute the actual hash to compare to the expected image's hash
             NSString *actualHash = md5HashStringForBitmap(bitmapImage);
             printf("\nActualHash: %s\n", [actualHash UTF8String]);
-            printf("BaselineHash: %s\n", [baselineHash UTF8String]);
+
+            BOOL dumpImage;
+            if (dumpAllPixels)
+                dumpImage = YES;
+            else {
+                // FIXME: It's unfortunate that we hardcode the file naming scheme here.
+                // At one time, the perl script had all the knowledge about file layout.
+                // Some day we should restore that setup by passing in more parameters to this tool.
+                NSString *baseTestPath = [currentTest stringByDeletingPathExtension];
+                NSString *baselineHashPath = [baseTestPath stringByAppendingString:@"-expected.checksum"];
+                NSString *baselineHash = [NSString stringWithContentsOfFile:baselineHashPath encoding:NSUTF8StringEncoding error:nil];
+                NSString *baselineImagePath = [baseTestPath stringByAppendingString:@"-expected.png"];
+
+                printf("BaselineHash: %s\n", [baselineHash UTF8String]);
+
+                /// send the image to stdout if the hash mismatches or if there's no file in the file system
+                dumpImage = ![baselineHash isEqualToString:actualHash] || access([baselineImagePath fileSystemRepresentation], F_OK) != 0;
+            }
             
-            // if the hashes don't match, send image back to stdout for diff comparision
-            if (![baselineHash isEqualToString:actualHash] || access([baselineImagePath fileSystemRepresentation], F_OK) != 0) {
+            if (dumpImage) {
                 CFMutableDataRef imageData = CFDataCreateMutable(0, 0);
                 CGImageDestinationRef imageDest = CGImageDestinationCreateWithData(imageData, CFSTR("public.png"), 1, 0);
                 CGImageDestinationAddImage(imageDest, bitmapImage, 0);
@@ -415,8 +437,8 @@ static void dump(void)
                 fwrite(CFDataGetBytePtr(imageData), 1, CFDataGetLength(imageData), stdout);
                 CFRelease(imageData);
             }
+
             CGImageRelease(bitmapImage);
-            CGContextRelease(cgContext);
         }
 
         printf("#EOF\n");

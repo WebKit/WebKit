@@ -26,11 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "DumpRenderTreeDraggingInfo.h"
-
+@class DumpRenderTreeDraggingInfo;
 @class WebFrame;
 
 extern WebFrame *frame;
 extern DumpRenderTreeDraggingInfo *draggingInfo;
 
-BOOL doneLoading();
+BOOL doneLoading(void);

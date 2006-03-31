@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {PRE} at (0,0) size 784x30
-        RenderText {TEXT} at (0,0) size 544x30
+        RenderText {TEXT} at (0,0) size 552x30
           text run at (0,0) width 544: "Caught expected exception: Error: NOT_SUPPORTED_ERR: DOM Exception 9"
-          text run at (0,15) width 400: "Caught expected exception: Error: DOM Exception 17"
+          text run at (0,15) width 552: "Caught expected exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17"
       RenderBlock (anonymous) at (0,43) size 784x18
         RenderInline {SPAN} at (0,0) size 60x18
           RenderText {TEXT} at (0,0) size 60x18

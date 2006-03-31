@@ -1,3 +1,14 @@
+2006-03-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * khtml/ecma/kjs_binding.cpp: Added names for VALIDATION_ERR and
+        TYPE_MISMATCH_ERR; new DOM Level 3 errors that need to be listed in
+        the mapping from error code to error name.
+
+        * dom/Element.idl: Removed comment from bad old days where we had to
+        touch these files to make them rebuild.
+
 2006-03-30  Maciej Stachowiak  <mjs@apple.com>
 
         - fixed Windows build breakage from previous change

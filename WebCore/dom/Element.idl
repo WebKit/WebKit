@@ -17,8 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-// touched to regenerate
-
 module core {
 
     interface [LegacyParent=KJS::DOMElement] Element : EventTargetNode {
@@ -81,12 +79,14 @@ module core {
 
         readonly attribute CSSStyleDeclaration style;
 
-        // IE only extensions
+        // IE-only extensions
+
         Node insertAdjacentElement(in DOMString position, 
                                    in Node newElement)
             raises(DOMException);
         
         boolean contains(in Element element);
+
     };
 
 }

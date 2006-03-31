@@ -3,18 +3,18 @@ This test checks whether passing wrong types to setAttributeNode causes a crash.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS element.setAttributeNode("style"); threw exception Error: DOM Exception 17.
-PASS element.setAttributeNode(null); threw exception Error: DOM Exception 17.
-PASS element.setAttributeNode(undefined); threw exception Error: DOM Exception 17.
-PASS element.setAttributeNode(new Object); threw exception Error: DOM Exception 17.
-PASS element.removeAttributeNode("style"); threw exception Error: DOM Exception 17.
-PASS element.removeAttributeNode(null); threw exception Error: DOM Exception 17.
-PASS element.removeAttributeNode(undefined); threw exception Error: DOM Exception 17.
-PASS element.removeAttributeNode(new Object); threw exception Error: DOM Exception 17.
-PASS element.setAttributeNodeNS("style"); threw exception Error: DOM Exception 17.
-PASS element.setAttributeNodeNS(null); threw exception Error: DOM Exception 17.
-PASS element.setAttributeNodeNS(undefined); threw exception Error: DOM Exception 17.
-PASS element.setAttributeNodeNS(new Object); threw exception Error: DOM Exception 17.
+PASS element.setAttributeNode("style"); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.setAttributeNode(null); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.setAttributeNode(undefined); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.setAttributeNode(new Object); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.removeAttributeNode("style"); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.removeAttributeNode(null); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.removeAttributeNode(undefined); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.removeAttributeNode(new Object); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.setAttributeNodeNS("style"); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.setAttributeNodeNS(null); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.setAttributeNodeNS(undefined); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS element.setAttributeNodeNS(new Object); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS successfullyParsed is true
 
 TEST COMPLETE
