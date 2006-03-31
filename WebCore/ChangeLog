@@ -1,3 +1,18 @@
+2006-03-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8108
+        REGRESSION (r13590-r13593): Floating table's cells don't paint 
+        their background
+
+        This is a regression from my painting patch yesterday. Just a silly 
+        error I didn't catch.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint): Change the phase of our new 
+        PaintInfo, not our old one.
+
 2006-03-31  Tim Omernick  <timo@apple.com>
 
         Reviewed by Adele.

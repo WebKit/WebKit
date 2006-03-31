@@ -1,3 +1,16 @@
+2006-03-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8108
+        REGRESSION (r13590-r13593): Floating table's cells don't paint 
+        their background
+
+        * fast/table/floatingTablePaintBackground-expected.checksum: Added.
+        * fast/table/floatingTablePaintBackground-expected.png: Added.
+        * fast/table/floatingTablePaintBackground-expected.txt: Added.
+        * fast/table/floatingTablePaintBackground.html: Added.
+
 2006-03-31  Tim Omernick  <timo@apple.com>
 
         Reviewed by Adele.
