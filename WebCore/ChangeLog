@@ -1,3 +1,12 @@
+2006-03-30  Tim Omernick  <timo@apple.com>
+
+        Manual test case for the Java aspect of <rdar://problem/4212626> REGRESSION: LIVECONNECT:
+        JavaScript type for Java Strings is function, not object
+
+        * manual-tests/java-string-object-type.html: Added.
+        * manual-tests/resources/StringTypeTest.class: Added.
+        * manual-tests/resources/StringTypeTest.java: Added.
+
 2006-03-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.
