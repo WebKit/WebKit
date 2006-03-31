@@ -1,3 +1,13 @@
+2006-03-31  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        Make sure the GetterSetterImp objects are marked as well.
+        
+        * kjs/internal.cpp:
+        (KJS::GetterSetterImp::mark):
+        Call JSCell::mark().
+        
 2006-03-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

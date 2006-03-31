@@ -123,6 +123,8 @@ bool NumberImp::getUInt32(uint32_t& uint32) const
 // --------------------------- GetterSetterImp ---------------------------------
 void GetterSetterImp::mark()
 {
+    JSCell::mark();
+    
     if (getter && !getter->marked())
         getter->mark();
     if (setter && !setter->marked())
