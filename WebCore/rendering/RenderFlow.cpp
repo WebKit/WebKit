@@ -364,11 +364,10 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
 
     // We can check the first box and last box and avoid painting if we don't
     // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
-    // FIXME: This check is flawed in two extremely obscure ways.
-    // (1) If some line in the middle has a huge overflow, it might actually extend below the last line.
-    // (2) The overflow from an inline block on a line is not reported to the line.
-    int yPos = firstLineBox()->root()->selectionTop() - maximalOutlineSize(i.phase);
-    int h = maximalOutlineSize(i.phase) + lastLineBox()->root()->selectionTop() + lastLineBox()->root()->selectionHeight() - yPos;
+    // FIXME: This check is flawed in the following extremely obscure way:
+    // if some line in the middle has a huge overflow, it might actually extend below the last line.
+    int yPos = firstLineBox()->root()->topOverflow() - maximalOutlineSize(i.phase);
+    int h = maximalOutlineSize(i.phase) + lastLineBox()->root()->bottomOverflow() - yPos;
     yPos += _ty;
     if (yPos >= i.r.bottom() || yPos + h <= i.r.y())
         return;
@@ -436,9 +435,8 @@ bool RenderFlow::hitTestLines(NodeInfo& i, int x, int y, int tx, int ty, HitTest
 
     // We can check the first box and last box and avoid hit testing if we don't
     // contain the point.  This is a quick short-circuit that we can take to avoid walking any lines.
-    // FIXME: This check is flawed in two extremely obscure ways.
-    // (1) If some line in the middle has a huge overflow, it might actually extend below the last line.
-    // (2) The overflow from an inline block on a line is not reported to the line.
+    // FIXME: This check is flawed in the following extremely obscure way:
+    // if some line in the middle has a huge overflow, it might actually extend below the last line.
     if ((y >= ty + lastLineBox()->root()->bottomOverflow()) || (y < ty + firstLineBox()->root()->topOverflow()))
         return false;
 

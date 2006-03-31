@@ -1,3 +1,37 @@
+2006-03-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Tests: fast/repaint/text-shadow.html fast/repaint/text-shadow-horizontal.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7301
+          Text shadow does not repaint correctly
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Paint the text box if it is within the maximum
+        possible horizontal shadow overflow of the damage rect.
+        * rendering/InlineTextBox.h: Removed unused function checkVerticalPoint().
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines): Use the vertical overflows instead of the
+        selection vertical bounds.
+        (WebCore::RenderFlow::hitTestLines):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Include overflow due to text shadow
+        in leftPosition and rightPosition and keep track of the maximum horizontal shadow
+        on the inline.
+        (WebCore::InlineFlowBox::verticallyAlignBoxes):
+        (WebCore::InlineFlowBox::placeBoxesVertically): Include overflow due to shadow and
+        inline-blocks' overflow in topPosition and bottomPosition but not in the selection
+        vertical bounds.
+        (WebCore::RootInlineBox::selectionTop):
+        * rendering/render_line.h:
+        (WebCore::InlineFlowBox:::InlineRunBox):
+        (WebCore::InlineFlowBox::setVerticalSelectionPositions):
+        (WebCore::InlineFlowBox::maxHorizontalShadow):
+        (WebCore::RootInlineBox::setVerticalSelectionPositions):
+        (WebCore::RootInlineBox::selectionBottom):
+        (WebCore::RootInlineBox::selectionHeight):
+
 2006-03-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

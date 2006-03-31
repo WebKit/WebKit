@@ -67,19 +67,6 @@ void InlineTextBox::operator delete(void* ptr, size_t sz)
     *static_cast<size_t*>(ptr) = sz;
 }
 
-bool InlineTextBox::checkVerticalPoint(int _y, int _ty, int _h)
-{
-    int topY = m_y;
-    int bottomY = m_y + m_height;
-    if (root()->hasSelectedChildren()) {
-        topY = kMin(root()->selectionTop(), topY);
-        bottomY = kMax(bottomY, root()->bottomOverflow());
-    }
-    if ((_ty + topY >= _y + _h) || (_ty + bottomY <= _y))
-        return false;
-    return true;
-}
-
 bool InlineTextBox::isSelected(int startPos, int endPos) const
 {
     int sPos = kMax(startPos - m_start, 0);
@@ -250,8 +237,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     
     assert(i.phase != PaintPhaseSelfOutline && i.phase != PaintPhaseChildOutlines);
 
-    int xPos = tx + m_x;
-    int w = width();
+    int xPos = tx + m_x - parent()->maxHorizontalShadow();
+    int w = width() + 2 * parent()->maxHorizontalShadow();
     if (xPos >= i.r.right() || xPos + w <= i.r.x())
         return;
         

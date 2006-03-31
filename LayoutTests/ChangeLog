@@ -1,3 +1,24 @@
+2006-03-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7301
+          Text shadow does not repaint correctly
+
+        * fast/repaint: Added.
+        * fast/repaint/inline-block-overflow-expected.checksum: Added.
+        * fast/repaint/inline-block-overflow-expected.png: Added.
+        * fast/repaint/inline-block-overflow-expected.txt: Added.
+        * fast/repaint/inline-block-overflow.html: Added.
+        * fast/repaint/text-shadow-expected.checksum: Added.
+        * fast/repaint/text-shadow-expected.png: Added.
+        * fast/repaint/text-shadow-expected.txt: Added.
+        * fast/repaint/text-shadow-horizontal-expected.checksum: Added.
+        * fast/repaint/text-shadow-horizontal-expected.png: Added.
+        * fast/repaint/text-shadow-horizontal-expected.txt: Added.
+        * fast/repaint/text-shadow-horizontal.html: Added.
+        * fast/repaint/text-shadow.html: Added.
+
 2006-03-30  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.

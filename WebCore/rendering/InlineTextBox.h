@@ -119,13 +119,6 @@ public:
     int offsetForPosition(int _x, bool includePartialGlyphs = true) const;
     int positionForOffset(int offset) const;
     
-    /**
-     * if this text run was rendered @ref _ty pixels below the upper edge
-     * of a view, would the @ref _y -coordinate be inside the vertical range
-     * of this object's representation?
-     */
-    bool checkVerticalPoint(int _y, int _ty, int _h);
-
     int m_start;
     unsigned short m_len;
     
