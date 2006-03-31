@@ -283,7 +283,7 @@ public:
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
     void paint(GraphicsContext*, const IntRect& damageRect, bool selectionOnly = false, RenderObject* paintingRoot = 0);
-    bool hitTest(RenderObject::NodeInfo& info, int x, int y);
+    bool hitTest(RenderObject::NodeInfo&, const IntPoint&);
 
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
@@ -294,7 +294,6 @@ public:
     ClipRects* clipRects() const { return m_clipRects; }
 
     bool intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const;
-    bool containsPoint(int x, int y, const IntRect& damageRect) const;
 
     // Returns a bounding box for this layer only.
     IntRect absoluteBoundingBox() const;
@@ -327,8 +326,7 @@ private:
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
         bool haveTransparency, bool selectionOnly, RenderObject* paintingRoot);
-    RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
-        int x, int y, const IntRect& hitTestRect);
+    RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo&, const IntPoint&, const IntRect& hitTestRect);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 
     virtual void valueChanged(Widget*);

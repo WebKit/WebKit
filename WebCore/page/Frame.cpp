@@ -1658,7 +1658,7 @@ bool Frame::isPointInsideSelection(int x, int y)
         return false;
     
     RenderObject::NodeInfo nodeInfo(true, true);
-    document()->renderer()->layer()->hitTest(nodeInfo, x, y);
+    document()->renderer()->layer()->hitTest(nodeInfo, IntPoint(x, y));
     Node *innerNode = nodeInfo.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;

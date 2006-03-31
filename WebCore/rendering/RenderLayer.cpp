@@ -46,8 +46,10 @@
 
 #include "Document.h"
 #include "EventNames.h"
+#include "FloatRect.h"
 #include "FrameView.h"
 #include "Frame.h"
+#include "FrameTree.h"
 #include "GraphicsContext.h"
 #include "dom2_eventsimpl.h"
 #include "html_blockimpl.h"
@@ -1165,15 +1167,28 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     }
 }
 
+static inline bool isSubframeCanvas(RenderObject* renderer)
+{
+    return renderer->isCanvas() && renderer->node()->document()->frame()->tree()->parent();
+}
+
+static inline IntRect frameVisibleRect(RenderObject* renderer)
+{
+    return enclosingIntRect(renderer->node()->document()->frame()->view()->visibleContentRect());
+}
+
 bool
-RenderLayer::hitTest(RenderObject::NodeInfo& info, int x, int y)
+RenderLayer::hitTest(RenderObject::NodeInfo& info, const IntPoint& point)
 {
     gScrollBar = 0;
 
     renderer()->document()->updateLayout();
     
-    IntRect damageRect(m_x, m_y, width(), height());
-    RenderLayer* insideLayer = hitTestLayer(this, info, x, y, damageRect);
+    IntRect boundsRect(m_x, m_y, width(), height());
+    if (isSubframeCanvas(renderer()))
+        boundsRect.intersect(frameVisibleRect(renderer()));
+
+    RenderLayer* insideLayer = hitTestLayer(this, info, point, boundsRect);
 
     // Now determine if the result is inside an anchor; make sure an image map wins if
     // it already set URLElement and only use the innermost.
@@ -1192,12 +1207,20 @@ RenderLayer::hitTest(RenderObject::NodeInfo& info, int x, int y)
     return insideLayer;
 }
 
+static inline bool shouldApplyImplicitCapture(RenderObject* renderer, bool mouseDown)
+{
+    return mouseDown && renderer->isRoot();
+}
+
 RenderLayer*
 RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
-                          int xMousePos, int yMousePos, const IntRect& hitTestRect)
+                          const IntPoint& mousePos, const IntRect& hitTestRect)
 {
     // Calculate the clip rects we should use.
-    IntRect layerBounds, bgRect, fgRect, outlineRect;
+    IntRect layerBounds;
+    IntRect bgRect;
+    IntRect fgRect;
+    IntRect outlineRect;
     calculateRects(rootLayer, hitTestRect, layerBounds, bgRect, fgRect, outlineRect);
     
     // Ensure our z-order lists are up-to-date.
@@ -1211,15 +1234,15 @@ RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
     // z-index.
     if (m_posZOrderList) {
         for (int i = m_posZOrderList->size() - 1; i >= 0; --i) {
-            insideLayer = m_posZOrderList->at(i)->hitTestLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
+            insideLayer = m_posZOrderList->at(i)->hitTestLayer(rootLayer, info, mousePos, hitTestRect);
             if (insideLayer)
                 return insideLayer;
         }
     }
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
-    if (containsPoint(xMousePos, yMousePos, fgRect) && 
-        renderer()->hitTest(info, xMousePos, yMousePos,
+    if (fgRect.contains(mousePos) && 
+        renderer()->hitTest(info, mousePos.x(), mousePos.y(),
                             layerBounds.x() - renderer()->xPos(),
                             layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra(), HitTestDescendants)) {
         // for positioned generated content, we might still not have a
@@ -1249,15 +1272,18 @@ RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
     // Now check our negative z-index children.
     if (m_negZOrderList) {
         for (int i = m_negZOrderList->size() - 1; i >= 0; --i) {
-            insideLayer = m_negZOrderList->at(i)->hitTestLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
+            insideLayer = m_negZOrderList->at(i)->hitTestLayer(rootLayer, info, mousePos, hitTestRect);
             if (insideLayer)
                 return insideLayer;
         }
     }
 
     // Next we want to see if the mouse pos is inside this layer but not any of its children.
-    if (containsPoint(xMousePos, yMousePos, bgRect) &&
-        renderer()->hitTest(info, xMousePos, yMousePos,
+    // If this is the root layer and the mouse is down, we want to do this even if it doesn't
+    // contain the point so mouse move events keep getting delivered when dragging outside the
+    // window.
+    if ((bgRect.contains(mousePos) || shouldApplyImplicitCapture(renderer(), info.active())) &&
+        renderer()->hitTest(info, mousePos.x(), mousePos.y(),
                             layerBounds.x() - renderer()->xPos(),
                             layerBounds.y() - renderer()->yPos() + m_object->borderTopExtra(),
                             HitTestSelf))
@@ -1447,13 +1473,6 @@ IntRect RenderLayer::absoluteBoundingBox() const
     convertToLayerCoords(root(), absX, absY);
     result.move(absX - m_x, absY - m_y);
     return result;
-}
-
-bool RenderLayer::containsPoint(int x, int y, const IntRect& damageRect) const
-{
-    // Always returning true for the root object to ensure that mouse events occurring
-    // outside the window (when dragging) always target some node.
-    return renderer()->isRoot() || damageRect.contains(x, y);
 }
 
 void RenderLayer::clearClipRects()

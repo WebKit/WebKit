@@ -86,6 +86,7 @@ public:
     // Equivalent to checking if the rect contains a 1x1 rect below and to the right of (px,py).
     bool contains(int px, int py) const
         { return px >= x() && px < right() && py >= y() && py < bottom(); }
+    bool contains(const IntPoint& point) const { return contains(point.x(), point.y()); }
 
     void intersect(const IntRect&);
     void unite(const IntRect&);

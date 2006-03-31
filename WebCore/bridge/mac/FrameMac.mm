@@ -792,7 +792,7 @@ bool FrameMac::wheelEvent(NSEvent *event)
     
     NSPoint point = [d->m_view->getDocumentView() convertPoint:[event locationInWindow] fromView:nil];
     RenderObject::NodeInfo nodeInfo(true, true);
-    r->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);    
+    r->layer()->hitTest(nodeInfo, IntPoint(point));    
     
     Node *node = nodeInfo.innerNode();
     if (!node)
@@ -1528,7 +1528,7 @@ bool FrameMac::eventMayStartDrag(NSEvent *event) const
     int mouseDownX, mouseDownY;
     d->m_view->viewportToContents((int)loc.x, (int)loc.y, mouseDownX, mouseDownY);
     RenderObject::NodeInfo nodeInfo(true, false);
-    renderer()->layer()->hitTest(nodeInfo, mouseDownX, mouseDownY);
+    renderer()->layer()->hitTest(nodeInfo, IntPoint(mouseDownX, mouseDownY));
     bool srcIsDHTML;
     return nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownX, mouseDownY, srcIsDHTML);
 }
@@ -1589,7 +1589,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         if (_mouseDownMayStartDrag && !_dragSrc) {
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
-            renderer()->layer()->hitTest(nodeInfo, _mouseDownX, _mouseDownY);
+            renderer()->layer()->hitTest(nodeInfo, IntPoint(_mouseDownX, _mouseDownY));
             Node *node = nodeInfo.innerNode();
             _dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _mouseDownX, _mouseDownY, _dragSrcIsDHTML) : 0;
             if (!_dragSrc) {
@@ -2112,7 +2112,7 @@ bool FrameMac::sendContextMenuEvent(NSEvent *event)
     int xm, ym;
     v->viewportToContents(mouseEvent.x(), mouseEvent.y(), xm, ym);
 
-    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, xm, ym, mouseEvent);
+    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, IntPoint(xm, ym), mouseEvent);
 
     swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, mouseEvent, true);
     if (!swallowEvent && !isPointInsideSelection(xm, ym) &&

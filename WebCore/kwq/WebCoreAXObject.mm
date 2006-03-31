@@ -64,6 +64,7 @@
 #import "DOMInternal.h"
 #import "EventNames.h"
 #import "HTMLNames.h"
+#import "IntPoint.h"
 
 using namespace WebCore;
 using namespace EventNames;
@@ -1060,7 +1061,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         ourpoint.y += docView->contentsY();
         
         RenderObject::NodeInfo nodeInfo(true, true);
-        renderer->layer()->hitTest(nodeInfo, (int)ourpoint.x, (int)ourpoint.y);
+        renderer->layer()->hitTest(nodeInfo, IntPoint(ourpoint));
         innerNode = nodeInfo.innerNode();
         if (!innerNode || !innerNode->renderer())
             return nil;
@@ -1772,7 +1773,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         return NSAccessibilityUnignoredAncestor(self);
     
     RenderObject::NodeInfo nodeInfo(true, true);
-    m_renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
+    m_renderer->layer()->hitTest(nodeInfo, IntPoint(point));
     if (!nodeInfo.innerNode())
         return NSAccessibilityUnignoredAncestor(self);
     Node* node = nodeInfo.innerNode()->shadowAncestorNode();

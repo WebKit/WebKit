@@ -75,6 +75,7 @@ namespace WebCore {
     class HTMLImageLoader;
     class HTMLInputElement;
     class HTMLMapElement;
+    class IntPoint;
     class JSEditor;
     class MouseEventWithHitTestResults;
     class NameNodeList;
@@ -335,7 +336,7 @@ public:
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
     
-    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, int x, int y, const PlatformMouseEvent&);
+    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, const IntPoint& point, const PlatformMouseEvent&);
 
     virtual bool childAllowed(Node*);
     virtual bool childTypeAllowed(NodeType);

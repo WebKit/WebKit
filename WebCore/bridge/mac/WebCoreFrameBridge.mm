@@ -2462,7 +2462,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
     RenderObject *renderer = m_frame->renderer();
 
     RenderObject::NodeInfo nodeInfo(true, true);
-    renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
+    renderer->layer()->hitTest(nodeInfo, IntPoint(point));
 
     Node *n;
     Widget *widget = 0;
@@ -2485,7 +2485,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
         widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
 
         RenderObject::NodeInfo widgetNodeInfo(true, true);
-        frame->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint.x(), widgetPoint.y());
+        frame->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint);
         nodeInfo = widgetNodeInfo;
     }
     

@@ -1,3 +1,39 @@
+2006-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::wheelEvent):
+        (WebCore::FrameMac::eventMayStartDrag):
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        (WebCore::FrameMac::sendContextMenuEvent):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge RenderObject::nodeInfoAtPoint:allowShadowContent:]):
+        * dom/Document.cpp:
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::prepareMouseEvent):
+        * dom/Document.h:
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXTextMarkerForPosition:]):
+        (-[WebCoreAXObject accessibilityHitTest:]):
+        * manual-tests/frame-hover.html: Added.
+        * manual-tests/resources/hover-subframe-1.html: Added.
+        * manual-tests/resources/hover-subframe-2.html: Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::isPointInsideSelection):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::prepareMouseEvent):
+        (WebCore::FrameView::handleWheelEvent):
+        * platform/IntRect.h:
+        (WebCore::IntRect::contains):
+        * rendering/RenderLayer.cpp:
+        (WebCore::isSubframeCanvas):
+        (WebCore::frameVisibleRect):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::shouldApplyImplicitCapture):
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/RenderLayer.h:
+
 2006-03-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Tests: fast/repaint/flexible-box-overflow.html fast/repaint/flexible-box-overflow-horizontal.html
