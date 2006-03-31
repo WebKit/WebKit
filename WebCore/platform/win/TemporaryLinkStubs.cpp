@@ -79,7 +79,6 @@ Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFoc
 void Widget::disableFlushDrawing() { notImplemented(); }
 void Widget::lockDrawingFocus() { notImplemented(); }
 void Widget::unlockDrawingFocus() { notImplemented(); }
-void Widget::setDrawingAlpha(float) { notImplemented(); }
 
 JavaAppletWidget::JavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 

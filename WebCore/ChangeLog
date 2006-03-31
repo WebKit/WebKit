@@ -1,3 +1,10 @@
+2006-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+        - fixed windows build
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Widget::unlockDrawingFocus):
+
 2006-03-31  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
