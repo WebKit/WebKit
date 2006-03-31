@@ -120,7 +120,7 @@ void RenderBox::setStyle(RenderStyle *_style)
     if (isBody())
         element()->document()->setTextColor(_style->color());
     
-    if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintActionOutline))
+    if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
         static_cast<RenderCanvas*>(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());
 }
 

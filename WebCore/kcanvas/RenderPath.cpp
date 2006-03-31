@@ -188,7 +188,7 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
     //ASSERT(parentX == 0);
     //ASSERT(parentY == 0);
 
-    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == HIDDEN)
+    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN)
         return;
     
     KRenderingDevice* device = renderingDevice();

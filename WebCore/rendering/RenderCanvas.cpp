@@ -152,7 +152,7 @@ void RenderCanvas::paint(PaintInfo& i, int _tx, int _ty)
         setPrintRect(i.r);
     
     // 1. paint background, borders etc
-    if (i.phase == PaintActionBlockBackground) {
+    if (i.phase == PaintPhaseBlockBackground) {
         paintBoxDecorations(i, _tx, _ty);
         return;
     }
@@ -169,7 +169,7 @@ void RenderCanvas::paint(PaintInfo& i, int _tx, int _ty)
     }
     
     // 3. paint floats.
-    if (i.phase == PaintActionFloat)
+    if (i.phase == PaintPhaseFloat)
         paintFloats(i, _tx, _ty);
         
 #ifdef BOX_DEBUG

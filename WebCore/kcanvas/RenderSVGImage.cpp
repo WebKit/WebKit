@@ -127,7 +127,7 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == HIDDEN)
+    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintPhaseForeground) || style()->visibility() == HIDDEN)
         return;
     
     KRenderingDevice* device = renderingDevice();

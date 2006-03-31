@@ -156,23 +156,24 @@ void InlineBox::adjustPosition(int dx, int dy)
 
 void InlineBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 {
-    if (!object()->shouldPaintWithinRoot(i) || i.phase == PaintActionOutline)
+    if (!object()->shouldPaintWithinRoot(i) || (i.phase != PaintPhaseForeground && i.phase != PaintPhaseSelection))
         return;
 
     // Paint all phases of replaced elements atomically, as though the replaced element established its
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
-    bool paintSelectionOnly = i.phase == PaintActionSelection;
-    RenderObject::PaintInfo info(i.p, i.r, paintSelectionOnly ? i.phase : PaintActionBlockBackground, i.paintingRoot);
+    bool paintSelectionOnly = i.phase == PaintPhaseSelection;
+    RenderObject::PaintInfo info(i);
+    info.phase = paintSelectionOnly ? i.phase : PaintPhaseBlockBackground;
     object()->paint(info, tx, ty);
     if (!paintSelectionOnly) {
-        info.phase = PaintActionChildBlockBackgrounds;
+        info.phase = PaintPhaseChildBlockBackgrounds;
         object()->paint(info, tx, ty);
-        info.phase = PaintActionFloat;
+        info.phase = PaintPhaseFloat;
         object()->paint(info, tx, ty);
-        info.phase = PaintActionForeground;
+        info.phase = PaintPhaseForeground;
         object()->paint(info, tx, ty);
-        info.phase = PaintActionOutline;
+        info.phase = PaintPhaseOutline;
         object()->paint(info, tx, ty);
     }
 }
@@ -753,13 +754,13 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     int w = width() + 2 * object()->maximalOutlineSize(i.phase);
     bool intersectsDamageRect = xPos < i.r.right() && xPos + w > i.r.x();
     
-    if (intersectsDamageRect) {
-        if (i.phase == PaintActionOutline) {
+    if (intersectsDamageRect && i.phase != PaintPhaseChildOutlines) {
+        if (i.phase == PaintPhaseOutline || i.phase == PaintPhaseSelfOutline) {
             // Add ourselves to the paint info struct's list of inlines that need to paint their
             // outlines.
             if (object()->style()->visibility() == VISIBLE && object()->style()->outlineWidth() > 0 &&
                 !object()->isInlineContinuation() && !isRootInlineBox()) {
-                i.outlineObjects.add(flowObject());
+                i.outlineObjects->add(flowObject());
             }
         }
         else {
@@ -771,14 +772,20 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         }
     }
 
+    PaintPhase paintPhase = i.phase == PaintPhaseChildOutlines ? PaintPhaseOutline : i.phase;
+    RenderObject::PaintInfo childInfo(i);
+    childInfo.phase = paintPhase;
+
     // 3. Paint our children.
-    for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
-        if (!curr->object()->layer())
-            curr->paint(i, tx, ty);
+    if (paintPhase != PaintPhaseSelfOutline) {
+        for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+            if (!curr->object()->layer())
+                curr->paint(childInfo, tx, ty);
+        }
     }
 
     // 4. Paint our strike-through
-    if (intersectsDamageRect && i.phase != PaintActionOutline)
+    if (intersectsDamageRect && (i.phase == PaintPhaseForeground || i.phase == PaintPhaseSelection))
         paintDecorations(i, tx, ty, true);
 }
 
@@ -826,7 +833,7 @@ void InlineFlowBox::paintBackground(GraphicsContext* p, const Color& c, const Ba
 void InlineFlowBox::paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty)
 {
     if (!object()->shouldPaintWithinRoot(i) || object()->style()->visibility() != VISIBLE ||
-        i.phase != PaintActionForeground)
+        i.phase != PaintPhaseForeground)
         return;
 
     // Move x/y to our coordinates.
@@ -1166,7 +1173,7 @@ int RootInlineBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
 void RootInlineBox::paintEllipsisBox(RenderObject::PaintInfo& i, int _tx, int _ty) const
 {
     if (m_ellipsisBox && object()->shouldPaintWithinRoot(i) && object()->style()->visibility() == VISIBLE &&
-        i.phase == PaintActionForeground)
+        i.phase == PaintPhaseForeground)
         m_ellipsisBox->paint(i, _tx, _ty);
 }
 

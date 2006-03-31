@@ -128,17 +128,17 @@ void RenderHTMLCanvas::paint(PaintInfo& i, int _tx, int _ty)
     int x = _tx + m_x;
     int y = _ty + m_y;
 
-    if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
+    if (shouldPaintBackgroundOrBorder() && (i.phase == PaintPhaseForeground || i.phase == PaintPhaseSelection)) 
         paintBoxDecorations(i, x, y);
 
     GraphicsContext* p = i.p;
     if (p->paintingDisabled())
         return;
     
-    if (i.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == VISIBLE)
+    if ((i.phase == PaintPhaseOutline || i.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(p, x, y, width(), height(), style());
     
-    if (i.phase != PaintActionForeground && i.phase != PaintActionSelection)
+    if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseSelection)
         return;
 
     if (!shouldPaintWithinRoot(i))
@@ -146,7 +146,7 @@ void RenderHTMLCanvas::paint(PaintInfo& i, int _tx, int _ty)
 
     bool isPrinting = i.p->printing();
     bool drawSelectionTint = (selectionState() != SelectionNone) && !isPrinting;
-    if (i.phase == PaintActionSelection) {
+    if (i.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)
             return;
         drawSelectionTint = false;

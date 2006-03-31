@@ -1076,6 +1076,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
     int x = layerBounds.x();
     int y = layerBounds.y();
+    int tx = x - renderer()->xPos();
+    int ty = y - renderer()->yPos() + renderer()->borderTopExtra();
                              
     // Ensure our z-order lists are up-to-date.
     updateZOrderLists();
@@ -1103,8 +1105,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         setClip(p, paintDirtyRect, damageRect);
 
         // Paint the background.
-        RenderObject::PaintInfo info(p, damageRect, PaintActionBlockBackground, paintingRootForRenderer);
-        renderer()->paint(info, x - renderer()->xPos(), y - renderer()->yPos() + renderer()->borderTopExtra());
+        RenderObject::PaintInfo info(p, damageRect, PaintPhaseBlockBackground, paintingRootForRenderer, 0);
+        renderer()->paint(info, tx, ty);
 
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
         // z-index.  We paint after we painted the background/border, so that the scrollbars will
@@ -1127,28 +1129,28 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
         // Set up the clip used when painting our children.
         setClip(p, paintDirtyRect, clipRectToApply);
-
-        int tx = x - renderer()->xPos();
-        int ty = y - renderer()->yPos() + renderer()->borderTopExtra();
         RenderObject::PaintInfo info(p, clipRectToApply, 
-                                     selectionOnly ? PaintActionSelection : PaintActionChildBlockBackgrounds,
-                                     paintingRootForRenderer);
+                                     selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
+                                     paintingRootForRenderer, 0);
         renderer()->paint(info, tx, ty);
         if (!selectionOnly) {
-            info.phase = PaintActionFloat;
+            info.phase = PaintPhaseFloat;
             renderer()->paint(info, tx, ty);
-            info.phase = PaintActionForeground;
+            info.phase = PaintPhaseForeground;
+            renderer()->paint(info, tx, ty);
+            info.phase = PaintPhaseChildOutlines;
             renderer()->paint(info, tx, ty);
         }
 
         // Now restore our clip.
         restoreClip(p, paintDirtyRect, clipRectToApply);
-        
-        setClip(p, paintDirtyRect, outlineRect);
-        info.phase = PaintActionOutline;
-        renderer()->paint(info, tx, ty);
-        restoreClip(p, paintDirtyRect, outlineRect);
     }
+    
+    // Paint our own outline
+    RenderObject::PaintInfo info(p, clipRectToApply, PaintPhaseSelfOutline, paintingRootForRenderer, 0);
+    setClip(p, paintDirtyRect, outlineRect);
+    renderer()->paint(info, tx, ty);
+    restoreClip(p, paintDirtyRect, outlineRect);
     
     // Now walk the sorted list of children with positive z-indices.
     if (m_posZOrderList)

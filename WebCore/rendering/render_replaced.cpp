@@ -55,7 +55,8 @@ RenderReplaced::RenderReplaced(WebCore::Node* node)
 
 bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
 {
-    if (i.phase != PaintActionForeground && i.phase != PaintActionOutline && i.phase != PaintActionSelection)
+    if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseOutline && i.phase != PaintPhaseSelfOutline 
+        && i.phase != PaintPhaseSelection)
         return false;
 
     if (!shouldPaintWithinRoot(i))
@@ -367,10 +368,10 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
     _tx += m_x;
     _ty += m_y;
     
-    if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
+    if (shouldPaintBackgroundOrBorder() && i.phase != PaintPhaseOutline && i.phase != PaintPhaseSelfOutline) 
         paintBoxDecorations(i, _tx, _ty);
 
-    if (!m_widget || !m_view || i.phase != PaintActionForeground ||
+    if (!m_widget || !m_view || i.phase != PaintPhaseForeground ||
         style()->visibility() != VISIBLE)
         return;
 

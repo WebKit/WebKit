@@ -74,15 +74,17 @@ class RenderTable;
 class RenderText;
 class VisiblePosition;
 
-enum PaintAction {
-    PaintActionBlockBackground,
-    PaintActionChildBlockBackground,
-    PaintActionChildBlockBackgrounds,
-    PaintActionFloat,
-    PaintActionForeground,
-    PaintActionOutline,
-    PaintActionSelection,
-    PaintActionCollapsedTableBorders
+enum PaintPhase {
+    PaintPhaseBlockBackground,
+    PaintPhaseChildBlockBackground,
+    PaintPhaseChildBlockBackgrounds,
+    PaintPhaseFloat,
+    PaintPhaseForeground,
+    PaintPhaseOutline,
+    PaintPhaseChildOutlines,
+    PaintPhaseSelfOutline,
+    PaintPhaseSelection,
+    PaintPhaseCollapsedTableBorders
 };
 
 enum HitTestFilter {
@@ -399,13 +401,13 @@ public:
      * (tx|ty) is the calculated position of the parent
      */
     struct PaintInfo {
-        PaintInfo(GraphicsContext* _p, const IntRect& _r, PaintAction _phase, RenderObject* _paintingRoot)
-            : p(_p), r(_r), phase(_phase), paintingRoot(_paintingRoot) {}
+        PaintInfo(GraphicsContext* _p, const IntRect& _r, PaintPhase _phase, RenderObject* _paintingRoot, RenderFlowSequencedSet* _outlineObjects)
+            : p(_p), r(_r), phase(_phase), paintingRoot(_paintingRoot), outlineObjects(_outlineObjects) {}
         GraphicsContext* p;
         IntRect r;
-        PaintAction phase;
+        PaintPhase phase;
         RenderObject* paintingRoot; // used to draw just one element and its visual kids
-        RenderFlowSequencedSet outlineObjects; // used to list outlines that should be painted by a block with inline children
+        RenderFlowSequencedSet* outlineObjects; // used to list outlines that should be painted by a block with inline children
     };
     virtual void paint(PaintInfo&, int tx, int ty);
     void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
@@ -753,7 +755,7 @@ public:
     float opacity() const { return style()->opacity(); }
 
     // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
-    int maximalOutlineSize(PaintAction p) const;
+    int maximalOutlineSize(PaintPhase p) const;
 
     enum SelectionState {
         SelectionNone, // The object is not selected.

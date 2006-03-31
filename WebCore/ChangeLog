@@ -1,3 +1,78 @@
+2006-03-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4472371> REGRESSION(417.9-TOT): Focus ring 
+        around link in overflow:auto div isn't clipped to div
+
+        Focus rings around the children off overflow:auto divs were not 
+        being appropriately clipped because they were being painted with 
+        the div's outlineRect, when they should be painted separately. This 
+        patch adds two new PaintPhases -- PaintPhaseSelfOutline and 
+        PaintPhaseChildOutlines -- to address this problem.
+
+        This patch also changes the name of PaintAction back to PaintPhase. 
+        Because Hyatt said so.
+
+        * kcanvas/KCanvasResources.cpp:
+        (WebCore::KCanvasMarker::draw):
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (WebCore::KCanvasContainerQuartz::paint):
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        (WebCore::RenderBlock::paintSelection):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        * rendering/RenderCanvas.cpp:
+        (WebCore::RenderCanvas::paint):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::maximalOutlineSize):
+        * rendering/RenderObject.h:
+        (WebCore::):
+        (WebCore::RenderObject::PaintInfo::PaintInfo):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+        * rendering/render_button.cpp:
+        (WebCore::RenderButton::paintObject):
+        * rendering/render_line.cpp:
+        (WebCore::InlineBox::paint):
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        (WebCore::RootInlineBox::paintEllipsisBox):
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        (WebCore::RenderWidget::paint):
+
 2006-03-30  Tim Omernick  <timo@apple.com>
 
         Manual test case for the Java aspect of <rdar://problem/4212626> REGRESSION: LIVECONNECT:

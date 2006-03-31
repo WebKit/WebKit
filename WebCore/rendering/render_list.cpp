@@ -381,7 +381,7 @@ InlineBox* RenderListMarker::createInlineBox(bool, bool isRootLineBox, bool)
 
 void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 {
-    if (i.phase != PaintActionForeground)
+    if (i.phase != PaintPhaseForeground)
         return;
     
     if (style()->visibility() != VISIBLE)  return;

@@ -371,36 +371,37 @@ void RenderTable::paint(PaintInfo& i, int _tx, int _ty)
     _tx += xPos();
     _ty += yPos();
 
-    PaintAction paintAction = i.phase;
+    PaintPhase paintPhase = i.phase;
     
-    int os = 2*maximalOutlineSize(paintAction);
+    int os = 2*maximalOutlineSize(paintPhase);
     if (_ty >= i.r.bottom() + os || _ty + height() <= i.r.y() - os)
         return;
     if (_tx >= i.r.right() + os || _tx + width() <= i.r.x() - os)
         return;
 
-    if ((paintAction == PaintActionBlockBackground || paintAction == PaintActionChildBlockBackground)
+    if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground)
         && shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE)
         paintBoxDecorations(i, _tx, _ty);
 
     // We're done.  We don't bother painting any children.
-    if (paintAction == PaintActionBlockBackground)
+    if (paintPhase == PaintPhaseBlockBackground)
         return;
 
     // We don't paint our own background, but we do let the kids paint their backgrounds.
-    if (paintAction == PaintActionChildBlockBackgrounds)
-        paintAction = PaintActionChildBlockBackground;
-    PaintInfo paintInfo(i.p, i.r, paintAction, paintingRootForChildren(i));
+    if (paintPhase == PaintPhaseChildBlockBackgrounds)
+        paintPhase = PaintPhaseChildBlockBackground;
+    PaintInfo paintInfo(i);
+    i.phase = paintPhase;
     
     for (RenderObject *child = firstChild(); child; child = child->nextSibling())
         if (!child->layer() && (child->isTableSection() || child == tCaption))
             child->paint(paintInfo, _tx, _ty);
 
-    if (collapseBorders() && paintAction == PaintActionChildBlockBackground && style()->visibility() == VISIBLE) {
+    if (collapseBorders() && paintPhase == PaintPhaseChildBlockBackground && style()->visibility() == VISIBLE) {
         // Collect all the unique border styles that we want to paint in a sorted list.  Once we
         // have all the styles sorted, we then do individual passes, painting each style of border
         // from lowest precedence to highest precedence.
-        paintInfo.phase = PaintActionCollapsedTableBorders;
+        paintInfo.phase = PaintPhaseCollapsedTableBorders;
         DeprecatedValueList<CollapsedBorderValue> borderStyles;
         collectBorders(borderStyles);
         DeprecatedValueListIterator<CollapsedBorderValue> it = borderStyles.begin();

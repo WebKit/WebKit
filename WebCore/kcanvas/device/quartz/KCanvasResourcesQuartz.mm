@@ -97,13 +97,13 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     //ASSERT(m_x == 0);
     //ASSERT(m_y == 0);
         
-    if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintActionOutline) 
+    if (shouldPaintBackgroundOrBorder() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
         paintBoxDecorations(paintInfo, parentX, parentY);
     
-    if (paintInfo.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == VISIBLE)
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(paintInfo.p, parentX, parentY, width(), height(), style());
     
-    if (paintInfo.phase != WebCore::PaintActionForeground || !drawsContents() || style()->visibility() == HIDDEN)
+    if (paintInfo.phase != WebCore::PaintPhaseForeground || !drawsContents() || style()->visibility() == HIDDEN)
         return;
     
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));

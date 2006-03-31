@@ -350,9 +350,10 @@ InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineB
 void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
 {
     // Only paint during the foreground/selection phases.
-    if (i.phase != PaintActionForeground && i.phase != PaintActionSelection && i.phase != PaintActionOutline)
+    if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseSelection && i.phase != PaintPhaseOutline 
+        && i.phase != PaintPhaseSelfOutline && i.phase != PaintPhaseChildOutlines)
         return;
-
+    
     bool inlineFlow = isInlineFlow();
     if (inlineFlow)
         KHTMLAssert(m_layer); // The only way a compact/run-in/inline could paint like this is if it has a layer.
@@ -372,10 +373,14 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
     if (yPos >= i.r.bottom() || yPos + h <= i.r.y())
         return;
 
+    PaintInfo info(i);
+    RenderFlowSequencedSet outlineObjects;
+    info.outlineObjects = &outlineObjects;
+    
     // See if our root lines intersect with the dirty rect.  If so, then we paint
     // them.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
-    bool isPrinting = i.p->printing();
+    bool isPrinting = info.p->printing();
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextFlowBox()) {
         if (isPrinting) {
             // FIXME: This is a feeble effort to avoid splitting a line across two pages.
@@ -395,24 +400,24 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
             }
         }
 
-        int top = kMin(curr->root()->topOverflow(), curr->root()->selectionTop()) - maximalOutlineSize(i.phase);
-        int bottom = kMax(curr->root()->selectionTop() + curr->root()->selectionHeight(), curr->root()->bottomOverflow()) + maximalOutlineSize(i.phase);
+        int top = kMin(curr->root()->topOverflow(), curr->root()->selectionTop()) - maximalOutlineSize(info.phase);
+        int bottom = kMax(curr->root()->selectionTop() + curr->root()->selectionHeight(), curr->root()->bottomOverflow()) + maximalOutlineSize(info.phase);
         h = bottom - top;
         yPos = _ty + top;
-        if (yPos < i.r.bottom() && yPos + h > i.r.y())
-            curr->paint(i, _tx, _ty);
+        if (yPos < info.r.bottom() && yPos + h > info.r.y())
+            curr->paint(info, _tx, _ty);
     }
 
-    if (i.phase == PaintActionOutline) {
-        RenderFlowSequencedSet::iterator end = i.outlineObjects.end();
-        for (RenderFlowSequencedSet::iterator it = i.outlineObjects.begin(); it != end; ++it) {
+    if (info.phase == PaintPhaseOutline || info.phase == PaintPhaseSelfOutline || info.phase == PaintPhaseChildOutlines) {
+        RenderFlowSequencedSet::iterator end = info.outlineObjects->end();
+        for (RenderFlowSequencedSet::iterator it = info.outlineObjects->begin(); it != end; ++it) {
             RenderFlow* flow = *it;
             if (flow->style()->outlineStyleIsAuto())
-                flow->paintFocusRing(i.p, _tx, _ty);
+                flow->paintFocusRing(info.p, _tx, _ty);
             else
-                flow->paintOutlines(i.p, _tx, _ty);
+                flow->paintOutlines(info.p, _tx, _ty);
         }
-        i.outlineObjects.clear();
+        info.outlineObjects->clear();
     }
 }
 

@@ -172,15 +172,15 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     _tx += m_x;
     _ty += m_y;
         
-    if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
+    if (shouldPaintBackgroundOrBorder() && i.phase != PaintPhaseOutline && i.phase != PaintPhaseSelfOutline) 
         paintBoxDecorations(i, _tx, _ty);
 
     GraphicsContext* p = i.p;
     
-    if (i.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == VISIBLE)
+    if ((i.phase == PaintPhaseOutline || i.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(p, _tx, _ty, width(), height(), style());
     
-    if (i.phase != PaintActionForeground && i.phase != PaintActionSelection)
+    if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseSelection)
         return;
 
     if (!shouldPaintWithinRoot(i))
@@ -188,7 +188,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         
     bool isPrinting = i.p->printing();
     bool drawSelectionTint = isSelected() && !isPrinting;
-    if (i.phase == PaintActionSelection) {
+    if (i.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)
             return;
         drawSelectionTint = false;
@@ -205,7 +205,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         return;
 
     if (!m_cachedImage || image()->isNull() || errorOccurred()) {
-        if (i.phase == PaintActionSelection)
+        if (i.phase == PaintPhaseSelection)
             return;
 
         if (cWidth > 2 && cHeight > 2) {

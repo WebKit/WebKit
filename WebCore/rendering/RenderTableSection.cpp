@@ -610,13 +610,13 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
 
     // check which rows and cols are visible and only paint these
     // ### fixme: could use a binary search here
-    PaintAction paintAction = i.phase;
+    PaintPhase paintPhase = i.phase;
     int x = i.r.x();
     int y = i.r.y();
     int w = i.r.width();
     int h = i.r.height();
 
-    int os = 2 * maximalOutlineSize(paintAction);
+    int os = 2 * maximalOutlineSize(paintPhase);
     unsigned int startrow = 0;
     unsigned int endrow = totalRows;
     for (; startrow < totalRows; startrow++)
@@ -657,7 +657,7 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
                 if (!cell || (r > startrow && (cellAt(r-1, c).cell == cell)))
                     continue;
 
-                if (paintAction == PaintActionBlockBackground || paintAction == PaintActionChildBlockBackground) {
+                if (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) {
                     // We need to handle painting a stack of backgrounds.  This stack (from bottom to top) consists of
                     // the column group, column, row group, row, and then the cell.
                     RenderObject* col = table()->colElement(c);
@@ -686,7 +686,7 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
                         cell->paintBackgroundsBehindCell(i, tx, ty, row);
                 }
 
-                if ((!cell->layer() && !cell->parent()->layer()) || i.phase == PaintActionCollapsedTableBorders)
+                if ((!cell->layer() && !cell->parent()->layer()) || i.phase == PaintPhaseCollapsedTableBorders)
                     cell->paint(i, tx, ty);
             }
         }

@@ -1237,7 +1237,7 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
         bool intersectsOverflowBox = overflowBox.intersects(i.r);
         if (!intersectsOverflowBox) {
             // Check floats next.
-            if (i.phase != PaintActionFloat)
+            if (i.phase != PaintPhaseFloat)
                 return;
             IntRect floatBox = floatRect();
             floatBox.inflate(maximalOutlineSize(i.phase));
@@ -1252,9 +1252,12 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
 
 void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
 {
+    PaintPhase newPhase = (i.phase == PaintPhaseChildOutlines) ? PaintPhaseOutline : i.phase;
+    newPhase = (newPhase == PaintPhaseChildBlockBackgrounds) ? PaintPhaseChildBlockBackground : newPhase;
+    
     // We don't paint our own background, but we do let the kids paint their backgrounds.
-    PaintInfo paintInfo(i.p, i.r, i.phase == PaintActionChildBlockBackgrounds ? PaintActionChildBlockBackground : i.phase,
-                        paintingRootForChildren(i));
+    PaintInfo paintInfo(i);
+    paintInfo.phase = newPhase;
     bool isPrinting = i.p->printing();
 
     for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {        
@@ -1295,20 +1298,20 @@ void RenderBlock::paintCaret(PaintInfo& i, CaretType type)
 
 void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
 {
-    PaintAction paintAction = i.phase;
+    PaintPhase paintPhase = i.phase;
 
     // If we're a repositioned run-in or a compact, don't paint background/borders.
     bool inlineFlow = isInlineFlow();
 
     // 1. paint background, borders etc
     if (!inlineFlow &&
-        (paintAction == PaintActionBlockBackground || paintAction == PaintActionChildBlockBackground) &&
+        (paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) &&
         shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE) {
         paintBoxDecorations(i, _tx, _ty);
     }
 
     // We're done.  We don't bother painting any children.
-    if (paintAction == PaintActionBlockBackground)
+    if (paintPhase == PaintPhaseBlockBackground)
         return;
 
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).s
@@ -1317,11 +1320,13 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
     if (hasOverflowClip())
         m_layer->subtractScrollOffset(scrolledX, scrolledY);
 
-    // 2. paint contents  
-    if (childrenInline())
-        paintLines(i, scrolledX, scrolledY);
-    else
-        paintChildren(i, scrolledX, scrolledY);
+    // 2. paint contents
+    if (paintPhase != PaintPhaseSelfOutline) {
+        if (childrenInline())
+            paintLines(i, scrolledX, scrolledY);
+        else
+            paintChildren(i, scrolledX, scrolledY);
+    }
     
     // 3. paint selection
     bool isPrinting = i.p->printing();
@@ -1329,18 +1334,18 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
         paintSelection(i, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
 
     // 4. paint floats.
-    if (!inlineFlow && (paintAction == PaintActionFloat || paintAction == PaintActionSelection))
-        paintFloats(i, scrolledX, scrolledY, paintAction == PaintActionSelection);
+    if (!inlineFlow && (paintPhase == PaintPhaseFloat || paintPhase == PaintPhaseSelection))
+        paintFloats(i, scrolledX, scrolledY, paintPhase == PaintPhaseSelection);
 
     // 5. paint outline.
-    if (!inlineFlow && paintAction == PaintActionOutline && 
-        style()->outlineWidth() && style()->visibility() == VISIBLE)
+    if (!inlineFlow && (paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) 
+        && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(i.p, _tx, _ty, width(), height(), style());
 
     // 6. paint caret.
-    // If the caret's node's render object's containing block is this block, and the paint action is PaintActionForeground,
+    // If the caret's node's render object's containing block is this block, and the paint action is PaintPhaseForeground,
     // then paint the caret.
-    if (!inlineFlow && paintAction == PaintActionForeground) {        
+    if (!inlineFlow && paintPhase == PaintPhaseForeground) {        
         paintCaret(i, CursorCaret);
         paintCaret(i, DragCaret);
     }
@@ -1367,18 +1372,19 @@ void RenderBlock::paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelectio
     for ( ; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
         if (!r->noPaint && !r->node->layer()) {
-            PaintInfo info(i.p, i.r, paintSelection ? PaintActionSelection : PaintActionBlockBackground, i.paintingRoot);
+            PaintInfo info(i);
+            info.phase = paintSelection ? PaintPhaseSelection : PaintPhaseBlockBackground;
             int tx = _tx + r->left - r->node->xPos() + r->node->marginLeft();
             int ty = _ty + r->startY - r->node->yPos() + r->node->marginTop();
             r->node->paint(info, tx, ty);
             if (!paintSelection) {
-                info.phase = PaintActionChildBlockBackgrounds;
+                info.phase = PaintPhaseChildBlockBackgrounds;
                 r->node->paint(info, tx, ty);
-                info.phase = PaintActionFloat;
+                info.phase = PaintPhaseFloat;
                 r->node->paint(info, tx, ty);
-                info.phase = PaintActionForeground;
+                info.phase = PaintPhaseForeground;
                 r->node->paint(info, tx, ty);
-                info.phase = PaintActionOutline;
+                info.phase = PaintPhaseOutline;
                 r->node->paint(info, tx, ty);
             }
         }
@@ -1390,7 +1396,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty)
     if (!shouldPaintWithinRoot(i) || !firstLineBox())
         return;
 
-    if (style()->visibility() == VISIBLE && i.phase == PaintActionForeground) {
+    if (style()->visibility() == VISIBLE && i.phase == PaintPhaseForeground) {
         // We can check the first box and last box and avoid painting if we don't
         // intersect.
         int yPos = _ty + firstLineBox()->yPos();;
@@ -1473,7 +1479,7 @@ GapRects RenderBlock::selectionGapRects()
 
 void RenderBlock::paintSelection(PaintInfo& i, int tx, int ty)
 {
-    if (shouldPaintSelectionGaps() && i.phase == PaintActionForeground) {
+    if (shouldPaintSelectionGaps() && i.phase == PaintPhaseForeground) {
         int lastTop = -borderTopExtra();
         int lastLeft = leftSelectionOffset(this, lastTop);
         int lastRight = rightSelectionOffset(this, lastTop);
