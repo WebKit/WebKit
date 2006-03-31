@@ -1,3 +1,14 @@
+2006-03-31  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Adele.
+
+        Layout test for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7858>
+        <rdar://problem/4483359> REGRESSION: New text field doesn't recognize the read only attribute
+
+        * fast/forms/input-appearance-readonly-expected.txt: Added.
+        * fast/forms/input-appearance-readonly.html: Added.
+
 2006-03-31  Trey Matteson  <trey@usa.net>
 
         Reviewed by Maciej, landed by ap.

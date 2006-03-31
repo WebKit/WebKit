@@ -70,10 +70,14 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->setDisplay(BLOCK);
     divStyle->setOverflow(OHIDDEN);
     divStyle->setWhiteSpace(NOWRAP);
-    divStyle->setUserModify(READ_WRITE_PLAINTEXT_ONLY);
+
+    if (element()->hasTagName(inputTag))
+        divStyle->setUserModify(static_cast<HTMLGenericFormElement *>(element())->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+
     // We're adding this extra pixel of padding to match WinIE.
     divStyle->setPaddingLeft(Length(1, Fixed));
     divStyle->setPaddingRight(Length(1, Fixed));
+
     return divStyle;
 }
 
@@ -105,6 +109,8 @@ void RenderTextField::updateFromElement()
             // Add div to Render tree
             RenderBlock::addChild(divRenderer);
         }
+
+        m_div->renderer()->style()->setUserModify(static_cast<HTMLGenericFormElement *>(element())->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
         
         if (!input->valueMatchesRenderer()) {
             String oldText = this->text();
