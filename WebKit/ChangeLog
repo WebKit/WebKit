@@ -1,3 +1,15 @@
+2006-03-31  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        We need to set reachedTerminalState to YES before we release
+        the resources to prevent a double dealloc of WebView
+
+        Fixes <rdar://problem/4372628> crash deallocating a WebView in -[WebFrame stopLoading]
+
+        * WebView/WebLoader.m:
+        (-[NSURLProtocol releaseResources]): set reachedTerminalState earlier
+
 2006-03-31  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

@@ -124,7 +124,12 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // has been deallocated and also to avoid reentering this method.
     
     [self retain];
-    
+
+    // We need to set reachedTerminalState to YES before we release
+    // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
+
+    reachedTerminalState = YES;
+
     [identifier release];
     identifier = nil;
 
@@ -148,9 +153,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     
     [resourceData release];
     resourceData = nil;
-    
-    reachedTerminalState = YES;
-    
+
     [self release];
 }
 
