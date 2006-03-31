@@ -78,8 +78,8 @@ namespace KJS {
 
     virtual JSValue *evaluate(ExecState *exec) = 0;
     UString toString() const;
-    virtual void streamTo(SourceStream &s) const = 0;
-    virtual void processVarDecls(ExecState *) {}
+    virtual void streamTo(SourceStream&) const = 0;
+    virtual void processVarDecls(ExecState*) {}
     int lineNo() const { return m_line; }
 
     void ref();
@@ -110,7 +110,7 @@ namespace KJS {
 
     JSValue *throwUndefinedVariableError(ExecState *, const Identifier &);
 
-    void setExceptionDetailsIfNeeded(ExecState *);
+    void setExceptionDetailsIfNeeded(ExecState*);
 
     int m_line;
   private:
@@ -125,10 +125,10 @@ namespace KJS {
     void setLoc(int line0, int line1);
     int firstLine() const { return lineNo(); }
     int lastLine() const { return m_lastLine; }
-    bool hitStatement(ExecState *exec);
+    bool hitStatement(ExecState*);
     virtual Completion execute(ExecState *exec) = 0;
     void pushLabel(const Identifier &id) { ls.push(id); }
-    virtual void processFuncDecl(ExecState *exec);
+    virtual void processFuncDecl(ExecState*);
   protected:
     LabelStack ls;
   private:
@@ -140,14 +140,14 @@ namespace KJS {
   public:
     NullNode() {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   };
 
   class BooleanNode : public Node {
   public:
     BooleanNode(bool v) : value(v) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     bool value;
   };
@@ -156,7 +156,7 @@ namespace KJS {
   public:
     NumberNode(double v) : value(v) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     double value;
   };
@@ -165,7 +165,7 @@ namespace KJS {
   public:
     StringNode(const UString *v) { value = *v; }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     UString value;
   };
@@ -175,7 +175,7 @@ namespace KJS {
     RegExpNode(const UString &p, const UString &f)
       : pattern(p), flags(f) { }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     UString pattern, flags;
   };
@@ -184,14 +184,14 @@ namespace KJS {
   public:
     ThisNode() {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   };
 
   class ResolveNode : public Node {
   public:
     ResolveNode(const Identifier &s) : ident(s) { }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
 
     virtual bool isLocation() const { return true; }
     virtual bool isResolveNode() const { return true; }
@@ -206,7 +206,7 @@ namespace KJS {
     GroupNode(Node *g) : group(g) { }
     virtual JSValue* evaluate(ExecState*);
     virtual Node *nodeInsideAllParens();
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
     virtual bool isGroupNode() const { return true; }
   private:
     RefPtr<Node> group;
@@ -219,7 +219,7 @@ namespace KJS {
     ElementNode(ElementNode *l, int e, Node *n)
       : next(l->next), elision(e), node(n) { l->next = this; }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
     PassRefPtr<ElementNode> releaseNext() { return next.release(); }
     virtual void breakCycle();
   private:
@@ -237,7 +237,7 @@ namespace KJS {
     ArrayNode(int eli, ElementNode *ele)
       : element(ele->next), elision(eli), opt(true) { Parser::removeNodeCycle(element.get()); ele->next = 0; }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<ElementNode> element;
     int elision;
@@ -249,7 +249,7 @@ namespace KJS {
     PropertyNameNode(double d) : numeric(d) { }
     PropertyNameNode(const Identifier &s) : str(s) { }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     double numeric;
     Identifier str;
@@ -261,7 +261,7 @@ namespace KJS {
     PropertyNode(PropertyNameNode *n, Node *a, Type t) 
       : name(n), assign(a), type(t) { }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
     friend class PropertyListNode;
   private:
     RefPtr<PropertyNameNode> name;
@@ -277,7 +277,7 @@ namespace KJS {
     PropertyListNode(PropertyNode *n, PropertyListNode *l)
       : node(n), next(l->next) { l->next = this; }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
     PassRefPtr<PropertyListNode> releaseNext() { return next.release(); }
     virtual void breakCycle();
   private:
@@ -291,7 +291,7 @@ namespace KJS {
     ObjectLiteralNode() { }
     ObjectLiteralNode(PropertyListNode *l) : list(l->next) { Parser::removeNodeCycle(list.get()); l->next = 0; }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<PropertyListNode> list;
   };
@@ -300,7 +300,7 @@ namespace KJS {
   public:
     BracketAccessorNode(Node *e1, Node *e2) : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
 
     virtual bool isLocation() const { return true; }
     virtual bool isBracketAccessorNode() const { return true; }
@@ -316,7 +316,7 @@ namespace KJS {
   public:
     DotAccessorNode(Node *e, const Identifier &s) : expr(e), ident(s) { }
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
 
     virtual bool isLocation() const { return true; }
     virtual bool isDotAccessorNode() const { return true; }
@@ -335,8 +335,8 @@ namespace KJS {
     ArgumentListNode(ArgumentListNode *l, Node *e)
       : next(l->next), expr(e) { l->next = this; }
     JSValue* evaluate(ExecState*);
-    List evaluateList(ExecState *);
-    virtual void streamTo(SourceStream &s) const;
+    List evaluateList(ExecState*);
+    virtual void streamTo(SourceStream&) const;
     PassRefPtr<ArgumentListNode> releaseNext() { return next.release(); }
     virtual void breakCycle();
   private:
@@ -352,7 +352,7 @@ namespace KJS {
       : list(l->next) { Parser::removeNodeCycle(list.get()); l->next = 0; }
     JSValue* evaluate(ExecState*);
     List evaluateList(ExecState *exec) { return list ? list->evaluateList(exec) : List(); }
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<ArgumentListNode> list;
   };
@@ -362,7 +362,7 @@ namespace KJS {
     NewExprNode(Node *e) : expr(e) {}
     NewExprNode(Node *e, ArgumentsNode *a) : expr(e), args(a) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
     RefPtr<ArgumentsNode> args;
@@ -372,7 +372,7 @@ namespace KJS {
   public:
     FunctionCallValueNode(Node *e, ArgumentsNode *a) : expr(e), args(a) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
     RefPtr<ArgumentsNode> args;
@@ -382,7 +382,7 @@ namespace KJS {
   public:
     FunctionCallResolveNode(const Identifier& i, ArgumentsNode *a) : ident(i), args(a) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier ident;
     RefPtr<ArgumentsNode> args;
@@ -392,7 +392,7 @@ namespace KJS {
   public:
     FunctionCallBracketNode(Node *b, Node *s, ArgumentsNode *a) : base(b), subscript(s), args(a) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   protected:
     RefPtr<Node> base;
     RefPtr<Node> subscript;
@@ -402,14 +402,14 @@ namespace KJS {
   class FunctionCallParenBracketNode : public FunctionCallBracketNode {
   public:
     FunctionCallParenBracketNode(Node *b, Node *s, ArgumentsNode *a) : FunctionCallBracketNode(b, s, a) {}
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   };
 
   class FunctionCallDotNode : public Node {
   public:
     FunctionCallDotNode(Node *b, const Identifier &i, ArgumentsNode *a) : base(b), ident(i), args(a) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   protected:
     RefPtr<Node> base;
     Identifier ident;
@@ -419,14 +419,14 @@ namespace KJS {
   class FunctionCallParenDotNode : public FunctionCallDotNode {
   public:
     FunctionCallParenDotNode(Node *b, const Identifier &i, ArgumentsNode *a) : FunctionCallDotNode(b, i, a) {}
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   };
 
   class PostfixResolveNode : public Node {
   public:
     PostfixResolveNode(const Identifier& i, Operator o) : m_ident(i), m_oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier m_ident;
     Operator m_oper;
@@ -436,7 +436,7 @@ namespace KJS {
   public:
     PostfixBracketNode(Node *b, Node *s, Operator o) : m_base(b), m_subscript(s), m_oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> m_base;
     RefPtr<Node> m_subscript;
@@ -447,7 +447,7 @@ namespace KJS {
   public:
     PostfixDotNode(Node *b, const Identifier& i, Operator o) : m_base(b), m_ident(i), m_oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> m_base;
     Identifier m_ident;
@@ -458,7 +458,7 @@ namespace KJS {
   public:
     DeleteResolveNode(const Identifier& i) : m_ident(i) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier m_ident;
   };
@@ -467,7 +467,7 @@ namespace KJS {
   public:
     DeleteBracketNode(Node *base, Node *subscript) : m_base(base), m_subscript(subscript) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> m_base;
     RefPtr<Node> m_subscript;
@@ -477,7 +477,7 @@ namespace KJS {
   public:
     DeleteDotNode(Node *base, const Identifier& i) : m_base(base), m_ident(i) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> m_base;
     Identifier m_ident;
@@ -487,7 +487,7 @@ namespace KJS {
   public:
     DeleteValueNode(Node *e) : m_expr(e) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> m_expr;
   };
@@ -496,7 +496,7 @@ namespace KJS {
   public:
     VoidNode(Node *e) : expr(e) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
   };
@@ -505,7 +505,7 @@ namespace KJS {
   public:
     TypeOfResolveNode(const Identifier& i) : m_ident(i) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier m_ident;
   };
@@ -514,7 +514,7 @@ namespace KJS {
   public:
     TypeOfValueNode(Node *e) : m_expr(e) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> m_expr;
   };
@@ -523,7 +523,7 @@ namespace KJS {
   public:
     PrefixResolveNode(const Identifier& i, Operator o) : m_ident(i), m_oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier m_ident;
     Operator m_oper;
@@ -533,7 +533,7 @@ namespace KJS {
   public:
     PrefixBracketNode(Node *b, Node *s, Operator o) : m_base(b), m_subscript(s), m_oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> m_base;
     RefPtr<Node> m_subscript;
@@ -544,7 +544,7 @@ namespace KJS {
   public:
     PrefixDotNode(Node *b, const Identifier& i, Operator o) : m_base(b), m_ident(i), m_oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> m_base;
     Identifier m_ident;
@@ -555,7 +555,7 @@ namespace KJS {
   public:
     UnaryPlusNode(Node *e) : expr(e) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
   };
@@ -564,7 +564,7 @@ namespace KJS {
   public:
     NegateNode(Node *e) : expr(e) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
   };
@@ -573,7 +573,7 @@ namespace KJS {
   public:
     BitwiseNotNode(Node *e) : expr(e) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
   };
@@ -582,7 +582,7 @@ namespace KJS {
   public:
     LogicalNotNode(Node *e) : expr(e) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
   };
@@ -591,7 +591,7 @@ namespace KJS {
   public:
     MultNode(Node *t1, Node *t2, char op) : term1(t1), term2(t2), oper(op) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
@@ -602,7 +602,7 @@ namespace KJS {
   public:
     AddNode(Node *t1, Node *t2, char op) : term1(t1), term2(t2), oper(op) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
@@ -614,7 +614,7 @@ namespace KJS {
     ShiftNode(Node *t1, Operator o, Node *t2)
       : term1(t1), term2(t2), oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> term1;
     RefPtr<Node> term2;
@@ -626,7 +626,7 @@ namespace KJS {
     RelationalNode(Node *e1, Operator o, Node *e2) :
       expr1(e1), expr2(e2), oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -638,7 +638,7 @@ namespace KJS {
     EqualNode(Node *e1, Operator o, Node *e2)
       : expr1(e1), expr2(e2), oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -650,7 +650,7 @@ namespace KJS {
     BitOperNode(Node *e1, Operator o, Node *e2) :
       expr1(e1), expr2(e2), oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -665,7 +665,7 @@ namespace KJS {
     BinaryLogicalNode(Node *e1, Operator o, Node *e2) :
       expr1(e1), expr2(e2), oper(o) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -680,7 +680,7 @@ namespace KJS {
     ConditionalNode(Node *l, Node *e1, Node *e2) :
       logical(l), expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> logical;
     RefPtr<Node> expr1;
@@ -692,7 +692,7 @@ namespace KJS {
     AssignResolveNode(const Identifier &ident, Operator oper, Node *right) 
       : m_ident(ident), m_oper(oper), m_right(right) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   protected:
     Identifier m_ident;
     Operator m_oper;
@@ -704,7 +704,7 @@ namespace KJS {
     AssignBracketNode(Node *base, Node *subscript, Operator oper, Node *right) 
       : m_base(base), m_subscript(subscript), m_oper(oper), m_right(right) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   protected:
     RefPtr<Node> m_base;
     RefPtr<Node> m_subscript;
@@ -717,7 +717,7 @@ namespace KJS {
     AssignDotNode(Node *base, const Identifier& ident, Operator oper, Node *right)
       : m_base(base), m_ident(ident), m_oper(oper), m_right(right) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   protected:
     RefPtr<Node> m_base;
     Identifier m_ident;
@@ -729,7 +729,7 @@ namespace KJS {
   public:
     CommaNode(Node *e1, Node *e2) : expr1(e1), expr2(e2) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -740,9 +740,9 @@ namespace KJS {
     // list pointer is tail of a circular list, cracked in the CaseClauseNode ctor
     StatListNode(StatementNode *s);
     StatListNode(StatListNode *l, StatementNode *s);
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
     PassRefPtr<StatListNode> releaseNext() { return next.release(); }
     virtual void breakCycle();
   private:
@@ -755,7 +755,7 @@ namespace KJS {
   public:
     AssignExprNode(Node *e) : expr(e) {}
     JSValue* evaluate(ExecState*);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
   };
@@ -765,8 +765,8 @@ namespace KJS {
     enum Type { Variable, Constant };
     VarDeclNode(const Identifier &id, AssignExprNode *in, Type t);
     JSValue* evaluate(ExecState*);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     Type varType;
     Identifier ident;
@@ -780,8 +780,8 @@ namespace KJS {
     VarDeclListNode(VarDeclListNode *l, VarDeclNode *v)
       : next(l->next), var(v) { l->next = this; }
     JSValue* evaluate(ExecState*);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
     PassRefPtr<VarDeclListNode> releaseNext() { return next.release(); }
     virtual void breakCycle();
   private:
@@ -794,9 +794,9 @@ namespace KJS {
   class VarStatementNode : public StatementNode {
   public:
     VarStatementNode(VarDeclListNode *l) : next(l->next) { Parser::removeNodeCycle(next.get()); l->next = 0; }
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<VarDeclListNode> next;
   };
@@ -804,9 +804,9 @@ namespace KJS {
   class BlockNode : public StatementNode {
   public:
     BlockNode(SourceElementsNode *s);
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   protected:
     RefPtr<SourceElementsNode> source;
   };
@@ -814,15 +814,15 @@ namespace KJS {
   class EmptyStatementNode : public StatementNode {
   public:
     EmptyStatementNode() { } // debug
-    virtual Completion execute(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   };
 
   class ExprStatementNode : public StatementNode {
   public:
     ExprStatementNode(Node *e) : expr(e) { }
-    virtual Completion execute(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
   };
@@ -831,9 +831,9 @@ namespace KJS {
   public:
     IfNode(Node *e, StatementNode *s1, StatementNode *s2)
       : expr(e), statement1(s1), statement2(s2) {}
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
     RefPtr<StatementNode> statement1;
@@ -843,9 +843,9 @@ namespace KJS {
   class DoWhileNode : public StatementNode {
   public:
     DoWhileNode(StatementNode *s, Node *e) : statement(s), expr(e) {}
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<StatementNode> statement;
     RefPtr<Node> expr;
@@ -854,9 +854,9 @@ namespace KJS {
   class WhileNode : public StatementNode {
   public:
     WhileNode(Node *e, StatementNode *s) : expr(e), statement(s) {}
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
     RefPtr<StatementNode> statement;
@@ -868,9 +868,9 @@ namespace KJS {
       expr1(e1), expr2(e2), expr3(e3), statement(s) {}
     ForNode(VarDeclListNode *e1, Node *e2, Node *e3, StatementNode *s) :
       expr1(e1->next), expr2(e2), expr3(e3), statement(s) { Parser::removeNodeCycle(expr1.get()); e1->next = 0; }
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr1;
     RefPtr<Node> expr2;
@@ -882,9 +882,9 @@ namespace KJS {
   public:
     ForInNode(Node *l, Node *e, StatementNode *s);
     ForInNode(const Identifier &i, AssignExprNode *in, Node *e, StatementNode *s);
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier ident;
     RefPtr<AssignExprNode> init;
@@ -898,8 +898,8 @@ namespace KJS {
   public:
     ContinueNode() { }
     ContinueNode(const Identifier &i) : ident(i) { }
-    virtual Completion execute(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier ident;
   };
@@ -908,8 +908,8 @@ namespace KJS {
   public:
     BreakNode() { }
     BreakNode(const Identifier &i) : ident(i) { }
-    virtual Completion execute(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier ident;
   };
@@ -917,8 +917,8 @@ namespace KJS {
   class ReturnNode : public StatementNode {
   public:
     ReturnNode(Node *v) : value(v) {}
-    virtual Completion execute(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> value;
   };
@@ -926,9 +926,9 @@ namespace KJS {
   class WithNode : public StatementNode {
   public:
     WithNode(Node *e, StatementNode *s) : expr(e), statement(s) {}
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
     RefPtr<StatementNode> statement;
@@ -940,9 +940,9 @@ namespace KJS {
     CaseClauseNode(Node *e, StatListNode *l)
       : expr(e), next(l->next) { Parser::removeNodeCycle(next.get()); l->next = 0; }
     JSValue* evaluate(ExecState*);
-    Completion evalStatements(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    Completion evalStatements(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
     RefPtr<StatListNode> next;
@@ -957,8 +957,8 @@ namespace KJS {
     JSValue* evaluate(ExecState*);
     CaseClauseNode *getClause() const { return clause.get(); }
     ClauseListNode *getNext() const { return next.get(); }
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
     PassRefPtr<ClauseListNode> releaseNext() { return next.release(); }
     virtual void breakCycle();
   private:
@@ -972,8 +972,8 @@ namespace KJS {
     CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d, ClauseListNode *l2);
     JSValue* evaluate(ExecState*);
     Completion evalBlock(ExecState *exec, JSValue *input);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<ClauseListNode> list1;
     RefPtr<CaseClauseNode> def;
@@ -983,9 +983,9 @@ namespace KJS {
   class SwitchNode : public StatementNode {
   public:
     SwitchNode(Node *e, CaseBlockNode *b) : expr(e), block(b) { }
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
     RefPtr<CaseBlockNode> block;
@@ -994,9 +994,9 @@ namespace KJS {
   class LabelNode : public StatementNode {
   public:
     LabelNode(const Identifier &l, StatementNode *s) : label(l), statement(s) { }
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier label;
     RefPtr<StatementNode> statement;
@@ -1005,8 +1005,8 @@ namespace KJS {
   class ThrowNode : public StatementNode {
   public:
     ThrowNode(Node *e) : expr(e) {}
-    virtual Completion execute(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<Node> expr;
   };
@@ -1015,9 +1015,9 @@ namespace KJS {
   public:
     TryNode(StatementNode *b, const Identifier &e, StatementNode *c, StatementNode *f)
       : tryBlock(b), exceptionIdent(e), catchBlock(c), finallyBlock(f) { }
-    virtual Completion execute(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    virtual Completion execute(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     RefPtr<StatementNode> tryBlock;
     Identifier exceptionIdent;
@@ -1034,7 +1034,7 @@ namespace KJS {
     JSValue* evaluate(ExecState*);
     Identifier ident() { return id; }
     ParameterNode *nextParam() { return next.get(); }
-    virtual void streamTo(SourceStream &s) const;
+    virtual void streamTo(SourceStream&) const;
     PassRefPtr<ParameterNode> releaseNext() { return next.release(); }
     virtual void breakCycle();
   private:
@@ -1048,7 +1048,7 @@ namespace KJS {
   class FunctionBodyNode : public BlockNode {
   public:
     FunctionBodyNode(SourceElementsNode *);
-    virtual void processFuncDecl(ExecState *exec);
+    virtual void processFuncDecl(ExecState*);
     int sourceId() { return m_sourceId; }
     const UString& sourceURL() { return m_sourceURL; }
   private:
@@ -1060,8 +1060,8 @@ namespace KJS {
   public:
     FuncExprNode(const Identifier &i, FunctionBodyNode *b, ParameterNode *p = 0)
       : ident(i), param(p ? p->next : 0), body(b) { if (p) { Parser::removeNodeCycle(param.get()); p->next = 0; } }
-    virtual JSValue *evaluate(ExecState *);
-    virtual void streamTo(SourceStream &) const;
+    virtual JSValue *evaluate(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     // Used for streamTo
     friend class PropertyNode;
@@ -1076,9 +1076,9 @@ namespace KJS {
       : ident(i), body(b) { }
     FuncDeclNode(const Identifier &i, ParameterNode *p, FunctionBodyNode *b)
       : ident(i), param(p->next), body(b) { Parser::removeNodeCycle(param.get()); p->next = 0; }
-    virtual Completion execute(ExecState *);
-    virtual void processFuncDecl(ExecState *);
-    virtual void streamTo(SourceStream &) const;
+    virtual Completion execute(ExecState*);
+    virtual void processFuncDecl(ExecState*);
+    virtual void streamTo(SourceStream&) const;
   private:
     Identifier ident;
     RefPtr<ParameterNode> param;
@@ -1090,13 +1090,13 @@ namespace KJS {
   public:
       static int count;
     // list pointer is tail of a circular list, cracked in the BlockNode (or subclass) ctor
-    SourceElementsNode(StatementNode *s1);
+    SourceElementsNode(StatementNode*);
     SourceElementsNode(SourceElementsNode *s1, StatementNode *s2);
     
-    Completion execute(ExecState *exec);
-    void processFuncDecl(ExecState *exec);
-    virtual void processVarDecls(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const;
+    Completion execute(ExecState*);
+    void processFuncDecl(ExecState*);
+    virtual void processVarDecls(ExecState*);
+    virtual void streamTo(SourceStream&) const;
     PassRefPtr<SourceElementsNode> releaseNext() { return next.release(); }
     virtual void breakCycle();
   private:

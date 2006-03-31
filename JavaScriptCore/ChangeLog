@@ -2,6 +2,12 @@
 
         Reviewed by ggaren.
 
+        * kjs/nodes.h: Some various small style fixes.
+
+2006-03-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
         Clean-up style issues in node.h, remove redundant initializations.
 
         * kjs/nodes.h:
