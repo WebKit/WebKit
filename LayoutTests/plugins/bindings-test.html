@@ -1,0 +1,75 @@
+<html>
+<head>
+<script>
+function doTest()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    if (window.objCPlugin) {
+        // Type should be "object"
+        alert("typeof(objCPlugin)=" + typeof(objCPlugin));
+
+        // Calling objCPlugin() should raise an exception.
+        var result;
+        try {
+            result = objCPlugin();
+        } catch (e) {
+            result = e.name;
+        }
+        alert("objCPlugin()=" + result);
+    }
+
+    if (window.objCPluginFunction) {
+        // Type should be "function"
+        alert("typeof(objCPluginFunction)=" + typeof(objCPluginFunction));
+
+        // Calling objCPluginFunction() should return "test"
+        var result;
+        try {
+            result = objCPluginFunction();
+        } catch (e) {
+            result = e.name;
+        }
+        alert("objCPluginFunction()=" + result);
+    }
+    
+    // Test the C plugin
+    var cPlugin = document.getElementById("testCPlugin");
+    if (cPlugin) {
+        // Type should be "function"
+        alert("typeof(cPlugin)=" + typeof(cPlugin));
+        
+        // Calling cPlugin() should return 1
+        var result;
+        try {
+            result = cPlugin();
+        } catch (e) {
+            result = e.name;
+        }
+        alert("cPlugin()=" + result);
+
+        // Special function that removes cPlugin's default method implementation.  The runtime should consider
+        // cPlugin an "object" if it has no default method.
+        cPlugin.removeDefaultMethod();
+
+        // Type should be "object"
+        alert("typeof(cPlugin)=" + typeof(cPlugin));
+        
+        // Calling cPlugin() now should raise an exception
+        var result;
+        try {
+            result = cPlugin();
+        } catch (e) {
+            result = e.name;
+        }
+        alert("cPlugin()=" + result);
+    }
+}
+</script>
+</head>
+<body onload="doTest();">
+<p>This page tests invoking as functions JavaScript objects that are provided by plugins.</p>
+<embed id="testCPlugin" type="application/x-webkit-test-netscape"></embed>
+</body>
+</html>

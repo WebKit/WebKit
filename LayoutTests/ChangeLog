@@ -1,3 +1,16 @@
+2006-03-30  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+        
+        Test case for issues surrounding <rdar://problem/4212626> REGRESSION: LIVECONNECT:
+        JavaScript type for Java Strings is function, not object
+
+        Unfortunately, I can only test C and ObjC instances; Java does not run correctly
+        in DumpRenderTree.
+
+        * plugins/bindings-test/bindings-test.html: Added.
+        * plugins/bindings-test/bindings-test-expected.txt: Added.
+
 2006-03-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
