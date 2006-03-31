@@ -1,5 +1,16 @@
 2006-03-30  Maciej Stachowiak  <mjs@apple.com>
 
+        - fixed Windows build breakage from previous change
+
+        * platform/ScrollView.h:
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::drawLineForText):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::scrollBy):
+
+2006-03-30  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
         
         - various Point / Size related cleanup

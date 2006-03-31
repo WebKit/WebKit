@@ -337,7 +337,7 @@ int Font::checkSelectionPoint(const QChar* str, int slen, int offset, int len, i
 void Font::drawLineForText(const GraphicsContext* context, int x, int y, int yOffset, int width) const
 {
     IntPoint origin(x, y + yOffset + 1);
-    IntPoint endPoint = origin + IntPoint(width, 0);
+    IntPoint endPoint = origin + IntSize(width, 0);
     const_cast<GraphicsContext*>(context)->drawLine(origin, endPoint);
 }
 

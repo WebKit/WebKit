@@ -81,7 +81,7 @@ namespace WebCore {
         ~ScrollView();
     private:
         void updateScrollBars();
-        IntPoint maximumScroll() const;
+        IntSize maximumScroll() const;
         int updateScrollInfo(short type, int current, int max, int pageSize);
         class ScrollViewPrivate;
         ScrollViewPrivate* m_data;
