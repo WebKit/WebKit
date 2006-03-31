@@ -2112,6 +2112,7 @@ bool FrameMac::sendContextMenuEvent(NSEvent *event)
     swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, mouseEvent, true);
     if (!swallowEvent && !isPointInsideSelection(viewportPos) &&
         ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode()->isContentEditable())) {
+        _mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
         selectClosestWordFromMouseEvent(mouseEvent, mev.innerNode());
     }
 

@@ -1,3 +1,14 @@
+2006-03-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher.
+        
+        - fixed <rdar://problem/4372842> 10.4.4 Regression: control-clicking on a misspelled word 
+        doesn't select it or offer corrections (first click only)
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::sendContextMenuEvent):
+        Rolled in this one-line change that Hyatt wrote ages ago.
+
 2006-03-31  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.
