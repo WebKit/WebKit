@@ -119,6 +119,11 @@ Bindings::Class *ObjcInstance::getClass() const
     return static_cast<Bindings::Class*>(_class);
 }
 
+bool ObjcInstance::implementsCall() const
+{
+    return [_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)];
+}
+
 JSValue *ObjcInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
 {
     JSValue *resultValue;

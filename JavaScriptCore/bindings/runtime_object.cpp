@@ -188,8 +188,7 @@ JSValue *RuntimeObjectImp::defaultValue(ExecState*, JSType hint) const
     
 bool RuntimeObjectImp::implementsCall() const
 {
-    // Only true for default functions.
-    return true;
+    return getInternalInstance()->implementsCall();
 }
 
 JSValue *RuntimeObjectImp::callAsFunction(ExecState* exec, JSObject*, const List& args)

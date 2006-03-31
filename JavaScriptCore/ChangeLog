@@ -1,3 +1,38 @@
+2006-03-30  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4212626> REGRESSION: LIVECONNECT: JavaScript type for Java Strings is function,
+        not object
+
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::implementsCall):
+        New method.  Returns false by default.  Concrete subclasses can override this return true when
+        the bound object may be called as a function.
+        (KJS::Bindings::Instance::invokeDefaultMethod):
+        Since bound objects are no longer treated as functions by default, we can return jsUndefined()
+        here instead of in concrete subclasses that decide not to implement the default method
+        functionality.
+
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::implementsCall):
+        Don't assume that the bound object is a function; instead, let the object instance decide whether
+        it is callable.
+
+        * bindings/c/c_instance.h:
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::implementsCall):
+        The object is callable if its class has an invokeDefault function.
+
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::implementsCall):
+        The object is callable if the ObjC instance responds to -invokeDefaultMethodWithArguments:.
+
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_instance.cpp:
+        Moved bogus invokeDefaultMethod() to superclass.
+
 2006-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

@@ -85,6 +85,11 @@ void CInstance::end()
     // Do nothing.
 }
 
+bool CInstance::implementsCall() const
+{
+    return (_object->_class->invokeDefault != 0);
+}
+
 JSValue* CInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const List& args)
 {
     // Overloading methods are not allowed by NPObjects.  Should only be one
