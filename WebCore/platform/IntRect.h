@@ -76,8 +76,8 @@ public:
     int right() const { return x() + width(); }
     int bottom() const { return y() + height(); }
 
-    void move(const IntPoint& p) { m_location += p; } 
-    void move(int dx, int dy) { m_location += IntPoint(dx, dy); } 
+    void move(const IntSize& s) { m_location += s; } 
+    void move(int dx, int dy) { m_location.move(dx, dy); } 
 
     bool intersects(const IntRect&) const;
     bool contains(const IntRect&) const;

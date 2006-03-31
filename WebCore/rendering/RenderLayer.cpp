@@ -640,7 +640,7 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
     } else {
         FrameView* view = m_object->document()->view();
         if (view) {
-            IntRect viewRect = IntRect(view->scrollXOffset(), view->scrollYOffset(), view->visibleWidth(), view->visibleHeight());
+            IntRect viewRect = enclosingIntRect(view->visibleContentRect());
             IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
             
             xOffset = r.x();

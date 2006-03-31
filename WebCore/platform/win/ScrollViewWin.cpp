@@ -44,7 +44,7 @@ public:
         , hScrollBarMode(ScrollBarAuto)
     {
     }
-    IntPoint scrollPoint;
+    IntSize scrollOffset;
     IntSize contentsSize;
     bool hasStaticBackground;
     bool suppressScrollBars;
@@ -65,7 +65,7 @@ ScrollView::~ScrollView()
 void ScrollView::updateContents(const IntRect& updateRect, bool now)
 {
     IntRect adjustedDirtyRect(updateRect);
-    adjustedDirtyRect.move(-m_data->scrollPoint.x(), -m_data->scrollPoint.y());
+    adjustedDirtyRect.move(-m_data->scrollOffset);
 
     RECT dirtyRect = RECT(adjustedDirtyRect);
 #if PAINT_FLASHING_DEBUG
@@ -98,7 +98,7 @@ FloatRect ScrollView::visibleContentRect() const
     RECT bounds;
     GetClientRect(windowHandle(), &bounds);
     FloatRect contentRect = bounds;
-    contentRect.move(m_data->scrollPoint);
+    contentRect.move(m_data->scrollOffset);
     return contentRect;
 }
 
@@ -120,12 +120,12 @@ void ScrollView::resizeContents(int w,int h)
 
 int ScrollView::contentsX() const
 {
-    return scrollXOffset();
+    return scrollOffset().width();
 }
 
 int ScrollView::contentsY() const
 {
-    return scrollYOffset();
+    return scrollOffset().height();
 }
 
 int ScrollView::contentsWidth() const
@@ -138,58 +138,46 @@ int ScrollView::contentsHeight() const
     return m_data->contentsSize.height();
 }
 
-void ScrollView::viewportToContents(int x1, int y1, int& x2, int& y2)
+IntPoint ScrollView::viewportToContents(const IntPoint& contentsPoint)
 {
-    POINT point = {x1, y1};
+    POINT point = contentsPoint;
     MapWindowPoints(GetAncestor(windowHandle(), GA_ROOT), windowHandle(), &point, 1);
-    x2 = point.x + scrollXOffset();
-    y2 = point.y + scrollYOffset();
+    return IntPoint(point) + scrollOffset();
 }
 
-void ScrollView::contentsToViewport(int x1, int y1, int& x2, int& y2)
+IntPoint ScrollView::contentsToViewport(const IntPoint& viewportPoint)
 {
-    POINT point = {x1 - scrollXOffset(), y1 - scrollYOffset()};
+    POINT point = viewportPoint - scrollOffset();
     MapWindowPoints(windowHandle(), GetAncestor(windowHandle(), GA_ROOT), &point, 1);
-    x2 = point.x;
-    y2 = point.y;
+    return point;
 }
 
-int ScrollView::scrollXOffset() const
+IntSize scrollOffset() const
 {
-    return m_data->scrollPoint.x();
+    return m_data->scrollOffset;
 }
 
-int ScrollView::scrollYOffset() const
+IntSize ScrollView::maximumScroll() const
 {
-    return m_data->scrollPoint.y();
-}
-
-static inline int clampToRange(int value, int min, int max)
-{
-    return max(min(value, max), min);
-}
-
-IntPoint ScrollView::maximumScroll() const
-{
-    const IntSize& docSize = m_data->contentsSize;
-    const IntPoint& scrollPoint = m_data->scrollPoint;
-    return IntPoint(max(docSize.width() - scrollPoint.x(), 0), max(docSize.height() - scrollPoint.y(), 0));
+    IntSize delta = m_data->contentsSize - m_data->scrollOffset;
+    delta.clampNegativeToZero();
+    return delta;
 }
 
 void ScrollView::scrollBy(int dx, int dy)
 {
-    IntPoint scrollPoint = m_data->scrollPoint;
-    const IntPoint& maxScroll = maximumScroll();
-    int newX = max(0, min(scrollPoint.x() + dx, maxScroll.x()));
-    int newY = max(0, min(scrollPoint.y() + dy, maxScroll.y()));
+    IntSize scrollOffset = m_data->scrollOffset;
+    IntSize maxScroll = maximumScroll();
+    IntSize newScrollOffset = scrollOffset;
+    newScrollOffset.move(dx, dy);
+    newScrollOffset.clampNegativeToZero();
 
-    IntPoint newPoint(newX, newY);
-    if (newPoint != scrollPoint) {
-        m_data->scrollPoint = newPoint;
+    if (newScrollOffset != scrollScrollOffset) {
+        m_data->scrollOffset = newScrollOffset;
         updateScrollBars();
         // ScrollBar updates can fail, so we check the final delta before scrolling
-        IntPoint scrollDelta = m_data->scrollPoint - scrollPoint;
-        if (scrollDelta == IntPoint(0,0))
+        IntSize scrollDelta = m_data->scrollOffset - scrollOffset;
+        if (scrollDelta == IntSize())
             return;
         if (!m_data->hasStaticBackground)
             // FIXME: This could be made more efficient by passing a valid clip rect for only the document content.
@@ -259,15 +247,12 @@ int ScrollView::updateScrollInfo(short type, int current, int max, int pageSize)
 
 void ScrollView::updateScrollBars()
 { 
-    const IntPoint& maxScroll = maximumScroll();
+    IntSize scroll = scrollOffset().shrunkTo(maximumScroll());
+    scroll.clampNegativeToZero();
 
-    int xScroll = max(0, min(scrollXOffset(), maxScroll.x()));
-    xScroll = updateScrollInfo(SB_HORZ, xScroll, contentsWidth()-1, width());
-    m_data->scrollPoint.setX(xScroll);
-
-    int yScroll = max(0, min(scrollYOffset(), maxScroll.y()));
-    yScroll = updateScrollInfo(SB_VERT, yScroll, contentsHeight()-1, height());
-    m_data->scrollPoint.setY(yScroll);
+    m_data->scrollOffset = 
+        IntSize(updateScrollInfo(SB_HORZ, scroll.width(), contentsWidth() - 1, width()),
+                updateScrollInfo(SB_VERT, scroll.height(), contentsHeight() - 1, height()));
 
     if (m_data->hScrollBarMode != ScrollBarAuto || m_data->suppressScrollBars)
         ShowScrollBar(windowHandle(), SB_HORZ, (m_data->hScrollBarMode != ScrollBarAlwaysOff) && !m_data->suppressScrollBars);

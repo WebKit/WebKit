@@ -68,6 +68,17 @@ public:
             m_height > other.m_height ? m_height : other.m_height);
     }
 
+    IntSize shrunkTo(const IntSize& other) const
+    {
+        return IntSize(m_width < other.m_width ? m_width : other.m_width,
+            m_height < other.m_height ? m_height : other.m_height);
+    }
+
+    void clampNegativeToZero()
+    {
+        *this = expandedTo(IntSize());
+    }
+
 #if __APPLE__
 
     explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
@@ -111,6 +122,11 @@ inline IntSize operator+(const IntSize& a, const IntSize& b)
 inline IntSize operator-(const IntSize& a, const IntSize& b)
 {
     return IntSize(a.width() - b.width(), a.height() - b.height());
+}
+
+inline IntSize operator-(const IntSize& size)
+{
+    return IntSize(-size.width(), -size.height());
 }
 
 inline bool operator==(const IntSize& a, const IntSize& b)

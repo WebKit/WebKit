@@ -31,6 +31,7 @@
 #include "Node.h"
 #include "render_style.h"
 #include "TextAffinity.h"
+#include "VisiblePosition.h"
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashSet.h>
 
@@ -525,6 +526,7 @@ public:
     void setInnerNode(NodeInfo& info);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
+    VisiblePosition positionForPoint(const IntPoint& point) { return positionForCoordinates(point.x(), point.y()); }
     
     virtual void dirtyLinesFromChangedChild(RenderObject* child);
     

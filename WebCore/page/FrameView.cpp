@@ -681,12 +681,11 @@ void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
 bool FrameView::dispatchDragEvent(const AtomicString& eventType, Node *dragTarget, const PlatformMouseEvent& event, Clipboard* clipboard)
 {
-    int clientX, clientY;
-    viewportToContents(event.x(), event.y(), clientX, clientY);
+    IntPoint clientPos = viewportToContents(event.pos());
     
     RefPtr<MouseEvent> me = new MouseEvent(eventType,
         true, true, m_frame->document()->defaultView(),
-        0, event.globalX(), event.globalY(), clientX, clientY,
+        0, event.globalX(), event.globalY(), clientPos.x(), clientPos.y(),
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
         0, 0, clipboard);
 
@@ -942,10 +941,8 @@ MouseEventWithHitTestResults FrameView::prepareMouseEvent(bool readonly, bool ac
     ASSERT(m_frame);
     ASSERT(m_frame->document());
     
-    int xm, ym;
-    viewportToContents(mev.x(), mev.y(), xm, ym);
-
-    return m_frame->document()->prepareMouseEvent(readonly, active, mouseMove, IntPoint(xm, ym), mev);
+    IntPoint vPoint = viewportToContents(mev.pos());
+    return m_frame->document()->prepareMouseEvent(readonly, active, mouseMove, vPoint, mev);
 }
 
 bool FrameView::dispatchMouseEvent(const AtomicString& eventType, Node* targetNode, bool cancelable,
@@ -1020,11 +1017,10 @@ void FrameView::handleWheelEvent(PlatformWheelEvent& e)
     if (doc) {
         RenderObject *docRenderer = doc->renderer();
         if (docRenderer) {
-            int x, y;
-            viewportToContents(e.x(), e.y(), x, y);
+            IntPoint vPoint = viewportToContents(e.pos());
 
             RenderObject::NodeInfo hitTestResult(true, false);
-            doc->renderer()->layer()->hitTest(hitTestResult, IntPoint(x, y)); 
+            doc->renderer()->layer()->hitTest(hitTestResult, vPoint); 
             Node *node = hitTestResult.innerNode();
 
            if (m_frame->passWheelEventToChildWidget(node)) {

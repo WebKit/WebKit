@@ -26,6 +26,8 @@
 #ifndef INTPOINT_H_
 #define INTPOINT_H_
 
+#include "IntSize.h"
+
 #if __APPLE__
 
 typedef struct CGPoint CGPoint;
@@ -60,6 +62,8 @@ public:
     void setX(int x) { m_x = x; }
     void setY(int y) { m_y = y; }
 
+    void move(int dx, int dy) { m_x += dx; m_y += dy; }
+    
 #if __APPLE__
 
     explicit IntPoint(const CGPoint&); // don't do this implicitly since it's lossy
@@ -81,28 +85,31 @@ private:
     int m_x, m_y;
 };
 
-inline IntPoint& operator+=(IntPoint& a, const IntPoint& b)
+inline IntPoint& operator+=(IntPoint& a, const IntSize& b)
 {
-    a.setX(a.x() + b.x());
-    a.setY(a.y() + b.y());
+    a.move(b.width(), b.height());
     return a;
 }
 
-inline IntPoint& operator-=(IntPoint& a, const IntPoint& b)
+inline IntPoint& operator-=(IntPoint& a, const IntSize& b)
 {
-    a.setX(a.x() - b.x());
-    a.setY(a.y() - b.y());
+    a.move(-b.width(), -b.height());
     return a;
 }
 
-inline IntPoint operator+(const IntPoint& a, const IntPoint& b)
+inline IntPoint operator+(const IntPoint& a, const IntSize& b)
 {
-    return IntPoint(a.x() + b.x(), a.y() + b.y());
+    return IntPoint(a.x() + b.width(), a.y() + b.height());
 }
 
-inline IntPoint operator-(const IntPoint& a, const IntPoint& b)
+inline IntSize operator-(const IntPoint& a, const IntPoint& b)
 {
-    return IntPoint(a.x() - b.x(), a.y() - b.y());
+    return IntSize(a.x() - b.x(), a.y() - b.y());
+}
+
+inline IntPoint operator-(const IntPoint& a, const IntSize& b)
+{
+    return IntPoint(a.x() - b.width(), a.y() - b.height());
 }
 
 inline bool operator==(const IntPoint& a, const IntPoint& b)

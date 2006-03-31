@@ -1642,13 +1642,13 @@ void Frame::reparseConfiguration()
         setUserStyleSheet(String());
 }
 
-bool Frame::shouldDragAutoNode(Node *node, int x, int y) const
+bool Frame::shouldDragAutoNode(Node *node, const IntPoint& point) const
 {
     // No KDE impl yet
     return false;
 }
 
-bool Frame::isPointInsideSelection(int x, int y)
+bool Frame::isPointInsideSelection(const IntPoint& point)
 {
     // Treat a collapsed selection like no selection.
     if (!d->m_selection.isRange())
@@ -1657,12 +1657,12 @@ bool Frame::isPointInsideSelection(int x, int y)
         return false;
     
     RenderObject::NodeInfo nodeInfo(true, true);
-    document()->renderer()->layer()->hitTest(nodeInfo, IntPoint(x, y));
+    document()->renderer()->layer()->hitTest(nodeInfo, point);
     Node *innerNode = nodeInfo.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;
     
-    Position pos(innerNode->renderer()->positionForCoordinates(x, y).deepEquivalent());
+    Position pos(innerNode->renderer()->positionForPoint(point).deepEquivalent());
     if (pos.isNull())
         return false;
 
@@ -1683,12 +1683,13 @@ bool Frame::isPointInsideSelection(int x, int y)
    return false;
 }
 
-void Frame::selectClosestWordFromMouseEvent(const PlatformMouseEvent& mouse, Node *innerNode, int x, int y)
+void Frame::selectClosestWordFromMouseEvent(const PlatformMouseEvent& mouse, Node *innerNode)
 {
     SelectionController selection;
 
     if (innerNode && innerNode->renderer() && mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
-        VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
+        IntPoint vPoint = view()->viewportToContents(mouse.pos());
+        VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
             selection.expandUsingGranularity(WordGranularity);
@@ -1714,11 +1715,8 @@ void Frame::handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&
             // m_beganSelectingText to prevent handleMouseReleaseEvent
             // from setting caret selection.
             d->m_beganSelectingText = true;
-        else {
-            int x, y;
-            view()->viewportToContents(event.event().x(), event.event().y(), x, y);
-            selectClosestWordFromMouseEvent(event.event(), event.innerNode(), x, y);
-        }
+        else
+            selectClosestWordFromMouseEvent(event.event(), event.innerNode());
     }
 }
 
@@ -1729,9 +1727,8 @@ void Frame::handleMousePressEventTripleClick(const MouseEventWithHitTestResults&
     if (event.event().button() == LeftButton && innerNode && innerNode->renderer() &&
         mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
         SelectionController selection;
-        int x, y;
-        view()->viewportToContents(event.event().x(), event.event().y(), x, y);
-        VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
+        IntPoint vPoint = view()->viewportToContents(event.event().pos());
+        VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
             selection.expandUsingGranularity(ParagraphGranularity);
@@ -1760,12 +1757,11 @@ void Frame::handleMousePressEventSingleClick(const MouseEventWithHitTestResults&
 
             // Don't restart the selection when the mouse is pressed on an
             // existing selection so we can allow for text dragging.
-            int x, y;
-            view()->viewportToContents(event.event().x(), event.event().y(), x, y);
-            if (!extendSelection && isPointInsideSelection(x, y))
+            IntPoint vPoint = view()->viewportToContents(event.event().pos());
+            if (!extendSelection && isPointInsideSelection(vPoint))
                 return;
 
-            VisiblePosition visiblePos(innerNode->renderer()->positionForCoordinates(x, y));
+            VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(vPoint));
             if (visiblePos.isNull())
                 visiblePos = VisiblePosition(innerNode, innerNode->caretMinOffset(), DOWNSTREAM);
             Position pos = visiblePos.deepEquivalent();
@@ -1833,9 +1829,8 @@ void Frame::handleMouseMoveEventPart2(const MouseEventWithHitTestResults& event)
         return;
 
     // handle making selection
-    int x, y;
-    view()->viewportToContents(event.event().x(), event.event().y(), x, y);
-    VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
+    IntPoint vPoint = view()->viewportToContents(event.event().pos());
+    VisiblePosition pos(innerNode->renderer()->positionForPoint(vPoint));
 
     // Don't modify the selection if we're not on a node.
     if (pos.isNull())
@@ -1881,9 +1876,8 @@ void Frame::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
         SelectionController selection;
         Node *node = event.innerNode();
         if (node && node->isContentEditable() && node->renderer()) {
-            int x, y;
-            view()->viewportToContents(event.event().x(), event.event().y(), x, y);
-            VisiblePosition pos = node->renderer()->positionForCoordinates(x, y);
+            IntPoint vPoint = view()->viewportToContents(event.event().pos());
+            VisiblePosition pos = node->renderer()->positionForPoint(vPoint);
             selection.moveTo(pos);
         }
         if (shouldChangeSelection(selection))

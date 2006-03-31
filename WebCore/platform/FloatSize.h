@@ -108,6 +108,11 @@ inline FloatSize operator-(const FloatSize& a, const FloatSize& b)
     return FloatSize(a.width() - b.width(), a.height() - b.height());
 }
 
+inline FloatSize operator-(const FloatSize& size)
+{
+    return FloatSize(-size.width(), -size.height());
+}
+
 inline bool operator==(const FloatSize& a, const FloatSize& b)
 {
     return a.width() == b.width() && a.height() == b.height();

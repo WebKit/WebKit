@@ -1663,7 +1663,8 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     if (args.size() >= 2 && widget) {
       IntRect r = frame->page()->windowRect();
       IntRect sr = screenRect(widget);
-      r.setLocation(sr.location() + IntPoint(args[0]->toInt32(exec), args[1]->toInt32(exec)));
+      r.setLocation(sr.location());
+      r.move(args[0]->toInt32(exec), args[1]->toInt32(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if (sr.contains(r))
         frame->page()->setWindowRect(r);

@@ -148,7 +148,7 @@ public:
   /**
    * Implementation of CSS property -khtml-user-drag == auto
    */
-  virtual bool shouldDragAutoNode(Node*, int x, int y) const;
+  virtual bool shouldDragAutoNode(Node*, const IntPoint&) const;
   
   /**
    * Specifies whether images contained in the document should be loaded
@@ -476,7 +476,7 @@ public:
    */
   String lastModified() const;
 
-  bool isPointInsideSelection(int x, int y);
+  bool isPointInsideSelection(const IntPoint&);
 
   virtual bool tabsToLinks() const;
   virtual bool tabsToAllControls() const;
@@ -521,7 +521,7 @@ public:
   virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
   virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
   
-  void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode, int x, int y);
+  void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode);
 
   virtual void urlSelected(const DeprecatedString& url, const String& target);
   virtual void urlSelected(const ResourceRequest&, const String& target);

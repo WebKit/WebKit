@@ -144,26 +144,15 @@ int ScrollView::contentsY() const
     return 0;
 }
 
-int ScrollView::scrollXOffset() const
+IntSize ScrollView::scrollOffset() const
 {
     NSView *view = getView();
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view isKindOfClass:[NSScrollView class]])
-        return (int)[[(NSScrollView *)view contentView] visibleRect].origin.x;
+        return IntPoint([[(NSScrollView *)view contentView] visibleRect].origin) - IntPoint();
     END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-int ScrollView::scrollYOffset() const
-{
-    NSView *view = getView();
-    
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]])
-        return (int)[[(NSScrollView *)view contentView] visibleRect].origin.y;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
+    return IntSize();
 }
 
 void ScrollView::scrollBy(int dx, int dy)
@@ -364,16 +353,9 @@ void ScrollView::updateContents(const IntRect &rect, bool now)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-IntPoint ScrollView::contentsToViewport(const IntPoint &p)
-{
-    int vx, vy;
-    contentsToViewport(p.x(), p.y(), vx, vy);
-    return IntPoint(vx, vy);
-}
-
 // NB, for us "viewport" means the NSWindow's coord system, which is origin lower left
 
-void ScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
+IntPoint ScrollView::contentsToViewport(const IntPoint& contentsPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -384,20 +366,16 @@ void ScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
     if (docView)
         view = docView;
     
-    NSPoint tempPoint = { x, y }; // workaround for 4213314
+    NSPoint tempPoint = { contentsPoint.x(), contentsPoint.y() }; // workaround for 4213314
     NSPoint np = [view convertPoint:tempPoint toView: nil];
-    vx = (int)np.x;
-    vy = (int)np.y;
-    
-    return;
+    return IntPoint(np);
 
     END_BLOCK_OBJC_EXCEPTIONS;
     
-    vx = 0;
-    vy = 0;
+    return IntPoint();
 }
 
-void ScrollView::viewportToContents(int vx, int vy, int& x, int& y)
+IntPoint ScrollView::viewportToContents(const IntPoint& viewportPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -408,17 +386,14 @@ void ScrollView::viewportToContents(int vx, int vy, int& x, int& y)
     if (docView)
         view = docView;
     
-    NSPoint tempPoint = { vx, vy }; // workaround for 4213314
+    NSPoint tempPoint = { viewportPoint.x(), viewportPoint.y() }; // workaround for 4213314
     NSPoint np = [view convertPoint:tempPoint fromView: nil];
-    x = (int)np.x;
-    y = (int)np.y;
 
-    return;
+    return IntPoint(np);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    x = 0;
-    y = 0;
+    return IntPoint();
 }
 
 void ScrollView::setStaticBackground(bool b)

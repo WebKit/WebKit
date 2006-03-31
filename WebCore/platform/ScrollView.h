@@ -41,8 +41,7 @@ namespace WebCore {
         int contentsHeight() const;
         int contentsX() const;
         int contentsY() const;
-        int scrollXOffset() const;
-        int scrollYOffset() const;
+        IntSize scrollOffset() const;
         void scrollBy(int dx, int dy);
         void scrollPointRecursively(int dx, int dy);
 
@@ -67,8 +66,7 @@ namespace WebCore {
         void updateContents(const IntRect&, bool now = false);
 
         IntPoint contentsToViewport(const IntPoint&);
-        void contentsToViewport(int x, int y, int& vx, int& vy);
-        void viewportToContents(int vx, int vy, int& x, int& y);
+        IntPoint viewportToContents(const IntPoint&);
 
         void setStaticBackground(bool);
 

@@ -1525,12 +1525,11 @@ bool FrameMac::eventMayStartDrag(NSEvent *event) const
     }
 
     NSPoint loc = [event locationInWindow];
-    int mouseDownX, mouseDownY;
-    d->m_view->viewportToContents((int)loc.x, (int)loc.y, mouseDownX, mouseDownY);
+    IntPoint mouseDownPos = d->m_view->viewportToContents(IntPoint(loc));
     RenderObject::NodeInfo nodeInfo(true, false);
-    renderer()->layer()->hitTest(nodeInfo, IntPoint(mouseDownX, mouseDownY));
+    renderer()->layer()->hitTest(nodeInfo, mouseDownPos);
     bool srcIsDHTML;
-    return nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownX, mouseDownY, srcIsDHTML);
+    return nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownPos.x(), mouseDownPos.y(), srcIsDHTML);
 }
 
 // The link drag hysteresis is much larger than the others because there
@@ -1544,20 +1543,19 @@ const float TextDragDelay = 0.15;
 
 bool FrameMac::dragHysteresisExceeded(float dragLocationX, float dragLocationY) const
 {
-    int dragX, dragY;
-    d->m_view->viewportToContents((int)dragLocationX, (int)dragLocationY, dragX, dragY);
-    float deltaX = fabsf(dragX - _mouseDownX);
-    float deltaY = fabsf(dragY - _mouseDownY);
+    IntPoint dragViewportLocation((int)dragLocationX, (int)dragLocationY);
+    IntPoint dragLocation = d->m_view->viewportToContents(dragViewportLocation);
+    IntSize delta = dragLocation - m_mouseDownPos;
     
     float threshold = GeneralDragHysteresis;
-    if (_dragSrcIsImage) {
+    if (_dragSrcIsImage)
         threshold = ImageDragHysteresis;
-    } else if (_dragSrcIsLink) {
+    else if (_dragSrcIsLink)
         threshold = LinkDragHysteresis;
-    } else if (_dragSrcInSelection) {
+    else if (_dragSrcInSelection)
         threshold = TextDragHysteresis;
-    }
-    return deltaX >= threshold || deltaY >= threshold;
+
+    return fabsf(delta.width()) >= threshold || fabsf(delta.height()) >= threshold;
 }
 
 void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
@@ -1589,9 +1587,9 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         if (_mouseDownMayStartDrag && !_dragSrc) {
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
-            renderer()->layer()->hitTest(nodeInfo, IntPoint(_mouseDownX, _mouseDownY));
+            renderer()->layer()->hitTest(nodeInfo, m_mouseDownPos);
             Node *node = nodeInfo.innerNode();
-            _dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _mouseDownX, _mouseDownY, _dragSrcIsDHTML) : 0;
+            _dragSrc = (node && node->renderer()) ? node->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, m_mouseDownPos.x(), m_mouseDownPos.y(), _dragSrcIsDHTML) : 0;
             if (!_dragSrc) {
                 _mouseDownMayStartDrag = false;     // no element is draggable
             } else {
@@ -1602,7 +1600,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                 node = nodeInfo.innerNonSharedNode();
                 _dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
                 
-                _dragSrcInSelection = isPointInsideSelection(_mouseDownX, _mouseDownY);
+                _dragSrcInSelection = isPointInsideSelection(m_mouseDownPos);
             }                
         }
         
@@ -1645,7 +1643,8 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
                     if (_dragSrcIsDHTML) {
                         int srcX, srcY;
                         _dragSrc->renderer()->absolutePosition(srcX, srcY);
-                        _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint(_mouseDownX - srcX, _mouseDownY - srcY));
+                        IntSize delta = m_mouseDownPos - IntPoint(srcX, srcY);
+                        _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint() + delta);
                     } 
 
                     _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown);
@@ -1926,7 +1925,7 @@ void FrameMac::mouseDown(NSEvent *event)
     _currentEvent = KWQRetain(event);
     m_mouseDown = PlatformMouseEvent(event);
     NSPoint loc = [event locationInWindow];
-    d->m_view->viewportToContents((int)loc.x, (int)loc.y, _mouseDownX, _mouseDownY);
+    m_mouseDownPos = d->m_view->viewportToContents(IntPoint(loc));
     _mouseDownTimestamp = [event timestamp];
 
     _mouseDownMayStartDrag = false;
@@ -2079,16 +2078,14 @@ void FrameMac::mouseMoved(NSEvent *event)
 }
 
 // Called as we walk up the element chain for nodes with CSS property -khtml-user-drag == auto
-bool FrameMac::shouldDragAutoNode(Node* node, int x, int y) const
+bool FrameMac::shouldDragAutoNode(Node* node, const IntPoint& point) const
 {
     // We assume that WebKit only cares about dragging things that can be leaf nodes (text, images, urls).
     // This saves a bunch of expensive calls (creating WC and WK element dicts) as we walk farther up
     // the node hierarchy, and we also don't have to cook up a way to ask WK about non-leaf nodes
     // (since right now WK just hit-tests using a cached lastMouseDown).
     if (!node->hasChildNodes() && d->m_view) {
-        int windowX, windowY;
-        d->m_view->contentsToViewport(x, y, windowX, windowY);
-        NSPoint eventLoc = {windowX, windowY};
+        NSPoint eventLoc = d->m_view->contentsToViewport(point);
         return [_bridge mayStartDragAtEventLocation:eventLoc];
     } else
         return NO;
@@ -2109,15 +2106,13 @@ bool FrameMac::sendContextMenuEvent(NSEvent *event)
     
     PlatformMouseEvent mouseEvent(event);
 
-    int xm, ym;
-    v->viewportToContents(mouseEvent.x(), mouseEvent.y(), xm, ym);
-
-    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, IntPoint(xm, ym), mouseEvent);
+    IntPoint viewportPos = v->viewportToContents(mouseEvent.pos());
+    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, viewportPos, mouseEvent);
 
     swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, mouseEvent, true);
-    if (!swallowEvent && !isPointInsideSelection(xm, ym) &&
+    if (!swallowEvent && !isPointInsideSelection(viewportPos) &&
         ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode()->isContentEditable())) {
-        selectClosestWordFromMouseEvent(mouseEvent, mev.innerNode(), xm, ym);
+        selectClosestWordFromMouseEvent(mouseEvent, mev.innerNode());
     }
 
     ASSERT(_currentEvent == event);

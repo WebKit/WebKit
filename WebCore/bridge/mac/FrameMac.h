@@ -283,7 +283,7 @@ public:
     virtual void partClearedInBegin();
     
     // Implementation of CSS property -khtml-user-drag == auto
-    virtual bool shouldDragAutoNode(Node*, int x, int y) const;
+    virtual bool shouldDragAutoNode(Node*, const IntPoint&) const;
 
     void setMarkedTextRange(const Range* , NSArray* attributes, NSArray* ranges);
     virtual Range* markedTextRange() const { return m_markedTextRange.get(); }
@@ -339,7 +339,7 @@ private:
     bool _mouseDownMayStartSelect;
     PlatformMouseEvent m_mouseDown;
     // in our view's coords
-    int _mouseDownX, _mouseDownY;
+    IntPoint m_mouseDownPos;
     float _mouseDownTimestamp;
     int _activationEventNumber;
     

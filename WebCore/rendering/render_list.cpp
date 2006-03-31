@@ -387,7 +387,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     if (style()->visibility() != VISIBLE)  return;
 
     IntRect marker = getRelativeMarkerRect();
-    marker.move(IntPoint(_tx, _ty));
+    marker.move(_tx, _ty);
 
     IntRect box(_tx + m_x, _ty + m_y, m_width, m_height);
 

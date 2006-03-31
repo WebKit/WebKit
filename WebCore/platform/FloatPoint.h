@@ -27,6 +27,8 @@
 #ifndef FLOATPOINT_H_
 #define FLOATPOINT_H_
 
+#include "FloatSize.h"
+
 #if __APPLE__
 
 typedef struct CGPoint CGPoint;
@@ -59,6 +61,7 @@ public:
 
     void setX(float x) { m_x = x; }
     void setY(float y) { m_y = y; }
+    void move(float dx, float dy) { m_x += dx; m_y += dy; }
 
 #if __APPLE__
 
@@ -76,28 +79,31 @@ private:
     float m_x, m_y;
 };
 
-inline FloatPoint& operator+=(FloatPoint& a, const FloatPoint& b)
+inline FloatPoint& operator+=(FloatPoint& a, const FloatSize& b)
 {
-    a.setX(a.x() + b.x());
-    a.setY(a.y() + b.y());
+    a.move(b.width(), b.height());
     return a;
 }
 
-inline FloatPoint& operator-=(FloatPoint& a, const FloatPoint& b)
+inline FloatPoint& operator-=(FloatPoint& a, const FloatSize& b)
 {
-    a.setX(a.x() - b.x());
-    a.setY(a.y() - b.y());
+    a.move(-b.width(), -b.height());
     return a;
 }
 
-inline FloatPoint operator+(const FloatPoint& a, const FloatPoint& b)
+inline FloatPoint operator+(const FloatPoint& a, const FloatSize& b)
 {
-    return FloatPoint(a.x() + b.x(), a.y() + b.y());
+    return FloatPoint(a.x() + b.width(), a.y() + b.height());
 }
 
-inline FloatPoint operator-(const FloatPoint& a, const FloatPoint& b)
+inline FloatSize operator-(const FloatPoint& a, const FloatPoint& b)
 {
-    return FloatPoint(a.x() - b.x(), a.y() - b.y());
+    return FloatSize(a.x() - b.x(), a.y() - b.y());
+}
+
+inline FloatPoint operator-(const FloatPoint& a, const FloatSize& b)
+{
+    return FloatPoint(a.x() - b.width(), a.y() - b.height());
 }
 
 inline bool operator==(const FloatPoint& a, const FloatPoint& b)

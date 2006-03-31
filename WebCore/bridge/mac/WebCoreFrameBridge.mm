@@ -1197,7 +1197,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (BOOL)isPointInsideSelection:(NSPoint)point
 {
-    return m_frame->isPointInsideSelection((int)point.x, (int)point.y);
+    return m_frame->isPointInsideSelection(IntPoint(point));
 }
 
 - (NSURL *)URLWithAttributeString:(NSString *)string

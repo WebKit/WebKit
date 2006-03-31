@@ -1,5 +1,104 @@
 2006-03-30  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+        
+        - various Point / Size related cleanup
+        
+        First, I clarified the semantics of some operations to keep a
+        better distinction between IntPoint and IntSize:
+        
+        * platform/IntPoint.h:
+        (WebCore::IntPoint::move): new convenience to move a point by separate
+        x and y deltas.
+        (WebCore::operator+=): You can't add a point to a point, you can only add
+        a size to a point.
+        (WebCore::operator+): ditto
+        (WebCore::operator-): point - point = size; point - size = point
+        (WebCore::operator-=): only allow subtracting a size for the mutating version
+        * platform/IntRect.h:
+        (WebCore::IntRect::move): tweaked to use IntPoint::move, also, move by an IntSize,
+        not an IntPoint.
+        * platform/IntSize.h:
+        (WebCore::IntSize::shrunkTo): analog to expandedTo
+        (WebCore::IntSize::clampNegativeToZero): a handy helper
+        (WebCore::operator-): Added unary minus operator
+
+        Made the same changes for FloatPoint:
+        
+        * platform/FloatPoint.h:
+        (WebCore::FloatPoint::move):
+        (WebCore::operator+=):
+        (WebCore::operator-=):
+        (WebCore::operator+):
+        (WebCore::operator-):
+        * platform/FloatRect.h:
+        (WebCore::FloatRect::move):
+        * platform/FloatSize.h:
+        (WebCore::operator-):
+
+        Then I changed a bunch of stuff to pass around IntPoint instead of separate x and y
+        coordinates. The main one was:
+        
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::scrollOffset): new method, return an IntSize
+        (WebCore::ScrollView::contentsToViewport): take and return an IntPoint
+        (WebCore::ScrollView::viewportToContents): take and return an IntPoint
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateContents): handle things in terms of scrollOffset,
+        not scrollPoint
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::viewportToContents):
+        (WebCore::ScrollView::contentsToViewport):
+        (WebCore::scrollOffset):
+        (WebCore::ScrollView::maximumScroll):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::updateScrollBars):
+
+        The rest is mainly updates for these changes.
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::eventMayStartDrag):
+        (WebCore::FrameMac::dragHysteresisExceeded):
+        (WebCore::FrameMac::handleMouseMoveEvent):
+        (WebCore::FrameMac::mouseDown):
+        (WebCore::FrameMac::shouldDragAutoNode):
+        (WebCore::FrameMac::sendContextMenuEvent):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge isPointInsideSelection:]):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        (WebCore::EventTargetNode::dispatchWheelEvent):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        * page/Frame.cpp:
+        (WebCore::Frame::shouldDragAutoNode):
+        (WebCore::Frame::isPointInsideSelection):
+        (WebCore::Frame::selectClosestWordFromMouseEvent):
+        (WebCore::Frame::handleMousePressEventDoubleClick):
+        (WebCore::Frame::handleMousePressEventTripleClick):
+        (WebCore::Frame::handleMousePressEventSingleClick):
+        (WebCore::Frame::handleMouseMoveEventPart2):
+        (WebCore::Frame::handleMouseReleaseEvent):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchDragEvent):
+        (WebCore::FrameView::prepareMouseEvent):
+        (WebCore::FrameView::handleWheelEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::draggableNode):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::positionForPoint):
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint):
+
+2006-03-30  Maciej Stachowiak  <mjs@apple.com>
+
         - fixed windows build
 
         * platform/win/TemporaryLinkStubs.cpp:
