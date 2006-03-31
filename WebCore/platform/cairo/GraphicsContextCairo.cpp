@@ -442,7 +442,10 @@ void GraphicsContext::drawFocusRing(const Color& color)
     }
     // FIXME: These rects should be rounded
     cairo_rectangle(m_data->context, finalFocusRect.x(), finalFocusRect.y(), finalFocusRect.width(), finalFocusRect.height());
-    setPen(color);
+    
+    // Force the alpha to 50%.  This matches what the Mac does with outline rings.
+    Color ringColor(color.red(), color.green(), color.blue(), 127);
+    setColor(m_data->context, ringColor);
     cairo_stroke(m_data->context);
 }
 

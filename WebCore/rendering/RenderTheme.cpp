@@ -112,7 +112,7 @@ bool RenderTheme::paintBorder(RenderObject* o, const RenderObject::PaintInfo& i,
             break;
     }
     
-    return false;
+    return true;
 }
 bool RenderTheme::shouldPaintBorder(RenderObject* o)
 {

@@ -100,19 +100,19 @@ protected:
 
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
-    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) = 0;
+    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
     virtual void setCheckboxSize(RenderStyle* style) const {};
     
     virtual void adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
-    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) = 0;
+    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
     virtual void setRadioSize(RenderStyle* style) const {};
     
     virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
-    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) = 0;
+    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
     virtual void setButtonSize(RenderStyle* style) const {};
 
     virtual void adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
-    virtual bool paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) = 0;
+    virtual bool paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return true; }
 };
 
 // Function to obtain the theme.  This is implemented in your platform-specific theme implementation to hand

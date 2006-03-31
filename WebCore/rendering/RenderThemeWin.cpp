@@ -31,4 +31,49 @@ RenderTheme* theme()
     return &winTheme;
 }
 
+void RenderThemeWin::addIntrinsicMargins(RenderStyle* style) const
+{
+    // Cut out the intrinsic margins completely if we end up using a small font size
+    if (style->fontSize() < 11)
+        return;
+    
+    // Intrinsic margin value.
+    const int m = 2;
+    
+    // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
+    if (style->width().isIntrinsicOrAuto()) {
+        if (style->marginLeft().quirk())
+            style->setMarginLeft(Length(m, Fixed));
+        if (style->marginRight().quirk())
+            style->setMarginRight(Length(m, Fixed));
+    }
+
+    if (style->height().isAuto()) {
+        if (style->marginTop().quirk())
+            style->setMarginTop(Length(m, Fixed));
+        if (style->marginBottom().quirk())
+            style->setMarginBottom(Length(m, Fixed));
+    }
+}
+
+void RenderThemeWin::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+{
+    addIntrinsicMargins(style);
+}
+
+void RenderThemeWin::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+{
+    addIntrinsicMargins(style);
+}
+
+void RenderThemeWin::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+{
+    addIntrinsicMargins(style);
+}
+
+void RenderThemeWin::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+{
+    addIntrinsicMargins(style);
+}
+
 }
