@@ -549,7 +549,7 @@
         c_utility.cpp contains CFString OS X platform-dependent code; should use ICU
 
         Tested with test case from:
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5163
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5163
 
         * bindings/c_utility.cpp
         (convertUTF8ToUTF16): Changed to using Unicode converter from ICU, and manual Latin-1 conversion.
@@ -649,7 +649,7 @@
 
         Rubber stamped by Anders and Eric.
 
-	- add fpconst.cpp to win32 build, it is now needed
+        - add fpconst.cpp to win32 build, it is now needed
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
         * kjs/fpconst.cpp:
@@ -658,7 +658,7 @@
 
         Reviewed by Eric.
 
-	- fix windows build, broken by my last patch
+        - fix windows build, broken by my last patch
 
         * kjs/JSImmediate.cpp:
         * kjs/identifier.cpp:
@@ -1441,7 +1441,7 @@
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
         Add JSImmediate to the Win32 project.
 
-	* kjs/JSImmediate.h:
+        * kjs/JSImmediate.h:
         (KJS::JSImmediate::fromDouble):
         (KJS::JSImmediate::toDouble):
         (KJS::JSImmediate::NanAsBits):
@@ -1880,10 +1880,10 @@
 
         * bindings/c/c_utility.cpp:
         (KJS::Bindings::convertUTF8ToUTF16):
-	Fixed an invalid assertion that UTF8Chars is not NULL.  It is valid for it to be NULL as long as
-	UTF8Length is 0.
-	This fixes an assertion failure on TOT at <http://www.musicindiaonline.com/p/x/tJO0OOBME9.As1NMvHdW/>,
-	where JavaScript is getting a NULL string back from some call on the Real Player plugin.
+        Fixed an invalid assertion that UTF8Chars is not NULL.  It is valid for it to be NULL as long as
+        UTF8Length is 0.
+        This fixes an assertion failure on TOT at <http://www.musicindiaonline.com/p/x/tJO0OOBME9.As1NMvHdW/>,
+        where JavaScript is getting a NULL string back from some call on the Real Player plugin.
 
 2006-01-30  Anders Carlsson  <andersca@mac.com>
 
@@ -2055,9 +2055,9 @@
 
 2006-01-25  George Staikos <staikos@opensource.apple.com>
 
-	Reviewed by Darin.
+        Reviewed by Darin.
 
-	* kxmlcore/HashFunctions.h: Merge build fix from KDE.
+        * kxmlcore/HashFunctions.h: Merge build fix from KDE.
 
 2006-01-25  Darin Adler  <darin@apple.com>
 
@@ -2295,9 +2295,9 @@
 
 2006-01-23  George Staikos <staikos@opensource.apple.com>
 
-	Reviewed by Maciej and Darin.
+        Reviewed by Maciej and Darin.
 
-	* kxmlcore/Assertions.h: This file only works with __APPLE__ right now
+        * kxmlcore/Assertions.h: This file only works with __APPLE__ right now
         * kjs/interpreter.cpp: ditto
         * kjs/simple_number.h: Add assert.h and remove from config.h
         * kjs/array_object.cpp: Use relative paths for kxmlcore includes
@@ -2305,9 +2305,9 @@
 
 2006-01-23  George Staikos <staikos@opensource.apple.com>
 
-	Reviewed by Maciej.
+        Reviewed by Maciej.
 
-	* kjs/config.h: unbreak preprocessor change
+        * kjs/config.h: unbreak preprocessor change
 
 2006-01-23  George Staikos <staikos@opensource.apple.com>
 
@@ -2315,7 +2315,7 @@
 
         * kjs/:
         * kxmlcore/:
-	     Update FSF address in license to make merging easier
+             Update FSF address in license to make merging easier
 
 2006-01-22  George Staikos <staikos@opensource.apple.com>
 
@@ -2343,7 +2343,7 @@
           Fix pedantic compile with some gcc versions (Merge from KDE)
 
         * kjs/create_hash_table:
-	  Fix build with Perl 5.8.0 (Merge from KDE)
+          Fix build with Perl 5.8.0 (Merge from KDE)
 
 2006-01-18  Darin Adler  <darin@apple.com>
 
@@ -2449,17 +2449,17 @@
 
         Reviewed by John Sullivan.
 
-	JavaScriptCore part of <rdar://problem/4211707> NPAPI ref count behavior differs with Mozilla
+        JavaScriptCore part of <rdar://problem/4211707> NPAPI ref count behavior differs with Mozilla
 
         * bindings/npruntime.cpp:
         (_NPN_ReleaseObject):
-	Refactored part of this function out into _NPN_DeallocateObject.
+        Refactored part of this function out into _NPN_DeallocateObject.
         (_NPN_DeallocateObject):
-	Forcibly deallocates the passed object, even if its refcount is
-	greater than zero.
-	
+        Forcibly deallocates the passed object, even if its refcount is
+        greater than zero.
+        
         * bindings/npruntime_impl.h:
-	Declared _NPN_DeallocateObject().
+        Declared _NPN_DeallocateObject().
 
 2006-01-16  Darin Adler  <darin@apple.com>
 
@@ -2698,11 +2698,11 @@
 
 2006-01-06  Maciej Stachowiak  <mjs@apple.com>
 
-	Reviewed by Darin.
+        Reviewed by Darin.
 
-	- miscellaneous changes for 4% speedup on the JavaScript iBench
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6396
-	
+        - miscellaneous changes for 4% speedup on the JavaScript iBench
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6396
+        
         Changes mostly thanks to Maks Orlovich, tweaked a little by me.
 
         * kjs/create_hash_table: Use the same hash as the one used by Identifier.
@@ -2724,7 +2724,7 @@
 
 2006-01-06  Maciej Stachowiak  <mjs@apple.com>
 
-	- fix development build failure from the previous checkin
+        - fix development build failure from the previous checkin
 
         * kjs/function.cpp:
         (KJS::ActivationImp::put): Use prototype() accessor in assert.
@@ -2733,19 +2733,19 @@
 
         Reviewed by Eric.
 
-	- fix remaining performance regression from Getter/Setter change
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6249
+        - fix remaining performance regression from Getter/Setter change
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6249
 
-	- Activation objects should not have __proto__ property
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6395
+        - Activation objects should not have __proto__ property
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6395
 
         * kjs/function.cpp:
         (KJS::ActivationImp::getOwnPropertySlot): Implement directly, thus
-	skipping getter/setter handling and __proto__ handling, as well
-	as inlining needed superclass stuff.
+        skipping getter/setter handling and __proto__ handling, as well
+        as inlining needed superclass stuff.
         (KJS::ActivationImp::put): Implement directly, skipping getter/setter,
-	__proto__, and do canPut directly in PropertyMap::put since there's no
-	static property table either.
+        __proto__, and do canPut directly in PropertyMap::put since there's no
+        static property table either.
         * kjs/function.h:
         * kjs/property_map.cpp:
         (KJS::PropertyMap::put): Allow optionally inlining canPut check.
@@ -2786,7 +2786,7 @@
 
         - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6298
         Getter setter test is failing
-		
+                
         * kjs/object.cpp:
         (KJS::JSObject::put):
         Rework the getter setter part. We now walk the prototype chain, checking for
@@ -2796,14 +2796,14 @@
 
         Reviewed and committed by Maciej.
 
-	- Handle negative, FP numbers with non-10 radix in toString
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6259
+        - Handle negative, FP numbers with non-10 radix in toString
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6259
 
         (Merged from KJS, original work by Harri Porten)
-	
+        
         * kjs/number_object.cpp:
         (NumberProtoFunc::callAsFunction): rewrote Number.toString(radix) to work with  
-	negative numbers, floating point and very large numbers.
+        negative numbers, floating point and very large numbers.
 
 2005-12-29  Geoffrey Garen  <ggaren@apple.com>
 
@@ -3020,12 +3020,12 @@
 
         Reviewed and landed by Maciej.
 
-	- fixed 6234: Can delete array index property incorrectly.
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6234
+        - fixed 6234: Can delete array index property incorrectly.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6234
 
         * kjs/array_object.cpp:
         (ArrayInstance::deleteProperty): use toArrayIndex instead of toUInt32 when
-	looking for array properties.
+        looking for array properties.
 
 2005-12-27  Anders Carlsson  <andersca@mac.com>
 
@@ -3039,55 +3039,55 @@
 
         Reviewed by Darin and Geoff.
 
-	Changes by me and Anders.
+        Changes by me and Anders.
 
-	- mostly fixed REGRESSION: 5-10% performance regression on JS iBench from getter/setter change
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6083
+        - mostly fixed REGRESSION: 5-10% performance regression on JS iBench from getter/setter change
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6083
 
-	- also fixed some warnings reported by -Winline
-	
+        - also fixed some warnings reported by -Winline
+        
         * JavaScriptCorePrefix.h: Move new and delete definitions higher so there
-	aren't conflicts with use in standard C++ headers
+        aren't conflicts with use in standard C++ headers
         * kjs/object.cpp:
         (KJS::throwSetterError): Moved this piece of put into a seprate function
-	to avoid the PIC branch.
+        to avoid the PIC branch.
         (KJS::JSObject::put): Use hasGetterSetterProperties to avoid expensive stuff
-	when not needed. Also use GetterSetter properties attribute.
+        when not needed. Also use GetterSetter properties attribute.
         (KJS::JSObject::deleteProperty): Recompute whether any properties are getter/setter
-	properties any more, if this one was one.
+        properties any more, if this one was one.
         (KJS::JSObject::defineGetter): Let the PropertyMap know that it has getter/setter
-	properties now (and use the new attribute).
+        properties now (and use the new attribute).
         (KJS::JSObject::defineSetter): Ditto.
         (KJS::JSObject::fillGetterPropertySlot): Out-of-line helper for getOwnPropertySlot,
-	to avoid global variable access in the hot code path.
+        to avoid global variable access in the hot code path.
         * kjs/object.h:
         (KJS::): Added GetterSetter attribute.
         (KJS::JSCell::isObject): Moved lower to be after inline methods it uses.
         (KJS::JSValue::isObject): ditto
         (KJS::JSObject::getOwnPropertySlot): try to avoid impact of getters and setters
-	as much as possible in the case where they are not being used
+        as much as possible in the case where they are not being used
         * kjs/property_map.cpp:
         (KJS::PropertyMap::containsGettersOrSetters): New method to help with this
         * kjs/property_map.h:
         (KJS::PropertyMap::hasGetterSetterProperties): Ditto
         (KJS::PropertyMap::setHasGetterSetterProperties): Ditto
         (KJS::PropertyMap::PropertyMap): Added a crazy hack to store the
-	global "has getter/setter properties" flag in the property map
-	single entry, to avoid making objects any bigger.
+        global "has getter/setter properties" flag in the property map
+        single entry, to avoid making objects any bigger.
         * kjs/value.h: Moved some things to object.h to make -Winline happier
 
 2005-12-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric and Dave Hyatt.
 
-	- make even const PassRefPtrs give transfer of ownership semantics
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6238
-	
-	This is a somewhat cheesy change. Having to use PassRefPtr_Ref creates ambiguities
-	in assignment and copy construction. And this makes life way easier and removes
-	the need for pass(). It is not really correct, but we pretty much never need a real
-	const PassRefPtr, and this takes care of things for PassRefPtr temporaries.
-	
+        - make even const PassRefPtrs give transfer of ownership semantics
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6238
+        
+        This is a somewhat cheesy change. Having to use PassRefPtr_Ref creates ambiguities
+        in assignment and copy construction. And this makes life way easier and removes
+        the need for pass(). It is not really correct, but we pretty much never need a real
+        const PassRefPtr, and this takes care of things for PassRefPtr temporaries.
+        
         * kjs/identifier.cpp:
         (KJS::Identifier::add): No more need for pass()
         * kjs/property_map.cpp:
@@ -3102,7 +3102,7 @@
         (KXMLCore::PassRefPtr::release): Made this a const method (ugh)
         (KXMLCore::PassRefPtr::operator=): clean up appropriately
         (KXMLCore::adoptRef): Added this to use instead of PassRefPtr<T>::adopt, I think
-	it makes the behavior more clear and it is less verbose.
+        it makes the behavior more clear and it is less verbose.
         (KXMLCore::static_pointer_cast): use adoptRef
         (KXMLCore::const_pointer_cast): use adoptRef
         * kxmlcore/RefPtr.h:
@@ -3131,13 +3131,13 @@
 
         Reviewed by Eric.
 
-	- fixed "HashMap does not work with const pointer keys or values"
+        - fixed "HashMap does not work with const pointer keys or values"
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6222
-	
+        
         * kxmlcore/HashMapPtrSpec.h:
         (KXMLCore::HashMap): In all methods, explicitly cast all pointers
-	to void * before passing to internal implementation. Use C-style
-	casts instead of new-style casts, because the real solution would
+        to void * before passing to internal implementation. Use C-style
+        casts instead of new-style casts, because the real solution would
         require a combo of reinterpret_cast anc const_cast.
 
 
@@ -3167,24 +3167,24 @@
 
         * kxmlcore/HashTable.h:
         (KXMLCore::swap): specialize swap for pairs, to swap elements individually,
-	so that excess copies can be avoided.
+        so that excess copies can be avoided.
         (KXMLCore::Mover::move): Template function to either copy or swap, used
-	when transferring elements from old table to new.
+        when transferring elements from old table to new.
         (KXMLCore::IdentityHashTranslator::hash): The old "converting lookup" templates
-	that took two or three function parameters now take a class parameter, this is
-	the class used to do a normal lookup.
+        that took two or three function parameters now take a class parameter, this is
+        the class used to do a normal lookup.
         (KXMLCore::IdentityHashTranslator::equal): Ditto.
         (KXMLCore::IdentityHashTranslator::translate): Ditto. Translate now takes a reference
-	to write into instead of returning a value to avoid redundant copies.
+        to write into instead of returning a value to avoid redundant copies.
         (KXMLCore::HashTable::~HashTable): Use deallocateTable instead of freeing directly.
         (KXMLCore::HashTable::insert): Based on HashTranslator now instead of separate
-	functions. Added a FIXME about a remaining rare excess copy.
+        functions. Added a FIXME about a remaining rare excess copy.
         (KXMLCore::HashTable::isEmptyBucket): Use KeyTraits directly instead of unwrapping
-	the key from Traits, to avoid creating and destroying pair, which copies.
+        the key from Traits, to avoid creating and destroying pair, which copies.
         (KXMLCore::HashTable::isDeletedBucket): ditto
         (KXMLCore::HashTable::lookup): Use HashTranslator now instead of separate functions.
         (KXMLCore::HashTable::initializeBucket): Renamed from emptyBucket. Use placement new to
-	work right for non-POD types.
+        work right for non-POD types.
         (KXMLCore::HashTable::deleteBucket): Use assignDeleted to avoid excess copies.
         (KXMLCore::HashTable::reinsert): use Mover template to copy or swap as appropriate
         (KXMLCore::HashTable::allocateTable): Initialize every bucket if calloc won't do.
@@ -3192,14 +3192,14 @@
         (KXMLCore::HashTable::rehash): Avoid copy before reinserting, so that swap can do its magic.
         (KXMLCore::HashTable::clear): use deallocateTable instead of freeing directly.
         (KXMLCore::HashTable::HashTable): be more dumb when copying to ensure that non-POD types
-	work right
+        work right
         * kxmlcore/HashFunctions.h:
         (KXMLCore::PointerHash): Specialize PointerHash for RefPtr
         * kxmlcore/HashMap.h:
         (KXMLCore::extractFirst): Return a reference not a full object to avoid
-	copies.
+        copies.
         (KXMLCore::HashMapTranslator::hash): Use a special translator for insertion
-	to defer making the pair as long as possible, thus avoiding needless copies.
+        to defer making the pair as long as possible, thus avoiding needless copies.
         (KXMLCore::HashMapTranslator::equal): ditto
         (KXMLCore::HashMapTranslator::translate): ditto
         (KXMLCore::::inlineAdd): Shared by set and add to insert using HashMapTranslator
@@ -3210,27 +3210,27 @@
         * kxmlcore/HashSet.h:
         (KXMLCore::identityExtract): Return a reference not a full object to avoid copies.
         (KXMLCore::HashSetTranslatorAdapter::hash): Redo adapter stuff to work with
-	the new HashTranslator approach.
+        the new HashTranslator approach.
         (KXMLCore::HashSetTranslatorAdapter::equal): ditto
         (KXMLCore::HashSetTranslatorAdapter::translate): ditto
         (KXMLCore::::insert): ditto
         * kxmlcore/HashTraits.h:
         (KXMLCore::GenericHashTraits): This is intended be used as a base class for
-	customized traits: sensible defaults.
+        customized traits: sensible defaults.
         (KXMLCore::): Use it a bunch
         (KXMLCore::assignDeleted): template function to allow pairs to be assigned the
-	deleted value w/o excess copies.
+        deleted value w/o excess copies.
         (KXMLCore::PairHashTraits::emptyValue): Updated
         (KXMLCore::PairHashTraits::deletedValue): Updated
         (KXMLCore::PairHashTraits::assignDeletedValue): part of assignDeleted hack
         (KXMLCore::DeletedValueAssigner::assignDeletedValue): Use template magic
-	to either use use deletedValue or assignDeletedValue for the cases where we care.
+        to either use use deletedValue or assignDeletedValue for the cases where we care.
         * kxmlcore/RefPtr.h:
         (KXMLCore::RefPtr::swap): Added swap method.
         (KXMLCore::swap): Added swap free function.
         * kjs/identifier.cpp:
         (KJS::CStringTranslator::hash): Use new HashTranslator class approach to
-	alternate type based insertion.
+        alternate type based insertion.
         (KJS::CStringTranslator::equal): ditto
         (KJS::CStringTranslator::translate): ditto
         (KJS::Identifier::add): ditto
@@ -3238,8 +3238,8 @@
         (KJS::UCharBufferTranslator::equal): ditto
         (KJS::UCharBufferTranslator::translate): ditto
 
-	- irrelevant change:
-	
+        - irrelevant change:
+        
         * kjs/array_object.cpp:
         (ArrayProtoFunc::callAsFunction): Removed a stray space.
 
@@ -3307,8 +3307,8 @@
 
         Reviewed by Darin.
 
-	- made ALWAYS_INLINE declare things inline as well as __attribute__((always_inline))
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6159
+        - made ALWAYS_INLINE declare things inline as well as __attribute__((always_inline))
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6159
 
         * kxmlcore/AlwaysInline.h:
 
@@ -3316,27 +3316,27 @@
 
         Reviewed by Darin.
 
-	- fixed a leak in the assignment operator from PassRefPtr to RefPtr
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=6158
+        - fixed a leak in the assignment operator from PassRefPtr to RefPtr
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6158
 
         * kxmlcore/RefPtr.h:
         (KXMLCore::RefPtr::operator=):
 
-	- fix problem with PassRefPtr that darin spotted - it lacked a copy constructor
-	and therefore was using the default one, which can lead to excess derefs
+        - fix problem with PassRefPtr that darin spotted - it lacked a copy constructor
+        and therefore was using the default one, which can lead to excess derefs
 
-	I fixed this by adding a copy constructor from non-const
-	reference, and by adding a template pass() function that you have
-	to use when raw pointer or RefPtr are passed where PassRefPtr is
-	expected.
+        I fixed this by adding a copy constructor from non-const
+        reference, and by adding a template pass() function that you have
+        to use when raw pointer or RefPtr are passed where PassRefPtr is
+        expected.
 
         * kjs/identifier.cpp:
         (KJS::Identifier::add): Changed to have PassRefPtr return type and
-	pass() the results.	
+        pass() the results.
         * kjs/identifier.h:
         * kjs/property_map.cpp:
         (KJS::PropertyMap::addSparseArrayPropertiesToReferenceList): Use pass()
-	where required.
+        where required.
         * kjs/ustring.cpp:
         (KJS::UString::UString): Use pass() as needed.
         (KJS::UString::append): ditto
@@ -3346,7 +3346,7 @@
         * kxmlcore/PassRefPtr.h:
         (KXMLCore::PassRefPtr::PassRefPtr): Added copy constructor
         (KXMLCore::pass): new template function to make it convenient to pass
-	a PassRefPtr
+        a PassRefPtr
 
 2005-12-19  Geoffrey Garen  <ggaren@apple.com>
   
@@ -3426,7 +3426,7 @@
 
         Reviewed by Geoff and Adele
 
-	- replaced custom Identifier hashtable with HashSet
+        - replaced custom Identifier hashtable with HashSet
 
         * kjs/identifier.cpp:
         (KXMLCore::):
@@ -3496,8 +3496,8 @@
 
 2005-12-16  David Hyatt  <hyatt@apple.com>
 
-	Remove unused RefPtr constructors that can create an ambiguity in ustring on some platforms.
-	
+        Remove unused RefPtr constructors that can create an ambiguity in ustring on some platforms.
+        
         Reviewed by mjs
 
         * kxmlcore/RefPtr.h:
@@ -3723,27 +3723,27 @@
 
         Reviewed by Eric.
 
-	- added a new HashCountedSet class for the common pattern of mapping items to counts that can change
-	
+        - added a new HashCountedSet class for the common pattern of mapping items to counts that can change
+        
         * kxmlcore/HashCountedSet.h: Added.
         (KXMLCore::HashCountedSet::*): Implemented, on top of HashMap.
         * kxmlcore/HashMap.h:
         (KXMLCore::HashMap::add): New method - does not replace existing value if key already present
-	but otherwise like set().
+        but otherwise like set().
         (KXMLCore::HashMap::set): Improved comments.
         * kxmlcore/HashMapPtrSpec.h:
         (KXMLCore::HashMap::add): Added to specializations too.
         * JavaScriptCore.xcodeproj/project.pbxproj: Add new  file.
         * kxmlcore/HashFunctions.h: Added include of stdint.h
-	
-	- replaced the custom hashtable for values protected from GC with HashCountedSet
+        
+        - replaced the custom hashtable for values protected from GC with HashCountedSet
 
         * kjs/collector.cpp:
         (KJS::Collector::protect): Moved code here from ProtectedValues::increaseProtectCount
-	since the code is so simple now.
+        since the code is so simple now.
         (KJS::Collector::unprotect): Ditto for ProtectedValues::decreaseProtectCount.
         (KJS::Collector::markProtectedObjects): Updated for new way of doing things, now
-	simpler and safer.
+        simpler and safer.
         (KJS::Collector::numReferencedObjects): ditto
         (KJS::Collector::rootObjectClasses): ditto
         * kjs/collector.h: Added protect and unprotect static methods
@@ -3948,17 +3948,17 @@
 
         Reviewed by John.
 
-	- fix major memory leak and resultant slowdown on JavaScript iBench from
-	my PassRefPtr changes
-	
+        - fix major memory leak and resultant slowdown on JavaScript iBench from
+        my PassRefPtr changes
+        
         * kjs/ustring.cpp:
         (KJS::UString::Rep::create): I forgot to change one of the two overloads to create
-	with a refcount of 0 instead of 1 (the smart pointer then bumps it. But instead of
-	changing it, I changed both to start with a refcounter of 1 and use PassRefPtr::adopt
-	to adopt the initial refcount, this may be a hair more efficient.
+        with a refcount of 0 instead of 1 (the smart pointer then bumps it. But instead of
+        changing it, I changed both to start with a refcounter of 1 and use PassRefPtr::adopt
+        to adopt the initial refcount, this may be a hair more efficient.
 
-	- made the assignment operators for smart pointers inline because Shark said so
-	
+        - made the assignment operators for smart pointers inline because Shark said so
+        
         * kxmlcore/PassRefPtr.h:
         (KXMLCore::::operator=):
         * kxmlcore/RefPtr.h:
@@ -3969,7 +3969,7 @@
         Reviewed by Darin.
 
         - fix build when using gcc 4
-		
+                
         * kjs/ustring.h:
         Make Rep public.
 
@@ -3981,10 +3981,10 @@
 
         Reviewed by Eric.
 
-	- add PassRefPtr, a smart pointer class that works in conjunction
-	with RefPtr but has transfer-of-ownership semantics
-	- apply RefPtr and PassRefPtr to UString
-	- cleaned up UString a little so that it doesn't need to have so many friend classes
+        - add PassRefPtr, a smart pointer class that works in conjunction
+        with RefPtr but has transfer-of-ownership semantics
+        - apply RefPtr and PassRefPtr to UString
+        - cleaned up UString a little so that it doesn't need to have so many friend classes
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/identifier.cpp:
@@ -4066,7 +4066,7 @@
 
         Reviewed by Tim Hatcher.
 
-	- removed deprecated reset, isNull and nonNull methods
+        - removed deprecated reset, isNull and nonNull methods
 
         * kxmlcore/RefPtr.h:
 
@@ -4087,7 +4087,7 @@
 
         Rubber stamped by Eric.
 
-	- renamed SharedPtr to RefPtr via script
+        - renamed SharedPtr to RefPtr via script
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/function.cpp:
@@ -4124,7 +4124,7 @@
 
 2005-11-30  Maciej Stachowiak  <mjs@apple.com>
 
-	Reviewed by Dave Hyatt.
+        Reviewed by Dave Hyatt.
 
         - change idiom used for implicit bool conversion of smart pointers, because the old one gives weird error messages sometimes
 
@@ -4148,7 +4148,7 @@
 
         Rubber stamped by Eric.
 
-	- renamed InterpreterLock to JSLock
+        - renamed InterpreterLock to JSLock
 
         * bindings/NP_jsobject.cpp:
         (_NPN_Invoke):
@@ -4249,10 +4249,10 @@
 
         Reviewed by Geoff.
 
-	<rdar://problem/4139620> Seed: WebKit: hang when sending XMLHttpRequest if automatic proxy config is used
+        <rdar://problem/4139620> Seed: WebKit: hang when sending XMLHttpRequest if automatic proxy config is used
 
-	Also factored locking code completely into a separate class, and
-	added a convenient packaged way to temporarily drop locks.
+        Also factored locking code completely into a separate class, and
+        added a convenient packaged way to temporarily drop locks.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/JSLock.cpp: Added.
@@ -4483,7 +4483,7 @@
 
         Reviewed by Geoff. Code changes by Darin.
 
-	- some micro-optimizations to FastMalloc to reduce math and branches.
+        - some micro-optimizations to FastMalloc to reduce math and branches.
 
         * kxmlcore/FastMalloc.cpp:
         (KXMLCore::TCMalloc_Central_FreeList::Populate):
@@ -4493,10 +4493,10 @@
 
 2005-10-15  Maciej Stachowiak  <mjs@apple.com>
 
-	Reverted fix for this bug, because it was part of a time range that caused a performance
-	regression:
-	
-	<rdar://problem/4260481> Remove Reference type from JavaScriptCore
+        Reverted fix for this bug, because it was part of a time range that caused a performance
+        regression:
+        
+        <rdar://problem/4260481> Remove Reference type from JavaScriptCore
 
 2005-10-15  Darin Adler  <darin@apple.com>
 
@@ -4713,11 +4713,11 @@
 
         Reviewed by Eric.
 
-	- fixed <rdar://problem/4260481> Remove Reference type from JavaScriptCore
+        - fixed <rdar://problem/4260481> Remove Reference type from JavaScriptCore
 
-	Also fixed some bugs with for..in enumeration while I was at it. object
-	properties now come before prototype properties and duplicates
-	between object and prototype are listed only once.
+        Also fixed some bugs with for..in enumeration while I was at it. object
+        properties now come before prototype properties and duplicates
+        between object and prototype are listed only once.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/IdentifierSequencedSet.cpp: Added.
@@ -4774,8 +4774,8 @@
 
         Patch from George Staikos <staikos@kde.org>, reviewed and tweaked a bit by me.
 
-	- more Linux build fixes
-	
+        - more Linux build fixes
+        
         * kjs/operations.cpp:
         * kxmlcore/FastMalloc.h:
         * kxmlcore/TCSystemAlloc.cpp:
@@ -4785,8 +4785,8 @@
 
         Patch from George Staikos <staikos@kde.org>, reviewed and tweaked a bit by me.
 
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5174
-	Add support for compiling on Linux (likely to help for other POSIX systems too)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5174
+        Add support for compiling on Linux (likely to help for other POSIX systems too)
 
         * kjs/collector.cpp:
         (KJS::Collector::markCurrentThreadConservatively):
@@ -4836,31 +4836,31 @@
 
         Reviewed by Darin.
 
-	<rdar://problem/4283967> REGRESSION: 3% regression on PLT from new FastMalloc
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5243
-	
-	A number of optimizations to the new threadsafe malloc that make it actually as fast
-	as dlmalloc (I measured wrong before) and as memory-efficient as the system malloc.
+        <rdar://problem/4283967> REGRESSION: 3% regression on PLT from new FastMalloc
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5243
+        
+        A number of optimizations to the new threadsafe malloc that make it actually as fast
+        as dlmalloc (I measured wrong before) and as memory-efficient as the system malloc.
 
-	- use fastMalloc for everything - it now gets applied to all new/delete allocations
-	via a private inline operator new that is now included into every file via config.h.
+        - use fastMalloc for everything - it now gets applied to all new/delete allocations
+        via a private inline operator new that is now included into every file via config.h.
 
-	- tweaked some of the numeric parameters for size classes and amount of wasted memory
-	allowed per allocation - this saves on memory use and consequently improves speed.
+        - tweaked some of the numeric parameters for size classes and amount of wasted memory
+        allowed per allocation - this saves on memory use and consequently improves speed.
 
-	- so long as the allocator is not being used on background threads, get the per-thread
-	cache from a global variable instead of from pthread_getspecific, since the latter is slow.
+        - so long as the allocator is not being used on background threads, get the per-thread
+        cache from a global variable instead of from pthread_getspecific, since the latter is slow.
 
-	- inline more functions, and force the ones GCC refuses to inline with 
-	attribute(always_inline), nearly all of these have one call site so inlining them has 
-	to be a win.
+        - inline more functions, and force the ones GCC refuses to inline with 
+        attribute(always_inline), nearly all of these have one call site so inlining them has 
+        to be a win.
 
-	- use some tricks to calculate allocation size more efficiently and fewer times for small
-	allocations, to avoid hitting the huge size table array.
+        - use some tricks to calculate allocation size more efficiently and fewer times for small
+        allocations, to avoid hitting the huge size table array.
 
-	- avoid hitting the per-thread cache on code paths that don't need it.
+        - avoid hitting the per-thread cache on code paths that don't need it.
 
-	- implement inline assembly version of spinlock for PowerPC (was already done for x86)
+        - implement inline assembly version of spinlock for PowerPC (was already done for x86)
 
         * bindings/NP_jsobject.cpp:
         * bindings/c/c_class.cpp:
@@ -4965,7 +4965,7 @@
 
         - Second cut at fixing <rdar://problem/4275206> Denver Regression: Seed: 
           Past Editions of Opinions display "NAN/Undefined" for www.washingtonpost.com
-		
+                
         Reviewed by john.
 
         * kjs/date_object.cpp:
@@ -4998,9 +4998,9 @@
 
 2005-09-28  Geoffrey Garen  <ggaren@apple.com>
 
-	- Fixed <rdar://problem/4275206> Denver Regression: Seed: Past Editions of Opinions display 
-	  "NAN/Undefined" for www.washingtonpost.com
-	  
+        - Fixed <rdar://problem/4275206> Denver Regression: Seed: Past Editions of Opinions display 
+          "NAN/Undefined" for www.washingtonpost.com
+          
         Reviewed by darin.
 
         * kjs/date_object.cpp:
@@ -5009,10 +5009,10 @@
 
 2005-09-28  Maciej Stachowiak  <mjs@apple.com>
 
-	Patch from George Staikos, reviewed by me.
+        Patch from George Staikos, reviewed by me.
 
-	- fixed some compile issues on Linux
-	
+        - fixed some compile issues on Linux
+        
         * kjs/property_slot.h:
         * kjs/simple_number.h:
 
@@ -5020,22 +5020,22 @@
 
         Reviewed by Eric.
 
-	- move HashMap/HashSet code down to JavaScriptCore
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5161
-	
+        - move HashMap/HashSet code down to JavaScriptCore
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5161
+        
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/internal.cpp:
         (KJS::interpreterMap): Function that fetches the interpreter map on demand. 
         (KJS::InterpreterImp::InterpreterImp): Replace use of InterpreterMap
-	class with an appropriate HashMap.
+        class with an appropriate HashMap.
         (KJS::InterpreterImp::clear): ditto
         (KJS::InterpreterImp::interpreterWithGlobalObject): ditto
         * kjs/interpreter_map.cpp: Removed.
         * kjs/interpreter_map.h: Removed.
 
-	The HashMap/HashSet code (copied and slightly tweaked from WebCore)
+        The HashMap/HashSet code (copied and slightly tweaked from WebCore)
         
-	* kxmlcore/HashFunctions.h: Added.
+        * kxmlcore/HashFunctions.h: Added.
         (KXMLCore::4):
         (KXMLCore::8):
         (KXMLCore::):
@@ -5224,12 +5224,12 @@
 
         Reviewed by John.
 
-	- replace dlmalloc with tcmalloc
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5145
+        - replace dlmalloc with tcmalloc
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5145
 
-	I also moved SharedPtr and the assertion code from WebCore into a
-	new kxmlcore directory.
-	
+        I also moved SharedPtr and the assertion code from WebCore into a
+        new kxmlcore directory.
+        
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/collector.cpp:
         (KJS::Collector::allocate):
@@ -5414,15 +5414,15 @@
 
         Reviewed by Darin.
 
-	<rdar://problem/4260479> Finish deploying PropertySlot in the interpreter
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=5112
-	
-	Convert postfix, prefix, delete, prefix, and for..in expressions to use
-	PropertySlot-based lookup instead of evaluateReference.
+        <rdar://problem/4260479> Finish deploying PropertySlot in the interpreter
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5112
+        
+        Convert postfix, prefix, delete, prefix, and for..in expressions to use
+        PropertySlot-based lookup instead of evaluateReference.
 
-	3% speedup on JS iBench.
+        3% speedup on JS iBench.
 
-	Fixed two of the JS tests:
+        Fixed two of the JS tests:
         * tests/mozilla/expected.html:
 
         * kjs/grammar.y:
@@ -5503,11 +5503,11 @@
 
         Reviewed by Geoff and partly by Darin.
 
-	- fixed http://bugzilla.opendarwin.org/post_bug.cgi
-	(Reduce conflicts in JavaScriptCore grammar)
+        - fixed http://bugzilla.opendarwin.org/post_bug.cgi
+        (Reduce conflicts in JavaScriptCore grammar)
 
-	This change gets us down from over 200 shift/reduce and 45 reduce/reduce to
-	9 shift/reduce and 45 reduce/reduce.
+        This change gets us down from over 200 shift/reduce and 45 reduce/reduce to
+        9 shift/reduce and 45 reduce/reduce.
 
         * kjs/grammar.y:
         * kjs/grammar_types.h: Removed.
@@ -5612,14 +5612,14 @@
 
         Reviewed by Geoff.
 
-	- fixed <rdar://problem/4214783> REGRESSION: kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in the installer)
+        - fixed <rdar://problem/4214783> REGRESSION: kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in the installer)
 
-	Make sure to lock using the InterpreterLock class in all places that need it
-	(including anything that uses the collector, the parser, the protect count hash table,
-	and anything that allocates via fast_malloc).
+        Make sure to lock using the InterpreterLock class in all places that need it
+        (including anything that uses the collector, the parser, the protect count hash table,
+        and anything that allocates via fast_malloc).
 
-	Also added assertions to ensure that the locking rules are followed for the relevant
-	resources.
+        Also added assertions to ensure that the locking rules are followed for the relevant
+        resources.
 
         * Makefile.am:
         * bindings/NP_jsobject.cpp:
@@ -5775,7 +5775,7 @@
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Fixed JSC+SVG
         Fixed JavaScriptCore+SVG after PCRE 6.1 merger.
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=4932
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4932
 
 2005-09-10  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
@@ -6005,17 +6005,17 @@
 2005-09-02  Beth Dakin  <bdakin@apple.com>
 
         Fix for <rdar://problem/4235531> Denver Regression: Safari crash in KWQStringData::makeUnicode
-	The other half of the fix is in WebCore.
+        The other half of the fix is in WebCore.
 
-	Fix written by Maciej and Darin.
-	Reviewed by me/Maciej
+        Fix written by Maciej and Darin.
+        Reviewed by me/Maciej
 
-	As Maciej said in Radar: These problems was caused by a conflict between some of our custom 
-	allocators, causing them to return null. Symptom is typically a null pointer dereference in 
-	a place where it might be expected an allocation has just occurred.
+        As Maciej said in Radar: These problems was caused by a conflict between some of our custom 
+        allocators, causing them to return null. Symptom is typically a null pointer dereference in 
+        a place where it might be expected an allocation has just occurred.
 
-        * kjs/fast_malloc.cpp: 	Added #define for MORECORE_CONTIGUOUS, MORECORE_CANNOT_TRIM, 
-				and MALLOC_FAILURE_ACTION.
+        * kjs/fast_malloc.cpp: Added #define for MORECORE_CONTIGUOUS, MORECORE_CANNOT_TRIM, 
+                               and MALLOC_FAILURE_ACTION.
 
 2005-08-31  Geoffrey Garen  <ggaren@apple.com>
 
@@ -6076,12 +6076,12 @@
 
         Reviewed by John.
 
-	<rdar://problem/4224911> many many leaks in kjsyyparse with malformed Javascript        
+        <rdar://problem/4224911> many many leaks in kjsyyparse with malformed Javascript        
 
-	Record all nodes that are created during parsing, and delete any
-	that are left floating with a refcount of 0.
-	
-	* kjs/internal.cpp:
+        Record all nodes that are created during parsing, and delete any
+        that are left floating with a refcount of 0.
+        
+        * kjs/internal.cpp:
         (KJS::Parser::saveNewNode):
         (KJS::clearNewNodes):
         (KJS::Parser::parse):
@@ -6095,14 +6095,14 @@
 
         Reviewed by John.
 
-	- fixed <rdar://problem/4232452> many many leaks in kjsyyparse on some well-formed JavaScript (can repro on sony.com, webkit tests)
+        - fixed <rdar://problem/4232452> many many leaks in kjsyyparse on some well-formed JavaScript (can repro on sony.com, webkit tests)
         
-	Fixed by changing the refcounting scheme for nodes. Instead of each node implementing a custom ref and
-	deref for all its children (and being responsible for deleting them), nodes use a smart pointer to
-	hold their children, and smart pointers are used outside the node tree as well. This change mostly
-	removes code.
-	
-	* JavaScriptCore.xcodeproj/project.pbxproj:
+        Fixed by changing the refcounting scheme for nodes. Instead of each node implementing a custom ref and
+        deref for all its children (and being responsible for deleting them), nodes use a smart pointer to
+        hold their children, and smart pointers are used outside the node tree as well. This change mostly
+        removes code.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/function.cpp:
         (KJS::DeclaredFunctionImp::DeclaredFunctionImp):
         (KJS::GlobalFuncImp::callAsFunction):
@@ -6580,12 +6580,12 @@
         Reviewed by John.
 
         - two simple speed improvements for a 3% speed gain
-	
+        
         * JavaScriptCore.xcodeproj/project.pbxproj: turn on -fstrict-aliasing
 
         * kjs/scope_chain.h:
         (KJS::ScopeChainIterator::ScopeChainIterator): Add a scope chain iterator
-	so you can walk a scope chain without having to make a copy that you then mutate.
+        so you can walk a scope chain without having to make a copy that you then mutate.
         (KJS::ScopeChainIterator::operator*): standard iterator operation
         (KJS::ScopeChainIterator::operator->): ditto
         (KJS::ScopeChainIterator::operator++): ditto
@@ -6595,7 +6595,7 @@
         (KJS::ScopeChain::end): Iterator for one past the bottom (i.e. null)
         * kjs/nodes.cpp:
         (ResolveNode::evaluate): Use scope chain iterator instead of copying
-	a scope chain and then modifying the copy
+        a scope chain and then modifying the copy
         (ResolveNode::evaluateReference): ditto
         (FunctionCallResolveNode::evaluate): ditto
         (AssignResolveNode::evaluate): ditto
@@ -6610,27 +6610,27 @@
 
         Reviewed by hyatt.
 
-	- refactor function calls, 3% speedup on JS iBench.
+        - refactor function calls, 3% speedup on JS iBench.
 
         * kjs/grammar.y:
         * kjs/nodes.cpp:
         (Node::throwError): Added new useful variants.
         (FunctionCallValueNode::evaluate): New node to handle calls on expressions
-	that are strictly values, not references.
+        that are strictly values, not references.
         (FunctionCallValueNode::ref):  ditto
         (FunctionCallValueNode::deref): ditto
         (FunctionCallResolveNode::evaluate): New node to handle calls on identifier
-	expressions, so that they are looked up in the scope chain.
+        expressions, so that they are looked up in the scope chain.
         (FunctionCallResolveNode::ref): ditto
         (FunctionCallResolveNode::deref): ditto
         (FunctionCallBracketNode::evaluate): New node to handle calls on bracket
-	dereferences, so that the expression before brackets is used as the this
-	object.
+        dereferences, so that the expression before brackets is used as the this
+        object.
         (FunctionCallBracketNode::ref): ditto
         (FunctionCallBracketNode::deref): ditto
         (FunctionCallDotNode::evaluate): New node to handle calls on dot
-	dereferences, so that the expression before the dot is used as the this
-	object.
+        dereferences, so that the expression before the dot is used as the this
+        object.
         (FunctionCallDotNode::ref): ditto
         (FunctionCallDotNode::deref): ditto
         (dotExprNotAnObjectString): helper function to avoid global variable access.
@@ -6645,8 +6645,8 @@
         (FunctionCallParenDotNode::streamTo): ditto
         * kjs/object.h:
         (KJS::ObjectImp::isActivation): Change how activation objects are
-	detected in the scope chain, a virtual function is cheaper than the
-	old inheritance test.
+        detected in the scope chain, a virtual function is cheaper than the
+        old inheritance test.
         * kjs/function.h:
         (KJS::ActivationImp::isActivation): Ditto.
 
@@ -6664,7 +6664,7 @@
 
         * kjs/date_object.cpp:
         (timetUsingCF): Fix one of the date tests my making the CF version of mktime
-	have the same quirk about the DST field as the real mktime.
+        have the same quirk about the DST field as the real mktime.
         * tests/mozilla/expected.html: Updated for newly fixed test.
 
 2005-08-11  Maciej Stachowiak  <mjs@apple.com>
@@ -6677,23 +6677,23 @@
 
         Reviewed by Geoff.
 
-	Refactor assignment grammar to avoid Reference type, and to later
-	be able to take advantage of writeable PropertySlots, when those
-	are added. I also fixed a minor bug, turning a function to a
-	string lost parentheses, I made sure they are printed at least
-	where semantically significant.
-	
-	Test cases: see WebCore
-	
+        Refactor assignment grammar to avoid Reference type, and to later
+        be able to take advantage of writeable PropertySlots, when those
+        are added. I also fixed a minor bug, turning a function to a
+        string lost parentheses, I made sure they are printed at least
+        where semantically significant.
+        
+        Test cases: see WebCore
+        
         * kjs/grammar.y: Change grammar so that assignment expressions are parsed
-	directly to nodes that know how to set the kind of location being assigned, instead
-	of having a generic assign node that counts on evaluateReference.
+        directly to nodes that know how to set the kind of location being assigned, instead
+        of having a generic assign node that counts on evaluateReference.
         * kjs/lexer.cpp: Include grammar_types.h.
         * kjs/nodes.cpp:
         (BracketAccessorNode): Renamed from AccessorNode1 for clarity.
         (DotAccessorNode): Renamed from AccessorNode2 for clarity.
         (combineForAssignment): Inline function for doing the proper kind of
-	operation for various update assignments like += or *=.
+        operation for various update assignments like += or *=.
         (AssignResolveNode): Node that handles assignment to a bare identifier.
         (AssignDotNode): Node that handles assignments of the form EXPR . IDENT = EXPR
         (AssignBracketNode): EXPR [ IDENT ] = EXPR
@@ -7539,19 +7539,19 @@
 
         Reviewed by Darin.
 
-	Change over to the new PropertySlot mechanism for property
-	lookup. This allows the elimination of hasOwnProperty
-	methods. Also did some of the performance tuning enabled by this
-	(but not yet all the possible improvements for function calls,
-	assignment, ++, and so forth). And also much code cleanup.
+        Change over to the new PropertySlot mechanism for property
+        lookup. This allows the elimination of hasOwnProperty
+        methods. Also did some of the performance tuning enabled by this
+        (but not yet all the possible improvements for function calls,
+        assignment, ++, and so forth). And also much code cleanup.
 
-	Net result is about a 2% speedup on the JS iBench.
-	
-	Also redid Geoff's fix for the chrashing applet by avoiding a NULL
-	prototype in the bindings code and using the default of Null()
-	instead.
+        Net result is about a 2% speedup on the JS iBench.
         
-	* JavaScriptCore.xcodeproj/project.pbxproj:
+        Also redid Geoff's fix for the chrashing applet by avoiding a NULL
+        prototype in the bindings code and using the default of Null()
+        instead.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
         * bindings/objc/objc_runtime.h:
         * bindings/objc/objc_runtime.mm:
         (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
@@ -7717,7 +7717,7 @@
 2005-08-04  Maciej Stachowiak  <mjs@apple.com>
 
         - updated expected test results now that we no longer exlude the
-	date tests (apparently this was overlooked)
+        date tests (apparently this was overlooked)
 
         * tests/mozilla/expected.html:
 
@@ -7753,8 +7753,8 @@
 
         Changes by Michael Kahl, reviewed by me.
 
-	- fixed <rdar://problem/4194278> Need better debugging support in JavaScriptCore
-	
+        - fixed <rdar://problem/4194278> Need better debugging support in JavaScriptCore
+        
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * kjs/debugger.cpp:
         (KJS::AttachedInterpreter::AttachedInterpreter):
@@ -7840,26 +7840,26 @@
 
         Reviewed by Darin.
 
-	- http://bugzilla.opendarwin.org/show_bug.cgi?id=4124
-	(change JavaScript property access to avoid double lookup)
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=4124
+        (change JavaScript property access to avoid double lookup)
 
-	- 10% speedup on JavaScript iBench
-	- 5% speedup on 24fun BenchJS benchmark
+        - 10% speedup on JavaScript iBench
+        - 5% speedup on 24fun BenchJS benchmark
 
-	Changed all get methods to getOwnProperty - they are no longer
-	responsible for prototype lookup, and determine if the property
-	was found as a side efect. 
+        Changed all get methods to getOwnProperty - they are no longer
+        responsible for prototype lookup, and determine if the property
+        was found as a side efect. 
 
-	get() is now a nonvirtual ObjectImp method which calls the virtual
-	getOwnProperty and walks the prototype chain. A few selected
-	methods were inlined.
+        get() is now a nonvirtual ObjectImp method which calls the virtual
+        getOwnProperty and walks the prototype chain. A few selected
+        methods were inlined.
 
-	Changed ResolveNode::evaluate plus some other places to use
-	getProperty which does get() and hasProperty() in one lookup.
+        Changed ResolveNode::evaluate plus some other places to use
+        getProperty which does get() and hasProperty() in one lookup.
 
-	Also miscellaneous code cleanup.
+        Also miscellaneous code cleanup.
         
-	* bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.h:
         * bindings/objc/objc_runtime.mm:
         (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
         (ObjcFallbackObjectImp::getOwnProperty):
@@ -7969,11 +7969,11 @@
 
         Patch from Trey Matteson <trey@usa.net>, reviewed by me.
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3956
-	some of WebKit builds with symbols, some doesn't
-	
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3956
+        some of WebKit builds with symbols, some doesn't
+        
         * JavaScriptCore.pbproj/project.pbxproj: Generate symbols even for
-	Deployment.
+        Deployment.
 
 2005-07-19  Geoffrey Garen  <ggaren@apple.com>
 
@@ -8251,19 +8251,19 @@
 
         Reviewed by hyatt.
 
-	- When there are many live objects, GC less often, to try to make
-	GC cost proportional to garbage, not proportional to total memory used.
+        - When there are many live objects, GC less often, to try to make
+        GC cost proportional to garbage, not proportional to total memory used.
 
         * kjs/collector.cpp:
         (KJS::Collector::allocate):
 
 2005-07-08  Vicki Murley  <vicki@apple.com>
 
-	Fix from Carsten Guenther, reviewed by Maciej
+        Fix from Carsten Guenther, reviewed by Maciej
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3644 (Error string representation)
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3644 (Error string representation)
 
-	Switch from "-" to ":" in error strings.
+        Switch from "-" to ":" in error strings.
 
         * kjs/error_object.cpp:
         (ErrorProtoFuncImp::call):
@@ -8291,10 +8291,10 @@
 
 2005-07-03  Maciej Stachowiak  <mjs@apple.com>
 
-	Original patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
-	Fixes to patch by me, reviewed by John Sullivan.
+        Original patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
+        Fixes to patch by me, reviewed by John Sullivan.
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3293
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3293
 
         Test cases added:
         * tests/mozilla/expected.html: Two tests newly pass.
@@ -8421,15 +8421,15 @@
         (KJS::Context::curStmtFirstLine): stub for compatibility with KDE
         * kjs/value.h:
         (KJS::Value::isValid): compatibility with KDE
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=3687
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3687
 
 2005-07-01  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
 
         * kjs/create_hash_table: rolled in changes from KDE, including
-	-n <namespace> support from KDOM and support for newer comments
-	http://bugzilla.opendarwin.org/show_bug.cgi?id=3771
+        -n <namespace> support from KDOM and support for newer comments
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3771
 
 2005-06-30  Geoffrey Garen  <ggaren@apple.com>
 
@@ -8470,21 +8470,21 @@
 
         Reviewed by rjw.
 
-	fixed: <rdar://problem/4166838> failed assertion in`Interpreter::lockCount() > 0
+        fixed: <rdar://problem/4166838> failed assertion in`Interpreter::lockCount() > 0
 
-	no layout test added; this is in the bindings code.
+        no layout test added; this is in the bindings code.
 
         * bindings/objc/WebScriptObject.mm:
         (+[WebScriptObject _convertValueToObjcValue:KJS::originExecutionContext:Bindings::executionContext:Bindings::]): make sure to lock and unlock the interpreter around allocations. 
 
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
-	Patch by Francisco Tolmasky <tolmasky@gmail.com>
+        Patch by Francisco Tolmasky <tolmasky@gmail.com>
 
-	- fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3667
-	Core JavaScript 1.5 Reference:Objects:Array:forEach
+        - fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3667
+        Core JavaScript 1.5 Reference:Objects:Array:forEach
 
-	See WebCore Changelog for layout tests added.
+        See WebCore Changelog for layout tests added.
 
         Reviewed by darin.
 
@@ -8495,12 +8495,12 @@
 
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
-	Patch contributed by Oliver Hunt <ojh16@student.canterbury.ac.nz>
+        Patch contributed by Oliver Hunt <ojh16@student.canterbury.ac.nz>
 
-	-fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3743
-	Incorrect error message given for certain calls
+        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3743
+        Incorrect error message given for certain calls
 
-	See WebCore Changelog for layout test added.
+        See WebCore Changelog for layout test added.
 
         Reviewed by mjs.
 
@@ -8509,8 +8509,8 @@
 
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
-	Rolling out date patch from 6-28-05 because it breaks 
-	fast/js/date-parse-test
+        Rolling out date patch from 6-28-05 because it breaks 
+        fast/js/date-parse-test
 
         * kjs/date_object.cpp:
         (formatLocaleDate):
@@ -8527,8 +8527,8 @@
 
         Reviewed by Darin.
 
-	-fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3750
-	build fails with KJS_VERBOSE set
+        -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3750
+        build fails with KJS_VERBOSE set
 
         * kjs/nodes.cpp: changed debug print statement to use UString
         (VarDeclNode::evaluate):
@@ -8537,10 +8537,10 @@
 
 2005-06-28  Geoffrey Garen  <ggaren@apple.com>
 
-	Patch contributed by Carsten Guenther <cguenther@gmail.com>.
+        Patch contributed by Carsten Guenther <cguenther@gmail.com>.
 
-	-fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3477
-	some US-centric date formats not parsed by JavaScript (clock at news8austin.com)
+        -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3477
+        some US-centric date formats not parsed by JavaScript (clock at news8austin.com)
 
         Reviewed by darin.
 
@@ -8567,7 +8567,7 @@
 
         Reviewed by Darin.
 
-	- replace hash functions  with better ones
+        - replace hash functions  with better ones
 
         * JavaScriptCore.pbproj/project.pbxproj: Add new file to build.
         * kjs/interpreter_map.cpp:
@@ -8597,7 +8597,7 @@
 2005-06-21  Adele Peterson  <adele@apple.com>
 
         rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3293, since it caused layout test failures.
-	fast/forms/element-by-name
+        fast/forms/element-by-name
         fast/loader/loadInProgress
 
         * ChangeLog:
@@ -8701,13 +8701,13 @@
 
         Patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3293
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3293
         
         Test cases added: 
         * tests/mozilla/expected.html: Updated for two fixed tests.
-	- also added a layout test
+        - also added a layout test
 
-	* bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.h:
         * bindings/objc/objc_runtime.mm:
         (ObjcFallbackObjectImp::hasOwnProperty):
         * bindings/runtime_array.cpp:
@@ -8758,7 +8758,7 @@
 
 2005-06-16  Geoffrey Garen  <ggaren@apple.com>
 
-	Fixed: <rdar://problem/4151759> 'delete' fails on variables declared inside 'eval' statements.
+        Fixed: <rdar://problem/4151759> 'delete' fails on variables declared inside 'eval' statements.
 
         Reviewed by cblu.
 
@@ -8772,7 +8772,7 @@
 
 2005-06-14  Geoffrey Garen  <ggaren@apple.com>
 
-	Updated expected.html to reflect fix to <rdar://problem/4147745>.
+        Updated expected.html to reflect fix to <rdar://problem/4147745>.
 
         Reviewed by cblu.
 
@@ -8780,10 +8780,10 @@
 
 2005-06-14  Geoffrey Garen  <ggaren@apple.com>
 
-	Fixed: <rdar://problem/4147745> JavaScript discards locally defined "arguments" property
+        Fixed: <rdar://problem/4147745> JavaScript discards locally defined "arguments" property
 
-	No layout tests added because this change fixes existing tests:
-	ecma/ExecutionContexts/10.1.6.js
+        No layout tests added because this change fixes existing tests:
+        ecma/ExecutionContexts/10.1.6.js
         ecma_3/Function/regress-94506.js
         js1_4/Functions/function-001.js
 
@@ -8791,8 +8791,8 @@
 
         * kjs/function.cpp:
         (KJS::ActivationImp::get): get now checks for an "arguments" property defined in the local variable object
-	before trying to return the built-in arguments array.
-	
+        before trying to return the built-in arguments array.
+        
         * kjs/function.h: ActivationImp::put no longer overrides ObjectImp::put
 
 2005-06-10  Darin Adler  <darin@apple.com>
@@ -8809,20 +8809,20 @@
 2005-06-09  Darin Adler  <darin@apple.com>
 
         Change by Mark Rowe <opendarwin.org@bdash.net.nz>
-	Reviewed by me.
+        Reviewed by me.
 
         * kjs/nodes.cpp: Get rid of unneeded this->.
 
 2005-06-08  Maciej Stachowiak  <mjs@apple.com>
 
         Change by Mark Rowe <opendarwin.org@bdash.net.nz>
-	Reviewed by me.
+        Reviewed by me.
 
-	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3327
-	(Exception When Setting Style to Invalid Value Lacks Line/File Information)
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3327
+        (Exception When Setting Style to Invalid Value Lacks Line/File Information)
 
         * kjs/nodes.cpp: Include source file and line number when making exception in
-	KJS_CHECKEXCEPTIONVALUE.
+        KJS_CHECKEXCEPTIONVALUE.
 
 2005-06-07  Darin Adler  <darin@apple.com>
 
@@ -8994,7 +8994,7 @@
 
 2005-05-09  Chris Blumenberg  <cblu@apple.com>
 
-	Workaround gcc 3.3 internal compiler errors.
+        Workaround gcc 3.3 internal compiler errors.
 
         Reviewed by darin.
 
@@ -9018,11 +9018,11 @@
 
         Reviewed by Darin.
 
-	<rdar://problem/4086570> Crash in JavaScriptCore with RSS Visualizer
-	
+        <rdar://problem/4086570> Crash in JavaScriptCore with RSS Visualizer
+        
         * kjs/internal.cpp:
         (InterpreterImp::mark): mark staticNaN, it is usually protected by the Number
-	prototype but there is a small window where it can get collected.
+        prototype but there is a small window where it can get collected.
 
 2005-05-04  Darin Adler  <darin@apple.com>
 
@@ -9051,15 +9051,15 @@
 2005-05-04  Maciej Stachowiak  <mjs@apple.com>
 
         - revert presumably accidental change to mozilla JS test expected results, this
-	was making the tests fail.
+        was making the tests fail.
 
         * tests/mozilla/expected.html:
 
 2005-05-03  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/4102644> Crash in LiveConnect below KJS::Bindings::JavaInstance::stringValue() const
+        Fixed <rdar://problem/4102644> Crash in LiveConnect below KJS::Bindings::JavaInstance::stringValue() const
 
-	Correctly handle accessing nil objects from a Java object array.
+        Correctly handle accessing nil objects from a Java object array.
 
         Reviewed by John.
 
@@ -9126,23 +9126,23 @@
 
 2005-04-26  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/4098713> Scripting API is incompatible with Mozilla
-	
-	We were incompatible with Mozilla's implementation of the scripting APIs in
-	two ways:
+        Fixed <rdar://problem/4098713> Scripting API is incompatible with Mozilla
+        
+        We were incompatible with Mozilla's implementation of the scripting APIs in
+        two ways:
 
-	Their NPN_SetException has the following signature:
+        Their NPN_SetException has the following signature:
 
             void NPN_SetException(NPObject *npobj, const NPUTF8 *message);
 
-	ours has:
+        ours has:
 
             void NPN_SetException (NPObject * npobj, const NPString *message);
 
-	Also, they expect the string returned from NPN_UTF8FromIdentifier() to be freed by caller.
-	We do not.
+        Also, they expect the string returned from NPN_UTF8FromIdentifier() to be freed by caller.
+        We do not.
 
-	I changed both behaviors to match Mozilla.
+        I changed both behaviors to match Mozilla.
 
         Reviewed by Chris.
 
@@ -9159,9 +9159,9 @@
 
         Reviewed by Chris.
 
-	<rdar://problem/4092136> reproducible crash in KJS::kjs_fast_realloc loading maps.google.com
+        <rdar://problem/4092136> reproducible crash in KJS::kjs_fast_realloc loading maps.google.com
         
-	* kjs/string_object.cpp:
+        * kjs/string_object.cpp:
         (StringObjectFuncImp::call): Allocate adopted ustring buffer properly.
 
 2005-04-22  Darin Adler  <darin@apple.com>
@@ -9332,18 +9332,18 @@
 
         Reviewed by Richard.
 
-	<rdar://problem/4089734> JavaScript iBench can be sped up ~10% with custom allocator
+        <rdar://problem/4089734> JavaScript iBench can be sped up ~10% with custom allocator
 
-	- use custom single-threaded malloc for all non-GC JavaScriptCore
-	allocations, for a 9.1% speedup on JavaScript iBench
-	
+        - use custom single-threaded malloc for all non-GC JavaScriptCore
+        allocations, for a 9.1% speedup on JavaScript iBench
+        
         * JavaScriptCore.pbproj/project.pbxproj:
         * kjs/collector.cpp:
         (KJS::Collector::allocate): Use dlmalloc to allocate the collector blocks.
         (KJS::Collector::collect): And dlfree to free it.
         * kjs/fast_malloc.cpp: Added, just the standard dlmalloc here.
         * kjs/fast_malloc.h: Added. Declarations for the functions. Also added a handy
-	macro to give a class custom operator new/delete
+        macro to give a class custom operator new/delete
         * kjs/identifier.cpp:
         (KJS::Identifier::add): Use dlmalloc/dlfree.
         * kjs/nodes.h: make nodes KJS_FAST_ALLOCATED.
@@ -9353,7 +9353,7 @@
         * kjs/scope_chain.h:
         * kjs/ustring.cpp:
         (KJS::UString::Rep::createCopying): New named constructor that copies a passed-in
-	buffer, to hide allocation details from webcore.
+        buffer, to hide allocation details from webcore.
         (KJS::UString::UString): use createCopying when appropriate.
         (KJS::UString::Rep::destroy): Use dlmalloc/dlfree.
         (KJS::UString::expandedSize): likewise
@@ -9369,23 +9369,23 @@
 
         Reviewed by John.
 
-	<rdar://problem/4086819> Avoid using protect count hash table so much for 5.6% JS iBench speedup
+        <rdar://problem/4086819> Avoid using protect count hash table so much for 5.6% JS iBench speedup
 
-	- Avoid using protected values hash for the two most common cases
-	- Bump up ListImp high water mark, new testing shows 508 ListImps are
-	created during JS iBench.
+        - Avoid using protected values hash for the two most common cases
+        - Bump up ListImp high water mark, new testing shows 508 ListImps are
+        created during JS iBench.
 
-	Net result is a 5.6% speedup on JavaScript iBench
-	
+        Net result is a 5.6% speedup on JavaScript iBench
+        
         * kjs/collector.cpp:
         (KJS::Collector::collect): mark protected lists as appropriate.
         * kjs/context.h:
         * kjs/list.cpp:
         (KJS::ListImp::markValues): Moved implementation from List::markValues
         (KJS::List::markProtectedLists): Implemented - scan pool and overflow
-	list.
+        list.
         (KJS::allocateListImp): link lists outside the pool into a separate
-	doubly linked list to be able to mark protected lists
+        doubly linked list to be able to mark protected lists
         (KJS::deallocateListImp): do the corresponding delinking
         (KJS::List::derefValues): do nothing in conservative GC mode
         (KJS::List::refValues): do nothing in conservative GC mode
@@ -9409,20 +9409,20 @@
 
         Reviewed by Kevin.
 
-	Fix for <rdar://problem/4025212> "REGRESSION (163-164): search not performed correctly; united.com"
-	JavaScript unescape("") was returning a messed-up String object that appeared identical to an empty string, but would in some cases act as 'null' when passed to native functions, in this case the Option() constructor.
-	In the implementation of unescape, the UString holding the result was not initialized to "", so it started out as a null string. If nothing was appended to it, it remained null, resulting in a JavaScript String object with some bad behaviors (namely, converting it to a DOMStringImpl results in a NULL pointer.)
-	Darin says this regression occurred when we replaced our own implementation of unescape() with code from KJS.
+        Fix for <rdar://problem/4025212> "REGRESSION (163-164): search not performed correctly; united.com"
+        JavaScript unescape("") was returning a messed-up String object that appeared identical to an empty string, but would in some cases act as 'null' when passed to native functions, in this case the Option() constructor.
+        In the implementation of unescape, the UString holding the result was not initialized to "", so it started out as a null string. If nothing was appended to it, it remained null, resulting in a JavaScript String object with some bad behaviors (namely, converting it to a DOMStringImpl results in a NULL pointer.)
+        Darin says this regression occurred when we replaced our own implementation of unescape() with code from KJS.
 
         * kjs/function.cpp:
         (KJS::GlobalFuncImp::call):
 
 2005-03-15  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/4053276> WebScripting protocol in WebKit cannot convert Boolean in Javascript to BOOL in Objective-C
+        Fixed <rdar://problem/4053276> WebScripting protocol in WebKit cannot convert Boolean in Javascript to BOOL in Objective-C
 
-	Added JavaScript boolean to type that can be converted to
-	ObjC scalar parameters.
+        Added JavaScript boolean to type that can be converted to
+        ObjC scalar parameters.
 
         Reviewed by Ken Kocienda.
 
@@ -9449,9 +9449,9 @@
 
 2005-02-17  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/4003251> Safari crashed at www.icelandair.com in LiveConnect code converting a Java object to a string
+        Fixed <rdar://problem/4003251> Safari crashed at www.icelandair.com in LiveConnect code converting a Java object to a string
 
-	Added nil check.
+        Added nil check.
 
         Reviewed by John Sullivan.
 
@@ -9462,11 +9462,11 @@
 
 2005-02-11  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3985118> DOM objects not being marshaled on JS->native calls
+        Fixed <rdar://problem/3985118> DOM objects not being marshaled on JS->native calls
 
-	Re-factored how 'native' wrappers for JS objects are created.  The interpreter now
-	creates these wrappers.  The WebCore subclass of the interpreter now overrides
-	createLanguageInstanceForValue() and creates a DOM ObjC wrapper for DOM objects.
+        Re-factored how 'native' wrappers for JS objects are created.  The interpreter now
+        creates these wrappers.  The WebCore subclass of the interpreter now overrides
+        createLanguageInstanceForValue() and creates a DOM ObjC wrapper for DOM objects.
 
         Reviewed by Ken.
 
@@ -9512,11 +9512,11 @@
 
 2005-02-03  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3972905> CrashTracer: ...36 crashes at com.apple.WebCore: khtml::CSSStyleSelector::applyDeclarations + 120
+        Fixed <rdar://problem/3972905> CrashTracer: ...36 crashes at com.apple.WebCore: khtml::CSSStyleSelector::applyDeclarations + 120
 
-	Revert to old (and correct) behavior of returning runtime object
-	when passed as a parameter, rather than it's corresponding DOM
-	object.
+        Revert to old (and correct) behavior of returning runtime object
+        when passed as a parameter, rather than it's corresponding DOM
+        object.
 
         Reviewed by Chris.
 
@@ -9527,13 +9527,13 @@
 
 2005-01-28  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3980389> JavaScript bindings access incorrect runtime object
+        Fixed <rdar://problem/3980389> JavaScript bindings access incorrect runtime object
 
-	Only use special 'back door' property to get the runtime object if thisObj isn't
-	already a runtime object.
+        Only use special 'back door' property to get the runtime object if thisObj isn't
+        already a runtime object.
 
-	<gratuitous> Cleaned up a couple of strcmp on ClassInfo name.  Used == on
-	ClassInfo pointer instead.
+        <gratuitous> Cleaned up a couple of strcmp on ClassInfo name.  Used == on
+        ClassInfo pointer instead.
 
         Reviewed by Chris.
 
@@ -9548,16 +9548,16 @@
 
 2005-01-26  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3972522> (179-180) 40% slowdown on iBench JavaScript test
+        Fixed <rdar://problem/3972522> (179-180) 40% slowdown on iBench JavaScript test
 
-	I added a member variable to ObjectImp.  This changed it's size and consequently
-	hampered the optimizations built into the garbage collector.  Objects no longer
-	fit within the allocators cell size, and thus allocation fell back to a slower
-	allocator.
+        I added a member variable to ObjectImp.  This changed it's size and consequently
+        hampered the optimizations built into the garbage collector.  Objects no longer
+        fit within the allocators cell size, and thus allocation fell back to a slower
+        allocator.
 
-	As a result of this fix I also dramatically cleaned up how runtime objects are
-	accessed.  The path mostly *removes* code.
-	
+        As a result of this fix I also dramatically cleaned up how runtime objects are
+        accessed.  The path mostly *removes* code.
+        
         Reviewed by Chris.
 
         * bindings/runtime_method.cpp:
@@ -9584,12 +9584,12 @@
 
 2005-01-20  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3964634> undefined property value from binding seems to evaluate to true in an if statement
+        Fixed <rdar://problem/3964634> undefined property value from binding seems to evaluate to true in an if statement
 
-	The comprehensive fix for this problem requires new API, as described in 3965326.  However,
-	given that we can't add new API at this point, the 'ObjcFallbackObjectImp' will behave
-	like and Undefined object if  invokeUndefinedMethodFromWebScript:withArguments: isn't
-	implemented on the bound object.
+        The comprehensive fix for this problem requires new API, as described in 3965326.  However,
+        given that we can't add new API at this point, the 'ObjcFallbackObjectImp' will behave
+        like and Undefined object if  invokeUndefinedMethodFromWebScript:withArguments: isn't
+        implemented on the bound object.
 
         Reviewed by Chris.
 
@@ -9606,14 +9606,14 @@
 
 2005-01-19  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3853676> Browser Crash when accessing CCWeb Progress Page - KJS::Bindings::convertValueToJValue
+        Fixed <rdar://problem/3853676> Browser Crash when accessing CCWeb Progress Page - KJS::Bindings::convertValueToJValue
 
-	Fixed the following problems with LiveConnect that are demonstrated by the application
-	described in 3853676.
+        Fixed the following problems with LiveConnect that are demonstrated by the application
+        described in 3853676.
 
-	1.  If a nil object is passed in an array from Java to JavaScript we will crash.
-	2.  We sometimes will incorrectly attempt to access a generic JavaScript as a Java runtime object wrapper.
-	3.  We will sometimes fail to find the correct static method ID.
+        1.  If a nil object is passed in an array from Java to JavaScript we will crash.
+        2.  We sometimes will incorrectly attempt to access a generic JavaScript as a Java runtime object wrapper.
+        3.  We will sometimes fail to find the correct static method ID.
 
         Reviewed by Maciej.
 
@@ -9630,16 +9630,16 @@
 
 2005-01-18  Richard Williamson   <rjw@apple.com>
 
-	Fixed several issues all arising from analysis of plugin detection code at ifilm.com:
+        Fixed several issues all arising from analysis of plugin detection code at ifilm.com:
 
-	Fixed <rdar://problem/3958592> can't script plug-ins if plug-in is invoked with <object> element instead of <embed>
-	Fixed <rdar://problem/3958597> <object> elements with IDs do not show up as named properties of the document
-	Fixed <rdar://problem/3960973> DOM objects for plugin elements are not accessible
-	Fixed <rdar://problem/3958601> need an additional class ID in WebCore for the Real plug-in
+        Fixed <rdar://problem/3958592> can't script plug-ins if plug-in is invoked with <object> element instead of <embed>
+        Fixed <rdar://problem/3958597> <object> elements with IDs do not show up as named properties of the document
+        Fixed <rdar://problem/3960973> DOM objects for plugin elements are not accessible
+        Fixed <rdar://problem/3958601> need an additional class ID in WebCore for the Real plug-in
 
-	We now support accessing scriptable plugin objects that are specified with <applet>, <embed>, or <object>
-	tags.  Also, if any of these elements are named they can be accessed from the document or window objects.
-	Finally, DOM methods are properties will be forwarded appropriately for the plugin's root scriptable object.
+        We now support accessing scriptable plugin objects that are specified with <applet>, <embed>, or <object>
+        tags.  Also, if any of these elements are named they can be accessed from the document or window objects.
+        Finally, DOM methods are properties will be forwarded appropriately for the plugin's root scriptable object.
 
         Reviewed by Chris.
 
@@ -9665,7 +9665,7 @@
 
 2005-01-18  Richard Williamson   <rjw@apple.com>
 
-	Back out a change that was incorrectly committed yesterday.
+        Back out a change that was incorrectly committed yesterday.
 
         Reviewed by Chris.
 
@@ -9674,11 +9674,11 @@
 
 2005-01-17  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3753030> Need to ensure same origin for plugin binding invocations (origin security rules)
+        Fixed <rdar://problem/3753030> Need to ensure same origin for plugin binding invocations (origin security rules)
 
-	Keep track of originating execution context and target execution
-	context for native JS object wrappers, and perform appropriate
-	security checks.
+        Keep track of originating execution context and target execution
+        context for native JS object wrappers, and perform appropriate
+        security checks.
 
         Reviewed by David Harrison.
 
@@ -9746,15 +9746,15 @@
 
         Reviewed by Adele.
 
-	- fix <rdar://problem/3946836> Safari about box lists 2004 instead of 2005
+        - fix <rdar://problem/3946836> Safari about box lists 2004 instead of 2005
  
         * JavaScriptCore.pbproj/project.pbxproj: bump "2004" to "2005"
 
 2005-01-12  Richard Williamson   <rjw@apple.com>
 
-	Avoid additional work on dealloc by adding early out to
-	removeNativeReference().  (This will save time on dealloc
-	for all ObjC DOM objects.)
+        Avoid additional work on dealloc by adding early out to
+        removeNativeReference().  (This will save time on dealloc
+        for all ObjC DOM objects.)
 
         Reviewed by Darin.
 
@@ -9763,10 +9763,10 @@
 
 2005-01-12  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3923356> REGRESSION: Java/JavaScript security checks working incorrectly
+        Fixed <rdar://problem/3923356> REGRESSION: Java/JavaScript security checks working incorrectly
 
-	We were always returning the first "root" object for all runtime
-	objects.  Changed 0 in loop to i, the index.
+        We were always returning the first "root" object for all runtime
+        objects.  Changed 0 in loop to i, the index.
 
         Reviewed by David Harrison.
 
@@ -9775,10 +9775,10 @@
 
 2005-01-11  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3887930> Must use new Java plug-in API to get/set fields so exception handling works (fixes many LiveConnect crashes)
+        Fixed <rdar://problem/3887930> Must use new Java plug-in API to get/set fields so exception handling works (fixes many LiveConnect crashes)
 
-	Use the new dispatching API to invoke JNI, rather than calling JNI
-	directly.
+        Use the new dispatching API to invoke JNI, rather than calling JNI
+        directly.
 
         Reviewed by David Harrison.
 
@@ -9803,11 +9803,11 @@
 
         Reviewed by Kevin.
 
-	<rdar://problem/3926869> Opening caches window after running PLT causes crash
-	
+        <rdar://problem/3926869> Opening caches window after running PLT causes crash
+        
         * kjs/protected_values.cpp:
         (KJS::ProtectedValues::getProtectCount): Don't include simple numbers in
-	the protected value table.
+        the protected value table.
         (KJS::ProtectedValues::increaseProtectCount): Ditto.
         (KJS::ProtectedValues::decreaseProtectCount): Ditto.
 
@@ -9824,7 +9824,7 @@
 
 2004-12-14  Richard Williamson   <rjw@apple.com>
 
-	Pass URL of plugin view when call into JNI.
+        Pass URL of plugin view when call into JNI.
 
         Reviewed by Chris.
 
@@ -9833,9 +9833,9 @@
 
 2004-12-13  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3827799> repro. crash with IBM Rational ClearCase Web under Safari (Java/LiveConnect-related)
+        Fixed <rdar://problem/3827799> repro. crash with IBM Rational ClearCase Web under Safari (Java/LiveConnect-related)
 
-	Add support for calling static Java methods from JavaScript.
+        Add support for calling static Java methods from JavaScript.
 
         Reviewed by Maciej.
 
@@ -9853,7 +9853,7 @@
 
 2004-12-13  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3887767> LiveConnect doesn't propagate Java exceptions back to JavaScript (prevents security suite from running)
+        Fixed <rdar://problem/3887767> LiveConnect doesn't propagate Java exceptions back to JavaScript (prevents security suite from running)
 
         Reviewed by John.
 
@@ -9870,29 +9870,29 @@
 
         Reviewed by Darin.
 
-	<rdar://problem/3908017> REGRESSION (172-173): assertion in ObjectImp::construct trying to create JS error (24hourfitness.com)
+        <rdar://problem/3908017> REGRESSION (172-173): assertion in ObjectImp::construct trying to create JS error (24hourfitness.com)
 
-	The fix was to implement copy constructor and assignment operator,
-	the ones that worked on the base class did not replace the
-	defaults apparently!
-	
+        The fix was to implement copy constructor and assignment operator,
+        the ones that worked on the base class did not replace the
+        defaults apparently!
+        
         * kjs/protect.h:
         (KJS::ProtectedValue::ProtectedValue):
         (KJS::ProtectedValue::operator=):
         (KJS::ProtectedObject::ProtectedObject):
         (KJS::ProtectedObject::operator=):
         
-	Also fixed a bug in the GC test mode that compares the results of
-	the old collector and the new collector.
+        Also fixed a bug in the GC test mode that compares the results of
+        the old collector and the new collector.
 
-	* kjs/value.cpp:
+        * kjs/value.cpp:
         (ValueImp::mark):
 
 === Safari-173 ===
 
 2004-11-23  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3890385> field and method cache incorrectly capped (c bindings)
+        Fixed <rdar://problem/3890385> field and method cache incorrectly capped (c bindings)
 
         Reviewed by Ken.
 
@@ -9903,9 +9903,9 @@
 
         Reviewed by Ken.
 
-	<rdar://problem/3889696> Enable conservative garbage collection for JavaScript
+        <rdar://problem/3889696> Enable conservative garbage collection for JavaScript
         
-	* kjs/collector.cpp:
+        * kjs/collector.cpp:
         (KJS::Collector::Thread::Thread):
         (KJS::destroyRegisteredThread):
         (KJS::initializeRegisteredThreadKey):
@@ -9937,7 +9937,7 @@
 
 2004-11-09  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed: <rdar://problem/3872724> soft link against JavaVM to save ~2MB RSHRD
+        Fixed: <rdar://problem/3872724> soft link against JavaVM to save ~2MB RSHRD
 
         Reviewed by rjw.
 
@@ -10013,10 +10013,10 @@
         * ChangeLog:
         * bindings/objc/WebScriptObject.mm:
         (+[WebScriptObject _convertValueToObjcValue:KJS::root:Bindings::]):
-	Added additional conversion Undefined -> WebUndefined.
+        Added additional conversion Undefined -> WebUndefined.
         * bindings/objc/objc_utility.mm:
         (KJS::Bindings::convertObjcValueToValue):
-	Added additional conversion WebUndefined -> Undefined.
+        Added additional conversion WebUndefined -> Undefined.
 
 2004-11-01  Darin Adler  <darin@apple.com>
 
@@ -10041,10 +10041,10 @@
 
 2004-10-13  Richard Williamson   <rjw@apple.com>
 
-	Moved boolean checks prior to NSNumber checks.  booleans are
-	NSNumbers.
+        Moved boolean checks prior to NSNumber checks.  booleans are
+        NSNumbers.
 
-	Follow on to <rdar://problem/3821515> binding layer needs to convert NSNumber-bools to js type boolean not number.
+        Follow on to <rdar://problem/3821515> binding layer needs to convert NSNumber-bools to js type boolean not number.
 
         Reviewed by John.
 
@@ -10054,7 +10054,7 @@
 2004-10-12  Richard Williamson   <rjw@apple.com>
 
         Fixed access to DOM object via WebScriptObject API.
-        The execution context for DOM objects wasn't being found.	
+        The execution context for DOM objects wasn't being found.
         <rdar://problem/3831372> The valueForKey method for @"offsetLeft" on a paragraph element causes a crash.
 
         Reviewed by Chris.
@@ -10094,20 +10094,20 @@
 
 2004-10-07  Richard Williamson   <rjw@apple.com>
 
-	Added simple JavaScript call tracing.  Very useful for
+        Added simple JavaScript call tracing.  Very useful for
         debugging complex pages.
 
-	Tracing is only available in development builds and is
-	enabled by:
+        Tracing is only available in development builds and is
+        enabled by:
 
-	(gdb) set traceJavaScript = 1
+        (gdb) set traceJavaScript = 1
 
-	or programatically
+        or programatically
 
-	setTraceJavaScript(true)
+        setTraceJavaScript(true)
 
-	Function, args, and return values are printed to console.  Very
-	verbose.
+        Function, args, and return values are printed to console.  Very
+        verbose.
 
         Reviewed by Ken.
 
@@ -10157,7 +10157,7 @@
 
 2004-09-30  Richard Williamson  <rjw@apple.com>
 
-	Fixed <rdar://problem/3821215> NPN hasMethod and hasProperty functions should take NPObjects, not NPClass
+        Fixed <rdar://problem/3821215> NPN hasMethod and hasProperty functions should take NPObjects, not NPClass
 
         Reviewed by Chris.
 
@@ -10185,7 +10185,7 @@
 
 2004-09-29  Chris Blumenberg  <cblu@apple.com>
 
-	Prepended underscores to NPN methods so that when the QT plug-in loads these symbols, it uses the non-underscore versions in WebKit. Without this, the QT plug-in was failing to load when launching Safari from the command-line.
+        Prepended underscores to NPN methods so that when the QT plug-in loads these symbols, it uses the non-underscore versions in WebKit. Without this, the QT plug-in was failing to load when launching Safari from the command-line.
 
         Reviewed by rjw.
 
@@ -10331,40 +10331,40 @@
 
         Reviewed by Darin.
 
-	<rdar://problem/3794735> Gmail- sending a very long message with Safari is so slow it seems like a hang
+        <rdar://problem/3794735> Gmail- sending a very long message with Safari is so slow it seems like a hang
         
-	* kjs/string_object.cpp:
+        * kjs/string_object.cpp:
         (StringProtoFuncImp::call): Replaced implementation of replace()
-	method with function below...
-	(replace): In order to avoid excessive allocation and copying,
-	figure out the ranges of the original string and replacement
-	strings to be assembled, instead of constantly creating new
-	strings at each substitution. The old behavior is basically O(N^2)
-	for a global replace on a pattern that matches many places in the
-	string.
+        method with function below...
+        (replace): In order to avoid excessive allocation and copying,
+        figure out the ranges of the original string and replacement
+        strings to be assembled, instead of constantly creating new
+        strings at each substitution. The old behavior is basically O(N^2)
+        for a global replace on a pattern that matches many places in the
+        string.
         (regExpIsGlobal): Helper function for the above.
         (expandSourceRanges): ditto
         (pushSourceRange): ditto
         (expandReplacements): ditto
         (pushReplacement): ditto
         * kjs/ustring.cpp:
-	(KJS::UString::spliceSubstringsWithSeparators): New method that
-	pieces together substring ranges of this string together with
-	specified separators, all at one go.
+        (KJS::UString::spliceSubstringsWithSeparators): New method that
+        pieces together substring ranges of this string together with
+        specified separators, all at one go.
         * kjs/ustring.h:
         (KJS::UString::Range::Range): Added new helper class to represent
-	substring choices.
+        substring choices.
 
 2004-09-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 
-	- fixed <rdar://problem/3800315> encode-URI-test layout test is failing
-	
+        - fixed <rdar://problem/3800315> encode-URI-test layout test is failing
+        
         * kjs/function.cpp:
         (KJS::GlobalFuncImp::call): Make sure to escape null
-	characters. This is a bug in the new code that made part of the
-	test fail.
+        characters. This is a bug in the new code that made part of the
+        test fail.
 
 2004-09-13  Darin Adler  <darin@apple.com>
 
@@ -10395,11 +10395,11 @@
 
         Reviewed by Richard.
 
-	<rdar://problem/3493140> REGRESSION (85-100): cedille displays %-escaped in JavaScript message at hotmail.com
+        <rdar://problem/3493140> REGRESSION (85-100): cedille displays %-escaped in JavaScript message at hotmail.com
 
-	* kjs/function.cpp:
+        * kjs/function.cpp:
         (KJS::GlobalFuncImp::call): Replace our escape() and unescape() implementations with
-	ones from KDE KJS, which have the proper latin-1 behavior to match Win IE.
+        ones from KDE KJS, which have the proper latin-1 behavior to match Win IE.
         * kjs/lexer.cpp:
         (Lexer::isHexDigit): Made static and non-const.
         * kjs/lexer.h:
@@ -10414,7 +10414,7 @@
 
 2004-09-01  Richard Williamson   <rjw@apple.com>
 
-	Add pid to exception messages (to help debug dashboard clients).
+        Add pid to exception messages (to help debug dashboard clients).
 
         Reviewed by Chris.
 
@@ -10494,11 +10494,11 @@
 
         Code change by Eric Albert, reviewd by me.
 
-	<rdar://problem/3571960> washingtonpost.com claims I don't have cookies enabled and won't let me read articles
+        <rdar://problem/3571960> washingtonpost.com claims I don't have cookies enabled and won't let me read articles
 
         * kjs/date_object.cpp:
         (timetUsingCF): Clamp time to LONG_MAX (getting rid of time_t
-	entirely would be even better, but is not required to fix this bug.
+        entirely would be even better, but is not required to fix this bug.
 
 === Safari-157 ===
 
@@ -10519,7 +10519,7 @@
 
 2004-08-15  Richard Williamson   <rjw@apple.com>
 
-	More updates to np headers.  Implemented new NPN functions.
+        More updates to np headers.  Implemented new NPN functions.
 
         Reviewed by Darin.
 
@@ -10539,8 +10539,8 @@
 
 2004-08-12  Richard Williamson   <rjw@apple.com>
 
-	Bring npruntime.h and friends closer to compliance with
-	latest spec.
+        Bring npruntime.h and friends closer to compliance with
+        latest spec.
 
         Reviewed by Maciej.
 
@@ -10685,10 +10685,10 @@
 
         Fixed <rdar://problem/3674747> Need to implement invokeUndefinedMethodFromWebScript:withArguments:
 
-	The following WebScripting methods are now supported on bound
-	objects:
+        The following WebScripting methods are now supported on bound
+        objects:
 
-	- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
+        - (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
         - (void)setValue:(id)value forUndefinedKey:(NSString *)key
         - (id)valueForUndefinedKey:(NSString *)key
 
@@ -10897,36 +10897,36 @@
 
         Reviewed by mjs.
  
-	- fix <rdar://problem/3649789> SAP WebGUI has problems loading first page because of parse error        
+        - fix <rdar://problem/3649789> SAP WebGUI has problems loading first page because of parse error        
 
-	* kjs/lexer.cpp:
+        * kjs/lexer.cpp:
         (Lexer::lex): if the current character is a '\' and the next character is a line terminator,
-	go to the next line and continue parsing the string (instead of failing).  This matches 
-	behavior in Mac IE and Mozilla.
+        go to the next line and continue parsing the string (instead of failing).  This matches 
+        behavior in Mac IE and Mozilla.
 
 2004-08-03  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.
 
-	Rolled in changes from the latest KJS sources that support additional 
-	Number.prototype functions. 
+        Rolled in changes from the latest KJS sources that support additional 
+        Number.prototype functions. 
 
-	Specifically this patch covers the follow parts of the ECMA 3 spec:
-  	15.7.4.5, 15.7.4.6, and 15.7.4.7 
-	
-	Fixes:
-	<rdar://problem/3663716> missing Number.toFixed (and toPrecision, toExponential)
-	<rdar://problem/3749492> missing Number.toPrecision prototype implementation
-	<rdar://problem/3749591> missing Number.toExponential prototype implementation
+        Specifically this patch covers the follow parts of the ECMA 3 spec:
+        15.7.4.5, 15.7.4.6, and 15.7.4.7 
+        
+        Fixes:
+        <rdar://problem/3663716> missing Number.toFixed (and toPrecision, toExponential)
+        <rdar://problem/3749492> missing Number.toPrecision prototype implementation
+        <rdar://problem/3749591> missing Number.toExponential prototype implementation
 
         * kjs/identifier.h: Added toFixed, toPrecision, and toExponential to the
-	list of supported identifiers (a macro).
+        list of supported identifiers (a macro).
         * kjs/number_object.cpp: Implemented support for toFixed(), toPrecision(),
-	and toExponential(). 
+        and toExponential(). 
         (NumberPrototypeImp::NumberPrototypeImp):
         (NumberProtoFuncImp::call):
         * kjs/number_object.h: Added property names for toFixed, toPrecision,
-	and toExponential. 
+        and toExponential. 
         (KJS::NumberProtoFuncImp::):
         * tests/mozilla/expected.html: Update results.
 
@@ -11023,8 +11023,8 @@
 2004-07-22  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin
-	
-	Fixed <rdar://problem/3682340> (error console does not include source urls or line numbers of event exceptions). 
+        
+        Fixed <rdar://problem/3682340> (error console does not include source urls or line numbers of event exceptions). 
 
         * kjs/function_object.cpp:
         (FunctionObjectImp::construct):
@@ -11051,8 +11051,8 @@
 
 2004-07-19  Richard Williamson   <rjw@apple.com>
 
-	Fixed 3733349.  Prevent Java applet callbacks into JavaScript after applet
-	has been destroyed.
+        Fixed 3733349.  Prevent Java applet callbacks into JavaScript after applet
+        has been destroyed.
 
         Reviewed by John.
 
@@ -11083,8 +11083,8 @@
 
         Reviewed by John.
 
-	<rdar://problem/3711474>: (REGRESSION (125-146): JavaScript 'toString(16)' is broken)
-	<rdar://problem/3644873>: (REGRESSION (125-140u): secondary list doesn't fill in at Southwest.com)
+        <rdar://problem/3711474>: (REGRESSION (125-146): JavaScript 'toString(16)' is broken)
+        <rdar://problem/3644873>: (REGRESSION (125-140u): secondary list doesn't fill in at Southwest.com)
 
         * kjs/number_object.cpp:
         (NumberProtoFuncImp::call): Initialize radix from dradix, not from itself!
@@ -11093,8 +11093,8 @@
 
         Reviewed by kocienda.
 
-	- made testkjs and JavaScriptCore a subtarget of 'All'
-	- testkjs now builds in $SYMROOTS
+        - made testkjs and JavaScriptCore a subtarget of 'All'
+        - testkjs now builds in $SYMROOTS
 
         * JavaScriptCore.pbproj/project.pbxproj:
 
@@ -11102,7 +11102,7 @@
 
 2004-06-24  Chris Blumenberg  <cblu@apple.com>
 
-	Ignore .mode1 files in JavaScriptCore.pbproj
+        Ignore .mode1 files in JavaScriptCore.pbproj
 
         Reviewed by kocienda.
 
@@ -11110,8 +11110,8 @@
 
 2004-06-23  Richard Williamson   <rjw@apple.com>
 
-	Implemented changes for latest npruntime.h.
-	
+        Implemented changes for latest npruntime.h.
+        
         Reviewed by Chris.
 
         * JavaScriptCore.pbproj/project.pbxproj:
@@ -11166,12 +11166,12 @@
 
 2004-06-16  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3702287> Crash returning nil from bound ObjC
+        Fixed <rdar://problem/3702287> Crash returning nil from bound ObjC
 
-	This turned out to be a show stopper for Dashboard.  Accessing a nil
-	ObjC property from JS caused a crash.  Similar to the problem
-	3696112 fixed below.
-	
+        This turned out to be a show stopper for Dashboard.  Accessing a nil
+        ObjC property from JS caused a crash.  Similar to the problem
+        3696112 fixed below.
+        
         Reviewed by Trey.
 
         * bindings/objc/objc_runtime.mm:
@@ -11181,12 +11181,12 @@
 
 2004-06-16  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3696112>: nil from an Objective-C class seems to get wrapped as a JavaScript proxy that will not print.
+        Fixed <rdar://problem/3696112>: nil from an Objective-C class seems to get wrapped as a JavaScript proxy that will not print.
 
-	This turned out to be a show stopper for Dashboard.  We now
-	return Undefined() when nil is returned from a ObjC method
-	that returns an object type.
-	
+        This turned out to be a show stopper for Dashboard.  We now
+        return Undefined() when nil is returned from a ObjC method
+        that returns an object type.
+        
         Reviewed by Maciej.
 
         * bindings/objc/objc_utility.mm:
@@ -11196,11 +11196,11 @@
 
 2004-06-15  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
+        Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
 
-	No longer need to check respondsToSelector: for
-	isSelectorExcludedFromWebScript: and isKeyExcludedFromWebScript:
-	because these now have a default implementation on NSObject.
+        No longer need to check respondsToSelector: for
+        isSelectorExcludedFromWebScript: and isKeyExcludedFromWebScript:
+        because these now have a default implementation on NSObject.
 
         Reviewed by Trey.
 
