@@ -1,3 +1,15 @@
+2006-03-31  Dave Hyatt <hyatt@apple.com>
+
+        Fix the border drawing for themes on Win32.
+
+        Reviewed by adele
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintBorderOnly):
+        * rendering/RenderTheme.h:
+
 2006-03-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

@@ -50,8 +50,7 @@ public:
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates
     // whether the CSS border/background should also be painted.
     bool paint(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
-    bool paintBorder(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
-    bool shouldPaintBorder(RenderObject* o);
+    bool paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
 
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // RenderThemeMac.cpp for Mac OS X.
