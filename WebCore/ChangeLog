@@ -1,5 +1,19 @@
 2006-03-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by John Sullivan.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8101
+          REGSRESSION: Fix for bug 7031 causes 30 layout tests to fail
+
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::placeBoxesVertically): Change top and bottom positions
+        only if childAffectsTopBottomPos is true.
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines): Redo a part of the patch for bug 7031 that
+        wasn't committed with the rest of the patch.
+
+2006-03-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin, landed by Beth.
 
         Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8081

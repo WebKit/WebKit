@@ -400,7 +400,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
         }
 
         int top = kMin(curr->root()->topOverflow(), curr->root()->selectionTop()) - maximalOutlineSize(info.phase);
-        int bottom = kMax(curr->root()->selectionTop() + curr->root()->selectionHeight(), curr->root()->bottomOverflow()) + maximalOutlineSize(info.phase);
+        int bottom = curr->root()->bottomOverflow() + maximalOutlineSize(info.phase);
         h = bottom - top;
         yPos = _ty + top;
         if (yPos < info.r.bottom() && yPos + h > info.r.y())

@@ -704,9 +704,9 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
         if (childAffectsTopBottomPos) {
             selectionTop = kMin(selectionTop, newY);
             selectionBottom = kMax(selectionBottom, newY + newHeight);
+            topPosition = kMin(topPosition, newY + overflowTop);
+            bottomPosition = kMax(bottomPosition, newY + newHeight + overflowBottom);
         }
-        topPosition = kMin(topPosition, newY + overflowTop);
-        bottomPosition = kMax(bottomPosition, newY + newHeight + overflowBottom);
     }
 
     if (isRootInlineBox()) {
