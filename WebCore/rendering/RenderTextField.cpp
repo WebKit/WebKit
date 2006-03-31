@@ -159,8 +159,8 @@ void RenderTextField::setSelectionRange(int start, int end)
     VisiblePosition endPosition = visiblePositionForIndex(end);
     
     ASSERT(startPosition.isNotNull() && endPosition.isNotNull());
-    ASSERT(startPosition.deepEquivalent().node()->rootEditableElement() == m_div && endPosition.deepEquivalent().node()->rootEditableElement() == m_div);
-    
+    ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
+
     SelectionController sel = SelectionController(startPosition, endPosition);
     document()->frame()->setSelection(sel, false);
 }

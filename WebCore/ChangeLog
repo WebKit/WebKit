@@ -1,3 +1,14 @@
+2006-03-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        Updating shadowAncestorNode so it doesn't check for rootEditableElement.  Now we just walk
+        up the tree to look for a shadowNode, and then we find the shadowParent.
+
+        * dom/Node.cpp: (WebCore::Node::shadowAncestorNode):
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::setSelectionRange):
+         Updated assertion to check for shadowAncestorNode instead of rootEditableElement.
+
 2006-03-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by John Sullivan.

@@ -971,9 +971,12 @@ int Node::nextOffset (int current) const
 
 Node* Node::shadowAncestorNode()
 {
-    Node* n = rootEditableElement();
-    if (n && n->isShadowNode())
-        return n->shadowParentNode();
+    Node *n = this;    
+    while (n) {
+        if (n->isShadowNode())
+            return n->shadowParentNode();
+        n = n->parentNode();
+    } 
     return this;
 }
 
