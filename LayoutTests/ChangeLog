@@ -1,3 +1,15 @@
+2006-03-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by Beth.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8081
+        REGRESSION: Drop-down menu has gap at top
+
+        * fast/table/cell-absolute-child-expected.checksum: Added.
+        * fast/table/cell-absolute-child-expected.png: Added.
+        * fast/table/cell-absolute-child-expected.txt: Added.
+        * fast/table/cell-absolute-child.html: Added.
+
 2006-03-31  Darin Adler  <darin@apple.com>
 
         - updated results for tests that involve scrolling
