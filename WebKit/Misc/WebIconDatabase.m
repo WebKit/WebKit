@@ -416,7 +416,6 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)_createFileDatabase
 {
-    // FIXME: Make defaults key public somehow
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
 
@@ -446,7 +445,10 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_loadIconDictionaries
 {
     WebFileDatabase *fileDB = _private->fileDatabase;
+    
+    // fileDB should be non-nil here because it should have been created by _createFileDatabase 
     if (!fileDB) {
+        ERROR("Couldn't load icon dictionaries because file database didn't exist");
         return;
     }
     
@@ -462,7 +464,7 @@ NSSize WebIconLargeSize = {128, 128};
     // Get the site URL to icon URL dictionary from the file DB.
     NSMutableDictionary *pageURLToIconURL = nil;
     if (v <= WebIconDatabaseCurrentVersion) {
-        pageURLToIconURL = [[fileDB objectForKey:WebURLToIconURLKey] retain];
+        pageURLToIconURL = [fileDB objectForKey:WebURLToIconURLKey];
         // Remove the old unnecessary mapping files.
         if (v < WebIconDatabaseCurrentVersion) {
             [fileDB removeObjectForKey:ObsoleteIconsOnDiskKey];
@@ -470,42 +472,51 @@ NSSize WebIconLargeSize = {128, 128};
         }        
     }
     
+    // Must double-check all values read from disk. If any are bogus, we just throw out the whole icon cache.
     if (![pageURLToIconURL isKindOfClass:[NSMutableDictionary class]]) {
+        ERROR("Clearing icon cache because bad value %@ was found on disk, expected an NSMutableDictionary", pageURLToIconURL);
         [self _clearDictionaries];
         return;
     }
 
     // Keep a set of icon URLs on disk so we know what we need to write out or remove.
-    NSMutableSet *iconsOnDiskWithURLs = [[NSMutableSet alloc] initWithArray:[pageURLToIconURL allValues]];
+    NSMutableSet *iconsOnDiskWithURLs = [NSMutableSet setWithArray:[pageURLToIconURL allValues]];
 
     // Reverse pageURLToIconURL so we have an icon URL to page URLs dictionary. 
-    NSMutableDictionary *iconURLToPageURLs = [[NSMutableDictionary alloc] initWithCapacity:[_private->iconsOnDiskWithURLs count]];
+    NSMutableDictionary *iconURLToPageURLs = [NSMutableDictionary dictionaryWithCapacity:[_private->iconsOnDiskWithURLs count]];
     NSEnumerator *enumerator = [pageURLToIconURL keyEnumerator];
     NSString *URL;
     while ((URL = [enumerator nextObject])) {
         NSString *iconURL = (NSString *)[pageURLToIconURL objectForKey:URL];
+        // Must double-check all values read from disk. If any are bogus, we just throw out the whole icon cache.
         if (![URL isKindOfClass:[NSString class]] || ![iconURL isKindOfClass:[NSString class]]) {
+            ERROR("Clearing icon cache because either %@ or %@ was a bad value on disk, expected both to be NSStrings", URL, iconURL);
             [self _clearDictionaries];
             return;
         }
         [iconURLToPageURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
     }
 
-    _private->pageURLToIconURL = pageURLToIconURL;
-    _private->iconURLToPageURLs = iconURLToPageURLs;
-    _private->iconsOnDiskWithURLs = iconsOnDiskWithURLs;
+    ASSERT(!_private->pageURLToIconURL);
+    ASSERT(!_private->iconURLToPageURLs);
+    ASSERT(!_private->iconsOnDiskWithURLs);
+    ASSERT(!_private->originalIconsOnDiskWithURLs);
+    
+    _private->pageURLToIconURL = [pageURLToIconURL retain];
+    _private->iconURLToPageURLs = [iconURLToPageURLs retain];
+    _private->iconsOnDiskWithURLs = [iconsOnDiskWithURLs retain];
     _private->originalIconsOnDiskWithURLs = [iconsOnDiskWithURLs copy];
 }
 
 // Only called by _setIconURL:forKey:
 - (void)_updateFileDatabase
 {
-    if(_private->cleanupCount != 0){
+    if (_private->cleanupCount != 0)
         return;
-    }
 
     WebFileDatabase *fileDB = _private->fileDatabase;
     if (!fileDB) {
+        ERROR("Couldn't update file database because it didn't exist");
         return;
     }
 

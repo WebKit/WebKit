@@ -1,3 +1,20 @@
+2006-03-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        Some cleanup in the WebIconDatabase code in a fruitless search for the cause
+        of the mysterious -[WebFileDatabase performSetObject:forKey] crash
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]):
+        removed obsolete comment
+        (-[WebIconDatabase _loadIconDictionaries]):
+        Added ERRORs for unexpected early returns. Made dictionaries be autoreleased until
+        the end of the method where they are retained, so that the early returns don't leak;
+        added ASSERTs that the _private->dictionary values aren't being leaked.
+        (-[WebIconDatabase _updateFileDatabase]):
+        Added an ERROR for an unexpected early return, and made a trivial style fix.
+
 2006-03-31  Trey Matteson  <trey@usa.net>
 
         Reviewed by Maciej, landed by ap.
