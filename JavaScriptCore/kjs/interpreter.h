@@ -423,9 +423,6 @@ namespace KJS {
      * interpreter instance instead.
      */
     Interpreter operator=(const Interpreter&);
-
-  protected:
-    virtual void virtual_hook( int id, void* data );
   };
 
   /**
@@ -445,9 +442,6 @@ namespace KJS {
      * @return The interpreter executing the script
      */
     Interpreter *dynamicInterpreter() const { return m_interpreter; }
-
-    // for compatibility
-    Interpreter *interpreter() const { return dynamicInterpreter(); }
 
     /**
      * Returns the interpreter associated with the current scope's

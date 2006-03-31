@@ -111,7 +111,7 @@ ObjcValue convertValueToObjcValue (ExecState *exec, JSValue *value, ObjcValueTyp
 	
     switch (type){
         case ObjcObjectType: {
-	    Interpreter *originInterpreter = exec->interpreter();
+	    Interpreter *originInterpreter = exec->dynamicInterpreter();
             const RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
 
 	    Interpreter *interpreter = 0;

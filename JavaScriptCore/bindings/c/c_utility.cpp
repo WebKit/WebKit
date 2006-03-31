@@ -118,7 +118,7 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
             _NPN_RetainObject(obj);
 	    OBJECT_TO_NPVARIANT(obj, *result);
         } else {
-	    Interpreter *originInterpreter = exec->interpreter();
+	    Interpreter *originInterpreter = exec->dynamicInterpreter();
             const Bindings::RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
 
 	    Interpreter *interpreter = 0;
@@ -136,7 +136,7 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
                 executionContext = newExecutionContext;
             }
     
-	    NPObject* obj = (NPObject *)exec->interpreter()->createLanguageInstanceForValue(exec, Instance::CLanguage, value->toObject(exec), originExecutionContext, executionContext);
+	    NPObject* obj = (NPObject *)exec->dynamicInterpreter()->createLanguageInstanceForValue(exec, Instance::CLanguage, value->toObject(exec), originExecutionContext, executionContext);
 	    OBJECT_TO_NPVARIANT(obj, *result);
 	}
     }

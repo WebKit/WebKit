@@ -1,3 +1,23 @@
+2006-03-31  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        A bit more code cleanup.
+
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant):
+        * bindings/objc/objc_runtime.mm:
+        (convertValueToObjcObject):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/interpreter.cpp:
+        (KJS::ExecState::lexicalInterpreter):
+        * kjs/interpreter.h:
+        * kjs/operations.cpp:
+        (KJS::equal):
+
 2006-03-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by anders.

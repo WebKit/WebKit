@@ -128,10 +128,10 @@ bool equal(ExecState *exec, JSValue *v1, JSValue *v2)
         
         if (t1 == NumberType && t2 == StringType) {
             // use toNumber
-        } else if (t1 == StringType && t2 == NumberType) {
+        } else if (t1 == StringType && t2 == NumberType)
             t1 = NumberType;
             // use toNumber
-        } else {
+        else {
             if ((t1 == StringType || t1 == NumberType) && t2 >= ObjectType)
                 return equal(exec, v1, v2->toPrimitive(exec));
             if (t1 == NullType && t2 == ObjectType)

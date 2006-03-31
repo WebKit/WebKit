@@ -125,10 +125,10 @@ JSValue *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance)
 
 static id convertValueToObjcObject (ExecState *exec, JSValue *value)
 {
-    const Bindings::RootObject *root = rootForInterpreter(exec->interpreter());
+    const Bindings::RootObject *root = rootForInterpreter(exec->dynamicInterpreter());
     if (!root) {
         Bindings::RootObject *newRoot = new Bindings::RootObject(0);
-        newRoot->setInterpreter (exec->interpreter());
+        newRoot->setInterpreter (exec->dynamicInterpreter());
         root = newRoot;
     }
     return [WebScriptObject _convertValueToObjcValue:value originExecutionContext:root executionContext:root ];

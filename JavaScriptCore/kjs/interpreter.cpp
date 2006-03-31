@@ -354,22 +354,15 @@ SavedBuiltins::~SavedBuiltins()
   delete _internal;
 }
 
-
-void Interpreter::virtual_hook( int, void* )
-{ /*BASE::virtual_hook( id, data );*/ }
-
-
 Interpreter *ExecState::lexicalInterpreter() const
 {
-  if (!m_context) {
+  if (!m_context)
     return dynamicInterpreter();
-  }
 
   InterpreterImp *result = InterpreterImp::interpreterWithGlobalObject(m_context->scopeChain().bottom());
 
-  if (!result) {
+  if (!result)
     return dynamicInterpreter();
-  }
 
   return result->interpreter();
 }
