@@ -273,10 +273,14 @@
         if (status < 200 || status >= 300) {
             // Handle <object> fallback for error cases.
             [[[dataSource webFrame] _bridge] handleFallbackContent];
+            [self cancel];
         }
     }
 
-    [super didReceiveResponse:r];
+    // we may have cancelled this load as part of switching to fallback content
+    if (!reachedTerminalState) {
+        [super didReceiveResponse:r];
+    }
 
     if (![dataSource _isStopping] && ([URL _webkit_shouldLoadAsEmptyDocument] || [WebView _representationExistsForURLScheme:[URL scheme]])) {
         [self didFinishLoading];

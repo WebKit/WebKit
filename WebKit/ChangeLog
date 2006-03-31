@@ -1,3 +1,19 @@
+2006-03-31  Trey Matteson  <trey@usa.net>
+
+        Reviewed by Maciej, landed by ap.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7739
+        REGRESSION: Assertion failure loading acid2 test in -[WebCoreFrameBridge installInFrame:]
+
+        Tests: http/tests/misc/acid2.html, http/tests/misc/acid2-pixel.html
+
+        The gist of this change is that we must cancel the load from the Webkit side when we
+        realize we're switching to the fallback content.  This is somewhat a temp workaround
+        since control of loading will be moving to WebCore.
+
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader continueAfterContentPolicy:response:]):
+
 2006-03-30  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

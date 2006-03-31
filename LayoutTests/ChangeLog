@@ -1,3 +1,24 @@
+2006-03-31  Trey Matteson  <trey@usa.net>
+
+        Reviewed by Maciej, landed by ap.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7739
+        REGRESSION: Assertion failure loading acid2 test in -[WebCoreFrameBridge installInFrame:]
+
+        Copy Acid2 to http directory, change failing object URL from a non-existent
+        file back to a 404 failure, as in the original test. The modified versions
+        are preserved just to keep something in fast/css.
+
+        * http/tests/misc: Added.
+        * http/tests/misc/acid2-expected.checksum: Added.
+        * http/tests/misc/acid2-expected.png: Added.
+        * http/tests/misc/acid2-expected.txt: Added.
+        * http/tests/misc/acid2-pixel-expected.checksum: Added.
+        * http/tests/misc/acid2-pixel-expected.png: Added.
+        * http/tests/misc/acid2-pixel-expected.txt: Added.
+        * http/tests/misc/acid2-pixel.html: Added.
+        * http/tests/misc/acid2.html: Added.
+
 2006-03-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by Beth.
