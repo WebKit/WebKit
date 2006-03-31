@@ -1,3 +1,13 @@
+2006-03-31  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        Add getter/setter GC tests.
+        
+        * fast/js/getter-setter-gc-expected.txt: Added.
+        * fast/js/getter-setter-gc.html: Added.
+        * fast/js/resources/getter-setter-gc.js: Added.
+
 2006-03-30  Darin Adler  <darin@apple.com>
 
         - updated pixel results to create a new baseline (on a 10.4.5 system)
