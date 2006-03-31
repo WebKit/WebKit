@@ -1,3 +1,11 @@
+2006-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - <rdar://problem/4395622> API: WebScriptObject.h incorrectly reports that -isSelectorExcludedFromWebScript returns NO by default
+
+        * bindings/objc/WebScriptObject.h: Fixed comment.
+
 2006-03-31  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

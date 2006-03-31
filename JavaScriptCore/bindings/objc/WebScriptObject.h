@@ -1,6 +1,6 @@
 /*
-    Copyright (C) 2004 Apple Computer, Inc. All rights reserved.    
-    
+    Copyright (C) 2004, 2006 Apple Computer, Inc. All rights reserved.    
+
     Public header file.
  */
 
@@ -15,7 +15,7 @@
     language.
     
     Instances automatically reflect their interfaces in the scripting environment.  This
-    automatic reflection can be overriden using the class methods defined in the WebScripting
+    automatic reflection can be overridden using the class methods defined in the WebScripting
     informal protocol.
     
     Access to the attributes of an instance is done using KVC. Specifically the following
@@ -41,18 +41,18 @@
     to web script.
 	
     Not all methods are exposed.  Only those methods whose parameters and return
-    type meets the export criteria will exposed.  Valid types are ObjectiveC instances
+    type meets the export criteria will exposed.  Valid types are Objective-C instances
     and scalars.  Other types are not allowed.  Classes may further exclude method
     that they do not want to expose.
     
     Types will be converted to appropriate types in the scripting environment.
-    After any KVC coercion occurs the ObjectiveC types will converted to a type
+    After any KVC coercion occurs the Objective-C types will converted to a type
     appropriate for the script environment.  For JavaScript NSNumber will be
     converted to numbers.  NSString will be converted to strings.  NSArray will
     be mapped to a special read-only array.  NSNull will be converted to null.  
     WebUndefined will be converted to undefined.  WebScriptObjects will be unwrapped.
     Instances of other classes will be wrapped when passed to the script environment
-    and unwrapped when returned to ObjectiveC.  Similar conversion happens in the
+    and unwrapped when returned to Objective-C.  Similar conversion happens in the
     other direction.
 */
 @interface NSObject (WebScripting)
@@ -65,14 +65,14 @@
     uniqueness of the returned name.  If nil is returned or this
     method is not implemented the default name for the selector will
     be used.  The default name concatenates the components of the
-    ObjectiveC selector name and replaces ':' with '_'.  '_' characters
+    Objective-C selector name and replaces ':' with '_'.  '_' characters
     are escaped with an additional '$', i.e. '_' becomes "$_".  '$' are
     also escaped, i.e.
-        ObjectiveC name         Default script name
+        Objective-C name        Default script name
         moveTo::                move__
         moveTo_                 moveTo$_
         moveTo$_                moveTo$$$_
-    @result Returns the name to be used to represent the specificed selector in the
+    @result Returns the name to be used to represent the specified selector in the
     scripting environment.
 */
 + (NSString *)webScriptNameForSelector:(SEL)aSelector;
@@ -82,8 +82,7 @@
     @param aSelect  The selector the will be exposed to the script environment.
     @discussion	Return YES to prevent the selector appearing in the script
     environment.  Return NO to expose the selector in the script environment.
-    If this method is not implemented on the class all the selector that match
-    the export criteria will be exposed.
+    If this method is not implemented on the class no selectors will be exposed.
     @result Returns YES to hide the selector, NO to expose the selector.
 */
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
@@ -91,10 +90,10 @@
 /*!
     @method webScriptNameForKey:
     @param name The name of the instance variable that will be exposed to the
-    script enviroment.  Only that properties that meet the export criteria will
+    script environment.  Only that properties that meet the export criteria will
     be exposed.
     @discussion Provide an alternate name for a property.
-    @result Returns the name to be used to represent the specificed property in the
+    @result Returns the name to be used to represent the specified property in the
     scripting environment.
 */
 + (NSString *)webScriptNameForKey:(const char *)name;
@@ -102,9 +101,9 @@
 /*!
     @method isKeyExcludedFromWebScript:
     @param name The name of the instance variable that will be exposed to the
-    scrip environment.
-    @discussion Return YES to exclude the property from visibility in the script environement.
-    Return NO to expose the instance varible to the script environment.
+    script environment.
+    @discussion Return YES to exclude the property from visibility in the script environment.
+    Return NO to expose the instance variable to the script environment.
     @result Returns YES to hide the property, NO to expose the property.
 */
 + (BOOL)isKeyExcludedFromWebScript:(const char *)name;
@@ -148,7 +147,7 @@
 /*!
     @class WebScriptObject
     @discussion WebScriptObjects are used to wrap script objects passed from
-    script environments to ObjectiveC.  WebScriptObjects cannot be created
+    script environments to Objective-C.  WebScriptObjects cannot be created
     directly.  In normal uses of WebKit, you gain access to the script
     environment using the "windowScriptObject" method on WebView.
     
