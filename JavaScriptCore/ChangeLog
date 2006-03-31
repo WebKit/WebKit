@@ -1,3 +1,18 @@
+2006-03-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Clean-up style issues in node.h, remove redundant initializations.
+
+        * kjs/nodes.h:
+        (KJS::StatementNode::evaluate):
+        (KJS::ArrayNode::ArrayNode):
+        (KJS::ObjectLiteralNode::ObjectLiteralNode):
+        (KJS::ArgumentsNode::ArgumentsNode):
+        (KJS::NewExprNode::NewExprNode):
+        (KJS::CaseClauseNode::CaseClauseNode):
+        (KJS::FuncDeclNode::FuncDeclNode):
+
 2006-03-30  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.
