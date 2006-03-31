@@ -1,3 +1,25 @@
+2006-03-31  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        A bit more code cleanup.
+
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+        * kwq/WebCoreTextField.mm:
+        (-[KWQTextFieldController textView:shouldHandleEvent:]):
+        (-[KWQSecureTextField selectText:]):
+        * page/Frame.cpp:
+        (WebCore::Frame::submitForm):
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm:
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::userResize):
+
 2006-03-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

@@ -928,9 +928,8 @@ void HTMLInputElement::setValue(const String &value)
         if (renderer())
             renderer()->updateFromElement();
         setChanged();
-    } else {
+    } else
         setAttribute(valueAttr, value);
-    }
 }
 
 void HTMLInputElement::setValueFromRenderer(const String &value)

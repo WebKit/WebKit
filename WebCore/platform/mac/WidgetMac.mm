@@ -351,13 +351,6 @@ void Widget::enableFlushDrawing()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void Widget::setDrawingAlpha(float alpha)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    CGContextSetAlpha((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], alpha);
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void Widget::paint(GraphicsContext* p, const IntRect& r)
 {
     if (p->paintingDisabled())

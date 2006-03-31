@@ -283,16 +283,14 @@ using namespace WebCore;
         Widget::setDeferFirstResponderChanges(true);
 
         BOOL intercepted = [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] shouldHandleEvent:event];
-        if (!intercepted) {
+        if (!intercepted)
             intercepted = [bridge interceptKeyEvent:event toView:view];
-        }
 
         // Always intercept key up events because we don't want them
         // passed along the responder chain. This is arguably a bug in
         // NSTextView; see Radar 3507083.
-        if (type == NSKeyUp) {
+        if (type == NSKeyUp)
             intercepted = YES;
-        }
 
         if (intercepted || !widget) {
             Widget::setDeferFirstResponderChanges(false);
@@ -785,9 +783,8 @@ using namespace WebCore;
 
 - (void)selectText:(id)sender
 {
-    if (sender == self && inSetFrameSize) {
+    if (sender == self && inSetFrameSize)
         return;
-    }
 
     // Don't call the NSSecureTextField's selectText if the field is already first responder.
     // If we do, we'll end up deactivating and then reactivating, which will send

@@ -508,25 +508,22 @@ bool RenderFrameSet::userResize( MouseEvent *evt )
         const int rBord = 3;
         int sw = element()->border();
         int p = m_resizing ? (m_vSplit > -1 ? _x : _y) : -1;
+        static unsigned greyQuarterOpacity = 0x40A0A0A0;
         if (m_vSplit > -1) {
             if (m_oldpos >= 0)
                 v->updateContents(IntRect(m_oldpos + sw/2 - rBord, r.y(), 2 * rBord, r.height()), true);
             if (p >= 0) {
                 paint.setPen(Pen::NoPen);
-                paint.setBrush(Color::gray);
-                v->setDrawingAlpha(0.25);
+                paint.setBrush(greyQuarterOpacity);
                 paint.drawRect(IntRect(p + sw/2 - rBord, r.y(), 2 * rBord, r.height()));
-                v->setDrawingAlpha(1.0);
             }
         } else {
             if (m_oldpos >= 0)
                 v->updateContents(IntRect(r.x(), m_oldpos + sw/2 - rBord, r.width(), 2 * rBord), true);
             if (p >= 0) {
                 paint.setPen(Pen::NoPen);
-                paint.setBrush(Color::gray);
-                v->setDrawingAlpha(0.25);
+                paint.setBrush(greyQuarterOpacity);
                 paint.drawRect(IntRect(r.x(), p + sw/2 - rBord, r.width(), 2 * rBord));
-                v->setDrawingAlpha(1.0);
             }
         }
         m_oldpos = p;

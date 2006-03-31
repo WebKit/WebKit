@@ -1509,10 +1509,10 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
 
       // 2)  Append body=
       DeprecatedString bodyEnc;
-      if (contentType.lower() == "multipart/form-data") {
+      if (contentType.lower() == "multipart/form-data")
          // FIXME: is this correct?  I suspect not
          bodyEnc = KURL::encode_string(formData.flattenToString());
-      } else if (contentType.lower() == "text/plain") {
+      else if (contentType.lower() == "text/plain") {
          // Convention seems to be to decode, and s/&/\n/
          DeprecatedString tmpbody = formData.flattenToString();
          tmpbody.replace('&', '\n');
@@ -1531,8 +1531,7 @@ void Frame::submitForm(const char *action, const String& url, const FormData& fo
     if (u.protocol() != "mailto")
        u.setQuery(formData.flattenToString());
     request.setDoPost(false);
-  }
-  else {
+  } else {
     request.postData = formData;
     request.setDoPost(true);
 

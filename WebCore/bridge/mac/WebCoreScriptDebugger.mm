@@ -315,7 +315,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     UString code(DeprecatedString::fromNSString(script));
 
     ExecState   *state   = _state;
-    Interpreter *interp  = state->interpreter();
+    Interpreter *interp  = state->dynamicInterpreter();
     JSObject   *globObj = interp->globalObject();
 
     // find "eval"

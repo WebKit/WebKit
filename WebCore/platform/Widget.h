@@ -118,7 +118,6 @@ namespace WebCore {
         void unlockDrawingFocus();
         void enableFlushDrawing();
         void disableFlushDrawing();
-        void setDrawingAlpha(float alpha);
 
         void setIsSelected(bool);
 
