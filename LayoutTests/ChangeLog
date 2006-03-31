@@ -1,3 +1,13 @@
+2006-03-31  Beth Dakin  <bdakin@apple.com>
+
+        Layout test for <rdar://problem/4472371> REGRESSION(417.9-TOT): 
+        Focus ring around link in overflow:auto div isn't clipped to div
+
+        * fast/overflow/childFocusRingClip-expected.checksum: Added.
+        * fast/overflow/childFocusRingClip-expected.png: Added.
+        * fast/overflow/childFocusRingClip-expected.txt: Added.
+        * fast/overflow/childFocusRingClip.html: Added.
+
 2006-03-31  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
