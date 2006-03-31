@@ -1102,8 +1102,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         addOverhangingFloats(static_cast<RenderBlock *>(child), -child->xPos(), -child->yPos());
 
         // See if this child has made our overflow need to grow.
-        int rightChildPos = child->xPos() + kMax(child->overflowWidth(false), child->width());
-        m_overflowWidth = kMax(rightChildPos, m_overflowWidth);
+        m_overflowWidth = kMax(child->xPos() + child->overflowWidth(false), m_overflowWidth);
         m_overflowLeft = kMin(child->xPos() + child->overflowLeft(false), m_overflowLeft);
         
         // Insert our compact into the block margin if we have one.

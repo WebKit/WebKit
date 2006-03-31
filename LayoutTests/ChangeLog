@@ -2,6 +2,22 @@
 
         Reviewed by Darin.
 
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8056
+          Flexible boxes do not repaint their top, left and children's overflows
+
+        * fast/repaint/flexible-box-overflow-expected.checksum: Added.
+        * fast/repaint/flexible-box-overflow-expected.png: Added.
+        * fast/repaint/flexible-box-overflow-expected.txt: Added.
+        * fast/repaint/flexible-box-overflow-horizontal-expected.checksum: Added.
+        * fast/repaint/flexible-box-overflow-horizontal-expected.png: Added.
+        * fast/repaint/flexible-box-overflow-horizontal-expected.txt: Added.
+        * fast/repaint/flexible-box-overflow-horizontal.html: Added.
+        * fast/repaint/flexible-box-overflow.html: Added.
+
+2006-03-30  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
         - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7301
           Text shadow does not repaint correctly
 
