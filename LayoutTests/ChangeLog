@@ -1,3 +1,7 @@
+2006-04-01  Darin Adler  <darin@apple.com>
+
+        - re-updated many pixel results to try to create a new baseline
+
 2006-04-01  Maciej Stachowiak  <mjs@apple.com>
 
         Test cases for:
