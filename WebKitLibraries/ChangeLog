@@ -1,3 +1,10 @@
+2006-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        * libWebKitSystemInterface.a: Changed alpha in the focus-ring drawing
+        code to use the system default alpha.
+
 2006-03-17  Eric Seidel  <eseidel@apple.com>
 
         * libWebKitSystemInterface.a: commit a universal binary.
