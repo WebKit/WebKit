@@ -1,3 +1,28 @@
+2006-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8106
+          REGRESSION (NativeTextField): New text fields don't scroll to the beginning when losing focus
+
+        Test: fast/forms/input-text-scroll-left-on-blur.html
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler): Pass blur events
+        through to the RenderTextField, as well as mouse, drag, and wheel events.
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::forwardEvent): Scroll all the way to
+        the left on a blur.
+
+        - unrelated small changes
+
+        * html/HTMLTextFieldInnerElement.cpp: Removed excess includes.
+        (WebCore::HTMLTextFieldInnerElement::defaultEventHandler): Tweaked comments a bit.
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView): Removed unneeded this-> before function call.
+        (WebCore::Element::scrollIntoViewIfNeeded): Ditto.
+
+        * page/FrameView.cpp: (WebCore::FrameView::dispatchMouseEvent): Removed obsolete comment.
+
 2006-03-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

@@ -1,3 +1,11 @@
+2006-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        * DumpRenderTree/EventSendingController.m: (-[EventSendingController keyDown:withModifiers:]):
+        Fixed keyDown function so that it will work if you don't pass an array of modifiers or if
+        elements in that array are not strings.
+
 2006-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

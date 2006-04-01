@@ -1191,7 +1191,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
         }        
     }
     
-    if (m_type == TEXT && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent()) && renderer())
+    if (m_type == TEXT && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent) && renderer())
         static_cast<RenderTextField*>(renderer())->forwardEvent(evt);
     
     HTMLGenericFormElement::defaultEventHandler(evt);

@@ -201,19 +201,20 @@ NSPoint lastMousePosition;
     NSString *modifier = nil;
     int mask = 0;
     
-    for (unsigned i = 0; modifiers && [modifiers webScriptValueAtIndex:i]; i++) {
-        modifier = (NSString *)[modifiers webScriptValueAtIndex:i];
-        if ([modifier isEqual:@"ctrlKey"])
-            mask |= NSControlKeyMask;
-        else if ([modifier isEqual:@"shiftKey"])
-            mask |= NSShiftKeyMask;
-        else if ([modifier isEqual:@"altKey"])
-            mask |= NSAlternateKeyMask;
-        else if ([modifier isEqual:@"metaKey"])
-            mask |= NSCommandKeyMask;
-        else
-            break;
-    }
+    if ([modifiers isKindOfClass:[WebScriptObject class]])
+        for (unsigned i = 0; [[modifiers webScriptValueAtIndex:i] isKindOfClass:[NSString class]]; i++) {
+            modifier = (NSString *)[modifiers webScriptValueAtIndex:i];
+            if ([modifier isEqual:@"ctrlKey"])
+                mask |= NSControlKeyMask;
+            else if ([modifier isEqual:@"shiftKey"])
+                mask |= NSShiftKeyMask;
+            else if ([modifier isEqual:@"altKey"])
+                mask |= NSAlternateKeyMask;
+            else if ([modifier isEqual:@"metaKey"])
+                mask |= NSCommandKeyMask;
+            else
+                break;
+        }
 
     [[[frame frameView] documentView] layout];
     

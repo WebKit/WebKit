@@ -1,5 +1,17 @@
 2006-04-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Justin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8106
+          REGRESSION (NativeTextField): New text fields don't scroll to the beginning when losing focus
+
+        * fast/forms/input-text-scroll-left-on-blur-expected.png: Added.
+        * fast/forms/input-text-scroll-left-on-blur-expected.txt: Added.
+        * fast/forms/input-text-scroll-left-on-blur-expected.checksum: Added.
+        * fast/forms/input-text-scroll-left-on-blur.html: Added.
+
+2006-04-01  Darin Adler  <darin@apple.com>
+
         - re-updated many pixel results to try to create a new baseline
 
 2006-04-01  Maciej Stachowiak  <mjs@apple.com>

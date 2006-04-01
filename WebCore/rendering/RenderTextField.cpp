@@ -21,24 +21,27 @@
 #include "config.h"
 #include "RenderTextField.h"
 
-#include <algorithm>
 #include "Document.h"
+#include "EventNames.h"
 #include "Frame.h"
-#include "RenderText.h"
-#include "HTMLNames.h"
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "HTMLTextFieldInnerElement.h"
+#include "RenderText.h"
 #include "SelectionController.h"
-#include "VisiblePosition.h"
 #include "TextIterator.h"
+#include "VisiblePosition.h"
+#include "dom2_eventsimpl.h"
+#include <algorithm>
 
 namespace WebCore {
 
+using namespace EventNames;
 using namespace HTMLNames;
 using namespace std;
 
 RenderTextField::RenderTextField(Node* node)
-:RenderBlock(node), m_dirty(false)
+    : RenderBlock(node), m_dirty(false)
 {
 }
 
@@ -127,7 +130,6 @@ void RenderTextField::updateFromElement()
             input->setValueFromRenderer(value);
     }
 }
-
 
 int RenderTextField::selectionStart()
 {
@@ -228,7 +230,15 @@ void RenderTextField::calcMinMaxWidth()
 
 void RenderTextField::forwardEvent(Event* evt)
 {
-    m_div->defaultEventHandler(evt);
+    if (evt->type() == blurEvent) {
+        RenderObject* innerRenderer = m_div->renderer();
+        if (innerRenderer) {
+            RenderLayer* innerLayer = innerRenderer->layer();
+            if (innerLayer)
+                innerLayer->scrollToOffset(0, 0);
+        }
+    } else
+        m_div->defaultEventHandler(evt);
 }
 
 }
