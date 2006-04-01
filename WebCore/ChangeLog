@@ -1,3 +1,13 @@
+2006-03-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+        
+        <rdar://problem/4497684> REGRESSION(NativeTextField): After undoing pasted text in a field, the field changes to only a few pixels in height (8096)
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): merge into start block when pasting into
+        an empty editable subtree.
+
 2006-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

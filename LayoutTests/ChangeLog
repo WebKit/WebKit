@@ -1,3 +1,12 @@
+2006-04-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Test cases for:
+        
+        <rdar://problem/4497684> REGRESSION(NativeTextField): After undoing pasted text in a field, the field changes to only a few pixels in height (8096)
+
+        * fast/forms/input-paste-undo-expected.txt: Added.
+        * fast/forms/input-paste-undo.html: Added.
+
 2006-04-01  Darin Adler  <darin@apple.com>
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8063

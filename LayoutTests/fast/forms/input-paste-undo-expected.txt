@@ -1,0 +1,35 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 13 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV to 0 of DIV givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV to 0 of #text > DIV toDOMRange:range from 13 of #text > DIV to 13 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 13 of #text to 13 of #text toDOMRange:range from 0 of DIV to 0 of DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x77
+        RenderText {TEXT} at (0,0) size 776x36
+          text run at (0,0) width 776: "This test checks that undoing a paste into an empty text field doesn't cause it to collapse vertically. When running manually,"
+          text run at (0,18) width 236: "you have to paste and undo by hand. "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,36) size 0x18
+        RenderTextField {INPUT} at (2,56) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,77) size 784x18
+        RenderText {TEXT} at (0,0) size 81x18
+          text run at (0,0) width 81: "Text to paste"
+      RenderBlock {DIV} at (0,95) size 784x0
+layer at (13,67) size 142x13
+  RenderBlock {DIV} at (3,3) size 142x13
+caret: position 0 of document
