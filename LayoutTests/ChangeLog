@@ -1,5 +1,15 @@
 2006-04-01  Darin Adler  <darin@apple.com>
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8063
+          REGRESSION: double clicking in new text fields won't select whole words
+
+        * fast/forms/input-text-double-click-expected.checksum: Added.
+        * fast/forms/input-text-double-click-expected.png: Added.
+        * fast/forms/input-text-double-click-expected.txt: Added.
+        * fast/forms/input-text-double-click.html: Added.
+
+2006-04-01  Darin Adler  <darin@apple.com>
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8105
           REGRESSION (NativeTextField): Option-delete deletes one space before the deleted word
 

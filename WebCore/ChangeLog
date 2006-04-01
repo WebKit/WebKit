@@ -1,3 +1,21 @@
+2006-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8063
+          REGRESSION: double clicking in new text fields won't select whole words
+
+        Test: fast/forms/input-text-double-click.html
+
+        * editing/visible_units.cpp: (WebCore::nextBoundary): Set the end of the range by
+        calling selectNodeContents rather than by calling setEndAfter. The problem with
+        setEndAfter is that it doesn't do anything when the parent of the node is 0, and
+        also it's not really what we want, since the boundary node is one with editable
+        contents -- we want to stay inside the boundary node.
+
+        * editing/Selection.cpp: (WebCore::Selection::validate): Fix a tiny formatting glitch
+        I noticed at the same time.
+
 2006-03-31  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher.

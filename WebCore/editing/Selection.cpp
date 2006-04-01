@@ -211,7 +211,7 @@ void Selection::validate()
             m_end = endOfWord(end, side).deepEquivalent();
             
             break;
-            }
+        }
         case LineGranularity: {
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             VisiblePosition end = endOfLine(VisiblePosition(m_end, m_affinity));
