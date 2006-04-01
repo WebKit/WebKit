@@ -70,7 +70,7 @@ my ($revision) = ($svnInfo =~ m/Revision: (\d+)/g);
 die "Failed to determine svn revision!\n" unless (defined $revision);
 
 print "Starting performance tests on PLT slave...\n";
-die "Failed to start slave!\n" unless (system("ssh", $userAndHost, "autovicki", $slaveDirectory, "--safari", "$slaveDirectory/Safari.app", "--count", 4, "--clean-exit", "--webkit-revision", $revision, "--show-results", "send-completed-results.command") == 0);
+die "Failed to start slave!\n" unless (system("ssh", $userAndHost, "autovicki", $slaveDirectory, "--safari", "$slaveDirectory/Safari.app", "--count", 3, "--clean-exit", "--webkit-revision", $revision, "--show-results", "send-completed-results.command") == 0);
 
 print "Waiting for PLT slave to respond...\n";
 my $new_sock = $sock->accept();
