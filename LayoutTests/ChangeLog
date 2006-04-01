@@ -1,3 +1,13 @@
+2006-04-01  Darin Adler  <darin@apple.com>
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8105
+          REGRESSION (NativeTextField): Option-delete deletes one space before the deleted word
+
+        * fast/forms/input-text-option-delete-expected.checksum: Added.
+        * fast/forms/input-text-option-delete-expected.png: Added.
+        * fast/forms/input-text-option-delete-expected.txt: Added.
+        * fast/forms/input-text-option-delete.html: Added.
+
 2006-03-31  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.

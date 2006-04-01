@@ -1,0 +1,10 @@
+<input id="input" type="text" value="word another">
+<p>Tests option-deleting a word. If the test succeeds, the word "word" should end up with a space after it.</p>
+<script>
+var input = document.getElementById("input");
+input.focus();
+input.setSelectionRange(12, 12);
+if (window.eventSender) {
+    eventSender.keyDown(String.fromCharCode(127), ["altKey"]);
+}
+</script>

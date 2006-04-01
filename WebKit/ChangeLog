@@ -1,3 +1,18 @@
+2006-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8105
+          REGRESSION (NativeTextField): Option-delete deletes one space before the deleted word
+
+        Test: fast/forms/input-text-option-delete.html
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:isTypingAction:]): Pass NO for
+        smartDeleteOK. Smart deletion only applies to deleting a word at a time, and none of
+        the callers of this function that delete a word at a time want smart deletion.
+        (-[WebHTMLView deleteToEndOfLine:]): Fixed tiny formatting glitch.
+
 2006-03-31  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
