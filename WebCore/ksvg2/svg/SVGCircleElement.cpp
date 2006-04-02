@@ -29,7 +29,6 @@
 #include "SVGCircleElement.h"
 #include "SVGAnimatedLength.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 
 using namespace WebCore;

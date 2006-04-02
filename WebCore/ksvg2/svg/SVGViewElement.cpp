@@ -22,15 +22,14 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include "PlatformString.h"
-#include "Attr.h"
-#include <kdom/core/NamedAttrMap.h>
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGStringList.h"
 #include "SVGViewElement.h"
+
+#include "Attr.h"
+#include "PlatformString.h"
 #include "SVGFitToViewBox.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "SVGStringList.h"
 #include "SVGZoomAndPan.h"
 
 using namespace WebCore;

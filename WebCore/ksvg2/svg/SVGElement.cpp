@@ -34,11 +34,7 @@
 #include "HTMLNames.h"
 #include "ksvg.h"
 #include "PlatformString.h"
-#include <kdom/Namespace.h>
 #include "Attr.h"
-#include <kdom/core/domattrs.h>
-#include <kdom/events/EventListener.h>
-#include <kdom/kdom.h>
 #include "SVGDocumentExtensions.h"
 
 namespace WebCore {

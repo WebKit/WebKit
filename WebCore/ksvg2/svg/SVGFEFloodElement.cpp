@@ -22,20 +22,18 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <DeprecatedStringList.h>
+#include "SVGFEFloodElement.h"
 
 #include "Attr.h"
-
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasFilters.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
-#include "SVGFEFloodElement.h"
+#include "DeprecatedStringList.h"
+#include "RenderCanvas.h"
 #include "SVGAnimatedString.h"
 #include "SVGDOMImplementation.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "SVGRenderStyle.h"
+#include <kcanvas/KCanvasFilters.h>
+#include <kcanvas/device/KRenderingDevice.h>
 
 using namespace WebCore;
 

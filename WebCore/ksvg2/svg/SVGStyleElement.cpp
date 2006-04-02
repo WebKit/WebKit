@@ -30,7 +30,6 @@
 #include "PlatformString.h"
 #include "DeprecatedString.h"
 #include "css_stylesheetimpl.h"
-#include <kdom/kdom.h>
 
 using namespace WebCore;
 

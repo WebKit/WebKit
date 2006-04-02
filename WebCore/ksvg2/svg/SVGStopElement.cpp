@@ -25,7 +25,6 @@
 #include "Attr.h"
 #include "Document.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
 #include "SVGNames.h"

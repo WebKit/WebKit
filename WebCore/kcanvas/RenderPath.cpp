@@ -35,7 +35,6 @@
 #include "KRenderingStrokePainter.h"
 #include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"
-#include <kcanvas/KCanvas.h>
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {

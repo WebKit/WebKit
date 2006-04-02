@@ -22,27 +22,24 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include "PlatformString.h"
+#include "SVGMarkerElement.h"
+
 #include "Attr.h"
-#include <kdom/core/NamedAttrMap.h>
-
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasCreator.h>
-#include <kcanvas/KCanvasContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
+#include "PlatformString.h"
 #include "SVGAngle.h"
+#include "SVGAnimatedAngle.h"
+#include "SVGAnimatedEnumeration.h"
+#include "SVGAnimatedLength.h"
+#include "SVGFitToViewBox.h"
+#include "SVGHelper.h"
 #include "SVGLength.h"
 #include "SVGMatrix.h"
+#include "SVGNames.h"
 #include "SVGSVGElement.h"
-#include "SVGFitToViewBox.h"
-#include "SVGMarkerElement.h"
-#include "SVGAnimatedAngle.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedEnumeration.h"
+#include "ksvg.h"
+#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/KCanvasCreator.h>
+#include <kcanvas/device/KRenderingDevice.h>
 
 namespace WebCore {
 

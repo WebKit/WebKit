@@ -32,7 +32,6 @@
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLength.h"
 #include "SVGImageElement.h"
-#include <kcanvas/KCanvas.h>
 #include "Attr.h"
 
 #include "SVGImageElement.h"

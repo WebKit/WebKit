@@ -23,33 +23,25 @@
 
 #include "config.h"
 #if SVG_SUPPORT
+#include "SVGImageElement.h"
 
 #include "Attr.h"
-#include <kdom/core/DOMConfiguration.h>
-#include <kdom/parser/KDOMParser.h>
-
-#include "XLinkNames.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGSVGElement.h"
-#include "RenderSVGImage.h"
-#include "SVGImageElement.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedString.h"
+#include "CSSPropertyNames.h"
 #include "KCanvasRenderingStyle.h"
+#include "RenderSVGImage.h"
+#include "SVGAnimatedLength.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGAnimatedString.h"
 #include "SVGDocument.h"
-#include <ksvg2/KSVGView.h>
-
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasCreator.h>
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "SVGSVGElement.h"
+#include "XLinkNames.h"
 #include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasImage.h>
 #include <kcanvas/KCanvasPath.h>
-
 #include <kxmlcore/Assertions.h>
-
-#include "CSSPropertyNames.h"
 
 using namespace WebCore;
 

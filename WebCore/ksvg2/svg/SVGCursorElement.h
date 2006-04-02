@@ -30,8 +30,7 @@
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 #include "SVGExternalResourcesRequired.h"
-#include <kdom/cache/KDOMCachedImage.h>
-#include <kdom/cache/KDOMCachedObjectClient.h>
+#include "CachedObjectClient.h"
 
 namespace WebCore
 {

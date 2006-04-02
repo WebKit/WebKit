@@ -26,7 +26,6 @@
 
 #include <math.h>
 
-#include "kcanvas/KCanvas.h"
 #include "KCanvasPath.h"
 #include "KRenderingDevice.h"
 #include "KCanvasContainer.h"

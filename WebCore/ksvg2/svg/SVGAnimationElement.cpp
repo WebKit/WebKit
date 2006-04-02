@@ -22,27 +22,23 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <float.h>
-
-#include <kdom/kdom.h>
-#include "Attr.h"
-#include "Document.h"
-#include "DOMImplementation.h"
-#include "css_valueimpl.h"
-#include "PlatformString.h"
-
-#include "SVGHelper.h"
-#include "SVGURIReference.h"
-#include "SVGStyledElement.h"
 #include "SVGAnimationElement.h"
-#include "SVGSVGElement.h"
-#include "KSVGTimeScheduler.h"
-#include "SVGDocumentExtensions.h"
+
+#include "Attr.h"
 #include "CSSPropertyNames.h"
-#include "ksvgcssproperties.h"
-
+#include "DOMImplementation.h"
+#include "Document.h"
+#include "KSVGTimeScheduler.h"
+#include "PlatformString.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGHelper.h"
+#include "SVGSVGElement.h"
+#include "SVGStyledElement.h"
+#include "SVGURIReference.h"
 #include "XLinkNames.h"
-
+#include "css_valueimpl.h"
+#include "ksvgcssproperties.h"
+#include <float.h>
 #include <math.h>
 
 using namespace WebCore;

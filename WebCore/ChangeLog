@@ -1,5 +1,132 @@
 2006-04-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - removed a bunch of unneeded ForwardingHeaders and WebCore+SVG headers
+
+        * ForwardingHeaders/kcanvas: Removed.
+        * ForwardingHeaders/kcanvas/KCanvas.h: Removed.
+        * ForwardingHeaders/kdom: Removed.
+        * ForwardingHeaders/kdom/DOMString.h: Removed.
+        * ForwardingHeaders/kdom/Helper.h: Removed.
+        * ForwardingHeaders/kdom/KDOMSettings.h: Removed.
+        * ForwardingHeaders/kdom/Namespace.h: Removed.
+        * ForwardingHeaders/kdom/cache: Removed.
+        * ForwardingHeaders/kdom/cache/KDOMCachedImage.h: Removed.
+        * ForwardingHeaders/kdom/cache/KDOMCachedObject.h: Removed.
+        * ForwardingHeaders/kdom/cache/KDOMCachedObjectClient.h: Removed.
+        * ForwardingHeaders/kdom/cache/KDOMCachedScript.h: Removed.
+        * ForwardingHeaders/kdom/cache/KDOMLoader.h: Removed.
+        * ForwardingHeaders/kdom/core: Removed.
+        * ForwardingHeaders/kdom/core/DOMConfiguration.h: Removed.
+        * ForwardingHeaders/kdom/core/DOMException.h: Removed.
+        * ForwardingHeaders/kdom/core/DOMList.h: Removed.
+        * ForwardingHeaders/kdom/core/DOMString.h: Removed.
+        * ForwardingHeaders/kdom/core/NamedAttrMap.h: Removed.
+        * ForwardingHeaders/kdom/core/ProcessingInstruction.h: Removed.
+        * ForwardingHeaders/kdom/core/domattrs.h: Removed.
+        * ForwardingHeaders/kdom/ecma: Removed.
+        * ForwardingHeaders/kdom/ecma/GlobalObject.h: Removed.
+        * ForwardingHeaders/kdom/events: Removed.
+        * ForwardingHeaders/kdom/events/Event.h: Removed.
+        * ForwardingHeaders/kdom/events/EventListener.h: Removed.
+        * ForwardingHeaders/kdom/events/EventTarget.h: Removed.
+        * ForwardingHeaders/kdom/events/KeyboardEvent.h: Removed.
+        * ForwardingHeaders/kdom/events/MouseEvent.h: Removed.
+        * ForwardingHeaders/kdom/events/UIEvent.h: Removed.
+        * ForwardingHeaders/kdom/events/kdomevents.h: Removed.
+        * ForwardingHeaders/kdom/kdom.h: Removed.
+        * ForwardingHeaders/kdom/parser: Removed.
+        * ForwardingHeaders/kdom/parser/KDOMParser.h: Removed.
+        * ForwardingHeaders/ksvg2: Removed.
+        * ForwardingHeaders/ksvg2/KSVGPart.h: Removed.
+        * ForwardingHeaders/ksvg2/KSVGView.h: Removed.
+        * ForwardingHeaders/ksvg2/css: Removed.
+        * ForwardingHeaders/ksvg2/css/CSSPropertyNames.h: Removed.
+        * ForwardingHeaders/ksvg2/css/CSSValueKeywords.h: Removed.
+        * WebCore+SVG/KDOMHeaders.h: Removed.
+        * WebCore+SVG/Namespace.h: Removed.
+        * WebCore+SVG/kdom.h: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed headers.
+
+        * kcanvas/KCanvasCreator.cpp:
+        * kcanvas/KCanvasResources.cpp:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * kcanvas/RenderPath.cpp:
+        * kcanvas/RenderSVGImage.cpp:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/events/SVGZoomEvent.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        * ksvg2/misc/SVGImageLoader.cpp:
+        * ksvg2/svg/SVGAElement.cpp:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        * ksvg2/svg/SVGCircleElement.cpp:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        * ksvg2/svg/SVGCursorElement.cpp:
+        * ksvg2/svg/SVGCursorElement.h:
+        * ksvg2/svg/SVGDOMImplementation.cpp:
+        * ksvg2/svg/SVGDocument.cpp:
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGElement.cpp:
+        * ksvg2/svg/SVGEllipseElement.cpp:
+        * ksvg2/svg/SVGExternalResourcesRequired.cpp:
+        * ksvg2/svg/SVGExternalResourcesRequired.h:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFEImageElement.cpp:
+        * ksvg2/svg/SVGFEImageElement.h:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        * ksvg2/svg/SVGFilterElement.cpp:
+        * ksvg2/svg/SVGGradientElement.cpp:
+        * ksvg2/svg/SVGHelper.cpp:
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGLangSpace.cpp:
+        * ksvg2/svg/SVGLength.cpp:
+        * ksvg2/svg/SVGLineElement.cpp:
+        * ksvg2/svg/SVGLinearGradientElement.cpp:
+        * ksvg2/svg/SVGList.h:
+        * ksvg2/svg/SVGLocatable.cpp:
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGPathElement.cpp:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        * ksvg2/svg/SVGPolyElement.cpp:
+        * ksvg2/svg/SVGPolygonElement.cpp:
+        * ksvg2/svg/SVGPolylineElement.cpp:
+        * ksvg2/svg/SVGRadialGradientElement.cpp:
+        * ksvg2/svg/SVGRectElement.cpp:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * ksvg2/svg/SVGStopElement.cpp:
+        * ksvg2/svg/SVGStyleElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGStyledLocatableElement.cpp:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        * ksvg2/svg/SVGTextElement.cpp:
+        * ksvg2/svg/SVGTransformable.cpp:
+        * ksvg2/svg/SVGUseElement.cpp:
+        * ksvg2/svg/SVGViewElement.cpp:
+        Updated includes.
+
+2006-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8089

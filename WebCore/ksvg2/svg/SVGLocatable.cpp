@@ -22,13 +22,12 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/kdom.h>
-#include "SVGRect.h"
-#include "SVGMatrix.h"
-#include "SVGElement.h"
 #include "SVGLocatable.h"
-#include "SVGSVGElement.h"
 
+#include "SVGElement.h"
+#include "SVGMatrix.h"
+#include "SVGRect.h"
+#include "SVGSVGElement.h"
 #include <kcanvas/RenderPath.h>
 
 using namespace WebCore;

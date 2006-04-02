@@ -38,7 +38,6 @@
 #include "SVGRadialGradientElement.h"
 #include "SVGAnimatedTransformList.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>

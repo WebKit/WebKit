@@ -22,25 +22,21 @@
 
 #include "config.h"
 #if SVG_SUPPORT
+#include "SVGFEImageElement.h"
 
 #include "Attr.h"
-#include <kdom/cache/KDOMLoader.h>
-#include <kdom/cache/KDOMCachedObject.h>
-#include "Document.h"
+#include "CachedImage.h"
 #include "DocLoader.h"
-
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGFEImageElement.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedString.h"
+#include "Document.h"
 #include "KCanvasRenderingStyle.h"
+#include "KCanvasRenderingStyle.h"
+#include "SVGAnimatedLength.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
-
-#include <kcanvas/KCanvas.h>
+#include "SVGAnimatedString.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasImage.h>
-#include "KCanvasRenderingStyle.h"
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 

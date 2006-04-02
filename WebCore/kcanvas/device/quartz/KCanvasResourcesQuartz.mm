@@ -37,7 +37,6 @@
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
 #import "SVGRenderStyle.h"
-#import <kcanvas/KCanvas.h>
 #import <kxmlcore/Assertions.h>
 
 namespace WebCore {

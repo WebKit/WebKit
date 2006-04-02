@@ -31,7 +31,6 @@
 #import <kxmlcore/Assertions.h>
 
 #import "kcanvas/RenderPath.h"
-#import "kcanvas/KCanvas.h"
 #import "KCanvasRenderingStyle.h"
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"

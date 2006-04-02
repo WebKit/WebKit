@@ -22,13 +22,14 @@
 
 #include "config.h"
 #if SVG_SUPPORT
+#include "SVGCursorElement.h"
+
 #include "Attr.h"
+#include "CachedImage.h"
 #include "Document.h"
 #include "DocLoader.h"
-
 #include "SVGNames.h"
 #include "SVGHelper.h"
-#include "SVGCursorElement.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
 

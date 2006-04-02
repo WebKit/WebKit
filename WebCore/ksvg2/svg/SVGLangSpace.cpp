@@ -22,14 +22,13 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/core/domattrs.h>
-#include "Attr.h"
-#include "StringImpl.h"
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "SVGElement.h"
 #include "SVGLangSpace.h"
+
+#include "Attr.h"
+#include "SVGElement.h"
+#include "SVGNames.h"
+#include "StringImpl.h"
+#include "ksvg.h"
 
 using namespace WebCore;
 

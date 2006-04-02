@@ -25,7 +25,6 @@
 
 #include "Attr.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingDevice.h>
 

@@ -26,13 +26,13 @@
 
 #include "Document.h"
 #include "FrameView.h"
+#include "RenderCanvas.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedRect.h"
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
 #include "ksvg.h"
 #include <math.h>
-#include <kcanvas/KCanvas.h>
 
 using namespace WebCore;
 using namespace std;

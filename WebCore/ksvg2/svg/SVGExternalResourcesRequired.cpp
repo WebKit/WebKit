@@ -22,15 +22,15 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include "Attr.h"
+#include "SVGExternalResourcesRequired.h"
 
+#include "Attr.h"
 #include "SVGNames.h"
 #include "SVGHelper.h"
 #include "SVGElement.h"
 #include "SVGAnimatedBoolean.h"
-#include "SVGExternalResourcesRequired.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGExternalResourcesRequired::SVGExternalResourcesRequired()
 {
@@ -45,9 +45,9 @@ SVGAnimatedBoolean *SVGExternalResourcesRequired::externalResourcesRequired() co
     return lazy_create<SVGAnimatedBoolean>(m_external, static_cast<const SVGStyledElement *>(0));
 }
 
-bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute *attr)
+bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute* attr)
 {
-    const String& value = attr->value();
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::externalResourcesRequiredAttr) {
         externalResourcesRequired()->setBaseVal(value == "true");
         return true;
@@ -56,6 +56,7 @@ bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute *attr)
     return false;
 }
 
+}
+
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
-

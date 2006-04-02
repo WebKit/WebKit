@@ -28,8 +28,6 @@
 #include "SVGURIReference.h"
 #include "SVGLangSpace.h"
 #include "SVGExternalResourcesRequired.h"
-#include <kdom/cache/KDOMCachedImage.h>
-#include <kdom/cache/KDOMCachedObjectClient.h>
 #include "KCanvasFilters.h"
 
 namespace WebCore {

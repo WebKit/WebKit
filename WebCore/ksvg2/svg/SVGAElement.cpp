@@ -22,25 +22,22 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include "Attr.h"
-#include <kdom/events/MouseEvent.h>
-#include <kdom/Helper.h>
-#include "dom2_eventsimpl.h"
-#include "csshelper.h"
-#include "Document.h"
+#include "SVGAElement.h"
 
-#include <kcanvas/KCanvasCreator.h>
+#include "Attr.h"
+#include "Document.h"
+#include "EventNames.h"
+#include "Frame.h"
+#include "SVGAnimatedString.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "csshelper.h"
+#include "dom2_eventsimpl.h"
 #include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
-#include "EventNames.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include <ksvg2/KSVGPart.h>
-#include "SVGAElement.h"
-#include "SVGAnimatedString.h"
-
-using namespace WebCore;
+namespace WebCore {
 
 SVGAElement::SVGAElement(const QualifiedName& tagName, Document *doc)
 : SVGStyledTransformableElement(tagName, doc), SVGURIReference(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
@@ -90,7 +87,7 @@ void SVGAElement::defaultEventHandler(Event *evt)
         DeprecatedString utarget;
         if(e && e->button() == 2)
         {
-            EventTarget::defaultEventHandler(evt);
+            SVGStyledTransformableElement::defaultEventHandler(evt);
             return;
         }
         url = parseURL(href()->baseVal()).deprecatedString();
@@ -110,9 +107,10 @@ void SVGAElement::defaultEventHandler(Event *evt)
         evt->setDefaultHandled();
     }
 
-    EventTarget::defaultEventHandler(evt);
+    SVGStyledTransformableElement::defaultEventHandler(evt);
+}
+
 }
 
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
-

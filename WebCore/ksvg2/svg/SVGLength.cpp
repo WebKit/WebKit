@@ -24,7 +24,6 @@
 #if SVG_SUPPORT
 #include "IntRect.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/RenderPath.h>
 #include "KCanvasRenderingStyle.h"
 

@@ -24,7 +24,7 @@
 #define KDOM_SVGZoomEventImpl_H
 #if SVG_SUPPORT
 
-#include <kdom/events/UIEvent.h>
+#include "dom2_eventsimpl.h"
 
 namespace WebCore
 {

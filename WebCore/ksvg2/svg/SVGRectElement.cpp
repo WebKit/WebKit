@@ -33,7 +33,6 @@
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 #include <kcanvas/device/KRenderingPaintServerSolid.h>
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 
 namespace WebCore {

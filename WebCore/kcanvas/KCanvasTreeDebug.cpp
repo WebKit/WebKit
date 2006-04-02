@@ -30,7 +30,6 @@
 #include "KCanvasTreeDebug.h"
 
 #include <math.h>
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/RenderPath.h>
 #include <kcanvas/KCanvasContainer.h>

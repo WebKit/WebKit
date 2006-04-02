@@ -24,20 +24,15 @@
 #define KSVG_SVGMarkerElementImpl_H
 #if SVG_SUPPORT
 
-#include "SVGLangSpace.h"
-#include "SVGFitToViewBox.h"
-#include "SVGStyledElement.h"
+#include "KCanvasResources.h"
 #include "SVGExternalResourcesRequired.h"
-
-class KCanvasMarker;
+#include "SVGFitToViewBox.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledElement.h"
 
 namespace WebCore
 {
     class Document;
-};
-
-namespace WebCore
-{
     class SVGAngle;
     class SVGAnimatedAngle;
     class SVGAnimatedLength;

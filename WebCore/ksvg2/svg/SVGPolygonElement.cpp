@@ -25,7 +25,6 @@
 #include "SVGPointList.h"
 #include "SVGPolygonElement.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
 

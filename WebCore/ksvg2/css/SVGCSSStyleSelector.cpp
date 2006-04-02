@@ -40,8 +40,8 @@
 #include "css_ruleimpl.h"
 #include "CSSValueKeywords.h"
 #include "ksvg.h"
-#include <ksvg2/css/CSSPropertyNames.h>
-#include <ksvg2/css/CSSValueKeywords.h>
+#include "ksvgcssvalues.h"
+#include "ksvgcssproperties.h"
 #include <stdlib.h>
 
 #define HANDLE_INHERIT(prop, Prop) \

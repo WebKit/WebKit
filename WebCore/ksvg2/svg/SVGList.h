@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include <q3ptrlist.h>
-#include <kdom/core/DOMList.h>
+#include "DOMList.h"
 #include <ksvg2/svg/SVGStyledElement.h>
 
 namespace WebCore

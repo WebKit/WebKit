@@ -22,16 +22,15 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/kdom.h>
 #include "SVGTextElement.h"
-#include "SVGTSpanElement.h"
+
+#include "KCanvasRenderingStyle.h"
 #include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGMatrix.h"
 #include "SVGRenderStyle.h"
-#include "KCanvasRenderingStyle.h"
+#include "SVGTSpanElement.h"
 #include "render_style.h"
-
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/RenderSVGText.h>
 

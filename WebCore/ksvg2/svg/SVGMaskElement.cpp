@@ -36,7 +36,6 @@
 #include "SVGRenderStyle.h"
 #include "cssstyleselector.h"
 #include "ksvg.h"
-#include <kcanvas/KCanvas.h>
 #include "Attr.h"
 
 namespace WebCore {

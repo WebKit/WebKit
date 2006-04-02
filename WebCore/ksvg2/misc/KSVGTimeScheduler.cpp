@@ -36,7 +36,6 @@
 #include "SVGStyledTransformableElement.h"
 #include "SystemTime.h"
 #include "Timer.h"
-#include <kcanvas/KCanvas.h>
 
 namespace WebCore {
 

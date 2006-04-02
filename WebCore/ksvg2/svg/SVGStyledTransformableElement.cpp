@@ -27,7 +27,6 @@
 
 #include "Attr.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/RenderPath.h>
 
 #include "SVGHelper.h"

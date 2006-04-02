@@ -22,20 +22,19 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include "Attr.h"
+#include "SVGClipPathElement.h"
 
-#include <kcanvas/KCanvas.h>
+#include "Attr.h"
+#include "Document.h"
+#include "RenderCanvas.h"
+#include "SVGAnimatedEnumeration.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "SVGRenderStyle.h"
+#include "cssstyleselector.h"
+#include "ksvg.h"
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/device/KRenderingDevice.h>
-#include "cssstyleselector.h"
-#include "Document.h"
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
-#include "SVGClipPathElement.h"
-#include "SVGAnimatedEnumeration.h"
 
 using namespace WebCore;
 

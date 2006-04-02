@@ -29,7 +29,6 @@
 #include "SVGEllipseElement.h"
 #include "SVGAnimatedLength.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 
 namespace WebCore {

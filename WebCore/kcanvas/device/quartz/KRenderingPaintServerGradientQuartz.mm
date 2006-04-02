@@ -32,7 +32,6 @@
 
 #import "RenderObject.h"
 
-#import "kcanvas/KCanvas.h"
 #import "KCanvasRenderingStyle.h"
 #import "KRenderingPaintServer.h"
 #import "KRenderingFillPainter.h"

@@ -24,32 +24,26 @@
 #if SVG_SUPPORT
 #include "SVGStyledElement.h"
 
-#include <kdom/kdom.h>
 #include "Attr.h"
-#include <kdom/core/domattrs.h>
-#include "PlatformString.h"
 #include "Document.h"
-
-#include <kxmlcore/Assertions.h>
-
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/RenderPath.h>
+#include "KCanvasRenderingStyle.h"
+#include "PlatformString.h"
+#include "RenderCanvas.h"
+#include "RenderPath.h"
+#include "SVGAnimatedString.h"
+#include "SVGDOMImplementation.h"
+#include "SVGElement.h"
+#include "SVGHelper.h"
+#include "SVGMatrix.h"
+#include "SVGNames.h"
+#include "SVGRenderStyle.h"
+#include "SVGSVGElement.h"
+#include "css_base.h"
+#include "ksvg.h"
+#include "ksvgcssproperties.h"
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
-
-#include "ksvg.h"
-#include "SVGMatrix.h"
-#include "SVGRenderStyle.h"
-#include "SVGElement.h"
-#include "SVGSVGElement.h"
-#include "SVGAnimatedString.h"
-#include "KCanvasRenderingStyle.h"
-#include "SVGDOMImplementation.h"
-#include "ksvgcssproperties.h"
-#include "css_base.h"
-#include "SVGHelper.h"
-
-#include "SVGNames.h"
+#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

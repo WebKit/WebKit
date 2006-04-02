@@ -25,12 +25,6 @@
 #if SVG_SUPPORT
 #include "SVGDOMImplementation.h"
 
-#include <kdom/Helper.h>
-#include <kdom/Namespace.h>
-#include <kdom/core/DOMException.h>
-#include <kdom/kdom.h>
-#include <kxmlcore/HashSet.h>
-
 #include "Document.h"
 #include "DocumentType.h"
 #include "ExceptionCode.h"
@@ -40,6 +34,7 @@
 #include "SVGSVGElement.h"
 #include "css_stylesheetimpl.h"
 #include "ksvg.h"
+#include <kxmlcore/HashSet.h>
 
 using namespace WebCore;
 

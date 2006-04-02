@@ -23,7 +23,6 @@
 #if SVG_SUPPORT
 
 #include "Attr.h"
-#include <kdom/cache/KDOMLoader.h>
 #include "DocLoader.h"
 #include "Document.h"
 

@@ -22,42 +22,29 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <assert.h>
+#include "SVGDocument.h"
 
-#include "KURL.h"
-
-#include <kdom/Helper.h>
-#include "Shared.h"
-#include <kdom/Namespace.h>
-#include <kdom/core/domattrs.h>
-#include <kdom/cache/KDOMLoader.h>
+#include "CachedScript.h"
 #include "DocLoader.h"
-#include <kdom/cache/KDOMCachedObject.h>
-#include "cssstyleselector.h"
-#include "css_stylesheetimpl.h"
-#include <kdom/events/MouseEvent.h>
-#include <kdom/events/KeyboardEvent.h>
-#include <kdom/core/ProcessingInstruction.h>
-
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/RenderPath.h>
-
-#include "ksvg.h"
-//#include "Ecma.h"
-#include <ksvg2/KSVGView.h>
-#include "SVGElement.h"
-#include "SVGRenderStyle.h"
-#include "SVGZoomEvent.h"
+#include "EventNames.h"
 #include "KSVGTimeScheduler.h"
-#include "SVGSVGElement.h"
+#include "KURL.h"
 #include "SVGAnimatedString.h"
 #include "SVGDOMImplementation.h"
-#include "SVGScriptElement.h"
+#include "SVGElement.h"
 #include "SVGElementFactory.h"
+#include "SVGRenderStyle.h"
+#include "SVGSVGElement.h"
+#include "SVGScriptElement.h"
 #include "SVGStyleElement.h"
 #include "SVGTitleElement.h"
-#include "SVGDocument.h"
-#include "EventNames.h"
+#include "SVGZoomEvent.h"
+#include "Shared.h"
+#include "css_stylesheetimpl.h"
+#include "cssstyleselector.h"
+#include "ksvg.h"
+#include <assert.h>
+#include <kcanvas/RenderPath.h>
 
 namespace WebCore {
 
@@ -265,24 +252,6 @@ void SVGDocument::recalcStyle(StyleChange change)
         if(change >= Inherit || n->hasChangedChild() || n->changed())
             n->recalcStyle(change);
     }
-}
-
-void SVGDocument::dispatchUIEvent(EventTarget *target, const AtomicString &type)
-{
-    // Setup kdom 'UIEvent'...
-    ExceptionCode ec;
-    RefPtr<UIEvent> event = static_pointer_cast<UIEvent>(createEvent("UIEvents", ec));
-    event->initUIEvent(type, true, true, 0, 0);
-    target->dispatchEvent(event.get(), ec);
-}
-
-void SVGDocument::dispatchMouseEvent(EventTarget *target, const AtomicString &type)
-{
-    // Setup kdom 'PlatformMouseEvent'...
-    ExceptionCode ec;
-    RefPtr<MouseEvent> event = static_pointer_cast<MouseEvent>(createEvent("MouseEvents", ec));
-    event->initEvent(type, true, true);
-    target->dispatchEvent(event.get(), ec);
 }
 
 void SVGDocument::addForwardReference(const SVGElement *element)

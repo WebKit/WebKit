@@ -36,7 +36,6 @@
 #include "SVGLinearGradientElement.h"
 #include "SVGAnimatedTransformList.h"
 
-#include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/device/KRenderingDevice.h>

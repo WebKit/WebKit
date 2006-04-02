@@ -28,7 +28,6 @@
 #if SVG_SUPPORT
 #import "KCanvasMaskerQuartz.h"
 
-#import "kcanvas/KCanvas.h"
 #import "SVGRenderStyle.h"
 
 #import "KCanvasResourcesQuartz.h"
