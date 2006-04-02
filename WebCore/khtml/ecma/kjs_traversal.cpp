@@ -329,9 +329,9 @@ void JSNodeFilterCondition::mark()
     filter->mark();
 }
 
-short JSNodeFilterCondition::acceptNode(Node* filterNode) const
+short JSNodeFilterCondition::acceptNode(WebCore::Node* filterNode) const
 {
-    Node *node = filterNode;
+    WebCore::Node *node = filterNode;
     Frame *frame = node->document()->frame();
     KJSProxy *proxy = frame->jScript();
     if (proxy && filter->implementsCall()) {

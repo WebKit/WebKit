@@ -83,7 +83,7 @@ JSValue *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
         return jsUndefined();
       }
 
-      Node *node = static_cast<Node *>(static_cast<DOMNode *>(args[0]->toObject(exec))->impl());
+      WebCore::Node* node = static_cast<WebCore::Node*>(static_cast<DOMNode*>(args[0]->toObject(exec))->impl());
       return jsStringOrNull(WebCore::createMarkup(node));
     }
   }

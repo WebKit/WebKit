@@ -197,7 +197,7 @@ JSValue *JSHTMLDocument::namedItemGetter(ExecState *exec, JSObject *originalObje
   RefPtr<WebCore::HTMLCollection> collection = doc.documentNamedItems(name);
 
   if (collection->length() == 1) {
-    Node* node = collection->firstItem();
+    WebCore::Node* node = collection->firstItem();
     Frame *frame;
     if (node->hasTagName(iframeTag) && (frame = static_cast<WebCore::HTMLIFrameElement *>(node)->contentFrame()))
       return Window::retrieve(frame);
@@ -1210,7 +1210,7 @@ JSValue *JSHTMLElement::framesetNameGetter(ExecState *exec, JSObject *originalOb
     JSHTMLElement *thisObj = static_cast<JSHTMLElement *>(slot.slotBase());
     HTMLElement *element = static_cast<HTMLElement *>(thisObj->impl());
 
-    Node *frame = element->children()->namedItem(propertyName);
+    WebCore::Node *frame = element->children()->namedItem(propertyName);
     if (Document* doc = static_cast<HTMLFrameElement *>(frame)->contentDocument())
         if (Window *window = Window::retrieveWindow(doc->frame()))
             return window;
@@ -1266,7 +1266,7 @@ bool JSHTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& proper
             return true;
         }
     } else if (element.hasLocalName(framesetTag)) {
-        Node *frame = element.children()->namedItem(propertyName);
+        WebCore::Node *frame = element.children()->namedItem(propertyName);
         if (frame && frame->hasTagName(frameTag)) {
             slot.setCustom(this, framesetNameGetter);
             return true;
@@ -2205,7 +2205,7 @@ void JSHTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) co
   if (form)
     scope.push(static_cast<JSObject *>(toJS(exec, form)));
   else {
-    Node *form = element->parentNode();
+    WebCore::Node* form = element->parentNode();
     while (form && !form->hasTagName(formTag))
       form = form->parentNode();
     
@@ -3277,7 +3277,7 @@ JSValue *JSHTMLCollection::callAsFunction(ExecState *exec, JSObject *, const Lis
     if (ok)
     {
       WebCore::String pstr = s;
-      Node *node = collection.namedItem(pstr);
+      WebCore::Node *node = collection.namedItem(pstr);
       while (node) {
         if (!u)
           return toJS(exec,node);
@@ -3291,7 +3291,7 @@ JSValue *JSHTMLCollection::callAsFunction(ExecState *exec, JSObject *, const Lis
 
 JSValue *JSHTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
 {
-    DeprecatedValueList< RefPtr<Node> > namedItems = m_impl->namedItems(propertyName);
+    DeprecatedValueList< RefPtr<WebCore::Node> > namedItems = m_impl->namedItems(propertyName);
 
     if (namedItems.isEmpty())
         return jsUndefined();
@@ -3395,7 +3395,7 @@ void JSHTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName
   }
 
   // is v an option element ?
-  Node *option = toNode(value);
+  WebCore::Node *option = toNode(value);
   if (!option || !option->hasTagName(optionTag))
     return;
 

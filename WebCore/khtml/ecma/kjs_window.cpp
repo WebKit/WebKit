@@ -1014,18 +1014,16 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
 {
   // Called by an internal KJS call (e.g. InterpreterImp's constructor) ?
   // If yes, save time and jump directly to JSObject.
-  if ( (attr != None && attr != DontDelete)
+  if ((attr != None && attr != DontDelete)
        // Same thing if we have a local override (e.g. "var location")
-       || ( JSObject::getDirect(propertyName) && isSafeScript(exec)) )
-  {
+       || (JSObject::getDirect(propertyName) && isSafeScript(exec))) {
     JSObject::put( exec, propertyName, value, attr );
     return;
   }
 
   const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
-  if (entry)
-  {
-    switch( entry->value ) {
+  if (entry) {
+    switch(entry->value) {
     case Status:
       m_frame->setJSStatusBarText(value->toString(exec));
       return;
@@ -1036,8 +1034,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
       Frame* p = Window::retrieveActive(exec)->m_frame;
       if (p) {
         DeprecatedString dstUrl = p->document()->completeURL(DeprecatedString(value->toString(exec)));
-        if (!dstUrl.startsWith("javascript:", false) || isSafeScript(exec))
-        {
+        if (!dstUrl.startsWith("javascript:", false) || isSafeScript(exec)) {
           bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
           // We want a new history item if this JS was called via a user gesture
           m_frame->scheduleLocationChange(dstUrl, p->referrer(), !userGesture, userGesture);
@@ -1161,9 +1158,8 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
       break;
     }
   }
-  if (isSafeScript(exec)) {
+  if (isSafeScript(exec))
     JSObject::put(exec, propertyName, value, attr);
-  }
 }
 
 bool Window::toBoolean(ExecState *) const

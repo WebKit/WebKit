@@ -212,7 +212,7 @@ void JSEventListener::clearWindowObj()
 
 // -------------------------------------------------------------------------
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& code, Window* win, Node* node, int lineno)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& code, Window* win, WebCore::Node* node, int lineno)
   : JSEventListener(0, win, true)
   , m_functionName(functionName)
   , code(code)
@@ -667,7 +667,7 @@ JSValue *ClipboardProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, 
             int y = (int)args[2]->toNumber(exec);
 
             // See if they passed us a node
-            Node *node = toNode(args[0]);
+            WebCore::Node *node = toNode(args[0]);
             if (!node)
                 return throwError(exec, TypeError);
             

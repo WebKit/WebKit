@@ -181,7 +181,7 @@ using namespace KJS;
     return document;
 }
 
-- (Node *)mousePressNode
+- (WebCore::Node *)mousePressNode
 {
     return mousePressNode;
 }

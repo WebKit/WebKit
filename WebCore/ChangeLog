@@ -1,3 +1,51 @@
+2006-04-02  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Make WebCore safe against KJS::Node in JavaScriptCore private headers.
+
+        * editing/ReplaceSelectionCommand.h:
+        * khtml/ecma/JSXMLSerializer.cpp:
+        (KJS::XMLSerializerProtoFunc::callAsFunction):
+        * khtml/ecma/JSXSLTProcessor.cpp:
+        (KJS::XSLTProcessorProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::forgetDOMNodeForDocument):
+        (KJS::ScriptInterpreter::putDOMNodeForDocument):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::DOMNode):
+        (KJS::DOMNode::mark):
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        (KJS::toNode):
+        (KJS::DOMEventTargetNode::DOMEventTargetNode):
+        (KJS::DOMDocumentProtoFunc::callAsFunction):
+        (KJS::DOMElement::putValueProperty):
+        (KJS::DOMElementProtoFunc::callAsFunction):
+        (KJS::checkNodeSecurity):
+        (KJS::toJS):
+        (KJS::getRuntimeObject):
+        (KJS::DOMNamedNodesCollection::DOMNamedNodesCollection):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSLazyEventListener::JSLazyEventListener):
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::JSHTMLDocument::namedItemGetter):
+        (KJS::JSHTMLElement::framesetNameGetter):
+        (KJS::JSHTMLElement::getOwnPropertySlot):
+        (KJS::JSHTMLElement::pushEventHandlerScope):
+        (KJS::JSHTMLCollection::callAsFunction):
+        (KJS::JSHTMLCollection::getNamedItems):
+        (KJS::JSHTMLSelectCollection::put):
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::put):
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState WebCore::]):
+
 2006-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

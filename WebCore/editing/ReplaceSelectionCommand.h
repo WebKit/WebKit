@@ -46,7 +46,7 @@ private:
     bool m_isBlockFlow;
 };
 
-typedef Vector<RefPtr<Node> > NodeVector;
+typedef Vector<RefPtr<WebCore::Node> > NodeVector;
 typedef HashMap<Node*, RefPtr<RenderingInfo> > RenderingInfoMap;
 
 // --- ReplacementFragment helper class
