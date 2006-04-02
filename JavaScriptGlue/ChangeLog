@@ -1,3 +1,11 @@
+2006-04-02  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Add missing forwarding header.
+
+        * kxmlcore/Vector.h: Added.
+
 2006-03-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
