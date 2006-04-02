@@ -1,3 +1,15 @@
+2006-04-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8118
+          REGRESSION (r13595): Inline block's clipped overflow increases table row height
+
+        * fast/inline-block/overflow-clip-expected.checksum: Added.
+        * fast/inline-block/overflow-clip-expected.png: Added.
+        * fast/inline-block/overflow-clip-expected.txt: Added.
+        * fast/inline-block/overflow-clip.html: Added.
+
 2006-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

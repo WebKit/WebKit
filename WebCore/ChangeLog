@@ -1,3 +1,16 @@
+2006-04-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/inline-block/overflow-clip.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8118
+          REGRESSION (r13595): Inline block's clipped overflow increases table row height
+
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::placeBoxesVertically): Don't look at interior overflow
+        when calculating the contribution to the inline's vertical overflows.
+
 2006-04-02  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.
