@@ -1,5 +1,26 @@
 2006-04-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8089
+          REGRESSION: Caret position is off in native text field with text-align:right
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8082
+          REGRESSION: Empty RTL text fields place the caret on the left side
+
+        Need a way to make a test for this. No obvious way at the moment.
+
+        * rendering/RenderFlow.cpp: (WebCore::RenderFlow::caretRect):
+        Consider border, padding, and the width of the caret properly in the
+        calculation of the caret's X position.
+
+        * rendering/RenderBox.cpp: (WebCore::RenderBox::caretRect):
+        Fixed some similar issues and rewrote this function for clarity.
+        However, I suspect this function was and remains broken and is almost
+        never called.
+
+2006-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Justin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8106

@@ -579,54 +579,68 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
 
 IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
-    if (firstChild() || style()->display() == INLINE) {
-        // Do the normal calculation
+    // Do the normal calculation in most cases.
+    if (firstChild() || style()->display() == INLINE)
         return RenderContainer::caretRect(offset, affinity, extraWidthToEndOfLine);
-    }
 
     // This is a special case:
     // The element is not an inline element, and it's empty. So we have to
     // calculate a fake position to indicate where objects are to be inserted.
     
-    int _x, _y, width, height;
-    
-    // EDIT FIXME: this does neither take into regard :first-line nor :first-letter
+    // FIXME: This does not take into account either :first-line or :first-letter
     // However, as soon as some content is entered, the line boxes will be
-    // constructed properly and this kludge is not called any more. So only
-    // the caret size of an empty :first-line'd block is wrong, but I think we
-    // can live with that.
+    // constructed and this kludge is not called any more. So only the caret size
+    // of an empty :first-line'd block is wrong. I think we can live with that.
     RenderStyle *currentStyle = firstLineStyle();
-    height = lineHeight(true);
-    width = 1;
+    int height = lineHeight(true);
+    const int caretWidth = 1;
 
-    // EDIT FIXME: This needs to account for text direction
-    int w = this->width();
+    enum CaretAlignment { alignLeft, alignRight, alignCenter };
+
+    CaretAlignment alignment = alignLeft;
+
     switch (currentStyle->textAlign()) {
-        case LEFT:
-        case KHTML_LEFT:
         case TAAUTO:
         case JUSTIFY:
-        default:
-            _x = 0;
+            if (currentStyle->direction() == RTL)
+                alignment = alignRight;
+            break;
+        case LEFT:
+        case KHTML_LEFT:
             break;
         case CENTER:
         case KHTML_CENTER:
-            _x = w / 2;
-        break;
+            alignment = alignCenter;
+            break;
         case RIGHT:
         case KHTML_RIGHT:
-            _x = w;
-        break;
+            alignment = alignRight;
+            break;
     }
-    
-    _y = 0;
-    
+
+    int x = borderLeft() + paddingLeft();
+    int w = width();
+
+    switch (alignment) {
+        case alignLeft:
+            break;
+        case alignCenter:
+            x = (x + w - (borderRight() + paddingRight())) / 2;
+            break;
+        case alignRight:
+            x = w - (borderRight() + paddingRight());
+            break;
+    }
 
     if (extraWidthToEndOfLine) {
         if (isRenderBlock()) {
-            *extraWidthToEndOfLine = this->width() - (_x + width);
+            *extraWidthToEndOfLine = w - (x + caretWidth);
         } else {
-            int myRight = _x + width;
+            // FIXME: This code looks wrong.
+            // myRight and containerRight are set up, but then clobbered.
+            // So *extraWidthToEndOfLine will always be 0 here.
+
+            int myRight = x + caretWidth;
             int ignore;
             absolutePositionForContent(myRight, ignore);
             
@@ -639,10 +653,10 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToE
 
     int absx, absy;
     absolutePositionForContent(absx, absy);
-    _x += absx + paddingLeft() + borderLeft();
-    _y += absy + paddingTop() + borderTop();
+    x += absx;
+    int y = absy + paddingTop() + borderTop();
 
-    return IntRect(_x, _y, width, height);
+    return IntRect(x, y, caretWidth, height);
 }
 
 void RenderFlow::addFocusRingRects(GraphicsContext* p, int _tx, int _ty)
