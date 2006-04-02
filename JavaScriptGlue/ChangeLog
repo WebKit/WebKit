@@ -1,3 +1,44 @@
+2006-03-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed <rdar://problem/4430836> JavaScript patch crashing Quartz
+        Composer
+
+        JSValueWrappers used to hold on to the ExecState that pertained at
+        the time of their creation. Since ExecStates are transient, that
+        design was totally bogus, and it would crash once the ExecState had
+        been deallocated.
+
+        Unfortunately, there's no clean solution to this problem, since
+        the JSGlue API has no notion of state. The solution here is to use
+        a shared, global ExecState for the purpose of JSGlue calls. Given
+        the pre-existing limitations in the JSGlue API, this design
+        shouldn't actually introduce any new limitations (see comments in
+        JSValueWrapper.cpp).
+
+        I tested with Quartz Composer and PAC files, neither of which are
+        layout-testable.
+        
+        * JSUtils.cpp:
+        (KJSValueToJSObject):
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSValueWrapper):
+        (JSValueWrapper::GetValue):
+        (getProcessGlobalExecState):
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        (JSValueWrapper::JSObjectCopyCFValue):
+        * JSValueWrapper.h:
+
+        Also added a test harness file. It was helpful while I was testing,
+        and may come in handy in the future:
+        
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+        testjsglue.cpp: Added.
+
 2006-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

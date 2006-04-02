@@ -111,7 +111,7 @@ JSUserObject* KJSValueToJSObject(JSValue *inValue, ExecState *exec)
         if (result)
             result->Retain();
     } else {
-        JSValueWrapper* wrapperValue = new JSValueWrapper(inValue, exec);
+        JSValueWrapper* wrapperValue = new JSValueWrapper(inValue);
         if (wrapperValue) {
             JSObjectCallBacks callBacks;
             JSValueWrapper::GetJSObectCallBacks(callBacks);

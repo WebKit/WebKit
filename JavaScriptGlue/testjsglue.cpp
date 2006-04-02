@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,32 +26,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSValueWrapper_h
-#define JSValueWrapper_h
+#include "CoreFoundation/CoreFoundation.h"
+#include "JavaScriptGlue.h"
 
-#include "JSUtils.h"
-#include "JSBase.h"
-#include "JSObject.h"
+CFStringRef script = 
+CFSTR("\
+x = 1; \n\
+function getX() \n\
+{ \n\
+    return x; \n\
+} \n\
+");
 
-class JSValueWrapper {
-public:
-    JSValueWrapper(JSValue *inValue);
-    virtual ~JSValueWrapper();
+int main(int argc, char* argv[])
+{
+    JSRunRef jsRun = JSRunCreate(script, kJSFlagNone);
+    if (!JSRunCheckSyntax(jsRun)) {
+        return -1;
+    }
+    JSObjectRef globalObject = JSRunCopyGlobalObject(jsRun);
+    JSRunEvaluate(jsRun);
+    JSObjectRef getX = JSObjectCopyProperty(globalObject, CFSTR("getX"));
+    JSObjectRef jsResult = JSObjectCallFunction(getX, globalObject, 0);
 
-    static void GetJSObectCallBacks(JSObjectCallBacks& callBacks);
-
-    JSValue *GetValue();
-
-private:
-    ProtectedPtr<JSValue> fValue;
+    if (jsResult) {
+        CFTypeRef cfResult = JSObjectCopyCFValue(jsResult);
+        CFShow(cfResult);
+        
+        CFRelease(cfResult);
+        JSRelease(jsResult);
+    }
     
-    static void JSObjectDispose(void *data);
-    static CFArrayRef JSObjectCopyPropertyNames(void *data);
-    static JSObjectRef JSObjectCopyProperty(void *data, CFStringRef propertyName);
-    static void JSObjectSetProperty(void *data, CFStringRef propertyName, JSObjectRef jsValue);
-    static JSObjectRef JSObjectCallFunction(void *data, JSObjectRef thisObj, CFArrayRef args);
-    static CFTypeRef JSObjectCopyCFValue(void *data);
-    static void JSObjectMark(void *data);
-};
-
-#endif
+    JSRelease(jsRun);
+    
+    return 0;
+}

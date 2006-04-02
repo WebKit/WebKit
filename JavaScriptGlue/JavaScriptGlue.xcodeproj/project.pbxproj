@@ -6,7 +6,27 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		1422E8C409DE3EA600749B87 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 1422E8DD09DE3EF500749B87 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			buildSettings = {
+				PRODUCT_NAME = All;
+			};
+			dependencies = (
+				1422E8CA09DE3EB100749B87 /* PBXTargetDependency */,
+				1422E8C809DE3EAD00749B87 /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
+		1422E87B09DE3BF000749B87 /* testjsglue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1422E86709DE3BCE00749B87 /* testjsglue.cpp */; };
+		1422E88209DE3C0400749B87 /* JavaScriptGlue.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD66F3D608F73ED700C75FD7 /* JavaScriptGlue.framework */; };
 		DD66F3BB08F73ED700C75FD7 /* JavaScriptGlue.h in Headers */ = {isa = PBXBuildFile; fileRef = F11798B30262465703CA149D /* JavaScriptGlue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD66F3BC08F73ED700C75FD7 /* JSBase.h in Headers */ = {isa = PBXBuildFile; fileRef = F11798B9026246FD03CA149D /* JSBase.h */; };
 		DD66F3BD08F73ED700C75FD7 /* JSUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = F11798B7026246FD03CA149D /* JSUtils.h */; };
@@ -51,10 +71,29 @@
 		};
 /* End PBXBuildStyle section */
 
+/* Begin PBXContainerItemProxy section */
+		1422E8C709DE3EAD00749B87 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1422E87609DE3BE800749B87;
+			remoteInfo = testjsglue;
+		};
+		1422E8C909DE3EB100749B87 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD66F3B908F73ED700C75FD7;
+			remoteInfo = JavaScriptGlue;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; indentWidth = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		1422E86709DE3BCE00749B87 /* testjsglue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = testjsglue.cpp; sourceTree = "<group>"; };
+		1422E87709DE3BE800749B87 /* testjsglue */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testjsglue; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD66F3D508F73ED700C75FD7 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD66F3D608F73ED700C75FD7 /* JavaScriptGlue.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptGlue.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,6 +116,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1422E87509DE3BE800749B87 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1422E88209DE3C0400749B87 /* JavaScriptGlue.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD66F3CD08F73ED700C75FD7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -93,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				DD66F3D608F73ED700C75FD7 /* JavaScriptGlue.framework */,
+				1422E87709DE3BE800749B87 /* testjsglue */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,6 +148,7 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptGlue */ = {
 			isa = PBXGroup;
 			children = (
+				1422E86709DE3BCE00749B87 /* testjsglue.cpp */,
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
@@ -186,6 +235,30 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		1422E87609DE3BE800749B87 /* testjsglue */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1422E88609DE3C2200749B87 /* Build configuration list for PBXNativeTarget "testjsglue" */;
+			buildPhases = (
+				1422E87409DE3BE800749B87 /* Sources */,
+				1422E87509DE3BE800749B87 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = testjsglue;
+				ZERO_LINK = YES;
+			};
+			dependencies = (
+			);
+			name = testjsglue;
+			productName = testjsglue;
+			productReference = 1422E87709DE3BE800749B87 /* testjsglue */;
+			productType = "com.apple.product-type.tool";
+		};
 		DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DD66F3D108F73ED700C75FD7 /* Build configuration list for PBXNativeTarget "JavaScriptGlue" */;
@@ -252,6 +325,8 @@
 			projectDirPath = "";
 			targets = (
 				DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */,
+				1422E87609DE3BE800749B87 /* testjsglue */,
+				1422E8C409DE3EA600749B87 /* All */,
 			);
 		};
 /* End PBXProject section */
@@ -285,6 +360,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1422E87409DE3BE800749B87 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1422E87B09DE3BF000749B87 /* testjsglue.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD66F3C408F73ED700C75FD7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -301,6 +384,19 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		1422E8C809DE3EAD00749B87 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1422E87609DE3BE800749B87 /* testjsglue */;
+			targetProxy = 1422E8C709DE3EAD00749B87 /* PBXContainerItemProxy */;
+		};
+		1422E8CA09DE3EB100749B87 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */;
+			targetProxy = 1422E8C909DE3EB100749B87 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -313,6 +409,77 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1422E88709DE3C2200749B87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = testjsglue;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1422E88809DE3C2200749B87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = testjsglue;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		1422E88909DE3C2200749B87 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = testjsglue;
+				ZERO_LINK = YES;
+			};
+			name = Production;
+		};
+		1422E8DE09DE3EF500749B87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = All;
+			};
+			name = Debug;
+		};
+		1422E8DF09DE3EF500749B87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = All;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		1422E8E009DE3EF500749B87 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = All;
+			};
+			name = Production;
+		};
 		14AC662C08CE7791006915A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -470,6 +637,26 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1422E88609DE3C2200749B87 /* Build configuration list for PBXNativeTarget "testjsglue" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1422E88709DE3C2200749B87 /* Debug */,
+				1422E88809DE3C2200749B87 /* Release */,
+				1422E88909DE3C2200749B87 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		1422E8DD09DE3EF500749B87 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1422E8DE09DE3EF500749B87 /* Debug */,
+				1422E8DF09DE3EF500749B87 /* Release */,
+				1422E8E009DE3EF500749B87 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		14AC662B08CE7791006915A8 /* Build configuration list for PBXProject "JavaScriptGlue" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

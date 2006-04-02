@@ -29,9 +29,10 @@
 #include "config.h"
 #include "JSValueWrapper.h"
 #include "JavaScriptCore/reference_list.h"
+#include <pthread.h>
 
-JSValueWrapper::JSValueWrapper(JSValue *inValue, ExecState *inExec)
-    : fValue(inValue), fExec(inExec)
+JSValueWrapper::JSValueWrapper(JSValue *inValue)
+    : fValue(inValue)
 {
 }
 
@@ -43,11 +44,50 @@ JSValue *JSValueWrapper::GetValue()
 {
     return fValue;
 }
-ExecState* JSValueWrapper::GetExecState() const
+
+/*
+ * This is a slight hack. The JSGlue API has no concept of execution state.
+ * However, execution state is an inherent part of JS, and JSCore requires it.
+ * So, we keep a single execution state for the whole thread and supply it
+ * where necessary.
+
+ * The execution state holds two things: (1) exceptions; (2) the global object. 
+ * JSGlue has no API for accessing exceptions, so we just discard them. As for
+ * the global object, JSGlue includes no calls that depend on it. Its property
+ * getters and setters are per-object; they don't walk up the enclosing scope. 
+ * Functions called by JSObjectCallFunction may reference values in the enclosing 
+ * scope, but they do so through an internally stored scope chain, so we don't 
+ * need to supply the global scope.
+ */      
+
+pthread_key_t interpreterKey;
+pthread_once_t interpreterKeyOnce = PTHREAD_ONCE_INIT;
+
+static void destroyInterpreter(void* data) 
 {
-    return fExec;
+    delete static_cast<Interpreter*>(data);
 }
 
+static void initializeInterpreterKey()
+{
+    pthread_key_create(&interpreterKey, destroyInterpreter);
+}
+
+static ExecState* getThreadGlobalExecState()
+{
+    pthread_once(&interpreterKeyOnce, initializeInterpreterKey);
+    Interpreter* interpreter = static_cast<Interpreter*>(pthread_getspecific(interpreterKey));
+    if (!interpreter) {
+        interpreter = new Interpreter();
+        pthread_setspecific(interpreterKey, interpreter);
+    }
+
+    // Discard exceptions -- otherwise an exception would forestall JS 
+    // evaluation throughout the thread
+    interpreter->globalExec()->clearException();
+
+    return interpreter->globalExec();
+}
 
 void JSValueWrapper::GetJSObectCallBacks(JSObjectCallBacks& callBacks)
 {
@@ -75,7 +115,7 @@ CFArrayRef JSValueWrapper::JSObjectCopyPropertyNames(void *data)
     JSValueWrapper* ptr = (JSValueWrapper*)data;
     if (ptr)
     {
-        ExecState* exec = ptr->GetExecState();
+        ExecState* exec = getThreadGlobalExecState();
         JSObject *object = ptr->GetValue()->toObject(exec);
         ReferenceList list = object->propList(exec);
         ReferenceListIterator iterator = list.begin();
@@ -109,9 +149,9 @@ JSObjectRef JSValueWrapper::JSObjectCopyProperty(void *data, CFStringRef propert
     JSValueWrapper* ptr = (JSValueWrapper*)data;
     if (ptr)
     {
-        ExecState* exec = ptr->GetExecState();
+        ExecState* exec = getThreadGlobalExecState();
         JSValue *propValue = ptr->GetValue()->toObject(exec)->get(exec, CFStringToIdentifier(propertyName));
-        JSValueWrapper* wrapperValue = new JSValueWrapper(propValue, exec);
+        JSValueWrapper* wrapperValue = new JSValueWrapper(propValue);
 
         JSObjectCallBacks callBacks;
         GetJSObectCallBacks(callBacks);
@@ -132,7 +172,7 @@ void JSValueWrapper::JSObjectSetProperty(void *data, CFStringRef propertyName, J
     JSValueWrapper* ptr = (JSValueWrapper*)data;
     if (ptr)
     {
-        ExecState* exec = ptr->GetExecState();
+        ExecState* exec = getThreadGlobalExecState();
         JSValue *value = JSObjectKJSValue((JSUserObject*)jsValue);
         JSObject *objValue = ptr->GetValue()->toObject(exec);
         objValue->put(exec, CFStringToIdentifier(propertyName), value);
@@ -147,7 +187,7 @@ JSObjectRef JSValueWrapper::JSObjectCallFunction(void *data, JSObjectRef thisObj
     JSValueWrapper* ptr = (JSValueWrapper*)data;
     if (ptr)
     {
-        ExecState* exec = ptr->GetExecState();
+        ExecState* exec = getThreadGlobalExecState();
 
         JSValue *value = JSObjectKJSValue((JSUserObject*)thisObj);
         JSObject *ksjThisObj = value->toObject(exec);
@@ -163,7 +203,7 @@ JSObjectRef JSValueWrapper::JSObjectCallFunction(void *data, JSObjectRef thisObj
         }
 
         JSValue *resultValue = objValue->call(exec, ksjThisObj, listArgs);
-        JSValueWrapper* wrapperValue = new JSValueWrapper(resultValue, ptr->GetExecState());
+        JSValueWrapper* wrapperValue = new JSValueWrapper(resultValue);
         JSObjectCallBacks callBacks;
         GetJSObectCallBacks(callBacks);
         result = JSObjectCreate(wrapperValue, &callBacks);
@@ -183,7 +223,7 @@ CFTypeRef JSValueWrapper::JSObjectCopyCFValue(void *data)
     JSValueWrapper* ptr = (JSValueWrapper*)data;
     if (ptr)
     {
-        result = KJSValueToCFType(ptr->fValue, ptr->fExec);
+        result = KJSValueToCFType(ptr->GetValue(), getThreadGlobalExecState());
     }
     return result;
 }
