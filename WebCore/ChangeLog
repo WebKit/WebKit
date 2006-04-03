@@ -1,3 +1,45 @@
+2006-04-03  Dave Hyatt
+
+        Implement basic theme support on Win32.  Still much to do, but
+        the backgrounds of buttons, textfields, checkboxes and radio
+        controls now draw correctly.  Still work to do for the Classic look
+        and to get the foreground defaults of the controls correct.
+
+        Reviewed by anders
+
+        * dom/Node.h:
+        (WebCore::Node::isReadOnly):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isReadOnly):
+        * platform/win/IntRectWin.cpp:
+        (WebCore::IntRect::operator RECT):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isControlStyled):
+        (WebCore::RenderTheme::stateChanged):
+        (WebCore::RenderTheme::isReadOnly):
+        (WebCore::RenderTheme::isHovered):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::supportsHover):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::m_textFieldTheme):
+        (WebCore::RenderThemeWin::~RenderThemeWin):
+        (WebCore::RenderThemeWin::close):
+        (WebCore::RenderThemeWin::supportsFocus):
+        (WebCore::RenderThemeWin::determineState):
+        (WebCore::RenderThemeWin::getThemeData):
+        (WebCore::RenderThemeWin::paintButton):
+        (WebCore::RenderThemeWin::setCheckboxSize):
+        (WebCore::RenderThemeWin::setRadioSize):
+        (WebCore::RenderThemeWin::paintTextField):
+        * rendering/RenderThemeWin.h:
+        (WebCore::ThemeData::m_state):
+        (WebCore::RenderThemeWin::supportsHover):
+        (WebCore::RenderThemeWin::paintCheckbox):
+        (WebCore::RenderThemeWin::paintRadio):
+
 2006-04-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Beth.

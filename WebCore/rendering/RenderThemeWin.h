@@ -27,15 +27,47 @@
 
 namespace WebCore {
 
+struct ThemeData {
+    ThemeData() :m_part(0), m_state(0) {}
+
+    unsigned m_part;
+    unsigned m_state;
+};
+
 class RenderThemeWin : public RenderTheme {
 public:
-    virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
-    virtual void adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    RenderThemeWin();
+    ~RenderThemeWin();
+       
+    // A method asking if the theme's controls actually care about redrawing when hovered.
+    virtual bool supportsHover(const RenderStyle* style) const { return true; }
+
+    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+    { return paintButton(o, i, r); }
+    virtual void setCheckboxSize(RenderStyle* style) const;
+
+    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+    { return paintButton(o, i, r); }
+    virtual void setRadioSize(RenderStyle* style) const;
+
     virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
+
     virtual void adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
+    virtual bool paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
 
 private:
     void addIntrinsicMargins(RenderStyle* style) const;
+    void close();
+
+    unsigned determineState(RenderObject* o);
+    bool supportsFocus(EAppearance appearance);
+
+    ThemeData getThemeData(RenderObject* o);
+    
+    HMODULE m_themeDLL;
+    mutable HANDLE m_buttonTheme;
+    mutable HANDLE m_textFieldTheme;
 };
 
 };

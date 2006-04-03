@@ -56,6 +56,14 @@ RenderThemeMac::RenderThemeMac()
 {
 }
 
+bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData& border, 
+                                     const BackgroundLayer& background, const Color& backgroundColor) const
+{
+    if (style->appearance() == TextFieldAppearance)
+        return style->border() != border;
+    return RenderTheme::isControlStyled(style, border, background, backgroundColor);
+}
+
 void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
     switch (o->style()->appearance()) {

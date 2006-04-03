@@ -133,14 +133,13 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
     switch (style->appearance()) {
         case PushButtonAppearance:
         case SquareButtonAppearance:
-        case ButtonAppearance: {
+        case ButtonAppearance:
+        case TextFieldAppearance: {
             // Test the style to see if the UA border and background match.
             return (style->border() != border ||
                     *style->backgroundLayers() != background ||
                     style->backgroundColor() != backgroundColor);
         }
-        case TextFieldAppearance:
-            return style->border() != border;
         default:
             return false;
     }
@@ -156,7 +155,7 @@ bool RenderTheme::supportsFocusRing(const RenderStyle* style) const
 bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
 {
     // Default implementation assumes the controls dont respond to changes in :hover state
-    if (state == HoverState)
+    if (state == HoverState && !supportsHover(o->style()))
         return false;
         
     // Assume pressed state is only responded to if the control is enabled.
@@ -201,6 +200,20 @@ bool RenderTheme::isPressed(const RenderObject* o) const
     if (!o->element())
         return false;
     return o->element()->active();
+}
+
+bool RenderTheme::isReadOnly(const RenderObject* o) const
+{
+    if (!o->element())
+        return false;
+    return o->element()->isReadOnly();
+}
+
+bool RenderTheme::isHovered(const RenderObject* o) const
+{
+    if (!o->element())
+        return false;
+    return o->element()->hovered();
 }
 
 void RenderTheme::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const

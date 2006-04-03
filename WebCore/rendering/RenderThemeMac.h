@@ -47,6 +47,9 @@ public:
 
     virtual void adjustRepaintRect(const RenderObject* o, IntRect& r);
 
+    virtual bool isControlStyled(const RenderStyle* style, const BorderData& border, 
+                                 const BackgroundLayer& background, const Color& backgroundColor) const;
+
 protected:
     // Methods for each appearance value.
     virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);

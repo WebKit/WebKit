@@ -89,6 +89,9 @@ public:
     // A method asking if the theme is able to draw the focus ring.
     virtual bool supportsFocusRing(const RenderStyle* style) const;
     
+    // A method asking if the theme's controls actually care about redrawing when hovered.
+    virtual bool supportsHover(const RenderStyle* style) const { return false; }
+
 protected:
     // Methods for state querying
     bool isChecked(const RenderObject* o) const;
@@ -96,6 +99,8 @@ protected:
     bool isEnabled(const RenderObject* o) const;
     bool isFocused(const RenderObject* o) const;
     bool isPressed(const RenderObject* o) const;
+    bool isHovered(const RenderObject* o) const;
+    bool isReadOnly(const RenderObject* o) const;
 
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
