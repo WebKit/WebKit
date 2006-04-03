@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,11 @@
 #import "config.h"
 #import "WebCoreTextRendererFactory.h"
 
-#import <kxmlcore/Assertions.h>
-#import "FrameMac.h"
 #import "KWQListBox.h"
+#import "Page.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
+#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 
@@ -115,9 +115,7 @@ static WebCoreTextRendererFactory *sharedFactory;
 - (void)clearCaches
 {
     QListBox::clearCachedTextRenderers();
-    for (DeprecatedPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
-        [Mac(it.current())->bridge() setNeedsReapplyStyles];
-    }
+    Page::setNeedsReapplyStyles();
 }
 
 @end

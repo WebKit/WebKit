@@ -39,7 +39,7 @@ for my $in (@ARGV) {
     my $name = $1;
 
     # Slurp in the CSS file.
-    open IN, $in or die;
+    open IN, "-|", "/usr/bin/cpp", "-P", $in, "-" or die;
     my $text; { local $/; $text = <IN>; }
     close IN;
 
@@ -56,8 +56,8 @@ for my $in (@ARGV) {
 
     # Write out a C array of the characters.
     my $length = length $text;
-    print HEADER "extern const unsigned short ${name}UserAgentStyleSheet[${length}];\n";
-    print OUT "extern const unsigned short ${name}UserAgentStyleSheet[${length}] = {\n";
+    print HEADER "extern const char ${name}UserAgentStyleSheet[${length}];\n";
+    print OUT "extern const char ${name}UserAgentStyleSheet[${length}] = {\n";
     my $i = 0;
     while ($i < $length) {
         print OUT "    ";

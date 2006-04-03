@@ -124,6 +124,8 @@ sub GetLegacyHeaderIncludes
     return "#include \"kjs_events.h\"\n\n";
   } elsif ($module eq "core") {
     return "#include \"kjs_dom.h\"\n\n";
+  } elsif ($module eq "css") {
+    return "#include \"kjs_css.h\"\n\n";
   } elsif ($module eq "html") {
     return "#include \"kjs_html.h\"\n\n";
   } else {
@@ -153,6 +155,8 @@ sub AddIncludesForType
     $implIncludes{"${type}.h"} = 1;
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
+  } elsif ($type eq "CSSPrimitiveValue" or $type eq "Counter" or $type eq "Rect" or $type eq "RGBColor") {
+    $implIncludes{"css_valueimpl.h"} = 1;
   } elsif ($type eq "HTMLDocument") {
     $implIncludes{"HTMLDocument.h"} = 1;
   } elsif ($type eq "MutationEvent" or
@@ -851,31 +855,29 @@ sub NativeToJSValue
            $type eq "Element" or
            $type eq "Attr" or
            $type eq "DocumentFragment") {
-    # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"Node.h"} = 1;
     $implIncludes{"Element.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "EventTarget") {
-    # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"EventTargetNode.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
-    # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;
     return "toJS(exec, $value)";
-  } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
-    # Add necessary includes
+  } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet" or $type eq "MediaList") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
     $implIncludes{"css_ruleimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value)";    
-  } elsif ($type eq "CSSStyleDeclaration") {
-    # Add necessary includes
+  } elsif ($type eq "CSSStyleDeclaration" or $type eq "Counter" or $type eq "Rect") {
     $implIncludes{"css_valueimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value)";
+  } elsif ($type eq "RGBColor") {
+    $implIncludes{"kjs_css.h"} = 1;
+    return "getDOMRGBColor(exec, $value)";
   } elsif ($type eq "HTMLCanvasElement") {
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"HTMLCanvasElement.h"} = 1;

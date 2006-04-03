@@ -25,13 +25,13 @@
 
 html {
     display: block
-} 
+}
 
 /* children of the <head> element all have display:none */
-head { 
+head {
     display: none
 }
-     
+
 meta {
     display: none
 }
@@ -80,7 +80,7 @@ marquee {
 address {
     display: block
 }
-      
+
 blockquote {
     display: block;
     margin: 1__qem 40px 1em 40px
@@ -104,7 +104,7 @@ center {
     display: block;
     /* special centering to be able to emulate the html4/netscape behaviour */
     text-align: -khtml-center
-}  
+}
 
 hr {
     display: block;
@@ -118,28 +118,28 @@ map {
 }
 
 /* heading elements */
-      
+
 h1 {
     display: block;
     font-size: 2em;
     margin: .67__qem 0 .67em 0;
     font-weight: bold
 }
-      
+
 h2 {
     display: block;
     font-size: 1.5em;
     margin: .83__qem 0 .83em 0;
     font-weight: bold
 }
-      
+
 h3 {
     display: block;
     font-size: 1.17em;
     margin: 1__qem 0 1em 0;
     font-weight: bold
 }
-      
+
 h4 {
     display: block;
     margin: 1.33__qem 0 1.33em 0;
@@ -180,13 +180,13 @@ thead {
     vertical-align: middle;
     border-color: inherit
 }
-      
+
 tbody {
     display: table-row-group;
-    vertical-align: middle; 
+    vertical-align: middle;
     border-color: inherit
 }
-      
+
 tfoot {
     display: table-footer-group;
     vertical-align: middle;
@@ -257,7 +257,7 @@ dd {
 dl {
     display: block;
     margin: 1__qem 0 1em 0
-} 
+}
 
 dt {
     display: block
@@ -321,7 +321,7 @@ input {
     -khtml-rtl-ordering: logical;
 }
 
-input[type="password"], input[type="search"], input[type="hidden"], input[type="image"], input[type="file"]{
+input[type="password"], input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {
     -khtml-appearance: initial;
     padding: initial;
     background-color: initial;
@@ -380,24 +380,24 @@ input[type="radio"] {
     -khtml-appearance: radio
 }
 
-/* inline elements */      
-      
+/* inline elements */
+
 u, ins {
     text-decoration: underline
 }
-      
+
 strong, b {
     font-weight: bolder
 }
-      
+
 i, cite, em, var, address {
     font-style: italic
 }
-      
+
 tt, code, kbd, samp {
     font-family: monospace
 }
-      
+
 pre, xmp, plaintext, listing {
     display: block;
     font-family: monospace;
@@ -408,7 +408,7 @@ pre, xmp, plaintext, listing {
 big {
     font-size: larger
 }
-      
+
 small {
     font-size: smaller
 }
@@ -438,11 +438,32 @@ wbr {
 /* states */
 
 :focus { 
-    outline: auto 3px #1f5ccf
+    outline: auto 5px -webkit-focus-ring-color
 }
 
 html:focus, body:focus { 
     outline: none
+}
+
+html:focus, body:focus {
+    outline: none
+}
+  
+input:focus {
+    outline-offset: -2px
+}
+
+input[type="button"]:focus,
+input[type="checkbox"]:focus,
+input[type="file"]:focus,
+input[type="hidden"]:focus,
+input[type="image"]:focus,
+input[type="password"]:focus,
+input[type="radio"]:focus,
+input[type="reset"]:focus,
+input[type="search"]:focus,
+input[type="submit"]:focus {
+    outline-offset: 0
 }
 
 a:-khtml-any-link {
@@ -465,4 +486,4 @@ frameset, frame {
     display: block
 }
 
-/* noscript is handled internally, as it depends on the html settings */
+/* noscript is handled internally, as it depends on settings */

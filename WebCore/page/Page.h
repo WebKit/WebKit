@@ -35,6 +35,8 @@ class WebCorePageBridge;
 #endif
 #endif
 
+class KHTMLSettings;
+
 namespace WebCore {
 
     class Frame;
@@ -59,6 +61,9 @@ namespace WebCore {
         void incrementFrameCount() { ++m_frameCount; }
         void decrementFrameCount() { --m_frameCount; }
         int frameCount() const { return m_frameCount; }
+
+        static void setNeedsReapplyStyles();
+        static void setNeedsReapplyStylesForSettingsChange(KHTMLSettings*);
 
 #if __APPLE__
         Page(WebCorePageBridge*);

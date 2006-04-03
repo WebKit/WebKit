@@ -58,6 +58,8 @@ class RenderArena;
 
 namespace WebCore {
 
+using std::max;
+
 class CSSStyleSelector;
 class CachedImage;
 class CachedObject;
@@ -1156,8 +1158,12 @@ public:
     const Color&   borderBottomColor() const {  return surround->border.bottom.color; }
     bool borderBottomIsTransparent() const { return surround->border.bottom.isTransparent(); }
     
-    unsigned short outlineSize() const { return outlineWidth() + outlineOffset(); }
-    unsigned short outlineWidth() const { if (background->m_outline.style() == BNONE || background->m_outline.style() == BHIDDEN) return 0; return background->m_outline.width; }
+    unsigned short outlineSize() const { return max(0, outlineWidth() + outlineOffset()); }
+    unsigned short outlineWidth() const {
+        if (background->m_outline.style() == BNONE || background->m_outline.style() == BHIDDEN)
+            return 0;
+        return background->m_outline.width;
+    }
     EBorderStyle   outlineStyle() const {  return background->m_outline.style(); }
     bool outlineStyleIsAuto() const { return background->m_outline._auto; }
     const Color &  outlineColor() const {  return background->m_outline.color; }
@@ -1283,7 +1289,9 @@ public:
     BindingURI* bindingURIs() const { return css3NonInheritedData->bindingURI; }
 #endif
     int outlineOffset() const { 
-        if (background->m_outline.style() == BNONE || background->m_outline.style() == BHIDDEN) return 0; return background->m_outline._offset;
+        if (background->m_outline.style() == BNONE || background->m_outline.style() == BHIDDEN)
+            return 0;
+        return background->m_outline._offset;
     }
     ShadowData* textShadow() const { return css3InheritedData->textShadow; }
     float opacity() const { return css3NonInheritedData->opacity; }
@@ -1501,7 +1509,7 @@ public:
     }
     void addBindingURI(StringImpl* uri);
 #endif
-    void setOutlineOffset(unsigned short v) { SET_VAR(background, m_outline._offset, v) }
+    void setOutlineOffset(int v) { SET_VAR(background, m_outline._offset, v) }
     void setTextShadow(ShadowData* val, bool add=false);
     void setOpacity(float f) { SET_VAR(css3NonInheritedData, opacity, f); }
     void setAppearance(EAppearance a) { SET_VAR(css3NonInheritedData, m_appearance, a); }

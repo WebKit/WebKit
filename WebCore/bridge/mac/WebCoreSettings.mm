@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebCoreSettings.h"
 
 #import "FoundationExtras.h"
-#import "FrameMac.h"
 #import "KWQKHTMLSettings.h"
+#import "Page.h"
 #import "WebCoreFrameBridge.h"
 
 using namespace WebCore;
@@ -61,17 +61,13 @@ using namespace WebCore;
 {
     // A Frame may not have been created yet, so we initialize the AtomicString hash before we try and use it in KHTMLSettings.
     AtomicString::init();
-    settings = new KHTMLSettings();
+    settings = new KHTMLSettings;
     return [super init];
 }
 
 - (void)_updateAllViews
 {
-    for (DeprecatedPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
-        FrameMac *frame = Mac(it.current());
-        if (frame->settings() == settings)
-            [frame->bridge() setNeedsReapplyStyles];
-    }
+    Page::setNeedsReapplyStylesForSettingsChange(settings);
 }
 
 - (void)setStandardFontFamily:(NSString *)s

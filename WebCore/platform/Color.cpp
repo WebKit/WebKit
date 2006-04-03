@@ -30,53 +30,43 @@
 #include "PlatformString.h"
 #include <kxmlcore/Assertions.h>
 
-// Turn off inlining to avoid warning with newer gcc.
-#undef __inline
-#define __inline
 #include "ColorData.c"
-#undef __inline
+
+using namespace std;
 
 namespace WebCore {
 
 RGBA32 makeRGB(int r, int g, int b)
 {
-    if (r < 0) r = 0; else if (r > 255) r = 255;
-    if (g < 0) g = 0; else if (g > 255) g = 255;
-    if (b < 0) b = 0; else if (b > 255) b = 255;
-    return (r << 16 | g << 8 | b) | 0xFF000000;
+    return 0xFF000000 | max(0, min(r, 255)) << 16 | max(0, min(g, 255)) << 8 | max(0, min(b, 255));
 }
 
 RGBA32 makeRGBA(int r, int g, int b, int a)
 {
-    if (r < 0) r = 0; else if (r > 255) r = 255;
-    if (g < 0) g = 0; else if (g > 255) g = 255;
-    if (b < 0) b = 0; else if (b > 255) b = 255;
-    if (a < 0) a = 0; else if (a > 255) a = 255;
-    return (a << 24 | r << 16 | g << 8 | b);
+    return max(0, min(a, 255)) << 24 | max(0, min(r, 255)) << 16 | max(0, min(g, 255)) << 8 | max(0, min(b, 255));
 }
 
-// copied from css/cssparser.h
-static inline bool parseHexColor(const DeprecatedString &name, RGBA32 &rgb)
+// originally moved here from the CSS parser
+static inline bool parseHexColor(const String& name, RGBA32 &rgb)
 {
     int len = name.length();
-    
-    if ( !len )
+    if (!len)
         return false;
-    bool ok;
-    
-    if ( len == 3 || len == 6 ) {
-        int val = name.toInt(&ok, 16);
-        if ( ok ) {
+
+    if (len == 3 || len == 6) {
+        bool ok;
+        int val = name.deprecatedString().toInt(&ok, 16);
+        if (ok) {
             if (len == 6) {
-                rgb =  (0xff << 24) | val;
+                rgb = (0xff << 24) | val;
                 return true;
             }
-            else if ( len == 3 ) {
+            if (len == 3) {
                 // #abc converts to #aabbcc according to the specs
-                rgb = (0xff << 24) |
-                (val&0xf00)<<12 | (val&0xf00)<<8 |
-                (val&0xf0)<<8 | (val&0xf0)<<4 |
-                (val&0xf)<<4 | (val&0xf);
+                rgb = (0xff << 24)
+                    | (val & 0xf00) << 12 | (val & 0xf00) << 8
+                    | (val & 0xf0) << 8 | (val & 0xf0) << 4
+                    | (val & 0xf) << 4 | (val & 0xf);
                 return true;
             }
         }
@@ -84,23 +74,20 @@ static inline bool parseHexColor(const DeprecatedString &name, RGBA32 &rgb)
     return false;
 }
 
-Color::Color(const DeprecatedString &name) {
-    if(name.startsWith("#")) {
-        valid = parseHexColor(name.mid(1), color);
-    } else {
-        const NamedColor *foundColor = findColor(name.ascii(), name.length());
-        color = foundColor ? foundColor->RGBValue : 0;
-        color |= 0xFF000000;
-        valid = foundColor;
-    }
+Color::Color(const String& name)
+{
+    if (name.startsWith("#"))
+        valid = parseHexColor(name.substring(1), color);
+    else
+        setNamedColor(name);
 }
 
-Color::Color(const char *name)
+Color::Color(const char* name)
 {
-    if(name[0] == '#') {
-        valid = parseHexColor(DeprecatedString(name).mid(1), color);
-    } else {
-        const NamedColor *foundColor = findColor(name, strlen(name));
+    if (name[0] == '#')
+        valid = parseHexColor(&name[1], color);
+    else {
+        const NamedColor* foundColor = findColor(name, strlen(name));
         color = foundColor ? foundColor->RGBValue : 0;
         color |= 0xFF000000;
         valid = foundColor;
@@ -117,9 +104,10 @@ String Color::name() const
     return name;
 }
 
-void Color::setNamedColor(const DeprecatedString &name)
+void Color::setNamedColor(const String& name)
 {
-    const NamedColor *foundColor = name.isAllASCII() ? findColor(name.latin1(), name.length()) : 0;
+    DeprecatedString dname = name.deprecatedString();
+    const NamedColor* foundColor = dname.isAllASCII() ? findColor(dname.latin1(), dname.length()) : 0;
     color = foundColor ? foundColor->RGBValue : 0;
     color |= 0xFF000000;
     valid = foundColor;

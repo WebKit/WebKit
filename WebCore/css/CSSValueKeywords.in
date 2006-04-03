@@ -150,6 +150,7 @@ threedshadow
 window
 windowframe
 windowtext
+-webkit-focus-ring-color
 #
 # colors in non strict mode
 grey

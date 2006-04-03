@@ -26,9 +26,8 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
-class DeprecatedString;
-
 #if __APPLE__
+
 #ifdef __OBJC__
 @class NSColor;
 #else
@@ -36,6 +35,7 @@ class NSColor;
 #endif
 
 typedef struct CGColor *CGColorRef;
+
 #endif
 
 namespace WebCore {
@@ -53,11 +53,11 @@ public:
     Color(RGBA32 col) : color(col), valid(true) { }
     Color(int r, int g, int b) : color(makeRGB(r, g, b)), valid(true) { }
     Color(int r, int g, int b, int a) : color(makeRGBA(r, g, b, a)), valid(true) { }
-    explicit Color(const DeprecatedString&);
-    explicit Color(const char *);
+    explicit Color(const String&);
+    explicit Color(const char*);
     
     String name() const;
-    void setNamedColor(const DeprecatedString&);
+    void setNamedColor(const String&);
 
     bool isValid() const { return valid; }
 
@@ -65,19 +65,16 @@ public:
     int green() const { return (color >> 8) & 0xFF; }
     int blue() const { return color & 0xFF; }
     int alpha() const { return (color >> 24) & 0xFF; }
-    RGBA32 rgb() const { return color & 0xFFFFFFFF; } // Preserve the alpha.
+    RGBA32 rgb() const { return color; } // Preserve the alpha.
     void setRgb(int r, int g, int b) { color = makeRGB(r, g, b); valid = true; }
-    void setRgb(int rgb) { color = rgb; valid = true; /* Alpha may be set. Preserve it. */ }
-    void getRgbaF(float *, float *, float *, float *) const;
+    void setRgb(RGBA32 rgb) { color = rgb; valid = true; }
+    void getRgbaF(float*, float*, float*, float*) const;
 
-    void hsv(int *, int *, int *) const;
+    void hsv(int*, int*, int*) const;
     void setHsv(int h, int s, int v);
 
     Color light(int f = 150) const;
     Color dark(int f = 200) const;
-
-    friend bool operator==(const Color &a, const Color &b);
-    friend bool operator!=(const Color &a, const Color &b);
 
     static const RGBA32 black = 0xFF000000;
     static const RGBA32 white = 0xFFFFFFFF;
@@ -93,23 +90,22 @@ private:
 
 inline bool operator==(const Color &a, const Color &b)
 {
-    return a.color == b.color && a.valid == b.valid;
+    return a.rgb() == b.rgb() && a.isValid() == b.isValid();
 }
 
 inline bool operator!=(const Color &a, const Color &b)
 {
-    return a.color != b.color || a.valid != b.valid;
+    return !(a == b);
 }
 
+Color focusRingColor();
+void setFocusRingColorChangeFunction(void (*)());
+
 #if __APPLE__
-NSColor *nsColor(const Color &);
-CGColorRef cgColor(const Color &);
+NSColor* nsColor(const Color&);
+CGColorRef cgColor(const Color&);
 #endif
 
 }
-
-// FIXME: Remove usings when the rest of KWQ has been converted.
-using WebCore::RGBA32;
-using WebCore::Color;
 
 #endif

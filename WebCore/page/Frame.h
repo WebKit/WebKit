@@ -263,7 +263,7 @@ public:
    * Sets a user defined style sheet to be used on top of the HTML4,
    * SVG and printing default style sheets.
    */
-  void setUserStyleSheetLocation(const KURL& url);
+  void setUserStyleSheetLocation(const KURL&);
   void setUserStyleSheet(const String& styleSheetData);
   
   /**
@@ -706,9 +706,6 @@ private:
 
   static void clearDocumentFocus(Widget*);
 
-  static const DeprecatedPtrList<Frame>& instances() { return mutableInstances(); }    
-  static DeprecatedPtrList<Frame>& mutableInstances();
-
   void updatePolicyBaseURL();
   void setPolicyBaseURL(const String&);
 
@@ -753,6 +750,8 @@ private:
 
     void disconnectOwnerRenderer();
 
+    void setNeedsReapplyStyles();
+
 protected:
     virtual void startRedirectionTimer();
     virtual void stopRedirectionTimer();
@@ -795,7 +794,6 @@ public:
 
   virtual void frameDetached();
 
-  virtual void detachFromView();
   void updateBaseURLForEmptyDocument();
 
   KURL url() const;

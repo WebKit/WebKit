@@ -65,6 +65,17 @@ String::String(const char* str)
         m_impl = new StringImpl(str, l);
 }
 
+String::String(const char* str, unsigned length)
+{
+    if (!str)
+        return;
+
+    if (length == 0)
+        m_impl = StringImpl::empty();
+    else
+        m_impl = new StringImpl(str, length);
+}
+
 String& String::operator+=(const String &str)
 {
     if (str.m_impl) {

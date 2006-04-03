@@ -126,15 +126,12 @@ FrameMac::FrameMac(Page* page, RenderPart* ownerRenderer)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
 {
-    mutableInstances().prepend(this);
-
     d->m_extension = new BrowserExtensionMac(this);
 }
 
 FrameMac::~FrameMac()
 {
     setView(0);
-    mutableInstances().remove(this);
     freeClipboard();
     clearRecordedFormValues();    
     
@@ -2355,16 +2352,16 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
 
                         maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
                         switch(style->listStyleType()) {
-                            case WebCore::DISC:
+                            case DISC:
                                 listText += ((QChar)BULLET_CHAR);
                                 break;
-                            case WebCore::CIRCLE:
+                            case CIRCLE:
                                 listText += ((QChar)CIRCLE_CHAR);
                                 break;
-                            case WebCore::SQUARE:
+                            case SQUARE:
                                 listText += ((QChar)SQUARE_CHAR);
                                 break;
-                            case WebCore::LNONE:
+                            case LNONE:
                                 break;
                             default:
                                 DeprecatedString marker = listRenderer->markerStringValue();
@@ -2750,31 +2747,31 @@ NSDictionary *FrameMac::fontAttributesForSelectionStart() const
     }
 
     int decoration = style->textDecorationsInEffect();
-    if (decoration & WebCore::LINE_THROUGH)
+    if (decoration & LINE_THROUGH)
         [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
 
     int superscriptInt = 0;
     switch (style->verticalAlign()) {
-        case WebCore::BASELINE:
-        case WebCore::BOTTOM:
-        case WebCore::BASELINE_MIDDLE:
-        case WebCore::LENGTH:
-        case WebCore::MIDDLE:
-        case WebCore::TEXT_BOTTOM:
-        case WebCore::TEXT_TOP:
-        case WebCore::TOP:
+        case BASELINE:
+        case BOTTOM:
+        case BASELINE_MIDDLE:
+        case LENGTH:
+        case MIDDLE:
+        case TEXT_BOTTOM:
+        case TEXT_TOP:
+        case TOP:
             break;
-        case WebCore::SUB:
+        case SUB:
             superscriptInt = -1;
             break;
-        case WebCore::SUPER:
+        case SUPER:
             superscriptInt = 1;
             break;
     }
     if (superscriptInt)
         [result setObject:[NSNumber numberWithInt:superscriptInt] forKey:NSSuperscriptAttributeName];
 
-    if (decoration & WebCore::UNDERLINE)
+    if (decoration & UNDERLINE)
         [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
 
     if (nodeToRemove) {
@@ -2799,10 +2796,10 @@ NSWritingDirection FrameMac::baseWritingDirectionForSelectionStart() const
         return result;
         
     switch (style->direction()) {
-        case WebCore::LTR:
+        case LTR:
             result = NSWritingDirectionLeftToRight;
             break;
-        case WebCore::RTL:
+        case RTL:
             result = NSWritingDirectionRightToLeft;
             break;
     }
@@ -2872,12 +2869,12 @@ WebCoreKeyboardUIMode FrameMac::keyboardUIMode() const
     return WebCoreKeyboardAccessDefault;
 }
 
-void FrameMac::didTellBridgeAboutLoad(const WebCore::String& URL)
+void FrameMac::didTellBridgeAboutLoad(const String& URL)
 {
     urlsBridgeKnowsAbout.add(URL.impl());
 }
 
-bool FrameMac::haveToldBridgeAboutLoad(const WebCore::String& URL)
+bool FrameMac::haveToldBridgeAboutLoad(const String& URL)
 {
     return urlsBridgeKnowsAbout.contains(URL.impl());
 }
@@ -3148,7 +3145,7 @@ void FrameMac::respondToChangedSelection(const SelectionController &oldSelection
     [_bridge respondToChangedSelection];
 }
 
-bool FrameMac::shouldChangeSelection(const SelectionController &oldSelection, const SelectionController &newSelection, WebCore::EAffinity affinity, bool stillSelecting) const
+bool FrameMac::shouldChangeSelection(const SelectionController &oldSelection, const SelectionController &newSelection, EAffinity affinity, bool stillSelecting) const
 {
     return [_bridge shouldChangeSelectedDOMRange:[DOMRange _rangeWith:oldSelection.toRange().get()]
                                       toDOMRange:[DOMRange _rangeWith:newSelection.toRange().get()]
@@ -3371,9 +3368,9 @@ bool FrameMac::dispatchDragSrcEvent(const AtomicString &eventType, const Platfor
     return !noDefaultProc;
 }
 
-void FrameMac::detachFromView()
+void Frame::setNeedsReapplyStyles()
 {
-    setView(0);
+    [Mac(this)->bridge() setNeedsReapplyStyles];
 }
 
 }

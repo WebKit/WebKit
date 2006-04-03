@@ -289,6 +289,19 @@
 		93B780CA09B3B7FE00690162 /* WidgetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B780C909B3B7FE00690162 /* WidgetClient.h */; };
 		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
 		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
+		93CA4CA409DF93FA00DF8677 /* CSSStyleDeclaration.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9709DF93FA00DF8677 /* CSSStyleDeclaration.idl */; };
+		93CA4CA509DF93FA00DF8677 /* CSSStyleSheet.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9809DF93FA00DF8677 /* CSSStyleSheet.idl */; };
+		93CA4CA609DF93FA00DF8677 /* html4.css in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9909DF93FA00DF8677 /* html4.css */; };
+		93CA4CA709DF93FA00DF8677 /* make-css-file-arrays.pl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */; };
+		93CA4CA809DF93FA00DF8677 /* makeprop in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9B09DF93FA00DF8677 /* makeprop */; };
+		93CA4CA909DF93FA00DF8677 /* maketokenizer in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9C09DF93FA00DF8677 /* maketokenizer */; };
+		93CA4CAA09DF93FA00DF8677 /* makevalues in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9D09DF93FA00DF8677 /* makevalues */; };
+		93CA4CAB09DF93FA00DF8677 /* MediaList.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9E09DF93FA00DF8677 /* MediaList.idl */; };
+		93CA4CAC09DF93FA00DF8677 /* quirks.css in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9F09DF93FA00DF8677 /* quirks.css */; };
+		93CA4CAD09DF93FA00DF8677 /* StyleSheet.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4CA009DF93FA00DF8677 /* StyleSheet.idl */; };
+		93CA4CAE09DF93FA00DF8677 /* StyleSheetList.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4CA109DF93FA00DF8677 /* StyleSheetList.idl */; };
+		93CA4CAF09DF93FA00DF8677 /* svg.css in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4CA209DF93FA00DF8677 /* svg.css */; };
+		93CA4CB009DF93FA00DF8677 /* tokenizer.flex in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4CA309DF93FA00DF8677 /* tokenizer.flex */; };
 		93CD4FDE0995F9EA007ECC97 /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */; };
 		93CD4FDF0995F9EA007ECC97 /* AtomicString.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CD4FD80995F9EA007ECC97 /* AtomicString.h */; };
 		93CD4FE00995F9EA007ECC97 /* AtomicStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */; };
@@ -1257,14 +1270,12 @@
 		656580ED09D12B20000E61D7 /* CSSPropertyNames.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = CSSPropertyNames.c; sourceTree = "<group>"; };
 		656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPropertyNames.gperf; sourceTree = "<group>"; };
 		656580EF09D12B20000E61D7 /* CSSPropertyNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPropertyNames.h; sourceTree = "<group>"; };
-		656580F009D12B20000E61D7 /* CSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPropertyNames.in; sourceTree = "<group>"; };
 		656580F109D12B20000E61D7 /* CSSPropertyNames.strip */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPropertyNames.strip; sourceTree = "<group>"; };
 		6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DocTypeStrings.cpp; sourceTree = "<group>"; };
 		6565814409D13043000E61D7 /* CSSGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGrammar.cpp; sourceTree = "<group>"; };
 		6565814609D13043000E61D7 /* CSSValueKeywords.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = CSSValueKeywords.c; sourceTree = "<group>"; };
 		6565814709D13043000E61D7 /* CSSValueKeywords.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueKeywords.gperf; sourceTree = "<group>"; };
 		6565814809D13043000E61D7 /* CSSValueKeywords.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSValueKeywords.h; sourceTree = "<group>"; };
-		6565814909D13043000E61D7 /* CSSValueKeywords.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueKeywords.in; sourceTree = "<group>"; };
 		6565814A09D13043000E61D7 /* CSSValueKeywords.strip */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueKeywords.strip; sourceTree = "<group>"; };
 		6565814B09D13043000E61D7 /* HTMLEntityNames.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = HTMLEntityNames.c; sourceTree = "<group>"; };
 		6565814C09D13043000E61D7 /* tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = tokenizer.cpp; sourceTree = "<group>"; };
@@ -1537,6 +1548,19 @@
 		93B780C909B3B7FE00690162 /* WidgetClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WidgetClient.h; path = platform/WidgetClient.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMImplementationFront.h; path = bindings/objc/DOMImplementationFront.h; sourceTree = "<group>"; };
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMImplementationFront.cpp; path = bindings/objc/DOMImplementationFront.cpp; sourceTree = "<group>"; };
+		93CA4C9709DF93FA00DF8677 /* CSSStyleDeclaration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSStyleDeclaration.idl; sourceTree = "<group>"; };
+		93CA4C9809DF93FA00DF8677 /* CSSStyleSheet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSStyleSheet.idl; sourceTree = "<group>"; };
+		93CA4C9909DF93FA00DF8677 /* html4.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html4.css; sourceTree = "<group>"; };
+		93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "make-css-file-arrays.pl"; sourceTree = "<group>"; };
+		93CA4C9B09DF93FA00DF8677 /* makeprop */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makeprop; sourceTree = "<group>"; };
+		93CA4C9C09DF93FA00DF8677 /* maketokenizer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = maketokenizer; sourceTree = "<group>"; };
+		93CA4C9D09DF93FA00DF8677 /* makevalues */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makevalues; sourceTree = "<group>"; };
+		93CA4C9E09DF93FA00DF8677 /* MediaList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaList.idl; sourceTree = "<group>"; };
+		93CA4C9F09DF93FA00DF8677 /* quirks.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quirks.css; sourceTree = "<group>"; };
+		93CA4CA009DF93FA00DF8677 /* StyleSheet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StyleSheet.idl; sourceTree = "<group>"; };
+		93CA4CA109DF93FA00DF8677 /* StyleSheetList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StyleSheetList.idl; sourceTree = "<group>"; };
+		93CA4CA209DF93FA00DF8677 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
+		93CA4CA309DF93FA00DF8677 /* tokenizer.flex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tokenizer.flex; sourceTree = "<group>"; };
 		93CCF7D4033BD43C008635CE /* KWQFileButton.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQFileButton.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93CCF7D5033BD43C008635CE /* KWQFileButton.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQFileButton.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicString.cpp; path = platform/AtomicString.cpp; sourceTree = "<group>"; };
@@ -2605,12 +2629,10 @@
 				656580ED09D12B20000E61D7 /* CSSPropertyNames.c */,
 				656580EE09D12B20000E61D7 /* CSSPropertyNames.gperf */,
 				656580EF09D12B20000E61D7 /* CSSPropertyNames.h */,
-				656580F009D12B20000E61D7 /* CSSPropertyNames.in */,
 				656580F109D12B20000E61D7 /* CSSPropertyNames.strip */,
 				6565814609D13043000E61D7 /* CSSValueKeywords.c */,
 				6565814709D13043000E61D7 /* CSSValueKeywords.gperf */,
 				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
-				6565814909D13043000E61D7 /* CSSValueKeywords.in */,
 				6565814A09D13043000E61D7 /* CSSValueKeywords.strip */,
 				6565811C09D12DB2000E61D7 /* DocTypeStrings.cpp */,
 				6565814B09D13043000E61D7 /* HTMLEntityNames.c */,
@@ -2678,19 +2700,10 @@
 				6565814C09D13043000E61D7 /* tokenizer.cpp */,
 				656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */,
 				656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */,
-				6565829209D157FA000E61D7 /* WebCore */,
 				656581EA09D1508D000E61D7 /* XLinkNames.cpp */,
 				656581EB09D1508D000E61D7 /* XLinkNames.h */,
 			);
 			name = "Derived Sources";
-			path = DerivedSources/WebCore;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6565829209D157FA000E61D7 /* WebCore */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = WebCore;
 			path = DerivedSources/WebCore;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3172,7 +3185,7 @@
 			path = svg;
 			sourceTree = "<group>";
 		};
-		A88427FC093081AD00B6D461 /* KDOM Support */ = {
+		A8C0F6DC089701F100BA5114 /* WebCore+SVG */ = {
 			isa = PBXGroup;
 			children = (
 				A884283D09308C1C00B6D461 /* DOMList.h */,
@@ -3181,14 +3194,6 @@
 				A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */,
 				A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */,
 				A8C32D96093D8EA4000B9CAC /* XLinkNamesWrapper.cpp */,
-			);
-			name = "KDOM Support";
-			sourceTree = "<group>";
-		};
-		A8C0F6DC089701F100BA5114 /* WebCore+SVG */ = {
-			isa = PBXGroup;
-			children = (
-				A88427FC093081AD00B6D461 /* KDOM Support */,
 			);
 			path = "WebCore+SVG";
 			sourceTree = "<group>";
@@ -3904,24 +3909,37 @@
 			children = (
 				BCEA477A097CAAC80094C9E4 /* css_base.cpp */,
 				BCEA477B097CAAC80094C9E4 /* css_base.h */,
-				BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */,
-				BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */,
-				BCEA477E097CAAC80094C9E4 /* CSSGrammar.y */,
 				BCEA477F097CAAC80094C9E4 /* css_ruleimpl.cpp */,
 				BCEA4780097CAAC80094C9E4 /* css_ruleimpl.h */,
 				BCEA4781097CAAC80094C9E4 /* css_stylesheetimpl.cpp */,
 				BCEA4782097CAAC80094C9E4 /* css_stylesheetimpl.h */,
 				BCEA4783097CAAC80094C9E4 /* css_valueimpl.cpp */,
 				BCEA4784097CAAC80094C9E4 /* css_valueimpl.h */,
+				BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */,
+				BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */,
+				BCEA477E097CAAC80094C9E4 /* CSSGrammar.y */,
 				BCEA4785097CAAC80094C9E4 /* csshelper.cpp */,
 				BCEA4786097CAAC80094C9E4 /* csshelper.h */,
 				BCEA4787097CAAC80094C9E4 /* cssparser.cpp */,
 				BCEA4788097CAAC80094C9E4 /* cssparser.h */,
 				BCEA4789097CAAC80094C9E4 /* CSSPropertyNames.in */,
+				93CA4C9709DF93FA00DF8677 /* CSSStyleDeclaration.idl */,
 				BCEA478A097CAAC80094C9E4 /* cssstyleselector.cpp */,
 				BCEA478B097CAAC80094C9E4 /* cssstyleselector.h */,
+				93CA4C9809DF93FA00DF8677 /* CSSStyleSheet.idl */,
 				BCEA478C097CAAC80094C9E4 /* CSSValueKeywords.in */,
+				93CA4C9909DF93FA00DF8677 /* html4.css */,
 				935C476009AC4CD100A6AAB4 /* Length.h */,
+				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
+				93CA4C9B09DF93FA00DF8677 /* makeprop */,
+				93CA4C9C09DF93FA00DF8677 /* maketokenizer */,
+				93CA4C9D09DF93FA00DF8677 /* makevalues */,
+				93CA4C9E09DF93FA00DF8677 /* MediaList.idl */,
+				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
+				93CA4CA009DF93FA00DF8677 /* StyleSheet.idl */,
+				93CA4CA109DF93FA00DF8677 /* StyleSheetList.idl */,
+				93CA4CA209DF93FA00DF8677 /* svg.css */,
+				93CA4CA309DF93FA00DF8677 /* tokenizer.flex */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -4956,6 +4974,19 @@
 				930CAB9009C49F1B00229C04 /* CanvasPattern.idl in Resources */,
 				930CAB9709C49FAA00229C04 /* CodeGeneratorJS.pm in Resources */,
 				936DD03B09CEAC270056AE8C /* Range.idl in Resources */,
+				93CA4CA409DF93FA00DF8677 /* CSSStyleDeclaration.idl in Resources */,
+				93CA4CA509DF93FA00DF8677 /* CSSStyleSheet.idl in Resources */,
+				93CA4CA609DF93FA00DF8677 /* html4.css in Resources */,
+				93CA4CA709DF93FA00DF8677 /* make-css-file-arrays.pl in Resources */,
+				93CA4CA809DF93FA00DF8677 /* makeprop in Resources */,
+				93CA4CA909DF93FA00DF8677 /* maketokenizer in Resources */,
+				93CA4CAA09DF93FA00DF8677 /* makevalues in Resources */,
+				93CA4CAB09DF93FA00DF8677 /* MediaList.idl in Resources */,
+				93CA4CAC09DF93FA00DF8677 /* quirks.css in Resources */,
+				93CA4CAD09DF93FA00DF8677 /* StyleSheet.idl in Resources */,
+				93CA4CAE09DF93FA00DF8677 /* StyleSheetList.idl in Resources */,
+				93CA4CAF09DF93FA00DF8677 /* svg.css in Resources */,
+				93CA4CB009DF93FA00DF8677 /* tokenizer.flex in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

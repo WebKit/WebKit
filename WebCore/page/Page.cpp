@@ -21,28 +21,37 @@
 #include "config.h"
 #include "Page.h"
 
+#include "Color.h"
 #include "Frame.h"
+#include "FrameTree.h"
 #include <kjs/collector.h>
 #include <kjs/JSLock.h>
 #include <kxmlcore/HashMap.h>
+#include <kxmlcore/HashSet.h>
 
 using namespace KJS;
 
 namespace WebCore {
 
-static int pageCount;
+static HashSet<Page*>* allPages;
 static HashMap<String, HashSet<Page*>*>* frameNamespaces;
 
 void Page::init()
 {
-    ++pageCount;
+    if (!allPages) {
+        allPages = new HashSet<Page*>;
+        setFocusRingColorChangeFunction(setNeedsReapplyStyles);
+    }
+    ASSERT(!allPages->contains(this));
+    allPages->add(this);
 }
 
-Page::~Page() 
+Page::~Page()
 {
-    m_mainFrame->detachFromView(); 
+    m_mainFrame->setView(0);
     setGroupName(String());
-    if (!--pageCount) {
+    allPages->remove(this);
+    if (allPages->isEmpty()) {
         Frame::endAllLifeSupport();
 #ifndef NDEBUG
         m_mainFrame = 0;
@@ -91,6 +100,27 @@ const HashSet<Page*>* Page::frameNamespace() const
 const HashSet<Page*>* Page::frameNamespace(const String& groupName)
 {
     return (frameNamespaces && !groupName.isEmpty()) ? frameNamespaces->get(groupName) : 0;
+}
+
+void Page::setNeedsReapplyStyles()
+{
+    if (!allPages)
+        return;
+    HashSet<Page*>::iterator end = allPages->end();
+    for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
+            frame->setNeedsReapplyStyles();
+}
+
+void Page::setNeedsReapplyStylesForSettingsChange(KHTMLSettings* settings)
+{
+    if (!allPages)
+        return;
+    HashSet<Page*>::iterator end = allPages->end();
+    for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
+            if (frame->settings() == settings)
+                frame->setNeedsReapplyStyles();
 }
 
 }

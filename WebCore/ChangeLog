@@ -1,3 +1,105 @@
+2006-04-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8123
+          focus ring on new text field doesn't look like the old one
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7685
+          Focus ring color should change to match graphite when system theme is graphite
+
+        - some cleanup to how we parse user agent style sheets
+
+        * css/CSSValueKeywords.in: Added -webkit-focus-ring-color.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::parseUASheet): Parse an array of chars instead of UTF-16.
+        Cuts the size of the style sheet in half.
+        (WebCore::CSSStyleSelector::applyProperty): Allow negative value for
+        outline-offset. Changed shadow parsing to use getColorFromPrimitiveValue
+        instead of repeating the same logic.
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue): Added a case
+        for the focus ring color.
+        * rendering/render_style.h: (WebCore::RenderStyle::setOutlineOffset):
+        Changed to allow negative values.
+
+        * css/html4.css: Removed a lot of excess spaces. Changed color of focus
+        to -webkit-focus-ring-color. Changed width of focus to 5px.
+        Added an outline-offset for <input type=text> of -2px.
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue): Added focus ring color as an outline color all
+        the time, and as any other color when not in strict mode. I'm confused about what's
+        best for this whole strict mode policy, and I may need advice on Hyatt to perfect
+        this one later.
+        (WebCore::CSSParser::parseColorFromValue): Removed code to pin r, g, and b because
+        the functions in platform already take care of that. Kept the pinning of a, though
+        because that's done in floating point before converting to an integer.
+        (WebCore::CSSParser::parseShadow): Allow focus ring color when not in strict mode.
+
+        * bridge/mac/FrameMac.h: Eliminated the virtual detachFromView function.
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::FrameMac): Eliminated code to maintain the frame instances list.
+        (WebCore::FrameMac::~FrameMac): Ditto.
+        (WebCore::Frame::setNeedsReapplyStyles): Added.
+
+        * bridge/mac/WebCoreSettings.mm: (-[WebCoreSettings _updateAllViews]):
+        * platform/mac/WebCoreTextRendererFactory.mm:
+        (-[WebCoreTextRendererFactory clearCaches]):
+        Changed to call the new Page::setNeedsReapplyStylesForSettingsChange instead of using the
+        obsolete Frame::instances.
+
+        * page/Frame.h: Removed instances, mutableInstances, and detachFromView.
+        * page/Frame.cpp: Ditto.
+
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::~FrameTree): Call setView(0) instead of detachFromView().
+        (WebCore::FrameTree::removeChild): Ditto.
+
+        * page/Page.h:
+        * page/Page.cpp:
+        (WebCore::Page::init): Added a set of pages instead of a page count. Also
+        register a function for when the focus ring color changes the first time this
+        is called.
+        (WebCore::Page::~Page): Call setView(0) instead of detachFromView. Also update
+        to manager the set of pages.
+        (WebCore::Page::setNeedsReapplyStyles): Call setNeedsReapplyStyles on all frames.
+        (WebCore::Page::setNeedsReapplyStylesForSettingsChange): Call setNeedsReapplyStyles
+        on all frames with the passed-in settings.
+
+        * css/make-css-file-arrays.pl: Changed to run the C preprocessor on the
+        input files and to generate an array of char instead of unsigned short.
+
+        * platform/PlatformString.h: Added a constructor that takes a char* and
+        a length.
+        * platform/String.cpp: (WebCore::String::String): Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Just some tweaks; adding in a few files like
+        the user agent style sheets.
+
+        * platform/Color.h: Removed all use of DeprecatedString. Cleaned up a bit.
+        Added focusRingColor and setFocusRingColorChangeFunction.
+        * platform/Color.cpp:
+        (WebCore::makeRGB): Rewrote using max and min.
+        (WebCore::makeRGBA): Ditto.
+        (WebCore::parseHexColor): Cleaned up a bit; changed partway to String instead of
+        DeprecatedString.
+        (WebCore::Color::Color): Changed to use String and to call setNamedColor to save code.
+        (WebCore::Color::setNamedColor): Changed to use String in the interface.
+
+        * platform/mac/ColorMac.mm:
+        (WebCore::observeTheme): Added. Function used to start up the observer.
+        (WebCore::setFocusRingColorChangeFunction): Added. Used to get a call back so we can
+        update all the views when the color changes (including recomputing style to get the
+        color change in).
+        (WebCore::setFocusRingColorChangeFunction): Added. Returns one of the two focus
+        ring colors. Both of these match what AppKit uses -- neither matches what we used
+        to have in the html4.css file.
+        (+[WebCoreControlTintObserver controlTintDidChange]): Added. Used to update when
+        the appearance is changed from blue to graphite and back. We keep a global so we
+        don't have to call over to AppKit every time; that's probably overkill but we need
+        the obsever for the color change function anyway.
+
 2006-04-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/inline-block/overflow-clip.html

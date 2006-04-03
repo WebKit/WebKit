@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "Color.h"
+
+#import <kxmlcore/Assertions.h>
+
+@interface WebCoreControlTintObserver : NSObject
++ (void)controlTintDidChange;
+@end
 
 namespace WebCore {
 
 // NSColor calls don't throw, so no need to block Cocoa exceptions in this file
 
-NSColor *nsColor(const Color &color)
+static bool tintIsKnown;
+static bool tintIsKnownToBeGraphite;
+static void (*tintChangeFunction)();
+
+NSColor* nsColor(const Color& color)
 {
     unsigned c = color.rgb();
     switch (c) {
         case 0: {
             // Need this to avoid returning nil because cachedRGBAValues will default to 0.
-            static NSColor *clearColor = [[NSColor clearColor] retain];
+            static NSColor* clearColor = [[NSColor clearColor] retain];
             return clearColor;
         }
         case Color::black: {
-            static NSColor *blackColor = [[NSColor blackColor] retain];
+            static NSColor* blackColor = [[NSColor blackColor] retain];
             return blackColor;
         }
         case Color::white: {
-            static NSColor *whiteColor = [[NSColor whiteColor] retain];
+            static NSColor* whiteColor = [[NSColor whiteColor] retain];
             return whiteColor;
         }
         default: {
             const int cacheSize = 32;
             static unsigned cachedRGBAValues[cacheSize];
-            static NSColor *cachedColors[cacheSize];
+            static NSColor* cachedColors[cacheSize];
 
-            for (int i = 0; i != cacheSize; ++i) {
-                if (cachedRGBAValues[i] == c) {
+            for (int i = 0; i != cacheSize; ++i)
+                if (cachedRGBAValues[i] == c)
                     return cachedColors[i];
-                }
-            }
 
 #if COLORMATCH_EVERYTHING
-            NSColor *result = [NSColor colorWithCalibratedRed:color.red() / 255.0
+            NSColor* result = [NSColor colorWithCalibratedRed:color.red() / 255.0
                                                         green:color.green() / 255.0
                                                          blue:color.blue() / 255.0
                                                         alpha:color.alpha() /255.0];
 #else
-            NSColor *result = [NSColor colorWithDeviceRed:color.red() / 255.0
+            NSColor* result = [NSColor colorWithDeviceRed:color.red() / 255.0
                                                     green:color.green() / 255.0
                                                      blue:color.blue() / 255.0
                                                     alpha:color.alpha() /255.0];
@@ -74,38 +82,70 @@ NSColor *nsColor(const Color &color)
             cachedRGBAValues[cursor] = c;
             [cachedColors[cursor] autorelease];
             cachedColors[cursor] = [result retain];
-            if (++cursor == cacheSize) {
+            if (++cursor == cacheSize)
                 cursor = 0;
-            }
-
             return result;
         }
     }
 }
 
-static CGColorRef CGColorFromNSColor(NSColor *color)
+static CGColorRef CGColorFromNSColor(NSColor* color)
 {
-    // this needs to always use device colorspace so it can de-calibrate the color for
-    // CGColor to possibly recalibrate it
+    // This needs to always use device colorspace so it can de-calibrate the color for
+    // CGColor to possibly recalibrate it.
     NSColor* deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     float red = [deviceColor redComponent];
     float green = [deviceColor greenComponent];
     float blue = [deviceColor blueComponent];
     float alpha = [deviceColor alphaComponent];
-    const float components[] = { red, green, blue, alpha };
-    
+    const float components[4] = { red, green, blue, alpha };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef cgColor = CGColorCreate(colorSpace, components);
     CGColorSpaceRelease(colorSpace);
     return cgColor;
 }
 
-CGColorRef cgColor(const Color &c)
+CGColorRef cgColor(const Color& c)
 {
     // We could directly create a CGColor here, but that would
-    // skip any rgb caching the nsColor method does.  A direct 
-    // creation should be investigated for a possible performance win.
+    // skip any RGB caching the nsColor method does. A direct 
+    // creation could be investigated for a possible performance win.
     return CGColorFromNSColor(nsColor(c));
 }
 
+static void observeTint()
+{
+    ASSERT(!tintIsKnown);
+    [[NSNotificationCenter defaultCenter] addObserver:[WebCoreControlTintObserver class]
+                                             selector:@selector(controlTintDidChange)
+                                                 name:NSControlTintDidChangeNotification
+                                               object:NSApp];
+    [WebCoreControlTintObserver controlTintDidChange];
+    tintIsKnown = true;
 }
+
+void setFocusRingColorChangeFunction(void (*function)())
+{
+    ASSERT(!tintChangeFunction);
+    tintChangeFunction = function;
+    if (!tintIsKnown)
+        observeTint();
+}
+
+Color focusRingColor()
+{
+    if (!tintIsKnown)
+        observeTint();
+    return tintIsKnownToBeGraphite ? 0xFF9CABBD : 0xFF7DADD9;
+}
+
+}
+
+@implementation WebCoreControlTintObserver
+
++ (void)controlTintDidChange
+{
+    WebCore::tintIsKnownToBeGraphite = [NSColor currentControlTint] == NSGraphiteControlTint;
+}
+
+@end
