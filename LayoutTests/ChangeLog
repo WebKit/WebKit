@@ -1,3 +1,14 @@
+2006-04-03  Beth Dakin  <bdakin@apple.com>
+
+        Layout test for <rdar://problem/4495644> crash when mousing over 
+        links at nationalrealestateinvestors.com in 
+        WebCore::RenderBlock::findNextLineBreak
+
+        * fast/inline/dirtyLinesForInline-expected.checksum: Added.
+        * fast/inline/dirtyLinesForInline-expected.png: Added.
+        * fast/inline/dirtyLinesForInline-expected.txt: Added.
+        * fast/inline/dirtyLinesForInline.html: Added.
+
 2006-04-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Beth.

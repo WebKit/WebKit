@@ -1,0 +1,38 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > P > BODY > HTML > #document to 2 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > P > BODY > HTML > #document to 2 of #text > P > BODY > HTML > #document toDOMRange:range from 0 of #text > P > BODY > HTML > #document to 0 of TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {TEXT} at (0,0) size 772x36
+          text run at (0,0) width 598: "To reproduce this bug outside of DumpRenderTree, mouse over the links below several times. "
+          text run at (598,0) width 174: "The bug is fixed if we don't"
+          text run at (0,18) width 37: "crash."
+      RenderBlock {DIV} at (0,52) size 784x78
+        RenderTable {TABLE} at (0,0) size 132x78
+          RenderTableSection {TBODY} at (0,0) size 0x78
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,2) size 128x74 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (1,1) size 126x72
+                  RenderInline {A} at (0,0) size 98x36 [color=#0000EE]
+                    RenderInline {SPAN} at (0,0) size 98x36
+                      RenderText {TEXT} at (0,0) size 98x36
+                        text run at (0,0) width 98: "this is the home"
+                        text run at (0,18) width 30: "page"
+                    RenderText {TEXT} at (30,18) size 35x18
+                      text run at (30,18) width 35: "home"
+                  RenderBR {BR} at (0,0) size 0x0
+                  RenderInline {A} at (0,0) size 116x36 [color=#0000EE]
+                    RenderInline {SPAN} at (0,0) size 116x36
+                      RenderText {TEXT} at (0,36) size 116x36
+                        text run at (0,36) width 116: "this is the about us"
+                        text run at (0,54) width 30: "page"
+                    RenderText {TEXT} at (30,54) size 53x18
+                      text run at (30,54) width 53: "about us"
+                  RenderBR {BR} at (0,0) size 0x0
+selection start: position 0 of child 0 {TEXT} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 0 of child 1 {TABLE} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
