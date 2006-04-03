@@ -160,6 +160,7 @@
 		93032CC809AEC34300F82A18 /* PathCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93032CC709AEC34300F82A18 /* PathCG.cpp */; };
 		93032CCA09AEC34B00F82A18 /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 93032CC909AEC34B00F82A18 /* Path.h */; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; };
+		9307056C09E0AF8F00B17FE4 /* csshelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4786097CAAC80094C9E4 /* csshelper.h */; };
 		930CAAD709C495B600229C04 /* CanvasRenderingContext2D.idl in Resources */ = {isa = PBXBuildFile; fileRef = 930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */; };
 		930CAB8909C49EFA00229C04 /* CanvasGradient.idl in Resources */ = {isa = PBXBuildFile; fileRef = 930CAB8809C49EFA00229C04 /* CanvasGradient.idl */; };
 		930CAB9009C49F1B00229C04 /* CanvasPattern.idl in Resources */ = {isa = PBXBuildFile; fileRef = 930CAB8F09C49F1B00229C04 /* CanvasPattern.idl */; };
@@ -289,19 +290,6 @@
 		93B780CA09B3B7FE00690162 /* WidgetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B780C909B3B7FE00690162 /* WidgetClient.h */; };
 		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
 		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
-		93CA4CA409DF93FA00DF8677 /* CSSStyleDeclaration.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9709DF93FA00DF8677 /* CSSStyleDeclaration.idl */; };
-		93CA4CA509DF93FA00DF8677 /* CSSStyleSheet.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9809DF93FA00DF8677 /* CSSStyleSheet.idl */; };
-		93CA4CA609DF93FA00DF8677 /* html4.css in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9909DF93FA00DF8677 /* html4.css */; };
-		93CA4CA709DF93FA00DF8677 /* make-css-file-arrays.pl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */; };
-		93CA4CA809DF93FA00DF8677 /* makeprop in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9B09DF93FA00DF8677 /* makeprop */; };
-		93CA4CA909DF93FA00DF8677 /* maketokenizer in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9C09DF93FA00DF8677 /* maketokenizer */; };
-		93CA4CAA09DF93FA00DF8677 /* makevalues in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9D09DF93FA00DF8677 /* makevalues */; };
-		93CA4CAB09DF93FA00DF8677 /* MediaList.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9E09DF93FA00DF8677 /* MediaList.idl */; };
-		93CA4CAC09DF93FA00DF8677 /* quirks.css in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4C9F09DF93FA00DF8677 /* quirks.css */; };
-		93CA4CAD09DF93FA00DF8677 /* StyleSheet.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4CA009DF93FA00DF8677 /* StyleSheet.idl */; };
-		93CA4CAE09DF93FA00DF8677 /* StyleSheetList.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4CA109DF93FA00DF8677 /* StyleSheetList.idl */; };
-		93CA4CAF09DF93FA00DF8677 /* svg.css in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4CA209DF93FA00DF8677 /* svg.css */; };
-		93CA4CB009DF93FA00DF8677 /* tokenizer.flex in Resources */ = {isa = PBXBuildFile; fileRef = 93CA4CA309DF93FA00DF8677 /* tokenizer.flex */; };
 		93CD4FDE0995F9EA007ECC97 /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */; };
 		93CD4FDF0995F9EA007ECC97 /* AtomicString.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CD4FD80995F9EA007ECC97 /* AtomicString.h */; };
 		93CD4FE00995F9EA007ECC97 /* AtomicStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */; };
@@ -1069,13 +1057,10 @@
 		BCEA4796097CAAC80094C9E4 /* css_valueimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4783097CAAC80094C9E4 /* css_valueimpl.cpp */; };
 		BCEA4797097CAAC80094C9E4 /* css_valueimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4784097CAAC80094C9E4 /* css_valueimpl.h */; };
 		BCEA4798097CAAC80094C9E4 /* csshelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4785097CAAC80094C9E4 /* csshelper.cpp */; };
-		BCEA4799097CAAC80094C9E4 /* csshelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4786097CAAC80094C9E4 /* csshelper.h */; };
 		BCEA479A097CAAC80094C9E4 /* cssparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4787097CAAC80094C9E4 /* cssparser.cpp */; };
 		BCEA479B097CAAC80094C9E4 /* cssparser.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4788097CAAC80094C9E4 /* cssparser.h */; };
-		BCEA479C097CAAC80094C9E4 /* CSSPropertyNames.in in Resources */ = {isa = PBXBuildFile; fileRef = BCEA4789097CAAC80094C9E4 /* CSSPropertyNames.in */; };
 		BCEA479D097CAAC80094C9E4 /* cssstyleselector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA478A097CAAC80094C9E4 /* cssstyleselector.cpp */; };
 		BCEA479E097CAAC80094C9E4 /* cssstyleselector.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA478B097CAAC80094C9E4 /* cssstyleselector.h */; };
-		BCEA479F097CAAC80094C9E4 /* CSSValueKeywords.in in Resources */ = {isa = PBXBuildFile; fileRef = BCEA478C097CAAC80094C9E4 /* CSSValueKeywords.in */; };
 		BCEA4852097D93020094C9E4 /* bidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4813097D93020094C9E4 /* bidi.cpp */; };
 		BCEA4853097D93020094C9E4 /* bidi.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4814097D93020094C9E4 /* bidi.h */; };
 		BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4815097D93020094C9E4 /* break_lines.cpp */; };
@@ -1548,17 +1533,12 @@
 		93B780C909B3B7FE00690162 /* WidgetClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WidgetClient.h; path = platform/WidgetClient.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMImplementationFront.h; path = bindings/objc/DOMImplementationFront.h; sourceTree = "<group>"; };
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMImplementationFront.cpp; path = bindings/objc/DOMImplementationFront.cpp; sourceTree = "<group>"; };
-		93CA4C9709DF93FA00DF8677 /* CSSStyleDeclaration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSStyleDeclaration.idl; sourceTree = "<group>"; };
-		93CA4C9809DF93FA00DF8677 /* CSSStyleSheet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSStyleSheet.idl; sourceTree = "<group>"; };
 		93CA4C9909DF93FA00DF8677 /* html4.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html4.css; sourceTree = "<group>"; };
 		93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "make-css-file-arrays.pl"; sourceTree = "<group>"; };
 		93CA4C9B09DF93FA00DF8677 /* makeprop */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makeprop; sourceTree = "<group>"; };
 		93CA4C9C09DF93FA00DF8677 /* maketokenizer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = maketokenizer; sourceTree = "<group>"; };
 		93CA4C9D09DF93FA00DF8677 /* makevalues */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makevalues; sourceTree = "<group>"; };
-		93CA4C9E09DF93FA00DF8677 /* MediaList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaList.idl; sourceTree = "<group>"; };
 		93CA4C9F09DF93FA00DF8677 /* quirks.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quirks.css; sourceTree = "<group>"; };
-		93CA4CA009DF93FA00DF8677 /* StyleSheet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StyleSheet.idl; sourceTree = "<group>"; };
-		93CA4CA109DF93FA00DF8677 /* StyleSheetList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StyleSheetList.idl; sourceTree = "<group>"; };
 		93CA4CA209DF93FA00DF8677 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
 		93CA4CA309DF93FA00DF8677 /* tokenizer.flex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tokenizer.flex; sourceTree = "<group>"; };
 		93CCF7D4033BD43C008635CE /* KWQFileButton.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQFileButton.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3923,10 +3903,8 @@
 				BCEA4787097CAAC80094C9E4 /* cssparser.cpp */,
 				BCEA4788097CAAC80094C9E4 /* cssparser.h */,
 				BCEA4789097CAAC80094C9E4 /* CSSPropertyNames.in */,
-				93CA4C9709DF93FA00DF8677 /* CSSStyleDeclaration.idl */,
 				BCEA478A097CAAC80094C9E4 /* cssstyleselector.cpp */,
 				BCEA478B097CAAC80094C9E4 /* cssstyleselector.h */,
-				93CA4C9809DF93FA00DF8677 /* CSSStyleSheet.idl */,
 				BCEA478C097CAAC80094C9E4 /* CSSValueKeywords.in */,
 				93CA4C9909DF93FA00DF8677 /* html4.css */,
 				935C476009AC4CD100A6AAB4 /* Length.h */,
@@ -3934,10 +3912,7 @@
 				93CA4C9B09DF93FA00DF8677 /* makeprop */,
 				93CA4C9C09DF93FA00DF8677 /* maketokenizer */,
 				93CA4C9D09DF93FA00DF8677 /* makevalues */,
-				93CA4C9E09DF93FA00DF8677 /* MediaList.idl */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
-				93CA4CA009DF93FA00DF8677 /* StyleSheet.idl */,
-				93CA4CA109DF93FA00DF8677 /* StyleSheetList.idl */,
 				93CA4CA209DF93FA00DF8677 /* svg.css */,
 				93CA4CA309DF93FA00DF8677 /* tokenizer.flex */,
 			);
@@ -4598,7 +4573,6 @@
 				BCEA4793097CAAC80094C9E4 /* css_ruleimpl.h in Headers */,
 				BCEA4795097CAAC80094C9E4 /* css_stylesheetimpl.h in Headers */,
 				BCEA4797097CAAC80094C9E4 /* css_valueimpl.h in Headers */,
-				BCEA4799097CAAC80094C9E4 /* csshelper.h in Headers */,
 				BCEA479B097CAAC80094C9E4 /* cssparser.h in Headers */,
 				BCEA479E097CAAC80094C9E4 /* cssstyleselector.h in Headers */,
 				BCEA4853097D93020094C9E4 /* bidi.h in Headers */,
@@ -4814,6 +4788,7 @@
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
 				9326DC0B09DAD5BE00AFC847 /* CharsetData.h in Headers */,
+				9307056C09E0AF8F00B17FE4 /* csshelper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4952,8 +4927,6 @@
 				A88AD3A10952486D001DD196 /* WKPointLightFilter.cikernel in Resources */,
 				A88AD3A40952486D001DD196 /* WKSpecularLightingFilter.cikernel in Resources */,
 				A88AD3A70952486D001DD196 /* WKSpotLightFilter.cikernel in Resources */,
-				BCEA479C097CAAC80094C9E4 /* CSSPropertyNames.in in Resources */,
-				BCEA479F097CAAC80094C9E4 /* CSSValueKeywords.in in Resources */,
 				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
 				65F5382209B2B55700F3DC4A /* character-sets.txt in Resources */,
 				65F5382309B2B55700F3DC4A /* make-charset-table.pl in Resources */,
@@ -4974,19 +4947,6 @@
 				930CAB9009C49F1B00229C04 /* CanvasPattern.idl in Resources */,
 				930CAB9709C49FAA00229C04 /* CodeGeneratorJS.pm in Resources */,
 				936DD03B09CEAC270056AE8C /* Range.idl in Resources */,
-				93CA4CA409DF93FA00DF8677 /* CSSStyleDeclaration.idl in Resources */,
-				93CA4CA509DF93FA00DF8677 /* CSSStyleSheet.idl in Resources */,
-				93CA4CA609DF93FA00DF8677 /* html4.css in Resources */,
-				93CA4CA709DF93FA00DF8677 /* make-css-file-arrays.pl in Resources */,
-				93CA4CA809DF93FA00DF8677 /* makeprop in Resources */,
-				93CA4CA909DF93FA00DF8677 /* maketokenizer in Resources */,
-				93CA4CAA09DF93FA00DF8677 /* makevalues in Resources */,
-				93CA4CAB09DF93FA00DF8677 /* MediaList.idl in Resources */,
-				93CA4CAC09DF93FA00DF8677 /* quirks.css in Resources */,
-				93CA4CAD09DF93FA00DF8677 /* StyleSheet.idl in Resources */,
-				93CA4CAE09DF93FA00DF8677 /* StyleSheetList.idl in Resources */,
-				93CA4CAF09DF93FA00DF8677 /* svg.css in Resources */,
-				93CA4CB009DF93FA00DF8677 /* tokenizer.flex in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

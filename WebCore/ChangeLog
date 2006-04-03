@@ -1,5 +1,12 @@
 2006-04-02  Darin Adler  <darin@apple.com>
 
+        - fix the build
+
+        * WebCore.xcodeproj/project.pbxproj: Removed a bunch of files that should not have been
+        mentioned at all, and a bunch of others that should be in the project but not in the target.
+
+2006-04-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8123
