@@ -37,7 +37,7 @@
 #include "identifier.h"
 #include "lookup.h"
 #include "internal.h"
-#include <unicode/uchar.h>
+#include <kxmlcore/unicode/Unicode.h>
 
 static bool isDecimalDigit(unsigned short c);
 
@@ -137,7 +137,7 @@ void Lexer::shift(unsigned int p)
         break;
       }
       next3 = code[pos++].uc;
-    } while (u_charType(next3) == U_FORMAT_CHAR);
+    } while (KXMLCore::Unicode::isFormatChar(next3));
   }
 }
 
@@ -572,7 +572,7 @@ int Lexer::lex()
 
 bool Lexer::isWhiteSpace() const
 {
-  return (current == '\t' || current == 0x0b || current == 0x0c || u_charType(current) == U_SPACE_SEPARATOR);
+  return current == '\t' || current == 0x0b || current == 0x0c || KXMLCore::Unicode::isSeparatorSpace(current);
 }
 
 bool Lexer::isLineTerminator()
@@ -588,12 +588,26 @@ bool Lexer::isLineTerminator()
 
 bool Lexer::isIdentStart(unsigned short c)
 {
-  return (U_GET_GC_MASK(c) & (U_GC_L_MASK | U_GC_NL_MASK)) || c == '$' || c == '_';
+  return (KXMLCore::Unicode::category(c) & (KXMLCore::Unicode::Letter_Uppercase
+        | KXMLCore::Unicode::Letter_Lowercase
+        | KXMLCore::Unicode::Letter_Titlecase
+        | KXMLCore::Unicode::Letter_Modifier
+        | KXMLCore::Unicode::Letter_Other))
+    || c == '$' || c == '_';
 }
 
 bool Lexer::isIdentPart(unsigned short c)
 {
-  return (U_GET_GC_MASK(c) & (U_GC_L_MASK | U_GC_NL_MASK | U_GC_MN_MASK | U_GC_MC_MASK | U_GC_ND_MASK | U_GC_PC_MASK)) || c == '$' || c == '_';
+  return (KXMLCore::Unicode::category(c) & (KXMLCore::Unicode::Letter_Uppercase
+        | KXMLCore::Unicode::Letter_Lowercase
+        | KXMLCore::Unicode::Letter_Titlecase
+        | KXMLCore::Unicode::Letter_Modifier
+        | KXMLCore::Unicode::Letter_Other
+        | KXMLCore::Unicode::Mark_NonSpacing
+        | KXMLCore::Unicode::Mark_SpacingCombining
+        | KXMLCore::Unicode::Number_DecimalDigit
+        | KXMLCore::Unicode::Punctuation_Connector))
+    || c == '$' || c == '_';
 }
 
 static bool isDecimalDigit(unsigned short c)

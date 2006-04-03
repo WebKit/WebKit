@@ -149,6 +149,11 @@
 // multiple threads only supported on OS X WebKit for now
 #if PLATFORM(MAC)
 #define KXMLCORE_USE_MULTIPLE_THREADS 1
+#define KXMLCORE_USE_ICU_UNICODE 1
+#endif
+
+#if PLATFORM(KDE)
+#define KXMLCORE_USE_QT4_UNICODE 1
 #endif
 
 #endif // KXMLCORE_PLATFORM_H

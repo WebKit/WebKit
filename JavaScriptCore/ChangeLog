@@ -1,3 +1,11 @@
+2006-04-03  George Staikos   <staikos@opensource.apple.com>
+
+        Reviewed by Maciej.
+
+        Implement a unicode abstraction layer to make JavaScriptCore much more
+        easily ported to other platforms without having to take in libicu.  Also
+        makes the unicode related code easier to understand.
+
 2006-04-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Adele.

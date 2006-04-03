@@ -44,7 +44,7 @@
 
 using std::max;
 
-#include <unicode/uchar.h>
+#include <kxmlcore/unicode/Unicode.h>
 
 namespace KJS {
 
@@ -144,12 +144,12 @@ static int statBufferSize = 0;
 
 UChar UChar::toLower() const
 {
-  return static_cast<unsigned short>(u_tolower(uc));
+  return KXMLCore::Unicode::toLower(uc);
 }
 
 UChar UChar::toUpper() const
 {
-  return static_cast<unsigned short>(u_toupper(uc));
+  return KXMLCore::Unicode::toUpper(uc);
 }
 
 UCharReference& UCharReference::operator=(UChar c)

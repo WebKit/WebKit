@@ -40,7 +40,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <unicode/uchar.h>
+#include <kxmlcore/unicode/Unicode.h>
 
 namespace KJS {
 
@@ -661,7 +661,7 @@ static bool isStrWhiteSpace(unsigned short c)
         case 0x2029:
             return true;
         default:
-            return u_charType(c) == U_SPACE_SEPARATOR;
+            return KXMLCore::Unicode::isSeparatorSpace(c);
     }
 }
 
