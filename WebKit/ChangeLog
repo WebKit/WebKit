@@ -1,3 +1,14 @@
+2006-04-02  Trey Matteson  <trey@usa.net>
+
+        Reviewed by Maciej.
+
+        fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8121
+        REGRESSION: 404s are not displayed
+
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader continueAfterContentPolicy:response:]):
+        Only cancel failed loads for object elements, not for frames or a whole page.
+
 2006-04-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.

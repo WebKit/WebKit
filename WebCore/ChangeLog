@@ -1,3 +1,17 @@
+2006-04-02  Trey Matteson  <trey@usa.net>
+
+        Reviewed by Maciej.
+
+        Support for fixing http://bugzilla.opendarwin.org/show_bug.cgi?id=8121
+        REGRESSION: 404s are not displayed
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge currentForm]): Nuke redundant nil check.
+        (-[WebCoreFrameBridge frameElement]): Tweak to not rely on our document, which
+        gives a correct result even at the start of our loading process.
+        * bindings/objc/DOM.mm:
+        (-[DOMDocument _ownerElement]): Nuke redundant nil check.
+
 2006-04-02  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Maciej.

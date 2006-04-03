@@ -1180,8 +1180,7 @@ static ListenerMap *listenerMap;
 
 - (DOMElement *)_ownerElement
 {
-    Element *element = [self _document]->ownerElement();
-    return element ? [DOMElement _elementWith:element] : nil;
+    return [DOMElement _elementWith:[self _document]->ownerElement()];
 }
 
 @end

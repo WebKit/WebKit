@@ -1145,8 +1145,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMElement *)currentForm
 {
-    HTMLFormElement *formElement = m_frame->currentForm();
-    return formElement ? [DOMElement _elementWith:formElement] : nil;
+    return [DOMElement _elementWith:m_frame->currentForm()];
 }
 
 - (NSArray *)controlsInForm:(DOMElement *)form
@@ -1336,7 +1335,12 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMHTMLElement *)frameElement
 {
-    return (DOMHTMLElement *)[[self DOMDocument] _ownerElement];
+    // Not [[self DOMDocument] _ownerElement], since our doc is not set up at the start of our own load.
+    // FIXME: There really is no guarantee this is an HTML element.
+    // For example, it could be something like an SVG foreign object element.
+    // Because of that, I believe the cast here is wrong and also the public API
+    // of WebKit might have to be changed.
+    return (DOMHTMLElement *)[DOMElement _elementWith:m_frame->ownerElement()];
 }
 
 - (NSAttributedString *)selectedAttributedString

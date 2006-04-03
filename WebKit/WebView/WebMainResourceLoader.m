@@ -33,6 +33,7 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
 
+#import <WebKit/DOMHTML.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
@@ -272,8 +273,12 @@
         int status = [(NSHTTPURLResponse *)r statusCode];
         if (status < 200 || status >= 300) {
             // Handle <object> fallback for error cases.
+            DOMHTMLElement *hostElement = [[[self dataSource] webFrame] frameElement];
             [[[dataSource webFrame] _bridge] handleFallbackContent];
-            [self cancel];
+            if (hostElement && [hostElement isKindOfClass:[DOMHTMLObjectElement class]])
+                // object elements are no longer rendered after we fallback, so don't
+                // keep trying to process data from their load
+                [self cancel];
         }
     }
 
