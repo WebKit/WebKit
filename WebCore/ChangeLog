@@ -1,3 +1,19 @@
+2006-04-02  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8032
+          REGRESSION: Focus ring not completely redrawn after a Delete changes its size
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded): When an element changes size, the
+        delta rectangles that need to be invalidated must be inflated by the outline size to ensure
+        that the previous outline is erased, and the space where the new outline is to be drawn is
+        also invalidated. This behaviour is identical to the behaviour of borders that was fixed in
+        bug 6301.
+        * manual-tests/outline-repaint-glitch.html: Added. Manual testcase.
+        This is just an outline version of border-repaint-glitch.html
+
 2006-04-02  Trey Matteson  <trey@usa.net>
 
         Reviewed by Maciej.
