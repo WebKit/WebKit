@@ -38,4 +38,3 @@ layer at (0,0) size 785x1184
               RenderBlock {DIV} at (0,558) size 135x300
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,668) size 769x500
-scrolled to 0,2
