@@ -1,5 +1,14 @@
 2006-04-02  Darin Adler  <darin@apple.com>
 
+        - add a few stubs to get Windows closer to building
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::focusRingColor):
+        (WebCore::setFocusRingColorChangeFunction):
+        (Frame::setNeedsReapplyStyles):
+
+2006-04-02  Darin Adler  <darin@apple.com>
+
         - fix the build
 
         * WebCore.xcodeproj/project.pbxproj: Removed a bunch of files that should not have been

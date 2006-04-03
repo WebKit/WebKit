@@ -308,3 +308,8 @@ QListBox::QListBox() { }
 QListBox::~QListBox() { }
 void QListBox::setSelectionMode(QListBox::SelectionMode) { }
 void QListBox::setFont(WebCore::Font const&) { }
+
+Color WebCore::focusRingColor() { return 0xFF0000FF; }
+void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
+
+void Frame::setNeedsReapplyStyles() { }
