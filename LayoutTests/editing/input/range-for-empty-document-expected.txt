@@ -1,4 +1,4 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-(0, 0): 0,600,0,0
+(0, 0): 8,574,0,18
 
 
