@@ -1,3 +1,18 @@
+2006-04-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/repaint/layer-outline.html fast/repaint/layer-outline-horizontal.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7943
+          Layer outline does not repaint
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer): Use the outlineRect for the
+        outline phase and do it only if the outlineRect isn't empty.
+        (WebCore::RenderLayer::calculateRects): Actually add the outline width to the
+        outline rect.
+
 2006-04-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.

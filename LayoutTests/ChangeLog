@@ -1,3 +1,20 @@
+2006-04-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7943
+          Layer outline does not repaint
+
+        * fast/repaint/inline-block-overflow-expected.png: Added.
+        * fast/repaint/layer-outline-expected.checksum: Added.
+        * fast/repaint/layer-outline-expected.png: Added.
+        * fast/repaint/layer-outline-expected.txt: Added.
+        * fast/repaint/layer-outline-horizontal-expected.checksum: Added.
+        * fast/repaint/layer-outline-horizontal-expected.png: Added.
+        * fast/repaint/layer-outline-horizontal-expected.txt: Added.
+        * fast/repaint/layer-outline-horizontal.html: Added.
+        * fast/repaint/layer-outline.html: Added.
+
 2006-04-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.
