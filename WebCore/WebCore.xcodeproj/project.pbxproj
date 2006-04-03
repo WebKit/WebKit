@@ -149,9 +149,6 @@
 		65DF323E09D1DE65000BE325 /* JSCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */; };
 		65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */; };
 		65F537D909B2B20F00F3DC4A /* CharsetNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F537D809B2B20F00F3DC4A /* CharsetNames.h */; };
-		65F5382209B2B55700F3DC4A /* character-sets.txt in Resources */ = {isa = PBXBuildFile; fileRef = 65F5382009B2B55700F3DC4A /* character-sets.txt */; };
-		65F5382309B2B55700F3DC4A /* make-charset-table.pl in Resources */ = {isa = PBXBuildFile; fileRef = 65F5382109B2B55700F3DC4A /* make-charset-table.pl */; };
-		65F5382509B2B57500F3DC4A /* mac-encodings.txt in Resources */ = {isa = PBXBuildFile; fileRef = 65F5382409B2B57500F3DC4A /* mac-encodings.txt */; };
 		65F5386909B2BFDA00F3DC4A /* ExtraCFEncodings.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F5386809B2BFDA00F3DC4A /* ExtraCFEncodings.h */; };
 		65F5386B09B2C05E00F3DC4A /* CharsetNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65F5386A09B2C05E00F3DC4A /* CharsetNames.cpp */; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
@@ -161,10 +158,6 @@
 		93032CCA09AEC34B00F82A18 /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 93032CC909AEC34B00F82A18 /* Path.h */; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; };
 		9307056C09E0AF8F00B17FE4 /* csshelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4786097CAAC80094C9E4 /* csshelper.h */; };
-		930CAAD709C495B600229C04 /* CanvasRenderingContext2D.idl in Resources */ = {isa = PBXBuildFile; fileRef = 930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */; };
-		930CAB8909C49EFA00229C04 /* CanvasGradient.idl in Resources */ = {isa = PBXBuildFile; fileRef = 930CAB8809C49EFA00229C04 /* CanvasGradient.idl */; };
-		930CAB9009C49F1B00229C04 /* CanvasPattern.idl in Resources */ = {isa = PBXBuildFile; fileRef = 930CAB8F09C49F1B00229C04 /* CanvasPattern.idl */; };
-		930CAB9709C49FAA00229C04 /* CodeGeneratorJS.pm in Resources */ = {isa = PBXBuildFile; fileRef = 930CAB9609C49FAA00229C04 /* CodeGeneratorJS.pm */; };
 		930CAD1509C4F3C300229C04 /* JSCanvasRenderingContext2DBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 930CAD1409C4F3C300229C04 /* JSCanvasRenderingContext2DBase.h */; };
 		930CAD2609C4F49100229C04 /* JSCanvasRenderingContext2DBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930CAD2509C4F49100229C04 /* JSCanvasRenderingContext2DBase.cpp */; };
 		9326DC0B09DAD5BE00AFC847 /* CharsetData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9326DC0A09DAD5BE00AFC847 /* CharsetData.h */; };
@@ -279,7 +272,6 @@
 		935FBC4509BA00B900E230B1 /* EventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBC4409BA00B900E230B1 /* EventListener.h */; };
 		935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBCF109BA143B00E230B1 /* ExceptionCode.h */; };
 		936B424E09A436CD00BAA820 /* SVGCSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6F6089701F100BA5114 /* SVGCSSParser.cpp */; };
-		936DD03B09CEAC270056AE8C /* Range.idl in Resources */ = {isa = PBXBuildFile; fileRef = 936DD03A09CEAC270056AE8C /* Range.idl */; };
 		9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47109A11AB4001FDB34 /* Widget.cpp */; };
 		9380F47409A11AB4001FDB34 /* Widget.h in Headers */ = {isa = PBXBuildFile; fileRef = 9380F47209A11AB4001FDB34 /* Widget.h */; };
 		9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47709A11ACC001FDB34 /* WidgetMac.mm */; };
@@ -299,24 +291,13 @@
 		93CD4FEC0995FD2A007ECC97 /* PlatformString.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CD4FEB0995FD2A007ECC97 /* PlatformString.h */; };
 		93E47C5C09BE2BBB0019C5C1 /* PageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E47C5B09BE2BBB0019C5C1 /* PageMac.mm */; };
 		93E62D9B0985F41600E1B5E3 /* SystemTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E62D990985F41600E1B5E3 /* SystemTime.h */; };
-		93EEC1F809C2877700C515D1 /* Attr.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1E509C2877700C515D1 /* Attr.idl */; };
-		93EEC1F909C2877700C515D1 /* CharacterData.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1E609C2877700C515D1 /* CharacterData.idl */; };
 		93EEC1FA09C2877700C515D1 /* DocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1E709C2877700C515D1 /* DocPtr.h */; };
-		93EEC1FB09C2877700C515D1 /* DocumentType.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1E809C2877700C515D1 /* DocumentType.idl */; };
-		93EEC1FC09C2877700C515D1 /* DOMImplementation.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1E909C2877700C515D1 /* DOMImplementation.idl */; };
-		93EEC1FD09C2877700C515D1 /* Element.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1EA09C2877700C515D1 /* Element.idl */; };
-		93EEC1FE09C2877700C515D1 /* Entity.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1EB09C2877700C515D1 /* Entity.idl */; };
 		93EEC1FF09C2877700C515D1 /* CanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC1ED09C2877700C515D1 /* CanvasRenderingContext2D.cpp */; };
 		93EEC20009C2877700C515D1 /* CanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1EE09C2877700C515D1 /* CanvasRenderingContext2D.h */; };
 		93EEC20109C2877700C515D1 /* CanvasStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1EF09C2877700C515D1 /* CanvasStyle.h */; };
 		93EEC20209C2877700C515D1 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC1F009C2877700C515D1 /* CanvasGradient.cpp */; };
 		93EEC20309C2877700C515D1 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1F109C2877700C515D1 /* CanvasGradient.h */; };
 		93EEC20409C2877700C515D1 /* CanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1F209C2877700C515D1 /* CanvasPattern.h */; };
-		93EEC20509C2877700C515D1 /* MutationEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F309C2877700C515D1 /* MutationEvent.idl */; };
-		93EEC20609C2877700C515D1 /* Notation.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F409C2877700C515D1 /* Notation.idl */; };
-		93EEC20709C2877700C515D1 /* ProcessingInstruction.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */; };
-		93EEC20809C2877700C515D1 /* Text.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F609C2877700C515D1 /* Text.idl */; };
-		93EEC20909C2877700C515D1 /* WheelEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 93EEC1F709C2877700C515D1 /* WheelEvent.idl */; };
 		93EEC26F09C3218000C515D1 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */; };
 		93EEC27109C3218800C515D1 /* CanvasStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC27009C3218800C515D1 /* CanvasStyle.cpp */; };
 		93F198CE08245E59001E9ABC /* kjs_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D1F502DE4369018635CA /* kjs_binding.h */; };
@@ -4928,25 +4909,6 @@
 				A88AD3A40952486D001DD196 /* WKSpecularLightingFilter.cikernel in Resources */,
 				A88AD3A70952486D001DD196 /* WKSpotLightFilter.cikernel in Resources */,
 				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
-				65F5382209B2B55700F3DC4A /* character-sets.txt in Resources */,
-				65F5382309B2B55700F3DC4A /* make-charset-table.pl in Resources */,
-				65F5382509B2B57500F3DC4A /* mac-encodings.txt in Resources */,
-				93EEC1F809C2877700C515D1 /* Attr.idl in Resources */,
-				93EEC1F909C2877700C515D1 /* CharacterData.idl in Resources */,
-				93EEC1FB09C2877700C515D1 /* DocumentType.idl in Resources */,
-				93EEC1FC09C2877700C515D1 /* DOMImplementation.idl in Resources */,
-				93EEC1FD09C2877700C515D1 /* Element.idl in Resources */,
-				93EEC1FE09C2877700C515D1 /* Entity.idl in Resources */,
-				93EEC20509C2877700C515D1 /* MutationEvent.idl in Resources */,
-				93EEC20609C2877700C515D1 /* Notation.idl in Resources */,
-				93EEC20709C2877700C515D1 /* ProcessingInstruction.idl in Resources */,
-				93EEC20809C2877700C515D1 /* Text.idl in Resources */,
-				93EEC20909C2877700C515D1 /* WheelEvent.idl in Resources */,
-				930CAAD709C495B600229C04 /* CanvasRenderingContext2D.idl in Resources */,
-				930CAB8909C49EFA00229C04 /* CanvasGradient.idl in Resources */,
-				930CAB9009C49F1B00229C04 /* CanvasPattern.idl in Resources */,
-				930CAB9709C49FAA00229C04 /* CodeGeneratorJS.pm in Resources */,
-				936DD03B09CEAC270056AE8C /* Range.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

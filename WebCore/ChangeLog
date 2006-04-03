@@ -1,3 +1,12 @@
+2006-04-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Removing idl files and some scripts from the WebCore target to prevent
+        them from being copied into the Resources.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-04-03  Dave Hyatt
 
         Implement basic theme support on Win32.  Still much to do, but
