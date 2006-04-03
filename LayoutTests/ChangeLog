@@ -1,5 +1,12 @@
 2006-04-02  Darin Adler  <darin@apple.com>
 
+        - updated one more result for change in focus ring appearance
+
+        * fast/forms/plaintext-mode-2-expected.checksum: Updated.
+        * fast/forms/plaintext-mode-2-expected.png: Ditto.
+
+2006-04-02  Darin Adler  <darin@apple.com>
+
         - updated layout test results, mostly for the change in focus ring appearance
 
         * editing/input/range-for-empty-document-expected.txt:
