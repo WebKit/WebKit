@@ -2247,9 +2247,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
-    if (![string length])
-        return NO;
-    
     // Get the frame holding the selection, or start with the main frame
     WebFrame *startFrame = [self _selectedOrMainFrame];
 

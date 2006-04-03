@@ -1,3 +1,15 @@
+2006-04-03  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher.
+        
+        - re-fixed <rdar://problem/4481198> REGRESSION (TOT): search results list in bookmarks view 
+        remains when search text is deleted
+
+        * WebView/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        I fixed this recently, but then broke it again by adding an early bail-out to this method. So
+        now I'm removing the early bail-out.
+
 2006-04-02  Trey Matteson  <trey@usa.net>
 
         Reviewed by Maciej.
