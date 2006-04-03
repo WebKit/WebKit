@@ -1,3 +1,20 @@
+2006-04-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4495644> crash when mousing over links at 
+        nationalrealestateinvestors.com in 
+        WebCore::RenderBlock::findNextLineBreak
+
+        This is a fix for a repro crasher where a rootLineBox had a stale 
+        pointer to a render object.
+
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::dirtyLinesFromChangedChild): Only break from 
+        the function because of selfNeedsLayout() if we are not an inline 
+        flow, because if we are, we will not re-layout before bad things 
+        can happen.
+
 2006-04-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

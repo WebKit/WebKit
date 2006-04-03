@@ -227,7 +227,7 @@ void RenderFlow::destroy()
 
 void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
 {
-    if (!parent() || selfNeedsLayout() || isTable())
+    if (!parent() || (selfNeedsLayout() && !isInlineFlow()) || isTable())
         return;
 
     // For an empty inline, go ahead and propagate the check up to our parent.
