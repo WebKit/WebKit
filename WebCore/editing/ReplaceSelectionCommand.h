@@ -54,7 +54,7 @@ typedef HashMap<Node*, RefPtr<RenderingInfo> > RenderingInfoMap;
 class ReplacementFragment
 {
 public:
-    ReplacementFragment(Document *, DocumentFragment *, bool matchStyle);
+    ReplacementFragment(Document*, DocumentFragment*, bool, Element*);
     ~ReplacementFragment();
 
     enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
@@ -132,7 +132,6 @@ private:
     void removeLinePlaceholderIfNeeded(Node *);
     void removeNodeAndPruneAncestors(Node*);
 
-    ReplacementFragment m_fragment;
     RefPtr<Node> m_firstNodeInserted;
     RefPtr<Node> m_lastNodeInserted;
     RefPtr<Node> m_lastTopNodeInserted;
@@ -140,6 +139,7 @@ private:
     bool m_selectReplacement;
     bool m_smartReplace;
     bool m_matchStyle;
+    RefPtr<DocumentFragment> m_documentFragment;
 };
 
 } // namespace WebCore

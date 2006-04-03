@@ -1,0 +1,25 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 757x18
+          text run at (0,0) width 757: "This test does a drag and drop such that the selection around the dragged word is no longer in the document on the drop."
+      RenderBlock {DIV} at (0,34) size 784x18
+        RenderText {TEXT} at (0,0) size 37x18
+          text run at (0,0) width 37: "world"
+        RenderText {TEXT} at (37,0) size 4x18
+          text run at (37,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 31x18
+          RenderText {TEXT} at (41,0) size 31x18
+            text run at (41,0) width 31: "hello"
+caret: position 1 of child 1 {TEXT} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

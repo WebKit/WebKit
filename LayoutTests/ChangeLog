@@ -1,3 +1,23 @@
+2006-04-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8117>
+        REGRESSION (NativeTextField): Drag and drop text within a text input field modifies page
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7567>
+        A drag and drop in DumpRenderTree copies the source, instead of cutting it
+
+        * editing/pasteboard/drag-drop-modifies-page-expected.checksum: Added.
+        * editing/pasteboard/drag-drop-modifies-page-expected.png: Added.
+        * editing/pasteboard/drag-drop-modifies-page-expected.txt: Added.
+        * editing/pasteboard/drag-drop-modifies-page.html: Added.
+
+        Updated:
+        * fast/lists/drag-onto-marker.html:
+        * fast/lists/drag-onto-marker-expected.txt:
+        * fast/lists/drag-onto-marker-expected.png:
+        * fast/lists/drag-onto-marker-expected.checksum:
+
 2006-04-03  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/4495644> crash when mousing over 

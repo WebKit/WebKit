@@ -1,3 +1,15 @@
+2006-04-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7567>
+        A drag and drop in DumpRenderTree copies the source, instead of cutting it
+        
+        Tell the source that the drag is over after the drag is performed, not before.
+
+        * DumpRenderTree/EventSendingController.m:
+        (-[EventSendingController mouseUp]):
+
 2006-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

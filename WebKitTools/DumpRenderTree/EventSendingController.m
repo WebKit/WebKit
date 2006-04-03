@@ -127,9 +127,9 @@ NSPoint lastMousePosition;
             
             NSDragOperation dragOperation = [webView draggingUpdated:draggingInfo];
             
-            [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
             if (dragOperation != NSDragOperationNone)
                 [webView performDragOperation:draggingInfo];
+            [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
             [draggingInfo release];
             draggingInfo = nil;
         }

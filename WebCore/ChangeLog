@@ -1,3 +1,26 @@
+2006-04-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8117>
+        REGRESSION (NativeTextField): Drag and drop text within a text input field modifies page
+        
+        The frame's selection is only set after all sub-commands have been 
+        performed.  When we send the khtmlBeforeTextInsertedEvent to the root 
+        editable element we were using frame->selection(), which may no longer 
+        be in the document.
+        
+        Had to move the construction of the ReplacementFragment to when the
+        replace operation is applied, because endingSelection isn't the 
+        endingSelection of the last operation when the replace operation
+        is constructed.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+
 2006-04-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

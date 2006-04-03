@@ -5,8 +5,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > LI > UL > BODY > HTML > #document to 2 of #text > SPAN > LI > UL > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > LI > UL > BODY > HTML > #document to 5 of #text > SPAN > LI > UL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of LI > UL > BODY > HTML > #document to 0 of LI > UL > BODY > HTML > #document givenAction:WebViewInsertActionDropped
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > SPAN > LI > UL > BODY > HTML > #document to 6 of #text > SPAN > LI > UL > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > LI > UL > BODY > HTML > #document to 6 of #text > SPAN > LI > UL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > SPAN > LI > UL > BODY > HTML > #document to 6 of #text > SPAN > LI > UL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -20,11 +19,8 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 124x55
             RenderText {TEXT} at (0,0) size 124x55
               text run at (0,0) width 124: "world "
-          RenderText {TEXT} at (124,0) size 107x55
-            text run at (124,0) width 107: "hello "
-          RenderInline {SPAN} at (0,0) size 112x55
-            RenderText {TEXT} at (231,0) size 112x55
-              text run at (231,0) width 112: "world"
+          RenderText {TEXT} at (124,0) size 95x55
+            text run at (124,0) width 95: "hello"
       RenderBlock {P} at (0,73) size 784x72
         RenderText {TEXT} at (0,0) size 764x72
           text run at (0,0) width 562: "This is an automated test for elementAtPoint for points over position:outside list markers. "

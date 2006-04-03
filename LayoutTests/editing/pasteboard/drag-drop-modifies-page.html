@@ -1,0 +1,35 @@
+<html> 
+<head>
+<script src=../editing.js type="text/javascript"></script>
+<script>
+function editingTest() {
+  
+    if (!window.layoutTestController)
+        return;
+        
+    extendSelectionForwardByWordCommand();
+    
+    window.layoutTestController.waitUntilDone();
+    
+    // Drag 'hello'
+    var e = document.getElementById("dragme");
+    x = e.offsetLeft + 10;
+    y = e.offsetTop + e.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    // and drop it off to the right somewhere
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(x + 300, y);
+    eventSender.mouseUp();
+
+    window.layoutTestController.notifyDone();
+}
+</script>
+<title>Drag and drop within a text input field modifies page</title> 
+</head> 
+<body>
+<p>This test does a drag and drop such that the selection around the dragged word is no longer in the document on the drop.</p>
+<div contenteditable="true" id="test"><span id="dragme">hello</span> world</div>
+<script>runEditingTest();</script>
+</body>
+</html>

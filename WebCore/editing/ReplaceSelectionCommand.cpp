@@ -54,7 +54,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *fragment, bool matchStyle)
+ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *fragment, bool matchStyle, Element* editableRoot)
     : m_document(document),
       m_fragment(fragment),
       m_matchStyle(matchStyle), 
@@ -117,13 +117,12 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
         removeNode(newlineAtStartNode);
     if (newlineAtEndNode)
         removeNode(newlineAtEndNode);
-        
-    RefPtr<Node> holder = insertFragmentForTestRendering();
     
-    Element* editableRoot = document->frame() ? document->frame()->selection().rootEditableElement() : 0;
     ASSERT(editableRoot);
     if (!editableRoot)
         return;
+            
+    RefPtr<Node> holder = insertFragmentForTestRendering();
 
     RefPtr<Range> range = new Range(holder->document());
     ExceptionCode ec = 0;
@@ -139,9 +138,6 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
         m_fragment = createFragmentFromText(document, newText.deprecatedString());
         holder = insertFragmentForTestRendering();
      }
-    
-    if (!editableRoot->isContentRichlyEditable())
-        m_matchStyle = true;
     
     saveRenderingInfo(holder.get());
     removeUnrenderedNodes(holder.get());
@@ -482,11 +478,11 @@ RenderingInfo::RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration> style, bool 
 }
 
 ReplaceSelectionCommand::ReplaceSelectionCommand(Document *document, DocumentFragment *fragment, bool selectReplacement, bool smartReplace, bool matchStyle) 
-    : CompositeEditCommand(document), 
-      m_fragment(document, fragment, matchStyle),
+    : CompositeEditCommand(document),
       m_selectReplacement(selectReplacement), 
       m_smartReplace(smartReplace),
-      m_matchStyle(matchStyle)
+      m_matchStyle(matchStyle),
+      m_documentFragment(fragment)
 {
 }
 
@@ -502,6 +498,8 @@ void ReplaceSelectionCommand::doApply()
     
     if (!selection.isContentRichlyEditable())
         m_matchStyle = true;
+    
+    ReplacementFragment fragment(document(), m_documentFragment.get(), m_matchStyle, selection.rootEditableElement());
     
     if (m_matchStyle)
         m_insertionStyle = styleAtPosition(selection.start());
@@ -522,14 +520,14 @@ void ReplaceSelectionCommand::doApply()
         mergeStart = true;
     } else {
         // merge if current selection starts inside a paragraph, or there is only one block and no interchange newline to add
-        mergeStart = !m_fragment.hasInterchangeNewlineAtStart() && 
-            (!isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewlineAtEnd() && !m_fragment.hasMoreThanOneBlock()));
+        mergeStart = !fragment.hasInterchangeNewlineAtStart() && 
+            (!isStartOfParagraph(visibleStart) || (!fragment.hasInterchangeNewlineAtEnd() && !fragment.hasMoreThanOneBlock()));
         
         // This is a workaround for this bug:
         // <rdar://problem/4013642> Copied quoted word does not paste as a quote if pasted at the start of a line
         // We need more powerful logic in this whole mergeStart code for this case to come out right without
         // breaking other cases.
-        if (isStartOfParagraph(visibleStart) && isMailBlockquote(m_fragment.firstChild()))
+        if (isStartOfParagraph(visibleStart) && isMailBlockquote(fragment.firstChild()))
             mergeStart = false;
         
         // prevent first list item from getting merged into target, thereby pulled out of list
@@ -538,7 +536,7 @@ void ReplaceSelectionCommand::doApply()
         // assume that the mergeStartNode() contains the first visible content to paste.
         // Any better ideas?
         if (mergeStart) {
-            for (Node *n = m_fragment.mergeStartNode(); n; n = n->parentNode()) {
+            for (Node *n = fragment.mergeStartNode(); n; n = n->parentNode()) {
                 if (isListElement(n)) {
                     mergeStart = false;
                     break;
@@ -549,19 +547,19 @@ void ReplaceSelectionCommand::doApply()
     
     // decide whether to later append nodes to the end
     Node *beyondEndNode = 0;
-    if (!isEndOfParagraph(visibleEnd) && !m_fragment.hasInterchangeNewlineAtEnd() &&
-       (startBlock != endBlock || m_fragment.hasMoreThanOneBlock()))
+    if (!isEndOfParagraph(visibleEnd) && !fragment.hasInterchangeNewlineAtEnd() &&
+       (startBlock != endBlock || fragment.hasMoreThanOneBlock()))
         beyondEndNode = selection.end().downstream().node();
 
     Position startPos = selection.start();
     
     // delete the current range selection, or insert paragraph for caret selection, as needed
     if (selection.isRange()) {
-        bool mergeBlocksAfterDelete = !(m_fragment.hasInterchangeNewlineAtStart() || m_fragment.hasInterchangeNewlineAtEnd() || m_fragment.hasMoreThanOneBlock());
+        bool mergeBlocksAfterDelete = !(fragment.hasInterchangeNewlineAtStart() || fragment.hasInterchangeNewlineAtEnd() || fragment.hasMoreThanOneBlock());
         deleteSelection(false, mergeBlocksAfterDelete);
         updateLayout();
         visibleStart = VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY);
-        if (m_fragment.hasInterchangeNewlineAtStart()) {
+        if (fragment.hasInterchangeNewlineAtStart()) {
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
                 if (!isEndOfDocument(visibleStart))
                     setEndingSelection(visibleStart.next());
@@ -574,7 +572,7 @@ void ReplaceSelectionCommand::doApply()
     } 
     else {
         ASSERT(selection.isCaret());
-        if (m_fragment.hasInterchangeNewlineAtStart()) {
+        if (fragment.hasInterchangeNewlineAtStart()) {
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
                 if (!isEndOfDocument(visibleStart))
                     setEndingSelection(visibleStart.next());
@@ -583,7 +581,7 @@ void ReplaceSelectionCommand::doApply()
                 setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY));
             }
         }
-        if (!m_fragment.hasInterchangeNewlineAtEnd() && m_fragment.hasMoreThanOneBlock() && 
+        if (!fragment.hasInterchangeNewlineAtEnd() && fragment.hasMoreThanOneBlock() && 
             !startAtBlockBoundary && !isEndOfParagraph(visibleEnd)) {
             // The start and the end need to wind up in separate blocks.
             // Insert a paragraph separator to make that happen.
@@ -610,7 +608,7 @@ void ReplaceSelectionCommand::doApply()
     setTypingStyle(0);    
     
     // done if there is nothing to add
-    if (!m_fragment.firstChild())
+    if (!fragment.firstChild())
         return;
     
     // check for a line placeholder, and store it away for possible removal later.
@@ -623,7 +621,7 @@ void ReplaceSelectionCommand::doApply()
         // now a "second deepest position"
         downstream = positionAvoidingSpecialElementBoundary(downstream);
         if (downstream.node()->hasTagName(brTag) && downstream.offset() == 0 && 
-            m_fragment.hasInterchangeNewlineAtEnd() &&
+            fragment.hasInterchangeNewlineAtEnd() &&
             isStartOfLine(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
             linePlaceholder = downstream.node();
     }
@@ -661,12 +659,12 @@ void ReplaceSelectionCommand::doApply()
 
     // step 1: merge content into the start block
     if (mergeStart) {
-        Node *refNode = m_fragment.mergeStartNode();
+        Node *refNode = fragment.mergeStartNode();
         if (refNode) {
             Node *parent = refNode->parentNode();
             Node *node = refNode->nextSibling();
             insertNodeAtAndUpdateNodesInserted(refNode, startPos.node(), startPos.offset());
-            while (node && !m_fragment.isBlockFlow(node)) {
+            while (node && !fragment.isBlockFlow(node)) {
                 Node *next = node->nextSibling();
                 insertNodeAfterAndUpdateNodesInserted(node, refNode);
                 refNode = node;
@@ -689,17 +687,17 @@ void ReplaceSelectionCommand::doApply()
     }
     
     // step 2 : merge everything remaining in the fragment
-    if (m_fragment.firstChild()) {
-        Node *refNode = m_fragment.firstChild();
+    if (fragment.firstChild()) {
+        Node *refNode = fragment.firstChild();
         Node *node = refNode ? refNode->nextSibling() : 0;
         Node *insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
         bool insertionBlockIsRoot = insertionBlock == insertionBlock->rootEditableElement();
         VisiblePosition visiblePos(insertionPos, DOWNSTREAM);
-        if (!insertionBlockIsRoot && m_fragment.isBlockFlow(refNode) && isStartOfBlock(visiblePos))
+        if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode) && isStartOfBlock(visiblePos))
             insertNodeBeforeAndUpdateNodesInserted(refNode, insertionBlock);
-        else if (!insertionBlockIsRoot && m_fragment.isBlockFlow(refNode) && isEndOfBlock(visiblePos)) {
+        else if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode) && isEndOfBlock(visiblePos)) {
             insertNodeAfterAndUpdateNodesInserted(refNode, insertionBlock);
-        } else if (m_lastNodeInserted && !m_fragment.isBlockFlow(refNode)) {
+        } else if (m_lastNodeInserted && !fragment.isBlockFlow(refNode)) {
             Position pos = visiblePos.next().deepEquivalent().downstream();
             insertNodeAtAndUpdateNodesInserted(refNode, pos.node(), pos.offset());
         } else {
@@ -753,7 +751,7 @@ void ReplaceSelectionCommand::doApply()
     Position lastPositionToSelect;
 
     // step 4 : handle trailing newline
-    if (m_fragment.hasInterchangeNewlineAtEnd()) {
+    if (fragment.hasInterchangeNewlineAtEnd()) {
         removeLinePlaceholderIfNeeded(linePlaceholder);
 
         if (!m_lastNodeInserted) {
@@ -763,7 +761,7 @@ void ReplaceSelectionCommand::doApply()
             bool insertParagraph = false;
             VisiblePosition pos(insertionPos, VP_DEFAULT_AFFINITY);
             
-            if (startBlock == endBlock && !m_fragment.isBlockFlow(m_lastTopNodeInserted.get())) {
+            if (startBlock == endBlock && !fragment.isBlockFlow(m_lastTopNodeInserted.get())) {
                 insertParagraph = true;
             } else {
                 // Handle end-of-document case.
@@ -828,7 +826,7 @@ void ReplaceSelectionCommand::doApply()
     }
     
     if (!m_matchStyle)
-        fixupNodeStyles(m_fragment.nodes(), m_fragment.renderingInfo());
+        fixupNodeStyles(fragment.nodes(), fragment.renderingInfo());
     completeHTMLReplacement(lastPositionToSelect);
     
     // step 5 : mop up
