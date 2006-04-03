@@ -1,0 +1,38 @@
+<html>
+<head>
+<style type="text/css">
+tr#row1 td { height: 50px; }
+td { width: 50px; }
+td#cell1 { height: 100px; }
+td#cell2 div { height: 20px; }
+</style>
+<script type="text/javascript">
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function test()
+{
+    console = document.getElementById("console");
+    rowOffset = document.getElementById("row2").offsetTop;
+    cellOffset = document.getElementById("cell2").offsetTop;
+    console.innerText += "Row 2 top offset:" + rowOffset;
+    console.innerText += "\n";
+    console.innerText += "Cell 2 top offset:" + cellOffset;
+    console.innerText += "\n";
+    console.innerText += "Test result: "
+    console.innerText += (rowOffset == 50 && cellOffset == 90 ? "PASS" : "FAIL");
+}
+</script>
+</head>
+<body onload="test()">
+<p>This is a regression test for <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=8085">http://bugzilla.opendarwin.org/show_bug.cgi?id=8085</a>
+REGRESSION: Main menu positioned incorrectly on eia.org and fedex.com/us</i>.
+</p>
+<pre id="console">
+</pre>
+<table cellspacing="0" cellpadding="0">
+<tr id="row1"><td colspan="2"></td></tr>
+<tr id="row2"><td id="cell1"></td><td id="cell2"><div></div></td></tr>
+</table>
+</body>
+</html>

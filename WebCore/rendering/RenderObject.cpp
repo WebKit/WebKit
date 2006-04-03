@@ -580,7 +580,8 @@ int RenderObject::offsetTop() const
         RenderObject* offsetPar = offsetParent();
         RenderObject* curr = parent();
         while (curr && curr != offsetPar) {
-            y += curr->yPos();
+            if (!curr->isTableRow())
+                y += curr->yPos();
             curr = curr->parent();
         }
     }

@@ -1,0 +1,6 @@
+This is a regression test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8085 REGRESSION: Main menu positioned incorrectly on eia.org and fedex.com/us.
+
+Row 2 top offset:50
+Cell 2 top offset:90
+Test result: PASS
+

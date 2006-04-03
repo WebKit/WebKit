@@ -1,5 +1,19 @@
 2006-04-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Beth.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8085
+          REGRESSION: Main menu positioned incorrectly on eia.org and fedex.com/us
+
+        Test: fast/dom/Element/offsetTop-table-cell.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetTop): Skip table rows when adding up
+        the offsets, since a table cell's yPos() is relative to the table
+        section, not the row.
+
+2006-04-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Test: fast/repaint/layer-outline.html fast/repaint/layer-outline-horizontal.html
 
         Reviewed by Darin.
