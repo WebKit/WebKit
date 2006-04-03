@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src=../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+
+function test()
+{ 
+    var res = "";
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    document.getElementById('dv').focus();
+    copyCommand();
+    document.getElementById('tf').focus();
+    pasteCommand();
+    
+    if (document.getElementById('tf').value == "Test") {
+        res+= "Passed.\n";
+    }
+    document.getElementById('dv').innerHTML = "";
+    document.getElementById('result').innerHTML = res;
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+
+</script>
+</head>
+<body onload="test()">
+This tests that when newlines are pasted into text fields, the text gets truncated properly.
+<br><br>
+<input type="text" id="tf"></input>
+<div contenteditable id="dv">Test<br>Failed</div>
+<div id="result">
+</div>
+</body>
+</html>

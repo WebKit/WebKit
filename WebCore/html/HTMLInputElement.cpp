@@ -50,7 +50,17 @@ namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
+using namespace std;
 
+static int minPosition(int p1, int p2)
+{
+    if (p1 < 0)
+        return p2;
+    if (p2 < 0)
+        return p1;
+    return min(p1, p2);
+}
+    
 HTMLInputElement::HTMLInputElement(Document *doc, HTMLFormElement *f)
     : HTMLGenericFormElement(inputTag, doc, f)
 {
@@ -1183,12 +1193,20 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
         unsigned currentLength = value().length();
         String text = static_cast<BeforeTextInsertedEvent *>(evt)->text();
         int selectionLength = document()->frame()->selection().toString().length();
-        
+        int truncateLength = -1;
         // Truncate the inserted text if necessary
         if (currentLength + text.length() - selectionLength > ml) {
             ASSERT(currentLength <= ml);
-            text.truncate(ml - currentLength);
-        }        
+            truncateLength = ml - currentLength;
+        }
+        
+        // Truncate the inserted text at the first new line.
+        int newLinePosition = text.find("\n");
+        truncateLength = minPosition(truncateLength, newLinePosition);
+        newLinePosition = text.find("\r");
+        truncateLength = minPosition(truncateLength, newLinePosition);
+        if (truncateLength >= 0)
+            text.truncate(truncateLength);
     }
     
     if (m_type == TEXT && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent) && renderer())

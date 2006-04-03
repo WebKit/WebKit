@@ -1,3 +1,17 @@
+2006-04-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8104
+        REGRESSION (NativeTextField): New text fields should not allow pasting newlines
+
+        Test: fast/forms/input-truncate-newline.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::minPosition): Added helper function.
+        (WebCore::HTMLInputElement::defaultEventHandler): Searches for /r or /n and 
+         truncates the text to be inserted to the earliest newline.
+
 2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Fixed a comment (forgot to save the file before the previous commit).

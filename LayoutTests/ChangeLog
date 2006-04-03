@@ -1,3 +1,13 @@
+2006-04-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8104
+        REGRESSION (NativeTextField): New text fields should not allow pasting newlines
+
+        * fast/forms/input-truncate-newline-expected.txt: Added.
+        * fast/forms/input-truncate-newline.html: Added.
+
 2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
