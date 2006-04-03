@@ -520,6 +520,7 @@ typedef enum {
 
 - (NSResponder *)firstResponder;
 - (void)makeFirstResponder:(NSResponder *)responder;
+- (void)willMakeFirstResponderForNodeFocus;
 
 - (BOOL)wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
 

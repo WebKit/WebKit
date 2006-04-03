@@ -297,6 +297,13 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [webView _popPerformingProgrammaticFocus];
 }
 
+- (void)willMakeFirstResponderForNodeFocus
+{
+    ASSERT([[[_frame frameView] documentView] isKindOfClass:[WebHTMLView class]]);
+    [(WebHTMLView *)[[_frame frameView] documentView] _willMakeFirstResponderForNodeFocus];
+}
+
+
 - (BOOL)wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
 {
     ASSERT(_frame != nil);

@@ -1,3 +1,17 @@
+2006-04-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/4198619> REGRESSION: tabbing through links fails after hitting text field w/ sys's "tab to all controls" off
+        - fixed <rdar://problem/4463760> REGRESSION: Can't tab from old text field (like password fields) to new text field (6811)
+        (http://bugzilla.opendarwin.org/show_bug.cgi?id=6811)
+        - fixed tab and shift tab don't select the right things
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5685
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::nextKeyViewInFrame):
+        * bridge/mac/WebCoreFrameBridge.h:
+
 2006-04-02  Darin Adler  <darin@apple.com>
 
         - add a few stubs to get Windows closer to building
@@ -3378,7 +3392,6 @@
         * bindings/js/JSDOMHTML.cpp:
         * bindings/scripts/CodeGeneratorJS.pm:
 
->>>>>>> .r13497
 2006-03-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej

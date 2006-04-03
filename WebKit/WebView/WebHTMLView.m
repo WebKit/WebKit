@@ -2953,6 +2953,13 @@ done:
     return YES;
 }
 
+// returning YES from this method is the way we tell AppKit that it is ok for this view
+// to be in the key loop even when "tab to all controls" is not on.
+- (BOOL)needsPanelToBecomeKey
+{
+    return YES;
+}
+
 - (NSView *)nextValidKeyView
 {
     NSView *view = nil;
@@ -3003,7 +3010,7 @@ done:
 - (BOOL)becomeFirstResponder
 {
     NSView *view = nil;
-    if (![[self _webView] _isPerformingProgrammaticFocus]) {
+    if (![[self _webView] _isPerformingProgrammaticFocus] && !_private->willBecomeFirstResponderForNodeFocus) {
         switch ([[self window] keyViewSelectionDirection]) {
         case NSDirectSelection:
             break;
@@ -3015,6 +3022,7 @@ done:
             break;
         }
     }
+    _private->willBecomeFirstResponderForNodeFocus = NO;
     if (view)
         [[self window] makeFirstResponder:view];
     [[[self _web_parentWebFrameView] webFrame] _clearSelectionInOtherFrames];
@@ -4979,6 +4987,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         if ([subview isKindOfClass:[WebBaseNetscapePluginView class]])
             [(WebBaseNetscapePluginView *)subview restartNullEvents];
     }
+}
+
+- (void)_willMakeFirstResponderForNodeFocus
+{
+    _private->willBecomeFirstResponderForNodeFocus = YES;
 }
 
 @end

@@ -1,0 +1,33 @@
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(str)
+{
+    document.getElementById("log").innerHTML += str + "<br>";
+}
+function tabCycle()
+{
+    if (window.eventSender) {
+        eventSender.keyDown("\t", Array());
+	eventSender.keyDown("\t", Array());
+        eventSender.keyDown("\t", Array());
+        eventSender.keyDown("\t", Array());
+    }
+}
+</script>
+</head>
+<body onload="tabCycle()">
+<p>This test checks whether you can tab between AppKit controls and engine-rendered controls or other focusable object in the page like contentEditable areas. As you tab through, select one, text, select two and contentEditable div should focus, in that order.</p>
+<select multiple onfocus="log('FOCUS: select one')">
+<option>one</option>
+</select>
+<input type=text onfocus="log('FOCUS: text')" value="text">
+<select multiple onfocus="log('FOCUS: select two')">
+<option>two</option>
+</select>
+<div style="display: inline-block" contentEditable="true" onfocus="log('FOCUS: contentEditable div')">contentEditable div</div>
+<pre id="log">
+</pre>
+</body>

@@ -1,3 +1,29 @@
+2006-04-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/4198619> REGRESSION: tabbing through links fails after hitting text field w/ sys's "tab to all controls" off
+        - fixed <rdar://problem/4463760> REGRESSION: Can't tab from old text field (like password fields) to new text field (6811)
+        (http://bugzilla.opendarwin.org/show_bug.cgi?id=6811)
+        - fixed tab and shift tab don't select the right things
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5685
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge willMakeFirstResponderForNodeFocus]): New method
+        - let WebHTMLView know that the next time it becomes first
+        responder, it's to change focus within the page and the right node
+        has already been set, so it should not move focus forward or
+        backward inside it.
+        * WebView/WebHTMLView.m:
+        (-[NSArray needsPanelToBecomeKey]): Override to return YES, oddly enough this
+        is the right way to tell AppKit that you should be in the tab cycle loop.
+        (-[NSArray becomeFirstResponder]): Don't move forward or back in tab cycle
+        when this becomeFirstResponder is for tabbing from a control in the page.
+        (-[WebHTMLView _willMakeFirstResponderForNodeFocus]): Note that the next
+        time this view becomes first responder, it will be for in-page focus 
+        navigation.
+        * WebView/WebHTMLViewInternal.h:
+
 2006-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

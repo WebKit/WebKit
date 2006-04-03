@@ -1,0 +1,16 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 19 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 19 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 19 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+This test checks whether you can tab between AppKit controls and engine-rendered controls or other focusable object in the page like contentEditable areas. As you tab through, select one, text, select two and contentEditable div should focus, in that order.
+
+   
+contentEditable div
+ FOCUS: select one
+FOCUS: text
+FOCUS: select two
+FOCUS: contentEditable div
+

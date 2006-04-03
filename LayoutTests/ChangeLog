@@ -1,3 +1,17 @@
+2006-04-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Tests for:
+        - fixed <rdar://problem/4198619> REGRESSION: tabbing through links fails after hitting text field w/ sys's "tab to all controls" off
+        - fixed <rdar://problem/4463760> REGRESSION: Can't tab from old text field (like password fields) to new text field (6811)
+        (http://bugzilla.opendarwin.org/show_bug.cgi?id=6811)
+        - fixed tab and shift tab don't select the right things
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5685
+
+        * fast/forms/focus-control-to-page-expected.txt: Added.
+        * fast/forms/focus-control-to-page.html: Added.
+
 2006-04-02  Darin Adler  <darin@apple.com>
 
         - updated one more result for change in focus ring appearance

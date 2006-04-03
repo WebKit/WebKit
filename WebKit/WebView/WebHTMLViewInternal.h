@@ -79,6 +79,7 @@
     BOOL ignoreMarkedTextSelectionChange;
     BOOL startNewKillRingSequence;
     BOOL nextResponderDisabledOnce;
+    BOOL willBecomeFirstResponderForNodeFocus;
     
     WebTextCompleteController *compController;
     
@@ -97,4 +98,5 @@
 - (BOOL)_wasFirstResponderAtMouseDownTime:(NSResponder *)responder;
 - (void)_pauseNullEventsForAllNetscapePlugins;
 - (void)_resumeNullEventsForAllNetscapePlugins;
+- (void)_willMakeFirstResponderForNodeFocus;
 @end

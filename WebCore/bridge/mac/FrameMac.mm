@@ -879,7 +879,8 @@ NSView *FrameMac::nextKeyViewInFrame(Node *node, KWQSelectionDirection direction
                 return view;
         } else
             static_cast<Element *>(node)->focus(); 
-        [_bridge makeFirstResponder:[_bridge documentView]];
+
+        [_bridge willMakeFirstResponderForNodeFocus];
         return [_bridge documentView];
     }
 }
