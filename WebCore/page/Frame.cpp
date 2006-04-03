@@ -1640,6 +1640,13 @@ void Frame::reparseConfiguration()
         setUserStyleSheetLocation(userStyleSheetLocation);
     else
         setUserStyleSheet(String());
+
+    // FIXME: It's not entirely clear why the following is needed.
+    // The document automatically does this as required when you set the style sheet.
+    // But we had problems when this code was removed. Details are in
+    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=8079>.
+    if (d->m_doc)
+        d->m_doc->updateStyleSelector();
 }
 
 bool Frame::shouldDragAutoNode(Node *node, const IntPoint& point) const

@@ -1,3 +1,13 @@
+2006-04-02  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8079
+        REGRESSION: Redraw from page cache does not show visited links
+
+        * page/Frame.cpp: (WebCore::Frame::reparseConfiguration): Added back
+        updateStyleSelector call that was removed as part of the patch for bug 7907.
+
 2006-04-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.
