@@ -271,7 +271,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
     if (!password.isNull())
         m_url.setPass(password.deprecatedString());
 
-    // Methods names are case-sensitive, but Firefox uppercases methods it knows
+    // Method names are case sensitive. But since Firefox uppercases method names it knows, we'll do the same.
     String methodUpper(method.upper());
     if (methodUpper == "CONNECT" || methodUpper == "COPY" || methodUpper == "DELETE" || methodUpper == "GET" || methodUpper == "HEAD"
         || methodUpper == "INDEX" || methodUpper == "LOCK" || methodUpper == "M-POST" || methodUpper == "MKCOL" || methodUpper == "MOVE" 

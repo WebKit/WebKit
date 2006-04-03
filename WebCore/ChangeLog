@@ -1,5 +1,12 @@
 2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
 
+        Fixed a comment (forgot to save the file before the previous commit).
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+
+2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Darin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8099
