@@ -371,6 +371,8 @@ void Collector::markOtherThreadConservatively(Thread *thread)
   // scan the stack
 #if PLATFORM(X86)
   markStackObjectsConservatively((void *)regs.esp, pthread_get_stackaddr_np(thread->posixThread));
+#elif (PLATFORM(PPC) || PLATFORM(PPC64)) && __DARWIN_UNIX03
+  markStackObjectsConservatively((void *)regs.__r1, pthread_get_stackaddr_np(thread->posixThread));
 #elif PLATFORM(PPC) || PLATFORM(PPC64)
   markStackObjectsConservatively((void *)regs.r1, pthread_get_stackaddr_np(thread->posixThread));
 #else

@@ -1,3 +1,21 @@
+2006-04-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Adele.
+
+        Fixes <rdar://problem/4498338> JavaScriptCore fails to compile for ppc64
+        Other 64 bit build fixes.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::markOtherThreadConservatively): test for __DARWIN_UNIX03 and use __r1
+        * kjs/dtoa.cpp:
+        (Bigint::): cast PRIVATE_mem to unsigned to prevent warning
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::getJavaVM): cast jniError to long to prevent format warning
+        (KJS::Bindings::getJNIEnv): cast jniError to long to prevent format warning
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::addNativeReference): cast CFDictionaryGetValue to unsigned long to prevent warning
+        (KJS::Bindings::removeNativeReference): cast CFDictionaryGetValue to unsigned long to prevent warning
+
 2006-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

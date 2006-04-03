@@ -159,7 +159,7 @@ void KJS::Bindings::addNativeReference (const Bindings::RootObject *root, JSObje
     if (root) {
         CFMutableDictionaryRef referencesDictionary = getReferencesDictionary (root);
         
-        unsigned int numReferences = (unsigned int)CFDictionaryGetValue (referencesDictionary, imp);
+        unsigned long numReferences = (unsigned long)CFDictionaryGetValue (referencesDictionary, imp);
         if (numReferences == 0) {
             JSLock lock;
             gcProtect(imp);
@@ -179,7 +179,7 @@ void KJS::Bindings::removeNativeReference (JSObject *imp)
     CFMutableDictionaryRef referencesDictionary = findReferenceDictionary (imp);
 
     if (referencesDictionary) {
-        unsigned int numReferences = (unsigned int)CFDictionaryGetValue (referencesDictionary, imp);
+        unsigned long numReferences = (unsigned long)CFDictionaryGetValue (referencesDictionary, imp);
         if (numReferences == 1) {
             JSLock lock;
             gcUnprotect(imp);

@@ -55,7 +55,7 @@ JavaVM *getJavaVM()
         jvm = jvmArray[0];
     }
     else 
-        fprintf(stderr, "%s: JNI_GetCreatedJavaVMs failed, returned %ld\n", __PRETTY_FUNCTION__, jniError);
+        fprintf(stderr, "%s: JNI_GetCreatedJavaVMs failed, returned %ld\n", __PRETTY_FUNCTION__, (long)jniError);
         
     return jvm;
 }
@@ -69,7 +69,7 @@ JNIEnv *getJNIEnv()
     if ( jniError == JNI_OK )
         return env;
     else
-        fprintf(stderr, "%s: AttachCurrentThread failed, returned %ld\n", __PRETTY_FUNCTION__, jniError);
+        fprintf(stderr, "%s: AttachCurrentThread failed, returned %ld\n", __PRETTY_FUNCTION__, (long)jniError);
     return NULL;
 }
 
