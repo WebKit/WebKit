@@ -1,3 +1,13 @@
+2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8099
+          REGRESSION: XMLHttpRequest lowercase post requests broken
+
+        * http/tests/xmlhttprequest/methods-lower-case-expected.txt: Added.
+        * http/tests/xmlhttprequest/methods-lower-case.html: Added.
+
 2006-04-02  Trey Matteson  <trey@usa.net>
 
         Reviewed by Maciej.

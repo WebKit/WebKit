@@ -271,7 +271,16 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
     if (!password.isNull())
         m_url.setPass(password.deprecatedString());
 
-    m_method = method.deprecatedString();
+    // Methods names are case-sensitive, but Firefox uppercases methods it knows
+    String methodUpper(method.upper());
+    if (methodUpper == "CONNECT" || methodUpper == "COPY" || methodUpper == "DELETE" || methodUpper == "GET" || methodUpper == "HEAD"
+        || methodUpper == "INDEX" || methodUpper == "LOCK" || methodUpper == "M-POST" || methodUpper == "MKCOL" || methodUpper == "MOVE" 
+        || methodUpper == "OPTIONS" || methodUpper == "POST" || methodUpper == "PROPFIND" || methodUpper == "PROPPATCH" || methodUpper == "PUT" 
+        || methodUpper == "TRACE" || methodUpper == "UNLOCK")
+        m_method = methodUpper.deprecatedString();
+    else
+        m_method = method.deprecatedString();
+
     m_async = async;
 
     changeState(Loading);
@@ -291,7 +300,7 @@ void XMLHttpRequest::send(const String& body)
 
     m_aborted = false;
 
-    if (!body.isNull() && m_method.lower() != "get" && m_method.lower() != "head" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
+    if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocol().lower() == "http" || m_url.protocol().lower() == "https")) {
         String contentType = getRequestHeader("Content-Type");
         String charset;
         if (contentType.isEmpty())
@@ -309,7 +318,7 @@ void XMLHttpRequest::send(const String& body)
         m_job = new TransferJob(m_async ? this : 0, m_method, m_url, m_encoding.fromUnicode(body.deprecatedString()));
     } else {
         // FIXME: HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
-        if (m_method.lower() == "head")
+        if (m_method == "HEAD")
             m_method = "GET";
         m_job = new TransferJob(m_async ? this : 0, m_method, m_url);
     }

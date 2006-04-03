@@ -1,3 +1,16 @@
+2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8099
+          REGRESSION: XMLHttpRequest lowercase post requests broken
+
+        Test: http/tests/xmlhttprequest/methods-lower-case.html
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::open): Uppercase some HTTP method names, to match a Firefox quirk.
+        (WebCore::XMLHttpRequest::send): Account for the above change.
+
 2006-04-02  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by Darin.
