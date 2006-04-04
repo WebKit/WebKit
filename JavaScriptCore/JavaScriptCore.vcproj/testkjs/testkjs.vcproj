@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot; ..\..\..\icu\lib\icuuc.lib"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot; ..\..\..\icu\lib\icuuc.lib&#x0D;&#x0A;winmm.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -137,7 +137,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot; ..\..\..\icu\lib\icuuc.lib"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot; ..\..\..\icu\lib\icuuc.lib&#x0D;&#x0A;winmm.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"

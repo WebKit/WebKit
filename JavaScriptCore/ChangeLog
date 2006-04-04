@@ -1,3 +1,13 @@
+2006-04-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Fix win32 build.
+        Disable ASSERT redefinition warnings for now.
+
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj:
+        * kxmlcore/Assertions.h:
+
 2006-04-04  Bjrn Graf  <bjoern.graf@gmail.com>
 
         Reviewed by ggaren & darin.  Landed by eseidel.

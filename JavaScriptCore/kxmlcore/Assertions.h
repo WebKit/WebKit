@@ -98,6 +98,11 @@ void KXCLog(const char *file, int line, const char *function, KXCLogChannel *cha
 
 // ASSERT, ASSERT_WITH_MESSAGE, ASSERT_NOT_REACHED
 
+#if PLATFORM(WIN_OS)
+// FIXME: Change to use something other than ASSERT to avoid this conflict with win32.
+#undef ASSERT
+#endif
+
 #if ASSERT_DISABLED
 
 #define ASSERT(assertion) ((void)0)
