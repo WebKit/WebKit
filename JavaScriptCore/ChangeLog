@@ -1,3 +1,12 @@
+2006-04-03  Darin Adler  <darin@apple.com>
+
+        - tweak config.h and Platform.h to try to get buildbot working
+          (making some small changes at the same time)
+
+        * kjs/config.h: Removed now-unneeded HAVE_ICU.
+        * kxmlcore/Platform.h: Tweak how platform gets set up. Move all the
+        USE stuff to the end.
+
 2006-04-03  George Staikos   <staikos@opensource.apple.com>
 
         Reviewed by Maciej.

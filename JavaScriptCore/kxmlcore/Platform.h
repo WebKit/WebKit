@@ -47,7 +47,6 @@
 // regardless of operating environment
 #if defined(WIN32) || defined(_WIN32)
 #define KXMLCORE_PLATFORM_WIN_OS 1
-#define KXMLCORE_USE_ICU_UNICODE 1
 #endif
 
 // PLATFORM(UNIX)
@@ -65,27 +64,17 @@
 
 // Operating environments
 
-#define KXMLCORE_HAVE_OPERATING_ENVIRONMENT 0
+// I made the BUILDING_KDE__ macro up for the KDE build system to define
 
 // PLATFORM(KDE)
-// Operating environment dependencies for KDE
-// I made this macro up for the KDE build system to define
+// PLATFORM(MAC)
+// PLATFORM(WIN)
 #if defined(BUILDING_KDE__)
 #define KXMLCORE_PLATFORM_KDE 1
-#undef KXMLCORE_HAVE_OPERATING_ENVIRONMENT
-#define KXMLCORE_HAVE_OPERATING_ENVIRONMENT 1
-#endif
-
-#if !KXMLCORE_HAVE_OPERATING_ENVIRONMENT && PLATFORM(DARWIN)
+#elif PLATFORM(DARWIN)
 #define KXMLCORE_PLATFORM_MAC 1
-#undef KXMLCORE_HAVE_OPERATING_ENVIRONMENT
-#define KXMLCORE_HAVE_OPERATING_ENVIRONMENT 1
-#endif
-
-#if !KXMLCORE_HAVE_OPERATING_ENVIRONMENT && PLATFORM(WIN_OS)
+#elif PLATFORM(WIN_OS)
 #define KXMLCORE_PLATFORM_WIN 1
-#undef KXMLCORE_HAVE_OPERATING_ENVIRONMENT
-#define KXMLCORE_HAVE_OPERATING_ENVIRONMENT 1
 #endif
 
 // CPU
@@ -147,13 +136,15 @@
 #define KXMLCORE_COMPILER_CYGWIN 1
 #endif
 
-// multiple threads only supported on OS X WebKit for now
+// multiple threads only supported on Mac for now
 #if PLATFORM(MAC)
 #define KXMLCORE_USE_MULTIPLE_THREADS 1
-#define KXMLCORE_USE_ICU_UNICODE 1
 #endif
 
-#if PLATFORM(KDE)
+// for Unicode, Mac and Windows use ICU, KDE uses Qt
+#if PLATFORM(MAC) || PLATFORM(WIN)
+#define KXMLCORE_USE_ICU_UNICODE 1
+#elif PLATFORM(KDE)
 #define KXMLCORE_USE_QT4_UNICODE 1
 #endif
 
