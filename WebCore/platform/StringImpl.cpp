@@ -343,8 +343,8 @@ bool StringImpl::isLower() const
 {
     unsigned int i;
     for (i = 0; i < m_length; i++)
-	if (m_data[i].lower() != m_data[i])
-	    return false;
+        if (m_data[i].lower() != m_data[i])
+            return false;
     return true;
 }
 
@@ -358,7 +358,7 @@ StringImpl* StringImpl::lower() const
     c->m_length = m_length;
 
     for (unsigned int i = 0; i < m_length; i++)
-	c->m_data[i] = m_data[i].lower();
+        c->m_data[i] = m_data[i].lower();
 
     return c;
 }
@@ -373,7 +373,7 @@ StringImpl* StringImpl::upper() const
     c->m_length = m_length;
 
     for (unsigned int i = 0; i < m_length; i++)
-	c->m_data[i] = m_data[i].upper();
+        c->m_data[i] = m_data[i].upper();
 
     return c;
 }
@@ -463,7 +463,7 @@ static bool equal(const QChar* a, const char* b, int m_length)
     while (m_length--) {
         if (*a != *b)
             return false;
-	a++; b++;
+        a++; b++;
     }
     return true;
 }
@@ -474,7 +474,7 @@ static bool equalCaseInsensitive(const QChar* a, const char* b, int m_length)
     while (m_length--) {
         if (tolower(a->unicode()) != tolower(*b))
             return false;
-	a++; b++;
+        a++; b++;
     }
     return true;
 }
@@ -485,7 +485,7 @@ static bool equalCaseInsensitive(const QChar* a, const QChar* b, int m_length)
     while (m_length--) {
         if (tolower(a->unicode()) != tolower(b->unicode()))
             return false;
-	a++; b++;
+        a++; b++;
     }
     return true;
 }
@@ -536,9 +536,9 @@ int StringImpl::find(const QChar c, int start) const
     if (index >= m_length )
         return -1;
     while(index < m_length) {
-	if (m_data[index] == c)
+        if (m_data[index] == c)
             return index;
-	index++;
+        index++;
     }
     return -1;
 }
@@ -559,49 +559,49 @@ int StringImpl::find(const StringImpl* str, int index, bool caseSensitive) const
     */
     ASSERT(str);
     if (index < 0)
-	index += m_length;
+        index += m_length;
     int lstr = str->m_length;
     int lthis = m_length - index;
     if ((unsigned)lthis > m_length)
-	return -1;
+        return -1;
     int delta = lthis - lstr;
     if (delta < 0)
-	return -1;
+        return -1;
 
     const QChar* uthis = m_data + index;
     const QChar* ustr = str->m_data;
     unsigned hthis = 0;
     unsigned hstr = 0;
     if (caseSensitive) {
-	for (int i = 0; i < lstr; i++) {
-	    hthis += uthis[i].unicode();
-	    hstr += ustr[i].unicode();
-	}
-	int i = 0;
-	while (1) {
-	    if (hthis == hstr && memcmp(uthis + i, ustr, lstr * sizeof(QChar)) == 0)
-		return index + i;
-	    if (i == delta)
-		return -1;
-	    hthis += uthis[i + lstr].unicode();
-	    hthis -= uthis[i].unicode();
-	    i++;
-	}
+        for (int i = 0; i < lstr; i++) {
+            hthis += uthis[i].unicode();
+            hstr += ustr[i].unicode();
+        }
+        int i = 0;
+        while (1) {
+            if (hthis == hstr && memcmp(uthis + i, ustr, lstr * sizeof(QChar)) == 0)
+                return index + i;
+            if (i == delta)
+                return -1;
+            hthis += uthis[i + lstr].unicode();
+            hthis -= uthis[i].unicode();
+            i++;
+        }
     } else {
-	for (int i = 0; i < lstr; i++ ) {
-	    hthis += tolower(uthis[i].unicode());
-	    hstr += tolower(ustr[i].unicode());
-	}
-	int i = 0;
-	while (1) {
-	    if (hthis == hstr && equalCaseInsensitive(uthis + i, ustr, lstr))
-		return index + i;
-	    if (i == delta)
-		return -1;
-	    hthis += tolower(uthis[i + lstr].unicode());
-	    hthis -= tolower(uthis[i].unicode());
-	    i++;
-	}
+        for (int i = 0; i < lstr; i++ ) {
+            hthis += tolower(uthis[i].unicode());
+            hstr += tolower(ustr[i].unicode());
+        }
+        int i = 0;
+        while (1) {
+            if (hthis == hstr && equalCaseInsensitive(uthis + i, ustr, lstr))
+                return index + i;
+            if (i == delta)
+                return -1;
+            hthis += tolower(uthis[i + lstr].unicode());
+            hthis -= tolower(uthis[i].unicode());
+            i++;
+        }
     }
 }
 
@@ -620,7 +620,7 @@ StringImpl* StringImpl::replace(QChar oldC, QChar newC)
         return this;
     unsigned i;
     for (i = 0; i != m_length; ++i)
-	if (m_data[i] == oldC)
+        if (m_data[i] == oldC)
             break;
     if (i == m_length)
         return this;
@@ -632,7 +632,7 @@ StringImpl* StringImpl::replace(QChar oldC, QChar newC)
 
     for (i = 0; i != m_length; ++i) {
         QChar ch = m_data[i];
-	if (ch == oldC)
+        if (ch == oldC)
             ch = newC;
         c->m_data[i] = ch;
     }

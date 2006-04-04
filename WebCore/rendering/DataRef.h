@@ -37,14 +37,14 @@ public:
 
     DataRef(const DataRef<T>& d)
     {
-    	assert(d.m_data);
+        assert(d.m_data);
         m_data = d.m_data;
         m_data->ref();
     }
 
     ~DataRef()
     {
-    	if (m_data)
+        if (m_data)
             m_data->deref();
     }
 
@@ -55,42 +55,42 @@ public:
 
     T* access()
     {
-    	if (!m_data->hasOneRef()) {
-	    m_data->deref();
-	    m_data = new T(*m_data);
-	    m_data->ref();
+        if (!m_data->hasOneRef()) {
+            m_data->deref();
+            m_data = new T(*m_data);
+            m_data->ref();
         }
         return m_data;
     }
 
     void init()
     {
-    	assert(!m_data);
+        assert(!m_data);
         m_data = new T;
         m_data->ref();
     }
 
     DataRef<T>& operator=(const DataRef<T>& d)
     {
-    	assert(d.m_data);
+        assert(d.m_data);
         d.m_data->ref();
-    	if (m_data)
-    	    m_data->deref();
-    	m_data = d.m_data;
+        if (m_data)
+            m_data->deref();
+        m_data = d.m_data;
         return *this;
     }
 
     bool operator==(const DataRef<T>& o) const
     {
-    	assert(m_data);
-    	assert(o.m_data);
+        assert(m_data);
+        assert(o.m_data);
         return m_data == o.m_data || *m_data == *o.m_data;
     }
     
     bool operator!=(const DataRef<T>& o) const
     {
-    	assert(m_data);
-    	assert(o.m_data);
+        assert(m_data);
+        assert(o.m_data);
         return m_data != o.m_data && *m_data != *o.m_data;
     }
 

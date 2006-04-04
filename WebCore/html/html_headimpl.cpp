@@ -58,11 +58,11 @@ HTMLBaseElement::~HTMLBaseElement()
 void HTMLBaseElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == hrefAttr) {
-	m_href = parseURL(attr->value());
-	process();
+        m_href = parseURL(attr->value());
+        process();
     } else if (attr->name() == targetAttr) {
-    	m_target = attr->value();
-	process();
+        m_target = attr->value();
+        process();
     } else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -86,13 +86,13 @@ void HTMLBaseElement::removedFromDocument()
 void HTMLBaseElement::process()
 {
     if (!inDocument())
-	return;
+        return;
 
     if(!m_href.isEmpty() && document()->frame())
-	document()->setBaseURL( KURL( document()->frame()->url(), m_href.deprecatedString() ).url() );
+        document()->setBaseURL( KURL( document()->frame()->url(), m_href.deprecatedString() ).url() );
 
     if(!m_target.isEmpty())
-	document()->setBaseTarget( m_target.deprecatedString() );
+        document()->setBaseTarget( m_target.deprecatedString() );
 
     // ### should changing a document's base URL dynamically automatically update all images, stylesheets etc?
 }
@@ -169,10 +169,10 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
         process();
     } else if (attr->name() == hrefAttr) {
         m_url = document()->completeURL(parseURL(attr->value()));
-	process();
+        process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();
-	process();
+        process();
     } else if (attr->name() == mediaAttr) {
         m_media = attr->value().deprecatedString().lower();
         process();
@@ -229,7 +229,7 @@ void HTMLLinkElement::process()
     if (m_disabledState != 2 && (type.contains("text/css") || m_isStyleSheet) && document()->frame()) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
-	// also, don't load style sheets for standalone documents
+        // also, don't load style sheets for standalone documents
         if (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print")) {
 
             // Add ourselves as a pending sheet, but only if we aren't an alternate 
@@ -407,11 +407,11 @@ HTMLMetaElement::~HTMLMetaElement()
 void HTMLMetaElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == http_equivAttr) {
-	m_equiv = attr->value();
-	process();
+        m_equiv = attr->value();
+        process();
     } else if (attr->name() == contentAttr) {
-	m_content = attr->value();
-	process();
+        m_content = attr->value();
+        process();
     } else if (attr->name() == nameAttr) {
         // Do nothing.
     } else
@@ -429,7 +429,7 @@ void HTMLMetaElement::process()
     // Get the document to process the tag, but only if we're actually part of DOM tree (changing a meta tag while
     // it's not in the tree shouldn't have any effect on the document)
     if (inDocument() && !m_equiv.isNull() && !m_content.isNull())
-	document()->processHttpEquiv(m_equiv,m_content);
+        document()->processHttpEquiv(m_equiv,m_content);
 }
 
 String HTMLMetaElement::content() const
@@ -736,8 +736,8 @@ void HTMLStyleElement::childrenChanged()
     String text = "";
 
     for (Node* c = firstChild(); c; c = c->nextSibling())
-	if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE || c->nodeType() == COMMENT_NODE)
-	    text += c->nodeValue();
+        if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE || c->nodeType() == COMMENT_NODE)
+            text += c->nodeValue();
 
     if (m_sheet) {
         if (static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading())
@@ -834,8 +834,8 @@ void HTMLTitleElement::childrenChanged()
     HTMLElement::childrenChanged();
     m_title = "";
     for (Node* c = firstChild(); c != 0; c = c->nextSibling())
-	if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE)
-	    m_title += c->nodeValue();
+        if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE)
+            m_title += c->nodeValue();
     if (inDocument())
         document()->setTitle(m_title, this);
 }

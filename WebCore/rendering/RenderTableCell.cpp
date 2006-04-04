@@ -108,8 +108,8 @@ void RenderTableCell::calcWidth()
 void RenderTableCell::setWidth(int width)
 {
     if (width != m_width) {
-	m_width = width;
-	m_widthChanged = true;
+        m_width = width;
+        m_widthChanged = true;
     }
 }
 
@@ -142,9 +142,9 @@ short RenderTableCell::baselinePosition(bool) const
     if (!o)
         return offset + contentHeight();
     while (o->firstChild()) {
-	if (!o->isInline())
-	    offset += o->paddingTop() + o->borderTop();
-	o = o->firstChild();
+        if (!o->isInline())
+            offset += o->paddingTop() + o->borderTop();
+        o = o->firstChild();
     }
     
     if (!o->isInline())
@@ -711,7 +711,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& i, int _tx, int _ty,
     const BackgroundLayer* bgLayer = backgroundObject->style()->backgroundLayers();
 
     if (bgLayer->hasImage() || c.isValid()) {
-	// We have to clip here because the background would paint
+        // We have to clip here because the background would paint
         // on top of the borders otherwise.  This only matters for cells and rows.
         bool hasLayer = backgroundObject->layer() && (backgroundObject == this || backgroundObject == parent());
         if (hasLayer && tableElt->collapseBorders()) {

@@ -79,25 +79,25 @@ protected:
     void fullRecalc();
     void recalcColumn( int effCol );
     int totalPercent() const {
-	if ( percentagesDirty )
-	    calcPercentages();
-	return total_percent;
+        if ( percentagesDirty )
+            calcPercentages();
+        return total_percent;
     }
     void calcPercentages() const;
     int calcEffectiveWidth();
     void insertSpanCell( RenderTableCell *cell );
 
     struct Layout {
-	Layout() : minWidth( 0 ), maxWidth( 0 ),
-		   effMinWidth( 0 ), effMaxWidth( 0 ),
-		   calcWidth( 0 ) {}
-	Length width;
-	Length effWidth;
-	int minWidth;
-	int maxWidth;
-	int effMinWidth;
-	int effMaxWidth;
-	int calcWidth;
+        Layout() : minWidth( 0 ), maxWidth( 0 ),
+                   effMinWidth( 0 ), effMaxWidth( 0 ),
+                   calcWidth( 0 ) {}
+        Length width;
+        Length effWidth;
+        int minWidth;
+        int maxWidth;
+        int effMinWidth;
+        int effMaxWidth;
+        int calcWidth;
     };
 
     DeprecatedArray<Layout> layoutStruct;

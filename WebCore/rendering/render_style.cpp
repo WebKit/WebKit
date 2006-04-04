@@ -47,7 +47,7 @@ StyleSurroundData::StyleSurroundData(const StyleSurroundData& o )
 bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 {
     return offset==o.offset && margin==o.margin &&
-	padding==o.padding && border==o.border;
+        padding==o.padding && border==o.border;
 }
 
 StyleBoxData::StyleBoxData()
@@ -457,12 +457,12 @@ StyleInheritedData::StyleInheritedData(const StyleInheritedData& o )
 bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 {
     return
-	indent == o.indent &&
-	line_height == o.line_height &&
-	style_image == o.style_image &&
-	cursor_image == o.cursor_image &&
-	font == o.font &&
-	color == o.color &&
+        indent == o.indent &&
+        line_height == o.line_height &&
+        style_image == o.style_image &&
+        cursor_image == o.cursor_image &&
+        font == o.font &&
+        color == o.color &&
         horizontal_border_spacing == o.horizontal_border_spacing &&
         vertical_border_spacing == o.vertical_border_spacing &&
         widows == o.widows &&
@@ -491,9 +491,9 @@ void RenderStyle::arenaDelete(RenderArena *arena)
     while (ps) {
         prev = ps;
         ps = ps->pseudoStyle;
-	// to prevent a double deletion.
-	// this works only because the styles below aren't really shared
-	// Dirk said we need another construct as soon as these are shared
+        // to prevent a double deletion.
+        // this works only because the styles below aren't really shared
+        // Dirk said we need another construct as soon as these are shared
         prev->pseudoStyle = 0;
         prev->deref(arena);
     }
@@ -590,7 +590,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
 // compare everything except the pseudoStyle pointer
     return (inherited_flags == o.inherited_flags &&
             noninherited_flags == o.noninherited_flags &&
-	    box == o.box &&
+            box == o.box &&
             visual == o.visual &&
             background == o.background &&
             surround == o.surround &&
@@ -648,7 +648,7 @@ RenderStyle* RenderStyle::getPseudoStyle(PseudoId pid)
 
     RenderStyle *ps = 0;
     if (noninherited_flags._styleType==NOPSEUDO) {
-	ps = pseudoStyle;
+        ps = pseudoStyle;
         while (ps) {
             if (styleType() == pid)
                     break;
@@ -703,10 +703,10 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 #endif
 
     // we anyway assume they are the same
-// 	EDisplay _effectiveDisplay : 5;
+//      EDisplay _effectiveDisplay : 5;
 
     // NonVisible:
-// 	ECursor _cursor_style : 4;
+//      ECursor _cursor_style : 4;
 
 // ### this needs work to know more exactly if we need a relayout
 //     or just a repaint
@@ -760,46 +760,46 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
     // changes causing Layout changes:
 
 // only for tables:
-// 	_border_collapse
-// 	EEmptyCell _empty_cells : 2 ;
-// 	ECaptionSide _caption_side : 2;
+//     _border_collapse
+//     EEmptyCell _empty_cells : 2 ;
+//     ECaptionSide _caption_side : 2;
 //     ETableLayout _table_layout : 1;
 //     EPosition _position : 2;
 //     EFloat _floating : 2;
     if ( ((int)noninherited_flags._effectiveDisplay) >= TABLE ) {
-	// Stupid gcc gives a compile error on
-	// a != other->b if a and b are bitflags. Using
-	// !(a== other->b) instead.
-	if ( !(inherited_flags._border_collapse == other->inherited_flags._border_collapse) ||
-	     !(inherited_flags._empty_cells == other->inherited_flags._empty_cells) ||
-	     !(inherited_flags._caption_side == other->inherited_flags._caption_side) ||
-	     !(noninherited_flags._table_layout == other->noninherited_flags._table_layout))
+        // Stupid gcc gives a compile error on
+        // a != other->b if a and b are bitflags. Using
+        // !(a== other->b) instead.
+        if ( !(inherited_flags._border_collapse == other->inherited_flags._border_collapse) ||
+             !(inherited_flags._empty_cells == other->inherited_flags._empty_cells) ||
+             !(inherited_flags._caption_side == other->inherited_flags._caption_side) ||
+             !(noninherited_flags._table_layout == other->noninherited_flags._table_layout))
         return Layout;
     }
 
 // only for lists:
-// 	EListStyleType _list_style_type : 5 ;
-// 	EListStylePosition _list_style_position :1;
+//      EListStyleType _list_style_type : 5 ;
+//      EListStylePosition _list_style_position :1;
     if (noninherited_flags._effectiveDisplay == LIST_ITEM ) {
-	if ( !(inherited_flags._list_style_type == other->inherited_flags._list_style_type) ||
-	     !(inherited_flags._list_style_position == other->inherited_flags._list_style_position) )
-	    return Layout;
+        if ( !(inherited_flags._list_style_type == other->inherited_flags._list_style_type) ||
+             !(inherited_flags._list_style_position == other->inherited_flags._list_style_position) )
+            return Layout;
     }
 
 // ### These could be better optimised
-// 	ETextAlign _text_align : 3;
-// 	ETextTransform _text_transform : 4;
-// 	EDirection _direction : 1;
-// 	EWhiteSpace _white_space : 2;
-// 	EFontVariant _font_variant : 1;
+//      ETextAlign _text_align : 3;
+//      ETextTransform _text_transform : 4;
+//      EDirection _direction : 1;
+//      EWhiteSpace _white_space : 2;
+//      EFontVariant _font_variant : 1;
 //     EClear _clear : 2;
     if ( !(inherited_flags._text_align == other->inherited_flags._text_align) ||
-	 !(inherited_flags._text_transform == other->inherited_flags._text_transform) ||
-	 !(inherited_flags._direction == other->inherited_flags._direction) ||
-	 !(inherited_flags._white_space == other->inherited_flags._white_space) ||
-	 !(noninherited_flags._clear == other->noninherited_flags._clear)
-	)
-	return Layout;
+         !(inherited_flags._text_transform == other->inherited_flags._text_transform) ||
+         !(inherited_flags._direction == other->inherited_flags._direction) ||
+         !(inherited_flags._white_space == other->inherited_flags._white_space) ||
+         !(noninherited_flags._clear == other->noninherited_flags._clear)
+        )
+        return Layout;
 
 // only for inline:
 //     EVerticalAlign _vertical_align : 4;
@@ -841,9 +841,9 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         return RepaintLayer;
 
     // Repaint:
-// 	EVisibility _visibility : 2;
+//      EVisibility _visibility : 2;
 //     EOverflow _overflow : 4 ;
-// 	int _text_decoration : 4;
+//      int _text_decoration : 4;
 //     DataRef<StyleBackgroundData> background;
     if (inherited->color != other->inherited->color ||
         !(inherited_flags._visibility == other->inherited_flags._visibility) ||
@@ -857,7 +857,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         css3InheritedData->userModify != other->css3InheritedData->userModify ||
         css3NonInheritedData->userSelect != other->css3NonInheritedData->userSelect ||
         css3NonInheritedData->userDrag != other->css3NonInheritedData->userDrag
-	)
+        )
         return Repaint;
 
     return Equal;

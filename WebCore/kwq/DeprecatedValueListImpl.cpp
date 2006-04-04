@@ -48,8 +48,8 @@ public:
     unsigned count;
 };
 
-inline DeprecatedValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(DeprecatedValueListImplNode *), 
-							   DeprecatedValueListImplNode *(*copyFunc)(DeprecatedValueListImplNode *)) : 
+inline DeprecatedValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(DeprecatedValueListImplNode*),
+        DeprecatedValueListImplNode* (*copyFunc)(DeprecatedValueListImplNode*)) : 
     head(NULL),
     tail(NULL),
     deleteNode(deleteFunc),
@@ -80,18 +80,18 @@ void DeprecatedValueListImpl::KWQValueListPrivate::copyList(DeprecatedValueListI
     head = NULL;
 
     while (node != NULL) {
-	DeprecatedValueListImplNode *copy = copyNode(node);
-	if (prev == NULL) {
-	    head = copy;
-	} else {
-	    prev->next = copy;
-	}
+        DeprecatedValueListImplNode *copy = copyNode(node);
+        if (prev == NULL) {
+            head = copy;
+        } else {
+            prev->next = copy;
+        }
 
-	copy->prev = prev;
-	copy->next = NULL;
+        copy->prev = prev;
+        copy->next = NULL;
 
-	prev = copy;
-	node = node->next;
+        prev = copy;
+        node = node->next;
     }
 
     tail = prev;
@@ -102,9 +102,9 @@ void DeprecatedValueListImpl::KWQValueListPrivate::deleteList(DeprecatedValueLis
     DeprecatedValueListImplNode *p = l;
     
     while (p != NULL) {
-	DeprecatedValueListImplNode *next = p->next;
-	deleteNode(p);
-	p = next;
+        DeprecatedValueListImplNode *next = p->next;
+        deleteNode(p);
+        p = next;
     }
 }
 
@@ -173,7 +173,7 @@ DeprecatedValueListImplIterator DeprecatedValueListImpl::prependNode(DeprecatedV
     if (d->tail == NULL) {
         d->tail = node;
     } else {
-	node->next->prev = node;
+        node->next->prev = node;
     }
 
     d->count++;
@@ -187,24 +187,24 @@ void DeprecatedValueListImpl::removeEqualNodes(DeprecatedValueListImplNode *node
 
     DeprecatedValueListImplNode *next;
     for (DeprecatedValueListImplNode *p = d->head; p != NULL; p = next) {
-	next = p->next;
-	if (equalFunc(node, p)) {
-	    if (p->next != NULL) {
-		p->next->prev = p->prev;
-	    } else {
+        next = p->next;
+        if (equalFunc(node, p)) {
+            if (p->next != NULL) {
+                p->next->prev = p->prev;
+            } else {
                 d->tail = p->prev;
             }
 
-	    if (p->prev != NULL) {
-		p->prev->next = p->next;
-	    } else {
-		d->head = p->next;
-	    }
+            if (p->prev != NULL) {
+                p->prev->next = p->next;
+            } else {
+                d->head = p->next;
+            }
 
-	    d->deleteNode(p);
+            d->deleteNode(p);
 
-	    d->count--;
-	}
+            d->count--;
+        }
     }
 }
 
@@ -213,9 +213,9 @@ unsigned DeprecatedValueListImpl::containsEqualNodes(DeprecatedValueListImplNode
     unsigned contains = 0;
 
     for (DeprecatedValueListImplNode *p = d->head; p != NULL; p = p->next) {
-	if (equalFunc(node, p)) {
-	    ++contains;
-	}
+        if (equalFunc(node, p)) {
+            ++contains;
+        }
     }
     
     return contains;
@@ -263,21 +263,21 @@ DeprecatedValueListImplIterator DeprecatedValueListImpl::removeIterator(Deprecat
     copyOnWrite();
 
     if (iterator.nodeImpl == NULL) {
-	return iterator;
+        return iterator;
     }
 
     DeprecatedValueListImplNode *next = iterator.nodeImpl->next;
 
     // detach node
     if (iterator.nodeImpl->next != NULL) {
-	iterator.nodeImpl->next->prev = iterator.nodeImpl->prev;
+        iterator.nodeImpl->next->prev = iterator.nodeImpl->prev;
     } else {
         d->tail = iterator.nodeImpl->prev;
     }
     if (iterator.nodeImpl->prev != NULL) {
-	iterator.nodeImpl->prev->next = iterator.nodeImpl->next;
+        iterator.nodeImpl->prev->next = iterator.nodeImpl->next;
     } else {
-	d->head = iterator.nodeImpl->next;
+        d->head = iterator.nodeImpl->next;
     }
     
     d->deleteNode(iterator.nodeImpl);
@@ -347,13 +347,13 @@ DeprecatedValueListImplNode *DeprecatedValueListImpl::nodeAt(unsigned index)
     copyOnWrite();
 
     if (d->count <= index) {
-	return NULL;
+        return NULL;
     }
 
     DeprecatedValueListImplNode *p = d->head;
 
     for (unsigned i = 0; i < index; i++) {
-	p = p->next;
+        p = p->next;
     }
 
     return p;
@@ -362,13 +362,13 @@ DeprecatedValueListImplNode *DeprecatedValueListImpl::nodeAt(unsigned index)
 DeprecatedValueListImplNode *DeprecatedValueListImpl::nodeAt(unsigned index) const
 {
     if (d->count <= index) {
-	return NULL;
+        return NULL;
     }
 
     DeprecatedValueListImplNode *p = d->head;
 
     for (unsigned i = 0; i < index; i++) {
-	p = p->next;
+        p = p->next;
     }
 
     return p;
@@ -388,16 +388,16 @@ DeprecatedValueListImpl& DeprecatedValueListImpl::operator=(const DeprecatedValu
 void DeprecatedValueListImpl::copyOnWrite()
 {
     if (!d->hasOneRef())
-	d = new KWQValueListPrivate(*d);
+        d = new KWQValueListPrivate(*d);
 }
 
 bool DeprecatedValueListImpl::isEqual(const DeprecatedValueListImpl &other, bool (*equalFunc)(const DeprecatedValueListImplNode *, const DeprecatedValueListImplNode *)) const
 {
     DeprecatedValueListImplNode *p, *q;
     for (p = d->head, q = other.d->head; p && q; p = p->next, q = q->next) {
-	if (!equalFunc(p, q)) {
-	    return false;
-	}
+        if (!equalFunc(p, q)) {
+            return false;
+        }
     }
     return !p && !q;
 }

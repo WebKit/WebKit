@@ -76,20 +76,20 @@ bool ArrayImpl::resize(size_t newSize)
     if (newSize != d->numItems) {
         char *newData;
         
-	if (newSize != 0) {
+        if (newSize != 0) {
             size_t maxSize = std::numeric_limits<size_t>::max() / d->itemSize;
             if (newSize > maxSize)
                 return false;
-	    newData = static_cast<char *>(fastRealloc(d->data, newSize * d->itemSize));
-	    if (!newData)
-	        return false;
-	} else {
-	    newData = 0;
+            newData = static_cast<char *>(fastRealloc(d->data, newSize * d->itemSize));
+            if (!newData)
+                return false;
+        } else {
+            newData = 0;
             fastFree(d->data);
-	}
+        }
 
-	d->data = newData;
-	d->numItems = newSize;
+        d->data = newData;
+        d->numItems = newSize;
     }
 
     return true;
@@ -98,14 +98,14 @@ bool ArrayImpl::resize(size_t newSize)
 void ArrayImpl::duplicate(const void *data, size_t newSize)
 {
     if (data == NULL) {
-	newSize = 0;
+        newSize = 0;
     }
 
     if (!d->hasOneRef())
         d = new ArrayPrivate(d->itemSize, newSize);
 
     if (d->numItems != newSize) {
-	resize(newSize);
+        resize(newSize);
     }
 
     memcpy(d->data, data, newSize * d->itemSize);
@@ -125,8 +125,8 @@ bool ArrayImpl::fill(const void *item, int numItems)
 
     if ((unsigned)numItems != d->numItems) {
         if (!resize(numItems)) {
-	    return false;
-	}
+            return false;
+        }
     }
 
     for (int i = 0; i < numItems; i++) {

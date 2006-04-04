@@ -110,8 +110,8 @@ unsigned int CSSSelector::specificity()
     switch(match)
     {
     case Id:
-	s += 0x10000;
-	break;
+        s += 0x10000;
+        break;
     case Exact:
     case Class:
     case Set:
@@ -164,8 +164,8 @@ void CSSSelector::extractPseudoType() const
     static AtomicString selection("selection");
     static AtomicString target("target");
     static AtomicString visited("visited");
-    bool element = false;	// pseudo-element
-    bool compat = false;	// single colon compatbility mode
+    bool element = false;       // pseudo-element
+    bool compat = false;        // single colon compatbility mode
     
     _pseudoType = PseudoOther;
     if (value == active)
@@ -244,16 +244,16 @@ bool CSSSelector::operator == ( const CSSSelector &other )
     const CSSSelector *sel2 = &other;
 
     while ( sel1 && sel2 ) {
-	if ( sel1->tag != sel2->tag || sel1->attr != sel2->attr ||
-	     sel1->relation() != sel2->relation() || sel1->match != sel2->match ||
-	     sel1->value != sel2->value ||
+        if ( sel1->tag != sel2->tag || sel1->attr != sel2->attr ||
+             sel1->relation() != sel2->relation() || sel1->match != sel2->match ||
+             sel1->value != sel2->value ||
              sel1->pseudoType() != sel2->pseudoType())
-	    return false;
-	sel1 = sel1->tagHistory;
-	sel2 = sel2->tagHistory;
+            return false;
+        sel1 = sel1->tagHistory;
+        sel2 = sel2->tagHistory;
     }
     if ( sel1 || sel2 )
-	return false;
+        return false;
     return true;
 }
 

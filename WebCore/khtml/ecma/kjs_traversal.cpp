@@ -35,17 +35,17 @@ namespace KJS {
 const ClassInfo DOMNodeIterator::info = { "NodeIterator", 0, &DOMNodeIteratorTable, 0 };
 /*
 @begin DOMNodeIteratorTable 5
-  root				DOMNodeIterator::Root			DontDelete|ReadOnly
-  whatToShow			DOMNodeIterator::WhatToShow		DontDelete|ReadOnly
-  filter			DOMNodeIterator::Filter			DontDelete|ReadOnly
-  expandEntityReferences	DOMNodeIterator::ExpandEntityReferences	DontDelete|ReadOnly
-  referenceNode	DOMNodeIterator::ReferenceNode	DontDelete|ReadOnly
-  pointerBeforeReferenceNode DOMNodeIterator::PointerBeforeReferenceNode	DontDelete|ReadOnly
+  root                          DOMNodeIterator::Root                   DontDelete|ReadOnly
+  whatToShow                    DOMNodeIterator::WhatToShow             DontDelete|ReadOnly
+  filter                        DOMNodeIterator::Filter                 DontDelete|ReadOnly
+  expandEntityReferences        DOMNodeIterator::ExpandEntityReferences DontDelete|ReadOnly
+  referenceNode DOMNodeIterator::ReferenceNode  DontDelete|ReadOnly
+  pointerBeforeReferenceNode DOMNodeIterator::PointerBeforeReferenceNode        DontDelete|ReadOnly
 @end
 @begin DOMNodeIteratorProtoTable 3
-  nextNode	DOMNodeIterator::NextNode	DontDelete|Function 0
-  previousNode	DOMNodeIterator::PreviousNode	DontDelete|Function 0
-  detach	DOMNodeIterator::Detach		DontDelete|Function 0
+  nextNode      DOMNodeIterator::NextNode       DontDelete|Function 0
+  previousNode  DOMNodeIterator::PreviousNode   DontDelete|Function 0
+  detach        DOMNodeIterator::Detach         DontDelete|Function 0
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMNodeIteratorProto)
@@ -124,22 +124,22 @@ JSValue *toJS(ExecState *exec, NodeIterator *ni)
 const ClassInfo NodeFilterConstructor::info = { "NodeFilterConstructor", 0, &NodeFilterConstructorTable, 0 };
 /*
 @begin NodeFilterConstructorTable 17
-  FILTER_ACCEPT		WebCore::NodeFilter::FILTER_ACCEPT	DontDelete|ReadOnly
-  FILTER_REJECT		WebCore::NodeFilter::FILTER_REJECT	DontDelete|ReadOnly
-  FILTER_SKIP		WebCore::NodeFilter::FILTER_SKIP	DontDelete|ReadOnly
-  SHOW_ALL		WebCore::NodeFilter::SHOW_ALL	DontDelete|ReadOnly
-  SHOW_ELEMENT		WebCore::NodeFilter::SHOW_ELEMENT	DontDelete|ReadOnly
-  SHOW_ATTRIBUTE	WebCore::NodeFilter::SHOW_ATTRIBUTE	DontDelete|ReadOnly
-  SHOW_TEXT		WebCore::NodeFilter::SHOW_TEXT	DontDelete|ReadOnly
-  SHOW_CDATA_SECTION	WebCore::NodeFilter::SHOW_CDATA_SECTION	DontDelete|ReadOnly
-  SHOW_ENTITY_REFERENCE	WebCore::NodeFilter::SHOW_ENTITY_REFERENCE	DontDelete|ReadOnly
-  SHOW_ENTITY		WebCore::NodeFilter::SHOW_ENTITY	DontDelete|ReadOnly
-  SHOW_PROCESSING_INSTRUCTION	WebCore::NodeFilter::SHOW_PROCESSING_INSTRUCTION	DontDelete|ReadOnly
-  SHOW_COMMENT		WebCore::NodeFilter::SHOW_COMMENT	DontDelete|ReadOnly
-  SHOW_DOCUMENT		WebCore::NodeFilter::SHOW_DOCUMENT	DontDelete|ReadOnly
-  SHOW_DOCUMENT_TYPE	WebCore::NodeFilter::SHOW_DOCUMENT_TYPE	DontDelete|ReadOnly
-  SHOW_DOCUMENT_FRAGMENT	WebCore::NodeFilter::SHOW_DOCUMENT_FRAGMENT	DontDelete|ReadOnly
-  SHOW_NOTATION		WebCore::NodeFilter::SHOW_NOTATION	DontDelete|ReadOnly
+  FILTER_ACCEPT         WebCore::NodeFilter::FILTER_ACCEPT      DontDelete|ReadOnly
+  FILTER_REJECT         WebCore::NodeFilter::FILTER_REJECT      DontDelete|ReadOnly
+  FILTER_SKIP           WebCore::NodeFilter::FILTER_SKIP        DontDelete|ReadOnly
+  SHOW_ALL              WebCore::NodeFilter::SHOW_ALL   DontDelete|ReadOnly
+  SHOW_ELEMENT          WebCore::NodeFilter::SHOW_ELEMENT       DontDelete|ReadOnly
+  SHOW_ATTRIBUTE        WebCore::NodeFilter::SHOW_ATTRIBUTE     DontDelete|ReadOnly
+  SHOW_TEXT             WebCore::NodeFilter::SHOW_TEXT  DontDelete|ReadOnly
+  SHOW_CDATA_SECTION    WebCore::NodeFilter::SHOW_CDATA_SECTION DontDelete|ReadOnly
+  SHOW_ENTITY_REFERENCE WebCore::NodeFilter::SHOW_ENTITY_REFERENCE      DontDelete|ReadOnly
+  SHOW_ENTITY           WebCore::NodeFilter::SHOW_ENTITY        DontDelete|ReadOnly
+  SHOW_PROCESSING_INSTRUCTION   WebCore::NodeFilter::SHOW_PROCESSING_INSTRUCTION        DontDelete|ReadOnly
+  SHOW_COMMENT          WebCore::NodeFilter::SHOW_COMMENT       DontDelete|ReadOnly
+  SHOW_DOCUMENT         WebCore::NodeFilter::SHOW_DOCUMENT      DontDelete|ReadOnly
+  SHOW_DOCUMENT_TYPE    WebCore::NodeFilter::SHOW_DOCUMENT_TYPE DontDelete|ReadOnly
+  SHOW_DOCUMENT_FRAGMENT        WebCore::NodeFilter::SHOW_DOCUMENT_FRAGMENT     DontDelete|ReadOnly
+  SHOW_NOTATION         WebCore::NodeFilter::SHOW_NOTATION      DontDelete|ReadOnly
 @end
 */
 bool NodeFilterConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -163,7 +163,7 @@ JSValue *getNodeFilterConstructor(ExecState *exec)
 const ClassInfo DOMNodeFilter::info = { "NodeFilter", 0, 0, 0 };
 /*
 @begin DOMNodeFilterProtoTable 1
-  acceptNode	DOMNodeFilter::AcceptNode	DontDelete|Function 0
+  acceptNode    DOMNodeFilter::AcceptNode       DontDelete|Function 0
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMNodeFilterProto)
@@ -216,20 +216,20 @@ NodeFilter *toNodeFilter(JSValue *val)
 const ClassInfo DOMTreeWalker::info = { "TreeWalker", 0, &DOMTreeWalkerTable, 0 };
 /*
 @begin DOMTreeWalkerTable 5
-  root			DOMTreeWalker::Root		DontDelete|ReadOnly
-  whatToShow		DOMTreeWalker::WhatToShow	DontDelete|ReadOnly
-  filter		DOMTreeWalker::Filter		DontDelete|ReadOnly
-  expandEntityReferences DOMTreeWalker::ExpandEntityReferences	DontDelete|ReadOnly
-  currentNode		DOMTreeWalker::CurrentNode	DontDelete
+  root                  DOMTreeWalker::Root             DontDelete|ReadOnly
+  whatToShow            DOMTreeWalker::WhatToShow       DontDelete|ReadOnly
+  filter                DOMTreeWalker::Filter           DontDelete|ReadOnly
+  expandEntityReferences DOMTreeWalker::ExpandEntityReferences  DontDelete|ReadOnly
+  currentNode           DOMTreeWalker::CurrentNode      DontDelete
 @end
 @begin DOMTreeWalkerProtoTable 7
-  parentNode	DOMTreeWalker::ParentNode	DontDelete|Function 0
-  firstChild	DOMTreeWalker::FirstChild	DontDelete|Function 0
-  lastChild	DOMTreeWalker::LastChild	DontDelete|Function 0
-  previousSibling DOMTreeWalker::PreviousSibling	DontDelete|Function 0
-  nextSibling	DOMTreeWalker::NextSibling	DontDelete|Function 0
-  previousNode	DOMTreeWalker::PreviousNode	DontDelete|Function 0
-  nextNode	DOMTreeWalker::NextNode		DontDelete|Function 0
+  parentNode    DOMTreeWalker::ParentNode       DontDelete|Function 0
+  firstChild    DOMTreeWalker::FirstChild       DontDelete|Function 0
+  lastChild     DOMTreeWalker::LastChild        DontDelete|Function 0
+  previousSibling DOMTreeWalker::PreviousSibling        DontDelete|Function 0
+  nextSibling   DOMTreeWalker::NextSibling      DontDelete|Function 0
+  previousNode  DOMTreeWalker::PreviousNode     DontDelete|Function 0
+  nextNode      DOMTreeWalker::NextNode         DontDelete|Function 0
 @end
 */
 KJS_DEFINE_PROTOTYPE(DOMTreeWalkerProto)

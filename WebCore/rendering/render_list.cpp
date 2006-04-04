@@ -89,15 +89,15 @@ static DeprecatedString toHebrew( int number ) {
 
     DeprecatedString letter;
     if (number>999) {
-  	letter = toHebrew(number/1000) + "'";
-   	number = number%1000;
+        letter = toHebrew(number/1000) + "'";
+        number = number%1000;
     }
 
     int hunderts = (number/400);
     if (hunderts > 0) {
-	for(int i=0; i<hunderts; i++) {
-	    letter += QChar(1511 + 3);
-	}
+        for(int i=0; i<hunderts; i++) {
+            letter += QChar(1511 + 3);
+        }
     }
     number = number % 400;
     if ((number / 100) != 0) {
@@ -106,11 +106,11 @@ static DeprecatedString toHebrew( int number ) {
     number = number % 100;
     int tens = number/10;
     if (tens > 0 && !(number == 15 || number == 16)) {
-	letter += tenDigit[tens-1];
+        letter += tenDigit[tens-1];
     }
     if (number == 15 || number == 16) { // special because of religious
-	letter += QChar(1487 + 9);       // reasons
-    	letter += QChar(1487 + number - 9);
+        letter += QChar(1487 + 9);       // reasons
+        letter += QChar(1487 + number - 9);
     } else {
         number = number % 10;
         if (number != 0) {
@@ -363,11 +363,11 @@ void RenderListMarker::setStyle(RenderStyle *s)
     RenderBox::setStyle(s);
 
     if ( m_listImage != style()->listStyleImage() ) {
-	if (m_listImage)
-	    m_listImage->deref(this);
-	m_listImage = style()->listStyleImage();
-	if (m_listImage)
-	    m_listImage->ref(this);
+        if (m_listImage)
+            m_listImage->deref(this);
+        m_listImage = style()->listStyleImage();
+        if (m_listImage)
+            m_listImage->ref(this);
     }
 }
 
@@ -446,19 +446,19 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         if (!m_item.isEmpty()) {
             const Font& font = style()->font();
             if (isInside()) {
-            	if( style()->direction() == LTR) {
+                if( style()->direction() == LTR) {
                     p->drawText(marker.x(), marker.y(), AlignLeft, m_item);
                     p->drawText(marker.x() + font.width(m_item), marker.y(), AlignLeft, ". ");
                 } else {
                     p->drawText(marker.x(), marker.y(), AlignLeft, " .");
-            	    p->drawText(marker.x() + font.width(" ."), marker.y(), AlignLeft, m_item);
+                    p->drawText(marker.x() + font.width(" ."), marker.y(), AlignLeft, m_item);
                 }
             } else {
                 if (style()->direction() == LTR) {
                     p->drawText(marker.x(), marker.y(), AlignRight, ". ");
                     p->drawText(marker.x() - font.width(". "), marker.y(), AlignRight, m_item);
                 } else {
-            	    p->drawText(marker.x(), marker.y(), AlignLeft, " .");
+                    p->drawText(marker.x(), marker.y(), AlignLeft, " .");
                     p->drawText(marker.x() + font.width(" ."), marker.y(), AlignLeft, m_item);
                 }
             }
@@ -471,7 +471,7 @@ void RenderListMarker::layout()
     KHTMLAssert( needsLayout() );
     // ### KHTMLAssert( minMaxKnown() );
     if ( !minMaxKnown() )
-	calcMinMaxWidth();
+        calcMinMaxWidth();
     setNeedsLayout(false);
 }
 
@@ -516,7 +516,7 @@ void RenderListMarker::calcMinMaxWidth()
     case SQUARE:
         if (isInside())
             m_width = m_height;
-    	goto end;
+        goto end;
     case ARMENIAN:
     case GEORGIAN:
     case CJK_IDEOGRAPHIC:
@@ -537,20 +537,20 @@ void RenderListMarker::calcMinMaxWidth()
         break;
     case LOWER_GREEK:
      {
-    	int number = m_listItem->value() - 1;
-      	int l = (number % 24);
+        int number = m_listItem->value() - 1;
+        int l = (number % 24);
 
-	if (l>16) {l++;} // Skip GREEK SMALL LETTER FINAL SIGMA
+        if (l>16) {l++;} // Skip GREEK SMALL LETTER FINAL SIGMA
 
-   	m_item = QChar(945 + l);
-    	for (int i = 0; i < (number / 24); i++) {
-       	    m_item += "'";
-    	}
-	break;
+        m_item = QChar(945 + l);
+        for (int i = 0; i < (number / 24); i++) {
+            m_item += "'";
+        }
+        break;
      }
     case HEBREW:
-     	m_item = toHebrew( m_listItem->value() );
-	break;
+        m_item = toHebrew( m_listItem->value() );
+        break;
     case LOWER_ALPHA:
     case LOWER_LATIN:
         m_item = toLetter( m_listItem->value(), 'a' );

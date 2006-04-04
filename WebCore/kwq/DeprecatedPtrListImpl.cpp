@@ -48,17 +48,17 @@ static KWQListNode *copyList(KWQListNode *l, KWQListNode *&tail)
     KWQListNode *last = 0;
 
     while (node != 0) {
-	KWQListNode *copy = new KWQListNode(node->data);
-	if (last != 0) {
-	    last->next = copy;
-	} else {
-	    copyHead = copy;
-	}
+        KWQListNode *copy = new KWQListNode(node->data);
+        if (last != 0) {
+            last->next = copy;
+        } else {
+            copyHead = copy;
+        }
 
-	copy->prev = last;
-	
-	last = copy;
-	node = node->next;
+        copy->prev = last;
+        
+        last = copy;
+        node = node->next;
     }
 
     tail = last;
@@ -116,7 +116,7 @@ void DeprecatedPtrListImpl::clear(bool deleteItems)
     nodeCount = 0;
 
     for (DeprecatedPtrListImplIterator *it = iterators; it; it = it->next)
-	it->node = 0;
+        it->node = 0;
 }
 
 void *DeprecatedPtrListImpl::at(unsigned n)
@@ -138,18 +138,18 @@ void *DeprecatedPtrListImpl::at(unsigned n)
 bool DeprecatedPtrListImpl::insert(unsigned n, const void *item)
 {
     if (n > nodeCount) {
-	return false;
+        return false;
     }
 
     KWQListNode *node = new KWQListNode((void *)item);
 
     if (n == 0) {
-	// inserting at head
-	node->next = head;
-	if (head) {
-	    head->prev = node;
-	}
-	head = node;
+        // inserting at head
+        node->next = head;
+        if (head) {
+            head->prev = node;
+        }
+        head = node;
         if (tail == 0) {
             tail = node;
         }
@@ -161,21 +161,21 @@ bool DeprecatedPtrListImpl::insert(unsigned n, const void *item)
         }
         tail = node;
     } else {
-	// general insertion
-	
-	// iterate to one node before the insertion point, can't be null
-	// since we know n > 0 and n < nodeCount
-	KWQListNode *prevNode = head;
+        // general insertion
+        
+        // iterate to one node before the insertion point, can't be null
+        // since we know n > 0 and n < nodeCount
+        KWQListNode *prevNode = head;
 
-	for (unsigned i = 0; i < n - 1; i++) {
-	    prevNode = prevNode->next;
-	}
-	node->prev = prevNode;
-	node->next = prevNode->next;
-	if (node->next) {
-	    node->next->prev = node;
-	}
-	prevNode->next = node;
+        for (unsigned i = 0; i < n - 1; i++) {
+            prevNode = prevNode->next;
+        }
+        node->prev = prevNode;
+        node->next = prevNode->next;
+        if (node->next) {
+            node->next->prev = node;
+        }
+        prevNode->next = node;
     }
 
     nodeCount++;
@@ -187,35 +187,35 @@ bool DeprecatedPtrListImpl::remove(bool shouldDeleteItem)
 {
     KWQListNode *node = cur;
     if (node == 0) {
-	return false;
+        return false;
     }
 
     if (node->prev == 0) {
-	head = node->next;
+        head = node->next;
     } else {
-	node->prev->next = node->next;
+        node->prev->next = node->next;
     }
 
     if (node->next == 0) {
         tail = node->prev;
     } else {
-	node->next->prev = node->prev;
+        node->next->prev = node->prev;
     }
 
     if (node->next) {
-	cur = node->next;
+        cur = node->next;
     } else {
-	cur = node->prev;
+        cur = node->prev;
     }
 
     for (DeprecatedPtrListImplIterator *it = iterators; it; it = it->next) {
-	if (it->node == node) {
-	    it->node = cur;
-	}
+        if (it->node == node) {
+            it->node = cur;
+        }
     }
 
     if (shouldDeleteItem) {
-	deleteItem(node->data);
+        deleteItem(node->data);
     }
     delete node;
 
@@ -227,7 +227,7 @@ bool DeprecatedPtrListImpl::remove(bool shouldDeleteItem)
 bool DeprecatedPtrListImpl::remove(unsigned n, bool deleteItem)
 {
     if (n >= nodeCount) {
-	return false;
+        return false;
     }
 
     at(n);
@@ -251,11 +251,11 @@ bool DeprecatedPtrListImpl::removeRef(const void *item, bool deleteItem)
     node = head;
 
     while (node && item != node->data) {
-	node = node->next;
+        node = node->next;
     }
     
     if (node == 0) {
-	return false;
+        return false;
     }
 
     cur = node;
@@ -286,9 +286,9 @@ void *DeprecatedPtrListImpl::getPrev() const
 void *DeprecatedPtrListImpl::current() const
 {
     if (cur) {
-	return cur->data;
+        return cur->data;
     } else {
-	return 0;
+        return 0;
     }
 }
 
@@ -307,7 +307,7 @@ void *DeprecatedPtrListImpl::last()
 void *DeprecatedPtrListImpl::next()
 {
     if (cur) {
-	cur = cur->next;
+        cur = cur->next;
     }
     return current();
 }
@@ -315,7 +315,7 @@ void *DeprecatedPtrListImpl::next()
 void *DeprecatedPtrListImpl::prev()
 {
     if (cur) {
-	cur = cur->prev;
+        cur = cur->prev;
     }
     return current();
 }
@@ -440,7 +440,7 @@ DeprecatedPtrListImplIterator::DeprecatedPtrListImplIterator(const DeprecatedPtr
 DeprecatedPtrListImplIterator::~DeprecatedPtrListImplIterator()
 {
     if (list) {
-	list->removeIterator(this);
+        list->removeIterator(this);
     }
 }
 
@@ -482,7 +482,7 @@ void *DeprecatedPtrListImplIterator::current() const
 void *DeprecatedPtrListImplIterator::operator--()
 {
     if (node) {
-	node = node->prev;
+        node = node->prev;
     }
     return current();
 }
@@ -490,7 +490,7 @@ void *DeprecatedPtrListImplIterator::operator--()
 void *DeprecatedPtrListImplIterator::operator++()
 {
     if (node) {
-	node = node->next;
+        node = node->next;
     }
     return current();
 }
@@ -498,14 +498,14 @@ void *DeprecatedPtrListImplIterator::operator++()
 DeprecatedPtrListImplIterator &DeprecatedPtrListImplIterator::operator=(const DeprecatedPtrListImplIterator &impl)
 {
     if (list) {
-	list->removeIterator(this);
+        list->removeIterator(this);
     }
     
     list = impl.list;
     node = impl.node;
     
     if (list) {
-	list->addIterator(this);
+        list->addIterator(this);
     }
 
     return *this;

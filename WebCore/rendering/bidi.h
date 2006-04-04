@@ -42,46 +42,46 @@ namespace WebCore {
         
     class BidiContext {
     public:
-	BidiContext(unsigned char level, QChar::Direction embedding, BidiContext *parent = 0, bool override = false);
-	~BidiContext();
+        BidiContext(unsigned char level, QChar::Direction embedding, BidiContext *parent = 0, bool override = false);
+        ~BidiContext();
 
-	void ref() const;
-	void deref() const;
+        void ref() const;
+        void deref() const;
 
         QChar::Direction dir() const { return static_cast<QChar::Direction>(m_dir); }
         QChar::Direction basicDir() const { return static_cast<QChar::Direction>(m_basicDir); }
 
-	unsigned char level;
-	bool override : 1;
-	unsigned m_dir : 5; // QChar::Direction
-	unsigned m_basicDir : 5; // QChar::Direction
-	
-	BidiContext *parent;
+        unsigned char level;
+        bool override : 1;
+        unsigned m_dir : 5; // QChar::Direction
+        unsigned m_basicDir : 5; // QChar::Direction
+        
+        BidiContext *parent;
 
-	// refcounting....
-	mutable int count;
+        // refcounting....
+        mutable int count;
     };
 
     struct BidiRun {
-	BidiRun(int _start, int _stop, RenderObject *_obj, BidiContext *context, QChar::Direction dir)
-	    :  start( _start ), stop( _stop ), obj( _obj ), box(0), override(context->override), nextRun(0)
-	{
-	    if (dir == QChar::DirON) 
+        BidiRun(int _start, int _stop, RenderObject *_obj, BidiContext *context, QChar::Direction dir)
+            :  start( _start ), stop( _stop ), obj( _obj ), box(0), override(context->override), nextRun(0)
+        {
+            if (dir == QChar::DirON) 
                 dir = context->dir();
 
-	    level = context->level;
+            level = context->level;
 
-	    // add level of run (cases I1 & I2)
-	    if( level % 2 ) {
-		if(dir == QChar::DirL || dir == QChar::DirAN || dir == QChar::DirEN)
-		    level++;
-	    } else {
-		if( dir == QChar::DirR )
-		    level++;
-		else if( dir == QChar::DirAN || dir == QChar::DirEN)
-		    level += 2;
-	    }
-	}
+            // add level of run (cases I1 & I2)
+            if( level % 2 ) {
+                if(dir == QChar::DirL || dir == QChar::DirAN || dir == QChar::DirEN)
+                    level++;
+            } else {
+                if( dir == QChar::DirR )
+                    level++;
+                else if( dir == QChar::DirAN || dir == QChar::DirEN)
+                    level += 2;
+            }
+        }
 
         void destroy(RenderArena* renderArena);
 
@@ -96,14 +96,14 @@ private:
         void* operator new(size_t sz) throw();
 
 public:
-	int start;
-	int stop;
+        int start;
+        int stop;
 
         RenderObject *obj;
         InlineBox* box;
         
-	// explicit + implicit levels here
-	unsigned char level;
+        // explicit + implicit levels here
+        unsigned char level;
         bool override : 1;
         bool compact : 1;
         

@@ -1,3 +1,25 @@
+2006-04-03  Darin Adler  <darin@apple.com>
+
+        - fixed properties on a bunch of files
+          (removed allow-tabs and svn:executable from many)
+
+        * css/css_base.cpp:
+        * html/html_headimpl.cpp:
+        * khtml/ecma/kjs_traversal.cpp:
+        * kwq/DeprecatedPtrListImpl.cpp:
+        * kwq/DeprecatedValueListImpl.cpp:
+        * loader/CachedScript.h:
+        * platform/ArrayImpl.cpp:
+        * platform/StringImpl.cpp:
+        * rendering/DataRef.h:
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderTableCell.cpp:
+        * rendering/bidi.h:
+        * rendering/render_list.cpp:
+        * rendering/render_style.cpp:
+        * rendering/table_layout.h:
+        Converted tabs to spaces.
+
 2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

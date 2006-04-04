@@ -35,27 +35,27 @@ namespace WebCore {
 
     class CachedScript : public CachedObject {
     public:
-	CachedScript(DocLoader*, const String& URL, KIO::CacheControl, time_t expireDate, const DeprecatedString& charset);
-	CachedScript(const String& URL, const DeprecatedString& scriptData);
-	virtual ~CachedScript();
+        CachedScript(DocLoader*, const String& URL, KIO::CacheControl, time_t expireDate, const DeprecatedString& charset);
+        CachedScript(const String& URL, const DeprecatedString& scriptData);
+        virtual ~CachedScript();
 
-	const String& script() const { return m_script; }
+        const String& script() const { return m_script; }
 
-	virtual void ref(CachedObjectClient*);
-	virtual void deref(CachedObjectClient*);
+        virtual void ref(CachedObjectClient*);
+        virtual void deref(CachedObjectClient*);
 
         virtual void setCharset(const DeprecatedString&);
-	virtual void data(DeprecatedByteArray&, bool atEnd);
-	virtual void error();
+        virtual void data(DeprecatedByteArray&, bool atEnd);
+        virtual void error();
 
         virtual bool schedule() const { return false; }
         
         bool errorOccurred() const { return m_errorOccurred; }
 
-	void checkNotify();
+        void checkNotify();
 
     private:
-	String m_script;
+        String m_script;
         TextEncoding m_encoding;
         bool m_errorOccurred;
     };
