@@ -160,6 +160,8 @@ public:
 
     virtual IntRect getOverflowClipRect(int tx, int ty);
 
+    void recalcSectionsIfNeeded();
+
 private:
     void recalcSections();
 

@@ -1,3 +1,19 @@
+2006-04-04  Trey Matteson  <trey@usa.net>
+
+        Reviewed by Hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7951
+        REGRESSION: Safari crashes when printing a google map w/directions
+
+        Tests: none, because I believe it only happens when printing, due to the relayouts
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::recalcSectionsIfNeeded): Add new utility to let the cells
+        ensure the sections' grid data is up to date.
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::calcMinMaxWidth):  Call above method.
+
 2006-04-03  Justin Haygood <jhaygood@spsu.edu>
 
         Reviewed by eseidel.  Landed by eseidel.

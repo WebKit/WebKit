@@ -85,6 +85,12 @@ Length RenderTableCell::styleOrColWidth()
 
 void RenderTableCell::calcMinMaxWidth()
 {
+    // recalcMinMaxWidths works depth first.  However, the child cells rely on the grids up in the
+    // sections to do their calcMinMaxWidths work.  Normally the sections are set up early, as table
+    // cells are added, but relayout can cause the cells to be freed, leaving stale ptrs in the sections'
+    // grids.  We must refresh those grids before the child cells try to use them.
+    table()->recalcSectionsIfNeeded();
+
     RenderBlock::calcMinMaxWidth();
     if (element() && style()->autoWrap()) {
         // See if nowrap was set.
