@@ -61,7 +61,6 @@ all : \
     JSNotation.h \
     JSProcessingInstruction.h \
     JSRange.h \
-    JSStyleSheet.h \
     JSText.h \
     JSUIEvent.h \
     JSWheelEvent.h \

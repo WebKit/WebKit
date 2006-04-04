@@ -255,6 +255,90 @@ JSValue *toJS(ExecState *exec, CSSStyleDeclaration *s)
 
 // -------------------------------------------------------------------------
 
+const ClassInfo DOMStyleSheet::info = { "StyleSheet", 0, &DOMStyleSheetTable, 0 };
+/*
+@begin DOMStyleSheetTable 7
+  type		DOMStyleSheet::Type		DontDelete|ReadOnly
+  disabled	DOMStyleSheet::Disabled		DontDelete
+  ownerNode	DOMStyleSheet::OwnerNode	DontDelete|ReadOnly
+  parentStyleSheet DOMStyleSheet::ParentStyleSheet	DontDelete|ReadOnly
+  href		DOMStyleSheet::Href		DontDelete|ReadOnly
+  title		DOMStyleSheet::Title		DontDelete|ReadOnly
+  media		DOMStyleSheet::Media		DontDelete|ReadOnly
+@end
+*/
+
+DOMStyleSheet::DOMStyleSheet(ExecState*, WebCore::StyleSheet* ss) 
+  : m_impl(ss) 
+{
+}
+
+DOMStyleSheet::DOMStyleSheet(WebCore::StyleSheet *ss) 
+  : m_impl(ss) 
+{
+}
+
+DOMStyleSheet::~DOMStyleSheet()
+{
+  ScriptInterpreter::forgetDOMObject(m_impl.get());
+}
+
+bool DOMStyleSheet::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+{
+  return getStaticValueSlot<DOMStyleSheet, DOMObject>(exec, &DOMStyleSheetTable, this, propertyName, slot);
+}
+
+JSValue *DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
+{
+  StyleSheet &styleSheet = *m_impl;
+  switch (token) {
+  case Type:
+    return jsStringOrNull(styleSheet.type());
+  case Disabled:
+    return jsBoolean(styleSheet.disabled());
+  case OwnerNode:
+    return toJS(exec,styleSheet.ownerNode());
+  case ParentStyleSheet:
+    return toJS(exec,styleSheet.parentStyleSheet());
+  case Href:
+    return jsStringOrNull(styleSheet.href());
+  case Title:
+    return jsStringOrNull(styleSheet.title());
+  case Media:
+    return toJS(exec, styleSheet.media());
+  }
+  return NULL;
+}
+
+void DOMStyleSheet::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+{
+  if (propertyName == "disabled") {
+    m_impl->setDisabled(value->toBoolean(exec));
+  }
+  else
+    DOMObject::put(exec, propertyName, value, attr);
+}
+
+JSValue* toJS(ExecState *exec, PassRefPtr<StyleSheet> ss)
+{
+  DOMObject *ret;
+  if (!ss)
+    return jsNull();
+  ScriptInterpreter *interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
+  if ((ret = interp->getDOMObject(ss.get())))
+    return ret;
+  else {
+    if (ss->isCSSStyleSheet())
+      ret = new DOMCSSStyleSheet(exec, static_cast<CSSStyleSheet *>(ss.get()));
+    else
+      ret = new DOMStyleSheet(exec, ss.get());
+    interp->putDOMObject(ss.get(), ret);
+    return ret;
+  }
+}
+
+// -------------------------------------------------------------------------
+
 const ClassInfo DOMStyleSheetList::info = { "StyleSheetList", 0, &DOMStyleSheetListTable, 0 };
 
 /*
@@ -488,8 +572,8 @@ KJS_DEFINE_PROTOTYPE(DOMCSSStyleSheetProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMCSSStyleSheetProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMCSSStyleSheet",DOMCSSStyleSheetProto,DOMCSSStyleSheetProtoFunc) // warning, use _WITH_PARENT if DOMStyleSheet gets a proto
 
-DOMCSSStyleSheet::DOMCSSStyleSheet(ExecState* exec, CSSStyleSheet* ss)
-  : JSStyleSheet(exec, ss) 
+DOMCSSStyleSheet::DOMCSSStyleSheet(ExecState *exec, CSSStyleSheet *ss)
+  : DOMStyleSheet(ss) 
 {
   setPrototype(DOMCSSStyleSheetProto::self(exec));
 }
@@ -514,7 +598,7 @@ JSValue *DOMCSSStyleSheet::getValueProperty(ExecState *exec, int token) const
 
 bool DOMCSSStyleSheet::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticValueSlot<DOMCSSStyleSheet, JSStyleSheet>(exec, &DOMCSSStyleSheetTable, this, propertyName, slot);
+  return getStaticValueSlot<DOMCSSStyleSheet, DOMStyleSheet>(exec, &DOMCSSStyleSheetTable, this, propertyName, slot);
 }
 
 JSValue *DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)

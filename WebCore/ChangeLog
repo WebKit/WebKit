@@ -1,5 +1,16 @@
 2006-04-03  Darin Adler  <darin@apple.com>
 
+        - changed StyleSheet back to hand-generated since the generated toJS
+          function was not making the right type of wrapper for CSS style sheets
+          (fixes failing layout tests)
+
+        * DerivedSources.make: Removed JSStyleSheet.h.
+        * css/StyleSheet.idl: Removed.
+        * khtml/ecma/kjs_css.cpp: Added DOMStyleSheet back in.
+        * khtml/ecma/kjs_css.h: Ditto.
+
+2006-04-03  Darin Adler  <darin@apple.com>
+
         - fixed Macintosh build
 
         * WebCore.xcodeproj/project.pbxproj: Fixed paths of some files that were absolute
