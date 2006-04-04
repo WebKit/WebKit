@@ -365,7 +365,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       int p = (int)dp;
       
       if (x != 0) {
-          e = static_cast<int>(trunc(log10(x)));
+          e = static_cast<int>(log10(x));
           double tens = intPow10(e - p + 1);
           double n = floor(x / tens);
           if (n < intPow10(p - 1)) {

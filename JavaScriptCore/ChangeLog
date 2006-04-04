@@ -1,3 +1,10 @@
+2006-04-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * kjs/number_object.cpp:
+        (NumberProtoFunc::callAsFunction): remove trunc() to fix win32.
+
 2006-03-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
