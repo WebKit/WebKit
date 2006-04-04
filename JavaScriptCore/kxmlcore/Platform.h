@@ -47,6 +47,7 @@
 // regardless of operating environment
 #if defined(WIN32) || defined(_WIN32)
 #define KXMLCORE_PLATFORM_WIN_OS 1
+#define KXMLCORE_USE_ICU_UNICODE 1
 #endif
 
 // PLATFORM(UNIX)

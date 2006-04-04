@@ -87,7 +87,6 @@ public:
 
     virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
-    Completion execute(const List &);
     enum { ToString, ToDateString, ToTimeString, ToLocaleString,
            ToLocaleDateString, ToLocaleTimeString, ValueOf, GetTime,
            GetFullYear, GetMonth, GetDate, GetDay, GetHours, GetMinutes,
