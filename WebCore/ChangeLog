@@ -1,3 +1,14 @@
+2006-04-03  Justin Haygood <jhaygood@spsu.edu>
+
+        Reviewed by eseidel.  Landed by eseidel.
+        
+        - WIN32: maximumScroll() is the maximum scroll delta, not the maximum scroll position. Update to use
+          the real maximum scroll position.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8160
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateScrollBars):
+
 2006-04-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.
