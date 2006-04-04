@@ -1,3 +1,19 @@
+2006-04-04  Bjrn Graf  <bjoern.graf@gmail.com>
+
+        Reviewed by ggaren & darin.  Landed by eseidel.
+
+        Integrate CURL version of gettimeofday
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7399
+        Disable crash report dialogs for testkjs.exe in Release mode
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8113
+
+        * kjs/testkjs.cpp:
+        (StopWatch::start):
+        (StopWatch::stop):
+        (StopWatch::getElapsedMS):
+        (main):
+        (kjsmain):
+
 2006-04-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
