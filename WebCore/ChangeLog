@@ -1,5 +1,12 @@
 2006-04-03  Darin Adler  <darin@apple.com>
 
+        - tried to fix build again
+
+        * WebCore.xcodeproj/project.pbxproj: Removed JSStyleSheet files.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+
+2006-04-03  Darin Adler  <darin@apple.com>
+
         - fixed properties on a bunch of files
           (removed allow-tabs and svn:executable from many)
 

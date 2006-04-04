@@ -395,10 +395,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSStyleSheet.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSText.cpp"
 				>
 			</File>
