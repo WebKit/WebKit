@@ -57,6 +57,7 @@ public:
     bool JavaScriptCanOpenWindowsAutomatically() const { return m_javaScriptCanOpenWindowsAutomatically; }
     bool isJavaEnabled() const { return m_javaEnabled; }
     bool isPluginsEnabled() const { return m_pluginsEnabled; }
+    bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
     
     const DeprecatedString& encoding() const { return m_encoding; }
 
@@ -80,6 +81,7 @@ public:
     void setIsJavaScriptEnabled(bool f) { m_javaScriptEnabled = f; }
     void setIsJavaEnabled(bool f) { m_javaEnabled = f; }
     void setArePluginsEnabled(bool f) { m_pluginsEnabled = f; }
+    void setPrivateBrowsingEnabled(bool f) { m_privateBrowsingEnabled = f; }
     void setJavaScriptCanOpenWindowsAutomatically(bool f) { m_javaScriptCanOpenWindowsAutomatically = f; }
 
     void setEncoding(const DeprecatedString& s) { m_encoding = s; }
@@ -104,6 +106,7 @@ private:
     int m_defaultFixedFontSize;
     bool m_javaEnabled : 1;
     bool m_willLoadImagesAutomatically : 1;
+    bool m_privateBrowsingEnabled : 1;
     bool m_pluginsEnabled : 1;
     bool m_javaScriptEnabled : 1;
     bool m_javaScriptCanOpenWindowsAutomatically : 1;

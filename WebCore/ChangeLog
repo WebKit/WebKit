@@ -1,3 +1,27 @@
+2006-04-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        - WebCore part of <rdar://problem/4498418> "Autosaved" searchterms are saved during private browsing
+
+        * bridge/mac/WebCoreSettings.h:
+        * bridge/mac/WebCoreSettings.mm:
+        (-[WebCoreSettings setPrivateBrowsingEnabled:]):
+        (-[WebCoreSettings privateBrowsingEnabled]):
+        Teach WebCoreSettings about private browsing (WebKit knew, but WebCore didn't)
+        
+        * kwq/KWQKHTMLSettings.h:
+        (KHTMLSettings::privateBrowsingEnabled):
+        (KHTMLSettings::setPrivateBrowsingEnabled):
+        Teach KHTMLSettings about private browsing
+        
+        * kwq/KWQLineEdit.mm:
+        Fix wrong class in a category method declaration; the compiler didn't seem to mind.
+        
+        * kwq/WebCoreTextField.mm:
+        (-[KWQSearchFieldCell _addStringToRecentSearches:]):
+        Override this method to bail out if private browsing is enabled.
+
 2006-04-04  Trey Matteson  <trey@usa.net>
 
         Reviewed by Hyatt.

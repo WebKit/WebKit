@@ -40,7 +40,7 @@
 
 using namespace WebCore;
 
-@interface NSSearchField (SearchFieldSecrets)
+@interface NSSearchFieldCell (SearchFieldSecrets)
 - (void)_addStringToRecentSearches:(NSString *)string;
 @end
 

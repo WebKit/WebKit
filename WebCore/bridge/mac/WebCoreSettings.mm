@@ -260,6 +260,17 @@ using namespace WebCore;
     return JavaScriptCanOpenWindowsAutomatically;
 }
 
+- (void)setPrivateBrowsingEnabled:(BOOL)enabled
+{
+    privateBrowsingEnabled = enabled;
+    settings->setPrivateBrowsingEnabled(enabled);
+}
+
+- (BOOL)privateBrowsingEnabled
+{
+    return privateBrowsingEnabled;
+}
+
 - (void)setWillLoadImagesAutomatically:(BOOL)load
 {
     willLoadImagesAutomatically = load;

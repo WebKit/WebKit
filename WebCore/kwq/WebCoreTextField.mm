@@ -48,6 +48,10 @@ using namespace WebCore;
 - (NSMutableDictionary *)_textAttributes;
 @end
 
+@interface NSSearchFieldCell (KWQTextFieldAppKitSecrets)
+- (void)_addStringToRecentSearches:(NSString *)string;
+@end
+
 @interface NSTextView (KWQTextFieldAppKitSecrets)
 - (void)setWantsNotificationForMarkedText:(BOOL)wantsNotification;
 @end
@@ -1026,6 +1030,16 @@ using namespace WebCore;
     [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
     ASSERT([delegate isKindOfClass:[KWQSearchField class]]);
     [[(KWQSearchField *)delegate controller] setHasFocus:YES];
+}
+
+- (void)_addStringToRecentSearches:(NSString *)string
+{
+    ASSERT([[self controlView] isKindOfClass:[KWQSearchField class]]);
+    Frame *frame = Frame::frameForWidget([(KWQSearchField*)[self controlView] widget]);
+    if (frame && frame->settings()->privateBrowsingEnabled())
+        return;
+
+    [super _addStringToRecentSearches:string];
 }
 
 - (NSMutableDictionary *)_textAttributes
