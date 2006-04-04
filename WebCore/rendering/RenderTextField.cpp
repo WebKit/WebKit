@@ -235,7 +235,7 @@ void RenderTextField::forwardEvent(Event* evt)
         if (innerRenderer) {
             RenderLayer* innerLayer = innerRenderer->layer();
             if (innerLayer)
-                innerLayer->scrollToOffset(0, 0);
+                innerLayer->scrollToOffset(style()->direction() == RTL ? innerLayer->scrollWidth() : 0, 0);
         }
     } else
         m_div->defaultEventHandler(evt);

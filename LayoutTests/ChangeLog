@@ -1,3 +1,12 @@
+2006-04-03  Darin Adler  <darin@apple.com>
+
+        - add a test of RTL to the test for bug 8106
+
+        * fast/forms/input-text-scroll-left-on-blur-expected.png: Updated.
+        * fast/forms/input-text-scroll-left-on-blur-expected.txt: Updated.
+        * fast/forms/input-text-scroll-left-on-blur-expected.checksum: Updated.
+        * fast/forms/input-text-scroll-left-on-blur.html: Updated.
+
 2006-04-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

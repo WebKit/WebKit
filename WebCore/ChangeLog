@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - get RTL right for bug http://bugzilla.opendarwin.org/show_bug.cgi?id=8106
+          REGRESSION (NativeTextField): New text fields don't scroll to the beginning when losing focus
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::forwardEvent):
+        Scroll to the right if RTL.
+
+2006-04-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=8147
           convert derived sources script to a Makefile
 
