@@ -1,3 +1,12 @@
+2006-04-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Work-around spaces-in-pathnames issue in gnumake on win32.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8173
+
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+
 2006-04-03  Darin Adler  <darin@apple.com>
 
         - tried to fix build again

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DOM_DocumentImpl_h
-#define DOM_DocumentImpl_h
+#ifndef DOM_Document_h
+#define DOM_Document_h
 
 #include "Attr.h"
 #include "Color.h"
