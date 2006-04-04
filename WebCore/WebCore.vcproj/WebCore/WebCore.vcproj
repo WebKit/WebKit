@@ -343,7 +343,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSPrimitiveValue.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCharacterData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCounter.cpp"
 				>
 			</File>
 			<File
@@ -384,6 +392,10 @@
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSRange.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSStyleSheet.cpp"
 				>
 			</File>
 			<File

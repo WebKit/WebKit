@@ -1,5 +1,11 @@
 2006-04-03  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Add three new generated files as source files.
+
+2006-04-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - get RTL right for bug http://bugzilla.opendarwin.org/show_bug.cgi?id=8106
