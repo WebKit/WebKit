@@ -1271,7 +1271,7 @@
 					"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore",
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
@@ -1309,7 +1309,7 @@
 					"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore",
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",

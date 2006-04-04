@@ -1947,7 +1947,7 @@
 					icu,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
 				PRODUCT_NAME = WebKit;
@@ -1981,7 +1981,7 @@
 					icu,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
 				PREBINDING = NO;

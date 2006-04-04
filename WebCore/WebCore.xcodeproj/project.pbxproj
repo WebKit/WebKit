@@ -5520,7 +5520,7 @@
 					"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore",
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
@@ -5553,7 +5553,7 @@
 					"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore",
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
