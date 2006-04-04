@@ -126,9 +126,9 @@ bool Text::rendererIsNeeded(RenderStyle *style)
     if (prev && prev->isBR()) // <span><br/> <br/></span>
         return false;
         
-    if (par->isInline()) {
+    if (par->isInlineFlow()) {
         // <span><div/> <div/></span>
-        if (prev && prev->isRenderBlock())
+        if (prev && !prev->isInline())
             return false;
     } else {
         if (par->isRenderBlock() && !par->childrenInline() && (!prev || !prev->isInline()))
