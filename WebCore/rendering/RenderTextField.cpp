@@ -215,17 +215,40 @@ String RenderTextField::text()
 
 void RenderTextField::calcMinMaxWidth()
 {
-    // Figure out how big a text field needs to be for a given number of characters
-    // (using "0" as the nominal character).
-    int size = static_cast<HTMLInputElement*>(element())->size();
-    if (size <= 0)
-        size = 20;
+    m_minWidth = 0;
+    m_maxWidth = 0;
+
+    if (style()->width().isFixed() && style()->width().value() > 0)
+        m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
+    else {
+        // Figure out how big a text field needs to be for a given number of characters
+        // (using "0" as the nominal character).
+        int size = static_cast<HTMLInputElement*>(element())->size();
+        if (size <= 0)
+            size = 20;
+
+        QChar ch[1];
+        ch[0] = '0';
+        int sizeWidth = (int)ceilf(style()->font().floatWidth(ch, 1, 0, 1, 0, 0) * size);
+        m_maxWidth = sizeWidth;
+    }
     
-    QChar ch[1];
-    ch[0] = '0';
-    m_minWidth = m_maxWidth = (int)ceilf(style()->font().floatWidth(ch, 1, 0, 1, 0, 0) * size) + paddingLeft() + paddingRight() + 
-                borderLeft() + borderRight() + m_div->renderer()->paddingLeft() + m_div->renderer()->paddingRight();
-    setMinMaxKnown();
+    if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
+        m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));
+        m_minWidth = max(m_minWidth, calcContentBoxWidth(style()->minWidth().value()));
+    } else
+        m_minWidth = m_maxWidth;
+    
+    if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
+        m_maxWidth = min(m_maxWidth, calcContentBoxWidth(style()->maxWidth().value()));
+        m_minWidth = min(m_minWidth, calcContentBoxWidth(style()->maxWidth().value()));
+    }
+
+    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight() + m_div->renderer()->paddingLeft() + m_div->renderer()->paddingRight();
+    m_minWidth += toAdd;
+    m_maxWidth += toAdd;
+
+    setMinMaxKnown();    
 }
 
 void RenderTextField::forwardEvent(Event* evt)

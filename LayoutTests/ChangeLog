@@ -1,3 +1,20 @@
+2006-04-04  Adele Peterson  <adele@apple.com>
+
+         - Test for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8092
+        REGRESSION (NativeTextField): table contents misaligned in Netflix queue
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8141
+        REGRESSION: Native text field fails to wrap inside table
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8072
+        REGRESSION: text fields at connect.apple.com spill out of the containing box
+
+        * fast/forms/input-table-expected.checksum: Added.
+        * fast/forms/input-table-expected.png: Added.
+        * fast/forms/input-table-expected.txt: Added.
+        * fast/forms/input-table.html: Added.
+
 2006-04-04  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
