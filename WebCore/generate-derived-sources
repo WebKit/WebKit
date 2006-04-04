@@ -1,332 +1,45 @@
 #!/bin/sh
 
-DerivedSourcesDir="${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore"
-WebCoreSourceRoot="${SRCROOT}"
+# Copyright (C) 2006 Apple Computer, Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-echo "Generating files into \"${DerivedSourcesDir}\""
-mkdir -p "${DerivedSourcesDir}"
+mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore"
+cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore"
 
-cd "$SRCROOT"
-
-# Rebuild CSSPropertyNames.h and CSSValueKeywords.h if the .in files have changed
-
-if [ css/CSSPropertyNames.in -nt "$DerivedSourcesDir/CSSPropertyNames.h" -o css/makeprop -nt "$DerivedSourcesDir/CSSPropertyNames.h" ]; then
-  echo "Generating CSS properties table"
-  cat css/CSSPropertyNames.in > "$DerivedSourcesDir/CSSPropertyNames.in"
-  cd "$DerivedSourcesDir"
-  sh "$WebCoreSourceRoot/css/makeprop"
-  cd "$WebCoreSourceRoot"
-fi
-
-if [ css/CSSValueKeywords.in -nt "$DerivedSourcesDir/CSSValueKeywords.h" -o css/makevalues -nt "$DerivedSourcesDir/CSSValueKeywords.h" ]; then
-  echo "Generating CSS values table"
-  cat css/CSSValueKeywords.in > "$DerivedSourcesDir/CSSValueKeywords.in"
-  cd "$DerivedSourcesDir"
-  sh "$WebCoreSourceRoot/css/makevalues"
-  cd "$WebCoreSourceRoot"
-fi
-
-if [ html/DocTypeStrings.gperf -nt "$DerivedSourcesDir/DocTypeStrings.cpp" ]; then
-  echo "Generating doctype string table"
-  gperf -CEot -L ANSI-C -k "*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards html/DocTypeStrings.gperf > "$DerivedSourcesDir/DocTypeStrings.cpp"
-fi
-
-if [ html/HTMLEntityNames.gperf -nt "$DerivedSourcesDir/HTMLEntityNames.c" ]; then
-  echo "Generating entities table"
-  gperf -a -L ANSI-C -C -G -c -o -t -k '*' -NfindEntity -D -s 2 html/HTMLEntityNames.gperf > "$DerivedSourcesDir/HTMLEntityNames.c"
-fi
-
-# Generate the CSS tokenizer using flex
-
-if [ css/tokenizer.flex -nt "$DerivedSourcesDir/tokenizer.cpp" ]; then
-  echo "Generating the CSS tokenizer using flex"
-  flex -t css/tokenizer.flex | perl css/maketokenizer > "$DerivedSourcesDir/tokenizer.cpp"
-fi
-
-# Generate the CSS grammar using bison
-
-if [ css/CSSGrammar.y -nt "$DerivedSourcesDir/CSSGrammar.cpp" ]; then
-  echo "Generating the CSS grammar using bison"
-  bison -d -p cssyy css/CSSGrammar.y -o "$DerivedSourcesDir/CSSGrammar.cpp"
-  cat "$DerivedSourcesDir/CSSGrammar.cpp.h" "$DerivedSourcesDir/CSSGrammar.hpp" > "$DerivedSourcesDir/CSSGrammar.h" 2>/dev/null
-  rm -f "$DerivedSourcesDir/CSSGrammar.cpp.h" "$DerivedSourcesDir/CSSGrammar.hpp"
-fi
-
-# Convert the style sheets to C arrays
-
-if [ css/make-css-file-arrays.pl -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/html4.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/quirks.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" -o css/svg.css -nt "$DerivedSourcesDir/UserAgentStyleSheets.h" ]; then
-  echo "Re-generating the user agent stylesheet files"
-  css/make-css-file-arrays.pl "$DerivedSourcesDir/UserAgentStyleSheets.h" "$DerivedSourcesDir/UserAgentStyleSheetsData.cpp" css/html4.css css/quirks.css css/svg.css
-fi
-
-# Generate the color data table.
-
-if [ platform/ColorData.gperf -nt "$DerivedSourcesDir/ColorData.c" ]; then
-  echo "Generating the color table data for the Color class"
-  gperf -CDEot -L 'ANSI-C' -k '*' -N findColor platform/ColorData.gperf > "$DerivedSourcesDir/ColorData.c"
-fi
-
-# Generate the charset name table
+WebCore="${SRCROOT}"
+export WebCore
 
 if which sw_vers 2>&1 > /dev/null; then
-    ENCODINGS_FILE="platform/mac/mac-encodings.txt"
+    ENCODINGS_FILE="${WebCore}/platform/mac/mac-encodings.txt"
     ENCODINGS_PREFIX="kCFStringEncoding"
 else
-    ENCODINGS_FILE="platform/win/win-encodings.txt";
+    ENCODINGS_FILE="${WebCore}/platform/win/win-encodings.txt";
     ENCODINGS_PREFIX=""
 fi
+export ENCODINGS_FILE
+export ENCODINGS_PREFIX
 
-if [ platform/character-sets.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o "$ENCODINGS_FILE" -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/make-charset-table.pl -nt "$DerivedSourcesDir/CharsetData.cpp" ]; then
-  echo "Generating character set name table"
-  platform/make-charset-table.pl platform/character-sets.txt "${ENCODINGS_FILE}" "${ENCODINGS_PREFIX}" > "$DerivedSourcesDir/CharsetData.cpp"
-fi
-
-# Generate the lookup tables for the JS bindings
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/JSDOMParser.lut.h" -o khtml/ecma/JSDOMParser.cpp -nt "$DerivedSourcesDir/JSDOMParser.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/JSDOMParser.cpp > "$DerivedSourcesDir/JSDOMParser.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/kjs_css.lut.h" -o khtml/ecma/kjs_css.cpp -nt "$DerivedSourcesDir/kjs_css.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/kjs_css.cpp > "$DerivedSourcesDir/kjs_css.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/kjs_dom.lut.h" -o khtml/ecma/kjs_dom.cpp -nt "$DerivedSourcesDir/kjs_dom.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/kjs_dom.cpp > "$DerivedSourcesDir/kjs_dom.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/kjs_events.lut.h" -o khtml/ecma/kjs_events.cpp -nt "$DerivedSourcesDir/kjs_events.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/kjs_events.cpp > "$DerivedSourcesDir/kjs_events.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/kjs_html.lut.h" -o khtml/ecma/kjs_html.cpp -nt "$DerivedSourcesDir/kjs_html.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/kjs_html.cpp > "$DerivedSourcesDir/kjs_html.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/kjs_navigator.lut.h" -o khtml/ecma/kjs_navigator.cpp -nt "$DerivedSourcesDir/kjs_navigator.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/kjs_navigator.cpp > "$DerivedSourcesDir/kjs_navigator.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/kjs_traversal.lut.h" -o khtml/ecma/kjs_traversal.cpp -nt "$DerivedSourcesDir/kjs_traversal.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/kjs_traversal.cpp > "$DerivedSourcesDir/kjs_traversal.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/kjs_views.lut.h" -o khtml/ecma/kjs_views.cpp -nt "$DerivedSourcesDir/kjs_views.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/kjs_views.cpp > "$DerivedSourcesDir/kjs_views.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/kjs_window.lut.h" -o khtml/ecma/kjs_window.cpp -nt "$DerivedSourcesDir/kjs_window.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/kjs_window.cpp > "$DerivedSourcesDir/kjs_window.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/JSXMLSerializer.lut.h" -o khtml/ecma/JSXMLSerializer.cpp -nt "$DerivedSourcesDir/JSXMLSerializer.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/JSXMLSerializer.cpp > "$DerivedSourcesDir/JSXMLSerializer.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/JSXSLTProcessor.lut.h" -o khtml/ecma/JSXSLTProcessor.cpp -nt "$DerivedSourcesDir/JSXSLTProcessor.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/JSXSLTProcessor.cpp > "$DerivedSourcesDir/JSXSLTProcessor.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/JSXMLHttpRequest.lut.h" -o khtml/ecma/JSXMLHttpRequest.cpp -nt "$DerivedSourcesDir/JSXMLHttpRequest.lut.h" ]; then
-  "$CREATE_HASH_TABLE" khtml/ecma/JSXMLHttpRequest.cpp > "$DerivedSourcesDir/JSXMLHttpRequest.lut.h"
-fi
-
-if [ "$CREATE_HASH_TABLE" -nt "$DerivedSourcesDir/JSCanvasRenderingContext2DBaseTable.cpp" -o bindings/js/JSCanvasRenderingContext2DBase.cpp -nt "$DerivedSourcesDir/JSCanvasRenderingContext2DBaseTable.cpp" ]; then
-  "$CREATE_HASH_TABLE" bindings/js/JSCanvasRenderingContext2DBase.cpp -n WebCore > "$DerivedSourcesDir/JSCanvasRenderingContext2DBaseTable.cpp"
-fi
-
-if [ ksvg2/svg/svgtags.in -nt "$DerivedSourcesDir/SVGNames.cpp" -o ksvg2/svg/svgattrs.in -nt "$DerivedSourcesDir/SVGNames.cpp" -o ksvg2/scripts/make_names.pl -nt "$DerivedSourcesDir/SVGNames.cpp" ]; then
-  ksvg2/scripts/make_names.pl --tags ksvg2/svg/svgtags.in --attrs ksvg2/svg/svgattrs.in --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output "$DerivedSourcesDir"
-fi
-
-if [ ksvg2/misc/xlinkattrs.in -nt "$DerivedSourcesDir/XLinkNames.cpp" -o ksvg2/scripts/make_names.pl -nt "$DerivedSourcesDir/XLinkNames.cpp" ]; then
-  ksvg2/scripts/make_names.pl --attrs ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output "$DerivedSourcesDir"
-  touch WebCore+SVG/XLinkNamesWrapper.cpp
-fi
-
-if [ ksvg2/scripts/cssmakeprops -nt "$DerivedSourcesDir/ksvgcssproperties.h" -o ksvg2/css/CSSPropertyNames.in -nt "$DerivedSourcesDir/ksvgcssproperties.h" ]; then
-  cat css/CSSPropertyNames.in ksvg2/css/CSSPropertyNames.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'
-  if [ $? -eq 0 ]; then
-      echo "Duplicate property!";
-      exit 1;
-  fi
-  cat ksvg2/css/CSSPropertyNames.in > "$DerivedSourcesDir/ksvgcssproperties.in"
-  cd "$DerivedSourcesDir"
-  "$WebCoreSourceRoot/ksvg2/scripts/cssmakeprops" -n SVG -f ksvgcssproperties.in
-  cd "$WebCoreSourceRoot"
-fi
-
-if [ ksvg2/css/CSSValueKeywords.in -nt "$DerivedSourcesDir/ksvgcssvalues.h" -o ksvg2/scripts/cssmakevalues -nt "$DerivedSourcesDir/ksvgcssvalues.h" ]; then
-  cat css/CSSValueKeywords.in ksvg2/css/CSSValueKeywords.in | sort | uniq -c | grep -v 1 | awk '{print $2;}' | grep -E '^[^#]'
-  if [ $? -eq 0 ]; then
-      echo "Duplicate value!";
-      exit 1;
-  fi
-  # Lower case all the values, as CSS values are case-insensitive
-  cat ksvg2/css/CSSValueKeywords.in | perl -pe '$_ = lc;' > "$DerivedSourcesDir/ksvgcssvalues.in"
-  cd "$DerivedSourcesDir"
-  "$WebCoreSourceRoot/ksvg2/scripts/cssmakevalues" -n SVG -f ksvgcssvalues.in
-  cd "$WebCoreSourceRoot"
-fi
-
-if [ dom/Attr.idl -nt "$DerivedSourcesDir/JSAttr.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSAttr.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSAttr.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSAttr.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSAttr.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSAttr.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/Attr.idl
-fi
-
-if [ dom/CharacterData.idl -nt "$DerivedSourcesDir/JSCharacterData.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSCharacterData.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSCharacterData.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSCharacterData.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSCharacterData.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSCharacterData.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/CharacterData.idl
-fi
-
-if [ dom/DocumentType.idl -nt "$DerivedSourcesDir/JSDocumentType.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSDocumentType.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSDocumentType.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSDocumentType.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSDocumentType.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSDocumentType.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/DocumentType.idl
-fi
-
-if [ dom/DOMImplementation.idl -nt "$DerivedSourcesDir/JSDOMImplementation.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSDOMImplementation.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSDOMImplementation.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSDOMImplementation.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSDOMImplementation.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSDOMImplementation.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/DOMImplementation.idl
-fi
-
-if [ dom/Element.idl -nt "$DerivedSourcesDir/JSElement.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSElement.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSElement.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSElement.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSElement.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSElement.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/Element.idl
-fi
-
-if [ dom/Entity.idl -nt "$DerivedSourcesDir/JSEntity.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSEntity.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSEntity.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSEntity.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSEntity.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSEntity.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/Entity.idl
-fi
-
-if [ dom/MutationEvent.idl -nt "$DerivedSourcesDir/JSMutationEvent.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSMutationEvent.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSMutationEvent.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSMutationEvent.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSMutationEvent.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSMutationEvent.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/MutationEvent.idl
-fi
-
-if [ dom/UIEvent.idl -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSUIEvent.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSUIEvent.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/UIEvent.idl
-fi
-
-if [ dom/Notation.idl -nt "$DerivedSourcesDir/JSNotation.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSNotation.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSNotation.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSNotation.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSNotation.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSNotation.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/Notation.idl
-fi
-
-if [ dom/ProcessingInstruction.idl -nt "$DerivedSourcesDir/JSProcessingInstruction.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSProcessingInstruction.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSProcessingInstruction.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSProcessingInstruction.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSProcessingInstruction.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSProcessingInstruction.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/ProcessingInstruction.idl
-fi
-
-if [ dom/Range.idl -nt "$DerivedSourcesDir/JSRange.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSRange.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSRange.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSRange.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSRange.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSRange.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/Range.idl
-fi
-
-if [ dom/Text.idl -nt "$DerivedSourcesDir/JSText.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSText.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSText.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSText.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSText.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSText.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/Text.idl
-fi
-
-if [ dom/KeyboardEvent.idl -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSKeyboardEvent.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSKeyboardEvent.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/KeyboardEvent.idl
-fi
-
-if [ dom/MouseEvent.idl -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSMouseEvent.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSMouseEvent.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/MouseEvent.idl
-fi
-
-if [ dom/WheelEvent.idl -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSWheelEvent.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSWheelEvent.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" dom/WheelEvent.idl
-fi
-
-if [ html/CanvasGradient.idl -nt "$DerivedSourcesDir/JSCanvasGradient.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSCanvasGradient.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSCanvasGradient.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSCanvasGradient.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSCanvasGradient.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSCanvasGradient.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" html/CanvasGradient.idl
-fi
-
-if [ html/CanvasPattern.idl -nt "$DerivedSourcesDir/JSCanvasPattern.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSCanvasPattern.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSCanvasPattern.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSCanvasPattern.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSCanvasPattern.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSCanvasPattern.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" html/CanvasPattern.idl
-fi
-
-if [ html/CanvasRenderingContext2D.idl -nt "$DerivedSourcesDir/JSCanvasRenderingContext2D.h" -o \
-     bindings/scripts/generate-bindings.pl -nt "$DerivedSourcesDir/JSCanvasRenderingContext2D.h" -o \
-     bindings/scripts/CodeGenerator.pm -nt "$DerivedSourcesDir/JSCanvasRenderingContext2D.h" -o \
-     bindings/scripts/CodeGeneratorJS.pm -nt "$DerivedSourcesDir/JSCanvasRenderingContext2D.h" -o \
-     bindings/scripts/IDLParser.pm -nt "$DerivedSourcesDir/JSCanvasRenderingContext2D.h" -o \
-     bindings/scripts/IDLStructure.pm -nt "$DerivedSourcesDir/JSCanvasRenderingContext2D.h" ]; then
-  perl -Ibindings/scripts bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir "$DerivedSourcesDir" html/CanvasRenderingContext2D.idl
-fi
+make -f "$WebCore/DerivedSources.make"

@@ -23,20 +23,20 @@
 #include "config.h"
 #include "kjs_css.h"
 
-#include "css/css_base.h"
-#include "css/css_ruleimpl.h"
-#include "css/css_stylesheetimpl.h"
-#include "css/css_valueimpl.h"
 #include "Document.h"
+#include "HTMLNames.h"
+#include "JSCSSPrimitiveValue.h"
+#include "css_base.h"
+#include "css_ruleimpl.h"
+#include "css_stylesheetimpl.h"
+#include "css_valueimpl.h"
 #include "html_headimpl.h" // for HTMLStyleElement
 #include "kjs_dom.h"
-#include "HTMLNames.h"
 
 #include "kjs_css.lut.h"
 
-using namespace WebCore::HTMLNames;
-
 using namespace WebCore;
+using namespace HTMLNames;
 
 namespace KJS {
 
@@ -251,90 +251,6 @@ JSValue *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, JSObje
 JSValue *toJS(ExecState *exec, CSSStyleDeclaration *s)
 {
   return cacheDOMObject<CSSStyleDeclaration, DOMCSSStyleDeclaration>(exec, s);
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMStyleSheet::info = { "StyleSheet", 0, &DOMStyleSheetTable, 0 };
-/*
-@begin DOMStyleSheetTable 7
-  type		DOMStyleSheet::Type		DontDelete|ReadOnly
-  disabled	DOMStyleSheet::Disabled		DontDelete
-  ownerNode	DOMStyleSheet::OwnerNode	DontDelete|ReadOnly
-  parentStyleSheet DOMStyleSheet::ParentStyleSheet	DontDelete|ReadOnly
-  href		DOMStyleSheet::Href		DontDelete|ReadOnly
-  title		DOMStyleSheet::Title		DontDelete|ReadOnly
-  media		DOMStyleSheet::Media		DontDelete|ReadOnly
-@end
-*/
-
-DOMStyleSheet::DOMStyleSheet(ExecState*, WebCore::StyleSheet* ss) 
-  : m_impl(ss) 
-{
-}
-
-DOMStyleSheet::DOMStyleSheet(WebCore::StyleSheet *ss) 
-  : m_impl(ss) 
-{
-}
-
-DOMStyleSheet::~DOMStyleSheet()
-{
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-bool DOMStyleSheet::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMStyleSheet, DOMObject>(exec, &DOMStyleSheetTable, this, propertyName, slot);
-}
-
-JSValue *DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
-{
-  StyleSheet &styleSheet = *m_impl;
-  switch (token) {
-  case Type:
-    return jsStringOrNull(styleSheet.type());
-  case Disabled:
-    return jsBoolean(styleSheet.disabled());
-  case OwnerNode:
-    return toJS(exec,styleSheet.ownerNode());
-  case ParentStyleSheet:
-    return toJS(exec,styleSheet.parentStyleSheet());
-  case Href:
-    return jsStringOrNull(styleSheet.href());
-  case Title:
-    return jsStringOrNull(styleSheet.title());
-  case Media:
-    return toJS(exec, styleSheet.media());
-  }
-  return NULL;
-}
-
-void DOMStyleSheet::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-  if (propertyName == "disabled") {
-    m_impl->setDisabled(value->toBoolean(exec));
-  }
-  else
-    DOMObject::put(exec, propertyName, value, attr);
-}
-
-JSValue* toJS(ExecState *exec, PassRefPtr<StyleSheet> ss)
-{
-  DOMObject *ret;
-  if (!ss)
-    return jsNull();
-  ScriptInterpreter *interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
-  if ((ret = interp->getDOMObject(ss.get())))
-    return ret;
-  else {
-    if (ss->isCSSStyleSheet())
-      ret = new DOMCSSStyleSheet(exec, static_cast<CSSStyleSheet *>(ss.get()));
-    else
-      ret = new DOMStyleSheet(exec, ss.get());
-    interp->putDOMObject(ss.get(), ret);
-    return ret;
-  }
 }
 
 // -------------------------------------------------------------------------
@@ -572,8 +488,8 @@ KJS_DEFINE_PROTOTYPE(DOMCSSStyleSheetProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMCSSStyleSheetProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMCSSStyleSheet",DOMCSSStyleSheetProto,DOMCSSStyleSheetProtoFunc) // warning, use _WITH_PARENT if DOMStyleSheet gets a proto
 
-DOMCSSStyleSheet::DOMCSSStyleSheet(ExecState *exec, CSSStyleSheet *ss)
-  : DOMStyleSheet(ss) 
+DOMCSSStyleSheet::DOMCSSStyleSheet(ExecState* exec, CSSStyleSheet* ss)
+  : JSStyleSheet(exec, ss) 
 {
   setPrototype(DOMCSSStyleSheetProto::self(exec));
 }
@@ -598,7 +514,7 @@ JSValue *DOMCSSStyleSheet::getValueProperty(ExecState *exec, int token) const
 
 bool DOMCSSStyleSheet::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticValueSlot<DOMCSSStyleSheet, DOMStyleSheet>(exec, &DOMCSSStyleSheetTable, this, propertyName, slot);
+  return getStaticValueSlot<DOMCSSStyleSheet, JSStyleSheet>(exec, &DOMCSSStyleSheetTable, this, propertyName, slot);
 }
 
 JSValue *DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -962,11 +878,16 @@ JSValue *getCSSRuleConstructor(ExecState *exec)
 const ClassInfo DOMCSSValue::info = { "CSSValue", 0, &DOMCSSValueTable, 0 };
 
 /*
+@begin DOMCSSValueProtoTable 0
+@end
 @begin DOMCSSValueTable 2
   cssText	DOMCSSValue::CssText		DontDelete|ReadOnly
   cssValueType	DOMCSSValue::CssValueType	DontDelete|ReadOnly
 @end
 */
+KJS_IMPLEMENT_PROTOFUNC(DOMCSSValueProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("DOMCSSValue", DOMCSSValueProto, DOMCSSValueProtoFunc)
+
 DOMCSSValue::~DOMCSSValue()
 {
   ScriptInterpreter::forgetDOMObject(m_impl.get());
@@ -1000,6 +921,11 @@ void DOMCSSValue::put(ExecState *exec, const Identifier &propertyName, JSValue *
     DOMObject::put(exec, propertyName, value, attr);
 }
 
+JSValue* DOMCSSValueProtoFunc::callAsFunction(ExecState*, JSObject*, const List&)
+{
+    return 0;
+}
+
 JSValue *toJS(ExecState *exec, CSSValue *v)
 {
   DOMObject *ret;
@@ -1012,7 +938,7 @@ JSValue *toJS(ExecState *exec, CSSValue *v)
     if (v->isValueList())
       ret = new DOMCSSValueList(exec, static_cast<CSSValueList *>(v));
     else if (v->isPrimitiveValue())
-      ret = new DOMCSSPrimitiveValue(exec, static_cast<CSSPrimitiveValue *>(v));
+      ret = new JSCSSPrimitiveValue(exec, static_cast<CSSPrimitiveValue *>(v));
     else
       ret = new DOMCSSValue(exec,v);
     interp->putDOMObject(v, ret);
@@ -1054,123 +980,6 @@ JSValue *CSSValueConstructor::getValueProperty(ExecState *, int token) const
 JSValue *getCSSValueConstructor(ExecState *exec)
 {
   return cacheGlobalObject<CSSValueConstructor>( exec, "[[cssValue.constructor]]" );
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMCSSPrimitiveValue::info = { "CSSPrimitiveValue", 0, &DOMCSSPrimitiveValueTable, 0 };
-/*
-@begin DOMCSSPrimitiveValueTable 1
-  primitiveType		DOMCSSPrimitiveValue::PrimitiveType	DontDelete|ReadOnly
-@end
-@begin DOMCSSPrimitiveValueProtoTable 3
-  setFloatValue		DOMCSSPrimitiveValue::SetFloatValue	DontDelete|Function 2
-  getFloatValue		DOMCSSPrimitiveValue::GetFloatValue	DontDelete|Function 1
-  setStringValue	DOMCSSPrimitiveValue::SetStringValue	DontDelete|Function 2
-  getStringValue	DOMCSSPrimitiveValue::GetStringValue	DontDelete|Function 0
-  getCounterValue	DOMCSSPrimitiveValue::GetCounterValue	DontDelete|Function 0
-  getRectValue		DOMCSSPrimitiveValue::GetRectValue	DontDelete|Function 0
-  getRGBColorValue	DOMCSSPrimitiveValue::GetRGBColorValue	DontDelete|Function 0
-@end
-*/
-KJS_DEFINE_PROTOTYPE(DOMCSSPrimitiveValueProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMCSSPrimitiveValueProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMCSSPrimitiveValue",DOMCSSPrimitiveValueProto,DOMCSSPrimitiveValueProtoFunc)
-
-DOMCSSPrimitiveValue::DOMCSSPrimitiveValue(ExecState *exec, CSSPrimitiveValue *v)
-  : DOMCSSValue(v) 
-{ 
-  setPrototype(DOMCSSPrimitiveValueProto::self(exec));
-}
-
-JSValue *DOMCSSPrimitiveValue::getValueProperty(ExecState *exec, int token)
-{
-  assert(token == PrimitiveType);
-  return jsNumber(static_cast<CSSPrimitiveValue *>(impl())->primitiveType());
-}
-
-bool DOMCSSPrimitiveValue::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMCSSPrimitiveValue, DOMCSSValue>(exec, &DOMCSSPrimitiveValueTable, this, propertyName, slot);
-}
-
-JSValue *DOMCSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMCSSPrimitiveValue::info))
-    return throwError(exec, TypeError);
-  DOMExceptionTranslator exception(exec);
-  CSSPrimitiveValue &val = *static_cast<CSSPrimitiveValue *>(static_cast<DOMCSSPrimitiveValue *>(thisObj)->impl());
-  switch (id) {
-    case DOMCSSPrimitiveValue::SetFloatValue:
-      val.setFloatValue(args[0]->toInt32(exec), args[1]->toNumber(exec), exception);
-      return jsUndefined();
-    case DOMCSSPrimitiveValue::GetFloatValue:
-      return jsNumber(val.getFloatValue(args[0]->toInt32(exec)));
-    case DOMCSSPrimitiveValue::SetStringValue:
-      val.setStringValue(args[0]->toInt32(exec), args[1]->toString(exec), exception);
-      return jsUndefined();
-    case DOMCSSPrimitiveValue::GetStringValue:
-      return jsStringOrNull(val.getStringValue());
-    case DOMCSSPrimitiveValue::GetCounterValue:
-      return toJS(exec,val.getCounterValue());
-    case DOMCSSPrimitiveValue::GetRectValue:
-      return toJS(exec,val.getRectValue());
-    case DOMCSSPrimitiveValue::GetRGBColorValue:
-      return getDOMRGBColor(exec,val.getRGBColorValue());
-    default:
-      return jsUndefined();
-  }
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo CSSPrimitiveValueConstructor::info = { "CSSPrimitiveValueConstructor", 0, &CSSPrimitiveValueConstructorTable, 0 };
-
-/*
-@begin CSSPrimitiveValueConstructorTable 27
-  CSS_UNKNOWN   	WebCore::CSSPrimitiveValue::CSS_UNKNOWN	DontDelete|ReadOnly
-  CSS_NUMBER    	WebCore::CSSPrimitiveValue::CSS_NUMBER	DontDelete|ReadOnly
-  CSS_PERCENTAGE	WebCore::CSSPrimitiveValue::CSS_PERCENTAGE	DontDelete|ReadOnly
-  CSS_EMS       	WebCore::CSSPrimitiveValue::CSS_EMS		DontDelete|ReadOnly
-  CSS_EXS       	WebCore::CSSPrimitiveValue::CSS_EXS		DontDelete|ReadOnly
-  CSS_PX        	WebCore::CSSPrimitiveValue::CSS_PX		DontDelete|ReadOnly
-  CSS_CM        	WebCore::CSSPrimitiveValue::CSS_CM		DontDelete|ReadOnly
-  CSS_MM        	WebCore::CSSPrimitiveValue::CSS_MM		DontDelete|ReadOnly
-  CSS_IN        	WebCore::CSSPrimitiveValue::CSS_IN		DontDelete|ReadOnly
-  CSS_PT        	WebCore::CSSPrimitiveValue::CSS_PT		DontDelete|ReadOnly
-  CSS_PC        	WebCore::CSSPrimitiveValue::CSS_PC		DontDelete|ReadOnly
-  CSS_DEG       	WebCore::CSSPrimitiveValue::CSS_DEG		DontDelete|ReadOnly
-  CSS_RAD       	WebCore::CSSPrimitiveValue::CSS_RAD		DontDelete|ReadOnly
-  CSS_GRAD      	WebCore::CSSPrimitiveValue::CSS_GRAD	DontDelete|ReadOnly
-  CSS_MS        	WebCore::CSSPrimitiveValue::CSS_MS		DontDelete|ReadOnly
-  CSS_S			WebCore::CSSPrimitiveValue::CSS_S		DontDelete|ReadOnly
-  CSS_HZ        	WebCore::CSSPrimitiveValue::CSS_HZ		DontDelete|ReadOnly
-  CSS_KHZ       	WebCore::CSSPrimitiveValue::CSS_KHZ		DontDelete|ReadOnly
-  CSS_DIMENSION 	WebCore::CSSPrimitiveValue::CSS_DIMENSION	DontDelete|ReadOnly
-  CSS_STRING    	WebCore::CSSPrimitiveValue::CSS_STRING	DontDelete|ReadOnly
-  CSS_URI       	WebCore::CSSPrimitiveValue::CSS_URI		DontDelete|ReadOnly
-  CSS_IDENT     	WebCore::CSSPrimitiveValue::CSS_IDENT	DontDelete|ReadOnly
-  CSS_ATTR      	WebCore::CSSPrimitiveValue::CSS_ATTR	DontDelete|ReadOnly
-  CSS_COUNTER   	WebCore::CSSPrimitiveValue::CSS_COUNTER	DontDelete|ReadOnly
-  CSS_RECT      	WebCore::CSSPrimitiveValue::CSS_RECT	DontDelete|ReadOnly
-  CSS_RGBCOLOR  	WebCore::CSSPrimitiveValue::CSS_RGBCOLOR	DontDelete|ReadOnly
-@end
-*/
-
-bool CSSPrimitiveValueConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<CSSPrimitiveValueConstructor, CSSValueConstructor>(exec, &CSSPrimitiveValueConstructorTable, this, propertyName, slot);
-}
-
-JSValue *CSSPrimitiveValueConstructor::getValueProperty(ExecState *, int token) const
-{
-  // We use the token as the value to return directly
-  return jsNumber(token);
-}
-
-JSValue *getCSSPrimitiveValueConstructor(ExecState *exec)
-{
-  return cacheGlobalObject<CSSPrimitiveValueConstructor>( exec, "[[cssPrimitiveValue.constructor]]" );
 }
 
 // -------------------------------------------------------------------------
@@ -1257,7 +1066,7 @@ bool DOMRGBColor::getOwnPropertySlot(ExecState *exec, const Identifier& property
   return getStaticValueSlot<DOMRGBColor, DOMObject>(exec, &DOMRGBColorTable, this, propertyName, slot);
 }
 
-JSValue *DOMRGBColor::getValueProperty(ExecState *exec, int token) const
+JSValue *DOMRGBColor::getValueProperty(ExecState* exec, int token) const
 {
   int color = m_color;
   switch (token) {
@@ -1268,7 +1077,7 @@ JSValue *DOMRGBColor::getValueProperty(ExecState *exec, int token) const
     color >>= 8;
     // fall through
   case Blue:
-    return new DOMCSSPrimitiveValue(exec, new CSSPrimitiveValue(color & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
+    return toJS(exec, new CSSPrimitiveValue(color & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
   default:
     return NULL;
   }
@@ -1321,47 +1130,6 @@ JSValue *DOMRect::getValueProperty(ExecState *exec, int token) const
 JSValue *toJS(ExecState *exec, RectImpl *r)
 {
   return cacheDOMObject<RectImpl, DOMRect>(exec, r);
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMCounter::info = { "Counter", 0, &DOMCounterTable, 0 };
-/*
-@begin DOMCounterTable 3
-  identifier	DOMCounter::identifier	DontDelete|ReadOnly
-  listStyle	DOMCounter::listStyle	DontDelete|ReadOnly
-  separator	DOMCounter::separator	DontDelete|ReadOnly
-@end
-*/
-
-DOMCounter::~DOMCounter()
-{
-  ScriptInterpreter::forgetDOMObject(m_counter.get());
-}
-
-bool DOMCounter::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMCounter, DOMObject>(exec, &DOMCounterTable, this, propertyName, slot);
-}
-
-JSValue *DOMCounter::getValueProperty(ExecState *, int token) const
-{
-  Counter &counter = *m_counter;
-  switch (token) {
-  case identifier:
-    return jsStringOrNull(counter.identifier());
-  case listStyle:
-    return jsStringOrNull(counter.listStyle());
-  case separator:
-    return jsStringOrNull(counter.separator());
-  default:
-    return NULL;
-  }
-}
-
-JSValue *toJS(ExecState *exec, Counter *c)
-{
-  return cacheDOMObject<Counter, DOMCounter>(exec, c);
 }
 
 }

@@ -301,7 +301,7 @@ sub GenerateHeader
         push(@headerContent, "\n        ");
       }
 
-      my $value = ucfirst($attribute->signature->name);
+      my $value = ucfirst($attribute->signature->name) . "AttrNum";
       $value .= ", " if(($i < $numAttributes - 1));
       $value .= ", " if(($i eq $numAttributes - 1) and ($numFunctions ne 0));
       push(@headerContent, $value);
@@ -323,7 +323,7 @@ sub GenerateHeader
         push(@headerContent, "\n        ");
       }
 
-      my $value = ucfirst($function->signature->name);
+      my $value = ucfirst($function->signature->name) . "FuncNum";
       $value .= ", " if ($i < $numFunctions - 1);
       push(@headerContent, $value);
     }
@@ -401,7 +401,7 @@ sub GenerateImplementation
       my $name = $attribute->signature->name;
       push(@hashKeys, $name);
       
-      my $value = $className . "::" . ucfirst($name);
+      my $value = $className . "::" . ucfirst($name) . "AttrNum";
       push(@hashValues, $value);
 
       my $special = "DontDelete";
@@ -484,7 +484,7 @@ sub GenerateImplementation
       my $name = $function->signature->name;
       push(@hashKeys, $name);
     
-      my $value = $className . "::" . ucfirst($name);
+      my $value = $className . "::" . ucfirst($name) . "FuncNum";
       push(@hashValues, $value);
     
       my $special = "DontDelete|Function";
@@ -551,10 +551,10 @@ sub GenerateImplementation
       my $name = $attribute->signature->name;
   
       if (!@{$attribute->getterExceptions}) {
-        push(@implContent, "    case " . ucfirst($name) . ":\n");
+        push(@implContent, "    case " . ucfirst($name) . "AttrNum:\n");
         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "impl->$name()") . ";\n");
       } else {
-        push(@implContent, "    case " . ucfirst($name) .": {\n");
+        push(@implContent, "    case " . ucfirst($name) . "AttrNum: {\n");
         push(@implContent, "        ExceptionCode ec = 0;\n");
         push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "impl->$name(ec)") . ";\n");
         push(@implContent, "        setDOMException(exec, ec);\n");
@@ -583,7 +583,7 @@ sub GenerateImplementation
       foreach my $attribute (@{$dataNode->attributes}) {
         if ($attribute->type !~ /^readonly/) {
           my $name = $attribute->signature->name;
-          push(@implContent, "    case " . ucfirst($name) .": {\n");
+          push(@implContent, "    case " . ucfirst($name) ."AttrNum: {\n");
           push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
           push(@implContent, "        impl->set" . ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
           push(@implContent, ", ec") if @{$attribute->setterExceptions};
@@ -614,7 +614,7 @@ sub GenerateImplementation
     
     push(@implContent, "    switch (id) {\n");
     foreach my $function (@{$dataNode->functions}) {      
-      push(@implContent, "    case ${className}::" . ucfirst($function->signature->name) . ": {\n");
+      push(@implContent, "    case ${className}::" . ucfirst($function->signature->name) . "FuncNum: {\n");
       
       AddIncludesForType($function->signature->type);
       
@@ -871,7 +871,7 @@ sub NativeToJSValue
     $implIncludes{"css_ruleimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value)";    
-  } elsif ($type eq "CSSStyleDeclaration" or $type eq "Counter" or $type eq "Rect") {
+  } elsif ($type eq "CSSStyleDeclaration" or $type eq "Rect") {
     $implIncludes{"css_valueimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value)";
@@ -882,11 +882,8 @@ sub NativeToJSValue
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"HTMLCanvasElement.h"} = 1;
     return "toJS(exec, $value)";
-  } elsif ($type eq "CanvasGradient") {
-    $implIncludes{"JSCanvasGradient.h"} = 1;
-    return "toJS(exec, $value)";
-  } elsif ($type eq "Range") {
-    $implIncludes{"JSRange.h"} = 1;
+  } elsif ($type eq "CanvasGradient" or $type eq "Counter" or $type eq "Range") {
+    $implIncludes{"JS$type.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "views::AbstractView") {
     $implIncludes{"kjs_views.h"} = 1;

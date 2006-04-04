@@ -24,6 +24,7 @@
 #define KJS_CSS_H_
 
 #include "Color.h"
+#include "JSStyleSheet.h"
 #include "kjs_binding.h"
 
 namespace WebCore {
@@ -65,27 +66,6 @@ namespace KJS {
   };
 
   JSValue* toJS(ExecState*, WebCore::CSSStyleDeclaration*);
-
-  class DOMStyleSheet : public DOMObject {
-  public:
-    DOMStyleSheet(ExecState *, WebCore::StyleSheet *ss);
-    virtual ~DOMStyleSheet();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual bool toBoolean(ExecState *) const { return true; }
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { Type, Disabled, OwnerNode, ParentStyleSheet, Href, Title, Media };
-    WebCore::StyleSheet *impl() const { return m_impl.get(); }
-  protected:
-    // Constructor for derived classes; doesn't set up a prototype.
-    DOMStyleSheet(WebCore::StyleSheet *ss);
-  private:
-    RefPtr<WebCore::StyleSheet> m_impl;
-  };
-
-  JSValue* toJS(ExecState*, PassRefPtr<WebCore::StyleSheet>);
 
   class DOMStyleSheetList : public DOMObject {
   public:
@@ -130,7 +110,7 @@ namespace KJS {
 
   JSValue* toJS(ExecState*, WebCore::MediaList*);
 
-  class DOMCSSStyleSheet : public DOMStyleSheet {
+  class DOMCSSStyleSheet : public WebCore::JSStyleSheet {
   public:
     DOMCSSStyleSheet(ExecState *exec, WebCore::CSSStyleSheet *ss);
     virtual ~DOMCSSStyleSheet();
@@ -215,6 +195,8 @@ namespace KJS {
     RefPtr<WebCore::CSSValue> m_impl;
   };
 
+  KJS_DEFINE_PROTOTYPE(DOMCSSValueProto)
+
   JSValue* toJS(ExecState*, WebCore::CSSValue*);
 
   // Constructor for CSSValue - currently only used for some global values
@@ -230,31 +212,6 @@ namespace KJS {
   };
 
   JSValue *getCSSValueConstructor(ExecState *exec);
-
-  class DOMCSSPrimitiveValue : public DOMCSSValue {
-  public:
-    DOMCSSPrimitiveValue(ExecState *exec, WebCore::CSSPrimitiveValue *v);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token);
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { PrimitiveType, SetFloatValue, GetFloatValue, SetStringValue, GetStringValue,
-           GetCounterValue, GetRectValue, GetRGBColorValue };
-  };
-
-  // Constructor for CSSPrimitiveValue - currently only used for some global values
-  class CSSPrimitiveValueConstructor : public CSSValueConstructor {
-  public:
-    CSSPrimitiveValueConstructor(ExecState *exec) : CSSValueConstructor(exec) { }
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  };
-
-  JSValue *getCSSPrimitiveValueConstructor(ExecState *exec);
 
   class DOMCSSValueList : public DOMCSSValue {
   public:
@@ -300,22 +257,6 @@ namespace KJS {
   };
 
   JSValue* toJS(ExecState*, WebCore::RectImpl*);
-
-  class DOMCounter : public DOMObject {
-  public:
-    DOMCounter(ExecState *, WebCore::Counter *c) : m_counter(c) { }
-    ~DOMCounter();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { identifier, listStyle, separator };
-  protected:
-    RefPtr<WebCore::Counter> m_counter;
-  };
-
-  JSValue* toJS(ExecState*, WebCore::Counter*);
 
 } // namespace
 

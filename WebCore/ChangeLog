@@ -1,3 +1,31 @@
+2006-04-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8147
+          convert derived sources script to a Makefile
+
+        * DerivedSources.make: Added.
+        * css/CSSPrimitiveValue.idl: Added.
+        * css/Counter.idl: Added.
+        * css/StyleSheet.idl: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Added new generated files, IDLs, and the makefile.
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+        * generate-derived-sources: Added license header. Removed most of the script, except for
+        a single invocation of make.
+
+        * khtml/ecma/kjs_css.h: Removed DOMStyleSheet, DOMCSSPrimitiveValue,
+        CSSPrimitiveValueConstructor, and DOMCounter.
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleSheet::DOMCSSStyleSheet): Changed to use JSStyleSheet as the base class.
+        (KJS::DOMCSSStyleSheet::getOwnPropertySlot): Ditto.
+        (KJS::DOMCSSValueProtoFunc::callAsFunction): Added.
+        (KJS::toJS): Changed to use JSCSSPrimitiveValue.
+        (KJS::DOMRGBColor::getValueProperty): Changed to call toJS instead of making a
+        DOMCSSPrimitiveValue directly.
+
 2006-04-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

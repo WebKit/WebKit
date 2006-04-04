@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module css {
+
+    interface [LegacyParent=KJS::DOMCSSValue] CSSPrimitiveValue : CSSValue {
+
+        // UnitTypes
+        const unsigned short CSS_UNKNOWN    = 0;
+        const unsigned short CSS_NUMBER     = 1;
+        const unsigned short CSS_PERCENTAGE = 2;
+        const unsigned short CSS_EMS        = 3;
+        const unsigned short CSS_EXS        = 4;
+        const unsigned short CSS_PX         = 5;
+        const unsigned short CSS_CM         = 6;
+        const unsigned short CSS_MM         = 7;
+        const unsigned short CSS_IN         = 8;
+        const unsigned short CSS_PT         = 9;
+        const unsigned short CSS_PC         = 10;
+        const unsigned short CSS_DEG        = 11;
+        const unsigned short CSS_RAD        = 12;
+        const unsigned short CSS_GRAD       = 13;
+        const unsigned short CSS_MS         = 14;
+        const unsigned short CSS_S          = 15;
+        const unsigned short CSS_HZ         = 16;
+        const unsigned short CSS_KHZ        = 17;
+        const unsigned short CSS_DIMENSION  = 18;
+        const unsigned short CSS_STRING     = 19;
+        const unsigned short CSS_URI        = 20;
+        const unsigned short CSS_IDENT      = 21;
+        const unsigned short CSS_ATTR       = 22;
+        const unsigned short CSS_COUNTER    = 23;
+        const unsigned short CSS_RECT       = 24;
+        const unsigned short CSS_RGBCOLOR   = 25;
+
+        readonly attribute unsigned short primitiveType;
+
+        void setFloatValue(in unsigned short unitType,
+                           in float floatValue)
+            raises(dom::DOMException);
+        float getFloatValue(in unsigned short unitType);
+        void setStringValue(in unsigned short stringType, 
+                            in DOMString stringValue)
+            raises(dom::DOMException);
+        DOMString getStringValue();
+        Counter getCounterValue();
+        Rect getRectValue();
+        RGBColor getRGBColorValue();
+
+    };
+
+}
