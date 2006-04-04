@@ -326,6 +326,9 @@ DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes
     static const DeprecatedString interchangeNewlineString = DeprecatedString("<br class=\"") + AppleInterchangeNewline + "\">";
 
     ExceptionCode ec = 0;
+    if (range->collapsed(ec))
+        return "";
+    ASSERT(ec == 0);
     Node *commonAncestor = range->commonAncestorContainer(ec);
     ASSERT(ec == 0);
 

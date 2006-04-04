@@ -285,21 +285,6 @@ static String &matchNearestBlockquoteColorString()
     return matchNearestBlockquoteColorString;
 }
 
-// FIXME: Move this somewhere so that the other editing operations can use it to clean up after themselves.
-void ReplaceSelectionCommand::removeNodeAndPruneAncestors(Node* node)
-{
-    Node* parent = node->parentNode();
-    removeNode(node);
-    while (parent) {
-        Node* nextParent = parent->parentNode();
-        // If you change this rule you may have to add an updateLayout() here.
-        if (parent->renderer() && parent->renderer()->firstChild())
-            return;
-        removeNode(parent);
-        parent = nextParent;
-    }
-}
-
 void ReplaceSelectionCommand::fixupNodeStyles(const NodeVector& nodes, const RenderingInfoMap& renderingInfo)
 {
     // This function uses the mapped "desired style" to apply the additional style needed, if any,
@@ -500,6 +485,9 @@ void ReplaceSelectionCommand::doApply()
         m_matchStyle = true;
     
     ReplacementFragment fragment(document(), m_documentFragment.get(), m_matchStyle, selection.rootEditableElement());
+    
+    if (fragment.type() == EmptyFragment)
+        return;
     
     if (m_matchStyle)
         m_insertionStyle = styleAtPosition(selection.start());

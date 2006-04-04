@@ -1,3 +1,40 @@
+2006-04-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6608>
+        REGRESSION: Line disappears when deleting
+        
+        Rewrote moveNodesAfterNode to address these problems:
+        It moved nodes without preserving their style. 
+        It traversed over siblings looking for a br to know when
+        to stop merging.  If the br was burried inside a span, it 
+        wouldn't find it.  If the text is whitespace:pre, it wouldn't
+        stop.
+        In theory it would crash if the "enclosingInlineElements" of the start of the
+        selection to delete and the end of the selection to delete were the
+        same.  We think that this will fix these:
+        <rdar://problems/3950559&4498113>
+        CrashTracer: 2116 crashes in Mail at com.apple.WebCore: khtml::CompositeEditCommand::insertNodeAfter + 32
+        CrashTracer: 1569 crashes in Mail at com.apple.WebCore: khtml::DeleteSelectionCommand::moveNodesAfterNode + 340
+        But we haven't been able to construct a reproducible case.
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removeNodeAndPruneAncestors): Moved from ReplaceSelectionCommand.
+        (WebCore::CompositeEditCommand::prune): Ditto.
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/DeleteSelectionCommand.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::):
+        * editing/markup.cpp:
+        (WebCore::createMarkup): 
+        Was crashing when passed a collapsed range.  I early return an empty string instead.
+
 2006-04-04  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele Peterson.

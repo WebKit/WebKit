@@ -1,3 +1,38 @@
+2006-04-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6608>
+        REGRESSION: Line disappears when deleting
+
+        Added:
+        * editing/deleting/merge-different-styles-expected.checksum: Added.
+        * editing/deleting/merge-different-styles-expected.png: Added.
+        * editing/deleting/merge-different-styles-expected.txt: Added.
+        * editing/deleting/merge-different-styles.html: Added.
+        * editing/deleting/merge-no-br-expected.checksum: Added.
+        * editing/deleting/merge-no-br-expected.png: Added.
+        * editing/deleting/merge-no-br-expected.txt: Added.
+        * editing/deleting/merge-no-br.html: Added.
+        * editing/deleting/merge-whitespace-pre-expected.checksum: Added.
+        * editing/deleting/merge-whitespace-pre-expected.png: Added.
+        * editing/deleting/merge-whitespace-pre-expected.txt: Added.
+        * editing/deleting/merge-whitespace-pre.html: Added.
+
+        Fixes (not enough style on nodes for the fixes to be reflected in pixel results):
+        * editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * editing/deleting/delete-block-merge-contents-008-expected.txt:
+
+        Equivalent render trees:
+        * editing/deleting/delete-3857753-fix-expected.txt:
+        * editing/inserting/insert-div-026-expected.txt:
+        
+        Forgot to checkin these new expected results after fixing the DRT bug:
+        * fast/lists/drag-into-marker-expected.checksum:
+        * fast/lists/drag-into-marker-expected.png:
+        * fast/lists/drag-into-marker-expected.txt:
+
 2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

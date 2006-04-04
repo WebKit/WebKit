@@ -30,14 +30,5 @@ layer at (0,0) size 800x600
           text run at (743,36) width 21: "So,"
           text run at (0,54) width 371: "this test drags a bit of text over the list marker and drops it. "
           text run at (371,54) width 386: "It should be pasted into the list item, which is contenteditable."
-      RenderBlock {P} at (0,161) size 784x36
-        RenderInline {B} at (0,0) size 771x36
-          RenderText {TEXT} at (0,0) size 771x36
-            text run at (0,0) width 713: "This test case demonstrates a bug in DumpRenderTree's drag and drop support, which is that the source "
-            text run at (713,0) width 58: "is copied"
-            text run at (0,18) width 113: "on drop, not cut."
-        RenderText {TEXT} at (113,18) size 173x18
-          text run at (113,18) width 4: " "
-          text run at (117,18) width 169: "So you'll see 'world' twice."
 selection start: position 0 of child 0 {TEXT} of child 0 {SPAN} of child 0 {LI} of child 1 {UL} of child 0 {BODY} of child 0 {HTML} of document
 selection end:   position 6 of child 0 {TEXT} of child 0 {SPAN} of child 0 {LI} of child 1 {UL} of child 0 {BODY} of child 0 {HTML} of document

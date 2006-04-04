@@ -35,8 +35,10 @@
 #include "Position.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"
+#include "markup.h"
 #include "render_line.h"
 #include "RenderObject.h"
+#include "ReplaceSelectionCommand.h"
 #include "VisiblePosition.h"
 #include "TextIterator.h"
 #include "visible_units.h"
@@ -490,87 +492,66 @@ void DeleteSelectionCommand::fixupWhitespace()
     }
 }
 
-// This function moves nodes in the block containing startNode to dstBlock, starting
-// from startNode and proceeding to the end of the paragraph. Nodes in the block containing
-// startNode that appear in document order before startNode are not moved.
-// This function is an important helper for deleting selections that cross paragraph
-// boundaries.
-void DeleteSelectionCommand::moveNodesAfterNode()
+// If a selection ended in a different paragraph than it started in, we must merge 
+// the two paragraphs after deleting the selection.
+void DeleteSelectionCommand::mergeParagraphs()
 {
     if (!m_mergeBlocksAfterDelete)
         return;
 
-    if (m_endBlock == m_startBlock)
-        return;
-
-    Node *startNode = m_downstreamEnd.node();
-    Node *dstNode = m_upstreamStart.node();
-
-    if (!startNode->inDocument() || !dstNode->inDocument())
-        return;
-
-    Node *startBlock = startNode->enclosingBlockFlowElement();
-
+    // FIXME: Deletion should adjust selection endpoints as it removes nodes so that we never get into this state (4099839).
+    if (!m_downstreamEnd.node()->inDocument() || !m_upstreamStart.node()->inDocument())
+         return;
+         
     // Do not move content between parts of a table.
-    if (isTableStructureNode(startBlock))
+    if (isTableStructureNode(m_downstreamEnd.node()->enclosingBlockFlowElement()) || isTableStructureNode(m_upstreamStart.node()->enclosingBlockFlowElement()))
+        return;
+        
+    VisiblePosition startOfParagraphToMove(m_downstreamEnd);
+    VisiblePosition mergeDestination(m_upstreamStart);
+    
+    if (mergeDestination == startOfParagraphToMove)
         return;
     
-    // Now that we are about to add content, check to see if a placeholder element
-    // can be removed.
-    removeBlockPlaceholder(startBlock);
-
-    // Move the subtree containing node
-    Node *node = startNode->enclosingInlineElement();
-
-    // Insert after the subtree containing dstNode
-    Node *refNode = dstNode->enclosingInlineElement();
-
-    // Preserve nesting when deleting to the beginning of an ancestor block
-    Node *dstBlock = refNode->enclosingBlockFlowElement();
-    if (startBlock->isAncestor(dstBlock) && isStartOfBlock(VisiblePosition(m_upstreamStart)))
+    // FIXME: The above early return should be all we need. 
+    if (m_endBlock == m_startBlock)
         return;
+        
+    VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove);
+    
+    Position start = startOfParagraphToMove.deepEquivalent().upstream();
+    // We upstream() the end so that we don't include collapsed whitespace in the move.
+    // If we must later add a br after the merged paragraph, doing so would cause the moved unrendered space to become rendered.
+    Position end = endOfParagraphToMove.deepEquivalent().upstream();
+    RefPtr<Range> range = new Range(document(), start.node(), start.offset(), end.node(), end.offset());
 
-    // Do the move.
-    Node *rootNode = refNode->rootEditableElement();
-    while (node && node->isAncestor(startBlock)) {
-        Node *moveNode = node;
-        node = node->nextSibling();
-        removeNode(moveNode);
-        if (moveNode->hasTagName(brTag) && !moveNode->renderer()) {
-            // Just remove this node, and don't put it back.
-            // If the BR was not rendered (since it was at the end of a block, for instance), 
-            // putting it back in the document might make it appear, and that is not desirable.
-            break;
-        }
-        if (refNode == rootNode)
-            insertNodeAt(moveNode, refNode, 0);
-        else
-            insertNodeAfter(moveNode, refNode);
-        refNode = moveNode;
-        if (moveNode->hasTagName(brTag))
-            break;
-    }
+    // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move.  It 
+    // shouldn't matter though, since moved paragraphs will usually be quite small.
+    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(document(), range->toHTML(), "");
+    
+    setEndingSelection(Selection(startOfParagraphToMove.deepEquivalent(), endOfParagraphToMove.deepEquivalent(), DOWNSTREAM));
+    deleteSelection(false, false);
+    
+    // The above deletion leaves a placeholder (it always does when a whole paragraph is deleted).
+    // We remove it and prune it's parents since we want to remove all traces of the paragraph to move.
+    Node* placeholder = endingSelection().end().node();
+    // FIXME: Deletion has bugs and it doesn't always add a placeholder.  If it fails, still do pruning.
+    if (placeholder->hasTagName(brTag))
+        removeNodeAndPruneAncestors(placeholder);
+    else
+        prune(placeholder);
 
-    // If the startBlock no longer has any kids, we may need to deal with adding a BR
-    // to make the layout come out right. Consider this document:
-    //
-    // One
-    // <div>Two</div>
-    // Three
-    // 
-    // Placing the insertion before before the 'T' of 'Two' and hitting delete will
-    // move the contents of the div to the block containing 'One' and delete the div.
-    // This will have the side effect of moving 'Three' on to the same line as 'One'
-    // and 'Two'. This is undesirable. We fix this up by adding a BR before the 'Three'.
-    // This may not be ideal, but it is better than nothing.
-    updateLayout();
-    if (!startBlock->renderer() || startBlock->renderer()->isEmpty()) {
-        removeNode(startBlock);
-        updateLayout();
-        if (refNode->renderer() && refNode->renderer()->inlineBox() && refNode->renderer()->inlineBox()->nextOnLineExists()) {
-            insertNodeAfter(createBreakElement(document()).get(), refNode);
-        }
-    }
+    // Add a br if pruning an empty block level element caused a collapse.  For example:
+    // foo
+    // <div>bar</div>
+    // baz
+    // Placing the cursor before 'bar' and hitting delete will merge 'foo' and 'bar' and prune the empty div.    
+    if (!isEndOfParagraph(mergeDestination))
+        insertNodeAt(createBreakElement(document()).get(), m_upstreamStart.node(), m_upstreamStart.offset());
+    
+    setEndingSelection(mergeDestination);
+    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), false));
+    applyCommandToComposite(cmd);
 }
 
 void DeleteSelectionCommand::calculateEndingPosition()
@@ -694,8 +675,7 @@ void DeleteSelectionCommand::doApply()
     insertPlaceholderForAncestorBlockContent();
     handleGeneralDelete();
     
-    // Do block merge if start and end of selection are in different blocks.
-    moveNodesAfterNode();
+    mergeParagraphs();
     
     calculateEndingPosition();
     fixupWhitespace();

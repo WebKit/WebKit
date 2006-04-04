@@ -75,6 +75,8 @@ protected:
     void removeChildrenInRange(WebCore::Node *node, int from, int to);
     void removeNode(WebCore::Node *removeChild);
     void removeNodePreservingChildren(WebCore::Node *node);
+    void removeNodeAndPruneAncestors(Node* node);
+    void prune(PassRefPtr<Node> node);
     void replaceTextInNode(WebCore::Text *node, int offset, int count, const WebCore::String &replacementText);
     WebCore::Position positionOutsideTabSpan(const WebCore::Position& pos);
     void insertNodeAtTabSpanPosition(WebCore::Node *node, const WebCore::Position& pos);

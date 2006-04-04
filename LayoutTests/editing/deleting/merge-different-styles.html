@@ -1,0 +1,12 @@
+<p>This places the caret before the 'b' in 'bar' and Deletes.  'foo' and 'bar' should end up on the same line, but neither should change style.</p>
+<div contenteditable="true">
+<div>foo</div>
+<div id="test" style="font-weight:bold">bar</div>
+</div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+s.setPosition(e, 0);
+document.execCommand("Delete");
+</script>

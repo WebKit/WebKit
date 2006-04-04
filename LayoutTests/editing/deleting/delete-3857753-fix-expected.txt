@@ -16,12 +16,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [border: (2px solid #FF0000)]
       RenderBlock {DIV} at (14,14) size 756x28
-        RenderInline {B} at (0,0) size 25x28
+        RenderInline {B} at (0,0) size 37x28
           RenderText {TEXT} at (0,0) size 25x28
             text run at (0,0) width 25: "on"
-        RenderInline {I} at (0,0) size 12x28
-          RenderText {TEXT} at (25,0) size 12x28
-            text run at (25,0) width 12: "o"
+          RenderInline {SPAN} at (0,0) size 12x28
+            RenderInline {I} at (0,0) size 12x28
+              RenderText {TEXT} at (25,0) size 12x28
+                text run at (25,0) width 12: "o"
       RenderBlock {DIV} at (14,42) size 756x28
         RenderInline {B} at (0,0) size 54x28
           RenderText {TEXT} at (0,0) size 54x28

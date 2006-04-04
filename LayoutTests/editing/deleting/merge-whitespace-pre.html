@@ -1,0 +1,14 @@
+<p>This places the caret before the 'b' in 'bar' and Delete.  'foo' and 'bar' should end up on the same line with 'baz' on the second.</p>
+<p>This demonstrates a bug, which is that 'bar' changes size when it's merged with 'foo'.</p>
+<div contenteditable="true">
+<div>foo</div>
+<pre id="test">bar
+baz</pre>
+</div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+s.setPosition(e, 0);
+document.execCommand("Delete");
+</script>

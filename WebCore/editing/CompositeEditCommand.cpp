@@ -227,6 +227,25 @@ void CompositeEditCommand::removeNodePreservingChildren(Node *removeChild)
     applyCommandToComposite(cmd);
 }
 
+void CompositeEditCommand::removeNodeAndPruneAncestors(Node* node)
+{
+    RefPtr<Node> parent = node->parentNode();
+    removeNode(node);
+    prune(parent);
+}
+
+void CompositeEditCommand::prune(PassRefPtr<Node> node)
+{
+    while (node) {
+        RefPtr<Node> parent = node->parentNode();
+        // If you change this rule you may have to add an updateLayout() here.
+        if (node->renderer() && node->renderer()->firstChild())
+            return;
+        removeNode(node.get());
+        node = parent;
+    }
+}
+
 void CompositeEditCommand::splitTextNode(Text *text, int offset)
 {
     EditCommandPtr cmd(new SplitTextNodeCommand(document(), text, offset));
