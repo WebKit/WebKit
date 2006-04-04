@@ -1,3 +1,23 @@
+2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7118
+          Property values with extra items do not get treated as invalid (they should)
+
+        Tests: fast/css/invalidation-errors.html
+               fast/css/invalidation-errors-2.html
+               fast/css/invalidation-errors-3.html
+
+        * css/CSSGrammar.y: Rollback the properties added by parseValue() when it returns false.
+        * css/cssparser.h: Moved shorthand counting to ShorthandScope, a new class in cssparser.cpp.
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::rollbackLastProperties): Added.
+        (WebCore::CSSParser::parseValue): Return false if there are too many properties in the list.
+        (WebCore::CSSParser::parseBackgroundShorthand): Use ShorthandScope.
+        (WebCore::CSSParser::parseShorthand): Ditto.
+        (WebCore::CSSParser::parse4Values): Ditto.
+
 2006-04-03  Darin Adler  <darin@apple.com>
 
         - changed StyleSheet back to hand-generated since the generated toJS

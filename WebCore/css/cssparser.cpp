@@ -55,6 +55,25 @@ ValueList::~ValueList()
              delete m_values[i].function;
 }
 
+namespace {
+    class ShorthandScope {
+    public:
+        ShorthandScope(CSSParser* parser, int propId) : m_parser(parser)
+        {
+            if (!(m_parser->m_inParseShorthand++))
+                m_parser->m_currentShorthand = propId;
+        }
+        ~ShorthandScope()
+        {
+            if (!(--m_parser->m_inParseShorthand))
+                m_parser->m_currentShorthand = 0;
+        }
+
+    private:
+        CSSParser* m_parser;
+    };
+}
+
 CSSParser* CSSParser::currentParser = 0;
 
 CSSParser::CSSParser(bool strictParsing)
@@ -262,6 +281,15 @@ void CSSParser::addProperty(int propId, CSSValue *value, bool important)
     parsedProperties[numParsedProperties++] = prop;
 }
 
+void CSSParser::rollbackLastProperties(int num)
+{
+    ASSERT(num >= 0);
+    ASSERT(numParsedProperties >= num);
+
+    for (int i = 0; i < num; ++i)
+        delete parsedProperties[--numParsedProperties];
+}
+
 void CSSParser::clearProperties()
 {
     for (int i = 0; i < numParsedProperties; i++)
@@ -339,11 +367,17 @@ bool CSSParser::parseValue(int propId, bool important)
 
     int id = value->id;
 
+    int num = inShorthand() ? 1 : valueList->size();
+
     if (id == CSS_VAL_INHERIT) {
+        if (num != 1)
+            return false;
         addProperty(propId, new CSSInheritedValue(), important);
         return true;
     }
     else if (id == CSS_VAL_INITIAL) {
+        if (num != 1)
+            return false;
         addProperty(propId, new CSSInitialValue(), important);
         return true;
     }
@@ -542,16 +576,18 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_BORDER_SPACING: {
         const int properties[2] = { CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING,
                                     CSS_PROP__KHTML_BORDER_VERTICAL_SPACING };
-        int num = valueList->size();
         if (num == 1) {
-            if (!parseValue(properties[0], important)) return false;
+            ShorthandScope scope(this, CSS_PROP_BORDER_SPACING);
+            if (!parseValue(properties[0], important))
+                return false;
             CSSValue* value = parsedProperties[numParsedProperties-1]->value();
             addProperty(properties[1], value, important);
             return true;
         }
         else if (num == 2) {
-            if (!parseValue(properties[0], important)) return false;
-            if (!parseValue(properties[1], important)) return false;
+            ShorthandScope scope(this, CSS_PROP_BORDER_SPACING);
+            if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
+                return false;
             return true;
         }
         return false;
@@ -678,7 +714,7 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSS_PROP__KHTML_FONT_SIZE_DELTA:           // <length>
-           valid_primitive = validUnit(value, FLength, strict);
+        valid_primitive = validUnit(value, FLength, strict);
         break;
 
     case CSS_PROP__KHTML_NBSP_MODE:     // normal | space
@@ -881,7 +917,6 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS:
     case CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS:
     case CSS_PROP_BORDER_RADIUS: {
-        int num = valueList->size();
         if (num != 1 && num != 2)
             return false;
         valid_primitive = validUnit(value, FLength, strict);
@@ -1011,16 +1046,18 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP__KHTML_MARGIN_COLLAPSE: {
         const int properties[2] = { CSS_PROP__KHTML_MARGIN_TOP_COLLAPSE,
             CSS_PROP__KHTML_MARGIN_BOTTOM_COLLAPSE };
-        int num = valueList->size();
         if (num == 1) {
-            if (!parseValue(properties[0], important)) return false;
+            ShorthandScope scope(this, CSS_PROP__KHTML_MARGIN_COLLAPSE);
+            if (!parseValue(properties[0], important))
+                return false;
             CSSValue* value = parsedProperties[numParsedProperties-1]->value();
             addProperty(properties[1], value, important);
             return true;
         }
         else if (num == 2) {
-            if (!parseValue(properties[0], important)) return false;
-            if (!parseValue(properties[1], important)) return false;
+            ShorthandScope scope(this, CSS_PROP__KHTML_MARGIN_COLLAPSE);
+            if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
+                return false;
             return true;
         }
         return false;
@@ -1186,8 +1223,11 @@ bool CSSParser::parseValue(int propId, bool important)
         valueList->next();
     }
     if (parsedValue) {
-        addProperty(propId, parsedValue, important);
-        return true;
+        if (!valueList->current() || inShorthand()) {
+            addProperty(propId, parsedValue, important);
+            return true;
+        }
+        delete parsedValue;
     }
     return false;
 }
@@ -1218,7 +1258,7 @@ bool CSSParser::parseBackgroundShorthand(bool important)
         CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION, CSS_PROP_BACKGROUND_CLIP,
         CSS_PROP_BACKGROUND_ORIGIN, CSS_PROP_BACKGROUND_COLOR };
     
-    enterShorthand(CSS_PROP_BACKGROUND);
+    ShorthandScope scope(this, CSS_PROP_BACKGROUND);
 
     bool parsedProperty[numProperties] = { false }; // compiler will repeat false as necessary
     CSSValue* values[numProperties] = { 0 }; // compiler will repeat 0 as necessary
@@ -1286,11 +1326,9 @@ bool CSSParser::parseBackgroundShorthand(bool important)
             addProperty(properties[i], values[i], important);
     }
     
-    exitShorthand();
     return true;
 
 fail:
-    exitShorthand();
     for (int k = 0; k < numProperties; k++)
         delete values[k];
     delete positionYValue;
@@ -1302,7 +1340,7 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
     // We try to match as many properties as possible
     // We set up an array of booleans to mark which property has been found,
     // and we try to search for properties until it makes no longer any sense.
-    enterShorthand(propId);
+    ShorthandScope scope(this, propId);
 
     bool found = false;
     bool fnd[6]; // Trust me ;)
@@ -1320,10 +1358,8 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
 
         // if we didn't find at least one match, this is an
         // invalid shorthand and we have to ignore it
-        if (!found) {
-            exitShorthand();
+        if (!found)
             return false;
-        }
     }
     
     // Fill in any remaining properties with the initial value.
@@ -1334,7 +1370,6 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
     }
     m_implicitShorthand = false;
 
-    exitShorthand();
     return true;
 }
 
@@ -1350,15 +1385,13 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
     
     int num = inShorthand() ? 1 : valueList->size();
     
-    enterShorthand(propId);
+    ShorthandScope scope(this, propId);
 
     // the order is top, right, bottom, left
     switch (num) {
         case 1: {
-            if (!parseValue(properties[0], important)) {
-                exitShorthand();
+            if (!parseValue(properties[0], important))
                 return false;
-            }
             CSSValue *value = parsedProperties[numParsedProperties-1]->value();
             m_implicitShorthand = true;
             addProperty(properties[1], value, important);
@@ -1368,10 +1401,8 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
             break;
         }
         case 2: {
-            if (!parseValue(properties[0], important) || !parseValue(properties[1], important)) {
-                exitShorthand();
+            if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
                 return false;
-            }
             CSSValue *value = parsedProperties[numParsedProperties-2]->value();
             m_implicitShorthand = true;
             addProperty(properties[2], value, important);
@@ -1381,11 +1412,8 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
             break;
         }
         case 3: {
-            if (!parseValue(properties[0], important) || !parseValue(properties[1], important) ||
-                !parseValue(properties[2], important)) {
-                exitShorthand();
+            if (!parseValue(properties[0], important) || !parseValue(properties[1], important) || !parseValue(properties[2], important))
                 return false;
-            }
             CSSValue *value = parsedProperties[numParsedProperties-2]->value();
             m_implicitShorthand = true;
             addProperty(properties[3], value, important);
@@ -1394,19 +1422,15 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
         }
         case 4: {
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important) ||
-                !parseValue(properties[2], important) || !parseValue(properties[3], important)) {
-                exitShorthand();
+                !parseValue(properties[2], important) || !parseValue(properties[3], important))
                 return false;
-            }
             break;
         }
         default: {
-            exitShorthand();
             return false;
         }
     }
     
-    exitShorthand();
     return true;
 }
 

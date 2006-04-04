@@ -123,6 +123,7 @@ namespace WebCore {
         Document* document() const;
 
         void addProperty(int propId, CSSValue*, bool important);
+        void rollbackLastProperties(int num);
         bool hasProperties() const { return numParsedProperties > 0; }
 
         bool parseValue(int propId, bool important);
@@ -212,16 +213,7 @@ namespace WebCore {
         void clearProperties();
 
         void setupParser(const char* prefix, const String&, const char* suffix);
-        void enterShorthand(int propId)
-        {
-            if (!(m_inParseShorthand++))
-                m_currentShorthand = propId;
-        }
-        void exitShorthand()
-        {
-            if (!(--m_inParseShorthand))
-                m_currentShorthand = 0;
-        }
+
         bool inShorthand() const { return m_inParseShorthand; }
 
         unsigned short* data;

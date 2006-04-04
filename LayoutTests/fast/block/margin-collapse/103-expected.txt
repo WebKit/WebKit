@@ -10,7 +10,7 @@ layer at (0,0) size 785x1691
             RenderText {TEXT} at (0,2) size 520x40
               text run at (0,2) width 520: "We are trying to understand how UVic students perform Shakespeare related research for"
               text run at (0,22) width 265: "classes as well as for their own interest. The "
-            RenderInline {A} at (0,0) size 173x16 [border: (1px dashed #333333) none]
+            RenderInline {A} at (0,0) size 173x15
               RenderText {TEXT} at (265,22) size 173x20
                 text run at (265,22) width 173: "Internet Shakespeare Editions"
             RenderText {TEXT} at (438,22) size 560x60

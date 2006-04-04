@@ -284,7 +284,9 @@ khtml_value:
         CSSParser *p = static_cast<CSSParser *>(parser);
         if ($4) {
             p->valueList = p->sinkFloatingValueList($4);
-            p->parseValue(p->id, p->important);
+            int oldParsedProperties = p->numParsedProperties;
+            if (!p->parseValue(p->id, p->important))
+                p->rollbackLastProperties(p->numParsedProperties - oldParsedProperties);
             delete p->valueList;
             p->valueList = 0;
         }
@@ -804,7 +806,10 @@ declaration:
         CSSParser *p = static_cast<CSSParser *>(parser);
         if ($1 && $4) {
             p->valueList = p->sinkFloatingValueList($4);
+            int oldParsedProperties = p->numParsedProperties;
             $$ = p->parseValue($1, $5);
+            if (!$$)
+                p->rollbackLastProperties(p->numParsedProperties - oldParsedProperties);
             delete p->valueList;
             p->valueList = 0;
         }

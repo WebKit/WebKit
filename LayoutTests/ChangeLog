@@ -1,3 +1,26 @@
+2006-04-03  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7118
+          Property values with extra items do not get treated as invalid (they should)
+
+        * fast/block/margin-collapse/103-expected.checksum: Corrected the results.
+        * fast/block/margin-collapse/103-expected.png:
+        * fast/block/margin-collapse/103-expected.txt:
+        * fast/css/invalidation-errors-2-expected.checksum: Added.
+        * fast/css/invalidation-errors-2-expected.png: Added.
+        * fast/css/invalidation-errors-2-expected.txt: Added.
+        * fast/css/invalidation-errors-2.html: Added.
+        * fast/css/invalidation-errors-3-expected.checksum: Added.
+        * fast/css/invalidation-errors-3-expected.png: Added.
+        * fast/css/invalidation-errors-3-expected.txt: Added.
+        * fast/css/invalidation-errors-3.html: Added.
+        * fast/css/invalidation-errors-expected.checksum: Added.
+        * fast/css/invalidation-errors-expected.png: Added.
+        * fast/css/invalidation-errors-expected.txt: Added.
+        * fast/css/invalidation-errors.html: Added.
+
 2006-04-03  Darin Adler  <darin@apple.com>
 
         - add a test of RTL to the test for bug 8106
