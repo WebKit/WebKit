@@ -795,7 +795,7 @@ void CSSPrimitiveValue::cleanup()
     m_type = 0;
 }
 
-int CSSPrimitiveValue::computeIntLength(RenderStyle *style)
+int CSSPrimitiveValue::computeLengthInt(RenderStyle *style)
 {
     double result = computeLengthFloat(style);
     
@@ -808,20 +808,7 @@ int CSSPrimitiveValue::computeIntLength(RenderStyle *style)
     return (int)result;    
 }
 
-short CSSPrimitiveValue::computeShortLength(RenderStyle *style)
-{
-    double result = computeLengthFloat(style);
-    
-    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
-    // need to go ahead and round if we're really close to the next integer value.
-    result += result < 0 ? -0.01 : +0.01;
-    
-    if (result > SHRT_MAX || result < SHRT_MIN)
-        return 0;
-    return (short)result;    
-}
-
-int CSSPrimitiveValue::computeIntLength(RenderStyle *style, double multiplier)
+int CSSPrimitiveValue::computeLengthInt(RenderStyle *style, double multiplier)
 {
     double result = multiplier * computeLengthFloat(style);
     
@@ -834,7 +821,51 @@ int CSSPrimitiveValue::computeIntLength(RenderStyle *style, double multiplier)
     return (int)result;  
 }
 
-short CSSPrimitiveValue::computeShortLength(RenderStyle *style, double multiplier)
+const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
+const int intMinForLength = (-0x7ffffff-1); // min value for a 28-bit int
+
+// Lengths expect an int that is only 28-bits, so we have to check for a different overflow.
+int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle *style)
+{
+    double result = computeLengthFloat(style);
+    
+    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
+    // need to go ahead and round if we're really close to the next integer value.
+    result += result < 0 ? -0.01 : +0.01;
+    
+    if (result > intMaxForLength || result < intMinForLength)
+        return 0;
+    return (int)result;    
+}
+
+// Lengths expect an int that is only 28-bits, so we have to check for a different overflow.
+int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle *style, double multiplier)
+{
+    double result = multiplier * computeLengthFloat(style);
+    
+    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
+    // need to go ahead and round if we're really close to the next integer value.
+    result += result < 0 ? -0.01 : +0.01;
+    
+    if (result > intMaxForLength || result < intMinForLength)
+        return 0;
+    return (int)result;  
+}
+
+short CSSPrimitiveValue::computeLengthShort(RenderStyle *style)
+{
+    double result = computeLengthFloat(style);
+    
+    // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
+    // need to go ahead and round if we're really close to the next integer value.
+    result += result < 0 ? -0.01 : +0.01;
+    
+    if (result > SHRT_MAX || result < SHRT_MIN)
+        return 0;
+    return (short)result;    
+}
+
+short CSSPrimitiveValue::computeLengthShort(RenderStyle *style, double multiplier)
 {
     double result = multiplier * computeLengthFloat(style);
     

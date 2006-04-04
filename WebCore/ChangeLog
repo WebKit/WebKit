@@ -1,3 +1,28 @@
+2006-04-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        This is a followup to my fix for <rdar://problem/4493218>
+        
+        This patch re-names computeIntLength() and computerShortLength() to 
+        be computeLengthInt() and computeLengthShort(), respectively, to 
+        match the pre-existing computeLengthFloat(). This patch also adds 
+        the slightly confusing-ly named computeLengthIntForLength() which 
+        uses the max and min values of a 28-bit integer as bounds for 
+        overflow. This function is necessary because Length objects expect 
+        28-bit integers. 
+
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthInt):
+        (WebCore::CSSPrimitiveValue::computeLengthIntForLength):
+        (WebCore::CSSPrimitiveValue::computeLengthShort):
+        * css/css_valueimpl.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::convertToLength):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition):
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition):
+
 2006-04-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
