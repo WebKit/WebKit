@@ -116,6 +116,38 @@ static UString char_sequence(char c, int count)
     return UString(buf);
 }
 
+static double intPow10(int e)
+{
+  // This function uses the "exponentiation by squaring" algorithm and
+  // long double to quickly and precisely calculate integer powers of 10.0.
+
+  // This is a handy workaround for <rdar://problem/4494756>
+
+  if (e == 0)
+    return 1.0;
+
+  bool negative = e < 0;
+  unsigned exp = negative ? -e : e;
+
+  long double result = 10.0;
+  bool foundOne = false;
+  for (int bit = 31; bit >= 0; bit--) {
+    if (!foundOne) {
+      if ((exp >> bit) & 1)
+        foundOne = true;
+    } else {
+      result = result * result;
+      if ((exp >> bit) & 1)
+        result = result * 10.0;
+    }
+  }
+
+  if (negative)
+    return 1.0 / result;
+  else
+    return result;
+}
+
 // ECMA 15.7.4.2 - 15.7.4.7
 JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
@@ -238,7 +270,7 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       if (!fractionDigits->isUndefined()) {
           double logx = floor(log10(x));
           x /= pow(10.0, logx);
-          double fx = floor(x * pow(10.0, f)) / pow(10.0,f);
+          double fx = floor(x * pow(10.0, f)) / pow(10.0, f);
           double cx = ceil(x * pow(10.0, f)) / pow(10.0, f);
           
           if (fabs(fx-x) < fabs(cx-x))
@@ -333,17 +365,19 @@ JSValue *NumberProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
       int p = (int)dp;
       
       if (x != 0) {
-          e = static_cast<int>(log10(x));
-          double n = floor(x / pow(10.0, e - p + 1));
-          if (n < pow(10.0, p - 1)) {
+          e = static_cast<int>(trunc(log10(x)));
+          double tens = intPow10(e - p + 1);
+          double n = floor(x / tens);
+          if (n < intPow10(p - 1)) {
               e = e - 1;
-              n = floor(x / pow(10.0, e - p + 1));
+              tens = intPow10(e - p + 1);
+              n = floor(x / tens);
           }
           
-          if (fabs((n + 1) * pow(10.0, e - p + 1) - x) < fabs(n * pow(10.0, e - p + 1) - x))
-              n++;
-          assert(pow(10.0, p - 1) <= n);
-          assert(n < pow(10.0, p));
+          if (fabs((n + 1.0) * tens - x) <= fabs(n * tens - x))
+            ++n;
+          assert(intPow10(p - 1) <= n);
+          assert(n < intPow10(p));
           
           m = integer_part_noexp(n);
           if (e < -6 || e >= p) {

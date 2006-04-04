@@ -1,3 +1,15 @@
+2006-03-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed "toPrecision sometimes messes up the last digit on intel Macs"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7748
+
+        * kjs/number_object.cpp:
+        (intPow10): Compute integer powers of 10 using exponentiation by squaring.
+        (NumberProtoFunc::callAsFunction): Use intPow10(n) in place of all pow(10.0, n),
+        plus a bit of refactoring.
+
 2006-04-03  Darin Adler  <darin@apple.com>
 
         - tweak config.h and Platform.h to try to get buildbot working
