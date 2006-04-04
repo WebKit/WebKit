@@ -828,6 +828,7 @@ static bool debugWidget = true;
     [_private->settings setMinimumFontSize:[preferences minimumFontSize]];
     [_private->settings setMinimumLogicalFontSize:[preferences minimumLogicalFontSize]];
     [_private->settings setPluginsEnabled:[preferences arePlugInsEnabled]];
+    [_private->settings setPrivateBrowsingEnabled:[preferences privateBrowsingEnabled]];
     [_private->settings setSansSerifFontFamily:[preferences sansSerifFontFamily]];
     [_private->settings setSerifFontFamily:[preferences serifFontFamily]];
     [_private->settings setStandardFontFamily:[preferences standardFontFamily]];

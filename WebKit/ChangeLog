@@ -1,3 +1,13 @@
+2006-04-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - WebKit part of <rdar://problem/4498418> "Autosaved" searchterms are saved during private browsing
+
+        * WebView/WebView.m:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+        Pass private browsing setting down to WebCore.
+
 2006-04-03  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher.
