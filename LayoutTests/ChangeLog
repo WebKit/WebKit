@@ -1,5 +1,14 @@
 2006-04-04  Adele Peterson  <adele@apple.com>
 
+        New results for
+        * fast/forms/input-truncate-newline-expected.txt
+
+        Filed bug:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8187
+        input-truncate-newline layout test fails when run as part of larger set of tests
+
+2006-04-04  Adele Peterson  <adele@apple.com>
+
          - Test for:
         http://bugzilla.opendarwin.org/show_bug.cgi?id=8092
         REGRESSION (NativeTextField): table contents misaligned in Netflix queue

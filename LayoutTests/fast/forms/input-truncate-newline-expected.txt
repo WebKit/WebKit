@@ -7,10 +7,9 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV to 0 of DIV givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV to 0 of #text > DIV toDOMRange:range from 4 of #text > DIV to 4 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV to 0 of #text > DIV toDOMRange:range from 6 of #text > DIV to 6 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 This tests that when newlines are pasted into text fields, the text gets truncated properly. 
 
-Passed.
 
