@@ -1,3 +1,22 @@
+2006-04-05  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/4502311> text-transform:capitalize needs to 
+        treat nbsp as a regular space when ICU changes
+
+        There will be future changes in ICU to match the Unicode 4.1 
+        standard which no longer recognizes &nbsp as a word separator. We 
+        need to work around this with text-transform:capitalize because 
+        words after non-breaking spaces still need to be capitalized.
+
+        No layout tests added because existing layout tests cover this.
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::capitalize): If the character is a non-
+        breaking space, add a regular space to our temporary buffer, 
+        otherwise, just copy the character in.
+
 2006-04-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

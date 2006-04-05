@@ -409,8 +409,14 @@ StringImpl* StringImpl::capitalize(QChar previous) const
     
     QChar* stringWithPrevious = newQCharVector(m_length + 1);
     stringWithPrevious[0] = previous;
-    for (unsigned i = 1; i < m_length + 1; i++)
-        stringWithPrevious[i] = m_data[i - 1];
+    const char nonBreakingSpace = '\xa0';
+    for (unsigned i = 1; i < m_length + 1; i++) {
+        // Replace &nbsp with a real space since ICU no longer treats &nbsp as a word separator.
+        if (m_data[i - 1] == nonBreakingSpace)
+            stringWithPrevious[i] = ' ';
+        else
+            stringWithPrevious[i] = m_data[i - 1];
+    }
     
     UBreakIterator* boundary = getWordBreakIterator(stringWithPrevious, m_length + 1);
     if (!boundary) {
