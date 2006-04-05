@@ -28,7 +28,6 @@ layer at (0,0) size 800x600
               RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                 RenderText {TEXT} at (0,0) size 0x0
                 RenderImage {IMG} at (728,5) size 28x15
-                RenderText {TEXT} at (0,0) size 0x0
               RenderText {TEXT} at (5,5) size 63x18
                 text run at (5,5) width 63: "Some text"
               RenderText {TEXT} at (0,0) size 0x0
