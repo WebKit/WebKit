@@ -23,20 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MacFrame_H
-#define MacFrame_H
+#ifndef FrameMac_h
+#define FrameMac_h
 
-#include "Frame.h"
-#include "IntRect.h"
-#include "ClipboardMac.h"
-#include "KWQScrollBar.h"
-#include "PlatformMouseEvent.h"
-#include "Node.h"
-#include "WebCoreKeyboardAccess.h"
-#include "TextAffinity.h"
-#include <kxmlcore/HashSet.h>
-
+#import "ClipboardMac.h"
+#import "Frame.h"
+#import "IntRect.h"
+#import "KWQScrollBar.h"
+#import "Node.h"
+#import "PlatformMouseEvent.h"
+#import "StringHash.h"
+#import "TextAffinity.h"
+#import "WebCoreKeyboardAccess.h"
 #import <CoreFoundation/CoreFoundation.h>
+#import <kxmlcore/HashSet.h>
 
 class NPObject;
 

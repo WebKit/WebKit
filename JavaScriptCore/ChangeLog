@@ -1,3 +1,68 @@
+2006-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - JavaScriptCore part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8049
+          StringImpl hash traits deleted value creates an init routine for WebCore
+          <rdar://problem/4442248> REGRESSION: WebCore has init routines (8049)
+
+        Change HashMap and HashSet implementation so they fold various types together.
+        This allows us to implement maps and sets that use RefPtr<WebCore::StringImpl>
+        and WebCore::String in terms of the underlying raw pointer type, and hence use
+        -1 for the deleted value.
+
+        * kxmlcore/HashTraits.h: Added a new type to HashTraits, StorageTraits, which is a
+        type to be used when storing a value that has the same layout as the type itself.
+        This is used only for non-key cases. In the case of keys, the hash function must also
+        be considered. Moved emptyValue out of GenericHashTraitsBase into GenericHashTraits.
+        Added a new bool to HashTraits, needsRef, which indicates whether the type needs
+        explicit reference counting. If the type itself has needsRef true, but the storage
+        type has needsRef false, then the HashSet or HashMap has to handle the reference
+        counting explicitly. Added hash trait specializations for all signed integer values
+        that give -1 as the deleted value. Gave all integers StorageTraits of the canonical
+        integer type of the same size so int and long will share code. Gave all pointers and
+        RefPtrs StorageTraits of the appropriately sized integer type. Removed redundant
+        TraitType and emptyValue definitions in the pointer specialization for HashTraits.
+        Added PairBaseHashTraits, which doesn't try to set up needsDestruction and deletedValue.
+        Useful for types where we don't want to force the existence of deletedValue, such as
+        the type of a pair in a HashMap which is not the actual storage type. Removed an
+        unneeded parameter from the DeletedValueAssigner template. Added HashKeyStorageTraits
+        template, which determines what type can be used to store a given hash key type with
+        a given hash function, and specialized it for pointers and RefPtr so that pointer
+        hash tables share an underlying HashTable that uses IntHash.
+
+        * kxmlcore/HashTable.h: Added HashTableConstIteratorAdapter, HashTableIteratorAdapter,
+        NeedsRef, RefCountManagerBase, RefCountManager, HashTableRefCountManagerBase, and
+        HashTableRefCountManager. All are used by both HashSet and HashMap to handle hash
+        tables where the type stored is not the same as the real value type.
+        
+        * kxmlcore/HashFunctions.h: Added a new struct named IntTypes that finds an
+        integer type given a sizeof value. Renamed pointerHash to intHash and made it
+        use overloading and take integer parameters. Added an IntHash struct which is
+        a hash function that works for integers. Changed PtrHash to call IntHash with
+        an appropriately sized integer. Made IntHash the default hash function for
+        many integer types. Made PtrHash the default hash function for RefPtr as well
+        as for raw pointers.
+
+        * kxmlcore/HashSet.h: Changed implementation to use a separate "storage type"
+        derived from the new traits. The HashTable will use the storage type and all
+        necessary translation and ref/deref is done at the HashSet level. Also reorganized
+        the file so that the HashSet is at the top and has no inline implementation inside
+        it so it's easy to read the interface to HashSet.
+
+        * kxmlcore/HashMap.h: Changed implementation to use a separate "storage type"
+        derived from the new traits. The HashTable will use the storage type and all
+        necessary translation and ref/deref is done at the HashMap level. Also reorganized
+        the file so that the HashMap is at the top and has no inline implementation inside
+        it so it's easy to read the interface to HashMap.
+
+        * kxmlcore/HashMapPtrSpec.h: Removed. Superceded by optimizations in HashMap itself.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Remove HashMapPtrSpec.h, resort files,
+        and also remove some unnecessary build settings from the aggregate target that
+        generates derived sources.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+
 2006-04-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

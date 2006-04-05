@@ -45,7 +45,7 @@ struct QCharBufferTranslator;
 struct CStringTranslator;
 struct Length;
 
-class StringImpl : public Shared<StringImpl>
+class StringImpl : public Shared<StringImpl>, Noncopyable
 {
 private:
     struct WithOneRef { };
@@ -115,19 +115,6 @@ public:
     // For debugging only, leaks memory.
     const char* ascii() const;
 
-private:
-    unsigned m_length;
-    QChar* m_data;
-
-private:
-    friend class AtomicString;
-    friend struct QCharBufferTranslator;
-    friend struct CStringTranslator;
-    
-    mutable unsigned m_hash;
-    bool m_inTable;
-
-public:
 #if __APPLE__
     StringImpl(CFStringRef);
     CFStringRef createCFString() const;
@@ -136,6 +123,17 @@ public:
     StringImpl(NSString*);
     operator NSString*() const;
 #endif
+
+private:
+    unsigned m_length;
+    QChar* m_data;
+
+    friend class AtomicString;
+    friend struct QCharBufferTranslator;
+    friend struct CStringTranslator;
+    
+    mutable unsigned m_hash;
+    bool m_inTable;
 };
 
 bool equal(const StringImpl*, const StringImpl*);
@@ -150,182 +148,16 @@ bool equalIgnoringCase(const char*, const StringImpl*);
 
 namespace KXMLCore {
 
-    template<typename T> class DefaultHash;
-    template<typename T> class StrHash;
-
-    template<> struct StrHash<WebCore::StringImpl*> {
-        static unsigned hash(const WebCore::StringImpl* key) { return key->hash(); }
-        static bool equal(const WebCore::StringImpl* a, const WebCore::StringImpl* b)
-        {
-            if (a == b) return true;
-            if (!a || !b) return false;
-            
-            unsigned aLength = a->length();
-            unsigned bLength = b->length();
-            if (aLength != bLength)
-                return false;
-            
-            const uint32_t* aChars = reinterpret_cast<const uint32_t*>(a->unicode());
-            const uint32_t* bChars = reinterpret_cast<const uint32_t*>(b->unicode());
-            
-            unsigned halfLength = aLength >> 1;
-            for (unsigned i = 0; i != halfLength; ++i)
-                if (*aChars++ != *bChars++)
-                    return false;
-            
-            if (aLength & 1 && *reinterpret_cast<const uint16_t*>(aChars) != *reinterpret_cast<const uint16_t*>(bChars))
-                return false;
-            
-            return true;
-        }
-    };
-    
-    class CaseInsensitiveHash {
-    private:
-        // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
-        static const unsigned PHI = 0x9e3779b9U;
-    public:
-        // Paul Hsieh's SuperFastHash
-        // http://www.azillionmonkeys.com/qed/hash.html
-        static unsigned hash(const WebCore::StringImpl* str)
-        {
-            unsigned m_length = str->length();
-            const QChar* m_data = str->unicode();
-            uint32_t hash = PHI;
-            uint32_t tmp;
-            
-            int rem = m_length & 1;
-            m_length >>= 1;
-            
-            // Main loop
-            for (; m_length > 0; m_length--) {
-                hash += m_data[0].lower().unicode();
-                tmp = (m_data[1].lower().unicode() << 11) ^ hash;
-                hash = (hash << 16) ^ tmp;
-                m_data += 2;
-                hash += hash >> 11;
-            }
-            
-            // Handle end case
-            if (rem) {
-                hash += m_data[0].lower().unicode();
-                hash ^= hash << 11;
-                hash += hash >> 17;
-            }
-            
-            // Force "avalanching" of final 127 bits
-            hash ^= hash << 3;
-            hash += hash >> 5;
-            hash ^= hash << 2;
-            hash += hash >> 15;
-            hash ^= hash << 10;
-            
-            // this avoids ever returning a hash code of 0, since that is used to
-            // signal "hash not computed yet", using a value that is likely to be
-            // effectively the same as 0 when the low bits are masked
-            if (hash == 0)
-                hash = 0x80000000;
-            
-            return hash;
-        }
-        
-        static unsigned hash(const char* str, unsigned length)
-        {
-            // This hash is designed to work on 16-bit chunks at a time. But since the normal case
-            // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
-            // were 16-bit chunks, which will give matching results.
-
-            unsigned m_length = length;
-            const char* m_data = str;
-            uint32_t hash = PHI;
-            uint32_t tmp;
-            
-            int rem = m_length & 1;
-            m_length >>= 1;
-            
-            // Main loop
-            for (; m_length > 0; m_length--) {
-                hash += QChar(m_data[0]).lower().unicode();
-                tmp = (QChar(m_data[1]).lower().unicode() << 11) ^ hash;
-                hash = (hash << 16) ^ tmp;
-                m_data += 2;
-                hash += hash >> 11;
-            }
-            
-            // Handle end case
-            if (rem) {
-                hash += QChar(m_data[0]).lower().unicode();
-                hash ^= hash << 11;
-                hash += hash >> 17;
-            }
-            
-            // Force "avalanching" of final 127 bits
-            hash ^= hash << 3;
-            hash += hash >> 5;
-            hash ^= hash << 2;
-            hash += hash >> 15;
-            hash ^= hash << 10;
-            
-            // this avoids ever returning a hash code of 0, since that is used to
-            // signal "hash not computed yet", using a value that is likely to be
-            // effectively the same as 0 when the low bits are masked
-            if (hash == 0)
-                hash = 0x80000000;
-            
-            return hash;
-        }
-        
-        static bool equal(const WebCore::StringImpl* a, const WebCore::StringImpl* b)
-        {
-            if (a == b) return true;
-            if (!a || !b) return false;
-            unsigned length = a->length();
-            if (length != b->length())
-                return false;
-            const QChar* as = a->unicode();
-            const QChar* bs = b->unicode();
-            for (unsigned i = 0; i != length; ++i)
-                if (as[i].lower() != bs[i].lower())
-                    return false;
-            return true;
-        }
-    };
-
-    template<> struct StrHash<RefPtr<WebCore::StringImpl> > {
-        static unsigned hash(const RefPtr<WebCore::StringImpl>& key) 
-        { 
-            return StrHash<WebCore::StringImpl*>::hash(key.get());
-        }
-
-        static bool equal(const RefPtr<WebCore::StringImpl>& a, const RefPtr<WebCore::StringImpl>& b)
-        {
-            return StrHash<WebCore::StringImpl*>::equal(a.get(), b.get());
-        }
-    };
-
+    // StrHash is the default hash for StringImpl* and RefPtr<StringImpl>
+    template<typename T> struct DefaultHash;
+    template<typename T> struct StrHash;
     template<> struct DefaultHash<WebCore::StringImpl*> {
         typedef StrHash<WebCore::StringImpl*> Hash;
     };
-
     template<> struct DefaultHash<RefPtr<WebCore::StringImpl> > {
         typedef StrHash<RefPtr<WebCore::StringImpl> > Hash;
     };
-    
-    template <typename T> class HashTraits;
-
-    template<> struct HashTraits<RefPtr<WebCore::StringImpl> > {
-        typedef RefPtr<WebCore::StringImpl> TraitType;
-
-        static const bool emptyValueIsZero = true;
-        static const bool needsDestruction = true;
-        static const TraitType emptyValue() { return TraitType(); }
-
-        static const TraitType _deleted;
-        static const TraitType& deletedValue() { return _deleted; }
-    };
 
 }
-
-using KXMLCore::CaseInsensitiveHash;
 
 #endif

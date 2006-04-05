@@ -125,14 +125,4 @@ inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return e
 
 }
 
-namespace KXMLCore {
-
-    template<typename T> class StrHash;
-
-    template<> struct StrHash<WebCore::AtomicStringImpl*> : public StrHash<WebCore::StringImpl*>
-    {
-    };
-
-}
-
 #endif

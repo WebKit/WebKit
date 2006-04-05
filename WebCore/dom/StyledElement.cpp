@@ -22,14 +22,16 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "StyledElement.h"
 
-#include "css_stylesheetimpl.h"
-#include "css_valueimpl.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "css_stylesheetimpl.h"
+#include "css_valueimpl.h"
+#include <kxmlcore/HashTraits.h>
 
 namespace WebCore {
 
@@ -39,19 +41,17 @@ struct MappedAttributeKey {
     uint16_t type;
     StringImpl* name;
     StringImpl* value;
-    MappedAttributeKey(MappedAttributeEntry t, StringImpl* n, StringImpl* v)
+    MappedAttributeKey(MappedAttributeEntry t = eNone, StringImpl* n = 0, StringImpl* v = 0)
         : type(t), name(n), value(v) { }
 };
 
 static inline bool operator==(const MappedAttributeKey& a, const MappedAttributeKey& b)
     { return a.type == b.type && a.name == b.name && a.value == b.value; } 
 
-struct MappedAttributeKeyTraits {
-    typedef MappedAttributeKey TraitType;
+struct MappedAttributeKeyTraits : KXMLCore::GenericHashTraits<MappedAttributeKey> {
     static const bool emptyValueIsZero = true;
     static const bool needsDestruction = false;
-    static MappedAttributeKey emptyValue() { return MappedAttributeKey(eNone, 0, 0); }
-    static MappedAttributeKey deletedValue() { return MappedAttributeKey(eLastEntry, 0, 0); }
+    static MappedAttributeKey deletedValue() { return eLastEntry; }
 };
 
 struct MappedAttributeHash {

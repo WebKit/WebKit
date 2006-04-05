@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "SelectionController.h"
+#include "StringHash.h"
 #include "Timer.h"
 #include "css_valueimpl.h"
 #include "kjs_proxy.h"

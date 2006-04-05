@@ -105,7 +105,7 @@ int NodeImplCounter::count = 0;
 static NodeImplCounter nodeImplCounter;
 
 int gEventDispatchForbidden = 0;
-#endif NDEBUG
+#endif
 
 Node::Node(Document *doc)
     : m_document(doc),

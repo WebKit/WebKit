@@ -20,21 +20,20 @@
  *
  */
 
-#ifndef _xslt_processorimpl_h_
-#define _xslt_processorimpl_h_
+#ifndef xslt_processorimpl_h_
+#define xslt_processorimpl_h_
 
 #ifdef KHTML_XSLT
 
 #include "Shared.h"
-#include "StringImpl.h"
+#include "StringHash.h"
 #include "XSLStyleSheet.h"
+#include <DeprecatedString.h>
+#include <kxmlcore/HashMap.h>
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <libxslt/documents.h>
 #include <libxslt/transform.h>
-#include <DeprecatedString.h>
-
-#include <kxmlcore/HashMap.h>
 
 namespace WebCore {
 

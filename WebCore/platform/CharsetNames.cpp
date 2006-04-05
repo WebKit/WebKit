@@ -32,17 +32,26 @@
 #include <unicode/ucnv.h>
 #include <unicode/utypes.h>
 
+using namespace KXMLCore;
+using namespace WebCore;
+
+namespace WebCore {
+
+struct TextEncodingIDHashTraits : GenericHashTraits<TextEncodingID> {
+    static TraitType deletedValue() { return InvalidEncoding; }
+};
+
+}
+
 namespace KXMLCore {
 
-    template<> struct DefaultHash<WebCore::TextEncodingID> {
-        typedef PtrHash<WebCore::TextEncodingID> Hash;
-    };
+template<> struct HashKeyStorageTraits<IntHash<TextEncodingID>, TextEncodingIDHashTraits> {
+    typedef IntTypes<sizeof(TextEncodingID)>::SignedType IntType;
+    typedef IntHash<IntType> Hash;
+    typedef HashTraits<IntType> Traits;
+};
 
-    template<> struct HashTraits<WebCore::TextEncodingID> : GenericHashTraits<WebCore::TextEncodingID> {
-        static TraitType deletedValue() { return WebCore::InvalidEncoding; }
-    };
-    
-} // namespace KXMLCore
+}
 
 namespace WebCore {
 
@@ -99,13 +108,16 @@ struct EncodingHash {
     }
 };
 
-static HashMap<const char*, const CharsetEntry*, EncodingHash>* nameMap;
-static HashMap<TextEncodingID, const CharsetEntry*>* encodingMap;
+typedef HashMap<const char*, const CharsetEntry*, EncodingHash> NameMap;
+typedef HashMap<TextEncodingID, const CharsetEntry*, IntHash<TextEncodingID>, TextEncodingIDHashTraits> EncodingMap;
+
+static NameMap* nameMap;
+static EncodingMap* encodingMap;
 
 static void buildDictionaries()
 {
-    nameMap = new HashMap<const char*, const CharsetEntry*, EncodingHash>();
-    encodingMap = new HashMap<TextEncodingID, const CharsetEntry*>();
+    nameMap = new NameMap;
+    encodingMap = new EncodingMap;
 
     for (int i = 0; CharsetTable[i].name; ++i) {
         nameMap->add(CharsetTable[i].name, &CharsetTable[i]);

@@ -23,31 +23,25 @@
 
 #ifdef KHTML_XSLT
 
-#include "XSLTProcessor.h"
-#include "XSLStyleSheet.h"
-#include "xml_tokenizer.h"
-#include "Text.h"
-#include "HTMLTokenizer.h"
-#include "HTMLDocument.h"
-#include "DOMImplementation.h"
-#include "loader.h"
 #include "Cache.h"
+#include "DOMImplementation.h"
 #include "DocLoader.h"
-#include "markup.h"
-#include "FrameView.h"
 #include "Frame.h"
+#include "FrameView.h"
+#include "HTMLDocument.h"
+#include "HTMLTokenizer.h"
 #include "KWQLoader.h"
-
+#include "Text.h"
 #include "TransferJob.h"
-
-#include <libxslt/xsltutils.h>
+#include "XSLStyleSheet.h"
+#include "XSLTProcessor.h"
+#include "loader.h"
+#include "markup.h"
+#include "xml_tokenizer.h"
+#include <kxmlcore/Assertions.h>
 #include <libxslt/documents.h>
 #include <libxslt/imports.h>
-
-#include <kxmlcore/Assertions.h>
-
-using namespace WebCore;
-using namespace WebCore;
+#include <libxslt/xsltutils.h>
 
 namespace WebCore {
 

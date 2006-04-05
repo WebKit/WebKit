@@ -169,23 +169,13 @@ inline bool operator!=(const DeprecatedString& b, const String& a ) { return !(a
 
 namespace KXMLCore {
 
-    template<> struct StrHash<WebCore::String> {
-        static unsigned hash(const WebCore::String& key) { return key.impl()->hash(); }
-        static bool equal(const WebCore::String& a, const WebCore::String& b)
-            { return StrHash<WebCore::StringImpl*>::equal(a.impl(), b.impl()); }
-    };
-    
+    // StrHash is the default hash for String
+    template<typename T> struct DefaultHash;
+    template<typename T> struct StrHash;
     template<> struct DefaultHash<WebCore::String> {
         typedef StrHash<WebCore::String> Hash;
     };
 
-    template<> struct HashTraits<WebCore::String> {
-        typedef WebCore::String TraitType;
-        static const bool emptyValueIsZero = true;
-        static const bool needsDestruction = true;
-        static TraitType emptyValue() { return TraitType(); }
-        static TraitType deletedValue() { return HashTraits<RefPtr<WebCore::StringImpl> >::_deleted.get(); }
-    };
 }
 
 #endif

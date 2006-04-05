@@ -25,6 +25,7 @@
 #define render_applet_h
 
 #include "HTMLElement.h"
+#include "StringHash.h"
 #include "render_replaced.h"
 
 namespace WebCore {

@@ -34,13 +34,10 @@
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "loader.h"
-#include "TransferJob.h"
-#include "TransferJob.h"
-#include <kxmlcore/Assertions.h>
 #include "Image.h"
-
-using namespace WebCore;
+#include "TransferJob.h"
+#include "loader.h"
+#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

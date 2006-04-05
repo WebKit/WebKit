@@ -24,7 +24,7 @@
 #ifndef XML_Tokenizer_h_
 #define XML_Tokenizer_h_
 
-#include "PlatformString.h"
+#include "StringHash.h"
 #include <kxmlcore/HashMap.h>
 
 namespace WebCore {

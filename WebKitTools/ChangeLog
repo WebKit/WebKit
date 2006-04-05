@@ -1,3 +1,10 @@
+2006-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * Scripts/check-for-global-initializers: Remove StringImpl from the list of files that
+        are allowed to have global initializers.
+
 2006-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by OMG BETH

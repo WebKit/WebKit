@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "PlatformString.h"
+#include "StringHash.h"
 #include "Widget.h"
 #include <kxmlcore/HashMap.h>
 

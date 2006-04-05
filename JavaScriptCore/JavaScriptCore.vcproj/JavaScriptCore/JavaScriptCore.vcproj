@@ -529,10 +529,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\HashMapPtrSpec.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kxmlcore\HashSet.h"
 				>
 			</File>

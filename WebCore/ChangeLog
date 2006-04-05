@@ -1,3 +1,69 @@
+2006-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8049
+          StringImpl hash traits deleted value creates an init routine for WebCore
+          <rdar://problem/4442248> REGRESSION: WebCore has init routines (8049)
+
+        * platform/StringHash.h: Added. Moved hash functions and such for
+        WebCore::String and friends into this file so we don't have to include
+        the hash traits header everywhere. Changed hashing for WebCore::StringImpl
+        and WebCore::String so that they use a raw pointer for the underlying
+        storage type, taking advantage of the new feature added in JavaScriptCore.
+
+        * platform/AtomicString.h: Moved StrHash specialization to StringHash.h.
+        * platform/PlatformString.h: Moved StrHash specialization to StringHash.h.
+        * platform/StringImpl.h: Moved StrHash, CaseInsensitiveHash, and HashTraits
+        to StringHash.h. Left DefaultHash behind so that you can't get the wrong
+        hash function by accident if you forget to include "StringHash.h".
+
+        * platform/StringImpl.cpp: Added include of StringHash.h and removed
+        RefPtr<StringImpl> HashTraits<RefPtr<StringImpl> >::_deleted, which is
+        the object with a global initializer causing all the trouble!
+
+        * kwq/AccessibilityObjectCache.h: Changed hash function to be IntHash
+        instead of PtrHash.
+
+        * dom/StyledElement.cpp: Changed MappedAttributeKeyTraits to inherit from
+        the generic traits in KXMLCore so we get a StorageType. Also cleaned up a
+        tiny bit by adding default values to the MappedAttributeKey constructor.
+
+        * platform/CharsetNames.cpp: Changed hash traits here to be a new
+        TextEncodingIDHashTraits struct rather than defining new default traits
+        for the integer type since more integer types have default traits in
+        HashTraits.h now. Also added a specialization so this class will share
+        the underlying implementation (since InvalidEncoding happens to be -1).
+
+        * bridge/mac/FrameMac.h:
+        * dom/Document.h:
+        * dom/xml_tokenizer.h:
+        * khtml/xsl/XSLTProcessor.h:
+        * kwq/JavaAppletWidget.h:
+        * page/FramePrivate.h:
+        * page/Page.cpp:
+        * platform/AtomicString.cpp:
+        * platform/TransferJob.h:
+        * rendering/render_applet.h:
+        Added include of StringHash.h.
+
+        * WebCore.xcodeproj/project.pbxproj: Added StringHash.h. Remove unneeded
+        CREATE_HASH_TABLE variable in build settings. Re-sorted some file lists.
+        Added quotes to the CREATE_HASH_TABLE initialization in the rule that
+        builds generated files. Removed various unneeded build settings for that
+        target as well.
+
+        * ForwardingHeaders/kxmlcore/HashTraits.h: Added.
+
+        - other minor cleanup
+
+        * bridge/mac/FrameMac.mm: Sorted includes.
+        * dom/Node.cpp: Removed bogus symbol after #endif.
+
+        * khtml/xsl/XSLTProcessor.cpp: Sorted includes. Removed redundant using
+        namespace WebCore.
+        * loader/Cache.cpp: Ditto.
+
 2006-04-05  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
@@ -1030,7 +1096,7 @@
         (WebCore::RenderTheme::paintBorderOnly):
         * rendering/RenderTheme.h:
 
-2006-03-30  Darin Adler  <darin@apple.com>
+2006-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
 

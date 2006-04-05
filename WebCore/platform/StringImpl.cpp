@@ -29,6 +29,7 @@
 
 #include "AtomicString.h"
 #include "Length.h"
+#include "StringHash.h"
 #include <kjs/identifier.h>
 #include <kxmlcore/Assertions.h>
 #include <string.h>
@@ -876,9 +877,3 @@ StringImpl::StringImpl(const UString& str)
 }
 
 } // namespace WebCore
-
-namespace KXMLCore {
-
-const RefPtr<WebCore::StringImpl> HashTraits<RefPtr<WebCore::StringImpl> >::_deleted = new WebCore::StringImpl(static_cast<char*>(0), 0);
-
-}

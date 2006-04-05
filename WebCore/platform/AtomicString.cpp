@@ -29,6 +29,7 @@
 #include "AtomicString.h"
 
 #include "StaticConstructors.h"
+#include "StringHash.h"
 #include <kjs/identifier.h>
 #include <kxmlcore/HashSet.h>
 

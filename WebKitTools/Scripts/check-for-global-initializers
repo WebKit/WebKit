@@ -90,9 +90,6 @@ for my $file (sort @files) {
         if ($target eq "JavaScriptCore") {
             next if $shortName eq "FastMalloc.o";
         }
-        if ($target eq "WebCore") {
-            next if $shortName eq "StringImpl.o";
-        }
 
         print "$shortName has a global initializer in it! ($file)\n";
         $sawError = 1;

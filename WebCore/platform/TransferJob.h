@@ -26,10 +26,10 @@
 #ifndef TransferJob_H_
 #define TransferJob_H_
 
-#include "PlatformString.h"
+#include "StringHash.h"
+#include "Timer.h"
 #include "TransferJobClient.h" // for PlatformResponse
 #include <kxmlcore/HashMap.h>
-#include "Timer.h"
 
 #ifdef WIN32
 typedef unsigned long DWORD;

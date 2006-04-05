@@ -164,6 +164,7 @@
 		930705EB09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */; };
 		930CAD1509C4F3C300229C04 /* JSCanvasRenderingContext2DBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 930CAD1409C4F3C300229C04 /* JSCanvasRenderingContext2DBase.h */; };
 		930CAD2609C4F49100229C04 /* JSCanvasRenderingContext2DBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930CAD2509C4F49100229C04 /* JSCanvasRenderingContext2DBase.cpp */; };
+		93126F6109D7A736008D9626 /* StringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 93126F6009D7A736008D9626 /* StringHash.h */; };
 		9326DC0B09DAD5BE00AFC847 /* CharsetData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9326DC0A09DAD5BE00AFC847 /* CharsetData.h */; };
 		9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AC09D14EE6000E61D7 /* CharsetData.cpp */; };
 		9327A94209968D1A0068A546 /* HTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */; };
@@ -1144,7 +1145,6 @@
 		014CEA440018CDF011CA2923 /* Development */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = "";
 				EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore-combined.exp";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1159,7 +1159,6 @@
 		014CEA450018CDF011CA2923 /* Deployment */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
@@ -1171,7 +1170,6 @@
 		F58C8A07025BD3BC018635CA /* OptimizedWithSymbols */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
@@ -1394,6 +1392,7 @@
 		930CAB9609C49FAA00229C04 /* CodeGeneratorJS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGeneratorJS.pm; path = bindings/scripts/CodeGeneratorJS.pm; sourceTree = "<group>"; };
 		930CAD1409C4F3C300229C04 /* JSCanvasRenderingContext2DBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSCanvasRenderingContext2DBase.h; path = bindings/js/JSCanvasRenderingContext2DBase.h; sourceTree = "<group>"; };
 		930CAD2509C4F49100229C04 /* JSCanvasRenderingContext2DBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSCanvasRenderingContext2DBase.cpp; path = bindings/js/JSCanvasRenderingContext2DBase.cpp; sourceTree = "<group>"; };
+		93126F6009D7A736008D9626 /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringHash.h; path = platform/StringHash.h; sourceTree = "<group>"; };
 		9326DC0A09DAD5BE00AFC847 /* CharsetData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharsetData.h; path = platform/CharsetData.h; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		93309D87099E64910056E581 /* AppendNodeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppendNodeCommand.cpp; sourceTree = "<group>"; };
@@ -3738,7 +3737,6 @@
 				6582A14809999D6C00BEEB6D /* mac */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
-				BCB16B880979B01400467741 /* DeprecatedArray.h */,
 				BCB16B890979B01400467741 /* ArrayImpl.cpp */,
 				BCB16B8A0979B01400467741 /* ArrayImpl.h */,
 				93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */,
@@ -3754,6 +3752,11 @@
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
 				9352088109BD45E900F2038D /* CookieJar.h */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
+				BCB16B880979B01400467741 /* DeprecatedArray.h */,
+				6582A13D09999CD600BEEB6D /* DeprecatedString.cpp */,
+				6582A13E09999CD600BEEB6D /* DeprecatedString.h */,
+				651B4D8309AC83370029F1EF /* DeprecatedStringList.cpp */,
+				651B4D8409AC83370029F1EF /* DeprecatedStringList.h */,
 				BC73E3900978CED700EDFF8A /* FloatPoint.cpp */,
 				BC73E3910978CED700EDFF8A /* FloatPoint.h */,
 				BCB16AF50979A08500467741 /* FloatRect.cpp */,
@@ -3762,10 +3765,10 @@
 				BC73E25C0978682700EDFF8A /* FloatSize.h */,
 				BC6D6DD009AF906600F59759 /* Font.cpp */,
 				BC6D6DD109AF906600F59759 /* Font.h */,
+				BCEB377509B7BB0D00CB38B1 /* FontDataSet.h */,
 				BCC47E6A09A3FE4700ADB771 /* FontDescription.h */,
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
-				BCEB377509B7BB0D00CB38B1 /* FontDataSet.h */,
 				A823A75B09B6E53900B60641 /* GraphicsContext.cpp */,
 				935367E409AF77DD00D35CD6 /* GraphicsContext.h */,
 				BC6B7BAE0993603C0052867B /* Image.cpp */,
@@ -3778,24 +3781,21 @@
 				BCB16AF70979A08500467741 /* IntRect.cpp */,
 				BCB16AF80979A08500467741 /* IntRect.h */,
 				BCF1A5EF097839600061A123 /* IntSize.h */,
-				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
 				6593923509AE4346002C531F /* KURL.cpp */,
 				6593923609AE4346002C531F /* KURL.h */,
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
 				65F5382109B2B55700F3DC4A /* make-charset-table.pl */,
-				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				93032CC909AEC34B00F82A18 /* Path.h */,
 				BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */,
 				BCC8D1710988301200140BF2 /* Pen.cpp */,
 				BCC8D1720988301200140BF2 /* Pen.h */,
+				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
+				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				93CD4FEB0995FD2A007ECC97 /* PlatformString.h */,
+				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
 				A82398A509B3ACDB00B60641 /* PlugInInfoStore.h */,
-				6582A13D09999CD600BEEB6D /* DeprecatedString.cpp */,
-				6582A13E09999CD600BEEB6D /* DeprecatedString.h */,
-				651B4D8309AC83370029F1EF /* DeprecatedStringList.cpp */,
-				651B4D8409AC83370029F1EF /* DeprecatedStringList.h */,
 				9385F761098D9C3100D90D24 /* Screen.h */,
 				9353673E09AED79200D35CD6 /* ScrollBarMode.h */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
@@ -3807,6 +3807,7 @@
 				657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */,
 				657BD74A09AFDC54005A2056 /* StreamingTextDecoder.h */,
 				93CD4FDA0995F9EA007ECC97 /* String.cpp */,
+				93126F6009D7A736008D9626 /* StringHash.h */,
 				93CD4FDC0995F9EA007ECC97 /* StringImpl.cpp */,
 				93CD4FDD0995F9EA007ECC97 /* StringImpl.h */,
 				93E62D990985F41600E1B5E3 /* SystemTime.h */,
@@ -3820,7 +3821,6 @@
 				6545F66D09B82FED0013006F /* TransferJob.h */,
 				6545F66E09B82FED0013006F /* TransferJobClient.h */,
 				6545F66F09B82FED0013006F /* TransferJobInternal.h */,
-				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				93B780C909B3B7FE00690162 /* WidgetClient.h */,
@@ -4772,6 +4772,7 @@
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
 				65DF323E09D1DE65000BE325 /* JSCanvasRenderingContext2D.h in Headers */,
+				93126F6109D7A736008D9626 /* StringHash.h in Headers */,
 				D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */,
 				A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */,
 				A8C4A7FF09D563270003AC8D /* Node.h in Headers */,
@@ -4809,7 +4810,6 @@
 			buildRules = (
 			);
 			buildSettings = {
-				CREATE_HASH_TABLE = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table;
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -4961,7 +4961,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
+<<<<<<< .mine
+			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n./generate-derived-sources\n";
+=======
 			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nexport WebCore=\"${SRCROOT}\"\n\nexport ENCODINGS_FILE=\"${WebCore}/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kCFStringEncoding\"\n\nmake -f \"$WebCore/DerivedSources.make\"\n";
+>>>>>>> .r13702
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -5499,7 +5503,6 @@
 		149C283A08902B11008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -5532,7 +5535,6 @@
 		149C283B08902B11008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -5565,7 +5567,6 @@
 		149C283D08902B11008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -5706,10 +5707,6 @@
 		DD041FC209D9DDDC0010AF2A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Debug;
@@ -5717,11 +5714,7 @@
 		DD041FC309D9DDDC0010AF2A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = "Derived Sources";
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
