@@ -1,3 +1,16 @@
+2006-04-05  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8110
+          Define navigator.vendorSub (bcms.gov.uk doesn't allow access to login page)
+
+        Test: fast/dom/navigator-vendorSub.html
+
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty): Return an empty string for vendorSub property.
+        * khtml/ecma/kjs_navigator.h:
+
 2006-04-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin (editing parts) and Adele (the rest).

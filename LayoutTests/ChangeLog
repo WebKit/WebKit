@@ -1,3 +1,13 @@
+2006-04-05  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8110
+          Define navigator.vendorSub (bcms.gov.uk doesn't allow access to login page)
+
+        * fast/dom/navigator-vendorSub-expected.txt: Added.
+        * fast/dom/navigator-vendorSub.html: Added.
+
 2006-04-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin and Adele.

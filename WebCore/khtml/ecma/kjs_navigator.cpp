@@ -135,6 +135,7 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
   product       Navigator::Product      DontDelete|ReadOnly
   productSub    Navigator::ProductSub   DontDelete|ReadOnly
   vendor        Navigator::Vendor       DontDelete|ReadOnly
+  vendorSub     Navigator::VendorSub    DontDelete|ReadOnly
   cookieEnabled Navigator::CookieEnabled DontDelete|ReadOnly
   javaEnabled   Navigator::JavaEnabled  DontDelete|Function 0
 @end
@@ -178,6 +179,8 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
     return jsString("20030107");
   case Vendor:
     return jsString("Apple Computer, Inc.");
+  case VendorSub:
+    return jsString("");
   case Language:
     return jsString(defaultLanguage());
   case UserAgent:
