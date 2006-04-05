@@ -37,8 +37,6 @@ layer at (0,0) size 800x577
           text run at (0,0) width 281: "In each box, all the lines should be the same."
       RenderBlock (anonymous) at (0,160) size 784x226
         RenderBlock {DIV} at (3,3) size 102x170 [border: (1px solid #008000)]
-          RenderBlock (anonymous) at (4,4) size 94x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderBlock {P} at (4,4) size 94x18
             RenderText {TEXT} at (0,0) size 94x18
               text run at (0,0) width 94: "ABCDEFGHI"
@@ -87,8 +85,6 @@ layer at (0,0) size 800x577
         RenderText {TEXT} at (108,77) size 4x18
           text run at (108,77) width 4: " "
         RenderBlock {DIV} at (115,48) size 36x80 [border: (1px solid #008000)]
-          RenderBlock (anonymous) at (4,4) size 28x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderTable {TABLE} at (4,4) size 28x18
             RenderTableSection {TBODY} at (0,0) size 0x18
               RenderTableRow {TR} at (0,0) size 0x0
@@ -113,8 +109,6 @@ layer at (0,0) size 800x577
         RenderText {TEXT} at (154,77) size 4x18
           text run at (154,77) width 4: " "
         RenderBlock {DIV} at (161,57) size 105x62 [border: (1px solid #008000)]
-          RenderBlock (anonymous) at (4,4) size 97x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderTable {TABLE} at (4,4) size 97x18
             RenderTableSection {TBODY} at (0,0) size 0x18
               RenderTableRow {TR} at (0,0) size 0x0
@@ -164,8 +158,6 @@ layer at (0,0) size 800x577
         RenderText {TEXT} at (269,77) size 4x18
           text run at (269,77) width 4: " "
         RenderBlock {DIV} at (276,3) size 173x170 [border: (1px solid #008000)]
-          RenderBlock (anonymous) at (4,4) size 165x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderTable {TABLE} at (4,4) size 165x18
             RenderTableSection {TBODY} at (0,0) size 0x18
               RenderTableRow {TR} at (0,0) size 0x0
@@ -289,8 +281,6 @@ layer at (0,0) size 800x577
         RenderText {TEXT} at (452,77) size 4x18
           text run at (452,77) width 4: " "
         RenderBlock {DIV} at (459,66) size 206x44 [border: (1px solid #008000)]
-          RenderBlock (anonymous) at (4,4) size 198x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderTable {TABLE} at (4,4) size 198x18
             RenderTableSection {TBODY} at (0,0) size 0x18
               RenderTableRow {TR} at (0,0) size 0x0
@@ -374,8 +364,6 @@ layer at (0,0) size 800x577
           text run at (668,77) width 4: " "
         RenderBR {BR} at (672,77) size 0x18
         RenderBlock {DIV} at (3,179) size 206x44 [border: (1px solid #008000)]
-          RenderBlock (anonymous) at (4,4) size 198x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderTable {TABLE} at (4,4) size 198x18
             RenderTableSection {TBODY} at (0,0) size 0x18
               RenderTableRow {TR} at (0,0) size 0x0
@@ -457,8 +445,6 @@ layer at (0,0) size 800x577
         RenderText {TEXT} at (212,190) size 4x18
           text run at (212,190) width 4: " "
         RenderBlock {DIV} at (219,179) size 206x44 [border: (1px solid #008000)]
-          RenderBlock (anonymous) at (4,4) size 198x0
-            RenderText {TEXT} at (0,0) size 0x0
           RenderTable {TABLE} at (4,4) size 198x18
             RenderTableSection {TBODY} at (0,0) size 0x18
               RenderTableRow {TR} at (0,0) size 0x0

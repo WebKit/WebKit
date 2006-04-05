@@ -51,7 +51,6 @@ layer at (0,0) size 785x890
         RenderText {TEXT} at (0,0) size 0x0
 layer at (8,192) size 769x16 scrollX -769 scrollWidth 1692 scrollHeight 18
   RenderBlock {MARQUEE} at (0,0) size 769x16 [bgcolor=#00FFFF]
-    RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
@@ -60,7 +59,6 @@ layer at (8,192) size 769x16 scrollX -769 scrollWidth 1692 scrollHeight 18
     RenderText {TEXT} at (0,0) size 0x0
 layer at (8,208) size 769x16 scrollX -769 scrollWidth 1692 scrollHeight 18
   RenderBlock {MARQUEE} at (0,16) size 769x16 [bgcolor=#FFFF00]
-    RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
@@ -69,7 +67,6 @@ layer at (8,208) size 769x16 scrollX -769 scrollWidth 1692 scrollHeight 18
     RenderText {TEXT} at (0,0) size 0x0
 layer at (8,224) size 769x18 scrollX -769 scrollWidth 1692
   RenderBlock {MARQUEE} at (0,32) size 769x18 [bgcolor=#FFA500]
-    RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
@@ -78,7 +75,6 @@ layer at (8,224) size 769x18 scrollX -769 scrollWidth 1692
     RenderText {TEXT} at (0,0) size 0x0
 layer at (8,242) size 769x18 scrollX -769 scrollWidth 1692
   RenderBlock {MARQUEE} at (0,50) size 769x18 [bgcolor=#A52A2A]
-    RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
@@ -87,7 +83,6 @@ layer at (8,242) size 769x18 scrollX -769 scrollWidth 1692
     RenderText {TEXT} at (0,0) size 0x0
 layer at (8,260) size 769x100 scrollX -769 scrollWidth 1692
   RenderBlock {MARQUEE} at (0,68) size 769x100 [bgcolor=#FFC0CB]
-    RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "

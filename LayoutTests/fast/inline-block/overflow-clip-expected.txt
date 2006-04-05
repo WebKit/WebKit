@@ -25,6 +25,4 @@ layer at (0,0) size 800x600
               RenderText {TEXT} at (0,0) size 0x0
 layer at (8,94) size 100x100 scrollHeight 200
   RenderBlock {DIV} at (0,0) size 100x100
-    RenderBlock (anonymous) at (0,0) size 100x0
-      RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {DIV} at (0,0) size 100x200 [bgcolor=#008000]

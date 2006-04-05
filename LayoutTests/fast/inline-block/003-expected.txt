@@ -19,6 +19,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 729: "The two marquees below should be on separate lines, since marquees fill the width of a containing block by default."
         RenderInline {SPAN} at (0,0) size 784x36
           RenderText {TEXT} at (0,0) size 0x0
+          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0

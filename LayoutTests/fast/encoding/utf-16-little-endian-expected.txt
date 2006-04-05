@@ -19,6 +19,7 @@ layer at (0,0) size 785x1095
                       RenderText {TEXT} at (1,1) size 74x18
                         text run at (1,1) width 74: "WHGNSO"
                     RenderText {TEXT} at (0,0) size 0x0
+            RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,26) size 769x2
         RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
