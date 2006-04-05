@@ -1,3 +1,15 @@
+2006-04-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8198>
+        Hitting an assert on undo paste
+
+        * editing/pasteboard/undoable-fragment-removes-expected.checksum: Added.
+        * editing/pasteboard/undoable-fragment-removes-expected.png: Added.
+        * editing/pasteboard/undoable-fragment-removes-expected.txt: Added.
+        * editing/pasteboard/undoable-fragment-removes.html: Added.
+
 2006-04-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

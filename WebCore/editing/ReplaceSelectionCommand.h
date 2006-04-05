@@ -77,6 +77,8 @@ public:
     bool hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }
     
     bool isBlockFlow(Node*) const;
+    
+    void removeNode(PassRefPtr<Node>);
 
 private:
     // no copy construction or assignment
@@ -94,9 +96,7 @@ private:
     int renderedBlocks(Node*);
     void removeStyleNodes();
 
-    // A couple simple DOM helpers
     Node *enclosingBlock(Node *) const;
-    void removeNode(PassRefPtr<Node>);
     void removeNodePreservingChildren(Node *);
     void insertNodeBefore(Node *node, Node *refNode);
 

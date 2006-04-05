@@ -43,6 +43,9 @@ void InsertNodeBeforeCommand::doApply()
     ASSERT(m_insertChild);
     ASSERT(m_refChild);
     ASSERT(m_refChild->parentNode());
+    // If the child to insert is already in a tree, inserting it will remove it from it's old location
+    // in an non-undoable way.  We might eventually find it useful to do an undoable remove in this case.
+    ASSERT(!m_appendChild->parent());
 
     ExceptionCode ec = 0;
     m_refChild->parentNode()->insertBefore(m_insertChild.get(), m_refChild.get(), ec);

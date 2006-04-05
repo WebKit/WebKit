@@ -1,0 +1,17 @@
+<p>This is a testcase for 8193, hitting an assert inside RemoveNodeCommand on Undo Paste.  Both editable regions below should look the same after the test.</p>
+<hr>
+<div style="border: 1px solid black;" id="copy" contenteditable="true">
+<div>foo</div><div>bar</div></div>
+<div style="border: 1px solid black;" id="paste" contenteditable="true"></div>
+
+<script>
+var c = document.getElementById("copy");
+var p = document.getElementById("paste");
+var s = window.getSelection();
+s.setPosition(c, 0);
+document.execCommand("SelectAll");
+document.execCommand("Copy");
+s.setPosition(p, 0);
+document.execCommand("Paste");
+document.execCommand("Undo");
+</script>

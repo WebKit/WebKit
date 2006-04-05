@@ -647,14 +647,16 @@ void ReplaceSelectionCommand::doApply()
 
     // step 1: merge content into the start block
     if (mergeStart) {
-        Node *refNode = fragment.mergeStartNode();
+        RefPtr<Node> refNode = fragment.mergeStartNode();
         if (refNode) {
             Node *parent = refNode->parentNode();
-            Node *node = refNode->nextSibling();
-            insertNodeAtAndUpdateNodesInserted(refNode, startPos.node(), startPos.offset());
-            while (node && !fragment.isBlockFlow(node)) {
+            RefPtr<Node> node = refNode->nextSibling();
+            fragment.removeNode(refNode);
+            insertNodeAtAndUpdateNodesInserted(refNode.get(), startPos.node(), startPos.offset());
+            while (node && !fragment.isBlockFlow(node.get())) {
                 Node *next = node->nextSibling();
-                insertNodeAfterAndUpdateNodesInserted(node, refNode);
+                fragment.removeNode(node);
+                insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
                 refNode = node;
                 node = next;
             }
@@ -662,7 +664,7 @@ void ReplaceSelectionCommand::doApply()
             // remove any ancestors we emptied, except the root itself which cannot be removed
             while (parent && parent->parentNode() && parent->childNodeCount() == 0) {
                 Node *nextParent = parent->parentNode();
-                removeNode(parent);
+                fragment.removeNode(parent);
                 parent = nextParent;
             }
         }
@@ -676,25 +678,26 @@ void ReplaceSelectionCommand::doApply()
     
     // step 2 : merge everything remaining in the fragment
     if (fragment.firstChild()) {
-        Node *refNode = fragment.firstChild();
-        Node *node = refNode ? refNode->nextSibling() : 0;
+        RefPtr<Node> refNode = fragment.firstChild();
+        RefPtr<Node> node = refNode ? refNode->nextSibling() : 0;
         Node *insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
         bool insertionBlockIsRoot = insertionBlock == insertionBlock->rootEditableElement();
         VisiblePosition visiblePos(insertionPos, DOWNSTREAM);
-        if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode) && isStartOfBlock(visiblePos))
-            insertNodeBeforeAndUpdateNodesInserted(refNode, insertionBlock);
-        else if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode) && isEndOfBlock(visiblePos)) {
-            insertNodeAfterAndUpdateNodesInserted(refNode, insertionBlock);
-        } else if (m_lastNodeInserted && !fragment.isBlockFlow(refNode)) {
+        fragment.removeNode(refNode);
+        if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isStartOfBlock(visiblePos))
+            insertNodeBeforeAndUpdateNodesInserted(refNode.get(), insertionBlock);
+        else if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isEndOfBlock(visiblePos)) {
+            insertNodeAfterAndUpdateNodesInserted(refNode.get(), insertionBlock);
+        } else if (m_lastNodeInserted && !fragment.isBlockFlow(refNode.get())) {
             Position pos = visiblePos.next().deepEquivalent().downstream();
-            insertNodeAtAndUpdateNodesInserted(refNode, pos.node(), pos.offset());
+            insertNodeAtAndUpdateNodesInserted(refNode.get(), pos.node(), pos.offset());
         } else {
-            insertNodeAtAndUpdateNodesInserted(refNode, insertionPos.node(), insertionPos.offset());
+            insertNodeAtAndUpdateNodesInserted(refNode.get(), insertionPos.node(), insertionPos.offset());
         }
         
         while (node) {
             Node *next = node->nextSibling();
-            insertNodeAfterAndUpdateNodesInserted(node, refNode);
+            insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
             refNode = node;
             node = next;
         }

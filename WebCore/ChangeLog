@@ -1,3 +1,34 @@
+2006-04-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8198>
+        Hitting an assert on undo paste
+        
+        ReplaceSelectionCommand was doing a combination of undoable and non-undoable 
+        removes from the ReplacementFragment.  On Undo Paste, the undoable removes 
+        couldn't be undone because the tree was in a different state than it was
+        at the time of the remove.  This patch makes all the removes from the fragment 
+        non-undoable.  We could make them all undoable, but I can't think of any reason 
+        why we'd want the fragment to be reconstructed on an Undo Paste.
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply):
+        Assert that the node to append isn't already in a tree, since if it is, it will 
+        be removed in a non-undoable way.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply): Ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): 
+        Nodes were being moved from the fragment to the document with undoable inserts.  
+        Undoable inserts implicitly remove the node (in a non-undoable way) from its 
+        old location if it is already in a tree.  I now explicitly remove the nodes 
+        from the fragment before inserting them into the document to make it clear that 
+        they are being removed in a non-non-undoable way.  I also changed the one undoable 
+        remove from the fragment to a non-undoable remove.
+        * editing/ReplaceSelectionCommand.h: 
+        Made ReplacementFragment's non-undoable removeNode public.
+
 2006-04-05  Darin Adler  <darin@apple.com>
 
         - fixed the build
