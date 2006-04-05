@@ -1,3 +1,14 @@
+2006-04-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by OMG BETH
+
+        * Scripts/run-testkjs:
+        - pipe STDERR to /dev/null by default; new --verbose option overrides
+        this behavior
+        - set DYLD_FRAMEWORK_PATH to the webkit-configured path
+        - output run command in a format that can be copied and pasted into the
+        terminal to run manually
+
 2006-04-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
