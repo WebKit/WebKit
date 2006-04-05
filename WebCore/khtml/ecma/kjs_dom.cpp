@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "JSAttr.h"
 #include "JSCharacterData.h"
+#include "JSDocument.h"
 #include "JSDOMImplementation.h"
 #include "JSDocumentType.h"
 #include "JSEntity.h"
@@ -802,250 +803,6 @@ Attr* toAttr(JSValue* val, bool& ok)
 
 // -------------------------------------------------------------------------
 
-/* Source for DOMDocumentProtoTable. Use "make hashtables" to regenerate.
-@begin DOMDocumentProtoTable 29
-  adoptNode       DOMDocument::AdoptNode                       DontDelete|Function 1
-  createElement   DOMDocument::CreateElement                   DontDelete|Function 1
-  createDocumentFragment DOMDocument::CreateDocumentFragment   DontDelete|Function 1
-  createTextNode  DOMDocument::CreateTextNode                  DontDelete|Function 1
-  createComment   DOMDocument::CreateComment                   DontDelete|Function 1
-  createCDATASection DOMDocument::CreateCDATASection           DontDelete|Function 1
-  createProcessingInstruction DOMDocument::CreateProcessingInstruction DontDelete|Function 1
-  createAttribute DOMDocument::CreateAttribute                 DontDelete|Function 1
-  createEntityReference DOMDocument::CreateEntityReference     DontDelete|Function 1
-  elementFromPoint     DOMDocument::ElementFromPoint           DontDelete|Function 1
-  getElementsByTagName  DOMDocument::GetElementsByTagName      DontDelete|Function 1
-  importNode           DOMDocument::ImportNode                 DontDelete|Function 2
-  createElementNS      DOMDocument::CreateElementNS            DontDelete|Function 2
-  createAttributeNS    DOMDocument::CreateAttributeNS          DontDelete|Function 2
-  getElementsByTagNameNS  DOMDocument::GetElementsByTagNameNS  DontDelete|Function 2
-  getElementById     DOMDocument::GetElementById               DontDelete|Function 1
-  createRange        DOMDocument::CreateRange                  DontDelete|Function 0
-  createNodeIterator DOMDocument::CreateNodeIterator           DontDelete|Function 3
-  createTreeWalker   DOMDocument::CreateTreeWalker             DontDelete|Function 4
-  createEvent        DOMDocument::CreateEvent                  DontDelete|Function 1
-  getOverrideStyle   DOMDocument::GetOverrideStyle             DontDelete|Function 2
-  execCommand        DOMDocument::ExecCommand                  DontDelete|Function 3
-  queryCommandEnabled DOMDocument::QueryCommandEnabled         DontDelete|Function 1
-  queryCommandIndeterm DOMDocument::QueryCommandIndeterm       DontDelete|Function 1
-  queryCommandState DOMDocument::QueryCommandState             DontDelete|Function 1
-  queryCommandSupported DOMDocument::QueryCommandSupported     DontDelete|Function 1
-  queryCommandValue DOMDocument::QueryCommandValue             DontDelete|Function 1
-@end
-*/
-KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMDocumentProto, DOMEventTargetNodeProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMDocumentProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMDocument", DOMDocumentProto, DOMDocumentProtoFunc)
-
-const ClassInfo DOMDocument::info = { "Document", &DOMEventTargetNode::info, &DOMDocumentTable, 0 };
-
-/* Source for DOMDocumentTable. Use "make hashtables" to regenerate.
-@begin DOMDocumentTable 17
-  doctype         DOMDocument::DocType                         DontDelete|ReadOnly
-  implementation  DOMDocument::Implementation                  DontDelete|ReadOnly
-  documentElement DOMDocument::DocumentElement                 DontDelete|ReadOnly
-  charset         DOMDocument::Charset                         DontDelete
-  defaultCharset  DOMDocument::DefaultCharset                  DontDelete|ReadOnly
-  characterSet    DOMDocument::CharacterSet                    DontDelete|ReadOnly
-  actualEncoding  DOMDocument::ActualEncoding                  DontDelete|ReadOnly
-  inputEncoding   DOMDocument::InputEncoding                   DontDelete|ReadOnly
-  styleSheets     DOMDocument::StyleSheets                     DontDelete|ReadOnly
-  preferredStylesheetSet  DOMDocument::PreferredStylesheetSet  DontDelete|ReadOnly
-  selectedStylesheetSet  DOMDocument::SelectedStylesheetSet    DontDelete
-  readyState      DOMDocument::ReadyState                      DontDelete|ReadOnly
-  defaultView        DOMDocument::DefaultView                  DontDelete|ReadOnly
-@end
-*/
-
-DOMDocument::DOMDocument(ExecState *exec, Document *d)
-  : DOMEventTargetNode(d) 
-{ 
-  setPrototype(DOMDocumentProto::self(exec));
-}
-
-DOMDocument::DOMDocument(Document *d)
-  : DOMEventTargetNode(d) 
-{ 
-}
-
-DOMDocument::~DOMDocument()
-{
-  ScriptInterpreter::forgetDOMObject(static_cast<Document *>(m_impl.get()));
-}
-
-bool DOMDocument::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMDocument, DOMEventTargetNode>(exec, &DOMDocumentTable, this, propertyName, slot);
-}
-
-JSValue *DOMDocument::getValueProperty(ExecState *exec, int token) const
-{
-  Document &doc = *static_cast<Document *>(impl());
-
-  switch(token) {
-  case DocType:
-    return toJS(exec,doc.doctype());
-  case Implementation:
-    return toJS(exec, doc.implementation());
-  case DocumentElement:
-    return toJS(exec,doc.documentElement());
-  case Charset:
-  case CharacterSet:
-  case ActualEncoding:
-  case InputEncoding:
-    if (Decoder* decoder = doc.decoder())
-      return jsString(decoder->encodingName());
-    return jsNull();
-  case DefaultCharset:
-    if (Frame *frame = doc.frame())
-        return jsString(frame->settings()->encoding());
-    return jsUndefined();
-  case StyleSheets:
-    return getDOMStyleSheetList(exec, doc.styleSheets(), &doc);
-  case PreferredStylesheetSet:
-    return jsStringOrNull(doc.preferredStylesheetSet());
-  case SelectedStylesheetSet:
-    return jsStringOrNull(doc.selectedStylesheetSet());
-  case ReadyState:
-    if (Frame *frame = doc.frame()) {
-      if (frame->isComplete()) return jsString("complete");
-      if (doc.parsing()) return jsString("loading");
-      return jsString("loaded");
-      // What does the interactive value mean ?
-      // Missing support for "uninitialized"
-    }
-    return jsUndefined();
-  case DOMDocument::DefaultView: // DOM2
-    return toJS(exec,doc.defaultView());
-  default:
-    return NULL;
-  }
-}
-
-void DOMDocument::put(ExecState *exec, const Identifier& propertyName, JSValue *value, int attr)
-{
-    lookupPut<DOMDocument, DOMEventTargetNode>(exec, propertyName, value, attr, &DOMDocumentTable, this);
-}
-
-void DOMDocument::putValueProperty(ExecState *exec, int token, JSValue *value, int)
-{
-  Document &doc = *static_cast<Document *>(impl());
-  switch (token) {
-    case SelectedStylesheetSet:
-      doc.setSelectedStylesheetSet(value->toString(exec));
-      break;
-    case Charset:
-      doc.decoder()->setEncodingName(value->toString(exec).cstring().c_str(), Decoder::UserChosenEncoding);
-      break;
-  }
-}
-
-JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMDocument::info))
-    return throwError(exec, TypeError);
-  DOMExceptionTranslator exception(exec);
-  WebCore::Node& node = *static_cast<DOMNode*>(thisObj)->impl();
-  Document &doc = static_cast<Document &>(node);
-  UString str = args[0]->toString(exec);
-  WebCore::String s = str;
-
-  switch(id) {
-  case DOMDocument::AdoptNode:
-    return toJS(exec,doc.adoptNode(toNode(args[0]),exception));
-  case DOMDocument::CreateElement:
-    return toJS(exec,doc.createElement(s, exception));
-  case DOMDocument::CreateDocumentFragment:
-    return toJS(exec,doc.createDocumentFragment());
-  case DOMDocument::CreateTextNode:
-    return toJS(exec,doc.createTextNode(s));
-  case DOMDocument::CreateComment:
-    return toJS(exec,doc.createComment(s));
-  case DOMDocument::CreateCDATASection:
-    return toJS(exec, doc.createCDATASection(s, exception));
-  case DOMDocument::CreateProcessingInstruction:
-    return toJS(exec, doc.createProcessingInstruction(args[0]->toString(exec), args[1]->toString(exec), exception));
-  case DOMDocument::CreateAttribute:
-    return toJS(exec,doc.createAttribute(s, exception));
-  case DOMDocument::CreateEntityReference:
-    return toJS(exec, doc.createEntityReference(s, exception));
-  case DOMDocument::ElementFromPoint:
-    return toJS(exec,doc.elementFromPoint((int)args[0]->toNumber(exec), (int)args[1]->toNumber(exec)));
-  case DOMDocument::GetElementsByTagName:
-    return toJS(exec,doc.getElementsByTagName(s).get());
-  case DOMDocument::ImportNode: // DOM2
-    return toJS(exec,doc.importNode(toNode(args[0]), args[1]->toBoolean(exec), exception));
-  case DOMDocument::CreateElementNS: // DOM2
-    return toJS(exec,doc.createElementNS(s, args[1]->toString(exec), exception));
-  case DOMDocument::CreateAttributeNS: // DOM2
-    return toJS(exec,doc.createAttributeNS(s, args[1]->toString(exec), exception));
-  case DOMDocument::GetElementsByTagNameNS: // DOM2
-    return toJS(exec,doc.getElementsByTagNameNS(s, args[1]->toString(exec)).get());
-  case DOMDocument::GetElementById:
-    return toJS(exec,doc.getElementById(args[0]->toString(exec)));
-  case DOMDocument::CreateRange:
-    return toJS(exec, doc.createRange().get());
-  case DOMDocument::CreateNodeIterator: {
-    RefPtr<NodeFilter> filter;
-    JSValue* arg2 = args[2];
-    if (arg2->isObject()) {
-      JSObject* o(static_cast<JSObject*>(arg2));
-      filter = new NodeFilter(new JSNodeFilterCondition(o));
-    }
-    return toJS(exec, doc.createNodeIterator(toNode(args[0]), args[1]->toUInt32(exec),
-        filter.release(), args[3]->toBoolean(exec), exception).get());
-  }
-  case DOMDocument::CreateTreeWalker: {
-    RefPtr<NodeFilter> filter;
-    JSValue* arg2 = args[2];
-    if (arg2->isObject()) {
-      JSObject* o(static_cast<JSObject *>(arg2));
-      filter = new NodeFilter(new JSNodeFilterCondition(o));
-    }
-    return toJS(exec, doc.createTreeWalker(toNode(args[0]), args[1]->toUInt32(exec),
-        filter.release(), args[3]->toBoolean(exec), exception).get());
-  }
-  case DOMDocument::CreateEvent:
-    return toJS(exec, doc.createEvent(s, exception).get());
-  case DOMDocument::GetOverrideStyle:
-    if (Element *element0 = toElement(args[0]))
-        return toJS(exec,doc.getOverrideStyle(element0, args[1]->toString(exec)));
-    // FIXME: Is undefined right here, or should we raise an exception?
-    return jsUndefined();
-  case DOMDocument::ExecCommand: {
-    return jsBoolean(doc.execCommand(args[0]->toString(exec), args[1]->toBoolean(exec), args[2]->toString(exec)));
-  }
-  case DOMDocument::QueryCommandEnabled: {
-    return jsBoolean(doc.queryCommandEnabled(args[0]->toString(exec)));
-  }
-  case DOMDocument::QueryCommandIndeterm: {
-    return jsBoolean(doc.queryCommandIndeterm(args[0]->toString(exec)));
-  }
-  case DOMDocument::QueryCommandState: {
-    return jsBoolean(doc.queryCommandState(args[0]->toString(exec)));
-  }
-  case DOMDocument::QueryCommandSupported: {
-    return jsBoolean(doc.queryCommandSupported(args[0]->toString(exec)));
-  }
-  case DOMDocument::QueryCommandValue: {
-    WebCore::String commandValue(doc.queryCommandValue(args[0]->toString(exec)));
-    // Method returns null String to signal command is unsupported.
-    // Microsoft documentation for this method says:
-    // "If not supported [for a command identifier], this method returns a Boolean set to false."
-    if (commandValue.isNull())
-        return jsBoolean(false);
-    else 
-        return jsString(commandValue);
-  }
-  default:
-    break;
-  }
-
-  return jsUndefined();
-}
-
-// -------------------------------------------------------------------------
-
 /* Source for DOMElementProtoTable. Use "make hashtables" to regenerate.
 @begin DOMElementProtoTable 8
   scrollIntoView                DOMElement::ScrollIntoView      DontDelete|Function 1
@@ -1352,16 +1109,16 @@ JSValue* toJS(ExecState *exec, Document *n)
   if (!n)
     return jsNull();
 
-  DOMDocument *ret = 0;
+  JSDocument *ret = 0;
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
 
-  if ((ret = static_cast<DOMDocument *>(interp->getDOMObject(n))))
+  if ((ret = static_cast<JSDocument *>(interp->getDOMObject(n))))
     return ret;
 
   if (n->isHTMLDocument())
     ret = new JSHTMLDocument(exec, static_cast<HTMLDocument *>(n));
   else
-    ret = new DOMDocument(exec, n);
+    ret = new JSDocument(exec, n);
 
   // Make sure the document is kept around by the window object, and works right with the
   // back/forward cache.

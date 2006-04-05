@@ -52,6 +52,7 @@ all : \
     JSCSSPrimitiveValue.h \
     JSDOMImplementation.h \
     JSDOMParser.lut.h \
+    JSDocument.h \
     JSDocumentType.h \
     JSElement.h \
     JSEntity.h \

@@ -13,7 +13,6 @@
 	document.write("<p>&nbsp;document.defaultCharset: " + (document.defaultCharset ? "defined" : "undefined") + "</p>");	// MSIE
 	document.write("<p>&nbsp;document.characterSet: " + document.characterSet + "</p>");	// Firefox
 	document.write("<p>&nbsp;document.inputEncoding: " + document.inputEncoding + "</p>");	// DOM3
-	document.write("<p>&nbsp;document.actualEncoding: " + document.actualEncoding + "</p>");	// Firefox, old DOM3 draft
 	
 	document.write("<p>Setting charset to UTF-8...</p>");
 	try {
@@ -22,7 +21,6 @@
 		document.write("<p>&nbsp;document.defaultCharset: " + (document.defaultCharset ? "defined" : "undefined") + "</p>");
 		document.write("<p>&nbsp;document.characterSet: " + document.characterSet + "</p>");
 		document.write("<p>&nbsp;document.inputEncoding: " + document.inputEncoding + "</p>");
-		document.write("<p>&nbsp;document.actualEncoding: " + document.actualEncoding + "</p>");
 	} catch (ex) {
 		document.write("<p>Failure</p>");
 	}
@@ -35,7 +33,6 @@
 		document.write("<p>&nbsp;document.defaultCharset: " + (document.defaultCharset ? "defined" : "undefined") + "</p>");
 		document.write("<p>&nbsp;document.characterSet: " + document.characterSet + "</p>");
 		document.write("<p>&nbsp;document.inputEncoding: " + document.inputEncoding + "</p>");
-		document.write("<p>&nbsp;document.actualEncoding: " + document.actualEncoding + "</p>");
 	} catch (ex) {
 		document.write("<p>Failure (expected)</p>");
 	}

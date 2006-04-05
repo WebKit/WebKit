@@ -1,3 +1,14 @@
+2006-04-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        Update prototype chain for the following fix:
+
+        - autogenerate bindings for all of the methods and properties of Document
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8163
+
+        * fast/dom/prototype-chain-expected.txt:
+
 2006-04-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

@@ -42,7 +42,7 @@ public:
     AtomicString(const KJS::Identifier& s) : m_string(add(s)) { }
     AtomicString(StringImpl* imp) : m_string(add(imp)) { }
     AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
-    explicit AtomicString(const String& s) : m_string(add(s.impl())) { }
+    AtomicString(const String& s) : m_string(add(s.impl())) { }
     
     operator const String&() const { return m_string; }
     const String& domString() const { return m_string; };

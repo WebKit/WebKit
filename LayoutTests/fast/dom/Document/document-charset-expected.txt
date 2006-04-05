@@ -8,8 +8,6 @@ Initial
 
  document.inputEncoding: KOI8-R
 
- document.actualEncoding: KOI8-R
-
 Setting charset to UTF-8...
 
  document.charset: UTF-8
@@ -20,8 +18,6 @@ Setting charset to UTF-8...
 
  document.inputEncoding: UTF-8
 
- document.actualEncoding: UTF-8
-
 Setting characterSet to KOI8-R (expected to fail, matching Firefox)...
 
  document.charset: UTF-8
@@ -31,7 +27,5 @@ Setting characterSet to KOI8-R (expected to fail, matching Firefox)...
  document.characterSet: UTF-8
 
  document.inputEncoding: UTF-8
-
- document.actualEncoding: UTF-8
 
 

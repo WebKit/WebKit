@@ -248,6 +248,13 @@ JSValue *jsStringOrUndefined(const String &s)
     return jsString(s);
 }
 
+JSValue *jsStringOrFalse(const String &s)
+{
+    if (s.isNull())
+        return jsBoolean(false);
+    return jsString(s);
+}
+
 String valueToStringWithNullCheck(ExecState *exec, JSValue *val)
 {
     if (val->isNull())

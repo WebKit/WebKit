@@ -10,7 +10,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEventTargetNode]
 
-[object DOMDocument]
+[object JSDocument]
 
 ----- [object DIV] (5 prototypes) -----
 

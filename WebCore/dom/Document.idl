@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module core {
+
+    interface [LegacyParent=KJS::DOMEventTargetNode] Document : EventTargetNode {
+
+        // DOM Level 1 Core
+        
+        readonly attribute DocumentType doctype;
+        
+        readonly attribute DOMImplementation implementation;
+        
+        readonly attribute Element documentElement;
+        
+        Element createElement(in DOMString tagName)
+            raises (DOMException);
+        
+        DocumentFragment createDocumentFragment();
+        
+        Text createTextNode(in DOMString data);
+        
+        Comment createComment(in DOMString data);
+        
+        CDATASection createCDATASection(in DOMString data)
+            raises(DOMException);
+        
+        ProcessingInstruction createProcessingInstruction(in DOMString target, 
+                                                          in DOMString data)
+            raises (DOMException);
+        
+        Attr createAttribute(in DOMString name)
+            raises (DOMException);
+        
+        EntityReference createEntityReference(in DOMString name)
+            raises(DOMException);
+        
+        NodeList getElementsByTagName(in DOMString tagname);
+        
+        // DOM Level 2 Core
+        
+        Node importNode(in Node importedNode,
+                        in boolean deep)
+            raises (DOMException);
+        
+        Element createElementNS(in DOMString namespaceURI,
+                                in DOMString qualifiedName)
+            raises (DOMException);
+        
+        Attr createAttributeNS(in DOMString namespaceURI,
+                               in DOMString qualifiedName)
+            raises (DOMException);
+        
+        NodeList getElementsByTagNameNS(in DOMString namespaceURI,
+                                        in DOMString localName);
+        
+        Element getElementById(in DOMString elementId);
+
+        // DOM Level 2 Events (DocumentEvents interface)
+
+        Event createEvent(in DOMString eventType)
+            raises(DOMException);
+
+        // DOM Level 2 Tranversal and Range (DocumentRange interface)
+
+        Range createRange();
+
+        // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
+
+        NodeIterator createNodeIterator(in Node root, 
+                                        in unsigned long whatToShow,
+                                        in NodeFilter filter,
+                                        in boolean entityReferenceExpansion)
+            raises(DOMException);
+
+        TreeWalker createTreeWalker(in Node root, 
+                                    in unsigned long whatToShow, 
+                                    in NodeFilter filter, 
+                                    in boolean entityReferenceExpansion)
+            raises(DOMException);
+
+        // DOM Level 2 Abstract Views (DocumentView interface)
+
+        readonly attribute views::AbstractView defaultView;
+
+        // DOM Level 2 Style (DocumentStyle interface)
+
+        readonly attribute StyleSheetList styleSheets;
+
+        // DOM Level 2 Style (DocumentCSS interface)
+
+        CSSStyleDeclaration getOverrideStyle(in Element elt, 
+                                             in DOMString pseudoElt);
+
+        // DOM Level 3 Core
+
+        readonly attribute [ConvertNullStringTo=Null] DOMString inputEncoding;
+        Node adoptNode(in Node source)
+            raises (DOMException);
+
+        // Common extensions
+
+        boolean execCommand(in DOMString command, 
+                            in boolean userInterface, 
+                            in DOMString value);
+
+        boolean queryCommandEnabled(in DOMString command);
+
+        boolean queryCommandIndeterm(in DOMString command);
+
+        boolean queryCommandState(in DOMString command);
+
+        boolean queryCommandSupported(in DOMString command);
+
+        [ConvertNullStringTo=False] DOMString queryCommandValue(in DOMString command);
+
+        // IE extensions
+
+        attribute [ConvertNullStringTo=Undefined] DOMString charset;
+
+        readonly attribute [ConvertNullStringTo=Undefined] DOMString defaultCharset;
+
+        readonly attribute [ConvertNullStringTo=Undefined] DOMString readyState;
+
+        Element elementFromPoint(in long x, in long y);
+
+        // Mozilla extensions
+
+        readonly attribute [ConvertNullStringTo=Null] DOMString characterSet;
+
+        // WebKit extensions
+
+        readonly attribute [ConvertNullStringTo=Null] DOMString preferredStylesheetSet;
+
+        attribute [ConvertNullStringTo=Null] DOMString selectedStylesheetSet;
+
+    };
+
+}

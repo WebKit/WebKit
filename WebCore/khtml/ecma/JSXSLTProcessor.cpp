@@ -31,6 +31,7 @@
 #include "XSLTProcessor.h"
 #include "JSXSLTProcessor.lut.h"
 #include "kjs_dom.h"
+#include "JSDocument.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 
@@ -88,9 +89,9 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
         {
             JSValue *nodeVal = args[0];
             JSValue *docVal = args[1];
-            if (nodeVal->isObject(&DOMNode::info) && docVal->isObject(&DOMDocument::info)) {
+            if (nodeVal->isObject(&DOMNode::info) && docVal->isObject(&JSDocument::info)) {
                 WebCore::Node* node = static_cast<DOMNode *>(nodeVal)->impl();
-                Document* doc = static_cast<Document*>(static_cast<DOMDocument *>(docVal)->impl());
+                Document* doc = static_cast<Document*>(static_cast<JSDocument *>(docVal)->impl());
                 return toJS(exec, processor.transformToFragment(node, doc).get());
             }
             // Throw exception?

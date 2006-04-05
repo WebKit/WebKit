@@ -22,8 +22,8 @@
 #ifndef KJS_HTML_H_
 #define KJS_HTML_H_
 
+#include "JSDocument.h"
 #include "JSElement.h"
-#include "kjs_dom.h"
 
 namespace WebCore {
     class CanvasRenderingContext2D;
@@ -41,7 +41,7 @@ namespace KJS {
 
   class JSAbstractEventListener;
 
-  class JSHTMLDocument : public DOMDocument {
+  class JSHTMLDocument : public WebCore::JSDocument {
   public:
     JSHTMLDocument(ExecState *exec, WebCore::HTMLDocument *d);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);

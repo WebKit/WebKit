@@ -136,35 +136,6 @@ protected:
     RefPtr<WebCore::NodeList> m_impl;
   };
 
-  class DOMDocument : public DOMEventTargetNode {
-  public:
-    DOMDocument(ExecState *exec, WebCore::Document *d);
-    ~DOMDocument();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int attr);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { DocType, Implementation, DocumentElement, 
-           Charset, DefaultCharset, CharacterSet, ActualEncoding, InputEncoding,
-           // Functions
-           AdoptNode,
-           CreateElement, CreateDocumentFragment, CreateTextNode, CreateComment,
-           CreateCDATASection, CreateProcessingInstruction, CreateAttribute,
-           CreateEntityReference, GetElementsByTagName, ImportNode, CreateElementNS,
-           CreateAttributeNS, GetElementsByTagNameNS, GetElementById,
-           CreateRange, CreateNodeIterator, CreateTreeWalker, DefaultView,
-           CreateEvent, ElementFromPoint, StyleSheets, PreferredStylesheetSet, 
-           SelectedStylesheetSet, GetOverrideStyle, ReadyState, 
-           ExecCommand, QueryCommandEnabled, QueryCommandIndeterm, QueryCommandState, 
-           QueryCommandSupported, QueryCommandValue };
-
-  protected:
-    // Constructor for inherited classes; doesn't set up a prototype.
-    DOMDocument(WebCore::Document *d);
-  };
-
   WebCore::Attr* toAttr(JSValue*, bool& ok);
 
   KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMElementProto, DOMEventTargetNodeProto)

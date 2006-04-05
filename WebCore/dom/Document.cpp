@@ -609,6 +609,41 @@ Element *Document::getElementById(const AtomicString& elementId) const
     return 0;
 }
 
+String Document::readyState()
+{
+    if (Frame *f = frame()) {
+        if (f->isComplete()) 
+            return "complete";
+        if (parsing()) 
+            return "loading";
+      return "loaded";
+      // FIXME: What does the interactive value mean ?
+      // FIXME: Missing support for "uninitialized"
+    }
+    return String();
+}
+
+String Document::inputEncoding()
+{
+    if (Decoder* d = decoder())
+        return d->encodingName();
+    return String();
+}
+
+String Document::defaultCharset()
+{
+    if (Frame *f = frame())
+        return f->settings()->encoding();
+    return String();
+}
+
+void Document::setCharset(const String& charset)
+{
+    if (!decoder())
+        return;
+    decoder()->setEncodingName(charset.deprecatedString().ascii(), Decoder::UserChosenEncoding);
+}
+
 Element* Document::elementFromPoint(int x, int y) const
 {
     if (!renderer())

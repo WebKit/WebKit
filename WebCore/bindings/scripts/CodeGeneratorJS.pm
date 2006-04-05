@@ -146,27 +146,37 @@ sub AddIncludesForType
       $type eq "NodeList" or 
       $type eq "Text" or 
       $type eq "CharacterData" or
+      $type eq "CDATASection" or
       $type eq "CanvasPattern" or
       $type eq "Range" or
       $type eq "DocumentFragment" or
       $type eq "Node" or
       $type eq "Attr" or
+      $type eq "AbstractView" or
+      $type eq "Comment" or
       $type eq "Element") {
     $implIncludes{"${type}.h"} = 1;
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
   } elsif ($type eq "CSSPrimitiveValue" or $type eq "Counter" or $type eq "Rect" or $type eq "RGBColor") {
     $implIncludes{"css_valueimpl.h"} = 1;
+  } elsif ($type eq "CSSStyleDeclaration") {
+    $implIncludes{"css_valueimpl.h"} = 1;
   } elsif ($type eq "HTMLDocument") {
     $implIncludes{"HTMLDocument.h"} = 1;
   } elsif ($type eq "MutationEvent" or
            $type eq "KeyboardEvent" or
            $type eq "MouseEvent" or
+           $type eq "Event" or
            $type eq "UIEvent" or
            $type eq "WheelEvent") {
     $implIncludes{"dom2_eventsimpl.h"} = 1;
+  } elsif ($type eq "NodeIterator" or
+	   $type eq "TreeWalker") {
+    $implIncludes{"dom2_traversalimpl.h"} = 1;
   } elsif ($type eq "ProcessingInstruction" or
            $type eq "Entity" or
+	   $type eq "EntityReference" or
            $type eq "Notation") {
     $implIncludes{"dom_xmlimpl.h"} = 1;
   } elsif ($type eq "CanvasRenderingContext2D") {
@@ -252,7 +262,7 @@ sub GenerateHeader
   push(@headerContent, "    $className(KJS::ExecState*, $implClassName*);\n");
     
   # Destructor
-  if (!$hasParent) {
+  if (!$hasParent or $interfaceName eq "Document") {
     push(@headerContent, "    virtual ~$className();\n");
   }
   
@@ -536,6 +546,13 @@ sub GenerateImplementation
     push(@implContent, "${className}::~$className()\n");
     push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(m_impl.get());\n}\n\n");    
   }
+
+  # Document needs a special destructor because it's a special case for caching. It needs
+  # its own special handling rather than relying on the caching that Node normally does.
+  if ($interfaceName eq "Document") {
+    push(@implContent, "${className}::~$className()\n");
+    push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(static_cast<${implClassName}*>(m_impl.get()));\n}\n\n");    
+  }
   
   # Attributes
   if ($numAttributes ne 0) {
@@ -719,6 +736,8 @@ sub GetNativeType
            $type eq "DocumentType" or
            $type eq "Range") {
     return "${type}*";
+  } elsif ($type eq "NodeFilter") {
+      return "PassRefPtr<${type}>";
   } elsif ($type eq "CompareHow") {
     return "Range::CompareHow";
   } elsif ($type eq "EventTarget") {
@@ -762,6 +781,8 @@ sub TypeCanFailConversion
   } elsif ($type eq "EventTarget") {
       return 0;
   }  elsif ($type eq "Range") {
+      return 0;
+  }  elsif ($type eq "NodeFilter") {
       return 0;
   } else {
     die "Don't know whether a JS value can fail conversion to type $type."
@@ -816,6 +837,9 @@ sub JSValueToNative
   } elsif ($type eq "Element") {
     $implIncludes{"kjs_dom.h"} = 1;
     return "toElement($value)";
+  } elsif ($type eq "NodeFilter") {
+    $implIncludes{"kjs_traversal.h"} = 1;
+    return "toNodeFilter($value)";
   } else {
     die "Don't know how to convert a JS value of type $type."
   }
@@ -841,27 +865,46 @@ sub NativeToJSValue
     if (defined $conv) {
       if ($conv eq "Null") {
         return "jsStringOrNull($value)";
+      } elsif ($conv eq "Undefined") {
+        return "jsStringOrUndefined($value)";
+      } elsif ($conv eq "False") {
+        return "jsStringOrFalse($value)";
       } else {
         die "Unknown value for ConvertNullStringTo extended attribute";
       }
     } else {
       return "jsString($value)";
     }
+  } elsif ($type eq "DOMImplementation") {
+    $implIncludes{"kjs_dom.h"} = 1;
+    $implIncludes{"JSDOMImplementation.h"} = 1;
+    return "toJS(exec, $value)";
   } elsif ($type eq "Node" or
            $type eq "Text" or
+           $type eq "Comment" or
+           $type eq "CDATASection" or
            $type eq "DocumentType" or
            $type eq "Document" or
+           $type eq "EntityReference" or
+           $type eq "ProcessingInstruction" or
            $type eq "HTMLDocument" or
            $type eq "Element" or
            $type eq "Attr" or
            $type eq "DocumentFragment") {
     $implIncludes{"kjs_dom.h"} = 1;
+    $implIncludes{"Comment.h"} = 1;
+    $implIncludes{"CDATASection.h"} = 1;
     $implIncludes{"Node.h"} = 1;
     $implIncludes{"Element.h"} = 1;
+    $implIncludes{"DocumentType.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "EventTarget") {
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"EventTargetNode.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "Event") {
+    $implIncludes{"kjs_events.h"} = 1;
+    $implIncludes{"dom2_eventsimpl.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
     $implIncludes{"kjs_dom.h"} = 1;
@@ -871,6 +914,10 @@ sub NativeToJSValue
     $implIncludes{"css_ruleimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value)";    
+  } elsif ($type eq "StyleSheetList") {
+    $implIncludes{"css_stylesheetimpl.h"} = 1;
+    $implIncludes{"kjs_css.h"} = 1;
+    return "toJS(exec, $value, impl)";    
   } elsif ($type eq "CSSStyleDeclaration" or $type eq "Rect") {
     $implIncludes{"css_valueimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
@@ -887,6 +934,10 @@ sub NativeToJSValue
     return "toJS(exec, $value)";
   } elsif ($type eq "views::AbstractView") {
     $implIncludes{"kjs_views.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "NodeIterator" or
+	   $type eq "TreeWalker") {
+    $implIncludes{"kjs_traversal.h"} = 1;
     return "toJS(exec, $value)";
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";

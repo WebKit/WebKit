@@ -1,3 +1,53 @@
+2006-04-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - autogenerate bindings for all of the methods and properties of Document
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8163
+
+        - also removed document.actualEncoding since it is not in any spec
+        or implemented by any other browser
+        
+        * DerivedSources.make: add JSDocument.h to results
+        * WebCore.xcodeproj/project.pbxproj: Added new files to project
+        * bindings/scripts/CodeGeneratorJS.pm: Support for new stuff needed by Document.
+        * dom/Document.cpp:
+        (WebCore::Document::readyState): moved impl here from JS bindings
+        (WebCore::Document::inputEncoding): ditto
+        (WebCore::Document::defaultCharset): ditto
+        (WebCore::Document::setCharset): ditto
+        * dom/Document.h:
+        (WebCore::Document::charset): added, synonym for inputEncoding.
+        (WebCore::Document::characterSet): ditto
+        * dom/Document.idl: Added. Full interface for the Document object.
+        * khtml/ecma/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestProtoFunc::callAsFunction): JSDocument, not DOMDocument
+        * khtml/ecma/JSXSLTProcessor.cpp:
+        (KJS::XSLTProcessorProtoFunc::callAsFunction): ditto
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::jsStringOrFalse): Added this convenience for the method on Document
+        that bizzarely returns false on failure and a string otherwise.
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::toJS): renamed for consistency
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        - removed all traces of DOMDocument
+        (KJS::toJS): JSDocument, not DOMDocument
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLDocument::JSHTMLDocument): inherit from JSDocument
+        (KJS::JSHTMLDocument::getOwnPropertySlot): ditto
+        (KJS::JSHTMLDocument::put): ditto
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::toJS): added overloads
+        (KJS::toNodeFilter): handle JS functions as well as impl NodeFilter objects
+        * khtml/ecma/kjs_traversal.h:
+        * platform/AtomicString.h:
+        (WebCore::AtomicString::AtomicString): Allow implicit conversion from String.
+
 2006-04-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
@@ -505,7 +555,7 @@
 
         * WebCore.xcodeproj/project.pbxproj:
 
-2006-04-03  Dave Hyatt
+2006-04-03  Dave Hyatt  <hyatt@apple.com>
 
         Implement basic theme support on Win32.  Still much to do, but
         the backgrounds of buttons, textfields, checkboxes and radio
