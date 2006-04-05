@@ -11,11 +11,18 @@ SRCROOT=`realpath "$SRCROOT"`
 SRCROOT=`cygpath -m -s "$SRCROOT"`
 SRCROOT=`cygpath -u "$SRCROOT"`
 export SRCROOT
+
 # FIXME: Eventually win32 might wish to generate to the Debug/Release output directories.
 export BUILT_PRODUCTS_DIR="$SRCROOT"
 export CREATE_HASH_TABLE="$SRCROOT/../JavaScriptCore/kjs/create_hash_table"
 
-"$SRCROOT/generate-derived-sources" || exit 1
+mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore"
+cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore"
+
+export WebCore="${SRCROOT}"
+export ENCODINGS_FILE="${WebCore}/platform/win/win-encodings.txt";
+export ENCODINGS_PREFIX=""
+make -f "$WebCore/DerivedSources.make" || exit 1
 
 cd "$SRCROOT"
 mkdir -p "${WebKitOutputConfigDirUnix}"
@@ -41,4 +48,3 @@ if [ ../zlib/bin/zlib1.dll -nt "$WebKitOutputConfigDirUnix/zlib1.dll" ]; then
     echo "Copying zlib1.dll"
     cp ../zlib/bin/zlib1.dll "$WebKitOutputConfigDirUnix" || exit 1
 fi
-

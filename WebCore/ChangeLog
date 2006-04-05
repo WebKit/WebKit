@@ -1,3 +1,37 @@
+2006-04-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin (editing parts) and Adele (the rest).
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8182
+          some text-field-related layout tests are failing
+
+        The smart paste code was getting confused and adding extra spaces.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Use isStartOfParagraph instead of
+        isStartOfLine.
+        (WebCore::ReplaceSelectionCommand::removeLinePlaceholderIfNeeded): Ditto.
+
+        * editing/InsertParagraphSeparatorCommand.cpp: (WebCore::enclosingEmptyListItem):
+        Change to call isStart/EndOfParagraph instead of Line.
+
+        * editing/InsertTextCommand.cpp: (WebCore::InsertTextCommand::input):
+        Add a comment about how isStartOfLine is almost certainly wrong here.
+
+        - clean up some loose ends in the Frame class from the recent renaming
+
+        * page/Frame.h: Removed declarations of deleteMe1, deleteMe2, and
+        handleMouseMoveEventPart2.
+        * page/Frame.cpp: (WebCore::Frame::handleMouseMoveEvent): Removed
+        handleMouseMoveEventPart2 by renaming it to handleMouseMoveEvent and removing
+        handleMouseMoveEvent itself.
+
+        - invoke the makefile directly, removing the generate-derived-sources script
+
+        * WebCore.vcproj/WebCore/build-generated-files.sh: Call make directly.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * generate-derived-sources: Removed.
+
 2006-04-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.

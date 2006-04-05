@@ -118,7 +118,7 @@ static Node* enclosingEmptyListItem(const VisiblePosition& visiblePos)
 {
     // check that position is on a line by itself inside a list item
     Node* listChildNode = enclosingListChild(visiblePos.deepEquivalent().node());
-    if (!listChildNode || !isStartOfLine(visiblePos) || !isEndOfLine(visiblePos))
+    if (!listChildNode || !isStartOfParagraph(visiblePos) || !isEndOfParagraph(visiblePos))
         return 0;
     
     // check for sublist embedded in the list item

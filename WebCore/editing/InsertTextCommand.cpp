@@ -94,6 +94,9 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
     assert(text.find('\n') == -1);
 
     Selection selection = endingSelection();
+    // FIXME: I don't see how "start of line" could possibly be the right check here.
+    // It depends on line breaks which depends on the way things are current laid out,
+    // window width, etc. This needs to be rethought.
     bool adjustDownstream = isStartOfLine(VisiblePosition(selection.start().downstream(), DOWNSTREAM));
 
     // Delete the current selection, or collapse whitespace, as needed

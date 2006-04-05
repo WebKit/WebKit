@@ -1,3 +1,10 @@
+2006-04-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin and Adele.
+
+        * fast/forms/plaintext-mode-2-expected.txt: Updated because there's no longer
+        and extra <div> element added.
+
 2006-04-04  Adele Peterson  <adele@apple.com>
 
         - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=8158

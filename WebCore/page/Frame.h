@@ -765,10 +765,6 @@ protected:
   
   void receivedFirstData();
 
-  bool deleteMe1(const MouseEventWithHitTestResults&);
-  bool deleteMe2(const MouseEventWithHitTestResults&);
-  void handleMouseMoveEventPart2(const MouseEventWithHitTestResults&);
-
   /**
    * @internal Extracts anchor and tries both encoded and decoded form.
    */

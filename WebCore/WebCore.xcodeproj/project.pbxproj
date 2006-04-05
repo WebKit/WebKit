@@ -1213,7 +1213,6 @@
 		55998A5C052B59CC0017A6C1 /* AccessibilityObjectCache.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectCache.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55998A5D052B59CC0017A6C1 /* AccessibilityObjectCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectCache.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSGrammar.h; sourceTree = "<group>"; };
-		651B2B6209D12891008808C6 /* generate-derived-sources */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; path = "generate-derived-sources"; sourceTree = "<group>"; };
 		651B4D8309AC83370029F1EF /* DeprecatedStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DeprecatedStringList.cpp; path = platform/DeprecatedStringList.cpp; sourceTree = "<group>"; };
 		651B4D8409AC83370029F1EF /* DeprecatedStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DeprecatedStringList.h; path = platform/DeprecatedStringList.h; sourceTree = "<group>"; };
 		651B4D8E09AC859F0029F1EF /* QStringListMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = QStringListMac.mm; sourceTree = "<group>"; };
@@ -2532,7 +2531,6 @@
 			children = (
 				65C97AF208EA908800ACD273 /* config.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
-				651B2B6209D12891008808C6 /* generate-derived-sources */,
 				F58EF58E02DFDFB7018635CA /* WebCore.exp */,
 				BC1A3790097C6F970019F3D8 /* bindings */,
 				65BF021F097480EF00C43196 /* bridge */,
@@ -4963,7 +4961,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nelse\n    export CREATE_HASH_TABLE=${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\nfi\n./generate-derived-sources\n";
+			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nexport WebCore=\"${SRCROOT}\"\n\nexport ENCODINGS_FILE=\"${WebCore}/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kCFStringEncoding\"\n\nmake -f \"$WebCore/DerivedSources.make\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
