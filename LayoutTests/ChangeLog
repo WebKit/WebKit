@@ -1,5 +1,19 @@
 2006-04-04  Adele Peterson  <adele@apple.com>
 
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=8158
+        REGRESSION: Clicking past RTL text in a new text field puts the caret on the wrong side of the text
+
+        * editing/selection/caret-rtl-expected.checksum: Added.
+        * editing/selection/caret-rtl-expected.png: Added.
+        * editing/selection/caret-rtl-expected.txt: Added.
+        * editing/selection/caret-rtl.html: Added.
+        * editing/selection/caret-rtl-2-expected.checksum: Added.
+        * editing/selection/caret-rtl-2-expected.png: Added.
+        * editing/selection/caret-rtl-2-expected.txt: Added.
+        * editing/selection/caret-rtl-2.html: Added.
+
+2006-04-04  Adele Peterson  <adele@apple.com>
+
         New results for
         * fast/forms/input-truncate-newline-expected.txt
 

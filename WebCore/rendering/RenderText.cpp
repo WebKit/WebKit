@@ -253,38 +253,42 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
     if (cb->hasOverflowClip())
         cb->layer()->subtractScrollOffset(absx, absy);
 
+    // Get the offset for the position, since this will take rtl text into account.
+    int offset;
+    
+    // FIXME: We should be able to roll these special cases into the general cases in the loop below.
     if (firstTextBox() && _y < absy + firstTextBox()->root()->bottomOverflow() && _x < absx + firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left than the first text box left edge
-        return VisiblePosition(element(), firstTextBox()->m_start, DOWNSTREAM);
+        offset = firstTextBox()->offsetForPosition(_x - absx);
+        return VisiblePosition(element(), offset + firstTextBox()->m_start, DOWNSTREAM);
     }
-
     if (lastTextBox() && _y >= absy + lastTextBox()->root()->topOverflow() && _x >= absx + lastTextBox()->m_x + lastTextBox()->m_width) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right than the last text box right edge
-        return VisiblePosition(element(), lastTextBox()->m_start + lastTextBox()->m_len, DOWNSTREAM);
+        offset = lastTextBox()->offsetForPosition(_x - absx);
+        return VisiblePosition(element(), offset + lastTextBox()->m_start, DOWNSTREAM);
     }
 
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
         if (_y >= absy + box->root()->topOverflow() && _y < absy + box->root()->bottomOverflow()) {
-            if (_x < absx + box->m_x + box->m_width) {
+            offset = box->offsetForPosition(_x - absx);
+
+            if (_x < absx + box->m_x + box->m_width)
                 // and the x coordinate is to the left of the right edge of this box
                 // check to see if position goes in this box
-                int offset = box->offsetForPosition(_x - absx);
-                if (offset != -1)
-                    return VisiblePosition(element(), offset + box->m_start, VP_UPSTREAM_IF_POSSIBLE);
-            }
-            else if (!box->prevOnLine() && _x < absx + box->m_x) {
+                return VisiblePosition(element(), offset + box->m_start, VP_UPSTREAM_IF_POSSIBLE);
+
+            if (!box->prevOnLine() && _x < absx + box->m_x)
                 // box is first on line
                 // and the x coordinate is to the left of the first text box left edge
-                return VisiblePosition(element(), box->m_start, DOWNSTREAM);
-            }
-            else if (!box->nextOnLine() && _x >= absx + box->m_x + box->m_width) {
+                return VisiblePosition(element(), offset + box->m_start, DOWNSTREAM);
+
+            if (!box->nextOnLine())
                 // box is last on line
                 // and the x coordinate is to the right of the last text box right edge
                 // generate VisiblePosition, use UPSTREAM affinity if possible
-                return VisiblePosition(element(), box->m_start + box->m_len, VP_UPSTREAM_IF_POSSIBLE);
-            }
+                return VisiblePosition(element(), offset + box->m_start, VP_UPSTREAM_IF_POSSIBLE);
         }
     }
     

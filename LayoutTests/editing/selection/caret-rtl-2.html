@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+function test()
+{    
+    if (window.layoutTestController) {
+        eventSender.mouseMoveTo(145, 75);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+</script>
+</head>
+<body onload="test()">
+This tests that clicking in a contenteditable div will set the caret in the right position for rtl text.
+<br>
+<p>
+    Click in the middle of the field.  The caret should be on the edge of the text closer to where you clicked.
+</p>
+<div style="width:150px; border: solid thin black; position: absolute; top: 70; left: 10;" contenteditable>&#x05e9;&#x05d3;&#x05d4; &#x05d1;&#x05d5;&#x05e8;</div>
+</body>
+</html>
+

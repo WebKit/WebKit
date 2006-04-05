@@ -1,3 +1,20 @@
+2006-04-04  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8158
+        REGRESSION: Clicking past RTL text in a new text field puts the caret on the wrong side of the text
+
+        Tests:
+        editing/selection/caret-rtl.html
+        editing/selection/caret-rtl-2.html
+
+        * rendering/RenderText.cpp: (WebCore::RenderText::positionForCoordinates):
+        When calculating the position for the beginning or end of an InlineTextBox,
+        we now use offsetForPosition instead of just using m_start and m_len, because
+        offsetForPosition will take rtl text into account.  I also made some formatting
+        changes.
+
 2006-04-04  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 8065, inline blocks incorrectly loses spaces between them.
