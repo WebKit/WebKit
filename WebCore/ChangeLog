@@ -1,5 +1,11 @@
 2006-04-05  Darin Adler  <darin@apple.com>
 
+        - fixed the build
+
+        * WebCore.xcodeproj/project.pbxproj: Oops! Resolved merge conflict.
+
+2006-04-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8049

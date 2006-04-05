@@ -4961,11 +4961,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-<<<<<<< .mine
-			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n./generate-derived-sources\n";
-=======
 			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nexport WebCore=\"${SRCROOT}\"\n\nexport ENCODINGS_FILE=\"${WebCore}/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kCFStringEncoding\"\n\nmake -f \"$WebCore/DerivedSources.make\"\n";
->>>>>>> .r13702
 		};
 /* End PBXShellScriptBuildPhase section */
 
