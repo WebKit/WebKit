@@ -46,6 +46,13 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [archivedSubframes release];
+    [archivedResources release];
+    [super dealloc];
+}
+
 - (void)addArchive:(WebArchive *)archive
 {
     NSEnumerator *enumerator = [[archive subresources] objectEnumerator];

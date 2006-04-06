@@ -1,3 +1,10 @@
+2006-04-05  Darin Adler  <darin@apple.com>
+
+        - fixed a storage leak from that last check-in
+
+        * WebView/WebUnarchivingState.m: (-[WebUnarchivingState dealloc]):
+        Release the two dictionaries.
+
 2006-04-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
