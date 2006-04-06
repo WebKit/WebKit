@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - fix memory leak introduced by the previous change
+
+        * kxmlcore/HashTable.h: Specialize NeedsRef so that it correctly returns true when
+        the value in question is a pair where one of the pair needs a ref and the other
+        of the pair does not.
+
+2006-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - JavaScriptCore part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8049
           StringImpl hash traits deleted value creates an init routine for WebCore
           <rdar://problem/4442248> REGRESSION: WebCore has init routines (8049)

@@ -835,6 +835,14 @@ namespace KXMLCore {
     template<typename ValueTraits, typename ValueStorageTraits> struct NeedsRef {
         static const bool value = ValueTraits::needsRef && !ValueStorageTraits::needsRef;
     };
+    template<typename FirstTraits, typename SecondTraits, typename ValueStorageTraits>
+    struct NeedsRef<PairBaseHashTraits<FirstTraits, SecondTraits>, ValueStorageTraits> {
+        typedef typename ValueStorageTraits::FirstTraits FirstStorageTraits;
+        typedef typename ValueStorageTraits::SecondTraits SecondStorageTraits;
+        static const bool firstNeedsRef = NeedsRef<FirstTraits, FirstStorageTraits>::value;
+        static const bool secondNeedsRef = NeedsRef<SecondTraits, SecondStorageTraits>::value;
+        static const bool value = firstNeedsRef || secondNeedsRef;
+    };
 
     template<bool needsRef, typename ValueTraits> struct RefCounterBase;
 
