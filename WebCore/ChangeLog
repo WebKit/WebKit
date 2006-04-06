@@ -1,3 +1,9 @@
+2006-04-06  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Add JSDocument.cpp.
+
 2006-04-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

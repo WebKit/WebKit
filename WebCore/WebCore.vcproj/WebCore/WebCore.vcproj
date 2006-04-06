@@ -355,6 +355,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDocument.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSDocumentType.cpp"
 				>
 			</File>
