@@ -1,3 +1,18 @@
+2006-04-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8203 
+        REGRESSION: "Invite a friend" text field in GMail page spills out 
+        of table
+
+        RenderReplaced::calcMinMaxWidth() sets m_minWidth to 0 when the 
+        width is a percent, so this patch copies that behavior into 
+        RenderTextField::calcMinMaxWidth().
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::calcMinMaxWidth):
+
 2006-04-06  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

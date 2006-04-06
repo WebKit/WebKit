@@ -236,7 +236,9 @@ void RenderTextField::calcMinMaxWidth()
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxWidth = max(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));
         m_minWidth = max(m_minWidth, calcContentBoxWidth(style()->minWidth().value()));
-    } else
+    } else if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent()))
+        m_minWidth = 0;
+    else
         m_minWidth = m_maxWidth;
     
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
