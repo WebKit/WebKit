@@ -1,3 +1,16 @@
+2006-04-06  Darin Adler  <darin@apple.com>
+
+        Changes requested by Mark Rowe.
+
+        * BuildSlaveSupport/build-launcher-app: Set executable bit, removed property change
+        trash at the end of the file.
+        * BuildSlaveSupport/build-launcher-dmg: Ditto.
+
+        * WebKitLauncher/main.m: Removed trash at end of file.
+
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj: Let Xcode update comments
+        to make name match.
+
 2006-04-06  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Darin, landed by Maciej.

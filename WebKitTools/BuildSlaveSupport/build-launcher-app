@@ -72,9 +72,3 @@ sub copyNightlyLauncher
 chdirWebKit();
 buildNightlyLauncher();
 copyNightlyLauncher();
-
-Property changes on: WebKitTools/BuildSlaveSupport/build-launcher-app
-___________________________________________________________________
-Name: svn:executable
-   + *
-

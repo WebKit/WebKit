@@ -102,10 +102,3 @@ if ($nightlyBuild) {
 } else {
     print "Disk image left at $nightlyLauncherDiskImagePath\n";
 }
-
-
-Property changes on: WebKitTools/BuildSlaveSupport/build-launcher-dmg
-___________________________________________________________________
-Name: svn:executable
-   + *
-
