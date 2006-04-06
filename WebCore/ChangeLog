@@ -1,3 +1,14 @@
+2006-04-##  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8184
+          REGRESSION (r13655): Layer outline not clipped where it should be
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateRects): Reverted this part of the fix for bug 7943.
+        The outlineRect should not be inflated.
+
 2006-04-04  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric, landed by Maciej.

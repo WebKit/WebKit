@@ -1,3 +1,13 @@
+2006-04-##  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Maciej.
+
+        - updated test result for http://bugzilla.opendarwin.org/show_bug.cgi?id=8184
+          REGRESSION (r13655): Layer outline not clipped where it should be
+
+        * fast/clip/outline-overflowClip-expected.txt: Reverted to the correct
+        expected result.
+
 2006-04-04  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric, landed by Maciej.

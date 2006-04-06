@@ -1377,8 +1377,6 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     convertToLayerCoords(rootLayer, x, y);
     layerBounds = IntRect(x,y,width(),height());
     
-    int outlineSize = renderer()->style()->outlineSize();
-    outlineRect.inflate(outlineSize);
     // Update the clip rects that will be passed to child layers.
     if (m_object->hasOverflowClip() || m_object->hasClip()) {
         // This layer establishes a clip of some kind.
@@ -1396,7 +1394,6 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
         // rect is intersected with our layer's bounds.
         backgroundRect.intersect(layerBounds);
     }
-    outlineRect.intersect(paintDirtyRect);
 }
 
 bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const
