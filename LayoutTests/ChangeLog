@@ -1,5 +1,11 @@
 2006-04-05  Darin Adler  <darin@apple.com>
 
+        - bug http://bugzilla.opendarwin.org/show_bug.cgi?id=8187 seems to have disappeared
+
+        * fast/forms/input-truncate-newline-expected.txt: Restored good expected results.
+
+2006-04-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8111
