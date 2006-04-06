@@ -1,3 +1,9 @@
+2006-04-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric, landed by Maciej.
+
+        * svg/custom/class-selector.svg: Added.
+
 2006-04-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

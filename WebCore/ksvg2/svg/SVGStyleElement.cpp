@@ -102,7 +102,7 @@ void SVGStyleElement::childrenChanged()
         m_loading = true;
  
         m_sheet = new CSSStyleSheet(this);
-        m_sheet->parseString(textContent(), false);//!document()->inCompatMode());
+        m_sheet->parseString(textContent()); // SVG css is always parsed in strict mode
 
         MediaList *mediaList = new MediaList(m_sheet.get(), _media);
         m_sheet->setMedia(mediaList);

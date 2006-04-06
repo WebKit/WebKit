@@ -1,3 +1,16 @@
+2006-04-04  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric, landed by Maciej.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7627:
+        SVG from the W3C SVG 1.1 test suite (cubic01.svg) renders as all black
+
+        Fix this svg stylesheet to use strict-mode, as this makes sure
+        class selecting is done correctly.
+
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (SVGStyleElement::childrenChanged):
+
 2006-04-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
