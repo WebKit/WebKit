@@ -1,0 +1,111 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2006 Mark Rowe <opendarwin.org@bdash.net.nz>.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Script used by build slaves to create a disk-image containing WebKit.app.
+
+use strict;
+
+use File::Basename;
+use Getopt::Long;
+use FindBin;
+use lib "$FindBin::Bin/../Scripts";
+use webkitdirs;
+
+my $nightlyLauncherStagingPath = productDir() . "/WebKit.app";
+my $nightlyLauncherDiskImagePath;
+
+my $nightlyRemoteHost = 'webkit-nightlies@nightly.webkit.org';
+my $nightlyRemotePath = "/home/webkit-nightlies";
+my $nightlyRemoteLatestPath = "$nightlyRemotePath/update-latest.sh";
+
+sub buildDiskImage
+{
+    my $revision = currentSVNRevision();
+    my $productDir = productDir();
+    $nightlyLauncherDiskImagePath = productDir() . "/WebKit-SVN-r$revision.dmg";
+    
+    print "Creating disk image...\n";
+    my $output = `hdiutil create \"$nightlyLauncherDiskImagePath\" -ov -megabytes 50 -fs HFS+ -volname \"WebKit\"`;
+    die "Creating disk image failed" if $?;
+
+    $output = `hdiutil attach \"$nightlyLauncherDiskImagePath\"`;
+    die "Mounting disk image failed" if $?;
+    
+    my ($mountedDevice)  = ($output =~ /(\/dev\/.+?)\s*Apple_partition_scheme/im);
+    my ($mountedPath) = ($output =~ /Apple_HFS\s+(.+?)\s*$/im);
+    
+    print "Copying files to disk image...\n";    
+    system("ditto", $nightlyLauncherStagingPath, "$mountedPath/WebKit.app") == 0 or die "Failed copying $nightlyLauncherStagingPath to $mountedPath";
+    
+    system("hdiutil", "detach", "-quiet", $mountedDevice) == 0 or die "Unmounting disk image failed";
+    
+    print "Compressing disk image...\n";
+    system("mv", "-f", $nightlyLauncherDiskImagePath, "$nightlyLauncherDiskImagePath.uncompressed") == 0 or die "Renaming disk image failed";
+    system("hdiutil", "convert", "-quiet", "$nightlyLauncherDiskImagePath.uncompressed", "-format", "UDZO", "-imagekey", "zlib-level=9", "-o", "$nightlyLauncherDiskImagePath");
+    die "Compressing disk image failed" if $?;
+    
+    unlink "$nightlyLauncherDiskImagePath.uncompressed";
+}
+
+sub uploadNightlyDiskImage
+{
+    my $nightlyRemoteDiskImagePath = "$nightlyRemotePath/builds/" . basename($nightlyLauncherDiskImagePath);
+    system("rsync", "-vP", $nightlyLauncherDiskImagePath, "$nightlyRemoteHost:$nightlyRemoteDiskImagePath") == 0 or die "Failed uploading disk image";
+    system("ssh", $nightlyRemoteHost, $nightlyRemoteLatestPath, $nightlyRemoteDiskImagePath) == 0 or die "Failed linking disk image to latest";
+}
+
+sub uploadBuildSlaveDiskImage
+{
+    my $remoteDiskImagePath = shift(@_) . basename($nightlyLauncherDiskImagePath);
+    system("rsync", "-vP", $nightlyLauncherDiskImagePath, $remoteDiskImagePath) == 0 or die "Failed uploading disk image";
+}
+
+
+my $uploadTo;
+my $nightlyBuild = 0;
+GetOptions('upload-to-host=s' => \$uploadTo,
+           'upload-as-nightly!' => \$nightlyBuild);
+
+chdirWebKit();
+buildDiskImage();
+
+if ($nightlyBuild) {
+    uploadNightlyDiskImage();
+} elsif ($uploadTo) {
+    uploadBuildSlaveDiskImage($uploadTo);
+} else {
+    print "Disk image left at $nightlyLauncherDiskImagePath\n";
+}
+
+
+Property changes on: WebKitTools/BuildSlaveSupport/build-launcher-dmg
+___________________________________________________________________
+Name: svn:executable
+   + *
+

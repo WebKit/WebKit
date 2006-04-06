@@ -1,3 +1,28 @@
+2006-04-06  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Darin, landed by Maciej.
+
+        * BuildSlaveSupport/build-launcher-app: Added.  Builds WebKit.app from WebKitLauncher
+          and bundles the WebKit frameworks inside it.
+        * BuildSlaveSupport/build-launcher-dmg: Added.  Builds, and optionally uploads, a disk image
+          containing WebKit.app.
+        * BuildSlaveSupport/run-performance-tests:  Use currentSVNRevision.
+        * Scripts/webkitdirs.pm:  Add currentSVNRevision to retrieve the revision
+          number of the SVN working copy.
+        * WebKitLauncher: Added.
+        * WebKitLauncher/Info.plist: Added.
+        * WebKitLauncher/WebKitLauncher.xcodeproj: Added.
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj: Added.
+        * WebKitLauncher/WebKitNightlyEnabler.m: Added.  This makes
+          up the WebKitNightlyEnabler dylib which is loaded into Safari's address space
+          to cause LaunchServices to treat Safari.app as WebKit.app when it is run from
+          the nightly launcher.
+        * WebKitLauncher/main.m: Added.  The WebKit.app launcher.
+          It sets up the environment to have Safari use the bundled frameworks
+          and load the WebKitNightlyEnabler dylib before exec'ing Safari
+        * WebKitLauncher/start.html: Added.
+        * WebKitLauncher/webkit.icns: Added.
+
 2006-04-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

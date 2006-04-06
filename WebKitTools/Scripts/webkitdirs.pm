@@ -35,7 +35,7 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&chdirWebKit &baseProductDir &productDir &XcodeOptions &XcodeOptionString &XcodeOptionStringNoConfig &passedConfiguration &setConfiguration &safariPath &checkFrameworks);
+   @EXPORT      = qw(&chdirWebKit &baseProductDir &productDir &XcodeOptions &XcodeOptionString &XcodeOptionStringNoConfig &passedConfiguration &setConfiguration &safariPath &checkFrameworks &currentSVNRevision);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
@@ -47,6 +47,8 @@ my @baseProductDirOption;
 my $configuration;
 my $configurationProductDir;
 my $sourceDir;
+my $currentSVNRevision;
+
 
 # Variables for Win32 support
 my $devenvPath;
@@ -133,6 +135,17 @@ sub determineConfigurationProductDir
     $configurationProductDir = "$baseProductDir/$configuration";
 }
 
+sub determineCurrentSVNRevision
+{
+    return if defined $currentSVNRevision;
+    determineSourceDir();
+    my $svnInfo = `svn info $sourceDir | grep Revision:`;
+    ($currentSVNRevision) = ($svnInfo =~ m/Revision: (\d+).*/g);
+    die "Unable to determine current SVN revision in $sourceDir" unless (defined $currentSVNRevision);
+    return $currentSVNRevision;
+}
+
+
 sub chdirWebKit
 {
     determineSourceDir();
@@ -155,6 +168,12 @@ sub configuration()
 {
     determineConfiguration();
     return $configuration;
+}
+
+sub currentSVNRevision
+{
+    determineCurrentSVNRevision();
+    return $currentSVNRevision;
 }
 
 sub XcodeOptions
