@@ -1,3 +1,14 @@
+2006-04-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+
+        I forgot to convert one of the implicit remove/inserts to an explicit remove/insert,
+        so we were hitting the assert I just added to InsertNodeBeforeCommand that checked for
+        implicit removes.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2006-04-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

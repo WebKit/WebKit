@@ -697,6 +697,7 @@ void ReplaceSelectionCommand::doApply()
         
         while (node) {
             Node *next = node->nextSibling();
+            fragment.removeNode(node);
             insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
             refNode = node;
             node = next;
