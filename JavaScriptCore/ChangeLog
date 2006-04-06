@@ -1,5 +1,11 @@
 2006-04-05  Darin Adler  <darin@apple.com>
 
+        - attempt to fix Windows build
+
+        * os-win32/stdint.h: Add int8_t, uint8_t, int64_t.
+
+2006-04-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix memory leak introduced by the previous change
