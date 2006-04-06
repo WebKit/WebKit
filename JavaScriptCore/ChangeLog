@@ -2,6 +2,13 @@
 
         - attempt to fix Windows build
 
+        * kxmlcore/HashMap.h: (KXMLCore::HashMap::remove): Use (*it). instead of it->.
+        * kxmlcore/HashSet.h: (KXMLCore::HashSet::remove): Ditto.
+
+2006-04-05  Darin Adler  <darin@apple.com>
+
+        - attempt to fix Windows build
+
         * os-win32/stdint.h: Add int8_t, uint8_t, int64_t.
 
 2006-04-05  Darin Adler  <darin@apple.com>
