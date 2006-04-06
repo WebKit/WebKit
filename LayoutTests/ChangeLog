@@ -1,3 +1,28 @@
+2006-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8111
+          REGRESSION (NativeTextField): first click in form field on weather.com leaves focus
+          but no caret
+
+        - updated results for improved dumping of selection location in DumpRenderTree
+
+        * fast/forms/input-text-self-emptying-click-expected.checksum: Added.
+        * fast/forms/input-text-self-emptying-click-expected.png: Added.
+        * fast/forms/input-text-self-emptying-click-expected.txt: Added.
+        * fast/forms/input-text-self-emptying-click.html: Added.
+
+        * editing/selection/3690703-2-expected.txt: Updated.
+        * fast/forms/input-appearance-focus-expected.txt: Updated.
+        * fast/forms/input-appearance-readonly-expected.txt: Updated.
+        * fast/forms/input-appearance-selection-expected.txt: Updated.
+        * fast/forms/input-paste-undo-expected.txt: Updated.
+        * fast/forms/input-text-double-click-expected.txt: Updated.
+        * fast/forms/input-text-option-delete-expected.txt: Updated.
+        * fast/forms/input-text-scroll-left-on-blur-expected.txt: Updated.
+        * fast/forms/plaintext-mode-2-expected.txt: Updated.
+
 2006-04-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Maciej.

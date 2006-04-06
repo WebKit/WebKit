@@ -463,10 +463,10 @@ void FrameView::layout()
 
 static Frame* subframeForEvent(const MouseEventWithHitTestResults& mev)
 {
-    if (!mev.innerNode())
+    if (!mev.targetNode())
         return 0;
 
-    RenderObject* renderer = mev.innerNode()->renderer();
+    RenderObject* renderer = mev.targetNode()->renderer();
     if (!renderer || !renderer->isWidget())
         return 0;
 
@@ -494,9 +494,9 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     }
 
     d->clickCount = mouseEvent.clickCount();
-    d->clickNode = mev.innerNode();
+    d->clickNode = mev.targetNode();
 
-    bool swallowEvent = dispatchMouseEvent(mousedownEvent, mev.innerNode(), true, d->clickCount, mouseEvent, true);
+    bool swallowEvent = dispatchMouseEvent(mousedownEvent, mev.targetNode(), true, d->clickCount, mouseEvent, true);
 
     if (!swallowEvent) {
         m_frame->handleMousePressEvent(mev);
@@ -526,10 +526,10 @@ void FrameView::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent
         return;
 
     d->clickCount = mouseEvent.clickCount();
-    bool swallowEvent = dispatchMouseEvent(mouseupEvent, mev.innerNode(), true, d->clickCount, mouseEvent, false);
+    bool swallowEvent = dispatchMouseEvent(mouseupEvent, mev.targetNode(), true, d->clickCount, mouseEvent, false);
 
-    if (mev.innerNode() == d->clickNode)
-        dispatchMouseEvent(clickEvent, mev.innerNode(), true, d->clickCount, mouseEvent, true);
+    if (mev.targetNode() == d->clickNode)
+        dispatchMouseEvent(clickEvent, mev.targetNode(), true, d->clickCount, mouseEvent, true);
 
     // Qt delivers a release event AND a double click event.
     if (!swallowEvent) {
@@ -551,7 +551,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
     if (mousePressed && frame->hasSelection())
         return iBeamCursor();
 
-    Node* node = event.innerNode();
+    Node* node = event.targetNode();
     RenderObject* renderer = node ? node->renderer() : 0;
     RenderStyle* style = renderer ? renderer->style() : 0;
 
@@ -560,7 +560,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
         case CURSOR_AUTO:
-            if (!event.url().isNull() || isSubmitImage(node))
+            if (event.isOverLink() || isSubmitImage(node))
                 return handCursor();
             if ((node && node->isContentEditable()) || (renderer && renderer->isText() && renderer->canSelect()))
                 return iBeamCursor();
@@ -629,7 +629,7 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     if (d->oldSubframe)
         m_frame->passSubframeEventToSubframe(mev, d->oldSubframe.get());
 
-    bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.innerNode(), false, 0, mouseEvent, true);
+    bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
     if (!swallowEvent)
         m_frame->handleMouseMoveEvent(mev);
     
@@ -668,10 +668,10 @@ void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     if (m_frame->passSubframeEventToSubframe(mev))
         return;
 
-    bool swallowEvent = dispatchMouseEvent(mouseupEvent, mev.innerNode(), true, d->clickCount, mouseEvent, false);
+    bool swallowEvent = dispatchMouseEvent(mouseupEvent, mev.targetNode(), true, d->clickCount, mouseEvent, false);
 
-    if (d->clickCount > 0 && mev.innerNode() == d->clickNode)
-        dispatchMouseEvent(clickEvent, mev.innerNode(), true, d->clickCount, mouseEvent, true);
+    if (d->clickCount > 0 && mev.targetNode() == d->clickNode)
+        dispatchMouseEvent(clickEvent, mev.targetNode(), true, d->clickCount, mouseEvent, true);
 
     if (!swallowEvent)
         m_frame->handleMouseReleaseEvent(mev);
@@ -701,7 +701,7 @@ bool FrameView::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard* cl
     MouseEventWithHitTestResults mev = prepareMouseEvent(true, false, false, PlatformMouseEvent());
 
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
-    Node* newTarget = mev.innerNode();
+    Node* newTarget = mev.targetNode();
     if (newTarget && newTarget->isTextNode())
         newTarget = newTarget->parentNode();
     if (newTarget)

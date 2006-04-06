@@ -1664,25 +1664,17 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(bool readonly, bool act
                                                          const IntPoint& point, const PlatformMouseEvent& event)
 {
     if (!renderer())
-        return MouseEventWithHitTestResults(event, String(), String(), 0);
+        return MouseEventWithHitTestResults(event, 0, false);
 
     assert(renderer()->isCanvas());
     RenderObject::NodeInfo renderInfo(readonly, active, mouseMove);
     renderer()->layer()->hitTest(renderInfo, point);
 
-    String href;
-    String target;
-    if (renderInfo.URLElement()) {
-        Element* e = renderInfo.URLElement();
-        href = parseURL(e->getAttribute(hrefAttr));
-        if (!href.isNull())
-            target = e->getAttribute(targetAttr);
-    }
-
     if (!readonly)
         updateRendering();
 
-    return MouseEventWithHitTestResults(event, href, target, renderInfo.innerNode());
+    bool isOverLink = renderInfo.URLElement() && !renderInfo.URLElement()->getAttribute(hrefAttr).isNull();
+    return MouseEventWithHitTestResults(event, renderInfo.innerNode(), isOverLink);
 }
 
 // DOM Section 1.1.1

@@ -603,6 +603,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\page\MouseEventWithHitTestResults.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\page\MouseEventWithHitTestResults.h"
 				>
 			</File>

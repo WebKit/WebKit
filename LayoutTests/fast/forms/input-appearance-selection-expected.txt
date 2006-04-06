@@ -87,5 +87,5 @@ layer at (13,47) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
     RenderText {TEXT} at (1,0) size 131x13
       text run at (1,0) width 131: "123456789 ABCDEFGHIJ"
-selection start: position 3 of child 0 {TEXT} of document
-selection end:   position 12 of child 0 {TEXT} of document
+selection start: position 3 of child 0 {TEXT} of child 0 {DIV} of child 1 {INPUT} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 12 of child 0 {TEXT} of child 0 {DIV} of child 1 {INPUT} of child 1 {P} of child 1 {BODY} of child 0 {HTML} of document

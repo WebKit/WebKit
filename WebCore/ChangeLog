@@ -1,3 +1,59 @@
+2006-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8111
+          REGRESSION (NativeTextField): first click in form field on weather.com leaves focus
+          but no caret
+
+        Test: fast/forms/input-text-self-emptying-click.html
+
+        * page/MouseEventWithHitTestResults.h: Removed url, target, m_url and m_target,
+        replacing them with isOverLink and m_isOverLink. Replaced innerNode with targetNode,
+        and added logic to handle the case where the target node is removed from the document
+        but the element the target node was in is still inside the document.
+        * page/MouseEventWithHitTestResults.cpp: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Added MouseEventWithHitTestResults.cpp.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+
+        * kwq/RenderTreeAsText.cpp: (nodePosition): Added a call to shadowParentNode so we
+        correctly dump positions within shadow trees. This was needed to give a good result
+        from my new test for this bug.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareMouseEvent): Update to pass fewer parameters to the
+        constructor for MouseEventWithHitTestResults. Now takes isOverLink boolean, and no
+        longer takes href and target parameters.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::handleMousePressEventDoubleClick): Use new name targetNode, instead
+        of old name innerNode.
+        (WebCore::Frame::handleMousePressEventTripleClick): Ditto.
+        (WebCore::Frame::handleMousePressEventSingleClick): Ditto. Also change code to check
+        if over a link to use !isOverLink instead of url.isNull.
+        (WebCore::Frame::handleMousePressEvent): Ditto. Also remove unused "url" local variable.
+        (WebCore::Frame::handleMouseMoveEvent): Ditto.
+        (WebCore::Frame::handleMouseReleaseEvent): Ditto.
+        (WebCore::Frame::passWidgetMouseDownEventToWidget): Ditto.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::handleMousePressEvent): Use new name targetNode, instead of old
+        name innerNode.
+        (WebCore::FrameMac::handleMouseMoveEvent): Ditto.
+        (WebCore::FrameMac::passSubframeEventToSubframe): Ditto.
+        (WebCore::FrameMac::sendContextMenuEvent): Ditto.
+
+        * page/FrameView.cpp:
+        (WebCore::subframeForEvent): Use new name targetNode, instead of old name innerNode.
+        (WebCore::FrameView::handleMousePressEvent): Ditto.
+        (WebCore::FrameView::handleMouseDoubleClickEvent): Ditto.
+        (WebCore::selectCursor): Ditto. Also change code to check if over a link to use
+        isOverLink instead of !url.isNull.
+        (WebCore::FrameView::handleMouseMoveEvent): Ditto.
+        (WebCore::FrameView::handleMouseReleaseEvent): Ditto.
+        (WebCore::FrameView::updateDragAndDrop): Ditto.
+
 2006-04-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Maciej.

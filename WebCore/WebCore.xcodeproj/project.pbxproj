@@ -298,6 +298,7 @@
 		93CD4FEC0995FD2A007ECC97 /* PlatformString.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CD4FEB0995FD2A007ECC97 /* PlatformString.h */; };
 		93E47C5C09BE2BBB0019C5C1 /* PageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E47C5B09BE2BBB0019C5C1 /* PageMac.mm */; };
 		93E62D9B0985F41600E1B5E3 /* SystemTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E62D990985F41600E1B5E3 /* SystemTime.h */; };
+		93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */; };
 		93EEC1FA09C2877700C515D1 /* DocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1E709C2877700C515D1 /* DocPtr.h */; };
 		93EEC1FF09C2877700C515D1 /* CanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC1ED09C2877700C515D1 /* CanvasRenderingContext2D.cpp */; };
 		93EEC20009C2877700C515D1 /* CanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1EE09C2877700C515D1 /* CanvasRenderingContext2D.h */; };
@@ -1548,6 +1549,7 @@
 		93CD4FEB0995FD2A007ECC97 /* PlatformString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformString.h; path = platform/PlatformString.h; sourceTree = "<group>"; };
 		93E47C5B09BE2BBB0019C5C1 /* PageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PageMac.mm; sourceTree = "<group>"; };
 		93E62D990985F41600E1B5E3 /* SystemTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SystemTime.h; path = platform/SystemTime.h; sourceTree = "<group>"; };
+		93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseEventWithHitTestResults.cpp; sourceTree = "<group>"; };
 		93EEC1E509C2877700C515D1 /* Attr.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Attr.idl; sourceTree = "<group>"; };
 		93EEC1E609C2877700C515D1 /* CharacterData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CharacterData.idl; sourceTree = "<group>"; };
 		93EEC1E709C2877700C515D1 /* DocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocPtr.h; sourceTree = "<group>"; };
@@ -2761,6 +2763,7 @@
 				65A21483097A3F5300B9050A /* FrameTree.h */,
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
+				93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */,
 				935C476209AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
 				65A21467097A329100B9050A /* Page.h */,
@@ -5492,6 +5495,7 @@
 				659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */,
 				930705D809E0C9B700B17FE4 /* JSCounter.cpp in Sources */,
 				930705E909E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp in Sources */,
+				93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

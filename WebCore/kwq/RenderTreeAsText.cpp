@@ -388,6 +388,8 @@ static DeprecatedString nodePosition(Node *node)
     Node *p;
     for (Node *n = node; n; n = p) {
         p = n->parentNode();
+        if (!p)
+            p = n->shadowParentNode();
         if (n != node)
             result += " of ";
         if (p)

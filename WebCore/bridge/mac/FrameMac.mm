@@ -1352,12 +1352,12 @@ void FrameMac::handleMousePressEvent(const MouseEventWithHitTestResults& event)
 
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection.
-    _mouseDownMayStartSelect = canMouseDownStartSelect(event.innerNode());
+    _mouseDownMayStartSelect = canMouseDownStartSelect(event.targetNode());
     
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     _mouseDownMayStartDrag = singleClick;
 
-    d->m_mousePressNode = event.innerNode();
+    d->m_mousePressNode = event.targetNode();
     
     if (!passWidgetMouseDownEventToWidget(event, false)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
@@ -1696,7 +1696,7 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
         _mouseDownMayStartDrag = false;
         d->m_view->invalidateClick();
 
-        Node* node = event.innerNode();
+        Node* node = event.targetNode();
         RenderLayer* layer = 0;
         if (node && node->renderer())
             layer = node->renderer()->enclosingLayer();
@@ -1823,7 +1823,7 @@ bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, 
         }
         
         case NSLeftMouseDown: {
-            Node *node = event.innerNode();
+            Node *node = event.targetNode();
             if (!node) {
                 return false;
             }
@@ -2107,11 +2107,11 @@ bool FrameMac::sendContextMenuEvent(NSEvent *event)
     IntPoint viewportPos = v->viewportToContents(mouseEvent.pos());
     MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, viewportPos, mouseEvent);
 
-    swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, mouseEvent, true);
+    swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.targetNode(), true, 0, mouseEvent, true);
     if (!swallowEvent && !isPointInsideSelection(viewportPos) &&
-        ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode()->isContentEditable())) {
+        ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.targetNode()->isContentEditable())) {
         _mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
-        selectClosestWordFromMouseEvent(mouseEvent, mev.innerNode());
+        selectClosestWordFromMouseEvent(mouseEvent, mev.targetNode());
     }
 
     ASSERT(_currentEvent == event);

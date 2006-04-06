@@ -48,4 +48,4 @@ layer at (325,13) size 142x13 scrollX 179 scrollWidth 321
   RenderBlock {DIV} at (3,3) size 142x13
     RenderText {TEXT} at (1,0) size 319x13
       text run at (1,0) width 319: "this text field has a lot of text in it so that it needs to scroll"
-caret: position 66 of child 0 {TEXT} of document
+caret: position 66 of child 0 {TEXT} of child 0 {DIV} of child 4 {INPUT} of child 0 {BODY} of child 0 {HTML} of document
