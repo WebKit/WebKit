@@ -1,5 +1,14 @@
 2006-04-05  Darin Adler  <darin@apple.com>
 
+        - regenerated test results
+
+        * fast/forms/input-table-expected.txt: Regenerated. Seems right, matches Gecko.
+
+        * fast/forms/form-element-geometry-expected.png: Regenerated.
+        * fast/forms/form-element-geometry-expected.checksum: Regenerated.
+
+2006-04-05  Darin Adler  <darin@apple.com>
+
         - bug http://bugzilla.opendarwin.org/show_bug.cgi?id=8187 seems to have disappeared
 
         * fast/forms/input-truncate-newline-expected.txt: Restored good expected results.
