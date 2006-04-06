@@ -25,6 +25,8 @@
 		226E9E6A09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */; };
 		226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		650F74E409E488F70020118A /* WebUnarchivingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F74E209E488F70020118A /* WebUnarchivingState.h */; };
+		650F74E509E488F70020118A /* WebUnarchivingState.m in Sources */ = {isa = PBXBuildFile; fileRef = 650F74E309E488F70020118A /* WebUnarchivingState.m */; };
 		651951E209974178003DFC65 /* WebLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 651951E109974178003DFC65 /* WebLoader.h */; };
 		65488DA1084FBCCB00831AD0 /* WebNSDictionaryExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */; };
 		65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */; };
@@ -426,6 +428,8 @@
 		51E94C6806C0347500A9B09E /* WebPDFRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPDFRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51E94C6906C0347500A9B09E /* WebPDFRepresentation.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPDFRepresentation.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6866D0366057300CA2D3A /* WebLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebLoader.m; sourceTree = "<group>"; };
+		650F74E209E488F70020118A /* WebUnarchivingState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebUnarchivingState.h; sourceTree = "<group>"; };
+		650F74E309E488F70020118A /* WebUnarchivingState.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebUnarchivingState.m; sourceTree = "<group>"; };
 		651951E109974178003DFC65 /* WebLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebLoader.h; sourceTree = "<group>"; };
 		65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDictionaryExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSDictionaryExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -917,6 +921,8 @@
 		9C7CABBB0190A37C0ECA16EA /* WebView */ = {
 			isa = PBXGroup;
 			children = (
+				650F74E209E488F70020118A /* WebUnarchivingState.h */,
+				650F74E309E488F70020118A /* WebUnarchivingState.m */,
 				6550B7C5099EFAE90090D781 /* WebArchiver.h */,
 				6550B7C6099EFAE90090D781 /* WebArchiver.m */,
 				F52CA6BD02DF9D0F018635CA /* HTML */,
@@ -1326,6 +1332,7 @@
 				6550B7C7099EFAE90090D781 /* WebArchiver.h in Headers */,
 				DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */,
 				226E9E6A09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h in Headers */,
+				650F74E409E488F70020118A /* WebUnarchivingState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1873,6 +1880,7 @@
 				6550B7C8099EFAE90090D781 /* WebArchiver.m in Sources */,
 				DD89682109AA87240097E7F0 /* WebElementDictionary.m in Sources */,
 				226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */,
+				650F74E509E488F70020118A /* WebUnarchivingState.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

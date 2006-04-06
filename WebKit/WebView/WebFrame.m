@@ -397,7 +397,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
 }
 
-- (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
+- (void)_loadRequest:(NSURLRequest *)request archive:(WebArchive *)archive
 {
     WebFrameLoadType loadType;
     
@@ -413,8 +413,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
     
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
-    [newDataSource _addSubresources:subresources];
-    [newDataSource _addSubframeArchives:subframeArchives];
+    [newDataSource _addToUnarchiveState:archive];
     
     // When we loading alternate content for an unreachable URL that we're
     // visiting in the b/f list, we treat it as a reload so the b/f list 
@@ -2881,7 +2880,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    [self _loadRequest:request subresources:nil subframeArchives:nil];
+    [self _loadRequest:request archive:nil];
 }
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
@@ -2935,7 +2934,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                             textEncodingName:[mainResource textEncodingName]
                                                      baseURL:[mainResource URL]
                                               unreachableURL:nil];
-        [self _loadRequest:request subresources:[archive subresources] subframeArchives:[archive subframeArchives]];
+        [self _loadRequest:request archive:archive];
     }
 }
 

@@ -60,6 +60,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebTextRepresentation.h>
+#import <WebKit/WebUnarchivingState.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKitSystemInterface.h>
 
@@ -92,7 +93,7 @@
     [responses release];
     [webFrame release];
     [subresources release];
-    [pendingSubframeArchives release];
+    [unarchivingState release];
 
     [super dealloc];
 }
@@ -100,15 +101,6 @@
 @end
 
 @implementation WebDataSource (WebPrivate)
-
-- (void)_addSubresources:(NSArray *)subresources
-{
-    NSEnumerator *enumerator = [subresources objectEnumerator];
-    WebResource *subresource;
-    while ((subresource = [enumerator nextObject]) != nil) {
-        [self addSubresource:subresource];
-    }
-}
 
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
 {
@@ -132,31 +124,16 @@
     return nil;
 }
 
-- (void)_addSubframeArchives:(NSArray *)subframeArchives
+- (void)_addToUnarchiveState:(WebArchive *)archive
 {
-    if (_private->pendingSubframeArchives == nil) {
-        _private->pendingSubframeArchives = [[NSMutableDictionary alloc] init];
-    }
-    
-    NSEnumerator *enumerator = [subframeArchives objectEnumerator];
-    WebArchive *archive;
-    while ((archive = [enumerator nextObject]) != nil) {
-        NSString *frameName = [[archive mainResource] frameName];
-        if (frameName) {
-            [_private->pendingSubframeArchives setObject:archive forKey:frameName];
-        }
-    }
+    if (!_private->unarchivingState)
+        _private->unarchivingState = [[WebUnarchivingState alloc] init];
+    [_private->unarchivingState addArchive:archive];
 }
 
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName
 {
-    ASSERT(frameName != nil);
-    
-    WebArchive *archive = [[[_private->pendingSubframeArchives objectForKey:frameName] retain] autorelease];
-    if (archive != nil) {
-        [_private->pendingSubframeArchives removeObjectForKey:frameName];
-    }
-    return archive;
+    return [_private->unarchivingState popSubframeArchiveWithFrameName:frameName];
 }
 
 - (DOMElement *)_imageElementWithImageResource:(WebResource *)resource
@@ -193,8 +170,8 @@
         NSString *MIMEType = [mainResource MIMEType];
         if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
             NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
-            [self _addSubresources:[archive subresources]];
-            [self _addSubframeArchives:[archive subframeArchives]];
+            // FIXME: seems poor form to do this as a side effect of getting a document fragment
+            [self _addToUnarchiveState:archive];
             DOMDocumentFragment *fragment = [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
             return fragment;
@@ -939,7 +916,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [_private->plugInStreamLoaders makeObjectsPerformSelector:@selector(cancel)];
     [_private->plugInStreamLoaders removeAllObjects];
     [_private->subresources removeAllObjects];
-    [_private->pendingSubframeArchives removeAllObjects];
+    [_private->unarchivingState release];
 }
 
 @end
@@ -1089,6 +1066,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (WebResource *)subresourceForURL:(NSURL *)URL
 {
+    WebResource *resource = [_private->unarchivingState archivedResourceForURL:URL];
+    if (resource)
+        return resource;
+
     return [_private->subresources objectForKey:[URL _web_originalDataAsString]];
 }
 

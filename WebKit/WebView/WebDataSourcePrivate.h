@@ -41,6 +41,7 @@
 @class WebIconLoader;
 @class WebMainResourceLoader;
 @class WebResource;
+@class WebUnarchivingState;
 @class WebView;
 
 @protocol WebDocumentRepresentation;
@@ -124,7 +125,8 @@
     WebFrame *webFrame;
     
     NSMutableDictionary *subresources;
-    NSMutableDictionary *pendingSubframeArchives;
+
+    WebUnarchivingState *unarchivingState;
     
     BOOL supportsMultipartContent;
 }
@@ -134,10 +136,9 @@
 @interface WebDataSource (WebPrivate)
 
 // Other private methods
-- (void)_addSubresources:(NSArray *)subresources;
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
+- (void)_addToUnarchiveState:(WebArchive *)archive;
 
-- (void)_addSubframeArchives:(NSArray *)subframeArchives;
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 
 - (DOMElement *)_imageElementWithImageResource:(WebResource *)resource;

@@ -1,3 +1,33 @@
+2006-04-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - start on factoring WebArchive unpacking more into a separate class.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8208
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _addToUnarchiveState:]):
+        (-[WebDataSource _popSubframeArchiveWithName:]):
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        (-[WebDataSource _setupForReplaceByMIMEType:]):
+        (-[WebDataSource subresourceForURL:]):
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadRequest:archive:]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame loadArchive:]):
+        * WebView/WebFramePrivate.h:
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation loadArchive]):
+        * WebView/WebUnarchivingState.h: Added.
+        * WebView/WebUnarchivingState.m: Added.
+        (-[WebUnarchivingState init]):
+        (-[WebUnarchivingState addArchive:]):
+        (-[WebUnarchivingState archivedResourceForURL:]):
+        (-[WebUnarchivingState popSubframeArchiveWithFrameName:]):
+
 2006-04-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
