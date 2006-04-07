@@ -128,28 +128,7 @@
 - (void)loadArchive
 {
     WebArchive *archive = [[WebArchive alloc] initWithData:[_private->dataSource data]];
-    WebResource *mainResource = [archive mainResource];
-    if (!mainResource) {
-        [archive release];
-        return;
-    }
-    
-    NSData *data = [mainResource data];
-    [data retain];
-    [_private->parsedArchiveData release];
-    _private->parsedArchiveData = data;
-    
-    [_private->dataSource _addToUnarchiveState:archive];
-    [archive release];
-
-    [_private->bridge closeURL];
-    [_private->bridge openURL:[mainResource URL]
-                       reload:NO 
-                  contentType:[mainResource MIMEType]
-                      refresh:NO
-                 lastModified:nil
-                    pageCache:nil];
-    [_private->bridge receivedData:data textEncodingName:[mainResource textEncodingName]];
+    [[_private->dataSource webFrame] loadArchive:archive];
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
@@ -179,11 +158,9 @@
 
 - (NSString *)documentSource
 {
-    if ([self _isDisplayingWebArchive]) {
-        return [[[NSString alloc] initWithData:_private->parsedArchiveData encoding:NSUTF8StringEncoding] autorelease];
-    } else {
-        return [WebFrameBridge stringWithData:[_private->dataSource data] textEncoding:[_private->bridge textEncoding]];
-    }
+    NSData *data = [_private->dataSource data];
+    CFStringEncoding encoding = [_private->bridge textEncoding];
+    return [WebFrameBridge stringWithData:data textEncoding:encoding];
 }
 
 - (NSString *)title

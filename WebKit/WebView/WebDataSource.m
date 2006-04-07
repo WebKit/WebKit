@@ -969,7 +969,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return _private->resourceData != nil ? _private->resourceData : [_private->mainResourceLoader resourceData];
 }
 
-- (id <WebDocumentRepresentation>) representation
+- (id <WebDocumentRepresentation>)representation
 {
     return _private->representation;
 }

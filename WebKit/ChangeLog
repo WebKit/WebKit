@@ -1,3 +1,16 @@
+2006-04-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - simplify archive loading
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource representation]): fix whitespace
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation loadArchive]): Use WebFrame's loadArchive: instead
+        of trying to do a manual load here.
+        (-[WebHTMLRepresentation documentSource]): No more special case for WebArchive.
+
 2006-04-07  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
