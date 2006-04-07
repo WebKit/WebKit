@@ -77,14 +77,9 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
         m_type = EmptyFragment;
         return;
     }
-
-    if (firstChild == lastChild && firstChild->isTextNode()) {
-        m_type = SingleTextNodeFragment;
-        return;
-    }
     
-    m_type = TreeFragment;
-
+    m_type = firstChild == lastChild && firstChild->isTextNode() ? SingleTextNodeFragment : TreeFragment;
+    
     Node *node = fragment->firstChild();
     Node *newlineAtStartNode = 0;
     Node *newlineAtEndNode = 0;

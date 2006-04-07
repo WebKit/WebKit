@@ -1,0 +1,9 @@
+<p>The string pasted into the text field should be truncated at the maxlength, 5 characters.</p>
+<input maxlength="5" id="test" type="text">
+
+<script>
+var e = document.getElementById("test");
+e.focus();
+e.setSelectionRange(0, 0);
+document.execCommand("InsertHTML", false, "123456789");
+</script>

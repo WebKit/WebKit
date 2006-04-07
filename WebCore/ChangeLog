@@ -1,5 +1,15 @@
 2006-04-07  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by adele
+        
+        maxlength truncation in text fields didn't work if the fragment was a
+        single text node.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+
+2006-04-07  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by harrison
         
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=8250>
