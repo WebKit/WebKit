@@ -1,3 +1,13 @@
+2006-04-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        Test case for this fix:
+        
+        - fixed REGRESSION: offsetParent on element with no offset parent crashes
+
+        * fast/dom/Element/null-offset-parent.html: Added.
+
 2006-04-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by adele

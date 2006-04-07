@@ -212,7 +212,8 @@ Element* Element::offsetParent()
 {
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
-        return static_cast<Element*>(rend->offsetParent()->element());
+        if (RenderObject* offsetParent = rend->offsetParent())
+            return static_cast<Element*>(offsetParent->element());
     return 0;
 }
 
