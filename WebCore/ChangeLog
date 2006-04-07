@@ -1,5 +1,16 @@
 2006-04-07  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8250>
+        REGRESSION: Interchange newlines aren't passed with the khtmlBeforeTextInsertedEvent
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        Interchange content removal happened before khtmlBeforeTextInsertedEvent was sent.
+
+2006-04-07  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by adele
         
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=8219>

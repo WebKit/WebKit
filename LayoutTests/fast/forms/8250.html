@@ -1,0 +1,9 @@
+<input id="test" type="text">
+
+<script>
+var e = document.getElementById("test");
+e.focus();
+e.setSelectionRange(0, 0);
+
+document.execCommand("InsertHTML", false, "<br class='Apple-interchange-newline'>foo");
+</script>

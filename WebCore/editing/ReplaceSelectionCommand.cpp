@@ -84,6 +84,27 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
     }
     
     m_type = TreeFragment;
+    
+    ASSERT(editableRoot);
+    if (!editableRoot)
+        return;
+            
+    RefPtr<Node> holder = insertFragmentForTestRendering();
+    
+    Selection selectionAroundFragment = Selection::selectionFromContentsOfNode(holder.get());
+    RefPtr<Range> range = selectionAroundFragment.toRange();
+    String text = plainText(range.get());
+    String newText = text.copy();
+    // Give the root a chance to change the text.
+    RefPtr<Event> evt = new BeforeTextInsertedEvent(newText);
+    ExceptionCode ec = 0;
+    editableRoot->dispatchEvent(evt, ec, true);
+    ASSERT(ec == 0);
+    if (text != newText || !editableRoot->isContentRichlyEditable()) {
+        removeNode(holder);
+        m_fragment = createFragmentFromText(document, newText.deprecatedString());
+        holder = insertFragmentForTestRendering();
+     }
 
     Node *node = fragment->firstChild();
     Node *newlineAtStartNode = 0;
@@ -117,28 +138,7 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
         removeNode(newlineAtStartNode);
     if (newlineAtEndNode)
         removeNode(newlineAtEndNode);
-    
-    ASSERT(editableRoot);
-    if (!editableRoot)
-        return;
-            
-    RefPtr<Node> holder = insertFragmentForTestRendering();
-    
-    Selection selectionAroundFragment = Selection::selectionFromContentsOfNode(holder.get());
-    RefPtr<Range> range = selectionAroundFragment.toRange();
-    String text = plainText(range.get());
-    String newText = text.copy();
-    // Give the root a chance to change the text.
-    RefPtr<Event> evt = new BeforeTextInsertedEvent(newText);
-    ExceptionCode ec = 0;
-    editableRoot->dispatchEvent(evt, ec, true);
-    ASSERT(ec == 0);
-    if (text != newText || !editableRoot->isContentRichlyEditable()) {
-        removeNode(holder);
-        m_fragment = createFragmentFromText(document, newText.deprecatedString());
-        holder = insertFragmentForTestRendering();
-     }
-    
+        
     saveRenderingInfo(holder.get());
     removeUnrenderedNodes(holder.get());
     m_hasMoreThanOneBlock = renderedBlocks(holder.get()) > 1;

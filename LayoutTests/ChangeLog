@@ -1,5 +1,16 @@
 2006-04-07  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by harrison
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8250>
+        REGRESSION: Interchange newlines aren't passed with the khtmlBeforeTextInsertedEvent
+
+        * fast/forms/8250-expected.checksum: Added.
+        * fast/forms/8250-expected.png: Added.
+        * fast/forms/8250-expected.txt: Added.
+        * fast/forms/8250.html: Added.
+
+2006-04-07  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by adele
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=8219>
         REGRESSION: Two extra newlines added when pasting a single styled line into a plaintext-only region
