@@ -1,3 +1,27 @@
+2006-04-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - fixed <rdar://problem/4507054> If an icon file is removed from disk behind Safari's back, 
+        Safari will not try to refetch it
+        
+        In addition to letting WebIconDatabase recover from disk/memory mismatches as per 4507054, I also found
+        a bug in the way icons are remembered that could account for some of the other cases where
+        site icons didn't appear (and you'd get an ERROR on debug builds about WebIconDatabase saying it
+        had some icon when it really doesn't).
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        When the icon file for a previously-saved site icon isn't found, forget about the darn icon URL thoroughly
+        so that this situation is self-correcting. Formerly, once you got into this state WebKit would never find
+        the icon again (short of removing the entire icon database cleanly). Note that this does *not* change
+        the behavior of sites that didn't have a site icon when WebKit checked -- these will continue to not
+        return a site icon indefinitely (that's a separate, possibly performance-sensitive issue).
+        (-[WebIconDatabase _retainIconForIconURLString:]):
+        This code did the wrong thing in the case where an icon was in the process of being forgotten about. In
+        that case, the icon would still be in _private->iconsOnDiskWithURLs, so we wouldn't try to save it here,
+        so the new icon wouldn't stick.
+
 2006-04-07  David Hyatt  <hyatt@apple.com>
 
         Re-enable coalesced updates.  Our move to a single timer has essentially

@@ -156,7 +156,13 @@ NSSize WebIconLargeSize = {128, 128};
     NSMutableDictionary *icons = [self _iconsForIconURLString:iconURLString];
     if (!icons) {
 	if (![_private->iconURLsWithNoIcons containsObject:iconURLString]) {
-	    ERROR("WebIconDatabase said it had %@, but it doesn't.", iconURLString);
+           // We used to have this icon, but don't have it anymore for some reason. (Bug? Deleted from
+           // disk behind our back?). Forget that we ever had it so it will be re-fetched next time.
+	    ERROR("WebIconDatabase used to contain %@, but the icon file is missing. Now forgetting that we ever knew about this icon.", iconURLString);
+            [self _forgetIconForIconURLString:iconURLString];
+            // _forgetIconForIconURLString doesn't modify the retain count, so we need to do so here. Perhaps it would be
+            // safe to do this in _forgetIconForIconURLString, but the comment in removeAllIcons implies otherwise.
+            CFDictionaryRemoveValue(_private->iconURLToExtraRetainCount, iconURLString);
 	}
         return [self defaultIconWithSize:size];
     }        
@@ -685,9 +691,17 @@ NSSize WebIconLargeSize = {128, 128};
 
     CFDictionarySetValue(_private->iconURLToExtraRetainCount, iconURLString, (void *)newRetainCount);
 
-    if (newRetainCount == 1 && ![_private->iconsOnDiskWithURLs containsObject:iconURLString]){
-        [_private->iconsToSaveWithURLs addObject:iconURLString];
-        [_private->iconsToEraseWithURLs removeObject:iconURLString];
+    if (newRetainCount == 1) {
+        ASSERT(![_private->iconsToSaveWithURLs containsObject:iconURLString]);
+
+        // Either we know nothing about this icon and need to save it to disk, or we were planning to remove it
+        // from disk (as set up in _forgetIconForIconURLString:) and should stop that process.
+        if ([_private->iconsOnDiskWithURLs containsObject:iconURLString]) {
+            [_private->iconsToEraseWithURLs removeObject:iconURLString];
+        } else {
+            ASSERT(![_private->iconsToEraseWithURLs containsObject:iconURLString]);
+            [_private->iconsToSaveWithURLs addObject:iconURLString];
+        }
     }
 }
 
