@@ -1,3 +1,23 @@
+2006-04-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by adele
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8219>
+        REGRESSION: Two extra newlines added when pasting a single styled line into a plaintext-only region
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        Converting the fragment to plaintext introduced an extraneous newline because
+        the range passed to plainText ended after the paragraph containing the fragment
+        built from the markup that TextEdit put on the paste board.  TextIterator will
+        emit a newline when it exits a paragraph.
+        Two extra newlines were added because the '\n' in the plaintext string turns
+        into an interchange newline, which isn't removed because of 8250, and the
+        interchange newline looks like inline content that requires the insertion of
+        a paragraph separator during paste.
+        Fixed by creating a range using VisiblePositions at the start and the end of 
+        the node that holds the fragment during paste's test rendering.
+
 2006-04-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

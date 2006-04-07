@@ -123,16 +123,16 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
         return;
             
     RefPtr<Node> holder = insertFragmentForTestRendering();
-
-    RefPtr<Range> range = new Range(holder->document());
-    ExceptionCode ec = 0;
-    range->selectNodeContents(holder.get(), ec);
-    ASSERT(ec == 0);
+    
+    Selection selectionAroundFragment = Selection::selectionFromContentsOfNode(holder.get());
+    RefPtr<Range> range = selectionAroundFragment.toRange();
     String text = plainText(range.get());
     String newText = text.copy();
     // Give the root a chance to change the text.
     RefPtr<Event> evt = new BeforeTextInsertedEvent(newText);
+    ExceptionCode ec = 0;
     editableRoot->dispatchEvent(evt, ec, true);
+    ASSERT(ec == 0);
     if (text != newText || !editableRoot->isContentRichlyEditable()) {
         removeNode(holder);
         m_fragment = createFragmentFromText(document, newText.deprecatedString());

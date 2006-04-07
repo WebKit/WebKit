@@ -1,5 +1,17 @@
 2006-04-07  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by adele
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8219>
+        REGRESSION: Two extra newlines added when pasting a single styled line into a plaintext-only region
+
+        Updated to relfect fix:
+        * editing/pasteboard/8145-1-expected.checksum:
+        * editing/pasteboard/8145-1-expected.png:
+        * editing/pasteboard/8145-1-expected.txt:
+        * editing/pasteboard/8145-1.html:
+
+2006-04-07  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by harrison
         
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=8145>
