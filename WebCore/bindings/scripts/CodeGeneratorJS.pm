@@ -799,7 +799,12 @@ sub JSValueToNative
   my $type = $signature->type;
 
   if ($type eq "boolean") {
-    return "$value->toBoolean(exec)";
+    my $conv = $signature->extendedAttributes->{"ConvertUndefinedToTrue"};
+    if (defined $conv) {
+	return "valueToBooleanTreatUndefinedAsTrue(exec, $value)";
+    } else {
+	return "$value->toBoolean(exec)";
+    }
   } elsif ($type eq "unsigned long" or $type eq "long") {
     return "$value->toInt32(exec)";
   } elsif ($type eq "unsigned short") {

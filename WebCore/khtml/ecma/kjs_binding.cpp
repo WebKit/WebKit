@@ -255,11 +255,18 @@ JSValue *jsStringOrFalse(const String &s)
     return jsString(s);
 }
 
-String valueToStringWithNullCheck(ExecState *exec, JSValue *val)
+String valueToStringWithNullCheck(ExecState* exec, JSValue* val)
 {
     if (val->isNull())
         return String();
     return val->toString(exec);
+}
+
+bool valueToBooleanTreatUndefinedAsTrue(ExecState* exec, JSValue* val)
+{
+    if (val->isUndefined())
+        return true;
+    return val->toBoolean(exec);
 }
 
 static const char * const exceptionNames[] = {

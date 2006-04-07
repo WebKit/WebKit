@@ -804,13 +804,7 @@ Attr* toAttr(JSValue* val, bool& ok)
 // -------------------------------------------------------------------------
 
 /* Source for DOMElementProtoTable. Use "make hashtables" to regenerate.
-@begin DOMElementProtoTable 8
-  scrollIntoView                DOMElement::ScrollIntoView      DontDelete|Function 1
-  scrollIntoViewIfNeeded        DOMElement::ScrollIntoViewIfNeeded      DontDelete|Function 1
-
-# extension for Safari RSS
-  scrollByLines         DOMElement::ScrollByLines       DontDelete|Function 1
-  scrollByPages         DOMElement::ScrollByPages       DontDelete|Function 1
+@begin DOMElementProtoTable 1
 @end
 */
 KJS_IMPLEMENT_PROTOFUNC(DOMElementProtoFunc)
@@ -818,21 +812,7 @@ KJS_IMPLEMENT_PROTOTYPE("DOMElement", DOMElementProto, DOMElementProtoFunc)
 
 const ClassInfo DOMElement::info = { "Element", &DOMEventTargetNode::info, &DOMElementTable, 0 };
 /* Source for DOMElementTable. Use "make hashtables" to regenerate.
-@begin DOMElementTable 17
-    tagName       DOMElement::TagName                         DontDelete|ReadOnly
-
-# IE extensions
-    offsetLeft    DOMElement::OffsetLeft             DontDelete|ReadOnly
-    offsetTop     DOMElement::OffsetTop              DontDelete|ReadOnly
-    offsetWidth   DOMElement::OffsetWidth            DontDelete|ReadOnly
-    offsetHeight  DOMElement::OffsetHeight           DontDelete|ReadOnly
-    offsetParent  DOMElement::OffsetParent           DontDelete|ReadOnly
-    clientWidth   DOMElement::ClientWidth            DontDelete|ReadOnly
-    clientHeight  DOMElement::ClientHeight           DontDelete|ReadOnly
-    scrollLeft    DOMElement::ScrollLeft             DontDelete
-    scrollTop     DOMElement::ScrollTop              DontDelete
-    scrollWidth   DOMElement::ScrollWidth            DontDelete|ReadOnly
-    scrollHeight  DOMElement::ScrollHeight           DontDelete|ReadOnly
+@begin DOMElementTable 1
 @end
 */
 DOMElement::DOMElement(ExecState *exec, Element *e)
@@ -848,47 +828,6 @@ DOMElement::DOMElement(Element *e)
 
 JSValue *DOMElement::getValueProperty(ExecState *exec, int token) const
 {
-    Element *element = static_cast<Element *>(impl());
-    switch (token) {
-    case TagName:
-        return jsStringOrNull(element->nodeName());
-
-    default:
-        // no DOM standard -- IE extension
-        
-        // Make sure our layout is up to date before we allow a query on these attributes.
-        element->document()->updateLayoutIgnorePendingStylesheets();
-        
-        RenderObject *rend = element->renderer();
-        
-        switch (token) {
-            case OffsetLeft:
-                return rend ? jsNumber(rend->offsetLeft()) : static_cast<JSValue *>(jsUndefined());
-            case OffsetTop:
-                return rend ? jsNumber(rend->offsetTop()) : static_cast<JSValue *>(jsUndefined());
-            case OffsetWidth:
-                return rend ? jsNumber(rend->offsetWidth()) : static_cast<JSValue *>(jsUndefined());
-            case OffsetHeight:
-                return rend ? jsNumber(rend->offsetHeight()) : static_cast<JSValue *>(jsUndefined());
-            case OffsetParent: {
-                RenderObject* par = rend ? rend->offsetParent() : 0;
-                return toJS(exec, par ? par->element() : 0);
-            }
-            case ClientWidth:
-                return rend ? jsNumber(rend->clientWidth()) : static_cast<JSValue *>(jsUndefined());
-            case ClientHeight:
-                return rend ? jsNumber(rend->clientHeight()) : static_cast<JSValue *>(jsUndefined());
-            case ScrollWidth:
-                return rend ? jsNumber(rend->scrollWidth()) : static_cast<JSValue *>(jsUndefined());
-            case ScrollHeight:
-                return rend ? jsNumber(rend->scrollHeight()) : static_cast<JSValue *>(jsUndefined());
-            case ScrollLeft:
-                return jsNumber(rend && rend->layer() ? rend->layer()->scrollXOffset() : 0);
-            case ScrollTop:
-                return jsNumber(rend && rend->layer() ? rend->layer()->scrollYOffset() : 0);
-        }
-    }
-
     return jsUndefined();
 }
 
@@ -899,21 +838,6 @@ void DOMElement::put(ExecState *exec, const Identifier& propertyName, JSValue *v
 
 void DOMElement::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
-    WebCore::Node& node = *m_impl;
-    switch (token) {
-        case ScrollTop: {
-            RenderObject *rend = node.renderer();
-            if (rend && rend->hasOverflowClip())
-                rend->layer()->scrollToYOffset(value->toInt32(exec));
-            break;
-        }
-        case ScrollLeft: {
-            RenderObject *rend = node.renderer();
-            if (rend && rend->hasOverflowClip())
-                rend->layer()->scrollToXOffset(value->toInt32(exec));
-            break;
-        }
-    }
 }
 
 JSValue* DOMElement::attributeGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -955,33 +879,6 @@ JSValue *DOMElementProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj,
 {
   if (!thisObj->inherits(&KJS::DOMElement::info))
     return throwError(exec, TypeError);
-  DOMExceptionTranslator exception(exec);
-  WebCore::Node& node = *static_cast<DOMNode*>(thisObj)->impl();
-  Element &element = static_cast<Element &>(node);
-
-  switch(id) {
-      case DOMElement::ScrollIntoView: 
-        element.scrollIntoView(args[0]->isUndefinedOrNull() || args[0]->toBoolean(exec));
-        return jsUndefined();
-      case DOMElement::ScrollIntoViewIfNeeded: 
-        element.scrollIntoViewIfNeeded(args[0]->isUndefinedOrNull() || args[0]->toBoolean(exec));
-        return jsUndefined();
-      case DOMElement::ScrollByLines:
-      case DOMElement::ScrollByPages:
-        element.document()->updateLayoutIgnorePendingStylesheets();
-        if (RenderObject *rend = element.renderer())
-          if (rend->hasOverflowClip()) {
-            KWQScrollDirection direction = KWQScrollDown;
-            int multiplier = args[0]->toInt32(exec);
-            if (multiplier < 0) {
-                direction = KWQScrollUp;
-                multiplier = -multiplier;
-            }
-            KWQScrollGranularity granularity = id == DOMElement::ScrollByLines ? KWQScrollLine : KWQScrollPage;
-            rend->layer()->scroll(direction, granularity, multiplier);
-          }
-        return jsUndefined();
-    }
 
     return jsUndefined();
 }

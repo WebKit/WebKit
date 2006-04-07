@@ -156,9 +156,11 @@ namespace KJS {
   /**
    *  Get a String object or a null String if the value is null
    */
-  WebCore::String valueToStringWithNullCheck(ExecState* exec, JSValue *val);
+  WebCore::String valueToStringWithNullCheck(ExecState* exec, JSValue* val);
 
-    template <typename T> inline JSValue* toJS(ExecState* exec, PassRefPtr<T> ptr) { return toJS(exec, ptr.get()); }
+  bool valueToBooleanTreatUndefinedAsTrue(ExecState* exec, JSValue* val);
+
+  template <typename T> inline JSValue* toJS(ExecState* exec, PassRefPtr<T> ptr) { return toJS(exec, ptr.get()); }
   
 } // namespace
 

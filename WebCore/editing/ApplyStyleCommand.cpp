@@ -899,7 +899,7 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
             HTMLElement *elem = static_cast<HTMLElement *>(node);
             Node *prev = elem->traversePreviousNodePostOrder();
             Node *next = elem->traverseNextNode();
-            if (m_styledInlineElement && elem->hasTagName(m_styledInlineElement->tagName()))
+            if (m_styledInlineElement && elem->hasTagName(m_styledInlineElement->tagQName()))
                 removeNodePreservingChildren(elem);
             if (isHTMLStyleNode(style.get(), elem))
                 removeHTMLStyleNode(elem);
@@ -1026,7 +1026,7 @@ static bool areIdenticalElements(Node *first, Node *second)
     Element *firstElement = static_cast<Element *>(first);
     Element *secondElement = static_cast<Element *>(second);
     
-    if (!firstElement->tagName().matches(secondElement->tagName()))
+    if (!firstElement->tagQName().matches(secondElement->tagQName()))
         return false;
 
     NamedAttrMap *firstMap = firstElement->attributes();

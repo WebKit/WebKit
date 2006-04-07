@@ -151,6 +151,135 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
     }
 }
 
+void Element::scrollByUnits(int units, KWQScrollGranularity granularity)
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject *rend = renderer()) {
+        if (rend->hasOverflowClip()) {
+            KWQScrollDirection direction = KWQScrollDown;
+            if (units < 0) {
+                direction = KWQScrollUp;
+                units = -units;
+            }
+            rend->layer()->scroll(direction, granularity, units);
+        }
+    }
+}
+
+void Element::scrollByLines(int lines)
+{
+    scrollByUnits(lines, KWQScrollLine);
+}
+
+void Element::scrollByPages(int pages)
+{
+    scrollByUnits(pages, KWQScrollPage);
+}
+
+int Element::offsetLeft()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return rend->offsetLeft();
+    return 0;
+}
+
+int Element::offsetTop()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return rend->offsetTop();
+    return 0;
+}
+
+int Element::offsetWidth()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return rend->offsetWidth();
+    return 0;
+}
+
+int Element::offsetHeight()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return rend->offsetHeight();
+    return 0;
+}
+
+Element* Element::offsetParent()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return static_cast<Element*>(rend->offsetParent()->element());
+    return 0;
+}
+
+int Element::clientWidth()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return rend->clientWidth();
+    return 0;
+}
+
+int Element::clientHeight()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return rend->clientHeight();
+    return 0;
+}
+
+int Element::scrollLeft()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    RenderObject* rend = renderer();
+    if (rend && rend->layer())
+        return rend->layer()->scrollXOffset();
+    return 0;
+}
+
+int Element::scrollTop()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    RenderObject* rend = renderer();
+    if (rend && rend->layer())
+        return rend->layer()->scrollYOffset();
+    return 0;
+}
+
+void Element::setScrollLeft(int newLeft)
+{
+    RenderObject *rend = renderer();
+    if (rend && rend->hasOverflowClip())
+        rend->layer()->scrollToXOffset(newLeft);
+}
+
+void Element::setScrollTop(int newTop)
+{
+    RenderObject *rend = renderer();
+    if (rend && rend->hasOverflowClip())
+        rend->layer()->scrollToYOffset(newTop);
+}
+
+int Element::scrollWidth()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return rend->scrollWidth();
+    return 0;
+}
+
+int Element::scrollHeight()
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    if (RenderObject* rend = renderer())
+        return rend->scrollHeight();
+    return 0;
+}
+
 static inline bool inHTMLDocument(const Element* e)
 {
     return e && e->document()->isHTMLDocument();

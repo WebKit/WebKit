@@ -750,11 +750,11 @@ bool HTMLElement::inEitherTagList(const Node* newChild)
         
     if (newChild->isHTMLElement()) {
         const HTMLElement* child = static_cast<const HTMLElement*>(newChild);
-        if (inlineTagList()->contains(child->tagName().localName().impl()))
+        if (inlineTagList()->contains(child->tagQName().localName().impl()))
             return true;
-        if (blockTagList()->contains(child->tagName().localName().impl()))
+        if (blockTagList()->contains(child->tagQName().localName().impl()))
             return true;
-        return !isRecognizedTagName(child->tagName()); // Accept custom html tags
+        return !isRecognizedTagName(child->tagQName()); // Accept custom html tags
     }
 
     return false;
@@ -767,9 +767,9 @@ bool HTMLElement::inInlineTagList(const Node* newChild)
 
     if (newChild->isHTMLElement()) {
         const HTMLElement* child = static_cast<const HTMLElement*>(newChild);
-        if (inlineTagList()->contains(child->tagName().localName().impl()))
+        if (inlineTagList()->contains(child->tagQName().localName().impl()))
             return true;
-        return !isRecognizedTagName(child->tagName()); // Accept custom html tags
+        return !isRecognizedTagName(child->tagQName()); // Accept custom html tags
     }
 
     return false;
@@ -782,7 +782,7 @@ bool HTMLElement::inBlockTagList(const Node* newChild)
             
     if (newChild->isHTMLElement()) {
         const HTMLElement* child = static_cast<const HTMLElement*>(newChild);
-        return (blockTagList()->contains(child->tagName().localName().impl()));
+        return (blockTagList()->contains(child->tagQName().localName().impl()));
     }
 
     return false;

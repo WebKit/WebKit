@@ -21,12 +21,10 @@ module core {
 
     interface [LegacyParent=KJS::DOMElement] Element : EventTargetNode {
 
-        // DOM Level 1
+        // DOM Level 1 Core
 
-        NodeList getElementsByTagName(in DOMString name);
+        readonly attribute [ConvertNullStringTo=Null] DOMString tagName;
 
-        // ConvertNullStringTo=Null is used here since if the attribute isn't present at all
-        // the function should return null and not "".
         [ConvertNullStringTo=Null] DOMString getAttribute(in DOMString name);
 
         void setAttribute(in DOMString name,
@@ -44,15 +42,9 @@ module core {
         Attr removeAttributeNode(in Attr oldAttr)
             raises(DOMException);
 
-        // DOM Level 2
+        NodeList getElementsByTagName(in DOMString name);
 
-        NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                        in DOMString localName);
-
-        boolean hasAttribute(in DOMString name);
-
-        boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                               in DOMString localName);
+        // DOM Level 2 Core
 
         DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                  in DOMString localName);
@@ -66,26 +58,67 @@ module core {
                                in DOMString localName)
             raises(DOMException);
 
+        NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
+                                        in DOMString localName);
+
         Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                 in DOMString localName);
 
         Attr setAttributeNodeNS(in Attr newAttr)
             raises(DOMException);
 
-        // extensions
+        boolean hasAttribute(in DOMString name);
 
-        void focus();
-        void blur();
+        boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
+                               in DOMString localName);
 
         readonly attribute CSSStyleDeclaration style;
 
-        // IE-only extensions
+        // Common extensions
+
+        readonly attribute long offsetLeft;
+
+        readonly attribute long offsetTop;
+
+        readonly attribute long offsetWidth;
+
+        readonly attribute long offsetHeight;
+
+        readonly attribute Element offsetParent;
+        
+        readonly attribute long clientWidth;
+
+        readonly attribute long clientHeight;
+
+        attribute long scrollLeft;
+
+        attribute long scrollTop;
+
+        readonly attribute long scrollWidth;
+
+        readonly attribute long scrollHeight;
+
+        void focus();
+
+        void blur();
+
+        void scrollIntoView(in [ConvertUndefinedToTrue] boolean alignWithTop);
+
+        // IE extensions
 
         Node insertAdjacentElement(in DOMString position, 
                                    in Node newElement)
             raises(DOMException);
         
         boolean contains(in Element element);
+
+        // WebKit extensions
+
+        void scrollIntoViewIfNeeded(in [ConvertUndefinedToTrue] boolean alignWithTop);
+
+        void scrollByLines(in long lines);
+
+        void scrollByPages(in long pages);
 
     };
 

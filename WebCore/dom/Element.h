@@ -30,6 +30,7 @@
 #include "ContainerNode.h"
 #include "Attr.h"
 #include "QualifiedName.h"
+#include "KWQScrollBar.h"
 
 namespace WebCore {
 
@@ -68,6 +69,24 @@ public:
     void scrollIntoView (bool alignToTop);
     void scrollIntoViewIfNeeded(bool centerIfNeeded);
 
+    void scrollByUnits(int units, KWQScrollGranularity granularity);
+    void scrollByLines(int lines);
+    void scrollByPages(int pages);
+
+    int offsetLeft();
+    int offsetTop();
+    int offsetWidth();
+    int offsetHeight();
+    Element* offsetParent();
+    int clientWidth();
+    int clientHeight();
+    int scrollLeft();
+    int scrollTop();
+    void setScrollLeft(int);
+    void setScrollTop(int);
+    int scrollWidth();
+    int scrollHeight();
+
     void removeAttribute(const String &name, ExceptionCode& ec);
     void removeAttributeNS(const String &namespaceURI, const String& localName, ExceptionCode&);
 
@@ -79,7 +98,8 @@ public:
     
     virtual CSSStyleDeclaration *style();
 
-    virtual const QualifiedName& tagName() const { return m_tagName; }
+    const QualifiedName& tagQName() const { return m_tagName; }
+    String tagName() const { return nodeName(); }
     virtual bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
     
     // A fast function for checking the local name against another atomic string.
