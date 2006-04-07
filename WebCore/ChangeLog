@@ -1,3 +1,32 @@
+2006-04-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8145>
+        REGRESSION: Pasting text from TextEdit with a bold word into text field results in crash
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply): 
+        Assert that the node will be placed somewhere that's contenteditable.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply): Ditto
+        * editing/JSEditor.cpp: 
+        Enabled insertHTML for plaintext-only regions since it's useful for debugging rich 
+        content pastes into the new text fields.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        1) After the first paragraph of the fragment has been merged with the first part of the
+        paragraph where the paste occured, if the next node to be inserted is inline, we put it 
+        in a new paragraph because it was at the start of a paragraph in the fragment.  The change
+        is to insert a paragraph separator if insertionPos.next() is null or outside of the current 
+        editable region.
+        2) Before the paste begins, a paragraph separator is inserted in order to avoid 
+        nesting blocks from the fragment to be pasted inside the block where the paste will 
+        occur.  I made two fixes to the code that decides whether or not to insert the 
+        paragraph separator and added testcases for each.  Added a fixme because it appears that
+        this code is also used to ensure that the aforementioned insertionPos will be at the end of 
+        a paragraph.  This code should only be about preventing nesting.
+
 2006-04-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

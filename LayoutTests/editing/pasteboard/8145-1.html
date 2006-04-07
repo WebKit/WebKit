@@ -1,0 +1,11 @@
+<p>This is a replica of the paste that caused the crash covered by 8145.  <b>It currently demonstrates 8219.  Two extra newlines are added when pasting a single styled line into a plaintext-only region.</b></p>
+<div id="test1" style="border: 1px solid black;" contenteditable="plaintext-only"></div>
+
+<script>
+var s = window.getSelection();
+var p = document.getElementById("test1");
+p.innerHTML = "";
+s.setPosition(p, 0);
+var html = "<p style='margin: 0; font: 12px Helvetica'>foo <b>bar</b> baz</p>" + '\n';
+document.execCommand("InsertHTML", false, html);
+</script>

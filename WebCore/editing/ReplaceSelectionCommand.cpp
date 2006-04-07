@@ -496,7 +496,6 @@ void ReplaceSelectionCommand::doApply()
     VisiblePosition visibleEnd(selection.end(), selection.affinity());
     bool startAtStartOfBlock = isStartOfBlock(visibleStart);
     bool startAtEndOfBlock = isEndOfBlock(visibleStart);
-    bool startAtBlockBoundary = startAtStartOfBlock || startAtEndOfBlock;
     Node *startBlock = selection.start().node()->enclosingBlockFlowElement();
     Node *endBlock = selection.end().node()->enclosingBlockFlowElement();
 
@@ -569,10 +568,14 @@ void ReplaceSelectionCommand::doApply()
                 setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY));
             }
         }
-        if (!fragment.hasInterchangeNewlineAtEnd() && fragment.hasMoreThanOneBlock() && 
-            !startAtBlockBoundary && !isEndOfParagraph(visibleEnd)) {
-            // The start and the end need to wind up in separate blocks.
-            // Insert a paragraph separator to make that happen.
+        // We split the current paragraph in two to avoid nesting the blocks from the fragment inside the current block.
+        // For example paste <div>foo</div><div>bar</div><div>baz</div> into <div>x^x</div>, where ^ is the caret.  
+        // As long as the  div styles are the same, visually you'd expect: <div>xbar</div><div>bar</div><div>bazx</div>, 
+        // not <div>xbar<div>bar</div><div>bazx</div></div>
+        // FIXME: If this code is really about preventing block nesting, then the check should be !isEndOfBlock(visibleStart) and we 
+        // should split the block in two, instead of inserting a paragraph separator. In the meantime, it appears that code below 
+        // depends on this split happening when the paste position is not the start or end of a paragraph.
+        if (fragment.hasMoreThanOneBlock() && !isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
             insertParagraphSeparator();
             setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY).previous());
         }
@@ -681,15 +684,31 @@ void ReplaceSelectionCommand::doApply()
         RefPtr<Node> refNode = fragment.firstChild();
         RefPtr<Node> node = refNode ? refNode->nextSibling() : 0;
         Node *insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
-        bool insertionBlockIsRoot = insertionBlock == insertionBlock->rootEditableElement();
-        VisiblePosition visiblePos(insertionPos, DOWNSTREAM);
+        Node* insertionRoot = insertionPos.node()->rootEditableElement();
+        bool insertionBlockIsRoot = insertionBlock == insertionRoot;
+        VisiblePosition visibleInsertionPos(insertionPos, DOWNSTREAM);
         fragment.removeNode(refNode);
-        if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isStartOfBlock(visiblePos))
+        if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isStartOfBlock(visibleInsertionPos))
             insertNodeBeforeAndUpdateNodesInserted(refNode.get(), insertionBlock);
-        else if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isEndOfBlock(visiblePos)) {
+        else if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isEndOfBlock(visibleInsertionPos)) {
             insertNodeAfterAndUpdateNodesInserted(refNode.get(), insertionBlock);
         } else if (m_lastNodeInserted && !fragment.isBlockFlow(refNode.get())) {
-            Position pos = visiblePos.next().deepEquivalent().downstream();
+            // A non-null m_lastNodeInserted means we've done merging above.  That means everything in the first paragraph 
+            // of the fragment has been merged with everything up to the start of the paragraph where the paste was performed.  
+            // refNode is the first node in the second paragraph of the fragment to paste.  Since it's inline, we can't 
+            // insert it at insertionPos, because it wouldn't end up in its own paragraph.
+
+            // FIXME: Code above does paragraph splitting and so we are assured that visibleInsertionPos is the end of
+            // a paragraph, but the above splitting should eventually be only about preventing nesting.
+            ASSERT(isEndOfParagraph(visibleInsertionPos));
+            VisiblePosition next = visibleInsertionPos.next();
+            if (next.isNull() || next.deepEquivalent().node()->rootEditableElement() != insertionRoot) {
+                setEndingSelection(visibleInsertionPos);
+                insertParagraphSeparator();
+                next = visibleInsertionPos.next();
+            }
+            
+            Position pos = next.deepEquivalent().downstream();
             insertNodeAtAndUpdateNodesInserted(refNode.get(), pos.node(), pos.offset());
         } else {
             insertNodeAtAndUpdateNodesInserted(refNode.get(), insertionPos.node(), insertionPos.offset());
@@ -789,6 +808,7 @@ void ReplaceSelectionCommand::doApply()
             }
         }
 
+        // FIXME: This is a bad way to move a paragraph.  This could share code with DeleteSelectionCommand::mergeParagraphs().
         if (beyondEndNode) {
             updateLayout();
             RenderingInfoMap renderingInfo;

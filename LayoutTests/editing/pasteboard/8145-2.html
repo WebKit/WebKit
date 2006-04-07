@@ -1,0 +1,13 @@
+<p>This tests a change made with the fix for 8145.  The paragraph separator inserted to prevent nesting blocks from the fragment to paste inside the block where the paste occured was incorrectly inserted when the paste occured at the start of a paragraph.</p>
+<div id="test" style="border: 1px solid black;" contenteditable="true"></div>
+
+<script>
+var s = window.getSelection();
+var p = document.getElementById("test");
+p.innerHTML = "foo<br>bar<br>baz";
+s.setPosition(p, 0);
+s.modify("move", "forward", "word");
+s.modify("move", "forward", "character");
+var html = "<div>foo</div>bar";
+document.execCommand("InsertHTML", false, html);
+</script>

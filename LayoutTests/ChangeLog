@@ -1,3 +1,25 @@
+2006-04-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8145>
+        REGRESSION: Pasting text from TextEdit with a bold word into text field results in crash
+
+        * editing/pasteboard/8145-1-expected.checksum: Added.
+        * editing/pasteboard/8145-1-expected.png: Added.
+        * editing/pasteboard/8145-1-expected.txt: Added.
+        * editing/pasteboard/8145-1.html: Added.
+        * editing/pasteboard/8145-2-expected.checksum: Added.
+        * editing/pasteboard/8145-2-expected.png: Added.
+        * editing/pasteboard/8145-2-expected.txt: Added.
+        * editing/pasteboard/8145-2.html: Added.
+        * editing/pasteboard/8145-3-expected.checksum: Added.
+        * editing/pasteboard/8145-3-expected.png: Added.
+        * editing/pasteboard/8145-3-expected.txt: Added.
+        * editing/pasteboard/8145-3.html: Added.
+        * fast/forms/plaintext-mode-1-expected.txt:
+        * fast/forms/plaintext-mode-1.html:
+
 2006-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

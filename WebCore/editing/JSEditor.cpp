@@ -597,7 +597,7 @@ CommandMap *createCommandDictionary()
         { "ForeColor", { execForeColor, enabledAnySelection, stateNone, valueForeColor } },
         { "ForwardDelete", { execForwardDelete, enabledAnyEditableSelection, stateNone, valueNull } },
         { "Indent", { execIndent, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
-        { "InsertHTML", { execInsertHTML, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
+        { "InsertHTML", { execInsertHTML, enabledAnyEditableSelection, stateNone, valueNull } },
         { "InsertImage", { execInsertImage, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "InsertLineBreak", { execInsertLineBreak, enabledAnyEditableSelection, stateNone, valueNull } },
         { "InsertParagraph", { execInsertParagraph, enabledAnyEditableSelection, stateNone, valueNull } },

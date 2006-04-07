@@ -21,7 +21,7 @@ Success: document.queryCommandEnabled("FontSizeDelta") == true
 Success: document.queryCommandEnabled("ForeColor") == true
 Success: document.queryCommandEnabled("ForwardDelete") == true
 Success: document.queryCommandEnabled("Indent") == false
-Success: document.queryCommandEnabled("InsertHTML") == false
+Success: document.queryCommandEnabled("InsertHTML") == true
 Success: document.queryCommandEnabled("InsertImage") == false
 Success: document.queryCommandEnabled("InsertLineBreak") == true
 Success: document.queryCommandEnabled("InsertParagraph") == true
