@@ -1568,12 +1568,6 @@ NSMutableDictionary *countInvocations;
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
-    static bool CGContextInitialized = false;
-    if (!CGContextInitialized) {
-        WKDisableCGDeferredUpdates();
-        CGContextInitialized = true;
-    }
-
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
 

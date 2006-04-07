@@ -1,3 +1,16 @@
+2006-04-07  David Hyatt  <hyatt@apple.com>
+
+        Re-enable coalesced updates.  Our move to a single timer has essentially
+        implemented coalescing of updates anyway, so the regression has already
+        come back.  Since we have to deal with that now anyway, there's no reason
+        to visually tear also. :)
+
+        Reviewed by darin
+
+        * ChangeLog:
+        * WebView/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2006-04-05  Darin Adler  <darin@apple.com>
 
         - fixed a storage leak from that last check-in
