@@ -692,11 +692,11 @@ NSSize WebIconLargeSize = {128, 128};
     CFDictionarySetValue(_private->iconURLToExtraRetainCount, iconURLString, (void *)newRetainCount);
 
     if (newRetainCount == 1) {
-        ASSERT(![_private->iconsToSaveWithURLs containsObject:iconURLString]);
 
         // Either we know nothing about this icon and need to save it to disk, or we were planning to remove it
         // from disk (as set up in _forgetIconForIconURLString:) and should stop that process.
         if ([_private->iconsOnDiskWithURLs containsObject:iconURLString]) {
+            ASSERT(![_private->iconsToSaveWithURLs containsObject:iconURLString]);
             [_private->iconsToEraseWithURLs removeObject:iconURLString];
         } else {
             ASSERT(![_private->iconsToEraseWithURLs containsObject:iconURLString]);

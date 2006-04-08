@@ -1,3 +1,15 @@
+2006-04-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=8260
+        REGRESSION: Assertion failure: ![_private->iconsToSaveWithURLs containsObject:iconURLString] 
+        in WebIconDatabase.m:695-[WebIconDatabase(WebInternal) _retainIconForIconURLString:]
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _retainIconForIconURLString:]):
+        This new assertion was one block too high; moved it in.
+
 2006-04-07  David Hyatt  <hyatt@apple.com>
 
         A fix that makes coalesced updates work much better (and makes our
