@@ -2451,41 +2451,8 @@ static WebHTMLView *lastHitView = nil;
     _private->needsToApplyStyles = flag;
 }
 
-- (void)drawRect:(NSRect)rect
+- (void)drawSingleRect:(NSRect)rect
 {
-    LOG(View, "%@ drawing", self);
-
-    // Work around AppKit bug <rdar://problem/3875305> rect passed to drawRect: is too large.
-    // Ignore the passed-in rect and instead union in the rectangles from getRectsBeingDrawn.
-    // This does a better job of clipping out rects that are entirely outside the visible area.
-    const NSRect *rects;
-    int count;
-    [self getRectsBeingDrawn:&rects count:&count];
-
-    // If count == 0 here, use the rect passed in for drawing. This is a workaround for:
-    // <rdar://problem/3908282> REGRESSION (Mail): No drag image dragging selected text in Blot and Mail
-    // The reason for the workaround is that this method is called explicitly from the code
-    // to generate a drag image, and at that time, getRectsBeingDrawn:count: will return a zero count.
-    if (count > 0) {
-        rect = NSZeroRect;
-        int i;
-        for (i = 0; i < count; ++i) {
-            rect = NSUnionRect(rect, rects[i]);
-        }
-        if (rect.size.height == 0 || rect.size.width == 0) {
-            return;
-        }
-    }
-
-    BOOL subviewsWereSetAside = _private->subviewsSetAside;
-    if (subviewsWereSetAside) {
-        [self _restoreSubviews];
-    }
-
-#ifdef _KWQ_TIMING
-    double start = CFAbsoluteTimeGetCurrent();
-#endif
-
     [NSGraphicsContext saveGraphicsState];
     NSRectClip(rect);
         
@@ -2510,33 +2477,57 @@ static WebHTMLView *lastHitView = nil;
         ERROR("Exception caught while drawing: %@", localException);
         [localException raise];
     } NS_ENDHANDLER
+}
 
-#ifdef DEBUG_LAYOUT
-    NSRect vframe = [self frame];
-    [[NSColor blackColor] set];
-    NSBezierPath *path;
-    path = [NSBezierPath bezierPath];
-    [path setLineWidth:(float)0.1];
-    [path moveToPoint:NSMakePoint(0, 0)];
-    [path lineToPoint:NSMakePoint(vframe.size.width, vframe.size.height)];
-    [path closePath];
-    [path stroke];
-    path = [NSBezierPath bezierPath];
-    [path setLineWidth:(float)0.1];
-    [path moveToPoint:NSMakePoint(0, vframe.size.height)];
-    [path lineToPoint:NSMakePoint(vframe.size.width, 0)];
-    [path closePath];
-    [path stroke];
+- (void)drawRect:(NSRect)rect
+{
+    LOG(View, "%@ drawing", self);
+
+    const NSRect *rects;
+    int count;
+    [self getRectsBeingDrawn:&rects count:&count];
+
+    BOOL subviewsWereSetAside = _private->subviewsSetAside;
+    if (subviewsWereSetAside)
+        [self _restoreSubviews];
+
+#ifdef _KWQ_TIMING
+    double start = CFAbsoluteTimeGetCurrent();
 #endif
+
+    // If count == 0 here, use the rect passed in for drawing. This is a workaround for:
+    // <rdar://problem/3908282> REGRESSION (Mail): No drag image dragging selected text in Blot and Mail
+    // The reason for the workaround is that this method is called explicitly from the code
+    // to generate a drag image, and at that time, getRectsBeingDrawn:count: will return a zero count.
+    const int cRectThreshold = 10;
+    const float cWastedSpaceThreshold = 0.75f;
+    BOOL useUnionedRect = (count <= 1) || (count > cRectThreshold);
+    if (!useUnionedRect) {
+        // Attempt to guess whether or not we should use the unioned rect or the individual rects.
+        // We do this by computing the percentage of "wasted space" in the union.  If that wasted space
+        // is too large, then we will do individual rect painting instead.
+        float unionPixels = (rect.size.width * rect.size.height);
+        float singlePixels = 0;
+        for (int i = 0; i < count; ++i)
+            singlePixels += rects[i].size.width * rects[i].size.height;
+        float wastedSpace = 1 - (singlePixels / unionPixels);
+        if (wastedSpace <= cWastedSpaceThreshold)
+            useUnionedRect = YES;
+    }
+    
+    if (useUnionedRect)
+        [self drawSingleRect:rect];
+    else
+        for (int i = 0; i < count; ++i)
+            [self drawSingleRect:rects[i]];
 
 #ifdef _KWQ_TIMING
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
 
-    if (subviewsWereSetAside) {
+    if (subviewsWereSetAside)
         [self _setAsideSubviews];
-    }
 }
 
 // Turn off the additional clip while computing our visibleRect.

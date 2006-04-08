@@ -1,3 +1,17 @@
+2006-04-07  David Hyatt  <hyatt@apple.com>
+
+        A fix that makes coalesced updates work much better (and makes our
+        single animated GIF timer work better).  The new rect painting algorithm
+        for WebHTMLView will use the single unioned rect if the # of rects exceeds
+        a threshold (10 is my initial cut), or if the union has enough "wasted"
+        additional pixels (conservatively set at 75%).
+
+        Reviewed by darin
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray drawSingleRect:]):
+        (-[NSArray drawRect:]):
+
 2006-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
