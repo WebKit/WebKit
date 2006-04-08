@@ -224,6 +224,9 @@
 		93E26DDC08B2A4F400F85226 /* pcre_printint.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26DDB08B2A4F400F85226 /* pcre_printint.c */; };
 		93F0B3AB09BB4DC00068FCE3 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F0B3A909BB4DC00068FCE3 /* Parser.cpp */; };
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; };
+		E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = E195678F09E7CF1200B89D13 /* UnicodeIcu.h */; };
+		E195679809E7CF1200B89D13 /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679409E7CF1200B89D13 /* Unicode.h */; };
+		E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679509E7CF1200B89D13 /* UnicodeCategory.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -436,6 +439,9 @@
 		93F0B3A909BB4DC00068FCE3 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		93F0B3AA09BB4DC00068FCE3 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; tabWidth = 8; };
+		E195678F09E7CF1200B89D13 /* UnicodeIcu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeIcu.h; sourceTree = "<group>"; };
+		E195679409E7CF1200B89D13 /* Unicode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unicode.h; sourceTree = "<group>"; };
+		E195679509E7CF1200B89D13 /* UnicodeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeCategory.h; sourceTree = "<group>"; };
 		F5341390030CEEB1018BE7F3 /* reference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reference.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F5341391030CEEB1018BE7F3 /* reference.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = reference.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5341394030CF5F8018BE7F3 /* reference_list.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reference_list.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -641,6 +647,7 @@
 		65162EF108E6A21C007556CD /* kxmlcore */ = {
 			isa = PBXGroup;
 			children = (
+				E195678D09E7CF1200B89D13 /* unicode */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
@@ -802,6 +809,24 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		E195678D09E7CF1200B89D13 /* unicode */ = {
+			isa = PBXGroup;
+			children = (
+				E195678E09E7CF1200B89D13 /* icu */,
+				E195679409E7CF1200B89D13 /* Unicode.h */,
+				E195679509E7CF1200B89D13 /* UnicodeCategory.h */,
+			);
+			path = unicode;
+			sourceTree = "<group>";
+		};
+		E195678E09E7CF1200B89D13 /* icu */ = {
+			isa = PBXGroup;
+			children = (
+				E195678F09E7CF1200B89D13 /* UnicodeIcu.h */,
+			);
+			path = icu;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -916,6 +941,9 @@
 				65FB3F4F09D11B2400F49DEB /* date_object.lut.h in Headers */,
 				65FB3F5109D11B2400F49DEB /* grammar.h in Headers */,
 				65FB3F5409D11B2400F49DEB /* regexp_object.lut.h in Headers */,
+				E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */,
+				E195679809E7CF1200B89D13 /* Unicode.h in Headers */,
+				E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KJS_UNICODE_COMMON_H
-#define KJS_UNICODE_COMMON_H
+#ifndef KJS_UNICODE_CATEGORY_H
+#define KJS_UNICODE_CATEGORY_H
 
 namespace KXMLCore {
   namespace Unicode {

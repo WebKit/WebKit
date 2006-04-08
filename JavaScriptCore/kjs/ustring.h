@@ -84,15 +84,6 @@ namespace KJS {
      * @return the 16 bit Unicode value of the character
      */
     unsigned short unicode() const { return uc; }
-  public:
-    /**
-     * @return The character converted to lower case.
-     */
-    UChar toLower() const;
-    /**
-     * @return The character converted to upper case.
-     */
-    UChar toUpper() const;
 
     unsigned short uc;
   };
@@ -141,14 +132,6 @@ namespace KJS {
      * @return Higher byte.
      */
     unsigned char high() const { return ref().uc >> 8; }
-    /**
-     * @return Character converted to lower case.
-     */
-    UChar toLower() const { return ref().toLower(); }
-    /**
-     * @return Character converted to upper case.
-     */
-    UChar toUpper() const  { return ref().toUpper(); }
   private:
     // not implemented, can only be constructed from UString
     UCharReference();

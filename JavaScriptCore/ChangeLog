@@ -1,3 +1,40 @@
+2006-04-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8264
+        toLowerCase and toUpperCase don't honor special mappings
+
+        Test: fast/js/string-capitalization.html
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added KXMLCore::Unicode headers to the project.
+        * icu/unicode/putil.h: Added (copied from WebCore).
+        * icu/unicode/uiter.h: Ditto.
+        * icu/unicode/ustring.h: Ditto.
+        * kjs/string_object.cpp:
+        (StringProtoFunc::callAsFunction): Use the new KXMLCore::Unicode::toUpper() and toLower().
+        * kjs/ustring.cpp: Removed unused (and evil) UChar::toLower() and toUpper().
+        * kjs/ustring.h: Ditto.
+
+        * kxmlcore/unicode/Unicode.h: Corrected capitalization of the word Unicode.
+        * kxmlcore/unicode/UnicodeCategory.h: Renamed include guard macro to match file name.
+
+        * kxmlcore/unicode/icu/UnicodeIcu.h:
+        (KXMLCore::Unicode::toLower): Work on strings, not individual characters. Use ICU root locale.
+        (KXMLCore::Unicode::toUpper): Ditto.
+        (KXMLCore::Unicode::isFormatChar): Use int32_t, which can hold a complete code point.
+        (KXMLCore::Unicode::isSeparatorSpace): Ditto.
+        (KXMLCore::Unicode::category): Ditto.
+        * kxmlcore/unicode/qt4/UnicodeQt4.h:
+        (KXMLCore::Unicode::toLower): Work on strings, not individual characters.
+        (KXMLCore::Unicode::toUpper): Ditto.
+        (KXMLCore::Unicode::isFormatChar): Use int32_t, which can hold a complete code point.
+        (KXMLCore::Unicode::isSeparatorSpace): Ditto.
+        (KXMLCore::Unicode::category): Ditto.
+
+        * tests/mozilla/ecma/String/15.5.4.12-1.js: Corrected expected results.
+        * tests/mozilla/ecma/String/15.5.4.12-5.js: Corrected expected results.
+
 2006-04-05  Darin Adler  <darin@apple.com>
 
         - attempt to fix Windows build

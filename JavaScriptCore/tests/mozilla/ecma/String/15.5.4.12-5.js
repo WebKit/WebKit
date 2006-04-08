@@ -172,6 +172,13 @@ function GetUnicodeValues( c ) {
         return u;
     }
 
+    // LATIN SMALL LETTER N PRECEDED BY APOSTROPHE, uppercase takes two code points
+    if (c == 0x0149) {
+        u[0] = 0x02bc;
+        u[1] = c;
+        return u;
+    }
+    
     if ( (c >= 0x0139 && c < 0x0149) || (c > 0x0178 && c < 0x017F) ) {
         if ( c % 2 == 1 ) {
         // if it's odd, it's a capital and the lower case is c +1
@@ -265,6 +272,11 @@ function GetUnicodeValues( c ) {
     }
     if ( c >= 0x0561 && c < 0x0587 ) {
         u[0] = c - 48;
+        u[1] = c;
+        return u;
+    }
+    if (c == 0x0587) {
+        u[0] = 0x0535;
         u[1] = c;
         return u;
     }

@@ -34,6 +34,7 @@
 #include "error_object.h"
 #include <stdio.h>
 #include "string_object.lut.h"
+#include <kxmlcore/unicode/Unicode.h>
 
 using namespace KJS;
 
@@ -623,19 +624,37 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     }
     break;
   case ToLowerCase:
-  case ToLocaleLowerCase: // FIXME: To get this 100% right we need to detect Turkish and change I to lowercase i without a dot.
+  case ToLocaleLowerCase: { // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
     u = s;
-    for (i = 0; i < len; i++)
-      u[i] = u[i].toLower();
-    result = jsString(u);
+    u.copyForWriting();
+    uint16_t* dataPtr = reinterpret_cast<uint16_t*>(u.rep()->data());
+    uint16_t* destIfNeeded;
+
+    int len = KXMLCore::Unicode::toLower(dataPtr, u.size(), destIfNeeded);
+    if (len >= 0)
+        result = jsString(UString(reinterpret_cast<UChar *>(destIfNeeded ? destIfNeeded : dataPtr), len));
+    else
+        result = jsString(s);
+
+    free(destIfNeeded);
     break;
+  }
   case ToUpperCase:
-  case ToLocaleUpperCase: // FIXME: To get this 100% right we need to detect Turkish and change i to uppercase I with a dot.
+  case ToLocaleUpperCase: { // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
     u = s;
-    for (i = 0; i < len; i++)
-      u[i] = u[i].toUpper();
-    result = jsString(u);
+    u.copyForWriting();
+    uint16_t* dataPtr = reinterpret_cast<uint16_t*>(u.rep()->data());
+    uint16_t* destIfNeeded;
+
+    int len = KXMLCore::Unicode::toUpper(dataPtr, u.size(), destIfNeeded);
+    if (len >= 0)
+        result = jsString(UString(reinterpret_cast<UChar *>(destIfNeeded ? destIfNeeded : dataPtr), len));
+    else
+        result = jsString(s);
+
+    free(destIfNeeded);
     break;
+  }
 #ifndef KJS_PURE_ECMA
   case Big:
     result = jsString("<big>" + s + "</big>");

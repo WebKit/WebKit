@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2006 George Staikos <staikos@kde.org>
+ *  Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,28 +25,65 @@
 #define KJS_UNICODE_ICU_H
 
 #include <unicode/uchar.h>
+#include <unicode/ustring.h>
 
 #include "../UnicodeCategory.h"
 
 namespace KXMLCore {
   namespace Unicode {
-    inline unsigned short toLower(unsigned short c) {
-      return u_tolower(c);
+
+    inline int toLower(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
+    {
+      UErrorCode err = U_ZERO_ERROR;
+      int resultLength;
+      destIfNeeded = 0;
+
+      resultLength = u_strToLower(0, 0, str, strLength, "", &err);
+
+      if (resultLength <= strLength) {
+        err = U_ZERO_ERROR;
+        u_strToLower(str, resultLength, str, strLength, "", &err);
+      } else {
+        err = U_ZERO_ERROR;
+        destIfNeeded = (uint16_t*)malloc(resultLength * sizeof(uint16_t));
+        u_strToLower(destIfNeeded, resultLength, str, strLength, "", &err);
+      }
+
+      return U_FAILURE(err) ? -1 : resultLength;
     }
 
-    inline unsigned short toUpper(unsigned short c) {
-      return u_toupper(c);
+    inline int toUpper(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
+    {
+      UErrorCode err = U_ZERO_ERROR;
+      int resultLength;
+      destIfNeeded = 0;
+
+      resultLength = u_strToUpper(0, 0, str, strLength, "", &err);
+
+      if (resultLength <= strLength) {
+        err = U_ZERO_ERROR;
+        u_strToUpper(str, resultLength, str, strLength, "", &err);
+      } else {
+        err = U_ZERO_ERROR;
+        destIfNeeded = (uint16_t*)malloc(resultLength * sizeof(uint16_t));
+        u_strToUpper(destIfNeeded, resultLength, str, strLength, "", &err);
+      }
+
+      return U_FAILURE(err) ? -1 : resultLength;
     }
 
-    inline bool isFormatChar(unsigned short c) {
+    inline bool isFormatChar(int32_t c)
+    {
       return u_charType(c) == U_FORMAT_CHAR;
     }
 
-    inline bool isSeparatorSpace(unsigned short c) {
+    inline bool isSeparatorSpace(int32_t c)
+    {
       return u_charType(c) == U_SPACE_SEPARATOR;
     }
 
-    inline CharCategory category(unsigned short c) {
+    inline CharCategory category(int32_t c)
+    {
       switch (u_charType(c)) {
         case U_NON_SPACING_MARK:
           return Mark_NonSpacing;

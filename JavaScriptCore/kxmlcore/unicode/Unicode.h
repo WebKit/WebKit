@@ -30,7 +30,7 @@
 #elif USE(ICU_UNICODE)
 #include "icu/UnicodeIcu.h"
 #else
-#error "Unknown unicode implementation"
+#error "Unknown Unicode implementation"
 #endif
 
 #endif

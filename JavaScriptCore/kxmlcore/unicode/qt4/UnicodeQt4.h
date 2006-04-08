@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2006 George Staikos <staikos@kde.org>
+ *  Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -29,24 +30,43 @@
 
 namespace KXMLCore {
   namespace Unicode {
-    inline unsigned short toLower(unsigned short c) {
-      return (unsigned short)QChar(c).toLower().unicode();
+    inline int toLower(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
+    {
+      destIfNeeded = 0;
+
+      for (int i = 0; i < strLength; ++i)
+        str[i] = QChar(str[i]).toLower().unicode();
+
+      return strLength;
     }
 
-    inline unsigned short toUpper(unsigned short c) {
-      return (unsigned short)QChar(c).toUpper().unicode();
+    inline int toUpper(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
+    {
+      destIfNeeded = 0;
+
+      for (int i = 0; i < strLength; ++i)
+        str[i] = QChar(str[i]).toUpper().unicode();
+
+      return strLength;
     }
 
-    inline bool isFormatChar(unsigned short c) {
-      return QChar(c).category() == QChar::Other_Format;
+    inline bool isFormatChar(int32_t c)
+    {
+      return (c & 0xFFFF == 0) && (QChar(c).category() == QChar::Other_Format);
     }
 
-    inline bool isSeparatorSpace(unsigned short c) {
-      return QChar(c).category() == QChar::Separator_Space;
+    inline bool isSeparatorSpace(int32_t c)
+    {
+      return (c & 0xFFFF == 0) && (QChar(c).category() == QChar::Separator_Space);
     }
 
-    inline CharCategory category(unsigned short c) {
-      switch (QChar(c).category()) {
+    inline CharCategory category(int32_t c)
+    {
+      // FIXME: implement support for non-BMP code points
+      if (c & 0xFFFF != 0)
+        return NoCategory;
+        
+      switch (QChar((unsigned short)c).category()) {
         case QChar::Mark_NonSpacing:
           return Mark_NonSpacing;
         case QChar::Mark_SpacingCombining:
