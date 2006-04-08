@@ -2,6 +2,12 @@
 
         Reviewed by Darin.
 
+        One more attempt - use reinterpret_cast, rather than static_cast.
+
+2006-04-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         An attempt to fix Win32 build - ICU uses wchar_t on Windows, so we need a type cast.
 
         * kxmlcore/unicode/icu/UnicodeIcu.h:

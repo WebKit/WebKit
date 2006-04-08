@@ -38,15 +38,15 @@ namespace KXMLCore {
       int resultLength;
       destIfNeeded = 0;
 
-      resultLength = u_strToLower(0, 0, static_cast< ::UChar*>(str), strLength, "", &err);
+      resultLength = u_strToLower(0, 0, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
 
       if (resultLength <= strLength) {
         err = U_ZERO_ERROR;
-        u_strToLower(static_cast< ::UChar*>(str), resultLength, static_cast< ::UChar*>(str), strLength, "", &err);
+        u_strToLower(reinterpret_cast< ::UChar*>(str), resultLength, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
       } else {
         err = U_ZERO_ERROR;
         destIfNeeded = (uint16_t*)malloc(resultLength * sizeof(uint16_t));
-        u_strToLower(destIfNeeded, resultLength, str, strLength, "", &err);
+        u_strToLower(reinterpret_cast< ::UChar*>(destIfNeeded), resultLength, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
       }
 
       return U_FAILURE(err) ? -1 : resultLength;
@@ -58,15 +58,15 @@ namespace KXMLCore {
       int resultLength;
       destIfNeeded = 0;
 
-      resultLength = u_strToUpper(0, 0, static_cast< ::UChar*>(str), strLength, "", &err);
+      resultLength = u_strToUpper(0, 0, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
 
       if (resultLength <= strLength) {
         err = U_ZERO_ERROR;
-        u_strToUpper(static_cast< ::UChar*>(str), resultLength, static_cast< ::UChar*>(str), strLength, "", &err);
+        u_strToUpper(reinterpret_cast< ::UChar*>(str), resultLength, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
       } else {
         err = U_ZERO_ERROR;
         destIfNeeded = (uint16_t*)malloc(resultLength * sizeof(uint16_t));
-        u_strToUpper(destIfNeeded, resultLength, str, strLength, "", &err);
+        u_strToUpper(reinterpret_cast< ::UChar*>(destIfNeeded), resultLength, reinterpret_cast< ::UChar*>(str), strLength, "", &err);
       }
 
       return U_FAILURE(err) ? -1 : resultLength;
