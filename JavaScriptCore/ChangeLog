@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        An attempt to fix Win32 build - ICU uses wchar_t on Windows, so we need a type cast.
+
+        * kxmlcore/unicode/icu/UnicodeIcu.h:
+        (KXMLCore::Unicode::toLower):
+        (KXMLCore::Unicode::toUpper):
+
+2006-04-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8264
         toLowerCase and toUpperCase don't honor special mappings
 
