@@ -1,3 +1,15 @@
+2006-04-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Rolled the fix for 8250 back in and fixed a bug:
+        The local variables for the first and last nodes in the fragment
+        need to be reset when the fragment is changed for plaintext-only mode
+        or a change from the beforetextinserted event handler.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+
 2006-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

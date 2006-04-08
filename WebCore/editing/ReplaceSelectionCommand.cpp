@@ -65,13 +65,13 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
     if (!m_document)
         return;
 
-    if (!fragment) {
+    if (!m_fragment) {
         m_type = EmptyFragment;
         return;
     }
-    
-    Node *firstChild = fragment->firstChild();
-    Node *lastChild = fragment->lastChild();
+
+    Node* firstChild = m_fragment->firstChild();
+    Node* lastChild = m_fragment->lastChild();
 
     if (!firstChild) {
         m_type = EmptyFragment;
@@ -80,13 +80,36 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
     
     m_type = firstChild == lastChild && firstChild->isTextNode() ? SingleTextNodeFragment : TreeFragment;
     
-    Node *node = fragment->firstChild();
+    ASSERT(editableRoot);
+    if (!editableRoot)
+        return;
+            
+    RefPtr<Node> holder = insertFragmentForTestRendering();
+    
+    RefPtr<Range> range = Selection::selectionFromContentsOfNode(holder.get()).toRange();
+    String text = plainText(range.get());
+    String newText = text.copy();
+    // Give the root a chance to change the text.
+    RefPtr<Event> evt = new BeforeTextInsertedEvent(newText);
+    ExceptionCode ec = 0;
+    editableRoot->dispatchEvent(evt, ec, true);
+    ASSERT(ec == 0);
+    if (text != newText || !editableRoot->isContentRichlyEditable()) {
+        m_fragment = createFragmentFromText(document, newText.deprecatedString());
+        firstChild = m_fragment->firstChild();
+        lastChild = m_fragment->firstChild();
+        
+        removeNode(holder);
+        holder = insertFragmentForTestRendering();
+    }
+    
+    Node *node = firstChild;
     Node *newlineAtStartNode = 0;
     Node *newlineAtEndNode = 0;
     while (node) {
         Node *next = node->traverseNextNode();
         if (isInterchangeNewlineNode(node)) {
-            if (next || node == fragment->firstChild()) {
+            if (next || node == firstChild) {
                 m_hasInterchangeNewlineAtStart = true;
                 newlineAtStartNode = node;
             }
@@ -112,27 +135,6 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
         removeNode(newlineAtStartNode);
     if (newlineAtEndNode)
         removeNode(newlineAtEndNode);
-    
-    ASSERT(editableRoot);
-    if (!editableRoot)
-        return;
-            
-    RefPtr<Node> holder = insertFragmentForTestRendering();
-    
-    Selection selectionAroundFragment = Selection::selectionFromContentsOfNode(holder.get());
-    RefPtr<Range> range = selectionAroundFragment.toRange();
-    String text = plainText(range.get());
-    String newText = text.copy();
-    // Give the root a chance to change the text.
-    RefPtr<Event> evt = new BeforeTextInsertedEvent(newText);
-    ExceptionCode ec = 0;
-    editableRoot->dispatchEvent(evt, ec, true);
-    ASSERT(ec == 0);
-    if (text != newText || !editableRoot->isContentRichlyEditable()) {
-        removeNode(holder);
-        m_fragment = createFragmentFromText(document, newText.deprecatedString());
-        holder = insertFragmentForTestRendering();
-     }
     
     saveRenderingInfo(holder.get());
     removeUnrenderedNodes(holder.get());
