@@ -1,3 +1,24 @@
+2006-04-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8134
+          REGRESSION: dragging down from the middle of a text field does not select to end of field
+
+        * editing/Selection.cpp:
+        (WebCore::comparePositions): Added. Takes shadow content into account.
+        (WebCore::Selection::validate): Changed to call comparePositions instead of calling
+        Range::compareBoundaryPoints directly. Also removed unneeded code to redundantly set
+        m_start and m_end to null and did a bit of reformatting.
+
+        - some tiny efficiency improvements to the tokenizer -- no measurable speedup, but removes
+          a little bit of unneeded code
+
+        * html/HTMLTokenizer.cpp: (WebCore::HTMLTokenizer::parseTag): Changed all the places
+        that do "unsigned short x = *c" to "unsigned short x = c->unicode()" when c is a QChar,
+        otherwise we do an unnecessary conversion to char (which requires a branch to see if
+        the c fits in a char).
+
 2006-04-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

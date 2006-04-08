@@ -138,6 +138,38 @@ bool Selection::expandUsingGranularity(TextGranularity granularity)
     return true;
 }
 
+// Compare two positions, taking into account the possibility that one or both
+// could be inside a shadow tree. Only works for non-null values.
+static int comparePositions(const Position& a, const Position& b)
+{
+    Node* nodeA = a.node();
+    ASSERT(nodeA);
+    Node* nodeB = b.node();
+    ASSERT(nodeB);
+    int offsetA = a.offset();
+    int offsetB = b.offset();
+
+    Node* shadowAncestorA = nodeA->shadowAncestorNode();
+    if (shadowAncestorA == nodeA)
+        shadowAncestorA = 0;
+    Node* shadowAncestorB = nodeB->shadowAncestorNode();
+    if (shadowAncestorB == nodeB)
+        shadowAncestorB = 0;
+
+    if (shadowAncestorA != shadowAncestorB) {
+        if (shadowAncestorA) {
+            nodeA = shadowAncestorA;
+            offsetA = 0;
+        }
+        if (shadowAncestorB) {
+            nodeB = shadowAncestorB;
+            offsetB = 0;
+        }
+    }
+
+    return Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
+}
+
 void Selection::validate()
 {
     // Move the selection to rendered positions, if possible.
@@ -162,13 +194,6 @@ void Selection::validate()
             m_base = pos;
             m_extent = pos;
         }
-        else {
-            // We have no position to work with. See if the BODY element of the page
-            // is contentEditable. If it is, put the caret there.
-            //Node *node = document()
-            m_start.clear();
-            m_end.clear();
-        }
         m_baseIsFirst = true;
     } else if (m_base.isNull()) {
         m_base = m_extent;
@@ -177,7 +202,7 @@ void Selection::validate()
         m_extent = m_base;
         m_baseIsFirst = true;
     } else {
-        m_baseIsFirst = Range::compareBoundaryPoints(m_base.node(), m_base.offset(), m_extent.node(), m_extent.offset()) <= 0;
+        m_baseIsFirst = comparePositions(m_base, m_extent) <= 0;
     }
 
     if (m_baseIsFirst) {
@@ -187,7 +212,7 @@ void Selection::validate()
         m_start = m_extent;
         m_end = m_base;
     }
-    
+
     // Expand the selection if requested.
     switch (m_granularity) {
         case CharacterGranularity:
@@ -209,7 +234,6 @@ void Selection::validate()
             if (isEndOfDocument(end) || (isEndOfLine(end) && !isStartOfLine(end) && !isEndOfParagraph(end)))
                 side = LeftWordIfOnBoundary;
             m_end = endOfWord(end, side).deepEquivalent();
-            
             break;
         }
         case LineGranularity: {
@@ -225,11 +249,10 @@ void Selection::validate()
             m_end = end.deepEquivalent();
             break;
         }
-        case LineBoundary: {
+        case LineBoundary:
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfLine(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
-        }
         case ParagraphGranularity: {
             VisiblePosition pos(m_start, m_affinity);
             if (isStartOfLine(pos) && isEndOfDocument(pos))

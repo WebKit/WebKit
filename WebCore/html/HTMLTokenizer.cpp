@@ -864,7 +864,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             bool finish = false;
             unsigned int ll = kMin(src.length(), CBUFLEN-cBufferPos);
             while(ll--) {
-                unsigned short curchar = *src;
+                unsigned short curchar = src->unicode();
                 if(curchar <= ' ' || curchar == '>' ) {
                     finish = true;
                     break;
@@ -912,14 +912,11 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             break;
         }
         case SearchAttribute:
-        {
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
-                qDebug("SearchAttribute");
+            qDebug("SearchAttribute");
 #endif
-            bool atespace = false;
-            unsigned short curchar;
             while(!src.isEmpty()) {
-                curchar = *src;
+                unsigned short curchar = src->unicode();
                 // In this mode just ignore any quotes we encounter and treat them like spaces.
                 if (curchar > ' ' && curchar != '\'' && curchar != '"') {
                     if (curchar == '<' || curchar == '>')
@@ -930,21 +927,17 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     cBufferPos = 0;
                     break;
                 }
-                atespace = true;
                 ++src;
             }
             break;
-        }
         case AttributeName:
         {
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
-                qDebug("AttributeName");
+            qDebug("AttributeName");
 #endif
-            unsigned short curchar;
             int ll = kMin(src.length(), CBUFLEN-cBufferPos);
-
             while(ll--) {
-                curchar = *src;
+                unsigned short curchar = src->unicode();
                 if (curchar <= '>' && (curchar >= '=' || curchar <= ' ')) {
                     cBuffer[cBufferPos] = '\0';
                     attrName = AtomicString(cBuffer);
@@ -978,14 +971,11 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             break;
         }
         case SearchEqual:
-        {
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
-                qDebug("SearchEqual");
+            qDebug("SearchEqual");
 #endif
-            unsigned short curchar;
-            bool atespace = false;
             while(!src.isEmpty()) {
-                curchar = src->unicode();
+                unsigned short curchar = src->unicode();
                 // In this mode just ignore any quotes we encounter and treat them like spaces.
                 if (curchar > ' ' && curchar != '\'' && curchar != '"') {
                     if(curchar == '=') {
@@ -1002,16 +992,12 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     }
                     break;
                 }
-                atespace = true;
                 ++src;
             }
             break;
-        }
         case SearchValue:
-        {
-            unsigned short curchar;
             while(!src.isEmpty()) {
-                curchar = src->unicode();
+                unsigned short curchar = src->unicode();
                 if(curchar > ' ') {
                     if(( curchar == '\'' || curchar == '\"' )) {
                         tquote = curchar == '\"' ? DoubleQuote : SingleQuote;
@@ -1025,17 +1011,14 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 ++src;
             }
             break;
-        }
         case QuotedValue:
-        {
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
-                qDebug("QuotedValue");
+            qDebug("QuotedValue");
 #endif
-            unsigned short curchar;
             while(!src.isEmpty()) {
                 checkBuffer();
 
-                curchar = src->unicode();
+                unsigned short curchar = src->unicode();
                 if (curchar == '>' && attrName.isEmpty()) {
                     // Handle a case like <img '>.  Just go ahead and be willing
                     // to close the whole tag.  Don't consume the character and
@@ -1085,16 +1068,13 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 ++src;
             }
             break;
-        }
         case Value:
-        {
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
             qDebug("Value");
 #endif
-            unsigned short curchar;
             while(!src.isEmpty()) {
                 checkBuffer();
-                curchar = src->unicode();
+                unsigned short curchar = src->unicode();
                 if(curchar <= '>' && !src.escaped()) {
                     // parse Entities
                     if ( curchar == '&' )
@@ -1119,7 +1099,6 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 ++src;
             }
             break;
-        }
         case SearchEnd:
         {
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1

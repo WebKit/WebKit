@@ -1,3 +1,15 @@
+2006-04-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8134
+          REGRESSION: dragging down from the middle of a text field does not select to end of field
+
+        * fast/forms/input-text-drag-down-expected.checksum: Added.
+        * fast/forms/input-text-drag-down-expected.png: Added.
+        * fast/forms/input-text-drag-down-expected.txt: Added.
+        * fast/forms/input-text-drag-down.html: Added.
+
 2006-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
