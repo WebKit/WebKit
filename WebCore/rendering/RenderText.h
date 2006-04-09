@@ -30,6 +30,8 @@
 #include <assert.h>
 #include <kxmlcore/PassRefPtr.h>
 
+typedef void UBreakIterator;
+
 namespace WebCore {
 
 // Define a constant for soft hyphen's unicode value.
@@ -186,6 +188,8 @@ protected: // members
     mutable bool m_allAscii:1;
     int m_monospaceCharacterWidth;
 };
+
+UBreakIterator* characterBreakIterator(const StringImpl*);
 
 }
 

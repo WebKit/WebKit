@@ -88,14 +88,13 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
     
     RefPtr<Range> range = Selection::selectionFromContentsOfNode(holder.get()).toRange();
     String text = plainText(range.get());
-    String newText = text.copy();
     // Give the root a chance to change the text.
-    RefPtr<Event> evt = new BeforeTextInsertedEvent(newText);
+    RefPtr<BeforeTextInsertedEvent> evt = new BeforeTextInsertedEvent(text);
     ExceptionCode ec = 0;
     editableRoot->dispatchEvent(evt, ec, true);
     ASSERT(ec == 0);
-    if (text != newText || !editableRoot->isContentRichlyEditable()) {
-        m_fragment = createFragmentFromText(document, newText.deprecatedString());
+    if (text != evt->text() || !editableRoot->isContentRichlyEditable()) {
+        m_fragment = createFragmentFromText(document, evt->text().deprecatedString());
         firstChild = m_fragment->firstChild();
         lastChild = m_fragment->firstChild();
         

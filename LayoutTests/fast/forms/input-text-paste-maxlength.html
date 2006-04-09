@@ -1,0 +1,76 @@
+<style>
+table { font: 11px 'Lucida Grande' }
+.result { color: GrayText; padding-left: 4px; padding-right: 8px }
+.result:before { content: "expected: " }
+</style>
+
+<table>
+
+<tr><td><input type="text" id="f" size="5" maxlength="4"></td>
+<td class="result">123</td>
+<td class="description">set value attribute that violates maxlength (with pasted value)</td></tr>
+
+<tr><td><input type="text" id="e" size="5" maxlength="4"></td>
+<td class="result">1234</td>
+<td class="description">set value property that violates maxlength (with pasted value)</td></tr>
+
+<tr><td><input type="text" id="d" size="5"></td>
+<td class="result">1234</td>
+<td class="description">set maxlength attribute that is smaller than pasted value</td></tr>
+
+<tr><td><input type="text" id="c" size="5"></td>
+<td class="result">1234</td>
+<td class="description">set maxLength property that is smaller than pasted value</td></tr>
+
+<tr><td><input type="text" id="j" size="5" maxlength="4"></td>
+<td class="result">123</td>
+<td class="description">set value attribute that violates maxlength (with pasted value)</td></tr>
+
+<tr><td><input type="text" id="i" size="5" maxlength="4"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">set value property that violates maxlength (with pasted value)</td></tr>
+
+<tr><td><input type="text" id="h" size="5"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">set maxlength attribute that is smaller than pasted value</td></tr>
+
+<tr><td><input type="text" id="g" size="5"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">set maxLength property that is smaller than pasted value</td></tr>
+
+<tr><td><input type="text" id="k" size="5" maxlength="4"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">pasting too much text</td></tr>
+
+</table>
+
+<script>
+var fancyX = "x" + String.fromCharCode(0x305) + String.fromCharCode(0x332);
+document.getElementById("c").focus();
+document.execCommand("InsertHTML", false, "12345");
+document.getElementById("c").maxLength = 4;
+document.getElementById("d").focus();
+document.execCommand("InsertHTML", false, "12345");
+document.getElementById("d").setAttribute('maxlength', 4);
+document.getElementById("e").focus();
+document.execCommand("InsertHTML", false, "123");
+document.getElementById("e").value = '12345';
+document.getElementById("f").focus();
+document.execCommand("InsertHTML", false, "123");
+document.getElementById("f").setAttribute('value', '12345');
+document.getElementById("g").focus();
+document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
+document.getElementById("g").maxLength = 4;
+document.getElementById("h").focus();
+document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
+document.getElementById("h").setAttribute('maxlength', 4);
+document.getElementById("i").focus();
+document.execCommand("InsertHTML", false, "123");
+document.getElementById("i").value = '12' + fancyX + '45';
+document.getElementById("j").focus();
+document.execCommand("InsertHTML", false, "123");
+document.getElementById("j").setAttribute('value', '12' + fancyX + '45');
+document.getElementById("k").focus();
+document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
+document.getElementById("k").blur();
+</script>

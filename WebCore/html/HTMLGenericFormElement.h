@@ -91,8 +91,6 @@ public:
      */
     virtual bool appendFormData(FormDataList&, bool) { return false; }
 
-    virtual bool isEditable();
-
     virtual DeprecatedString state();
     DeprecatedString findMatchingState(DeprecatedStringList &states);
 

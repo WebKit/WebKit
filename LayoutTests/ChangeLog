@@ -1,3 +1,19 @@
+2006-04-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7622
+          REGRESSION: New text fields should compute maxlength considering composed character sequences
+
+        * fast/forms/input-text-maxlength-expected.checksum: Added.
+        * fast/forms/input-text-maxlength-expected.png: Added.
+        * fast/forms/input-text-maxlength-expected.txt: Added.
+        * fast/forms/input-text-maxlength.html: Added.
+        * fast/forms/input-text-paste-maxlength-expected.checksum: Added.
+        * fast/forms/input-text-paste-maxlength-expected.png: Added.
+        * fast/forms/input-text-paste-maxlength-expected.txt: Added.
+        * fast/forms/input-text-paste-maxlength.html: Added.
+
 2006-04-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

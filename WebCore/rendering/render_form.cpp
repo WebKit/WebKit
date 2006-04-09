@@ -534,7 +534,7 @@ void RenderFileButton::returnPressed(Widget*)
 
 void RenderFileButton::valueChanged(Widget*)
 {
-    element()->m_value = static_cast<KWQFileButton*>(widget())->filename();
+    element()->setValueFromRenderer(static_cast<KWQFileButton*>(widget())->filename());
     element()->onChange();
 }
 

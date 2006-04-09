@@ -226,11 +226,6 @@ bool HTMLGenericFormElement::isMouseFocusable() const
     return false;
 }
 
-bool HTMLGenericFormElement::isEditable()
-{
-    return false;
-}
-
 // Special chars used to encode form state strings.
 // We pick chars that are unlikely to be used in an HTML attr, so we rarely have to really encode.
 const char stateSeparator = '&';

@@ -35,7 +35,6 @@ using namespace HTMLNames;
 HTMLIsIndexElement::HTMLIsIndexElement(Document *doc, HTMLFormElement *f)
     : HTMLInputElement(isindexTag, doc, f)
 {
-    m_type = TEXT;
     m_name = "isindex";
 }
 

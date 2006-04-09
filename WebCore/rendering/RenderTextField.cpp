@@ -87,17 +87,6 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
 void RenderTextField::updateFromElement()
 {
     if (element()->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(element());
-        String value = input->value().copy();
-        if (value.isNull())
-            value = "";
-        unsigned ml = input->maxLength();
-        bool valueHasChanged = false;
-        if (value.length() > ml) {
-            value.truncate(ml);
-            valueHasChanged = true;
-        }
-            
         if (!m_div) {
             // Create the div and give it a parent, renderer, and style
             m_div = new HTMLTextFieldInnerElement(document(), node());
@@ -115,8 +104,12 @@ void RenderTextField::updateFromElement()
 
         m_div->renderer()->style()->setUserModify(static_cast<HTMLGenericFormElement *>(element())->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
         
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(element());
         if (!input->valueMatchesRenderer()) {
-            String oldText = this->text();
+            String oldText = text();
+            String value = input->value().copy();
+            if (value.isNull())
+                value = "";
             value.replace(QChar('\\'), backslashAsCurrencySymbol());
             if (value != oldText) {
                 ExceptionCode ec = 0;
@@ -125,9 +118,6 @@ void RenderTextField::updateFromElement()
             }
             input->setValueMatchesRenderer();
         }
-        
-        if (valueHasChanged)
-            input->setValueFromRenderer(value);
     }
 }
 

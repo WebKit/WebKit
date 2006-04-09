@@ -1,0 +1,69 @@
+<style>
+table { font: 11px 'Lucida Grande' }
+.result { color: GrayText; padding-left: 4px; padding-right: 8px }
+.result:before { content: "expected: " }
+</style>
+
+<table>
+
+<tr><td><input type="text" size="5" value="12345" maxlength="4"></td>
+<td class="result">1234</td>
+<td class="description">maxlength and value that violates it, maxlength first</td></tr>
+
+<tr><td><input type="text" size="5" maxlength="4" value="12345"></td>
+<td class="result">1234</td>
+<td class="description">maxlength and value that violates it, value first</td></tr>
+
+<tr><td><input type="text" id="f" size="5" maxlength="4" value="123"></td>
+<td class="result">1234</td>
+<td class="description">set value attribute that violates maxlength</td></tr>
+
+<tr><td><input type="text" id="e" size="5" maxlength="4" value="123"></td>
+<td class="result">1234</td>
+<td class="description">set value property that violates maxlength</td></tr>
+
+<tr><td><input type="text" id="d" size="5" value="12345"></td>
+<td class="result">1234</td>
+<td class="description">set maxlength attribute that is smaller than initial value</td></tr>
+
+<tr><td><input type="text" id="c" size="5" value="12345"></td>
+<td class="result">1234</td>
+<td class="description">set maxLength property that is smaller than initial value</td></tr>
+
+<tr><td><input type="text" size="5" value="12x&#x305;&#x332;45" maxlength="4"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">maxlength and value that violates it, maxlength first</td></tr>
+
+<tr><td><input type="text" size="5" maxlength="4" value="12x&#x305;&#x332;45"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">maxlength and value that violates it, value first</td></tr>
+
+<tr><td><input type="text" id="j" size="5" maxlength="4" value="123"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">set value attribute that violates maxlength</td></tr>
+
+<tr><td><input type="text" id="i" size="5" maxlength="4" value="123"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">set value property that violates maxlength</td></tr>
+
+<tr><td><input type="text" id="h" size="5" value="12x&#x305;&#x332;45"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">set maxlength attribute that is smaller than initial value</td></tr>
+
+<tr><td><input type="text" id="g" size="5" value="12x&#x305;&#x332;45"></td>
+<td class="result">12x&#x305;&#x332;4</td>
+<td class="description">set maxLength property that is smaller than initial value</td></tr>
+
+</table>
+
+<script>
+var fancyX = "x" + String.fromCharCode(0x305) + String.fromCharCode(0x332);
+document.getElementById("c").maxLength = 4;
+document.getElementById("d").setAttribute('maxlength', 4);
+document.getElementById("e").value = '12345';
+document.getElementById("f").setAttribute('value', '12345');
+document.getElementById("g").maxLength = 4;
+document.getElementById("h").setAttribute('maxlength', 4);
+document.getElementById("i").value = '12' + fancyX + '45';
+document.getElementById("j").setAttribute('value', '12' + fancyX + '45');
+</script>

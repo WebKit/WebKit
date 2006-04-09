@@ -1,3 +1,110 @@
+2006-04-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7622
+          REGRESSION: New text fields should compute maxlength considering composed character sequences
+
+        Test: fast/forms/input-text-maxlength.html
+        Test: fast/forms/input-text-paste-maxlength.html
+
+        * html/HTMLInputElement.h: Removed all friend classes (not needed any more). Renamed
+        typeEnum to InputType. Made init() function private. Tweaked parameter names and formatting
+        in many function declarations. Made canHaveSelection, selectionStart, and selectionEnd
+        const. Made data members except for m_name private instead of protected. Added private
+        functions constrainValue and recheckValue. Removed unused isEditable function.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::numGraphemeClusters): Added.
+        (WebCore::numCharactersInGraphemeClusters): Added.
+        (WebCore::HTMLInputElement::isKeyboardFocusable): Use inputType() instead of using m_type
+        directly.
+        (WebCore::HTMLInputElement::isMouseFocusable): Ditto.
+        (WebCore::HTMLInputElement::focus): Ditto.
+        (WebCore::HTMLInputElement::setInputType): Added code to call constrainValue or recheckValue
+        so we will enforce maxLen if changing from a type that doesn't have maxLen to one that does.
+        (WebCore::HTMLInputElement::type): More-standard formatting for switch statement. Put
+        cases into alphabetical order.
+        (WebCore::HTMLInputElement::state): Changed switch statement to include all case values and
+        not include a default case to take advantage of gcc's missing case warning.
+        (WebCore::HTMLInputElement::restoreState): Ditto.
+        (WebCore::HTMLInputElement::canHaveSelection): Ditto.
+        (WebCore::HTMLInputElement::selectionStart): Ditto.
+        (WebCore::HTMLInputElement::selectionEnd): Ditto.
+        (WebCore::HTMLInputElement::setSelectionStart): Ditto.
+        (WebCore::HTMLInputElement::setSelectionEnd): Ditto.
+        (WebCore::HTMLInputElement::select): Ditto.
+        (WebCore::HTMLInputElement::setSelectionRange): Ditto.
+        (WebCore::HTMLInputElement::click): Ditto.
+        (WebCore::HTMLInputElement::accessKeyAction): Ditto.
+        (WebCore::HTMLInputElement::parseMappedAttribute): Use inputType() instead of using m_type
+        directly. Added call to recheckValue when parsing a new value for the maxlength attribute.
+        (WebCore::HTMLInputElement::rendererIsNeeded): Changed switch statement to include all case
+        values and not include a default case to take advantage of gcc's missing case warning.
+        (WebCore::HTMLInputElement::createRenderer): Ditto.
+        (WebCore::HTMLInputElement::attach): Remove code to condition the value attribute when done
+        parsing. This is now all handled by constrainValue and recheckValue as needed.
+        (WebCore::HTMLInputElement::isSuccessfulSubmitButton): Use inputType() instead of using
+        m_type directly.
+        (WebCore::HTMLInputElement::appendFormData): Ditto. Rearranged code a little.
+        (WebCore::HTMLInputElement::setChecked): Ditto.
+        (WebCore::HTMLInputElement::setIndeterminate): Ditto.
+        (WebCore::HTMLInputElement::value): Ditto. Call constrainValue when reading the value out
+        of the value attribute.
+        (WebCore::HTMLInputElement::valueWithDefault): Use inputType() instead of using
+        m_type directly. Changed switch statement to include all case values and not include a
+        default case to take advantage of gcc's missing case warning.
+        (WebCore::HTMLInputElement::setValue): Ditto. Call constrainValue when storing a value.
+        (WebCore::HTMLInputElement::setValueFromRenderer): Added an assertion.
+        (WebCore::HTMLInputElement::storesValueSeparateFromAttribute): Use inputType() instead of
+        using m_type directly.
+        (WebCore::HTMLInputElement::preDispatchEventHandler): Ditto.
+        (WebCore::HTMLInputElement::postDispatchEventHandler): Ditto.
+        (WebCore::HTMLInputElement::defaultEventHandler): Ditto. Changed code to truncate inserted
+        text in a BeforeTextInsertedEvent to use the new constrainValue function and also the
+        numGraphemeClusters function, so it's based on grapheme clusters instead of characters and
+        shares code.
+        (WebCore::HTMLInputElement::constrainValue): Added.
+        (WebCore::HTMLInputElement::recheckValue): Added.
+
+        * html/HTMLIsIndexElement.cpp: (WebCore::HTMLIsIndexElement::HTMLIsIndexElement):
+        Removed unneeded code to set m_type to TEXT, which is already what it gets set to by
+        the base class's constructor.
+
+        * html/HTMLGenericFormElement.h: Removed unused isEditable function.
+        * html/HTMLGenericFormElement.cpp: Ditto.
+        * html/HTMLTextAreaElement.h: Ditto.
+        * html/HTMLTextAreaElement.cpp: Ditto.
+
+        * platform/StringImpl.cpp: (WebCore::StringImpl::truncate): Changed > to >= so that
+        truncating to the size of the string does nothing, efficiently.
+
+        * rendering/RenderText.h: Added declaration of characterBreakIterator.
+        * rendering/RenderText.cpp:
+        (WebCore::characterBreakIterator): Made this public so it can be used in other files.
+        Maybe we should also move it to another source file later. Also renamed to remove the
+        "get" from the title.
+        (WebCore::RenderText::previousOffset): Updated for name change.
+        (WebCore::RenderText::nextOffset): Updated for name change.
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::updateFromElement):
+        Removed code to implement maxlength checking. That's handled entirely in the DOM now.
+        Also moved down the code to get the value into a string so that it's done only in the
+        case where the string is used.
+
+        * rendering/render_form.cpp: (WebCore::RenderFileButton::valueChanged): Use setValueFromRenderer
+        instead of setting the value directly in the input element. We changed this for all the other
+        types a while ago, and it works just as well for the input element.
+
+        * dom/BeforeTextInsertedEvent.h: Added setText function. Previously, clients changed the text
+        by modifying the text object in place, but going forward we'd like to avoid that sort of thing.
+ 
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplacementFragment::ReplacementFragment):
+        Changed code to assume clients will change the text in the event rather than mutating the
+        text object itself. This is compatible with possible future changes to String to be copy
+        on write.
+        * editing/TypingCommand.cpp: (WebCore::TypingCommand::insertText): Ditto.
+
 2006-04-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
@@ -260,7 +367,7 @@
         (WebCore::RenderLayer::calculateRects): Reverted this part of the fix for bug 7943.
         The outlineRect should not be inflated.
 
-2006-04-04  Rob Buis  <buis@kde.org>
+2006-04-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric, landed by Maciej.
 

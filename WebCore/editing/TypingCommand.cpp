@@ -99,14 +99,15 @@ void TypingCommand::insertText(Document *document, const String &text, bool sele
     Frame *frame = document->frame();
     ASSERT(frame);
     
-    String newText = text.copy();
+    String newText = text;
     Node* startNode = frame->selection().start().node();
     
     if (startNode && startNode->rootEditableElement()) {        
         // Send khtmlBeforeTextInsertedEvent.  The event handler will update text if necessary.
         ExceptionCode ec = 0;
-        RefPtr<Event> evt = new BeforeTextInsertedEvent(newText);
+        RefPtr<BeforeTextInsertedEvent> evt = new BeforeTextInsertedEvent(text);
         startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
+        newText = evt->text();
     }
     
     if (newText.isEmpty())

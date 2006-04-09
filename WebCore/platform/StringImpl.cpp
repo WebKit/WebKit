@@ -152,7 +152,7 @@ void StringImpl::insert(const StringImpl* str, unsigned pos)
 void StringImpl::truncate(int len)
 {
     assert(!m_inTable);
-    if (len > (int)m_length)
+    if (len >= (int)m_length)
         return;
     int nl = len < 1 ? 1 : len;
     QChar* c = newQCharVector(nl);

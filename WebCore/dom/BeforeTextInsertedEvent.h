@@ -37,7 +37,8 @@ public:
 
     virtual bool isBeforeTextInsertedEvent() const { return true; }
   
-    String text() const { return m_text; }
+    const String& text() const { return m_text; }
+    void setText(const String& s) { m_text = s; }
 
 private:
     String m_text;
