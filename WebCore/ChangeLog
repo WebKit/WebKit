@@ -1,5 +1,20 @@
 2006-04-09  Rob Buis  <buis@kde.org>
 
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6027:
+        Dirty rect invalidation issues in mozilla sample
+
+        Make sure the paths calculate the new bounding box and not
+        use the cached bbox.
+
+        No automated test case possible.
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::setPath):
+
+2006-04-09  Rob Buis  <buis@kde.org>
+
         Reviewed by darin.  Landed by eseidel.
 
         Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6930:

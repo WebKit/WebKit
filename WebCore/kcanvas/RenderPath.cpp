@@ -132,6 +132,8 @@ FloatRect RenderPath::relativeBBox(bool includeStroke) const
 void RenderPath::setPath(KCanvasPath* newPath)
 {
     d->path = newPath;
+    d->strokeBbox = FloatRect();
+    d->fillBBox = FloatRect();
 }
 
 KCanvasPath* RenderPath::path() const
