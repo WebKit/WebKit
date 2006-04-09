@@ -29,6 +29,8 @@
 #include "html_imageimpl.h"
 
 #if __APPLE__
+// FIXME: Mac-specific parts need to move to the platform directory.
+typedef struct CGContext* CGContextRef;
 typedef struct CGImage* CGImageRef;
 #endif
 
@@ -37,35 +39,48 @@ namespace WebCore {
 class CanvasRenderingContext2D;
 typedef CanvasRenderingContext2D CanvasRenderingContext;
 
-// FIXME: Should inherit from HTMLElement instead of HTMLImageElement.
-class HTMLCanvasElement : public HTMLImageElement {
+class HTMLCanvasElement : public HTMLElement {
 public:
     HTMLCanvasElement(Document*);
-    ~HTMLCanvasElement();
+    virtual ~HTMLCanvasElement();
+
+    int width() const { return m_size.width(); }
+    int height() const { return m_size.height(); }
+    void setWidth(int);
+    void setHeight(int);
 
     CanvasRenderingContext* getContext(const String&);
-
     // FIXME: Web Applications 1.0 describes a toDataURL function.
 
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
-
-    virtual void attach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void detach();
-    
-    virtual bool isURLAttribute(Attribute*) const;
 
-    IntSize size() const;
+    IntSize size() const { return m_size; }
+    void willDraw(const FloatRect&);
+
+    void paint(GraphicsContext*, const IntRect&);
 
 #if __APPLE__
     CGImageRef createPlatformImage() const;
+    CGContextRef drawingContext() const;
 #endif
 
 private:
+    void createDrawingContext() const;
+    void reset();
+
     RefPtr<CanvasRenderingContext2D> m_2DContext;
-    // FIXME: Web Applications 1.0 describes a security feature where we track if we ever drew
-    // any images outside the domain.
+    IntSize m_size;
+
+    // FIXME: Web Applications 1.0 describes a security feature where we track
+    // if we ever drew any images outside the domain, so we can disable toDataURL.
+
+    mutable bool m_createdDrawingContext;
+    mutable void* m_data;
+
+#if __APPLE__
+    mutable CGContextRef m_drawingContext;
+#endif
 };
 
 } //namespace

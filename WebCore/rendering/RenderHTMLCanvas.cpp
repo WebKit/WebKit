@@ -23,14 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-//#define DEBUG_LAYOUT
-
 #include "config.h"
 #include "RenderHTMLCanvas.h"
 
-#if __APPLE__
-
-#include "Document.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
@@ -39,104 +34,29 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderHTMLCanvas::RenderHTMLCanvas(Node *_node)
-    : RenderImage(_node), _drawingContext(0), _drawingContextData(0), _drawnImage(0), _needsImageUpdate(0)
+RenderHTMLCanvas::RenderHTMLCanvas(Node* n)
+    : RenderReplaced(n)
 {
 }
 
-RenderHTMLCanvas::~RenderHTMLCanvas()
+const char* RenderHTMLCanvas::renderName() const
 {
-    if (_drawingContext) {
-        CFRelease (_drawingContext);
-        _drawingContext = 0;
-    }
-    
-    fastFree(_drawingContextData);
-    _drawingContextData = 0;
-    
-    if (_drawnImage) {
-        CFRelease (_drawnImage);
-        _drawnImage = 0;
-    }
+    return "RenderHTMLCanvas";
 }
 
-#define BITS_PER_COMPONENT 8
-#define BYTES_PER_ROW(width,bitsPerComponent,numComponents) ((width * bitsPerComponent * numComponents + 7)/8)
-
-void RenderHTMLCanvas::createDrawingContext()
+void RenderHTMLCanvas::paint(PaintInfo& i, int tx, int ty)
 {
-    if (_drawingContext) {
-        CFRelease (_drawingContext);
-        _drawingContext = 0;
-    }
-    fastFree(_drawingContextData);
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-
-    int cWidth = contentWidth();
-    int cHeight = contentHeight();
-    size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
-    size_t bytesPerRow = BYTES_PER_ROW(cWidth,BITS_PER_COMPONENT,(numComponents+1)); // + 1 for alpha
-    _drawingContextData = fastCalloc(height(), bytesPerRow);
-    _drawingContext = CGBitmapContextCreate(_drawingContextData, cWidth, cHeight, BITS_PER_COMPONENT, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
-    
-#ifdef DEBUG_CANVAS_BACKGROUND
-    CGContextSetRGBFillColor(_drawingContext, 1.0, 0., 0., 1.);
-    CGContextFillRect (_drawingContext, CGRectMake (0, 0, width(), height()));
-    CGContextFlush (_drawingContext);
-#endif
-    
-    updateDrawnImage();
-    
-    CFRelease (colorSpace);
-}
-
-CGContextRef RenderHTMLCanvas::drawingContext()
-{
-    if (!_drawingContext) {
-        document()->updateLayout();
-        createDrawingContext();
-    }
-    
-    return _drawingContext;
-}
-
-void RenderHTMLCanvas::setNeedsImageUpdate()
-{
-    _needsImageUpdate = true;
-    repaint();
-}
-
-
-void RenderHTMLCanvas::updateDrawnImage()
-{
-    if (_drawnImage)
-        CFRelease (_drawnImage);
-    CGContextFlush (_drawingContext);
-    _drawnImage = CGBitmapContextCreateImage (_drawingContext);
-}
-
-CGImageRef RenderHTMLCanvas::drawnImage()
-{
-    return _drawnImage;
-}
-
-void RenderHTMLCanvas::paint(PaintInfo& i, int _tx, int _ty)
-{
-    if (!shouldPaint(i, _tx, _ty))
+    if (!shouldPaint(i, tx, ty))
         return;
 
-    int x = _tx + m_x;
-    int y = _ty + m_y;
+    int x = tx + m_x;
+    int y = ty + m_y;
 
     if (shouldPaintBackgroundOrBorder() && (i.phase == PaintPhaseForeground || i.phase == PaintPhaseSelection)) 
         paintBoxDecorations(i, x, y);
 
-    GraphicsContext* p = i.p;
-    if (p->paintingDisabled())
-        return;
-    
     if ((i.phase == PaintPhaseOutline || i.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(p, x, y, width(), height(), style());
+        paintOutline(i.p, x, y, width(), height(), style());
     
     if (i.phase != PaintPhaseForeground && i.phase != PaintPhaseSelection)
         return;
@@ -144,71 +64,36 @@ void RenderHTMLCanvas::paint(PaintInfo& i, int _tx, int _ty)
     if (!shouldPaintWithinRoot(i))
         return;
 
-    bool isPrinting = i.p->printing();
-    bool drawSelectionTint = (selectionState() != SelectionNone) && !isPrinting;
+    bool drawSelectionTint = selectionState() != SelectionNone && !i.p->printing();
     if (i.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)
             return;
         drawSelectionTint = false;
     }
 
-    int cWidth = contentWidth();
-    int cHeight = contentHeight();
-    int leftBorder = borderLeft();
-    int topBorder = borderTop();
-    int leftPad = paddingLeft();
-    int topPad = paddingTop();
-
-    x += leftBorder + leftPad;
-    y += topBorder + topPad;
-    
-    if (_needsImageUpdate) {
-        updateDrawnImage();
-        _needsImageUpdate = false;
-    }
-    
-    if (drawnImage()) {
-        HTMLCanvasElement* i = (element() && element()->hasTagName(canvasTag)) ? static_cast<HTMLCanvasElement*>(element()) : 0;
-        int oldOperation = 0;
-        if (i) {
-            oldOperation = GraphicsContext::getCompositeOperation(GraphicsContext::currentCGContext());
-            GraphicsContext::setCompositeOperation(GraphicsContext::currentCGContext(), i->compositeOperator());
-        }
-        CGContextDrawImage(GraphicsContext::currentCGContext(), CGRectMake(x, y, cWidth, cHeight), drawnImage());
-        if (i)
-            GraphicsContext::setCompositeOperation(GraphicsContext::currentCGContext(), oldOperation);
-    }
+    if (element() && element()->hasTagName(canvasTag))
+        static_cast<HTMLCanvasElement*>(element())->paint(i.p,
+            IntRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(), contentWidth(), contentHeight()));
 
     if (drawSelectionTint)
-        p->fillRect(selectionRect(), selectionColor(p));
+        i.p->fillRect(selectionRect(), selectionColor(i.p));
 }
 
 void RenderHTMLCanvas::layout()
 {
-    KHTMLAssert(needsLayout());
-    KHTMLAssert(minMaxKnown());
+    ASSERT(needsLayout());
+    ASSERT(minMaxKnown());
 
     IntRect oldBounds;
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint)
         oldBounds = getAbsoluteRepaintRect();
-
-    int oldwidth = m_width;
-    int oldheight = m_height;
-    
     calcWidth();
     calcHeight();
-
-    if ( m_width != oldwidth || m_height != oldheight ) {
-        createDrawingContext();
-    }
-
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
-    
+
     setNeedsLayout(false);
 }
 
 }
-
-#endif

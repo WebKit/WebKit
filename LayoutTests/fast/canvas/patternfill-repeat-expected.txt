@@ -10,4 +10,4 @@ layer at (0,0) size 800x460
           text run at (0,36) width 764: "Bottom left square should be one row with three Apple images along the top of the square. Bottom right square should be"
           text run at (0,54) width 220: "one Apple image in top left corner."
       RenderBlock {P} at (0,88) size 784x340
-        RenderCanvasImage {CANVAS} at (0,0) size 336x336 [border: (3px solid #000000)]
+        RenderHTMLCanvas {CANVAS} at (0,0) size 336x336 [border: (3px solid #000000)]

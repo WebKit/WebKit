@@ -770,10 +770,8 @@ void CanvasRenderingContext2D::applyShadow()
 }
 
 // FIXME: This only exists because canvas is a subclass of image.
-static IntSize imageOrCanvasSize(HTMLImageElement* image)
+static IntSize imageSize(HTMLImageElement* image)
 {
-    if (image->hasLocalName(canvasTag))
-        return static_cast<HTMLCanvasElement*>(image)->size();
     if (CachedImage* cachedImage = image->cachedImage())
         return cachedImage->imageSize();
     return IntSize();
@@ -783,7 +781,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float
 {
     if (!image)
         return;
-    IntSize size = imageOrCanvasSize(image);
+    IntSize size = imageSize(image);
     drawImage(image, 0, 0, size.width(), size.height(), x, y, size.width(), size.height());
 }
 
@@ -791,7 +789,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float
 {
     if (!image)
         return;
-    IntSize size = imageOrCanvasSize(image);
+    IntSize size = imageSize(image);
     drawImage(image, 0, 0, size.width(), size.height(), x, y, width, height);
 }
 
@@ -808,23 +806,49 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
     if (!c)
         return;
 
-    FloatRect destRect = FloatRect(dx, dy, dw, dh);
-
-    if (!image->hasLocalName(canvasTag)) {
-        CachedImage* cachedImage = image->cachedImage();
-        if (!cachedImage)
-            return;
-
-        willDraw(destRect);
-        cachedImage->image()->drawInRect(destRect, FloatRect(sx, sy, sw, sh),
-            Image::compositeOperatorFromString(state().m_globalComposite), c);
+    CachedImage* cachedImage = image->cachedImage();
+    if (!cachedImage)
         return;
-    }
 
-    CGImageRef platformImage = static_cast<HTMLCanvasElement*>(image)->createPlatformImage();
+    FloatRect destRect = FloatRect(dx, dy, dw, dh);
+    willDraw(destRect);
+    cachedImage->image()->drawInRect(destRect, FloatRect(sx, sy, sw, sh),
+        Image::compositeOperatorFromString(state().m_globalComposite), c);
+#endif
+}
+
+void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, float y)
+{
+    if (!canvas)
+        return;
+    drawImage(canvas, 0, 0, canvas->width(), canvas->height(), x, y, canvas->width(), canvas->height());
+}
+
+void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, float y, float width, float height)
+{
+    if (!canvas)
+        return;
+    drawImage(canvas, 0, 0, canvas->width(), canvas->height(), x, y, width, height);
+}
+
+void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
+    float sx, float sy, float sw, float sh,
+    float dx, float dy, float dw, float dh)
+{
+    if (!canvas)
+        return;
+
+    // FIXME: Do this through platform-independent GraphicsContext API.
+#if __APPLE__
+    CGContextRef c = drawingContext();
+    if (!c)
+        return;
+
+    CGImageRef platformImage = canvas->createPlatformImage();
     if (!platformImage)
         return;
 
+    FloatRect destRect = FloatRect(dx, dy, dw, dh);
     willDraw(destRect);
 
     float iw = CGImageGetWidth(platformImage);
@@ -871,21 +895,17 @@ void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,
     if (!image)
         return;
 
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
-    CGContextRef c = drawingContext();
-    if (!c)
-        return;
-
-    FloatRect destRect = FloatRect(dx, dy, dw, dh);
-
-    // FIXME: Does not support using a canvas as a source image.
     CachedImage* cachedImage = image->cachedImage();
     if (!cachedImage)
         return;
 
+    // FIXME: Do this through platform-independent GraphicsContext API.
+    FloatRect destRect = FloatRect(dx, dy, dw, dh);
     willDraw(destRect);
-
+#if __APPLE__
+    CGContextRef c = drawingContext();
+    if (!c)
+        return;
     cachedImage->image()->drawInRect(destRect, FloatRect(sx, sy, sw, sh),
         Image::compositeOperatorFromString(compositeOperation), c);
 #endif
@@ -916,13 +936,11 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     return new CanvasPattern(image ? image->cachedImage() : 0, repetitionType);
 }
 
-void CanvasRenderingContext2D::willDraw(const FloatRect&)
+void CanvasRenderingContext2D::willDraw(const FloatRect& r)
 {
     if (!m_canvas)
         return;
-    RenderHTMLCanvas* renderer = static_cast<RenderHTMLCanvas*>(m_canvas->renderer());
-    if (renderer)
-        renderer->setNeedsImageUpdate();
+    m_canvas->willDraw(r);
 }
 
 #if __APPLE__
@@ -931,10 +949,7 @@ CGContextRef CanvasRenderingContext2D::drawingContext() const
 {
     if (!m_canvas)
         return 0;
-    RenderHTMLCanvas* renderer = static_cast<RenderHTMLCanvas*>(m_canvas->renderer());
-    if (!renderer)
-        return 0;
-    return renderer->drawingContext();
+    return m_canvas->drawingContext();
 }
 
 void CanvasRenderingContext2D::applyStrokePattern()

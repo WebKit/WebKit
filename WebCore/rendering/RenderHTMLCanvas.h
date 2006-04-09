@@ -23,55 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RENDER_CANVASIMAGE_H
-#define RENDER_CANVASIMAGE_H
+#ifndef RENDERHTMLCANVAS_H
+#define RENDERHTMLCANVAS_H
 
-
-#include "HTMLElement.h"
-#include "RenderImage.h"
-
-#if __APPLE__
-// FIXME: Mac-specific parts need to move to the platform directory.
-#include <ApplicationServices/ApplicationServices.h>
-#endif
+#include "render_replaced.h"
 
 namespace WebCore {
 
-class DocLoader;
-
-class RenderHTMLCanvas : public RenderImage
-{
-public:
-    RenderHTMLCanvas(Node*);
-    virtual ~RenderHTMLCanvas();
-
-    virtual const char *renderName() const { return "RenderCanvasImage"; }
-    
-    virtual void paint(PaintInfo& i, int tx, int ty);
-
-    virtual void layout();
-
-    void setNeedsImageUpdate();
-    
-    // don't even think about making this method virtual!
-    HTMLElement* element() const
-        { return static_cast<HTMLElement*>(RenderImage::element()); }
-    
-#if __APPLE__
-    void updateDrawnImage();
-    CGContextRef drawingContext();
-    
-private:
-    void createDrawingContext();
-    CGImageRef drawnImage();
-
-    CGContextRef _drawingContext;
-    void *_drawingContextData;
-    CGImageRef _drawnImage;
-    
-    bool _needsImageUpdate : 1;
-#endif
-};
+    class RenderHTMLCanvas : public RenderReplaced {
+    public:
+        RenderHTMLCanvas(Node*);
+        virtual const char* renderName() const;
+        virtual void paint(PaintInfo&, int tx, int ty);
+        virtual void layout();
+    };
 
 } //namespace
 

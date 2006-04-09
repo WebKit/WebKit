@@ -1,3 +1,83 @@
+2006-04-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4884
+          Canvas element breaks when RenderObject creation is deferred by external CSS
+
+        Test: fast/canvas/canvas-before-css.html
+
+        This patch makes us match the canvas documentation in Hixie's Web Applications
+        draft as far as when the canvas is created and recreated and how it's sized.
+        It also gets rid of the compositeOperation attribute of the canvas element.
+        We can add that back if we need it. Anders points out that this specifically
+        changes behavior for canvas elements where the size is set in CSS and not with
+        width and height attributes. The CSS size now determines how big a box the canvas
+        is rendered into, but has no effect on the size of the canvas's buffer.
+
+        * html/CanvasRenderingContext2D.h: Added overloads of drawImage that take
+        HTMLCanvasElement, which is no longer derived from HTMLImageElement.
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::imageSize): Renamed from imageOrCanvasSize. Now used for images only,
+        because canvas is no longer derived from image.
+        (WebCore::CanvasRenderingContext2D::drawImage): Split the implementation of this
+        for image sources from the implementation for canvas sources.
+        (WebCore::CanvasRenderingContext2D::willDraw): Changed to call a new willDraw
+        function on the canvas element.
+        (WebCore::CanvasRenderingContext2D::drawingContext): Changed to call drawingContext
+        on the canvas element rather than the renderer.
+
+        * html/HTMLCanvasElement.h: Changed HTMLCanvasElement to derive from HTMLElement
+        instead of HTMLImageElement. Added width, height, setWidth, setHeight, willDraw,
+        paint, drawingContext, createDrawingContext, and reset functions. Added m_size,
+        m_createdDrawingContext, m_data, and m_drawingContext data members. Removed
+        mapToEntry, attach, detach, and isURLAttribute functins.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement): Added initializers for new m_size,
+        m_createdDrawingContext, m_data, and m_drawingContext data members.
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement): Free m_data and m_drawingContext.
+        (WebCore::HTMLCanvasElement::parseMappedAttribute): Got rid of special case for
+        srcAttr, which is no longer needed since we aren't deriving from HTMLImageElement.
+        Added code that triggers a reset when either width or height is set.
+        (WebCore::HTMLCanvasElement::createRenderer): Added code to set the intrinsic
+        width and height of the renderer to the size of the element.
+        (WebCore::HTMLCanvasElement::setHeight): Added. Sets the height attribute.
+        (WebCore::HTMLCanvasElement::setWidth): Added. Sets the width attribute.
+        (WebCore::HTMLCanvasElement::willDraw): Added. Tells the renderer to repaint.
+        Also has FIXME mentioning we could dirty only the part that has changed in the future.
+        (WebCore::HTMLCanvasElement::reset): Added. Sets the size of the canvas and discards
+        the old buffer, which is an indirect way of resetting the buffer to transparent black.
+        (WebCore::HTMLCanvasElement::paint): Added. Draws the canvas image into the graphics
+        context that's passed in.
+        (WebCore::HTMLCanvasElement::createDrawingContext): Added. Allocates a buffer for
+        the bits, then creates a bitmap context for drawing into the buffer.
+        (WebCore::HTMLCanvasElement::drawingContext): Added. Calls createDrawingContext if
+        needed, then returns the current drawing context.
+        (WebCore::HTMLCanvasElement::createPlatformImage): Changed to always call CGContextFlush
+        and to create the image from the context in this class.
+
+        * rendering/RenderHTMLCanvas.h: Remove almost all of the contents of this file.
+        Removed ~RenderHTMLCanvas, setNeedsImageUpdate, element, updateDrawnImage, drawingContext,
+        createDrawingContext, and drawnImage functions and _drawingContext, _drawingContextData,
+        _drawnImage, and _needsImageUpdate booleans. Changed RenderHTMLCanvas to derive from
+        RenderReplaced instead of RenderImage.
+
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::RenderHTMLCanvas): Changed to only initialize RenderReplaced.
+        (WebCore::RenderHTMLCanvas::renderName): Moved this in here, since there's no good reason
+        to have this virtual function inlined.
+        (WebCore::RenderHTMLCanvas::paint): Changed implementation to use HTMLCanvasElement::paint
+        instead ofcalling CGContextDrawImage directly.
+        (WebCore::RenderHTMLCanvas::layout): Removed the code that detects changes in width and
+        causes the drawing context to be recreated; instead, if the width and height changes we
+        scale when we paint the canvas.
+
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp:
+        (WebCore::JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction):
+        Separated out handling for <canvas> vs. <img> elements in drawRect, since
+        HTMLCanvasElement is no longer derived from HTMLImageElement.
+
 2006-04-09  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

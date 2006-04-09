@@ -1,3 +1,24 @@
+2006-04-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - test changes for http://bugzilla.opendarwin.org/show_bug.cgi?id=4884
+          Canvas element breaks when RenderObject creation is deferred by external CSS
+
+        * fast/canvas/canvas-before-css-expected.checksum: Added.
+        * fast/canvas/canvas-before-css-expected.png: Added.
+        * fast/canvas/canvas-before-css-expected.txt: Added.
+        * fast/canvas/canvas-before-css.html: Added.
+
+        * fast/canvas/image-object-in-canvas.html: Test had a bug where it used <canvas>
+        without a </canvas> tag. Changed test to include a </canvas> tag.
+
+        * fast/canvas/patternfill-repeat-expected.txt: Updated for name change from
+        RenderCanvasImage to RenderHTMLCanvas.
+        * fast/canvas/image-object-in-canvas-expected.txt: Ditto.
+        * fast/canvas/fillrect_gradient-expected.txt: Ditto.
+        * fast/canvas/quadraticCurveTo-expected.txt: Ditto.
+
 2006-04-09  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.
@@ -34,6 +55,18 @@
         * fast/js/resources/string-capitalization.js: Added.
         * fast/js/string-capitalization-expected.txt: Added.
         * fast/js/string-capitalization.html: Added.
+
+2006-04-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8134
+          REGRESSION: dragging down from the middle of a text field does not select to end of field
+
+        * fast/forms/input-text-drag-down-expected.checksum: Added.
+        * fast/forms/input-text-drag-down-expected.png: Added.
+        * fast/forms/input-text-drag-down-expected.txt: Added.
+        * fast/forms/input-text-drag-down.html: Added.
 
 2006-04-07  Darin Adler  <darin@apple.com>
 

@@ -17,8 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-// This file needs to be touched every once in a while.
-
 #include "config.h"
 #include "JSCanvasRenderingContext2DBase.h"
 
@@ -26,6 +24,7 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
+#include "HTMLCanvasElement.h"
 #include "JSCanvasGradient.h"
 #include "JSCanvasPattern.h"
 #include "html_imageimpl.h"
@@ -178,35 +177,57 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
             break;
         case JSCanvasRenderingContext2DBase::DrawImage: {
             // DrawImage has three variants:
-            // drawImage(img, dx, dy)
-            // drawImage(img, dx, dy, dw, dh)
-            // drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh)
-            // composite operation is specified with globalCompositeOperation
-            // img parameter can be a JavaScript Image, <img>, or a <canvas>
+            //     drawImage(img, dx, dy)
+            //     drawImage(img, dx, dy, dw, dh)
+            //     drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh)
+            // Composite operation is specified with globalCompositeOperation.
+            // The img parameter can be a <img> or <canvas> element.
             JSObject* o = static_cast<JSObject*>(args[0]);
             if (!o->isObject())
                 return throwError(exec, TypeError);
-            if (!(o->inherits(&JSHTMLElement::img_info) || o->inherits(&JSHTMLElement::canvas_info)))
-                return throwError(exec, TypeError);
-            HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
-            switch (args.size()) {
-                case 3:
-                    context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec));
-                    break;
-                case 5:
-                    context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec),
-                        args[3]->toNumber(exec), args[4]->toNumber(exec));
-                    break;
-                case 9:
-                    context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec),
-                        args[3]->toNumber(exec), args[4]->toNumber(exec),
-                        args[5]->toNumber(exec), args[6]->toNumber(exec),
-                        args[7]->toNumber(exec), args[8]->toNumber(exec));
-                    break;
-                default:
-                    return throwError(exec, SyntaxError);
+            if (o->inherits(&JSHTMLElement::img_info)) {
+                HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
+                switch (args.size()) {
+                    case 3:
+                        context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec));
+                        break;
+                    case 5:
+                        context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec),
+                            args[3]->toNumber(exec), args[4]->toNumber(exec));
+                        break;
+                    case 9:
+                        context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec),
+                            args[3]->toNumber(exec), args[4]->toNumber(exec),
+                            args[5]->toNumber(exec), args[6]->toNumber(exec),
+                            args[7]->toNumber(exec), args[8]->toNumber(exec));
+                        break;
+                    default:
+                        return throwError(exec, SyntaxError);
+                }
+                break;
             }
-            break;
+            if (o->inherits(&JSHTMLElement::canvas_info)) {
+                HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
+                switch (args.size()) {
+                    case 3:
+                        context->drawImage(canvas, args[1]->toNumber(exec), args[2]->toNumber(exec));
+                        break;
+                    case 5:
+                        context->drawImage(canvas, args[1]->toNumber(exec), args[2]->toNumber(exec),
+                            args[3]->toNumber(exec), args[4]->toNumber(exec));
+                        break;
+                    case 9:
+                        context->drawImage(canvas, args[1]->toNumber(exec), args[2]->toNumber(exec),
+                            args[3]->toNumber(exec), args[4]->toNumber(exec),
+                            args[5]->toNumber(exec), args[6]->toNumber(exec),
+                            args[7]->toNumber(exec), args[8]->toNumber(exec));
+                        break;
+                    default:
+                        return throwError(exec, SyntaxError);
+                }
+                break;
+            }
+            return throwError(exec, TypeError);
         }
         case JSCanvasRenderingContext2DBase::DrawImageFromRect: {
             JSObject* o = static_cast<JSObject*>(args[0]);
