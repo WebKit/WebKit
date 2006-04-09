@@ -1,6 +1,23 @@
+2006-04-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6930:
+        % width/height on nested <svg> tags do not work
+
+        Set the context correctly for inner <svg>, so calculation of
+        width/height for inner <svg> elements is done against the
+        viewport element.
+
+        Test: svg/custom/inner-percent.svg
+
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::width):
+        (WebCore::SVGSVGElement::height):
+
 2006-04-08  Rob Buis  <buis@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         No automated test case possible.
 

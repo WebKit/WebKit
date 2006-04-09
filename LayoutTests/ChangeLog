@@ -1,3 +1,13 @@
+2006-04-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6930
+        % width/height on nested <svg> tags do not work
+
+        * svg/custom/inner-percent-expected.txt: Added.
+        * svg/custom/inner-percent.svg: Added.
+
 2006-04-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.
