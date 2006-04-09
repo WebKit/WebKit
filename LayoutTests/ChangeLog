@@ -14,6 +14,17 @@
         * fast/forms/input-text-paste-maxlength-expected.txt: Added.
         * fast/forms/input-text-paste-maxlength.html: Added.
 
+2006-04-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8264
+        toLowerCase and toUpperCase don't honor special mappings
+
+        * fast/js/resources/string-capitalization.js: Added.
+        * fast/js/string-capitalization-expected.txt: Added.
+        * fast/js/string-capitalization.html: Added.
+
 2006-04-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
