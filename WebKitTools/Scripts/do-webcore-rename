@@ -67,137 +67,10 @@ sub wanted
 
 # find all symbols ending in Impl
 
-my %exceptions = (
-    "Array" => 1,
-    "AtomicString" => 1,
-    "DeprecatedValueList" => 1,
-    "DeprecatedPtrList" => 1,
-    "QualifiedName" => 1,
-    "String" => 1,
-    "feature" => 1,
-    "name" => 1,
-    "namespaceURI" => 1,
-    "node" => 1,
-    "qualifiedName" => 1,
-    "str" => 1,
-    "version" => 1,
-
-    "Rect" => 1,
-);
-
-my %otherRenames = (
-    "MouseEvent" => "PlatformMouseEvent",
-    "WheelEvent" => "PlatformWheelEvent",
-    "KeyEvent" => "PlatformKeyboardEvent",
-    "XSLTProcessor" => "JSXSLTProcessor",
-    "_History" => "History_",
-    "_Location" => "Location_",
-    "_Navigator" => "Navigator_",
-    "_Screen" => "Screen_",
-    "_Window" => "Window_",
-    "HTMLCollection" => "JSHTMLCollection",
-    "HTMLSelectCollection" => "JSHTMLSelectCollection",
-    "HTMLSelectElement" => "JSHTMLSelectElement",
-    "HTMLElement" => "JSHTMLElement",
-    "HTMLDocument" => "JSHTMLDocument",
-    "MacFrame" => "FrameMac",
-    "createAttrImplIfNeeded" => "createAttrIfNeeded",
-    "dom2_rangeimpl" => "Range",
-    "dom2_viewsimpl" => "AbstractView",
-    "dom_position" => "Position",
-    "html_canvasimpl" => "HTMLCanvasElement",
-    "html_documentimpl" => "HTMLDocument",
-    "jsediting" => "JSEditor",
-    "render_arena" => "RenderArena",
-    "render_box" => "RenderBox",
-    "render_br" => "RenderBR",
-    "render_canvas" => "RenderCanvas",
-    "render_canvasimage" => "RenderHTMLCanvas",
-    "RenderCanvasImage" => "RenderHTMLCanvas",
-    "render_flexbox" => "RenderFlexibleBox",
-    "render_flow" => "RenderFlow",
-    "render_image" => "RenderImage",
-    "render_inline" => "RenderInline",
-    "render_layer" => "RenderLayer",
-    "render_object" => "RenderObject",
-    "render_theme" => "RenderTheme",
-    "render_theme_mac" => "RenderThemeMac",
-    "visible_text" => "TextIterator",
-    "xmlserializer" => "JSXMLSerializer",
-    "xslt_processorimpl" => "XSLTProcessorImpl",
-    "KWQ_BLOCK_EXCEPTIONS" => "BEGIN_BLOCK_OBJC_EXCEPTIONS",
-    "KWQ_UNBLOCK_EXCEPTIONS" => "END_BLOCK_OBJC_EXCEPTIONS",
-    "KWQReportBlockedException" => "ReportBlockedObjCException",
-    "KWQExceptions" => "BlockExceptions",
-    "KWQAccObject" => "WebCoreAXObject",
-    "KWQAccObjectID" => "WebCoreAXID",
-    "KWQAccObjectCache" => "AccessibilityObjectCache",
-    "accObjectID" => "axObjectID",
-    "setAccObjectID" => "setAXObjectID",
-    "removeAccObjectID" => "removeAXObjectID",
-    "KWQClipboard" => "ClipboardMac",
-    "KWQTextField" => "WebCoreTextField",
-    "KWQTextArea" => "WebCoreTextArea",
-    "KWQTextAreaTextView" => "WebCoreTextView",
-    "KWQValueList" => "DeprecatedValueList",
-    "QValueList" => "DeprecatedValueList",
-    "QString" => "DeprecatedString",
-    "qstring" => "deprecatedString",
-    "QCString" => "DeprecatedCString",
-    "Array" => "DeprecatedArray",
-    "ByteArray" => "DeprecatedByteArray",
-    "QStringList" => "DeprecatedStringList",
-    "KWQPtrList" => "DeprecatedPtrList",
-    "QPtrList" => "DeprecatedPtrList",
-    "KWQListImpl" => "DeprecatedPtrListImpl",
-    "KWQValueListImpl" => "DeprecatedValueListImpl",
-    "QPtrQueue" => "DeprecatedPtrQueue",
-    "KWQValueListNodeImpl" => "DeprecatedValueListImplNode",
-    "KWQValueListIteratorImpl" => "DeprecatedValueListImplIterator",
-    "KWQListIteratorImpl" => "DeprecatedPtrListImplIterator",
-    "QPtrListIterator" => "DeprecatedPtrListIterator",
-    "QValueListConstIterator" => "DeprecatedValueListConstIterator",
-    "QValueListIterator" => "DeprecatedValueListIterator",
-    "QValueListNode" => "DeprecatedValueListNode",
-    "KWQRenderTreeDebug" => "RenderTreeAsText",
-    "QRegExp" => "RegularExpression",
-    "KWQRegExp" => "RegularExpression",
-    "KJavaAppletWidget" => "JavaAppletWidget",
-    "KWQKJavaAppletWidget" => "JavaAppletWidget",
-    "uint" => "unsigned",
-    "kentities" => "HTMLEntityNames",
-    "khtmlentities" => "HTMLEntityNames",
-    "xsl_stylesheetimpl" => "XSLStyleSheet",
-    "doctypes" => "DocTypeStrings",
-    "DOMParser" => "JSDOMParser",
-    "domparser" => "JSDOMParser",
-    "htmlfactory" => "HTMLElementFactory",
-    "text_affinity" => "TextAffinity",
-    "edit_actions" => "EditAction",
-    "html_interchange" => "HTMLInterchange",
-    "text_granularity" => "TextGranularity",
-    "ETextGranularity" => "TextGranularity",
-    "LINE_BOUNDARY" => "LineBoundary",
-    "PARAGRAPH_BOUNDARY" => "ParagraphBoundary",
-    "DOCUMENT_BOUNDARY" => "DocumentBoundary",
-    "css_grammar" => "CSSGrammar",
-    "css_computedstyle" => "CSSComputedStyleDeclaration",
-    "cssproperties" => "CSSPropertyNames",
-    "cssvalues" => "CSSValueKeywords",
-    "KSVGCSSParser" => "SVGCSSParser",
-    "dispatchKHTMLEditableContentChanged" => "dispatchEditableContentChangedEvent",
-    "khtmlMousePressEvent" => "handleMousePressEvent",
-    "khtmlMouseReleaseEvent" => "handleMouseReleaseEvent",
-    "khtmlMouseDoubleClickEvent" => "handleMouseReleaseDoubleClickEvent",
-    "khtmlMouseMoveEvent" => "handleMouseMoveEvent",
-    "handleMouseMoveEventDrag" => "deleteMe1",
-    "handleMouseMoveEventOver" => "deleteMe2",
-    "handleMouseMoveEventSelection" => "handleMouseMoveEventPart2",
-    "viewportMousePressEvent" => "handleMousePressEvent",
-    "viewportMouseDoubleClickEvent" => "handleMouseDoubleClickEvent",
-    "viewportMouseMoveEvent" => "handleMouseMoveEvent",
-    "viewportMouseReleaseEvent" => "handleMouseReleaseEvent",
-    "viewportWheelEvent" => "handleWheelEvent",
+my %renames = (
+    "DOMRect" => "JSRect",
+    "RectImpl" => "DOMRect",
+    "MouseEventMac" => "PlatformMouseEventMac",
 );
 
 # rename most files with names ending in Impl
@@ -205,8 +78,7 @@ my %otherRenames = (
 my %newFile;
 for my $file (sort @paths) {
     my $f = $file;
-    $f = "$1$otherRenames{$2}$3" if $f =~ /^(.*\/)(\w+)(\.\w+)$/ && $otherRenames{$2};
-    $f = "$1$2$3" if $f =~ /^(.*?)(\w+)Impl(\.\w+)$/ && !$exceptions{$2};
+    $f = "$1$renames{$2}$3" if $f =~ /^(.*\/)(\w+)(\.\w+)$/ && $renames{$2};
     if ($f ne $file) {
         $newFile{$file} = $f;
     }
@@ -233,70 +105,11 @@ for my $file (sort @paths) {
     }
     my $newContents = $contents;
 
-    # fix namespace names
-    $newContents =~ s/\bDOM::/WebCore::/g;
-    $newContents =~ s/\bKDOM::/WebCore::/g;
-    $newContents =~ s/\bKSVG::/WebCore::/g;
-    $newContents =~ s/\bkhtml::/WebCore::/g;
-    $newContents =~ s/namespace DOM\b/namespace WebCore/g;
-    $newContents =~ s/namespace KDOM\b/namespace WebCore/g;
-    $newContents =~ s/namespace KSVG\b/namespace WebCore/g;
-    $newContents =~ s/namespace khtml\b/namespace WebCore/g;
-
     if ($file !~ /\.idl$/) {
-        for my $from (keys %otherRenames) {
-            $newContents =~ s/\b$from(?!["\w])/$otherRenames{$from}/g; # this " unconfuses Xcode syntax highlighting
-        }
-        $newContents =~ s/\#\#Event_/\#\#Event/g;
-
-        if ($file !~ /\.pm$/) {
-            # fix DOMString and QString
-            $newContents =~ s/\#define DOMStringImpl StringImpl\n//;
-            $newContents =~ s/\bDOMString\b/String/g;
-            $newContents =~ s/\bDOMStringImpl\b/StringImpl/g;
-            $newContents =~ s/\#define String String\n/#define DOMString String\n#define QString DeprecatedString\n#define qstring() deprecatedString()\n/;
+        for my $from (keys %renames) {
+            $newContents =~ s/\b$from(?!["\w])/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
         }
     }
-
-    # remove some bogus stuff
-    $newContents =~ s/typedef unsigned unsigned;\n//;
-    $newContents =~ s/friend class HTMLFormElement;\s*\n\s*(friend class HTMLFormCollection)/$1/;
-
-    # fix binding code generation
-    if ($file =~ /\.pm$/) {
-        $newContents =~ s/interfaceName \. "Impl"/interfaceName/g;
-        $newContents =~ s/{interfaceName}Impl/{interfaceName}/g;
-        $newContents =~ s/{type}Impl/{type}/g;
-        $newContents =~ s/html_documentimpl/HTMLDocument/g;
-    }
-
-    # fix words with Impl suffix
-    $newContents =~ s/\b(\w+)Impl\b/$exceptions{$1} ? "$1Impl" : $1/ge;
-
-    # fix typo that annoys me
-    $newContents =~ s/it.s base class/its base class/;
-
-    # fix a few things that get done wrong
-
-    $newContents =~ s/Window::Event /Window::Event_/;
-    $newContents =~ s/case Event:/case Event_:/g;
-
-    $newContents =~ s/Event, InnerHeight/Event_, InnerHeight/;
-
-    $newContents =~ s/DOMAbstractView::Document /DOMAbstractView::Document_/;
-    $newContents =~ s/Window::Document /Window::Document_/;
-    $newContents =~ s/case Document:/case Document_:/g;
-    $newContents =~ s/token == Document\b/token == Document_/;
-    $newContents =~ s/Document, GetComputedStyle/Document_, GetComputedStyle/;
-    $newContents =~ s/Status, Document, Node/Status, Document_, Node/;
-
-    $newContents =~ s/XMLHttpRequest, XMLSerializer, JSDOMParser, JSXSLTProcessor/XMLHttpRequest, XMLSerializer, DOMParser_, XSLTProcessor_/;
-
-    $newContents =~ s/JSDOMParser(\s+Window::)JSDOMParser /DOMParser$1DOMParser_/;
-    $newContents =~ s/case JSDOMParser(:[^:])/case DOMParser_$1/g;
-
-    $newContents =~ s/JSXSLTProcessor(\s+Window::)JSXSLTProcessor /XSLTProcessor$1XSLTProcessor_/;
-    $newContents =~ s/case JSXSLTProcessor(:[^:])/case XSLTProcessor_$1/g;
 
     if ($newContents ne $contents) {
         open FILE, ">", $file or die;
