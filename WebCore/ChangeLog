@@ -1,3 +1,18 @@
+2006-04-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.
+
+        No automated test case possible.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7531:
+        hang in SVGPolygonElementImpl::toPathData in polygon test case
+
+        Make sure the points list is cleared, just like the path
+        list is cleared first before (re)parsing.
+
+        * ksvg2/svg/SVGPolyElement.cpp:
+        (SVGPolyElement::parseMappedAttribute):
+
 2006-04-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.
