@@ -1,3 +1,14 @@
+2006-04-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - try to fix the Windows build
+
+        * html/HTMLCanvasElement.cpp: (WebCore::HTMLCanvasElement::reset):
+        Put code to release m_drawingContext into an __APPLE__ ifdef.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+
 2006-04-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Eric, landed by ap.

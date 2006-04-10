@@ -127,10 +127,12 @@ void HTMLCanvasElement::reset()
     }
 
     m_createdDrawingContext = false;
-    CGContextRelease(m_drawingContext);
-    m_drawingContext = 0;
     fastFree(m_data);
     m_data = 0;
+#if __APPLE__
+    CGContextRelease(m_drawingContext);
+    m_drawingContext = 0;
+#endif
 }
 
 void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
