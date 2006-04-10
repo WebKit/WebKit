@@ -1055,6 +1055,10 @@ RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, bool selection
 
 static void setClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
 {
+#if __APPLE__
+    // Work around bugs in focus ring clipping on Mac.
+    p->setFocusRingClip(clipRect);
+#endif
     if (paintDirtyRect == clipRect)
         return;
     p->save();
@@ -1063,6 +1067,10 @@ static void setClip(GraphicsContext* p, const IntRect& paintDirtyRect, const Int
 
 static void restoreClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
 {
+#if __APPLE__
+    // Work around bugs in focus ring clipping on Mac.
+    p->clearFocusRingClip();
+#endif
     if (paintDirtyRect == clipRect)
         return;
     p->restore();

@@ -123,6 +123,11 @@ namespace WebCore {
         void addClip(const IntRect&);
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
 
+#if __APPLE__
+        void setFocusRingClip(const IntRect&);
+        void clearFocusRingClip();
+#endif
+
         void drawText(int x, int y, int alignmentFlags, const DeprecatedString&);
         void drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
             const QChar*, int slen, int pos, int len, int toAdd,
@@ -172,7 +177,6 @@ namespace WebCore {
 
 #if SVG_SUPPORT
         KRenderingDeviceContext* createRenderingDeviceContext();
-        static KRenderingDevice* renderingDevice();
 #endif
 
         bool printing() const;

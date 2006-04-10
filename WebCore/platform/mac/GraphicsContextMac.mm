@@ -54,11 +54,7 @@ public:
     GraphicsContextPlatformPrivate();
     ~GraphicsContextPlatformPrivate();
     
-    id <WebCoreTextRenderer> textRenderer;
-    Font textRendererFont;
-#if SVG_SUPPORT
-    KRenderingDevice *renderingDevice;
-#endif
+    IntRect m_focusRingClip; // Work around CG bug in focus ring clipping.
 };
 
 // A fillRect helper to work around the fact that NSRectFill uses copy mode, not source over.
@@ -69,13 +65,11 @@ static inline void fillRectSourceOver(const FloatRect& rect, const Color& col)
 }
 
 GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate()
-    : textRenderer(0) 
 {
 }
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 {
-    KWQRelease(textRenderer);
 }
 
 GraphicsContext::GraphicsContext()
@@ -512,6 +506,18 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
     CGContextClip(context);
 }
 
+void GraphicsContext::setFocusRingClip(const IntRect& r)
+{
+    // This method only exists to work around bugs in Mac focus ring clipping.
+    m_data->m_focusRingClip = r;
+}
+
+void GraphicsContext::clearFocusRingClip()
+{
+    // This method only exists to work around bugs in Mac focus ring clipping.
+    m_data->m_focusRingClip = IntRect();
+}
+
 CGContextRef GraphicsContext::currentCGContext()
 {
     return (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
@@ -585,7 +591,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
     for (unsigned i = 0; i < rectCount; i++)
         CGPathAddRect(focusRingPath, 0, CGRectInset(rects[i], -offset, -offset));
     
-    [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:focusRingPath radius:radius color:colorRef];
+    [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:focusRingPath radius:radius color:colorRef clipRect:m_data->m_focusRingClip];
     CGColorRelease(colorRef);
     CGPathRelease(focusRingPath);
 }

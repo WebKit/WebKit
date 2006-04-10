@@ -47,7 +47,7 @@ static WebCoreGraphicsBridge *sharedBridge;
     return self;
 }
 
-- (void)drawFocusRingWithPath:(CGPathRef)path radius:(float)radius color:(CGColorRef)color
+- (void)drawFocusRingWithPath:(CGPathRef)path radius:(float)radius color:(CGColorRef)color clipRect:(NSRect)rect
 {
 }
 

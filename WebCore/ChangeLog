@@ -1,3 +1,23 @@
+2006-04-10  David Hyatt  <hyatt@apple.com>
+
+        Make focus ring painting respect clips set by WebCore (e.g., overflow).
+
+        Reviewed by darin
+
+        * platform/GraphicsContext.h:
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::setFocusRingClip):
+        (WebCore::GraphicsContext::clearFocusRingClip):
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/mac/WebCoreGraphicsBridge.h:
+        * platform/mac/WebCoreGraphicsBridge.m:
+        (-[WebCoreGraphicsBridge drawFocusRingWithPath:radius:color:clipRect:]):
+        * rendering/RenderLayer.cpp:
+        (WebCore::setClip):
+        (WebCore::restoreClip):
+
 2006-04-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
