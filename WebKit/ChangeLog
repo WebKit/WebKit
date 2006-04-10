@@ -1,3 +1,20 @@
+2006-04-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8100
+          REGRESSION (NativeTextField): Right-aligned and RTL text jitters in new text fields
+
+        * WebCoreSupport/WebTextRenderer.m:
+        (overrideLayoutOperation): For RTL runs, apply the word-rounding on the left.
+        (CG_floatWidthForRun): For RTL runs, apply the last character's rounding
+        on the left by adjusting the start position.
+        (initializeWidthIterator): Added finalRoundingWidth field to WidthIterator.
+        (advanceWidthIterator): For RTL runs, apply rounding on the left of the character,
+        by increasing the width of the next character (which is the character to the left). For
+        the last character, keep the rounding width in the iterator's finalRoundingWidth, to be used by
+        CG_floatWidthForRun().
+
 2006-04-08  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele Peterson.

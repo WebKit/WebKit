@@ -1,3 +1,8 @@
+2006-04-10  Darin Adler  <darin@apple.com>
+
+        - regenerated pixel results because many may be affected by
+          the fix for bug 8100
+
 2006-04-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

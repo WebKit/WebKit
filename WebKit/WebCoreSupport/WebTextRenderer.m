@@ -107,6 +107,7 @@ typedef struct WidthIterator {
     float widthToStart;
     float padding;
     float padPerSpace;
+    float finalRoundingWidth;
 } WidthIterator;
 
 typedef struct ATSULayoutParameters
@@ -256,6 +257,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         float padding = style->padding;
         // In the CoreGraphics code path, the rounding hack is applied in logical order.
         // Here it is applied in visual left-to-right order, which may be better.
+        ItemCount lastRoundingChar = 0;
         ItemCount i;
         for (i = 1; i < count; i++) {
             bool isLastChar = i == count - 1;
@@ -306,11 +308,22 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             if (isRoundingHackCharacter(ch))
                 width = ceilf(width);
             lastAdjustedPos = lastAdjustedPos + width;
-            if (isRoundingHackCharacter(nextCh))
-                if (!isLastChar
-                        || style->applyRunRounding
-                        || (run->to < (int)run->length && isRoundingHackCharacter(characters[run->to - run->from])))
+            if (isRoundingHackCharacter(nextCh)
+                && (!isLastChar
+                    || style->applyRunRounding
+                    || (run->to < (int)run->length && isRoundingHackCharacter(characters[run->to - run->from])))) {
+                if (!style->rtl)
                     lastAdjustedPos = ceilf(lastAdjustedPos);
+                else {
+                    float roundingWidth = ceilf(lastAdjustedPos) - lastAdjustedPos;
+                    Fixed rw = FloatToFixed(roundingWidth);
+                    ItemCount j;
+                    for (j = lastRoundingChar; j < i; j++)
+                        layoutRecords[j].realPos += rw;
+                    lastRoundingChar = i;
+                    lastAdjustedPos += roundingWidth;
+                }
+            }
             if (syntheticBoldPass) {
                 if (syntheticBoldOffset)
                     layoutRecords[i-1].realPos += syntheticBoldOffset;
@@ -1047,8 +1060,9 @@ static float CG_floatWidthForRun(WebTextRenderer *renderer, const WebCoreTextRun
         if (!style->rtl)
             *startPosition = it.widthToStart;
         else {
+            float finalRoundingWidth = it.finalRoundingWidth;
             advanceWidthIterator(&it, run->length, 0, 0, 0);
-            *startPosition = it.runWidthSoFar - runWidth;
+            *startPosition = it.runWidthSoFar - runWidth + finalRoundingWidth;
         }
     }
     if (numGlyphsResult)
@@ -1752,6 +1766,7 @@ static void initializeWidthIterator(WidthIterator *iterator, WebTextRenderer *re
     iterator->style = style;
     iterator->currentCharacter = run->from;
     iterator->runWidthSoFar = 0;
+    iterator->finalRoundingWidth = 0;
 
     // If the padding is non-zero, count the number of spaces in the run
     // and divide that by the padding for per space addition.
@@ -1815,10 +1830,12 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
     const UniChar *cp = &run->characters[currentCharacter];
 
     const WebCoreTextStyle *style = iterator->style;
-    bool needCharTransform = style->rtl | style->smallCaps;
+    bool rtl = style->rtl;
+    bool needCharTransform = rtl | style->smallCaps;
     bool hasExtraSpacing = style->letterSpacing | style->wordSpacing | style->padding;
 
     float runWidthSoFar = iterator->runWidthSoFar;
+    float lastRoundingWidth = iterator->finalRoundingWidth;
 
     while (currentCharacter < offset) {
         UChar32 c = *cp;
@@ -1854,7 +1871,7 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
         WebTextRenderer *renderer = iterator->renderer;
 
         if (needCharTransform) {
-            if (style->rtl)
+            if (rtl)
                 c = u_charMirror(c);
 
             // If small-caps, convert lowercase to upper.
@@ -1944,6 +1961,8 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
         // We adjust the width of the last character of a "word" to ensure an integer width.
         // If we move KHTML to floats we can remove this (and related) hacks.
 
+        float oldWidth = width;
+
         // Force characters that are used to determine word boundaries for the rounding hack
         // to be integer width, so following words will start on an integer boundary.
         if (style->applyWordRounding && isRoundingHackCharacter(c))
@@ -1965,16 +1984,18 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
         } else {
             ASSERT(renderersUsed);
             ASSERT(glyphsUsed);
-            *widths++ = width;
+            *widths++ = (rtl ? oldWidth + lastRoundingWidth : width);
             *renderersUsed++ = renderer;
             *glyphsUsed++ = glyph;
         }
 
+        lastRoundingWidth = width - oldWidth;
         ++numGlyphs;
     }
 
     iterator->currentCharacter = currentCharacter;
     iterator->runWidthSoFar = runWidthSoFar;
+    iterator->finalRoundingWidth = lastRoundingWidth;
 
     return numGlyphs;
 }
