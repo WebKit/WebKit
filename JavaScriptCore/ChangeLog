@@ -1,3 +1,27 @@
+2006-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by eric.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=8284
+        prevent unnecessary entries in the "nodes with extra refs" hash table
+
+        This patch switches manually RefPtr exchange with use of
+        RefPtr::release to ensure that a node's ref count never tops 1
+        (in the normal case).
+
+        * kjs/nodes.cpp:
+        (BlockNode::BlockNode):
+        (CaseBlockNode::CaseBlockNode):
+        * kjs/nodes.h:
+        (KJS::ArrayNode::ArrayNode):
+        (KJS::ObjectLiteralNode::ObjectLiteralNode):
+        (KJS::ArgumentsNode::ArgumentsNode):
+        (KJS::VarStatementNode::VarStatementNode):
+        (KJS::ForNode::ForNode):
+        (KJS::CaseClauseNode::CaseClauseNode):
+        (KJS::FuncExprNode::FuncExprNode):
+        (KJS::FuncDeclNode::FuncDeclNode):
+
 2006-04-08  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

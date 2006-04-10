@@ -233,9 +233,9 @@ namespace KJS {
   public:
     ArrayNode(int e) : elision(e), opt(true) { }
     ArrayNode(ElementNode *ele)
-      : element(ele->next), elision(0), opt(false) { Parser::removeNodeCycle(element.get()); ele->next = 0; }
+      : element(ele->next.release()), elision(0), opt(false) { Parser::removeNodeCycle(element.get()); }
     ArrayNode(int eli, ElementNode *ele)
-      : element(ele->next), elision(eli), opt(true) { Parser::removeNodeCycle(element.get()); ele->next = 0; }
+      : element(ele->next.release()), elision(eli), opt(true) { Parser::removeNodeCycle(element.get()); }
     JSValue* evaluate(ExecState*);
     virtual void streamTo(SourceStream&) const;
   private:
@@ -289,7 +289,7 @@ namespace KJS {
   class ObjectLiteralNode : public Node {
   public:
     ObjectLiteralNode() { }
-    ObjectLiteralNode(PropertyListNode *l) : list(l->next) { Parser::removeNodeCycle(list.get()); l->next = 0; }
+    ObjectLiteralNode(PropertyListNode *l) : list(l->next.release()) { Parser::removeNodeCycle(list.get()); }
     JSValue* evaluate(ExecState*);
     virtual void streamTo(SourceStream&) const;
   private:
@@ -349,7 +349,7 @@ namespace KJS {
   public:
     ArgumentsNode() { }
     ArgumentsNode(ArgumentListNode *l)
-      : list(l->next) { Parser::removeNodeCycle(list.get()); l->next = 0; }
+      : list(l->next.release()) { Parser::removeNodeCycle(list.get()); }
     JSValue* evaluate(ExecState*);
     List evaluateList(ExecState *exec) { return list ? list->evaluateList(exec) : List(); }
     virtual void streamTo(SourceStream&) const;
@@ -793,7 +793,7 @@ namespace KJS {
 
   class VarStatementNode : public StatementNode {
   public:
-    VarStatementNode(VarDeclListNode *l) : next(l->next) { Parser::removeNodeCycle(next.get()); l->next = 0; }
+    VarStatementNode(VarDeclListNode *l) : next(l->next.release()) { Parser::removeNodeCycle(next.get()); }
     virtual Completion execute(ExecState*);
     virtual void processVarDecls(ExecState*);
     virtual void streamTo(SourceStream&) const;
@@ -867,7 +867,7 @@ namespace KJS {
     ForNode(Node *e1, Node *e2, Node *e3, StatementNode *s) :
       expr1(e1), expr2(e2), expr3(e3), statement(s) {}
     ForNode(VarDeclListNode *e1, Node *e2, Node *e3, StatementNode *s) :
-      expr1(e1->next), expr2(e2), expr3(e3), statement(s) { Parser::removeNodeCycle(expr1.get()); e1->next = 0; }
+      expr1(e1->next.release()), expr2(e2), expr3(e3), statement(s) { Parser::removeNodeCycle(expr1.get()); }
     virtual Completion execute(ExecState*);
     virtual void processVarDecls(ExecState*);
     virtual void streamTo(SourceStream&) const;
@@ -938,7 +938,7 @@ namespace KJS {
   public:
     CaseClauseNode(Node *e) : expr(e) { }
     CaseClauseNode(Node *e, StatListNode *l)
-      : expr(e), next(l->next) { Parser::removeNodeCycle(next.get()); l->next = 0; }
+      : expr(e), next(l->next.release()) { Parser::removeNodeCycle(next.get()); }
     JSValue* evaluate(ExecState*);
     Completion evalStatements(ExecState*);
     virtual void processVarDecls(ExecState*);
@@ -1059,7 +1059,7 @@ namespace KJS {
   class FuncExprNode : public Node {
   public:
     FuncExprNode(const Identifier &i, FunctionBodyNode *b, ParameterNode *p = 0)
-      : ident(i), param(p ? p->next : 0), body(b) { if (p) { Parser::removeNodeCycle(param.get()); p->next = 0; } }
+      : ident(i), param(p ? p->next.release() : 0), body(b) { if (p) { Parser::removeNodeCycle(param.get()); } }
     virtual JSValue *evaluate(ExecState*);
     virtual void streamTo(SourceStream&) const;
   private:
@@ -1075,7 +1075,7 @@ namespace KJS {
     FuncDeclNode(const Identifier &i, FunctionBodyNode *b)
       : ident(i), body(b) { }
     FuncDeclNode(const Identifier &i, ParameterNode *p, FunctionBodyNode *b)
-      : ident(i), param(p->next), body(b) { Parser::removeNodeCycle(param.get()); p->next = 0; }
+      : ident(i), param(p->next.release()), body(b) { Parser::removeNodeCycle(param.get()); }
     virtual Completion execute(ExecState*);
     virtual void processFuncDecl(ExecState*);
     virtual void streamTo(SourceStream&) const;

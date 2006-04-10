@@ -1677,9 +1677,8 @@ void VarStatementNode::processVarDecls(ExecState *exec)
 BlockNode::BlockNode(SourceElementsNode *s)
 {
   if (s) {
-    source = s->next;
+    source = s->next.release();
     Parser::removeNodeCycle(source.get());
-    s->next = 0;
     setLoc(s->firstLine(), s->lastLine());
   } else {
     source = 0;
@@ -2143,9 +2142,8 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
                              ClauseListNode *l2)
 {
   if (l1) {
-    list1 = l1->next;
+    list1 = l1->next.release();
     Parser::removeNodeCycle(list1.get());
-    l1->next = 0;
   } else {
     list1 = 0;
   }
@@ -2153,9 +2151,8 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
   def = d;
 
   if (l2) {
-    list2 = l2->next;
+    list2 = l2->next.release();
     Parser::removeNodeCycle(list2.get());
-    l2->next = 0;
   } else {
     list2 = 0;
   }
