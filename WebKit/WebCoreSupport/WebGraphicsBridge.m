@@ -46,11 +46,15 @@
     return (WebGraphicsBridge *)[super sharedBridge];
 }
 
-- (void)drawFocusRingWithPath:(CGPathRef)path radius:(float)radius color:(CGColorRef)color
+- (void)drawFocusRingWithPath:(CGPathRef)path radius:(float)radius color:(CGColorRef)color clipRect:(NSRect)rect
 {
+    // We have to set an accurate clip ourselves, since CG inflates the clip (thus allowing the focus ring to
+    // paint slightly outside the clip).
+    NSView* view = [NSView focusView];
+    
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
-
-    NSView *view = [NSView focusView];
+    NSRect tr = [view convertRect:rect toView:nil];
+    
     const NSRect *rects;
     int count;
     [view getRectsBeingDrawn:&rects count:&count];
@@ -58,9 +62,10 @@
     int i;
     for (i = 0; i < count; ++i) {
         NSRect transformedRect = [view convertRect:rects[i] toView:nil];
+        NSRect rectToUse = NSIntersectionRect(transformedRect, tr);
         CGContextBeginPath(context);
         CGContextAddPath(context, path);
-        WKDrawFocusRing(context, *(CGRect *)&transformedRect, color, radius);
+        WKDrawFocusRing(context, *(CGRect *)&rectToUse, color, radius);
     }
 }
 

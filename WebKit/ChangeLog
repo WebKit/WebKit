@@ -1,3 +1,13 @@
+2006-04-10  David Hyatt  <hyatt@apple.com>
+
+        Make the broken CG focus ring painting work when WebCore sets a clip
+        (in addition to respecting the dirty rect clip).
+
+        Reviewed by darin
+
+        * WebCoreSupport/WebGraphicsBridge.m:
+        (-[WebGraphicsBridge drawFocusRingWithPath:radius:color:clipRect:]):
+
 2006-04-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
