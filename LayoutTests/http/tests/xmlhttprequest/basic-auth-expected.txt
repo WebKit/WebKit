@@ -1,0 +1,10 @@
+Tests for bug 7877: XMLHttpRequest ignores username/password passed to open()
+
+sync: User: sync, password: 123.
+sync2: User: sync2, password: 123.
+sync3: User: sync3, password: 123.
+sync4: User: sync4, password: 123.
+async: User: async, password: 123.
+async2: User: async2, password: 123.
+async3: User: async3, password: 123.
+async4: User: async4, password: 123.

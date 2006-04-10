@@ -605,23 +605,16 @@ void KURL::setUser(const DeprecatedString &user)
         DeprecatedString u;
         int end = userEndPos;
         if (!user.isEmpty()) {
-            // Untested code, but this is never used.
-            ASSERT_NOT_REACHED();
-#if 0
             u = user;
-            if (userStartPos == schemeEndPos + 1) {
+            if (userStartPos == schemeEndPos + 1)
                 u = "//" + u;
-            }
             // Add '@' if we didn't have one before.
-            if (end == hostEndPos || (end == passwordEndPos && urlString[end] != '@')) {
+            if (end == hostEndPos || (end == passwordEndPos && urlString[end] != '@'))
                 u += '@';
-            }
-#endif
         } else {
             // Remove '@' if we now have neither user nor password.
-            if (userEndPos == passwordEndPos && end != hostEndPos && urlString[end] == '@') {
+            if (userEndPos == passwordEndPos && end != hostEndPos && urlString[end] == '@')
                 end += 1;
-            }
         }
         const DeprecatedString newURL = urlString.left(userStartPos) + u + urlString.mid(end);
         parse(newURL.ascii(), &newURL);
@@ -634,23 +627,16 @@ void KURL::setPass(const DeprecatedString &password)
         DeprecatedString p;
         int end = passwordEndPos;
         if (!password.isEmpty()) {
-            // Untested code, but this is never used.
-            ASSERT_NOT_REACHED();
-#if 0
             p = ':' + password + '@';
-            if (userEndPos == schemeEndPos + 1) {
+            if (userEndPos == schemeEndPos + 1)
                 p = "//" + p;
-            }
             // Eat the existing '@' since we are going to add our own.
-            if (end != hostEndPos && urlString[end] == '@') {
+            if (end != hostEndPos && urlString[end] == '@')
                 end += 1;
-            }
-#endif
         } else {
             // Remove '@' if we now have neither user nor password.
-            if (userStartPos == userEndPos && end != hostEndPos && urlString[end] == '@') {
+            if (userStartPos == userEndPos && end != hostEndPos && urlString[end] == '@')
                 end += 1;
-            }
         }
         const DeprecatedString newURL = urlString.left(userEndPos) + p + urlString.mid(end);
         parse(newURL.ascii(), &newURL);

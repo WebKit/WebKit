@@ -1,0 +1,79 @@
+<html>
+<body>
+<p>Tests for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7877">bug 7877</a>: 
+XMLHttpRequest ignores username/password passed to open()
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    var console_messages = document.createElement("ol");
+    document.body.appendChild(console_messages);
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+
+    // sync
+    req = new XMLHttpRequest;
+    req.open("GET", "resources/basic-auth.php?uid=sync", false, "sync", "123");
+    req.send("");
+    log('sync: ' + req.responseText);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth.php?uid=sync2"), false, "sync2", "123");
+    req.send("");
+    log('sync2: ' + req.responseText);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth.php?uid=sync3").replace("http://", "http://sync3:123@"), false);
+    req.send("");
+    log('sync3: ' + req.responseText);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth.php?uid=sync4").replace("http://", "http://incorrect:incorrect@"), false, "sync4", "123");
+    req.send("");
+    log('sync4: ' + req.responseText);
+
+    // async
+    var asyncStep = 1;
+
+    req.onreadystatechange = processStateChange;
+    req.open("GET", "resources/basic-auth.php?uid=async", true, "async", "123");
+    req.send("");
+
+    function processStateChange() {
+    
+      if (req.readyState == 4){
+        if (req.status == 200){
+          if (asyncStep == 1) {
+            asyncStep = 2;
+            log('async: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth.php?uid=async2"), true, "async2", "123");
+            req.send("");
+          } else if (asyncStep == 2) {
+            asyncStep = 3;
+            log('async2: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth.php?uid=async3").replace("http://", "http://async3:123@"), true, "async3", "123");
+            req.send("");
+          } else if (asyncStep == 3) {
+            asyncStep = 4;
+            log('async3: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth.php?uid=async4").replace("http://", "http://incorrect:incorrect@"), true, "async4", "123");
+            req.send("");
+          } else if (asyncStep == 4) {
+            log('async4: ' + req.responseText);
+            if (window.layoutTestController)
+              layoutTestController.notifyDone();
+          }
+        }
+      }
+    }
+
+</script>
+</body>
+</html>

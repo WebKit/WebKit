@@ -1,3 +1,17 @@
+2006-04-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7877
+        XMLHttpRequest ignores username/password passed to open()
+
+        Test: http/tests/xmlhttprequest/basic-auth.html
+
+        * platform/KURL.cpp:
+        (KURL::setUser): Enable a code path that handles non-empty user name -
+        it was already present, but commented out and protected with an assertion.
+        (KURL::setPass): Ditto.
+
 2006-04-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

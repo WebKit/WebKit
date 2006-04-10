@@ -1,3 +1,14 @@
+2006-04-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7877
+        XMLHttpRequest ignores username/password passed to open()
+
+        * http/tests/xmlhttprequest/basic-auth-expected.txt: Added.
+        * http/tests/xmlhttprequest/basic-auth.html: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth.php: Added.
+
 2006-04-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
