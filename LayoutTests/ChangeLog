@@ -1,5 +1,9 @@
 2006-04-10  Darin Adler  <darin@apple.com>
 
+        * fast/dom/gc-4-expected.txt: Add one blank line (test result was failing).
+
+2006-04-10  Darin Adler  <darin@apple.com>
+
         - one more test change for http://bugzilla.opendarwin.org/show_bug.cgi?id=4884
           Canvas element breaks when RenderObject creation is deferred by external CSS
 
