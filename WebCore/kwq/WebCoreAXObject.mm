@@ -1047,7 +1047,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
 {
     // convert absolute point to view coordinates
     FrameView *docView = [self topView];
-    NSView *view = docView->getView();
+    NSView *view = docView->getDocumentView();
     RenderObject *renderer = [self topRenderer];
     Node *innerNode = NULL;
     NSPoint ourpoint;
@@ -1057,8 +1057,6 @@ static IntRect boundingBoxRect(RenderObject* obj)
         // ask the document layer to hitTest
         NSPoint windowCoord = [[view window] convertScreenToBase: point];
         ourpoint = [view convertPoint:windowCoord fromView:nil];
-        ourpoint.x += docView->contentsX();
-        ourpoint.y += docView->contentsY();
         
         RenderObject::NodeInfo nodeInfo(true, true);
         renderer->layer()->hitTest(nodeInfo, IntPoint(ourpoint));

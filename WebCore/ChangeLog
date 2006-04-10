@@ -1,3 +1,17 @@
+2006-04-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Eric, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8295
+          Dictionary pop-up panel targets the wrong word in a scrolled IFRAME
+
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject doAXTextMarkerForPosition:]): Removed the addition of scroll
+        offsets, which is redundant for scrolled views, then changed the first view
+        to be the document's scrolled view instead of its scroll view (all subsequent views were
+        already scrolled views).
+        * manual-tests/dictionary-scrolled-iframe.html: Added.
+
 2006-04-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
