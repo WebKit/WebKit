@@ -1,5 +1,13 @@
 2006-04-10  Darin Adler  <darin@apple.com>
 
+        - one more test change for http://bugzilla.opendarwin.org/show_bug.cgi?id=4884
+          Canvas element breaks when RenderObject creation is deferred by external CSS
+
+        * fast/dom/gc-4.html: Test had a bug where it used <canvas>
+        without a </canvas> tag. Changed test to include a </canvas> tag.
+
+2006-04-10  Darin Adler  <darin@apple.com>
+
         - regenerated pixel results because many may be affected by
           the fix for bug 8100
 
