@@ -26,8 +26,6 @@
 /* Begin PBXBuildFile section */
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; };
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
-		1A69D381085627410009880D /* JSDOMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* JSDOMParser.h */; };
-		1A69D382085627410009880D /* JSDOMParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* JSDOMParser.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; };
 		550A0BCD085F604D007353D6 /* HTMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* HTMLNames.cpp */; };
@@ -286,6 +284,34 @@
 		9385F762098D9C3100D90D24 /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = 9385F761098D9C3100D90D24 /* Screen.h */; };
 		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
+		93B70D5B09EB0C7C009D8468 /* JSDOMParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */; };
+		93B70D5C09EB0C7C009D8468 /* JSDOMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4009EB0C7C009D8468 /* JSDOMParser.h */; };
+		93B70D5D09EB0C7C009D8468 /* JSXMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */; };
+		93B70D5E09EB0C7C009D8468 /* JSXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */; };
+		93B70D5F09EB0C7C009D8468 /* JSXMLSerializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4309EB0C7C009D8468 /* JSXMLSerializer.cpp */; };
+		93B70D6009EB0C7C009D8468 /* JSXMLSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4409EB0C7C009D8468 /* JSXMLSerializer.h */; };
+		93B70D6109EB0C7C009D8468 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */; };
+		93B70D6209EB0C7C009D8468 /* JSXSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4609EB0C7C009D8468 /* JSXSLTProcessor.h */; };
+		93B70D6309EB0C7C009D8468 /* kjs_binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4709EB0C7C009D8468 /* kjs_binding.cpp */; };
+		93B70D6409EB0C7C009D8468 /* kjs_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4809EB0C7C009D8468 /* kjs_binding.h */; };
+		93B70D6509EB0C7C009D8468 /* kjs_css.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4909EB0C7C009D8468 /* kjs_css.cpp */; };
+		93B70D6609EB0C7C009D8468 /* kjs_css.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4A09EB0C7C009D8468 /* kjs_css.h */; };
+		93B70D6709EB0C7C009D8468 /* kjs_dom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4B09EB0C7C009D8468 /* kjs_dom.cpp */; };
+		93B70D6809EB0C7C009D8468 /* kjs_dom.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4C09EB0C7C009D8468 /* kjs_dom.h */; };
+		93B70D6909EB0C7C009D8468 /* kjs_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */; };
+		93B70D6A09EB0C7C009D8468 /* kjs_events.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4E09EB0C7C009D8468 /* kjs_events.h */; };
+		93B70D6B09EB0C7C009D8468 /* kjs_html.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */; };
+		93B70D6C09EB0C7C009D8468 /* kjs_html.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5009EB0C7C009D8468 /* kjs_html.h */; };
+		93B70D6D09EB0C7C009D8468 /* kjs_navigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5109EB0C7C009D8468 /* kjs_navigator.cpp */; };
+		93B70D6E09EB0C7C009D8468 /* kjs_navigator.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5209EB0C7C009D8468 /* kjs_navigator.h */; };
+		93B70D6F09EB0C7C009D8468 /* kjs_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5309EB0C7C009D8468 /* kjs_proxy.cpp */; };
+		93B70D7009EB0C7C009D8468 /* kjs_proxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5409EB0C7C009D8468 /* kjs_proxy.h */; };
+		93B70D7109EB0C7C009D8468 /* kjs_traversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5509EB0C7C009D8468 /* kjs_traversal.cpp */; };
+		93B70D7209EB0C7C009D8468 /* kjs_traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5609EB0C7C009D8468 /* kjs_traversal.h */; };
+		93B70D7309EB0C7C009D8468 /* kjs_views.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5709EB0C7C009D8468 /* kjs_views.cpp */; };
+		93B70D7409EB0C7C009D8468 /* kjs_views.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5809EB0C7C009D8468 /* kjs_views.h */; };
+		93B70D7509EB0C7C009D8468 /* kjs_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5909EB0C7C009D8468 /* kjs_window.cpp */; };
+		93B70D7609EB0C7C009D8468 /* kjs_window.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5A09EB0C7C009D8468 /* kjs_window.h */; };
 		93B780CA09B3B7FE00690162 /* WidgetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B780C909B3B7FE00690162 /* WidgetClient.h */; };
 		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
 		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
@@ -308,16 +334,6 @@
 		93EEC20409C2877700C515D1 /* CanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EEC1F209C2877700C515D1 /* CanvasPattern.h */; };
 		93EEC26F09C3218000C515D1 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC26E09C3218000C515D1 /* CanvasPattern.cpp */; };
 		93EEC27109C3218800C515D1 /* CanvasStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93EEC27009C3218800C515D1 /* CanvasStyle.cpp */; };
-		93F198CE08245E59001E9ABC /* kjs_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D1F502DE4369018635CA /* kjs_binding.h */; };
-		93F198CF08245E59001E9ABC /* kjs_css.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D1F702DE4369018635CA /* kjs_css.h */; };
-		93F198D108245E59001E9ABC /* kjs_dom.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D1FA02DE4369018635CA /* kjs_dom.h */; };
-		93F198D308245E59001E9ABC /* kjs_events.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D1FD02DE4369018635CA /* kjs_events.h */; };
-		93F198D508245E59001E9ABC /* kjs_html.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20002DE4369018635CA /* kjs_html.h */; };
-		93F198D708245E59001E9ABC /* kjs_navigator.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20302DE4369018635CA /* kjs_navigator.h */; };
-		93F198D908245E59001E9ABC /* kjs_proxy.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20602DE4369018635CA /* kjs_proxy.h */; };
-		93F198DC08245E59001E9ABC /* kjs_traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20B02DE4369018635CA /* kjs_traversal.h */; };
-		93F198DE08245E59001E9ABC /* kjs_views.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20E02DE4369018635CA /* kjs_views.h */; };
-		93F198E008245E59001E9ABC /* kjs_window.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D21102DE4369018635CA /* kjs_window.h */; };
 		93F198E308245E59001E9ABC /* html_baseimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23802DE4396018635CA /* html_baseimpl.h */; };
 		93F198E408245E59001E9ABC /* html_blockimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23A02DE4396018635CA /* html_blockimpl.h */; };
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; };
@@ -383,7 +399,6 @@
 		93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* BlockExceptions.h */; settings = {ATTRIBUTES = (); }; };
 		93F199BF08245E59001E9ABC /* WebCoreGraphicsBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199C308245E59001E9ABC /* JSXMLSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 65912B0E0586921000123A69 /* JSXMLSerializer.h */; };
 		93F199C508245E59001E9ABC /* xbl_binding_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC41978E059293F30016347F /* xbl_binding_manager.h */; };
 		93F199C608245E59001E9ABC /* xbl_docimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */; };
 		93F199C708245E59001E9ABC /* xbl_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD990DD0594B9FC00AB848D /* xbl_tokenizer.h */; };
@@ -433,16 +448,6 @@
 		93F19A5D08245E59001E9ABC /* WebCoreImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */; };
 		93F19A5E08245E59001E9ABC /* WebCoreTextRendererFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587855302DE375901EA4122 /* WebCoreTextRendererFactory.mm */; };
 		93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587855502DE375901EA4122 /* WebCoreViewFactory.m */; };
-		93F19A8308245E59001E9ABC /* kjs_binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D1F402DE4369018635CA /* kjs_binding.cpp */; };
-		93F19A8408245E59001E9ABC /* kjs_css.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D1F602DE4369018635CA /* kjs_css.cpp */; };
-		93F19A8508245E59001E9ABC /* kjs_dom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D1F902DE4369018635CA /* kjs_dom.cpp */; };
-		93F19A8608245E59001E9ABC /* kjs_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D1FC02DE4369018635CA /* kjs_events.cpp */; };
-		93F19A8708245E59001E9ABC /* kjs_html.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D1FF02DE4369018635CA /* kjs_html.cpp */; };
-		93F19A8808245E59001E9ABC /* kjs_navigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20202DE4369018635CA /* kjs_navigator.cpp */; };
-		93F19A8908245E59001E9ABC /* kjs_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20502DE4369018635CA /* kjs_proxy.cpp */; };
-		93F19A8B08245E59001E9ABC /* kjs_traversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20A02DE4369018635CA /* kjs_traversal.cpp */; };
-		93F19A8C08245E59001E9ABC /* kjs_views.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20D02DE4369018635CA /* kjs_views.cpp */; };
-		93F19A8D08245E59001E9ABC /* kjs_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D21002DE4369018635CA /* kjs_window.cpp */; };
 		93F19A8F08245E59001E9ABC /* html_baseimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23702DE4396018635CA /* html_baseimpl.cpp */; };
 		93F19A9008245E59001E9ABC /* html_blockimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23902DE4396018635CA /* html_blockimpl.cpp */; };
 		93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* HTMLDocument.cpp */; };
@@ -478,7 +483,6 @@
 		93F19AE308245E59001E9ABC /* WebCoreGraphicsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */; };
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
 		93F19AE608245E59001E9ABC /* KWQKSSLKeyGen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* KWQKSSLKeyGen.mm */; };
-		93F19AE708245E59001E9ABC /* JSXMLSerializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65912B0D0586921000123A69 /* JSXMLSerializer.cpp */; };
 		93F19AE808245E59001E9ABC /* xbl_binding_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC419795059294CA0016347F /* xbl_binding_manager.cpp */; };
 		93F19AE908245E59001E9ABC /* xbl_docimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEACC8E0592E0AD009D6AEF /* xbl_docimpl.cpp */; };
 		93F19AEA08245E59001E9ABC /* xbl_tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD990D90594B9E500AB848D /* xbl_tokenizer.cpp */; };
@@ -564,8 +568,6 @@
 		A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8239DFE09B3CF8A00B60641 /* Logging.cpp */; };
 		A8239E0109B3CF8A00B60641 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = A8239DFF09B3CF8A00B60641 /* Logging.h */; };
 		A823A75C09B6E53900B60641 /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A823A75B09B6E53900B60641 /* GraphicsContext.cpp */; };
-		A83C81A3091189B9009BF4A7 /* JSXSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = A83C819F091189B9009BF4A7 /* JSXSLTProcessor.h */; };
-		A83C81A4091189B9009BF4A7 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83C81A0091189B9009BF4A7 /* JSXSLTProcessor.cpp */; };
 		A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629C909DA2B47009633A5 /* JSUIEvent.h */; };
 		A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */; };
 		A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629CB09DA2B47009633A5 /* JSMouseEvent.h */; };
@@ -1134,8 +1136,6 @@
 		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
 		E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F0424409839389006694EA /* xmlhttprequest.cpp */; };
 		E1F0424709839389006694EA /* xmlhttprequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F0424509839389006694EA /* xmlhttprequest.h */; };
-		E1F7F5600981AF570073BE6A /* JSXMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */; };
-		E1F7F5610981AF570073BE6A /* JSXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; };
 		FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418909759694000540BE /* RenderSVGImage.h */; };
@@ -1196,8 +1196,6 @@
 /* Begin PBXFileReference section */
 		14EC267D09CA07E000E1EEEC /* EventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNode.h; sourceTree = "<group>"; };
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
-		1A69D37F085627410009880D /* JSDOMParser.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMParser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		1A69D380085627410009880D /* JSDOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1304,8 +1302,6 @@
 		6582A15409999D6D00BEEB6D /* ScreenMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenMac.mm; sourceTree = "<group>"; };
 		6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SystemTimeMac.cpp; sourceTree = "<group>"; };
 		6582A17709999EA000BEEB6D /* QStringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = QStringMac.mm; sourceTree = "<group>"; };
-		65912B0D0586921000123A69 /* JSXMLSerializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLSerializer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		65912B0E0586921000123A69 /* JSXMLSerializer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLSerializer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		6593923509AE4346002C531F /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KURL.cpp; path = platform/KURL.cpp; sourceTree = "<group>"; };
 		6593923609AE4346002C531F /* KURL.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = KURL.h; path = platform/KURL.h; sourceTree = "<group>"; };
 		6593923909AE435C002C531F /* KURLMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KURLMac.mm; sourceTree = "<group>"; };
@@ -1527,6 +1523,34 @@
 		93ABCE5E06E1A42E0085925B /* formdata.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = formdata.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93B641F106E28C5C0055F610 /* KWQFormData.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQFormData.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93B641F206E28C5C0055F610 /* KWQFormData.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQFormData.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMParser.cpp; path = bindings/js/JSDOMParser.cpp; sourceTree = "<group>"; };
+		93B70D4009EB0C7C009D8468 /* JSDOMParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSDOMParser.h; path = bindings/js/JSDOMParser.h; sourceTree = "<group>"; };
+		93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSXMLHttpRequest.cpp; path = bindings/js/JSXMLHttpRequest.cpp; sourceTree = "<group>"; };
+		93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXMLHttpRequest.h; path = bindings/js/JSXMLHttpRequest.h; sourceTree = "<group>"; };
+		93B70D4309EB0C7C009D8468 /* JSXMLSerializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSXMLSerializer.cpp; path = bindings/js/JSXMLSerializer.cpp; sourceTree = "<group>"; };
+		93B70D4409EB0C7C009D8468 /* JSXMLSerializer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXMLSerializer.h; path = bindings/js/JSXMLSerializer.h; sourceTree = "<group>"; };
+		93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSXSLTProcessor.cpp; path = bindings/js/JSXSLTProcessor.cpp; sourceTree = "<group>"; };
+		93B70D4609EB0C7C009D8468 /* JSXSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = JSXSLTProcessor.h; path = bindings/js/JSXSLTProcessor.h; sourceTree = "<group>"; };
+		93B70D4709EB0C7C009D8468 /* kjs_binding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_binding.cpp; path = bindings/js/kjs_binding.cpp; sourceTree = "<group>"; };
+		93B70D4809EB0C7C009D8468 /* kjs_binding.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_binding.h; path = bindings/js/kjs_binding.h; sourceTree = "<group>"; };
+		93B70D4909EB0C7C009D8468 /* kjs_css.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_css.cpp; path = bindings/js/kjs_css.cpp; sourceTree = "<group>"; };
+		93B70D4A09EB0C7C009D8468 /* kjs_css.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_css.h; path = bindings/js/kjs_css.h; sourceTree = "<group>"; };
+		93B70D4B09EB0C7C009D8468 /* kjs_dom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_dom.cpp; path = bindings/js/kjs_dom.cpp; sourceTree = "<group>"; };
+		93B70D4C09EB0C7C009D8468 /* kjs_dom.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_dom.h; path = bindings/js/kjs_dom.h; sourceTree = "<group>"; };
+		93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_events.cpp; path = bindings/js/kjs_events.cpp; sourceTree = "<group>"; };
+		93B70D4E09EB0C7C009D8468 /* kjs_events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_events.h; path = bindings/js/kjs_events.h; sourceTree = "<group>"; };
+		93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_html.cpp; path = bindings/js/kjs_html.cpp; sourceTree = "<group>"; };
+		93B70D5009EB0C7C009D8468 /* kjs_html.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_html.h; path = bindings/js/kjs_html.h; sourceTree = "<group>"; };
+		93B70D5109EB0C7C009D8468 /* kjs_navigator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_navigator.cpp; path = bindings/js/kjs_navigator.cpp; sourceTree = "<group>"; };
+		93B70D5209EB0C7C009D8468 /* kjs_navigator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_navigator.h; path = bindings/js/kjs_navigator.h; sourceTree = "<group>"; };
+		93B70D5309EB0C7C009D8468 /* kjs_proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_proxy.cpp; path = bindings/js/kjs_proxy.cpp; sourceTree = "<group>"; };
+		93B70D5409EB0C7C009D8468 /* kjs_proxy.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_proxy.h; path = bindings/js/kjs_proxy.h; sourceTree = "<group>"; };
+		93B70D5509EB0C7C009D8468 /* kjs_traversal.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_traversal.cpp; path = bindings/js/kjs_traversal.cpp; sourceTree = "<group>"; };
+		93B70D5609EB0C7C009D8468 /* kjs_traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_traversal.h; path = bindings/js/kjs_traversal.h; sourceTree = "<group>"; };
+		93B70D5709EB0C7C009D8468 /* kjs_views.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_views.cpp; path = bindings/js/kjs_views.cpp; sourceTree = "<group>"; };
+		93B70D5809EB0C7C009D8468 /* kjs_views.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_views.h; path = bindings/js/kjs_views.h; sourceTree = "<group>"; };
+		93B70D5909EB0C7C009D8468 /* kjs_window.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = kjs_window.cpp; path = bindings/js/kjs_window.cpp; sourceTree = "<group>"; };
+		93B70D5A09EB0C7C009D8468 /* kjs_window.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = kjs_window.h; path = bindings/js/kjs_window.h; sourceTree = "<group>"; };
 		93B780C909B3B7FE00690162 /* WidgetClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WidgetClient.h; path = platform/WidgetClient.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMImplementationFront.h; path = bindings/objc/DOMImplementationFront.h; sourceTree = "<group>"; };
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMImplementationFront.cpp; path = bindings/objc/DOMImplementationFront.cpp; sourceTree = "<group>"; };
@@ -1758,8 +1782,6 @@
 		A823A75B09B6E53900B60641 /* GraphicsContext.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsContext.cpp; path = platform/GraphicsContext.cpp; sourceTree = "<group>"; };
 		A82FC33B08CBB07C00EFEE23 /* SVGCursorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGCursorElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A82FC33C08CBB07C00EFEE23 /* SVGCursorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCursorElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A83C819F091189B9009BF4A7 /* JSXSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSXSLTProcessor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A83C81A0091189B9009BF4A7 /* JSXSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessor.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A85D7A8C0879EC64006A9172 /* KWQWMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQWMatrix.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQWMatrix.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2373,30 +2395,8 @@
 		E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextDecoder.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		E1F0424409839389006694EA /* xmlhttprequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlhttprequest.cpp; sourceTree = "<group>"; };
 		E1F0424509839389006694EA /* xmlhttprequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmlhttprequest.h; sourceTree = "<group>"; };
-		E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequest.cpp; sourceTree = "<group>"; };
-		E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.h; sourceTree = "<group>"; };
 		ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = textAreaResizeCorner.tiff; path = Resources/textAreaResizeCorner.tiff; sourceTree = "<group>"; };
 		ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarker.h; sourceTree = "<group>"; };
-		F523D1F402DE4369018635CA /* kjs_binding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_binding.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D1F502DE4369018635CA /* kjs_binding.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_binding.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D1F602DE4369018635CA /* kjs_css.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_css.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D1F702DE4369018635CA /* kjs_css.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_css.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D1F902DE4369018635CA /* kjs_dom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_dom.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D1FA02DE4369018635CA /* kjs_dom.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_dom.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D1FC02DE4369018635CA /* kjs_events.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_events.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D1FD02DE4369018635CA /* kjs_events.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_events.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D1FF02DE4369018635CA /* kjs_html.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_html.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20002DE4369018635CA /* kjs_html.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_html.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20202DE4369018635CA /* kjs_navigator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_navigator.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20302DE4369018635CA /* kjs_navigator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_navigator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20502DE4369018635CA /* kjs_proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_proxy.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20602DE4369018635CA /* kjs_proxy.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_proxy.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20A02DE4369018635CA /* kjs_traversal.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_traversal.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20B02DE4369018635CA /* kjs_traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_traversal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20D02DE4369018635CA /* kjs_views.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_views.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20E02DE4369018635CA /* kjs_views.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_views.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D21002DE4369018635CA /* kjs_window.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_window.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D21102DE4369018635CA /* kjs_window.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_window.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23702DE4396018635CA /* html_baseimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_baseimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23802DE4396018635CA /* html_baseimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_baseimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23902DE4396018635CA /* html_blockimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_blockimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3653,6 +3653,34 @@
 				930CAB9609C49FAA00229C04 /* CodeGeneratorJS.pm */,
 				930CAD2509C4F49100229C04 /* JSCanvasRenderingContext2DBase.cpp */,
 				930CAD1409C4F3C300229C04 /* JSCanvasRenderingContext2DBase.h */,
+				93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */,
+				93B70D4009EB0C7C009D8468 /* JSDOMParser.h */,
+				93B70D4109EB0C7C009D8468 /* JSXMLHttpRequest.cpp */,
+				93B70D4209EB0C7C009D8468 /* JSXMLHttpRequest.h */,
+				93B70D4309EB0C7C009D8468 /* JSXMLSerializer.cpp */,
+				93B70D4409EB0C7C009D8468 /* JSXMLSerializer.h */,
+				93B70D4509EB0C7C009D8468 /* JSXSLTProcessor.cpp */,
+				93B70D4609EB0C7C009D8468 /* JSXSLTProcessor.h */,
+				93B70D4709EB0C7C009D8468 /* kjs_binding.cpp */,
+				93B70D4809EB0C7C009D8468 /* kjs_binding.h */,
+				93B70D4909EB0C7C009D8468 /* kjs_css.cpp */,
+				93B70D4A09EB0C7C009D8468 /* kjs_css.h */,
+				93B70D4B09EB0C7C009D8468 /* kjs_dom.cpp */,
+				93B70D4C09EB0C7C009D8468 /* kjs_dom.h */,
+				93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */,
+				93B70D4E09EB0C7C009D8468 /* kjs_events.h */,
+				93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */,
+				93B70D5009EB0C7C009D8468 /* kjs_html.h */,
+				93B70D5109EB0C7C009D8468 /* kjs_navigator.cpp */,
+				93B70D5209EB0C7C009D8468 /* kjs_navigator.h */,
+				93B70D5309EB0C7C009D8468 /* kjs_proxy.cpp */,
+				93B70D5409EB0C7C009D8468 /* kjs_proxy.h */,
+				93B70D5509EB0C7C009D8468 /* kjs_traversal.cpp */,
+				93B70D5609EB0C7C009D8468 /* kjs_traversal.h */,
+				93B70D5709EB0C7C009D8468 /* kjs_views.cpp */,
+				93B70D5809EB0C7C009D8468 /* kjs_views.h */,
+				93B70D5909EB0C7C009D8468 /* kjs_window.cpp */,
+				93B70D5A09EB0C7C009D8468 /* kjs_window.h */,
 			);
 			name = JavaScript;
 			sourceTree = "<group>";
@@ -3882,7 +3910,6 @@
 		F523D16302DE42AE018635CA /* khtml */ = {
 			isa = PBXGroup;
 			children = (
-				F523D23402DE436B018635CA /* ecma */,
 				F523D29C02DE43D9018635CA /* misc */,
 				BC41978B059293BE0016347F /* xbl */,
 				BC06F24406D18A35004A6FA3 /* xsl */,
@@ -3926,41 +3953,6 @@
 				93CA4CA309DF93FA00DF8677 /* tokenizer.flex */,
 			);
 			path = css;
-			sourceTree = "<group>";
-		};
-		F523D23402DE436B018635CA /* ecma */ = {
-			isa = PBXGroup;
-			children = (
-				1A69D380085627410009880D /* JSDOMParser.cpp */,
-				1A69D37F085627410009880D /* JSDOMParser.h */,
-				E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */,
-				E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */,
-				F523D1F402DE4369018635CA /* kjs_binding.cpp */,
-				F523D1F502DE4369018635CA /* kjs_binding.h */,
-				F523D1F602DE4369018635CA /* kjs_css.cpp */,
-				F523D1F702DE4369018635CA /* kjs_css.h */,
-				F523D1F902DE4369018635CA /* kjs_dom.cpp */,
-				F523D1FA02DE4369018635CA /* kjs_dom.h */,
-				F523D1FC02DE4369018635CA /* kjs_events.cpp */,
-				F523D1FD02DE4369018635CA /* kjs_events.h */,
-				F523D1FF02DE4369018635CA /* kjs_html.cpp */,
-				F523D20002DE4369018635CA /* kjs_html.h */,
-				F523D20202DE4369018635CA /* kjs_navigator.cpp */,
-				F523D20302DE4369018635CA /* kjs_navigator.h */,
-				F523D20502DE4369018635CA /* kjs_proxy.cpp */,
-				F523D20602DE4369018635CA /* kjs_proxy.h */,
-				F523D20A02DE4369018635CA /* kjs_traversal.cpp */,
-				F523D20B02DE4369018635CA /* kjs_traversal.h */,
-				F523D20D02DE4369018635CA /* kjs_views.cpp */,
-				F523D20E02DE4369018635CA /* kjs_views.h */,
-				F523D21002DE4369018635CA /* kjs_window.cpp */,
-				F523D21102DE4369018635CA /* kjs_window.h */,
-				65912B0D0586921000123A69 /* JSXMLSerializer.cpp */,
-				65912B0E0586921000123A69 /* JSXMLSerializer.h */,
-				A83C81A0091189B9009BF4A7 /* JSXSLTProcessor.cpp */,
-				A83C819F091189B9009BF4A7 /* JSXSLTProcessor.h */,
-			);
-			path = ecma;
 			sourceTree = "<group>";
 		};
 		F523D29C02DE43D9018635CA /* misc */ = {
@@ -4228,16 +4220,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93F198CE08245E59001E9ABC /* kjs_binding.h in Headers */,
-				93F198CF08245E59001E9ABC /* kjs_css.h in Headers */,
-				93F198D108245E59001E9ABC /* kjs_dom.h in Headers */,
-				93F198D308245E59001E9ABC /* kjs_events.h in Headers */,
-				93F198D508245E59001E9ABC /* kjs_html.h in Headers */,
-				93F198D708245E59001E9ABC /* kjs_navigator.h in Headers */,
-				93F198D908245E59001E9ABC /* kjs_proxy.h in Headers */,
-				93F198DC08245E59001E9ABC /* kjs_traversal.h in Headers */,
-				93F198DE08245E59001E9ABC /* kjs_views.h in Headers */,
-				93F198E008245E59001E9ABC /* kjs_window.h in Headers */,
 				93F198E308245E59001E9ABC /* html_baseimpl.h in Headers */,
 				93F198E408245E59001E9ABC /* html_blockimpl.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
@@ -4303,7 +4285,6 @@
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				93F199BF08245E59001E9ABC /* WebCoreGraphicsBridge.h in Headers */,
 				93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */,
-				93F199C308245E59001E9ABC /* JSXMLSerializer.h in Headers */,
 				93F199C508245E59001E9ABC /* xbl_binding_manager.h in Headers */,
 				93F199C608245E59001E9ABC /* xbl_docimpl.h in Headers */,
 				93F199C708245E59001E9ABC /* xbl_tokenizer.h in Headers */,
@@ -4323,7 +4304,6 @@
 				93F199EF08245E59001E9ABC /* KWQFormData.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
-				1A69D381085627410009880D /* JSDOMParser.h in Headers */,
 				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,
 				550A0BCE085F604D007353D6 /* HTMLNames.h in Headers */,
 				BCEF3435087B563E00BBF833 /* HTMLElementFactory.h in Headers */,
@@ -4332,7 +4312,6 @@
 				939885C408B7E3D100E707C4 /* EventNames.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */,
-				A83C81A3091189B9009BF4A7 /* JSXSLTProcessor.h in Headers */,
 				A88AD3870952486D001DD196 /* KRenderingDevice.h in Headers */,
 				A88AD3890952486D001DD196 /* KRenderingFillPainter.h in Headers */,
 				A88AD38A0952486D001DD196 /* KRenderingPaintServer.h in Headers */,
@@ -4627,7 +4606,6 @@
 				A8DF4AEE0980C42C0052981B /* RenderTableRow.h in Headers */,
 				A8DF4AEF0980C42C0052981B /* RenderTableSection.h in Headers */,
 				A8DF4AF10980C42C0052981B /* RenderTableCol.h in Headers */,
-				E1F7F5610981AF570073BE6A /* JSXMLHttpRequest.h in Headers */,
 				E1F0424709839389006694EA /* xmlhttprequest.h in Headers */,
 				A8DF5F4A098448C80052981B /* JSSVGLazyEventListener.h in Headers */,
 				A8DF5FA3098460AA0052981B /* SVGDocumentExtensions.h in Headers */,
@@ -4803,6 +4781,20 @@
 				659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */,
 				930705DA09E0C9BF00B17FE4 /* JSCounter.h in Headers */,
 				930705EB09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h in Headers */,
+				93B70D5C09EB0C7C009D8468 /* JSDOMParser.h in Headers */,
+				93B70D5E09EB0C7C009D8468 /* JSXMLHttpRequest.h in Headers */,
+				93B70D6009EB0C7C009D8468 /* JSXMLSerializer.h in Headers */,
+				93B70D6209EB0C7C009D8468 /* JSXSLTProcessor.h in Headers */,
+				93B70D6409EB0C7C009D8468 /* kjs_binding.h in Headers */,
+				93B70D6609EB0C7C009D8468 /* kjs_css.h in Headers */,
+				93B70D6809EB0C7C009D8468 /* kjs_dom.h in Headers */,
+				93B70D6A09EB0C7C009D8468 /* kjs_events.h in Headers */,
+				93B70D6C09EB0C7C009D8468 /* kjs_html.h in Headers */,
+				93B70D6E09EB0C7C009D8468 /* kjs_navigator.h in Headers */,
+				93B70D7009EB0C7C009D8468 /* kjs_proxy.h in Headers */,
+				93B70D7209EB0C7C009D8468 /* kjs_traversal.h in Headers */,
+				93B70D7409EB0C7C009D8468 /* kjs_views.h in Headers */,
+				93B70D7609EB0C7C009D8468 /* kjs_window.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5000,16 +4992,6 @@
 				93F19A5D08245E59001E9ABC /* WebCoreImageRendererFactory.m in Sources */,
 				93F19A5E08245E59001E9ABC /* WebCoreTextRendererFactory.mm in Sources */,
 				93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */,
-				93F19A8308245E59001E9ABC /* kjs_binding.cpp in Sources */,
-				93F19A8408245E59001E9ABC /* kjs_css.cpp in Sources */,
-				93F19A8508245E59001E9ABC /* kjs_dom.cpp in Sources */,
-				93F19A8608245E59001E9ABC /* kjs_events.cpp in Sources */,
-				93F19A8708245E59001E9ABC /* kjs_html.cpp in Sources */,
-				93F19A8808245E59001E9ABC /* kjs_navigator.cpp in Sources */,
-				93F19A8908245E59001E9ABC /* kjs_proxy.cpp in Sources */,
-				93F19A8B08245E59001E9ABC /* kjs_traversal.cpp in Sources */,
-				93F19A8C08245E59001E9ABC /* kjs_views.cpp in Sources */,
-				93F19A8D08245E59001E9ABC /* kjs_window.cpp in Sources */,
 				93F19A8F08245E59001E9ABC /* html_baseimpl.cpp in Sources */,
 				93F19A9008245E59001E9ABC /* html_blockimpl.cpp in Sources */,
 				93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */,
@@ -5045,7 +5027,6 @@
 				93F19AE308245E59001E9ABC /* WebCoreGraphicsBridge.m in Sources */,
 				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
 				93F19AE608245E59001E9ABC /* KWQKSSLKeyGen.mm in Sources */,
-				93F19AE708245E59001E9ABC /* JSXMLSerializer.cpp in Sources */,
 				93F19AE808245E59001E9ABC /* xbl_binding_manager.cpp in Sources */,
 				93F19AE908245E59001E9ABC /* xbl_docimpl.cpp in Sources */,
 				93F19AEA08245E59001E9ABC /* xbl_tokenizer.cpp in Sources */,
@@ -5064,7 +5045,6 @@
 				93F19B0608245E59001E9ABC /* KWQFormData.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */,
-				1A69D382085627410009880D /* JSDOMParser.cpp in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
 				550A0BCD085F604D007353D6 /* HTMLNames.cpp in Sources */,
 				BCEF3434087B563E00BBF833 /* HTMLElementFactory.cpp in Sources */,
@@ -5072,7 +5052,6 @@
 				7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
 				E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */,
-				A83C81A4091189B9009BF4A7 /* JSXSLTProcessor.cpp in Sources */,
 				A88AD3860952486D001DD196 /* KRenderingDevice.cpp in Sources */,
 				A88AD3880952486D001DD196 /* KRenderingFillPainter.cpp in Sources */,
 				A88AD38B0952486D001DD196 /* KRenderingPaintServerGradient.cpp in Sources */,
@@ -5346,7 +5325,6 @@
 				A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */,
 				A8DF4AED0980C42C0052981B /* RenderTableSection.cpp in Sources */,
 				A8DF4AF00980C42C0052981B /* RenderTableRow.cpp in Sources */,
-				E1F7F5600981AF570073BE6A /* JSXMLHttpRequest.cpp in Sources */,
 				E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */,
 				A8DF5F49098448C70052981B /* JSSVGLazyEventListener.cpp in Sources */,
 				A8DF5FA4098460AA0052981B /* SVGDocumentExtensions.cpp in Sources */,
@@ -5496,6 +5474,20 @@
 				930705D809E0C9B700B17FE4 /* JSCounter.cpp in Sources */,
 				930705E909E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp in Sources */,
 				93EB355F09E37FD600F43799 /* MouseEventWithHitTestResults.cpp in Sources */,
+				93B70D5B09EB0C7C009D8468 /* JSDOMParser.cpp in Sources */,
+				93B70D5D09EB0C7C009D8468 /* JSXMLHttpRequest.cpp in Sources */,
+				93B70D5F09EB0C7C009D8468 /* JSXMLSerializer.cpp in Sources */,
+				93B70D6109EB0C7C009D8468 /* JSXSLTProcessor.cpp in Sources */,
+				93B70D6309EB0C7C009D8468 /* kjs_binding.cpp in Sources */,
+				93B70D6509EB0C7C009D8468 /* kjs_css.cpp in Sources */,
+				93B70D6709EB0C7C009D8468 /* kjs_dom.cpp in Sources */,
+				93B70D6909EB0C7C009D8468 /* kjs_events.cpp in Sources */,
+				93B70D6B09EB0C7C009D8468 /* kjs_html.cpp in Sources */,
+				93B70D6D09EB0C7C009D8468 /* kjs_navigator.cpp in Sources */,
+				93B70D6F09EB0C7C009D8468 /* kjs_proxy.cpp in Sources */,
+				93B70D7109EB0C7C009D8468 /* kjs_traversal.cpp in Sources */,
+				93B70D7309EB0C7C009D8468 /* kjs_views.cpp in Sources */,
+				93B70D7509EB0C7C009D8468 /* kjs_window.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

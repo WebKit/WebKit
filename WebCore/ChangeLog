@@ -2,6 +2,48 @@
 
         Reviewed by Geoff.
 
+        - death to khtml/ecma, long live bindings/js
+
+        * khtml/ecma: Removed. Moved all files to bindings/js.
+
+        * bindings/js/JSDOMParser.cpp: Added.
+        * bindings/js/JSDOMParser.h: Added.
+        * bindings/js/JSXMLHttpRequest.cpp: Added.
+        * bindings/js/JSXMLHttpRequest.h: Added.
+        * bindings/js/JSXMLSerializer.cpp: Added.
+        * bindings/js/JSXMLSerializer.h: Added.
+        * bindings/js/JSXSLTProcessor.cpp: Added.
+        * bindings/js/JSXSLTProcessor.h: Added.
+        * bindings/js/kjs_binding.cpp: Added.
+        * bindings/js/kjs_binding.h: Added.
+        * bindings/js/kjs_css.cpp: Added.
+        * bindings/js/kjs_css.h: Added.
+        * bindings/js/kjs_dom.cpp: Added.
+        * bindings/js/kjs_dom.h: Added.
+        * bindings/js/kjs_events.cpp: Added.
+        * bindings/js/kjs_events.h: Added.
+        * bindings/js/kjs_html.cpp: Added.
+        * bindings/js/kjs_html.h: Added.
+        * bindings/js/kjs_navigator.cpp: Added.
+        * bindings/js/kjs_navigator.h: Added.
+        * bindings/js/kjs_proxy.cpp: Added.
+        * bindings/js/kjs_proxy.h: Added.
+        * bindings/js/kjs_traversal.cpp: Added.
+        * bindings/js/kjs_traversal.h: Added.
+        * bindings/js/kjs_views.cpp: Added.
+        * bindings/js/kjs_views.h: Added.
+        * bindings/js/kjs_window.cpp: Added.
+        * bindings/js/kjs_window.h: Added.
+
+        * DerivedSources.make: Removed khtml/ecma from directory list.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Moved files from
+        khtml/ecma to bindings/js.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+2006-04-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
         - try to fix the Windows build
 
         * html/HTMLCanvasElement.cpp: (WebCore::HTMLCanvasElement::reset):

@@ -30,7 +30,6 @@ VPATH = \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/html \
-    $(WebCore)/khtml/ecma \
 #
 
 .PHONY : all
