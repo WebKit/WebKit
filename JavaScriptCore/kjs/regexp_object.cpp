@@ -23,8 +23,6 @@
 #include "config.h"
 #include "regexp_object.h"
 
-#include "regexp_object.lut.h"
-
 #include <stdio.h>
 #include "value.h"
 #include "object.h"
@@ -35,6 +33,8 @@
 #include "regexp.h"
 #include "error_object.h"
 #include "lookup.h"
+
+#include "regexp_object.lut.h"
 
 using namespace KJS;
 
