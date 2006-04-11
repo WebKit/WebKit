@@ -24,8 +24,6 @@
 #define KJS_PROTECTED_REFERENCE_H
 
 #include "protect.h"
-#include "reference.h"
-#include "interpreter.h" 
 
 namespace KJS {
 

@@ -27,7 +27,6 @@
 #ifndef FLOATRECTF_H_
 #define FLOATRECTF_H_
 
-#include "FloatSize.h"
 #include "FloatPoint.h"
 
 #if __APPLE__

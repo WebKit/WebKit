@@ -20,15 +20,11 @@
  */
 
 #include "config.h"
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-#include "operations.h"
 #include "object_object.h"
+
+#include "operations.h"
 #include "function_object.h"
 #include <stdio.h>
-#include <assert.h>
 
 using namespace KJS;
 

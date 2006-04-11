@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __typing_command_h__
-#define __typing_command_h__
+#ifndef typing_command_h__
+#define typing_command_h__
 
 #include "CompositeEditCommand.h"
-#include "PlatformString.h"
 
 namespace WebCore {
 

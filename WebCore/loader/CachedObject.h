@@ -30,7 +30,6 @@
 #include "PlatformString.h"
 #include <kio/global.h>
 #include <kxmlcore/HashSet.h>
-#include <stdlib.h>
 #include <time.h>
 
 #if __OBJC__

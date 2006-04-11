@@ -26,20 +26,16 @@
 #include "Cache.h"
 #include "DOMImplementation.h"
 #include "DocLoader.h"
+#include "DocumentFragment.h"
 #include "Frame.h"
-#include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLTokenizer.h"
 #include "KWQLoader.h"
 #include "Text.h"
 #include "TransferJob.h"
-#include "XSLStyleSheet.h"
 #include "XSLTProcessor.h"
 #include "loader.h"
 #include "markup.h"
-#include "xml_tokenizer.h"
-#include <kxmlcore/Assertions.h>
-#include <libxslt/documents.h>
 #include <libxslt/imports.h>
 #include <libxslt/xsltutils.h>
 

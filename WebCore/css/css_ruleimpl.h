@@ -24,10 +24,6 @@
 #ifndef CSS_css_ruleimpl_h_
 #define CSS_css_ruleimpl_h_
 
-#include "CachedObjectClient.h"
-#include "PlatformString.h"
-#include "Shared.h"
-#include "css_base.h"
 #include "css_valueimpl.h"
 
 namespace WebCore {

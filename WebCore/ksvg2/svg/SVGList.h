@@ -24,7 +24,6 @@
 #define KSVG_SVGList_H
 #if SVG_SUPPORT
 
-#include <q3ptrlist.h>
 #include "DOMList.h"
 #include <ksvg2/svg/SVGStyledElement.h>
 

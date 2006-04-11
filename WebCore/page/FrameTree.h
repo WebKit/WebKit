@@ -22,9 +22,6 @@
 #define FRAME_TREE_H
 
 #include "AtomicString.h"
-#include <kxmlcore/Noncopyable.h>
-#include <kxmlcore/PassRefPtr.h>
-#include <kxmlcore/RefPtr.h>
 
 namespace WebCore {
 

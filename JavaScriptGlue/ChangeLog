@@ -1,3 +1,12 @@
+2006-04-10  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by John Sullivan.
+
+        - added forwarding headers for the new Forward.h and HashForward.h files
+
+        * kxmlcore/Forward.h: Added.
+        * kxmlcore/HashForward.h: Added.
+
 2006-04-04  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

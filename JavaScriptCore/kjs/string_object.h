@@ -19,10 +19,9 @@
  *
  */
 
-#ifndef _STRING_OBJECT_H_
-#define _STRING_OBJECT_H_
+#ifndef STRING_OBJECT_H_
+#define STRING_OBJECT_H_
 
-#include "internal.h"
 #include "function_object.h"
 
 namespace KJS {

@@ -26,7 +26,6 @@
 #import "config.h"
 #import "KWQTextEdit.h"
 
-#import "Color.h"
 #import "Font.h"
 #import "IntSize.h"
 #import "BlockExceptions.h"

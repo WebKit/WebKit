@@ -24,7 +24,6 @@
 #define KSVG_SVGLengthImpl_H
 #if SVG_SUPPORT
 
-#include "Shared.h"
 #include "PlatformString.h"
 
 #include <ksvg2/svg/SVGHelper.h>

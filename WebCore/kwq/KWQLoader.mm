@@ -23,12 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQLoader.h"
 
 #import "Cache.h"
 #import "CachedImage.h"
-#import "CachedObject.h"
 #import "DocLoader.h"
 #import "FoundationExtras.h"
 #import "BlockExceptions.h"

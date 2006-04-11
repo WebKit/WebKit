@@ -26,13 +26,12 @@
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
-#include <kxmlcore/Vector.h>
-#include "ImageSource.h"
 #include "DeprecatedArray.h"
+#include "ImageSource.h"
 #include "IntSize.h"
+#include <kxmlcore/Vector.h>
 
 #if __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
 #if __OBJC__
 @class NSImage;
 #else

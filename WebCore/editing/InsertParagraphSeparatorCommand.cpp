@@ -30,15 +30,12 @@
 #include "Logging.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
-#include "Position.h"
 #include "Text.h"
 #include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderObject.h"
-#include "VisiblePosition.h"
 #include "visible_units.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

@@ -26,7 +26,6 @@
 #define KJS_CONTEXT_H
 
 #include "function.h"
-#include "protect.h"
 
 namespace KJS  {
 

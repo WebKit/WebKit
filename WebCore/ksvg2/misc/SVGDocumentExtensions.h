@@ -24,10 +24,7 @@
 
 #if SVG_SUPPORT
 
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
+#include <kxmlcore/Forward.h>
 
 namespace WebCore {
 

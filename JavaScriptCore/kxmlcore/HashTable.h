@@ -26,7 +26,6 @@
 #include "FastMalloc.h"
 #include "HashTraits.h"
 #include <assert.h>
-#include <algorithm>
 
 namespace KXMLCore {
 

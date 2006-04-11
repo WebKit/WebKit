@@ -22,7 +22,6 @@
 #ifndef KJS_BINDING_H_
 #define KJS_BINDING_H_
 
-#include <kjs/interpreter.h>
 #include <kjs/lookup.h>
 
 #if __APPLE__

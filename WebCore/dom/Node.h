@@ -27,7 +27,6 @@
 #define DOM_NodeImpl_h_
 
 #include "DocPtr.h"
-#include "Shared.h"
 #include "PlatformString.h"
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashSet.h>
@@ -36,8 +35,6 @@
 class DeprecatedStringList;
 class QTextStream;
 class RenderArena;
-
-template <typename T> class DeprecatedPtrList;
 
 namespace WebCore {
 
@@ -48,21 +45,20 @@ class Element;
 class Event;
 class EventListener;
 class IntRect;
-class PlatformKeyboardEvent;
-class PlatformMouseEvent;
 class NamedAttrMap;
 class NodeList;
+class PlatformKeyboardEvent;
+class PlatformMouseEvent;
+class PlatformWheelEvent;
 class QualifiedName;
 class RegisteredEventListener;
 class RenderObject;
 class RenderStyle;
-class PlatformWheelEvent;
 
 typedef int ExceptionCode;
 
 // this class implements nodes, which can have a parent but no children:
-class Node : public TreeShared<Node>
-{
+class Node : public TreeShared<Node> {
     friend class Document;
 public:
     enum NodeType {
@@ -433,11 +429,11 @@ public:
     virtual String toString() const = 0;
 
 #ifndef NDEBUG
-    virtual void formatForDebugger(char *buffer, unsigned length) const;
+    virtual void formatForDebugger(char* buffer, unsigned length) const;
 
-    void showNode(const char *prefix="") const;
-    void showTree() const;
-    void showTreeAndMark(Node* markedNode1, const char* markedLabel1, Node* markedNode2, const char* markedLabel2) const;
+    void showNode(const char* prefix = "") const;
+    void showTreeForThis() const;
+    void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = 0, const char* markedLabel2 = 0) const;
 #endif
 
     void registerNodeList(NodeList*);
@@ -455,6 +451,7 @@ private: // members
     Node* m_previous;
     Node* m_next;
     RenderObject* m_renderer;
+
 protected:
     typedef HashSet<NodeList*> NodeListSet;
     NodeListSet* m_nodeLists;
@@ -485,10 +482,11 @@ private:
     Element* ancestorElement() const;
 };
 
-#ifndef NDEBUG
-void showTree(const Node *node);
-#endif
-
 } //namespace
+
+#ifndef NDEBUG
+// Outside the WebCore namespace for ease of invocation from gdb.
+void showTree(const WebCore::Node*);
+#endif
 
 #endif

@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "FormDataList.h"
-#include "HTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"

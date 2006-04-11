@@ -28,8 +28,6 @@
 
 #include "DeprecatedString.h"
 
-#include <kxmlcore/RefPtr.h>
-
 class RegularExpression {
 public:
     RegularExpression();

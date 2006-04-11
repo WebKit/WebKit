@@ -28,10 +28,8 @@
 
 #import "Document.h"
 #import "RenderObject.h"
-#import "VisiblePosition.h"
 #import "WebCoreAXObject.h"
 #import "WebCoreViewFactory.h"
-#import <kxmlcore/Assertions.h>
 
 // The simple Cocoa calls in this file don't throw exceptions.
 

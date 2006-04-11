@@ -29,6 +29,7 @@
 
 #include "KURL.h"
 #include "formdata.h"
+#include <kxmlcore/HashMap.h>
 
 // The allocations and releases in TransferJobInternal are
 // definitely Cocoa-exception-free (either simple Foundation

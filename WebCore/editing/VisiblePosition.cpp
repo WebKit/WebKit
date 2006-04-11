@@ -25,18 +25,15 @@
 
 #include "config.h"
 #include "VisiblePosition.h"
+
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
-#include "Range.h"
-#include "RenderObject.h"
-#include "htmlediting.h"
-#include "render_line.h"
-#include "visible_units.h"
-
-#include <kxmlcore/Assertions.h>
 #include "Logging.h"
+#include "Range.h"
+#include "htmlediting.h"
+#include "visible_units.h"
 
 namespace WebCore {
 
@@ -50,12 +47,6 @@ VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity)
 VisiblePosition::VisiblePosition(Node *node, int offset, EAffinity affinity)
 {
     init(Position(node, offset), affinity);
-}
-
-VisiblePosition::VisiblePosition(const VisiblePosition &other)
-{
-    m_deepPosition = other.m_deepPosition;
-    m_affinity = other.m_affinity;
 }
 
 void VisiblePosition::init(const Position &pos, EAffinity affinity)
@@ -226,13 +217,13 @@ QChar VisiblePosition::character() const
 
 bool isEqualIgnoringAffinity(const VisiblePosition &a, const VisiblePosition &b)
 {
-    bool result = a.m_deepPosition == b.m_deepPosition;
+    bool result = a.deepEquivalent() == b.deepEquivalent();
     if (result) {
         // We want to catch cases where positions are equal, but affinities are not, since
         // this is very likely a bug, given the places where this call is used. The difference
         // is very likely due to code that set the affinity on a VisiblePosition "by hand" and 
         // did so incorrectly.
-        ASSERT(a.m_affinity == b.m_affinity);
+        ASSERT(a.affinity() == b.affinity());
     }
     return result;
 }
@@ -251,26 +242,15 @@ void VisiblePosition::debugPosition(const char *msg) const
 }
 
 #ifndef NDEBUG
-void VisiblePosition::formatForDebugger(char *buffer, unsigned length) const
+
+void VisiblePosition::formatForDebugger(char* buffer, unsigned length) const
 {
     m_deepPosition.formatForDebugger(buffer, length);
 }
 
-void VisiblePosition::showTree() const
+void VisiblePosition::showTreeForThis() const
 {
-    if (m_deepPosition.node())
-        m_deepPosition.node()->showTreeAndMark(m_deepPosition.node(), "*", NULL, NULL);
-}
-
-void showTree(const VisiblePosition *vpos)
-{
-    if (vpos)
-        vpos->showTree();
-}
-
-void showTree(const VisiblePosition &vpos)
-{
-    vpos.showTree();
+    m_deepPosition.showTreeForThis();
 }
 
 #endif
@@ -347,3 +327,18 @@ bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const N
 }
 
 }  // namespace WebCore
+
+#ifndef NDEBUG
+
+void showTree(const WebCore::VisiblePosition* vpos)
+{
+    if (vpos)
+        vpos->showTreeForThis();
+}
+
+void showTree(const WebCore::VisiblePosition& vpos)
+{
+    vpos.showTreeForThis();
+}
+
+#endif

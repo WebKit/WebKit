@@ -19,10 +19,9 @@
  *
  */
 
-#ifndef _MATH_OBJECT_H_
-#define _MATH_OBJECT_H_
+#ifndef MATH_OBJECT_H_
+#define MATH_OBJECT_H_
 
-#include "internal.h"
 #include "function_object.h"
 
 namespace KJS {

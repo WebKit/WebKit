@@ -26,44 +26,13 @@
 #ifndef DOM_EventTargetNodeImpl_h
 #define DOM_EventTargetNodeImpl_h
 
-#include "DocPtr.h"
 #include "Node.h"
-#include "Shared.h"
-#include "PlatformString.h"
-#include <kxmlcore/Assertions.h>
-#include <kxmlcore/HashSet.h>
-#include <kxmlcore/PassRefPtr.h>
-
-class DeprecatedStringList;
-class QTextStream;
-class RenderArena;
 
 template <typename T> class DeprecatedPtrList;
 
 namespace WebCore {
 
-class AtomicString;
-class ContainerNode;
-class Document;
-class Element;
-class Event;
-class EventListener;
-class IntRect;
-class PlatformKeyboardEvent;
-class PlatformMouseEvent;
-class NamedAttrMap;
-class NodeList;
-class QualifiedName;
-class RegisteredEventListener;
-class RenderObject;
-class RenderStyle;
-class PlatformWheelEvent;
-
-typedef int ExceptionCode;
-
-class EventTargetNode : public Node
-{
-    friend class Document;
+class EventTargetNode : public Node {
 public:
     EventTargetNode(Document*);
     virtual ~EventTargetNode();
@@ -102,7 +71,7 @@ public:
     // Handlers to do/undo actions on the target node before an event is dispatched to it and after the event
     // has been dispatched.  The data pointer is handed back by the preDispatch and passed to postDispatch.
     virtual void* preDispatchEventHandler(Event*) { return 0; }
-    virtual void postDispatchEventHandler(Event*, void* data) { }
+    virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch) { }
 
     /**
      * Perform the default action for an event e.g. submitting a form
@@ -137,10 +106,9 @@ inline const EventTargetNode* EventTargetNodeCast(const Node* n)
 
 #ifndef NDEBUG
 
-extern int gEventDispatchForbidden;
-inline void forbidEventDispatch() { ++gEventDispatchForbidden; }
-inline void allowEventDispatch() { if (gEventDispatchForbidden > 0) --gEventDispatchForbidden; }
-inline bool eventDispatchForbidden() { return gEventDispatchForbidden > 0; }
+void forbidEventDispatch();
+void allowEventDispatch();
+bool eventDispatchForbidden();
 
 #else
 

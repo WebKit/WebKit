@@ -27,7 +27,6 @@
 #define INTRECT_H_
 
 #include "IntPoint.h"
-#include "IntSize.h"
 
 #if __APPLE__
 

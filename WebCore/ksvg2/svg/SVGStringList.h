@@ -24,8 +24,6 @@
 #define KSVG_SVGStringListImpl_H
 #if SVG_SUPPORT
 
-#include "StringImpl.h"
-
 #include "SVGList.h"
 
 namespace WebCore

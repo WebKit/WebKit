@@ -30,18 +30,14 @@
 
 #include "BrowserExtension.h"
 #include "Color.h"
+#include "DeprecatedStringList.h"
 #include "FrameView.h"
 #include "Node.h"
-#include "Shared.h"
 #include "TransferJobClient.h"
 #include "EditAction.h"
 #include "TextAffinity.h"
 #include "TextGranularity.h"
-#include <KURL.h>
 #include <qscrollbar.h>
-#include <DeprecatedStringList.h>
-#include <kxmlcore/Noncopyable.h>
-#include <kxmlcore/Vector.h>
 
 class KHTMLSettings;
 

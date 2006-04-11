@@ -20,24 +20,18 @@
  */
 
 #include "config.h"
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-#include "operations.h"
 #include "number_object.h"
-#include "error_object.h"
-#include "dtoa.h"
 
+#include "dtoa.h"
+#include "error_object.h"
+#include "lookup.h"
+#include "operations.h"
 #include <kxmlcore/Vector.h>
+#include <math.h>
 
 #include "number_object.lut.h"
 
-#include <assert.h>
-#include <math.h>
-
 using namespace KJS;
-
 
 // ------------------------------ NumberInstance ----------------------------
 

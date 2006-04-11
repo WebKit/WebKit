@@ -77,6 +77,7 @@
 		9303F568099118FA00AD71B8 /* OwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F567099118FA00AD71B8 /* OwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5690991190000AD71B8 /* Noncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9303F5A509911A5800AD71B8 /* OwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9304635709EB51E8008855DC /* HashForward.h in Headers */ = {isa = PBXBuildFile; fileRef = 9304635609EB51E8008855DC /* HashForward.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930754C108B0F68000AB3056 /* pcre_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754BF08B0F68000AB3056 /* pcre_compile.c */; };
 		930754D008B0F74600AB3056 /* pcre_tables.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754CE08B0F74500AB3056 /* pcre_tables.c */; };
 		930754D308B0F76300AB3056 /* pcre_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754D108B0F76200AB3056 /* pcre_globals.c */; };
@@ -209,6 +210,8 @@
 		932F5BDD0822A1C700736975 /* testkjs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45E12D8806A49B0F00E9DF84 /* testkjs.cpp */; };
 		932F5BEA0822A1C700736975 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		932FC11D0824A6A3005B3C75 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (Private, ); }; };
+		935AF46C09E9D9DB00ACD1D8 /* Forward.h in Headers */ = {isa = PBXBuildFile; fileRef = 935AF46909E9D9DB00ACD1D8 /* Forward.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		935AF46E09E9D9DB00ACD1D8 /* UnusedParam.h in Headers */ = {isa = PBXBuildFile; fileRef = 935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */; };
 		935F69FE08245057003D1A45 /* dftables.c in Sources */ = {isa = PBXBuildFile; fileRef = 6541720E039E08B90058BFEB /* dftables.c */; };
 		93AA4F780957251F0084B3A7 /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AA4F770957251F0084B3A7 /* AlwaysInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E26BCA08B1511900F85226 /* pcre_ord2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BC908B1511900F85226 /* pcre_ord2utf8.c */; };
@@ -372,7 +375,6 @@
 		65B174F409D100FA00820339 /* string_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = string_object.lut.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; tabWidth = 8; };
 		65C647B3093EF8D60022C380 /* RefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RefPtr.h; sourceTree = "<group>"; tabWidth = 8; };
-		65D2CD9C09D1F54E009AB1A1 /* generate-derived-sources */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; path = "generate-derived-sources"; sourceTree = SOURCE_ROOT; };
 		65D6D87E09B5A32E0002E4D7 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FastMallocInternal.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92A08EA173A00F7300B /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -404,6 +406,7 @@
 		9303F567099118FA00AD71B8 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
 		9303F5690991190000AD71B8 /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noncopyable.h; sourceTree = "<group>"; };
 		9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnArrayPtr.h; sourceTree = "<group>"; };
+		9304635609EB51E8008855DC /* HashForward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashForward.h; sourceTree = "<group>"; };
 		930754BF08B0F68000AB3056 /* pcre_compile.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_compile.c; path = pcre/pcre_compile.c; sourceTree = "<group>"; tabWidth = 8; };
 		930754CE08B0F74500AB3056 /* pcre_tables.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_tables.c; path = pcre/pcre_tables.c; sourceTree = "<group>"; tabWidth = 8; };
 		930754D108B0F76200AB3056 /* pcre_globals.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_globals.c; path = pcre/pcre_globals.c; sourceTree = "<group>"; tabWidth = 8; };
@@ -418,11 +421,14 @@
 		933A3499038AE7C6008635CE /* grammar.y */ = {isa = PBXFileReference; explicitFileType = sourcecode.yacc; fileEncoding = 4; indentWidth = 4; path = grammar.y; sourceTree = "<group>"; tabWidth = 8; };
 		933A349A038AE7C6008635CE /* identifier.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = identifier.h; sourceTree = "<group>"; tabWidth = 8; };
 		933A349D038AE80F008635CE /* identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		935AF46909E9D9DB00ACD1D8 /* Forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
+		935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnusedParam.h; sourceTree = "<group>"; };
 		935F69F608244FEA003D1A45 /* dftables */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dftables; sourceTree = BUILT_PRODUCTS_DIR; };
 		9364B273045B7D6C00A9CAC1 /* fpconst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fpconst.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		9373524E038DA8C2008635CE /* context.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; tabWidth = 8; };
 		9374D3A7038D9D74008635CE /* scope_chain.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = scope_chain.h; sourceTree = "<group>"; tabWidth = 8; };
 		9374D3A8038D9D74008635CE /* scope_chain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scope_chain.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		937B63CC09E766D200A671DD /* DerivedSources.make */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = DerivedSources.make; sourceTree = "<group>"; usesTabs = 1; };
 		938772E5038BFE19008635CE /* array_instance.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = array_instance.h; sourceTree = "<group>"; tabWidth = 8; };
 		93AA4F770957251F0084B3A7 /* AlwaysInline.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AlwaysInline.h; sourceTree = "<group>"; tabWidth = 8; };
 		93E26BC908B1511900F85226 /* pcre_ord2utf8.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_ord2utf8.c; path = pcre/pcre_ord2utf8.c; sourceTree = "<group>"; tabWidth = 8; };
@@ -543,7 +549,7 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
-				65D2CD9C09D1F54E009AB1A1 /* generate-derived-sources */,
+				937B63CC09E766D200A671DD /* DerivedSources.make */,
 				65417200039E01BA0058BFEB /* kjs */,
 				65162EF108E6A21C007556CD /* kxmlcore */,
 				51856D950562EE9C008B9D83 /* bindings */,
@@ -654,7 +660,9 @@
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
 				65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */,
+				935AF46909E9D9DB00ACD1D8 /* Forward.h */,
 				657EEBBF094E445E008C9C7B /* HashCountedSet.h */,
+				9304635609EB51E8008855DC /* HashForward.h */,
 				65DFC92A08EA173A00F7300B /* HashFunctions.h */,
 				65DFC92B08EA173A00F7300B /* HashMap.h */,
 				65DFC92C08EA173A00F7300B /* HashSet.h */,
@@ -672,6 +680,7 @@
 				6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */,
 				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
+				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
 			);
@@ -944,6 +953,9 @@
 				E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */,
 				E195679809E7CF1200B89D13 /* Unicode.h in Headers */,
 				E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */,
+				935AF46C09E9D9DB00ACD1D8 /* Forward.h in Headers */,
+				935AF46E09E9D9DB00ACD1D8 /* UnusedParam.h in Headers */,
+				9304635709EB51E8008855DC /* HashForward.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1112,7 +1124,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./generate-derived-sources\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\nexport JavaScriptCore=\"${SRCROOT}\"\n\nmake -f \"$JavaScriptCore/DerivedSources.make\"\n";
 		};
 		9319586B09D9F91A00A56FD4 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;

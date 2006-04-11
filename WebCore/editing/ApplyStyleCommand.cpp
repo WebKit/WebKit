@@ -26,22 +26,18 @@
 #include "config.h"
 #include "ApplyStyleCommand.h"
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSPropertyNames.h"
 #include "Document.h"
 #include "HTMLElement.h"
-#include "NodeList.h"
-#include "PlatformString.h"
-#include "Text.h"
-#include "VisiblePosition.h"
-#include "CSSComputedStyleDeclaration.h"
-#include "css_valueimpl.h"
-#include "cssparser.h"
-#include "CSSPropertyNames.h"
-#include "Range.h"
 #include "HTMLInterchange.h"
-#include "htmlediting.h"
 #include "HTMLNames.h"
+#include "NodeList.h"
+#include "Range.h"
 #include "RenderObject.h"
-#include <kxmlcore/Assertions.h>
+#include "Text.h"
+#include "cssparser.h"
+#include "htmlediting.h"
 
 namespace WebCore {
 

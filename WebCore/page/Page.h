@@ -22,10 +22,7 @@
 #define PAGE_H
 
 #include "PlatformString.h"
-#include <kxmlcore/HashSet.h>
-#include <kxmlcore/Noncopyable.h>
-#include <kxmlcore/PassRefPtr.h>
-#include <kxmlcore/RefPtr.h>
+#include <kxmlcore/HashForward.h>
 
 #if __APPLE__
 #ifdef __OBJC__
@@ -47,7 +44,7 @@ namespace WebCore {
     public:
         ~Page();
 
-        void setMainFrame(PassRefPtr<Frame> mainFrame);
+        void setMainFrame(PassRefPtr<Frame>);
         Frame* mainFrame() const { return m_mainFrame.get(); }
 
         IntRect windowRect() const;

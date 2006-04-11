@@ -98,10 +98,10 @@ void InlineBox::operator delete(void* ptr, size_t sz)
 }
 
 #ifndef NDEBUG
-void InlineBox::showTree() const
+void InlineBox::showTreeForThis() const
 {
     if (m_object)
-        m_object->showTree();
+        m_object->showTreeForThis();
 }
 #endif
 
@@ -1375,5 +1375,15 @@ void RootInlineBox::setLineBreakInfo(RenderObject* obj, unsigned breakPos, BidiS
     if (status)
         m_lineBreakBidiStatus = *status;
 }
+
 }
 
+#ifndef NDEBUG
+
+void showTree(const WebCore::InlineBox* b)
+{
+    if (b)
+        b->showTreeForThis();
+}
+
+#endif

@@ -21,12 +21,13 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTMLCollectionImpl_H
 #define HTMLCollectionImpl_H
 
 #include "Shared.h"
+#include <kxmlcore/Forward.h>
 #include <kxmlcore/HashMap.h>
-#include <kxmlcore/Vector.h>
 
 template <typename T> class DeprecatedValueList;
 

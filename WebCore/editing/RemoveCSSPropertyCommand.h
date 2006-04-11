@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __remove_css_property_command_h__
-#define __remove_css_property_command_h__
+#ifndef remove_css_property_command_h__
+#define remove_css_property_command_h__
 
 #include "EditCommand.h"
-
-#include "PlatformString.h"
 
 namespace WebCore {
     class CSSStyleDeclaration;

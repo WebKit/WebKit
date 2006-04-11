@@ -31,7 +31,6 @@
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCorePageBridge.h"
-#import <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
@@ -61,7 +60,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     ASSERT(!winArgs.dialog || request.frameName.isEmpty());
 
     if (partResult)
-	*partResult = NULL;
+        *partResult = NULL;
     
     const KURL& url = request.url();
 
@@ -106,10 +105,10 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     
     WebCoreFrameBridge *bridge = [page mainFrame];
     if ([bridge impl])
-	[bridge impl]->tree()->setName(AtomicString(request.frameName));
+        [bridge impl]->tree()->setName(AtomicString(request.frameName));
     
     if (partResult)
-	*partResult = [bridge impl];
+        *partResult = [bridge impl];
     
     [bridge setToolbarsVisible:winArgs.toolBarVisible || winArgs.locationBarVisible];
     [bridge setStatusbarVisible:winArgs.statusBarVisible];
@@ -127,11 +126,11 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     // of the WebView, so we translate 'left' and 'top' from WebView coordinates to window coordinates.
     // (If the screen resolution is scaled, window coordinates won't match WebView coordinates.)
     if (winArgs.xSet)
-	windowFrame.origin.x = winArgs.x * scaleX;
+        windowFrame.origin.x = winArgs.x * scaleX;
     if (winArgs.ySet) {
-	// In JavaScript, (0, 0) is the top left corner of the screen.
-	float screenTop = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
-	windowFrame.origin.y = screenTop - (winArgs.y * scaleY) - windowFrame.size.height;
+        // In JavaScript, (0, 0) is the top left corner of the screen.
+        float screenTop = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
+        windowFrame.origin.y = screenTop - (winArgs.y * scaleY) - windowFrame.size.height;
     }
 
     // 'width' and 'height' specify the dimensions of the WebView, but we can only resize the window, 
@@ -139,13 +138,13 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     // to resize the window.
     NSRect webViewFrame = [[page outerView] frame];
     if (winArgs.widthSet) {
-	float widthDelta = (winArgs.width - webViewFrame.size.width) * scaleX;
-	windowFrame.size.width += widthDelta;
+        float widthDelta = (winArgs.width - webViewFrame.size.width) * scaleX;
+        windowFrame.size.width += widthDelta;
     }
     if (winArgs.heightSet) {
-	float heightDelta = (winArgs.height - webViewFrame.size.height) * scaleY;
-	windowFrame.size.height += heightDelta;
-	windowFrame.origin.y -= heightDelta;
+        float heightDelta = (winArgs.height - webViewFrame.size.height) * scaleY;
+        windowFrame.size.height += heightDelta;
+        windowFrame.origin.y -= heightDelta;
     }
     
     [page setWindowFrame:windowFrame];

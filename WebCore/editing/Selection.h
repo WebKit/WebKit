@@ -26,9 +26,8 @@
 #ifndef KHTML_EDITING_SELECTION_H
 #define KHTML_EDITING_SELECTION_H
 
-#include <kxmlcore/PassRefPtr.h>
-#include "TextGranularity.h"
 #include "Position.h"
+#include "TextGranularity.h"
 
 namespace WebCore {
 
@@ -77,6 +76,11 @@ public:
 
     void debugPosition() const;
 
+#ifndef NDEBUG
+    void formatForDebugger(char* buffer, unsigned length) const;
+    void showTreeForThis() const;
+#endif
+
 private:
     void validate();
     void adjustForEditableContent();
@@ -105,5 +109,11 @@ inline bool operator!=(const Selection &a, const Selection &b)
 }
 
 } // namespace WebCore
+
+#ifndef NDEBUG
+// Outside the WebCore namespace for ease of invocation from gdb.
+void showTree(const WebCore::Selection&);
+void showTree(const WebCore::Selection*);
+#endif
 
 #endif // KHTML_EDITING_SELECTION_H

@@ -24,6 +24,7 @@
 #ifndef KXMLCORE_HASH_SET_H
 #define KXMLCORE_HASH_SET_H
 
+#include "HashForward.h"
 #include "HashTable.h"
 
 namespace KXMLCore {
@@ -34,8 +35,7 @@ namespace KXMLCore {
     template<typename Value, typename HashFunctions, typename Traits>
     void deleteAllValues(HashSet<Value, HashFunctions, Traits>&);
 
-    template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash,
-        typename TraitsArg = HashTraits<ValueArg> > class HashSet {
+    template<typename ValueArg, typename HashArg, typename TraitsArg> class HashSet {
     private:
         typedef HashArg HashFunctions;
         typedef TraitsArg ValueTraits;

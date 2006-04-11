@@ -27,11 +27,7 @@
 #define DOM_DOMImplementationImpl_h
 
 #include "Shared.h"
-
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
+#include <kxmlcore/Forward.h>
 
 namespace WebCore {
 

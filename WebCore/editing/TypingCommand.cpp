@@ -30,7 +30,6 @@
 #include "BreakBlockquoteCommand.h"
 #include "Document.h"
 #include "Element.h"
-#include "dom2_eventsimpl.h"
 #include "Frame.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
@@ -39,7 +38,6 @@
 #include "VisiblePosition.h"
 #include "htmlediting.h"
 #include "visible_units.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

@@ -33,7 +33,6 @@
 #include "Image.h"
 #include "AccessibilityObjectCache.h"
 #include "PlatformKeyboardEvent.h"
-#include "PlatformMouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
 #include "RenderText.h"
 #include "SelectionController.h"
@@ -43,13 +42,9 @@
 #include "HTMLDocument.h"
 #include "html_inlineimpl.h"
 #include "HTMLNames.h"
-#include "khtml_settings.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
 #include "render_frames.h"
-#include "render_line.h"
-#include "render_replaced.h"
-#include "render_style.h"
 
 namespace WebCore {
 

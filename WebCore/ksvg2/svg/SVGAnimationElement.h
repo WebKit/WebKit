@@ -25,7 +25,6 @@
 #if SVG_SUPPORT
 
 #include "SVGTests.h"
-#include "SVGElement.h"
 #include "SVGStringList.h"
 #include "SVGExternalResourcesRequired.h"
 

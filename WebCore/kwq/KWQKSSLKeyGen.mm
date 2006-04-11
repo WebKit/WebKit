@@ -27,7 +27,6 @@
 #import "KWQKSSLKeyGen.h"
 
 #import "KURL.h"
-#import "DeprecatedString.h"
 #import "WebCoreKeyGenerator.h"
 
 DeprecatedStringList KSSLKeyGen::supportedKeySizes()

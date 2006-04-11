@@ -25,11 +25,11 @@
 
 #include "config.h"
 #include "ImageSource.h"
-#include <cairo.h>
+
 #include "GIFImageDecoder.h"
-#include "PNGImageDecoder.h"
 #include "JPEGImageDecoder.h"
-#include "IntSize.h"
+#include "PNGImageDecoder.h"
+#include <cairo.h>
 
 namespace WebCore {
 

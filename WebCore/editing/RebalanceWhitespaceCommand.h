@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __rebalance_whitespace_command_h__
-#define __rebalance_whitespace_command_h__
+#ifndef rebalance_whitespace_command_h__
+#define rebalance_whitespace_command_h__
 
 #include "EditCommand.h"
-#include "PlatformString.h"
 
 namespace WebCore {
 

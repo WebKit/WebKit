@@ -23,10 +23,7 @@
 #ifndef HTMLELEMENTFACTORY_H
 #define HTMLELEMENTFACTORY_H
 
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
+#include <kxmlcore/Forward.h>
 
 namespace WebCore {
 

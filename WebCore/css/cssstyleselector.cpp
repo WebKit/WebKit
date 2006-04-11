@@ -26,29 +26,16 @@
 
 #include "CachedImage.h"
 #include "Frame.h"
-#include "FrameView.h"
 #include "HTMLElement.h"
 #include "History.h"
 #include "UserAgentStyleSheets.h"
-#include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
-#include "css_valueimpl.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "Font.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
-#include "khtml_settings.h"
 #include "loader.h"
-#include "RenderObject.h"
-#include "render_style.h"
 #include "RenderTheme.h"
-#include <assert.h>
-#include <KURL.h>
-#include <kxmlcore/HashMap.h>
-#include <DeprecatedString.h>
-#include <qvaluelist.h>
-#include <stdlib.h>
 
 namespace WebCore {
 

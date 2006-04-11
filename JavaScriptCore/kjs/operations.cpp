@@ -20,15 +20,11 @@
  *
  */
 
-
-#include "JSType.h"
 #include "config.h"
 #include "operations.h"
 
-#include <assert.h>
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #if HAVE(FUNC_ISINF) && HAVE(IEEEFP_H)
 #include <ieeefp.h>

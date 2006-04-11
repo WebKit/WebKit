@@ -29,14 +29,9 @@
 #import "ClipboardMac.h"
 #import "Frame.h"
 #import "IntRect.h"
-#import "KWQScrollBar.h"
-#import "Node.h"
 #import "PlatformMouseEvent.h"
 #import "StringHash.h"
-#import "TextAffinity.h"
 #import "WebCoreKeyboardAccess.h"
-#import <CoreFoundation/CoreFoundation.h>
-#import <kxmlcore/HashSet.h>
 
 class NPObject;
 

@@ -24,6 +24,7 @@
 #define KXMLCORE_VECTOR_H
 
 #include "Assertions.h"
+#include "Forward.h"
 #include "VectorTraits.h"
 #include <limits>
 #include <stdlib.h>
@@ -301,7 +302,7 @@ namespace KXMLCore {
         char m_inlineBuffer[m_inlineBufferSize];
     };
 
-    template<typename T, size_t inlineCapacity = 0>
+    template<typename T, size_t inlineCapacity>
     class Vector {
     private:
         typedef VectorBuffer<T, inlineCapacity> Impl;

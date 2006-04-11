@@ -26,13 +26,10 @@
 #include "config.h"
 #include "KURL.h"
 
-#include <kxmlcore/Assertions.h>
 #include "PlatformString.h"
 #include "RegularExpression.h"
-#include "TextEncoding.h"
 #include <kxmlcore/Vector.h>
 #include <unicode/uidna.h>
-#include <utility>
 
 using std::pair;
 using std::make_pair;

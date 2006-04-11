@@ -25,7 +25,6 @@
 
 #ifdef __cplusplus
 
-#include "DeprecatedString.h"
 #include "KWQTextStream.h"
 #include "RenderObject.h"
 

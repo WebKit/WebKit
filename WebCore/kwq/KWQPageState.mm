@@ -26,14 +26,9 @@
 #import "config.h"
 #import "KWQPageState.h"
 
-#import <JavaScriptCore/interpreter.h>
-#import <JavaScriptCore/property_map.h>
-
 #import "Document.h"
-#import "FrameView.h"
 #import "kjs_window.h"
 
-#import <kxmlcore/Assertions.h>
 #import "FoundationExtras.h"
 #import "FrameMac.h"
 

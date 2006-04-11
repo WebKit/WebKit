@@ -27,16 +27,15 @@
 #ifndef Cache_h
 #define Cache_h
 
-#include "DeprecatedString.h"
 #include "PlatformString.h"
 #include <kio/global.h>
 #include <qptrlist.h>
-#include <kxmlcore/HashSet.h>
+#include <kxmlcore/HashForward.h>
 
 class KURL;
 
-namespace WebCore
-{
+namespace WebCore  {
+
     class CachedCSSStyleSheet;
     class CachedImage;
     class CachedObject;
@@ -51,8 +50,7 @@ namespace WebCore
      * Provides a cache/loader for objects needed for displaying the html page.
      * At the moment these are stylesheets, scripts and images
      */
-    class Cache
-    {
+    class Cache {
         friend class DocLoader;
     public:
         /**
@@ -187,6 +185,7 @@ namespace WebCore
             
         static int m_countOfLRUAndUncacheableLists;
     };
+
 }
 
 #endif

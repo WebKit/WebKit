@@ -44,13 +44,9 @@
 #ifndef render_layer_h
 #define render_layer_h
 
-#include "Color.h"
-#include "IntRect.h"
+#include "RenderObject.h"
 #include "Timer.h"
 #include "WidgetClient.h"
-#include "RenderObject.h"
-#include <assert.h>
-#include <kxmlcore/Vector.h>
 
 class QScrollBar;
 

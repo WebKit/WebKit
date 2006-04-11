@@ -28,11 +28,7 @@
 #include "TransferJobInternal.h"
 
 #include "DocLoader.h"
-#include "formdata.h"
 #include "Frame.h"
-#include "kxmlcore/HashMap.h"
-#include "KURL.h"
-#include "Widget.h"
 #include <windows.h>
 #include <wininet.h>
 

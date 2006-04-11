@@ -26,7 +26,6 @@
 #define _JNI_UTILITY_H_
 
 #include <list.h>
-#include <value.h>
 
 #include <JavaVM/jni.h>
 

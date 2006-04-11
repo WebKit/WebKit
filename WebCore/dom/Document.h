@@ -28,17 +28,14 @@
 
 #include "Attr.h"
 #include "Color.h"
-#include "ContainerNode.h"
+#include "DeprecatedStringList.h"
 #include "DocumentMarker.h"
-#include "Shared.h"
+#include "KURL.h"
 #include "StringHash.h"
 #include "Timer.h"
 #include "decoder.h"
 #include "dom2_traversalimpl.h"
-#include <DeprecatedStringList.h>
-#include <KURL.h>
 #include <kxmlcore/HashCountedSet.h>
-#include <kxmlcore/HashMap.h>
 #include <qptrlist.h>
 
 class RenderArena;

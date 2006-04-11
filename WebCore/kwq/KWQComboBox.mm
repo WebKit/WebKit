@@ -28,14 +28,11 @@
 
 #import "BlockExceptions.h"
 #import "FoundationExtras.h"
-#import "KWQLineEdit.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
-#import "WebCoreTextRendererFactory.h"
 #import "WebCoreWidgetHolder.h"
 #import "render_form.h"
-#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 

@@ -32,8 +32,6 @@
 #include "VisiblePosition.h"
 #include "htmlediting.h"
 
-#include <kxmlcore/Assertions.h>
-
 namespace WebCore {
 
 using namespace HTMLNames;

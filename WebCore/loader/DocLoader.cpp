@@ -35,7 +35,6 @@
 #include "CachedXSLStyleSheet.h"
 #include "Document.h"
 #include "Frame.h"
-#include "KURL.h"
 #include "KWQLoader.h"
 #include "loader.h"
 

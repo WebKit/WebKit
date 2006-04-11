@@ -47,7 +47,6 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "FloatRect.h"
-#include "FrameView.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "GraphicsContext.h"
@@ -59,9 +58,6 @@
 #include "RenderInline.h"
 #include "RenderTheme.h"
 #include "SelectionController.h"
-#include <assert.h>
-#include <kxmlcore/Vector.h>
-#include <qscrollbar.h>
 
 #if SVG_SUPPORT
 #include "SVGNames.h"

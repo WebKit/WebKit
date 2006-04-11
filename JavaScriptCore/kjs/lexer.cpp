@@ -24,19 +24,11 @@
 #include "lexer.h"
 
 #include <ctype.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include <assert.h>
 
-#include "value.h"
-#include "object.h"
-#include "types.h"
 #include "interpreter.h"
 #include "nodes.h"
-#include "identifier.h"
 #include "lookup.h"
-#include "internal.h"
 #include <kxmlcore/unicode/Unicode.h>
 
 static bool isDecimalDigit(unsigned short c);

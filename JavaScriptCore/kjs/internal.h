@@ -34,7 +34,6 @@
 #include "ustring.h"
 
 #include <kxmlcore/Noncopyable.h>
-#include <kxmlcore/RefPtr.h>
 
 #define I18N_NOOP(s) s
 

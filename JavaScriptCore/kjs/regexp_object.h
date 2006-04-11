@@ -19,13 +19,11 @@
  *
  */
 
-#ifndef _REGEXP_OBJECT_H_
-#define _REGEXP_OBJECT_H_
+#ifndef REGEXP_OBJECT_H_
+#define REGEXP_OBJECT_H_
 
-#include "internal.h"
 #include "function_object.h"
 #include "regexp.h"
-#include <kxmlcore/OwnArrayPtr.h>
 
 namespace KJS {
   class ExecState;

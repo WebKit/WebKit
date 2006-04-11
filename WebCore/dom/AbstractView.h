@@ -23,8 +23,7 @@
 #ifndef _DOM_ViewsImpl_h_
 #define _DOM_ViewsImpl_h_
 
-#include "css/css_valueimpl.h"
-#include "Shared.h"
+#include "css_valueimpl.h"
 
 namespace WebCore {
 

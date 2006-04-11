@@ -24,8 +24,7 @@
 #define KSVG_SVGHelper_H
 #if SVG_SUPPORT
 
-#include <DeprecatedString.h>
-#include <kxmlcore/RefPtr.h>
+#include "DeprecatedString.h"
 
 namespace WebCore
 {

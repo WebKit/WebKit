@@ -21,22 +21,19 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "render_replaced.h"
 
+#include "BrowserExtension.h"
 #include "Document.h" // ### remove dependency
 #include "Element.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "dom2_eventsimpl.h"
-#include "Position.h"
-#include "BrowserExtension.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
-#include "render_line.h"
-#include "VisiblePosition.h"
-#include "Widget.h"
+#include "dom2_eventsimpl.h"
 
 namespace WebCore {
 

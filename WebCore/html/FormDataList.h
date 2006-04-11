@@ -27,10 +27,9 @@
 #ifndef HTML_FormDataList_h
 #define HTML_FormDataList_h
 
-#include <DeprecatedString.h>
-#include <qvaluelist.h>
 #include "PlatformString.h"
 #include "TextEncoding.h"
+#include <qvaluelist.h>
 
 namespace WebCore {
 

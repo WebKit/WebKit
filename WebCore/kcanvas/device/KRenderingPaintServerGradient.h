@@ -24,11 +24,7 @@
 #define KRenderingPaintServerGradient_H
 #if SVG_SUPPORT
 
-#include "Color.h"
-#include <kxmlcore/Vector.h>
-
 #include <kcanvas/device/KRenderingPaintServer.h>
-#include <kcanvas/KCanvasResourceListener.h>
 
 namespace WebCore {
 

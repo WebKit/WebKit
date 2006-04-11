@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __delete_from_text_node_command_h__
-#define __delete_from_text_node_command_h__
+#ifndef delete_from_text_node_command_h__
+#define delete_from_text_node_command_h__
 
 #include "EditCommand.h"
-
-#include "PlatformString.h"
 
 namespace WebCore {
     class Text;

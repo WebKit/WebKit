@@ -20,10 +20,9 @@
  *
  */
 
-#ifndef _KJS_REFERENCE_LIST_H_
-#define _KJS_REFERENCE_LIST_H_
+#ifndef KJS_REFERENCE_LIST_H_
+#define KJS_REFERENCE_LIST_H_
 
-#include "types.h"
 #include "reference.h"
 
 namespace KJS {

@@ -26,14 +26,9 @@
 #define KHTML_RenderTextFragment_H
 
 #include "RenderText.h"
-#include <kxmlcore/PassRefPtr.h>
 
 namespace WebCore {
-    class StringImpl;
-};
 
-namespace WebCore
-{
 // Used to represent a text substring of an element, e.g., for text runs that are split because of
 // first letter and that must therefore have different styles (and positions in the render tree).
 // We cache offsets so that text transformations can be applied in such a way that we can recover

@@ -22,7 +22,6 @@
 #ifndef JSXMLHTTPREQUEST_H_
 #define JSXMLHTTPREQUEST_H_
 
-#include <kxmlcore/RefPtr.h>
 #include "kjs_binding.h"
 
 namespace WebCore {

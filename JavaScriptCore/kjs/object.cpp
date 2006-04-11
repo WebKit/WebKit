@@ -23,22 +23,24 @@
  */
 
 #include "config.h"
-#include "value.h"
 #include "object.h"
-#include "types.h"
-#include "interpreter.h"
-#include "lookup.h"
-#include "reference_list.h"
 
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
-
-#include "internal.h"
-#include "collector.h"
-#include "operations.h"
 #include "error_object.h"
+#include "lookup.h"
 #include "nodes.h"
+#include "operations.h"
+#include "reference_list.h"
+#include <math.h>
+
+// maximum global call stack size. Protects against accidental or
+// malicious infinite recursions. Define to -1 if you want no limit.
+#if PLATFORM(DARWIN)
+// Given OS X stack sizes we run out of stack at about 350 levels.
+// If we improve our stack usage, we can bump this number.
+#define KJS_MAX_STACK 100
+#else
+#define KJS_MAX_STACK 1000
+#endif
 
 #define JAVASCRIPT_CALL_TRACING 0
 

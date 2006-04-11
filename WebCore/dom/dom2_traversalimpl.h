@@ -27,12 +27,9 @@
 #define dom2_traversal_h
 
 #include "Shared.h"
+#include <kxmlcore/Forward.h>
 #include <kxmlcore/Noncopyable.h>
-
-namespace KXMLCore {
-    template <class T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
+#include <kxmlcore/RefPtr.h>
 
 namespace WebCore {
 

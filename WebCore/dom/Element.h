@@ -27,9 +27,7 @@
 #ifndef Element_h
 #define Element_h
 
-#include "ContainerNode.h"
 #include "Attr.h"
-#include "QualifiedName.h"
 #include "KWQScrollBar.h"
 
 namespace WebCore {

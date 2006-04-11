@@ -28,7 +28,6 @@
 #include "config.h"
 #include "RenderImage.h"
 
-#include "CachedImage.h"
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"

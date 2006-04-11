@@ -28,7 +28,6 @@
 
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashSet.h>
-#include "DeprecatedString.h"
 #include "StreamingTextDecoder.h"
 
 namespace WebCore {

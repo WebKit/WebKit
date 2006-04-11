@@ -21,11 +21,12 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLCollection.h"
+
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
-#include <kxmlcore/Vector.h>
 #include "HTMLNames.h"
 
 namespace WebCore {

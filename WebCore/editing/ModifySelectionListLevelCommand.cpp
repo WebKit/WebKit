@@ -26,14 +26,12 @@
 #include "config.h"
 #include "ModifySelectionListLevelCommand.h"
 
-#include "CompositeEditCommand.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
 #include "RenderObject.h"
 #include "SelectionController.h"
 #include "htmlediting.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

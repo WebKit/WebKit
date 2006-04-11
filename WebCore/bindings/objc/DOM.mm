@@ -28,9 +28,7 @@
 
 #import "CDATASection.h"
 #import "Comment.h"
-#import "ContainerNode.h"
 #import "DOMEventsInternal.h"
-#import "DOMHTML.h"
 #import "DOMImplementationFront.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
@@ -39,22 +37,15 @@
 #import "DocumentType.h"
 #import "EventListener.h"
 #import "FoundationExtras.h"
-#import "HTMLElement.h"
 #import "FrameMac.h"
 #import "NodeList.h"
-#import "PlatformString.h"
-#import "StringImpl.h"
 #import "css_stylesheetimpl.h"
 #import "csshelper.h"
 #import "Range.h"
-#import "dom2_traversalimpl.h"
-#import "AbstractView.h"
 #import "dom_xmlimpl.h"
 #import "HTMLNames.h"
 #import "RenderImage.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
-#import <kxmlcore/Assertions.h>
-#import <kxmlcore/HashMap.h>
 #import <objc/objc-class.h>
 
 using WebCore::Attr;

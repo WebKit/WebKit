@@ -26,16 +26,13 @@
 
 #include "config.h"
 #include "RenderContainer.h"
+
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
 #include "RenderImage.h"
 #include "RenderCanvas.h"
 #include "render_list.h"
 #include "Document.h"
-#include "Position.h"
-#include "VisiblePosition.h"
-
-#include <assert.h>
 
 // For accessibility
 #include "AccessibilityObjectCache.h" 

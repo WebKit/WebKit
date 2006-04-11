@@ -25,13 +25,13 @@
 #include "config.h"
 #include "HTMLElement.h"
 
+#include "DocumentFragment.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
-#include "css_valueimpl.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "dom2_eventsimpl.h"
@@ -42,7 +42,6 @@
 #include "markup.h"
 #include "render_replaced.h"
 #include "TextIterator.h"
-#include <kxmlcore/HashSet.h>
 
 namespace WebCore {
 

@@ -24,9 +24,6 @@
 #define KRenderingDevice_H
 #if SVG_SUPPORT
 
-#include "Color.h"
-#include <kxmlcore/Vector.h>
-
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
 

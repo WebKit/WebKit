@@ -24,7 +24,6 @@
 #define KXMLCORE_LIST_REF_PTR_H
 
 #include <kxmlcore/RefPtr.h>
-#include <algorithm>
 
 namespace KXMLCore {
 

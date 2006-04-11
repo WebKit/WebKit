@@ -22,7 +22,6 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/core/Node.h>
 #include <kdom/core/Document.h>
 
 #include "GlobalObject.h"

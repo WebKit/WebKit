@@ -22,7 +22,6 @@
 #define KJS_Navigator_H
 
 #include "kjs_binding.h"
-#include <kjs/object.h>
 
 namespace WebCore {
     class Frame;

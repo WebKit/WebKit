@@ -28,7 +28,6 @@
 
 #include "ApplyStyleCommand.h"
 #include "HTMLElement.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

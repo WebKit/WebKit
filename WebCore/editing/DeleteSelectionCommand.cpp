@@ -27,22 +27,17 @@
 #include "DeleteSelectionCommand.h"
 
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "Element.h"
 #include "Frame.h"
 #include "Logging.h"
 #include "CSSComputedStyleDeclaration.h"
-#include "Range.h"
-#include "Position.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"
 #include "markup.h"
-#include "render_line.h"
-#include "RenderObject.h"
 #include "ReplaceSelectionCommand.h"
-#include "VisiblePosition.h"
 #include "TextIterator.h"
 #include "visible_units.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

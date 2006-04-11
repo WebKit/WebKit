@@ -27,7 +27,6 @@
 #define KCanvasResourcesQuartz_h
 
 #import "KCanvasImage.h"
-#import "KCanvasResources.h"
 #import "KCanvasContainer.h"
 #import <qmatrix.h>
 

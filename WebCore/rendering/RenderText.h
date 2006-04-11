@@ -25,10 +25,8 @@
 #ifndef KHTML_RenderText_H
 #define KHTML_RenderText_H
 
-#include "Text.h"
 #include "RenderObject.h"
-#include <assert.h>
-#include <kxmlcore/PassRefPtr.h>
+#include "Text.h"
 
 typedef void UBreakIterator;
 

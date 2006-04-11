@@ -20,10 +20,9 @@
  *
  */
 
-#ifndef _FUNCTION_OBJECT_H_
-#define _FUNCTION_OBJECT_H_
+#ifndef FUNCTION_OBJECT_H_
+#define FUNCTION_OBJECT_H_
 
-#include "internal.h"
 #include "object_object.h"
 #include "function.h"
 

@@ -26,11 +26,8 @@
 #define KHTMLSTRING_H
 
 #include "PlatformString.h"
-
-#include <DeprecatedString.h>
-#include <qvaluelist.h>
-
 #include <assert.h>
+#include <qvaluelist.h>
 
 namespace WebCore
 {

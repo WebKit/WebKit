@@ -32,7 +32,6 @@
 #include "StringHash.h"
 #include <kjs/identifier.h>
 #include <kxmlcore/Assertions.h>
-#include <string.h>
 #include <unicode/ubrk.h>
 
 using namespace KJS;

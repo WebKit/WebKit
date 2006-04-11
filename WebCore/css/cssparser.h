@@ -25,14 +25,8 @@
 
 #include "AtomicString.h"
 #include "Color.h"
-#include "DeprecatedString.h"
 #include <kxmlcore/HashSet.h>
 #include <kxmlcore/Vector.h>
-
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 

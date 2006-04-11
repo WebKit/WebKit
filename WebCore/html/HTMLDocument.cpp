@@ -59,8 +59,7 @@
 #include "DocumentType.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "css/css_stylesheetimpl.h"
-#include "css/cssstyleselector.h"
+#include "cssstyleselector.h"
 #include "CSSPropertyNames.h"
 #include "html_baseimpl.h"
 #include "html_headimpl.h"
@@ -69,12 +68,7 @@
 #include "HTMLTokenizer.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
-#include "khtml_settings.h"
-#include "rendering/RenderObject.h"
 #include "dom2_eventsimpl.h"
-#include "xml_tokenizer.h"
-#include <KURL.h>
-#include <stdlib.h>
 
 #include "DocTypeStrings.cpp"
 

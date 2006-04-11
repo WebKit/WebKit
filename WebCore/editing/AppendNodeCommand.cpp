@@ -26,9 +26,6 @@
 #include "config.h"
 #include "AppendNodeCommand.h"
 
-#include "Node.h"
-#include <kxmlcore/Assertions.h>
-
 namespace WebCore {
 
 AppendNodeCommand::AppendNodeCommand(Document *document, Node *appendChild, Node *parentNode)

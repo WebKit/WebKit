@@ -23,8 +23,6 @@
 
 #ifdef KHTML_XSLT
 
-#include "PlatformString.h"
-
 #include "HTMLDocument.h"
 #include "loader.h"
 #include "CachedXSLStyleSheet.h"

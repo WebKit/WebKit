@@ -27,7 +27,6 @@
 #include "Element.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "RenderLayer.h"
 
 namespace WebCore {
 

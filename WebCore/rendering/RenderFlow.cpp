@@ -28,13 +28,10 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
-#include "RenderBlock.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
 #include "RenderInline.h"
-#include "render_line.h"
-#include <assert.h>
 
 namespace WebCore {
 

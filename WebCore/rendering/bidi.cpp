@@ -23,17 +23,15 @@
 
 #include "config.h"
 #include "bidi.h"
+
 #include "Document.h"
 #include "Element.h"
-#include "break_lines.h"
 #include "FrameView.h"
-#include <kxmlcore/AlwaysInline.h>
-#include "RenderArena.h"
-#include "RenderBlock.h"
-#include "RenderCanvas.h"
 #include "InlineTextBox.h"
-
-using namespace WebCore;
+#include "RenderArena.h"
+#include "RenderCanvas.h"
+#include "break_lines.h"
+#include <kxmlcore/AlwaysInline.h>
 
 namespace WebCore {
 
@@ -2550,4 +2548,3 @@ void RenderBlock::checkLinesForTextOverflow()
 }
 
 }
-

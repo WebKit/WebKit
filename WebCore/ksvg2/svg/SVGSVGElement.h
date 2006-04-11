@@ -24,8 +24,6 @@
 #define KSVG_SVGSVGElementImpl_H
 #if SVG_SUPPORT
 
-#include "IntPoint.h"
-
 #include "SVGTests.h"
 #include "SVGLangSpace.h"
 #include "SVGFitToViewBox.h"

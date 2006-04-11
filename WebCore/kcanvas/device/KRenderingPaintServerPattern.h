@@ -25,9 +25,6 @@
 #if SVG_SUPPORT
 
 #include <kcanvas/device/KRenderingPaintServer.h>
-#include <kcanvas/KCanvasResourceListener.h>
-
-#include "IntPoint.h"
 
 namespace WebCore {
 

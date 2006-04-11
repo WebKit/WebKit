@@ -29,7 +29,6 @@
 #include "FloatRect.h"
 #include "Font.h"
 #include "IntRect.h"
-#include "DeprecatedString.h"
 #include "Widget.h"
 
 namespace WebCore {

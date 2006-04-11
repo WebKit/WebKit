@@ -391,4 +391,50 @@ void Selection::debugPosition() const
     fprintf(stderr, "================================\n");
 }
 
+#ifndef NDEBUG
+
+void Selection::formatForDebugger(char* buffer, unsigned length) const
+{
+    String result;
+    String s;
+    
+    if (isNone()) {
+        result = "<none>";
+    } else {
+        const int FormatBufferSize = 1024;
+        char s[FormatBufferSize];
+        result += "from ";
+        start().formatForDebugger(s, FormatBufferSize);
+        result += s;
+        result += " to ";
+        end().formatForDebugger(s, FormatBufferSize);
+        result += s;
+    }
+
+    strncpy(buffer, result.deprecatedString().latin1(), length - 1);
+}
+
+void Selection::showTreeForThis() const
+{
+    if (start().node())
+        start().node()->showTreeAndMark(start().node(), "S", end().node(), "E");
+}
+
+#endif
+
 } // namespace WebCore
+
+#ifndef NDEBUG
+
+void showTree(const WebCore::Selection& sel)
+{
+    sel.showTreeForThis();
+}
+
+void showTree(const WebCore::Selection* sel)
+{
+    if (sel)
+        sel->showTreeForThis();
+}
+
+#endif

@@ -28,11 +28,8 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "InlineTextBox.h"
-#include "DeprecatedString.h"
 #include "RenderBlock.h"
 #include "TextBoundaries.h"
-#include "VisiblePosition.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"
 #include "TextIterator.h"

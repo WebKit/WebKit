@@ -7,10 +7,7 @@
 #import <JavaScriptCore/WebScriptObject.h>
 
 #include <JavaScriptCore/internal.h>
-#include <JavaScriptCore/list.h>
-#include <JavaScriptCore/object.h>
 #include <JavaScriptCore/runtime_root.h>
-#include <JavaScriptCore/value.h>
 
 @interface WebScriptObject (Private)
 + (id)_convertValueToObjcValue:(KJS::JSValue *)value originExecutionContext:(const KJS::Bindings::RootObject *)originExecutionContext executionContext:(const KJS::Bindings::RootObject *)executionContext;

@@ -26,7 +26,6 @@
 #ifndef KURL_H_
 #define KURL_H_
 
-#include "DeprecatedString.h"
 #include "TextEncoding.h"
 
 #if __APPLE__

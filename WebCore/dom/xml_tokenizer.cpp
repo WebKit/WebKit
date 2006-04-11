@@ -33,15 +33,11 @@
 #include "Document.h"
 #include "DocumentType.h"
 #include "Frame.h"
-#include "FrameView.h"
 #include "KWQLoader.h"
-#include "SegmentedString.h"
 #include "dom_xmlimpl.h"
 #include "html_headimpl.h"
 #include "html_tableimpl.h"
-#include "HTMLNames.h"
 #include "HTMLTokenizer.h"
-#include <kxmlcore/Vector.h>
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 

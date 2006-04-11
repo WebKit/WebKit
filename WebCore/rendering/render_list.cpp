@@ -26,13 +26,10 @@
 #include "config.h"
 #include "render_list.h"
 
+#include "CachedImage.h"
+#include "Document.h"
 #include "GraphicsContext.h"
 #include "RenderCanvas.h"
-
-#include "Document.h"
-#include "CachedImage.h"
-
-#include "HTMLNames.h"
 #include "html_listimpl.h"
 
 namespace WebCore {

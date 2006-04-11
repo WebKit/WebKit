@@ -28,7 +28,6 @@
 #ifndef XSLTProcessor_H
 #define XSLTProcessor_H
 
-#include <kxmlcore/RefPtr.h>
 #include "kjs_binding.h"
 
 namespace WebCore {

@@ -24,9 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
 #import "KCanvasImage.h"
-#import "KCanvasResources.h"
 
 namespace WebCore {
 

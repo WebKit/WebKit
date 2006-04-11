@@ -26,7 +26,6 @@
 
 #include "Color.h"
 
-#include "StringImpl.h"
 #include "css_valueimpl.h"
 
 namespace WebCore

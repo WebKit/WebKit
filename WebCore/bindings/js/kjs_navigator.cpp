@@ -28,9 +28,7 @@
 #include "CookieJar.h"
 #include "Frame.h"
 #include "Language.h"
-#include "Node.h"
 #include "PlugInInfoStore.h"
-#include "kjs_binding.h"
 
 using namespace WebCore;
 

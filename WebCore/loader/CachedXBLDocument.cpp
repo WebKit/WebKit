@@ -34,8 +34,6 @@
 #include "CachedObjectClientWalker.h"
 #include "decoder.h"
 
-#include <kxmlcore/Assertions.h>
-
 namespace WebCore {
 
 CachedXBLDocument::CachedXBLDocument(DocLoader* dl, const String &url, KIO::CacheControl _cachePolicy, time_t _expireDate)

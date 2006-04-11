@@ -26,8 +26,6 @@
 #ifndef KJS_BINDINGS_OBJC_CLASS_H
 #define KJS_BINDINGS_OBJC_CLASS_H
 
-#include <CoreFoundation/CoreFoundation.h>
-
 #include "objc_runtime.h"
 
 namespace KJS {

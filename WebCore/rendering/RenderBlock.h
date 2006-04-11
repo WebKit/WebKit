@@ -26,7 +26,6 @@
 
 #include "GapRects.h"
 #include "RenderFlow.h"
-#include <qptrlist.h>
 
 namespace WebCore {
 

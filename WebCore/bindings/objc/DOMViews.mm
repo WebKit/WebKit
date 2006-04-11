@@ -23,15 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "DOMViews.h"
 
+#import "AbstractView.h"
 #import "DOMInternal.h"
 #import "DOMViewsInternal.h"
-#import <kxmlcore/Assertions.h>
-
 #import "Document.h"
-#import "AbstractView.h"
 
 using WebCore::AbstractView;
 

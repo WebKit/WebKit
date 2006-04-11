@@ -22,11 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include "config.h"
-#import <Foundation/Foundation.h>
 
-#import <JavaScriptCore/objc_instance.h>
-#import <JavaScriptCore/WebScriptObject.h>
+#import "config.h"
+#import "objc_instance.h"
+
+#import "WebScriptObject.h"
 
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)
@@ -36,8 +36,6 @@
     fprintf(stderr, formatAndArgs); \
 }
 #endif
-
-#include <JavaScriptCore/objc_runtime.h>
 
 using namespace KJS::Bindings;
 using namespace KJS;

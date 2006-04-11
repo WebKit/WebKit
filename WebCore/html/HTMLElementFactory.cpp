@@ -26,11 +26,9 @@
 #include "HTMLBaseFontElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
-#include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
-#include "HTMLInputElement.h"
 #include "HTMLIsIndexElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLLegendElement.h"
@@ -41,11 +39,9 @@
 #include "html_baseimpl.h"
 #include "html_blockimpl.h"
 #include "html_headimpl.h"
-#include "html_imageimpl.h"
 #include "html_listimpl.h"
 #include "html_objectimpl.h"
 #include "html_tableimpl.h"
-#include <kxmlcore/HashMap.h>
 
 namespace WebCore {
 

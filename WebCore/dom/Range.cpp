@@ -27,14 +27,13 @@
 #include "Range.h"
 
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "ExceptionCode.h"
 #include "HTMLElement.h"
 #include "RenderBlock.h"
-#include "VisiblePosition.h"
-#include "Position.h"
+#include "TextIterator.h"
 #include "dom_xmlimpl.h"
 #include "markup.h"
-#include "TextIterator.h"
 #include "visible_units.h"
 
 namespace WebCore {

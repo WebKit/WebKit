@@ -27,7 +27,6 @@
 
 #include "css_valueimpl.h"
 #include <kcanvas/KCanvasMatrix.h>
-#include <qvaluelist.h>
 
 namespace WebCore {
 

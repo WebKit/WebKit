@@ -27,7 +27,6 @@
 #define TextEncoding_H
 
 #include "DeprecatedString.h"
-#include "KWQCString.h"
 
 namespace WebCore {
 

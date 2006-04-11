@@ -25,11 +25,9 @@
 
 #include "config.h"
 #include "MoveSelectionCommand.h"
-#include "ReplaceSelectionCommand.h"
 
 #include "DocumentFragment.h"
-
-#include <kxmlcore/Assertions.h>
+#include "ReplaceSelectionCommand.h"
 
 namespace WebCore {
 

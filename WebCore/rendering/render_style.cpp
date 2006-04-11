@@ -24,7 +24,6 @@
 #include "config.h"
 #include "render_style.h"
 
-#include "StringImpl.h"
 #include "cssstyleselector.h"
 #include "RenderArena.h"
 

@@ -27,8 +27,6 @@
 #ifndef StyledElement_h
 #define StyledElement_h
 
-#include "Element.h"
-#include "MappedAttributeEntry.h"
 #include "NamedMappedAttrMap.h"
 
 namespace WebCore {

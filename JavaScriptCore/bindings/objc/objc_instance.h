@@ -22,13 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_OBJC_INSTANCE_H_
-#define _BINDINGS_OBJC_INSTANCE_H_
 
-#include <CoreFoundation/CoreFoundation.h>
+#ifndef BINDINGS_OBJC_INSTANCE_H_
+#define BINDINGS_OBJC_INSTANCE_H_
 
 #include <objc_class.h>
-#include <objc_runtime.h>
 #include <objc_utility.h>
 
 namespace KJS {

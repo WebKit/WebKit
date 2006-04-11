@@ -24,8 +24,6 @@
 #define KRenderingPaintServerSolid_H
 #if SVG_SUPPORT
 
-#include "Color.h"
-
 #include <kcanvas/device/KRenderingPaintServer.h>
 
 namespace WebCore {

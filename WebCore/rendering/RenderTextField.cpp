@@ -27,12 +27,9 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextFieldInnerElement.h"
-#include "RenderText.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
-#include "VisiblePosition.h"
 #include "dom2_eventsimpl.h"
-#include <algorithm>
 
 namespace WebCore {
 

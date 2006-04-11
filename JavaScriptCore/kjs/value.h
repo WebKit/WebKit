@@ -24,6 +24,10 @@
 #ifndef KJS_VALUE_H
 #define KJS_VALUE_H
 
+#include "JSImmediate.h"
+#include "ustring.h"
+#include <stddef.h> // for size_t
+
 #ifndef NDEBUG // protection against problems if committing with KJS_VERBOSE on
 
 // Uncomment this to enable very verbose output from KJS
@@ -32,13 +36,6 @@
 //#define KJS_DEBUG_MEM
 
 #endif
-
-#include "JSImmediate.h"
-#include "JSType.h"
-#include "kxmlcore/Assertions.h"
-#include "ustring.h"
-
-#include <stdlib.h> // for size_t
 
 namespace KJS {
 

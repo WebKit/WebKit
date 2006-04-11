@@ -25,19 +25,13 @@
 #include "array_object.h"
 
 #include "error_object.h"
-#include "internal.h"
-#include "interpreter.h"
-#include "object.h"
+#include "lookup.h"
 #include "operations.h"
 #include "reference_list.h"
-#include "types.h"
-#include "value.h"
 #include <kxmlcore/HashSet.h>
+#include <stdio.h>
 
 #include "array_object.lut.h"
-
-#include <stdio.h>
-#include <assert.h>
 
 using namespace KJS;
 

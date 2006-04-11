@@ -27,7 +27,6 @@
 #include "HTMLInterchange.h"
 
 #include "Document.h"
-#include "DeprecatedString.h"
 #include "TextIterator.h"
 
 using WebCore::isCollapsibleWhitespace;

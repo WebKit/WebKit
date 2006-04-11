@@ -24,7 +24,6 @@
 #define KSVG_SVGAnimatedStringImpl_H
 #if SVG_SUPPORT
 
-#include "StringImpl.h"
 #include "SVGAnimatedTemplate.h"
 
 namespace WebCore

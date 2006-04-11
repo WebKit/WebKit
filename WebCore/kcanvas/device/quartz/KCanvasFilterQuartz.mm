@@ -32,9 +32,6 @@
 #import "CachedImage.h"
 #import "FoundationExtras.h"
 #import "Image.h"
-#import "IntRect.h"
-#import "KCanvasMatrix.h"
-#import "KCanvasRenderingStyle.h"
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
 #import "WKArithmeticFilter.h"
@@ -46,7 +43,6 @@
 #import "WKSpecularLightingFilter.h"
 #import "WKSpotLightFilter.h"
 #import <QuartzCore/QuartzCore.h>
-#import <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

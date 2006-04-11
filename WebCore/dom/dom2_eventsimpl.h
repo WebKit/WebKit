@@ -25,10 +25,8 @@
 #ifndef DOM_EVENTSIMPL_H
 #define DOM_EVENTSIMPL_H
 
-#include "AtomicString.h"
-#include "Node.h"
-#include "Shared.h"
 #include "AbstractView.h"
+#include "Node.h"
 
 class DeprecatedStringList;
 

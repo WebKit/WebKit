@@ -27,7 +27,6 @@
 #import "KWQEditCommand.h"
 
 #import "EditCommand.h"
-#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 

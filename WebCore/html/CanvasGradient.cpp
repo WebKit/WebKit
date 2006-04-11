@@ -27,7 +27,6 @@
 #include "CanvasGradient.h"
 
 #include "cssparser.h"
-#include <stdlib.h>
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>

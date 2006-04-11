@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "FontFamily.h"
-#include "StringImpl.h"
 
 namespace WebCore {
 

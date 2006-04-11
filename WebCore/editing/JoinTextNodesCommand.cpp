@@ -28,11 +28,6 @@
 
 #include "Text.h"
 
-#include <kxmlcore/Assertions.h>
-
-using WebCore::Document;
-using WebCore::Text;
-
 namespace WebCore {
 
 JoinTextNodesCommand::JoinTextNodesCommand(Document *document, Text *text1, Text *text2)

@@ -23,7 +23,6 @@
 
 #include "DeprecatedString.h"
 #include "kjs_binding.h"
-#include <kjs/protect.h>
 #include <kxmlcore/HashMap.h>
 
 namespace WebCore {

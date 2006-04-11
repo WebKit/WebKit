@@ -26,7 +26,6 @@
 #ifndef WebCoreSettings_H
 #define WebCoreSettings_H
 
-#include "PlatformString.h"
 #include "Font.h"
 #include "KURL.h"
 

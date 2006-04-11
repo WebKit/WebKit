@@ -22,12 +22,12 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTML_HTMLFormElementImpl_H
 #define HTML_HTMLFormElementImpl_H
 
 #include "HTMLElement.h"
 #include "HTMLCollection.h" 
-#include <kxmlcore/Vector.h>
 
 namespace WebCore {
     class FormData;

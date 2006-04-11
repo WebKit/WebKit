@@ -24,8 +24,6 @@
 #define KSVG_SVGAnimatedNumberListImpl_H
 #if SVG_SUPPORT
 
-#include "Shared.h"
-
 #include "SVGAnimatedTemplate.h"
 #include "SVGNumberList.h"
 

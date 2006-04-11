@@ -25,11 +25,8 @@
 #include "decoder.h"
 
 #include "HTMLNames.h"
-#include <ctype.h>
-#include <kxmlcore/Assertions.h>
-#include <qregexp.h>
-#include "TextEncoding.h"
 #include "StreamingTextDecoder.h"
+#include <qregexp.h>
 
 using namespace WebCore;
 using namespace HTMLNames;

@@ -23,24 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "DOMCSS.h"
 
-#import "DOMInternal.h"
-#import "Color.h"
-#import "FoundationExtras.h"
-#import "css_base.h"
-#import "css_ruleimpl.h"
-#import "css_stylesheetimpl.h"
-#import "css_valueimpl.h"
 #import "AbstractView.h"
+#import "DOMInternal.h"
 #import "Document.h"
-#import "PlatformString.h"
-#import "StringImpl.h"
+#import "FoundationExtras.h"
+#import "css_ruleimpl.h"
 #import "dom_xmlimpl.h"
 #import "html_headimpl.h"
-#import "Shared.h"
-#import <kxmlcore/Assertions.h>
 #import <objc/objc-class.h>
 
 using namespace WebCore;

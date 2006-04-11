@@ -24,7 +24,6 @@
 #define KSVG_SVGAngleImpl_H
 #if SVG_SUPPORT
 
-#include "Shared.h"
 #include "PlatformString.h"
 
 namespace WebCore

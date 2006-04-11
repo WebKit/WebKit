@@ -27,9 +27,7 @@
 #define KHTML_EDITING_VISIBLE_TEXT_H
 
 #include "InlineTextBox.h"
-#include "DeprecatedString.h"
 #include "Range.h"
-#include <kxmlcore/Vector.h>
 
 namespace WebCore {
 

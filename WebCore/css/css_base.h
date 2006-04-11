@@ -24,15 +24,8 @@
 #ifndef CSS_BASE_H
 #define CSS_BASE_H
 
-#include "PlatformString.h"
 #include "QualifiedName.h"
-#include "Shared.h"
 #include <kxmlcore/Vector.h>
-
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 

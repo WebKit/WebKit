@@ -25,7 +25,6 @@
 #include "PlatformString.h"
 #include "kjs_dom.h"
 #include "kjs_html.h"
-#include <kjs/protect.h>
 
 namespace WebCore {
     class Clipboard;

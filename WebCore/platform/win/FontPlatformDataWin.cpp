@@ -25,7 +25,6 @@
 #include "FontPlatformData.h"
 
 #include "FontDescription.h"
-#include <cairo.h>
 #include <cairo-win32.h>
 
 namespace WebCore {

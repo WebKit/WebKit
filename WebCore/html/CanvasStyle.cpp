@@ -29,10 +29,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "cssparser.h"
-
-#if __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
+#include <kxmlcore/PassRefPtr.h>
 
 namespace WebCore {
 

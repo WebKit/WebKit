@@ -26,18 +26,11 @@
 #ifndef HTMLTOKENIZER_H
 #define HTMLTOKENIZER_H
 
-#include "CachedObjectClient.h"
 #include "NamedMappedAttrMap.h"
 #include "SegmentedString.h"
 #include "Timer.h"
-#include "QualifiedName.h"
 #include "xml_tokenizer.h"
 #include <qptrqueue.h>
-
-namespace KXMLCore {
-    template <class T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 

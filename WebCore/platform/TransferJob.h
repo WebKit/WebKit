@@ -29,19 +29,18 @@
 #include "StringHash.h"
 #include "Timer.h"
 #include "TransferJobClient.h" // for PlatformResponse
-#include <kxmlcore/HashMap.h>
+#include <kxmlcore/HashForward.h>
 
 #ifdef WIN32
 typedef unsigned long DWORD;
 typedef unsigned long DWORD_PTR;
 typedef void* LPVOID;
 typedef LPVOID HINTERNET;
-typedef LPVOID HANDLE;
-typedef unsigned    WPARAM;
-typedef long        LPARAM;
-typedef struct HWND__ *HWND;
-typedef _W64 long LONG_PTR, *PLONG_PTR;
-typedef LONG_PTR            LRESULT;
+typedef unsigned WPARAM;
+typedef long LPARAM;
+typedef struct HWND__* HWND;
+typedef _W64 long LONG_PTR;
+typedef LONG_PTR LRESULT;
 #endif
 
 #if __APPLE__
@@ -87,7 +86,7 @@ public:
 #if WIN32
     void fileLoadTimer(Timer<TransferJob>* timer);
     friend void __stdcall transferJobStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
-    friend LRESULT __stdcall TransferJobWndProc(HWND hWnd, unsigned message, WPARAM wParam, LPARAM lParam);
+    friend LRESULT __stdcall TransferJobWndProc(HWND, unsigned message, WPARAM, LPARAM);
 #endif
 
     void cancel();

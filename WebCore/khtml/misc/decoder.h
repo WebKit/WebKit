@@ -23,7 +23,6 @@
 #define KHTMLDECODER_H
 
 #include <kxmlcore/OwnPtr.h>
-#include "DeprecatedString.h"
 #include "TextEncoding.h"
 
 namespace WebCore {

@@ -28,9 +28,6 @@
 
 #include "FloatRect.h"
 #include "PlatformString.h"
-#include "Shared.h"
-#include <kxmlcore/PassRefPtr.h>
-#include <kxmlcore/RefPtr.h>
 #include <kxmlcore/Vector.h>
 
 #if __APPLE__

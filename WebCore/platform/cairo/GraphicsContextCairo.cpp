@@ -27,12 +27,10 @@
 
 #include "GraphicsContext.h"
 #include "Font.h"
-#include "Pen.h"
 #include "FloatRect.h"
 #include "IntPointArray.h"
 #include "IntRect.h"
 
-#include <cairo.h>
 #include <cairo-win32.h>
 
 #ifndef M_PI

@@ -26,9 +26,6 @@
 #define KCanvasItem_H
 #if SVG_SUPPORT
 
-#include "IntRect.h"
-#include "IntPoint.h"
-#include "IntRect.h"
 #include <q3valuelist.h>
 #include "FloatRect.h"
 

@@ -24,9 +24,9 @@
  */
  
 #include "config.h"
-#include "context.h"
-#include "internal.h"
 #include "runtime_method.h"
+
+#include "context.h"
 #include "runtime_object.h"
 
 using namespace KJS::Bindings;

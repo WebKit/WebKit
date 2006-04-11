@@ -41,7 +41,6 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "Shared.h"
-#include "TextDirection.h"
 #include <qvaluelist.h>
 
 #if SVG_SUPPORT

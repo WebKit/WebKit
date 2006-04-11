@@ -25,10 +25,8 @@
 #define KCanvasFilters_H
 #if SVG_SUPPORT
 
+#include "DeprecatedStringList.h"
 #include "KCanvasResources.h"
-#include "FloatSize.h"
-#include "Color.h"
-#include <DeprecatedStringList.h>
 
 #ifdef __OBJC__
 @class CIFilter;

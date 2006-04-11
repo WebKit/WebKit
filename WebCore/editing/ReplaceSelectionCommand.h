@@ -27,7 +27,6 @@
 #define replace_selection_command_h__
 
 #include "CompositeEditCommand.h"
-#include <kxmlcore/PassRefPtr.h>
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/Vector.h>
 

@@ -27,10 +27,7 @@
 // we should consider increasing the minimum required version of gcc to build
 // WebCore, and rolling the change that introduced this file back.
 
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
+#include <kxmlcore/Forward.h>
 
 namespace WebCore {
 

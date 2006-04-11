@@ -33,7 +33,6 @@
 #import "FontDataSet.h"
 #import "GraphicsContext.h"
 #import "khtml_settings.h"
-#import <algorithm>
 
 #import "WebCoreTextRenderer.h"
 #import "IntRect.h"

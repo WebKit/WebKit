@@ -22,38 +22,28 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 */
-//----------------------------------------------------------------------------
-//
-// KDE HTML Widget -- HTML Parser
 
 #include "config.h"
 #include "HTMLParser.h"
 
-#include "DocumentFragment.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "HTMLFormElement.h"
-#include "HTMLIsIndexElement.h"
-#include "LocalizedStrings.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "Text.h"
 #include "Comment.h"
+#include "DocumentFragment.h"
+#include "Frame.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLElementFactory.h"
+#include "HTMLFormElement.h"
+#include "HTMLIsIndexElement.h"
+#include "HTMLTokenizer.h"
+#include "LocalizedStrings.h"
+#include "Text.h"
 #include "html_baseimpl.h"
 #include "html_blockimpl.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLDocument.h"
 #include "html_headimpl.h"
-#include "html_imageimpl.h"
-#include "html_inlineimpl.h"
 #include "html_listimpl.h"
 #include "html_objectimpl.h"
 #include "html_tableimpl.h"
-#include "HTMLElementFactory.h"
-#include "HTMLTokenizer.h"
-#include "RenderObject.h"
-#include <kxmlcore/HashMap.h>
-#include <kxmlcore/HashSet.h>
 
 namespace WebCore {
 

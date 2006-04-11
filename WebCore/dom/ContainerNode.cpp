@@ -30,8 +30,6 @@
 #include "ExceptionCode.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
-#include "IntRect.h"
-#include "RenderText.h"
 #include "SystemTime.h"
 #include "dom2_eventsimpl.h"
 #include "RenderTheme.h"

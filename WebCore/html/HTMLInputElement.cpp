@@ -40,7 +40,6 @@
 #include "RenderTextField.h"
 #include "RenderTheme.h"
 #include "SelectionController.h"
-#include "dom2_eventsimpl.h"
 #include "html_imageimpl.h"
 #include "render_button.h"
 #include "render_form.h"

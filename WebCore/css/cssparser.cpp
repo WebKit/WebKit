@@ -27,13 +27,9 @@
 #include "Document.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
-#include "css_valueimpl.h"
 #include "csshelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include <KURL.h>
-#include <kxmlcore/Assertions.h>
-#include <stdlib.h>
 
 #define YYDEBUG 0
 

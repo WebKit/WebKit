@@ -21,11 +21,11 @@
  *
  */
 
-#ifndef _KJSCOLLECTOR_H_
-#define _KJSCOLLECTOR_H_
+#ifndef KJSCOLLECTOR_H_
+#define KJSCOLLECTOR_H_
 
 #include "value.h"
-#include <kxmlcore/HashCountedSet.h>
+#include <kxmlcore/HashForward.h>
 
 #define KJS_MEM_LIMIT 500000
 

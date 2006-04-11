@@ -26,22 +26,19 @@
 #include "config.h"
 #include "markup.h"
 
+#include "CSSComputedStyleDeclaration.h"
 #include "Comment.h"
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
-#include "VisiblePosition.h"
-#include "CSSComputedStyleDeclaration.h"
-#include "css_valueimpl.h"
 #include "Range.h"
-#include "Position.h"
 #include "dom_xmlimpl.h"
 #include "htmlediting.h"
-#include "HTMLNames.h"
 #include "visible_units.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

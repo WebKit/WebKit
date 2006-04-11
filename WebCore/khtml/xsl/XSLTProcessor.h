@@ -25,15 +25,11 @@
 
 #ifdef KHTML_XSLT
 
-#include "Shared.h"
 #include "StringHash.h"
 #include "XSLStyleSheet.h"
-#include <DeprecatedString.h>
 #include <kxmlcore/HashMap.h>
-#include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <libxslt/documents.h>
-#include <libxslt/transform.h>
 
 namespace WebCore {
 

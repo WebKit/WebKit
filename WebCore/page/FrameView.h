@@ -29,7 +29,6 @@
 #include "ScrollView.h"
 #include "IntSize.h"
 #include "PlatformString.h"
-#include <kxmlcore/RefPtr.h>
 
 class DeprecatedStringList;
 

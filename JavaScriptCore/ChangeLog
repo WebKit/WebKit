@@ -1,3 +1,84 @@
+2006-04-10  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by John Sullivan.
+
+        - switched from a shell script to a makefile for generated files
+        - removed lots of unneeded includes
+        - added new Forward.h and HashForward.h headers that allow compiling with
+          fewer unneeded templates
+
+        * DerivedSources.make: Added.
+        * generate-derived-sources: Removed.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added new files, changed to use
+        DerivedSources.make.
+
+        * kxmlcore/Forward.h: Added.
+        * kxmlcore/HashForward.h: Added.
+
+        * kxmlcore/HashCountedSet.h: Include HashForward for default args.
+        * kxmlcore/HashMap.h: Ditto.
+        * kxmlcore/HashSet.h: Ditto.
+
+        * kjs/object.h:
+        * kjs/object.cpp:
+        Moved KJS_MAX_STACK into the .cpp file.
+
+        * bindings/NP_jsobject.cpp:
+        * bindings/c/c_instance.h:
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_runtime.h:
+        * bindings/jni/jni_utility.h:
+        * bindings/objc/WebScriptObject.mm:
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * bindings/objc/objc_class.h:
+        * bindings/objc/objc_class.mm:
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        * bindings/objc/objc_runtime.mm:
+        * bindings/objc/objc_utility.mm:
+        * bindings/runtime.h:
+        * bindings/runtime_array.cpp:
+        * bindings/runtime_array.h:
+        * bindings/runtime_method.cpp:
+        * bindings/runtime_method.h:
+        * bindings/runtime_object.cpp:
+        * bindings/runtime_root.h:
+        * kjs/JSImmediate.cpp:
+        * kjs/Parser.h:
+        * kjs/array_object.cpp:
+        * kjs/array_object.h:
+        * kjs/bool_object.cpp:
+        * kjs/bool_object.h:
+        * kjs/collector.h:
+        * kjs/context.h:
+        * kjs/debugger.cpp:
+        * kjs/error_object.h:
+        * kjs/function_object.h:
+        * kjs/internal.h:
+        * kjs/lexer.cpp:
+        * kjs/math_object.cpp:
+        * kjs/math_object.h:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/number_object.cpp:
+        * kjs/number_object.h:
+        * kjs/object_object.cpp:
+        * kjs/operations.cpp:
+        * kjs/protected_reference.h:
+        * kjs/reference.h:
+        * kjs/reference_list.h:
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        * kjs/string_object.h:
+        * kjs/testkjs.cpp:
+        * kjs/value.cpp:
+        * kjs/value.h:
+        * kxmlcore/HashTable.h:
+        * kxmlcore/ListRefPtr.h:
+        * kxmlcore/TCPageMap.h:
+        * kxmlcore/Vector.h:
+        Removed unneeded header includes.
+
 2006-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by eric.

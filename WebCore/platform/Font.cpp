@@ -29,7 +29,6 @@
 #include "FontDataSet.h"
 #include "GraphicsContext.h"
 #include "khtml_settings.h"
-#include <algorithm>
 
 namespace WebCore {
 

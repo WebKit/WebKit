@@ -31,8 +31,6 @@
 #include "SVGStyledLocatableElement.h"
 #include "SVGExternalResourcesRequired.h"
 
-#include <kcanvas/KCanvasResourceListener.h>
-#include <kcanvas/device/KRenderingPaintServer.h>
 #include <kcanvas/device/KRenderingPaintServerPattern.h>
 
 class KCanvasImage;

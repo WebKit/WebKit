@@ -26,7 +26,6 @@
 #ifndef JAVASCRIPTCORE_BINDINGS_RUNTIME_H
 #define JAVASCRIPTCORE_BINDINGS_RUNTIME_H
 
-#include "JSType.h"
 #include "value.h"
 
 #include <CoreFoundation/CFDictionary.h>

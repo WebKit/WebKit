@@ -24,14 +24,11 @@
  */
 
 #include "config.h"
-#include <math.h>
-#include <cairo.h>
-#include <kxmlcore/Vector.h>
-#include "DeprecatedArray.h"
-#include "IntSize.h"
-#include "FloatRect.h"
 #include "Image.h"
 
+#include "FloatRect.h"
+#include <cairo.h>
+#include <math.h>
 
 namespace WebCore {
 

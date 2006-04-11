@@ -31,8 +31,6 @@
 #import "DOMViewsInternal.h"
 #import "Document.h"
 #import "dom2_eventsimpl.h"
-#import "AbstractView.h"
-#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 

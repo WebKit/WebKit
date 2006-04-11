@@ -28,7 +28,6 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "ExceptionCode.h"
-#include "PlatformString.h"
 #include "css_stylesheetimpl.h"
 #include "HTMLDocument.h"
 

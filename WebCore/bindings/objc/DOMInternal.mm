@@ -28,14 +28,10 @@
 
 #import "Document.h"
 #import "FrameMac.h"
-#import "PlatformString.h"
 #import "Range.h"
 #import "kjs_dom.h"
 #import "kjs_proxy.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
-#import <JavaScriptCore/interpreter.h>
-#import <JavaScriptCore/runtime_root.h>
-#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 

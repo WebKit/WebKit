@@ -27,7 +27,6 @@
 #import "JavaAppletWidget.h"
 
 #import "Document.h"
-#import "FrameView.h"
 #import "BlockExceptions.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"

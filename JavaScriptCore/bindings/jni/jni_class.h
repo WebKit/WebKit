@@ -22,14 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _JNI_CLASS_H_
-#define _JNI_CLASS_H_
 
-#include <CoreFoundation/CoreFoundation.h>
+#ifndef JNI_CLASS_H_
+#define JNI_CLASS_H_
 
-#include <JavaVM/jni.h>
-
-#include <runtime.h>
 #include <jni_runtime.h>
 
 namespace KJS {

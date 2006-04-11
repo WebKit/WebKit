@@ -25,8 +25,6 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "TransferJobClient.h"
-#include <kxmlcore/HashMap.h>
-#include <kxmlcore/HashSet.h>
 
 namespace WebCore {
 

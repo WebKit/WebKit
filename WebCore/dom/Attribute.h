@@ -27,9 +27,7 @@
 #ifndef Attribute_h
 #define Attribute_h
 
-#include "Shared.h"
 #include "QualifiedName.h"
-#include <kxmlcore/PassRefPtr.h>
 
 namespace WebCore {
 

@@ -25,7 +25,7 @@
 #ifndef Parser_h
 #define Parser_h
 
-#include <kxmlcore/PassRefPtr.h>
+#include <kxmlcore/Forward.h>
 
 namespace KJS {
 

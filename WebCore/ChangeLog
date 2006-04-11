@@ -1,5 +1,336 @@
 2006-04-10  Darin Adler  <darin@apple.com>
 
+        Rubber-stamped by John Sullivan (except for pbxproj change).
+
+        - updated to use the new Forward.h and HashForward.h headers
+        - moved the showTree debugging functions out of the WebCore
+          namespace so they are easier to call from gdb, and renamed
+          the showTree member functions so they don't get in the way;
+          now you can do "call showTree(x)" in gdb and it just works
+        - removed a lot of unneeded includes
+
+        * WebCore.xcodeproj/project.pbxproj: Fixed a lot of paths that
+        were not relative to the enclosing group.
+
+        * ForwardingHeaders/kxmlcore/Forward.h: Added.
+        * ForwardingHeaders/kxmlcore/HashForward.h: Added.
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp:
+        * bindings/js/JSXMLHttpRequest.cpp:
+        * bindings/js/JSXMLHttpRequest.h:
+        * bindings/js/JSXSLTProcessor.h:
+        * bindings/js/kjs_binding.h:
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_events.cpp:
+        * bindings/js/kjs_events.h:
+        * bindings/js/kjs_html.cpp:
+        * bindings/js/kjs_navigator.cpp:
+        * bindings/js/kjs_navigator.h:
+        * bindings/js/kjs_proxy.cpp:
+        * bindings/js/kjs_traversal.h:
+        * bindings/js/kjs_window.cpp:
+        * bindings/js/kjs_window.h:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMCSS.mm:
+        * bindings/objc/DOMCore.h:
+        * bindings/objc/DOMEvents.mm:
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMImplementationFront.h:
+        * bindings/objc/DOMInternal.mm:
+        * bindings/objc/DOMUtility.mm:
+        * bindings/objc/DOMViews.mm:
+        * bridge/BrowserExtension.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * bridge/mac/WebCoreFrameNamespaces.mm:
+        * bridge/mac/WebCoreJavaScript.mm:
+        * bridge/win/PageWin.cpp:
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/css_base.h:
+        * css/css_ruleimpl.h:
+        * css/css_valueimpl.cpp:
+        * css/cssparser.cpp:
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        * css/cssstyleselector.h:
+        * dom/AbstractView.h:
+        * dom/AtomicStringList.h:
+        * dom/Attribute.cpp:
+        * dom/Attribute.h:
+        * dom/Comment.cpp:
+        * dom/ContainerNode.cpp:
+        * dom/DOMImplementation.cpp:
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/Element.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dump):
+        (WebCore::forbidEventDispatch):
+        (WebCore::allowEventDispatch):
+        (WebCore::eventDispatchForbidden):
+        * dom/EventTargetNode.h:
+        (WebCore::EventTargetNode::postDispatchEventHandler):
+        * dom/NamedAttrMap.h:
+        * dom/Node.cpp:
+        (WebCore::Node::showNode):
+        (WebCore::Node::showTree):
+        (WebCore::Node::showTreeAndMark):
+        (showTree):
+        * dom/Node.h:
+        * dom/NodeList.cpp:
+        * dom/NodeList.h:
+        * dom/Position.cpp:
+        (showTree):
+        * dom/Position.h:
+        * dom/Range.cpp:
+        * dom/Range.h:
+        * dom/StyledElement.cpp:
+        * dom/StyledElement.h:
+        * dom/dom2_eventsimpl.cpp:
+        * dom/dom2_eventsimpl.h:
+        * dom/dom2_traversalimpl.h:
+        * dom/dom_xmlimpl.cpp:
+        * dom/xml_tokenizer.cpp:
+        * dom/xml_tokenizer.h:
+        * editing/AppendNodeCommand.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/ApplyStyleCommand.h:
+        * editing/BreakBlockquoteCommand.cpp:
+        * editing/CompositeEditCommand.cpp:
+        * editing/CreateLinkCommand.cpp:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        * editing/DeleteFromTextNodeCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        * editing/EditCommand.cpp:
+        * editing/EditCommand.h:
+        * editing/HTMLInterchange.cpp:
+        * editing/InsertIntoTextNodeCommand.cpp:
+        * editing/InsertIntoTextNodeCommand.h:
+        * editing/InsertLineBreakCommand.cpp:
+        * editing/InsertNodeBeforeCommand.cpp:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        * editing/InsertTextCommand.cpp:
+        * editing/JSEditor.cpp:
+        * editing/JoinTextNodesCommand.cpp:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        * editing/ModifySelectionListLevelCommand.cpp:
+        * editing/MoveSelectionCommand.cpp:
+        * editing/RebalanceWhitespaceCommand.h:
+        * editing/RemoveCSSPropertyCommand.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/ReplaceSelectionCommand.h:
+        * editing/Selection.cpp:
+        (WebCore::Selection::formatForDebugger):
+        (WebCore::Selection::showTree):
+        (showTree):
+        * editing/Selection.h:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::formatForDebugger):
+        (WebCore::SelectionController::showTree):
+        (showTree):
+        * editing/SelectionController.h:
+        * editing/TextIterator.cpp:
+        * editing/TextIterator.h:
+        * editing/TypingCommand.cpp:
+        * editing/TypingCommand.h:
+        * editing/UnlinkCommand.cpp:
+        * editing/VisiblePosition.cpp:
+        (WebCore::isEqualIgnoringAffinity):
+        (WebCore::VisiblePosition::formatForDebugger):
+        (WebCore::VisiblePosition::showTree):
+        (showTree):
+        * editing/VisiblePosition.h:
+        (WebCore::VisiblePosition::VisiblePosition):
+        (WebCore::operator==):
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        * editing/htmlediting.h:
+        * editing/markup.cpp:
+        * editing/markup.h:
+        (WebCore::):
+        * editing/visible_units.cpp:
+        * html/CanvasGradient.cpp:
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasStyle.cpp:
+        * html/CanvasStyle.h:
+        * html/FormDataList.cpp:
+        * html/FormDataList.h:
+        * html/HTMLCollection.cpp:
+        * html/HTMLCollection.h:
+        * html/HTMLDocument.cpp:
+        * html/HTMLDocument.h:
+        * html/HTMLElement.cpp:
+        * html/HTMLElementFactory.cpp:
+        * html/HTMLElementFactory.h:
+        * html/HTMLFormCollection.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLFormElement.h:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLParser.cpp:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTokenizer.cpp:
+        * html/HTMLTokenizer.h:
+        * html/html_baseimpl.cpp:
+        * html/html_headimpl.h:
+        * kcanvas/KCanvasCreator.cpp:
+        * kcanvas/KCanvasFilters.h:
+        * kcanvas/KCanvasPath.h:
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * kcanvas/RenderPath.cpp:
+        * kcanvas/RenderPath.h:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/KRenderingPaintServerSolid.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        * khtml/misc/decoder.cpp:
+        * khtml/misc/decoder.h:
+        * khtml/xsl/XSLStyleSheet.cpp:
+        * khtml/xsl/XSLTProcessor.cpp:
+        * khtml/xsl/XSLTProcessor.h:
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/ecma/GlobalObject.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/svg/SVGAngle.h:
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimatedColor.h:
+        * ksvg2/svg/SVGAnimatedLengthList.h:
+        * ksvg2/svg/SVGAnimatedNumberList.h:
+        * ksvg2/svg/SVGAnimatedString.h:
+        * ksvg2/svg/SVGAnimatedTransformList.h:
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGColor.h:
+        * ksvg2/svg/SVGCursorElement.h:
+        * ksvg2/svg/SVGHelper.h:
+        * ksvg2/svg/SVGLength.h:
+        * ksvg2/svg/SVGList.h:
+        * ksvg2/svg/SVGPaint.h:
+        * ksvg2/svg/SVGPathSeg.h:
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * ksvg2/svg/SVGSVGElement.h:
+        * ksvg2/svg/SVGStringList.h:
+        * ksvg2/svg/SVGTransform.h:
+        * kwq/AccessibilityObjectCache.mm:
+        * kwq/ClipboardMac.mm:
+        * kwq/JavaAppletWidget.mm:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQEditCommand.mm:
+        * kwq/KWQFileButton.mm:
+        * kwq/KWQKHTMLSettings.h:
+        * kwq/KWQKSSLKeyGen.mm:
+        * kwq/KWQLoader.mm:
+        * kwq/KWQPageState.mm:
+        * kwq/KWQTextEdit.mm:
+        * kwq/RegularExpression.h:
+        * kwq/RenderTreeAsText.cpp:
+        * kwq/RenderTreeAsText.h:
+        * kwq/WebCoreAXObject.mm:
+        * loader/Cache.cpp:
+        * loader/Cache.h:
+        * loader/CachedCSSStyleSheet.cpp:
+        * loader/CachedObject.h:
+        * loader/CachedScript.cpp:
+        * loader/CachedXBLDocument.cpp:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.cpp:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameTree.cpp:
+        * page/FrameTree.h:
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * page/Page.cpp:
+        * page/Page.h:
+        * page/Plugin.h:
+        (WebCore::Plugin::Plugin):
+        (WebCore::Plugin::view):
+        * platform/Color.cpp:
+        * platform/FloatRect.h:
+        * platform/Font.cpp:
+        * platform/Font.h:
+        * platform/FontFamily.cpp:
+        * platform/GraphicsContext.cpp:
+        * platform/Image.cpp:
+        * platform/Image.h:
+        * platform/IntRect.h:
+        * platform/KURL.cpp:
+        * platform/KURL.h:
+        * platform/SegmentedString.h:
+        * platform/Shared.h:
+        * platform/StreamingTextDecoder.cpp:
+        * platform/StringImpl.cpp:
+        * platform/StringImpl.h:
+        * platform/TextEncoding.h:
+        * platform/Timer.cpp:
+        * platform/Timer.h:
+        * platform/TransferJob.cpp:
+        * platform/TransferJob.h:
+        * platform/TransferJobInternal.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        * platform/cairo/ImageCairo.cpp:
+        * platform/cairo/ImageSourceCairo.cpp:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        * platform/mac/FontFamilyMac.mm:
+        * platform/mac/FontMac.mm:
+        * platform/mac/ImageMac.mm:
+        * platform/mac/TextEncodingMac.cpp:
+        * platform/mac/TransferJobMac.mm:
+        * platform/win/FontPlatformDataWin.cpp:
+        * platform/win/TransferJobWin.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderCanvas.cpp:
+        * rendering/RenderCanvas.h:
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderImage.h:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (showTree):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        * rendering/RenderTextField.cpp:
+        * rendering/RenderTextFragment.h:
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm:
+        * rendering/RenderThemeWin.cpp:
+        * rendering/bidi.cpp:
+        * rendering/render_form.h:
+        * rendering/render_line.cpp:
+        (showTree):
+        * rendering/render_line.h:
+        * rendering/render_list.cpp:
+        * rendering/render_replaced.cpp:
+        * rendering/render_replaced.h:
+        * rendering/render_style.cpp:
+        * rendering/render_style.h:
+        * xml/xmlhttprequest.h:
+
+2006-04-10  Darin Adler  <darin@apple.com>
+
         - try to fix the Windows build
 
         * WebCore.vcproj/WebCore/WebCore.vcproj: Fix mistaken bad editing of
@@ -898,7 +1229,7 @@
 
         This is a followup to my fix for <rdar://problem/4493218>
         
-        This patch re-names computeIntLength() and computerShortLength() to 
+        This patch re-names computeIntLength() and computeShortLength() to 
         be computeLengthInt() and computeLengthShort(), respectively, to 
         match the pre-existing computeLengthFloat(). This patch also adds 
         the slightly confusing-ly named computeLengthIntForLength() which 

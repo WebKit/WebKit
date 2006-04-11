@@ -23,15 +23,11 @@
 #ifndef RENDER_THEME_H
 #define RENDER_THEME_H
 
-#include "render_style.h"
 #include "RenderObject.h"
 
 namespace WebCore {
+
 class Element;
-};
-
-namespace WebCore {
-
 enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState };
 
 class RenderTheme {

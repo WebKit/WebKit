@@ -26,15 +26,12 @@
 #include "config.h"
 #include "Image.h"
 
-#include "DeprecatedArray.h"
 #include "FloatRect.h"
 #include "Image.h"
 #include "ImageAnimationObserver.h"
-#include "ImageSource.h"
 #include "IntRect.h"
 #include "PlatformString.h"
 #include "Timer.h"
-#include <kxmlcore/Vector.h>
 
 #if __APPLE__
 // FIXME: Will go away when we make PDF a subclass.

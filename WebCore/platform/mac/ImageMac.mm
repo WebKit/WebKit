@@ -26,14 +26,11 @@
 #import "config.h"
 #import "Image.h"
 
-#import "DeprecatedArray.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"
-#import "IntSize.h"
 #import "PDFDocumentImage.h"
 #import "PlatformString.h"
 #import "WebCoreImageRendererFactory.h"
-#import <kxmlcore/Vector.h>
 
 namespace WebCore {
 

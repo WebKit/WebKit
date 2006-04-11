@@ -22,12 +22,9 @@
 #ifndef SHARED_H
 #define SHARED_H
 
-#include <kxmlcore/RefPtr.h>
-
 namespace WebCore {
 
-template<class T> class Shared
-{
+template<class T> class Shared {
 public:
     Shared() : m_refCount(0) { }
 
@@ -43,8 +40,7 @@ private:
     Shared& operator=(const Shared&);
 };
 
-template<class T> class TreeShared
-{
+template<class T> class TreeShared {
 public:
     TreeShared() : m_refCount(0), m_parent(0) { }
     TreeShared(T* parent) : m_refCount(0), m_parent(parent) { }

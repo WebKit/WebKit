@@ -27,7 +27,6 @@
 #include "UnlinkCommand.h"
 
 #include "html_inlineimpl.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

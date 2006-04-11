@@ -29,10 +29,7 @@
 
 #include "CachedObject.h"
 
-#include <kio/global.h>
-
-namespace WebCore
-{
+namespace WebCore {
     class CachedObject;
     class Request;
     class DocLoader;

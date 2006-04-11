@@ -27,7 +27,6 @@
 #define apply_style_command_h__
 
 #include "CompositeEditCommand.h"
-#include <kxmlcore/PassRefPtr.h>
 
 namespace WebCore {
 

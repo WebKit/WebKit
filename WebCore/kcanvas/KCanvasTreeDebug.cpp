@@ -29,33 +29,17 @@
 #if SVG_SUPPORT
 #include "KCanvasTreeDebug.h"
 
-#include <math.h>
-#include <kcanvas/KCanvasMatrix.h>
-#include <kcanvas/RenderPath.h>
-#include <kcanvas/KCanvasContainer.h>
-#include "KCanvasRenderingStyle.h"
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingStrokePainter.h>
-#include <kcanvas/device/KRenderingFillPainter.h>
-#include <kcanvas/device/KRenderingPaintServerSolid.h>
-#include <kcanvas/device/KRenderingPaintServerPattern.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
-#include <kcanvas/KCanvasResources.h>
-#include <kcanvas/KCanvasFilters.h>
-
-#include "RenderTreeAsText.h"
-
-#include <kxmlcore/Assertions.h>
-
-#include "SVGRenderStyle.h"
-#include <ksvg2/svg/SVGStyledElement.h>
-
-#include "PlatformString.h"
-#include "AtomicString.h"
 #include "HTMLNames.h"
-
-#include <qtextstream.h>
-#include "FloatSize.h"
+#include "RenderTreeAsText.h"
+#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/device/KRenderingDevice.h>
+#include <kcanvas/device/KRenderingFillPainter.h>
+#include <kcanvas/device/KRenderingPaintServerGradient.h>
+#include <kcanvas/device/KRenderingPaintServerPattern.h>
+#include <kcanvas/device/KRenderingPaintServerSolid.h>
+#include <kcanvas/device/KRenderingStrokePainter.h>
+#include <ksvg2/svg/SVGStyledElement.h>
+#include <math.h>
 
 namespace WebCore {
 

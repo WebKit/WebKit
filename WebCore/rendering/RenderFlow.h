@@ -21,11 +21,11 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef RENDER_FLOW_H
 #define RENDER_FLOW_H
 
 #include "RenderContainer.h"
-#include "bidi.h"
 #include "render_line.h"
 
 namespace WebCore {

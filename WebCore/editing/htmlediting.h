@@ -26,10 +26,7 @@
 #ifndef htmlediting_h
 #define htmlediting_h
 
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
+#include <kxmlcore/Forward.h>
 
 namespace WebCore {
 

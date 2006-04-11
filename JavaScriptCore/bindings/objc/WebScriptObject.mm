@@ -23,19 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebScriptObjectPrivate.h"
 
-#import "internal.h"
-#import "list.h"
-#import "value.h"
-
 #import "objc_instance.h"
-#import "objc_utility.h"
-
 #import "runtime_object.h"
-#import "runtime_root.h"
-
 #import <kxmlcore/UnusedParam.h>
 
 using namespace KJS;

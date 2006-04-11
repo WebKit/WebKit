@@ -23,12 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "ClipboardMac.h"
-#import <kxmlcore/Assertions.h>
+
 #import "FoundationExtras.h"
 #import "FrameMac.h"
-#import "DeprecatedStringList.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
 #import "CachedImage.h"

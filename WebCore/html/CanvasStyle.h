@@ -27,8 +27,6 @@
 #define HTMLCanvasStyle_h
 
 #include "PlatformString.h"
-#include "Shared.h"
-#include <kxmlcore/PassRefPtr.h>
 
 #if __APPLE__
 typedef struct CGContext* CGContextRef;

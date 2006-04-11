@@ -28,12 +28,8 @@
 #define DOM2_RangeImpl_h_
 
 #include "Shared.h"
+#include <kxmlcore/Forward.h>
 #include <kxmlcore/RefPtr.h>
-
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 

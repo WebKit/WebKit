@@ -25,14 +25,9 @@
 #define StringImpl_h
 
 #include "DeprecatedString.h"
-#include "Shared.h"
+#include <kxmlcore/Forward.h>
 #include <kxmlcore/Noncopyable.h>
-#include <kxmlcore/RefPtr.h>
 #include <limits.h>
-
-#if __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#endif
 
 #if __OBJC__
 @class NSString;

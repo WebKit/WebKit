@@ -31,7 +31,6 @@
 #include "HTMLTextAreaElement.h"
 #include "RenderBlock.h"
 #include "RenderImage.h"
-#include "render_replaced.h"
 #include <qlineedit.h>
 
 class QListBox;

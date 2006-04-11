@@ -30,21 +30,12 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
-#include "InlineTextBox.h"
-#include "IntRect.h"
-#include "PlatformString.h"
-#include "VisiblePosition.h"
-#include "dom2_eventsimpl.h"
-#include "Range.h"
-#include "htmlediting.h"
 #include "RenderCanvas.h"
-#include "RenderObject.h"
-#include "render_style.h"
 #include "TextIterator.h"
+#include "dom2_eventsimpl.h"
+#include "htmlediting.h"
 #include "visible_units.h"
-#include <kxmlcore/Assertions.h>
 
 #define EDIT_DEBUG 0
 
@@ -905,45 +896,32 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
 }
 
 #ifndef NDEBUG
-#define FormatBufferSize 1024
-void SelectionController::formatForDebugger(char *buffer, unsigned length) const
-{
-    String result;
-    String s;
-    
-    if (isNone()) {
-        result = "<none>";
-    }
-    else {
-        char s[FormatBufferSize];
-        result += "from ";
-        m_sel.start().formatForDebugger(s, FormatBufferSize);
-        result += s;
-        result += " to ";
-        m_sel.end().formatForDebugger(s, FormatBufferSize);
-        result += s;
-    }
-          
-    strncpy(buffer, result.deprecatedString().latin1(), length - 1);
-}
-#undef FormatBufferSize
 
-void SelectionController::showTree() const
+void SelectionController::formatForDebugger(char* buffer, unsigned length) const
 {
-    if (m_sel.start().node())
-        m_sel.start().node()->showTreeAndMark(m_sel.start().node(), "S", m_sel.end().node(), "E");
+    m_sel.formatForDebugger(buffer, length);
 }
 
-void showTree(const SelectionController &sel)
+void SelectionController::showTreeForThis() const
 {
-    sel.showTree();
+    m_sel.showTreeForThis();
 }
 
-void showTree(const SelectionController *sel)
-{
-    if (sel)
-        sel->showTree();
-}
 #endif
 
 }
+
+#ifndef NDEBUG
+
+void showTree(const WebCore::SelectionController& sel)
+{
+    sel.showTreeForThis();
+}
+
+void showTree(const WebCore::SelectionController* sel)
+{
+    if (sel)
+        sel->showTreeForThis();
+}
+
+#endif

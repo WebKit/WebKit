@@ -28,10 +28,9 @@
 
 #include "SharedTimer.h"
 #include "SystemTime.h"
-#include <algorithm>
 #include <math.h>
-#include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashSet.h>
+#include <kxmlcore/Vector.h>
 
 using namespace std;
 

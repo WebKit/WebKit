@@ -27,27 +27,20 @@
 #include "RenderTreeAsText.h"
 
 #include "Document.h"
-#include "Position.h"
-#include "JSEditor.h"
-#include "FrameView.h"
-#include "RenderCanvas.h"
-#include "render_replaced.h"
-#include "RenderTableCell.h"
+#include "Frame.h"
 #include "InlineTextBox.h"
+#include "JSEditor.h"
 #include "RenderBR.h"
+#include "RenderCanvas.h"
+#include "RenderTableCell.h"
 #include "SelectionController.h"
+#include "render_replaced.h"
 
 #if SVG_SUPPORT
 #include "KCanvasTreeDebug.h"
-#include "RenderPath.h"
 #include "KCanvasContainer.h"
 #endif
 
-#include "Frame.h"
-#include "KWQTextStream.h"
-#include <kxmlcore/Vector.h>
-
-using namespace WebCore;
 using namespace WebCore;
 
 static void writeLayers(QTextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0);

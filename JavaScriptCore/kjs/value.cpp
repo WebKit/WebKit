@@ -24,16 +24,10 @@
 #include "config.h"
 #include "value.h"
 
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "internal.h"
-#include "collector.h"
 #include "operations.h"
 #include "error_object.h"
 #include "nodes.h"

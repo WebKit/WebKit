@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __insert_into_text_node_command_h__
-#define __insert_into_text_node_command_h__
+#ifndef insert_into_text_node_command_h__
+#define insert_into_text_node_command_h__
 
 #include "EditCommand.h"
-
-#include "PlatformString.h"
 
 namespace WebCore {
     class Text;

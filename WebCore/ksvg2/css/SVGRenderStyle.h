@@ -25,7 +25,6 @@
 #define KSVG_SVGRenderStyle_H
 #if SVG_SUPPORT
 
-#include "Shared.h"
 #include "DataRef.h"
 
 #include <ksvg2/svg/SVGPaint.h>

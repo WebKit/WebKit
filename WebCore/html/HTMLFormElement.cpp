@@ -26,19 +26,16 @@
 
 #include "config.h"
 #include "HTMLFormElement.h"
-#include "HTMLFormCollection.h"
-#include "html_imageimpl.h"
-#include "HTMLDocument.h"
-#include "csshelper.h" // For kthml::parseURL
-#include "FormDataList.h"
 
-#include "rendering/render_form.h"
 #include "EventNames.h"
-
+#include "FormDataList.h"
 #include "Frame.h"
-
-#include "TextEncoding.h"
+#include "HTMLDocument.h"
+#include "HTMLFormCollection.h"
 #include "HTMLNames.h"
+#include "csshelper.h"
+#include "html_imageimpl.h"
+#include "render_form.h"
 
 namespace WebCore {
 

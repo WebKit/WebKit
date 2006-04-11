@@ -23,7 +23,6 @@
 #define KSVG_SVGAnimatedColorImpl_H
 #if SVG_SUPPORT
 
-#include "SVGColor.h"
 #include "SVGAnimatedTemplate.h"
 
 namespace WebCore

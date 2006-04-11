@@ -24,9 +24,6 @@
 #define KCanvasResources_H
 #if SVG_SUPPORT
 
-#include <DeprecatedString.h>
-#include <q3valuelist.h>
-
 #include <kcanvas/RenderPath.h>
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/KCanvasResourceListener.h>

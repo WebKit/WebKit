@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebCoreJavaScript.h"
 
+#import <JavaScriptCore/HashCountedSet.h>
+#import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/collector.h>
 #import <JavaScriptCore/interpreter.h>
-#import <JavaScriptCore/JSLock.h>
 
 using KJS::Collector;
 using KJS::Interpreter;

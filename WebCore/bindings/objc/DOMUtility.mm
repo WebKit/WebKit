@@ -27,7 +27,6 @@
 #import "kjs_dom.h"
 #import "Node.h"
 
-#import "DOM.h"
 #import "DOMInternal.h"
 
 #import <JavaScriptCore/WebScriptObjectPrivate.h>

@@ -72,11 +72,11 @@ or revised. This service is offered free of charge; please provide us with your
 mailing address.
 */
 
-#include <stddef.h>
-#include <string.h>
 #include "config.h"
-#include "GIFImageDecoder.h"
 #include "GIFImageReader.h"
+
+#include <string.h>
+#include "GIFImageDecoder.h"
 
 using WebCore::GIFImageDecoder;
 

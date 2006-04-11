@@ -28,17 +28,12 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "Font.h"
 #include "HTMLElement.h"
-#include "PlatformString.h"
-#include "StringImpl.h"
-#include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "cssparser.h"
 #include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
 #include "CSSValueKeywords.h"
-#include "render_style.h"
 #include <qregexp.h>
 
 #if SVG_SUPPORT

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Color.h"
 
-#include "DeprecatedString.h"
 #include "PlatformString.h"
 #include <kxmlcore/Assertions.h>
 

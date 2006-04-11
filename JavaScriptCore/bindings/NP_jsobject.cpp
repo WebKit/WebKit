@@ -27,10 +27,6 @@
 #include "NP_jsobject.h"
 
 #include "c_utility.h"
-#include "identifier.h"
-#include "interpreter.h"
-#include "list.h"
-#include "npruntime.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "runtime_root.h"

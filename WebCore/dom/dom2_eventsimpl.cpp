@@ -31,7 +31,6 @@
 #include "SystemTime.h"
 #include "PlatformKeyboardEvent.h"
 #include "SystemTime.h"
-#include "AbstractView.h"
 #include "RenderLayer.h"
 
 namespace WebCore {

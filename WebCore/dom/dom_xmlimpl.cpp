@@ -28,8 +28,6 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "StringImpl.h"
-#include "css_stylesheetimpl.h"
 #include "xml_tokenizer.h"
 
 #if KHTML_XSLT

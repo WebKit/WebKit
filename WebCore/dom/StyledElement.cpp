@@ -30,8 +30,6 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "css_stylesheetimpl.h"
-#include "css_valueimpl.h"
-#include <kxmlcore/HashTraits.h>
 
 namespace WebCore {
 

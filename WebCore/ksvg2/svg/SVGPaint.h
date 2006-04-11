@@ -24,8 +24,6 @@
 #define KSVG_SVGPaintImpl_H
 #if SVG_SUPPORT
 
-#include "PlatformString.h"
-
 #include <SVGColor.h>
 
 namespace WebCore

@@ -28,7 +28,6 @@
 #define KHTML_CachedXSLStyleSheet_h
 
 #include "CachedObject.h"
-#include <kio/global.h>
 
 namespace WebCore {
 

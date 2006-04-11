@@ -21,14 +21,12 @@
 #include "config.h"
 #include "Page.h"
 
-#include "Color.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "StringHash.h"
 #include <kjs/collector.h>
 #include <kjs/JSLock.h>
 #include <kxmlcore/HashMap.h>
-#include <kxmlcore/HashSet.h>
 
 using namespace KJS;
 

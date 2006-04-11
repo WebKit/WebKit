@@ -24,7 +24,6 @@
 #ifndef render_replaced_h
 #define render_replaced_h
 
-#include "WidgetClient.h"
 #include "RenderBox.h"
 
 namespace WebCore {

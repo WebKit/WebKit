@@ -26,9 +26,7 @@
 #import "FrameView.h"
 #import "FoundationExtras.h"
 #import "cssstyleselector.h"
-#import "Font.h"
 #import "RenderCanvas.h"
-#import "render_style.h"
 #import "WebCoreGraphicsBridge.h"
 
 // The methods in this file are specific to the Mac OS X platform.

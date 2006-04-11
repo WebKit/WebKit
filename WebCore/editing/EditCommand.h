@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __edit_command_h__
-#define __edit_command_h__
+#ifndef edit_command_h__
+#define edit_command_h__
 
-#include "Shared.h"
 #include "EditAction.h"
 #include "Selection.h"
 

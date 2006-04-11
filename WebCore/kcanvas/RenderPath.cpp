@@ -26,16 +26,11 @@
 #include "RenderPath.h"
 
 #include "GraphicsContext.h"
-#include "IntRect.h"
 #include "KCanvasContainer.h"
-#include "KCanvasMatrix.h"
-#include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "KRenderingFillPainter.h"
 #include "KRenderingStrokePainter.h"
-#include "SVGRenderStyle.h"
 #include "SVGStyledElement.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

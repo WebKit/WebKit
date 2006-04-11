@@ -27,7 +27,6 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "Node.h"
 
 namespace WebCore {
 

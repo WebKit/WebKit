@@ -36,7 +36,7 @@
 #include "css_valueimpl.h"
 #include "kjs_proxy.h"
 #include <kio/global.h>
-#include <kxmlcore/Vector.h>
+#include <kxmlcore/HashMap.h>
 
 namespace WebCore {
 

@@ -23,7 +23,6 @@
 
 #include "dom2_traversalimpl.h"
 #include "kjs_dom.h"
-#include <kjs/protect.h>
 
 namespace WebCore {
     class NodeFilter;

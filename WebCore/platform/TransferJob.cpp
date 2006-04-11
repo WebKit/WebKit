@@ -27,10 +27,8 @@
 #include "TransferJob.h"
 #include "TransferJobInternal.h"
 
-#include "KURL.h"
 #include "KWQLoader.h"
 #include "Logging.h"
-#include "formdata.h"
 
 namespace WebCore {
 

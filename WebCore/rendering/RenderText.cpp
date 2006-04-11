@@ -29,7 +29,6 @@
 #include "InlineTextBox.h"
 #include "Pen.h"
 #include "RenderBlock.h"
-#include "VisiblePosition.h"
 #include "break_lines.h"
 #include "Range.h"
 #include "RenderArena.h"

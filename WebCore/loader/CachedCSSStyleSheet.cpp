@@ -33,7 +33,6 @@
 #include "CachedObjectClientWalker.h"
 #include "KWQLoader.h"
 #include "loader.h"
-#include "TextEncoding.h"
 
 namespace WebCore {
 

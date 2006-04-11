@@ -28,24 +28,14 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "InlineTextBox.h"
 #include "Logging.h"
-#include "DeprecatedString.h"
 #include "RenderBlock.h"
 #include "CSSComputedStyleDeclaration.h"
-#include "css_valueimpl.h"
-#include "Range.h"
 #include "AbstractView.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"
-#include "RenderFlow.h"
-#include "render_line.h"
-#include "render_style.h"
-#include "TextAffinity.h"
-#include "VisiblePosition.h"
 #include "TextIterator.h"
 #include "visible_units.h"
-#include <kxmlcore/Assertions.h>
   
 namespace WebCore {
 
@@ -703,21 +693,10 @@ void Position::formatForDebugger(char *buffer, unsigned length) const
     strncpy(buffer, result.deprecatedString().latin1(), length - 1);
 }
 
-void Position::showTree() const
+void Position::showTreeForThis() const
 {
     if (m_node)
-        m_node->showTree();
-}
-
-void showTree(const Position &pos)
-{
-    pos.showTree();
-}
-
-void showTree(const Position *pos)
-{
-    if (pos)
-        pos->showTree();
+        m_node->showTreeForThis();
 }
 
 #endif
@@ -739,3 +718,18 @@ Position endPosition(const Range *r)
 }
 
 } // namespace WebCore
+
+#ifndef NDEBUG
+
+void showTree(const WebCore::Position& pos)
+{
+    pos.showTreeForThis();
+}
+
+void showTree(const WebCore::Position* pos)
+{
+    if (pos)
+        pos->showTreeForThis();
+}
+
+#endif

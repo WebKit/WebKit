@@ -23,44 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "DOMHTML.h"
 
-#import "PlatformString.h"
-#import "html_baseimpl.h"
-#import "html_blockimpl.h"
-#import "HTMLDocument.h"
-#import "HTMLElement.h"
-#import "HTMLOptionsCollection.h"
-#import "HTMLFormElement.h"
-#import "HTMLInputElement.h"
-#import "HTMLIsIndexElement.h"
-#import "HTMLSelectElement.h"
-#import "HTMLOptionElement.h"
-#import "HTMLTextAreaElement.h"
-#import "HTMLButtonElement.h"
-#import "HTMLLabelElement.h"
-#import "HTMLLegendElement.h"
-#import "HTMLFieldSetElement.h"
-#import "HTMLOptGroupElement.h"
-#import "html_headimpl.h"
-#import "html_imageimpl.h"
-#import "html_inlineimpl.h"
-#import "html_listimpl.h"
-#import "HTMLFormCollection.h"
-#import "HTMLBaseFontElement.h"
-#import "html_objectimpl.h"
-#import "html_tableimpl.h"
-#import "ContainerNode.h"
-#import "NameNodeList.h"
-#import "markup.h"
-
-#import "DOMExtensions.h"
+#import "DOMHTMLInternal.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
-#import "DOMHTMLInternal.h"
-#import <kxmlcore/Assertions.h>
+#import "DocumentFragment.h"
 #import "FoundationExtras.h"
+#import "HTMLBaseFontElement.h"
+#import "HTMLButtonElement.h"
+#import "HTMLDocument.h"
+#import "HTMLFieldSetElement.h"
+#import "HTMLFormCollection.h"
+#import "HTMLFormElement.h"
+#import "HTMLIsIndexElement.h"
+#import "HTMLLabelElement.h"
+#import "HTMLLegendElement.h"
+#import "HTMLOptGroupElement.h"
+#import "HTMLOptionElement.h"
+#import "HTMLOptionsCollection.h"
+#import "HTMLSelectElement.h"
+#import "HTMLTextAreaElement.h"
+#import "NameNodeList.h"
+#import "html_baseimpl.h"
+#import "html_blockimpl.h"
+#import "html_headimpl.h"
+#import "html_imageimpl.h"
+#import "html_listimpl.h"
+#import "html_objectimpl.h"
+#import "html_tableimpl.h"
+#import "markup.h"
 
 using namespace WebCore;
 using namespace WebCore::HTMLNames;
@@ -3956,7 +3949,6 @@ using namespace WebCore::HTMLNames;
 
 // These #imports and "usings" are used only by viewForElement and should be deleted 
 // when that function goes away.
-#import "RenderObject.h"
 #import "render_replaced.h"
 using WebCore::RenderObject;
 using WebCore::RenderWidget;

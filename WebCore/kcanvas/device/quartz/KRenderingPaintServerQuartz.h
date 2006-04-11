@@ -25,7 +25,6 @@
  */
 
 #import <kcanvas/device/KRenderingDevice.h>
-#import <kcanvas/device/KRenderingPaintServer.h>
 #import <kcanvas/device/KRenderingPaintServerSolid.h>
 #import <kcanvas/device/KRenderingPaintServerPattern.h>
 #import <kcanvas/device/KRenderingPaintServerGradient.h>

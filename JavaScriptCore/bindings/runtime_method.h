@@ -22,11 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _RUNTIME_FUNCTION_H_
-#define _RUNTIME_FUNCTION_H_
 
-#include <JavaScriptCore/runtime.h>
-#include <JavaScriptCore/object.h>
+#ifndef RUNTIME_FUNCTION_H_
+#define RUNTIME_FUNCTION_H_
+
+#include "function.h"
+#include "runtime.h"
+#include "object.h"
 
 namespace KJS {
 

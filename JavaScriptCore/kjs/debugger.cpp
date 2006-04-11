@@ -22,12 +22,9 @@
 
 #include "config.h"
 #include "debugger.h"
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-#include "internal.h"
 #include "ustring.h"
+
+#include "internal.h"
 
 using namespace KJS;
 

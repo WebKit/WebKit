@@ -33,16 +33,12 @@
 #include "DocumentFragment.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameView.h"
 #include "HTMLElement.h"
 #include "SystemTime.h"
 #include "csshelper.h"
-#include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLParser.h"
 #include "kjs_proxy.h"
-#include <ctype.h>
-#include <stdlib.h>
 
 #include "HTMLEntityNames.c"
 

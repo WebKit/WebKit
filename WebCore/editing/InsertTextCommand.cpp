@@ -26,19 +26,15 @@
 #include "config.h"
 #include "InsertTextCommand.h"
 
-#include "css_valueimpl.h"
 #include "Document.h"
 #include "Element.h"
 #include "EditingText.h"
 #include "Frame.h"
 #include "Logging.h"
-#include "VisiblePosition.h"
-#include "Position.h"
 #include "HTMLInterchange.h"
 #include "htmlediting.h"
 #include "TextIterator.h"
 #include "visible_units.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

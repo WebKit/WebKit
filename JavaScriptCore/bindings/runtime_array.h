@@ -22,13 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _RUNTIME_ARRAY_H_
-#define _RUNTIME_ARRAY_H_
 
-#include <array_instance.h>
-#include <object.h>
-#include <runtime.h>
+#ifndef RUNTIME_ARRAY_H_
+#define RUNTIME_ARRAY_H_
 
+#include "array_instance.h"
+#include "runtime.h"
 
 namespace KJS {
     

@@ -26,26 +26,25 @@
 #include "config.h"
 #include "JSEditor.h"
 
-#include "CreateLinkCommand.h"
-#include "UnlinkCommand.h"
-#include "Document.h"
-#include "Frame.h"
-#include "SelectionController.h"
-#include "css_valueimpl.h"
 #include "CSSPropertyNames.h"
-#include "htmlediting.h"
+#include "CreateLinkCommand.h"
+#include "Document.h"
+#include "DocumentFragment.h"
+#include "Frame.h"
 #include "HTMLNames.h"
-#include "html_imageimpl.h"
-#include "markup.h"
 #include "ReplaceSelectionCommand.h"
+#include "SelectionController.h"
 #include "TypingCommand.h"
-#include <kxmlcore/HashMap.h>
+#include "UnlinkCommand.h"
+#include "html_imageimpl.h"
+#include "htmlediting.h"
+#include "markup.h"
 
 namespace WebCore {
 
-class Document;
-
 using namespace HTMLNames;
+
+class Document;
 
 namespace {
 

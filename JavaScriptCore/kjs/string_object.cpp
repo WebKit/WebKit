@@ -23,18 +23,14 @@
 #include "config.h"
 #include "string_object.h"
 
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
+#include "error_object.h"
+#include "lookup.h"
 #include "operations.h"
 #include "reference_list.h"
-#include "regexp.h"
 #include "regexp_object.h"
-#include "error_object.h"
-#include <stdio.h>
-#include "string_object.lut.h"
 #include <kxmlcore/unicode/Unicode.h>
+
+#include "string_object.lut.h"
 
 using namespace KJS;
 

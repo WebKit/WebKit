@@ -23,17 +23,12 @@
 #include "config.h"
 #include "CSSComputedStyleDeclaration.h"
 
-#include "AtomicString.h"
 #include "CachedImage.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "PlatformString.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "Font.h"
 #include "RenderObject.h"
-#include "render_style.h"
-#include <kxmlcore/Assertions.h>
 
 extern WebCore::String getPropertyName(unsigned short id);
 

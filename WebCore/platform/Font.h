@@ -26,19 +26,13 @@
 #ifndef FONT_H
 #define FONT_H
 
+#include "Color.h"
+#include "FontDescription.h"
+#include "TextDirection.h"
+
 #if __APPLE__
 #include "WebCoreTextRendererFactory.h"
 #endif
-
-#include <kxmlcore/RefPtr.h>
-#include "Color.h"
-#include "TextDirection.h"
-#include "FontFamily.h"
-#include "FontDescription.h"
-
-#undef min
-#undef max
-#include <algorithm>
 
 namespace WebCore {
 
@@ -51,7 +45,7 @@ enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 class Font {
 public:
     Font();
-    Font(const FontDescription& fd, short letterSpacing, short wordSpacing);
+    Font(const FontDescription&, short letterSpacing, short wordSpacing);
     ~Font();
     
     Font(const Font&);

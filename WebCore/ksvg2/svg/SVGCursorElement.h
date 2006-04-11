@@ -30,7 +30,6 @@
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 #include "SVGExternalResourcesRequired.h"
-#include "CachedObjectClient.h"
 
 namespace WebCore
 {

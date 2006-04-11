@@ -27,9 +27,8 @@
 #ifndef NamedAttrMap_h
 #define NamedAttrMap_h
 
-#include "NamedNodeMap.h"
-#include "Attribute.h"
 #include "Element.h"
+#include "NamedNodeMap.h"
 
 #if __OBJC__
 #define id id_AVOID_KEYWORD

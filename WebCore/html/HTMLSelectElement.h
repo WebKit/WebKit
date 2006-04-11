@@ -26,7 +26,6 @@
 #ifndef HTML_HTMLSelectElementImpl_H
 #define HTML_HTMLSelectElementImpl_H
 
-#include "DeprecatedArray.h"
 #include "HTMLGenericFormElement.h"
 
 namespace WebCore {

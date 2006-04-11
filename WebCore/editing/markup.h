@@ -27,25 +27,28 @@
 #define KHTML_EDITING_MARKUP_H
 
 #include "HTMLInterchange.h"
-#include <kxmlcore/PassRefPtr.h>
-#include "DocumentFragment.h"
+#include <kxmlcore/Forward.h>
+
+template <class T> class DeprecatedPtrList;
 
 namespace WebCore {
+
+    class Document;
+    class DocumentFragment;
+    class Node;
     class Range;
-}
+    class String;
 
-namespace WebCore {
+    enum EChildrenOnly { IncludeNode, ChildrenOnly };
 
-enum EChildrenOnly { IncludeNode, ChildrenOnly };
+    PassRefPtr<DocumentFragment> createFragmentFromText(Document*, const DeprecatedString &text);
+    PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String &markup, const String &baseURL);
+    PassRefPtr<DocumentFragment> createFragmentFromNodeList(Document*, const DeprecatedPtrList<Node> &nodeList);
 
-PassRefPtr<WebCore::DocumentFragment> createFragmentFromText(WebCore::Document *document, const DeprecatedString &text);
-PassRefPtr<WebCore::DocumentFragment> createFragmentFromMarkup(WebCore::Document *document, const String &markup, const String &baseURL);
-PassRefPtr<WebCore::DocumentFragment> createFragmentFromNodeList(WebCore::Document *document, const DeprecatedPtrList<WebCore::Node> &nodeList);
-
-DeprecatedString createMarkup(const WebCore::Range *range,
-    DeprecatedPtrList<WebCore::Node> *nodes = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
-DeprecatedString createMarkup(const WebCore::Node *node, EChildrenOnly = IncludeNode,
-    DeprecatedPtrList<WebCore::Node> *nodes = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
+    DeprecatedString createMarkup(const Range *range,
+        DeprecatedPtrList<Node> *nodes = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
+    DeprecatedString createMarkup(const Node *node, EChildrenOnly = IncludeNode,
+        DeprecatedPtrList<Node> *nodes = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange);
 
 }
 

@@ -26,15 +26,10 @@
 #include "config.h"
 #include "objc_utility.h"
 
-#include <Foundation/Foundation.h>
-
-#include "internal.h"
-
 #include "objc_instance.h"
 
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include "runtime_root.h"
 
 #include "WebScriptObjectPrivate.h"
 

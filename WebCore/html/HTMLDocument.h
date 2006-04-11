@@ -28,7 +28,6 @@
 #include "CachedObjectClient.h"
 #include "Document.h"
 #include "HTMLCollection.h"
-#include <kxmlcore/HashMap.h>
 
 class DeprecatedString;
 

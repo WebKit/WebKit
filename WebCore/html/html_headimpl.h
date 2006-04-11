@@ -25,8 +25,7 @@
 #define HTML_HEADIMPL_H
 
 #include "HTMLElement.h"
-#include "CachedObjectClient.h"
-#include "css/css_stylesheetimpl.h"
+#include "css_stylesheetimpl.h"
 
 namespace WebCore {
 

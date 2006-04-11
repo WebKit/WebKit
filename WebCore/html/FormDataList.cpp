@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "FormDataList.h"
-#include "TextEncoding.h"
 
 namespace WebCore {
 

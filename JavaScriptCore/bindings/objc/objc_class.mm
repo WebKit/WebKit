@@ -22,14 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include "config.h"
-#include <Foundation/Foundation.h>
 
-#include <objc_class.h>
-#include <objc_instance.h>
-#include <objc_runtime.h>
-#include <objc_utility.h>
-#include <WebScriptObject.h>
+#include "config.h"
+#include "objc_class.h"
+
+#include "objc_instance.h"
+#include "WebScriptObject.h"
 
 namespace KJS {
 namespace Bindings {

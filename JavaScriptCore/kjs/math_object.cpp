@@ -20,17 +20,12 @@
  */
 
 #include "config.h"
-#include <math.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <time.h>
-
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-#include "operations.h"
 #include "math_object.h"
+
+#include "lookup.h"
+#include "operations.h"
+#include <math.h>
+#include <time.h>
 
 #include "math_object.lut.h"
 

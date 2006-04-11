@@ -24,7 +24,6 @@
 #include "config.h"
 #include "Comment.h"
 
-#include "AtomicString.h"
 #include "Document.h"
 
 namespace WebCore {

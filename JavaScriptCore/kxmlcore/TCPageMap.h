@@ -57,7 +57,7 @@
 
 #include <string.h>
 
-#include "kxmlcore/Assertions.h"
+#include "Assertions.h"
 
 // Single-level array
 template <int BITS>

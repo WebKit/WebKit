@@ -22,10 +22,7 @@
 #include "kjs_proxy.h"
 
 #include "kjs_window.h"
-#include "kjs_events.h"
-#include "Node.h"
 #include "Frame.h"
-#include <kjs/collector.h>
 
 #if SVG_SUPPORT
 #include "JSSVGLazyEventListener.h"

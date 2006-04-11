@@ -31,7 +31,6 @@
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"
-#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 

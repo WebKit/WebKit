@@ -31,12 +31,9 @@
 #include "SelectionController.h"
 #include "VisiblePosition.h"
 #include "CSSComputedStyleDeclaration.h"
-#include "css_valueimpl.h"
 #include "dom2_eventsimpl.h"
-#include "Position.h"
 #include "EventNames.h"
 #include "htmlediting.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

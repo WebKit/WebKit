@@ -22,7 +22,6 @@
 #define KJS_DOM_H
 
 #include "NodeList.h"
-#include "Shared.h"
 #include "kjs_binding.h"
 #include <qvaluelist.h>
 

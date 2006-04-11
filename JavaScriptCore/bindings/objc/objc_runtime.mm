@@ -22,18 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include "config.h"
-#include <Foundation/Foundation.h>
+#include "objc_runtime.h"
 
-
-#include <JavaScriptCore/internal.h>
-
-#include <objc_instance.h>
+#include "objc_instance.h"
+#include "runtime_array.h"
+#include "runtime_object.h"
 #include <WebScriptObjectPrivate.h>
-
-#include <runtime_array.h>
-#include <runtime_object.h>
-
 
 using namespace KJS;
 using namespace KJS::Bindings;

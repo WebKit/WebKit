@@ -21,10 +21,9 @@
  */
 
 #include "config.h"
-#include <windows.h>
-#include <cairo.h>
-#include <cairo-win32.h>
 #include "RenderThemeWin.h"
+
+#include <cairo-win32.h>
 #include "GraphicsContext.h"
 
 /* 

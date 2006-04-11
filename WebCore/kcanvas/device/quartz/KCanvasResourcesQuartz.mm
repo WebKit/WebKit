@@ -32,12 +32,9 @@
 #import "GraphicsContext.h"
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasMaskerQuartz.h"
-#import "KCanvasMatrix.h"
 #import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
-#import "SVGRenderStyle.h"
-#import <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

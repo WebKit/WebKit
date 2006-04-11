@@ -24,9 +24,11 @@
 #if SVG_SUPPORT
 #include "SVGSVGElement.h"
 
+#include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "HTMLNames.h"
 #include "KCanvasRenderingStyle.h"
 #include "KSVGTimeScheduler.h"
 #include "SVGAngle.h"
@@ -34,29 +36,15 @@
 #include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedRect.h"
 #include "SVGDocumentExtensions.h"
-#include "SVGFitToViewBox.h"
-#include "SVGHelper.h"
-#include "SVGLength.h"
 #include "SVGMatrix.h"
-#include "SVGNames.h"
 #include "SVGNumber.h"
 #include "SVGPoint.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGRect.h"
-#include "SVGRenderStyle.h"
 #include "SVGTransform.h"
-#include "SVGZoomAndPan.h"
 #include "SVGZoomEvent.h"
-#include "StringImpl.h"
-#include "CSSPropertyNames.h"
-#include "HTMLNames.h"
 #include "ksvg.h"
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/KCanvasCreator.h>
-#include <kcanvas/KCanvasMatrix.h>
-#include <kcanvas/RenderPath.h>
 #include <kcanvas/device/KRenderingDevice.h>
-#include "Attr.h"
 #include <qtextstream.h>
 
 namespace WebCore {

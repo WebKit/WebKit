@@ -30,6 +30,7 @@
 #import "WebCoreFrameNamespaces.h"
 
 #import "Page.h"
+#import <kxmlcore/HashSet.h>
 
 using namespace WebCore;
 

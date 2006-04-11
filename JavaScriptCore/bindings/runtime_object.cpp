@@ -24,19 +24,11 @@
  */
 
 #include "config.h"
+#include "runtime_object.h"
 
 #include "error_object.h"
-#include "function.h"
-#include "interpreter.h"
-#include "object.h"
 #include "operations.h"
 #include "runtime_method.h"
-#include "runtime_object.h"
-#include "types.h"
-#include "value.h"
-
-
-#include <assert.h>
 
 using namespace KJS;
 using namespace Bindings;

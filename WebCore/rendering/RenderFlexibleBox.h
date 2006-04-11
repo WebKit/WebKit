@@ -24,7 +24,6 @@
 #define RENDER_FLEXIBLE_BOX_H
 
 #include "RenderBlock.h"
-#include "render_style.h"
 
 namespace WebCore {
 

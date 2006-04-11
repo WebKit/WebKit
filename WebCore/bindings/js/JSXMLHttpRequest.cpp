@@ -22,7 +22,6 @@
 #include "JSXMLHttpRequest.h"
 
 #include "Frame.h"
-#include "PlatformString.h"
 #include "HTMLDocument.h"
 #include "kjs_events.h"
 #include "kjs_window.h"

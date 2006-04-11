@@ -27,7 +27,6 @@
 #include "HTMLCanvasElement.h"
 #include "JSCanvasGradient.h"
 #include "JSCanvasPattern.h"
-#include "html_imageimpl.h"
 #include "kjs_html.h"
 
 #include "JSCanvasRenderingContext2DBaseTable.cpp"

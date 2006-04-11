@@ -21,7 +21,6 @@
 #include "config.h"
 #include "kjs_events.h"
 
-#include "CachedImage.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -30,13 +29,11 @@
 #include "JSMouseEvent.h"
 #include "JSKeyboardEvent.h"
 #include "dom2_eventsimpl.h"
-#include "AbstractView.h"
 #include "html_imageimpl.h"
 #include "HTMLNames.h"
 #include "kjs_proxy.h"
 #include "kjs_views.h"
 #include "kjs_window.h"
-#include "rendering/RenderObject.h"
 
 #include "kjs_events.lut.h"
 

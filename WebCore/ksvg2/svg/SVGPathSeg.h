@@ -24,7 +24,6 @@
 #define KSVG_SVGPathSegImpl_H
 #if SVG_SUPPORT
 
-#include "Shared.h"
 #include "PlatformString.h"
 
 #include "ksvg.h"

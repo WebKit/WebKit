@@ -37,7 +37,6 @@
 #include "htmlediting.h"
 #include "HTMLNames.h"
 #include "visible_units.h"
-#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 

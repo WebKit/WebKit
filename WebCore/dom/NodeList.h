@@ -23,15 +23,12 @@
  *
  */
 
-#ifndef DOM_NodeListImpl_h
-#define DOM_NodeListImpl_h
+#ifndef DOM_NodeList_h
+#define DOM_NodeList_h
 
 #include "Shared.h"
-
-namespace KXMLCore {
-    template <typename T> class PassRefPtr;
-}
-using KXMLCore::PassRefPtr;
+#include <kxmlcore/Forward.h>
+#include <kxmlcore/RefPtr.h>
 
 namespace WebCore {
 
