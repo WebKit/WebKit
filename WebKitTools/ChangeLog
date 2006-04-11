@@ -1,3 +1,15 @@
+2006-04-10  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8157
+          Make HTTP tests using Perl use .pl extension
+
+        * Scripts/run-webkit-tests: Added support for running .pl and .php tests,
+          removed support for .text. Reduced the number of places that explicitly list supported
+          extensions. Some of the changes come from bug 8121, the patch for which got landed only
+          partially.
+
 2006-04-06  Darin Adler  <darin@apple.com>
 
         Changes requested by Mark Rowe.

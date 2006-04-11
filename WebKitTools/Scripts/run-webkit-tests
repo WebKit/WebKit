@@ -30,7 +30,7 @@
 # Script to run the Web Kit Open Source Project layout tests.
 
 # Run all the tests passed in on the command line.
-# If no tests are passed, find all the .html, .shtml, .text, .xml, .xhtml (and svg) files in the test directory.
+# If no tests are passed, find all the .html, .shtml, .xml, .xhtml, .pl, .php (and svg) files in the test directory.
 
 # Run each text.
 # Compare against the existing file xxx-expected.txt.
@@ -135,7 +135,7 @@ print "Running tests from $testDirectory\n";
 my @tests = ();
 
 my $prunePart = "\\( -name resources \\! -prune \\)";
-my $extensionPart = "-name '*.html' -or -name '*.shtml' -or -name '*.text' -or -name '*.xml' -or -name '*.xhtml'";
+my $extensionPart = "-name '*.html' -or -name '*.shtml' -or -name '*.xml' -or -name '*.xhtml' -or -name '*.pl' -or -name '*.php'";
 if ($testOnlySVGs) {
     $extensionPart = "-name '*.svg' -or -name '*.xml'";
 } elsif (checkWebCoreSVGSupport($testOnlySVGs)) { 
@@ -156,7 +156,7 @@ for my $test (@ARGV) {
     if ($test =~ /^\//) {
         print "can't run test outside $testDirectory\n";
     } elsif (-f "$testDirectory/$test") {
-        if ($test !~ /\.(html|shtml|text|xml|xhtml|svg)$/) {
+        if ($test !~ /\.(html|shtml|xml|xhtml|pl|php|svg)$/) {
             print "test $test does not have a supported extension\n";
         } elsif ($testHTTP || $test !~ /^http\//) {
             push @tests, $test;
@@ -214,7 +214,7 @@ for my $test (@tests) {
     openDumpRenderTreeIfNeeded();
 
     my $base = $test;
-    $base =~ s/\.(html|shtml|text|xml|xhtml|svg)$//;
+    $base =~ s/\.[a-zA-Z]+$//;
     
     if ($verbose || $singly) {
         print "running $test -> ";
@@ -523,7 +523,7 @@ if ($counts{mismatch}) {
     print HTML "<table>\n";
     for my $test (@{$tests{mismatch}}) {
         my $base = $test;
-        $base =~ s/\.(html|shtml|text|xml|xhtml|svg)$//;
+        $base =~ s/\.[a-zA-Z]+$//;
         copy("$testDirectory/$base-expected.txt", "$testResultsDirectory/$base-expected.txt");
         print HTML "<tr>\n";            
         print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
@@ -552,7 +552,7 @@ if ($counts{fail}) {
     print HTML "<table>\n";
     for my $test (@{$tests{fail}}) {
         my $base = $test;
-        $base =~ s/\.(html|shtml|text|xml|xhtml|svg)$//;
+        $base =~ s/\.[a-zA-Z]+$//;
         print HTML "<tr>\n";
         print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
         print HTML "</tr>\n";
@@ -565,7 +565,7 @@ if ($counts{new}) {
     print HTML "<table>\n";
     for my $test (@{$tests{new}}) {
         my $base = $test;
-        $base =~ s/\.(html|shtml|text|xml|xhtml|svg)$//;
+        $base =~ s/\.[a-zA-Z]+$//;
         print HTML "<tr>\n";
         print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
         print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">results</a></td>\n";

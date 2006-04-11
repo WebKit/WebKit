@@ -4,7 +4,11 @@
 select (STDOUT);
 $| = 1;
 
-print "Content-Type: text/html\n\n";
+print "Content-Type: text/html\n";
+print "Expires: Thu, 01 Dec 2003 16:00:00 GMT\n";
+print "Cache-Control: no-store, no-cache, must-revalidate\n";
+print "Pragma: no-cache\n";
+print "\n";
 
 print "<body>\n";
 print "<script>\n";
