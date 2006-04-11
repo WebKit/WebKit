@@ -38,7 +38,7 @@
 
     NSMutableDictionary *iconURLToIcons;
     NSMutableDictionary *iconURLToPageURLs;
-    NSMutableDictionary *pageURLToIconURL;    
+    NSMutableDictionary *pageURLToIconURL;
     CFMutableDictionaryRef pageURLToRetainCount;
     CFMutableDictionaryRef iconURLToExtraRetainCount;
     
@@ -47,11 +47,14 @@
     NSMutableSet *iconsToSaveWithURLs;
     NSMutableSet *iconURLsWithNoIcons;
     NSMutableSet *originalIconsOnDiskWithURLs;
+    NSMutableSet *pageURLsBoundDuringPrivateBrowsing;
+    NSMutableSet *iconURLsBoundDuringPrivateBrowsing;
     
     int cleanupCount;
 
     BOOL didCleanup;
     BOOL waitingToCleanup;
+    BOOL privateBrowsingEnabled;
 
     NSMutableDictionary *htmlIcons;
     NSMutableDictionary *defaultIcons;

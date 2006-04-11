@@ -1,3 +1,48 @@
+2006-04-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - fixed <rdar://problem/4139799> Seed: Safari: Private Browsing leaves traces in Icon Cache
+        
+        * Misc/WebIconDatabasePrivate.h:
+        new ivars: pageURLsBoundDuringPrivateBrowsing, iconURLsBoundDuringPrivateBrowsing, and privateBrowsingEnabled
+
+        * Misc/WebIconDatabase.m:
+        (-[NSMutableDictionary init]):
+        initialize new ivars, and listen for notifications that WebPreferences changed so we can react to changes
+        to private browsing.
+        (-[NSMutableDictionary iconForURL:withSize:cache:]):
+        Don't remove icon URL from extraRetain dictionary; that's now done in _forgetIconForIconURLString. (I left a
+        comment here earlier about why I was worried about this change, but I convinced myself that it's fine.)
+        (-[WebIconDatabase removeAllIcons]):
+        Removed no-longer-true (and never very clear) comment, and braces. Also remove all objects from the two
+        private-browsing-related dictionaries.
+        (-[WebIconDatabase _setIcon:forIconURL:]):
+        remember icon URL if private browsing is enabled
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]):
+        remember icon URL if private browsing is enabled
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        added an assert that helped me out at one point
+        (-[WebIconDatabase _clearDictionaries]):
+        clear the two new dictionaries too
+        (-[WebIconDatabase _loadIconDictionaries]):
+        made an existing ERROR not fire in the expected case where there are no icons at all on disk
+        (-[WebIconDatabase _updateFileDatabase]):
+        when saving the pageURLToIconURL dictionary to disk, first remove any values that were created during
+        private browsing
+        (-[WebIconDatabase _retainIconForIconURLString:]):
+        skip the code that deals with saving changes to disk if private browsing is enabled
+        (-[WebIconDatabase _forgetIconForIconURLString:]):
+        Remove the icon URL from extraRetain dictionary here. We're forgetting everything about this icon URL
+        so we should forget its former extraRetain count too.
+        (-[WebIconDatabase _resetCachedWebPreferences:]):
+        Cache the new value of private browsing. If it has now been turned off, forget everything we learned
+        while it was on. This causes (e.g.) icons for bookmarks or pre-existing history items to be forgotten
+        if the icon was only learned during private browsing.
+
+        * History/WebHistoryItem.m:
+        removed an unnecessary #import I happened to notice
+        
 2006-04-10  David Hyatt  <hyatt@apple.com>
 
         Make the broken CG focus ring painting work when WebCore sets a clip

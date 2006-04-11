@@ -31,8 +31,9 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebFileDatabase.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebPreferences.h>
 
 NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";
 NSString * const WebURLToIconURLKey = 		@"WebSiteURLToIconURLKey";
@@ -69,6 +70,7 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_releaseIconForIconURLString:(NSString *)iconURL;
 - (void)_retainOriginalIconsOnDisk;
 - (void)_releaseOriginalIconsOnDisk;
+- (void)_resetCachedWebPreferences:(NSNotification *)notification;
 - (void)_sendNotificationForURL:(NSString *)URL;
 - (int)_totalRetainCountForIconURLString:(NSString *)iconURLString;
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons;
@@ -120,11 +122,18 @@ NSSize WebIconLargeSize = {128, 128};
     _private->iconsToEraseWithURLs = [[NSMutableSet alloc] init];
     _private->iconsToSaveWithURLs = [[NSMutableSet alloc] init];
     _private->iconURLsWithNoIcons = [[NSMutableSet alloc] init];
+    _private->iconURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
+    _private->pageURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
+    _private->privateBrowsingEnabled = [[WebPreferences standardPreferences] privateBrowsingEnabled];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(_applicationWillTerminate:)
                                                  name:NSApplicationWillTerminateNotification
                                                object:NSApp];
+    [[NSNotificationCenter defaultCenter] 
+            addObserver:self selector:@selector(_resetCachedWebPreferences:) 
+                   name:WebPreferencesChangedNotification object:nil];
+    
 
     // Retain icons on disk then release them once clean-up has begun.
     // This gives the client the opportunity to retain them before they are erased.
@@ -160,9 +169,6 @@ NSSize WebIconLargeSize = {128, 128};
            // disk behind our back?). Forget that we ever had it so it will be re-fetched next time.
 	    ERROR("WebIconDatabase used to contain %@, but the icon file is missing. Now forgetting that we ever knew about this icon.", iconURLString);
             [self _forgetIconForIconURLString:iconURLString];
-            // _forgetIconForIconURLString doesn't modify the retain count, so we need to do so here. Perhaps it would be
-            // safe to do this in _forgetIconForIconURLString, but the comment in removeAllIcons implies otherwise.
-            CFDictionaryRemoveValue(_private->iconURLToExtraRetainCount, iconURLString);
 	}
         return [self defaultIconWithSize:size];
     }        
@@ -311,13 +317,8 @@ NSSize WebIconLargeSize = {128, 128};
 {
     NSEnumerator *keyEnumerator = [(NSDictionary *)_private->iconURLToPageURLs keyEnumerator];
     NSString *iconURLString;
-    while ((iconURLString = [keyEnumerator nextObject]) != nil) {
-        // Note that _forgetIconForIconURLString does not affect retain counts, so the current clients
-        // need not do anything about retaining/releasing icons here. (However, the current clients should
-        // respond to WebIconDatabaseDidRemoveAllIconsNotification by refetching any icons that are 
-        // displayed in the UI.) 
+    while ((iconURLString = [keyEnumerator nextObject]) != nil)
         [self _forgetIconForIconURLString:iconURLString];
-    }
     
     // Delete entire file database immediately. This has at least three advantages over waiting for
     // _updateFileDatabase to execute:
@@ -328,6 +329,8 @@ NSSize WebIconLargeSize = {128, 128};
     [_private->fileDatabase removeAllObjects];
     [_private->iconsToEraseWithURLs removeAllObjects];
     [_private->iconsToSaveWithURLs removeAllObjects];
+    [_private->iconURLsBoundDuringPrivateBrowsing removeAllObjects];
+    [_private->pageURLsBoundDuringPrivateBrowsing removeAllObjects];
     [self _clearDictionaries];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidRemoveAllIconsNotification
                                                         object:self
@@ -356,6 +359,11 @@ NSSize WebIconLargeSize = {128, 128};
     
     [_private->iconURLToIcons setObject:icons forKey:iconURL];
     
+    // Don't update any icon information on disk during private browsing. Remember which icons have been
+    // affected during private browsing so we can forget this information when private browsing is turned off.
+    if (_private->privateBrowsingEnabled)
+        [_private->iconURLsBoundDuringPrivateBrowsing addObject:iconURL];
+
     [self _retainIconForIconURLString:iconURL];
     
     // Release the newly created icon much like an autorelease.
@@ -371,8 +379,13 @@ NSSize WebIconLargeSize = {128, 128};
 
     [_private->iconURLsWithNoIcons addObject:iconURL];
     
+    // Don't update any icon information on disk during private browsing. Remember which icons have been
+    // affected during private browsing so we can forget this information when private browsing is turned off.
+    if (_private->privateBrowsingEnabled)
+        [_private->iconURLsBoundDuringPrivateBrowsing addObject:iconURL];
+
     [self _retainIconForIconURLString:iconURL];
-    
+
     // Release the newly created icon much like an autorelease.
     // This gives the client enough time to retain it.
     // FIXME: Should use an actual autorelease here using a proxy object instead.
@@ -386,6 +399,7 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(URL);
     ASSERT([self _isEnabled]);
     ASSERT([self _hasIconForIconURL:iconURL]);
+    ASSERT(_private->pageURLToIconURL);
 
     if ([[_private->pageURLToIconURL objectForKey:URL] isEqualToString:iconURL]) {
         // Don't do any work if the icon URL is already bound to the site URL
@@ -398,6 +412,11 @@ NSSize WebIconLargeSize = {128, 128};
         // a nonexistent icon
         return;
     }
+    
+    // Keep track of which entries in pageURLToIconURL were created during private browsing so that they can be skipped
+    // when saving to disk.
+    if (_private->privateBrowsingEnabled)
+        [_private->pageURLsBoundDuringPrivateBrowsing addObject:URL];
 
     [_private->pageURLToIconURL setObject:iconURL forKey:URL];
     [_private->iconURLToPageURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
@@ -442,10 +461,14 @@ NSSize WebIconLargeSize = {128, 128};
     [_private->iconURLToPageURLs release];
     [_private->iconsOnDiskWithURLs release];
     [_private->originalIconsOnDiskWithURLs release];
+    [_private->iconURLsBoundDuringPrivateBrowsing release];
+    [_private->pageURLsBoundDuringPrivateBrowsing release];
     _private->pageURLToIconURL = [[NSMutableDictionary alloc] init];
     _private->iconURLToPageURLs = [[NSMutableDictionary alloc] init];
     _private->iconsOnDiskWithURLs = [[NSMutableSet alloc] init];
     _private->originalIconsOnDiskWithURLs = [[NSMutableSet alloc] init];
+    _private->iconURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
+    _private->pageURLsBoundDuringPrivateBrowsing = [[NSMutableSet alloc] init];
 }
 
 - (void)_loadIconDictionaries
@@ -479,8 +502,10 @@ NSSize WebIconLargeSize = {128, 128};
     }
     
     // Must double-check all values read from disk. If any are bogus, we just throw out the whole icon cache.
+    // We expect this to be nil if the icon cache has been cleared, so we shouldn't whine in that case.
     if (![pageURLToIconURL isKindOfClass:[NSMutableDictionary class]]) {
-        ERROR("Clearing icon cache because bad value %@ was found on disk, expected an NSMutableDictionary", pageURLToIconURL);
+        if (pageURLToIconURL)
+            ERROR("Clearing icon cache because bad value %@ was found on disk, expected an NSMutableDictionary", pageURLToIconURL);
         [self _clearDictionaries];
         return;
     }
@@ -567,9 +592,12 @@ NSSize WebIconLargeSize = {128, 128};
     [_private->iconsToEraseWithURLs removeAllObjects];
     [_private->iconsToSaveWithURLs removeAllObjects];
 
-    // Save the icon dictionaries to disk. Save them as mutable copies otherwise WebFileDatabase may access the 
-    // same dictionaries on a separate thread as it's being modified. We think this fixes 3566336.
+    // Save the icon dictionaries to disk, after removing any values created during private browsing.
+    // Even if we weren't modifying the dictionary we'd still want to use a copy so that WebFileDatabase
+    // doesn't look at the original from a different thread. (We used to think this would fix 3566336
+    // but that bug's progeny are still alive and kicking.)
     NSMutableDictionary *pageURLToIconURLCopy = [_private->pageURLToIconURL mutableCopy];
+    [pageURLToIconURLCopy removeObjectsForKeys:[_private->pageURLsBoundDuringPrivateBrowsing allObjects]];
     [fileDB setObject:pageURLToIconURLCopy forKey:WebURLToIconURLKey];
     [pageURLToIconURLCopy release];
 }
@@ -691,7 +719,7 @@ NSSize WebIconLargeSize = {128, 128};
 
     CFDictionarySetValue(_private->iconURLToExtraRetainCount, iconURLString, (void *)newRetainCount);
 
-    if (newRetainCount == 1) {
+    if (newRetainCount == 1 && !_private->privateBrowsingEnabled) {
 
         // Either we know nothing about this icon and need to save it to disk, or we were planning to remove it
         // from disk (as set up in _forgetIconForIconURLString:) and should stop that process.
@@ -712,7 +740,7 @@ NSSize WebIconLargeSize = {128, 128};
         [_private->iconsToEraseWithURLs addObject:iconURLString];
         [_private->iconsToSaveWithURLs removeObject:iconURLString];
     }
-    
+        
     // Remove the icon's images
     [_private->iconURLToIcons removeObjectForKey:iconURLString];
     
@@ -731,6 +759,7 @@ NSSize WebIconLargeSize = {128, 128};
         }
     }
     [_private->iconURLToPageURLs removeObjectForKey:iconURLString];
+    CFDictionaryRemoveValue(_private->iconURLToExtraRetainCount, iconURLString);
     [iconURLString release];
 }
 
@@ -782,6 +811,37 @@ NSSize WebIconLargeSize = {128, 128};
     _private->originalIconsOnDiskWithURLs = nil;
 
     _private->didCleanup = YES;
+}
+
+- (void)_resetCachedWebPreferences:(NSNotification *)notification
+{
+    BOOL privateBrowsingEnabledNow = [[WebPreferences standardPreferences] privateBrowsingEnabled];
+    if (privateBrowsingEnabledNow == _private->privateBrowsingEnabled)
+        return;
+    
+    _private->privateBrowsingEnabled = privateBrowsingEnabledNow;
+    
+    // When private browsing is turned off, forget everything we learned while it was on 
+    if (!_private->privateBrowsingEnabled) {
+        // Forget all of the icons whose existence we learned of during private browsing.
+        NSEnumerator *iconEnumerator = [_private->iconURLsBoundDuringPrivateBrowsing objectEnumerator];
+        NSString *iconURLString;
+        while ((iconURLString = [iconEnumerator nextObject]) != nil)
+            [self _forgetIconForIconURLString:iconURLString];
+
+        // Forget the relationships between page and icon that we learned during private browsing.
+        NSEnumerator *pageEnumerator = [_private->pageURLsBoundDuringPrivateBrowsing objectEnumerator];
+        NSString *pageURLString;
+        while ((pageURLString = [pageEnumerator nextObject]) != nil) {
+            [_private->pageURLToIconURL removeObjectForKey:pageURLString];
+            // Tell clients that these pages' icons have changed (to generic). The notification is named
+            // WebIconDatabaseDidAddIconNotification but it really means just "did change icon".
+            [self _sendNotificationForURL:pageURLString];
+        }
+        
+        [_private->iconURLsBoundDuringPrivateBrowsing removeAllObjects];
+        [_private->pageURLsBoundDuringPrivateBrowsing removeAllObjects];
+    }
 }
 
 - (void)_sendNotificationForURL:(NSString *)URL

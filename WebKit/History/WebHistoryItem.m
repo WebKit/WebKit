@@ -33,7 +33,6 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
-#import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSDictionaryExtras.h>
