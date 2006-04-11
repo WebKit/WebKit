@@ -3204,10 +3204,16 @@ unsigned Frame::highlightAllMatchesForString(const String& target, bool caseFlag
         if (resultRange->collapsed(exception))
             break;
         
+        // A non-collapsed result range can in some funky whitespace cases still not
+        // advance the range's start position (4509328). Break to avoid infinite loop.
+        VisiblePosition newStart = endVisiblePosition(resultRange.get(), DOWNSTREAM);
+        if (newStart == startVisiblePosition(searchRange.get(), DOWNSTREAM))
+            break;
+
         ++matchCount;
-        document()->addMarker(resultRange.get(), DocumentMarker::TextMatch);
+        document()->addMarker(resultRange.get(), DocumentMarker::TextMatch);        
         
-        setStart(searchRange.get(), endVisiblePosition(resultRange.get(), DOWNSTREAM));
+        setStart(searchRange.get(), newStart);
     } while (true);
     
     return matchCount;

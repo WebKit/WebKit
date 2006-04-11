@@ -1,3 +1,20 @@
+2006-04-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - fixed <rdar://problem/4509328> highlight all matches hangs when searching for tab character on www.google.com (and others)
+        
+        For reasons not yet completely understood, searching for a tab character on some pages (Google, Amazon) finds a match
+        with a non-collapsed range but then claims that the end visible position of the match is the original start visible 
+        position of the search range. This was causing the highlightAllMatches code to loop forever. Fixed the loop by 
+        checking for the non-advancing search range explicitly. I'm going to track down a reduction of the bogus 
+        search-for-tab issue, and write that up as a separate bug (that bug is not a regression; you can "find" a tab on 
+        google in Tiger also).
+
+        * page/Frame.cpp:
+        (WebCore::Frame::highlightAllMatchesForString):
+        break the loop if the search range hasn't advanced
+
 2006-04-10  Darin Adler  <darin@apple.com>
 
         Rubber-stamped by John Sullivan (except for pbxproj change).
