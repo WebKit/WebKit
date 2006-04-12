@@ -1,5 +1,13 @@
 2006-04-12  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * platform/TransferJobInternal.h: Declare HANDLE.
+        * platform/image-decoders/gif/GIFImageReader.h: Include GIFImageDecoder.h.
+        * rendering/RenderThemeWin.h: Declare HANDLE and HMODULE.
+
+2006-04-12  Darin Adler  <darin@apple.com>
+
         - another attempt to get things building
 
         * bindings/js/kjs_proxy.cpp: Add "kjs_events.h" include, needed when not

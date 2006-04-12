@@ -25,6 +25,12 @@
 
 #include "RenderTheme.h"
 
+#if WIN32
+typedef void* HANDLE;
+typedef struct HINSTANCE__* HINSTANCE;
+typedef HINSTANCE HMODULE;
+#endif
+
 namespace WebCore {
 
 struct ThemeData {

@@ -34,19 +34,18 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+
 #ifndef _GIF_H_
 #define _GIF_H_
+
+// Define ourselves as the clientPtr.  Mozilla just hacked their C++ callback class into this old C decoder,
+// so we will too.
+#include "GIFImageDecoder.h"
 
 #define MAX_LZW_BITS          12
 #define MAX_BITS            4097 /* 2^MAX_LZW_BITS+1 */
 #define MAX_COLORS           256
 #define MAX_HOLD_SIZE        256
-
-// Define ourselves as the clientPtr.  Mozilla just hacked their C++ callback class into this old C decoder,
-// so we will too.
-namespace WebCore {
-    class GIFImageDecoder;
-}
 
 /* gif2.h  
    The interface for the GIF87/89a decoder. 

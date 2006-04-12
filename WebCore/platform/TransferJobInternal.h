@@ -31,10 +31,13 @@
 #include "formdata.h"
 #include <kxmlcore/HashMap.h>
 
+#ifdef WIN32
+typedef void* HANDLE;
+#endif
+
 // The allocations and releases in TransferJobInternal are
-// definitely Cocoa-exception-free (either simple Foundation
-// classes or our own KWQResourceLoader which avoides doing work
-// in dealloc.
+// Cocoa-exception-free (either simple Foundation classes or
+// KWQResourceLoader which avoids doing work in dealloc).
 
 namespace WebCore {
 
