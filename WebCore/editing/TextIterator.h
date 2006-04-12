@@ -28,6 +28,7 @@
 
 #include "InlineTextBox.h"
 #include "Range.h"
+#include <kxmlcore/Vector.h>
 
 namespace WebCore {
 

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "kjs_proxy.h"
 
+#include "kjs_events.h"
 #include "kjs_window.h"
 #include "Frame.h"
 
