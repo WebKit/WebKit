@@ -51,26 +51,15 @@ sub buildDiskImage
     $nightlyLauncherDiskImagePath = productDir() . "/WebKit-SVN-r$revision.dmg";
     
     print "Creating disk image...\n";
-    my $output = `hdiutil create \"$nightlyLauncherDiskImagePath\" -ov -megabytes 50 -fs HFS+ -volname \"WebKit\"`;
+    my $output = `hdiutil create \"$nightlyLauncherDiskImagePath\" -ov -srcfolder $nightlyLauncherStagingPath -fs HFS+ -volname \"WebKit\"`;
     die "Creating disk image failed" if $?;
 
-    $output = `hdiutil attach \"$nightlyLauncherDiskImagePath\"`;
-    die "Mounting disk image failed" if $?;
-    
-    my ($mountedDevice)  = ($output =~ /(\/dev\/.+?)\s*Apple_partition_scheme/im);
-    my ($mountedPath) = ($output =~ /Apple_HFS\s+(.+?)\s*$/im);
-    
-    print "Copying files to disk image...\n";    
-    system("ditto", $nightlyLauncherStagingPath, "$mountedPath/WebKit.app") == 0 or die "Failed copying $nightlyLauncherStagingPath to $mountedPath";
-    
-    system("hdiutil", "detach", "-quiet", $mountedDevice) == 0 or die "Unmounting disk image failed";
-    
     print "Compressing disk image...\n";
-    system("mv", "-f", $nightlyLauncherDiskImagePath, "$nightlyLauncherDiskImagePath.uncompressed") == 0 or die "Renaming disk image failed";
-    system("hdiutil", "convert", "-quiet", "$nightlyLauncherDiskImagePath.uncompressed", "-format", "UDZO", "-imagekey", "zlib-level=9", "-o", "$nightlyLauncherDiskImagePath");
+    system("mv", "-f", $nightlyLauncherDiskImagePath, "$nightlyLauncherDiskImagePath.uncompressed.dmg") == 0 or die "Renaming disk image failed";
+    system("hdiutil", "convert", "-quiet", "$nightlyLauncherDiskImagePath.uncompressed.dmg", "-format", "UDZO", "-imagekey", "zlib-level=9", "-o", "$nightlyLauncherDiskImagePath");
     die "Compressing disk image failed" if $?;
     
-    unlink "$nightlyLauncherDiskImagePath.uncompressed";
+    unlink "$nightlyLauncherDiskImagePath.uncompressed.dmg";
 }
 
 sub uploadNightlyDiskImage

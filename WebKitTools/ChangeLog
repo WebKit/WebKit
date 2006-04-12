@@ -1,3 +1,17 @@
+2006-04-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Rubber-stamped by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8348
+          upload-disk-image stage on buildslaves fail with "No space left on device"
+
+        * BuildSlaveSupport/build-launcher-dmg:  Use the -srcfolder option to
+          'hdiutil create'.   This creates the initial disk image based on the size of
+          the source folder, and copies the contents to the new disk image.  The file
+          extension on the temporary uncompressed disk image has also been altered from
+          ".uncompressed" to ".uncompressed.dmg" as hdiutil on 10.4.6 Intel fails when
+          the extension is not ".dmg".
+
 2006-04-12  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by Tim H.
