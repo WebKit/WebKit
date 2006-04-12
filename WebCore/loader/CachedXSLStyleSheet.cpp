@@ -31,7 +31,7 @@
 #include "Cache.h"
 #include "CachedObjectClient.h"
 #include "CachedObjectClientWalker.h"
-#include "decoder.h"
+#include "Decoder.h"
 #include "loader.h"
 
 namespace WebCore {

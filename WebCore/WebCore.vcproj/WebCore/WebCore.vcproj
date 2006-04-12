@@ -421,22 +421,6 @@
 			<Filter
 				Name="misc"
 				>
-				<File
-					RelativePath="..\..\khtml\misc\decoder.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\misc\decoder.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\misc\formdata.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\misc\formdata.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -555,11 +539,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\loader\Decoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\Decoder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\loader\DocLoader.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\loader\DocLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\FormData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\FormData.h"
 				>
 			</File>
 			<File
@@ -1819,10 +1819,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\Length.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\css\quirks.css"
 				>
 			</File>
@@ -1864,6 +1860,10 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\InlineTextBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\Length.h"
 				>
 			</File>
 			<File

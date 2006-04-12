@@ -27,7 +27,7 @@
 #ifndef ResourceRequest_H_
 #define ResourceRequest_H_
 
-#include "formdata.h"
+#include "FormData.h"
 #include "PlatformString.h"
 #include "KURL.h"
 

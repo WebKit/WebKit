@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "formdata.h"
+#include "FormData.h"
 
 namespace WebCore {
 

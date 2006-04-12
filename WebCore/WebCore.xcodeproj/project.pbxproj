@@ -346,7 +346,7 @@
 		93F198EE08245E59001E9ABC /* html_tableimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24F02DE4396018635CA /* html_tableimpl.h */; };
 		93F198EF08245E59001E9ABC /* HTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* HTMLParser.h */; };
 		93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* HTMLTokenizer.h */; };
-		93F198F608245E59001E9ABC /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* decoder.h */; };
+		93F198F608245E59001E9ABC /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* Decoder.h */; };
 		93F1991708245E59001E9ABC /* dom2_eventsimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30202DE4476018635CA /* dom2_eventsimpl.h */; };
 		93F1991808245E59001E9ABC /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30402DE4476018635CA /* Range.h */; };
 		93F1991908245E59001E9ABC /* dom2_traversalimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30602DE4476018635CA /* dom2_traversalimpl.h */; };
@@ -406,7 +406,7 @@
 		93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D90660B0665D937006B6F1A /* ClipboardMac.h */; };
 		93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */; };
 		93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */; };
-		93F199EE08245E59001E9ABC /* formdata.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABCE5E06E1A42E0085925B /* formdata.h */; };
+		93F199EE08245E59001E9ABC /* FormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 93ABCE5E06E1A42E0085925B /* FormData.h */; };
 		93F199EF08245E59001E9ABC /* KWQFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B641F206E28C5C0055F610 /* KWQFormData.h */; };
 		93F199F008245E59001E9ABC /* WebCoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = BE855F7F0701E83500239769 /* WebCoreView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 5150C2A10702629000AF642C /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -452,7 +452,7 @@
 		93F19A9A08245E59001E9ABC /* html_tableimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24E02DE4396018635CA /* html_tableimpl.cpp */; };
 		93F19A9B08245E59001E9ABC /* HTMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* HTMLParser.cpp */; };
 		93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* HTMLTokenizer.cpp */; };
-		93F19A9D08245E59001E9ABC /* decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* decoder.cpp */; };
+		93F19A9D08245E59001E9ABC /* Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* Decoder.cpp */; };
 		93F19AB708245E59001E9ABC /* dom_xmlimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FF02DE4476018635CA /* dom_xmlimpl.cpp */; };
 		93F19AB808245E59001E9ABC /* dom2_eventsimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30102DE4476018635CA /* dom2_eventsimpl.cpp */; };
 		93F19AB908245E59001E9ABC /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30302DE4476018635CA /* Range.cpp */; };
@@ -482,7 +482,7 @@
 		93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* ClipboardMac.mm */; };
 		93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */; };
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
-		93F19B0508245E59001E9ABC /* formdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABCE5D06E1A42E0085925B /* formdata.cpp */; };
+		93F19B0508245E59001E9ABC /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABCE5D06E1A42E0085925B /* FormData.cpp */; };
 		93F19B0608245E59001E9ABC /* KWQFormData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B641F106E28C5C0055F610 /* KWQFormData.mm */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
 		93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5150C2A50702629800AF642C /* WebDashboardRegion.m */; };
@@ -1501,8 +1501,8 @@
 		93955A4203D72932008635CE /* RenderTreeAsText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeAsText.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C108B7E3D100E707C4 /* EventNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventNames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C208B7E3D100E707C4 /* EventNames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = EventNames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		93ABCE5D06E1A42E0085925B /* formdata.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = formdata.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		93ABCE5E06E1A42E0085925B /* formdata.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = formdata.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		93ABCE5D06E1A42E0085925B /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		93ABCE5E06E1A42E0085925B /* FormData.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FormData.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93B641F106E28C5C0055F610 /* KWQFormData.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQFormData.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93B641F206E28C5C0055F610 /* KWQFormData.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQFormData.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMParser.cpp; sourceTree = "<group>"; };
@@ -2387,8 +2387,8 @@
 		F523D25102DE4396018635CA /* HTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D25202DE4396018635CA /* HTMLTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D25302DE4396018635CA /* HTMLTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D27802DE43D7018635CA /* decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decoder.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D27902DE43D7018635CA /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D27802DE43D7018635CA /* Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decoder.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D27902DE43D7018635CA /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2FF02DE4476018635CA /* dom_xmlimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_xmlimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30002DE4476018635CA /* dom_xmlimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_xmlimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30102DE4476018635CA /* dom2_eventsimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom2_eventsimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2511,7 +2511,6 @@
 				93309D86099E64910056E581 /* editing */,
 				93EEC1EC09C2877700C515D1 /* html */,
 				A8C0FB51089701F700BA5114 /* kcanvas */,
-				F523D16302DE42AE018635CA /* khtml */,
 				A8C0F6E9089701F100BA5114 /* ksvg2 */,
 				F58785E802DE377601EA4122 /* kwq */,
 				BCB16BFB0979C38700467741 /* loader */,
@@ -3679,8 +3678,12 @@
 				BCB16C0D0979C3BD00467741 /* CachedXBLDocument.h */,
 				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
 				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
+				F523D27802DE43D7018635CA /* Decoder.cpp */,
+				F523D27902DE43D7018635CA /* Decoder.h */,
 				BCB16C100979C3BD00467741 /* DocLoader.cpp */,
 				BCB16C110979C3BD00467741 /* DocLoader.h */,
+				93ABCE5D06E1A42E0085925B /* FormData.cpp */,
+				93ABCE5E06E1A42E0085925B /* FormData.h */,
 				BCB16C130979C3BD00467741 /* loader.cpp */,
 				BCB16C140979C3BD00467741 /* loader.h */,
 				BCB16C150979C3BD00467741 /* Request.cpp */,
@@ -3831,14 +3834,6 @@
 			name = other;
 			sourceTree = "<group>";
 		};
-		F523D16302DE42AE018635CA /* khtml */ = {
-			isa = PBXGroup;
-			children = (
-				F523D29C02DE43D9018635CA /* misc */,
-			);
-			path = khtml;
-			sourceTree = "<group>";
-		};
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
@@ -3864,7 +3859,6 @@
 				BCEA478B097CAAC80094C9E4 /* cssstyleselector.h */,
 				BCEA478C097CAAC80094C9E4 /* CSSValueKeywords.in */,
 				93CA4C9909DF93FA00DF8677 /* html4.css */,
-				935C476009AC4CD100A6AAB4 /* Length.h */,
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
 				93CA4C9B09DF93FA00DF8677 /* makeprop */,
 				93CA4C9C09DF93FA00DF8677 /* maketokenizer */,
@@ -3874,17 +3868,6 @@
 				93CA4CA309DF93FA00DF8677 /* tokenizer.flex */,
 			);
 			path = css;
-			sourceTree = "<group>";
-		};
-		F523D29C02DE43D9018635CA /* misc */ = {
-			isa = PBXGroup;
-			children = (
-				F523D27802DE43D7018635CA /* decoder.cpp */,
-				F523D27902DE43D7018635CA /* decoder.h */,
-				93ABCE5D06E1A42E0085925B /* formdata.cpp */,
-				93ABCE5E06E1A42E0085925B /* formdata.h */,
-			);
-			path = misc;
 			sourceTree = "<group>";
 		};
 		F523D2F302DE443B018635CA /* rendering */ = {
@@ -3898,6 +3881,7 @@
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
+				935C476009AC4CD100A6AAB4 /* Length.h */,
 				BCEA481C097D93020094C9E4 /* render_applet.cpp */,
 				BCEA481D097D93020094C9E4 /* render_applet.h */,
 				BCEA4826097D93020094C9E4 /* render_button.cpp */,
@@ -4144,7 +4128,7 @@
 				93F198EE08245E59001E9ABC /* html_tableimpl.h in Headers */,
 				93F198EF08245E59001E9ABC /* HTMLParser.h in Headers */,
 				93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */,
-				93F198F608245E59001E9ABC /* decoder.h in Headers */,
+				93F198F608245E59001E9ABC /* Decoder.h in Headers */,
 				93F1991708245E59001E9ABC /* dom2_eventsimpl.h in Headers */,
 				93F1991808245E59001E9ABC /* Range.h in Headers */,
 				93F1991908245E59001E9ABC /* dom2_traversalimpl.h in Headers */,
@@ -4204,7 +4188,7 @@
 				93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */,
 				93F199EC08245E59001E9ABC /* XSLStyleSheet.h in Headers */,
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
-				93F199EE08245E59001E9ABC /* formdata.h in Headers */,
+				93F199EE08245E59001E9ABC /* FormData.h in Headers */,
 				93F199EF08245E59001E9ABC /* KWQFormData.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
@@ -4906,7 +4890,7 @@
 				93F19A9A08245E59001E9ABC /* html_tableimpl.cpp in Sources */,
 				93F19A9B08245E59001E9ABC /* HTMLParser.cpp in Sources */,
 				93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */,
-				93F19A9D08245E59001E9ABC /* decoder.cpp in Sources */,
+				93F19A9D08245E59001E9ABC /* Decoder.cpp in Sources */,
 				93F19AB708245E59001E9ABC /* dom_xmlimpl.cpp in Sources */,
 				93F19AB808245E59001E9ABC /* dom2_eventsimpl.cpp in Sources */,
 				93F19AB908245E59001E9ABC /* Range.cpp in Sources */,
@@ -4936,7 +4920,7 @@
 				93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */,
 				93F19B0308245E59001E9ABC /* XSLStyleSheet.cpp in Sources */,
 				93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */,
-				93F19B0508245E59001E9ABC /* formdata.cpp in Sources */,
+				93F19B0508245E59001E9ABC /* FormData.cpp in Sources */,
 				93F19B0608245E59001E9ABC /* KWQFormData.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */,

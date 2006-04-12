@@ -26,7 +26,7 @@
 #include "config.h"
 #import "WebCoreEncodings.h"
 
-#import "decoder.h"
+#import "Decoder.h"
 
 #include "HTMLNames.h"
 

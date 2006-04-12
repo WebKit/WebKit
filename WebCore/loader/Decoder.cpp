@@ -22,7 +22,7 @@
 
 
 #include "config.h"
-#include "decoder.h"
+#include "Decoder.h"
 
 #include "HTMLNames.h"
 #include "StreamingTextDecoder.h"

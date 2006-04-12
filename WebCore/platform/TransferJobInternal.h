@@ -28,7 +28,7 @@
 #define TransferJobInternal_H_
 
 #include "KURL.h"
-#include "formdata.h"
+#include "FormData.h"
 #include <kxmlcore/HashMap.h>
 
 #ifdef WIN32

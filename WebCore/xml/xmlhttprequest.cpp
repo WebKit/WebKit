@@ -28,7 +28,7 @@
 #include "KWQLoader.h"
 #include "dom2_eventsimpl.h"
 #include "PlatformString.h"
-#include "formdata.h"
+#include "FormData.h"
 #include "HTMLDocument.h"
 #include "kjs_binding.h"
 #include "TransferJob.h"

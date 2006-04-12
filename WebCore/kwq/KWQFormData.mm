@@ -27,7 +27,7 @@
 #import "KWQFormData.h"
 
 #import <kxmlcore/Assertions.h>
-#import "formdata.h"
+#import "FormData.h"
 
 using WebCore::FormData;
 using WebCore::FormDataElement;

@@ -1,3 +1,36 @@
+2006-04-12  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Hyatt.
+
+        - moved Decoder and FormData classes into loader directory
+          (Decoder, because it's part of the loading process.
+           FormData, because it's used as a parameter when specifying
+           what to load. Arguably either could be in page instead.)
+        - moved Length.h from css to renderer, cause that's where Hyatt
+          says it belongs
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for new locations.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * khtml: Removed.
+        * loader/Decoder.cpp: Added.
+        * loader/Decoder.h: Added.
+        * loader/FormData.cpp: Added.
+        * loader/FormData.h: Added.
+
+        * css/Length.h: Removed.
+        * rendering/Length.h: Added.
+
+        * bridge/mac/WebCoreEncodings.mm:
+        * dom/Document.h:
+        * kwq/KWQFormData.mm:
+        * loader/CachedXBLDocument.cpp:
+        * loader/CachedXSLStyleSheet.cpp:
+        * page/ResourceRequest.h:
+        * platform/TransferJobInternal.h:
+        * xml/xmlhttprequest.cpp:
+        Updated includes.
+
 2006-04-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin

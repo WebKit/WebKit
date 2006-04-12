@@ -33,7 +33,7 @@
 #include "KURL.h"
 #include "StringHash.h"
 #include "Timer.h"
-#include "decoder.h"
+#include "Decoder.h"
 #include "dom2_traversalimpl.h"
 #include <kxmlcore/HashCountedSet.h>
 #include <qptrlist.h>
