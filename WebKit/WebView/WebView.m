@@ -3080,7 +3080,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 - (WebFrame *)_focusedFrame
 {
     NSResponder *resp = [[self window] firstResponder];
-    if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:self]) {
+    if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:[[self mainFrame] frameView]]) {
         WebFrameView *frameView = [resp isKindOfClass:[WebFrameView class]] 
         ? (WebFrameView *)resp 
         : (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
