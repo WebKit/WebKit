@@ -30,7 +30,7 @@
 #include "PlatformString.h"
 #include <kio/global.h>
 #include <qptrlist.h>
-#include <kxmlcore/HashForward.h>
+#include <kxmlcore/HashSet.h>
 
 class KURL;
 

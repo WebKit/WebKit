@@ -1,3 +1,13 @@
+2006-04-11  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * ForwardingHeaders/kxmlcore/HashForward.h: Removed.
+        * dom/xml_tokenizer.h: Include another header instead of HashForward.h.
+        * loader/Cache.h: Ditto.
+        * page/Page.h: Ditto.
+        * platform/TransferJob.h: Ditto.
+
 2006-04-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

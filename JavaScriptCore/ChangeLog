@@ -1,3 +1,16 @@
+2006-04-11  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build -- HashForward.h was not working
+
+        * kxmlcore/HashForward.h: Removed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Remove HashForward.h.
+        * kjs/collector.h: Remove use of HashForward.h.
+        * kxmlcore/HashCountedSet.h: Remove include of HashForward.h, restore
+        default arguments.
+        * kxmlcore/HashMap.h: Ditto.
+        * kxmlcore/HashSet.h: Ditto.
+
 2006-04-11  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
