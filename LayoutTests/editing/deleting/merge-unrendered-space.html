@@ -1,0 +1,12 @@
+<p>This tests deleting the line break before a paragraph that ends with unrendered space.</p>
+<div id="test" contenteditable="true">foo<br>bar
+<div>baz</div></div>
+
+<script>
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "paragraph");
+document.execCommand("Delete");
+</script>

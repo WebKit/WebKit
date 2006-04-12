@@ -31,6 +31,7 @@
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "Element.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
@@ -39,6 +40,7 @@
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
 #include "JoinTextNodesCommand.h"
+#include "markup.h"
 #include "MergeIdenticalElementsCommand.h"
 #include "Range.h"
 #include "RebalanceWhitespaceCommand.h"
@@ -46,6 +48,7 @@
 #include "RemoveNodeAttributeCommand.h"
 #include "RemoveNodeCommand.h"
 #include "RemoveNodePreservingChildrenCommand.h"
+#include "ReplaceSelectionCommand.h"
 #include "SetNodeAttributeCommand.h"
 #include "SplitElementCommand.h"
 #include "SplitTextNodeCommand.h"
@@ -657,6 +660,53 @@ void CompositeEditCommand::pushPartiallySelectedAnchorElementsDown()
 
     ASSERT(originalSelection.start().node()->inDocument() && originalSelection.end().node()->inDocument());
     setEndingSelection(originalSelection);
+}
+
+// This moves a paragraph preserving its style.
+void CompositeEditCommand::moveParagraph(const VisiblePosition& startOfParagraphToMove, const VisiblePosition& endOfParagraphToMove, const VisiblePosition& destination)
+{
+    if (startOfParagraphToMove == destination)
+        return;
+    
+    ASSERT(isStartOfParagraph(startOfParagraphToMove));
+    ASSERT(isEndOfParagraph(endOfParagraphToMove));
+    
+    Position start = startOfParagraphToMove.deepEquivalent().upstream();
+    // We upstream() the end so that we don't include collapsed whitespace in the move.
+    // If we must later add a br after the moved paragraph, doing so would cause the moved unrendered space to become rendered.
+    Position end = endOfParagraphToMove.deepEquivalent().upstream();
+    RefPtr<Range> range = new Range(document(), start.node(), start.offset(), end.node(), end.offset());
+
+    // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move.  It 
+    // shouldn't matter though, since moved paragraphs will usually be quite small.
+    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(document(), range->toHTML(), "");
+    
+    setEndingSelection(Selection(start, end, DOWNSTREAM));
+    deleteSelection(false, false);
+    
+    ASSERT(destination.deepEquivalent().node()->inDocument());
+    
+    // Deleting a paragraph leaves a placeholder (it always does when a whole paragraph is deleted).
+    // We remove it and prune it's parents since we want to remove all traces of the paragraph we're moving.
+    Node* placeholder = endingSelection().end().node();
+    if (placeholder->hasTagName(brTag))
+        removeNodeAndPruneAncestors(placeholder);
+    // FIXME: Deletion has bugs and it doesn't always add a placeholder.  If it fails, still do pruning.
+    else
+        prune(placeholder);
+
+    // Add a br if pruning an empty block level element caused a collapse.  For example:
+    // foo^
+    // <div>bar</div>
+    // baz
+    // Imagine moving 'bar' to ^.  'bar' will be deleted and its div pruned.  That would
+    // cause 'baz' to collapse onto the line with 'foobar' unless we insert a br.
+    if (!isEndOfParagraph(destination))
+        insertNodeAt(createBreakElement(document()).get(), destination.deepEquivalent().node(), destination.deepEquivalent().offset());
+    
+    setEndingSelection(destination);
+    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), false));
+    applyCommandToComposite(cmd);
 }
 
 PassRefPtr<Element> createBlockPlaceholderElement(Document* document)

@@ -49,48 +49,14 @@ VisiblePosition::VisiblePosition(Node *node, int offset, EAffinity affinity)
     init(Position(node, offset), affinity);
 }
 
-void VisiblePosition::init(const Position &pos, EAffinity affinity)
+void VisiblePosition::init(const Position& position, EAffinity affinity)
 {
     m_affinity = affinity;
     
-    if (pos.isNull()) {
-        m_deepPosition = Position();
-        return;
-    }
+    initDeepPosition(position, affinity);
     
-    pos.node()->document()->updateLayoutIgnorePendingStylesheets();
-    Position deepPos = deepEquivalent(pos);
-    if (deepPos.inRenderedContent()) {
-        // If two visually equivalent positions are both candidates for being made the m_deepPosition,
-        // (this can happen when two rendered positions have only collapsed whitespace between them for example),
-        // we always choose the one that occurs first in the DOM to canonicalize VisiblePositions.
-        Position upstreamPosition = deepPos.upstream();
-        m_deepPosition = upstreamPosition.inRenderedContent() ? upstreamPosition : deepPos;
-    } else {
-        Position next = nextVisiblePosition(deepPos);
-        Position prev = previousVisiblePosition(deepPos);
-        
-        if (next.isNull() && prev.isNull())
-            m_deepPosition = Position();
-        else if (next.isNull())
-            m_deepPosition = prev;
-        else if (prev.isNull())
-            m_deepPosition = next;
-        else {
-            Node *originalBlock = pos.node() ? pos.node()->enclosingBlockFlowElement() : 0;
-            bool nextIsOutsideOriginalBlock = !next.node()->isAncestor(originalBlock) && next.node() != originalBlock;
-            bool prevIsOutsideOriginalBlock = !prev.node()->isAncestor(originalBlock) && prev.node() != originalBlock;
-            
-            if (nextIsOutsideOriginalBlock && !prevIsOutsideOriginalBlock || 
-                (deepPos.node()->hasTagName(brTag) && deepPos.offset() == 0))
-                m_deepPosition = prev;
-            else
-                m_deepPosition = next;
-        }
-    }
-
     // When not at a line wrap, make sure to end up with DOWNSTREAM affinity.
-    if (m_affinity == UPSTREAM && (isNull() || inSameLine(VisiblePosition(pos, DOWNSTREAM), *this)))
+    if (m_affinity == UPSTREAM && (isNull() || inSameLine(VisiblePosition(position, DOWNSTREAM), *this)))
         m_affinity = DOWNSTREAM;
 }
 
@@ -161,6 +127,53 @@ Position VisiblePosition::nextVisiblePosition(const Position &pos)
     }
     
     return Position();
+}
+
+void VisiblePosition::initDeepPosition(const Position& position, EAffinity affinity)
+{
+    if (position.isNull()) {
+        m_deepPosition = Position();
+        return;
+    }
+
+    position.node()->document()->updateLayoutIgnorePendingStylesheets();
+    Position deepPos = deepEquivalent(position);
+    // If two visually equivalent positions are both candidates for being made the m_deepPosition,
+    // (this can happen when two rendered positions have only collapsed whitespace between them),
+    // we always choose the one that occurs first in the DOM to canonicalize VisiblePositions.
+    m_deepPosition = deepPos.upstream();
+    if (m_deepPosition.inRenderedContent())
+        return;
+    
+    m_deepPosition = deepPos;
+    if (m_deepPosition.inRenderedContent())
+        return;
+
+    m_deepPosition = deepPos.downstream();
+    if (m_deepPosition.inRenderedContent())
+        return;
+        
+    // Do something rational for an input position inside unrendered whitespace that isn't really 
+    // equivalent to any rendered position, such as: <div>foo</div>{unrendered whitespace}<div>bar</div>
+    Position next = nextVisiblePosition(deepPos);
+    Position prev = previousVisiblePosition(deepPos);
+    
+    if (next.isNull() && prev.isNull())
+        m_deepPosition = Position();
+    else if (next.isNull())
+        m_deepPosition = prev;
+    else if (prev.isNull())
+        m_deepPosition = next;
+    else {
+        Node *originalBlock = position.node()->enclosingBlockFlowElement();
+        bool nextIsOutsideOriginalBlock = !next.node()->isAncestor(originalBlock) && next.node() != originalBlock;
+        bool prevIsOutsideOriginalBlock = !prev.node()->isAncestor(originalBlock) && prev.node() != originalBlock;
+        
+        if (nextIsOutsideOriginalBlock && !prevIsOutsideOriginalBlock)
+            m_deepPosition = prev;
+        else
+            m_deepPosition = next;
+    }
 }
 
 Position VisiblePosition::deepEquivalent(const Position &pos)

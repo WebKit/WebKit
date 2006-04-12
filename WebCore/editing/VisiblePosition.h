@@ -79,6 +79,7 @@ public:
     
 private:
     void init(const Position&, EAffinity);
+    void initDeepPosition(const Position&, EAffinity affinity);
 
     static int maxOffset(const Node*);
     

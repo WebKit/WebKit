@@ -514,39 +514,7 @@ void DeleteSelectionCommand::mergeParagraphs()
         
     VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove);
     
-    Position start = startOfParagraphToMove.deepEquivalent().upstream();
-    // We upstream() the end so that we don't include collapsed whitespace in the move.
-    // If we must later add a br after the merged paragraph, doing so would cause the moved unrendered space to become rendered.
-    Position end = endOfParagraphToMove.deepEquivalent().upstream();
-    RefPtr<Range> range = new Range(document(), start.node(), start.offset(), end.node(), end.offset());
-
-    // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move.  It 
-    // shouldn't matter though, since moved paragraphs will usually be quite small.
-    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(document(), range->toHTML(), "");
-    
-    setEndingSelection(Selection(startOfParagraphToMove.deepEquivalent(), endOfParagraphToMove.deepEquivalent(), DOWNSTREAM));
-    deleteSelection(false, false);
-    
-    // The above deletion leaves a placeholder (it always does when a whole paragraph is deleted).
-    // We remove it and prune it's parents since we want to remove all traces of the paragraph to move.
-    Node* placeholder = endingSelection().end().node();
-    // FIXME: Deletion has bugs and it doesn't always add a placeholder.  If it fails, still do pruning.
-    if (placeholder->hasTagName(brTag))
-        removeNodeAndPruneAncestors(placeholder);
-    else
-        prune(placeholder);
-
-    // Add a br if pruning an empty block level element caused a collapse.  For example:
-    // foo
-    // <div>bar</div>
-    // baz
-    // Placing the cursor before 'bar' and hitting delete will merge 'foo' and 'bar' and prune the empty div.    
-    if (!isEndOfParagraph(mergeDestination))
-        insertNodeAt(createBreakElement(document()).get(), m_upstreamStart.node(), m_upstreamStart.offset());
-    
-    setEndingSelection(mergeDestination);
-    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), false));
-    applyCommandToComposite(cmd);
+    moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination);
 }
 
 void DeleteSelectionCommand::calculateEndingPosition()
@@ -648,8 +616,8 @@ void DeleteSelectionCommand::doApply()
 
     // if all we are deleting is complete paragraph(s), we need to make
     // sure a blank paragraph remains when we are done
-    bool forceBlankParagraph = isStartOfParagraph(VisiblePosition(m_upstreamStart, VP_DEFAULT_AFFINITY)) &&
-                               isEndOfParagraph(VisiblePosition(m_downstreamEnd, VP_DEFAULT_AFFINITY));
+    bool forceBlankParagraph = isStartOfParagraph(VisiblePosition(m_upstreamStart)) &&
+                               isEndOfParagraph(VisiblePosition(m_downstreamEnd));
 
     // Delete any text that may hinder our ability to fixup whitespace after the detele
     deleteInsignificantTextDownstream(m_trailingWhitespace);    
