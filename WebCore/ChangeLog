@@ -26,7 +26,7 @@
         (WebCore::VisiblePosition::init): Put the code that chooses m_deepPosition into initDeepPosition.
         (WebCore::VisiblePosition::initDeepPosition): 
         Fixed a bug: don't fall through to the code that's only for positions inside unrendered space between blocks when
-        there's a candidate downstream() is a candidate.  Added a comment about why the fall through code is necessary.
+        downstream() is a candidate.  Added a comment about why the fall through code is necessary.
         * editing/VisiblePosition.h:
 
 2006-04-11  John Sullivan  <sullivan@apple.com>

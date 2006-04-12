@@ -15,7 +15,7 @@
         Use the editing library so the test can be run in slow motion.
         * editing/deleting/merge-unrendered-space.html:
         
-        Merges after pasted content no longer happen unnecessary.  These
+        Merges after pasted content no longer happen unnecessarily.  These
         tests used to do unnecessary merges that happened to move nodes
         that served as selection endpoints, which cleared the selection.
         So, you'll see changes to the selection change delegate calls.
