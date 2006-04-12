@@ -1,5 +1,10 @@
 2006-04-12  Darin Adler  <darin@apple.com>
 
+        * WebCore.xcodeproj/project.pbxproj: Turn SVG support back on.
+        I accidentally checked in this file with SVG off last night.
+
+2006-04-12  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * platform/TransferJobInternal.h: Declare HANDLE.
