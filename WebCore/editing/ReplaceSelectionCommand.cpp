@@ -797,33 +797,12 @@ void ReplaceSelectionCommand::doApply()
                 }
             }
         }
-
-        // FIXME: This is a bad way to move a paragraph.  This could share code with DeleteSelectionCommand::mergeParagraphs().
+        
         if (beyondEndNode) {
-            updateLayout();
-            RenderingInfoMap renderingInfo;
-            NodeVector nodes;
-            Node* node = beyondEndNode->enclosingInlineElement();
-            Node* refNode = m_lastNodeInserted.get();
-            
-            while (node) {
-                if (node->isBlockFlowOrBlockTable())
-                    break;
-                    
-                Node *next = node->nextSibling();
-                nodes.append(node);
-                renderingInfo.add(node, new RenderingInfo(styleForNode(node)));
-                removeNodeAndPruneAncestors(node);
-                // No need to update inserted node variables.
-                insertNodeAfter(node, refNode);
-                refNode = node;
-                // We want to move the first BR we see, so check for that here.
-                if (node->hasTagName(brTag))
-                    break;
-                node = next;
-            }
-
-            fixupNodeStyles(nodes, renderingInfo);
+            VisiblePosition startOfParagraphToMove(Position(beyondEndNode, 0));
+            VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove);
+            VisiblePosition destination(Position(m_lastNodeInserted->parentNode(), m_lastNodeInserted->nodeIndex() + 1));
+            moveParagraph(startOfParagraphToMove, endOfParagraphToMove, destination);
         }
     }
     

@@ -1,0 +1,13 @@
+<p>This tests one of the cases where it is necessary for paste to merge the last paragraph in the fragment being pasted with the content after the position where the paste will occur.</p>
+<div id="test" contenteditable="true"><span>foo</span></div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+e.focus();
+s.setPosition(e, 0);
+moveSelectionForwardByCharacterCommand();
+insertHTMLCommand("<div>bar</div>baz");
+</script>

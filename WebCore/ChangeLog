@@ -2,6 +2,17 @@
 
         Reviewed by harrison
         
+        Fixes more instances of:
+        <rdar://problem/3950559>
+        CrashTracer: 2116 crashes in Mail at com.apple.WebCore: khtml::CompositeEditCommand::insertNodeAfter + 32
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Do paragraph merging using moveParagraphs.
+
+2006-04-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
         Some setup for work on paste performance.
 
         * editing/CompositeEditCommand.cpp:
