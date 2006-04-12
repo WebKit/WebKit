@@ -352,9 +352,10 @@ static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLay
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     l->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
     
-    // Ensure our z-order lists are up-to-date.
+    // Ensure our lists are up-to-date.
     l->updateZOrderLists();
-
+    l->updateOverflowList();
+    
     bool shouldPaint = l->intersectsDamageRect(layerBounds, damageRect);
     Vector<RenderLayer*>* negList = l->negZOrderList();
     if (shouldPaint && negList && negList->size() > 0)
@@ -367,6 +368,12 @@ static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLay
 
     if (shouldPaint)
         write(ts, *l, layerBounds, damageRect, clipRectToApply, outlineRect, negList && negList->size() > 0, indent);
+
+    Vector<RenderLayer*>* overflowList = l->overflowList();
+    if (overflowList) {
+        for (unsigned i = 0; i != overflowList->size(); ++i)
+            writeLayers(ts, rootLayer, overflowList->at(i), paintDirtyRect, indent);
+    }
 
     Vector<RenderLayer*>* posList = l->posZOrderList();
     if (posList) {

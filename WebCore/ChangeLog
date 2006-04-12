@@ -1,3 +1,27 @@
+2006-04-12  David Hyatt  <hyatt@apple.com>
+
+        Fix for 5283, make sure overflow doesn't paint on top of positioned elements.
+
+        Reviewed by beth
+
+        * kwq/RenderTreeAsText.cpp:
+        (writeLayers):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::dirtyOverflowList):
+        (WebCore::RenderLayer::updateOverflowList):
+        (WebCore::RenderLayer::collectLayers):
+        (WebCore::RenderLayer::shouldBeOverflowOnly):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isOverflowOnly):
+        (WebCore::RenderLayer::overflowList):
+
 2006-04-12  Darin Adler  <darin@apple.com>
 
         * WebCore.xcodeproj/project.pbxproj: Turn SVG support back on.
