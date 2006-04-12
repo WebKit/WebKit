@@ -26,6 +26,7 @@
 #ifndef render_object_h
 #define render_object_h
 
+#include "CachedObjectClient.h"
 #include "KWQScrollBar.h"
 #include "VisiblePosition.h"
 #include "render_style.h"

@@ -1,5 +1,12 @@
 2006-04-11  Darin Adler  <darin@apple.com>
 
+        - try to fix no-SVG build
+
+        * kwq/RenderTreeAsText.cpp: Added back an include only needed for non-SVG.
+        * rendering/RenderObject.h: Ditto.
+
+2006-04-11  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * ForwardingHeaders/kxmlcore/HashForward.h: Removed.

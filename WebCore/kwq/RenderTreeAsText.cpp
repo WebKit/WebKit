@@ -35,6 +35,7 @@
 #include "RenderTableCell.h"
 #include "SelectionController.h"
 #include "render_replaced.h"
+#include <kxmlcore/Vector.h>
 
 #if SVG_SUPPORT
 #include "KCanvasTreeDebug.h"
