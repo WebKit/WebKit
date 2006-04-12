@@ -255,8 +255,7 @@ bool execForeColor(Frame *frame, bool userInterface, const String &value)
 bool execInsertHorizontalRule(Frame* frame, bool userInterface, const String& value)
 {
     RefPtr<HTMLElement> hr = new HTMLElement(hrTag, frame->document());
-    if (!value.isEmpty())
-        hr->setId(value);
+    hr->setId(value);
     RefPtr<DocumentFragment> fragment = new DocumentFragment(frame->document());
     ExceptionCode ec = 0;
     fragment->appendChild(hr, ec);
