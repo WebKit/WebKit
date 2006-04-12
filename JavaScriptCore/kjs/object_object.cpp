@@ -168,48 +168,26 @@ bool ObjectObjectImp::implementsConstruct() const
 }
 
 // ECMA 15.2.2
-JSObject *ObjectObjectImp::construct(ExecState *exec, const List &args)
+JSObject* ObjectObjectImp::construct(ExecState* exec, const List& args)
 {
-  // if no arguments have been passed ...
-  if (args.isEmpty()) {
-    JSObject *proto = exec->lexicalInterpreter()->builtinObjectPrototype();
-    JSObject *result(new JSObject(proto));
-    return result;
-  }
-
-  JSValue *arg = *(args.begin());
-  if (JSObject *obj = arg->getObject())
-    return obj;
-
+  JSValue* arg = args[0];
   switch (arg->type()) {
   case StringType:
   case BooleanType:
   case NumberType:
-    return arg->toObject(exec);
-  default:
-    assert(!"unhandled switch case in ObjectConstructor");
+  case ObjectType:
+      return arg->toObject(exec);
   case NullType:
   case UndefinedType:
-    return new JSObject(exec->lexicalInterpreter()->builtinObjectPrototype());
+      return new JSObject(exec->lexicalInterpreter()->builtinObjectPrototype());
+  default:
+      ASSERT_NOT_REACHED();
+      return 0;
   }
 }
 
-JSValue *ObjectObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
+JSValue* ObjectObjectImp::callAsFunction(ExecState* exec, JSObject* /*thisObj*/, const List &args)
 {
-  JSValue *result;
-
-  List argList;
-  // Construct a new Object
-  if (args.isEmpty()) {
-    result = construct(exec,argList);
-  } else {
-    JSValue *arg = args[0];
-    if (arg->isUndefinedOrNull()) {
-      argList.append(arg);
-      result = construct(exec,argList);
-    } else
-      result = arg->toObject(exec);
-  }
-  return result;
+    return construct(exec, args);
 }
 

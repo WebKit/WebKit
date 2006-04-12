@@ -1,3 +1,13 @@
+2006-04-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        Minor code cleanup -- passes all the JS tests.
+
+        * kjs/object_object.cpp:
+        (ObjectObjectImp::construct):
+        (ObjectObjectImp::callAsFunction):
+
 2006-04-11  Darin Adler  <darin@apple.com>
 
         - another attempt to fix Windows build -- Vector in Forward.h was not working
