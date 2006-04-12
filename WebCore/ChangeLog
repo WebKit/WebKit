@@ -1,3 +1,18 @@
+2006-04-12  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Hyatt.
+
+        - moved xsl files into xml directory, removed xbl files (for now)
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for new locations.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * khtml/xbl: Removed.
+        * khtml/xsl: Removed.
+        * xml/XSLStyleSheet.cpp: Added.
+        * xml/XSLStyleSheet.h: Added.
+        * xml/XSLTProcessor.cpp: Added.
+        * xml/XSLTProcessor.h: Added.
+
 2006-04-12  David Hyatt  <hyatt@apple.com>
 
         Fix for 5283, make sure overflow doesn't paint on top of positioned elements.

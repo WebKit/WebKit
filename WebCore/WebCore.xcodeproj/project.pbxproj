@@ -398,13 +398,6 @@
 		93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* BlockExceptions.h */; settings = {ATTRIBUTES = (); }; };
 		93F199BF08245E59001E9ABC /* WebCoreGraphicsBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199C508245E59001E9ABC /* xbl_binding_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC41978E059293F30016347F /* xbl_binding_manager.h */; };
-		93F199C608245E59001E9ABC /* xbl_docimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */; };
-		93F199C708245E59001E9ABC /* xbl_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD990DD0594B9FC00AB848D /* xbl_tokenizer.h */; };
-		93F199C808245E59001E9ABC /* xbl_protobinding.h in Headers */ = {isa = PBXBuildFile; fileRef = BC74596305954CC80058C893 /* xbl_protobinding.h */; };
-		93F199C908245E59001E9ABC /* xbl_protohandler.h in Headers */ = {isa = PBXBuildFile; fileRef = BC745A1B05955F390058C893 /* xbl_protohandler.h */; };
-		93F199CA08245E59001E9ABC /* xbl_protoimplementation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBDB0380597B36E00B83B92 /* xbl_protoimplementation.h */; };
-		93F199CB08245E59001E9ABC /* xbl_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBDB094059A28B100B83B92 /* xbl_binding.h */; };
 		93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* AtomicStringList.h */; };
 		93F199D508245E59001E9ABC /* KWQEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */; };
 		93F199DE08245E59001E9ABC /* Position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* Position.h */; };
@@ -482,13 +475,6 @@
 		93F19AE308245E59001E9ABC /* WebCoreGraphicsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */; };
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
 		93F19AE608245E59001E9ABC /* KWQKSSLKeyGen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* KWQKSSLKeyGen.mm */; };
-		93F19AE808245E59001E9ABC /* xbl_binding_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC419795059294CA0016347F /* xbl_binding_manager.cpp */; };
-		93F19AE908245E59001E9ABC /* xbl_docimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEACC8E0592E0AD009D6AEF /* xbl_docimpl.cpp */; };
-		93F19AEA08245E59001E9ABC /* xbl_tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD990D90594B9E500AB848D /* xbl_tokenizer.cpp */; };
-		93F19AEB08245E59001E9ABC /* xbl_protobinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC74596205954CC80058C893 /* xbl_protobinding.cpp */; };
-		93F19AEC08245E59001E9ABC /* xbl_protohandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC745A1A05955F380058C893 /* xbl_protohandler.cpp */; };
-		93F19AED08245E59001E9ABC /* xbl_protoimplementation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBDB0370597B36E00B83B92 /* xbl_protoimplementation.cpp */; };
-		93F19AEE08245E59001E9ABC /* xbl_binding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBDB093059A28B100B83B92 /* xbl_binding.cpp */; };
 		93F19AF708245E59001E9ABC /* KWQEditCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = BEF7EEA105FF8F0D009717EE /* KWQEditCommand.mm */; };
 		93F19AF808245E59001E9ABC /* Position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE91FC8C06133666005E3790 /* Position.cpp */; };
 		93F19AFA08245E59001E9ABC /* KWQSlider.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC86FB8E061F5C23006BB822 /* KWQSlider.mm */; };
@@ -2207,8 +2193,6 @@
 		BC1A37AB097C715F0019F3D8 /* DOMViews.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMViews.mm; sourceTree = "<group>"; };
 		BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMViewsInternal.h; sourceTree = "<group>"; };
 		BC3B364705C9D5E200E42902 /* AtomicStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC41978E059293F30016347F /* xbl_binding_manager.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xbl_binding_manager.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC419795059294CA0016347F /* xbl_binding_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xbl_binding_manager.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC6B7BAE0993603C0052867B /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
 		BC6B7ECE0998AC7F0052867B /* ImageSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageSource.h; sourceTree = "<group>"; };
 		BC6D6DD009AF906600F59759 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
@@ -2221,10 +2205,6 @@
 		BC73E3180978AFFB00EDFF8A /* IntPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IntPoint.h; sourceTree = "<group>"; };
 		BC73E3900978CED700EDFF8A /* FloatPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint.cpp; sourceTree = "<group>"; };
 		BC73E3910978CED700EDFF8A /* FloatPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint.h; sourceTree = "<group>"; };
-		BC74596205954CC80058C893 /* xbl_protobinding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xbl_protobinding.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC74596305954CC80058C893 /* xbl_protobinding.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xbl_protobinding.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC745A1A05955F380058C893 /* xbl_protohandler.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xbl_protohandler.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC745A1B05955F390058C893 /* xbl_protohandler.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xbl_protohandler.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF80450824100A8000F /* KWQScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7B2AF90450824100A8000F /* KWQScrollBar.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQScrollBar.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC86FB8D061F5C23006BB822 /* KWQSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQSlider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2259,10 +2239,6 @@
 		BCB16C140979C3BD00467741 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		BCB16C150979C3BD00467741 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Request.cpp; sourceTree = "<group>"; };
 		BCB16C160979C3BD00467741 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
-		BCBDB0370597B36E00B83B92 /* xbl_protoimplementation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xbl_protoimplementation.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BCBDB0380597B36E00B83B92 /* xbl_protoimplementation.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xbl_protoimplementation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BCBDB093059A28B100B83B92 /* xbl_binding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xbl_binding.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BCBDB094059A28B100B83B92 /* xbl_binding.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xbl_binding.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontFamilyMac.mm; sourceTree = "<group>"; };
 		BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontFamily.cpp; sourceTree = "<group>"; };
 		BCC47E2509A3D6F100ADB771 /* FontFamily.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontFamily.h; sourceTree = "<group>"; };
@@ -2273,8 +2249,6 @@
 		BCC8D1710988301200140BF2 /* Pen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Pen.cpp; sourceTree = "<group>"; };
 		BCC8D1720988301200140BF2 /* Pen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Pen.h; sourceTree = "<group>"; };
 		BCD75ABB0989A446003E28DF /* Image.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
-		BCD990D90594B9E500AB848D /* xbl_tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xbl_tokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BCD990DD0594B9FC00AB848D /* xbl_tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xbl_tokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEA477A097CAAC80094C9E4 /* css_base.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = css_base.cpp; sourceTree = "<group>"; };
 		BCEA477B097CAAC80094C9E4 /* css_base.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = css_base.h; sourceTree = "<group>"; };
 		BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
@@ -2356,8 +2330,6 @@
 		BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrowserExtension.h; sourceTree = "<group>"; };
 		BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrowserExtensionMac.h; sourceTree = "<group>"; };
 		BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserExtensionMac.mm; sourceTree = "<group>"; };
-		BCEACC8E0592E0AD009D6AEF /* xbl_docimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xbl_docimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xbl_docimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEB377209B7BA3900CB38B1 /* FontMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontMac.mm; sourceTree = "<group>"; };
 		BCEB377509B7BB0D00CB38B1 /* FontDataSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontDataSet.h; sourceTree = "<group>"; };
 		BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3609,17 +3581,6 @@
 			path = filters;
 			sourceTree = "<group>";
 		};
-		BC06F24406D18A35004A6FA3 /* xsl */ = {
-			isa = PBXGroup;
-			children = (
-				BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */,
-				BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */,
-				BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */,
-				BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */,
-			);
-			path = xsl;
-			sourceTree = "<group>";
-		};
 		BC1A3790097C6F970019F3D8 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
@@ -3696,27 +3657,6 @@
 				BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */,
 			);
 			path = objc;
-			sourceTree = "<group>";
-		};
-		BC41978B059293BE0016347F /* xbl */ = {
-			isa = PBXGroup;
-			children = (
-				BCBDB093059A28B100B83B92 /* xbl_binding.cpp */,
-				BCBDB094059A28B100B83B92 /* xbl_binding.h */,
-				BC419795059294CA0016347F /* xbl_binding_manager.cpp */,
-				BC41978E059293F30016347F /* xbl_binding_manager.h */,
-				BCEACC8E0592E0AD009D6AEF /* xbl_docimpl.cpp */,
-				BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */,
-				BC74596205954CC80058C893 /* xbl_protobinding.cpp */,
-				BC74596305954CC80058C893 /* xbl_protobinding.h */,
-				BC745A1A05955F380058C893 /* xbl_protohandler.cpp */,
-				BC745A1B05955F390058C893 /* xbl_protohandler.h */,
-				BCBDB0370597B36E00B83B92 /* xbl_protoimplementation.cpp */,
-				BCBDB0380597B36E00B83B92 /* xbl_protoimplementation.h */,
-				BCD990D90594B9E500AB848D /* xbl_tokenizer.cpp */,
-				BCD990DD0594B9FC00AB848D /* xbl_tokenizer.h */,
-			);
-			path = xbl;
 			sourceTree = "<group>";
 		};
 		BCB16BFB0979C38700467741 /* loader */ = {
@@ -3851,6 +3791,10 @@
 			children = (
 				E1F0424409839389006694EA /* xmlhttprequest.cpp */,
 				E1F0424509839389006694EA /* xmlhttprequest.h */,
+				BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */,
+				BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */,
+				BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */,
+				BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */,
 			);
 			path = xml;
 			sourceTree = "<group>";
@@ -3891,8 +3835,6 @@
 			isa = PBXGroup;
 			children = (
 				F523D29C02DE43D9018635CA /* misc */,
-				BC41978B059293BE0016347F /* xbl */,
-				BC06F24406D18A35004A6FA3 /* xsl */,
 			);
 			path = khtml;
 			sourceTree = "<group>";
@@ -4254,13 +4196,6 @@
 				93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */,
 				93F199BF08245E59001E9ABC /* WebCoreGraphicsBridge.h in Headers */,
 				93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */,
-				93F199C508245E59001E9ABC /* xbl_binding_manager.h in Headers */,
-				93F199C608245E59001E9ABC /* xbl_docimpl.h in Headers */,
-				93F199C708245E59001E9ABC /* xbl_tokenizer.h in Headers */,
-				93F199C808245E59001E9ABC /* xbl_protobinding.h in Headers */,
-				93F199C908245E59001E9ABC /* xbl_protohandler.h in Headers */,
-				93F199CA08245E59001E9ABC /* xbl_protoimplementation.h in Headers */,
-				93F199CB08245E59001E9ABC /* xbl_binding.h in Headers */,
 				93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */,
 				93F199D508245E59001E9ABC /* KWQEditCommand.h in Headers */,
 				93F199DE08245E59001E9ABC /* Position.h in Headers */,
@@ -4994,13 +4929,6 @@
 				93F19AE308245E59001E9ABC /* WebCoreGraphicsBridge.m in Sources */,
 				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
 				93F19AE608245E59001E9ABC /* KWQKSSLKeyGen.mm in Sources */,
-				93F19AE808245E59001E9ABC /* xbl_binding_manager.cpp in Sources */,
-				93F19AE908245E59001E9ABC /* xbl_docimpl.cpp in Sources */,
-				93F19AEA08245E59001E9ABC /* xbl_tokenizer.cpp in Sources */,
-				93F19AEB08245E59001E9ABC /* xbl_protobinding.cpp in Sources */,
-				93F19AEC08245E59001E9ABC /* xbl_protohandler.cpp in Sources */,
-				93F19AED08245E59001E9ABC /* xbl_protoimplementation.cpp in Sources */,
-				93F19AEE08245E59001E9ABC /* xbl_binding.cpp in Sources */,
 				93F19AF708245E59001E9ABC /* KWQEditCommand.mm in Sources */,
 				93F19AF808245E59001E9ABC /* Position.cpp in Sources */,
 				93F19AFA08245E59001E9ABC /* KWQSlider.mm in Sources */,
