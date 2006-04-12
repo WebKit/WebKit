@@ -1,3 +1,16 @@
+2006-04-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8335>
+        Implement execCommand(InsertHorizontalRule)
+
+        * editing/deleting/merge-unrendered-space.html:
+        * editing/execCommand/insertHorizontalRule-expected.checksum: Added.
+        * editing/execCommand/insertHorizontalRule-expected.png: Added.
+        * editing/execCommand/insertHorizontalRule-expected.txt: Added.
+        * editing/execCommand/insertHorizontalRule.html: Added.
+
 2006-04-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

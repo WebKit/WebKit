@@ -1,3 +1,12 @@
+2006-04-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8335>
+        Implement execCommand(InsertHorizontalRule)
+
+        * editing/JSEditor.cpp:
+
 2006-04-12  Darin Adler  <darin@apple.com>
 
         Rubber-stamped by Hyatt.
