@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+</head>
+<body>
+<p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=8337">Bugzilla bug 8337</a> Incomplete repaint of inlines&rsquo; outline during editing</p>
+
+<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
+Place the insertion point at the end of the outlined text below and press the Delete key 9 times.
+</p>
+
+<p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
+The words &ldquo;sit amet&rdquo; will be deleted, and the blue outline will shrink to
+surround only the remaining text, without leaving behind any trails or other artifacts.
+</p>
+
+<p id="failure" style="background-color:#FF3300; padding:3px;"><b>TEST FAIL:</b>  
+As the words &ldquo;sit amet&rdquo; will be deleted, the blue outline will leave
+trails behind as it shrinks to fit the remaining text.
+</p>
+
+<div contenteditable style="width: 100px; outline: none;">
+<span style="outline: blue solid;">Lorem ipsum dolor sit amet&nbsp;</span>
+</div>
+
+</body>
+</html>

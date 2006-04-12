@@ -549,8 +549,10 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
     if (!didFullRepaint && !repaintRect.isEmpty()) {
         RenderCanvas* c = canvas();
-        if (c && c->view())
+        if (c && c->view()) {
+            repaintRect.inflate(maximalOutlineSize(PaintPhaseOutline));
             c->view()->addRepaintInfo(this, repaintRect); // We need to do a partial repaint of our content.
+        }
     }
     setNeedsLayout(false);
 }

@@ -1,3 +1,15 @@
+2006-04-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8337
+          Incomplete repaint of inlines' outline during editing
+
+        * manual-tests/inline-outline-repaint.html: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Add the maximal outline width to the
+        inlines' repaint rect.
+
 2006-04-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
