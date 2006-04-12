@@ -1,5 +1,13 @@
 2006-04-11  Darin Adler  <darin@apple.com>
 
+        - another attempt to fix Windows build -- Vector in Forward.h was not working
+
+        * kxmlcore/Forward.h: Remove Vector.
+        * kxmlcore/Vector.h: Add back default arguments, remove include of
+        Forward.h.
+
+2006-04-11  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build -- HashForward.h was not working
 
         * kxmlcore/HashForward.h: Removed.

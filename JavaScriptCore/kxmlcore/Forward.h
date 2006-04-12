@@ -29,7 +29,6 @@ namespace KXMLCore {
     template<typename T> class OwnPtr;
     template<typename T> class PassRefPtr;
     template<typename T> class RefPtr;
-    template<typename T, size_t inlineCapacity = 0> class Vector;
 }
 
 using KXMLCore::ListRefPtr;
@@ -37,6 +36,5 @@ using KXMLCore::OwnArrayPtr;
 using KXMLCore::OwnPtr;
 using KXMLCore::PassRefPtr;
 using KXMLCore::RefPtr;
-using KXMLCore::Vector;
 
 #endif

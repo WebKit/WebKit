@@ -26,8 +26,8 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include <kxmlcore/Forward.h>
 #include <kxmlcore/Noncopyable.h>
+#include <kxmlcore/Vector.h>
 
 namespace WebCore {
 

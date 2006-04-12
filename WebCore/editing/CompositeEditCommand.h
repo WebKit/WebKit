@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __composite_edit_command_h__
-#define __composite_edit_command_h__
+#ifndef composite_edit_command_h__
+#define composite_edit_command_h__
 
 #include "EditCommand.h"
-#include "qvaluelist.h"
+#include "css_valueimpl.h"
 
 namespace WebCore {
     class CSSStyleDeclaration;

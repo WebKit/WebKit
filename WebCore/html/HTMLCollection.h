@@ -28,6 +28,7 @@
 #include "Shared.h"
 #include <kxmlcore/Forward.h>
 #include <kxmlcore/HashMap.h>
+#include <kxmlcore/Vector.h>
 
 template <typename T> class DeprecatedValueList;
 

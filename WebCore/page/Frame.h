@@ -37,6 +37,7 @@
 #include "EditAction.h"
 #include "TextAffinity.h"
 #include "TextGranularity.h"
+#include <kxmlcore/Vector.h>
 #include <qscrollbar.h>
 
 class KHTMLSettings;

@@ -1,5 +1,17 @@
 2006-04-11  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * html/HTMLCollection.h: Add back include of Vector.h.
+        * page/Frame.h: Ditto.
+        * platform/Timer.h: Ditto.
+
+        - more changes for no-SVG (not working yet though)
+
+        * editing/CompositeEditCommand.h: Added css_valueimpl.h include.
+
+2006-04-11  Darin Adler  <darin@apple.com>
+
         - try to fix no-SVG build
 
         * kwq/RenderTreeAsText.cpp: Added back an include only needed for non-SVG.
