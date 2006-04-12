@@ -51,18 +51,6 @@ layer at (15,295) size 115x45 clip at (25,295) size 100x30 scrollWidth 188
     RenderBlock {DIV} at (10,0) size 100x18 [bgcolor=#D3D3D3]
       RenderText {TEXT} at (0,0) size 188x18
         text run at (0,0) width 188: "abcdefghijklmnopqrstuvwxyz"
-layer at (15,344) size 115x45 clip at (25,344) size 100x45
-  RenderBlock (relative positioned) {DIV} at (5,152) size 115x45 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000)]
-layer at (71,364) size 8x4
-  RenderBlock (positioned) {DIV} at (56,20) size 8x4 [bgcolor=#0000FF]
-layer at (-25,344) size 70x20 backgroundClip at (25,344) size 100x45 clip at (25,344) size 100x45 outlineClip at (25,344) size 100x45
-  RenderBlock (positioned) {DIV} at (-40,0) size 70x20 [bgcolor=#808000]
-layer at (15,393) size 115x45 clip at (25,393) size 100x30 scrollWidth 150
-  RenderBlock (relative positioned) {DIV} at (5,201) size 115x45 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000)]
-layer at (71,413) size 8x4
-  RenderBlock (positioned) {DIV} at (56,20) size 8x4 [bgcolor=#0000FF]
-layer at (105,393) size 70x20 backgroundClip at (25,393) size 100x30 clip at (25,393) size 100x30 outlineClip at (25,393) size 100x30
-  RenderBlock (positioned) {DIV} at (90,0) size 70x20 [bgcolor=#808000]
 layer at (142,197) size 115x45 clip at (147,197) size 100x30 scrollX 88 scrollWidth 188
   RenderBlock {DIV} at (5,5) size 115x45 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000)]
     RenderText {TEXT} at (-83,0) size 188x18
@@ -77,6 +65,18 @@ layer at (142,295) size 115x45 clip at (147,295) size 100x30 scrollX 88 scrollWi
     RenderBlock {DIV} at (5,0) size 100x18 [bgcolor=#D3D3D3]
       RenderText {TEXT} at (-88,0) size 188x18
         text run at (-88,0) width 188: "zyxwvutsrqponmlkjihgfedcba"
+layer at (15,344) size 115x45 clip at (25,344) size 100x45
+  RenderBlock (relative positioned) {DIV} at (5,152) size 115x45 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000)]
+layer at (71,364) size 8x4
+  RenderBlock (positioned) {DIV} at (56,20) size 8x4 [bgcolor=#0000FF]
+layer at (-25,344) size 70x20 backgroundClip at (25,344) size 100x45 clip at (25,344) size 100x45 outlineClip at (25,344) size 100x45
+  RenderBlock (positioned) {DIV} at (-40,0) size 70x20 [bgcolor=#808000]
+layer at (15,393) size 115x45 clip at (25,393) size 100x30 scrollWidth 150
+  RenderBlock (relative positioned) {DIV} at (5,201) size 115x45 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000)]
+layer at (71,413) size 8x4
+  RenderBlock (positioned) {DIV} at (56,20) size 8x4 [bgcolor=#0000FF]
+layer at (105,393) size 70x20 backgroundClip at (25,393) size 100x30 clip at (25,393) size 100x30 outlineClip at (25,393) size 100x30
+  RenderBlock (positioned) {DIV} at (90,0) size 70x20 [bgcolor=#808000]
 layer at (142,344) size 115x45 clip at (147,344) size 100x45
   RenderBlock (relative positioned) {DIV} at (5,152) size 115x45 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000)]
 layer at (193,364) size 8x4
