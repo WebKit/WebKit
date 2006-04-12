@@ -1,3 +1,9 @@
+2006-04-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by Tim H.
+
+        * Scripts/update-webkit: Make this return non-zero when svn fails.
+
 2006-04-10  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

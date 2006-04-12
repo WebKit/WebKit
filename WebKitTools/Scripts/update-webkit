@@ -42,10 +42,10 @@ $svnoptions = '-q' if $quiet;
 
 chdirWebKit();
 print "Updating OpenSource\n" unless $quiet;
-system "svn $svnoptions up";
+(system("svn $svnoptions up") == 0) or die;
 
 if (-x "../Internal") {
     chdir("../Internal");
     print "Updating Internal\n" unless $quiet;
-    system "svn $svnoptions up";
+    (system("svn $svnoptions up") == 0) or die;
 }
