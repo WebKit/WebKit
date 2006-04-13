@@ -1615,8 +1615,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
             break;
         case WebBridgeSelectByCharacter:
         case WebBridgeSelectByWord:
+        case WebBridgeSelectBySentence:
         case WebBridgeSelectToLineBoundary:
         case WebBridgeSelectToParagraphBoundary:
+        case WebBridgeSelectToSentenceBoundary:
         case WebBridgeSelectToDocumentBoundary:
             break;
     }

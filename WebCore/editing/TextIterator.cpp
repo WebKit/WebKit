@@ -30,11 +30,12 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
-
-// FIXME: These classes should probably use the render tree and not the DOM tree, since elements could
-// be hidden using CSS, or additional generated content could be added.  For now, we just make sure
-// text objects walk their renderers' InlineTextBox objects, so that we at least get the whitespace 
-// stripped out properly and obey CSS visibility for text runs.
+#include "htmlediting.h"
+#include "InlineTextBox.h"
+#include "Position.h"
+#include "Range.h"
+#include "RenderTableCell.h"
+#include "RenderTableRow.h"
 
 namespace WebCore {
 
@@ -349,33 +350,122 @@ bool TextIterator::handleReplacedElement()
     return true;
 }
 
+static bool isTableCell(Node* node)
+{
+    RenderObject* r = node->renderer();
+    if (!r)
+        return node->hasTagName(tdTag) || node->hasTagName(thTag);
+    
+    return r->isTableCell();
+}
+
+static bool shouldEmitTabBeforeNode(Node* node)
+{
+    // Table cells are delimited by tabs.
+    if (!isTableCell(node))
+        return false;
+    
+    // Want a tab before every cell other than the first one
+    RenderObject* r = node->renderer();
+    RenderTableCell* rc = static_cast<RenderTableCell*>(r);
+    RenderTable* t = rc->table();
+    return t && (t->cellBefore(rc) || t->cellAbove(rc));
+}
+
+static bool shouldEmitNewlineForNode(Node* node)
+{
+    // br elements are represented by a single newline.
+    RenderObject* r = node->renderer();
+    if (!r)
+        return node->hasTagName(brTag);
+        
+    return r->isBR();
+}
+
+static bool shouldEmitNewlinesBeforeAndAfterNode(Node* node)
+{
+    // Block flow (versus inline flow) is represented by having
+    // a newline both before and after the element.
+    RenderObject* r = node->renderer();
+    if (!r) {
+        return (node->hasTagName(blockquoteTag)
+                || node->hasTagName(ddTag)
+                || node->hasTagName(divTag)
+                || node->hasTagName(dlTag)
+                || node->hasTagName(dtTag)
+                || node->hasTagName(h1Tag)
+                || node->hasTagName(h2Tag)
+                || node->hasTagName(h3Tag)
+                || node->hasTagName(h4Tag)
+                || node->hasTagName(h5Tag)
+                || node->hasTagName(h6Tag)
+                || node->hasTagName(hrTag)
+                || node->hasTagName(liTag)
+                || node->hasTagName(listingTag)
+                || node->hasTagName(olTag)
+                || node->hasTagName(pTag)
+                || node->hasTagName(preTag)
+                || node->hasTagName(trTag)
+                || node->hasTagName(ulTag));
+    }
+
+    // Need to make an exception for table cells, because they are blocks, but we
+    // want them tab-delimited rather than having newlines before and after.
+    if (isTableCell(node))
+        return false;
+    
+    // Need to make an exception for table row elements, because they are neither
+    // "inline" or "RenderBlock", but we want newlines for them.
+    if (r->isTableRow()) {
+        RenderTable* t = static_cast<RenderTableRow*>(r)->table();
+        if (t && !t->isInline())
+            return true;
+    }
+    
+    // Check for non-inline block
+    return !r->isInline() && r->isRenderBlock() && !r->isBody();
+}
+
+static bool shouldEmitExtraNewlineForNode(Node* node)
+{
+    // When there is a significant collapsed bottom margin, emit an extra
+    // newline for a more realistic result.  We end up getting the right
+    // result even without margin collapsing. For example: <div><p>text</p></div>
+    // will work right even if both the <div> and the <p> have bottom margins.
+    RenderObject* r = node->renderer();
+    if (!r)
+        return false;
+    
+    // NOTE: We only do this for a select set of nodes, and fwiw WinIE appears
+    // not to do this at all
+    if (node->hasTagName(h1Tag)
+        || node->hasTagName(h2Tag)
+        || node->hasTagName(h3Tag)
+        || node->hasTagName(h4Tag)
+        || node->hasTagName(h5Tag)
+        || node->hasTagName(h6Tag)
+        || node->hasTagName(pTag)) {
+        RenderStyle* style = r->style();
+        if (style) {
+            int bottomMargin = r->collapsedMarginBottom();
+            int fontSize = style->fontDescription().computedPixelSize();
+            if (bottomMargin * 2 >= fontSize)
+                return true;
+        }
+    }
+    
+    return false;
+}
+
 bool TextIterator::handleNonTextNode()
 {
-    if (m_node->hasTagName(brTag)) {
+    if (shouldEmitNewlineForNode(m_node)) {
         emitCharacter('\n', m_node->parentNode(), m_node, 0, 1);
-    } else if (m_node->hasTagName(tdTag) || m_node->hasTagName(thTag)) {
-        if (m_lastCharacter != '\n' && m_lastTextNode)
+    } else if (m_lastCharacter != '\n' && m_lastTextNode) {
+        // only add the tab or newline if not at the start of a line
+        if (shouldEmitTabBeforeNode(m_node))
             emitCharacter('\t', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
-    } else if (m_node->hasTagName(blockquoteTag)
-                || m_node->hasTagName(ddTag)
-                || m_node->hasTagName(divTag)
-                || m_node->hasTagName(dlTag)
-                || m_node->hasTagName(dtTag)
-                || m_node->hasTagName(h1Tag)
-                || m_node->hasTagName(h2Tag)
-                || m_node->hasTagName(h3Tag)
-                || m_node->hasTagName(h4Tag)
-                || m_node->hasTagName(h5Tag)
-                || m_node->hasTagName(h6Tag)
-                || m_node->hasTagName(hrTag)
-                || m_node->hasTagName(liTag)
-                || m_node->hasTagName(listingTag)
-                || m_node->hasTagName(olTag)
-                || m_node->hasTagName(pTag)
-                || m_node->hasTagName(preTag) 
-                || m_node->hasTagName(trTag)
-                || m_node->hasTagName(ulTag)) {
-        if (m_lastCharacter != '\n' && m_lastTextNode)
+        else if (shouldEmitNewlinesBeforeAndAfterNode(m_node))
             emitCharacter('\n', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
     }
 
@@ -384,57 +474,15 @@ bool TextIterator::handleNonTextNode()
 
 void TextIterator::exitNode()
 {
-    bool endLine = false;
-    bool addNewline = false;
-
-    if (m_node->hasTagName(blockquoteTag)
-            || m_node->hasTagName(ddTag)
-            || m_node->hasTagName(divTag)
-            || m_node->hasTagName(dlTag)
-            || m_node->hasTagName(dtTag)
-            || m_node->hasTagName(hrTag)
-            || m_node->hasTagName(liTag)
-            || m_node->hasTagName(listingTag)
-            || m_node->hasTagName(olTag)
-            || m_node->hasTagName(preTag)
-            || m_node->hasTagName(trTag)
-            || m_node->hasTagName(ulTag))
-        endLine = true;
-    else if (m_node->hasTagName(h1Tag)
-            || m_node->hasTagName(h2Tag)
-            || m_node->hasTagName(h3Tag)
-            || m_node->hasTagName(h4Tag)
-            || m_node->hasTagName(h5Tag)
-            || m_node->hasTagName(h6Tag)
-            || m_node->hasTagName(pTag)) {
-        endLine = true;
-
-        // In certain cases, emit a new newline character for this node
-        // regardless of whether we emit another one.
-        // FIXME: Some day we could do this for other tags.
-        // However, doing it just for the tags above makes it more likely
-        // we'll end up getting the right result without margin collapsing.
-        // For example: <div><p>text</p></div> will work right even if both
-        // the <div> and the <p> have bottom margins.
-        RenderObject *renderer = m_node->renderer();
-        if (renderer) {
-            RenderStyle *style = renderer->style();
-            if (style) {
-                int bottomMargin = renderer->collapsedMarginBottom();
-                int fontSize = style->fontDescription().computedPixelSize();
-                if (bottomMargin * 2 >= fontSize)
-                    addNewline = true;
-            }
-        }
-    }
-
-    // emit character(s) iff there is an earlier text node and we need at least one newline
-    if (m_lastTextNode && endLine) {
+    if (m_lastTextNode && shouldEmitNewlinesBeforeAndAfterNode(m_node)) {
+        // use extra newline to represent margin bottom, as needed
+        bool addNewline = shouldEmitExtraNewlineForNode(m_node);
+        
         if (m_lastCharacter != '\n') {
             // insert a newline with a position following this block
             emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
 
-            //...and, if needed, set flag to later add a newline for the current node
+            // remember whether to later add a newline for the current node
             assert(!m_needAnotherNewline);
             m_needAnotherNewline = addNewline;
         } else if (addNewline) {
@@ -596,7 +644,7 @@ void SimplifiedBackwardsTextIterator::advance()
             if (block) {
                 Node *nextBlock = next->enclosingBlockFlowElement();
                 if (nextBlock && nextBlock->isAncestor(block))
-                    emitNewlineForBROrText();
+                    emitNewline();
             }
         }
         
@@ -652,44 +700,23 @@ bool SimplifiedBackwardsTextIterator::handleReplacedElement()
 }
 
 bool SimplifiedBackwardsTextIterator::handleNonTextNode()
-{
-    if (m_node->hasTagName(brTag))
-        emitNewlineForBROrText();
-    else if (m_node->hasTagName(blockquoteTag)
-            || m_node->hasTagName(ddTag)
-            || m_node->hasTagName(divTag)
-            || m_node->hasTagName(dlTag)
-            || m_node->hasTagName(dtTag)
-            || m_node->hasTagName(h1Tag)
-            || m_node->hasTagName(h2Tag)
-            || m_node->hasTagName(h3Tag)
-            || m_node->hasTagName(h4Tag)
-            || m_node->hasTagName(h5Tag)
-            || m_node->hasTagName(h6Tag)
-            || m_node->hasTagName(hrTag)
-            || m_node->hasTagName(liTag)
-            || m_node->hasTagName(listingTag)
-            || m_node->hasTagName(olTag)
-            || m_node->hasTagName(pTag)
-            || m_node->hasTagName(preTag)
-            || m_node->hasTagName(tdTag)
-            || m_node->hasTagName(thTag)
-            || m_node->hasTagName(trTag)
-            || m_node->hasTagName(ulTag)) {
-        // Emit a space to "break up" content. Any word break
-        // character will do.
-        emitCharacter(' ', m_node, 0, 0);
-    }
-
+{    
+    // We can use a linefeed in place of a tab because this simple iterator is only used to
+    // find boundaries, not actual content.  A linefeed breaks words, sentences, and paragraphs.
+    if (shouldEmitNewlineForNode(m_node) ||
+        shouldEmitNewlinesBeforeAndAfterNode(m_node) ||
+        shouldEmitTabBeforeNode(m_node))
+        emitNewline();
+    
     return true;
 }
 
 void SimplifiedBackwardsTextIterator::exitNode()
 {
-    // Left this function in so that the name and usage patters remain similar to 
+    // Left this function in so that the name and usage patterns remain similar to 
     // TextIterator. However, the needs of this iterator are much simpler, and
     // the handleNonTextNode() function does just what we want (i.e. insert a
-    // space for certain node types to "break up" text so that it does not seem
+    // BR for certain node types to "break up" text so that it does not seem
     // like content is next to other text when it really isn't). 
     handleNonTextNode();
 }
@@ -705,7 +732,7 @@ void SimplifiedBackwardsTextIterator::emitCharacter(QChar c, Node *node, int sta
     m_lastCharacter = c;
 }
 
-void SimplifiedBackwardsTextIterator::emitNewlineForBROrText()
+void SimplifiedBackwardsTextIterator::emitNewline()
 {
     int offset;
     

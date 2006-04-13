@@ -40,6 +40,12 @@ VisiblePosition endOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBoun
 VisiblePosition previousWordPosition(const VisiblePosition &);
 VisiblePosition nextWordPosition(const VisiblePosition &);
 
+// sentences
+VisiblePosition startOfSentence(const VisiblePosition &);
+VisiblePosition endOfSentence(const VisiblePosition &);
+VisiblePosition previousSentencePosition(const VisiblePosition &);
+VisiblePosition nextSentencePosition(const VisiblePosition &);
+
 // lines
 VisiblePosition startOfLine(const VisiblePosition &);
 VisiblePosition endOfLine(const VisiblePosition &);
@@ -48,12 +54,6 @@ VisiblePosition nextLinePosition(const VisiblePosition &, int x);
 bool inSameLine(const VisiblePosition &, const VisiblePosition &);
 bool isStartOfLine(const VisiblePosition &);
 bool isEndOfLine(const VisiblePosition &);
-
-// sentences
-VisiblePosition startOfSentence(const VisiblePosition &);
-VisiblePosition endOfSentence(const VisiblePosition &);
-VisiblePosition previousSentencePosition(const VisiblePosition &);
-VisiblePosition nextSentencePosition(const VisiblePosition &);
 
 // paragraphs (perhaps a misnomer, can be divided by line break elements)
 VisiblePosition startOfParagraph(const VisiblePosition &);

@@ -97,8 +97,10 @@ typedef enum {
 typedef enum {
     WebBridgeSelectByCharacter,
     WebBridgeSelectByWord,
+    WebBridgeSelectBySentence,
     WebBridgeSelectByLine,
     WebBridgeSelectByParagraph,
+    WebBridgeSelectToSentenceBoundary,
     WebBridgeSelectToLineBoundary,
     WebBridgeSelectToParagraphBoundary,
     WebBridgeSelectToDocumentBoundary

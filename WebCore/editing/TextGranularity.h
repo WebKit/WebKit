@@ -30,11 +30,14 @@ namespace WebCore {
 
 // FIXME: This really should be broken up into more than one concept.
 // Frame doesn't neeed the 3 boundaries in this enum.
+// NOTE: This MUST match WebBridgeSelectionGranularity
 enum TextGranularity {
     CharacterGranularity,
     WordGranularity,
+    SentenceGranularity,
     LineGranularity,
     ParagraphGranularity,
+    SentenceBoundary,
     LineBoundary,
     ParagraphBoundary,
     DocumentBoundary

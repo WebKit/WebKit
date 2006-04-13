@@ -141,7 +141,7 @@ private:
     bool handleReplacedElement();
     bool handleNonTextNode();
     void emitCharacter(QChar, Node *Node, int startOffset, int endOffset);
-    void emitNewlineForBROrText();
+    void emitNewline();
     
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.

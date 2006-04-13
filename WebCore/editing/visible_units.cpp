@@ -82,8 +82,7 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     if (it.atEnd() && next == 0) {
         RefPtr<Range> range(it.range());
         pos = Position(range->startContainer(exception), range->startOffset(exception));
-    }
-    else if (!it.atEnd() && it.length() == 0) {
+    } else if (!it.atEnd() && it.length() == 0) {
         // Got a zero-length chunk.
         // This means we have hit a replaced element.
         // Make a check to see if the position should be before or after the replaced element
@@ -99,8 +98,7 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
             pos = Position(range->startContainer(exception), range->startOffset(exception));
         else
             pos = Position(range->endContainer(exception), range->endOffset(exception));
-    }
-    else if (next != 0) {
+    } else if (next != 0) {
         // The simpler iterator used in this function, as compared to the one used in 
         // nextWordPosition(), gives us results we can use directly without having to 
         // iterate again to translate the next value into a DOM position. 
@@ -156,8 +154,7 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
         RefPtr<Range> range(it.range());
         int exception = 0;
         pos = Position(range->startContainer(exception), range->startOffset(exception));
-    }
-    else if (!it.atEnd() && it.length() == 0) {
+    } else if (!it.atEnd() && it.length() == 0) {
         // Got a zero-length chunk.
         // This means we have hit a replaced element.
         // Make a check to see if the position should be before or after the replaced element
@@ -174,8 +171,7 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
             pos = Position(range->endContainer(exception), range->endOffset(exception));
         else
             pos = Position(range->startContainer(exception), range->startOffset(exception));
-    }
-    else if (next != 0) {
+    } else if (next != 0) {
         // Use the character iterator to translate the next value into a DOM position.
         CharacterIterator charIt(searchRange.get());
         charIt.advance(next - 1);
@@ -523,7 +519,7 @@ static unsigned previousSentencePositionBoundary(const QChar *characters, unsign
     return findNextSentenceFromIndex(characters, length, length, false);
 }
 
-VisiblePosition previousSentencePosition(const VisiblePosition &c, int x)
+VisiblePosition previousSentencePosition(const VisiblePosition &c)
 {
     return previousBoundary(c, previousSentencePositionBoundary);
 }
@@ -533,7 +529,7 @@ static unsigned nextSentencePositionBoundary(const QChar *characters, unsigned l
     return findNextSentenceFromIndex(characters, length, 0, true);
 }
 
-VisiblePosition nextSentencePosition(const VisiblePosition &c, int x)
+VisiblePosition nextSentencePosition(const VisiblePosition &c)
 {
     return nextBoundary(c, nextSentencePositionBoundary);
 }
