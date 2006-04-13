@@ -1,3 +1,10 @@
+2006-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        * projects/compat/hitlist.html: Added Google Calendar to the list
+        in place of www.hangseng.com/ebanking
+
 2006-04-11  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.
