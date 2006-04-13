@@ -1,3 +1,27 @@
+2006-04-12  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/4386640> AX: AXPreviousSentenceStartTextMarkerForTextMarker does not respect paragraph boundary
+        <rdar://problem/4414575> AX: Dictionary popup cannot find some words on Dictionary.app
+        
+        (see related changes in WebCore)
+        
+        Tests added:
+        * editing/selection/extend-by-sentence-001.html: Added.
+        * fast/dom/inner-text-001.html: Added.
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray validateUserInterfaceItem:]):
+        (-[NSArray moveToBeginningOfSentence:]):
+        (-[NSArray moveToBeginningOfSentenceAndModifySelection:]):
+        (-[NSArray moveToEndOfSentence:]):
+        (-[NSArray moveToEndOfSentenceAndModifySelection:]):
+        (-[NSArray selectSentence:]):
+        * WebView/WebView.m:
+        * WebView/WebViewPrivate.h:
+        Add sentence navigation and selection.
+
 2006-04-12  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

@@ -150,6 +150,8 @@ macro(moveRight) \
 macro(moveRightAndModifySelection) \
 macro(moveToBeginningOfDocument) \
 macro(moveToBeginningOfDocumentAndModifySelection) \
+macro(moveToBeginningOfSentence) \
+macro(moveToBeginningOfSentenceAndModifySelection) \
 macro(moveToBeginningOfLine) \
 macro(moveToBeginningOfLineAndModifySelection) \
 macro(moveToBeginningOfParagraph) \
@@ -160,6 +162,8 @@ macro(moveToEndOfLine) \
 macro(moveToEndOfLineAndModifySelection) \
 macro(moveToEndOfParagraph) \
 macro(moveToEndOfParagraphAndModifySelection) \
+macro(moveToEndOfSentence) \
+macro(moveToEndOfSentenceAndModifySelection) \
 macro(moveUp) \
 macro(moveUpAndModifySelection) \
 macro(moveWordBackward) \
@@ -184,9 +188,10 @@ macro(scrollPageUp) \
 macro(scrollToBeginningOfDocument) \
 macro(scrollToEndOfDocument) \
 macro(selectAll) \
+macro(selectWord) \
+macro(selectSentence) \
 macro(selectLine) \
 macro(selectParagraph) \
-macro(selectWord) \
 macro(showGuessPanel) \
 macro(startSpeaking) \
 macro(stopSpeaking) \

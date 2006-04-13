@@ -133,6 +133,16 @@ typedef enum {
 
 @end
 
+@interface WebView (WebViewEditingPendingPublic)
+
+- (void)moveToBeginningOfSentence:(id)sender;
+- (void)moveToBeginningOfSentenceAndModifySelection:(id)sender;
+- (void)moveToEndOfSentence:(id)sender;
+- (void)moveToEndOfSentenceAndModifySelection:(id)sender;
+- (void)selectSentence:(id)sender;
+
+@end
+
 @interface WebView (WebPrivate)
 
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;

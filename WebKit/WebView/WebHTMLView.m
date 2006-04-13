@@ -1915,12 +1915,16 @@ static WebHTMLView *lastHitView = nil;
             || action == @selector(moveRightAndModifySelection:)
             || action == @selector(moveToBeginningOfDocument:)
             || action == @selector(moveToBeginningOfDocumentAndModifySelection:)
+            || action == @selector(moveToBeginningOfSentence:)
+            || action == @selector(moveToBeginningOfSentenceAndModifySelection:)
             || action == @selector(moveToBeginningOfLine:)
             || action == @selector(moveToBeginningOfLineAndModifySelection:)
             || action == @selector(moveToBeginningOfParagraph:)
             || action == @selector(moveToBeginningOfParagraphAndModifySelection:)
             || action == @selector(moveToEndOfDocument:)
             || action == @selector(moveToEndOfDocumentAndModifySelection:)
+            || action == @selector(moveToEndOfSentence:)
+            || action == @selector(moveToEndOfSentenceAndModifySelection:)
             || action == @selector(moveToEndOfLine:)
             || action == @selector(moveToEndOfLineAndModifySelection:)
             || action == @selector(moveToEndOfParagraph:)
@@ -3463,6 +3467,16 @@ done:
     [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToDocumentBoundary];
 }
 
+- (void)moveToBeginningOfSentence:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToSentenceBoundary];
+}
+
+- (void)moveToBeginningOfSentenceAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectBackward granularity:WebBridgeSelectToSentenceBoundary];
+}
+
 - (void)moveToBeginningOfLine:(id)sender
 {
     [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectBackward granularity:WebBridgeSelectToLineBoundary];
@@ -3491,6 +3505,16 @@ done:
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
     [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToDocumentBoundary];
+}
+
+- (void)moveToEndOfSentence:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebBridgeSelectForward granularity:WebBridgeSelectToSentenceBoundary];
+}
+
+- (void)moveToEndOfSentenceAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebBridgeSelectForward granularity:WebBridgeSelectToSentenceBoundary];
 }
 
 - (void)moveToEndOfLine:(id)sender
@@ -3628,6 +3652,11 @@ done:
 - (void)selectLine:(id)sender
 {
     [self _expandSelectionToGranularity:WebBridgeSelectByLine];
+}
+
+- (void)selectSentence:(id)sender
+{
+    [self _expandSelectionToGranularity:WebBridgeSelectBySentence];
 }
 
 - (void)selectWord:(id)sender
