@@ -52,6 +52,8 @@
 #include "KWQWMatrix.h"
 #include "KWQTextStream.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace EventNames;
@@ -888,20 +890,20 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
           switch(s)
             {
             case BSTop:
-              drawBorder(p, x1+kMax((-adjbw1*2+1)/3,0), y1        , x2-kMax((-adjbw2*2+1)/3,0), y1 + third, s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
-              drawBorder(p, x1+kMax(( adjbw1*2+1)/3,0), y2 - third, x2-kMax(( adjbw2*2+1)/3,0), y2        , s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+              drawBorder(p, x1+max((-adjbw1*2+1)/3,0), y1        , x2-max((-adjbw2*2+1)/3,0), y1 + third, s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+              drawBorder(p, x1+max(( adjbw1*2+1)/3,0), y2 - third, x2-max(( adjbw2*2+1)/3,0), y2        , s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
               break;
             case BSLeft:
-              drawBorder(p, x1        , y1+kMax((-adjbw1*2+1)/3,0), x1+third, y2-kMax((-adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
-              drawBorder(p, x2 - third, y1+kMax(( adjbw1*2+1)/3,0), x2      , y2-kMax(( adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+              drawBorder(p, x1        , y1+max((-adjbw1*2+1)/3,0), x1+third, y2-max((-adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+              drawBorder(p, x2 - third, y1+max(( adjbw1*2+1)/3,0), x2      , y2-max(( adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
               break;
             case BSBottom:
-              drawBorder(p, x1+kMax(( adjbw1*2+1)/3,0), y1      , x2-kMax(( adjbw2*2+1)/3,0), y1+third, s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
-              drawBorder(p, x1+kMax((-adjbw1*2+1)/3,0), y2-third, x2-kMax((-adjbw2*2+1)/3,0), y2      , s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+              drawBorder(p, x1+max(( adjbw1*2+1)/3,0), y1      , x2-max(( adjbw2*2+1)/3,0), y1+third, s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+              drawBorder(p, x1+max((-adjbw1*2+1)/3,0), y2-third, x2-max((-adjbw2*2+1)/3,0), y2      , s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
               break;
             case BSRight:
-            drawBorder(p, x1      , y1+kMax(( adjbw1*2+1)/3,0), x1+third, y2-kMax(( adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
-            drawBorder(p, x2-third, y1+kMax((-adjbw1*2+1)/3,0), x2      , y2-kMax((-adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+            drawBorder(p, x1      , y1+max(( adjbw1*2+1)/3,0), x1+third, y2-max(( adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+            drawBorder(p, x2-third, y1+max((-adjbw1*2+1)/3,0), x2      , y2-max((-adjbw2*2+1)/3,0), s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
               break;
             default:
               break;
@@ -938,20 +940,20 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
         switch (s)
         {
         case BSTop:
-            drawBorder(p, x1+kMax(-adjbw1  ,0)/2,  y1        , x2-kMax(-adjbw2,0)/2, (y1+y2+1)/2, s, c, textcolor, s1, adjbw1bighalf, adjbw2bighalf);
-            drawBorder(p, x1+kMax( adjbw1+1,0)/2, (y1+y2+1)/2, x2-kMax( adjbw2+1,0)/2,  y2        , s, c, textcolor, s2, adjbw1/2, adjbw2/2);
+            drawBorder(p, x1+max(-adjbw1  ,0)/2,  y1        , x2-max(-adjbw2,0)/2, (y1+y2+1)/2, s, c, textcolor, s1, adjbw1bighalf, adjbw2bighalf);
+            drawBorder(p, x1+max( adjbw1+1,0)/2, (y1+y2+1)/2, x2-max( adjbw2+1,0)/2,  y2        , s, c, textcolor, s2, adjbw1/2, adjbw2/2);
             break;
         case BSLeft:
-            drawBorder(p,  x1        , y1+kMax(-adjbw1  ,0)/2, (x1+x2+1)/2, y2-kMax(-adjbw2,0)/2, s, c, textcolor, s1, adjbw1bighalf, adjbw2bighalf);
-            drawBorder(p, (x1+x2+1)/2, y1+kMax( adjbw1+1,0)/2,  x2        , y2-kMax( adjbw2+1,0)/2, s, c, textcolor, s2, adjbw1/2, adjbw2/2);
+            drawBorder(p,  x1        , y1+max(-adjbw1  ,0)/2, (x1+x2+1)/2, y2-max(-adjbw2,0)/2, s, c, textcolor, s1, adjbw1bighalf, adjbw2bighalf);
+            drawBorder(p, (x1+x2+1)/2, y1+max( adjbw1+1,0)/2,  x2        , y2-max( adjbw2+1,0)/2, s, c, textcolor, s2, adjbw1/2, adjbw2/2);
             break;
         case BSBottom:
-            drawBorder(p, x1+kMax( adjbw1  ,0)/2,  y1        , x2-kMax( adjbw2,0)/2, (y1+y2+1)/2, s, c, textcolor, s2,  adjbw1bighalf, adjbw2bighalf);
-            drawBorder(p, x1+kMax(-adjbw1+1,0)/2, (y1+y2+1)/2, x2-kMax(-adjbw2+1,0)/2,  y2        , s, c, textcolor, s1, adjbw1/2, adjbw2/2);
+            drawBorder(p, x1+max( adjbw1  ,0)/2,  y1        , x2-max( adjbw2,0)/2, (y1+y2+1)/2, s, c, textcolor, s2,  adjbw1bighalf, adjbw2bighalf);
+            drawBorder(p, x1+max(-adjbw1+1,0)/2, (y1+y2+1)/2, x2-max(-adjbw2+1,0)/2,  y2        , s, c, textcolor, s1, adjbw1/2, adjbw2/2);
             break;
         case BSRight:
-            drawBorder(p,  x1        , y1+kMax( adjbw1  ,0)/2, (x1+x2+1)/2, y2-kMax( adjbw2,0)/2, s, c, textcolor, s2, adjbw1bighalf, adjbw2bighalf);
-            drawBorder(p, (x1+x2+1)/2, y1+kMax(-adjbw1+1,0)/2,  x2        , y2-kMax(-adjbw2+1,0)/2, s, c, textcolor, s1, adjbw1/2, adjbw2/2);
+            drawBorder(p,  x1        , y1+max( adjbw1  ,0)/2, (x1+x2+1)/2, y2-max( adjbw2,0)/2, s, c, textcolor, s2, adjbw1bighalf, adjbw2bighalf);
+            drawBorder(p, (x1+x2+1)/2, y1+max(-adjbw1+1,0)/2,  x2        , y2-max(-adjbw2+1,0)/2, s, c, textcolor, s1, adjbw1/2, adjbw2/2);
             break;
         }
         break;
@@ -978,31 +980,31 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
         switch(s) {
         case BSTop:
             quad.setPoints(4,
-                           x1+kMax(-adjbw1,0), y1,
-                           x1+kMax( adjbw1,0), y2,
-                           x2-kMax( adjbw2,0), y2,
-                           x2-kMax(-adjbw2,0), y1);
+                           x1+max(-adjbw1,0), y1,
+                           x1+max( adjbw1,0), y2,
+                           x2-max( adjbw2,0), y2,
+                           x2-max(-adjbw2,0), y1);
             break;
         case BSBottom:
             quad.setPoints(4,
-                           x1+kMax( adjbw1,0), y1,
-                           x1+kMax(-adjbw1,0), y2,
-                           x2-kMax(-adjbw2,0), y2,
-                           x2-kMax( adjbw2,0), y1);
+                           x1+max( adjbw1,0), y1,
+                           x1+max(-adjbw1,0), y2,
+                           x2-max(-adjbw2,0), y2,
+                           x2-max( adjbw2,0), y1);
             break;
         case BSLeft:
           quad.setPoints(4,
-                         x1, y1+kMax(-adjbw1,0),
-                         x1, y2-kMax(-adjbw2,0),
-                         x2, y2-kMax( adjbw2,0),
-                         x2, y1+kMax( adjbw1,0));
+                         x1, y1+max(-adjbw1,0),
+                         x1, y2-max(-adjbw2,0),
+                         x2, y2-max( adjbw2,0),
+                         x2, y1+max( adjbw1,0));
             break;
         case BSRight:
           quad.setPoints(4,
-                         x1, y1+kMax( adjbw1,0),
-                         x1, y2-kMax( adjbw2,0),
-                         x2, y2-kMax(-adjbw2,0),
-                         x2, y1+kMax(-adjbw1,0));
+                         x1, y1+max( adjbw1,0),
+                         x1, y2-max( adjbw2,0),
+                         x2, y2-max(-adjbw2,0),
+                         x2, y1+max(-adjbw1,0));
             break;
         }
         p->drawConvexPolygon(quad);
@@ -1030,10 +1032,10 @@ bool RenderObject::paintBorderImage(GraphicsContext* p, int _tx, int _ty, int w,
     int imageWidth = borderImage->image()->width();
     int imageHeight = borderImage->image()->height();
 
-    int topSlice = kMin(imageHeight, style->borderImage().m_slices.top.calcValue(borderImage->image()->height()));
-    int bottomSlice = kMin(imageHeight, style->borderImage().m_slices.bottom.calcValue(borderImage->image()->height()));
-    int leftSlice = kMin(imageWidth, style->borderImage().m_slices.left.calcValue(borderImage->image()->width()));    
-    int rightSlice = kMin(imageWidth, style->borderImage().m_slices.right.calcValue(borderImage->image()->width()));
+    int topSlice = min(imageHeight, style->borderImage().m_slices.top.calcValue(borderImage->image()->height()));
+    int bottomSlice = min(imageHeight, style->borderImage().m_slices.bottom.calcValue(borderImage->image()->height()));
+    int leftSlice = min(imageWidth, style->borderImage().m_slices.left.calcValue(borderImage->image()->width()));    
+    int rightSlice = min(imageWidth, style->borderImage().m_slices.right.calcValue(borderImage->image()->width()));
 
     EBorderImageRule hRule = style->borderImage().horizontalRule();
     EBorderImageRule vRule = style->borderImage().verticalRule();
@@ -1156,8 +1158,8 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
     IntSize bottomRight = style->borderBottomRightRadius();
 
     if (style->hasBorderRadius()) {
-        int requiredWidth = kMax(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
-        int requiredHeight = kMax(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
+        int requiredWidth = max(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
+        int requiredHeight = max(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
         render_radii = (requiredWidth <= w && requiredHeight <= h);
     }
     
@@ -1438,15 +1440,15 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
     int ow = style() ? style()->outlineSize() : 0;
     int width = abs(newBounds.width() - oldBounds.width());
     if (width)
-        c->repaintViewRectangle(IntRect(kMin(newBounds.x() + newBounds.width(), oldBounds.x() + oldBounds.width()) - borderRight() - ow,
+        c->repaintViewRectangle(IntRect(min(newBounds.x() + newBounds.width(), oldBounds.x() + oldBounds.width()) - borderRight() - ow,
             newBounds.y(),
             width + borderRight() + ow,
-            kMax(newBounds.height(), oldBounds.height())));
+            max(newBounds.height(), oldBounds.height())));
     int height = abs(newBounds.height() - oldBounds.height());
     if (height)
         c->repaintViewRectangle(IntRect(newBounds.x(),
-            kMin(newBounds.bottom(), oldBounds.bottom()) - borderBottom() - ow,
-            kMax(newBounds.width(), oldBounds.width()),
+            min(newBounds.bottom(), oldBounds.bottom()) - borderBottom() - ow,
+            max(newBounds.width(), oldBounds.width()),
             height + borderBottom() + ow));
     return false;
 }

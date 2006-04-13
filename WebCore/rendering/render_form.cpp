@@ -42,6 +42,8 @@
 #include "PlatformMouseEvent.h"
 #include "dom2_eventsimpl.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace EventNames;
@@ -321,15 +323,15 @@ int RenderLineEdit::selectionEnd()
 
 void RenderLineEdit::setSelectionStart(int start)
 {
-    int realStart = kMax(start, 0);
-    int length = kMax(selectionEnd() - realStart, 0);
+    int realStart = max(start, 0);
+    int length = max(selectionEnd() - realStart, 0);
     static_cast<QLineEdit *>(m_widget)->setSelection(realStart, length);
 }
 
 void RenderLineEdit::setSelectionEnd(int end)
 {
     int start = selectionStart();
-    int realEnd = kMax(end, 0);
+    int realEnd = max(end, 0);
     int length = realEnd - start;
     if (length < 0) {
         start = realEnd;
@@ -354,8 +356,8 @@ void RenderLineEdit::setEdited(bool x)
 
 void RenderLineEdit::setSelectionRange(int start, int end)
 {
-    int realStart = kMax(start, 0);
-    int length = kMax(end - realStart, 0);
+    int realStart = max(start, 0);
+    int length = max(end - realStart, 0);
     static_cast<QLineEdit *>(m_widget)->setSelection(realStart, length);
 }
 
@@ -379,8 +381,8 @@ RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
             xPos = m_width - paddingRight() - borderRight() - legend->width() - legend->marginRight();
         int b = borderTop();
         int h = legend->height();
-        legend->setPos(xPos, kMax((b-h)/2, 0));
-        m_height = kMax(b,h) + paddingTop();
+        legend->setPos(xPos, max((b-h)/2, 0));
+        m_height = max(b,h) + paddingTop();
     }
     return legend;
 }
@@ -407,8 +409,8 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     h -= yOff;
     _ty += yOff - borderTopExtra();
 
-    int my = kMax(_ty, i.r.y());
-    int end = kMin(i.r.bottom(),  _ty + h);
+    int my = max(_ty, i.r.y());
+    int end = min(i.r.bottom(),  _ty + h);
     int mh = end - my;
 
     paintBackground(i.p, style()->backgroundColor(), style()->backgroundLayers(), my, mh, _tx, _ty, w, h);
@@ -754,12 +756,12 @@ void RenderSelect::layout( )
 
         int size = m_size;
         // check if multiple and size was not given or invalid
-        // Internet Exploder sets size to kMin(number of elements, 4)
+        // Internet Exploder sets size to min(number of elements, 4)
         // Netscape seems to simply set it to "number of elements"
-        // the average of that is IMHO kMin(number of elements, 10)
+        // the average of that is IMHO min(number of elements, 10)
         // so I did that ;-)
         if(size < 1)
-            size = kMin(static_cast<QListBox*>(m_widget)->count(), 10U);
+            size = min(static_cast<QListBox*>(m_widget)->count(), 10U);
 
         // Let the widget tell us how big it wants to be.
         IntSize s(w->sizeForNumberOfLines(size));
@@ -935,7 +937,7 @@ void RenderTextArea::calcMinMaxWidth()
     KHTMLAssert( !minMaxKnown() );
 
     QTextEdit* w = static_cast<QTextEdit*>(m_widget);
-    IntSize size(w->sizeWithColumnsAndRows(kMax(element()->cols(), 1), kMax(element()->rows(), 1)));
+    IntSize size(w->sizeWithColumnsAndRows(max(element()->cols(), 1), max(element()->rows(), 1)));
 
     setIntrinsicWidth( size.width() );
     setIntrinsicHeight( size.height() );
@@ -1101,16 +1103,16 @@ void RenderSlider::calcMinMaxWidth()
 void RenderSlider::updateFromElement()
 {
     String value = element()->value();
-    const AtomicString& min = element()->getAttribute(minAttr);
-    const AtomicString& max = element()->getAttribute(maxAttr);
+    const AtomicString& minStr = element()->getAttribute(minAttr);
+    const AtomicString& maxStr = element()->getAttribute(maxAttr);
     const AtomicString& precision = element()->getAttribute(precisionAttr);
     
-    double minVal = min.isNull() ? 0.0 : min.deprecatedString().toDouble();
-    double maxVal = max.isNull() ? 100.0 : max.deprecatedString().toDouble();
-    minVal = kMin(minVal, maxVal); // Make sure the range is sane.
+    double minVal = minStr.isNull() ? 0.0 : minStr.deprecatedString().toDouble();
+    double maxVal = maxStr.isNull() ? 100.0 : maxStr.deprecatedString().toDouble();
+    minVal = min(minVal, maxVal); // Make sure the range is sane.
     
     double val = value.isNull() ? (maxVal + minVal)/2.0 : value.deprecatedString().toDouble();
-    val = kMax(minVal, kMin(val, maxVal)); // Make sure val is within min/max.
+    val = max(minVal, min(val, maxVal)); // Make sure val is within min/max.
     
     // Force integer value if not float.
     if (!equalIgnoringCase(precision, "float"))

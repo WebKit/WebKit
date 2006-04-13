@@ -196,10 +196,10 @@ IntSize QComboBox::sizeHint() const
                     renderer = itemRenderer;
                 }
                 float textWidth = [renderer floatWidthForRun:&run style:&style];
-                width = kMax(width, textWidth);
+                width = max(width, textWidth);
             } while (i != e);
         }
-        _width = kMax(static_cast<int>(ceilf(width)), dimensions()[minimumTextWidth]);
+        _width = max(static_cast<int>(ceilf(width)), dimensions()[minimumTextWidth]);
         _widthGood = true;
     }
     

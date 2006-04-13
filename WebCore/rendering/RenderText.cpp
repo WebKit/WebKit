@@ -35,6 +35,8 @@
 #include <kxmlcore/AlwaysInline.h>
 #include <unicode/ubrk.h>
 
+using namespace std;
+
 namespace WebCore {
 
 UBreakIterator* characterBreakIterator(const StringImpl* i)
@@ -416,7 +418,7 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     RenderBlock *cb = containingBlock();
     int availableWidth = cb->lineWidth(top);
     if (style()->autoWrap())
-        left = kMin(left, absx + box->m_x + availableWidth - 1);
+        left = min(left, absx + box->m_x + availableWidth - 1);
     
     return IntRect(left, top, 1, height);
 }
@@ -718,8 +720,8 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     if (needsWordSpacing && len > 1) 
         currMaxWidth += wordSpacing;
     
-    m_minWidth = kMax(currMinWidth, m_minWidth);
-    m_maxWidth = kMax(currMaxWidth, m_maxWidth);
+    m_minWidth = max(currMinWidth, m_minWidth);
+    m_maxWidth = max(currMaxWidth, m_maxWidth);
         
     if (!style()->autoWrap())
         m_minWidth = m_maxWidth;
@@ -750,7 +752,7 @@ int RenderText::minXPos() const
     if (!m_firstTextBox) return 0;
     int retval=6666666;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        retval = kMin(retval, (int)box->m_x);
+        retval = min(retval, (int)box->m_x);
     return retval;
 }
 
@@ -1018,7 +1020,7 @@ int RenderText::width() const
             maxx = s->m_x + s->m_width;
     }
 
-    return kMax(0, maxx-minx);
+    return max(0, maxx-minx);
 }
 
 IntRect RenderText::getAbsoluteRepaintRect()
@@ -1082,7 +1084,7 @@ int RenderText::caretMinOffset() const
         return 0;
     int minOffset = box->m_start;
     for (box = box->nextTextBox(); box; box = box->nextTextBox())
-        minOffset = kMin(minOffset, box->m_start);
+        minOffset = min(minOffset, box->m_start);
     return minOffset;
 }
 
@@ -1093,7 +1095,7 @@ int RenderText::caretMaxOffset() const
         return str->length();
     int maxOffset = box->m_start + box->m_len;
     for (box = box->prevTextBox(); box; box = box->prevTextBox())
-        maxOffset = kMax(maxOffset,box->m_start + box->m_len);
+        maxOffset = max(maxOffset,box->m_start + box->m_len);
     return maxOffset;
 }
 

@@ -34,6 +34,8 @@
 #include "HTMLNames.h"
 #include "KWQTextStream.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -390,10 +392,10 @@ int RenderTableSection::layoutRows(int toAdd)
             int rh = rowPos[1] - rowPos[0];
             for (int r = 0; r < totalRows; r++) {
                 if (totalPercent > 0 && grid[r].height.isPercent()) {
-                    int toAdd = kMin(dh, (totalHeight * grid[r].height.value() / 100) - rh);
+                    int toAdd = min(dh, (totalHeight * grid[r].height.value() / 100) - rh);
                     // If toAdd is negative, then we don't want to shrink the row (this bug
                     // affected Outlook Web Access).
-                    toAdd = kMax(0, toAdd);
+                    toAdd = max(0, toAdd);
                     add += toAdd;
                     dh -= toAdd;
                     totalPercent -= grid[r].height.value();
@@ -486,7 +488,7 @@ int RenderTableSection::layoutRows(int toAdd)
                 }
             }
             if (cellChildrenFlex) {
-                cell->setOverrideSize(kMax(0, 
+                cell->setOverrideSize(max(0, 
                                            rHeight - cell->borderTop() - cell->paddingTop() - 
                                                      cell->borderBottom() - cell->paddingBottom()));
                 cell->layoutIfNeeded();
@@ -559,7 +561,7 @@ int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includ
         for (RenderObject *cell = row->firstChild(); cell; cell = cell->nextSibling())
             if (cell->isTableCell()) {
                 int bp = cell->yPos() + cell->lowestPosition(false);
-                bottom = kMax(bottom, bp);
+                bottom = max(bottom, bp);
         }
     }
     
@@ -576,7 +578,7 @@ int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool inc
         for (RenderObject *cell = row->firstChild(); cell; cell = cell->nextSibling())
             if (cell->isTableCell()) {
                 int rp = cell->xPos() + cell->rightmostPosition(false);
-                right = kMax(right, rp);
+                right = max(right, rp);
         }
     }
     
@@ -593,7 +595,7 @@ int RenderTableSection::leftmostPosition(bool includeOverflowInterior, bool incl
         for (RenderObject *cell = row->firstChild(); cell; cell = cell->nextSibling())
             if (cell->isTableCell()) {
                 int lp = cell->xPos() + cell->leftmostPosition(false);
-                left = kMin(left, lp);
+                left = min(left, lp);
         }
     }
     

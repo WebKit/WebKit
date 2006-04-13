@@ -36,6 +36,8 @@
 #include "HTMLNames.h"
 #include "KWQTextStream.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -212,13 +214,13 @@ void RenderTable::calcWidth()
             marginTotal += style()->marginRight().calcValue(availableWidth);
             
         // Subtract out our margins to get the available content width.
-        int availContentWidth = kMax(0, availableWidth - marginTotal);
+        int availContentWidth = max(0, availableWidth - marginTotal);
         
         // Ensure we aren't bigger than our max width or smaller than our min width.
-        m_width = kMin(availContentWidth, m_maxWidth);
+        m_width = min(availContentWidth, m_maxWidth);
     }
     
-    m_width = kMax(m_width, m_minWidth);
+    m_width = max(m_width, m_minWidth);
 
     // Finally, with our true width determined, compute our margins for real.
     m_marginRight = 0;
@@ -299,7 +301,7 @@ void RenderTable::layout()
         th = h.value() - (bpTop + bpBottom);  // Tables size as though CSS height includes border/padding.
     else if (h.isPercent())
         th = calcPercentageHeight(h);
-    th = kMax(0, th);
+    th = max(0, th);
 
     // layout rows
     if (th > calculatedHeight) {
@@ -353,8 +355,8 @@ void RenderTable::layout()
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
     
-    m_overflowHeight = kMax(m_overflowHeight, m_height);
-    m_overflowWidth = kMax(m_overflowWidth, m_width);
+    m_overflowHeight = max(m_overflowHeight, m_height);
+    m_overflowWidth = max(m_overflowWidth, m_width);
 
     setNeedsLayout(false);
 }
@@ -432,12 +434,12 @@ void RenderTable::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
             _ty += captionHeight;
     }
 
-    int my = kMax(_ty, i.r.y());
+    int my = max(_ty, i.r.y());
     int mh;
     if (_ty < i.r.y())
-        mh= kMax(0, h - (i.r.y() - _ty));
+        mh= max(0, h - (i.r.y() - _ty));
     else
-        mh = kMin(i.r.height(), h);
+        mh = min(i.r.height(), h);
     
     paintBackground(i.p, style()->backgroundColor(), style()->backgroundLayers(), my, mh, _tx, _ty, w, h);
     

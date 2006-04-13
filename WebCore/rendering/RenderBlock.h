@@ -200,7 +200,7 @@ public:
     
     virtual void calcMinMaxWidth();
     void calcInlineMinMaxWidth();
-    void calcBlockMinMaxWidth();
+    void calcBlocminMaxWidth();
 
     virtual int getBaselineOfFirstLineBox() const;
     virtual int getBaselineOfLastLineBox() const;

@@ -78,6 +78,7 @@
 #include "SVGDocumentExtensions.h"
 #endif
 
+using namespace std;
 using namespace KJS;
 
 namespace WebCore {
@@ -2906,7 +2907,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
         // implementation should not do this!
         int rightmostPos = root->rightmostPosition();
         if (rightmostPos > minPageWidth) {
-            pageW = kMin(rightmostPos, (int)ceilf(maxPageWidth));
+            pageW = min(rightmostPos, (int)ceilf(maxPageWidth));
             root->setWidth(pageW);
             root->setNeedsLayoutAndMinMaxRecalc();
             forceLayout();

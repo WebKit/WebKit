@@ -35,6 +35,8 @@
 #include "RenderCanvas.h"
 #include "dom2_eventsimpl.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace EventNames;
@@ -71,8 +73,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
     if (isSelected() && m_inlineBoxWrapper) {
         int selTop = _ty + m_inlineBoxWrapper->root()->selectionTop();
         int selBottom = _ty + selTop + m_inlineBoxWrapper->root()->selectionHeight();
-        top = kMin(selTop, top);
-        bottom = kMax(selBottom, bottom);
+        top = min(selTop, top);
+        bottom = max(selBottom, bottom);
     }
     
     int os = 2*maximalOutlineSize(i.phase);

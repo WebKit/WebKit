@@ -460,10 +460,10 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
 
     // Need sufficient width and height to contain these curves.  Sanity check our top/bottom
     // values and our width/height values to make sure the curves can all fit.
-    int requiredWidth = kMax(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
+    int requiredWidth = max(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
     if (requiredWidth > rect.width())
         return;
-    int requiredHeight = kMax(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
+    int requiredHeight = max(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
     if (requiredHeight > rect.height())
         return;
  
@@ -489,20 +489,20 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
     // Now add five rects (one for each edge rect in between the rounded corners and one for the interior).
     CGContextAddRect(context, CGRectMake(rect.x() + topLeft.width(), rect.y(),
                                          rect.width() - topLeft.width() - topRight.width(),
-                                         kMax(topLeft.height(), topRight.height())));
+                                         max(topLeft.height(), topRight.height())));
     CGContextAddRect(context, CGRectMake(rect.x() + bottomLeft.width(), 
-                                         rect.bottom() - kMax(bottomLeft.height(), bottomRight.height()),
+                                         rect.bottom() - max(bottomLeft.height(), bottomRight.height()),
                                          rect.width() - bottomLeft.width() - bottomRight.width(),
-                                         kMax(bottomLeft.height(), bottomRight.height())));
+                                         max(bottomLeft.height(), bottomRight.height())));
     CGContextAddRect(context, CGRectMake(rect.x(), rect.y() + topLeft.height(),
-                                         kMax(topLeft.width(), bottomLeft.width()), rect.height() - topLeft.height() - bottomLeft.height()));
-    CGContextAddRect(context, CGRectMake(rect.right() - kMax(topRight.width(), bottomRight.width()),
+                                         max(topLeft.width(), bottomLeft.width()), rect.height() - topLeft.height() - bottomLeft.height()));
+    CGContextAddRect(context, CGRectMake(rect.right() - max(topRight.width(), bottomRight.width()),
                                          rect.y() + topRight.height(),
-                                         kMax(topRight.width(), bottomRight.width()), rect.height() - topRight.height() - bottomRight.height()));
-    CGContextAddRect(context, CGRectMake(rect.x() + kMax(topLeft.width(), bottomLeft.width()),
-                                         rect.y() + kMax(topLeft.height(), topRight.height()),
-                                         rect.width() - kMax(topLeft.width(), bottomLeft.width()) - kMax(topRight.width(), bottomRight.width()),
-                                         rect.height() - kMax(topLeft.height(), topRight.height()) - kMax(bottomLeft.height(), bottomRight.height())));
+                                         max(topRight.width(), bottomRight.width()), rect.height() - topRight.height() - bottomRight.height()));
+    CGContextAddRect(context, CGRectMake(rect.x() + max(topLeft.width(), bottomLeft.width()),
+                                         rect.y() + max(topLeft.height(), topRight.height()),
+                                         rect.width() - max(topLeft.width(), bottomLeft.width()) - max(topRight.width(), bottomRight.width()),
+                                         rect.height() - max(topLeft.height(), topRight.height()) - max(bottomLeft.height(), bottomRight.height())));
     CGContextClip(context);
 }
 

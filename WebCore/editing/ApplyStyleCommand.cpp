@@ -500,7 +500,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
         
         CSSMutableStyleDeclaration* inlineStyleDecl = elem->getInlineStyleDecl();
         float currentFontSize = computedFontSize(node);
-        float desiredFontSize = kMax(MinimumFontSize, startingFontSizes.get(node) + adjustment);
+        float desiredFontSize = max(MinimumFontSize, startingFontSizes.get(node) + adjustment);
         RefPtr<CSSValue> value = inlineStyleDecl->getPropertyCSSValue(CSS_PROP_FONT_SIZE);
         if (value) {
             inlineStyleDecl->removeProperty(CSS_PROP_FONT_SIZE, true);

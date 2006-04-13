@@ -35,6 +35,8 @@
 #include "RenderImage.h"
 #include "HTMLNames.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace EventNames;
@@ -603,7 +605,7 @@ Path HTMLAreaElement::getRegion(int width, int height) const
         case Circle:
             if (m_coordsLen >= 3) {
                 Length radius = m_coords[2];
-                int r = kMin(radius.calcMinValue(width), radius.calcMinValue(height));
+                int r = min(radius.calcMinValue(width), radius.calcMinValue(height));
                 return Path(IntRect(m_coords[0].calcMinValue(width) - r, m_coords[1].calcMinValue(height) - r,
                     2 * r, 2 * r), Path::Ellipse);
             }

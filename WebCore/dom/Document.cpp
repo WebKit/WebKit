@@ -86,6 +86,8 @@ using XBL::XBLBindingManager;
 #include "KSVGTimeScheduler.h"
 #endif
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace EventNames;
@@ -1268,7 +1270,7 @@ int Document::minimumLayoutDelay()
     m_overMinimumLayoutThreshold = elapsed > cLayoutScheduleThreshold;
     
     // We'll want to schedule the timer to fire at the minimum layout threshold.
-    return kMax(0, cLayoutScheduleThreshold - elapsed);
+    return max(0, cLayoutScheduleThreshold - elapsed);
 }
 
 int Document::elapsedTime() const
@@ -2699,8 +2701,8 @@ void Document::addMarker(Node *node, DocumentMarker newMarker)
                 return;
             } else {
                 // marker and newMarker intersect or touch - merge them into newMarker
-                newMarker.startOffset = kMin(newMarker.startOffset, marker.startOffset);
-                newMarker.endOffset = kMax(newMarker.endOffset, marker.endOffset);
+                newMarker.startOffset = min(newMarker.startOffset, marker.startOffset);
+                newMarker.endOffset = max(newMarker.endOffset, marker.endOffset);
                 // remove old one, we'll add newMarker later
                 it = markers->remove(it);
                 // it points to the next marker to consider

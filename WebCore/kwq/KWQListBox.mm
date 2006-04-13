@@ -302,7 +302,7 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
                 WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
 
                 float textWidth = [(((*i).type == KWQListBoxGroupLabel) ? groupLabelRenderer : renderer) floatWidthForRun:&run style:&style];
-                width = kMax(width, textWidth);
+                width = max(width, textWidth);
                 
                 ++i;
             

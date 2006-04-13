@@ -74,36 +74,35 @@
 
 @class NSView;
 
+using namespace std;
 using namespace WebCore;
 using namespace HTMLNames;
 
+using KJS::BooleanType;
+using KJS::DateInstance;
 using KJS::ExecState;
+using KJS::GetterSetterType;
+using KJS::Identifier;
 using KJS::Interpreter;
 using KJS::JSLock;
 using KJS::JSObject;
+using KJS::JSType;
 using KJS::JSValue;
-using KJS::SavedProperties;
-using KJS::SavedBuiltins;
-using KJS::Window;
-using KJS::BooleanType;
-using KJS::StringType;
+using KJS::List;
+using KJS::NullType;
 using KJS::NumberType;
 using KJS::ObjectType;
-using KJS::UnspecifiedType;
-using KJS::UndefinedType;
-using KJS::NullType;
-using KJS::GetterSetterType;
+using KJS::SavedBuiltins;
+using KJS::SavedProperties;
+using KJS::StringType;
 using KJS::UString;
-using KJS::Identifier;
-using KJS::List;
-using KJS::JSType;
-using KJS::DateInstance;
+using KJS::UndefinedType;
+using KJS::UnspecifiedType;
+using KJS::Window;
 
 using KJS::Bindings::RootObject;
 
-using WebCore::RenderObject;
-
-NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
+NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
 @interface WebCoreFrameBridge (WebCoreBridgeInternal)
 - (RootObject *)executionContextForView:(NSView *)aView;
@@ -939,9 +938,9 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     
     // We need to give the part the opportunity to adjust the page height at each step.
     for (float i = 0; i < docHeight; i += currPageHeight) {
-        float proposedBottom = kMin(docHeight, i + printHeight);
+        float proposedBottom = min(docHeight, i + printHeight);
         m_frame->adjustPageHeight(&proposedBottom, i, proposedBottom, i);
-        currPageHeight = kMax(1.0f, proposedBottom - i);
+        currPageHeight = max(1.0f, proposedBottom - i);
         for (float j = 0; j < docWidth; j += printWidth) {
             NSValue* val = [NSValue valueWithRect: NSMakeRect(j, i, printWidth, currPageHeight)];
             [pages addObject: val];

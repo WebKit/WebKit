@@ -40,6 +40,8 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -112,8 +114,8 @@ static DeprecatedString renderedText(const Node *node, const Range *range)
         if (endOffset < start)
             break;
         if (startOffset <= end) {
-            unsigned s = kMax(start, startOffset);
-            unsigned e = kMin(end, endOffset);
+            unsigned s = max(start, startOffset);
+            unsigned e = min(end, endOffset);
             result.append(str.mid(s, e-s));
             if (e == end) {
                 // now add in collapsed-away spaces if at the end of the line
@@ -123,7 +125,7 @@ static DeprecatedString renderedText(const Node *node, const Range *range)
                     // count the number of characters between the end of the
                     // current box and the start of the next box.
                     int collapsedStart = e;
-                    int collapsedPastEnd = kMin((unsigned)nextBox->m_start, endOffset + 1);
+                    int collapsedPastEnd = min((unsigned)nextBox->m_start, endOffset + 1);
                     bool addNextNonNBSP = true;
                     for (int i = collapsedStart; i < collapsedPastEnd; i++) {
                         if (str[i] == nonBreakingSpace) {

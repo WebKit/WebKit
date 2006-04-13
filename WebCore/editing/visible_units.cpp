@@ -568,7 +568,7 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
                 int i = static_cast<RenderText*>(r)->length();
                 int o = offset;
                 if (n == startNode && o < i)
-                    i = kMax(0, o);
+                    i = max(0, o);
                 while (--i >= 0)
                     if (text[i] == '\n')
                         return VisiblePosition(n, i + 1, DOWNSTREAM);

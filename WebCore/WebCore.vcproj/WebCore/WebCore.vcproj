@@ -171,10 +171,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQDef.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQEditCommand.h"
 				>
 			</File>

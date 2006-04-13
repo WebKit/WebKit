@@ -33,6 +33,7 @@
 #import "WebCoreWidgetHolder.h"
 #import "render_form.h"
 
+using namespace std;
 using namespace WebCore;
 
 @interface KWQSlider : NSSlider <WebCoreWidgetHolder>
@@ -242,7 +243,7 @@ IntSize QSlider::sizeHint() const
 
 void QSlider::setValue(double v)
 {
-    double val = kMax(m_minVal, kMin(v, m_maxVal));
+    double val = max(m_minVal, min(v, m_maxVal));
     
     KWQSlider* slider = (KWQSlider*)getView();
     [slider setDoubleValue: val];

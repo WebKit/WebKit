@@ -34,6 +34,8 @@
 #include "RenderArena.h"
 #include <kxmlcore/AlwaysInline.h>
 
+using namespace std;
+
 namespace WebCore {
 
 #ifndef NDEBUG
@@ -69,8 +71,8 @@ void InlineTextBox::operator delete(void* ptr, size_t sz)
 
 bool InlineTextBox::isSelected(int startPos, int endPos) const
 {
-    int sPos = kMax(startPos - m_start, 0);
-    int ePos = kMin(endPos - m_start, (int)m_len);
+    int sPos = max(startPos - m_start, 0);
+    int ePos = min(endPos - m_start, (int)m_len);
     return (sPos < ePos);
 }
 
@@ -99,8 +101,8 @@ RenderObject::SelectionState InlineTextBox::selectionState()
 
 IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
 {
-    int sPos = kMax(startPos - m_start, 0);
-    int ePos = kMin(endPos - m_start, (int)m_len);
+    int sPos = max(startPos - m_start, 0);
+    int ePos = min(endPos - m_start, (int)m_len);
     
     if (sPos >= ePos)
         return IntRect();
@@ -172,7 +174,7 @@ int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
                 // No characters should be rendered.  Set ourselves to full truncation and place the ellipsis at the min of our start
                 // and the ellipsis edge.
                 m_truncation = cFullTruncation;
-                return kMin(ellipsisX, m_x);
+                return min(ellipsisX, m_x);
             }
             
             // Set the truncation index on the text run.  The ellipsis needs to be placed just after the last visible character.
@@ -421,8 +423,8 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
             startPos = 0;
     }
 
-    sPos = kMax(startPos - m_start, 0);
-    ePos = kMin(endPos - m_start, (int)m_len);
+    sPos = max(startPos - m_start, 0);
+    ePos = min(endPos - m_start, (int)m_len);
 }
 
 void InlineTextBox::paintSelection(GraphicsContext* p, int tx, int ty, RenderStyle* style, const Font* f)
@@ -459,8 +461,8 @@ void InlineTextBox::paintSelection(GraphicsContext* p, int tx, int ty, RenderSty
 void InlineTextBox::paintMarkedTextBackground(GraphicsContext* p, int tx, int ty, RenderStyle* style, const Font* f, int startPos, int endPos)
 {
     int offset = m_start;
-    int sPos = kMax(startPos - offset, 0);
-    int ePos = kMin(endPos - offset, (int)m_len);
+    int sPos = max(startPos - offset, 0);
+    int ePos = min(endPos - offset, (int)m_len);
 
     if (sPos >= ePos)
         return;
@@ -528,11 +530,11 @@ void InlineTextBox::paintSpellingMarker(GraphicsContext* pt, int _tx, int _ty, D
         start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, textPos(), m_firstLine);
     }
     if (paintEnd != marker.endOffset) {      // end points at the last char, not past it
-        paintEnd = kMin(paintEnd, marker.endOffset);
+        paintEnd = min(paintEnd, marker.endOffset);
         useWholeWidth = false;
     }
     if (m_truncation != cNoTruncation) {
-        paintEnd = kMin(paintEnd, (unsigned)m_truncation);
+        paintEnd = min(paintEnd, (unsigned)m_truncation);
         useWholeWidth = false;
     }
     if (!useWholeWidth) {
@@ -569,8 +571,8 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, 
     int y = r->selectionTop();
     int h = r->selectionHeight();
     pt->addClip(IntRect(_tx + m_x, _ty + y, m_width, h));
-    int sPos = kMax(marker.startOffset - m_start, (unsigned)0);
-    int ePos = kMin(marker.endOffset - m_start, (unsigned)m_len);
+    int sPos = max(marker.startOffset - m_start, (unsigned)0);
+    int ePos = min(marker.endOffset - m_start, (unsigned)m_len);
     
     pt->drawHighlightForText(m_x + _tx, y + _ty, h, textObject()->tabWidth(), textPos(), 
                              textObject()->str->unicode(), textObject()->str->length(), m_start, m_len,
@@ -638,11 +640,11 @@ void InlineTextBox::paintMarkedTextUnderline(GraphicsContext* pt, int _tx, int _
         start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, textPos(), m_firstLine);
     }
     if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
-        paintEnd = kMin(paintEnd, (unsigned)underline.endOffset);
+        paintEnd = min(paintEnd, (unsigned)underline.endOffset);
         useWholeWidth = false;
     }
     if (m_truncation != cNoTruncation) {
-        paintEnd = kMin(paintEnd, (unsigned)m_truncation);
+        paintEnd = min(paintEnd, (unsigned)m_truncation);
         useWholeWidth = false;
     }
     if (!useWholeWidth) {

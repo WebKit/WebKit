@@ -34,9 +34,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 #ifdef WIN32
-#include "Windows.h"
+#include <windows.h>
 #endif
 
+using namespace std;
 using namespace KJS;
 using namespace WebCore;
 
@@ -104,7 +105,7 @@ static inline int ucstrcmp( const DeprecatedString &as, const DeprecatedString &
         return 1;
     if ( b == 0 )
         return -1;
-    int l = kMin(as.length(), bs.length());
+    int l = min(as.length(), bs.length());
     while ( l-- && *a == *b )
         a++,b++;
     if ( l == -1 )

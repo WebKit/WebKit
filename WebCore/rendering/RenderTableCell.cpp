@@ -33,6 +33,8 @@
 #include "HTMLNames.h"
 #include "KWQTextStream.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -709,8 +711,8 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& i, int _tx, int _ty,
     int h = height() + borderTopExtra() + borderBottomExtra();
     _ty -= borderTopExtra();
     
-    int my = kMax(_ty, i.r.y());
-    int end = kMin(i.r.bottom(), _ty + h);
+    int my = max(_ty, i.r.y());
+    int end = min(i.r.bottom(), _ty + h);
     int mh = end - my;
     
     Color c = backgroundObject->style()->backgroundColor();

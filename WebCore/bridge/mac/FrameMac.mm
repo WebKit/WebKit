@@ -77,6 +77,8 @@
 - (void *)pluginScriptableObject;
 @end
 
+using namespace std;
+
 using namespace KJS;
 using namespace Bindings;
 
@@ -2296,7 +2298,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                             for (InlineTextBox* box = textObj->firstTextBox(); box; box = box->nextTextBox()) {
                                 int runStart = (start == -1) ? box->m_start : start;
                                 int runEnd = (end == -1) ? box->m_start + box->m_len : end;
-                                runEnd = kMin(runEnd, box->m_start + box->m_len);
+                                runEnd = min(runEnd, box->m_start + box->m_len);
                                 if (runStart >= box->m_start &&
                                     runStart < box->m_start + box->m_len) {
                                     if (box == textObj->firstTextBox() && box->m_start == runStart && runStart > 0)

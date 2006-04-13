@@ -255,9 +255,9 @@ ContainerNode* HTMLSelectElement::addChild(PassRefPtr<Node> newChild)
 void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == sizeAttr) {
-        m_size = kMax(attr->value().toInt(), 1);
+        m_size = max(attr->value().toInt(), 1);
     } else if (attr->name() == widthAttr) {
-        m_minwidth = kMax(attr->value().toInt(), 0);
+        m_minwidth = max(attr->value().toInt(), 0);
     } else if (attr->name() == multipleAttr) {
         m_multiple = (!attr->isNull());
     } else if (attr->name() == accesskeyAttr) {

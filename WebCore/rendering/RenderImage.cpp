@@ -35,6 +35,8 @@
 #include "HTMLNames.h"
 #include "RenderCanvas.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -102,8 +104,8 @@ void RenderImage::imageChanged(CachedImage* o)
         // we have an alt and the user meant it (its not a text we invented)
         if (!m_altText.isEmpty()) {
             const Font& font = style()->font();
-            iw = kMax(iw, kMin(font.width(m_altText.deprecatedString()), 1024));
-            ih = kMax(ih, kMin(font.height(), 256));
+            iw = max(iw, min(font.width(m_altText.deprecatedString()), 1024));
+            ih = max(ih, min(font.height(), 256));
         }
 
         if (iw != intrinsicWidth()) {
@@ -362,7 +364,7 @@ int RenderImage::calcReplacedWidth() const
     int minW = calcReplacedWidthUsing(MinWidth);
     int maxW = style()->maxWidth().value() == undefinedLength ? width : calcReplacedWidthUsing(MaxWidth);
 
-    return kMax(minW, kMin(width, maxW));
+    return max(minW, min(width, maxW));
 }
 
 int RenderImage::calcReplacedHeight() const
@@ -376,7 +378,7 @@ int RenderImage::calcReplacedHeight() const
     int minH = calcReplacedHeightUsing(MinHeight);
     int maxH = style()->maxHeight().value() == undefinedLength ? height : calcReplacedHeightUsing(MaxHeight);
 
-    return kMax(minH, kMin(height, maxH));
+    return max(minH, min(height, maxH));
 }
 
 int RenderImage::calcAspectRatioWidth() const

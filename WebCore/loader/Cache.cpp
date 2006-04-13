@@ -38,6 +38,8 @@
 #include "TransferJob.h"
 #include "loader.h"
 
+using namespace std;
+
 namespace WebCore {
 
 const int defaultCacheSize = 4096 * 1024;
@@ -438,7 +440,7 @@ void Cache::flush(bool force)
 void Cache::setSize(int bytes)
 {
     maxSize = bytes;
-    maxCacheable = kMax(maxSize / 128, minMaxCacheableObjectSize);
+    maxCacheable = max(maxSize / 128, minMaxCacheableObjectSize);
 
     // may be we need to clear parts of the cache
     flushCount = 0;

@@ -370,7 +370,7 @@ public:
 
     int selectionTop();
     int selectionBottom() { return m_selectionBottom; }
-    int selectionHeight() { return kMax(0, selectionBottom() - selectionTop()); }
+    int selectionHeight() { return max(0, selectionBottom() - selectionTop()); }
  
     InlineBox* closestLeafChildForXPos(int _x, int _tx);
 

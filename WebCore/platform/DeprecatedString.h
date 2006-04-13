@@ -26,7 +26,6 @@
 #ifndef QSTRING_H_
 #define QSTRING_H_
 
-#include "KWQDef.h"
 #include <ctype.h>
 #include <unicode/uchar.h>
 #if __APPLE__

@@ -48,6 +48,8 @@
 #include "XLinkNames.h"
 #endif
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -147,7 +149,7 @@ public:
     
     int readOutBytes(char *outputBuffer, unsigned askedToRead) {
         unsigned bytesLeft = m_buffer.size() - m_currentOffset;
-        unsigned lenToCopy = kMin(askedToRead, bytesLeft);
+        unsigned lenToCopy = min(askedToRead, bytesLeft);
         if (lenToCopy) {
             memcpy(outputBuffer, m_buffer.data() + m_currentOffset, lenToCopy);
             m_currentOffset += lenToCopy;

@@ -57,6 +57,8 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -423,8 +425,8 @@ void CompositeEditCommand::deleteInsignificantText(Text *textNode, int start, in
         bool indicesIntersect = start <= gapEnd && end >= gapStart;
         int gapLen = gapEnd - gapStart;
         if (indicesIntersect && gapLen > 0) {
-            gapStart = kMax(gapStart, start);
-            gapEnd = kMin(gapEnd, end);
+            gapStart = max(gapStart, start);
+            gapEnd = min(gapEnd, end);
             if (!str)
                 str = textNode->string()->substring(start, end - start);
             // remove text in the gap

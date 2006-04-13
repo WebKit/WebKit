@@ -26,7 +26,6 @@
 #ifndef KWQVALUELIST_H_
 #define KWQVALUELIST_H_
 
-#include "KWQDef.h"
 #include <kxmlcore/RefPtr.h>
 
 class DeprecatedValueListImplNode;

@@ -37,6 +37,8 @@
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -218,7 +220,7 @@ bool TextIterator::handleTextNode()
         }
         int strLength = str.length();
         int end = (m_node == m_endContainer) ? m_endOffset : LONG_MAX;
-        int runEnd = kMin(strLength, end);
+        int runEnd = min(strLength, end);
 
         if (runStart >= runEnd)
             return true;
@@ -263,7 +265,7 @@ void TextIterator::handleTextBox()
     int end = (m_node == m_endContainer) ? m_endOffset : LONG_MAX;
     while (m_textBox) {
         int textBoxStart = m_textBox->m_start;
-        int runStart = kMax(textBoxStart, start);
+        int runStart = max(textBoxStart, start);
 
         // Check for collapsed space at the start of this run.
         InlineTextBox *firstTextBox = renderer->containsReversedText() ? m_sortedTextBoxes[0] : renderer->firstTextBox();
@@ -274,7 +276,7 @@ void TextIterator::handleTextBox()
             return;
         }
         int textBoxEnd = textBoxStart + m_textBox->m_len;
-        int runEnd = kMin(textBoxEnd, end);
+        int runEnd = min(textBoxEnd, end);
         
         // Determine what the next text box will be, but don't advance yet
         InlineTextBox *nextTextBox = 0;
@@ -829,7 +831,7 @@ DeprecatedString CharacterIterator::string(int numChars)
     DeprecatedString result;
     result.reserve(numChars);
     while (numChars > 0 && !atEnd()) {
-        int runSize = kMin(numChars, length());
+        int runSize = min(numChars, length());
         result.append(characters(), runSize);
         numChars -= runSize;
         advance(runSize);
@@ -1119,7 +1121,7 @@ PassRefPtr<Range> findPlainText(const Range *r, const String& s, bool forward, b
                     buffer.clear();
                 }
                 int available = it.length();
-                int runLength = kMin(needed, available);
+                int runLength = min(needed, available);
                 buffer.append(runLength, it.characters());
                 it.advance(runLength);
             }

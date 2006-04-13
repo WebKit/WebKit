@@ -422,7 +422,7 @@ void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
             addCSSLength(attr, CSS_PROP_BORDER_SPACING, attr->value());
     } else if (attr->name() == cellpaddingAttr) {
         if (!attr->value().isEmpty())
-            padding = kMax( 0, attr->value().toInt() );
+            padding = max( 0, attr->value().toInt() );
         else
             padding = 1;
         if (renderer() && renderer()->isTable()) {

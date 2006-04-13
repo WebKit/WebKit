@@ -2,6 +2,216 @@
 
         Rubber-stamped by Anders.
 
+        - fix Windows build
+
+        * WebCore.vcproj/Image\ Viewer/Image\ Viewer.vcproj: Add loader directory.
+
+        - use std::min/max exclusively intead of kMin/Max
+        - eliminate KWQDef.h since all it had left in it was kMin/Max
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Remove KWQDef.h.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * kwq/KWQDef.h: Removed.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::attributedString):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        (WebCore::CSSStyleSelector::fontSizeForKeyword):
+        * dom/Document.cpp:
+        (WebCore::Document::minimumLayoutDelay):
+        (WebCore::Document::addMarker):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor):
+        * dom/xml_tokenizer.cpp:
+        (WebCore::OffsetBuffer::readOutBytes):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::CharacterIterator::string):
+        (WebCore::findPlainText):
+        * editing/htmlediting.cpp:
+        (WebCore::rangeCompliantEquivalent):
+        * editing/markup.cpp:
+        (WebCore::renderedText):
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseComment):
+        (WebCore::HTMLTokenizer::parseEntity):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::enlargeBuffer):
+        (WebCore::HTMLTokenizer::enlargeScriptBuffer):
+        * html/html_imageimpl.cpp:
+        (WebCore::HTMLAreaElement::getRegion):
+        * html/html_tableimpl.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::sizeHint):
+        * kwq/KWQListBox.mm:
+        (QListBox::sizeForNumberOfLines):
+        * kwq/KWQSlider.mm:
+        (QSlider::setValue):
+        * loader/Cache.cpp:
+        (WebCore::Cache::setSize):
+        * page/Frame.cpp:
+        (WebCore::Frame::forceLayoutWithPageWidthRange):
+        * platform/DeprecatedPtrListImpl.h:
+        * platform/DeprecatedString.cpp:
+        (ucstrcmp):
+        * platform/DeprecatedString.h:
+        * platform/DeprecatedValueListImpl.h:
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        * platform/mac/WebCoreTextArea.mm:
+        (-[WebCoreTextView _trackResizeFromMouseDown:]):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::isSelected):
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::selectionStartEnd):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintSpellingMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::paintMarkedTextUnderline):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowRect):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::estimateVerticalPosition):
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::setCollapsedBottomMargin):
+        (WebCore::RenderBlock::handleBottomOfBlock):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::fillVerticalSelectionGap):
+        (WebCore::RenderBlock::fillLeftSelectionGap):
+        (WebCore::RenderBlock::fillRightSelectionGap):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::nearestFloatBottom):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::RenderBlock::calcMinMaxWidth):
+        (WebCore::RenderBlock::calcInlineMinMaxWidth):
+        (WebCore::RenderBlock::calcBlocminMaxWidth):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcBorderBoxWidth):
+        (WebCore::RenderBox::calcBorderBoxHeight):
+        (WebCore::RenderBox::calcContentBoxWidth):
+        (WebCore::RenderBox::calcContentBoxHeight):
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcWidthUsing):
+        (WebCore::RenderBox::calcHeight):
+        (WebCore::RenderBox::calcPercentageHeight):
+        (WebCore::RenderBox::calcReplacedWidth):
+        (WebCore::RenderBox::calcReplacedHeight):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteVerticalValues):
+        * rendering/RenderCanvas.cpp:
+        (WebCore::RenderCanvas::layout):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::calcMinMaxWidth):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderFlexibleBox::allowedChildFlex):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintLines):
+        (WebCore::RenderFlow::lowestPosition):
+        (WebCore::RenderFlow::rightmostPosition):
+        (WebCore::RenderFlow::leftmostPosition):
+        (WebCore::RenderFlow::paintOutlineForLine):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::computeScrollDimensions):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::absoluteBoundingBox):
+        (WebCore::Marquee::marqueeSpeed):
+        (WebCore::Marquee::computePosition):
+        (WebCore::Marquee::timerFired):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBorder):
+        (WebCore::RenderObject::paintBorderImage):
+        (WebCore::RenderObject::paintBorder):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcWidth):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::lowestPosition):
+        (WebCore::RenderTableSection::rightmostPosition):
+        (WebCore::RenderTableSection::leftmostPosition):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::caretRect):
+        (WebCore::RenderText::calcMinMaxWidth):
+        (WebCore::RenderText::minXPos):
+        (WebCore::RenderText::width):
+        (WebCore::RenderText::caretMinOffset):
+        (WebCore::RenderText::caretMaxOffset):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::checkLinesForOverflow):
+        * rendering/render_form.cpp:
+        (WebCore::RenderLineEdit::setSelectionStart):
+        (WebCore::RenderLineEdit::setSelectionEnd):
+        (WebCore::RenderLineEdit::setSelectionRange):
+        (WebCore::RenderFieldset::layoutLegend):
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        (WebCore::RenderSelect::layout):
+        (WebCore::RenderTextArea::calcMinMaxWidth):
+        (WebCore::RenderSlider::updateFromElement):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::layout):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::verticallyAlignBoxes):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        * rendering/render_line.h:
+        (WebCore::RootInlineBox::selectionHeight):
+        * rendering/render_list.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/table_layout.cpp:
+        (WebCore::FixedTableLayout::calcMinMaxWidth):
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::calcMinMaxWidth):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::layout):
+        Use min/max instead of kMin/kMax.
+
+2006-04-12  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Anders.
+
         - get ready for some more de-KWQ-ing done by the renaming script in two ways
             1) stop using forwarding headers for things within WebCore
             2) remove a bit of unused stuff

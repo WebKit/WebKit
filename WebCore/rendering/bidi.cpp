@@ -33,6 +33,8 @@
 #include "break_lines.h"
 #include <kxmlcore/AlwaysInline.h>
 
+using namespace std;
+
 namespace WebCore {
 
 // an iterator which traverses all the objects within a block
@@ -869,7 +871,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                 RenderStyle *style = r->obj->style();
                 if (style->autoWrap() && style->breakOnlyAfterWhiteSpace()) {
                     // shrink the box as needed to keep the line from overflowing the available width
-                    textWidth = kMin(effectiveWidth, availableWidth - totWidth);
+                    textWidth = min(effectiveWidth, availableWidth - totWidth);
                 }
             }
             r->box->setWidth(textWidth);
@@ -1569,7 +1571,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         if (startLine) {
             useRepaintRect = true;
             startLineBottom = startLine->bottomOverflow();
-            repaintRect.setY(kMin(m_height, startLine->topOverflow()));
+            repaintRect.setY(min(m_height, startLine->topOverflow()));
             RenderArena* arena = renderArena();
             RootInlineBox* box = startLine;
             while (box) {
@@ -1651,9 +1653,9 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
             if (endLineMatched) {
                 // Note our current y-position for correct repainting when no lines move.  If no lines move, we still have to
                 // repaint up to the maximum of the bottom overflow of the old start line or the bottom overflow of the new last line.
-                int currYPos = kMax(startLineBottom, m_height);
+                int currYPos = max(startLineBottom, m_height);
                 if (lastRootBox())
-                    currYPos = kMax(currYPos, lastRootBox()->bottomOverflow());
+                    currYPos = max(currYPos, lastRootBox()->bottomOverflow());
                 
                 // Attach all the remaining lines, and then adjust their y-positions as needed.
                 for (RootInlineBox* line = endLine; line; line = line->nextRootBox())
@@ -1666,24 +1668,24 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                         line->adjustPosition(0, delta);
                 }
                 m_height = lastRootBox()->blockHeight();
-                m_overflowHeight = kMax(m_height, m_overflowHeight);
+                m_overflowHeight = max(m_height, m_overflowHeight);
                 int bottomOfLine = lastRootBox()->bottomOverflow();
                 if (bottomOfLine > m_height && bottomOfLine > m_overflowHeight)
                     m_overflowHeight = bottomOfLine;
                 if (delta)
-                    repaintRect.setHeight(kMax(m_overflowHeight-delta, m_overflowHeight) - repaintRect.y());
+                    repaintRect.setHeight(max(m_overflowHeight-delta, m_overflowHeight) - repaintRect.y());
                 else
                     repaintRect.setHeight(currYPos - repaintRect.y());
             }
             else {
                 // Delete all the remaining lines.
-                m_overflowHeight = kMax(m_height, m_overflowHeight);
+                m_overflowHeight = max(m_height, m_overflowHeight);
                 InlineRunBox* line = endLine;
                 RenderArena* arena = renderArena();
                 while (line) {
                     InlineRunBox* next = line->nextLineBox();
                     if (!next)
-                        repaintRect.setHeight(kMax(m_overflowHeight, line->bottomOverflow()) - repaintRect.y());
+                        repaintRect.setHeight(max(m_overflowHeight, line->bottomOverflow()) - repaintRect.y());
                     line->deleteLine(arena);
                     line = next;
                 }
@@ -1705,16 +1707,16 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     m_height += toAdd;
 
     // Always make sure this is at least our height.
-    m_overflowHeight = kMax(m_height, m_overflowHeight);
+    m_overflowHeight = max(m_height, m_overflowHeight);
     
     // See if any lines spill out of the block.  If so, we need to update our overflow width.
     checkLinesForOverflow();
 
     if (useRepaintRect) {
         repaintRect.setX(m_overflowLeft);
-        repaintRect.setWidth(kMax((int)m_width, m_overflowWidth) - m_overflowLeft);
+        repaintRect.setWidth(max((int)m_width, m_overflowWidth) - m_overflowLeft);
         if (repaintRect.height() == 0)
-            repaintRect.setHeight(kMax(oldLineBottom, m_overflowHeight) - repaintRect.y());
+            repaintRect.setHeight(max(oldLineBottom, m_overflowHeight) - repaintRect.y());
     }
 
     if (!firstLineBox() && element() && element()->isContentEditable() && element()->rootEditableElement() == element())
@@ -2504,10 +2506,10 @@ void RenderBlock::checkLinesForOverflow()
     // and factor that in somehow.
     m_overflowWidth = m_width;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        m_overflowLeft = kMin(curr->leftOverflow(), m_overflowLeft);
-        m_overflowTop = kMin(curr->topOverflow(), m_overflowTop);
-        m_overflowWidth = kMax(curr->rightOverflow(), m_overflowWidth);
-        m_overflowHeight = kMax(curr->bottomOverflow(), m_overflowHeight);
+        m_overflowLeft = min(curr->leftOverflow(), m_overflowLeft);
+        m_overflowTop = min(curr->topOverflow(), m_overflowTop);
+        m_overflowWidth = max(curr->rightOverflow(), m_overflowWidth);
+        m_overflowHeight = max(curr->bottomOverflow(), m_overflowHeight);
     }
 }
 

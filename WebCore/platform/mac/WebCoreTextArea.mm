@@ -37,6 +37,7 @@
 #import "render_replaced.h"
 #import <kxmlcore/Assertions.h>
 
+using namespace std;
 using namespace WebCore;
 using namespace EventNames;
 
@@ -621,8 +622,8 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     NSPoint initialLocalPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSSize initialTextAreaSize = [textArea frame].size;
     
-    int minWidth = kMin((int)initialTextAreaSize.width, MinimumWidthWhileResizing);
-    int minHeight = kMin((int)initialTextAreaSize.height, MinimumHeightWhileResizing);
+    int minWidth = min((int)initialTextAreaSize.width, MinimumWidthWhileResizing);
+    int minHeight = min((int)initialTextAreaSize.height, MinimumHeightWhileResizing);
     
     BOOL handledIntrinsicMargins = NO;
     DOMCSSStyleDeclaration *oldComputedStyle = [[element ownerDocument] getComputedStyle:element :@""];
@@ -646,8 +647,8 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
             // to drag the bottom-right corner to make the bottom-left corner move.
             // FIXME Radar 4118564: ideally we'd autoscroll the window as necessary to keep the point under
             // the cursor in view.
-            int newWidth = kMax(minWidth, (int)(initialTextAreaSize.width + (localPoint.x - initialLocalPoint.x)));
-            int newHeight = kMax(minHeight, (int)(initialTextAreaSize.height + (localPoint.y - initialLocalPoint.y)));
+            int newWidth = max(minWidth, (int)(initialTextAreaSize.width + (localPoint.x - initialLocalPoint.x)));
+            int newHeight = max(minHeight, (int)(initialTextAreaSize.height + (localPoint.y - initialLocalPoint.y)));
             [inlineStyle setWidth:[NSString stringWithFormat:@"%dpx", newWidth]];
             [inlineStyle setHeight:[NSString stringWithFormat:@"%dpx", newHeight]];
             
