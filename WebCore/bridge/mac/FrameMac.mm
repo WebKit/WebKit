@@ -111,7 +111,7 @@ static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
     if (key.length() != 1)
         return 0;
 
-    SEL selector;
+    SEL selector = NULL;
     switch (key[0U].unicode()) {
     case NSUpArrowFunctionKey:
         selector = @selector(moveUp:); break;
