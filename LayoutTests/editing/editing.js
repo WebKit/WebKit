@@ -84,6 +84,36 @@ function extendSelectionForwardByWordCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execMoveSelectionForwardBySentenceCommand() {
+    selection.modify("move", "forward", "sentence");
+}
+function moveSelectionForwardBySentenceCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionForwardBySentenceCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionForwardBySentenceCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionForwardBySentenceCommand() {
+    selection.modify("extend", "forward", "sentence");
+}
+function extendSelectionForwardBySentenceCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionForwardBySentenceCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionForwardBySentenceCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execMoveSelectionForwardByLineCommand() {
     selection.modify("move", "forward", "line");
 }
@@ -169,6 +199,36 @@ function extendSelectionBackwardByWordCommand() {
     }
     else {
         execExtendSelectionBackwardByWordCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execMoveSelectionBackwardBySentenceCommand() {
+    selection.modify("move", "backward", "sentence");
+}
+function moveSelectionBackwardBySentenceCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionBackwardBySentenceCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionBackwardBySentenceCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionBackwardBySentenceCommand() {
+    selection.modify("extend", "backward", "sentence");
+}
+function extendSelectionBackwardBySentenceCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionBackwardBySentenceCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionBackwardBySentenceCommand();
     }
 }
 

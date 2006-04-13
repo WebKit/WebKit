@@ -2,4 +2,5 @@ This tests that a textarea's default value is submitted with hard line wraps (ca
 
 Due to a bug, the textarea is actually a bit wider than we specify via the cols attribute, so, the number and position of the carriage returns in the submitted data is not what you'd expect. The expected results for this testcase should be updated when http://bugzilla.opendarwin.org/show_bug.cgi?id=7505 is fixed.
 
- Success
+ 
+Success

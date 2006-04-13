@@ -1,3 +1,29 @@
+2006-04-12  David Harrison  <harrison@apple.com>
+
+        <rdar://problem/4386640> AX: AXPreviousSentenceStartTextMarkerForTextMarker does not respect paragraph boundary
+        <rdar://problem/4414575> AX: Dictionary popup cannot find some words on Dictionary.app
+
+        * editing/editing.js:
+        Add sentence navigation/selection.
+        
+        * editing/selection/extend-by-sentence-001-expected.txt: Added.
+        * editing/selection/extend-by-sentence-001.html: Added.
+        Test for both <rdar://problem/4386640> and <rdar://problem/4414575>.
+        
+        * fast/dom/inner-text-001-expected.txt: Added.
+        * fast/dom/inner-text-001.html: Added.
+        Tests innerText on a variety of elements.
+        
+        * fast/dom/HTMLObjectElement/form/test1-expected.txt:
+        * fast/events/mouseclick-target-and-positioning-expected.txt:
+        * fast/forms/button-in-forms-collection-expected.txt:
+        * fast/forms/focus-control-to-page-expected.txt:
+        * fast/forms/focus-expected.txt:
+        * fast/forms/textarea-hard-linewrap-expected.txt:
+        * fast/forms/textarea-setvalue-submit-expected.txt:
+        * fast/loader/loadInProgress-expected.txt:
+        Updated for innerText changes that emit newlines for more kinds of blocks.
+
 2006-04-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

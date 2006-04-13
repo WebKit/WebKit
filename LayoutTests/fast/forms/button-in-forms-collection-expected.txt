@@ -1,6 +1,7 @@
 The following tests for regression against 4405: <button> not listed in form collections. You should see a series of lines starting with PASS.
 
  Button2
+
 PASS document.test.elements.length is 2
 PASS document.test.elements[0].name is "foo"
 PASS document.test.elements[1].name is "bla"
