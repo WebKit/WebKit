@@ -32,7 +32,7 @@
 
 #import "FontDataSet.h"
 #import "GraphicsContext.h"
-#import "khtml_settings.h"
+#import "KWQKHTMLSettings.h"
 
 #import "WebCoreTextRenderer.h"
 #import "IntRect.h"

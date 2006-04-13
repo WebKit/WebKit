@@ -27,7 +27,7 @@
 
 #include "PlatformString.h"
 #include <assert.h>
-#include <qvaluelist.h>
+#include "DeprecatedValueList.h"
 
 namespace WebCore
 {

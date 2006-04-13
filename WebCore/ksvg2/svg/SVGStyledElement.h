@@ -27,7 +27,7 @@
 #include "SVGElement.h"
 #include "SVGStylable.h"
 
-#include <qwmatrix.h>
+#include "KWQWMatrix.h"
 #include <kcanvas/KCanvasPath.h>
 #include "render_style.h"
 

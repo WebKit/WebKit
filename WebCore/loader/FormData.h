@@ -21,8 +21,8 @@
 #ifndef KHTML_FORM_DATA_H
 #define KHTML_FORM_DATA_H
 
-#include <DeprecatedString.h>
-#include <qvaluelist.h>
+#include "DeprecatedString.h"
+#include "DeprecatedValueList.h"
 
 class DeprecatedCString;
 

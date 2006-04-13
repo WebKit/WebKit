@@ -25,8 +25,8 @@
 
 #include "CachedObjectClient.h"
 #include "css_base.h"
-#include <qptrlist.h>
-#include <qvaluelist.h>
+#include "DeprecatedPtrList.h"
+#include "DeprecatedValueList.h"
 #include <kxmlcore/PassRefPtr.h>
 
 class QPaintDeviceMetrics;

@@ -33,7 +33,7 @@
 #include "kjs_binding.h"
 #include "TransferJob.h"
 #include <kjs/protect.h>
-#include <qregexp.h>
+#include "RegularExpression.h"
 #include "TextEncoding.h"
 
 using namespace KIO;

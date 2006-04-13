@@ -28,6 +28,7 @@
 
 #import "KWQLineEdit.h"
 #import "FrameMac.h"
+#import "KWQKHTMLSettings.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreWidgetHolder.h"
 #import "render_form.h"

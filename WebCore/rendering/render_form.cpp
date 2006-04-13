@@ -35,12 +35,12 @@
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
+#include "KWQComboBox.h"
 #include "KWQFileButton.h"
 #include "KWQSlider.h"
+#include "KWQTextEdit.h"
 #include "PlatformMouseEvent.h"
 #include "dom2_eventsimpl.h"
-#include <qcombobox.h>
-#include <qtextedit.h>
 
 namespace WebCore {
 

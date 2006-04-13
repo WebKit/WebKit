@@ -67,7 +67,7 @@
 #include "render_frames.h"
 #include "xml_tokenizer.h"
 #include "xmlhttprequest.h"
-#include <qregexp.h>
+#include "RegularExpression.h"
 
 #ifdef KHTML_XSLT
 #include "XSLTProcessor.h"

@@ -25,7 +25,7 @@
 #define KCanvasPath_H
 #if SVG_SUPPORT
 
-#include <q3valuelist.h>
+#include "DeprecatedValueList.h"
 #include <kxmlcore/Assertions.h>
 #include "Shared.h"
 #include "FloatRect.h"

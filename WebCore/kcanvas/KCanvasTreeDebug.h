@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <DeprecatedString.h>
-#include <qtextstream.h>
-#include <q3valuelist.h>
+#include "DeprecatedString.h"
+#include "KWQTextStream.h"
+#include "DeprecatedValueList.h"
 
 class QMatrix;
 class DeprecatedStringList;

@@ -24,7 +24,7 @@
 #define KDOM_DOMList_H
 #if SVG_SUPPORT
 
-#include <q3ptrlist.h>
+#include "DeprecatedPtrList.h"
 #include "Shared.h"
 
 namespace WebCore

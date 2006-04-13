@@ -49,8 +49,8 @@
 #include "RenderInline.h"
 #include "render_list.h"
 #include "RenderTheme.h"
-#include <qmatrix.h>
-#include <qtextstream.h>
+#include "KWQWMatrix.h"
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

@@ -24,7 +24,7 @@
 #define KSVG_SVGMatrixImpl_H
 #if SVG_SUPPORT
 
-#include <qmatrix.h>
+#include "KWQWMatrix.h"
 
 #include "Shared.h"
 

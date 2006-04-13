@@ -35,7 +35,7 @@
 #include "HTMLNames.h"
 #include "RenderCanvas.h"
 #include "RenderTheme.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

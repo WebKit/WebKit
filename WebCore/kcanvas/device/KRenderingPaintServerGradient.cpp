@@ -27,7 +27,7 @@
 #include "KRenderingPaintServerGradient.h"
 #include "KCanvasMatrix.h"
 
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 #include "KCanvasTreeDebug.h"
 
 namespace WebCore {

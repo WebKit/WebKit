@@ -23,7 +23,7 @@
 #ifndef BIDI_H
 #define BIDI_H
 
-#include <DeprecatedString.h>
+#include "DeprecatedString.h"
 
 class RenderArena;
 

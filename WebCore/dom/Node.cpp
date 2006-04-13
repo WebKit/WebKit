@@ -36,7 +36,7 @@
 #include "HTMLNames.h"
 #include "kjs_binding.h"
 #include "RenderObject.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

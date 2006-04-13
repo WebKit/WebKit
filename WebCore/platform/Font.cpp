@@ -28,7 +28,7 @@
 
 #include "FontDataSet.h"
 #include "GraphicsContext.h"
-#include "khtml_settings.h"
+#include "KWQKHTMLSettings.h"
 
 namespace WebCore {
 

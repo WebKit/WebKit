@@ -20,7 +20,7 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <DeprecatedStringList.h>
+#include "DeprecatedStringList.h"
 
 #include "Attr.h"
 

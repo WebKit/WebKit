@@ -27,7 +27,7 @@
 
 #include "CachedImage.h"
 
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 #include "KCanvasTreeDebug.h"
 #include <kxmlcore/Assertions.h>
 

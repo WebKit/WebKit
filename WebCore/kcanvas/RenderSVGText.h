@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "RenderBlock.h"
-#include <qmatrix.h>
+#include "KWQWMatrix.h"
 
 namespace WebCore {
 

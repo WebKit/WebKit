@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __break_blockquote_command_h__
-#define __break_blockquote_command_h__
+#ifndef break_blockquote_command_h__
+#define break_blockquote_command_h__
 
 #include "CompositeEditCommand.h"
-#include "qptrlist.h"
+#include "DeprecatedPtrList.h"
 
 namespace WebCore {
 
@@ -41,4 +41,4 @@ public:
 
 } // namespace WebCore
 
-#endif // __break_blockquote_command_h__
+#endif

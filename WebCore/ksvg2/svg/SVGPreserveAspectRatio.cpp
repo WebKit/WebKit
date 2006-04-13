@@ -22,8 +22,8 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <DeprecatedString.h>
-#include <DeprecatedStringList.h>
+#include "DeprecatedString.h"
+#include "DeprecatedStringList.h"
 
 #include "StringImpl.h"
 

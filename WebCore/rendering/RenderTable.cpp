@@ -34,7 +34,7 @@
 #include "Document.h"
 #include "table_layout.h"
 #include "HTMLNames.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

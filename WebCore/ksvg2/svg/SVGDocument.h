@@ -24,7 +24,7 @@
 #define KSVG_SVGDocumentImpl_H
 #if SVG_SUPPORT
 
-#include <q3ptrlist.h>
+#include "DeprecatedPtrList.h"
 
 #include "CachedObjectClient.h"
 #include <ksvg2/misc/KSVGTimeScheduler.h>

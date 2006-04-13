@@ -24,8 +24,8 @@
 #define CSS_css_stylesheetimpl_h_
 
 #include "css_base.h"
-#include <qptrlist.h>
-#include <qvaluelist.h>
+#include "DeprecatedPtrList.h"
+#include "DeprecatedValueList.h"
 
 namespace WebCore {
 

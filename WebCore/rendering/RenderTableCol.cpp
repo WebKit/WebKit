@@ -29,7 +29,7 @@
 
 #include "html_tableimpl.h"
 #include "HTMLNames.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

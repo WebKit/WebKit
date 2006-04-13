@@ -28,8 +28,8 @@
 #define Cache_h
 
 #include "PlatformString.h"
-#include <kio/global.h>
-#include <qptrlist.h>
+#include "KWQKIOGlobal.h"
+#include "DeprecatedPtrList.h"
 #include <kxmlcore/HashSet.h>
 
 class KURL;

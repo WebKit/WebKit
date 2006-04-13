@@ -24,19 +24,20 @@
 #include "config.h"
 #include "cssstyleselector.h"
 
-#include "CachedImage.h"
-#include "Frame.h"
-#include "HTMLElement.h"
-#include "HTMLInputElement.h"
-#include "History.h"
-#include "UserAgentStyleSheets.h"
-#include "css_stylesheetimpl.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CachedImage.h"
+#include "Frame.h"
 #include "HTMLDocument.h"
+#include "HTMLElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "loader.h"
+#include "History.h"
+#include "KWQKHTMLSettings.h"
 #include "RenderTheme.h"
+#include "UserAgentStyleSheets.h"
+#include "css_stylesheetimpl.h"
+#include "loader.h"
 
 namespace WebCore {
 

@@ -24,7 +24,7 @@
 #define KCanvasMatrix_H
 #if SVG_SUPPORT
 
-#include <qmatrix.h>
+#include "KWQWMatrix.h"
 
 namespace WebCore {
 

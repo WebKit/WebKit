@@ -41,7 +41,7 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "Shared.h"
-#include <qvaluelist.h>
+#include "DeprecatedValueList.h"
 
 #if SVG_SUPPORT
 #include "SVGRenderStyle.h"

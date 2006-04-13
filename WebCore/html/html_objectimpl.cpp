@@ -40,8 +40,8 @@
 #include "render_applet.h"
 #include "render_frames.h"
 #include "RenderImage.h"
-#include <java/kjavaappletwidget.h>
-#include <DeprecatedString.h>
+#include "JavaAppletWidget.h"
+#include "DeprecatedString.h"
 #include "HTMLNames.h"
 
 namespace WebCore {

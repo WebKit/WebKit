@@ -29,7 +29,6 @@
 
 #include "CachedObject.h"
 #include "IntRect.h"
-#include <khtml_settings.h>
 #include "ImageAnimationObserver.h"
 
 namespace WebCore {
@@ -58,8 +57,6 @@ public:
 
     bool isErrorImage() const { return m_errorOccurred; }
 
-    void setShowAnimations(KHTMLSettings::KAnimationAdvice);
-
     virtual bool schedule() const { return true; }
 
     void checkNotify();
@@ -78,7 +75,6 @@ private:
     int m_dataSize;
     
     bool m_errorOccurred : 1;
-    unsigned m_showAnimations : 2; // KHTMLSettings::KAnimationAdvice
 
     friend class Cache;
 };

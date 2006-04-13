@@ -45,7 +45,6 @@ DocLoader::DocLoader(Frame *frame, Document* doc)
     m_cachePolicy = KIO::CC_Verify;
     m_expireDate = 0;
     m_bautoloadImages = true;
-    m_showAnimations = KHTMLSettings::KAnimationEnabled;
     m_frame = frame;
     m_doc = doc;
     m_loadInProgress = false;
@@ -190,21 +189,6 @@ void DocLoader::setAutoloadImages(bool enable)
 void DocLoader::setCachePolicy(KIO::CacheControl cachePolicy)
 {
     m_cachePolicy = cachePolicy;
-}
-
-void DocLoader::setShowAnimations(KHTMLSettings::KAnimationAdvice showAnimations)
-{
-    if (showAnimations == static_cast<KHTMLSettings::KAnimationAdvice>(m_showAnimations))
-        return;
-    m_showAnimations = showAnimations;
-
-    const CachedObject* co;
-    for (co=m_docObjects.first(); co; co = m_docObjects.next())
-        if (co->type() == CachedObject::ImageResource) {
-            CachedImage *img = const_cast<CachedImage*>(static_cast<const CachedImage*>(co));
-
-            img->setShowAnimations(showAnimations);
-        }
 }
 
 void DocLoader::removeCachedObject(CachedObject* o) const

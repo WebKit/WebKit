@@ -34,7 +34,7 @@
 #include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
 #include "CSSValueKeywords.h"
-#include <qregexp.h>
+#include "RegularExpression.h"
 
 #if SVG_SUPPORT
 #include "ksvgcssproperties.h"

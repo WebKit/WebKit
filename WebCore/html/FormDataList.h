@@ -29,7 +29,7 @@
 
 #include "PlatformString.h"
 #include "TextEncoding.h"
-#include <qvaluelist.h>
+#include "DeprecatedValueList.h"
 
 namespace WebCore {
 

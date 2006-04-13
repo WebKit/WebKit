@@ -36,7 +36,7 @@
 #include "dom2_eventsimpl.h"
 #include "kjs_proxy.h"
 #include "HTMLNames.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

@@ -35,7 +35,7 @@
 #include "Timer.h"
 #include "css_valueimpl.h"
 #include "kjs_proxy.h"
-#include <kio/global.h>
+#include "KWQKIOGlobal.h"
 #include <kxmlcore/HashMap.h>
 
 namespace WebCore {

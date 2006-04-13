@@ -27,7 +27,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "html_objectimpl.h"
-#include "java/kjavaappletwidget.h"
+#include "JavaAppletWidget.h"
 #include "RenderCanvas.h"
 #include "HTMLNames.h"
 

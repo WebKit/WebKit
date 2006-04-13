@@ -23,7 +23,7 @@
 
 #include "NodeList.h"
 #include "kjs_binding.h"
-#include <qvaluelist.h>
+#include "DeprecatedValueList.h"
 
 
 namespace WebCore {

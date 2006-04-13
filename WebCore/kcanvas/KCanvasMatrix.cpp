@@ -22,11 +22,11 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <math.h>
-#include <qwmatrix.h>
+#include "KCanvasMatrix.h"
 
 #include "KCanvasPath.h"
-#include "KCanvasMatrix.h"
+#include "KWQWMatrix.h"
+#include <math.h>
 
 namespace WebCore {
 

@@ -26,7 +26,7 @@
 #define KCanvasItem_H
 #if SVG_SUPPORT
 
-#include <q3valuelist.h>
+#include "DeprecatedValueList.h"
 #include "FloatRect.h"
 
 #include "RenderObject.h"

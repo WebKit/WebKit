@@ -29,7 +29,7 @@
 
 #include "TransferJobClient.h"
 #include <kxmlcore/HashMap.h>
-#include <qptrlist.h>
+#include "DeprecatedPtrList.h"
 
 #if __OBJC__
 @class NSData;

@@ -32,7 +32,7 @@
 #include "RenderTableCol.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

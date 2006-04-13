@@ -21,7 +21,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "svgpathparser.h"
-#include <DeprecatedString.h>
+#include "DeprecatedString.h"
 #include <math.h>
 
 using namespace WebCore;

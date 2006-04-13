@@ -29,9 +29,9 @@
 #include "HTMLInputElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
+#include "KWQLineEdit.h"
 #include "RenderBlock.h"
 #include "RenderImage.h"
-#include <qlineedit.h>
 
 class QListBox;
 

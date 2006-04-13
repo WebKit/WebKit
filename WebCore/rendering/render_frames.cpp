@@ -42,7 +42,7 @@
 #include "HTMLTokenizer.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

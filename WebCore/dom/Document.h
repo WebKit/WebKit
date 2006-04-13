@@ -36,7 +36,7 @@
 #include "Decoder.h"
 #include "dom2_traversalimpl.h"
 #include <kxmlcore/HashCountedSet.h>
-#include <qptrlist.h>
+#include "DeprecatedPtrList.h"
 
 class RenderArena;
 

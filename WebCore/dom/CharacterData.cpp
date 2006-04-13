@@ -29,7 +29,7 @@
 #include "ExceptionCode.h"
 #include "RenderText.h"
 #include "dom2_eventsimpl.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

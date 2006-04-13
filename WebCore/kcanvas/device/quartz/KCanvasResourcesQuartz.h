@@ -28,7 +28,7 @@
 
 #import "KCanvasImage.h"
 #import "KCanvasContainer.h"
-#import <qmatrix.h>
+#import "KWQWMatrix.h"
 
 typedef struct CGContext *CGContextRef;
 typedef struct CGLayer *CGLayerRef;

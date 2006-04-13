@@ -23,7 +23,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "KRenderingPaintServerSolid.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 #include "KCanvasTreeDebug.h"
 
 // this is related to KRenderingPaintServer, but currently it doesn't have its own .cpp file

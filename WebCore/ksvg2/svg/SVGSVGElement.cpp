@@ -45,7 +45,7 @@
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

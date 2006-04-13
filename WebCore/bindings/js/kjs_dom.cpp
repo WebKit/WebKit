@@ -46,7 +46,7 @@
 #include "HTMLDocument.h"
 #include "html_objectimpl.h"
 #include "HTMLNames.h"
-#include "khtml_settings.h"
+#include "KWQKHTMLSettings.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_traversal.h"

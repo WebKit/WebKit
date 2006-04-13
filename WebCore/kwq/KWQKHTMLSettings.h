@@ -32,12 +32,6 @@
 class KHTMLSettings
 {
 public:
-    enum KAnimationAdvice {
-        KAnimationDisabled,
-        KAnimationLoopOnce,
-        KAnimationEnabled
-    };
-    
     const WebCore::AtomicString& stdFontName() const { return m_stdFontName; }
     const WebCore::AtomicString& fixedFontName() const { return m_fixedFontName; }
     const WebCore::AtomicString& serifFontName() const { return m_serifFontName; }

@@ -45,7 +45,6 @@ CachedImage::CachedImage(DocLoader* dl, const String &url, KIO::CacheControl _ca
     m_errorOccurred = false;
     m_status = Unknown;
     m_loading = true;
-    m_showAnimations = dl->showAnimations();
 }
 
 CachedImage::~CachedImage()
@@ -98,11 +97,6 @@ void CachedImage::notifyObservers()
     CachedObjectClientWalker w(m_clients);
     while (CachedObjectClient *c = w.next())
         c->imageChanged(this);
-}
-
-void CachedImage::setShowAnimations( KHTMLSettings::KAnimationAdvice showAnimations )
-{
-    m_showAnimations = showAnimations;
 }
 
 void CachedImage::clear()

@@ -26,12 +26,12 @@
 
 #include "config.h"
 #include "HTMLKeygenElement.h"
-#include "HTMLOptionElement.h"
-#include "Text.h"
+
 #include "Document.h"
 #include "FormDataList.h"
-
-#include <ksslkeygen.h>
+#include "HTMLOptionElement.h"
+#include "KWQKSSLKeyGen.h"
+#include "Text.h"
 
 using namespace WebCore;
 

@@ -34,7 +34,7 @@
 #include "KRenderingDevice.h"
 #include "RenderPath.h"
 #include "SVGStyledElement.h"
-#include <qtextstream.h>
+#include "KWQTextStream.h"
 
 namespace WebCore {
 

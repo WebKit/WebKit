@@ -1,3 +1,134 @@
+2006-04-12  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Anders.
+
+        - get ready for some more de-KWQ-ing done by the renaming script in two ways
+            1) stop using forwarding headers for things within WebCore
+            2) remove a bit of unused stuff
+
+        * loader/CachedImage.h:
+        * loader/CachedImage.cpp:
+        * loader/DocLoader.cpp:
+        * loader/DocLoader.h:
+        * page/Frame.cpp:
+        * xml/XSLTProcessor.cpp:
+        Removed unused showAnimations functions and data. We can add back later if we need it.
+        And if we do, we won't use a typedef from KHTMLSettings.
+
+        * ForwardingHeaders/java: Removed.
+        * ForwardingHeaders/java/kjavaappletwidget.h: Removed.
+        * ForwardingHeaders/khtml_settings.h: Removed.
+        * ForwardingHeaders/kio: Removed.
+        * ForwardingHeaders/kio/global.h: Removed.
+        * ForwardingHeaders/ksslkeygen.h: Removed.
+        * ForwardingHeaders/q3ptrlist.h: Removed.
+        * ForwardingHeaders/q3valuelist.h: Removed.
+        * ForwardingHeaders/qcombobox.h: Removed.
+        * ForwardingHeaders/qfontmetrics.h: Removed.
+        * ForwardingHeaders/qlineedit.h: Removed.
+        * ForwardingHeaders/qmatrix.h: Removed.
+        * ForwardingHeaders/qptrlist.h: Removed.
+        * ForwardingHeaders/qptrqueue.h: Removed.
+        * ForwardingHeaders/qregexp.h: Removed.
+        * ForwardingHeaders/qscrollbar.h: Removed.
+        * ForwardingHeaders/qtextedit.h: Removed.
+        * ForwardingHeaders/qtextstream.h: Removed.
+        * ForwardingHeaders/qvaluelist.h: Removed.
+        * ForwardingHeaders/qwmatrix.h: Removed.
+
+        * WebCore+SVG/DOMList.h:
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_dom.h:
+        * bindings/js/kjs_window.cpp:
+        * css/css_stylesheetimpl.h:
+        * css/css_valueimpl.cpp:
+        * css/css_valueimpl.h:
+        * css/cssstyleselector.cpp:
+        * dom/CharacterData.cpp:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/EventTargetNode.cpp:
+        * dom/Node.cpp:
+        * editing/BreakBlockquoteCommand.h:
+        * editing/htmlediting.cpp:
+        * html/FormDataList.h:
+        * html/HTMLKeygenElement.cpp:
+        * html/HTMLTokenizer.h:
+        * html/html_objectimpl.cpp:
+        * kcanvas/KCanvasFilters.cpp:
+        * kcanvas/KCanvasMatrix.cpp:
+        * kcanvas/KCanvasMatrix.h:
+        * kcanvas/KCanvasPath.cpp:
+        * kcanvas/KCanvasPath.h:
+        * kcanvas/KCanvasResources.cpp:
+        * kcanvas/KCanvasTreeDebug.h:
+        * kcanvas/RenderForeignObject.h:
+        * kcanvas/RenderPath.h:
+        * kcanvas/RenderSVGImage.h:
+        * kcanvas/RenderSVGText.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        * kcanvas/device/KRenderingPaintServerSolid.cpp:
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        * ksvg2/svg/SVGColor.cpp:
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGFEBlendElement.cpp:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElement.cpp:
+        * ksvg2/svg/SVGFECompositeElement.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElement.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElement.cpp:
+        * ksvg2/svg/SVGFELightElement.cpp:
+        * ksvg2/svg/SVGFEMergeElement.cpp:
+        * ksvg2/svg/SVGFEOffsetElement.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElement.cpp:
+        * ksvg2/svg/SVGFETileElement.cpp:
+        * ksvg2/svg/SVGFETurbulenceElement.cpp:
+        * ksvg2/svg/SVGFitToViewBox.cpp:
+        * ksvg2/svg/SVGLengthList.cpp:
+        * ksvg2/svg/SVGMatrix.h:
+        * ksvg2/svg/SVGNumberList.cpp:
+        * ksvg2/svg/SVGPreserveAspectRatio.cpp:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * ksvg2/svg/SVGStringList.cpp:
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        * ksvg2/svg/SVGTransformable.cpp:
+        * ksvg2/svg/SVGURIReference.h:
+        * ksvg2/svg/svgpathparser.cpp:
+        * kwq/KWQKHTMLSettings.h:
+        * loader/Cache.h:
+        * loader/CachedObject.h:
+        * loader/Decoder.cpp:
+        * loader/FormData.h:
+        * loader/loader.h:
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * platform/Font.cpp:
+        * platform/SegmentedString.h:
+        * platform/mac/FontMac.mm:
+        * platform/mac/WebCoreTextField.mm:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCol.cpp:
+        * rendering/RenderTableSection.cpp:
+        * rendering/bidi.h:
+        * rendering/break_lines.cpp:
+        * rendering/render_applet.cpp:
+        * rendering/render_form.cpp:
+        * rendering/render_form.h:
+        * rendering/render_frames.cpp:
+        * rendering/render_style.h:
+        * xml/xmlhttprequest.cpp:
+        Updated includes.
+
+        * WebCore.xcodeproj/project.pbxproj: Resorted a couple things.
+
 2006-04-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin and Tim O.
