@@ -1,3 +1,41 @@
+2006-04-12  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Hyatt.
+
+        - moved some more files out of KWQ to more-permanent homes
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for new locations.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * kwq/BlockExceptions.h: Removed.
+        * kwq/BlockExceptions.mm: Removed.
+        * kwq/ClipboardMac.h: Removed.
+        * kwq/ClipboardMac.mm: Removed.
+        * kwq/DeprecatedPtrList.h: Removed.
+        * kwq/DeprecatedPtrListImpl.cpp: Removed.
+        * kwq/DeprecatedPtrListImpl.h: Removed.
+        * kwq/DeprecatedValueList.h: Removed.
+        * kwq/DeprecatedValueListImpl.cpp: Removed.
+        * kwq/DeprecatedValueListImpl.h: Removed.
+        * kwq/WebCoreTextArea.h: Removed.
+        * kwq/WebCoreTextArea.mm: Removed.
+        * kwq/WebCoreTextField.h: Removed.
+        * kwq/WebCoreTextField.mm: Removed.
+        * platform/DeprecatedPtrList.h: Added.
+        * platform/DeprecatedPtrListImpl.cpp: Added.
+        * platform/DeprecatedPtrListImpl.h: Added.
+        * platform/DeprecatedValueList.h: Added.
+        * platform/DeprecatedValueListImpl.cpp: Added.
+        * platform/DeprecatedValueListImpl.h: Added.
+        * platform/mac/BlockExceptions.h: Added.
+        * platform/mac/BlockExceptions.mm: Added.
+        * platform/mac/ClipboardMac.h: Added.
+        * platform/mac/ClipboardMac.mm: Added.
+        * platform/mac/WebCoreTextArea.h: Added.
+        * platform/mac/WebCoreTextArea.mm: Added.
+        * platform/mac/WebCoreTextField.h: Added.
+        * platform/mac/WebCoreTextField.mm: Added.
+
 2006-04-12  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

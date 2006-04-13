@@ -155,38 +155,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\BlockExceptions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\ClipboardMac.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedPtrList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedPtrListImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedPtrListImpl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedValueList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedValueListImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\DeprecatedValueListImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\JavaAppletWidget.h"
 				>
 			</File>
@@ -296,14 +264,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\RenderTreeAsText.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\WebCoreTextArea.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\WebCoreTextField.h"
 				>
 			</File>
 		</Filter>
@@ -643,6 +603,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\DeprecatedPtrList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedPtrListImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedPtrListImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\DeprecatedString.cpp"
 				>
 			</File>
@@ -656,6 +628,18 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\DeprecatedStringList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedValueList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedValueListImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\DeprecatedValueListImpl.h"
 				>
 			</File>
 			<File
