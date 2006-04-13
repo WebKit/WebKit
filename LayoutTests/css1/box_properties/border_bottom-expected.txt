@@ -49,28 +49,28 @@ layer at (0,0) size 785x995
       RenderBlock {UL} at (0,382) size 769x135
         RenderListItem {LI} at (40,0) size 729x75 [border: (3px solid #000000) none]
           RenderBlock (anonymous) at (0,0) size 729x18
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-17,0) size 7x18
             RenderText {TEXT} at (0,0) size 118x18
               text run at (0,0) width 118: "This is a list item..."
           RenderBlock {UL} at (0,18) size 729x54
             RenderListItem {LI} at (40,0) size 689x18
-              RenderListMarker at (0,0) size 0x14
+              RenderListMarker at (-17,0) size 7x18
               RenderText {TEXT} at (0,0) size 73x18
                 text run at (0,0) width 73: "...and this..."
             RenderListItem {LI} at (40,18) size 689x18
-              RenderListMarker at (0,0) size 0x14
+              RenderListMarker at (-17,0) size 7x18
               RenderText {TEXT} at (0,0) size 115x18
                 text run at (0,0) width 115: "...is a second list..."
             RenderListItem {LI} at (40,36) size 689x18
-              RenderListMarker at (0,0) size 0x14
+              RenderListMarker at (-17,0) size 7x18
               RenderText {TEXT} at (0,0) size 176x18
                 text run at (0,0) width 176: "...nested within the list item."
         RenderListItem {LI} at (40,75) size 729x21 [border: (3px solid #000000) none]
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 158x18
             text run at (0,0) width 158: "This is a second list item."
         RenderListItem {LI} at (40,96) size 729x39 [border: (3px solid #000000) none]
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 722x36
             text run at (0,0) width 722: "Each list item in this list should have a medium-width black border at its bottom, which for the first item means that"
             text run at (0,18) width 104: "it should appear "
@@ -127,28 +127,28 @@ layer at (0,0) size 785x995
               RenderBlock {UL} at (4,261) size 747x135
                 RenderListItem {LI} at (40,0) size 707x75 [border: (3px solid #000000) none]
                   RenderBlock (anonymous) at (0,0) size 707x18
-                    RenderListMarker at (0,0) size 0x14
+                    RenderListMarker at (-17,0) size 7x18
                     RenderText {TEXT} at (0,0) size 118x18
                       text run at (0,0) width 118: "This is a list item..."
                   RenderBlock {UL} at (0,18) size 707x54
                     RenderListItem {LI} at (40,0) size 667x18
-                      RenderListMarker at (0,0) size 0x14
+                      RenderListMarker at (-17,0) size 7x18
                       RenderText {TEXT} at (0,0) size 73x18
                         text run at (0,0) width 73: "...and this..."
                     RenderListItem {LI} at (40,18) size 667x18
-                      RenderListMarker at (0,0) size 0x14
+                      RenderListMarker at (-17,0) size 7x18
                       RenderText {TEXT} at (0,0) size 115x18
                         text run at (0,0) width 115: "...is a second list..."
                     RenderListItem {LI} at (40,36) size 667x18
-                      RenderListMarker at (0,0) size 0x14
+                      RenderListMarker at (-17,0) size 7x18
                       RenderText {TEXT} at (0,0) size 176x18
                         text run at (0,0) width 176: "...nested within the list item."
                 RenderListItem {LI} at (40,75) size 707x21 [border: (3px solid #000000) none]
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 158x18
                     text run at (0,0) width 158: "This is a second list item."
                 RenderListItem {LI} at (40,96) size 707x39 [border: (3px solid #000000) none]
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 695x36
                     text run at (0,0) width 695: "Each list item in this list should have a medium-width black border at its bottom, which for the first item means"
                     text run at (0,18) width 131: "that it should appear "

@@ -110,16 +110,13 @@ public:
     virtual void layout( );
     virtual void calcMinMaxWidth();
 
-    virtual IntRect getAbsoluteRepaintRect();
-    
+    virtual void positionListMarker();
     void updateMarkerLocation();
     
     void setNotInList(bool notInList) { _notInList = notInList; }
     bool notInList() const { return _notInList; }
 
     DeprecatedString markerStringValue() { return m_marker ? m_marker->text() : ""; }
-    
-    virtual bool nodeAtPoint(NodeInfo&, int, int, int, int, HitTestAction);
 
 private:
     int predefVal;

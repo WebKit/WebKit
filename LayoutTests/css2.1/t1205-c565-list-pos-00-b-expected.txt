@@ -8,7 +8,7 @@ layer at (0,0) size 800x95
           text run at (0,0) width 363: "The following two boxes should be identical, to the pixel."
       RenderBlock {OL} at (80,34) size 160x18 [color=#FFFFFF] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 160x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderInline {SPAN} at (0,0) size 12x18 [color=#000080]
             RenderText {TEXT} at (0,0) size 12x18
               text run at (0,0) width 12: "1."
@@ -16,7 +16,7 @@ layer at (0,0) size 800x95
             text run at (12,0) width 31: " Test"
       RenderBlock {OL} at (80,53) size 160x18 [color=#000080] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 160x18
-          RenderListMarker at (0,0) size 16x14
+          RenderListMarker at (0,0) size 16x18
           RenderInline {SPAN} at (0,0) size 31x18 [color=#FFFFFF]
             RenderText {TEXT} at (16,0) size 31x18
               text run at (16,0) width 31: " Test"

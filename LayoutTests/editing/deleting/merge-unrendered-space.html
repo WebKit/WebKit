@@ -2,11 +2,12 @@
 <div id="test" contenteditable="true">foo<br>bar
 <div>baz</div></div>
 
+<script type="text/javascript" src="../editing.js"></script>
 <script>
-var e = document.getElementById("test");
 var s = window.getSelection();
+var e = document.getElementById("test");
 
 s.setPosition(e, 0);
-s.modify("move", "forward", "paragraph");
-document.execCommand("Delete");
+moveSelectionForwardByLineCommand();
+deleteCommand();
 </script>

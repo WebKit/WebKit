@@ -14,15 +14,15 @@ layer at (0,0) size 785x1273
           text run at (0,0) width 108: "opacity: 0.5"
       RenderBlock {UL} at (0,118) size 769x60
         RenderListItem {LI} at (40,0) size 729x15
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 280x15
             text run at (0,0) width 280: "The first three rows should be red."
         RenderListItem {LI} at (40,15) size 729x15
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 240x15
             text run at (0,0) width 240: "The last row should be orange."
         RenderListItem {LI} at (40,30) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 696x30
             text run at (0,0) width 696: "Cell A should be purple. Cell P should also be purple, but of a shade that reflects the"
             text run at (0,15) width 304: "underlying orange rather than the red."

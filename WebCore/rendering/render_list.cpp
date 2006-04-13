@@ -279,25 +279,6 @@ void RenderListItem::updateMarkerLocation()
     }
 }
 
-// We need to override RenderBlock::nodeAtPoint so that a point over an outside list marker will return the list item.
-// We should remove this when we improve the way list markers are stored in the render tree.
-bool RenderListItem::nodeAtPoint(NodeInfo& i, int x, int y, int tx, int ty, HitTestAction hitTestAction)
-{
-    if (RenderBlock::nodeAtPoint(i, x, y, tx, ty, hitTestAction))
-        return true;
-    
-    if (m_marker && !m_marker->isInside() && hitTestAction == HitTestForeground) {
-        IntRect markerRect = m_marker->getRelativeMarkerRect();
-        markerRect.move(tx + m_x, ty + m_y);
-        if (markerRect.contains(x, y)) {
-            setInnerNode(i);
-            return true;
-        }
-    }
-    
-    return false;
-}
-
 void RenderListItem::calcMinMaxWidth()
 {
     // Make sure our marker is in the correct location.
@@ -315,25 +296,44 @@ void RenderListItem::layout( )
     RenderBlock::layout();
 }
 
+void RenderListItem::positionListMarker()
+{
+    if (m_marker && !m_marker->isInside()) {
+        int markerOldX = m_marker->xPos();
+        int yOffset = 0;
+        int xOffset = 0;
+        for (RenderObject* o = m_marker->parent(); o != this; o = o->parent()) {
+            yOffset += o->yPos();
+            xOffset += o->xPos();
+        }
+        
+        RootInlineBox* root = m_marker->inlineBoxWrapper()->root();
+        if (style()->direction() == LTR) {
+            int leftLineOffset = leftRelOffset(yOffset, leftOffset(yOffset));
+            int markerXPos = leftLineOffset - xOffset - paddingLeft() - borderLeft() + m_marker->marginLeft();
+            m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
+            if (markerXPos < root->leftOverflow()) {
+                root->setHorizontalOverflowPositions(markerXPos, root->rightOverflow());
+                m_overflowLeft = kMin(markerXPos, m_overflowLeft);
+            }
+        } else {
+            int rightLineOffset = rightRelOffset(yOffset, rightOffset(yOffset));
+            int markerXPos = rightLineOffset - xOffset + paddingRight() + borderRight() + m_marker->marginLeft();
+            m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
+            if (markerXPos + m_marker->width() > root->rightOverflow()) {
+                root->setHorizontalOverflowPositions(root->leftOverflow(), markerXPos + m_marker->width());
+                m_overflowWidth = kMax(markerXPos + m_marker->width(), m_overflowLeft);
+            }
+        }
+    }
+}
+
 void RenderListItem::paint(PaintInfo& i, int _tx, int _ty)
 {
     if (!m_height)
         return;
 
     RenderBlock::paint(i, _tx, _ty);
-}
-
-IntRect RenderListItem::getAbsoluteRepaintRect()
-{
-    IntRect result = RenderBlock::getAbsoluteRepaintRect();
-    if (m_marker && m_marker->parent() == this && !m_marker->isInside()) {
-        IntRect markerRect = m_marker->getRelativeMarkerRect();
-        int x, y;
-        absolutePosition(x, y);
-        markerRect.move(x, y);
-        result.unite(markerRect);
-    }
-    return result;
 }
 
 // -----------------------------------------------------------
@@ -442,22 +442,12 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     default:
         if (!m_item.isEmpty()) {
             const Font& font = style()->font();
-            if (isInside()) {
-                if( style()->direction() == LTR) {
-                    p->drawText(marker.x(), marker.y(), AlignLeft, m_item);
-                    p->drawText(marker.x() + font.width(m_item), marker.y(), AlignLeft, ". ");
-                } else {
-                    p->drawText(marker.x(), marker.y(), AlignLeft, " .");
-                    p->drawText(marker.x() + font.width(" ."), marker.y(), AlignLeft, m_item);
-                }
+            if( style()->direction() == LTR) {
+                p->drawText(marker.x(), marker.y(), AlignLeft, m_item);
+                p->drawText(marker.x() + font.width(m_item), marker.y(), AlignLeft, ". ");
             } else {
-                if (style()->direction() == LTR) {
-                    p->drawText(marker.x(), marker.y(), AlignRight, ". ");
-                    p->drawText(marker.x() - font.width(". "), marker.y(), AlignRight, m_item);
-                } else {
-                    p->drawText(marker.x(), marker.y(), AlignLeft, " .");
-                    p->drawText(marker.x() + font.width(" ."), marker.y(), AlignLeft, m_item);
-                }
+                p->drawText(marker.x(), marker.y(), AlignLeft, " .");
+                p->drawText(marker.x() + font.width(" ."), marker.y(), AlignLeft, m_item);
             }
         }
     }
@@ -489,11 +479,8 @@ void RenderListMarker::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
 
-    m_width = 0;
-
     if (m_listImage) {
-        if (isInside())
-            m_width = m_listImage->image()->width() + cMarkerPadding;
+        m_width = m_listImage->image()->width();
         m_height = m_listImage->image()->height();
         m_minWidth = m_maxWidth = m_width;
         setMinMaxKnown();
@@ -504,15 +491,14 @@ void RenderListMarker::calcMinMaxWidth()
         m_listItem->calcValue();
 
     const Font& font = style()->font();
-    m_height = font.ascent();
+    m_height = font.height();
 
     switch(style()->listStyleType())
     {
     case DISC:
     case CIRCLE:
     case SQUARE:
-        if (isInside())
-            m_width = m_height;
+        m_width = (font.ascent() * 2 / 3 + 1) / 2 + 2;
         goto end;
     case ARMENIAN:
     case GEORGIAN:
@@ -560,8 +546,7 @@ void RenderListMarker::calcMinMaxWidth()
         break;
     }
 
-    if (isInside())
-        m_width = font.width(m_item) + font.width(". ");
+    m_width = font.width(m_item) + font.width(". ");
 
 end:
 
@@ -573,7 +558,75 @@ end:
 
 void RenderListMarker::calcWidth()
 {
-    RenderBox::calcWidth();
+    // m_width is set in calcMinMaxWidth()
+    bool haveImage = m_listImage && !m_listImage->isErrorImage();
+    const Font& font = style()->font();
+
+    if (isInside()) {
+        if (haveImage) {
+            if (style()->direction() == LTR) {
+                m_marginLeft = 0;
+                m_marginRight = cMarkerPadding;
+            } else {
+                m_marginLeft = cMarkerPadding;
+                m_marginRight = 0;
+            }
+        } else switch (style()->listStyleType()) {
+            case DISC:
+            case CIRCLE:
+            case SQUARE:
+                if (style()->direction() == LTR) {
+                    m_marginLeft = -1;
+                    m_marginRight = font.ascent() - m_width + 1;
+                } else {
+                    m_marginLeft = font.ascent() - m_width + 1;
+                    m_marginRight = -1;
+                }
+                break;
+            default:
+                m_marginLeft = 0;
+                m_marginRight = 0;
+        }
+    } else {
+        if (style()->direction() == LTR) {
+            if (haveImage)
+                m_marginLeft = -m_width - cMarkerPadding;
+            else {
+                int offset = font.ascent() * 2 / 3;
+                switch (style()->listStyleType()) {
+                    case DISC:
+                    case CIRCLE:
+                    case SQUARE:
+                        m_marginLeft = -offset - cMarkerPadding - 1;
+                        break;
+                    case LNONE:
+                        m_marginLeft = 0;
+                        break;
+                    default:
+                        m_marginLeft = m_item.isEmpty() ? 0 : -m_width - offset / 2;
+                }
+            }
+        } else {
+            if (haveImage)
+                m_marginLeft = cMarkerPadding;
+            else {
+                int offset = font.ascent() * 2 / 3;
+                switch (style()->listStyleType()) {
+                    case DISC:
+                    case CIRCLE:
+                    case SQUARE:
+                        m_marginLeft = offset + cMarkerPadding + 1 - m_width;
+                        break;
+                    case LNONE:
+                        m_marginLeft = 0;
+                        break;
+                    default:
+                        m_marginLeft = m_item.isEmpty() ? 0 : offset / 2;
+                }
+            }
+        }
+        m_marginRight = -m_marginLeft - m_width;
+    }
 }
 
 short RenderListMarker::lineHeight(bool, bool) const
@@ -599,79 +652,26 @@ bool RenderListMarker::isInside() const
 
 IntRect RenderListMarker::getRelativeMarkerRect()
 {
-    int x = m_x;
-    int y = m_y;
-    
-    RenderObject* listItem = 0;
-    int leftLineOffset = 0;
-    int rightLineOffset = 0;
-    if (!isInside()) {
-        listItem = this;
-        int yOffset = 0;
-        int xOffset = 0;
-        while (listItem && listItem != m_listItem) {
-            yOffset += listItem->yPos();
-            xOffset += listItem->xPos();
-            listItem = listItem->parent();
-        }
-        
-        // Now that we have our xoffset within the listbox, we need to adjust ourselves by the delta
-        // between our current xoffset and our desired position (which is just outside the border box
-        // of the list item).
-        if (style()->direction() == LTR) {
-            leftLineOffset = m_listItem->leftRelOffset(yOffset, m_listItem->leftOffset(yOffset));
-            x -= (xOffset - leftLineOffset) + m_listItem->paddingLeft() + m_listItem->borderLeft();
-        } else {
-            rightLineOffset = m_listItem->rightRelOffset(yOffset, m_listItem->rightOffset(yOffset));
-            x += (rightLineOffset-xOffset) + m_listItem->paddingRight() + m_listItem->borderRight();
-        }
-    }
-    
-    const Font& font = style()->font();
-    
-    int offset = font.ascent()*2/3;
-    bool haveImage = m_listImage && !m_listImage->isErrorImage();
-    if (haveImage)
-        offset = m_listImage->image()->width();
-    
-    int xoff = 0;
-    int yoff = font.ascent() - offset;
-
-    int bulletWidth = offset/2;
-    if (offset%2)
-        bulletWidth++;
-    if (!isInside()) {
-        if (listItem->style()->direction() == LTR)
-            xoff = -cMarkerPadding - offset;
-        else
-            xoff = cMarkerPadding + (haveImage ? 0 : (offset - bulletWidth));
-    } else if (style()->direction() == RTL)
-        xoff += haveImage ? cMarkerPadding : (m_width - bulletWidth);
-    
     if (m_listImage && !m_listImage->isErrorImage())
-        return IntRect(x + xoff, y,  m_listImage->imageSize().width(), m_listImage->imageSize().height());
-    
-    switch(style()->listStyleType()) {
-    case DISC:
-    case CIRCLE:
-    case SQUARE:
-        return IntRect(x + xoff, y + (3 * yoff)/2, bulletWidth, bulletWidth);
-    case LNONE:
-        return IntRect();
-    default:
-        if (m_item.isEmpty())
-            return IntRect();
-            
-        y += font.ascent();
+        return IntRect(m_x, m_y,  m_listImage->imageSize().width(), m_listImage->imageSize().height());
 
-        if (isInside())
-            return IntRect(x, y, font.width(m_item) + font.width(". "), font.height());
-        else {
-            if (style()->direction() == LTR)
-                return IntRect(x - offset / 2, y, font.width(m_item) + font.width(". "), font.height());
-            else
-                return IntRect(x + offset / 2, y, font.width(m_item) + font.width(". "), font.height());
+    const Font& font = style()->font();
+    int ascent = font.ascent();
+    
+    switch (style()->listStyleType()) {
+        case DISC:
+        case CIRCLE:
+        case SQUARE: {
+            // FIXME: Are these particular rounding rules necessary?
+            int bulletWidth = (ascent * 2 / 3 + 1) / 2;
+            return IntRect(m_x + 1, m_y + 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
         }
+        case LNONE:
+            return IntRect();
+        default:
+            if (m_item.isEmpty())
+                return IntRect();
+            return IntRect(m_x, m_y + ascent, font.width(m_item) + font.width(". "), font.height());
     }
 }
 

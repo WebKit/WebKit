@@ -119,6 +119,8 @@ public:
     void insertPositionedObject(RenderObject *o);
     void removePositionedObject(RenderObject *o);
 
+    virtual void positionListMarker() { }
+
     // Called to lay out the legend for a fieldset.
     virtual RenderObject* layoutLegend(bool relayoutChildren) { return 0; };
     

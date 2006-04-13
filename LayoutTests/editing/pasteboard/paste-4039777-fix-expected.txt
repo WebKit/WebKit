@@ -35,13 +35,13 @@ layer at (0,0) size 800x600
             RenderBR {BR} at (0,0) size 0x0
           RenderBlock {UL} at (0,80) size 756x28
             RenderListItem {LI} at (40,0) size 716x28
-              RenderListMarker at (699,0) size 0x22
+              RenderListMarker at (-22,0) size 9x28
               RenderText {TEXT} at (699,0) size 17x28
                 text run at (699,0) width 17: "A"
           RenderBlock {DIV} at (0,132) size 756x56
             RenderBlock {UL} at (0,0) size 756x56
               RenderListItem {LI} at (40,0) size 716x56
-                RenderListMarker at (0,0) size 0x22
+                RenderListMarker at (-22,0) size 9x28
                 RenderInline {A} at (0,0) size 16x28 [color=#0000EE]
                   RenderText {TEXT} at (0,0) size 16x28
                     text run at (0,0) width 16: "B"
@@ -53,7 +53,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,364) size 784x120
         RenderBlock {UL} at (0,0) size 784x28
           RenderListItem {LI} at (40,0) size 744x28
-            RenderListMarker at (727,8) size 0x14
+            RenderListMarker at (-17,8) size 7x18
             RenderInline {FONT} at (0,0) size 0x28
             RenderInline {SPAN} at (0,0) size 0x28
             RenderInline {FONT} at (0,0) size 17x28
@@ -63,7 +63,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,44) size 784x56
           RenderBlock {UL} at (0,0) size 784x56
             RenderListItem {LI} at (40,0) size 744x56
-              RenderListMarker at (0,8) size 0x14
+              RenderListMarker at (-17,8) size 7x18
               RenderInline {A} at (0,0) size 16x18 [color=#0000EE]
                 RenderInline {FONT} at (0,0) size 16x28
                   RenderInline {SPAN} at (0,0) size 16x28

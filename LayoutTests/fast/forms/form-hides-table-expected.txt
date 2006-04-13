@@ -37,7 +37,7 @@ layer at (0,0) size 785x682
                     text run at (1,1) width 88: "display: block"
       RenderListItem {DIV} at (0,148) size 769x42
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
         RenderBlock {FORM} at (0,18) size 769x24
           RenderTable {TABLE} at (0,0) size 109x24
             RenderTableSection {TBODY} at (0,0) size 0x24

@@ -20,26 +20,26 @@ layer at (0,0) size 785x1737
           text run at (0,0) width 496: "In table cell C (third cell in the first row), which is empty:"
       RenderBlock {UL} at (0,174) size 769x120
         RenderListItem {LI} at (40,0) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 728x30
             text run at (0,0) width 728: "Four sets of horizontal double violet stripes surrounded by aqua should run just inside the"
             text run at (0,15) width 128: "top border edge."
         RenderListItem {LI} at (40,30) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 704x30
             text run at (0,0) width 704: "One set of aqua-backed double violet stripes should run just inside the left, right, and"
             text run at (0,15) width 160: "bottom border edges."
         RenderListItem {LI} at (40,60) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 720x30
             text run at (0,0) width 720: "The third set along the top should turn down at the right edge and go under the fourth set"
             text run at (0,15) width 216: "to form the right-edge set."
         RenderListItem {LI} at (40,90) size 729x15
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 560x15
             text run at (0,0) width 560: "The fourth set should turn down at the left edge to form the left set."
         RenderListItem {LI} at (40,105) size 729x15
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 416x15
             text run at (0,0) width 416: "The bottom stripe should be straight and cut across "
           RenderInline {EM} at (0,0) size 32x15
@@ -52,16 +52,16 @@ layer at (0,0) size 785x1737
           text run at (0,0) width 376: "In table cell A, (first cell in the first row):"
       RenderBlock {UL} at (0,335) size 769x75
         RenderListItem {LI} at (40,0) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 712x30
             text run at (0,0) width 712: "Three sets of horizontal aqua-backed double violet stripes should run just inside the top"
             text run at (0,15) width 96: "border edge."
         RenderListItem {LI} at (40,30) size 729x15
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 256x15
             text run at (0,0) width 256: "The first set should run across."
         RenderListItem {LI} at (40,45) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 720x30
             text run at (0,0) width 720: "The second set should turn down at the left edge, going over the third set to form another"
             text run at (0,15) width 376: "set that runs just inside the left border edge."
@@ -70,12 +70,12 @@ layer at (0,0) size 785x1737
           text run at (0,0) width 368: "In table cell D, (last cell in the first row):"
       RenderBlock {UL} at (0,451) size 769x60
         RenderListItem {LI} at (40,0) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 688x30
             text run at (0,0) width 688: "Two sets of horizontal aqua-backed double violet strips should run just inside the top"
             text run at (0,15) width 96: "border edge."
         RenderListItem {LI} at (40,30) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 720x30
             text run at (0,0) width 720: "The first set should turn down at the right edge, going under the second horizontal set to"
             text run at (0,15) width 392: "run vertically just inside the right border edge."
@@ -84,17 +84,17 @@ layer at (0,0) size 785x1737
           text run at (0,0) width 384: "In table cell G, (third cell in the second row):"
       RenderBlock {UL} at (0,552) size 769x90
         RenderListItem {LI} at (40,0) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 696x30
             text run at (0,0) width 696: "Two sets of horizontal aqua-backed double violet stripes should run just inside the top"
             text run at (0,15) width 96: "border edge."
         RenderListItem {LI} at (40,30) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 696x30
             text run at (0,0) width 696: "A set of vertical stripes should run down just inside the left border edge, going under"
             text run at (0,15) width 192: "both horizontal stripes."
         RenderListItem {LI} at (40,60) size 729x30
-          RenderListMarker at (0,0) size 0x12
+          RenderListMarker at (-16,0) size 6x15
           RenderText {TEXT} at (0,0) size 696x30
             text run at (0,0) width 696: "Another set of vertical stripes should run down just inside the right border edge, also"
             text run at (0,15) width 288: "going under both horizontal stripes."

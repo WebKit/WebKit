@@ -41,11 +41,11 @@ layer at (0,0) size 785x991
           text run at (192,36) width 73: "(light blue)."
       RenderBlock {UL} at (0,415) size 769x72 [bgcolor=#808080]
         RenderListItem {LI} at (25,0) size 744x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 715x18
             text run at (0,0) width 715: "The left padding on this unordered list has been set to 25 pixels, which will require some extra test in order to test."
         RenderListItem {LI} at (25,18) size 744x54 [bgcolor=#FFFFFF]
-          RenderListMarker at (25,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (25,0) size 712x54
             text run at (25,0) width 712: "Another list item might not be such a bad idea, either, considering that such things do need to be double-checked."
             text run at (25,18) width 696: "This list item has its left padding also set to 25 pixels, which should combine with the list's padding to make 50"
@@ -93,11 +93,11 @@ layer at (0,0) size 785x991
                   text run at (186,36) width 107: "aqua (light blue)."
               RenderBlock {UL} at (4,264) size 747x72 [bgcolor=#808080]
                 RenderListItem {LI} at (25,0) size 722x18
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 715x18
                     text run at (0,0) width 715: "The left padding on this unordered list has been set to 25 pixels, which will require some extra test in order to test."
                 RenderListItem {LI} at (25,18) size 722x54 [bgcolor=#FFFFFF]
-                  RenderListMarker at (25,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (25,0) size 682x54
                     text run at (25,0) width 656: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
                     text run at (25,18) width 60: "checked. "

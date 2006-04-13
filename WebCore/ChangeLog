@@ -1,3 +1,42 @@
+2006-04-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+ 
+         Reviewed by hyatt
+ 
+         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4855
+           List item's bullets fail to redraw correctly after their style is set with JavaScript
+ 
+         * manual-tests/list-marker-repaint.html: Added.
+         * rendering/RenderBlock.cpp:
+         (WebCore::RenderBlock::layoutBlock): Call positionListMarker() after laying out
+         the children.
+         (WebCore::RenderBlock::calcInlineMinMaxWidth): Call calcWidth() on the child
+         if we are going to use its marginLeft() or marginRight(), which is if they are
+         given as a percentage or if the child is a list marker.
+         * rendering/RenderBlock.h:
+         (WebCore::RenderBlock::positionListMarker): Added this virtual function which
+         RenderListItem implements and which is called from layoutBlock().
+         * rendering/RenderFlow.cpp:
+         (WebCore::RenderFlow::addFocusRingRects): Avoid adding focus rings around outside list
+         markers. Previously it did not matter since the markers had zero width.
+         * rendering/bidi.cpp:
+         (WebCore::RenderBlock::findNextLineBreak): Outside list markers should not contribute
+         to the line width, even now that they have width.
+         * rendering/render_line.cpp:
+         (WebCore::InlineFlowBox::placeBoxesHorizontally): Skip outside list markers.
+         * rendering/render_list.cpp:
+         (WebCore::RenderListItem::positionListMarker): Added.
+         (WebCore::RenderListMarker::paint): Removed code that was used to right-align outside
+         text markers, since that is achieved by margins now.
+         (WebCore::RenderListMarker::calcMinMaxWidth): Changed the marker height to be the font height.
+         Made the width of outside list markers non-zero and equal to the width of inside markers.
+         Changed the width to include only the marker and not any padding. Increased the width of bullets
+         by 2 to contain spillage due to antialiasing.
+         (WebCore::RenderListMarker::calcWidth): Calculate horizontal margins. Padding that was
+         previously included in the width is now part of the margins. 
+         (WebCore::RenderListMarker::getRelativeMarkerRect): Adjusted for the changes to width and
+         margins.
+         * rendering/render_list.h:
+
 2006-04-12  Darin Adler  <darin@apple.com>
 
         Rubber-stamped by Hyatt.

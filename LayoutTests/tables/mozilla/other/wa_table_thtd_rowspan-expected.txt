@@ -50,7 +50,7 @@ layer at (0,0) size 785x2358
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {OL} at (0,253) size 769x244
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 498x18
             text run at (0,0) width 498: "Verify that the sample text displays as stated in each of the following test cases:"
         RenderBlock {P} at (40,34) size 729x104
@@ -88,7 +88,7 @@ layer at (0,0) size 785x2358
                         text run at (7,7) width 410: "table with nested header & data cells spanning multiple rows"
         RenderBlock {P} at (40,154) size 729x0
         RenderListItem {LI} at (40,154) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 283x18
             text run at (0,0) width 283: "Verify that the table is maintained when you "
           RenderInline {B} at (0,0) size 129x18
@@ -97,7 +97,7 @@ layer at (0,0) size 785x2358
           RenderText {TEXT} at (412,0) size 71x18
             text run at (412,0) width 71: " the screen."
         RenderListItem {LI} at (40,172) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 283x18
             text run at (0,0) width 283: "Verify that the table is maintained when you "
           RenderInline {B} at (0,0) size 122x18
@@ -106,7 +106,7 @@ layer at (0,0) size 785x2358
           RenderText {TEXT} at (405,0) size 71x18
             text run at (405,0) width 71: " the screen."
         RenderListItem {LI} at (40,190) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 283x18
             text run at (0,0) width 283: "Verify that the table is maintained when you "
           RenderInline {B} at (0,0) size 138x18
@@ -115,11 +115,11 @@ layer at (0,0) size 785x2358
           RenderText {TEXT} at (421,0) size 71x18
             text run at (421,0) width 71: " the screen."
         RenderListItem {LI} at (40,208) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 407x18
             text run at (0,0) width 407: "Verify re-draw takes place correctly after maximizing the screen."
         RenderListItem {LI} at (40,226) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 131x18
             text run at (0,0) width 131: "Verify reload works."
       RenderBlock {HR} at (0,513) size 769x2 [border: (1px inset #000000)]

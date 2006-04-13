@@ -17,19 +17,19 @@ layer at (0,0) size 800x453
           text run at (0,0) width 457: "The right column should be a mirror-image of the left column in terms of"
       RenderBlock {UL} at (0,86) size 784x72
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 164x18
             text run at (0,0) width 164: "the presence of a scrollbar"
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 234x18
             text run at (0,0) width 234: "the initial position of the scroll thumb"
         RenderListItem {LI} at (40,36) size 744x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 451x18
             text run at (0,0) width 451: "which letters are visible initially and when you scroll (in the top 3 rows)"
         RenderListItem {LI} at (40,54) size 744x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 578x18
             text run at (0,0) width 578: "the position of the blue and olive boxes, initially and when you scroll (in the bottom 2 rows)"
       RenderTable {TABLE} at (0,174) size 256x255

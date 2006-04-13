@@ -13,13 +13,13 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,95) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
-          RenderListMarker at (0,0) size 20x14
+          RenderListMarker at (0,0) size 20x18
           RenderText {TEXT} at (20,0) size 731x36
             text run at (20,0) width 711: "The text in this item should not behave as expected; that is, it should line up with the capital-A on the left margin,"
             text run at (0,18) width 286: "leaving no blank space beneath the capital-A."
       RenderBlock {UL} at (0,147) size 784x37
         RenderListItem {LI} at (40,0) size 744x37
-          RenderListMarker at (0,0) size 0x15
+          RenderListMarker at (-22,0) size 15x15
           RenderText {TEXT} at (0,1) size 736x36
             text run at (0,1) width 476: "The text in this item have an orange square for its bullet; failing that, a disc. "
             text run at (476,1) width 260: "Also, the bullet should be outside the text"
@@ -38,13 +38,13 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (12,26) size 770x113 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {UL} at (4,4) size 762x36
                 RenderListItem {LI} at (40,0) size 722x36
-                  RenderListMarker at (0,0) size 20x14
+                  RenderListMarker at (0,0) size 20x18
                   RenderText {TEXT} at (20,0) size 679x36
                     text run at (20,0) width 659: "The text in this item should not behave as expected; that is, it should line up with the capital-A on the left"
                     text run at (0,18) width 338: "margin, leaving no blank space beneath the capital-A."
               RenderBlock {UL} at (4,56) size 762x37
                 RenderListItem {LI} at (40,0) size 722x37
-                  RenderListMarker at (0,0) size 0x15
+                  RenderListMarker at (-22,0) size 15x15
                   RenderText {TEXT} at (0,1) size 709x36
                     text run at (0,1) width 476: "The text in this item have an orange square for its bullet; failing that, a disc. "
                     text run at (476,1) width 233: "Also, the bullet should be outside the"

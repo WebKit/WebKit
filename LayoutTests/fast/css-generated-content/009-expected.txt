@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           text run at (155,0) width 43: " green."
       RenderBlock {UL} at (0,34) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 373x18
             text run at (0,0) width 373: "All of this text should be green. The bullet should be black."
       RenderBlock {DIV} at (0,68) size 784x55 [color=#FF0000]

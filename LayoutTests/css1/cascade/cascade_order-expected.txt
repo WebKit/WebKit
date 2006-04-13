@@ -21,37 +21,37 @@ layer at (0,0) size 785x790
       RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,230) size 769x144
         RenderListItem {LI} at (40,0) size 729x18 [color=#0000FF]
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 189x18
             text run at (0,0) width 189: "This list item should be blue..."
         RenderListItem {LI} at (40,18) size 729x72 [color=#0000FF]
           RenderBlock (anonymous) at (0,0) size 729x18
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-17,0) size 7x18
             RenderText {TEXT} at (0,0) size 289x18
               text run at (0,0) width 289: "...and so should this; neither should be purple."
           RenderBlock {UL} at (0,18) size 729x54
             RenderListItem {LI} at (40,0) size 689x18 [color=#808080]
-              RenderListMarker at (0,0) size 0x14
+              RenderListMarker at (-17,0) size 7x18
               RenderText {TEXT} at (0,0) size 190x18
                 text run at (0,0) width 190: "This list item should be gray..."
             RenderListItem {LI} at (40,18) size 689x18 [color=#808080]
-              RenderListMarker at (0,0) size 0x14
+              RenderListMarker at (-17,0) size 7x18
               RenderText {TEXT} at (0,0) size 113x18
                 text run at (0,0) width 113: "...as should this...."
             RenderListItem {LI} at (40,36) size 689x18 [color=#008000]
-              RenderListMarker at (0,0) size 0x14
+              RenderListMarker at (-17,0) size 7x18
               RenderText {TEXT} at (0,0) size 193x18
                 text run at (0,0) width 193: "...but this one should be green."
         RenderListItem {LI} at (40,90) size 729x18 [color=#660000]
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 171x18
             text run at (0,0) width 171: "This ought to be dark red..."
         RenderListItem {LI} at (40,108) size 729x18 [color=#008000]
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "...this green..."
         RenderListItem {LI} at (40,126) size 729x18 [color=#0000FF]
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 96x18
             text run at (0,0) width 96: "...and this blue."
       RenderBlock {P} at (0,390) size 769x18 [color=#0000FF]
@@ -82,37 +82,37 @@ layer at (0,0) size 785x790
             RenderTableCell {TD} at (12,26) size 691x254 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {UL} at (4,4) size 683x144
                 RenderListItem {LI} at (40,0) size 643x18 [color=#0000FF]
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 189x18
                     text run at (0,0) width 189: "This list item should be blue..."
                 RenderListItem {LI} at (40,18) size 643x72 [color=#0000FF]
                   RenderBlock (anonymous) at (0,0) size 643x18
-                    RenderListMarker at (0,0) size 0x14
+                    RenderListMarker at (-17,0) size 7x18
                     RenderText {TEXT} at (0,0) size 289x18
                       text run at (0,0) width 289: "...and so should this; neither should be purple."
                   RenderBlock {UL} at (0,18) size 643x54
                     RenderListItem {LI} at (40,0) size 603x18 [color=#808080]
-                      RenderListMarker at (0,0) size 0x14
+                      RenderListMarker at (-17,0) size 7x18
                       RenderText {TEXT} at (0,0) size 190x18
                         text run at (0,0) width 190: "This list item should be gray..."
                     RenderListItem {LI} at (40,18) size 603x18 [color=#808080]
-                      RenderListMarker at (0,0) size 0x14
+                      RenderListMarker at (-17,0) size 7x18
                       RenderText {TEXT} at (0,0) size 113x18
                         text run at (0,0) width 113: "...as should this...."
                     RenderListItem {LI} at (40,36) size 603x18 [color=#008000]
-                      RenderListMarker at (0,0) size 0x14
+                      RenderListMarker at (-17,0) size 7x18
                       RenderText {TEXT} at (0,0) size 193x18
                         text run at (0,0) width 193: "...but this one should be green."
                 RenderListItem {LI} at (40,90) size 643x18 [color=#660000]
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 171x18
                     text run at (0,0) width 171: "This ought to be dark red..."
                 RenderListItem {LI} at (40,108) size 643x18 [color=#008000]
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 85x18
                     text run at (0,0) width 85: "...this green..."
                 RenderListItem {LI} at (40,126) size 643x18 [color=#0000FF]
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 96x18
                     text run at (0,0) width 96: "...and this blue."
               RenderBlock {P} at (4,164) size 683x18 [color=#0000FF]

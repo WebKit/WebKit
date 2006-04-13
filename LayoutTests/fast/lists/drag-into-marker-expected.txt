@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {UL} at (16,0) size 752x57 [border: (1px solid #000000)]
         RenderListItem {LI} at (41,1) size 710x55
-          RenderListMarker at (0,0) size 0x43
+          RenderListMarker at (-36,0) size 16x55
           RenderInline {SPAN} at (0,0) size 124x55
             RenderText {TEXT} at (0,0) size 124x55
               text run at (0,0) width 124: "world "

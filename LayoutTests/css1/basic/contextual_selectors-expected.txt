@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
       RenderBlock {UL} at (0,193) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
           RenderBlock (anonymous) at (0,0) size 744x18
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-17,0) size 7x18
             RenderInline {EM} at (0,0) size 39x18 [color=#008000]
               RenderText {TEXT} at (0,0) size 39x18
                 text run at (0,0) width 39: "Hello."
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
               text run at (43,0) width 395: "The first \"hello\" should be green, but this part should be black."
           RenderBlock {UL} at (0,18) size 744x18
             RenderListItem {LI} at (40,0) size 704x18 [color=#008000]
-              RenderListMarker at (0,0) size 0x14
+              RenderListMarker at (-17,0) size 7x18
               RenderText {TEXT} at (0,0) size 136x18
                 text run at (0,0) width 136: "This should be green."
       RenderTable {TABLE} at (0,245) size 722x156 [border: (1px outset #808080)]
@@ -64,7 +64,7 @@ layer at (0,0) size 800x600
               RenderBlock {UL} at (4,72) size 700x36
                 RenderListItem {LI} at (40,0) size 660x36
                   RenderBlock (anonymous) at (0,0) size 660x18
-                    RenderListMarker at (0,0) size 0x14
+                    RenderListMarker at (-17,0) size 7x18
                     RenderInline {EM} at (0,0) size 39x18 [color=#008000]
                       RenderText {TEXT} at (0,0) size 39x18
                         text run at (0,0) width 39: "Hello."
@@ -73,6 +73,6 @@ layer at (0,0) size 800x600
                       text run at (43,0) width 395: "The first \"hello\" should be green, but this part should be black."
                   RenderBlock {UL} at (0,18) size 660x18
                     RenderListItem {LI} at (40,0) size 620x18 [color=#008000]
-                      RenderListMarker at (0,0) size 0x14
+                      RenderListMarker at (-17,0) size 7x18
                       RenderText {TEXT} at (0,0) size 136x18
                         text run at (0,0) width 136: "This should be green."

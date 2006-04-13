@@ -1,3 +1,113 @@
+2006-04-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+ 
+         Reviewed by hyatt
+ 
+         - updated test results for http://bugzilla.opendarwin.org/show_bug.cgi?id=4855
+           List item's bullets fail to redraw correctly after their style is set with JavaScript
+ 
+         * css1/basic/class_as_selector-expected.txt:
+         * css1/basic/containment-expected.txt:
+         * css1/basic/contextual_selectors-expected.txt:
+         * css1/basic/id_as_selector-expected.txt:
+         * css1/box_properties/border_bottom-expected.txt:
+         * css1/box_properties/border_left-expected.txt:
+         * css1/box_properties/border_right_inline-expected.txt:
+         * css1/box_properties/border_top-expected.txt:
+         * css1/box_properties/clear_float-expected.txt:
+         * css1/box_properties/margin-expected.txt:
+         * css1/box_properties/margin_bottom-expected.txt:
+         * css1/box_properties/margin_left-expected.txt:
+         * css1/box_properties/margin_right-expected.txt:
+         * css1/box_properties/margin_top-expected.txt:
+         * css1/box_properties/padding_left-expected.txt:
+         * css1/box_properties/padding_right-expected.txt:
+         * css1/cascade/cascade_order-expected.txt:
+         * css1/classification/display-expected.txt:
+         * css1/classification/list_style-expected.txt:
+         * css1/classification/list_style_image-expected.txt:
+         * css1/classification/list_style_position-expected.txt:
+         * css1/classification/list_style_type-expected.txt:
+         * css1/conformance/forward_compatible_parsing-expected.txt:
+         * css1/pseudo/anchor-expected.txt:
+         * css2.1/t0402-c71-fwd-parsing-02-f-expected.txt:
+         * css2.1/t0505-c16-descendant-01-e-expected.txt:
+         * css2.1/t050803-c14-classes-00-e-expected.txt:
+         * css2.1/t0509-c15-ids-01-e-expected.txt:
+         * css2.1/t0805-c5518-brdr-t-01-e-expected.txt:
+         * css2.1/t0805-c5519-brdr-r-02-e-expected.txt:
+         * css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+         * css2.1/t0805-c5521-brdr-l-02-e-expected.txt:
+         * css2.1/t1205-c561-list-displ-00-b-expected.txt:
+         * css2.1/t1205-c563-list-type-00-b-expected.txt:
+         * css2.1/t1205-c563-list-type-01-b-expected.txt:
+         * css2.1/t1205-c564-list-img-00-b-g-expected.txt:
+         * css2.1/t1205-c565-list-pos-00-b-expected.txt:
+         * css2.1/t1205-c566-list-stl-00-e-ag-expected.txt:
+         * css2.1/t1205-c566-list-stl-01-c-g-expected.txt:
+         * editing/deleting/delete-listitem-002-expected.txt:
+         * editing/execCommand/insertHTML-expected.txt:
+         * editing/pasteboard/paste-4039777-fix-expected.txt:
+         * editing/pasteboard/paste-list-001-expected.txt:
+         * editing/selection/extend-by-word-002-expected.txt:
+         * editing/selection/move-by-line-002-expected.txt:
+         * editing/selection/select-all-iframe-expected.txt:
+         * editing/selection/selectNode-expected.txt:
+         * editing/selection/selectNodeContents-expected.txt:
+         * editing/unsupported-content/list-type-after-expected.txt:
+         * editing/unsupported-content/list-type-before-expected.txt:
+         * fast/block/float/014-expected.txt:
+         * fast/css-generated-content/009-expected.txt:
+         * fast/css/001-expected.txt:
+         * fast/css/001-expected.png:
+         * fast/css/001-expected.checksum:
+         * fast/css/continuationCrash-expected.txt:
+         * fast/css/list-outline-expected.txt:
+         * fast/doctypes/001-expected.txt:
+         * fast/doctypes/002-expected.txt:
+         * fast/doctypes/003-expected.txt:
+         * fast/doctypes/004-expected.txt:
+         * fast/dom/window-onFocus-expected.txt:
+         * fast/forms/form-hides-table-expected.txt:
+         * fast/forms/plaintext-mode-2-expected.txt:
+         * fast/lists/001-expected.checksum:
+         * fast/lists/001-expected.png:
+         * fast/lists/001-expected.txt:
+         * fast/lists/002-expected.txt:
+         * fast/lists/003-expected.txt:
+         * fast/lists/004-expected.txt:
+         * fast/lists/005-expected.txt:
+         * fast/lists/006-expected.txt:
+         * fast/lists/007-expected.txt:
+         * fast/lists/008-expected.txt:
+         * fast/lists/009-expected.txt:
+         * fast/lists/drag-into-marker-expected.txt:
+         * fast/lists/li-br-expected.txt:
+         * fast/lists/ol-display-types-expected.txt:
+         * fast/lists/olstart-expected.txt:
+         * fast/lists/scrolled-marker-paint-expected.txt:
+         * fast/overflow/overflow-rtl-expected.txt:
+         * fast/parser/entities-in-xhtml-expected.txt:
+         * fast/selectors/001-expected.txt:
+         * fast/selectors/013-expected.txt:
+         * fast/selectors/015-expected.txt:
+         * fast/selectors/166-expected.txt:
+         * fast/table/018-expected.txt:
+         * fast/table/form-with-table-style-expected.txt:
+         * fast/text/whitespace/tab-character-basics-expected.txt:
+         * fast/tokenizer/004-expected.txt:
+         * tables/mozilla/bugs/bug23235-expected.txt:
+         * tables/mozilla/bugs/bug30692-expected.txt:
+         * tables/mozilla/bugs/bug3191-expected.txt:
+         * tables/mozilla/bugs/bug32205-2-expected.txt:
+         * tables/mozilla/marvin/backgr_index-expected.txt:
+         * tables/mozilla/marvin/backgr_layers-opacity-expected.txt:
+         * tables/mozilla/marvin/x_table-expected.txt:
+         * tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+         * tables/mozilla/other/wa_table_tr_align-expected.txt:
+         * tables/mozilla_expected_failures/bugs/bug1010-expected.txt:
+         * tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt:
+         * tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt:
+
 2006-04-12  David Harrison  <harrison@apple.com>
 
         <rdar://problem/4386640> AX: AXPreviousSentenceStartTextMarkerForTextMarker does not respect paragraph boundary

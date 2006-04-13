@@ -42,19 +42,19 @@ layer at (0,0) size 785x1638
           text run at (0,18) width 232: "will require extra text in order to test."
       RenderBlock {UL} at (0,724) size 769x97 [bgcolor=#00FFFF]
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 400x18
             text run at (0,0) width 400: "This list has a margin-top of 25px, and a light blue background."
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 264x18
             text run at (0,0) width 264: "Therefore, it ought to have such a margin."
         RenderListItem {LI} at (40,61) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 567x18
             text run at (0,0) width 567: "This list item has a top margin of 25px, which should cause it to be offset in some fashion."
         RenderListItem {LI} at (40,79) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-17,0) size 7x18
           RenderText {TEXT} at (0,0) size 294x18
             text run at (0,0) width 294: "This list item has no special styles applied to it."
       RenderBlock {P} at (0,821) size 769x18 [bgcolor=#C0C0C0]
@@ -102,19 +102,19 @@ layer at (0,0) size 785x1638
                   text run at (0,18) width 264: "This will require extra text in order to test."
               RenderBlock {UL} at (4,548) size 747x97 [bgcolor=#00FFFF]
                 RenderListItem {LI} at (40,0) size 707x18
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 400x18
                     text run at (0,0) width 400: "This list has a margin-top of 25px, and a light blue background."
                 RenderListItem {LI} at (40,18) size 707x18
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 264x18
                     text run at (0,0) width 264: "Therefore, it ought to have such a margin."
                 RenderListItem {LI} at (40,61) size 707x18
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 567x18
                     text run at (0,0) width 567: "This list item has a top margin of 25px, which should cause it to be offset in some fashion."
                 RenderListItem {LI} at (40,79) size 707x18
-                  RenderListMarker at (0,0) size 0x14
+                  RenderListMarker at (-17,0) size 7x18
                   RenderText {TEXT} at (0,0) size 294x18
                     text run at (0,0) width 294: "This list item has no special styles applied to it."
               RenderBlock {P} at (4,645) size 747x18 [bgcolor=#C0C0C0]

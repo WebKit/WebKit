@@ -31,6 +31,7 @@
 #include "RenderTableCell.h"
 #include "RenderArena.h"
 #include "RenderInline.h"
+#include "render_list.h"
 #include <assert.h>
 
 namespace WebCore {
@@ -487,8 +488,7 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
             rightPosition = kMax(x + text->width() + shadowRight, rightPosition);
             m_maxHorizontalShadow = kMax(kMax(shadowRight, -shadowLeft), m_maxHorizontalShadow);
             x += text->width();
-        }
-        else {
+        } else {
             if (curr->object()->isPositioned()) {
                 if (curr->object()->parent()->style()->direction() == LTR)
                     curr->setXPos(x);
@@ -504,14 +504,12 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
                 if (curr->object()->isCompact()) {
                     int ignoredX = x;
                     flow->placeBoxesHorizontally(ignoredX, leftPosition, rightPosition, needsWordSpacing);
-                }
-                else {
+                } else {
                     x += flow->marginLeft();
                     x = flow->placeBoxesHorizontally(x, leftPosition, rightPosition, needsWordSpacing);
                     x += flow->marginRight();
                 }
-            }
-            else if (!curr->object()->isCompact()) {
+            } else if (!curr->object()->isCompact() && (!curr->object()->isListMarker() || static_cast<RenderListMarker*>(curr->object())->isInside())) {
                 x += curr->object()->marginLeft();
                 curr->setXPos(x);
                 leftPosition = kMin(x, leftPosition);

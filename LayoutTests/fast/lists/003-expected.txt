@@ -39,18 +39,18 @@ layer at (0,0) size 800x334
             text run at (260,18) width 4: "."
         RenderBlock {OL} at (0,138) size 470x180
           RenderListItem {LI} at (40,0) size 430x36
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-20,0) size 16x18
             RenderText {TEXT} at (0,0) size 402x36
               text run at (0,0) width 159: "New larger PowerBook. "
               text run at (159,0) width 243: "Still 1 GHz, but with a 17-inch screen."
               text run at (0,18) width 44: "$3299."
           RenderListItem {LI} at (40,36) size 430x18
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-20,0) size 16x18
             RenderText {TEXT} at (0,0) size 355x18
               text run at (0,0) width 311: "New smaller PowerBook, with a 12-inch screen. "
               text run at (311,0) width 44: "$1799."
           RenderListItem {LI} at (40,54) size 430x54
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-20,0) size 16x18
             RenderText {TEXT} at (0,0) size 94x18
               text run at (0,0) width 94: "New browser: "
             RenderInline {A} at (0,0) size 37x18 [color=#0000EE]
@@ -78,12 +78,12 @@ layer at (0,0) size 800x334
               text run at (84,36) width 123: "Only runs on 10.2. "
               text run at (207,36) width 153: "Currently in public beta."
           RenderListItem {LI} at (40,108) size 430x18
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-20,0) size 16x18
             RenderText {TEXT} at (0,0) size 428x18
               text run at (0,0) width 239: "New presentation software: Keynote. "
               text run at (239,0) width 189: "The software Steve Jobs uses."
           RenderListItem {LI} at (40,126) size 430x36
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-20,0) size 16x18
             RenderText {TEXT} at (0,0) size 108x18
               text run at (0,0) width 108: "New versions of "
             RenderInline {A} at (0,0) size 45x18 [color=#0000EE]
@@ -108,7 +108,7 @@ layer at (0,0) size 800x334
             RenderText {TEXT} at (30,18) size 58x18
               text run at (30,18) width 58: ", for $49."
           RenderListItem {LI} at (40,162) size 430x18
-            RenderListMarker at (0,0) size 0x14
+            RenderListMarker at (-20,0) size 16x18
             RenderInline {A} at (0,0) size 113x18 [color=#0000EE]
               RenderText {TEXT} at (0,0) size 113x18
                 text run at (0,0) width 113: "Final Cut Express"
@@ -118,42 +118,42 @@ layer at (0,0) size 800x334
       RenderBlock {DIV} at (0,0) size 784x302
         RenderBlock {UL} at (0,0) size 784x144
           RenderListItem {LI} at (40,0) size 744x18
-            RenderListMarker at (704,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 40x18 [color=#0000EE]
               RenderText {TEXT} at (704,0) size 40x18
                 text run at (704,0) width 40: "About"
           RenderListItem {LI} at (40,18) size 744x18
-            RenderListMarker at (689,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 55x18 [color=#0000EE]
               RenderText {TEXT} at (689,0) size 55x18
                 text run at (689,0) width 55: "Site map"
           RenderListItem {LI} at (40,36) size 744x18
-            RenderListMarker at (687,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 57x18 [color=#0000EE]
               RenderText {TEXT} at (687,0) size 57x18
                 text run at (687,0) width 57: "Archives"
           RenderListItem {LI} at (40,54) size 744x18
-            RenderListMarker at (694,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 50x18 [color=#0000EE]
               RenderText {TEXT} at (694,0) size 50x18
                 text run at (694,0) width 50: "Projects"
           RenderListItem {LI} at (40,72) size 744x18
-            RenderListMarker at (701,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 43x18 [color=#0000EE]
               RenderText {TEXT} at (701,0) size 43x18
                 text run at (701,0) width 43: "Photos"
           RenderListItem {LI} at (40,90) size 744x18
-            RenderListMarker at (689,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 55x18 [color=#0000EE]
               RenderText {TEXT} at (689,0) size 55x18
                 text run at (689,0) width 55: "Statistics"
           RenderListItem {LI} at (40,108) size 744x18
-            RenderListMarker at (600,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 144x18 [color=#0000EE]
               RenderText {TEXT} at (600,0) size 144x18
                 text run at (600,0) width 144: "Accessibility statement"
           RenderListItem {LI} at (40,126) size 744x18
-            RenderListMarker at (632,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 29x18 [color=#0000EE]
               RenderText {TEXT} at (632,0) size 29x18
                 text run at (632,0) width 29: "RSS"
@@ -166,38 +166,38 @@ layer at (0,0) size 800x334
               text run at (739,0) width 5: ")"
         RenderBlock {UL} at (0,160) size 784x18
           RenderListItem {LI} at (40,0) size 744x18
-            RenderListMarker at (656,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 88x18 [color=#0000EE]
               RenderText {TEXT} at (656,0) size 88x18
                 text run at (656,0) width 88: "What is RSS?"
         RenderBlock {UL} at (0,194) size 784x108
           RenderListItem {LI} at (40,0) size 744x18
-            RenderListMarker at (652,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 92x18 [color=#0000EE]
               RenderText {TEXT} at (652,0) size 92x18
                 text run at (652,0) width 92: "RSS Validator"
           RenderListItem {LI} at (40,18) size 744x18
-            RenderListMarker at (599,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 145x18 [color=#0000EE]
               RenderText {TEXT} at (599,0) size 145x18
                 text run at (599,0) width 145: "Dive Into Accessibility"
           RenderListItem {LI} at (40,36) size 744x18
-            RenderListMarker at (643,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 101x18 [color=#0000EE]
               RenderText {TEXT} at (643,0) size 101x18
                 text run at (643,0) width 101: "Dive Into OS X"
           RenderListItem {LI} at (40,54) size 744x18
-            RenderListMarker at (646,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 98x18 [color=#0000EE]
               RenderText {TEXT} at (646,0) size 98x18
                 text run at (646,0) width 98: "Dive Into J2EE"
           RenderListItem {LI} at (40,72) size 744x18
-            RenderListMarker at (635,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 109x18 [color=#0000EE]
               RenderText {TEXT} at (635,0) size 109x18
                 text run at (635,0) width 109: "Dive Into Python"
           RenderListItem {LI} at (40,90) size 744x18
-            RenderListMarker at (699,0) size 0x14
+            RenderListMarker at (413,0) size 7x18
             RenderInline {A} at (0,0) size 45x18 [color=#0000EE]
               RenderText {TEXT} at (699,0) size 45x18
                 text run at (699,0) width 45: "r\x{E9}sum\x{E9}"

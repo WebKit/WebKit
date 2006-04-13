@@ -23,24 +23,24 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (14,66) size 756x0
         RenderBlock {OL} at (14,66) size 756x168
           RenderListItem {LI} at (40,0) size 716x28
-            RenderListMarker at (0,0) size 0x22
+            RenderListMarker at (-31,0) size 24x28
             RenderText {TEXT} at (0,0) size 211x28
               text run at (0,0) width 211: "I should be number 1."
           RenderListItem {LI} at (40,28) size 716x28
-            RenderListMarker at (0,0) size 0x22
+            RenderListMarker at (-31,0) size 24x28
           RenderListItem {LI} at (40,56) size 716x28
-            RenderListMarker at (0,0) size 0x22
+            RenderListMarker at (-31,0) size 24x28
             RenderText {TEXT} at (0,0) size 211x28
               text run at (0,0) width 211: "I should be number 3."
           RenderBlock {OL} at (40,84) size 716x84
             RenderListItem {LI} at (40,0) size 676x28
-              RenderListMarker at (0,0) size 0x22
+              RenderListMarker at (-31,0) size 24x28
               RenderText {TEXT} at (0,0) size 211x28
                 text run at (0,0) width 211: "I should be number 1."
             RenderListItem {LI} at (40,28) size 676x28
-              RenderListMarker at (0,0) size 0x22
+              RenderListMarker at (-31,0) size 24x28
             RenderListItem {LI} at (40,56) size 676x28
-              RenderListMarker at (0,0) size 0x22
+              RenderListMarker at (-31,0) size 24x28
               RenderText {TEXT} at (0,0) size 211x28
                 text run at (0,0) width 211: "I should be number 3."
 caret: position 21 of child 0 {TEXT} of child 2 {LI} of child 6 {OL} of child 4 {OL} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

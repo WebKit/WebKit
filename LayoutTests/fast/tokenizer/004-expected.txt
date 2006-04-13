@@ -11,103 +11,103 @@ layer at (0,0) size 785x3222
           text run at (0,0) width 191: "These scripts should execute"
       RenderBlock {OL} at (0,82) size 769x306
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 106x18
             text run at (0,0) width 106: "no type attribute "
           RenderText {TEXT} at (106,0) size 56x18
             text run at (106,0) width 56: "executed"
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 82x18
             text run at (0,0) width 82: "empty string "
           RenderText {TEXT} at (82,0) size 56x18
             text run at (82,0) width 56: "executed"
         RenderListItem {LI} at (40,36) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 91x18
             text run at (0,0) width 91: "text/javascript "
           RenderText {TEXT} at (91,0) size 56x18
             text run at (91,0) width 56: "executed"
         RenderListItem {LI} at (40,54) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 128x18
             text run at (0,0) width 128: "text/JAVASCRIPT "
           RenderText {TEXT} at (128,0) size 56x18
             text run at (128,0) width 56: "executed"
         RenderListItem {LI} at (40,72) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 147x18
             text run at (0,0) width 147: "TEXT/JAVASCRIPT "
           RenderText {TEXT} at (147,0) size 56x18
             text run at (147,0) width 56: "executed"
         RenderListItem {LI} at (40,90) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 101x18
             text run at (0,0) width 101: "'text/javascript ' "
           RenderText {TEXT} at (101,0) size 56x18
             text run at (101,0) width 56: "executed"
         RenderListItem {LI} at (40,108) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 105x18
             text run at (0,0) width 105: "' text/javascript ' "
           RenderText {TEXT} at (105,0) size 56x18
             text run at (105,0) width 56: "executed"
         RenderListItem {LI} at (40,126) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 69x18
             text run at (0,0) width 69: "text/jscript "
           RenderText {TEXT} at (69,0) size 56x18
             text run at (69,0) width 56: "executed"
         RenderListItem {LI} at (40,144) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 98x18
             text run at (0,0) width 98: "text/ecmascript "
           RenderText {TEXT} at (98,0) size 56x18
             text run at (98,0) width 56: "executed"
         RenderListItem {LI} at (40,162) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 88x18
             text run at (0,0) width 88: "text/livescript "
           RenderText {TEXT} at (88,0) size 56x18
             text run at (88,0) width 56: "executed"
         RenderListItem {LI} at (40,180) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 111x18
             text run at (0,0) width 111: "text/javascript1.0 "
           RenderText {TEXT} at (111,0) size 56x18
             text run at (111,0) width 56: "executed"
         RenderListItem {LI} at (40,198) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 111x18
             text run at (0,0) width 111: "text/javascript1.1 "
           RenderText {TEXT} at (111,0) size 56x18
             text run at (111,0) width 56: "executed"
         RenderListItem {LI} at (40,216) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 111x18
             text run at (0,0) width 111: "text/javascript1.2 "
           RenderText {TEXT} at (111,0) size 56x18
             text run at (111,0) width 56: "executed"
         RenderListItem {LI} at (40,234) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 111x18
             text run at (0,0) width 111: "text/javascript1.3 "
           RenderText {TEXT} at (111,0) size 56x18
             text run at (111,0) width 56: "executed"
         RenderListItem {LI} at (40,252) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 111x18
             text run at (0,0) width 111: "text/javascript1.4 "
           RenderText {TEXT} at (111,0) size 56x18
             text run at (111,0) width 56: "executed"
         RenderListItem {LI} at (40,270) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 111x18
             text run at (0,0) width 111: "text/javascript1.5 "
           RenderText {TEXT} at (111,0) size 56x18
             text run at (111,0) width 56: "executed"
         RenderListItem {LI} at (40,288) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 150x18
             text run at (0,0) width 150: "application/x-javascript "
           RenderText {TEXT} at (150,0) size 56x18
@@ -117,279 +117,279 @@ layer at (0,0) size 785x3222
           text run at (0,0) width 217: "These scripts should not execute"
       RenderBlock {OL} at (0,448) size 769x1242
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 62x18
             text run at (0,0) width 62: "one space"
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 27x18
             text run at (0,0) width 27: "text/"
         RenderListItem {LI} at (40,36) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 77x18
             text run at (0,0) width 77: "text/vbscript"
         RenderListItem {LI} at (40,54) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 49x18
             text run at (0,0) width 49: "text/vbs"
         RenderListItem {LI} at (40,72) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 51x18
             text run at (0,0) width 51: "text/xml"
         RenderListItem {LI} at (40,90) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 95x18
             text run at (0,0) width 95: "text/javascript1"
         RenderListItem {LI} at (40,108) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 107x18
             text run at (0,0) width 107: "text/javascript1.6"
         RenderListItem {LI} at (40,126) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 111x18
             text run at (0,0) width 111: "application/jscript"
         RenderListItem {LI} at (40,144) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 124x18
             text run at (0,0) width 124: "application/x-jscript"
         RenderListItem {LI} at (40,162) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 130x18
             text run at (0,0) width 130: "application/livescript"
         RenderListItem {LI} at (40,180) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 143x18
             text run at (0,0) width 143: "application/x-livescript"
         RenderListItem {LI} at (40,198) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 140x18
             text run at (0,0) width 140: "application/ecmascript"
         RenderListItem {LI} at (40,216) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 153x18
             text run at (0,0) width 153: "application/x-ecmascript"
         RenderListItem {LI} at (40,234) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 133x18
             text run at (0,0) width 133: "application/javascript"
         RenderListItem {LI} at (40,252) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 153x18
             text run at (0,0) width 153: "application/javascript1.2"
         RenderListItem {LI} at (40,270) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 166x18
             text run at (0,0) width 166: "application/x-javascript1.2"
         RenderListItem {LI} at (40,288) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 60x18
             text run at (0,0) width 60: "javascript"
         RenderListItem {LI} at (40,306) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 38x18
             text run at (0,0) width 38: "jscript"
         RenderListItem {LI} at (40,324) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 67x18
             text run at (0,0) width 67: "ecmascript"
         RenderListItem {LI} at (40,342) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 57x18
             text run at (0,0) width 57: "livescript"
         RenderListItem {LI} at (40,360) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 77x18
             text run at (0,0) width 77: "livescript1.1"
         RenderListItem {LI} at (40,378) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 97x18
             text run at (0,0) width 97: "JAVASCRIPT"
         RenderListItem {LI} at (40,396) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 65x18
             text run at (0,0) width 65: "JavaScript"
         RenderListItem {LI} at (40,414) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 77x18
             text run at (0,0) width 77: "JavaScript 1"
         RenderListItem {LI} at (40,432) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.0"
         RenderListItem {LI} at (40,450) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.1"
         RenderListItem {LI} at (40,468) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 101x18
             text run at (0,0) width 101: "JavaScript 1.1.1"
         RenderListItem {LI} at (40,486) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.2"
         RenderListItem {LI} at (40,504) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.3"
         RenderListItem {LI} at (40,522) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.4"
         RenderListItem {LI} at (40,540) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.5"
         RenderListItem {LI} at (40,558) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.6"
         RenderListItem {LI} at (40,576) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.7"
         RenderListItem {LI} at (40,594) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.8"
         RenderListItem {LI} at (40,612) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.9"
         RenderListItem {LI} at (40,630) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 77x18
             text run at (0,0) width 77: "JavaScript 2"
         RenderListItem {LI} at (40,648) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 2.1"
         RenderListItem {LI} at (40,666) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript 10"
         RenderListItem {LI} at (40,684) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 97x18
             text run at (0,0) width 97: "JavaScript 10.0"
         RenderListItem {LI} at (40,702) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 68x18
             text run at (0,0) width 68: "_javascript"
         RenderListItem {LI} at (40,720) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 68x18
             text run at (0,0) width 68: "javascript_"
         RenderListItem {LI} at (40,738) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 88x18
             text run at (0,0) width 88: "javascript_1.0"
         RenderListItem {LI} at (40,756) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 96x18
             text run at (0,0) width 96: "javascript 1.0 x"
         RenderListItem {LI} at (40,774) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 73x18
             text run at (0,0) width 73: "JavaScript1"
         RenderListItem {LI} at (40,792) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.0"
         RenderListItem {LI} at (40,810) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.1"
         RenderListItem {LI} at (40,828) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.2"
         RenderListItem {LI} at (40,846) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.3"
         RenderListItem {LI} at (40,864) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.4"
         RenderListItem {LI} at (40,882) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 97x18
             text run at (0,0) width 97: "JavaScript1.4.1"
         RenderListItem {LI} at (40,900) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.5"
         RenderListItem {LI} at (40,918) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.6"
         RenderListItem {LI} at (40,936) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.7"
         RenderListItem {LI} at (40,954) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 84x18
             text run at (0,0) width 84: "1.0 javascript"
         RenderListItem {LI} at (40,972) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 74x18
             text run at (0,0) width 74: "' javascript '"
         RenderListItem {LI} at (40,990) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 94x18
             text run at (0,0) width 94: "' javascript1.1 '"
         RenderListItem {LI} at (40,1008) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 90x18
             text run at (0,0) width 90: "'   javascript   '"
         RenderListItem {LI} at (40,1026) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 98x18
             text run at (0,0) width 98: "' javascript 1.0 '"
         RenderListItem {LI} at (40,1044) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 102x18
             text run at (0,0) width 102: "' javascript  1.0 '"
         RenderListItem {LI} at (40,1062) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 50x18
             text run at (0,0) width 50: "jscript 1"
         RenderListItem {LI} at (40,1080) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 62x18
             text run at (0,0) width 62: "jscript 1.0"
         RenderListItem {LI} at (40,1098) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 79x18
             text run at (0,0) width 79: "ecmascript 1"
         RenderListItem {LI} at (40,1116) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 91x18
             text run at (0,0) width 91: "ecmascript 1.0"
         RenderListItem {LI} at (40,1134) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 69x18
             text run at (0,0) width 69: "livescript 1"
         RenderListItem {LI} at (40,1152) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 81x18
             text run at (0,0) width 81: "livescript 1.0"
         RenderListItem {LI} at (40,1170) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 80x18
             text run at (0,0) width 80: "' jscript  1.0 '"
         RenderListItem {LI} at (40,1188) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 120x18
             text run at (0,0) width 120: "disabled_javascript"
         RenderListItem {LI} at (40,1206) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 108x18
             text run at (0,0) width 108: "xxxjavascriptxxx"
         RenderListItem {LI} at (40,1224) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 38x18
             text run at (0,0) width 38: "bogus"
       RenderBlock {H3} at (0,1708) size 769x22
@@ -400,85 +400,85 @@ layer at (0,0) size 785x3222
           text run at (0,0) width 191: "These scripts should execute"
       RenderBlock {OL} at (0,1790) size 769x252
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 136x18
             text run at (0,0) width 136: "no language attribute "
           RenderText {TEXT} at (136,0) size 56x18
             text run at (136,0) width 56: "executed"
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 82x18
             text run at (0,0) width 82: "empty string "
           RenderText {TEXT} at (82,0) size 56x18
             text run at (82,0) width 56: "executed"
         RenderListItem {LI} at (40,36) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 42x18
             text run at (0,0) width 42: "jscript "
           RenderText {TEXT} at (42,0) size 56x18
             text run at (42,0) width 56: "executed"
         RenderListItem {LI} at (40,54) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 71x18
             text run at (0,0) width 71: "ecmascript "
           RenderText {TEXT} at (71,0) size 56x18
             text run at (71,0) width 56: "executed"
         RenderListItem {LI} at (40,72) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 61x18
             text run at (0,0) width 61: "livescript "
           RenderText {TEXT} at (61,0) size 56x18
             text run at (61,0) width 56: "executed"
         RenderListItem {LI} at (40,90) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 64x18
             text run at (0,0) width 64: "javascript "
           RenderText {TEXT} at (64,0) size 56x18
             text run at (64,0) width 56: "executed"
         RenderListItem {LI} at (40,108) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 101x18
             text run at (0,0) width 101: "JAVASCRIPT "
           RenderText {TEXT} at (101,0) size 56x18
             text run at (101,0) width 56: "executed"
         RenderListItem {LI} at (40,126) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 69x18
             text run at (0,0) width 69: "JavaScript "
           RenderText {TEXT} at (69,0) size 56x18
             text run at (69,0) width 56: "executed"
         RenderListItem {LI} at (40,144) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript1.0 "
           RenderText {TEXT} at (89,0) size 56x18
             text run at (89,0) width 56: "executed"
         RenderListItem {LI} at (40,162) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript1.1 "
           RenderText {TEXT} at (89,0) size 56x18
             text run at (89,0) width 56: "executed"
         RenderListItem {LI} at (40,180) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript1.2 "
           RenderText {TEXT} at (89,0) size 56x18
             text run at (89,0) width 56: "executed"
         RenderListItem {LI} at (40,198) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript1.3 "
           RenderText {TEXT} at (89,0) size 56x18
             text run at (89,0) width 56: "executed"
         RenderListItem {LI} at (40,216) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript1.4 "
           RenderText {TEXT} at (89,0) size 56x18
             text run at (89,0) width 56: "executed"
         RenderListItem {LI} at (40,234) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript1.5 "
           RenderText {TEXT} at (89,0) size 56x18
@@ -488,175 +488,175 @@ layer at (0,0) size 785x3222
           text run at (0,0) width 217: "These scripts should not execute"
       RenderBlock {OL} at (0,2102) size 769x774
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 62x18
             text run at (0,0) width 62: "one space"
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 50x18
             text run at (0,0) width 50: "vbscript"
         RenderListItem {LI} at (40,36) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 77x18
             text run at (0,0) width 77: "livescript1.1"
         RenderListItem {LI} at (40,54) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 77x18
             text run at (0,0) width 77: "JavaScript 1"
         RenderListItem {LI} at (40,72) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.0"
         RenderListItem {LI} at (40,90) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.1"
         RenderListItem {LI} at (40,108) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 101x18
             text run at (0,0) width 101: "JavaScript 1.1.1"
         RenderListItem {LI} at (40,126) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.2"
         RenderListItem {LI} at (40,144) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.3"
         RenderListItem {LI} at (40,162) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.4"
         RenderListItem {LI} at (40,180) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.5"
         RenderListItem {LI} at (40,198) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.6"
         RenderListItem {LI} at (40,216) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.7"
         RenderListItem {LI} at (40,234) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.8"
         RenderListItem {LI} at (40,252) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 1.9"
         RenderListItem {LI} at (40,270) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 77x18
             text run at (0,0) width 77: "JavaScript 2"
         RenderListItem {LI} at (40,288) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 89x18
             text run at (0,0) width 89: "JavaScript 2.1"
         RenderListItem {LI} at (40,306) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript 10"
         RenderListItem {LI} at (40,324) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 97x18
             text run at (0,0) width 97: "JavaScript 10.0"
         RenderListItem {LI} at (40,342) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 68x18
             text run at (0,0) width 68: "_javascript"
         RenderListItem {LI} at (40,360) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 68x18
             text run at (0,0) width 68: "javascript_"
         RenderListItem {LI} at (40,378) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 88x18
             text run at (0,0) width 88: "javascript_1.0"
         RenderListItem {LI} at (40,396) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 96x18
             text run at (0,0) width 96: "javascript 1.0 x"
         RenderListItem {LI} at (40,414) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 73x18
             text run at (0,0) width 73: "JavaScript1"
         RenderListItem {LI} at (40,432) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.6"
         RenderListItem {LI} at (40,450) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 85x18
             text run at (0,0) width 85: "JavaScript1.7"
         RenderListItem {LI} at (40,468) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 97x18
             text run at (0,0) width 97: "JavaScript1.4.1"
         RenderListItem {LI} at (40,486) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 84x18
             text run at (0,0) width 84: "1.0 javascript"
         RenderListItem {LI} at (40,504) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 74x18
             text run at (0,0) width 74: "' javascript '"
         RenderListItem {LI} at (40,522) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 94x18
             text run at (0,0) width 94: "' javascript1.1 '"
         RenderListItem {LI} at (40,540) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 90x18
             text run at (0,0) width 90: "'   javascript   '"
         RenderListItem {LI} at (40,558) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 98x18
             text run at (0,0) width 98: "' javascript 1.0 '"
         RenderListItem {LI} at (40,576) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 102x18
             text run at (0,0) width 102: "' javascript  1.0 '"
         RenderListItem {LI} at (40,594) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 50x18
             text run at (0,0) width 50: "jscript 1"
         RenderListItem {LI} at (40,612) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 62x18
             text run at (0,0) width 62: "jscript 1.0"
         RenderListItem {LI} at (40,630) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 79x18
             text run at (0,0) width 79: "ecmascript 1"
         RenderListItem {LI} at (40,648) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 91x18
             text run at (0,0) width 91: "ecmascript 1.0"
         RenderListItem {LI} at (40,666) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 69x18
             text run at (0,0) width 69: "livescript 1"
         RenderListItem {LI} at (40,684) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 81x18
             text run at (0,0) width 81: "livescript 1.0"
         RenderListItem {LI} at (40,702) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 80x18
             text run at (0,0) width 80: "' jscript  1.0 '"
         RenderListItem {LI} at (40,720) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 120x18
             text run at (0,0) width 120: "disabled_javascript"
         RenderListItem {LI} at (40,738) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 108x18
             text run at (0,0) width 108: "xxxjavascriptxxx"
         RenderListItem {LI} at (40,756) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-28,0) size 24x18
           RenderText {TEXT} at (0,0) size 38x18
             text run at (0,0) width 38: "bogus"
       RenderBlock {H3} at (0,2894) size 769x22
@@ -667,37 +667,37 @@ layer at (0,0) size 785x3222
           text run at (0,0) width 191: "These scripts should execute"
       RenderBlock {OL} at (0,2976) size 769x108
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 256x18
             text run at (0,0) width 256: "empty string type, \"javascript\" language "
           RenderText {TEXT} at (256,0) size 56x18
             text run at (256,0) width 56: "executed"
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 283x18
             text run at (0,0) width 283: "empty string language, \"text/javascript\" type "
           RenderText {TEXT} at (283,0) size 56x18
             text run at (283,0) width 56: "executed"
         RenderListItem {LI} at (40,36) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 279x18
             text run at (0,0) width 279: "\"javascript\" language, \"text/javascript\" type "
           RenderText {TEXT} at (279,0) size 56x18
             text run at (279,0) width 56: "executed"
         RenderListItem {LI} at (40,54) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 257x18
             text run at (0,0) width 257: "\"bogus\" language, \"text/javascript\" type "
           RenderText {TEXT} at (257,0) size 56x18
             text run at (257,0) width 56: "executed"
         RenderListItem {LI} at (40,72) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 276x18
             text run at (0,0) width 276: "\"livescript\" language, \"text/javascript\" type "
           RenderText {TEXT} at (276,0) size 56x18
             text run at (276,0) width 56: "executed"
         RenderListItem {LI} at (40,90) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 299x18
             text run at (0,0) width 299: "\"javascript1.2\" language, \"text/javascript\" type "
           RenderText {TEXT} at (299,0) size 56x18
@@ -707,14 +707,14 @@ layer at (0,0) size 785x3222
           text run at (0,0) width 217: "These scripts should not execute"
       RenderBlock {OL} at (0,3144) size 769x54
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 226x18
             text run at (0,0) width 226: "\"javascript\" language, \"bogus\" type"
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 230x18
             text run at (0,0) width 230: "empty string type, \"bogus\" language"
         RenderListItem {LI} at (40,36) size 729x18
-          RenderListMarker at (0,0) size 0x14
+          RenderListMarker at (-20,0) size 16x18
           RenderText {TEXT} at (0,0) size 230x18
             text run at (0,0) width 230: "empty string language, \"bogus\" type"
