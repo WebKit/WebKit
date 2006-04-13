@@ -69,8 +69,77 @@ sub wanted
 
 my %renames = (
     "DOMRect" => "JSRect",
-    "RectImpl" => "DOMRect",
+    "KHTMLSettings" => "Settings",
+    "KSSLKeyGen" => "SSLKeyGenerator",
+    "KWQCString" => "DeprecatedCString",
+    "KWQComboBox" => "PopUpButton",
+    "KWQComboBoxAdapter" => "WebCorePopUpButtonAdapter",
+    "KWQEditCommand" => "WebCoreEditCommand",
+    "KWQFileButton" => "FileButton",
+    "KWQFileButtonAdapter" => "WebCoreFileButtonAdapter",
+    "KWQFormData" => "FormDataMac",
+    "KWQKHTMLSettings" => "Settings",
+    "KWQKSSLKeyGen" => "SSLKeyGenerator",
+    "KWQLineEdit" => "TextField",
+    "KWQListBox" => "ListBox",
+    "KWQListBoxGroupLabel" => "ListBoxGroupLabel",
+    "KWQListBoxItem" => "ListBoxItem",
+    "KWQListBoxItemType" => "ListBoxItemType",
+    "KWQListBoxOption" => "ListBoxOption",
+    "KWQListBoxScrollView" => "WebCoreListBoxScrollView",
+    "KWQListBoxSeparator" => "ListBoxSeparator",
+    "KWQListBoxSeparator" => "ListBoxSeparator",
+    "KWQListNode" => "DeprecatedListNode",
+    "KWQNSControlSizeForFont" => "ControlSize",
+    "KWQNSTextAlignment" => "TextAlignment",
+    "KWQPTRQUEUE_H_" => "DeprecatedPtrQueue_h",
+    "KWQPageState" => "WebCorePageState",
+    "KWQPopUpButton" => "WebCorePopUpButton",
+    "KWQPopUpButtonCell" => "WebCorePopUpButtonCell",
+    "KWQPtrQueue" => "DeprecatedPtrQueue",
+    "KWQRegExpPrivate" => "Private",
+    "KWQRelease" => "Release",
+    "KWQRetain" => "Retain",
+    "KWQSCROLLBAR_H_" => "ScrollBar_h",
+    "KWQScrollBar" => "WebCoreScrollBar",
+    "KWQScrollDirection" => "ScrollDirection",
+    "KWQScrollDocument" => "ScrollByDocument",
+    "KWQScrollDown" => "ScrollDown",
+    "KWQScrollGranularity" => "ScrollGranularity",
+    "KWQScrollLeft" => "ScrollLeft",
+    "KWQScrollLine" => "ScrollByLine",
+    "KWQScrollPage" => "ScrollByPage",
+    "KWQScrollRight" => "ScrollRight",
+    "KWQScrollUp" => "ScrollUp",
+    "KWQScrollWheel" => "ScrollByWheel",
+    "KWQSearchField" => "WebCoreSearchField",
+    "KWQSearchFieldCell" => "WebCoreSearchFieldCell",
+    "KWQSecureTextField" => "WebCoreSecureTextField",
+    "KWQSecureTextFieldCell" => "WebCoreSecureTextFieldCell",
+    "KWQSelectingNext" => "SelectingNext",
+    "KWQSelectingPrevious" => "SelectingPrevious",
+    "KWQSelectionDirection" => "SelectionDirection",
+    "KWQSlider" => "WebCoreSlider",
+    "KWQStringData" => "DeprecatedStringData",
+    "KWQTableView" => "WebCoreTableView",
+    "KWQTextEdit" => "TextBox",
+    "KWQTextFieldController" => "TextFieldController",
+    "KWQTextFieldFormatter" => "WebCoreTextFieldFormatter",
+    "KWQTextStream" => "TextStream",
+    "KWQValueListPrivate" => "Private",
+    "KWQWMatrix" => "AffineTransform",
+    "KWQ_LIST_IMPL_H" => "DeprecatedPtrListImpl_h",
     "MouseEventMac" => "PlatformMouseEventMac",
+    "QLineEdit" => "TextField",
+    "QListBox" => "ListBox",
+    "QMatrix" => "AffineTransform",
+    "QScrollBar" => "ScrollBar",
+    "QSlider" => "Slider",
+    "QTextEdit" => "TextBox",
+    "QTextStream" => "TextStream",
+    "QTextStreamManipulator" => "TextStreamManipulator",
+    "QWMatrix" => "AffineTransform",
+    "RectImpl" => "DOMRect",
 );
 
 # rename most files with names ending in Impl
@@ -105,11 +174,10 @@ for my $file (sort @paths) {
     }
     my $newContents = $contents;
 
-    if ($file !~ /\.idl$/) {
-        for my $from (keys %renames) {
-            $newContents =~ s/\b$from(?!["\w])/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
-        }
+    for my $from (keys %renames) {
+        $newContents =~ s/\b$from(?!["\w])/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
     }
+    $newContents =~ s/_KWQ_/_webcore_/g;
 
     if ($newContents ne $contents) {
         open FILE, ">", $file or die;
