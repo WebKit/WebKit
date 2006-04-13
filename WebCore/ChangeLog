@@ -1,3 +1,8 @@
+2006-04-13  Darin Adler  <darin@apple.com>
+
+        * platform/mac/GraphicsContextMac.mm: Fix one no-SVG compile problem by adding
+        a "using namespace std".
+
 2006-04-12  Darin Adler  <darin@apple.com>
 
         Rubber-stamped by Anders.

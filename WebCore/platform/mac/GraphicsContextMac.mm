@@ -42,6 +42,8 @@
 // FIXME: A lot more of this should use CoreGraphics instead of AppKit.
 // FIXME: A lot more of this should move into GraphicsContextCG.cpp.
 
+using namespace std;
+
 namespace WebCore {
 
 // NSColor, NSBezierPath, NSGraphicsContext and WebCoreTextRenderer
