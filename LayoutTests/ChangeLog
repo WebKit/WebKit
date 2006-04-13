@@ -1,3 +1,14 @@
+2006-04-13  Alexey Proskuryakov  <ap@nypop.com>
+
+        Test created by Maciej.
+
+        Tests that Latin-1 is handled as windows-1252
+        (see http://bugzilla.opendarwin.org/show_bug.cgi?id=7602). Some existing tests
+        already did cover this, but only indirectly.
+
+        * fast/encoding/latin1-winlatin-expected.txt: Added.
+        * fast/encoding/latin1-winlatin.html: Added.
+
 2006-04-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
@@ -199,6 +210,19 @@
         * editing/deleting/merge-unrendered-space-expected.png: Added.
         * editing/deleting/merge-unrendered-space-expected.txt: Added.
         * editing/deleting/merge-unrendered-space.html: Added.
+
+2006-04-10  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8157
+          Make HTTP tests using Perl use .pl extension
+
+        * http/tests/incremental/slow-utf8-text.pl: Added (renamed from .text).
+        * http/tests/incremental/slow-utf8-text.text: Removed.
+        * http/tests/incremental/split-hex-entities.pl: Added (renamed from .html).
+        * http/tests/incremental/split-hex-entities.html: Removed.
+        * http/tests/incremental/.htaccess: Removed.
 
 2006-04-10  Darin Adler  <darin@apple.com>
 

@@ -1,3 +1,20 @@
+2006-04-13  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7602
+        Only use fixupChar for entities
+
+        * html/HTMLTokenizer.cpp: Only use fixUpChar() when handling entities.
+        (WebCore::HTMLTokenizer::parseSpecial):
+        (WebCore::HTMLTokenizer::parseText):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::write):
+        * platform/StreamingTextDecoder.cpp:
+        (WebCore::StreamingTextDecoder::convert): Remove the special case for Latin-1, because it is already handled 
+        via effectiveEncoding().
+        * platform/StreamingTextDecoder.h: Remove convertLatin1().
+
 2006-04-13  Darin Adler  <darin@apple.com>
 
         * platform/mac/GraphicsContextMac.mm: Fix one no-SVG compile problem by adding

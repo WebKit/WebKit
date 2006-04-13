@@ -8,6 +8,7 @@
               (C) 1999 Antti Koivisto (koivisto@kde.org)
               (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+    Copyright (C) 2005, 2006 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -81,11 +82,7 @@ static const char titleEnd [] = "</title";
 //
 // There may be better equivalents
 
-// We need this for entities at least. For non-entity text, we could
-// handle this in the text encoding.
-
-// To cover non-entity text, I think this function would need to be called
-// in more places. There seem to be some places that don't call fixUpChar.
+// We only need this for entities. For non-entity text, we handle this in the text encoding.
 
 static const unsigned short windowsLatin1ExtensionArray[32] = {
     0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
@@ -328,7 +325,7 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
             scriptCodeSize = scriptCodeDest-scriptCode;
         }
         else {
-            scriptCode[scriptCodeSize++] = fixUpChar(*src);
+            scriptCode[scriptCodeSize++] = *src;
             ++src;
         }
     }
@@ -638,7 +635,7 @@ HTMLTokenizer::State HTMLTokenizer::parseText(SegmentedString &src, State state)
             state.setSkipLF(true);
             *dest++ = '\n';
         } else
-            *dest++ = fixUpChar(cc);
+            *dest++ = cc;
         ++src;
     }
 
@@ -1062,7 +1059,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         break;
                     }
                 }
-                *dest++ = fixUpChar(*src);
+                *dest++ = *src;
                 ++src;
             }
             break;
@@ -1093,7 +1090,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     }
                 }
 
-                *dest++ = fixUpChar(*src);
+                *dest++ = *src;
                 ++src;
             }
             break;
@@ -1455,7 +1452,7 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
             ++src;
         } else {
             state.setDiscardLF(false);
-            *dest++ = fixUpChar(*src);
+            *dest++ = *src;
             ++src;
         }
     }
