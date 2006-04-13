@@ -23,6 +23,7 @@
  */
 
 #include "config.h"
+#include "collector.h"
 
 #include "HashTraits.h"
 #include "JSLock.h"
@@ -34,6 +35,8 @@
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
+
+#include "protect.h"
 
 #if PLATFORM(WIN_OS)
 #include <windows.h>
@@ -192,6 +195,48 @@ int main(int argc, char** argv)
     return res;
 }
 
+
+bool doIt(int argc, char** argv)
+{
+  bool success = true;
+  GlobalImp* global = new GlobalImp();
+
+  // create interpreter
+  Interpreter interp(global);
+  // add debug() function
+  global->put(interp.globalExec(), "debug", new TestFunctionImp(TestFunctionImp::Debug, 1));
+  // add "print" for compatibility with the mozilla js shell
+  global->put(interp.globalExec(), "print", new TestFunctionImp(TestFunctionImp::Print, 1));
+  // add "quit" for compatibility with the mozilla js shell
+  global->put(interp.globalExec(), "quit", new TestFunctionImp(TestFunctionImp::Quit, 0));
+  // add "gc" for compatibility with the mozilla js shell
+  global->put(interp.globalExec(), "gc", new TestFunctionImp(TestFunctionImp::GC, 0));
+  // add "version" for compatibility with the mozilla js shell 
+  global->put(interp.globalExec(), "version", new TestFunctionImp(TestFunctionImp::Version, 1));
+  global->put(interp.globalExec(), "run", new TestFunctionImp(TestFunctionImp::Run, 1));
+  
+  Interpreter::setShouldPrintExceptions(true);
+  
+  for (int i = 1; i < argc; i++) {
+    const char* fileName = argv[i];
+    if (strcmp(fileName, "-f") == 0) // mozilla test driver script uses "-f" prefix for files
+      continue;
+    
+    char* script = createStringWithContentsOfFile(fileName);
+    if (!script) {
+      success = false;
+      break; // fail early so we can catch missing files
+    }
+    
+    Completion completion = interp.evaluate(fileName, 0, script);
+    success = success && completion.complType() != Throw;
+    free(script);
+  }
+
+  return success;
+}
+
+
 int kjsmain(int argc, char** argv)
 {
   if (argc < 2) {
@@ -201,46 +246,13 @@ int kjsmain(int argc, char** argv)
 
   testIsInteger();
 
-  bool success = true;
-  {
-    JSLock lock;
-    
-    GlobalImp* global = new GlobalImp();
+  JSLock lock;
 
-    // create interpreter
-    Interpreter interp(global);
-    // add debug() function
-    global->put(interp.globalExec(), "debug", new TestFunctionImp(TestFunctionImp::Debug, 1));
-    // add "print" for compatibility with the mozilla js shell
-    global->put(interp.globalExec(), "print", new TestFunctionImp(TestFunctionImp::Print, 1));
-    // add "quit" for compatibility with the mozilla js shell
-    global->put(interp.globalExec(), "quit", new TestFunctionImp(TestFunctionImp::Quit, 0));
-    // add "gc" for compatibility with the mozilla js shell
-    global->put(interp.globalExec(), "gc", new TestFunctionImp(TestFunctionImp::GC, 0));
-    // add "version" for compatibility with the mozilla js shell 
-    global->put(interp.globalExec(), "version", new TestFunctionImp(TestFunctionImp::Version, 1));
-    global->put(interp.globalExec(), "run", new TestFunctionImp(TestFunctionImp::Run, 1));
+  bool success = doIt(argc, argv);
 
-    Interpreter::setShouldPrintExceptions(true);
-    
-    for (int i = 1; i < argc; i++) {
-      const char* fileName = argv[i];
-      if (strcmp(fileName, "-f") == 0) // mozilla test driver script uses "-f" prefix for files
-        continue;
-      
-      char* script = createStringWithContentsOfFile(fileName);
-      if (!script) {
-        success = false;
-        break; // fail early so we can catch missing files
-      }
-
-      Completion completion = interp.evaluate(fileName, 0, script);
-      success = success && completion.complType() != Throw;
-      free(script);
-    }
-    
-    delete global;
-  } // end block, so that interpreter gets deleted
+#ifndef NDEBUG
+  Collector::collect();
+#endif
 
   if (success)
     fprintf(stderr, "OK.\n");

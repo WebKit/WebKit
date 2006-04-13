@@ -1,3 +1,13 @@
+2006-04-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - fix testkjs to not show false-positive KJS::Node leaks in debug builds
+
+        * kjs/testkjs.cpp:
+        (doIt):
+        (kjsmain):
+
 2006-04-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
