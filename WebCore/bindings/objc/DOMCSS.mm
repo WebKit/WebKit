@@ -26,8 +26,8 @@
 #import "config.h"
 #import "DOMCSS.h"
 
-#import "AbstractView.h"
 #import "DOMInternal.h"
+#import "DOMWindow.h"
 #import "Document.h"
 #import "FoundationExtras.h"
 #import "css_ruleimpl.h"
@@ -36,6 +36,8 @@
 #import <objc/objc-class.h>
 
 using namespace WebCore;
+
+typedef DOMWindow AbstractView;
 
 @interface DOMStyleSheet (WebCoreInternal)
 + (DOMStyleSheet *)_DOMStyleSheetWith:(StyleSheet *)impl;
@@ -2512,15 +2514,25 @@ void removeWrapperForRGB(RGBA32 value)
 
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
-    Element *element = [elt _element];
+    Element* element = [elt _element];
+    AbstractView* defaultView = [self _document]->defaultView();
     String pseudoEltString(pseudoElt);
-    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _document]->defaultView()->getComputedStyle(element, pseudoEltString.impl())];
+    
+    if (!defaultView)
+        return nil;
+    
+    return [DOMCSSStyleDeclaration _styleDeclarationWith:defaultView->getComputedStyle(element, pseudoEltString.impl()).get()];
 }
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)elt :(NSString *)pseudoElt
 {
+    AbstractView* defaultView = [self _document]->defaultView();
+
+    if (!defaultView)
+        return nil;
+    
     // The parameter of "false" is handy for the DOM inspector and lets us see user agent and user rules.
-    return [DOMCSSRuleList _ruleListWith: AbstractView([self _document]).getMatchedCSSRules([elt _element], String(pseudoElt).impl(), false).get()];
+    return [DOMCSSRuleList _ruleListWith:defaultView->getMatchedCSSRules([elt _element], String(pseudoElt).impl(), false).get()];
 }
 
 @end

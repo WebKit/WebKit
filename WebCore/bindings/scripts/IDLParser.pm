@@ -153,7 +153,7 @@ sub parseExtendedAttributes
     $attrs{$name} = $value;
   }
   
-  return %attrs;
+  return \%attrs;
 }
 
 sub ParseInterface

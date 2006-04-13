@@ -326,7 +326,10 @@ void InterpreterImp::initGlobalObject()
   ErrorPrototype *errorProto = new ErrorPrototype(&globExec, objProto, funcProto);
   b_ErrorPrototype = errorProto;
 
-  static_cast<JSObject*>(global)->setPrototype(b_ObjectPrototype);
+  JSObject* o = global;
+  while (o->prototype()->isObject())
+      o = static_cast<JSObject*>(o->prototype());
+  o->setPrototype(b_ObjectPrototype);
 
   // Constructors (Object, Array, etc.)
   b_Object = new ObjectObjectImp(&globExec, objProto, funcProto);

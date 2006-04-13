@@ -22,12 +22,14 @@
 #include "config.h"
 #include "kjs_window.h"
 
+#include "DOMWindow.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLDocument.h"
 #include "JSDOMParser.h"
+#include "JSDOMWindow.h"
 #include "JSMutationEvent.h"
 #include "JSRange.h"
 #include "JSXMLHttpRequest.h"
@@ -202,7 +204,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   defaultStatus Window::DefaultStatus   DontDelete
   defaultstatus Window::DefaultStatus   DontDelete
   status        Window::Status          DontDelete
-  document      Window::Document_       DontDelete|ReadOnly
   Node          Window::Node            DontDelete
   Event         Window::EventCtor       DontDelete
   Range         Window::Range           DontDelete
@@ -307,8 +308,8 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 */
 KJS_IMPLEMENT_PROTOFUNC(WindowFunc)
 
-Window::Window(Frame *f)
-  : m_frame(f)
+Window::Window(DOMWindow* window)
+  : m_frame(window->frame())
   , screen(0)
   , history(0)
   , frames(0)
@@ -340,6 +341,11 @@ Window::~Window()
     ListenersMap::iterator e2 = jsEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindowObj();
+}
+
+DOMWindow* Window::impl() const
+{
+     return m_frame->domWindow();
 }
 
 ScriptInterpreter *Window::interpreter() const
@@ -806,14 +812,6 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
      return jsUndefined();
 
    switch (token) {
-   case Document_:
-     if (!m_frame->document()) {
-       m_frame->createEmptyDocument();
-       m_frame->begin();
-       m_frame->write("<HTML><BODY>");
-       m_frame->end();
-     }
-     return toJS(exec, m_frame->document());
    case Onabort:
      return getListener(exec, abortEvent);
    case Onblur:
@@ -1348,8 +1346,8 @@ void Window::clear()
       *m_returnValueSlot = returnValue;
 
   clearAllTimeouts();
-
   clearProperties();
+  setPrototype(JSDOMWindowProto::self()); // clear the prototype
 
   // there's likely to be lots of garbage now
   Collector::collect();
@@ -2493,3 +2491,19 @@ void DOMWindowTimer::fired()
 }
 
 } // namespace KJS
+
+using namespace KJS;
+
+namespace WebCore {
+
+JSValue* toJS(ExecState*, DOMWindow* domWindow)
+{
+    return Window::retrieve(domWindow->frame());
+}
+
+DOMWindow* toDOMWindow(JSValue* val)
+{
+    return val->isObject(&JSDOMWindow::info) ? static_cast<JSDOMWindow*>(val)->impl() : 0;
+}
+    
+} // namespace WebCore

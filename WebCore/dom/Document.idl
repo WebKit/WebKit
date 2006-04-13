@@ -97,7 +97,7 @@ module core {
 
         // DOM Level 2 Abstract Views (DocumentView interface)
 
-        readonly attribute views::AbstractView defaultView;
+        readonly attribute DOMWindow defaultView;
 
         // DOM Level 2 Style (DocumentStyle interface)
 

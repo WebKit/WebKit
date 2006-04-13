@@ -25,13 +25,15 @@
 #ifndef DOM_EVENTSIMPL_H
 #define DOM_EVENTSIMPL_H
 
-#include "AbstractView.h"
+#include "AtomicString.h"
+#include "DOMWindow.h"
 #include "Node.h"
 
 class DeprecatedStringList;
 
 namespace WebCore {
 
+class CachedImage;
 class Clipboard;
 class EventListener;
 class EventTargetNode;
@@ -40,6 +42,7 @@ class IntPoint;
 class PlatformKeyboardEvent;
 
 typedef unsigned long long DOMTimeStamp;
+typedef DOMWindow AbstractView;
 
 const int EventExceptionOffset = 100;
 const int EventExceptionMax = 199;

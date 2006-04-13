@@ -50,7 +50,6 @@
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_traversal.h"
-#include "kjs_views.h"
 #include "kjs_window.h"
 #include "RenderCanvas.h"
 

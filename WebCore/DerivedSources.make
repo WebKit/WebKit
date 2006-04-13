@@ -30,6 +30,7 @@ VPATH = \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/html \
+    $(WebCore)/page \
 #
 
 .PHONY : all
@@ -53,6 +54,7 @@ all : \
     JSDOMParser.lut.h \
     JSDocument.h \
     JSDocumentType.h \
+    JSDOMWindow.h \
     JSElement.h \
     JSEntity.h \
     JSKeyboardEvent.h \
@@ -76,7 +78,6 @@ all : \
     kjs_html.lut.h \
     kjs_navigator.lut.h \
     kjs_traversal.lut.h \
-    kjs_views.lut.h \
     kjs_window.lut.h \
     ksvgcssproperties.h \
     ksvgcssvalues.h \

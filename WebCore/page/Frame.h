@@ -59,6 +59,7 @@ class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
 class DrawContentsEvent;
+class DOMWindow;
 class EditCommandPtr;
 class FramePrivate;
 class FrameTree;
@@ -797,6 +798,7 @@ public:
   // split out controller objects
   FrameTree* tree() const;
   SelectionController& selection() const;
+  DOMWindow* domWindow() const;
 
  private:
   friend class FramePrivate;

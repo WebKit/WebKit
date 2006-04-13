@@ -41,7 +41,7 @@ module events {
         void               initMouseEvent(in AtomicString typeArg, 
                                           in boolean canBubbleArg, 
                                           in boolean cancelableArg, 
-                                          in views::AbstractView viewArg, 
+                                          in DOMWindow viewArg, 
                                           in long detailArg, 
                                           in long screenXArg, 
                                           in long screenYArg, 

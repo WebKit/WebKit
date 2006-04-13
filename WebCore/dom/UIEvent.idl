@@ -23,7 +23,7 @@ module events {
 
     interface [LegacyParent=KJS::DOMEvent] UIEvent : Event {
 
-        readonly attribute views::AbstractView  view;
+        readonly attribute DOMWindow  view;
         readonly attribute long                 detail;
         
         readonly attribute long                 keyCode;
@@ -37,7 +37,7 @@ module events {
         void               initUIEvent(in AtomicString typeArg, 
                                        in boolean canBubbleArg, 
                                        in boolean cancelableArg, 
-                                       in views::AbstractView viewArg, 
+                                       in DOMWindow viewArg, 
                                        in long detailArg);
     };
 

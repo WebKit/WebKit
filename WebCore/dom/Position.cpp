@@ -31,7 +31,6 @@
 #include "Logging.h"
 #include "RenderBlock.h"
 #include "CSSComputedStyleDeclaration.h"
-#include "AbstractView.h"
 #include "htmlediting.h"
 #include "HTMLNames.h"
 #include "TextIterator.h"

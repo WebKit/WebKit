@@ -33,6 +33,7 @@
 #import "Cache.h"
 #import "Cursor.h"
 #import "DOMInternal.h"
+#import "DOMWindow.h"
 #import "EventNames.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"

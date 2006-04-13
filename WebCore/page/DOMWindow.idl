@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "DOMViews.h"
-#import "DOMWindow.h"
+module window {
 
-namespace WebCore {
-    typedef DOMWindow AbstractView;
+    // You can't cache the Window object in the global object because it *is* the global object.
+    // For the same reason, there's no need to.
+    interface [LegacyParent=KJS::Window, DoNotCache] DOMWindow {
+        // DOM Level 2 AbstractView Interface
+        readonly attribute Document document;
+        
+        // DOM Level 2 Style Interface
+        CSSStyleDeclaration getComputedStyle(in Element elt,
+                                             in DOMString pseudoElt);
+
+        // WebKit extension for the Web Inspector
+        CSSRuleList getMatchedCSSRules(in Element elt,
+                                       in DOMString pseudoElt,
+                                       in [ConvertUndefinedToTrue] boolean authorOnly);
+        
+    };
+
 }
-
-@interface DOMAbstractView (WebCoreInternal)
-+ (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl;
-- (WebCore::AbstractView *)_abstractView;
-@end

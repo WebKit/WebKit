@@ -24,6 +24,7 @@
 #include "kjs_events.h"
 #include "kjs_window.h"
 #include "Frame.h"
+#include "JSDOMWindow.h"
 
 #if SVG_SUPPORT
 #include "JSSVGLazyEventListener.h"
@@ -142,7 +143,7 @@ void KJSProxy::initScriptIfNeeded()
 
   // Build the global object - which is a Window instance
   JSLock lock;
-  JSObject *globalObject( new Window(m_frame) );
+  JSObject* globalObject = new JSDOMWindow(m_frame->domWindow());
 
   // Create a KJS interpreter for this frame
   m_script = new ScriptInterpreter(globalObject, m_frame);

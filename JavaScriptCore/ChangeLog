@@ -1,3 +1,13 @@
+2006-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::initGlobalObject): Add the built-in object
+        prototype to the end of the global object's prototype chain instead of
+        just blowing away its existing prototype. We need to do this because
+        the window object has a meaningful prototype now.
+
 2006-04-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

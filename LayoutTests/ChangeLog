@@ -1,3 +1,21 @@
+2006-04-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for document.defaultView
+
+        * fast/dom/defaultView-expected.txt: Added.
+        * fast/dom/defaultView.html: Added.
+        * fast/events/event-view-toString-expected.txt: Updated to reflect new
+        prototype chain for defaultView.
+
+2006-04-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test to ensure that the window object gets cleared during a
+        navigation. I caused a regression in that area when working in window
+        object code.
+
+        * fast/loader/resources/window-clearing2.html: Added.
+        * fast/loader/window-clearing.html: Added.
+
 2006-04-13  Alexey Proskuryakov  <ap@nypop.com>
 
         Test created by Maciej.

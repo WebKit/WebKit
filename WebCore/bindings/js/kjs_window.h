@@ -27,8 +27,10 @@
 
 namespace WebCore {
     class AtomicString;
+    class DOMWindow;
     class Frame;
     class FrameView;
+    class JSDOMWindow;
     class Node;
 }
 
@@ -83,10 +85,11 @@ namespace KJS {
     friend class Location;
     friend class WindowFunc;
     friend class ScheduledAction;
-  public:
-    Window(WebCore::Frame*);
+  protected:
+    Window(WebCore::DOMWindow*);
   public:
     ~Window();
+    WebCore::DOMWindow* impl() const;
     void disconnectFrame();
     /**
      * Returns and registers a window object. In case there's already a Window
@@ -149,7 +152,7 @@ namespace KJS {
     UnprotectedListenersMap jsUnprotectedEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { Closed, Crypto, DefaultStatus, Status, Document_, Node, EventCtor, MutationEventCtor, Range,
+    enum { Closed, Crypto, DefaultStatus, Status, Node, EventCtor, MutationEventCtor, Range,
            NodeFilter, DOMException, CSSRule, Frames, History_, Event_, InnerHeight,
            InnerWidth, Length, Location_, Locationbar, Name, Navigator_, ClientInformation,
            Menubar, OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
@@ -270,5 +273,10 @@ namespace KJS {
   };
 
 } // namespace
+
+namespace WebCore {
+    KJS::JSValue* toJS(KJS::ExecState*, DOMWindow*);
+    DOMWindow* toDOMWindow(KJS::JSValue*);
+} // namespace WebCore
 
 #endif

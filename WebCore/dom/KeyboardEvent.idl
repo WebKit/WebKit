@@ -32,7 +32,7 @@ module events {
         void initKeyboardEvent(in AtomicString typeArg, 
                                in boolean canBubbleArg, 
                                in boolean cancelableArg, 
-                               in views::AbstractView viewArg, 
+                               in DOMWindow viewArg, 
                                in DOMString keyIdentifier,
                                in unsigned long keyLocationArg,
                                in boolean ctrlKeyArg,

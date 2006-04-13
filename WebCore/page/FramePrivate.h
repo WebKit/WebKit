@@ -111,6 +111,7 @@ namespace WebCore {
 
         Page* m_page;
         FrameTree m_treeNode;
+        RefPtr<DOMWindow> m_domWindow;
 
         Vector<RefPtr<Plugin> > m_plugins;
 

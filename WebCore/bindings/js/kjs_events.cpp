@@ -32,7 +32,6 @@
 #include "html_imageimpl.h"
 #include "HTMLNames.h"
 #include "kjs_proxy.h"
-#include "kjs_views.h"
 #include "kjs_window.h"
 
 #include "kjs_events.lut.h"

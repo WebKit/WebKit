@@ -26,14 +26,17 @@
 #import "config.h"
 #import "DOMViews.h"
 
-#import "AbstractView.h"
 #import "DOMInternal.h"
 #import "DOMViewsInternal.h"
 #import "Document.h"
 
+namespace WebCore {
+    typedef DOMWindow AbstractView;
+}
 using WebCore::AbstractView;
+using WebCore::DOMWindow;
 
-ALLOW_DOM_CAST(AbstractView)
+ALLOW_DOM_CAST(DOMWindow)
 
 @implementation DOMAbstractView
 

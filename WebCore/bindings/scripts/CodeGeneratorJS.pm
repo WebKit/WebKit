@@ -120,6 +120,8 @@ sub GetLegacyHeaderIncludes
   my $legacyParent = shift;
   if ($legacyParent eq "JSCanvasRenderingContext2DBase") {
     return "#include \"JSCanvasRenderingContext2DBase.h\"\n\n";
+  } elsif ($legacyParent eq "KJS::Window") {
+      return "#include \"kjs_window.h\"\n\n";
   } elsif ($module eq "events") {
     return "#include \"kjs_events.h\"\n\n";
   } elsif ($module eq "core") {
@@ -142,6 +144,7 @@ sub AddIncludesForType
   
   if ($type eq "DocumentType" or 
       $type eq "Document" or
+      $type eq "DOMWindow" or
       $type eq "DOMImplementation" or
       $type eq "NodeList" or 
       $type eq "Text" or 
@@ -152,12 +155,13 @@ sub AddIncludesForType
       $type eq "DocumentFragment" or
       $type eq "Node" or
       $type eq "Attr" or
-      $type eq "AbstractView" or
       $type eq "Comment" or
       $type eq "Element") {
     $implIncludes{"${type}.h"} = 1;
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
+  } elsif ($type eq "CSSRuleList") {
+    $implIncludes{"css_ruleimpl.h"} = 1;
   } elsif ($type eq "CSSPrimitiveValue" or $type eq "Counter" or $type eq "Rect" or $type eq "RGBColor") {
     $implIncludes{"css_valueimpl.h"} = 1;
   } elsif ($type eq "CSSStyleDeclaration") {
@@ -193,19 +197,6 @@ sub AddIncludesForType
   } else {
     die "Don't know what to include for interface $type";
   }
-}
-
-sub GetLegacyImplementationIncludes
-{
-  my $interfaceName = shift;
-  
-  if ($module eq "events") {
-    return "#include \"dom2_eventsimpl.h\"\n";
-  } elsif ($module eq "core") {
-    return "#include \"${interfaceName}.h\"\n";
-  } else {
-    die ("Don't know what headers to include for module $module");
-  }  
 }
 
 sub GenerateHeader
@@ -259,7 +250,11 @@ sub GenerateHeader
   push(@headerContent, "public:\n");
   
   # Constructor
-  push(@headerContent, "    $className(KJS::ExecState*, $implClassName*);\n");
+  if ($dataNode->extendedAttributes->{"DoNotCache"}) {
+      push(@headerContent, "    $className($implClassName*);\n");
+  } else {
+      push(@headerContent, "    $className(KJS::ExecState*, $implClassName*);\n");
+  }
     
   # Destructor
   if (!$hasParent or $interfaceName eq "Document") {
@@ -356,13 +351,33 @@ sub GenerateHeader
     push(@headerContent, "$implClassName* to${interfaceName}(KJS::JSValue*);\n\n");
   }
 
-  # Add prototype declaration
+  # Add prototype declaration -- code adopted from the KJS_DEFINE_PROTOTYPE and KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
   if ($numFunctions > 0) {
-    if ($hasParent) {
-      push(@headerContent, "KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(${className}Proto, ${parentClassName}Proto);\n\n");
-    } else {
-      push(@headerContent, "KJS_DEFINE_PROTOTYPE(${className}Proto);\n\n");
-    }
+      push(@headerContent, "class ${className}Proto : public KJS::JSObject {\n");
+      if (!$dataNode->extendedAttributes->{"DoNotCache"}) {
+          push(@headerContent, "    friend KJS::JSObject* KJS_GCC_ROOT_NS_HACK cacheGlobalObject<${className}Proto>(KJS::ExecState*, const KJS::Identifier& propertyName);\n");
+      }
+      push(@headerContent, "public:\n");
+      if ($dataNode->extendedAttributes->{"DoNotCache"}) {
+          push(@headerContent, "    static KJS::JSObject* self();\n");
+      } else {
+          push(@headerContent, "    static KJS::JSObject* self(KJS::ExecState* exec);\n");
+      }
+      push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &info; }\n");
+      push(@headerContent, "    static const KJS::ClassInfo info;\n");
+      push(@headerContent, "    bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n");
+      push(@headerContent, "protected:\n");
+      if ($dataNode->extendedAttributes->{"DoNotCache"}) {
+          push(@headerContent, "    ${className}Proto() { }\n");
+      } else {
+          push(@headerContent, "    ${className}Proto(KJS::ExecState* exec)\n");
+          if ($hasParent) {
+              push(@headerContent, "        : KJS::JSObject(${parentClassName}Proto::self(exec)) { }\n");
+          } else {
+              push(@headerContent, "        : KJS::JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()) { }\n");
+          }
+      }
+      push(@headerContent, "};\n\n");
   }
   
   push(@headerContent, "}\n\n#endif\n");
@@ -508,8 +523,35 @@ sub GenerateImplementation
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
 
-    push(@implContent, "KJS_IMPLEMENT_PROTOFUNC(${className}ProtoFunc)\n");
-    push(@implContent, "KJS_IMPLEMENT_PROTOTYPE(\"$className\", ${className}Proto, ${className}ProtoFunc)\n\n");
+    push(@implContent, "class ${className}ProtoFunc : public InternalFunctionImp {\n");
+    push(@implContent, "public:\n");
+    push(@implContent, "    ${className}ProtoFunc(ExecState* exec, int i, int len, const Identifier& name)\n");
+    push(@implContent, "    : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)\n");
+    push(@implContent, "    , id(i)\n");
+    push(@implContent, "    {\n");
+    push(@implContent, "        put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum);\n");
+    push(@implContent, "    }\n");
+    push(@implContent, "    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args);\n");
+    push(@implContent, "private:\n");
+    push(@implContent, "    int id;\n");
+    push(@implContent, "};\n\n");
+
+    push(@implContent, "const ClassInfo ${className}Proto::info = { \"$className\", 0, &${className}ProtoTable, 0 };\n\n");
+    if ($dataNode->extendedAttributes->{"DoNotCache"}) {
+        push(@implContent, "JSObject* ${className}Proto::self()\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return new ${className}Proto();\n");
+        push(@implContent, "}\n\n");
+    } else {
+        push(@implContent, "JSObject* ${className}Proto::self(ExecState* exec)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return ::cacheGlobalObject<${className}Proto>(exec, \"[[${className}.prototype]]\");\n");
+        push(@implContent, "}\n\n");
+    }
+    push(@implContent, "bool ${className}Proto::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    return getStaticFunctionSlot<${className}ProtoFunc, JSObject>(exec, &${className}ProtoTable, this, propertyName, slot);\n");
+    push(@implContent, "}\n\n");
   }
   
   # - Initialize static ClassInfo object
@@ -528,17 +570,24 @@ sub GenerateImplementation
   push(@implContent, "0 };\n\n");
     
   # Constructor
-  push(@implContent, "${className}::$className(ExecState* exec, $implClassName* impl)\n");
-  if ($hasParent) {
-    push(@implContent, "    : $parentClassName(exec, impl)\n");
+  if ($dataNode->extendedAttributes->{"DoNotCache"}) {
+      push(@implContent, "${className}::$className($implClassName* impl)\n");
+      push(@implContent, "    : $parentClassName(impl)\n");
   } else {
-    push(@implContent, "    : m_impl(impl)\n");
+      push(@implContent, "${className}::$className(ExecState* exec, $implClassName* impl)\n");
+      if ($hasParent) {
+          push(@implContent, "    : $parentClassName(exec, impl)\n");
+      } else {
+          push(@implContent, "    : m_impl(impl)\n");
+      }
   }
   
-  if ($numFunctions ne 0) {
-    push(@implContent, "{\n    setPrototype(${className}Proto::self(exec));\n}\n\n");
+  if ($dataNode->extendedAttributes->{"DoNotCache"}) {
+      push(@implContent, "{\n    setPrototype(${className}Proto::self());\n}\n\n");
+  } elsif ($numFunctions ne 0) {
+      push(@implContent, "{\n    setPrototype(${className}Proto::self(exec));\n}\n\n");
   } else {
-    push(@implContent, "{\n}\n\n");    
+      push(@implContent, "{\n}\n\n");    
   }
   
   # Destructor
@@ -728,8 +777,6 @@ sub GetNativeType
     return "AtomicString";
   } elsif ($type eq "DOMString") {
     return "String";
-  } elsif ($type eq "views::AbstractView") {
-    return "AbstractView*";
   } elsif ($type eq "Node" or
            $type eq "Element" or
            $type eq "Attr" or
@@ -742,6 +789,8 @@ sub GetNativeType
     return "Range::CompareHow";
   } elsif ($type eq "EventTarget") {
     return "EventTargetNode*";
+  } elsif ($type eq "DOMWindow") {
+    return "DOMWindow*";
   } else {
     die "Don't know the native type of $type";
   }
@@ -767,8 +816,6 @@ sub TypeCanFailConversion
       return 0;
   } elsif ($type eq "DOMString") {
       return 0;
-  } elsif ($type eq "views::AbstractView") {
-      return 0;
   } elsif ($type eq "Node") {
       return 0;
   } elsif ($type eq "Element") {
@@ -783,6 +830,8 @@ sub TypeCanFailConversion
   }  elsif ($type eq "Range") {
       return 0;
   }  elsif ($type eq "NodeFilter") {
+      return 0;
+  } elsif ($type eq "DOMWindow") {
       return 0;
   } else {
     die "Don't know whether a JS value can fail conversion to type $type."
@@ -821,9 +870,6 @@ sub JSValueToNative
     } else {
       return "$value->toString(exec)";
     }
-  } elsif ($type eq "views::AbstractView") {
-    $implIncludes{"kjs_views.h"} = 1;
-    return "toAbstractView($value)";
   } elsif ($type eq "Node") {
     $implIncludes{"kjs_dom.h"} = 1;
     return "toNode($value)";
@@ -845,6 +891,9 @@ sub JSValueToNative
   } elsif ($type eq "NodeFilter") {
     $implIncludes{"kjs_traversal.h"} = 1;
     return "toNodeFilter($value)";
+  } elsif ($type eq "DOMWindow") {
+    $implIncludes{"kjs_window.h"} = 1;
+    return "toDOMWindow($value)";
   } else {
     die "Don't know how to convert a JS value of type $type."
   }
@@ -923,6 +972,9 @@ sub NativeToJSValue
     $implIncludes{"css_stylesheetimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value, impl)";    
+  } elsif ($type eq "CSSRuleList") {
+    $implIncludes{"css_ruleimpl.h"} = 1;
+    return "toJS(exec, $value)";  
   } elsif ($type eq "CSSStyleDeclaration" or $type eq "Rect") {
     $implIncludes{"css_valueimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
@@ -937,12 +989,12 @@ sub NativeToJSValue
   } elsif ($type eq "CanvasGradient" or $type eq "Counter" or $type eq "Range") {
     $implIncludes{"JS$type.h"} = 1;
     return "toJS(exec, $value)";
-  } elsif ($type eq "views::AbstractView") {
-    $implIncludes{"kjs_views.h"} = 1;
-    return "toJS(exec, $value)";
   } elsif ($type eq "NodeIterator" or
 	   $type eq "TreeWalker") {
     $implIncludes{"kjs_traversal.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "DOMWindow") {
+    $implIncludes{"kjs_window.h"} = 1;
     return "toJS(exec, $value)";
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "DOMViews.h"
-#import "DOMWindow.h"
+#ifndef DOMWindow_h
+#define DOMWindow_h
+
+#include "Shared.h"
+#include <kxmlcore/Noncopyable.h>
+#include <kxmlcore/PassRefPtr.h>
 
 namespace WebCore {
-    typedef DOMWindow AbstractView;
-}
+    class CSSRuleList;
+    class CSSStyleDeclaration;
+    class Document;
+    class Element;
+    class Frame;
+    class String;
+    
+    class DOMWindow : public Shared<DOMWindow>, Noncopyable {
+    public:
+        DOMWindow(Frame*);
+        Frame* frame();
+        void disconnectFrame();
 
-@interface DOMAbstractView (WebCoreInternal)
-+ (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl;
-- (WebCore::AbstractView *)_abstractView;
-@end
+        // DOM Level 2 AbstractView Interface
+        Document* document() const;
+        
+        // DOM Level 2 Style Interface
+        PassRefPtr<CSSStyleDeclaration> getComputedStyle(Element*, const String& pseudoElt) const;
+
+        // WebKit extension for the Web Inspector
+        PassRefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
+        
+    private:
+        Frame* m_frame;
+    };
+
+} // namespace WebCore
+
+#endif
