@@ -62,6 +62,8 @@ public:
     virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const { return inputType() != IMAGE; }
     virtual void focus();
+    virtual void dispatchFocusEvent();
+    virtual void dispatchBlurEvent();
 
     virtual const AtomicString& name() const;
 
@@ -73,6 +75,10 @@ public:
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
+    bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH; }
+    // FIXME: When other text fields switch to the non-NSView implementation, we should add them here.
+    // Once all text fields switch over, we should merge this with isTextField.
+    bool isNonWidgetTextField() const { return m_type == TEXT; }
 
     bool checked() const { return m_checked; }
     void setChecked(bool);
@@ -169,6 +175,9 @@ public:
     String useMap() const;
     void setUseMap(const String&);
 
+    bool autofilled() const { return m_autofilled; }
+    void setAutofilled(bool b = true) { m_autofilled = b; }
+
 protected:
     AtomicString m_name;
 
@@ -198,6 +207,7 @@ private:
     bool m_activeSubmit : 1;
     bool m_autocomplete : 1;
     bool m_valueMatchesRenderer : 1;
+    bool m_autofilled : 1;
 };
 
 } //namespace

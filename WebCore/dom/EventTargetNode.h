@@ -65,6 +65,9 @@ public:
 
     void handleLocalEvents(Event*, bool useCapture);
 
+    virtual void dispatchFocusEvent();
+    virtual void dispatchBlurEvent();
+
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     

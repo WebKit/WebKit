@@ -447,6 +447,17 @@ void EventTargetNode::dispatchWheelEvent(PlatformWheelEvent& e)
         e.accept();
 }
 
+
+void EventTargetNode::dispatchFocusEvent()
+{
+    dispatchHTMLEvent(focusEvent, false, false);
+}
+
+void EventTargetNode::dispatchBlurEvent()
+{
+    dispatchHTMLEvent(blurEvent, false, false);
+}
+
 bool EventTargetNode::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
     assert(!eventDispatchForbidden());

@@ -71,8 +71,8 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->setOverflow(OHIDDEN);
     divStyle->setWhiteSpace(NOWRAP);
 
-    if (element()->hasTagName(inputTag))
-        divStyle->setUserModify(static_cast<HTMLGenericFormElement *>(element())->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+    if (node()->hasTagName(inputTag))
+        divStyle->setUserModify(static_cast<HTMLGenericFormElement *>(node())->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
 
     // We're adding this extra pixel of padding to match WinIE.
     divStyle->setPaddingLeft(Length(1, Fixed));
@@ -83,7 +83,7 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
 
 void RenderTextField::updateFromElement()
 {
-    if (element()->hasTagName(inputTag)) {
+    if (node()->hasTagName(inputTag)) {
         if (!m_div) {
             // Create the div and give it a parent, renderer, and style
             m_div = new HTMLTextFieldInnerElement(document(), node());
@@ -99,9 +99,9 @@ void RenderTextField::updateFromElement()
             RenderBlock::addChild(divRenderer);
         }
 
-        m_div->renderer()->style()->setUserModify(static_cast<HTMLGenericFormElement *>(element())->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+        m_div->renderer()->style()->setUserModify(input->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
         
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(element());
         if (!input->valueMatchesRenderer()) {
             String oldText = text();
             String value = input->value().copy();
@@ -157,7 +157,7 @@ void RenderTextField::setSelectionRange(int start, int end)
     ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
 
     SelectionController sel = SelectionController(startPosition, endPosition);
-    document()->frame()->setSelection(sel, false);
+    document()->frame()->setSelection(sel);
 }
 
 VisiblePosition RenderTextField::visiblePositionForIndex(int index)
@@ -186,10 +186,11 @@ int RenderTextField::indexForVisiblePosition(const VisiblePosition& pos)
 
 void RenderTextField::subtreeHasChanged()
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(element());
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     if (input) {
         input->setValueFromRenderer(text());
         setEdited(true);
+        document()->frame()->textDidChangeInTextField(input);
     }
 }
 
@@ -210,7 +211,7 @@ void RenderTextField::calcMinMaxWidth()
     else {
         // Figure out how big a text field needs to be for a given number of characters
         // (using "0" as the nominal character).
-        int size = static_cast<HTMLInputElement*>(element())->size();
+        int size = static_cast<HTMLInputElement*>(node())->size();
         if (size <= 0)
             size = 20;
 

@@ -51,7 +51,7 @@ void HTMLTextFieldInnerElement::defaultEventHandler(Event* evt)
 
         if (evt->type() == khtmlEditableContentChangedEvent) {
             // FIXME: When other text fields switch to the Non-NSView implementation, we may beed to add them here.
-            if (static_cast<HTMLInputElement*>(shadowParentNode())->inputType() == HTMLInputElement::TEXT) 
+            if (static_cast<HTMLInputElement*>(shadowParentNode())->isNonWidgetTextField()) 
                 static_cast<RenderTextField*>(shadowParentNode()->renderer())->subtreeHasChanged();
         }
     }

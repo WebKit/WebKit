@@ -328,6 +328,11 @@ input[type="password"], input[type="search"], input[type="hidden"], input[type="
     border: initial;
 }
 
+input:-khtml-autofill {
+    background-color: #FAFFBD !important;
+    background-image:none !important;
+}
+
 input[type="radio"], input[type="checkbox"] {
     margin: 3px 0.5ex;
     -khtml-user-select: ignore
@@ -438,7 +443,7 @@ wbr {
 /* states */
 
 :focus { 
-    outline: auto 5px -webkit-focus-ring-color
+    outline: auto 5px -khtml-focus-ring-color
 }
 
 html:focus, body:focus { 

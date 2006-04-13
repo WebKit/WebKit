@@ -54,6 +54,8 @@
 #import "html_objectimpl.h"
 #import "html_tableimpl.h"
 #import "markup.h"
+#import "RenderTextField.h"
+#import "FrameView.h"
 
 using namespace WebCore;
 using namespace WebCore::HTMLNames;
@@ -3970,24 +3972,6 @@ static NSView *viewForElement(DOMElement *element)
 
 @implementation DOMHTMLInputElement(FormAutoFillTransition)
 
-- (NSString *)_displayedValue
-{
-    // Seems like we could just call [_element value] here but doing so messes up autofill (when you type in
-    // a form and it autocompletes, the autocompleted part of the text isn't left selected; instead the insertion
-    // point appears between what you typed and the autocompleted part of the text). I think the DOM element's
-    // stored value isn't updated until the text in the field is committed when losing focus or perhaps on Enter.
-    // Maybe when we switch over to not using NSTextField here then [_element value] will be good enough and
-    // we can get rid of this method. Otherwise we'll have to convert it to work in the NSTextField-free world.
-    
-    // Don't read the stringValue directly from the focused text field, as this breaks international input (4406505).
-    NSTextField *textField = (NSTextField *)viewForElement(self);
-    NSText *fieldEditor = [textField currentEditor];
-    if (!fieldEditor)
-        return [textField stringValue];
-    
-    return [fieldEditor string];
-}
-
 - (BOOL)_isTextField
 {
     // We could make this public API as-is, or we could change it into a method that returns whether
@@ -4019,69 +4003,45 @@ static NSView *viewForElement(DOMElement *element)
     return isText;
 }
 
-- (void)_setDisplayedValue:(NSString *)newValue
-{
-    // This method is used by autofill and needs to work even when the field is currently being edited.
-    NSTextField *field = (NSTextField *)viewForElement(self);
-    NSText *fieldEditor = [field currentEditor];
-    if (fieldEditor != nil) {
-        [fieldEditor setString:newValue];
-        [(NSTextView *)fieldEditor didChangeText];
-    } else {
-        // Not currently being edited, so we can set the string the simple way. Note that we still can't
-        // just use [self setValue:] here because it would break background-color-setting in the current
-        // autofill code. When we've adopted a new way to set the background color to indicate autofilled
-        // fields, then this case at least can probably change to [self setValue:].
-        [field setStringValue:newValue];
-    }
-}
-
 - (NSRect)_rectOnScreen
 {
     // Returns bounding rect of text field, in screen coordinates.
-    // FIXME: need a way to determine bounding rect for DOMElements before we can convert this code to
-    // not use views. Hyatt says we need to add offsetLeft/offsetTop/width/height to DOMExtensions, but
-    // then callers would need to walk up the offsetParent chain to determine real coordinates. So we
-    // probably need to (also?) add some call(s) to get the absolute origin.
-    NSTextField *field = (NSTextField *)viewForElement(self);
-    ASSERT(field != nil);
-    NSRect result = [field bounds];
-    result = [field convertRect:result toView:nil];
-    result.origin = [[field window] convertBaseToScreen:result.origin];
+    NSView* view = [self _inputElement]->document()->view()->getView();
+    NSRect result = [self boundingBox];
+    result = [view convertRect:result toView:nil];
+    result.origin = [[view window] convertBaseToScreen:result.origin];
     return result;
 }
 
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index
 {
-    NSText *fieldEditor = [(NSTextField *)viewForElement(self) currentEditor];
-    [fieldEditor replaceCharactersInRange:targetRange withString:replacementString];
-    
-    NSRange selectRange;
-    selectRange.location = index;
-    selectRange.length = [[self _displayedValue] length] - selectRange.location;
-    [fieldEditor setSelectedRange:selectRange];
-    
-    [(NSTextView *)fieldEditor didChangeText];
+    HTMLInputElement* input = [self _inputElement];
+    if (input) {
+        String value = input->value().replace(targetRange.location, targetRange.length, replacementString);
+        input->setValue(value);
+        input->setSelectionRange(index, value.length());
+    }
 }
 
 - (NSRange)_selectedRange
-{    
-    NSText *editor = [(NSTextField *)viewForElement(self) currentEditor];
-    if (editor == nil) {
-        return NSMakeRange(NSNotFound, 0);
+{
+    HTMLInputElement* input = [self _inputElement];
+    if (input) {
+        int start = input->selectionStart();
+        int end = input->selectionEnd();
+        return NSMakeRange(start, end - start); 
     }
-    
-    return [editor selectedRange];
+    return NSMakeRange(NSNotFound, 0);
 }    
 
-- (void)_setBackgroundColor:(NSColor *)color
+- (void)_setAutofilled:(BOOL)filled
 {
-    // We currently have no DOM-aware way of setting the background color of a text field.
-    // Safari autofill uses this method, which is fragile because there's no guarantee that
-    // the color set here won't be clobbered by other WebCore code. However, it works OK for
-    // Safari autofill's purposes right now. When we switch over to using DOMElements for
-    // form controls, we'll probably need a CSS pseudoclass to make this work.
-    [(NSTextField *)viewForElement(self) setBackgroundColor:color];
+    // This notifies the input element that the content has been autofilled
+    // This allows WebKit to obey the -khtml-autofill pseudo style, which
+    // changes the background color.
+    HTMLInputElement* input = [self _inputElement];
+    if (input)
+        input->setAutofilled(filled);
 }
 
 @end

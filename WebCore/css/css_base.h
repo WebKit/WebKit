@@ -146,6 +146,7 @@ namespace WebCore {
             PseudoLink,
             PseudoVisited,
             PseudoAnyLink,
+            PseudoAutofill,
             PseudoHover,
             PseudoDrag,
             PseudoFocus,

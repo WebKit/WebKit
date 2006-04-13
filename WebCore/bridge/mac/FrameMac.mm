@@ -89,6 +89,50 @@ using namespace HTMLNames;
 
 NSEvent *FrameMac::_currentEvent = nil;
 
+static NSMutableDictionary* createNSDictionary(const HashMap<String, String>& map)
+{
+    NSMutableDictionary* dict = [[NSMutableDictionary alloc] initWithCapacity:map.size()];
+    HashMap<String, String>::const_iterator end = map.end();
+    for (HashMap<String, String>::const_iterator it = map.begin(); it != end; ++it) {
+        NSString* key = it->first;
+        NSString* object = it->second;
+        [dict setObject:object forKey:key];
+    }
+    return dict;
+}
+
+static const unsigned int escChar = 27;
+static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
+{
+    // FIXME: This helper function is for the autofill code so the bridge can pass a selector to the form delegate.  
+    // Eventually, we should move all of the autofill code down to WebKit and remove the need for this function by
+    // not relying on the selector in the new implementation.
+    String key = event->unmodifiedText();
+    if (key.length() != 1)
+        return 0;
+
+    SEL selector;
+    switch (key[0U].unicode()) {
+    case NSUpArrowFunctionKey:
+        selector = @selector(moveUp:); break;
+    case NSDownArrowFunctionKey:
+        selector = @selector(moveDown:); break;
+    case escChar:
+        selector = @selector(cancel:); break;
+    case NSTabCharacter:
+        selector = @selector(insertTab:); break;
+    case NSBackTabCharacter:
+        selector = @selector(insertBacktab:); break;
+    case NSNewlineCharacter:
+    case NSCarriageReturnCharacter:
+    case NSEnterCharacter:
+        selector = @selector(insertNewline:); break;
+        break;
+    }
+    return selector;
+}
+
+
 bool FrameView::isFrameView() const
 {
     return true;
@@ -102,8 +146,6 @@ FrameMac::FrameMac(Page* page, RenderPart* ownerRenderer)
     , _mouseDownMayStartDrag(false)
     , _mouseDownMayStartSelect(false)
     , _activationEventNumber(0)
-    , _formValuesAboutToBeSubmitted(nil)
-    , _formAboutToBeSubmitted(nil)
     , _bindingRoot(0)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
@@ -438,6 +480,9 @@ void FrameMac::submitForm(const ResourceRequest& request)
         d->m_submittedFormURL = request.url();
     }
 
+    ObjCDOMElement* submitForm = [DOMElement _elementWith:d->m_formAboutToBeSubmitted.get()];
+    NSMutableDictionary* formValues = createNSDictionary(d->m_formValuesAboutToBeSubmitted);
+    
     if (!request.doPost()) {
         [_bridge loadURL:request.url().getNSURL()
                 referrer:[_bridge referrer] 
@@ -445,8 +490,8 @@ void FrameMac::submitForm(const ResourceRequest& request)
              userGesture:true
                   target:request.frameName
          triggeringEvent:_currentEvent
-                    form:_formAboutToBeSubmitted
-              formValues:_formValuesAboutToBeSubmitted];
+                    form:submitForm
+              formValues:formValues];
     } else {
         ASSERT(request.contentType().startsWith("Content-Type: "));
         [_bridge postWithURL:request.url().getNSURL()
@@ -455,9 +500,10 @@ void FrameMac::submitForm(const ResourceRequest& request)
                         data:arrayFromFormData(request.postData)
                  contentType:request.contentType().substring(14)
              triggeringEvent:_currentEvent
-                        form:_formAboutToBeSubmitted
-                  formValues:_formValuesAboutToBeSubmitted];
+                        form:submitForm
+                  formValues:formValues];
     }
+    [formValues release];
     clearRecordedFormValues();
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -3168,6 +3214,43 @@ void FrameMac::didBeginEditing() const
 void FrameMac::didEndEditing() const
 {
     [_bridge didEndEditing];
+}
+
+void FrameMac::textFieldDidBeginEditing(Element* input)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [_bridge textFieldDidBeginEditing:(DOMHTMLInputElement *)[DOMElement _elementWith:input]];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void FrameMac::textFieldDidEndEditing(Element* input)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [_bridge textFieldDidEndEditing:(DOMHTMLInputElement *)[DOMElement _elementWith:input]];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void FrameMac::textDidChangeInTextField(Element* input)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [_bridge textDidChangeInTextField:(DOMHTMLInputElement *)[DOMElement _elementWith:input]];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+bool FrameMac::doTextFieldCommandFromEvent(Element* input, const PlatformKeyboardEvent* event)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [_bridge textField:(DOMHTMLInputElement *)[DOMElement _elementWith:input] doCommandBySelector:selectorForKeyEvent(event)];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return false;
+}
+
+void FrameMac::textWillBeDeletedInTextField(Element* input)
+{
+    // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [_bridge textField:(DOMHTMLInputElement *)[DOMElement _elementWith:input] doCommandBySelector:@selector(deleteBackward:)];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 static DeprecatedValueList<MarkedTextUnderline> convertAttributesToUnderlines(const Range *markedTextRange, NSArray *attributes, NSArray *ranges)

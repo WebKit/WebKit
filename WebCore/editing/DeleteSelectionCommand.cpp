@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "htmlediting.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "markup.h"
 #include "ReplaceSelectionCommand.h"
@@ -598,6 +599,12 @@ void DeleteSelectionCommand::doApply()
         
     if (!m_selectionToDelete.isRange())
         return;
+
+    // If the deletion is occuring in a text field, let the frame call across the bridge to notify the form delegate. 
+    Node* startNode = m_selectionToDelete.start().node();
+    Node* ancestorNode = startNode ? startNode->shadowAncestorNode() : 0;
+    if (ancestorNode && ancestorNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(ancestorNode)->isNonWidgetTextField())
+        document()->frame()->textWillBeDeletedInTextField(static_cast<Element*>(ancestorNode));
 
     // save this to later make the selection with
     EAffinity affinity = m_selectionToDelete.affinity();

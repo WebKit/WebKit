@@ -1912,6 +1912,27 @@ bool Frame::isContentEditable() const
     return d->m_doc->inDesignMode();
 }
 
+void Frame::textFieldDidBeginEditing(Element* input)
+{
+}
+
+void Frame::textFieldDidEndEditing(Element* input)
+{
+}
+
+void Frame::textDidChangeInTextField(Element* input)
+{
+}
+
+bool Frame::doTextFieldCommandFromEvent(Element* input, const PlatformKeyboardEvent* evt)
+{
+    return false;
+}
+
+void Frame::textWillBeDeletedInTextField(Element* input)
+{
+}
+
 EditCommandPtr Frame::lastEditCommand()
 {
     return d->m_lastEditCommand;

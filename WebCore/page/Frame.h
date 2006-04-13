@@ -419,6 +419,12 @@ public:
    */
   virtual bool isContentEditable() const;
 
+  virtual void textFieldDidBeginEditing(Element*);
+  virtual void textFieldDidEndEditing(Element*);
+  virtual void textDidChangeInTextField(Element*);
+  virtual bool doTextFieldCommandFromEvent(Element*, const PlatformKeyboardEvent*);
+  virtual void textWillBeDeletedInTextField(Element* input);
+
   /**
    * Returns the most recent edit command applied.
    */

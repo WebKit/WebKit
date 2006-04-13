@@ -605,7 +605,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_OUTLINE_COLOR:        // <color> | invert | inherit
         // Outline color has "invert" as additional keyword.
         // Also, we want to allow the special focus color even in strict parsing mode.
-        if (propId == CSS_PROP_OUTLINE_COLOR && (id == CSS_VAL_INVERT || id == CSS_VAL__WEBKIT_FOCUS_RING_COLOR)) {
+        if (propId == CSS_PROP_OUTLINE_COLOR && (id == CSS_VAL_INVERT || id == CSS_VAL__KHTML_FOCUS_RING_COLOR)) {
             valid_primitive = true;
             break;
         }
@@ -623,7 +623,7 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true; // Always allow this, even when strict parsing is on,
                                     // since we use this in our UA sheets.
         else if (id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT || id == CSS_VAL_MENU ||
-             (id >= CSS_VAL__WEBKIT_FOCUS_RING_COLOR && id < CSS_VAL__KHTML_TEXT && !strict)) {
+             (id >= CSS_VAL__KHTML_FOCUS_RING_COLOR && id < CSS_VAL__KHTML_TEXT && !strict)) {
             valid_primitive = true;
         } else {
             parsedValue = parseColor();
@@ -2313,7 +2313,7 @@ bool CSSParser::parseShadow(int propId, bool important)
             // The only other type of value that's ok is a color value.
             CSSPrimitiveValue* parsedColor = 0;
             bool isColor = (val->id >= CSS_VAL_AQUA && val->id <= CSS_VAL_WINDOWTEXT || val->id == CSS_VAL_MENU ||
-                            (val->id >= CSS_VAL__WEBKIT_FOCUS_RING_COLOR && val->id <= CSS_VAL__KHTML_TEXT && !strict));
+                            (val->id >= CSS_VAL__KHTML_FOCUS_RING_COLOR && val->id <= CSS_VAL__KHTML_TEXT && !strict));
             if (isColor) {
                 if (!context.allowColor)
                     return context.failed();

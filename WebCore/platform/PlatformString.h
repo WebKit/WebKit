@@ -79,6 +79,7 @@ public:
 
     String& replace(QChar a, QChar b) { if (m_impl) m_impl = m_impl->replace(a, b); return *this; }
     String& replace(QChar a, const String& b) { if (m_impl) m_impl = m_impl->replace(a, b.impl()); return *this; }
+    String& replace(unsigned index, unsigned len, const String& b) { if (m_impl) m_impl = m_impl->replace(index, len, b.impl()); return *this; }
 
     unsigned length() const;
     void truncate(unsigned len);

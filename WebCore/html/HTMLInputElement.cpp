@@ -102,6 +102,7 @@ void HTMLInputElement::init()
     m_activeSubmit = false;
     m_autocomplete = true;
     m_inited = false;
+    m_autofilled = false;
 
     xPos = 0;
     yPos = 0;
@@ -126,8 +127,7 @@ const AtomicString& HTMLInputElement::name() const
 bool HTMLInputElement::isKeyboardFocusable() const
 {
     // If text fields can be focused, then they should always be keyboardFocusable
-    // FIXME: When other text fields switch to the non-NSView implementation, we should add them here.
-    if (inputType() == TEXT)
+    if (isNonWidgetTextField())
         return HTMLGenericFormElement::isFocusable();
         
     // If the base class says we can't be focused, then we can stop now.
@@ -158,25 +158,40 @@ bool HTMLInputElement::isKeyboardFocusable() const
 
 bool HTMLInputElement::isMouseFocusable() const
 {
-    // FIXME: When other text fields switch to the non-NSView implementation, we should add them here.
-    if (inputType() == TEXT)
+    if (isNonWidgetTextField())
         return HTMLGenericFormElement::isFocusable();
     return HTMLGenericFormElement::isMouseFocusable();
 }
 
 void HTMLInputElement::focus()
 {
-    // FIXME: When other text fields switch to the non-NSView implementation, we should add them here.
-    if (inputType() == TEXT) {
+    if (isNonWidgetTextField()) {
         Document* doc = document();
         doc->updateLayout();
         if (isFocusable()) {
             doc->setFocusNode(this);
             select();
-            doc->frame()->revealSelection();
+            if (doc->frame())
+                doc->frame()->revealSelection();
         }
     } else
         HTMLGenericFormElement::focus();
+}
+
+void HTMLInputElement::dispatchFocusEvent()
+{
+    if (isNonWidgetTextField() && document()->frame()) {
+        setAutofilled(false);
+        document()->frame()->textFieldDidBeginEditing(static_cast<Element*>(this));
+    }
+    HTMLGenericFormElement::dispatchFocusEvent();
+}
+
+void HTMLInputElement::dispatchBlurEvent()
+{
+    if (isNonWidgetTextField() && document()->frame())
+        document()->frame()->textFieldDidEndEditing(static_cast<Element*>(this));
+    HTMLGenericFormElement::dispatchBlurEvent();
 }
 
 void HTMLInputElement::setType(const String& t)
@@ -1173,6 +1188,11 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
     if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
         bool clickElement = false;
         bool clickDefaultFormButton = false;
+    
+        if (isNonWidgetTextField() && document()->frame() && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt)->keyEvent())) {
+            evt->setDefaultHandled();
+            return;
+        }
 
         String key = static_cast<KeyboardEvent *>(evt)->keyIdentifier();
 
@@ -1286,8 +1306,7 @@ void HTMLInputElement::defaultEventHandler(Event *evt)
         textEvent->setText(constrainValue(textEvent->text(), maxNewLen));
     }
     
-    // FIXME: When other text fields switch to the Non-NSView implementation, we should add them here.
-    if (inputType() == TEXT && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent) && renderer())
+    if (isNonWidgetTextField() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent) && renderer())
         static_cast<RenderTextField*>(renderer())->forwardEvent(evt);
     
     HTMLGenericFormElement::defaultEventHandler(evt);
@@ -1403,7 +1422,7 @@ void HTMLInputElement::recheckValue()
 
 String HTMLInputElement::constrainValue(const String& proposedValue, int maxLen) const
 {
-    if (inputType() == TEXT || inputType() == PASSWORD || inputType() == SEARCH) {
+    if (isTextField()) {
         StringImpl* s = proposedValue.impl();
         int newLen = numCharactersInGraphemeClusters(s, maxLen);
         for (int i = 0; i < newLen; ++i)

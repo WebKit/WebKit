@@ -58,13 +58,11 @@
 // replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,
 // and these will be deleted.
 @interface DOMHTMLInputElement(FormsAutoFillTransition)
-- (NSString *)_displayedValue; // the string currently displayed in the field, even when the field is being edited
 - (BOOL)_isTextField;
-- (void)_setDisplayedValue:(NSString *)newValue; // set the value displayed, even when the field is being edited
 - (NSRect)_rectOnScreen; // bounding box of the text field, in screen coordinates
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index;
 - (NSRange)_selectedRange;
-- (void)_setBackgroundColor:(NSColor *)color;
+- (void)_setAutofilled:(BOOL)filled;
 @end
 
 // All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.

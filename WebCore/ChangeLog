@@ -1,3 +1,93 @@
+2006-04-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin and Tim O.
+
+        WebCore part of fix for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8061
+        REGRESSION: New text fields need to send callbacks used by autocomplete
+
+        Fix for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8156
+        FrameMac::submitForm is busted after Vector changes
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _rectOnScreen]): Use boundingBox method so this no longer relies on an NSTextField.  
+        The old code is no longer needed because this method was used by autocomplete, and that was not enabled for password or search fields.
+        (-[DOMHTMLInputElement _replaceCharactersInRange:withString:selectingFromIndex:]): New implementation that uses setValue and setSelectionRange
+        instead of NSTextField specific code.
+        (-[DOMHTMLInputElement _selectedRange]): Creates range by calling selectionStart and selectionEnd on the input element.
+        (-[DOMHTMLInputElement _setAutofilled:]): Provides a way for the autofill code to set a flag on the input element so
+         it knows when its value is set by autofill.  This is how we change the background color.
+        * bindings/objc/DOMPrivate.h: Removed _displayedValue, _setDisplayedValue, _setBackgroundColor since these are no
+         longer needed for the new text field implementation, and aren't used for remaining NSView-style password and search fields.
+         Added _setAutofilled method.
+        * bridge/mac/FrameMac.h: Added virtual clearRecordedFormValues and recordFormValue.  These were moved into Frame.cpp recently, which broke
+        how Safari asked to add form values to the keychain.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::createNSDictionary): Added. Converts a hashmap to an NSDictionary for m_formValuesAboutToBeSubmitted.  This is needed to fix the submit form bug.
+        (WebCore::selectorForKeyEvent): Added.  This helper function converts key events into selectors that the autocomplete code needs to know about.
+        (WebCore::FrameMac::FrameMac):
+        (WebCore::FrameMac::submitForm): Convert saved form and formValues into DOMElement and NSMutableDictionary.
+        (WebCore::FrameMac::textFieldDidBeginEditing): Added so the input element can send this notification over the bridge.
+        (WebCore::FrameMac::textFieldDidEndEditing): ditto.
+        (WebCore::FrameMac::textDidChangeInTextField): ditto.
+        (WebCore::FrameMac::doTextFieldCommandFromEvent): ditto. Also calls selectorForKeyEvent.
+        (WebCore::FrameMac::textWillBeDeletedInTextField): ditto.
+        * page/Frame.cpp:
+        (WebCore::Frame::textFieldDidBeginEditing): ditto.
+        (WebCore::Frame::textFieldDidEndEditing): ditto.
+        (WebCore::Frame::textDidChangeInTextField): ditto.
+        (WebCore::Frame::doTextFieldCommandFromEvent): ditto.
+        (WebCore::Frame::textWillBeDeletedInTextField): ditto.
+        * page/Frame.h: ditto.
+        * platform/PlatformString.h: (WebCore::String::replace): Added to use an existing version of StringImpl::replace.
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::setSelectionRange): Setting the selection here should close the typing command.
+        (WebCore::RenderTextField::subtreeHasChanged): Calls textDidChangeInTextField.
+
+        * dom/Document.cpp: (WebCore::Document::setFocusNode): Calls dispatchFocusEvent and dispatchBlurEvent instead of directly dispatching the events.  This gives the node a chance to do other work before dispatching the event.
+
+        * dom/EventTargetNode.cpp:
+        (WebCore:: EventTargetNode::dispatchFocusEvent): Added.
+        (WebCore:: EventTargetNode::dispatchBlurEvent): Added.
+        * dom/EventTargetNode.h:
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::init): initializes m_autofilled.
+        (WebCore::HTMLInputElement::dispatchFocusEvent): Calls textFieldDidBeginEditing and then calls up to the base class
+        (WebCore::HTMLInputElement::dispatchBlurEvent): Calls textFieldDidEndEditing and then calls up to the base class
+        (WebCore::HTMLInputElement::defaultEventHandler): For keypress events, calls doTextFieldCommandFromEvent so the form delegate will
+        have a chance to say whether or not it is going to handle the event.
+       (WebCore::HTMLInputElement::isKeyboardFocusable): Uses isNonWidgetTextField instead of checking the inputType.
+        (WebCore::HTMLInputElement::isMouseFocusable): ditto.
+        (WebCore::HTMLInputElement::focus): ditto.
+        (WebCore::HTMLInputElement::constrainValue): Uses isTextField instead of checking inputType.
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::submit): ditto.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isTextField): Added. Checks for TEXT, PASSWORD, and SEARCH
+        (WebCore::HTMLInputElement::isNonWidgetTextField): Added.  Checks for all converted controls.
+        (WebCore::HTMLInputElement::autofilled): Added.
+        (WebCore::HTMLInputElement::setAutofilled): Added.
+        * html/HTMLTextFieldInnerElement.cpp: (WebCore::HTMLTextFieldInnerElement::defaultEventHandler): Uses isNonWidgetTextField instead of checking the inputType.
+
+        * editing/DeleteSelectionCommand.cpp: (WebCore::DeleteSelectionCommand::doApply):
+         If the deletion is occuring in a text field, call textWillBeDeletedInTextField so the frame can
+         call across the bridge to notify the form delegate.
+
+        * css/css_base.cpp: (WebCore::CSSSelector::extractPseudoType): Added autofill string for "-khtml-autofill".
+        * css/css_base.h: (WebCore::CSSSelector::): Added PseudoAutofill to enum.
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector): Added case for PseudoAutofill that checks the input element's autofilled flag.
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue): Changed  -webkit-focus-ring-color to -khtml-focus-ring-color for consistency.
+        * css/html4.css: Added background-color and background-image for input:-khtml-autofill style.
+         Changed -webkit-focus-ring-color to -khtml-focus-ring-color for consistency.
+        * css/CSSValueKeywords.in: ditto.
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue): ditto.
+        (WebCore::CSSParser::parseShadow): ditto.
+
 2006-04-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
  
          Reviewed by hyatt
