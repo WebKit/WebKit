@@ -1,3 +1,14 @@
+2006-04-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Layout test for the changes made to VisiblePosition::init in r13825.
+        
+        * editing/selection/unrendered-space.html
+        * editing/selection/unrendered-space-expected.png
+        * editing/selection/unrendered-space-expected.checksum
+        * editing/selection/unrendered-space-expected.txt
+
 2006-04-12  Adele Peterson  <adele@apple.com>
 
         Test for setSelectionRange bug in text fields.
