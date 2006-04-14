@@ -1,3 +1,12 @@
+2006-04-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
+        Fix win32 build.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * page/FramePrivate.h:
+
 2006-04-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

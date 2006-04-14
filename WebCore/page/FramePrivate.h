@@ -27,6 +27,7 @@
 #ifndef khtmlpart_p_h
 #define khtmlpart_p_h
 
+#include "DOMWindow.h"
 #include "EditCommand.h"
 #include "Frame.h"
 #include "FrameTree.h"

@@ -279,15 +279,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSCSSPrimitiveValue.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCharacterData.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCounter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSPrimitiveValue.cpp"
 				>
 			</File>
 			<File
@@ -300,6 +300,14 @@
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSDOMImplementation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDOMWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDOMWindow.h"
 				>
 			</File>
 			<File
@@ -362,6 +370,14 @@
 		<Filter
 			Name="page"
 			>
+			<File
+				RelativePath="..\..\page\DOMWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\DOMWindow.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\page\Frame.cpp"
 				>
@@ -1835,22 +1851,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderApplet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderApplet.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderEmptyApplet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderEmptyApplet.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\render_button.cpp"
 				>
 			</File>
@@ -1907,6 +1907,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\rendering\RenderApplet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderApplet.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\rendering\RenderArena.cpp"
 				>
 			</File>
@@ -1952,6 +1960,14 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderContainer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderEmptyApplet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderEmptyApplet.h"
 				>
 			</File>
 			<File
@@ -2138,14 +2154,6 @@
 		<Filter
 			Name="dom"
 			>
-			<File
-				RelativePath="..\..\dom\AbstractView.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\AbstractView.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\dom\AtomicStringList.h"
 				>
