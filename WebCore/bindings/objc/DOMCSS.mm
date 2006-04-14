@@ -1758,12 +1758,12 @@ void removeWrapperForRGB(RGBA32 value)
 
 - (NSString *)_fontSizeDelta
 {
-    return [self getPropertyValue:@"-khtml-font-size-delta"];
+    return [self getPropertyValue:@"-webkit-font-size-delta"];
 }
 
 - (void)_setFontSizeDelta:(NSString *)fontSizeDelta
 {
-    [self setProperty:@"-khtml-font-size-delta" :fontSizeDelta :@""];
+    [self setProperty:@"-webkit-font-size-delta" :fontSizeDelta :@""];
 }
 
 - (NSString *)fontStretch

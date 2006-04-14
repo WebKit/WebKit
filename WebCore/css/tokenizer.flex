@@ -46,9 +46,9 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 "@font-face"            {yyTok = FONT_FACE_SYM; return yyTok;}
 "@charset"              {yyTok = CHARSET_SYM; return yyTok;}
 "@namespace"            {yyTok = NAMESPACE_SYM; return yyTok; }
-"@-khtml-rule"    {yyTok = KHTML_RULE_SYM; return yyTok; }
-"@-khtml-decls"   {yyTok = KHTML_DECLS_SYM; return yyTok; }
-"@-khtml-value"   {yyTok = KHTML_VALUE_SYM; return yyTok; }
+"@-webkit-rule"    {yyTok = WEBKIT_RULE_SYM; return yyTok; }
+"@-webkit-decls"   {yyTok = WEBKIT_DECLS_SYM; return yyTok; }
+"@-webkit-value"   {yyTok = WEBKIT_VALUE_SYM; return yyTok; }
 
 "!"{w}"important"         {yyTok = IMPORTANT_SYM; return yyTok;}
 

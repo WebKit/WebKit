@@ -302,7 +302,7 @@ void ReplaceSelectionCommand::fixupNodeStyles(const NodeVector& nodes, const Ren
 
         // Check for the special "match nearest blockquote color" property and resolve to the correct
         // color if necessary.
-        String matchColorCheck = desiredStyle->getPropertyValue(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
+        String matchColorCheck = desiredStyle->getPropertyValue(CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
         if (matchColorCheck == matchNearestBlockquoteColorString()) {
             Node *blockquote = nearestMailBlockquote(node);
             Position pos(blockquote ? blockquote : node->document()->documentElement(), 0);
@@ -312,7 +312,7 @@ void ReplaceSelectionCommand::fixupNodeStyles(const NodeVector& nodes, const Ren
             if (desiredColor != nearestColor)
                 desiredStyle->setProperty(CSS_PROP_COLOR, nearestColor);
         }
-        desiredStyle->removeProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
+        desiredStyle->removeProperty(CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
 
         currentStyle->diff(desiredStyle);
         
@@ -343,7 +343,7 @@ static PassRefPtr<CSSMutableStyleDeclaration> styleForNode(Node *node)
         RefPtr<CSSComputedStyleDeclaration> blockquoteStyle = Position(blockquote, 0).computedStyle();
         bool match = (blockquoteStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR));
         if (match) {
-            style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
+            style->setProperty(CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
             return style.release();
         }
     }
@@ -351,7 +351,7 @@ static PassRefPtr<CSSMutableStyleDeclaration> styleForNode(Node *node)
     RefPtr<CSSComputedStyleDeclaration> documentStyle = Position(documentElement, 0).computedStyle();
     bool match = (documentStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR));
     if (match)
-        style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
+        style->setProperty(CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
         
     return style.release();
 }

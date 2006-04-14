@@ -2106,7 +2106,7 @@ void FrameMac::mouseMoved(NSEvent *event)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-// Called as we walk up the element chain for nodes with CSS property -khtml-user-drag == auto
+// Called as we walk up the element chain for nodes with CSS property -webkit-user-drag == auto
 bool FrameMac::shouldDragAutoNode(Node* node, const IntPoint& point) const
 {
     // We assume that WebKit only cares about dragging things that can be leaf nodes (text, images, urls).

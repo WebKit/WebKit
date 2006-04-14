@@ -72,7 +72,7 @@ medium
 large
 x-large
 xx-large
--khtml-xxx-large
+-webkit-xxx-large
 smaller
 larger
 #
@@ -97,7 +97,7 @@ sans-serif
 cursive
 fantasy
 monospace
--khtml-body
+-webkit-body
 #
 #
 # CSS_PROP_*_COLOR
@@ -120,8 +120,8 @@ teal
 white
 yellow
 transparent
--khtml-link
--khtml-activelink
+-webkit-link
+-webkit-activelink
 activeborder
 activecaption
 appworkspace
@@ -150,11 +150,11 @@ threedshadow
 window
 windowframe
 windowtext
--khtml-focus-ring-color
+-webkit-focus-ring-color
 #
 # colors in non strict mode
 grey
--khtml-text
+-webkit-text
 #
 # CSS_PROP_BACKGROUND_REPEAT:
 #
@@ -174,18 +174,18 @@ text-bottom
 top
 bottom
 # HTML alignment MIDDLE has no corresponding CSS alignment
--khtml-baseline-middle
+-webkit-baseline-middle
 #
 # CSS_PROP_TEXT_ALIGN:
 #
--khtml-auto
+-webkit-auto
 left
 right
 center
 justify
--khtml-left
--khtml-right
--khtml-center
+-webkit-left
+-webkit-right
+-webkit-center
 #
 # CSS_PROP_LIST_STYLE_POSITION:
 #
@@ -234,8 +234,8 @@ table-column-group
 table-column
 table-cell
 table-caption
--khtml-box
--khtml-inline-box
+-webkit-box
+-webkit-inline-box
 #none
 #
 # CSS_PROP_CURSOR:
@@ -299,13 +299,13 @@ level
 line-through
 loud
 lower
-marquee
+-webkit-marquee
 mix
 no-close-quote
 no-open-quote
 nowrap
 open-quote
-overlay
+-webkit-overlay
 overline
 portrait
 pre
@@ -319,7 +319,7 @@ static
 thick
 thin
 underline
--khtml-nowrap
+-webkit-nowrap
 
 # CSS3 Values
 # CSS_PROP_BOX_ALIGN

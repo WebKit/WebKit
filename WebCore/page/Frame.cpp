@@ -2980,7 +2980,7 @@ bool Frame::canMouseDownStartSelect(Node* node)
     if (!node || !node->renderer())
         return true;
     
-    // Check to see if khtml-user-select has been set to none
+    // Check to see if -webkit-user-select has been set to none
     if (!node->renderer()->canSelect())
         return false;
     

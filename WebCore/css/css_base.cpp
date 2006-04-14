@@ -139,12 +139,12 @@ void CSSSelector::extractPseudoType() const
     
     static AtomicString active("active");
     static AtomicString after("after");
-    static AtomicString anyLink("-khtml-any-link");
-    static AtomicString autofill("-khtml-autofill");
+    static AtomicString anyLink("-webkit-any-link");
+    static AtomicString autofill("-webkit-autofill");
     static AtomicString before("before");
     static AtomicString checked("checked");
     static AtomicString disabled("disabled");
-    static AtomicString drag("-khtml-drag");
+    static AtomicString drag("-webkit-drag");
     static AtomicString empty("empty");
     static AtomicString enabled("enabled");
     static AtomicString firstChild("first-child");

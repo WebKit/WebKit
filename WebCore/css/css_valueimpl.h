@@ -331,7 +331,7 @@ protected:
 // A primitive value representing a pair.  This is useful for properties like border-radius, background-size/position,
 // and border-spacing (all of which are space-separated sets of two values).  At the moment we are only using it for
 // border-radius, but (FIXME) border-spacing and background-position could be converted over to use it
-// (eliminating some extra -khtml- internal properties).
+// (eliminating some extra -webkit- internal properties).
 class Pair : public Shared<Pair> {
 public:
     virtual ~Pair();

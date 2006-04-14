@@ -79,11 +79,11 @@ void HTMLDivElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == alignAttr) {
         String v = attr->value();
         if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
-           addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
+           addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_CENTER);
         else if (equalIgnoringCase(attr->value(), "left"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_LEFT);
         else if (equalIgnoringCase(attr->value(), "right"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_RIGHT);
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
     } else
@@ -262,11 +262,11 @@ void HTMLParagraphElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == alignAttr) {
         String v = attr->value();
         if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_CENTER);
         else if (equalIgnoringCase(attr->value(), "left"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_LEFT);
         else if (equalIgnoringCase(attr->value(), "right"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_RIGHT);
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
     } else
@@ -386,23 +386,23 @@ void HTMLMarqueeElement::parseMappedAttribute(MappedAttribute *attr)
         }
     } else if (attr->name() == scrollamountAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_INCREMENT, attr->value());
+            addCSSLength(attr, CSS_PROP__WEBKIT_MARQUEE_INCREMENT, attr->value());
     } else if (attr->name() == scrolldelayAttr) {
         if (!attr->value().isEmpty())
-            addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_SPEED, attr->value());
+            addCSSLength(attr, CSS_PROP__WEBKIT_MARQUEE_SPEED, attr->value());
     } else if (attr->name() == loopAttr) {
         if (!attr->value().isEmpty()) {
             if (attr->value() == "-1" || equalIgnoringCase(attr->value(), "infinite"))
-                addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_REPETITION, CSS_VAL_INFINITE);
+                addCSSProperty(attr, CSS_PROP__WEBKIT_MARQUEE_REPETITION, CSS_VAL_INFINITE);
             else
-                addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_REPETITION, attr->value());
+                addCSSLength(attr, CSS_PROP__WEBKIT_MARQUEE_REPETITION, attr->value());
         }
     } else if (attr->name() == behaviorAttr) {
         if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_STYLE, attr->value());
+            addCSSProperty(attr, CSS_PROP__WEBKIT_MARQUEE_STYLE, attr->value());
     } else if (attr->name() == directionAttr) {
         if (!attr->value().isEmpty())
-            addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_DIRECTION, attr->value());
+            addCSSProperty(attr, CSS_PROP__WEBKIT_MARQUEE_DIRECTION, attr->value());
     } else if (attr->name() == truespeedAttr) {
         m_minimumDelay = !attr->isNull() ? 0 : defaultMinimumDelay;
     } else

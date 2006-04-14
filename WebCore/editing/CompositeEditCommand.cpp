@@ -722,7 +722,7 @@ PassRefPtr<Element> createBlockPlaceholderElement(Document* document)
 
 static const String &blockPlaceholderClassString()
 {
-    static String blockPlaceholderClassString = "khtml-block-placeholder";
+    static String blockPlaceholderClassString = "webkit-block-placeholder";
     return blockPlaceholderClassString;
 }
 

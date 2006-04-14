@@ -414,7 +414,7 @@ void HTMLElement::addHTMLAlignment(MappedAttribute* attr)
     } else if (equalIgnoringCase(alignment, "top")) {
         propvalign = CSS_VAL_TOP;
     } else if (equalIgnoringCase(alignment, "middle")) {
-        propvalign = CSS_VAL__KHTML_BASELINE_MIDDLE;
+        propvalign = CSS_VAL__WEBKIT_BASELINE_MIDDLE;
     } else if (equalIgnoringCase(alignment, "center")) {
         propvalign = CSS_VAL_MIDDLE;
     } else if (equalIgnoringCase(alignment, "bottom")) {
@@ -475,25 +475,25 @@ void HTMLElement::setContentEditable(MappedAttribute* attr)
 {
     const AtomicString& enabled = attr->value();
     if (enabled.isEmpty() || equalIgnoringCase(enabled, "true")) {
-        addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
+        addCSSProperty(attr, CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_READ_WRITE);
         addCSSProperty(attr, CSS_PROP_WORD_WRAP, CSS_VAL_BREAK_WORD);
-        addCSSProperty(attr, CSS_PROP__KHTML_NBSP_MODE, CSS_VAL_SPACE);
-        addCSSProperty(attr, CSS_PROP__KHTML_LINE_BREAK, CSS_VAL_AFTER_WHITE_SPACE);
+        addCSSProperty(attr, CSS_PROP__WEBKIT_NBSP_MODE, CSS_VAL_SPACE);
+        addCSSProperty(attr, CSS_PROP__WEBKIT_LINE_BREAK, CSS_VAL_AFTER_WHITE_SPACE);
     } else if (equalIgnoringCase(enabled, "false")) {
-        addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
+        addCSSProperty(attr, CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_READ_ONLY);
         attr->decl()->removeProperty(CSS_PROP_WORD_WRAP, false);
-        attr->decl()->removeProperty(CSS_PROP__KHTML_NBSP_MODE, false);
-        attr->decl()->removeProperty(CSS_PROP__KHTML_LINE_BREAK, false);
+        attr->decl()->removeProperty(CSS_PROP__WEBKIT_NBSP_MODE, false);
+        attr->decl()->removeProperty(CSS_PROP__WEBKIT_LINE_BREAK, false);
     } else if (equalIgnoringCase(enabled, "inherit")) {
-        addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
+        addCSSProperty(attr, CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_INHERIT);
         attr->decl()->removeProperty(CSS_PROP_WORD_WRAP, false);
-        attr->decl()->removeProperty(CSS_PROP__KHTML_NBSP_MODE, false);
-        attr->decl()->removeProperty(CSS_PROP__KHTML_LINE_BREAK, false);
+        attr->decl()->removeProperty(CSS_PROP__WEBKIT_NBSP_MODE, false);
+        attr->decl()->removeProperty(CSS_PROP__WEBKIT_LINE_BREAK, false);
     } else if (equalIgnoringCase(enabled, "plaintext-only")) {
-        addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE_PLAINTEXT_ONLY);
+        addCSSProperty(attr, CSS_PROP__WEBKIT_USER_MODIFY, CSS_VAL_READ_WRITE_PLAINTEXT_ONLY);
         addCSSProperty(attr, CSS_PROP_WORD_WRAP, CSS_VAL_BREAK_WORD);
-        addCSSProperty(attr, CSS_PROP__KHTML_NBSP_MODE, CSS_VAL_SPACE);
-        addCSSProperty(attr, CSS_PROP__KHTML_LINE_BREAK, CSS_VAL_AFTER_WHITE_SPACE);
+        addCSSProperty(attr, CSS_PROP__WEBKIT_NBSP_MODE, CSS_VAL_SPACE);
+        addCSSProperty(attr, CSS_PROP__WEBKIT_LINE_BREAK, CSS_VAL_AFTER_WHITE_SPACE);
     }
 }
 

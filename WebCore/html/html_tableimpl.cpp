@@ -668,13 +668,13 @@ void HTMLTablePartElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == alignAttr) {
         const AtomicString& v = attr->value();
         if (equalIgnoringCase(v, "middle") || equalIgnoringCase(v, "center"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_CENTER);
         else if (equalIgnoringCase(v, "absmiddle"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL_CENTER);
         else if (equalIgnoringCase(v, "left"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_LEFT);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_LEFT);
         else if (equalIgnoringCase(v, "right"))
-            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
+            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__WEBKIT_RIGHT);
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
     } else if (attr->name() == heightAttr) {
@@ -1047,7 +1047,7 @@ void HTMLTableCellElement::parseMappedAttribute(MappedAttribute *attr)
             static_cast<RenderTableCell*>(renderer())->updateFromElement();
     } else if (attr->name() == nowrapAttr) {
         if (!attr->isNull())
-            addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL__KHTML_NOWRAP);
+            addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL__WEBKIT_NOWRAP);
     } else if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty()) {
             int widthInt = attr->value().toInt();

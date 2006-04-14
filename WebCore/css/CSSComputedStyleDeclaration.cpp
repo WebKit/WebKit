@@ -40,15 +40,15 @@ static const int computedProperties[] = {
     CSS_PROP_BACKGROUND_IMAGE,
     CSS_PROP_BACKGROUND_REPEAT,
     CSS_PROP_BACKGROUND_ATTACHMENT,
-    CSS_PROP_BACKGROUND_CLIP,
-    CSS_PROP_BACKGROUND_ORIGIN,
+    CSS_PROP__WEBKIT_BACKGROUND_CLIP,
+    CSS_PROP__WEBKIT_BACKGROUND_ORIGIN,
     CSS_PROP_BACKGROUND_POSITION,
     CSS_PROP_BACKGROUND_POSITION_X,
     CSS_PROP_BACKGROUND_POSITION_Y,
     CSS_PROP_BORDER_COLLAPSE,
     CSS_PROP_BORDER_SPACING,
-    CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING,
-    CSS_PROP__KHTML_BORDER_VERTICAL_SPACING,
+    CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
+    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING,
     CSS_PROP_BORDER_TOP_COLOR,
     CSS_PROP_BORDER_RIGHT_COLOR,
     CSS_PROP_BORDER_BOTTOM_COLOR,
@@ -62,20 +62,20 @@ static const int computedProperties[] = {
     CSS_PROP_BORDER_BOTTOM_WIDTH,
     CSS_PROP_BORDER_LEFT_WIDTH,
     CSS_PROP_BOTTOM,
-    CSS_PROP__KHTML_BOX_ALIGN,
-    CSS_PROP__KHTML_BOX_DIRECTION,
-    CSS_PROP__KHTML_BOX_FLEX,
-    CSS_PROP__KHTML_BOX_FLEX_GROUP,
-    CSS_PROP__KHTML_BOX_LINES,
-    CSS_PROP__KHTML_BOX_ORDINAL_GROUP,
-    CSS_PROP__KHTML_BOX_ORIENT,
-    CSS_PROP__KHTML_BOX_PACK,
+    CSS_PROP__WEBKIT_BOX_ALIGN,
+    CSS_PROP__WEBKIT_BOX_DIRECTION,
+    CSS_PROP__WEBKIT_BOX_FLEX,
+    CSS_PROP__WEBKIT_BOX_FLEX_GROUP,
+    CSS_PROP__WEBKIT_BOX_LINES,
+    CSS_PROP__WEBKIT_BOX_ORDINAL_GROUP,
+    CSS_PROP__WEBKIT_BOX_ORIENT,
+    CSS_PROP__WEBKIT_BOX_PACK,
     CSS_PROP_CAPTION_SIDE,
     CSS_PROP_CLEAR,
     CSS_PROP_COLOR,
     CSS_PROP_CURSOR,
 #if __APPLE__
-    CSS_PROP__KHTML_DASHBOARD_REGION,
+    CSS_PROP__WEBKIT_DASHBOARD_REGION,
 #endif
     CSS_PROP_DIRECTION,
     CSS_PROP_DISPLAY,
@@ -89,8 +89,8 @@ static const int computedProperties[] = {
     CSS_PROP_HEIGHT,
     CSS_PROP_LEFT,
     CSS_PROP_LETTER_SPACING,
-    CSS_PROP__KHTML_LINE_BREAK,
-    CSS_PROP__KHTML_LINE_CLAMP,
+    CSS_PROP__WEBKIT_LINE_BREAK,
+    CSS_PROP__WEBKIT_LINE_CLAMP,
     CSS_PROP_LINE_HEIGHT,
     CSS_PROP_LIST_STYLE_IMAGE,
     CSS_PROP_LIST_STYLE_POSITION,
@@ -99,15 +99,15 @@ static const int computedProperties[] = {
     CSS_PROP_MARGIN_RIGHT,
     CSS_PROP_MARGIN_BOTTOM,
     CSS_PROP_MARGIN_LEFT,
-    CSS_PROP__KHTML_MARQUEE_DIRECTION,
-    CSS_PROP__KHTML_MARQUEE_INCREMENT,
-    CSS_PROP__KHTML_MARQUEE_REPETITION,
-    CSS_PROP__KHTML_MARQUEE_STYLE,
+    CSS_PROP__WEBKIT_MARQUEE_DIRECTION,
+    CSS_PROP__WEBKIT_MARQUEE_INCREMENT,
+    CSS_PROP__WEBKIT_MARQUEE_REPETITION,
+    CSS_PROP__WEBKIT_MARQUEE_STYLE,
     CSS_PROP_MAX_HEIGHT,
     CSS_PROP_MAX_WIDTH,
     CSS_PROP_MIN_HEIGHT,
     CSS_PROP_MIN_WIDTH,
-    CSS_PROP__KHTML_NBSP_MODE,
+    CSS_PROP__WEBKIT_NBSP_MODE,
     CSS_PROP_OPACITY,
     CSS_PROP_ORPHANS,
     CSS_PROP_OUTLINE_STYLE,
@@ -124,13 +124,13 @@ static const int computedProperties[] = {
     CSS_PROP_TABLE_LAYOUT,
     CSS_PROP_TEXT_ALIGN,
     CSS_PROP_TEXT_DECORATION,
-    CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT,
+    CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
     CSS_PROP_TEXT_INDENT,
     CSS_PROP_TEXT_SHADOW,
     CSS_PROP_TEXT_TRANSFORM,
     CSS_PROP_TOP,
     CSS_PROP_UNICODE_BIDI,
-    CSS_PROP__KHTML_USER_MODIFY,
+    CSS_PROP__WEBKIT_USER_MODIFY,
     CSS_PROP_VERTICAL_ALIGN,
     CSS_PROP_VISIBILITY,
     CSS_PROP_WHITE_SPACE,
@@ -197,11 +197,11 @@ static CSSValue *valueForTextAlign(ETextAlign align)
         case JUSTIFY:
             return new CSSPrimitiveValue(CSS_VAL_JUSTIFY);
         case KHTML_LEFT:
-            return new CSSPrimitiveValue(CSS_VAL__KHTML_LEFT);
+            return new CSSPrimitiveValue(CSS_VAL__WEBKIT_LEFT);
         case KHTML_RIGHT:
-            return new CSSPrimitiveValue(CSS_VAL__KHTML_RIGHT);
+            return new CSSPrimitiveValue(CSS_VAL__WEBKIT_RIGHT);
         case KHTML_CENTER:
-            return new CSSPrimitiveValue(CSS_VAL__KHTML_CENTER);
+            return new CSSPrimitiveValue(CSS_VAL__WEBKIT_CENTER);
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -345,9 +345,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         if (style->backgroundAttachment())
             return new CSSPrimitiveValue(CSS_VAL_SCROLL);
         return new CSSPrimitiveValue(CSS_VAL_FIXED);
-    case CSS_PROP_BACKGROUND_CLIP:
-    case CSS_PROP_BACKGROUND_ORIGIN: {
-        EBackgroundBox box = (propertyID == CSS_PROP_BACKGROUND_CLIP ? style->backgroundClip() : style->backgroundOrigin());
+    case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
+    case CSS_PROP__WEBKIT_BACKGROUND_ORIGIN: {
+        EBackgroundBox box = (propertyID == CSS_PROP__WEBKIT_BACKGROUND_CLIP ? style->backgroundClip() : style->backgroundOrigin());
         if (box == BGBORDER)
             return new CSSPrimitiveValue(CSS_VAL_BORDER);
         if (box == BGPADDING)
@@ -375,7 +375,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     case CSS_PROP_BACKGROUND_POSITION_Y:
         return valueForLength(style->backgroundYPosition());
 #ifndef KHTML_NO_XBL
-    case CSS_PROP__KHTML_BINDING:
+    case CSS_PROP__WEBKIT_BINDING:
         // FIXME: unimplemented
         break;
 #endif
@@ -389,9 +389,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         String string(numberAsString(style->horizontalBorderSpacing()) + "px " + numberAsString(style->verticalBorderSpacing()) + "px");
         return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
     }
-    case CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING:
+    case CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING:
         return new CSSPrimitiveValue(style->horizontalBorderSpacing(), CSSPrimitiveValue::CSS_PX);
-    case CSS_PROP__KHTML_BORDER_VERTICAL_SPACING:
+    case CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING:
         return new CSSPrimitiveValue(style->verticalBorderSpacing(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_BORDER_TOP_COLOR:
         return new CSSPrimitiveValue(style->borderLeftColor().rgb());
@@ -419,7 +419,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         return new CSSPrimitiveValue(style->borderLeftWidth(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_BOTTOM:
         return getPositionOffsetValue(renderer, CSS_PROP_BOTTOM);
-    case CSS_PROP__KHTML_BOX_ALIGN:
+    case CSS_PROP__WEBKIT_BOX_ALIGN:
         switch (style->boxAlign()) {
             case BSTRETCH:
                 return new CSSPrimitiveValue(CSS_VAL_STRETCH);
@@ -436,7 +436,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_BOX_DIRECTION:
+    case CSS_PROP__WEBKIT_BOX_DIRECTION:
         switch (style->boxDirection()) {
             case BNORMAL:
                 return new CSSPrimitiveValue(CSS_VAL_NORMAL);
@@ -445,11 +445,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_BOX_FLEX:
+    case CSS_PROP__WEBKIT_BOX_FLEX:
         return new CSSPrimitiveValue(style->boxFlex(), CSSPrimitiveValue::CSS_NUMBER);
-    case CSS_PROP__KHTML_BOX_FLEX_GROUP:
+    case CSS_PROP__WEBKIT_BOX_FLEX_GROUP:
         return new CSSPrimitiveValue(style->boxFlexGroup(), CSSPrimitiveValue::CSS_NUMBER);
-    case CSS_PROP__KHTML_BOX_LINES:
+    case CSS_PROP__WEBKIT_BOX_LINES:
         switch (style->boxLines()) {
             case SINGLE:
                 return new CSSPrimitiveValue(CSS_VAL_SINGLE);
@@ -458,9 +458,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_BOX_ORDINAL_GROUP:
+    case CSS_PROP__WEBKIT_BOX_ORDINAL_GROUP:
         return new CSSPrimitiveValue(style->boxOrdinalGroup(), CSSPrimitiveValue::CSS_NUMBER);
-    case CSS_PROP__KHTML_BOX_ORIENT:
+    case CSS_PROP__WEBKIT_BOX_ORIENT:
         switch (style->boxOrient()) {
             case HORIZONTAL:
                 return new CSSPrimitiveValue(CSS_VAL_HORIZONTAL);
@@ -469,7 +469,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_BOX_PACK:
+    case CSS_PROP__WEBKIT_BOX_PACK:
         switch (style->boxPack()) {
             case BSTART:
                 return new CSSPrimitiveValue(CSS_VAL_START);
@@ -608,9 +608,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             case TABLE_CAPTION:
                 return new CSSPrimitiveValue(CSS_VAL_TABLE_CAPTION);
             case BOX:
-                return new CSSPrimitiveValue(CSS_VAL__KHTML_BOX);
+                return new CSSPrimitiveValue(CSS_VAL__WEBKIT_BOX);
             case INLINE_BOX:
-                return new CSSPrimitiveValue(CSS_VAL__KHTML_INLINE_BOX);
+                return new CSSPrimitiveValue(CSS_VAL__WEBKIT_INLINE_BOX);
             case NONE:
                 return new CSSPrimitiveValue(CSS_VAL_NONE);
         }
@@ -685,7 +685,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         if (style->letterSpacing() == 0)
             return new CSSPrimitiveValue(CSS_VAL_NORMAL);
         return new CSSPrimitiveValue(style->letterSpacing(), CSSPrimitiveValue::CSS_PX);
-    case CSS_PROP__KHTML_LINE_CLAMP:
+    case CSS_PROP__WEBKIT_LINE_CLAMP:
         return new CSSPrimitiveValue(style->lineClamp(), CSSPrimitiveValue::CSS_PERCENTAGE);
     case CSS_PROP_LINE_HEIGHT: {
         Length length(style->lineHeight());
@@ -771,10 +771,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         return valueForLength(style->marginBottom());
     case CSS_PROP_MARGIN_LEFT:
         return valueForLength(style->marginLeft());
-    case CSS_PROP__KHTML_MARQUEE:
+    case CSS_PROP__WEBKIT_MARQUEE:
         // FIXME: unimplemented
         break;
-    case CSS_PROP__KHTML_MARQUEE_DIRECTION:
+    case CSS_PROP__WEBKIT_MARQUEE_DIRECTION:
         switch (style->marqueeDirection()) {
             case MFORWARD:
                 return new CSSPrimitiveValue(CSS_VAL_FORWARDS);
@@ -793,16 +793,16 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_MARQUEE_INCREMENT:
+    case CSS_PROP__WEBKIT_MARQUEE_INCREMENT:
         return valueForLength(style->marqueeIncrement());
-    case CSS_PROP__KHTML_MARQUEE_REPETITION:
+    case CSS_PROP__WEBKIT_MARQUEE_REPETITION:
         if (style->marqueeLoopCount() < 0)
             return new CSSPrimitiveValue(CSS_VAL_INFINITE);
         return new CSSPrimitiveValue(style->marqueeLoopCount(), CSSPrimitiveValue::CSS_NUMBER);
-    case CSS_PROP__KHTML_MARQUEE_SPEED:
+    case CSS_PROP__WEBKIT_MARQUEE_SPEED:
         // FIXME: unimplemented
         break;
-    case CSS_PROP__KHTML_MARQUEE_STYLE:
+    case CSS_PROP__WEBKIT_MARQUEE_STYLE:
         switch (style->marqueeBehavior()) {
             case MNONE:
                 return new CSSPrimitiveValue(CSS_VAL_NONE);
@@ -817,7 +817,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_USER_MODIFY:
+    case CSS_PROP__WEBKIT_USER_MODIFY:
         switch (style->userModify()) {
             case READ_ONLY:
                 return new CSSPrimitiveValue(CSS_VAL_READ_ONLY);
@@ -864,9 +864,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             case OAUTO:
                 return new CSSPrimitiveValue(CSS_VAL_AUTO);
             case OMARQUEE:
-                return new CSSPrimitiveValue(CSS_VAL_MARQUEE);
+                return new CSSPrimitiveValue(CSS_VAL__WEBKIT_MARQUEE);
             case OOVERLAY:
-                return new CSSPrimitiveValue(CSS_VAL_OVERLAY);
+                return new CSSPrimitiveValue(CSS_VAL__WEBKIT_OVERLAY);
         }
         ASSERT_NOT_REACHED();
         return 0;
@@ -970,7 +970,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return new CSSPrimitiveValue(CSS_VAL_NONE);
         return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
     }
-    case CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT:
+    case CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT:
     {
         String string;
         if (style->textDecorationsInEffect() & UNDERLINE)
@@ -998,7 +998,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         return valueForLength(style->textIndent());
     case CSS_PROP_TEXT_SHADOW:
         return valueForShadow(style->textShadow());
-    case CSS_PROP__KHTML_TEXT_SIZE_ADJUST:
+    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST:
         if (style->textSizeAdjust()) 
             return new CSSPrimitiveValue(CSS_VAL_AUTO);
         else
@@ -1048,7 +1048,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             case BOTTOM:
                 return new CSSPrimitiveValue(CSS_VAL_BOTTOM);
             case BASELINE_MIDDLE:
-                return new CSSPrimitiveValue(CSS_VAL__KHTML_BASELINE_MIDDLE);
+                return new CSSPrimitiveValue(CSS_VAL__WEBKIT_BASELINE_MIDDLE);
             case LENGTH:
                 return valueForLength(style->verticalAlignLength());
         }
@@ -1078,7 +1078,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             case NOWRAP:
                 return new CSSPrimitiveValue(CSS_VAL_NOWRAP);
             case KHTML_NOWRAP:
-                return new CSSPrimitiveValue(CSS_VAL__KHTML_NOWRAP);
+                return new CSSPrimitiveValue(CSS_VAL__WEBKIT_NOWRAP);
         }
         ASSERT_NOT_REACHED();
         return 0;
@@ -1097,7 +1097,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_LINE_BREAK:
+    case CSS_PROP__WEBKIT_LINE_BREAK:
         switch (style->khtmlLineBreak()) {
             case LBNORMAL:
                 return new CSSPrimitiveValue(CSS_VAL_NORMAL);
@@ -1106,7 +1106,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_NBSP_MODE:
+    case CSS_PROP__WEBKIT_NBSP_MODE:
         switch (style->nbspMode()) {
             case NBNORMAL:
                 return new CSSPrimitiveValue(CSS_VAL_NORMAL);
@@ -1115,7 +1115,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
-    case CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:
+    case CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:
         switch (style->matchNearestMailBlockquoteColor()) {
             case BCNORMAL:
                 return new CSSPrimitiveValue(CSS_VAL_NORMAL);
@@ -1171,7 +1171,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         // FIXME: unimplemented
         break;
 #if __APPLE__
-        case CSS_PROP__KHTML_DASHBOARD_REGION: {
+        case CSS_PROP__WEBKIT_DASHBOARD_REGION: {
             DeprecatedValueList<StyleDashboardRegion> regions = style->dashboardRegions();
             unsigned count = regions.count();
             if (count == 1 && regions[0].type == StyleDashboardRegion::None)

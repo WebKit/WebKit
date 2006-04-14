@@ -74,7 +74,7 @@ layer {
 
 marquee {
     display: inline-block;
-    overflow: marquee
+    overflow: -webkit-marquee
 }
 
 address {
@@ -103,7 +103,7 @@ q:after {
 center {
     display: block;
     /* special centering to be able to emulate the html4/netscape behaviour */
-    text-align: -khtml-center
+    text-align: -webkit-center
 }
 
 hr {
@@ -165,7 +165,7 @@ h6 {
 table {
     display: table;
     border-collapse: separate;
-    text-align: -khtml-auto;
+    text-align: -webkit-auto;
     border-spacing: 2px;
     border-color: gray
 }
@@ -218,7 +218,7 @@ th {
 
 caption {
     display: table-caption;
-    text-align: -khtml-center
+    text-align: -webkit-center
 }
 
 /* lists */
@@ -227,14 +227,14 @@ ul, menu, dir {
     display: block;
     list-style-type: disc;
     margin: 1__qem 0 1em 0;
-    -khtml-padding-start: 40px
+    -webkit-padding-start: 40px
 }
 
 ol {
     display: block;
     list-style-type: decimal;
     margin: 1__qem 0 1em 0;
-    -khtml-padding-start: 40px
+    -webkit-padding-start: 40px
 }
 
 li {
@@ -251,7 +251,7 @@ ol ol ul, ol ul ul, ul ol ul, ul ul ul {
 
 dd {
     display: block;
-    -khtml-margin-start: 40px
+    -webkit-margin-start: 40px
 }
 
 dl {
@@ -291,7 +291,7 @@ fieldset {
 }
 
 button {
-    -khtml-appearance: button;
+    -webkit-appearance: button;
 }
 
 /* If we add support for CSS2 system fonts, then we won't have to hard code Lucida Grande here. */
@@ -299,7 +299,7 @@ input, textarea, select, button {
     margin: 0__qem;
     font: 11px 'Lucida Grande';
     color: initial;
-    text-align: -khtml-auto;
+    text-align: -webkit-auto;
     letter-spacing: normal;
     word-spacing: normal;
     line-height: normal;
@@ -314,28 +314,28 @@ input[type="hidden"] {
 }
 
 input {
-    -khtml-appearance: textfield;
+    -webkit-appearance: textfield;
     padding: 1px;
     background-color: white;
     border: 2px inset;
-    -khtml-rtl-ordering: logical;
+    -webkit-rtl-ordering: logical;
 }
 
 input[type="password"], input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {
-    -khtml-appearance: initial;
+    -webkit-appearance: initial;
     padding: initial;
     background-color: initial;
     border: initial;
 }
 
-input:-khtml-autofill {
+input:-webkit-autofill {
     background-color: #FAFFBD !important;
     background-image:none !important;
 }
 
 input[type="radio"], input[type="checkbox"] {
     margin: 3px 0.5ex;
-    -khtml-user-select: ignore
+    -webkit-user-select: ignore
     padding: initial;
     background-color: initial;
     border: initial;
@@ -343,12 +343,12 @@ input[type="radio"], input[type="checkbox"] {
 
 input[type="button"], input[type="submit"], input[type="reset"]
 {
-    -khtml-appearance: push-button;
+    -webkit-appearance: push-button;
     white-space: pre
 }
 
 input[type="button"], input[type="submit"], input[type="reset"], button {
-    -khtml-box-align: center;
+    -webkit-box-align: center;
     text-align: center;
     cursor: default;
     color: ButtonText;
@@ -370,7 +370,7 @@ input[type="button"]:active:disabled, input[type="submit"]:active:disabled, inpu
 }
 
 select, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], img {
-    -khtml-user-select: ignore
+    -webkit-user-select: ignore
 }
 
 option, optgroup, area, param {
@@ -378,11 +378,11 @@ option, optgroup, area, param {
 }
 
 input[type="checkbox"] {
-    -khtml-appearance: checkbox
+    -webkit-appearance: checkbox
 }
 
 input[type="radio"] {
-    -khtml-appearance: radio
+    -webkit-appearance: radio
 }
 
 /* inline elements */
@@ -443,7 +443,7 @@ wbr {
 /* states */
 
 :focus { 
-    outline: auto 5px -khtml-focus-ring-color
+    outline: auto 5px -webkit-focus-ring-color
 }
 
 html:focus, body:focus { 
@@ -471,14 +471,14 @@ input[type="submit"]:focus {
     outline-offset: 0
 }
 
-a:-khtml-any-link {
-    color: -khtml-link;
+a:-webkit-any-link {
+    color: -webkit-link;
     text-decoration: underline;
-    -khtml-user-select: ignore
+    -webkit-user-select: ignore
 }
 
-a:-khtml-any-link:active {
-    color: -khtml-activelink
+a:-webkit-any-link:active {
+    color: -webkit-activelink
 }
 
 /* other elements */

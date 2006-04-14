@@ -144,7 +144,7 @@ public:
   KJS::JSValue* executeScript(Node*, const DeprecatedString& script, bool forceUserGesture = false);
 
   /**
-   * Implementation of CSS property -khtml-user-drag == auto
+   * Implementation of CSS property -webkit-user-drag == auto
    */
   virtual bool shouldDragAutoNode(Node*, const IntPoint&) const;
   

@@ -1654,7 +1654,7 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                     case CSS_PROP_FONT_STYLE:
                     case CSS_PROP_FONT_FAMILY:
                     case CSS_PROP_FONT_WEIGHT:
-                    case CSS_PROP__KHTML_TEXT_SIZE_ADJUST:
+                    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST:
                     case CSS_PROP_FONT_VARIANT:
                         // these have to be applied first, because other properties use the computed
                         // values of these porperties.
@@ -1686,9 +1686,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     bool isInitial = valueType == CSSValue::CSS_INITIAL || (!parentNode && valueType == CSSValue::CSS_INHERIT);
 
     // These properties are used to set the correct margins/padding on RTL lists.
-    if (id == CSS_PROP__KHTML_MARGIN_START)
+    if (id == CSS_PROP__WEBKIT_MARGIN_START)
         id = style->direction() == LTR ? CSS_PROP_MARGIN_LEFT : CSS_PROP_MARGIN_RIGHT;
-    else if (id == CSS_PROP__KHTML_PADDING_START)
+    else if (id == CSS_PROP__WEBKIT_PADDING_START)
         id = style->direction() == LTR ? CSS_PROP_PADDING_LEFT : CSS_PROP_PADDING_RIGHT;
 
     // What follows is a list that maps the CSS properties into their corresponding front-end
@@ -1700,10 +1700,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP_BACKGROUND_ATTACHMENT:
         HANDLE_BACKGROUND_VALUE(backgroundAttachment, BackgroundAttachment, value)
         break;
-    case CSS_PROP_BACKGROUND_CLIP:
+    case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
         HANDLE_BACKGROUND_VALUE(backgroundClip, BackgroundClip, value)
         break;
-    case CSS_PROP_BACKGROUND_ORIGIN:
+    case CSS_PROP__WEBKIT_BACKGROUND_ORIGIN:
         HANDLE_BACKGROUND_VALUE(backgroundOrigin, BackgroundOrigin, value)
         break;
     case CSS_PROP_BACKGROUND_REPEAT:
@@ -1988,9 +1988,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             o = OSCROLL; break;
         case CSS_VAL_AUTO:
             o = OAUTO; break;
-        case CSS_VAL_MARQUEE:
+        case CSS_VAL__WEBKIT_MARQUEE:
             o = OMARQUEE; break;
-        case CSS_VAL_OVERLAY:
+        case CSS_VAL__WEBKIT_OVERLAY:
             o = OOVERLAY; break;
         default:
             return;
@@ -2157,7 +2157,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         EWhiteSpace s;
         switch(primitiveValue->getIdent()) {
-        case CSS_VAL__KHTML_NOWRAP:
+        case CSS_VAL__WEBKIT_NOWRAP:
             s = KHTML_NOWRAP;
             break;
         case CSS_VAL_NOWRAP:
@@ -2203,14 +2203,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         break;
     }
-    case CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING: {
+    case CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING: {
         HANDLE_INHERIT_AND_INITIAL(horizontalBorderSpacing, HorizontalBorderSpacing)
         if (!primitiveValue) break;
         short spacing =  primitiveValue->computeLengthShort(style);
         style->setHorizontalBorderSpacing(spacing);
         break;
     }
-    case CSS_PROP__KHTML_BORDER_VERTICAL_SPACING: {
+    case CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING: {
         HANDLE_INHERIT_AND_INITIAL(verticalBorderSpacing, VerticalBorderSpacing)
         if (!primitiveValue) break;
         short spacing =  primitiveValue->computeLengthShort(style);
@@ -2430,7 +2430,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
     }
 
-    case CSS_PROP__KHTML_NBSP_MODE:
+    case CSS_PROP__WEBKIT_NBSP_MODE:
     {
         HANDLE_INHERIT_AND_INITIAL(nbspMode, NBSPMode)
 
@@ -2450,7 +2450,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
     }
 
-    case CSS_PROP__KHTML_LINE_BREAK:
+    case CSS_PROP__WEBKIT_LINE_BREAK:
     {
         HANDLE_INHERIT_AND_INITIAL(khtmlLineBreak, KHTMLLineBreak)
 
@@ -2470,7 +2470,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
     }
 
-    case CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:
+    case CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:
     {
         HANDLE_INHERIT_AND_INITIAL(matchNearestMailBlockquoteColor, MatchNearestMailBlockquoteColor)
 
@@ -2697,7 +2697,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     align = SUB; break;
                 case CSS_VAL_SUPER:
                     align = SUPER; break;
-                case CSS_VAL__KHTML_BASELINE_MIDDLE:
+                case CSS_VAL__WEBKIT_BASELINE_MIDDLE:
                     align = BASELINE_MIDDLE; break;
                 default:
                     return;
@@ -2743,7 +2743,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             case CSS_VAL_LARGE:
             case CSS_VAL_X_LARGE:
             case CSS_VAL_XX_LARGE:
-            case CSS_VAL__KHTML_XXX_LARGE:
+            case CSS_VAL__WEBKIT_XXX_LARGE:
                 size = fontSizeForKeyword(primitiveValue->getIdent(), style->htmlHacks());
                 break;
             case CSS_VAL_LARGER:
@@ -2858,7 +2858,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(textAlign, TextAlign)
         if (!primitiveValue) return;
         if (primitiveValue->getIdent())
-            style->setTextAlign((ETextAlign) (primitiveValue->getIdent() - CSS_VAL__KHTML_AUTO));
+            style->setTextAlign((ETextAlign) (primitiveValue->getIdent() - CSS_VAL__WEBKIT_AUTO));
         return;
     }
 
@@ -2986,7 +2986,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 face = static_cast<FontFamilyValue *>(val)->fontName();
             else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT) {
                 switch (val->getIdent()) {
-                    case CSS_VAL__KHTML_BODY:
+                    case CSS_VAL__WEBKIT_BODY:
                         face = settings->stdFontName();
                         break;
                     case CSS_VAL_SERIF:
@@ -3248,7 +3248,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
 
     // CSS3 Properties
-    case CSS_PROP__KHTML_APPEARANCE: {
+    case CSS_PROP__WEBKIT_APPEARANCE: {
         HANDLE_INHERIT_AND_INITIAL(appearance, Appearance)
         if (!primitiveValue) break;
         int id = primitiveValue->getIdent();
@@ -3259,7 +3259,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             appearance = EAppearance(id - CSS_VAL_CHECKBOX + 1);
         style->setAppearance(appearance);
     }
-    case CSS_PROP__KHTML_BINDING: {
+    case CSS_PROP__WEBKIT_BINDING: {
 #ifndef KHTML_NO_XBL
         if (isInitial || (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE)) {
             style->deleteBindingURIs();
@@ -3291,7 +3291,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
     }
 
-    case CSS_PROP_BORDER_IMAGE: {
+    case CSS_PROP__WEBKIT_BORDER_IMAGE: {
         HANDLE_INHERIT_AND_INITIAL(borderImage, BorderImage)
         BorderImage image;
         if (primitiveValue) {
@@ -3354,7 +3354,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
     }
 
-    case CSS_PROP_BORDER_RADIUS:
+    case CSS_PROP__WEBKIT_BORDER_RADIUS:
         if (isInherit) {
             style->setBorderTopLeftRadius(parentStyle->borderTopLeftRadius());
             style->setBorderTopRightRadius(parentStyle->borderTopRightRadius());
@@ -3367,23 +3367,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         }
         // Fall through
-    case CSS_PROP_BORDER_TOP_LEFT_RADIUS:
-    case CSS_PROP_BORDER_TOP_RIGHT_RADIUS:
-    case CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS:
-    case CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS: {
+    case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
+    case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
+    case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
+    case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS: {
         if (isInherit) {
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_TOP_LEFT_RADIUS, borderTopLeftRadius, BorderTopLeftRadius)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_TOP_RIGHT_RADIUS, borderTopRightRadius, BorderTopRightRadius)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS, borderBottomLeftRadius, BorderBottomLeftRadius)
-            HANDLE_INHERIT_COND(CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS, borderBottomRightRadius, BorderBottomRightRadius)
+            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS, borderTopLeftRadius, BorderTopLeftRadius)
+            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS, borderTopRightRadius, BorderTopRightRadius)
+            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS, borderBottomLeftRadius, BorderBottomLeftRadius)
+            HANDLE_INHERIT_COND(CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS, borderBottomRightRadius, BorderBottomRightRadius)
             return;
         }
         
         if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_TOP_LEFT_RADIUS, BorderTopLeftRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_TOP_RIGHT_RADIUS, BorderTopRightRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS, BorderBottomLeftRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS, BorderBottomRightRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS, BorderTopLeftRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS, BorderTopRightRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS, BorderBottomLeftRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS, BorderBottomRightRadius, BorderRadius)
             return;
         }
 
@@ -3406,16 +3406,16 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         IntSize size(width, height);
         switch (id) {
-            case CSS_PROP_BORDER_TOP_LEFT_RADIUS:
+            case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
                 style->setBorderTopLeftRadius(size);
                 break;
-            case CSS_PROP_BORDER_TOP_RIGHT_RADIUS:
+            case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
                 style->setBorderTopRightRadius(size);
                 break;
-            case CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS:
+            case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
                 style->setBorderBottomLeftRadius(size);
                 break;
-            case CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS:
+            case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS:
                 style->setBorderBottomRightRadius(size);
                 break;
             default:
@@ -3468,7 +3468,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         // Clamp opacity to the range 0-1
         style->setOpacity(min(1.0, max(0.0, primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER))));
         return;
-    case CSS_PROP__KHTML_BOX_ALIGN:
+    case CSS_PROP__WEBKIT_BOX_ALIGN:
         HANDLE_INHERIT_AND_INITIAL(boxAlign, BoxAlign)
         if (!primitiveValue) return;
         switch (primitiveValue->getIdent()) {
@@ -3491,7 +3491,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 return;
         }
         return;        
-    case CSS_PROP__KHTML_BOX_DIRECTION:
+    case CSS_PROP__WEBKIT_BOX_DIRECTION:
         HANDLE_INHERIT_AND_INITIAL(boxDirection, BoxDirection)
         if (!primitiveValue) return;
         if (primitiveValue->getIdent() == CSS_VAL_NORMAL)
@@ -3499,7 +3499,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             style->setBoxDirection(BREVERSE);
         return;        
-    case CSS_PROP__KHTML_BOX_LINES:
+    case CSS_PROP__WEBKIT_BOX_LINES:
         HANDLE_INHERIT_AND_INITIAL(boxLines, BoxLines)
         if(!primitiveValue) return;
         if (primitiveValue->getIdent() == CSS_VAL_SINGLE)
@@ -3507,7 +3507,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             style->setBoxLines(MULTIPLE);
         return;     
-    case CSS_PROP__KHTML_BOX_ORIENT:
+    case CSS_PROP__WEBKIT_BOX_ORIENT:
         HANDLE_INHERIT_AND_INITIAL(boxOrient, BoxOrient)
         if (!primitiveValue) return;
         if (primitiveValue->getIdent() == CSS_VAL_HORIZONTAL ||
@@ -3516,7 +3516,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             style->setBoxOrient(VERTICAL);
         return;     
-    case CSS_PROP__KHTML_BOX_PACK:
+    case CSS_PROP__WEBKIT_BOX_PACK:
         HANDLE_INHERIT_AND_INITIAL(boxPack, BoxPack)
         if (!primitiveValue) return;
         switch (primitiveValue->getIdent()) {
@@ -3536,19 +3536,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 return;
         }
         return;        
-    case CSS_PROP__KHTML_BOX_FLEX:
+    case CSS_PROP__WEBKIT_BOX_FLEX:
         HANDLE_INHERIT_AND_INITIAL(boxFlex, BoxFlex)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
         style->setBoxFlex(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER));
         return;
-    case CSS_PROP__KHTML_BOX_FLEX_GROUP:
+    case CSS_PROP__WEBKIT_BOX_FLEX_GROUP:
         HANDLE_INHERIT_AND_INITIAL(boxFlexGroup, BoxFlexGroup)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
         style->setBoxFlexGroup((unsigned int)(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)));
         return;        
-    case CSS_PROP__KHTML_BOX_ORDINAL_GROUP:
+    case CSS_PROP__WEBKIT_BOX_ORDINAL_GROUP:
         HANDLE_INHERIT_AND_INITIAL(boxOrdinalGroup, BoxOrdinalGroup)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
@@ -3562,7 +3562,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             style->setBoxSizing(BORDER_BOX);
         break;
-    case CSS_PROP__KHTML_MARQUEE:
+    case CSS_PROP__WEBKIT_MARQUEE:
         if (valueType != CSSValue::CSS_INHERIT || !parentNode) return;
         style->setMarqueeDirection(parentStyle->marqueeDirection());
         style->setMarqueeIncrement(parentStyle->marqueeIncrement());
@@ -3570,7 +3570,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setMarqueeLoopCount(parentStyle->marqueeLoopCount());
         style->setMarqueeBehavior(parentStyle->marqueeBehavior());
         break;
-    case CSS_PROP__KHTML_MARQUEE_REPETITION: {
+    case CSS_PROP__WEBKIT_MARQUEE_REPETITION: {
         HANDLE_INHERIT_AND_INITIAL(marqueeLoopCount, MarqueeLoopCount)
         if (!primitiveValue) return;
         if (primitiveValue->getIdent() == CSS_VAL_INFINITE)
@@ -3579,7 +3579,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             style->setMarqueeLoopCount((int)(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)));
         break;
     }
-    case CSS_PROP__KHTML_MARQUEE_SPEED: {
+    case CSS_PROP__WEBKIT_MARQUEE_SPEED: {
         HANDLE_INHERIT_AND_INITIAL(marqueeSpeed, MarqueeSpeed)      
         if (!primitiveValue) return;
         if (primitiveValue->getIdent()) {
@@ -3604,7 +3604,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             style->setMarqueeSpeed(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)));
         break;
     }
-    case CSS_PROP__KHTML_MARQUEE_INCREMENT: {
+    case CSS_PROP__WEBKIT_MARQUEE_INCREMENT: {
         HANDLE_INHERIT_AND_INITIAL(marqueeIncrement, MarqueeIncrement)
         if (!primitiveValue) return;
         if (primitiveValue->getIdent()) {
@@ -3629,7 +3629,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         break;
     }
-    case CSS_PROP__KHTML_MARQUEE_STYLE: {
+    case CSS_PROP__WEBKIT_MARQUEE_STYLE: {
         HANDLE_INHERIT_AND_INITIAL(marqueeBehavior, MarqueeBehavior)      
         if (!primitiveValue || !primitiveValue->getIdent()) return;
         switch (primitiveValue->getIdent())
@@ -3652,7 +3652,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         break;
     }
-    case CSS_PROP__KHTML_MARQUEE_DIRECTION: {
+    case CSS_PROP__WEBKIT_MARQUEE_DIRECTION: {
         HANDLE_INHERIT_AND_INITIAL(marqueeDirection, MarqueeDirection)
         if (!primitiveValue || !primitiveValue->getIdent()) return;
         switch (primitiveValue->getIdent())
@@ -3683,7 +3683,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         break;
     }
-    case CSS_PROP__KHTML_USER_DRAG: {
+    case CSS_PROP__WEBKIT_USER_DRAG: {
         HANDLE_INHERIT_AND_INITIAL(userDrag, UserDrag)      
         if (!primitiveValue || !primitiveValue->getIdent())
             return;
@@ -3701,7 +3701,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         break;
     }
-    case CSS_PROP__KHTML_USER_MODIFY: {
+    case CSS_PROP__WEBKIT_USER_MODIFY: {
         HANDLE_INHERIT_AND_INITIAL(userModify, UserModify)      
         if (!primitiveValue || !primitiveValue->getIdent())
             return;
@@ -3709,7 +3709,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setUserModify(userModify);
         break;
     }
-    case CSS_PROP__KHTML_USER_SELECT: {
+    case CSS_PROP__WEBKIT_USER_SELECT: {
         HANDLE_INHERIT_AND_INITIAL(userSelect, UserSelect)      
         if (!primitiveValue || !primitiveValue->getIdent())
             return;
@@ -3731,7 +3731,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
     }
     case CSS_PROP_TEXT_OVERFLOW: {
-        // This property is supported by WinIE, and so we leave off the "-khtml-" in order to
+        // This property is supported by WinIE, and so we leave off the "-webkit-" in order to
         // work with WinIE-specific pages that use the property.
         HANDLE_INHERIT_AND_INITIAL(textOverflow, TextOverflow)
         if (!primitiveValue || !primitiveValue->getIdent())
@@ -3739,7 +3739,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setTextOverflow(primitiveValue->getIdent() == CSS_VAL_ELLIPSIS);
         break;
     }
-    case CSS_PROP__KHTML_MARGIN_COLLAPSE: {
+    case CSS_PROP__WEBKIT_MARGIN_COLLAPSE: {
         if (isInherit) {
             style->setMarginTopCollapse(parentStyle->marginTopCollapse());
             style->setMarginBottomCollapse(parentStyle->marginBottomCollapse());
@@ -3750,7 +3750,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         break;
     }
-    case CSS_PROP__KHTML_MARGIN_TOP_COLLAPSE: {
+    case CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE: {
         HANDLE_INHERIT_AND_INITIAL(marginTopCollapse, MarginTopCollapse)
         if (!primitiveValue || !primitiveValue->getIdent()) return;
         EMarginCollapse val;
@@ -3767,7 +3767,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setMarginTopCollapse(val);
         break;
     }
-    case CSS_PROP__KHTML_MARGIN_BOTTOM_COLLAPSE: {
+    case CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE: {
         HANDLE_INHERIT_AND_INITIAL(marginBottomCollapse, MarginBottomCollapse)
         if (!primitiveValue || !primitiveValue->getIdent()) return;
         EMarginCollapse val;
@@ -3786,13 +3786,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
     // Apple-specific changes.  Do not merge these properties into KHTML.
-    case CSS_PROP__KHTML_LINE_CLAMP: {
+    case CSS_PROP__WEBKIT_LINE_CLAMP: {
         HANDLE_INHERIT_AND_INITIAL(lineClamp, LineClamp)
         if (!primitiveValue) return;
         style->setLineClamp((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE));
         break;
     }
-    case CSS_PROP__KHTML_TEXT_SIZE_ADJUST: {
+    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
         if (!primitiveValue || !primitiveValue->getIdent()) return;
         style->setTextSizeAdjust(primitiveValue->getIdent() == CSS_VAL_AUTO);
@@ -3800,7 +3800,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
     }
 #if __APPLE__
-    case CSS_PROP__KHTML_DASHBOARD_REGION: {
+    case CSS_PROP__WEBKIT_DASHBOARD_REGION: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
         if (!primitiveValue)
             return;
@@ -3832,7 +3832,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         break;
     }
 #endif
-    case CSS_PROP__KHTML_RTL_ORDERING:
+    case CSS_PROP__WEBKIT_RTL_ORDERING:
         HANDLE_INHERIT_AND_INITIAL(visuallyOrdered, VisuallyOrdered)
         if (!primitiveValue || !primitiveValue->getIdent())
             return;
@@ -4217,9 +4217,9 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
     Color col;
     int ident = primitiveValue->getIdent();
     if (ident) {
-        if (ident == CSS_VAL__KHTML_TEXT)
+        if (ident == CSS_VAL__WEBKIT_TEXT)
             col = element->document()->textColor();
-        else if (ident == CSS_VAL__KHTML_LINK) {
+        else if (ident == CSS_VAL__WEBKIT_LINK) {
             Color linkColor = element->document()->linkColor();
             Color visitedColor = element->document()->visitedLinkColor();
             if (linkColor == visitedColor)
@@ -4229,9 +4229,9 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
                     checkPseudoState(element);
                 col = (pseudoState == PseudoLink) ? linkColor : visitedColor;
             }
-        } else if (ident == CSS_VAL__KHTML_ACTIVELINK)
+        } else if (ident == CSS_VAL__WEBKIT_ACTIVELINK)
             col = element->document()->activeLinkColor();
-        else if (ident == CSS_VAL__KHTML_FOCUS_RING_COLOR)
+        else if (ident == CSS_VAL__WEBKIT_FOCUS_RING_COLOR)
             col = focusRingColor();
         else
             col = colorForCSSValue(ident);

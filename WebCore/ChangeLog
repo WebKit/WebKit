@@ -1,3 +1,81 @@
+2006-04-14  David Hyatt  <hyatt@apple.com>
+
+        CSS vendor-specific property/value cleanup.  Properly qualify background-clip,
+        background-origin, border-image and the border-radius properties.  Make sure
+        our overflow extensions of marquee and overlay are qualified as well.  Rename
+        the -khtml- extension to -webkit.
+
+        Reviewed by beth
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::cssPropertyName):
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMCSSStyleDeclaration _fontSizeDelta]):
+        (-[DOMCSSStyleDeclaration _setFontSizeDelta:]):
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _setAutofilled:]):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::valueForTextAlign):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSGrammar.y:
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/css_base.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/css_valueimpl.cpp:
+        (WebCore::):
+        * css/css_valueimpl.h:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseRule):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::parseBackgroundShorthand):
+        (WebCore::CSSParser::parseBackgroundColor):
+        (WebCore::CSSParser::parseBackgroundProperty):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseShadow):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/cssstyleselector.h:
+        * css/html4.css:
+        * css/quirks.css:
+        * css/tokenizer.flex:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::StyleChange::init):
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::blockPlaceholderClassString):
+        * editing/JSEditor.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::fixupNodeStyles):
+        (WebCore::styleForNode):
+        * editing/htmlediting.cpp:
+        (WebCore::rebalanceWhitespaceInTextNode):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::addHTMLAlignment):
+        (WebCore::HTMLElement::setContentEditable):
+        * html/html_blockimpl.cpp:
+        (WebCore::HTMLDivElement::parseMappedAttribute):
+        (WebCore::HTMLParagraphElement::parseMappedAttribute):
+        (WebCore::HTMLMarqueeElement::parseMappedAttribute):
+        * html/html_inlineimpl.cpp:
+        (WebCore::HTMLFontElement::parseMappedAttribute):
+        * html/html_tableimpl.cpp:
+        (WebCore::HTMLTablePartElement::parseMappedAttribute):
+        (WebCore::HTMLTableCellElement::parseMappedAttribute):
+        * page/Frame.cpp:
+        (WebCore::Frame::canMouseDownStartSelect):
+        * page/Frame.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::draggableNode):
+
 2006-04-14  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by beth.

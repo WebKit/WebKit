@@ -4037,7 +4037,7 @@ static NSView *viewForElement(DOMElement *element)
 - (void)_setAutofilled:(BOOL)filled
 {
     // This notifies the input element that the content has been autofilled
-    // This allows WebKit to obey the -khtml-autofill pseudo style, which
+    // This allows WebKit to obey the -webkit-autofill pseudo style, which
     // changes the background color.
     HTMLInputElement* input = [self _inputElement];
     if (input)

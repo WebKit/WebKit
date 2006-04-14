@@ -1645,7 +1645,7 @@ Node* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& d
     while (curr) {
         Node *elt = curr->element();
         if (elt && elt->nodeType() == Node::TEXT_NODE) {
-            // Since there's no way for the author to address the -khtml-user-drag style for a text node,
+            // Since there's no way for the author to address the -webkit-user-drag style for a text node,
             // we use our own judgement.
             if (uaOK && canvas()->view()->frame()->shouldDragAutoNode(curr->node(), IntPoint(x, y))) {
                 dhtmlWillDrag = false;

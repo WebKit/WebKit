@@ -62,16 +62,17 @@ int getPropertyID(const char *tagStr, int len)
     if (len && tagStr[0] == '-') {
         prop = DeprecatedString(tagStr, len);
         if (prop.startsWith("-apple-")) {
-            prop = "-khtml-" + prop.mid(7);
+            prop = "-webkit-" + prop.mid(7);
             tagStr = prop.ascii();
-        } else if (prop.startsWith("-webkit-")) {
-            prop = "-khtml-" + prop.mid(8);
-            len--;
+            len++;
+        } else if (prop.startsWith("-khtml-")) {
+            prop = "-webkit-" + prop.mid(7);
+            len++;
             tagStr = prop.ascii();
         }
         
-        // Honor the use of -khtml-opacity (for Safari 1.1).
-        if (prop == "-khtml-opacity") {
+        // Honor the use of old-style opacity (for Safari 1.1).
+        if (prop == "-webkit-opacity") {
             const char * const opacity = "opacity";
             tagStr = opacity;
             len = strlen(opacity);
@@ -93,11 +94,12 @@ static inline int getValueID(const char *tagStr, int len)
     if (len && tagStr[0] == '-') {
         prop = DeprecatedString(tagStr, len);
         if (prop.startsWith("-apple-")) {
-            prop = "-khtml-" + prop.mid(7);
+            prop = "-webkit-" + prop.mid(7);
             tagStr = prop.ascii();
-        } else if (prop.startsWith("-moz-")) {
-            prop = "-khtml-" + prop.mid(5);
-            len += 2;
+            len++;
+        } else if (prop.startsWith("-khtml-")) {
+            prop = "-webkit-" + prop.mid(7);
+            len++;
             tagStr = prop.ascii();
         }
     }
@@ -172,9 +174,9 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 %token FONT_FACE_SYM
 %token CHARSET_SYM
 %token NAMESPACE_SYM
-%token KHTML_RULE_SYM
-%token KHTML_DECLS_SYM
-%token KHTML_VALUE_SYM
+%token WEBKIT_RULE_SYM
+%token WEBKIT_DECLS_SYM
+%token WEBKIT_VALUE_SYM
 
 %token IMPORTANT_SYM
 
@@ -262,25 +264,25 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 
 stylesheet:
     maybe_charset maybe_sgml import_list namespace_list rule_list
-  | khtml_rule maybe_space
-  | khtml_decls maybe_space
-  | khtml_value maybe_space
+  | webkit_rule maybe_space
+  | webkit_decls maybe_space
+  | webkit_value maybe_space
   ;
 
-khtml_rule:
-    KHTML_RULE_SYM '{' maybe_space ruleset maybe_space '}' {
+webkit_rule:
+    WEBKIT_RULE_SYM '{' maybe_space ruleset maybe_space '}' {
         static_cast<CSSParser*>(parser)->rule = $4;
     }
 ;
 
-khtml_decls:
-    KHTML_DECLS_SYM '{' maybe_space declaration_list '}' {
+webkit_decls:
+    WEBKIT_DECLS_SYM '{' maybe_space declaration_list '}' {
         /* can be empty */
     }
 ;
 
-khtml_value:
-    KHTML_VALUE_SYM '{' maybe_space expr '}' {
+webkit_value:
+    WEBKIT_VALUE_SYM '{' maybe_space expr '}' {
         CSSParser *p = static_cast<CSSParser *>(parser);
         if ($4) {
             p->valueList = p->sinkFloatingValueList($4);

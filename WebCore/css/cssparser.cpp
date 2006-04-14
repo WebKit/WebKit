@@ -163,7 +163,7 @@ PassRefPtr<CSSRule> CSSParser::parseRule(CSSStyleSheet *sheet, const String &str
 {
     styleElement = sheet;
     
-    setupParser("@-khtml-rule{", string, "} ");
+    setupParser("@-webkit-rule{", string, "} ");
 
     CSSParser* old = currentParser;
     currentParser = this;
@@ -177,7 +177,7 @@ bool CSSParser::parseValue(CSSMutableStyleDeclaration *declaration, int _id, con
 {
     styleElement = declaration->stylesheet();
 
-    setupParser("@-khtml-value{", string, "} ");
+    setupParser("@-webkit-value{", string, "} ");
 
     id = _id;
     important = _important;
@@ -226,7 +226,7 @@ bool CSSParser::parseColor(CSSMutableStyleDeclaration *declaration, const String
 {
     styleElement = declaration->stylesheet();
 
-    setupParser("@-khtml-decls{color:", string, "} ");
+    setupParser("@-webkit-decls{color:", string, "} ");
 
     CSSParser* old = currentParser;
     currentParser = this;
@@ -246,7 +246,7 @@ bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration *declaration, const 
 {
     styleElement = declaration->stylesheet();
 
-    setupParser("@-khtml-decls{", string, "} ");
+    setupParser("@-webkit-decls{", string, "} ");
 
     CSSParser* old = currentParser;
     currentParser = this;
@@ -457,7 +457,7 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
 #if __APPLE__
-    case CSS_PROP__KHTML_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
+    case CSS_PROP__WEBKIT_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
         if (value->unit == Value::Function || id == CSS_VAL_NONE)
             return parseDashboardRegions(propId, important);
         break;
@@ -484,7 +484,7 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSS_PROP_OVERFLOW:             // visible | hidden | scroll | auto | marquee | overlay | inherit
         if (id == CSS_VAL_VISIBLE || id == CSS_VAL_HIDDEN || id == CSS_VAL_SCROLL || id == CSS_VAL_AUTO ||
-            id == CSS_VAL_MARQUEE || id == CSS_VAL_OVERLAY)
+            id == CSS_VAL__WEBKIT_MARQUEE || id == CSS_VAL__WEBKIT_OVERLAY)
             valid_primitive = true;
         break;
 
@@ -506,7 +506,7 @@ bool CSSParser::parseValue(int propId, bool important)
         // inline | block | list-item | run-in | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | box | inline-box | none | inherit
-        if ((id >= CSS_VAL_INLINE && id <= CSS_VAL__KHTML_INLINE_BOX) || id == CSS_VAL_NONE)
+        if ((id >= CSS_VAL_INLINE && id <= CSS_VAL__WEBKIT_INLINE_BOX) || id == CSS_VAL_NONE)
             valid_primitive = true;
         break;
 
@@ -534,7 +534,7 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSS_PROP_TEXT_ALIGN:
         // left | right | center | justify | khtml_left | khtml_right | khtml_center | <string> | inherit
-        if ((id >= CSS_VAL__KHTML_AUTO && id <= CSS_VAL__KHTML_CENTER) ||
+        if ((id >= CSS_VAL__WEBKIT_AUTO && id <= CSS_VAL__WEBKIT_CENTER) ||
              value->unit == CSSPrimitiveValue::CSS_STRING)
             valid_primitive = true;
         break;
@@ -570,8 +570,8 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSS_PROP_BORDER_SPACING: {
-        const int properties[2] = { CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING,
-                                    CSS_PROP__KHTML_BORDER_VERTICAL_SPACING };
+        const int properties[2] = { CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING,
+                                    CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING };
         if (num == 1) {
             ShorthandScope scope(this, CSS_PROP_BORDER_SPACING);
             if (!parseValue(properties[0], important))
@@ -588,8 +588,8 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         return false;
     }
-    case CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING:
-    case CSS_PROP__KHTML_BORDER_VERTICAL_SPACING:
+    case CSS_PROP__WEBKIT_BORDER_HORIZONTAL_SPACING:
+    case CSS_PROP__WEBKIT_BORDER_VERTICAL_SPACING:
         valid_primitive = validUnit(value, FLength|FNonNeg, strict);
         break;
     case CSS_PROP_SCROLLBAR_FACE_COLOR:         // IE5.5
@@ -605,7 +605,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_OUTLINE_COLOR:        // <color> | invert | inherit
         // Outline color has "invert" as additional keyword.
         // Also, we want to allow the special focus color even in strict parsing mode.
-        if (propId == CSS_PROP_OUTLINE_COLOR && (id == CSS_VAL_INVERT || id == CSS_VAL__KHTML_FOCUS_RING_COLOR)) {
+        if (propId == CSS_PROP_OUTLINE_COLOR && (id == CSS_VAL_INVERT || id == CSS_VAL__WEBKIT_FOCUS_RING_COLOR)) {
             valid_primitive = true;
             break;
         }
@@ -619,11 +619,11 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_TEXT_LINE_THROUGH_COLOR: // CSS3 text decoration colors
     case CSS_PROP_TEXT_UNDERLINE_COLOR:
     case CSS_PROP_TEXT_OVERLINE_COLOR:
-        if (id == CSS_VAL__KHTML_TEXT)
+        if (id == CSS_VAL__WEBKIT_TEXT)
             valid_primitive = true; // Always allow this, even when strict parsing is on,
                                     // since we use this in our UA sheets.
         else if (id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT || id == CSS_VAL_MENU ||
-             (id >= CSS_VAL__KHTML_FOCUS_RING_COLOR && id < CSS_VAL__KHTML_TEXT && !strict)) {
+             (id >= CSS_VAL__WEBKIT_FOCUS_RING_COLOR && id < CSS_VAL__WEBKIT_TEXT && !strict)) {
             valid_primitive = true;
         } else {
             parsedValue = parseColor();
@@ -651,9 +651,9 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSS_PROP_BACKGROUND_ATTACHMENT:
-    case CSS_PROP_BACKGROUND_CLIP:
+    case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
     case CSS_PROP_BACKGROUND_IMAGE:
-    case CSS_PROP_BACKGROUND_ORIGIN:
+    case CSS_PROP__WEBKIT_BACKGROUND_ORIGIN:
     case CSS_PROP_BACKGROUND_POSITION:
     case CSS_PROP_BACKGROUND_POSITION_X:
     case CSS_PROP_BACKGROUND_POSITION_Y:
@@ -709,21 +709,21 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__KHTML_FONT_SIZE_DELTA:           // <length>
+    case CSS_PROP__WEBKIT_FONT_SIZE_DELTA:           // <length>
         valid_primitive = validUnit(value, FLength, strict);
         break;
 
-    case CSS_PROP__KHTML_NBSP_MODE:     // normal | space
+    case CSS_PROP__WEBKIT_NBSP_MODE:     // normal | space
         if (id == CSS_VAL_NORMAL || id == CSS_VAL_SPACE)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__KHTML_LINE_BREAK:   // normal | after-white-space
+    case CSS_PROP__WEBKIT_LINE_BREAK:   // normal | after-white-space
         if (id == CSS_VAL_NORMAL || id == CSS_VAL_AFTER_WHITE_SPACE)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:   // normal | match
+    case CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:   // normal | match
         if (id == CSS_VAL_NORMAL || id == CSS_VAL_MATCH)
             valid_primitive = true;
         break;
@@ -733,7 +733,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_PADDING_RIGHT:        //   Which is defined as
     case CSS_PROP_PADDING_BOTTOM:       //   <length> | <percentage>
     case CSS_PROP_PADDING_LEFT:         ////
-    case CSS_PROP__KHTML_PADDING_START:
+    case CSS_PROP__WEBKIT_PADDING_START:
         valid_primitive = (!id && validUnit(value, FLength|FPercent, strict));
         break;
 
@@ -774,7 +774,7 @@ bool CSSParser::parseValue(int propId, bool important)
         // baseline | sub | super | top | text-top | middle | bottom | text-bottom |
         // <percentage> | <length> | inherit
 
-        if (id >= CSS_VAL_BASELINE && id <= CSS_VAL__KHTML_BASELINE_MIDDLE)
+        if (id >= CSS_VAL_BASELINE && id <= CSS_VAL__WEBKIT_BASELINE_MIDDLE)
             valid_primitive = true;
         else
             valid_primitive = (!id && validUnit(value, FLength|FPercent, strict));
@@ -797,7 +797,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_MARGIN_RIGHT:         //   Which is defined as
     case CSS_PROP_MARGIN_BOTTOM:        //   <length> | <percentage> | auto | inherit
     case CSS_PROP_MARGIN_LEFT:          ////
-    case CSS_PROP__KHTML_MARGIN_START:
+    case CSS_PROP__WEBKIT_MARGIN_START:
         if (id == CSS_VAL_AUTO)
             valid_primitive = true;
         else
@@ -830,7 +830,7 @@ bool CSSParser::parseValue(int propId, bool important)
     }
 
     case CSS_PROP_TEXT_DECORATION:
-    case CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT:
+    case CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT:
         // none | [ underline || overline || line-through || blink ] | inherit
         if (id == CSS_VAL_NONE) {
             valid_primitive = true;
@@ -865,12 +865,12 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     /* CSS3 properties */
-    case CSS_PROP__KHTML_APPEARANCE:
+    case CSS_PROP__WEBKIT_APPEARANCE:
         if ((id >= CSS_VAL_CHECKBOX && id <= CSS_VAL_TEXTFIELD) || id == CSS_VAL_NONE)
             valid_primitive = true;
         break;
 
-    case CSS_PROP__KHTML_BINDING:
+    case CSS_PROP__WEBKIT_BINDING:
 #ifndef KHTML_NO_XBL
         if (id == CSS_VAL_NONE)
             valid_primitive = true;
@@ -902,17 +902,17 @@ bool CSSParser::parseValue(int propId, bool important)
         }
 #endif
         break;
-    case CSS_PROP_BORDER_IMAGE:
+    case CSS_PROP__WEBKIT_BORDER_IMAGE:
         if (id == CSS_VAL_NONE)
             valid_primitive = true;
         else
             return parseBorderImage(propId, important);
         break;
-    case CSS_PROP_BORDER_TOP_RIGHT_RADIUS:
-    case CSS_PROP_BORDER_TOP_LEFT_RADIUS:
-    case CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS:
-    case CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS:
-    case CSS_PROP_BORDER_RADIUS: {
+    case CSS_PROP__WEBKIT_BORDER_TOP_RIGHT_RADIUS:
+    case CSS_PROP__WEBKIT_BORDER_TOP_LEFT_RADIUS:
+    case CSS_PROP__WEBKIT_BORDER_BOTTOM_LEFT_RADIUS:
+    case CSS_PROP__WEBKIT_BORDER_BOTTOM_RIGHT_RADIUS:
+    case CSS_PROP__WEBKIT_BORDER_RADIUS: {
         if (num != 1 && num != 2)
             return false;
         valid_primitive = validUnit(value, FLength, strict);
@@ -950,88 +950,88 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_OPACITY:
         valid_primitive = validUnit(value, FNumber, strict);
         break;
-    case CSS_PROP__KHTML_BOX_ALIGN:
+    case CSS_PROP__WEBKIT_BOX_ALIGN:
         if (id == CSS_VAL_STRETCH || id == CSS_VAL_START || id == CSS_VAL_END ||
             id == CSS_VAL_CENTER || id == CSS_VAL_BASELINE)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_BOX_DIRECTION:
+    case CSS_PROP__WEBKIT_BOX_DIRECTION:
         if (id == CSS_VAL_NORMAL || id == CSS_VAL_REVERSE)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_BOX_LINES:
+    case CSS_PROP__WEBKIT_BOX_LINES:
         if (id == CSS_VAL_SINGLE || id == CSS_VAL_MULTIPLE)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_BOX_ORIENT:
+    case CSS_PROP__WEBKIT_BOX_ORIENT:
         if (id == CSS_VAL_HORIZONTAL || id == CSS_VAL_VERTICAL ||
             id == CSS_VAL_INLINE_AXIS || id == CSS_VAL_BLOCK_AXIS)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_BOX_PACK:
+    case CSS_PROP__WEBKIT_BOX_PACK:
         if (id == CSS_VAL_START || id == CSS_VAL_END ||
             id == CSS_VAL_CENTER || id == CSS_VAL_JUSTIFY)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_BOX_FLEX:
+    case CSS_PROP__WEBKIT_BOX_FLEX:
         valid_primitive = validUnit(value, FNumber, strict);
         break;
-    case CSS_PROP__KHTML_BOX_FLEX_GROUP:
-    case CSS_PROP__KHTML_BOX_ORDINAL_GROUP:
+    case CSS_PROP__WEBKIT_BOX_FLEX_GROUP:
+    case CSS_PROP__WEBKIT_BOX_ORDINAL_GROUP:
         valid_primitive = validUnit(value, FInteger|FNonNeg, true);
         break;
     case CSS_PROP_BOX_SIZING: {
-        // We don't preface this with -khtml, since MacIE defined this property without the prefix.
+        // We don't preface this with -webkit, since MacIE defined this property without the prefix.
         // Thus the damage has been done, and it's known that this property's definition isn't going
         // to fluctuate.
         if (id == CSS_VAL_BORDER_BOX || id == CSS_VAL_CONTENT_BOX)
             valid_primitive = true;
         break;
     }
-    case CSS_PROP__KHTML_MARQUEE: {
-        const int properties[5] = { CSS_PROP__KHTML_MARQUEE_DIRECTION, CSS_PROP__KHTML_MARQUEE_INCREMENT,
-                                    CSS_PROP__KHTML_MARQUEE_REPETITION,
-                                    CSS_PROP__KHTML_MARQUEE_STYLE, CSS_PROP__KHTML_MARQUEE_SPEED };
+    case CSS_PROP__WEBKIT_MARQUEE: {
+        const int properties[5] = { CSS_PROP__WEBKIT_MARQUEE_DIRECTION, CSS_PROP__WEBKIT_MARQUEE_INCREMENT,
+                                    CSS_PROP__WEBKIT_MARQUEE_REPETITION,
+                                    CSS_PROP__WEBKIT_MARQUEE_STYLE, CSS_PROP__WEBKIT_MARQUEE_SPEED };
         return parseShorthand(propId, properties, 5, important);
     }
-    case CSS_PROP__KHTML_MARQUEE_DIRECTION:
+    case CSS_PROP__WEBKIT_MARQUEE_DIRECTION:
         if (id == CSS_VAL_FORWARDS || id == CSS_VAL_BACKWARDS || id == CSS_VAL_AHEAD ||
             id == CSS_VAL_REVERSE || id == CSS_VAL_LEFT || id == CSS_VAL_RIGHT || id == CSS_VAL_DOWN ||
             id == CSS_VAL_UP || id == CSS_VAL_AUTO)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_MARQUEE_INCREMENT:
+    case CSS_PROP__WEBKIT_MARQUEE_INCREMENT:
         if (id == CSS_VAL_SMALL || id == CSS_VAL_LARGE || id == CSS_VAL_MEDIUM)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FLength|FPercent, strict);
         break;
-    case CSS_PROP__KHTML_MARQUEE_STYLE:
+    case CSS_PROP__WEBKIT_MARQUEE_STYLE:
         if (id == CSS_VAL_NONE || id == CSS_VAL_SLIDE || id == CSS_VAL_SCROLL || id == CSS_VAL_ALTERNATE ||
             id == CSS_VAL_UNFURL)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_MARQUEE_REPETITION:
+    case CSS_PROP__WEBKIT_MARQUEE_REPETITION:
         if (id == CSS_VAL_INFINITE)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FInteger|FNonNeg, strict);
         break;
-    case CSS_PROP__KHTML_MARQUEE_SPEED:
+    case CSS_PROP__WEBKIT_MARQUEE_SPEED:
         if (id == CSS_VAL_NORMAL || id == CSS_VAL_SLOW || id == CSS_VAL_FAST)
             valid_primitive = true;
         else
             valid_primitive = validUnit(value, FTime|FInteger|FNonNeg, strict);
         break;
-    case CSS_PROP__KHTML_USER_DRAG: // auto | none | element
+    case CSS_PROP__WEBKIT_USER_DRAG: // auto | none | element
         if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE || id == CSS_VAL_ELEMENT)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_USER_MODIFY: // read-only | read-write
+    case CSS_PROP__WEBKIT_USER_MODIFY: // read-only | read-write
         if (id == CSS_VAL_READ_ONLY || id == CSS_VAL_READ_WRITE || CSS_VAL_READ_WRITE_PLAINTEXT_ONLY)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_USER_SELECT: // auto | none | text
+    case CSS_PROP__WEBKIT_USER_SELECT: // auto | none | text
         if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE || id == CSS_VAL_TEXT || id == CSS_VAL_IGNORE)
             valid_primitive = true;
         break;
@@ -1039,11 +1039,11 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSS_VAL_CLIP || id == CSS_VAL_ELLIPSIS)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_MARGIN_COLLAPSE: {
-        const int properties[2] = { CSS_PROP__KHTML_MARGIN_TOP_COLLAPSE,
-            CSS_PROP__KHTML_MARGIN_BOTTOM_COLLAPSE };
+    case CSS_PROP__WEBKIT_MARGIN_COLLAPSE: {
+        const int properties[2] = { CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE,
+            CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE };
         if (num == 1) {
-            ShorthandScope scope(this, CSS_PROP__KHTML_MARGIN_COLLAPSE);
+            ShorthandScope scope(this, CSS_PROP__WEBKIT_MARGIN_COLLAPSE);
             if (!parseValue(properties[0], important))
                 return false;
             CSSValue* value = parsedProperties[numParsedProperties-1]->value();
@@ -1051,15 +1051,15 @@ bool CSSParser::parseValue(int propId, bool important)
             return true;
         }
         else if (num == 2) {
-            ShorthandScope scope(this, CSS_PROP__KHTML_MARGIN_COLLAPSE);
+            ShorthandScope scope(this, CSS_PROP__WEBKIT_MARGIN_COLLAPSE);
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
                 return false;
             return true;
         }
         return false;
     }
-    case CSS_PROP__KHTML_MARGIN_TOP_COLLAPSE:
-    case CSS_PROP__KHTML_MARGIN_BOTTOM_COLLAPSE:
+    case CSS_PROP__WEBKIT_MARGIN_TOP_COLLAPSE:
+    case CSS_PROP__WEBKIT_MARGIN_BOTTOM_COLLAPSE:
         if (id == CSS_VAL_COLLAPSE || id == CSS_VAL_SEPARATE || id == CSS_VAL_DISCARD)
             valid_primitive = true;
         break;
@@ -1091,14 +1091,14 @@ bool CSSParser::parseValue(int propId, bool important)
 
     // Apple specific properties.  These will never be standardized and are purely to
     // support custom WebKit-based Apple applications.
-    case CSS_PROP__KHTML_LINE_CLAMP:
+    case CSS_PROP__WEBKIT_LINE_CLAMP:
         valid_primitive = (!id && validUnit(value, FPercent, false));
         break;
-    case CSS_PROP__KHTML_TEXT_SIZE_ADJUST:
+    case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST:
         if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE)
             valid_primitive = true;
         break;
-    case CSS_PROP__KHTML_RTL_ORDERING:
+    case CSS_PROP__WEBKIT_RTL_ORDERING:
         if (id == CSS_VAL_LOGICAL || id == CSS_VAL_VISUAL)
             valid_primitive = true;
         break;
@@ -1251,8 +1251,8 @@ bool CSSParser::parseBackgroundShorthand(bool important)
     // in quirks mode but it's usually the X coordinate of a position.
     const int numProperties = 7;
     const int properties[numProperties] = { CSS_PROP_BACKGROUND_IMAGE, CSS_PROP_BACKGROUND_REPEAT,
-        CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION, CSS_PROP_BACKGROUND_CLIP,
-        CSS_PROP_BACKGROUND_ORIGIN, CSS_PROP_BACKGROUND_COLOR };
+        CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION, CSS_PROP__WEBKIT_BACKGROUND_CLIP,
+        CSS_PROP__WEBKIT_BACKGROUND_ORIGIN, CSS_PROP_BACKGROUND_COLOR };
     
     ShorthandScope scope(this, CSS_PROP_BACKGROUND);
 
@@ -1485,8 +1485,8 @@ bool CSSParser::parseContent(int propId, bool important)
 CSSValue* CSSParser::parseBackgroundColor()
 {
     int id = valueList->current()->id;
-    if (id == CSS_VAL__KHTML_TEXT || (id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT) || id == CSS_VAL_MENU ||
-        (id >= CSS_VAL_GREY && id < CSS_VAL__KHTML_TEXT && !strict))
+    if (id == CSS_VAL__WEBKIT_TEXT || (id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT) || id == CSS_VAL_MENU ||
+        (id >= CSS_VAL_GREY && id < CSS_VAL__WEBKIT_TEXT && !strict))
        return new CSSPrimitiveValue(id);
     return parseColor();
 }
@@ -1626,8 +1626,8 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
                     if (currValue)
                         valueList->next();
                     break;
-                case CSS_PROP_BACKGROUND_CLIP:
-                case CSS_PROP_BACKGROUND_ORIGIN:
+                case CSS_PROP__WEBKIT_BACKGROUND_CLIP:
+                case CSS_PROP__WEBKIT_BACKGROUND_ORIGIN:
                     if (val->id == CSS_VAL_BORDER || val->id == CSS_VAL_PADDING || val->id == CSS_VAL_CONTENT) {
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();
@@ -2031,10 +2031,10 @@ CSSValueList *CSSParser::parseFontFamily()
         bool nextValBreaksFont = !nextValue ||
                                  (nextValue->unit == Value::Operator && nextValue->iValue == ',');
         bool nextValIsFontName = nextValue &&
-            ((nextValue->id >= CSS_VAL_SERIF && nextValue->id <= CSS_VAL__KHTML_BODY) ||
+            ((nextValue->id >= CSS_VAL_SERIF && nextValue->id <= CSS_VAL__WEBKIT_BODY) ||
             (nextValue->unit == CSSPrimitiveValue::CSS_STRING || nextValue->unit == CSSPrimitiveValue::CSS_IDENT));
 
-        if (value->id >= CSS_VAL_SERIF && value->id <= CSS_VAL__KHTML_BODY) {
+        if (value->id >= CSS_VAL_SERIF && value->id <= CSS_VAL__WEBKIT_BODY) {
             if (currFamily) {
                 currFamily->parsedFontName += ' ';
                 currFamily->parsedFontName += deprecatedString(value->string);
@@ -2313,7 +2313,7 @@ bool CSSParser::parseShadow(int propId, bool important)
             // The only other type of value that's ok is a color value.
             CSSPrimitiveValue* parsedColor = 0;
             bool isColor = (val->id >= CSS_VAL_AQUA && val->id <= CSS_VAL_WINDOWTEXT || val->id == CSS_VAL_MENU ||
-                            (val->id >= CSS_VAL__KHTML_FOCUS_RING_COLOR && val->id <= CSS_VAL__KHTML_TEXT && !strict));
+                            (val->id >= CSS_VAL__WEBKIT_FOCUS_RING_COLOR && val->id <= CSS_VAL__WEBKIT_TEXT && !strict));
             if (isColor) {
                 if (!context.allowColor)
                     return context.failed();

@@ -162,7 +162,7 @@ void rebalanceWhitespaceInTextNode(Node *node, unsigned int start, unsigned int 
     
     // The sequence should alternate between spaces and nbsps, always ending in a regular space.
     // Note: This pattern doesn't mimic TextEdit editing behavior on other clients that don't
-    // support our -khtml-nbsp-mode: space, but it comes close.
+    // support our -webkit-nbsp-mode: space, but it comes close.
     static DeprecatedString pattern("\xa0 ");
     int end = length - 1; 
     int i = substring.findRev(twoSpaces, end);
