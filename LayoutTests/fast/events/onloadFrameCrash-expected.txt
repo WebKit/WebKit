@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderPartObject {IFRAME} at (0,0) size 300x150
-      RenderText {TEXT} at (300,136) size 92x18
+      RenderText {#text} at (300,136) size 92x18
         text run at (300,136) width 92: "This is the text"

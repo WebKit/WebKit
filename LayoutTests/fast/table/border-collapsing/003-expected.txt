@@ -4,15 +4,15 @@ layer at (0,0) size 800x348
   RenderBlock {HTML} at (0,0) size 800x348
     RenderBody {BODY} at (8,16) size 784x300
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 541x18
+        RenderText {#text} at (0,0) size 541x18
           text run at (0,0) width 442: "The black border below should cut right through the top left corner of "
           text run at (442,0) width 99: "the blue border."
       RenderBlock {DIV} at (32,50) size 720x250 [border: (1px solid #0000FF)]
         RenderTable {DIV} at (1,1) size 104x200
-          RenderTableSection at (0,0) size 0x200
-            RenderTableRow {P} at (0,0) size 0x0
+          RenderTableSection at (0,0) size 104x200
+            RenderTableRow {P} at (0,0) size 104x100
               RenderTableCell {SPAN} at (0,-1) size 52x11 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderTableCell {SPAN} at (52,-10) size 52x68 [border: (10px solid #000000)] [r=0 c=1 rs=1 cs=1]
-            RenderTableRow {P} at (0,0) size 0x0 [border: (1px solid #0000FF)]
+            RenderTableRow {P} at (0,100) size 104x100 [border: (1px solid #0000FF)]
               RenderTableCell {SPAN} at (0,90) size 52x20 [border: (10px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderTableCell {SPAN} at (52,90) size 52x68 [border: (10px solid #000000)] [r=1 c=1 rs=1 cs=1]

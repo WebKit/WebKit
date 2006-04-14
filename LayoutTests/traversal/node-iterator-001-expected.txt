@@ -13,29 +13,29 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,0) size 784x106
         RenderBlock {P} at (0,0) size 784x16
           RenderInline {B} at (0,0) size 280x16
-            RenderText {TEXT} at (0,0) size 280x16
+            RenderText {#text} at (0,0) size 280x16
               text run at (0,0) width 280: "Expect ref node 'A'; pointer before"
-          RenderText {TEXT} at (280,0) size 168x16
+          RenderText {#text} at (280,0) size 168x16
             text run at (280,0) width 168: ": * A B C D E F G H I"
         RenderBlock {P} at (0,30) size 784x16
           RenderInline {B} at (0,0) size 272x16
-            RenderText {TEXT} at (0,0) size 272x16
+            RenderText {#text} at (0,0) size 272x16
               text run at (0,0) width 272: "Expect ref node 'A'; pointer after"
-          RenderText {TEXT} at (272,0) size 184x16
+          RenderText {#text} at (272,0) size 184x16
             text run at (272,0) width 184: ": [A] * B C D E F G H I"
         RenderBlock {P} at (0,60) size 784x16
           RenderInline {B} at (0,0) size 280x16
-            RenderText {TEXT} at (0,0) size 280x16
+            RenderText {#text} at (0,0) size 280x16
               text run at (0,0) width 280: "Expect ref node 'A'; pointer before"
-          RenderText {TEXT} at (280,0) size 184x16
+          RenderText {#text} at (280,0) size 184x16
             text run at (280,0) width 184: ": * [A] B C D E F G H I"
         RenderBlock {P} at (0,90) size 784x16
           RenderInline {B} at (0,0) size 280x16
-            RenderText {TEXT} at (0,0) size 280x16
+            RenderText {#text} at (0,0) size 280x16
               text run at (0,0) width 280: "Expect ref node 'A'; pointer before"
-          RenderText {TEXT} at (280,0) size 184x16
+          RenderText {#text} at (280,0) size 184x16
             text run at (280,0) width 184: ": * [A] B C D E F G H I"

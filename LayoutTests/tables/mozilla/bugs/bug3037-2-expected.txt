@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable at (0,0) size 41x18
-        RenderTableSection at (0,0) size 0x18
-          RenderTableRow at (0,0) size 0x0
+        RenderTableSection at (0,0) size 41x18
+          RenderTableRow at (0,0) size 41x18
             RenderTableCell {SPAN} at (0,0) size 21x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (0,0) size 21x18
+              RenderText {#text} at (0,0) size 21x18
                 text run at (0,0) width 21: "foo"
             RenderTableCell {SPAN} at (21,0) size 20x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (0,0) size 20x18
+              RenderText {#text} at (0,0) size 20x18
                 text run at (0,0) width 20: "bar"

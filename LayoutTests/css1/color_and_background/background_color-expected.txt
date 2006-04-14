@@ -4,76 +4,80 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18 [bgcolor=#008000]
-        RenderText {TEXT} at (0,0) size 355x18
+        RenderText {#text} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x60
-        RenderText {TEXT} at (0,0) size 296x45
+        RenderText {#text} at (0,0) size 296x60
           text run at (0,0) width 224: "P {background-color: green;}"
+          text run at (224,0) width 0: " "
           text run at (0,15) width 240: ".one {background-color: lime;}"
+          text run at (240,15) width 0: " "
           text run at (0,30) width 296: ".two {background-color: transparent;}"
+          text run at (296,30) width 0: " "
+          text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 784x18 [bgcolor=#008000]
-        RenderText {TEXT} at (0,0) size 277x18
+        RenderText {#text} at (0,0) size 277x18
           text run at (0,0) width 277: "This element's background should be green."
       RenderBlock {P} at (0,159) size 784x18 [bgcolor=#00FF00]
-        RenderText {TEXT} at (0,0) size 350x18
+        RenderText {#text} at (0,0) size 350x18
           text run at (0,0) width 350: "This element's background should be lime (light green)."
       RenderBlock {P} at (0,193) size 784x54 [bgcolor=#008000]
-        RenderText {TEXT} at (0,0) size 652x18
+        RenderText {#text} at (0,0) size 652x18
           text run at (0,0) width 652: "This element's background should be green, and the last word in this sentence should also have a green "
         RenderInline {SPAN} at (0,0) size 75x18
-          RenderText {TEXT} at (652,0) size 75x18
+          RenderText {#text} at (652,0) size 75x18
             text run at (652,0) width 75: "background"
-        RenderText {TEXT} at (727,0) size 779x54
+        RenderText {#text} at (727,0) size 779x54
           text run at (727,0) width 8: ". "
           text run at (735,0) width 42: "This is"
           text run at (0,18) width 779: "because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word \"sentence,\""
           text run at (0,36) width 109: "which was set to "
         RenderInline {CODE} at (0,0) size 88x15
-          RenderText {TEXT} at (109,38) size 88x15
+          RenderText {#text} at (109,38) size 88x15
             text run at (109,38) width 88: "transparent"
-        RenderText {TEXT} at (197,36) size 395x18
+        RenderText {#text} at (197,36) size 395x18
           text run at (197,36) width 8: ". "
           text run at (205,36) width 387: "If the document background is visible, the browser is in error."
       RenderBlock {P} at (0,263) size 784x18
-        RenderText {TEXT} at (0,0) size 744x18
+        RenderText {#text} at (0,0) size 744x18
           text run at (0,0) width 462: "This element should allow the document background to \"shine through.\" "
           text run at (462,0) width 282: "There should be no green backgrounds here!"
       RenderTable {TABLE} at (0,297) size 784x192 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 0x190
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 782x190
+          RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18
-                RenderText {TEXT} at (4,4) size 163x18
+                RenderText {#text} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,26) size 782x164
             RenderTableCell {TD} at (0,95) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (4,4) size 4x18
+              RenderText {#text} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x164 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x18 [bgcolor=#008000]
-                RenderText {TEXT} at (0,0) size 277x18
+                RenderText {#text} at (0,0) size 277x18
                   text run at (0,0) width 277: "This element's background should be green."
               RenderBlock {P} at (4,38) size 762x18 [bgcolor=#00FF00]
-                RenderText {TEXT} at (0,0) size 350x18
+                RenderText {#text} at (0,0) size 350x18
                   text run at (0,0) width 350: "This element's background should be lime (light green)."
               RenderBlock {P} at (4,72) size 762x54 [bgcolor=#008000]
-                RenderText {TEXT} at (0,0) size 652x18
+                RenderText {#text} at (0,0) size 652x18
                   text run at (0,0) width 652: "This element's background should be green, and the last word in this sentence should also have a green "
                 RenderInline {SPAN} at (0,0) size 75x18
-                  RenderText {TEXT} at (652,0) size 75x18
+                  RenderText {#text} at (652,0) size 75x18
                     text run at (652,0) width 75: "background"
-                RenderText {TEXT} at (727,0) size 749x54
+                RenderText {#text} at (727,0) size 749x54
                   text run at (727,0) width 4: "."
                   text run at (0,18) width 749: "This is because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word"
                   text run at (0,36) width 185: "\"sentence,\" which was set to "
                 RenderInline {CODE} at (0,0) size 88x15
-                  RenderText {TEXT} at (185,38) size 88x15
+                  RenderText {#text} at (185,38) size 88x15
                     text run at (185,38) width 88: "transparent"
-                RenderText {TEXT} at (273,36) size 395x18
+                RenderText {#text} at (273,36) size 395x18
                   text run at (273,36) width 8: ". "
                   text run at (281,36) width 387: "If the document background is visible, the browser is in error."
               RenderBlock {P} at (4,142) size 762x18
-                RenderText {TEXT} at (0,0) size 744x18
+                RenderText {#text} at (0,0) size 744x18
                   text run at (0,0) width 462: "This element should allow the document background to \"shine through.\" "
                   text run at (462,0) width 282: "There should be no green backgrounds here!"

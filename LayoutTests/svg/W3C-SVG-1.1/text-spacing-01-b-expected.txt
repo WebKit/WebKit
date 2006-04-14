@@ -4,24 +4,24 @@ layer at (0,0) size 480x360
       KCanvasContainer {g} at (0,0) size 0x0
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x10
-            RenderText {TEXT} at (0,0) size 64x10
+            RenderText {#text} at (0,0) size 64x10
               text run at (0,0) width 64: "letter-spacing:0"
           RenderSVGText {text} at (0,0) size 465x10
-            RenderText {TEXT} at (0,0) size 50x10
+            RenderText {#text} at (0,0) size 50x10
               text run at (0,0) width 50: "letter-spacing:-1"
           RenderSVGText {text} at (0,0) size 465x10
-            RenderText {TEXT} at (0,0) size 67x10
+            RenderText {#text} at (0,0) size 67x10
               text run at (0,0) width 67: "letter-spacing:.3"
           RenderSVGText {text} at (0,0) size 465x10
-            RenderText {TEXT} at (0,0) size 73x10
+            RenderText {#text} at (0,0) size 73x10
               text run at (0,0) width 73: "ws:0 - Two Words"
           RenderSVGText {text} at (0,0) size 465x10
-            RenderText {TEXT} at (0,0) size 67x10
+            RenderText {#text} at (0,0) size 67x10
               text run at (0,0) width 67: "ws:-3 - Two Words"
           RenderSVGText {text} at (0,0) size 465x10
-            RenderText {TEXT} at (0,0) size 82x10
+            RenderText {#text} at (0,0) size 82x10
               text run at (0,0) width 82: "ws:3 - Two Words"
       RenderSVGText {text} at (0,0) size 465x10
-        RenderText {TEXT} at (0,0) size 64x10
+        RenderText {#text} at (0,0) size 64x10
           text run at (0,0) width 64: "$Revision: 1.1 $"
       KCanvasItem {rect} at (3,3) size 474x354 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L79.00,1.00L79.00,59.00L1.00,59.00"]

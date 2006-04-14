@@ -4,19 +4,19 @@ layer at (0,0) size 800x95
   RenderBlock {HTML} at (0,0) size 800x95
     RenderBody {BODY} at (8,16) size 784x71
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 363x18
+        RenderText {#text} at (0,0) size 363x18
           text run at (0,0) width 363: "The following two boxes should be identical, to the pixel."
       RenderBlock {OL} at (80,34) size 160x18 [color=#FFFFFF] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 160x18
           RenderListMarker at (-20,0) size 16x18
           RenderInline {SPAN} at (0,0) size 12x18 [color=#000080]
-            RenderText {TEXT} at (0,0) size 12x18
+            RenderText {#text} at (0,0) size 12x18
               text run at (0,0) width 12: "1."
-          RenderText {TEXT} at (12,0) size 31x18
+          RenderText {#text} at (12,0) size 31x18
             text run at (12,0) width 31: " Test"
       RenderBlock {OL} at (80,53) size 160x18 [color=#000080] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 160x18
           RenderListMarker at (0,0) size 16x18
           RenderInline {SPAN} at (0,0) size 31x18 [color=#FFFFFF]
-            RenderText {TEXT} at (16,0) size 31x18
+            RenderText {#text} at (16,0) size 31x18
               text run at (16,0) width 31: " Test"

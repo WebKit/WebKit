@@ -8,7 +8,7 @@ layer at (0,0) size 800x1530
 layer at (0,0) size 800x900
   RenderBlock (positioned) zI: 1 {DIV} at (0,0) size 800x900 [bgcolor=#99CC66]
     RenderBlock {DIV} at (90,90) size 620x15
-      RenderText {TEXT} at (0,1) size 36x15
+      RenderText {#text} at (0,1) size 36x12
         text run at (0,1) width 36: "Header"
 layer at (90,990) size 1800x2
   RenderBlock (positioned) {DIV} at (0,0) size 1800x0
@@ -17,7 +17,7 @@ layer at (90,990) size 1892x2
 layer at (90,990) size 1800x2 clip at (0,0) size 0x0 scrollHeight 30
   RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 1800x2 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
     RenderBlock {DIV} at (1,1) size 1783x30
-      RenderText {TEXT} at (0,1) size 1775x30
+      RenderText {#text} at (0,1) size 1775x27
         text run at (0,1) width 1775: "Luckily, the bit of the broadcast is now missing from BBCs website and folks in Cornwall swear they saw Bigfoot and Jersey Devil run off with miles and miles of audio tape containing tapes of Steve Jobs talking about the new Video iPod while drunk on soju, the confession of the true JFK assassin, and a tripping Chief Justice Roberts talking about how \x{201C}Green isn\x{2019}t just"
         text run at (0,16) width 124: "a color, man, it\x{2019}s an idea.\x{201D}"
 layer at (1980,990) size 2x2 clip at (0,0) size 0x0 scrollWidth 26 scrollHeight 152
@@ -25,5 +25,5 @@ layer at (1980,990) size 2x2 clip at (0,0) size 0x0 scrollWidth 26 scrollHeight 
 layer at (0,150) size 800x450
   RenderBlock (positioned) zI: 1 {DIV} at (0,150) size 800x450 [bgcolor=#99CC66]
     RenderBlock {DIV} at (90,90) size 620x15
-      RenderText {TEXT} at (0,1) size 32x15
+      RenderText {#text} at (0,1) size 32x12
         text run at (0,1) width 32: "Footer"

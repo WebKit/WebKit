@@ -102,20 +102,20 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (14,14) size 756x28
           RenderInline {SPAN} at (0,0) size 150x28
             RenderInline {B} at (0,0) size 78x28
-              RenderText {TEXT} at (0,0) size 78x28
+              RenderText {#text} at (0,0) size 78x28
                 text run at (0,0) width 78: "xxxxxx "
             RenderInline {B} at (0,0) size 72x28
-              RenderText {TEXT} at (78,0) size 72x28
+              RenderText {#text} at (78,0) size 72x28
                 text run at (78,0) width 72: "xxxxxx"
           RenderInline {SPAN} at (0,0) size 0x28
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (14,42) size 756x28
           RenderInline {SPAN} at (0,0) size 156x28
             RenderInline {B} at (0,0) size 78x28
-              RenderText {TEXT} at (0,0) size 78x28
+              RenderText {#text} at (0,0) size 78x28
                 text run at (0,0) width 78: " xxxxxx"
             RenderInline {B} at (0,0) size 78x28
-              RenderText {TEXT} at (78,0) size 78x28
+              RenderText {#text} at (78,0) size 78x28
                 text run at (78,0) width 78: " xxxxxx"
-selection start: position 0 of child 0 {TEXT} of child 1 {B} of child 0 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 7 of child 0 {TEXT} of child 0 {B} of child 0 {SPAN} of child 4 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {#text} of child 1 {B} of child 0 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 7 of child 0 {#text} of child 0 {B} of child 0 {SPAN} of child 4 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

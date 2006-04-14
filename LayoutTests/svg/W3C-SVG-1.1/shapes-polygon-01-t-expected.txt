@@ -9,6 +9,6 @@ layer at (0,0) size 480x360
         KCanvasItem {polygon} at (126.71,180.56) size 105.62x103.48 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M179.00,185.00L218.00,203.00L228.00,245.00L202.00,279.00L159.00,280.00L131.00,247.00L139.00,205.00"]
         KCanvasItem {polygon} at (265.20,179.61) size 161.15x104.39 [stroke={[type=SOLID] [color=#00FF00] [stroke width=8.00]}] [data="M270.00,225.00L300.00,245.00L320.00,225.00L340.00,245.00L280.00,280.00L390.00,280.00L420.00,240.00L280.00,185.00"]
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

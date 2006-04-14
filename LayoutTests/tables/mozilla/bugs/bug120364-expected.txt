@@ -3,23 +3,23 @@ layer at (0,0) size 785x1813
 layer at (0,0) size 785x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x584
-      RenderText {TEXT} at (0,0) size 21x18
+      RenderText {#text} at (0,0) size 21x18
         text run at (0,0) width 21: "foo"
       RenderTable {TABLE} at (653,0) size 116x1805
-        RenderTableSection {TBODY} at (0,0) size 0x1805
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 116x1805
+          RenderTableRow {TR} at (0,2) size 116x998
             RenderTableCell {TD} at (2,2) size 112x74 [r=0 c=0 rs=1 cs=1]
               RenderBR {BR} at (1,1) size 0x18
-              RenderText {TEXT} at (1,19) size 101x54
+              RenderText {#text} at (1,19) size 101x54
                 text run at (1,19) width 83: "Create a cool"
                 text run at (1,37) width 101: "home page with"
                 text run at (1,55) width 19: "the"
-          RenderTableRow {TR} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,1002) size 116x801
             RenderTableCell {TD} at (2,1002) size 112x56 [r=1 c=0 rs=1 cs=1]
               RenderBR {BR} at (1,1) size 0x18
-              RenderText {TEXT} at (1,19) size 94x36
+              RenderText {#text} at (1,19) size 94x36
                 text run at (1,19) width 89: "Get organized"
                 text run at (1,37) width 94: "online with the"
-      RenderText {TEXT} at (0,0) size 0x0
-      RenderText {TEXT} at (0,0) size 0x0
-      RenderText {TEXT} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

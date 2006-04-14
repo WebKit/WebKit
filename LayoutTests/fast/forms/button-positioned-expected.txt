@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
 layer at (10,10) size 153x18
   RenderButton {BUTTON} at (10,10) size 153x18 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0) none (2px outset #C0C0C0)]
     RenderBlock (anonymous) at (8,2) size 137x13
-      RenderText {TEXT} at (0,0) size 137x13
+      RenderText {#text} at (0,0) size 137x13
         text run at (0,0) width 137: "This button is positioned."
 layer at (10,10) size 175x18
   RenderButton {INPUT} at (10,10) size 175x18 [bgcolor=#C0C0C0]

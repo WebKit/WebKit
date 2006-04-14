@@ -4,13 +4,13 @@ layer at (0,0) size 785x781
   RenderBlock {HTML} at (0,0) size 785x781
     RenderBody {BODY} at (8,32) size 769x717
       RenderBlock {P} at (32,0) size 705x111 [color=#000080]
-        RenderText {TEXT} at (0,0) size 678x111
+        RenderText {#text} at (0,0) size 678x111
           text run at (0,0) width 678: "\x{21E9} The following blue box should be exactly half the"
           text run at (0,37) width 81: "width "
           text run at (81,37) width 560: "of the viewport, on the left of the 50% ruler"
           text run at (0,74) width 74: "mark."
       RenderBlock (floating) {DIV} at (0,143) size 384x342 [color=#FFFFFF] [bgcolor=#0000FF]
-        RenderText {TEXT} at (0,0) size 384x342
+        RenderText {#text} at (0,0) size 384x342
           text run at (0,0) width 384: "ignore this float text ignore this float text ignore this"
           text run at (0,18) width 42: "float "
           text run at (42,18) width 342: "text ignore this float text ignore this float text"
@@ -46,7 +46,7 @@ layer at (0,0) size 785x781
           text run at (233,306) width 151: "ignore this float text"
           text run at (0,324) width 259: "ignore this float text ignore this float"
       RenderBlock {DIV} at (0,143) size 769x468 [color=#C0C0C0]
-        RenderText {TEXT} at (384,0) size 769x468
+        RenderText {#text} at (384,0) size 769x468
           text run at (384,0) width 385: "this is some dummy text this is some dummy text this is some"
           text run at (384,18) width 54: "dummy "
           text run at (438,18) width 331: "text this is some dummy text this is some dummy"
@@ -100,6 +100,6 @@ layer at (0,0) size 785x781
           text run at (0,450) width 156: "some dummy text this is "
           text run at (156,450) width 268: "some dummy text this is some dummy text"
       RenderBlock {P} at (32,643) size 705x74 [color=#000080]
-        RenderText {TEXT} at (19,0) size 686x74
+        RenderText {#text} at (19,0) size 686x74
           text run at (19,0) width 686: "The above gray text should flow around the blue box."
           text run at (673,37) width 32: "\x{21E7}"

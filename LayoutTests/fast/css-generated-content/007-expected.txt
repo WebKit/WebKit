@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 784x18
         RenderInline (generated) at (0,0) size 10x18
-          RenderText {TEXT} at (0,0) size 10x18
+          RenderText {#text} at (0,0) size 10x18
             text run at (0,0) width 10: "T"
-        RenderText {TEXT} at (10,0) size 269x18
+        RenderText {#text} at (10,0) size 269x18
           text run at (10,0) width 269: "HIS TEXT SHOULD BE UPPERCASE."
       RenderBlock {P} at (0,34) size 784x18
         RenderInline (generated) at (0,0) size 279x18

@@ -6,11 +6,11 @@ layer at (0,0) size 800x84
       RenderBlock {DIV} at (0,0) size 784x52
         RenderBlock {P} at (0,0) size 784x18 [color=#00FF00]
           RenderInline {SPAN} at (0,0) size 492x18 [color=#000000]
-            RenderText {TEXT} at (0,0) size 492x18
+            RenderText {#text} at (0,0) size 492x18
               text run at (0,0) width 492: "The color of this text should be green when the pointing device hovers over it."
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (0,34) size 784x18 [color=#00FF00]
           RenderInline {A} at (0,0) size 492x18 [color=#000000]
-            RenderText {TEXT} at (0,0) size 492x18
+            RenderText {#text} at (0,0) size 492x18
               text run at (0,0) width 492: "The color of this text should be green when the pointing device hovers over it."
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0

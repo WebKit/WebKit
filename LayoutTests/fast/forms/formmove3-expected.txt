@@ -5,18 +5,18 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {A} at (0,0) size 0x0
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,0) size 784x0
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {A} at (0,0) size 0x0
       RenderBlock {DIV} at (0,0) size 784x28
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {A} at (0,0) size 0x0
-            RenderText {TEXT} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,0) size 784x28
           RenderTable {TABLE} at (0,0) size 66x28
-            RenderTableSection {TBODY} at (0,0) size 0x28
-              RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableSection {TBODY} at (0,0) size 66x28
+              RenderTableRow {TR} at (0,2) size 66x24
                 RenderTableCell {TD} at (2,13) size 2x2 [r=0 c=0 rs=1 cs=1]
                 RenderBlock {FORM} at (0,0) size 0x0
                 RenderTableCell {TD} at (6,2) size 58x24 [r=0 c=1 rs=1 cs=1]
@@ -27,8 +27,8 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,28) size 784x0
           RenderInline {A} at (0,0) size 0x0
           RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,28) size 784x18
-        RenderText {TEXT} at (0,0) size 104x18
+        RenderText {#text} at (0,0) size 104x18
           text run at (0,0) width 104: "Form did submit"
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

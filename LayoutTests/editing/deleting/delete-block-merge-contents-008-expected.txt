@@ -16,17 +16,17 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,14) size 756x84
           RenderBlock (anonymous) at (0,0) size 756x28
-            RenderText {TEXT} at (0,0) size 40x28
+            RenderText {#text} at (0,0) size 40x28
               text run at (0,0) width 40: "One"
-            RenderText {TEXT} at (40,0) size 44x28
+            RenderText {#text} at (40,0) size 44x28
               text run at (40,0) width 44: "Two"
           RenderBlock {DIV} at (0,28) size 756x56
             RenderBlock {DIV} at (0,0) size 756x28
               RenderBlock (anonymous) at (0,0) size 756x0
               RenderBlock {DIV} at (0,0) size 756x28
-                RenderText {TEXT} at (0,0) size 57x28
+                RenderText {#text} at (0,0) size 57x28
                   text run at (0,0) width 57: "Three"
             RenderBlock (anonymous) at (0,28) size 756x28
-              RenderText {TEXT} at (0,0) size 45x28
+              RenderText {#text} at (0,0) size 45x28
                 text run at (0,0) width 45: "Four"
-caret: position 3 of child 0 {TEXT} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

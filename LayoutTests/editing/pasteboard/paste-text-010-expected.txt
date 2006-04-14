@@ -59,13 +59,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
-        RenderText {TEXT} at (14,14) size 348x28
+        RenderText {#text} at (14,14) size 348x28
           text run at (14,14) width 348: "There is a tide in the affairs of men."
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (362,36) size 0x0
         RenderBR {BR} at (14,42) size 0x28
-        RenderText {TEXT} at (14,70) size 74x28
+        RenderText {#text} at (14,70) size 74x28
           text run at (14,70) width 74: "of men."
-        RenderText {TEXT} at (88,70) size 74x28
+        RenderText {#text} at (88,70) size 74x28
           text run at (88,70) width 74: "of men."
-        RenderBR {BR} at (0,0) size 0x0
-caret: position 7 of child 4 {TEXT} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+        RenderBR {BR} at (162,92) size 0x0
+caret: position 7 of child 4 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

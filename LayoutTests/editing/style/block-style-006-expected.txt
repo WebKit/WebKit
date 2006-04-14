@@ -26,27 +26,27 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #0000FF)]
-        RenderText {TEXT} at (14,14) size 742x56
+        RenderText {#text} at (14,14) size 742x56
           text run at (14,14) width 742: "You should see one \"x\" followed by two blank lines, then one more \"x\". The"
           text run at (14,42) width 376: "blank lines should be the same height. "
           text run at (390,42) width 262: "The second and third lines "
         RenderInline {B} at (0,0) size 50x28
-          RenderText {TEXT} at (652,42) size 50x28
+          RenderText {#text} at (652,42) size 50x28
             text run at (652,42) width 50: "must"
-        RenderText {TEXT} at (702,42) size 753x56
+        RenderText {#text} at (702,42) size 753x56
           text run at (702,42) width 65: " be the"
           text run at (14,70) width 191: "same height. See: <"
         RenderInline {A} at (0,0) size 232x28 [color=#0000EE]
-          RenderText {TEXT} at (205,70) size 232x28
+          RenderText {#text} at (205,70) size 232x28
             text run at (205,70) width 232: "rdar://problem/3959727"
-        RenderText {TEXT} at (437,70) size 721x56
+        RenderText {#text} at (437,70) size 721x56
           text run at (437,70) width 298: "> REGRESSION (Mail): Style"
           text run at (14,98) width 273: "not preserved on blank lines"
       RenderBlock {DIV} at (0,164) size 784x276
         RenderBlock {DIV} at (0,0) size 784x69
           RenderInline {FONT} at (0,0) size 30x55
             RenderInline {SPAN} at (0,0) size 30x69
-              RenderText {TEXT} at (0,0) size 30x69
+              RenderText {#text} at (0,0) size 30x69
                 text run at (0,0) width 30: "x"
         RenderBlock {DIV} at (0,69) size 784x69
           RenderInline {FONT} at (0,0) size 0x55
@@ -59,6 +59,6 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,207) size 784x69
           RenderInline {FONT} at (0,0) size 30x55
             RenderInline {SPAN} at (0,0) size 30x69
-              RenderText {TEXT} at (0,0) size 30x69
+              RenderText {#text} at (0,0) size 30x69
                 text run at (0,0) width 30: "x"
-caret: position 0 of child 0 {TEXT} of child 0 {SPAN} of child 0 {FONT} of child 4 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {FONT} of child 4 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

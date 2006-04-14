@@ -3,17 +3,17 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (74.50,69.50) size 301x161
         RenderSVGText {text} at (0,0) size 465x42
-          RenderText {TEXT} at (0,0) size 410x42
+          RenderText {#text} at (0,0) size 410x41
             text run at (0,0) width 410: "Basic paint: fill properties."
         KCanvasItem {rect} at (74.50,69.50) size 101x161 [stroke={[type=SOLID] [color=#000000]}] [data="M75.00,70.00L175.00,70.00L175.00,230.00L75.00,230.00"]
         KCanvasItem {rect} at (274.50,69.50) size 101x161 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M275.00,70.00L375.00,70.00L375.00,230.00L275.00,230.00"]
         RenderSVGText {text} at (0,0) size 465x42
-          RenderText {TEXT} at (0,0) size 124x42
+          RenderText {#text} at (0,0) size 124x41
             text run at (0,0) width 124: "fill:none"
         RenderSVGText {text} at (0,0) size 465x42
-          RenderText {TEXT} at (0,0) size 96x42
+          RenderText {#text} at (0,0) size 96x41
             text run at (0,0) width 96: "fill:red"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

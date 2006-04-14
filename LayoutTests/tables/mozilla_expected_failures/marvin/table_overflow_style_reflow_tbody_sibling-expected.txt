@@ -5,31 +5,31 @@ layer at (0,0) size 785x705
     RenderBody {BODY} at (8,8) size 769x689
       RenderTable {TABLE} at (0,0) size 200x689 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 198x206 [border: (3px solid #FFA500)]
-          RenderText {TEXT} at (77,3) size 44x37
+          RenderText {#text} at (77,3) size 44x37
             text run at (77,3) width 44: "cap"
-        RenderTableSection {TBODY} at (1,207) size 0x116
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,207) size 198x116
+          RenderTableRow {TR} at (0,30) size 198x56
             RenderTableCell {TD} at (30,48) size 54x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 21x18
+              RenderText {#text} at (1,1) size 21x18
                 text run at (1,1) width 21: "foo"
             RenderTableCell {TD} at (114,30) size 54x56 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 20x18
+              RenderText {#text} at (1,1) size 20x18
                 text run at (1,1) width 20: "bar"
               RenderBR {BR} at (21,1) size 0x18
-              RenderText {TEXT} at (1,19) size 22x18
+              RenderText {#text} at (1,19) size 22x18
                 text run at (1,19) width 22: "baz"
               RenderBR {BR} at (23,19) size 0x18
-              RenderText {TEXT} at (1,37) size 22x18
+              RenderText {#text} at (1,37) size 22x18
                 text run at (1,37) width 22: "zap"
-        RenderTableSection {TBODY} at (1,323) size 0x365
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,323) size 198x365
+          RenderTableRow {TR} at (0,30) size 198x305
             RenderTableCell {TD} at (30,126) size 54x113 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 44x111
+              RenderText {#text} at (1,1) size 44x111
                 text run at (1,1) width 43: "foo"
                 text run at (1,38) width 41: "bar"
                 text run at (1,75) width 44: "baz"
             RenderTableCell {TD} at (114,30) size 54x305 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 52x52 [border: (1px solid #008000)]
                 RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]
-                  RenderText {TEXT} at (1,1) size 16x37
+                  RenderText {#text} at (1,1) size 16x37
                     text run at (1,1) width 16: "d"

@@ -4,29 +4,31 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {PRE} at (0,0) size 784x30
-        RenderText {TEXT} at (0,0) size 552x30
+        RenderText {#text} at (0,0) size 552x30
           text run at (0,0) width 544: "Caught expected exception: Error: NOT_SUPPORTED_ERR: DOM Exception 9"
+          text run at (544,0) width 0: " "
           text run at (0,15) width 552: "Caught expected exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17"
+          text run at (552,15) width 0: " "
       RenderBlock (anonymous) at (0,43) size 784x18
         RenderInline {SPAN} at (0,0) size 60x18
-          RenderText {TEXT} at (0,0) size 60x18
+          RenderText {#text} at (0,0) size 60x18
             text run at (0,0) width 60: "1 (black) "
         RenderInline {SPAN} at (0,0) size 122x18 [color=#008000]
           RenderInline {SPAN} at (0,0) size 61x18
-            RenderText {TEXT} at (60,0) size 61x18
+            RenderText {#text} at (60,0) size 61x18
               text run at (60,0) width 61: "2 (green) "
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 61x18
-            RenderText {TEXT} at (121,0) size 61x18
+            RenderText {#text} at (121,0) size 61x18
               text run at (121,0) width 61: "3 (green) "
         RenderInline {SPAN} at (0,0) size 60x18
-          RenderText {TEXT} at (182,0) size 60x18
+          RenderText {#text} at (182,0) size 60x18
             text run at (182,0) width 60: "4 (black) "
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 39x18 [color=#008000]
-          RenderText {TEXT} at (242,0) size 39x18
+          RenderText {#text} at (242,0) size 39x18
             text run at (242,0) width 39: "PASS"
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

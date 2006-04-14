@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
       KCanvasContainer {g} at (36.16,38.08) size 327.00x125.08
         KCanvasContainer {g} at (36.16,38.08) size 79.68x121.76 [transform={m=((1.00,0.00)(0.00,1.00)) t=(400.00,0.00)}]
           RenderSVGText {text} at (0,0) size 785x364
-            RenderText {TEXT} at (0,0) size 436x364
+            RenderText {#text} at (0,0) size 436x364
               text run at (0,0) width 329: "Abs."
               text run at (0,182) width 436: "units:"
           KCanvasItem {rect} at (38.08,38.08) size 39.84x21.84 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,400.00L360.00,400.00L360.00,580.00L0.00,580.00"]
@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
             KCanvasItem {rect} at (36.16,116.16) size 79.68x43.68 [stroke={[type=SOLID] [color=#FF0000] [stroke width=38.40]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,600.00L360.00,600.00L360.00,780.00L0.00,780.00"]
         KCanvasContainer {g} at (156.25,38.12) size 82.50x123.12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1600.00,0.00)}]
           RenderSVGText {text} at (0,0) size 785x182
-            RenderText {TEXT} at (0,0) size 778x182
+            RenderText {#text} at (0,0) size 778x182
               text run at (0,0) width 778: "Rel. units:"
           KCanvasItem {rect} at (158.12,38.12) size 41.25x22.50 [stroke={[type=SOLID] [color=#FF0000] [stroke width=37.50]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,400.00L375.00,400.00L375.00,587.50L0.00,587.50"]
           KCanvasItem {rect} at (158.12,73.12) size 41.25x22.50 [stroke={[type=SOLID] [color=#FF0000] [stroke width=37.50]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,750.00L375.00,750.00L375.00,937.50L0.00,937.50"]
@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
             KCanvasItem {rect} at (156.25,116.25) size 82.50x45 [stroke={[type=SOLID] [color=#FF0000] [stroke width=37.50]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,600.00L375.00,600.00L375.00,787.50L0.00,787.50"]
         KCanvasContainer {g} at (276.84,38.42) size 86.32x124.74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2800.00,0.00)}]
           RenderSVGText {text} at (0,0) size 785x182
-            RenderText {TEXT} at (0,0) size 982x182
+            RenderText {#text} at (0,0) size 982x182
               text run at (0,0) width 982: "Percentages:"
           KCanvasItem {rect} at (278.42,38.42) size 43.16x23.16 [stroke={[type=SOLID] [color=#FF0000] [stroke width=31.62]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,400.00L400.00,400.00L400.00,600.00L0.00,600.00"]
           KCanvasItem {rect} at (278.42,73.42) size 43.16x23.16 [stroke={[type=SOLID] [color=#FF0000] [stroke width=31.62]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,750.00L400.00,750.00L400.00,950.00L0.00,950.00"]

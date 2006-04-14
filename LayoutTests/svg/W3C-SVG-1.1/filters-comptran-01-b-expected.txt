@@ -13,23 +13,23 @@ layer at (0,0) size 480x360
             KCanvasItem {rect} at (0.36,0.36) size 449.29x299.29 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
             KCanvasItem {rect} at (7.14,7.14) size 414.29x28.57 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (0.33,#00FF00), (0.67,#0000FF), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Identity] [data="M10.00,10.00L590.00,10.00L590.00,50.00L10.00,50.00"]
             RenderSVGText {text} at (0,0) size 465x36
-              RenderText {TEXT} at (0,0) size 206x36
+              RenderText {#text} at (0,0) size 206x36
                 text run at (0,0) width 206: "type: identity"
             KCanvasItem {rect} at (7.14,78.57) size 414.29x28.57 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (0.33,#00FF00), (0.67,#0000FF), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Table] [data="M10.00,110.00L590.00,110.00L590.00,150.00L10.00,150.00"]
             RenderSVGText {text} at (0,0) size 465x36
-              RenderText {TEXT} at (0,0) size 167x36
+              RenderText {#text} at (0,0) size 167x36
                 text run at (0,0) width 167: "type: table"
             KCanvasItem {rect} at (7.14,150) size 414.29x28.57 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (0.33,#00FF00), (0.67,#0000FF), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Linear] [data="M10.00,210.00L590.00,210.00L590.00,250.00L10.00,250.00"]
             RenderSVGText {text} at (0,0) size 465x72
-              RenderText {TEXT} at (0,0) size 299x72
+              RenderText {#text} at (0,0) size 299x72
                 text run at (0,0) width 299: "type:linear slope:.5"
                 text run at (0,36) width 291: "intercepts:.25/0/.5"
             KCanvasItem {rect} at (7.14,221.43) size 414.29x28.57 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (0.33,#00FF00), (0.67,#0000FF), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Gamma] [data="M10.00,310.00L590.00,310.00L590.00,350.00L10.00,350.00"]
             RenderSVGText {text} at (0,0) size 465x72
-              RenderText {TEXT} at (0,0) size 323x72
+              RenderText {#text} at (0,0) size 323x72
                 text run at (0,0) width 323: "type: gamma ampl:2"
                 text run at (0,36) width 256: "exponents:5/3/1"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

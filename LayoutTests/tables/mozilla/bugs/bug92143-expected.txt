@@ -6,10 +6,10 @@ layer at (0,0) size 2410x600
       RenderBlock (anonymous) at (0,0) size 769x18
         RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,18) size 324x58 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 0x56
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 322x56
+          RenderTableRow {TR} at (0,0) size 322x56
             RenderTableCell {TD} at (0,0) size 322x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 313x54
+              RenderText {#text} at (1,1) size 313x54
                 text run at (1,1) width 280: "Hotmail's Junk Mail spreading effort just got"
                 text run at (1,19) width 44: "better! "
                 text run at (45,19) width 269: "Now you can choose from 3 levels of junk"
@@ -17,15 +17,15 @@ layer at (0,0) size 2410x600
       RenderBlock (anonymous) at (0,76) size 769x72
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
-        RenderText {TEXT} at (0,36) size 437x18
+        RenderText {#text} at (0,36) size 437x18
           text run at (0,36) width 437: "the next table must overrun the visible part of the view (width=2400) "
         RenderBR {BR} at (0,0) size 0x0
         RenderBR {BR} at (0,54) size 0x18
       RenderTable {TABLE} at (0,148) size 2402x58 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 0x56
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 2400x56
+          RenderTableRow {TR} at (0,0) size 2400x56
             RenderTableCell {TD} at (0,0) size 2400x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 2373x54
+              RenderText {#text} at (1,1) size 2373x54
                 text run at (1,1) width 328: "Hotmail's Junk Mail spreading effort just got better! "
                 text run at (329,1) width 309: "Now you can choose from 3 levels of junk mail! "
                 text run at (638,1) width 328: "Hotmail's Junk Mail spreading effort just got better! "

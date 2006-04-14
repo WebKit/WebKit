@@ -13,38 +13,38 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,0) size 784x196
         RenderBlock {P} at (0,0) size 784x16
           RenderInline {B} at (0,0) size 272x16
-            RenderText {TEXT} at (0,0) size 272x16
+            RenderText {#text} at (0,0) size 272x16
               text run at (0,0) width 272: "Expect ref node 'D'; pointer after"
-          RenderText {TEXT} at (272,0) size 184x16
+          RenderText {#text} at (272,0) size 184x16
             text run at (272,0) width 184: ": A B C [D] * E F G H I"
         RenderBlock {P} at (0,30) size 784x16
-          RenderText {TEXT} at (0,0) size 120x16
+          RenderText {#text} at (0,0) size 120x16
             text run at (0,0) width 120: "remove node 'E'"
         RenderBlock {P} at (0,60) size 784x16
           RenderInline {B} at (0,0) size 272x16
-            RenderText {TEXT} at (0,0) size 272x16
+            RenderText {#text} at (0,0) size 272x16
               text run at (0,0) width 272: "Expect ref node 'D'; pointer after"
-          RenderText {TEXT} at (272,0) size 168x16
+          RenderText {#text} at (272,0) size 168x16
             text run at (272,0) width 168: ": A B C [D] * F G H I"
         RenderBlock {P} at (0,90) size 784x16
-          RenderText {TEXT} at (0,0) size 240x16
+          RenderText {#text} at (0,0) size 240x16
             text run at (0,0) width 240: "insert new node 'X' before 'F'"
         RenderBlock {P} at (0,120) size 784x16
           RenderInline {B} at (0,0) size 272x16
-            RenderText {TEXT} at (0,0) size 272x16
+            RenderText {#text} at (0,0) size 272x16
               text run at (0,0) width 272: "Expect ref node 'D'; pointer after"
-          RenderText {TEXT} at (272,0) size 184x16
+          RenderText {#text} at (272,0) size 184x16
             text run at (272,0) width 184: ": A B C [D] * X F G H I"
         RenderBlock {P} at (0,150) size 784x16
-          RenderText {TEXT} at (0,0) size 192x16
+          RenderText {#text} at (0,0) size 192x16
             text run at (0,0) width 192: "move node 'I' before 'X'"
         RenderBlock {P} at (0,180) size 784x16
           RenderInline {B} at (0,0) size 272x16
-            RenderText {TEXT} at (0,0) size 272x16
+            RenderText {#text} at (0,0) size 272x16
               text run at (0,0) width 272: "Expect ref node 'D'; pointer after"
-          RenderText {TEXT} at (272,0) size 184x16
+          RenderText {#text} at (272,0) size 184x16
             text run at (272,0) width 184: ": A B C [D] * I X F G H"

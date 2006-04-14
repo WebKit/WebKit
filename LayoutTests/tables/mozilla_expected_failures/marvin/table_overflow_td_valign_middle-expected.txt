@@ -4,13 +4,13 @@ layer at (0,0) size 800x429
   RenderBlock {HTML} at (0,0) size 800x429
     RenderBody {BODY} at (8,8) size 784x413
       RenderTable {TABLE} at (0,0) size 200x413 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 0x411
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 198x411
+          RenderTableRow {TR} at (0,2) size 198x407
             RenderTableCell {TD} at (2,194) size 117x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 21x18
+              RenderText {#text} at (2,2) size 21x18
                 text run at (2,2) width 21: "foo"
             RenderTableCell {TD} at (121,2) size 75x407 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 12x12 [border: (1px solid #008000)]
                 RenderBlock {DIV} at (1,1) size 302x402 [border: (1px solid #FF0000)]
-                  RenderText {TEXT} at (1,1) size 8x18
+                  RenderText {#text} at (1,1) size 8x18
                     text run at (1,1) width 8: "d"

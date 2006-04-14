@@ -94,12 +94,12 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (14,14) size 756x28
           RenderInline {SPAN} at (0,0) size 150x28
             RenderInline {B} at (0,0) size 150x28
-              RenderText {TEXT} at (0,0) size 150x28
+              RenderText {#text} at (0,0) size 150x28
                 text run at (0,0) width 150: "xxxxxx xxxxxx"
           RenderInline {SPAN} at (0,0) size 0x28
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
         RenderBlock {DIV} at (14,42) size 756x28
           RenderInline {B} at (0,0) size 156x28
-            RenderText {TEXT} at (0,0) size 156x28
+            RenderText {#text} at (0,0) size 156x28
               text run at (0,0) width 156: " xxxxxx xxxxxx"
-caret: position 14 of child 0 {TEXT} of child 0 {B} of child 4 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 14 of child 0 {#text} of child 0 {B} of child 4 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

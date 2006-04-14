@@ -18,33 +18,35 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x316 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x84
-          RenderText {TEXT} at (0,0) size 67x28
+          RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 737x56
+          RenderText {#text} at (0,28) size 737x56
             text run at (0,28) width 737: "Copying and pasting content inside of a PRE tag. This test was created after"
             text run at (0,56) width 64: "fixing "
           RenderInline {A} at (0,0) size 84x28 [color=#0000EE]
-            RenderText {TEXT} at (64,56) size 84x28
+            RenderText {#text} at (64,56) size 84x28
               text run at (64,56) width 84: "3918056"
-          RenderText {TEXT} at (148,56) size 6x28
+          RenderText {#text} at (148,56) size 6x28
             text run at (148,56) width 6: "."
         RenderBlock {DIV} at (14,114) size 756x164
           RenderBlock (anonymous) at (0,0) size 756x84
-            RenderText {TEXT} at (0,0) size 189x28
+            RenderText {#text} at (0,0) size 189x28
               text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (0,0) size 0x0
-            RenderText {TEXT} at (0,28) size 690x56
+            RenderBR {BR} at (189,22) size 0x0
+            RenderText {#text} at (0,28) size 690x56
               text run at (0,28) width 690: "The PRE tag and the formatting of the text inside of the PRE should be"
               text run at (0,56) width 557: "maintained. Should see this content in the red box below:"
           RenderBlock {PRE} at (0,108) size 756x56
-            RenderText {TEXT} at (0,0) size 42x56
+            RenderText {#text} at (0,0) size 42x56
               text run at (0,0) width 42: "foo"
+              text run at (42,0) width 0: " "
               text run at (0,28) width 42: "bar"
       RenderBlock {DIV} at (0,340) size 784x108
         RenderBlock {DIV} at (0,0) size 784x108 [border: (2px solid #FF0000)]
           RenderBlock {PRE} at (2,26) size 780x56
-            RenderText {TEXT} at (0,0) size 42x56
+            RenderText {#text} at (0,0) size 42x56
               text run at (0,0) width 42: "foo"
+              text run at (42,0) width 0: " "
               text run at (0,28) width 42: "bar"
-caret: position 7 of child 0 {TEXT} of child 1 {PRE} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 0 {#text} of child 1 {PRE} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

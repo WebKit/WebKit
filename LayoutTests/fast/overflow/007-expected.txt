@@ -6,32 +6,32 @@ layer at (0,0) size 800x388
 layer at (143,32) size 514x146 clip at (144,33) size 497x144 scrollHeight 284
   RenderBlock {DIV} at (111,0) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
     RenderBlock {P} at (17,17) size 465x72
-      RenderText {TEXT} at (0,0) size 220x18
+      RenderText {#text} at (0,0) size 220x18
         text run at (0,0) width 220: "This page is to test the behavior of "
       RenderInline {CODE} at (0,0) size 136x15
-        RenderText {TEXT} at (220,2) size 136x15
+        RenderText {#text} at (220,2) size 136x15
           text run at (220,2) width 136: "position:absolute"
-      RenderText {TEXT} at (356,0) size 463x36
+      RenderText {#text} at (356,0) size 463x36
         text run at (356,0) width 107: " content which is"
         text run at (0,18) width 275: "a child of an overflowed parent object with "
       RenderInline {CODE} at (0,0) size 104x15
-        RenderText {TEXT} at (275,20) size 104x15
+        RenderText {#text} at (275,20) size 104x15
           text run at (275,20) width 104: "overflow:auto"
-      RenderText {TEXT} at (379,18) size 454x36
+      RenderText {#text} at (379,18) size 454x36
         text run at (379,18) width 75: ", both when"
         text run at (0,36) width 133: "the parent element is "
       RenderInline {CODE} at (0,0) size 120x15
-        RenderText {TEXT} at (133,38) size 120x15
+        RenderText {#text} at (133,38) size 120x15
           text run at (133,38) width 120: "position:static"
-      RenderText {TEXT} at (253,36) size 92x18
+      RenderText {#text} at (253,36) size 92x18
         text run at (253,36) width 92: " (top case) and"
       RenderInline {CODE} at (0,0) size 136x15
-        RenderText {TEXT} at (0,56) size 136x15
+        RenderText {#text} at (0,56) size 136x15
           text run at (0,56) width 136: "position:relative"
-      RenderText {TEXT} at (136,54) size 93x18
+      RenderText {#text} at (136,54) size 93x18
         text run at (136,54) width 93: " (bottom case)."
     RenderBlock {P} at (17,105) size 465x180 [color=#999999]
-      RenderText {TEXT} at (0,0) size 465x180
+      RenderText {#text} at (0,0) size 465x180
         text run at (0,0) width 457: "Following extra content exists to ensure that the parent box overflows properly. Sed"
         text run at (0,15) width 449: "ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque"
         text run at (0,30) width 454: "laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi"
@@ -46,26 +46,26 @@ layer at (143,32) size 514x146 clip at (144,33) size 497x144 scrollHeight 284
         text run at (0,165) width 220: "eum fugiat quo voluptas nulla pariatur?"
 layer at (0,0) size 40x34
   RenderBlock (positioned) {P} at (0,0) size 40x34 [bgcolor=#FF0000]
-    RenderText {TEXT} at (8,8) size 24x18
+    RenderText {#text} at (8,8) size 24x18
       text run at (8,8) width 24: "hi 1"
 layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 336
   RenderBlock (relative positioned) {DIV} at (111,178) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
     RenderBlock {P} at (17,17) size 465x36
-      RenderText {TEXT} at (0,0) size 462x36
+      RenderText {#text} at (0,0) size 462x36
         text run at (0,0) width 462: "Safari v1.2.2 incorrectly scrolls the 'hi 1' div when its parent is scrolled. If"
         text run at (0,18) width 327: "you resize the page even a little, this bug fixes itself."
     RenderBlock {P} at (17,69) size 465x72
-      RenderText {TEXT} at (0,0) size 401x18
+      RenderText {#text} at (0,0) size 401x18
         text run at (0,0) width 401: "Safari v1.2.2 also (really odd) causes the entire second div to be"
       RenderInline {CODE} at (0,0) size 88x15
-        RenderText {TEXT} at (0,20) size 88x15
+        RenderText {#text} at (0,20) size 88x15
           text run at (0,20) width 88: "opacity:0.5"
-      RenderText {TEXT} at (88,18) size 440x54
+      RenderText {#text} at (88,18) size 440x54
         text run at (88,18) width 347: ", despite the fact that this property is only applied to the"
         text run at (0,36) width 440: "child item. This problem fixes itself if you resize the window and then"
         text run at (0,54) width 85: "scroll the div."
     RenderBlock {P} at (17,157) size 465x180 [color=#999999]
-      RenderText {TEXT} at (0,0) size 465x180
+      RenderText {#text} at (0,0) size 465x180
         text run at (0,0) width 457: "Following extra content exists to ensure that the parent box overflows properly. Sed"
         text run at (0,15) width 449: "ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque"
         text run at (0,30) width 454: "laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi"
@@ -80,5 +80,5 @@ layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 336
         text run at (0,165) width 220: "eum fugiat quo voluptas nulla pariatur?"
 layer at (144,211) size 40x34
   RenderBlock (positioned) {P} at (1,1) size 40x34 [bgcolor=#FF0000]
-    RenderText {TEXT} at (8,8) size 24x18
+    RenderText {#text} at (8,8) size 24x18
       text run at (8,8) width 24: "hi 2"

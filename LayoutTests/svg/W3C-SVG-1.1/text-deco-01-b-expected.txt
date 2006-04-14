@@ -3,44 +3,44 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (0,0) size 0x0
         RenderSVGText {text} at (0,0) size 465x18
-          RenderText {TEXT} at (0,0) size 150x18
+          RenderText {#text} at (0,0) size 150x17
             text run at (0,0) width 150: "Test 'text-decoration'."
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x28
-            RenderText {TEXT} at (0,0) size 122x28
+            RenderText {#text} at (0,0) size 122x27
               text run at (0,0) width 122: "Normal text"
           RenderSVGText {text} at (0,0) size 465x28
-            RenderText {TEXT} at (0,0) size 227x28
+            RenderText {#text} at (0,0) size 227x27
               text run at (0,0) width 227: "Text with line-through"
           RenderSVGText {text} at (0,0) size 465x28
-            RenderText {TEXT} at (0,0) size 159x28
+            RenderText {#text} at (0,0) size 159x27
               text run at (0,0) width 159: "Underlined text"
           RenderSVGText {text} at (0,0) size 465x28
             RenderInline {tspan} at (0,0) size 45x27
-              RenderText {TEXT} at (0,0) size 45x28
+              RenderText {#text} at (0,0) size 45x27
                 text run at (0,0) width 45: "One"
-            RenderText {TEXT} at (45,0) size 7x28
+            RenderText {#text} at (45,0) size 7x27
               text run at (45,0) width 7: " "
             RenderInline {tspan} at (0,0) size 51x27
-              RenderText {TEXT} at (52,0) size 51x28
+              RenderText {#text} at (52,0) size 51x27
                 text run at (52,0) width 51: "word"
-            RenderText {TEXT} at (103,0) size 7x28
+            RenderText {#text} at (103,0) size 7x27
               text run at (103,0) width 7: " "
             RenderInline {tspan} at (0,0) size 38x27
-              RenderText {TEXT} at (110,0) size 38x28
+              RenderText {#text} at (110,0) size 38x27
                 text run at (110,0) width 38: "has"
-            RenderText {TEXT} at (148,0) size 7x28
+            RenderText {#text} at (148,0) size 7x27
               text run at (148,0) width 7: " "
             RenderInline {tspan} at (0,0) size 86x27
-              RenderText {TEXT} at (155,0) size 86x28
+              RenderText {#text} at (155,0) size 86x27
                 text run at (155,0) width 86: "different"
-            RenderText {TEXT} at (241,0) size 7x28
+            RenderText {#text} at (241,0) size 7x27
               text run at (241,0) width 7: " "
             RenderInline {tspan} at (0,0) size 114x27
-              RenderText {TEXT} at (248,0) size 114x28
+              RenderText {#text} at (248,0) size 114x27
                 text run at (248,0) width 114: "underlining"
-            RenderText {TEXT} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -4,10 +4,10 @@ layer at (0,0) size 800x206
   RenderBlock {HTML} at (0,0) size 800x206
     RenderBody {BODY} at (8,16) size 784x182
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-        RenderText {TEXT} at (0,0) size 321x18
+        RenderText {#text} at (0,0) size 321x18
           text run at (0,0) width 321: "There should be two unbroken vertical bars below."
       RenderBlock {P} at (0,34) size 784x36 [color=#000080]
-        RenderText {TEXT} at (0,0) size 754x36
+        RenderText {#text} at (0,0) size 754x36
           text run at (0,0) width 403: "Hold up a credit card to your display. The distance between the "
           text run at (403,0) width 351: "two vertical bars should be exactly the length of a credit"
           text run at (0,18) width 31: "card "

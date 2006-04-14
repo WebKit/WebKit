@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,10) size 4x2
-        RenderTableSection {TBODY} at (0,0) size 0x2
+        RenderTableSection {TBODY} at (0,0) size 4x2
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,0) size 0x2 [r=-1 c=-1 rs=1947483647 cs=1]

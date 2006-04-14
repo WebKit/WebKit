@@ -24,27 +24,27 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {TEXT} at (0,0) size 67x28
+          RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 640x28
+          RenderText {#text} at (0,28) size 640x28
             text run at (0,28) width 640: "Smart paste when pasting between smart paste exempt characters."
         RenderBlock {DIV} at (14,86) size 756x112
-          RenderText {TEXT} at (0,0) size 189x28
+          RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 754x56
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 754x56
             text run at (0,28) width 754: "No spaces should be added before or after the pasted word. It should look like"
             text run at (0,56) width 48: "this: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,84) size 50x28
+          RenderBR {BR} at (48,78) size 0x0
+          RenderText {#text} at (0,84) size 50x28
             text run at (0,84) width 50: "-test-"
       RenderBlock {DIV} at (0,236) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {TEXT} at (2,2) size 8x28
+          RenderText {#text} at (2,2) size 8x28
             text run at (2,2) width 8: "-"
-          RenderText {TEXT} at (10,2) size 34x28
+          RenderText {#text} at (10,2) size 34x28
             text run at (10,2) width 34: "test"
-          RenderText {TEXT} at (44,2) size 8x28
+          RenderText {#text} at (44,2) size 8x28
             text run at (44,2) width 8: "-"
-caret: position 4 of child 1 {TEXT} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 4 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

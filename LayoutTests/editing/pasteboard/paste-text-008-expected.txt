@@ -113,21 +113,21 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x28
-          RenderText {TEXT} at (0,0) size 351x28
+          RenderText {#text} at (0,0) size 351x28
             text run at (0,0) width 351: "Omitted, all the voyage of their life,"
         RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
-          RenderText {TEXT} at (14,14) size 114x28
+          RenderText {#text} at (14,14) size 114x28
             text run at (14,14) width 114: "Is bound in "
-          RenderText {TEXT} at (128,14) size 243x28
+          RenderText {#text} at (128,14) size 243x28
             text run at (128,14) width 243: "shallows and in miseries."
         RenderBlock (anonymous) at (14,98) size 756x28
-          RenderText {TEXT} at (0,0) size 197x28
+          RenderText {#text} at (0,0) size 197x28
             text run at (0,0) width 197: "Upon such a full sea"
-          RenderText {TEXT} at (197,0) size 243x28
+          RenderText {#text} at (197,0) size 243x28
             text run at (197,0) width 243: "shallows and in miseries."
       RenderBlock {DIV} at (0,140) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {TEXT} at (14,14) size 197x28
+        RenderText {#text} at (14,14) size 197x28
           text run at (14,14) width 197: "Upon such a full sea"
-        RenderText {TEXT} at (211,14) size 185x28
+        RenderText {#text} at (211,14) size 185x28
           text run at (211,14) width 185: " are we now afloat,"
-caret: position 20 of child 0 {TEXT} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 20 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

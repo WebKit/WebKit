@@ -11,7 +11,7 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
         KCanvasItem {rect} at (24.50,9.50) size 431x61 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M25.00,10.00L455.00,10.00L455.00,70.00L25.00,70.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 395x14
+          RenderText {#text} at (0,0) size 395x14
             text run at (0,0) width 395: "Pattern created using red and green rectangles applied to fill of rectangle"
         KCanvasContainer {pattern} at (0,0) size 20x20
           KCanvasItem {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
@@ -20,27 +20,27 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
         KCanvasItem {rect} at (25,100) size 430x60 [stroke={[type=PATTERN] [bbox=at (0,0) size 0x0] [stroke width=20.00]}] [data="M35.00,110.00L445.00,110.00L445.00,150.00L35.00,150.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 305x14
+          RenderText {#text} at (0,0) size 305x14
             text run at (0,0) width 305: "Pattern of 4 rectangles applied to a stroke of a rectangle."
         KCanvasContainer {pattern} at (0,0) size 10x20
           KCanvasItem {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
           KCanvasItem {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,10.00L10.00,10.00L10.00,20.00L0.00,20.00"]
         RenderSVGText {text} at (0,0) size 465x58
-          RenderText {TEXT} at (0,1) size 293x58
+          RenderText {#text} at (0,1) size 293x56
             text run at (0,1) width 293: "Pattern on fill"
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 208x14
+          RenderText {#text} at (0,0) size 208x14
             text run at (0,0) width 208: "Pattern consists of red and green rows"
         KCanvasContainer {pattern} at (0,0) size 20x10
           KCanvasItem {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
           KCanvasItem {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,0.00L20.00,0.00L20.00,10.00L10.00,10.00"]
         RenderSVGText {text} at (0,0) size 465x45
-          RenderText {TEXT} at (0,0) size 302x45
+          RenderText {#text} at (0,0) size 302x44
             text run at (0,0) width 302: "Pattern on stroke"
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 220x14
+          RenderText {#text} at (0,0) size 220x14
             text run at (0,0) width 220: "Pattern consists of red and blue columns"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -18,13 +18,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 381x18
+        RenderText {#text} at (0,0) size 381x18
           text run at (0,0) width 381: "This tests to see if trailing spaces are lost during a copy/paste"
       RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,44) size 784x26 [border: (2px solid #FFAAAA)]
         RenderBlock {DIV} at (2,2) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 569x18
+          RenderText {#text} at (2,2) size 569x18
             text run at (2,2) width 569: "there should be a single trailing space between the '.' and the last character in this sentence "
-          RenderText {TEXT} at (571,2) size 4x18
+          RenderText {#text} at (571,2) size 4x18
             text run at (571,2) width 4: "."
-caret: position 96 of child 0 {TEXT} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 96 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

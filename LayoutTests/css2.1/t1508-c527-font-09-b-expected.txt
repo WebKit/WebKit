@@ -4,10 +4,10 @@ layer at (0,0) size 800x118
   RenderBlock {HTML} at (0,0) size 800x118
     RenderBody {BODY} at (8,9) size 784x100 [color=#000080]
       RenderBlock {P} at (0,0) size 784x100
-        RenderText {TEXT} at (0,6) size 472x25
+        RenderText {#text} at (0,6) size 472x12
           text run at (0,6) width 472: "This test should be about 10px, sans-serif, and light. There should be about 15px between each line. "
         RenderInline {SPAN} at (0,0) size 781x87 [color=#C0C0C0]
-          RenderText {TEXT} at (472,6) size 781x100
+          RenderText {#text} at (472,6) size 781x87
             text run at (472,6) width 277: "dummy text dummy text dummy text dummy text dummy text"
             text run at (0,31) width 36: "dummy "
             text run at (36,31) width 336: "text dummy text dummy text dummy text dummy text dummy text dummy "
@@ -19,4 +19,4 @@ layer at (0,0) size 800x118
             text run at (0,81) width 148: "dummy text dummy text dummy "
             text run at (148,81) width 336: "text dummy text dummy text dummy text dummy text dummy text dummy "
             text run at (484,81) width 297: "text dummy text dummy text dummy text dummy text dummy text"
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

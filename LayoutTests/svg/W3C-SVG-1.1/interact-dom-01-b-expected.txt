@@ -5,9 +5,9 @@ layer at (0,0) size 480x360
         KCanvasContainer {g} at (64.50,19.50) size 351x201
           KCanvasItem {rect} at (64.50,19.50) size 351x201 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#DDDDDD]}] [data="M65.00,20.00L415.00,20.00L415.00,220.00L65.00,220.00"]
           RenderSVGText {text} at (0,0) size 465x63
-            RenderText {TEXT} at (0,0) size 209x63
+            RenderText {#text} at (0,0) size 209x63
               text run at (0,0) width 209: "Start Test"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

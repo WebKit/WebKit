@@ -5,26 +5,26 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {FORM} at (0,0) size 784x19
         RenderBlock {INPUT} at (3,3) size 12x13
-        RenderText {TEXT} at (18,0) size 34x18
+        RenderText {#text} at (18,0) size 34x18
           text run at (18,0) width 34: "Two "
         RenderBlock {INPUT} at (55,3) size 12x13
-        RenderText {TEXT} at (70,0) size 37x18
+        RenderText {#text} at (70,0) size 37x18
           text run at (70,0) width 37: "Three"
       RenderBlock {FORM} at (0,35) size 784x19
         RenderBlock {INPUT} at (3,3) size 12x13
-        RenderText {TEXT} at (18,0) size 31x18
+        RenderText {#text} at (18,0) size 31x18
           text run at (18,0) width 31: "One "
         RenderBlock {INPUT} at (52,3) size 12x13
-        RenderText {TEXT} at (67,0) size 34x18
+        RenderText {#text} at (67,0) size 34x18
           text run at (67,0) width 34: "Two "
         RenderBlock {INPUT} at (104,3) size 12x13
-        RenderText {TEXT} at (119,0) size 41x18
+        RenderText {#text} at (119,0) size 41x18
           text run at (119,0) width 41: "Three "
         RenderBlock {INPUT} at (163,3) size 12x13
-        RenderText {TEXT} at (178,0) size 27x18
+        RenderText {#text} at (178,0) size 27x18
           text run at (178,0) width 27: "One"
       RenderBlock (anonymous) at (0,70) size 784x36
-        RenderText {TEXT} at (0,0) size 766x36
+        RenderText {#text} at (0,0) size 766x36
           text run at (0,0) width 505: "The count of the # of elements in form 1 should be 2 and in form 2 should be 4. "
           text run at (505,0) width 261: "The count in form 1 is 2, and the count in"
           text run at (0,18) width 68: "form 2 is 4"

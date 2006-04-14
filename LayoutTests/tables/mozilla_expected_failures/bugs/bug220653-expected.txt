@@ -4,14 +4,14 @@ layer at (0,0) size 808x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x584
       RenderTable {TABLE} at (0,0) size 800x36 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 0x34
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 798x34
+          RenderTableRow {TR} at (0,3) size 798x28
             RenderTableCell {TD} at (3,3) size 394x28 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=10]
-              RenderText {TEXT} at (5,5) size 12x18
+              RenderText {#text} at (5,5) size 12x18
                 text run at (5,5) width 12: "A"
             RenderTableCell {TD} at (400,3) size 196x28 [border: (1px inset #808080)] [r=0 c=10 rs=1 cs=50]
-              RenderText {TEXT} at (5,5) size 11x18
+              RenderText {#text} at (5,5) size 11x18
                 text run at (5,5) width 11: "B"
             RenderTableCell {TD} at (599,3) size 196x28 [border: (1px inset #808080)] [r=0 c=60 rs=1 cs=120]
-              RenderText {TEXT} at (5,5) size 11x18
+              RenderText {#text} at (5,5) size 11x18
                 text run at (5,5) width 11: "C"

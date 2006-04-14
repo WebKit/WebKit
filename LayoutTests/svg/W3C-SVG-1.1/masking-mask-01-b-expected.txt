@@ -7,27 +7,27 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (10,30) size 250x270
         RenderSVGText {text} at (0,0) size 465x16
-          RenderText {TEXT} at (0,0) size 139x16
+          RenderText {#text} at (0,0) size 139x16
             text run at (0,0) width 139: "Test for mask support"
         KCanvasItem {rect} at (10,30) size 100x260 [fill={[type=SOLID] [color=#FF0000]}] [data="M10.00,30.00L110.00,30.00L110.00,290.00L10.00,290.00"]
         KCanvasContainer {mask} at (60,50) size 100x60
           KCanvasItem {rect} at (60,50) size 100x60 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#FFFFFF7F)]] [bounding box mode=0] [start=(60,50)] [end=(60,120)]}] [data="M60.00,50.00L160.00,50.00L160.00,110.00L60.00,110.00"]
         KCanvasItem {rect} at (60,50) size 100x60 [fill={[type=SOLID] [color=#00FF00]}] [data="M60.00,50.00L160.00,50.00L160.00,110.00L60.00,110.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 163x14
+          RenderText {#text} at (0,0) size 163x14
             text run at (0,0) width 163: "Mask with linear gradient from"
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 135x14
+          RenderText {#text} at (0,0) size 135x14
             text run at (0,0) width 135: "opacity=1 to opactity=0.5"
         KCanvasContainer {mask} at (60,120) size 100x30
           KCanvasItem {rect} at (60,120) size 100x30 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [data="M60.00,120.00L160.00,120.00L160.00,150.00L60.00,150.00"]
         KCanvasItem {rect} at (60,120) size 100x30 [fill={[type=SOLID] [color=#00FF00]}] [data="M60.00,120.00L160.00,120.00L160.00,150.00L60.00,150.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 173x14
+          RenderText {#text} at (0,0) size 173x14
             text run at (0,0) width 173: "Mask with uniform opacity of 0.5"
         KCanvasItem {rect} at (60,160) size 100x30 [fill={[type=SOLID] [color=#00FF00] [opacity=0.50]}] [data="M60.00,160.00L160.00,160.00L160.00,190.00L60.00,190.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 200x14
+          RenderText {#text} at (0,0) size 200x14
             text run at (0,0) width 200: "Rectangle with uniform opacity of 0.5"
         KCanvasContainer {mask} at (60,200) size 200x100
           KCanvasItem {rect} at (60,200) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [data="M60.00,200.00L260.00,200.00L260.00,225.00L60.00,225.00"]
@@ -35,15 +35,15 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (60,250) size 200x25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M60.00,250.00L260.00,250.00L260.00,275.00L60.00,275.00"]
           KCanvasItem {rect} at (60,275) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [data="M60.00,275.00L260.00,275.00L260.00,300.00L60.00,300.00"]
         RenderSVGText {text} at (0,0) size 465x127
-          RenderText {TEXT} at (0,0) size 232x127
+          RenderText {#text} at (0,0) size 232x127
             text run at (0,0) width 232: "SVG"
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 200x14
+          RenderText {#text} at (0,0) size 200x14
             text run at (0,0) width 200: "Text with mask containing rectangles"
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 105x14
+          RenderText {#text} at (0,0) size 105x14
             text run at (0,0) width 105: "of various opacities"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

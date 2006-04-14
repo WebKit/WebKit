@@ -22,18 +22,18 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x132 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x44
-          RenderText {TEXT} at (0,0) size 51x22
+          RenderText {#text} at (0,0) size 51x22
             text run at (0,0) width 51: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,22) size 86x22
+          RenderText {#text} at (0,22) size 86x22
             text run at (0,22) width 86: "Bug fix for "
           RenderInline {A} at (0,0) size 192x22 [color=#0000EE]
-            RenderText {TEXT} at (86,22) size 192x22
+            RenderText {#text} at (86,22) size 192x22
               text run at (86,22) width 192: "<rdar://problem/4180820>"
-          RenderText {TEXT} at (278,22) size 390x22
+          RenderText {#text} at (278,22) size 390x22
             text run at (278,22) width 390: " Erroneous spacing between lines introduced on paste"
         RenderBlock (anonymous) at (14,74) size 756x44
-          RenderText {TEXT} at (0,0) size 713x44
+          RenderText {#text} at (0,0) size 713x44
             text run at (0,0) width 711: "Applying block styles, like text-align, used to wrap paragraphs that needed block style changes in"
             text run at (0,22) width 324: "clones of other paragraphs in the document. "
             text run at (324,22) width 389: "This would almost always introduce unwanted styles."
@@ -41,42 +41,42 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x190 [border: (2px solid #FF0000)]
           RenderBlock {CENTER} at (2,20) size 780x150
             RenderBlock {P} at (0,0) size 780x110
-              RenderText {TEXT} at (0,0) size 76x22
+              RenderText {#text} at (0,0) size 76x22
                 text run at (0,0) width 76: "This is an "
               RenderInline {B} at (0,0) size 82x22
-                RenderText {TEXT} at (76,0) size 82x22
+                RenderText {#text} at (76,0) size 82x22
                   text run at (76,0) width 82: "interactive"
-              RenderText {TEXT} at (158,0) size 622x44
+              RenderText {#text} at (158,0) size 622x44
                 text run at (158,0) width 622: " documentation site, so please help out by posting any useful information that you've "
                 text run at (325,22) width 129: "had to search out."
-              RenderBR {BR} at (0,0) size 0x0
-              RenderText {TEXT} at (20,44) size 115x22
+              RenderBR {BR} at (454,39) size 0x0
+              RenderText {#text} at (20,44) size 115x22
                 text run at (20,44) width 115: "(Adding to this "
               RenderInline {A} at (0,0) size 107x22 [color=#0000EE]
-                RenderText {TEXT} at (135,44) size 107x22
+                RenderText {#text} at (135,44) size 107x22
                   text run at (135,44) width 107: "wiki is so easy"
-              RenderText {TEXT} at (242,44) size 207x22
+              RenderText {#text} at (242,44) size 207x22
                 text run at (242,44) width 207: ", you can't screw it up). See "
               RenderInline {A} at (0,0) size 114x22 [color=#0000EE]
-                RenderText {TEXT} at (449,44) size 114x22
+                RenderText {#text} at (449,44) size 114x22
                   text run at (449,44) width 114: "Wiki Reference"
-              RenderText {TEXT} at (563,44) size 196x22
+              RenderText {#text} at (563,44) size 196x22
                 text run at (563,44) width 196: " for text formatting syntax."
-              RenderBR {BR} at (0,0) size 0x0
-              RenderText {TEXT} at (161,66) size 283x22
+              RenderBR {BR} at (759,61) size 0x0
+              RenderText {#text} at (161,66) size 283x22
                 text run at (161,66) width 283: "Info for setting up your own wiki is at "
               RenderInline {A} at (0,0) size 170x22 [color=#0000EE]
-                RenderText {TEXT} at (444,66) size 170x22
+                RenderText {#text} at (444,66) size 170x22
                   text run at (444,66) width 170: "about howto.apple.com"
-              RenderText {TEXT} at (614,66) size 5x22
+              RenderText {#text} at (614,66) size 5x22
                 text run at (614,66) width 5: "."
-              RenderBR {BR} at (0,0) size 0x0
-              RenderText {TEXT} at (96,88) size 514x22
+              RenderBR {BR} at (619,83) size 0x0
+              RenderText {#text} at (96,88) size 514x22
                 text run at (96,88) width 514: "Check out a cool wiki editor application that helps in wiki generation: "
               RenderInline {A} at (0,0) size 73x22 [color=#0000EE]
-                RenderText {TEXT} at (610,88) size 73x22
+                RenderText {#text} at (610,88) size 73x22
                   text run at (610,88) width 73: "Wikinator"
             RenderBlock {P} at (0,128) size 780x22
-              RenderText {TEXT} at (85,0) size 610x22
+              RenderText {#text} at (85,0) size 610x22
                 text run at (85,0) width 610: "Start browsing the topics below, or use the search field at the bottom of every page."
-caret: position 85 of child 0 {TEXT} of child 2 {P} of child 1 {CENTER} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 85 of child 0 {#text} of child 2 {P} of child 1 {CENTER} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

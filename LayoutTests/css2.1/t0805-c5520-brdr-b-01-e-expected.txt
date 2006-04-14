@@ -4,33 +4,33 @@ layer at (0,0) size 800x290
   RenderBlock {HTML} at (0,0) size 800x290
     RenderBody {BODY} at (8,16) size 784x258 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {TEXT} at (0,0) size 491x18
+        RenderText {#text} at (0,0) size 491x18
           text run at (0,0) width 491: "There should be a solid blue line directly under every occurance of the word \""
         RenderInline {SPAN} at (0,0) size 63x20 [border: (2px solid #0000FF) none]
-          RenderText {TEXT} at (491,0) size 63x18
+          RenderText {#text} at (491,0) size 63x18
             text run at (491,0) width 63: "HERE \x{21E9}"
-        RenderText {TEXT} at (554,0) size 767x36
+        RenderText {#text} at (554,0) size 767x36
           text run at (554,0) width 213: "\". (So there should be 8 blue lines"
           text run at (0,18) width 85: "on this page.)"
       RenderTable {TABLE} at (0,52) size 142x76
-        RenderTableSection {TBODY} at (0,0) size 0x76
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 142x76
+          RenderTableRow {TR} at (0,2) size 142x22
             RenderTableCell {TD} at (2,2) size 138x22 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
-              RenderText {TEXT} at (37,1) size 63x18
+              RenderText {#text} at (37,1) size 63x18
                 text run at (37,1) width 63: "HERE \x{21E9}"
-          RenderTableRow {TR} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,26) size 142x48
             RenderTableCell {TD} at (2,39) size 65x22 [border: none (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 63x18
+              RenderText {#text} at (1,1) size 63x18
                 text run at (1,1) width 63: "HERE \x{21E9}"
             RenderTableCell {TD} at (69,26) size 71x48 [border: none (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (1,1) size 69x26
-                RenderTableSection {TBODY} at (0,0) size 0x26
-                  RenderTableRow {TR} at (0,0) size 0x0
+                RenderTableSection {TBODY} at (0,0) size 69x26
+                  RenderTableRow {TR} at (0,2) size 69x22
                     RenderTableCell {TD} at (2,2) size 65x22 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=1]
-                      RenderText {TEXT} at (1,1) size 63x18
+                      RenderText {#text} at (1,1) size 63x18
                         text run at (1,1) width 63: "HERE \x{21E9}"
               RenderBlock (anonymous) at (1,27) size 69x18
-                RenderText {TEXT} at (3,0) size 63x18
+                RenderText {#text} at (3,0) size 63x18
                   text run at (3,0) width 63: "HERE \x{21E9}"
       RenderBlock {UL} at (0,144) size 784x114
         RenderListItem {LI} at (40,0) size 744x74 [border: (2px solid #0000FF) none]
@@ -38,24 +38,24 @@ layer at (0,0) size 800x290
             RenderListItem {LI} at (40,0) size 704x18
               RenderListMarker at (-57,0) size 7x18
               RenderListMarker at (-17,0) size 7x18
-              RenderText {TEXT} at (0,0) size 75x18
+              RenderText {#text} at (0,0) size 75x18
                 text run at (0,0) width 75: "dummy text"
             RenderListItem {LI} at (40,18) size 704x18
               RenderListMarker at (-17,0) size 7x18
-              RenderText {TEXT} at (0,0) size 75x18
+              RenderText {#text} at (0,0) size 75x18
                 text run at (0,0) width 75: "dummy text"
             RenderListItem {LI} at (40,36) size 704x18
               RenderListMarker at (-17,0) size 7x18
-              RenderText {TEXT} at (0,0) size 75x18
+              RenderText {#text} at (0,0) size 75x18
                 text run at (0,0) width 75: "dummy text"
           RenderBlock (anonymous) at (0,54) size 744x18
-            RenderText {TEXT} at (0,0) size 63x18
+            RenderText {#text} at (0,0) size 63x18
               text run at (0,0) width 63: "HERE \x{21E9}"
         RenderListItem {LI} at (40,74) size 744x20 [border: (2px solid #0000FF) none]
           RenderListMarker at (-17,0) size 7x18
-          RenderText {TEXT} at (0,0) size 63x18
+          RenderText {#text} at (0,0) size 63x18
             text run at (0,0) width 63: "HERE \x{21E9}"
         RenderListItem {LI} at (40,94) size 744x20 [border: (2px solid #0000FF) none]
           RenderListMarker at (-17,0) size 7x18
-          RenderText {TEXT} at (0,0) size 63x18
+          RenderText {#text} at (0,0) size 63x18
             text run at (0,0) width 63: "HERE \x{21E9}"

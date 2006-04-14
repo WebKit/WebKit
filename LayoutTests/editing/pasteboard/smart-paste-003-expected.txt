@@ -14,28 +14,28 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x240 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {TEXT} at (0,0) size 67x28
+          RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 738x28
+          RenderText {#text} at (0,28) size 738x28
             text run at (0,28) width 738: "Smart paste when pasting after a word and before a space and another word."
         RenderBlock {DIV} at (14,86) size 756x140
-          RenderText {TEXT} at (0,0) size 189x28
+          RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 720x84
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 720x84
             text run at (0,28) width 720: "A space should be added between the preexisting word and the word that's"
             text run at (0,56) width 717: "pasted. No space should be added after the pasted word. It should like this"
             text run at (0,84) width 48: "this: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,112) size 114x28
+          RenderBR {BR} at (48,106) size 0x0
+          RenderText {#text} at (0,112) size 114x28
             text run at (0,112) width 114: "test test test"
       RenderBlock {DIV} at (0,264) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {TEXT} at (2,2) size 34x28
+          RenderText {#text} at (2,2) size 34x28
             text run at (2,2) width 34: "test"
-          RenderText {TEXT} at (36,2) size 40x28
+          RenderText {#text} at (36,2) size 40x28
             text run at (36,2) width 40: " test"
-          RenderText {TEXT} at (76,2) size 40x28
+          RenderText {#text} at (76,2) size 40x28
             text run at (76,2) width 40: " test"
-caret: position 5 of child 1 {TEXT} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

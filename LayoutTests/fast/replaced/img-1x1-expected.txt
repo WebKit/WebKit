@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 53x18
+        RenderText {#text} at (0,0) size 53x18
           text run at (0,0) width 53: "Test for "
         RenderInline {A} at (0,0) size 60x18 [color=#0000EE]
-          RenderText {TEXT} at (53,0) size 60x18
+          RenderText {#text} at (53,0) size 60x18
             text run at (53,0) width 60: "bug 3438"
-        RenderText {TEXT} at (113,0) size 202x18
+        RenderText {#text} at (113,0) size 202x18
           text run at (113,0) width 202: ": rendering of 1x1 PNG images."
       RenderTable {TABLE} at (0,34) size 440x24
-        RenderTableSection {TBODY} at (0,0) size 0x24
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 440x24
+          RenderTableRow {TR} at (0,2) size 440x20
             RenderTableCell {TD} at (2,2) size 408x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (1,1) size 406x18
+              RenderText {#text} at (1,1) size 406x18
                 text run at (1,1) width 406: "Should be uniform color (comparing PNG with GIF and JPEG):"
             RenderTableCell {TD} at (412,6) size 12x12 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 10x10
-              RenderText {TEXT} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (426,6) size 12x12 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 10x10
-              RenderText {TEXT} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0

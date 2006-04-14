@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#FFFFFF]
       RenderBlock {FORM} at (0,0) size 784x28
         RenderTable {TABLE} at (0,0) size 784x28
-          RenderTableSection {TBODY} at (0,0) size 0x28
-            RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#FFFFFF]
+          RenderTableSection {TBODY} at (0,0) size 784x28
+            RenderTableRow {TR} at (0,2) size 784x24 [bgcolor=#FFFFFF]
               RenderTableCell {TD} at (2,2) size 70x24 [r=0 c=0 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 64x18 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 48x13
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
                     RenderText at (0,0) size 65x13
                       text run at (0,0) width 65: "Empty trash"
               RenderTableCell {TD} at (221,6) size 372x20 [r=0 c=3 rs=1 cs=1]
-                RenderText {TEXT} at (1,1) size 4x18
+                RenderText {#text} at (1,1) size 4x18
                   text run at (1,1) width 4: " "
               RenderTableCell {TD} at (595,2) size 69x24 [r=0 c=4 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 63x18 [bgcolor=#C0C0C0]
@@ -32,6 +32,6 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 47: "Move to:"
               RenderTableCell {TD} at (666,2) size 116x24 [r=0 c=5 rs=1 cs=1]
                 RenderSelect {SELECT} at (3,3) size 110x18
-                RenderText {TEXT} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
-                RenderText {TEXT} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0

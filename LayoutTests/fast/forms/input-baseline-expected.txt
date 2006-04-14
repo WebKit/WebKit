@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {TEXT} at (0,0) size 293x18
+      RenderText {#text} at (0,0) size 293x18
         text run at (0,0) width 293: "This tests that text fields get the right baseline. "
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (293,14) size 0x0
       RenderBR {BR} at (0,18) size 0x18
       RenderTextField {INPUT} at (2,38) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {TEXT} at (152,38) size 424x18
+      RenderText {#text} at (152,38) size 424x18
         text run at (152,38) width 424: "This text should line up with the bottom of the text in the text field. "
-      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (576,52) size 0x0
       RenderBR {BR} at (0,59) size 0x18
       RenderTextField {INPUT} at (2,79) size 148x132 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-      RenderText {TEXT} at (152,171) size 420x18
+      RenderText {#text} at (152,171) size 420x18
         text run at (152,171) width 420: "This text should line up with the bottom of the text in the text field."
 layer at (13,49) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13

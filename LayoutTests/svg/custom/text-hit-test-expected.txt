@@ -7,13 +7,13 @@ layer at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 0x0
       KCanvasContainer {g} at (0,0) size 0x0 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
         RenderSVGText {text} at (0,0) size 785x18
-          RenderText {TEXT} at (0,0) size 57x18
+          RenderText {#text} at (0,0) size 57x18
             text run at (0,0) width 57: "Click me"
         RenderSVGText {text} at (0,0) size 785x18
-          RenderText {TEXT} at (0,0) size 42x18
+          RenderText {#text} at (0,0) size 42x18
             text run at (0,0) width 42: "Status:"
         RenderSVGText {text} at (0,0) size 800x18
-          RenderText {TEXT} at (0,0) size 43x18
+          RenderText {#text} at (0,0) size 43x18
             text run at (0,0) width 43: "Passed"
-selection start: position 8 of child 0 {TEXT} of child 1 {text} of child 3 {g} of child 0 {svg} of document
+selection start: position 8 of child 0 {#text} of child 1 {text} of child 3 {g} of child 0 {svg} of document
 selection end:   position 0 of child 3 {text} of child 3 {g} of child 0 {svg} of document

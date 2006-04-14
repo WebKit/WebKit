@@ -6,21 +6,21 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (10,35) size 460x225
         RenderSVGText {text} at (0,0) size 465x17
-          RenderText {TEXT} at (0,0) size 201x17
+          RenderText {#text} at (0,0) size 201x17
             text run at (0,0) width 201: "Testing spreadMethod attribute"
         KCanvasItem {rect} at (10,35) size 460x55 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [start=(40,0)] [end=(60,0)]}] [data="M10.00,35.00L470.00,35.00L470.00,90.00L10.00,90.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 107x14
+          RenderText {#text} at (0,0) size 107x14
             text run at (0,0) width 107: "spreadMethod=pad"
         KCanvasItem {rect} at (10,120) size 460x55 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]][method=REFLECT] [start=(40,0)] [end=(60,0)]}] [data="M10.00,120.00L470.00,120.00L470.00,175.00L10.00,175.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 119x14
+          RenderText {#text} at (0,0) size 119x14
             text run at (0,0) width 119: "spreadMethod=reflect"
         KCanvasItem {rect} at (10,205) size 460x55 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]][method=REPEAT] [start=(40,0)] [end=(60,0)]}] [data="M10.00,205.00L470.00,205.00L470.00,260.00L10.00,260.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 121x14
+          RenderText {#text} at (0,0) size 121x14
             text run at (0,0) width 121: "spreadMethod=repeat"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -4,13 +4,13 @@ layer at (0,0) size 800x76
   RenderBlock {HTML} at (0,0) size 800x76
     RenderBody {BODY} at (8,16) size 784x52
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 193x18
+        RenderText {#text} at (0,0) size 193x18
           text run at (0,0) width 193: "There should be no red below."
       RenderBlock {DIV} at (160,34) size 624x18 [color=#FF0000] [bgcolor=#00FF00]
         RenderBlock (compact) {DIV} at (-160,0) size 0x0 [color=#000000]
-          RenderText {TEXT} at (0,0) size 31x18
+          RenderText {#text} at (0,0) size 31x18
             text run at (0,0) width 31: "Test:"
         RenderInline {SPAN} at (0,0) size 299x18 [color=#000000]
-          RenderText {TEXT} at (0,0) size 299x0
+          RenderText {#text} at (0,0) size 299x18
             text run at (0,0) width 299: "This sentence should have a green background."
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

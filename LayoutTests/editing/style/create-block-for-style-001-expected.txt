@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {TEXT} at (14,14) size 727x56
+        RenderText {#text} at (14,14) size 727x56
           text run at (14,14) width 727: "Should see \"foo\" centered in its own red box, followed by left-aligned two "
           text run at (14,42) width 424: "lines, \"bar\" and \"baz\", in their own red box."
       RenderBlock {DIV} at (0,108) size 784x112
         RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
           RenderBlock {DIV} at (14,14) size 756x28
-            RenderText {TEXT} at (362,0) size 32x28
+            RenderText {#text} at (362,0) size 32x28
               text run at (362,0) width 32: "foo"
-            RenderBR {BR} at (0,0) size 0x0
+            RenderBR {BR} at (394,22) size 0x0
           RenderBlock (anonymous) at (14,42) size 756x56
-            RenderText {TEXT} at (0,0) size 31x28
+            RenderText {#text} at (0,0) size 31x28
               text run at (0,0) width 31: "bar"
-            RenderBR {BR} at (0,0) size 0x0
-            RenderText {TEXT} at (0,28) size 34x28
+            RenderBR {BR} at (31,22) size 0x0
+            RenderText {#text} at (0,28) size 34x28
               text run at (0,28) width 34: "baz"
-caret: position 1 of child 0 {TEXT} of child 0 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

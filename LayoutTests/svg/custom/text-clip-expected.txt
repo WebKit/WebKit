@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 0x0
       KCanvasContainer {g} at (0,0) size 0x0
         RenderSVGText {text} at (0,0) size 785x63
-          RenderText {TEXT} at (0,0) size 133x63
+          RenderText {#text} at (0,0) size 133x63
             text run at (0,0) width 133: "PASS"
         RenderSVGText {text} at (0,0) size 785x63
-          RenderText {TEXT} at (0,0) size 648x63
+          RenderText {#text} at (0,0) size 648x63
             text run at (0,0) width 648: "FAIL (should be clipped out)"

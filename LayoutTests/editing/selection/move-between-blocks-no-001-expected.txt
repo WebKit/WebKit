@@ -101,10 +101,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 381x28
-          RenderText {TEXT} at (14,14) size 381x28
+          RenderText {#text} at (14,14) size 381x28
             text run at (14,14) width 381: "We hold these truths to be self-evident,"
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,56) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {TEXT} at (14,14) size 244x28
+        RenderText {#text} at (14,14) size 244x28
           text run at (14,14) width 244: "men are created equal, ..."
-caret: position 0 of child 0 {TEXT} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {#text} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

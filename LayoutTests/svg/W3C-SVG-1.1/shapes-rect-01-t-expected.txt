@@ -11,6 +11,6 @@ layer at (0,0) size 480x360
         KCanvasItem {rect} at (246,192) size 58x88 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [data="M275.00,196.00C288.80,196.00,300.00,213.92,300.00,236.00C300.00,258.08,288.80,276.00,275.00,276.00C261.20,276.00,250.00,258.08,250.00,236.00C250.00,213.92,261.20,196.00,275.00,196.00"]
         KCanvasItem {rect} at (350,196) size 50x80 [fill={[type=SOLID] [color=#00FF00]}] [data="M375.00,196.00C388.80,196.00,400.00,213.92,400.00,236.00C400.00,258.08,388.80,276.00,375.00,276.00C361.20,276.00,350.00,258.08,350.00,236.00C350.00,213.92,361.20,196.00,375.00,196.00"]
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

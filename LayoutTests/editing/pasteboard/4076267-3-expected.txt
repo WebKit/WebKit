@@ -407,39 +407,39 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 333x18
+        RenderText {#text} at (0,0) size 333x18
           text run at (0,0) width 333: "This tests to see if spaces are lost during a copy/paste"
       RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,44) size 784x246 [border: (2px solid #FFAAAA)]
         RenderBlock {DIV} at (2,2) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 20x18
+          RenderText {#text} at (2,2) size 20x18
             text run at (2,2) width 20: "x x"
         RenderBlock {DIV} at (2,24) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 24x18
+          RenderText {#text} at (2,2) size 24x18
             text run at (2,2) width 24: "x  x"
         RenderBlock {DIV} at (2,46) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 28x18
+          RenderText {#text} at (2,2) size 28x18
             text run at (2,2) width 28: "x   x"
         RenderBlock {DIV} at (2,68) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 32x18
+          RenderText {#text} at (2,2) size 32x18
             text run at (2,2) width 32: "x    x"
         RenderBlock {DIV} at (2,90) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 36x18
+          RenderText {#text} at (2,2) size 36x18
             text run at (2,2) width 36: "x     x"
         RenderBlock {DIV} at (2,112) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 40x18
+          RenderText {#text} at (2,2) size 40x18
             text run at (2,2) width 40: "x      x"
         RenderBlock {DIV} at (2,134) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 44x18
+          RenderText {#text} at (2,2) size 44x18
             text run at (2,2) width 44: "x       x"
         RenderBlock {DIV} at (2,156) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 48x18
+          RenderText {#text} at (2,2) size 48x18
             text run at (2,2) width 48: "x        x"
         RenderBlock {DIV} at (2,178) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 52x18
+          RenderText {#text} at (2,2) size 52x18
             text run at (2,2) width 52: "x         x"
         RenderBlock {DIV} at (2,200) size 780x22 [border: (2px solid #AAAAFF)]
-          RenderText {TEXT} at (2,2) size 56x18
+          RenderText {#text} at (2,2) size 56x18
             text run at (2,2) width 56: "x          x"
         RenderBlock {DIV} at (2,222) size 780x22 [border: (2px solid #AAAAFF)]
           RenderBR {BR} at (2,2) size 0x18

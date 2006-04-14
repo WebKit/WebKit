@@ -5,7 +5,7 @@ layer at (0,0) size 800x325
     RenderBody {BODY} at (8,8) size 784x309
       RenderBlock {DIV} at (0,0) size 385x309
         RenderBlock {DIV} at (0,0) size 385x18
-          RenderText {TEXT} at (0,0) size 370x18
+          RenderText {#text} at (0,0) size 370x18
             text run at (0,0) width 370: "The yellow block should be to the right of the green block."
         RenderBlock (floating) {DIV} at (0,18) size 100x100 [bgcolor=#008000]
         RenderImage {IMG} at (100,34) size 395x275 [bgcolor=#FFFF00]

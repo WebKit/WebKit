@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x104
-  RenderBlock {HTML} at (0,0) size 800x104
-    RenderBody {BODY} at (8,16) size 784x80
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 116x18
+  RenderBlock {html} at (0,0) size 800x104
+    RenderBody {body} at (8,16) size 784x80
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 116x18
           text run at (0,0) width 116: "COL WIDTH=px"
-      RenderTable {TABLE} at (0,34) size 616x46 [border: (1px outset #808080)]
-        RenderTableCol {COLGROUP} at (0,0) size 0x0
-          RenderTableCol {COL} at (0,0) size 0x0
-          RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,1) size 0x44
-          RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 203x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 170x36
+      RenderTable {table} at (0,34) size 616x46 [border: (1px outset #808080)]
+        RenderTableCol {colgroup} at (0,0) size 0x0
+          RenderTableCol {col} at (0,0) size 0x0
+          RenderTableCol {col} at (0,0) size 0x0
+        RenderTableSection {tbody} at (1,1) size 614x44
+          RenderTableRow {tr} at (0,2) size 614x40
+            RenderTableCell {td} at (2,2) size 203x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 170x36
                 text run at (2,2) width 170: "This column should have a"
                 text run at (2,20) width 122: "width of 200 pixels"
-            RenderTableCell {TD} at (207,11) size 405x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 296x18
+            RenderTableCell {td} at (207,11) size 405x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 296x18
                 text run at (2,2) width 296: "This column should have a width of 400 pixels"

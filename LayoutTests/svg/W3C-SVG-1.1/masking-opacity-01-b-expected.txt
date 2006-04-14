@@ -3,58 +3,58 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (10,30) size 140x260
         RenderSVGText {text} at (0,0) size 465x28
-          RenderText {TEXT} at (0,0) size 385x28
+          RenderText {#text} at (0,0) size 385x27
             text run at (0,0) width 385: "Test for opacity property on a group."
         KCanvasItem {rect} at (10,30) size 100x260 [fill={[type=SOLID] [color=#FF0000]}] [data="M10.00,30.00L110.00,30.00L110.00,290.00L10.00,290.00"]
         KCanvasContainer {g} at (60,50) size 90x50
           KCanvasItem {rect} at (60,50) size 80x40 [fill={[type=SOLID] [color=#0000FF]}] [data="M60.00,50.00L140.00,50.00L140.00,90.00L60.00,90.00"]
           KCanvasItem {rect} at (70,60) size 80x40 [fill={[type=SOLID] [color=#00FF00]}] [data="M70.00,60.00L150.00,60.00L150.00,100.00L70.00,100.00"]
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 148x23
+          RenderText {#text} at (0,0) size 148x22
             text run at (0,0) width 148: "Group opacity: 1"
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 219x23
+          RenderText {#text} at (0,0) size 219x22
             text run at (0,0) width 219: "Blue rectangle opacity: 1"
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 236x23
+          RenderText {#text} at (0,0) size 236x22
             text run at (0,0) width 236: "Green rectangle opacity: 1"
         KCanvasContainer {g} at (60,110) size 90x50 [opacity=0.50]
           KCanvasItem {rect} at (60,110) size 80x40 [fill={[type=SOLID] [color=#0000FF]}] [data="M60.00,110.00L140.00,110.00L140.00,150.00L60.00,150.00"]
           KCanvasItem {rect} at (70,120) size 80x40 [fill={[type=SOLID] [color=#00FF00]}] [data="M70.00,120.00L150.00,120.00L150.00,160.00L70.00,160.00"]
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 165x23
+          RenderText {#text} at (0,0) size 165x22
             text run at (0,0) width 165: "Group opacity: 0.5"
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 219x23
+          RenderText {#text} at (0,0) size 219x22
             text run at (0,0) width 219: "Blue rectangle opacity: 1"
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 236x23
+          RenderText {#text} at (0,0) size 236x22
             text run at (0,0) width 236: "Green rectangle opacity: 1"
         KCanvasContainer {g} at (60,170) size 90x50
           KCanvasItem {rect} at (60,170) size 80x40 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M60.00,170.00L140.00,170.00L140.00,210.00L60.00,210.00"]
           KCanvasItem {rect} at (70,180) size 80x40 [opacity=0.50] [fill={[type=SOLID] [color=#00FF00]}] [data="M70.00,180.00L150.00,180.00L150.00,220.00L70.00,220.00"]
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 148x23
+          RenderText {#text} at (0,0) size 148x22
             text run at (0,0) width 148: "Group opacity: 1"
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 236x23
+          RenderText {#text} at (0,0) size 236x22
             text run at (0,0) width 236: "Blue rectangle opacity: 0.5"
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 253x23
+          RenderText {#text} at (0,0) size 253x22
             text run at (0,0) width 253: "Green rectangle opacity: 0.5"
         KCanvasContainer {g} at (60,230) size 90x50 [opacity=0.50]
           KCanvasItem {rect} at (60,230) size 80x40 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M60.00,230.00L140.00,230.00L140.00,270.00L60.00,270.00"]
           KCanvasItem {rect} at (70,240) size 80x40 [opacity=0.50] [fill={[type=SOLID] [color=#00FF00]}] [data="M70.00,240.00L150.00,240.00L150.00,280.00L70.00,280.00"]
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 165x23
+          RenderText {#text} at (0,0) size 165x22
             text run at (0,0) width 165: "Group opacity: 0.5"
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 236x23
+          RenderText {#text} at (0,0) size 236x22
             text run at (0,0) width 236: "Blue rectangle opacity: 0.5"
         RenderSVGText {text} at (0,0) size 465x23
-          RenderText {TEXT} at (0,0) size 253x23
+          RenderText {#text} at (0,0) size 253x22
             text run at (0,0) width 253: "Green rectangle opacity: 0.5"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -7,11 +7,11 @@ layer at (0,0) size 480x360
       KCanvasContainer {g} at (0,0) size 460x260
         KCanvasItem {rect} at (20,20) size 440x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (0.50,#FF0000), (1.00,#00FF00)]] [bounding box mode=0] [transform={m=((0.50,0.00)(0.00,0.50)) t=(25.00,35.00)}] [start=(0,0)] [end=(430,0)]}] [data="M20.00,20.00L460.00,20.00L460.00,70.00L20.00,70.00"]
         RenderSVGText {text} at (0,0) size 465x34
-          RenderText {TEXT} at (0,0) size 293x34
+          RenderText {#text} at (0,0) size 293x33
             text run at (0,0) width 293: "scale(0.5) on gradient"
         KCanvasItem {rect} at (20,110) size 440x50 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFA500)]] [bounding box mode=0] [transform={m=((1.00,0.00)(1.00,1.00)) t=(240.00,155.00)}] [center=(0,0)] [focal=(0,0)] [radius=60.00]}] [data="M20.00,110.00L460.00,110.00L460.00,160.00L20.00,160.00"]
         RenderSVGText {text} at (0,0) size 465x34
-          RenderText {TEXT} at (0,0) size 303x34
+          RenderText {#text} at (0,0) size 303x33
             text run at (0,0) width 303: "skewX(45) on gradient"
         KCanvasContainer {pattern} at (0,0) size 20x20
           KCanvasItem {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
@@ -20,9 +20,9 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00L20.00,10.00L20.00,20.00L10.00,20.00"]
         KCanvasItem {rect} at (20,210) size 440x50 [fill={[type=PATTERN] [bbox=at (0,0) size 0x0]}] [data="M20.00,210.00L460.00,210.00L460.00,260.00L20.00,260.00"]
         RenderSVGText {text} at (0,0) size 465x34
-          RenderText {TEXT} at (0,0) size 411x34
+          RenderText {#text} at (0,0) size 411x33
             text run at (0,0) width 411: "scale(2), skewX(45) on pattern"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

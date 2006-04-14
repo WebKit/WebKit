@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderInline {A} at (0,0) size 21x16 [color=#0000EE]
         RenderImage {IMG} at (0,0) size 21x21 [bgcolor=#008000]
-      RenderText {TEXT} at (21,0) size 4x16
+      RenderText {#text} at (21,0) size 4x16
         text run at (21,0) width 4: " "
       RenderImage {IMG} at (25,0) size 21x21 [bgcolor=#008000]
-      RenderText {TEXT} at (46,0) size 271x16
+      RenderText {#text} at (46,0) size 271x16
         text run at (46,0) width 271: " The two green blocks should line up vertically."

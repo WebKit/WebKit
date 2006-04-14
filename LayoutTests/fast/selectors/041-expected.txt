@@ -7,6 +7,6 @@ layer at (0,0) size 800x68
         RenderInline (generated) at (0,0) size 184x18 [bgcolor=#00FF00]
           RenderText at (0,0) size 184x18
             text run at (0,0) width 184: "GENERATED CONTENT "
-        RenderText {TEXT} at (184,0) size 740x36
+        RenderText {#text} at (184,0) size 740x36
           text run at (184,0) width 556: "You should see before this paragraph the words GENERATED CONTENT over green"
           text run at (0,18) width 75: "background"

@@ -15,8 +15,8 @@ layer at (0,0) size 820x585
     RenderBody {BODY} at (8,64) size 784x457
       RenderBlock {DIV} at (64,0) size 748x196 [border: (50px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 32x28
-          RenderText {TEXT} at (74,84) size 32x48
+          RenderText {#text} at (74,84) size 32x28
             text run at (74,84) width 32: "foo"
-        RenderText {TEXT} at (106,84) size 34x48
+        RenderText {#text} at (106,84) size 34x28
           text run at (106,84) width 34: "baz"
-caret: position 3 of child 0 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

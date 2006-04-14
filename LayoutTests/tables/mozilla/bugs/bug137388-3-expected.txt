@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 206x216
-        RenderTableSection {TBODY} at (0,0) size 0x216
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 206x216
+          RenderTableRow {TR} at (0,2) size 206x212
             RenderTableCell {TD} at (2,2) size 202x212 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 200x210
                 RenderPartObject {IFRAME} at (0,0) size 200x210
@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
                   layer at (0,0) size 200x8
                     RenderBlock {HTML} at (0,0) size 200x8
                       RenderBody {BODY} at (8,8) size 184x0
-                RenderText {TEXT} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0

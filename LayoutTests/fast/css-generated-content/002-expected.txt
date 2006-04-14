@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 9: "S"
           RenderText at (9,0) size 45x18
             text run at (9,0) width 45: "pecial: "
-        RenderText {TEXT} at (54,0) size 590x18
+        RenderText {#text} at (54,0) size 590x18
           text run at (54,0) width 220: "The \"S\" to the left should be gold. "
           text run at (274,0) width 370: "This is testing :before used in conjunction with :first-letter. "
         RenderInline (generated) at (0,0) size 65x18

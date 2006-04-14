@@ -11,65 +11,65 @@ layer at (0,0) size 480x360
         KCanvasContainer {g} at (25,25) size 400x230
           KCanvasItem {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb1] [data="M25.00,25.00L125.00,25.00L125.00,100.00L25.00,100.00"]
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 82x12
+            RenderText {#text} at (0,0) size 82x12
               text run at (0,0) width 82: "type=turbulence"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 104x12
+            RenderText {#text} at (0,0) size 104x12
               text run at (0,0) width 104: "baseFrequency=0.05"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 76x12
+            RenderText {#text} at (0,0) size 76x12
               text run at (0,0) width 76: "numOctaves=2"
           KCanvasItem {rect} at (175,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb2] [data="M175.00,25.00L275.00,25.00L275.00,100.00L175.00,100.00"]
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 82x12
+            RenderText {#text} at (0,0) size 82x12
               text run at (0,0) width 82: "type=turbulence"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 98x12
+            RenderText {#text} at (0,0) size 98x12
               text run at (0,0) width 98: "baseFrequency=0.1"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 76x12
+            RenderText {#text} at (0,0) size 76x12
               text run at (0,0) width 76: "numOctaves=2"
           KCanvasItem {rect} at (325,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb3] [data="M325.00,25.00L425.00,25.00L425.00,100.00L325.00,100.00"]
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 82x12
+            RenderText {#text} at (0,0) size 82x12
               text run at (0,0) width 82: "type=turbulence"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 104x12
+            RenderText {#text} at (0,0) size 104x12
               text run at (0,0) width 104: "baseFrequency=0.05"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 76x12
+            RenderText {#text} at (0,0) size 76x12
               text run at (0,0) width 76: "numOctaves=8"
           KCanvasItem {rect} at (25,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb4] [data="M25.00,180.00L125.00,180.00L125.00,255.00L25.00,255.00"]
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 89x12
+            RenderText {#text} at (0,0) size 89x12
               text run at (0,0) width 89: "type=fractalNoise"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 98x12
+            RenderText {#text} at (0,0) size 98x12
               text run at (0,0) width 98: "baseFrequency=0.1"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 76x12
+            RenderText {#text} at (0,0) size 76x12
               text run at (0,0) width 76: "numOctaves=4"
           KCanvasItem {rect} at (175,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb5] [data="M175.00,180.00L275.00,180.00L275.00,255.00L175.00,255.00"]
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 89x12
+            RenderText {#text} at (0,0) size 89x12
               text run at (0,0) width 89: "type=fractalNoise"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 98x12
+            RenderText {#text} at (0,0) size 98x12
               text run at (0,0) width 98: "baseFrequency=0.4"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 76x12
+            RenderText {#text} at (0,0) size 76x12
               text run at (0,0) width 76: "numOctaves=4"
           KCanvasItem {rect} at (325,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=#Turb6] [data="M325.00,180.00L425.00,180.00L425.00,255.00L325.00,255.00"]
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 89x12
+            RenderText {#text} at (0,0) size 89x12
               text run at (0,0) width 89: "type=fractalNoise"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 98x12
+            RenderText {#text} at (0,0) size 98x12
               text run at (0,0) width 98: "baseFrequency=0.1"
           RenderSVGText {text} at (0,0) size 465x12
-            RenderText {TEXT} at (0,0) size 76x12
+            RenderText {#text} at (0,0) size 76x12
               text run at (0,0) width 76: "numOctaves=1"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

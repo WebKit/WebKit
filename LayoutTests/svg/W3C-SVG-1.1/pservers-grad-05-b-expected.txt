@@ -5,14 +5,14 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (20,20) size 440x210
         RenderSVGText {text} at (0,0) size 465x69
-          RenderText {TEXT} at (0,1) size 318x69
+          RenderText {#text} at (0,1) size 318x67
             text run at (0,1) width 318: "Background"
         KCanvasItem {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#EE82EE), (0.20,#0000FF00), (0.40,#00FF007F), (0.60,#FFFF0033), (0.80,#FFA500CC), (1.00,#FF0000)]] [start=(0,0)] [end=(100,100)]}] [data="M20.00,20.00L460.00,20.00L460.00,100.00L20.00,100.00"]
         RenderSVGText {text} at (0,0) size 465x69
-          RenderText {TEXT} at (0,1) size 318x69
+          RenderText {#text} at (0,1) size 318x67
             text run at (0,1) width 318: "Background"
         KCanvasItem {rect} at (20,150) size 440x80 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (0.20,#FFFF0000), (0.40,#FF00007F), (0.60,#0000FF33), (0.80,#FFFFFFCC), (1.00,#008000)]] [bounding box mode=0] [center=(240,210)] [focal=(240,210)] [radius=220.00]}] [data="M20.00,150.00L460.00,150.00L460.00,230.00L20.00,230.00"]
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

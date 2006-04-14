@@ -8,16 +8,16 @@ layer at (0,0) size 2008x2070
   RenderBlock {HTML} at (0,0) size 785x2070
     RenderBody {BODY} at (8,8) size 769x2054
       RenderBlock (anonymous) at (0,0) size 769x36
-        RenderText {TEXT} at (0,0) size 583x18
+        RenderText {#text} at (0,0) size 583x18
           text run at (0,0) width 583: "This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element. "
-        RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,18) size 262x18
+        RenderBR {BR} at (583,14) size 0x0
+        RenderText {#text} at (0,18) size 262x18
           text run at (0,18) width 262: "If the document doesn't scroll, test passes."
       RenderBlock {DIV} at (0,36) size 2000x2000
       RenderBlock (anonymous) at (0,2036) size 769x18
-        RenderText {TEXT} at (0,0) size 237x18
+        RenderText {#text} at (0,0) size 237x18
           text run at (0,0) width 237: "If the document scrolls here, test fails."
-        RenderText {TEXT} at (0,0) size 0x0
-selection start: position 1 of child 0 {TEXT} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 42 of child 4 {TEXT} of child 0 {BODY} of child 0 {HTML} of document
+        RenderText {#text} at (0,0) size 0x0
+selection start: position 1 of child 0 {#text} of child 0 {BODY} of child 0 {HTML} of document
+selection end:   position 42 of child 4 {#text} of child 0 {BODY} of child 0 {HTML} of document
 scrolled to 0,8

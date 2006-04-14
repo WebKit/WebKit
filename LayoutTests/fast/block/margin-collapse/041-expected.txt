@@ -4,11 +4,11 @@ layer at (0,0) size 800x118
   RenderBlock {HTML} at (0,0) size 800x118
     RenderBody {BODY} at (8,16) size 784x94
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 276x18
+        RenderText {#text} at (0,0) size 276x18
           text run at (0,0) width 276: "The two boxes below should look identical."
       RenderTable {TABLE} at (0,34) size 214x60
-        RenderTableSection {TBODY} at (0,0) size 0x60
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 214x60
+          RenderTableRow {TR} at (0,2) size 214x56
             RenderTableCell {TD} at (2,2) size 104x56 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 102x54 [bgcolor=#00FFFF] [border: (3px solid #000000)]
                 RenderBlock {DIV} at (3,3) size 96x16 [bgcolor=#FF00FF]

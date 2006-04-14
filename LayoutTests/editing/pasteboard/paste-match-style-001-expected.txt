@@ -20,28 +20,28 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {TEXT} at (0,0) size 67x28
+          RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 267x28
+          RenderText {#text} at (0,28) size 267x28
             text run at (0,28) width 267: "Pasting and matching style."
         RenderBlock {DIV} at (14,86) size 756x112
-          RenderText {TEXT} at (0,0) size 189x28
+          RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 749x56
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 749x56
             text run at (0,28) width 749: "The pasted letter should match the style of the preexisting bold letter. Should"
             text run at (0,56) width 368: "see this content in the red box below: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (368,78) size 0x0
           RenderInline {B} at (0,0) size 25x28
-            RenderText {TEXT} at (0,84) size 25x28
+            RenderText {#text} at (0,84) size 25x28
               text run at (0,84) width 25: "ab"
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,236) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
           RenderInline {B} at (0,0) size 25x28
-            RenderText {TEXT} at (2,2) size 12x28
+            RenderText {#text} at (2,2) size 12x28
               text run at (2,2) width 12: "a"
-            RenderText {TEXT} at (14,2) size 13x28
+            RenderText {#text} at (14,2) size 13x28
               text run at (14,2) width 13: "b"
-caret: position 1 of child 1 {TEXT} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 1 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

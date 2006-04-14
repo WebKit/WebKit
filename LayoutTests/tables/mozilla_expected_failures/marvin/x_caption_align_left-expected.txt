@@ -1,33 +1,33 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x128
-  RenderBlock {HTML} at (0,0) size 800x128
-    RenderBody {BODY} at (8,16) size 784x104
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 286x18
+  RenderBlock {html} at (0,0) size 800x128
+    RenderBody {body} at (8,16) size 784x104
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 286x18
           text run at (0,0) width 286: "The table caption should be aligned at the left"
-      RenderTable {TABLE} at (0,34) size 124x70 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 122x18
-          RenderText {TEXT} at (25,0) size 71x18
+      RenderTable {table} at (0,34) size 124x70 [border: (1px outset #808080)]
+        RenderBlock {caption} at (0,0) size 122x18
+          RenderText {#text} at (25,0) size 71x18
             text run at (25,0) width 71: "CAPTION"
-        RenderTableSection {TBODY} at (1,19) size 0x50
-          RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,2) size 38x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 34x18
+        RenderTableSection {tbody} at (1,19) size 122x50
+          RenderTableRow {tr} at (0,2) size 122x22
+            RenderTableCell {td} at (2,2) size 38x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x18
                 text run at (2,2) width 34: "cell 1"
-            RenderTableCell {TD} at (42,2) size 38x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 34x18
+            RenderTableCell {td} at (42,2) size 38x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x18
                 text run at (2,2) width 34: "cell 2"
-            RenderTableCell {TD} at (82,2) size 38x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 34x18
+            RenderTableCell {td} at (82,2) size 38x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x18
                 text run at (2,2) width 34: "cell 3"
-          RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,26) size 38x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 34x18
+          RenderTableRow {tr} at (0,26) size 122x22
+            RenderTableCell {td} at (2,26) size 38x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x18
                 text run at (2,2) width 34: "cell 4"
-            RenderTableCell {TD} at (42,26) size 38x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 34x18
+            RenderTableCell {td} at (42,26) size 38x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x18
                 text run at (2,2) width 34: "cell 5"
-            RenderTableCell {TD} at (82,26) size 38x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 34x18
+            RenderTableCell {td} at (82,26) size 38x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 34x18
                 text run at (2,2) width 34: "cell 6"

@@ -26,27 +26,27 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #0000FF)]
-        RenderText {TEXT} at (14,14) size 735x56
+        RenderText {#text} at (14,14) size 735x56
           text run at (14,14) width 735: "You should see one \"x\" followed by two blank lines. The blank lines should"
           text run at (14,42) width 194: "be the same height. "
           text run at (208,42) width 160: "The second line "
         RenderInline {B} at (0,0) size 50x28
-          RenderText {TEXT} at (368,42) size 50x28
+          RenderText {#text} at (368,42) size 50x28
             text run at (368,42) width 50: "must"
-        RenderText {TEXT} at (418,42) size 753x56
+        RenderText {#text} at (418,42) size 753x56
           text run at (418,42) width 349: " be the same height as the first. See:"
           text run at (14,70) width 14: "<"
         RenderInline {A} at (0,0) size 232x28 [color=#0000EE]
-          RenderText {TEXT} at (28,70) size 232x28
+          RenderText {#text} at (28,70) size 232x28
             text run at (28,70) width 232: "rdar://problem/3959727"
-        RenderText {TEXT} at (260,70) size 711x56
+        RenderText {#text} at (260,70) size 711x56
           text run at (260,70) width 465: "> REGRESSION (Mail): Style not preserved on"
           text run at (14,98) width 106: "blank lines"
       RenderBlock {DIV} at (0,164) size 784x207
         RenderBlock {DIV} at (0,0) size 784x69
           RenderInline {FONT} at (0,0) size 30x55
             RenderInline {SPAN} at (0,0) size 30x69
-              RenderText {TEXT} at (0,0) size 30x69
+              RenderText {#text} at (0,0) size 30x69
                 text run at (0,0) width 30: "x"
         RenderBlock {DIV} at (0,69) size 784x69
           RenderInline {FONT} at (0,0) size 0x55

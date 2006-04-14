@@ -17,32 +17,32 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x240 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x84
-          RenderText {TEXT} at (0,0) size 67x28
+          RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 735x56
+          RenderText {#text} at (0,28) size 735x56
             text run at (0,28) width 735: "Pasting and matching style when there is nothing typed, but the typing style"
             text run at (0,56) width 459: "is set to bold. This test was created after fixing "
           RenderInline {A} at (0,0) size 84x28 [color=#0000EE]
-            RenderText {TEXT} at (459,56) size 84x28
+            RenderText {#text} at (459,56) size 84x28
               text run at (459,56) width 84: "3976872"
-          RenderText {TEXT} at (543,56) size 6x28
+          RenderText {#text} at (543,56) size 6x28
             text run at (543,56) width 6: "."
         RenderBlock {DIV} at (14,114) size 756x112
-          RenderText {TEXT} at (0,0) size 189x28
+          RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 697x56
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 697x56
             text run at (0,28) width 691: "The pasted word should match the current typing style. In this case, the"
             text run at (0,56) width 697: "typing style is set to bold. Should see this content in the red box below: "
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (697,78) size 0x0
           RenderInline {B} at (0,0) size 50x28
-            RenderText {TEXT} at (0,84) size 50x28
+            RenderText {#text} at (0,84) size 50x28
               text run at (0,84) width 50: "hello"
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,264) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
           RenderInline {B} at (0,0) size 50x28
-            RenderText {TEXT} at (2,2) size 50x28
+            RenderText {#text} at (2,2) size 50x28
               text run at (2,2) width 50: "hello"
-caret: position 5 of child 0 {TEXT} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

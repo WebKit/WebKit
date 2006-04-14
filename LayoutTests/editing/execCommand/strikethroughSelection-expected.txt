@@ -94,54 +94,54 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (14,14) size 756x56
           RenderInline {SPAN} at (0,0) size 693x56
             RenderInline {SPAN} at (0,0) size 219x28
-              RenderText {TEXT} at (0,0) size 10x28
+              RenderText {#text} at (0,0) size 10x28
                 text run at (0,0) width 10: "\""
-              RenderText {TEXT} at (10,0) size 15x28
+              RenderText {#text} at (10,0) size 15x28
                 text run at (10,0) width 15: "T"
-              RenderText {TEXT} at (25,0) size 12x28
+              RenderText {#text} at (25,0) size 12x28
                 text run at (25,0) width 12: "h"
-              RenderText {TEXT} at (37,0) size 11x28
+              RenderText {#text} at (37,0) size 11x28
                 text run at (37,0) width 11: "e"
-              RenderText {TEXT} at (48,0) size 6x28
+              RenderText {#text} at (48,0) size 6x28
                 text run at (48,0) width 6: " "
-              RenderText {TEXT} at (54,0) size 12x28
+              RenderText {#text} at (54,0) size 12x28
                 text run at (54,0) width 12: "q"
-              RenderText {TEXT} at (66,0) size 12x28
+              RenderText {#text} at (66,0) size 12x28
                 text run at (66,0) width 12: "u"
-              RenderText {TEXT} at (78,0) size 7x28
+              RenderText {#text} at (78,0) size 7x28
                 text run at (78,0) width 7: "i"
-              RenderText {TEXT} at (85,0) size 11x28
+              RenderText {#text} at (85,0) size 11x28
                 text run at (85,0) width 11: "c"
-              RenderText {TEXT} at (96,0) size 12x28
+              RenderText {#text} at (96,0) size 12x28
                 text run at (96,0) width 12: "k"
-              RenderText {TEXT} at (108,0) size 6x28
+              RenderText {#text} at (108,0) size 6x28
                 text run at (108,0) width 6: " "
-              RenderText {TEXT} at (114,0) size 12x28
+              RenderText {#text} at (114,0) size 12x28
                 text run at (114,0) width 12: "b"
-              RenderText {TEXT} at (126,0) size 8x28
+              RenderText {#text} at (126,0) size 8x28
                 text run at (126,0) width 8: "r"
-              RenderText {TEXT} at (134,0) size 12x28
+              RenderText {#text} at (134,0) size 12x28
                 text run at (134,0) width 12: "o"
-              RenderText {TEXT} at (146,0) size 17x28
+              RenderText {#text} at (146,0) size 17x28
                 text run at (146,0) width 17: "w"
-              RenderText {TEXT} at (163,0) size 12x28
+              RenderText {#text} at (163,0) size 12x28
                 text run at (163,0) width 12: "n"
-              RenderText {TEXT} at (175,0) size 6x28
+              RenderText {#text} at (175,0) size 6x28
                 text run at (175,0) width 6: " "
-              RenderText {TEXT} at (181,0) size 8x28
+              RenderText {#text} at (181,0) size 8x28
                 text run at (181,0) width 8: "f"
-              RenderText {TEXT} at (189,0) size 12x28
+              RenderText {#text} at (189,0) size 12x28
                 text run at (189,0) width 12: "o"
-              RenderText {TEXT} at (201,0) size 12x28
+              RenderText {#text} at (201,0) size 12x28
                 text run at (201,0) width 12: "x"
-              RenderText {TEXT} at (213,0) size 6x28
+              RenderText {#text} at (213,0) size 6x28
                 text run at (213,0) width 6: " "
-            RenderText {TEXT} at (219,0) size 693x56
+            RenderText {#text} at (219,0) size 693x56
               text run at (219,0) width 474: "jumps over the lazy dog\" uses every letter in the "
               text run at (0,28) width 170: "english language."
         RenderBlock (anonymous) at (14,94) size 756x224
           RenderBlock {P} at (0,0) size 756x224
-            RenderText {TEXT} at (0,0) size 756x224
+            RenderText {#text} at (0,0) size 756x224
               text run at (0,0) width 462: "Here's to the crazy ones, the misfits, the rebels, "
               text run at (462,0) width 193: "the trouble makers, "
               text run at (655,0) width 98: "the round "
@@ -164,6 +164,6 @@ layer at (0,0) size 800x600
               text run at (0,196) width 77: "who do."
         RenderBlock (anonymous) at (14,342) size 756x0
           RenderInline {SPAN} at (0,0) size 0x0
-          RenderText {TEXT} at (0,0) size 0x0
-selection start: position 0 of child 0 {TEXT} of child 0 {SPAN} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 20 {TEXT} of child 0 {SPAN} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (0,0) size 0x0
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 20 {#text} of child 0 {SPAN} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

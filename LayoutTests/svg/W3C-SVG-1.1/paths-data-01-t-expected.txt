@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (3,23) size 452.44x304
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 236x14
+          RenderText {#text} at (0,0) size 236x14
             text run at (0,0) width 236: "Cubic bezier curves drawn with commands:"
         KCanvasItem {path} at (10,24.50) size 200x106 [stroke={[type=SOLID] [color=#00C000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M210.00,130.00C145.00,130.00,110.00,80.00,110.00,80.00C110.00,80.00,75.00,25.00,10.00,25.00M10.00,130.00C75.00,130.00,110.00,80.00,110.00,80.00C110.00,80.00,145.00,25.00,210.00,25.00"]
         KCanvasItem {rect} at (208,128) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M208.00,128.00L212.00,128.00L212.00,132.00L208.00,132.00"]
@@ -13,7 +13,7 @@ layer at (0,0) size 480x360
         KCanvasItem {rect} at (108,78) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M108.00,78.00L112.00,78.00L112.00,82.00L108.00,82.00"]
         KCanvasItem {rect} at (208,23) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M208.00,23.00L212.00,23.00L212.00,27.00L208.00,27.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 79x14
+          RenderText {#text} at (0,0) size 79x14
             text run at (0,0) width 79: "M, C, S, m, c, s"
         KCanvasItem {path} at (239.50,56.72) size 101x66.93 [stroke={[type=SOLID] [color=#000000]}] [data="M240.00,90.00C240.00,120.00,247.00,140.00,290.00,90.00C333.00,40.00,340.00,60.00,340.00,90.00C340.00,173.00,272.00,56.00,250.00,60.00C240.00,60.00,240.00,90.00,240.00,90.00"]
         KCanvasItem {rect} at (238,88) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M238.00,88.00L242.00,88.00L242.00,92.00L238.00,92.00"]
@@ -21,33 +21,33 @@ layer at (0,0) size 480x360
         KCanvasItem {rect} at (338,88) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M338.00,88.00L342.00,88.00L342.00,92.00L338.00,92.00"]
         KCanvasItem {rect} at (248,58) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M248.00,58.00L252.00,58.00L252.00,62.00L248.00,62.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 73x14
+          RenderText {#text} at (0,0) size 73x14
             text run at (0,0) width 73: "M, c, c, c, C, z"
         KCanvasItem {path} at (80,169.50) size 100x1 [stroke={[type=SOLID] [color=#000000]}] [data="M80.00,170.00C100.00,170.00,160.00,170.00,180.00,170.00"]
         KCanvasItem {rect} at (78,168) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M78.00,168.00L82.00,168.00L82.00,172.00L78.00,172.00"]
         KCanvasItem {rect} at (178,168) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M178.00,168.00L182.00,168.00L182.00,172.00L178.00,172.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 38x14
+          RenderText {#text} at (0,0) size 38x14
             text run at (0,0) width 38: "M, C, Z"
         KCanvasItem {path} at (5,160) size 100x100 [fill={[type=SOLID] [color=#00C000]}] [data="M5.00,260.00C40.00,260.00,60.00,175.00,55.00,160.00C50.00,175.00,70.00,260.00,105.00,260.00"]
         KCanvasItem {rect} at (3,258) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M3.00,258.00L7.00,258.00L7.00,262.00L3.00,262.00"]
         KCanvasItem {rect} at (53,158) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M53.00,158.00L57.00,158.00L57.00,162.00L53.00,162.00"]
         KCanvasItem {rect} at (103,258) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M103.00,258.00L107.00,258.00L107.00,262.00L103.00,262.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 50x14
+          RenderText {#text} at (0,0) size 50x14
             text run at (0,0) width 50: "M, C, c, Z"
         KCanvasItem {path} at (199.69,159.50) size 50.62x100.89 [stroke={[type=SOLID] [color=#000000]}] [data="M200.00,260.00C250.00,220.00,250.00,160.00,225.00,160.00C200.00,160.00,200.00,220.00,250.00,260.00"]
         KCanvasItem {rect} at (198,258) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M198.00,258.00L202.00,258.00L202.00,262.00L198.00,262.00"]
         KCanvasItem {rect} at (223,158) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M223.00,158.00L227.00,158.00L227.00,162.00L223.00,162.00"]
         KCanvasItem {rect} at (248,258) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M248.00,258.00L252.00,258.00L252.00,262.00L248.00,262.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 34x14
+          RenderText {#text} at (0,0) size 34x14
             text run at (0,0) width 34: "m, c, s"
         KCanvasItem {path} at (359.92,94.74) size 95.52x95.36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M360.00,100.00C420.00,90.00,460.00,140.00,450.00,190.00"]
         KCanvasItem {rect} at (358,98) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M358.00,98.00L362.00,98.00L362.00,102.00L358.00,102.00"]
         KCanvasItem {rect} at (448,188) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M448.00,188.00L452.00,188.00L452.00,192.00L448.00,192.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 25x14
+          RenderText {#text} at (0,0) size 25x14
             text run at (0,0) width 25: "M, C"
         KCanvasItem {path} at (287.50,173.50) size 73x73 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M360.00,210.00C360.00,230.00,344.00,246.00,324.00,246.00C304.00,246.00,288.00,230.00,288.00,210.00C288.00,190.00,304.00,174.00,324.00,174.00C344.00,174.00,360.00,190.00,360.00,210.00"]
         KCanvasItem {rect} at (358,208) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M358.00,208.00L362.00,208.00L362.00,212.00L358.00,212.00"]
@@ -55,15 +55,15 @@ layer at (0,0) size 480x360
         KCanvasItem {rect} at (286,208) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M286.00,208.00L290.00,208.00L290.00,212.00L286.00,212.00"]
         KCanvasItem {rect} at (322,172) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M322.00,172.00L326.00,172.00L326.00,176.00L322.00,176.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 70x14
+          RenderText {#text} at (0,0) size 70x14
             text run at (0,0) width 70: "M, c, s, s, s, z"
         KCanvasItem {path} at (349.79,261.81) size 94.22x63.69 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#F0F0F0]}] [data="M360.00,325.00C320.00,265.00,455.00,225.00,440.00,325.00"]
         KCanvasItem {rect} at (358,323) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M358.00,323.00L362.00,323.00L362.00,327.00L358.00,327.00"]
         KCanvasItem {rect} at (438,323) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [data="M438.00,323.00L442.00,323.00L442.00,327.00L438.00,327.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 34x14
+          RenderText {#text} at (0,0) size 34x14
             text run at (0,0) width 34: "m, c, z"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

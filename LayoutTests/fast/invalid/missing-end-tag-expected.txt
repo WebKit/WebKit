@@ -3,23 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x148
   RenderBlock {html} at (0,0) size 800x148
     RenderBlock (anonymous) at (0,0) size 800x0
-      RenderInline {PARSERERROR} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderInline {parsererror} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
     RenderBlock (anonymous) at (0,18) size 800x94
-      RenderBlock {H3} at (0,0) size 800x22
-        RenderText {TEXT} at (0,0) size 324x22
+      RenderBlock {h3} at (0,0) size 800x22
+        RenderText {#text} at (0,0) size 324x22
           text run at (0,0) width 324: "This page contains the following errors:"
-      RenderBlock {DIV} at (0,40) size 800x14
-        RenderText {TEXT} at (0,0) size 560x14
+      RenderBlock {div} at (0,40) size 800x14
+        RenderText {#text} at (0,0) size 560x14
           text run at (0,0) width 560: "error on line 7 at column 29: Opening and ending tag mismatch: p line 0 and body"
-      RenderBlock {H3} at (0,72) size 800x22
-        RenderText {TEXT} at (0,0) size 429x22
+          text run at (560,0) width 0: " "
+      RenderBlock {h3} at (0,72) size 800x22
+        RenderText {#text} at (0,0) size 429x22
           text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
     RenderBlock (anonymous) at (0,130) size 800x18
-      RenderInline {PARSERERROR} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderInline {parsererror} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
       RenderInline {body} at (0,0) size 180x18
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
         RenderInline {p} at (0,0) size 180x18
-          RenderText {TEXT} at (0,0) size 180x18
+          RenderText {#text} at (0,0) size 180x18
             text run at (0,0) width 180: "You should see errors above"
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
         RenderInline {p} at (0,0) size 0x0

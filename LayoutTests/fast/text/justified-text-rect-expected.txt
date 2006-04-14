@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 800x54
-        RenderText {TEXT} at (0,0) size 791x54
+        RenderText {#text} at (0,0) size 791x54
           text run at (0,0) width 760: "This is a testcase for a problem where caret rects and the rects returned by firstRectForCharacterRange were incorrect for"
           text run at (0,18) width 85: "justified text. "
           text run at (85,18) width 518: "The test sets a caret selection just before the word 'is' in the editable region below. "
@@ -15,17 +15,17 @@ layer at (0,0) size 800x600
           text run at (0,36) width 158: "the caret in that position. "
           text run at (158,36) width 470: "The test also writes out the rect returned from firstRectForCharacterRange."
       RenderBlock {P} at (0,70) size 70x50 [bgcolor=#008000]
-        RenderText {TEXT} at (0,0) size 38x18
+        RenderText {#text} at (0,0) size 38x18
           text run at (0,0) width 38: "this    "
         RenderInline {SPAN} at (0,0) size 10x18
-          RenderText {TEXT} at (38,0) size 10x18
+          RenderText {#text} at (38,0) size 10x18
             text run at (38,0) width 10: "is"
-        RenderText {TEXT} at (48,0) size 70x36
+        RenderText {#text} at (48,0) size 70x36
           text run at (48,0) width 22: " "
           text run at (0,18) width 50: "justified"
       RenderBlock (anonymous) at (0,136) size 800x18
-        RenderText {TEXT} at (0,0) size 76x18
+        RenderText {#text} at (0,0) size 76x18
           text run at (0,0) width 76: "53,582,4,18"
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
-caret: position 8 of child 0 {TEXT} of child 3 {P} of child 1 {BODY} of child 0 {HTML} of document
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+caret: position 8 of child 0 {#text} of child 3 {P} of child 1 {BODY} of child 0 {HTML} of document

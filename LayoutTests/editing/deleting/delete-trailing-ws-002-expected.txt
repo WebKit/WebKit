@@ -24,10 +24,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 40x56
-          RenderText {TEXT} at (14,14) size 32x28
+          RenderText {#text} at (14,14) size 32x28
             text run at (14,14) width 32: "foo"
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (14,42) size 40x28
+          RenderBR {BR} at (46,36) size 0x0
+          RenderText {#text} at (14,42) size 40x28
             text run at (14,42) width 40: " baz"
-        RenderText {TEXT} at (0,0) size 0x0
-caret: position 0 of child 2 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+        RenderText {#text} at (0,0) size 0x0
+caret: position 0 of child 2 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

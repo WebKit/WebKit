@@ -1,30 +1,27 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x579
+    RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 781x18
+        RenderText {#text} at (0,0) size 781x18
           text run at (0,0) width 339: "This places the caret before the 'b' in 'bar' and Delete. "
           text run at (339,0) width 442: "'foo' and 'bar' should end up on the same line with 'baz' on the second."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {TEXT} at (0,0) size 532x18
+        RenderText {#text} at (0,0) size 532x18
           text run at (0,0) width 532: "This demonstrates a bug, which is that 'bar' changes size when it's merged with 'foo'."
-      RenderBlock {DIV} at (0,68) size 784x46
+      RenderBlock {DIV} at (0,68) size 784x18
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {TEXT} at (0,0) size 21x18
+          RenderText {#text} at (0,0) size 21x18
             text run at (0,0) width 21: "foo"
           RenderInline {FONT} at (0,0) size 30x18
             RenderInline {SPAN} at (0,0) size 30x18
-              RenderText {TEXT} at (21,0) size 30x18
+              RenderText {#text} at (21,0) size 30x18
                 text run at (21,0) width 30: "bar"
-        RenderBlock {PRE} at (0,31) size 784x15
-          RenderText {TEXT} at (0,0) size 24x15
-            text run at (0,0) width 24: "baz"
-caret: position 3 of child 0 {TEXT} of child 1 {DIV} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {DIV} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document

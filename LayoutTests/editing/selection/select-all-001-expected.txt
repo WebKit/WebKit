@@ -10,7 +10,7 @@ layer at (0,0) size 820x900
     RenderBody {BODY} at (8,64) size 769x772
       RenderBlock {DIV} at (64,0) size 748x772 [border: (50px solid #FF0000)]
         RenderBlock {DIV} at (74,74) size 600x624
-          RenderText {TEXT} at (0,10) size 600x624
+          RenderText {#text} at (0,10) size 600x604
             text run at (0,10) width 558: "Four score and seven years ago our fathers brought forth, "
             text run at (0,58) width 589: "upon this continent, a new nation, conceived in Liberty, and "
             text run at (0,106) width 577: "dedicated to the proposition that all men are created equal. "
@@ -24,5 +24,5 @@ layer at (0,0) size 820x900
             text run at (0,490) width 600: "brought forth, upon this continent, a new nation, conceived in "
             text run at (0,538) width 560: "Liberty, and dedicated to the proposition that all men are "
             text run at (0,586) width 136: "created equal."
-selection start: position 1 of child 0 {TEXT} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 737 of child 0 {TEXT} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 737 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

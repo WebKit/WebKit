@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600 [bgcolor=#000000]
       RenderTable {TABLE} at (0,0) size 800x20
-        RenderTableSection {TBODY} at (0,0) size 0x20
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 800x20
+          RenderTableRow {TR} at (0,0) size 800x20
             RenderTableCell {TD} at (0,0) size 4x20 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x20
             RenderTableCell {TD} at (4,6) size 672x14 [r=0 c=1 rs=1 cs=1]
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (70,0) size 7x14
               RenderImage {IMG} at (77,0) size 14x14
               RenderImage {IMG} at (91,0) size 14x14
-              RenderText {TEXT} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (781,6) size 15x14 [r=0 c=3 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 15x14
             RenderTableCell {TD} at (796,0) size 4x20 [r=0 c=4 rs=1 cs=1]

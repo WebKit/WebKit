@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x66
-  RenderBlock {HTML} at (0,0) size 800x66
-    RenderBody {BODY} at (8,8) size 784x50
-      RenderPartObject {IFRAME} at (0,0) size 60x50
-      RenderText {TEXT} at (0,0) size 0x0
+  RenderBlock {html} at (0,0) size 800x66
+    RenderBody {body} at (8,8) size 784x50
+      RenderPartObject {iframe} at (0,0) size 60x50
+      RenderText {#text} at (0,0) size 0x0

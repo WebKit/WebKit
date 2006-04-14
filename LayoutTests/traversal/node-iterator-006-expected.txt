@@ -6,20 +6,20 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,0) size 784x76
         RenderBlock {P} at (0,0) size 784x16
           RenderInline {B} at (0,0) size 280x16
-            RenderText {TEXT} at (0,0) size 280x16
+            RenderText {#text} at (0,0) size 280x16
               text run at (0,0) width 280: "Expect ref node 'C'; pointer before"
-          RenderText {TEXT} at (280,0) size 88x16
+          RenderText {#text} at (280,0) size 88x16
             text run at (280,0) width 88: ": A B * [C]"
         RenderBlock {P} at (0,30) size 784x16
-          RenderText {TEXT} at (0,0) size 120x16
+          RenderText {#text} at (0,0) size 120x16
             text run at (0,0) width 120: "remove node 'C'"
         RenderBlock {P} at (0,60) size 784x16
           RenderInline {B} at (0,0) size 272x16
-            RenderText {TEXT} at (0,0) size 272x16
+            RenderText {#text} at (0,0) size 272x16
               text run at (0,0) width 272: "Expect ref node 'B'; pointer after"
-          RenderText {TEXT} at (272,0) size 72x16
+          RenderText {#text} at (272,0) size 72x16
             text run at (272,0) width 72: ": A [B] *"

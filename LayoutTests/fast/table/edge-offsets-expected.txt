@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {TEXT} at (0,0) size 212x18
+        RenderText {#text} at (0,0) size 212x18
           text run at (0,0) width 212: "This tests for a regression against "
         RenderInline {I} at (0,0) size 778x36
           RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
-            RenderText {TEXT} at (212,0) size 348x18
+            RenderText {#text} at (212,0) size 348x18
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7054"
-          RenderText {TEXT} at (560,0) size 778x36
+          RenderText {#text} at (560,0) size 778x36
             text run at (560,0) width 4: " "
             text run at (564,0) width 214: "Vertical scroll bars do not appear"
             text run at (0,18) width 169: "or do not scroll completely"
-        RenderText {TEXT} at (169,18) size 4x18
+        RenderText {#text} at (169,18) size 4x18
           text run at (169,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {TEXT} at (0,0) size 649x18
+        RenderText {#text} at (0,0) size 649x18
           text run at (0,0) width 649: "The top two boxes should have horizontal scroll bars. The bottom box should have a vertical scroll bar."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,198) size 784x18
@@ -27,20 +27,20 @@ layer at (0,0) size 800x600
 layer at (8,104) size 102x102 clip at (9,105) size 100x85 scrollWidth 133
   RenderBlock {DIV} at (0,96) size 102x102 [border: (1px solid #0000FF)]
     RenderTable {TABLE} at (1,1) size 6x6
-      RenderTableSection {TBODY} at (0,0) size 0x6
-        RenderTableRow {TR} at (0,0) size 0x0
+      RenderTableSection {TBODY} at (0,0) size 6x6
+        RenderTableRow {TR} at (0,2) size 6x2
           RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
 layer at (8,224) size 102x102 clip at (9,225) size 100x85 scrollX 33 scrollWidth 133
   RenderBlock {DIV} at (0,216) size 102x102 [border: (1px solid #0000FF)]
     RenderTable {TABLE} at (95,1) size 6x6
-      RenderTableSection {TBODY} at (0,0) size 0x6
-        RenderTableRow {TR} at (0,0) size 0x0
+      RenderTableSection {TBODY} at (0,0) size 6x6
+        RenderTableRow {TR} at (0,2) size 6x2
           RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
 layer at (8,344) size 102x102 clip at (9,345) size 85x100 scrollHeight 133
   RenderBlock {DIV} at (0,336) size 102x102 [border: (1px solid #0000FF)]
     RenderTable {TABLE} at (1,1) size 6x6
-      RenderTableSection {TBODY} at (0,0) size 0x6
-        RenderTableRow {TR} at (0,0) size 0x0
+      RenderTableSection {TBODY} at (0,0) size 6x6
+        RenderTableRow {TR} at (0,2) size 6x2
           RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
 layer at (82,108) size 60x60 backgroundClip at (9,105) size 100x85 clip at (9,105) size 100x85 outlineClip at (9,105) size 100x85
   RenderBlock (positioned) {DIV} at (70,0) size 60x60 [bgcolor=#C0C0C0]

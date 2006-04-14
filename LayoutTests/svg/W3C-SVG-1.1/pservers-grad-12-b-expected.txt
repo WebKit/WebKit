@@ -6,30 +6,30 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (10.00,35) size 460x225
         RenderSVGText {text} at (0,0) size 465x17
-          RenderText {TEXT} at (0,0) size 194x17
+          RenderText {#text} at (0,0) size 194x17
             text run at (0,0) width 194: "Testing gradientUnits attribute"
         KCanvasItem {rect} at (10,35) size 460x50 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [center=(50,50)] [focal=(50,50)] [radius=50.00]}] [data="M10.00,35.00L470.00,35.00L470.00,85.00L10.00,85.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 298x14
+          RenderText {#text} at (0,0) size 298x14
             text run at (0,0) width 298: "Radial gradient with default attributes (from blue to red)"
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 343x14
+          RenderText {#text} at (0,0) size 343x14
             text run at (0,0) width 343: "Gradient is blue at the object center and red at the object edges"
         KCanvasItem {rect} at (10,125) size 460x50 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [center=(20,20)] [focal=(20,20)] [radius=50.00]}] [data="M10.00,125.00L470.00,125.00L470.00,175.00L10.00,175.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 187x14
+          RenderText {#text} at (0,0) size 187x14
             text run at (0,0) width 187: "gradientUnits=objectBoundingBox"
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 152x14
+          RenderText {#text} at (0,0) size 152x14
             text run at (0,0) width 152: "cx=.2, cy=.2, r=.5, fx=.2 fy=.2"
         KCanvasItem {rect} at (10.00,210.00) size 460x50 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(10.00,260.00)}] [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(25,215)] [focal=(25,215)] [radius=25.00]}] [data="M0.00,0.00L50.00,0.00L50.00,460.00L0.00,460.00"]
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 177x14
+          RenderText {#text} at (0,0) size 177x14
             text run at (0,0) width 177: "gradientUnits=userSpaceOnUse"
         RenderSVGText {text} at (0,0) size 465x14
-          RenderText {TEXT} at (0,0) size 380x14
+          RenderText {#text} at (0,0) size 380x14
             text run at (0,0) width 380: "Gradient is red to blue radial gradiant from center to horizontal bounds"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

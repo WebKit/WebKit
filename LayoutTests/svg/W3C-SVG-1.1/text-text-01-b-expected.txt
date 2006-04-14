@@ -3,18 +3,18 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (1.50,1.50) size 477x357
       KCanvasContainer {g} at (4.50,94.50) size 471x211.50
         RenderSVGText {text} at (0,0) size 465x11
-          RenderText {TEXT} at (0,0) size 114x11
+          RenderText {#text} at (0,0) size 114x11
             text run at (0,0) width 114: "Basic test of 'textLength'"
         RenderSVGText {text} at (0,0) size 465x11
-          RenderText {TEXT} at (0,0) size 132x11
+          RenderText {#text} at (0,0) size 132x11
             text run at (0,0) width 132: "and 'lengthAdjust' attributes."
         KCanvasContainer {g} at (4.50,94.50) size 471x13.50
           KCanvasContainer {g} at (0,0) size 0x0
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 61x10
+              RenderText {#text} at (0,0) size 61x10
                 text run at (0,0) width 61: "Line to Stretch"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 99x10
+              RenderText {#text} at (0,0) size 99x10
                 text run at (0,0) width 99: "this is a line to squeeze"
           KCanvasContainer {g} at (4.50,94.50) size 471x13.50
             KCanvasItem {line} at (6,94.50) size 162x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L56.00,32.00"]
@@ -25,24 +25,24 @@ layer at (0,0) size 480x360
             KCanvasItem {line} at (472.50,96) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M158.00,32.00L158.00,36.00"]
           KCanvasContainer {g} at (0,0) size 0x0
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 78x10
+              RenderText {#text} at (0,0) size 78x10
                 text run at (0,0) width 78: "textLength: default"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 85x10
+              RenderText {#text} at (0,0) size 85x10
                 text run at (0,0) width 85: "lengthAdjust: default"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 78x10
+              RenderText {#text} at (0,0) size 78x10
                 text run at (0,0) width 78: "textLength: default"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 85x10
+              RenderText {#text} at (0,0) size 85x10
                 text run at (0,0) width 85: "lengthAdjust: default"
         KCanvasContainer {g} at (4.50,160.50) size 420x13.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}]
           KCanvasContainer {g} at (0,66) size 0x0
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 61x10
+              RenderText {#text} at (0,0) size 61x10
                 text run at (0,0) width 61: "Line to Stretch"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 99x10
+              RenderText {#text} at (0,0) size 99x10
                 text run at (0,0) width 99: "this is a line to squeeze"
           KCanvasContainer {g} at (4.50,160.50) size 420x13.50
             KCanvasItem {line} at (6,160.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
@@ -53,24 +53,24 @@ layer at (0,0) size 480x360
             KCanvasItem {line} at (421.50,162) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
           KCanvasContainer {g} at (0,66) size 0x0
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 96x10
+              RenderText {#text} at (0,0) size 96x10
                 text run at (0,0) width 96: "textLength: 25% longer"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 85x10
+              RenderText {#text} at (0,0) size 85x10
                 text run at (0,0) width 85: "lengthAdjust: default"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 100x10
+              RenderText {#text} at (0,0) size 100x10
                 text run at (0,0) width 100: "textLength: 15% shorter"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 85x10
+              RenderText {#text} at (0,0) size 85x10
                 text run at (0,0) width 85: "lengthAdjust: default"
         KCanvasContainer {g} at (4.50,226.50) size 420x13.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,44.00)}]
           KCanvasContainer {g} at (0,132) size 0x0
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 61x10
+              RenderText {#text} at (0,0) size 61x10
                 text run at (0,0) width 61: "Line to Stretch"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 99x10
+              RenderText {#text} at (0,0) size 99x10
                 text run at (0,0) width 99: "this is a line to squeeze"
           KCanvasContainer {g} at (4.50,226.50) size 420x13.50
             KCanvasItem {line} at (6,226.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
@@ -81,24 +81,24 @@ layer at (0,0) size 480x360
             KCanvasItem {line} at (421.50,228) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
           KCanvasContainer {g} at (0,132) size 0x0
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 96x10
+              RenderText {#text} at (0,0) size 96x10
                 text run at (0,0) width 96: "textLength: 25% longer"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 89x10
+              RenderText {#text} at (0,0) size 89x10
                 text run at (0,0) width 89: "lengthAdjust: spacing"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 100x10
+              RenderText {#text} at (0,0) size 100x10
                 text run at (0,0) width 100: "textLength: 15% shorter"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 89x10
+              RenderText {#text} at (0,0) size 89x10
                 text run at (0,0) width 89: "lengthAdjust: spacing"
         KCanvasContainer {g} at (4.50,292.50) size 420x13.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,66.00)}]
           KCanvasContainer {g} at (0,198) size 0x0
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 61x10
+              RenderText {#text} at (0,0) size 61x10
                 text run at (0,0) width 61: "Line to Stretch"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 99x10
+              RenderText {#text} at (0,0) size 99x10
                 text run at (0,0) width 99: "this is a line to squeeze"
           KCanvasContainer {g} at (4.50,292.50) size 420x13.50
             KCanvasItem {line} at (6,292.50) size 201x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M2.00,32.00L69.00,32.00"]
@@ -109,18 +109,18 @@ layer at (0,0) size 480x360
             KCanvasItem {line} at (421.50,294) size 3x12 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M141.00,32.00L141.00,36.00"]
           KCanvasContainer {g} at (0,198) size 0x0
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 96x10
+              RenderText {#text} at (0,0) size 96x10
                 text run at (0,0) width 96: "textLength: 25% longer"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 75x10
+              RenderText {#text} at (0,0) size 75x10
                 text run at (0,0) width 75: "lengthAdjust: sAG"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 100x10
+              RenderText {#text} at (0,0) size 100x10
                 text run at (0,0) width 100: "textLength: 20% shorter"
             RenderSVGText {text} at (0,0) size 465x10
-              RenderText {TEXT} at (0,0) size 75x10
+              RenderText {#text} at (0,0) size 75x10
                 text run at (0,0) width 75: "lengthAdjust: sAG"
       RenderSVGText {text} at (0,0) size 465x10
-        RenderText {TEXT} at (0,0) size 64x10
+        RenderText {#text} at (0,0) size 64x10
           text run at (0,0) width 64: "$Revision: 1.1 $"
       KCanvasItem {rect} at (1.50,1.50) size 477x357 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L159.00,1.00L159.00,119.00L1.00,119.00"]

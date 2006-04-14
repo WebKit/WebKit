@@ -24,35 +24,35 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x184 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x84
-          RenderText {TEXT} at (0,0) size 67x28
+          RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 727x56
+          RenderText {#text} at (0,28) size 727x56
             text run at (0,28) width 727: "Pasting black (document default color) text into a block of text with a non-"
             text run at (0,56) width 130: "default color."
         RenderBlock {DIV} at (14,114) size 756x56
-          RenderText {TEXT} at (0,0) size 189x28
+          RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 442x28
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 442x28
             text run at (0,28) width 442: "Should see this content in the red box below: "
           RenderInline {SPAN} at (0,0) size 77x28 [color=#FF0000]
-            RenderText {TEXT} at (442,28) size 23x28
+            RenderText {#text} at (442,28) size 23x28
               text run at (442,28) width 23: "ab"
             RenderInline {SPAN} at (0,0) size 34x28 [color=#000000]
-              RenderText {TEXT} at (465,28) size 34x28
+              RenderText {#text} at (465,28) size 34x28
                 text run at (465,28) width 34: "cde"
-            RenderText {TEXT} at (499,28) size 20x28
+            RenderText {#text} at (499,28) size 20x28
               text run at (499,28) width 20: "fg"
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,208) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
           RenderInline {SPAN} at (0,0) size 77x28 [color=#FF0000]
-            RenderText {TEXT} at (2,2) size 23x28
+            RenderText {#text} at (2,2) size 23x28
               text run at (2,2) width 23: "ab"
             RenderInline {FONT} at (0,0) size 34x28 [color=#000000]
-              RenderText {TEXT} at (25,2) size 34x28
+              RenderText {#text} at (25,2) size 34x28
                 text run at (25,2) width 34: "cde"
-            RenderText {TEXT} at (59,2) size 20x28
+            RenderText {#text} at (59,2) size 20x28
               text run at (59,2) width 20: "fg"
-caret: position 3 of child 0 {TEXT} of child 1 {FONT} of child 1 {SPAN} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {#text} of child 1 {FONT} of child 1 {SPAN} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

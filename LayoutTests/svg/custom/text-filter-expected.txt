@@ -3,5 +3,5 @@ layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 0x0
       RenderSVGText {text} at (0,0) size 785x63
-        RenderText {TEXT} at (0,0) size 567x63
+        RenderText {#text} at (0,0) size 567x63
           text run at (0,0) width 567: "This text should be blury."

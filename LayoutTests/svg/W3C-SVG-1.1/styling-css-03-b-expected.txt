@@ -3,10 +3,10 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (130,70) size 260x210
         RenderSVGText {text} at (0,0) size 465x18
-          RenderText {TEXT} at (0,0) size 245x18
+          RenderText {#text} at (0,0) size 245x17
             text run at (0,0) width 245: "Rectangle should be red not green"
         RenderSVGText {text} at (0,0) size 465x18
-          RenderText {TEXT} at (0,0) size 338x18
+          RenderText {#text} at (0,0) size 338x17
             text run at (0,0) width 72: "This tests "
             text run at (72,0) width 266: "ancestor selectors and child selectors"
         KCanvasContainer {g} at (130,70) size 260x60
@@ -16,10 +16,10 @@ layer at (0,0) size 480x360
             KCanvasItem {polygon} at (300,70) size 90x50 [fill={[type=SOLID] [color=#008000]}] [data="M300.00,100.00L320.00,120.00L340.00,110.00L360.00,120.00L390.00,90.00L340.00,70.00"]
         KCanvasContainer {g} at (130,220) size 260x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
           RenderSVGText {text} at (0,0) size 465x18
-            RenderText {TEXT} at (0,0) size 343x18
+            RenderText {#text} at (0,0) size 343x17
               text run at (0,0) width 343: "Circle should be red not green; rectangle still red"
           RenderSVGText {text} at (0,0) size 465x18
-            RenderText {TEXT} at (0,0) size 434x18
+            RenderText {#text} at (0,0) size 434x17
               text run at (0,0) width 72: "This tests "
               text run at (72,0) width 362: "ancestor, immediate-sibling and first-child selectors"
           KCanvasContainer {g} at (130,220) size 260x60
@@ -27,6 +27,6 @@ layer at (0,0) size 480x360
             KCanvasItem {rect} at (220,230) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M220.00,80.00L280.00,80.00L280.00,120.00L220.00,120.00"]
             KCanvasItem {polygon} at (300,220) size 90x50 [fill={[type=SOLID] [color=#008000]}] [data="M300.00,100.00L320.00,120.00L340.00,110.00L360.00,120.00L390.00,90.00L340.00,70.00"]
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

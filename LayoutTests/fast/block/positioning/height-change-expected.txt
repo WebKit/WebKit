@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {TEXT} at (0,0) size 212x18
+        RenderText {#text} at (0,0) size 212x18
           text run at (0,0) width 212: "This tests for a regression against "
         RenderInline {I} at (0,0) size 743x36
           RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
-            RenderText {TEXT} at (212,0) size 348x18
+            RenderText {#text} at (212,0) size 348x18
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6881"
-          RenderText {TEXT} at (560,0) size 743x36
+          RenderText {#text} at (560,0) size 743x36
             text run at (560,0) width 4: " "
             text run at (564,0) width 179: "Block with position:absolute"
             text run at (0,18) width 579: "bottom:0 doesn't always move when height of containing block changes (affects Safari RSS)"
-        RenderText {TEXT} at (579,18) size 4x18
+        RenderText {#text} at (579,18) size 4x18
           text run at (579,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {TEXT} at (0,0) size 550x18
+        RenderText {#text} at (0,0) size 550x18
           text run at (0,0) width 550: "The squares below should have blue tops and green bottoms, not the other way around."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,196) size 784x18

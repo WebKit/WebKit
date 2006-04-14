@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x574
       RenderBlock (anonymous) at (0,0) size 784x54
-        RenderText {TEXT} at (0,0) size 758x54
+        RenderText {#text} at (0,0) size 758x54
           text run at (0,0) width 285: "In this sample, the H3s should not be nested. "
           text run at (285,0) width 347: "While WinIE does allow the nesting, Firefox does not. "
           text run at (632,0) width 120: "We have chosen to"
@@ -12,14 +12,14 @@ layer at (0,0) size 800x600
           text run at (0,36) width 34: "sizes."
       RenderBlock {H3} at (0,72) size 784x30 [border: (2px solid #FF0000)]
         RenderInline {I} at (0,0) size 33x22
-          RenderText {TEXT} at (4,4) size 33x22
+          RenderText {#text} at (4,4) size 33x22
             text run at (4,4) width 33: "One"
       RenderBlock (anonymous) at (0,120) size 784x0
         RenderInline {I} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,120) size 784x30
         RenderBlock {H3} at (0,0) size 784x30 [border: (2px solid #FF0000)]
           RenderInline {I} at (0,0) size 35x22
-            RenderText {TEXT} at (4,4) size 35x22
+            RenderText {#text} at (4,4) size 35x22
               text run at (4,4) width 35: "Two"
       RenderBlock (anonymous) at (0,168) size 784x0
         RenderInline {I} at (0,0) size 0x0
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,168) size 784x30
         RenderBlock {H3} at (0,0) size 784x30 [border: (2px solid #FF0000)]
           RenderInline {I} at (0,0) size 46x22
-            RenderText {TEXT} at (4,4) size 46x22
+            RenderText {#text} at (4,4) size 46x22
               text run at (4,4) width 46: "Three"
       RenderBlock (anonymous) at (0,216) size 784x0
         RenderInline {I} at (0,0) size 0x0
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,216) size 784x30
         RenderBlock {H3} at (0,0) size 784x30 [border: (2px solid #FF0000)]
           RenderInline {I} at (0,0) size 41x22
-            RenderText {TEXT} at (4,4) size 41x22
+            RenderText {#text} at (4,4) size 41x22
               text run at (4,4) width 41: "Four"
       RenderBlock (anonymous) at (0,264) size 784x0
         RenderInline {I} at (0,0) size 0x0

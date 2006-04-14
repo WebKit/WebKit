@@ -10,20 +10,20 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 396x596
             RenderBody {BODY} at (8,8) size 380x572
               RenderBlock {P} at (0,0) size 380x36
-                RenderText {TEXT} at (0,0) size 53x18
+                RenderText {#text} at (0,0) size 53x18
                   text run at (0,0) width 53: "Test for "
                 RenderInline {A} at (0,0) size 60x18 [color=#0000EE]
-                  RenderText {TEXT} at (53,0) size 60x18
+                  RenderText {#text} at (53,0) size 60x18
                     text run at (53,0) width 60: "bug 3400"
-                RenderText {TEXT} at (113,0) size 366x36
+                RenderText {#text} at (113,0) size 366x36
                   text run at (113,0) width 253: ": setting the .src of an iframe to the same"
                   text run at (0,18) width 172: "value does not reload page."
               RenderBlock {P} at (0,52) size 380x36
-                RenderText {TEXT} at (0,0) size 375x36
+                RenderText {#text} at (0,0) size 375x36
                   text run at (0,0) width 375: "Testing that setting contentWindow.location.href of a frame"
                   text run at (0,18) width 152: "to the same value works"
               RenderBlock {P} at (0,104) size 380x18
-                RenderText {TEXT} at (0,0) size 71x18
+                RenderText {#text} at (0,0) size 71x18
                   text run at (0,0) width 71: "SUCCESS"
       RenderFrame {FRAME} at (402,0) size 398x600
         layer at (0,0) size 396x596

@@ -9,9 +9,9 @@ layer at (0,0) size 812x1044
   RenderBlock {HTML} at (0,0) size 785x1044
     RenderBody {BODY} at (64,64) size 748x916 [border: (50px solid #FF0000)]
       RenderBlock (anonymous) at (74,74) size 600x768
-        RenderBR {BR} at (0,10) size 0x48
-        RenderBR {BR} at (0,58) size 0x48
-        RenderText {TEXT} at (0,106) size 600x624
+        RenderBR {BR} at (0,10) size 0x28
+        RenderBR {BR} at (0,58) size 0x28
+        RenderText {#text} at (0,106) size 600x604
           text run at (0,106) width 558: "Four score and seven years ago our fathers brought forth, "
           text run at (0,154) width 589: "upon this continent, a new nation, conceived in Liberty, and "
           text run at (0,202) width 577: "dedicated to the proposition that all men are created equal. "
@@ -25,8 +25,8 @@ layer at (0,0) size 812x1044
           text run at (0,586) width 600: "brought forth, upon this continent, a new nation, conceived in "
           text run at (0,634) width 560: "Liberty, and dedicated to the proposition that all men are "
           text run at (0,682) width 142: "created equal. "
-        RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,730) size 0x48
+        RenderBR {BR} at (142,704) size 0x0
+        RenderBR {BR} at (0,730) size 0x28
       RenderBlock {DIV} at (74,842) size 600x0
 selection start: position 0 of child 1 {BR} of child 1 {BODY} of child 0 {HTML} of document
 selection end:   position 1 of child 5 {BR} of child 1 {BODY} of child 0 {HTML} of document

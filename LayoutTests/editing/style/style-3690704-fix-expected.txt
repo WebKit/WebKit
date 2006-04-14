@@ -33,20 +33,20 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 224x56
-          RenderText {TEXT} at (14,14) size 70x28
+          RenderText {#text} at (14,14) size 70x28
             text run at (14,14) width 70: "here is "
           RenderInline {I} at (0,0) size 51x28
             RenderInline {B} at (0,0) size 51x28
-              RenderText {TEXT} at (84,14) size 51x28
+              RenderText {#text} at (84,14) size 51x28
                 text run at (84,14) width 51: "some"
           RenderInline {B} at (0,0) size 166x56
-            RenderText {TEXT} at (135,14) size 45x28
+            RenderText {#text} at (135,14) size 45x28
               text run at (135,14) width 45: " text"
-            RenderBR {BR} at (0,0) size 0x0
-            RenderText {TEXT} at (14,42) size 46x28
+            RenderBR {BR} at (180,36) size 0x0
+            RenderText {#text} at (14,42) size 46x28
               text run at (14,42) width 46: "here"
-          RenderText {TEXT} at (60,42) size 178x28
+          RenderText {#text} at (60,42) size 178x28
             text run at (60,42) width 178: " is some more text"
-        RenderText {TEXT} at (0,0) size 0x0
-selection start: position 0 of child 0 {TEXT} of child 0 {B} of child 1 {I} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 4 of child 2 {TEXT} of child 2 {B} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+        RenderText {#text} at (0,0) size 0x0
+selection start: position 0 of child 0 {#text} of child 0 {B} of child 1 {I} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 4 of child 2 {#text} of child 2 {B} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -15,24 +15,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {TEXT} at (0,0) size 85x18
+        RenderText {#text} at (0,0) size 85x18
           text run at (0,0) width 85: "See this bug: "
         RenderInline {A} at (0,0) size 167x18 [color=#0000EE]
-          RenderText {TEXT} at (85,0) size 167x18
+          RenderText {#text} at (85,0) size 167x18
             text run at (85,0) width 167: "<rdar://problem/3918712>"
-        RenderText {TEXT} at (252,0) size 740x36
+        RenderText {#text} at (252,0) size 740x36
           text run at (252,0) width 488: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost). "
           text run at (0,18) width 496: "Should see two boxes with blockquoted \"foo\" text, followed by an empty box."
       RenderBlock {DIV} at (0,36) size 784x24
       RenderBlock {DIV} at (0,60) size 784x104 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,38) size 756x28
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
-            RenderText {TEXT} at (0,0) size 32x28
+            RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
       RenderBlock {DIV} at (0,164) size 784x104 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,38) size 756x28
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
-            RenderText {TEXT} at (0,0) size 32x28
+            RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
       RenderBlock {DIV} at (0,268) size 784x28 [border: (2px solid #FF0000)]
 caret: position 0 of child 8 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -5,12 +5,12 @@ layer at (0,0) size 800x0
 layer at (8,8) size 784x54
   RenderBody {BODY} at (8,8) size 784x54
     RenderBlock {DIV} at (0,0) size 784x54
-      RenderText {TEXT} at (0,0) size 130x18
+      RenderText {#text} at (0,0) size 130x18
         text run at (0,0) width 130: "You should see two "
       RenderInline {I} at (0,0) size 109x18
-        RenderText {TEXT} at (130,0) size 109x18
+        RenderText {#text} at (130,0) size 109x18
           text run at (130,0) width 109: "vertically stacked"
-      RenderText {TEXT} at (239,0) size 763x54
+      RenderText {#text} at (239,0) size 763x54
         text run at (239,0) width 157: " green rectangles below. "
         text run at (396,0) width 181: "Each one is 100 pixels wide "
         text run at (577,0) width 115: "and 50 pixels tall. "
@@ -23,6 +23,6 @@ layer at (8,8) size 784x54
 layer at (8,62) size 100x108
   RenderBlock (positioned) {DIV} at (0,0) size 100x108
     RenderBlock {SPAN} at (0,0) size 100x50 [bgcolor=#008000]
-    RenderText {TEXT} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0
     RenderBlock {SPAN} at (0,54) size 100x50 [bgcolor=#008000]
-    RenderText {TEXT} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0

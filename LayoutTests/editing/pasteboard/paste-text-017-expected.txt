@@ -15,36 +15,36 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x112
-          RenderText {TEXT} at (0,0) size 67x28
+          RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 742x56
+          RenderText {#text} at (0,28) size 742x56
             text run at (0,28) width 742: "Copying and pasting a whole line followed by a blank line could remove the"
             text run at (0,56) width 480: "blank line incorrectly, as in the case described in "
           RenderInline {A} at (0,0) size 260x28 [color=#0000EE]
-            RenderText {TEXT} at (480,56) size 260x28
+            RenderText {#text} at (480,56) size 260x28
               text run at (480,56) width 260: "<rdar://problem/3951178>"
-          RenderText {TEXT} at (0,84) size 623x28
+          RenderText {#text} at (0,84) size 623x28
             text run at (0,84) width 623: "REGRESSION (Mail): blank line lost after pasting as quotation."
         RenderBlock {DIV} at (14,142) size 756x56
-          RenderText {TEXT} at (0,0) size 189x28
+          RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 490x28
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 490x28
             text run at (0,28) width 490: "Should see a blank line between \"two\" and \"three\""
       RenderBlock {DIV} at (0,236) size 784x144
         RenderBlock {DIV} at (0,0) size 784x144 [border: (2px solid #FF0000)]
           RenderBlock {DIV} at (2,2) size 780x28
-            RenderText {TEXT} at (0,0) size 35x28
+            RenderText {#text} at (0,0) size 35x28
               text run at (0,0) width 35: "one"
           RenderBlock {DIV} at (2,30) size 780x28
             RenderBR {BR} at (0,0) size 0x28
           RenderBlock {DIV} at (2,58) size 780x28
-            RenderText {TEXT} at (0,0) size 36x28
+            RenderText {#text} at (0,0) size 36x28
               text run at (0,0) width 36: "two"
           RenderBlock {DIV} at (2,86) size 780x28
             RenderBR {BR} at (0,0) size 0x28
           RenderBlock {DIV} at (2,114) size 780x28
-            RenderText {TEXT} at (0,0) size 49x28
+            RenderText {#text} at (0,0) size 49x28
               text run at (0,0) width 49: "three"
 caret: position 0 of child 0 {BR} of child 6 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

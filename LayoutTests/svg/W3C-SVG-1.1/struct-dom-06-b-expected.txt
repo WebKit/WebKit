@@ -4,10 +4,10 @@ layer at (0,0) size 480x360
       KCanvasContainer {g} at (0,0) size 450x450
         KCanvasItem {rect} at (0,0) size 450x450 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L450.00,0.00L450.00,450.00L0.00,450.00"]
         RenderSVGText {text} at (0,0) size 465x72
-          RenderText {TEXT} at (0,0) size 418x72
+          RenderText {#text} at (0,0) size 418x72
             text run at (0,0) width 418: "Removing DOM Elements is"
             text run at (0,36) width 213: "not supported"
       RenderSVGText {text} at (0,0) size 465x36
-        RenderText {TEXT} at (0,0) size 198x36
+        RenderText {#text} at (0,0) size 198x36
           text run at (0,0) width 198: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (5,5) size 67x28 [bgcolor=#ADD8E6]
         RenderInline {SPAN} at (0,0) size 9x18
-          RenderText {TEXT} at (5,5) size 9x18
+          RenderText {#text} at (5,5) size 9x18
             text run at (5,5) width 9: "\x{25B8}"
-        RenderText {TEXT} at (14,5) size 48x18
+        RenderText {#text} at (14,5) size 48x18
           text run at (14,5) width 48: " Project"
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

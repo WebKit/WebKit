@@ -18,7 +18,7 @@ layer at (0,0) size 480x360
         KCanvasContainer {marker} at (0,0) size 10x10
           KCanvasItem {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
         RenderSVGText {text} at (0,0) size 465x16
-          RenderText {TEXT} at (0,0) size 90x16
+          RenderText {#text} at (0,0) size 90x16
             text run at (0,0) width 90: "Basic Markers"
         KCanvasItem {path} at (130,36) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=#marker1] [middle marker=#marker1] [end marker=#marker1] [data="M130.00,40.00L180.00,40.00L180.00,90.00"]
         KCanvasContainer {g} at (242,32) size 66x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
@@ -30,7 +30,7 @@ layer at (0,0) size 480x360
           KCanvasContainer {g} at (292,82) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,82.00)}]
             KCanvasItem {rect} at (292,82) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00L10.00,0.00L10.00,10.00L0.00,10.00"]
         RenderSVGText {text} at (0,0) size 465x16
-          RenderText {TEXT} at (0,0) size 137x16
+          RenderText {#text} at (0,0) size 137x16
             text run at (0,0) width 137: "Start, Middle and End"
         KCanvasItem {path} at (130,131) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=#markerStart] [middle marker=#markerMiddle] [end marker=#markerEnd] [data="M130.00,135.00L180.00,135.00L180.00,185.00"]
         KCanvasContainer {g} at (242,127) size 66x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
@@ -42,7 +42,7 @@ layer at (0,0) size 480x360
           KCanvasContainer {g} at (292,177) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,177.00)}]
             KCanvasItem {path} at (292,177) size 16x16 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
         RenderSVGText {text} at (0,0) size 465x16
-          RenderText {TEXT} at (0,0) size 137x16
+          RenderText {#text} at (0,0) size 137x16
             text run at (0,0) width 137: "Automatic Orientation"
         KCanvasItem {path} at (130,226) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=#marker2] [middle marker=#marker2] [end marker=#marker2] [data="M130.00,230.00L180.00,230.00L180.00,280.00"]
         KCanvasContainer {g} at (242,218.69) size 69.31x69.31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
@@ -54,6 +54,6 @@ layer at (0,0) size 480x360
           KCanvasContainer {g} at (292,272) size 16x16 [transform={m=((-0.00,1.60)(-1.60,-0.00)) t=(188.00,272.00)}]
             KCanvasItem {path} at (292,272) size 16x16 [fill={[type=SOLID] [color=#0000FF]}] [data="M5.00,0.00L10.00,10.00L0.00,10.00"]
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

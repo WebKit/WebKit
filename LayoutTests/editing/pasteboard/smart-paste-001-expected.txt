@@ -14,25 +14,25 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {TEXT} at (0,0) size 67x28
+          RenderText {#text} at (0,0) size 67x28
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 564x28
+          RenderText {#text} at (0,28) size 564x28
             text run at (0,28) width 564: "Smart paste when pasting after a word at the end of a line."
         RenderBlock {DIV} at (14,86) size 756x112
-          RenderText {TEXT} at (0,0) size 189x28
+          RenderText {#text} at (0,0) size 189x28
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,28) size 720x56
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 720x56
             text run at (0,28) width 720: "A space should be added between the preexisting word and the word that's"
             text run at (0,56) width 297: "pasted. It should like this this: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {TEXT} at (0,84) size 74x28
+          RenderBR {BR} at (297,78) size 0x0
+          RenderText {#text} at (0,84) size 74x28
             text run at (0,84) width 74: "test test"
       RenderBlock {DIV} at (0,236) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {TEXT} at (2,2) size 40x28
+          RenderText {#text} at (2,2) size 40x28
             text run at (2,2) width 40: "test "
-          RenderText {TEXT} at (42,2) size 34x28
+          RenderText {#text} at (42,2) size 34x28
             text run at (42,2) width 34: "test"
-caret: position 4 of child 1 {TEXT} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 4 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

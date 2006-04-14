@@ -3,47 +3,47 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (0,0) size 0x0
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 49x35
+          RenderText {#text} at (0,0) size 49x35
             text run at (0,0) width 49: "100"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 53x35
+          RenderText {#text} at (0,0) size 53x35
             text run at (0,0) width 53: "200"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 53x35
+          RenderText {#text} at (0,0) size 53x35
             text run at (0,0) width 53: "300"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 53x35
+          RenderText {#text} at (0,0) size 53x35
             text run at (0,0) width 53: "400"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 52x35
+          RenderText {#text} at (0,0) size 52x35
             text run at (0,0) width 52: "500"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 61x35
+          RenderText {#text} at (0,0) size 61x35
             text run at (0,0) width 61: "600"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 59x35
+          RenderText {#text} at (0,0) size 59x35
             text run at (0,0) width 59: "700"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 62x35
+          RenderText {#text} at (0,0) size 62x35
             text run at (0,0) width 62: "800"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 61x35
+          RenderText {#text} at (0,0) size 61x35
             text run at (0,0) width 61: "900"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 177x35
+          RenderText {#text} at (0,0) size 177x35
             text run at (0,0) width 177: "This is bold"
         RenderSVGText {text} at (0,0) size 465x35
-          RenderText {TEXT} at (0,0) size 190x35
+          RenderText {#text} at (0,0) size 190x35
             text run at (0,0) width 190: "This is normal"
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x35
-            RenderText {TEXT} at (0,0) size 213x35
+            RenderText {#text} at (0,0) size 213x35
               text run at (0,0) width 213: "Blue is bolder"
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x35
-            RenderText {TEXT} at (0,0) size 184x35
+            RenderText {#text} at (0,0) size 184x35
               text run at (0,0) width 184: "Blue is lighter"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

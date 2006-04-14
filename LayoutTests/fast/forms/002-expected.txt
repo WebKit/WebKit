@@ -5,4 +5,4 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (0,0) size 156x24 [border: (2px solid #FF0000)]
         RenderImageButton {INPUT} at (2,2) size 152x20
-        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

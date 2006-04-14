@@ -11,12 +11,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x356 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x56
           RenderInline {SPAN} at (0,0) size 693x56
-            RenderText {TEXT} at (0,0) size 693x56
+            RenderText {#text} at (0,0) size 693x56
               text run at (0,0) width 693: "\"The quick brown fox jumps over the lazy dog\" uses every letter in the "
               text run at (0,28) width 170: "english language."
         RenderBlock (anonymous) at (14,94) size 756x224
           RenderBlock {P} at (0,0) size 756x224
-            RenderText {TEXT} at (0,0) size 756x224
+            RenderText {#text} at (0,0) size 756x224
               text run at (0,0) width 462: "Here's to the crazy ones, the misfits, the rebels, "
               text run at (462,0) width 193: "the trouble makers, "
               text run at (655,0) width 98: "the round "
@@ -39,6 +39,6 @@ layer at (0,0) size 800x600
               text run at (0,196) width 77: "who do."
         RenderBlock (anonymous) at (14,342) size 756x0
           RenderInline {SPAN} at (0,0) size 0x0
-          RenderText {TEXT} at (0,0) size 0x0
-selection start: position 0 of child 0 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 562 of child 0 {TEXT} of child 1 {P} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (0,0) size 0x0
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 562 of child 0 {#text} of child 1 {P} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

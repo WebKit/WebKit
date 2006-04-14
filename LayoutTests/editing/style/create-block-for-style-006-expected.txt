@@ -12,18 +12,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {TEXT} at (14,14) size 731x56
+        RenderText {#text} at (14,14) size 731x56
           text run at (14,14) width 731: "Should see \"bar\" and \"baz\" centered in their own red boxes. The \"foo\" line "
           text run at (14,42) width 448: "should be in its own red box, but not centered."
       RenderBlock {DIV} at (0,108) size 784x168
         RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-          RenderText {TEXT} at (14,14) size 32x28
+          RenderText {#text} at (14,14) size 32x28
             text run at (14,14) width 32: "foo"
         RenderBlock {DIV} at (0,56) size 784x56 [border: (2px solid #FF0000)]
-          RenderText {TEXT} at (376,14) size 31x28
+          RenderText {#text} at (376,14) size 31x28
             text run at (376,14) width 31: "bar"
         RenderBlock {DIV} at (0,112) size 784x56 [border: (2px solid #FF0000)]
-          RenderText {TEXT} at (375,14) size 34x28
+          RenderText {#text} at (375,14) size 34x28
             text run at (375,14) width 34: "baz"
-selection start: position 1 of child 0 {TEXT} of child 3 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 2 of child 0 {TEXT} of child 5 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {#text} of child 3 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 2 of child 0 {#text} of child 5 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

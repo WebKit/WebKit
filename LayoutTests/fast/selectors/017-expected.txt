@@ -5,8 +5,8 @@ layer at (0,0) size 800x68
     RenderBody {BODY} at (8,16) size 784x36
       RenderBlock {P} at (0,0) size 784x36
         RenderInline {A} at (0,0) size 379x18 [color=#0000EE] [bgcolor=#FF0000]
-          RenderText {TEXT} at (0,0) size 379x18
+          RenderText {#text} at (0,0) size 379x18
             text run at (0,0) width 379: "You should see a green background assigned by the anchor."
-        RenderText {TEXT} at (379,0) size 770x36
+        RenderText {#text} at (379,0) size 770x36
           text run at (379,0) width 391: " (Note: You must have visited http://www.w3.org/ for this test"
           text run at (0,18) width 75: "to be valid.)"

@@ -7,8 +7,8 @@ layer at (8,8) size 31x100
   RenderBlock (positioned) {DIV} at (8,8) size 31x100
     RenderBlock {DIV} at (0,0) size 31x100
       RenderTable {TABLE} at (0,0) size 31x100 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 0x98
-          RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 29x98
+          RenderTableRow {TR} at (0,2) size 29x94
             RenderTableCell {TD} at (2,38) size 25x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {TEXT} at (2,2) size 21x18
+              RenderText {#text} at (2,2) size 21x18
                 text run at (2,2) width 21: "test"

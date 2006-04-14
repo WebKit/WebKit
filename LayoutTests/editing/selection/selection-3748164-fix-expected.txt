@@ -17,9 +17,9 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 0x0
           RenderBR {BR} at (0,0) size 0x28
           RenderInline {SPAN} at (0,0) size 33x15
-            RenderText {TEXT} at (0,28) size 33x15
+            RenderText {#text} at (0,28) size 33x15
               text run at (0,28) width 33: "- Ken"
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (33,40) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
-          RenderText {TEXT} at (0,0) size 0x0
-caret: position 5 of child 0 {TEXT} of child 4 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (0,0) size 0x0
+caret: position 5 of child 0 {#text} of child 4 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

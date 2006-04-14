@@ -12,15 +12,15 @@ layer at (0,0) size 480x360
             KCanvasItem {rect} at (60,215) size 360x80 [fill={[type=LINEAR-GRADIENT] [stops=[(0.05,#6600FF), (0.50,#FF0000), (0.95,#FFFF66)]] [start=(0,0)] [end=(100,0)]}] [data="M60.00,215.00L420.00,215.00L420.00,295.00L60.00,295.00"]
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x36
-            RenderText {TEXT} at (0,0) size 34x36
+            RenderText {#text} at (0,0) size 34x36
               text run at (0,0) width 34: "fill"
           RenderSVGText {text} at (0,0) size 465x36
-            RenderText {TEXT} at (0,0) size 73x36
+            RenderText {#text} at (0,0) size 73x36
               text run at (0,0) width 73: "stroke"
           RenderSVGText {text} at (0,0) size 465x36
-            RenderText {TEXT} at (0,0) size 121x36
+            RenderText {#text} at (0,0) size 121x36
               text run at (0,0) width 121: "stop-color"
       RenderSVGText {text} at (0,0) size 465x46
-        RenderText {TEXT} at (0,0) size 264x46
+        RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"
       KCanvasItem {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
