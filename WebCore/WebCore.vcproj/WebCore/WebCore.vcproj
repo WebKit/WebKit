@@ -155,10 +155,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\JavaAppletWidget.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQComboBox.h"
 				>
 			</File>
@@ -244,22 +240,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQWMatrix.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\RegularExpression.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\RegularExpression.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\RenderTreeAsText.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\RenderTreeAsText.h"
 				>
 			</File>
 		</Filter>
@@ -788,6 +768,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\PlugInInfoStore.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\RegularExpression.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\RegularExpression.h"
 				>
 			</File>
 			<File
@@ -1847,11 +1835,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_applet.cpp"
+				RelativePath="..\..\rendering\RenderApplet.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_applet.h"
+				RelativePath="..\..\rendering\RenderApplet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderEmptyApplet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderEmptyApplet.h"
 				>
 			</File>
 			<File
@@ -2092,6 +2088,14 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderThemeWin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTreeAsText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTreeAsText.h"
 				>
 			</File>
 			<File
@@ -2432,6 +2436,10 @@
 			</File>
 			<File
 				RelativePath="..\..\bridge\History.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bridge\JavaAppletWidget.h"
 				>
 			</File>
 			<Filter

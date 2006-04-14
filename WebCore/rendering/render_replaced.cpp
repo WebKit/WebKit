@@ -41,7 +41,7 @@ namespace WebCore {
 
 using namespace EventNames;
 
-RenderReplaced::RenderReplaced(WebCore::Node* node)
+RenderReplaced::RenderReplaced(Node* node)
     : RenderBox(node)
 {
     // init RenderObject attributes
@@ -237,11 +237,11 @@ Color RenderReplaced::selectionColor(GraphicsContext* p) const
 
 // -----------------------------------------------------------------------------
 
-RenderWidget::RenderWidget(WebCore::Node* node)
+RenderWidget::RenderWidget(Node* node)
       : RenderReplaced(node)
+      , m_widget(0)
       , m_refCount(0)
 {
-    m_widget = 0;
     // a replaced element doesn't support being anonymous
     ASSERT(node);
     m_view = node->document()->view();
@@ -360,29 +360,31 @@ void RenderWidget::setStyle(RenderStyle *_style)
     }
 }
 
-void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
+void RenderWidget::paint(PaintInfo& i, int tx, int ty)
 {
-    if (!shouldPaint(i, _tx, _ty)) return;
-
-    _tx += m_x;
-    _ty += m_y;
-    
-    if (shouldPaintBackgroundOrBorder() && i.phase != PaintPhaseOutline && i.phase != PaintPhaseSelfOutline) 
-        paintBoxDecorations(i, _tx, _ty);
-
-    if (!m_widget || !m_view || i.phase != PaintPhaseForeground ||
-        style()->visibility() != VISIBLE)
+    if (!shouldPaint(i, tx, ty))
         return;
 
-    // Move the widget if necessary.  We normally move and resize widgets during layout, but sometimes
-    // widgets can move without layout occurring (most notably when you scroll a document that
-    // contains fixed positioned elements).
-    m_widget->move(_tx + borderLeft() + paddingLeft(), _ty + borderTop() + paddingTop());
-    
-    // Tell the widget to paint now.  This is the only time the widget is allowed
-    // to paint itself.  That way it will composite properly with z-indexed layers.
-    m_widget->paint(i.p, i.r);
-    
+    tx += m_x;
+    ty += m_y;
+
+    if (shouldPaintBackgroundOrBorder() && i.phase != PaintPhaseOutline && i.phase != PaintPhaseSelfOutline) 
+        paintBoxDecorations(i, tx, ty);
+
+    if (!m_view || i.phase != PaintPhaseForeground || style()->visibility() != VISIBLE)
+        return;
+
+    if (m_widget) {
+        // Move the widget if necessary.  We normally move and resize widgets during layout, but sometimes
+        // widgets can move without layout occurring (most notably when you scroll a document that
+        // contains fixed positioned elements).
+        m_widget->move(tx + borderLeft() + paddingLeft(), ty + borderTop() + paddingTop());
+
+        // Tell the widget to paint now.  This is the only time the widget is allowed
+        // to paint itself.  That way it will composite properly with z-indexed layers.
+        m_widget->paint(i.p, i.r);
+    }
+
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !i.p->printing())
         i.p->fillRect(selectionRect(), selectionColor(i.p));

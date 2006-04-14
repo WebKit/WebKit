@@ -1,3 +1,58 @@
+2006-04-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - moved a few things out of kwq and cleaned up the
+          Java-applet-related renderers
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for file location
+        and name changes.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * kwq/JavaAppletWidget.h: Moved.
+        * kwq/JavaAppletWidget.mm: Moved.
+        * kwq/RegularExpression.cpp: Moved.
+        * kwq/RegularExpression.h: Moved.
+        * kwq/RenderTreeAsText.cpp: Moved.
+        * kwq/RenderTreeAsText.h: Moved.
+        * rendering/render_applet.cpp: Moved.
+        * rendering/render_applet.h: Moved.
+
+        * bridge/JavaAppletWidget.h: Moved here.
+        * bridge/mac/JavaAppletWidget.mm: Moved here.
+        * platform/RegularExpression.cpp: Moved here.
+        * platform/RegularExpression.h: Moved here.
+        * rendering/RenderTreeAsText.cpp: Moved here.
+        * rendering/RenderTreeAsText.h: Moved here.
+
+        * rendering/RenderApplet.h: Moved here and made changes.
+        Removed unused element() function.
+        * rendering/RenderApplet.cpp: Moved here and made changes.
+        (WebCore::RenderApplet::RenderApplet): Changed parameter type to
+        be more precise (HTMLAppletElement).
+        (WebCore::RenderApplet::intrinsicWidth): Removed unnecessary type
+        cast and simplified.
+        (WebCore::RenderApplet::intrinsicHeight): Ditto.
+        (WebCore::RenderApplet::createWidgetIfNecessary): Straightened out
+        the if statements and changed to use node() instead of element().
+        (WebCore::RenderApplet::layout): Removed unneeded check before
+        calling createWidgetIfNecessary.
+
+        * rendering/RenderEmptyApplet.h: Moved here and made changes.
+        Removed unneeded overrides of intrinsicWidth and intrinsicHeight.
+        * rendering/RenderEmptyApplet.cpp: Moved here and made changes.
+        (WebCore::RenderEmptyApplet::RenderEmptyApplet): Added code to
+        set the intrinsic width and height.
+
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::RenderWidget): Initialize m_widget
+        with contructor syntax.
+        (WebCore::RenderWidget::paint): Changed _tx and _ty to be just
+        tx and ty. Rearranged the code so the transparent wash will draw
+        even if m_widget is 0.
+
+        * html/html_objectimpl.cpp: Update includes for new file names.
+
 2006-04-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
