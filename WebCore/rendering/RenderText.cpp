@@ -351,10 +351,7 @@ static RenderObject *lastRendererOnPrevLine(InlineBox *box)
 bool RenderText::atLineWrap(InlineTextBox *box, int offset)
 {
     if (box->nextTextBox() && !box->nextOnLine() && offset == box->m_start + box->m_len) {
-        // Take special care because in preformatted text, the newlines
-        // are in between the text boxes (i.e. not in any box's m_start
-        // thru m_start+m_len-1), even though they are rendered.
-        if (!style()->preserveNewline() || (*str)[offset] != '\n')
+        if (!style()->preserveNewline() || box->isLineBreak())
             return true;
     }
     
@@ -371,7 +368,7 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     for (box = firstTextBox(); box; box = box->nextTextBox()) {
         if ((offset >= box->m_start) && (offset <= box->m_start + box->m_len)) {
             // Check if downstream affinity would make us move to the next line.
-            if (affinity == DOWNSTREAM && atLineWrap(box, offset)) {
+            if (atLineWrap(box, offset)) {
                 // Use the next text box
                 box = box->nextTextBox();
                 offset = box->m_start;
@@ -919,10 +916,9 @@ void RenderText::setText(StringImpl *text, bool force)
 
 int RenderText::height() const
 {
-    // FIXME: Why use line-height? Shouldn't we be adding in the height of the last text box? -dwh
     int retval = 0;
     if (firstTextBox())
-        retval = lastTextBox()->m_y + lineHeight(false) - firstTextBox()->m_y;
+        retval = lastTextBox()->m_y + lastTextBox()->height() - firstTextBox()->m_y;
     return retval;
 }
 
@@ -1111,7 +1107,7 @@ InlineBox *RenderText::inlineBox(int offset, EAffinity affinity)
 {
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
         if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
-            if (affinity == DOWNSTREAM && atLineWrap(box, offset))
+            if (atLineWrap(box, offset))
                 return box->nextTextBox();
             return box;
         }

@@ -1,3 +1,49 @@
+2006-04-14  David Hyatt  <hyatt@apple.com>
+
+        Fix for 8333, make sure newlines in whitespace:pre (and friends) get
+        line boxes created for them.  This resolves all the weird selection/navigation
+        issues that arise by not creating lines (and thus not having navigable positions
+        on those lines).
+
+        This checkin is also removing all of the layout test hacks that have piled
+        up, so layout test results are being regenerated completely.
+
+        Reviewed by eric
+
+        * dom/Position.cpp:
+        (WebCore::Position::downstream):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraph):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * kwq/RenderTreeAsText.cpp:
+        (getTagName):
+        (operator<<):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionState):
+        (WebCore::InlineTextBox::isLineBreak):
+        (WebCore::InlineTextBox::nodeAtPoint):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBR.cpp:
+        * rendering/RenderBR.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::atLineWrap):
+        (WebCore::RenderText::caretRect):
+        (WebCore::RenderText::height):
+        (WebCore::RenderText::inlineBox):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/render_line.h:
+        (WebCore::InlineBox::isLineBreak):
+
 2006-04-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -562,8 +562,7 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
         if (r->isBR() || r->isBlockFlow() || (r->isTable() && !r->isInline()))
             break;
         if (r->isText()) {
-            // FIXME: Not clear what to do with pre-wrap or pre-line here.
-            if (style->whiteSpace() == PRE) {
+            if (style->preserveNewline()) {
                 const QChar* text = static_cast<RenderText*>(r)->text();
                 int i = static_cast<RenderText*>(r)->length();
                 int o = offset;
@@ -623,8 +622,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
         // We should probably do this in other cases such as startOfParagraph.
         if (r->isText() && r->caretMaxRenderedOffset() > 0) {
             int length = static_cast<RenderText *>(r)->length();
-            // FIXME: Not clear what to do with pre-wrap or pre-line here.
-            if (style->whiteSpace() == PRE) {
+            if (style->preserveNewline()) {
                 const QChar* text = static_cast<RenderText *>(r)->text();
                 int o = n == startNode ? offset : 0;
                 for (int i = o; i < length; ++i)

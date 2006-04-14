@@ -59,6 +59,8 @@ public:
     virtual void extractLine();
     virtual void attachLine();
 
+    virtual bool isLineBreak() const { return false; }
+
     virtual void adjustPosition(int dx, int dy);
 
     virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);

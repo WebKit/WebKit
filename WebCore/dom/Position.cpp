@@ -432,7 +432,7 @@ Position Position::downstream() const
                     return currentPos;
                 
                 if (box != textRenderer->lastTextBox() && 
-                     !box->nextOnLine() && 
+                     !box->nextOnLine() &&
                      textOffset == box->start() + box->len()) {
                     return currentPos;
                 }

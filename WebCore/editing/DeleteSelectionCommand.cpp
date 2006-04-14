@@ -600,7 +600,7 @@ void DeleteSelectionCommand::doApply()
     if (!m_selectionToDelete.isRange())
         return;
 
-    // If the deletion is occuring in a text field, let the frame call across the bridge to notify the form delegate. 
+    // If the deletion is occurring in a text field, let the frame call across the bridge to notify the form delegate. 
     Node* startNode = m_selectionToDelete.start().node();
     Node* ancestorNode = startNode ? startNode->shadowAncestorNode() : 0;
     if (ancestorNode && ancestorNode->hasTagName(inputTag) && static_cast<HTMLInputElement*>(ancestorNode)->isNonWidgetTextField())
@@ -626,7 +626,7 @@ void DeleteSelectionCommand::doApply()
     bool forceBlankParagraph = isStartOfParagraph(VisiblePosition(m_upstreamStart)) &&
                                isEndOfParagraph(VisiblePosition(m_downstreamEnd));
 
-    // Delete any text that may hinder our ability to fixup whitespace after the detele
+    // Delete any text that may hinder our ability to fixup whitespace after the delete
     deleteInsignificantTextDownstream(m_trailingWhitespace);    
 
     saveTypingStyleState();

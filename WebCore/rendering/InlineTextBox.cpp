@@ -79,11 +79,15 @@ bool InlineTextBox::isSelected(int startPos, int endPos) const
 RenderObject::SelectionState InlineTextBox::selectionState()
 {
     RenderObject::SelectionState state = object()->selectionState();
-    if (state == RenderObject::SelectionStart || state == RenderObject::SelectionEnd ||
-        state == RenderObject::SelectionBoth) {
+    if (state == RenderObject::SelectionStart || state == RenderObject::SelectionEnd || state == RenderObject::SelectionBoth) {
         int startPos, endPos;
         object()->selectionStartEnd(startPos, endPos);
         
+        // If we're at a line wrap, then the selection is going to extend onto the next line (and thus needs to be thought of as
+        // extending beyond our box.
+        if (textObject()->atLineWrap(this, endPos))
+            endPos++;
+
         bool start = (state != RenderObject::SelectionEnd && startPos >= m_start && startPos < m_start + m_len);
         bool end = (state != RenderObject::SelectionStart && endPos > m_start && endPos <= m_start + m_len);
         if (start && end)
@@ -218,9 +222,14 @@ correctedTextColor(Color textColor, Color backgroundColor)
     return textColor.light();
 }
 
+bool InlineTextBox::isLineBreak() const
+{
+    return object()->isBR() || (object()->style()->preserveNewline() && len() == 1 && (*textObject()->string())[start()] == '\n');
+}
+
 bool InlineTextBox::nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty)
 {
-    if (object()->isBR())
+    if (isLineBreak())
         return false;
 
     IntRect rect(tx + m_x, ty + m_y, m_width, m_height);
@@ -233,7 +242,7 @@ bool InlineTextBox::nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx,
 
 void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 {
-    if (object()->isBR() || !object()->shouldPaintWithinRoot(i) || object()->style()->visibility() != VISIBLE ||
+    if (isLineBreak() || !object()->shouldPaintWithinRoot(i) || object()->style()->visibility() != VISIBLE ||
         m_truncation == cFullTruncation || i.phase == PaintPhaseOutline)
         return;
     
@@ -683,6 +692,9 @@ int InlineTextBox::textPos() const
 
 int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
 {
+    if (isLineBreak())
+        return 0;
+
     RenderText* text = static_cast<RenderText*>(m_object);
     RenderStyle *style = text->style(m_firstLine);
     const Font* f = &style->font();
@@ -693,6 +705,9 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
 
 int InlineTextBox::positionForOffset(int offset) const
 {
+    if (isLineBreak())
+        return m_x;
+
     RenderText *text = static_cast<RenderText *>(m_object);
     const Font *f = text->font(m_firstLine);
     int from = m_reversed ? offset - m_start : 0;
