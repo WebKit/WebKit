@@ -68,7 +68,7 @@ FbFillColor (uint32_t pixel, int bits)
 
 void
 pixman_pixel_to_color (const pixman_format_t	*format,
-		const pixman_bits_t	pixel,
+		pixman_bits_t	pixel,
 		pixman_color_t		*color)
 {
     uint32_t	    r, g, b, a;

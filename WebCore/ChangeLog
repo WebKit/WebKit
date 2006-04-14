@@ -1,3 +1,18 @@
+2006-04-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Fix build-warnings in cairo code.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8176
+
+        * platform/cairo/cairo/src/cairo-win32-surface.c:
+        (_cairo_win32_print_gdi_error):
+        (_cairo_win32_surface_create_for_dc):
+        (_composite_alpha_blend):
+        (cairo_win32_surface_create):
+        * platform/cairo/pixman/src/iccolor.c:
+        (pixman_pixel_to_color):
+
 2006-04-14  David Hyatt  <hyatt@apple.com>
 
         Fix for 8333, make sure newlines in whitespace:pre (and friends) get

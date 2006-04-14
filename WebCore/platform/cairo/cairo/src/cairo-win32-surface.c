@@ -59,7 +59,7 @@ static const cairo_surface_backend_t cairo_win32_surface_backend;
 cairo_status_t
 _cairo_win32_print_gdi_error (const char *context)
 {
-    void *lpMsgBuf;
+    LPSTR lpMsgBuf;
     DWORD last_error = GetLastError ();
 
     if (!FormatMessageA (FORMAT_MESSAGE_ALLOCATE_BUFFER | 
@@ -67,11 +67,11 @@ _cairo_win32_print_gdi_error (const char *context)
 			 NULL,
 			 last_error,
 			 MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT),
-			 (LPTSTR) &lpMsgBuf,
+			 (LPSTR) &lpMsgBuf,
 			 0, NULL)) {
 	fprintf (stderr, "%s: Unknown GDI error", context);
     } else {
-	fprintf (stderr, "%s: %s", context, (char *)lpMsgBuf);
+	fprintf (stderr, "%s: %s", context, lpMsgBuf);
 	
 	LocalFree (lpMsgBuf);
     }
@@ -266,7 +266,7 @@ _cairo_win32_surface_create_for_dc (HDC             original_dc,
     surface = malloc (sizeof (cairo_win32_surface_t));
     if (surface == NULL) {
 	_cairo_error (CAIRO_STATUS_NO_MEMORY);
-	return &_cairo_surface_nil;
+	return (cairo_surface_t *)(&_cairo_surface_nil);
     }
 
     status = _create_dc_and_bitmap (surface, original_dc, format,
@@ -312,10 +312,10 @@ _cairo_win32_surface_create_for_dc (HDC             original_dc,
 
     if (status == CAIRO_STATUS_NO_MEMORY) {
 	_cairo_error (CAIRO_STATUS_NO_MEMORY);
-	return &_cairo_surface_nil;
+	return (cairo_surface_t *)(&_cairo_surface_nil);
     } else {
 	_cairo_error (status);
-	return &_cairo_surface_nil;
+	return (cairo_surface_t *)(&_cairo_surface_nil);
     }
 }
 
@@ -618,7 +618,7 @@ _composite_alpha_blend (cairo_win32_surface_t *dst,
 	if (VER_PLATFORM_WIN32_WINDOWS != os.dwPlatformId ||
 	    os.dwMajorVersion != 4 || os.dwMinorVersion != 10)
 	{
-	    HMODULE msimg32_dll = LoadLibrary ("msimg32");
+	    HMODULE msimg32_dll = LoadLibraryA("msimg32");
 	    
 	    if (msimg32_dll != NULL)
 		alpha_blend = (cairo_alpha_blend_func_t)GetProcAddress (msimg32_dll,
@@ -1014,7 +1014,7 @@ cairo_win32_surface_create (HDC hdc)
 	_cairo_win32_print_gdi_error ("cairo_win32_surface_create");
 	/* XXX: Can we make a more reasonable guess at the error cause here? */
 	_cairo_error (CAIRO_STATUS_NO_MEMORY);
-	return &_cairo_surface_nil;
+	return (cairo_surface_t *)(&_cairo_surface_nil);
     }
 
     if (GetDeviceCaps(hdc, TECHNOLOGY) == DT_RASDISPLAY) {
@@ -1032,7 +1032,7 @@ cairo_win32_surface_create (HDC hdc)
 	else {
 	    _cairo_win32_print_gdi_error("cairo_win32_surface_create(bad BITSPIXEL)");
 	    _cairo_error (CAIRO_STATUS_NO_MEMORY);
-	    return &_cairo_surface_nil;
+	    return (cairo_surface_t *)(&_cairo_surface_nil);
 	}
     } else {
 	format = CAIRO_FORMAT_RGB24;
@@ -1041,7 +1041,7 @@ cairo_win32_surface_create (HDC hdc)
     surface = malloc (sizeof (cairo_win32_surface_t));
     if (surface == NULL) {
 	_cairo_error (CAIRO_STATUS_NO_MEMORY);
-	return &_cairo_surface_nil;
+	return (cairo_surface_t *)(&_cairo_surface_nil);
     }
 
     surface->image = NULL;
