@@ -1,3 +1,10 @@
+2006-04-15  Darin Adler  <darin@apple.com>
+
+        - updated a layout test result for Hyatt's prefix change
+
+        * fast/inspector/style-expected.txt: Some background properties now
+        have the "-webkit" prefix.
+
 2006-04-12  Geoffrey Garen  <ggaren@apple.com>
 
         Layout test for document.defaultView

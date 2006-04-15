@@ -25,12 +25,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,72) size 413x18
           text run at (0,72) width 413: "background-position-y: initial (original property was background)"
         RenderBR {BR} at (413,86) size 0x0
-        RenderText {#text} at (0,90) size 373x18
-          text run at (0,90) width 373: "background-clip: initial (original property was background)"
-        RenderBR {BR} at (373,104) size 0x0
-        RenderText {#text} at (0,108) size 387x18
-          text run at (0,108) width 387: "background-origin: initial (original property was background)"
-        RenderBR {BR} at (387,122) size 0x0
+        RenderText {#text} at (0,90) size 426x18
+          text run at (0,90) width 426: "-webkit-background-clip: initial (original property was background)"
+        RenderBR {BR} at (426,104) size 0x0
+        RenderText {#text} at (0,108) size 440x18
+          text run at (0,108) width 440: "-webkit-background-origin: initial (original property was background)"
+        RenderBR {BR} at (440,122) size 0x0
         RenderText {#text} at (0,126) size 387x18
           text run at (0,126) width 387: "background-color: purple (original property was background)"
         RenderBR {BR} at (387,140) size 0x0
