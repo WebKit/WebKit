@@ -1,5 +1,17 @@
 2006-04-15  Darin Adler  <darin@apple.com>
 
+        - added some results for some tests people added without expected results
+
+        * svg/custom/class-selector-expected.txt: Added.
+        * svg/custom/class-selector-expected.checksum: Added.
+        * svg/custom/class-selector-expected.png: Added.
+        * editing/selection/extend-by-sentence-001-expected.checksum: Added.
+        * editing/selection/extend-by-sentence-001-expected.png: Added.
+        * fast/dom/Element/null-offset-parent-expected.checksum: Added.
+        * fast/dom/Element/null-offset-parent-expected.png: Added.
+
+2006-04-15  Darin Adler  <darin@apple.com>
+
         - updated a layout test result for Hyatt's prefix change
 
         * fast/inspector/style-expected.txt: Some background properties now
