@@ -1,3 +1,14 @@
+2006-04-15  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8405
+          REGRESSION: Web Inspector's Style pane is blank
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::isSafeScript): Use isEmpty() instead of isNull() for checking
+        the domain to determine if the document in a local file. 
+
 2006-04-14  David Hyatt  <hyatt@apple.com>
 
         CSS vendor-specific property/value cleanup.  Properly qualify background-clip,
