@@ -1,3 +1,28 @@
+2006-04-14  James G. Speth  <speth@end.com>
+
+        Reviewed by Timothy.
+
+        Bug 8389: support for Cocoa bindings - binding an NSTreeController to the WebView's DOM
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8389
+
+        Added a controller class, WebController, that is a subclass of
+        NSTreeController that has a new outlet/binding for the WebView.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge windowObjectCleared]): notify bindings about the document change
+        * WebView/WebView.m:
+        (-[WebView _progressStarted:]): notify bindings about the document change
+        (-[WebView _finalProgressComplete]): notify bindings about the document change
+        (-[WebView _declaredKeys]): added a key for the main frame document
+        (-[WebController init]):
+        (-[WebController exposedBindings]):
+        (-[WebController valueClassForBinding:]):
+        (-[WebController setContent:]):
+        (-[WebController webView]):
+        (-[WebController setWebView:]):
+        (-[WebView mainFrameDocument]): get the main frame's DOMDocument
+        * WebView/WebViewPrivate.h: Adds mainFrameDocument to pending public.
+
 2006-04-12  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

@@ -283,6 +283,8 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     }
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
+    if ([resultObj isKindOfClass:[WebUndefined class]])
+        resultObj = [super valueForKey:key];    // ensure correct not-applicable key behavior
 
     _didExecute(self);
     
@@ -422,6 +424,31 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 @end
 
+@interface WebScriptObject (WebKitCocoaBindings)
+
+- (unsigned int)count;
+- (id)objectAtIndex:(unsigned int)index;
+
+@end
+
+@implementation WebScriptObject (WebKitCocoaBindings)
+
+- (unsigned int)count
+{
+    id length = [self valueForKey:@"length"];
+    if ([length respondsToSelector:@selector(intValue)])
+        return [length intValue];
+    else
+        return 0;
+}
+
+- (id)objectAtIndex:(unsigned int)index
+{
+    return [self webScriptValueAtIndex:index];
+}
+
+@end
+
 @implementation WebUndefined
 
 + (id)allocWithZone:(NSZone *)zone
@@ -431,6 +458,11 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     if (!sharedUndefined)
         sharedUndefined = [super allocWithZone:NULL];
     return sharedUndefined;
+}
+
+- (NSString *)description
+{
+    return @"undefined";
 }
 
 - (id)initWithCoder:(NSCoder *)coder
