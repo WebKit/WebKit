@@ -1,5 +1,12 @@
 2006-04-15  Darin Adler  <darin@apple.com>
 
+        - more results for tests landed without pixel-test results
+
+        * fast/text/whitespace/pre-newline-box-test-expected.checksum: Added.
+        * fast/text/whitespace/pre-newline-box-test-expected.png: Added.
+
+2006-04-15  Darin Adler  <darin@apple.com>
+
         - added some results for some tests people added without expected results
 
         * svg/custom/class-selector-expected.txt: Added.
