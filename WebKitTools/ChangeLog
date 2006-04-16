@@ -1,3 +1,21 @@
+2006-04-16  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8412
+          Restore color profile after a crash
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (crashHandler): Added a handler for signals that are raised on a crash. Keeping separate
+        from the existing handler for manual interruption (SIGINT/SIGHUP/SIGTERM), because
+        I'm trying to find a way to prevent the Crash Reporter dialog from appearing on crash,
+        and this code may change significantly.
+
+        (main): Install crashHandler.
+
+        (setDefaultColorProfileToRGB): Properly convert CFStringRef to a char buffer
+        (CFStringGetCStringPtr should NEVER EVER be used!).
+
 2006-04-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

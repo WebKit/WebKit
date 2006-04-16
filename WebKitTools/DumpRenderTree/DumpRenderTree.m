@@ -117,6 +117,13 @@ static void restoreColorSpace(int ignored)
     }
 }
 
+static void crashHandler(int sig)
+{
+    fprintf(stderr, "%s\n", strsignal(sig));
+    restoreColorSpace(0);
+    exit(128 + sig);
+}
+
 static void setDefaultColorProfileToRGB(void)
 {
     CMProfileRef genericProfile = [[NSColorSpace genericRGBColorSpace] colorSyncProfile];
@@ -130,26 +137,28 @@ static void setDefaultColorProfileToRGB(void)
         return;
     CFStringRef previousProfileName;
     CFStringRef genericProfileName;
+    char previousProfileNameString[1024];
+    char genericProfileNameString[1024];
     CMCopyProfileDescriptionString(previousProfile, &previousProfileName);
     CMCopyProfileDescriptionString(genericProfile, &genericProfileName);
+    CFStringGetCString(previousProfileName, previousProfileNameString, sizeof(previousProfileNameString), kCFStringEncodingUTF8);
+    CFStringGetCString(genericProfileName, genericProfileNameString, sizeof(previousProfileNameString), kCFStringEncodingUTF8);
+    CFRelease(genericProfileName);
+    CFRelease(previousProfileName);
     
-    fprintf(stderr, "\n\nWARNING: Temporarily changing your system color profile from \"%s\" to \"%s\".\n",
-        CFStringGetCStringPtr(previousProfileName, kCFStringEncodingMacRoman),
-        CFStringGetCStringPtr(genericProfileName, kCFStringEncodingMacRoman));
+    fprintf(stderr, "\n\nWARNING: Temporarily changing your system color profile from \"%s\" to \"%s\".\n", previousProfileNameString, genericProfileNameString);
     fprintf(stderr, "This allows the WebKit pixel-based regression tests to have consistent color values across all machines.\n");
     fprintf(stderr, "The colors on your screen will change for the duration of the testing.\n\n");
     
     if ((error = CMSetDefaultProfileByUse(cmDisplayUse, genericProfile)))
         fprintf(stderr, "Failed to set color profile to \"%s\"! Many pixel tests will fail as a result.  (Error: %i)",
-            CFStringGetCStringPtr(genericProfileName, kCFStringEncodingMacRoman), error);
+            genericProfileNameString, error);
     else {
         currentColorProfile = previousProfile;
         signal(SIGINT, restoreColorSpace);
         signal(SIGHUP, restoreColorSpace);
         signal(SIGTERM, restoreColorSpace);
     }
-    CFRelease(genericProfileName);
-    CFRelease(previousProfileName);
 }
 
 static void* (*savedMalloc)(malloc_zone_t*, size_t);
@@ -276,6 +285,17 @@ int main(int argc, const char *argv[])
     [webView setContinuousSpellCheckingEnabled:YES];
 
     makeLargeMallocFailSilently();
+
+    signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
+    signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */
+    signal(SIGEMT, crashHandler);    /* 7:   EMT instruction */
+    signal(SIGFPE, crashHandler);    /* 8:   floating point exception */
+    signal(SIGBUS, crashHandler);    /* 10:  bus error */
+    signal(SIGSEGV, crashHandler);   /* 11:  segmentation violation */
+    signal(SIGSYS, crashHandler);    /* 12:  bad argument to system call */
+    signal(SIGPIPE, crashHandler);   /* 13:  write on a pipe with no reader */
+    signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
+    signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
     
     // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
     // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
