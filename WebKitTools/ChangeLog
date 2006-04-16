@@ -1,3 +1,10 @@
+2006-04-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        * Scripts/install-win-extras: Try to fix the Windows build by fixing the URLs here.
+        Seems xmlsoft.org's HTTP no longer has what we need.
+
 2006-04-13  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Rubber-stamped by Darin.
