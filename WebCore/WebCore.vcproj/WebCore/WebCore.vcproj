@@ -3234,14 +3234,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\bindings\js\kjs_views.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\kjs_views.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\bindings\js\kjs_window.cpp"
 					>
 				</File>
