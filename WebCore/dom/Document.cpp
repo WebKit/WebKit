@@ -34,6 +34,7 @@
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "EditingText.h"
+#include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -2174,6 +2175,10 @@ void Document::detachNodeIterator(NodeIterator *ni)
 
 void Document::notifyBeforeNodeRemoval(Node *n)
 {
+    if (Frame* f = frame()) {
+        f->selection().nodeWillBeRemoved(n);
+        f->dragCaret().nodeWillBeRemoved(n);
+    }
     DeprecatedPtrListIterator<NodeIterator> it(m_nodeIterators);
     for (; it.current(); ++it)
         it.current()->notifyBeforeNodeRemoval(n);

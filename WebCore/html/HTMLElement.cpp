@@ -296,42 +296,70 @@ void HTMLElement::setInnerHTML(const String &html, ExceptionCode& ec)
         return;
     }
 
+    Node* child = firstChild();
+    if (child && !child->nextSibling()) {
+        // Optimize the case where the element has exactly one text node as a child,
+        // and what we're replacing with is also exactly one text node.
+        if (child->isTextNode()) {
+            Node* fragmentChild = fragment->firstChild();
+            if (fragmentChild && !fragmentChild->nextSibling() && fragmentChild->isTextNode()) {
+                static_cast<Text*>(child)->setData(static_cast<Text*>(fragmentChild)->data(), ec);
+                return;
+            }
+        }
+
+        // Optimize the case where the element has exactly one child.
+        replaceChild(fragment.release(), child, ec);
+        return;
+    }
+
     removeChildren();
     appendChild(fragment.release(), ec);
 }
 
 void HTMLElement::setOuterHTML(const String &html, ExceptionCode& ec)
 {
-    Node *p = parent();
+    Node* p = parent();
     if (!p || !p->isHTMLElement()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    HTMLElement *parent = static_cast<HTMLElement *>(p);
-    RefPtr<DocumentFragment> fragment = parent->createContextualFragment(html);
 
+    HTMLElement* parent = static_cast<HTMLElement*>(p);
+    RefPtr<DocumentFragment> fragment = parent->createContextualFragment(html);
     if (!fragment) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    
+
     parent->replaceChild(fragment.release(), this, ec);
 }
 
-
-void HTMLElement::setInnerText(const String &text, ExceptionCode& ec)
+void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
 {
-    // following the IE specs.
+    // follow the IE specs about when this is allowed
     if (endTagRequirement() == TagStatusForbidden) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-
     if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag) ||
         hasLocalName(headTag) || hasLocalName(htmlTag) || hasLocalName(tableTag) || 
         hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
         hasLocalName(trTag)) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
+
+    Node* child = firstChild();
+    if (child && !child->nextSibling()) {
+        // Optimize the case where the element already has exactly one text node as a child.
+        if (child->isTextNode()) {
+            static_cast<Text*>(child)->setData(text, ec);
+            return;
+        }
+
+        // Optimize the case where the element has exactly one child.
+        replaceChild(new Text(document(), text), child, ec);
         return;
     }
 
@@ -341,12 +369,11 @@ void HTMLElement::setInnerText(const String &text, ExceptionCode& ec)
 
 void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
 {
-    // following the IE specs.
+    // follow the IE specs about when this is allowed
     if (endTagRequirement() == TagStatusForbidden) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-
     if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag) ||
         hasLocalName(headTag) || hasLocalName(htmlTag) || hasLocalName(tableTag) || 
         hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
@@ -355,8 +382,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
         return;
     }
 
-    Node *parent = parentNode();
-
+    Node* parent = parentNode();
     if (!parent) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
@@ -369,9 +395,9 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
         return;
 
     // is previous node a text node? if so, merge into it
-    Node *prev = t->previousSibling();
+    Node* prev = t->previousSibling();
     if (prev && prev->isTextNode()) {
-        Text *textPrev = static_cast<Text *>(prev);
+        Text* textPrev = static_cast<Text*>(prev);
         textPrev->appendData(t->data(), ec);
         if (ec)
             return;
@@ -382,9 +408,9 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
     }
 
     // is next node a text node? if so, merge it in
-    Node *next = t->nextSibling();
+    Node* next = t->nextSibling();
     if (next && next->isTextNode()) {
-        Text *textNext = static_cast<Text *>(next);
+        Text* textNext = static_cast<Text*>(next);
         t->appendData(textNext->data(), ec);
         if (ec)
             return;

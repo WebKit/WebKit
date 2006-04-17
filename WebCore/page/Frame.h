@@ -320,34 +320,17 @@ public:
    */
   void setSelectionGranularity(TextGranularity granularity) const;
 
-  /**
-   * Returns the drag caret of the HTML.
-   */
-  const SelectionController& dragCaret() const;
-
-  /**
-   * Sets the current selection.
-   */
+  // FIXME: Replace these with functions on the selection controller.
   void setSelection(const SelectionController&, bool closeTyping = true, bool keepTypingStyle = false);
-
-  /**
-   * Returns whether selection can be changed.
-   */
   bool shouldChangeSelection(const SelectionController&) const;
 
   /**
    * Returns a mark, to be used as emacs uses it.
    */
   const Selection& mark() const;
-
-  /**
-   * Returns the mark.
-   */
   void setMark(const Selection&);
 
-  /**
-   * Sets the current drag caret.
-   */
+  // FIXME: Replace this with a function on the selection controller or change it to Selection instead?
   void setDragCaret(const SelectionController&);
   
   /**
@@ -797,7 +780,8 @@ public:
 
   // split out controller objects
   FrameTree* tree() const;
-  SelectionController& selection() const;
+  SelectionController& selection() const; // FIXME: Change to pointer?
+  SelectionController& dragCaret() const; // FIXME: Change to pointer?
   DOMWindow* domWindow() const;
 
  private:

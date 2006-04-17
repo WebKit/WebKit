@@ -1092,7 +1092,7 @@ void Frame::setSelectionGranularity(TextGranularity granularity) const
     d->m_selectionGranularity = granularity;
 }
 
-const SelectionController& Frame::dragCaret() const
+SelectionController& Frame::dragCaret() const
 {
     return d->m_dragCaret;
 }

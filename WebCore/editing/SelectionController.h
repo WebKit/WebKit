@@ -26,7 +26,6 @@
 #ifndef KHTML_EDITING_SELECTIONCONTROLLER_H
 #define KHTML_EDITING_SELECTIONCONTROLLER_H
 
-#include "EventListener.h"
 #include "IntRect.h"
 #include "Selection.h"
 #include "Range.h"
@@ -37,21 +36,6 @@ class Frame;
 class GraphicsContext;
 class RenderObject;
 class VisiblePosition;
-class SelectionController;
-
-class MutationListener : public EventListener
-{
-public:
-    MutationListener() { m_selectionController = 0; }
-    MutationListener(SelectionController *s) { m_selectionController = s; }
-    SelectionController *selectionController() const { return m_selectionController; }
-    void setSelectionController(SelectionController *s) { m_selectionController = s; }
-    
-    virtual void handleEvent(Event*, bool isWindowEvent);
-    
-private:
-    SelectionController *m_selectionController;
-};
 
 class SelectionController
 {
@@ -61,32 +45,30 @@ public:
 #define SEL_DEFAULT_AFFINITY DOWNSTREAM
 
     SelectionController();
-    SelectionController(const Selection &sel);
-    SelectionController(const Range *, EAffinity affinity);
-    SelectionController(const VisiblePosition &);
-    SelectionController(const VisiblePosition &, const VisiblePosition &);
-    SelectionController(const Position &, EAffinity affinity);
-    SelectionController(const Position &, const Position &, EAffinity);
-    SelectionController(const SelectionController &);
+    SelectionController(const Selection&);
+    SelectionController(const Range*, EAffinity);
+    SelectionController(const VisiblePosition&);
+    SelectionController(const VisiblePosition&, const VisiblePosition&);
+    SelectionController(const Position&, EAffinity);
+    SelectionController(const Position&, const Position&, EAffinity);
+    SelectionController(const SelectionController&);
     
-    ~SelectionController();
-
-    SelectionController &operator=(const SelectionController &o);
-    SelectionController &operator=(const VisiblePosition &r) { moveTo(r); return *this; }
+    SelectionController& operator=(const SelectionController&);
+    SelectionController& operator=(const VisiblePosition& r) { moveTo(r); return *this; }
 
     Element* rootEditableElement() const { return selection().rootEditableElement(); }
     bool isContentEditable() const { return selection().isContentEditable(); }
     bool isContentRichlyEditable() const { return selection().isContentRichlyEditable(); }
 
-    void moveTo(const Range *, EAffinity affinity);
-    void moveTo(const VisiblePosition &);
-    void moveTo(const VisiblePosition &, const VisiblePosition &);
-    void moveTo(const Position &, EAffinity);
-    void moveTo(const Position &, const Position &, EAffinity);
-    void moveTo(const SelectionController &);
+    void moveTo(const Range*, EAffinity);
+    void moveTo(const VisiblePosition&);
+    void moveTo(const VisiblePosition&, const VisiblePosition&);
+    void moveTo(const Position&, EAffinity);
+    void moveTo(const Position&, const Position&, EAffinity);
+    void moveTo(const SelectionController&);
 
-    const Selection &selection() const { return m_sel; }
-    void setSelection(const Selection &);
+    const Selection& selection() const { return m_sel; }
+    void setSelection(const Selection&);
 
     Selection::EState state() const { return m_sel.state(); }
 
@@ -98,10 +80,10 @@ public:
 
     void clear();
 
-    void setBase(const VisiblePosition &);
-    void setBase(const Position &pos, EAffinity affinity);
-    void setExtent(const VisiblePosition &);
-    void setExtent(const Position &pos, EAffinity affinity);
+    void setBase(const VisiblePosition& );
+    void setBase(const Position&, EAffinity);
+    void setExtent(const VisiblePosition&);
+    void setExtent(const Position&, EAffinity);
 
     Position base() const { return m_sel.base(); }
     Position extent() const { return m_sel.extent(); }
@@ -127,33 +109,33 @@ public:
     
     Frame* frame() const;
     
-    void nodeWillBeRemoved(Node *);
+    void nodeWillBeRemoved(Node*);
 
     // Safari Selection Object API
-    Node *baseNode() const { return m_sel.base().node(); }
-    Node *extentNode() const { return m_sel.extent().node(); }
+    Node* baseNode() const { return m_sel.base().node(); }
+    Node* extentNode() const { return m_sel.extent().node(); }
     int baseOffset() const { return m_sel.base().offset(); }
     int extentOffset() const { return m_sel.extent().offset(); }
     String type() const;
-    void setBaseAndExtent(Node *baseNode, int baseOffset, Node *extentNode, int extentOffset);
-    void setPosition(Node *node, int offset);
-    bool modify(const String &alterString, const String &directionString, const String &granularityString);
+    void setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset);
+    void setPosition(Node*, int offset);
+    bool modify(const String& alterString, const String& directionString, const String& granularityString);
     
     // Mozilla Selection Object API
     // In FireFox, anchor/focus are the equal to the start/end of the selection,
     // but reflect the direction in which the selection was made by the user.  That does
     // not mean that they are base/extent, since the base/extent don't reflect
     // expansion.
-    Node *anchorNode() const { return m_sel.isBaseFirst() ? m_sel.start().node() : m_sel.end().node(); }
+    Node* anchorNode() const { return m_sel.isBaseFirst() ? m_sel.start().node() : m_sel.end().node(); }
     int anchorOffset() const { return m_sel.isBaseFirst() ? m_sel.start().offset() : m_sel.end().offset(); }
-    Node *focusNode() const { return m_sel.isBaseFirst() ? m_sel.end().node() : m_sel.start().node(); }
+    Node* focusNode() const { return m_sel.isBaseFirst() ? m_sel.end().node() : m_sel.start().node(); }
     int focusOffset() const { return m_sel.isBaseFirst() ? m_sel.end().offset() : m_sel.start().offset(); }
     bool isCollapsed() const { return !isRange(); }
     String toString() const;
-    void collapse(Node *node, int offset);
+    void collapse(Node*, int offset);
     void collapseToEnd();
     void collapseToStart();
-    void extend(Node *node, int offset);
+    void extend(Node*, int offset);
     PassRefPtr<Range> getRangeAt(int index) const;
     //void deleteFromDocument();
     //bool containsNode(Node *node, bool entirelyContained);
@@ -169,7 +151,7 @@ public:
     //TextRange *createRange();
 
 #ifndef NDEBUG
-    void formatForDebugger(char *buffer, unsigned length) const;
+    void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
 #endif
 
@@ -200,15 +182,14 @@ private:
     bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
     bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
                                   // modified with EAlter::EXTEND
-    RefPtr<MutationListener> m_mutationListener;
 };
 
-inline bool operator==(const SelectionController &a, const SelectionController &b)
+inline bool operator==(const SelectionController& a, const SelectionController& b)
 {
     return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity();
 }
 
-inline bool operator!=(const SelectionController &a, const SelectionController &b)
+inline bool operator!=(const SelectionController& a, const SelectionController& b)
 {
     return !(a == b);
 }

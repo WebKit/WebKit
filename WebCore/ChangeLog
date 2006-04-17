@@ -1,3 +1,47 @@
+2006-04-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele and Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8298
+          REGRESSION: Crash occurs when attempting to drag selection into
+          Depart/Return input fields at http://www.travelocity.com/
+        - remove the mutation event listener that's installed all the time,
+          since it slows things down a bit
+
+        Calling SelectionController::nodeWillBeRemoved from Document::notifyBeforeNodeRemoval
+        fixes the crash, which was happening because the call that was removing the text
+        node, removeChildren, does not send a "node removed" mutation event (it sends a
+        "subtree modified" mutation event instead). So this change alone fixes the crash.
+
+        But I also changed setInnerText to not blow away the text node each time the value
+        is changed, and that makes the test case behave even better -- you don't even lose
+        the selection; it works as it did with the NSTextField-based text field.
+
+        * manual-tests/input-empty-on-focus.html: Added.
+
+        * page/Frame.h: Tweaked a few comments and functions related to selection.
+        * page/Frame.cpp: (WebCore::Frame::dragCaret): Made non-const.
+
+        * dom/Document.cpp: (WebCore::Document::notifyBeforeNodeRemoval):
+        Call nodeWillBeRemoved on the two selection controllers before removing
+        a node from the document.
+
+        * editing/SelectionController.h: Tweak formatting. Remove MutationListener
+        class and m_mutationListener field.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController): Remove code to set up
+        the mutation event listener.
+        (WebCore::SelectionController::setSelection): Remove code to maintain the
+        mutation event listener.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerHTML): In cases where the container has only a
+        single child use replaceChild, and in cases where the HTML being inserted
+        also has only a single child and both are text nodes use setData. It's common
+        to use setInnerHTML to set something that's just text.
+        (WebCore::HTMLElement::setInnerText): Same as above, but simpler since the
+        thing we're replacing with is always text.
+
 2006-04-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin.
