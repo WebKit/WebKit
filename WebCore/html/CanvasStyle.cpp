@@ -83,18 +83,18 @@ void CanvasStyle::applyStrokeColor(CGContextRef context)
         case ColorString: {
             RGBA32 color = CSSParser::parseColor(m_color);
             CGContextSetRGBStrokeColor(context,
-                ((color >> 16) & 0xFF) / 255.0f,
-                ((color >> 8) & 0xFF) / 255.0f,
-                (color & 0xFF) / 255.0f,
-                ((color >> 24) & 0xFF) / 255.0f);
+                ((color >> 16) & 0xFF) / 255.0,
+                ((color >> 8) & 0xFF) / 255.0,
+                (color & 0xFF) / 255.0,
+                ((color >> 24) & 0xFF) / 255.0);
             break;
         }
         case ColorStringWithAlpha: {
             RGBA32 color = CSSParser::parseColor(m_color);
             CGContextSetRGBStrokeColor(context,
-                ((color >> 16) & 0xFF) / 255.0f,
-                ((color >> 8) & 0xFF) / 255.0f,
-                (color & 0xFF) / 255.0f,
+                ((color >> 16) & 0xFF) / 255.0,
+                ((color >> 8) & 0xFF) / 255.0,
+                (color & 0xFF) / 255.0,
                 m_alpha);
             break;
         }
@@ -121,18 +121,18 @@ void CanvasStyle::applyFillColor(CGContextRef context)
         case ColorString: {
             RGBA32 color = CSSParser::parseColor(m_color);
             CGContextSetRGBFillColor(context,
-                ((color >> 16) & 0xFF) / 255.0f,
-                ((color >> 8) & 0xFF) / 255.0f,
-                (color & 0xFF) / 255.0f,
-                ((color >> 24) & 0xFF) / 255.0f);
+                ((color >> 16) & 0xFF) / 255.0,
+                ((color >> 8) & 0xFF) / 255.0,
+                (color & 0xFF) / 255.0,
+                ((color >> 24) & 0xFF) / 255.0);
             break;
         }
         case ColorStringWithAlpha: {
             RGBA32 color = CSSParser::parseColor(m_color);
             CGContextSetRGBFillColor(context,
-                ((color >> 16) & 0xFF) / 255.0f,
-                ((color >> 8) & 0xFF) / 255.0f,
-                (color & 0xFF) / 255.0f,
+                ((color >> 16) & 0xFF) / 255.0,
+                ((color >> 8) & 0xFF) / 255.0,
+                (color & 0xFF) / 255.0,
                 m_alpha);
             break;
         }

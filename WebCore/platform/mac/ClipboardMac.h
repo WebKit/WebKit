@@ -41,8 +41,6 @@ class NSImage;
 class NSPasteboard;
 #endif
 
-typedef unsigned NSDragOperation;
-
 class DeprecatedStringList;
 
 namespace WebCore {

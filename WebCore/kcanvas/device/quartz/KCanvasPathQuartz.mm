@@ -80,7 +80,7 @@ CGContextRef scratchContext()
         CGDataConsumerRelease(consumer);
         CFRelease(empty);
 
-        float black[4] = {0,0,0,1};
+        CGFloat black[4] = {0, 0, 0, 1};
         CGContextSetFillColor(scratch, black);
         CGContextSetStrokeColor(scratch, black);
     }

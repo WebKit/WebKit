@@ -2236,7 +2236,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSWritingDirection)baseWritingDirectionForSelectionStart
 {
-    return m_frame ? m_frame->baseWritingDirectionForSelectionStart() : NSWritingDirectionLeftToRight;
+    // FIXME: remove this NSWritingDirection cast once <rdar://problem/4509035> is fixed
+    return m_frame ? m_frame->baseWritingDirectionForSelectionStart() : (NSWritingDirection)NSWritingDirectionLeftToRight;
 }
 
 - (void)ensureSelectionVisible

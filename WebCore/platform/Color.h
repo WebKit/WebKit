@@ -68,7 +68,8 @@ public:
     RGBA32 rgb() const { return color; } // Preserve the alpha.
     void setRgb(int r, int g, int b) { color = makeRGB(r, g, b); valid = true; }
     void setRgb(RGBA32 rgb) { color = rgb; valid = true; }
-    void getRgbaF(float*, float*, float*, float*) const;
+    void getRGBA(float&, float&, float&, float&) const;
+    void getRGBA(double&, double&, double&, double&) const;
 
     void hsv(int*, int*, int*) const;
     void setHsv(int h, int s, int v);

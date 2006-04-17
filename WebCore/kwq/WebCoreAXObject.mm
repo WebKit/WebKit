@@ -1129,7 +1129,7 @@ static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existing
     NSColor *rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     if (rgbColor == nil)
         rgbColor = [NSColor blackColor];
-    float components[4];
+    CGFloat components[4];
     [rgbColor getRed:&components[0] green:&components[1] blue:&components[2] alpha:&components[3]];
     
     // create a new CGColorRef to return

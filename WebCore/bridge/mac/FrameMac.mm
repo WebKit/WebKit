@@ -236,7 +236,7 @@ RegularExpression *regExpForLabels(NSArray *labels)
     RegularExpression *result;
     if (!regExpLabels)
         regExpLabels = [[NSMutableArray alloc] initWithCapacity:regExpCacheSize];
-    unsigned int cacheHit = [regExpLabels indexOfObject:labels];
+    CFIndex cacheHit = [regExpLabels indexOfObject:labels];
     if (cacheHit != NSNotFound)
         result = regExps.at(cacheHit);
     else {

@@ -234,7 +234,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
             }
         }
         
-        const float dottedLine[2] = { patWidth, patWidth };
+        const CGFloat dottedLine[2] = { patWidth, patWidth };
         [path setLineDash:dottedLine count:2 phase:patternOffset];
     }
     

@@ -65,9 +65,9 @@ private:
 };
 
 typedef struct {
-    float colorArray[4];
-    float offset;
-    float previousDeltaInverse;
+    CGFloat colorArray[4];
+    CGFloat offset;
+    CGFloat previousDeltaInverse;
 } QuartzGradientStop;
 
 // Does not subclass from KRenderingPaintServerGradient intentionally.

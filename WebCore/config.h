@@ -25,6 +25,16 @@
 
 #if __APPLE__
 #define HAVE_FUNC_USLEEP 1
+
+#ifndef CGFLOAT_DEFINED
+#if __LP64__
+typedef double CGFloat;
+#else
+typedef float CGFloat;
+#endif
+#define CGFLOAT_DEFINED 1
+#endif
+
 #endif
 
 #if WIN32

@@ -61,10 +61,10 @@ void CanvasGradient::addColorStop(float value, const String& color)
 {
     RGBA32 rgba = CSSParser::parseColor(color);
     m_stops.append(ColorStop(value,
-        ((rgba >> 16) & 0xFF) / 255.0f,
-        ((rgba >> 8) & 0xFF) / 255.0f,
-        (rgba & 0xFF) / 255.0f,
-        ((rgba >> 24) & 0xFF) / 255.0f));
+        ((rgba >> 16) & 0xFF) / 255.0,
+        ((rgba >> 8) & 0xFF) / 255.0,
+        (rgba & 0xFF) / 255.0,
+        ((rgba >> 24) & 0xFF) / 255.0));
 
     m_stopsSorted = false;
 
@@ -76,9 +76,14 @@ void CanvasGradient::addColorStop(float value, const String& color)
 
 #if __APPLE__
 
-static void gradientCallback(void* info, const float* in, float* out)
+static void gradientCallback(void* info, const CGFloat* in, CGFloat* out)
 {
-    static_cast<CanvasGradient*>(info)->getColor(*in, &out[0], &out[1], &out[2], &out[3]);
+    float r, g, b, a;
+    static_cast<CanvasGradient*>(info)->getColor(*in, &r, &g, &b, &a);
+    out[0] = r;
+    out[1] = g;
+    out[2] = b;
+    out[3] = a;
 }
 
 CGShadingRef CanvasGradient::platformShading()
@@ -86,8 +91,8 @@ CGShadingRef CanvasGradient::platformShading()
     if (m_shading)
         return m_shading;
 
-    const float intervalRanges[2] = { 0, 1 };
-    const float colorComponentRanges[4 * 2] = { 0, 1, 0, 1, 0, 1, 0, 1 };
+    const CGFloat intervalRanges[2] = { 0, 1 };
+    const CGFloat colorComponentRanges[4 * 2] = { 0, 1, 0, 1, 0, 1, 0, 1 };
     const CGFunctionCallbacks gradientCallbacks = { 0, gradientCallback, 0 };
     CGFunctionRef colorFunction = CGFunctionCreate(this, 1, intervalRanges, 4, colorComponentRanges, &gradientCallbacks);
 

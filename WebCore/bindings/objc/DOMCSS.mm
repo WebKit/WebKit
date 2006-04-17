@@ -1016,33 +1016,33 @@ void removeWrapperForRGB(RGBA32 value)
 
 - (void)dealloc
 {
-    removeWrapperForRGB(reinterpret_cast<RGBA32>(_internal));
+    removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
     [super dealloc];
 }
 
 - (void)finalize
 {
-    removeWrapperForRGB(reinterpret_cast<RGBA32>(_internal));
+    removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
     [super finalize];
 }
 
 - (DOMCSSPrimitiveValue *)red
 {
-    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
+    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = (rgb >> 16) & 0xFF;
     return [DOMCSSPrimitiveValue _valueWith:new CSSPrimitiveValue(value, CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)green
 {
-    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
+    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = (rgb >> 8) & 0xFF;
     return [DOMCSSPrimitiveValue _valueWith:new CSSPrimitiveValue(value, CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)blue
 {
-    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
+    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     int value = rgb & 0xFF;
     return [DOMCSSPrimitiveValue _valueWith:new CSSPrimitiveValue(value, CSSPrimitiveValue::CSS_NUMBER)];
 }
@@ -1080,7 +1080,7 @@ void removeWrapperForRGB(RGBA32 value)
 
 - (DOMCSSPrimitiveValue *)alpha
 {
-    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
+    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     float value = (float)Color(rgb).alpha() / 0xFF;
     return [DOMCSSPrimitiveValue _valueWith:new CSSPrimitiveValue(value, CSSPrimitiveValue::CSS_NUMBER)];
     
@@ -1092,7 +1092,7 @@ void removeWrapperForRGB(RGBA32 value)
 
 - (NSColor *)_color
 {
-    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
+    RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
     return nsColor(Color(rgb));
 }
 

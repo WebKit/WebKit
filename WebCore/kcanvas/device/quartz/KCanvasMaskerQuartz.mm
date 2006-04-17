@@ -42,8 +42,8 @@ static CIImage *applyLuminanceToAlphaFilter(CIImage *inputImage)
 {
     CIFilter *luminanceToAlpha = [CIFilter filterWithName:@"CIColorMatrix"];
     [luminanceToAlpha setDefaults];
-    float alpha[4] = {0.2125f, 0.7154f, 0.0721f, 0.f};
-    float zero[4] = {0.f, 0.f, 0.f, 0.f};
+    CGFloat alpha[4] = {0.2125, 0.7154, 0.0721, 0};
+    CGFloat zero[4] = {0, 0, 0, 0};
     [luminanceToAlpha setValue:inputImage forKey:@"inputImage"];  
     [luminanceToAlpha setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputRVector"];
     [luminanceToAlpha setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputGVector"];
@@ -56,21 +56,21 @@ static CIImage *applyLuminanceToAlphaFilter(CIImage *inputImage)
 static CIImage *applyExpandAlphatoGrayscaleFilter(CIImage *inputImage)
 {
     CIFilter *alphaToGrayscale = [CIFilter filterWithName:@"CIColorMatrix"];
-    float zero[4] = {0.f, 0.f, 0.f, 0.f};
+    CGFloat zero[4] = {0, 0, 0, 0};
     [alphaToGrayscale setDefaults];
     [alphaToGrayscale setValue:inputImage forKey:@"inputImage"];
     [alphaToGrayscale setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputRVector"];
     [alphaToGrayscale setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputGVector"];
     [alphaToGrayscale setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputBVector"];
-    [alphaToGrayscale setValue:[CIVector vectorWithX:0.0f Y:0.0f Z:0.0f W:1.0f] forKey:@"inputAVector"];
-    [alphaToGrayscale setValue:[CIVector vectorWithX:1.0f Y:1.0f Z:1.0f W:0.0f] forKey:@"inputBiasVector"];
+    [alphaToGrayscale setValue:[CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:1.0] forKey:@"inputAVector"];
+    [alphaToGrayscale setValue:[CIVector vectorWithX:1.0 Y:1.0 Z:1.0 W:0.0] forKey:@"inputBiasVector"];
     return [alphaToGrayscale valueForKey:@"outputImage"];
 }
 
 static CIImage *transformImageIntoGrayscaleMask(CIImage *inputImage)
 {
     CIFilter *blackBackground = [CIFilter filterWithName:@"CIConstantColorGenerator"];
-    [blackBackground setValue:[CIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:1.0f] forKey:@"inputColor"];
+    [blackBackground setValue:[CIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1.0] forKey:@"inputColor"];
 
     CIFilter *layerOverBlack = [CIFilter filterWithName:@"CISourceOverCompositing"];
     [layerOverBlack setValue:[blackBackground valueForKey:@"outputImage"] forKey:@"inputBackgroundImage"];  

@@ -162,7 +162,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
 
     CGSize cellSize = CGSize(cell->size());
 
-    float alpha = 1; // canvasStyle->opacity(); //which?
+    CGFloat alpha = 1; // canvasStyle->opacity(); //which?
             
     // Patterns don't seem to resepect the CTM unless we make them...
     CGAffineTransform ctm = CGContextGetCTM(context);

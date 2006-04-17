@@ -46,13 +46,13 @@
 
 namespace WebCore {
     
-static void cgGradientCallback(void *info, const float *inValues, float *outColor)
+static void cgGradientCallback(void* info, const CGFloat* inValues, CGFloat* outColor)
 {
     const KRenderingPaintServerGradientQuartz *server = (const KRenderingPaintServerGradientQuartz *)info;
     QuartzGradientStop *stops = server->m_stopsCache;
     int stopsCount = server->m_stopsCount;
     
-    float inValue = inValues[0];
+    CGFloat inValue = inValues[0];
     
     if (!stopsCount) {
         outColor[0] = 0;
@@ -61,14 +61,14 @@ static void cgGradientCallback(void *info, const float *inValues, float *outColo
         outColor[3] = 1;
         return;
     } else if (stopsCount == 1) {
-        memcpy(outColor, stops[0].colorArray, 4 * sizeof(float));
+        memcpy(outColor, stops[0].colorArray, 4 * sizeof(CGFloat));
         return;
     }
     
     if (!(inValue > stops[0].offset)) {
-        memcpy(outColor, stops[0].colorArray, 4 * sizeof(float));
+        memcpy(outColor, stops[0].colorArray, 4 * sizeof(CGFloat));
     } else if (!(inValue < stops[stopsCount-1].offset)) {
-        memcpy(outColor, stops[stopsCount-1].colorArray, 4 * sizeof(float));
+        memcpy(outColor, stops[stopsCount-1].colorArray, 4 * sizeof(CGFloat));
     } else {
         int nextStopIndex = 0;
         while ( (nextStopIndex < stopsCount) && (stops[nextStopIndex].offset < inValue) ) {
@@ -76,27 +76,17 @@ static void cgGradientCallback(void *info, const float *inValues, float *outColo
         }
         
         //float nextOffset = stops[nextStopIndex].offset;
-        float *nextColorArray = stops[nextStopIndex].colorArray;
-        float *previousColorArray = stops[nextStopIndex-1].colorArray;
+        CGFloat *nextColorArray = stops[nextStopIndex].colorArray;
+        CGFloat *previousColorArray = stops[nextStopIndex-1].colorArray;
         //float totalDelta = nextOffset - previousOffset;
-        float diffFromPrevious = inValue - stops[nextStopIndex-1].offset;
+        CGFloat diffFromPrevious = inValue - stops[nextStopIndex-1].offset;
         //float percent = diffFromPrevious / totalDelta;
-        float percent = diffFromPrevious * stops[nextStopIndex].previousDeltaInverse;
+        CGFloat percent = diffFromPrevious * stops[nextStopIndex].previousDeltaInverse;
         
-#if 1
-        outColor[0] = ((1.0f - percent) * previousColorArray[0] + percent * nextColorArray[0]);
-        outColor[1] = ((1.0f - percent) * previousColorArray[1] + percent * nextColorArray[1]);
-        outColor[2] = ((1.0f - percent) * previousColorArray[2] + percent * nextColorArray[2]);
-        outColor[3] = ((1.0f - percent) * previousColorArray[3] + percent * nextColorArray[3]);
-#else
-        // load up vPercent = {percent, percent, percent, percent}
-        vector float vPercent = vec_loadAndSplatScalar(percent);
-        // result = -( arg1 * arg2 - arg3 ) = arg3 - arg2 * arg1
-        vector float vPrevResult = vec_nmsub(vPrevColor, vPercent, vPrevColor);
-        // result = arg1 * arg2 + arg3
-        vector float vResult = vec_madd(vPercent, vNextColor, vPrevResult);
-        vec_st(vResult, 0, outColor);
-#endif
+        outColor[0] = ((1.0 - percent) * previousColorArray[0] + percent * nextColorArray[0]);
+        outColor[1] = ((1.0 - percent) * previousColorArray[1] + percent * nextColorArray[1]);
+        outColor[2] = ((1.0 - percent) * previousColorArray[2] + percent * nextColorArray[2]);
+        outColor[3] = ((1.0 - percent) * previousColorArray[3] + percent * nextColorArray[3]);
     }
     // FIXME: have to handle the spreadMethod()s here SPREADMETHOD_REPEAT, etc.
 }
@@ -106,9 +96,9 @@ static CGShadingRef CGShadingRefForLinearGradient(const KRenderingPaintServerLin
     CGPoint start = CGPoint(server->gradientStart());
     CGPoint end = CGPoint(server->gradientEnd());
     
-    CGFunctionCallbacks callbacks = { 0, cgGradientCallback, NULL };
-    float domainLimits[2] = { 0.0f, 1.0f };
-    float rangeLimits[8] = { 0,1, 0,1, 0,1, 0,1 };
+    CGFunctionCallbacks callbacks = {0, cgGradientCallback, NULL};
+    CGFloat domainLimits[2] = {0, 1};
+    CGFloat rangeLimits[8] = {0, 1, 0, 1, 0, 1, 0, 1};
     const KRenderingPaintServerGradientQuartz *castServer = static_cast<const KRenderingPaintServerGradientQuartz *>(server);
     CGFunctionRef shadingFunction = CGFunctionCreate((void *)castServer, 1, domainLimits, 4, rangeLimits, &callbacks);
     
@@ -137,9 +127,9 @@ static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRad
         focus.y = int(sin(angle) * radius) - 1;
     }
     
-    CGFunctionCallbacks callbacks = { 0, cgGradientCallback, NULL };
-    float domainLimits[2] = { 0.0f, 1.0f };
-    float rangeLimits[8] = { 0,1, 0,1, 0,1, 0,1 };
+    CGFunctionCallbacks callbacks = {0, cgGradientCallback, NULL};
+    CGFloat domainLimits[2] = {0, 1};
+    CGFloat rangeLimits[8] = {0, 1, 0, 1, 0, 1, 0, 1};
     const KRenderingPaintServerGradientQuartz *castServer = static_cast<const KRenderingPaintServerGradientQuartz *>(server);
     CGFunctionRef shadingFunction = CGFunctionCreate((void *)castServer, 1, domainLimits, 4, rangeLimits, &callbacks);
     
@@ -190,13 +180,13 @@ void KRenderingPaintServerGradientQuartz::updateQuartzGradientStopsCache(const V
     m_stopsCount = stops.size();
     m_stopsCache = new QuartzGradientStop[m_stopsCount];
     
-    float previousOffset = 0.0f;
+    CGFloat previousOffset = 0.0;
     for (unsigned i = 0; i < stops.size(); ++i) {
         m_stopsCache[i].offset = stops[i].first;
-        m_stopsCache[i].previousDeltaInverse = 1.0f / (stops[i].first - previousOffset);
+        m_stopsCache[i].previousDeltaInverse = 1.0 / (stops[i].first - previousOffset);
         previousOffset = stops[i].first;
-        float *ca = m_stopsCache[i].colorArray;
-        stops[i].second.getRgbaF(ca, ca+1, ca+2, ca+3);
+        CGFloat *ca = m_stopsCache[i].colorArray;
+        stops[i].second.getRGBA(ca[0], ca[1], ca[2], ca[3]);
     }
 }
 

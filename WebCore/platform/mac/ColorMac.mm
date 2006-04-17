@@ -94,11 +94,11 @@ static CGColorRef CGColorFromNSColor(NSColor* color)
     // This needs to always use device colorspace so it can de-calibrate the color for
     // CGColor to possibly recalibrate it.
     NSColor* deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-    float red = [deviceColor redComponent];
-    float green = [deviceColor greenComponent];
-    float blue = [deviceColor blueComponent];
-    float alpha = [deviceColor alphaComponent];
-    const float components[4] = { red, green, blue, alpha };
+    CGFloat red = [deviceColor redComponent];
+    CGFloat green = [deviceColor greenComponent];
+    CGFloat blue = [deviceColor blueComponent];
+    CGFloat alpha = [deviceColor alphaComponent];
+    const CGFloat components[4] = { red, green, blue, alpha };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef cgColor = CGColorCreate(colorSpace, components);
     CGColorSpaceRelease(colorSpace);

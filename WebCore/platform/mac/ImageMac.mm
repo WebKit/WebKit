@@ -137,7 +137,7 @@ void Image::checkForSolidColor(CGImageRef image)
     
     // Currently we only check for solid color in the important special case of a 1x1 image.
     if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
-        float pixel[4]; // RGBA
+        CGFloat pixel[4]; // RGBA
         CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
 // This #if won't be needed once the CG header that includes kCGBitmapByteOrder32Host is included in the OS.
 #if __ppc__
@@ -339,7 +339,7 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
         CGContextSetFillColorSpace(context, patternSpace);
         CGColorSpaceRelease(patternSpace);
 
-        float patternAlpha = 1;
+        CGFloat patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
         setCompositingOperation(context, Image::CompositeSourceOver);
@@ -422,7 +422,7 @@ void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRec
         CGContextSetFillColorSpace(context, patternSpace);
         CGColorSpaceRelease(patternSpace);
 
-        float patternAlpha = 1;
+        CGFloat patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
         setCompositingOperation(context, Image::CompositeSourceOver);

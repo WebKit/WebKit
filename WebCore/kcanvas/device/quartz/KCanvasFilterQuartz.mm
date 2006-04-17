@@ -173,7 +173,7 @@ void KCanvasFilterQuartz::setOutputImage(const KCanvasFilterEffect *filterEffect
 static inline CIImage *alphaImageForImage(CIImage *image)
 {
     CIFilter *onlyAlpha = [CIFilter filterWithName:@"CIColorMatrix"];
-    float zero[4] = {0.f, 0.f, 0.f, 0.f};
+    CGFloat zero[4] = {0, 0, 0, 0};
     [onlyAlpha setDefaults];
     [onlyAlpha setValue:image forKey:@"inputImage"];
     [onlyAlpha setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputRVector"];
@@ -327,8 +327,8 @@ CIFilter *KCanvasFEColorMatrixQuartz::getCIFilter(KCanvasFilterQuartz *quartzFil
         // FIXME: I bet there is an easy filter to do this.
         filter = [CIFilter filterWithName:@"CIColorMatrix"];
         [filter setDefaults];
-        float zero[4] = {0.f, 0.f, 0.f, 0.f};
-        float alpha[4] = { 0.2125f, 0.7154f, 0.0721f, 0.f};
+        CGFloat zero[4] = {0, 0, 0, 0};
+        CGFloat alpha[4] = {0.2125, 0.7154, 0.0721, 0};
         [filter setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputRVector"];
         [filter setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputGVector"];
         [filter setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputBVector"];

@@ -245,12 +245,20 @@ Color Color::dark(int factor) const
     return result;
 }
 
-void Color::getRgbaF(float *r, float *g, float *b, float *a) const
+void Color::getRGBA(float& r, float& g, float& b, float& a) const
 {
-    *r = (float)red() / 255.0;
-    *g = (float)green() / 255.0;
-    *b = (float)blue() / 255.0;
-    *a = (float)alpha() / 255.0;
+    r = red() / 255.0f;
+    g = green() / 255.0f;
+    b = blue() / 255.0f;
+    a = alpha() / 255.0f;
+}
+
+void Color::getRGBA(double& r, double& g, double& b, double& a) const
+{
+    r = red() / 255.0;
+    g = green() / 255.0;
+    b = blue() / 255.0;
+    a = alpha() / 255.0;
 }
 
 }

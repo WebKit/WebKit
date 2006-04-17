@@ -1,3 +1,73 @@
+2006-04-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4506601> TOT WebCore fails to build ppc64
+
+        Switch many CG calls to use CGFloat for colors and gradients
+
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMRGBColor dealloc]): cast _internal to uintptr_t
+        (-[DOMRGBColor finalize]): cast _internal to uintptr_t
+        (-[DOMRGBColor red]): cast _internal to uintptr_t
+        (-[DOMRGBColor green]): cast _internal to uintptr_t
+        (-[DOMRGBColor blue]): cast _internal to uintptr_t
+        (-[DOMRGBColor alpha]): cast _internal to uintptr_t
+        (-[DOMRGBColor _color]): cast _internal to uintptr_t
+        * bridge/mac/FrameMac.mm:
+        (WebCore::regExpForLabels): use CFIndex as the type returned from indexOfObject:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge baseWritingDirectionForSelectionStart]): workaround for <rdar://problem/4509035>
+        * config.h: define CGFloat if it isn't defined already
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::addColorStop):
+        (WebCore::gradientCallback):
+        (WebCore::CanvasGradient::platformShading):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        (WebCore::CanvasRenderingContext2D::applyShadow):
+        (WebCore::CanvasRenderingContext2D::applyStrokePattern):
+        (WebCore::CanvasRenderingContext2D::applyFillPattern):
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::alphaImageForImage):
+        (WebCore::KCanvasFEColorMatrixQuartz::getCIFilter):
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm:
+        (WebCore::applyLuminanceToAlphaFilter):
+        (WebCore::applyExpandAlphatoGrayscaleFilter):
+        (WebCore::transformImageIntoGrayscaleMask):
+        * kcanvas/device/quartz/KCanvasPathQuartz.mm:
+        (WebCore::scratchContext):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (WebCore::cgGradientCallback):
+        (WebCore::CGShadingRefForLinearGradient):
+        (WebCore::CGShadingRefForRadialGradient):
+        (WebCore::KRenderingPaintServerGradientQuartz::updateQuartzGradientStopsCache):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        (WebCore::):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (WebCore::KRenderingPaintServerPatternQuartz::setup):
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (WebCore::applyStrokeStyleToContext):
+        * kwq/WebCoreAXObject.mm:
+        (CreateCGColorIfDifferent):
+        * platform/Color.cpp:
+        (WebCore::Color::getRGBA): new name, was getRgbaF. getRGBA uses float and has a double overload
+        * platform/Color.h:
+        * platform/mac/ClipboardMac.h: no need to define NSDragOperation
+        * platform/mac/ColorMac.mm:
+        (+[WebCoreControlTintObserver WebCore]):
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLine):
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::checkForSolidColor):
+        (WebCore::Image::tileInRect):
+        (WebCore::Image::scaleAndTileInRect):
+        * platform/mac/TextEncodingMac.cpp:
+        (WebCore::TextEncoding::fromUnicode):
+
 2006-04-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
