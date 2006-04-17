@@ -1,5 +1,17 @@
 2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8420
+          iExploder(#12): Assertion failure in RenderContainer::removeChildNode
+
+        * fast/forms/button-inner-block-reuse-expected.checksum: Added.
+        * fast/forms/button-inner-block-reuse-expected.png: Added.
+        * fast/forms/button-inner-block-reuse-expected.txt: Added.
+        * fast/forms/button-inner-block-reuse.html: Added.
+
+2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Justin.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8394

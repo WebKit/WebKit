@@ -1,5 +1,27 @@
 2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8420
+          iExploder(#12): Assertion failure in RenderContainer::removeChildNode
+
+        Test: fast/forms/button-inner-block-reuse.html
+
+        Buttons have a distinguished anonymous child that holds all their other
+        descendants. Descendants ended up in a sibling anonymous block as the
+        initial anonymous child was being reused to hold the initial part of an
+        inline that got split.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitFlow): Check if the anonymous block's parent
+        allows us to reuse it.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::allowsReusingAnonymousChild): Added. Returns true.
+        * rendering/render_button.h:
+        (WebCore::RenderButton::allowsReusingAnonymousChild): Added. Returns false.
+
+2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Justin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8394

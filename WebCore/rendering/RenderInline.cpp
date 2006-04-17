@@ -199,12 +199,11 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     RenderBlock* pre = 0;
     RenderBlock* block = containingBlock();
     bool madeNewBeforeBlock = false;
-    if (block->isAnonymousBlock()) {
+    if (block->isAnonymousBlock() && (!block->parent() || block->parent()->allowsReusingAnonymousChild())) {
         // We can reuse this block and make it the preBlock of the next continuation.
         pre = block;
         block = block->containingBlock();
-    }
-    else {
+    } else {
         // No anonymous block available for use.  Make one.
         pre = block->createAnonymousBlock();
         madeNewBeforeBlock = true;

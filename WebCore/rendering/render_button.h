@@ -38,6 +38,7 @@ public:
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
     virtual void removeChild(RenderObject* oldChild);
     virtual void removeLeftoverAnonymousBoxes() {}
+    virtual bool allowsReusingAnonymousChild() const { return false; }
 
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
