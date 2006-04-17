@@ -1,3 +1,15 @@
+2006-04-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8417
+          make-css-file-arrays.pl hangs when run on Linux
+
+        * css/make-css-file-arrays.pl: Remove the "-" parameter from the invocation of cpp,
+        which means "send output to stdout". It's optional on Mac OS X, and is causing a
+        hang on Linux.
+        * rendering/RenderArena.cpp: Added a missing include of <assert.h>.
+
 2006-04-15  Darin Adler  <darin@apple.com>
 
         - removed references to a couple files that are obsolete

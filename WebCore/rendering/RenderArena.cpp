@@ -33,11 +33,11 @@
  */
 
 #include "config.h"
+#include "RenderArena.h"
 
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-
-#include "RenderArena.h"
 
 #ifndef NDEBUG
 
