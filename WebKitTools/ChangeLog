@@ -1,3 +1,43 @@
+2006-04-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8412
+          Integrate iExploder test script.
+
+        This script generates artificially mangled HTML documents, to test that the browser
+        doesn't crash when handling ill-formed code.
+        
+        How to use:
+         run-iexploder-tests             Open an interactive test page in Safari+ToT.
+         run-iexploder-tests nnnnn       Open test #nnnnn.
+
+        Command line options:
+         -guard-malloc (-g)              Use Guard Malloc.
+         -port=nnnn                      Run Apache on port nnnn (default is 8000).
+
+        To save a crashing test, you can use curl while the crash reporter dialog is on the screen
+        (thus, Apache is still running), e.g.:
+         curl -o iexploder293.html "http://127.0.0.1:8000/iexploder.cgi?lookup=1&test=293"
+
+        Additionally, there are some useful scripts in WebKitTools/iExploder/tools directory.
+
+        * Scripts/run-iexploder-tests: Added.
+        * iExploder: Added.
+        * iExploder/LICENSE.txt: Added.
+        * iExploder/README.txt: Added.
+        * iExploder/htdocs: Added.
+        * iExploder/htdocs/cssproperties.in: Added.
+        * iExploder/htdocs/cssvalues.in: Added.
+        * iExploder/htdocs/htmlattrs.in: Added.
+        * iExploder/htdocs/htmltags.in: Added.
+        * iExploder/htdocs/htmlvalues.in: Added.
+        * iExploder/htdocs/iexploder.cgi: Added.
+        * iExploder/htdocs/index.html: Added.
+        * iExploder/tools: Added.
+        * iExploder/tools/lasthit.rb: Added.
+        * iExploder/tools/osx_last_crash.rb: Added.
+
 2006-04-16  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
