@@ -73,10 +73,17 @@ public:
     
     IntRect getRelativeMarkerRect();
     
+    virtual SelectionState selectionState() const { return m_selectionState; }
+    virtual void setSelectionState(SelectionState);
+    virtual IntRect selectionRect();
+    virtual Color selectionColor(GraphicsContext*) const;
+    virtual bool canBeSelectionLeaf() const { return true; }
+
 private:
     DeprecatedString m_item;
     CachedImage *m_listImage;
     RenderListItem* m_listItem;
+    SelectionState m_selectionState;
 };
 
 class ListMarkerBox : public InlineBox

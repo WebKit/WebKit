@@ -2,6 +2,20 @@
 
         Reviewed by Darin.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8408
+          Paint the highlight behind selected list markers
+
+        * editing/selection/extend-by-word-002-expected.checksum: Updated.
+        * editing/selection/extend-by-word-002-expected.png: Updated.
+        * fast/lists/markers-in-selection-expected.checksum: Added.
+        * fast/lists/markers-in-selection-expected.png: Added.
+        * fast/lists/markers-in-selection-expected.txt: Added.
+        * fast/lists/markers-in-selection.html: Added.
+
+2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8420
           iExploder(#12): Assertion failure in RenderContainer::removeChildNode
 

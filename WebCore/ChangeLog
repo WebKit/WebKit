@@ -2,6 +2,33 @@
 
         Reviewed by Darin.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8408
+          Paint the highlight behind selected list markers
+
+        Test: fast/lists/markers-in-selection.html
+
+        * rendering/RenderObject.h: Added selectionColorImageOverlayAlpha constant -
+        the maximum opacity of the selection color when painted over images.
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::RenderListMarker):
+        (WebCore::RenderListMarker::paint): Paint the selection highlight
+        if selected: over the marker for image markers, under the marker for all other
+        markers.
+        (WebCore::RenderListMarker::setSelectionState): Added.
+        (WebCore::RenderListMarker::selectionRect): Added.
+        (WebCore::RenderListMarker::selectionColor): Added. Ensures that the selection
+        color is transparent for image markers.
+        * rendering/render_list.h:
+        (WebCore::RenderListMarker::selectionState):
+        (WebCore::RenderListMarker::canBeSelectionLeaf):
+        * rendering/render_replaced.cpp
+        (WebCore::RenderReplaced::selectionColor): Changed to use the selectionColorImageOverlayAlpha
+        constant.
+
+2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8420
           iExploder(#12): Assertion failure in RenderContainer::removeChildNode
 
