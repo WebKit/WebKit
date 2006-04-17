@@ -1,3 +1,19 @@
+2006-04-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8402>
+        Fix interchange newline handling and avoid use of test rendering info
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Fixed bugs in handling of interchange newlines at the end of incoming 
+        fragments.  Removed the use of !fragment.isBlockFlow since it isn't 
+        correct and relies on information gathered during the test insertion, which 
+        we're trying to get rid of. 
+        * editing/VisiblePosition.h:
+        (WebCore::VisiblePosition::rootEditableElement): Added for convenience.
+
 2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

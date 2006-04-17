@@ -474,7 +474,8 @@ void ReplaceSelectionCommand::doApply()
     if (!selection.isContentRichlyEditable())
         m_matchStyle = true;
     
-    ReplacementFragment fragment(document(), m_documentFragment.get(), m_matchStyle, selection.rootEditableElement());
+    Element* currentRoot = selection.rootEditableElement();
+    ReplacementFragment fragment(document(), m_documentFragment.get(), m_matchStyle, currentRoot);
     
     if (fragment.type() == EmptyFragment)
         return;
@@ -676,7 +677,7 @@ void ReplaceSelectionCommand::doApply()
         Node *insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
         Node* insertionRoot = insertionPos.node()->rootEditableElement();
         bool insertionBlockIsRoot = insertionBlock == insertionRoot;
-        VisiblePosition visibleInsertionPos(insertionPos, DOWNSTREAM);
+        VisiblePosition visibleInsertionPos(insertionPos);
         fragment.removeNode(refNode);
         if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isStartOfBlock(visibleInsertionPos))
             insertNodeBeforeAndUpdateNodesInserted(refNode.get(), insertionBlock);
@@ -692,7 +693,7 @@ void ReplaceSelectionCommand::doApply()
             // a paragraph, but the above splitting should eventually be only about preventing nesting.
             ASSERT(isEndOfParagraph(visibleInsertionPos));
             VisiblePosition next = visibleInsertionPos.next();
-            if (next.isNull() || next.deepEquivalent().node()->rootEditableElement() != insertionRoot) {
+            if (next.isNull() || next.rootEditableElement() != insertionRoot) {
                 setEndingSelection(visibleInsertionPos);
                 insertParagraphSeparator();
                 next = visibleInsertionPos.next();
@@ -759,21 +760,13 @@ void ReplaceSelectionCommand::doApply()
             lastPositionToSelect = endingSelection().end().downstream();
         }
         else {
-            bool insertParagraph = false;
-            VisiblePosition pos(insertionPos, VP_DEFAULT_AFFINITY);
+            VisiblePosition pos(insertionPos);
+            VisiblePosition next = pos.next();
             
-            if (startBlock == endBlock && !fragment.isBlockFlow(m_lastTopNodeInserted.get())) {
-                insertParagraph = true;
-            } else {
-                // Handle end-of-document case.
-                updateLayout();
-                if (isEndOfDocument(pos))
-                    insertParagraph = true;
-            }
-            if (insertParagraph) {
+            if (!isEndOfParagraph(pos) || next.isNull() || next.rootEditableElement() != currentRoot) {
                 setEndingSelection(insertionPos, DOWNSTREAM);
                 insertParagraphSeparator();
-                VisiblePosition next = pos.next();
+                next = pos.next();
 
                 // Select up to the paragraph separator that was added.
                 lastPositionToSelect = next.deepEquivalent().downstream();

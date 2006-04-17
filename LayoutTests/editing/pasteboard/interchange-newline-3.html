@@ -1,0 +1,12 @@
+<p>This demonstrates a bug in interchange newline handling during paste.  There is an interchange newline at the end of the incoming fragment and so the caret should end up on an empty line.  The editable region is followed by non-editable content, which breaks the old code in paste that handled interchange newlines.</p>
+
+<div id="test" contenteditable="true"></div>
+This is non-editable content.
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+document.execCommand("InsertHTML", false, "foo<div>bar</div><br class='Apple-interchange-newline'>");
+</script>

@@ -1,3 +1,23 @@
+2006-04-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8402>
+        Fix interchange newline handling and avoid use of test rendering info
+
+        * editing/pasteboard/interchange-newline-1-expected.checksum: Added.
+        * editing/pasteboard/interchange-newline-1-expected.png: Added.
+        * editing/pasteboard/interchange-newline-1-expected.txt: Added.
+        * editing/pasteboard/interchange-newline-1.html: Added.
+        * editing/pasteboard/interchange-newline-2-expected.checksum: Added.
+        * editing/pasteboard/interchange-newline-2-expected.png: Added.
+        * editing/pasteboard/interchange-newline-2-expected.txt: Added.
+        * editing/pasteboard/interchange-newline-2.html: Added.
+        * editing/pasteboard/interchange-newline-3-expected.checksum: Added.
+        * editing/pasteboard/interchange-newline-3-expected.png: Added.
+        * editing/pasteboard/interchange-newline-3-expected.txt: Added.
+        * editing/pasteboard/interchange-newline-3.html: Added.
+
 2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

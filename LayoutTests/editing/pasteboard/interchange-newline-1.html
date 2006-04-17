@@ -1,0 +1,12 @@
+<p>There is an interchange newline at the end of the incoming fragment, so the last bit of pasted content and the content after the position where the paste occured should be in separate paragraphs.  The last bit of pasted content is a div wrapped in a span, which breaks the old code in paste that handled interchange newlines.</p>
+
+<div id="test" contenteditable="true">xx</div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "character");
+document.execCommand("InsertHTML", false, "<div>foo</div><span><div>bar</div></span><br class='Apple-interchange-newline'>");
+</script>

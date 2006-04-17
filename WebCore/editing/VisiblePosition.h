@@ -71,6 +71,8 @@ public:
     void debugPosition(const char* msg = "") const;
     
     static Position deepEquivalent(const Position&);
+    
+    Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.node()->rootEditableElement() : 0; }
 
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;

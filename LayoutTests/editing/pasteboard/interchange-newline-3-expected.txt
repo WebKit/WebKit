@@ -1,0 +1,31 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 783x54
+          text run at (0,0) width 448: "This demonstrates a bug in interchange newline handling during paste. "
+          text run at (448,0) width 306: "There is an interchange newline at the end of the"
+          text run at (0,18) width 431: "incoming fragment and so the caret should end up on an empty line. "
+          text run at (431,18) width 352: "The editable region is followed by non-editable content,"
+          text run at (0,36) width 439: "which breaks the old code in paste that handled interchange newlines."
+      RenderBlock {DIV} at (0,70) size 784x54
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 21x18
+            text run at (0,0) width 21: "foo"
+        RenderBlock {DIV} at (0,18) size 784x18
+          RenderText {#text} at (0,0) size 20x18
+            text run at (0,0) width 20: "bar"
+        RenderBlock {DIV} at (0,36) size 784x18
+          RenderBR {BR} at (0,0) size 0x18
+      RenderBlock (anonymous) at (0,124) size 784x18
+        RenderText {#text} at (0,0) size 178x18
+          text run at (0,0) width 178: "This is non-editable content."
+caret: position 0 of child 0 {BR} of child 2 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
