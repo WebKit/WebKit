@@ -408,10 +408,6 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     left += absx;
     top += absy;
 
-    // FIXME: Need the +1 to match caret position of other programs on Macintosh.
-    // Would be better to somehow derive it once we understand exactly why it's needed.
-    left += 1;
-
     RenderBlock *cb = containingBlock();
     int availableWidth = cb->lineWidth(top);
     if (style()->autoWrap())

@@ -714,7 +714,7 @@ int InlineTextBox::positionForOffset(int offset) const
     int to = m_reversed ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
     return f->selectionRectForText(m_x, 0, 0, text->tabWidth(), textPos(), text->str->unicode(), text->str->length(), m_start, m_len,
-        m_toAdd, m_reversed, m_dirOverride, from, to).right() - 1;
+        m_toAdd, m_reversed, m_dirOverride, from, to).right();
 }
 
 }

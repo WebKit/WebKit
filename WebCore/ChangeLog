@@ -1,3 +1,14 @@
+2006-04-17  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 8848, caret off by 1 pixel on numerous pixel tests.
+
+        Reviewed by darin
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::caretRect):
+
 2006-04-17  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
