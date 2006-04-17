@@ -2,7 +2,7 @@
 
         Reviewed by Darin.
 
-        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8412
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8421
           Integrate iExploder test script.
 
         This script generates artificially mangled HTML documents, to test that the browser
