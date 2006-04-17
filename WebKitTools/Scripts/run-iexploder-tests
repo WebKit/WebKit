@@ -46,9 +46,11 @@ sub runSafari();
 # Argument handling
 my $guardMalloc = '';
 my $httpdPort = 8000;
+my $downloadTest;
 
 GetOptions(
     'guard-malloc|g' => \$guardMalloc,
+    'get=s' => \$downloadTest,
     'port=i' => \$httpdPort
 );
 
@@ -62,7 +64,14 @@ checkFrameworks();
 
 my $httpdOpen = 0;
 openHTTPDIfNeeded();
-runSafari();
+
+if ($downloadTest) {
+    system "/usr/bin/curl -o ~/Desktop/iexploder$downloadTest.html \"http://127.0.0.1:$httpdPort/iexploder.cgi?lookup=1&test=$downloadTest\"";
+    print "Saved the test as iexploder$downloadTest.html on the desktop\n";
+} else {
+    runSafari();
+}
+
 closeHTTPD();
 
 

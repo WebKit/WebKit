@@ -2,6 +2,15 @@
 
         Reviewed by Darin.
 
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8443
+          An easier way to save iExploder tests.
+
+        * Scripts/run-iexploder-tests: Added a --get option to save a test into a file.
+
+2006-04-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=8421
           Integrate iExploder test script.
 
