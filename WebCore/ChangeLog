@@ -1,5 +1,18 @@
 2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8394
+          Editable region does not accept dropped text if there is no selection
+
+        Test: editing/pasteboard/drop-text-without-selection.html
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge documentFragmentWithText:]): Changed to allow
+        creating a fragment regardless of the selection.
+
+2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin.
 
         - WebCore part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8324

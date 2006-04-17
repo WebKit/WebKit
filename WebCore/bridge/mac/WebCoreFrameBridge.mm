@@ -1927,7 +1927,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text
 {
-    if (!frameHasSelection(self) || !text)
+    if (!m_frame || !m_frame->document() || !text)
         return 0;
     
     return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText(m_frame->document(), DeprecatedString::fromNSString(text)).get()];

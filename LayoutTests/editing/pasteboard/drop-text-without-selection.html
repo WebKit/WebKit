@@ -1,0 +1,47 @@
+<body onload="runTest()">
+<p>
+    This is a test for <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=8394">http://bugzilla.opendarwin.org/show_bug.cgi?id=8394</a>
+    Editable region does not accept dropped text if there is no selection</i>.
+</p>
+<p>
+    The text field should accept drag-and-dropped text, such as the link, even if
+    no text is currently selected.
+</p>
+<hr>
+<input id="field">
+<a id="link" href="http://www.ibm.com/">drop me into the text field</a>
+
+<script>
+
+function runTest() {
+    if (!window.layoutTestController)
+        return;
+
+    window.layoutTestController.waitUntilDone();
+
+    var link = document.getElementById("link");
+
+    var xOff = document.body.offsetLeft;
+    var yOff = document.body.offsetTop;
+    
+    var x = xOff + link.offsetLeft + link.offsetWidth / 2;
+    var y = yOff + link.offsetTop + link.offsetHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    // Wait a moment so that the mouseDown will kick off a drag instead of starting a new selection.
+    eventSender.leapForward(400);
+    var field = document.getElementById("field");
+    
+    x = xOff + field.offsetLeft + field.offsetWidth / 2;
+    y = yOff + field.offsetTop + field.offsetHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+
+    window.layoutTestController.notifyDone();
+}
+
+</script>
+
+</body>

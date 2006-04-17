@@ -1,3 +1,15 @@
+2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Justin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8394
+          Editable region does not accept dropped text if there is no selection
+
+        * editing/pasteboard/drop-text-without-selection-expected.checksum: Added.
+        * editing/pasteboard/drop-text-without-selection-expected.png: Added.
+        * editing/pasteboard/drop-text-without-selection-expected.txt: Added.
+        * editing/pasteboard/drop-text-without-selection.html: Added.
+
 2006-04-15  Darin Adler  <darin@apple.com>
 
         - more results for tests landed without pixel-test results
