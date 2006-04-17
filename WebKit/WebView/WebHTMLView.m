@@ -1632,7 +1632,7 @@ static WebHTMLView *lastHitView = nil;
     BOOL windowIsKey = [window isKeyWindow];
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
-    BOOL displaysWithFocusAttributes = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
+    BOOL displaysWithFocusAttributes = !_private->resigningFirstResponder && windowIsKey && (_private->descendantBecomingFirstResponder || [self _web_firstResponderCausesFocusDisplay]);
     
     [[self _bridge] setWindowHasFocus:windowOrSheetIsKey];
     [[self _bridge] setDisplaysWithFocusAttributes:displaysWithFocusAttributes];
@@ -4894,6 +4894,15 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self _updateSelectionForInputManager];
     [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;
+}
+
+- (void)_formControlIsBecomingFirstResponder:(NSView *)formControl
+{
+    if (![formControl isDescendantOf:self])
+        return;
+    _private->descendantBecomingFirstResponder = YES;
+    [self _updateFocusState];
+    _private->descendantBecomingFirstResponder = NO;
 }
 
 - (void)_formControlIsResigningFirstResponder:(NSView *)formControl

@@ -637,6 +637,13 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 }
 
+- (void)formControlIsBecomingFirstResponder:(NSView *)formControl
+{
+    // When a form element becomes first responder, its enclosing WebHTMLView might need to
+    // change its focus-displaying state, but isn't otherwise notified.
+    [(WebHTMLView *)[formControl _web_superviewOfClass:[WebHTMLView class]] _formControlIsBecomingFirstResponder:formControl];
+}
+
 - (void)formControlIsResigningFirstResponder:(NSView *)formControl
 {
     // When a form element resigns first responder, its enclosing WebHTMLView might need to

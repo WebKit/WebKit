@@ -920,8 +920,10 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         if (widget && widget->client() && !FrameMac::currentEventIsMouseDownInWidget(widget))
             widget->client()->scrollToVisible(widget);
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
-        if (widget && widget->client())
+        if (widget && widget->client()) {
             widget->client()->focusIn(widget);
+            [FrameMac::bridgeForWidget(widget) formControlIsBecomingFirstResponder:self];
+        }
     }
 
     return become;
@@ -940,8 +942,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
         if (widget && widget->client()) {
             widget->client()->focusOut(widget);
-            if (widget)
-                [FrameMac::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
+            [FrameMac::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
         }
     }
 

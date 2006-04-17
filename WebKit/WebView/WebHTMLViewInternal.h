@@ -75,6 +75,7 @@
     
     NSArray* pageRects;
 
+    BOOL descendantBecomingFirstResponder;
     BOOL resigningFirstResponder;
     BOOL ignoreMarkedTextSelectionChange;
     BOOL startNewKillRingSequence;
@@ -91,6 +92,7 @@
 
 @interface WebHTMLView (WebInternal)
 - (void)_selectionChanged;
+- (void)_formControlIsBecomingFirstResponder:(NSView *)formControl;
 - (void)_formControlIsResigningFirstResponder:(NSView *)formControl;
 - (void)_updateFontPanel;
 - (unsigned int)_delegateDragSourceActionMask;

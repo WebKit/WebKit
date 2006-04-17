@@ -98,11 +98,11 @@ using namespace WebCore;
 - (BOOL)becomeFirstResponder
 {
     BOOL become = [super becomeFirstResponder];
-    if (become && slider) {
-        if (slider && slider->client() && !FrameMac::currentEventIsMouseDownInWidget(slider))
+    if (become && slider && slider->client()) {
+        if (!FrameMac::currentEventIsMouseDownInWidget(slider))
             slider->client()->scrollToVisible(slider);
-        if (slider && slider->client())
-            slider->client()->focusIn(slider);
+        slider->client()->focusIn(slider);
+        [FrameMac::bridgeForWidget(slider) formControlIsBecomingFirstResponder:self];
     }
     return become;
 }
@@ -112,8 +112,7 @@ using namespace WebCore;
     BOOL resign = [super resignFirstResponder];
     if (resign && slider && slider->client()) {
         slider->client()->focusOut(slider);
-        if (slider)
-            [FrameMac::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
+        [FrameMac::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
     }
     return resign;
 }

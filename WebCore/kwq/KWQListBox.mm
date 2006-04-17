@@ -571,8 +571,10 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
         if (_box && _box->client() && !FrameMac::currentEventIsMouseDownInWidget(_box))
             _box->client()->scrollToVisible(_box);
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
-        if (_box && _box->client())
+        if (_box && _box->client()) {
             _box->client()->focusIn(_box);
+            [FrameMac::bridgeForWidget(_box) formControlIsBecomingFirstResponder:self];
+        }
     }
 
     return become;
@@ -583,8 +585,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     BOOL resign = [super resignFirstResponder];
     if (resign && _box && _box->client()) {
         _box->client()->focusOut(_box);
-        if (_box)
-            [FrameMac::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
+        [FrameMac::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
     }
     return resign;
 }

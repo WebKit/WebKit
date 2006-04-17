@@ -1,3 +1,20 @@
+2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - WebKit part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8324
+          REGRESSION: textarea :focus not applied immediately
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge formControlIsBecomingFirstResponder:]): Added. Calls the ancestor
+        WebHTMLView's _formControlIsBecomingFirstResponder:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateFocusState:]): If a descendant is becoming first responder,
+        enable focused appearance.
+        (-[WebHTMLView _formControlIsBecomingFirstResponder:]): Added. Calls _updateFocusState,
+        causing the frame to display with focus attributes.
+        * WebView/WebHTMLViewInternal.h:
+
 2006-04-14  James G. Speth  <speth@end.com>
 
         Reviewed by Timothy.

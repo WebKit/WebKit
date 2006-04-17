@@ -487,8 +487,10 @@ void QComboBox::populate()
         Widget* widget = [self widget];
         if (widget && widget->client() && !FrameMac::currentEventIsMouseDownInWidget(widget))
             widget->client()->scrollToVisible(widget);
-        if (widget && widget->client())
+        if (widget && widget->client()) {
             widget->client()->focusIn(widget);
+            [FrameMac::bridgeForWidget(widget) formControlIsBecomingFirstResponder:self];
+        }
     }
     return become;
 }
@@ -500,8 +502,7 @@ void QComboBox::populate()
         Widget* widget = [self widget];
         if (widget && widget->client()) {
             widget->client()->focusOut(widget);
-            if (widget)
-                [FrameMac::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
+            [FrameMac::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
         }
     }
     return resign;

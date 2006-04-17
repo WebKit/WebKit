@@ -397,8 +397,10 @@ using namespace WebCore;
 
         if (widget && widget->client() && !FrameMac::currentEventIsMouseDownInWidget(widget))
             widget->client()->scrollToVisible(widget);
-        if (widget && widget->client())
+        if (widget && widget->client()) {
             widget->client()->focusIn(widget);
+            [FrameMac::bridgeForWidget(widget) formControlIsBecomingFirstResponder:field];
+        }
         
         // Sending the onFocus event above, may have resulted in a blur() - if this
         // happens when tabbing from another text field, then endEditing: and
@@ -416,8 +418,7 @@ using namespace WebCore;
         
         if (widget && widget->client()) {
             widget->client()->focusOut(widget);
-            if (widget)
-                [FrameMac::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
+            [FrameMac::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
         }
     }
 }

@@ -1,3 +1,28 @@
+2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - WebCore part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8324
+          REGRESSION: textarea :focus not applied immediately
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButton becomeFirstResponder]): Added call to formControlIsBecomingFirstResponder:.
+        (-[KWQPopUpButton resignFirstResponder]): Cleaned up.
+        * kwq/KWQListBox.mm: Ditto.
+        (-[KWQTableView becomeFirstResponder]):
+        (-[KWQTableView resignFirstResponder]):
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider becomeFirstResponder]): Added call to formControlIsBecomingFirstResponder: and
+        cleaned up.
+        (-[KWQSlider resignFirstResponder]): Cleaned up.
+        * platform/mac/WebCoreTextArea.mm:
+        (-[WebCoreTextView becomeFirstResponder]): Added call to formControlIsBecomingFirstResponder:.
+        (-[WebCoreTextView resignFirstResponder]): Cleaned up.
+        * platform/mac/WebCoreTextField.mm:
+        (-[KWQTextFieldController setHasFocus:]): Added call to formControlIsBecomingFirstResponder:.
+        * manual-tests/textarea-focus.html: Added.
+
 2006-04-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele and Justin.
