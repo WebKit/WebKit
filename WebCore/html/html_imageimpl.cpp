@@ -488,9 +488,9 @@ void HTMLMapElement::parseMappedAttribute(MappedAttribute *attr)
         doc->removeImageMap(this);
         m_name = attr->value();
         if (m_name[0] == '#') {
-            String mapName = mapName.copy();
+            String mapName(m_name.domString().copy());
             mapName.remove(0, 1);
-            m_name = mapName.impl();
+            m_name = mapName;
         }
         doc->addImageMap(this);
     } else

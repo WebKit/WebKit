@@ -1,3 +1,15 @@
+2006-04-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8440
+        iExploder(#3327): Crash in StringImpl::initWithQChar()
+
+        Test: fast/parser/number-sign-in-map-name.html
+
+        * html/html_imageimpl.cpp:
+        (WebCore::HTMLMapElement::parseMappedAttribute): Fixed handling of names starting with a '#'.
+
 2006-04-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

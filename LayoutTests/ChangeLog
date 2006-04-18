@@ -1,3 +1,13 @@
+2006-04-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8440
+        iExploder(#3327): Crash in StringImpl::initWithQChar()
+
+        * fast/parser/number-sign-in-map-name-expected.txt: Added.
+        * fast/parser/number-sign-in-map-name.html: Added.
+
 2006-04-17  Adele Peterson  <adele@apple.com>
 
         Test and updated results for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8269
