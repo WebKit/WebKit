@@ -1,0 +1,20 @@
+<html>
+<head>
+  <script type="text/javascript" src="webkit_version_xl.js"></script>
+  <title>WebKit version detection sample page</title>
+</head>
+
+<body>
+  <h1>
+    <script type="text/javascript">
+      var version = get_webkit_version();		
+      document.write(version['major']+" "+version['minor']+" "+version['browser']);
+      if (version['is_nightly']) {
+        document.write(" nightly build");
+      } else {
+        document.write(" system WebKit");
+      }
+    </script>
+  </h1>
+</body>
+</html>
