@@ -1,5 +1,16 @@
 2006-04-18  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Eric.
+
+        Build fix for Windows. Just a few typos from background-size patch.
+
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::tileInRect):
+
+2006-04-18  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Hyatt.
 
         Implementation of CSS3 background-size property. See 

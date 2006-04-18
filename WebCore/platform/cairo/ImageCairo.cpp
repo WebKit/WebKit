@@ -143,7 +143,7 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, con
         return;
 
     IntSize intrinsicImageSize = size();                       
-    FloatRect srcRect(srcPoint, selfSize);
+    FloatRect srcRect(srcPoint, intrinsicImageSize);
     FloatPoint point = srcPoint;
 
     // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
@@ -155,7 +155,7 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, con
     // scaled tile. 
     float scaleX = 1.0;
     float scaleY = 1.0;
-    cairo_matrix_t* mat;
+    cairo_matrix_t mat;
     cairo_matrix_init_identity(&mat);
     if (tileSize.width() != intrinsicImageSize.width() || tileSize.height() != intrinsicImageSize.height()) {
         scaleX = intrinsicImageSize.width() / tileSize.width();

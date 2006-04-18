@@ -384,7 +384,7 @@ void GraphicsContext::drawTiledImage(Image* image, const IntRect& dest, const In
     if (paintingDisabled())
         return;
     
-    image->tileInRect(dest, srcPoint, tileSize, noRepeat, context);
+    image->tileInRect(dest, srcPoint, tileSize, context);
 }
 
 void GraphicsContext::drawScaledAndTiledImage(Image* image, const IntRect& dest, int sx, int sy, int sw, int sh, 
