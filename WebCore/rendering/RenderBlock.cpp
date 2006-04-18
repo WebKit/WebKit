@@ -1541,7 +1541,8 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
         int selTop =  curr->selectionTop();
         int selHeight = curr->selectionHeight();
 
-        if (!containsStart && !lastSelectedLine && selectionState() != SelectionStart)
+        if (!containsStart && !lastSelectedLine &&
+            selectionState() != SelectionStart && selectionState() != SelectionBoth)
             result.uniteCenter(fillVerticalSelectionGap(lastTop, lastLeft, lastRight, ty + selTop,
                                                         rootBlock, blockX, blockY, i));
 
