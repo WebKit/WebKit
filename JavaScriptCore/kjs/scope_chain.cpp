@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "scope_chain.h"
+#include "reference_list.h"
 
 namespace KJS {
 
@@ -33,5 +34,26 @@ void ScopeChain::push(const ScopeChain &c)
         tail = &newNode->next;
     }
 }
+
+#ifndef NDEBUG
+
+void ScopeChain::print(ExecState* exec)
+{
+    ScopeChainIterator scopeEnd = end();
+    for (ScopeChainIterator scopeIter = begin(); scopeIter != scopeEnd; ++scopeIter) {
+        JSObject* o = *scopeIter;
+        ReferenceList propList = o->propList(exec, false);
+        ReferenceListIterator propEnd = propList.end();
+
+        fprintf(stderr, "----- [scope %p] -----\n", o);
+        for (ReferenceListIterator propIter = propList.begin(); propIter != propEnd; propIter++) {
+            Identifier name = propIter->getPropertyName(exec);
+            fprintf(stderr, "%s, ", name.ascii());
+        }
+        fprintf(stderr, "\n");
+    }
+}
+
+#endif
 
 } // namespace KJS

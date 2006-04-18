@@ -1,3 +1,13 @@
+2006-04-18  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        <rdar://problem/4067864> REGRESSION (125-407): JavaScript failure on PeopleSoft REN Server
+
+        * fast/js/lexical-lookup-in-function-constructor.html: Added.
+        * fast/js/resources/lexical-lookup-in-function-constructor-child.html: Added.
+        * fast/js/lexical-lookup-in-function-constructor-expected.txt: Added.
+
 2006-04-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt

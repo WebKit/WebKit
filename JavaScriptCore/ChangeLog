@@ -1,3 +1,17 @@
+2006-04-18  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Fix "new Function()" to correctly use lexical scoping.
+        Add ScopeChain::print() function for debugging.
+        <rdar://problem/4067864> REGRESSION (125-407): JavaScript failure on PeopleSoft REN Server
+
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/scope_chain.cpp:
+        (KJS::ScopeChain::print):
+        * kjs/scope_chain.h:
+
 2006-04-14  James G. Speth  <speth@end.com>
 
         Reviewed by Timothy.
