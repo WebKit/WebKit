@@ -1,3 +1,10 @@
+2006-04-18  Darin Adler  <darin@apple.com>
+
+        - try to fix the Windows build
+
+        * platform/cairo/GraphicsContextCairo.cpp: (WebCore::setColor):
+        Update for changes to getRGBA.
+
 2006-04-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

@@ -24,13 +24,12 @@
  */
 
 #include "config.h"
-
 #include "GraphicsContext.h"
-#include "Font.h"
+
 #include "FloatRect.h"
+#include "Font.h"
 #include "IntPointArray.h"
 #include "IntRect.h"
-
 #include <cairo-win32.h>
 
 #ifndef M_PI
@@ -50,7 +49,7 @@ public:
 static inline void setColor(cairo_t* cr, const Color& col)
 {
     float red, green, blue, alpha;
-    col.getRgbaF(&red, &green, &blue, &alpha);
+    col.getRGBA(red, green, blue, alpha);
     cairo_set_source_rgba(cr, red, green, blue, alpha);
 }
 
