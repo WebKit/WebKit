@@ -1,3 +1,24 @@
+2006-04-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8269
+        REGRESSION: disabled text field does not display greyed-out text
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::createDivStyle): 
+        For disabled text fields, lighten or darken text color based on background color.
+        Tries to get as close as possible to logic in AppKit for old text fields.
+        * platform/Color.h: Removed hsv and setHsv since they were just used within Color.cpp.
+        * platform/Color.cpp:
+        (WebCore::parseHexColor): Cleanup.
+        (WebCore::differenceSquared): Added. Returns the difference squared of two colors.
+        (WebCore::convertRGBToHSV): Added static function. Replaces hsv and setHSV, and fixes bug in old implementation of the algorithm.
+        (WebCore::convertHSVToRGB): ditto.
+        (WebCore::Color::light): No longer takes in a factor, since all callers use the same factor.  Uses new conversion functions.
+        (WebCore::Color::dark): ditto.
+        * rendering/InlineTextBox.cpp: Removed simpleDifferenceBetweenColors.
+        (WebCore::correctedTextColor):  Uses differenceSquared instead of simpleDifferenceBetweenColors.
+
 2006-04-17  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 8270, text highlights outside of textfield when it shouldn't.

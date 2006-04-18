@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,20 +57,26 @@ static inline bool parseHexColor(const String& name, RGBA32 &rgb)
         int val = name.deprecatedString().toInt(&ok, 16);
         if (ok) {
             if (len == 6) {
-                rgb = (0xff << 24) | val;
+                rgb = 0xFF000000 | val;
                 return true;
             }
-            if (len == 3) {
-                // #abc converts to #aabbcc according to the specs
-                rgb = (0xff << 24)
-                    | (val & 0xf00) << 12 | (val & 0xf00) << 8
-                    | (val & 0xf0) << 8 | (val & 0xf0) << 4
-                    | (val & 0xf) << 4 | (val & 0xf);
-                return true;
-            }
+            // #abc converts to #aabbcc according to the specs
+            rgb = 0xFF000000
+                | (val & 0xF00) << 12 | (val & 0xF00) << 8
+                | (val & 0xF0) << 8 | (val & 0xF0) << 4
+                | (val & 0xF) << 4 | (val & 0xF);
+            return true;
         }
     }
     return false;
+}
+
+int differenceSquared(const Color& c1, const Color& c2)
+{
+    int dR = c1.red() - c2.red();
+    int dG = c1.green() - c2.green();
+    int dB = c1.blue() - c2.blue();
+    return dR * dR + dG * dG + dB * dB;
 }
 
 Color::Color(const String& name)
@@ -112,137 +118,97 @@ void Color::setNamedColor(const String& name)
     valid = foundColor;
 }
 
-void Color::hsv(int *h, int *s, int *v) const
+const float undefinedHue = -1;
+
+// Explanations of these algorithms can be found at http://www.acm.org/jgt/papers/SmithLyons96/hsv_rgb.html
+static void convertRGBToHSV(float r, float g, float b, float& h, float& s, float& v)
 {
-    int r = red(); 
-    int g = green(); 
-    int b = blue(); 
-    int i, w, x, f;
-        
-    x = w = r;
-    
-    if (g > x) {
-        x = g;
-    } 
-    if (g < w) {
-        w = g;
-    }
-    
-    if (b > x) {
-        x = b;
-    } 
-    if (b < w) {
-        w = b;
-    }
-  
-    if (w == x) {
-        *h = -1;
-        *s = 0;
-        *v = w;
-    }
-    else {
-        f = (r == x) ? g - b : ((g == x) ? b - r : r - g); 
-        i = (r == x) ? 3 : ((g == x) ? 5 : 1); 
-        *h = i - f /(w - x);
-        if (w != 0)
-            *s = (w - x)/w;
+    float x = min(r, min(g, b));
+    v = max(r, max(g, b));
+
+    if (v == x) {
+        h = undefinedHue;
+        s = 0;
+    } else {
+        float f = (r == x) ? g - b : ((g == x) ? b - r : r - g); 
+        int i = (r == x) ? 3 : ((g == x) ? 5 : 1); 
+        h = i - f / (v - x);
+        if (v != 0)
+            s = (v - x) / v;
         else
-            *s = 0;
-        *v = w; 
+            s = 0;
     }
 }
 
-void Color::setHsv(int h, int s, int v)
+static void convertHSVToRGB(float h, float s, float v, float& r, float& g, float& b)
 {
-    int i, f, p, q, t;
-    
-    if( s == 0 ) {
-        // achromatic (gray)
-        setRgb(v, v, v);
+    if (h == undefinedHue) {
+        r = v;
+        g = v;
+        b = v;
         return;
     }
-    
-    // FIXME: The math here is totally wrong.  Why did it floor an int?
-    h /= 60;                    // sector 0 to 5
-    i = h;
-    f = h - i;                  // factorial part of h
-    p = v * (1 - s);
-    q = v * (1 - s * f);
-    t = v * (1 - s * (1 - f));
-    
-    switch( i ) {
-        case 0:
-            setRgb(v, t, p);
+
+    int i = static_cast<int>(h); // sector 0 to 5
+    float f = h - i; // fractional part of h
+    if (!(i & 1))
+        f = 1 - f;
+    float m = v * (1 - s);
+    float n = v * (1 - s * f);
+
+    switch (i) {
+        default: // 0 and 6
+            r = v;
+            g = n;
+            b = m;
             break;
         case 1:
-            setRgb(q, v, p);
+            r = n;
+            g = v;
+            b = m;
             break;
         case 2:
-            setRgb(p, v, t);
+            r = m;
+            g = v;
+            b = n;
             break;
         case 3:
-            setRgb(p, q, v);
+            r = m;
+            g = n;
+            b = v;
             break;
         case 4:
-            setRgb(t, p, v);
+            r = n;
+            g = m;
+            b = v;
             break;
-        default:                // case 5:
-            setRgb(v, p, q);
+        case 5:
+            r = v;
+            g = m;
+            b = n;
             break;
     }
 }
 
 
-Color Color::light(int factor) const
+Color Color::light() const
 {
-    if (factor <= 0) {
-        return Color(*this);
-    }
-    else if (factor < 100) {
-        // NOTE: this is actually a darken operation
-        return dark(10000 / factor); 
-    }
-
-    int h, s, v;
-    
-    hsv(&h, &s, &v);
-    v = (factor * v) / 100;
-
-    if (v > 255) {
-        s -= (v - 255);
-        if (s < 0) {
-            s = 0;
-        }
-        v = 255;
-    }
-
-    Color result;
-    
-    result.setHsv(h, s, v);
-    
-    return result;
+    float r, g, b, a, h, s, v;
+    getRGBA(r, g, b, a);
+    convertRGBToHSV(r, g, b, h, s, v);
+    v = max(0.0f, min(v + 0.33f, 1.0f));
+    convertHSVToRGB(h, s, v, r, g, b);
+    return Color((int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255));
 }
 
-Color Color::dark(int factor) const
+Color Color::dark() const
 {
-    if (factor <= 0) {
-        return Color(*this);
-    }
-    else if (factor < 100) {
-        // NOTE: this is actually a lighten operation
-        return light(10000 / factor); 
-    }
-
-    int h, s, v;
-    
-    hsv(&h, &s, &v);
-    v = (v * 100) / factor;
-
-    Color result;
-    
-    result.setHsv(h, s, v);
-    
-    return result;
+    float r, g, b, a, h, s, v;
+    getRGBA(r, g, b, a);
+    convertRGBToHSV(r, g, b, h, s, v);
+    v = max(0.0f, min(v - 0.33f, 1.0f));
+    convertHSVToRGB(h, s, v, r, g, b);
+    return Color((int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255));
 }
 
 void Color::getRGBA(float& r, float& g, float& b, float& a) const

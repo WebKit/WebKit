@@ -192,28 +192,20 @@ int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
     return -1;
 }
 
-static int
-simpleDifferenceBetweenColors(Color c1, Color c2)
-{
-    // a distance could be computed by squaring the differences between components, but
-    // this is faster and so far seems good enough for our purposes.
-    return abs(c1.red() - c2.red()) + abs(c1.green() - c2.green()) + abs(c1.blue() - c2.blue());
-}
-
 static Color 
 correctedTextColor(Color textColor, Color backgroundColor) 
 {
     // Adjust the text color if it is too close to the background color,
     // by darkening or lightening it to move it further away.
     
-    int d = simpleDifferenceBetweenColors(textColor, backgroundColor);
-    // semi-arbitrarily chose 255 value here after a few tests; 
-    if (d > 255) {
+    int d = differenceSquared(textColor, backgroundColor);
+    // semi-arbitrarily chose 65025 (255^2) value here after a few tests; 
+    if (d > 65025) {
         return textColor;
     }
     
-    int distanceFromWhite = simpleDifferenceBetweenColors(textColor, Color::white);
-    int distanceFromBlack = simpleDifferenceBetweenColors(textColor, Color::black);
+    int distanceFromWhite = differenceSquared(textColor, Color::white);
+    int distanceFromBlack = differenceSquared(textColor, Color::black);
 
     if (distanceFromWhite < distanceFromBlack) {
         return textColor.dark();

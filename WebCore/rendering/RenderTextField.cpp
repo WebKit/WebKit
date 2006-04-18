@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderTextField.h"
 
+#include "css_valueimpl.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -66,17 +67,28 @@ void RenderTextField::setStyle(RenderStyle* style)
 RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
 {
     RenderStyle* divStyle = new (renderArena()) RenderStyle();
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    
     divStyle->inheritFrom(startStyle);
     divStyle->setDisplay(BLOCK);
     divStyle->setOverflow(OHIDDEN);
     divStyle->setWhiteSpace(NOWRAP);
 
-    if (node()->hasTagName(inputTag))
-        divStyle->setUserModify(static_cast<HTMLGenericFormElement *>(node())->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+    divStyle->setUserModify(input->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
 
     // We're adding this extra pixel of padding to match WinIE.
     divStyle->setPaddingLeft(Length(1, Fixed));
     divStyle->setPaddingRight(Length(1, Fixed));
+    
+    if (!input->isEnabled()) {
+        Color textColor = startStyle->color();
+        Color disabledTextColor;
+        if (differenceSquared(textColor, Color::white) > differenceSquared(startStyle->backgroundColor(), Color::white))
+            disabledTextColor = textColor.light();
+        else
+            disabledTextColor = textColor.dark();
+        divStyle->setColor(disabledTextColor);
+    }
 
     return divStyle;
 }

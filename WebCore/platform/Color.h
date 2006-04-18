@@ -41,11 +41,14 @@ typedef struct CGColor *CGColorRef;
 namespace WebCore {
 
 class String;
+class Color;
 
 typedef unsigned int RGBA32;                      // RGBA quadruplet
 
 RGBA32 makeRGB(int r, int g, int b);
 RGBA32 makeRGBA(int r, int g, int b, int a);
+
+int differenceSquared(const Color&, const Color&);
 
 class Color {
 public:
@@ -68,14 +71,11 @@ public:
     RGBA32 rgb() const { return color; } // Preserve the alpha.
     void setRgb(int r, int g, int b) { color = makeRGB(r, g, b); valid = true; }
     void setRgb(RGBA32 rgb) { color = rgb; valid = true; }
-    void getRGBA(float&, float&, float&, float&) const;
-    void getRGBA(double&, double&, double&, double&) const;
+    void getRGBA(float& r, float& g, float& b, float& a) const;
+    void getRGBA(double& r, double& g, double& b, double& a) const;
 
-    void hsv(int*, int*, int*) const;
-    void setHsv(int h, int s, int v);
-
-    Color light(int f = 150) const;
-    Color dark(int f = 200) const;
+    Color light() const;
+    Color dark() const;
 
     static const RGBA32 black = 0xFF000000;
     static const RGBA32 white = 0xFFFFFFFF;
