@@ -2,6 +2,23 @@
 
         Reviewed by Darin.
 
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8444
+          Integrate mangleme test script.
+
+        Works in a similar way to run-iexploder-tests.
+
+        * Scripts/run-mangleme-tests: Added.
+        * mangleme: Added.
+        * mangleme/Makefile: Added.
+        * mangleme/README: Added.
+        * mangleme/mangle.cgi.c: Added.
+        * mangleme/remangle.cgi.c: Added.
+        * mangleme/tags.h: Added.
+
+2006-04-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=8443
           An easier way to save iExploder tests.
 
