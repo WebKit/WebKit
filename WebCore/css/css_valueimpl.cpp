@@ -777,6 +777,9 @@ void CSSPrimitiveValue::cleanup()
     case CSS_RECT:
         m_value.rect->deref();
         break;
+    case CSS_PAIR:
+        m_value.pair->deref();
+        break;
 #if __APPLE__
     case CSS_DASHBOARD_REGION:
         if (m_value.region)
