@@ -1709,6 +1709,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSS_PROP_BACKGROUND_REPEAT:
         HANDLE_BACKGROUND_VALUE(backgroundRepeat, BackgroundRepeat, value)
         break;
+    case CSS_PROP__WEBKIT_BACKGROUND_SIZE:
+        HANDLE_BACKGROUND_VALUE(backgroundSize, BackgroundSize, value)
+        break;
     case CSS_PROP_BORDER_COLLAPSE:
         HANDLE_INHERIT_AND_INITIAL(borderCollapse, BorderCollapse)
         if(!primitiveValue) break;
@@ -3951,6 +3954,56 @@ void CSSStyleSelector::mapBackgroundRepeat(BackgroundLayer* layer, CSSValue* val
         default:
             return;
     }
+}
+
+void CSSStyleSelector::mapBackgroundSize(BackgroundLayer* layer, CSSValue* value)
+{
+    LengthSize b = RenderStyle::initialBackgroundSize();
+    
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundSize(b);
+        return;
+    }
+    
+    if (!value->isPrimitiveValue())
+        return;
+        
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    Pair* pair = primitiveValue->getPairValue();
+    if (!pair)
+        return;
+    
+    CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(pair->first());
+    CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(pair->second());
+    
+    if (!first || !second)
+        return;
+        
+    Length firstLength, secondLength;
+    int firstType = first->primitiveType();
+    int secondType = second->primitiveType();
+    
+    if (firstType == CSSPrimitiveValue::CSS_UNKNOWN)
+        firstLength = Length(Auto);
+    else if (firstType > CSSPrimitiveValue::CSS_PERCENTAGE && firstType < CSSPrimitiveValue::CSS_DEG)
+        firstLength = Length(first->computeLengthIntForLength(style), Fixed);
+    else if (firstType == CSSPrimitiveValue::CSS_PERCENTAGE)
+        firstLength = Length((int)first->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+    else
+        return;
+
+    if (secondType == CSSPrimitiveValue::CSS_UNKNOWN)
+        secondLength = Length(Auto);
+    else if (secondType > CSSPrimitiveValue::CSS_PERCENTAGE && secondType < CSSPrimitiveValue::CSS_DEG)
+        secondLength = Length(second->computeLengthIntForLength(style), Fixed);
+    else if (secondType == CSSPrimitiveValue::CSS_PERCENTAGE)
+        secondLength = Length((int)second->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+    else
+        return;
+    
+    b.width = firstLength;
+    b.height = secondLength;
+    layer->setBackgroundSize(b);
 }
 
 void CSSStyleSelector::mapBackgroundXPosition(BackgroundLayer* layer, CSSValue* value)

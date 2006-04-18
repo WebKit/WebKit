@@ -17,6 +17,7 @@ background-position
 background-position-x
 background-position-y
 background-repeat
+-webkit-background-size
 -webkit-binding
 border-collapse
 -webkit-border-image

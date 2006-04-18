@@ -115,7 +115,7 @@ namespace WebCore {
             float sx = 0, float sy = 0, float sw = -1, float sh = -1,
             Image::CompositeOperator = Image::CompositeSourceOver, 
             void* nativeData = 0);
-        void drawTiledImage(Image*, const IntRect& dest, int sx = 0, int sy = 0, void* nativeData = 0);
+        void drawTiledImage(Image*, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize, void* nativeData = 0);
         void drawScaledAndTiledImage(Image*, const IntRect&, int, int, int, int, 
             Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
             void* nativeData = 0);

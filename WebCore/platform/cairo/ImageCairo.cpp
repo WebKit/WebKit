@@ -133,7 +133,7 @@ void Image::drawInRect(const FloatRect& dst, const FloatRect& src,
 
 }
 
-void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, void* ctxt)
+void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, void* ctxt)
 {
     if (!m_source.initialized())
         return;
@@ -142,17 +142,37 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
     if (!image) // If it's too early we won't have an image yet.
         return;
 
-    IntSize selfSize = size();                       
+    IntSize intrinsicImageSize = size();                       
     FloatRect srcRect(srcPoint, selfSize);
+    FloatPoint point = srcPoint;
 
     // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
     float tileWidth = size().width();
     float tileHeight = size().height();
+    
+    // If the scale is not equal to the intrinsic size of the image, set transform matrix
+    // to the appropriate scalar matrix, scale the source point, and set the size of the
+    // scaled tile. 
+    float scaleX = 1.0;
+    float scaleY = 1.0;
+    cairo_matrix_t* mat;
+    cairo_matrix_init_identity(&mat);
+    if (tileSize.width() != intrinsicImageSize.width() || tileSize.height() != intrinsicImageSize.height()) {
+        scaleX = intrinsicImageSize.width() / tileSize.width();
+        scaleY = intrinsicImageSize.height() / tileSize.height();
+        cairo_matrix_init_scale(&mat, scaleX, scaleY);
+        
+        point.setX(point.x() / scaleX);
+        point.setY(point.y() / scaleY);
+        
+        tileWidth = tileSize.width();
+        tileHeight = tileSize.height();
+    }
    
     // We could get interesting source offsets (negative ones or positive ones.  Deal with both
     // out of bounds cases.
-    float dstTileX = dstRect.x() + fmodf(fmodf(-srcPoint.x(), tileWidth) - tileWidth, tileWidth);
-    float dstTileY = dstRect.y() + fmodf(fmodf(-srcPoint.y(), tileHeight) - tileHeight, tileHeight);
+    float dstTileX = dstRect.x() + fmodf(fmodf(-point.x(), tileWidth) - tileWidth, tileWidth);
+    float dstTileY = dstRect.y() + fmodf(fmodf(-point.y(), tileHeight) - tileHeight, tileHeight);
     FloatRect dstTileRect(dstTileX, dstTileY, tileWidth, tileHeight);
     
     float srcX = dstRect.x() - dstTileRect.x();
@@ -161,7 +181,7 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
     // If the single image draw covers the whole area, then just draw once.
     if (dstTileRect.contains(dstRect)) {
         drawInRect(dstRect,
-                   FloatRect(srcX, srcY, dstRect.width(), dstRect.height()),
+                   FloatRect(srcX * scaleX, srcY * scaleY, dstRect.width() * scaleX, dstRect.height() * scaleY),
                    Image::CompositeSourceOver,
                    ctxt);
         return;
@@ -178,6 +198,7 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
 
     cairo_translate(context, dstTileRect.x(), dstTileRect.y());
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
+    cairo_pattern_set_matrix(pattern, &mat);
     cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
 
     // Draw the image.

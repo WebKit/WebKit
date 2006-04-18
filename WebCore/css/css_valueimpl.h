@@ -330,10 +330,13 @@ protected:
 
 // A primitive value representing a pair.  This is useful for properties like border-radius, background-size/position,
 // and border-spacing (all of which are space-separated sets of two values).  At the moment we are only using it for
-// border-radius, but (FIXME) border-spacing and background-position could be converted over to use it
-// (eliminating some extra -webkit- internal properties).
+// border-radius and background-size, but (FIXME) border-spacing and background-position could be converted over to use
+// it (eliminating some extra -webkit- internal properties).
 class Pair : public Shared<Pair> {
 public:
+    Pair() : m_first(0), m_second(0) { }
+    Pair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
+        : m_first(first), m_second(second) { }
     virtual ~Pair();
 
     CSSPrimitiveValue* first() const { return m_first.get(); }

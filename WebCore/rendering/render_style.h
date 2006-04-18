@@ -434,6 +434,11 @@ enum EBackgroundRepeat {
     REPEAT, REPEAT_X, REPEAT_Y, NO_REPEAT
 };
 
+struct LengthSize {
+    Length width;
+    Length height;
+};
+
 struct BackgroundLayer {
 public:
     BackgroundLayer();
@@ -446,6 +451,7 @@ public:
     EBackgroundBox backgroundClip() const { return static_cast<EBackgroundBox>(m_bgClip); }
     EBackgroundBox backgroundOrigin() const { return static_cast<EBackgroundBox>(m_bgOrigin); }
     EBackgroundRepeat backgroundRepeat() const { return static_cast<EBackgroundRepeat>(m_bgRepeat); }
+    LengthSize backgroundSize() const { return m_backgroundSize; }
 
     BackgroundLayer* next() const { return m_next; }
     BackgroundLayer* next() { return m_next; }
@@ -457,6 +463,7 @@ public:
     bool isBackgroundClipSet() const { return m_clipSet; }
     bool isBackgroundOriginSet() const { return m_originSet; }
     bool isBackgroundRepeatSet() const { return m_repeatSet; }
+    bool isBackgroundSizeSet() const { return m_backgroundSizeSet; }
     
     void setBackgroundImage(CachedImage* i) { m_image = i; m_imageSet = true; }
     void setBackgroundXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
@@ -465,6 +472,7 @@ public:
     void setBackgroundClip(EBackgroundBox b) { m_bgClip = b; m_clipSet = true; }
     void setBackgroundOrigin(EBackgroundBox b) { m_bgOrigin = b; m_originSet = true; }
     void setBackgroundRepeat(EBackgroundRepeat r) { m_bgRepeat = r; m_repeatSet = true; }
+    void setBackgroundSize(const LengthSize& b) { m_backgroundSize = b; m_backgroundSizeSet = true; }
     
     void clearBackgroundImage() { m_imageSet = false; }
     void clearBackgroundXPosition() { m_xPosSet = false; }
@@ -473,6 +481,7 @@ public:
     void clearBackgroundClip() { m_clipSet = false; }
     void clearBackgroundOrigin() { m_originSet = false; }
     void clearBackgroundRepeat() { m_repeatSet = false; }
+    void clearBackgroundSize() { m_backgroundSizeSet = false; }
 
     void setNext(BackgroundLayer* n) { if (m_next != n) { delete m_next; m_next = n; } }
 
@@ -510,6 +519,8 @@ public:
     unsigned m_bgOrigin : 2; // EBackgroundBox
     unsigned m_bgRepeat : 2; // EBackgroundRepeat
 
+    LengthSize m_backgroundSize;
+
     bool m_imageSet : 1;
     bool m_attachmentSet : 1;
     bool m_clipSet : 1;
@@ -517,6 +528,7 @@ public:
     bool m_repeatSet : 1;
     bool m_xPosSet : 1;
     bool m_yPosSet : 1;
+    bool m_backgroundSizeSet : 1;
 
     BackgroundLayer* m_next;
 };
@@ -1246,6 +1258,7 @@ public:
     EBackgroundBox backgroundOrigin() const { return static_cast<EBackgroundBox>(background->m_background.m_bgOrigin); }
     Length backgroundXPosition() const { return background->m_background.m_xPosition; }
     Length backgroundYPosition() const { return background->m_background.m_yPosition; }
+    LengthSize backgroundSize() const { return background->m_background.m_backgroundSize; }
     BackgroundLayer* accessBackgroundLayers() { return &(background.access()->m_background); }
     const BackgroundLayer* backgroundLayers() const { return &(background->m_background); }
 
@@ -1586,6 +1599,7 @@ public:
     static EBackgroundBox initialBackgroundClip() { return BGBORDER; }
     static EBackgroundBox initialBackgroundOrigin() { return BGPADDING; }
     static EBackgroundRepeat initialBackgroundRepeat() { return REPEAT; }
+    static LengthSize initialBackgroundSize() { return LengthSize(); }
     static bool initialBorderCollapse() { return false; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
     static BorderImage initialBorderImage() { return BorderImage(); }

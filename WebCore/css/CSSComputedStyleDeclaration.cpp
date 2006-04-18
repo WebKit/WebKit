@@ -38,6 +38,7 @@ namespace WebCore {
 static const int computedProperties[] = {
     CSS_PROP_BACKGROUND_COLOR,
     CSS_PROP_BACKGROUND_IMAGE,
+    CSS_PROP__WEBKIT_BACKGROUND_SIZE,
     CSS_PROP_BACKGROUND_REPEAT,
     CSS_PROP_BACKGROUND_ATTACHMENT,
     CSS_PROP__WEBKIT_BACKGROUND_CLIP,
@@ -303,6 +304,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     return getPropertyCSSValue(propertyID, UpdateLayout);
 }
 
+CSSPrimitiveValue* primitiveValueFromLength(Length length, RenderObject* renderer, RenderStyle* style)
+{
+    String string;
+    if (length.isPercent())
+        string = numberAsString(length.value()) + "%";
+    else if (length.isFixed())
+        string = numberAsString(length.calcMinValue(0));
+    else if (length.isAuto())
+        string += "auto";
+    string += " ";
+    return new CSSPrimitiveValue(string, CSSPrimitiveValue::CSS_STRING);
+}
+
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
 {
     Node* node = m_node.get();
@@ -328,6 +342,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         if (style->backgroundImage())
             return new CSSPrimitiveValue(style->backgroundImage()->url(), CSSPrimitiveValue::CSS_URI);
         return new CSSPrimitiveValue(CSS_VAL_NONE);
+    case CSS_PROP__WEBKIT_BACKGROUND_SIZE: {
+        Length widthLength = style->backgroundSize().width;
+        Length heightLength = style->backgroundSize().height;
+        CSSPrimitiveValue* bgWidth = primitiveValueFromLength(widthLength, renderer, style);
+        CSSPrimitiveValue* bgHeight = primitiveValueFromLength(heightLength, renderer, style);
+        Pair* pair = new Pair(bgWidth, bgHeight);
+        return new CSSPrimitiveValue(pair);
+    }
     case CSS_PROP_BACKGROUND_REPEAT:
         switch (style->backgroundRepeat()) {
             case REPEAT:

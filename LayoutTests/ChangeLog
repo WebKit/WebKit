@@ -1,3 +1,76 @@
+2006-04-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+        Layout tests for http://bugzilla.opendarwin.org/show_bug.cgi?
+        id=8353 CSS3: Implement background-size property
+
+        * fast/css/backgroundSize01-expected.checksum: Added.
+        * fast/css/backgroundSize01-expected.png: Added.
+        * fast/css/backgroundSize01-expected.txt: Added.
+        * fast/css/backgroundSize01.html: Added.
+        * fast/css/backgroundSize02-expected.checksum: Added.
+        * fast/css/backgroundSize02-expected.png: Added.
+        * fast/css/backgroundSize02-expected.txt: Added.
+        * fast/css/backgroundSize02.html: Added.
+        * fast/css/backgroundSize03-expected.checksum: Added.
+        * fast/css/backgroundSize03-expected.png: Added.
+        * fast/css/backgroundSize03-expected.txt: Added.
+        * fast/css/backgroundSize03.html: Added.
+        * fast/css/backgroundSize04-expected.checksum: Added.
+        * fast/css/backgroundSize04-expected.png: Added.
+        * fast/css/backgroundSize04-expected.txt: Added.
+        * fast/css/backgroundSize04.html: Added.
+        * fast/css/backgroundSize05-expected.checksum: Added.
+        * fast/css/backgroundSize05-expected.png: Added.
+        * fast/css/backgroundSize05-expected.txt: Added.
+        * fast/css/backgroundSize05.html: Added.
+        * fast/css/backgroundSize06-expected.checksum: Added.
+        * fast/css/backgroundSize06-expected.png: Added.
+        * fast/css/backgroundSize06-expected.txt: Added.
+        * fast/css/backgroundSize06.html: Added.
+        * fast/css/backgroundSize07-expected.checksum: Added.
+        * fast/css/backgroundSize07-expected.png: Added.
+        * fast/css/backgroundSize07-expected.txt: Added.
+        * fast/css/backgroundSize07.html: Added.
+        * fast/css/backgroundSize08-expected.checksum: Added.
+        * fast/css/backgroundSize08-expected.png: Added.
+        * fast/css/backgroundSize08-expected.txt: Added.
+        * fast/css/backgroundSize08.html: Added.
+        * fast/css/backgroundSize09-expected.checksum: Added.
+        * fast/css/backgroundSize09-expected.png: Added.
+        * fast/css/backgroundSize09-expected.txt: Added.
+        * fast/css/backgroundSize09.html: Added.
+        * fast/css/backgroundSize10-expected.checksum: Added.
+        * fast/css/backgroundSize10-expected.png: Added.
+        * fast/css/backgroundSize10-expected.txt: Added.
+        * fast/css/backgroundSize10.html: Added.
+        * fast/css/backgroundSize11-expected.checksum: Added.
+        * fast/css/backgroundSize11-expected.png: Added.
+        * fast/css/backgroundSize11-expected.txt: Added.
+        * fast/css/backgroundSize11.html: Added.
+        * fast/css/backgroundSize12-expected.checksum: Added.
+        * fast/css/backgroundSize12-expected.png: Added.
+        * fast/css/backgroundSize12-expected.txt: Added.
+        * fast/css/backgroundSize12.html: Added.
+        * fast/css/backgroundSize13-expected.checksum: Added.
+        * fast/css/backgroundSize13-expected.png: Added.
+        * fast/css/backgroundSize13-expected.txt: Added.
+        * fast/css/backgroundSize13.html: Added.
+        * fast/css/backgroundSize14-expected.checksum: Added.
+        * fast/css/backgroundSize14-expected.png: Added.
+        * fast/css/backgroundSize14-expected.txt: Added.
+        * fast/css/backgroundSize14.html: Added.
+        * fast/css/backgroundSize15-expected.checksum: Added.
+        * fast/css/backgroundSize15-expected.png: Added.
+        * fast/css/backgroundSize15-expected.txt: Added.
+        * fast/css/backgroundSize15.html: Added.
+        * fast/css/backgroundSize16-expected.checksum: Added.
+        * fast/css/backgroundSize16-expected.png: Added.
+        * fast/css/backgroundSize16-expected.txt: Added.
+        * fast/css/backgroundSize16.html: Added.
+        * fast/css/resources/bikes.bmp: Added.
+
 2006-04-18  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

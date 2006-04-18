@@ -657,6 +657,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSS_PROP_BACKGROUND_POSITION:
     case CSS_PROP_BACKGROUND_POSITION_X:
     case CSS_PROP_BACKGROUND_POSITION_Y:
+    case CSS_PROP__WEBKIT_BACKGROUND_SIZE:
     case CSS_PROP_BACKGROUND_REPEAT: {
         CSSValue *val1 = 0, *val2 = 0;
         int propId1, propId2;
@@ -931,9 +932,7 @@ bool CSSParser::parseValue(int propId, bool important)
             parsedValue2 = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
         }
         
-        Pair* pair = new Pair;
-        pair->setFirst(parsedValue1);
-        pair->setSecond(parsedValue2);
+        Pair* pair = new Pair(parsedValue1, parsedValue2);
         CSSPrimitiveValue* val = new CSSPrimitiveValue(pair);
         addProperty(propId, val, important);
         return true;
@@ -1105,7 +1104,7 @@ bool CSSParser::parseValue(int propId, bool important)
 
         /* shorthand properties */
     case CSS_PROP_BACKGROUND:
-        // ['background-color' || 'background-image' ||'background-repeat' ||
+        // ['background-color' || 'background-image' || 'background-size' || 'background-repeat' ||
         // 'background-attachment' || 'background-position'] | inherit
         return parseBackgroundShorthand(important);
     case CSS_PROP_BORDER:
@@ -1249,10 +1248,11 @@ bool CSSParser::parseBackgroundShorthand(bool important)
 {
     // Position must come before color in this array because a plain old "0" is a legal color
     // in quirks mode but it's usually the X coordinate of a position.
-    const int numProperties = 7;
-    const int properties[numProperties] = { CSS_PROP_BACKGROUND_IMAGE, CSS_PROP_BACKGROUND_REPEAT,
+    // FIXME: Add CSS_PROP__KHTML_BACKGROUND_SIZE to the shorthand.
+    const int properties[] = { CSS_PROP_BACKGROUND_IMAGE, CSS_PROP_BACKGROUND_REPEAT, 
         CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION, CSS_PROP__WEBKIT_BACKGROUND_CLIP,
         CSS_PROP__WEBKIT_BACKGROUND_ORIGIN, CSS_PROP_BACKGROUND_COLOR };
+    const int numProperties = sizeof(properties) / sizeof(properties[0]);
     
     ShorthandScope scope(this, CSS_PROP_BACKGROUND);
 
@@ -1584,6 +1584,36 @@ void CSSParser::parseBackgroundPosition(CSSValue*& value1, CSSValue*& value2)
     }
 }
 
+CSSValue* CSSParser::parseBackgroundSize()
+{
+    Value* value = valueList->current();
+    CSSPrimitiveValue* parsedValue1;
+    
+    if (value->id == CSS_VAL_AUTO)
+        parsedValue1 = new CSSPrimitiveValue(0, CSSPrimitiveValue::CSS_UNKNOWN);
+    else {
+        if (!validUnit(value, FLength|FPercent, strict))
+            return 0;
+        parsedValue1 = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
+    }
+    
+    CSSPrimitiveValue* parsedValue2 = parsedValue1;
+    if ((value = valueList->next())) {
+        if (value->id == CSS_VAL_AUTO)
+            parsedValue2 = new CSSPrimitiveValue(0, CSSPrimitiveValue::CSS_UNKNOWN);
+        else {
+            if (!validUnit(value, FLength|FPercent, strict)) {
+                delete parsedValue1;
+                return 0;
+            }
+            parsedValue2 = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
+        }
+    }
+    
+    Pair* pair = new Pair(parsedValue1, parsedValue2);
+    return new CSSPrimitiveValue(pair);
+}
+
 bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2, 
                                         CSSValue*& retValue1, CSSValue*& retValue2)
 {
@@ -1656,6 +1686,11 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
                         currValue = new CSSPrimitiveValue(val->id);
                         valueList->next();
                     }
+                    break;
+                case CSS_PROP__WEBKIT_BACKGROUND_SIZE:
+                    currValue = parseBackgroundSize();
+                    if (currValue)
+                        valueList->next();
                     break;
             }
             

@@ -103,9 +103,11 @@ BackgroundLayer::BackgroundLayer()
  m_bgClip(RenderStyle::initialBackgroundClip()),
  m_bgOrigin(RenderStyle::initialBackgroundOrigin()),
  m_bgRepeat(RenderStyle::initialBackgroundRepeat()),
+ m_backgroundSize(RenderStyle::initialBackgroundSize()),
  m_next(0)
 {
-    m_imageSet = m_attachmentSet = m_clipSet = m_originSet = m_repeatSet = m_xPosSet = m_yPosSet = false;     
+    m_imageSet = m_attachmentSet = m_clipSet = m_originSet = 
+            m_repeatSet = m_xPosSet = m_yPosSet = m_backgroundSizeSet = false;     
 }
 
 BackgroundLayer::BackgroundLayer(const BackgroundLayer& o)
@@ -118,6 +120,7 @@ BackgroundLayer::BackgroundLayer(const BackgroundLayer& o)
     m_bgClip = o.m_bgClip;
     m_bgOrigin = o.m_bgOrigin;
     m_bgRepeat = o.m_bgRepeat;
+    m_backgroundSize = o.m_backgroundSize;
     m_imageSet = o.m_imageSet;
     m_attachmentSet = o.m_attachmentSet;
     m_clipSet = o.m_clipSet;
@@ -125,6 +128,7 @@ BackgroundLayer::BackgroundLayer(const BackgroundLayer& o)
     m_repeatSet = o.m_repeatSet;
     m_xPosSet = o.m_xPosSet;
     m_yPosSet = o.m_yPosSet;
+    m_backgroundSizeSet = o.m_backgroundSizeSet;
 }
 
 BackgroundLayer::~BackgroundLayer()
@@ -145,6 +149,7 @@ BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o) {
     m_bgClip = o.m_bgClip;
     m_bgOrigin = o.m_bgOrigin;
     m_bgRepeat = o.m_bgRepeat;
+    m_backgroundSize = o.m_backgroundSize;
     
     m_imageSet = o.m_imageSet;
     m_attachmentSet = o.m_attachmentSet;
@@ -153,15 +158,17 @@ BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o) {
     m_repeatSet = o.m_repeatSet;
     m_xPosSet = o.m_xPosSet;
     m_yPosSet = o.m_yPosSet;
+    m_backgroundSizeSet = o.m_backgroundSizeSet;
     
     return *this;
 }
 
 bool BackgroundLayer::operator==(const BackgroundLayer& o) const {
     return m_image == o.m_image && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
-           m_bgAttachment == o.m_bgAttachment && m_bgClip == o.m_bgClip && m_bgOrigin == o.m_bgOrigin && m_bgRepeat == o.m_bgRepeat && 
-           m_imageSet == o.m_imageSet && m_attachmentSet == o.m_attachmentSet && m_repeatSet == o.m_repeatSet &&
-           m_xPosSet == o.m_xPosSet && m_yPosSet == o.m_yPosSet &&
+           m_bgAttachment == o.m_bgAttachment && m_bgClip == o.m_bgClip && m_bgOrigin == o.m_bgOrigin && m_bgRepeat == o.m_bgRepeat &&
+           m_backgroundSize.width == o.m_backgroundSize.width && m_backgroundSize.height == o.m_backgroundSize.height && 
+           m_imageSet == o.m_imageSet && m_attachmentSet == o.m_attachmentSet && m_repeatSet == o.m_repeatSet && 
+           m_xPosSet == o.m_xPosSet && m_yPosSet == o.m_yPosSet && m_backgroundSizeSet == o.m_backgroundSizeSet && 
            ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
 
@@ -244,6 +251,17 @@ void BackgroundLayer::fillUnsetProperties()
                 pattern = this;
         }
     }
+    
+    for (curr = this; curr && curr->isBackgroundSizeSet(); curr = curr->next());
+    if (curr && curr != this) {
+        // We need to fill in the remaining values with the pattern specified.
+        for (BackgroundLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_backgroundSize = pattern->m_backgroundSize;
+            pattern = pattern->next();
+            if (pattern == curr || !pattern)
+                pattern = this;
+        }
+    }
 }
 
 void BackgroundLayer::cullEmptyLayers()
@@ -254,7 +272,8 @@ void BackgroundLayer::cullEmptyLayers()
         if (next && !next->isBackgroundImageSet() &&
             !next->isBackgroundXPositionSet() && !next->isBackgroundYPositionSet() &&
             !next->isBackgroundAttachmentSet() && !next->isBackgroundClipSet() &&
-            !next->isBackgroundOriginSet() && !next->isBackgroundRepeatSet()) {
+            !next->isBackgroundOriginSet() && !next->isBackgroundRepeatSet() &&
+            !next->isBackgroundSizeSet()) {
             delete next;
             p->m_next = 0;
             break;

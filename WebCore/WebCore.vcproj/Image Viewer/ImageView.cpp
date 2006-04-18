@@ -109,7 +109,7 @@ void ImageView::OnDraw(CDC* pDC)
     FloatRect dstRect(FloatPoint(left, top), FloatSize(width, height));
     FloatRect imageRect(srcPoint, image->size());
     if (tile)
-        gc.drawTiledImage(image, IntRect(left, top, width, height), srcPoint.x(), srcPoint.y());
+        gc.drawTiledImage(image, IntRect(left, top, width, height), IntPoint(srcPoint.x(), srcPoint.y()), image->size());
     else {
         gc.drawImage(image, dstRect,
             imageRect.x(), imageRect.y(), imageRect.width(), imageRect.height(), Image::CompositeSourceOver);

@@ -292,7 +292,7 @@ static void drawPattern(void* info, CGContextRef context)
 
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
-void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, void* ctxt)
+void Image::tileInRect(const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& tileSize, void* ctxt)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
@@ -301,32 +301,52 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
     CGContextRef context = graphicsContext(ctxt);
 
     if (m_currentFrame == 0 && m_isSolidColor)
-        return fillSolidColorInRect(m_solidColor, dstRect, Image::CompositeSourceOver, context);
+        return fillSolidColorInRect(m_solidColor, destRect, Image::CompositeSourceOver, context);
 
-    CGSize tileSize = size();
-    CGRect rect = dstRect;
-    CGPoint point = srcPoint;
+    CGPoint scaledPoint = srcPoint;
+    CGRect destination = destRect;
+    CGSize intrinsicTileSize = size();
+    CGSize scaledTileSize = intrinsicTileSize;
+
+    // If tileSize is not equal to the intrinsic size of the image, set patternTransform
+    // to the appropriate scalar matrix, scale the source point, and set the size of the
+    // scaled tile. 
+    float scaleX = 1.0;
+    float scaleY = 1.0;
+    CGAffineTransform patternTransform = CGAffineTransformIdentity;
+    if (tileSize.width() != intrinsicTileSize.width || tileSize.height() != intrinsicTileSize.height) {
+        scaleX = tileSize.width() / intrinsicTileSize.width;
+        scaleY = tileSize.height() / intrinsicTileSize.height;
+        patternTransform = CGAffineTransformMakeScale(scaleX, scaleY);
+        
+        scaledPoint = CGPointApplyAffineTransform(scaledPoint, patternTransform);
+        scaledTileSize = tileSize;
+    }
 
     // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
     NSRect oneTileRect;
-    oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, tileSize.width) - tileSize.width, tileSize.width);
-    oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, tileSize.height) - tileSize.height, tileSize.height);
-    oneTileRect.size.height = tileSize.height;
-    oneTileRect.size.width = tileSize.width;
+    oneTileRect.origin.x = destination.origin.x + fmodf(fmodf(-scaledPoint.x, scaledTileSize.width) - 
+                            scaledTileSize.width, scaledTileSize.width);
+    oneTileRect.origin.y = destination.origin.y + fmodf(fmodf(-scaledPoint.y, scaledTileSize.height) - 
+                            scaledTileSize.height, scaledTileSize.height);
+    oneTileRect.size.width = scaledTileSize.width;
+    oneTileRect.size.height = scaledTileSize.height;
 
     // If the single image draw covers the whole area, then just draw once.
-    if (NSContainsRect(oneTileRect, NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height))) {
+    if (NSContainsRect(oneTileRect, NSMakeRect(destination.origin.x, destination.origin.y, 
+                                        destination.size.width, destination.size.height))) {
         CGRect fromRect;
-        fromRect.origin.x = rect.origin.x - oneTileRect.origin.x;
-        fromRect.origin.y = rect.origin.y - oneTileRect.origin.y;
-        fromRect.size = rect.size;
+        fromRect.origin.x = (destination.origin.x - oneTileRect.origin.x) / scaleX;
+        fromRect.origin.y = (destination.origin.y - oneTileRect.origin.y) / scaleY;
+        fromRect.size.width = oneTileRect.size.width / scaleX;
+        fromRect.size.height = oneTileRect.size.height / scaleY;
 
-        drawInRect(dstRect, FloatRect(fromRect), Image::CompositeSourceOver, context);
+        drawInRect(destRect, FloatRect(fromRect), Image::CompositeSourceOver, context);
         return;
     }
 
-    CGPatternRef pattern = CGPatternCreate(this, CGRectMake(0, 0, tileSize.width, tileSize.height),
-                                           CGAffineTransformIdentity, tileSize.width, tileSize.height, 
+    CGPatternRef pattern = CGPatternCreate(this, CGRectMake(0, 0, intrinsicTileSize.width, intrinsicTileSize.height),
+                                           patternTransform, intrinsicTileSize.width, intrinsicTileSize.height, 
                                            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
     
     if (pattern) {
@@ -344,7 +364,7 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
 
         setCompositingOperation(context, Image::CompositeSourceOver);
 
-        CGContextFillRect(context, rect);
+        CGContextFillRect(context, destination);
 
         CGContextRestoreGState(context);
 

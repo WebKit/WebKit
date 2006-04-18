@@ -387,12 +387,12 @@ void GraphicsContext::drawImage(Image* image, const FloatRect& dest,
     image->drawInRect(FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, const IntRect& rect, int sx, int sy, void* context)
+void GraphicsContext::drawTiledImage(Image* image, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize, void* context)
 {
     if (paintingDisabled())
         return;
     
-    image->tileInRect(rect, FloatPoint(sx, sy), context);
+    image->tileInRect(destRect, srcPoint, tileSize, context);
 }
 
 void GraphicsContext::drawScaledAndTiledImage(Image* image, const IntRect& dest, int sx, int sy, int sw, int sh, 
