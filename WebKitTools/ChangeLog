@@ -39,8 +39,8 @@
          run-iexploder-tests nnnnn       Open test #nnnnn.
 
         Command line options:
-         -guard-malloc (-g)              Use Guard Malloc.
-         -port=nnnn                      Run Apache on port nnnn (default is 8000).
+         --guard-malloc (-g)              Use Guard Malloc.
+         --port=nnnn                      Run Apache on port nnnn (default is 8000).
 
         To save a crashing test, you can use curl while the crash reporter dialog is on the screen
         (thus, Apache is still running), e.g.:
