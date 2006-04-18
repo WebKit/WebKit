@@ -1,3 +1,15 @@
+2006-04-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8437
+          iExploder(#293): Crash in StringImpl::hash()
+
+        * manual-tests/applet-param-no-name.html: Added.
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::createWidgetIfNecessary): Skip param elements with
+        empty name.
+
 2006-04-18  Darin Adler  <darin@apple.com>
 
         - try to fix the Windows build

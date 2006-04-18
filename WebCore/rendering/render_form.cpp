@@ -667,17 +667,15 @@ void RenderSelect::updateFromElement()
             }
             else if (listItems[listIndex]->hasTagName(optionTag)) {
                 HTMLOptionElement *optionElement = static_cast<HTMLOptionElement*>(listItems[listIndex]);
-                DeprecatedString itemText;
-                if (optionElement->hasAttribute(labelAttr))
+                DeprecatedString itemText = optionElement->text().deprecatedString();
+                if (itemText.isEmpty())
                     itemText = optionElement->getAttribute(labelAttr).deprecatedString();
-                else
-                    itemText = optionElement->text().deprecatedString();
                 
                 itemText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
                 // In WinIE, leading and trailing whitespace is ignored in options. We match this behavior.
                 itemText = itemText.stripWhiteSpace();
-                // We want to collapse our whitespace too.  This will match other browsers.
+                // We want to collapse our whitespace too. This will match other browsers.
                 itemText = itemText.simplifyWhiteSpace();
                 
                 if (listItems[listIndex]->parentNode()->hasTagName(optgroupTag))

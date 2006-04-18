@@ -76,7 +76,8 @@ void RenderApplet::createWidgetIfNecessary()
     for (Node* child = node()->firstChild(); child; child = child->nextSibling())
         if (child->hasTagName(paramTag)) {
             HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
-            m_args.set(p->name(), p->value());
+            if (!p->name().isEmpty())
+                m_args.set(p->name(), p->value());
         }
     setWidget(new JavaAppletWidget(IntSize(width, height), node()->document()->frame(), m_args));
 }
