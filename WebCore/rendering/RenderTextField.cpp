@@ -72,7 +72,7 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->inheritFrom(startStyle);
     divStyle->setDisplay(BLOCK);
     divStyle->setOverflow(OHIDDEN);
-    divStyle->setWhiteSpace(NOWRAP);
+    divStyle->setWhiteSpace(PRE);
 
     divStyle->setUserModify(input->readOnly() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
 

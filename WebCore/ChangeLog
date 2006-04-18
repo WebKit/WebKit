@@ -1,3 +1,15 @@
+2006-04-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8407
+        REGRESSION (NativeTextField): Leading and trailing spaces trimmed from text field value attribute
+
+        Test: fast/forms/input-spaces.html
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::createDivStyle): 
+        Use white-space:pre for the inner div to avoid collapsing spaces in the text field.
+
 2006-04-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
