@@ -1,3 +1,15 @@
+2006-04-17  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Geoff.
+        
+        - fix one more part of http://bugzilla.opendarwin.org/show_bug.cgi?id=4508
+          Layout tests access an external server
+          (patch in http://bugzilla.opendarwin.org/show_bug.cgi?id=8142)
+
+        * fast/block/float/014.html: Use local image
+        * fast/block/float/resources: Added.
+        * fast/block/float/resources/training_thumb.jpg: Added.
+
 2006-04-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
