@@ -1,0 +1,14 @@
+<p>The last paragraph of the incoming fragment should be in the same paragraph as 'three'.</p> 
+<div id="test" contenteditable="true">one three</div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "word");
+s.modify("move", "forward", "character");
+
+document.execCommand("InsertHTML", false , "<br class='Apple-interchange-newline'><div>two</div>");
+
+</script>

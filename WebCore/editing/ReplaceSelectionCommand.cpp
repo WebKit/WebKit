@@ -488,7 +488,6 @@ void ReplaceSelectionCommand::doApply()
     bool startAtStartOfBlock = isStartOfBlock(visibleStart);
     bool startAtEndOfBlock = isEndOfBlock(visibleStart);
     Node *startBlock = selection.start().node()->enclosingBlockFlowElement();
-    Node *endBlock = selection.end().node()->enclosingBlockFlowElement();
 
     // decide whether to later merge content into the startBlock
     bool mergeStart = false;
@@ -523,11 +522,8 @@ void ReplaceSelectionCommand::doApply()
         }
     }
     
-    // decide whether to later append nodes to the end
-    Node *beyondEndNode = 0;
-    if (!isEndOfParagraph(visibleEnd) && !fragment.hasInterchangeNewlineAtEnd() &&
-       (startBlock != endBlock || fragment.hasMoreThanOneBlock()))
-        beyondEndNode = selection.end().downstream().node();
+    // Whether the last paragraph of the incoming fragment should be merged with content from visibleEnd to endOfParagraph(visibleEnd).
+    bool mergeEnd = !isEndOfParagraph(visibleEnd) && !fragment.hasInterchangeNewlineAtEnd();
 
     Position startPos = selection.start();
     
@@ -791,11 +787,15 @@ void ReplaceSelectionCommand::doApply()
             }
         }
         
-        if (beyondEndNode) {
-            VisiblePosition startOfParagraphToMove(Position(beyondEndNode, 0));
-            VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove);
-            VisiblePosition destination(Position(m_lastNodeInserted->parentNode(), m_lastNodeInserted->nodeIndex() + 1));
-            moveParagraph(startOfParagraphToMove, endOfParagraphToMove, destination);
+        if (mergeEnd) {
+            // FIXME: This move should happen in the opposite direction, because we'd rather preserve the styles on the block containing the 
+            // paragraph that was already in the document than preserve block styles from the incoming fragment. 
+            VisiblePosition afterInsertedContent(Position(m_lastNodeInserted->parentNode(), m_lastNodeInserted->nodeIndex() + 1));
+            if (isEndOfParagraph(afterInsertedContent)) {
+                VisiblePosition startOfParagraphToMove = afterInsertedContent.next();
+                VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove);
+                moveParagraph(startOfParagraphToMove, endOfParagraphToMove, afterInsertedContent);
+            }
         }
     }
     

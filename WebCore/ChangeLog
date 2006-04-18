@@ -1,3 +1,19 @@
+2006-04-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraph): The placeholder that's inserted 
+        to keep content from collapsing due to pruning was inserted at the position after 
+        the moved paragraph.  That's only appropriate when moving the paragraph backward 
+        into the previous paragraph.
+        
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): The last paragraph of the incoming
+        fragment should be merged with the paragraph after the end of the selection being pasted
+        into even if the incoming fragment has only one block.   This fixes a bug and gets
+        rid of a use of the info gathered during the test insertion.
+
 2006-04-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

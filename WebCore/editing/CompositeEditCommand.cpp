@@ -673,6 +673,8 @@ void CompositeEditCommand::moveParagraph(const VisiblePosition& startOfParagraph
     ASSERT(isStartOfParagraph(startOfParagraphToMove));
     ASSERT(isEndOfParagraph(endOfParagraphToMove));
     
+    VisiblePosition beforeParagraph = startOfParagraphToMove.previous();
+    
     Position start = startOfParagraphToMove.deepEquivalent().upstream();
     // We upstream() the end so that we don't include collapsed whitespace in the move.
     // If we must later add a br after the moved paragraph, doing so would cause the moved unrendered space to become rendered.
@@ -703,8 +705,8 @@ void CompositeEditCommand::moveParagraph(const VisiblePosition& startOfParagraph
     // baz
     // Imagine moving 'bar' to ^.  'bar' will be deleted and its div pruned.  That would
     // cause 'baz' to collapse onto the line with 'foobar' unless we insert a br.
-    if (!isEndOfParagraph(destination))
-        insertNodeAt(createBreakElement(document()).get(), destination.deepEquivalent().node(), destination.deepEquivalent().offset());
+    if (beforeParagraph.isNotNull() && !isEndOfParagraph(beforeParagraph))
+        insertNodeAt(createBreakElement(document()).get(), beforeParagraph.deepEquivalent().node(), beforeParagraph.deepEquivalent().offset());
     
     setEndingSelection(destination);
     EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), false));
