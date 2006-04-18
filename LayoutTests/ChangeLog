@@ -2,9 +2,8 @@
 
         Reviewed by Geoff.
         
-        - fix one more part of http://bugzilla.opendarwin.org/show_bug.cgi?id=4508
-          Layout tests access an external server
-          (patch in http://bugzilla.opendarwin.org/show_bug.cgi?id=8142)
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8142
+          fast/block/float/014.html test should not require live internet connection
 
         * fast/block/float/014.html: Use local image
         * fast/block/float/resources: Added.
