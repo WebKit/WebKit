@@ -1,3 +1,17 @@
+2006-04-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8467 Block 
+        with percentage background-size doesn't repaint properly when it 
+        grows
+
+        * manual-tests/backgroundSizeRepaint.html: Added.
+        * manual-tests/resources/apple.jpg: Added.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder): We must 
+        return true if we have a percentage background-size.
+
 2006-04-19  David Hyatt  <hyatt@apple.com>
 
         Fix for a regression in the new text fields.  Don't allow the repaint
