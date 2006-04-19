@@ -202,11 +202,11 @@ bool RenderTheme::isPressed(const RenderObject* o) const
     return o->element()->active();
 }
 
-bool RenderTheme::isReadOnly(const RenderObject* o) const
+bool RenderTheme::isReadOnlyControl(const RenderObject* o) const
 {
     if (!o->element())
         return false;
-    return o->element()->isReadOnly();
+    return o->element()->isReadOnlyControl();
 }
 
 bool RenderTheme::isHovered(const RenderObject* o) const

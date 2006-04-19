@@ -73,7 +73,7 @@ public:
     virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const { return false; }
 
-    bool readOnly() const { return m_readOnly; }
+    virtual bool isReadOnlyControl() const { return m_readOnly; }
     void setReadOnly(bool _readOnly);
 
     virtual void recalcStyle( StyleChange );

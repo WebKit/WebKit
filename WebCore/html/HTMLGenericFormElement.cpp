@@ -70,7 +70,11 @@ void HTMLGenericFormElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == readonlyAttr) {
         bool oldReadOnly = m_readOnly;
         m_readOnly = !attr->isNull();
-        if (oldReadOnly != m_readOnly) setChanged();
+        if (oldReadOnly != m_readOnly) {
+            setChanged();
+            if (renderer() && renderer()->style()->hasAppearance())
+                theme()->stateChanged(renderer(), ReadOnlyState);
+        }
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

@@ -50,7 +50,6 @@ RenderThemeMac::RenderThemeMac()
     : checkbox(nil)
     , radio(nil)
     , button(nil)
-    , textField(nil)
 {
 }
 
@@ -94,10 +93,6 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
                 r = inflateRect(r, buttonSizes()[[button controlSize]], buttonMargins());
             break;
         }
-        case TextFieldAppearance:
-            // Since we query the prototype cell, we need to update its state to match.
-            setTextFieldCellState(o, r);
-            break;
         default:
             break;
     }
@@ -526,21 +521,10 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
 
 bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    // Initialize text field and update state.
-    setTextFieldCellState(o, r);
-    
-    [[WebCoreGraphicsBridge sharedBridge] drawBezeledTextFieldCell:NSRect(r) enabled:[textField isEnabled]];
-
-    [textField setControlView: nil];
+    bool enabled = isEnabled(o) && !isReadOnlyControl(o);
+    [[WebCoreGraphicsBridge sharedBridge] drawBezeledTextFieldCell:NSRect(r) enabled:enabled];
     
     return false;
-}
-
-void RenderThemeMac::setTextFieldCellState(const RenderObject* o, const IntRect& r)
-{
-    if (!textField)
-        textField = KWQRetainNSRelease([[NSTextFieldCell alloc] initTextCell:@""]);
-    updateEnabledState(textField, o);
 }
 
 void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const

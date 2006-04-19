@@ -60,7 +60,7 @@ public:
     virtual unsigned length() const = 0;
 
     // Other methods (not part of DOM)
-    virtual bool isReadOnly() { return false; }
+    virtual bool isReadOnlyNode() { return false; }
 };
 
 } //namespace

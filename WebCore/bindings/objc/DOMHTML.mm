@@ -1337,7 +1337,7 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)readOnly
 {
-    return [self _inputElement]->readOnly();
+    return [self _inputElement]->isReadOnlyControl();
 }
 
 - (void)setReadOnly:(BOOL)readOnly

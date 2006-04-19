@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class Element;
-enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState };
+enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState, ReadOnlyState };
 
 class RenderTheme {
 public:
@@ -96,7 +96,7 @@ protected:
     bool isFocused(const RenderObject* o) const;
     bool isPressed(const RenderObject* o) const;
     bool isHovered(const RenderObject* o) const;
-    bool isReadOnly(const RenderObject* o) const;
+    bool isReadOnlyControl(const RenderObject* o) const;
 
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;

@@ -60,7 +60,7 @@ Text *Text::splitText(unsigned offset, ExceptionCode& ec)
     }
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return 0;
     }

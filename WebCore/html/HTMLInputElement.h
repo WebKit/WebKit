@@ -71,7 +71,6 @@ public:
 
     virtual bool isChecked() const { return checked(); }
     virtual bool isIndeterminate() const { return indeterminate(); }
-    virtual bool isReadOnly() const { return readOnly(); }
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }

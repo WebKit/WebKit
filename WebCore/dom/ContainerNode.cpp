@@ -347,7 +347,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     ec = 0;
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return false;
     }

@@ -1202,7 +1202,7 @@ void Range::checkDeleteExtract(ExceptionCode& ec)
 {
     Node *pastEnd = pastEndNode();
     for (Node *n = startNode(); n != pastEnd; n = n->traverseNextNode()) {
-        if (n->isReadOnly()) {
+        if (n->isReadOnlyNode()) {
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return;
         }
@@ -1222,11 +1222,11 @@ bool Range::containedByReadOnly() const
 {
     Node *n;
     for (n = m_startContainer.get(); n; n = n->parentNode()) {
-        if (n->isReadOnly())
+        if (n->isReadOnlyNode())
             return true;
     }
     for (n = m_endContainer.get(); n; n = n->parentNode()) {
-        if (n->isReadOnly())
+        if (n->isReadOnlyNode())
             return true;
     }
     return false;

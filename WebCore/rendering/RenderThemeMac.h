@@ -96,13 +96,10 @@ private:
     const int* buttonMargins() const;
     void setButtonCellState(const RenderObject* o, const IntRect& r);
 
-    void setTextFieldCellState(const RenderObject* o, const IntRect& r);
-
 private:
     NSButtonCell* checkbox;
     NSButtonCell* radio;
     NSButtonCell* button;
-    NSTextFieldCell* textField;
 };
 
 }

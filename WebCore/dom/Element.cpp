@@ -316,7 +316,7 @@ void Element::setAttribute(const QualifiedName& name, StringImpl* value, Excepti
     Attribute* old = attributes(false)->getAttributeItem(name);
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
-    if (namedAttrMap->isReadOnly()) {
+    if (namedAttrMap->isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }

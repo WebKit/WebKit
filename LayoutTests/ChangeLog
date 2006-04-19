@@ -1,3 +1,14 @@
+2006-04-19  Adele Peterson  <adele@apple.com>
+
+        Tests for change to make readonly text fields have dimmed borders.
+
+        * fast/forms/input-appearance-readonly-expected.checksum:
+        * fast/forms/input-appearance-readonly-expected.png:
+        * fast/forms/input-readonly-dimmed-expected.checksum: Added.
+        * fast/forms/input-readonly-dimmed-expected.png: Added.
+        * fast/forms/input-readonly-dimmed-expected.txt: Added.
+        * fast/forms/input-readonly-dimmed.html: Added.
+
 2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Eric, landed by ap.

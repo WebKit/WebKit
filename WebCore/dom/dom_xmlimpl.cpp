@@ -233,7 +233,7 @@ ProcessingInstruction::~ProcessingInstruction()
 void ProcessingInstruction::setData(const String& data, ExceptionCode& ec)
 {
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }

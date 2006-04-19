@@ -93,7 +93,7 @@ PassRefPtr<Node> NamedAttrMap::setNamedItem(Node* arg, ExceptionCode& ec)
     }
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this map is readonly.
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return 0;
     }
@@ -144,7 +144,7 @@ PassRefPtr<Node> NamedAttrMap::removeNamedItem(const QualifiedName& name, Except
 {
     // ### should this really be raised when the attribute to remove isn't there at all?
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return 0;
     }

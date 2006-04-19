@@ -160,7 +160,7 @@ String Node::nodeValue() const
 void Node::setNodeValue( const String &/*_nodeValue*/, ExceptionCode& ec)
 {
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -513,7 +513,7 @@ void Node::checkSetPrefix(const AtomicString &_prefix, ExceptionCode& ec)
     // FIXME: Implement support for INVALID_CHARACTER_ERR: Raised if the specified prefix contains an illegal character.
     
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -547,7 +547,7 @@ void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
     }
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -742,7 +742,7 @@ void Node::childrenChanged()
 {
 }
 
-bool Node::isReadOnly()
+bool Node::isReadOnlyNode()
 {
     // Entity & Entity Reference nodes and their descendants are read-only
     Node *n = this;

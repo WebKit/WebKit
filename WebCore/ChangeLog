@@ -1,3 +1,60 @@
+ 2006-04-19  Adele Peterson  <adele@apple.com>
+ 
+         Reviewed by Beth.
+ 
+         Fix to make readonly text fields have dimmed borders to match AppKit behavior.
+ 
+         Test: fast/forms/input-readonly-dimmed.html
+ 
+         * dom/Node.h: (WebCore::Node::isReadOnlyControl): Changed from const version of isReadOnly.
+         * dom/Node.cpp:
+         (WebCore::Node::isReadOnlyNode): Changed from isReadOnly.
+         (WebCore::Node::setNodeValue): Uses isReadOnlyNode instead of isReadOnly.
+         (WebCore::Node::checkSetPrefix): ditto.
+         (WebCore::Node::checkAddChild): ditto.
+         * dom/Attr.cpp: (WebCore::Attr::setValue): ditto.
+         * dom/CharacterData.cpp:
+         (WebCore::CharacterData::setData): ditto.
+         (WebCore::CharacterData::appendData): ditto.
+         (WebCore::CharacterData::checkCharDataOperation): ditto.
+         * dom/ContainerNode.cpp: (WebCore::ContainerNode::removeChild): ditto.
+         * dom/Element.cpp: (WebCore::Element::setAttribute): ditto.
+         * dom/NamedAttrMap.cpp:
+         (WebCore::NamedAttrMap::setNamedItem): ditto.
+         (WebCore::NamedAttrMap::removeNamedItem): ditto.
+         * dom/NamedAttrMap.h: (WebCore::NamedAttrMap::isReadOnlyNode): ditto.
+         * dom/NamedNodeMap.h: (WebCore::NamedNodeMap::isReadOnlyNode): ditto.
+         * dom/Range.cpp:
+         (WebCore::Range::checkDeleteExtract): ditto.
+         (WebCore::Range::containedByReadOnly): ditto.
+         * dom/Text.cpp: (WebCore::Text::splitText): ditto.
+         * dom/dom_xmlimpl.cpp: (WebCore::ProcessingInstruction::setData): ditto.
+ 
+         * bindings/js/kjs_html.cpp:
+         (KJS::JSHTMLElement::inputGetter): Uses isReadOnlyControl instead of isReadOnly.
+         (KJS::JSHTMLElement::textAreaGetter): ditto.
+         * bindings/objc/DOMHTML.mm: (-[DOMHTMLInputElement readOnly]): ditto.
+         * rendering/render_form.cpp:
+         (WebCore::RenderLineEdit::updateFromElement): ditto.
+         (WebCore::RenderTextArea::updateFromElement): ditto.
+         * rendering/RenderTextField.cpp:
+         (WebCore::RenderTextField::createDivStyle): ditto.
+         (WebCore::RenderTextField::updateFromElement): ditto.
+ 
+         * html/HTMLGenericFormElement.cpp: (WebCore::HTMLGenericFormElement::parseMappedAttribute): 
+           When readonly attribute changes, update the theme so the control will repaint.
+         * html/HTMLGenericFormElement.h: (WebCore::HTMLGenericFormElement::isReadOnlyControl): Renamed from readOnly.
+         * html/HTMLInputElement.h: Removed isReadOnly, since isReadOnlyControl now exists on HTMLGenericFormElement.
+         * rendering/RenderTheme.cpp: (WebCore::RenderTheme::isReadOnlyControl): Renamed from isReadOnly.
+         * rendering/RenderTheme.h: (WebCore::): Added ReadOnlyState to ControlState enum.
+         * rendering/RenderThemeMac.h: Removed NSTextFieldCell since it was only being used to store the enabled state.
+           Removed setTextFieldState since it was updating the enabled state of the cell, which is only used in one place.
+         * rendering/RenderThemeMac.mm:
+         (WebCore::RenderThemeMac::RenderThemeMac): No longer initialized the NSTextFieldCell.
+         (WebCore::RenderThemeMac::adjustRepaintRect): No longer calls setTextFieldState.
+         (WebCore::RenderThemeMac::paintTextField): Uses the enabled state and the readonly state to determine whether to draw
+          a dimmed version of the aqua border.
+ 
 2006-04-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

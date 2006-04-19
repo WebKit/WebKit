@@ -106,7 +106,7 @@ void Attr::setValue( const String& v, ExceptionCode& ec)
     // do not interprete entities in the string, its literal!
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }

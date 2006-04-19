@@ -238,7 +238,7 @@ public:
     virtual bool isEnabled() const { return true; }
     virtual bool isChecked() const { return false; }
     virtual bool isIndeterminate() const { return false; }
-    virtual bool isReadOnly() const { return false; }
+    virtual bool isReadOnlyControl() const { return false; }
 
     virtual bool isContentEditable() const;
     virtual bool isContentRichlyEditable() const;
@@ -271,7 +271,7 @@ public:
       return m_inDocument; 
     }
     
-    virtual bool isReadOnly();
+    virtual bool isReadOnlyNode();
     virtual bool childTypeAllowed(NodeType) { return false; }
     virtual unsigned childNodeCount() const;
     virtual Node* childNode(unsigned index) const;

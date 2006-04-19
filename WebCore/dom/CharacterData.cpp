@@ -61,7 +61,7 @@ String CharacterData::data() const
 void CharacterData::setData( const String &_data, ExceptionCode& ec)
 {
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -106,7 +106,7 @@ void CharacterData::appendData( const String &arg, ExceptionCode& ec)
     ec = 0;
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -267,7 +267,7 @@ void CharacterData::checkCharDataOperation( const unsigned offset, ExceptionCode
     }
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-    if (isReadOnly()) {
+    if (isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
