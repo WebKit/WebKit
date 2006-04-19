@@ -202,7 +202,7 @@ void RenderCanvas::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
 void RenderCanvas::repaintViewRectangle(const IntRect& ur, bool immediate)
 {
     if (m_printingMode || ur.width() == 0 || ur.height() == 0) return;
-
+    
     IntRect vr = viewRect();
     if (m_view && ur.intersects(vr)) {
         // We always just invalidate the root view, since we could be an iframe that is clipped out

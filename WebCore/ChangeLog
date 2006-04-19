@@ -1,5 +1,19 @@
 2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Fix for bug 8449, incomplete repaint of table cell that moved.  This
+        fix also solves some of the textfield repainting problems (e.g., on
+        google.com and lxr.mozilla.org).
+
+        Reviewed by hyatt
+
+        * manual-tests/table-cell-move.html: Added.
+        * rendering/RenderCanvas.cpp:
+        (WebCore::RenderCanvas::repaintViewRectangle):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+
+2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Eric, landed by ap.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8469

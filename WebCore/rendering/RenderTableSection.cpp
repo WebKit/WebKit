@@ -528,7 +528,7 @@ int RenderTableSection::layoutRows(int toAdd)
             }
             
             int oldCellX = cell->xPos();
-            int oldCellY = cell->yPos();
+            int oldCellY = cell->yPos() - cell->borderTopExtra();
         
             if (style()->direction() == RTL) {
                 cell->setPos(
