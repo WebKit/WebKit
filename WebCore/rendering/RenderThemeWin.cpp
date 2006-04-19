@@ -166,7 +166,7 @@ unsigned RenderThemeWin::determineState(RenderObject* o)
     unsigned result = TS_NORMAL;
     if (!isEnabled(o))
         result = TS_DISABLED;
-    else if (isReadOnly(o))
+    else if (isReadOnlyControl(o))
         result = TFS_READONLY; // Readonly is supported on textfields.
     else if (supportsFocus(o->style()->appearance()) && isFocused(o))
         result = TS_FOCUSED;

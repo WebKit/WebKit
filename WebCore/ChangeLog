@@ -1,3 +1,12 @@
+2006-04-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for Windows build.
+
+        * rendering/RenderThemeWin.cpp: (WebCore::RenderThemeWin::determineState):
+        Use isReadOnlyControl instead of isReadOnly.
+
  2006-04-19  Adele Peterson  <adele@apple.com>
  
          Reviewed by Beth.
