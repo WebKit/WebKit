@@ -1796,15 +1796,15 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
         // dashboard-region(label, type) or dashboard-region(label type)
         // dashboard-region(label, type) or dashboard-region(label type)
         ValueList* args = value->function->args;
-        int numArgs = value->function->args->size();
-        if ((numArgs != DASHBOARD_REGION_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_NUM_PARAMETERS*2-1)) &&
-            (numArgs != DASHBOARD_REGION_SHORT_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1))){
+        String fname = domString(value->function->name).lower();
+        if (fname != "dashboard-region(" || !args) {
             valid = false;
             break;
         }
         
-        String fname = domString(value->function->name).lower();
-        if (fname != "dashboard-region(") {
+        int numArgs = args->size();
+        if ((numArgs != DASHBOARD_REGION_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_NUM_PARAMETERS*2-1)) &&
+            (numArgs != DASHBOARD_REGION_SHORT_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1))){
             valid = false;
             break;
         }

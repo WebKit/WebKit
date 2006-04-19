@@ -1,3 +1,13 @@
+2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Eric, landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8469
+          CRASH: WebCore::CSSParser::parseDashboardRegions when attr() is passed
+
+        * fast/css/dashboard-regions-attr-crash-expected.txt
+        * fast/css/dashboard-regions-attr-crash.html
+
 2006-04-17  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

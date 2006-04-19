@@ -1,3 +1,15 @@
+2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Eric, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8469
+          CRASH: WebCore::CSSParser::parseDashboardRegions when attr() is passed
+
+        Test: fast/css/dashboard-regions-attr-crash.html
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseDashboardRegions): Added null check for args.
+
 2006-04-18  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel & darin.  Landed by eseidel.
