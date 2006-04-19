@@ -199,7 +199,10 @@ void RenderSVGImage::imageChanged(CachedImage* image)
 
 IntRect RenderSVGImage::getAbsoluteRepaintRect()
 {
-    FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
+    SVGImageElement *image = static_cast<SVGImageElement *>(node());
+    float xOffset = image->x()->baseVal() ? image->x()->baseVal()->value() : 0;
+    float yOffset = image->y()->baseVal() ? image->y()->baseVal()->value() : 0;
+    FloatRect repaintRect = absoluteTransform().mapRect(FloatRect(xOffset, yOffset, width(), height()));
 
     // Filters can expand the bounding box
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
@@ -207,6 +210,11 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
 
     return enclosingIntRect(repaintRect);
+}
+
+void RenderSVGImage::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
+{
+    rects.append(getAbsoluteRepaintRect());
 }
 
 void RenderSVGImage::translateForAttributes()

@@ -1,3 +1,28 @@
+2006-04-18  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel & darin.  Landed by eseidel.
+
+        No automated tests possible (from javascript).
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6664:
+        Inspector does not highlight SVG elements properly
+
+        Make sure RenderObject::absoluteBoundingBoxRect works for
+        svg specific render objects by overriding absoluteRects.
+        This fixes highlighting in the Inspector of svg shapes, paths,
+        images and text.
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::absoluteRects):
+        * kcanvas/RenderPath.h:
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::getAbsoluteRepaintRect):
+        (WebCore::RenderSVGImage::absoluteRects):
+        * kcanvas/RenderSVGImage.h:
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects):
+        * kcanvas/RenderSVGText.h:
+
 2006-04-17  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

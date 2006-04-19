@@ -68,7 +68,9 @@ public:
     virtual short lineHeight(bool b, bool isRootLineBox = false) const;
     virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void paint(PaintInfo&, int parentX, int parentY);
-    
+ 
+    virtual void absoluteRects(DeprecatedValueList<IntRect>& rects, int tx, int ty);
+
     virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
 
 protected:

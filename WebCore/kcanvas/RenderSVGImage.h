@@ -42,6 +42,8 @@ namespace WebCore
         virtual FloatRect relativeBBox(bool includeStroke = true) const;
         virtual IntRect getAbsoluteRepaintRect();
         
+        virtual void absoluteRects(DeprecatedValueList<IntRect>& rects, int tx, int ty);
+
         virtual void imageChanged(CachedImage*);
         void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio *aspectRatio);
         virtual void paint(PaintInfo& paintInfo, int parentX, int parentY);

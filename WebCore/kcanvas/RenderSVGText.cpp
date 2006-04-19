@@ -133,6 +133,15 @@ bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty
     return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, _tx, _ty, hitTestAction);
 }
 
+void RenderSVGText::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
+{
+    QMatrix mat = translationForAttributes();
+    mat *= translationTopToBaseline();
+    mat *= absoluteTransform();
+
+    rects.append(enclosingIntRect(mat.mapRect(FloatRect(0, 0, width(), height()))));
+}
+
 }
 
 #endif // SVG_SUPPORT

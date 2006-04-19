@@ -242,6 +242,11 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
         paintInfo.p->restore();
 }
 
+void RenderPath::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
+{
+    rects.append(getAbsoluteRepaintRect());
+}
+
 bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.

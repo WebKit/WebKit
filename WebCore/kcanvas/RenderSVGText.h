@@ -44,6 +44,8 @@ public:
     
     bool nodeAtPoint(NodeInfo&, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction);
 
+    virtual void absoluteRects(DeprecatedValueList<IntRect>& rects, int tx, int ty);
+
  private:
     QMatrix translationTopToBaseline();
     QMatrix translationForAttributes();
