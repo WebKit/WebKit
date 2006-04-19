@@ -6,6 +6,8 @@ layer at (0,0) size 480x360
           RenderText {#text} at (0,0) size 281x14
             text run at (0,0) width 281: "Test 'tref' element with an external referenced string."
         RenderSVGText {text} at (0,0) size 465x0
+          RenderInline {tref} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
         KCanvasItem {rect} at (72.50,182.50) size 261x23 [stroke={[type=SOLID] [color=#000000]}] [data="M73.00,183.00L333.00,183.00L333.00,205.00L73.00,205.00"]
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {#text} at (0,0) size 154x14

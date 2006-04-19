@@ -1,3 +1,12 @@
+2006-04-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-tref-01-b-expected.txt:
+        * svg/custom/tref-update-expected.txt: Added.
+        * svg/custom/tref-update.svg: Added.
+
 2006-04-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.

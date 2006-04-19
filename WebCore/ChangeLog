@@ -1,3 +1,30 @@
+2006-04-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Test: svg/custom/tref-update.svg
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6427:
+        <tref> element not implemented
+
+        Implementation of <tref> element.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/svg/SVGTRefElement.cpp: Added.
+        (SVGTRefElement::SVGTRefElement):
+        (SVGTRefElement::~SVGTRefElement):
+        (SVGTRefElement::parseMappedAttribute):
+        (SVGTRefElement::closeRenderer):
+        (SVGTRefElement::childShouldCreateRenderer):
+        (SVGTRefElement::createRenderer):
+        * ksvg2/svg/SVGTRefElement.h: Added.
+        (WebCore::SVGTRefElement::rendererIsNeeded):
+        * ksvg2/svg/SVGTSpanElement.cpp:
+        (SVGTSpanElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer):
+        * ksvg2/svg/svgtags.in:
+
 2006-04-18  Darin Adler  <darin@apple.com>
 
         * rendering/render_form.cpp: (WebCore::RenderSelect::updateFromElement):

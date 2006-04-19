@@ -20,36 +20,34 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
+#ifndef KSVG_SVGTRefElementImpl_H
+#define KSVG_SVGTRefElementImpl_H
 #if SVG_SUPPORT
-#include "SVGTSpanElement.h"
-#include "SVGNames.h"
-#include "RenderInline.h"
 
-using namespace WebCore;
+#include "SVGURIReference.h"
+#include "SVGTextPositioningElement.h"
 
-SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document *doc)
-: SVGTextPositioningElement(tagName, doc)
+namespace WebCore
 {
-}
+    class SVGTRefElement : public SVGTextPositioningElement, public SVGURIReference
+    {
+    public:
+        SVGTRefElement(const QualifiedName& tagName, Document *doc);
+        virtual ~SVGTRefElement();
 
-SVGTSpanElement::~SVGTSpanElement()
-{
-}
+        virtual void attributeChanged(Attribute* attr, bool preserveDecls);
+        virtual void parseMappedAttribute(MappedAttribute *attr);
 
-bool SVGTSpanElement::childShouldCreateRenderer(WebCore::Node *child) const
-{
-    if (child->isTextNode() || child->hasTagName(SVGNames::tspanTag) ||
-        child->hasTagName(SVGNames::trefTag))
-        return true;
-    return false;
-}
+        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
+        bool childShouldCreateRenderer(WebCore::Node *child) const;
 
-RenderObject *SVGTSpanElement::createRenderer(RenderArena *arena, RenderStyle *)
-{
-    return new (arena) RenderInline(this);
-}
+    private:
+        void updateReferencedText();
+    };
+};
+
+#endif // SVG_SUPPORT
+#endif
 
 // vim:ts=4:noet
-#endif // SVG_SUPPORT
-

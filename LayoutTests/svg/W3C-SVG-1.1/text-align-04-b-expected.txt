@@ -22,7 +22,11 @@ layer at (0,0) size 480x360
             RenderInline {tspan} at (0,0) size 150x33
               RenderText {#text} at (154,0) size 150x33
                 text run at (154,0) width 150: "bold tspan"
-          RenderSVGText {text} at (0,0) size 465x0
+          RenderSVGText {text} at (0,0) size 465x34
+            RenderInline {tref} at (0,0) size 158x33
+              RenderText {#text} at (0,0) size 158x33
+                text run at (0,0) width 158: "end text tref"
+            RenderText {#text} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x0
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {#text} at (0,0) size 264x46
