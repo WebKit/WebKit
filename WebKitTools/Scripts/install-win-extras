@@ -54,7 +54,7 @@ if (! -e "icu-3.4-win32-msvc7.1.zip") {
 if (! -e "iconv-1.9.1.win32.zip") {
     print "Downloading iconv-1.9.1.win32.zip...\n\n";
     `rm -rf iconv*`;
-    `curl -O ftp://xmlsoft.org/libxml2/win32/iconv-1.9.1.win32.zip`;
+    `curl -O ftp://fr.rpmfind.net/pub/libxml/win32/iconv-1.9.1.win32.zip`;
     print "\nInstalling iconv-1.9.1.win32.zip...\n";
     `unzip iconv-1.9.1.win32.zip`;
     `rm -rf ../iconv`;
@@ -65,7 +65,7 @@ if (! -e "iconv-1.9.1.win32.zip") {
 if (! -e "libxml2-2.6.23.win32.zip") {
     print "Downloading libxml2-2.6.23.win32.zip...\n\n";
     `rm -rf libxml*`;
-    `curl -O ftp://xmlsoft.org/libxml2/win32/libxml2-2.6.23.win32.zip`;
+    `curl -O ftp://fr.rpmfind.net/pub/libxml/win32/libxml2-2.6.23.win32.zip`;
     print "\nInstalling libxml2-2.6.23.win32.zip...\n";
     `unzip libxml2-2.6.23.win32.zip`;
     `rm -rf ../libxml`;
@@ -76,7 +76,7 @@ if (! -e "libxml2-2.6.23.win32.zip") {
 if (! -e "libxslt-1.1.15.win32.zip") {
     print "Downloading libxmslt-1.1.15.win32.zip...\n";
     `rm -rf libxslt*`;
-    `curl -O ftp://xmlsoft.org/libxml2/win32/libxslt-1.1.15.win32.zip`;
+    `curl -O ftp://fr.rpmfind.net/pub/libxml/win32/libxslt-1.1.15.win32.zip`;
     print "Installing libxmslt-1.1.15.win32.zip...\n";
     `unzip libxslt-1.1.15.win32.zip`;
     `rm -rf ../libxslt`;
@@ -87,7 +87,7 @@ if (! -e "libxslt-1.1.15.win32.zip") {
 if (! -e "zlib-1.2.3.win32.zip") {
     print "Downloading zlib-1.2.3.win32.zip...\n\n";
     `rm -rf zlib*`;
-    `curl -O ftp://xmlsoft.org/libxml2/win32/zlib-1.2.3.win32.zip`;
+    `curl -O ftp://fr.rpmfind.net/pub/libxml/win32/zlib-1.2.3.win32.zip`;
     print "\nInstalling zlib-1.2.3.win32.zip...\n";
     `unzip zlib-1.2.3.win32.zip`;
     `rm -rf ../zlib`;
@@ -105,7 +105,7 @@ if (! -x "$setx") {
     unlink("setx_setup.exe"); 
     print "Downloading setx_setup.exe...\n\n";
     `curl -O http://download.microsoft.com/download/win2000platform/setx/1.00.0.1/nt5/en-us/setx_setup.exe`;
-    print "Instaling setx_setup.exe, please install in the default location...\n";
+    print "Installing setx_setup.exe, please install in the default location...\n";
     `chmod +x ./setx_setup.exe`;
     `./setx_setup.exe`;
     `chmod +x "$setx"`;

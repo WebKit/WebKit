@@ -1,3 +1,10 @@
+2006-04-18  Darin Adler  <darin@apple.com>
+
+        - attempt to fix Windows buildbot
+
+        * Scripts/install-win-extras: Temporarily changed URLs to fr.rpmfind.net.
+        We need a better long-term solution for this.
+
 2006-04-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
