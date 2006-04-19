@@ -1,3 +1,23 @@
+2006-04-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        - updated some results that were affected by recent changes
+
+        There are some other failures that might be reflecting actual
+        bugs; these seem fine though.
+
+        * fast/events/updateLayoutForHitTest-expected.checksum:
+        * fast/events/updateLayoutForHitTest-expected.png:
+        * fast/events/updateLayoutForHitTest-expected.txt:
+        Updated because the 4 clicks done in this test now seem to be
+        behaving as a triple-click and selecting some text.
+
+        * fast/forms/input-appearance-maxlength-expected.txt:
+        * fast/forms/input-paste-undo-expected.txt:
+        * fast/text/attributed-substring-from-range-expected.txt:
+        Unimportant changes to the editing delegate calls.
+
 2006-04-18  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.
