@@ -1,3 +1,8 @@
+2006-04-18  Darin Adler  <darin@apple.com>
+
+        * rendering/render_form.cpp: (WebCore::RenderSelect::updateFromElement):
+        Roll out accidentally-landed change for bug 8398.
+
 2006-04-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
