@@ -1,3 +1,10 @@
+2006-04-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        * WebInspector/webInspector/inspector.css: Add "-webkit-" prefixes to the border
+        radius properties to make the corners rounded again.
+
 2006-04-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
