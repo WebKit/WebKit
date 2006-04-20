@@ -1,3 +1,15 @@
+2006-04-19  Adele Peterson  <adele@apple.com>
+
+        Rubber-stamped by Darin.
+
+        Removed optimizations recently added in setInnerHTML and setInnerText.  The setInnerHTML change broke a first-letter style test.
+        The setInnerText change caused an empty text node to get added when setting inner text to an empty string.  The bug that this
+        change went in with remains fixed.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerHTML):
+        (WebCore::HTMLElement::setInnerText):
+
 2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Haytt.

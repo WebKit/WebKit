@@ -296,23 +296,6 @@ void HTMLElement::setInnerHTML(const String &html, ExceptionCode& ec)
         return;
     }
 
-    Node* child = firstChild();
-    if (child && !child->nextSibling()) {
-        // Optimize the case where the element has exactly one text node as a child,
-        // and what we're replacing with is also exactly one text node.
-        if (child->isTextNode()) {
-            Node* fragmentChild = fragment->firstChild();
-            if (fragmentChild && !fragmentChild->nextSibling() && fragmentChild->isTextNode()) {
-                static_cast<Text*>(child)->setData(static_cast<Text*>(fragmentChild)->data(), ec);
-                return;
-            }
-        }
-
-        // Optimize the case where the element has exactly one child.
-        replaceChild(fragment.release(), child, ec);
-        return;
-    }
-
     removeChildren();
     appendChild(fragment.release(), ec);
 }
@@ -347,19 +330,6 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
         hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
         hasLocalName(trTag)) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-
-    Node* child = firstChild();
-    if (child && !child->nextSibling()) {
-        // Optimize the case where the element already has exactly one text node as a child.
-        if (child->isTextNode()) {
-            static_cast<Text*>(child)->setData(text, ec);
-            return;
-        }
-
-        // Optimize the case where the element has exactly one child.
-        replaceChild(new Text(document(), text), child, ec);
         return;
     }
 
