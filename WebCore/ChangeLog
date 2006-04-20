@@ -1,3 +1,13 @@
+2006-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Timothy.
+
+        Removed TO_NODE_OFFSET and TO_NODE_ADDRESS macros. These can just be done inline with pointer math.
+
+        * platform/DeprecatedString.cpp:
+        (allocateNode):
+        (freeHandle):
+
 2006-04-19  Adele Peterson  <adele@apple.com>
 
         Rubber-stamped by Darin.

@@ -2525,9 +2525,6 @@ static const size_t pageSize = 4096;
 static const uintptr_t pageMask = ~(pageSize - 1);
 static const size_t nodeBlockSize = pageSize / sizeof(HandleNode);
 
-#define TO_NODE_OFFSET(ptr)   ((unsigned)(((unsigned)ptr - (unsigned)base)/sizeof(HandleNode)))
-#define TO_NODE_ADDRESS(offset,base) ((HandleNode *)(offset*sizeof(HandleNode) + (unsigned)base))
-
 static HandleNode *initializeHandleNodeBlock(HandlePageNode *pageNode)
 {
     unsigned i;
@@ -2580,7 +2577,7 @@ static HandleNode *allocateNode(HandlePageNode *pageNode)
     // Remove node from end of free list 
     allocated = freeNodes;
     if (allocated->type.internalNode.previous >= 2) {
-        block[0].type.freeNodes = TO_NODE_ADDRESS(allocated->type.internalNode.previous, block);
+        block[0].type.freeNodes = block + allocated->type.internalNode.previous;
         block[0].type.freeNodes->type.internalNode.next = 0;
     }
     else {
@@ -2618,8 +2615,8 @@ void freeHandle(KWQStringData **_free)
     }
     else {
         // Insert at head of free list.
-        free->type.internalNode.previous = TO_NODE_OFFSET(freeNodes);
-        freeNodes->type.internalNode.next = TO_NODE_OFFSET(free);
+        free->type.internalNode.previous = freeNodes - base;
+        freeNodes->type.internalNode.next = free - base;
     }
     free->type.internalNode.next = 0;
     base[0].type.freeNodes = free;
