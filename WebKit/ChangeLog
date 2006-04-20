@@ -1,3 +1,26 @@
+2006-04-19  James G. Speth  <speth@end.com>
+
+        Reviewed by Timothy.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6637
+        Bug 6637: selecting node in Inspector after closing window crashes Safari
+
+        When the window the Web Inspector was inspecting is closed, the inspector goes into its
+        no-selection state. Choosing to inspect another element activates it again. The inspector
+        will also follow the WebView if the URL changes and select the root element on the new page.
+
+        * WebInspector/WebInspector.m:
+        (-[NSWindow setWebFrame:]):
+        (-[NSWindow setRootDOMNode:]):
+        (-[WebInspector _revealAndSelectNodeInTree:]):
+        (-[WebInspector _update]):
+        (-[WebInspector _updateRoot]):
+        (-[WebInspector inspectedWebViewProgressFinished:]):
+        (-[WebInspector inspectedWindowWillClose:]):
+        (-[WebInspector webView:didFinishLoadForFrame:]):
+        * WebInspector/WebInspectorPanel.m:
+        (-[WebInspectorPanel canBecomeMainWindow]):
+
 2006-04-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth.

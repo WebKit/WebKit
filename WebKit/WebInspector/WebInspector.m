@@ -164,10 +164,21 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     if ([webFrame isEqual:_private->webFrame])
         return;
 
+    if (_private->webFrame) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebViewProgressFinishedNotification object:[_private->webFrame webView]];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[[_private->webFrame webView] window]];
+    }
+    
     [webFrame retain];
     [_private->webFrame release];
     _private->webFrame = webFrame;
 
+    if (_private->webFrame) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inspectedWebViewProgressFinished:) name:WebViewProgressFinishedNotification object:[_private->webFrame webView]];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inspectedWindowWillClose:) name:NSWindowWillCloseNotification object:[[_private->webFrame webView] window]];
+    }
+
+    [_private->treeOutlineView setAllowsEmptySelection:NO];
     [self setFocusedDOMNode:[webFrame DOMDocument]];
 }
 
@@ -180,7 +191,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)setRootDOMNode:(DOMNode *)node
 {
-    if (![node hasChildNodes] || [node isSameNode:_private->rootNode])
+    if ([node isSameNode:_private->rootNode])
         return;
 
     [node retain];
@@ -548,7 +559,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)_revealAndSelectNodeInTree:(DOMNode *)node
 {
-    if (!_private->webViewLoaded || !node)
+    if (!_private->webViewLoaded)
         return;
 
     if (!_private->preventRevealOnFocus) {
@@ -572,8 +583,10 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     if (index != -1) {
         [_private->treeOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
         [_private->treeOutlineView scrollRowToVisible:index];
-        [self _updateTreeScrollbar];
+    } else {
+        [_private->treeOutlineView deselectAll:self];
     }
+    [self _updateTreeScrollbar];
 }
 
 - (void)_refreshSearch
@@ -641,8 +654,13 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)_update
 {
-    if (_private->webViewLoaded && [self focusedDOMNode])
-        [[_private->webView windowScriptObject] callWebScriptMethod:@"updatePanes" withArguments:nil];
+    if (_private->webViewLoaded) {
+        if ([self focusedDOMNode]) {
+            [[_private->webView windowScriptObject] callWebScriptMethod:@"toggleNoSelection" withArguments:[NSArray arrayWithObject:[NSNumber numberWithBool:NO]]];
+            [[_private->webView windowScriptObject] callWebScriptMethod:@"updatePanes" withArguments:nil];
+        } else
+            [[_private->webView windowScriptObject] callWebScriptMethod:@"toggleNoSelection" withArguments:[NSArray arrayWithObject:[NSNumber numberWithBool:YES]]];
+    }
 }
 
 - (void)_updateTraversalButtons
@@ -673,7 +691,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)_updateRoot
 {
-    if (!_private->webViewLoaded || ![self rootDOMNode] || _private->searchResultsVisible)
+    if (!_private->webViewLoaded || _private->searchResultsVisible)
         return;
 
     DOMHTMLElement *titleArea = (DOMHTMLElement *)[_private->domDocument getElementById:@"treePopupTitleArea"];
@@ -693,7 +711,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     _private->preventSelectionRefocus = YES;
     DOMNode *focusedNode = [[self focusedDOMNode] retain];
     [_private->treeOutlineView reloadData];
-    [_private->treeOutlineView expandItem:[self rootDOMNode]];
+    if ([self rootDOMNode])
+        [_private->treeOutlineView expandItem:[self rootDOMNode]];
     [self _revealAndSelectNodeInTree:focusedNode];
     [focusedNode release];
     _private->preventSelectionRefocus = NO;
@@ -748,8 +767,31 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 #pragma mark -
 
+- (void)inspectedWebViewProgressFinished:(NSNotification *)notification
+{
+    if ([notification object] == [[self webFrame] webView]) {
+        [self setFocusedDOMNode:[[self webFrame] DOMDocument]];
+        [self _update];
+        [self _updateRoot];
+        [self _highlightNode:[self focusedDOMNode]];
+    }
+}
+
+- (void)inspectedWindowWillClose:(NSNotification *)notification
+{
+    [self setFocusedDOMNode:nil];
+    [self setWebFrame:nil];
+    [_private->treeOutlineView setAllowsEmptySelection:YES];
+    [_private->treeOutlineView deselectAll:self];
+    [self _update];
+    [self _updateRoot];
+}
+
+#pragma mark -
+
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
+    // note: this is the Inspector's own WebView, not the one being inspected
     _private->webViewLoaded = YES;
     [[sender windowScriptObject] setValue:self forKey:@"Inspector"];
 

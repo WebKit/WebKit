@@ -43,7 +43,8 @@
 
 - (BOOL)canBecomeMainWindow
 {
-    return YES;
+    // prevent the inspector from confusing other panels
+    return NO;
 }
 
 - (void)moveWindow:(NSEvent *)event
