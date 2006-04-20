@@ -1,5 +1,15 @@
 2006-04-19  Adele Peterson  <adele@apple.com>
 
+        Updating test results that were incorrectly checked in 
+        when many of the table test results changed recently due to Color
+        improvements.
+
+        * tables/mozilla/bugs/bug625-expected.checksum:
+        * tables/mozilla/bugs/bug625-expected.png:
+        * tables/mozilla/bugs/bug625-expected.txt:
+
+2006-04-19  Adele Peterson  <adele@apple.com>
+
         Updated results after rolling out optimizations in setInnerText and setInnerHTML.
 
         * fast/events/updateLayoutForHitTest-expected.txt:
