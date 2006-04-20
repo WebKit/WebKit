@@ -1,5 +1,22 @@
 2006-04-19  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        Added readOnly methods for HTMLInputElement and HTMLTextAreaElement so the DOM bindings can call
+        a method with the same name.  This will make it easier to autogenerate the DOM bindings in the future.
+ 
+        * html/HTMLInputElement.h: (WebCore::HTMLInputElement::readOnly): Added. Calls isReadOnlyControl.
+        * html/HTMLTextAreaElement.h: (WebCore::HTMLTextAreaElement::readOnly): ditto.
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLElement::inputGetter): Calls readOnly instead of isReadOnlyControl.
+        (KJS::JSHTMLElement::textAreaGetter): ditto.
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement readOnly]): ditto.
+        (-[DOMHTMLTextAreaElement readOnly]): Calls readOnly instead of getting the attribute directly.
+        (-[DOMHTMLTextAreaElement setReadOnly:]): Calls setReadOnly instead of setting the attribute directly.
+
+2006-04-19  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8297

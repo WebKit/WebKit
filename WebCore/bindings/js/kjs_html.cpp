@@ -1550,7 +1550,7 @@ JSValue *JSHTMLElement::inputGetter(ExecState* exec, int token) const
         case InputIndeterminate:   return jsBoolean(input.indeterminate());
         case InputMaxLength:       return jsNumber(input.maxLength());
         case InputName:            return jsString(input.name());
-        case InputReadOnly:        return jsBoolean(input.isReadOnlyControl());
+        case InputReadOnly:        return jsBoolean(input.readOnly());
         case InputSelectionStart:  return getInputSelectionStart(input);
         case InputSelectionEnd:    return getInputSelectionEnd(input);
         case InputSize:            return jsNumber(input.size());
@@ -1573,7 +1573,7 @@ JSValue *JSHTMLElement::textAreaGetter(ExecState* exec, int token) const
         case TextAreaCols:            return jsNumber(textarea.cols());
         case TextAreaDisabled:        return jsBoolean(textarea.disabled());
         case TextAreaName:            return jsString(textarea.name());
-        case TextAreaReadOnly:        return jsBoolean(textarea.isReadOnlyControl());
+        case TextAreaReadOnly:        return jsBoolean(textarea.readOnly());
         case TextAreaRows:            return jsNumber(textarea.rows());
         case TextAreaSelectionStart:  return jsNumber(textarea.selectionStart());
         case TextAreaSelectionEnd:    return jsNumber(textarea.selectionEnd());

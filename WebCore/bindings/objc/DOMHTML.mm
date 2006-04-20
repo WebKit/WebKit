@@ -1337,7 +1337,7 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)readOnly
 {
-    return [self _inputElement]->isReadOnlyControl();
+    return [self _inputElement]->readOnly();
 }
 
 - (void)setReadOnly:(BOOL)readOnly
@@ -1498,12 +1498,12 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)readOnly
 {
-    return [self _textAreaElement]->getAttribute(readonlyAttr).isNull();
+    return [self _textAreaElement]->readOnly();
 }
 
 - (void)setReadOnly:(BOOL)readOnly
 {
-    [self _textAreaElement]->setAttribute(readonlyAttr, readOnly ? "" : 0);
+    [self _textAreaElement]->setReadOnly(readOnly);
 }
 
 - (int)rows
