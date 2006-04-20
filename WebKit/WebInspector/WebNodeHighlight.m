@@ -106,14 +106,20 @@ NSString *WebNodeHighlightExpiredNotification = @"WebNodeHighlightExpiredNotific
 
 - (void)expire
 {
+    if (![_timer isValid])  // make sure it has not been expired already (loop prevention)
+        return;
+    
     [_timer invalidate];
     [_timer release];
     _timer = nil;
 
+    // remove this observation before closing the window (more loop prevention)
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:nil];
+    
     [_webNodeHighlightWindow close];
     _webNodeHighlightWindow = nil;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"WebNodeHighlightExpired" object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebNodeHighlightExpiredNotification object:self userInfo:nil];
 }
 
 - (void)redraw:(NSTimer *)timer

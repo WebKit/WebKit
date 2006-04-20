@@ -1,3 +1,18 @@
+2006-04-19  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Timothy.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6635
+        Bug 6635: Crash selecting inspector nodes for tabs that aren't foremost
+
+        Stop observing window will close notifications before we tell the highlight window to close,
+        this prevents the crash. Also prevent drawing highlights for hidden tabs.
+
+        * WebInspector/WebInspector.m:
+        (-[WebInspector _highlightNode:]):
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlight expire]):
+
 2006-04-19  James G. Speth  <speth@end.com>
 
         Reviewed by Timothy.

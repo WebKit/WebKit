@@ -530,7 +530,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         if (![rects count])
             rects = [NSArray arrayWithObject:[NSValue valueWithRect:bounds]];
 
-        _private->currentHighlight = [[WebNodeHighlight alloc] initWithBounds:bounds andRects:rects forView:view];
+        if ([view window])      // skip the highlight if we have no window (e.g. hidden tab)
+            _private->currentHighlight = [[WebNodeHighlight alloc] initWithBounds:bounds andRects:rects forView:view];
     }
 }
 
