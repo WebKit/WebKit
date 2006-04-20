@@ -1,5 +1,48 @@
 2006-04-19  Adele Peterson  <adele@apple.com>
 
+        Updated results for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8297
+        REGRESSION: Input element extends outside of DIV element at http://www.macdock.com/
+
+        * editing/selection/3690703-2-expected.checksum:
+        * editing/selection/3690703-2-expected.png:
+        * editing/selection/3690703-2-expected.txt:
+        * editing/selection/3690703-expected.checksum:
+        * editing/selection/3690703-expected.png:
+        * editing/selection/3690703-expected.txt:
+        * editing/selection/3690719-expected.checksum:
+        * editing/selection/3690719-expected.png:
+        * editing/selection/3690719-expected.txt:
+        * fast/forms/input-appearance-minWidth-expected.checksum:
+        * fast/forms/input-appearance-minWidth-expected.png:
+        * fast/forms/input-appearance-minWidth-expected.txt:
+        * fast/forms/input-appearance-width-expected.checksum:
+        * fast/forms/input-appearance-width-expected.png:
+        * fast/forms/input-appearance-width-expected.txt:
+        * fast/forms/input-double-click-selection-gap-bug-expected.checksum:
+        * fast/replaced/width100percent-expected.checksum:
+        * fast/replaced/width100percent-expected.png:
+        * fast/replaced/width100percent-expected.txt:
+        * tables/mozilla/bugs/bug1188-expected.checksum:
+        * tables/mozilla/bugs/bug1188-expected.png:
+        * tables/mozilla/bugs/bug1188-expected.txt:
+        * tables/mozilla/bugs/bug12384-expected.checksum:
+        * tables/mozilla/bugs/bug12384-expected.png:
+        * tables/mozilla/bugs/bug12384-expected.txt:
+        * tables/mozilla/bugs/bug18359-expected.checksum:
+        * tables/mozilla/bugs/bug18359-expected.png:
+        * tables/mozilla/bugs/bug18359-expected.txt:
+        * tables/mozilla/bugs/bug55545-expected.checksum:
+        * tables/mozilla/bugs/bug55545-expected.png:
+        * tables/mozilla/bugs/bug55545-expected.txt:
+        * tables/mozilla/bugs/bug7342-expected.checksum:
+        * tables/mozilla/bugs/bug7342-expected.png:
+        * tables/mozilla/bugs/bug7342-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug2479-2-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug2479-2-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug2479-2-expected.txt:
+
+2006-04-19  Adele Peterson  <adele@apple.com>
+
         Tests for change to make readonly text fields have dimmed borders.
 
         * fast/forms/input-appearance-readonly-expected.checksum:

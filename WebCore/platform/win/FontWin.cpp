@@ -176,7 +176,7 @@ static IntSize hackishExtentForString(HDC dc, FontData* font, const QChar* str, 
 }
 
 float Font::floatWidth(const QChar* str, int slen, int pos, int len,
-                       int tabWidth, int xpos) const
+                       int tabWidth, int xpos, bool runRounding) const
 {
     FontData* font = m_dataSet->primaryFont(fontDescription());
     if (!font)

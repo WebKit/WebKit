@@ -229,7 +229,7 @@ void RenderTextField::calcMinMaxWidth()
 
         QChar ch[1];
         ch[0] = '0';
-        int sizeWidth = (int)ceilf(style()->font().floatWidth(ch, 1, 0, 1, 0, 0) * size);
+        int sizeWidth = (int)ceilf(style()->font().floatWidth(ch, 1, 0, 1, 0, 0, false) * size);
         m_maxWidth = sizeWidth;
     }
     

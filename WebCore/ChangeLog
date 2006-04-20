@@ -1,5 +1,18 @@
 2006-04-19  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Hyatt.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8297
+        REGRESSION: Input element extends outside of DIV element at http://www.macdock.com/
+
+        * platform/Font.h: Added runRounding parameter to floatWidth.
+        * platform/mac/FontMac.mm: (WebCore::Font::floatWidth): ditto.
+        * platform/win/FontWin.cpp: (WebCore::Font::floatWidth): ditto.
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::calcMinMaxWidth):
+          Use new floatWidth parameter to turn off run rounding.
+
+2006-04-19  Adele Peterson  <adele@apple.com>
+
         Reviewed by Beth.
 
         Fix for Windows build.

@@ -106,13 +106,13 @@ layer at (0,0) size 785x980
       RenderTable {TABLE} at (0,358) size 769x27
         RenderTableSection {TBODY} at (0,0) size 769x27
           RenderTableRow {TR} at (0,1) size 769x25
-            RenderTableCell {TD} at (1,1) size 710x25 [r=0 c=0 rs=1 cs=1]
-              RenderTextField {INPUT} at (1,3) size 708x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (712,1) size 10x25 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (1,1) size 706x25 [r=0 c=0 rs=1 cs=1]
+              RenderTextField {INPUT} at (1,3) size 704x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderTableCell {TD} at (708,1) size 10x25 [r=0 c=1 rs=1 cs=1]
               RenderTextField {INPUT} at (1,3) size 8x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (723,1) size 10x25 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (719,1) size 10x25 [r=0 c=2 rs=1 cs=1]
               RenderTextField {INPUT} at (1,3) size 8x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableCell {TD} at (734,3) size 34x20 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (730,3) size 38x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,385) size 769x36
@@ -202,15 +202,15 @@ layer at (175,310) size 2x13 scrollWidth 48
   RenderBlock {DIV} at (3,3) size 2x13
     RenderText {#text} at (1,0) size 46x13
       text run at (1,0) width 46: "Reply All"
-layer at (13,373) size 702x13
-  RenderBlock {DIV} at (3,3) size 702x13
+layer at (13,373) size 698x13
+  RenderBlock {DIV} at (3,3) size 698x13
     RenderText {#text} at (1,0) size 48x13
       text run at (1,0) width 48: "New Mail"
-layer at (724,373) size 2x13 scrollWidth 31
+layer at (720,373) size 2x13 scrollWidth 31
   RenderBlock {DIV} at (3,3) size 2x13
     RenderText {#text} at (1,0) size 29x13
       text run at (1,0) width 29: "Reply"
-layer at (735,373) size 2x13 scrollWidth 48
+layer at (731,373) size 2x13 scrollWidth 48
   RenderBlock {DIV} at (3,3) size 2x13
     RenderText {#text} at (1,0) size 46x13
       text run at (1,0) width 46: "Reply All"

@@ -255,7 +255,7 @@ int Font::misspellingLineThickness(const GraphicsContext* context) const
     return [m_dataSet->getRenderer(fontDescription()) misspellingLineThickness];
 }
 
-float Font::floatWidth(const QChar* uchars, int slen, int pos, int len, int tabWidth, int xpos) const
+float Font::floatWidth(const QChar* uchars, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding) const
 {
     assert(m_dataSet);
     CREATE_FAMILY_ARRAY(fontDescription(), families);
@@ -271,6 +271,7 @@ float Font::floatWidth(const QChar* uchars, int slen, int pos, int len, int tabW
     style.wordSpacing = wordSpacing();
     style.smallCaps = fontDescription().smallCaps();
     style.families = families;
+    style.applyRunRounding = runRounding;
 
     return [m_dataSet->getRenderer(fontDescription()) floatWidthForRun:&run style:&style];
 

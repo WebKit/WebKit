@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {FORM} at (0,0) size 784x27
-        RenderTable {TABLE} at (0,0) size 696x27 [bgcolor=#FFE030] [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 694x25
-            RenderTableRow {TR} at (0,0) size 694x25
-              RenderTableCell {TD} at (0,0) size 694x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {NOBR} at (0,0) size 692x18
-                  RenderTextField {INPUT} at (3,3) size 218x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderText {#text} at (223,3) size 13x18
-                    text run at (223,3) width 13: " - "
-                  RenderTextField {INPUT} at (238,3) size 218x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderText {#text} at (458,3) size 13x18
-                    text run at (458,3) width 13: " - "
-                  RenderTextField {INPUT} at (473,3) size 218x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTable {TABLE} at (0,0) size 693x27 [bgcolor=#FFE030] [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 691x25
+            RenderTableRow {TR} at (0,0) size 691x25
+              RenderTableCell {TD} at (0,0) size 691x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {NOBR} at (0,0) size 689x18
+                  RenderTextField {INPUT} at (3,3) size 217x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderText {#text} at (222,3) size 13x18
+                    text run at (222,3) width 13: " - "
+                  RenderTextField {INPUT} at (237,3) size 217x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderText {#text} at (456,3) size 13x18
+                    text run at (456,3) width 13: " - "
+                  RenderTextField {INPUT} at (471,3) size 217x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,0) size 0x0
-layer at (15,15) size 212x13
-  RenderBlock {DIV} at (3,3) size 212x13
-layer at (250,15) size 212x13
-  RenderBlock {DIV} at (3,3) size 212x13
-layer at (485,15) size 212x13
-  RenderBlock {DIV} at (3,3) size 212x13
+layer at (15,15) size 211x13
+  RenderBlock {DIV} at (3,3) size 211x13
+layer at (249,15) size 211x13
+  RenderBlock {DIV} at (3,3) size 211x13
+layer at (483,15) size 211x13
+  RenderBlock {DIV} at (3,3) size 211x13

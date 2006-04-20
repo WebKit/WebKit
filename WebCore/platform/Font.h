@@ -80,7 +80,7 @@ public:
     void drawLineForMisspelling(const GraphicsContext*, int x, int y, int width) const;
     int misspellingLineThickness(const GraphicsContext*) const;
 
-    float floatWidth(const QChar*, int slen, int pos, int len, int tabWidth, int xpos) const;
+    float floatWidth(const QChar*, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding = true) const;
     
     int checkSelectionPoint(const QChar*, int slen, int pos, int len, int toAdd, int tabWidth, int xpos,
         int x, TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const;
