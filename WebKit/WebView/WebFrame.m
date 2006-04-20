@@ -545,6 +545,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
     if (_private->dataSource)
         [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] willCloseFrame:self];
+    [[self webView] setMainFrameDocumentReady:NO];  // stop giving out the actual DOMDocument to observers
 }
 
 - (void)_detachFromParent

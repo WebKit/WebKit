@@ -438,6 +438,7 @@
             // it has the right notion of the current b/f item.
             [[self webFrame] _setTitle:_private->pageTitle];
             
+            [[self _webView] setMainFrameDocumentReady:YES];    // update observers with new DOMDocument
             [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
                                                      didReceiveTitle:_private->pageTitle
                                                             forFrame:[self webFrame]];

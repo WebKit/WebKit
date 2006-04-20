@@ -270,6 +270,7 @@ macro(yankAndSelect) \
     
     void *observationInfo;
     
+    BOOL mainFrameDocumentReady;
     BOOL drawsBackground;
     BOOL editable;
     BOOL initiatedDrag;
@@ -1039,7 +1040,6 @@ static bool debugWidget = true;
         _private->progressValue = INITIAL_PROGRESS_VALUE;
         _private->originatingProgressFrame = [frame retain];
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
-        [self _willChangeValueForKey:_WebMainFrameDocumentKey];     // paired with didChange.. in windowObjectCleared
     }
     _private->numProgressTrackedFrames++;
     [self _didChangeValueForKey: @"estimatedProgress"];
@@ -1054,12 +1054,11 @@ static bool debugWidget = true;
     if (!_private->finalProgressChangedSent) {
         _private->progressValue = 1;
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
-        // send the final KVO message, ending the willChange.. from WebFrameBridge windowObjectCleared
-        [self _didChangeValueForKey:_WebMainFrameDocumentKey];
     }
     
     [self _resetProgress];
     
+    [self setMainFrameDocumentReady:YES];   // make sure this is turned on at this point
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:self];
 }
 
@@ -1577,6 +1576,7 @@ NSMutableDictionary *countInvocations;
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;
 
@@ -2524,82 +2524,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @end
 
-@implementation WebController
-
-- (id)init
-{
-    self = [super init];
-    if (self == nil)
-        return nil;
-    [self setChildrenKeyPath:@"childNodes"];
-    [self setObjectClass:[DOMNode class]];
-    return self;
-}
-
-- (NSArray *)exposedBindings
-{
-    NSArray *bindings = [super exposedBindings];
-    return [bindings arrayByAddingObject:@"webView"];
-}
-
-- (Class)valueClassForBinding:(NSString *)binding
-{
-    if ([binding isEqualToString:@"webView"])
-        return [WebView class];
-    return [super valueClassForBinding:binding];
-}
-
-- (void)setContent:(id)newContent
-{
-    // override NSTreeController's setContent: to prevent crash when changing the tree
-    //   see http://www.cocoadev.com/index.pl?NSTreeControllerBugOrDeveloperError
-    
-    // in our case, it prevents a crash in NSTreeController that occurs when:
-    // 1. an outline view has a column bound to arrangedObjects.nodeName
-    // 2. a text field has its value bound to selection.innerHTML
-    // 3. a node is selected in the outline view
-    // 4. a new page is loaded in the WebView
-    //    -> crash
-    // step 3 is necessary for the crash, it does not happen when there's no selection
-    
-    // retain original values while the content changes
-    id content = [[self content] retain];
-    NSArray *paths = [[self selectionIndexPaths] retain];
-    NSString *childrenKeyPath = [[self childrenKeyPath] retain];
-    
-    // clear the tree controller state as much as possible
-    [self setSelectionIndexPaths:nil];
-    [super setContent:nil];
-    
-    // set the new content and restore the configuration
-    [super setContent:newContent];
-    [self setChildrenKeyPath:childrenKeyPath];
-    [self setSelectionIndexPaths:paths];
-    
-    // release the original content and the temporary storage
-    [content release];
-    [paths release];
-    [childrenKeyPath release];
-}
-
-- (WebView *)webView
-{
-    return [[webView retain] autorelease];
-}
-
-- (void)setWebView:(WebView *)newWebView
-{
-    if (newWebView == webView)
-        return;
-    [self unbind:@"contentObject"];
-    id old = webView;
-    webView = [newWebView retain];
-    [old release];
-    [self bind:@"contentObject" toObject:webView withKeyPath:_WebMainFrameDocumentKey options:nil];
-}
-
-@end
-
 @implementation WebView (WebPendingPublic)
 
 - (void)setMainFrameURL:(NSString *)URLString
@@ -2633,9 +2557,26 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] dataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
 }
 
+- (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady
+{
+    // by setting this to NO, calls to mainFrameDocument are forced to return nil
+    // setting this to YES lets it return the actual DOMDocument value
+    // we use this to tell NSTreeController to reset its observers and clear its state
+    if (_private->mainFrameDocumentReady == mainFrameDocumentReady)
+        return;
+    [self _willChangeValueForKey:_WebMainFrameDocumentKey];
+    _private->mainFrameDocumentReady = mainFrameDocumentReady;
+    [self _didChangeValueForKey:_WebMainFrameDocumentKey];
+    // this will cause observers to call mainFrameDocument where this flag will be checked
+}
+
 - (DOMDocument *)mainFrameDocument
 {
-    return [[self mainFrame] DOMDocument];
+    // only return the actual value if the state we're in gives NSTreeController
+    // enough time to release its observers on the old model
+    if (_private->mainFrameDocumentReady)
+        return [[self mainFrame] DOMDocument];
+    return nil;
 }
 
 - (void)setDrawsBackground:(BOOL)drawsBackground

@@ -1503,10 +1503,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     WebView *wv = [self webView];
     [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:[self windowScriptObject]];
-    // this KVO notification first started in WebView's _progressStarted:, and gets finished here
-    [wv _didChangeValueForKey:_WebMainFrameDocumentKey];
-    // start another change notification that will be completed in WebView's _finalProgressComplete:
-    [wv _willChangeValueForKey:_WebMainFrameDocumentKey];
     if ([wv scriptDebugDelegate]) {
         [_frame _attachScriptDebugger];
     }

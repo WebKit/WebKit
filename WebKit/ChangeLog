@@ -2,6 +2,31 @@
 
         Reviewed by Timothy.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8442
+        Bug 8442: improvements to Cocoa bindings support in WebView - code simplification
+
+        Removes the WebController class added earlier; changes NSTreeController and 
+        WebView to together without it. Now you can just bind the contentObject binding
+        of the tree controller directly to the mainFrameDocument key of the WebView.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge windowObjectCleared]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _setTitle:]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _closeOldDataSources]):
+        * WebView/WebView.m:
+        (-[WebView _progressStarted:]):
+        (-[WebView _finalProgressComplete]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView setMainFrameDocumentReady:]):
+        (-[WebView mainFrameDocument]):
+        * WebView/WebViewPrivate.h:
+
+2006-04-19  James G. Speth  <speth@end.com>
+
+        Reviewed by Timothy.
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6635
         Bug 6635: Crash selecting inspector nodes for tabs that aren't foremost
 

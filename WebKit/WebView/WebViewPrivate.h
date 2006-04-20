@@ -89,6 +89,8 @@ typedef enum {
 - (BOOL)isLoading;
 - (NSString *)mainFrameTitle;
 - (NSImage *)mainFrameIcon;
+
+- (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady;
 - (DOMDocument *)mainFrameDocument;
 
 - (void)setDrawsBackground:(BOOL)drawsBackround;
