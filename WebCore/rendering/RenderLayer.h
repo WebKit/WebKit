@@ -397,6 +397,7 @@ protected:
                                  // we ended up painting this layer or any descendants (and therefore need to
                                  // blend).
     bool m_inOverflowRelayout : 1;
+    bool m_repaintOverflowOnResize : 1;
 
     Marquee* m_marquee; // Used by layers with overflow:marquee
 };

@@ -1,5 +1,24 @@
 2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Haytt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6770
+          REGRESSION: Incomplete repaint when block with clipping grows
+
+        * manual-tests/repaint-resized-overflow.html: Added.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::computeRepaintRects): Set the m_repaintOverflowOnResize
+        flag to true if our object itself needs layout or if we're an overflow
+        and have a normal child that needs layout, in which case if we end up
+        resizing it will be because of the child, and that child might have not repainted
+        itself correctly during its own layout.
+        (WebCore::RenderLayer::updateLayerPositions): Do a full repaint if
+        m_repaintOverflowOnResize is set and we resized but didn't move.
+        * rendering/RenderLayer.h:
+
+2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Hyatt.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8352
