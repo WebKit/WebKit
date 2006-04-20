@@ -1,5 +1,13 @@
 2006-04-19  Adele Peterson  <adele@apple.com>
 
+        Updated results after rolling out optimizations in setInnerText and setInnerHTML.
+
+        * fast/events/updateLayoutForHitTest-expected.txt:
+        * fast/forms/input-text-paste-maxlength-expected.txt:
+        * fast/text/attributed-substring-from-range-expected.txt:
+
+2006-04-19  Adele Peterson  <adele@apple.com>
+
         Updated results for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8297
         REGRESSION: Input element extends outside of DIV element at http://www.macdock.com/
 
