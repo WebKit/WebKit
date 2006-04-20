@@ -1,3 +1,19 @@
+2006-04-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8273
+        REGRESSION: Read only input text field renders at the wrong height when value attribute is not present
+
+        Test: fast/forms/input-readonly-empty.html
+
+        * rendering/RenderBlock.h: Added hasLineIfEmpty.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasLineIfEmpty): Added.  Checks for rootEditableElement as well as 
+         a shadowNode who has an input element as a parent.
+        (WebCore::RenderBlock::getBaselineOfLastLineBox): Calls hasLineIfEmpty instead of just checking for the rootEditableElement.
+        * rendering/bidi.cpp: (WebCore::RenderBlock::layoutInlineChildren): ditto.
+
 2006-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Timothy.

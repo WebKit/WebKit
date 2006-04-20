@@ -1,3 +1,13 @@
+2006-04-20  Adele Peterson  <adele@apple.com>
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8273
+        REGRESSION: Read only input text field renders at the wrong height when value attribute is not present
+
+        * fast/forms/input-readonly-empty-expected.checksum: Added.
+        * fast/forms/input-readonly-empty-expected.png: Added.
+        * fast/forms/input-readonly-empty-expected.txt: Added.
+        * fast/forms/input-readonly-empty.html: Added.
+
 2006-04-19  Adele Peterson  <adele@apple.com>
 
         Updated test to use webkit-block-placeholder instead of khtml-block-placeholder.

@@ -1722,7 +1722,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
             repaintRect.intersect(IntRect(0, 0, m_width, m_height));
     }
 
-    if (!firstLineBox() && element() && element()->isContentEditable() && element()->rootEditableElement() == element())
+    if (!firstLineBox() && hasLineIfEmpty())
         m_height += lineHeight(true);
 
     // See if we have any lines that spill out of our block.  If we do, then we will possibly need to
