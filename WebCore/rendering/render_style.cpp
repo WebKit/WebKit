@@ -815,7 +815,8 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
          !(inherited_flags._text_transform == other->inherited_flags._text_transform) ||
          !(inherited_flags._direction == other->inherited_flags._direction) ||
          !(inherited_flags._white_space == other->inherited_flags._white_space) ||
-         !(noninherited_flags._clear == other->noninherited_flags._clear)
+         !(noninherited_flags._clear == other->noninherited_flags._clear) ||
+         !css3InheritedData->shadowDataEquivalent(*other->css3InheritedData.get())
         )
         return Layout;
 
@@ -871,7 +872,6 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         !(surround->border == other->surround->border) ||
         *background.get() != *other->background.get() ||
         visual->textDecoration != other->visual->textDecoration ||
-        !css3InheritedData->shadowDataEquivalent(*other->css3InheritedData.get()) ||
         css3InheritedData->userModify != other->css3InheritedData->userModify ||
         css3NonInheritedData->userSelect != other->css3NonInheritedData->userSelect ||
         css3NonInheritedData->userDrag != other->css3NonInheritedData->userDrag

@@ -1,3 +1,15 @@
+2006-04-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8352
+          CSS text-shadow does not repaint completely when changed
+
+        * manual-tests/dynamic-shadow.html: Added.
+        * rendering/render_style.cpp:
+        (WebCore::RenderStyle::diff): Changed to return Layout when text-shadow
+        changes.
+
 2006-04-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
