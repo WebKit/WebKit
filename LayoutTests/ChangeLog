@@ -1,5 +1,11 @@
 2006-04-19  Adele Peterson  <adele@apple.com>
 
+        Updated test to use webkit-block-placeholder instead of khtml-block-placeholder.
+
+        * editing/inserting/insert-div-010.html:
+
+2006-04-19  Adele Peterson  <adele@apple.com>
+
         Updating test results that were incorrectly checked in 
         when many of the table test results changed recently due to Color
         improvements.
