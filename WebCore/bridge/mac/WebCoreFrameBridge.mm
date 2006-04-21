@@ -2083,6 +2083,11 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return [DOMRange _rangeWith:m_frame->dragCaret().toRange().get()];
 }
 
+- (BOOL)isDragCaretRichlyEditable
+{
+    return m_frame->dragCaret().isContentRichlyEditable();
+}
+
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
     VisiblePosition position = [self _visiblePositionForPoint:point];

@@ -1,3 +1,30 @@
+2006-04-20 Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        WebKit part of:
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8276
+          REGRESSION (NativeTextField): Pasting a Finder item into a text field results in
+            a file: URL being pasted instead of just the file name
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8283
+          REGRESSION: File's path doesn't appear after dragging file into input field
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _plainTextFromPasteboard:]): Added method that tries to copy AppKit
+        text fields' logic for extracting plain text from the pasteboard.
+        (-[WebHTMLView _pasteAsPlainTextWithPasteboard:]): Added helper method.
+        (-[WebHTMLView _shouldInsertText:replacingDOMRange:givenAction:]):
+        (-[WebHTMLView _shouldReplaceSelectionWithText:givenAction:]):
+        (-[WebHTMLView readSelectionFromPasteboard:]): Paste as plain text if
+        rich text is not allowed.
+        (-[WebHTMLView validateUserInterfaceItem:]): Changed to not allow pasteAsRichText:
+        if the paste is not going to be handled by the DOM and the selection
+        does not allow pasting rich text.
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): Paste as plain text if
+        rich text is not allowed.
+        (-[WebHTMLView paste:]): Ditto.
+        (-[WebHTMLView pasteAsPlainText:]):
+
 2006-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

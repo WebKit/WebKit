@@ -1,3 +1,25 @@
+2006-04-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        WebCore part of:
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8276
+          REGRESSION (NativeTextField): Pasting a Finder item into a text field results in
+            a file: URL being pasted instead of just the file name
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8283
+          REGRESSION: File's path doesn't appear after dragging file into input field
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge isDragCaretRichlyEditable]): Added.
+        * manual-tests/plain-text-paste.html: Added.
+        * manual-tests/resources/plain-text-paste: Added.
+        * manual-tests/resources/plain-text-paste/1.textClipping: Added.
+        * manual-tests/resources/plain-text-paste/2.textClipping: Added.
+        * manual-tests/resources/plain-text-paste/3.gif: Added.
+        * manual-tests/resources/plain-text-paste/4.txt: Added.
+        * manual-tests/resources/plain-text-paste/5.webloc: Added.
+
 2006-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
