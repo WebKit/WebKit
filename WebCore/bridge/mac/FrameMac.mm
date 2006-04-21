@@ -1737,8 +1737,11 @@ void FrameMac::handleMouseMoveEvent(const MouseEventWithHitTestResults& event)
             layer = layer->parent();
         if (layer)
             handleAutoscroll(layer);
-        else
+        else {
+            if (!d->m_autoscrollTimer.isActive())
+                startAutoscrollTimer();
             [_bridge handleAutoscrollForMouseDragged:_currentEvent];
+        }
             
     } else {
         // If we allowed the other side of the bridge to handle a drag

@@ -2678,6 +2678,7 @@ void Frame::startAutoscrollTimer()
 
 void Frame::stopAutoscrollTimer()
 {
+    d->m_autoscrollLayer = 0;
     d->m_autoscrollTimer.stop();
 }
 

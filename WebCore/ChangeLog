@@ -1,3 +1,16 @@
+2006-04-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8496
+        REGRESSION: Dragging to select text around a text field causes the text field to scroll.
+
+        Test: manual-tests/text-field-autoscroll.html
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::handleMouseMoveEvent): Start the frame's autoscroll timer
+        even when we're calling over the bridge to handle the autoscroll.
+        * page/Frame.cpp: (WebCore::Frame::stopAutoscrollTimer): Clear out pointer to layer.
+
 2006-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         - And again.
