@@ -1,5 +1,19 @@
 2006-04-20  Adele Peterson  <adele@apple.com>
 
+        Updated test results for: 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8276
+          REGRESSION (NativeTextField): Pasting a Finder item into a text field results in
+            a file: URL being pasted instead of just the file name
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8283
+          REGRESSION: File's path doesn't appear after dragging file into input field
+
+        * editing/pasteboard/drop-text-without-selection-expected.txt:
+        * fast/forms/input-paste-undo-expected.txt:
+        * fast/forms/input-truncate-newline-expected.txt:
+        * fast/forms/plaintext-mode-2-expected.txt:
+
+2006-04-20  Adele Peterson  <adele@apple.com>
+
         Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8273
         REGRESSION: Read only input text field renders at the wrong height when value attribute is not present
 

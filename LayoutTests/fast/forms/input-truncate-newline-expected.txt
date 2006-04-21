@@ -6,7 +6,8 @@ EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML >
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV to 0 of DIV givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldInsertText:Test
+Failed replacingDOMRange:range from 0 of DIV to 0 of DIV givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV to 0 of #text > DIV toDOMRange:range from 4 of #text > DIV to 4 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
