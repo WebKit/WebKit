@@ -62,6 +62,9 @@
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
+@interface WebBaseNetscapePluginView (Internal)
+- (NSBitmapImageRep *)_printedPluginBitmap;
+@end
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
 
@@ -1237,10 +1240,21 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return;
     }
     
-    if ([NSGraphicsContext currentContextDrawingToScreen]) {
+    if ([NSGraphicsContext currentContextDrawingToScreen])
         [self sendUpdateEvent];
-    } else {
-        // Printing 2862383
+    else {
+        NSBitmapImageRep *printedPluginBitmap = [self _printedPluginBitmap];
+        if (printedPluginBitmap) {
+            // Flip the bitmap before drawing because the QuickDraw port is flipped relative
+            // to this view.
+            CGContextRef cgContext = [[NSGraphicsContext currentContext] graphicsPort];
+            CGContextSaveGState(cgContext);
+            NSRect bounds = [self bounds];
+            CGContextTranslateCTM(cgContext, 0.0, NSHeight(bounds));
+            CGContextScaleCTM(cgContext, 1.0, -1.0);
+            [printedPluginBitmap drawInRect:bounds];
+            CGContextRestoreGState(cgContext);
+        }
     }
 }
 
@@ -1883,6 +1897,75 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (void *)notifyData
 {
     return _notifyData;
+}
+
+@end
+
+@implementation WebBaseNetscapePluginView (Internal)
+
+- (NSBitmapImageRep *)_printedPluginBitmap
+{
+    // Cannot print plugins that do not implement NPP_Print
+    if (!NPP_Print)
+        return nil;
+
+    // This NSBitmapImageRep will share its bitmap buffer with a GWorld that the plugin will draw into.
+    // The bitmap is created in 32-bits-per-pixel ARGB format, which is the default GWorld pixel format.
+    NSBitmapImageRep *bitmap = [[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                         pixelsWide:window.width
+                                                         pixelsHigh:window.height
+                                                         bitsPerSample:8
+                                                         samplesPerPixel:4
+                                                         hasAlpha:YES
+                                                         isPlanar:NO
+                                                         colorSpaceName:NSDeviceRGBColorSpace
+                                                         bitmapFormat:NSAlphaFirstBitmapFormat
+                                                         bytesPerRow:0
+                                                         bitsPerPixel:0] autorelease];
+    ASSERT(bitmap);
+    
+    // Create a GWorld with the same underlying buffer into which the plugin can draw
+    Rect printGWorldBounds;
+    SetRect(&printGWorldBounds, 0, 0, window.width, window.height);
+    GWorldPtr printGWorld;
+    if (NewGWorldFromPtr(&printGWorld,
+                         k32ARGBPixelFormat,
+                         &printGWorldBounds,
+                         NULL,
+                         NULL,
+                         0,
+                         (Ptr)[bitmap bitmapData],
+                         [bitmap bytesPerRow]) != noErr) {
+        ERROR("Could not create GWorld for printing");
+        return nil;
+    }
+    
+    /// Create NPWindow for the GWorld
+    NPWindow printNPWindow;
+    printNPWindow.window = &printGWorld; // Normally this is an NP_Port, but when printing it is the actual CGrafPtr
+    printNPWindow.x = 0;
+    printNPWindow.y = 0;
+    printNPWindow.width = window.width;
+    printNPWindow.height = window.height;
+    printNPWindow.clipRect.top = 0;
+    printNPWindow.clipRect.left = 0;
+    printNPWindow.clipRect.right = window.width;
+    printNPWindow.clipRect.bottom = window.height;
+    printNPWindow.type = NPWindowTypeDrawable; // Offscreen graphics port as opposed to a proper window
+    
+    // Create embed-mode NPPrint
+    NPPrint npPrint;
+    npPrint.mode = NP_EMBED;
+    npPrint.print.embedPrint.window = printNPWindow;
+    npPrint.print.embedPrint.platformPrint = printGWorld;
+    
+    // Tell the plugin to print into the GWorld
+    NPP_Print(instance, &npPrint);
+
+    // Don't need the GWorld anymore
+    DisposeGWorld(printGWorld);
+        
+    return bitmap;
 }
 
 @end

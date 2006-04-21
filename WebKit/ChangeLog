@@ -1,3 +1,22 @@
+2006-04-20  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4476875> Support printing for embedded Netscape plugins
+
+        NOTE: This only works with the Flash plugin right now.  It appears that the other
+        major plugins either have awful printing support, or no printing support.  If someone
+        can find an example of any other embedded Netscape plugin printing in any browser on
+        the Mac, I will be happy to eat my own words!
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView drawRect:]):
+        When printing, get the printed bitmap via -_printedPluginBitmap, and draw it into the
+        plugin view.
+        (-[WebBaseNetscapePluginView _printedPluginBitmap]):
+        Call NPP_Print on the plugin to render it into a GWorld.  This GWorld has the same
+        underlying buffer as an NSBitmapImageRep, which is returned to the caller.
+
 2006-04-20 Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
