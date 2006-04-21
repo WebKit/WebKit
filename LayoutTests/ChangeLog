@@ -1,3 +1,22 @@
+2006-04-21  Beth Dakin  <bdakin@apple.com>
+
+        Adding a few more background-size tests that include background-
+        origin.
+
+        * fast/backgrounds/size/backgroundSize17-expected.checksum: Added.
+        * fast/backgrounds/size/backgroundSize17-expected.png: Added.
+        * fast/backgrounds/size/backgroundSize17-expected.txt: Added.
+        * fast/backgrounds/size/backgroundSize17.html: Added.
+        * fast/backgrounds/size/backgroundSize18-expected.checksum: Added.
+        * fast/backgrounds/size/backgroundSize18-expected.png: Added.
+        * fast/backgrounds/size/backgroundSize18-expected.txt: Added.
+        * fast/backgrounds/size/backgroundSize18.html: Added.
+        * fast/backgrounds/size/backgroundSize19-expected.checksum: Added.
+        * fast/backgrounds/size/backgroundSize19-expected.png: Added.
+        * fast/backgrounds/size/backgroundSize19-expected.txt: Added.
+        * fast/backgrounds/size/backgroundSize19.html: Added.
+        * fast/backgrounds/size/resources/flower.jpg: Added.
+
 2006-04-20  Geoffrey Garen  <ggaren@apple.com>
 
         Tests for global constants related to CSSRule, CSSValue, Event, and
