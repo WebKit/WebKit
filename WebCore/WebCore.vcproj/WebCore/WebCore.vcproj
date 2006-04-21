@@ -247,22 +247,6 @@
 			Name="DerivedSources"
 			>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSCSSRule.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSCSSValue.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSEvent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\DerivedSources\WebCore\CharsetData.cpp"
 				>
 			</File>
@@ -307,6 +291,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSRule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSValue.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSDocument.cpp"
 				>
 			</File>
@@ -335,6 +327,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSEvent.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSKeyboardEvent.cpp"
 				>
 			</File>
@@ -344,6 +340,10 @@
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSMutationEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.cpp"
 				>
 			</File>
 			<File

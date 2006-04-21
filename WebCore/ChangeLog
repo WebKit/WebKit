@@ -1,3 +1,9 @@
+2006-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        - Futile attempt to fix Windows build.
+        
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
 2006-04-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.
