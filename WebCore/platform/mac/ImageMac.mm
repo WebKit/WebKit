@@ -324,8 +324,8 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         CGRect fromRect;
         fromRect.origin.x = (destRect.x() - oneTileRect.origin.x) / scaleX;
         fromRect.origin.y = (destRect.y() - oneTileRect.origin.y) / scaleY;
-        fromRect.size.width = oneTileRect.size.width / scaleX;
-        fromRect.size.height = oneTileRect.size.height / scaleY;
+        fromRect.size.width = destRect.width() / scaleX;
+        fromRect.size.height = destRect.height() / scaleY;
 
         draw(ctxt, destRect, fromRect, CompositeSourceOver);
         return;

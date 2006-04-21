@@ -1,3 +1,20 @@
+2006-04-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8495 
+        REGRESSION: Sidebar on cnn.com is hosed
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::drawTiled): Use the size of the destination rect, 
+        not the oneTileRect in the no-pattern case.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended): Initialize 
+        scaledWidth and scaledHeight to the appropriate value (was wrong in 
+        scroll case), adjust position at appropriate times, and take out 
+        no-repeat clause for now since we don't have enough test cases yet 
+        to be sure we won't cause massive regressions. 
+
 2006-04-21  Darin Adler  <darin@apple.com>
 
         - attempt to fix Windows build after my last check-in

@@ -446,8 +446,8 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
         int sy = 0;
         int cw,ch;
         int cx,cy;
-        int scaledWidth = w;
-        int scaledHeight = h;
+        int scaledWidth, scaledHeight;
+
         
         // CSS2 chapter 14.2.1
 
@@ -469,6 +469,8 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
             
             int pw = w - hpab;
             int ph = h - vpab;
+            scaledWidth = pw;
+            scaledHeight = ph;
 
             int pixw = bg->imageSize().width();
             int pixh = bg->imageSize().height();
@@ -611,11 +613,11 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
             // If we are only repeating in one direction, we need to adjust the size and position of our
             // container to take our new scale into account.
             EBackgroundRepeat bgr = bgLayer->backgroundRepeat();
-            if ((bgr == REPEAT_X || bgr == NO_REPEAT) && scaledHeight < ch) {
+            if ((bgr == REPEAT_X || bgr == NO_REPEAT) && scaledHeight != ch) {
                 ch = scaledHeight;
                 cy -= bgLayer->backgroundYPosition().calcMinValue(scaledHeight - bg->imageSize().height());
             }
-            if ((bgr == REPEAT_Y || bgr == NO_REPEAT) && scaledWidth < cw) {
+            if ((bgr == REPEAT_Y || bgr == NO_REPEAT) && scaledWidth != cw) {
                 cw = scaledWidth;
                 cx -= bgLayer->backgroundXPosition().calcMinValue(scaledWidth - bg->imageSize().width());
             }        
@@ -624,15 +626,8 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
             scaledHeight = bg->imageSize().height();
         }
 
-        if (cw > 0 && ch > 0) {
-            if (bgLayer->backgroundRepeat() == NO_REPEAT) {
-                IntSize imageSize = bg->imageSize();
-                int originX = cx + int(fmodf(fmodf(-sx, imageSize.width()) - imageSize.width(), imageSize.width()));
-                int originY = cy + int(fmodf(fmodf(-sy, imageSize.height()) - imageSize.height(), imageSize.height()));
-                p->drawImage(bg->image(), IntRect(cx, cy, cw, ch), IntRect(IntPoint(originX, originY), imageSize));
-            } else
-                p->drawTiledImage(bg->image(), IntRect(cx, cy, cw, ch), IntPoint(sx, sy), IntSize(scaledWidth, scaledHeight));
-        }
+        if (cw > 0 && ch > 0)
+            p->drawTiledImage(bg->image(), IntRect(cx, cy, cw, ch), IntPoint(sx, sy), IntSize(scaledWidth, scaledHeight));
     }
     
     if (bgLayer->backgroundClip() != BGBORDER)
