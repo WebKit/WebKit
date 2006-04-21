@@ -17,6 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifndef JSCanvasRenderingContext2DBase_h
+#define JSCanvasRenderingContext2DBase_h
+
 #include "kjs_binding.h"
 
 namespace WebCore {
@@ -42,4 +45,8 @@ namespace WebCore {
         RefPtr<CanvasRenderingContext2D> m_impl;
     };
 
+    KJS::JSValue* toJS(KJS::ExecState*, CanvasRenderingContext2D*);
+
 }
+
+#endif

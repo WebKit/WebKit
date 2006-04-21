@@ -220,7 +220,7 @@ float KCanvasMarker::scaleY() const
     return m_scaleY;
 }
 
-void KCanvasMarker::draw(const FloatRect &rect, double x, double y, double strokeWidth, double angle)
+void KCanvasMarker::draw(GraphicsContext* context, const FloatRect& rect, double x, double y, double strokeWidth, double angle)
 {
     if(m_marker)
     {
@@ -239,8 +239,7 @@ void KCanvasMarker::draw(const FloatRect &rect, double x, double y, double strok
 
         // FIXME: PaintInfo should be passed into this method instead.
         // FIXME: bounding box fractions lost
-        GraphicsContext p;
-        RenderObject::PaintInfo info(&p, enclosingIntRect(rect), PaintPhaseForeground, 0, 0);
+        RenderObject::PaintInfo info(context, enclosingIntRect(rect), PaintPhaseForeground, 0, 0);
         m_marker->setLocalTransform(rotation.multiply(translation).qmatrix());
         static_cast<KCanvasContainer *>(m_marker)->setDrawsContents(true);
         m_marker->paint(info, 0, 0);

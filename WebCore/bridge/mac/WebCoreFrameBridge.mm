@@ -900,7 +900,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 
 - (void)drawRect:(NSRect)rect
 {
-    GraphicsContext context(nowPrinting(self));
+    GraphicsContext context([NSGraphicsContext currentContext]);
     context.setUsesInactiveTextBackgroundColor(!m_frame->displaysWithFocusAttributes());
     [self _setupRootForPrinting:YES];
     m_frame->paint(&context, enclosingIntRect(rect));

@@ -28,6 +28,7 @@
 
 #import "FloatRect.h"
 #import "FoundationExtras.h"
+#import "GraphicsContext.h"
 #import "PDFDocumentImage.h"
 #import "PlatformString.h"
 #import "WebCoreImageRendererFactory.h"
@@ -102,26 +103,13 @@ bool Image::supportsType(const String& type)
 }
 
 // Drawing Routines
-static CGContextRef graphicsContext(void* context)
-{
-    if (!context)
-        return (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    return (CGContextRef)context;
-}
 
-static void setCompositingOperation(CGContextRef context, Image::CompositeOperator op)
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:(NSCompositingOperation)op];
-    [pool release];
-}
-
-static void fillSolidColorInRect(CGColorRef color, CGRect rect, Image::CompositeOperator op, CGContextRef context)
+static void fillSolidColorInRect(CGColorRef color, CGRect rect, CompositeOperator op, CGContextRef context)
 {
     if (color) {
         CGContextSaveGState(context);
         CGContextSetFillColorWithColor(context, color);
-        setCompositingOperation(context, op);
+        setCompositeOperation(context, op);
         CGContextFillRect(context, rect);
         CGContextRestoreGState(context);
     }
@@ -148,8 +136,7 @@ void Image::checkForSolidColor(CGImageRef image)
             kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
 #endif
         if (bmap) {
-            setCompositingOperation(bmap, Image::CompositeCopy);
-            
+            setCompositeOperation(bmap, CompositeCopy);
             CGRect dst = { {0, 0}, {1, 1} };
             CGContextDrawImage(bmap, dst, image);
             if (pixel[3] > 0)
@@ -201,10 +188,9 @@ CGImageRef Image::getCGImageRef()
     return frameAtIndex(0);
 }
 
-void Image::drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
-                       CompositeOperator compositeOp, void* ctxt)
+void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
 {
-    CGContextRef context = graphicsContext(ctxt);
+    CGContextRef context = ctxt->platformContext();
     if (m_isPDF) {
         if (m_PDFDoc)
             m_PDFDoc->draw(srcRect, dstRect, compositeOp, 1.0, true, context);
@@ -247,7 +233,7 @@ void Image::drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
     }
 
     // Flip the coords.
-    setCompositingOperation(context, compositeOp);
+    setCompositeOperation(context, compositeOp);
     CGContextTranslateCTM(context, ir.origin.x, ir.origin.y);
     CGContextScaleCTM(context, 1, -1);
     CGContextTranslateCTM(context, 0, -ir.size.height);
@@ -292,19 +278,20 @@ static void drawPattern(void* info, CGContextRef context)
 
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
-void Image::tileInRect(const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& tileSize, void* ctxt)
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& tileSize)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
-    CGContextRef context = graphicsContext(ctxt);
+    CGContextRef context = ctxt->platformContext();
 
-    if (m_currentFrame == 0 && m_isSolidColor)
-        return fillSolidColorInRect(m_solidColor, destRect, Image::CompositeSourceOver, context);
+    if (m_currentFrame == 0 && m_isSolidColor) {
+        fillSolidColorInRect(m_solidColor, destRect, CompositeSourceOver, context);
+        return;
+    }
 
     CGPoint scaledPoint = srcPoint;
-    CGRect destination = destRect;
     CGSize intrinsicTileSize = size();
     CGSize scaledTileSize = intrinsicTileSize;
 
@@ -325,23 +312,22 @@ void Image::tileInRect(const FloatRect& destRect, const FloatPoint& srcPoint, co
 
     // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
     NSRect oneTileRect;
-    oneTileRect.origin.x = destination.origin.x + fmodf(fmodf(-scaledPoint.x, scaledTileSize.width) - 
+    oneTileRect.origin.x = destRect.x() + fmodf(fmodf(-scaledPoint.x, scaledTileSize.width) - 
                             scaledTileSize.width, scaledTileSize.width);
-    oneTileRect.origin.y = destination.origin.y + fmodf(fmodf(-scaledPoint.y, scaledTileSize.height) - 
+    oneTileRect.origin.y = destRect.y() + fmodf(fmodf(-scaledPoint.y, scaledTileSize.height) - 
                             scaledTileSize.height, scaledTileSize.height);
     oneTileRect.size.width = scaledTileSize.width;
     oneTileRect.size.height = scaledTileSize.height;
 
     // If the single image draw covers the whole area, then just draw once.
-    if (NSContainsRect(oneTileRect, NSMakeRect(destination.origin.x, destination.origin.y, 
-                                        destination.size.width, destination.size.height))) {
+    if (NSContainsRect(oneTileRect, destRect)) {
         CGRect fromRect;
-        fromRect.origin.x = (destination.origin.x - oneTileRect.origin.x) / scaleX;
-        fromRect.origin.y = (destination.origin.y - oneTileRect.origin.y) / scaleY;
+        fromRect.origin.x = (destRect.x() - oneTileRect.origin.x) / scaleX;
+        fromRect.origin.y = (destRect.y() - oneTileRect.origin.y) / scaleY;
         fromRect.size.width = oneTileRect.size.width / scaleX;
         fromRect.size.height = oneTileRect.size.height / scaleY;
 
-        drawInRect(destRect, FloatRect(fromRect), Image::CompositeSourceOver, context);
+        draw(ctxt, destRect, fromRect, CompositeSourceOver);
         return;
     }
 
@@ -362,9 +348,9 @@ void Image::tileInRect(const FloatRect& destRect, const FloatPoint& srcPoint, co
         CGFloat patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
-        setCompositingOperation(context, Image::CompositeSourceOver);
+        setCompositeOperation(context, CompositeSourceOver);
 
-        CGContextFillRect(context, destination);
+        CGContextFillRect(context, destRect);
 
         CGContextRestoreGState(context);
 
@@ -374,17 +360,17 @@ void Image::tileInRect(const FloatRect& destRect, const FloatPoint& srcPoint, co
     startAnimation();
 }
 
-void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRect,
-                               TileRule hRule, TileRule vRule, void* ctxt)
+// FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule)
 {    
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
-    CGContextRef context = graphicsContext(ctxt);
+    CGContextRef context = ctxt->platformContext();
     
     if (m_currentFrame == 0 && m_isSolidColor)
-        return fillSolidColorInRect(m_solidColor, dstRect, Image::CompositeSourceOver, context);
+        return fillSolidColorInRect(m_solidColor, dstRect, CompositeSourceOver, context);
 
     CGContextSaveGState(context);
     CGSize tileSize = srcRect.size();
@@ -445,7 +431,7 @@ void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRec
         CGFloat patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
-        setCompositingOperation(context, Image::CompositeSourceOver);
+        setCompositeOperation(context, CompositeSourceOver);
         
         CGContextFillRect(context, ir);
 

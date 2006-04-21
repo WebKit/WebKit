@@ -414,7 +414,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     }
 
     if (m_listImage && !m_listImage->isErrorImage()) {
-        p->drawImageAtPoint(m_listImage->image(), marker.location());
+        p->drawImage(m_listImage->image(), marker.location());
         if (selectionState() != SelectionNone)
             p->fillRect(selectionRect(), selectionColor(p));
         return;
@@ -433,15 +433,15 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 
     switch(style()->listStyleType()) {
     case DISC:
-        p->setBrush(color);
+        p->setFillColor(color.rgb());
         p->drawEllipse(marker);
         return;
     case CIRCLE:
-        p->setBrush(WebCore::Brush::NoBrush);
+        p->setFillColor(Color::transparent);
         p->drawEllipse(marker);
         return;
     case SQUARE:
-        p->setBrush(color);
+        p->setFillColor(color.rgb());
         p->drawRect(marker);
         return;
     case LNONE:
@@ -450,11 +450,11 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         if (!m_item.isEmpty()) {
             const Font& font = style()->font();
             if( style()->direction() == LTR) {
-                p->drawText(marker.x(), marker.y(), AlignLeft, m_item);
-                p->drawText(marker.x() + font.width(m_item), marker.y(), AlignLeft, ". ");
+                p->drawText(marker.location(), AlignLeft, m_item);
+                p->drawText(marker.location() + IntSize(font.width(m_item), 0), AlignLeft, ". ");
             } else {
-                p->drawText(marker.x(), marker.y(), AlignLeft, " .");
-                p->drawText(marker.x() + font.width(" ."), marker.y(), AlignLeft, m_item);
+                p->drawText(marker.location(), AlignLeft, " .");
+                p->drawText(marker.location() + IntSize(font.width(" ."), 0), AlignLeft, m_item);
             }
         }
     }

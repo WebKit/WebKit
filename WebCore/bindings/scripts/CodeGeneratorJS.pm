@@ -142,21 +142,22 @@ sub AddIncludesForType
   # When we're finished with the one-file-per-class 
   # reorganization, we don't need these special cases.
   
-  if ($type eq "DocumentType" or 
-      $type eq "Document" or
-      $type eq "DOMWindow" or
-      $type eq "DOMImplementation" or
-      $type eq "NodeList" or 
-      $type eq "Text" or 
-      $type eq "CharacterData" or
+  if ($type eq "Attr" or
       $type eq "CDATASection" or
       $type eq "CanvasPattern" or
-      $type eq "Range" or
-      $type eq "DocumentFragment" or
-      $type eq "Node" or
-      $type eq "Attr" or
+      $type eq "CharacterData" or
       $type eq "Comment" or
-      $type eq "Element") {
+      $type eq "DOMImplementation" or
+      $type eq "DOMWindow" or
+      $type eq "Document" or
+      $type eq "DocumentFragment" or
+      $type eq "DocumentType" or 
+      $type eq "Element" or
+      $type eq "HTMLCanvasElement" or
+      $type eq "Node" or
+      $type eq "NodeList" or 
+      $type eq "Range" or 
+      $type eq "Text") {
     $implIncludes{"${type}.h"} = 1;
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
@@ -192,7 +193,7 @@ sub AddIncludesForType
     $implIncludes{"CanvasGradient.h"} = 1;
     $implIncludes{"PlatformString.h"} = 1;
   } elsif ($codeGenerator->IsPrimitiveType($type) or
-           $type eq "DOMString") {
+           $type eq "DOMString" or $type eq "DOMObject") {
     # Do nothing
   } else {
     die "Don't know what to include for interface $type";
@@ -933,18 +934,18 @@ sub NativeToJSValue
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"JSDOMImplementation.h"} = 1;
     return "toJS(exec, $value)";
-  } elsif ($type eq "Node" or
-           $type eq "Text" or
-           $type eq "Comment" or
+  } elsif ($type eq "Attr" or
            $type eq "CDATASection" or
-           $type eq "DocumentType" or
+           $type eq "Comment" or
            $type eq "Document" or
-           $type eq "EntityReference" or
-           $type eq "ProcessingInstruction" or
-           $type eq "HTMLDocument" or
+           $type eq "DocumentFragment" or
+           $type eq "DocumentType" or
            $type eq "Element" or
-           $type eq "Attr" or
-           $type eq "DocumentFragment") {
+           $type eq "EntityReference" or
+           $type eq "HTMLDocument" or
+           $type eq "Node" or
+           $type eq "ProcessingInstruction" or
+           $type eq "Text") {
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"Comment.h"} = 1;
     $implIncludes{"CDATASection.h"} = 1;
@@ -995,6 +996,9 @@ sub NativeToJSValue
     return "toJS(exec, $value)";
   } elsif ($type eq "DOMWindow") {
     $implIncludes{"kjs_window.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "DOMObject") {
+    $implIncludes{"JSCanvasRenderingContext2DBase.h"} = 1;
     return "toJS(exec, $value)";
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";

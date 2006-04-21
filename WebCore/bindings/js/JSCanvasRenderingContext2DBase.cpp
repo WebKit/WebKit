@@ -24,10 +24,12 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
+#include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "JSCanvasGradient.h"
 #include "JSCanvasPattern.h"
-#include "kjs_html.h"
+#include "JSCanvasRenderingContext2D.h"
+#include "JSHTMLCanvasElement.h"
 
 #include "JSCanvasRenderingContext2DBaseTable.cpp"
 
@@ -126,14 +128,17 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
                     return throwError(exec, SyntaxError);
             }
             break;
-        case JSCanvasRenderingContext2DBase::StrokeRect:
+        case JSCanvasRenderingContext2DBase::StrokeRect: {
+            ExceptionCode ec;
             if (args.size() <= 4)
                 context->strokeRect(args[0]->toNumber(exec), args[1]->toNumber(exec),
-                    args[2]->toNumber(exec), args[3]->toNumber(exec));
+                    args[2]->toNumber(exec), args[3]->toNumber(exec), ec);
             else
                 context->strokeRect(args[0]->toNumber(exec), args[1]->toNumber(exec),
-                    args[2]->toNumber(exec), args[3]->toNumber(exec), args[4]->toNumber(exec));
+                    args[2]->toNumber(exec), args[3]->toNumber(exec), args[4]->toNumber(exec), ec);
+            setDOMException(exec, ec);
             break;
+        }
         case JSCanvasRenderingContext2DBase::SetShadow:
             switch (args.size()) {
                 case 3:
@@ -184,6 +189,7 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
             JSObject* o = static_cast<JSObject*>(args[0]);
             if (!o->isObject())
                 return throwError(exec, TypeError);
+            ExceptionCode ec;
             if (o->inherits(&JSHTMLElement::img_info)) {
                 HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
                 switch (args.size()) {
@@ -192,20 +198,22 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
                         break;
                     case 5:
                         context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec),
-                            args[3]->toNumber(exec), args[4]->toNumber(exec));
+                            args[3]->toNumber(exec), args[4]->toNumber(exec), ec);
+                        setDOMException(exec, ec);
                         break;
                     case 9:
                         context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec),
                             args[3]->toNumber(exec), args[4]->toNumber(exec),
                             args[5]->toNumber(exec), args[6]->toNumber(exec),
-                            args[7]->toNumber(exec), args[8]->toNumber(exec));
+                            args[7]->toNumber(exec), args[8]->toNumber(exec), ec);
+                        setDOMException(exec, ec);
                         break;
                     default:
                         return throwError(exec, SyntaxError);
                 }
                 break;
             }
-            if (o->inherits(&JSHTMLElement::canvas_info)) {
+            if (o->inherits(&JSHTMLCanvasElement::info)) {
                 HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
                 switch (args.size()) {
                     case 3:
@@ -213,20 +221,23 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
                         break;
                     case 5:
                         context->drawImage(canvas, args[1]->toNumber(exec), args[2]->toNumber(exec),
-                            args[3]->toNumber(exec), args[4]->toNumber(exec));
+                            args[3]->toNumber(exec), args[4]->toNumber(exec), ec);
+                        setDOMException(exec, ec);
                         break;
                     case 9:
                         context->drawImage(canvas, args[1]->toNumber(exec), args[2]->toNumber(exec),
                             args[3]->toNumber(exec), args[4]->toNumber(exec),
                             args[5]->toNumber(exec), args[6]->toNumber(exec),
-                            args[7]->toNumber(exec), args[8]->toNumber(exec));
+                            args[7]->toNumber(exec), args[8]->toNumber(exec), ec);
+                        setDOMException(exec, ec);
                         break;
                     default:
                         return throwError(exec, SyntaxError);
                 }
                 break;
             }
-            return throwError(exec, TypeError);
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return 0;
         }
         case JSCanvasRenderingContext2DBase::DrawImageFromRect: {
             JSObject* o = static_cast<JSObject*>(args[0]);
@@ -246,11 +257,24 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
             JSObject* o = static_cast<JSObject*>(args[0]);
             if (!o->isObject())
                 return throwError(exec, TypeError);
-            if (!o->inherits(&JSHTMLElement::img_info))
-                return throwError(exec, TypeError);
-            return toJS(exec,
-                context->createPattern(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
-                args[1]->toString(exec)).get());
+            if (o->inherits(&JSHTMLElement::img_info)) {
+                ExceptionCode ec;
+                JSValue* pattern = toJS(exec,
+                    context->createPattern(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
+                        args[1]->toString(exec), ec).get());
+                setDOMException(exec, ec);
+                return pattern;
+            }
+            if (o->inherits(&JSHTMLCanvasElement::info)) {
+                ExceptionCode ec;
+                JSValue* pattern = toJS(exec,
+                    context->createPattern(static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
+                        args[1]->toString(exec), ec).get());
+                setDOMException(exec, ec);
+                return pattern;
+            }
+            setDOMException(exec, TYPE_MISMATCH_ERR);
+            return 0;
     }
 
     return jsUndefined();
@@ -315,7 +339,7 @@ void JSCanvasRenderingContext2DBase::putValueProperty(ExecState* exec, int token
     }
 }
 
-JSCanvasRenderingContext2DBase::JSCanvasRenderingContext2DBase(ExecState*, PassRefPtr<WebCore::CanvasRenderingContext2D> impl)
+JSCanvasRenderingContext2DBase::JSCanvasRenderingContext2DBase(ExecState*, PassRefPtr<CanvasRenderingContext2D> impl)
     : m_impl(impl)
 {
 }
@@ -323,6 +347,11 @@ JSCanvasRenderingContext2DBase::JSCanvasRenderingContext2DBase(ExecState*, PassR
 JSCanvasRenderingContext2DBase::~JSCanvasRenderingContext2DBase()
 {
     ScriptInterpreter::forgetDOMObject(m_impl.get());
+}
+
+JSValue* toJS(ExecState* exec, CanvasRenderingContext2D* context)
+{
+    return cacheDOMObject<CanvasRenderingContext2D, JSCanvasRenderingContext2D>(exec, context);
 }
 
 }

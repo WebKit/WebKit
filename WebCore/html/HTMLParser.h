@@ -80,30 +80,28 @@ private:
 
     Document* document;
 
-    /*
-     * generate a node from the token
-     */
     PassRefPtr<Node> getNode(Token*);
-    bool textCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool commentCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool headCreateErrorCheck(Token*, RefPtr<Node>&);
     bool bodyCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool framesetCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool iframeCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool formCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool isindexCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool selectCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool canvasCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool commentCreateErrorCheck(Token*, RefPtr<Node>&);
     bool ddCreateErrorCheck(Token*, RefPtr<Node>&);
     bool dtCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool formCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool framesetCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool headCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool iframeCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool isindexCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool mapCreateErrorCheck(Token*, RefPtr<Node>&);
     bool nestedCreateErrorCheck(Token*, RefPtr<Node>&);
     bool nestedStyleCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool tableCellCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool tableSectionCreateErrorCheck(Token*, RefPtr<Node>&);
     bool noembedCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool noscriptCreateErrorCheck(Token*, RefPtr<Node>&);
     bool noframesCreateErrorCheck(Token*, RefPtr<Node>&);
     bool nolayerCreateErrorCheck(Token*, RefPtr<Node>&);
-    bool mapCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool noscriptCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool selectCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool tableCellCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool tableSectionCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool textCreateErrorCheck(Token*, RefPtr<Node>&);
 
     void processCloseTag(Token *);
 

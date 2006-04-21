@@ -71,30 +71,24 @@ bool Image::supportsType(const String& type)
 }
 
 // Drawing Routines
-static cairo_t* graphicsContext(void* context)
-{
-    // FIXME: If there is no context do we have some way of getting the current one?
-    return (cairo_t*)context;
-}
 
-static void setCompositingOperation(cairo_t* context, Image::CompositeOperator op, bool hasAlpha)
+static void setCompositingOperation(cairo_t* context, CompositeOperator op, bool hasAlpha)
 {
     // FIXME: Add support for more operators.
     // FIXME: This should really move to be a graphics context function once we have
     // a C++ abstraction for GraphicsContext.
-    if (op == Image::CompositeSourceOver && !hasAlpha)
-        op = Image::CompositeCopy;
+    if (op == CompositeSourceOver && !hasAlpha)
+        op = CompositeCopy;
 
-    if (op == Image::CompositeCopy)
+    if (op == CompositeCopy)
         cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
     else
         cairo_set_operator(context, CAIRO_OPERATOR_OVER);
 }
 
-void Image::drawInRect(const FloatRect& dst, const FloatRect& src,
-                       CompositeOperator compositeOp, void* ctxt)
+void Image::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatRect& src, CompositeOperator op)
 {
-    cairo_t* context = graphicsContext(ctxt);
+    cairo_t* context = ctxt->platformContext();
 
     if (!m_source.initialized())
         return;
@@ -110,7 +104,7 @@ void Image::drawInRect(const FloatRect& dst, const FloatRect& src,
     cairo_save(context);
 
     // Set the compositing operation.
-    setCompositingOperation(context, compositeOp, frameHasAlphaAtIndex(m_currentFrame));
+    setCompositingOperation(context, op, frameHasAlphaAtIndex(m_currentFrame));
     
     // If we're drawing a sub portion of the image or scaling then create
     // a pattern transformation on the image and draw the transformed pattern.
@@ -133,7 +127,7 @@ void Image::drawInRect(const FloatRect& dst, const FloatRect& src,
 
 }
 
-void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, void* ctxt)
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize)
 {
     if (!m_source.initialized())
         return;
@@ -180,20 +174,19 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, con
 
     // If the single image draw covers the whole area, then just draw once.
     if (dstTileRect.contains(dstRect)) {
-        drawInRect(dstRect,
-                   FloatRect(srcX * scaleX, srcY * scaleY, dstRect.width() * scaleX, dstRect.height() * scaleY),
-                   Image::CompositeSourceOver,
-                   ctxt);
+        draw(ctxt, dstRect,
+             FloatRect(srcX * scaleX, srcY * scaleY, dstRect.width() * scaleX, dstRect.height() * scaleY),
+             CompositeSourceOver);
         return;
     }
 
     // We have to tile.
-    cairo_t* context = graphicsContext(ctxt);
+    cairo_t* context = ctxt->platformContext();
 
     cairo_save(context);
 
     // Set the compositing operation.
-    // FIXME: This should be part of the tileInRect API.
+    // FIXME: This should be part of the drawTiled API.
     setCompositingOperation(context, CompositeSourceOver, frameHasAlphaAtIndex(m_currentFrame));
 
     cairo_translate(context, dstTileRect.x(), dstTileRect.y());
@@ -210,8 +203,7 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, con
     startAnimation();
 }
 
-void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRect,
-                               TileRule hRule, TileRule vRule, void* ctxt)
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule)
 {
     /* FIXME: IMPLEMENT
     if (!m_data)
@@ -224,7 +216,7 @@ void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRec
     CGContextRef context = graphicsContext(ctxt);
     
     if (m_currentFrame == 0 && m_isSolidColor)
-        return fillSolidColorInRect(m_solidColor, dstRect, Image::CompositeSourceOver, context);
+        return fillSolidColorInRect(m_solidColor, dstRect, CompositeSourceOver, context);
 
     CGContextSaveGState(context);
     CGSize tileSize = srcRect.size();
@@ -285,7 +277,7 @@ void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRec
         float patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
-        setCompositingOperation(context, Image::CompositeSourceOver);
+        setCompositingOperation(context, CompositeSourceOver);
         
         CGContextFillRect(context, ir);
 

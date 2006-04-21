@@ -31,13 +31,15 @@
 #include "IntRect.h"
 #include "Widget.h"
 
+using namespace std;
+
 namespace WebCore {
 
 struct GraphicsContextState {
-    GraphicsContextState() : paintingDisabled(false) { }
+    GraphicsContextState() : fillColor(Color::black), paintingDisabled(false) { }
     Font font;
     Pen pen;
-    Brush brush;
+    RGBA32 fillColor;
     bool paintingDisabled;
 };
         
@@ -133,26 +135,14 @@ void GraphicsContext::setPen(RGBA32 rgb)
     m_common->state.pen.setWidth(0);
 }
 
-void GraphicsContext::setBrush(const Brush& brush)
+void GraphicsContext::setFillColor(RGBA32 color)
 {
-    m_common->state.brush = brush;
+    m_common->state.fillColor = color;
 }
 
-void GraphicsContext::setBrush(Brush::BrushStyle style)
+const RGBA32 GraphicsContext::fillColor() const
 {
-    m_common->state.brush.setStyle(style);
-    m_common->state.brush.setColor(Color::black);
-}
-
-void GraphicsContext::setBrush(RGBA32 rgb)
-{
-    m_common->state.brush.setStyle(Brush::SolidPattern);
-    m_common->state.brush.setColor(rgb);
-}
-
-const Brush& GraphicsContext::brush() const
-{
-    return m_common->state.brush;
+    return m_common->state.fillColor;
 }
 
 void GraphicsContext::setUsesInactiveTextBackgroundColor(bool u)
@@ -191,87 +181,86 @@ bool GraphicsContext::printing() const
     return m_common->m_isForPrinting;
 }
 
-void GraphicsContext::drawImageAtPoint(Image* image, const IntPoint& p, Image::CompositeOperator compositeOperator)
+void GraphicsContext::drawImage(Image* image, const IntPoint& p, CompositeOperator op)
 {        
-    drawImage(image, p, 0, 0, -1, -1, compositeOperator);
+    drawImage(image, p, IntRect(0, 0, -1, -1), op);
 }
 
-void GraphicsContext::drawImageInRect(Image* image, const IntRect& r, Image::CompositeOperator compositeOperator)
+void GraphicsContext::drawImage(Image* image, const IntRect& r, CompositeOperator op)
 {
-    drawImage(image, r, 0, 0, -1, -1, compositeOperator);
+    drawImage(image, r, IntRect(0, 0, -1, -1), op);
 }
 
-void GraphicsContext::drawImage(Image* image, const IntPoint& dest,
-                         int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
+void GraphicsContext::drawImage(Image* image, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op)
 {
-    drawImage(image, IntRect(dest, IntSize(sw, sh)), sx, sy, sw, sh, compositeOperator, context);
+    drawImage(image, IntRect(dest, srcRect.size()), srcRect, op);
 }
 
-void GraphicsContext::drawImage(Image* image, const IntRect& dest,
-                         int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
+void GraphicsContext::drawImage(Image* image, const IntRect& dest, const IntRect& srcRect, CompositeOperator op)
 {
-    drawImage(image, FloatRect(dest), (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
+    drawImage(image, FloatRect(dest), srcRect, op);
 }
 
 // FIXME: We should consider removing this function and having callers just call the lower-level drawText directly.
 // FIXME: The int parameter should change to a HorizontalAlignment parameter.
 // FIXME: HorizontalAlignment should be moved into a separate header so it's not in Widget.h.
 // FIXME: We should consider changing this function to take a character pointer and length instead of a DeprecatedString.
-void GraphicsContext::drawText(int x, int y, int horizontalAlignment, const DeprecatedString& deprecatedString)
+void GraphicsContext::drawText(const IntPoint& point, int horizontalAlignment, const DeprecatedString& str)
 {
     if (paintingDisabled())
         return;
 
+    IntPoint p = point;
     if (horizontalAlignment == AlignRight)
-        x -= font().width(deprecatedString.unicode(), deprecatedString.length(), 0, 0);
-    drawText(x, y, 0, 0, deprecatedString.unicode(), deprecatedString.length(), 0, deprecatedString.length(), 0);
+        p.setX(p.x() - font().width(str.unicode(), str.length(), 0, 0));
+    drawText(p, 0, 0, str.unicode(), str.length(), 0, str.length(), 0);
 }
 
-void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,
+void GraphicsContext::drawText(const IntPoint& point, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,
                                TextDirection d, bool visuallyOrdered, int from, int to)
 {
     if (paintingDisabled())
         return;
 
-    int length = std::min(slen - pos, len);
+    int length = min(slen - pos, len);
     if (length <= 0)
         return;
     
-    font().drawText(this, x, y, tabWidth, xpos, str + pos, length, from, to, toAdd, d, visuallyOrdered);
+    font().drawText(this, point, tabWidth, xpos, str + pos, length, from, to, toAdd, d, visuallyOrdered);
 }
 
-void GraphicsContext::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,
+void GraphicsContext::drawHighlightForText(const IntPoint& point, int h, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,
                                            TextDirection d, bool visuallyOrdered, int from, int to, const Color& backgroundColor)
 {
     if (paintingDisabled())
         return;
         
-    int length = std::min(slen - pos, len);
+    int length = min(slen - pos, len);
     if (length <= 0)
         return;
 
-    return font().drawHighlightForText(this, x, y, h, tabWidth, xpos, str + pos, length, from, to,
+    return font().drawHighlightForText(this, point, h, tabWidth, xpos, str + pos, length, from, to,
                                        toAdd, d, visuallyOrdered, backgroundColor);
 }
 
-void GraphicsContext::drawLineForText(int x, int y, int yOffset, int width)
+void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int width)
 {
     if (paintingDisabled())
         return;
 
-    return font().drawLineForText(this, x, y, yOffset, width);
+    return font().drawLineForText(this, point, yOffset, width);
 }
 
 
-void GraphicsContext::drawLineForMisspelling(int x, int y, int width)
+void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
 {
     if (paintingDisabled())
         return;
 
-    return font().drawLineForMisspelling(this, x, y, width);
+    return font().drawLineForMisspelling(this, point, width);
 }
 
-int GraphicsContext::misspellingLineThickness() const
+int GraphicsContext::misspellingLineThickness()
 {
     return font().misspellingLineThickness(this);
 }
@@ -311,6 +300,49 @@ int GraphicsContext::focusRingOffset() const
 const Vector<IntRect>& GraphicsContext::focusRingRects() const
 {
     return m_common->m_focusRingRects;
+}
+
+void GraphicsContext::drawImage(Image* image, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+{
+    if (paintingDisabled())
+        return;
+
+    float tsw = src.width();
+    float tsh = src.height();
+    float tw = dest.width();
+    float th = dest.height();
+        
+    if (tsw == -1)
+        tsw = image->width();
+    if (tsh == -1)
+        tsh = image->height();
+
+    if (tw == -1)
+        tw = image->width();
+    if (th == -1)
+        th = image->height();
+
+    image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), op);
+}
+
+void GraphicsContext::drawTiledImage(Image* image, const IntRect& rect, const IntPoint& srcPoint, const IntSize& tileSize)
+{
+    if (paintingDisabled())
+        return;
+
+    image->drawTiled(this, rect, srcPoint, tileSize);
+}
+
+void GraphicsContext::drawTiledImage(Image* image, const IntRect& dest, const IntRect& srcRect, Image::TileRule hRule, Image::TileRule vRule)
+{
+    if (paintingDisabled())
+        return;
+
+    if (hRule == Image::StretchTile && vRule == Image::StretchTile)
+        // Just do a scale.
+        return drawImage(image, dest, srcRect);
+
+    image->drawTiled(this, dest, srcRect, hRule, vRule);
 }
 
 }

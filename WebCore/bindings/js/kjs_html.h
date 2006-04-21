@@ -26,12 +26,9 @@
 #include "JSElement.h"
 
 namespace WebCore {
-    class CanvasRenderingContext2D;
     class HTMLCollection;
     class HTMLDocument;
     class HTMLElement;
-    class CanvasGradient;
-    class CanvasPattern;
     class HTMLSelectElement;
     class HTMLTableCaptionElement;
     class HTMLTableSectionElement;
@@ -58,6 +55,8 @@ namespace KJS {
     static JSValue *namedItemGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
   };
 
+  KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(JSHTMLElementProto, WebCore::JSElementProto)
+
   class JSHTMLElement : public WebCore::JSElement {
   public:
     JSHTMLElement(ExecState *exec, WebCore::HTMLElement *e);
@@ -78,7 +77,7 @@ namespace KJS {
       button_info, label_info, fieldSet_info, legend_info, ul_info, ol_info,
       dl_info, dir_info, menu_info, li_info, div_info, p_info, heading_info,
       blockQuote_info, q_info, pre_info, br_info, baseFont_info, font_info,
-      hr_info, mod_info, a_info, canvas_info, img_info, object_info, param_info,
+      hr_info, mod_info, a_info, img_info, object_info, param_info,
       applet_info, map_info, area_info, script_info, table_info,
       caption_info, col_info, tablesection_info, tr_info,
       tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
@@ -94,7 +93,7 @@ namespace KJS {
       button_accessors, label_accessors, fieldSet_accessors, legend_accessors, ul_accessors, ol_accessors,
       dl_accessors, dir_accessors, menu_accessors, li_accessors, div_accessors, p_accessors, heading_accessors,
       blockQuote_accessors, q_accessors, pre_accessors, br_accessors, baseFont_accessors, font_accessors,
-      hr_accessors, mod_accessors, a_accessors, canvas_accessors, img_accessors, object_accessors, param_accessors,
+      hr_accessors, mod_accessors, a_accessors, img_accessors, object_accessors, param_accessors,
       applet_accessors, map_accessors, area_accessors, script_accessors, table_accessors,
       caption_accessors, col_accessors, tablesection_accessors, tr_accessors,
       tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;

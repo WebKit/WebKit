@@ -70,14 +70,15 @@ struct MarkerData {
 };
 
 struct DrawMarkersData {
-    DrawMarkersData(KCanvasMarker *startMarker, KCanvasMarker *midMarker, double strokeWidth);
-    
+    DrawMarkersData(GraphicsContext*, KCanvasMarker* startMarker, KCanvasMarker* midMarker, double strokeWidth);
+    GraphicsContext* context;
     int elementIndex;
     MarkerData previousMarkerData;
-    KCanvasMarker *midMarker;
+    KCanvasMarker* midMarker;
 };
 
-DrawMarkersData::DrawMarkersData(KCanvasMarker *start, KCanvasMarker *mid, double strokeWidth)
+DrawMarkersData::DrawMarkersData(GraphicsContext* c, KCanvasMarker *start, KCanvasMarker *mid, double strokeWidth)
+    : context(c)
 {
     elementIndex = 0;
     midMarker = mid;
@@ -88,7 +89,7 @@ DrawMarkersData::DrawMarkersData(KCanvasMarker *start, KCanvasMarker *mid, doubl
     previousMarkerData.type = Start;
 }
 
-void drawMarkerWithData(MarkerData &data)
+static void drawMarkerWithData(GraphicsContext* context, MarkerData &data)
 {
     if (!data.marker)
         return;
@@ -108,7 +109,7 @@ void drawMarkerWithData(MarkerData &data)
     else // (data.type == End)
         angle = inslope;
     
-    data.marker->draw(FloatRect(), data.origin.x, data.origin.y, data.strokeWidth, angle);
+    data.marker->draw(context, FloatRect(), data.origin.x, data.origin.y, data.strokeWidth, angle);
 }
 
 static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, const CGPathElement *element)
@@ -133,7 +134,7 @@ static inline void updateMarkerDataForElement(MarkerData &previousMarkerData, co
     }
 }
 
-void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
+static void drawStartAndMidMarkers(void *info, const CGPathElement *element)
 {
     DrawMarkersData &data = *(DrawMarkersData *)info;
 
@@ -148,7 +149,7 @@ void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
 
     // Draw the marker for the previous element
     if (elementIndex != 0)
-        drawMarkerWithData(previousMarkerData);
+        drawMarkerWithData(data.context, previousMarkerData);
 
     // Update our marker data for this element
     updateMarkerDataForElement(previousMarkerData, element);
@@ -162,7 +163,7 @@ void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
     data.elementIndex++;
 }
 
-void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvasPath *path) const
+void KCanvasItemQuartz::drawMarkersIfNeeded(GraphicsContext* context, const FloatRect& rect, const KCanvasPath *path) const
 {
     Document *doc = document();
     const SVGRenderStyle *svgStyle = style()->svgStyle();
@@ -176,14 +177,14 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvas
 
     double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
 
-    DrawMarkersData data(startMarker, midMarker, strokeWidth);
+    DrawMarkersData data(context, startMarker, midMarker, strokeWidth);
 
     CGPathRef cgPath = static_cast<const KCanvasPathQuartz*>(path)->cgPath();
-    CGPathApply(cgPath, &data, DrawStartAndMidMarkers);
+    CGPathApply(cgPath, &data, drawStartAndMidMarkers);
 
     data.previousMarkerData.marker = endMarker;
     data.previousMarkerData.type = End;
-    drawMarkerWithData(data.previousMarkerData);
+    drawMarkerWithData(context, data.previousMarkerData);
 }
 
 }

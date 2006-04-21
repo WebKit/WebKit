@@ -26,10 +26,12 @@
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
+#include "CompositeOperator.h"
 #include "DeprecatedArray.h"
 #include "ImageSource.h"
 #include "IntSize.h"
 #include "FloatSize.h"
+#include <kxmlcore/Noncopyable.h>
 #include <kxmlcore/Vector.h>
 
 #if __APPLE__
@@ -55,6 +57,7 @@ namespace WebCore {
 
 class FloatPoint;
 class FloatRect;
+class GraphicsContext;
 class IntRect;
 class IntSize;
 class String;
@@ -102,7 +105,8 @@ struct FrameData {
 // Image Class
 // =================================================
 
-class Image {
+class Image : Noncopyable {
+    friend class GraphicsContext;
 public:
     Image();
     Image(ImageAnimationObserver* observer, bool isPDF = false);
@@ -137,53 +141,25 @@ public:
     // Typically the CachedImage that owns us.
     ImageAnimationObserver* animationObserver() const { return m_animationObserver; }
 
-    // Note: These constants exactly match the NSCompositeOperator constants of AppKit.
-    enum CompositeOperator {
-        CompositeClear,
-        CompositeCopy,
-        CompositeSourceOver,
-        CompositeSourceIn,
-        CompositeSourceOut,
-        CompositeSourceAtop,
-        CompositeDestinationOver,
-        CompositeDestinationIn,
-        CompositeDestinationOut,
-        CompositeDestinationAtop,
-        CompositeXOR,
-        CompositePlusDarker,
-        CompositeHighlight,
-        CompositePlusLighter
-    };
-
     enum TileRule { StretchTile, RoundTile, RepeatTile };
 
-    static CompositeOperator compositeOperatorFromString(const String&);
-
-    // Drawing routines.
-    void drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
-                    CompositeOperator compositeOp, void* context);
-    void tileInRect(const FloatRect& destRect, const FloatPoint& point,
-                    const FloatSize& tileSize, void* context);
-    void scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRect,
-                            TileRule hRule, TileRule vRule, void* context);
-
 #if __APPLE__
-    // Apple Image accessors for native formats.
+    // Accessors for native image formats.
     CGImageRef getCGImageRef();
     NSImage* getNSImage();
     CFDataRef getTIFFRepresentation();
-    
+
     // PDF
     void setIsPDF() { m_isPDF = true; }
-    
+
 private:
-    void checkForSolidColor(CGImageRef image);
+    void checkForSolidColor(CGImageRef);
 #endif
 
 private:
-    // We do not allow images to be assigned to or copied.
-    Image(const Image&);
-    Image &operator=(const Image&);
+    void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
+    void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize);
+    void drawTiled(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule);
 
     // Decodes and caches a frame. Never accessed except internally.
     void cacheFrame(size_t index);

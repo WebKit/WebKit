@@ -43,11 +43,11 @@ const int defaultWidth = 300;
 const int defaultHeight = 150;
 
 HTMLCanvasElement::HTMLCanvasElement(Document* doc)
-    : HTMLElement(canvasTag, doc), m_size(defaultWidth, defaultHeight)
-    , m_createdDrawingContext(false), m_data(0)
-#if __APPLE__
+    : HTMLElement(canvasTag, doc)
+    , m_size(defaultWidth, defaultHeight)
+    , m_createdDrawingContext(false)
+    , m_data(0)
     , m_drawingContext(0)
-#endif
 {
 }
 
@@ -56,9 +56,7 @@ HTMLCanvasElement::~HTMLCanvasElement()
     if (m_2DContext)
         m_2DContext->detachCanvas();
     fastFree(m_data);
-#if __APPLE__
-    CGContextRelease(m_drawingContext);
-#endif
+    delete m_drawingContext;
 }
 
 void HTMLCanvasElement::parseMappedAttribute(MappedAttribute* attr)
@@ -89,8 +87,7 @@ void HTMLCanvasElement::setWidth(int value)
 
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 {
-    // FIXME: Web Applications 1.0 says "2d" only, but the code here matches historical behavior of WebKit.
-    if (type.isNull() || type == "2d" || type == "2D") {
+    if (type == "2d") {
         if (!m_2DContext)
             m_2DContext = new CanvasRenderingContext2D(this);
         return m_2DContext.get();
@@ -129,10 +126,8 @@ void HTMLCanvasElement::reset()
     m_createdDrawingContext = false;
     fastFree(m_data);
     m_data = 0;
-#if __APPLE__
-    CGContextRelease(m_drawingContext);
+    delete m_drawingContext;
     m_drawingContext = 0;
-#endif
 }
 
 void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
@@ -141,7 +136,7 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
         return;
 #if __APPLE__
     if (CGImageRef image = createPlatformImage()) {
-        CGContextDrawImage(p->currentCGContext(), r, image);
+        CGContextDrawImage(p->platformContext(), r, image);
         CGImageRelease(image);
     }
 #endif
@@ -165,27 +160,29 @@ void HTMLCanvasElement::createDrawingContext() const
         return;
 #if __APPLE__
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    m_drawingContext = CGBitmapContextCreate(m_data, w, height(), 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextRef bitmapContext = CGBitmapContextCreate(m_data, w, height(), 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
+    m_drawingContext = new GraphicsContext(bitmapContext, false, false);
+    CGContextRelease(bitmapContext);
 #endif
 }
 
-#if __APPLE__
-
-CGContextRef HTMLCanvasElement::drawingContext() const
+GraphicsContext* HTMLCanvasElement::drawingContext() const
 {
     if (!m_createdDrawingContext)
         createDrawingContext();
     return m_drawingContext;
 }
 
+#if __APPLE__
+
 CGImageRef HTMLCanvasElement::createPlatformImage() const
 {
-    CGContextRef context = drawingContext();
+    GraphicsContext* context = drawingContext();
     if (!context)
         return 0;
-    CGContextFlush(context);
-    return CGBitmapContextCreateImage(context);
+    CGContextFlush(context->platformContext());
+    return CGBitmapContextCreateImage(context->platformContext());
 }
 
 #endif

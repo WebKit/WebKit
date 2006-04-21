@@ -24,19 +24,18 @@
 #if SVG_SUPPORT
 #include "RenderSVGImage.h"
 
+#include "Attr.h"
 #include "GraphicsContext.h"
 #include "KCanvasMaskerQuartz.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
 #include "KCanvasRenderingStyle.h"
 #include "KCanvasResourcesQuartz.h"
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLength.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGImageElement.h"
-#include "Attr.h"
-
 #include "SVGImageElement.h"
-
 #include "ksvg.h"
+#include <kxmlcore/OwnPtr.h>
 
 namespace WebCore {
 
@@ -132,13 +131,14 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     KRenderingDevice* device = renderingDevice();
     KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
-    if (!context) {
+    if (context)
+        paintInfo.p->save();
+    else {
         // Need to push a device context on the stack if empty.
         context = paintInfo.p->createRenderingDeviceContext();
         device->pushContext(context);
         shouldPopContext = true;
-    } else
-        paintInfo.p->save();
+    }
 
     context->concatCTM(QMatrix().translate(parentX, parentY));
     context->concatCTM(localTransform());
@@ -157,32 +157,35 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->prepareFilter(boundingBox);
     
+    OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
+    PaintInfo pi = paintInfo;
+    pi.p = c.get();
+
     int x = 0, y = 0;
-    if (!shouldPaint(paintInfo, x, y))
+    if (!shouldPaint(pi, x, y))
         return;
         
     SVGImageElement *imageElt = static_cast<SVGImageElement *>(node());
         
     if (imageElt->preserveAspectRatio()->baseVal()->align() == SVG_PRESERVEASPECTRATIO_NONE)
-        RenderImage::paint(paintInfo, 0, 0);
+        RenderImage::paint(pi, 0, 0);
     else {
         FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
         FloatRect srcRect(0, 0, image()->width(), image()->height());
         adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio()->baseVal());
-        paintInfo.p->drawImage(image(), destRect,
-                                    srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), 
-                                    Image::CompositeSourceOver);
+        c->drawImage(image(), destRect, srcRect);
     }
 
     if (filter)
         filter->applyFilter(boundingBox);
     
     // restore drawing state
-    if (shouldPopContext) {
+    if (!shouldPopContext)
+        paintInfo.p->restore();
+    else {
         device->popContext();
         delete context;
-    } else
-        paintInfo.p->restore();
+    }
 }
 
 FloatRect RenderSVGImage::relativeBBox(bool includeStroke) const

@@ -121,8 +121,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
         return;
     
     cairo_t* context = m_data->context;
-    if (brush().style() != Brush::NoBrush)
-        fillRectSourceOver(context, rect, brush().color());
+    if (fillColor() & 0xFF000000)
+        fillRectSourceOver(context, rect, fillColor());
 
     if (pen().style() != Pen::NoPen) {
         setColorFromPen();
@@ -134,9 +134,9 @@ void GraphicsContext::drawRect(const IntRect& rect)
     }
 }
 
-void GraphicsContext::setColorFromBrush()
+void GraphicsContext::setColorFromFillColor()
 {
-    setColor(m_data->context, brush().color());
+    setColor(m_data->context, fillColor());
 }
   
 void GraphicsContext::setColorFromPen()
@@ -283,8 +283,8 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     cairo_arc(context, 0., 0., 1., 0., 2 * M_PI);
     cairo_restore(context);
 
-    if (brush().style() != Brush::NoBrush) {
-        setColorFromBrush();
+    if (fillColor() & 0xFF000000) {
+        setColorFromFillColor();
         cairo_fill(context);
     }
     if (pen().style() != Pen::NoPen) {
@@ -298,7 +298,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
 }
 
 void GraphicsContext::drawArc(int x, int y, int w, int h, int a, int alen)
-{ 
+{
     // Only supports arc on circles.  That's all khtml needs.
     ASSERT(w == h);
 
@@ -336,8 +336,8 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
         cairo_line_to(context, points[i].x(), points[i].y());
     cairo_close_path(context);
 
-    if (brush().style() != Brush::NoBrush) {
-        setColorFromBrush();
+    if (fillColor() & 0xFF000000) {
+        setColorFromFillColor();
         cairo_set_fill_rule(context, CAIRO_FILL_RULE_EVEN_ODD);
         cairo_fill(context);
     }
@@ -348,59 +348,6 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
         cairo_stroke(context);
     }
     cairo_restore(context);
-}
-
-void GraphicsContext::drawImage(Image* image, const FloatRect& destRect, 
-                              float sx, float sy, float sw, float sh, Image::CompositeOperator compositeOperator, void* context)
-{
-    if (!context)
-        context = m_data->context;
-
-    if (paintingDisabled())
-        return;
-
-    float tsw = sw;
-    float tsh = sh;
-    FloatRect dest = destRect;
-            
-    if (tsw == -1)
-        tsw = image->width();
-    if (tsh == -1)
-        tsh = image->height();
-
-    if (dest.width() == -1)
-        dest.setWidth(image->width());
-    if (dest.height() == -1)
-        dest.setHeight(image->height());
-
-    image->drawInRect(dest, FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
-}
-
-void GraphicsContext::drawTiledImage(Image* image, const IntRect& dest, const IntPoint& srcPoint, const IntSize& tileSize, void* context)
-{
-    if (!context)
-        context = m_data->context;
-
-    if (paintingDisabled())
-        return;
-    
-    image->tileInRect(dest, srcPoint, tileSize, context);
-}
-
-void GraphicsContext::drawScaledAndTiledImage(Image* image, const IntRect& dest, int sx, int sy, int sw, int sh, 
-    Image::TileRule hRule, Image::TileRule vRule, void* context)
-{
-    if (!context)
-        context = m_data->context;
-
-    if (paintingDisabled())
-        return;
-
-    if (hRule == Image::StretchTile && vRule == Image::StretchTile)
-        // Just do a scale.
-        return drawImage(image, dest, sx, sy, sw, sh, Image::CompositeSourceOver, context);
-
-    image->scaleAndTileInRect(dest, FloatRect(sx, sy, sw, sh), hRule, vRule, context);
 }
 
 void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
@@ -444,6 +391,14 @@ void GraphicsContext::drawFocusRing(const Color& color)
     Color ringColor(color.red(), color.green(), color.blue(), 127);
     setColor(m_data->context, ringColor);
     cairo_stroke(m_data->context);
+}
+
+void GraphicsContext::setFocusRingClip(const IntRect&)
+{
+}
+
+void GraphicsContext::clearFocusRingClip()
+{
 }
 
 }

@@ -626,11 +626,10 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
 
         if (cw > 0 && ch > 0) {
             if (bgLayer->backgroundRepeat() == NO_REPEAT) {
-                int imageSizeX = bg->imageSize().width();
-                int imageSizeY = bg->imageSize().height();
-                int originX = cx + int(fmodf(fmodf(-sx, imageSizeX) - imageSizeX, imageSizeX));
-                int originY = cy + int(fmodf(fmodf(-sy, imageSizeY) - imageSizeY, imageSizeY));
-                p->drawImage(bg->image(), IntRect(cx, cy, cw, ch), originX, originY, imageSizeX, imageSizeY);
+                IntSize imageSize = bg->imageSize();
+                int originX = cx + int(fmodf(fmodf(-sx, imageSize.width()) - imageSize.width(), imageSize.width()));
+                int originY = cy + int(fmodf(fmodf(-sy, imageSize.height()) - imageSize.height(), imageSize.height()));
+                p->drawImage(bg->image(), IntRect(cx, cy, cw, ch), IntRect(IntPoint(originX, originY), imageSize));
             } else
                 p->drawTiledImage(bg->image(), IntRect(cx, cy, cw, ch), IntPoint(sx, sy), IntSize(scaledWidth, scaledHeight));
         }
@@ -646,7 +645,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
 void RenderBox::outlineBox(GraphicsContext* p, int _tx, int _ty, const char* color)
 {
     p->setPen(Pen(Color(color), 1, Pen::DotLine));
-    p->setBrush(WebCore::Brush::NoBrush);
+    p->setFillColor(Color::transparent);
     p->drawRect(IntRect(_tx, _ty, m_width, m_height));
 }
 

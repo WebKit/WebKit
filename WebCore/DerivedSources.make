@@ -57,6 +57,7 @@ all : \
     JSDOMWindow.h \
     JSElement.h \
     JSEntity.h \
+    JSHTMLCanvasElement.h \
     JSKeyboardEvent.h \
     JSMouseEvent.h \
     JSMutationEvent.h \

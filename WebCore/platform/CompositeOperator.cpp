@@ -23,51 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLImagePattern_h
-#define HTMLImagePattern_h
+#include "config.h"
+#include "CompositeOperator.h"
 
-#include "CachedObjectClient.h"
-#include "Shared.h"
-
-#if __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
+#include "PlatformString.h"
 
 namespace WebCore {
 
-    class CachedImage;
-    class String;
+static const char* const compositeOperatorNames[] = {
+    "clear",
+    "copy",
+    "source-over",
+    "source-in",
+    "source-out",
+    "source-atop",
+    "destination-over",
+    "destination-in",
+    "destination-out",
+    "destination-atop",
+    "xor",
+    "darker",
+    "highlight",
+    "lighter"
+};
 
-    typedef int ExceptionCode;
+bool parseCompositeOperator(const String& s, CompositeOperator& op)
+{
+    const int num = sizeof(compositeOperatorNames) / sizeof(compositeOperatorNames[0]);
+    for (int i = 0; i < num; i++)
+        if (s == compositeOperatorNames[i]) {
+            op = static_cast<CompositeOperator>(i);
+            return true;
+        }
+    return false;
+}
 
-    class CanvasPattern : public Shared<CanvasPattern>, CachedObjectClient {
-    public:
-        static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
+String compositeOperatorName(CompositeOperator op)
+{
+    return compositeOperatorNames[op];
+}
 
-#if __APPLE__
-        CanvasPattern(CGImageRef, bool repeatX, bool repeatY);
-#endif
-        CanvasPattern(CachedImage*, bool repeatX, bool repeatY);
-        ~CanvasPattern();
-
-#if __APPLE__
-        CGImageRef platformImage() const { return m_platformImage; }
-#endif
-        CachedImage* cachedImage() const { return m_cachedImage; }
-
-#if __APPLE__
-        CGPatternRef createPattern(const CGAffineTransform&);
-#endif
-
-    private:
-#if __APPLE__
-        const CGImageRef m_platformImage;
-#endif
-        CachedImage* const m_cachedImage;
-        const bool m_repeatX;
-        const bool m_repeatY;
-    };
-
-} // namespace WebCore
-
-#endif
+}

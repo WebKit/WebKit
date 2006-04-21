@@ -211,9 +211,9 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 
         if (cWidth > 2 && cHeight > 2) {
             if (!errorOccurred()) {
-                p->setPen (Color::lightGray);
-                p->setBrush (WebCore::Brush::NoBrush);
-                p->drawRect (IntRect(_tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight));
+                p->setPen(Color::lightGray);
+                p->setFillColor(Color::transparent);
+                p->drawRect(IntRect(_tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight));
             }
             
             bool errorPictureDrawn = false;
@@ -231,7 +231,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                     centerY = 0;
                 imageX = leftBorder + leftPad + centerX;
                 imageY = topBorder + topPad + centerY;
-                p->drawImageAtPoint(image(), IntPoint(_tx + imageX, _ty + imageY));
+                p->drawImage(image(), IntPoint(_tx + imageX, _ty + imageY));
                 errorPictureDrawn = true;
             }
             
@@ -250,9 +250,9 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 int textWidth = font.width(text);
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && font.height() <= imageY)
-                        p->drawText(ax, ay+ascent, 0, text);
+                        p->drawText(IntPoint(ax, ay + ascent), 0, text);
                 } else if (usableWidth >= textWidth && cHeight >= font.height())
-                    p->drawText(ax, ay+ascent, 0, text);
+                    p->drawText(IntPoint(ax, ay + ascent), 0, text);
             }
         }
     }
@@ -260,8 +260,8 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         IntRect rect(IntPoint(_tx + leftBorder + leftPad, _ty + topBorder + topPad), IntSize(cWidth, cHeight));
         
         HTMLImageElement* imageElt = (element() && element()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(element()) : 0;
-        Image::CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : Image::CompositeSourceOver;
-        p->drawImageInRect(image(), rect, compositeOperator);
+        CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
+        p->drawImage(image(), rect, compositeOperator);
 
         if (drawSelectionTint)
             p->fillRect(selectionRect(), selectionColor(p));

@@ -38,6 +38,7 @@ namespace WebCore {
 
 class FontDataSet;
 class GraphicsContext;
+class IntPoint;
 class IntRect;
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
@@ -70,21 +71,21 @@ public:
     
     void update() const;
 
-    void drawText(const GraphicsContext*, int x, int y, int tabWidth, int xpos,
+    void drawText(GraphicsContext*, const IntPoint&, int tabWidth, int xpos,
                   const QChar*, int len, int from, int to, int toAdd, 
                   TextDirection, bool visuallyOrdered) const;
-    void drawHighlightForText(const GraphicsContext*, int x, int y, int h, int tabWidth, int xpos,
+    void drawHighlightForText(GraphicsContext*, const IntPoint&, int h, int tabWidth, int xpos,
                               const QChar*, int len, int from, int to, int toAdd, 
                               TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const;
-    void drawLineForText(const GraphicsContext*, int x, int y, int yOffset, int width) const;
-    void drawLineForMisspelling(const GraphicsContext*, int x, int y, int width) const;
-    int misspellingLineThickness(const GraphicsContext*) const;
+    void drawLineForText(GraphicsContext*, const IntPoint&, int yOffset, int width) const;
+    void drawLineForMisspelling(GraphicsContext*, const IntPoint&, int width) const;
+    int misspellingLineThickness(GraphicsContext*) const;
 
     float floatWidth(const QChar*, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding = true) const;
     
     int checkSelectionPoint(const QChar*, int slen, int pos, int len, int toAdd, int tabWidth, int xpos,
         int x, TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const;
-    IntRect selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
+    IntRect selectionRectForText(const IntPoint&, int h, int tabWidth, int xpos, 
         const QChar*, int slen, int pos, int len, int width,
         bool rtl, bool visuallyOrdered = false, int from = -1, int to = -1) const;
     

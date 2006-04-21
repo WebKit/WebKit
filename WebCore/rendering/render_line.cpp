@@ -972,7 +972,7 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
         // FIXME: Support multiple shadow effects.  Need more from the CG API before we can do this.
         bool setShadow = false;
         if (styleToUse->textShadow()) {
-            p->setShadow(styleToUse->textShadow()->x, styleToUse->textShadow()->y,
+            p->setShadow(IntSize(styleToUse->textShadow()->x, styleToUse->textShadow()->y),
                          styleToUse->textShadow()->blur, styleToUse->textShadow()->color);
             setShadow = true;
         }
@@ -990,15 +990,15 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
 
         if (deco & UNDERLINE && !paintedChildren) {
             p->setPen(underline);
-            p->drawLineForText(_tx, _ty, m_baseline, w);
+            p->drawLineForText(IntPoint(_tx, _ty), m_baseline, w);
         }
         if (deco & OVERLINE && !paintedChildren) {
             p->setPen(overline);
-            p->drawLineForText(_tx, _ty, 0, w);
+            p->drawLineForText(IntPoint(_tx, _ty), 0, w);
         }
         if (deco & LINE_THROUGH && paintedChildren) {
             p->setPen(linethrough);
-            p->drawLineForText(_tx, _ty, 2*m_baseline/3, w);
+            p->drawLineForText(IntPoint(_tx, _ty), 2*m_baseline/3, w);
         }
 
         if (setShadow)
@@ -1079,13 +1079,13 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
         p->setPen(textColor);
     bool setShadow = false;
     if (_style->textShadow()) {
-        p->setShadow(_style->textShadow()->x, _style->textShadow()->y,
+        p->setShadow(IntSize(_style->textShadow()->x, _style->textShadow()->y),
                      _style->textShadow()->blur, _style->textShadow()->color);
         setShadow = true;
     }
 
     const String& str = m_str;
-    p->drawText(m_x + _tx, m_y + _ty + m_baseline, 0, 0, str.unicode(), str.length(),
+    p->drawText(IntPoint(m_x + _tx, m_y + _ty + m_baseline), 0, 0, str.unicode(), str.length(),
         0, str.length(), 0, LTR, _style->visuallyOrdered(), 0, str.length());
 
     if (setShadow)

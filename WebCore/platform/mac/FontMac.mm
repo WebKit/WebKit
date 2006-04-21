@@ -129,7 +129,7 @@ bool Font::isFixedPitch() const
     return m_dataSet->isFixedPitch(fontDescription());
 }
 
-IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
+IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, int xpos, 
     const QChar* str, int slen, int pos, int l, int toAdd,
     bool rtl, bool visuallyOrdered, int from, int to) const
 {
@@ -158,14 +158,14 @@ IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos,
     style.xpos = xpos;
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
-    geometry.point = NSMakePoint(x, y);
-    geometry.selectionY = y;
+    geometry.point = point;
+    geometry.selectionY = point.y();
     geometry.selectionHeight = h;
     geometry.useFontMetricsForSelectionYAndHeight = false;
     return enclosingIntRect([m_dataSet->getRenderer(fontDescription()) selectionRectForRun:&run style:&style geometry:&geometry]);
 }
                      
-void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, int xpos, const QChar* str, int len, int from, int to,
+void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos, const QChar* str, int len, int from, int to,
                     int toAdd, TextDirection d, bool visuallyOrdered) const
 {
     // Avoid allocations, use stack array to pass font families.  Normally these
@@ -194,11 +194,11 @@ void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, 
     style.xpos = xpos;
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
-    geometry.point = NSMakePoint(x, y);
+    geometry.point = point;
     [m_dataSet->getRenderer(fontDescription()) drawRun:&run style:&style geometry:&geometry];
 }
 
-void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, int h, int tabWidth, int xpos, const QChar* str,
+void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point, int h, int tabWidth, int xpos, const QChar* str,
                                 int len, int from, int to, int toAdd,
                                 TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
 {
@@ -228,29 +228,29 @@ void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, in
     style.xpos = xpos;
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
-    geometry.point = NSMakePoint(x, y);
-    geometry.selectionY = y;
+    geometry.point = point;
+    geometry.selectionY = point.y();
     geometry.selectionHeight = h;
     geometry.useFontMetricsForSelectionYAndHeight = false;
     [m_dataSet->getRenderer(fontDescription()) drawHighlightForRun:&run style:&style geometry:&geometry];
 }
 
-void Font::drawLineForText(const GraphicsContext* context, int x, int y, int yOffset, int width) const
+void Font::drawLineForText(GraphicsContext* context, const IntPoint& point, int yOffset, int width) const
 {
     [m_dataSet->getRenderer(fontDescription())
-        drawLineForCharacters:NSMakePoint(x, y)
+        drawLineForCharacters:point
                       yOffset:(float)yOffset
                         width:width
                         color:nsColor(context->pen().color())
                     thickness:context->pen().width()];
 }
 
-void Font::drawLineForMisspelling(const GraphicsContext* context, int x, int y, int width) const
+void Font::drawLineForMisspelling(GraphicsContext* context, const IntPoint& point, int width) const
 {
-    [m_dataSet->getRenderer(fontDescription()) drawLineForMisspelling:NSMakePoint(x, y) withWidth:width];
+    [m_dataSet->getRenderer(fontDescription()) drawLineForMisspelling:point withWidth:width];
 }
 
-int Font::misspellingLineThickness(const GraphicsContext* context) const
+int Font::misspellingLineThickness(GraphicsContext* context) const
 {
     return [m_dataSet->getRenderer(fontDescription()) misspellingLineThickness];
 }

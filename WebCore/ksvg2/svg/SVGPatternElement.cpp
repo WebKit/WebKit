@@ -24,8 +24,9 @@
 #if SVG_SUPPORT
 #include "SVGPatternElement.h"
 
-#include "GraphicsContext.h"
+#include "Attr.h"
 #include "Document.h"
+#include "GraphicsContext.h"
 #include "KCanvasContainer.h"
 #include "KCanvasCreator.h"
 #include "KCanvasImage.h"
@@ -45,7 +46,6 @@
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
 #include "ksvg.h"
-#include "Attr.h"
 
 namespace WebCore {
 
@@ -227,6 +227,8 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement *targ
     m_paintServer->setPatternTransform(patternTransformMatrix);
     m_paintServer->setTile(m_tile);
 
+    OwnPtr<GraphicsContext> context(patternContext->createGraphicsContext());
+
     for(Node *n = target->firstChild(); n != 0; n = n->nextSibling())
     {
         SVGElement *elem = svg_dynamic_cast(n);
@@ -268,9 +270,9 @@ void SVGPatternElement::drawPatternContentIntoTile(const SVGPatternElement *targ
         }
 #endif
 
-        GraphicsContext p;
-        RenderObject::PaintInfo info(&p, IntRect(), PaintPhaseForeground, 0, 0);
+        RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0);
         item->paint(info, 0, 0);
+
 #if 0
         if(savedContext)
             e->pushAttributeContext(savedContext);

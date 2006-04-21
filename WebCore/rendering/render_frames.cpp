@@ -496,39 +496,35 @@ bool RenderFrameSet::userResize( MouseEvent *evt )
     }
     
     else if (m_resizing || evt->type() == mouseupEvent) {
-        FrameView *v = canvas()->view();
-        GraphicsContext paint;
-        
+        FrameView *v = canvas()->view();        
         v->disableFlushDrawing();
-        v->lockDrawingFocus();
-        paint.setPen( Color::gray );
-        paint.setBrush( Color::gray );
+        GraphicsContext* context = v->lockDrawingFocus();
         
         IntRect r(xPos(), yPos(), width(), height());
         const int rBord = 3;
         int sw = element()->border();
         int p = m_resizing ? (m_vSplit > -1 ? _x : _y) : -1;
-        static unsigned greyQuarterOpacity = 0x40A0A0A0;
+        const RGBA32 greyQuarterOpacity = 0x40A0A0A0;
         if (m_vSplit > -1) {
             if (m_oldpos >= 0)
                 v->updateContents(IntRect(m_oldpos + sw/2 - rBord, r.y(), 2 * rBord, r.height()), true);
             if (p >= 0) {
-                paint.setPen(Pen::NoPen);
-                paint.setBrush(greyQuarterOpacity);
-                paint.drawRect(IntRect(p + sw/2 - rBord, r.y(), 2 * rBord, r.height()));
+                context->setPen(Pen::NoPen);
+                context->setFillColor(greyQuarterOpacity);
+                context->drawRect(IntRect(p + sw/2 - rBord, r.y(), 2 * rBord, r.height()));
             }
         } else {
             if (m_oldpos >= 0)
                 v->updateContents(IntRect(r.x(), m_oldpos + sw/2 - rBord, r.width(), 2 * rBord), true);
             if (p >= 0) {
-                paint.setPen(Pen::NoPen);
-                paint.setBrush(greyQuarterOpacity);
-                paint.drawRect(IntRect(r.x(), p + sw/2 - rBord, r.width(), 2 * rBord));
+                context->setPen(Pen::NoPen);
+                context->setFillColor(greyQuarterOpacity);
+                context->drawRect(IntRect(r.x(), p + sw/2 - rBord, r.width(), 2 * rBord));
             }
         }
         m_oldpos = p;
 
-        v->unlockDrawingFocus();
+        v->unlockDrawingFocus(context);
         v->enableFlushDrawing();
     }
     

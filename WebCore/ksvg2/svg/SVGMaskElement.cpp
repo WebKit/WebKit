@@ -37,6 +37,7 @@
 #include "cssstyleselector.h"
 #include "ksvg.h"
 #include "Attr.h"
+#include <kxmlcore/OwnPtr.h>
 
 namespace WebCore {
 
@@ -122,9 +123,10 @@ KCanvasImage *SVGMaskElement::drawMaskerContent()
     KRenderingDeviceContext *patternContext = device->contextForImage(maskImage);
     device->pushContext(patternContext);
 
+    OwnPtr<GraphicsContext> context(patternContext->createGraphicsContext());
+
     KCanvasContainer *maskContainer = static_cast<KCanvasContainer *>(renderer());
-    GraphicsContext p;
-    RenderObject::PaintInfo info(&p, IntRect(), PaintPhaseForeground, 0, 0);
+    RenderObject::PaintInfo info(context.get(), IntRect(), PaintPhaseForeground, 0, 0);
     maskContainer->setDrawsContents(true);
     maskContainer->paint(info, 0, 0);
     maskContainer->setDrawsContents(false);

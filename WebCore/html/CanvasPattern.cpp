@@ -27,15 +27,59 @@
 #include "CanvasPattern.h"
 
 #include "CachedImage.h"
+#include "ExceptionCode.h"
 #include "FloatRect.h"
+#include "GraphicsContext.h"
 #include "Image.h"
 
 namespace WebCore {
 
-CanvasPattern::CanvasPattern(CachedImage* cachedImage, const String& repetitionType)
-    : m_cachedImage(cachedImage)
-    , m_repeatX(!(equalIgnoringCase(repetitionType, "repeat-y") || equalIgnoringCase(repetitionType, "no-repeat")))
-    , m_repeatY(!(equalIgnoringCase(repetitionType, "repeat-x") || equalIgnoringCase(repetitionType, "no-repeat")))
+void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY, ExceptionCode& ec)
+{
+    if (type.isEmpty() || type == "repeat") {
+        repeatX = true;
+        repeatY = true;
+        ec = 0;
+        return;
+    }
+    if (type == "no-repeat") {
+        repeatX = false;
+        repeatY = false;
+        ec = 0;
+        return;
+    }
+    if (type == "repeat-x") {
+        repeatX = true;
+        repeatY = false;
+        ec = 0;
+        return;
+    }
+    if (type == "repeat-y") {
+        repeatX = false;
+        repeatY = true;
+        ec = 0;
+        return;
+    }
+    ec = SYNTAX_ERR;
+}
+
+#if __APPLE__
+
+CanvasPattern::CanvasPattern(CGImageRef image, bool repeatX, bool repeatY)
+    : m_platformImage(image)
+    , m_cachedImage(0)
+    , m_repeatX(repeatX)
+    , m_repeatY(repeatY)
+{
+}
+
+#endif
+
+CanvasPattern::CanvasPattern(CachedImage* cachedImage, bool repeatX, bool repeatY)
+    : m_platformImage(0)
+    , m_cachedImage(cachedImage)
+    , m_repeatX(repeatX)
+    , m_repeatY(repeatY)
 {
     if (cachedImage)
         cachedImage->ref(this);
@@ -43,6 +87,9 @@ CanvasPattern::CanvasPattern(CachedImage* cachedImage, const String& repetitionT
 
 CanvasPattern::~CanvasPattern()
 {
+#if __APPLE__
+    CGImageRelease(m_platformImage);
+#endif
     if (m_cachedImage)
         m_cachedImage->deref(this);
 }
@@ -51,6 +98,13 @@ CanvasPattern::~CanvasPattern()
 
 static void patternCallback(void* info, CGContextRef context)
 {
+    CGImageRef platformImage = static_cast<CanvasPattern*>(info)->platformImage();
+    if (platformImage) {
+        CGRect rect = CGRectMake(0, 0, CGImageGetWidth(platformImage), CGImageGetHeight(platformImage));
+        CGContextDrawImage(context, rect, platformImage);
+        return;
+    }
+
     CachedImage* cachedImage = static_cast<CanvasPattern*>(info)->cachedImage();
     if (!cachedImage)
         return;
@@ -59,14 +113,15 @@ static void patternCallback(void* info, CGContextRef context)
         return;
 
     FloatRect rect = image->rect();
-    
-    // FIXME: Is using CGImageRef directly really superior to asking the image to draw?
+
     if (image->getCGImageRef()) {
         CGContextDrawImage(context, rect, image->getCGImageRef());
         return;
     }
 
-    image->drawInRect(rect, rect, Image::CompositeSourceOver, context);
+    // FIXME: Won't handle text flipping right for image types that include text
+    // since we just pass false for the context's flipped state.
+    GraphicsContext(context, false, false).drawImage(image, rect);
 }
 
 static void patternReleaseCallback(void* info)
@@ -76,26 +131,36 @@ static void patternReleaseCallback(void* info)
 
 CGPatternRef CanvasPattern::createPattern(const CGAffineTransform& transform)
 {
-    if (!m_cachedImage)
-        return 0;
-    Image* image = m_cachedImage->image();
-    if (!image)
-        return 0;
+    CGRect rect;
+    rect.origin.x = 0;
+    rect.origin.y = 0;
+    if (m_platformImage) {
+        rect.size.width = CGImageGetWidth(m_platformImage);
+        rect.size.height = CGImageGetHeight(m_platformImage);
+    } else {
+        if (!m_cachedImage)
+            return 0;
+        Image* image = m_cachedImage->image();
+        if (!image)
+            return 0;
+        rect.size.width = image->width();
+        rect.size.height = image->height();
+    }
 
     CGAffineTransform patternTransform =
-        CGAffineTransformTranslate(CGAffineTransformScale(transform, 1, -1), 0, -image->height());
+        CGAffineTransformTranslate(CGAffineTransformScale(transform, 1, -1), 0, -rect.size.height);
 
-    float xStep = m_repeatX ? image->width() : FLT_MAX;
+    float xStep = m_repeatX ? rect.size.width : FLT_MAX;
     // If FLT_MAX should also be used for yStep, nothing is rendered. Using fractions of FLT_MAX also
     // result in nothing being rendered. This is not a problem with xStep.
     // INT_MAX is almost correct, but there seems to be some number wrapping occuring making the fill
     // pattern is not filled correctly. 
     // So, just pick a really large number that works. 
-    float yStep = m_repeatY ? image->height() : (100000000.0);
+    float yStep = m_repeatY ? rect.size.height : (100000000.0);
 
     const CGPatternCallbacks patternCallbacks = { 0, patternCallback, patternReleaseCallback };
     ref();
-    return CGPatternCreate(this, image->rect(), patternTransform, xStep, yStep,
+    return CGPatternCreate(this, rect, patternTransform, xStep, yStep,
         kCGPatternTilingConstantSpacing, TRUE, &patternCallbacks);
 }
 

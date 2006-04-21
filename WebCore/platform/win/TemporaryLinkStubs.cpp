@@ -101,8 +101,8 @@ void Widget::enableFlushDrawing() { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
 Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFocus; }
 void Widget::disableFlushDrawing() { notImplemented(); }
-void Widget::lockDrawingFocus() { notImplemented(); }
-void Widget::unlockDrawingFocus() { notImplemented(); }
+GraphicsContext* Widget::lockDrawingFocus() { notImplemented(); return 0; }
+void Widget::unlockDrawingFocus(GraphicsContext*) { notImplemented(); }
 
 JavaAppletWidget::JavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 

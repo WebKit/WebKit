@@ -302,39 +302,4 @@ int Image::height() const
     return size().height();
 }
 
-const int NUM_COMPOSITE_OPERATORS = 14;
-
-struct CompositeOperatorEntry
-{
-    const char *name;
-    Image::CompositeOperator value;
-};
-
-struct CompositeOperatorEntry compositeOperators[NUM_COMPOSITE_OPERATORS] = {
-    { "clear", Image::CompositeClear },
-    { "copy", Image::CompositeCopy },
-    { "source-over", Image::CompositeSourceOver },
-    { "source-in", Image::CompositeSourceIn },
-    { "source-out", Image::CompositeSourceOut },
-    { "source-atop", Image::CompositeSourceAtop },
-    { "destination-over", Image::CompositeDestinationOver },
-    { "destination-in", Image::CompositeDestinationIn },
-    { "destination-out", Image::CompositeDestinationOut },
-    { "destination-atop", Image::CompositeDestinationAtop },
-    { "xor", Image::CompositeXOR },
-    { "darker", Image::CompositePlusDarker },
-    { "highlight", Image::CompositeHighlight },
-    { "lighter", Image::CompositePlusLighter }
-};
-
-Image::CompositeOperator Image::compositeOperatorFromString(const String& s)
-{
-    CompositeOperator op = CompositeSourceOver;
-    if (!s.isEmpty())
-        for (int i = 0; i < NUM_COMPOSITE_OPERATORS; i++)
-            if (equalIgnoringCase(s, compositeOperators[i].name))
-                return compositeOperators[i].value;
-    return op;
-}
-
 }

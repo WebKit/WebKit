@@ -31,7 +31,7 @@
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLengthList.h"
 #include "SVGTextElement.h"
-#include "RenderObject.h"
+#include <kxmlcore/OwnPtr.h>
 
 namespace WebCore {
 
@@ -64,13 +64,14 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     KRenderingDevice* device = renderingDevice();
     KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
-    if (!context) {
-        // Need to push a device context on the stack if empty.
+    if (context)
+        paintInfo.p->save();
+    else {
+        // Need to set up KCanvas rendering if it hasn't already been done.
         context = paintInfo.p->createRenderingDeviceContext();
         device->pushContext(context);
         shouldPopContext = true;
-    } else
-        paintInfo.p->save();
+    }
     
     context->concatCTM(localTransform());
     context->concatCTM(QMatrix().translate(parentX, parentY));
@@ -90,12 +91,16 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->prepareFilter(boundingBox);
         
+    OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
+    PaintInfo pi = paintInfo;
+    pi.p = c.get();
+
     KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
         fillPaintServer->setPaintingText(true);
         // fillPaintServer->setActiveClient(this);
         if (fillPaintServer->setup(context, this, APPLY_TO_FILL)) {
-            RenderBlock::paint(paintInfo, 0, 0);
+            RenderBlock::paint(pi, 0, 0);
             fillPaintServer->teardown(context, this, APPLY_TO_FILL);
         }
         fillPaintServer->setPaintingText(false);
@@ -106,7 +111,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
         strokePaintServer->setPaintingText(true);
         // strokePaintServer->setActiveClient(this);
         if (strokePaintServer->setup(context, this, APPLY_TO_STROKE)) {
-            RenderBlock::paint(paintInfo, 0, 0);
+            RenderBlock::paint(pi, 0, 0);
             strokePaintServer->teardown(context, this, APPLY_TO_STROKE);
         }
         strokePaintServer->setPaintingText(false);
@@ -116,11 +121,12 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
         filter->applyFilter(boundingBox);
 
     // restore drawing state
-    if (shouldPopContext) {
+    if (!shouldPopContext)
+        paintInfo.p->restore();
+    else {
         device->popContext();
         delete context;
-    } else
-        paintInfo.p->restore();
+    }
 }
 
 bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)

@@ -237,7 +237,8 @@ static void convertRange(int from, int to, int len, int& offset, int& length)
         length = to - from;
 }
 
-void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, int xpos, const QChar* str, int len, int from, int to,
+void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos,
+                    const QChar* str, int len, int from, int to,
                     int toAdd, TextDirection d, bool visuallyOrdered) const
 {
     FontData* font = m_dataSet->primaryFont(fontDescription());
@@ -253,6 +254,8 @@ void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, 
     int offset, length;
     convertRange(from, to, len, offset, length);
 
+    int x = point.x();
+    int y = point.y();
     y -= font->ascent();
 
     SetBkMode(dc, TRANSPARENT);
@@ -264,8 +267,8 @@ void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, 
     // No need to ReleaseDC the HDC borrowed from cairo
 }
 
-void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, int h, int tabWidth, int xpos, const QChar* str,
-                                int len, int from, int to, int toAdd,
+void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point, int h, int tabWidth, int xpos,
+                                const QChar* str, int len, int from, int to, int toAdd,
                                 TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
 {
     if (!backgroundColor.isValid())
@@ -283,10 +286,10 @@ void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, in
     IntSize runSize = hackishExtentForString(dc, font, str, len, offset, length, tabWidth, xpos);
 
     // FIXME: this const_cast should be removed when this code is made real.
-    const_cast<GraphicsContext*>(context)->fillRect(IntRect(IntPoint(x, y), runSize), backgroundColor);
+    const_cast<GraphicsContext*>(context)->fillRect(IntRect(point, runSize), backgroundColor);
 }
 
-IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, const QChar* str, int slen,
+IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, int xpos, const QChar* str, int slen,
                                    int pos, int len, int toAdd, bool rtl, bool visuallyOrdered, int from, int to) const
 {
     FontData* font = m_dataSet->primaryFont(fontDescription());
@@ -299,11 +302,11 @@ IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
     HDC dc = GetDC((HWND)0); // FIXME: Need a way to get to the real HDC.
     IntSize runSize = hackishExtentForString(dc, font, str, slen, offset, length, tabWidth, xpos);
     ReleaseDC(0, dc);
-    return IntRect(x, y, runSize.width(), runSize.height());
+    return IntRect(point, runSize);
 }
 
 int Font::checkSelectionPoint(const QChar* str, int slen, int offset, int len, int toAdd, int tabWidth, int xpos, int x,
-                              WebCore::TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const
+                              TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const
 {
     FontData* font = m_dataSet->primaryFont(fontDescription());
     if (!font)
@@ -334,18 +337,18 @@ int Font::checkSelectionPoint(const QChar* str, int slen, int offset, int len, i
     return selectionOffset;
 }
 
-void Font::drawLineForText(const GraphicsContext* context, int x, int y, int yOffset, int width) const
+void Font::drawLineForText(GraphicsContext* context, const IntPoint& point, int yOffset, int width) const
 {
-    IntPoint origin(x, y + yOffset + 1);
+    IntPoint origin = point + IntSize(0, yOffset + 1);
     IntPoint endPoint = origin + IntSize(width, 0);
     const_cast<GraphicsContext*>(context)->drawLine(origin, endPoint);
 }
 
-void Font::drawLineForMisspelling(const GraphicsContext* context, int x, int y, int width) const
+void Font::drawLineForMisspelling(GraphicsContext* context, const IntPoint& point, int width) const
 {
 }
 
-int Font::misspellingLineThickness(const GraphicsContext* context) const
+int Font::misspellingLineThickness(GraphicsContext* context) const
 {
     return 1;
 }

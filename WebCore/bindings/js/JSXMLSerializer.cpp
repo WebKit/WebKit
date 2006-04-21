@@ -26,7 +26,7 @@
 #include "kjs_dom.h"
 #include "markup.h"
 
-using WebCore::Node;
+using namespace WebCore;
 
 namespace KJS {
 

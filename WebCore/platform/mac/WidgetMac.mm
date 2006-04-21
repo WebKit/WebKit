@@ -315,18 +315,20 @@ NSView* Widget::getOuterView() const
     return view;
 }
 
-void Widget::lockDrawingFocus()
+GraphicsContext* Widget::lockDrawingFocus()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getView() lockFocus];
     END_BLOCK_OBJC_EXCEPTIONS;
+    return new GraphicsContext([NSGraphicsContext currentContext]);
 }
 
-void Widget::unlockDrawingFocus()
+void Widget::unlockDrawingFocus(GraphicsContext* context)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getView() unlockFocus];
     END_BLOCK_OBJC_EXCEPTIONS;
+    delete context;
 }
 
 void Widget::disableFlushDrawing()

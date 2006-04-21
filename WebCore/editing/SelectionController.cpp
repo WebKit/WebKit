@@ -811,7 +811,7 @@ void SelectionController::paintCaret(GraphicsContext *p, const IntRect &rect)
         
     IntRect caret = intersection(caretRect(), rect);
     if (!caret.isEmpty())
-        p->fillRect(caret, Brush());
+        p->fillRect(caret, Color::black);
 }
 
 void SelectionController::debugRenderer(RenderObject *r, bool selected) const

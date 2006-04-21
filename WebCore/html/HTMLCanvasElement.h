@@ -60,9 +60,10 @@ public:
 
     void paint(GraphicsContext*, const IntRect&);
 
+    GraphicsContext* drawingContext() const;
+
 #if __APPLE__
     CGImageRef createPlatformImage() const;
-    CGContextRef drawingContext() const;
 #endif
 
 private:
@@ -77,10 +78,7 @@ private:
 
     mutable bool m_createdDrawingContext;
     mutable void* m_data;
-
-#if __APPLE__
-    mutable CGContextRef m_drawingContext;
-#endif
+    mutable GraphicsContext* m_drawingContext;
 };
 
 } //namespace

@@ -136,10 +136,10 @@ public:
     float scaleX() const;
     float scaleY() const;
 
-     // Draw onto the canvas
-    void draw(const FloatRect &rect, double x, double y, double strokeWidth = 1., double angle = 0.0);
+    void draw(GraphicsContext*, const FloatRect&, double x, double y, double strokeWidth = 1, double angle = 0);
 
     QTextStream& externalRepresentation(QTextStream &) const; 
+
 private:
     double m_refX, m_refY;
     float m_angle, m_scaleX, m_scaleY;

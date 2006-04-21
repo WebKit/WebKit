@@ -26,14 +26,15 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
-#include "GraphicsContext.h"
-#include "CanvasStyle.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
-#include "cssparser.h"
+#include "CanvasStyle.h"
+#include "ExceptionCode.h"
+#include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
 #include "RenderHTMLCanvas.h"
+#include "cssparser.h"
 
 namespace WebCore {
 
@@ -55,13 +56,13 @@ CanvasRenderingContext2D::State::State()
     : m_strokeStyle(new CanvasStyle("black"))
     , m_fillStyle(new CanvasStyle("black"))
     , m_lineWidth(1)
-    , m_lineCap("butt")
-    , m_lineJoin("miter")
+    , m_lineCap(ButtCap)
+    , m_lineJoin(MiterJoin)
     , m_miterLimit(10)
     , m_shadowBlur(0)
     , m_shadowColor("black")
     , m_globalAlpha(1)
-    , m_globalComposite("source-over")
+    , m_globalComposite(CompositeSourceOver)
 #if __APPLE__
     , m_platformContextStrokeStyleIsPattern(false)
     , m_platformContextFillStyleIsPattern(false)
@@ -76,7 +77,7 @@ void CanvasRenderingContext2D::save()
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGContextSaveGState(c);
@@ -92,7 +93,7 @@ void CanvasRenderingContext2D::restore()
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGContextRestoreGState(c);
@@ -112,7 +113,7 @@ void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    state().m_strokeStyle->applyStrokeColor(drawingContext());
+    state().m_strokeStyle->applyStrokeColor(platformContext());
     state().m_platformContextStrokeStyleIsPattern = false;
 #endif
 }
@@ -130,7 +131,7 @@ void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    state().m_fillStyle->applyFillColor(drawingContext());
+    state().m_fillStyle->applyFillColor(platformContext());
     state().m_platformContextFillStyleIsPattern = false;
 #endif
 }
@@ -142,55 +143,86 @@ float CanvasRenderingContext2D::lineWidth() const
 
 void CanvasRenderingContext2D::setLineWidth(float width)
 {
+    if (!(width > 0))
+        return;
+
     state().m_lineWidth = width;
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextSetLineWidth(drawingContext(), width);
+    CGContextSetLineWidth(platformContext(), width);
 #endif
 }
 
 String CanvasRenderingContext2D::lineCap() const
 {
-    return state().m_lineCap;
+    const char* const names[3] = { "butt", "round", "square" };
+    return names[state().m_lineCap];
 }
 
-void CanvasRenderingContext2D::setLineCap(const String& cap)
+void CanvasRenderingContext2D::setLineCap(const String& s)
 {
-    // FIXME: Should we store the actual string passed, or should we
-    // convert it to "round", "square", or "butt"?
+    Cap cap;
+    if (s == "butt")
+        cap = ButtCap;
+    else if (s == "round")
+        cap = RoundCap;
+    else if (s == "square")
+        cap = SquareCap;
+    else
+        return;
+
     state().m_lineCap = cap;
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    if (equalIgnoringCase(cap, "round"))
-        CGContextSetLineCap(drawingContext(), kCGLineCapRound);
-    else if (equalIgnoringCase(cap, "square"))
-        CGContextSetLineCap(drawingContext(), kCGLineCapSquare);
-    else
-        CGContextSetLineCap(drawingContext(), kCGLineCapButt);
+    switch (cap) {
+        case ButtCap:
+            CGContextSetLineCap(platformContext(), kCGLineCapButt);
+            break;
+        case RoundCap:
+            CGContextSetLineCap(platformContext(), kCGLineCapRound);
+            break;
+        case SquareCap:
+            CGContextSetLineCap(platformContext(), kCGLineCapSquare);
+            break;
+    }
 #endif
 }
 
 String CanvasRenderingContext2D::lineJoin() const
 {
-    return state().m_lineJoin;
+    const char* const names[3] = { "miter", "round", "bevel" };
+    return names[state().m_lineJoin];
 }
 
-void CanvasRenderingContext2D::setLineJoin(const String& join)
+void CanvasRenderingContext2D::setLineJoin(const String& s)
 {
-    // FIXME: Should we store the actual string passed, or should we
-    // convert it to "round", "bevel", or "miter"?
+    Join join;
+    if (s == "miter")
+        join = MiterJoin;
+    else if (s == "round")
+        join = RoundJoin;
+    else if (s == "bevel")
+        join = BevelJoin;
+    else
+        return;
+
     state().m_lineJoin = join;
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    if (equalIgnoringCase(join, "round"))
-        CGContextSetLineJoin(drawingContext(), kCGLineJoinRound);
-    else if (equalIgnoringCase(join, "bevel"))
-        CGContextSetLineJoin(drawingContext(), kCGLineJoinBevel);
-    else
-        CGContextSetLineJoin(drawingContext(), kCGLineJoinMiter);
+    switch (join) {
+        case MiterJoin:
+            CGContextSetLineJoin(platformContext(), kCGLineJoinMiter);
+            break;
+        case RoundJoin:
+            CGContextSetLineJoin(platformContext(), kCGLineJoinRound);
+            break;
+        case BevelJoin:
+            CGContextSetLineJoin(platformContext(), kCGLineJoinBevel);
+            break;
+    }
 #endif
 }
 
@@ -201,11 +233,14 @@ float CanvasRenderingContext2D::miterLimit() const
 
 void CanvasRenderingContext2D::setMiterLimit(float limit)
 {
+    if (!(limit > 0))
+        return;
+
     state().m_miterLimit = limit;
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextSetMiterLimit(drawingContext(), limit);
+    CGContextSetMiterLimit(platformContext(), limit);
 #endif
 }
 
@@ -261,26 +296,33 @@ float CanvasRenderingContext2D::globalAlpha() const
 
 void CanvasRenderingContext2D::setGlobalAlpha(float alpha)
 {
+    if (!(alpha >= 0 && alpha <= 1))
+        return;
+
     state().m_globalAlpha = alpha;
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextSetAlpha(drawingContext(), alpha);
+    CGContextSetAlpha(platformContext(), alpha);
 #endif
 }
 
 String CanvasRenderingContext2D::globalCompositeOperation() const
 {
-    return state().m_globalComposite;
+    return compositeOperatorName(state().m_globalComposite);
 }
 
 void CanvasRenderingContext2D::setGlobalCompositeOperation(const String& operation)
 {
-    state().m_globalComposite = operation;
+    CompositeOperator op;
+    if (!parseCompositeOperator(operation, op))
+        return;
+
+    state().m_globalComposite = op;
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    GraphicsContext::setCompositeOperation(drawingContext(), operation);
+    WebCore::setCompositeOperation(platformContext(), op);
 #endif
 }
 
@@ -288,7 +330,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextScaleCTM(drawingContext(), sx, sy);
+    CGContextScaleCTM(platformContext(), sx, sy);
 #endif
 }
 
@@ -296,7 +338,7 @@ void CanvasRenderingContext2D::rotate(float angleInRadians)
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRotateCTM(drawingContext(), angleInRadians);
+    CGContextRotateCTM(platformContext(), angleInRadians);
 #endif
 }
 
@@ -304,7 +346,7 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextTranslateCTM(drawingContext(), tx, ty);
+    CGContextTranslateCTM(platformContext(), tx, ty);
 #endif
 }
 
@@ -372,7 +414,7 @@ void CanvasRenderingContext2D::beginPath()
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGContextBeginPath(c);
@@ -383,7 +425,7 @@ void CanvasRenderingContext2D::closePath()
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGContextClosePath(c);
@@ -394,7 +436,7 @@ void CanvasRenderingContext2D::moveTo(float x, float y)
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGContextMoveToPoint(c, x, y);
@@ -405,7 +447,7 @@ void CanvasRenderingContext2D::lineTo(float x, float y)
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGContextAddLineToPoint(c, x, y);
@@ -416,7 +458,7 @@ void CanvasRenderingContext2D::quadraticCurveTo(float cpx, float cpy, float x, f
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGContextAddQuadCurveToPoint(c, cpx, cpy, x, y);
@@ -427,43 +469,64 @@ void CanvasRenderingContext2D::bezierCurveTo(float cp1x, float cp1y, float cp2x,
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
-    CGContextAddCurveToPoint(drawingContext(), cp1x, cp1y, cp2x, cp2y, x, y);
+    CGContextAddCurveToPoint(c, cp1x, cp1y, cp2x, cp2y, x, y);
 #endif
 }
 
-void CanvasRenderingContext2D::arcTo(float x0, float y0, float x1, float y1, float radius)
+void CanvasRenderingContext2D::arcTo(float x0, float y0, float x1, float y1, float radius, ExceptionCode& ec)
 {
+    ec = 0;
+
+    if (!(radius > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
-    CGContextAddArcToPoint(drawingContext(), x0, y0, x1, y1, radius);
+    CGContextAddArcToPoint(c, x0, y0, x1, y1, radius);
 #endif
 }
 
-void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea, bool clockwise)
+void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea, bool clockwise, ExceptionCode& ec)
 {
+    ec = 0;
+
+    if (!(r > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
-    CGContextAddArc(drawingContext(), x, y, r, sa, ea, clockwise);
+    CGContextAddArc(c, x, y, r, sa, ea, clockwise);
 #endif
 }
 
-void CanvasRenderingContext2D::rect(float x, float y, float width, float height)
+void CanvasRenderingContext2D::rect(float x, float y, float width, float height, ExceptionCode& ec)
 {
+    ec = 0;
+
+    if (!(width > 0 && height > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
-    CGContextAddRect(drawingContext(), CGRectMake(x, y, width, height));
+    CGContextAddRect(c, CGRectMake(x, y, width, height));
 #endif
 }
 
@@ -471,7 +534,7 @@ void CanvasRenderingContext2D::fill()
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
 
@@ -495,7 +558,7 @@ void CanvasRenderingContext2D::stroke()
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
 
@@ -525,18 +588,25 @@ void CanvasRenderingContext2D::clip()
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGContextClip(c);
 #endif
 }
 
-void CanvasRenderingContext2D::clearRect(float x, float y, float width, float height)
+void CanvasRenderingContext2D::clearRect(float x, float y, float width, float height, ExceptionCode& ec)
 {
+    ec = 0;
+
+    if (!(width > 0 && height > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGRect rect = CGRectMake(x, y, width, height);
@@ -547,11 +617,18 @@ void CanvasRenderingContext2D::clearRect(float x, float y, float width, float he
 #endif
 }
 
-void CanvasRenderingContext2D::fillRect(float x, float y, float width, float height)
+void CanvasRenderingContext2D::fillRect(float x, float y, float width, float height, ExceptionCode& ec)
 {
+    ec = 0;
+
+    if (!(width > 0 && height > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     CGRect rect = CGRectMake(x, y, width, height);
@@ -572,34 +649,23 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
 #endif
 }
 
-void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float height)
+void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float height, ExceptionCode& ec)
 {
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
-    CGContextRef c = drawingContext();
-    if (!c)
-        return;
-
-    // FIXME: Is this right for negative widths?
-    float lineWidth = state().m_lineWidth;
-    float inset = -lineWidth / 2;
-    CGRect rect = CGRectMake(x, y, width, height);
-    CGRect boundingRect = CGRectInset(rect, inset, inset);
-
-    willDraw(boundingRect);
-
-    // FIXME: No support for gradients!
-    if (state().m_strokeStyle->pattern())
-        applyStrokePattern();
-    CGContextStrokeRect(c, rect);
-#endif
+    strokeRect(x, y, width, height, state().m_lineWidth, ec);
 }
 
-void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float height, float lineWidth)
+void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float height, float lineWidth, ExceptionCode& ec)
 {
+    ec = 0;
+
+    if (!(width > 0 && height > 0 && lineWidth > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
 
@@ -641,7 +707,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     const CGFloat components[2] = { grayLevel, 1 };
@@ -661,7 +727,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     RGBA32 rgba = CSSParser::parseColor(color);
@@ -687,7 +753,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     const CGFloat components[2] = { grayLevel, alpha };
@@ -707,7 +773,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     const CGFloat components[4] = { r, g, b, a };
@@ -727,7 +793,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef dc = drawingContext();
+    CGContextRef dc = platformContext();
     if (!dc)
         return;
     const CGFloat components[5] = { c, m, y, k, a };
@@ -751,7 +817,7 @@ void CanvasRenderingContext2D::applyShadow()
 {
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
     RGBA32 rgba = state().m_shadowColor.isEmpty() ? 0 : CSSParser::parseColor(state().m_shadowColor);
@@ -769,8 +835,7 @@ void CanvasRenderingContext2D::applyShadow()
 #endif
 }
 
-// FIXME: This only exists because canvas is a subclass of image.
-static IntSize imageSize(HTMLImageElement* image)
+static IntSize size(HTMLImageElement* image)
 {
     if (CachedImage* cachedImage = image->cachedImage())
         return cachedImage->imageSize();
@@ -779,30 +844,37 @@ static IntSize imageSize(HTMLImageElement* image)
 
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y)
 {
-    if (!image)
-        return;
-    IntSize size = imageSize(image);
-    drawImage(image, 0, 0, size.width(), size.height(), x, y, size.width(), size.height());
+    ASSERT(image);
+    IntSize s = size(image);
+    ExceptionCode ec;
+    drawImage(image, x, y, s.width(), s.height(), ec);
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y, float width, float height)
+void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
+    float x, float y, float width, float height, ExceptionCode& ec)
 {
-    if (!image)
-        return;
-    IntSize size = imageSize(image);
-    drawImage(image, 0, 0, size.width(), size.height(), x, y, width, height);
+    ASSERT(image);
+    IntSize s = size(image);
+    drawImage(image, 0, 0, s.width(), s.height(), x, y, width, height, ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
     float sx, float sy, float sw, float sh,
-    float dx, float dy, float dw, float dh)
+    float dx, float dy, float dw, float dh, ExceptionCode& ec)
 {
-    if (!image)
-        return;
+    ASSERT(image);
 
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
-    CGContextRef c = drawingContext();
+    ec = 0;
+
+    FloatRect imageRect = FloatRect(FloatPoint(), size(image));
+    FloatRect sourceRect = FloatRect(sx, sy, sw, sh);
+
+    if (!(imageRect.contains(sourceRect) && sw > 0 && sh > 0 && dw > 0 && dh > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    GraphicsContext* c = drawingContext();
     if (!c)
         return;
 
@@ -812,35 +884,42 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
 
     FloatRect destRect = FloatRect(dx, dy, dw, dh);
     willDraw(destRect);
-    cachedImage->image()->drawInRect(destRect, FloatRect(sx, sy, sw, sh),
-        Image::compositeOperatorFromString(state().m_globalComposite), c);
-#endif
+    c->drawImage(cachedImage->image(), destRect, sourceRect, state().m_globalComposite);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, float y)
 {
-    if (!canvas)
-        return;
-    drawImage(canvas, 0, 0, canvas->width(), canvas->height(), x, y, canvas->width(), canvas->height());
+    ASSERT(canvas);
+    ExceptionCode ec;
+    drawImage(canvas, x, y, canvas->width(), canvas->height(), ec);
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, float y, float width, float height)
+void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
+    float x, float y, float width, float height, ExceptionCode& ec)
 {
-    if (!canvas)
-        return;
-    drawImage(canvas, 0, 0, canvas->width(), canvas->height(), x, y, width, height);
+    ASSERT(canvas);
+    drawImage(canvas, 0, 0, canvas->width(), canvas->height(), x, y, width, height, ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
     float sx, float sy, float sw, float sh,
-    float dx, float dy, float dw, float dh)
+    float dx, float dy, float dw, float dh, ExceptionCode& ec)
 {
+    ASSERT(canvas);
+
+    ec = 0;
+
+    if (!(sw > 0 && sh > 0 && dw > 0 && dh > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     if (!canvas)
         return;
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
 
@@ -899,16 +978,18 @@ void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,
     if (!cachedImage)
         return;
 
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
+
+    CompositeOperator op;
+    if (!parseCompositeOperator(compositeOperation, op))
+        op = CompositeSourceOver;
+
     // FIXME: Do this through platform-independent GraphicsContext API.
     FloatRect destRect = FloatRect(dx, dy, dw, dh);
     willDraw(destRect);
-#if __APPLE__
-    CGContextRef c = drawingContext();
-    if (!c)
-        return;
-    cachedImage->image()->drawInRect(destRect, FloatRect(sx, sy, sw, sh),
-        Image::compositeOperatorFromString(compositeOperation), c);
-#endif
+    c->drawImage(cachedImage->image(), destRect, FloatRect(sx, sy, sw, sh), op);
 }
 
 void CanvasRenderingContext2D::setAlpha(float alpha)
@@ -931,9 +1012,33 @@ PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float 
     return new CanvasGradient(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
 }
 
-PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* image, const String& repetitionType)
+PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* image,
+    const String& repetitionType, ExceptionCode& ec)
 {
-    return new CanvasPattern(image ? image->cachedImage() : 0, repetitionType);
+    bool repeatX, repeatY;
+    CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
+    if (ec)
+        return 0;
+    return new CanvasPattern(image ? image->cachedImage() : 0, repeatX, repeatY);
+}
+
+PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement* canvas,
+    const String& repetitionType, ExceptionCode& ec)
+{
+    bool repeatX, repeatY;
+    CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
+    if (ec)
+        return 0;
+#if __APPLE__
+    CGImageRef image = canvas->createPlatformImage();
+    if (!image)
+        return 0;
+    PassRefPtr<CanvasPattern> pattern = new CanvasPattern(image, repeatX, repeatY);
+    CGImageRelease(image);
+    return pattern;
+#else
+    return 0;
+#endif
 }
 
 void CanvasRenderingContext2D::willDraw(const FloatRect& r)
@@ -943,18 +1048,26 @@ void CanvasRenderingContext2D::willDraw(const FloatRect& r)
     m_canvas->willDraw(r);
 }
 
-#if __APPLE__
-
-CGContextRef CanvasRenderingContext2D::drawingContext() const
+GraphicsContext* CanvasRenderingContext2D::drawingContext() const
 {
     if (!m_canvas)
         return 0;
     return m_canvas->drawingContext();
 }
 
+#if __APPLE__
+
+CGContextRef CanvasRenderingContext2D::platformContext() const
+{
+    GraphicsContext* c = drawingContext();
+    if (!c)
+        return 0;
+    return c->platformContext();
+}
+
 void CanvasRenderingContext2D::applyStrokePattern()
 {
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
 
@@ -986,7 +1099,7 @@ void CanvasRenderingContext2D::applyStrokePattern()
 
 void CanvasRenderingContext2D::applyFillPattern()
 {
-    CGContextRef c = drawingContext();
+    CGContextRef c = platformContext();
     if (!c)
         return;
 

@@ -1,3 +1,341 @@
+2006-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - make <canvas> element and related API behave more like the draft of
+          the WhatWG Web Application specification, checking parameter validity
+          and raising exceptions
+        - changed HTMLCanvasElement bindings to be auto-generated, fixing all
+          issues so we can generate bindings for classes drived from HTMLElement
+        - change GraphicsContext API to use IntRect/Point/Size in more cases
+        - change GraphicsContext so it is closer to truly wrapping a graphics
+          context rather than representing the current NSGraphicsContext; there
+          are still some things like text and rectangle fills that are tied to
+          NSGraphicsContext, but we're most of the way there
+        - removed Brush class since it just amounted to a color, using an RGBA32
+          instead where we used to use a Brush
+
+        * DerivedSources.make: Added JSHTMLCanvasElement.h.
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
+        * bindings/js/JSCanvasRenderingContext2DBase.h: Added toJS.
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp:
+        (WebCore::JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction):
+        Added exception code handling for strokeRect, drawImage, and createPattern.
+        Added version of createPattern that takes a canvas. Use TYPE_MISMATCH_ERR
+        instead of JavaScript TypeError when parameter is neither an image or canvas
+        element. Adapt for new HTMLCanvasElement binding.
+        (WebCore::toJS): Added. Converts context object to JS wrapper.
+
+        * bindings/js/JSHTMLElementWrapperFactory.h: Added.
+        * bindings/js/JSHTMLElementWrapperFactory.cpp: Added. Creates a JavaScript
+        wrapper for an arbitrary HTML element. Better than putting this all in the
+        DOM node class toJS function.
+
+        * bindings/js/JSXMLSerializer.cpp: Tweaked to make it build.
+        * bindings/js/kjs_dom.cpp: (KJS::toJS): Changed to call the
+        JSHTMLElementWrapperFactory function createJSWrapper, instead
+        of always creating a JSHTMLElement.
+
+        * bindings/js/kjs_html.h: Removed canvas-related stuff. Added HTMLElement
+        prototype.
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLElement::classInfo): Removed canvas element.
+        (KJS::JSHTMLElement::accessors): Ditto.
+        (KJS::JSHTMLElementProtoFunc::callAsFunction): Added, to help the auto-binding
+        machiner cope with HTMLElement.
+        (KJS::HTMLElementFunction::callAsFunction): Removed canvas element.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added types needed for HTMLCanvasElement.
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::setDisplaysWithFocusAttributes):
+        Changed to create a GraphicsContext with the new constructor that takes
+        a CGContextRef.
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge drawRect:]):
+        Changed to create a GraphicsContext with the new constructor that takes
+        a NSGraphicsContext.
+        * page/Frame.cpp: (WebCore::Frame::adjustPageHeight): Changed to create a
+        GraphicsContext with the new constructor that takes a CGContextRef.
+
+        * editing/SelectionController.cpp: (WebCore::SelectionController::paintCaret):
+        Eliminated a use of obsolete class Brush.
+
+        * html/CanvasPattern.h:
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::parseRepetitionType): Added. Parses a repetition
+        type. Different from the old logic in that it is case-sensitive and rejects
+        anything other than null, empty string, or the four repeat types.
+        (WebCore::CanvasPattern::CanvasPattern): Added constructor that takes
+        a CGImageRef. Changed constructor to take two booleans instead of the repetition
+        type string. It's the caller's responsibility to parse the string.
+        (WebCore::CanvasPattern::~CanvasPattern): Release the CGImage.
+        (WebCore::patternCallback): Handle the CGImage case. Also changed the code
+        to create a GraphicsContext as needed and call the image drawing code with that.
+        (WebCore::CanvasPattern::createPattern): Handle both the image element case and
+        the canvas element case.
+        
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State): Change line cap, line join,
+        and global composite to store enum values instead of strings.
+        (WebCore::CanvasRenderingContext2D::setLineWidth): Do nothing if width is NaN
+        or <= 0.
+        (WebCore::CanvasRenderingContext2D::lineCap): Return a string based on a
+        stored enum, rather than returning a stored string.
+        (WebCore::CanvasRenderingContext2D::setLineCap): Do nothing if the string is
+        not one of the standard line cap types. Also case sensitive and stores enum
+        rather than the string.
+        (WebCore::CanvasRenderingContext2D::lineJoin): Return a string based on a
+        stored enum, rather than returning a stored string.
+        (WebCore::CanvasRenderingContext2D::setLineJoin): Do nothing if the string is
+        not one of the standard line join types. Also case sensitive and stores enum
+        rather than the string.
+        (WebCore::CanvasRenderingContext2D::setMiterLimit): Do nothing if limit is NaN
+        or <= 0.
+        (WebCore::CanvasRenderingContext2D::setGlobalAlpha): Do nothing if alpha is NaN
+        or < 0 or > 1.
+        (WebCore::CanvasRenderingContext2D::globalCompositeOperation): Return a string
+        based on a stored enum, rather than returning a stored string.
+        (WebCore::CanvasRenderingContext2D::setGlobalCompositeOperation): Do nothing if
+        the string is not one of the standard compositing modes. Also case sensitive and
+        stores enum rather than the string.
+        (WebCore::CanvasRenderingContext2D::arcTo): Generate INDEX_SIZE_ERR exception
+        if radius is NaN or <= 0.
+        (WebCore::CanvasRenderingContext2D::arc): Ditto.
+        (WebCore::CanvasRenderingContext2D::rect): Generate INDEX_SIZE_ERR exception
+        if width or height is NaN or <= 0.
+        (WebCore::CanvasRenderingContext2D::clearRect): Ditto.
+        (WebCore::CanvasRenderingContext2D::fillRect): Ditto.
+        (WebCore::CanvasRenderingContext2D::strokeRect): Ditto, same for line width.
+        Changed the case where the line width is not specified to share code with the
+        case where it is.
+        (WebCore::size): Renamed from imageSize, since C++ overloads based on parameter
+        types anyway.
+        (WebCore::CanvasRenderingContext2D::drawImage): Generate INDEX_SIZE_ERR exception
+        if the source rect is not entirely inside the image rect, or if the width or height
+        of either the source or destination rect is NaN or <= 0. Changed image drawing
+        code to be platform-independent for the image element case, but not yet for the
+        canvas case.
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect): Change code to parse the
+        composite operation to use the new code shared with Image.
+        (WebCore::CanvasRenderingContext2D::createPattern): Added code to parse the
+        repetition type separately before creating the pattern. Added an overload for
+        canvas elements.
+        (WebCore::CanvasRenderingContext2D::drawingContext): Changed to return a
+        GraphicsContext*.
+        (WebCore::CanvasRenderingContext2D::platformContext): Added. Now does what
+        drawingContext used to do.
+
+        * html/CanvasRenderingContext2D.idl: Added exception declarations as needed
+        for changes above.
+
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement): Changed m_drawingContext
+        to be a GraphicsContext instead of a CGContextRef.
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement): Ditto.
+        (WebCore::HTMLCanvasElement::getContext): Removed special cases for null
+        and empty string. Only give a 2D graphics context if the string is "2d".
+        (WebCore::HTMLCanvasElement::reset): Updated for change to GraphicsContext
+        from CGContextRef.
+        (WebCore::HTMLCanvasElement::paint): Ditto.
+        (WebCore::HTMLCanvasElement::createDrawingContext): Changed to create a
+        GraphicsContext* instead of a CGContextRef.
+        (WebCore::HTMLCanvasElement::drawingContext): Changed to return a
+        GraphicsContext* instead of a CGContextRef.
+        (WebCore::HTMLCanvasElement::createPlatformImage): Updated for changes above.
+
+        * html/HTMLCanvasElement.idl: Added.
+
+        * html/HTMLParser.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::canvasCreateErrorCheck): Added. An attempt to implement the
+        fallback behavior for canvas elements when JavaScript is off.
+        (WebCore::HTMLParser::getNode): Sorted list of functions. Added case for canvas.
+
+        * html/html_imageimpl.h:
+        * html/html_imageimpl.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement): Changed m_compositeOperator to be
+        an enum instead of a string.
+        (WebCore::HTMLImageElement::parseMappedAttribute): Parse the enum here.
+
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasResources.cpp: (WebCore::KCanvasMarker::draw): Changed to take a
+        GraphicsContext parameter.
+
+        * kcanvas/RenderPath.h: Added GraphicsContext parameter to drawMarkersIfNeeded.
+
+        * kcanvas/RenderPath.cpp: (WebCore::RenderPath::paint):
+        * kcanvas/RenderSVGImage.cpp: (WebCore::RenderSVGImage::paint):
+        * kcanvas/RenderSVGText.cpp: (WebCore::RenderSVGText::paint):
+        Changed to generate and use an appropriate GraphicsContext.
+
+        * kcanvas/device/quartz/KCanvasItemQuartz.h: Added GraphicsContext parameter to
+        drawMarkersIfNeeded.
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (WebCore::DrawMarkersData::DrawMarkersData): Added GraphicsContext*.
+        (WebCore::drawMarkerWithData): Pass along a GraphicsContext*.
+        (WebCore::drawStartAndMidMarkers): Ditto.
+        (WebCore::KCanvasItemQuartz::drawMarkersIfNeeded): Pass a long a GraphicsContext*.
+
+        * kcanvas/device/KRenderingDevice.h: Added a pure virtual createGraphicsContext
+        to bridge back to a GraphicsContext. Long term that class will replace this one.
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceContextQuartz::createGraphicsContext): Added.
+
+        * ksvg2/svg/SVGMaskElement.cpp: (WebCore::SVGMaskElement::drawMaskerContent):
+        Create and pass a GraphicsContext -- old code used the default constructor for
+        GraphicsContext which meant "current context", and that no longer exists.
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile): Ditto.
+
+        * platform/Brush.h: Removed.
+        * platform/CompositeOperator.h: Added.
+        * platform/CompositeOperator.cpp: Added.
+
+        * platform/Font.h: Changed calls to use IntPoint instead of pairs of ints.
+        Also removed the const from all the uses of GraphicsContext*.
+
+        * platform/GraphicsContext.h: Eliminated default constructor and constructor
+        that takes only a boolean. Replaced with constructors that take platform
+        graphics contexts only. Replaced brush-related calls with fill color calls.
+        Replaced use of Brush with use of Color. Changed Image::CompositeOperator to
+        just plain CompositeOperator. Changed tuples of ints into IntRect and IntPoint.
+        Moved setFocusRingClip and clearFocusRingClip out of ifdefs. Removed unused
+        getCompositeOperation and string-based setCompositeOperation. Moved
+        currentCGContext and the other setCompositeOperation out of the GraphicsContext
+        class and made them global functions. Fixed platformContext so it won't always
+        return the CGContextRef of the current NSGraphicsContext. Instead, it will
+        return the appropriate CGContextRef for the GraphicsContext. This eliminates
+        the need to use void* for the image-drawing functions.
+
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState): Replaced Brush with
+        an RGBA fill color.
+        (WebCore::GraphicsContext::setFillColor): Renamed from setBrush.
+        (WebCore::GraphicsContext::fillColor): Renamed from brush.
+        (WebCore::GraphicsContext::drawImage): Changed to use IntRect.
+        (WebCore::GraphicsContext::drawTiledImage): Moved here from GraphicsContextMac.mm.
+        (WebCore::GraphicsContext::drawText): Changed to use IntPoint.
+        (WebCore::GraphicsContext::drawHighlightForText): Ditto.
+        (WebCore::GraphicsContext::drawLineForText): Ditto.
+        (WebCore::GraphicsContext::drawLineForMisspelling): Ditto.
+
+        * platform/Image.h: Removed CompositeOperator and related functions.
+        Removed void* context parameters from draw functions.
+
+        * platform/Image.cpp: Removed compositeOperatorFromString.
+
+        * platform/Widget.h: Added a GraphicsContext* return value from lockDrawingFocus
+        that you pass back to unlockDrawingFocus (for deletion).
+
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::selectionRectForText): Changed parameter to point and removed
+        const on GraphicsContext* parameter.
+        (WebCore::Font::drawText): Ditto.
+        (WebCore::Font::drawHighlightForText): Ditto.
+        (WebCore::Font::drawLineForText): Ditto.
+        (WebCore::Font::drawLineForMisspelling): Ditto.
+        (WebCore::Font::misspellingLineThickness): Removed const.
+
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        Added fields to store a CGContextRef and an NSGraphicsContext.
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        Release both the CGContextRef and the NSGraphicsContext.
+        (WebCore::GraphicsContext::GraphicsContext): Implement to set up both the
+        CGContextRef and the NSGraphicsContext in one case, and only the CGContextRef
+        in the other.
+        (WebCore::GraphicsContext::savePlatformState): Implement for the CGContext-only
+        case.
+        (WebCore::GraphicsContext::restorePlatformState): Ditto.
+        (WebCore::GraphicsContext::drawRect): Assert that the NS context is present
+        and 
+        (WebCore::GraphicsContext::setColorFromFillColor): Renamed from
+        setColorFromBrush.
+        (WebCore::GraphicsContext::setColorFromPen): Added assertion.
+        (WebCore::GraphicsContext::drawLine): Added assertion.
+        (WebCore::GraphicsContext::drawEllipse): Get CGContext from the platformContext
+        function instead of currentCGContext, and changed to use fillColor.
+        (WebCore::GraphicsContext::drawArc): Ditto.
+        (WebCore::GraphicsContext::drawConvexPolygon): Ditto.
+        (WebCore::setCompositeOperation): Changed to global function and also changed
+        to do the work here -- no need to use WebCoreImageRendererFactory.
+        (WebCore::GraphicsContext::drawImage): Move most of this into GraphicsContext.cpp.
+        Remove the void* context parameter. Changed to take rects instead of separate coordinates.
+        (WebCore::GraphicsContext::fillRect): Changed to take color instead of Brush.
+        (WebCore::GraphicsContext::addClip): Added assertion.
+        (WebCore::GraphicsContext::addRoundedRectClip): Get CGContextRef from the platformContext
+        function instead of currentCGContext.
+        (WebCore::GraphicsContext::createRenderingDeviceContext): Ditto.
+        (WebCore::GraphicsContext::beginTransparencyLayer): Ditto.
+        (WebCore::GraphicsContext::endTransparencyLayer): Ditto.
+        (WebCore::GraphicsContext::setShadow): Change to take size instead of x,y. Also get
+        CGCOntextRef from the platformContext function instead of currentCGContext.
+        (WebCore::GraphicsContext::clearShadow): Get CGContextRef from the platformContext
+        function instead of currentCGContext.
+        (WebCore::GraphicsContext::platformContext): Added. Returns m_data->m_cgContext.
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::fillSolidColorInRect): Updated for change in CompositeOperator type.
+        (WebCore::Image::checkForSolidColor): Ditto.
+        (WebCore::Image::draw): Removed void* context parameter and replaced it with
+        a GraphicsContext* parameter. Renamed from drawInRect.
+        (WebCore::Image::drawTiled): Ditto. Renamed from tileInRect and scaleAndTileInRect.
+
+        * platform/mac/PDFDocumentImage.h: Updated for change in CompositeOperator type.
+        * platform/mac/PDFDocumentImage.mm: (WebCore::PDFDocumentImage::draw): Ditto.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::lockDrawingFocus): Changed to return a GraphicsContext*.
+        (WebCore::Widget::unlockDrawingFocus): Changed to take a GraphicsContext*.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect): Changed to pass IntPoint.
+        (WebCore::InlineTextBox::paint): Changed to pass IntSize.
+        (WebCore::InlineTextBox::paintSelection): More of the same.
+        (WebCore::InlineTextBox::paintMarkedTextBackground): Ditto.
+        (WebCore::InlineTextBox::paintDecoration): Ditto.
+        (WebCore::InlineTextBox::paintSpellingMarker): Ditto.
+        (WebCore::InlineTextBox::paintTextMatchMarker): Ditto.
+        (WebCore::InlineTextBox::paintMarkedTextUnderline): Ditto.
+        (WebCore::InlineTextBox::positionForOffset): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::fillHorizontalSelectionGap): Ditto.
+        (WebCore::RenderBlock::fillVerticalSelectionGap): Ditto.
+        (WebCore::RenderBlock::fillLeftSelectionGap): Ditto.
+        (WebCore::RenderBlock::fillRightSelectionGap): Ditto.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended): Ditto.
+        (WebCore::RenderBox::outlineBox): Ditto.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::setClip): Take out ifdefs. We'll do that inside GraphicsContext instead.
+        (WebCore::restoreClip): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBorder): More of the same.
+        (WebCore::RenderObject::paintBorderImage): Ditto.
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paintDecorations): Ditto.
+        (WebCore::EllipsisBox::paint): Ditto.
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint): Ditto.
+
+        * rendering/render_frames.cpp: (WebCore::RenderFrameSet::userResize): Set up a graphics
+        context by calling lockDrawingFocus. Also changed a color here to be a constant.
+
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawImage): Update for parameter type changes.
+        (WebCore::GraphicsContext::drawScaledAndTiledImage):
+        (WebCore::GraphicsContext::setFocusRingClip):
+        (WebCore::GraphicsContext::clearFocusRingClip):
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::setCompositingOperation):
+        (WebCore::Image::tileInRect):
+        (WebCore::Image::scaleAndTileInRect):
+
 2006-04-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

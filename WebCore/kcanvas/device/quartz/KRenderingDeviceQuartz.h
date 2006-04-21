@@ -55,6 +55,8 @@ public:
     
     virtual void clearPath();
     virtual void addPath(const KCanvasPath*);
+
+    virtual GraphicsContext* createGraphicsContext();
     
     CGContextRef cgContext() const { return m_cgContext; };
     NSGraphicsContext *nsGraphicsContext();

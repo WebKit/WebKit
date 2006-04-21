@@ -139,7 +139,7 @@ int PDFDocumentImage::pageCount()
     return CGPDFDocumentGetNumberOfPages(m_document);
 }
 
-void PDFDocumentImage::draw(NSRect srcRect, NSRect dstRect, Image::CompositeOperator op, 
+void PDFDocumentImage::draw(NSRect srcRect, NSRect dstRect, CompositeOperator op, 
                             float alpha, bool flipped, CGContextRef context)
 {
     CGContextSaveGState(context);

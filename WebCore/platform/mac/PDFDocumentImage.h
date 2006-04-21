@@ -51,7 +51,7 @@ public:
     int pageCount();
     void adjustCTM(CGContextRef context);
 
-    void draw(NSRect fromRect, NSRect toRect, Image::CompositeOperator op, float alpha, bool flipped, CGContextRef context);
+    void draw(NSRect fromRect, NSRect toRect, CompositeOperator, float alpha, bool flipped, CGContextRef);
 
 private:
     CGPDFDocumentRef m_document;

@@ -74,7 +74,7 @@ public:
     virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
 
 protected:
-    virtual void drawMarkersIfNeeded(const FloatRect&, const KCanvasPath*) const = 0;
+    virtual void drawMarkersIfNeeded(GraphicsContext*, const FloatRect&, const KCanvasPath*) const = 0;
 
 private:
     FloatRect strokeBBox() const;

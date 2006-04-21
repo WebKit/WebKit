@@ -28,6 +28,7 @@
 #import "KRenderingDeviceQuartz.h"
 
 #import "FoundationExtras.h"
+#import "GraphicsContext.h"
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasItemQuartz.h"
 #import "KCanvasMaskerQuartz.h"
@@ -95,6 +96,11 @@ NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
     if (!m_nsGraphicsContext && m_cgContext)
         m_nsGraphicsContext = KWQRetain([NSGraphicsContext graphicsContextWithGraphicsPort:m_cgContext flipped:YES]);
     return m_nsGraphicsContext;
+}
+
+GraphicsContext* KRenderingDeviceContextQuartz::createGraphicsContext()
+{
+    return new GraphicsContext(m_cgContext, false, false);
 }
 
 static bool __useFilters = true;

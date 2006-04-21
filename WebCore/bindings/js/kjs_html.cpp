@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "HTMLBaseFontElement.h"
 #include "HTMLButtonElement.h"
+#include "HTMLDocument.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLIsIndexElement.h"
@@ -37,16 +38,16 @@
 #include "HTMLOptionsCollection.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
-#include "JSCanvasRenderingContext2D.h"
 #include "NameNodeList.h"
+#include "RenderLayer.h"
 #include "Text.h"
 #include "css_ruleimpl.h"
 #include "dom2_eventsimpl.h"
 #include "html_baseimpl.h"
 #include "html_blockimpl.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLDocument.h"
 #include "html_headimpl.h"
+#include "html_imageimpl.h"
+#include "html_inlineimpl.h"
 #include "html_listimpl.h"
 #include "html_objectimpl.h"
 #include "html_tableimpl.h"
@@ -54,7 +55,6 @@
 #include "kjs_events.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
-#include "RenderLayer.h"
 
 #include "kjs_html.lut.h"
 
@@ -429,7 +429,6 @@ const ClassInfo JSHTMLElement::blockQuote_info = { "HTMLBlockQuoteElement", &JSH
 const ClassInfo JSHTMLElement::body_info = { "HTMLBodyElement", &JSHTMLElement::info, &HTMLBodyElementTable, 0 };
 const ClassInfo JSHTMLElement::br_info = { "HTMLBRElement", &JSHTMLElement::info, &HTMLBRElementTable, 0 };
 const ClassInfo JSHTMLElement::button_info = { "HTMLButtonElement", &JSHTMLElement::info, &HTMLButtonElementTable, 0 };
-const ClassInfo JSHTMLElement::canvas_info = { "HTMLCanvasElement", &JSHTMLElement::info, &HTMLCanvasElementTable, 0 };
 const ClassInfo JSHTMLElement::caption_info = { "HTMLTableCaptionElement", &JSHTMLElement::info, &HTMLTableCaptionElementTable, 0 };
 const ClassInfo JSHTMLElement::col_info = { "HTMLTableColElement", &JSHTMLElement::info, &HTMLTableColElementTable, 0 };
 const ClassInfo JSHTMLElement::dir_info = { "HTMLDirectoryElement", &JSHTMLElement::info, &HTMLDirectoryElementTable, 0 };
@@ -489,7 +488,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(bodyTag.localName().impl(), &body_info);
         classInfoMap.set(brTag.localName().impl(), &br_info);
         classInfoMap.set(buttonTag.localName().impl(), &button_info);
-        classInfoMap.set(canvasTag.localName().impl(), &canvas_info);
         classInfoMap.set(captionTag.localName().impl(), &caption_info);
         classInfoMap.set(colTag.localName().impl(), &col_info);
         classInfoMap.set(colgroupTag.localName().impl(), &col_info);
@@ -593,7 +591,6 @@ const JSHTMLElement::Accessors JSHTMLElement::font_accessors = { &JSHTMLElement:
 const JSHTMLElement::Accessors JSHTMLElement::hr_accessors = { &JSHTMLElement::hrGetter, &JSHTMLElement::hrSetter };
 const JSHTMLElement::Accessors JSHTMLElement::mod_accessors = { &JSHTMLElement::modGetter, &JSHTMLElement::modSetter };
 const JSHTMLElement::Accessors JSHTMLElement::a_accessors = { &JSHTMLElement::anchorGetter, &JSHTMLElement::anchorSetter };
-const JSHTMLElement::Accessors JSHTMLElement::canvas_accessors = { &JSHTMLElement::imageGetter, &JSHTMLElement::imageSetter };
 const JSHTMLElement::Accessors JSHTMLElement::img_accessors = { &JSHTMLElement::imageGetter, &JSHTMLElement::imageSetter };
 const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::param_accessors = { &JSHTMLElement::paramGetter, &JSHTMLElement::paramSetter };
@@ -625,7 +622,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(bodyTag.localName().impl(), &body_accessors);
         accessorMap.add(brTag.localName().impl(), &br_accessors);
         accessorMap.add(buttonTag.localName().impl(), &button_accessors);
-        accessorMap.add(canvasTag.localName().impl(), &canvas_accessors);
         accessorMap.add(captionTag.localName().impl(), &caption_accessors);
         accessorMap.add(colTag.localName().impl(), &col_accessors);
         accessorMap.add(colgroupTag.localName().impl(), &col_accessors);
@@ -689,6 +685,10 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 }
 
 /*
+
+@begin JSHTMLElementProtoTable 0
+@end
+
 @begin HTMLElementTable 14
   id            KJS::JSHTMLElement::ElementId     DontDelete
   title         KJS::JSHTMLElement::ElementTitle  DontDelete
@@ -1164,11 +1164,15 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   start           KJS::JSHTMLElement::MarqueeStart                DontDelete|Function 0
   stop            KJS::JSHTMLElement::MarqueeStop                 DontDelete|Function 0
 @end
-
-@begin HTMLCanvasElementTable 1
-  getContext      KJS::JSHTMLElement::GetContext                  DontDelete|Function 1
-@end
 */
+
+KJS_IMPLEMENT_PROTOFUNC(JSHTMLElementProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("HTMLElement", JSHTMLElementProto, JSHTMLElementProtoFunc)
+
+JSValue* JSHTMLElementProtoFunc::callAsFunction(ExecState*, JSObject*, const List&)
+{
+    return 0;
+}
 
 JSHTMLElement::JSHTMLElement(ExecState *exec, HTMLElement *e)
     : JSElement(exec, e)
@@ -2218,11 +2222,6 @@ HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len, const 
   put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }
 
-static JSValue* toJS(ExecState* exec, CanvasRenderingContext2D* context)
-{
-    return cacheDOMObject<CanvasRenderingContext2D, JSCanvasRenderingContext2D>(exec, context);
-}
-
 JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
     if (!thisObj->inherits(&JSHTMLElement::info))
@@ -2400,10 +2399,6 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj,
             element.renderer()->layer()->marquee()->stop();
             return jsUndefined();
         }
-    }
-    else if (element.hasLocalName(canvasTag)) {
-        if (id == JSHTMLElement::GetContext)
-            return toJS(exec, static_cast<HTMLCanvasElement*>(&element)->getContext(args[0]->toString(exec)));
     }
 
     return jsUndefined();

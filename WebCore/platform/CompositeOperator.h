@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BRUSH_H_
-#define BRUSH_H_
-
-#include "Color.h"
+#ifndef CompositeOperator_h
+#define CompositeOperator_h
 
 namespace WebCore {
 
-class Brush {
-public:    
-    enum BrushStyle {
-        NoBrush,
-        SolidPattern,
+    class String;
+
+    // Note: These constants exactly match the NSCompositeOperator constants of
+    // AppKit on Mac OS X. If that's ever changed, we'll need to change the Mac
+    // platform code to map one to the other.
+    enum CompositeOperator {
+        CompositeClear,
+        CompositeCopy,
+        CompositeSourceOver,
+        CompositeSourceIn,
+        CompositeSourceOut,
+        CompositeSourceAtop,
+        CompositeDestinationOver,
+        CompositeDestinationIn,
+        CompositeDestinationOut,
+        CompositeDestinationAtop,
+        CompositeXOR,
+        CompositePlusDarker,
+        CompositeHighlight,
+        CompositePlusLighter
     };
 
-    Brush(const Color &c = Color::black, BrushStyle style = SolidPattern)
-        : brushColor(c), brushStyle(style) { }
-
-    const Color &color() const { return brushColor; }
-    void setColor(const Color &c) { brushColor = c; }
-    BrushStyle style() const { return brushStyle; }
-    void setStyle(BrushStyle s) { brushStyle = s; }
-    
-    bool operator==(const Brush &b) const { return brushColor == b.brushColor && brushStyle == b.brushStyle; }
-    bool operator!=(const Brush &b) const { return !(*this == b); }
-
-private:
-    Color brushColor;
-    BrushStyle brushStyle;
-};
+    String compositeOperatorName(CompositeOperator);
+    bool parseCompositeOperator(const String&, CompositeOperator&);
 
 }
 
