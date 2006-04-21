@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright 2006 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "WebCoreGraphicsBridge.h"
+#ifndef WebCoreSystemInterface_h
+#define WebCoreSystemInterface_h
 
-#import <kxmlcore/Assertions.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-@implementation WebCoreGraphicsBridge
+// In alphabetical order.
 
-static WebCoreGraphicsBridge *sharedBridge;
+extern void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
+extern void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
+extern void (*wkSetDragImage)(NSImage*, NSPoint offset);
 
-+ (WebCoreGraphicsBridge *)sharedBridge
-{
-    return sharedBridge;
+#ifdef __cplusplus
 }
+#endif
 
-- (id)init
-{
-    [super init];
-    
-    ASSERT(!sharedBridge);
-    sharedBridge = [self retain];
-    
-    return self;
-}
-
-- (void)drawFocusRingWithPath:(CGPathRef)path radius:(float)radius color:(CGColorRef)color clipRect:(NSRect)rect
-{
-}
-
-- (void)setDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc
-{
-}
-
-- (void)drawBezeledTextFieldCell:(NSRect)rect enabled:(BOOL)active
-{
-}
-
-@end
+#endif

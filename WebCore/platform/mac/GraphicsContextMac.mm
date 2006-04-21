@@ -26,15 +26,15 @@
 #import "config.h"
 #import "GraphicsContext.h"
 
-#import "Font.h"
+#import "BlockExceptions.h"
 #import "FloatRect.h"
+#import "Font.h"
 #import "FoundationExtras.h"
 #import "IntPointArray.h"
 #import "IntRect.h"
 #import "KRenderingDeviceQuartz.h"
-#import "BlockExceptions.h"
-#import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRendererFactory.h"
+#import "WebCoreSystemInterface.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "Widget.h"
@@ -582,19 +582,43 @@ void GraphicsContext::drawFocusRing(const Color& color)
 {
     if (paintingDisabled())
         return;
+
     int radius = (focusRingWidth() - 1) / 2;
     int offset = radius + focusRingOffset();
     CGColorRef colorRef = color.isValid() ? cgColor(color) : 0;
-    
+
     CGMutablePathRef focusRingPath = CGPathCreateMutable();
     const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
-    
     for (unsigned i = 0; i < rectCount; i++)
         CGPathAddRect(focusRingPath, 0, CGRectInset(rects[i], -offset, -offset));
-    
-    [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:focusRingPath radius:radius color:colorRef clipRect:m_data->m_focusRingClip];
+
+    CGContextRef context = platformContext();
+
+    // FIXME: This works only inside a NSView's drawRect method. The view must be
+    // focused and this context must be the current NSGraphicsContext.
+    ASSERT(context == [[NSGraphicsContext currentContext] graphicsPort]);
+    NSView* view = [NSView focusView];
+    ASSERT(view);
+
+    const NSRect* drawRects;
+    int count;
+    [view getRectsBeingDrawn:&drawRects count:&count];
+
+    // We have to pass in our own clip rectangles here because a bug in CG
+    // seems to inflate the clip (thus allowing the focus ring to paint
+    // slightly outside the clip).
+    NSRect transformedClipRect = [view convertRect:m_data->m_focusRingClip toView:nil];
+    for (int i = 0; i < count; ++i) {
+        NSRect transformedRect = [view convertRect:drawRects[i] toView:nil];
+        NSRect rectToUse = NSIntersectionRect(transformedRect, transformedClipRect);
+        CGContextBeginPath(context);
+        CGContextAddPath(context, focusRingPath);
+        wkDrawFocusRing(context, *(CGRect *)&rectToUse, colorRef, radius);
+    }
+
     CGColorRelease(colorRef);
+
     CGPathRelease(focusRingPath);
 }
 

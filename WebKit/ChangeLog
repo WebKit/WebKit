@@ -1,3 +1,28 @@
+2006-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - WebKit part of http://bugzilla.opendarwin.org/show_bug.cgi?id=8505
+          eliminate WebCoreGraphics bridge, demonstrate new SystemInterface technique
+
+        * WebCoreSupport/WebGraphicsBridge.h: Removed.
+        * WebCoreSupport/WebGraphicsBridge.m: Removed.
+        * WebCoreSupport/WebSystemInterface.h: Added.
+        * WebCoreSupport/WebSystemInterface.m: Added.
+
+        * WebKit.xcodeproj/project.pbxproj: Updated for removed and added files.
+
+        * WebCoreSupport/WebImageData.m: Removed unneeded include of WebGraphicsBridge.h.
+        * WebCoreSupport/WebImageRenderer.m: Ditto.
+        * WebCoreSupport/WebTextRenderer.m: Ditto.
+
+        * WebView/WebFrameView.m: (-[WebFrameView initWithFrame:]): Guarded all the one-time
+        initialization inside a boolean, just in case some things take a little time. Added
+        a call to InitWebCoreSystemInterface to the one-time initialization here. Later, we
+        will need to add it in some other places if we call code that requires the use of
+        WebCoreSystemInterface functions from anywhere that can be invoked before creations
+        of the first WebFrameView, but for now there is no need.
+
 2006-04-19  James G. Speth  <speth@end.com>
 
         Reviewed by Timothy.

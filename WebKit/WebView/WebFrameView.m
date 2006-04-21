@@ -26,35 +26,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebFrameView.h>
+#import "WebFrameView.h"
 
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebClipView.h>
-#import <WebKit/WebCookieAdapter.h>
-#import <WebKit/WebDataSource.h>
-#import <WebKit/WebDocument.h>
-#import <WebKit/WebDynamicScrollBarsView.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameViewInternal.h>
-#import <WebKit/WebFrameViewPrivate.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebGraphicsBridge.h>
-#import <WebKit/WebImageRenderer.h>
-#import <WebKit/WebImageRendererFactory.h>
-#import <WebKit/WebImageView.h>
-#import <WebKit/WebKeyGenerator.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSPasteboardExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPDFView.h>
-#import <WebKit/WebTextRendererFactory.h>
-#import <WebKit/WebTextView.h>
-#import <WebKit/WebViewFactory.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebAssertions.h>
+#import "WebAssertions.h"
+#import "WebClipView.h"
+#import "WebCookieAdapter.h"
+#import "WebDataSource.h"
+#import "WebDocument.h"
+#import "WebDynamicScrollBarsView.h"
+#import "WebFrame.h"
+#import "WebFrameBridge.h"
+#import "WebFrameViewInternal.h"
+#import "WebFrameViewPrivate.h"
+#import "WebHTMLViewPrivate.h"
+#import "WebImageRenderer.h"
+#import "WebImageRendererFactory.h"
+#import "WebImageView.h"
+#import "WebKeyGenerator.h"
+#import "WebKitErrorsPrivate.h"
+#import "WebKitStatisticsPrivate.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSPasteboardExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebPDFView.h"
+#import "WebSystemInterface.h"
+#import "WebTextRendererFactory.h"
+#import "WebTextView.h"
+#import "WebViewFactory.h"
+#import "WebViewInternal.h"
+#import "WebViewPrivate.h"
 
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
@@ -125,14 +125,12 @@ enum {
         return NO;
         
     // Only draw a border for frames that request a border and the frame does
-    // not contain a frameset.  Additionally we should (post-panther) not draw
+    // not contain a frameset.  Additionally we should (some day) not draw
     // a border (left, right, top or bottom) if the frame edge abutts the window frame.
     NSView *docV = [self documentView];
-    if ([docV isKindOfClass:[WebHTMLView class]]){
-        if ([[(WebHTMLView *)docV _bridge] isFrameSet]){
+    if ([docV isKindOfClass:[WebHTMLView class]])
+        if ([[(WebHTMLView *)docV _bridge] isFrameSet])
             return NO;
-        }
-    }
     return YES;
 }
 
@@ -142,9 +140,8 @@ enum {
     // The border drawn by WebFrameView is 1 pixel on the left and right,
     // two pixels on top and bottom.  Shrink the scroll view to accomodate
     // the border.
-    if ([self _shouldDrawBorder]) {
+    if ([self _shouldDrawBorder])
         scrollViewFrame = NSInsetRect (scrollViewFrame, 1, 2);
-    }
     [_private->frameScrollView setFrame:scrollViewFrame];
 }
 
@@ -163,7 +160,7 @@ enum {
     return [_private->webFrame webView];
 }
 
-- (void)_setMarginWidth: (int)w
+- (void)_setMarginWidth:(int)w
 {
     _private->marginWidth = w;
 }
@@ -173,7 +170,7 @@ enum {
     return _private->marginWidth;
 }
 
-- (void)_setMarginHeight: (int)h
+- (void)_setMarginHeight:(int)h
 {
     _private->marginHeight = h;
 }
@@ -187,15 +184,15 @@ enum {
 {
     WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self _scrollView];
     
-    [sv setSuppressLayout: YES];
+    [sv setSuppressLayout:YES];
     
     // Always start out with arrow.  New docView can then change as needed, but doesn't have to
     // clean up after the previous docView.  Also TextView will set cursor when added to view
     // tree, so must do this before setDocumentView:.
     [sv setDocumentCursor:[NSCursor arrowCursor]];
 
-    [sv setDocumentView: view];
-    [sv setSuppressLayout: NO];
+    [sv setDocumentView:view];
+    [sv setSuppressLayout:NO];
 }
 
 -(NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
@@ -303,30 +300,34 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 @implementation WebFrameView
 
-- initWithFrame: (NSRect) frame
+- initWithFrame:(NSRect)frame
 {
-    self = [super initWithFrame: frame];
+    self = [super initWithFrame:frame];
     if (!self)
         return nil;
  
-    [WebViewFactory createSharedFactory];
-    [WebTextRendererFactory createSharedFactory];
-    [WebImageRendererFactory createSharedFactory];
-    [WebCookieAdapter createSharedAdapter];
-    [WebGraphicsBridge createSharedBridge];
-    [WebKeyGenerator createSharedGenerator];
+    static bool didFirstTimeInitialization;
+    if (!didFirstTimeInitialization) {
+        didFirstTimeInitialization = true;
+        InitWebCoreSystemInterface();
+        [WebViewFactory createSharedFactory];
+        [WebTextRendererFactory createSharedFactory];
+        [WebImageRendererFactory createSharedFactory];
+        [WebCookieAdapter createSharedAdapter];
+        [WebKeyGenerator createSharedGenerator];
+    }
     
     _private = [[WebFrameViewPrivate alloc] init];
 
-    WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,frame.size.width,frame.size.height)];
+    WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0,0,frame.size.width,frame.size.height)];
     _private->frameScrollView = scrollView;
-    [scrollView setContentView: [[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
-    [scrollView setDrawsBackground: NO];
-    [scrollView setHasVerticalScroller: NO];
-    [scrollView setHasHorizontalScroller: NO];
-    [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
+    [scrollView setDrawsBackground:NO];
+    [scrollView setHasVerticalScroller:NO];
+    [scrollView setHasHorizontalScroller:NO];
+    [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [scrollView setLineScroll:40.0];
-    [self addSubview: scrollView];
+    [self addSubview:scrollView];
     // don't call our overridden version here; we need to make the standard NSView link between us
     // and our subview so that previousKeyView and previousValidKeyView work as expected. This works
     // together with our becomeFirstResponder and setNextKeyView overrides.
@@ -361,9 +362,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return _private->webFrame;
 }
 
-- (void)setAllowsScrolling: (BOOL)flag
+- (void)setAllowsScrolling:(BOOL)flag
 {
-    [(WebDynamicScrollBarsView *)[self _scrollView] setAllowsScrolling: flag];
+    [(WebDynamicScrollBarsView *)[self _scrollView] setAllowsScrolling:flag];
 }
 
 - (BOOL)allowsScrolling
@@ -537,7 +538,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [[self _webView] goForward];
 }
 
-- (BOOL)_scrollVerticallyBy: (float)delta
+- (BOOL)_scrollVerticallyBy:(float)delta
 {
     // This method uses the secret method _scrollTo on NSClipView.
     // It does that because it needs to know definitively whether scrolling was
@@ -549,7 +550,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [[self _contentView] _scrollTo:&point];
 }
 
-- (BOOL)_scrollHorizontallyBy: (float)delta
+- (BOOL)_scrollHorizontallyBy:(float)delta
 {
     NSPoint point = [[self _contentView] bounds].origin;
     point.x += delta;

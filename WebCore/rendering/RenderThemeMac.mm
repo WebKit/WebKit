@@ -23,11 +23,11 @@
 #import "RenderThemeMac.h"
 
 #import "Document.h"
-#import "FrameView.h"
 #import "FoundationExtras.h"
-#import "cssstyleselector.h"
+#import "FrameView.h"
 #import "RenderCanvas.h"
-#import "WebCoreGraphicsBridge.h"
+#import "WebCoreSystemInterface.h"
+#import "cssstyleselector.h"
 
 // The methods in this file are specific to the Mac OS X platform.
 
@@ -492,8 +492,11 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
     updateFocusedState(button, o);
 }
 
-bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {    
+    // FIXME: Ignores the GraphicsContext in the PaintInfo and always draws into the current
+    // NSGraphicsContext instead.
+
     // Determine the width and height needed for the control and prepare the cell for painting.
     setButtonCellState(o, r);
     
@@ -519,11 +522,11 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
     return false;
 }
 
-bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
 {
-    bool enabled = isEnabled(o) && !isReadOnlyControl(o);
-    [[WebCoreGraphicsBridge sharedBridge] drawBezeledTextFieldCell:NSRect(r) enabled:enabled];
-    
+    // FIXME: Ignores the GraphicsContext in the PaintInfo and always draws into the current
+    // NSGraphicsContext instead.
+    wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
     return false;
 }
 

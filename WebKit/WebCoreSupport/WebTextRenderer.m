@@ -32,7 +32,6 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebTextRendererFactory.h>

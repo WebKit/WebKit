@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright 2006 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/WebCoreGraphicsBridge.h>
-
-@interface WebGraphicsBridge : WebCoreGraphicsBridge
-+ (void)createSharedBridge;
-+ (WebGraphicsBridge *)sharedBridge;
-@end
+void InitWebCoreSystemInterface(void);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright 2006 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Cocoa/Cocoa.h>
+#import "config.h"
+#import "WebCoreSystemInterface.h"
 
-@interface WebCoreGraphicsBridge : NSObject
-
-+ (WebCoreGraphicsBridge *)sharedBridge;
-- (void)drawFocusRingWithPath:(CGPathRef)path radius:(float)radius color:(CGColorRef)color clipRect:(NSRect)rect;
-- (void)setDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc;
-- (void)drawBezeledTextFieldCell:(NSRect)rect enabled:(BOOL)active;
-
-@end
+void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
+void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
+void (*wkSetDragImage)(NSImage*, NSPoint offset);

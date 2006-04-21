@@ -29,7 +29,6 @@
 #import "WebImageData.h"
 
 #import "WebAssertions.h"
-#import "WebGraphicsBridge.h"
 #import "WebImageDecoder.h"
 #import "WebImageRenderer.h"
 #import "WebImageRendererFactory.h"

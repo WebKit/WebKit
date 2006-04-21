@@ -30,7 +30,6 @@
 
 #import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageData.h>
 #import <WebKit/WebImageRendererFactory.h>

@@ -26,16 +26,11 @@
 #import "config.h"
 #import "ClipboardMac.h"
 
+#import "CachedImage.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
-#import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
-#import "CachedImage.h"
-
-#import <AppKit/AppKit.h>
-
-using WebCore::String;
-using WebCore::Node;
+#import "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
@@ -316,7 +311,16 @@ void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &
             NSPoint cocoaLoc;
             NSImage* cocoaImage = dragNSImage(&cocoaLoc);
             if (cocoaImage) {
-                [[WebCoreGraphicsBridge sharedBridge] setDraggingImage:cocoaImage at:cocoaLoc];
+                // Dashboard wants to be able to set the drag image during dragging, but Cocoa does not allow this.
+                // Instead we must drop down to the CoreGraphics API.
+                wkSetDragImage(cocoaImage, cocoaLoc);
+
+                // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
+                // up the stack from us because the CoreFoundation drag manager does not use the run loop by itself.
+                // This is the most innocuous event to use, per Kristen Forster.
+                NSEvent* ev = [NSEvent mouseEventWithType:NSMouseMoved location:NSZeroPoint
+                    modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
+                [NSApp postEvent:ev atStart:YES];
             }
         }
         // Else either 1) we haven't started dragging yet, so we rely on the part to install this drag image

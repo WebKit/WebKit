@@ -1,3 +1,34 @@
+2006-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - WebCore part of http://bugzilla.opendarwin.org/show_bug.cgi?id=8505
+          eliminate WebCoreGraphics bridge, demonstrate new SystemInterface technique
+
+        * platform/mac/WebCoreGraphicsBridge.h: Removed.
+        * platform/mac/WebCoreGraphicsBridge.m: Removed.
+        * platform/mac/WebCoreSystemInterface.h: Added.
+        * platform/mac/WebCoreSystemInterface.mm: Added.
+
+        * WebCore.exp: Add new SystemInterface globals, remove WebCoreGraphicsBridge.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for removed and added files.
+        Sorted files.
+
+        * bridge/mac/FrameMac.mm: Removed unneeded include of WebCoreGraphicsBridge.h.
+
+        * platform/mac/ClipboardMac.mm: (WebCore::ClipboardMac::setDragImage):
+        Moved code from WebGraphicsBridge here, using WebCoreSystemInterface so we can
+        call wkSetDragImage.
+
+        * platform/mac/GraphicsContextMac.mm: (WebCore::GraphicsContext::drawFocusRing):
+        Moved code from WebGraphicsBridge here, using WebCoreSystemInterface so we can
+        call wkDrawFocusRing.
+
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::paintTextField):
+        Call wkDrawBezeledTextFieldCell from WebCoreSystemInterface instead of using
+        WebGraphicsBridge to do the same thing.
+
 2006-04-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

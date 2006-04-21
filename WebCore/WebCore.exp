@@ -102,17 +102,16 @@
 .objc_class_name_DOMText
 .objc_class_name_DOMTreeWalker
 .objc_class_name_DOMUIEvent
-.objc_class_name_WebCoreFrameBridge
-.objc_class_name_WebCorePageBridge
 .objc_class_name_WebCoreCache
 .objc_class_name_WebCoreCookieAdapter
 .objc_class_name_WebCoreEncodings
+.objc_class_name_WebCoreFrameBridge
 .objc_class_name_WebCoreFrameNamespaces
-.objc_class_name_WebCoreGraphicsBridge
 .objc_class_name_WebCoreHistory
 .objc_class_name_WebCoreImageRendererFactory
 .objc_class_name_WebCoreJavaScript
 .objc_class_name_WebCoreKeyGenerator
+.objc_class_name_WebCorePageBridge
 .objc_class_name_WebCoreScriptDebugger
 .objc_class_name_WebCoreSettings
 .objc_class_name_WebCoreTextDecoder
@@ -124,3 +123,6 @@ _WebCoreInitializeEmptyTextStyle
 _WebCoreInitializeFont
 _WebCoreInitializeTextRun
 _WebCorePageCacheStateKey
+_wkDrawBezeledTextFieldCell
+_wkDrawFocusRing
+_wkSetDragImage

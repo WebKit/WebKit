@@ -58,7 +58,6 @@
 #import "TextIterator.h"
 #import "TransferJob.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreGraphicsBridge.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
 #import "csshelper.h"
