@@ -344,13 +344,13 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
     cairo_restore(context);
 }
 
-void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
+void GraphicsContext::fillRect(const IntRect& rect, const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    if (brush.style() == Brush::SolidPattern)
-        fillRectSourceOver(m_data->context, rect, brush.color());
+    if (color.alpha())
+        fillRectSourceOver(m_data->context, rect, color);
 }
 
 void GraphicsContext::addClip(const IntRect& rect)

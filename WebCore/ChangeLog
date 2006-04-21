@@ -1,3 +1,11 @@
+2006-04-21  Darin Adler  <darin@apple.com>
+
+        - one more attempt to fix Windows build
+
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillRect): Update to use Color and match
+        the similar function on GraphicsContextMac.
+
 2006-04-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
