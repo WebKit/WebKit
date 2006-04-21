@@ -247,6 +247,22 @@
 			Name="DerivedSources"
 			>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSRule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\CharsetData.cpp"
 				>
 			</File>
@@ -584,6 +600,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\CookieJar.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\CompositeOperator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\CompositeOperator.cpp"
 				>
 			</File>
 			<File
@@ -3129,6 +3153,14 @@
 			<Filter
 				Name="js"
 				>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DBase.cpp"
 					>

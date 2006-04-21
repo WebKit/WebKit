@@ -1,3 +1,14 @@
+2006-04-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Tests for global constants related to CSSRule, CSSValue, Event, and
+        NodeFilter objects.
+
+        * fast/dom/constants-expected.txt: Added.
+        * fast/dom/constants.html: Added.
+        * fast/dom/prototype-chain-expected.txt:
+        * fast/dom/resources/stylesheet.css: Added.
+        * fast/dom/xmlhttprequest-get-expected.txt:
+
 2006-04-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

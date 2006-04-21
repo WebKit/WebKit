@@ -28,12 +28,17 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLDocument.h"
+#include "JSCSSRule.h"
+#include "JSCSSValue.h"
 #include "JSDOMParser.h"
 #include "JSDOMWindow.h"
+#include "JSEvent.h"
 #include "JSMutationEvent.h"
+#include "JSNodeFilter.h"
 #include "JSRange.h"
 #include "JSXMLHttpRequest.h"
 #include "JSXMLSerializer.h"
+#include "KWQKHTMLSettings.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PlugInInfoStore.h"
@@ -44,7 +49,6 @@
 #include "css_stylesheetimpl.h"
 #include "dom2_eventsimpl.h"
 #include "htmlediting.h"
-#include "KWQKHTMLSettings.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_navigator.h"
@@ -210,6 +214,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   NodeFilter    Window::NodeFilter      DontDelete
   DOMException  Window::DOMException    DontDelete
   CSSRule       Window::CSSRule         DontDelete
+  CSSValue      Window::CSSValue        DontDelete
   MutationEvent Window::MutationEventCtor   DontDelete
   frames        Window::Frames          DontDelete|ReadOnly
   history       Window::History_        DontDelete|ReadOnly
@@ -676,13 +681,15 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Range:
       return JSRange::getConstructor(exec);
     case NodeFilter:
-      return getNodeFilterConstructor(exec);
+      return JSNodeFilter::getConstructor(exec);
     case DOMException:
       return getDOMExceptionConstructor(exec);
     case CSSRule:
-      return getCSSRuleConstructor(exec);
+      return JSCSSRule::getConstructor(exec);
+    case CSSValue:
+      return JSCSSValue::getConstructor(exec);
     case EventCtor:
-      return getEventConstructor(exec);
+      return JSEvent::getConstructor(exec);
     case MutationEventCtor:
       return JSMutationEvent::getConstructor(exec);
     case Frames:

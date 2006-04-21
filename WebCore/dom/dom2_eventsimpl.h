@@ -51,7 +51,32 @@ enum EventExceptionCode { UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset };
 class Event : public Shared<Event>
 {
 public:
-    enum PhaseType { CAPTURING_PHASE = 1, AT_TARGET = 2, BUBBLING_PHASE = 3 };
+    enum PhaseType { 
+        CAPTURING_PHASE = 1, 
+        AT_TARGET = 2, 
+        BUBBLING_PHASE = 3 
+    };
+
+    // Reverse-engineered from Netscape
+    enum EventType {
+        MOUSEDOWN           = 1,
+        MOUSEUP             = 2,
+        MOUSEOVER           = 4,
+        MOUSEOUT            = 8,
+        MOUSEMOVE           = 16,
+        MOUSEDRAG           = 32,
+        CLICK               = 64,
+        DBLCLICK            = 128,
+        KEYDOWN             = 256,
+        KEYUP               = 512,
+        KEYPRESS            = 1024,
+        DRAGDROP            = 2048,
+        FOCUS               = 4096,
+        BLUR                = 8192,
+        SELECT              = 16384,
+        CHANGE              = 32768
+    };
+    
     Event();
     Event(const AtomicString& type, bool canBubbleArg, bool cancelableArg);
     virtual ~Event();

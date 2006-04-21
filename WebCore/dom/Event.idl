@@ -1,0 +1,48 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module events {
+
+    // Introduced in DOM Level 2:
+    interface [LegacyParent=KJS::DOMEvent] Event {
+
+        // DOM PhaseType
+        const unsigned short      CAPTURING_PHASE                = 1;
+        const unsigned short      AT_TARGET                      = 2;
+        const unsigned short      BUBBLING_PHASE                 = 3;
+
+        // Reverse-engineered from Netscape
+        const unsigned short MOUSEDOWN           = 1;
+        const unsigned short MOUSEUP             = 2;
+        const unsigned short MOUSEOVER           = 4;
+        const unsigned short MOUSEOUT            = 8;
+        const unsigned short MOUSEMOVE           = 16;
+        const unsigned short MOUSEDRAG           = 32;
+        const unsigned short CLICK               = 64;
+        const unsigned short DBLCLICK            = 128;
+        const unsigned short KEYDOWN             = 256;
+        const unsigned short KEYUP               = 512;
+        const unsigned short KEYPRESS            = 1024;
+        const unsigned short DRAGDROP            = 2048;
+        const unsigned short FOCUS               = 4096;
+        const unsigned short BLUR                = 8192;
+        const unsigned short SELECT              = 16384;
+        const unsigned short CHANGE              = 32768;
+    };
+}

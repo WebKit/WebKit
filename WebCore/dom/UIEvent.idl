@@ -21,7 +21,7 @@ module events {
 
     // Introduced in DOM Level 2:
 
-    interface [LegacyParent=KJS::DOMEvent] UIEvent : Event {
+    interface UIEvent : Event {
 
         readonly attribute DOMWindow  view;
         readonly attribute long                 detail;

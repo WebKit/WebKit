@@ -153,7 +153,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Closed, Crypto, DefaultStatus, Status, Node, EventCtor, MutationEventCtor, Range,
-           NodeFilter, DOMException, CSSRule, Frames, History_, Event_, InnerHeight,
+           NodeFilter, DOMException, CSSRule, CSSValue, Frames, History_, Event_, InnerHeight,
            InnerWidth, Length, Location_, Locationbar, Name, Navigator_, ClientInformation,
            Menubar, OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,

@@ -183,20 +183,6 @@ namespace KJS {
 
   JSValue* toJS(ExecState*, WebCore::CSSRule*);
 
-  // Constructor for CSSRule - currently only used for some global values
-  class CSSRuleConstructor : public DOMObject {
-  public:
-    CSSRuleConstructor(ExecState *) { }
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { UNKNOWN_RULE, STYLE_RULE, CHARSET_RULE, IMPORT_RULE, MEDIA_RULE, FONT_FACE_RULE, PAGE_RULE };
-  };
-
-  JSValue *getCSSRuleConstructor(ExecState *exec);
-
   class DOMCSSValue : public DOMObject {
   public:
     DOMCSSValue(ExecState *, WebCore::CSSValue *v) : m_impl(v) { }
@@ -218,20 +204,6 @@ namespace KJS {
   KJS_DEFINE_PROTOTYPE(DOMCSSValueProto)
 
   JSValue* toJS(ExecState*, WebCore::CSSValue*);
-
-  // Constructor for CSSValue - currently only used for some global values
-  class CSSValueConstructor : public DOMObject {
-  public:
-    CSSValueConstructor(ExecState *) { }
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { CSS_VALUE_LIST, CSS_PRIMITIVE_VALUE, CSS_CUSTOM, CSS_INHERIT };
-  };
-
-  JSValue *getCSSValueConstructor(ExecState *exec);
 
   class DOMCSSValueList : public DOMCSSValue {
   public:

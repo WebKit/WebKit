@@ -19,7 +19,7 @@
 
 module css {
 
-    interface [LegacyParent=KJS::DOMCSSValue] CSSPrimitiveValue : CSSValue {
+    interface CSSPrimitiveValue : CSSValue {
 
         // UnitTypes
         const unsigned short CSS_UNKNOWN    = 0;

@@ -130,6 +130,8 @@ sub GetLegacyHeaderIncludes
     return "#include \"kjs_css.h\"\n\n";
   } elsif ($module eq "html") {
     return "#include \"kjs_html.h\"\n\n";
+  } elsif ($module eq "traversal") {
+    return "#include \"kjs_traversal.h\"\n\n";
   } else {
     die ("Don't know what headers to include for module $module");
   }
@@ -147,6 +149,7 @@ sub AddIncludesForType
       $type eq "CanvasPattern" or
       $type eq "CharacterData" or
       $type eq "Comment" or
+      $type eq "DOMException" or
       $type eq "DOMImplementation" or
       $type eq "DOMWindow" or
       $type eq "Document" or
@@ -161,9 +164,14 @@ sub AddIncludesForType
     $implIncludes{"${type}.h"} = 1;
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
-  } elsif ($type eq "CSSRuleList") {
+  } elsif ($type eq "CSSRuleList" or
+           $type eq "CSSRule") {
     $implIncludes{"css_ruleimpl.h"} = 1;
-  } elsif ($type eq "CSSPrimitiveValue" or $type eq "Counter" or $type eq "Rect" or $type eq "RGBColor") {
+  } elsif ($type eq "CSSPrimitiveValue" or 
+           $type eq "CSSValue" or
+           $type eq "Counter" or 
+           $type eq "Rect" or 
+           $type eq "RGBColor") {
     $implIncludes{"css_valueimpl.h"} = 1;
   } elsif ($type eq "CSSStyleDeclaration") {
     $implIncludes{"css_valueimpl.h"} = 1;
@@ -177,6 +185,7 @@ sub AddIncludesForType
            $type eq "WheelEvent") {
     $implIncludes{"dom2_eventsimpl.h"} = 1;
   } elsif ($type eq "NodeIterator" or
+           $type eq "NodeFilter" or
 	   $type eq "TreeWalker") {
     $implIncludes{"dom2_traversalimpl.h"} = 1;
   } elsif ($type eq "ProcessingInstruction" or
@@ -353,7 +362,7 @@ sub GenerateHeader
   }
 
   # Add prototype declaration -- code adopted from the KJS_DEFINE_PROTOTYPE and KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
-  if ($numFunctions > 0) {
+  if ($numFunctions > 0 || $numConstants > 0) {
       push(@headerContent, "class ${className}Proto : public KJS::JSObject {\n");
       if (!$dataNode->extendedAttributes->{"DoNotCache"}) {
           push(@headerContent, "    friend KJS::JSObject* KJS_GCC_ROOT_NS_HACK cacheGlobalObject<${className}Proto>(KJS::ExecState*, const KJS::Identifier& propertyName);\n");
@@ -367,12 +376,15 @@ sub GenerateHeader
       push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &info; }\n");
       push(@headerContent, "    static const KJS::ClassInfo info;\n");
       push(@headerContent, "    bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n");
+      if ($numConstants ne 0) {
+          push(@headerContent, "    KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;\n");
+      }
       push(@headerContent, "protected:\n");
       if ($dataNode->extendedAttributes->{"DoNotCache"}) {
           push(@headerContent, "    ${className}Proto() { }\n");
       } else {
           push(@headerContent, "    ${className}Proto(KJS::ExecState* exec)\n");
-          if ($hasParent) {
+          if ($hasParent && $parentClassName ne "KJS::DOMCSSRule" && $parentClassName ne "KJS::DOMNodeFilter") {
               push(@headerContent, "        : KJS::JSObject(${parentClassName}Proto::self(exec)) { }\n");
           } else {
               push(@headerContent, "        : KJS::JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()) { }\n");
@@ -491,14 +503,14 @@ sub GenerateImplementation
                        "(exec, &${className}ConstructorTable, this, propertyName, slot);\n}\n\n");
 
     push(@implContent, "JSValue* ${className}Constructor::getValueProperty(ExecState*, int token) const\n{\n");
-    push(@implContent, "    // We use the token as the value to return directly\n");
+    push(@implContent, "    // The token is the numeric value of its associated constant\n");
     push(@implContent, "    return jsNumber(token);\n}\n\n");
   }
   
-  # - Add all functions in a hashtable definition, if we have any.
+  # - Add functions and constants to a hashtable definition
   my $numFunctions = @{$dataNode->functions};
-  if ($numFunctions ne 0) {
-    $hashSize = $numFunctions;
+  if ($numFunctions > 0 || $numConstants > 0) {
+    $hashSize = $numFunctions + $numConstants;
     $hashName = $className . "ProtoTable";
 
     @hashKeys = ();
@@ -506,6 +518,20 @@ sub GenerateImplementation
     @hashSpecials = ();
     @hashParameters = ();
 
+    foreach my $constant (@{$dataNode->constants}) {
+        my $name = $constant->name;
+        push(@hashKeys, $name);
+        
+        my $value = "${implClassName}::$name";
+        push(@hashValues, $value);
+        
+        my $special = "DontDelete|ReadOnly";
+        push(@hashSpecials, $special);
+        
+        my $numParameters = 0;
+        push(@hashParameters, $numParameters); 
+    }
+    
     foreach my $function (@{$dataNode->functions}) {
       my $name = $function->signature->name;
       push(@hashKeys, $name);
@@ -524,18 +550,20 @@ sub GenerateImplementation
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
 
-    push(@implContent, "class ${className}ProtoFunc : public InternalFunctionImp {\n");
-    push(@implContent, "public:\n");
-    push(@implContent, "    ${className}ProtoFunc(ExecState* exec, int i, int len, const Identifier& name)\n");
-    push(@implContent, "    : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)\n");
-    push(@implContent, "    , id(i)\n");
-    push(@implContent, "    {\n");
-    push(@implContent, "        put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum);\n");
-    push(@implContent, "    }\n");
-    push(@implContent, "    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args);\n");
-    push(@implContent, "private:\n");
-    push(@implContent, "    int id;\n");
-    push(@implContent, "};\n\n");
+    if($numFunctions > 0) {
+        push(@implContent, "class ${className}ProtoFunc : public InternalFunctionImp {\n");
+        push(@implContent, "public:\n");
+        push(@implContent, "    ${className}ProtoFunc(ExecState* exec, int i, int len, const Identifier& name)\n");
+        push(@implContent, "    : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)\n");
+        push(@implContent, "    , id(i)\n");
+        push(@implContent, "    {\n");
+        push(@implContent, "        put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum);\n");
+        push(@implContent, "    }\n");
+        push(@implContent, "    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args);\n");
+        push(@implContent, "private:\n");
+        push(@implContent, "    int id;\n");
+        push(@implContent, "};\n\n");
+    }
 
     push(@implContent, "const ClassInfo ${className}Proto::info = { \"$className\", 0, &${className}ProtoTable, 0 };\n\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
@@ -551,8 +579,19 @@ sub GenerateImplementation
     }
     push(@implContent, "bool ${className}Proto::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
     push(@implContent, "{\n");
-    push(@implContent, "    return getStaticFunctionSlot<${className}ProtoFunc, JSObject>(exec, &${className}ProtoTable, this, propertyName, slot);\n");
+    if ($numConstants eq 0) {
+        push(@implContent, "    return getStaticFunctionSlot<${className}ProtoFunc, JSObject>(exec, &${className}ProtoTable, this, propertyName, slot);\n");
+    } elsif ($numFunctions eq 0) {
+        push(@implContent, "    return getStaticValueSlot<${className}Proto, JSObject>(exec, &${className}ProtoTable, this, propertyName, slot);\n");
+    } else {
+        push(@implContent, "    return getStaticPropertySlot<${className}ProtoFunc, ${className}Proto, JSObject>(exec, &${className}ProtoTable, this, propertyName, slot);\n");
+    }
     push(@implContent, "}\n\n");
+    if ($numConstants ne 0) {
+        push(@implContent, "JSValue* ${className}Proto::getValueProperty(ExecState*, int token) const\n{\n");
+        push(@implContent, "    // The token is the numeric value of its associated constant\n");
+        push(@implContent, "    return jsNumber(token);\n}\n\n");
+    }
   }
   
   # - Initialize static ClassInfo object
@@ -585,7 +624,7 @@ sub GenerateImplementation
   
   if ($dataNode->extendedAttributes->{"DoNotCache"}) {
       push(@implContent, "{\n    setPrototype(${className}Proto::self());\n}\n\n");
-  } elsif ($numFunctions ne 0) {
+  } elsif ($numFunctions ne 0 || $numConstants ne 0) {
       push(@implContent, "{\n    setPrototype(${className}Proto::self(exec));\n}\n\n");
   } else {
       push(@implContent, "{\n}\n\n");    

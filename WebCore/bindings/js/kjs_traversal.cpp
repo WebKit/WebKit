@@ -22,6 +22,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "JSNodeFilter.h"
 #include "kjs_proxy.h"
 
 #include "kjs_traversal.lut.h"
@@ -121,45 +122,6 @@ JSValue *toJS(ExecState *exec, NodeIterator *ni)
 
 // -------------------------------------------------------------------------
 
-const ClassInfo NodeFilterConstructor::info = { "NodeFilterConstructor", 0, &NodeFilterConstructorTable, 0 };
-/*
-@begin NodeFilterConstructorTable 17
-  FILTER_ACCEPT         WebCore::NodeFilter::FILTER_ACCEPT      DontDelete|ReadOnly
-  FILTER_REJECT         WebCore::NodeFilter::FILTER_REJECT      DontDelete|ReadOnly
-  FILTER_SKIP           WebCore::NodeFilter::FILTER_SKIP        DontDelete|ReadOnly
-  SHOW_ALL              WebCore::NodeFilter::SHOW_ALL   DontDelete|ReadOnly
-  SHOW_ELEMENT          WebCore::NodeFilter::SHOW_ELEMENT       DontDelete|ReadOnly
-  SHOW_ATTRIBUTE        WebCore::NodeFilter::SHOW_ATTRIBUTE     DontDelete|ReadOnly
-  SHOW_TEXT             WebCore::NodeFilter::SHOW_TEXT  DontDelete|ReadOnly
-  SHOW_CDATA_SECTION    WebCore::NodeFilter::SHOW_CDATA_SECTION DontDelete|ReadOnly
-  SHOW_ENTITY_REFERENCE WebCore::NodeFilter::SHOW_ENTITY_REFERENCE      DontDelete|ReadOnly
-  SHOW_ENTITY           WebCore::NodeFilter::SHOW_ENTITY        DontDelete|ReadOnly
-  SHOW_PROCESSING_INSTRUCTION   WebCore::NodeFilter::SHOW_PROCESSING_INSTRUCTION        DontDelete|ReadOnly
-  SHOW_COMMENT          WebCore::NodeFilter::SHOW_COMMENT       DontDelete|ReadOnly
-  SHOW_DOCUMENT         WebCore::NodeFilter::SHOW_DOCUMENT      DontDelete|ReadOnly
-  SHOW_DOCUMENT_TYPE    WebCore::NodeFilter::SHOW_DOCUMENT_TYPE DontDelete|ReadOnly
-  SHOW_DOCUMENT_FRAGMENT        WebCore::NodeFilter::SHOW_DOCUMENT_FRAGMENT     DontDelete|ReadOnly
-  SHOW_NOTATION         WebCore::NodeFilter::SHOW_NOTATION      DontDelete|ReadOnly
-@end
-*/
-bool NodeFilterConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<NodeFilterConstructor, DOMObject>(exec, &NodeFilterConstructorTable, this, propertyName, slot);
-}
-
-JSValue *NodeFilterConstructor::getValueProperty(ExecState *, int token) const
-{
-  // We use the token as the value to return directly
-  return jsNumber(token);
-}
-
-JSValue *getNodeFilterConstructor(ExecState *exec)
-{
-  return cacheGlobalObject<NodeFilterConstructor>(exec, "[[nodeFilter.constructor]]");
-}
-
-// -------------------------------------------------------------------------
-
 const ClassInfo DOMNodeFilter::info = { "NodeFilter", 0, 0, 0 };
 /*
 @begin DOMNodeFilterProtoTable 1
@@ -201,7 +163,7 @@ JSValue *DOMNodeFilterProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
 
 JSValue *toJS(ExecState* exec, NodeFilter* nf)
 {
-    return cacheDOMObject<NodeFilter, DOMNodeFilter>(exec, nf);
+    return cacheDOMObject<NodeFilter, JSNodeFilter>(exec, nf);
 }
 
 PassRefPtr<NodeFilter> toNodeFilter(JSValue* val)

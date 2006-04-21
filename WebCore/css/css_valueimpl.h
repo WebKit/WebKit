@@ -280,9 +280,6 @@ protected:
     } m_value;
 };
 
-// FIXME: Remove when we rename everything to remove Impl.
-typedef CSSPrimitiveValue CSSPrimitiveValue;
-
 // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
 // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em
 // in a stylesheet.  When the quirky value is used, if you're in quirks mode, the margin will

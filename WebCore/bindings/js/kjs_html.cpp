@@ -3418,11 +3418,6 @@ void JSHTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName
 OptionConstructorImp::OptionConstructorImp(ExecState *exec, Document *d)
     : m_doc(d)
 {
-  // ## isn't there some redundancy between JSObject::_proto and the "prototype" property ?
-  //put(exec,"prototype", ...,DontEnum|DontDelete|ReadOnly);
-
-  // no. of arguments for constructor
-  // ## is 4 correct ? 0 to 4, it seems to be
   put(exec,lengthPropertyName, jsNumber(4), ReadOnly|DontDelete|DontEnum);
 }
 

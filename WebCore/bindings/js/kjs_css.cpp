@@ -26,6 +26,7 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "JSCSSPrimitiveValue.h"
+#include "JSCSSRule.h"
 #include "css_base.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
@@ -734,19 +735,19 @@ const ClassInfo* DOMCSSRule::classInfo() const
 {
   CSSRule &cssRule = *m_impl;
   switch (cssRule.type()) {
-  case WebCore::STYLE_RULE:
+  case CSSRule::STYLE_RULE:
     return &style_info;
-  case WebCore::MEDIA_RULE:
+  case CSSRule::MEDIA_RULE:
     return &media_info;
-  case WebCore::FONT_FACE_RULE:
+  case CSSRule::FONT_FACE_RULE:
     return &fontface_info;
-  case WebCore::PAGE_RULE:
+  case CSSRule::PAGE_RULE:
     return &page_info;
-  case WebCore::IMPORT_RULE:
+  case CSSRule::IMPORT_RULE:
     return &import_info;
-  case WebCore::CHARSET_RULE:
+  case CSSRule::CHARSET_RULE:
     return &charset_info;
-  case WebCore::UNKNOWN_RULE:
+  case CSSRule::UNKNOWN_RULE:
   default:
     return &info;
   }
@@ -787,7 +788,7 @@ const ClassInfo* DOMCSSRule::classInfo() const
 bool DOMCSSRule::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   // first try the properties specific to this rule type
-  const HashEntry* entry = Lookup::findEntry(classInfo()->propHashTable, propertyName);
+  const HashEntry* entry = Lookup::findEntry(DOMCSSRule::classInfo()->propHashTable, propertyName);
   if (entry) {
     slot.setStaticEntry(this, entry, staticValueGetter<DOMCSSRule>);
     return true;
@@ -852,7 +853,7 @@ JSValue *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
 
 void DOMCSSRule::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
-  const HashTable* table = classInfo()->propHashTable; // get the right hashtable
+  const HashTable* table = DOMCSSRule::classInfo()->propHashTable; // get the right hashtable
   const HashEntry* entry = Lookup::findEntry(table, propertyName);
   if (entry) {
     if (entry->attr & Function) // function: put as override property
@@ -895,7 +896,7 @@ JSValue *DOMCSSRuleFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
     return throwError(exec, TypeError);
   CSSRule &cssRule = *static_cast<DOMCSSRule *>(thisObj)->impl();
 
-  if (cssRule.type() == WebCore::MEDIA_RULE) {
+  if (cssRule.type() == CSSRule::MEDIA_RULE) {
     CSSMediaRule &rule = static_cast<CSSMediaRule &>(cssRule);
     if (id == DOMCSSRule::Media_InsertRule)
       return jsNumber(rule.insertRule(args[0]->toString(exec), args[1]->toInt32(exec)));
@@ -908,53 +909,7 @@ JSValue *DOMCSSRuleFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
 
 JSValue *toJS(ExecState *exec, CSSRule *r)
 {
-  return cacheDOMObject<CSSRule, DOMCSSRule>(exec, r);
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo CSSRuleConstructor::info = { "CSSRuleConstructor", 0, &CSSRuleConstructorTable, 0 };
-/*
-@begin CSSRuleConstructorTable 7
-  UNKNOWN_RULE   CSSRuleConstructor::UNKNOWN_RULE       DontDelete|ReadOnly
-  STYLE_RULE     CSSRuleConstructor::STYLE_RULE         DontDelete|ReadOnly
-  CHARSET_RULE   CSSRuleConstructor::CHARSET_RULE       DontDelete|ReadOnly
-  IMPORT_RULE    CSSRuleConstructor::IMPORT_RULE        DontDelete|ReadOnly
-  MEDIA_RULE     CSSRuleConstructor::MEDIA_RULE         DontDelete|ReadOnly
-  FONT_FACE_RULE CSSRuleConstructor::FONT_FACE_RULE     DontDelete|ReadOnly
-  PAGE_RULE      CSSRuleConstructor::PAGE_RULE          DontDelete|ReadOnly
-@end
-*/
-
-bool CSSRuleConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<CSSRuleConstructor, DOMObject>(exec, &CSSRuleConstructorTable, this, propertyName, slot);
-}
-
-JSValue *CSSRuleConstructor::getValueProperty(ExecState *, int token) const
-{
-  switch (token) {
-  case UNKNOWN_RULE:
-    return jsNumber(WebCore::UNKNOWN_RULE);
-  case STYLE_RULE:
-    return jsNumber(WebCore::STYLE_RULE);
-  case CHARSET_RULE:
-    return jsNumber(WebCore::CHARSET_RULE);
-  case IMPORT_RULE:
-    return jsNumber(WebCore::IMPORT_RULE);
-  case MEDIA_RULE:
-    return jsNumber(WebCore::MEDIA_RULE);
-  case FONT_FACE_RULE:
-    return jsNumber(WebCore::FONT_FACE_RULE);
-  case PAGE_RULE:
-    return jsNumber(WebCore::PAGE_RULE);
-  }
-  return NULL;
-}
-
-JSValue *getCSSRuleConstructor(ExecState *exec)
-{
-  return cacheGlobalObject<CSSRuleConstructor>( exec, "[[cssRule.constructor]]" );
+  return cacheDOMObject<CSSRule, JSCSSRule>(exec, r);
 }
 
 // -------------------------------------------------------------------------
@@ -1028,42 +983,6 @@ JSValue *toJS(ExecState *exec, CSSValue *v)
     interp->putDOMObject(v, ret);
     return ret;
   }
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo CSSValueConstructor::info = { "CSSValueConstructor", 0, &CSSValueConstructorTable, 0 };
-/*
-@begin CSSValueConstructorTable 5
-  CSS_INHERIT           CSSValueConstructor::CSS_INHERIT                DontDelete|ReadOnly
-  CSS_PRIMITIVE_VALUE   CSSValueConstructor::CSS_PRIMITIVE_VALUE        DontDelete|ReadOnly
-  CSS_VALUE_LIST        CSSValueConstructor::CSS_VALUE_LIST             DontDelete|ReadOnly
-  CSS_CUSTOM            CSSValueConstructor::CSS_CUSTOM                 DontDelete|ReadOnly
-@end
-*/
-bool CSSValueConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<CSSValueConstructor, DOMObject>(exec, &CSSValueConstructorTable, this, propertyName, slot);
-}
-
-JSValue *CSSValueConstructor::getValueProperty(ExecState *, int token) const
-{
-  switch (token) {
-  case CSS_INHERIT:
-    return jsNumber(WebCore::CSSValue::CSS_INHERIT);
-  case CSS_PRIMITIVE_VALUE:
-    return jsNumber(WebCore::CSSValue::CSS_PRIMITIVE_VALUE);
-  case CSS_VALUE_LIST:
-    return jsNumber(WebCore::CSSValue::CSS_VALUE_LIST);
-  case CSS_CUSTOM:
-    return jsNumber(WebCore::CSSValue::CSS_CUSTOM);
-  }
-  return NULL;
-}
-
-JSValue *getCSSValueConstructor(ExecState *exec)
-{
-  return cacheGlobalObject<CSSValueConstructor>( exec, "[[cssValue.constructor]]" );
 }
 
 // -------------------------------------------------------------------------

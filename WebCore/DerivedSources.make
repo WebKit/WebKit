@@ -43,24 +43,28 @@ all : \
     DocTypeStrings.cpp \
     HTMLEntityNames.c \
     JSAttr.h \
+    JSCSSPrimitiveValue.h \
+    JSCSSRule.h \
+    JSCSSValue.h \
     JSCanvasGradient.h \
     JSCanvasPattern.h \
     JSCanvasRenderingContext2D.h \
     JSCanvasRenderingContext2DBaseTable.cpp \
-    JSCounter.h \
     JSCharacterData.h \
-    JSCSSPrimitiveValue.h \
+    JSCounter.h \
     JSDOMImplementation.h \
     JSDOMParser.lut.h \
+    JSDOMWindow.h \
     JSDocument.h \
     JSDocumentType.h \
-    JSDOMWindow.h \
     JSElement.h \
+    JSEvent.h \
     JSEntity.h \
     JSHTMLCanvasElement.h \
     JSKeyboardEvent.h \
     JSMouseEvent.h \
     JSMutationEvent.h \
+    JSNodeFilter.h \
     JSNotation.h \
     JSProcessingInstruction.h \
     JSRange.h \

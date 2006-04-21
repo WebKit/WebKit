@@ -28,6 +28,20 @@
 		1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403B99609EB13AF00797C7F /* DOMWindow.cpp */; };
 		1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */; };
 		1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403BA0E09EB18F800797C7F /* JSDOMWindow.h */; };
+		14115AFA09F847D600CA4FC1 /* NodeFilter.idl in Resources */ = {isa = PBXBuildFile; fileRef = 14115AF909F847D600CA4FC1 /* NodeFilter.idl */; };
+		14115B5209F84B7100CA4FC1 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B5109F84B7100CA4FC1 /* Node.h */; };
+		14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */; };
+		14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */; };
+		14CF787209F587CA00EB3665 /* CSSValue.idl in Resources */ = {isa = PBXBuildFile; fileRef = 14CF787109F587CA00EB3665 /* CSSValue.idl */; };
+		14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */; };
+		14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF78A509F58CD800EB3665 /* JSCSSValue.h */; };
+		14CF7A7109F5CF9A00EB3665 /* CSSRule.idl in Resources */ = {isa = PBXBuildFile; fileRef = 14CF7A7009F5CF9A00EB3665 /* CSSRule.idl */; };
+		14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */; };
+		14CF7B3409F6ECD700EB3665 /* JSCSSRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */; };
+		14CF7C2209F7110600EB3665 /* KeyboardEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */; };
+		14E836D309F8512000B85AE4 /* Event.idl in Resources */ = {isa = PBXBuildFile; fileRef = 14E836D209F8512000B85AE4 /* Event.idl */; };
+		14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E8378309F85D1C00B85AE4 /* JSEvent.cpp */; };
+		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; };
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
@@ -552,7 +566,6 @@
 		A818721F0977D3C0005826D9 /* ContainerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872140977D3C0005826D9 /* ContainerNode.cpp */; };
 		A81872200977D3C0005826D9 /* ChildNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872150977D3C0005826D9 /* ChildNodeList.h */; };
 		A81872210977D3C0005826D9 /* NodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872160977D3C0005826D9 /* NodeList.cpp */; };
-		A81872220977D3C0005826D9 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872170977D3C0005826D9 /* Node.h */; };
 		A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A81872180977D3C0005826D9 /* NamedNodeMap.h */; };
 		A81872240977D3C0005826D9 /* NameNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81872190977D3C0005826D9 /* NameNodeList.cpp */; };
 		A81872250977D3C0005826D9 /* ChildNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A818721A0977D3C0005826D9 /* ChildNodeList.cpp */; };
@@ -1189,9 +1202,23 @@
 		1403B99609EB13AF00797C7F /* DOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindow.cpp; sourceTree = "<group>"; };
 		1403BA0B09EB18C700797C7F /* JSDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindow.cpp; sourceTree = "<group>"; };
 		1403BA0E09EB18F800797C7F /* JSDOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMWindow.h; sourceTree = "<group>"; };
+		14115AF909F847D600CA4FC1 /* NodeFilter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NodeFilter.idl; sourceTree = "<group>"; };
+		14115B5109F84B7100CA4FC1 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilter.cpp; sourceTree = "<group>"; };
+		14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilter.h; sourceTree = "<group>"; };
 		141B94E509EC4223000E9413 /* MouseEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = MouseEvent.idl; sourceTree = "<group>"; };
 		141B94EE09EC425A000E9413 /* UIEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = UIEvent.idl; sourceTree = "<group>"; };
 		14813BF309EDF88E00F757E1 /* IDLParser.pm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; name = IDLParser.pm; path = scripts/IDLParser.pm; sourceTree = "<group>"; };
+		14CF787109F587CA00EB3665 /* CSSValue.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValue.idl; sourceTree = "<group>"; };
+		14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValue.cpp; sourceTree = "<group>"; };
+		14CF78A509F58CD800EB3665 /* JSCSSValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSValue.h; sourceTree = "<group>"; };
+		14CF7A7009F5CF9A00EB3665 /* CSSRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSRule.idl; sourceTree = "<group>"; };
+		14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRule.cpp; sourceTree = "<group>"; };
+		14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSRule.h; sourceTree = "<group>"; };
+		14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = KeyboardEvent.idl; sourceTree = "<group>"; };
+		14E836D209F8512000B85AE4 /* Event.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Event.idl; sourceTree = "<group>"; };
+		14E8378309F85D1C00B85AE4 /* JSEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEvent.cpp; sourceTree = "<group>"; };
+		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14EC267D09CA07E000E1EEEC /* EventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNode.h; sourceTree = "<group>"; };
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1773,12 +1800,10 @@
 		A8185F3809765765005826D9 /* Document.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Document.h; sourceTree = "<group>"; };
 		A81872100977D3C0005826D9 /* NodeList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeList.h; sourceTree = "<group>"; };
 		A81872110977D3C0005826D9 /* ContainerNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContainerNode.h; sourceTree = "<group>"; };
-		A81872120977D3C0005826D9 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
 		A81872130977D3C0005826D9 /* NameNodeList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NameNodeList.h; sourceTree = "<group>"; };
 		A81872140977D3C0005826D9 /* ContainerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContainerNode.cpp; sourceTree = "<group>"; };
 		A81872150977D3C0005826D9 /* ChildNodeList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ChildNodeList.h; sourceTree = "<group>"; };
 		A81872160977D3C0005826D9 /* NodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeList.cpp; sourceTree = "<group>"; };
-		A81872170977D3C0005826D9 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		A81872180977D3C0005826D9 /* NamedNodeMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NamedNodeMap.h; sourceTree = "<group>"; };
 		A81872190977D3C0005826D9 /* NameNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NameNodeList.cpp; sourceTree = "<group>"; };
 		A818721A0977D3C0005826D9 /* ChildNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ChildNodeList.cpp; sourceTree = "<group>"; };
@@ -2624,6 +2649,10 @@
 				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
 				930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */,
 				930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */,
+				14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */,
+				14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */,
+				14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */,
+				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
 				659DDC8009E198BA001BF3C6 /* JSDocument.cpp */,
 				659DDC8109E198BA001BF3C6 /* JSDocument.h */,
 				65DF31E109D1CC60000BE325 /* JSDocumentType.cpp */,
@@ -2637,6 +2666,8 @@
 				65DF31E609D1CC60000BE325 /* JSElement.h */,
 				65DF322D09D1DDBC000BE325 /* JSEntity.cpp */,
 				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
+				14E8378309F85D1C00B85AE4 /* JSEvent.cpp */,
+				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
 				938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */,
 				938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
@@ -2645,6 +2676,8 @@
 				A86629CB09DA2B47009633A5 /* JSMouseEvent.h */,
 				65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */,
 				65DF31E809D1CC60000BE325 /* JSMutationEvent.h */,
+				14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */,
+				14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */,
 				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
 				65DF31EA09D1CC60000BE325 /* JSNotation.h */,
 				65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */,
@@ -3874,6 +3907,8 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				14CF7A7009F5CF9A00EB3665 /* CSSRule.idl */,
+				14CF787109F587CA00EB3665 /* CSSValue.idl */,
 				930705C709E0C95F00B17FE4 /* Counter.idl */,
 				BCEA477A097CAAC80094C9E4 /* css_base.cpp */,
 				BCEA477B097CAAC80094C9E4 /* css_base.h */,
@@ -4046,6 +4081,7 @@
 				14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */,
 				14EC267D09CA07E000E1EEEC /* EventTargetNode.h */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
+				14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */,
 				A8C4A7F409D563270003AC8D /* MappedAttribute.cpp */,
 				A8C4A7F309D563270003AC8D /* MappedAttribute.h */,
 				A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */,
@@ -4059,7 +4095,8 @@
 				A81872190977D3C0005826D9 /* NameNodeList.cpp */,
 				A81872130977D3C0005826D9 /* NameNodeList.h */,
 				A8C4A7EE09D563270003AC8D /* Node.cpp */,
-				A81872170977D3C0005826D9 /* Node.h */,
+				14115B5109F84B7100CA4FC1 /* Node.h */,
+				14115AF909F847D600CA4FC1 /* NodeFilter.idl */,
 				A81872160977D3C0005826D9 /* NodeList.cpp */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
 				93EEC1F409C2877700C515D1 /* Notation.idl */,
@@ -4080,8 +4117,7 @@
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
 				F523D30902DE4476018635CA /* xml_tokenizer.cpp */,
 				F523D30A02DE4476018635CA /* xml_tokenizer.h */,
-				A81872120977D3C0005826D9 /* Node.cpp */,
-				A81872170977D3C0005826D9 /* Node.h */,
+				14E836D209F8512000B85AE4 /* Event.idl */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -4426,7 +4462,6 @@
 				A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
 				A81872200977D3C0005826D9 /* ChildNodeList.h in Headers */,
-				A81872220977D3C0005826D9 /* Node.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */,
 				BCF1A5F1097839600061A123 /* IntSize.h in Headers */,
@@ -4709,10 +4744,15 @@
 				93B70EB309EEE5B5009D8468 /* RenderEmptyApplet.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Headers */,
+				14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */,
+				14CF7B3409F6ECD700EB3665 /* JSCSSRule.h in Headers */,
 				938E65F109F09840008A48EC /* JSHTMLElementWrapperFactory.h in Headers */,
 				938E666209F09B87008A48EC /* JSHTMLCanvasElement.h in Headers */,
 				938E683C09F0BD7B008A48EC /* CompositeOperator.h in Headers */,
 				8116896009F2A4A000772CA0 /* SVGTRefElement.h in Headers */,
+				14115B5209F84B7100CA4FC1 /* Node.h in Headers */,
+				14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */,
+				14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */,
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4852,6 +4892,11 @@
 				A88AD3A40952486D001DD196 /* WKSpecularLightingFilter.cikernel in Resources */,
 				A88AD3A70952486D001DD196 /* WKSpotLightFilter.cikernel in Resources */,
 				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
+				14CF787209F587CA00EB3665 /* CSSValue.idl in Resources */,
+				14CF7A7109F5CF9A00EB3665 /* CSSRule.idl in Resources */,
+				14CF7C2209F7110600EB3665 /* KeyboardEvent.idl in Resources */,
+				14115AFA09F847D600CA4FC1 /* NodeFilter.idl in Resources */,
+				14E836D309F8512000B85AE4 /* Event.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5400,10 +5445,14 @@
 				93B70EB209EEE5B5009D8468 /* RenderEmptyApplet.cpp in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
 				1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */,
+				14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */,
+				14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */,
 				938E65F709F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp in Sources */,
 				938E666009F09B81008A48EC /* JSHTMLCanvasElement.cpp in Sources */,
 				938E685409F0BE04008A48EC /* CompositeOperator.cpp in Sources */,
 				8116895F09F2A4A000772CA0 /* SVGTRefElement.cpp in Sources */,
+				14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */,
+				14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */,
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

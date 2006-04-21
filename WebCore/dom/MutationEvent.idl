@@ -19,7 +19,7 @@
 
 module events {
 
-    interface [LegacyParent=KJS::DOMEvent] MutationEvent : Event {
+    interface MutationEvent : Event {
 
         // DOM Level 2
 

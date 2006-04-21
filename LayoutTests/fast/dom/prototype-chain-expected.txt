@@ -24,29 +24,35 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object JSElement]
 
------ [object UIEvent] (3 prototypes) -----
+----- [object UIEvent] (4 prototypes) -----
 
 [object Object]
 
 [object DOMEvent]
+
+[object JSEvent]
 
 [object JSUIEvent]
 
------ [object MouseEvent] (4 prototypes) -----
+----- [object MouseEvent] (5 prototypes) -----
 
 [object Object]
 
 [object DOMEvent]
+
+[object JSEvent]
 
 [object JSUIEvent]
 
 [object JSMouseEvent]
 
------ [object KeyboardEvent] (4 prototypes) -----
+----- [object KeyboardEvent] (5 prototypes) -----
 
 [object Object]
 
 [object DOMEvent]
+
+[object JSEvent]
 
 [object JSUIEvent]
 
