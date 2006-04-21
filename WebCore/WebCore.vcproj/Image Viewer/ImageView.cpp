@@ -88,7 +88,7 @@ void ImageView::OnDraw(CDC* pDC)
     cairo_t* context = cairo_create(surface);
     GraphicsContext gc(context);
     // Fill with white.
-    gc.fillRect(IntRect(0, 0, rect.right, rect.bottom), Brush(Color::white));
+    gc.fillRect(IntRect(0, 0, rect.right, rect.bottom), Color::white);
 
     // Comment in to test overlapping.
     bool overlapping = false; // true;
@@ -111,8 +111,7 @@ void ImageView::OnDraw(CDC* pDC)
     if (tile)
         gc.drawTiledImage(image, IntRect(left, top, width, height), IntPoint(srcPoint.x(), srcPoint.y()), image->size());
     else {
-        gc.drawImage(image, dstRect,
-            imageRect.x(), imageRect.y(), imageRect.width(), imageRect.height(), Image::CompositeSourceOver);
+        gc.drawImage(image, dstRect, imageRect);
     //    if (overlapping)
      //       image->drawInRect(FloatRect(dstRect.x() + dstRect.width()/2, dstRect.y(), dstRect.width(), dstRect.height()),
      //                        imageRect, Image::CompositeSourceOver, context);

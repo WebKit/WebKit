@@ -2717,6 +2717,8 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
         LOG_ERROR("called Frame::paint with nil renderer");
 }
 
+#if __APPLE__
+
 void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
 {
     RenderCanvas *root = static_cast<RenderCanvas *>(document()->renderer());
@@ -2732,6 +2734,8 @@ void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, fl
     } else
         *newBottom = oldBottom;
 }
+
+#endif
 
 PausedTimeouts *Frame::pauseTimeouts()
 {

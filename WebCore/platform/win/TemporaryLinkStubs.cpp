@@ -117,8 +117,6 @@ void QLineEdit::setSelection(int,int) { notImplemented(); }
 void QLineEdit::setMaxResults(int) { notImplemented(); }
 bool QLineEdit::edited() const { notImplemented(); return 0; }
 
-GraphicsContext::GraphicsContext() { notImplemented(); }
-
 QSlider::QSlider() { notImplemented(); }
 IntSize QSlider::sizeHint() const { notImplemented(); return IntSize(); }
 void QSlider::setValue(double) { notImplemented(); }
@@ -270,7 +268,7 @@ void ScrollView::removeChild(Widget*) { }
 void ScrollView::scrollPointRecursively(int x, int y) { }
 bool ScrollView::inWindow() const { return true; }
 
-void GraphicsContext::setShadow(int,int,int,Color const&) { }
+void GraphicsContext::setShadow(IntSize const&,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
 void GraphicsContext::beginTransparencyLayer(float) { }
 void GraphicsContext::endTransparencyLayer() { }

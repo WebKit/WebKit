@@ -87,12 +87,6 @@ GraphicsContext::GraphicsContext(cairo_t* context)
     m_data->context = cairo_reference(context);
 }
 
-GraphicsContext::GraphicsContext(bool forPrinting)
-    : m_common(createGraphicsContextPrivate(forPrinting))
-    , m_data(new GraphicsContextPlatformPrivate)
-{
-}
-
 GraphicsContext::~GraphicsContext()
 {
     destroyGraphicsContextPrivate(m_common);

@@ -27,6 +27,7 @@
 #include "Image.h"
 
 #include "FloatRect.h"
+#include "GraphicsContext.h"
 #include <cairo.h>
 #include <math.h>
 

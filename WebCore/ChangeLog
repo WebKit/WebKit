@@ -1,5 +1,27 @@
 2006-04-21  Darin Adler  <darin@apple.com>
 
+        - attempt to fix Windows build after my last check-in
+
+        * WebCore.vcproj/Image Viewer/ImageView.cpp: Changed calls to use the
+        new IntRect-based API.
+
+        * html/CanvasPattern.cpp: (WebCore::CanvasPattern::CanvasPattern):
+        Put appropriate ifdefs around the m_platformImage initializer.
+
+        * page/Frame.cpp: Make Frame::adjustPageHeight Mac-OS-X-only for now
+        since it's used for printing and we don't have printing going on any
+        other platforms yet.
+
+        * platform/cairo/GraphicsContextCairo.cpp: Take out constructor that
+        takes only the "for printing" boolean for now.
+
+        * platform/cairo/ImageCairo.cpp: Include the GraphicsContext.h header.
+
+        * platform/win/TemporaryLinkStubs.cpp: (GraphicsContext::setShadow):
+        Fix up this stub and remove the GraphicsContext empty constructor stub.
+
+2006-04-21  Darin Adler  <darin@apple.com>
+
         - fix build
 
         * WebCore.xcodeproj/project.pbxproj: Replaced absolute path on my system
