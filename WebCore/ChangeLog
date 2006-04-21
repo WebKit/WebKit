@@ -1,3 +1,11 @@
+2006-04-21  Darin Adler  <darin@apple.com>
+
+        - fix build
+
+        * WebCore.xcodeproj/project.pbxproj: Replaced absolute path on my system
+        with a build-result-relative path; also removed some source files from the
+        list of resources to install!
+
 2006-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
