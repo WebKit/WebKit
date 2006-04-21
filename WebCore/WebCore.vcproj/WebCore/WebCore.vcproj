@@ -331,6 +331,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLCanvasElement.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSKeyboardEvent.cpp"
 				>
 			</File>
