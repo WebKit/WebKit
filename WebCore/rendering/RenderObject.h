@@ -468,7 +468,7 @@ public:
 
     virtual void updateWidgetPosition();
     
-    DeprecatedValueList<DashboardRegionValue> RenderObject::computeDashboardRegions();
+    DeprecatedValueList<DashboardRegionValue> computeDashboardRegions();
     void addDashboardRegions (DeprecatedValueList<DashboardRegionValue>& regions);
     void collectDashboardRegions (DeprecatedValueList<DashboardRegionValue>& regions);
 

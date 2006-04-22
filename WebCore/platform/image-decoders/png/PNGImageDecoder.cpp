@@ -37,6 +37,7 @@
 
 #include "PNGImageDecoder.h"
 #include "png.h"
+#include "assert.h"
 
 namespace WebCore {
 

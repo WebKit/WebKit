@@ -50,6 +50,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <kxmlcore/FastMalloc.h>
+#include <assert.h>
 
 using std::max;
 

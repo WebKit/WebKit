@@ -33,6 +33,7 @@
 #include <kjs/identifier.h>
 #include <kxmlcore/Assertions.h>
 #include <unicode/ubrk.h>
+#include <assert.h>
 
 using namespace KJS;
 using namespace KXMLCore;

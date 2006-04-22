@@ -37,6 +37,7 @@
 
 #include "config.h"
 #include "JPEGImageDecoder.h"
+#include <assert.h>
 
 extern "C" {
 #include "jpeglib.h"

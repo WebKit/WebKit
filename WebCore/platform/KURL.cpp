@@ -30,6 +30,7 @@
 #include "RegularExpression.h"
 #include <kxmlcore/Vector.h>
 #include <unicode/uidna.h>
+#include <assert.h>
 
 using std::pair;
 using std::make_pair;
