@@ -140,24 +140,6 @@ static void updateRenderingForBindings (ExecState *exec, JSObject *rootObject)
         doc->updateRendering();
 }
 
-static BOOL frameHasSelection(WebCoreFrameBridge *bridge)
-{
-    if (!bridge)
-        return NO;
-    
-    Frame *frame = [bridge impl];
-    if (!frame)
-        return NO;
-        
-    if (frame->selection().isNone())
-        return NO;
-
-    // If a part has a selection, it should also have a document.        
-    ASSERT(frame->document());
-
-    return YES;
-}
-
 static BOOL hasCaseInsensitivePrefix(NSString *string, NSString *prefix)
 {
     return [string rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location !=
@@ -260,42 +242,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (BOOL)isDescendantOfFrame:(WebCoreFrameBridge *)ancestor
 {
-    for (WebCoreFrameBridge *frame = self; frame; frame = [frame parent])
-        if (frame == ancestor)
-            return YES;
-
-    return NO;
+    return m_frame->tree()->isDescendantOf(ancestor->m_frame);
 }
 
 - (WebCoreFrameBridge *)traverseNextFrameStayWithin:(WebCoreFrameBridge *)stayWithin
 {
-    WebCoreFrameBridge *firstChild = [self firstChild];
-    if (firstChild) {
-        ASSERT(!stayWithin || [firstChild isDescendantOfFrame:stayWithin]);
-        return firstChild;
-    }
-
-    if (self == stayWithin)
-        return 0;
-
-    WebCoreFrameBridge *nextSibling = [self nextSibling];
-    if (nextSibling) {
-        assert(!stayWithin || [nextSibling isDescendantOfFrame:stayWithin]);
-        return nextSibling;
-    }
-
-    WebCoreFrameBridge *frame = self;
-    while (frame && !nextSibling && (!stayWithin || [frame parent] != stayWithin)) {
-        frame = (WebCoreFrameBridge *)[frame parent];
-        nextSibling = [frame nextSibling];
-    }
-
-    if (frame) {
-        ASSERT(!stayWithin || !nextSibling || [nextSibling isDescendantOfFrame:stayWithin]);
-        return nextSibling;
-    }
-
-    return nil;
+    return bridge(m_frame->tree()->traverseNext(stayWithin->m_frame));
 }
 
 - (void)appendChild:(WebCoreFrameBridge *)child
@@ -313,44 +265,17 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return bridge(m_frame->tree()->child(name));
 }
 
-// Returns the last child of us and any children, or self
-- (WebCoreFrameBridge *)_deepLastChildFrame
-{
-    WebCoreFrameBridge *result = self;
-    for (WebCoreFrameBridge *lastChild = [self lastChild]; lastChild; lastChild = [lastChild lastChild])
-        result = lastChild;
-
-    return result;
-}
-
-// Return next frame to be traversed, visiting children after parent
 - (WebCoreFrameBridge *)nextFrameWithWrap:(BOOL)wrapFlag
 {
-    WebCoreFrameBridge *result = [self traverseNextFrameStayWithin:nil];
-    if (!result && wrapFlag)
-        return [[self page] mainFrame];
-    return result;
+    return bridge(m_frame->tree()->traverseNextWithWrap(wrapFlag));
 }
 
-// Return previous frame to be traversed, exact reverse order of _nextFrame
 - (WebCoreFrameBridge *)previousFrameWithWrap:(BOOL)wrapFlag
 {
-    // FIXME: besides the wrap feature, this is just the traversePreviousNode algorithm
-
-    WebCoreFrameBridge *prevSibling = [self previousSibling];
-    if (prevSibling)
-        return [prevSibling _deepLastChildFrame];
-    if ([self parent])
-        return [self parent];
-    
-    // no siblings, no parent, self==top
-    if (wrapFlag)
-        return [self _deepLastChildFrame];
-
-    // top view is always the last one in this ordering, so prev is nil without wrap
-    return nil;
+    return bridge(m_frame->tree()->traversePreviousWithWrap(wrapFlag));
 }
 
+// FIXME: this is not getting called any more! security regression...
 - (BOOL)_shouldAllowAccessFrom:(WebCoreFrameBridge *)source
 {
     // if no source frame, allow access
@@ -415,8 +340,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document
 {
-    Frame *frame = [document _document]->frame();
-    return frame ? Mac(frame)->bridge() : nil;
+    return bridge([document _document]->frame());
 }
 
 - (id)initMainFrameWithPage:(WebCorePageBridge *)page
@@ -480,17 +404,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     [super finalize];
 }
 
-- (FrameMac *)part
-{
-    return m_frame;
-}
-
 - (WebCoreFrameBridge *)parent
 {
-    FrameMac *parentFrame = Mac(m_frame->tree()->parent());
-    if (!parentFrame)
-        return nil;
-    return parentFrame->bridge();
+    return bridge(m_frame->tree()->parent());
 }
 
 - (void)provisionalLoadStarted
@@ -540,7 +456,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // as a result of JS executing during load, i.e. one frame
     // changing another's location before the frame's document
     // has been created. 
-    if (doc){
+    if (doc) {
         doc->setShouldCreateRenderers([self shouldCreateRenderers]);
         m_frame->addData((const char *)[data bytes], [data length]);
     }
@@ -564,9 +480,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // transitioned to the new page (before WebFrameState==commit).  The goal here is to restore any state
     // so that the existing view (that wenever got far enough to replace) can continue being used.
     Document *doc = m_frame->document();
-    if (doc) {
+    if (doc)
         doc->setInPageCache(NO);
-    }
+
     KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
     [state invalidate];
 }
@@ -607,7 +523,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         NSArray *documentState = [self documentState];
         
         DeprecatedStringList s;
-        for (unsigned i = 0; i < [documentState count]; i++){
+        for (unsigned i = 0; i < [documentState count]; i++) {
             NSString *string = [documentState objectAtIndex: i];
             s.append(DeprecatedString::fromNSString(string));
         }
@@ -747,37 +663,17 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return WebSelectionStateNone;
 }
 
-- (NSString *)_documentTypeString
-{
-    NSString *documentTypeString = nil;
-    Document *doc = m_frame->document();
-    if (doc) {
-        if (DocumentType *doctype = doc->realDocType())
-            documentTypeString = doctype->toString();
-    }
-    return documentTypeString;
-}
-
 - (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
 {
-    NSString *documentTypeString = [self _documentTypeString];
-    if (documentTypeString && markupString) {
-        return [NSString stringWithFormat:@"%@%@", documentTypeString, markupString];
-    } else if (documentTypeString) {
-        return documentTypeString;
-    } else if (markupString) {
-        return markupString;
-    } else {
-        return @"";
-    }
+    return m_frame->documentTypeString() + markupString;
 }
 
 - (NSArray *)nodesFromList:(DeprecatedPtrList<Node> *)nodeList
 {
     NSMutableArray *nodes = [NSMutableArray arrayWithCapacity:nodeList->count()];
-    for (DeprecatedPtrListIterator<Node> i(*nodeList); i.current(); ++i) {
+    for (DeprecatedPtrListIterator<Node> i(*nodeList); i.current(); ++i)
         [nodes addObject:[DOMNode _nodeWith:i.current()]];
-    }
+
     return nodes;
 }
 
@@ -786,9 +682,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // FIXME: This is never "for interchange". Is that right? See the next method.
     DeprecatedPtrList<Node> nodeList;
     NSString *markupString = createMarkup([node _node], IncludeNode, nodes ? &nodeList : 0).getNSString();
-    if (nodes) {
+    if (nodes)
         *nodes = [self nodesFromList:&nodeList];
-    }
+
     return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
 }
 
@@ -797,9 +693,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // FIXME: This is always "for interchange". Is that right? See the previous method.
     DeprecatedPtrList<Node> nodeList;
     NSString *markupString = createMarkup([range _range], nodes ? &nodeList : 0, AnnotateForInterchange).getNSString();
-    if (nodes) {
+    if (nodes)
         *nodes = [self nodesFromList:&nodeList];
-    }
+
     return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
 }
 
@@ -1572,7 +1468,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebBridgeSelectionGranularity)granularity
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return nil;
         
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
@@ -1583,7 +1479,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return nil;
         
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
@@ -1596,7 +1492,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
         
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
@@ -1645,7 +1541,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return nil;
         
     SelectionController selection(m_frame->selection());
@@ -1655,7 +1551,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
         
     SelectionController selection(m_frame->selection());
@@ -1788,7 +1684,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)replaceMarkedTextWithText:(NSString *)text
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     int exception = 0;
@@ -1951,7 +1847,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
-    if (!frameHasSelection(self) || !fragment)
+    if (!m_frame->hasSelection() || !fragment)
         return;
     
     EditCommandPtr(new ReplaceSelectionCommand(m_frame->document(), [fragment _fragment], selectReplacement, smartReplace, matchStyle)).apply();
@@ -1988,7 +1884,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)increaseSelectionListLevel
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     ModifySelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
@@ -1997,7 +1893,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)decreaseSelectionListLevel
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     ModifySelectionListLevelCommand::decreaseSelectionListLevel(m_frame->document());
@@ -2006,7 +1902,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertLineBreak
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     TypingCommand::insertLineBreak(m_frame->document());
@@ -2015,7 +1911,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertParagraphSeparator
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     TypingCommand::insertParagraphSeparator(m_frame->document());
@@ -2024,7 +1920,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertParagraphSeparatorInQuotedContent
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame->document());
@@ -2033,7 +1929,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     TypingCommand::insertText(m_frame->document(), text, selectInsertedText);
@@ -2121,7 +2017,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     EditCommandPtr(new DeleteSelectionCommand(m_frame->document(), smartDelete)).apply();
@@ -2247,7 +2143,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (void)ensureSelectionVisible
 {
-    if (!frameHasSelection(self))
+    if (!m_frame->hasSelection())
         return;
     
     FrameView *v = m_frame->view();
@@ -2451,47 +2347,7 @@ static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id 
 
 - (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow
 {
-    RenderObject *renderer = m_frame->renderer();
-
-    RenderObject::NodeInfo nodeInfo(true, true);
-    renderer->layer()->hitTest(nodeInfo, IntPoint(point));
-
-    Node *n;
-    Widget *widget = 0;
-    IntPoint widgetPoint(point);
-    
-    while (true) {
-        n = nodeInfo.innerNode();
-        if (!n || !n->renderer() || !n->renderer()->isWidget())
-            break;
-        widget = static_cast<RenderWidget *>(n->renderer())->widget();
-        if (!widget || !widget->isFrameView())
-            break;
-        Frame* frame = static_cast<HTMLFrameElement *>(n)->contentFrame();
-        if (!frame || !frame->renderer())
-            break;
-        int absX, absY;
-        n->renderer()->absolutePosition(absX, absY, true);
-        FrameView *view = static_cast<FrameView *>(widget);
-        widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
-        widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
-
-        RenderObject::NodeInfo widgetNodeInfo(true, true);
-        frame->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint);
-        nodeInfo = widgetNodeInfo;
-    }
-    
-    if (!allow) {
-        Node* node = nodeInfo.innerNode();
-        if (node)
-            node = node->shadowAncestorNode();
-        nodeInfo.setInnerNode(node);
-        node = nodeInfo.innerNonSharedNode();
-        if (node)
-            node = node->shadowAncestorNode();
-        nodeInfo.setInnerNonSharedNode(node); 
-    }
-    return nodeInfo;
+    return m_frame->nodeInfoAtPoint(IntPoint(point), allow);
 }
 
 @end

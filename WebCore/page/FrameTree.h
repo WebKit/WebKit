@@ -52,6 +52,8 @@ namespace WebCore {
 
         bool isDescendantOf(Frame* ancestor) const;
         Frame* traverseNext(Frame* stayWithin = 0) const;
+        Frame* traverseNextWithWrap(bool) const;
+        Frame* traversePreviousWithWrap(bool) const;
         
         void appendChild(PassRefPtr<Frame>);
         void removeChild(Frame*);
@@ -63,6 +65,8 @@ namespace WebCore {
         AtomicString uniqueChildName(const AtomicString& requestedName) const;
 
     private:
+        Frame* deepLastChild() const;
+
         Frame* m_thisFrame;
 
         Frame* m_parent;

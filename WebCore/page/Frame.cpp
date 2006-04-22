@@ -36,6 +36,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "DOMImplementation.h"
 #include "DocLoader.h"
+#include "DocumentType.h"
 #include "DOMWindow.h"
 #include "EditingText.h"
 #include "EventNames.h"
@@ -2671,6 +2672,60 @@ void Frame::autoscrollTimerFired(Timer<Frame>*)
     } 
 }
 
+RenderObject::NodeInfo Frame::nodeInfoAtPoint(const IntPoint& point, bool allowShadowContent)
+{
+    RenderObject::NodeInfo nodeInfo(true, true);
+    renderer()->layer()->hitTest(nodeInfo, point);
+
+    Node *n;
+    Widget *widget = 0;
+    IntPoint widgetPoint(point);
+    
+    while (true) {
+        n = nodeInfo.innerNode();
+        if (!n || !n->renderer() || !n->renderer()->isWidget())
+            break;
+        widget = static_cast<RenderWidget *>(n->renderer())->widget();
+        if (!widget || !widget->isFrameView())
+            break;
+        Frame* frame = static_cast<HTMLFrameElement *>(n)->contentFrame();
+        if (!frame || !frame->renderer())
+            break;
+        int absX, absY;
+        n->renderer()->absolutePosition(absX, absY, true);
+        FrameView *view = static_cast<FrameView *>(widget);
+        widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
+        widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
+
+        RenderObject::NodeInfo widgetNodeInfo(true, true);
+        frame->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint);
+        nodeInfo = widgetNodeInfo;
+    }
+    
+    if (!allowShadowContent) {
+        Node* node = nodeInfo.innerNode();
+        if (node)
+            node = node->shadowAncestorNode();
+        nodeInfo.setInnerNode(node);
+        node = nodeInfo.innerNonSharedNode();
+        if (node)
+            node = node->shadowAncestorNode();
+        nodeInfo.setInnerNonSharedNode(node); 
+    }
+    return nodeInfo;
+}
+
+bool Frame::hasSelection()
+{
+    if (selection().isNone())
+        return false;
+
+    // If a part has a selection, it should also have a document.        
+    ASSERT(document());
+
+    return true;
+}
+
 void Frame::startAutoscrollTimer()
 {
     d->m_autoscrollTimer.startRepeating(autoscrollInterval);
@@ -3327,5 +3382,15 @@ void Frame::disconnectOwnerRenderer()
 {
     d->m_ownerRenderer = 0;
 }
+
+String Frame::documentTypeString() const
+{
+    if (Document *doc = document())
+        if (DocumentType *doctype = doc->realDocType())
+            return doctype->toString();
+
+    return String();
+}
+
 
 } // namespace WebCore

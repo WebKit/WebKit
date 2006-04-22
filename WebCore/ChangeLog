@@ -1,3 +1,50 @@
+2006-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - push down a bunch of WebCoreFrameBridge code to C++ (plus some reformatting)
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge isDescendantOfFrame:]):
+        (-[WebCoreFrameBridge traverseNextFrameStayWithin:]):
+        (-[WebCoreFrameBridge nextFrameWithWrap:]):
+        (-[WebCoreFrameBridge previousFrameWithWrap:]):
+        (+[WebCoreFrameBridge bridgeForDOMDocument:]):
+        (-[WebCoreFrameBridge parent]):
+        (-[WebCoreFrameBridge addData:]):
+        (-[WebCoreFrameBridge didNotOpenURL:pageCache:]):
+        (-[WebCoreFrameBridge restoreDocumentState]):
+        (-[WebCoreFrameBridge _stringWithDocumentTypeStringAndMarkupString:]):
+        (-[WebCoreFrameBridge nodesFromList:]):
+        (-[WebCoreFrameBridge markupStringFromNode:nodes:]):
+        (-[WebCoreFrameBridge markupStringFromRange:nodes:]):
+        (-[WebCoreFrameBridge rangeByExpandingSelectionWithGranularity:]):
+        (-[WebCoreFrameBridge rangeByAlteringCurrentSelection:direction:granularity:]):
+        (-[WebCoreFrameBridge alterCurrentSelection:direction:granularity:]):
+        (-[WebCoreFrameBridge rangeByAlteringCurrentSelection:verticalDistance:]):
+        (-[WebCoreFrameBridge alterCurrentSelection:verticalDistance:]):
+        (-[WebCoreFrameBridge replaceMarkedTextWithText:]):
+        (-[WebCoreFrameBridge replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebCoreFrameBridge increaseSelectionListLevel]):
+        (-[WebCoreFrameBridge decreaseSelectionListLevel]):
+        (-[WebCoreFrameBridge insertLineBreak]):
+        (-[WebCoreFrameBridge insertParagraphSeparator]):
+        (-[WebCoreFrameBridge insertParagraphSeparatorInQuotedContent]):
+        (-[WebCoreFrameBridge insertText:selectInsertedText:]):
+        (-[WebCoreFrameBridge deleteSelectionWithSmartDelete:]):
+        (-[WebCoreFrameBridge ensureSelectionVisible]):
+        (-[WebCoreFrameBridge RenderObject::nodeInfoAtPoint:allowShadowContent:]):
+        * page/Frame.cpp:
+        (WebCore::Frame::nodeInfoAtPoint):
+        (WebCore::Frame::hasSelection):
+        (WebCore::Frame::documentTypeString):
+        * page/Frame.h:
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::traverseNextWithWrap):
+        (WebCore::FrameTree::traversePreviousWithWrap):
+        (WebCore::FrameTree::deepLastChild):
+        * page/FrameTree.h:
+
 2006-04-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
@@ -610,7 +657,6 @@
         (WebCore::Image::tileInRect):
         (WebCore::Image::scaleAndTileInRect):
 
->>>>>>> .r13996
 2006-04-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

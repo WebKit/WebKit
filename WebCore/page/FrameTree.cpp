@@ -244,4 +244,41 @@ Frame* FrameTree::traverseNext(Frame* stayWithin) const
     return 0;
 }
 
+Frame* FrameTree::traverseNextWithWrap(bool wrap) const
+{
+    if (Frame* result = traverseNext())
+        return result;
+
+    if (wrap)
+        return m_thisFrame->page()->mainFrame();
+
+    return 0;
+}
+
+Frame* FrameTree::traversePreviousWithWrap(bool wrap) const
+{
+    // FIXME: besides the wrap feature, this is just the traversePreviousNode algorithm
+
+    if (Frame* prevSibling = previousSibling())
+        return prevSibling->tree()->deepLastChild();
+    if (Frame* parentFrame = parent())
+        return parentFrame;
+    
+    // no siblings, no parent, self==top
+    if (wrap)
+        return deepLastChild();
+
+    // top view is always the last one in this ordering, so prev is nil without wrap
+    return 0;
+}
+
+Frame* FrameTree::deepLastChild() const
+{
+    Frame* result = m_thisFrame;
+    for (Frame* last = lastChild(); last; last = last->tree()->lastChild())
+        result = last;
+
+    return result;
+}
+
 }
