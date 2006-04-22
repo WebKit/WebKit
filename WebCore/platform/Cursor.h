@@ -44,9 +44,10 @@ namespace WebCore {
 
 #ifdef WIN32
     typedef HCURSOR PlatformCursor;
-#endif
-#ifdef __APPLE__
+#elif defined(__APPLE__)
     typedef NSCursor* PlatformCursor;
+#else
+    typedef void* PlatformCursor;
 #endif
 
     class Cursor {

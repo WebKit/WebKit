@@ -40,6 +40,7 @@
 #include "render_replaced.h"
 #include "RenderTheme.h"
 #include <assert.h>
+#include <math.h>
 
 using namespace std;
 

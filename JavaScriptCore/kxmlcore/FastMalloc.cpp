@@ -74,6 +74,9 @@
 #if USE_SYSTEM_MALLOC
 
 #include <stdlib.h>
+#if !PLATFORM(WIN_OS)
+    #include <pthread.h>
+#endif
 
 namespace KXMLCore {
     

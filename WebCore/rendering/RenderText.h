@@ -37,6 +37,7 @@ const unsigned short SOFT_HYPHEN = 173;
 
 class DocumentMarker;
 class InlineBox;
+class InlineTextBox;
 class Position;
 class String;
 class StringImpl;

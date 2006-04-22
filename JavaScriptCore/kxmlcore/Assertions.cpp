@@ -26,8 +26,9 @@
 
 #include "config.h"
 #include "Assertions.h"
-#include "stdio.h"
-#include "stdarg.h"
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 
 #if PLATFORM(MAC)
 #include <CoreFoundation/CFString.h>

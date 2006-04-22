@@ -42,6 +42,7 @@ namespace KJS {
 class ClassInfo;
 class ExecState;
 class JSObject;
+class JSCell;
 
 /**
  * JSValue is the base type for all primitives (Undefined, Null, Boolean,

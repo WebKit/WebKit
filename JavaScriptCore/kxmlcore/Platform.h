@@ -141,11 +141,11 @@
 #define KXMLCORE_USE_MULTIPLE_THREADS 1
 #endif
 
-// for Unicode, Mac and Windows use ICU, KDE uses Qt
-#if PLATFORM(MAC) || PLATFORM(WIN)
-#define KXMLCORE_USE_ICU_UNICODE 1
-#elif PLATFORM(KDE)
+// for Unicode, KDE uses Qt, everything else uses ICU
+#if PLATFORM(KDE)
 #define KXMLCORE_USE_QT4_UNICODE 1
+#else
+#define KXMLCORE_USE_ICU_UNICODE 1
 #endif
 
 #endif // KXMLCORE_PLATFORM_H

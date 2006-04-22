@@ -31,6 +31,7 @@
 #include "SelectionController.h"
 #include "TextIterator.h"
 #include "dom2_eventsimpl.h"
+#include <math.h>
 
 namespace WebCore {
 

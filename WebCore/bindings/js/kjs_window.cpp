@@ -54,6 +54,7 @@
 #include "kjs_navigator.h"
 #include "kjs_proxy.h"
 #include "kjs_traversal.h"
+#include <math.h>
 
 #if KHTML_XSLT
 #include "JSXSLTProcessor.h"

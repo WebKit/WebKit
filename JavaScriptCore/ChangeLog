@@ -1,3 +1,22 @@
+2006-04-21  Kevin M. Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8507
+          Compilation fixes for building on gcc 4.0.2, and without precomp headers
+
+        * kjs/operations.h:
+        * kxmlcore/Assertions.cpp:
+        * kxmlcore/FastMalloc.cpp:
+        Added necessary headers to resolve compilation issues when not using
+        precompiled headers.
+        
+        * kjs/value.h: Declare the JSCell class before friend declaration  
+        to resolve compilation issues with gcc 4.0.2.
+        
+        * kxmlcore/Platform.h: Set Unicode support to use ICU on platforms
+        other than KDE (previously only defined for Win and Mac OS)
+                
 2006-04-18  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

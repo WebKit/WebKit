@@ -23,6 +23,8 @@
 #ifndef _KJS_OPERATIONS_H_
 #define _KJS_OPERATIONS_H_
 
+#include <math.h>
+
 namespace KJS {
 
   class ExecState;
