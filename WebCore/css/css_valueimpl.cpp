@@ -921,7 +921,7 @@ double CSSPrimitiveValue::computeLengthFloat(RenderStyle *style, bool applyZoomF
         return -1;
     }
 
-    return getFloatValue(type)*factor;
+    return getFloatValue() * factor;
 }
 
 void CSSPrimitiveValue::setFloatValue( unsigned short unitType, double floatValue, ExceptionCode& ec)
@@ -936,6 +936,54 @@ void CSSPrimitiveValue::setFloatValue( unsigned short unitType, double floatValu
     //if(m_type > CSS_DIMENSION) throw DOMException(INVALID_ACCESS_ERR);
     m_value.num = floatValue;
     m_type = unitType;
+}
+
+double scaleFactorForConversion(unsigned short unitType)
+{
+    double cssPixelsPerInch = 96.0;
+    double factor = 1.0;
+    
+    switch(unitType) {
+        case CSSPrimitiveValue::CSS_PX:
+            break;
+        case CSSPrimitiveValue::CSS_CM:
+            factor = cssPixelsPerInch / 2.54; // (2.54 cm/in)
+            break;
+        case CSSPrimitiveValue::CSS_MM:
+            factor = cssPixelsPerInch / 25.4;
+            break;
+        case CSSPrimitiveValue::CSS_IN:
+            factor = cssPixelsPerInch;
+            break;
+        case CSSPrimitiveValue::CSS_PT:
+            factor = cssPixelsPerInch / 72.0;
+            break;
+        case CSSPrimitiveValue::CSS_PC:
+            factor = cssPixelsPerInch * 12.0 / 72.0; // 1 pc == 12 pt
+            break;
+        default:
+            break;
+    }
+    
+    return factor;
+}
+
+double CSSPrimitiveValue::getFloatValue(unsigned short unitType)
+{
+    if (unitType == m_type || unitType < CSS_PX || unitType > CSS_PC)
+        return m_value.num;
+    
+    double convertedValue = m_value.num;
+    
+    // First convert the value from m_type into CSSPixels
+    double factor = scaleFactorForConversion(m_type);
+    convertedValue *= factor;
+    
+    // Now convert from CSSPixels to the specified unitType
+    factor = scaleFactorForConversion(unitType);
+    convertedValue /= factor;
+    
+    return convertedValue;
 }
 
 void CSSPrimitiveValue::setStringValue( unsigned short stringType, const String &stringValue, ExceptionCode& ec)

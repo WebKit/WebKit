@@ -1,0 +1,9 @@
+<body>
+<div id='d' style="font-size: 10pt"></div>
+10pt = 
+<script>
+//CSSPrimitiveValue.CSS_MM
+document.write(document.defaultView.getComputedStyle(document.getElementById('d'), '').getPropertyCSSValue('font-size').getFloatValue(7));
+document.write("mm (should be 3.4395833333333328)");
+</script>
+</body>

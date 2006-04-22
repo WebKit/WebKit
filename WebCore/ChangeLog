@@ -1,3 +1,45 @@
+2006-04-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6141 
+        DOMCSSPrimitiveValue is always returning values in pixels when 
+        using getComputedStyle:
+
+        getFloatValue() took a unit type as a parameter, ignored it, and 
+        returned m_value.num. This patch writes a second version of the 
+        function that actually converts m_value.num to the specified unites 
+        before returning it. Where a conversion is not required, I removed 
+        the unit type from the caller so that it would go directly to the 
+        inline version of the function.
+
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthFloat): Remove type 
+        parameter since a conversion is not needed.
+        (WebCore::scaleFactorForConversion): Helper function for 
+        conversion.
+        (WebCore::CSSPrimitiveValue::getFloatValue): This version of 
+        getFloatValue() takes a unit type parameter and converts 
+        m_value.num.
+        * css/css_valueimpl.h:
+        (WebCore::CSSPrimitiveValue::getFloatValue): This version does not 
+        take a parameter and just returns m_value.num.
+        * css/cssparser.cpp:
+        (WebCore::BorderImageParseContext::commitBorderImage): Remove type 
+        parameter since a conversion is not needed.
+        * css/cssstyleselector.cpp:
+        (WebCore::convertToLength): Same.
+        (WebCore::CSSStyleSelector::applyProperty): Same.
+        (WebCore::CSSStyleSelector::mapBackgroundSize): Same.
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition): Same.
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition): Same.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Same.
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty): Same.
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::cssPrimitiveToLength): Same.
+
 2006-04-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John.

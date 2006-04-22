@@ -140,7 +140,7 @@ double KSVGPainterFactory::cssPrimitiveToLength(const RenderObject* item, CSSVal
         SVGElement *viewportElement = (element ? element->viewportElement() : 0);
         if(viewportElement)
         {
-            double result = primitive->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100.0;
+            double result = primitive->getFloatValue() / 100.0;
             return SVGHelper::PercentageOfViewport(result, viewportElement, LM_OTHER);
         }
     }

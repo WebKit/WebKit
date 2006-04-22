@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 45x18
+          text run at (0,0) width 45: "10pt = "
+        RenderText {#text} at (45,0) size 383x18
+          text run at (45,0) width 383: "3.4395833333333328mm (should be 3.4395833333333328)"

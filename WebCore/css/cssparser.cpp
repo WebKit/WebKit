@@ -2448,16 +2448,16 @@ struct BorderImageParseContext
     void commitBorderImage(CSSParser* p, int propId, bool important) {
         // We need to clone and repeat values for any omissions.
         if (!m_right) {
-            m_right = new CSSPrimitiveValue(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_bottom = new CSSPrimitiveValue(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = new CSSPrimitiveValue(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_right = new CSSPrimitiveValue(m_top->getFloatValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_bottom = new CSSPrimitiveValue(m_top->getFloatValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_left = new CSSPrimitiveValue(m_top->getFloatValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
         }
         if (!m_bottom) {
-            m_bottom = new CSSPrimitiveValue(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = new CSSPrimitiveValue(m_right->getFloatValue(m_right->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+            m_bottom = new CSSPrimitiveValue(m_top->getFloatValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_left = new CSSPrimitiveValue(m_right->getFloatValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
         }
         if (!m_left)
-             m_left = new CSSPrimitiveValue(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+             m_left = new CSSPrimitiveValue(m_top->getFloatValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
              
         // Now build a rect value to hold all four of our primitive values.
         RectImpl* rect = new RectImpl;
