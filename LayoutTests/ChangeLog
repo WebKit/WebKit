@@ -1,3 +1,15 @@
+2006-04-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8213
+        REGRESSION: Can't tab out of text field if iframe comes after it
+
+        * fast/forms/tabbing-input-iframe-expected.checksum: Added.
+        * fast/forms/tabbing-input-iframe-expected.png: Added.
+        * fast/forms/tabbing-input-iframe-expected.txt: Added.
+        * fast/forms/tabbing-input-iframe.html: Added.
+
 2006-04-21  Beth Dakin  <bdakin@apple.com>
 
         Adding a few more background-size tests that include background-

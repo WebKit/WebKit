@@ -1,5 +1,18 @@
 2006-04-21  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8213
+        REGRESSION: Can't tab out of text field if iframe comes after it
+
+        Test: fast/forms/tabbing-input-iframe.html
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::nextKeyViewInFrame):
+          If the next focusable node is a RenderWidget without a view, then continue in the loop.  We used to break out in this case. 
+          I also made some formatting changes and reorganized the function to make it easier to read.
+
+2006-04-21  Adele Peterson  <adele@apple.com>
+
         Reviewed by Beth.
 
         Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8496

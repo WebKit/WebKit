@@ -880,9 +880,9 @@ String FrameMac::mimeTypeForFileName(const String& fileName) const
     return String();
 }
 
-NSView *FrameMac::nextKeyViewInFrame(Node *node, KWQSelectionDirection direction)
+NSView* FrameMac::nextKeyViewInFrame(Node* node, KWQSelectionDirection direction)
 {
-    Document *doc = document();
+    Document* doc = document();
     if (!doc)
         return nil;
     
@@ -892,26 +892,22 @@ NSView *FrameMac::nextKeyViewInFrame(Node *node, KWQSelectionDirection direction
         if (!node)
             return nil;
         
-        RenderObject *renderer = node->renderer();
-        if (renderer->isWidget()) {
-            RenderWidget *renderWidget = static_cast<RenderWidget *>(renderer);
-            Widget *widget = renderWidget->widget();
-            if (!widget)
-                continue;
-            
-            FrameView *childFrameWidget = widget->isFrameView() ? static_cast<FrameView *>(widget) : 0;
-            NSView *view = nil;
-            if (childFrameWidget)
-                view = Mac(childFrameWidget->frame())->nextKeyViewInFrame(0, direction);
+        RenderObject* renderer = node->renderer();
+        if (!renderer->isWidget()) {
+            static_cast<Element*>(node)->focus(); 
+            [_bridge willMakeFirstResponderForNodeFocus];
+            return [_bridge documentView];
+        }
+
+        if (Widget* widget = static_cast<RenderWidget*>(renderer)->widget()) {
+            NSView* view;
+            if (widget->isFrameView())
+                view = Mac(static_cast<FrameView*>(widget)->frame())->nextKeyViewInFrame(0, direction);
             else
                 view = widget->getView();
             if (view)
                 return view;
-        } else
-            static_cast<Element *>(node)->focus(); 
-
-        [_bridge willMakeFirstResponderForNodeFocus];
-        return [_bridge documentView];
+        }
     }
 }
 
