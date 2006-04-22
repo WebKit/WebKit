@@ -1,5 +1,41 @@
 2006-04-22  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8532
+          Update iExploder to 1.3.2
+
+        Test case numbers are not compatible with iExploder 1.2.
+
+        * Scripts/run-iexploder-tests: Print the numbers of the last five tests that were accessed.
+
+        * iExploder/CHANGELOG.txt: Added.
+        * iExploder/LICENSE.txt: Changed to a standard zlib/png license.
+        * iExploder/README.txt: Added some performance hints.
+
+        * iExploder/htdocs/config.rb: Added.
+        * iExploder/htdocs/cssproperties.in:
+        * iExploder/htdocs/cssvalues.in:
+        * iExploder/htdocs/htmlattrs.in:
+        * iExploder/htdocs/htmltags.in:
+        * iExploder/htdocs/iexploder.cgi:
+         - Updated to support the latest HTML & CSS tags, properties, and values from both
+           the WebKit and Mozilla CVS tree
+         - cssproperties.in cleanup
+         - Modularized the code a little bit.
+         - Fix subtest bug that was causing last 5 tags to be missed
+         - new subtest algorithm to deal better with larger tag counts
+         - default HTML_MAX_TAGS increased from 32 to 96
+
+        * iExploder/htdocs/index.html: Updated version to 1.3.2.
+        * iExploder/htdocs/webserver.rb: Added. New standalone webserver, can be used as an
+        alternative to our run-iexploder-tests.
+        * iExploder/tools/showtest.rb: Added. Similar to run-iexploder-tests --get.
+        * iExploder/htdocs/iexploder.rb: Added. Used by webserver.rb.
+        * iExploder/tools/osx_last_crash.rb: Find logs modified in the last two days.
+
+2006-04-22  Alexey Proskuryakov  <ap@nypop.com>
+
         - commit Scripts/run-mangleme-tests (missed it the previous time).
 
 2006-04-18  Darin Adler  <darin@apple.com>

@@ -1,12 +1,12 @@
 #!/usr/bin/ruby
 # Gives you information about the most recent crash for each application
-# that has crashed within the last 60 minutes
+# that has crashed within the last 2 days
 
 $LogDir=ENV['HOME'] + '/Library/Logs/CrashReporter'
-$Min=60
+$Days=1
 $StackCount=5
 
-files=`find #{$LogDir} -mmin -#{$Min} -type f | grep -v synergy`
+files=`find #$LogDir -mtime -#$Days -type f | grep -v synergy`
 files.each { |filename|
     filename.chop!
     record = 0

@@ -70,6 +70,8 @@ if ($downloadTest) {
     print "Saved the test as iexploder$downloadTest.html on the desktop\n";
 } else {
     runSafari();
+    print "Last generated tests:\n";
+    system "grep 'iexploder.cgi' /tmp/WebKit/access_log.txt | tail -n -5 | awk -F'[ =]' '{print \$8}'";
 }
 
 closeHTTPD();

@@ -1,4 +1,5 @@
 # The following come from khtml's htmltags.in from 19oct2004
+# From WebCore svn tree, 2006-04-18 (WebKit/WebCore/html/HTMLNames.h)
 
 a
 abbr
@@ -15,6 +16,7 @@ blockquote
 body
 br
 button
+canvas
 caption
 center
 cite
@@ -46,7 +48,7 @@ hr
 html
 i
 iframe
-ilayer
+image
 img
 input
 ins
@@ -58,6 +60,7 @@ layer
 legend
 li
 link
+listing
 map
 marquee
 menu
@@ -65,8 +68,8 @@ meta
 nobr
 noembed
 noframes
-noscript
 nolayer
+noscript
 object
 ol
 optgroup
@@ -103,20 +106,23 @@ var
 wbr
 xmp
 
+# This was in khtml in 10-2004
+ilayer
 
-# From Mozilla FireFox 0.10.1
+# Additions from Mozilla CVS, 2006-04-18.
+# mozilla/parser/htmlparser/public/nsHTMLTagList.h
 bgsound
 blink
+multicol
+spacer
+
+# The following tags used to be in Mozilla in 10-2004, now removed
 counter
 endnote
-image
-listing
-multicol
 parsererror
 server
 sound
 sourcetext
-spacer
 
 # From Internet Explorer - http://msdn.microsoft.com/workshop/author/html/reference/elements.asp
 xml

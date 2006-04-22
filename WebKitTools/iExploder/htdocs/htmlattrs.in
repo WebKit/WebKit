@@ -1,8 +1,8 @@
-# the following come from khtml's htmlattr.in from 19oct2004
+# the following come from WebCore 2006-04-15 (WebKit/WebCore/html/HTMLNames.h)
 
 abbr
-accept-charset
 accept
+accept_charset
 accesskey
 action
 align
@@ -10,6 +10,7 @@ alink
 alt
 archive
 autocomplete
+autosave
 axis
 background
 behavior
@@ -17,10 +18,11 @@ bgcolor
 bgproperties
 border
 bordercolor
+cellborder
 cellpadding
 cellspacing
-char
 challenge
+char
 charoff
 charset
 checked
@@ -35,6 +37,7 @@ color
 cols
 colspan
 compact
+composite
 content
 contenteditable
 coords
@@ -56,10 +59,11 @@ hidden
 href
 hreflang
 hspace
-html
-http-equiv
+http_equiv
 id
+incremental
 ismap
+keytype
 label
 lang
 language
@@ -70,24 +74,41 @@ longdesc
 loop
 marginheight
 marginwidth
+max
 maxlength
+mayscript
 media
 method
+min
 multiple
 name
 nohref
 noresize
-nosave
 noshade
 nowrap
 object
 onabort
+onbeforecopy
+onbeforecut
+onbeforepaste
+onbeforeunload
 onblur
 onchange
 onclick
+oncontextmenu
+oncopy
+oncut
 ondblclick
+ondrag
+ondragend
+ondragenter
+ondragleave
+ondragover
+ondragstart
+ondrop
 onerror
 onfocus
+oninput
 onkeydown
 onkeypress
 onkeyup
@@ -97,22 +118,29 @@ onmousemove
 onmouseout
 onmouseover
 onmouseup
+onmousewheel
+onpaste
 onreset
 onresize
+onscroll
+onsearch
 onselect
+onselectstart
 onsubmit
 onunload
-oversrc
 pagex
 pagey
+placeholder
 plain
 pluginpage
 pluginspage
 pluginurl
+precision
 profile
 prompt
 readonly
 rel
+results
 rev
 rows
 rowspan
@@ -132,6 +160,7 @@ start
 style
 summary
 tabindex
+tableborder
 target
 text
 title
@@ -139,67 +168,33 @@ top
 topmargin
 truespeed
 type
-unknown
 usemap
 valign
 value
 valuetype
 version
-visibility
 vlink
 vspace
 width
 wrap
+
+# was in khtml in 2004, but is no longer in WebCore
+accept-charset
+html
+http-equiv
+nosave
+oversrc
+unknown
+visibility
 z-index
 
-# From FireFox 0.10.1
-AAstyle
-above
-autocheck
-below
-bottommargin
-bottompadding
-ch
-clip
-combobox
-content-language
-content-location
-content-script-type
-content-style-type
-content-type
-defaultchecked
-defaultselected
-default-style
-defaultvalue
-encoding
-event
-font-weight
-FormControlList
-gutter
-IForm
-ilayer
-index
-layer
-layout
-leftpadding
-length
-lowsrc
-mayscript
-:-moz-wrapped-frame
-msthemecompatible
-overflow
-point-size
-refresh
-repeat
-rightmargin
-rightpadding
-selectedindex
-set-cookie
-toppadding
-variable
-vcard_name
-window-target
-zindex
+# From Mozilla CVS 2006-04-15 (mozilla/layout/style/xbl-marquee)
+bounce
+finish
+onbounce
+onfinish
+onstart
+
 
 # IE specific, from msdn.microsoft.com/workshop/author/dhtml/reference/properties
 acceptcharset
@@ -219,3 +214,46 @@ scroll
 units
 urn
 volume
+
+# From Mozilla CVS 2006-04-15 (mozilla/content/base/src/nsGkAtomList.h)
+# To get these, I used:
+# ggrep -r "Get.*Attr" * | perl -ne 'if (/nsHTMLAtoms::(\w+)/) { \
+# system("grep \\($1, content/base/src/nsGkAtomList.h"); }' \
+# | cut -d\" -f2 | sort -u
+autocheck
+base
+bottommargin
+event
+font-weight
+handler
+layout
+observer
+ping
+point-size
+rightmargin
+variable
+
+# events from Mozilla CVS 2006-04-15 (mozilla/content/base/src/nsGkAtomList.h)
+# cat nsGkAtomList.h | grep GK_ATOM | cut -d\" -f2 | egrep "^on[a-z]+"
+onzoom
+onunderflow
+ontext
+onset
+onpopupshown
+onpopupshowing
+onpopuphiding
+onpopuphidden
+onpaint
+onpageshow
+onpagehide
+onoverflowchanged
+onoverflow
+onget
+ondraggesture
+ondragexit
+ondragdrop
+oncompositionstart
+oncompositionend
+oncommandupdate
+oncommand
+onclose
