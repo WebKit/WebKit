@@ -1,3 +1,16 @@
+2006-04-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8181
+        REGRESSION: After tabbing in page's field, attempting to tab from Google toolbar search to page fails on first try
+
+        Test: manual-tests/tabbing-input-google.html
+
+        * WebView/WebHTMLView.m: (-[NSArray resignFirstResponder]):
+        When resigning first responder, reset willBecomeFirstResponderForNodeFocus, so when the WebHTMLView gets focus again
+        it knows it can start moving through the tab cycle.
+
 2006-04-20  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

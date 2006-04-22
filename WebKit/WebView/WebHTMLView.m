@@ -3109,6 +3109,7 @@ done:
         }
         [self _updateFocusState];
         _private->resigningFirstResponder = NO;
+        _private->willBecomeFirstResponderForNodeFocus = NO;
     }
     return resign;
 }
