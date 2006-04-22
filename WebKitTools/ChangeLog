@@ -1,3 +1,7 @@
+2006-04-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        - commit Scripts/run-mangleme-tests (missed it the previous time).
+
 2006-04-18  Darin Adler  <darin@apple.com>
 
         - attempt to fix Windows buildbot
