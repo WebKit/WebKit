@@ -30,6 +30,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "JSAttr.h"
+#include "JSElement.h"
 #include "JSCharacterData.h"
 #include "JSDOMImplementation.h"
 #include "JSDocumentType.h"
@@ -798,93 +799,11 @@ Attr* toAttr(JSValue* val, bool& ok)
     return static_cast<Attr *>(static_cast<DOMNode *>(val)->impl());
 }
 
-// -------------------------------------------------------------------------
-
-/* Source for DOMElementProtoTable. Use "make hashtables" to regenerate.
-@begin DOMElementProtoTable 1
-@end
-*/
-KJS_IMPLEMENT_PROTOFUNC(DOMElementProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMElement", DOMElementProto, DOMElementProtoFunc)
-
-const ClassInfo DOMElement::info = { "Element", &DOMEventTargetNode::info, &DOMElementTable, 0 };
-/* Source for DOMElementTable. Use "make hashtables" to regenerate.
-@begin DOMElementTable 1
-@end
-*/
-DOMElement::DOMElement(ExecState *exec, Element *e)
-  : DOMEventTargetNode(e) 
-{
-  setPrototype(DOMElementProto::self(exec));
-}
-
-DOMElement::DOMElement(Element *e)
-  : DOMEventTargetNode(e) 
-{ 
-}
-
-JSValue *DOMElement::getValueProperty(ExecState *exec, int token) const
-{
-    return jsUndefined();
-}
-
-void DOMElement::put(ExecState *exec, const Identifier& propertyName, JSValue *value, int attr)
-{
-    lookupPut<DOMElement, DOMEventTargetNode>(exec, propertyName, value, attr, &DOMElementTable, this);
-}
-
-void DOMElement::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
-{
-}
-
-JSValue* DOMElement::attributeGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-  DOMElement* thisObj = static_cast<DOMElement*>(slot.slotBase());
-  return jsStringOrNull(static_cast<Element*>(thisObj->impl())->getAttributeNS(nullAtom, propertyName));
-}
-
-bool DOMElement::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  const HashEntry* entry = Lookup::findEntry(&DOMElementTable, propertyName);
-  if (entry) {
-    slot.setStaticEntry(this, entry, staticValueGetter<DOMElement>);
-    return true;
-  }
-
-  // We have to check in DOMEventTargetNode before giving access to attributes, otherwise
-  // onload="..." would make onload return the string (attribute value) instead of
-  // the listener object (function).
-  if (DOMEventTargetNode::getOwnPropertySlot(exec, propertyName, slot))
-    return true;
-
-  JSValue* proto = prototype();
-  if (proto->isObject() && static_cast<JSObject *>(proto)->hasProperty(exec, propertyName))
-    return false;
-
-  // FIXME: do we really want to do this attribute lookup thing? Mozilla doesn't do it,
-  // and it seems like it could interfere with XBL.
-  WebCore::String attr = static_cast<Element*>(impl())->getAttributeNS(nullAtom, propertyName);
-  if (!attr.isNull()) {
-    slot.setCustom(this, attributeGetter);
-    return true;
-  }
-
-  return false;
-}
-
-JSValue *DOMElementProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMElement::info))
-    return throwError(exec, TypeError);
-
-    return jsUndefined();
-}
-
 Element *toElement(JSValue *val)
 {
-    if (!val || !val->isObject(&DOMElement::info))
+    if (!val || !val->isObject(&JSElement::info))
         return 0;
-    return static_cast<Element *>(static_cast<DOMElement *>(val)->impl());
+    return static_cast<Element *>(static_cast<JSElement *>(val)->impl());
 }
 
 DocumentType *toDocumentType(JSValue *val)

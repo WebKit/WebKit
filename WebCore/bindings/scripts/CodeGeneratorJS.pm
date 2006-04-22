@@ -354,6 +354,11 @@ sub GenerateHeader
     push(@headerContent, "    RefPtr<$implClassName> m_impl;\n");
   }
   
+  if ($dataNode->extendedAttributes->{"IncludeAttributesInPropertyLookup"}) {
+    push(@headerContent, "private:\n");
+    push(@headerContent, "    static KJS::JSValue* attributeGetter(KJS::ExecState*, KJS::JSObject* originalObject, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot);\n");
+  }
+
   push(@headerContent, "};\n\n");
   
   if (!$hasParent) {
@@ -645,9 +650,14 @@ sub GenerateImplementation
   
   # Attributes
   if ($numAttributes ne 0) {
-    push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
-    push(@implContent, "{\n    return getStaticValueSlot<$className, $parentClassName>" .
-                       "(exec, &${className}Table, this, propertyName, slot);\n}\n\n");
+    if ($dataNode->extendedAttributes->{"IncludeAttributesInPropertyLookup"}) {
+      push(@implContent, getOwnPropertySlotIncludeAttributes($className, $parentClassName, $implClassName));
+    } else {
+      push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
+      push(@implContent, "{\n");
+      push(@implContent, "    return getStaticValueSlot<$className, $parentClassName>(exec, &${className}Table, this, propertyName, slot);\n");
+      push(@implContent, "}\n\n");
+    }
   
     push(@implContent, "JSValue* ${className}::getValueProperty(ExecState *exec, int token) const\n{\n");
     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
@@ -1233,6 +1243,52 @@ sub WriteData
 
     @headerContent = "";
   }
+}
+
+sub getOwnPropertySlotIncludeAttributes
+{
+    my $className = shift;
+    my $parentClassName = shift;
+    my $implClassName = shift;
+    
+    my $implContent = "";
+    
+    $implContent .= "JSValue* ${className}::attributeGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)\n";
+    $implContent .= "{\n";
+    $implContent .= "    ${className}* thisObj = static_cast<${className}*>(slot.slotBase());\n";
+    $implContent .= "    return jsStringOrNull(static_cast<${implClassName}*>(thisObj->impl())->getAttributeNS(nullAtom, propertyName));\n";
+    $implContent .= "}\n\n";
+
+    $implContent .= "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n";
+    $implContent .= "{\n";
+    $implContent .= "    const HashEntry* entry = Lookup::findEntry(&${className}Table, propertyName);\n";
+    $implContent .= "    if (entry) {\n";
+    $implContent .= "        slot.setStaticEntry(this, entry, staticValueGetter<${className}>);\n";
+    $implContent .= "        return true;\n";
+    $implContent .= "    }\n\n";
+    
+    $implContent .= "    // We have to check in $parentClassName before giving access to attributes, otherwise\n";
+    $implContent .= "    // properties like onload would return string (attribute) values instead of\n";
+    $implContent .= "    // object (listener function) values.\n";
+    $implContent .= "    if (${parentClassName}::getOwnPropertySlot(exec, propertyName, slot))\n";
+    $implContent .= "        return true;\n\n";
+    
+    $implContent .= "    JSValue* proto = prototype();\n";
+    $implContent .= "    if (proto->isObject() && static_cast<JSObject *>(proto)->hasProperty(exec, propertyName))\n";
+    $implContent .= "        return false;\n";
+    
+    $implContent .= "    // FIXME: do we really want to do this attribute lookup thing? Mozilla doesn't do it,\n";
+    $implContent .= "    // and it seems like it could interfere with XBL.\n";
+    $implContent .= "    String attr = static_cast<Element*>(impl())->getAttributeNS(nullAtom, propertyName);\n";
+    $implContent .= "    if (!attr.isNull()) {\n";
+    $implContent .= "        slot.setCustom(this, attributeGetter);\n";
+    $implContent .= "        return true;\n";
+    $implContent .= "    }\n\n";
+    
+    $implContent .= "    return false;\n";
+    $implContent .= "}\n\n";
+    
+    return $implContent;
 }
 
 1;

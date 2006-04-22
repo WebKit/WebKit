@@ -137,29 +137,6 @@ protected:
 
   WebCore::Attr* toAttr(JSValue*, bool& ok);
 
-  KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMElementProto, DOMEventTargetNodeProto)
-
-  class DOMElement : public DOMEventTargetNode {
-  public:
-    DOMElement(ExecState *exec, WebCore::Element *e);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
-    virtual void put(ExecState *exec, const Identifier& propertyName, JSValue *value, int attr = None);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { 
-        TagName, ScrollByLines, ScrollByPages, ScrollIntoView, ScrollIntoViewIfNeeded,
-        OffsetLeft, OffsetTop, OffsetWidth, OffsetHeight, OffsetParent,
-        ClientWidth, ClientHeight, ScrollLeft, ScrollTop, ScrollWidth, ScrollHeight
-    };
-  protected:
-    // Constructor for inherited classes; doesn't set up a prototype.
-    DOMElement(WebCore::Element *e);
-  private:
-    static JSValue *attributeGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
-  };
-
   WebCore::Element *toElement(JSValue *); // returns 0 if passed-in value is not a DOMElement object
 
   WebCore::DocumentType *toDocumentType(JSValue *); // returns 0 if passed-in value is not a DOMDocumentType object
