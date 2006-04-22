@@ -1,3 +1,22 @@
+2006-04-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8514
+        Bug 8514: Web Inspector hides when the app is in the background
+
+        Makes the inspector not hide in the background. Since the inspector is a floating panel
+        we need to call setFloatingPanel:NO when the app is switching into the background. Then
+        call setFloatingPanel:YES when the app is activated again. Without this the inspector
+        would float above all applications.
+
+        * WebInspector/WebInspector.m:
+        (-[NSWindow window]): setHidesOnDeactivate:NO
+        (-[NSWindow windowWillClose:]): de-regiser appliction active notifications
+        (-[NSWindow showWindow:]): register for appliction active notifications
+        (-[WebInspector _applicationWillResignActive]): setFloatingPanel:NO
+        (-[WebInspector _applicationDidBecomeActive]): setFloatingPanel:YES
+
 2006-04-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

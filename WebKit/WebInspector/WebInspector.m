@@ -113,6 +113,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [window setFloatingPanel:YES];
         [window setReleasedWhenClosed:YES];
         [window setMovableByWindowBackground:YES];
+        [window setHidesOnDeactivate:NO];
         [window setDelegate:self];
         [window setMinSize:NSMakeSize(280.0, 450.0)];
 
@@ -138,6 +139,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:WebNodeHighlightExpiredNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSSystemColorsDidChangeNotification object:nil];
@@ -150,6 +153,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_nodeHighlightExpired:) name:WebNodeHighlightExpiredNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_updateSystemColors) name:NSSystemColorsDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive) name:NSApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive) name:NSApplicationDidBecomeActiveNotification object:nil];
 
     [self _update];
     [self _updateSystemColors];
@@ -744,6 +749,16 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
     [style setAttribute:@"id" :@"systemColors"];
     [style setTextContent:styleText];
+}
+
+- (void)_applicationWillResignActive
+{
+    [(NSPanel *)[self window] setFloatingPanel:NO];
+}
+
+- (void)_applicationDidBecomeActive
+{
+    [(NSPanel *)[self window] setFloatingPanel:YES];
 }
 
 #pragma mark -
