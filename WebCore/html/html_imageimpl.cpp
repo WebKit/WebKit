@@ -198,8 +198,6 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute *attr)
         ismap = true;
     else if (attrName == onabortAttr)
         setHTMLEventListener(abortEvent, attr);
-    else if (attrName == onerrorAttr)
-        setHTMLEventListener(errorEvent, attr);
     else if (attrName == onloadAttr)
         setHTMLEventListener(loadEvent, attr);
     else if (attrName == compositeAttr) {

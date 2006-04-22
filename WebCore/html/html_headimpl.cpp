@@ -517,8 +517,6 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute *attr)
             m_cachedScript = document()->docLoader()->requestScript(url, charset);
             m_cachedScript->ref(this);
         }
-    } else if (attrName == onerrorAttr) {
-        setHTMLEventListener(errorEvent, attr);
     } else if (attrName == onloadAttr) {
         setHTMLEventListener(loadEvent, attr);
     } else
@@ -582,7 +580,7 @@ void HTMLScriptElement::notifyFinished(CachedObject* o)
     assert(cs == m_cachedScript);
 
     if (cs->errorOccurred())
-        dispatchHTMLEvent(errorEvent, false, false);
+        dispatchHTMLEvent(errorEvent, true, false);
     else {
         evaluateScript(cs->url(), cs->script());
         dispatchHTMLEvent(loadEvent, false, false);

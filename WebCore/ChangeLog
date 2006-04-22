@@ -1,3 +1,61 @@
+2006-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=8509
+        javascript:document.importNode(null)
+        
+        * dom/Document.cpp:
+        (WebCore::Document::importNode): Throw an error if the node is null.
+        This happens when the object provided in the JavaScript call is not
+        a node.
+        (WebCore::Document::adoptNode): Set the DOM exception code in all error
+        cases instead of just a few, because that's what the spec requires.
+
+2006-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=8510
+        submit event doesn't bubble - it's supposed to.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute): Added recognition for the
+        onsubmit attribute, so elements can use it
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareSubmit): Changed bubbling attribute
+        to 'true'
+
+2006-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by TimO.
+
+        - Fixed: error event does not bubble
+
+        I discovered this bug while working on the "submit event does not
+        bubble" bug. The DOM spec says the event should bubble, and that's how
+        it works in Firefox.
+
+        The DOM Spec also says that the error event is "valid for
+        OBJECT elements, BODY elements, and FRAMESET element." But it doesn't
+        say "valid ONLY." Firefox supports it on all elements and web
+        developers tend to think it will work for things like <img> and
+        <script>, so I went whole hog here.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute): Make onerror a mapped
+        attribute for all elements, so containing elements can register for
+        the event.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::notifyFinished): make onerror bubble
+        * html/html_headimpl.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute): Remove special
+        case for onerror because HTMLElement will take care of it
+        (WebCore::HTMLScriptElement::notifyFinished): make onerror bubble
+        * html/html_imageimpl.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute): Remove special
+        case for onerror because HTMLElement will take care of it
+
 2006-04-21  Adele Peterson  <adele@apple.com>
 
         Test for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8181

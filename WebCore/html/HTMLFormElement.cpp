@@ -310,12 +310,12 @@ bool HTMLFormElement::prepareSubmit()
     m_insubmit = true;
     m_doingsubmit = false;
 
-    if ( dispatchHTMLEvent(submitEvent,false,true) && !m_doingsubmit )
+    if (dispatchHTMLEvent(submitEvent, true, true) && !m_doingsubmit)
         m_doingsubmit = true;
 
     m_insubmit = false;
 
-    if ( m_doingsubmit )
+    if (m_doingsubmit)
         submit(true);
 
     return m_doingsubmit;

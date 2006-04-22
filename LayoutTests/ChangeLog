@@ -1,3 +1,25 @@
+2006-04-21  Geoffrey Garen  <ggaren@apple.com>
+        - Layout test for whether the error event bubbles.
+
+        * fast/events/onerror-bubbling-expected.txt: Added.
+        * fast/events/onerror-bubbling.html: Added.
+
+2006-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        - Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8510
+        submit event doesn't bubble - it's supposed to.
+        
+        * fast/events/onsubmit-bubbling-expected.txt: Added.
+        * fast/events/onsubmit-bubbling.html: Added.
+
+2006-04-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8509
+        javascript:document.importNode(null)
+        
+        * fast/dom/importNode-null-expected.txt: Added.
+        * fast/dom/importNode-null.html: Added.
+
 2006-04-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
