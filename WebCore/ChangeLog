@@ -1,3 +1,19 @@
+2006-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - remove WebCoreCookieAdapter, instead make mac implementation of
+        CookieJar use Foundation directly.
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookies):
+        (WebCore::setCookies):
+        (WebCore::cookiesEnabled):
+        * platform/mac/WebCoreCookieAdapter.h: Removed.
+        * platform/mac/WebCoreCookieAdapter.m: Removed.
+
 2006-04-21  Rob Buis  <buis@kde.org>
 
         Reviewed by hyatt.  Landed by eseidel.

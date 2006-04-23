@@ -103,7 +103,6 @@
 .objc_class_name_DOMTreeWalker
 .objc_class_name_DOMUIEvent
 .objc_class_name_WebCoreCache
-.objc_class_name_WebCoreCookieAdapter
 .objc_class_name_WebCoreEncodings
 .objc_class_name_WebCoreFrameBridge
 .objc_class_name_WebCoreFrameNamespaces

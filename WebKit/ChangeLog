@@ -1,5 +1,17 @@
 2006-04-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+        
+        - remove WebCookieAdapter, WebCore can just use Foundation directly.
+
+        * WebCoreSupport/WebCookieAdapter.h: Removed.
+        * WebCoreSupport/WebCookieAdapter.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebFrameView.m:
+        (-[WebFrameView initWithFrame:]):
+
+2006-04-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Adele.
         
         - prune WebView SPI of unused calls

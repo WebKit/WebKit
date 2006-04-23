@@ -404,7 +404,6 @@
 		93F1999D08245E59001E9ABC /* DeprecatedValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C202DE3B8601EA4122 /* DeprecatedValueList.h */; };
 		93F1999E08245E59001E9ABC /* DeprecatedValueListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */; };
 		93F199A508245E59001E9ABC /* WebCoreCache.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2A4FC02E2220F018635CB /* WebCoreCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199A608245E59001E9ABC /* WebCoreCookieAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A708245E59001E9ABC /* WebCoreEncodings.h in Headers */ = {isa = PBXBuildFile; fileRef = F56234DF03026D7301629B47 /* WebCoreEncodings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854C02DE375901EA4122 /* WebCoreFrameView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A908245E59001E9ABC /* WebCoreHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = F5517DC2031AB56301A80180 /* WebCoreHistory.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -460,7 +459,6 @@
 		93F19A5308245E59001E9ABC /* KWQTextEdit.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587853802DE375901EA4122 /* KWQTextEdit.mm */; };
 		93F19A5408245E59001E9ABC /* KWQTextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853902DE375901EA4122 /* KWQTextStream.cpp */; };
 		93F19A5608245E59001E9ABC /* DeprecatedValueListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */; };
-		93F19A5C08245E59001E9ABC /* WebCoreCookieAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */; };
 		93F19A5D08245E59001E9ABC /* WebCoreImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */; };
 		93F19A5E08245E59001E9ABC /* WebCoreTextRendererFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587855302DE375901EA4122 /* WebCoreTextRendererFactory.mm */; };
 		93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587855502DE375901EA4122 /* WebCoreViewFactory.m */; };
@@ -2472,8 +2470,6 @@
 		F587853902DE375901EA4122 /* KWQTextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQTextStream.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedValueListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreCookieAdapter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreCookieAdapter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854C02DE375901EA4122 /* WebCoreFrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854D02DE375901EA4122 /* WebCoreImageRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreImageRenderer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreImageRendererFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2763,8 +2759,6 @@
 				9352071B09BD3BBB00F2038D /* TextBoundaries.mm */,
 				6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */,
 				6545F67509B830180013006F /* TransferJobMac.mm */,
-				F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */,
-				F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */,
 				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
 				F5517DC3031AB56301A80180 /* WebCoreHistory.m */,
 				F587854D02DE375901EA4122 /* WebCoreImageRenderer.h */,
@@ -4226,7 +4220,6 @@
 				93F1999D08245E59001E9ABC /* DeprecatedValueList.h in Headers */,
 				93F1999E08245E59001E9ABC /* DeprecatedValueListImpl.h in Headers */,
 				93F199A508245E59001E9ABC /* WebCoreCache.h in Headers */,
-				93F199A608245E59001E9ABC /* WebCoreCookieAdapter.h in Headers */,
 				93F199A708245E59001E9ABC /* WebCoreEncodings.h in Headers */,
 				93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */,
 				93F199A908245E59001E9ABC /* WebCoreHistory.h in Headers */,
@@ -4952,7 +4945,6 @@
 				93F19A5308245E59001E9ABC /* KWQTextEdit.mm in Sources */,
 				93F19A5408245E59001E9ABC /* KWQTextStream.cpp in Sources */,
 				93F19A5608245E59001E9ABC /* DeprecatedValueListImpl.cpp in Sources */,
-				93F19A5C08245E59001E9ABC /* WebCoreCookieAdapter.m in Sources */,
 				93F19A5D08245E59001E9ABC /* WebCoreImageRendererFactory.m in Sources */,
 				93F19A5E08245E59001E9ABC /* WebCoreTextRendererFactory.mm in Sources */,
 				93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */,

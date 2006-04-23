@@ -29,30 +29,46 @@
 #import "KURL.h"
 #import "BlockExceptions.h"
 #import "PlatformString.h"
-#import "WebCoreCookieAdapter.h"
+#include <Foundation/Foundation.h>
 
 namespace WebCore {
 
 String cookies(const KURL& url)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.url().getNSString()];
+
+    NSURL *URL = url.getNSURL();
+    NSArray *cookiesForURL = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:URL];
+    NSDictionary *header = [NSHTTPCookie requestHeaderFieldsWithCookies:cookiesForURL];
+    return [header objectForKey:@"Cookie"];
+
     END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 
-void setCookies(const KURL& url, const KURL& policyBaseURL, const String& cookies)
+void setCookies(const KURL& url, const KURL& policyBaseURL, const String& cookieStr)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [[WebCoreCookieAdapter sharedAdapter] setCookies:cookies
-        forURL:url.url().getNSString() policyBaseURL:policyBaseURL.url().getNSString()];
+
+    NSURL *URL = url.getNSURL();
+    
+    // <http://bugzilla.opendarwin.org/show_bug.cgi?id=6531>, <rdar://4409034>
+    // cookiesWithResponseHeaderFields doesn't parse cookies without a value
+    String cookieString = cookieStr.contains('=') ? cookieStr : cookieStr + "=";
+    
+    NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:URL];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:URL mainDocumentURL:policyBaseURL.getNSURL()];    
+
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool cookiesEnabled()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreCookieAdapter sharedAdapter] cookiesEnabled];
+
+    NSHTTPCookieAcceptPolicy cookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
+    return cookieAcceptPolicy == NSHTTPCookieAcceptPolicyAlways || cookieAcceptPolicy == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+
     END_BLOCK_OBJC_EXCEPTIONS;
     return false;
 }

@@ -30,7 +30,6 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import "WebClipView.h"
-#import "WebCookieAdapter.h"
 #import "WebDataSource.h"
 #import "WebDocument.h"
 #import "WebDynamicScrollBarsView.h"
@@ -313,7 +312,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         [WebViewFactory createSharedFactory];
         [WebTextRendererFactory createSharedFactory];
         [WebImageRendererFactory createSharedFactory];
-        [WebCookieAdapter createSharedAdapter];
         [WebKeyGenerator createSharedGenerator];
     }
     
