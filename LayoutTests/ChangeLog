@@ -1,3 +1,19 @@
+2006-04-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Reproducible crasher with <li value=1234567890 type=A>
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8542
+
+        * fast/lists/alpha-list-wrap-expected.checksum: Added.
+        * fast/lists/alpha-list-wrap-expected.png: Added.
+        * fast/lists/alpha-list-wrap-expected.txt: Added.
+        * fast/lists/alpha-list-wrap.html: Added.
+        * fast/lists/li-style-alpha-huge-value-crash-expected.checksum: Added.
+        * fast/lists/li-style-alpha-huge-value-crash-expected.png: Added.
+        * fast/lists/li-style-alpha-huge-value-crash-expected.txt: Added.
+        * fast/lists/li-style-alpha-huge-value-crash.html: Added.
+
 2006-04-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

@@ -73,48 +73,50 @@ static DeprecatedString toRoman( int number, bool upper )
     return roman;
 }
 
-static DeprecatedString toLetter( int number, int base ) {
-    number--;
-    DeprecatedString letter = (QChar) (base + (number % 26));
-    // Add a single quote at the end of the alphabet.
-    for (int i = 0; i < (number / 26); i++) {
-       letter += '\'';
+static DeprecatedString toLetterString(int number, int letterA)
+{
+    if (number < 2)
+        return (QChar)letterA; // match WinIE (A.) not FireFox (0.)
+    
+    DeprecatedString letterString;
+    while (number > 0) {
+        int onesDigit = ((number - 1) % 26);
+        letterString = (QChar)(letterA + onesDigit) + letterString;
+        number -= onesDigit;
+        number /= 26;
     }
-    return letter;
+    
+    return letterString;
 }
 
 static DeprecatedString toHebrew( int number ) {
     const QChar tenDigit[] = {1497, 1499, 1500, 1502, 1504, 1505, 1506, 1508, 1510};
 
     DeprecatedString letter;
-    if (number>999) {
+    if (number > 999) {
         letter = toHebrew(number/1000) + "'";
-        number = number%1000;
+        number = number % 1000;
     }
 
     int hunderts = (number/400);
     if (hunderts > 0) {
-        for(int i=0; i<hunderts; i++) {
+        for (int i=0; i<hunderts; i++)
             letter += QChar(1511 + 3);
-        }
     }
     number = number % 400;
-    if ((number / 100) != 0) {
+    if ((number / 100) != 0)
         letter += QChar (1511 + (number / 100) -1);
-    }
     number = number % 100;
     int tens = number/10;
-    if (tens > 0 && !(number == 15 || number == 16)) {
+    if (tens > 0 && !(number == 15 || number == 16))
         letter += tenDigit[tens-1];
-    }
     if (number == 15 || number == 16) { // special because of religious
         letter += QChar(1487 + 9);       // reasons
         letter += QChar(1487 + number - 9);
     } else {
         number = number % 10;
-        if (number != 0) {
+        if (number != 0)
             letter += QChar (1487 + number);
-        }
     }
     return letter;
 }
@@ -383,7 +385,8 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     if (i.phase != PaintPhaseForeground)
         return;
     
-    if (style()->visibility() != VISIBLE)  return;
+    if (style()->visibility() != VISIBLE)
+        return;
 
     IntRect marker = getRelativeMarkerRect();
     marker.move(_tx, _ty);
@@ -543,11 +546,11 @@ void RenderListMarker::calcMinMaxWidth()
         break;
     case LOWER_ALPHA:
     case LOWER_LATIN:
-        m_item = toLetter( m_listItem->value(), 'a' );
+        m_item = toLetterString(m_listItem->value(), 'a');
         break;
     case UPPER_ALPHA:
     case UPPER_LATIN:
-        m_item = toLetter( m_listItem->value(), 'A' );
+        m_item = toLetterString(m_listItem->value(), 'A');
         break;
     case LNONE:
         break;
