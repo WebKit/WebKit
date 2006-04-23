@@ -1,3 +1,21 @@
+2006-04-21  Rob Buis  <buis@kde.org>
+
+        Reviewed by hyatt.  Landed by eseidel.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8170:
+        SVG CSS property values with extra items do not get treated
+        as invalid (they should)
+
+        Fixes the handling of invalid svg css properties similar
+        to how invalid html css properties are handled, ie. discard
+        the property if there are more values in the value list than
+        expected.
+
+        Test: svg/custom/invalid-css.svg
+
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+
 2006-04-23  Michael Emmel  <mike.emmel@gmail.com>
 
         Reviewed by mjs.  Landed by eseidel.

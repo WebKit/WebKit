@@ -1,3 +1,11 @@
+2006-04-23  Rob Buis  <buis@kde.org>
+
+        Reviewed by hyatt.  Landed by eseidel.
+
+        Tests for invalid svg css properties.
+
+        * svg/custom/invalid-css.svg: Added.
+
 2006-04-21  Jon Shier  <jshier@iastate.edu>
         
         Reviewed by ggaren.  Landed by eseidel.
