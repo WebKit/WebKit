@@ -161,8 +161,7 @@ void RenderCanvas::paint(PaintInfo& i, int _tx, int _ty)
         if (!child->layer() && !child->isFloating())
             child->paint(i, _tx, _ty);
 
-    if (m_view)
-    {
+    if (m_view) {
         _tx += m_view->contentsX();
         _ty += m_view->contentsY();
     }
@@ -476,8 +475,6 @@ void RenderCanvas::removeWidget(RenderObject *o)
 {
     m_widgets.remove(o);
 }
-
-
 
 IntRect RenderCanvas::viewRect() const
 {

@@ -1,3 +1,19 @@
+2006-04-21  Jon Shier  <jshier@iastate.edu>
+        
+        Reviewed by ggaren.  Landed by eseidel.
+        
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8511
+        onerror JS property does not register listener properly
+        
+        * ChangeLog:
+        * bindings/js/kjs_dom.cpp:  
+        (KJS::DOMEventTargetNode::getValueProperty): changed khtmlErrorEvent to errorEvent.
+        (KJS::DOMEventTargetNode::putValueProperty): ditto.
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty): ditto.
+        (KJS::Window::put):
+        * dom/EventNames.h: Removed khtmlError macro.
+        
 2006-04-23  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

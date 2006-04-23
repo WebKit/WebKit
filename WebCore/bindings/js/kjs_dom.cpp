@@ -1,6 +1,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
  *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -421,7 +422,7 @@ JSValue *DOMEventTargetNode::getValueProperty(ExecState *exec, int token) const
         case OnDragDrop:
             return getListener(khtmlDragdropEvent);
         case OnError:
-            return getListener(khtmlErrorEvent);
+            return getListener(errorEvent);
         case OnFocus:
             return getListener(focusEvent);
         case OnInput:
@@ -525,7 +526,7 @@ void DOMEventTargetNode::putValueProperty(ExecState *exec, int token, JSValue *v
             setListener(exec, khtmlDragdropEvent, value);
             break;
         case OnError:
-            setListener(exec, khtmlErrorEvent, value);
+            setListener(exec, errorEvent, value);
             break;
         case OnFocus:
             setListener(exec, focusEvent, value);

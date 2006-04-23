@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
  *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -833,7 +834,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    case Ondragdrop:
      return getListener(exec, khtmlDragdropEvent);
    case Onerror:
-     return getListener(exec, khtmlErrorEvent);
+     return getListener(exec, errorEvent);
    case Onfocus:
      return getListener(exec, focusEvent);
    case Onkeydown:
@@ -1067,7 +1068,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
       return;
     case Onerror:
       if (isSafeScript(exec))
-        setListener(exec,khtmlErrorEvent,value);
+        setListener(exec, errorEvent, value);
       return;
     case Onfocus:
       if (isSafeScript(exec))

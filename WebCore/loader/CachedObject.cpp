@@ -35,7 +35,8 @@ namespace WebCore {
 
 CachedObject::~CachedObject()
 {
-    if(m_deleted) abort();
+    if (m_deleted)
+        abort();
     Cache::removeFromLRUList(this);
     m_deleted = true;
 #if __APPLE__

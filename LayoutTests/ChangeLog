@@ -1,3 +1,13 @@
+2006-04-21  Jon Shier  <jshier@iastate.edu>
+        
+        Reviewed by ggaren.  Landed by eseidel.
+        
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8511
+        onerror JS property does not register listener properly
+        
+        * fast/dom/onerror-img-expected.txt: Added.
+        * fast/dom/onerror-img.html: Added.
+        
 2006-04-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

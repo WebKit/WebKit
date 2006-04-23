@@ -2,6 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,7 +89,6 @@ namespace WebCore { namespace EventNames {
     macro(khtmlBeforeTextInserted) \
     macro(khtmlDragdrop) \
     macro(khtmlEditableContentChanged) \
-    macro(khtmlError) \
     macro(khtmlHorizontalmousewheel) \
     macro(khtmlMove) \
     macro(khtmlOrigclickMouseup) \
