@@ -86,6 +86,7 @@ static BOOL dumpSelectionRect;
 static BOOL dumpTitleChanges;
 static int dumpPixels = NO;
 static int dumpAllPixels = NO;
+static BOOL readFromWindow = NO;
 static int testRepaintDefault = NO;
 static BOOL testRepaint = NO;
 static int repaintSweepHorizontallyDefault = NO;
@@ -397,7 +398,15 @@ static void dump(void)
             NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
             [NSGraphicsContext setCurrentContext:nsContext];
 
-            if (!testRepaint)
+            if (readFromWindow) {
+                NSBitmapImageRep *imageRep;
+                [view displayIfNeeded];
+                [view lockFocus];
+                imageRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:[view frame]];
+                [view unlockFocus];
+                [imageRep draw];
+                [imageRep release];
+            } else if (!testRepaint)
                 [view displayRectIgnoringOpacity:NSMakeRect(0, 0, webViewSize.width, webViewSize.height) inContext:nsContext];
             else if (!repaintSweepHorizontally) {
                 NSRect line = NSMakeRect(0, 0, webViewSize.width, 1);
@@ -578,6 +587,7 @@ static void dump(void)
             || aSelector == @selector(setWindowIsKey:)
             || aSelector == @selector(setMainFrameIsFirstResponder:)
             || aSelector == @selector(dumpSelectionRect)
+            || aSelector == @selector(display)
             || aSelector == @selector(testRepaint)
             || aSelector == @selector(repaintSweepHorizontally))
         return NO;
@@ -639,6 +649,12 @@ static void dump(void)
         [(WebHTMLView *)documentView _updateFocusState];
 }
 
+- (void)display
+{
+    [[frame webView] display];
+    readFromWindow = YES;
+}
+
 - (void)testRepaint
 {
     testRepaint = YES;
@@ -682,6 +698,7 @@ static void dumpRenderTree(const char *pathOrURL)
     dumpAsText = NO;
     dumpSelectionRect = NO;
     dumpTitleChanges = NO;
+    readFromWindow = NO;
     testRepaint = testRepaintDefault;
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;
     if (currentTest != nil)

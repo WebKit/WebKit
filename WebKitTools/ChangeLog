@@ -1,3 +1,18 @@
+2006-04-23  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6905
+          DumpRenderTree needs a way to force painting (to allow invalidation tests)
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (dump): If display() has been called during the test, grab the pixels from
+        the view, after letting it repaint invalidated rects.
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController display]): Added. Calls -display on the view
+        and changes the subsequent behavior of dump().
+        (dumpRenderTree):
+
 2006-04-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
