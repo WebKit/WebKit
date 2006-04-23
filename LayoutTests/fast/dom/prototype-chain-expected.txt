@@ -12,15 +12,13 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object JSDocument]
 
------ [object DIV] (5 prototypes) -----
+----- [object DIV] (4 prototypes) -----
 
 [object Object]
 
 [object DOMNode]
 
 [object DOMEventTargetNode]
-
-[object DOMElement]
 
 [object JSElement]
 
