@@ -28,7 +28,7 @@
 
 #import <WebKit/WebKitSystemBits.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 
 #include <mach/mach.h>
 #include <mach/host_info.h>
@@ -52,7 +52,7 @@ static void initCapabilities(void)
     r = host_info(host, HOST_BASIC_INFO, (host_info_t) &gHostBasicInfo, &count);
     mach_port_deallocate(mach_task_self(), host);
     if (r != KERN_SUCCESS) {
-        ERROR("%s : host_info(%d) : %s.\n", __FUNCTION__, r, mach_error_string(r));
+        LOG_ERROR("%s : host_info(%d) : %s.\n", __FUNCTION__, r, mach_error_string(r));
     }
 }
 

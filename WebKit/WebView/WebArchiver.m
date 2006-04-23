@@ -30,7 +30,7 @@
 
 #import <WebKit/DOM.h>
 #import "WebArchive.h"
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebDocument.h"
 #import "WebDataSource.h"
 #import "WebDOMOperationsPrivate.h"
@@ -96,7 +96,7 @@
                     [subresources addObject:subresource];
                 else
                     // FIXME: should do something better than spew to console here
-                    ERROR("Failed to archive subresource for %@", URL);
+                    LOG_ERROR("Failed to archive subresource for %@", URL);
             }
         }
     }

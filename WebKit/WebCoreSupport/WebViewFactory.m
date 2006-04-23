@@ -28,7 +28,7 @@
 
 #import <WebKit/WebViewFactory.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebHTMLViewPrivate.h>

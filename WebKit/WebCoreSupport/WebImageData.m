@@ -28,7 +28,7 @@
 
 #import "WebImageData.h"
 
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebImageDecoder.h"
 #import "WebImageRenderer.h"
 #import "WebImageRendererFactory.h"
@@ -285,7 +285,7 @@
             isSolidColor = YES;
             CFRelease(bmap);
         } else {
-            ERROR("Couldn't create CGBitmapContext");
+            LOG_ERROR("Couldn't create CGBitmapContext");
         }
         CFRelease(space);
     }
@@ -623,7 +623,7 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
             CGPatternRelease(pattern);
         } else {
-            ERROR("unable to create pattern");
+            LOG_ERROR("unable to create pattern");
         }
     }
     
@@ -714,7 +714,7 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
             CGPatternRelease (pattern);
         }
         else {
-            ERROR ("unable to create pattern");
+            LOG_ERROR("unable to create pattern");
         }
         
         CGContextRestoreGState (aContext);

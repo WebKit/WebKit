@@ -1,3 +1,146 @@
+2006-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - remove WebKit copy of assertions code, use the assertions
+        stuff from JavaScriptCore instead.
+
+        * Carbon/HIViewAdapter.m:
+        * DOM/WebDOMOperations.m:
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        * DefaultDelegates/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:unableToImplementPolicyWithError:frame:]):
+        * History/WebBackForwardList.m:
+        * History/WebHistory.m:
+        (-[WebHistoryPrivate _loadHistoryGuts:URL:error:]):
+        (-[WebHistoryPrivate _saveHistoryGuts:URL:error:]):
+        * History/WebHistoryItem.m:
+        * Misc/WebAssertions.h: Removed.
+        * Misc/WebAssertions.m: Removed.
+        * Misc/WebDatabase.m:
+        * Misc/WebDownload.m:
+        * Misc/WebFileDatabase.m:
+        (SetThreadPriority):
+        * Misc/WebIconDatabase.m:
+        (-[NSMutableDictionary iconForURL:withSize:cache:]):
+        (-[NSMutableDictionary releaseIconForURL:]):
+        (-[NSMutableDictionary delayDatabaseCleanup]):
+        (-[NSMutableDictionary allowDatabaseCleanup]):
+        (-[WebIconDatabase _loadIconDictionaries]):
+        (-[WebIconDatabase _updateFileDatabase]):
+        (-[WebIconDatabase _iconsBySplittingRepresentationsOfIcon:]):
+        * Misc/WebIconLoader.m:
+        * Misc/WebKitLogging.h:
+        * Misc/WebKitLogging.m:
+        * Misc/WebKitSystemBits.m:
+        (initCapabilities):
+        * Misc/WebLRUFileList.m:
+        (WebLRUFileListRemoveOldestFileFromList):
+        (WebLRUFileListGetFileSize):
+        * Misc/WebLocalizableStrings.m:
+        * Misc/WebNSCalendarDateExtras.m:
+        * Misc/WebNSDataExtras.m:
+        * Misc/WebNSDictionaryExtras.m:
+        * Misc/WebNSFileManagerExtras.m:
+        * Misc/WebNSPasteboardExtras.m:
+        * Misc/WebNSURLExtras.m:
+        (hexDigit):
+        (hexDigitValue):
+        (allCharactersInIDNScriptWhiteList):
+        * Misc/WebNSURLRequestExtras.m:
+        * Misc/WebNSUserDefaultsExtras.m:
+        * Misc/WebStringTruncator.m:
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel loadNib]):
+        * Panels/WebPanelAuthenticationHandler.m:
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:]):
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+        * Plugins/WebBaseNetscapePluginView.m:
+        (TSMEventHandler):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView status:]):
+        (-[WebBaseNetscapePluginView _printedPluginBitmap]):
+        * Plugins/WebBasePluginPackage.m:
+        * Plugins/WebNetscapePluginDocumentView.m:
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        * Plugins/WebNetscapePluginRepresentation.m:
+        * Plugins/WebPluginContainerCheck.m:
+        * Plugins/WebPluginController.m:
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        (-[WebPluginController webPlugInContainerShowStatus:]):
+        * Plugins/WebPluginDatabase.m:
+        * Plugins/WebPluginDocumentView.m:
+        * WebCoreSupport/WebCookieAdapter.m:
+        * WebCoreSupport/WebFileButton.m:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge runModal]):
+        * WebCoreSupport/WebImageData.m:
+        (-[WebImageData _checkSolidColor:]):
+        (-[WebImageData tileInRect:fromPoint:context:]):
+        (-[WebImageData scaleAndTileInRect:fromRect:withHorizontalTileRule:withVerticalTileRule:context:]):
+        * WebCoreSupport/WebImageDecoder.m:
+        * WebCoreSupport/WebImageRenderer.m:
+        (-[WebImageRenderer TIFFRepresentation]):
+        * WebCoreSupport/WebImageRendererFactory.m:
+        * WebCoreSupport/WebJavaScriptTextInputPanel.m:
+        * WebCoreSupport/WebKeyGenerator.m:
+        * WebCoreSupport/WebPageBridge.m:
+        * WebCoreSupport/WebSubresourceLoader.m:
+        * WebCoreSupport/WebTextRenderer.m:
+        (widthForGlyph):
+        (-[WebTextRenderer initWithFont:]):
+        (drawGlyphs):
+        (initializeATSUStyle):
+        (createATSULayoutParameters):
+        (getTextBounds):
+        (ATSU_draw):
+        * WebCoreSupport/WebTextRendererFactory.m:
+        * WebCoreSupport/WebViewFactory.m:
+        * WebKit.exp:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebKitPrefix.h:
+        * WebView/WebArchiver.m:
+        (+[WebArchiver _archiveWithMarkupString:fromFrame:nodes:]):
+        * WebView/WebClipView.m:
+        * WebView/WebDataProtocol.m:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _startLoading]):
+        * WebView/WebFormDataStream.m:
+        (formEventCallback):
+        (webSetHTTPBody):
+        * WebView/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        * WebView/WebFrameView.m:
+        * WebView/WebHTMLRepresentation.m:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[NSArray drawSingleRect:]):
+        (-[NSArray namesOfPromisedFilesDroppedAtDestination:]):
+        (-[NSArray _scaleFactorForPrintOperation:]):
+        (-[NSArray deleteBackwardByDecomposingPreviousCharacter:]):
+        (-[NSArray checkSpelling:]):
+        (-[NSArray showGuessPanel:]):
+        (-[NSArray _changeSpellingToWord:]):
+        (-[NSArray ignoreSpelling:]):
+        (-[NSArray performFindPanelAction:]):
+        (-[WebTextCompleteController doCompletion]):
+        * WebView/WebImageView.m:
+        * WebView/WebLoader.m:
+        (-[NSURLProtocol connection:willCacheResponse:]):
+        * WebView/WebPDFRepresentation.m:
+        (+[WebPDFRepresentation PDFDocumentClass]):
+        * WebView/WebPDFView.m:
+        (+[WebPDFView PDFKitBundle]):
+        (+[WebPDFView PDFViewClass]):
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):
+        * WebView/WebTextRepresentation.m:
+        * WebView/WebTextView.m:
+        * WebView/WebUnarchivingState.m:
+        * WebView/WebView.m:
+
 2006-04-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Eric.

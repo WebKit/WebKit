@@ -33,7 +33,7 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -682,7 +682,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 {
 #ifndef NDEBUG
     if (connection == nil && isInitializingConnection) {
-        ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (40676250)");
+        LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (40676250)");
     }
 #endif
     ++inNSURLConnectionCallback;

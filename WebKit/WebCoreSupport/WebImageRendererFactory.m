@@ -29,7 +29,7 @@
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRenderer.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKitSystemInterface.h>
 
 @implementation WebImageRendererFactory

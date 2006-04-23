@@ -31,7 +31,7 @@
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLProtectionSpace.h>
 #import <Foundation/NSURLCredential.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSURLExtras.h>
 
@@ -105,7 +105,7 @@
             nibLoaded = YES;
             [imageView setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
         } else {
-            ERROR("couldn't load nib named '%@'", WebAuthenticationPanelNibName);
+            LOG_ERROR("couldn't load nib named '%@'", WebAuthenticationPanelNibName);
             return FALSE;
         }
     }

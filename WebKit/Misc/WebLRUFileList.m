@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLRUFileList.h>
 
@@ -228,7 +228,7 @@ unsigned int WebLRUFileListRemoveOldestFileFromList(WebLRUFileList *list)
     NSLRUFileData *data = WebLRUFileListGetOldestFileData(list, RemoveFromHeap);
 
     if (!data) {
-        ERROR("list->count > 0, but no data returned from WebLRUFileListGetOldestFileData");
+        LOG_ERROR("list->count > 0, but no data returned from WebLRUFileListGetOldestFileData");
     }
     
     // no need to remove from heap explicitly
@@ -273,7 +273,7 @@ unsigned int WebLRUFileListGetFileSize(WebLRUFileList *list, const char *path)
     
     NSLRUFileData *data = (NSLRUFileData *)CFDictionaryGetValue(list->dict, path);
     if (!data) {
-        ERROR("list->count > 0, but no data returned from CFDictionaryGetValue with path: %s", path);
+        LOG_ERROR("list->count > 0, but no data returned from CFDictionaryGetValue with path: %s", path);
     }
 
     result = data->fileSize;

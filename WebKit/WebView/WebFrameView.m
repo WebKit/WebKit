@@ -28,7 +28,7 @@
 
 #import "WebFrameView.h"
 
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebClipView.h"
 #import "WebCookieAdapter.h"
 #import "WebDataSource.h"

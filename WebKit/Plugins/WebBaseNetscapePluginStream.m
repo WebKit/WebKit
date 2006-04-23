@@ -220,7 +220,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", responseURL, MIMEType, npErr);
 
     if (npErr != NPERR_NO_ERROR) {
-        ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, responseURL);
+        LOG_ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, responseURL);
         // Calling cancelLoadWithError: cancels the load, but doesn't call NPP_DestroyStream.
         [self cancelLoadWithError:[self _pluginCancelledConnectionError]];
         return;
@@ -237,11 +237,11 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             LOG(Plugins, "Stream type: NP_ASFILE");
             break;
         case NP_SEEK:
-            ERROR("Stream type: NP_SEEK not yet supported");
+            LOG_ERROR("Stream type: NP_SEEK not yet supported");
             [self cancelLoadAndDestroyStreamWithError:[self _pluginCancelledConnectionError]];
             break;
         default:
-            ERROR("unknown stream type");
+            LOG_ERROR("unknown stream type");
     }
 }
 
@@ -340,7 +340,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
         int fd = mkstemp(path);
         if (fd == -1) {
             // This should almost never happen.
-            ERROR("can't make temporary file, almost certainly a problem with /tmp");
+            LOG_ERROR("can't make temporary file, almost certainly a problem with /tmp");
             // This is not a network error, but the only error codes are "network error" and "user break".
             [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
             free(path);
@@ -352,7 +352,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             int byteCount = write(fd, [data bytes], dataLength);
             if (byteCount != dataLength) {
                 // This happens only rarely, when we are out of disk space or have a disk I/O error.
-                ERROR("error writing to temporary file, errno %d", errno);
+                LOG_ERROR("error writing to temporary file, errno %d", errno);
                 close(fd);
                 // This is not a network error, but the only error codes are "network error" and "user break".
                 [self _destroyStreamWithReason:NPRES_NETWORK_ERR];

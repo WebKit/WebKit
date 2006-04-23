@@ -28,7 +28,7 @@
 
 #import <WebKit/WebNSUserDefaultsExtras.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKitSystemInterface.h>
 
 @implementation NSString (WebNSUserDefaultsPrivate)

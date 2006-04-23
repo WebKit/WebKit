@@ -144,7 +144,6 @@
 		939810750824BF01008DF038 /* WebUIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E27CC0458C86500CA2D3A /* WebUIDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810760824BF01008DF038 /* WebDefaultUIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E27CF0458CA4B00CA2D3A /* WebDefaultUIDelegate.h */; };
 		939810770824BF01008DF038 /* WebDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 6578F5DE045F817400000128 /* WebDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		939810780824BF01008DF038 /* WebAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = BEE18F920472A0CF00CA289C /* WebAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810790824BF01008DF038 /* WebLocalizableStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = BEE18F990472B73200CA289C /* WebLocalizableStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398107A0824BF01008DF038 /* WebKitSystemBits.h in Headers */ = {isa = PBXBuildFile; fileRef = BEE52D4A0473032500CA289C /* WebKitSystemBits.h */; };
 		9398107B0824BF01008DF038 /* WebDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = BE07CEA7047538F000CA289C /* WebDatabase.h */; };
@@ -265,7 +264,6 @@
 		939811090824BF01008DF038 /* WebDataProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 70ECD6CD043B727400A80181 /* WebDataProtocol.m */; };
 		9398110A0824BF01008DF038 /* WebDefaultUIDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.m */; };
 		9398110B0824BF01008DF038 /* WebDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = 6578F5DF045F817400000128 /* WebDownload.m */; };
-		9398110C0824BF01008DF038 /* WebAssertions.m in Sources */ = {isa = PBXBuildFile; fileRef = BEE18F930472A0CF00CA289C /* WebAssertions.m */; };
 		9398110D0824BF01008DF038 /* WebLocalizableStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = BEE18F9A0472B73200CA289C /* WebLocalizableStrings.m */; };
 		9398110E0824BF01008DF038 /* WebKitSystemBits.m in Sources */ = {isa = PBXBuildFile; fileRef = BEE52D4B0473032500CA289C /* WebKitSystemBits.m */; };
 		9398110F0824BF01008DF038 /* WebDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = BE07CEA8047538F000CA289C /* WebDatabase.m */; };
@@ -557,8 +555,6 @@
 		BE95BEE605FD0805006E1513 /* WebDefaultEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BECD14290565830A005BB09C /* WebNSDataExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDataExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BECD142A0565830A005BB09C /* WebNSDataExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSDataExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BEE18F920472A0CF00CA289C /* WebAssertions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebAssertions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BEE18F930472A0CF00CA289C /* WebAssertions.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebAssertions.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEE18F990472B73200CA289C /* WebLocalizableStrings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebLocalizableStrings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEE18F9A0472B73200CA289C /* WebLocalizableStrings.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebLocalizableStrings.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEE52D4A0473032500CA289C /* WebKitSystemBits.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitSystemBits.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1025,8 +1021,6 @@
 		F52CA6C002DF9D78018635CA /* Download */ = {
 			isa = PBXGroup;
 			children = (
-				BEE18F920472A0CF00CA289C /* WebAssertions.h */,
-				BEE18F930472A0CF00CA289C /* WebAssertions.m */,
 				F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */,
 				F59EAE410253C8DE018635CA /* WebCoreStatistics.m */,
 				93AEB17D032C1735008635CE /* WebKitLogging.h */,
@@ -1267,7 +1261,6 @@
 				939810750824BF01008DF038 /* WebUIDelegate.h in Headers */,
 				939810760824BF01008DF038 /* WebDefaultUIDelegate.h in Headers */,
 				939810770824BF01008DF038 /* WebDownload.h in Headers */,
-				939810780824BF01008DF038 /* WebAssertions.h in Headers */,
 				939810790824BF01008DF038 /* WebLocalizableStrings.h in Headers */,
 				9398107A0824BF01008DF038 /* WebKitSystemBits.h in Headers */,
 				9398107B0824BF01008DF038 /* WebDatabase.h in Headers */,
@@ -1837,7 +1830,6 @@
 				939811090824BF01008DF038 /* WebDataProtocol.m in Sources */,
 				9398110A0824BF01008DF038 /* WebDefaultUIDelegate.m in Sources */,
 				9398110B0824BF01008DF038 /* WebDownload.m in Sources */,
-				9398110C0824BF01008DF038 /* WebAssertions.m in Sources */,
 				9398110D0824BF01008DF038 /* WebLocalizableStrings.m in Sources */,
 				9398110E0824BF01008DF038 /* WebKitSystemBits.m in Sources */,
 				9398110F0824BF01008DF038 /* WebDatabase.m in Sources */,

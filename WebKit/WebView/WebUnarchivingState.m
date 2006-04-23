@@ -29,7 +29,7 @@
 #import "WebUnarchivingState.h"
 
 #import "WebArchive.h"
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebResource.h"
 #import "WebNSURLExtras.h"
 

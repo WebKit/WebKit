@@ -31,7 +31,7 @@
 #import <objc/objc.h>
 #import <objc/objc-class.h>
 
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 
 static void SetViewNeedsDisplay(HIViewRef inView, RgnHandle inRegion, Boolean inNeedsDisplay);
 

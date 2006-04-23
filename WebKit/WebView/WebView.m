@@ -28,7 +28,7 @@
 
 #import "WebViewInternal.h"
 
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebBackForwardList.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebDOMOperationsPrivate.h"

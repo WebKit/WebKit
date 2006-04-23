@@ -28,7 +28,7 @@
 
 #import <WebKit/WebIconLoader.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebNSURLExtras.h>

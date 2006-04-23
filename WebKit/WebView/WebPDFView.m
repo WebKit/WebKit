@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDocumentPrivate.h>
@@ -77,12 +77,12 @@ NSString *_NSPathForSystemFramework(NSString *framework);
     if (PDFKitBundle == nil) {
         NSString *PDFKitPath = [_NSPathForSystemFramework(@"Quartz.framework") stringByAppendingString:@"/Frameworks/PDFKit.framework"];
         if (PDFKitPath == nil) {
-            ERROR("Couldn't find PDFKit.framework");
+            LOG_ERROR("Couldn't find PDFKit.framework");
             return nil;
         }
         PDFKitBundle = [NSBundle bundleWithPath:PDFKitPath];
         if (![PDFKitBundle load]) {
-            ERROR("Couldn't load PDFKit.framework");
+            LOG_ERROR("Couldn't load PDFKit.framework");
         }
     }
     return PDFKitBundle;
@@ -94,7 +94,7 @@ NSString *_NSPathForSystemFramework(NSString *framework);
     if (PDFViewClass == nil) {
         PDFViewClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFView"];
         if (PDFViewClass == nil) {
-            ERROR("Couldn't find PDFView class in PDFKit.framework");
+            LOG_ERROR("Couldn't find PDFView class in PDFKit.framework");
         }
     }
     return PDFViewClass;
@@ -262,7 +262,7 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
             tag = [tagNumber intValue];
         } else {
             tag = WebMenuItemTagOther;
-            ERROR("no WebKit menu item tag found for PDF context menu item action \"%@\", using WebMenuItemTagOther", actionString);
+            LOG_ERROR("no WebKit menu item tag found for PDF context menu item action \"%@\", using WebMenuItemTagOther", actionString);
         }
         if ([itemCopy tag] == 0) {
             [itemCopy setTag:tag];
@@ -272,7 +272,7 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
                 [itemCopy setTarget:PDFSubviewProxy];
             }
         } else {
-            ERROR("PDF context menu item %@ came with tag %d, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
+            LOG_ERROR("PDF context menu item %@ came with tag %d, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
         }
     }
     

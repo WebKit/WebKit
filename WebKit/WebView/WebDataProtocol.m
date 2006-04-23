@@ -29,7 +29,7 @@
 #import <WebKit/WebDataProtocol.h>
 
 #import <Foundation/NSURLResponse.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitNSStringExtras.h>
 

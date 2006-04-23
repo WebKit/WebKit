@@ -27,7 +27,7 @@
  */
 
 #import <WebKit/WebDatabase.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 
 // implementation WebDatabase ------------------------------------------------------------------------
 

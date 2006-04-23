@@ -215,7 +215,7 @@ static inline WebGlyphWidth widthForGlyph(WebTextRenderer *renderer, ATSGlyphRef
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
     if (!WKGetGlyphTransformedAdvances(font, &m, &glyph, &advance)) {
-        ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
+        LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
         advance.width = 0;
     }
     width = advance.width + renderer->syntheticBoldOffset;
@@ -389,18 +389,18 @@ static NSString *webFallbackFontFamily(void)
 		font.font = [[NSFontManager sharedFontManager] convertFont:font.font toFamily:webFallbackFontFamily()];
 		if (!setUpFont(self)) {
 		    // We tried, Times, Times New Roman, and the system font. No joy. We have to give up.
-		    ERROR("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+		    LOG_ERROR("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
                     failedSetup = true;
 		}
 	    } else {
 		// We tried the requested font and the system font. No joy. We have to give up.
-		ERROR("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+		LOG_ERROR("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
                 failedSetup = true;
 	    }
         }
 
         // Report the problem.
-        ERROR("Corrupt font detected, using %@ in place of %@ located at \"%@\".",
+        LOG_ERROR("Corrupt font detected, using %@ in place of %@ located at \"%@\".",
             [font.font familyName], [initialFont familyName], filePath);
     }
 
@@ -408,7 +408,7 @@ static NSString *webFallbackFontFamily(void)
     // This is probably because Times and Times New Roman are both unavailable.
     if (failedSetup) {
         font.font = [NSFont systemFontOfSize:[font.font pointSize]];
-        ERROR("%@ failed to set up font, using system font %s", self, font.font);
+        LOG_ERROR("%@ failed to set up font, using system font %s", self, font.font);
         setUpFont(self);
     }
     
@@ -867,7 +867,7 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
         drawFont = [font screenFont];
         if (drawFont != font)
             // We are getting this in too many places (3406411); use ERROR so it only prints on debug versions for now. (We should debug this also, eventually).
-            ERROR("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.",
+            LOG_ERROR("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.",
                 [[[font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
     } else {
         drawFont = [font printerFont];
@@ -1240,12 +1240,12 @@ static void initializeATSUStyle(WebTextRenderer *renderer)
         
         status = ATSUCreateStyle(&renderer->_ATSUStyle);
         if (status != noErr)
-            FATAL_ALWAYS("ATSUCreateStyle failed (%d)", status);
+            FATAL("ATSUCreateStyle failed (%d)", status);
     
         ATSUFontID fontID = WKGetNSFontATSUFontId(renderer->font.font);
         if (fontID == 0) {
             ATSUDisposeStyle(renderer->_ATSUStyle);
-            ERROR("unable to get ATSUFontID for %@", renderer->font.font);
+            LOG_ERROR("unable to get ATSUFontID for %@", renderer->font.font);
             return;
         }
         
@@ -1260,14 +1260,14 @@ static void initializeATSUStyle(WebTextRenderer *renderer)
         ATSUAttributeValuePtr styleValues[4] = { &fontSize, &fontID, &transform, &kerningInhibitFactor };
         status = ATSUSetAttributes(renderer->_ATSUStyle, 4, styleTags, styleSizes, styleValues);
         if (status != noErr)
-            FATAL_ALWAYS("ATSUSetAttributes failed (%d)", status);
+            FATAL("ATSUSetAttributes failed (%d)", status);
         status = ATSFontGetTable(fontID, 'prop', 0, 0, 0, &propTableSize);
         if (status == noErr)    // naively assume that if a 'prop' table exists then it contains mirroring info
             renderer->ATSUMirrors = YES;
         else if (status == kATSInvalidFontTableAccess)
             renderer->ATSUMirrors = NO;
         else
-            FATAL_ALWAYS("ATSFontGetTable failed (%d)", status);
+            FATAL("ATSFontGetTable failed (%d)", status);
 
         // Turn off ligatures such as 'fi' to match the CG code path's behavior, until bugzilla 6135 is fixed.
         // Don't be too aggressive: if the font doesn't contain 'a', then assume that any ligatures it contains are
@@ -1326,7 +1326,7 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
             &renderer->_ATSUStyle, 
             &layout);
     if (status != noErr)
-        FATAL_ALWAYS("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
+        FATAL("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
     params->layout = layout;
     ATSUSetTextLayoutRefCon(layout, (UInt32)params);
 
@@ -1341,11 +1341,11 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, WebTextRend
     
     status = ATSUSetLayoutControls(layout, (style->applyWordRounding ? 4 : 3), tags, sizes, values);
     if (status != noErr)
-        FATAL_ALWAYS("ATSUSetLayoutControls failed(%d)", status);
+        FATAL("ATSUSetLayoutControls failed(%d)", status);
 
     status = ATSUSetTransientFontMatching(layout, YES);
     if (status != noErr)
-        FATAL_ALWAYS("ATSUSetTransientFontMatching failed(%d)", status);
+        FATAL("ATSUSetTransientFontMatching failed(%d)", status);
 
     params->hasSyntheticBold = false;
     ATSUFontID ATSUSubstituteFont;
@@ -1450,9 +1450,9 @@ static ATSTrapezoid getTextBounds(WebTextRenderer *renderer, const WebCoreTextRu
     ItemCount actualNumBounds;
     status = ATSUGetGlyphBounds(params.layout, FloatToFixed(p.x), FloatToFixed(p.y), run->from, run->to - run->from, kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
     if (status != noErr)
-        FATAL_ALWAYS("ATSUGetGlyphBounds() failed(%d)", status);
+        FATAL("ATSUGetGlyphBounds() failed(%d)", status);
     if (actualNumBounds != 1)
-        FATAL_ALWAYS("unexpected result from ATSUGetGlyphBounds(): actualNumBounds(%d) != 1", actualNumBounds);
+        FATAL("unexpected result from ATSUGetGlyphBounds(): actualNumBounds(%d) != 1", actualNumBounds);
 
     disposeATSULayoutParameters(&params);
 
@@ -1613,7 +1613,7 @@ static void ATSU_draw(WebTextRenderer *renderer, const WebCoreTextRun *run, cons
 
     if (status != noErr) {
         // Nothing to do but report the error (dev build only).
-        ERROR("ATSUDrawText() failed(%d)", status);
+        LOG_ERROR("ATSUDrawText() failed(%d)", status);
     }
 
     disposeATSULayoutParameters(&params);

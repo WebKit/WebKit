@@ -28,7 +28,7 @@
 
 #import <WebKit/WebBasePluginPackage.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>

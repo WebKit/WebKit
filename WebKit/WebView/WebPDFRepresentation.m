@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
@@ -60,7 +60,7 @@
     if (PDFDocumentClass == nil) {
         PDFDocumentClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFDocument"];
         if (PDFDocumentClass == nil) {
-            ERROR("Couldn't find PDFDocument class in PDFKit.framework");
+            LOG_ERROR("Couldn't find PDFDocument class in PDFKit.framework");
         }
     }
     return PDFDocumentClass;

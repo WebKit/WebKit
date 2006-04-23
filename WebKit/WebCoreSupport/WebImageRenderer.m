@@ -29,7 +29,7 @@
 #import <WebKit/WebImageRenderer.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageData.h>
 #import <WebKit/WebImageRendererFactory.h>
@@ -245,13 +245,13 @@
         
         data = CFDataCreateMutable(NULL, 0);
         // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
-        destination = CGImageDestinationCreateWithData (data, CFSTR("public.tiff"), 1, NULL);
+        destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), 1, NULL);
         if (destination) {
-            CGImageDestinationAddImage (destination, image, NULL);
+            CGImageDestinationAddImage(destination, image, NULL);
             if (!CGImageDestinationFinalize (destination)) {
-                ERROR ("Unable to create image\n");
+                LOG_ERROR("Unable to create image\n");
             }
-            CFRelease (destination);
+            CFRelease(destination);
         }
 
         TIFFData = (NSData *)data;

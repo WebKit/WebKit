@@ -30,7 +30,7 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLDownload.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
 @class NSURLConnectionDelegateProxy;

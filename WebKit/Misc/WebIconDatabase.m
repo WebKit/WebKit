@@ -167,7 +167,7 @@ NSSize WebIconLargeSize = {128, 128};
 	if (![_private->iconURLsWithNoIcons containsObject:iconURLString]) {
            // We used to have this icon, but don't have it anymore for some reason. (Bug? Deleted from
            // disk behind our back?). Forget that we ever had it so it will be re-fetched next time.
-	    ERROR("WebIconDatabase used to contain %@, but the icon file is missing. Now forgetting that we ever knew about this icon.", iconURLString);
+	    LOG_ERROR("WebIconDatabase used to contain %@, but the icon file is missing. Now forgetting that we ever knew about this icon.", iconURLString);
             [self _forgetIconForIconURLString:iconURLString];
 	}
         return [self defaultIconWithSize:size];
@@ -230,7 +230,7 @@ NSSize WebIconLargeSize = {128, 128};
     int retainCount = (int)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, pageURL);
     
     if (retainCount <= 0) {
-        ERROR("The icon for %@ was released more times than it was retained.", pageURL);
+        LOG_ERROR("The icon for %@ was released more times than it was retained.", pageURL);
         return;
     }
     
@@ -283,7 +283,7 @@ NSSize WebIconLargeSize = {128, 128};
     }
     
     if(_private->didCleanup){
-        ERROR("delayDatabaseCleanup cannot be called after cleanup has begun");
+        LOG_ERROR("delayDatabaseCleanup cannot be called after cleanup has begun");
         return;
     }
     
@@ -297,7 +297,7 @@ NSSize WebIconLargeSize = {128, 128};
     }
     
     if(_private->didCleanup){
-        ERROR("allowDatabaseCleanup cannot be called after cleanup has begun");
+        LOG_ERROR("allowDatabaseCleanup cannot be called after cleanup has begun");
         return;
     }
     
@@ -477,7 +477,7 @@ NSSize WebIconLargeSize = {128, 128};
     
     // fileDB should be non-nil here because it should have been created by _createFileDatabase 
     if (!fileDB) {
-        ERROR("Couldn't load icon dictionaries because file database didn't exist");
+        LOG_ERROR("Couldn't load icon dictionaries because file database didn't exist");
         return;
     }
     
@@ -505,7 +505,7 @@ NSSize WebIconLargeSize = {128, 128};
     // We expect this to be nil if the icon cache has been cleared, so we shouldn't whine in that case.
     if (![pageURLToIconURL isKindOfClass:[NSMutableDictionary class]]) {
         if (pageURLToIconURL)
-            ERROR("Clearing icon cache because bad value %@ was found on disk, expected an NSMutableDictionary", pageURLToIconURL);
+            LOG_ERROR("Clearing icon cache because bad value %@ was found on disk, expected an NSMutableDictionary", pageURLToIconURL);
         [self _clearDictionaries];
         return;
     }
@@ -521,7 +521,7 @@ NSSize WebIconLargeSize = {128, 128};
         NSString *iconURL = (NSString *)[pageURLToIconURL objectForKey:URL];
         // Must double-check all values read from disk. If any are bogus, we just throw out the whole icon cache.
         if (![URL isKindOfClass:[NSString class]] || ![iconURL isKindOfClass:[NSString class]]) {
-            ERROR("Clearing icon cache because either %@ or %@ was a bad value on disk, expected both to be NSStrings", URL, iconURL);
+            LOG_ERROR("Clearing icon cache because either %@ or %@ was a bad value on disk, expected both to be NSStrings", URL, iconURL);
             [self _clearDictionaries];
             return;
         }
@@ -547,7 +547,7 @@ NSSize WebIconLargeSize = {128, 128};
 
     WebFileDatabase *fileDB = _private->fileDatabase;
     if (!fileDB) {
-        ERROR("Couldn't update file database because it didn't exist");
+        LOG_ERROR("Couldn't update file database because it didn't exist");
         return;
     }
 
@@ -895,7 +895,7 @@ NSSize WebIconLargeSize = {128, 128};
         return icons;
     }
 
-    ERROR("icon has no representations");
+    LOG_ERROR("icon has no representations");
     
     return nil;
 }

@@ -28,7 +28,7 @@
 
 #import <WebKit/WebNSURLRequestExtras.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebNSURLExtras.h>
 
 #define WebContentType  (@"Content-Type")

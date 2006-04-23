@@ -39,7 +39,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <Foundation/NSURLResponse.h>
 
 @implementation WebNetscapePluginDocumentView

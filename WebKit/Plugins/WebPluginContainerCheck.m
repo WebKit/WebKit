@@ -31,7 +31,7 @@
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSURL.h>
 #import <Foundation/NSURLRequest.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebPluginContainer.h>

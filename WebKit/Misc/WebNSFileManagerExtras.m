@@ -28,7 +28,7 @@
 
 #import <WebKit/WebNSFileManagerExtras.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebKitNSStringExtras.h>
 
 #import <sys/mount.h>

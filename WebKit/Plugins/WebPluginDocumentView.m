@@ -28,7 +28,7 @@
 
 #import <WebKit/WebPluginDocumentView.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitErrorsPrivate.h>

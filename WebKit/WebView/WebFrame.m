@@ -806,7 +806,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
                     // for a top-level frame, but that was a likely explanation for those crashes,
                     // so let's guard against it.
                     // ...and all WebFrameLoadTypeOnLoadEvent uses were folded to WebFrameLoadTypeInternal
-                    ERROR("no parent frame in _transitionToCommitted:, loadType=%d", loadType);
+                    LOG_ERROR("no parent frame in _transitionToCommitted:, loadType=%d", loadType);
                 }
                 [self _makeDocumentView];
                 break;

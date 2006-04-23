@@ -29,7 +29,7 @@
 
 #import <WebKit/WebNSURLExtras.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSDataExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -57,7 +57,7 @@ static uint32_t IDNScriptWhiteList[(USCRIPT_CODE_LIMIT + 31) / 32];
 static char hexDigit(int i)
 {
     if (i < 0 || i > 16) {
-        ERROR("illegal hex digit");
+        LOG_ERROR("illegal hex digit");
         return '0';
     }
     int h = i;
@@ -86,7 +86,7 @@ static int hexDigitValue(char c)
     if (c >= 'a' && c <= 'f') {
         return c - 'a' + 10;
     }
-    ERROR("illegal hex digit");
+    LOG_ERROR("illegal hex digit");
     return 0;
 }
 
@@ -959,11 +959,11 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
         UErrorCode error = U_ZERO_ERROR;
         UScriptCode script = uscript_getScript(c, &error);
         if (error != U_ZERO_ERROR) {
-            ERROR("got ICU error while trying to look at scripts: %d", error);
+            LOG_ERROR("got ICU error while trying to look at scripts: %d", error);
             return NO;
         }
         if (script < 0) {
-            ERROR("got negative number for script code from ICU: %d", script);
+            LOG_ERROR("got negative number for script code from ICU: %d", script);
             return NO;
         }
         if (script >= USCRIPT_CODE_LIMIT) {

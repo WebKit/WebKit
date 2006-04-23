@@ -46,7 +46,7 @@
 #define BEGIN_EXCEPTION_HANDLER NS_DURING
 #define END_EXCEPTION_HANDLER \
     NS_HANDLER \
-        ERROR("Uncaught exception: %@ [%@] [%@]", [localException class], [localException reason], [localException userInfo]); \
+        LOG_ERROR("Uncaught exception: %@ [%@] [%@]", [localException class], [localException reason], [localException userInfo]); \
     NS_ENDHANDLER
 #endif
 
@@ -181,7 +181,7 @@ static int SetThreadPriority(int priority)
     memset(&sp, 0, sizeof(struct sched_param));
     sp.sched_priority=priority;
     if (pthread_setschedparam(pthread_self(), SCHED_OTHER, &sp) == -1) {
-        ERROR("Failed to change priority.");
+        LOG_ERROR("Failed to change priority.");
         return -1;
     }
     return 0;

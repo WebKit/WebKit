@@ -35,7 +35,7 @@
 #import <WebKit/WebNSCalendarDateExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <Foundation/NSError.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebCore/WebCoreHistory.h>
 
 
@@ -440,7 +440,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
             nil];
     } else {
         if ([URL isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [URL path]]) {
-            ERROR("unable to read history from file %@; perhaps contents are corrupted", [URL path]);
+            LOG_ERROR("unable to read history from file %@; perhaps contents are corrupted", [URL path]);
         }
         return NO;
     }
@@ -451,11 +451,11 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     if (fileVersionObject != nil && [fileVersionObject isKindOfClass:[NSNumber class]]) {
         fileVersion = [fileVersionObject intValue];
     } else {
-        ERROR("history file version can't be determined, therefore not loading");
+        LOG_ERROR("history file version can't be determined, therefore not loading");
         return NO;
     }
     if (fileVersion > currentFileVersion) {
-        ERROR("history file version is %d, newer than newest known version %d, therefore not loading", fileVersion, currentFileVersion);
+        LOG_ERROR("history file version is %d, newer than newest known version %d, therefore not loading", fileVersion, currentFileVersion);
         return NO;
     }    
 
@@ -531,7 +531,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
         nil];
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:dictionary format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
     if (![data writeToURL:URL atomically:YES]) {
-        ERROR("attempt to save %@ to %@ failed", dictionary, URL);
+        LOG_ERROR("attempt to save %@ to %@ failed", dictionary, URL);
         return NO;
     }
     

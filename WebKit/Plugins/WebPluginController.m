@@ -158,7 +158,7 @@ static NSMutableSet *pluginViews = nil;
 - (void)addPlugin:(NSView *)view
 {
     if (!_documentView) {
-        ERROR("can't add a plug-in to a defunct WebPluginController");
+        LOG_ERROR("can't add a plug-in to a defunct WebPluginController");
         return;
     }
     
@@ -260,16 +260,16 @@ static NSMutableSet *pluginViews = nil;
 - (void)webPlugInContainerLoadRequest:(NSURLRequest *)request inFrame:(NSString *)target
 {
     if (!request) {
-        ERROR("nil URL passed");
+        LOG_ERROR("nil URL passed");
         return;
     }
     if (!_documentView) {
-        ERROR("could not load URL %@ because plug-in has already been destroyed", request);
+        LOG_ERROR("could not load URL %@ because plug-in has already been destroyed", request);
         return;
     }
     WebFrame *frame = [_documentView _frame];
     if (!frame) {
-        ERROR("could not load URL %@ because plug-in has already been stopped", request);
+        LOG_ERROR("could not load URL %@ because plug-in has already been stopped", request);
         return;
     }
     if (!target) {
@@ -278,13 +278,13 @@ static NSMutableSet *pluginViews = nil;
     NSString *JSString = [[request URL] _webkit_scriptIfJavaScriptURL];
     if (JSString) {
         if ([frame findFrameNamed:target] != frame) {
-            ERROR("JavaScript requests can only be made on the frame that contains the plug-in");
+            LOG_ERROR("JavaScript requests can only be made on the frame that contains the plug-in");
             return;
         }
         [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
     } else {
         if (!request) {
-            ERROR("could not load URL %@", [request URL]);
+            LOG_ERROR("could not load URL %@", [request URL]);
             return;
         }
         [frame _loadRequest:request inFrameNamed:target];
@@ -303,7 +303,7 @@ static NSMutableSet *pluginViews = nil;
         message = @"";
     }
     if (!_documentView) {
-        ERROR("could not show status message (%@) because plug-in has already been destroyed", message);
+        LOG_ERROR("could not show status message (%@) because plug-in has already been destroyed", message);
         return;
     }
     WebView *v = [_documentView _webView];

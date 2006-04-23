@@ -66,13 +66,7 @@ _WebKitErrorMIMETypeKey
 _WebKitErrorPlugInNameKey
 _WebKitErrorPlugInPageURLStringKey
 _WebLocalizedString
-_WebLog
 _WebMainResourceKey
-_WebReportArgumentAssertionFailure
-_WebReportAssertionFailure
-_WebReportAssertionFailureWithMessage
-_WebReportError
-_WebReportFatalError
 _WebURLNamePboardType
 _WebURLPboardType
 _WebViewProgressStartedNotification

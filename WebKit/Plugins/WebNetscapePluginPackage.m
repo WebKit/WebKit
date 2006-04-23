@@ -361,17 +361,17 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
         err = FSPathMakeRef((UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if (err != noErr) {
-            ERROR("FSPathMakeRef failed. Error=%d", err);
+            LOG_ERROR("FSPathMakeRef failed. Error=%d", err);
             goto abort;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
         if (err != noErr) {
-            ERROR("FSGetCatalogInfo failed. Error=%d", err);
+            LOG_ERROR("FSGetCatalogInfo failed. Error=%d", err);
             goto abort;
         }
         err = WebGetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if (err != noErr) {
-            ERROR("WebGetDiskFragment failed. Error=%d", err);
+            LOG_ERROR("WebGetDiskFragment failed. Error=%d", err);
             goto abort;
         }
 #if !LOG_DISABLED

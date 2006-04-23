@@ -28,7 +28,7 @@
 
 #import <WebKit/WebPluginDatabase.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>

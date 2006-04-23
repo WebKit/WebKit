@@ -26,31 +26,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX WebKitLog
 #endif
 
-extern WebLogChannel WebKitLogTiming;
-extern WebLogChannel WebKitLogLoading;
-extern WebLogChannel WebKitLogFontCache;
-extern WebLogChannel WebKitLogFontSubstitution;
-extern WebLogChannel WebKitLogFontSelection;
-extern WebLogChannel WebKitLogDownload;
-extern WebLogChannel WebKitLogDocumentLoad;
-extern WebLogChannel WebKitLogPlugins;
-extern WebLogChannel WebKitLogEvents;
-extern WebLogChannel WebKitLogView;
-extern WebLogChannel WebKitLogRedirect;
-extern WebLogChannel WebKitLogPageCache;
-extern WebLogChannel WebKitLogCacheSizes;
-extern WebLogChannel WebKitLogFormDelegate;
-extern WebLogChannel WebKitLogFileDatabaseActivity;
-extern WebLogChannel WebKitLogHistory;
-extern WebLogChannel WebKitLogBindings;
-extern WebLogChannel WebKitLogEncoding;
-extern WebLogChannel WebKitLogLiveConnect;
-extern WebLogChannel WebKitLogBackForward;
-extern WebLogChannel WebKitLogProgress;
-extern WebLogChannel WebKitLogPluginEvents;
+extern KXCLogChannel WebKitLogTiming;
+extern KXCLogChannel WebKitLogLoading;
+extern KXCLogChannel WebKitLogFontCache;
+extern KXCLogChannel WebKitLogFontSubstitution;
+extern KXCLogChannel WebKitLogFontSelection;
+extern KXCLogChannel WebKitLogDownload;
+extern KXCLogChannel WebKitLogDocumentLoad;
+extern KXCLogChannel WebKitLogPlugins;
+extern KXCLogChannel WebKitLogEvents;
+extern KXCLogChannel WebKitLogView;
+extern KXCLogChannel WebKitLogRedirect;
+extern KXCLogChannel WebKitLogPageCache;
+extern KXCLogChannel WebKitLogCacheSizes;
+extern KXCLogChannel WebKitLogFormDelegate;
+extern KXCLogChannel WebKitLogFileDatabaseActivity;
+extern KXCLogChannel WebKitLogHistory;
+extern KXCLogChannel WebKitLogBindings;
+extern KXCLogChannel WebKitLogEncoding;
+extern KXCLogChannel WebKitLogLiveConnect;
+extern KXCLogChannel WebKitLogBackForward;
+extern KXCLogChannel WebKitLogProgress;
+extern KXCLogChannel WebKitLogPluginEvents;

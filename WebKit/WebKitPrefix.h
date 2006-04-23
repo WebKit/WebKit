@@ -60,4 +60,6 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
+#include <JavaScriptCore/Platform.h>
+
 #endif

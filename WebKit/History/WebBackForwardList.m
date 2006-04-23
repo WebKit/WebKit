@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitLogging.h>

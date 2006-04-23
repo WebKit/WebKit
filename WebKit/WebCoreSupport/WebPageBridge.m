@@ -31,7 +31,7 @@
 #import "WebFrameBridge.h"
 #import "WebView.h"
 #import "WebViewPrivate.h"
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebUIDelegate.h"
 
 @implementation WebPageBridge

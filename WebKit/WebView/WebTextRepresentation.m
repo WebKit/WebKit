@@ -34,7 +34,7 @@
 #import <WebKit/WebTextView.h>
 
 #import <Foundation/NSURLResponse.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 
 @implementation WebTextRepresentation
 

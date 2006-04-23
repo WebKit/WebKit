@@ -28,7 +28,7 @@
 
 #import "WebFrameBridge.h"
 
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebBackForwardList.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebBasePluginPackage.h"
@@ -1686,7 +1686,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
     WebView *webView = [self webView];
     if ([webView defersCallbacks]) {
-        ERROR("tried to run modal in a view when it was deferring callbacks -- should never happen");
+        LOG_ERROR("tried to run modal in a view when it was deferring callbacks -- should never happen");
         return;
     }
 

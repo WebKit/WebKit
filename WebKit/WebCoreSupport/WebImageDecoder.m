@@ -28,7 +28,7 @@
 
 #import "WebImageDecoder.h"
 
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebImageData.h"
 
 @interface WebImageCallback : NSObject

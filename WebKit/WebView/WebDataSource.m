@@ -29,7 +29,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 
 #import <WebKit/DOMHTML.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebArchiver.h>
 #import <WebKit/WebFrameBridge.h>
@@ -341,7 +341,7 @@
     if (![_private->mainResourceLoader loadWithRequest:_private->request]) {
         // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
-        ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", [_private->request URL]);
+        LOG_ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", [_private->request URL]);
         [_private->mainResourceLoader release];
         _private->mainResourceLoader = nil;
         [self _updateLoading];

@@ -28,7 +28,7 @@
 
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/DOM.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>

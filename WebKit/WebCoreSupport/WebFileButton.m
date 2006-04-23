@@ -28,7 +28,7 @@
 
 #import "WebFileButton.h"
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebStringTruncator.h>

@@ -28,7 +28,7 @@
 
 #import <WebKit/WebHistoryItemPrivate.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>

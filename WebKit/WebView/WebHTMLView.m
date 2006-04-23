@@ -1590,7 +1590,7 @@ static WebHTMLView *lastHitView = nil;
         lookedForFunction = YES;
     }
     if (!__dictionaryServiceWindowShow) {
-        ERROR("Couldn't find _DCMDictionaryServiceWindowShow"); 
+        LOG_ERROR("Couldn't find _DCMDictionaryServiceWindowShow"); 
         return;
     }
     
@@ -2534,7 +2534,7 @@ static WebHTMLView *lastHitView = nil;
     } NS_HANDLER {
         [(WebClipView *)[self superview] resetAdditionalClip];
         [NSGraphicsContext restoreGraphicsState];
-        ERROR("Exception caught while drawing: %@", localException);
+        LOG_ERROR("Exception caught while drawing: %@", localException);
         [localException raise];
     } NS_ENDHANDLER
 }
@@ -2832,7 +2832,7 @@ done:
     
     NSFileWrapper *wrapper = [[self _dataSource] _fileWrapperForURL:_private->draggingImageURL];
     if (wrapper == nil) {
-        ERROR("Failed to create image file. Did the source image change while dragging? (<rdar://problem/4244861>)");
+        LOG_ERROR("Failed to create image file. Did the source image change while dragging? (<rdar://problem/4244861>)");
         return nil;
     }
     
@@ -2840,7 +2840,7 @@ done:
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
     path = [[NSFileManager defaultManager] _webkit_pathWithUniqueFilenameForPath:path];
     if (![wrapper writeToFile:path atomically:NO updateFilenames:YES]) {
-        ERROR("Failed to create image file via -[NSFileWrapper writeToFile:atomically:updateFilenames:]");
+        LOG_ERROR("Failed to create image file via -[NSFileWrapper writeToFile:atomically:updateFilenames:]");
     }
     
     return [NSArray arrayWithObject:[path lastPathComponent]];
@@ -3195,7 +3195,7 @@ done:
 {
     float viewWidth = NSWidth([self bounds]);
     if (viewWidth < 1) {
-        ERROR("%@ has no width when printing", self);
+        LOG_ERROR("%@ has no width when printing", self);
         return 1.0;
     }
 
@@ -4463,7 +4463,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
 {
-    ERROR("unimplemented, doing deleteBackward instead");
+    LOG_ERROR("unimplemented, doing deleteBackward instead");
     [self deleteBackward:sender];
 }
 
@@ -4519,7 +4519,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // WebCore does everything but update the spelling panel
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
-        ERROR("No NSSpellChecker");
+        LOG_ERROR("No NSSpellChecker");
         return;
     }
     NSString *badWord = [[self _bridge] advanceToNextMisspelling];
@@ -4533,7 +4533,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // WebCore does everything but update the spelling panel
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
-        ERROR("No NSSpellChecker");
+        LOG_ERROR("No NSSpellChecker");
         return;
     }
     NSString *badWord = [[self _bridge] advanceToNextMisspellingStartingJustBeforeSelection];
@@ -4550,7 +4550,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
     // Don't correct to empty string.  (AppKit checked this, we might as well too.)
     if (![NSSpellChecker sharedSpellChecker]) {
-        ERROR("No NSSpellChecker");
+        LOG_ERROR("No NSSpellChecker");
         return;
     }
     
@@ -4572,7 +4572,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
-        ERROR("No NSSpellChecker");
+        LOG_ERROR("No NSSpellChecker");
         return;
     }
     
@@ -4588,7 +4588,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     // Implementing this will probably require copying all of NSFindPanel.h and .m.
     // We need *almost* the same thing as AppKit, but not quite.
-    ERROR("unimplemented");
+    LOG_ERROR("unimplemented");
 }
 
 - (void)startSpeaking:(id)sender
@@ -5527,7 +5527,7 @@ static NSArray *validAttributes = nil;
     if (!_popupWindow) {
         NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
         if (!checker) {
-            ERROR("No NSSpellChecker");
+            LOG_ERROR("No NSSpellChecker");
             return;
         }
 

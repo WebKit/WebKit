@@ -30,7 +30,7 @@
 
 #import <WebKit/DOM.h>
 #import <WebKit/WebArchive.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentPrivate.h>

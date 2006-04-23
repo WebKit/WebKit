@@ -28,7 +28,7 @@
 
 #import <WebKit/WebNetscapePluginRepresentation.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>

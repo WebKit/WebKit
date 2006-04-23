@@ -29,7 +29,7 @@
 #import <WebKit/WebImageView.h>
 
 #import <WebKit/WebArchiver.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrameView.h>

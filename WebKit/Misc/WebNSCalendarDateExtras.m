@@ -28,7 +28,7 @@
 
 #import <WebKit/WebNSCalendarDateExtras.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 
 @implementation NSCalendarDate (WebNSCalendarDateExtras)
 

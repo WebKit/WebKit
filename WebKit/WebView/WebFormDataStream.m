@@ -33,7 +33,7 @@
 #import <sys/types.h>
 #import <sys/stat.h>
 
-#import "WebAssertions.h"
+#import <JavaScriptCore/Assertions.h>
 #import "WebNSObjectExtras.h"
 #import <WebKitSystemInterface.h>
 
@@ -279,13 +279,13 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
         }
         break;
     case kCFStreamEventNone:
-        ERROR("unexpected kCFStreamEventNone");
+        LOG_ERROR("unexpected kCFStreamEventNone");
         break;
     case kCFStreamEventOpenCompleted:
-        ERROR("unexpected kCFStreamEventOpenCompleted");
+        LOG_ERROR("unexpected kCFStreamEventOpenCompleted");
         break;
     case kCFStreamEventCanAcceptBytes:
-        ERROR("unexpected kCFStreamEventCanAcceptBytes");
+        LOG_ERROR("unexpected kCFStreamEventCanAcceptBytes");
         break;
     }
 }
@@ -319,7 +319,7 @@ void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData)
                 length += sb.st_size;
             }
         } else {
-            ERROR("item in form data array is neither NSData nor NSString");
+            LOG_ERROR("item in form data array is neither NSData nor NSString");
             return;
         }
     }

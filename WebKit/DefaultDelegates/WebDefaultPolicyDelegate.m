@@ -36,7 +36,7 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 
 
 @implementation WebDefaultPolicyDelegate
@@ -55,7 +55,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 
 - (void)webView: (WebView *)wv unableToImplementPolicyWithError:(NSError *)error frame:(WebFrame *)frame
 {
-    ERROR("called unableToImplementPolicyWithError:%@ inFrame:%@", error, frame);
+    LOG_ERROR("called unableToImplementPolicyWithError:%@ inFrame:%@", error, frame);
 }
 
 

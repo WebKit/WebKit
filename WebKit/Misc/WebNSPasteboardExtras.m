@@ -31,7 +31,7 @@
 #import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebArchive.h>
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebNSURLExtras.h>

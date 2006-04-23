@@ -28,7 +28,7 @@
 
 #import <WebKit/WebKeyGenerator.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKitSystemInterface.h>
 

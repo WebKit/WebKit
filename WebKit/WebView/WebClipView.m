@@ -28,7 +28,7 @@
 
 #import "WebClipView.h"
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebViewPrivate.h>

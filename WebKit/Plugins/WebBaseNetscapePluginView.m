@@ -28,7 +28,7 @@
 
 #import <WebKit/WebBaseNetscapePluginView.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultUIDelegate.h>
@@ -735,7 +735,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     EventRef rawKeyEventRef;
     OSStatus status = GetEventParameter(inEvent, kEventParamTextInputSendKeyboardEvent, typeEventRef, NULL, sizeof(EventRef), NULL, &rawKeyEventRef);
     if (status != noErr) {
-        ERROR("GetEventParameter failed with error: %d", status);
+        LOG_ERROR("GetEventParameter failed with error: %d", status);
         return noErr;
     }
     
@@ -743,13 +743,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     UInt32 numBytes;    
     status = GetEventParameter(rawKeyEventRef, kEventParamKeyMacCharCodes, typeChar, NULL, 0, &numBytes, NULL);
     if (status != noErr) {
-        ERROR("GetEventParameter failed with error: %d", status);
+        LOG_ERROR("GetEventParameter failed with error: %d", status);
         return noErr;
     }
     char *buffer = malloc(numBytes);
     status = GetEventParameter(rawKeyEventRef, kEventParamKeyMacCharCodes, typeChar, NULL, numBytes, NULL, buffer);
     if (status != noErr) {
-        ERROR("GetEventParameter failed with error: %d", status);
+        LOG_ERROR("GetEventParameter failed with error: %d", status);
         free(buffer);
         return noErr;
     }
@@ -759,7 +759,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     for (i = 0; i < numBytes; i++) {
         status = SetEventParameter(cloneEvent, kEventParamKeyMacCharCodes, typeChar, 1 /* one char code */, &buffer[i]);
         if (status != noErr) {
-            ERROR("SetEventParameter failed with error: %d", status);
+            LOG_ERROR("SetEventParameter failed with error: %d", status);
             free(buffer);
             return noErr;
         }
@@ -1005,7 +1005,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     LOG(Plugins, "NPP_New: %d", npErr);
     if (npErr != NPERR_NO_ERROR) {
-        ERROR("NPP_New failed with error: %d", npErr);
+        LOG_ERROR("NPP_New failed with error: %d", npErr);
         return NO;
     }
 
@@ -1780,7 +1780,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 -(void)status:(const char *)message
 {    
     if (!message) {
-        ERROR("NPN_Status passed a NULL status message");
+        LOG_ERROR("NPN_Status passed a NULL status message");
         return;
     }
 
@@ -1936,7 +1936,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                          0,
                          (Ptr)[bitmap bitmapData],
                          [bitmap bytesPerRow]) != noErr) {
-        ERROR("Could not create GWorld for printing");
+        LOG_ERROR("Could not create GWorld for printing");
         return nil;
     }
     
