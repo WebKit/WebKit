@@ -1,11 +1,21 @@
-2006-04-21  Jon Shier  <jshier@iastate.edu>
+2006-04-23  Michael Emmel  <mike.emmel@gmail.com>
+
+        Reviewed by mjs.  Landed by eseidel.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8517
+        No test necessary, no functional change.
+
+        * DerivedSources.make: use VPATH more consistently.
+
+2006-04-23  Jon Shier  <jshier@iastate.edu>
         
         Reviewed by ggaren.  Landed by eseidel.
         
         - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8511
         onerror JS property does not register listener properly
-        
-        * ChangeLog:
+
+        Test: fast/dom/onerror-img.html       
+ 
         * bindings/js/kjs_dom.cpp:  
         (KJS::DOMEventTargetNode::getValueProperty): changed khtmlErrorEvent to errorEvent.
         (KJS::DOMEventTargetNode::putValueProperty): ditto.

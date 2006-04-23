@@ -148,23 +148,23 @@ CharsetData.cpp : platform/make-charset-table.pl platform/character-sets.txt $(E
 
 # SVG tag and attribute names
 
-SVGNames.cpp : $(WebCore)/ksvg2/scripts/make_names.pl $(WebCore)/ksvg2/svg/svgtags.in $(WebCore)/ksvg2/svg/svgattrs.in
+SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgtags.in ksvg2/svg/svgattrs.in
 	$< --tags $(WebCore)/ksvg2/svg/svgtags.in --attrs $(WebCore)/ksvg2/svg/svgattrs.in \
             --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
 
-XLinkNames.cpp : $(WebCore)/ksvg2/scripts/make_names.pl $(WebCore)/ksvg2/misc/xlinkattrs.in
+XLinkNames.cpp : ksvg2/scripts/make_names.pl ksvg2/misc/xlinkattrs.in
 	$< --attrs $(WebCore)/ksvg2/misc/xlinkattrs.in \
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
 	touch $(WebCore)/WebCore+SVG/XLinkNamesWrapper.cpp
 
 # SVG CSS property names and value keywords
 
-ksvgcssproperties.h : $(WebCore)/ksvg2/scripts/cssmakeprops $(WebCore)/css/CSSPropertyNames.in $(WebCore)/ksvg2/css/CSSPropertyNames.in
+ksvgcssproperties.h : ksvg2/scripts/cssmakeprops css/CSSPropertyNames.in ksvg2/css/CSSPropertyNames.in
 	if sort $(WebCore)/css/CSSPropertyNames.in $(WebCore)/ksvg2/css/CSSPropertyNames.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $(WebCore)/ksvg2/css/CSSPropertyNames.in > ksvgcssproperties.in
 	$(WebCore)/ksvg2/scripts/cssmakeprops -n SVG -f ksvgcssproperties.in
 
-ksvgcssvalues.h : $(WebCore)/ksvg2/scripts/cssmakevalues $(WebCore)/css/CSSValueKeywords.in $(WebCore)/ksvg2/css/CSSValueKeywords.in
+ksvgcssvalues.h : ksvg2/scripts/cssmakevalues css/CSSValueKeywords.in ksvg2/css/CSSValueKeywords.in
 	if sort $(WebCore)/css/CSSValueKeywords.in $(WebCore)/ksvg2/css/CSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	# Lower case all the values, as CSS values are case-insensitive
 	perl -ne 'print lc' $(WebCore)/ksvg2/css/CSSValueKeywords.in > ksvgcssvalues.in
@@ -173,11 +173,11 @@ ksvgcssvalues.h : $(WebCore)/ksvg2/scripts/cssmakevalues $(WebCore)/css/CSSValue
 # new-style JavaScript bindings
 
 JS_BINDINGS_SCRIPTS = \
-    $(WebCore)/bindings/scripts/CodeGenerator.pm \
-    $(WebCore)/bindings/scripts/CodeGeneratorJS.pm \
-    $(WebCore)/bindings/scripts/IDLParser.pm \
-    $(WebCore)/bindings/scripts/IDLStructure.pm \
-    $(WebCore)/bindings/scripts/generate-bindings.pl \
+    bindings/scripts/CodeGenerator.pm \
+    bindings/scripts/CodeGeneratorJS.pm \
+    bindings/scripts/IDLParser.pm \
+    bindings/scripts/IDLStructure.pm \
+    bindings/scripts/generate-bindings.pl \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
