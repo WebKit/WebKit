@@ -49,3 +49,46 @@
 @interface WebView (WebViewBridge)
 - (WebPageBridge *)_pageBridge;
 @end
+
+@interface WebView (WebViewMiscInternal)
+- (BOOL)defersCallbacks;
+- (void)setDefersCallbacks:(BOOL)defers;
+- (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
+- (void)_setInitiatedDrag:(BOOL)initiatedDrag;
+- (id)_UIDelegateForwarder;
+- (id)_resourceLoadDelegateForwarder;
+- (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations;
+- (id)_frameLoadDelegateForwarder;
+- (id)_editingDelegateForwarder;
+- (id)_policyDelegateForwarder;
+- (id)_scriptDebugDelegateForwarder;
+- (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource;
+- (void)_receivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource;
+- (WebCoreSettings *)_settings;
+- (void)_pushPerformingProgrammaticFocus;
+- (void)_popPerformingProgrammaticFocus;
+- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate response:(NSURLResponse *)response;
+- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate data:(NSData *)dataSource;
+- (void)_completeProgressForConnectionDelegate:(id)connectionDelegate;
+- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
+- (void)_progressStarted:(WebFrame *)frame;
+- (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
++ (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
+- (void)_mainReceivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
++ (NSString *)_MIMETypeForFile:(NSString *)path;
+- (void)_downloadURL:(NSURL *)URL;
++ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
++ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
+- (BOOL)_isPerformingProgrammaticFocus;
+- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInt)modifierFlags;
+- (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
+- (void)_writeImageElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
+- (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
+- (void)_progressCompleted:(WebFrame *)frame;
+- (void)_didCommitLoadForFrame:(WebFrame *)frame;
+- (void)_didFinishLoadForFrame:(WebFrame *)frame;
+- (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
+- (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
+- (void)_willChangeValueForKey:(NSString *)key;
+- (void)_didChangeValueForKey:(NSString *)key;
+@end

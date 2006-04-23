@@ -36,7 +36,7 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 
 #import <Foundation/NSURLConnection.h>
 

@@ -644,17 +644,12 @@ static bool debugWidget = true;
 
 - (void)_downloadURL:(NSURL *)URL
 {
-    [self _downloadURL:URL toDirectory:nil];
-}
-
-- (void)_downloadURL:(NSURL *)URL toDirectory:(NSString *)directory
-{
     ASSERT(URL);
     
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     [WebDownload _downloadWithRequest:request
                              delegate:_private->downloadDelegate
-                            directory:[directory isAbsolutePath] ? directory : nil];
+                            directory:nil];
     [request release];
 }
 
@@ -758,14 +753,6 @@ static bool debugWidget = true;
     // abort any current load if we're going back/forward
     [[self mainFrame] stopLoading];
     [[self mainFrame] _goToItem:item withLoadType:type];
-}
-
-// Not used now, but could be if we ever store frames in bookmarks or history
-- (void)_loadItem:(WebHistoryItem *)item
-{
-    WebHistoryItem *newItem = [item copy];	// Makes a deep copy, happily
-    [[self backForwardList] addItem:newItem];
-    [self _goToItem:newItem withLoadType:WebFrameLoadTypeIndexedBackForward];
 }
 
 - (void)_loadBackForwardListFromOtherView:(WebView *)otherView

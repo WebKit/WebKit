@@ -35,7 +35,7 @@
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 
 #import <Foundation/NSURLResponse.h>
 

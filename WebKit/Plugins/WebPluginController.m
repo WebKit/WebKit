@@ -41,7 +41,7 @@
 #import <WebKit/WebPluginContainerCheck.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebPluginViewFactory.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 
 #import <WebCore/WebCoreFrameBridge.h>

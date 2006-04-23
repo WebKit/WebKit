@@ -155,7 +155,13 @@ typedef enum {
 
 @interface WebView (WebPrivate)
 
-+ (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
+/*!
+Could be worth adding to the API.
+ @method loadItemsFromOtherView:
+ @abstract Loads the view with the contents of the other view, including its backforward list.
+ @param otherView   The WebView from which to copy contents.
+ */
+- (void)_loadBackForwardListFromOtherView:(WebView *)otherView;
 
 + (NSArray *)_supportedFileExtensions;
 
@@ -174,61 +180,10 @@ typedef enum {
 */
 + (NSString *)suggestedFileExtensionForMIMEType: (NSString *)MIMEType;
 
-- (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource;
-- (void)_receivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource;
-- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
-- (void)_mainReceivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
-+ (NSString *)_MIMETypeForFile:(NSString *)path;
-- (void)_downloadURL:(NSURL *)URL;
-- (void)_downloadURL:(NSURL *)URL toDirectory:(NSString *)directoryPath;
-
-- (BOOL)defersCallbacks;
-- (void)setDefersCallbacks:(BOOL)defers;
-
-- (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
-
-- (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
-
-- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInt)modifierFlags;
-
-/*!
-Could be worth adding to the API.
-    @method loadItem:
-    @abstract Loads the view with the contents described by the item, including frame content
-        described by child items.
-    @param item   The item to load.  It is not retained, but a copy will appear in the
-        BackForwardList on this WebView.
-*/
-- (void)_loadItem:(WebHistoryItem *)item;
-/*!
-Could be worth adding to the API.
-    @method loadItemsFromOtherView:
-    @abstract Loads the view with the contents of the other view, including its backforward list.
-    @param otherView   The WebView from which to copy contents.
-*/
-- (void)_loadBackForwardListFromOtherView:(WebView *)otherView;
-
-- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
 
 // May well become public
 - (void)_setFormDelegate:(id<WebFormDelegate>)delegate;
 - (id<WebFormDelegate>)_formDelegate;
-
-- (WebCoreSettings *)_settings;
-- (void)_updateWebCoreSettingsFromPreferences:(WebPreferences *)prefs;
-
-- (id)_frameLoadDelegateForwarder;
-- (id)_resourceLoadDelegateForwarder;
-- (void)_cacheResourceLoadDelegateImplementations;
-- (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations;
-- (id)_policyDelegateForwarder;
-- (id)_UIDelegateForwarder;
-- (id)_editingDelegateForwarder;
-- (id)_scriptDebugDelegateForwarder;
-
-- (void)_closeWindow;
-
-- (void)_setInitiatedDrag:(BOOL)initiatedDrag;
 
 - (void)_close;
 
@@ -243,8 +198,6 @@ Could be worth adding to the API.
 
 + (void)_unregisterViewClassAndRepresentationClassForMIMEType:(NSString *)MIMEType;
 
-+ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
-+ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
 /*!
      @method _canHandleRequest:
      @abstract Performs a "preflight" operation that performs some
@@ -263,41 +216,15 @@ Could be worth adding to the API.
 
 + (NSString *)_decodeData:(NSData *)data;
 
-- (void)_pushPerformingProgrammaticFocus;
-- (void)_popPerformingProgrammaticFocus;
-- (BOOL)_isPerformingProgrammaticFocus;
-
-// Methods dealing with the estimated progress completion.
-- (void)_progressStarted:(WebFrame *)frame;
-- (void)_progressCompleted:(WebFrame *)frame;
-- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate response:(NSURLResponse *)response;
-- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate data:(NSData *)dataSource;
-- (void)_completeProgressForConnectionDelegate:(id)connectionDelegate;
-
-- (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
-- (void)_didCommitLoadForFrame:(WebFrame *)frame;
-- (void)_didFinishLoadForFrame:(WebFrame *)frame;
-- (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
-- (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
-
-- (void)_willChangeValueForKey:(NSString *)key;
-- (void)_didChangeValueForKey:(NSString *)key;
-
-- (void)_reloadForPluginChanges;
 + (void)_setAlwaysUseATSU:(BOOL)f;
 
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
-
-- (void)_writeImageElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
-- (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 
 - (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions;
 - (NSDictionary *)_dashboardRegions;
 
 - (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag;
 - (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior;
-
-- (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f;
 + (BOOL)_shouldUseFontSmoothing;

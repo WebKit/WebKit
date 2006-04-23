@@ -61,7 +61,7 @@
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebUnarchivingState.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
 
 #import <Foundation/NSURLConnection.h>

@@ -41,7 +41,6 @@
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewInternal.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPDFRepresentation.h>
 

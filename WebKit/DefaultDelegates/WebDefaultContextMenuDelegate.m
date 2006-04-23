@@ -41,7 +41,7 @@
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPolicyDelegate.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 

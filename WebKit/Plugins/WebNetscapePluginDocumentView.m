@@ -37,7 +37,7 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 
 #import <JavaScriptCore/Assertions.h>
 #import <Foundation/NSURLResponse.h>

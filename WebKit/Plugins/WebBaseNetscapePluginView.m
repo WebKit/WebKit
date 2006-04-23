@@ -46,7 +46,8 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPreferences.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
+
 #import <WebKit/WebUIDelegate.h>
 #import <WebKitSystemInterface.h>
 #import <JavaScriptCore/npruntime_impl.h>

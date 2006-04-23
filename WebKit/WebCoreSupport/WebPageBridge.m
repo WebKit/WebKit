@@ -30,7 +30,7 @@
 
 #import "WebFrameBridge.h"
 #import "WebView.h"
-#import "WebViewPrivate.h"
+#import "WebViewInternal.h"
 #import <JavaScriptCore/Assertions.h>
 #import "WebUIDelegate.h"
 

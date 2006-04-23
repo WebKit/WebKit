@@ -40,7 +40,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 
 #import <WebCore/WebCoreImageRenderer.h>

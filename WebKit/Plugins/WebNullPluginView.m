@@ -33,7 +33,7 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 
 static NSImage *image = nil;
 

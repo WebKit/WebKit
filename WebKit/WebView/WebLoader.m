@@ -45,7 +45,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
 
 static unsigned inNSURLConnectionCallback;

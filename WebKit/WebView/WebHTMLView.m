@@ -72,7 +72,6 @@
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebViewInternal.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKitSystemInterface.h>
 #import <WebCore/WebCoreImageRenderer.h>
 
