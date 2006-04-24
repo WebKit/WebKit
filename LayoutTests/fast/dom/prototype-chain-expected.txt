@@ -10,7 +10,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEventTargetNode]
 
-[object JSDocument]
+[object Document]
 
 ----- [object DIV] (4 prototypes) -----
 
@@ -20,7 +20,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEventTargetNode]
 
-[object JSElement]
+[object Element]
 
 ----- [object UIEvent] (4 prototypes) -----
 
@@ -28,9 +28,9 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEvent]
 
-[object JSEvent]
+[object Event]
 
-[object JSUIEvent]
+[object UIEvent]
 
 ----- [object MouseEvent] (5 prototypes) -----
 
@@ -38,11 +38,11 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEvent]
 
-[object JSEvent]
+[object Event]
 
-[object JSUIEvent]
+[object UIEvent]
 
-[object JSMouseEvent]
+[object MouseEvent]
 
 ----- [object KeyboardEvent] (5 prototypes) -----
 
@@ -50,10 +50,10 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object DOMEvent]
 
-[object JSEvent]
+[object Event]
 
-[object JSUIEvent]
+[object UIEvent]
 
-[object JSKeyboardEvent]
+[object KeyboardEvent]
 
 

@@ -539,7 +539,7 @@ sub GenerateImplementation
         push(@implContent, protoFuncFor($className));
     }
 
-    push(@implContent, "const ClassInfo ${className}Proto::info = { \"$className\", 0, &${className}ProtoTable, 0 };\n\n");
+    push(@implContent, "const ClassInfo ${className}Proto::info = { \"$interfaceName\", 0, &${className}ProtoTable, 0 };\n\n");
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
         push(@implContent, "JSObject* ${className}Proto::self()\n");
         push(@implContent, "{\n");

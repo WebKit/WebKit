@@ -11,6 +11,14 @@
 
 2006-04-23  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Maciej.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Removed confusing 'JS' prefix
+        from string descriptions of DOM prototypes, so the prototype for, e.g.,
+        Document serializes as 'Document,' not 'JSDocument.'
+
+2006-04-23  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin.
 
         - Took the larger snippets of C++ in the code generator and broke

@@ -1,3 +1,11 @@
+2006-04-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        * fast/dom/prototype-chain-expected.txt: Updated now that 'JS' is
+        no longer used as a prefix when serializing DOM elements to string.
+        * fast/events/event-view-toString.html: ditto
+        
 2006-04-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Eric.
