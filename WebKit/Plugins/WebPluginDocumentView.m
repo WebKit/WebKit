@@ -30,6 +30,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -80,6 +81,8 @@
     if (![self superview])
         return;
         
+    _dataSource = dataSource;
+    [pluginController setDataSource:dataSource];
     dataSourceHasBeenSet = YES;
     
     NSURLResponse *response = [dataSource response];
@@ -129,7 +132,7 @@
 
 - (void)layout
 {
-    NSRect superFrame = [[self _web_superviewOfClass:[WebFrameView class]] frame];
+    NSRect superFrame = [[[_dataSource webFrame] frameView] frame];
     [self setFrame:NSMakeRect(0, 0, NSWidth(superFrame), NSHeight(superFrame))];
     needsLayout = NO;    
 }
@@ -137,12 +140,12 @@
 - (NSWindow *)currentWindow
 {
     NSWindow *window = [self window];
-    return window != nil ? window : [[self _webView] hostWindow];
+    return window != nil ? window : [[_dataSource _webView] hostWindow];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    if ([[self _webView] hostWindow] == nil) {
+    if ([[_dataSource _webView] hostWindow] == nil) {
         [pluginController stopAllPlugins];
     }
 }

@@ -1,3 +1,102 @@
+2006-04-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - Remove use of _webSuperviewOfClass: and related
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8562
+        
+        I removed all use of these, now objects get at each other via
+        actual pointers, not using the view hierarchy. However, I left two
+        of the calls in because other clients rely on them as SPI (ugh).
+
+        * History/WebHistoryItem.m:
+        * Misc/WebNSViewExtras.h:
+        * Misc/WebNSViewExtras.m:
+        (-[NSView _web_superviewOfClass:]):
+        (-[NSView _web_parentWebFrameView]):
+        * Plugins/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView layout]):
+        * Plugins/WebNetscapePluginEmbeddedView.h:
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView setWebFrame:]):
+        (-[WebNetscapePluginEmbeddedView dataSource]):
+        * Plugins/WebNullPluginView.h:
+        * Plugins/WebNullPluginView.m:
+        (-[WebNullPluginView setWebFrame:]):
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * Plugins/WebPluginController.h:
+        * Plugins/WebPluginController.m:
+        (-[WebPluginController setDataSource:]):
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        (-[WebPluginController webPlugInContainerShowStatus:]):
+        (-[WebPluginController webPlugInContainerSelectionColor]):
+        (-[WebPluginController webFrame]):
+        * Plugins/WebPluginDocumentView.h:
+        * Plugins/WebPluginDocumentView.m:
+        (-[WebPluginDocumentView setDataSource:]):
+        (-[WebPluginDocumentView layout]):
+        (-[WebPluginDocumentView currentWindow]):
+        (-[WebPluginDocumentView viewWillMoveToWindow:]):
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge formControlIsBecomingFirstResponder:]):
+        (-[WebFrameBridge formControlIsResigningFirstResponder:]):
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:]):
+        * WebCoreSupport/WebViewFactory.m:
+        (-[WebViewFactory bridgeForView:]):
+        * WebView/WebClipView.m:
+        (-[NSView initWithFrame:]):
+        * WebView/WebFrameView.m:
+        (-[WebFrameView _shouldDrawBorder]):
+        (-[WebFrameView webCoreBridge]):
+        * WebView/WebHTMLView.m:
+        (-[WebTextCompleteController dealloc]):
+        (-[WebHTMLView _dataSource]):
+        (-[WebHTMLView _bridge]):
+        (-[WebHTMLView _webView]):
+        (-[WebHTMLView _frameView]):
+        (-[WebHTMLView _web_firstResponderCausesFocusDisplay]):
+        (-[NSArray becomeFirstResponder]):
+        (-[NSArray setDataSource:]):
+        (-[NSArray pageUp:]):
+        (-[NSArray pageDown:]):
+        (-[NSArray pageUpAndModifySelection:]):
+        (-[NSArray pageDownAndModifySelection:]):
+        (-[WebHTMLView _frame]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebImageView.h:
+        * WebView/WebImageView.m:
+        (-[WebImageView drawRect:]):
+        (-[WebImageView adjustFrameSize]):
+        (-[WebImageView setDataSource:]):
+        (-[WebImageView webView]):
+        (-[WebImageView writeImageToPasteboard:types:]):
+        (-[WebImageView copy:]):
+        (-[WebImageView elementAtPoint:]):
+        (-[WebImageView mouseDragged:]):
+        * WebView/WebPDFView.h:
+        * WebView/WebPDFView.m:
+        (-[WebPDFView _applyPDFDefaults]):
+        (-[WebPDFView _trackFirstResponder]):
+        (-[PDFPrefUpdatingProxy forwardInvocation:]):
+        * WebView/WebRenderNode.m:
+        (-[WebRenderNode initWithWebFrameView:]):
+        * WebView/WebTextView.h:
+        * WebView/WebTextView.m:
+        (-[WebTextView _textSizeMultiplierFromWebView]):
+        (-[WebTextView _preferences]):
+        (-[WebTextView setDataSource:]):
+        (-[WebTextView _webFrame]):
+        (-[WebTextView dragSelectionWithEvent:offset:slideBack:]):
+        (-[WebTextView menuForEvent:]):
+        (-[WebTextView resignFirstResponder]):
+        (-[WebTextView drawPageBorderWithSize:]):
+        (-[WebTextView knowsPageRange:]):
+        * WebView/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        (containingFrameView):
+        (-[WebView _focusedFrame]):
+        (-[WebView _frameViewAtWindowPoint:]):
+
 2006-04-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

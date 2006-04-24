@@ -115,14 +115,14 @@
 - (float)_textSizeMultiplierFromWebView
 {
     // Note that we are not guaranteed to be the subview of a WebView at any given time.
-    WebView *webView = [self _web_parentWebView];
+    WebView *webView = [_dataSource _webView];
     return webView ? [webView textSizeMultiplier] : 1.0;
 }
 
 - (WebPreferences *)_preferences
 {
     // Handle nil result because we might not be in a WebView at any given time.
-    WebPreferences *preferences = [[self _web_parentWebView] preferences];
+    WebPreferences *preferences = [[_dataSource _webView] preferences];
     if (preferences == nil) {
         preferences = [WebPreferences standardPreferences];
     }
@@ -183,16 +183,16 @@
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
+    _dataSource = dataSource;
+    
     [self setRichText:[[[dataSource response] MIMEType] isEqualToString:@"text/rtf"]];
     
     float oldMultiplier = _textSizeMultiplier;
     [self _updateTextSizeMultiplier];
     // If the multiplier didn't change, we still need to update the fixed-width font.
     // If the multiplier did change, this was already handled.
-    if (_textSizeMultiplier == oldMultiplier && ![self isRichText]) {
+    if (_textSizeMultiplier == oldMultiplier && ![self isRichText])
         [self setFixedWidthFont];
-    }
-
 }
 
 // We handle incoming data here rather than in dataSourceUpdated because we
@@ -306,7 +306,7 @@
 
 - (WebFrame *)_webFrame
 {
-    return [[self _web_parentWebFrameView] webFrame];
+    return [[[_dataSource webFrame] frameView] webFrame];
 }
 
 - (NSDictionary *)_elementAtWindowPoint:(NSPoint)windowPoint
@@ -334,7 +334,7 @@
 - (BOOL)dragSelectionWithEvent:(NSEvent *)event offset:(NSSize)mouseOffset slideBack:(BOOL)slideBack
 {
     // Mark webview as initiating the drag so dropping the text back on this webview never tries to navigate.
-    WebView *webView = [self _web_parentWebView];
+    WebView *webView = [_dataSource _webView];
     [webView _setInitiatedDrag:YES];
     
     // The last reference can be lost during the drag if it causes a navigation (e.g. dropping in Safari location
@@ -352,7 +352,7 @@
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {    
-    WebView *webView = [self _web_parentWebView];
+    WebView *webView = [_dataSource _webView];
     ASSERT(webView);
     return [webView _menuForElement:[self _elementAtWindowPoint:[event locationInWindow]] defaultItems:nil];
 }
@@ -368,7 +368,7 @@
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
-    if (resign && ![[self _web_parentWebView] maintainsInactiveSelection])
+    if (resign && ![[_dataSource _webView] maintainsInactiveSelection])
         [self deselectAll];
     return resign;
 }
@@ -390,12 +390,12 @@
 - (void)drawPageBorderWithSize:(NSSize)borderSize
 {
     ASSERT(NSEqualSizes(borderSize, [[[NSPrintOperation currentOperation] printInfo] paperSize]));
-    [[self _web_parentWebView] _drawHeaderAndFooter];
+    [[_dataSource _webView] _drawHeaderAndFooter];
 }
 
 - (BOOL)knowsPageRange:(NSRangePointer)range {
     // Waiting for beginDocument to adjust the printing margins is too late.
-    [[self _web_parentWebView] _adjustPrintingMarginsForHeaderAndFooter];
+    [[_dataSource _webView] _adjustPrintingMarginsForHeaderAndFooter];
     return [super knowsPageRange:range];
 }
 

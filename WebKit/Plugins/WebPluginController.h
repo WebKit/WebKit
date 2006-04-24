@@ -32,10 +32,12 @@
 @class WebPluginPackage;
 @class WebFrameBridge;
 @class WebView;
+@class WebDataSource;
 
 @interface WebPluginController : NSObject
 {
     NSView *_documentView;
+    WebDataSource *_dataSource;
     NSMutableArray *_views;
     BOOL _started;
     NSMutableSet *_checksInProgress;
@@ -45,6 +47,8 @@
 + (BOOL)isPlugInView:(NSView *)view;
 
 - (id)initWithDocumentView:(NSView *)view;
+
+- (void)setDataSource:(WebDataSource *)dataSource;
 
 - (void)addPlugin:(NSView *)view;
 - (void)destroyPlugin:(NSView *)view;

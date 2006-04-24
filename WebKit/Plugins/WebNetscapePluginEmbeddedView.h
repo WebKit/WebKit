@@ -30,9 +30,12 @@
 
 #import <WebKit/WebBaseNetscapePluginView.h>
 
+@class WebFrame;
+
 @interface WebNetscapePluginEmbeddedView : WebBaseNetscapePluginView
 {
     NSURL *URL;
+    WebFrame *_webFrame;
 }
 
 - (id)initWithFrame:(NSRect)r
@@ -42,5 +45,7 @@
            MIMEType:(NSString *)MIME
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values;
+
+- (void)setWebFrame:(WebFrame *)webFrame;
 
 @end

@@ -31,7 +31,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>

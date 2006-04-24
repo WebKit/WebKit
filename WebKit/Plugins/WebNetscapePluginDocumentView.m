@@ -134,7 +134,7 @@
 
 - (void)layout
 {
-    NSRect superFrame = [[self _web_superviewOfClass:[WebFrameView class]] frame];
+    NSRect superFrame = [[[dataSource webFrame] frameView] frame];
     [self setFrame:NSMakeRect(0, 0, NSWidth(superFrame), NSHeight(superFrame))];
     needsLayout = NO;
 }

@@ -27,7 +27,7 @@
  */
 
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFrame.h>
@@ -364,7 +364,7 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
 - (void)_applyPDFDefaults
 {
     // Set up default viewing params
-    WebPreferences *prefs = [[self _webView] preferences];
+    WebPreferences *prefs = [[dataSource _webView] preferences];
     float scaleFactor = [prefs PDFScaleFactor];
     if (scaleFactor == 0) {
         [PDFSubview setAutoScales:YES];
@@ -405,7 +405,7 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     // This next clause is the entire purpose of _trackFirstResponder. In other WebDocument
     // view classes this is done in a resignFirstResponder override, but in this case the
     // first responder view is a PDFKit class that we can't subclass.
-    if (trackedFirstResponder == [PDFSubview documentView] && ![[self _web_parentWebView] maintainsInactiveSelection])
+    if (trackedFirstResponder == [PDFSubview documentView] && ![[dataSource _webView] maintainsInactiveSelection])
         [self deselectAll];
 
     
@@ -929,7 +929,7 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     PDFView *PDFSubview = [view PDFSubview];
     [invocation invokeWithTarget:PDFSubview];
 
-    WebPreferences *prefs = [[view _webView] preferences];
+    WebPreferences *prefs = [[view->dataSource _webView] preferences];
     float scaleFactor = [PDFSubview autoScales] ? 0.0 : [PDFSubview scaleFactor];
     [prefs setPDFScaleFactor:scaleFactor];
     [prefs setPDFDisplayMode:[PDFSubview displayMode]];

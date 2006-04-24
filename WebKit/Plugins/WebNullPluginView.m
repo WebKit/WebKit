@@ -63,12 +63,16 @@ static NSImage *image = nil;
     [super dealloc];
 }
 
+- (void)setWebFrame:(WebFrame *)webFrame
+{
+    _webFrame = webFrame;
+}
+
 - (void)viewDidMoveToWindow
 {
     if(!didSendError && _window && error){
         didSendError = YES;
-        WebFrameView *view = (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
-        WebFrame *webFrame = [view webFrame];
+        WebFrame *webFrame = _webFrame;
         WebView *webView = [webFrame webView];
         WebDataSource *dataSource = [webFrame dataSource];
         

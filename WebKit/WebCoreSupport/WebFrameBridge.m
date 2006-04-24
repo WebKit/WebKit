@@ -633,14 +633,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     // When a form element becomes first responder, its enclosing WebHTMLView might need to
     // change its focus-displaying state, but isn't otherwise notified.
-    [(WebHTMLView *)[formControl _web_superviewOfClass:[WebHTMLView class]] _formControlIsBecomingFirstResponder:formControl];
+    [(WebHTMLView *)[[_frame frameView] documentView] _formControlIsBecomingFirstResponder:formControl];
 }
 
 - (void)formControlIsResigningFirstResponder:(NSView *)formControl
 {
     // When a form element resigns first responder, its enclosing WebHTMLView might need to
     // change its focus-displaying state, but isn't otherwise notified.
-    [(WebHTMLView *)[formControl _web_superviewOfClass:[WebHTMLView class]] _formControlIsResigningFirstResponder:formControl];
+    [(WebHTMLView *)[[_frame frameView] documentView] _formControlIsResigningFirstResponder:formControl];
 }
 
 - (void)setIconURL:(NSURL *)URL
@@ -957,20 +957,18 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             return view;
     }
 
-    if ([MIMEType length] != 0) {
+    if ([MIMEType length] != 0)
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
-    } else {
+    else
         MIMEType = nil;
-    }
     
     NSString *extension = [[URL path] pathExtension];
     if (!pluginPackage && [extension length] != 0) {
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
         if (pluginPackage) {
             NSString *newMIMEType = [pluginPackage MIMETypeForExtension:extension];
-            if ([newMIMEType length] != 0) {
+            if ([newMIMEType length] != 0)
                 MIMEType = newMIMEType;
-            }
         }
     }
 
@@ -982,23 +980,22 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                attributeValues:attributeValues
                                        baseURL:baseURL];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            view = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
+            WebNetscapePluginEmbeddedView *embeddedView = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                      URL:URL
                                                                  baseURL:baseURL
                                                                 MIMEType:MIMEType
                                                            attributeKeys:attributeNames
                                                          attributeValues:attributeValues] autorelease];
-        } else {
+            view = embeddedView;
+            [embeddedView setWebFrame:_frame];
+        } else
             ASSERT_NOT_REACHED();
-        }
-    } else {
+    } else
         errorCode = WebKitErrorCannotFindPlugIn;
-    }
 
-    if (!errorCode && !view) {
+    if (!errorCode && !view)
         errorCode = WebKitErrorCannotLoadPlugIn;
-    }
 
     if (errorCode) {
         NSString *pluginPage = [self valueForKey:@"pluginspage" keys:attributeNames values:attributeValues];
@@ -1008,7 +1005,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                      pluginPageURL:pluginPageURL
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];
-        view = [[[WebNullPluginView alloc] initWithFrame:NSZeroRect error:error] autorelease];
+        WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSZeroRect error:error] autorelease];
+        [nullView setWebFrame:_frame];
+        view = nullView;
         [error release];
     }
     

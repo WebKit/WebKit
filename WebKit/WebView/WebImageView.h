@@ -37,6 +37,7 @@
     BOOL ignoringMouseDraggedEvents;
     NSEvent *mouseDownEvent;
     unsigned int dragSourceActionMask;
+    WebDataSource *_dataSource;
 }
 + (NSArray *)supportedMIMETypes;
 @end

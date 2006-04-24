@@ -31,26 +31,14 @@
 #define WebDragImageAlpha    0.75
 
 @class DOMElement;
-@class WebArchive;
-@class WebFrameBridge;
-@class WebDataSource;
-@class WebFrame;
-@class WebFrameView;
 @class WebImageRenderer;
-@class WebView;
+@class WebFrameView;
 
 @interface NSView (WebExtras)
 
 // Returns the nearest enclosing view of the given class, or nil if none.
 - (NSView *)_web_superviewOfClass:(Class)class;
-
-// Returns the nearest enclosing view of the given class, or nil if none.
-// Stops searching and returns nil when limitClass is encountered
-- (NSView *)_web_superviewOfClass:(Class)class stoppingAtClass:(Class)limitClass;
-
-// Returns the first WebFrameView superview. Only works if self is the WebFrameView's document view.
 - (WebFrameView *)_web_parentWebFrameView;
-- (WebView *)_web_parentWebView;
 
 // returns whether a drag should begin starting with mouseDownEvent; if the time
 // passes expiration or the mouse moves less than the hysteresis before the mouseUp event,
@@ -79,15 +67,5 @@
                 offset:(NSPoint *)dragImageOffset;
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView;
-- (BOOL)_web_firstResponderCausesFocusDisplay;
-
-@end
-
-@interface NSView (WebDocumentViewExtras)
-
-- (WebView *)_webView;
-- (WebFrame *)_frame;
-- (WebFrameBridge *)_bridge;
-- (WebDataSource *)_dataSource;
 
 @end

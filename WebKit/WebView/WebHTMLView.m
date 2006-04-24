@@ -258,6 +258,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     [toolTip release];
     [compController release];
     [firstResponderAtMouseDownTime release];
+    [dataSource release];
 
     [super dealloc];
 }
@@ -280,6 +281,26 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     }
     
     return NO;
+}
+
+- (WebDataSource *)_dataSource
+{
+    return _private->dataSource;
+}
+
+- (WebFrameBridge *)_bridge
+{
+    return [_private->dataSource _bridge];
+}
+
+- (WebView *)_webView
+{
+    return [_private->dataSource _webView];
+}
+
+- (WebFrameView *)_frameView
+{
+    return [[_private->dataSource webFrame] frameView];
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithPaths:(NSArray *)paths
@@ -1660,6 +1681,11 @@ static WebHTMLView *lastHitView = nil;
         
     WebFrameBridge *bridge = [self _bridge];
     [bridge decreaseSelectionListLevel];
+}
+
+- (BOOL)_web_firstResponderCausesFocusDisplay
+{
+    return [self _web_firstResponderIsSelfOrDescendantView] || [[self window] firstResponder] == [self _frameView];
 }
 
 - (void)_updateFocusState
@@ -3085,7 +3111,7 @@ done:
     _private->willBecomeFirstResponderForNodeFocus = NO;
     if (view)
         [[self window] makeFirstResponder:view];
-    [[[self _web_parentWebFrameView] webFrame] _clearSelectionInOtherFrames];
+    [[self _frame] _clearSelectionInOtherFrames];
     [self _updateFocusState];
     [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;
@@ -3118,6 +3144,8 @@ done:
 //------------------------------------------------------------------------------------
 - (void)setDataSource:(WebDataSource *)dataSource 
 {
+    ASSERT(!_private->dataSource);
+    _private->dataSource = [dataSource retain];
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
@@ -3665,7 +3693,7 @@ done:
 
 - (void)pageUp:(id)sender
 {
-    WebFrameView *frameView = [self _web_parentWebFrameView];
+    WebFrameView *frameView = [self _frameView];
     if (frameView == nil)
         return;
     [self _alterCurrentSelection:WebSelectByMoving verticalDistance:-[frameView _verticalPageScrollDistance]];
@@ -3673,7 +3701,7 @@ done:
 
 - (void)pageDown:(id)sender
 {
-    WebFrameView *frameView = [self _web_parentWebFrameView];
+    WebFrameView *frameView = [self _frameView];
     if (frameView == nil)
         return;
     [self _alterCurrentSelection:WebSelectByMoving verticalDistance:[frameView _verticalPageScrollDistance]];
@@ -3681,7 +3709,7 @@ done:
 
 - (void)pageUpAndModifySelection:(id)sender
 {
-    WebFrameView *frameView = [self _web_parentWebFrameView];
+    WebFrameView *frameView = [self _frameView];
     if (frameView == nil)
         return;
     [self _alterCurrentSelection:WebSelectByExtending verticalDistance:-[frameView _verticalPageScrollDistance]];
@@ -3689,7 +3717,7 @@ done:
 
 - (void)pageDownAndModifySelection:(id)sender
 {
-    WebFrameView *frameView = [self _web_parentWebFrameView];
+    WebFrameView *frameView = [self _frameView];
     if (frameView == nil)
         return;
     [self _alterCurrentSelection:WebSelectByExtending verticalDistance:[frameView _verticalPageScrollDistance]];
@@ -5084,6 +5112,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (void)_willMakeFirstResponderForNodeFocus
 {
     _private->willBecomeFirstResponderForNodeFocus = YES;
+}
+
+- (WebFrame *)_frame
+{
+    return [_private->dataSource webFrame];
 }
 
 @end

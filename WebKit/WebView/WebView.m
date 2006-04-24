@@ -2263,8 +2263,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             }
             
             if ([searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO]) {
-                WebFrame *newSelectedFrame = [(WebFrameView *)[searchView _web_superviewOfClass:[WebFrameView class]] webFrame];
-                if (newSelectedFrame != startFrame)
+                if (frame != startFrame)
                     [startFrame _clearSelection];
                 [[self window] makeFirstResponder:searchView];
                 return YES;
@@ -3093,15 +3092,20 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 
 @end
 
+static WebFrameView *containingFrameView(NSView *view)
+{
+    while (view && ![view isKindOfClass:[WebFrameView class]])
+        view = [view superview];
+    return (WebFrameView *)view;    
+}
+
 @implementation WebView (WebFileInternal)
 
 - (WebFrame *)_focusedFrame
 {
     NSResponder *resp = [[self window] firstResponder];
     if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:[[self mainFrame] frameView]]) {
-        WebFrameView *frameView = [resp isKindOfClass:[WebFrameView class]] 
-        ? (WebFrameView *)resp 
-        : (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
+        WebFrameView *frameView = containingFrameView((NSView *)resp);
         ASSERT(frameView != nil);
         return [frameView webFrame];
     }
@@ -3132,7 +3136,11 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
 {
     NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
-    return (WebFrameView *)[view _web_superviewOfClass:[WebFrameView class] stoppingAtClass:[self class]];
+    if (![view isDescendantOf:[[self mainFrame] frameView]])
+        return nil;
+    WebFrameView *frameView = containingFrameView(view);
+    ASSERT(frameView);
+    return frameView;
 }
 
 - (WebFrameBridge *)_bridgeAtPoint:(NSPoint)point

@@ -29,13 +29,16 @@
 #import <AppKit/AppKit.h>
 
 @class NSError;
+@class WebFrame;
 
 @interface WebNullPluginView : NSImageView
 {
     BOOL didSendError;
     NSError *error;
+    WebFrame *_webFrame;
 }
 
 - (id)initWithFrame:(NSRect)frame error:(NSError *)pluginError;
+- (void)setWebFrame:(WebFrame *)webFrame;
 
 @end

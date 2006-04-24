@@ -86,11 +86,14 @@
     }
 }
 
+- (void)setWebFrame:(WebFrame *)webFrame
+{
+    _webFrame = webFrame;
+}
+
 - (WebDataSource *)dataSource
 {
-    WebFrameView *webFrameView = (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
-    WebFrame *webFrame = [webFrameView webFrame];
-    return [webFrame dataSource];
+    return [_webFrame dataSource];
 }
 
 @end

@@ -48,36 +48,17 @@
 
 @implementation NSView (WebExtras)
 
-- (NSView *)_web_superviewOfClass:(Class)class stoppingAtClass:(Class)limitClass
-{
-    NSView *view = self;
-    while ((view = [view superview]) != nil) {
-        if ([view isKindOfClass:class]) {
-            return view;
-        } else if (limitClass && [view isKindOfClass:limitClass]) {
-            break;
-        }
-    }
-
-    return nil;
-}
-
 - (NSView *)_web_superviewOfClass:(Class)class
 {
-    return [self _web_superviewOfClass:class stoppingAtClass:nil];
+    NSView *view = [self superview];
+    while (view  && ![view isKindOfClass:class])
+        view = [view superview];
+    return view;
 }
 
 - (WebFrameView *)_web_parentWebFrameView
 {
-    WebFrameView *view = (WebFrameView *)[[[self superview] superview] superview];
-    if ([view isKindOfClass: [WebFrameView class]])
-        return view;
-    return nil;
-}
-
-- (WebView *)_web_parentWebView
-{
-    return [[self _web_parentWebFrameView] _webView];
+    return (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
 }
 
 /* Determine whether a mouse down should turn into a drag; started as copy of NSTableView code */
@@ -222,44 +203,6 @@
     return (responder && 
            (responder == self || 
            ([responder isKindOfClass:[NSView class]] && [(NSView *)responder isDescendantOf:self])));
-}
-
-- (BOOL)_web_firstResponderCausesFocusDisplay
-{
-    return [self _web_firstResponderIsSelfOrDescendantView] || [[self window] firstResponder] == [self _web_parentWebFrameView];
-}
-
-@end
-
-@implementation NSView (WebDocumentViewExtras)
-
-- (WebView *)_webView
-{
-    // We used to use the view hierarchy exclusively here, but that won't work
-    // right when the first viewDidMoveToSuperview call is done, and this wil.
-    return [[self _frame] webView];
-}
-
-- (WebFrame *)_frame
-{
-    WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    return [webFrameView webFrame];
-}
-
-// Required so view can access the part's selection.
-- (WebFrameBridge *)_bridge
-{
-    return [[self _frame] _bridge];
-}
-
-- (WebDataSource *)_dataSource
-{
-    return [[self _frame] dataSource];
-}
-
-- (NSURL *)_webViewURL
-{
-    return [[[[[self superview] _frame] dataSource] request] URL];
 }
 
 @end

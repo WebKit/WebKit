@@ -30,7 +30,8 @@
 
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebNSViewExtras.h>
 
 @interface WebKitRenderTreeCopier : NSObject <WebCoreRenderTreeCopier>
@@ -80,8 +81,7 @@
     }
     
     copier = [[WebKitRenderTreeCopier alloc] init];
-    WebHTMLView *htmlView = (WebHTMLView *)[view documentView];
-    self = [[[htmlView _bridge] copyRenderTree:copier] retain];
+    self = [[[[[view webFrame] dataSource] _bridge] copyRenderTree:copier] retain];
     [copier release];
     
     return self;

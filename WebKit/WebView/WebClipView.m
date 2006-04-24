@@ -41,6 +41,10 @@
 
 // FIXME: Change terminology from "additional clip" to "focus ring clip".
 
+@interface NSView (WebViewMethod)
+- (WebView *)_webView;
+@end
+
 @implementation WebClipView
 
 - (id)initWithFrame:(NSRect)frame

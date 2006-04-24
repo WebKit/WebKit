@@ -30,7 +30,7 @@
 
 #import <WebKit/WebArchiver.h>
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebImageRenderer.h>
@@ -40,6 +40,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 
@@ -111,7 +112,7 @@
         [self layout];
     }
     
-    if ([[self _webView] drawsBackground]) {
+    if ([[_dataSource _webView] drawsBackground]) {
         [[NSColor whiteColor] set];
         NSRectFill(rect);
     }
@@ -129,7 +130,7 @@
     // as large as the image.. Otherwise we're printing, and we want the image to 
     // fill the view so that the printed size doesn't depend on the window size.
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
-        NSSize clipViewSize = [[self _web_superviewOfClass:[NSClipView class]] frame].size;
+        NSSize clipViewSize = [[[[_dataSource webFrame] frameView] _contentView] frame].size;
         size.width = MAX(size.width, clipViewSize.width);
         size.height = MAX(size.height, clipViewSize.height);
     }
@@ -152,6 +153,7 @@
 {
     ASSERT(!rep);
     rep = [[dataSource representation] retain];
+    _dataSource = dataSource;
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
@@ -188,7 +190,7 @@
 
 - (WebView *)webView
 {
-    return [self _web_parentWebView];
+    return [_dataSource _webView];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -211,7 +213,7 @@
 
 - (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
-    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
+    WebFrame *frame = [_dataSource webFrame];
     if ([self haveCompleteImage]) {
         [pasteboard _web_writeImage:[rep image] element:nil URL:[rep URL] title:nil archive:[WebArchiver archiveFrame:frame] types:types];
         return YES;
@@ -222,7 +224,7 @@
 
 - (void)copy:(id)sender
 {
-    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
+    WebFrame *frame = [_dataSource webFrame];
     NSArray *types = [NSPasteboard _web_writableTypesForImageIncludingArchive:([WebArchiver archiveFrame:frame] != nil)];
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard declareTypes:types owner:nil];
@@ -237,7 +239,7 @@
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
-    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
+    WebFrame *frame = [_dataSource webFrame];
     ASSERT(frame);
     
     return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -279,7 +281,7 @@
         return;
     }
     
-    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
+    WebFrame *frame = [_dataSource webFrame];
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     id source = [pasteboard _web_declareAndWriteDragImage:[rep image]
                                                   element:nil

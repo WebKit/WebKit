@@ -128,7 +128,7 @@ enum {
     // a border (left, right, top or bottom) if the frame edge abutts the window frame.
     NSView *docV = [self documentView];
     if ([docV isKindOfClass:[WebHTMLView class]])
-        if ([[(WebHTMLView *)docV _bridge] isFrameSet])
+        if ([[_private->webFrame _bridge] isFrameSet])
             return NO;
     return YES;
 }
@@ -146,7 +146,7 @@ enum {
 
 - (WebCoreFrameBridge *) webCoreBridge
 {
-    return [self _bridge];
+    return [_private->webFrame _bridge];
 }
 
 @end

@@ -43,6 +43,7 @@
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
+#import <WebKit/WebDataSourcePrivate.h>
 
 #import <WebCore/WebCoreFrameBridge.h>
 
@@ -104,6 +105,11 @@ static NSMutableSet *pluginViews = nil;
     _views = [[NSMutableArray alloc] init];
     _checksInProgress = (NSMutableSet *)CFMakeCollectable(CFSetCreateMutable(NULL, 0, NULL));
     return self;
+}
+
+- (void)setDataSource:(WebDataSource *)dataSource
+{
+    _dataSource = dataSource;    
 }
 
 - (void)dealloc
@@ -267,7 +273,7 @@ static NSMutableSet *pluginViews = nil;
         LOG_ERROR("could not load URL %@ because plug-in has already been destroyed", request);
         return;
     }
-    WebFrame *frame = [_documentView _frame];
+    WebFrame *frame = [_dataSource webFrame];
     if (!frame) {
         LOG_ERROR("could not load URL %@ because plug-in has already been stopped", request);
         return;
@@ -306,7 +312,7 @@ static NSMutableSet *pluginViews = nil;
         LOG_ERROR("could not show status message (%@) because plug-in has already been destroyed", message);
         return;
     }
-    WebView *v = [_documentView _webView];
+    WebView *v = [_dataSource _webView];
     [[v _UIDelegateForwarder] webView:v setStatusText:message];
 }
 
@@ -318,7 +324,7 @@ static NSMutableSet *pluginViews = nil;
 
 - (NSColor *)webPlugInContainerSelectionColor
 {
-    return [[_documentView _bridge] selectionColor];
+    return [[_dataSource _bridge] selectionColor];
 }
 
 // For compatibility only.
@@ -329,7 +335,7 @@ static NSMutableSet *pluginViews = nil;
 
 - (WebFrame *)webFrame
 {
-    return [_documentView _frame];
+    return [_dataSource webFrame];
 }
 
 - (WebFrameBridge *)bridge

@@ -31,7 +31,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebViewInternal.h>
-#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSUserDefaultsExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -84,7 +84,7 @@
     
     while (aView) {
         if ([aView isKindOfClass:[WebHTMLView class]]) {
-            return [(WebHTMLView *)aView _bridge];
+            return [[[(WebHTMLView *)aView _frame] dataSource] _bridge];
         }
         aView = [aView superview];
     }

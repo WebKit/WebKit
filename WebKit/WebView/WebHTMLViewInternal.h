@@ -87,6 +87,8 @@
     BOOL transparentBackground;
 
     NSResponder *firstResponderAtMouseDownTime;
+    
+    WebDataSource *dataSource;
 }
 @end
 
@@ -101,4 +103,6 @@
 - (void)_pauseNullEventsForAllNetscapePlugins;
 - (void)_resumeNullEventsForAllNetscapePlugins;
 - (void)_willMakeFirstResponderForNodeFocus;
+- (WebFrame *)_frame;
 @end
+

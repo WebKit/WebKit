@@ -35,6 +35,7 @@
 {
     WebPluginController *pluginController;
     WebPluginPackage *plugin;
+    WebDataSource *_dataSource;
     BOOL dataSourceHasBeenSet;
     BOOL needsLayout;
 }
