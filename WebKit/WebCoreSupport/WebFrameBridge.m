@@ -80,10 +80,6 @@
 #import <WebCore/WebCoreFrameNamespaces.h>
 #import <WebKitSystemInterface.h>
 
-#define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
-#define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
-#define UniversalAccessDomain CFSTR("com.apple.universalaccess")
-
 // For compatibility only with old SPI. 
 @interface NSObject (OldWebPlugin)
 - (void)setIsSelected:(BOOL)f;
@@ -150,14 +146,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)fini
 {
     ASSERT(_frame == nil);
-
-    if (_keyboardUIModeAccessed) {
-        [[NSDistributedNotificationCenter defaultCenter] 
-            removeObserver:self name:KeyboardUIModeDidChangeNotification object:nil];
-        [[NSNotificationCenter defaultCenter] 
-            removeObserver:self name:WebPreferencesChangedNotification object:nil];
-    }
-
     --WebBridgeCount;
 }
 
@@ -583,22 +571,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     // This check can be removed when the new Foundation method
     // has been around long enough for everyone to have it.
-    if ([response respondsToSelector:@selector(_calculatedExpiration)]) {
-        NSTimeInterval expiration = [response _calculatedExpiration];
-        expiration += kCFAbsoluteTimeIntervalSince1970;
-        return expiration > MAX_TIME_T ? MAX_TIME_T : expiration;
-    }
+    ASSERT([response respondsToSelector:@selector(_calculatedExpiration)]);
 
-    // Fall back to the older calculation
-    time_t now = time(NULL);
-    NSTimeInterval lifetime = WKGetNSURLResponseFreshnessLifetime(response);
-    if (lifetime < 0)
-        lifetime = 0;
-    
-    if (now + lifetime > MAX_TIME_T)
-        return MAX_TIME_T;
-    
-    return now + lifetime;
+    NSTimeInterval expiration = [response _calculatedExpiration];
+    expiration += kCFAbsoluteTimeIntervalSince1970;
+    return expiration > MAX_TIME_T ? MAX_TIME_T : expiration;
 }
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
@@ -653,36 +630,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
-- (BOOL)canTargetLoadInFrame:(WebFrame *)targetFrame
-{
-    // This method prevents this exploit:
-    // <rdar://problem/3715785> multiple frame injection vulnerability reported by Secunia, affects almost all browsers
-    
-    // don't mess with navigation purely within the same frame
-    if ([[self webFrame] webView] == [targetFrame webView])
-        return YES;
-
-    // Normally, domain should be called on the DOMDocument since it is a DOM method, but this fix is needed for
-    // Jaguar as well where the DOM API doesn't exist.
-    NSString *thisDomain = [self domain];
-    if ([thisDomain length] == 0) {
-        // Allow if the request is made from a local file.
-        return YES;
-    }
-    
-    WebFrameBridge *parentBridge = (WebFrameBridge *)[[targetFrame _bridge] parent];
-    // Allow if target is an entire window.
-    if (!parentBridge)
-        return YES;
-    
-    NSString *parentDomain = [parentBridge domain];
-    // Allow if the domain of the parent of the targeted frame equals this domain.
-    if (parentDomain && [thisDomain _webkit_isCaseInsensitiveEqualToString:parentDomain])
-        return YES;
-
-    return NO;
-}
-
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     BOOL hideReferrer;
@@ -694,7 +641,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
-    if (![self canTargetLoadInFrame:targetFrame]) {
+    if (![self canTargetLoadInFrame:[targetFrame _bridge]]) {
         return;
     }
     
@@ -724,7 +671,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
-    if (![self canTargetLoadInFrame:targetFrame]) {
+    if (![self canTargetLoadInFrame:[targetFrame _bridge]]) {
         return;
     }
 
@@ -919,9 +866,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     unsigned count = [keys count];
     unsigned i;
     for (i = 0; i < count; i++) {
-        if ([[keys objectAtIndex:i] _webkit_isCaseInsensitiveEqualToString:key]) {
+        if ([[keys objectAtIndex:i] _webkit_isCaseInsensitiveEqualToString:key])
             return [values objectAtIndex:i];
-        }
     }
     return nil;
 }
@@ -1079,11 +1025,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (WebPreferences *)_preferences
 {
-    WebPreferences *prefs = [[self webView] preferences];
-    if (prefs == nil) {
-        prefs = [WebPreferences standardPreferences];
-    }
-    return prefs;
+    return [[self webView] preferences];
 }
 
 -(int)getObjectCacheSize
@@ -1298,45 +1240,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 - (void)setHasBorder:(BOOL)hasBorder
 {
     [[_frame frameView] _setHasBorder:hasBorder];
-}
-
-- (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
-{
-    CFPreferencesAppSynchronize(UniversalAccessDomain);
-
-    Boolean keyExistsAndHasValidFormat;
-    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &keyExistsAndHasValidFormat);
-    
-    // The keyboard access mode is reported by two bits:
-    // Bit 0 is set if feature is on
-    // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists
-    // We require both bits to be on.
-    // I do not know that we would ever get one bit on and the other off since
-    // checking the checkbox in system preferences which is marked as "Turn on full keyboard access"
-    // turns on both bits.
-    _keyboardUIMode = (mode & 0x2) ? WebCoreKeyboardAccessFull : WebCoreKeyboardAccessDefault;
-    
-    // check for tabbing to links
-    if ([[self _preferences] tabsToLinks]) {
-        _keyboardUIMode |= WebCoreKeyboardAccessTabsToLinks;
-    }
-}
-
-- (WebCoreKeyboardUIMode)keyboardUIMode
-{
-    if (!_keyboardUIModeAccessed) {
-        _keyboardUIModeAccessed = YES;
-        [self _retrieveKeyboardUIModeFromPreferences:nil];
-        
-        [[NSDistributedNotificationCenter defaultCenter] 
-            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
-            name:KeyboardUIModeDidChangeNotification object:nil];
-
-        [[NSNotificationCenter defaultCenter] 
-            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
-                   name:WebPreferencesChangedNotification object:nil];
-    }
-    return _keyboardUIMode;
 }
 
 - (NSFileWrapper *)fileWrapperForURL:(NSURL *)URL
@@ -1575,62 +1478,6 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
         case WebUndoActionUnlink: return UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
     }
     return nil;
-}
-
-// FIXME: The following 2 functions are copied from AppKit. It would be best share code.
-
-// MF:!!! For now we will use static character sets for the computation, but we should eventually probably make these keys in the language dictionaries.
-// MF:!!! The following characters (listed with their nextstep encoding values) were in the preSmartTable in the old text objet, but aren't yet in the new text object: NS_FIGSPACE (0x80), exclamdown (0xa1), sterling (0xa3), yen (0xa5), florin (0xa6) section (0xa7), currency (0xa8), quotesingle (0xa9), quotedblleft (0xaa), guillemotleft (0xab), guilsinglleft (0xac), endash (0xb1), quotesinglbase (0xb8), quotedblbase (0xb9), questiondown (0xbf), emdash (0xd0), plusminus (0xd1).
-// MF:!!! The following characters (listed with their nextstep encoding values) were in the postSmartTable in the old text objet, but aren't yet in the new text object: NS_FIGSPACE (0x80), cent (0xa2), guilsinglright (0xad), registered (0xb0), dagger (0xa2), daggerdbl (0xa3), endash (0xb1), quotedblright (0xba), guillemotright (0xbb), perthousand (0xbd), onesuperior (0xc0), twosuperior (0xc9), threesuperior (0xcc), emdash (0xd0), ordfeminine (0xe3), ordmasculine (0xeb).
-// MF:!!! Another difference in both of these sets from the old text object is we include all the whitespace in whitespaceAndNewlineCharacterSet.
-#define _preSmartString @"([\"\'#$/-`{"
-#define _postSmartString @")].,;:?\'!\"%*-/}"
-
-static NSCharacterSet *_getPreSmartSet(void)
-{
-    static NSMutableCharacterSet *_preSmartSet = nil;
-    if (!_preSmartSet) {
-        _preSmartSet = [[NSMutableCharacterSet characterSetWithCharactersInString:_preSmartString] retain];
-        [_preSmartSet formUnionWithCharacterSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        // Adding CJK ranges
-        [_preSmartSet addCharactersInRange:NSMakeRange(0x1100, 256)]; // Hangul Jamo (0x1100 - 0x11FF)
-        [_preSmartSet addCharactersInRange:NSMakeRange(0x2E80, 352)]; // CJK & Kangxi Radicals (0x2E80 - 0x2FDF)
-        [_preSmartSet addCharactersInRange:NSMakeRange(0x2FF0, 464)]; // Ideograph Descriptions, CJK Symbols, Hiragana, Katakana, Bopomofo, Hangul Compatibility Jamo, Kanbun, & Bopomofo Ext (0x2FF0 - 0x31BF)
-        [_preSmartSet addCharactersInRange:NSMakeRange(0x3200, 29392)]; // Enclosed CJK, CJK Ideographs (Uni Han & Ext A), & Yi (0x3200 - 0xA4CF)
-        [_preSmartSet addCharactersInRange:NSMakeRange(0xAC00, 11183)]; // Hangul Syllables (0xAC00 - 0xD7AF)
-        [_preSmartSet addCharactersInRange:NSMakeRange(0xF900, 352)]; // CJK Compatibility Ideographs (0xF900 - 0xFA5F)
-        [_preSmartSet addCharactersInRange:NSMakeRange(0xFE30, 32)]; // CJK Compatibility From (0xFE30 - 0xFE4F)
-        [_preSmartSet addCharactersInRange:NSMakeRange(0xFF00, 240)]; // Half/Full Width Form (0xFF00 - 0xFFEF)
-        [_preSmartSet addCharactersInRange:NSMakeRange(0x20000, 0xA6D7)]; // CJK Ideograph Exntension B
-        [_preSmartSet addCharactersInRange:NSMakeRange(0x2F800, 0x021E)]; // CJK Compatibility Ideographs (0x2F800 - 0x2FA1D)
-    }
-    return _preSmartSet;
-}
-
-static NSCharacterSet *_getPostSmartSet(void)
-{
-    static NSMutableCharacterSet *_postSmartSet = nil;
-    if (!_postSmartSet) {
-        _postSmartSet = [[NSMutableCharacterSet characterSetWithCharactersInString:_postSmartString] retain];
-        [_postSmartSet formUnionWithCharacterSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        [_postSmartSet addCharactersInRange:NSMakeRange(0x1100, 256)]; // Hangul Jamo (0x1100 - 0x11FF)
-        [_postSmartSet addCharactersInRange:NSMakeRange(0x2E80, 352)]; // CJK & Kangxi Radicals (0x2E80 - 0x2FDF)
-        [_postSmartSet addCharactersInRange:NSMakeRange(0x2FF0, 464)]; // Ideograph Descriptions, CJK Symbols, Hiragana, Katakana, Bopomofo, Hangul Compatibility Jamo, Kanbun, & Bopomofo Ext (0x2FF0 - 0x31BF)
-        [_postSmartSet addCharactersInRange:NSMakeRange(0x3200, 29392)]; // Enclosed CJK, CJK Ideographs (Uni Han & Ext A), & Yi (0x3200 - 0xA4CF)
-        [_postSmartSet addCharactersInRange:NSMakeRange(0xAC00, 11183)]; // Hangul Syllables (0xAC00 - 0xD7AF)
-        [_postSmartSet addCharactersInRange:NSMakeRange(0xF900, 352)]; // CJK Compatibility Ideographs (0xF900 - 0xFA5F)
-        [_postSmartSet addCharactersInRange:NSMakeRange(0xFE30, 32)]; // CJK Compatibility From (0xFE30 - 0xFE4F)
-        [_postSmartSet addCharactersInRange:NSMakeRange(0xFF00, 240)]; // Half/Full Width Form (0xFF00 - 0xFFEF)
-        [_postSmartSet addCharactersInRange:NSMakeRange(0x20000, 0xA6D7)]; // CJK Ideograph Exntension B
-        [_postSmartSet addCharactersInRange:NSMakeRange(0x2F800, 0x021E)]; // CJK Compatibility Ideographs (0x2F800 - 0x2FA1D)        
-        [_postSmartSet formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
-    }
-    return _postSmartSet;
-}
-
-- (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter
-{
-    return [isPreviousCharacter ? _getPreSmartSet() : _getPostSmartSet() characterIsMember:c];
 }
 
 - (WebCorePageBridge *)createModalDialogWithURL:(NSURL *)URL

@@ -1,3 +1,22 @@
+2006-04-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - move more code from WebFrameBridge to WebCoreFrameBridge
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge domain]):
+        (-[WebCoreFrameBridge canTargetLoadInFrame:]):
+        (-[WebCoreFrameBridge fini]):
+        (-[WebCoreFrameBridge dealloc]):
+        (-[WebCoreFrameBridge finalize]):
+        (_getPreSmartSet):
+        (_getPostSmartSet):
+        (-[WebCoreFrameBridge isCharacterSmartReplaceExempt:isPreviousCharacter:]):
+        (-[WebCoreFrameBridge _retrieveKeyboardUIModeFromPreferences:]):
+        (-[WebCoreFrameBridge keyboardUIMode]):
+
 2006-04-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim O.

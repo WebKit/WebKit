@@ -1,5 +1,20 @@
 2006-04-24  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+        - move more code from WebFrameBridge to WebCoreFrameBridge
+
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge fini]):
+        (-[WebFrameBridge expiresTimeForResponse:]):
+        (-[WebFrameBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrameBridge valueForKey:keys:values:]):
+        (-[WebFrameBridge _preferences]):
+
+2006-04-24  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders.
         
         - Remove use of _webSuperviewOfClass: and related

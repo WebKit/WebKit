@@ -179,6 +179,8 @@ typedef enum {
 {
     WebCoreMacFrame *m_frame;
     BOOL _shouldCreateRenderers;
+    WebCoreKeyboardUIMode _keyboardUIMode;
+    BOOL _keyboardUIModeAccessed;
 }
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
@@ -228,6 +230,7 @@ typedef enum {
 - (void)didNotOpenURL:(NSURL *)URL pageCache:(NSDictionary *)pageCache;
 
 - (BOOL)canLoadURL:(NSURL *)URL fromReferrer:(NSString *)referrer hideReferrer:(BOOL *)hideReferrer;
+- (BOOL)canTargetLoadInFrame:(WebCoreFrameBridge *)targetFrame;
 
 - (void)saveDocumentState;
 - (void)restoreDocumentState;
@@ -244,7 +247,6 @@ typedef enum {
 - (NSURL *)URL;
 - (NSURL *)baseURL;
 - (NSString *)referrer;
-- (NSString *)domain;
 - (WebCoreFrameBridge *)opener;
 - (void)setOpener:(WebCoreFrameBridge *)bridge;
 
@@ -477,6 +479,8 @@ typedef enum {
 
 - (void)clear;
 
+- (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter;
+
 @end
 
 // The WebCoreFrameBridge protocol contains methods for use by the WebCore side of the bridge.
@@ -613,8 +617,6 @@ typedef enum {
 
 - (void)setHasBorder:(BOOL)hasBorder;
 
-- (WebCoreKeyboardUIMode)keyboardUIMode;
-
 - (NSFileWrapper *)fileWrapperForURL:(NSURL *)URL;
 
 - (void)print;
@@ -653,9 +655,9 @@ typedef enum {
 
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
 
-- (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter;
-
 - (void)handledOnloadEvents;
+
+- (WebCoreKeyboardUIMode)keyboardUIMode;
 
 @end
 
