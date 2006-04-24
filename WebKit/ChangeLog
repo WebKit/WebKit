@@ -1,5 +1,27 @@
 2006-04-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+        
+        - push WebFileButton and WebStringTruncator code down to WebCore
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8552
+
+        * Misc/WebStringTruncator.m:
+        (+[WebStringTruncator centerTruncateString:toWidth:]):
+        (+[WebStringTruncator centerTruncateString:toWidth:withFont:]):
+        (+[WebStringTruncator rightTruncateString:toWidth:withFont:]):
+        (+[WebStringTruncator widthOfString:font:]):
+        * WebCoreSupport/WebFileButton.h: Removed.
+        * WebCoreSupport/WebFileButton.m: Removed.
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge runOpenPanelForFileButtonWithResultListener:]):
+        * WebCoreSupport/WebViewFactory.m:
+        (-[WebViewFactory fileButtonChooseFileLabel]):
+        (-[WebViewFactory fileButtonNoFileSelectedLabel]):
+        * WebKit.xcodeproj/project.pbxproj:
+
+2006-04-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
         
         - remove WebCookieAdapter, WebCore can just use Foundation directly.

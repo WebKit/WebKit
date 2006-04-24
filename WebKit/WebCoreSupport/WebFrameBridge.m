@@ -35,7 +35,6 @@
 #import "WebDataSourcePrivate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebEditingDelegate.h"
-#import "WebFileButton.h"
 #import "WebFormDataStream.h"
 #import "WebFormDelegate.h"
 #import "WebFrameInternal.h"
@@ -408,17 +407,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [wd webView:wv addMessageToConsole:message];
 }
 
-- (NSView <WebCoreFileButton> *)fileButtonWithDelegate:(id <WebCoreFileButtonDelegate>)delegate
-{
-    return [[[WebFileButton alloc] initWithBridge:self delegate:delegate] autorelease];
-}
-
-- (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
+- (void)runOpenPanelForFileButtonWithResultListener:(id<WebCoreOpenPanelResultListener>)resultListener
 {
     WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webView:wv runOpenPanelForFileButtonWithResultListener:resultListener];
+    [[wv _UIDelegateForwarder] webView:wv runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener];
 }
-
 
 - (WebDataSource *)dataSource
 {

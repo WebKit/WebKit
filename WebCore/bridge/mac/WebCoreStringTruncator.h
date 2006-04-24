@@ -26,23 +26,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
-@protocol WebCoreFileButton;
-@protocol WebCoreFileButtonDelegate;
-@protocol WebOpenPanelResultListener;
-@class WebFrameBridge;
-@class WebFileChooserButton;
+@class NSFont;
 
-@interface WebFileButton : NSView <WebCoreFileButton, WebOpenPanelResultListener>
-{
-    NSString *_filename;
-    WebFileChooserButton *_button;
-    NSImage *_icon;
-    NSString *_label;
-    WebFrameBridge *_bridge;
-    BOOL _inNextValidKeyView;
-    id <WebCoreFileButtonDelegate> _delegate;
-}
-- (id)initWithBridge:(WebFrameBridge *)bridge delegate:(id <WebCoreFileButtonDelegate>)delegate;
+@interface WebCoreStringTruncator : NSObject
+
++ (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font;
+
+// Default font is [NSFont menuFontOfSize:0].
++ (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth;
+
++ (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font;
+
++ (float)widthOfString:(NSString *)string font:(NSFont *)font;
+
 @end

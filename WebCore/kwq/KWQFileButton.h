@@ -30,9 +30,9 @@
 #include "Widget.h"
 
 #ifdef __OBJC__
-@class KWQFileButtonAdapter;
+@class WebCoreFileButton;
 #else
-class KWQFileButtonAdapter;
+class WebCoreFileButton;
 #endif
 
 namespace WebCore {
@@ -42,7 +42,6 @@ namespace WebCore {
 class KWQFileButton : public Widget {
 public:
     KWQFileButton(WebCore::Frame*);
-    ~KWQFileButton();
     
     void setFilename(const DeprecatedString &);
     void click(bool sendMouseEvents);
@@ -59,7 +58,7 @@ public:
     const WebCore::String& filename() const { return m_name; }
 
 private:
-    KWQFileButtonAdapter* _adapter;
+    WebCoreFileButton* _buttonView;
     WebCore::String m_name;
 };
 

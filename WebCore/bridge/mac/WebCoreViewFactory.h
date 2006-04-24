@@ -40,6 +40,8 @@
 - (NSString *)resetButtonDefaultLabel;
 - (NSString *)searchableIndexIntroduction;
 - (NSString *)submitButtonDefaultLabel;
+- (NSString *)fileButtonChooseFileLabel;
+- (NSString *)fileButtonNoFileSelectedLabel;
 
 - (NSMenu *)cellMenuForSearchField;
 

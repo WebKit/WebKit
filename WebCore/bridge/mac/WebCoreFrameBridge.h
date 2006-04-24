@@ -66,8 +66,6 @@ typedef WebCore::RenderPart WebCoreRenderPart;
 @protocol WebCoreRenderTreeCopier;
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
-@protocol WebCoreFileButton;
-@protocol WebCoreFileButtonDelegate;
 
 extern NSString *WebCorePageCacheStateKey;
 
@@ -162,6 +160,11 @@ typedef enum {
     ObjectElementFrame,
     ObjectElementPlugin,
 } ObjectElementType;
+
+@protocol WebCoreOpenPanelResultListener <NSObject>
+- (void)chooseFilename:(NSString *)fileName;
+- (void)cancel;
+@end
 
 // WebCoreFrameBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also
@@ -535,6 +538,7 @@ typedef enum {
 - (BOOL)canRunBeforeUnloadConfirmPanel;
 - (BOOL)runBeforeUnloadConfirmPanelWithMessage:(NSString *)message;
 - (void)addMessageToConsole:(NSDictionary *)message;
+- (void)runOpenPanelForFileButtonWithResultListener:(id <WebCoreOpenPanelResultListener>)resultListener;
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders;
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)data;
@@ -607,8 +611,6 @@ typedef enum {
 - (BOOL)textField:(DOMHTMLInputElement *)element doCommandBySelector:(SEL)commandSelector;
 - (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event;
 
-- (NSView <WebCoreFileButton> *)fileButtonWithDelegate:(id <WebCoreFileButtonDelegate>)delegate;
-
 - (void)setHasBorder:(BOOL)hasBorder;
 
 - (WebCoreKeyboardUIMode)keyboardUIMode;
@@ -677,18 +679,3 @@ typedef enum {
 - (NSObject *)nodeWithName:(NSString *)name position:(NSPoint)p rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children;
 @end
 
-@protocol WebCoreFileButton <NSObject>
-- (void)setFilename:(NSString *)filename;
-- (void)performClick;
-- (NSString *)filename;
-- (float)baseline;
-- (void)setVisualFrame:(NSRect)rect;
-- (NSRect)visualFrame;
-- (NSSize)bestVisualFrameSizeForCharacterCount:(int)count;
-@end
-
-@protocol WebCoreFileButtonDelegate <NSObject>
-- (void)filenameChanged:(NSString *)filename;
-- (void)focusChanged:(BOOL)nowHasFocus;
-- (void)clicked;
-@end

@@ -1,5 +1,63 @@
 2006-04-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+        
+        - push WebFileButton and WebStringTruncator code down to WebCore
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8552
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreStringTruncator.h: Added.
+        * bridge/mac/WebCoreStringTruncator.mm: Added.
+        (stringWidth):
+        (truncateString):
+        (+[WebCoreStringTruncator widthOfString:font:]):
+        * bridge/mac/WebCoreViewFactory.h:
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (-[WebFileChooserButton initWithWidget::]):
+        (-[WebCoreFileButton positionButton]):
+        (-[WebCoreFileButton initWithWidget:]):
+        (-[WebCoreFileButton initWithFrame:]):
+        (-[WebCoreFileButton dealloc]):
+        (-[WebCoreFileButton isFlipped]):
+        (-[WebCoreFileButton drawRect:]):
+        (-[WebCoreFileButton updateLabel]):
+        (-[WebCoreFileButton setFilename:]):
+        (-[WebCoreFileButton filename]):
+        (-[WebCoreFileButton setFrameSize:]):
+        (-[WebCoreFileButton bestVisualFrameSizeForCharacterCount:]):
+        (-[WebCoreFileButton visualFrame]):
+        (-[WebCoreFileButton setVisualFrame:]):
+        (-[WebCoreFileButton baseline]):
+        (-[WebCoreFileButton beginSheet]):
+        (-[WebCoreFileButton chooseFilename:]):
+        (-[WebCoreFileButton cancel]):
+        (-[WebCoreFileButton chooseButtonPressed:]):
+        (-[WebCoreFileButton mouseDown:]):
+        (-[WebCoreFileButton acceptsFirstResponder]):
+        (-[WebCoreFileButton becomeFirstResponder]):
+        (-[WebCoreFileButton nextKeyView]):
+        (-[WebCoreFileButton previousKeyView]):
+        (-[WebCoreFileButton nextValidKeyView]):
+        (-[WebCoreFileButton previousValidKeyView]):
+        (-[WebCoreFileButton performClick]):
+        (-[WebFileChooserButton initWithWidget:]):
+        (-[WebFileChooserButton nextValidKeyView]):
+        (-[WebFileChooserButton previousValidKeyView]):
+        (-[WebFileChooserButton resignFirstResponder]):
+        (KWQFileButton::KWQFileButton):
+        (KWQFileButton::setFilename):
+        (KWQFileButton::click):
+        (KWQFileButton::sizeForCharacterWidth):
+        (KWQFileButton::frameGeometry):
+        (KWQFileButton::setFrameGeometry):
+        (KWQFileButton::baselinePosition):
+        (KWQFileButton::filenameChanged):
+
+2006-04-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
         - remove WebCoreCookieAdapter, instead make mac implementation of

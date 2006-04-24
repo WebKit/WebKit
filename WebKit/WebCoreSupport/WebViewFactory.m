@@ -112,6 +112,16 @@
     return UI_STRING("Submit", "default label for Submit buttons in forms on web pages");
 }
 
+- (NSString *)fileButtonChooseFileLabel
+{
+    return UI_STRING("Choose File", "title for file button used in HTML forms");
+}
+
+- (NSString *)fileButtonNoFileSelectedLabel
+{
+    return UI_STRING("no file selected", "text to display in file button used in HTML forms when no file is selected");
+}
+
 - (NSMenu *)cellMenuForSearchField
 {
     NSMenu* cellMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
