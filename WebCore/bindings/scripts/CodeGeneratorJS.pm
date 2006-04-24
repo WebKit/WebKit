@@ -489,27 +489,7 @@ sub GenerateImplementation
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
                                
-    # Add Constructor class
-    push(@implContent, "class ${className}Constructor : public DOMObject {\n");
-    push(@implContent, "public:\n");
-    push(@implContent, "    ${className}Constructor(ExecState* exec) { " . 
-                       "setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype()); }\n");
-    push(@implContent, "    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);\n");
-    push(@implContent, "    JSValue* getValueProperty(ExecState*, int token) const;\n");
-    push(@implContent, "    virtual const ClassInfo* classInfo() const { return &info; }\n");
-    push(@implContent, "    static const ClassInfo info;\n");    
-    push(@implContent, "};\n\n");
-    
-    push(@implContent, "const ClassInfo ${className}Constructor::info = { \"${interfaceName}Constructor\", 0, " .
-                       "&${className}ConstructorTable, 0 };\n\n");
-                       
-    push(@implContent, "bool ${className}Constructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n{\n");
-    push(@implContent, "    return getStaticValueSlot<${className}Constructor, DOMObject>" .
-                       "(exec, &${className}ConstructorTable, this, propertyName, slot);\n}\n\n");
-
-    push(@implContent, "JSValue* ${className}Constructor::getValueProperty(ExecState*, int token) const\n{\n");
-    push(@implContent, "    // The token is the numeric value of its associated constant\n");
-    push(@implContent, "    return jsNumber(token);\n}\n\n");
+    push(@implContent, constructorFor($className, $interfaceName));
   }
   
   # - Add functions and constants to a hashtable definition
@@ -556,18 +536,7 @@ sub GenerateImplementation
                                \@hashSpecials, \@hashParameters);
 
     if($numFunctions > 0) {
-        push(@implContent, "class ${className}ProtoFunc : public InternalFunctionImp {\n");
-        push(@implContent, "public:\n");
-        push(@implContent, "    ${className}ProtoFunc(ExecState* exec, int i, int len, const Identifier& name)\n");
-        push(@implContent, "    : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)\n");
-        push(@implContent, "    , id(i)\n");
-        push(@implContent, "    {\n");
-        push(@implContent, "        put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum);\n");
-        push(@implContent, "    }\n");
-        push(@implContent, "    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args);\n");
-        push(@implContent, "private:\n");
-        push(@implContent, "    int id;\n");
-        push(@implContent, "};\n\n");
+        push(@implContent, protoFuncFor($className));
     }
 
     push(@implContent, "const ClassInfo ${className}Proto::info = { \"$className\", 0, &${className}ProtoTable, 0 };\n\n");
@@ -651,7 +620,7 @@ sub GenerateImplementation
   # Attributes
   if ($numAttributes ne 0) {
     if ($dataNode->extendedAttributes->{"IncludeAttributesInPropertyLookup"}) {
-      push(@implContent, getOwnPropertySlotIncludeAttributes($className, $parentClassName, $implClassName));
+      push(@implContent, getOwnPropertySlotIncludeAttributesFor($className, $parentClassName, $implClassName));
     } else {
       push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
       push(@implContent, "{\n");
@@ -788,14 +757,7 @@ sub GenerateImplementation
   }
   
   if (!$hasParent) {
-    push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, $implClassName* obj)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    return KJS::cacheDOMObject<$implClassName, $className>(exec, obj);\n");
-    push(@implContent, "}\n");
-    push(@implContent, "$implClassName* to${interfaceName}(KJS::JSValue* val)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    return val->isObject(&${className}::info) ? static_cast<$className*>(val)->impl() : 0;\n");
-    push(@implContent, "}\n");
+    push(@implContent, toFunctionsFor($className, $implClassName, $interfaceName));
   }
 
   push(@implContent, "\n}\n");
@@ -1245,49 +1207,129 @@ sub WriteData
   }
 }
 
-sub getOwnPropertySlotIncludeAttributes
+sub getOwnPropertySlotIncludeAttributesFor
 {
     my $className = shift;
     my $parentClassName = shift;
     my $implClassName = shift;
     
-    my $implContent = "";
-    
-    $implContent .= "JSValue* ${className}::attributeGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)\n";
-    $implContent .= "{\n";
-    $implContent .= "    ${className}* thisObj = static_cast<${className}*>(slot.slotBase());\n";
-    $implContent .= "    return jsStringOrNull(static_cast<${implClassName}*>(thisObj->impl())->getAttributeNS(nullAtom, propertyName));\n";
-    $implContent .= "}\n\n";
+my $implContent = << "EOF";
+JSValue* ${className}::attributeGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+{
+    ${className}* thisObj = static_cast<${className}*>(slot.slotBase());
+    return jsStringOrNull(static_cast<${implClassName}*>(thisObj->impl())->getAttributeNS(nullAtom, propertyName));
+}
 
-    $implContent .= "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n";
-    $implContent .= "{\n";
-    $implContent .= "    const HashEntry* entry = Lookup::findEntry(&${className}Table, propertyName);\n";
-    $implContent .= "    if (entry) {\n";
-    $implContent .= "        slot.setStaticEntry(this, entry, staticValueGetter<${className}>);\n";
-    $implContent .= "        return true;\n";
-    $implContent .= "    }\n\n";
+bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    const HashEntry* entry = Lookup::findEntry(&${className}Table, propertyName);
+    if (entry) {
+        slot.setStaticEntry(this, entry, staticValueGetter<${className}>);
+        return true;
+    }
+
+    // We have to check in $parentClassName before giving access to attributes, otherwise
+    // properties like onload would return string (attribute) values instead of
+    // object (listener function) values.
+    if (${parentClassName}::getOwnPropertySlot(exec, propertyName, slot))
+        return true;
+
+    JSValue* proto = prototype();
+    if (proto->isObject() && static_cast<JSObject *>(proto)->hasProperty(exec, propertyName))
+        return false;
+
+    // FIXME: do we really want to do this attribute lookup thing? Mozilla does not do it,
+    // and it seems like it could interfere with XBL.
+    String attr = static_cast<Element*>(impl())->getAttributeNS(nullAtom, propertyName);
+    if (!attr.isNull()) {
+      slot.setCustom(this, attributeGetter);
+      return true;
+    }
     
-    $implContent .= "    // We have to check in $parentClassName before giving access to attributes, otherwise\n";
-    $implContent .= "    // properties like onload would return string (attribute) values instead of\n";
-    $implContent .= "    // object (listener function) values.\n";
-    $implContent .= "    if (${parentClassName}::getOwnPropertySlot(exec, propertyName, slot))\n";
-    $implContent .= "        return true;\n\n";
+    return false;
+}
+
+EOF
+
+    return $implContent;
+}
+
+sub constructorFor
+{
+    my $className = shift;
+    my $interfaceName = shift;
     
-    $implContent .= "    JSValue* proto = prototype();\n";
-    $implContent .= "    if (proto->isObject() && static_cast<JSObject *>(proto)->hasProperty(exec, propertyName))\n";
-    $implContent .= "        return false;\n";
+my $implContent = << "EOF";
+class ${className}Constructor : public DOMObject {
+public:
+    ${className}Constructor(ExecState* exec) 
+    { 
+        setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype()); 
+    }
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    JSValue* getValueProperty(ExecState*, int token) const;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;    
+};
+
+const ClassInfo ${className}Constructor::info = { "${interfaceName}Constructor", 0, &${className}ConstructorTable, 0 };
+
+bool ${className}Constructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<${className}Constructor, DOMObject>(exec, &${className}ConstructorTable, this, propertyName, slot);
+}
+
+JSValue* ${className}Constructor::getValueProperty(ExecState*, int token) const
+{
+    // The token is the numeric value of its associated constant
+    return jsNumber(token);
+}
+
+EOF
+
+    return $implContent;
+}
+
+sub protoFuncFor
+{
+    my $className = shift;
     
-    $implContent .= "    // FIXME: do we really want to do this attribute lookup thing? Mozilla doesn't do it,\n";
-    $implContent .= "    // and it seems like it could interfere with XBL.\n";
-    $implContent .= "    String attr = static_cast<Element*>(impl())->getAttributeNS(nullAtom, propertyName);\n";
-    $implContent .= "    if (!attr.isNull()) {\n";
-    $implContent .= "        slot.setCustom(this, attributeGetter);\n";
-    $implContent .= "        return true;\n";
-    $implContent .= "    }\n\n";
-    
-    $implContent .= "    return false;\n";
-    $implContent .= "}\n\n";
-    
+my $implContent = << "EOF";
+class ${className}ProtoFunc : public InternalFunctionImp {
+public:
+    ${className}ProtoFunc(ExecState* exec, int i, int len, const Identifier& name)
+    : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
+    , id(i)
+    {
+        put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum);
+    }
+    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List& args);
+private:
+    int id;
+};
+
+EOF
+  
+    return $implContent;
+}
+
+sub toFunctionsFor
+{
+    my $className = shift;
+    my $implClassName = shift;
+    my $interfaceName = shift;
+
+my $implContent = << "EOF";
+KJS::JSValue* toJS(KJS::ExecState* exec, $implClassName* obj)
+{
+    return KJS::cacheDOMObject<$implClassName, $className>(exec, obj);
+}
+$implClassName* to${interfaceName}(KJS::JSValue* val)
+{
+    return val->isObject(&${className}::info) ? static_cast<$className*>(val)->impl() : 0;
+}
+EOF
+
     return $implContent;
 }
 

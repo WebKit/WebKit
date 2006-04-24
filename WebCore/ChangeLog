@@ -1,3 +1,15 @@
+2006-04-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Took the larger snippets of C++ in the code generator and broke
+        them into HERE documents in the hopes of improving readability.
+        
+        * bindings/scripts/CodeGeneratorJS.pm: I indented variable names
+        level with their corresponding HERE documents to clearly
+        "sandwich" the HERE documents between opening and closing EOF
+        statements.
+
 2006-04-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
