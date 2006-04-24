@@ -363,12 +363,13 @@ static bool isTableCell(Node* node)
 
 static bool shouldEmitTabBeforeNode(Node* node)
 {
+    RenderObject* r = node->renderer();
+    
     // Table cells are delimited by tabs.
-    if (!isTableCell(node))
+    if (!r || !isTableCell(node))
         return false;
     
     // Want a tab before every cell other than the first one
-    RenderObject* r = node->renderer();
     RenderTableCell* rc = static_cast<RenderTableCell*>(r);
     RenderTable* t = rc->table();
     return t && (t->cellBefore(rc) || t->cellAbove(rc));

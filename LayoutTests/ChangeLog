@@ -1,3 +1,16 @@
+2006-04-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Eric.
+
+        Layout test for <rdar://problem/4513383> REGRESSION: Crash in 
+        WebCore::shouldEmitTabBeforeNode() when iterating through document 
+        text
+
+        * fast/text/textIteratorNilRenderer-expected.checksum: Added.
+        * fast/text/textIteratorNilRenderer-expected.png: Added.
+        * fast/text/textIteratorNilRenderer-expected.txt: Added.
+        * fast/text/textIteratorNilRenderer.html: Added.
+
 2006-04-23  Rob Buis  <buis@kde.org>
 
         Reviewed by hyatt.  Landed by eseidel.
