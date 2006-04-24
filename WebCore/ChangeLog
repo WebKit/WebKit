@@ -1,3 +1,13 @@
+2006-04-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim O.
+
+        Fix to send textFieldDidBeginEditing on the first editing change instead of on focus.
+        This matches our old behavior.
+
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::dispatchFocusEvent):
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::subtreeHasChanged):
+
 2006-04-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Eric.

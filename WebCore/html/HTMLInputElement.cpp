@@ -180,10 +180,8 @@ void HTMLInputElement::focus()
 
 void HTMLInputElement::dispatchFocusEvent()
 {
-    if (isNonWidgetTextField() && document()->frame()) {
+    if (isNonWidgetTextField())
         setAutofilled(false);
-        document()->frame()->textFieldDidBeginEditing(static_cast<Element*>(this));
-    }
     HTMLGenericFormElement::dispatchFocusEvent();
 }
 

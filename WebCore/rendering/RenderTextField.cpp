@@ -202,6 +202,8 @@ void RenderTextField::subtreeHasChanged()
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
     if (input) {
         input->setValueFromRenderer(text());
+        if (!isEdited())
+            document()->frame()->textFieldDidBeginEditing(input);
         setEdited(true);
         document()->frame()->textDidChangeInTextField(input);
     }
