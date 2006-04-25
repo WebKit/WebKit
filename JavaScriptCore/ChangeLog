@@ -1763,7 +1763,7 @@
 
         Reviewed by Maciej, Eric.
 
-        - WebCore half of fix for <rdar://problem/4176077> CrashTracer: 6569
+        - JavaScriptCore half of fix for <rdar://problem/4176077> CrashTracer: 6569
         crashes in DashboardClient at com.apple.JavaScriptCore:
         KJS::Bindings::ObjcFallbackObjectImp::type()
 
