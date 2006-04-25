@@ -319,6 +319,7 @@ input {
     background-color: white;
     border: 2px inset;
     -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
 }
 
 input[type="password"], input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {
