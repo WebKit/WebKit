@@ -33,6 +33,7 @@
 
 @interface WebPluginDocumentView : NSView <WebDocumentView, WebDocumentRepresentation>
 {
+    NSView *pluginView;
     WebPluginController *pluginController;
     WebPluginPackage *plugin;
     WebDataSource *_dataSource;

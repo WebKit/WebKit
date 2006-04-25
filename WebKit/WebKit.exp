@@ -82,6 +82,7 @@ _WebPlugInAttributesKey
 _WebPlugInContainerKey
 _WebPlugInModeKey
 _WebPluginWillPresentNativeUserInterfaceNotification
+_WebPlugInShouldLoadMainResourceKey
 
 ##
 ## Carbon Support

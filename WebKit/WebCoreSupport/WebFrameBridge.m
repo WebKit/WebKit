@@ -898,6 +898,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             attributes, WebPlugInAttributesKey,
             pluginController, WebPlugInContainerKey,
             [NSNumber numberWithInt:WebPlugInModeEmbed], WebPlugInModeKey,
+            [NSNumber numberWithBool:YES], WebPlugInShouldLoadMainResourceKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
@@ -950,6 +951,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             attributes, WebPlugInAttributesKey,
             [NSNumber numberWithInt:WebPlugInModeEmbed], WebPlugInModeKey,
             URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
+            [NSNumber numberWithBool:YES], WebPlugInShouldLoadMainResourceKey,
             nil];
         [attributes release];
         view = [wd webView:wv plugInViewWithArguments:arguments];

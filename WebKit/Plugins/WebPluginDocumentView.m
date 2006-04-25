@@ -35,6 +35,8 @@
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebPlugin.h>
+#import <WebKit/WebPluginPrivate.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginPackage.h>
@@ -54,6 +56,7 @@
 
 - (void)dealloc
 {
+    [pluginView release];
     [plugin release];
     [pluginController destroyAllPlugins];
     [pluginController release];
@@ -98,31 +101,37 @@
         attributes,         WebPlugInAttributesKey,
         pluginController,   WebPlugInContainerKey,
         [NSNumber numberWithInt:WebPlugInModeFull], WebPlugInModeKey,
+        [NSNumber numberWithBool:NO], WebPlugInShouldLoadMainResourceKey, // NO because we're already loading the data!
         nil];
     [attributes release];
-    NSView *view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:plugin];
+    pluginView = [[WebPluginController plugInViewWithArguments:arguments fromPluginPackage:plugin] retain];
     [arguments release];
 
-    ASSERT(view != nil);
+    ASSERT(pluginView != nil);
 
-    [self addSubview:view];
-    [pluginController addPlugin:view];
-    [view setFrame:[self frame]];
-    [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [self addSubview:pluginView];
+    [pluginController addPlugin:pluginView];
+    [pluginView setFrame:[self bounds]];
+    [pluginView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    
+    if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidReceiveResponse:)])
+        [pluginView webPlugInMainResourceDidReceiveResponse:[dataSource response]];
 }
 
-- (void)dataSourceUpdated:(WebDataSource *)dataSource;
+- (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
-    // Cancel the load since WebKit plug-ins do their own loading.
-    NSURLResponse *response = [dataSource response];
-    // FIXME: See <rdar://problem/4258008>
-    NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
-                                                    contentURL:[response URL]
-                                                 pluginPageURL:nil
-                                                    pluginName:[plugin name]
-                                                      MIMEType:[response MIMEType]];
-    [dataSource _stopLoadingWithError:error];
-    [error release];    
+    if (![pluginView respondsToSelector:@selector(webPlugInMainResourceDidReceiveData:)]) {
+        // Cancel the load since this plug-in does its own loading.
+        NSURLResponse *response = [dataSource response];
+        // FIXME: See <rdar://problem/4258008>
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
+                                                        contentURL:[response URL]
+                                                     pluginPageURL:nil
+                                                        pluginName:[plugin name]
+                                                          MIMEType:[response MIMEType]];
+        [dataSource _stopLoadingWithError:error];
+        [error release];
+    }
 }
 
 - (void)setNeedsLayout:(BOOL)flag
@@ -173,17 +182,20 @@
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
-    
+    if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidReceiveData:)])
+        [pluginView webPlugInMainResourceDidReceiveData:data];
 }
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
-    
+    if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidFailWithError:)])
+        [pluginView webPlugInMainResourceDidFailWithError:error];
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    
+    if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidFinishLoading)])
+        [pluginView webPlugInMainResourceDidFinishLoading];
 }
 
 - (BOOL)canProvideDocumentSource

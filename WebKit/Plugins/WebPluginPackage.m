@@ -31,10 +31,11 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 
-NSString *WebPlugInBaseURLKey =     @"WebPlugInBaseURLKey";
-NSString *WebPlugInAttributesKey =  @"WebPlugInAttributesKey";
-NSString *WebPlugInContainerKey =   @"WebPlugInContainerKey";
-NSString *WebPlugInModeKey =        @"WebPlugInModeKey";
+NSString *WebPlugInBaseURLKey =                 @"WebPlugInBaseURLKey";
+NSString *WebPlugInAttributesKey =              @"WebPlugInAttributesKey";
+NSString *WebPlugInContainerKey =               @"WebPlugInContainerKey";
+NSString *WebPlugInModeKey =                    @"WebPlugInModeKey";
+NSString *WebPlugInShouldLoadMainResourceKey =  @"WebPlugInShouldLoadMainResourceKey";
 
 /*!
     @constant WebPlugInContainingElementKey The DOMElement that was used to specify
