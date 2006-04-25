@@ -316,6 +316,10 @@ Length* StringImpl::toCoordsArray(int& len) const
 
 Length* StringImpl::toLengthArray(int& len) const
 {
+    if (!length()) {
+        len = 1;
+        return 0;
+    }
     DeprecatedString str(m_data, m_length);
     str = str.simplifyWhiteSpace();
 

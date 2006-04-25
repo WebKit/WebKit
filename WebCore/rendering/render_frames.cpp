@@ -147,6 +147,7 @@ void RenderFrameSet::layout( )
         int* gridLayout = m_gridLayout[k];
 
         if (grid) {
+            assert(gridLen);
             // First we need to investigate how many columns of each type we have and
             // how much space these columns are going to require.
             for (int i = 0; i < gridLen; ++i) {
