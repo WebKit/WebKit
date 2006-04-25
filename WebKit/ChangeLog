@@ -1,5 +1,18 @@
 2006-04-24  Maciej Stachowiak  <mjs@apple.com>
 
+        Build fix:
+        
+        - move some prematurely code back
+
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge fini]):
+        (-[WebFrameBridge _preferences]):
+        (-[WebFrameBridge _retrieveKeyboardUIModeFromPreferences:]):
+        (-[WebFrameBridge keyboardUIMode]):
+
+2006-04-24  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - move more code from WebFrameBridge to WebCoreFrameBridge

@@ -179,8 +179,6 @@ typedef enum {
 {
     WebCoreMacFrame *m_frame;
     BOOL _shouldCreateRenderers;
-    WebCoreKeyboardUIMode _keyboardUIMode;
-    BOOL _keyboardUIModeAccessed;
 }
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;

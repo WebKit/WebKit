@@ -430,13 +430,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)fini
 {
-    if (_keyboardUIModeAccessed) {
-        [[NSDistributedNotificationCenter defaultCenter] 
-            removeObserver:self name:KeyboardUIModeDidChangeNotification object:nil];
-        [[NSNotificationCenter defaultCenter] 
-            removeObserver:self name:WebPreferencesChangedNotification object:nil];
-    }
-
     [self removeFromFrame];
 }
 
@@ -2427,49 +2420,6 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter
 {
     return [isPreviousCharacter ? _getPreSmartSet() : _getPostSmartSet() characterIsMember:c];
-}
-
-#define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
-#define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
-#define UniversalAccessDomain CFSTR("com.apple.universalaccess")
-
-- (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
-{
-    CFPreferencesAppSynchronize(UniversalAccessDomain);
-
-    Boolean keyExistsAndHasValidFormat;
-    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &keyExistsAndHasValidFormat);
-    
-    // The keyboard access mode is reported by two bits:
-    // Bit 0 is set if feature is on
-    // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists
-    // We require both bits to be on.
-    // I do not know that we would ever get one bit on and the other off since
-    // checking the checkbox in system preferences which is marked as "Turn on full keyboard access"
-    // turns on both bits.
-    _keyboardUIMode = (mode & 0x2) ? WebCoreKeyboardAccessFull : WebCoreKeyboardAccessDefault;
-    
-    // check for tabbing to links
-    if ([[self _preferences] tabsToLinks]) {
-        _keyboardUIMode |= WebCoreKeyboardAccessTabsToLinks;
-    }
-}
-
-- (WebCoreKeyboardUIMode)keyboardUIMode
-{
-    if (!_keyboardUIModeAccessed) {
-        _keyboardUIModeAccessed = YES;
-        [self _retrieveKeyboardUIModeFromPreferences:nil];
-        
-        [[NSDistributedNotificationCenter defaultCenter] 
-            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
-            name:KeyboardUIModeDidChangeNotification object:nil];
-
-        [[NSNotificationCenter defaultCenter] 
-            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
-                   name:WebPreferencesChangedNotification object:nil];
-    }
-    return _keyboardUIMode;
 }
 
 @end

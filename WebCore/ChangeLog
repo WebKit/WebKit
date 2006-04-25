@@ -1,5 +1,15 @@
 2006-04-24  Maciej Stachowiak  <mjs@apple.com>
 
+        Build fix:
+        
+        - move some prematurely code back
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge fini]):
+
+2006-04-24  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - move more code from WebFrameBridge to WebCoreFrameBridge
