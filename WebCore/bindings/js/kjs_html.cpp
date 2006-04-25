@@ -434,6 +434,7 @@ const ClassInfo JSHTMLElement::col_info = { "HTMLTableColElement", &JSHTMLElemen
 const ClassInfo JSHTMLElement::dir_info = { "HTMLDirectoryElement", &JSHTMLElement::info, &HTMLDirectoryElementTable, 0 };
 const ClassInfo JSHTMLElement::div_info = { "HTMLDivElement", &JSHTMLElement::info, &HTMLDivElementTable, 0 };
 const ClassInfo JSHTMLElement::dl_info = { "HTMLDListElement", &JSHTMLElement::info, &HTMLDListElementTable, 0 };
+const ClassInfo JSHTMLElement::embed_info = { "HTMLEmbedElement", &JSHTMLElement::info, &HTMLEmbedElementTable, 0 };
 const ClassInfo JSHTMLElement::fieldSet_info = { "HTMLFieldSetElement", &JSHTMLElement::info, &HTMLFieldSetElementTable, 0 };
 const ClassInfo JSHTMLElement::font_info = { "HTMLFontElement", &JSHTMLElement::info, &HTMLFontElementTable, 0 };
 const ClassInfo JSHTMLElement::form_info = { "HTMLFormElement", &JSHTMLElement::info, &HTMLFormElementTable, 0 };
@@ -495,6 +496,7 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(dirTag.localName().impl(), &dir_info);
         classInfoMap.set(divTag.localName().impl(), &div_info);
         classInfoMap.set(dlTag.localName().impl(), &dl_info);
+        classInfoMap.set(embedTag.localName().impl(), &embed_info);
         classInfoMap.set(fieldsetTag.localName().impl(), &fieldSet_info);
         classInfoMap.set(fontTag.localName().impl(), &font_info);
         classInfoMap.set(formTag.localName().impl(), &form_info);
@@ -595,6 +597,7 @@ const JSHTMLElement::Accessors JSHTMLElement::img_accessors = { &JSHTMLElement::
 const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::param_accessors = { &JSHTMLElement::paramGetter, &JSHTMLElement::paramSetter };
 const JSHTMLElement::Accessors JSHTMLElement::applet_accessors = { &JSHTMLElement::appletGetter, &JSHTMLElement::appletSetter };
+const JSHTMLElement::Accessors JSHTMLElement::embed_accessors = { &JSHTMLElement::embedGetter, &JSHTMLElement::embedSetter };
 const JSHTMLElement::Accessors JSHTMLElement::map_accessors = { &JSHTMLElement::mapGetter, &JSHTMLElement::mapSetter };
 const JSHTMLElement::Accessors JSHTMLElement::area_accessors = { &JSHTMLElement::areaGetter, &JSHTMLElement::areaSetter };
 const JSHTMLElement::Accessors JSHTMLElement::script_accessors = { &JSHTMLElement::scriptGetter, &JSHTMLElement::scriptSetter };
@@ -629,6 +632,7 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(dirTag.localName().impl(), &dir_accessors);
         accessorMap.add(divTag.localName().impl(), &div_accessors);
         accessorMap.add(dlTag.localName().impl(), &dl_accessors);
+        accessorMap.add(embedTag.localName().impl(), &embed_accessors);
         accessorMap.add(fieldsetTag.localName().impl(), &fieldSet_accessors);
         accessorMap.add(fontTag.localName().impl(), &font_accessors);
         accessorMap.add(formTag.localName().impl(), &form_accessors);
@@ -1021,6 +1025,14 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   object        KJS::JSHTMLElement::AppletObject          DontDelete
   vspace        KJS::JSHTMLElement::AppletVspace          DontDelete
   width         KJS::JSHTMLElement::AppletWidth           DontDelete
+@end
+@begin HTMLEmbedElementTable 6
+  align         KJS::JSHTMLElement::EmbedAlign           DontDelete
+  height        KJS::JSHTMLElement::EmbedHeight          DontDelete
+  name          KJS::JSHTMLElement::EmbedName            DontDelete
+  src           KJS::JSHTMLElement::EmbedSrc             DontDelete
+  type          KJS::JSHTMLElement::EmbedType            DontDelete
+  width         KJS::JSHTMLElement::EmbedWidth           DontDelete
 @end
 @begin HTMLMapElementTable 2
   areas         KJS::JSHTMLElement::MapAreas              DontDelete|ReadOnly
@@ -1905,6 +1917,20 @@ JSValue *JSHTMLElement::appletGetter(ExecState* exec, int token) const
         case AppletObject:          return jsString(applet.object());
         case AppletVspace:          return jsString(applet.vspace());
         case AppletWidth:           return jsString(applet.width());
+    }
+    return jsUndefined();
+}
+
+JSValue *JSHTMLElement::embedGetter(ExecState* exec, int token) const
+{
+    HTMLEmbedElement& embed = *static_cast<HTMLEmbedElement*>(impl());
+    switch (token) {
+        case EmbedAlign:           return jsString(embed.align());
+        case EmbedHeight:          return jsString(embed.height());
+        case EmbedName:            return jsString(embed.name());
+        case EmbedSrc:             return jsString(embed.src());
+        case EmbedType:            return jsString(embed.type());
+        case EmbedWidth:           return jsString(embed.width());
     }
     return jsUndefined();
 }
@@ -2920,6 +2946,19 @@ void JSHTMLElement::appletSetter(ExecState *exec, int token, JSValue *value, con
         case AppletObject:          { applet.setObject(str); return; }
         case AppletVspace:          { applet.setVspace(str); return; }
         case AppletWidth:           { applet.setWidth(str); return; }
+    }
+}
+
+void JSHTMLElement::embedSetter(ExecState*, int token, JSValue*, const WebCore::String& str)
+{
+    HTMLEmbedElement& embed = *static_cast<HTMLEmbedElement*>(impl());
+    switch (token) {
+        case EmbedAlign:           { embed.setAlign(str); return; }
+        case EmbedHeight:          { embed.setHeight(str); return; }
+        case EmbedName:            { embed.setName(str); return; }
+        case EmbedSrc:             { embed.setSrc(str); return; }
+        case EmbedType:            { embed.setType(str); return; }
+        case EmbedWidth:           { embed.setWidth(str); return; }
     }
 }
 

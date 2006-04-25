@@ -1,3 +1,88 @@
+2006-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - Removed special handling of attributes in the DOM. To match
+        WinIE, we used to make all attributes available as properties of
+        their elements in the DOM, but that has caused us more
+        compatibility woes than it has solved, so, after talking with Darin
+        and Maciej, I'm taking it out. (Firefox does not support it.)
+
+        A layout test regression caused by this change led me to do the
+        following as well:
+        
+        - Implemented DOM properties missing on EMBED elements: align, height,
+        name, width, src, type. Since align, height, name, and width are
+        common to all plugin elements, I factored them and some other common
+        functionality out into a new abstract base class, HTMLPlugInElement.
+
+        - Removed extraneous attribute-to-style mappings on EMBED elements:
+        valign, border. Why they were there in the first place is a question
+        for the ages. Neither FF nor IE supports them.
+
+        * bindings/js/kjs_dom.cpp:
+        (KJS::getRuntimeObject):
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::JSHTMLElement::embedGetter):
+        (KJS::JSHTMLElement::embedSetter):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Element.idl:
+        * html/html_objectimpl.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement):
+        (WebCore::HTMLPlugInElement::align):
+        (WebCore::HTMLPlugInElement::setAlign):
+        (WebCore::HTMLPlugInElement::height):
+        (WebCore::HTMLPlugInElement::setHeight):
+        (WebCore::HTMLPlugInElement::name):
+        (WebCore::HTMLPlugInElement::setName):
+        (WebCore::HTMLPlugInElement::width):
+        (WebCore::HTMLPlugInElement::setWidth):
+        (WebCore::HTMLPlugInElement::mapToEntry):
+        (WebCore::HTMLPlugInElement::parseMappedAttribute):
+        (WebCore::HTMLPlugInElement::checkDTD):
+        (WebCore::HTMLAppletElement::HTMLAppletElement):
+        (WebCore::HTMLAppletElement::~HTMLAppletElement):
+        (WebCore::HTMLAppletElement::parseMappedAttribute):
+        (WebCore::HTMLAppletElement::insertedIntoDocument):
+        (WebCore::HTMLAppletElement::removedFromDocument):
+        (WebCore::HTMLAppletElement::getInstance):
+        (WebCore::HTMLAppletElement::closeRenderer):
+        (WebCore::HTMLAppletElement::detach):
+        (WebCore::HTMLEmbedElement::HTMLEmbedElement):
+        (WebCore::HTMLEmbedElement::~HTMLEmbedElement):
+        (WebCore::HTMLEmbedElement::getInstance):
+        (WebCore::HTMLEmbedElement::mapToEntry):
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        (WebCore::HTMLEmbedElement::attach):
+        (WebCore::HTMLEmbedElement::detach):
+        (WebCore::HTMLEmbedElement::insertedIntoDocument):
+        (WebCore::HTMLEmbedElement::removedFromDocument):
+        (WebCore::HTMLEmbedElement::src):
+        (WebCore::HTMLEmbedElement::setSrc):
+        (WebCore::HTMLEmbedElement::type):
+        (WebCore::HTMLEmbedElement::setType):
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        (WebCore::HTMLObjectElement::~HTMLObjectElement):
+        (WebCore::HTMLObjectElement::getInstance):
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+        (WebCore::HTMLObjectElement::attach):
+        (WebCore::HTMLObjectElement::closeRenderer):
+        (WebCore::HTMLObjectElement::detach):
+        (WebCore::HTMLObjectElement::insertedIntoDocument):
+        (WebCore::HTMLObjectElement::removedFromDocument):
+        (WebCore::HTMLObjectElement::recalcStyle):
+        * html/html_objectimpl.h:
+        (WebCore::HTMLPlugInElement::endTagRequirement):
+        (WebCore::HTMLAppletElement::tagPriority):
+        (WebCore::HTMLEmbedElement::tagPriority):
+        (WebCore::HTMLObjectElement::tagPriority):
+
 2006-04-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.

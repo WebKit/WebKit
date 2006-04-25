@@ -1020,21 +1020,11 @@ JSValue *getRuntimeObject(ExecState* exec, WebCore::Node* n)
         return 0;
 
 #if __APPLE__
-    if (n->hasTagName(appletTag)) {
-        HTMLAppletElement *appletElement = static_cast<HTMLAppletElement *>(n);
-        if (appletElement->getAppletInstance())
-            // The instance is owned by the applet element.
-            return new RuntimeObjectImp(appletElement->getAppletInstance());
-    }
-    else if (n->hasTagName(embedTag)) {
-        HTMLEmbedElement *embedElement = static_cast<HTMLEmbedElement *>(n);
-        if (embedElement->getEmbedInstance())
-            return new RuntimeObjectImp(embedElement->getEmbedInstance());
-    }
-    else if (n->hasTagName(objectTag)) {
-        HTMLObjectElement *objectElement = static_cast<HTMLObjectElement *>(n);
-        if (objectElement->getObjectInstance())
-            return new RuntimeObjectImp(objectElement->getObjectInstance());
+    if (n->hasTagName(objectTag) || n->hasTagName(embedTag) || n->hasTagName(appletTag)) {
+        HTMLPlugInElement *plugInElement = static_cast<HTMLPlugInElement *>(n);
+        if (plugInElement->getInstance())
+            // The instance is owned by the PlugIn element.
+            return new RuntimeObjectImp(plugInElement->getInstance());
     }
 #endif
 

@@ -1,3 +1,19 @@
+2006-04-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        Test for the DOM properties supported by object, embed, attribute:
+        * fast/dom/plugin-attributes-enumeration-expected.txt: Added.
+        * fast/dom/plugin-attributes-enumeration.html: Added.
+        
+        Test for setting attributes through DOM properties:
+        * plugins/embed-attributes-setting-expected.txt: Added.
+        * plugins/embed-attributes-setting.html: Added.
+        
+        Test for the special attribute-to-style mappings on embed.
+        * plugins/embed-attributes-style-expected.txt: Added.
+        * plugins/embed-attributes-style.html: Added.
+
 2006-04-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.

@@ -354,11 +354,6 @@ sub GenerateHeader
     push(@headerContent, "    RefPtr<$implClassName> m_impl;\n");
   }
   
-  if ($dataNode->extendedAttributes->{"IncludeAttributesInPropertyLookup"}) {
-    push(@headerContent, "private:\n");
-    push(@headerContent, "    static KJS::JSValue* attributeGetter(KJS::ExecState*, KJS::JSObject* originalObject, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot);\n");
-  }
-
   push(@headerContent, "};\n\n");
   
   if (!$hasParent) {
@@ -619,14 +614,10 @@ sub GenerateImplementation
   
   # Attributes
   if ($numAttributes ne 0) {
-    if ($dataNode->extendedAttributes->{"IncludeAttributesInPropertyLookup"}) {
-      push(@implContent, getOwnPropertySlotIncludeAttributesFor($className, $parentClassName, $implClassName));
-    } else {
-      push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
-      push(@implContent, "{\n");
-      push(@implContent, "    return getStaticValueSlot<$className, $parentClassName>(exec, &${className}Table, this, propertyName, slot);\n");
-      push(@implContent, "}\n\n");
-    }
+    push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    return getStaticValueSlot<$className, $parentClassName>(exec, &${className}Table, this, propertyName, slot);\n");
+    push(@implContent, "}\n\n");
   
     push(@implContent, "JSValue* ${className}::getValueProperty(ExecState *exec, int token) const\n{\n");
     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
@@ -1205,53 +1196,6 @@ sub WriteData
 
     @headerContent = "";
   }
-}
-
-sub getOwnPropertySlotIncludeAttributesFor
-{
-    my $className = shift;
-    my $parentClassName = shift;
-    my $implClassName = shift;
-    
-my $implContent = << "EOF";
-JSValue* ${className}::attributeGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    ${className}* thisObj = static_cast<${className}*>(slot.slotBase());
-    return jsStringOrNull(static_cast<${implClassName}*>(thisObj->impl())->getAttributeNS(nullAtom, propertyName));
-}
-
-bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    const HashEntry* entry = Lookup::findEntry(&${className}Table, propertyName);
-    if (entry) {
-        slot.setStaticEntry(this, entry, staticValueGetter<${className}>);
-        return true;
-    }
-
-    // We have to check in $parentClassName before giving access to attributes, otherwise
-    // properties like onload would return string (attribute) values instead of
-    // object (listener function) values.
-    if (${parentClassName}::getOwnPropertySlot(exec, propertyName, slot))
-        return true;
-
-    JSValue* proto = prototype();
-    if (proto->isObject() && static_cast<JSObject *>(proto)->hasProperty(exec, propertyName))
-        return false;
-
-    // FIXME: do we really want to do this attribute lookup thing? Mozilla does not do it,
-    // and it seems like it could interfere with XBL.
-    String attr = static_cast<Element*>(impl())->getAttributeNS(nullAtom, propertyName);
-    if (!attr.isNull()) {
-      slot.setCustom(this, attributeGetter);
-      return true;
-    }
-    
-    return false;
-}
-
-EOF
-
-    return $implContent;
 }
 
 sub constructorFor

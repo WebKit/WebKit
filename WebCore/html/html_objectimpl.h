@@ -38,17 +38,53 @@ namespace WebCore {
 class HTMLFormElement;
 class HTMLImageLoader;
 
-class HTMLAppletElement : public HTMLElement
+// -------------------------------------------------------------------------
+
+class HTMLPlugInElement : public HTMLElement
+{
+public:
+    HTMLPlugInElement(const QualifiedName& tagName, Document*);
+
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(MappedAttribute*);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual bool checkDTD(const Node* newChild);
+
+    String align() const;
+    void setAlign(const String&);
+    
+    String height() const;
+    void setHeight(const String&);
+    
+    String name() const;
+    void setName(const String&);
+    
+    String width() const;
+    void setWidth(const String&);
+    
+#if __APPLE__
+    virtual KJS::Bindings::Instance* getInstance() const = 0;
+#endif
+    
+protected:
+    String oldNameAttr;
+
+#if __APPLE__
+    mutable RefPtr<KJS::Bindings::Instance> m_instance;
+#endif
+};
+
+// -------------------------------------------------------------------------
+
+class HTMLAppletElement : public HTMLPlugInElement
 {
 public:
     HTMLAppletElement(Document*);
     ~HTMLAppletElement();
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
-    virtual bool checkDTD(const Node* newChild);
 
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
     
     virtual bool rendererIsNeeded(RenderStyle*);
@@ -56,8 +92,9 @@ public:
     virtual void closeRenderer();
     virtual void detach();
     
-    String align() const;
-    void setAlign(const String&);
+#if __APPLE__
+    virtual KJS::Bindings::Instance* getInstance() const;
+#endif
 
     String alt() const;
     void setAlt(const String&);
@@ -71,14 +108,8 @@ public:
     String codeBase() const;
     void setCodeBase(const String&);
 
-    String height() const;
-    void setHeight(const String&);
-
     String hspace() const;
     void setHspace(const String&);
-
-    String name() const;
-    void setName(const String&);
 
     String object() const;
     void setObject(const String&);
@@ -86,41 +117,26 @@ public:
     String vspace() const;
     void setVspace(const String&);
 
-    String width() const;
-    void setWidth(const String&);
-
     virtual bool allParamsAvailable();
     void setupApplet() const;
-
-#if __APPLE__
-    KJS::Bindings::Instance* getAppletInstance() const;
-#endif
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
 private:
-    String oldNameAttr;
     String oldIdAttr;
-
-#if __APPLE__
-    mutable RefPtr<KJS::Bindings::Instance> m_appletInstance;
-#endif
-
     bool m_allParamsAvailable;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLEmbedElement : public HTMLElement
+class HTMLEmbedElement : public HTMLPlugInElement
 {
 public:
     HTMLEmbedElement(Document*);
     ~HTMLEmbedElement();
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 0; }
-    virtual bool checkDTD(const Node* newChild);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
@@ -135,36 +151,30 @@ public:
     virtual bool isURLAttribute(Attribute*) const;
 
 #if __APPLE__
-    KJS::Bindings::Instance* getEmbedInstance() const;
+    virtual KJS::Bindings::Instance* getInstance() const;
 #endif
+
+    String src() const;
+    void setSrc(const String&);
+
+    String type() const;
+    void setType(const String&);
 
     DeprecatedString url;
     DeprecatedString pluginPage;
     DeprecatedString serviceType;
-
-private:
-    String oldNameAttr;
-
-#if __APPLE__
-    mutable RefPtr<KJS::Bindings::Instance> m_embedInstance;
-#endif
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLObjectElement : public HTMLElement
+class HTMLObjectElement : public HTMLPlugInElement
 {
 public:
     HTMLObjectElement(Document*);
     ~HTMLObjectElement();
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 7; }
-    virtual bool checkDTD(const Node* newChild);
 
-    HTMLFormElement* form() const;
-
-    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
 
     virtual void attach();
@@ -178,19 +188,15 @@ public:
     virtual void recalcStyle(StyleChange ch);
     virtual void childrenChanged();
 
-    Document* contentDocument() const;
-    
     virtual bool isURLAttribute(Attribute*) const;
 
     bool isImageType();
 
     void renderFallbackContent();
 
-    String code() const;
-    void setCode(const String&);
-
-    String align() const;
-    void setAlign(const String&);
+#if __APPLE__
+    virtual KJS::Bindings::Instance* getInstance() const;
+#endif
 
     String archive() const;
     void setArchive(const String&);
@@ -198,26 +204,27 @@ public:
     String border() const;
     void setBorder(const String&);
 
+    String code() const;
+    void setCode(const String&);
+    
     String codeBase() const;
     void setCodeBase(const String&);
 
     String codeType() const;
     void setCodeType(const String&);
 
+    Document* contentDocument() const;
+    
     String data() const;
     void setData(const String&);
 
     bool declare() const;
     void setDeclare(bool);
 
-    String height() const;
-    void setHeight(const String&);
-
+    HTMLFormElement* form() const;
+    
     String hspace() const;
     void setHspace(const String&);
-
-    String name() const;
-    void setName(const String&);
 
     String standby() const;
     void setStandby(const String&);
@@ -234,17 +241,10 @@ public:
     String vspace() const;
     void setVspace(const String&);
 
-    String width() const;
-    void setWidth(const String&);
-
     bool isComplete() const { return m_complete; }
     void setComplete(bool complete);
     
     bool isDocNamedItem() const { return m_docNamedItem; }
-
-#if __APPLE__
-    KJS::Bindings::Instance* getObjectInstance() const;
-#endif
 
     DeprecatedString serviceType;
     DeprecatedString url;
@@ -256,12 +256,6 @@ public:
 private:
     void updateDocNamedItem();
     String oldIdAttr;
-    String oldNameAttr;
-
-#if __APPLE__
-    mutable RefPtr<KJS::Bindings::Instance> m_objectInstance;
-#endif
-
     bool m_complete;
     bool m_docNamedItem;
 };

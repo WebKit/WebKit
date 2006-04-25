@@ -1,0 +1,106 @@
+<html>
+<head>
+<style>
+    .invisible {
+        width: 0;
+        height: 0;
+    }
+</style>
+
+<script>
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test() 
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+        
+    Array.prototype.forEach = function(f) {
+        for (var i = 0; i < this.length; i++) // >
+            f(this[i]);
+    };
+    
+    var objectHash = new Object();
+    var embedHash = new Object();
+    var appletHash = new Object();
+    var intersectionHash = new Object();
+
+    var object, embed, applet;
+
+    object = document.getElementById("object");
+    embed = document.getElementById("embed");
+    applet = document.getElementById("applet");
+
+    for (var p in object)
+        if (typeof object[p] != 'function')
+            objectHash[p] = 1;
+        
+    for (var p in embed)
+        if (typeof embed[p] != 'function')
+            embedHash[p] = 1;
+
+    for (var p in applet)
+        if (typeof applet[p] != 'function')
+            appletHash[p] = 1;
+            
+    for (var p in objectHash)
+        if (embedHash[p] && appletHash[p]) // ;
+            intersectionHash[p] = 1;
+        
+    print("[OBJECT, EMBED, APPLET] share:", "green");
+    var array = new Array();
+    for (var p in intersectionHash)
+        if (typeof document.body[p] == 'undefined') // weed out items shared by all elements
+            array.push(p);
+    array.sort();
+    array.forEach(print);
+
+    print("----------");
+    print(object.tagName + " also has:", "green");
+    var array = new Array();
+    for (var p in objectHash)
+        if (!intersectionHash[p])
+            array.push(p);
+    array.sort();
+    array.forEach(print);
+            
+    print("----------");
+    print(embed.tagName + " also has:", "green");
+    var array = new Array();
+    for (var p in embedHash)
+        if (!intersectionHash[p])
+            array.push(p);
+    array.sort();
+    array.forEach(print);
+
+    print("----------");
+    var array = new Array();
+    print(applet.tagName + " also has:", "green");
+    for (var p in appletHash)
+        if (!intersectionHash[p])
+            array.push(p);
+    array.sort();
+    array.forEach(print);
+}
+</script>
+</head>
+
+<body onload="test();">
+
+<hr>
+<div id='console'></div>
+
+<object class="invisible" id="object"></object>
+<embed class="invisible" id="embed"></embed>
+<applet class="invisible" id="applet"></applet>
+
+</body>
+</html>

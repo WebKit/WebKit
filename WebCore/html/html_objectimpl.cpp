@@ -51,26 +51,52 @@ using namespace HTMLNames;
 
 // -------------------------------------------------------------------------
 
-HTMLAppletElement::HTMLAppletElement(Document *doc)
-: HTMLElement(appletTag, doc)
-, m_allParamsAvailable(false)
+HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc)
+    : HTMLElement(tagName, doc)
 {
 }
 
-HTMLAppletElement::~HTMLAppletElement()
+String HTMLPlugInElement::align() const
 {
-#if __APPLE__
-    // m_appletInstance should have been cleaned up in detach().
-    assert(!m_appletInstance);
-#endif
+    return getAttribute(alignAttr);
 }
 
-bool HTMLAppletElement::checkDTD(const Node* newChild)
+void HTMLPlugInElement::setAlign(const String& value)
 {
-    return newChild->hasTagName(paramTag) || HTMLElement::checkDTD(newChild);
+    setAttribute(alignAttr, value);
 }
 
-bool HTMLAppletElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+String HTMLPlugInElement::height() const
+{
+    return getAttribute(heightAttr);
+}
+
+void HTMLPlugInElement::setHeight(const String& value)
+{
+    setAttribute(heightAttr, value);
+}
+
+String HTMLPlugInElement::name() const
+{
+    return getAttribute(nameAttr);
+}
+
+void HTMLPlugInElement::setName(const String& value)
+{
+    setAttribute(nameAttr, value);
+}
+
+String HTMLPlugInElement::width() const
+{
+    return getAttribute(widthAttr);
+}
+
+void HTMLPlugInElement::setWidth(const String& value)
+{
+    setAttribute(widthAttr, value);
+}
+
+bool HTMLPlugInElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == widthAttr ||
         attrName == heightAttr ||
@@ -88,6 +114,45 @@ bool HTMLAppletElement::mapToEntry(const QualifiedName& attrName, MappedAttribut
     return HTMLElement::mapToEntry(attrName, result);
 }
 
+void HTMLPlugInElement::parseMappedAttribute(MappedAttribute* attr)
+{
+    if (attr->name() == widthAttr)
+        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+    else if (attr->name() == heightAttr)
+        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+    else if (attr->name() == vspaceAttr) {
+        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
+    } else if (attr->name() == hspaceAttr) {
+        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
+        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
+    } else if (attr->name() == alignAttr)
+        addHTMLAlignment(attr);
+    else
+        HTMLElement::parseMappedAttribute(attr);
+}    
+
+bool HTMLPlugInElement::checkDTD(const Node* newChild)
+{
+    return newChild->hasTagName(paramTag) || HTMLElement::checkDTD(newChild);
+}
+
+// -------------------------------------------------------------------------
+
+HTMLAppletElement::HTMLAppletElement(Document *doc)
+: HTMLPlugInElement(appletTag, doc)
+, m_allParamsAvailable(false)
+{
+}
+
+HTMLAppletElement::~HTMLAppletElement()
+{
+#if __APPLE__
+    // m_instance should have been cleaned up in detach().
+    assert(!m_instance);
+#endif
+}
+
 void HTMLAppletElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == altAttr ||
@@ -97,18 +162,6 @@ void HTMLAppletElement::parseMappedAttribute(MappedAttribute *attr)
         attr->name() == mayscriptAttr ||
         attr->name() == objectAttr) {
         // Do nothing.
-    } else if (attr->name() == widthAttr) {
-        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
-    } else if (attr->name() == heightAttr) {
-        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attr->name() == vspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-    } else if (attr->name() == hspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-    } else if (attr->name() == alignAttr) {
-        addHTMLAlignment(attr);
     } else if (attr->name() == nameAttr) {
         String newNameAttr = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {
@@ -126,9 +179,9 @@ void HTMLAppletElement::parseMappedAttribute(MappedAttribute *attr)
         }
         oldIdAttr = newIdAttr;
         // also call superclass
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLPlugInElement::parseMappedAttribute(attr);
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLPlugInElement::parseMappedAttribute(attr);
 }
 
 void HTMLAppletElement::insertedIntoDocument()
@@ -139,7 +192,7 @@ void HTMLAppletElement::insertedIntoDocument()
         doc->addDocExtraNamedItem(oldIdAttr);
     }
 
-    HTMLElement::insertedIntoDocument();
+    HTMLPlugInElement::insertedIntoDocument();
 }
 
 void HTMLAppletElement::removedFromDocument()
@@ -150,7 +203,7 @@ void HTMLAppletElement::removedFromDocument()
         doc->removeDocExtraNamedItem(oldIdAttr);
     }
 
-    HTMLElement::removedFromDocument();
+    HTMLPlugInElement::removedFromDocument();
 }
 
 bool HTMLAppletElement::rendererIsNeeded(RenderStyle *style)
@@ -193,14 +246,14 @@ RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle 
 }
 
 #if __APPLE__
-KJS::Bindings::Instance *HTMLAppletElement::getAppletInstance() const
+KJS::Bindings::Instance *HTMLAppletElement::getInstance() const
 {
     Frame *frame = document()->frame();
     if (!frame || !frame->javaEnabled())
         return 0;
 
-    if (m_appletInstance)
-        return m_appletInstance.get();
+    if (m_instance)
+        return m_instance.get();
     
     RenderApplet *r = static_cast<RenderApplet*>(renderer());
     if (r) {
@@ -208,9 +261,9 @@ KJS::Bindings::Instance *HTMLAppletElement::getAppletInstance() const
         if (r->widget())
             // Call into the frame (and over the bridge) to pull the Bindings::Instance
             // from the guts of the plugin.
-            m_appletInstance = frame->getAppletInstanceForWidget(r->widget());
+            m_instance = frame->getAppletInstanceForWidget(r->widget());
     }
-    return m_appletInstance.get();
+    return m_instance.get();
 }
 #endif
 
@@ -220,30 +273,20 @@ void HTMLAppletElement::closeRenderer()
     m_allParamsAvailable = true;
     if (renderer())
         renderer()->setNeedsLayout(true); // This will cause it to create its widget & the Java applet
-    HTMLElement::closeRenderer();
+    HTMLPlugInElement::closeRenderer();
 }
 
 void HTMLAppletElement::detach()
 {
 #if __APPLE__
-    m_appletInstance = 0;
+    m_instance = 0;
 #endif
-    HTMLElement::detach();
+    HTMLPlugInElement::detach();
 }
 
 bool HTMLAppletElement::allParamsAvailable()
 {
     return m_allParamsAvailable;
-}
-
-String HTMLAppletElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLAppletElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
 }
 
 String HTMLAppletElement::alt() const
@@ -286,16 +329,6 @@ void HTMLAppletElement::setCodeBase(const String &value)
     setAttribute(codebaseAttr, value);
 }
 
-String HTMLAppletElement::height() const
-{
-    return getAttribute(heightAttr);
-}
-
-void HTMLAppletElement::setHeight(const String &value)
-{
-    setAttribute(heightAttr, value);
-}
-
 String HTMLAppletElement::hspace() const
 {
     return getAttribute(hspaceAttr);
@@ -304,16 +337,6 @@ String HTMLAppletElement::hspace() const
 void HTMLAppletElement::setHspace(const String &value)
 {
     setAttribute(hspaceAttr, value);
-}
-
-String HTMLAppletElement::name() const
-{
-    return getAttribute(nameAttr);
-}
-
-void HTMLAppletElement::setName(const String &value)
-{
-    setAttribute(nameAttr, value);
 }
 
 String HTMLAppletElement::object() const
@@ -336,45 +359,30 @@ void HTMLAppletElement::setVspace(const String &value)
     setAttribute(vspaceAttr, value);
 }
 
-String HTMLAppletElement::width() const
-{
-    return getAttribute(widthAttr);
-}
-
-void HTMLAppletElement::setWidth(const String &value)
-{
-    setAttribute(widthAttr, value);
-}
-
 // -------------------------------------------------------------------------
 
 HTMLEmbedElement::HTMLEmbedElement(Document *doc)
-: HTMLElement(embedTag, doc)
+: HTMLPlugInElement(embedTag, doc)
 {
 }
 
 HTMLEmbedElement::~HTMLEmbedElement()
 {
 #if __APPLE__
-    // m_embedInstance should have been cleaned up in detach().
-    assert(!m_embedInstance);
+    // m_instance should have been cleaned up in detach().
+    assert(!m_instance);
 #endif
 }
 
-bool HTMLEmbedElement::checkDTD(const Node* newChild)
-{
-    return newChild->hasTagName(paramTag) || HTMLElement::checkDTD(newChild);
-}
-
 #if __APPLE__
-KJS::Bindings::Instance *HTMLEmbedElement::getEmbedInstance() const
+KJS::Bindings::Instance *HTMLEmbedElement::getInstance() const
 {
     Frame *frame = document()->frame();
     if (!frame)
         return 0;
 
-    if (m_embedInstance)
-        return m_embedInstance.get();
+    if (m_instance)
+        return m_instance.get();
     
     RenderObject *r = renderer();
     if (!r) {
@@ -387,35 +395,24 @@ KJS::Bindings::Instance *HTMLEmbedElement::getEmbedInstance() const
         if (Widget *widget = static_cast<RenderWidget *>(r)->widget()) {
             // Call into the frame (and over the bridge) to pull the Bindings::Instance
             // from the guts of the Java VM.
-            m_embedInstance = frame->getEmbedInstanceForWidget(widget);
+            m_instance = frame->getEmbedInstanceForWidget(widget);
             // Applet may specified with <embed> tag.
-            if (!m_embedInstance)
-                m_embedInstance = frame->getAppletInstanceForWidget(widget);
+            if (!m_instance)
+                m_instance = frame->getAppletInstanceForWidget(widget);
         }
     }
-    return m_embedInstance.get();
+    return m_instance.get();
 }
 #endif
 
 bool HTMLEmbedElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == widthAttr ||
-        attrName == heightAttr ||
-        attrName == borderAttr ||
-        attrName == vspaceAttr ||
-        attrName == hspaceAttr ||
-        attrName == valignAttr ||
-        attrName == hiddenAttr) {
+    if (attrName == hiddenAttr) {
         result = eUniversal;
         return false;
     }
         
-    if (attrName == alignAttr) {
-        result = eReplaced; // Share with <img> since the alignment behavior is the same.
-        return false;
-    }
-    
-    return HTMLElement::mapToEntry(attrName, result);
+    return HTMLPlugInElement::mapToEntry(attrName, result);
 }
 
 void HTMLEmbedElement::parseMappedAttribute(MappedAttribute *attr)
@@ -431,26 +428,6 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == codeAttr ||
                attr->name() == srcAttr) {
          url = WebCore::parseURL(attr->value()).deprecatedString();
-    } else if (attr->name() == widthAttr) {
-        addCSSLength( attr, CSS_PROP_WIDTH, attr->value() );
-    } else if (attr->name() == heightAttr) {
-        addCSSLength( attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attr->name() == borderAttr) {
-        addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value());
-        addCSSProperty( attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID );
-        addCSSProperty( attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID );
-        addCSSProperty( attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID );
-        addCSSProperty( attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID );
-    } else if (attr->name() == vspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-    } else if (attr->name() == hspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-    } else if (attr->name() == alignAttr) {
-        addHTMLAlignment(attr);
-    } else if (attr->name() == valignAttr) {
-        addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
     } else if (attr->name() == pluginpageAttr ||
                attr->name() == pluginspageAttr) {
         pluginPage = val;
@@ -470,7 +447,7 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute *attr)
         }
         oldNameAttr = newNameAttr;
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLPlugInElement::parseMappedAttribute(attr);
 }
 
 bool HTMLEmbedElement::rendererIsNeeded(RenderStyle *style)
@@ -495,7 +472,7 @@ RenderObject *HTMLEmbedElement::createRenderer(RenderArena *arena, RenderStyle *
 
 void HTMLEmbedElement::attach()
 {
-    HTMLElement::attach();
+    HTMLPlugInElement::attach();
 
     if (renderer())
         static_cast<RenderPartObject*>(renderer())->updateWidget();
@@ -504,9 +481,9 @@ void HTMLEmbedElement::attach()
 void HTMLEmbedElement::detach()
 {
 #if __APPLE__
-    m_embedInstance = 0;
+    m_instance = 0;
 #endif
-    HTMLElement::detach();
+    HTMLPlugInElement::detach();
 }
 
 void HTMLEmbedElement::insertedIntoDocument()
@@ -516,7 +493,7 @@ void HTMLEmbedElement::insertedIntoDocument()
         doc->addNamedItem(oldNameAttr);
     }
 
-    HTMLElement::insertedIntoDocument();
+    HTMLPlugInElement::insertedIntoDocument();
 }
 
 void HTMLEmbedElement::removedFromDocument()
@@ -526,7 +503,7 @@ void HTMLEmbedElement::removedFromDocument()
         doc->removeNamedItem(oldNameAttr);
     }
 
-    HTMLElement::removedFromDocument();
+    HTMLPlugInElement::removedFromDocument();
 }
 
 bool HTMLEmbedElement::isURLAttribute(Attribute *attr) const
@@ -534,10 +511,30 @@ bool HTMLEmbedElement::isURLAttribute(Attribute *attr) const
     return attr->name() == srcAttr;
 }
 
+String HTMLEmbedElement::src() const
+{
+    return getAttribute(srcAttr);
+}
+
+void HTMLEmbedElement::setSrc(const String& value)
+{
+    setAttribute(srcAttr, value);
+}
+
+String HTMLEmbedElement::type() const
+{
+    return getAttribute(typeAttr);
+}
+
+void HTMLEmbedElement::setType(const String& value)
+{
+    setAttribute(typeAttr, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLObjectElement::HTMLObjectElement(Document *doc) 
-: HTMLElement(objectTag, doc)
+: HTMLPlugInElement(objectTag, doc)
 , m_imageLoader(0)
 {
     needWidgetUpdate = false;
@@ -549,42 +546,37 @@ HTMLObjectElement::HTMLObjectElement(Document *doc)
 HTMLObjectElement::~HTMLObjectElement()
 {
 #if __APPLE__
-    // m_objectInstance should have been cleaned up in detach().
-    assert(!m_objectInstance);
+    // m_instance should have been cleaned up in detach().
+    assert(!m_instance);
 #endif
     
     delete m_imageLoader;
 }
 
-bool HTMLObjectElement::checkDTD(const Node* newChild)
-{
-    return newChild->hasTagName(paramTag) || HTMLElement::checkDTD(newChild);
-}
-
 #if __APPLE__
-KJS::Bindings::Instance *HTMLObjectElement::getObjectInstance() const
+KJS::Bindings::Instance *HTMLObjectElement::getInstance() const
 {
     Frame *frame = document()->frame();
     if (!frame)
         return 0;
 
-    if (m_objectInstance)
-        return m_objectInstance.get();
+    if (m_instance)
+        return m_instance.get();
 
     if (RenderObject *r = renderer()) {
         if (r->isWidget()) {
             if (Widget *widget = static_cast<RenderWidget *>(r)->widget()) {
                 // Call into the frame (and over the bridge) to pull the Bindings::Instance
                 // from the guts of the plugin.
-                m_objectInstance = frame->getObjectInstanceForWidget(widget);
+                m_instance = frame->getObjectInstanceForWidget(widget);
                 // Applet may specified with <object> tag.
-                if (!m_objectInstance)
-                    m_objectInstance = frame->getAppletInstanceForWidget(widget);
+                if (!m_instance)
+                    m_instance = frame->getAppletInstanceForWidget(widget);
             }
         }
     }
 
-    return m_objectInstance.get();
+    return m_instance.get();
 }
 #endif
 
@@ -596,24 +588,6 @@ HTMLFormElement *HTMLObjectElement::form() const
     }
     
     return 0;
-}
-
-bool HTMLObjectElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
-{
-    if (attrName == widthAttr ||
-        attrName == heightAttr ||
-        attrName == vspaceAttr ||
-        attrName == hspaceAttr) {
-        result = eUniversal;
-        return false;
-    }
-    
-    if (attrName == alignAttr) {
-        result = eReplaced; // Share with <img> since the alignment behavior is the same.
-        return false;
-    }
-    
-    return HTMLElement::mapToEntry(attrName, result);
 }
 
 void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
@@ -640,18 +614,6 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
               m_imageLoader = new HTMLImageLoader(this);
           m_imageLoader->updateFromElement();
         }
-    } else if (attr->name() == widthAttr) {
-        addCSSLength( attr, CSS_PROP_WIDTH, attr->value());
-    } else if (attr->name() == heightAttr) {
-        addCSSLength( attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attr->name() == vspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-    } else if (attr->name() == hspaceAttr) {
-        addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
-        addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-    } else if (attr->name() == alignAttr) {
-        addHTMLAlignment(attr);
     } else if (attr->name() == classidAttr) {
         classId = val;
         if (renderer())
@@ -677,9 +639,9 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
         }
         oldIdAttr = newIdAttr;
         // also call superclass
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLPlugInElement::parseMappedAttribute(attr);
     } else
-        HTMLElement::parseMappedAttribute(attr);
+        HTMLPlugInElement::parseMappedAttribute(attr);
 }
 
 Document* HTMLObjectElement::contentDocument() const
@@ -691,7 +653,7 @@ Document* HTMLObjectElement::contentDocument() const
 bool HTMLObjectElement::rendererIsNeeded(RenderStyle *style)
 {
     if (m_useFallbackContent || isImageType())
-        return HTMLElement::rendererIsNeeded(style);
+        return HTMLPlugInElement::rendererIsNeeded(style);
 
     Frame *frame = document()->frame();
     if (!frame || !frame->pluginsEnabled())
@@ -711,7 +673,7 @@ RenderObject *HTMLObjectElement::createRenderer(RenderArena *arena, RenderStyle 
 
 void HTMLObjectElement::attach()
 {
-    HTMLElement::attach();
+    HTMLPlugInElement::attach();
 
     if (renderer() && !m_useFallbackContent) {
         if (isImageType()) {
@@ -741,7 +703,7 @@ void HTMLObjectElement::closeRenderer()
     // The parser just reached </object>.
     setComplete(true);
     
-    HTMLElement::closeRenderer();
+    HTMLPlugInElement::closeRenderer();
 }
 
 void HTMLObjectElement::setComplete(bool complete)
@@ -763,9 +725,9 @@ void HTMLObjectElement::detach()
     }
 
 #if __APPLE__
-    m_objectInstance = 0;
+    m_instance = 0;
 #endif
-    HTMLElement::detach();
+    HTMLPlugInElement::detach();
 }
 
 void HTMLObjectElement::insertedIntoDocument()
@@ -776,7 +738,7 @@ void HTMLObjectElement::insertedIntoDocument()
         doc->addDocExtraNamedItem(oldIdAttr);
     }
 
-    HTMLElement::insertedIntoDocument();
+    HTMLPlugInElement::insertedIntoDocument();
 }
 
 void HTMLObjectElement::removedFromDocument()
@@ -787,7 +749,7 @@ void HTMLObjectElement::removedFromDocument()
         doc->removeDocExtraNamedItem(oldIdAttr);
     }
 
-    HTMLElement::removedFromDocument();
+    HTMLPlugInElement::removedFromDocument();
 }
 
 void HTMLObjectElement::recalcStyle(StyleChange ch)
@@ -796,7 +758,7 @@ void HTMLObjectElement::recalcStyle(StyleChange ch)
         detach();
         attach();
     }
-    HTMLElement::recalcStyle(ch);
+    HTMLPlugInElement::recalcStyle(ch);
 }
 
 void HTMLObjectElement::childrenChanged()
@@ -888,16 +850,6 @@ void HTMLObjectElement::setCode(const String &value)
     setAttribute(codeAttr, value);
 }
 
-String HTMLObjectElement::align() const
-{
-    return getAttribute(alignAttr);
-}
-
-void HTMLObjectElement::setAlign(const String &value)
-{
-    setAttribute(alignAttr, value);
-}
-
 String HTMLObjectElement::archive() const
 {
     return getAttribute(archiveAttr);
@@ -958,16 +910,6 @@ void HTMLObjectElement::setDeclare(bool declare)
     setAttribute(declareAttr, declare ? "" : 0);
 }
 
-String HTMLObjectElement::height() const
-{
-    return getAttribute(heightAttr);
-}
-
-void HTMLObjectElement::setHeight(const String &value)
-{
-    setAttribute(heightAttr, value);
-}
-
 String HTMLObjectElement::hspace() const
 {
     return getAttribute(hspaceAttr);
@@ -976,16 +918,6 @@ String HTMLObjectElement::hspace() const
 void HTMLObjectElement::setHspace(const String &value)
 {
     setAttribute(hspaceAttr, value);
-}
-
-String HTMLObjectElement::name() const
-{
-    return getAttribute(nameAttr);
-}
-
-void HTMLObjectElement::setName(const String &value)
-{
-    setAttribute(nameAttr, value);
 }
 
 String HTMLObjectElement::standby() const
@@ -1036,16 +968,6 @@ String HTMLObjectElement::vspace() const
 void HTMLObjectElement::setVspace(const String &value)
 {
     setAttribute(vspaceAttr, value);
-}
-
-String HTMLObjectElement::width() const
-{
-    return getAttribute(widthAttr);
-}
-
-void HTMLObjectElement::setWidth(const String &value)
-{
-    setAttribute(widthAttr, value);
 }
 
 // -------------------------------------------------------------------------

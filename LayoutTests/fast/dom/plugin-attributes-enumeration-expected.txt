@@ -1,0 +1,36 @@
+[OBJECT, EMBED, APPLET] share:
+align
+height
+name
+width
+----------
+OBJECT also has:
+archive
+border
+code
+codeBase
+codeType
+contentDocument
+data
+declare
+form
+hspace
+standby
+tabIndex
+type
+useMap
+vspace
+----------
+EMBED also has:
+src
+type
+----------
+APPLET also has:
+alt
+archive
+code
+codeBase
+hspace
+object
+vspace
+ 
