@@ -54,3 +54,5 @@ extern KXCLogChannel WebKitLogLiveConnect;
 extern KXCLogChannel WebKitLogBackForward;
 extern KXCLogChannel WebKitLogProgress;
 extern KXCLogChannel WebKitLogPluginEvents;
+
+void WebKitInitializeLoggingChannelsIfNecessary(void);

@@ -1573,6 +1573,7 @@ NSMutableDictionary *countInvocations;
     [self addSubview:frameView];
     [frameView release];
 
+    WebKitInitializeLoggingChannelsIfNecessary();
     _private->_pageBridge = [[WebPageBridge alloc] initWithMainFrameName:frameName webView:self frameView:frameView];
 
     [self _addToAllWebViewsSet];

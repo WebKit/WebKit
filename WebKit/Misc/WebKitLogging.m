@@ -50,3 +50,48 @@ KXCLogChannel WebKitLogLiveConnect =            { 0x08000000, "WebKitLogLevel", 
 KXCLogChannel WebKitLogBackForward =            { 0x10000000, "WebKitLogLevel", KXCLogChannelOff };
 KXCLogChannel WebKitLogProgress =               { 0x20000000, "WebKitLogLevel", KXCLogChannelOff };
 KXCLogChannel WebKitLogPluginEvents =           { 0x40000000, "WebKitLogLevel", KXCLogChannelOff };
+
+static void initializeLogChannel(KXCLogChannel *channel)
+{
+    channel->state = KXCLogChannelOff;
+    NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:channel->defaultName]];
+    if (logLevelString) {
+        unsigned logLevel;
+        if (![[NSScanner scannerWithString:logLevelString] scanHexInt:&logLevel])
+            NSLog(@"unable to parse hex value for %s (%@), logging is off", channel->defaultName, logLevelString);
+        if ((logLevel & channel->mask) == channel->mask)
+            channel->state = KXCLogChannelOn;
+    }
+}
+
+void WebKitInitializeLoggingChannelsIfNecessary()
+{
+    static bool haveInitializedLoggingChannels = false;
+    if (haveInitializedLoggingChannels)
+        return;
+    haveInitializedLoggingChannels = true;
+    
+    initializeLogChannel(&WebKitLogTiming);
+    initializeLogChannel(&WebKitLogLoading);
+    initializeLogChannel(&WebKitLogFontCache);
+    initializeLogChannel(&WebKitLogFontSubstitution);
+    initializeLogChannel(&WebKitLogDownload);
+    initializeLogChannel(&WebKitLogDocumentLoad);
+    initializeLogChannel(&WebKitLogPlugins);
+    initializeLogChannel(&WebKitLogEvents);
+    initializeLogChannel(&WebKitLogView);
+    initializeLogChannel(&WebKitLogRedirect);
+    initializeLogChannel(&WebKitLogPageCache);
+    initializeLogChannel(&WebKitLogCacheSizes);
+    initializeLogChannel(&WebKitLogFormDelegate);
+    initializeLogChannel(&WebKitLogFileDatabaseActivity);
+    initializeLogChannel(&WebKitLogHistory);
+    initializeLogChannel(&WebKitLogBindings);
+    initializeLogChannel(&WebKitLogFontSelection);
+    initializeLogChannel(&WebKitLogEncoding);
+    initializeLogChannel(&WebKitLogLiveConnect);
+    initializeLogChannel(&WebKitLogBackForward);
+    initializeLogChannel(&WebKitLogProgress);
+    initializeLogChannel(&WebKitLogPluginEvents);
+}
+

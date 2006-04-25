@@ -200,7 +200,6 @@ NS_ENDHANDLER
 + (void)initialize
 {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        @"0x0",                         WebKitLogLevelPreferenceKey,
         @"Times",                       WebKitStandardFontPreferenceKey,
         @"Courier",                     WebKitFixedFontPreferenceKey,
         @"Times",                       WebKitSerifFontPreferenceKey,

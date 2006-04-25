@@ -1,8 +1,25 @@
 2006-04-24  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Geoff.
+        
+        <rdar://problem/4525364> REGRESSION (yesterday?): LOG() mechanism is broken
+        
+        - initialize WebKit's log channels
+
+        * Misc/WebKitLogging.h:
+        * Misc/WebKitLogging.m:
+        (initializeLogChannel):
+        (WebKitInitializeLoggingChannelsIfNecessary):
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        * WebView/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
+2006-04-24  Maciej Stachowiak  <mjs@apple.com>
+
         Build fix:
         
-        - move some prematurely code back
+        - move some prematurely moved code back
 
         * WebCoreSupport/WebFrameBridge.h:
         * WebCoreSupport/WebFrameBridge.m:
