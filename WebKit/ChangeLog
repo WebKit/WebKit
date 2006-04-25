@@ -1,5 +1,15 @@
 2006-04-25  Tim Omernick  <timo@apple.com>
 
+        Reviewed by Eric.
+
+        <rdar://problem/4526120> -[WebBasePluginPackage finalize] leaks the CFBundle (under GC only)
+
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage finalize]):
+        Release the CFBundle here.
+
+2006-04-25  Tim Omernick  <timo@apple.com>
+
         Reviewed by Geoff.
 
         <rdar://problem/4472037>

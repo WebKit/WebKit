@@ -263,6 +263,9 @@
 {
     ASSERT(!isLoaded);
 
+    if (cfBundle)
+        CFRelease(cfBundle);
+
     [super finalize];
 }
 
