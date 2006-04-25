@@ -1,5 +1,17 @@
 2006-04-24  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by ggaren.
+
+        Fix for 5th worst unresolved crasher:
+        <rdar://problem/4129744> [REGRESSION]CrashTracer: ..400 crashes at com.apple.WebCore: DOM::NodeImpl::createRendererIfNeeded + 44
+
+        Test: fast/dom/remove-style-element.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren):
+
+2006-04-24  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Speculative fix for our 7th worst crasher.

@@ -1,3 +1,12 @@
+2006-04-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        <rdar://problem/4129744> [REGRESSION]CrashTracer: ..400 crashes at com.apple.WebCore: DOM::NodeImpl::createRendererIfNeeded + 44
+
+        * fast/dom/remove-style-element-expected.txt: Added.
+        * fast/dom/remove-style-element.html: Added.
+
 2006-04-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

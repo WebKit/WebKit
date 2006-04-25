@@ -448,14 +448,15 @@ void ContainerNode::removeChildren()
         n->setNextSibling(0);
         n->setParent(0);
         
+        m_firstChild = next;
+        if (n == m_lastChild)
+            m_lastChild = 0;
+        
         if (n->inDocument())
             n->removedFromDocument();
 
         n->deref();
-
-        m_firstChild = next;
     }
-    m_lastChild = 0;
     allowEventDispatch();
     
     // Dispatch a single post-removal mutation event denoting a modified subtree.
