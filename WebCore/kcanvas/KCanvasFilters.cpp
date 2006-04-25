@@ -236,13 +236,32 @@ static QTextStream &operator<<(QTextStream &ts, KCComponentTransferType t)
 
 static QTextStream &operator<<(QTextStream &ts, const KCComponentTransferFunction &func)
 {
-    ts << "[type=" << func.type << "]" 
-        << " [table values=" << func.tableValues << "]"
-        << " [slope=" << func.slope << "]"
-        << " [intercept=" << func.intercept << "]"
-        << " [amplitude=" << func.amplitude << "]"
-        << " [exponent=" << func.exponent << "]"
-        << " [offset=" << func.offset << "]";
+    ts << "[type=" << func.type << "]"; 
+    switch (func.type) {
+        case CT_IDENTITY:
+            break;
+        case CT_TABLE:
+        case CT_DISCRETE:
+            ts << " [table values=";
+            Vector<float>::const_iterator itr=func.tableValues.begin();
+            if (itr != func.tableValues.end()) {
+                ts << *itr++;
+                for (; itr!=func.tableValues.end(); itr++) {
+                    ts << " " << *itr;
+                }
+            }
+            ts << "]";
+            break;
+        case CT_LINEAR:
+            ts << " [slope=" << func.slope << "]"
+               << " [intercept=" << func.intercept << "]";
+            break;
+        case CT_GAMMA:
+            ts << " [amplitude=" << func.amplitude << "]"
+               << " [exponent=" << func.exponent << "]"
+               << " [offset=" << func.offset << "]";
+            break;
+    }
     return ts;        
 }
 

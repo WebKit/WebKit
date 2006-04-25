@@ -519,6 +519,23 @@
 		A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */; };
 		A7638A970995965D0007E14F /* SVGFEDisplacementMapElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7638A950995965D0007E14F /* SVGFEDisplacementMapElement.h */; };
 		A7638A980995965D0007E14F /* SVGFEDisplacementMapElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7638A960995965D0007E14F /* SVGFEDisplacementMapElement.cpp */; };
+		A7B97B770979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B660979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel */; };
+		A7B97B780979C3A1000E8EB1 /* WKComponentMergeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B670979C3A1000E8EB1 /* WKComponentMergeFilter.h */; };
+		A7B97B790979C3A1000E8EB1 /* WKComponentMergeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B680979C3A1000E8EB1 /* WKComponentMergeFilter.m */; };
+		A7B97B7A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B690979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel */; };
+		A7B97B7B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B6A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h */; };
+		A7B97B7C0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B6B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m */; };
+		A7B97B7D0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B6C0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel */; };
+		A7B97B7E0979C3A1000E8EB1 /* WKGammaTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B6D0979C3A1000E8EB1 /* WKGammaTransferFilter.h */; };
+		A7B97B7F0979C3A1000E8EB1 /* WKGammaTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B6E0979C3A1000E8EB1 /* WKGammaTransferFilter.m */; };
+		A7B97B800979C3A1000E8EB1 /* WKIdentityTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B6F0979C3A1000E8EB1 /* WKIdentityTransferFilter.h */; };
+		A7B97B810979C3A1000E8EB1 /* WKIdentityTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B700979C3A1000E8EB1 /* WKIdentityTransferFilter.m */; };
+		A7B97B820979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B710979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel */; };
+		A7B97B830979C3A1000E8EB1 /* WKLinearTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B720979C3A1000E8EB1 /* WKLinearTransferFilter.h */; };
+		A7B97B840979C3A1000E8EB1 /* WKLinearTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B730979C3A1000E8EB1 /* WKLinearTransferFilter.m */; };
+		A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */; };
+		A7B97B860979C3A1000E8EB1 /* WKTableTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */; };
+		A7B97B870979C3A1000E8EB1 /* WKTableTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */; };
 		A81369CA097374F600D74463 /* HTMLIsIndexElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369AE097374F500D74463 /* HTMLIsIndexElement.h */; };
 		A81369CB097374F600D74463 /* HTMLIsIndexElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */; };
 		A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElement.h */; };
@@ -1638,6 +1655,23 @@
 		A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKDisplacementMapFilter.cikernel; sourceTree = "<group>"; };
 		A7638A950995965D0007E14F /* SVGFEDisplacementMapElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDisplacementMapElement.h; sourceTree = "<group>"; };
 		A7638A960995965D0007E14F /* SVGFEDisplacementMapElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDisplacementMapElement.cpp; sourceTree = "<group>"; };
+		A7B97B660979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKComponentMergeFilter.cikernel; sourceTree = "<group>"; };
+		A7B97B670979C3A1000E8EB1 /* WKComponentMergeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKComponentMergeFilter.h; sourceTree = "<group>"; };
+		A7B97B680979C3A1000E8EB1 /* WKComponentMergeFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKComponentMergeFilter.m; sourceTree = "<group>"; };
+		A7B97B690979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKDiscreteTransferFilter.cikernel; sourceTree = "<group>"; };
+		A7B97B6A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDiscreteTransferFilter.h; sourceTree = "<group>"; };
+		A7B97B6B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDiscreteTransferFilter.m; sourceTree = "<group>"; };
+		A7B97B6C0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKGammaTransferFilter.cikernel; sourceTree = "<group>"; };
+		A7B97B6D0979C3A1000E8EB1 /* WKGammaTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKGammaTransferFilter.h; sourceTree = "<group>"; };
+		A7B97B6E0979C3A1000E8EB1 /* WKGammaTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKGammaTransferFilter.m; sourceTree = "<group>"; };
+		A7B97B6F0979C3A1000E8EB1 /* WKIdentityTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKIdentityTransferFilter.h; sourceTree = "<group>"; };
+		A7B97B700979C3A1000E8EB1 /* WKIdentityTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKIdentityTransferFilter.m; sourceTree = "<group>"; };
+		A7B97B710979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKLinearTransferFilter.cikernel; sourceTree = "<group>"; };
+		A7B97B720979C3A1000E8EB1 /* WKLinearTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKLinearTransferFilter.h; sourceTree = "<group>"; };
+		A7B97B730979C3A1000E8EB1 /* WKLinearTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKLinearTransferFilter.m; sourceTree = "<group>"; };
+		A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKTableTransferFilter.cikernel; sourceTree = "<group>"; };
+		A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKTableTransferFilter.h; sourceTree = "<group>"; };
+		A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKTableTransferFilter.m; sourceTree = "<group>"; };
 		A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTreeDebug.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasTreeDebug.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8122C7E08D564B000844FA3 /* GetSVGDocument.idl */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = GetSVGDocument.idl; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3624,6 +3658,23 @@
 			isa = PBXGroup;
 			children = (
 				A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */,
+				A7B97B660979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel */,
+				A7B97B670979C3A1000E8EB1 /* WKComponentMergeFilter.h */,
+				A7B97B680979C3A1000E8EB1 /* WKComponentMergeFilter.m */,
+				A7B97B690979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel */,
+				A7B97B6A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h */,
+				A7B97B6B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m */,
+				A7B97B6C0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel */,
+				A7B97B6D0979C3A1000E8EB1 /* WKGammaTransferFilter.h */,
+				A7B97B6E0979C3A1000E8EB1 /* WKGammaTransferFilter.m */,
+				A7B97B6F0979C3A1000E8EB1 /* WKIdentityTransferFilter.h */,
+				A7B97B700979C3A1000E8EB1 /* WKIdentityTransferFilter.m */,
+				A7B97B710979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel */,
+				A7B97B720979C3A1000E8EB1 /* WKLinearTransferFilter.h */,
+				A7B97B730979C3A1000E8EB1 /* WKLinearTransferFilter.m */,
+				A7B97B740979C3A1000E8EB1 /* WKTableTransferFilter.cikernel */,
+				A7B97B750979C3A1000E8EB1 /* WKTableTransferFilter.h */,
+				A7B97B760979C3A1000E8EB1 /* WKTableTransferFilter.m */,
 				A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */,
 				A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */,
 				A8C32923093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel */,
@@ -4447,6 +4498,12 @@
 				A81369E2097374F600D74463 /* HTMLLabelElement.h in Headers */,
 				A81369E4097374F600D74463 /* HTMLKeygenElement.h in Headers */,
 				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
+				A7B97B780979C3A1000E8EB1 /* WKComponentMergeFilter.h in Headers */,
+				A7B97B7B0979C3A1000E8EB1 /* WKDiscreteTransferFilter.h in Headers */,
+				A7B97B7E0979C3A1000E8EB1 /* WKGammaTransferFilter.h in Headers */,
+				A7B97B800979C3A1000E8EB1 /* WKIdentityTransferFilter.h in Headers */,
+				A7B97B830979C3A1000E8EB1 /* WKLinearTransferFilter.h in Headers */,
+				A7B97B860979C3A1000E8EB1 /* WKTableTransferFilter.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				65BF02300974816300C43196 /* FramePrivate.h in Headers */,
 				65BF02440974819000C43196 /* FrameMac.h in Headers */,
@@ -4891,6 +4948,11 @@
 				A88AD3A10952486D001DD196 /* WKPointLightFilter.cikernel in Resources */,
 				A88AD3A40952486D001DD196 /* WKSpecularLightingFilter.cikernel in Resources */,
 				A88AD3A70952486D001DD196 /* WKSpotLightFilter.cikernel in Resources */,
+				A7B97B770979C3A1000E8EB1 /* WKComponentMergeFilter.cikernel in Resources */,
+				A7B97B7A0979C3A1000E8EB1 /* WKDiscreteTransferFilter.cikernel in Resources */,
+				A7B97B7D0979C3A1000E8EB1 /* WKGammaTransferFilter.cikernel in Resources */,
+				A7B97B820979C3A1000E8EB1 /* WKLinearTransferFilter.cikernel in Resources */,
+				A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */,
 				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
 				14CF787209F587CA00EB3665 /* CSSValue.idl in Resources */,
 				14CF7A7109F5CF9A00EB3665 /* CSSRule.idl in Resources */,
@@ -5186,6 +5248,12 @@
 				A81369E3097374F600D74463 /* HTMLLabelElement.cpp in Sources */,
 				A81369E5097374F600D74463 /* HTMLKeygenElement.cpp in Sources */,
 				A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */,
+				A7B97B790979C3A1000E8EB1 /* WKComponentMergeFilter.m in Sources */,
+				A7B97B7C0979C3A1000E8EB1 /* WKDiscreteTransferFilter.m in Sources */,
+				A7B97B7F0979C3A1000E8EB1 /* WKGammaTransferFilter.m in Sources */,
+				A7B97B810979C3A1000E8EB1 /* WKIdentityTransferFilter.m in Sources */,
+				A7B97B840979C3A1000E8EB1 /* WKLinearTransferFilter.m in Sources */,
+				A7B97B870979C3A1000E8EB1 /* WKTableTransferFilter.m in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				65BF02450974819000C43196 /* FrameMac.mm in Sources */,
 				FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */,

@@ -1,3 +1,29 @@
+2006-04-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8452
+          mangleme(0x58c22e11): Random crashes
+
+        * fast/frames/empty-cols-attribute-expected.checksum: Added.
+        * fast/frames/empty-cols-attribute-expected.png: Added.
+        * fast/frames/empty-cols-attribute-expected.txt: Added.
+        * fast/frames/empty-cols-attribute.html: Added.
+
+2006-04-26  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * svg/custom/feComponentTransfer-Discrete-expected.txt: Added.
+        * svg/custom/feComponentTransfer-Discrete.svg: Added.
+        * svg/custom/feComponentTransfer-Gamma-expected.txt: Added.
+        * svg/custom/feComponentTransfer-Gamma.svg: Added.
+        * svg/custom/feComponentTransfer-Linear-expected.txt: Added.
+        * svg/custom/feComponentTransfer-Linear.svg: Added.
+        * svg/custom/feComponentTransfer-Table-expected.txt: Added.
+        * svg/custom/feComponentTransfer-Table.svg: Added.
+
 2006-04-25  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

@@ -1,0 +1,29 @@
+KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}
+KCanvasResource {id="Identity" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 650x420"] [red func=[type=IDENTITY]] [green func=[type=IDENTITY]] [blue func=[type=IDENTITY]] [alpha func=[type=IDENTITY]]]]}
+KCanvasResource {id="TableBlank" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 650x420"] [red func=[type=IDENTITY]] [green func=[type=TABLE] [table values=0.00]] [blue func=[type=IDENTITY]] [alpha func=[type=IDENTITY]]]]}
+KCanvasResource {id="TableFull" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 650x420"] [red func=[type=IDENTITY]] [green func=[type=TABLE] [table values=1.00]] [blue func=[type=IDENTITY]] [alpha func=[type=IDENTITY]]]]}
+KCanvasResource {id="TableOrd" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 650x420"] [red func=[type=IDENTITY]] [green func=[type=TABLE] [table values=0.00 0.00 1.00 1.00]] [blue func=[type=IDENTITY]] [alpha func=[type=IDENTITY]]]]}
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+    KCanvasContainer {svg} at (0.83,0.83) size 1081.67x698.33
+      KCanvasContainer {g} at (0.83,0.83) size 1081.67x698.33
+        KCanvasContainer {svg} at (0.58,8.27) size 748.85x483.46
+          KCanvasItem {rect} at (0.58,8.27) size 748.85x483.46 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L649.00,1.00L649.00,419.00L1.00,419.00"]
+          KCanvasContainer {g} at (0.58,8.27) size 748.85x483.46
+            KCanvasItem {rect} at (0.58,8.27) size 748.85x483.46 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L649.00,1.00L649.00,419.00L1.00,419.00"]
+            KCanvasItem {rect} at (23.08,19.23) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#Identity] [data="M20.00,10.00L600.00,10.00L600.00,50.00L20.00,50.00"]
+            RenderSVGText {text} at (0,0) size 785x18
+              RenderText {#text} at (0,0) size 101x18
+                text run at (0,0) width 101: "type: identity"
+            KCanvasItem {rect} at (23.08,134.62) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#TableBlank] [data="M20.00,110.00L600.00,110.00L600.00,150.00L20.00,150.00"]
+            RenderSVGText {text} at (0,0) size 785x18
+              RenderText {#text} at (0,0) size 301x18
+                text run at (0,0) width 301: "type: table [0] -- Result should be black"
+            KCanvasItem {rect} at (23.08,250) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#TableFull] [data="M20.00,210.00L600.00,210.00L600.00,250.00L20.00,250.00"]
+            RenderSVGText {text} at (0,0) size 785x18
+              RenderText {#text} at (0,0) size 304x18
+                text run at (0,0) width 304: "type: table [1] -- Result should be green"
+            KCanvasItem {rect} at (23.08,365.38) size 669.23x46.15 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#00FF00), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}] [filter=#TableOrd] [data="M20.00,310.00L600.00,310.00L600.00,350.00L20.00,350.00"]
+            RenderSVGText {text} at (0,0) size 785x18
+              RenderText {#text} at (0,0) size 463x18
+                text run at (0,0) width 463: "type: table [0 0 1 1] -- Result should be compressed gradient"

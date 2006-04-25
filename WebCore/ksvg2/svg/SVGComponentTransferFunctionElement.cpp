@@ -105,7 +105,7 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute *
         else if(value == "gamma")
             type()->setBaseVal(SVG_FECOMPONENTTRANSFER_TYPE_GAMMA);
     }
-    else if (attr->name() == SVGNames::valuesAttr)
+    else if (attr->name() == SVGNames::tableValuesAttr)
         tableValues()->baseVal()->parse(value.deprecatedString());
     else if (attr->name() == SVGNames::slopeAttr)
         slope()->setBaseVal(value.deprecatedString().toDouble());
@@ -130,6 +130,10 @@ KCComponentTransferFunction SVGComponentTransferFunctionElement::transferFunctio
     func.amplitude = amplitude()->baseVal();
     func.exponent = exponent()->baseVal();
     func.offset = offset()->baseVal();
+    SVGNumberList *numbers = tableValues()->baseVal();
+    unsigned int nr = numbers->numberOfItems();
+    for (unsigned int i = 0; i < nr; i++)
+        func.tableValues.append(numbers->getItem(i)->value());
     return func;
 }
 

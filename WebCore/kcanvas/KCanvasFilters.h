@@ -212,8 +212,9 @@ typedef enum {
 
 struct KCComponentTransferFunction
 {
+    KCComponentTransferFunction() : type(CT_IDENTITY) {}
     KCComponentTransferType type;
-    Q3ValueList<float> tableValues;
+    Vector<float> tableValues;
     float slope;
     float intercept;
     float amplitude;

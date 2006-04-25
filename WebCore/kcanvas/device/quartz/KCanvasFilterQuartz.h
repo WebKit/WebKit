@@ -71,10 +71,12 @@ public:
     virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
-//class KCanvasFEComponentTransferQuartz : public KCanvasFEComponentTransfer {
-//public:
-//    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
-//};
+class KCanvasFEComponentTransferQuartz : public KCanvasFEComponentTransfer {
+public:
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+private:
+    CIFilter *getFunctionFilter(KCChannelSelectorType channel, CIImage *inputImage) const;
+};
 
 class KCanvasFEConvolveMatrixQuartz : public KCanvasFEConvolveMatrix {
 public:

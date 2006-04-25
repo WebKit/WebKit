@@ -1,3 +1,86 @@
+2006-04-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8452
+          mangleme(0x58c22e11): Random crashes
+
+        Test: fast/frames/empty-cols-attribute.html
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::toLengthArray): If the string is empty, return 0
+        but set len to 1. This gives the same behavior you get if you don't specify
+        the attribute at all, matching WinIE and Firefox. Previously, the empty
+        string resulted in len being set to 0 (and a memory smasher in
+        RenderFrameSet::layout()).
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::layout): Added an assert.
+
+2006-04-26  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasFilters.cpp:
+        (WebCore::operator<<):
+        * kcanvas/KCanvasFilters.h:
+        (WebCore::KCComponentTransferFunction::KCComponentTransferFunction):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::getVectorForChannel):
+        (WebCore::genImageFromTable):
+        (WebCore::filterForComponentFunc):
+        (WebCore::setParametersForComponentFunc):
+        (WebCore::getFilterForFunc):
+        (WebCore::KCanvasFEComponentTransferQuartz::getFunctionFilter):
+        (WebCore::KCanvasFEComponentTransferQuartz::getCIFilter):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceQuartz::createFilterEffect):
+        * kcanvas/device/quartz/filters/WKComponentMergeFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKComponentMergeFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKComponentMergeFilter.m: Added.
+        (+[WKComponentMergeFilter initialize]):
+        (+[WKComponentMergeFilter filterWithName:]):
+        (-[WKComponentMergeFilter init]):
+        (-[WKComponentMergeFilter outputImage]):
+        * kcanvas/device/quartz/filters/WKDiscreteTransferFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKDiscreteTransferFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKDiscreteTransferFilter.m: Added.
+        (+[WKDiscreteTransferFilter initialize]):
+        (+[WKDiscreteTransferFilter filterWithName:]):
+        (-[WKDiscreteTransferFilter init]):
+        (-[WKDiscreteTransferFilter outputImage]):
+        * kcanvas/device/quartz/filters/WKGammaTransferFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKGammaTransferFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKGammaTransferFilter.m: Added.
+        (+[WKGammaTransferFilter initialize]):
+        (+[WKGammaTransferFilter filterWithName:]):
+        (-[WKGammaTransferFilter init]):
+        (-[WKGammaTransferFilter outputImage]):
+        * kcanvas/device/quartz/filters/WKIdentityTransferFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKIdentityTransferFilter.m: Added.
+        (+[WKIdentityTransferFilter initialize]):
+        (+[WKIdentityTransferFilter filterWithName:]):
+        (-[WKIdentityTransferFilter init]):
+        (-[WKIdentityTransferFilter outputImage]):
+        * kcanvas/device/quartz/filters/WKLinearTransferFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKLinearTransferFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKLinearTransferFilter.m: Added.
+        (+[WKLinearTransferFilter initialize]):
+        (+[WKLinearTransferFilter filterWithName:]):
+        (-[WKLinearTransferFilter init]):
+        (-[WKLinearTransferFilter outputImage]):
+        * kcanvas/device/quartz/filters/WKTableTransferFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKTableTransferFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKTableTransferFilter.m: Added.
+        (+[WKTableTransferFilter initialize]):
+        (+[WKTableTransferFilter filterWithName:]):
+        (-[WKTableTransferFilter init]):
+        (-[WKTableTransferFilter outputImage]):
+        * ksvg2/svg/SVGComponentTransferFunctionElement.cpp:
+        (SVGComponentTransferFunctionElement::parseMappedAttribute):
+        (SVGComponentTransferFunctionElement::transferFunction):
+
 2006-04-25  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

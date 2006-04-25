@@ -39,6 +39,13 @@
 #import "WKDisplacementMapFilter.h"
 #import "WKDistantLightFilter.h"
 #import "WKNormalMapFilter.h"
+#import "WKArithmeticFilter.h"
+#import "WKComponentMergeFilter.h"
+#import "WKIdentityTransferFilter.h"
+#import "WKTableTransferFilter.h"
+#import "WKDiscreteTransferFilter.h"
+#import "WKLinearTransferFilter.h"
+#import "WKGammaTransferFilter.h"
 #import "WKPointLightFilter.h"
 #import "WKSpecularLightingFilter.h"
 #import "WKSpotLightFilter.h"
@@ -64,6 +71,22 @@ static inline CIVector *ciVector(KCanvasPoint3F point)
 static inline CIVector *ciVector(FloatPoint point)
 {
     return [CIVector vectorWithX:point.x() Y:point.y()];
+}
+
+static inline CIVector *getVectorForChannel(KCChannelSelectorType channel)
+{
+    switch (channel) {
+        case CS_RED:
+            return [CIVector vectorWithX:1.0 Y:0.0 Z:0.0 W:0.0];
+        case CS_GREEN:
+            return [CIVector vectorWithX:0.0 Y:1.0 Z:0.0 W:0.0];            
+        case CS_BLUE:
+            return [CIVector vectorWithX:0.0 Y:0.0 Z:1.0 W:0.0];
+        case CS_ALPHA:
+            return [CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:1.0];
+        default:
+            return [CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:0.0];
+    }
 }
 
 KCanvasFilterQuartz::KCanvasFilterQuartz() : m_filterCIContext(0), m_filterCGLayer(0)
@@ -347,6 +370,130 @@ CIFilter *KCanvasFEColorMatrixQuartz::getCIFilter(KCanvasFilterQuartz *quartzFil
     FE_QUARTZ_OUTPUT_RETURN;
 }
 
+static CIImage *genImageFromTable(const Vector<float>& table)
+{
+    int length = table.size();
+    int nBytes = length*4*sizeof(float);
+    float *tableStore = (float *)malloc(nBytes);
+    NSData *bitmapData = [NSData dataWithBytesNoCopy:tableStore length:nBytes];
+    for (Vector<float>::const_iterator it = table.begin(); it != table.end(); it++) {
+        const float value = *it;
+        *tableStore++ = value;
+        *tableStore++ = value;
+        *tableStore++ = value;
+        *tableStore++ = value;
+    }
+    return [CIImage imageWithBitmapData:bitmapData bytesPerRow:nBytes size:CGSizeMake(length, 1) format:kCIFormatRGBAf colorSpace:nil];
+}
+
+static CIFilter *filterForComponentFunc(const KCComponentTransferFunction& func)
+{
+    CIFilter *filter;
+    switch (func.type) {
+        case CT_IDENTITY:
+            filter = [CIFilter filterWithName:@"WKIdentityTransfer"];
+            break;
+        case CT_TABLE:
+            filter = [CIFilter filterWithName:@"WKTableTransferFilter"];
+            break;
+        case CT_DISCRETE:
+            filter = [CIFilter filterWithName:@"WKDiscreteTransferFilter"];
+            break;
+        case CT_LINEAR:
+            filter = [CIFilter filterWithName:@"WKLinearTransfer"];            
+            break;
+        case CT_GAMMA:
+            filter = [CIFilter filterWithName:@"WKGammaTransfer"];
+            break;
+        default:
+            NSLog(@"WARNING: Unknown function type for feComponentTransfer");
+            //and to prevent the entire svg from failing as a result
+            filter = [CIFilter filterWithName:@"WKIdentityTransfer"];
+            break;
+    }
+    return filter;
+}
+
+static void setParametersForComponentFunc(CIFilter *filter, const KCComponentTransferFunction& func, CIVector *channelSelector)
+{
+    switch (func.type) {
+        case CT_TABLE:
+            [filter setValue:genImageFromTable(func.tableValues) forKey:@"inputTable"];
+            [filter setValue:channelSelector forKey:@"inputSelector"];
+            break;
+        case CT_DISCRETE:
+            [filter setValue:genImageFromTable(func.tableValues) forKey:@"inputTable"];
+            [filter setValue:channelSelector forKey:@"inputSelector"];
+            break;
+        case CT_LINEAR:
+            [filter setValue:[NSNumber numberWithFloat:func.slope] forKey:@"inputSlope"];
+            [filter setValue:[NSNumber numberWithFloat:func.intercept] forKey:@"inputIntercept"];          
+            break;
+        case CT_GAMMA:
+            [filter setValue:[NSNumber numberWithFloat:func.amplitude] forKey:@"inputAmplitude"];
+            [filter setValue:[NSNumber numberWithFloat:func.exponent] forKey:@"inputExponent"];
+            [filter setValue:[NSNumber numberWithFloat:func.offset] forKey:@"inputOffset"];   
+            break;
+        default:
+            //identity has no args
+            break;
+    }
+}
+
+static CIFilter *getFilterForFunc(const KCComponentTransferFunction& func, CIImage *inputImage, CIVector *channelSelector) 
+{
+    CIFilter *filter = filterForComponentFunc(func);
+    [filter setDefaults];
+    
+    setParametersForComponentFunc(filter, func, channelSelector);
+    [filter setValue:inputImage forKey:@"inputImage"];
+    return filter;
+}
+
+CIFilter *KCanvasFEComponentTransferQuartz::getFunctionFilter(KCChannelSelectorType channel, CIImage *inputImage) const
+{
+    switch (channel) {
+        case CS_RED:
+            return [getFilterForFunc(redFunction(), inputImage, getVectorForChannel(channel)) valueForKey:@"outputImage"];
+        case CS_GREEN: 
+            return [getFilterForFunc(greenFunction(), inputImage, getVectorForChannel(channel)) valueForKey:@"outputImage"];
+        case CS_BLUE:
+            return [getFilterForFunc(blueFunction(), inputImage, getVectorForChannel(channel)) valueForKey:@"outputImage"];
+        case CS_ALPHA:
+            return [getFilterForFunc(alphaFunction(), inputImage, getVectorForChannel(channel)) valueForKey:@"outputImage"];
+        default:
+            return nil;
+    }
+    
+}
+
+CIFilter *KCanvasFEComponentTransferQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+{
+    [WKComponentMergeFilter class];
+    [WKIdentityTransferFilter class];
+    [WKTableTransferFilter class];
+    [WKDiscreteTransferFilter class];
+    [WKLinearTransferFilter class];
+    [WKGammaTransferFilter class];
+    
+    CIFilter *filter = nil;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    filter = [CIFilter filterWithName:@"WKComponentMerge"];
+    if (!filter)
+        return nil;
+    [filter setDefaults];
+    CIImage *inputImage = quartzFilter->inputImage(this);
+    FE_QUARTZ_CHECK_INPUT(inputImage);    
+    
+    [filter setValue:getFunctionFilter(CS_RED, inputImage) forKey:@"inputFuncR"];
+    [filter setValue:getFunctionFilter(CS_GREEN, inputImage) forKey:@"inputFuncG"];
+    [filter setValue:getFunctionFilter(CS_BLUE, inputImage) forKey:@"inputFuncB"];
+    [filter setValue:getFunctionFilter(CS_ALPHA, inputImage) forKey:@"inputFuncA"];
+    
+    FE_QUARTZ_OUTPUT_RETURN;
+    return nil;
+}
+
 CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
     CIFilter *filter = nil;
@@ -390,21 +537,6 @@ CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilte
         [filter setValue:[NSNumber numberWithFloat:k4()] forKey:@"inputK4"];
     }
     FE_QUARTZ_OUTPUT_RETURN;
-}
-
-static inline CIVector *getVectorForChannel(int idx){
-    switch(idx){
-    case 0:
-        return [CIVector vectorWithX:1.0 Y:0.0 Z:0.0 W:0.0];
-    case 1:
-        return [CIVector vectorWithX:0.0 Y:1.0 Z:0.0 W:0.0];            
-    case 2:
-        return [CIVector vectorWithX:0.0 Y:0.0 Z:1.0 W:0.0];
-    case 3:
-        return [CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:1.0];
-    default:
-        return [CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:0.0];
-    }
 }
 
 CIFilter *KCanvasFEDisplacementMapQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
