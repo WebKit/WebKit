@@ -1,3 +1,19 @@
+2006-04-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4518632> getComputedStyle returns 'auto' 
+        for dimensions like 'margin-left'
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): For 
+        margin and padding, to match Firefox we now go to the renderer to 
+        get the property value instead of calling valueForLength() on the 
+        style attribute. valueForLength() will return the string 'auto' if 
+        that was what was specified in the CSS, or a percentage if it was 
+        specified as a percent. But to match Firefox, we always want to 
+        return a pixel value for margin and padding.
+
 2006-04-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin.  Landed by eseidel.
