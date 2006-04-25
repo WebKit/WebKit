@@ -1,3 +1,13 @@
+2006-04-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=8575
+        New KWQFileButton leaks reported by buildbot
+
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton): Add a missing release
+
 2006-04-24  David Hyatt  <hyatt@apple.com>
 
         Fix for 8336, focus ring redrawing on top of itself.  Make sure
@@ -49,7 +59,7 @@
 
         Build fix:
         
-        - move some prematurely code back
+        - move some prematurely moved code back
 
         * bridge/mac/WebCoreFrameBridge.h:
         * bridge/mac/WebCoreFrameBridge.mm:

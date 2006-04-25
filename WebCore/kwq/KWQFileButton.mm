@@ -388,6 +388,7 @@ KWQFileButton::KWQFileButton(Frame *frame)
 
     _buttonView = [[WebCoreFileButton alloc] initWithWidget:this];
     setView(_buttonView);
+    [_buttonView release];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
