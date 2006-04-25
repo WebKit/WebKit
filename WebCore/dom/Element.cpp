@@ -500,7 +500,8 @@ void Element::recalcStyle( StyleChange change )
         RenderStyle *newStyle = document()->styleSelector()->createStyleForElement(this);
         StyleChange ch = diff( _style, newStyle );
         if (ch == Detach) {
-            if (attached()) detach();
+            if (attached())
+                detach();
             // ### Suboptimal. Style gets calculated again.
             attach();
             // attach recalulates the style for all children. No need to do it twice.

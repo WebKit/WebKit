@@ -821,12 +821,14 @@ void Document::recalcStyle(StyleChange change)
         
     m_inStyleRecalc = true;
     
-    if (!renderer())
+    ASSERT(!renderer() || renderArena());
+    if (!renderer() || !renderArena())
         goto bail_out;
 
     if (change == Force) {
         RenderStyle* oldStyle = renderer()->style();
-        if (oldStyle) oldStyle->ref();
+        if (oldStyle)
+            oldStyle->ref();
         RenderStyle* _style = new (m_renderArena) RenderStyle();
         _style->ref();
         _style->setDisplay(BLOCK);
@@ -949,11 +951,6 @@ void Document::attach()
 
     ContainerNode::attach();
 
-    setRenderer(render);
-}
-
-void Document::restoreRenderer(RenderObject* render)
-{
     setRenderer(render);
 }
 
@@ -2554,13 +2551,13 @@ void Document::setInPageCache(bool flag)
 
     m_inPageCache = flag;
     if (flag) {
-        assert(m_savedRenderer == 0);
+        ASSERT(m_savedRenderer == 0);
         m_savedRenderer = renderer();
-        if (m_view) {
+        if (m_view)
             m_view->resetScrollBars();
-        }
     } else {
-        assert(renderer() == 0 || renderer() == m_savedRenderer);
+        ASSERT(renderer() == 0 || renderer() == m_savedRenderer);
+        ASSERT(m_renderArena);
         setRenderer(m_savedRenderer);
         m_savedRenderer = 0;
     }

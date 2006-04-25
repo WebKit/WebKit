@@ -666,7 +666,6 @@ protected:
 public:
     bool inPageCache();
     void setInPageCache(bool flag);
-    void restoreRenderer(RenderObject*);
 
     void passwordFieldAdded();
     void passwordFieldRemoved();
