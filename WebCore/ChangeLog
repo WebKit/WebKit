@@ -1,3 +1,14 @@
+2006-04-24  David Hyatt  <hyatt@apple.com>
+
+        Fix for 8336, focus ring redrawing on top of itself.  Make sure
+        not to include empty rects when doing the focus ring drawing, since
+        that results in a draw with no clip set.
+
+        Reviewed by adele
+
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+
 2006-04-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

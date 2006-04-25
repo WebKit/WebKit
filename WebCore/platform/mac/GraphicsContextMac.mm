@@ -595,9 +595,11 @@ void GraphicsContext::drawFocusRing(const Color& color)
     for (int i = 0; i < count; ++i) {
         NSRect transformedRect = [view convertRect:drawRects[i] toView:nil];
         NSRect rectToUse = NSIntersectionRect(transformedRect, transformedClipRect);
-        CGContextBeginPath(context);
-        CGContextAddPath(context, focusRingPath);
-        wkDrawFocusRing(context, *(CGRect *)&rectToUse, colorRef, radius);
+        if (!NSIsEmptyRect(rectToUse)) {
+            CGContextBeginPath(context);
+            CGContextAddPath(context, focusRingPath);
+            wkDrawFocusRing(context, *(CGRect *)&rectToUse, colorRef, radius);
+        }
     }
 
     CGColorRelease(colorRef);
