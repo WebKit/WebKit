@@ -109,6 +109,7 @@ extern NSString *WebPlugInContainingElementKey;
 
 - (void)unload
 {
+    isLoaded = NO;
 }
 
 - (BOOL)isLoaded

@@ -2,6 +2,19 @@
 
         Reviewed by Eric.
 
+        <rdar://problem/4526052> intermittent assertion failure in -[WebBasePluginPackage dealloc]
+        running layout tests
+
+        * Plugins/WebPluginPackage.m:
+        (-[WebPluginPackage unload]):
+        Clear isLoaded here.  It turns out that only WebNetscapePluginPackage cleared its isLoaded
+        flag in -unload.  We need to also do it here, because the superclass (WebBasePluginPackage)
+        asserts in -dealloc that -unload has been called.
+
+2006-04-25  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Eric.
+
         <rdar://problem/4526120> -[WebBasePluginPackage finalize] leaks the CFBundle (under GC only)
 
         * Plugins/WebBasePluginPackage.m:
