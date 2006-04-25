@@ -1,3 +1,15 @@
+2006-04-25  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix reproducible crash in html parser code.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7137
+
+        Test: fast/parser/remove-current-node-parent.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+
 2006-04-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

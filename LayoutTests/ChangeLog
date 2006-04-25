@@ -1,3 +1,13 @@
+2006-04-25  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix reproducible crasher in HTML parsing code.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7137
+
+        * fast/parser/remove-current-node-parent-expected.txt: Added.
+        * fast/parser/remove-current-node-parent.html: Added.
+
 2006-04-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

@@ -487,7 +487,13 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 if (possiblyMoveStrayContent) {
                     Node *node = current;
                     Node *parent = node->parentNode();
+                    // It is allowed for nodes on the node stack to have been removed from the tree, thus we have to check (parentNode() == NULL) first
+                    // http://bugzilla.opendarwin.org/show_bug.cgi?id=7137
+                    if (!parent)
+                        return false;
                     Node *grandparent = parent->parentNode();
+                    if (!grandparent)
+                        return false;
 
                     if (n->isTextNode() ||
                         (h->hasLocalName(trTag) &&
@@ -498,6 +504,8 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                         node = (node->hasTagName(tableTag)) ? node :
                                 ((node->hasTagName(trTag)) ? grandparent : parent);
                         Node *parent = node->parentNode();
+                        if (!parent)
+                            return false;
                         parent->insertBefore(n, node, ec);
                         if (!ec) {
                             if (n->isHTMLElement() && tagPriority > 0 && 
