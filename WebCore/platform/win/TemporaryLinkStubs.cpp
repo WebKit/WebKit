@@ -144,7 +144,6 @@ WebCore::IntRect KWQFileButton::frameGeometry() const { notImplemented(); return
 void KWQFileButton::setFilename(DeprecatedString const&) { notImplemented(); }
 int KWQFileButton::baselinePosition(int) const { notImplemented(); return 0; }
 void KWQFileButton::setFrameGeometry(WebCore::IntRect const&) { notImplemented(); }
-KWQFileButton::~KWQFileButton() { notImplemented(); }
 
 Widget::FocusPolicy QTextEdit::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy QSlider::focusPolicy() const { notImplemented(); return NoFocus; }
