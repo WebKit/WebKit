@@ -1,3 +1,14 @@
+2006-04-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        - don't have a fini method, since trying to call it will actually call the subclass method
+        and mess up the bridge count.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge dealloc]):
+        (-[WebCoreFrameBridge finalize]):
+
 2006-04-25  Steve Falkenburg  <sfalkenburg@apple.com>
 
         Reviewed by eseidel.
