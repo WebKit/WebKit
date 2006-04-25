@@ -442,8 +442,7 @@ void ContainerNode::removeChildren()
         
         n->ref();
 
-        if (n->attached())
-            n->detach();
+        // Remove the node from the tree before calling detach or removedFromDocument (4427024, 4129744)
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
@@ -451,6 +450,9 @@ void ContainerNode::removeChildren()
         m_firstChild = next;
         if (n == m_lastChild)
             m_lastChild = 0;
+
+        if (n->attached())
+            n->detach();
         
         if (n->inDocument())
             n->removedFromDocument();

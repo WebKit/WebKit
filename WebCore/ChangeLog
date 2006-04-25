@@ -1,3 +1,18 @@
+2006-04-25  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Make trunk match the branch.  Now nodes are fully removed
+        from the tree before calling detach.  There is (thankfully) no
+        good way to test this, as no one should depend on this behavior.
+        This change was made are part of fixing:
+        <rdar://problem/4427024> repro crash on www.formassembly.com in khtml::RenderBlock::addChildToFlow
+        <rdar://problem/4233435> CrashTracer: 2698 crashes in Safari at com.apple.WebCore: khtml::RenderBlock::addChildToFlow + 156
+        on the branch.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChildren):
+
 2006-04-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.
