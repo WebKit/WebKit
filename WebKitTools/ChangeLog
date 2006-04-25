@@ -1,3 +1,13 @@
+2006-04-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Landed by eseidel.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8549
+          Enable detection of excessive repainting with DumpRenderTree
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[LayoutTestController display]):
+
 2006-04-23  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

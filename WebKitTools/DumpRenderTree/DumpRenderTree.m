@@ -651,7 +651,12 @@ static void dump(void)
 
 - (void)display
 {
-    [[frame webView] display];
+    NSView *webView = [frame webView];
+    [webView display];
+    [webView lockFocus];
+    [[[NSColor blackColor] colorWithAlphaComponent:0.66] set];
+    NSRectFillUsingOperation([webView frame], NSCompositeSourceOver);
+    [webView unlockFocus];
     readFromWindow = YES;
 }
 
