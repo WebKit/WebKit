@@ -1,3 +1,24 @@
+2006-04-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        Committing the project file change jhaygood suggesed in
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8044
+        WebKit Visual Studio 2005 project shouldn't use the SolutionDir
+        
+        Instead of his patch, I used the following commands:
+
+        sed -e 's/$(SolutionDir)/$(ProjectDir)\\../g' Image\ Viewer/Image\
+        Viewer.vcproj > Image\ Viewer/Image\ Viewer.vcproj_ && mv Image\
+        Viewer/Image\ Viewer.vcproj_ Image\ Viewer/Image\ Viewer.vcproj
+
+        sed -e 's/$(SolutionDir)/$(ProjectDir)\\../g'
+        WebCore/WebCore.vcproj > WebCore/WebCore.vcproj_ && mv
+        WebCore/WebCore.vcproj_ WebCore/WebCore.vcproj
+
+        * Viewer.vcproj:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
 2006-04-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
