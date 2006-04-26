@@ -487,13 +487,12 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 if (possiblyMoveStrayContent) {
                     Node *node = current;
                     Node *parent = node->parentNode();
-                    // It is allowed for nodes on the node stack to have been removed from the tree, thus we have to check (parentNode() == NULL) first
+                    // A script may have removed the current node's parent from the DOM
                     // http://bugzilla.opendarwin.org/show_bug.cgi?id=7137
+                    // FIXME: we should do real recovery here and re-parent with the correct node.
                     if (!parent)
                         return false;
                     Node *grandparent = parent->parentNode();
-                    if (!grandparent)
-                        return false;
 
                     if (n->isTextNode() ||
                         (h->hasLocalName(trTag) &&
