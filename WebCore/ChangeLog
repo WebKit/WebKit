@@ -1,3 +1,17 @@
+2006-04-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by hyatt
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8459>
+        REGRESSION: Content lost during a delete/merge of whitespace:pre text
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::prune): 
+        The function would prune a rendered leaf because it assumed that the 
+        first node passed to it would be a container.
+        The old code ascended using the DOM tree, and would remove the <b> when
+        pruning the <div> in <b><div></div>foo</b>.  Now ascends using the render tree.
+
 2006-04-26  Geoffrey Garen  <ggaren@apple.com>
 
         This time for sure. Fixed Windows build too.

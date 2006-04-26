@@ -1,5 +1,5 @@
-<p>This places the caret before the 'b' in 'bar' and Delete.  'foo' and 'bar' should end up on the same line with 'baz' on the second.</p>
-<p>This demonstrates a bug, which is that 'bar' changes size when it's merged with 'foo'.</p>
+<p>This test places the caret before the 'b' in 'bar' and Delete.  Afterword, 'foobar' should be in the first paragraph and 'baz' should be in the second.</p>
+<p><b>This test illustrates two bugs.</b>  First 'bar' changes size when it moves onto the line containing 'foo'.  Second, there's an extraneous line between 'foobar' and 'baz', but only until the window is resized, when it turns into an extraneous space before 'baz'.</p>
 <div contenteditable="true">
 <div>foo</div>
 <pre id="test">bar

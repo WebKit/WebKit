@@ -239,12 +239,25 @@ void CompositeEditCommand::removeNodeAndPruneAncestors(Node* node)
 void CompositeEditCommand::prune(PassRefPtr<Node> node)
 {
     while (node) {
-        RefPtr<Node> parent = node->parentNode();
         // If you change this rule you may have to add an updateLayout() here.
-        if (node->renderer() && node->renderer()->firstChild())
+        RenderObject* renderer = node->renderer();
+        if (renderer && (!renderer->canHaveChildren() || renderer->firstChild()))
             return;
+            
+        RefPtr<Node> next = node->parentNode();
+        
+        if (renderer) {
+            RenderObject* p = renderer->parent();
+            while (p && !p->element())
+                p = p->parent();
+            ASSERT(p);
+            if (!p)
+                return;
+            next = p->element();        
+        }
+
         removeNode(node.get());
-        node = parent;
+        node = next;
     }
 }
 

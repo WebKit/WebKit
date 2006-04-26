@@ -1,3 +1,20 @@
+2006-04-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by hyatt
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8459>
+        REGRESSION: Content lost during a delete/merge of whitespace:pre text
+
+        Updated to mention the bug that this testcase still demonstrates.  
+        Leaving it disabled until the bug (8592) is fixed:
+        * editing/deleting/merge-whitespace-pre.html-disabled:
+        
+        Illustrates why prune should ascend using the render tree:
+        * editing/deleting/pruning-after-merge-1-expected.checksum: Added.
+        * editing/deleting/pruning-after-merge-1-expected.png: Added.
+        * editing/deleting/pruning-after-merge-1-expected.txt: Added.
+        * editing/deleting/pruning-after-merge-1.html: Added.
+
 2006-04-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by OMG DETHBAKIN.
