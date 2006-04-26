@@ -35,6 +35,7 @@
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSMutationEvent.h"
+#include "JSNode.h"
 #include "JSNodeFilter.h"
 #include "JSRange.h"
 #include "JSXMLHttpRequest.h"
@@ -679,7 +680,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    case Status:
       return jsString(UString(m_frame->jsStatusBarText()));
     case Node:
-      return getNodeConstructor(exec);
+      return JSNode::getConstructor(exec);
     case Range:
       return JSRange::getConstructor(exec);
     case NodeFilter:

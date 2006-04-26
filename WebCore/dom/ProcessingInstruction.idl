@@ -19,7 +19,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMNode] ProcessingInstruction : Node {
+    interface ProcessingInstruction : Node {
 
         // DOM Level 1
 

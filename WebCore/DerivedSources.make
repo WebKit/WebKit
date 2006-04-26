@@ -64,6 +64,7 @@ all : \
     JSKeyboardEvent.h \
     JSMouseEvent.h \
     JSMutationEvent.h \
+    JSNode.h \
     JSNodeFilter.h \
     JSNotation.h \
     JSProcessingInstruction.h \

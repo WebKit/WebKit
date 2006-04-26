@@ -122,6 +122,8 @@ sub GetLegacyHeaderIncludes
     return "#include \"JSCanvasRenderingContext2DBase.h\"\n\n";
   } elsif ($legacyParent eq "KJS::Window") {
       return "#include \"kjs_window.h\"\n\n";
+  } elsif ($legacyParent eq "KJS::DOMNode") {
+      return "#include \"kjs_domnode.h\"\n\n";
   } elsif ($module eq "events") {
     return "#include \"kjs_events.h\"\n\n";
   } elsif ($module eq "core") {

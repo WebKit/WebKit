@@ -1,5 +1,35 @@
 2006-04-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by OMG DETHBAKIN.
+
+        - Start autogenerating Node. This fixes many missing attributes in our
+        DOM by making prototypes hold their relevant constants as properties.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMEventTargetNode::DOMEventTargetNode):
+        (KJS::toJS):
+        * bindings/js/kjs_dom.h:
+        (KJS::DOMEventTargetNode::):
+        * bindings/js/kjs_domnode.h: Had to break DOMNode into a separate
+        header to avoid circular dependency in header includes. Gave it an
+        old-school file name to keep distinguishing beteween old school and
+        news school files easy.
+        (KJS::DOMNode::impl):
+        (KJS::DOMNode::classInfo):
+        (KJS::DOMNode::):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/DocumentType.idl:
+        * dom/Entity.idl:
+        * dom/Node.idl: Added.
+        * dom/Notation.idl:
+        * dom/ProcessingInstruction.idl:
+
+2006-04-26  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin.
 
         Committing the project file change jhaygood suggesed in

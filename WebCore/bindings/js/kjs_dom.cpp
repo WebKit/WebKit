@@ -388,13 +388,8 @@ onunload      DOMEventTargetNode::OnUnload               DontDelete
 @end
 */
 
-DOMEventTargetNode::DOMEventTargetNode(WebCore::Node* n)
-    : DOMNode(n)
-{
-}
-
 DOMEventTargetNode::DOMEventTargetNode(ExecState* exec, WebCore::Node* n)
-    : DOMNode(n)
+    : JSNode(exec, n)
 {
     setPrototype(DOMEventTargetNodeProto::self(exec));
 }
@@ -1001,7 +996,7 @@ JSValue* toJS(ExecState *exec, PassRefPtr<WebCore::Node> node)
     case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
     case WebCore::Node::ENTITY_REFERENCE_NODE:
     default:
-      ret = new DOMNode(exec, n);
+      ret = new JSNode(exec, n);
   }
 
   interp->putDOMNodeForDocument(doc, n, ret);
@@ -1035,41 +1030,6 @@ JSValue *getRuntimeObject(ExecState* exec, WebCore::Node* n)
 JSValue *toJS(ExecState *exec, PassRefPtr<NodeList> l)
 {
   return cacheDOMObject<NodeList, DOMNodeList>(exec, l.get());
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo NodeConstructor::info = { "NodeConstructor", 0, &NodeConstructorTable, 0 };
-/* Source for NodeConstructorTable. Use "make hashtables" to regenerate.
-@begin NodeConstructorTable 11
-  ELEMENT_NODE          WebCore::Node::ELEMENT_NODE         DontDelete|ReadOnly
-  ATTRIBUTE_NODE        WebCore::Node::ATTRIBUTE_NODE               DontDelete|ReadOnly
-  TEXT_NODE             WebCore::Node::TEXT_NODE            DontDelete|ReadOnly
-  CDATA_SECTION_NODE    WebCore::Node::CDATA_SECTION_NODE   DontDelete|ReadOnly
-  ENTITY_REFERENCE_NODE WebCore::Node::ENTITY_REFERENCE_NODE        DontDelete|ReadOnly
-  ENTITY_NODE           WebCore::Node::ENTITY_NODE          DontDelete|ReadOnly
-  PROCESSING_INSTRUCTION_NODE WebCore::Node::PROCESSING_INSTRUCTION_NODE DontDelete|ReadOnly
-  COMMENT_NODE          WebCore::Node::COMMENT_NODE         DontDelete|ReadOnly
-  DOCUMENT_NODE         WebCore::Node::DOCUMENT_NODE                DontDelete|ReadOnly
-  DOCUMENT_TYPE_NODE    WebCore::Node::DOCUMENT_TYPE_NODE   DontDelete|ReadOnly
-  DOCUMENT_FRAGMENT_NODE WebCore::Node::DOCUMENT_FRAGMENT_NODE      DontDelete|ReadOnly
-  NOTATION_NODE         WebCore::Node::NOTATION_NODE                DontDelete|ReadOnly
-@end
-*/
-bool NodeConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<NodeConstructor, DOMObject>(exec, &NodeConstructorTable, this, propertyName, slot);
-}
-
-JSValue *NodeConstructor::getValueProperty(ExecState *, int token) const
-{
-  // We use the token as the value to return directly
-  return jsNumber(token);
-}
-
-JSObject *getNodeConstructor(ExecState *exec)
-{
-  return cacheGlobalObject<NodeConstructor>(exec, "[[node.constructor]]");
 }
 
 // -------------------------------------------------------------------------

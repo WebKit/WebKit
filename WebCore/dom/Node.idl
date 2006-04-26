@@ -1,0 +1,40 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module core {
+
+    interface [LegacyParent=KJS::DOMNode] Node {
+
+        // DOM Level 2 Core
+        
+        // NodeType
+        const unsigned short      ELEMENT_NODE                   = 1;
+        const unsigned short      ATTRIBUTE_NODE                 = 2;
+        const unsigned short      TEXT_NODE                      = 3;
+        const unsigned short      CDATA_SECTION_NODE             = 4;
+        const unsigned short      ENTITY_REFERENCE_NODE          = 5;
+        const unsigned short      ENTITY_NODE                    = 6;
+        const unsigned short      PROCESSING_INSTRUCTION_NODE    = 7;
+        const unsigned short      COMMENT_NODE                   = 8;
+        const unsigned short      DOCUMENT_NODE                  = 9;
+        const unsigned short      DOCUMENT_TYPE_NODE             = 10;
+        const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
+        const unsigned short      NOTATION_NODE                  = 12;
+    };
+}

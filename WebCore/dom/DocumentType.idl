@@ -19,7 +19,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMNode] DocumentType : Node {
+    interface DocumentType : Node {
 
         // DOM Level 1
 

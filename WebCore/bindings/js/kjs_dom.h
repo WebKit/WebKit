@@ -21,6 +21,7 @@
 #ifndef KJS_DOM_H
 #define KJS_DOM_H
 
+#include "JSNode.h"
 #include "NodeList.h"
 #include "kjs_binding.h"
 #include "DeprecatedValueList.h"
@@ -43,45 +44,10 @@ namespace WebCore {
 
 namespace KJS {
 
-  KJS_DEFINE_PROTOTYPE(DOMNodeProto)
+  KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMEventTargetNodeProto, WebCore::JSNodeProto)
 
-  class DOMNode : public DOMObject {
+  class DOMEventTargetNode : public WebCore::JSNode {
   public:
-    DOMNode(ExecState *exec, WebCore::Node *n);
-    virtual ~DOMNode();
-    virtual bool toBoolean(ExecState *) const;
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void mark();
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int attr);
-    WebCore::Node *impl() const { return m_impl.get(); }
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-
-    virtual JSValue *toPrimitive(ExecState *exec, JSType preferred = UndefinedType) const;
-    virtual UString toString(ExecState *exec) const;
-
-    enum { NodeName, NodeValue, NodeType, ParentNode, ParentElement,
-           ChildNodes, FirstChild, LastChild, PreviousSibling, NextSibling, Item,
-           Attributes, NamespaceURI, Prefix, LocalName, OwnerDocument, InsertBefore,
-           ReplaceChild, RemoveChild, AppendChild, HasAttributes, HasChildNodes,
-           CloneNode, Normalize, IsSupported, Contains, IsSameNode, IsEqualNode, TextContent,
-           IsDefaultNamespace, LookupNamespaceURI, LookupPrefix,
-    };
-
-  protected:
-    // Constructor for inherited classes; doesn't set up a prototype.
-    DOMNode(WebCore::Node *n);
-    RefPtr<WebCore::Node> m_impl;
-  };
-    
-  KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMEventTargetNodeProto, DOMNodeProto)
-
-  class DOMEventTargetNode : public DOMNode
-  {
-  public:
-
       DOMEventTargetNode(ExecState *exec, WebCore::Node *n);
 
       void setListener(ExecState* exec, const WebCore::AtomicString &eventType, JSValue* func) const;
@@ -102,10 +68,6 @@ namespace KJS {
           OnMouseMove, OnMouseOut, OnMouseOver, OnMouseUp, OnMouseWheel, OnMove, OnReset,
           OnResize, OnScroll, OnSearch, OnSelect, OnSubmit, OnUnload
       };
-      
-protected:
-      // Constructor for inherited classes; doesn't set up a prototype.
-      DOMEventTargetNode(WebCore::Node *n);
   };
 
   WebCore::EventTargetNode* toEventTargetNode(JSValue*); // returns 0 if passed-in value is not a EventTargetNode object
@@ -159,17 +121,6 @@ protected:
     static JSValue *nameGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
     RefPtr<WebCore::NamedNodeMap> m_impl;
-  };
-
-  // Constructor for Node - constructor stuff not implemented yet
-  class NodeConstructor : public DOMObject {
-  public:
-    NodeConstructor(ExecState *) { }
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
   };
 
   // Constructor for DOMException - constructor stuff not implemented yet
