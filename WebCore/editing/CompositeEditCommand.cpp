@@ -709,7 +709,7 @@ void CompositeEditCommand::moveParagraph(const VisiblePosition& startOfParagraph
         insertNodeAt(createBreakElement(document()).get(), beforeParagraph.deepEquivalent().node(), beforeParagraph.deepEquivalent().offset());
     
     setEndingSelection(destination);
-    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), false));
+    EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), false, false, false, true));
     applyCommandToComposite(cmd);
 }
 

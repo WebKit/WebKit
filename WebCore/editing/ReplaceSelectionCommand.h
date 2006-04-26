@@ -113,7 +113,7 @@ private:
 class ReplaceSelectionCommand : public CompositeEditCommand
 {
 public:
-    ReplaceSelectionCommand(Document *document, DocumentFragment *fragment, bool selectReplacement=true, bool smartReplace=false, bool matchStyle=false);
+    ReplaceSelectionCommand(Document *document, DocumentFragment *fragment, bool selectReplacement=true, bool smartReplace=false, bool matchStyle=false, bool forceMergeStart=false);
     virtual ~ReplaceSelectionCommand();
     
     virtual void doApply();
@@ -129,6 +129,9 @@ private:
     void updateNodesInserted(Node *);
     void fixupNodeStyles(const NodeVector&, const RenderingInfoMap&);
     void removeLinePlaceholderIfNeeded(Node *);
+    
+    bool shouldMergeStart(const ReplacementFragment&, const Selection&);
+    bool shouldMergeEnd(const ReplacementFragment&, const Selection&);
 
     RefPtr<Node> m_firstNodeInserted;
     RefPtr<Node> m_lastNodeInserted;
@@ -138,6 +141,7 @@ private:
     bool m_smartReplace;
     bool m_matchStyle;
     RefPtr<DocumentFragment> m_documentFragment;
+    bool m_forceMergeStart;
 };
 
 } // namespace WebCore

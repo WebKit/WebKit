@@ -27,6 +27,7 @@
 #define KHTML_EDITING_SELECTION_H
 
 #include "Position.h"
+#include "VisiblePosition.h"
 #include "TextGranularity.h"
 
 namespace WebCore {
@@ -57,6 +58,9 @@ public:
     Position extent() const { return m_extent; }
     Position start() const { return m_start; }
     Position end() const { return m_end; }
+    
+    VisiblePosition visibleStart() const { return VisiblePosition(m_start, isRange() ? DOWNSTREAM : affinity()); }
+    VisiblePosition visibleEnd() const { return VisiblePosition(m_end, isRange() ? UPSTREAM : affinity()); }
 
     bool isNone() const { return state() == NONE; }
     bool isCaret() const { return state() == CARET; }

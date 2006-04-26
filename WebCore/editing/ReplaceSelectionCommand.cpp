@@ -385,6 +385,7 @@ void ReplacementFragment::removeUnrenderedNodes(Node *holder)
         removeNode(it.current());
 }
 
+// FIXME: This counts two blocks for <span><div>foo</div></span>.  Get rid of uses of hasMoreThanOneBlock so that we can get rid of this function.
 int ReplacementFragment::renderedBlocks(Node *holder)
 {
     int count = 0;
@@ -452,17 +453,52 @@ RenderingInfo::RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration> style, bool 
 {
 }
 
-ReplaceSelectionCommand::ReplaceSelectionCommand(Document *document, DocumentFragment *fragment, bool selectReplacement, bool smartReplace, bool matchStyle) 
+ReplaceSelectionCommand::ReplaceSelectionCommand(Document *document, DocumentFragment *fragment, bool selectReplacement, bool smartReplace, bool matchStyle, bool forceMergeStart) 
     : CompositeEditCommand(document),
       m_selectReplacement(selectReplacement), 
       m_smartReplace(smartReplace),
       m_matchStyle(matchStyle),
-      m_documentFragment(fragment)
+      m_documentFragment(fragment),
+      m_forceMergeStart(forceMergeStart)
 {
 }
 
 ReplaceSelectionCommand::~ReplaceSelectionCommand()
 {
+}
+
+// FIXME: This will soon operate on the fragment after it's been inserted so that it can check renderers and create visible positions.
+bool ReplaceSelectionCommand::shouldMergeStart(const ReplacementFragment& incomingFragment, const Selection& destinationSelection)
+{
+    if (m_forceMergeStart)
+        return true;
+        
+    VisiblePosition visibleStart = destinationSelection.visibleStart();
+    Node* startBlock = destinationSelection.start().node()->enclosingBlockFlowElement();
+
+    // <rdar://problem/4013642> Copied quoted word does not paste as a quote if pasted at the start of a line    
+    if (isStartOfParagraph(visibleStart) && isMailBlockquote(incomingFragment.firstChild()))
+        return false;
+    
+    // Don't pull content out of a list item.
+    // FIXMEs: Do this check in shouldMergeEnd too.  Don't pull content out of a table cell either.
+    if (enclosingList(incomingFragment.mergeStartNode()))
+        return false;
+    
+    // Merge if this is an empty editable subtree, to prevent an extra level of block nesting.
+    if (startBlock == startBlock->rootEditableElement() && isStartOfBlock(visibleStart) && isEndOfBlock(visibleStart))
+        return true;
+    
+    if (!incomingFragment.hasInterchangeNewlineAtStart() && 
+        (!isStartOfParagraph(visibleStart) || !incomingFragment.hasInterchangeNewlineAtEnd() && !incomingFragment.hasMoreThanOneBlock()))
+       return true;
+    
+    return false;
+}
+
+bool ReplaceSelectionCommand::shouldMergeEnd(const ReplacementFragment& incomingFragment, const Selection& destinationSelection)
+{
+    return !incomingFragment.hasInterchangeNewlineAtEnd() && !isEndOfParagraph(destinationSelection.visibleEnd());
 }
 
 void ReplaceSelectionCommand::doApply()
@@ -486,44 +522,13 @@ void ReplaceSelectionCommand::doApply()
     VisiblePosition visibleStart(selection.start(), selection.affinity());
     VisiblePosition visibleEnd(selection.end(), selection.affinity());
     bool startAtStartOfBlock = isStartOfBlock(visibleStart);
-    bool startAtEndOfBlock = isEndOfBlock(visibleStart);
-    Node *startBlock = selection.start().node()->enclosingBlockFlowElement();
+    Node* startBlock = selection.start().node()->enclosingBlockFlowElement();
 
-    // decide whether to later merge content into the startBlock
-    bool mergeStart = false;
-    if (startBlock == startBlock->rootEditableElement() && startAtStartOfBlock && startAtEndOfBlock) {
-        // empty editable subtree, need to mergeStart so that fragment ends up
-        // merged into the editable subtree rather than adding more levels of block nesting
-        mergeStart = true;
-    } else {
-        // merge if current selection starts inside a paragraph, or there is only one block and no interchange newline to add
-        mergeStart = !fragment.hasInterchangeNewlineAtStart() && 
-            (!isStartOfParagraph(visibleStart) || (!fragment.hasInterchangeNewlineAtEnd() && !fragment.hasMoreThanOneBlock()));
-        
-        // This is a workaround for this bug:
-        // <rdar://problem/4013642> Copied quoted word does not paste as a quote if pasted at the start of a line
-        // We need more powerful logic in this whole mergeStart code for this case to come out right without
-        // breaking other cases.
-        if (isStartOfParagraph(visibleStart) && isMailBlockquote(fragment.firstChild()))
-            mergeStart = false;
-        
-        // prevent first list item from getting merged into target, thereby pulled out of list
-        // NOTE: ideally, we'd check for "first visible position in list" here,
-        // but we cannot.  Fragments do not have any visible positions.  Instead, we
-        // assume that the mergeStartNode() contains the first visible content to paste.
-        // Any better ideas?
-        if (mergeStart) {
-            for (Node *n = fragment.mergeStartNode(); n; n = n->parentNode()) {
-                if (isListElement(n)) {
-                    mergeStart = false;
-                    break;
-                }
-            }
-        }
-    }
+    // Whether the first paragraph of the incoming fragment should be merged with content from visibleStart to startOfParagraph(visibleStart).
+    bool mergeStart = shouldMergeStart(fragment, selection);
     
     // Whether the last paragraph of the incoming fragment should be merged with content from visibleEnd to endOfParagraph(visibleEnd).
-    bool mergeEnd = !isEndOfParagraph(visibleEnd) && !fragment.hasInterchangeNewlineAtEnd();
+    bool mergeEnd = shouldMergeEnd(fragment, selection);
 
     Position startPos = selection.start();
     
@@ -532,7 +537,7 @@ void ReplaceSelectionCommand::doApply()
         bool mergeBlocksAfterDelete = !(fragment.hasInterchangeNewlineAtStart() || fragment.hasInterchangeNewlineAtEnd() || fragment.hasMoreThanOneBlock());
         deleteSelection(false, mergeBlocksAfterDelete);
         updateLayout();
-        visibleStart = VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY);
+        visibleStart = endingSelection().visibleStart();
         if (fragment.hasInterchangeNewlineAtStart()) {
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
                 if (!isEndOfDocument(visibleStart))
@@ -568,7 +573,7 @@ void ReplaceSelectionCommand::doApply()
         }
         startPos = endingSelection().start();
     }
-
+    
     if (startAtStartOfBlock && startBlock->inDocument())
         startPos = Position(startBlock, 0);
 
@@ -786,21 +791,20 @@ void ReplaceSelectionCommand::doApply()
                 }
             }
         }
-        
-        if (mergeEnd) {
-            // FIXME: This move should happen in the opposite direction, because we'd rather preserve the styles on the block containing the 
-            // paragraph that was already in the document than preserve block styles from the incoming fragment. 
-            VisiblePosition afterInsertedContent(Position(m_lastNodeInserted->parentNode(), m_lastNodeInserted->nodeIndex() + 1));
-            if (isEndOfParagraph(afterInsertedContent)) {
-                VisiblePosition startOfParagraphToMove = afterInsertedContent.next();
-                VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove);
-                moveParagraph(startOfParagraphToMove, endOfParagraphToMove, afterInsertedContent);
-            }
-        }
     }
     
     if (!m_matchStyle)
         fixupNodeStyles(fragment.nodes(), fragment.renderingInfo());
+    
+    if (mergeEnd) {
+        VisiblePosition afterInsertedContent(positionAfterNode(m_lastNodeInserted.get()));
+        if (isEndOfParagraph(afterInsertedContent)) {
+            VisiblePosition startOfParagraphToMove = startOfParagraph(afterInsertedContent);
+            VisiblePosition destination = afterInsertedContent.next();
+            moveParagraph(startOfParagraphToMove, afterInsertedContent, destination);
+        }
+    }
+    
     completeHTMLReplacement(lastPositionToSelect);
     
     // step 5 : mop up

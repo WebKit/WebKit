@@ -1,0 +1,24 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BLOCKQUOTE > DIV > BODY > HTML > #document to 0 of BLOCKQUOTE > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 776x36
+          text run at (0,0) width 776: "This test makes sure that content inside a Mail blockquote in an incoming fragment isn't pulled out of the blockquote during"
+          text run at (0,18) width 36: "paste."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderInline {B} at (0,0) size 566x18
+          RenderText {#text} at (0,0) size 566x18
+            text run at (0,0) width 566: "You should see 'bar' inside a blockquote (it will have a blue border around it if it is)."
+      RenderBlock {DIV} at (0,86) size 784x20
+        RenderBlock {BLOCKQUOTE} at (40,0) size 704x20 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 20x18
+            text run at (1,1) width 20: "bar"
+caret: position 3 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

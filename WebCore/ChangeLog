@@ -1,3 +1,40 @@
+2006-04-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8583>
+        Moving paste code around and some small fixes
+        
+        Moved code to make it easier to do the start merge after the fact, 
+        with moveParagraph, instead of in the middle of the paste operation.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraph):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart):
+        Moved code to make this decision to its own function.  Moved special case
+        checks to the top.  Added m_forceMergeStart to override the special cases 
+        because moveParagraph uses ReplaceSelectionCommand and expects a merge.
+        
+        (WebCore::ReplaceSelectionCommand::shouldMergeEnd): 
+        No functional changes, just moved code here.
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Do the end merge in the opposite direction.  Merging two paragraphs destroys
+        the moved one's block level styles, and we prefer to use the styles of the 
+        one that was in the document, not the one that's being pasted.
+        
+        * editing/ReplaceSelectionCommand.h:
+        * editing/Selection.h:
+        (WebCore::Selection::visibleStart): Added.
+        (WebCore::Selection::visibleEnd): Added.
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingList): Added.
+        (WebCore::isMailBlockquote): 
+        Don't require a renderer so that this can be used on nodes in fragments.
+        
+        * editing/htmlediting.h:
+
 2006-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

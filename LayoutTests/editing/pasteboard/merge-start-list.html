@@ -1,0 +1,13 @@
+<p>This test makes sure that content inside a list in an incoming fragment isn't pulled out of the list during paste.</p>
+<p><b>You should see 'bar' inside a list item.</b></p>
+
+<div id="test" contenteditable="true"></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+
+document.execCommand("InsertHTML", false , "<ul><li>bar</li></ul>");
+</script>

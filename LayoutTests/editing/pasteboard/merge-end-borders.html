@@ -1,0 +1,19 @@
+<p>This is a test for the merge that paste does of the last paragraph of the incoming fragment with content after the end of the selection being pasted into.  A fragment that ends in with paragraph surrounded by a blue border is pasted into a selection ending in a paragraph surrounded by a red border.  The red border should win.</p><p><b>The second paragraph should be surrounded by a red border before and after the test.</b></p> 
+
+<div id="test" contenteditable="true">First paragraph<div style="border: 1px solid red;">This text should be surrounded by a red border.</div></div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+// Move to the last word in the first paragraph
+moveSelectionForwardByWordCommand();
+moveSelectionForwardByCharacterCommand();
+// Select from here to the end of the first word of the next paragraph.
+extendSelectionForwardByWordCommand();
+extendSelectionForwardByWordCommand();
+
+insertHTMLCommand("paragraph<div style='border: 1px solid blue;'>This</div>");
+</script>

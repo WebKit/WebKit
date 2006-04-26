@@ -373,6 +373,17 @@ bool isListElement(Node *n)
     return (n && (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(dlTag)));
 }
 
+Node* enclosingList(Node* node)
+{
+    if (!node)
+        return 0;
+        
+    for (Node* n = node->parentNode(); n; n = n->parentNode())
+        if (n->hasTagName(ulTag) || n->hasTagName(olTag))
+            return n;
+    return 0;
+}
+
 Node *enclosingListChild (Node *node)
 {
     // check not just for li elements per se, but also
@@ -550,7 +561,7 @@ Node *nearestMailBlockquote(const Node *node)
 
 bool isMailBlockquote(const Node *node)
 {
-    if (!node || !node->renderer() || !node->isElementNode() && !node->hasTagName(blockquoteTag))
+    if (!node || !node->isElementNode() && !node->hasTagName(blockquoteTag))
         return false;
         
     return static_cast<const Element *>(node)->getAttribute("type") == "cite";

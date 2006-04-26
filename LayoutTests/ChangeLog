@@ -1,3 +1,45 @@
+2006-04-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8583>
+        Moving paste code around and some small fixes
+
+        Disabling until the bug it illustrates is fixed (8459):
+        * editing/deleting/merge-whitespace-pre.html: Removed.
+        * editing/deleting/merge-whitespace-pre.html-disabled: Added.
+        
+        This illustrates the need to do mergeEnd in the opposite direction:
+        * editing/pasteboard/merge-end-borders-expected.checksum: Added.
+        * editing/pasteboard/merge-end-borders-expected.png: Added.
+        * editing/pasteboard/merge-end-borders-expected.txt: Added.
+        * editing/pasteboard/merge-end-borders.html: Added.
+        
+        These illustrate the need to do the special case checks for list content and Mail
+        blockquote content at the top of shouldMergeStart:
+        * editing/pasteboard/merge-start-blockquote-expected.checksum: Added.
+        * editing/pasteboard/merge-start-blockquote-expected.png: Added.
+        * editing/pasteboard/merge-start-blockquote-expected.txt: Added.
+        * editing/pasteboard/merge-start-blockquote.html: Added.
+        * editing/pasteboard/merge-start-list-expected.checksum: Added.
+        * editing/pasteboard/merge-start-list-expected.png: Added.
+        * editing/pasteboard/merge-start-list-expected.txt: Added.
+        * editing/pasteboard/merge-start-list.html: Added.
+        
+        In these tests, the caret was blown away because it was in content that 
+        participated in the end merge.  Now the end merge happens in the opposite 
+        direction (incoming content is what is moved when merging paragraphs), so 
+        the caret is no longer blown away:
+        * editing/pasteboard/paste-line-endings-007-expected.txt:
+        * editing/pasteboard/paste-line-endings-008-expected.txt:
+        * editing/pasteboard/paste-line-endings-009-expected.txt:
+        * editing/pasteboard/paste-text-002-expected.txt:
+        
+        Acceptable change to a complicated paste-a-selection-over-itself:
+        * editing/pasteboard/paste-text-003-expected.checksum:
+        * editing/pasteboard/paste-text-003-expected.png:
+        * editing/pasteboard/paste-text-003-expected.txt:
+
 2006-04-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

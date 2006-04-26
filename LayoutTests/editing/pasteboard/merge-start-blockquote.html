@@ -1,0 +1,19 @@
+<style>
+blockquote {
+    border: 1px solid blue;
+}
+</style>
+
+<p>This test makes sure that content inside a Mail blockquote in an incoming fragment isn't pulled out of the blockquote during paste.</p>
+<p><b>You should see 'bar' inside a blockquote (it will have a blue border around it if it is).</b></p>
+
+<div id="test" contenteditable="true"></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+
+document.execCommand("InsertHTML", false , "<blockquote type='cite'>bar</blockquote>");
+</script>
