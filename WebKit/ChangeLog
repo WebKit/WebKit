@@ -1,3 +1,38 @@
+2006-04-26  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4525105> Repro TOT crash in [WebBaseNetscapePluginView dealloc] at coachella.com
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8564> crashed when closing a tab
+
+        * WebView/WebFrame.m:
+        (-[WebFramePrivate dealloc]):
+        Assert that plugInViews has been released.
+        (-[WebFrame _addPlugInView:]):
+        New method.  Adds the plug-in view to the plugInViews set and calls -setWebFrame: on it.
+        (-[WebFrame _removeAllPlugInViews]):
+        New method.  Calls -setWebFrame:nil on all plug-in views and releases the plugInViews set.
+        (-[WebFrame _willCloseURL]):
+        New method.  Dispose of plug-in views when leaving a page (or closing the WebView).
+
+        * WebView/WebFrameInternal.h:
+        Declared -_addPlugInView:, -_removeAllPlugInViews, -_willCloseURL
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:]):
+        Call -[WebFrame _addPlugInView:] instead of directly setting plug-in views' frames.  This
+        allows us to keep track of them so that we can explicitly dispose of them when leaving the page.
+        (-[WebFrameBridge closeURL]):
+        Override -[WebCoreFrameBridge closeURL] so that we can perform our own teardown when leaving
+        a page or closing the WebView.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        Declared -stop so that subclass WebNetscapePluginEmbeddedView can call it.
+
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView setWebFrame:]):
+        Stop the plug-in when it is removed from its WebFrame.
+
 2006-04-25  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

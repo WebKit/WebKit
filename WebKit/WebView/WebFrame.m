@@ -166,6 +166,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebFrame *)_traverseNextFrameStayWithin:(WebFrame *)stayWithin;
 @end
 
+@interface NSView (WebFramePluginHosting)
+- (void)setWebFrame:(WebFrame *)webFrame;
+@end
+
 @interface WebFramePrivate : NSObject
 {
 @public
@@ -202,6 +206,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebScriptDebugger *scriptDebugger;
 
     NSString *frameNamespace;
+    
+    NSMutableSet *plugInViews;
 }
 
 - (void)setWebFrameView:(WebFrameView *)v;
@@ -256,7 +262,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     ASSERT(policyFormState == nil);
     ASSERT(policyDataSource == nil);
     ASSERT(frameNamespace == nil);
-
+    ASSERT(plugInViews == nil);
+    
     [super dealloc];
 }
 
@@ -2769,6 +2776,34 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [pool drain];
     
     return frame != nil;
+}
+
+- (void)_addPlugInView:(NSView *)plugInView
+{
+    ASSERT([plugInView respondsToSelector:@selector(setWebFrame:)]);
+    ASSERT(![_private->plugInViews containsObject:plugInView]);
+    
+    if (!_private->plugInViews)
+        _private->plugInViews = [[NSMutableSet alloc] init];
+        
+    [plugInView setWebFrame:self];
+    [_private->plugInViews addObject:plugInView];
+}
+
+- (void)_removeAllPlugInViews
+{
+    if (!_private->plugInViews)
+        return;
+    
+    [_private->plugInViews makeObjectsPerformSelector:@selector(setWebFrame:) withObject:nil];
+    [_private->plugInViews release];
+    _private->plugInViews = nil;
+}
+
+// This is called when leaving a page or closing the WebView
+- (void)_willCloseURL
+{
+    [self _removeAllPlugInViews];
 }
 
 @end

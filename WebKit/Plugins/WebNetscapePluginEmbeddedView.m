@@ -88,7 +88,13 @@
 
 - (void)setWebFrame:(WebFrame *)webFrame
 {
+    if (webFrame == _webFrame)
+        return;
+        
     _webFrame = webFrame;
+    
+    if (!_webFrame)
+        [self stop];
 }
 
 - (WebDataSource *)dataSource

@@ -990,7 +990,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                            attributeKeys:attributeNames
                                                          attributeValues:attributeValues] autorelease];
             view = embeddedView;
-            [embeddedView setWebFrame:_frame];
+            [_frame _addPlugInView:embeddedView];
         } else
             ASSERT_NOT_REACHED();
     } else
@@ -1008,7 +1008,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];
         WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSZeroRect error:error] autorelease];
-        [nullView setWebFrame:_frame];
+        [_frame _addPlugInView:nullView];
         view = nullView;
         [error release];
     }
@@ -1609,6 +1609,12 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 - (void)handledOnloadEvents
 {
     [_frame _handledOnloadEvents];
+}
+
+- (void)closeURL
+{
+    [_frame _willCloseURL];
+    [super closeURL];
 }
 
 @end
