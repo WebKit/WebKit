@@ -1,5 +1,12 @@
 2006-04-26  Geoffrey Garen  <ggaren@apple.com>
 
+        This time for sure. Fixed Windows build too.
+        
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2006-04-26  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by TimO.
 
         Build fix.
