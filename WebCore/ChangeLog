@@ -1,5 +1,14 @@
 2006-04-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by TimO.
+
+        Build fix.
+
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_domnode.h:
+
+2006-04-26  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by OMG DETHBAKIN.
 
         - Start autogenerating Node. This fixes many missing attributes in our

@@ -21,6 +21,13 @@
 #ifndef KJS_DOMNODE_H
 #define KJS_DOMNODE_H
 
+#include <kjs_binding.h>
+#include <kjs/lookup.h>
+
+namespace WebCore {
+    class JSNode;
+}
+
 namespace KJS {
 
 KJS_DEFINE_PROTOTYPE(DOMNodeProto)
@@ -54,7 +61,7 @@ protected:
 
 private:
     // Don't use this class directly -- use JSNode instead
-    friend class JSNode;
+    friend class WebCore::JSNode;
     DOMNode();
     DOMNode(ExecState *exec, WebCore::Node *n);
     DOMNode(WebCore::Node *n);

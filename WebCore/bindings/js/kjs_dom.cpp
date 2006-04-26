@@ -36,6 +36,7 @@
 #include "JSDOMImplementation.h"
 #include "JSDocumentType.h"
 #include "JSEntity.h"
+#include "JSNode.h"
 #include "JSNotation.h"
 #include "JSProcessingInstruction.h"
 #include "JSRange.h"
