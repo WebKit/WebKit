@@ -60,4 +60,6 @@
 - (WebFrameBridge *)bridge;
 - (WebView *)webView;
 
+- (NSString *)URLPolicyCheckReferrer;
+
 @end

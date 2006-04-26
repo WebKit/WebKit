@@ -92,7 +92,8 @@
 {
    BOOL ignore;
    WebFrameBridge *bridge = [_controller bridge];
-   if (![bridge canLoadURL:[_request URL] fromReferrer:[bridge referrer] hideReferrer:&ignore]) {
+   ASSERT(bridge);
+   if (![bridge canLoadURL:[_request URL] fromReferrer:[_controller URLPolicyCheckReferrer] hideReferrer:&ignore]) {
        [self _continueWithPolicy:WebPolicyIgnore];
        return YES;
    }

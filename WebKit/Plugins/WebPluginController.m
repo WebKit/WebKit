@@ -348,4 +348,11 @@ static NSMutableSet *pluginViews = nil;
     return [[self webFrame] webView];
 }
 
+- (NSString *)URLPolicyCheckReferrer
+{
+    NSURL *responseURL = [[[[self webFrame] dataSource] response] URL];
+    ASSERT(responseURL);
+    return [responseURL _web_originalDataAsString];
+}
+
 @end

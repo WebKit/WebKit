@@ -1,5 +1,24 @@
 2006-04-25  Tim Omernick  <timo@apple.com>
 
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4472035> SPI that checks for URL policy fails in plugin documents
+
+        * Plugins/WebPluginController.h:
+        * Plugins/WebPluginController.m:
+        (-[WebPluginController URLPolicyCheckReferrer]):
+        New method.  Get the referrer from the frame's data source's NSURLResponse.  Note that for
+        document types loaded by WebCore, this URL is the same as -[WebCorePageBridge referrer],
+        since the response URL is what we pass to -[WebCorePageBridge openURL:].
+
+        * Plugins/WebPluginContainerCheck.m:
+        (-[WebPluginContainerCheck _isForbiddenFileLoad]):
+        Use the WebPluginController's -URLPolicyCheckReferrer instead of assuming that the bridge's
+        -referrer is valid.  -[WebCorePageBridge referrer] is only set during the normal WebCore page
+        load process, which has nothing to do with loading standalone plugin documents.
+
+2006-04-25  Tim Omernick  <timo@apple.com>
+
         Reviewed by Eric.
 
         <rdar://problem/4526052> intermittent assertion failure in -[WebBasePluginPackage dealloc]
