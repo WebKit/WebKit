@@ -710,9 +710,10 @@ void HTMLObjectElement::setComplete(bool complete)
 {
     if (complete != m_complete) {
         m_complete = complete;
-        if (complete && inDocument() && !m_useFallbackContent) {
+        if (complete && !m_useFallbackContent) {
             needWidgetUpdate = true;
-            setChanged();
+            if (inDocument())
+                setChanged();
         }
     }
 }

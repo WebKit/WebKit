@@ -1,3 +1,13 @@
+2006-04-25  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Hyatt.
+        
+        Test case for <rdar://problem/4068375> Flash inserted via innerHTML Fails to Show when
+        CSS Display Style is Toggled via Javascript
+
+        * plugins/inner-html-display-none.html: Added.
+        * plugins/inner-html-display-none-expected.txt: Added.
+
 2006-04-26  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by hyatt

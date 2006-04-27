@@ -1,3 +1,18 @@
+2006-04-26  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Hyatt.
+
+        <rdar://problem/4068375> Flash inserted via innerHTML Fails to Show when CSS Display
+        Style is Toggled via Javascript
+
+        * html/html_objectimpl.cpp:
+        (WebCore::HTMLObjectElement::setComplete):
+        Set needWidgetUpdate when finished parsing, even if the object element is not in
+        a document.  That way, when the element attaches to a document, it will update its
+        widget (creating the plug-in view if necessary).  This is important when the object
+        is being inserted via setInnerHTML, since the parsed nodes are not added to the
+        document until the whole HTML string is parsed.
+
 2006-04-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Hyatt.
