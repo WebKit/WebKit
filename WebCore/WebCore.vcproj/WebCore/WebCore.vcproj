@@ -347,11 +347,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSNode.cpp"
+				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.cpp"
+				RelativePath="..\..\DerivedSources\WebCore\JSNode.cpp"
 				>
 			</File>
 			<File
