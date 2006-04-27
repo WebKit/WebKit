@@ -5,15 +5,19 @@
 <style type="text/css">
     div.test { width: 200px; height: 120px; border: 1px solid blue; padding: 10px; }
 </style>
+	<script src="repaint.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	   function repaintTest()
+	   {
+           document.getElementById('a').style.height = '40px';
+           document.getElementById('b').style.height = '60px';
+	   }
+	</script>
 </head>
-<body>
+<body onload="runRepaintTest();">
 <p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=8032">Bugzilla bug 8032</a> REGRESSION: Focus ring not completely redrawn after a Delete changes its size</p>
 
 <p> Note that this bug (and the test) are just outline versions of <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6301">Bugzilla bug 6301</a> and test <a href="border-repaint-glitch.html">border-repaint-glitch.html</a>
-
-<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
-Click each Test button once.
-</p>
 
 <p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
 The boxes will resize, maintaining their solid red rectangular outlines.
@@ -27,14 +31,12 @@ where the bottom outline was before.
 </p>
 
 <div class="test">
-    <button onclick="document.getElementById('a').style.height = '40px'">Test</button>
     <div style="background: teal; padding: 0; outline: solid red 4px;">
         <div id="a" style="height: 60px; margin: 10px; background:silver;"></div>
     </div>
 </div>
 <br>
 <div class="test">
-    <button onclick="document.getElementById('b').style.height = '60px'">Test</button>
     <div style="background: teal; padding: 0; outline: solid red 4px;">
         <div id="b" style="height: 40px; margin: 10px; background:silver;"></div>
     </div>

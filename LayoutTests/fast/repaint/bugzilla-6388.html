@@ -2,13 +2,16 @@
         "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
+	<script src="repaint.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	   function repaintTest()
+	   {
+           document.getElementById('outside').style.left = '-100px';
+	   }
+	</script>
 </head>
-<body>
+<body onload="runRepaintTest();">
 <p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6388">Bugzilla bug 6388</a> REGRESSION: Incomplete repaint when dragging the map on Google maps</p>
-
-<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
-Click the Test button below.
-</p>
 
 <p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
 The blue square will change to green.
@@ -26,6 +29,5 @@ The blue square will NOT change to green.
     </div>
 </div>
 <br>
-<button onclick="document.getElementById('outside').style.left = '-100px'">Test</button>
 </body>
 </html>

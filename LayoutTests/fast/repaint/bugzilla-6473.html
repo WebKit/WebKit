@@ -2,30 +2,21 @@
         "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
+<script src="repaint.js"></script>
 <script type="text/javascript">
-var allcontent;
-
 function finish()
 {
-	allcontent.style.overflow = '';
-	layoutTestController.notifyDone();
+	document.getElementById('allcontent').style.overflow = '';
 }
 
-function test()
+function repaintTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-	allcontent = document.getElementById('allcontent');
 	window.setTimeout(finish, 1);
 }
 </script>
 </head>
-<body onload="test()">
+<body onload="runRepaintTest()">
 <p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6473">Bugzilla bug 6473</a> REGRESSION: Serious painting problems on new iLife and iWorks pages</p>
-
-<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
-Do not resize the window. If you do, reload the page after resizing.
-</p>
 
 <p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
 A green rectangle containing the word SUCCESS will show below.

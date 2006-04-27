@@ -16,13 +16,16 @@
 		background: green;
 	}
 	</style>
+	<script src="repaint.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	   function repaintTest()
+	   {
+           document.getElementById('t').style.display='block';
+	   }
+	</script>
 </head>
-<body>
+<body onload="runRepaintTest();">
 <p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7235">Bugzilla bug 7235</a> Pure CSS Tooltips method renders wrong and creates artifacts</p>
-
-<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
-Resize the window if necessary so that the red square below is visible, then click the Test button.
-</p>
 
 <p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
 The square should change to solid green.
@@ -33,7 +36,6 @@ The square will remain red and will only change to green when the window is resi
 </p>
 
 <p>
-<button onclick="document.getElementById('t').style.display='block'">Test</button>
 </p>
 <span id="p">&nbsp;<div id="t"></div></span>
 <div style="width: 100px; height: 100px; background: red;"></div>

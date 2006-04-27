@@ -2,6 +2,65 @@
 
         Reviewed by darin
         
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8607>
+        Automate repaint tests
+
+        * fast/repaint/backgroundSizeRepaint-expected.checksum: Added.
+        * fast/repaint/backgroundSizeRepaint-expected.png: Added.
+        * fast/repaint/backgroundSizeRepaint-expected.txt: Added.
+        * fast/repaint/backgroundSizeRepaint.html: Added.
+        * fast/repaint/border-repaint-glitch-expected.checksum: Added.
+        * fast/repaint/border-repaint-glitch-expected.png: Added.
+        * fast/repaint/border-repaint-glitch-expected.txt: Added.
+        * fast/repaint/border-repaint-glitch.html: Added.
+        * fast/repaint/bugzilla-3509-expected.checksum: Added.
+        * fast/repaint/bugzilla-3509-expected.png: Added.
+        * fast/repaint/bugzilla-3509-expected.txt: Added.
+        * fast/repaint/bugzilla-3509.html: Added.
+        * fast/repaint/bugzilla-5699-expected.checksum: Added.
+        * fast/repaint/bugzilla-5699-expected.png: Added.
+        * fast/repaint/bugzilla-5699-expected.txt: Added.
+        * fast/repaint/bugzilla-5699.html: Added.
+        * fast/repaint/bugzilla-6278-expected.checksum: Added.
+        * fast/repaint/bugzilla-6278-expected.png: Added.
+        * fast/repaint/bugzilla-6278-expected.txt: Added.
+        * fast/repaint/bugzilla-6278.html: Added.
+        * fast/repaint/bugzilla-6388-expected.checksum: Added.
+        * fast/repaint/bugzilla-6388-expected.png: Added.
+        * fast/repaint/bugzilla-6388-expected.txt: Added.
+        * fast/repaint/bugzilla-6388.html: Added.
+        * fast/repaint/bugzilla-6473-expected.checksum: Added.
+        * fast/repaint/bugzilla-6473-expected.png: Added.
+        * fast/repaint/bugzilla-6473-expected.txt: Added.
+        * fast/repaint/bugzilla-6473.html: Added.
+        * fast/repaint/bugzilla-7235-expected.checksum: Added.
+        * fast/repaint/bugzilla-7235-expected.png: Added.
+        * fast/repaint/bugzilla-7235-expected.txt: Added.
+        * fast/repaint/bugzilla-7235.html: Added.
+        * fast/repaint/inline-outline-repaint-expected.checksum: Added.
+        * fast/repaint/inline-outline-repaint-expected.png: Added.
+        * fast/repaint/inline-outline-repaint-expected.txt: Added.
+        * fast/repaint/inline-outline-repaint.html: Added.
+        * fast/repaint/outline-repaint-glitch-expected.checksum: Added.
+        * fast/repaint/outline-repaint-glitch-expected.png: Added.
+        * fast/repaint/outline-repaint-glitch-expected.txt: Added.
+        * fast/repaint/outline-repaint-glitch.html: Added.
+        * fast/repaint/repaint-resized-overflow-expected.checksum: Added.
+        * fast/repaint/repaint-resized-overflow-expected.png: Added.
+        * fast/repaint/repaint-resized-overflow-expected.txt: Added.
+        * fast/repaint/repaint-resized-overflow.html: Added.
+        * fast/repaint/repaint.js: Added.
+        * fast/repaint/resources: Added.
+        * fast/repaint/resources/apple.jpg: Added.
+        * fast/repaint/table-cell-move-expected.checksum: Added.
+        * fast/repaint/table-cell-move-expected.png: Added.
+        * fast/repaint/table-cell-move-expected.txt: Added.
+        * fast/repaint/table-cell-move.html: Added.
+
+2006-04-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=8624>
         Placeholders aren't always removed during paste
         <rdar://problem/4059807>

@@ -1,3 +1,23 @@
+2006-04-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8607>
+        Automate repaint tests
+
+        * manual-tests/backgroundSizeRepaint.html: Removed.
+        * manual-tests/border-repaint-glitch.html: Removed.
+        * manual-tests/bugzilla-3509.html: Removed.
+        * manual-tests/bugzilla-5699.html: Removed.
+        * manual-tests/bugzilla-6278.html: Removed.
+        * manual-tests/bugzilla-6388.html: Removed.
+        * manual-tests/bugzilla-6473.html: Removed.
+        * manual-tests/bugzilla-7235.html: Removed.
+        * manual-tests/inline-outline-repaint.html: Removed.
+        * manual-tests/outline-repaint-glitch.html: Removed.
+        * manual-tests/repaint-resized-overflow.html: Removed.
+        * manual-tests/table-cell-move.html: Removed.
+
 2006-04-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

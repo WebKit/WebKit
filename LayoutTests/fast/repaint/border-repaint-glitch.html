@@ -5,13 +5,17 @@
 <style type="text/css">
     div.test { width: 200px; height: 120px; border: 1px solid blue; padding: 10px; }
 </style>
+	<script src="repaint.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	   function repaintTest()
+	   {
+           document.getElementById('a').style.height = '40px';
+           document.getElementById('b').style.height = '60px';
+	   }
+	</script>
 </head>
-<body>
+<body onload="runRepaintTest();">
 <p><b>BUG ID:</b> <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6301">Bugzilla bug 6301</a> REGRESSION: Border repaint glitch</p>
-
-<p id="test" style="background-color:skyblue; padding:3px;"><b>STEPS TO TEST:</b> 
-Click each Test button once.
-</p>
 
 <p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 
 The boxes will resize, maintaining their solid red rectangular borders.
@@ -25,14 +29,12 @@ where the bottom border was before.
 </p>
 
 <div class="test">
-    <button onclick="document.getElementById('a').style.height = '40px'">Test</button>
     <div style="background: teal; padding: 0; border: solid red 4px;">
         <div id="a" style="height: 60px; margin: 10px; background:silver;"></div>
     </div>
 </div>
 <br>
 <div class="test">
-    <button onclick="document.getElementById('b').style.height = '60px'">Test</button>
     <div style="background: teal; padding: 0; border: solid red 4px;">
         <div id="b" style="height: 40px; margin: 10px; background:silver;"></div>
     </div>
