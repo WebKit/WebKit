@@ -46,7 +46,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document toDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
@@ -67,5 +67,4 @@ layer at (0,0) size 800x600
           text run at (14,70) width 74: "of men."
         RenderText {#text} at (88,70) size 74x28
           text run at (88,70) width 74: "of men."
-        RenderBR {BR} at (162,92) size 0x0
 caret: position 7 of child 4 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

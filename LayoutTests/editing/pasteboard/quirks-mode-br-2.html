@@ -1,0 +1,12 @@
+<p>This is a test to make sure that the final &lt;br&gt; in an incoming fragment is interpretted strictly in quirks mode (where brs at the end of blocks are collapsed).  This test used to fail because placeholders where the paste occured were removed after incoming brs were handled.</p>
+
+<p>There should be two blank lines in the editable region below.</p>
+<div id="test" contenteditable="true"><br class="webkit-block-placeholder"></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+document.execCommand("InsertHTML", false, "<br>");
+</script>

@@ -1,0 +1,11 @@
+<p>This is a test to make sure that an unrendered br at the end of the selection being pasted into doesn't become rendered as a result of the paste.</p>
+<div id="test" contenteditable="true">First&nbsp;<br></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "line");
+document.execCommand("InsertHTML", false, "paragraph.<div>Second paragraph.</div>");
+</script>

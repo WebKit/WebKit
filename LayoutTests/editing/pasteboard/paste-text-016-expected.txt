@@ -18,7 +18,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of P > DIV > DIV > BODY > HTML > #document to 2 of P > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of P > DIV > DIV > BODY > HTML > #document to 3 of P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of P > DIV > DIV > BODY > HTML > #document to 3 of P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > P > DIV > DIV > BODY > HTML > #document to 0 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
@@ -37,9 +38,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,18) size 378x18
           text run at (0,18) width 378: "***TEST*** line should be second, following the first line."
       RenderBlock {DIV} at (0,36) size 784x12
-      RenderBlock {DIV} at (0,48) size 784x224
-        RenderBlock {DIV} at (0,0) size 784x224 [border: (2px solid #FF0000)]
-          RenderBlock {P} at (14,14) size 756x112
+      RenderBlock {DIV} at (0,48) size 784x196
+        RenderBlock {DIV} at (0,0) size 784x196 [border: (2px solid #FF0000)]
+          RenderBlock {P} at (14,14) size 756x84
             RenderBlock (anonymous) at (0,0) size 756x28
               RenderText {#text} at (0,0) size 319x28
                 text run at (0,0) width 319: "Should be first line of document."
@@ -47,18 +48,17 @@ layer at (0,0) size 800x600
             RenderBlock {P} at (0,28) size 756x28
               RenderText {#text} at (0,0) size 130x28
                 text run at (0,0) width 130: "***TEST***"
-            RenderBlock (anonymous) at (0,56) size 756x56
-              RenderBR {BR} at (0,0) size 0x28
-              RenderText {#text} at (0,28) size 128x28
-                text run at (0,28) width 128: "Another line."
+            RenderBlock (anonymous) at (0,56) size 756x28
+              RenderText {#text} at (0,0) size 128x28
+                text run at (0,0) width 128: "Another line."
+          RenderBlock {P} at (14,98) size 756x0
+          RenderBlock (anonymous) at (14,98) size 756x28
+            RenderText {#text} at (0,0) size 6x28
+              text run at (0,0) width 6: " "
           RenderBlock {P} at (14,126) size 756x0
           RenderBlock (anonymous) at (14,126) size 756x28
             RenderText {#text} at (0,0) size 6x28
               text run at (0,0) width 6: " "
-          RenderBlock {P} at (14,154) size 756x0
-          RenderBlock (anonymous) at (14,154) size 756x28
-            RenderText {#text} at (0,0) size 6x28
-              text run at (0,0) width 6: " "
-          RenderBlock {P} at (14,182) size 756x28
+          RenderBlock {P} at (14,154) size 756x28
             RenderBR {BR} at (0,0) size 0x28
-caret: position 0 of child 3 {BR} of child 0 {P} of child 1 {DIV} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 3 {#text} of child 0 {P} of child 1 {DIV} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document

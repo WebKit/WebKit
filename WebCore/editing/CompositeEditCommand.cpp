@@ -554,6 +554,11 @@ bool CompositeEditCommand::removeBlockPlaceholder(Node *node)
     return false;
 }
 
+// FIXME: This function should never be used.  If we're in a state where a webkit-block-placeholder
+// isn't the only thing in a block (there are bugs that can make this happen), this function will 
+// return a placeholder that might be far away from where the editing operation that's using it intends 
+// to operate.  Also a br is a placeholder if its acting like a placeholder, i.e. <div><br></div>, and 
+// this function only returs brs with our special class on them.
 Node *CompositeEditCommand::findBlockPlaceholder(Node *node)
 {
     if (!node)

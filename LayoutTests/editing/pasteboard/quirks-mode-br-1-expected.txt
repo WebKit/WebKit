@@ -1,0 +1,25 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 61 of #text > DIV > DIV > BODY > HTML > #document to 61 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 779x36
+          text run at (0,0) width 779: "This is a test to make sure that the final <br> in an incoming fragment is interpretted strictly in quirks mode (where brs at the"
+          text run at (0,18) width 184: "end of blocks are collapsed). "
+          text run at (184,18) width 509: "This test used to fail because of unrendered content to the left of the collapsed br."
+      RenderBlock {DIV} at (0,52) size 784x36
+        RenderBlock {DIV} at (0,0) size 784x36
+          RenderText {#text} at (0,0) size 370x18
+            text run at (0,0) width 370: "The test should add a single blank line after this paragraph."
+          RenderBR {BR} at (370,14) size 0x0
+          RenderBR {BR} at (0,18) size 0x18
+          RenderInline {SPAN} at (0,0) size 0x0
+caret: position 0 of child 2 {BR} of child 0 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

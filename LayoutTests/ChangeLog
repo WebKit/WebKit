@@ -1,3 +1,54 @@
+2006-04-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8624>
+        Placeholders aren't always removed during paste
+        <rdar://problem/4059807>
+        Seed: Mail: pasting quoted content sometimes adds a phantom newline
+        
+        If a webkit-block-placeholder has been introduced by a bug in deletion,
+        we shouldn't remove it during paste if it is now acting as a linebreak.
+        * editing/pasteboard/bad-placeholder-expected.checksum: Added.
+        * editing/pasteboard/bad-placeholder-expected.png: Added.
+        * editing/pasteboard/bad-placeholder-expected.txt: Added.
+        * editing/pasteboard/bad-placeholder.html: Added.
+        Generic placeholder brs should be removed if they are displaced by pasted content.
+        * editing/pasteboard/displaced-generic-placeholder-expected.checksum: Added.
+        * editing/pasteboard/displaced-generic-placeholder-expected.png: Added.
+        * editing/pasteboard/displaced-generic-placeholder-expected.txt: Added.
+        * editing/pasteboard/displaced-generic-placeholder.html: Added.
+        So should placeholder brs with our special class on them.
+        * editing/pasteboard/displaced-placeholder-expected.checksum: Added.
+        * editing/pasteboard/displaced-placeholder-expected.png: Added.
+        * editing/pasteboard/displaced-placeholder-expected.txt: Added.
+        * editing/pasteboard/displaced-placeholder.html: Added.
+        Removed an unnecessary collapsed br.
+        * editing/pasteboard/paste-text-010-expected.txt:
+        Two fixes, an extra line was present after pasting with an interchange newline.
+        * editing/pasteboard/paste-text-016-expected.checksum: Added.
+        * editing/pasteboard/paste-text-016-expected.png: Added.
+        * editing/pasteboard/paste-text-016-expected.txt: Added.
+        * editing/pasteboard/paste-text-017-expected.checksum: Added.
+        * editing/pasteboard/paste-text-017-expected.png: Added.
+        * editing/pasteboard/paste-text-017-expected.txt: Added.
+        The code that interprets the incoming br as a br in strict mode had a bug. 
+        * editing/pasteboard/quirks-mode-br-1-expected.checksum: Added.
+        * editing/pasteboard/quirks-mode-br-1-expected.png: Added.
+        * editing/pasteboard/quirks-mode-br-1-expected.txt: Added.
+        * editing/pasteboard/quirks-mode-br-1.html: Added.
+        The linePlaceholder removal was negating the work to interpret the last
+        incoming br as a br in strict mode.
+        * editing/pasteboard/quirks-mode-br-2-expected.checksum: Added.
+        * editing/pasteboard/quirks-mode-br-2-expected.png: Added.
+        * editing/pasteboard/quirks-mode-br-2-expected.txt: Added.
+        * editing/pasteboard/quirks-mode-br-2.html: Added.
+        Don't let collapsed brs become rendered as a result of the paste operation.
+        * editing/pasteboard/unrendered-br-expected.checksum: Added.
+        * editing/pasteboard/unrendered-br-expected.png: Added.
+        * editing/pasteboard/unrendered-br-expected.txt: Added.
+        * editing/pasteboard/unrendered-br.html: Added.
+
 2006-04-25  Tim Omernick  <timo@apple.com>
 
         Reviewed by Hyatt.

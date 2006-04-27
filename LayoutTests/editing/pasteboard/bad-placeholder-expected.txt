@@ -1,0 +1,30 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document toDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 751x36
+          text run at (0,0) width 751: "This is a test to make sure that a placeholder, even one without our special class on it, is removed only when it has been"
+          text run at (0,18) width 405: "collapsed away or when it has been displaced by pasted content."
+      RenderBlock {P} at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 763x36
+          text run at (0,0) width 695: "Placeholders with our special class can, through bugs in deletion, be inserted into the document unnecessarily. "
+          text run at (695,0) width 61: "Once that"
+          text run at (0,18) width 763: "happens, we don't want to make matters worse by removing them if they are acting as line breaks instead of placeholders."
+      RenderBlock {DIV} at (0,104) size 784x36
+        RenderText {#text} at (0,0) size 28x18
+          text run at (0,0) width 28: "First"
+        RenderText {#text} at (28,0) size 71x18
+          text run at (28,0) width 71: " paragraph."
+        RenderBR {BR} at (99,14) size 0x0
+        RenderText {#text} at (0,18) size 118x18
+          text run at (0,18) width 118: "Second paragraph."
+caret: position 11 of child 1 {#text} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document

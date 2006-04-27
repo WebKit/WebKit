@@ -542,10 +542,8 @@ void ReplaceSelectionCommand::doApply()
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
                 if (!isEndOfDocument(visibleStart))
                     setEndingSelection(visibleStart.next());
-            } else {
+            } else
                 insertParagraphSeparator();
-                setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY));
-            }
         }
         startPos = endingSelection().start();
     } 
@@ -555,10 +553,8 @@ void ReplaceSelectionCommand::doApply()
             if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
                 if (!isEndOfDocument(visibleStart))
                     setEndingSelection(visibleStart.next());
-            } else {
+            } else 
                 insertParagraphSeparator();
-                setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY));
-            }
         }
         // We split the current paragraph in two to avoid nesting the blocks from the fragment inside the current block.
         // For example paste <div>foo</div><div>bar</div><div>baz</div> into <div>x^x</div>, where ^ is the caret.  
@@ -573,6 +569,11 @@ void ReplaceSelectionCommand::doApply()
         }
         startPos = endingSelection().start();
     }
+    
+    // NOTE: This would be an incorrect usage of downstream() if downstream() were changed to mean the last position after 
+    // p that maps to the same visible position as p (since in the case where a br is at the end of a block and collapsed 
+    // away, there are positions after the br which map to the same visible position as [br, 0]).  
+    Node* endBR = startPos.downstream().node()->hasTagName(brTag) ? startPos.downstream().node() : 0;
     
     if (startAtStartOfBlock && startBlock->inDocument())
         startPos = Position(startBlock, 0);
@@ -593,21 +594,6 @@ void ReplaceSelectionCommand::doApply()
     // done if there is nothing to add
     if (!fragment.firstChild())
         return;
-    
-    // check for a line placeholder, and store it away for possible removal later.
-    Node *block = startPos.node()->enclosingBlockFlowElement();
-    Node *linePlaceholder = findBlockPlaceholder(block);
-    if (!linePlaceholder) {
-        Position downstream = startPos.downstream();
-        // NOTE: the check for brTag offset 0 could be false negative after
-        // positionAvoidingSpecialElementBoundary() because "downstream" is
-        // now a "second deepest position"
-        downstream = positionAvoidingSpecialElementBoundary(downstream);
-        if (downstream.node()->hasTagName(brTag) && downstream.offset() == 0 && 
-            fragment.hasInterchangeNewlineAtEnd() &&
-            isStartOfParagraph(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
-            linePlaceholder = downstream.node();
-    }
     
     // check whether to "smart replace" needs to add leading and/or trailing space
     bool addLeadingSpace = false;
@@ -752,10 +738,11 @@ void ReplaceSelectionCommand::doApply()
     }
     
     Position lastPositionToSelect;
+    
+    removeEndBRIfNeeded(endBR);
 
     // step 4 : handle trailing newline
     if (fragment.hasInterchangeNewlineAtEnd()) {
-        removeLinePlaceholderIfNeeded(linePlaceholder);
 
         if (!m_lastNodeInserted) {
             lastPositionToSelect = endingSelection().end().downstream();
@@ -779,23 +766,22 @@ void ReplaceSelectionCommand::doApply()
             }
         }
     } else {
-        if (m_lastNodeInserted && m_lastNodeInserted->hasTagName(brTag) && !document()->inStrictMode()) {
-            updateLayout();
-            VisiblePosition pos(Position(m_lastNodeInserted.get(), 1), DOWNSTREAM);
-            if (isEndOfBlock(pos)) {
-                Node *next = m_lastNodeInserted->traverseNextNode();
-                bool hasTrailingBR = next && next->hasTagName(brTag) && m_lastNodeInserted->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
-                if (!hasTrailingBR) {
-                    // Insert an "extra" BR at the end of the block. 
-                    insertNodeBefore(createBreakElement(document()).get(), m_lastNodeInserted.get());
-                }
-            }
+        // We want to honor the last incoming line break, so, if it will collapse away because of quirks mode, 
+        // add an extra one.
+        // FIXME: If <div><br></div> is pasted, the br will be expanded.  That's fine, if this code is about 
+        // interpreting incoming brs strictly, but if that's true then we should expand all incoming brs, not 
+        // just the last one. 
+        if (m_lastNodeInserted && m_lastNodeInserted->hasTagName(brTag) && 
+            !document()->inStrictMode() && isEndOfBlock(VisiblePosition(Position(m_lastNodeInserted.get(), 0)))) { 
+            insertNodeBeforeAndUpdateNodesInserted(createBreakElement(document()).get(), m_lastNodeInserted.get());
         }
     }
     
     if (!m_matchStyle)
         fixupNodeStyles(fragment.nodes(), fragment.renderingInfo());
     
+    // Make sure that content after the end of the selection being pasted into is in the same paragraph as the 
+    // last bit of content that was inserted.
     if (mergeEnd) {
         VisiblePosition afterInsertedContent(positionAfterNode(m_lastNodeInserted.get()));
         if (isEndOfParagraph(afterInsertedContent)) {
@@ -806,25 +792,21 @@ void ReplaceSelectionCommand::doApply()
     }
     
     completeHTMLReplacement(lastPositionToSelect);
-    
-    // step 5 : mop up
-    removeLinePlaceholderIfNeeded(linePlaceholder);
 }
 
-void ReplaceSelectionCommand::removeLinePlaceholderIfNeeded(Node *linePlaceholder)
+void ReplaceSelectionCommand::removeEndBRIfNeeded(Node* endBR)
 {
-    if (!linePlaceholder)
+    if (!endBR || !endBR->inDocument())
         return;
         
-    updateLayout();
-    if (linePlaceholder->inDocument()) {
-        VisiblePosition placeholderPos(linePlaceholder, linePlaceholder->renderer()->caretMinOffset(), DOWNSTREAM);
-        if (placeholderPos.next().isNull() ||
-            !(isStartOfParagraph(placeholderPos) && isEndOfParagraph(placeholderPos))) {
-            
-            removeNodeAndPruneAncestors(linePlaceholder);
-        }
-    }
+    VisiblePosition visiblePos(Position(endBR, 0));
+    
+    if (// The br is collapsed away and so is unnecessary.
+        !document()->inStrictMode() && isEndOfBlock(visiblePos) ||
+        // A br that was originally holding a line open should be displaced by inserted content.
+        // A br that was originally acting as a line break should still be acting as a line break, not as a placeholder.
+        isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos))
+        removeNodeAndPruneAncestors(endBR);
 }
 
 void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositionToSelect)

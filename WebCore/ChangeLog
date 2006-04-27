@@ -1,3 +1,33 @@
+2006-04-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8624>
+        Placeholders aren't always removed during paste
+        <rdar://problem/4059807>
+        Seed: Mail: pasting quoted content sometimes adds a phantom newline
+
+        * editing/CompositeEditCommand.cpp: Added a FIXME.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Removed two no-op setEndingSelection calls.
+        Store away a br at the position where we'll start inserting content in case the 
+        br a) is made unnecessary by the insertion (it's collapsed away) b) was acting 
+        as a placeholder and should therefore be displaced by inserted content or c) was
+        acting as a line break and, as a result of the insertion, is now acting as a 
+        placeholder.  
+        Don't only store away brs that have the webkit-block-placeholder class on them.
+        Any br that does any of the three things just mentioned should be removed.
+        The linePlaceholder removal was run after the code that makes sure to interpret 
+        incoming brs strictly, and was negating that work in certain cases.
+        
+        (WebCore::ReplaceSelectionCommand::removeEndBRIfNeeded): Described above.
+        * editing/ReplaceSelectionCommand.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::isEqualIgnoringAffinity): 
+        Added a workaround for 8622.  We want this function to return true even if one of 
+        the two visible positions has been incorrectly canonicalized.
+
 2006-04-26  Tim Omernick  <timo@apple.com>
 
         Reviewed by Hyatt.
