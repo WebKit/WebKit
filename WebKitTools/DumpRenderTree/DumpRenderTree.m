@@ -298,6 +298,8 @@ int main(int argc, const char *argv[])
     signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
     signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
     
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    
     // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
     // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
     NSBitmapImageRep *imageRep = [webView bitmapImageRepForCachingDisplayInRect:[webView bounds]];
