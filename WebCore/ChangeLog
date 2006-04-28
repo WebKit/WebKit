@@ -1,3 +1,21 @@
+2006-04-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6769
+          REGRESSION: Incomplete repaint when a cell's extra bottom margin grows
+
+        Test: fast/repaint/table-extra-bottom-grow.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowRect): Changed to not add the top/left overflow twice and
+        allow the normal overflow height to overlap with the bottom extra height.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout): Removed the code that resets the extra heights.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows): If the top extra height changed or the
+        bottom extra height increased, just repaint the entire cell.
+
 2006-04-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

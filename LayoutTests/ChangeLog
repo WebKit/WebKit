@@ -1,3 +1,19 @@
+2006-04-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt, landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6769
+          REGRESSION: Incomplete repaint when a cell's extra bottom margin grows
+
+        * fast/repaint/table-extra-bottom-grow-expected.checksum: Added.
+        * fast/repaint/table-extra-bottom-grow-expected.png: Added.
+        * fast/repaint/table-extra-bottom-grow-expected.txt: Added.
+        * fast/repaint/table-extra-bottom-grow.html: Added.
+        * fast/repaint/table-cell-moved-expected.checksum: Removed excessive painting.
+        * fast/repaint/table-cell-moved-expected.png: Ditto.
+        * fast/repaint/bugzilla-6278-expected.checksum: Ditto.
+        * fast/repaint/bugzilla-6278-expected.png: Ditto.
+
 2006-04-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

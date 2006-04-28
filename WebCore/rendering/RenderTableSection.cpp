@@ -488,18 +488,17 @@ int RenderTableSection::layoutRows(int toAdd)
                 }
             }
             if (cellChildrenFlex) {
-                cell->setOverrideSize(max(0, 
-                                           rHeight - cell->borderTop() - cell->paddingTop() - 
-                                                     cell->borderBottom() - cell->paddingBottom()));
-                cell->layoutIfNeeded();
-
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
                 // been resized based off its percentage. -dwh
                 cell->setCellTopExtra(0);
                 cell->setCellBottomExtra(0);
-            }
-            else {
+
+                cell->setOverrideSize(max(0, 
+                                           rHeight - cell->borderTop() - cell->paddingTop() - 
+                                                     cell->borderBottom() - cell->paddingBottom()));
+                cell->layoutIfNeeded();
+            } else {
                 EVerticalAlign va = cell->style()->verticalAlign();
                 int te = 0;
                 switch (va) {
@@ -523,8 +522,14 @@ int RenderTableSection::layoutRows(int toAdd)
                         break;
                 }
                 
+                int oldTe = cell->borderTopExtra();
+                int oldBe = cell->borderBottomExtra();
+                
+                int be = rHeight - cell->height() - te;
                 cell->setCellTopExtra(te);
-                cell->setCellBottomExtra(rHeight - cell->height() - te);
+                cell->setCellBottomExtra(be);
+                if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout() && (te != oldTe || be > oldBe))
+                    cell->repaint();
             }
             
             int oldCellX = cell->xPos();

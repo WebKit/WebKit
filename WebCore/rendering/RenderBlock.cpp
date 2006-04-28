@@ -363,7 +363,7 @@ IntRect RenderBlock::overflowRect(bool includeInterior) const
         return borderBox();
     int l = overflowLeft(includeInterior);
     int t = min(overflowTop(includeInterior), -borderTopExtra());
-    return IntRect(l, t, overflowWidth(includeInterior) - 2*l, overflowHeight(includeInterior) + borderTopExtra() + borderBottomExtra() - 2*t);
+    return IntRect(l, t, overflowWidth(includeInterior) - l, max(overflowHeight(includeInterior), height() + borderBottomExtra()) - t);
 }
 
 bool RenderBlock::isSelfCollapsingBlock() const
