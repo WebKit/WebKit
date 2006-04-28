@@ -400,9 +400,9 @@ SVGMatrix *SVGSVGElement::getScreenCTM() const
     return mat;
 }
 
-RenderObject *SVGSVGElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    KCanvasContainer *rootContainer = renderingDevice()->createContainer(arena, style, this);
+    KCanvasContainer *rootContainer = new (arena) KCanvasContainer(this);
 
     // FIXME: all this setup should be done after attributesChanged, not here.
     float _x = x()->baseVal()->value();

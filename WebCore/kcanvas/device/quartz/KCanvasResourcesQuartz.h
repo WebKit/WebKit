@@ -35,40 +35,6 @@ typedef struct CGLayer *CGLayerRef;
 
 namespace WebCore {
 
-class KCanvasContainerQuartz : public KCanvasContainer {
-public:
-    KCanvasContainerQuartz(SVGStyledElement *node) : KCanvasContainer(node) { }
-    
-    virtual bool canHaveChildren() const;
-    
-    virtual bool requiresLayer();
-    virtual short lineHeight(bool b, bool isRootLineBox = false) const;
-    virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
-    
-    virtual void calcMinMaxWidth();
-    virtual void layout();
-    virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
-    
-    virtual IntRect getAbsoluteRepaintRect();
-    virtual QMatrix absoluteTransform() const;
-
-    virtual void setViewport(const FloatRect&);
-    virtual FloatRect viewport() const;
-
-    virtual void setViewBox(const FloatRect&);
-    virtual FloatRect viewBox() const;
-
-    virtual void setAlign(KCAlign align);
-    virtual KCAlign align() const;
-    
-private:
-    QMatrix viewportTransform() const;
-
-    FloatRect m_viewport;
-    FloatRect m_viewBox;
-    KCAlign m_align;
-};
-
 class KCanvasClipperQuartz : public KCanvasClipper {
 public:
     KCanvasClipperQuartz() { }

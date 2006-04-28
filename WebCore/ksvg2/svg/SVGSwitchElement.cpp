@@ -34,7 +34,7 @@
 #include "SVGSwitchElement.h"
 #include "SVGAnimatedLength.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document *doc)
 : SVGStyledTransformableElement(tagName, doc), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired()
@@ -56,9 +56,11 @@ bool SVGSwitchElement::childShouldCreateRenderer(Node *child) const
     return false;
 }
 
-RenderObject *SVGSwitchElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGSwitchElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return renderingDevice()->createContainer(arena, style, this);
+    return new (arena) KCanvasContainer(this);
+}
+
 }
 
 // vim:ts=4:noet

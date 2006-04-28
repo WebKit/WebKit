@@ -1,3 +1,54 @@
+2006-04-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Remove KCanvasContainerQuartz, pushing all logic into KCanvasContainer.
+        
+        No tests affected.
+
+        * kcanvas/KCanvasContainer.cpp:
+        (WebCore::KCanvasContainer::canHaveChildren):
+        (WebCore::KCanvasContainer::requiresLayer):
+        (WebCore::KCanvasContainer::lineHeight):
+        (WebCore::KCanvasContainer::baselinePosition):
+        (WebCore::KCanvasContainer::calcMinMaxWidth):
+        (WebCore::KCanvasContainer::layout):
+        (WebCore::KCanvasContainer::paint):
+        (WebCore::KCanvasContainer::setViewport):
+        (WebCore::KCanvasContainer::viewport):
+        (WebCore::KCanvasContainer::setViewBox):
+        (WebCore::KCanvasContainer::viewBox):
+        (WebCore::KCanvasContainer::setAlign):
+        (WebCore::KCanvasContainer::align):
+        (WebCore::KCanvasContainer::viewportTransform):
+        (WebCore::KCanvasContainer::getAbsoluteRepaintRect):
+        (WebCore::KCanvasContainer::absoluteTransform):
+        (WebCore::KCanvasContainer::getAspectRatio):
+        * kcanvas/KCanvasContainer.h:
+        (WebCore::KCanvasContainer::renderName):
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceQuartz::createPaintServer):
+        * ksvg2/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::createRenderer):
+        * ksvg2/svg/SVGGElement.cpp:
+        (SVGGElement::createRenderer):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::createRenderer):
+        * ksvg2/svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::createRenderer):
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::createRenderer):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createRenderer):
+        * ksvg2/svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::createRenderer):
+        * ksvg2/svg/SVGUseElement.cpp:
+        (SVGUseElement::createRenderer):
+
 2006-04-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

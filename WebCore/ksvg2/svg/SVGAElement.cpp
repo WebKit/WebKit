@@ -71,9 +71,9 @@ void SVGAElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-RenderObject *SVGAElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    return renderingDevice()->createContainer(arena, style, this);
+    return new (arena) KCanvasContainer(this);
 }
 
 void SVGAElement::defaultEventHandler(Event *evt)

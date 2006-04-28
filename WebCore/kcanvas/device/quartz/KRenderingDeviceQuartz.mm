@@ -215,11 +215,6 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
     }
     return newServer;
 }
- 
-KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElement *node) const
-{
-    return new (arena) KCanvasContainerQuartz(node);
-}
 
 RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, KCanvasPath* path) const
 {

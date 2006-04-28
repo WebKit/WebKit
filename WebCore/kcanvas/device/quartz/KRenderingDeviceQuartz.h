@@ -92,7 +92,6 @@ public:
     
     // item creation
     virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, KCanvasPath* path) const;
-    virtual KCanvasContainer *createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElement *node) const;
 
     // filters (mostly debugging)
     static bool filtersEnabled();

@@ -46,9 +46,9 @@ void SVGGElement::parseMappedAttribute(MappedAttribute *attr)
     SVGStyledTransformableElement::parseMappedAttribute(attr);
 }
 
-RenderObject *SVGGElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    return renderingDevice()->createContainer(arena, style, this);
+    return new (arena) KCanvasContainer(this);
 }
 
 // Helper class for <use> support

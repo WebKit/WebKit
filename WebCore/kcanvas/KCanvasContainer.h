@@ -47,43 +47,56 @@ class KCanvasRenderingStyle;
 class KCanvasContainer : public RenderContainer
 {
 public:
-    KCanvasContainer(SVGStyledElement *node);
-    virtual ~KCanvasContainer();
+    KCanvasContainer(SVGStyledElement*);
+    ~KCanvasContainer();
 
     // Some containers do not want it's children
     // to be drawn, because they may be 'referenced'
     // Example: <marker> children in SVG
-    void setDrawsContents(bool drawsContents);
+    void setDrawsContents(bool);
     bool drawsContents() const;
 
     virtual bool isKCanvasContainer() const { return true; }
-    virtual const char *renderName() const { return "KCanvasContainer"; }
+    virtual const char* renderName() const { return "KCanvasContainer"; }
+    
+    virtual bool canHaveChildren() const;
+    
+    virtual bool requiresLayer();
+    virtual short lineHeight(bool b, bool isRootLineBox = false) const;
+    virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
+    
+    virtual void calcMinMaxWidth();
+    virtual void layout();
+    virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
+    
+    virtual IntRect getAbsoluteRepaintRect();
+    virtual QMatrix absoluteTransform() const;
 
-    virtual bool fillContains(const FloatPoint &p) const;
-    virtual bool strokeContains(const FloatPoint &p) const;
-    virtual FloatRect relativeBBox(bool includeStroke = true) const;
+    bool fillContains(const FloatPoint&) const;
+    bool strokeContains(const FloatPoint&) const;
+    FloatRect relativeBBox(bool includeStroke = true) const;
     
     virtual QMatrix localTransform() const;
-    virtual void setLocalTransform(const QMatrix &matrix);
+    void setLocalTransform(const QMatrix&);
     
-    virtual void setViewport(const FloatRect& viewport) = 0;
-    virtual FloatRect viewport() const = 0;
+    void setViewport(const FloatRect&);
+    FloatRect viewport() const;
 
-    virtual void setViewBox(const FloatRect& viewBox) = 0;
-    virtual FloatRect viewBox() const = 0;
+    void setViewBox(const FloatRect&);
+    FloatRect viewBox() const;
 
-    virtual void setAlign(KCAlign align) = 0;
-    virtual KCAlign align() const = 0;
+    void setAlign(KCAlign);
+    KCAlign align() const;
 
-    void setSlice(bool slice);
+    void setSlice(bool);
     bool slice() const;
     
-protected:
-    KCanvasMatrix getAspectRatio(const FloatRect logical, const FloatRect physical) const;
-
 private:
+    KCanvasMatrix getAspectRatio(const FloatRect& logical, const FloatRect& physical) const;
+    QMatrix viewportTransform() const;
+
     class Private;
-    Private *d;
+    Private* d;
 };
 
 }

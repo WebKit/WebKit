@@ -77,7 +77,6 @@ public:
     virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
 
     virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, KCanvasPath* path) const = 0;
-    virtual KCanvasContainer *createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElement *node) const = 0;
     virtual KCanvasPath* createPath() const = 0;
 
 private:

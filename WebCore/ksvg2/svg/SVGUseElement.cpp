@@ -163,9 +163,9 @@ bool SVGUseElement::hasChildNodes() const
     return false;
 }
 
-RenderObject *SVGUseElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGUseElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return renderingDevice()->createContainer(arena, style, this);
+    return new (arena) KCanvasContainer(this);
 }
 
 // vim:ts=4:noet
