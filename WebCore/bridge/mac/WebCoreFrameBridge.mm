@@ -522,7 +522,14 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         doc->setInPageCache(NO);
 
     KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
-    [state invalidate];
+
+    // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
+    // Somehow the KWQPageState object is not properly updated, and is holding onto a stale document
+    // both Xcode and FileMaker see this crash, Safari does not.
+    // This if check MUST be removed as part of re-writing the loader down in WebCore
+    ASSERT(!state || ([state document] == doc));
+    if ([state document] == doc)
+        [state invalidate];
 }
 
 - (BOOL)canLoadURL:(NSURL *)URL fromReferrer:(NSString *)referrer hideReferrer:(BOOL *)hideReferrer

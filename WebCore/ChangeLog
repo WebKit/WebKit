@@ -1,3 +1,13 @@
+2006-04-28  Eric Seidel  <eseidel@apple.com>
+
+        Fix by beth.  Reviewed by darin.  Landed by eseidel.
+
+        Make hackish fix to avoid crash in Xcode and Filemaker.
+        <rdar://problem/4059059> Crash in RenderFlow::detach (XCode Documentation Window)
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge didNotOpenURL:pageCache:]):
+
 2006-04-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by hyatt.
