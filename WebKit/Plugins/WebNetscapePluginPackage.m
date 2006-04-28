@@ -73,13 +73,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     FSRef fref;
     OSErr err;
     
-    if (isBundle) {
+    if (isBundle)
         return CFBundleOpenBundleResourceMap(cfBundle);
-    } else {
+    else {
         err = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fref, NULL);
-        if (err != noErr) {
+        if (err != noErr)
             return -1;
-        }
         
         return FSOpenResFile(&fref, fsRdPerm);
     }
@@ -87,11 +86,10 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (void)closeResourceFile:(SInt16)resRef
 {
-    if (isBundle) {
+    if (isBundle)
         CFBundleCloseBundleResourceMap(cfBundle, resRef);
-    } else {
+    else
         CloseResFile(resRef);
-    }
 }
 
 - (NSString *)stringForStringListID:(SInt16)stringListID andIndex:(SInt16)index
@@ -102,14 +100,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         return nil;
     }
     unsigned char *p = (unsigned char *)*stringHandle;
-    if (p == NULL) {
+    if (!p)
         return nil;
-    }
     
     // Check the index against the length of the string list, then skip the length.
-    if (index < 1 || index > *(SInt16 *)p) {
+    if (index < 1 || index > *(SInt16 *)p)
         return nil;
-    }
     p += sizeof(SInt16);
     
     // Skip any strings that come before the one we are looking for.
@@ -123,19 +119,16 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 - (BOOL)getPluginInfoFromResources
 {
     SInt16 resRef = [self openResourceFile];
-    if (resRef == -1) {
+    if (resRef == -1)
         return NO;
-    }
     
     UseResFile(resRef);
-    if (ResError() != noErr) {
+    if (ResError() != noErr)
         return NO;
-    }
 
     NSString *MIME, *extensionsList, *description;
     NSArray *extensions;
-    NSRange r;
-    uint i;
+    unsigned i;
     
     NSMutableDictionary *MIMEToExtensionsDictionary = [NSMutableDictionary dictionary];
     NSMutableDictionary *MIMEToDescriptionDictionary = [NSMutableDictionary dictionary];
@@ -143,33 +136,23 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     for (i=1; 1; i+=2) {
         MIME = [[self stringForStringListID:MIMEListStringStringNumber
                                    andIndex:i] lowercaseString];
-        if (!MIME) {
+        if (!MIME)
             break;
-        }
 
-        // FIXME: Avoid mime types with semi-colons because KJS can't properly parse them using KWQKConfigBase
-        r = [MIME rangeOfString:@";"];
-        if (r.length > 0) {
-            continue;
-        }
-
-        extensionsList = [[self stringForStringListID:MIMEListStringStringNumber
-                                             andIndex:i+1] lowercaseString];
+        extensionsList = [[self stringForStringListID:MIMEListStringStringNumber andIndex:i+1] lowercaseString];
         if (extensionsList) {
             extensions = [extensionsList componentsSeparatedByString:@","];
             [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
-        } else {
+        } else
             // DRM and WMP claim MIMEs without extensions. Use a @"" extension in this case.
             [MIMEToExtensionsDictionary setObject:[NSArray arrayWithObject:@""] forKey:MIME];
-        }
         
         description = [self stringForStringListID:MIMEDescriptionStringNumber
                                          andIndex:[MIMEToExtensionsDictionary count]];
-        if (description) {
+        if (description)
             [MIMEToDescriptionDictionary setObject:description forKey:MIME];
-        } else {
+        else
             [MIMEToDescriptionDictionary setObject:@"" forKey:MIME];
-        }
     }
 
     [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
@@ -178,16 +161,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSString *filename = [self filename];
     
     description = [self stringForStringListID:PluginNameOrDescriptionStringNumber andIndex:1];
-    if (!description) {
+    if (!description)
         description = filename;
-    }
     [self setPluginDescription:description];
     
     
     NSString *theName = [self stringForStringListID:PluginNameOrDescriptionStringNumber andIndex:2];
-    if (!theName) {
+    if (!theName)
         theName = filename;
-    }
     [self setName:theName];
     
     [self closeResourceFile:resRef];
@@ -195,7 +176,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return YES;
 }
 
-- initWithPath:(NSString *)pluginPath
+- (id)initWithPath:(NSString *)pluginPath
 {
     [super initWithPath:pluginPath];
 
@@ -259,11 +240,10 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (WebExecutableType)executableType
 {
-    if (isCFM) {
+    if (isCFM)
         return WebCFMExecutableType;
-    } else {
+    else
         return WebMachOExecutableType;
-    }
 }
 
 - (BOOL)isLoaded
@@ -273,22 +253,19 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (void)unloadWithoutShutdown
 {
-    if (!isLoaded) {
+    if (!isLoaded)
         return;
-    }
 
-    if (resourceRef != -1) {
+    if (resourceRef != -1)
         [self closeResourceFile:resourceRef];
-    }
 
-    if (isBundle) {
+    if (isBundle)
         CFBundleUnloadExecutable(cfBundle);
-    } else {
+    else
 #if !__LP64__
         // CFM is not supported in 64-bit
         WebCloseConnection(&connID);
 #endif
-    }
 
     LOG(Plugins, "Plugin Unloaded");
     isLoaded = NO;
@@ -321,14 +298,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
     LOG(Plugins, "%f Load timing started for: %@", start, [self name]);
 
-    if (isLoaded) {
+    if (isLoaded)
         return YES;
-    }
     
     if (isBundle) {
-        if (!CFBundleLoadExecutable(cfBundle)) {
+        if (!CFBundleLoadExecutable(cfBundle))
             goto abort;
-        }
 #if !LOG_DISABLED
         CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
         CFAbsoluteTime duration = currentTime - start;
@@ -338,16 +313,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
         if (isCFM) {
             pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("main") );
-            if (!pluginMainFunc) {
+            if (!pluginMainFunc)
                 goto abort;
-            }
         } else {
             NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Initialize"));
             NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_GetEntryPoints"));
             NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Shutdown"));
-            if (!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown) {
+            if (!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown)
                 goto abort;
-            }
         }
     } else {
 #if __LP64__
@@ -448,17 +421,15 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NPP_ShutdownProcPtr shutdownFunction;
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &shutdownFunction);
         NPP_Shutdown = (NPP_ShutdownProcPtr)functionPointerForTVector((TransitionVector)shutdownFunction);
-        if (!isBundle) {
+        if (!isBundle)
             // Don't free pluginMainFunc if we got it from a bundle because it is owned by CFBundle in that case.
             free(pluginMainFunc);
-        }
         
         // Workaround for 3270576. The RealPlayer plug-in fails to load if its preference file is out of date.
         // Launch the RealPlayer application to refresh the file.
         if (npErr != NPERR_NO_ERROR) {
-            if (npErr == NPERR_MODULE_LOAD_FAILED_ERROR && [[self filename] isEqualToString:RealPlayerPluginFilename]) {
+            if (npErr == NPERR_MODULE_LOAD_FAILED_ERROR && [[self filename] isEqualToString:RealPlayerPluginFilename])
                 [self launchRealPlayer];
-            }
             goto abort;
         }
 #if !LOG_DISABLED
@@ -487,7 +458,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
         // LiveConnect support
         NPP_GetJavaClass = (NPP_GetJavaClassProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.javaClass);
-        if (NPP_GetJavaClass){
+        if (NPP_GetJavaClass) {
             LOG(LiveConnect, "%@:  CFM entry point for NPP_GetJavaClass = %p", [self name], NPP_GetJavaClass);
         } else {
             LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", [self name]);
@@ -541,9 +512,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
         LOG(Plugins, "%f NP_Initialize timing started", initializeStart);
         npErr = NP_Initialize(&browserFuncs);
-        if (npErr != NPERR_NO_ERROR) {
+        if (npErr != NPERR_NO_ERROR)
             goto abort;
-        }
 #if !LOG_DISABLED
         CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
         CFAbsoluteTime duration = currentTime - initializeStart;
@@ -551,9 +521,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         LOG(Plugins, "%f NP_Initialize took %f seconds", currentTime, duration);
 
         npErr = NP_GetEntryPoints(&pluginFuncs);
-        if (npErr != NPERR_NO_ERROR) {
+        if (npErr != NPERR_NO_ERROR)
             goto abort;
-        }
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
@@ -596,9 +565,8 @@ abort:
     
 - (void)unload
 {
-    if (!isLoaded) {
+    if (!isLoaded)
         return;
-    }
     
     LOG(Plugins, "Unloading %@...", name);
 

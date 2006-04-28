@@ -74,7 +74,7 @@
 
     NSEnumerator *e = [customHeaders keyEnumerator];
     NSString *key;
-    while ((key = (NSString *)[e nextObject]) != nil) {
+    while ((key = [e nextObject])) {
 	[newRequest addValue:[customHeaders objectForKey:key] forHTTPHeaderField:key];
     }
 
@@ -91,9 +91,8 @@
     [newRequest setMainDocumentURL:[[[[_webView mainFrame] dataSource] request] URL]];
     [newRequest _web_setHTTPUserAgent:[_webView userAgentForURL:[newRequest URL]]];
             
-    if (![loader loadWithRequest:newRequest]) {
+    if (![loader loadWithRequest:newRequest])
         loader = nil;
-    }
     
     return loader;
 }
@@ -150,9 +149,8 @@
     NSURL *oldURL = [request URL];
     NSURLRequest *clientRequest = [super willSendRequest:newRequest redirectResponse:redirectResponse];
     
-    if (clientRequest != nil && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]]) {
+    if (clientRequest != nil && oldURL != [clientRequest URL] && ![oldURL isEqual:[clientRequest URL]])
 	[coreLoader redirectedToURL:[clientRequest URL]];
-    }
 
     return clientRequest;
 }

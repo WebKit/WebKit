@@ -1603,12 +1603,12 @@ NSMutableDictionary *countInvocations;
                                                  name:WebPreferencesChangedNotification object:[self preferences]];
 }
 
-- initWithFrame:(NSRect)f
+- (id)initWithFrame:(NSRect)f
 {
     return [self initWithFrame:f frameName:nil groupName:nil];
 }
 
-- initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName;
+- (id)initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName;
 {
     self = [super initWithFrame:f];
     if (!self)

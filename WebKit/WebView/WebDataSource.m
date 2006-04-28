@@ -1017,12 +1017,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     // Once a frame has loaded, we no longer need to consider subresources,
     // but we still need to consider subframes.
     if ([[self webFrame] _state] != WebFrameStateComplete) {
-        if (!_private->primaryLoadComplete && _private->loading) {
+        if (!_private->primaryLoadComplete && _private->loading)
             return YES;
-        }
-        if ([_private->subresourceLoaders count]) {
+        if ([_private->subresourceLoaders count])
             return YES;
-        }
         if (![[[self webFrame] _bridge] doneProcessingData])
             return YES;
     }

@@ -148,19 +148,16 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(size.width);
     ASSERT(size.height);
     
-    if (!URL || ![self _isEnabled]) {
+    if (!URL || ![self _isEnabled])
         return [self defaultIconWithSize:size];
-    }
 
-    if ([URL _webkit_isFileURL]) {
+    if ([URL _webkit_isFileURL])
         return [self _iconForFileURL:URL withSize:size];
-    }
     
     NSString *iconURLString = [_private->pageURLToIconURL objectForKey:URL];
-    if (!iconURLString) {
+    if (!iconURLString)
         // Don't have it
         return [self defaultIconWithSize:size];
-    }
 
     NSMutableDictionary *icons = [self _iconsForIconURLString:iconURLString];
     if (!icons) {
@@ -183,9 +180,8 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (NSString *)iconURLForURL:(NSString *)URL
 {
-    if (![self _isEnabled]) {
+    if (![self _isEnabled])
         return nil;
-    }
     return URL ? [_private->pageURLToIconURL objectForKey:URL] : nil;
 }
 
@@ -211,9 +207,8 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(URL);
     
-    if (![self _isEnabled]) {
+    if (![self _isEnabled])
         return;
-    }
     
     int retainCount = (int)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URL);
     CFDictionarySetValue(_private->pageURLToRetainCount, URL, (void *)(retainCount + 1));
@@ -223,9 +218,8 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(pageURL);
     
-    if (![self _isEnabled]) {
+    if (![self _isEnabled])
         return;
-    }    
     
     int retainCount = (int)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, pageURL);
     
@@ -353,9 +347,8 @@ NSSize WebIconLargeSize = {128, 128};
     
     NSMutableDictionary *icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
     
-    if (!icons) {
+    if (!icons)
         return;
-    }
     
     [_private->iconURLToIcons setObject:icons forKey:iconURL];
     
@@ -636,21 +629,17 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(iconURLString);
 
-    if ([_private->iconURLsWithNoIcons containsObject:iconURLString]) {
+    if ([_private->iconURLsWithNoIcons containsObject:iconURLString])
 	return nil;
-    }
     
     NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURLString];
 
-    if (icons) {
+    if (icons)
 	return icons;
-    }
 	
     // Not in memory, check disk
-    if(![_private->iconsOnDiskWithURLs containsObject:iconURLString]){
+    if(![_private->iconsOnDiskWithURLs containsObject:iconURLString])
         return nil;
-    }
-
     
 #if !LOG_DISABLED         
     double start = CFAbsoluteTimeGetCurrent();
@@ -751,9 +740,9 @@ NSSize WebIconLargeSize = {128, 128};
     [iconURLString retain];
     id URLs = [_private->iconURLToPageURLs objectForKey:iconURLString];
     if (URLs != nil) {
-        if ([URLs isKindOfClass:[NSMutableSet class]]) {
+        if ([URLs isKindOfClass:[NSMutableSet class]])
             [_private->pageURLToIconURL removeObjectsForKeys:[URLs allObjects]];
-        } else {
+        else {
             ASSERT([URLs isKindOfClass:[NSString class]]);
             [_private->pageURLToIconURL removeObjectForKey:URLs];
         }
@@ -769,10 +758,9 @@ NSSize WebIconLargeSize = {128, 128};
     
     int retainCount = (int)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
 
-    if (retainCount <= 0) {
-        ASSERT_NOT_REACHED();
+    ASSERT(retainCount > 0);
+    if (retainCount <= 0)
         return;
-    }
     
     int newRetainCount = retainCount - 1;
     if (newRetainCount == 0) {
@@ -891,9 +879,8 @@ NSSize WebIconLargeSize = {128, 128};
         [subIcon release];
     }
 
-    if([icons count] > 0){
+    if([icons count] > 0)
         return icons;
-    }
 
     LOG_ERROR("icon has no representations");
     

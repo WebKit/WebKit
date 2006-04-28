@@ -2345,8 +2345,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT([self webView] != nil);
 
     // Unfortunately the view must be non-nil, this is ultimately due
-    // to KDE parser requiring a KHTMLView.  Once we settle on a final
-    // KDE drop we should fix this dependency.
+    // to parser requiring a FrameView.  We should fix this dependency.
 
     ASSERT([self frameView] != nil);
 
@@ -2762,20 +2761,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (BOOL)_subframeIsLoading
 {
-    // Put in the auto-release pool because it's common to call this from a run loop source,
-    // and then the entire list of frames lasts until the next autorelease.
-    // FIXME: is this really still true? we use _firstChildFrame/_nextSiblingFrame now 
-    // which does not make a copy.
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-
-    WebFrame *frame;
-    for (frame = [self _firstChildFrame]; frame; frame = [frame _nextSiblingFrame])
+    // It's most likely that the last added frame is the last to load so we walk backwards.
+    for (WebFrame *frame = [self _lastChildFrame]; frame; frame = [frame _previousSiblingFrame])
         if ([[frame dataSource] isLoading] || [[frame provisionalDataSource] isLoading])
-            break;
-
-    [pool drain];
-    
-    return frame != nil;
+            return YES;
+    return NO;
 }
 
 - (void)_addPlugInView:(NSView *)plugInView

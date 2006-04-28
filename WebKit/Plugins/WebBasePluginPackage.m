@@ -56,9 +56,8 @@
 {
     WebBasePluginPackage *pluginPackage = [[WebPluginPackage alloc] initWithPath:pluginPath];
 
-    if (!pluginPackage) {
+    if (!pluginPackage)
         pluginPackage = [[WebNetscapePluginPackage alloc] initWithPath:pluginPath];
-    }
 
     return [pluginPackage autorelease];
 }
@@ -76,16 +75,14 @@
     OSStatus err;
 
     err = FSPathMakeRef((const UInt8 *)[thePath fileSystemRepresentation], &fref, NULL);
-    if (err != noErr) {
+    if (err != noErr)
         return newPath;
-    }
 
     Boolean targetIsFolder;
     Boolean wasAliased;
     err = FSResolveAliasFileWithMountFlags(&fref, TRUE, &targetIsFolder, &wasAliased, kResolveAliasFileNoUI);
-    if (err != noErr) {
+    if (err != noErr)
         return newPath;
-    }
 
     if (wasAliased) {
         CFURLRef URL = CFURLCreateFromFSRef(kCFAllocatorDefault, &fref);
@@ -96,9 +93,9 @@
     return newPath;
 }
 
-- initWithPath:(NSString *)pluginPath
+- (id)initWithPath:(NSString *)pluginPath
 {
-    [super init];
+    self = [super init];
     extensionToMIME = [[NSMutableDictionary alloc] init];
     path = [[self pathByResolvingSymlinksAndAliasesInPath:pluginPath] retain];
     bundle = [[NSBundle alloc] initWithPath:path];
@@ -109,15 +106,13 @@
 
 - (BOOL)getPluginInfoFromBundleAndMIMEDictionary:(NSDictionary *)MIMETypes
 {
-    if (!bundle) {
+    if (!bundle)
         return NO;
-    }
     
     if (!MIMETypes) {
         MIMETypes = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesKey];
-        if (!MIMETypes) {
+        if (!MIMETypes)
             return NO;
-        }
     }
 
     NSMutableDictionary *MIMEToExtensionsDictionary = [NSMutableDictionary dictionary];
@@ -132,23 +127,20 @@
         
         // FIXME: Consider storing disabled MIME types.
         NSNumber *isEnabled = [MIMEDictionary objectForKey:WebPluginTypeEnabledKey];
-        if (isEnabled && [isEnabled boolValue] == NO) {
+        if (isEnabled && [isEnabled boolValue] == NO)
             continue;
-        }
 
         extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
-        if ([extensions count] == 0) {
+        if ([extensions count] == 0)
             extensions = [NSArray arrayWithObject:@""];
-        }
 
         MIME = [MIME lowercaseString];
 
         [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
 
         description = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
-        if (!description) {
+        if (!description)
             description = @"";
-        }
 
         [MIMEToDescriptionDictionary setObject:description forKey:MIME];
     }
@@ -159,15 +151,13 @@
     NSString *filename = [self filename];
 
     NSString *theName = [bundle objectForInfoDictionaryKey:WebPluginNameKey];
-    if (!theName) {
+    if (!theName)
         theName = filename;
-    }
     [self setName:theName];
 
     description = [bundle objectForInfoDictionaryKey:WebPluginDescriptionKey];
-    if (!description) {
+    if (!description)
         description = filename;
-    }
     [self setPluginDescription:description];
 
     return YES;
@@ -175,9 +165,8 @@
 
 - (NSDictionary *)pListForPath:(NSString *)pListPath createFile:(BOOL)createFile
 {
-    if (createFile && [self load] && BP_CreatePluginMIMETypesPreferences) {
+    if (createFile && [self load] && BP_CreatePluginMIMETypesPreferences)
         BP_CreatePluginMIMETypesPreferences();
-    }
     
     NSDictionary *pList = nil;
     NSData *data = [NSData dataWithContentsOfFile:pListPath];
@@ -193,9 +182,8 @@
 
 - (BOOL)getPluginInfoFromPLists
 {
-    if (!bundle) {
+    if (!bundle)
         return NO;
-    }
     
     NSDictionary *MIMETypes = nil;
     NSString *pListFilename = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
@@ -207,14 +195,12 @@
         if (pList) {
             // If the plist isn't localized, have the plug-in recreate it in the preferred language.
             NSString *localizationName = [pList objectForKey:WebPluginLocalizationNameKey];
-            if (![localizationName isEqualToString:[[self class] preferredLocalizationName]]) {
+            if (![localizationName isEqualToString:[[self class] preferredLocalizationName]])
                 pList = [self pListForPath:pListPath createFile:YES];
-            }
             MIMETypes = [pList objectForKey:WebPluginMIMETypesKey];
-        } else {
+        } else
             // Plist doesn't exist, ask the plug-in to create it.
             MIMETypes = [[self pListForPath:pListPath createFile:YES] objectForKey:WebPluginMIMETypesKey];
-        }
     }
     
     // Pass the MIME dictionary to the superclass to parse it.
@@ -228,9 +214,8 @@
 
 - (BOOL)load
 {
-    if (isLoaded && bundle != nil && BP_CreatePluginMIMETypesPreferences == NULL) {
+    if (isLoaded && bundle && !BP_CreatePluginMIMETypesPreferences)
         BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
-    }
     return isLoaded;
 }
 
@@ -365,9 +350,8 @@
         extensionEnumerator = [extensions objectEnumerator];
 
         while ((extension = [extensionEnumerator nextObject]) != nil) {
-            if (![extension isEqualToString:@""]) {
+            if (![extension isEqualToString:@""])
                 [extensionToMIME setObject:MIME forKey:extension];
-            }
         }
     }
 }
@@ -414,12 +398,10 @@
         const NXArchInfo *localArch = NXGetLocalArchInfo();
         if (localArch != NULL) {
             struct mach_header *header = (struct mach_header *)[data bytes];
-            if (header->magic == MH_MAGIC) {
+            if (header->magic == MH_MAGIC)
                 return (header->cputype == localArch->cputype);
-            }
-            if (header->magic == MH_CIGAM) {
+            if (header->magic == MH_CIGAM)
                 return ((cpu_type_t) OSSwapInt32(header->cputype) == localArch->cputype);
-            }
         }
     }
     return YES;
@@ -436,9 +418,8 @@
     NSString *string;
 
     while ((string = [strings nextObject]) != nil) {
-        if ([string isKindOfClass:[NSString class]]) {
+        if ([string isKindOfClass:[NSString class]])
             [lowercaseStrings addObject:[string lowercaseString]];
-        }
     }
 
     return lowercaseStrings;

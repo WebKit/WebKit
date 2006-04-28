@@ -1,3 +1,66 @@
+2006-04-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Misc. style cleanup.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8643
+
+        * Misc/WebIconDatabase.m:
+        (-[NSMutableDictionary iconForURL:withSize:cache:]):
+        (-[NSMutableDictionary iconURLForURL:]):
+        (-[NSMutableDictionary retainIconForURL:]):
+        (-[NSMutableDictionary releaseIconForURL:]):
+        (-[WebIconDatabase _setIcon:forIconURL:]):
+        (-[WebIconDatabase _iconsForIconURLString:]):
+        (-[WebIconDatabase _forgetIconForIconURLString:]):
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+        (-[WebIconDatabase _iconsBySplittingRepresentationsOfIcon:]):
+        * Plugins/WebBasePluginPackage.m:
+        (+[WebBasePluginPackage pluginWithPath:]):
+        (-[WebBasePluginPackage pathByResolvingSymlinksAndAliasesInPath:]):
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage getPluginInfoFromBundleAndMIMEDictionary:]):
+        (-[WebBasePluginPackage pListForPath:createFile:]):
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        (-[WebBasePluginPackage load]):
+        (-[WebBasePluginPackage setMIMEToExtensionsDictionary:]):
+        (-[WebBasePluginPackage isNativeLibraryData:]):
+        (-[NSArray _web_lowercaseStrings]):
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage closeResourceFile:]):
+        (-[WebNetscapePluginPackage stringForStringListID:andIndex:]):
+        (-[WebNetscapePluginPackage getPluginInfoFromResources]):
+        (-[WebNetscapePluginPackage initWithPath:]):
+        (-[WebNetscapePluginPackage executableType]):
+        (-[WebNetscapePluginPackage unloadWithoutShutdown]):
+        (-[WebNetscapePluginPackage load]):
+        (-[WebNetscapePluginPackage unload]):
+        * Plugins/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation redeliverStream]):
+        * Plugins/WebPluginDatabase.m:
+        (+[WebPluginDatabase installedPlugins]):
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+        (-[WebPluginDatabase pluginForExtension:]):
+        (pluginLocations):
+        (-[WebPluginDatabase init]):
+        (-[WebPluginDatabase refresh]):
+        * Plugins/npapi.m:
+        (NPN_MemAlloc):
+        (NPN_MemFree):
+        (pluginViewForInstance):
+        * WebCoreSupport/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forDataSource:]):
+        (-[WebSubresourceLoader willSendRequest:redirectResponse:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource isLoading]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+        (-[WebFrame _subframeIsLoading]):
+        * WebView/WebView.m:
+        (-[WebView initWithFrame:]):
+        (-[WebView initWithFrame:frameName:groupName:]):
+
 2006-04-26  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.

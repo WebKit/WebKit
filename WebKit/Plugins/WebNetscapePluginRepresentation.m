@@ -130,11 +130,10 @@
             _dataLengthReceived = 0;
             [self receivedData:data withDataSource:_dataSource];
             if (![_dataSource isLoading]) {
-                if (_error) {
+                if (_error)
                     [self receivedError:_error withDataSource:_dataSource];
-                } else {
+                else
                     [self finishedLoadingWithDataSource:_dataSource];
-                }
             }
         }
     }

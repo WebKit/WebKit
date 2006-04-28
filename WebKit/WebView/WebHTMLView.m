@@ -497,13 +497,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     // which uses the URL of the resource for the fragment that it returns.
     NSString *extension = [name pathExtension];
     NSString *MIMEType = nil;
-    if ([extension length] != 0) {
+    if ([extension length] != 0)
         MIMEType = WKGetMIMETypeForExtension(extension);
-    }
     // Only support image resources.
-    if (MIMEType == nil || ![[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType]) {
+    if (MIMEType == nil || ![[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType])
         return nil;
-    }
     NSURL *URL = [NSURL _web_URLWithUserTypedString:[NSString stringWithFormat:@"/%@", name] relativeToURL:[NSURL _web_uniqueWebDataURL]];
     WebResource *resource = [[[WebResource alloc] initWithData:data
                                                            URL:URL

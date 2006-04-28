@@ -48,9 +48,8 @@ static WebPluginDatabase *database = nil;
 
 + (WebPluginDatabase *)installedPlugins 
 {
-    if (!database) {
+    if (!database)
         database = [[WebPluginDatabase alloc] init];
-    }
     return database;
 }
 
@@ -63,19 +62,16 @@ static WebPluginDatabase *database = nil;
     while ((plugin = [pluginEnumerator nextObject]) != nil) {
         if ([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]) {
             if ([plugin isKindOfClass:[WebPluginPackage class]]) {
-                if (webPlugin == nil) {
+                if (!webPlugin)
                     webPlugin = plugin;
-                }
             } else if([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
                 WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
                 if (executableType == WebCFMExecutableType) {
-                    if (CFMPlugin == nil) {
+                    if (!CFMPlugin)
                         CFMPlugin = plugin;
-                    }
                 } else if (executableType == WebMachOExecutableType) {
-                    if (machoPlugin == nil) {
+                    if (!machoPlugin)
                         machoPlugin = plugin;
-                    }
                 } else {
                     ASSERT_NOT_REACHED();
                 }
@@ -87,19 +83,18 @@ static WebPluginDatabase *database = nil;
 
     // Allow other plug-ins to win over QT because if the user has installed a plug-in that can handle a type
     // that the QT plug-in can handle, they probably intended to override QT.
-    if (webPlugin && ![webPlugin isQuickTimePlugIn]) {
+    if (webPlugin && ![webPlugin isQuickTimePlugIn])
         return webPlugin;
-    } else if (machoPlugin && ![machoPlugin isQuickTimePlugIn]) {
+    else if (machoPlugin && ![machoPlugin isQuickTimePlugIn])
         return machoPlugin;
-    } else if (CFMPlugin && ![CFMPlugin isQuickTimePlugIn]) {
+    else if (CFMPlugin && ![CFMPlugin isQuickTimePlugIn])
         return CFMPlugin;
-    } else if (webPlugin) {
+    else if (webPlugin)
         return webPlugin;
-    } else if (machoPlugin) {
+    else if (machoPlugin)
         return machoPlugin;
-    } else if (CFMPlugin) {
+    else if (CFMPlugin)
         return CFMPlugin;
-    }
     return nil;
 }
 
@@ -118,9 +113,8 @@ static WebPluginDatabase *database = nil;
         // and find the a plug-in from the MIME type. This is done in case the plug-in has not fully specified
         // an extension <-> MIME type mapping.
         NSString *MIMEType = WKGetMIMETypeForExtension(extension);
-        if ([MIMEType length] > 0) {
+        if ([MIMEType length] > 0)
             plugin = [self pluginForMIMEType:MIMEType];
-        }
     }
     return plugin;
 }
@@ -149,9 +143,8 @@ static NSArray *pluginLocations(void)
     // The purpose is to allow non-admin users to update their plug-ins.
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:[extensionPlugInPaths count] + 3];
     
-    if (extensionPlugInPaths) {
+    if (extensionPlugInPaths)
         [array addObjectsFromArray:extensionPlugInPaths];
-    }
     
     [array addObject:[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"]];
     [array addObject:@"/Library/Internet Plug-Ins"];
@@ -160,15 +153,11 @@ static NSArray *pluginLocations(void)
     return array;
 }
 
-- init
+- (id)init
 {
     self = [super init];
-    if (self == nil) {
-        return nil;
-    }
     [self refresh];
     return self;
-    
 }
     
 - (void)refresh
@@ -228,9 +217,8 @@ static NSArray *pluginLocations(void)
     NSString *MIMEType;
     while ((MIMEType = [keyEnumerator nextObject]) != nil) {
         Class class = [MIMEToViewClass objectForKey:MIMEType];
-        if (class == [WebNetscapePluginDocumentView class] || class == [WebPluginDocumentView class]) {
+        if (class == [WebNetscapePluginDocumentView class] || class == [WebPluginDocumentView class])
             [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
-        }
     }
     
     // Build a list of MIME types.
@@ -245,22 +233,19 @@ static NSArray *pluginLocations(void)
     NSEnumerator *MIMEEnumerator = [[MIMETypes allObjects] objectEnumerator];
     [MIMETypes release];
     while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
-        if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
+        if ([WebView canShowMIMETypeAsHTML:MIMEType])
             // Don't allow plug-ins to override our core HTML types.
             continue;
-        }
         plugin = [self pluginForMIMEType:MIMEType];
-        if ([plugin isJavaPlugIn]) {
+        if ([plugin isJavaPlugIn])
             // Don't register the Java plug-in for a document view since Java files should be downloaded when not embedded.
             continue;
-        }
-        if ([plugin isQuickTimePlugIn] && [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType] != nil) {
+        if ([plugin isQuickTimePlugIn] && [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType])
             // Don't allow the QT plug-in to override any types because it claims many that we can handle ourselves.
             continue;
-        }
-        if ([plugin isKindOfClass:[WebNetscapePluginPackage class]]) {
+        if ([plugin isKindOfClass:[WebNetscapePluginPackage class]])
             [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:MIMEType];
-        } else {
+        else {
             ASSERT([plugin isKindOfClass:[WebPluginPackage class]]);
             [WebView registerViewClass:[WebPluginDocumentView class] representationClass:[WebPluginDocumentView class] forMIMEType:MIMEType];
         }

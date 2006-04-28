@@ -37,13 +37,11 @@ WebBaseNetscapePluginView *pluginViewForInstance(NPP instance);
 
 void* NPN_MemAlloc(uint32 size)
 {
-    //LOG(Plugins, "NPN_MemAlloc");
     return malloc(size);
 }
 
 void NPN_MemFree(void* ptr)
 {
-    //LOG(Plugins, "NPN_MemFree");
     free(ptr);
 }
 
@@ -71,11 +69,10 @@ NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
 // This specifically works around Flash and Shockwave. When we call NPP_New, they call NPN_UserAgent with a NULL instance.
 WebBaseNetscapePluginView *pluginViewForInstance(NPP instance)
 {
-    if (instance && instance->ndata) {
+    if (instance && instance->ndata)
         return (WebBaseNetscapePluginView *)instance->ndata;
-    } else {
+    else
         return [WebBaseNetscapePluginView currentPluginView];
-    }
 }
 
 NPError NPN_GetURLNotify(NPP instance, const char* URL, const char* target, void* notifyData)
