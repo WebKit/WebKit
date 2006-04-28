@@ -6,7 +6,7 @@
     This page describes the current status of the SVG implementation in WebKit.
     </p>
     <p>
-    Last update: Jan 27th, 2006.
+    Last update: Apr 28th, 2006.
     </p>
     <p>
     For a list of general WebKit+SVG issues not covered in this document , please see the <a href="http://tinyurl.com/athb7">full SVG bug list</a>.
@@ -25,9 +25,9 @@
                 <name>svg</name>
                 <url>http://www.w3.org/TR/SVG11/struct.html#SVGElement</url>
                 <issues>
-                    <issue>overflow: hidden; is not respected <bug>5977</bug></issue>
+                    <issue>overflow: hidden; is not respected <bug>5358</bug></issue>
                     <issue>image/svg+xml should use SVGDocumentImpl <bug>5978</bug></issue>
-                    <issue>bounding box relative percentages fail <bug>6011</bug></issue>
+                    <issue>bounding box relative percentages fail <bug>6003</bug></issue>
                 </issues>
             </element>
             <element>
@@ -51,9 +51,7 @@
             <element>
                 <name>title</name>
                 <url>http://www.w3.org/TR/SVG11/struct.html#TitleElement</url>
-                <issues>
-                    <issue>Parsed, but otherwise ignored <bug>5351</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>metadata</name>
@@ -96,7 +94,6 @@
                 <name>image</name>
                 <url>http://www.w3.org/TR/SVG11/struct.html#ImageElement</url>
                  <issues>
-                    <issue>&lt;image&gt; does not viewBox or preserveAspectRatio <bug>5966</bug></issue>
                     <issue>&lt;image&gt; does not support color-profile property <bug>6036</bug></issue>
                 </issues>
             </element>
@@ -182,7 +179,7 @@
             <element>
                 <name>tref</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#TRefElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>textPath</name>
@@ -256,6 +253,7 @@
                     <issue>Reflect and repeat not supported <bug>5968</bug></issue>
                     <issue>color-interpolation not supported for gradients <bug>6034</bug></issue>
                     <issue>Gradient appears and disappears in SVG <bug>6716</bug></issue>
+                    <issue>Gradients aren't pixel-perfect <bug>8628</bug></issue>
                 </issues>
             </element>
             <element>
@@ -346,10 +344,7 @@
             <element>
                 <name>feComponentTransfer</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feComponentTransferElement</url>
-                <status>Unimplemented</status>
-                <issues>
-                    <issue>Not implemented <bug>5860</bug></issue>
-                </issues>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>feComposite</name>
@@ -372,9 +367,8 @@
             <element>
                 <name>feDisplacementMap</name>
                 <url>http://www.w3.org/TR/SVG11/filters.html#feDisplacementMapElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
                 <issues>
-                    <issue>Not implemented <bug>5862</bug></issue>
                     <issue>filters-displace-01-f displays incorrectly <bug>6719</bug></issue>
                 </issues>
             </element>
