@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebCoreTextRendererFactory.h"
+#import "WebTextRendererFactory.h"
 
 #import "KWQListBox.h"
 #import "Page.h"
@@ -79,6 +79,8 @@ static WebCoreTextRendererFactory *sharedFactory;
 
 + (WebCoreTextRendererFactory *)sharedFactory
 {
+    if (!sharedFactory)
+        [WebTextRendererFactory createSharedFactory];
     return sharedFactory;
 }
 

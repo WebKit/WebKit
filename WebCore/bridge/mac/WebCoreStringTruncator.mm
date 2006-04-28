@@ -32,8 +32,8 @@
 #import <Cocoa/Cocoa.h>
 
 #import <kxmlcore/Assertions.h>
-#import "WebCoreTextRendererFactory.h"
-#import "WebCoreTextRenderer.h"
+#import "WebTextRendererFactory.h"
+#import "WebTextRenderer.h"
 
 #define STRING_BUFFER_SIZE 2048
 #define ELLIPSIS_CHARACTER 0x2026

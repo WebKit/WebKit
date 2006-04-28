@@ -1,3 +1,51 @@
+2006-04-28  David Hyatt  <hyatt@apple.com>
+
+        Fix for 8586, move WebTextRenderer into WebCore.
+
+        Reviewed by darin
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreStringTruncator.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/mac/WebCoreTextRenderer.h:
+        * platform/mac/WebCoreTextRendererFactory.mm:
+        (+[WebCoreTextRendererFactory sharedFactory]):
+        * platform/mac/WebTextRenderer.h: Added.
+        * platform/mac/WebTextRenderer.mm: Added.
+        (widthForGlyph):
+        (-[WebTextRenderer initWithFont:]):
+        (destroy):
+        (-[WebTextRenderer drawLineForCharacters:yOffset:width:color:thickness:]):
+        (-[WebTextRenderer drawLineForMisspelling:withWidth:]):
+        (findSubstituteFont):
+        (setUpFont):
+        (pathFromFont):
+        (drawGlyphs):
+        (CG_draw):
+        (extendGlyphMap):
+        (extendWidthMap):
+        (initializeATSUStyle):
+        (createATSULayoutParameters):
+        (getTextBounds):
+        (addDirectionalOverride):
+        (ATSU_draw):
+        (normalizeVoicingMarks):
+        (advanceWidthIterator):
+        (fillStyleWithAttributes):
+        * platform/mac/WebTextRendererFactory.h: Added.
+        * platform/mac/WebTextRendererFactory.mm: Added.
+        (getAppDefaultValue):
+        (getUserDefaultValue):
+        (getLCDScaleParameters):
+        (fontsChanged):
+        (+[WebTextRendererFactory createSharedFactory]):
+        (-[WebTextRendererFactory isFontFixedPitch:]):
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+        (FontCacheKeyCopy):
+        (-[WebTextRendererFactory cachedFontFromFamily:traits:size:]):
+
 2006-04-28  Eric Seidel  <eseidel@apple.com>
 
         Fix by beth.  Reviewed by darin.  Landed by eseidel.

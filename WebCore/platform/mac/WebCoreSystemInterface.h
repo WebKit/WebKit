@@ -32,9 +32,28 @@ extern "C" {
 
 // In alphabetical order.
 
+extern BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef cgContext);
+extern void (*wkClearGlyphVector)(void* glyphs);
+extern OSStatus (*wkConvertCharToGlyphs)(void *styleGroup, const UniChar *characters, unsigned numCharacters, void* glyphs);
 extern void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
 extern void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
+extern BOOL (*wkFontSmoothingModeIsLCD)(int mode);
+extern OSStatus (*wkGetATSStyleGroup)(ATSUStyle fontStyle, void **styleGroup);
+extern CGFontRef (*wkGetCGFontFromNSFont)(NSFont *font);
+extern ATSGlyphRef (*wkGetDefaultGlyphForChar)(NSFont *font, UniChar c);
+extern NSFont* (*wkGetFontInLanguageForRange)(NSFont *font, NSString *string, NSRange range);
+extern NSFont* (*wkGetFontInLanguageForCharacter)(NSFont *font, UniChar ch);
+extern void (*wkGetFontMetrics)(NSFont *font, int *ascent, int *descent, int *lineGap, unsigned *unitsPerEm);
+extern BOOL (*wkGetGlyphTransformedAdvances)(NSFont *font, CGAffineTransform *m, ATSGlyphRef *glyph, CGSize *advance);
+extern ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
+extern int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
+extern size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
+extern ATSUFontID (*wkGetNSFontATSUFontId)(NSFont *font);
+extern OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
+extern void (*wkReleaseStyleGroup)(void *group);
+extern void (*wkSetCGFontRenderingMode)(CGContextRef cgContext, NSFont *font);
 extern void (*wkSetDragImage)(NSImage*, NSPoint offset);
+extern void (*wkSetUpFontCache)(size_t s);
 
 #ifdef __cplusplus
 }
