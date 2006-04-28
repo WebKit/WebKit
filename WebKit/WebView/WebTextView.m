@@ -39,12 +39,12 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
-#import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebTextRepresentation.h>
 
 #import <WebCore/WebCoreTextDecoder.h>
+#import <WebCore/WebCoreTextRenderer.h>
 
 #import <Foundation/NSURLResponse.h>
 
@@ -133,11 +133,9 @@
 - (void)setFixedWidthFont
 {
     WebPreferences *preferences = [self _preferences];
-    NSFont *font = [[WebTextRendererFactory sharedFactory] cachedFontFromFamily:[preferences fixedFontFamily]
-        traits:0 size:[preferences defaultFixedFontSize] * _textSizeMultiplier];
-    if (font) {
+    NSFont* font = WebCoreFindFont([preferences fixedFontFamily], 0, [preferences defaultFixedFontSize] * _textSizeMultiplier);
+    if (font)
         [self setFont:font];
-    }
 }
 
 // This method was borrowed from Mail and changed to use ratios rather than deltas.

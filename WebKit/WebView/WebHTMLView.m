@@ -68,12 +68,11 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebStringTruncator.h>
-#import <WebKit/WebTextRenderer.h>
-#import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
 #import <WebCore/WebCoreImageRenderer.h>
+#import <WebCore/WebCoreTextRenderer.h>
 
 #import <AppKit/NSAccessibility.h>
 
@@ -4102,13 +4101,12 @@ done:
         // the Postscript name.
         
         // Find the font the same way the rendering code would later if it encountered this CSS.
-        WebTextRendererFactory *factory = [WebTextRendererFactory sharedFactory];
         NSFontTraitMask traits = 0;
         if (aIsBold)
             traits |= NSBoldFontMask;
         if (aIsItalic)
             traits |= NSItalicFontMask;
-        NSFont *foundFont = [factory cachedFontFromFamily:aFamilyName traits:traits size:aPointSize];
+        NSFont *foundFont = WebCoreFindFont(aFamilyName, traits, aPointSize);
 
         // If we don't find a font with the same Postscript name, then we'll have to use the
         // Postscript name to make the CSS specific enough.

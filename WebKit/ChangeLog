@@ -1,3 +1,35 @@
+2006-04-28  David Hyatt  <hyatt@apple.com>
+
+        Fix for 8586, move WebTextRenderer into WebCore.
+
+        Reviewed by darin
+
+        * Misc/WebKitNSStringExtras.m:
+        (-[NSString _web_drawAtPoint:font:textColor:]):
+        (-[NSString _web_widthWithFont:]):
+        * Misc/WebStringTruncator.m:
+        (+[WebStringTruncator centerTruncateString:toWidth:]):
+        (+[WebStringTruncator centerTruncateString:toWidth:withFont:]):
+        (+[WebStringTruncator rightTruncateString:toWidth:withFont:]):
+        (+[WebStringTruncator widthOfString:font:]):
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+        * WebCoreSupport/WebTextRenderer.h: Removed.
+        * WebCoreSupport/WebTextRenderer.m: Removed.
+        * WebCoreSupport/WebTextRendererFactory.h: Removed.
+        * WebCoreSupport/WebTextRendererFactory.m: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebFrameView.m:
+        (-[WebFrameView initWithFrame:]):
+        * WebView/WebHTMLView.m:
+        (-[NSArray _addToStyle:fontA:fontB:]):
+        * WebView/WebTextView.m:
+        (-[WebTextView setFixedWidthFont]):
+        * WebView/WebView.m:
+        (+[WebView _setAlwaysUseATSU:]):
+        (+[WebView _setShouldUseFontSmoothing:]):
+        (+[WebView _shouldUseFontSmoothing]):
+
 2006-04-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

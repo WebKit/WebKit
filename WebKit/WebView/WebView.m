@@ -79,7 +79,6 @@
 #import "WebPreferencesPrivate.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebScriptDebugDelegatePrivate.h"
-#import "WebTextRenderer.h"
 #import "WebTextRepresentation.h"
 #import "WebTextView.h"
 #import "WebUIDelegate.h"
@@ -94,6 +93,8 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
+
+#import <WebCore/WebCoreTextRenderer.h>
 
 #if __ppc__
 #define PROCESSOR "PPC"
@@ -292,7 +293,6 @@ macro(yankAndSelect) \
     BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
     BOOL dashboardBehaviorAllowWheelScrolling;
     
-    BOOL shouldUseFontSmoothing;
     BOOL selectWordBeforeMenuEvent;
 }
 @end
@@ -358,8 +358,6 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 
 @implementation WebProgressItem
 @end
-
-static BOOL shouldUseFontSmoothing = YES;
 
 @implementation WebViewPrivate
 
@@ -531,7 +529,7 @@ static bool debugWidget = true;
 
 + (void)_setAlwaysUseATSU:(BOOL)f
 {
-    [WebTextRenderer setAlwaysUseATSU:f];
+    WebCoreSetAlwaysUseATSU(f);
 }
 
 + (BOOL)canShowFile:(NSString *)path
@@ -1399,12 +1397,12 @@ static bool debugWidget = true;
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f
 {
-    shouldUseFontSmoothing = f;
+    WebCoreSetShouldUseFontSmoothing(f);
 }
 
 + (BOOL)_shouldUseFontSmoothing
 {
-    return shouldUseFontSmoothing;
+    return WebCoreShouldUseFontSmoothing();
 }
 
 + (NSString *)_minimumRequiredSafariBuildNumber

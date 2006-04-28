@@ -29,31 +29,26 @@
 #import <WebKit/WebStringTruncator.h>
 
 #import <WebCore/WebCoreStringTruncator.h>
-#import <WebKit/WebTextRendererFactory.h>
 
 @implementation WebStringTruncator
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
 {
-    [WebTextRendererFactory createSharedFactory];
     return [WebCoreStringTruncator centerTruncateString:string toWidth:maxWidth];
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
-    [WebTextRendererFactory createSharedFactory];
     return [WebCoreStringTruncator centerTruncateString:string toWidth:maxWidth withFont:font];
 }
 
 + (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
-    [WebTextRendererFactory createSharedFactory];
     return [WebCoreStringTruncator rightTruncateString:string toWidth:maxWidth withFont:font];
 }
 
 + (float)widthOfString:(NSString *)string font:(NSFont *)font
 {
-    [WebTextRendererFactory createSharedFactory];
     return [WebCoreStringTruncator widthOfString:string font:font];
 }
 

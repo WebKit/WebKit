@@ -94,8 +94,6 @@
 		939810410824BF01008DF038 /* WebImageRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CE1F8A202A5C6F30ECA2ACD /* WebImageRendererFactory.h */; };
 		939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810430824BF01008DF038 /* WebSubresourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E0E10802BC45F8018635CA /* WebSubresourceLoader.h */; };
-		939810440824BF01008DF038 /* WebTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B36B410281DF55018635CB /* WebTextRenderer.h */; settings = {ATTRIBUTES = (); }; };
-		939810450824BF01008DF038 /* WebTextRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B36B450281DF9C018635CB /* WebTextRendererFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810460824BF01008DF038 /* WebViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F7174C02885C5B018635CA /* WebViewFactory.h */; settings = {ATTRIBUTES = (); }; };
 		939810470824BF01008DF038 /* WebKitPrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C283730284676D018635CA /* WebKitPrefix.h */; };
 		939810490824BF01008DF038 /* WebClipView.h in Headers */ = {isa = PBXBuildFile; fileRef = 933D659903413FF2008635CE /* WebClipView.h */; };
@@ -226,8 +224,6 @@
 		939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */; };
 		939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */; };
 		939810E50824BF01008DF038 /* WebSubresourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E0E10902BC45F8018635CA /* WebSubresourceLoader.m */; };
-		939810E60824BF01008DF038 /* WebTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B36B420281DF55018635CB /* WebTextRenderer.m */; };
-		939810E70824BF01008DF038 /* WebTextRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B36B460281DF9C018635CB /* WebTextRendererFactory.m */; };
 		939810E80824BF01008DF038 /* WebViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F7174D02885C5B018635CA /* WebViewFactory.m */; };
 		939810EA0824BF01008DF038 /* WebLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 51F6866D0366057300CA2D3A /* WebLoader.m */; };
 		939810EB0824BF01008DF038 /* WebClipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 933D659A03413FF2008635CE /* WebClipView.m */; };
@@ -594,10 +590,6 @@
 		F5AEBB3D024A527601C1A526 /* WebPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPreferences.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameBridge.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5AFB45F02B94DC8018635CA /* WebFrameBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebFrameBridge.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5B36B410281DF55018635CB /* WebTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebTextRenderer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5B36B420281DF55018635CB /* WebTextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebTextRenderer.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5B36B450281DF9C018635CB /* WebTextRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebTextRendererFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5B36B460281DF9C018635CB /* WebTextRendererFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebTextRendererFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5B67130023EDF8901C1A525 /* url_icon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = url_icon.tiff; path = Resources/url_icon.tiff; sourceTree = "<group>"; };
 		F5B92B820223191D01C1A525 /* WebHistoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5C283730284676D018635CA /* WebKitPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = WebKitPrefix.h; path = ../WebKitPrefix.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1066,10 +1058,6 @@
 				F5E0E10902BC45F8018635CA /* WebSubresourceLoader.m */,
 				93EB178E09F88D510091F8FF /* WebSystemInterface.h */,
 				93EB178C09F88D460091F8FF /* WebSystemInterface.m */,
-				F5B36B410281DF55018635CB /* WebTextRenderer.h */,
-				F5B36B420281DF55018635CB /* WebTextRenderer.m */,
-				F5B36B450281DF9C018635CB /* WebTextRendererFactory.h */,
-				F5B36B460281DF9C018635CB /* WebTextRendererFactory.m */,
 				F5F7174C02885C5B018635CA /* WebViewFactory.h */,
 				F5F7174D02885C5B018635CA /* WebViewFactory.m */,
 			);
@@ -1201,8 +1189,6 @@
 				939810410824BF01008DF038 /* WebImageRendererFactory.h in Headers */,
 				939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */,
 				939810430824BF01008DF038 /* WebSubresourceLoader.h in Headers */,
-				939810440824BF01008DF038 /* WebTextRenderer.h in Headers */,
-				939810450824BF01008DF038 /* WebTextRendererFactory.h in Headers */,
 				939810460824BF01008DF038 /* WebViewFactory.h in Headers */,
 				939810470824BF01008DF038 /* WebKitPrefix.h in Headers */,
 				939810490824BF01008DF038 /* WebClipView.h in Headers */,
@@ -1783,8 +1769,6 @@
 				939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */,
 				939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */,
 				939810E50824BF01008DF038 /* WebSubresourceLoader.m in Sources */,
-				939810E60824BF01008DF038 /* WebTextRenderer.m in Sources */,
-				939810E70824BF01008DF038 /* WebTextRendererFactory.m in Sources */,
 				939810E80824BF01008DF038 /* WebViewFactory.m in Sources */,
 				939810EA0824BF01008DF038 /* WebLoader.m in Sources */,
 				939810EB0824BF01008DF038 /* WebClipView.m in Sources */,

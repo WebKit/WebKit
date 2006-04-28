@@ -29,9 +29,9 @@
 #import "WebKitNSStringExtras.h"
 
 #import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebTextRenderer.h>
-#import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebNSFileManagerExtras.h>
+
+#import <WebCore/WebCoreTextRenderer.h>
 
 #import <unicode/uchar.h>
 
@@ -56,24 +56,8 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
     [self getCharacters:buffer];
     
-    if (canUseFastRenderer(buffer, length)) {
-        WebCoreFont f;
-        WebCoreInitializeFont(&f);
-        f.font = font;
-        WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
-
-        WebCoreTextRun run;
-        WebCoreInitializeTextRun (&run, buffer, length, 0, length);
-        WebCoreTextStyle style;
-        WebCoreInitializeEmptyTextStyle(&style);
-        style.applyRunRounding = NO;
-        style.applyWordRounding = NO;
-        style.textColor = textColor;
-        WebCoreTextGeometry geometry;
-        WebCoreInitializeEmptyTextGeometry(&geometry);
-        geometry.point = point;
-        [renderer drawRun:&run style:&style geometry:&geometry];
-    }
+    if (canUseFastRenderer(buffer, length))
+        WebCoreDrawTextAtPoint(buffer, length, point, font, textColor);
     else {
         // WebTextRenderer assumes drawing from baseline.
         if ([[NSView focusView] isFlipped])
@@ -114,22 +98,10 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
     [self getCharacters:buffer];
 
-    if (canUseFastRenderer(buffer, length)) {
-        WebCoreFont f;
-        WebCoreInitializeFont(&f);
-        f.font = font;
-        WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
-
-        WebCoreTextRun run;
-        WebCoreInitializeTextRun (&run, buffer, length, 0, length);
-        WebCoreTextStyle style;
-        WebCoreInitializeEmptyTextStyle(&style);
-        style.applyRunRounding = NO;
-        style.applyWordRounding = NO;
-        width = [renderer floatWidthForRun:&run style:&style];
-    } else {
+    if (canUseFastRenderer(buffer, length))
+        width = WebCoreTextFloatWidth(buffer, length, font);
+    else
         width = [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
-    }
     
     free(buffer);
     

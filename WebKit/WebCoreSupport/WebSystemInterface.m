@@ -35,7 +35,26 @@
 
 void InitWebCoreSystemInterface(void)
 {
+    INIT(CGContextGetShouldSmoothFonts);
+    INIT(ClearGlyphVector);
+    INIT(ConvertCharToGlyphs);
     INIT(DrawBezeledTextFieldCell);
     INIT(DrawFocusRing);
+    INIT(FontSmoothingModeIsLCD);
+    INIT(GetATSStyleGroup);
+    INIT(GetCGFontFromNSFont);
+    INIT(GetDefaultGlyphForChar);
+    INIT(GetGlyphTransformedAdvances);
+    INIT(GetFontInLanguageForRange);
+    INIT(GetFontInLanguageForCharacter);
+    INIT(GetFontMetrics);
+    INIT(GetGlyphVectorFirstRecord);
+    INIT(GetGlyphVectorNumGlyphs);
+    INIT(GetGlyphVectorRecordSize);
+    INIT(GetNSFontATSUFontId);
+    INIT(InitializeGlyphVector);
+    INIT(ReleaseStyleGroup);
+    INIT(SetCGFontRenderingMode);
     INIT(SetDragImage);
+    INIT(SetUpFontCache);
 }

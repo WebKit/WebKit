@@ -49,7 +49,6 @@
 #import "WebNSViewExtras.h"
 #import "WebPDFView.h"
 #import "WebSystemInterface.h"
-#import "WebTextRendererFactory.h"
 #import "WebTextView.h"
 #import "WebViewFactory.h"
 #import "WebViewInternal.h"
@@ -310,7 +309,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         didFirstTimeInitialization = true;
         InitWebCoreSystemInterface();
         [WebViewFactory createSharedFactory];
-        [WebTextRendererFactory createSharedFactory];
         [WebImageRendererFactory createSharedFactory];
         [WebKeyGenerator createSharedGenerator];
     }
