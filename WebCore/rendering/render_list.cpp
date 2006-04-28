@@ -402,7 +402,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     GraphicsContext* p = i.p;
     p->setFont(style()->font());
 
-    if (p->printing()) {
+    if (document()->printing()) {
         if (box.y() < i.r.y())
             // This has been printed already we suppose.
             return;

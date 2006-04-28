@@ -104,14 +104,14 @@ bool Image::supportsType(const String& type)
 
 // Drawing Routines
 
-static void fillSolidColorInRect(CGColorRef color, CGRect rect, CompositeOperator op, CGContextRef context)
+static void fillSolidColorInRect(GraphicsContext* context, CGColorRef color, CGRect rect, CompositeOperator op)
 {
     if (color) {
-        CGContextSaveGState(context);
-        CGContextSetFillColorWithColor(context, color);
-        setCompositeOperation(context, op);
-        CGContextFillRect(context, rect);
-        CGContextRestoreGState(context);
+        context->save();
+        CGContextSetFillColorWithColor(context->platformContext(), color);
+        context->setCompositeOperation(op);
+        CGContextFillRect(context->platformContext(), rect);
+        context->restore();
     }
 }
 
@@ -136,7 +136,7 @@ void Image::checkForSolidColor(CGImageRef image)
             kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
 #endif
         if (bmap) {
-            setCompositeOperation(bmap, CompositeCopy);
+            GraphicsContext(bmap).setCompositeOperation(CompositeCopy);
             CGRect dst = { {0, 0}, {1, 1} };
             CGContextDrawImage(bmap, dst, image);
             if (pixel[3] > 0)
@@ -190,10 +190,9 @@ CGImageRef Image::getCGImageRef()
 
 void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
 {
-    CGContextRef context = ctxt->platformContext();
     if (m_isPDF) {
         if (m_PDFDoc)
-            m_PDFDoc->draw(srcRect, dstRect, compositeOp, 1.0, true, context);
+            m_PDFDoc->draw(ctxt, srcRect, dstRect, compositeOp);
         return;
     } 
     
@@ -208,9 +207,11 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRec
         return;
 
     if (m_isSolidColor && m_currentFrame == 0)
-        return fillSolidColorInRect(m_solidColor, ir, compositeOp, context);
+        return fillSolidColorInRect(ctxt, m_solidColor, ir, compositeOp);
 
-    CGContextSaveGState(context);
+    CGContextRef context = ctxt->platformContext();
+
+    ctxt->save();
         
     // Get the height (in adjusted, i.e. scaled, coords) of the portion of the image
     // that is currently decoded.  This could be less that the actual height.
@@ -233,7 +234,7 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRec
     }
 
     // Flip the coords.
-    setCompositeOperation(context, compositeOp);
+    ctxt->setCompositeOperation(compositeOp);
     CGContextTranslateCTM(context, ir.origin.x, ir.origin.y);
     CGContextScaleCTM(context, 1, -1);
     CGContextTranslateCTM(context, 0, -ir.size.height);
@@ -261,7 +262,7 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRec
     } else // Draw the whole image.
         CGContextDrawImage(context, ir, image);
 
-    CGContextRestoreGState(context);
+    ctxt->restore();
     
     startAnimation();
 
@@ -284,10 +285,8 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     if (!image)
         return;
 
-    CGContextRef context = ctxt->platformContext();
-
     if (m_currentFrame == 0 && m_isSolidColor) {
-        fillSolidColorInRect(m_solidColor, destRect, CompositeSourceOver, context);
+        fillSolidColorInRect(ctxt, m_solidColor, destRect, CompositeSourceOver);
         return;
     }
 
@@ -336,7 +335,9 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
                                            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
     
     if (pattern) {
-        CGContextSaveGState(context);
+        CGContextRef context = ctxt->platformContext();
+
+        ctxt->save();
 
         CGPoint tileOrigin = CGPointMake(oneTileRect.origin.x, oneTileRect.origin.y);
         [[WebCoreImageRendererFactory sharedFactory] setPatternPhaseForContext:context inUserSpace:tileOrigin];
@@ -348,11 +349,11 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         CGFloat patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
-        setCompositeOperation(context, CompositeSourceOver);
+        ctxt->setCompositeOperation(CompositeSourceOver);
 
         CGContextFillRect(context, destRect);
 
-        CGContextRestoreGState(context);
+        ctxt->restore();
 
         CGPatternRelease(pattern);
     }
@@ -367,12 +368,11 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
     if (!image)
         return;
 
-    CGContextRef context = ctxt->platformContext();
-    
     if (m_currentFrame == 0 && m_isSolidColor)
-        return fillSolidColorInRect(m_solidColor, dstRect, CompositeSourceOver, context);
+        return fillSolidColorInRect(ctxt, m_solidColor, dstRect, CompositeSourceOver);
 
-    CGContextSaveGState(context);
+    ctxt->save();
+
     CGSize tileSize = srcRect.size();
     CGRect ir = dstRect;
     CGRect fr = srcRect;
@@ -412,6 +412,8 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
                                            patternTransform, tileSize.width, tileSize.height, 
                                            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
     if (pattern) {
+        CGContextRef context = ctxt->platformContext();
+    
         // We want to construct the phase such that the pattern is centered (when stretch is not
         // set for a particular rule).
         float hPhase = scaleX * fr.origin.x;
@@ -431,14 +433,14 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         CGFloat patternAlpha = 1;
         CGContextSetFillPattern(context, pattern, &patternAlpha);
 
-        setCompositeOperation(context, CompositeSourceOver);
+        ctxt->setCompositeOperation(CompositeSourceOver);
         
         CGContextFillRect(context, ir);
 
-        CGPatternRelease (pattern);
+        CGPatternRelease(pattern);
     }
 
-    CGContextRestoreGState(context);
+    ctxt->restore();
 
     startAnimation();
 }

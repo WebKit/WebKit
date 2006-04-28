@@ -26,8 +26,8 @@
 
 #include "DocLoader.h"
 #include "EventNames.h"
+#include "FloatRect.h"
 #include "HTMLFormElement.h"
-#include "IntPointArray.h"
 #include "csshelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -572,9 +572,9 @@ IntRect HTMLAreaElement::getRect(RenderObject* obj) const
 {
     int dx, dy;
     obj->absolutePosition(dx, dy);
-    Path p = getRegion(lastw,lasth);
-    p.translate(dx, dy);
-    return p.boundingRect();
+    Path p = getRegion(lastw, lasth);
+    p.translate(IntSize(dx, dy));
+    return enclosingIntRect(p.boundingRect());
 }
 
 Path HTMLAreaElement::getRegion(int width, int height) const
@@ -593,22 +593,24 @@ Path HTMLAreaElement::getRegion(int width, int height) const
             shape = Poly;
     }
 
+    Path path;
     switch (shape) {
         case Poly:
             if (m_coordsLen >= 6) {
+                Path path;
                 int numPoints = m_coordsLen / 2;
-                IntPointArray points(numPoints);
-                for (int i = 0; i < numPoints; ++i)
-                    points.setPoint(i, m_coords[i * 2].calcMinValue(width), m_coords[i * 2 + 1].calcMinValue(height));
-                return Path(points);
+                path.moveTo(FloatPoint(m_coords[0].calcMinValue(width), m_coords[1].calcMinValue(height)));
+                for (int i = 1; i < numPoints; ++i)
+                    path.addLineTo(FloatPoint(m_coords[i * 2].calcMinValue(width), m_coords[i * 2 + 1].calcMinValue(height)));
+                path.closeSubpath();
             }
             break;
         case Circle:
             if (m_coordsLen >= 3) {
                 Length radius = m_coords[2];
                 int r = min(radius.calcMinValue(width), radius.calcMinValue(height));
-                return Path(IntRect(m_coords[0].calcMinValue(width) - r, m_coords[1].calcMinValue(height) - r,
-                    2 * r, 2 * r), Path::Ellipse);
+                path.addEllipse(FloatRect(m_coords[0].calcMinValue(width) - r, m_coords[1].calcMinValue(height) - r,
+                    2 * r, 2 * r));
             }
             break;
         case Rect:
@@ -617,16 +619,17 @@ Path HTMLAreaElement::getRegion(int width, int height) const
                 int y0 = m_coords[1].calcMinValue(height);
                 int x1 = m_coords[2].calcMinValue(width);
                 int y1 = m_coords[3].calcMinValue(height);
-                return Path(IntRect(x0, y0, x1 - x0, y1 - y0));
+                path.addRect(FloatRect(x0, y0, x1 - x0, y1 - y0));
             }
             break;
         case Default:
-            return Path(IntRect(0, 0, width, height));
+            path.addRect(FloatRect(0, 0, width, height));
+            break;
         case Unknown:
             break;
     }
 
-    return Path();
+    return path;
 }
 
 String HTMLAreaElement::accessKey() const

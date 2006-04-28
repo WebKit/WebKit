@@ -378,7 +378,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
     // See if our root lines intersect with the dirty rect.  If so, then we paint
     // them.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
-    bool isPrinting = info.p->printing();
+    bool isPrinting = document()->printing();
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextFlowBox()) {
         if (isPrinting) {
             // FIXME: This is a feeble effort to avoid splitting a line across two pages.

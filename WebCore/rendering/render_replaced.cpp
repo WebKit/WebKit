@@ -386,7 +386,7 @@ void RenderWidget::paint(PaintInfo& i, int tx, int ty)
     }
 
     // Paint a partially transparent wash over selected widgets.
-    if (isSelected() && !i.p->printing())
+    if (isSelected() && !document()->printing())
         i.p->fillRect(selectionRect(), selectionColor(i.p));
 }
 

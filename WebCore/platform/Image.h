@@ -26,8 +26,8 @@
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
-#include "CompositeOperator.h"
 #include "DeprecatedArray.h"
+#include "GraphicsTypes.h"
 #include "ImageSource.h"
 #include "IntSize.h"
 #include "FloatSize.h"

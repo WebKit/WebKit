@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "CompositeOperator.h"
+#include "GraphicsTypes.h"
 
 #include "PlatformString.h"
+#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
@@ -46,11 +47,11 @@ static const char* const compositeOperatorNames[] = {
     "highlight",
     "lighter"
 };
+const int numCompositeOperatorNames = sizeof(compositeOperatorNames) / sizeof(compositeOperatorNames[0]);
 
 bool parseCompositeOperator(const String& s, CompositeOperator& op)
 {
-    const int num = sizeof(compositeOperatorNames) / sizeof(compositeOperatorNames[0]);
-    for (int i = 0; i < num; i++)
+    for (int i = 0; i < numCompositeOperatorNames; i++)
         if (s == compositeOperatorNames[i]) {
             op = static_cast<CompositeOperator>(i);
             return true;
@@ -60,7 +61,59 @@ bool parseCompositeOperator(const String& s, CompositeOperator& op)
 
 String compositeOperatorName(CompositeOperator op)
 {
+    ASSERT(op >= 0);
+    ASSERT(op < numCompositeOperatorNames);
     return compositeOperatorNames[op];
+}
+
+bool parseLineCap(const String& s, LineCap& cap)
+{
+    if (s == "butt") {
+        cap = ButtCap;
+        return true;
+    }
+    if (s == "round") {
+        cap = RoundCap;
+        return true;
+    }
+    if (s == "square") {
+        cap = SquareCap;
+        return true;
+    }
+    return false;
+}
+
+String lineCapName(LineCap cap)
+{
+    ASSERT(cap >= 0);
+    ASSERT(cap < 3);
+    const char* const names[3] = { "butt", "round", "square" };
+    return names[cap];
+}
+
+bool parseLineJoin(const String& s, LineJoin& join)
+{
+    if (s == "miter") {
+        join = MiterJoin;
+        return true;
+    }
+    if (s == "round") {
+        join = RoundJoin;
+        return true;
+    }
+    if (s == "bevel") {
+        join = BevelJoin;
+        return true;
+    }
+    return false;
+}
+
+String lineJoinName(LineJoin join)
+{
+    ASSERT(join >= 0);
+    ASSERT(join < 3);
+    const char* const names[3] = { "miter", "round", "bevel" };
+    return names[join];
 }
 
 }

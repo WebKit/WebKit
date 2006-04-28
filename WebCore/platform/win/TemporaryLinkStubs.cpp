@@ -273,16 +273,33 @@ void GraphicsContext::beginTransparencyLayer(float) { }
 void GraphicsContext::endTransparencyLayer() { }
 Color GraphicsContext::selectedTextBackgroundColor() const { return Color(0,0,255); }
 void GraphicsContext::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { }
+void GraphicsContext::clearRect(const FloatRect&) { }
+void GraphicsContext::strokeRect(const FloatRect&, float) { }
+void GraphicsContext::setLineWidth(float) { }
+void GraphicsContext::setLineCap(LineCap) { }
+void GraphicsContext::setLineJoin(LineJoin) { }
+void GraphicsContext::setMiterLimit(float) { }
+void GraphicsContext::setAlpha(float) { }
+void GraphicsContext::setCompositeOperation(CompositeOperator) { }
+void GraphicsContext::clip(const Path&) { }
 
 Path::Path(){ }
 Path::~Path(){ }
 Path::Path(const Path&){ }
-Path::Path(const IntRect&, Type){ }
-Path::Path(const IntPointArray&){ }
 bool Path::contains(const IntPoint&) const{ return false; }
-void Path::translate(int, int){ }
+void Path::translate(const FloatSize&){ }
 IntRect Path::boundingRect() const { return IntRect(); }
 Path& Path::operator=(const Path&){ return*this; }
+void Path::clear() { }
+void Path::moveTo(const FloatPoint&) { }
+void Path::addLineTo(const FloatPoint&) { }
+void Path::addQuadCurveTo(const FloatPoint&, const FloatPoint&) { }
+void Path::addBezierCurveTo(const FloatPoint&, const FloatPoint&, const FloatPoint&) { }
+void Path::addArcTo(const FloatPoint&, const FloatPoint&, float) { }
+void Path::closeSubpath() { }
+void Path::addArc(const FloatPoint&, float, float, float, bool) { }
+void Path::addRect(const FloatRect&) { }
+void Path::addEllipse(const FloatRect&) { }
 
 QLineEdit::QLineEdit(QLineEdit::Type) { }
 QLineEdit::~QLineEdit() { }

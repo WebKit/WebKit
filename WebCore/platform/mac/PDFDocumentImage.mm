@@ -24,20 +24,18 @@
  */
 
 #import "config.h"
-#import "Image.h"
 #import "PDFDocumentImage.h"
+
+#import "GraphicsContext.h"
+
+using namespace std;
 
 namespace WebCore {
 
-static void releasePDFDocumentData(void *info, const void *data, size_t size)
+PDFDocumentImage::PDFDocumentImage(CFDataRef data)
 {
-    [(id)info autorelease];
-}
-
-PDFDocumentImage::PDFDocumentImage(NSData* data)
-{
-    if (data != nil) {
-        CGDataProviderRef dataProvider = CGDataProviderCreateWithData([data retain], [data bytes], [data length], releasePDFDocumentData);
+    if (data) {
+        CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(data);
         m_document = CGPDFDocumentCreateWithProvider(dataProvider);
         CGDataProviderRelease(dataProvider);
     }
@@ -50,135 +48,91 @@ PDFDocumentImage::~PDFDocumentImage()
     CGPDFDocumentRelease(m_document);
 }
 
-CGPDFDocumentRef PDFDocumentImage::documentRef()
-{
-    return m_document;
-}
-
-CGRect PDFDocumentImage::mediaBox()
-{
-    return m_mediaBox;
-}
-
-CGRect PDFDocumentImage::bounds()
-{
-    CGRect rotatedRect;
-
-    // rotate the media box and calculate bounding box
-    float sina   = sinf(m_rotation);
-    float cosa   = cosf(m_rotation);
-    float width  = m_cropBox.size.width;
-    float height = m_cropBox.size.height;
-
-    // calculate rotated x and y axis
-    NSPoint rx = NSMakePoint( width  * cosa, width  * sina);
-    NSPoint ry = NSMakePoint(-height * sina, height * cosa);
-
-    // find delta width and height of rotated points
-    rotatedRect.origin      = m_cropBox.origin;
-    rotatedRect.size.width  = ceilf(fabs(rx.x - ry.x));
-    rotatedRect.size.height = ceilf(fabs(ry.y - rx.y));
-
-    return rotatedRect;
-}
-
-void PDFDocumentImage::adjustCTM(CGContextRef context)
+void PDFDocumentImage::adjustCTM(GraphicsContext* context) const
 {
     // rotate the crop box and calculate bounding box
-    float sina   = sinf(-m_rotation);
-    float cosa   = cosf(-m_rotation);
-    float width  = m_cropBox.size.width;
-    float height = m_cropBox.size.height;
+    float sina = sinf(-m_rotation);
+    float cosa = cosf(-m_rotation);
+    float width = m_cropBox.width();
+    float height = m_cropBox.height();
 
     // calculate rotated x and y edges of the corp box. if they're negative, it means part of the image has
     // been rotated outside of the bounds and we need to shift over the image so it lies inside the bounds again
-    NSPoint rx = NSMakePoint( width  * cosa, width  * sina);
+    NSPoint rx = NSMakePoint(width * cosa, width * sina);
     NSPoint ry = NSMakePoint(-height * sina, height * cosa);
 
     // adjust so we are at the crop box origin
-    CGContextTranslateCTM(context, floorf(-MIN(0,MIN(rx.x, ry.x))), floorf(-MIN(0,MIN(rx.y, ry.y))));
+    const CGFloat zero = 0;
+    CGContextTranslateCTM(context->platformContext(), floorf(-min(zero, min(rx.x, ry.x))), floorf(-min(zero, min(rx.y, ry.y))));
 
     // rotate -ve to remove rotation
-    CGContextRotateCTM(context, -m_rotation);
+    CGContextRotateCTM(context->platformContext(), -m_rotation);
 
     // shift so we are completely within media box
-    CGContextTranslateCTM(context, m_mediaBox.origin.x - m_cropBox.origin.x, m_mediaBox.origin.y - m_cropBox.origin.y);
+    CGContextTranslateCTM(context->platformContext(), m_mediaBox.x() - m_cropBox.x(), m_mediaBox.y() - m_cropBox.y());
 }
 
 void PDFDocumentImage::setCurrentPage(int page)
 {
-    if (page != m_currentPage && page >= 0 && page < pageCount()) {
+    if (!m_document)
+        return;
 
-        CGRect r;
+    if (page == m_currentPage)
+        return;
 
-        m_currentPage = page;
+    if (!(page >= 0 && page < pageCount()))
+        return;
 
-        // get media box (guaranteed)
-        m_mediaBox = CGPDFDocumentGetMediaBox(m_document, page + 1);
+    m_currentPage = page;
 
-        // get crop box (not always there). if not, use _mediaBox
-        r = CGPDFDocumentGetCropBox(m_document, page + 1);
-        if (!CGRectIsEmpty(r)) {
-            m_cropBox = CGRectMake(r.origin.x, r.origin.y, r.size.width, r.size.height);
-        } else {
-            m_cropBox = CGRectMake(m_mediaBox.origin.x, m_mediaBox.origin.y, m_mediaBox.size.width, m_mediaBox.size.height);
-        }
+    // get media box (guaranteed)
+    m_mediaBox = CGPDFDocumentGetMediaBox(m_document, page + 1);
 
-        // get page rotation angle
-        m_rotation = CGPDFDocumentGetRotationAngle(m_document, page + 1) * M_PI / 180.0; // to radians
-    }
+    // get crop box (not always there). if not, use media box
+    CGRect r = CGPDFDocumentGetCropBox(m_document, page + 1);
+    if (!CGRectIsEmpty(r))
+        m_cropBox = r;
+    else
+        m_cropBox = m_mediaBox;
+
+    // get page rotation angle
+    m_rotation = CGPDFDocumentGetRotationAngle(m_document, page + 1) * M_PI / 180.0; // to radians
 }
 
-int PDFDocumentImage::currentPage()
+int PDFDocumentImage::pageCount() const
 {
-    return m_currentPage;
+    return m_document ? CGPDFDocumentGetNumberOfPages(m_document) : 0;
 }
 
-int PDFDocumentImage::pageCount()
+void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& srcRect, const FloatRect& dstRect, CompositeOperator op) const
 {
-    return CGPDFDocumentGetNumberOfPages(m_document);
-}
+    if (!m_document || m_currentPage == -1)
+        return;
 
-void PDFDocumentImage::draw(NSRect srcRect, NSRect dstRect, CompositeOperator op, 
-                            float alpha, bool flipped, CGContextRef context)
-{
-    CGContextSaveGState(context);
+    context->save();
 
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:(NSCompositingOperation)op];
-    [pool release];
+    context->setCompositeOperation(op);
 
-    // Scale and translate so the document is rendered in the correct location.
-    float hScale = dstRect.size.width  / srcRect.size.width;
-    float vScale = dstRect.size.height / srcRect.size.height;
+    float hScale = dstRect.width() / srcRect.width();
+    float vScale = dstRect.height() / srcRect.height();
 
-    CGContextTranslateCTM(context, dstRect.origin.x - srcRect.origin.x * hScale, dstRect.origin.y - srcRect.origin.y * vScale);
-    CGContextScaleCTM(context, hScale, vScale);
+    // Scale and translate so the document is rendered in the correct location,
+    // including accounting for the fact that a GraphicsContext is always flipped
+    // and doing appropriate flipping.
+    CGContextTranslateCTM(context->platformContext(), dstRect.x() - srcRect.x() * hScale, dstRect.y() - srcRect.y() * vScale);
+    CGContextScaleCTM(context->platformContext(), hScale, vScale);
+    CGContextScaleCTM(context->platformContext(), 1, -1);
+    CGContextTranslateCTM(context->platformContext(), 0, -dstRect.height());
+    CGContextClipToRect(context->platformContext(), CGRectIntegral(srcRect));
 
-    // Reverse if flipped image.
-    if (flipped) {
-        CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, 0, -dstRect.size.height);
-    }
+    // Rotate translate image into position according to doc properties.
+    adjustCTM(context);
 
-    // Clip to destination in case we are imaging part of the source only
-    CGContextClipToRect(context, CGRectIntegral(*(CGRect*)&srcRect));
+    // Media box may have non-zero origin which we ignore. Pass 1 for the page number.
+    CGContextDrawPDFDocument(context->platformContext(), FloatRect(FloatPoint(), size()),
+        m_document, m_currentPage + 1);
 
-    // and draw
-    if (m_document) {
-        CGContextSaveGState(context);
-        // Rotate translate image into position according to doc properties.
-        adjustCTM(context);
-
-        // Media box may have non-zero origin which we ignore. CGPDFDocumentShowPage pages start
-        // at 1, not 0.
-        CGContextDrawPDFDocument(context, CGRectMake(0, 0, m_mediaBox.size.width, m_mediaBox.size.height), m_document, 1);
-
-        CGContextRestoreGState(context);
-    }
-
-    // done with our fancy transforms
-    CGContextRestoreGState(context);
+    context->restore();
 }
 
 }

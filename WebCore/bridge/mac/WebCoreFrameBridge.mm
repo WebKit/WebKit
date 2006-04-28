@@ -834,7 +834,10 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 
 - (void)drawRect:(NSRect)rect
 {
-    GraphicsContext context([NSGraphicsContext currentContext]);
+    PlatformGraphicsContext* platformContext = static_cast<PlatformGraphicsContext*>([[NSGraphicsContext currentContext] graphicsPort]);
+    ASSERT([[NSGraphicsContext currentContext] isFlipped]);
+    ASSERT(!m_frame->document() || m_frame->document()->printing() == ![NSGraphicsContext currentContextDrawingToScreen]);
+    GraphicsContext context(platformContext);
     context.setUsesInactiveTextBackgroundColor(!m_frame->displaysWithFocusAttributes());
     [self _setupRootForPrinting:YES];
     m_frame->paint(&context, enclosingIntRect(rect));

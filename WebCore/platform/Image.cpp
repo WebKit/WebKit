@@ -113,11 +113,10 @@ IntSize Image::size() const
     // FIXME: Will go away when we make PDF a subclass.
     if (m_isPDF) {
         if (m_PDFDoc) {
-            CGRect mediaBox = m_PDFDoc->mediaBox();
-            return IntSize((int)mediaBox.size.width, (int)mediaBox.size.height);
+            FloatSize size = m_PDFDoc->size();
+            return IntSize((int)size.width(), (int)size.height());
         }
-    } 
-    else
+    } else
 #endif
     
     if (m_sizeAvailable && !m_haveSize) {
@@ -163,7 +162,7 @@ bool Image::setNativeData(NativeBytePtr data, bool allDataReceived)
     // FIXME: Will go away when we make PDF a subclass.
     if (m_isPDF) {
         if (allDataReceived && !m_PDFDoc)
-            m_PDFDoc = new PDFDocumentImage((NSData*)data);
+            m_PDFDoc = new PDFDocumentImage(data);
         return m_PDFDoc;
     }
 #endif

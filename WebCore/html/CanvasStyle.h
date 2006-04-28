@@ -28,14 +28,11 @@
 
 #include "PlatformString.h"
 
-#if __APPLE__
-typedef struct CGContext* CGContextRef;
-#endif
-
 namespace WebCore {
 
     class CanvasGradient;
     class CanvasPattern;
+    class GraphicsContext;
 
     class CanvasStyle : public Shared<CanvasStyle> {
     public:
@@ -52,11 +49,9 @@ namespace WebCore {
         CanvasGradient* gradient() const { return m_gradient.get(); }
         CanvasPattern* pattern() const { return m_pattern.get(); }
 
-#if __APPLE__
         // These do nothing for gradients or patterns.
-        void applyFillColor(CGContextRef);
-        void applyStrokeColor(CGContextRef);
-#endif
+        void applyFillColor(GraphicsContext*);
+        void applyStrokeColor(GraphicsContext*);
 
     private:
         enum Type { ColorString, ColorStringWithAlpha, GrayLevel, RGBA, CMYKA, Gradient, ImagePattern };

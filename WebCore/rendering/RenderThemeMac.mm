@@ -517,7 +517,7 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
     }
 
     [button drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
-    [button setControlView: nil];
+    [button setControlView:nil];
 
     return false;
 }

@@ -45,30 +45,28 @@ struct GraphicsContextState {
         
 class GraphicsContextPrivate {
 public:
-    GraphicsContextPrivate(bool isForPrinting);
+    GraphicsContextPrivate();
     
     GraphicsContextState state;
     Vector<GraphicsContextState> stack;
     Vector<IntRect> m_focusRingRects;
     int m_focusRingWidth;
     int m_focusRingOffset;
-    bool m_isForPrinting;
     bool m_usesInactiveTextBackgroundColor;
     bool m_updatingControlTints;
 };
 
-GraphicsContextPrivate::GraphicsContextPrivate(bool isForPrinting)
+GraphicsContextPrivate::GraphicsContextPrivate()
     : m_focusRingWidth(0)
     , m_focusRingOffset(0)
-    , m_isForPrinting(isForPrinting)
     , m_usesInactiveTextBackgroundColor(false)
     , m_updatingControlTints(false)
 {
 }
 
-GraphicsContextPrivate* GraphicsContext::createGraphicsContextPrivate(bool isForPrinting)
+GraphicsContextPrivate* GraphicsContext::createGraphicsContextPrivate()
 {
-    return new GraphicsContextPrivate(isForPrinting);
+    return new GraphicsContextPrivate;
 }
 
 void GraphicsContext::destroyGraphicsContextPrivate(GraphicsContextPrivate* deleteMe)
@@ -174,11 +172,6 @@ void GraphicsContext::setPaintingDisabled(bool f)
 bool GraphicsContext::paintingDisabled() const
 {
     return m_common->state.paintingDisabled;
-}
-
-bool GraphicsContext::printing() const
-{
-    return m_common->m_isForPrinting;
 }
 
 void GraphicsContext::drawImage(Image* image, const IntPoint& p, CompositeOperator op)

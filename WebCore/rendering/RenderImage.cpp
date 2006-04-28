@@ -187,7 +187,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     if (!shouldPaintWithinRoot(i))
         return;
         
-    bool isPrinting = i.p->printing();
+    bool isPrinting = document()->printing();
     bool drawSelectionTint = isSelected() && !isPrinting;
     if (i.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)

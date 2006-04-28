@@ -112,7 +112,7 @@ private:
     CachedCSSStyleSheet* m_cachedSheet;
 };
 
-#if !NDEBUG
+#ifndef NDEBUG
 struct FrameCounter { 
     static int count; 
     ~FrameCounter() { if (count != 0) fprintf(stderr, "LEAK: %d Frame\n", count); }
@@ -145,7 +145,7 @@ Frame::Frame(Page* page, RenderPart* ownerRenderer)
     // FIXME: Frames were originally created with a refcount of 1, leave this
     // ref call here until we can straighten that out.
     ref();
-#if !NDEBUG
+#ifndef NDEBUG
     ++FrameCounter::count;
 #endif
 
@@ -157,7 +157,7 @@ Frame::~Frame()
 {
     ASSERT(!d->m_lifeSupportTimer.isActive());
 
-#if !NDEBUG
+#ifndef NDEBUG
     --FrameCounter::count;
 #endif
 
@@ -2358,13 +2358,13 @@ bool Frame::isCharacterSmartReplaceExempt(const QChar&, bool)
     return true;
 }
 
-#if !NDEBUG
+#ifndef NDEBUG
 static HashSet<Frame*> lifeSupportSet;
 #endif
 
 void Frame::endAllLifeSupport()
 {
-#if !NDEBUG
+#ifndef NDEBUG
     HashSet<Frame*> lifeSupportCopy = lifeSupportSet;
     HashSet<Frame*>::iterator end = lifeSupportCopy.end();
     for (HashSet<Frame*>::iterator it = lifeSupportCopy.begin(); it != end; ++it)
@@ -2377,7 +2377,7 @@ void Frame::keepAlive()
     if (d->m_lifeSupportTimer.isActive())
         return;
     ref();
-#if !NDEBUG
+#ifndef NDEBUG
     lifeSupportSet.add(this);
 #endif
     d->m_lifeSupportTimer.startOneShot(0);
@@ -2388,7 +2388,7 @@ void Frame::endLifeSupport()
     if (!d->m_lifeSupportTimer.isActive())
         return;
     d->m_lifeSupportTimer.stop();
-#if !NDEBUG
+#ifndef NDEBUG
     lifeSupportSet.remove(this);
 #endif
     deref();
@@ -2396,7 +2396,7 @@ void Frame::endLifeSupport()
 
 void Frame::lifeSupportTimerFired(Timer<Frame>*)
 {
-#if !NDEBUG
+#ifndef NDEBUG
     lifeSupportSet.remove(this);
 #endif
     deref();
@@ -2740,11 +2740,11 @@ void Frame::stopAutoscrollTimer()
 // FIXME: why is this here instead of on the FrameView?
 void Frame::paint(GraphicsContext* p, const IntRect& rect)
 {
-#if !NDEBUG
+#ifndef NDEBUG
     bool fillWithRed;
-    if (p->printing())
+    if (!document() || document()->printing())
         fillWithRed = false; // Printing, don't fill with red (can't remember why).
-    else if (!document() || document()->ownerElement())
+    else if (document()->ownerElement())
         fillWithRed = false; // Subframe, don't fill with red.
     else if (view() && view()->isTransparent())
         fillWithRed = false; // Transparent, don't fill with red.
@@ -2779,8 +2779,8 @@ void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, fl
 {
     RenderCanvas *root = static_cast<RenderCanvas *>(document()->renderer());
     if (root) {
-        // Use a context with painting disabled but with "for printer" set to true.
-        GraphicsContext context(0, false, true);
+        // Use a context with painting disabled.
+        GraphicsContext context(0);
         root->setTruncatedAt((int)floorf(oldBottom));
         IntRect dirtyRect(0, (int)floorf(oldTop), root->docWidth(), (int)ceilf(oldBottom - oldTop));
         root->layer()->paint(&context, dirtyRect);

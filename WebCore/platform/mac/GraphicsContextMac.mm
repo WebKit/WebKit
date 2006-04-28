@@ -32,6 +32,7 @@
 #import "FoundationExtras.h"
 #import "IntPointArray.h"
 #import "KRenderingDeviceQuartz.h"
+#import "Path.h"
 #import "WebCoreSystemInterface.h"
 
 // FIXME: A lot more of this should use CoreGraphics instead of AppKit.
@@ -47,11 +48,10 @@ namespace WebCore {
 
 class GraphicsContextPlatformPrivate {
 public:
-    GraphicsContextPlatformPrivate(CGContextRef, NSGraphicsContext*);
+    GraphicsContextPlatformPrivate(CGContextRef);
     ~GraphicsContextPlatformPrivate();
 
     CGContextRef m_cgContext;
-    NSGraphicsContext* m_nsContext;
     IntRect m_focusRingClip; // Work around CG bug in focus ring clipping.
 };
 
@@ -62,37 +62,20 @@ static inline void fillRectSourceOver(const FloatRect& rect, const Color& col)
     NSRectFillUsingOperation(rect, NSCompositeSourceOver);
 }
 
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(CGContextRef cgContext, NSGraphicsContext* nsContext)
+GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(CGContextRef cgContext)
 {
-    if (cgContext)
-        m_cgContext = cgContext;
-    else if (nsContext)
-        m_cgContext = static_cast<CGContextRef>([nsContext graphicsPort]);
-    else
-        m_cgContext = 0;
-
-    m_nsContext = nsContext;
-
+    m_cgContext = cgContext;
     CGContextRetain(m_cgContext);
-    KWQRetain(m_nsContext);
 }
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 {
     CGContextRelease(m_cgContext);
-    KWQRelease(m_nsContext);
 }
 
-GraphicsContext::GraphicsContext(NSGraphicsContext* nsContext)
-    : m_common(createGraphicsContextPrivate(nsContext && ![nsContext isDrawingToScreen]))
-    , m_data(new GraphicsContextPlatformPrivate(0, nsContext))
-{
-    setPaintingDisabled(!nsContext);
-}
-
-GraphicsContext::GraphicsContext(CGContextRef cgContext, bool /*flipText*/, bool forPrinting)
-    : m_common(createGraphicsContextPrivate(forPrinting))
-    , m_data(new GraphicsContextPlatformPrivate(cgContext, 0))
+GraphicsContext::GraphicsContext(CGContextRef cgContext)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate(cgContext))
 {
     setPaintingDisabled(!cgContext);
 }
@@ -105,22 +88,12 @@ GraphicsContext::~GraphicsContext()
 
 void GraphicsContext::savePlatformState()
 {
-    if (m_data->m_nsContext)
-        [m_data->m_nsContext saveGraphicsState];
-    else if (m_data->m_cgContext)
-        CGContextSaveGState(m_data->m_cgContext);
-    else
-        ASSERT_NOT_REACHED();
+    CGContextSaveGState(platformContext());
 }
 
 void GraphicsContext::restorePlatformState()
 {
-    if (m_data->m_nsContext)
-        [m_data->m_nsContext restoreGraphicsState];
-    else if (m_data->m_cgContext)
-        CGContextRestoreGState(m_data->m_cgContext);
-    else
-        ASSERT_NOT_REACHED();
+    CGContextRestoreGState(platformContext());
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -129,9 +102,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    // This function currently works only with NSGraphicsContext.
-    ASSERT(m_data->m_nsContext);
-    ASSERT(m_data->m_nsContext == [NSGraphicsContext currentContext]);
+    // FIXME: This function currently works only when the current context is the current NSGraphicsContext.
+    ASSERT(platformContext() == [[NSGraphicsContext currentContext] graphicsPort]);
 
     if (fillColor() & 0xFF000000)
         fillRectSourceOver(rect, fillColor());
@@ -144,31 +116,28 @@ void GraphicsContext::drawRect(const IntRect& rect)
 
 void GraphicsContext::setColorFromFillColor()
 {
-    // This function currently works only with NSGraphicsContext.
-    ASSERT(m_data->m_nsContext);
-    ASSERT(m_data->m_nsContext == [NSGraphicsContext currentContext]);
+    // FIXME: This function currently works only when the current context is the current NSGraphicsContext.
+    ASSERT(platformContext() == [[NSGraphicsContext currentContext] graphicsPort]);
 
     [nsColor(fillColor()) set];
 }
   
 void GraphicsContext::setColorFromPen()
 {
-    // This function currently works only with NSGraphicsContext.
-    ASSERT(m_data->m_nsContext);
-    ASSERT(m_data->m_nsContext == [NSGraphicsContext currentContext]);
+    // FIXME: This function currently works only when the current context is the current NSGraphicsContext.
+    ASSERT(platformContext() == [[NSGraphicsContext currentContext] graphicsPort]);
 
     [nsColor(pen().color()) set];
 }
   
-  // This is only used to draw borders.
+// This is only used to draw borders.
 void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
 {
     if (paintingDisabled())
         return;
 
-    // This function currently works only with NSGraphicsContext.
-    ASSERT(m_data->m_nsContext);
-    ASSERT(m_data->m_nsContext == [NSGraphicsContext currentContext]);
+    // FIXME: This function currently works only when the current context is the current NSGraphicsContext.
+    ASSERT(platformContext() == [[NSGraphicsContext currentContext] graphicsPort]);
 
     Pen::PenStyle penStyle = pen().style();
     if (penStyle == Pen::Pen::NoPen)
@@ -223,11 +192,11 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         break;
     }
 
+    CGContextSaveGState(platformContext());
+
     setColorFromPen();
-    
-    NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-    BOOL flag = [graphicsContext shouldAntialias];
-    [graphicsContext setShouldAntialias: NO];
+
+    CGContextSetShouldAntialias(platformContext(), false);
     
     if (patWidth) {
         // Do a rect fill of our endpoints.  This ensures we always have the
@@ -282,7 +251,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     
     [path release];
 
-    [graphicsContext setShouldAntialias: flag];
+    CGContextRestoreGState(platformContext());
 }
 
 
@@ -385,13 +354,6 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
     CGContextRestoreGState(context);
 }
 
-void setCompositeOperation(CGContextRef context, CompositeOperator op)
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:(NSCompositingOperation)op];
-    [pool release];
-}
-
 static int getBlendedColorComponent(int c, int a)
 {
     // We use white.
@@ -426,9 +388,8 @@ void GraphicsContext::fillRect(const IntRect& rect, const Color& color)
     if (paintingDisabled())
         return;
 
-    // This function currently works only with NSGraphicsContext.
-    ASSERT(m_data->m_nsContext);
-    ASSERT(m_data->m_nsContext == [NSGraphicsContext currentContext]);
+    // FIXME: This function currently works only when the current context is the current NSGraphicsContext.
+    ASSERT(platformContext() == [[NSGraphicsContext currentContext] graphicsPort]);
 
     if (color.alpha())
         fillRectSourceOver(rect, color.rgb());
@@ -612,6 +573,76 @@ CGContextRef GraphicsContext::platformContext() const
     ASSERT(!paintingDisabled());
     ASSERT(m_data->m_cgContext);
     return m_data->m_cgContext;
+}
+
+void GraphicsContext::setLineWidth(float width)
+{
+    CGContextSetLineWidth(platformContext(), width);
+}
+
+void GraphicsContext::setMiterLimit(float limit)
+{
+    CGContextSetMiterLimit(platformContext(), limit);
+}
+
+void GraphicsContext::setAlpha(float alpha)
+{
+    CGContextSetAlpha(platformContext(), alpha);
+}
+
+void GraphicsContext::setCompositeOperation(CompositeOperator op)
+{
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    [[NSGraphicsContext graphicsContextWithGraphicsPort:platformContext() flipped:YES]
+        setCompositingOperation:(NSCompositingOperation)op];
+    [pool release];
+}
+
+void GraphicsContext::clearRect(const FloatRect& r)
+{
+    CGContextClearRect(platformContext(), r);
+}
+
+void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
+{
+    CGContextStrokeRectWithWidth(platformContext(), r, lineWidth);
+}
+
+void GraphicsContext::setLineCap(LineCap cap)
+{
+    switch (cap) {
+        case ButtCap:
+            CGContextSetLineCap(platformContext(), kCGLineCapButt);
+            break;
+        case RoundCap:
+            CGContextSetLineCap(platformContext(), kCGLineCapRound);
+            break;
+        case SquareCap:
+            CGContextSetLineCap(platformContext(), kCGLineCapSquare);
+            break;
+    }
+}
+
+void GraphicsContext::setLineJoin(LineJoin join)
+{
+    switch (join) {
+        case MiterJoin:
+            CGContextSetLineJoin(platformContext(), kCGLineJoinMiter);
+            break;
+        case RoundJoin:
+            CGContextSetLineJoin(platformContext(), kCGLineJoinRound);
+            break;
+        case BevelJoin:
+            CGContextSetLineJoin(platformContext(), kCGLineJoinBevel);
+            break;
+    }
+}
+
+void GraphicsContext::clip(const Path& path)
+{
+    CGContextBeginPath(platformContext());
+    CGContextAddPath(platformContext(), path.platformPath());
+    CGContextClip(platformContext());
 }
 
 }

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CompositeOperator_h
-#define CompositeOperator_h
+#ifndef GraphicsTypes_h
+#define GraphicsTypes_h
 
 namespace WebCore {
 
@@ -50,8 +50,18 @@ namespace WebCore {
         CompositePlusLighter
     };
 
+    enum LineCap { ButtCap, RoundCap, SquareCap };
+
+    enum LineJoin { MiterJoin, RoundJoin, BevelJoin };
+
     String compositeOperatorName(CompositeOperator);
     bool parseCompositeOperator(const String&, CompositeOperator&);
+
+    String lineCapName(LineCap);
+    bool parseLineCap(const String&, LineCap&);
+
+    String lineJoinName(LineJoin);
+    bool parseLineJoin(const String&, LineJoin&);
 
 }
 

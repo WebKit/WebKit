@@ -314,8 +314,8 @@
 		938E65F709F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */; };
 		938E666009F09B81008A48EC /* JSHTMLCanvasElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */; };
 		938E666209F09B87008A48EC /* JSHTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */; };
-		938E683C09F0BD7B008A48EC /* CompositeOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 938E683B09F0BD7A008A48EC /* CompositeOperator.h */; };
-		938E685409F0BE04008A48EC /* CompositeOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938E685309F0BE04008A48EC /* CompositeOperator.cpp */; };
+		938E683C09F0BD7B008A48EC /* GraphicsTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 938E683B09F0BD7A008A48EC /* GraphicsTypes.h */; };
+		938E685409F0BE04008A48EC /* GraphicsTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938E685309F0BE04008A48EC /* GraphicsTypes.cpp */; };
 		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
 		93B70D5B09EB0C7C009D8468 /* JSDOMParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */; };
@@ -1576,8 +1576,8 @@
 		938E662509F09956008A48EC /* HTMLCanvasElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLCanvasElement.idl; sourceTree = "<group>"; };
 		938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLCanvasElement.cpp; sourceTree = "<group>"; };
 		938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLCanvasElement.h; sourceTree = "<group>"; };
-		938E683B09F0BD7A008A48EC /* CompositeOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositeOperator.h; sourceTree = "<group>"; };
-		938E685309F0BE04008A48EC /* CompositeOperator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompositeOperator.cpp; sourceTree = "<group>"; };
+		938E683B09F0BD7A008A48EC /* GraphicsTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsTypes.h; sourceTree = "<group>"; };
+		938E685309F0BE04008A48EC /* GraphicsTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsTypes.cpp; sourceTree = "<group>"; };
 		9394E0A403AA5BBE008635CE /* KWQPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPageState.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9394E0A503AA5BBE008635CE /* KWQPageState.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPageState.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93955A4103D72932008635CE /* RenderTreeAsText.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeAsText.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3853,8 +3853,6 @@
 				BCC8CFC80986CD2400140BF2 /* Color.cpp */,
 				BCC8CFC90986CD2400140BF2 /* Color.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
-				938E685309F0BE04008A48EC /* CompositeOperator.cpp */,
-				938E683B09F0BD7A008A48EC /* CompositeOperator.h */,
 				9352088109BD45E900F2038D /* CookieJar.h */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
 				BCB16B880979B01400467741 /* DeprecatedArray.h */,
@@ -3882,6 +3880,8 @@
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
 				A823A75B09B6E53900B60641 /* GraphicsContext.cpp */,
 				935367E409AF77DD00D35CD6 /* GraphicsContext.h */,
+				938E685309F0BE04008A48EC /* GraphicsTypes.cpp */,
+				938E683B09F0BD7A008A48EC /* GraphicsTypes.h */,
 				BC6B7BAE0993603C0052867B /* Image.cpp */,
 				BCD75ABB0989A446003E28DF /* Image.h */,
 				BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */,
@@ -4825,7 +4825,7 @@
 				14CF7B3409F6ECD700EB3665 /* JSCSSRule.h in Headers */,
 				938E65F109F09840008A48EC /* JSHTMLElementWrapperFactory.h in Headers */,
 				938E666209F09B87008A48EC /* JSHTMLCanvasElement.h in Headers */,
-				938E683C09F0BD7B008A48EC /* CompositeOperator.h in Headers */,
+				938E683C09F0BD7B008A48EC /* GraphicsTypes.h in Headers */,
 				8116896009F2A4A000772CA0 /* SVGTRefElement.h in Headers */,
 				14115B5209F84B7100CA4FC1 /* Node.h in Headers */,
 				14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */,
@@ -5542,7 +5542,7 @@
 				14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */,
 				938E65F709F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp in Sources */,
 				938E666009F09B81008A48EC /* JSHTMLCanvasElement.cpp in Sources */,
-				938E685409F0BE04008A48EC /* CompositeOperator.cpp in Sources */,
+				938E685409F0BE04008A48EC /* GraphicsTypes.cpp in Sources */,
 				8116895F09F2A4A000772CA0 /* SVGTRefElement.cpp in Sources */,
 				14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */,
 				14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */,

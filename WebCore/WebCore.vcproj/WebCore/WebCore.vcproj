@@ -615,14 +615,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\CompositeOperator.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\CompositeOperator.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\Cursor.h"
 				>
 			</File>
@@ -724,6 +716,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\GraphicsContext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\GraphicsTypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\GraphicsTypes.cpp"
 				>
 			</File>
 			<File

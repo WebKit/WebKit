@@ -315,12 +315,16 @@ NSView* Widget::getOuterView() const
     return view;
 }
 
+// FIXME: Get rid of the single use of these next two functions (frame resizing), and remove them.
+
 GraphicsContext* Widget::lockDrawingFocus()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getView() lockFocus];
     END_BLOCK_OBJC_EXCEPTIONS;
-    return new GraphicsContext([NSGraphicsContext currentContext]);
+    PlatformGraphicsContext* platformContext = static_cast<PlatformGraphicsContext*>([[NSGraphicsContext currentContext] graphicsPort]);
+    ASSERT([[NSGraphicsContext currentContext] isFlipped]);
+    return new GraphicsContext(platformContext);
 }
 
 void Widget::unlockDrawingFocus(GraphicsContext* context)

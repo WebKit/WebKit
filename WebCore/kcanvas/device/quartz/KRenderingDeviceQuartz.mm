@@ -100,7 +100,7 @@ NSGraphicsContext *KRenderingDeviceContextQuartz::nsGraphicsContext()
 
 GraphicsContext* KRenderingDeviceContextQuartz::createGraphicsContext()
 {
-    return new GraphicsContext(m_cgContext, false, false);
+    return new GraphicsContext(m_cgContext);
 }
 
 static bool __useFilters = true;

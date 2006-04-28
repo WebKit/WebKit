@@ -1,3 +1,199 @@
+2006-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8608
+          make GraphicsContext more suitable for cross-platform use, step 2
+
+        - Changed GraphicsContext to use NSGraphicsContext as little as possible.
+        - Removed the printing flag from GraphicsContext.
+        - Changed GraphicsContext to assume the NSGraphicsContext is always flipped,
+          and got rid of parameters to pass the flipped boolean around.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Add GraphicsTypes.h/cpp and remove
+        CompositeOperator.h/cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::setDisplaysWithFocusAttributes):
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge drawRect:]):
+        * html/CanvasPattern.cpp: (WebCore::patternCallback):
+        * html/HTMLCanvasElement.cpp: (WebCore::HTMLCanvasElement::createDrawingContext):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceContextQuartz::createGraphicsContext):
+        * platform/mac/WidgetMac.mm: (WebCore::Widget::lockDrawingFocus):
+        Update for changes to GraphicsContext constructor (no flipped or printing boolean).
+
+        * html/CanvasRenderingContext2D.h: Added a Path to the context state. Changed the
+        LineCap and LineJoin types to use the new ones in GraphicsTypes.h instead of defining
+        types here in this class. Changed m_platformContextStrokeStyleIsPattern and
+        m_platformContextFillStyleIsPattern to be named m_appliedStrokePattern and
+        m_appliedFillPattern and moved them outside the __APPLE__ ifdefs. Removed the
+        platformContext() function. Moved applyStrokePattern and applyFillPattern out of
+        the __APPLE__ ifdef.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State): Moved the stroke pattern
+        booleans out of Mac-specific ifdef.
+        (WebCore::CanvasRenderingContext2D::save): Changed to use GraphicsContext instead
+        of using CGContext directly.
+        (WebCore::CanvasRenderingContext2D::restore): Ditto.
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle): Ditto.
+        (WebCore::CanvasRenderingContext2D::setFillStyle): Ditto.
+        (WebCore::CanvasRenderingContext2D::setLineWidth): Ditto.
+        (WebCore::CanvasRenderingContext2D::lineCap): Ditto.
+        (WebCore::CanvasRenderingContext2D::setLineCap): Ditto.
+        (WebCore::CanvasRenderingContext2D::lineJoin): Ditto.
+        (WebCore::CanvasRenderingContext2D::setLineJoin): Ditto.
+        (WebCore::CanvasRenderingContext2D::setMiterLimit): Ditto.
+        (WebCore::CanvasRenderingContext2D::shadowColor): Ditto.
+        (WebCore::CanvasRenderingContext2D::setGlobalAlpha): Ditto.
+        (WebCore::CanvasRenderingContext2D::setGlobalCompositeOperation): Ditto.
+        (WebCore::CanvasRenderingContext2D::scale): Update since platformContext() function
+        no longer exists.
+        (WebCore::CanvasRenderingContext2D::rotate): Ditto.
+        (WebCore::CanvasRenderingContext2D::translate): Ditto.
+        (WebCore::CanvasRenderingContext2D::beginPath): Changed to use GraphicsContext instead
+        of using CGContext directly.
+        (WebCore::CanvasRenderingContext2D::closePath): Ditto.
+        (WebCore::CanvasRenderingContext2D::moveTo): Ditto.
+        (WebCore::CanvasRenderingContext2D::lineTo): Ditto.
+        (WebCore::CanvasRenderingContext2D::quadraticCurveTo): Ditto.
+        (WebCore::CanvasRenderingContext2D::bezierCurveTo): Ditto.
+        (WebCore::CanvasRenderingContext2D::arcTo): Ditto.
+        (WebCore::CanvasRenderingContext2D::arc): Ditto.
+        (WebCore::CanvasRenderingContext2D::rect): Ditto.
+        (WebCore::CanvasRenderingContext2D::fill): Changed to use the current path from this class
+        instead of relying on the CGContext's current path.
+        (WebCore::CanvasRenderingContext2D::stroke): Ditto.
+        (WebCore::CanvasRenderingContext2D::clip): Changed to use the current path and use the
+        GraphicsContext instead of using CGContext directly.
+        (WebCore::CanvasRenderingContext2D::clearRect): Changed to use GraphicsContext instead
+        of using CGContext directly.
+        (WebCore::CanvasRenderingContext2D::fillRect): Update since platformContext() function
+        no longer exists.
+        (WebCore::CanvasRenderingContext2D::strokeRect): Ditto.
+        (WebCore::CanvasRenderingContext2D::setShadow): Ditto.
+        (WebCore::CanvasRenderingContext2D::applyShadow): Ditto.
+        (WebCore::CanvasRenderingContext2D::drawImage): Ditto.
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect): Ditto.
+        (WebCore::CanvasRenderingContext2D::createPattern): Ditto.
+        (WebCore::CanvasRenderingContext2D::applyStrokePattern): Made a tiny bit of this function
+        cross-platform. The bulk is still Mac-specific.
+        (WebCore::CanvasRenderingContext2D::applyFillPattern): Ditto.
+
+        * html/CanvasStyle.h: Changed to use GraphicsContext instead of CGContext. Now the
+        platform-specific stuff is in the implementation, not the header.
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor): Moved the ifdefs inside the function, getting
+        us one step closer to platform independence.
+        (WebCore::CanvasStyle::applyFillColor): Ditto.
+
+        * html/html_imageimpl.cpp:
+        (WebCore::HTMLAreaElement::getRect): Update for changes to the Path class.
+        (WebCore::HTMLAreaElement::getRegion): Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::paint): Change to check printing flag on the document, rather than on
+        the GraphicsContext, since there is no printing flag for GraphicsContext any more.
+        (WebCore::Frame::adjustPageHeight): Update for change to GraphicsContext constructor.
+
+        * platform/GraphicsContext.h: Define a type called PlatformGraphicsContext so the
+        platform-specific getter and constructor don't have to be ifdef'd. Added clearRect,
+        strokeRect, setLineWidth, setLineCap, setLineJoin, setMiterLimit, setAlpha, setCompositeOperation,
+        and clip functions. Removed the isForPrinting parameter from createGraphicsContextPrivate.
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate): Removed isForPrinting.
+        (WebCore::GraphicsContext::createGraphicsContextPrivate): Ditto.
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        Removed NSGraphicsContext.
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        Ditto.
+        (WebCore::GraphicsContext::GraphicsContext): Removed constructor that
+        takes an NSGraphicsContext. Removed the flipText and forPrinting parameters
+        to the other constructor.
+        (WebCore::GraphicsContext::savePlatformState): Removed NSGraphicsContext code.
+        (WebCore::GraphicsContext::restorePlatformState): Ditto.
+        (WebCore::GraphicsContext::drawRect): Updated assertion to more-precisely
+        reflect the limitation of the current version of this function.
+        (WebCore::GraphicsContext::setColorFromFillColor): Ditto.
+        (WebCore::GraphicsContext::setColorFromPen): Ditto.
+        (WebCore::GraphicsContext::drawLine): Updated assertion to more-precisely
+        reflect the limitation of the current version of this function.
+        (WebCore::setCompositeOperation):
+        (WebCore::GraphicsContext::fillRect): Ditto.
+        (WebCore::GraphicsContext::setLineWidth): Added.
+        (WebCore::GraphicsContext::setMiterLimit): Added.
+        (WebCore::GraphicsContext::setAlpha): Added.
+        (WebCore::GraphicsContext::setCompositeOperation): Added.
+        (WebCore::GraphicsContext::clearRect): Added.
+        (WebCore::GraphicsContext::strokeRect): Added.
+        (WebCore::GraphicsContext::setLineCap): Added.
+        (WebCore::GraphicsContext::setLineJoin): Added.
+        (WebCore::GraphicsContext::clip): Added.
+
+        * platform/CompositeOperator.cpp: Removed.
+        * platform/CompositeOperator.h: Removed.
+        * platform/GraphicsTypes.cpp: Added. Includes CompositeOperator, LineCap, and LineJoin.
+        * platform/GraphicsTypes.h: Added.
+
+        * platform/Image.h: Changed include to GraphicsTypes.h from CompositeOperator.h.
+
+        * platform/Path.h: Removed constructors that take a Rect and an array of points. Made
+        the Path mutable. Changed the types for contains and boundingRect to be float-based
+        instead of int-based. Changed translate to take a FloatSize instead of two integers.
+        Added clear, moveTo, addLineTo, addQuadCurveTo, addBezierCurveTo, addArcTo, closeSubpath,
+        addArc, addRect, addEllipse, and platformPath functions. Defined a PlatformPath type
+        so we don't have to ifdef the header so much.
+        * platform/cg/PathCG.cpp:
+        (WebCore::Path::Path): Changed class to always have a mutable path.
+        (WebCore::Path::operator=): Changed to make a mutable copy.
+        (WebCore::Path::contains): Changed to take a FloatPoint instead of IntPoint.
+        (WebCore::Path::translate): Changed to use a FloatSize instead of two ints.
+        (WebCore::Path::boundingRect): Changed to return a FloatRect.
+        (WebCore::Path::moveTo): Added.
+        (WebCore::Path::addLineTo): Added.
+        (WebCore::Path::addQuadCurveTo): Added.
+        (WebCore::Path::addBezierCurveTo): Added.
+        (WebCore::Path::addArcTo): Added.
+        (WebCore::Path::closeSubpath): Added.
+        (WebCore::Path::addArc): Added.
+        (WebCore::Path::addRect): Added.
+        (WebCore::Path::addEllipse): Added.
+        (WebCore::Path::clear): Added.
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::fillSolidColorInRect): Changed to take a GraphicsContext instead of
+        a CGContext.
+        (WebCore::Image::checkForSolidColor): Changed to use the new setCompositeOperation
+        in GraphicsContex.
+        (WebCore::Image::draw): Changed to use the new PDF image and fillSolidColorInRect
+        function that take GraphicsContext instead of CGContext.
+        (WebCore::Image::drawTiled): Ditto.
+
+        * platform/mac/PDFDocumentImage.h: Made most functions private. Changed to
+        use GraphicsContext and FloatRect instead of CGContext and NSRect. Also
+        removed the unused alpha and flipped booleans.
+        * platform/mac/PDFDocumentImage.mm:
+        (WebCore::PDFDocumentImage::bounds): Update for change in types.
+        (WebCore::PDFDocumentImage::adjustCTM): Ditto.
+        (WebCore::PDFDocumentImage::setCurrentPage): Ditto.
+        (WebCore::PDFDocumentImage::draw): Ditto.
+
+        * platform/win/TemporaryLinkStubs.cpp: Added lots of new stubs.
+
+        * rendering/InlineTextBox.cpp: (WebCore::InlineTextBox::paint): Changed to get
+        printing boolean from document instead graphics context.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren): Ditto.
+        (WebCore::RenderBlock::paintObject): Ditto.
+        * rendering/RenderFlow.cpp: (WebCore::RenderFlow::paintLines): Ditto.
+        * rendering/RenderHTMLCanvas.cpp: (WebCore::RenderHTMLCanvas::paint): Ditto.
+        * rendering/RenderImage.cpp: (WebCore::RenderImage::paint): Ditto.
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::paintButton): Ditto.
+        * rendering/render_list.cpp: (WebCore::RenderListMarker::paint): Ditto.
+        * rendering/render_replaced.cpp: (WebCore::RenderWidget::paint): Ditto.
+
 2006-04-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt, landed by ap.

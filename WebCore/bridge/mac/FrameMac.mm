@@ -2874,7 +2874,7 @@ void FrameMac::setDisplaysWithFocusAttributes(bool flag)
     if (doc && d->m_view && d->m_view->getDocumentView() && theme()->supportsControlTints() && renderer()) {
         doc->updateLayout(); // Ensure layout is up to date.
         IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
-        GraphicsContext context(0, false, false);
+        GraphicsContext context(0);
         context.setUpdatingControlTints(true);
         paint(&context, visibleRect);
     }

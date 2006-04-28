@@ -123,9 +123,7 @@ static void patternCallback(void* info, CGContextRef context)
         return;
     }
 
-    // FIXME: Won't handle text flipping right for image types that include text
-    // since we just pass false for the context's flipped state.
-    GraphicsContext(context, false, false).drawImage(image, rect);
+    GraphicsContext(context).drawImage(image, rect);
 }
 
 static void patternReleaseCallback(void* info)

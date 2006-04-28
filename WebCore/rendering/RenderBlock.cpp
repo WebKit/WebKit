@@ -1261,7 +1261,7 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     PaintInfo paintInfo(i);
     paintInfo.phase = newPhase;
-    bool isPrinting = i.p->printing();
+    bool isPrinting = document()->printing();
 
     for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {        
         // Check for page-break-before: always, and if it's set, break and bail.
@@ -1332,7 +1332,7 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
     }
     
     // 3. paint selection
-    bool isPrinting = i.p->printing();
+    bool isPrinting = document()->printing();
     if (!inlineFlow && !isPrinting)
         paintSelection(i, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
 

@@ -26,35 +26,14 @@
 #include "config.h"
 #include "Path.h"
 
-#include "IntPointArray.h"
-#include "IntRect.h"
+#include "FloatRect.h"
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 
 Path::Path()
-    : m_path(0)
+    : m_path(CGPathCreateMutable())
 {
-}
-
-Path::Path(const IntRect& r, Type t)
-{
-    CGMutablePathRef path = CGPathCreateMutable();
-    if (t == Rectangle)
-        CGPathAddRect(path, 0, r);
-    else // Ellipse
-        CGPathAddEllipseInRect(path, 0, r);
-    m_path = path;
-}
-
-Path::Path(const IntPointArray& arr)
-{
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathMoveToPoint(path, 0, arr[0].x(), arr[0].y());
-    for (unsigned i = 1; i < arr.count(); ++i)
-        CGPathAddLineToPoint(path, 0, arr[i].x(), arr[i].y());
-    CGPathCloseSubpath(path);
-    m_path = path;
 }
 
 Path::~Path()
@@ -63,35 +42,86 @@ Path::~Path()
 }
 
 Path::Path(const Path& other)
-    : m_path(CGPathCreateCopy(other.m_path))
+    : m_path(CGPathCreateMutableCopy(other.m_path))
 {
 }
 
 Path& Path::operator=(const Path& other)
 {
-    CGPathRef path = CGPathCreateCopy(other.m_path);
+    CGMutablePathRef path = CGPathCreateMutableCopy(other.m_path);
     CGPathRelease(m_path);
     m_path = path;
     return *this;
 }
 
-bool Path::contains(const IntPoint& point) const
+bool Path::contains(const FloatPoint& point) const
 {
     return CGPathContainsPoint(m_path, 0, point, false);
 }
 
-void Path::translate(int deltaX, int deltaY)
+void Path::translate(const FloatSize& size)
 {
-    CGAffineTransform translation = CGAffineTransformMake(1, 0, 0, 1, deltaX, deltaY);
+    CGAffineTransform translation = CGAffineTransformMake(1, 0, 0, 1, size.width(), size.height());
     CGMutablePathRef newPath = CGPathCreateMutable();
     CGPathAddPath(newPath, &translation, m_path);
     CGPathRelease(m_path);
     m_path = newPath;
 }
 
-IntRect Path::boundingRect() const
+FloatRect Path::boundingRect() const
 {
-    return m_path ? enclosingIntRect(CGPathGetBoundingBox(m_path)) : IntRect();
+    return CGPathGetBoundingBox(m_path);
+}
+
+void Path::moveTo(const FloatPoint& point)
+{
+    CGPathMoveToPoint(m_path, 0, point.x(), point.y());
+}
+
+void Path::addLineTo(const FloatPoint& p)
+{
+    CGPathAddLineToPoint(m_path, 0, p.x(), p.y());
+}
+
+void Path::addQuadCurveTo(const FloatPoint& cp, const FloatPoint& p)
+{
+    CGPathAddQuadCurveToPoint(m_path, 0, cp.x(), cp.y(), p.x(), p.y());
+}
+
+void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const FloatPoint& p)
+{
+    CGPathAddCurveToPoint(m_path, 0, cp1.x(), cp1.y(), cp2.x(), cp2.y(), p.x(), p.y());
+}
+
+void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
+{
+    CGPathAddArcToPoint(m_path, 0, p1.x(), p1.y(), p2.x(), p2.y(), radius);
+}
+
+void Path::closeSubpath()
+{
+    CGPathCloseSubpath(m_path);
+}
+
+void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool clockwise)
+{
+    CGPathAddArc(m_path, 0, p.x(), p.y(), r, sa, ea, clockwise);
+}
+
+void Path::addRect(const FloatRect& r)
+{
+    CGPathAddRect(m_path, 0, r);
+}
+
+void Path::addEllipse(const FloatRect& r)
+{
+    CGPathAddEllipseInRect(m_path, 0, r);
+}
+
+void Path::clear()
+{
+    CGPathRelease(m_path);
+    m_path = CGPathCreateMutable();
 }
 
 }

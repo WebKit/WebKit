@@ -162,7 +162,7 @@ void HTMLCanvasElement::createDrawingContext() const
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef bitmapContext = CGBitmapContextCreate(m_data, w, height(), 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
-    m_drawingContext = new GraphicsContext(bitmapContext, false, false);
+    m_drawingContext = new GraphicsContext(bitmapContext);
     CGContextRelease(bitmapContext);
 #endif
 }

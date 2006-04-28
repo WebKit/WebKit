@@ -27,36 +27,47 @@
 #define Path_h
 
 #if __APPLE__
-typedef const struct CGPath* CGPathRef;
+typedef struct CGPath PlatformPath;
+#else
+typedef void PlatformPath;
 #endif
 
 namespace WebCore {
 
-    class IntPoint;
-    class IntPointArray;
-    class IntRect;
+    class FloatPoint;
+    class FloatSize;
+    class FloatRect;
 
     class Path {
     public:
-        enum Type { Ellipse, Rectangle };
-
         Path();
-        Path(const IntRect&, Type = Rectangle);
-        Path(const IntPointArray&);
         ~Path();
 
         Path(const Path&);
         Path& operator=(const Path&);
 
-        bool contains(const IntPoint&) const;
-        IntRect boundingRect() const;
+        bool contains(const FloatPoint&) const;
+        FloatRect boundingRect() const;
 
-        void translate(int deltaX, int deltaY);
+        void clear();
+
+        void moveTo(const FloatPoint&);
+        void addLineTo(const FloatPoint&);
+        void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& point);
+        void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint&);
+        void addArcTo(const FloatPoint&, const FloatPoint&, float radius);
+        void closeSubpath();
+
+        void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, bool clockwise);
+        void addRect(const FloatRect&);
+        void addEllipse(const FloatRect&);
+
+        void translate(const FloatSize&);
+
+        PlatformPath* platformPath() const { return m_path; }
 
     private:
-#if __APPLE__
-        CGPathRef m_path;
-#endif
+        PlatformPath* m_path;
     };
 
 }

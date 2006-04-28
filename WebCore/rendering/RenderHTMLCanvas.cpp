@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderHTMLCanvas.h"
 
+#include "Document.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
@@ -64,7 +65,7 @@ void RenderHTMLCanvas::paint(PaintInfo& i, int tx, int ty)
     if (!shouldPaintWithinRoot(i))
         return;
 
-    bool drawSelectionTint = selectionState() != SelectionNone && !i.p->printing();
+    bool drawSelectionTint = selectionState() != SelectionNone && !document()->printing();
     if (i.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)
             return;

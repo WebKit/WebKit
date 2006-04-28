@@ -244,8 +244,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     int w = width() + 2 * parent()->maxHorizontalShadow();
     if (xPos >= i.r.right() || xPos + w <= i.r.x())
         return;
-        
-    bool isPrinting = i.p->printing();
+
+    bool isPrinting = textObject()->document()->printing();
     
     // Determine whether or not we're selected.
     bool haveSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;

@@ -23,42 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// ================================================
-// PDF Images (Apple-Only)
-// ================================================
+#include "FloatRect.h"
+#include "GraphicsTypes.h"
 
-#if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
-#if __OBJC__
-@class NSData;
-#else
-class NSData;
-#endif
-#endif
 
 namespace WebCore {
 
-class PDFDocumentImage {
-public:
-    PDFDocumentImage(NSData* data);
-    ~PDFDocumentImage();
-    
-    CGPDFDocumentRef documentRef();
-    CGRect mediaBox();
-    CGRect bounds(); // adjust for rotation
-    void setCurrentPage(int page);
-    int currentPage();
-    int pageCount();
-    void adjustCTM(CGContextRef context);
+    class GraphicsContext;
 
-    void draw(NSRect fromRect, NSRect toRect, CompositeOperator, float alpha, bool flipped, CGContextRef);
+    class PDFDocumentImage {
+    public:
+        PDFDocumentImage(CFDataRef);
+        ~PDFDocumentImage();
 
-private:
-    CGPDFDocumentRef m_document;
-    CGRect           m_mediaBox;
-    CGRect           m_cropBox;
-    float            m_rotation;
-    int              m_currentPage;
-};
+        FloatSize size() const { return m_mediaBox.size(); }
+        void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator) const;
+
+    private:
+        void setCurrentPage(int page);
+        int pageCount() const;
+        void adjustCTM(GraphicsContext*) const;
+
+        CGPDFDocumentRef m_document;
+        FloatRect m_mediaBox;
+        FloatRect m_cropBox;
+        float m_rotation;
+        int m_currentPage;
+    };
 
 }

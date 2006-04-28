@@ -34,17 +34,12 @@
 #include <kxmlcore/Noncopyable.h>
 
 #if __APPLE__
-#if __OBJC__
-@class NSGraphicsContext;
-#else
-class NSGraphicsContext;
-#endif
-typedef struct CGContext* CGContextRef;
-#endif
-
-#if WIN32
+typedef struct CGContext PlatformGraphicsContext;
+#elif WIN32
 typedef struct HDC__* HDC;
-typedef struct _cairo cairo_t;
+typedef struct _cairo PlatformGraphicsContext;
+#else
+typedef void PlatformGraphicsContext;
 #endif
 
 class DeprecatedString;
@@ -57,20 +52,19 @@ namespace WebCore {
     class GraphicsContextPlatformPrivate;
     class IntPoint;
     class IntPointArray;
+    class Path;
 
 #if SVG_SUPPORT
     class KRenderingDeviceContext;
 #endif
 
-#if __APPLE__
-    CGContextRef currentCGContext();
-    void setCompositeOperation(CGContextRef, CompositeOperator);
-#endif
-
     class GraphicsContext : Noncopyable {
     public:
+        GraphicsContext(PlatformGraphicsContext*);
         ~GraphicsContext();
        
+        PlatformGraphicsContext* platformContext() const;
+
         const Font& font() const;
         void setFont(const Font&);
         
@@ -92,6 +86,8 @@ namespace WebCore {
         void drawConvexPolygon(const IntPointArray&);
 
         void fillRect(const IntRect&, const Color&);
+        void clearRect(const FloatRect&);
+        void strokeRect(const FloatRect&, float lineWidth);
 
         void drawImage(Image*, const IntPoint&, CompositeOperator = CompositeSourceOver);
         void drawImage(Image*, const IntRect&, CompositeOperator = CompositeSourceOver);
@@ -143,32 +139,23 @@ namespace WebCore {
         void drawFocusRing(const Color&);
         void clearFocusRing();
 
-        bool printing() const;
+        void setLineWidth(float);
+        void setLineCap(LineCap);
+        void setLineJoin(LineJoin);
+        void setMiterLimit(float);
+
+        void setAlpha(float);
+
+        void setCompositeOperation(CompositeOperator);
+
+        void clip(const Path&);
 
 #if SVG_SUPPORT
         KRenderingDeviceContext* createRenderingDeviceContext();
 #endif
 
-#if __APPLE__
-        GraphicsContext(NSGraphicsContext*);
-        GraphicsContext(CGContextRef, bool flipText, bool forPrinting);
-        CGContextRef platformContext() const;
-#endif
-
 #if WIN32
-        // It's possible to use GetDC to grab the current context from
-        // an HWND; however, we currently require clients to pass in the
-        // Device Context handle directly.  Printing will also
-        // eventually require clients to pass some sort of printer-info
-        // struct to that we can CreateDC the printer device correctly.
-        GraphicsContext(HDC);
-
-        // This is temporarily public to allow Spinneret to do double-buffering.
-        // Long term, we should get the GraphicsContext from the FrameView
-        // and then have a blit() method on the FrameView.
-        GraphicsContext(cairo_t* context);
-
-        cairo_t* platformContext() const;
+        GraphicsContext(HDC); // FIXME: To be removed.
 #endif
 
     private:
@@ -182,7 +169,7 @@ namespace WebCore {
         int focusRingOffset() const;
         const Vector<IntRect>& focusRingRects() const;
         
-        static GraphicsContextPrivate* createGraphicsContextPrivate(bool isForPrinting = false);
+        static GraphicsContextPrivate* createGraphicsContextPrivate();
         static void destroyGraphicsContextPrivate(GraphicsContextPrivate*);
         
         GraphicsContextPrivate* m_common;
