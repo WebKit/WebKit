@@ -151,6 +151,7 @@ my %renames = (
     "detachQSlider" => "detachSlider",
     "initWithQSlider" => "initWithSlider",
     "qmatrix" => "matrix",
+    "KCanvasContainer" => "RenderSVGContainer",
 );
 
 # rename most files with names ending in Impl

@@ -207,6 +207,7 @@ my $lastDirectory = "";
 my $httpdOpen = 0;
 
 print "Testing ", scalar @tests, " test cases.\n";
+my $overallStartTime = time;
 
 for my $test (@tests) {
     next if $test eq 'results.html';
@@ -447,6 +448,7 @@ for my $test (@tests) {
     $counts{$result} += 1;
     push @{$tests{$result}}, $test;
 }
+printf "\n%0.2fs total testing time\n", (time - $overallStartTime) . "";
 
 closeHTTPD();
 

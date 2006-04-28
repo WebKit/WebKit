@@ -1,3 +1,10 @@
+2006-04-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        * Scripts/do-webcore-rename: rename KCanvasContainer too
+        * Scripts/run-webkit-tests: output total time
+
 2006-04-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.  Landed by eseidel.
