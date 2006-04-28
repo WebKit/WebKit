@@ -432,7 +432,7 @@ static void setParametersForComponentFunc(CIFilter *filter, const KCComponentTra
         case CT_GAMMA:
             [filter setValue:[NSNumber numberWithFloat:func.amplitude] forKey:@"inputAmplitude"];
             [filter setValue:[NSNumber numberWithFloat:func.exponent] forKey:@"inputExponent"];
-            [filter setValue:[NSNumber numberWithFloat:func.offset] forKey:@"inputOffset"];   
+            [filter setValue:[NSNumber numberWithFloat:func.offset] forKey:@"inputOffset"];
             break;
         default:
             //identity has no args

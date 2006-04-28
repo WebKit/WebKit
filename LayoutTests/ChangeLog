@@ -1,3 +1,14 @@
+2006-04-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        WebKit should accept */*+xml as XML.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5998
+
+        * http/tests/xmlhttprequest/supported-xml-content-types-expected.txt: Added.
+        * http/tests/xmlhttprequest/supported-xml-content-types.cgi: Added.
+        * http/tests/xmlhttprequest/supported-xml-content-types.html: Added.
+
 2006-04-27  Geoffrey Garen  <ggaren@apple.com>
 
         - Updated to remove diff shmutz:

@@ -88,7 +88,7 @@ static inline String getMIMEType(const String& contentTypeString)
         QChar c = contentTypeString[offset];
         if (c == ';')
             break;
-        else if (c.isSpace())
+        else if (c.isSpace()) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
             continue;
         mimeType += String(c);
     }

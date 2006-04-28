@@ -30,6 +30,7 @@
 #include "ExceptionCode.h"
 #include "css_stylesheetimpl.h"
 #include "HTMLDocument.h"
+#include "RegularExpression.h"
 
 namespace WebCore {
 
@@ -178,12 +179,11 @@ DOMImplementation* DOMImplementation::instance()
 
 bool DOMImplementation::isXMLMIMEType(const String& mimeType)
 {
-    if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "application/xhtml+xml" ||
-        mimeType == "text/xsl" || mimeType == "application/rss+xml" || mimeType == "application/atom+xml"
-#if SVG_SUPPORT
-        || mimeType == "image/svg+xml"
-#endif
-        )
+    if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "text/xsl")
+        return true;
+    static const char* validChars = "[0-9a-zA-Z_\\-+~!$\\^{}|.%'`#&*]"; // per RFCs: 3023, 2045
+    static RegularExpression xmlTypeRegExp(DeprecatedString("^") + validChars + "+/" + validChars + "+\\+xml$");
+    if (xmlTypeRegExp.match(mimeType.deprecatedString()) > -1)
         return true;
     return false;
 }

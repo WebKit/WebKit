@@ -1,5 +1,18 @@
 2006-04-27  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by andersca.
+
+        Make WebCore accept any */*+xml type as XML.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5998
+        <rdar://problem/4031511> XmlHttpRequest doesn't allow responses with Content-Type: application/soap+xml
+
+        Test: http/tests/xmlhttprequest/supported-xml-content-types.html
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::isXMLMIMEType):
+
+2006-04-27  Eric Seidel  <eseidel@apple.com>
+
         * WebCore.vcproj/WebCore/WebCore.vcproj: Fix break from last checkin.
 
 2006-04-27  Geoffrey Garen  <ggaren@apple.com>
