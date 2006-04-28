@@ -1,3 +1,14 @@
+2006-04-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by hyatt.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5855
+          REGRESSION: revert SGML comment parsing fix (comment parsing causes most of usbank.com page to be missing)
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseComment): Revert one change made for acid2, 
+        <http://weblogs.mozillazine.org/hyatt/acid6.txt>.
+
 2006-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

@@ -1,3 +1,20 @@
+2006-04-28  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by hyatt.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5855
+          REGRESSION: revert SGML comment parsing fix (comment parsing causes most of usbank.com page to be missing)
+
+        * fast/css/acid2.html: Updated to the current version of the test, which no longer includes 
+          SGML comment parsing.
+        * fast/css/acid2-pixel.html: Ditto.
+        * http/tests/misc/acid2-pixel.html: Ditto.
+        * http/tests/misc/acid2.html: Ditto.
+        * fast/parser/comments-expected.checksum: The results of this test now match WinIE.
+        * fast/parser/comments-expected.png:
+        * fast/parser/comments-expected.txt:
+        * fast/parser/comments.html:
+
 2006-04-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt, landed by ap.
