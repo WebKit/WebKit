@@ -1,3 +1,58 @@
+2006-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - Added global constructor autogeneration for the following,
+        many of which are required by *.live.com: Node, Element, Range,
+        CSSRule, CSSValue, CSSPrimitiveValue, CSSStyleDeclaration, Event,
+        MutationEvent, NodeFilter
+
+        It works like so:
+        
+        - The autogenerator knows about the "Constructor" data type, which
+        gets special treatment because it exists purely in the
+        bindings. It also knows about the "GenerateConstructor" interface
+        attribute, which does just that.
+
+        - The window interface has many Constructor attributes
+
+        - The hash table generator swizzles empty tables to tables with one
+        empty bucket, to prevent crashes in Lookup::findEntry. (The old
+        generator used to work this way, too.)
+
+        - Window object property lookup gets special treatment to allow
+        shadowing of its built-in global constructor properties. We'll
+        need to expand this mechanism in the future and make it more
+        flexible, but it works for now.
+        
+        * DerivedSources.make:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_css.cpp:
+        (KJS::toJS):
+        * bindings/js/kjs_css.h:
+        * bindings/js/kjs_window.cpp: Removed 'namedFrameGetter' and its use
+        because they were bogus; added FIXME describing what they were
+        attempting to do.
+        (KJS::Window::getValueProperty):
+        (KJS::Window::getOverridePropertySlot):
+        (KJS::Window::getOwnPropertySlot):
+        * bindings/js/kjs_window.h:
+        (KJS::Window::):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl: Added.
+        * css/CSSValue.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Event.idl:
+        * dom/MutationEvent.idl:
+        * dom/Node.idl:
+        * dom/NodeFilter.idl:
+        * dom/Range.idl:
+        * page/DOMWindow.idl:
+
 2006-04-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin

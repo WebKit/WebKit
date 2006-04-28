@@ -19,7 +19,7 @@
 
 module events {
 
-    interface MutationEvent : Event {
+    interface [GenerateConstructor] MutationEvent : Event {
 
         // DOM Level 2
 

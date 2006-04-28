@@ -1,3 +1,15 @@
+2006-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        - Updated to remove diff shmutz:
+
+        * fast/dom/Window/window-special-properties-expected.txt:
+        * fast/dom/Window/window-special-properties.html:
+
+        - Test for global window properties like window.HTMLDocument:
+        
+        * fast/dom/global-constructors-expected.txt: Added.
+        * fast/dom/global-constructors.html: Added.
+
 2006-04-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by darin

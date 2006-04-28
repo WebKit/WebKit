@@ -19,7 +19,7 @@
 
 module core {
 
-    interface [LegacyParent=KJS::DOMNode] Node {
+    interface [LegacyParent=KJS::DOMNode, GenerateConstructor] Node {
 
         // DOM Level 2 Core
         

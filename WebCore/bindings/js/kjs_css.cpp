@@ -27,6 +27,7 @@
 #include "HTMLNames.h"
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSRule.h"
+#include "JSCSSStyleDeclaration.h"
 #include "css_base.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
@@ -96,7 +97,6 @@ static bool isCSSPropertyName(const Identifier &JSPropertyName)
   parentRule            DOMCSSStyleDeclaration::ParentRule      DontDelete|ReadOnly
 @end
 */
-KJS_DEFINE_PROTOTYPE(DOMCSSStyleDeclarationProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMCSSStyleDeclarationProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMCSSStyleDeclaration", DOMCSSStyleDeclarationProto, DOMCSSStyleDeclarationProtoFunc)
 
@@ -251,7 +251,7 @@ JSValue *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, JSObje
 
 JSValue *toJS(ExecState *exec, CSSStyleDeclaration *s)
 {
-  return cacheDOMObject<CSSStyleDeclaration, DOMCSSStyleDeclaration>(exec, s);
+  return cacheDOMObject<CSSStyleDeclaration, WebCore::JSCSSStyleDeclaration>(exec, s);
 }
 
 // -------------------------------------------------------------------------

@@ -1,3 +1,16 @@
+2006-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej
+
+        - Minor fixups I discovered while working on the autogenerator.
+        
+        * kjs/lookup.cpp:
+        (findEntry): ASSERT that size is not 0, because otherwise we'll % by 0,
+        compute a garbage address, and possibly crash.
+        * kjs/lookup.h:
+        (cacheGlobalObject): Don't enumerate cached objects -- ideally, they
+        would be hidden entirely.
+
 2006-04-21  Kevin M. Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin.

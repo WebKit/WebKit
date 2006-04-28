@@ -297,7 +297,7 @@ sub GenerateHeader
   push(@headerContent, "    static const KJS::ClassInfo info;\n");
   
   # Constructor object getter
-  if ($numConstants ne 0) {
+  if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
     push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n")
   }
 
@@ -318,7 +318,9 @@ sub GenerateHeader
         push(@headerContent, "\n        ");
       }
 
-      my $value = ucfirst($attribute->signature->name) . "AttrNum";
+      my $value = $attribute->signature->type =~ /Constructor$/
+                  ? $attribute->signature->name . "ConstructorAttrNum" 
+                  : ucfirst($attribute->signature->name) . "AttrNum";
       $value .= ", " if(($i < $numAttributes - 1));
       $value .= ", " if(($i eq $numAttributes - 1) and ($numFunctions ne 0));
       push(@headerContent, $value);
@@ -441,7 +443,9 @@ sub GenerateImplementation
       my $name = $attribute->signature->name;
       push(@hashKeys, $name);
       
-      my $value = $className . "::" . ucfirst($name) . "AttrNum";
+      my $value = $className . "::" . ($attribute->signature->type =~ /Constructor$/ 
+                                       ? $attribute->signature->name . "ConstructorAttrNum" 
+                                       : ucfirst($attribute->signature->name) . "AttrNum");      
       push(@hashValues, $value);
 
       my $special = "DontDelete";
@@ -453,13 +457,15 @@ sub GenerateImplementation
     }
 
     $object->GenerateHashTable($hashName, $hashSize,
-                            \@hashKeys, \@hashValues,
-                             \@hashSpecials, \@hashParameters);
+                               \@hashKeys, \@hashValues,
+                               \@hashSpecials, \@hashParameters);
   }
   
-  # - Add all constants
   my $numConstants = @{$dataNode->constants};
-  if ($numConstants ne 0) {
+  my $numFunctions = @{$dataNode->functions};
+
+  # - Add all constants
+  if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
     $hashSize = $numConstants;
     $hashName = $className . "ConstructorTable";
 
@@ -467,30 +473,38 @@ sub GenerateImplementation
     @hashValues = ();
     @hashSpecials = ();
     @hashParameters = ();
-    
+
     foreach my $constant (@{$dataNode->constants}) {
       my $name = $constant->name;
       push(@hashKeys, $name);
-     
+      
       my $value = "${implClassName}::$name";
       push(@hashValues, $value);
-
+      
       my $special = "DontDelete|ReadOnly";
       push(@hashSpecials, $special);
-
+      
       my $numParameters = 0;
       push(@hashParameters, $numParameters); 
     }
-    
+
     $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashValues,
                                \@hashSpecials, \@hashParameters);
-                               
-    push(@implContent, constructorFor($className, $interfaceName));
+
+    my $protoClassName;
+    if ($numFunctions ne 0 || $numConstants ne 0) {
+      $protoClassName = "${className}Proto";
+    } else {
+      # Since we have no functions or constants, we won't have generated 
+      # our own prototype -- use our parent's instead
+      $protoClassName = "${parentClassName}Proto";
+    }
+
+    push(@implContent, constructorFor($className, $protoClassName, $interfaceName));
   }
   
   # - Add functions and constants to a hashtable definition
-  my $numFunctions = @{$dataNode->functions};
   if ($numFunctions > 0 || $numConstants > 0) {
     $hashSize = $numFunctions + $numConstants;
     $hashName = $className . "ProtoTable";
@@ -618,6 +632,11 @@ sub GenerateImplementation
   if ($numAttributes ne 0) {
     push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
     push(@implContent, "{\n");
+    # FIXME: We need to provide scalable hooks/attributes for this kind of extension
+    if ($interfaceName eq "DOMWindow") {
+        push(@implContent, "    if (getOverridePropertySlot(exec, propertyName, slot))\n");
+        push(@implContent, "        return true;\n");
+    }
     push(@implContent, "    return getStaticValueSlot<$className, $parentClassName>(exec, &${className}Table, this, propertyName, slot);\n");
     push(@implContent, "}\n\n");
   
@@ -627,8 +646,11 @@ sub GenerateImplementation
 
     foreach my $attribute (@{$dataNode->attributes}) {
       my $name = $attribute->signature->name;
-  
-      if (!@{$attribute->getterExceptions}) {
+
+      if ($attribute->signature->type =~ /Constructor$/) {
+        push(@implContent, "    case " . $name . "ConstructorAttrNum:\n");
+        push(@implContent, "        return JS" . $name . "::getConstructor(exec);\n");
+      } elsif (!@{$attribute->getterExceptions}) {
         push(@implContent, "    case " . ucfirst($name) . "AttrNum:\n");
         push(@implContent, "        return " . NativeToJSValue($attribute->signature, "impl->$name()") . ";\n");
       } else {
@@ -657,25 +679,41 @@ sub GenerateImplementation
       push(@implContent, "{\n");
       push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
       push(@implContent, "    switch (token) {\n");
-      
+
       foreach my $attribute (@{$dataNode->attributes}) {
         if ($attribute->type !~ /^readonly/) {
           my $name = $attribute->signature->name;
-          push(@implContent, "    case " . ucfirst($name) ."AttrNum: {\n");
-          push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-          push(@implContent, "        impl->set" . ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
-          push(@implContent, ", ec") if @{$attribute->setterExceptions};
-          push(@implContent, ");\n");
-          push(@implContent, "        setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
-          push(@implContent, "    }\n");
+          if ($attribute->signature->type =~ /Constructor$/) {
+              $implIncludes{"JS" . $attribute->signature->name . ".h"} = 1;
+              push(@implContent, "    case " . $name ."ConstructorAttrNum: {\n");
+              push(@implContent, "        // Shadowing a built-in constructor\n");
+
+              # FIXME: We need to provide scalable hooks/attributes for this kind of extension
+              push(@implContent, "        if (isSafeScript(exec))\n");
+              push(@implContent, "            JSObject::put(exec, \"$name\", value);\n");
+          } else {
+              push(@implContent, "    case " . ucfirst($name) ."AttrNum: {\n");
+              push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
+              push(@implContent, "        impl->set" . ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
+              push(@implContent, ", ec") if @{$attribute->setterExceptions};
+              push(@implContent, ");\n");
+              push(@implContent, "        setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
+          }
           push(@implContent, "        break;\n");
+          push(@implContent, "    }\n");
         }
       }
-      push(@implContent, "    }\n}\n\n");      
+      push(@implContent, "    }\n"); # end switch
+        
+      if ($interfaceName eq "DOMWindow") {
+          push(@implContent, "    // FIXME: Hack to prevent unused variable warning -- remove once DOMWindow includes a settable property\n");
+          push(@implContent, "    (void)impl;\n");
+      }
+      push(@implContent, "}\n\n"); # end function
     }
   }
 
-  if ($numConstants ne 0) {
+  if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
     push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
     push(@implContent, "    return cacheGlobalObject<${className}Constructor>(exec, \"[[${interfaceName}.constructor]]\");\n");
     push(@implContent, "}\n");
@@ -1022,20 +1060,20 @@ sub GenerateHashTable
   my $values = shift;
   my $specials = shift;
   my $parameters = shift;
-
+  
   # Helpers
   my @table = ();
   my @links = ();
 
   my $maxDepth = 0;
   my $collisions = 0;
-  my $savedSize = $size;
+  my $numEntries = $size;
 
   # Collect hashtable information...
   my $i = 0;
   foreach(@{$keys}) {
     my $depth = 0;
-    my $h = $object->GenerateHashValue($_) % $savedSize;
+    my $h = $object->GenerateHashValue($_) % $numEntries;
 
     while(defined($table[$h])) {
       if(defined($links[$h])) {
@@ -1112,9 +1150,15 @@ sub GenerateHashTable
     $i++;
   }
 
+  if ($size eq 0) {
+    # dummy bucket -- an empty table would crash Lookup::findEntry
+    push(@implContent, "    \{ 0, 0, 0, 0, 0 \}\n") ;
+    $numEntries = 1;
+    $size = 1;
+  }
   push(@implContent, "};\n\n");
   push(@implContent, "static const HashTable $name = \n");
-  push(@implContent, "{\n    2, $size, $nameEntries, $savedSize\n};\n\n");
+  push(@implContent, "{\n    2, $size, $nameEntries, $numEntries\n};\n\n");
 }
 
 # Internal helper
@@ -1203,6 +1247,7 @@ sub WriteData
 sub constructorFor
 {
     my $className = shift;
+    my $protoClassName = shift;
     my $interfaceName = shift;
     
 my $implContent = << "EOF";
@@ -1211,6 +1256,7 @@ public:
     ${className}Constructor(ExecState* exec) 
     { 
         setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype()); 
+        putDirect(prototypePropertyName, ${protoClassName}::self(exec), None);
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;

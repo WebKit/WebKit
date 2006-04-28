@@ -277,7 +277,7 @@ inline KJS::JSObject *cacheGlobalObject(KJS::ExecState *exec, const KJS::Identif
     return static_cast<KJS::JSObject *>(obj);
   }
   KJS::JSObject *newObject = new ClassCtor(exec);
-  globalObject->put(exec, propertyName, newObject, KJS::Internal);
+  globalObject->put(exec, propertyName, newObject, KJS::Internal | KJS::DontEnum);
   return newObject;
 }
 

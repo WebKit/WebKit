@@ -19,11 +19,8 @@
 
 module css {
 
-    interface [LegacyParent=KJS::DOMCSSValue, GenerateConstructor] CSSValue {
-        const unsigned short CSS_INHERIT = 0;
-        const unsigned short CSS_PRIMITIVE_VALUE = 1;
-        const unsigned short CSS_VALUE_LIST = 2;
-        const unsigned short CSS_CUSTOM = 3;
+    // Introduced in DOM Level 2:
+    interface [LegacyParent=KJS::DOMCSSStyleDeclaration, GenerateConstructor] CSSStyleDeclaration {
     };
-
+  
 }

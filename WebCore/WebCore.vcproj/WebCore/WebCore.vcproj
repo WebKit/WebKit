@@ -294,6 +294,10 @@
 				RelativePath="..\..\DerivedSources\WebCore\JSCSSRule.cpp"
 				>
 			</File>
+
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSStyleDeclaration.cpp"
+				>
+			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCSSValue.cpp"
 				>

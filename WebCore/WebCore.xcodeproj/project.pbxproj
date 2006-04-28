@@ -32,6 +32,9 @@
 		14115B5209F84B7100CA4FC1 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B5109F84B7100CA4FC1 /* Node.h */; };
 		14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */; };
 		14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */; };
+		142011AF0A003117008303F9 /* CSSStyleDeclaration.idl in Resources */ = {isa = PBXBuildFile; fileRef = 142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */; };
+		142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */; };
+		142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */; };
 		14CF787209F587CA00EB3665 /* CSSValue.idl in Resources */ = {isa = PBXBuildFile; fileRef = 14CF787109F587CA00EB3665 /* CSSValue.idl */; };
 		14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */; };
 		14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF78A509F58CD800EB3665 /* JSCSSValue.h */; };
@@ -1229,6 +1232,9 @@
 		14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilter.h; sourceTree = "<group>"; };
 		141B94E509EC4223000E9413 /* MouseEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = MouseEvent.idl; sourceTree = "<group>"; };
 		141B94EE09EC425A000E9413 /* UIEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = UIEvent.idl; sourceTree = "<group>"; };
+		142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSStyleDeclaration.idl; sourceTree = "<group>"; };
+		142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleDeclaration.cpp; sourceTree = "<group>"; };
+		142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSStyleDeclaration.h; sourceTree = "<group>"; };
 		14813BF309EDF88E00F757E1 /* IDLParser.pm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; name = IDLParser.pm; path = scripts/IDLParser.pm; sourceTree = "<group>"; };
 		14CF787109F587CA00EB3665 /* CSSValue.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValue.idl; sourceTree = "<group>"; };
 		14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValue.cpp; sourceTree = "<group>"; };
@@ -2662,8 +2668,6 @@
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				14DC0D3509FED073007B0235 /* JSNode.cpp */,
-				14DC0D3609FED073007B0235 /* JSNode.h */,
 				656581AC09D14EE6000E61D7 /* CharsetData.cpp */,
 				656581AD09D14EE6000E61D7 /* ColorData.c */,
 				6565814409D13043000E61D7 /* CSSGrammar.cpp */,
@@ -2695,6 +2699,7 @@
 				930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */,
 				14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */,
 				14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */,
+				142011B40A003133008303F9 /* JSCSSStyleDeclaration.cpp */,
 				14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */,
 				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
 				659DDC8009E198BA001BF3C6 /* JSDocument.cpp */,
@@ -2720,6 +2725,8 @@
 				A86629CB09DA2B47009633A5 /* JSMouseEvent.h */,
 				65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */,
 				65DF31E809D1CC60000BE325 /* JSMutationEvent.h */,
+				14DC0D3509FED073007B0235 /* JSNode.cpp */,
+				14DC0D3609FED073007B0235 /* JSNode.h */,
 				14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */,
 				14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */,
 				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
@@ -2761,6 +2768,7 @@
 				656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */,
 				656581EA09D1508D000E61D7 /* XLinkNames.cpp */,
 				656581EB09D1508D000E61D7 /* XLinkNames.h */,
+				142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebCore;
@@ -3969,8 +3977,7 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
-				14CF7A7009F5CF9A00EB3665 /* CSSRule.idl */,
-				14CF787109F587CA00EB3665 /* CSSValue.idl */,
+				142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */,
 				930705C709E0C95F00B17FE4 /* Counter.idl */,
 				BCEA477A097CAAC80094C9E4 /* css_base.cpp */,
 				BCEA477B097CAAC80094C9E4 /* css_base.h */,
@@ -3989,8 +3996,10 @@
 				BCEA4788097CAAC80094C9E4 /* cssparser.h */,
 				9307059009E0C75800B17FE4 /* CSSPrimitiveValue.idl */,
 				BCEA4789097CAAC80094C9E4 /* CSSPropertyNames.in */,
+				14CF7A7009F5CF9A00EB3665 /* CSSRule.idl */,
 				BCEA478A097CAAC80094C9E4 /* cssstyleselector.cpp */,
 				BCEA478B097CAAC80094C9E4 /* cssstyleselector.h */,
+				14CF787109F587CA00EB3665 /* CSSValue.idl */,
 				BCEA478C097CAAC80094C9E4 /* CSSValueKeywords.in */,
 				93CA4C9909DF93FA00DF8677 /* html4.css */,
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
@@ -4825,6 +4834,7 @@
 				65901A4409FC6039005BD752 /* WebCoreStringTruncator.h in Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Headers */,
 				14D0C82509FF0EF5006B36D9 /* kjs_domnode.h in Headers */,
+				142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4974,6 +4984,7 @@
 				14115AFA09F847D600CA4FC1 /* NodeFilter.idl in Resources */,
 				14E836D309F8512000B85AE4 /* Event.idl in Resources */,
 				14DC0D0C09FECFA4007B0235 /* Node.idl in Resources */,
+				142011AF0A003117008303F9 /* CSSStyleDeclaration.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5538,6 +5549,7 @@
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,
 				65901A4509FC6039005BD752 /* WebCoreStringTruncator.mm in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
+				142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

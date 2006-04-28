@@ -20,7 +20,7 @@
 module traversal {
 
     // Introduced in DOM Level 2:
-    interface [LegacyParent=KJS::DOMNodeFilter] NodeFilter {
+    interface [LegacyParent=KJS::DOMNodeFilter, GenerateConstructor] NodeFilter {
 
         // Constants returned by acceptNode
         const short               FILTER_ACCEPT                  = 1;

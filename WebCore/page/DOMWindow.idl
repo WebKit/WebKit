@@ -40,6 +40,18 @@ module window {
                                        in DOMString pseudoElt,
                                        in [ConvertUndefinedToTrue] boolean authorOnly);
         
+        // Global constructors
+        attribute CSSPrimitiveValueConstructor CSSPrimitiveValue;
+        attribute CSSRuleConstructor CSSRule;
+        attribute CSSStyleDeclarationConstructor CSSStyleDeclaration;
+        attribute CSSValueConstructor CSSValue;
+        attribute DocumentConstructor Document;
+        attribute ElementConstructor Element;
+        attribute EventConstructor Event;
+        attribute MutationEventConstructor MutationEvent;
+        attribute NodeConstructor Node;
+        attribute NodeFilterConstructor NodeFilter;
+        attribute RangeConstructor Range;
     };
 
 }

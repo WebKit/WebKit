@@ -108,7 +108,8 @@ namespace KJS {
     static Window* retrieveActive(ExecState*);
     WebCore::Frame* frame() const { return m_frame; }
     virtual void mark();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    bool getOverridePropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual bool toBoolean(ExecState*) const;
@@ -152,8 +153,7 @@ namespace KJS {
     UnprotectedListenersMap jsUnprotectedEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { Closed, Crypto, DefaultStatus, Status, Node, EventCtor, MutationEventCtor, Range,
-           NodeFilter, DOMException, CSSRule, CSSValue, Frames, History_, Event_, InnerHeight,
+    enum { Closed, Crypto, DefaultStatus, Status, DOMException, Frames, History_, Event_, InnerHeight,
            InnerWidth, Length, Location_, Locationbar, Name, Navigator_, ClientInformation,
            Menubar, OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,

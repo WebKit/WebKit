@@ -20,7 +20,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [LegacyParent=KJS::DOMCSSRule] CSSRule {
+    interface [LegacyParent=KJS::DOMCSSRule, GenerateConstructor] CSSRule {
 
         // RuleType
         const unsigned short UNKNOWN_RULE = 0;

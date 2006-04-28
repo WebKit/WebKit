@@ -19,7 +19,7 @@
 
 module ranges {
 
-    interface Range {
+    interface [GenerateConstructor] Range {
 
         // DOM Level 2
 

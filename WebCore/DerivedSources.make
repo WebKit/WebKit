@@ -52,6 +52,7 @@ all : \
     JSCanvasRenderingContext2DBaseTable.cpp \
     JSCharacterData.h \
     JSCounter.h \
+    JSCSSStyleDeclaration.h \
     JSDOMImplementation.h \
     JSDOMParser.lut.h \
     JSDOMWindow.h \
