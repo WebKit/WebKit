@@ -1,6 +1,15 @@
 2006-04-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by kdecker
+        
+        Actually apply the change that was reviewed insted of checking it in with an #if 0 (oops).
+
+        * kjs/testkjs.cpp:
+        (main): Suppress C runtime alerts
+
+2006-04-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by kdecker
 
         Suppress error reporting dialog that blocks Javascript tests from completing.
         
