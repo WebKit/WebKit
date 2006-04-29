@@ -1,5 +1,16 @@
 2006-04-28  Steve Falkenburg  <sfalken@apple.com>
 
+        Reviewed by kdecker
+
+        Modify error reporting registry keys to disable Dr. Watson.
+        This allows Javascript test cases to complete without blocking UI.
+        
+        * Scripts/install-win-extras:
+         - Use Perl Win32 registry functions to disable blocking UI
+        
+
+2006-04-28  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by eric.
         
         Turned off C++ exceptions, fixed memory leaks

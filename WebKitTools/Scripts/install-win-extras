@@ -32,6 +32,7 @@ use strict;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
+use Win32API::Registry 0.21 qw( :ALL );
 
 checkRequiredSystemConfig();
 chdirWebKit();
@@ -132,4 +133,15 @@ if (! -x "$setx") {
     print "$setx Path \"$WINPATH\" -m\n";
     system '$setx', "Path", "$WINPATH", "-m";
 }
+
+# Disable error reporting UI
+my $key;
+RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AeDebug", 0, KEY_WRITE, $key);
+RegSetValueEx($key, "Auto", 0, REG_SZ, "1" );
+RegSetValueEx($key, "Debugger", 0, REG_SZ, "drwtsn32 -p %ld -e %ld -g");
+RegCloseKey($key );
+RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\PCHealth\\ErrorReporting", 0, KEY_WRITE, $key);
+RegSetValueEx($key, "DoReport", 0, REG_DWORD, "0");
+RegSetValueEx($key, "ShowUI", 0, REG_DWORD, "0");
+RegCloseKey($key );
 
