@@ -212,7 +212,7 @@ NS_ENDHANDLER
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
         @"3",                           WebKitPageCacheSizePreferenceKey,
-        @"8388608",                     WebKitObjectCacheSizePreferenceKey,
+        @"16777216",                    WebKitObjectCacheSizePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                            WebKitUserStyleSheetLocationPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldPrintBackgroundsPreferenceKey,
