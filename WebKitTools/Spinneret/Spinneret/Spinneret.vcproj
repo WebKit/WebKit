@@ -40,11 +40,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\WebCore&quot;;&quot;$(SolutionDir)\..\..\WebCore\loader&quot;;&quot;$(SolutionDir)\..\..\WebCore\khtml\dom&quot;;&quot;$(SolutionDir)\..\..\WebCore\khtml\ecma&quot;;&quot;$(SolutionDir)\..\..\WebCore\html&quot;;&quot;$(SolutionDir)\..\..\WebCore\khtml&quot;;&quot;$(SolutionDir)\..\..\WebCore\css&quot;;&quot;$(SolutionDir)\..\..\WebCore\khtml\misc&quot;;&quot;$(SolutionDir)\..\..\WebCore\platform&quot;;&quot;$(SolutionDir)\..\..\WebCore\bridge\win&quot;;&quot;$(SolutionDir)\..\..\WebCore\page&quot;;&quot;$(SolutionDir)\..\..\WebCore\bridge&quot;;&quot;$(SolutionDir)\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(SolutionDir)\..\..\WebCore\platform\win&quot;;&quot;$(SolutionDir)\..\..\WebCore\rendering&quot;;&quot;$(SolutionDir)\..\..\WebCore\editing&quot;;&quot;$(SolutionDir)\..\..\WebCore\dom&quot;;&quot;$(SolutionDir)\..\..\WebCore\xml&quot;;&quot;$(SolutionDir)\..\..\WebCore\kwq&quot;;&quot;$(SolutionDir)\..\..\iconv&quot;;&quot;$(SolutionDir)\..\..\libxml2&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kxmlcore&quot;;&quot;$(SolutionDir)\..\..\WebCore\ForwardingHeaders&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\loader&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\khtml\ecma&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\html&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\khtml&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\css&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\platform&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\bridge\win&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\page&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\bridge&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\platform\win&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\rendering&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\editing&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\dom&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\xml&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\kwq&quot;;&quot;$(ProjectDir)\..\..\..\iconv&quot;;&quot;$(ProjectDir)\..\..\..\libxml2&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kxmlcore&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\ForwardingHeaders&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="2"
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="false"
@@ -61,8 +63,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\icu\lib\icuuc.lib&quot;&#x0D;&#x0A;comctl32.lib&#x0D;&#x0A;wininet.lib"
+				AdditionalDependencies="comctl32.lib wininet.lib &quot;$(ProjectDir)\..\..\..\iconv\lib\iconv.lib&quot; &quot;$(ProjectDir)\..\..\..\libxml\lib\libxml2.lib&quot; &quot;$(ProjectDir)\..\..\..\libxslt\lib\libxslt.lib&quot; &quot;$(ProjectDir)\..\..\..\icu\lib\icuuc.lib&quot;"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -117,9 +120,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\WebCore&quot;;&quot;$(SolutionDir)\..\..\WebCore\loader&quot;;&quot;$(SolutionDir)\..\..\WebCore\khtml\dom&quot;;&quot;$(SolutionDir)\..\..\WebCore\khtml\ecma&quot;;&quot;$(SolutionDir)\..\..\WebCore\html&quot;;&quot;$(SolutionDir)\..\..\WebCore\khtml&quot;;&quot;$(SolutionDir)\..\..\WebCore\css&quot;;&quot;$(SolutionDir)\..\..\WebCore\khtml\misc&quot;;&quot;$(SolutionDir)\..\..\WebCore\platform&quot;;&quot;$(SolutionDir)\..\..\WebCore\bridge\win&quot;;&quot;$(SolutionDir)\..\..\WebCore\page&quot;;&quot;$(SolutionDir)\..\..\WebCore\bridge&quot;;&quot;$(SolutionDir)\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(SolutionDir)\..\..\WebCore\platform\win&quot;;&quot;$(SolutionDir)\..\..\WebCore\rendering&quot;;&quot;$(SolutionDir)\..\..\WebCore\editing&quot;;&quot;$(SolutionDir)\..\..\WebCore\dom&quot;;&quot;$(SolutionDir)\..\..\WebCore\xml&quot;;&quot;$(SolutionDir)\..\..\WebCore\kwq&quot;;&quot;$(SolutionDir)\..\..\iconv&quot;;&quot;$(SolutionDir)\..\..\libxml2&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kxmlcore&quot;;&quot;$(SolutionDir)\..\..\WebCore\ForwardingHeaders&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\WebCore&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\loader&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\khtml\ecma&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\html&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\khtml&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\css&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\platform&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\bridge\win&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\page&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\bridge&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\platform\win&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\rendering&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\editing&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\dom&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\xml&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\kwq&quot;;&quot;$(ProjectDir)\..\..\..\iconv&quot;;&quot;$(ProjectDir)\..\..\..\libxml2&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kxmlcore&quot;;&quot;$(ProjectDir)\..\..\..\WebCore\ForwardingHeaders&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE"
+				ExceptionHandling="0"
 				RuntimeLibrary="2"
+				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="2"
 				WarningLevel="1"
 				Detect64BitPortabilityProblems="false"
@@ -136,8 +141,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\icu\lib\icuuc.lib&quot;&#x0D;&#x0A;comctl32.lib&#x0D;&#x0A;wininet.lib"
+				AdditionalOptions="&quot;$(ProjectDir)\..\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\icu\lib\icuuc.lib&quot;&#x0D;&#x0A;"
+				AdditionalDependencies="comctl32.lib wininet.lib &quot;$(ProjectDir)\..\..\..\iconv\lib\iconv.lib&quot; &quot;$(ProjectDir)\..\..\..\libxml\lib\libxml2.lib&quot; &quot;$(ProjectDir)\..\..\..\libxslt\lib\libxslt.lib&quot; &quot;$(ProjectDir)\..\..\..\icu\lib\icuuc.lib&quot;"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)\..\..\..\&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"

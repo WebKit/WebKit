@@ -58,5 +58,12 @@
 #include <memory.h>
 #include <tchar.h>
 
-
-// TODO: reference additional headers your program requires here
+#if 0
+// Visual Studio Leak Detection
+// <http://msdn2.microsoft.com/en-US/library/e5ewb1h3.aspx>
+#if defined(_MSC_VER) && defined(_DEBUG)
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
+#endif

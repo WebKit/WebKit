@@ -1,3 +1,23 @@
+2006-04-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by eric.
+        
+        Turned off C++ exceptions, fixed memory leaks
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj:
+        * Spinneret/Spinneret.sln:
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (_tWinMain):
+        * Spinneret/Spinneret/Spinneret.vcproj:
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::WebFramePrivate::~WebFramePrivate):
+        (WebKit::WebFrame::WebFrame):
+        (WebKit::WebFrame::~WebFrame):
+        (WebKit::WebFrame::impl):
+        * Spinneret/Spinneret/WebFrame.h:
+        * Spinneret/Spinneret/WebView.cpp:
+        * Spinneret/Spinneret/stdafx.h:
+
 2006-04-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

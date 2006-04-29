@@ -27,6 +27,7 @@
 #include "Spinneret.h"
 #include "WebView.h"
 #include "WebFrame.h"
+#include "unicode/uclean.h"
 
 #include <commctrl.h>
 
@@ -69,6 +70,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
                      LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
+#ifdef _CRTDBG_MAP_ALLOC
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+#endif
+
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -118,6 +124,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
     }
+
+    delete gWebView;
+#ifdef _CRTDBG_MAP_ALLOC
+    u_cleanup();
+    _CrtDumpMemoryLeaks();
+#endif
 
     return (int) msg.wParam;
 }

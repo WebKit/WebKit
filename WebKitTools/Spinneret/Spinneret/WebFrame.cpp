@@ -53,8 +53,8 @@ public:
     WebFramePrivate() { }
     ~WebFramePrivate() { }
 
-    Frame* frame;
-    FrameView* frameView;
+    RefPtr<Frame> frame;
+    RefPtr<FrameView> frameView;
     WebView* webView;
 };
 
@@ -62,12 +62,22 @@ WebFrame::WebFrame(char* name, WebView* view)
 : d(new WebFrame::WebFramePrivate)
 {
     d->webView = view;
-    Page *page = new Page();
-    d->frame = new FrameWin(page, 0, this);
-    page->setMainFrame(d->frame);
-    d->frameView = new FrameView(d->frame);
-    d->frame->setView(d->frameView);
+    Page* page = new Page();
+    Frame* frame = new FrameWin(page, 0, this);
+    d->frame = frame;
+    frame->deref(); // Frames are created with a refcount of 1.  Release this ref, since we've assigned it to a RefPtr
+    page->setMainFrame(frame);
+    FrameView* frameView = new FrameView(frame);
+    d->frameView = frameView;
+    frameView->deref(); // FrameViews are created with a refcount of 1.  Release this ref, since we've assigned it to a RefPtr
+    d->frame->setView(frameView);
     d->frameView->setWindowHandle(view->windowHandle());
+}
+
+WebFrame::~WebFrame()
+{
+    delete d->frame->page();
+    delete d;
 }
 
 void WebFrame::loadFilePath(char* path)
@@ -182,7 +192,7 @@ void WebFrame::paint()
 
 WebCore::Frame* WebFrame::impl()
 {
-    return d->frame;
+    return d->frame.get();
 }
 
 }
