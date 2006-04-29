@@ -31,6 +31,12 @@
 #import "WebTextRenderer.h"
 #import "WebCoreSystemInterface.h"
 
+#import "FoundationExtras.h"
+#import "KWQListBox.h"
+#import "Page.h"
+#import "WebCoreFrameBridge.h"
+#import <kxmlcore/Assertions.h>
+
 #import <mach-o/dyld.h>
 
 #define SYNTHESIZED_FONT_TRAITS (NSBoldFontMask | NSItalicFontMask)
@@ -47,6 +53,49 @@
 )
 
 #define DESIRED_WEIGHT 5
+
+using namespace WebCore;
+
+static WebTextRendererFactory* sharedFactory;
+
+void WebCoreInitializeFont(WebCoreFont *font)
+{
+    font->font = nil;
+    font->syntheticBold = NO;
+    font->syntheticOblique = NO;
+    font->forPrinter = NO;
+}
+
+void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to)
+{
+    run->characters = characters;
+    run->length = length;
+    run->from = from;
+    run->to = to;
+}
+
+void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
+{
+    style->textColor = nil;
+    style->backgroundColor = nil;
+    style->letterSpacing = 0;
+    style->wordSpacing = 0;
+    style->padding = 0;
+    style->families = nil;
+    style->smallCaps = NO;
+    style->rtl = NO;
+    style->directionalOverride = NO;
+    style->applyRunRounding = YES;
+    style->applyWordRounding = YES;
+    style->attemptFontSubstitution = YES;
+}
+
+void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry)
+{
+    geometry->point.x = 0;
+    geometry->point.y = 0;
+    geometry->useFontMetricsForSelectionYAndHeight = YES;
+}
 
 @interface NSFont (WebPrivate)
 - (ATSUFontID)_atsFontID;
@@ -147,7 +196,8 @@ static CFMutableDictionaryRef fixedPitchFonts;
         fixedPitchFonts = 0;
     }
         
-    [super clearCaches];
+    QListBox::clearCachedTextRenderers();
+    Page::setNeedsReapplyStyles();
 }
 
 static void 
@@ -172,12 +222,14 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 
     // Ignore errors returned from ATSFontNotificationSubscribe.  If we can't subscribe then we
     // won't be told about changes to fonts.
-    ATSFontNotificationSubscribe( fontsChanged, kATSFontNotifyOptionDefault, (void *)[super sharedFactory], nil );
+    ATSFontNotificationSubscribe( fontsChanged, kATSFontNotifyOptionDefault, (void *)[self sharedFactory], nil );
 }
 
-+ (WebTextRendererFactory *)sharedFactory;
++ (WebTextRendererFactory *)sharedFactory
 {
-    return (WebTextRendererFactory *)[super sharedFactory];
+    if (!sharedFactory)
+        [WebTextRendererFactory createSharedFactory];
+    return sharedFactory;
 }
 
 - (BOOL)isFontFixedPitch:(WebCoreFont)font
@@ -218,6 +270,9 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     for (i = 0; i < WEB_TEXT_RENDERER_FACTORY_NUM_CACHES; ++i)
         caches[i] = [[NSMutableDictionary alloc] init];
     
+    ASSERT(!sharedFactory);
+    sharedFactory = KWQRetain(self);
+
     return self;
 }
 

@@ -1,5 +1,52 @@
 2006-04-28  David Hyatt  <hyatt@apple.com>
 
+        Merge WebCoreTextRenderer into WebTextRenderer.  Merge WebCoreTextRendererFactory
+        into WebTextRendererFactory.  Change all callers to refer to the concrete classes
+        now.  Change WebCoreTextRenderer.h to be the public API that WebKit uses when
+        it calls in to WebCore.  Clean up the exports to remove things WebKit no longer
+        needs.
+
+        Reviewed by darin
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreStringTruncator.mm:
+        (stringWidth):
+        (truncateString):
+        (+[WebCoreStringTruncator widthOfString:font:]):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::sizeHint):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth):
+        * kwq/KWQListBox.mm:
+        (itemTextRenderer):
+        (groupLabelTextRenderer):
+        (QListBox::sizeForNumberOfLines):
+        (-[KWQTableView drawRow:clipRect:]):
+        * platform/Font.h:
+        * platform/FontDataSet.h:
+        * platform/mac/FontMac.mm:
+        (WebCore::FontDataSet::getWebCoreFont):
+        (WebCore::FontDataSet::getRenderer):
+        (WebCore::FontDataSet::determinePitch):
+        * platform/mac/WebCoreTextRenderer.h:
+        * platform/mac/WebCoreTextRendererFactory.mm:
+        (-[WebCoreTextRendererFactory init]):
+        * platform/mac/WebTextRenderer.h:
+        * platform/mac/WebTextRenderer.mm:
+        * platform/mac/WebTextRendererFactory.h:
+        * platform/mac/WebTextRendererFactory.mm:
+        (WebCoreInitializeFont):
+        (WebCoreInitializeTextRun):
+        (WebCoreInitializeEmptyTextStyle):
+        (WebCoreInitializeEmptyTextGeometry):
+        (-[WebTextRendererFactory clearCaches]):
+        (+[WebTextRendererFactory createSharedFactory]):
+        (+[WebTextRendererFactory sharedFactory]):
+        (-[WebTextRendererFactory init]):
+
+2006-04-28  David Hyatt  <hyatt@apple.com>
+
         Fix for 8586, move WebTextRenderer into WebCore.
 
         Reviewed by darin

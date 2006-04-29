@@ -29,6 +29,7 @@
 
 #import "config.h"
 #import "WebTextRenderer.h"
+#import "WebCoreTextRenderer.h"
 
 #import <kxmlcore/Assertions.h>
 

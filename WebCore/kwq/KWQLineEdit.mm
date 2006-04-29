@@ -33,8 +33,8 @@
 #import "Logging.h"
 #import "WebCoreTextField.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreTextRenderer.h"
-#import "WebCoreTextRendererFactory.h"
+#import "WebTextRenderer.h"
+#import "WebTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
 #import "WidgetClient.h"
 
@@ -265,7 +265,7 @@ IntSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     WebCoreInitializeFont(&font);
     font.font = [textField font];
     font.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
-    id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font];
+    WebTextRenderer* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
 
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
     size.height += [layoutManager defaultLineHeightForFont:font.font];

@@ -39,7 +39,7 @@
 #define ELLIPSIS_CHARACTER 0x2026
 
 static NSFont *currentFont;
-static id<WebCoreTextRenderer> currentRenderer;
+static WebTextRenderer* currentRenderer;
 static float currentEllipsisWidth;
 
 typedef unsigned TruncationFunction(NSString *string, unsigned length, unsigned keepCount, unichar *buffer);
@@ -79,7 +79,7 @@ static unsigned rightTruncateToBuffer(NSString *string, unsigned length, unsigne
     return keepRange.length + 1;
 }
 
-static float stringWidth(id<WebCoreTextRenderer> renderer, const unichar *characters, unsigned length)
+static float stringWidth(WebTextRenderer* renderer, const unichar *characters, unsigned length)
 {
     WebCoreTextRun run;
     WebCoreInitializeTextRun (&run, characters, length, 0, length);
@@ -116,7 +116,7 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
         WebCoreFont f;
         WebCoreInitializeFont(&f);
         f.font = font;
-        currentRenderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFont:f] retain];
+        currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:f] retain];
         ellipsis = ELLIPSIS_CHARACTER;
         currentEllipsisWidth = stringWidth(currentRenderer, &ellipsis, 1);
     }
@@ -225,7 +225,7 @@ static NSFont *defaultMenuFont(void)
     WebCoreFont f;
     WebCoreInitializeFont(&f);
     f.font = font;
-    float width = stringWidth([[WebCoreTextRendererFactory sharedFactory] rendererWithFont:f], s, length);
+    float width = stringWidth([[WebTextRendererFactory sharedFactory] rendererWithFont:f], s, length);
     free(s);
     return width;
 }

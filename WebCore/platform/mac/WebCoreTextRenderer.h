@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,51 +25,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-struct WebCoreTextStyle
-{
-    NSColor *textColor;
-    NSColor *backgroundColor;
-    int letterSpacing;
-    int wordSpacing;
-    int padding;
-    int tabWidth;
-    int xpos;
-    NSString **families;
-    bool smallCaps;
-    bool rtl;
-    bool directionalOverride;
-    bool applyRunRounding;
-    bool applyWordRounding;
-    bool attemptFontSubstitution;
-};
-
-struct WebCoreTextRun
-{
-    const UniChar *characters;
-    unsigned int length;
-    int from;
-    int to;
-};
-
-struct WebCoreTextGeometry
-{
-    NSPoint point;
-    float selectionY;
-    float selectionHeight;
-    bool useFontMetricsForSelectionYAndHeight;
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef struct WebCoreTextRun WebCoreTextRun;
-typedef struct WebCoreTextStyle WebCoreTextStyle;
-typedef struct WebCoreTextGeometry WebCoreTextGeometry;
-
-extern void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to);
-extern void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style);
-extern void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry);
 
 extern void WebCoreDrawTextAtPoint(const UniChar*, unsigned length, NSPoint, NSFont*, NSColor*);
 extern float WebCoreTextFloatWidth(const UniChar*, unsigned length, NSFont*);
@@ -77,36 +35,7 @@ extern void WebCoreSetShouldUseFontSmoothing(bool);
 extern bool WebCoreShouldUseFontSmoothing();
 extern void WebCoreSetAlwaysUseATSU(bool);
 extern NSFont* WebCoreFindFont(NSString* familyName, NSFontTraitMask, int size);
+
 #ifdef __cplusplus
 }
 #endif
-
-@protocol WebCoreTextRenderer <NSObject>
-
-// WebCoreTextRenderer must guarantee that no calls to any of these
-// methods will raise any ObjC exceptions. It's too expensive to do
-// blocking for all of them at the WebCore level, and some
-// implementations may be able to guarantee no exceptions without the
-// use of NS_DURING.
-
-// vertical metrics
-- (int)ascent;
-- (int)descent;
-- (int)lineSpacing;
-- (float)xHeight;
-
-// horizontal metrics
-- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
-
-// drawing
-- (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (NSRect)selectionRectForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width: (int)width color:(NSColor *)color thickness:(float)thickness;
-- (void)drawLineForMisspelling:(NSPoint)point withWidth:(int)width;
-- (int)misspellingLineThickness;
-
-// selection point check
-- (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x includePartialGlyphs:(BOOL)includePartialGlyphs;
-
-@end

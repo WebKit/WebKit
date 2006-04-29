@@ -34,7 +34,9 @@
 #import "GraphicsContext.h"
 #import "KWQKHTMLSettings.h"
 
-#import "WebCoreTextRenderer.h"
+#import "WebTextRenderer.h"
+#import "WebTextRendererFactory.h"
+
 #import "IntRect.h"
 
 namespace WebCore {
@@ -61,7 +63,7 @@ const WebCoreFont& FontDataSet::getWebCoreFont(const FontDescription& fontDescri
             traits |= NSItalicFontMask;
         if (fontDescription.weight() >= WebCore::cBoldWeight)
             traits |= NSBoldFontMask;
-        m_webCoreFont = [[WebCoreTextRendererFactory sharedFactory] 
+        m_webCoreFont = [[WebTextRendererFactory sharedFactory] 
                                      fontWithFamilies:families traits:traits size:fontDescription.computedPixelSize()];
         KWQRetain(m_webCoreFont.font);
         m_webCoreFont.forPrinter = fontDescription.usePrinterFont();
@@ -70,16 +72,16 @@ const WebCoreFont& FontDataSet::getWebCoreFont(const FontDescription& fontDescri
     return m_webCoreFont;
 }
 
-id <WebCoreTextRenderer> FontDataSet::getRenderer(const FontDescription& fontDescription)
+WebTextRenderer* FontDataSet::getRenderer(const FontDescription& fontDescription)
 {
     if (!m_renderer)
-        m_renderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory] rendererWithFont:getWebCoreFont(fontDescription)]);
+        m_renderer = KWQRetain([[WebTextRendererFactory sharedFactory] rendererWithFont:getWebCoreFont(fontDescription)]);
     return m_renderer;
 }
 
 void FontDataSet::determinePitch(const FontDescription& fontDescription) const {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch:getWebCoreFont(fontDescription)])
+    if ([[WebTextRendererFactory sharedFactory] isFontFixedPitch:getWebCoreFont(fontDescription)])
         m_pitch = FixedPitch;
     else
         m_pitch = VariablePitch;

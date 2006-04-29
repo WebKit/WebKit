@@ -30,7 +30,8 @@
 #import "FoundationExtras.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreTextRenderer.h"
+#import "WebTextRenderer.h"
+#import "WebTextRendererFactory.h"
 #import "WebCoreWidgetHolder.h"
 #import "render_form.h"
 
@@ -167,8 +168,8 @@ IntSize QComboBox::sizeHint() const
             WebCoreInitializeFont(&itemFont);
             itemFont.font = [button font];
             itemFont.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
-            id <WebCoreTextRenderer> itemRenderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:itemFont];
-            id <WebCoreTextRenderer> labelRenderer = nil;
+            WebTextRenderer* itemRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:itemFont];
+            WebTextRenderer* labelRenderer = nil;
             WebCoreTextStyle style;
             WebCoreInitializeEmptyTextStyle(&style);
             style.applyRunRounding = NO;
@@ -182,14 +183,14 @@ IntSize QComboBox::sizeHint() const
                 int length = s.length();
                 WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
 
-                id <WebCoreTextRenderer> renderer;
+                WebTextRenderer* renderer;
                 if (isGroupLabel) {
                     if (labelRenderer == nil) {
                         WebCoreFont labelFont;
                         WebCoreInitializeFont(&labelFont);
                         labelFont.font = this->labelFont();
                         labelFont.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
-                        labelRenderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:labelFont];
+                        labelRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:labelFont];
                     }
                     renderer = labelRenderer;
                 } else {

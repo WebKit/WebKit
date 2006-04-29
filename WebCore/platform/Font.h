@@ -31,7 +31,20 @@
 #include "TextDirection.h"
 
 #if __APPLE__
-#include "WebCoreTextRendererFactory.h"
+
+#ifdef __OBJC__
+@class NSFont;
+#else
+class NSFont;
+#endif
+
+struct WebCoreFont {
+    NSFont *font;
+    bool syntheticBold;
+    bool syntheticOblique;
+    bool forPrinter;
+};
+
 #endif
 
 namespace WebCore {

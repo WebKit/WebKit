@@ -993,8 +993,6 @@
 		BC066F3909FEAF5300C589A7 /* WebTextRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F3509FEAF5300C589A7 /* WebTextRendererFactory.h */; };
 		BC066F3A09FEAF5300C589A7 /* WebTextRendererFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC066F3609FEAF5300C589A7 /* WebTextRendererFactory.mm */; };
 		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC066F7009FEB2FA00C589A7 /* WebCoreTextRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6D09FEB2FA00C589A7 /* WebCoreTextRendererFactory.h */; };
-		BC066F7109FEB2FA00C589A7 /* WebCoreTextRendererFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC066F6E09FEB2FA00C589A7 /* WebCoreTextRendererFactory.mm */; };
 		BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A3797097C715F0019F3D8 /* DOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A3798097C715F0019F3D8 /* DOM.mm */; };
 		BC1A37AF097C715F0019F3D8 /* DOMCore.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A3799097C715F0019F3D8 /* DOMCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2275,8 +2273,6 @@
 		BC066F3509FEAF5300C589A7 /* WebTextRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebTextRendererFactory.h; sourceTree = "<group>"; };
 		BC066F3609FEAF5300C589A7 /* WebTextRendererFactory.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextRendererFactory.mm; sourceTree = "<group>"; };
 		BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRenderer.h; sourceTree = "<group>"; };
-		BC066F6D09FEB2FA00C589A7 /* WebCoreTextRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRendererFactory.h; sourceTree = "<group>"; };
-		BC066F6E09FEB2FA00C589A7 /* WebCoreTextRendererFactory.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextRendererFactory.mm; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLStyleSheet.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLStyleSheet.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessor.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2843,8 +2839,6 @@
 				9352071C09BD3BBB00F2038D /* WebCoreWidgetHolder.h */,
 				BCFE8E310A02A1D30009E61D /* WebCoreTextRenderer.mm */,
 				BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */,
-				BC066F6D09FEB2FA00C589A7 /* WebCoreTextRendererFactory.h */,
-				BC066F6E09FEB2FA00C589A7 /* WebCoreTextRendererFactory.mm */,
 				BC066F3309FEAF5300C589A7 /* WebTextRenderer.h */,
 				BC066F3409FEAF5300C589A7 /* WebTextRenderer.mm */,
 				BC066F3509FEAF5300C589A7 /* WebTextRendererFactory.h */,
@@ -4848,7 +4842,6 @@
 				BC066F3709FEAF5300C589A7 /* WebTextRenderer.h in Headers */,
 				BC066F3909FEAF5300C589A7 /* WebTextRendererFactory.h in Headers */,
 				BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */,
-				BC066F7009FEB2FA00C589A7 /* WebCoreTextRendererFactory.h in Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Headers */,
 				14D0C82509FF0EF5006B36D9 /* kjs_domnode.h in Headers */,
 				142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */,
@@ -5566,7 +5559,6 @@
 				65901A4509FC6039005BD752 /* WebCoreStringTruncator.mm in Sources */,
 				BC066F3809FEAF5300C589A7 /* WebTextRenderer.mm in Sources */,
 				BC066F3A09FEAF5300C589A7 /* WebTextRendererFactory.mm in Sources */,
-				BC066F7109FEB2FA00C589A7 /* WebCoreTextRendererFactory.mm in Sources */,
 				BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
 				142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */,

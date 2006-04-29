@@ -26,6 +26,14 @@
 
 #include <kxmlcore/Vector.h>
 
+#ifdef __APPLE__
+#ifdef __OBJC__
+@class WebTextRenderer;
+#else
+class WebTextRenderer;
+#endif
+#endif
+
 namespace WebCore {
 
 class Font;
@@ -47,12 +55,8 @@ public:
 private:
     mutable Pitch m_pitch;
 #if __APPLE__
-#if __OBJC__
-    id <WebCoreTextRenderer> m_renderer;
-    id <WebCoreTextRenderer> getRenderer(const FontDescription&);
-#else
-    void* m_renderer;
-#endif
+    WebTextRenderer* m_renderer;
+    WebTextRenderer* getRenderer(const FontDescription&);
     mutable WebCoreFont m_webCoreFont;
     const WebCoreFont& getWebCoreFont(const FontDescription&) const;
 #else
