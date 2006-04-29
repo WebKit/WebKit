@@ -1,3 +1,19 @@
+2006-04-28  David Hyatt  <hyatt@apple.com>
+
+        Make image buffer sizes in the loader more accurate, since we know we store
+        buffers with 4 bytes per pixel.  Double sizes to account for this.  Also
+        deal better with animated GIFs that may have thousands of frames by adding
+        in a heuristic that will use the data size instead of a single frame RGBA32
+        buffer size if it's larger.
+
+        Reviewed by darin
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * loader/Cache.cpp:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::data):
+
 2006-04-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by eric.

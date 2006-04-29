@@ -42,10 +42,10 @@ using namespace std;
 
 namespace WebCore {
 
-const int defaultCacheSize = 4096 * 1024;
+const int defaultCacheSize = 8192 * 1024;
 
 // maxCacheableObjectSize is cache size divided by 128, but with this as a minimum
-const int minMaxCacheableObjectSize = 40 * 1024;
+const int minMaxCacheableObjectSize = 80 * 1024;
 
 const int maxLRULists = 20;
     
