@@ -1,3 +1,16 @@
+2006-04-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by kdecker
+
+        Suppress error reporting dialog that blocks Javascript tests from completing.
+        
+        Real error is due to an overflow in the date/time handling functions that needs
+        to be addressed, but this will prevent the hang running the Javascript tests
+        on the build bot (along with the related changes).
+        
+        * kjs/testkjs.cpp:
+        (main): Suppress C runtime alerts
+
 2006-04-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej
