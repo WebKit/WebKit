@@ -1,3 +1,20 @@
+2006-04-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by eric.
+
+        No test necessary - fixing Win32 build, turned off C++ exceptions, turned off RTTI
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::~FrameWin):
+        * bridge/win/PageWin.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::saveDocumentState):
+        (Path::contains):
+        (Path::boundingRect):
+
 2006-04-28  David Hyatt  <hyatt@apple.com>
 
         Merge WebCoreTextRenderer into WebTextRenderer.  Merge WebCoreTextRendererFactory

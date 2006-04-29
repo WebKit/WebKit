@@ -57,6 +57,8 @@ FrameWin::FrameWin(Page* page, RenderPart* renderPart, FrameWinClient* client)
 
 FrameWin::~FrameWin()
 {
+    setView(0);
+    clearRecordedFormValues();    
 }
 
 void FrameWin::urlSelected(const ResourceRequest& request)

@@ -67,6 +67,10 @@ namespace WebCore {
         WebCorePageBridge* bridge() const { return m_bridge; }
 #endif
 
+#if PLATFORM(WIN_OS)
+        Page();
+#endif
+
     private:
         void init();
 

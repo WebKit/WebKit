@@ -243,7 +243,7 @@ bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionControl
 void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { }
 static int frameNumber = 0;
 Frame* FrameWin::createFrame(KURL const&,String const&,RenderPart*,String const&) { return 0; }
-void FrameWin::saveDocumentState(void) { }
+void FrameWin::saveDocumentState() { }
 void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { }
 void FrameWin::clearUndoRedoOperations(void) { }
 String FrameWin::incomingReferrer() const { return String(); }
@@ -286,9 +286,9 @@ void GraphicsContext::clip(const Path&) { }
 Path::Path(){ }
 Path::~Path(){ }
 Path::Path(const Path&){ }
-bool Path::contains(const IntPoint&) const{ return false; }
+bool Path::contains(const FloatPoint&) const{ return false; }
 void Path::translate(const FloatSize&){ }
-IntRect Path::boundingRect() const { return IntRect(); }
+FloatRect Path::boundingRect() const { return FloatRect(); }
 Path& Path::operator=(const Path&){ return*this; }
 void Path::clear() { }
 void Path::moveTo(const FloatPoint&) { }
