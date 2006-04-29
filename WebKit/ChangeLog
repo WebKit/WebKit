@@ -1,3 +1,18 @@
+2006-04-29  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+
+        Bug 8577: [TabBarView _web_superviewOfClass:stoppingAtClass:]
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8577
+
+        Added back _web_superviewOfClass:stoppingAtClass:.
+        This method was removed in r14032 (bug 8562), but Safari 2.0 still uses it.
+        We should remove this method once Open Source users have a new version
+        to use with TOT WebKit.
+
+        * Misc/WebNSViewExtras.m:
+        (-[NSView _web_superviewOfClass:stoppingAtClass:]):
+
 2006-04-28  David Hyatt  <hyatt@apple.com>
 
         Double the cache size to account for our revised (more accurate)

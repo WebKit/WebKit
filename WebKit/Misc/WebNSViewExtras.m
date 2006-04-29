@@ -48,6 +48,22 @@
 
 @implementation NSView (WebExtras)
 
+// FIXME: Safari 2.0 is the only client of _web_superviewOfClass:stoppingAtClass:
+// remove this method once Open Source users have a new version to use with TOT WebKit.
+- (NSView *)_web_superviewOfClass:(Class)class stoppingAtClass:(Class)limitClass
+{
+    NSView *view = self;
+    while ((view = [view superview]) != nil) {
+        if ([view isKindOfClass:class]) {
+            return view;
+        } else if (limitClass && [view isKindOfClass:limitClass]) {
+            break;
+        }
+    }
+
+    return nil;
+}
+
 - (NSView *)_web_superviewOfClass:(Class)class
 {
     NSView *view = [self superview];
