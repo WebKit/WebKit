@@ -1,3 +1,9 @@
+2006-05-01  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix build
+
+        * WebKit.exp: Add symbol that the new Safari will need.
+
 2006-05-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
