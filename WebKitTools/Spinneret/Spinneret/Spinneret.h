@@ -26,5 +26,12 @@
 #pragma once
 
 #include "resource.h"
+#include "WebHost.h"
 
-void updateLocationBar(const char* URL);
+using namespace WebKit;
+
+class SpinneretWebHost : public WebHost
+{
+public:
+    virtual void updateLocationBar(const char* URL);
+};

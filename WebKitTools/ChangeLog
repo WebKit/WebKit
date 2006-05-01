@@ -1,3 +1,20 @@
+2006-05-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by eric.
+
+        Spinneret now links against the new separate lib.
+        
+        * Spinneret/Spinneret.sln:
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (SpinneretWebHost::updateLocationBar):
+        (_tWinMain):
+        * Spinneret/Spinneret/Spinneret.h:
+        * Spinneret/Spinneret/Spinneret.vcproj:
+        * Spinneret/Spinneret/WebFrame.cpp: Removed.
+        * Spinneret/Spinneret/WebFrame.h: Removed.
+        * Spinneret/Spinneret/WebView.cpp: Removed.
+        * Spinneret/Spinneret/WebView.h: Removed.
+
 2006-04-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by kdecker

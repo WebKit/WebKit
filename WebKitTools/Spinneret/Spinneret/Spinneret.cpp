@@ -27,7 +27,6 @@
 #include "Spinneret.h"
 #include "WebView.h"
 #include "WebFrame.h"
-#include "unicode/uclean.h"
 
 #include <commctrl.h>
 
@@ -42,6 +41,7 @@ HWND hMainWnd;
 HWND hURLBarWnd;
 long DefEditProc;
 WebView* gWebView = 0;
+WebHost* gWebHost = 0;
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
@@ -52,7 +52,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK    MyEditProc(HWND, UINT, WPARAM, LPARAM);
 
-void updateLocationBar(const char* URL)
+void SpinneretWebHost::updateLocationBar(const char* URL)
 {
     SendMessageA(hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)URL);
 }
@@ -108,7 +108,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     SetWindowLong(hURLBarWnd, GWL_WNDPROC,(long)MyEditProc);
     SetFocus(hURLBarWnd);
 
-    gWebView = WebView::createWebView(hInstance, hMainWnd);
+    gWebHost = new SpinneretWebHost();
+    gWebView = WebView::createWebView(hInstance, hMainWnd, gWebHost);
     resizeSubViews();
     ShowWindow(gWebView->windowHandle(), nCmdShow);
     UpdateWindow(gWebView->windowHandle());
@@ -127,7 +128,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
     delete gWebView;
 #ifdef _CRTDBG_MAP_ALLOC
-    u_cleanup();
     _CrtDumpMemoryLeaks();
 #endif
 
