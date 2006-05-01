@@ -1,3 +1,100 @@
+2006-05-01  David Hyatt  <hyatt@apple.com>
+
+        Convert WebTextRenderer to be a C++ class.  Change the factory so
+        that it uses pointer-based hashmaps instead of NSMutableDictionaries.
+        Convert uses of malloc/free to new/delete so that they start using
+        the fastMalloc/fastFree code.
+
+        Reviewed by darin
+
+        * bridge/mac/WebCoreStringTruncator.mm:
+        (stringWidth):
+        (truncateString):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::sizeHint):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth):
+        * kwq/KWQListBox.mm:
+        (itemTextRenderer):
+        (groupLabelTextRenderer):
+        (QListBox::sizeForNumberOfLines):
+        (QListBox::clearCachedTextRenderers):
+        (-[KWQTableView drawRow:clipRect:]):
+        * platform/FontDataSet.h:
+        * platform/mac/FontMac.mm:
+        (WebCore::FontDataSet::~FontDataSet):
+        (WebCore::FontDataSet::getRenderer):
+        (WebCore::FontDataSet::invalidate):
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::drawLineForText):
+        (WebCore::Font::drawLineForMisspelling):
+        (WebCore::Font::misspellingLineThickness):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::checkSelectionPoint):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        (WebCoreTextFloatWidth):
+        (WebCoreSetAlwaysUseATSU):
+        * platform/mac/WebTextRenderer.h:
+        (WebCore::WebTextRenderer::ascent):
+        (WebCore::WebTextRenderer::descent):
+        (WebCore::WebTextRenderer::lineSpacing):
+        (WebCore::WebTextRenderer::lineGap):
+        (WebCore::WebTextRenderer::misspellingLineThickness):
+        (WebCore::WebTextRenderer::misspellingLinePatternWidth):
+        (WebCore::WebTextRenderer::misspellingLinePatternGapWidth):
+        * platform/mac/WebTextRenderer.mm:
+        (WebCore::WebCoreInitializeFont):
+        (WebCore::WebCoreInitializeTextRun):
+        (WebCore::WebCoreInitializeEmptyTextStyle):
+        (WebCore::WebCoreInitializeEmptyTextGeometry):
+        (WebCore::widthForGlyph):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::m_ATSUMirrors):
+        (WebCore::WebTextRenderer::~WebTextRenderer):
+        (WebCore::WebTextRenderer::xHeight):
+        (WebCore::WebTextRenderer::drawRun):
+        (WebCore::WebTextRenderer::floatWidthForRun):
+        (WebCore::WebTextRenderer::drawLineForCharacters):
+        (WebCore::WebTextRenderer::selectionRectForRun):
+        (WebCore::WebTextRenderer::drawHighlightForRun):
+        (WebCore::WebTextRenderer::drawLineForMisspelling):
+        (WebCore::WebTextRenderer::pointToOffset):
+        (WebCore::WebTextRenderer::setAlwaysUseATSU):
+        (WebCore::getSmallCapsRenderer):
+        (WebCore::findSubstituteFont):
+        (WebCore::rendererForAlternateFont):
+        (WebCore::computeWidthForSpace):
+        (WebCore::setUpFont):
+        (WebCore::CG_selectionRect):
+        (WebCore::CG_draw):
+        (WebCore::updateGlyphMapEntry):
+        (WebCore::extendGlyphMap):
+        (WebCore::extendWidthMap):
+        (WebCore::initializeATSUStyle):
+        (WebCore::createATSULayoutParameters):
+        (WebCore::disposeATSULayoutParameters):
+        (WebCore::addDirectionalOverride):
+        (WebCore::ATSU_selectionRect):
+        (WebCore::ATSU_draw):
+        (WebCore::ATSU_pointToOffset):
+        (WebCore::freeWidthMap):
+        (WebCore::freeGlyphMap):
+        (WebCore::glyphForCharacter):
+        (WebCore::advanceWidthIterator):
+        * platform/mac/WebTextRendererFactory.h:
+        * platform/mac/WebTextRendererFactory.mm:
+        (-[WebTextRendererFactory clearCaches]):
+        (-[WebTextRendererFactory init]):
+        (-[WebTextRendererFactory dealloc]):
+        (-[WebTextRendererFactory rendererWithFont:]):
+
 2006-05-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

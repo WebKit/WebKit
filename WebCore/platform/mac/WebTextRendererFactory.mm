@@ -58,45 +58,6 @@ using namespace WebCore;
 
 static WebTextRendererFactory* sharedFactory;
 
-void WebCoreInitializeFont(WebCoreFont *font)
-{
-    font->font = nil;
-    font->syntheticBold = NO;
-    font->syntheticOblique = NO;
-    font->forPrinter = NO;
-}
-
-void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to)
-{
-    run->characters = characters;
-    run->length = length;
-    run->from = from;
-    run->to = to;
-}
-
-void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
-{
-    style->textColor = nil;
-    style->backgroundColor = nil;
-    style->letterSpacing = 0;
-    style->wordSpacing = 0;
-    style->padding = 0;
-    style->families = nil;
-    style->smallCaps = NO;
-    style->rtl = NO;
-    style->directionalOverride = NO;
-    style->applyRunRounding = YES;
-    style->applyWordRounding = YES;
-    style->attemptFontSubstitution = YES;
-}
-
-void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry)
-{
-    geometry->point.x = 0;
-    geometry->point.y = 0;
-    geometry->useFontMetricsForSelectionYAndHeight = YES;
-}
-
 @interface NSFont (WebPrivate)
 - (ATSUFontID)_atsFontID;
 @end
@@ -185,7 +146,7 @@ static CFMutableDictionaryRef fixedPitchFonts;
 {
     int i;
     for (i = 0; i < WEB_TEXT_RENDERER_FACTORY_NUM_CACHES; ++i)
-        [caches[i] removeAllObjects];
+        deleteAllValues(*caches[i]);
 
     if (fontCache)
         CFRelease(fontCache);
@@ -268,7 +229,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     
     int i;
     for (i = 0; i < WEB_TEXT_RENDERER_FACTORY_NUM_CACHES; ++i)
-        caches[i] = [[NSMutableDictionary alloc] init];
+        caches[i] = new HashMap<NSFont*, WebTextRenderer*>;
     
     ASSERT(!sharedFactory);
     sharedFactory = KWQRetain(self);
@@ -280,22 +241,18 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 {
     int i;
     for (i = 0; i < WEB_TEXT_RENDERER_FACTORY_NUM_CACHES; ++i)
-        [caches[i] release];
+        delete caches[i];
 
-    [viewBuffers release];
-    [viewStack release];
-    
     [super dealloc];
 }
 
 - (WebTextRenderer *)rendererWithFont:(WebCoreFont)font
 {
-    NSMutableDictionary *cache = caches[(font.syntheticBold << 2) | (font.syntheticOblique << 1) | font.forPrinter];
-    WebTextRenderer *renderer = [cache objectForKey:font.font];
-    if (renderer == nil) {
-        renderer = [[WebTextRenderer alloc] initWithFont:font];
-        [cache setObject:renderer forKey:font.font];
-        [renderer release];
+    HashMap<NSFont*, WebTextRenderer*>* cache = caches[(font.syntheticBold << 2) | (font.syntheticOblique << 1) | font.forPrinter];
+    WebTextRenderer *renderer = cache->get(font.font);
+    if (!renderer) {
+        renderer = new WebTextRenderer(font);
+        cache->set(font.font, renderer);
     }
     return renderer;
 }

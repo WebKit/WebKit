@@ -84,7 +84,7 @@ static WebTextRenderer* itemTextRenderer()
             WebCoreFont font;
             WebCoreInitializeFont(&font);
             font.font = itemFont();
-            itemScreenRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font] retain];
+            itemScreenRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
         }
         return itemScreenRenderer;
     } else {
@@ -93,7 +93,7 @@ static WebTextRenderer* itemTextRenderer()
             WebCoreInitializeFont(&font);
             font.font = itemFont();
             font.forPrinter = YES;
-            itemPrinterRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font] retain];
+            itemPrinterRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
         }
         return itemPrinterRenderer;
     }
@@ -106,7 +106,7 @@ static WebTextRenderer* groupLabelTextRenderer()
             WebCoreFont font;
             WebCoreInitializeFont(&font);
             font.font = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
-            groupLabelScreenRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font] retain];
+            groupLabelScreenRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
         }
         return groupLabelScreenRenderer;
     } else {
@@ -115,7 +115,7 @@ static WebTextRenderer* groupLabelTextRenderer()
             WebCoreInitializeFont(&font);
             font.font = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
             font.forPrinter = YES;
-            groupLabelPrinterRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:font] retain];
+            groupLabelPrinterRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
         }
         return groupLabelPrinterRenderer;
     }
@@ -301,7 +301,7 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
                 int length = s.length();
                 WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
 
-                float textWidth = [(((*i).type == KWQListBoxGroupLabel) ? groupLabelRenderer : renderer) floatWidthForRun:&run style:&style];
+                float textWidth = (((*i).type == KWQListBoxGroupLabel) ? groupLabelRenderer : renderer)->floatWidthForRun(&run, &style);
                 width = max(width, textWidth);
                 
                 ++i;
@@ -349,17 +349,10 @@ void QListBox::setWritingDirection(TextDirection d)
 
 void QListBox::clearCachedTextRenderers()
 {
-    [itemScreenRenderer release];
-    itemScreenRenderer = nil;
-
-    [itemPrinterRenderer release];
-    itemPrinterRenderer = nil;
-
-    [groupLabelScreenRenderer release];
-    groupLabelScreenRenderer = nil;
-
-    [groupLabelPrinterRenderer release];
-    groupLabelPrinterRenderer = nil;
+    itemScreenRenderer = 0;
+    itemPrinterRenderer = 0;
+    groupLabelScreenRenderer = 0;
+    groupLabelPrinterRenderer = 0;
 }
 
 void QListBox::setFont(const Font& font)
@@ -718,15 +711,15 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     if (!rtl) {
         point.x = NSMinX(cellRect) + leftMargin;
     } else {
-        point.x = NSMaxX(cellRect) - rightMargin - [renderer floatWidthForRun:&run style:&style];
+        point.x = NSMaxX(cellRect) - rightMargin - renderer->floatWidthForRun(&run, &style);
     }
-    point.y = NSMaxY(cellRect) - [renderer descent] - bottomMargin;
+    point.y = NSMaxY(cellRect) - renderer->descent() - bottomMargin;
 
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
     geometry.point = point;
-    
-    [renderer drawRun:&run style:&style geometry:&geometry];
+
+    renderer->drawRun(&run, &style, &geometry);
 }
 
 - (void)_KWQ_setKeyboardFocusRingNeedsDisplay

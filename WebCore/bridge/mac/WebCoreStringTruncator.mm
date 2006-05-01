@@ -38,6 +38,8 @@
 #define STRING_BUFFER_SIZE 2048
 #define ELLIPSIS_CHARACTER 0x2026
 
+using namespace WebCore;
+
 static NSFont *currentFont;
 static WebTextRenderer* currentRenderer;
 static float currentEllipsisWidth;
@@ -82,12 +84,12 @@ static unsigned rightTruncateToBuffer(NSString *string, unsigned length, unsigne
 static float stringWidth(WebTextRenderer* renderer, const unichar *characters, unsigned length)
 {
     WebCoreTextRun run;
-    WebCoreInitializeTextRun (&run, characters, length, 0, length);
+    WebCoreInitializeTextRun(&run, characters, length, 0, length);
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.applyRunRounding = NO;
     style.applyWordRounding = NO;
-    return [renderer floatWidthForRun:&run style:&style];
+    return renderer->floatWidthForRun(&run, &style);
 }
 
 static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, TruncationFunction truncateToBuffer)
@@ -112,11 +114,10 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
     if (![currentFont isEqual:font]) {
         [currentFont release];
         currentFont = [font retain];
-        [currentRenderer release];
         WebCoreFont f;
         WebCoreInitializeFont(&f);
         f.font = font;
-        currentRenderer = [[[WebTextRendererFactory sharedFactory] rendererWithFont:f] retain];
+        currentRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
         ellipsis = ELLIPSIS_CHARACTER;
         currentEllipsisWidth = stringWidth(currentRenderer, &ellipsis, 1);
     }

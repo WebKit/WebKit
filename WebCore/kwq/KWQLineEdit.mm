@@ -280,7 +280,7 @@ IntSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, &zero, 1, 0, 1);
 
-    size.width += ceilf([renderer floatWidthForRun:&run style:&style] * numCharacters);
+    size.width += ceilf(renderer->floatWidthForRun(&run, &style) * numCharacters);
 
     return IntSize(size);
     END_BLOCK_OBJC_EXCEPTIONS;

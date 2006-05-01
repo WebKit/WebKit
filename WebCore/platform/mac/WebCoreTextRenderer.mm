@@ -29,6 +29,8 @@
 #import "WebTextRenderer.h"
 #import "WebTextRendererFactory.h"
 
+using namespace WebCore;
+
 void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint point, NSFont* font, NSColor* textColor)
 {
     WebCoreFont f;
@@ -37,7 +39,7 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
     WebTextRenderer* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
 
     WebCoreTextRun run;
-    WebCoreInitializeTextRun (&run, buffer, length, 0, length);
+    WebCoreInitializeTextRun(&run, buffer, length, 0, length);
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.applyRunRounding = NO;
@@ -46,7 +48,7 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
     geometry.point = point;
-    [renderer drawRun:&run style:&style geometry:&geometry];
+    renderer->drawRun(&run, &style, &geometry);
 }
 
 float WebCoreTextFloatWidth(const UniChar* buffer, unsigned length , NSFont* font)
@@ -62,7 +64,7 @@ float WebCoreTextFloatWidth(const UniChar* buffer, unsigned length , NSFont* fon
     WebCoreInitializeEmptyTextStyle(&style);
     style.applyRunRounding = NO;
     style.applyWordRounding = NO;
-    return [renderer floatWidthForRun:&run style:&style];
+    return renderer->floatWidthForRun(&run, &style);
 }
 
 static bool gShouldUseFontSmoothing = true;
@@ -79,7 +81,7 @@ bool WebCoreShouldUseFontSmoothing()
 
 void WebCoreSetAlwaysUseATSU(bool useATSU)
 {
-    [WebTextRenderer setAlwaysUseATSU: useATSU];
+    WebTextRenderer::setAlwaysUseATSU(useATSU);
 }
 
 NSFont* WebCoreFindFont(NSString* familyName, NSFontTraitMask traits, int size)

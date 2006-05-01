@@ -54,6 +54,12 @@
 #import <Cocoa/Cocoa.h>
 #import "Font.h"
 
+namespace WebCore
+{
+
+class FloatRect;
+class FloatPoint;
+
 struct WebCoreTextStyle
 {
     NSColor *textColor;
@@ -88,10 +94,6 @@ struct WebCoreTextGeometry
     bool useFontMetricsForSelectionYAndHeight;
 };
 
-typedef struct WebCoreTextRun WebCoreTextRun;
-typedef struct WebCoreTextStyle WebCoreTextStyle;
-typedef struct WebCoreTextGeometry WebCoreTextGeometry;
-
 void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to);
 void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style);
 void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry);
@@ -100,60 +102,64 @@ void WebCoreInitializeFont(WebCoreFont *font);
 typedef struct WidthMap WidthMap;
 typedef struct GlyphMap GlyphMap;
 
-@interface WebTextRenderer : NSObject
+class WebTextRenderer
 {
-@public
-    int ascent;
-    int descent;
-    int lineSpacing;
-    int lineGap;
-    
-    void *styleGroup;
-    
-    WebCoreFont font;
-    GlyphMap *characterToGlyphMap;
-    WidthMap *glyphToWidthMap;
+public:
+    WebTextRenderer(const WebCoreFont& f);
+    ~WebTextRenderer();
 
-    bool treatAsFixedPitch;
-    ATSGlyphRef spaceGlyph;
-    float spaceWidth;
-    float adjustedSpaceWidth;
-    float syntheticBoldOffset;
+public:
+    static void setAlwaysUseATSU(bool);
+    static bool gAlwaysUseATSU;
+
+    // vertical metrics
+    int ascent() const { return m_ascent; }
+    int descent() const { return m_descent; }
+    int lineSpacing() const { return m_lineSpacing; }
+    int lineGap() const { return m_lineGap; }
+
+    float xHeight() const;
+
+    // horizontal metrics
+    float floatWidthForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style);
+
+    // drawing
+    void drawRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry);
+    FloatRect selectionRectForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry);
+    void drawHighlightForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry);
+    void drawLineForCharacters(const FloatPoint& point, float yOffset, int width, const Color& color, float thickness);
+    void drawLineForMisspelling(const FloatPoint& point, int width);
+    int misspellingLineThickness() const { return 3; }
+
+    // selection point check 
+    int pointToOffset(const WebCoreTextRun* run, const WebCoreTextStyle* style, int x, bool includePartialGlyphs);
+
+private:
+    int misspellingLinePatternWidth() const { return 4; }
+    int misspellingLinePatternGapWidth() const { return 1; } // the number of transparent pixels after the dot
+
+public:
+    int m_ascent;
+    int m_descent;
+    int m_lineSpacing;
+    int m_lineGap;
     
-    WebTextRenderer *smallCapsRenderer;
-    ATSUStyle _ATSUStyle;
-    bool ATSUStyleInitialized;
-    bool ATSUMirrors;
+    void* m_styleGroup;
+    
+    WebCoreFont m_font;
+    GlyphMap* m_characterToGlyphMap;
+    WidthMap* m_glyphToWidthMap;
+
+    bool m_treatAsFixedPitch;
+    ATSGlyphRef m_spaceGlyph;
+    float m_spaceWidth;
+    float m_adjustedSpaceWidth;
+    float m_syntheticBoldOffset;
+    
+    WebTextRenderer* m_smallCapsRenderer;
+    ATSUStyle m_ATSUStyle;
+    bool m_ATSUStyleInitialized;
+    bool m_ATSUMirrors;
+};
+
 }
-
-- (id)initWithFont:(WebCoreFont)font;
-
-+ (void)setAlwaysUseATSU:(bool)alwaysUseATSU;
-
-// WebTextRenderer must guarantee that no calls to any of these
-// methods will raise any ObjC exceptions. It's too expensive to do
-// blocking for all of them at the WebCore level, and some
-// implementations may be able to guarantee no exceptions without the
-// use of NS_DURING.
-
-// vertical metrics
-- (int)ascent;
-- (int)descent;
-- (int)lineSpacing;
-- (float)xHeight;
-
-// horizontal metrics
-- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
-
-// drawing
-- (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (NSRect)selectionRectForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
-- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset width: (int)width color:(NSColor *)color thickness:(float)thickness;
-- (void)drawLineForMisspelling:(NSPoint)point withWidth:(int)width;
-- (int)misspellingLineThickness;
-
-// selection point check
-- (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x includePartialGlyphs:(BOOL)includePartialGlyphs;
-
-@end

@@ -57,17 +57,19 @@
 class NSFont;
 #endif
 
+#include <kxmlcore/HashMap.h>
+
 struct WebCoreFont;
 
-@class WebTextRenderer;
+namespace WebCore {
+    class WebTextRenderer;
+}
 
 #define WEB_TEXT_RENDERER_FACTORY_NUM_CACHES 8
 
 @interface WebTextRendererFactory : NSObject
 {
-    NSMutableDictionary *caches[WEB_TEXT_RENDERER_FACTORY_NUM_CACHES];
-    NSMutableDictionary *viewBuffers;
-    NSMutableArray *viewStack;
+    HashMap<NSFont*, WebCore::WebTextRenderer*>* caches[WEB_TEXT_RENDERER_FACTORY_NUM_CACHES];
 }
 
 + (void)createSharedFactory;
@@ -80,6 +82,6 @@ struct WebCoreFont;
 
 - (NSFont *)cachedFontFromFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size;
 
-- (WebTextRenderer *)rendererWithFont:(WebCoreFont)font;
+- (WebCore::WebTextRenderer *)rendererWithFont:(WebCoreFont)font;
 
 @end

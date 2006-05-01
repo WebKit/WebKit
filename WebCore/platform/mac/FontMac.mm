@@ -49,7 +49,6 @@ FontDataSet::FontDataSet()
 
 FontDataSet::~FontDataSet()
 {
-    KWQRelease(m_renderer);
     KWQRelease(m_webCoreFont.font);
 }
 
@@ -75,7 +74,7 @@ const WebCoreFont& FontDataSet::getWebCoreFont(const FontDescription& fontDescri
 WebTextRenderer* FontDataSet::getRenderer(const FontDescription& fontDescription)
 {
     if (!m_renderer)
-        m_renderer = KWQRetain([[WebTextRendererFactory sharedFactory] rendererWithFont:getWebCoreFont(fontDescription)]);
+        m_renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:getWebCoreFont(fontDescription)];
     return m_renderer;
 }
 
@@ -90,8 +89,7 @@ void FontDataSet::determinePitch(const FontDescription& fontDescription) const {
 
 void FontDataSet::invalidate()
 {
-    KWQRelease(m_renderer);
-    m_renderer = nil;
+    m_renderer = 0;
     KWQRelease(m_webCoreFont.font);
     m_webCoreFont.font = nil;
     m_pitch = UnknownPitch;
@@ -104,25 +102,26 @@ const WebCoreFont& Font::getWebCoreFont() const
 
 int Font::ascent() const
 {
-    return [m_dataSet->getRenderer(fontDescription()) ascent];
+    assert(m_dataSet);
+    return m_dataSet->getRenderer(fontDescription())->ascent();
 }
 
 int Font::descent() const
 {
     assert(m_dataSet);
-    return [m_dataSet->getRenderer(fontDescription()) descent];
+    return m_dataSet->getRenderer(fontDescription())->descent();
 }
 
 int Font::lineSpacing() const
 {
     assert(m_dataSet);
-    return [m_dataSet->getRenderer(fontDescription()) lineSpacing];
+    return m_dataSet->getRenderer(fontDescription())->lineSpacing();
 }
 
 float Font::xHeight() const
 {
     assert(m_dataSet);
-    return [m_dataSet->getRenderer(fontDescription()) xHeight];
+    return m_dataSet->getRenderer(fontDescription())->xHeight();
 }
 
 bool Font::isFixedPitch() const
@@ -164,7 +163,7 @@ IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, i
     geometry.selectionY = point.y();
     geometry.selectionHeight = h;
     geometry.useFontMetricsForSelectionYAndHeight = false;
-    return enclosingIntRect([m_dataSet->getRenderer(fontDescription()) selectionRectForRun:&run style:&style geometry:&geometry]);
+    return enclosingIntRect(m_dataSet->getRenderer(fontDescription())->selectionRectForRun(&run, &style, &geometry));
 }
                      
 void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos, const QChar* str, int len, int from, int to,
@@ -197,7 +196,7 @@ void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidt
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
     geometry.point = point;
-    [m_dataSet->getRenderer(fontDescription()) drawRun:&run style:&style geometry:&geometry];
+    m_dataSet->getRenderer(fontDescription())->drawRun(&run, &style, &geometry);
 }
 
 void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point, int h, int tabWidth, int xpos, const QChar* str,
@@ -234,27 +233,22 @@ void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point,
     geometry.selectionY = point.y();
     geometry.selectionHeight = h;
     geometry.useFontMetricsForSelectionYAndHeight = false;
-    [m_dataSet->getRenderer(fontDescription()) drawHighlightForRun:&run style:&style geometry:&geometry];
+    m_dataSet->getRenderer(fontDescription())->drawHighlightForRun(&run, &style, &geometry);
 }
 
 void Font::drawLineForText(GraphicsContext* context, const IntPoint& point, int yOffset, int width) const
 {
-    [m_dataSet->getRenderer(fontDescription())
-        drawLineForCharacters:point
-                      yOffset:(float)yOffset
-                        width:width
-                        color:nsColor(context->pen().color())
-                    thickness:context->pen().width()];
+    m_dataSet->getRenderer(fontDescription())->drawLineForCharacters(point, yOffset, width, context->pen().color(), context->pen().width());
 }
 
 void Font::drawLineForMisspelling(GraphicsContext* context, const IntPoint& point, int width) const
 {
-    [m_dataSet->getRenderer(fontDescription()) drawLineForMisspelling:point withWidth:width];
+    m_dataSet->getRenderer(fontDescription())->drawLineForMisspelling(point, width);
 }
 
 int Font::misspellingLineThickness(GraphicsContext* context) const
 {
-    return [m_dataSet->getRenderer(fontDescription()) misspellingLineThickness];
+    return m_dataSet->getRenderer(fontDescription())->misspellingLineThickness();
 }
 
 float Font::floatWidth(const QChar* uchars, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding) const
@@ -275,8 +269,7 @@ float Font::floatWidth(const QChar* uchars, int slen, int pos, int len, int tabW
     style.families = families;
     style.applyRunRounding = runRounding;
 
-    return [m_dataSet->getRenderer(fontDescription()) floatWidthForRun:&run style:&style];
-
+    return m_dataSet->getRenderer(fontDescription())->floatWidthForRun(&run, &style);
 }
 
 int Font::checkSelectionPoint(const QChar* s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
@@ -299,7 +292,7 @@ int Font::checkSelectionPoint(const QChar* s, int slen, int pos, int len, int to
     style.rtl =  d == RTL;
     style.directionalOverride = visuallyOrdered;
 
-    return [m_dataSet->getRenderer(fontDescription()) pointToOffset:&run style:&style position:x includePartialGlyphs:includePartialGlyphs];
+    return m_dataSet->getRenderer(fontDescription())->pointToOffset(&run, &style, x, includePartialGlyphs);
 }
 
 }
