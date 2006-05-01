@@ -345,6 +345,10 @@ CSSValue *CSSParser::parseSVGStrokeDasharray()
         if(value && value->unit == KDOMCSSValue::Operator && value->iValue == ',')
             value = valueList->next();
     }
+    if(!valid_primitive) {
+        delete ret;
+        ret = 0;
+    }
 
     return ret;
 }

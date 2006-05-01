@@ -142,13 +142,13 @@ public:
 
     virtual void unfocusWindow();
     
-    void openURLFromPageCache(KWQPageState* state);
+    void openURLFromPageCache(KWQPageState*);
 
     virtual void saveDocumentState();
     virtual void restoreDocumentState();
     
     virtual void addMessageToConsole(const String& message,  unsigned int lineNumber, const String& sourceID);
-    virtual void setDisplaysWithFocusAttributes(bool flag);
+    virtual void setDisplaysWithFocusAttributes(bool);
     
     NSView* nextKeyView(Node* startingPoint, KWQSelectionDirection);
     NSView* nextKeyViewInFrameHierarchy(Node* startingPoint, KWQSelectionDirection);
@@ -161,8 +161,8 @@ public:
     
     static bool currentEventIsMouseDownInWidget(Widget* candidate);
     
-    virtual void runJavaScriptAlert(const String& message);
-    virtual bool runJavaScriptConfirm(const String& message);
+    virtual void runJavaScriptAlert(const String&);
+    virtual bool runJavaScriptConfirm(const String&);
     virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result);
     virtual bool locationbarVisible();
     virtual bool menubarVisible();
@@ -323,7 +323,7 @@ private:
     
     bool dispatchCPPEvent(const AtomicString &eventType, ClipboardMac::AccessPolicy policy);
 
-    NSImage* imageFromRect(NSRect rect) const;
+    NSImage* imageFromRect(NSRect) const;
 
     void freeClipboard();
 
