@@ -58,7 +58,8 @@ public:
     RefPtr<Frame> frame;
     RefPtr<FrameView> frameView;
     WebView* webView;
-    WebHost* m_host;};
+    WebHost* m_host;
+};
 
 WebFramePrivate::WebFramePrivate(char* name, WebView* view, WebHost* host)
 : d(new WebFramePrivate::WebFrameData)
