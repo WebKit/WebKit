@@ -506,6 +506,9 @@ void ReplaceSelectionCommand::doApply()
     // collect information about the current selection, prior to deleting the selection
     Selection selection = endingSelection();
     ASSERT(selection.isCaretOrRange());
+    ASSERT(selection.start().node());
+    if (selection.isNone() || !selection.start().node())
+        return;
     
     if (!selection.isContentRichlyEditable())
         m_matchStyle = true;
@@ -534,7 +537,10 @@ void ReplaceSelectionCommand::doApply()
     
     // delete the current range selection, or insert paragraph for caret selection, as needed
     if (selection.isRange()) {
-        bool mergeBlocksAfterDelete = !(fragment.hasInterchangeNewlineAtStart() || fragment.hasInterchangeNewlineAtEnd() || fragment.hasMoreThanOneBlock());
+        // When the end of the selection to delete is at the end of a paragraph, and the selection
+        // to delete spans multiple blocks, not merging will leave an empty line containing the
+        // end of the selection to delete.
+        bool mergeBlocksAfterDelete = !fragment.hasInterchangeNewlineAtEnd() && !fragment.hasInterchangeNewlineAtStart() && isEndOfParagraph(visibleEnd);
         deleteSelection(false, mergeBlocksAfterDelete);
         updateLayout();
         visibleStart = endingSelection().visibleStart();
@@ -666,11 +672,15 @@ void ReplaceSelectionCommand::doApply()
         bool insertionBlockIsRoot = insertionBlock == insertionRoot;
         VisiblePosition visibleInsertionPos(insertionPos);
         fragment.removeNode(refNode);
-        if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isStartOfBlock(visibleInsertionPos))
+        // FIXME: The first two cases need to be rethought.  They're about preventing the nesting of 
+        // incoming blocks in the block where the paste is being performed.  But, avoiding nesting doesn't 
+        // always produce the desired visual result, and the decisions are based on isBlockFlow, which 
+        // we're getting rid of.
+        if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isStartOfBlock(visibleInsertionPos) && !m_lastNodeInserted)
             insertNodeBeforeAndUpdateNodesInserted(refNode.get(), insertionBlock);
-        else if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isEndOfBlock(visibleInsertionPos)) {
+        else if (!insertionBlockIsRoot && fragment.isBlockFlow(refNode.get()) && isEndOfBlock(visibleInsertionPos))
             insertNodeAfterAndUpdateNodesInserted(refNode.get(), insertionBlock);
-        } else if (m_lastNodeInserted && !fragment.isBlockFlow(refNode.get())) {
+        else if (m_lastNodeInserted && !fragment.isBlockFlow(refNode.get())) {
             // A non-null m_lastNodeInserted means we've done merging above.  That means everything in the first paragraph 
             // of the fragment has been merged with everything up to the start of the paragraph where the paste was performed.  
             // refNode is the first node in the second paragraph of the fragment to paste.  Since it's inline, we can't 

@@ -1,0 +1,20 @@
+<style>
+div {
+    border: 1px solid black;
+    margin: 2px;
+}
+</style>
+<p>When ReplaceSelectionCommand deletes the current selection, it should request that the deletion do a merge in some cases (normally, though, it should ask that a merge not be done, because a merge will cause information about block nesting to be lost).  It wasn't requesting a merge in cases where it should have.</p>
+<p>The failing case is where the incoming fragment has more than one block, and the selection being pasted into ends at the end of a paragraph.  Any time the selection being pasted into ends at the end of a paragraph, deleting will leave leave a) a br or b) an empty block at the end of the deleted selection.  So, not merging will leave an extraneous empty line or a collapsed block after the paste operation.</p>
+<div id="test" contenteditable="true"><div style="border: 1px solid red;">bar</div>bar<br></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "character");
+s.modify("extend", "forward", "line");
+s.modify("extend", "forward", "line");
+document.execCommand("InsertHTML", false, "<div>foo</div><div>bar</div>");
+</script>

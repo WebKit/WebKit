@@ -198,17 +198,6 @@ void DeleteSelectionCommand::initializePositionData()
     m_endBlock = m_upstreamEnd.node()->enclosingBlockFlowElement();
     m_startNode = m_upstreamStart.node();
 
-    //
-    // Handle detecting if the line containing the selection end is itself fully selected.
-    // This is one of the tests that determines if block merging of content needs to be done.
-    //
-    VisiblePosition visibleEnd(m_downstreamEnd, VP_DEFAULT_AFFINITY);
-    if (isEndOfParagraph(visibleEnd)) {
-        Position previousLineStart = previousLinePosition(visibleEnd, 0).deepEquivalent();
-        if (previousLineStart.isNull() || Range::compareBoundaryPoints(previousLineStart, m_downstreamStart) >= 0)
-            m_mergeBlocksAfterDelete = false;
-    }
-
     debugPosition("m_upstreamStart      ", m_upstreamStart);
     debugPosition("m_downstreamStart    ", m_downstreamStart);
     debugPosition("m_upstreamEnd        ", m_upstreamEnd);
@@ -499,18 +488,29 @@ void DeleteSelectionCommand::mergeParagraphs()
     if (!m_downstreamEnd.node()->inDocument() || !m_upstreamStart.node()->inDocument())
          return;
          
-    // Do not move content between parts of a table.
+    // FIXME: The deletion algorithm shouldn't let this happen.
+    if (Range::compareBoundaryPoints(m_upstreamStart, m_downstreamEnd) > 0)
+        return;
+        
+    // FIXME: Merging will always be unnecessary in this case, but we really bail here because this is a case where
+    // deletion commonly fails to adjust its endpoints, which would cause the visible position comparison below to false negative.
+    if (m_endBlock == m_startBlock)
+        return;
+        
+    // Don't move content between parts of a table.
     if (isTableStructureNode(m_downstreamEnd.node()->enclosingBlockFlowElement()) || isTableStructureNode(m_upstreamStart.node()->enclosingBlockFlowElement()))
         return;
         
     VisiblePosition startOfParagraphToMove(m_downstreamEnd);
     VisiblePosition mergeDestination(m_upstreamStart);
     
-    if (mergeDestination == startOfParagraphToMove)
-        return;
+    // We need to merge into m_upstreamStart's block, but it's been emptied out and collapsed by deletion.
+    if (!mergeDestination.deepEquivalent().node()->isAncestor(m_upstreamStart.node()->enclosingBlockFlowElement())) {
+        insertNodeAt(createBreakElement(document()).get(), m_upstreamStart.node(), m_upstreamStart.offset());
+        mergeDestination = VisiblePosition(m_upstreamStart);
+    }
     
-    // FIXME: The above early return should be all we need. 
-    if (m_endBlock == m_startBlock)
+    if (mergeDestination == startOfParagraphToMove)
         return;
         
     VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove);

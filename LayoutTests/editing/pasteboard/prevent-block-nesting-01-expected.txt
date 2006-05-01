@@ -1,0 +1,28 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 85 of #text > DIV > SPAN > DIV > BODY > HTML > #document to 85 of #text > DIV > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 705x18
+          text run at (0,0) width 705: "The code in paste that prevents block nesting had a bug where the order of pasted paragraphs could be reversed."
+      RenderBlock {DIV} at (2,34) size 780x66 [border: (1px solid #FF0000)]
+        RenderBlock (anonymous) at (1,1) size 778x18
+          RenderText {#text} at (0,0) size 389x18
+            text run at (0,0) width 389: "There should be an empty line between these two paragraphs."
+          RenderInline {SPAN} at (0,0) size 0x18
+        RenderBlock (anonymous) at (1,21) size 778x42
+          RenderBlock {DIV} at (2,0) size 774x20 [border: (1px solid #FF0000)]
+            RenderBR {BR} at (1,1) size 0x18
+          RenderBlock {DIV} at (2,22) size 774x20 [border: (1px solid #FF0000)]
+            RenderText {#text} at (1,1) size 540x18
+              text run at (1,1) width 540: "This paragraph and the empty line should have be in their own divs with a red border."
+        RenderBlock (anonymous) at (1,65) size 778x0
+          RenderInline {SPAN} at (0,0) size 0x0
+caret: position 85 of child 0 {#text} of child 1 {DIV} of child 1 {SPAN} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,3 +1,32 @@
+2006-05-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8653>
+        Remove a use of hasMoreThanOneBlock, which uses info from the test rendering.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        Removed code that stopped the merge if the end of the selection to delete
+        was in a fully selected line, which was nonsense.
+        
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        Deletion does a bad job of updating the endpoints of the selection as it removes 
+        content.  If the endpoints have been flip flipped, bail.
+        If deletion has removed everything from the block that contained the
+        start of the selection to delete, we can't create a visible position inside 
+        that block to serve as a destination for the merge.  So, we insert a placeholder 
+        at that position to prop the block open to let content in.
+        
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Added an assert and two early returns for cases where we'll crash.
+        Removed a use of !fragment.hasMoreThanOneBlock, which uses test rendering info 
+        and which was wrong.
+        If we've already inserted content during the start merge, insertionPos will be 
+        the position just after that content, so inserting new content before insertionPos 
+        will reverse its order.
+
 2006-05-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
