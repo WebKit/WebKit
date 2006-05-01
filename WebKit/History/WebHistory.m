@@ -43,6 +43,7 @@ NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification"
 NSString *WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";
 NSString *WebHistoryAllItemsRemovedNotification = @"WebHistoryAllItemsRemovedNotification";
 NSString *WebHistoryLoadedNotification = @"WebHistoryLoadedNotification";
+NSString *WebHistoryItemsDiscardedWhileLoadingNotification = @"WebHistoryItemsDiscardedWhileLoadingNotification";
 NSString *WebHistorySavedNotification = @"WebHistorySavedNotification";
 NSString *WebHistoryItemsKey = @"WebHistoryItems";
 
@@ -366,55 +367,34 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 }
 
 // Return a date that marks the age limit for history entries saved to or
-// loaded from disk. Any entry on this day or older should be rejected,
-// as tested with -[NSCalendarDate compareDay:]
+// loaded from disk. Any entry older than this item should be rejected.
 - (NSCalendarDate *)_ageLimitDate
 {
     return [[NSCalendarDate calendarDate] dateByAddingYears:0 months:0 days:-[self historyAgeInDaysLimit]
                                                       hours:0 minutes:0 seconds:0];
 }
 
-// Return a flat array of WebHistoryItems. Leaves out entries older than the age limit.
-// Stops filling array when item count limit is reached, even if there are currently
-// more entries than that.
+// Return a flat array of WebHistoryItems. Ignores the date and item count limits; these are
+// respected when loading instead of when saving, so that clients can learn of discarded items
+// by listening to WebHistoryItemsDiscardedWhileLoadingNotification.
 - (NSArray *)arrayRepresentation
 {
-    int dateCount, dateIndex;
-    int limit;
-    int totalSoFar;
-    NSMutableArray *arrayRep;
-    NSCalendarDate *ageLimitDate;
+    NSMutableArray *arrayRep = [NSMutableArray array];
 
-    arrayRep = [NSMutableArray array];
-
-    limit = [self historyItemLimit];
-    ageLimitDate = [self _ageLimitDate];
-    totalSoFar = 0;
-    
-    dateCount = [_entriesByDate count];
+    int dateCount = [_entriesByDate count];
+    int dateIndex;
     for (dateIndex = 0; dateIndex < dateCount; ++dateIndex) {
-        int entryCount, entryIndex;
-        NSArray *entries;
-
-        // skip remaining days if they are older than the age limit
-        if ([[_datesWithEntries objectAtIndex:dateIndex] _webkit_compareDay:ageLimitDate] != NSOrderedDescending) {
-            break;
-        }
-
-        entries = [_entriesByDate objectAtIndex:dateIndex];
-        entryCount = [entries count];
-        for (entryIndex = 0; entryIndex < entryCount; ++entryIndex) {
-            if (totalSoFar++ >= limit) {
-                break;
-            }
+        NSArray *entries = [_entriesByDate objectAtIndex:dateIndex];
+        int entryCount = [entries count];
+        int entryIndex;
+        for (entryIndex = 0; entryIndex < entryCount; ++entryIndex)
             [arrayRep addObject: [[entries objectAtIndex:entryIndex] dictionaryRepresentation]];
-        }
     }
 
     return arrayRep;
 }
 
-- (BOOL)_loadHistoryGuts: (int *)numberOfItemsLoaded URL:(NSURL *)URL error:(NSError **)error
+- (BOOL)_loadHistoryGutsFromURL:(NSURL *)URL savedItemsCount:(int *)numberOfItemsLoaded collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error
 {
     *numberOfItemsLoaded = 0;
 
@@ -461,51 +441,48 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     NSArray *array = [fileAsDictionary objectForKey:DatesArrayKey];
         
-    int limit = [self historyItemLimit];
+    int itemCountLimit = [self historyItemLimit];
     NSCalendarDate *ageLimitDate = [self _ageLimitDate];
-    int index = 0;
-    // reverse dates so you're loading the oldest first, to minimize the number of comparisons
-    NSEnumerator *enumerator = [array reverseObjectEnumerator];
+    NSEnumerator *enumerator = [array objectEnumerator];
     BOOL ageLimitPassed = NO;
-
+    BOOL itemLimitPassed = NO;
+    ASSERT(*numberOfItemsLoaded == 0);
+    
     NSDictionary *itemAsDictionary;
     while ((itemAsDictionary = [enumerator nextObject]) != nil) {
-        WebHistoryItem *entry;
+        WebHistoryItem *item = [[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary];
 
-        entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary] autorelease];
-
-        if ([entry URLString] == nil) {
-            // entry without URL is useless; data on disk must have been bad; ignore
-            continue;
-        }
-
-        // test against date limit
-        if (!ageLimitPassed) {
-            if ([[entry _lastVisitedDate] _webkit_compareDay:ageLimitDate] != NSOrderedDescending) {
-                continue;
-            } else {
+        // item without URL is useless; data on disk must have been bad; ignore
+        if ([item URLString]) {
+            // Test against date limit. Since the items are ordered newest to oldest, we can stop comparing
+            // once we've found the first item that's too old.
+            if (!ageLimitPassed && ([[item _lastVisitedDate] compare:ageLimitDate] != NSOrderedDescending))
                 ageLimitPassed = YES;
+            
+            if (ageLimitPassed || itemLimitPassed)
+                [discardedItems addObject:item];
+            else {
+                [self addItem:item];
+                ++(*numberOfItemsLoaded);
+                if (*numberOfItemsLoaded == itemCountLimit)
+                    itemLimitPassed = YES;
             }
         }
         
-        [self addItem: entry];
-        if (++index >= limit) {
-            break;
-        }
+        [item release];
     }
 
-    *numberOfItemsLoaded = MIN(index, limit);
     return YES;    
 }
 
-- (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error
+- (BOOL)loadFromURL:(NSURL *)URL collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error
 {
     int numberOfItems;
     double start, duration;
     BOOL result;
 
     start = CFAbsoluteTimeGetCurrent();
-    result = [self _loadHistoryGuts: &numberOfItems URL:URL error:error];
+    result = [self _loadHistoryGutsFromURL:URL savedItemsCount:&numberOfItems collectDiscardedItemsInto:discardedItems error:error];
 
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
@@ -830,10 +807,16 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
 
 - (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error
 {
-    if ([_historyPrivate loadFromURL:URL error:error]) {
+    NSMutableArray *discardedItems = [NSMutableArray array];
+    
+    if ([_historyPrivate loadFromURL:URL collectDiscardedItemsInto:discardedItems error:error]) {
         [[NSNotificationCenter defaultCenter]
-            postNotificationName: WebHistoryLoadedNotification
-                          object: self];
+            postNotificationName:WebHistoryLoadedNotification
+                          object:self];
+        
+        if ([discardedItems count] > 0)
+            [self _sendNotification:WebHistoryItemsDiscardedWhileLoadingNotification entries:discardedItems];
+        
         return YES;
     }
     return NO;

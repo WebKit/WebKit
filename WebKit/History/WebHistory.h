@@ -38,11 +38,11 @@
     @constant WebHistoryItemsAddedNotification Posted from addItems:.  This 
     notification comes with a userInfo dictionary that contains the array of
     items added.  The key for the array is WebHistoryItemsKey.
-    @constant WebHistoryItemsRemovedNotification Posted from and removeItems:.  
+    @constant WebHistoryItemsRemovedNotification Posted from removeItems:.  
     This notification comes with a userInfo dictionary that contains the array of
     items removed.  The key for the array is WebHistoryItemsKey.
     @constant WebHistoryAllItemsRemovedNotification Posted from removeAllItems
-    @constant WebHistoryLoadedNotification Posted from loadHistory.
+    @constant WebHistoryLoadedNotification Posted from loadFromURL:error:.
 */
 extern NSString *WebHistoryItemsAddedNotification;
 extern NSString *WebHistoryItemsRemovedNotification;

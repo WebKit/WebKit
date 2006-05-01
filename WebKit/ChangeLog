@@ -1,3 +1,40 @@
+2006-05-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - fixed <rdar://problem/3126419> history load enforces history limit, but deletes the newest instead of oldest items
+        - added notification reporting items discarded during load because the age limit or item count limit is exceeded
+        - a few other minor tweaks
+
+        * History/WebHistory.h:
+        fixed a typo and an incorrect method name
+        
+        * History/WebHistoryPrivate.h:
+        Added declaration of WebHistoryItemsDiscardedWhileLoadingNotification. Also changed signature of
+        WebHistoryPrivate method -loadFromURL:error: to have new collectDiscardedItemsInto: parameter.
+        Also deleted declarations of two methods that didn't actually exist (loadHistory and initWithFile:), 
+        and added comments about which methods should become public API, WebKit-internal, or file-internal.
+
+        * History/WebHistory.m:
+        (-[WebHistoryPrivate arrayRepresentation]):
+        This method, called only by _saveHistoryGuts:, used to deliberately leave out items that violated
+        either the age limit or the item count limit. Now all the items are included (and thus saved), and
+        all the pruning is done at load time, so clients can keep track of the pruned items by observing
+        the new WebHistoryItemsDiscardedWhileLoadingNotification
+        (-[WebHistoryPrivate _loadHistoryGutsFromURL:savedItemsCount:collectDiscardedItemsInto:error:]):
+        Now keeps track of all the items that violated the age limit or item count limit in the new
+        collectedDiscardedItemsInto: parameter. Also, now processes items in forward order rather than
+        reverse order to fix 3126419. Now uses compare: rather than _webkit_compareDay: to check against
+        age limit; this is faster and also more correct (most noticeable with small age limits).
+        (-[WebHistoryPrivate loadFromURL:collectDiscardedItemsInto:error:]):
+        new collectDiscardedItemsInto: parameter, passed into _loadHistoryGuts:...
+        (-[WebHistory loadFromURL:error:]):
+        Now sends new WebHistoryItemsDiscardedWhileLoadingNotification if any items were discarded due
+        to age limit or item count limit.
+        
+        * WebKit.exp:
+        exported symbol for WebHistoryItemsDiscardedWhileLoadingNotification
+
 2006-04-29  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.

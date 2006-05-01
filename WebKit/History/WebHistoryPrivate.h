@@ -33,6 +33,15 @@
 @class WebHistoryItem;
 @class NSError;
 
+/*
+    @constant WebHistoryItemsDiscardedWhileLoadingNotification Posted from loadFromURL:error:.  
+    This notification comes with a userInfo dictionary that contains the array of
+    items discarded due to the date limit or item limit.  The key for the array is WebHistoryItemsKey.
+*/
+// FIXME: This notification should become API in WebHistory.h
+extern NSString *WebHistoryItemsDiscardedWhileLoadingNotification;
+
+// FIXME: The WebHistoryPrivate interface should be in WebHistoryInternal.h or inside WebHistory.m
 @interface WebHistoryPrivate : NSObject {
 @private
     NSMutableDictionary *_entriesByURL;
@@ -58,7 +67,7 @@
 - (WebHistoryItem *)itemForURL:(NSURL *)URL;
 - (WebHistoryItem *)itemForURLString:(NSString *)URLString;
 
-- (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error;
+- (BOOL)loadFromURL:(NSURL *)URL collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error;
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error;
 
 - (NSCalendarDate*)_ageLimitDate;
@@ -71,16 +80,24 @@
 @end
 
 @interface WebHistory (WebPrivate)
+
+// FIXME: The following SPI is used by Safari. Should it be made into public API?
+- (WebHistoryItem *)_itemForURLString:(NSString *)URLString;
+
+// FIXME: Safari doesn't use the following SPI, and it's used in WebKit only inside WebHistory.m.
+// Should we move it into a FileInternal category inside WebHistory.m, or do we need it for other
+// clients?
 - (void)removeItem:(WebHistoryItem *)entry;
 - (void)addItem:(WebHistoryItem *)entry;
+- (BOOL)containsItemForURLString:(NSString *)URLString;
+
+// FIXME: Safari doesn't use the following SPI, but other WebKit classes do. Should we move it into
+// a WebHistoryInternal.h, or do we need it for other clients?
+- (WebHistoryItem *)addItemForURL:(NSURL *)URL;
 // Change date on existing item
 - (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)item;
 
-- (BOOL)loadHistory;
-- initWithFile:(NSString *)file;
-- (WebHistoryItem *)addItemForURL:(NSURL *)URL;
-- (BOOL)containsItemForURLString:(NSString *)URLString;
-- (WebHistoryItem *)_itemForURLString:(NSString *)URLString;
+// FIXME: neither Safari nor WebKit use the following SPI -- do we still need it?
 - (NSCalendarDate*)ageLimitDate;
 
 @end
