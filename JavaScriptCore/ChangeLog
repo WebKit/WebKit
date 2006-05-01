@@ -1,3 +1,12 @@
+2006-05-01  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4526114> REGRESSION (two days ago): LOG() just prints @ for NSObject substitutions
+
+        * kxmlcore/Assertions.cpp:
+        Changed sense of strstr("%@") check.  I already made the same fix to the WebBrowser assertions.
+
 2006-04-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by kdecker
