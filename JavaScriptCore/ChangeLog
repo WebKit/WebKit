@@ -1,3 +1,17 @@
+2006-05-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/4308243> 8F36 Regression: crash in malloc_consolidate if you use a .PAC file
+
+        The original fix missed the oversized cell case. Added a test for "currentThreadIsMainThread || 
+        imp->m_destructorIsThreadSafe" where we collect oversized cells.
+
+        We don't have a way to test PAC files yet, so there's no test attached.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::collect): test the thread when we collect oversized cells
+
 2006-05-01  Tim Omernick  <timo@apple.com>
 
         Reviewed by Adele.

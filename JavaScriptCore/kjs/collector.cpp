@@ -544,7 +544,7 @@ bool Collector::collect()
   while (cell < heap.usedOversizeCells) {
     JSCell *imp = (JSCell *)heap.oversizeCells[cell];
     
-    if (!imp->m_marked) {
+    if (!imp->m_marked && (currentThreadIsMainThread || imp->m_destructorIsThreadSafe)) {
       imp->~JSCell();
 #if DEBUG_COLLECTOR
       heap.oversizeCells[cell]->u.freeCell.zeroIfFree = 0;
