@@ -3143,6 +3143,7 @@ done:
 {
     ASSERT(!_private->dataSource);
     _private->dataSource = [dataSource retain];
+    [_private->pluginController setDataSource:dataSource];
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource

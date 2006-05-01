@@ -1,3 +1,14 @@
+2006-05-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - manual test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8658
+          Assertion failure in -[WebPluginContainerCheck _isForbiddenFileLoad]
+          (bridge is null) when clicking QuickTime object with href
+
+        * manual-tests/plugin-controller-datasource.html: Added.
+        * manual-tests/resources/orange.mov: Added.
+
 2006-04-30  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.  Landed by eseidel.

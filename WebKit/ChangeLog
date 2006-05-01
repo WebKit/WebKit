@@ -1,3 +1,14 @@
+2006-05-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8658
+          Assertion failure in -[WebPluginContainerCheck _isForbiddenFileLoad]
+          (bridge is null) when clicking QuickTime object with href
+
+        * WebView/WebHTMLView.m:
+       (-[WebHTMLView setDataSource:]): Set the pluginController's dataSource.
+
 2006-05-01  Maciej Stachowiak  <mjs@apple.com>
 
         - fix build
