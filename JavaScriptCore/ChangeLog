@@ -1,3 +1,11 @@
+2006-05-02  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        * kxmlcore/HashMap.h:
+        (KXMLCore::::operator):
+        Return *this
+
 2006-05-01  Tim Omernick  <timo@apple.com>
 
         Reviewed by Tim Hatcher.

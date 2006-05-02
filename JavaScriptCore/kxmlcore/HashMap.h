@@ -177,6 +177,7 @@ namespace KXMLCore {
     {
         HashMap tmp(other);
         m_impl.swap(tmp.m_impl); 
+        return *this;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
