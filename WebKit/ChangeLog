@@ -1,3 +1,13 @@
+2006-05-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim O.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6988
+        REGRESSION: Display correct context menus for new text fields
+
+        * WebView/WebView.m: (-[WebView _menuForElement:defaultItems:]):
+        Don't let the UI delegate have control over the context menu for text fields.
+
 2006-05-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

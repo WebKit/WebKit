@@ -90,6 +90,7 @@
 #import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebCoreView.h>
 #import <WebKit/DOM.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
@@ -689,7 +690,10 @@ static bool debugWidget = true;
     NSMenu *menu = nil;
     unsigned i;
 
-    if (_private->UIDelegate) {
+    DOMNode* node = [element objectForKey:WebElementDOMNodeKey];
+    BOOL elementIsTextField = [node isKindOfClass:[DOMHTMLInputElement class]] && [(DOMHTMLInputElement*)node _isTextField];
+
+    if (_private->UIDelegate && !elementIsTextField) {
         id cd = _private->UIDelegate;
         
         if ([cd respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
