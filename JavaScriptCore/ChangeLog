@@ -1,3 +1,13 @@
+2006-05-01  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4476875> Support printing for embedded Netscape plugins
+
+        * bindings/npapi.h:
+        Fixed struct alignment problem in our npapi.h.  Structs must be 68k-aligned on both pre-Mac OS X
+        and Mac OS X systems, as this is what plugins expect.
+
 2006-05-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Maciej.
