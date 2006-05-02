@@ -32,6 +32,22 @@
 class KHTMLSettings
 {
 public:
+    KHTMLSettings()
+        : m_minimumFontSize(0)
+        , m_minimumLogicalFontSize(0)
+        , m_defaultFontSize(0)
+        , m_defaultFixedFontSize(0)
+        , m_javaEnabled(0)
+        , m_willLoadImagesAutomatically(0)
+        , m_privateBrowsingEnabled(0)
+        , m_pluginsEnabled(0)
+        , m_javaScriptEnabled(0)
+        , m_javaScriptCanOpenWindowsAutomatically(0)
+        , m_shouldPrintBackgrounds(0)
+        , m_textAreasAreResizable(0)
+    {
+    }
+
     const WebCore::AtomicString& stdFontName() const { return m_stdFontName; }
     const WebCore::AtomicString& fixedFontName() const { return m_fixedFontName; }
     const WebCore::AtomicString& serifFontName() const { return m_serifFontName; }

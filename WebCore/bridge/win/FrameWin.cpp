@@ -50,6 +50,7 @@ FrameWin::FrameWin(Page* page, RenderPart* renderPart, FrameWinClient* client)
     settings->setFixedFontName("Courier New");
     settings->setSansSerifFontName("Arial");
     settings->setStdFontName("Times New Roman");
+    settings->setIsJavaScriptEnabled(true);
 
     setSettings(settings);
     m_client = client;

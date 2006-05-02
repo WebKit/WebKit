@@ -1,3 +1,15 @@
+2006-05-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by eric.
+
+        WARNING: NO TEST CASES ADDED OR CHANGED
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: defined NDEBUG in release build
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin): turned on javascript.
+        * kwq/KWQKHTMLSettings.h: 
+        (KHTMLSettings::KHTMLSettings): initialized settings to 0
+
 2006-05-02  David Hyatt  <hyatt@apple.com>
 
         Make sure to updateLayout on all scrolling functions (in particular when
