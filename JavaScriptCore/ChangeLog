@@ -1,3 +1,10 @@
+2006-05-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by eric.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: set NDEBUG for release build
+        * kxmlcore/FastMalloc.cpp: Prevent USE_SYSTEM_MALLOC from being defined twice
+
 2006-05-02  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

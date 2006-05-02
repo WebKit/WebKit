@@ -65,10 +65,12 @@
 #include "config.h"
 #include "FastMalloc.h"
 
+#ifndef USE_SYSTEM_MALLOC
 #ifndef NDEBUG
 #define USE_SYSTEM_MALLOC 1
 #else
 #define USE_SYSTEM_MALLOC 0
+#endif
 #endif
 
 #if USE_SYSTEM_MALLOC

@@ -121,7 +121,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="&#x0D;&#x0A;"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
-				PreprocessorDefinitions="HAVE_CONFIG_H; WIN32; __STD_C"
+				PreprocessorDefinitions="HAVE_CONFIG_H; WIN32; __STD_C;NDEBUG"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="false"
