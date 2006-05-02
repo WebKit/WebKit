@@ -1,3 +1,18 @@
+2006-05-02  David Hyatt  <hyatt@apple.com>
+
+        Make sure to updateLayout on all scrolling functions (in particular when
+        setting scrollLeft/Top).
+
+        Reviewed by eric
+
+        fast/overflow/008,html added as a test case.
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView):
+        (WebCore::Element::scrollIntoViewIfNeeded):
+        (WebCore::Element::setScrollLeft):
+        (WebCore::Element::setScrollTop):
+
 2006-05-02  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Dave Hyatt.
