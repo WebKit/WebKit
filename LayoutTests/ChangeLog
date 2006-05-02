@@ -1,3 +1,13 @@
+2006-05-02  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=8688
+        file URLs aren't being serialized correctly when using window.location
+        
+        * fast/js/window-location-href-file-urls-expected.txt: Added.
+        * fast/js/window-location-href-file-urls.html: Added.
+        
 2006-04-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

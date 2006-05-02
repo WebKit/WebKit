@@ -694,9 +694,10 @@ DeprecatedString KURL::prettyURL() const
         }
     }
 
-    if (!authority.isEmpty()) {
+    if (!authority.isEmpty())
         result += "//" + authority;
-    }
+    else if (protocol() == "file")
+        result += "//";
 
     result += path();
     result += query();

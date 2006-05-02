@@ -1,3 +1,14 @@
+2006-05-02  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Dave Hyatt.
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8688
+        file URLs aren't being serialized correctly when using window.location
+        
+        * platform/KURL.cpp:
+        (KURL::prettyURL):
+        Append "//" for file URLs.
+        
 2006-05-01  David Hyatt  <hyatt@apple.com>
 
         Convert WebTextRenderer to be a C++ class.  Change the factory so
