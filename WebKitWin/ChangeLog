@@ -1,0 +1,7 @@
+2006-05-02  Darin Adler  <darin@apple.com>
+
+        * ChangeLog: Added.
+        * <most files: Cleared the stray "executable" bit that was on most files.
+
+---
+
