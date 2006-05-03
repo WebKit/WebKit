@@ -1,3 +1,19 @@
+2006-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8677
+          REGRESSION: wkSetUpFontCache() may be called before the SPIs are connected.
+
+        I don't know how reproduce this without one of Rosyna's hacks installed, so I
+        did not include a test.
+
+        * Misc/WebStringTruncator.m: (+[WebStringTruncator initialize]): Add call to
+        InitWebCoreSystemInterface.
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface): Add a boolean
+        so we will only do this one time.
+
 2006-05-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim O.

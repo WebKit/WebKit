@@ -35,6 +35,10 @@
 
 void InitWebCoreSystemInterface(void)
 {
+    static bool didInit;
+    if (didInit)
+        return;
+
     INIT(CGContextGetShouldSmoothFonts);
     INIT(ClearGlyphVector);
     INIT(ConvertCharToGlyphs);
@@ -57,4 +61,6 @@ void InitWebCoreSystemInterface(void)
     INIT(SetCGFontRenderingMode);
     INIT(SetDragImage);
     INIT(SetUpFontCache);
+
+    didInit = true;
 }
