@@ -1,3 +1,13 @@
+2006-05-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for <rdar://problem/4523671> 
+        REGRESSION (NativeTextField): Auto-complete popup list doesn't appear at the correct location after scrolling page.
+
+        * bindings/objc/DOMHTML.mm: (-[DOMHTMLInputElement _rectOnScreen]):
+        Use the documentView to compute the correct rect for the element when the view is scrolled.
+
 2006-05-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
