@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of LI > UL > BODY > HTML > #document to 2 of LI > UL > BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > SPAN > LI > UL > BODY > HTML > #document to 2 of #text > SPAN > LI > UL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -22,12 +22,12 @@ layer at (0,0) size 800x600
           RenderText {#text} at (124,0) size 95x55
             text run at (124,0) width 95: "hello"
       RenderBlock {P} at (0,73) size 784x72
-        RenderText {#text} at (0,0) size 764x72
+        RenderText {#text} at (0,0) size 768x72
           text run at (0,0) width 562: "This is an automated test for elementAtPoint for points over position:outside list markers. "
-          text run at (562,0) width 168: "The dictionary returned by"
+          text run at (562,0) width 172: "The dictionary returned by "
           text run at (0,18) width 743: "elementAtPoint should contain the list item as the DOMNode, not the list, for points over position:outside list markers."
           text run at (0,36) width 743: "elementAtPoint is used to determine the drag operation that will occur when something is dropped over a given point. "
-          text run at (743,36) width 21: "So,"
+          text run at (743,36) width 25: "So, "
           text run at (0,54) width 371: "this test drags a bit of text over the list marker and drops it. "
           text run at (371,54) width 386: "It should be pasted into the list item, which is contenteditable."
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {LI} of child 1 {UL} of child 0 {BODY} of child 0 {HTML} of document

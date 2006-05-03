@@ -2571,10 +2571,10 @@ Position RenderBlock::positionForRenderer(RenderObject *renderer, bool start) co
     return Position(node, offset);
 }
 
-VisiblePosition RenderBlock::positionForCoordinates(int _x, int _y)
+VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
 {
     if (isTable())
-        return RenderFlow::positionForCoordinates(_x, _y); 
+        return RenderFlow::positionForCoordinates(x, y); 
 
     int absx, absy;
     absolutePositionForContent(absx, absy);
@@ -2582,24 +2582,55 @@ VisiblePosition RenderBlock::positionForCoordinates(int _x, int _y)
     int top = absy + borderTop() + paddingTop();
     int bottom = top + contentHeight();
 
-    if (_y < top)
-        // y coordinate is above block
-        return VisiblePosition(positionForRenderer(firstLeafChild(), true), DOWNSTREAM);
+    int left = absx + borderLeft() + paddingLeft();
+    int right = left + contentWidth();
 
-    if (_y >= bottom)
-        // y coordinate is below block
-        return VisiblePosition(positionForRenderer(lastLeafChild(), false), DOWNSTREAM);
+    Node* n = element();
+
+    bool isEditableRoot = n && n->rootEditableElement() == n;
+
+    if (y < top || (isEditableRoot && (y < bottom && x < left))) {
+        if (!isEditableRoot)
+            if (RenderObject* c = firstChild()) {
+                VisiblePosition p = c->positionForCoordinates(x, y);
+                if (p.isNotNull())
+                    return p;
+            }
+        if (n) {
+            if (Node* sp = n->shadowParentNode())
+                n = sp;
+            if (Node* p = n->parent())
+                return VisiblePosition(p, n->nodeIndex(), DOWNSTREAM);
+        }
+        return VisiblePosition(n, 0, DOWNSTREAM);
+    }
+
+    if (y >= bottom || (isEditableRoot && (y >= top && x >= right))) {
+        if (!isEditableRoot)
+            if (RenderObject* c = lastChild()) {
+                VisiblePosition p = c->positionForCoordinates(x, y);
+                if (p.isNotNull())
+                    return p;
+            }
+        if (n) {
+            if (Node* sp = n->shadowParentNode())
+                n = sp;
+            if (Node* p = n->parent())
+                return VisiblePosition(p, n->nodeIndex() + 1, DOWNSTREAM);
+        }
+        return VisiblePosition(n, 0, DOWNSTREAM);
+    }
 
     if (childrenInline()) {
         if (!firstRootBox())
-            return VisiblePosition(element(), 0, DOWNSTREAM);
+            return VisiblePosition(n, 0, DOWNSTREAM);
             
-        if (_y >= top && _y < absy + firstRootBox()->topOverflow())
+        if (y >= top && y < absy + firstRootBox()->topOverflow())
             // y coordinate is above first root line box
             return VisiblePosition(positionForBox(firstRootBox()->firstLeafChild(), true), DOWNSTREAM);
         
         // look for the closest line box in the root box which is at the passed-in y coordinate
-        for (RootInlineBox *root = firstRootBox(); root; root = root->nextRootBox()) {
+        for (RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox()) {
             top = absy + root->topOverflow();
             // set the bottom based on whether there is a next root box
             if (root->nextRootBox())
@@ -2607,47 +2638,45 @@ VisiblePosition RenderBlock::positionForCoordinates(int _x, int _y)
             else
                 bottom = absy + root->bottomOverflow();
             // check if this root line box is located at this y coordinate
-            if (_y >= top && _y < bottom && root->firstChild()) {
-                InlineBox *closestBox = root->closestLeafChildForXPos(_x, absx);
-                if (closestBox) {
+            if (y >= top && y < bottom && root->firstChild()) {
+                InlineBox* closestBox = root->closestLeafChildForXPos(x, absx);
+                if (closestBox)
                     // pass the box a y position that is inside it
-                    return closestBox->object()->positionForCoordinates(_x, absy + closestBox->m_y);
-                }
+                    return closestBox->object()->positionForCoordinates(x, absy + closestBox->m_y);
             }
         }
 
         if (lastRootBox())
             // y coordinate is below last root line box
             return VisiblePosition(positionForBox(lastRootBox()->lastLeafChild(), false), DOWNSTREAM);
-        
-        return VisiblePosition(element(), 0, DOWNSTREAM);
+
+        return VisiblePosition(n, 0, DOWNSTREAM);
     }
     
     // see if any child blocks exist at this y coordinate
-    RenderObject *lastVisibleChild = 0;
-    for (RenderObject *renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
+    RenderObject* lastVisibleChild = 0;
+    for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
         if (renderer->height() == 0 || renderer->style()->visibility() != VISIBLE || renderer->isFloatingOrPositioned())
             continue;
         renderer->absolutePositionForContent(absx, top);
-        RenderObject *next = renderer->nextSibling();
+        RenderObject* next = renderer->nextSibling();
         while (next && next->isFloatingOrPositioned())
             next = next->nextSibling();
         if (next) 
             next->absolutePositionForContent(absx, bottom);
         else
             bottom = top + contentHeight();
-        if (_y >= top && _y < bottom) {
-            return renderer->positionForCoordinates(_x, _y);
-        }
+        if (y >= top && y < bottom)
+            return renderer->positionForCoordinates(x, y);
         lastVisibleChild = renderer;
     }
 
     // pass along to the last child we saw that had a height and is visible.
     if (lastVisibleChild)
-        return lastVisibleChild->positionForCoordinates(_x, _y);
+        return lastVisibleChild->positionForCoordinates(x, y);
     
     // still no luck...return this render object's element and offset 0
-    return VisiblePosition(element(), 0, DOWNSTREAM);
+    return VisiblePosition(n, 0, DOWNSTREAM);
 }
 
 void RenderBlock::calcMinMaxWidth()

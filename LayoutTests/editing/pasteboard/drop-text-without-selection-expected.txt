@@ -1,6 +1,6 @@
 EDITING DELEGATE: shouldInsertText:http://www.ibm.com/ replacingDOMRange:range from 0 of DIV to 0 of DIV givenAction:WebViewInsertActionDropped
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV to 0 of #text > DIV toDOMRange:range from 0 of #text > DIV to 19 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV to 0 of DIV toDOMRange:range from 0 of #text > DIV to 19 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600

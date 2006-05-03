@@ -276,7 +276,7 @@ static bool isStreamer(const Position &pos)
 Position Position::upstream() const
 {
     // start at equivalent deep position
-    Position start = VisiblePosition::deepEquivalent(*this);
+    Position start = *this;
     Node *startNode = start.node();
     if (!startNode)
         return Position();
@@ -363,7 +363,7 @@ Position Position::upstream() const
 // P.downstream() returns the end of the range of positions that map to the same VisiblePosition as P.
 Position Position::downstream() const
 {
-    Position start = VisiblePosition::deepEquivalent(*this);
+    Position start = *this;
     Node *startNode = start.node();
     if (!startNode)
         return Position();
@@ -443,7 +443,7 @@ Position Position::downstream() const
     return lastVisible;
 }
 
-bool hasRenderedChildrenWithHeight(RenderObject *renderer)
+static bool hasRenderedChildrenWithHeight(RenderObject *renderer)
 {
     if (!renderer->firstChild())
         return false;

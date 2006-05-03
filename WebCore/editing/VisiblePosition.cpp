@@ -89,123 +89,108 @@ VisiblePosition VisiblePosition::previous() const
     return result;
 }
 
-Position VisiblePosition::previousVisiblePosition(const Position &pos)
+Position VisiblePosition::previousVisiblePosition(const Position& pos)
 {
-    if (pos.isNull() || pos.atStart())
+    if (!pos.inRenderedContent()) {
+        Position current = pos;
+        while (!current.atStart()) {
+            current = current.previous(UsingComposedCharacters);
+            if (current.inRenderedContent())
+                return current;
+        }
         return Position();
+    }
 
-    Position test = deepEquivalent(pos);
-    Position downstreamTest = test.downstream();
-    bool acceptAnyVisiblePosition = !test.inRenderedContent();
-
-    Position current = test;
+    Position downstreamStart = pos.downstream();
+    Position current = pos;
     while (!current.atStart()) {
         current = current.previous(UsingComposedCharacters);
-        if (current.inRenderedContent() && (acceptAnyVisiblePosition || (downstreamTest != current.downstream()))) {
+        if (current.inRenderedContent() && downstreamStart != current.downstream())
             return current;
-        }
     }
-
-     return Position();
+    return Position();
 }
 
-Position VisiblePosition::nextVisiblePosition(const Position &pos)
+Position VisiblePosition::nextVisiblePosition(const Position& pos)
 {
-    if (pos.isNull() || pos.atEnd())
+    if (!pos.inRenderedContent()) {
+        Position current = pos;
+        while (!current.atEnd()) {
+            current = current.next(UsingComposedCharacters);
+            if (current.inRenderedContent())
+                return current;
+        }
         return Position();
+    }
 
-    Position test = deepEquivalent(pos);
-    bool acceptAnyVisiblePosition = !test.inRenderedContent();
-
-    Position current = test;
-    Position downstreamTest = test.downstream();
+    Position downstreamStart = pos.downstream();
+    Position current = pos;
     while (!current.atEnd()) {
         current = current.next(UsingComposedCharacters);
-        if (current.inRenderedContent() && (acceptAnyVisiblePosition || (downstreamTest != current.downstream()))) {
+        if (current.inRenderedContent() && downstreamStart != current.downstream())
             return current;
-        }
     }
-    
     return Position();
 }
 
 void VisiblePosition::initDeepPosition(const Position& position, EAffinity affinity)
 {
-    if (position.isNull()) {
+    // FIXME: No need for affinity parameter.
+    // FIXME: Would read nicer if this was a function that returned a Position.
+
+    Node* node = position.node();
+    if (!node) {
         m_deepPosition = Position();
         return;
     }
 
-    position.node()->document()->updateLayoutIgnorePendingStylesheets();
-    Position deepPos = deepEquivalent(position);
+    node->document()->updateLayoutIgnorePendingStylesheets();
+
     // If two visually equivalent positions are both candidates for being made the m_deepPosition,
     // (this can happen when two rendered positions have only collapsed whitespace between them),
     // we always choose the one that occurs first in the DOM to canonicalize VisiblePositions.
-    m_deepPosition = deepPos.upstream();
+    m_deepPosition = position.upstream();
     if (m_deepPosition.inRenderedContent())
         return;
-    
-    m_deepPosition = deepPos;
+    m_deepPosition = position;
+    if (m_deepPosition.inRenderedContent())
+        return;
+    m_deepPosition = position.downstream();
     if (m_deepPosition.inRenderedContent())
         return;
 
-    m_deepPosition = deepPos.downstream();
-    if (m_deepPosition.inRenderedContent())
-        return;
-        
-    // Do something rational for an input position inside unrendered whitespace that isn't really 
-    // equivalent to any rendered position, such as: <div>foo</div>{unrendered whitespace}<div>bar</div>
-    Position next = nextVisiblePosition(deepPos);
-    Position prev = previousVisiblePosition(deepPos);
-    
-    if (next.isNull() && prev.isNull())
-        m_deepPosition = Position();
-    else if (next.isNull())
+    // When neither upstream or downstream gets us to a visible position,
+    // look at the next and previous visible position.
+    Position next = nextVisiblePosition(position);
+    Position prev = previousVisiblePosition(position);
+    Node* nextNode = next.node();
+    Node* prevNode = prev.node();
+
+    // The new position must be in the same editable element. Enforce that first.
+    Node* editingRoot = node->rootEditableElement();
+    bool prevIsInSameEditableElement = prevNode && prevNode->rootEditableElement() == editingRoot;
+    bool nextIsInSameEditableElement = nextNode && nextNode->rootEditableElement() == editingRoot;
+    if (prevIsInSameEditableElement && !nextIsInSameEditableElement) {
         m_deepPosition = prev;
-    else if (prev.isNull())
+        return;
+    }
+    if (nextIsInSameEditableElement && !prevIsInSameEditableElement) {
         m_deepPosition = next;
-    else {
-        Node *originalBlock = position.node()->enclosingBlockFlowElement();
-        bool nextIsOutsideOriginalBlock = !next.node()->isAncestor(originalBlock) && next.node() != originalBlock;
-        bool prevIsOutsideOriginalBlock = !prev.node()->isAncestor(originalBlock) && prev.node() != originalBlock;
-        
-        if (nextIsOutsideOriginalBlock && !prevIsOutsideOriginalBlock)
-            m_deepPosition = prev;
-        else
-            m_deepPosition = next;
+        return;
     }
-}
-
-Position VisiblePosition::deepEquivalent(const Position &pos)
-{
-    Node *node = pos.node();
-    int offset = pos.offset();
-
-    if (!node)
-        return Position();
-    
-    if (pos.inRenderedContent() || isAtomicNode(node))
-        return pos;
-
-    if (offset >= (int)node->childNodeCount()) {
-        do {
-            Node *child = node->lastChild();
-            if (!child)
-                break;
-            node = child;
-        } while (!(Position(node, maxDeepOffset(node)).inRenderedContent()) && !isAtomicNode(node));
-        return Position(node, maxDeepOffset(node));
+    if (!nextIsInSameEditableElement && !prevIsInSameEditableElement) {
+        m_deepPosition = Position();
+        return;
     }
-    
-    node = node->childNode(offset);
-    ASSERT(node);
-    while (!(Position(node, 0).inRenderedContent()) && !isAtomicNode(node)) {
-        Node *child = node->firstChild();
-        if (!child)
-            break;
-        node = child;
-    }
-    return Position(node, 0);
+
+    // The new position should be in the same block flow element. Favor that.
+    Node *originalBlock = node->enclosingBlockFlowElement();
+    bool nextIsOutsideOriginalBlock = !nextNode->isAncestor(originalBlock) && nextNode != originalBlock;
+    bool prevIsOutsideOriginalBlock = !prevNode->isAncestor(originalBlock) && prevNode != originalBlock;
+    if (nextIsOutsideOriginalBlock && !prevIsOutsideOriginalBlock)
+        m_deepPosition = prev;
+    else
+        m_deepPosition = next;
 }
 
 int VisiblePosition::maxOffset(const Node *node)

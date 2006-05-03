@@ -45,7 +45,7 @@ public:
 
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
-    virtual const char *renderName() const { return "RenderButton"; }
+    virtual const char* renderName() const { return "RenderButton"; }
 
 protected:
     RenderText* m_buttonText;

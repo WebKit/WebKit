@@ -52,16 +52,23 @@ layer at (0,0) size 800x600
                   text run at (0,28) width 16: "C"
       RenderBlock {DIV} at (0,364) size 784x120
         RenderBlock {UL} at (0,0) size 784x28
+          RenderBlock (anonymous) at (40,0) size 744x0
+            RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {SPAN} at (0,0) size 0x0
           RenderListItem {LI} at (40,0) size 744x28
             RenderListMarker at (-17,8) size 7x18
-            RenderInline {FONT} at (0,0) size 0x28
-            RenderInline {SPAN} at (0,0) size 0x28
             RenderInline {FONT} at (0,0) size 17x28
               RenderInline {SPAN} at (0,0) size 17x28
                 RenderText {#text} at (727,0) size 17x28
                   text run at (727,0) width 17: "A"
         RenderBlock {DIV} at (0,44) size 784x56
+          RenderBlock (anonymous) at (0,0) size 784x0
+            RenderInline {FONT} at (0,0) size 0x0
+            RenderInline {SPAN} at (0,0) size 0x0
           RenderBlock {UL} at (0,0) size 784x56
+            RenderBlock (anonymous) at (40,0) size 744x0
+              RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {SPAN} at (0,0) size 0x0
             RenderListItem {LI} at (40,0) size 744x56
               RenderListMarker at (-17,8) size 7x18
               RenderInline {A} at (0,0) size 16x18 [color=#0000EE]
@@ -69,13 +76,18 @@ layer at (0,0) size 800x600
                   RenderInline {SPAN} at (0,0) size 16x28
                     RenderText {#text} at (0,0) size 16x28
                       text run at (0,0) width 16: "B"
-              RenderInline {FONT} at (0,0) size 22x56
-                RenderInline {SPAN} at (0,0) size 22x56
+              RenderInline {FONT} at (0,0) size 6x28
+                RenderInline {SPAN} at (0,0) size 6x28
                   RenderText {#text} at (16,0) size 6x28
                     text run at (16,0) width 6: " "
+              RenderInline {FONT} at (0,0) size 0x28
+                RenderInline {SPAN} at (0,0) size 0x28
                   RenderBR {BR} at (22,22) size 0x0
+              RenderInline {FONT} at (0,0) size 16x28
+                RenderInline {SPAN} at (0,0) size 16x28
                   RenderText {#text} at (0,28) size 16x28
                     text run at (0,28) width 16: "C"
         RenderBlock {DIV} at (0,116) size 784x4 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x0
           RenderBlock {DIV} at (2,2) size 780x0
-caret: position 1 of child 2 {#text} of child 0 {SPAN} of child 1 {FONT} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 1 of child 0 {#text} of child 0 {SPAN} of child 3 {FONT} of child 2 {LI} of child 2 {UL} of child 2 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

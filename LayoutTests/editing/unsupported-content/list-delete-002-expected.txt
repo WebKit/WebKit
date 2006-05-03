@@ -14,7 +14,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 8 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -57,8 +57,8 @@ layer at (0,0) size 800x600
           text run at (2,2) width 113: "before after"
       RenderBlock {DIV} at (0,302) size 784x32
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 68x28
-            text run at (2,2) width 68: "before "
-          RenderText {#text} at (70,2) size 45x28
-            text run at (70,2) width 45: "after"
-caret: position 8 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderText {#text} at (2,2) size 62x28
+            text run at (2,2) width 62: "before"
+          RenderText {#text} at (64,2) size 45x28
+            text run at (64,2) width 45: "after"
+caret: position 7 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

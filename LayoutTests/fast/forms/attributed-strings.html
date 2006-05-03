@@ -5,7 +5,7 @@ body { margin: 0; padding: 0 }
 </style>
 </head>
 <body>
-<div contenteditable>FAILURE</div>
+<div id="test" contenteditable>FAILURE</div>
 <p id="console"></p>
 <script type="text/javascript">
 	
@@ -23,6 +23,7 @@ body { margin: 0; padding: 0 }
 		try {
 
 			layoutTestController.dumpAsText();
+                        document.getElementById("test").focus();
 
 			var substr = textInputController.attributedSubstringFromRange(0, 2);
 //			log(substr); -- attributedSubstringFromRange is not implemented in WebKit yet

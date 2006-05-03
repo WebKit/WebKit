@@ -1,3 +1,73 @@
+2006-05-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8159
+          REGRESSION: Clicking outside new text field focuses the field
+
+        This bug has always been present for "content editable" HTML, but
+        now affects <input type=text> as well. The problem is with the editing
+        concept of a "deep equivalent". When computing the deep equivalent,
+        the code can move from outside an editable area to inside. To fix this,
+        I removed all use of the "deep equivalent" concept.
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::positionForCoordinates):
+        Changed argument names from _x and _y to just x and y. When the element
+        is the editable root, changed things so that clicks that are not within
+        the element at all return positions before or after the element, rather than
+        always choosing the closest point within the element. This gets us off on
+        the right foot, by not choosing a position inside an editable root when you
+        click outside that editable root. This code handles shadowParentNode as well,
+        and also calls positionForCoordinates on children rather than calling
+        positionForRenderer (which I believe is now a function that can be removed).
+
+        * editing/VisiblePosition.h: Removed the deepEquivalent function.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::previousVisiblePosition): Removed use of the
+        deepEquivalent function. Also, to make this function easier to understand
+        I separated out the case where the start point is "in rendered content"
+        and the case where it's not into two separate loops.
+        (WebCore::VisiblePosition::nextVisiblePosition): Ditto.
+        (WebCore::VisiblePosition::initDeepPosition): Removed use of the deepEquivalent
+        function. Also added code to make sure that this work never turns a position
+        outside an editable element into a position inside that editable element, or
+        vice versa. Reorganized the code a bit.
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream): Removed use of the deepEquivalent function.
+        (WebCore::Position::downstream): Ditto.
+
+        * editing/htmlediting.cpp:
+        (WebCore::editingIgnoresContent): Changed to use isReplaced instead of isWidget
+        and isImage to determine if editing should ignore content.
+        (WebCore::firstInSpecialElement): Rewrote isFirstVisiblePositionInSpecialElement
+        to have code to share with positionBeforeContainingSpecialElement. And changed
+        to allow both the position just before a table and the position just inside a
+        table to qualify. While this is slightly sloppy, the old code worked because
+        of the "deep equivalent" technique. This change is needed to get the desired
+        results even without that technique.
+        (WebCore::lastInSpecialElement): Ditto.
+        (WebCore::isFirstVisiblePositionInSpecialElement): Changed to use the new function.
+        (WebCore::positionBeforeContainingSpecialElement): Ditto.
+        (WebCore::isLastVisiblePositionInSpecialElement): Ditto.
+        (WebCore::positionAfterContainingSpecialElement): Ditto.
+
+        * dom/Node.cpp: (WebCore::Node::rootEditableElement): Rewrote to remove
+        special case for body tag.
+
+        - other changes
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setOuterHTML): Added a FIXME about the fact
+        that this won't merge neighboring text nodes the way setOuterText does.
+        (WebCore::HTMLElement::setInnerText): Added a FIXME about the fact that
+        this creates a text node even when setting to empty text.
+        (WebCore::HTMLElement::setOuterText): Ditto.
+
+        * editing/DeleteSelectionCommand.cpp: Removed some #if 1 and #if 0.
+        * editing/ReplaceSelectionCommand.cpp: A little reformatting.
+        * rendering/render_button.h: Tiny formatting tweak.
+
 2006-05-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.
@@ -66,8 +136,6 @@
 2006-05-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by eric.
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * WebCore.vcproj/WebCore/WebCore.vcproj: defined NDEBUG in release build
         * bridge/win/FrameWin.cpp:
@@ -260,8 +328,6 @@
         buffer size if it's larger.
 
         Reviewed by darin
-
-        WARNING: NO TEST CASES ADDED OR CHANGED
 
         * loader/Cache.cpp:
         * loader/CachedImage.cpp:

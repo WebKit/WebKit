@@ -674,7 +674,7 @@ void ReplaceSelectionCommand::doApply()
     if (fragment.firstChild()) {
         RefPtr<Node> refNode = fragment.firstChild();
         RefPtr<Node> node = refNode ? refNode->nextSibling() : 0;
-        Node *insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
+        Node* insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
         Node* insertionRoot = insertionPos.node()->rootEditableElement();
         bool insertionBlockIsRoot = insertionBlock == insertionRoot;
         VisiblePosition visibleInsertionPos(insertionPos);
@@ -710,7 +710,7 @@ void ReplaceSelectionCommand::doApply()
         }
         
         while (node) {
-            Node *next = node->nextSibling();
+            Node* next = node->nextSibling();
             fragment.removeNode(node);
             insertNodeAfterAndUpdateNodesInserted(node.get(), refNode.get());
             refNode = node;

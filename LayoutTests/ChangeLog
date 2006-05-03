@@ -1,3 +1,121 @@
+2006-05-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=8159
+          REGRESSION: Clicking outside new text field focuses the field
+
+        * fast/forms/input-text-click-inside-expected.png: Added.
+        * fast/forms/input-text-click-inside-expected.txt: Added.
+        * fast/forms/input-text-click-inside-expected.checksum: Added.
+        * fast/forms/input-text-click-inside.html: Added.
+        * fast/forms/input-text-click-outside-expected.png: Added.
+        * fast/forms/input-text-click-outside-expected.txt: Added.
+        * fast/forms/input-text-click-outside-expected.checksum: Added.
+        * fast/forms/input-text-click-outside.html: Added.
+        Test clicks both inside and outside an input element.
+
+        * editing/selection/contenteditable-click-inside-expected.png: Added.
+        * editing/selection/contenteditable-click-inside-expected.txt: Added.
+        * editing/selection/contenteditable-click-inside-expected.checksum: Added.
+        * editing/selection/contenteditable-click-inside.html: Added.
+        * editing/selection/contenteditable-click-outside-expected.png: Added.
+        * editing/selection/contenteditable-click-outside-expected.txt: Added.
+        * editing/selection/contenteditable-click-outside-expected.checksum: Added.
+        * editing/selection/contenteditable-click-outside.html: Added.
+        Added a test for the same situation, but with a div element set
+        to have editable content.
+
+        * editing/inserting/insert-3851164-fix-expected.txt:
+        * editing/inserting/insert-3851164-fix.html:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/inserting/insert-3907422-fix.html:
+        * editing/pasteboard/paste-text-011-expected.txt:
+        * editing/pasteboard/paste-text-011.html:
+        Update some tests that were relying on a bug that would cause a
+        Select All in a document that contained a single content-editable
+        element select the contents of that element.
+
+        * fast/lists/drag-into-marker-expected.checksum:
+        * fast/lists/drag-into-marker-expected.png:
+        * fast/lists/drag-into-marker-expected.txt:
+        * fast/lists/drag-into-marker.html:
+        Changed test so that it no longer tests what happens when you drag to a marker
+        that is outside the content-editable element. We may still want to make that
+        case behave as before, but that's a separate issue.
+
+        * editing/pasteboard/drop-text-without-selection-expected.txt:
+        * editing/pasteboard/merge-start-blockquote-expected.txt:
+        * editing/pasteboard/merge-start-list-expected.txt:
+        * editing/selection/select-all-iframe-expected.txt:
+        * fast/events/div-focus-expected.txt:
+        * fast/events/drag-outside-window-expected.txt:
+        * fast/forms/focus-control-to-page-expected.txt:
+        * fast/forms/input-changing-value-expected.txt:
+        * fast/forms/input-maxlength-2-expected.txt:
+        * fast/forms/input-paste-undo-expected.txt:
+        * fast/forms/input-text-paste-maxlength-expected.txt:
+        * fast/forms/input-truncate-newline-expected.txt:
+        * fast/forms/plaintext-mode-2-expected.txt:
+        * fast/text/textIteratorNilRenderer-expected.txt:
+        Update tests where the DOM range endpoints passed to the delegate are slightly
+        different, but equivalent and still OK.
+
+        * editing/pasteboard/paste-4039777-fix-expected.txt:
+        Updated tests where the resulting tree is slightly different, but still OK.
+
+        * editing/unsupported-content/list-delete-002-expected.checksum:
+        * editing/unsupported-content/list-delete-002-expected.png:
+        * editing/unsupported-content/list-delete-002-expected.txt:
+        Update test where the new code eliminates an unwanted extra space that we
+        got with the old code.
+
+        * editing/deleting/delete-4038408-fix-expected.txt:
+        * editing/deleting/delete-4038408-fix.html:
+        * editing/input/text-input-controller-expected.txt:
+        * editing/input/text-input-controller.html:
+        * fast/forms/attributed-strings-expected.txt:
+        * fast/forms/attributed-strings.html:
+        Update tests that were relying on the behavior of Select All putting the
+        selection inside a content-editable element if that element was the first
+        in the body; the patch breaks that behavior.
+
+        * fast/events/updateLayoutForHitTest-expected.checksum:
+        * fast/events/updateLayoutForHitTest-expected.png:
+        Update a test that no longer shows a visible selection.
+
+        * editing/selection/3690703-2-expected.checksum:
+        * editing/selection/3690703-2-expected.png:
+        * editing/selection/3690703-2-expected.txt:
+        * editing/selection/3690703-expected.checksum:
+        * editing/selection/3690703-expected.png:
+        * editing/selection/3690703-expected.txt:
+        Updated results for these tests, which have examples of form elements
+        inside a content-editable area. The old results were wrong; the new results
+        are not much better, but are OK.
+
+        - update some other misc. pixel-test results
+
+        * fast/inspector/style-expected.checksum:
+        * fast/inspector/style-expected.png:
+        Updated since the name changed to include "-webkit-".
+
+        * fast/overflow/childFocusRingClip-expected.checksum:
+        * fast/overflow/childFocusRingClip-expected.png:
+        Updated results that now seem to show correct clipping of the focus ring.
+
+        * fast/frames/empty-cols-attribute-expected.checksum:
+        * fast/frames/empty-cols-attribute-expected.png: Added.
+        Checksum was wrong, png was missing.
+
+        * fast/parser/001-expected.checksum:
+        * fast/parser/001-expected.png:
+        Checksum and png were incorrect -- changed a while back.
+
+        * plugins/embed-attributes-style-expected.checksum: Added.
+        * plugins/embed-attributes-style-expected.png: Added.
+        Added pixel-test results for tests that don't have them.
+
 2006-05-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
@@ -10307,7 +10425,7 @@
         Reviewed by darin
         
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=7059>
-        TinyMCE: Select All + delete sends you Back intsead of deleting
+        TinyMCE: Select All + delete sends you Back instead of deleting
 
         * editing/resources/select-all-iframe-src.html: Added.
         * editing/selection/select-all-iframe-expected.checksum: Added.

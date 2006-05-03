@@ -144,4 +144,4 @@ layer at (0,0) size 800x600
 layer at (206,85) size 385x13
   RenderBlock {DIV} at (3,3) size 385x13
 selection start: position 0 of child 1 {TABLE} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 3 {#text} of child 4 {FONT} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 0 of child 2 {BR} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document

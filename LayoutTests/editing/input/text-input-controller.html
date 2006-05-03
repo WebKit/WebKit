@@ -5,7 +5,7 @@ body { margin: 0; padding: 0 }
 </style>
 </head>
 <body>
-<div contenteditable>FAILURE</div>
+<div id="test" contenteditable>FAILURE</div>
 <script type="text/javascript">
 
     if (window.layoutTestController) {
@@ -13,6 +13,7 @@ body { margin: 0; padding: 0 }
         try {
         
             layoutTestController.dumpAsText();
+            document.getElementById("test").focus();
             document.execCommand("SelectAll");
         
             textInputController.insertText("to be deleted");

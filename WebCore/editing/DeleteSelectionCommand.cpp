@@ -64,23 +64,19 @@ static void debugNode(const char *prefix, const Node *node)
         LOG(Editing, "%s%s %p", prefix, node->nodeName().deprecatedString().latin1(), node);
 }
 
-#if 1
 static Position positionBeforePossibleContainingSpecialElement(const Position &pos, Node **containingSpecialElement)
- {
+{
     if (isFirstVisiblePositionInSpecialElement(pos))
-        return positionBeforeContainingSpecialElement(pos, containingSpecialElement);
- 
+        return positionBeforeContainingSpecialElement(pos, containingSpecialElement); 
      return pos;
- }
+}
  
 static Position positionAfterPossibleContainingSpecialElement(const Position &pos, Node **containingSpecialElement)
- {
+{
     if (isLastVisiblePositionInSpecialElement(pos))
         return positionAfterContainingSpecialElement(pos, containingSpecialElement);
- 
-     return pos;
- }
-#endif
+    return pos;
+}
 
 DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDelete, bool mergeBlocksAfterDelete)
     : CompositeEditCommand(document), 
@@ -111,19 +107,11 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document *document, const Selecti
 
 void DeleteSelectionCommand::initializeStartEnd()
  {
-#if 0
-    Position start = m_selectionToDelete.start();
-    Position end = m_selectionToDelete.end();
-    m_upstreamStart = start.upstream();
-    m_downstreamStart = start.downstream();
-    m_upstreamEnd = end.upstream();
-    m_downstreamEnd = end.downstream();
-#else
-    Node *startSpecialContainer = 0;
-    Node *endSpecialContainer = 0;
+    Node* startSpecialContainer = 0;
+    Node* endSpecialContainer = 0;
     
     Position start = positionOutsideContainingSpecialElement(m_selectionToDelete.start(), &startSpecialContainer);
-    Position end   = positionOutsideContainingSpecialElement(m_selectionToDelete.end(), &endSpecialContainer);
+    Position end = positionOutsideContainingSpecialElement(m_selectionToDelete.end(), &endSpecialContainer);
     
     m_upstreamStart = positionBeforePossibleContainingSpecialElement(start.upstream(), &startSpecialContainer);
     m_downstreamStart = positionBeforePossibleContainingSpecialElement(start.downstream(), 0);
@@ -141,7 +129,6 @@ void DeleteSelectionCommand::initializeStartEnd()
             m_downstreamEnd = end.downstream();
         }
     }
-#endif
 }
 
 void DeleteSelectionCommand::initializePositionData()
@@ -515,6 +502,9 @@ void DeleteSelectionCommand::mergeParagraphs()
         
     VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove);
     
+    if (mergeDestination == endOfParagraphToMove)
+        return;
+        
     moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination);
 }
 

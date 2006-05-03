@@ -55,10 +55,10 @@ bool editingIgnoresContent(const Node *node)
         return false;
     
     if (node->renderer()) {
-        if (node->renderer()->isWidget())
+        if (node->renderer()->isReplaced() && !node->renderer()->canHaveChildren())
             return true;
-        if (node->renderer()->isImage())
-            return true;
+        ASSERT(!node->renderer()->isWidget());
+        ASSERT(!node->renderer()->isImage());
     } else {
         // widgets
         if (static_cast<const HTMLElement *>(node)->isGenericFormElement())
@@ -206,7 +206,6 @@ static int maxRangeOffset(Node *n)
     return 1;
 }
 
-#if 1
 // FIXME: need to dump this
 bool isSpecialElement(const Node *n)
 {
@@ -238,111 +237,71 @@ bool isSpecialElement(const Node *n)
     return false;
 }
 
-bool isFirstVisiblePositionInSpecialElement(const Position& pos)
+static Node* firstInSpecialElement(const Position& pos)
 {
-    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
-
-    for (Node *n = pos.node(); n; n = n->parentNode()) {
-        VisiblePosition checkVP = VisiblePosition(n, 0, DOWNSTREAM);
-        if (checkVP != vPos) {
-            if (isTableElement(n) && checkVP.next() == vPos)
-                return true;
-            return false;
+    Node* rootEditableElement = pos.node()->rootEditableElement();
+    for (Node* n = pos.node(); n && n->rootEditableElement() == rootEditableElement; n = n->parentNode())
+        if (isSpecialElement(n)) {
+            VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
+            VisiblePosition firstInElement = VisiblePosition(n, 0, DOWNSTREAM);
+            if (isTableElement(n) && vPos == firstInElement.next())
+                return n;
+            if (vPos == firstInElement)
+                return n;
         }
-        if (n->rootEditableElement() == NULL)
-            return false;
-        if (isSpecialElement(n))
-            return true;
-    }
-
-    return false;
+    return 0;
 }
 
-Position positionBeforeContainingSpecialElement(const Position& pos, Node **containingSpecialElement)
+static Node* lastInSpecialElement(const Position& pos)
 {
-    ASSERT(isFirstVisiblePositionInSpecialElement(pos));
-
-    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
-    
-    Node *outermostSpecialElement = NULL;
-
-    for (Node *n = pos.node(); n; n = n->parentNode()) {
-        VisiblePosition checkVP = VisiblePosition(n, 0, DOWNSTREAM);
-        if (checkVP != vPos) {
-            if (isTableElement(n) && checkVP.next() == vPos)
-                outermostSpecialElement = n;
-            break;
+    Node* rootEditableElement = pos.node()->rootEditableElement();
+    for (Node* n = pos.node(); n && n->rootEditableElement() == rootEditableElement; n = n->parentNode())
+        if (isSpecialElement(n)) {
+            VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
+            VisiblePosition lastInElement = VisiblePosition(n, n->childNodeCount(), DOWNSTREAM);
+            if (isTableElement(n) && vPos == lastInElement.previous())
+                return n;
+            if (vPos == lastInElement)
+                return n;
         }
-        if (n->rootEditableElement() == NULL)
-            break;
-        if (isSpecialElement(n))
-            outermostSpecialElement = n;
-    }
-    
-    ASSERT(outermostSpecialElement);
-    if (containingSpecialElement)
-        *containingSpecialElement = outermostSpecialElement;
-        
-    Position result = positionBeforeNode(outermostSpecialElement);
-    if (result.isNull() || !result.node()->rootEditableElement())
+    return 0;
+}
+
+bool isFirstVisiblePositionInSpecialElement(const Position& pos)
+{
+    return firstInSpecialElement(pos);
+}
+
+Position positionBeforeContainingSpecialElement(const Position& pos, Node** containingSpecialElement)
+{
+    Node* n = firstInSpecialElement(pos);
+    ASSERT(n);
+    if (!n)
         return pos;
-    
+    Position result = positionBeforeNode(n);
+    if (result.isNull() || result.node()->rootEditableElement() != pos.node()->rootEditableElement())
+        return pos;
+    if (containingSpecialElement)
+        *containingSpecialElement = n;
     return result;
 }
 
 bool isLastVisiblePositionInSpecialElement(const Position& pos)
 {
-    // make sure to get a range-compliant version of the position
-    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
-    Position rangePos = rangeCompliantEquivalent(VisiblePosition(pos, DOWNSTREAM));
-
-    VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
-
-    for (Node *n = rangePos.node(); n; n = n->parentNode()) {
-        VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
-        if (checkVP != vPos)
-            return (isTableElement(n) && checkVP.previous() == vPos);
-        if (n->rootEditableElement() == NULL)
-            return false;
-        if (isSpecialElement(n))
-            return true;
-    }
-
-    return false;
+    return lastInSpecialElement(pos);
 }
 
 Position positionAfterContainingSpecialElement(const Position& pos, Node **containingSpecialElement)
 {
-    ASSERT(isLastVisiblePositionInSpecialElement(pos));
-
-    // make sure to get a range-compliant version of the position
-    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
-    Position rangePos = rangeCompliantEquivalent(VisiblePosition(pos, DOWNSTREAM));
-    VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
-
-    Node *outermostSpecialElement = NULL;
-
-    for (Node *n = rangePos.node(); n; n = n->parentNode()) {
-        VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
-        if (checkVP != vPos) {
-            if (isTableElement(n) && checkVP.previous() == vPos)
-                outermostSpecialElement = n;
-            break;
-        }
-        if (n->rootEditableElement() == NULL)
-            break;
-        if (isSpecialElement(n))
-            outermostSpecialElement = n;
-    }
-    
-    ASSERT(outermostSpecialElement);
-    if (containingSpecialElement)
-        *containingSpecialElement = outermostSpecialElement;
-
-    Position result = positionAfterNode(outermostSpecialElement);
-    if (result.isNull() || !result.node()->rootEditableElement())
+    Node* n = lastInSpecialElement(pos);
+    ASSERT(n);
+    if (!n)
         return pos;
-    
+    Position result = positionAfterNode(n);
+    if (result.isNull() || result.node()->rootEditableElement() != pos.node()->rootEditableElement())
+        return pos;
+    if (containingSpecialElement)
+        *containingSpecialElement = n;
     return result;
 }
 
@@ -350,13 +309,10 @@ Position positionOutsideContainingSpecialElement(const Position &pos, Node **con
 {
     if (isFirstVisiblePositionInSpecialElement(pos))
         return positionBeforeContainingSpecialElement(pos, containingSpecialElement);
-    
     if (isLastVisiblePositionInSpecialElement(pos))
         return positionAfterContainingSpecialElement(pos, containingSpecialElement);
-
     return pos;
 }
-#endif
 
 Position positionBeforeNode(const Node *node)
 {

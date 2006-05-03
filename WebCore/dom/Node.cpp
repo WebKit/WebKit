@@ -1041,28 +1041,13 @@ Element *Node::enclosingInlineElement() const
     return 0;
 }
 
-Element *Node::rootEditableElement() const
+Element* Node::rootEditableElement() const
 {
-    if (!isContentEditable())
-        return 0;
-
-    Node *n = const_cast<Node *>(this);
-    if (n->hasTagName(bodyTag))
-        return static_cast<Element *>(n);
-
-    Node *result = n->isEditableBlock() ? n : 0;
-    while (1) {
-        n = n->parentNode();
-        if (!n || !n->isContentEditable())
-            break;
-        if (n->hasTagName(bodyTag)) {
-            result = n;
-            break;
-        }
-        if (n->isBlockFlow())
-            result = n;
-    }
-    return static_cast<Element *>(result);
+    Element* result = 0;
+    for (Node* n = const_cast<Node*>(this); n && n->isContentEditable(); n = n->parentNode())
+        if (n->isBlockFlow() && n->isElementNode())
+            result = static_cast<Element*>(n);
+    return result;
 }
 
 bool Node::inSameRootEditableElement(Node *n)
