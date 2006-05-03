@@ -26,6 +26,9 @@
 #ifndef WebCoreSystemInterface_h
 #define WebCoreSystemInterface_h
 
+typedef signed char BOOL;
+typedef struct _NSRange NSRange;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

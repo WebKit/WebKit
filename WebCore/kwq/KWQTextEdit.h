@@ -26,6 +26,7 @@
 #ifndef QTEXTEDIT_H_
 #define QTEXTEDIT_H_
 
+#include "GraphicsTypes.h"
 #include "ScrollView.h"
 #include "TextDirection.h"
 

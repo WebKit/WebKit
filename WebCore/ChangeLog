@@ -1,5 +1,55 @@
 2006-05-03  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8696
+          another round of GraphicsContext improvements
+
+        * WebCore.xcodeproj/project.pbxproj: Added GraphicsContextCG.cpp.
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::scale): Use new GraphicsContext function.
+        (WebCore::CanvasRenderingContext2D::rotate): Ditto.
+        (WebCore::CanvasRenderingContext2D::translate): Ditto.
+        * kwq/KWQComboBox.mm: Added include (not sure if this is needed for this patch,
+        but it's needed for one of my upcoming ones).
+
+        * platform/GraphicsContext.h: Changed fillColor and setFillColor to use Color
+        instead of RGBA32. Removed setColorFromFillColor and setColorFromPen. Added
+        scale, rotate, and translate functions.
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setFillColor): Changed to use Color instead of RGBA32.
+        (WebCore::GraphicsContext::fillColor): Ditto.
+
+        * platform/GraphicsTypes.h: Moved HorizontalAlignment here.
+        * platform/Widget.h: Removed HorizontalAlignment from here.
+
+        * platform/cg/GraphicsContextCG.cpp: Added. Started as a copy of GraphicsContextMac.mm.
+        (WebCore::GraphicsContext::drawRect): Rewrote to not rely on [NSGraphicsContext currentContext].
+        (WebCore::GraphicsContext::drawLine): Ditto.
+        (WebCore::GraphicsContext::drawEllipse): Ditto.
+        (WebCore::GraphicsContext::drawArc): Ditto.
+        (WebCore::GraphicsContext::drawConvexPolygon): Ditto.
+        (WebCore::GraphicsContext::fillRect): Ditto.
+        (WebCore::GraphicsContext::setLineWidth):  Added check of paintingDisabled(). 
+        (WebCore::GraphicsContext::setMiterLimit): Ditto.
+        (WebCore::GraphicsContext::setAlpha): Ditto.
+        (WebCore::GraphicsContext::clearRect): Ditto.
+        (WebCore::GraphicsContext::strokeRect): Ditto.
+        (WebCore::GraphicsContext::setLineCap): Ditto.
+        (WebCore::GraphicsContext::setLineJoin): Ditto.
+        (WebCore::GraphicsContext::clip): Ditto.
+        (WebCore::GraphicsContext::scale): Added.
+        (WebCore::GraphicsContext::rotate): Added.
+        (WebCore::GraphicsContext::translate): Added.
+
+        * platform/mac/GraphicsContextMac.mm: Moved most of this file into GraphicsContextCG.cpp.
+        (WebCore::GraphicsContext::setCompositeOperation): Added check of paintingDisabled().
+
+        * platform/mac/WebCoreSystemInterface.h: Added declarations so this header
+        stands alone.
+
+2006-05-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Justin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8159

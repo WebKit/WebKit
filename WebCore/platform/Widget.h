@@ -53,8 +53,6 @@ namespace WebCore {
     class WidgetClient;
     class WidgetPrivate;
 
-    enum HorizontalAlignment { AlignLeft, AlignRight, AlignHCenter };
-
     class Widget {
     public:
 

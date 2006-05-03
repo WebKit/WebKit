@@ -273,10 +273,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
-    CGContextScaleCTM(c->platformContext(), sx, sy);
-#endif
+    c->scale(FloatSize(sx, sy));
 }
 
 void CanvasRenderingContext2D::rotate(float angleInRadians)
@@ -284,10 +281,7 @@ void CanvasRenderingContext2D::rotate(float angleInRadians)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
-    CGContextRotateCTM(c->platformContext(), angleInRadians);
-#endif
+    c->rotate(angleInRadians);
 }
 
 void CanvasRenderingContext2D::translate(float tx, float ty)
@@ -295,10 +289,7 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if __APPLE__
-    CGContextTranslateCTM(c->platformContext(), tx, ty);
-#endif
+    c->translate(FloatSize(tx, ty));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color)

@@ -26,6 +26,7 @@
 #ifndef QLineEdit_H
 #define QLineEdit_H
 
+#include "GraphicsTypes.h"
 #include "PlatformString.h"
 #include "TextDirection.h"
 #include "Widget.h"

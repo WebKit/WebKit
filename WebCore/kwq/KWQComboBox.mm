@@ -29,6 +29,7 @@
 #import "BlockExceptions.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
+#import "KWQLineEdit.h"
 #import "WebCoreFrameBridge.h"
 #import "WebTextRenderer.h"
 #import "WebTextRendererFactory.h"

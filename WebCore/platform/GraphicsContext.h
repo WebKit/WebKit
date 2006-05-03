@@ -73,8 +73,8 @@ namespace WebCore {
         void setPen(Pen::PenStyle);
         void setPen(RGBA32);
         
-        const RGBA32 fillColor() const;
-        void setFillColor(RGBA32);
+        Color fillColor() const;
+        void setFillColor(const Color&);
 
         void save();
         void restore();
@@ -150,6 +150,10 @@ namespace WebCore {
 
         void clip(const Path&);
 
+        void scale(const FloatSize&);
+        void rotate(float angleInRadians);
+        void translate(const FloatSize&);
+
 #if SVG_SUPPORT
         KRenderingDeviceContext* createRenderingDeviceContext();
 #endif
@@ -159,19 +163,16 @@ namespace WebCore {
 #endif
 
     private:
-        void setColorFromFillColor();
-        void setColorFromPen();
-        
         void savePlatformState();
         void restorePlatformState();
-        
+
         int focusRingWidth() const;
         int focusRingOffset() const;
         const Vector<IntRect>& focusRingRects() const;
-        
+
         static GraphicsContextPrivate* createGraphicsContextPrivate();
         static void destroyGraphicsContextPrivate(GraphicsContextPrivate*);
-        
+
         GraphicsContextPrivate* m_common;
         GraphicsContextPlatformPrivate* m_data;
     };

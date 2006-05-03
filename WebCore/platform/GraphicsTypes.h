@@ -54,6 +54,8 @@ namespace WebCore {
 
     enum LineJoin { MiterJoin, RoundJoin, BevelJoin };
 
+    enum HorizontalAlignment { AlignLeft, AlignRight, AlignHCenter };
+
     String compositeOperatorName(CompositeOperator);
     bool parseCompositeOperator(const String&, CompositeOperator&);
 
