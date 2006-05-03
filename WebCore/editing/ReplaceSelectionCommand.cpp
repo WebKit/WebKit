@@ -481,7 +481,7 @@ bool ReplaceSelectionCommand::shouldMergeStart(const ReplacementFragment& incomi
         return false;
     
     // Don't pull content out of a list item.
-    // FIXMEs: Do this check in shouldMergeEnd too.  Don't pull content out of a table cell either.
+    // FIXMEs: Don't pull content out of a table cell either.
     if (enclosingList(incomingFragment.mergeStartNode()))
         return false;
     
@@ -496,9 +496,17 @@ bool ReplaceSelectionCommand::shouldMergeStart(const ReplacementFragment& incomi
     return false;
 }
 
-bool ReplaceSelectionCommand::shouldMergeEnd(const ReplacementFragment& incomingFragment, const Selection& destinationSelection)
+bool ReplaceSelectionCommand::shouldMergeEnd(const ReplacementFragment& incomingFragment, const VisiblePosition& endOfInsertedContent, const VisiblePosition& destination)
 {
-    return !incomingFragment.hasInterchangeNewlineAtEnd() && !isEndOfParagraph(destinationSelection.visibleEnd());
+    Node* endNode = endOfInsertedContent.deepEquivalent().node();
+    Node* destinationNode = destination.deepEquivalent().node();
+    // FIXME: Unify the naming scheme for these enclosing element getters.
+    return !incomingFragment.hasInterchangeNewlineAtEnd() && 
+           isEndOfParagraph(endOfInsertedContent) && 
+           nearestMailBlockquote(endNode) == nearestMailBlockquote(destinationNode) &&
+           enclosingListChild(endNode) == enclosingListChild(destinationNode) &&
+           enclosingTableCell(endNode) == enclosingTableCell(destinationNode) &&
+           !endNode->hasTagName(hrTag);
 }
 
 void ReplaceSelectionCommand::doApply()
@@ -530,8 +538,7 @@ void ReplaceSelectionCommand::doApply()
     // Whether the first paragraph of the incoming fragment should be merged with content from visibleStart to startOfParagraph(visibleStart).
     bool mergeStart = shouldMergeStart(fragment, selection);
     
-    // Whether the last paragraph of the incoming fragment should be merged with content from visibleEnd to endOfParagraph(visibleEnd).
-    bool mergeEnd = shouldMergeEnd(fragment, selection);
+    bool endWasEndOfParagraph = isEndOfParagraph(visibleEnd);
 
     Position startPos = selection.start();
     
@@ -611,14 +618,14 @@ void ReplaceSelectionCommand::doApply()
         assert(visiblePos.isNotNull());
         addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(visiblePos);
         if (addLeadingSpace) {
-            QChar previousChar = visiblePos.previous().character();
+            QChar previousChar = visiblePos.previous().characterAfter();
             if (!previousChar.isNull()) {
                 addLeadingSpace = !frame->isCharacterSmartReplaceExempt(previousChar, true);
             }
         }
         addTrailingSpace = startPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(visiblePos);
         if (addTrailingSpace) {
-            QChar thisChar = visiblePos.character();
+            QChar thisChar = visiblePos.characterAfter();
             if (!thisChar.isNull()) {
                 addTrailingSpace = !frame->isCharacterSmartReplaceExempt(thisChar, false);
             }
@@ -792,13 +799,11 @@ void ReplaceSelectionCommand::doApply()
     
     // Make sure that content after the end of the selection being pasted into is in the same paragraph as the 
     // last bit of content that was inserted.
-    if (mergeEnd) {
-        VisiblePosition afterInsertedContent(positionAfterNode(m_lastNodeInserted.get()));
-        if (isEndOfParagraph(afterInsertedContent)) {
-            VisiblePosition startOfParagraphToMove = startOfParagraph(afterInsertedContent);
-            VisiblePosition destination = afterInsertedContent.next();
-            moveParagraph(startOfParagraphToMove, afterInsertedContent, destination);
-        }
+    VisiblePosition endOfInsertedContent(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
+    VisiblePosition destination = endOfInsertedContent.next();
+    if (!endWasEndOfParagraph && shouldMergeEnd(fragment, endOfInsertedContent, destination)) {
+        VisiblePosition startOfParagraphToMove = startOfParagraph(endOfInsertedContent);
+        moveParagraph(startOfParagraphToMove, endOfInsertedContent, destination);
     }
     
     completeHTMLReplacement(lastPositionToSelect);

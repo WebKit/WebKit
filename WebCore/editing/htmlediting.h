@@ -81,10 +81,11 @@ bool isLastVisiblePositionInSpecialElement(const Position&);
 Position positionAfterContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 Position positionOutsideContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 
-bool isListElement(Node* n);
-Node* enclosingList(Node* node);
-Node *enclosingListChild(Node *n);
-bool isTableElement(Node* n);
+Node* enclosingTableCell(Node*);
+bool isListElement(Node*);
+Node* enclosingList(Node*);
+Node* enclosingListChild(Node*);
+bool isTableElement(Node*);
 bool isFirstVisiblePositionAfterTableElement(const Position&);
 Position positionBeforePrecedingTableElement(const Position&);
 bool isLastVisiblePositionBeforeTableElement(const Position&);

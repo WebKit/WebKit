@@ -265,6 +265,8 @@ void InsertParagraphSeparatorCommand::doApply()
     // Make sure we do not cause a rendered space to become unrendered.
     // FIXME: We need the affinity for pos, but pos.downstream() does not give it
     Position leadingWhitespace = pos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY);
+    // FIXME: leadingWhitespacePosition is returning the position before preserved newlines for positions
+    // after the preserved newline, causing the newline to be turned into a nbsp.
     if (leadingWhitespace.isNotNull()) {
         Text *textNode = static_cast<Text *>(leadingWhitespace.node());
         replaceTextInNode(textNode, leadingWhitespace.offset(), 1, nonBreakingSpaceString());
@@ -277,6 +279,7 @@ void InsertParagraphSeparatorCommand::doApply()
         if (pos.offset() > 0 && !atEnd) {
             splitTextNode(textNode, pos.offset());
             pos = Position(startNode, 0);
+            visiblePos = VisiblePosition(pos);
             splitText = true;
         }
     }
@@ -295,13 +298,13 @@ void InsertParagraphSeparatorCommand::doApply()
         parent = child.release();
     }
 
-    // Insert a block placeholder if the next visible position is in a different paragraph,
-    // because we know that there will be no content on the first line of the new block 
-    // before the first block child. So, we need the placeholder to "hold the first line open".
-    VisiblePosition next = visiblePos.next();
-    if (!next.isNull() && !inSameBlock(visiblePos, next))
-        appendBlockPlaceholder(blockToInsert.get());
-
+    // If the paragraph separator was inserted at the end of a paragraph, an empty line must be
+    // created.  All of the nodes, starting at visiblePos, are about to be added to the new paragraph 
+    // element.  If the first node to be inserted won't be one that will hold an empty line open, add a br.
+    if (isEndOfParagraph(visiblePos) && !startNode->hasTagName(brTag) &&
+        !(startNode->renderer()->style()->preserveNewline() && visiblePos.characterAfter() == '\n'))
+        appendNode(createBreakElement(document()).get(), blockToInsert.get());
+        
     // Move the start node and the siblings of the start node.
     if (startNode != startBlock) {
         Node *n = startNode;
@@ -343,7 +346,6 @@ void InsertParagraphSeparatorCommand::doApply()
     }
 
     setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
-    rebalanceWhitespace();
     applyStyleAfterInsertion();
 }
 

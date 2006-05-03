@@ -1,0 +1,24 @@
+<p>This tests pasting a list into a position that would normally result in an end merge.</p>
+<div id="test1" contenteditable="true">xx</div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var e = document.getElementById("test1");
+var s = window.getSelection();
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByCharacterCommand();
+insertHTMLCommand("<ul><li><div>Item 1</div></li></ul>");
+</script>
+
+<p>This tests pasting text into a list item.  The last bit of content in the incoming fragment should be merged with the paragraph after the position being pasted into.</p>
+<div id="test2" contenteditable="true"><ul><li><div>Item 1</div></li></ul></div>
+
+<script>
+var e = document.getElementById("test2");
+var s = window.getSelection();
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByWordCommand();
+insertHTMLCommand("<div>foo</div><div>bar</div>");
+</script>

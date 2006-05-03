@@ -1,0 +1,14 @@
+<p>Tests for a bug in the paragraph separator insertion code that would add an extra newline when inserting a paragraph separator at the end of a paragraph in text that preserves newlines.  Also, an extraneous space would be added after 'foo'.  Only one newline should be added.  And there should be no extraneous spaces.</p>
+<p><b>It demonstrates a bug:</b> too much padding is left between the new line and the end of the paragraph containing 'foo'.</p>
+<div id="test" contenteditable="true"><pre>foo
+bar</pre></div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByWordCommand();
+insertParagraphCommand();
+</script>

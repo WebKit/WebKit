@@ -1,0 +1,49 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of #text > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 16 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 597x18
+          text run at (0,0) width 597: "This tests pasting a Mail blockquote into a position that would normally result in an end merge."
+      RenderBlock {DIV} at (0,34) size 784x52
+        RenderBlock {BLOCKQUOTE} at (40,0) size 704x18
+          RenderBlock {DIV} at (0,0) size 704x18
+            RenderText {#text} at (0,0) size 114x18
+              text run at (0,0) width 114: "Blockquoted Text"
+        RenderBlock (anonymous) at (0,34) size 784x18
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "x"
+      RenderBlock {P} at (0,102) size 784x36
+        RenderText {#text} at (0,0) size 759x36
+          text run at (0,0) width 289: "This tests pasting text into a Mail blockquote. "
+          text run at (289,0) width 470: "The last bit of content in the incoming fragment should be merged with the"
+          text run at (0,18) width 287: "paragraph after the position being pasted into."
+      RenderBlock {DIV} at (0,154) size 784x36
+        RenderBlock {BLOCKQUOTE} at (40,0) size 704x36
+          RenderBlock {DIV} at (0,0) size 704x18
+            RenderText {#text} at (0,0) size 81x18
+              text run at (0,0) width 81: "Blockquoted"
+            RenderText {#text} at (81,0) size 21x18
+              text run at (81,0) width 21: "foo"
+          RenderBlock {DIV} at (0,18) size 704x18
+            RenderText {#text} at (0,0) size 20x18
+              text run at (0,0) width 20: "bar"
+            RenderText {#text} at (20,0) size 33x18
+              text run at (20,0) width 33: " Text"
+caret: position 3 of child 0 {#text} of child 1 {DIV} of child 0 {BLOCKQUOTE} of child 10 {DIV} of child 0 {BODY} of child 0 {HTML} of document

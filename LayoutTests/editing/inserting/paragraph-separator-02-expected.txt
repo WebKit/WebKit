@@ -1,0 +1,27 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 585x18
+          text run at (0,0) width 361: "Tests for a bug in the paragraph separator insertion code. "
+          text run at (361,0) width 224: "Only one newline should be added."
+      RenderBlock {DIV} at (0,34) size 784x54
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 21x18
+            text run at (0,0) width 21: "foo"
+        RenderBlock {DIV} at (0,18) size 784x36
+          RenderBlock (anonymous) at (0,0) size 784x18
+            RenderBR {BR} at (0,0) size 0x18
+          RenderBlock {DIV} at (0,18) size 784x18
+            RenderText {#text} at (0,0) size 20x18
+              text run at (0,0) width 20: "bar"
+caret: position 0 of child 0 {BR} of child 1 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

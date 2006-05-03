@@ -1,0 +1,12 @@
+<p>Tests for a case where paste's end merge was failing.  You should see xfoo\nbar\nbazx.</p>
+<div id="test" contenteditable="true">xx</div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+s.setPosition(e, 0);
+moveSelectionForwardByCharacterCommand();
+insertHTMLCommand("<div>foo</div><div>bar</div>baz");
+</script>

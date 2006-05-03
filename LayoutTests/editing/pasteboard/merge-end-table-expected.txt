@@ -1,0 +1,66 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 1 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > SPAN > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 524x18
+          text run at (0,0) width 524: "This tests pasting a table into a position that would normally result in an end merge."
+      RenderBlock {DIV} at (0,34) size 784x64
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "x"
+        RenderTable {TABLE} at (0,18) size 32x28 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 30x26
+            RenderTableRow {TR} at (0,2) size 30x22
+              RenderTableCell {TD} at (2,2) size 12x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x18
+                  text run at (2,2) width 8: "1"
+              RenderTableCell {TD} at (16,2) size 12x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x18
+                  text run at (2,2) width 8: "2"
+        RenderBlock {DIV} at (0,46) size 784x18
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "x"
+      RenderBlock {P} at (0,114) size 784x36
+        RenderText {#text} at (0,0) size 779x36
+          text run at (0,0) width 242: "This tests pasting text into a table cell. "
+          text run at (242,0) width 537: "The last bit of content in the incoming fragment should be merged with the paragraph"
+          text run at (0,18) width 220: "after the position being pasted into."
+      RenderBlock {DIV} at (0,166) size 784x46
+        RenderTable {TABLE} at (0,0) size 105x46 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 103x44
+            RenderTableRow {TR} at (0,2) size 103x40
+              RenderTableCell {TD} at (2,2) size 53x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 49x18
+                  RenderText {#text} at (0,0) size 28x18
+                    text run at (0,0) width 28: "Item"
+                  RenderInline {SPAN} at (0,0) size 21x18
+                    RenderText {#text} at (28,0) size 21x18
+                      text run at (28,0) width 21: "foo"
+                RenderBlock {DIV} at (2,20) size 49x18
+                  RenderInline {SPAN} at (0,0) size 20x18
+                    RenderText {#text} at (0,0) size 20x18
+                      text run at (0,0) width 20: "bar"
+                  RenderText {#text} at (20,0) size 12x18
+                    text run at (20,0) width 12: " 1"
+              RenderTableCell {TD} at (57,11) size 44x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 40x18
+                  text run at (2,2) width 40: "Item 2"
+caret: position 3 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 10 {DIV} of child 0 {BODY} of child 0 {HTML} of document

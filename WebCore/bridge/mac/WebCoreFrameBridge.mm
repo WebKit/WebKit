@@ -1816,7 +1816,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
     bool addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
     if (addLeadingSpace) {
-        QChar previousChar = startVisiblePos.previous().character();
+        QChar previousChar = startVisiblePos.previous().characterAfter();
         if (!previousChar.isNull()) {
             addLeadingSpace = !m_frame->isCharacterSmartReplaceExempt(previousChar, true);
         }
@@ -1824,7 +1824,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     
     bool addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
     if (addTrailingSpace) {
-        QChar thisChar = endVisiblePos.character();
+        QChar thisChar = endVisiblePos.characterAfter();
         if (!thisChar.isNull()) {
             addTrailingSpace = !m_frame->isCharacterSmartReplaceExempt(thisChar, false);
         }

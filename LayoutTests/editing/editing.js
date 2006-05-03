@@ -9,6 +9,19 @@ var selection = window.getSelection();
 
 //-------------------------------------------------------------------------------------------------------
 
+function execSetSelectionCommand(sn, so, en, eo) {
+    window.getSelection().setBaseAndExtent(sn, so, en, eo);
+}
+function setSelectionCommand(sn, so, en, eo) {
+    if (commandDelay > 0) {
+        window.setTimeout(execSetSelectionCommand, commandCount * commandDelay, sn, so, en, eo);
+        commandCount++;
+    } else
+        execSetSelectionCommand(sn, so, en, eo);
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execTransposeCharactersCommand() {
     document.execCommand("Transpose");
 }

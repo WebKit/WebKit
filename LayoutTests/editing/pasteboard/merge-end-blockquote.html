@@ -1,0 +1,23 @@
+<p>This tests pasting a Mail blockquote into a position that would normally result in an end merge.</p>
+<div id="test1" contenteditable="true">x</div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var e = document.getElementById("test1");
+var s = window.getSelection();
+
+setSelectionCommand(e, 0, e, 0);
+insertHTMLCommand("<blockquote type='cite'><div>Blockquoted Text</div></blockquote>");
+</script>
+
+<p>This tests pasting text into a Mail blockquote.  The last bit of content in the incoming fragment should be merged with the paragraph after the position being pasted into.</p>
+<div id="test2" contenteditable="true"><blockquote type='cite'><div>Blockquoted Text</div></blockquote></div>
+
+<script>
+var e = document.getElementById("test2");
+var s = window.getSelection();
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByWordCommand();
+insertHTMLCommand("<div>foo</div><div>bar</div>");
+</script>

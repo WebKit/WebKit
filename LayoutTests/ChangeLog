@@ -1,3 +1,47 @@
+2006-05-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8704>
+        Fix a few end merge bugs
+        <rdar://problem/4424044>
+        REGRESSION: Extra line appears when typing
+
+        Added a function so that selection changes can participate in slow-motion-mode:
+        * editing/editing.js: 
+        Extra newlines were added:
+        * editing/inserting/paragraph-separator-01-expected.checksum: Added.
+        * editing/inserting/paragraph-separator-01-expected.png: Added.
+        * editing/inserting/paragraph-separator-01-expected.txt: Added.
+        * editing/inserting/paragraph-separator-01.html: Added.
+        * editing/inserting/paragraph-separator-02-expected.checksum: Added.
+        * editing/inserting/paragraph-separator-02-expected.png: Added.
+        * editing/inserting/paragraph-separator-02-expected.txt: Added.
+        * editing/inserting/paragraph-separator-02.html: Added.
+        A preserved newline was turned into a nbsp:
+        * editing/inserting/paragraph-separator-03-expected.checksum: Added.
+        * editing/inserting/paragraph-separator-03-expected.png: Added.
+        * editing/inserting/paragraph-separator-03-expected.txt: Added.
+        * editing/inserting/paragraph-separator-03.html: Added.
+        End merge didn't happen:
+        * editing/pasteboard/merge-end-4-expected.checksum: Added.
+        * editing/pasteboard/merge-end-4-expected.png: Added.
+        * editing/pasteboard/merge-end-4-expected.txt: Added.
+        * editing/pasteboard/merge-end-4.html: Added.
+        Content was pulled out of these special elements:
+        * editing/pasteboard/merge-end-blockquote-expected.checksum: Added.
+        * editing/pasteboard/merge-end-blockquote-expected.png: Added.
+        * editing/pasteboard/merge-end-blockquote-expected.txt: Added.
+        * editing/pasteboard/merge-end-blockquote.html: Added.
+        * editing/pasteboard/merge-end-list-expected.checksum: Added.
+        * editing/pasteboard/merge-end-list-expected.png: Added.
+        * editing/pasteboard/merge-end-list-expected.txt: Added.
+        * editing/pasteboard/merge-end-list.html: Added.
+        * editing/pasteboard/merge-end-table-expected.checksum: Added.
+        * editing/pasteboard/merge-end-table-expected.png: Added.
+        * editing/pasteboard/merge-end-table-expected.txt: Added.
+        * editing/pasteboard/merge-end-table.html: Added.
+
 2006-05-02  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Dave Hyatt.

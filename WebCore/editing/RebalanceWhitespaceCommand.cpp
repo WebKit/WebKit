@@ -43,6 +43,8 @@ static inline bool isWhitespace(const QChar &c)
     return c.unicode() == 0xa0 || isCollapsibleWhitespace(c);
 }
 
+// FIXME: This doesn't go into adjacent text in siblings, cousins, etc.
+// FIXME: This turns preserved newlines into nbsps.
 void RebalanceWhitespaceCommand::doApply()
 {
     if (m_position.isNull() || !m_position.node()->isTextNode())

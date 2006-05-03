@@ -1,0 +1,12 @@
+<p>Tests for a bug in the paragraph separator insertion code.  Only one newline should be added.</p>
+<div id="test" contenteditable="true">foo<br><div>bar</div></div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByWordCommand();
+insertParagraphCommand();
+</script>

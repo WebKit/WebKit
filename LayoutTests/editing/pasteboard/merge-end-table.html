@@ -1,0 +1,24 @@
+<p>This tests pasting a table into a position that would normally result in an end merge.</p>
+<div id="test1" contenteditable="true">xx</div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var e = document.getElementById("test1");
+var s = window.getSelection();
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByCharacterCommand();
+insertHTMLCommand("<table border='1'><tr><td>1</td><td>2</td></tr></table>");
+</script>
+
+<p>This tests pasting text into a table cell.  The last bit of content in the incoming fragment should be merged with the paragraph after the position being pasted into.</p>
+<div contenteditable="true"><table border='1'><tr><td><div id="test2">Item 1</div></td><td>Item 2</td></tr></table></div>
+
+<script>
+var e = document.getElementById("test2");
+var s = window.getSelection();
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByWordCommand();
+insertHTMLCommand("<div>foo</div><div>bar</div>");
+</script>

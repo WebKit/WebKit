@@ -1,3 +1,45 @@
+2006-05-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8704>
+        Fix a few end merge bugs
+        <rdar://problem/4424044>
+        REGRESSION: Extra line appears when typing
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge smartInsertForString:replacingRange:beforeString:afterString:]): 
+        Use renamed characterAfter.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        Regenerate a VisiblePosition that became stale during a text node split.
+        Don't rebalance whitespace after the operation, 1) it has a bug that turns preserved
+        newlines into nbsps, 2) I think it should only be done during serialization, not after 
+        every command (since editable regions now always have -webkit-nbsp-mode:space on them).
+        Use a regular br for the placeholder as I think we can move away from -webkit-block-placeholders.
+        
+        * editing/RebalanceWhitespaceCommand.cpp: Added FIXMEs.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart): Removed FIXME.
+        (WebCore::ReplaceSelectionCommand::shouldMergeEnd): Can now use rendering information.
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Call shouldMergeEnd after the insertion so that it can use rendering information.
+        Don't use positionAfterNode of the last node inserted to mark the position at the end 
+        of inserted content because canonicalization can send it into content that was already
+        in the document.
+        
+        * editing/ReplaceSelectionCommand.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::characterAfter): 
+        Renamed.  When two candidates are visually equivalent, the rightmost candidate will be 
+        the one inside the text node where the character will be.
+        
+        * editing/VisiblePosition.h:
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingTableCell): Added.
+        (WebCore::enclosingList):
+        * editing/htmlediting.h:
+
 2006-05-02  David Hyatt  <hyatt@apple.com>
 
         Partial fix for the crash in bugzilla bug 8088.  There's a third crash
