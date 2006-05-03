@@ -88,6 +88,8 @@ namespace WebCore
 typedef float WebGlyphWidth;
 
 struct WidthMap {
+    WidthMap() :next(0), widths(0) {}
+
     ATSGlyphRef startRange;
     ATSGlyphRef endRange;
     WidthMap *next;
@@ -1185,7 +1187,7 @@ static ATSGlyphRef extendGlyphMap(WebTextRenderer *renderer, UChar32 c)
 
 static WidthMap *extendWidthMap(WebTextRenderer *renderer, ATSGlyphRef glyph)
 {
-    WidthMap *map = (WidthMap *)calloc(1, sizeof(WidthMap));
+    WidthMap *map = new WidthMap;
     unsigned end;
     ATSGlyphRef start;
     unsigned blockSize;

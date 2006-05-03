@@ -145,8 +145,10 @@ static CFMutableDictionaryRef fixedPitchFonts;
 - (void)clearCaches
 {
     int i;
-    for (i = 0; i < WEB_TEXT_RENDERER_FACTORY_NUM_CACHES; ++i)
+    for (i = 0; i < WEB_TEXT_RENDERER_FACTORY_NUM_CACHES; ++i) {
         deleteAllValues(*caches[i]);
+        caches[i]->clear();
+    }
 
     if (fontCache)
         CFRelease(fontCache);
