@@ -1,3 +1,16 @@
+2006-05-04  David Hyatt  <hyatt@apple.com>
+
+        Fix for 8693, crash when reloading PDF. Make sure to clear the truncator's
+        cached renderer.
+
+        Reviewed by beth
+
+        * bridge/mac/WebCoreStringTruncator.h:
+        * bridge/mac/WebCoreStringTruncator.mm:
+        (+[WebCoreStringTruncator clear]):
+        * platform/mac/WebTextRendererFactory.mm:
+        (-[WebTextRendererFactory clearCaches]):
+
 2006-05-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

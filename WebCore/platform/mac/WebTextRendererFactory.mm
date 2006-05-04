@@ -35,6 +35,7 @@
 #import "KWQListBox.h"
 #import "Page.h"
 #import "WebCoreFrameBridge.h"
+#import "WebCoreStringTruncator.h"
 #import <kxmlcore/Assertions.h>
 
 #import <mach-o/dyld.h>
@@ -160,6 +161,7 @@ static CFMutableDictionaryRef fixedPitchFonts;
     }
         
     QListBox::clearCachedTextRenderers();
+    [WebCoreStringTruncator clear];
     Page::setNeedsReapplyStyles();
 }
 

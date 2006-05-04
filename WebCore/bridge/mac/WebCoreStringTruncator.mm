@@ -231,4 +231,9 @@ static NSFont *defaultMenuFont(void)
     return width;
 }
 
++ (void)clear
+{
+    currentRenderer = 0;
+}
+
 @end
