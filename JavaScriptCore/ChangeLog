@@ -1,3 +1,14 @@
+2006-05-04  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8734
+        Would like a Vector::append that takes another Vector
+        
+        * kxmlcore/Vector.h:
+        (KXMLCore::::append):
+        New function that takes another array.
+
 2006-05-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by eric.
