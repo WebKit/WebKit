@@ -1,3 +1,25 @@
+2006-05-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by timo.
+
+        Add drag & drop support to <input type="file">
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8733
+
+        Test: manual/input-type-file-drag-drop.html
+
+        * kwq/KWQFileButton.mm:
+        (-[WebFileChooserButton initWithWidget::]):
+        (-[WebCoreFileButton initWithWidget:]):
+        (-[WebCoreFileButton drawRect:]):
+        (-[WebCoreFileButton updateLabel]):
+        (-[WebCoreFileButton setFilename:]):
+        (-[WebCoreFileButton changeFilename:]):
+        (-[WebCoreFileButton chooseFilename:]):
+        (validFilenameFromPasteboard):
+        (-[WebCoreFileButton draggingEntered:]):
+        (-[WebCoreFileButton draggingExited:]):
+        (-[WebCoreFileButton performDragOperation:]):
+
 2006-05-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

@@ -68,6 +68,7 @@ using namespace WebCore;
     NSString *_label;
     BOOL _inNextValidKeyView;
     KWQFileButton *_widget;
+    BOOL _isCurrentDragTarget;
 }
 - (void)setFilename:(NSString *)filename;
 - (void)performClick;
@@ -92,6 +93,7 @@ using namespace WebCore;
     self = [super init];
     if (!self)
         return nil;
+    [self registerForDraggedTypes:[NSArray arrayWithObject:NSFilenamesPboardType]];
 
     _widget = widget;
     return self;
@@ -139,6 +141,11 @@ using namespace WebCore;
     
     [NSGraphicsContext saveGraphicsState];
     NSRectClip(NSIntersectionRect(bounds, rect));
+    
+    if (_isCurrentDragTarget) {
+        [[NSColor colorWithCalibratedWhite:0.0 alpha:0.25f] set];
+        NSRectFillUsingOperation([self bounds], NSCompositeSourceOver);
+    }
 
     float left = NSMaxX([_button frame]) + AFTER_BUTTON_SPACING;
 
@@ -163,16 +170,14 @@ using namespace WebCore;
     [_label release];
     
     NSString *label;
-    if ([_filename length]) {
+    if ([_filename length])
         label = _filename;
-    } else {
+    else
         label = [[WebCoreViewFactory sharedFactory] fileButtonNoFileSelectedLabel];
-    }
     
     float left = NSMaxX([_button frame]) + AFTER_BUTTON_SPACING;
-    if (_icon) {
+    if (_icon)
         left += ICON_WIDTH + ICON_FILENAME_SPACING;
-    }
     float labelWidth = [self bounds].size.width - left;
 
     _label = labelWidth <= 0 ? nil : [[WebCoreStringTruncator centerTruncateString:
@@ -187,9 +192,9 @@ using namespace WebCore;
     _filename = copy;
     
     [_icon release];
-    if ([_filename length] == 0 || [_filename characterAtIndex:0] != '/') {
+    if ([_filename length] == 0 || [_filename characterAtIndex:0] != '/')
         _icon = nil;
-    } else {
+    else {
         _icon = [[[NSWorkspace sharedWorkspace] iconForFile:_filename] retain];
         // I'm not sure why this has any effect, but including this line of code seems to make
         // the image appear right-side-up. As far as I know, the drawInRect method used above
@@ -266,7 +271,7 @@ using namespace WebCore;
     [bridge runOpenPanelForFileButtonWithResultListener:self];
 }
 
-- (void)chooseFilename:(NSString *)filename
+- (void)changeFilename:(NSString *)filename
 {
     // The != check here makes sure we don't consider a change from nil to nil as a change.
     if (_filename != filename && ![_filename isEqualToString:filename]) {
@@ -274,6 +279,11 @@ using namespace WebCore;
         if (_widget)
             _widget->filenameChanged(DeprecatedString::fromNSString(filename));
     }
+}
+
+- (void)chooseFilename:(NSString *)filename
+{
+    [self changeFilename:filename];
     WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(_widget);
     [bridge release];
 }
@@ -349,6 +359,48 @@ using namespace WebCore;
 - (void)performClick
 {
     [_button performClick:nil];
+}
+
+static NSString *validFilenameFromPasteboard(NSPasteboard* pBoard)
+{
+    NSArray *filenames = [pBoard propertyListForType:NSFilenamesPboardType];
+    if ([filenames count] == 1) {
+        NSString *filename = [filenames objectAtIndex:0];
+        NSDictionary *fileAttributes = [[NSFileManager defaultManager] fileAttributesAtPath:filename traverseLink:YES];
+        if ([[fileAttributes fileType] isEqualToString:NSFileTypeRegular])
+            return filename;
+    }
+    return nil;
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    if (validFilenameFromPasteboard([sender draggingPasteboard])) {
+        _isCurrentDragTarget = YES;
+        [self setNeedsDisplay:YES];
+        return NSDragOperationCopy;
+    }
+    return NSDragOperationNone;
+}
+
+- (void)draggingExited:(id <NSDraggingInfo>)sender
+{
+    if (_isCurrentDragTarget) {
+        _isCurrentDragTarget = NO;
+        [self setNeedsDisplay:YES];
+    }
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    _isCurrentDragTarget = NO;
+    NSString *filename = validFilenameFromPasteboard([sender draggingPasteboard]);
+    if (filename) {
+        [self changeFilename:filename];
+        [self setNeedsDisplay:YES];
+        return YES;
+    }
+    return NO;
 }
 
 @end
