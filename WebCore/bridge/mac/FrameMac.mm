@@ -557,14 +557,15 @@ static NSArray* nsArray(const Vector<String>& vector)
     return array;
 }
 
-Plugin* FrameMac::createPlugin(const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
+Plugin* FrameMac::createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     return new Plugin(new Widget([_bridge viewForPluginWithURL:url.getNSURL()
                                   attributeNames:nsArray(paramNames)
                                   attributeValues:nsArray(paramValues)
-                                  MIMEType:mimeType]));
+                                  MIMEType:mimeType
+                                  DOMElement:(element ? [DOMElement _elementWith:element] : nil)]));
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return 0;

@@ -1,3 +1,26 @@
+2006-05-04  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4480186> Give WebKit plugins access to their own DOM element
+
+        This does not fix <rdar://problem/4480187> Give Netscape plugins access to their own DOM element --
+        we're not going to use the ObjC DOM API for that, but rather the NP bindings API.
+
+        * Plugins/WebPluginPackage.m:
+        Declared WebPlugInContainingElementKey.  This is not a new plugin argument -- it's been in our public
+        headers since all along, but has never been concretely declared -- plugins that referenced it would not
+        link.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:DOMElement:]):
+        Added DOMElement parameter, which is now included in the plugin arguments dictionary.
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:]):
+        ditto
+
+        * WebKit.exp:
+        Export WebPlugInContainingElementKey.
+
 2006-05-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

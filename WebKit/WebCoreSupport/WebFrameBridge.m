@@ -877,6 +877,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                    attributeNames:(NSArray *)attributeNames
                   attributeValues:(NSArray *)attributeValues
                           baseURL:(NSURL *)baseURL
+                       DOMElement:(DOMElement *)element
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
@@ -899,6 +900,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             pluginController, WebPlugInContainerKey,
             [NSNumber numberWithInt:WebPlugInModeEmbed], WebPlugInModeKey,
             [NSNumber numberWithBool:YES], WebPlugInShouldLoadMainResourceKey,
+            element, WebPlugInContainingElementKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
@@ -906,6 +908,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             baseURL, WebPluginBaseURLKey,
             attributes, WebPluginAttributesKey,
             pluginController, WebPluginContainerKey,
+            element, WebPlugInContainingElementKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
     }
@@ -931,6 +934,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                   attributeNames:(NSArray *)attributeNames
                  attributeValues:(NSArray *)attributeValues
                         MIMEType:(NSString *)MIMEType
+                      DOMElement:(DOMElement *)element
 {
     BOOL hideReferrer;
     if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
@@ -952,6 +956,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             [NSNumber numberWithInt:WebPlugInModeEmbed], WebPlugInModeKey,
             URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
             [NSNumber numberWithBool:YES], WebPlugInShouldLoadMainResourceKey,
+            element, WebPlugInContainingElementKey,
             nil];
         [attributes release];
         view = [wd webView:wv plugInViewWithArguments:arguments];
@@ -980,7 +985,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
                                 attributeNames:attributeNames
                                attributeValues:attributeValues
-                                       baseURL:baseURL];
+                                       baseURL:baseURL
+                                    DOMElement:element];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             WebNetscapePluginEmbeddedView *embeddedView = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
@@ -1044,7 +1050,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             view = [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
                                 attributeNames:names
                                attributeValues:values
-                                       baseURL:baseURL];
+                                       baseURL:baseURL
+                                    DOMElement:nil]; // FIXME (4537606): Pass DOM element to Java applets
             [names release];
             [values release];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {

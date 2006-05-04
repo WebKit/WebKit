@@ -36,12 +36,7 @@ NSString *WebPlugInAttributesKey =              @"WebPlugInAttributesKey";
 NSString *WebPlugInContainerKey =               @"WebPlugInContainerKey";
 NSString *WebPlugInModeKey =                    @"WebPlugInModeKey";
 NSString *WebPlugInShouldLoadMainResourceKey =  @"WebPlugInShouldLoadMainResourceKey";
-
-/*!
-    @constant WebPlugInContainingElementKey The DOMElement that was used to specify
-    the plug-in.  May be nil.
-*/
-extern NSString *WebPlugInContainingElementKey;
+NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey";
 
 @implementation WebPluginPackage
 

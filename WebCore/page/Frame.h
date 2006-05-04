@@ -564,7 +564,7 @@ public:
   virtual bool lastEventIsMouseUp() const = 0;
   virtual String overrideMediaType() const = 0;
 protected:
-  virtual Plugin* createPlugin(const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType) = 0;
+  virtual Plugin* createPlugin(Element* node, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType) = 0;
   virtual Frame* createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
 

@@ -1,3 +1,23 @@
+2006-05-04  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4480186> Give WebKit plugins access to their own DOM element
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        Added DOMElement: parameter to -viewForPluginWithURL:attributeNames:attributueValues:MIMEType:
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::createPlugin):
+        Added "element" parameter; wrap element in DOMElement and pass up to the bridge.
+
+        * page/Frame.h:
+        Added "element" parameter to createPlugin().
+        * page/Frame.cpp:
+        (WebCore::Frame::loadPlugin):
+        Get the plugin's DOM element and pass to createPlugin().
+
 2006-05-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by timo.
