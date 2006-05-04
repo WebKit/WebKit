@@ -1,3 +1,20 @@
+2006-05-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updated pixel results for http://bugzilla.opendarwin.org/
+        show_bug.cgi?id=8732 Backgrounds with background-size and 
+        background-origin do not always lay out correctly
+
+        * fast/backgrounds/size/backgroundSize10-expected.checksum:
+        * fast/backgrounds/size/backgroundSize10-expected.png:
+        * fast/backgrounds/size/backgroundSize12-expected.checksum:
+        * fast/backgrounds/size/backgroundSize12-expected.png:
+        * fast/backgrounds/size/backgroundSize18-expected.checksum:
+        * fast/backgrounds/size/backgroundSize18-expected.png:
+        * fast/backgrounds/size/backgroundSize19-expected.checksum:
+        * fast/backgrounds/size/backgroundSize19-expected.png:
+
 2006-05-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

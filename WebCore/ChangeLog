@@ -1,3 +1,25 @@
+2006-05-04  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8732 
+        Backgrounds with background-size and background-origin do not 
+        always lay out correctly
+
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawTiled): We no longer need to scale the source 
+        point since it will now come in with the scale already taken into 
+        account.
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::drawTiled): Same as above.
+        * rendering/RenderBox.cpp:
+        (WebCore::cacluateBackgroundSize): Now calculate the background 
+        size in a helper method.
+        (WebCore::RenderBox::paintBackgroundExtended): Calculate the 
+        background size before calculating cx, cy, cw, ch, sx, and sy so 
+        that they can all be calculated with the scaled image size taken 
+        into account.
+
 2006-05-04  David Hyatt  <hyatt@apple.com>
 
         Fix for 8693, crash when reloading PDF. Make sure to clear the truncator's

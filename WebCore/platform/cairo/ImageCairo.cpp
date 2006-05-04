@@ -157,9 +157,6 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         scaleY = intrinsicImageSize.height() / tileSize.height();
         cairo_matrix_init_scale(&mat, scaleX, scaleY);
         
-        point.setX(point.x() / scaleX);
-        point.setY(point.y() / scaleY);
-        
         tileWidth = tileSize.width();
         tileHeight = tileSize.height();
     }

@@ -364,6 +364,52 @@ void RenderBox::paintBackground(GraphicsContext* p, const Color& c, const Backgr
                             borderLeft(), borderRight(), paddingLeft(), paddingRight());
 }
 
+static void cacluateBackgroundSize(const BackgroundLayer* bgLayer, int& scaledWidth, int& scaledHeight)
+{
+    CachedImage* bg = bgLayer->backgroundImage();
+    
+    if (bgLayer->isBackgroundSizeSet()) {
+        Length bgWidth = bgLayer->backgroundSize().width;
+        Length bgHeight = bgLayer->backgroundSize().height;
+        
+        if (bgWidth.isPercent())
+            scaledWidth = scaledWidth * bgWidth.value() / 100;
+        else if (bgWidth.isFixed())
+            scaledWidth = bgWidth.value();
+        else if (bgWidth.isAuto()) {
+            // If the width is auto and the height is not, we have to use the appropriate
+            // scale to maintain our aspect ratio.
+            if (bgHeight.isPercent()) {
+                int scaledH = scaledHeight * bgHeight.value() / 100;
+                scaledWidth = bg->imageSize().width() * scaledH / bg->imageSize().height();
+            } else if (bgHeight.isFixed())
+                scaledWidth = bg->imageSize().width() * bgHeight.value() / bg->imageSize().height();
+        }
+            
+        if (bgHeight.isPercent())
+            scaledHeight = scaledHeight * bgHeight.value() / 100;
+        else if (bgHeight.isFixed())
+            scaledHeight = bgHeight.value();
+        else if (bgHeight.isAuto()) {
+            // If the height is auto and the width is not, we have to use the appropriate
+            // scale to maintain our aspect ratio.
+            if (bgWidth.isPercent())
+                scaledHeight = bg->imageSize().height() * scaledWidth / bg->imageSize().width();
+            else if (bgWidth.isFixed())
+                scaledHeight = bg->imageSize().height() * bgWidth.value() / bg->imageSize().width();
+            else if (bgWidth.isAuto()) {
+                // If both width and height are auto, we just want to use the image's
+                // intrinsic size.
+                scaledWidth = bg->imageSize().width();
+                scaledHeight = bg->imageSize().height();
+            }
+        }
+    } else {
+        scaledWidth = bg->imageSize().width();
+        scaledHeight = bg->imageSize().height();
+    }
+}
+
 void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
                                         int _tx, int _ty, int w, int h,
                                         int bleft, int bright, int pleft, int pright)
@@ -447,7 +493,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
         int sy = 0;
         int cw,ch;
         int cx,cy;
-        int scaledWidth, scaledHeight;
+        int scaledImageWidth, scaledImageHeight;
 
         
         // CSS2 chapter 14.2.1
@@ -470,20 +516,19 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
             
             int pw = w - hpab;
             int ph = h - vpab;
-            scaledWidth = pw;
-            scaledHeight = ph;
+            scaledImageWidth = pw;
+            scaledImageHeight = ph;
+            cacluateBackgroundSize(bgLayer, scaledImageWidth, scaledImageHeight);
 
-            int pixw = bg->imageSize().width();
-            int pixh = bg->imageSize().height();
             EBackgroundRepeat bgr = bgLayer->backgroundRepeat();
-            if((bgr == NO_REPEAT || bgr == REPEAT_Y) && w > pixw) {
-                cw = pixw;
-                int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - pixw);
+            if ((bgr == NO_REPEAT || bgr == REPEAT_Y) && w > scaledImageWidth) {
+                cw = scaledImageWidth;
+                int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth);
                 if (xPosition >= 0)
                     cx = _tx + xPosition;
                 else {
                     cx = _tx;
-                    if (pixw > 0) {
+                    if (scaledImageWidth > 0) {
                         sx = -xPosition;
                         cw += xPosition;
                     }
@@ -493,26 +538,26 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
                 // repeat over x or background is wider than box
                 cw = w;
                 cx = _tx;
-                if (pixw > 0) {
-                    int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - pixw);
+                if (scaledImageWidth > 0) {
+                    int xPosition = bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth);
                     if ((xPosition > 0) && (bgr == NO_REPEAT)) {
                         cx += xPosition;
                         cw -= xPosition;
                     } else {
-                        sx = pixw - (xPosition % pixw );
-                        sx -= left % pixw;
+                        sx = scaledImageWidth - (xPosition % scaledImageWidth);
+                        sx -= left % scaledImageWidth;
                     }
                 }
             }
 
-            if((bgr == NO_REPEAT || bgr == REPEAT_X) && h > pixh) {
-                ch = pixh;
-                int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - pixh);
+            if((bgr == NO_REPEAT || bgr == REPEAT_X) && h > scaledImageHeight) {
+                ch = scaledImageHeight;
+                int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight);
                 if (yPosition >= 0)
                     cy = _ty + yPosition;
                 else {
                     cy = _ty;
-                    if (pixh > 0) {
+                    if (scaledImageHeight > 0) {
                         sy = -yPosition;
                         ch += yPosition;
                     }
@@ -523,14 +568,14 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
                 // repeat over y or background is taller than box
                 ch = h;
                 cy = _ty;
-                if (pixh > 0) {
-                    int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - pixh);
+                if (scaledImageHeight > 0) {
+                    int yPosition = bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight);
                     if ((yPosition > 0) && (bgr == NO_REPEAT)) {
                         cy += yPosition;
                         ch -= yPosition;
                     } else {
-                        sy = pixh - (yPosition % pixh );
-                        sy -= top % pixh;
+                        sy = scaledImageHeight - (yPosition % scaledImageHeight);
+                        sy -= top % scaledImageHeight;
                     }
                 }
             }
@@ -540,29 +585,29 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
             IntRect vr = viewRect();
             int pw = vr.width();
             int ph = vr.height();
-            scaledWidth = pw;
-            scaledHeight = ph;
-            int pixw = bg->imageSize().width();
-            int pixh = bg->imageSize().height();
+            scaledImageWidth = pw;
+            scaledImageHeight = ph;
+            cacluateBackgroundSize(bgLayer, scaledImageWidth, scaledImageHeight);
             EBackgroundRepeat bgr = bgLayer->backgroundRepeat();
-            if((bgr == NO_REPEAT || bgr == REPEAT_Y) && pw > pixw) {
-                cw = pixw;
-                cx = vr.x() + bgLayer->backgroundXPosition().calcMinValue(pw - pixw);
+            
+            if ((bgr == NO_REPEAT || bgr == REPEAT_Y) && pw > scaledImageWidth) {
+                cw = scaledImageWidth;
+                cx = vr.x() + bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth);
             } else {
                 cw = pw;
                 cx = vr.x();
-                if (pixw > 0)
-                    sx = pixw - bgLayer->backgroundXPosition().calcMinValue(pw - pixw) % pixw;
+                if (scaledImageWidth > 0)
+                    sx = scaledImageWidth - bgLayer->backgroundXPosition().calcMinValue(pw - scaledImageWidth) % scaledImageWidth;
             }
 
-            if((bgr == NO_REPEAT || bgr == REPEAT_X) && ph > pixh) {
-                ch = pixh;
-                cy = vr.y() + bgLayer->backgroundYPosition().calcMinValue(ph - pixh);
+            if ((bgr == NO_REPEAT || bgr == REPEAT_X) && ph > scaledImageHeight) {
+                ch = scaledImageHeight;
+                cy = vr.y() + bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight);
             } else {
                 ch = ph;
                 cy = vr.y();
-                if (pixh > 0)
-                    sy = pixh - bgLayer->backgroundYPosition().calcMinValue(ph - pixh) % pixh;
+                if (scaledImageHeight > 0)
+                    sy = scaledImageHeight - bgLayer->backgroundYPosition().calcMinValue(ph - scaledImageHeight) % scaledImageHeight;
             }
 
             IntRect b = intersection(IntRect(cx, cy, cw, ch), IntRect(_tx, _ty, w, h));
@@ -574,61 +619,8 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
             ch = b.height();
         }
 
-        if (bgLayer->isBackgroundSizeSet()) {
-            Length bgWidth = bgLayer->backgroundSize().width;
-            Length bgHeight = bgLayer->backgroundSize().height;
-            
-            if (bgWidth.isPercent())
-                scaledWidth = scaledWidth * bgWidth.value() / 100;
-            else if (bgWidth.isFixed())
-                scaledWidth = bgWidth.value();
-            else if (bgWidth.isAuto()) {
-                // If the width is auto and the height is not, we have to use the appropriate
-                // scale to maintain our aspect ratio.
-                if (bgHeight.isPercent()) {
-                    int scaledH = scaledHeight * bgHeight.value() / 100;
-                    scaledWidth = bg->imageSize().width() * scaledH / bg->imageSize().height();
-                } else if (bgHeight.isFixed())
-                    scaledWidth = bg->imageSize().width() * bgHeight.value() / bg->imageSize().height();
-            }
-            
-            if (bgHeight.isPercent())
-                scaledHeight = scaledHeight * bgHeight.value() / 100;
-            else if (bgHeight.isFixed())
-                scaledHeight = bgHeight.value();
-            else if (bgHeight.isAuto()) {
-                // If the height is auto and the width is not, we have to use the appropriate
-                // scale to maintain our aspect ratio.
-                if (bgWidth.isPercent())
-                    scaledHeight = bg->imageSize().height() * scaledWidth / bg->imageSize().width();
-                else if (bgWidth.isFixed())
-                    scaledHeight = bg->imageSize().height() * bgWidth.value() / bg->imageSize().width();
-                else if (bgWidth.isAuto()) {
-                    // If both width and height are auto, we just want to use the image's
-                    // intrinsic size.
-                    scaledWidth = bg->imageSize().width();
-                    scaledHeight = bg->imageSize().height();
-                }
-            }
-            
-            // If we are only repeating in one direction, we need to adjust the size and position of our
-            // container to take our new scale into account.
-            EBackgroundRepeat bgr = bgLayer->backgroundRepeat();
-            if ((bgr == REPEAT_X || bgr == NO_REPEAT) && scaledHeight != ch) {
-                ch = scaledHeight;
-                cy -= bgLayer->backgroundYPosition().calcMinValue(scaledHeight - bg->imageSize().height());
-            }
-            if ((bgr == REPEAT_Y || bgr == NO_REPEAT) && scaledWidth != cw) {
-                cw = scaledWidth;
-                cx -= bgLayer->backgroundXPosition().calcMinValue(scaledWidth - bg->imageSize().width());
-            }        
-        } else {
-            scaledWidth = bg->imageSize().width();
-            scaledHeight = bg->imageSize().height();
-        }
-
         if (cw > 0 && ch > 0)
-            p->drawTiledImage(bg->image(), IntRect(cx, cy, cw, ch), IntPoint(sx, sy), IntSize(scaledWidth, scaledHeight));
+            p->drawTiledImage(bg->image(), IntRect(cx, cy, cw, ch), IntPoint(sx, sy), IntSize(scaledImageWidth, scaledImageHeight));
     }
     
     if (bgLayer->backgroundClip() != BGBORDER)

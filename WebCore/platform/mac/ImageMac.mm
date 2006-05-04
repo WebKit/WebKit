@@ -304,8 +304,6 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         scaleX = tileSize.width() / intrinsicTileSize.width;
         scaleY = tileSize.height() / intrinsicTileSize.height;
         patternTransform = CGAffineTransformMakeScale(scaleX, scaleY);
-        
-        scaledPoint = CGPointApplyAffineTransform(scaledPoint, patternTransform);
         scaledTileSize = tileSize;
     }
 
