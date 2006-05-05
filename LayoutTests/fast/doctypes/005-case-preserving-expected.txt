@@ -1,0 +1,5 @@
+SUCCESS - This document has a doctype and each component has the correct case
+
+name = HtMl
+publicId = -//W3C//DTD HTML 4.01 Transitional//EN
+systemId = http://www.w3.org/TR/html4/loose.dtd

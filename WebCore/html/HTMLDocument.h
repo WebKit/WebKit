@@ -74,8 +74,6 @@ public:
         return 0;
     }
 
-    virtual DocumentType* doctype() const;
-
     typedef HashMap<StringImpl*, int> NameCountMap;
 
 protected:

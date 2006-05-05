@@ -1,3 +1,24 @@
+2006-05-05  Matt Gough  <matt@softchaos.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8563
+
+        The doctype object in the DOM is now usable by client code
+        as opposed to always being exposed as nil. Now also ensures that
+        the 'name' of the component preserves the case of the original html source.
+        (i.e HtMl -> HtMl not HTML)
+
+        * dom/Document.h:
+        Changes comment by docType() to say it may return 0 for html
+        * html/HTMLDocument.cpp:
+        (WebCore::parseDocTypeDeclaration):
+        (WebCore::HTMLDocument::determineParseMode):
+        Preserves the case of the name component
+        (WebCore::HTMLDocument::doctype):removed
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::doctype):removed
+
 2006-05-05  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
