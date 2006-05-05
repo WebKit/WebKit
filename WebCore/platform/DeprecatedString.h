@@ -56,12 +56,6 @@ public:
         DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
     };
     
-    enum SpecialCharacter {
-        byteOrderMark = 0xfeff
-    };
-
-    static const char null = 0; // not a QChar as in Qt (can't have static constructor), but close enough to be compatible in most cases
-
     QChar();
     QChar(char);
     QChar(unsigned char);
@@ -71,10 +65,7 @@ public:
     QChar(unsigned);
 
     unsigned short unicode() const;
-    unsigned char cell() const;
-    unsigned char row() const;
     char latin1() const;
-    bool isNull() const;
     bool isSpace() const;
     bool isDigit() const;
     bool isLetter() const;
@@ -86,40 +77,8 @@ public:
     QChar upper() const;
     Direction direction() const;
 
-    bool mirrored() const;
-    QChar mirroredChar() const;
-
-    operator char() const;
-
-    friend bool operator==(QChar, QChar);
-    friend bool operator==(QChar, char);
-    friend bool operator==(char, QChar);
-
-    friend bool operator!=(QChar, QChar);
-    friend bool operator!=(QChar, char);
-    friend bool operator!=(char, QChar);
-
-    friend bool operator>(QChar, QChar);
-    friend bool operator>(QChar, char);
-    friend bool operator>(char, QChar);
-
-    friend bool operator>=(QChar, QChar);
-    friend bool operator>=(QChar, char);
-    friend bool operator>=(char, QChar);
-
-    friend bool operator<(QChar, QChar);
-    friend bool operator<(QChar, char);
-    friend bool operator<(char, QChar);
-
-    friend bool operator<=(QChar, QChar);
-    friend bool operator<=(QChar, char);
-    friend bool operator<=(char, QChar);
-
 private:
     unsigned short c;
-
-    friend class DeprecatedString;
-    friend class QConstString;
 };
 
 inline QChar::QChar() : c(0)
@@ -153,16 +112,6 @@ inline QChar::QChar(int n) : c(n)
 inline unsigned short QChar::unicode() const
 {
     return c;
-}
-
-inline unsigned char QChar::cell() const
-{
-    return c;
-}
-
-inline bool QChar::isNull() const
-{
-    return c == 0;
 }
 
 inline bool QChar::isSpace() const
@@ -224,119 +173,39 @@ inline QChar::Direction QChar::direction() const
     return static_cast<Direction>(u_charDirection(c));
 }
 
-inline bool QChar::mirrored() const
-{
-    return u_isMirrored(c);
-}
-
-inline QChar QChar::mirroredChar() const
-{
-    return QChar(static_cast<unsigned>(u_charMirror(c)));
-}
-
-inline unsigned char QChar::row() const
-{
-    return c >> 8;
-}
-
 inline char QChar::latin1() const
-{
-    return c > 0xff ? 0 : c;
-}
-
-inline QChar::operator char() const
 {
     return c > 0xff ? 0 : c;
 }
 
 inline bool operator==(QChar qc1, QChar qc2)
 {
-    return qc1.c == qc2.c;
+    return qc1.unicode() == qc2.unicode();
 }
 
 inline bool operator==(QChar qc, char ch)
 {
-    return qc.c == (unsigned char) ch;
+    return qc.unicode() == (unsigned char) ch;
 }
 
 inline bool operator==(char ch, QChar qc)
 {
-    return (unsigned char) ch == qc.c;
+    return (unsigned char) ch == qc.unicode();
 }
 
 inline bool operator!=(QChar qc1, QChar qc2)
 {
-    return qc1.c != qc2.c;
+    return qc1.unicode() != qc2.unicode();
 }
 
 inline bool operator!=(QChar qc, char ch)
 {
-    return qc.c != (unsigned char) ch;
+    return qc.unicode() != (unsigned char) ch;
 }
 
 inline bool operator!=(char ch, QChar qc)
 {
-    return (unsigned char) ch != qc.c;
-}
-
-inline bool operator>=(QChar qc1, QChar qc2)
-{
-    return qc1.c >= qc2.c;
-}
-
-inline bool operator>=(QChar qc, char ch)
-{
-    return qc.c >= (unsigned char) ch;
-}
-
-inline bool operator>=(char ch, QChar qc)
-{
-    return (unsigned char) ch >= qc.c;
-}
-
-inline bool operator>(QChar qc1, QChar qc2)
-{
-    return qc1.c > qc2.c;
-}
-
-inline bool operator>(QChar qc, char ch)
-{
-    return qc.c > (unsigned char) ch;
-}
-
-inline bool operator>(char ch, QChar qc)
-{
-    return (unsigned char) ch > qc.c;
-}
-
-inline bool operator<=(QChar qc1, QChar qc2)
-{
-    return qc1.c <= qc2.c;
-}
-
-inline bool operator<=(QChar qc, char ch)
-{
-    return qc.c <= (unsigned char) ch;
-}
-
-inline bool operator<=(char ch, QChar qc)
-{
-    return (unsigned char) ch <= qc.c;
-}
-
-inline bool operator<(QChar qc1, QChar qc2)
-{
-    return qc1.c < qc2.c;
-}
-
-inline bool operator<(QChar qc, char ch)
-{
-    return qc.c < (unsigned char) ch;
-}
-
-inline bool operator<(char ch, QChar qc)
-{
-    return (unsigned char) ch < qc.c;
+    return (unsigned char) ch != qc.unicode();
 }
 
 // Keep this struct to <= 46 bytes, that's what the system will allocate.
@@ -492,17 +361,6 @@ public:
     static DeprecatedString number(long);
     static DeprecatedString number(unsigned long);
     static DeprecatedString number(double);
-
-    bool findArg(int& pos, int& len) const;
-    
-    DeprecatedString arg(const DeprecatedString &, int width=0) const;
-    DeprecatedString arg(short, int width=0) const;
-    DeprecatedString arg(unsigned short, int width=0) const;
-    DeprecatedString arg(int, int width=0) const;
-    DeprecatedString arg(unsigned, int width=0) const;
-    DeprecatedString arg(long, int width=0) const;
-    DeprecatedString arg(unsigned long, int width=0) const;
-    DeprecatedString arg(double, int width=0) const;
 
     DeprecatedString left(unsigned) const;
     DeprecatedString right(unsigned) const;

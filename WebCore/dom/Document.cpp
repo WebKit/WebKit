@@ -2419,7 +2419,7 @@ bool Document::parseQualifiedName(const String &qualifiedName, String &prefix, S
     bool sawColon = false;
     int colonPos = 0;
 
-    const QChar *s = qualifiedName.unicode();
+    const UChar* s = reinterpret_cast<const UChar*>(qualifiedName.unicode());
     for (unsigned i = 0; i < length;) {
         UChar32 c;
         U16_NEXT(s, i, length, c)

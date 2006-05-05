@@ -38,11 +38,11 @@ String parseURL(const String& url)
     int o = 0;
     int l = i->length();
 
-    while (o < l && (*i)[o] <= ' ') {
+    while (o < l && (*i)[o].unicode() <= ' ') {
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1] <= ' ')
+    while (l > 0 && (*i)[o+l-1].unicode() <= ' ')
         --l;
 
     if (l >= 5
@@ -55,11 +55,11 @@ String parseURL(const String& url)
         l -= 5;
     }
 
-    while (o < l && (*i)[o] <= ' ') {
+    while (o < l && (*i)[o].unicode() <= ' ') {
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1] <= ' ')
+    while (l > 0 && (*i)[o+l-1].unicode() <= ' ')
         --l;
 
     if (l >= 2 && (*i)[o] == (*i)[o+l-1] && ((*i)[o] == '\'' || (*i)[o] == '\"')) {
@@ -67,11 +67,11 @@ String parseURL(const String& url)
         l -= 2;
     }
 
-    while (o < l && (*i)[o] <= ' ') {
+    while (o < l && (*i)[o].unicode() <= ' ') {
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1] <= ' ')
+    while (l > 0 && (*i)[o+l-1].unicode() <= ' ')
         --l;
 
     Vector<unsigned short, 2048> buffer(l);

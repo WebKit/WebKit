@@ -1818,17 +1818,15 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     bool addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
     if (addLeadingSpace) {
         QChar previousChar = startVisiblePos.previous().characterAfter();
-        if (!previousChar.isNull()) {
+        if (previousChar.unicode())
             addLeadingSpace = !m_frame->isCharacterSmartReplaceExempt(previousChar, true);
-        }
     }
     
     bool addTrailingSpace = endPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
     if (addTrailingSpace) {
         QChar thisChar = endVisiblePos.characterAfter();
-        if (!thisChar.isNull()) {
+        if (thisChar.unicode())
             addTrailingSpace = !m_frame->isCharacterSmartReplaceExempt(thisChar, false);
-        }
     }
     
     // inspect source

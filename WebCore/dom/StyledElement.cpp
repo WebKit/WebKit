@@ -253,20 +253,11 @@ const AtomicStringList* StyledElement::getClassList() const
     return namedAttrMap ? mappedAttributes()->getClassList() : 0;
 }
 
-static inline bool isHexDigit( const QChar &c ) {
-    return ( c >= '0' && c <= '9' ) ||
-           ( c >= 'a' && c <= 'f' ) ||
-           ( c >= 'A' && c <= 'F' );
-}
-
-static inline int toHex( const QChar &c ) {
-    return ( (c >= '0' && c <= '9')
-             ? (c.unicode() - '0')
-             : ( ( c >= 'a' && c <= 'f' )
-                 ? (c.unicode() - 'a' + 10)
-                 : ( ( c >= 'A' && c <= 'F' )
-                     ? (c.unicode() - 'A' + 10)
-                     : -1 ) ) );
+static inline int toHex(UChar c) {
+    return ((c >= '0' && c <= '9') ? (c - '0')
+        : ((c >= 'a' && c <= 'f') ? (c - 'a' + 10)
+        : (( c >= 'A' && c <= 'F') ? (c - 'A' + 10)
+        : -1)));
 }
 
 void StyledElement::addCSSProperty(MappedAttribute* attr, int id, const String &value)
@@ -367,7 +358,7 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String &c)
                 // search forward for digits in the string
                 int numDigits = 0;
                 while (pos < (int)color.length() && numDigits < basicLength) {
-                    int hex = toHex(color[pos]);
+                    int hex = toHex(color[pos].unicode());
                     colors[component] = (colors[component] << 4);
                     if (hex > 0) {
                         colors[component] += hex;

@@ -1,3 +1,137 @@
+2006-05-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - remove a few of the stranger features of QChar on the road to
+          eventually replacing it with an integer type (probably ICU's UChar)
+
+        * platform/DeprecatedString.h: Remove SpecialCharacter, byteOrderMark, null,
+        cell, row, isNull, mirrored, mirroredChar, operator char, >, >=, <, and <=
+        from QChar. Also removed the many unneeded friend declarations. Remove findArg
+        and arg from DeprecatedString.
+
+        * dom/Document.cpp: (WebCore::Document::parseQualifiedName): Cast the type of the
+        buffer before invoking the U16_NEXT function. Turns out this was converting each
+        QChar to a char and back to a UChar, which means it caused a bug with characters
+        that are U+0100 or greater.
+
+        * css/csshelper.cpp: (WebCore::parseURL):
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::constrainValue):
+        * platform/StringImpl.cpp: (WebCore::StringImpl::toCoordsArray):
+        * xml/xmlhttprequest.cpp: (WebCore::getCharset):
+        Add some calls to unicode() since we don't have comparison operators any more.
+
+        * dom/StyledElement.cpp:
+        (WebCore::toHex): Rewrote to just take a UChar parameter.
+        (WebCore::StyledElement::addCSSColor): Call toHex on the character code.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge smartInsertForString:replacingRange:beforeString:afterString:]):
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/TextIterator.cpp: (WebCore::TextIterator::handleTextBox):
+        * platform/SegmentedString.h:
+        (WebCore::SegmentedString::push):
+        (WebCore::SegmentedString::advance):
+        (WebCore::SegmentedString::escaped):
+        * platform/SegmentedString.cpp:
+        (WebCore::SegmentedString::length):
+        (WebCore::SegmentedString::append):
+        (WebCore::SegmentedString::prepend):
+        (WebCore::SegmentedString::toString):
+        Changed calls to isNull() to instead just use unicode() and check for 0.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseEntity): Change callers that used cell and row to
+        just use unicode() instead.
+        (WebCore::HTMLTokenizer::parseTag): Ditto.
+
+        * loader/Decoder.cpp: (Decoder::decode): Changed code that did a type cast to
+        unsigned char to instead call unicode().
+
+        * platform/DeprecatedString.cpp:
+        (KWQStringData::makeAscii): Call latin1() instead of relying on the conversion operator.
+        (DeprecatedString::DeprecatedString): Call unicode() instead of relying on the conversion
+        operator (the character has been tested and is known to be ASCII).
+        (DeprecatedString::at): Use 0 instead of QChar::null.
+        (DeprecatedString::compare): Use unicode() so we can do comparison since we don't have
+        comparison operators any more.
+        (DeprecatedString::find): Call unicode() instead of relying on the conversion
+        operator (the character has been tested and is known to be ASCII).
+        (DeprecatedString::findRev): Ditto.
+        (DeprecatedString::copyLatin1): Call latin1() instead of relying on the conversion operator.
+        (DeprecatedString::lower): Call unicode() instead of relying on the conversion
+        operator (the character has been tested and is known to be ASCII).
+        (DeprecatedString::insert): Ditto.
+        (DeprecatedString::replace): Ditto.
+        (DeprecatedString::fill): Ditto.
+        (DeprecatedString::append): Ditto.
+
+        * html/html_inlineimpl.cpp: (WebCore::HTMLAnchorElement::defaultEventHandler):
+        Eliminate the one use of DeprecatedString::arg.
+
+        - other cleanup
+
+        * kwq/KWQCString.cpp: Remove unneeded "using" directive.
+
+        * html/HTMLElementFactory.cpp:
+        (WebCore::htmlConstructor):
+        (WebCore::headConstructor):
+        (WebCore::bodyConstructor):
+        (WebCore::baseConstructor):
+        (WebCore::linkConstructor):
+        (WebCore::metaConstructor):
+        (WebCore::styleConstructor):
+        (WebCore::titleConstructor):
+        (WebCore::frameConstructor):
+        (WebCore::framesetConstructor):
+        (WebCore::iframeConstructor):
+        (WebCore::formConstructor):
+        (WebCore::buttonConstructor):
+        (WebCore::inputConstructor):
+        (WebCore::isindexConstructor):
+        (WebCore::fieldsetConstructor):
+        (WebCore::labelConstructor):
+        (WebCore::legendConstructor):
+        (WebCore::optgroupConstructor):
+        (WebCore::optionConstructor):
+        (WebCore::selectConstructor):
+        (WebCore::textareaConstructor):
+        (WebCore::dlConstructor):
+        (WebCore::ulConstructor):
+        (WebCore::olConstructor):
+        (WebCore::dirConstructor):
+        (WebCore::menuConstructor):
+        (WebCore::liConstructor):
+        (WebCore::blockquoteConstructor):
+        (WebCore::divConstructor):
+        (WebCore::headingConstructor):
+        (WebCore::hrConstructor):
+        (WebCore::paragraphConstructor):
+        (WebCore::preConstructor):
+        (WebCore::basefontConstructor):
+        (WebCore::fontConstructor):
+        (WebCore::modConstructor):
+        (WebCore::anchorConstructor):
+        (WebCore::imageConstructor):
+        (WebCore::mapConstructor):
+        (WebCore::areaConstructor):
+        (WebCore::canvasConstructor):
+        (WebCore::appletConstructor):
+        (WebCore::embedConstructor):
+        (WebCore::objectConstructor):
+        (WebCore::paramConstructor):
+        (WebCore::scriptConstructor):
+        (WebCore::tableConstructor):
+        (WebCore::tableCaptionConstructor):
+        (WebCore::tableColConstructor):
+        (WebCore::tableRowConstructor):
+        (WebCore::tableCellConstructor):
+        (WebCore::tableSectionConstructor):
+        (WebCore::brConstructor):
+        (WebCore::quoteConstructor):
+        (WebCore::marqueeConstructor):
+        Mark functions static, remove unused parameters, change from docPtr to doc.
+
 2006-05-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

@@ -366,8 +366,8 @@ DeprecatedString Decoder::decode(const char *data, int len)
             // Handle the case where some of bytes are already in the buffer.
             // The last byte is always guaranteed to not be in the buffer.
             const unsigned char *udata = (const unsigned char *)data;
-            unsigned char c1 = bufferLength >= 1 ? (unsigned char)buffer[0] : *udata++;
-            unsigned char c2 = bufferLength >= 2 ? (unsigned char)buffer[1] : *udata++;
+            unsigned char c1 = bufferLength >= 1 ? buffer[0].unicode() : *udata++;
+            unsigned char c2 = bufferLength >= 2 ? buffer[1].unicode() : *udata++;
             ASSERT(bufferLength < 3);
             unsigned char c3 = *udata;
 

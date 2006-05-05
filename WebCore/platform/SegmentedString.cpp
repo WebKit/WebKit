@@ -56,9 +56,9 @@ const SegmentedString& SegmentedString::operator=(const SegmentedString &other)
 unsigned SegmentedString::length() const
 {
     unsigned length = m_currentString.m_length;
-    if (!m_pushedChar1.isNull()) {
+    if (m_pushedChar1.unicode()) {
         ++length;
-        if (!m_pushedChar2.isNull())
+        if (m_pushedChar2.unicode())
             ++length;
     }
     if (m_composite) {
@@ -118,7 +118,7 @@ void SegmentedString::append(const SegmentedString &s)
         for (; i != e; ++i)
             append(*i);
     }
-    m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
+    m_currentChar = m_pushedChar1.unicode() ? &m_pushedChar1 : m_currentString.m_current;
 }
 
 void SegmentedString::prepend(const SegmentedString &s)
@@ -132,7 +132,7 @@ void SegmentedString::prepend(const SegmentedString &s)
             prepend(*i);
     }
     prepend(s.m_currentString);
-    m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
+    m_currentChar = m_pushedChar1.unicode() ? &m_pushedChar1 : m_currentString.m_current;
 }
 
 void SegmentedString::advanceSubstring()
@@ -150,9 +150,9 @@ void SegmentedString::advanceSubstring()
 DeprecatedString SegmentedString::toString() const
 {
     DeprecatedString result;
-    if (!m_pushedChar1.isNull()) {
+    if (m_pushedChar1.unicode()) {
         result.append(m_pushedChar1);
-        if (!m_pushedChar2.isNull())
+        if (m_pushedChar2.unicode())
             result.append(m_pushedChar2);
     }
     m_currentString.appendTo(result);

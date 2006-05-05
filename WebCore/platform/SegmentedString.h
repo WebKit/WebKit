@@ -25,17 +25,15 @@
 #ifndef KHTMLSTRING_H
 #define KHTMLSTRING_H
 
+#include "DeprecatedValueList.h"
 #include "PlatformString.h"
 #include <assert.h>
-#include "DeprecatedValueList.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 class SegmentedString;
 
-class SegmentedSubstring
-{
+class SegmentedSubstring {
 private:
     friend class SegmentedString;
     
@@ -64,8 +62,7 @@ private:
     const QChar *m_current;
 };
 
-class SegmentedString
-{
+class SegmentedString {
 public:
     SegmentedString() : m_currentChar(0), m_lines(0), m_composite(false) {}
     SegmentedString(const QChar *str, int length) : m_currentString(str, length), m_currentChar(m_currentString.m_current), m_lines(0), m_composite(false) {}
@@ -80,11 +77,11 @@ public:
     void prepend(const SegmentedString &);
     
     void push(QChar c) {
-        if (m_pushedChar1.isNull()) {
+        if (!m_pushedChar1.unicode()) {
             m_pushedChar1 = c;
-            m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
+            m_currentChar = m_pushedChar1.unicode() ? &m_pushedChar1 : m_currentString.m_current;
         } else {
-            assert(m_pushedChar2.isNull());
+            assert(!m_pushedChar2.unicode());
             m_pushedChar2 = c;
         }
     }
@@ -93,7 +90,7 @@ public:
     unsigned length() const;
 
     void advance() {
-        if (!m_pushedChar1.isNull()) {
+        if (!m_pushedChar1.unicode()) {
             m_pushedChar1 = m_pushedChar2;
             m_pushedChar2 = 0;
         } else if (m_currentString.m_current) {
@@ -101,10 +98,10 @@ public:
             if (--m_currentString.m_length == 0)
                 advanceSubstring();
         }
-        m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current: &m_pushedChar1;
+        m_currentChar = m_pushedChar1.unicode() ? &m_pushedChar1 : m_currentString.m_current;
     }
     
-    bool escaped() const { return !m_pushedChar1.isNull(); }
+    bool escaped() const { return m_pushedChar1.unicode(); }
 
     int lineCount() const { return m_lines; }
     void resetLineCount() { m_lines = 0; }

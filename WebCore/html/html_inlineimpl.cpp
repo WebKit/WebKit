@@ -158,7 +158,10 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
                     int absx, absy;
                     r->absolutePosition(absx, absy);
                     int x(e->clientX() - absx), y(e->clientY() - absy);
-                    url += DeprecatedString("?%1,%2").arg( x ).arg( y );
+                    url += "?";
+                    url += DeprecatedString::number(x);
+                    url += ",";
+                    url += DeprecatedString::number(y);
                 }
                 else {
                     evt->setDefaultHandled();

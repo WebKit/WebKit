@@ -671,9 +671,9 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
             int ll = min(src.length(), 10-cBufferPos);
             while(ll--) {
                 QChar csrc(src->lower());
-                cc = csrc.cell();
+                cc = csrc.unicode();
 
-                if(csrc.row() || !((cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f'))) {
+                if (!((cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f'))) {
                     state.setEntityState(SearchSemicolon);
                     break;
                 }
@@ -689,9 +689,9 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
         {
             int ll = min(src.length(), 9-cBufferPos);
             while(ll--) {
-                cc = src->cell();
+                cc = src->unicode();
 
-                if(src->row() || !(cc >= '0' && cc <= '9')) {
+                if (!(cc >= '0' && cc <= '9')) {
                     state.setEntityState(SearchSemicolon);
                     break;
                 }
@@ -709,10 +709,9 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
             int ll = min(src.length(), 9-cBufferPos);
             while(ll--) {
                 QChar csrc = *src;
-                cc = csrc.cell();
+                cc = csrc.unicode();
 
-                if(csrc.row() || !((cc >= 'a' && cc <= 'z') ||
-                                   (cc >= '0' && cc <= '9') || (cc >= 'A' && cc <= 'Z'))) {
+                if (!((cc >= 'a' && cc <= 'z') || (cc >= '0' && cc <= '9') || (cc >= 'A' && cc <= 'Z'))) {
                     state.setEntityState(SearchSemicolon);
                     break;
                 }
@@ -821,7 +820,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                           state.setInComment(false);
                           ++src;
                           if (!src.isEmpty())
-                              cBuffer[cBufferPos++] = src->cell();
+                              // cuts off high bits, which is okay
+                              cBuffer[cBufferPos++] = src->unicode();
                         }
                         else
                           state = parseComment(src, state);
@@ -829,8 +829,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         m_cBufferPos = cBufferPos;
                         return state; // Finished parsing tag!
                     }
-                    // cuts of high part, is okay
-                    cBuffer[cBufferPos++] = src->cell();
+                    // cuts off high bits, which is okay
+                    cBuffer[cBufferPos++] = src->unicode();
                     ++src;
                     break;
                 }

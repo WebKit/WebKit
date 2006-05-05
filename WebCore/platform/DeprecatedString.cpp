@@ -456,9 +456,9 @@ char *KWQStringData::makeAscii()
         }
 
         unsigned i = _length;
-        char *cp = _ascii;
-        while ( i-- )
-            *cp++ = *str++;
+        char* cp = _ascii;
+        while (i--)
+            *cp++ = (*str++).latin1();
         *cp = 0;
         
         _isAsciiValid = 1;
@@ -633,7 +633,7 @@ DeprecatedString::DeprecatedString(QChar qc)
 
     // Copy the QChar.
     if (IS_ASCII_QCHAR(qc)) {
-        char c = (char)qc; 
+        char c = qc.unicode(); 
         *dataHandle = &internalData;
         internalData.initialize( &c, 1 );
     }
@@ -737,7 +737,7 @@ QChar DeprecatedString::at(unsigned i) const
     KWQStringData *thisData = *dataHandle;
     
     if (i >= thisData->_length)
-        return QChar::null;
+        return 0;
         
     if (thisData->_isAsciiValid) {
         return thisData->_ascii[i];
@@ -768,9 +768,9 @@ int DeprecatedString::compare(const char *chs) const
         if (!c2)
             return 1;
         QChar c1 = s[i];
-        if (c1 < c2)
+        if (c1.unicode() < c2)
             return -1;
-        if (c1 > c2)
+        if (c1.unicode() > c2)
             return 1;
     }
     return chs[len] ? -1 : 0;
@@ -880,10 +880,9 @@ bool DeprecatedString::isNull() const
 int DeprecatedString::find(QChar qc, int index) const
 {
     if (dataHandle[0]->_isAsciiValid) {
-        if (!IS_ASCII_QCHAR(qc)) {
+        if (!IS_ASCII_QCHAR(qc))
             return -1;
-        }
-        return find((char)qc, index);
+        return find(qc.unicode(), index);
     }
     return find(DeprecatedString(qc), index, true);
 }
@@ -1093,8 +1092,8 @@ int DeprecatedString::findRev( const DeprecatedString& str, int index, bool cs )
     int i;
     if ( cs ) {
         for ( i = 0; i < lstr; i++ ) {
-            hthis += uthis[index + i].cell();
-            hstr += ustr[i].cell();
+            hthis += uthis[index + i].unicode();
+            hstr += ustr[i].unicode();
         }
         i = index;
         while ( true ) {
@@ -1103,13 +1102,13 @@ int DeprecatedString::findRev( const DeprecatedString& str, int index, bool cs )
             if ( i == 0 )
                 return -1;
             i--;
-            hthis -= uthis[i + lstr].cell();
-            hthis += uthis[i].cell();
+            hthis -= uthis[i + lstr].unicode();
+            hthis += uthis[i].unicode();
         }
     } else {
         for ( i = 0; i < lstr; i++ ) {
-            hthis += uthis[index + i].lower().cell();
-            hstr += ustr[i].lower().cell();
+            hthis += uthis[index + i].lower().unicode();
+            hstr += ustr[i].lower().unicode();
         }
         i = index;
         while ( true ) {
@@ -1118,8 +1117,8 @@ int DeprecatedString::findRev( const DeprecatedString& str, int index, bool cs )
             if ( i == 0 )
                 return -1;
             i--;
-            hthis -= uthis[i + lstr].lower().cell();
-            hthis += uthis[i].lower().cell();
+            hthis -= uthis[i + lstr].lower().unicode();
+            hthis += uthis[i].lower().unicode();
         }
     }
 
@@ -1330,9 +1329,9 @@ void DeprecatedString::copyLatin1(char *buffer, unsigned position, unsigned maxL
     }
 
     ASSERT(data->_isUnicodeValid);
-    const QChar *uc = data->_unicode + position;
+    const QChar* uc = data->_unicode + position;
     while (length--)
-        *buffer++ = *uc++;
+        *buffer++ = (*uc++).latin1();
 }
 
 short DeprecatedString::toShort(bool *ok, int base) const
@@ -1472,103 +1471,19 @@ double DeprecatedString::toDouble(bool *ok) const
     return val;
 }
 
-bool DeprecatedString::findArg(int& pos, int& len) const
-{
-    char lowest=0;
-    for (unsigned i = 0; i< dataHandle[0]->_length; i++) {
-        if ( at(i) == '%' && i + 1 < dataHandle[0]->_length ) {
-            char dig = at(i+1);
-            if ( dig >= '0' && dig <= '9' ) {
-                if ( !lowest || dig < lowest ) {
-                    lowest = dig;
-                    pos = i;
-                    len = 2;
-                }
-            }
-        }
-    }
-    return lowest != 0;
-}
-
-DeprecatedString DeprecatedString::arg(const DeprecatedString &a, int fieldwidth) const
-{
-    int pos, len;
-    DeprecatedString r = *this;
-
-    if ( !findArg( pos, len ) ) {
-        // Make sure the text at least appears SOMEWHERE
-        r += ' ';
-        pos = r.dataHandle[0]->_length;
-        len = 0;
-    }
-
-    r.replace( pos, len, a );
-    if ( fieldwidth < 0 ) {
-        DeprecatedString s;
-        while ( (unsigned)-fieldwidth > a.dataHandle[0]->_length ) {
-            s += ' ';
-            fieldwidth++;
-        }
-        r.insert( pos + a.dataHandle[0]->_length, s );
-    } else if ( fieldwidth ) {
-        DeprecatedString s;
-        while ( (unsigned)fieldwidth > a.dataHandle[0]->_length ) {
-            s += ' ';
-            fieldwidth--;
-        }
-        r.insert( pos, s );
-    }
-
-    return r;
-}
-
-DeprecatedString DeprecatedString::arg(short replacement, int width) const
-{
-    return arg(number((int)replacement), width);
-}
-
-DeprecatedString DeprecatedString::arg(unsigned short replacement, int width) const
-{
-    return arg(number((unsigned)replacement), width);
-}
-
-DeprecatedString DeprecatedString::arg(int replacement, int width) const
-{
-    return arg(number(replacement), width);
-}
-
-DeprecatedString DeprecatedString::arg(unsigned replacement, int width) const
-{
-    return arg(number(replacement), width);
-}
-
-DeprecatedString DeprecatedString::arg(long replacement, int width) const
-{
-    return arg(number(replacement), width);
-}
-
-DeprecatedString DeprecatedString::arg(unsigned long replacement, int width) const
-{
-    return arg(number(replacement), width);
-}
-
-DeprecatedString DeprecatedString::arg(double replacement, int width) const
-{
-    return arg(number(replacement), width);
-}
-
 DeprecatedString DeprecatedString::left(unsigned len) const
-{ return mid(0, len); }
-
+{
+    return mid(0, len);
+}
 
 DeprecatedString DeprecatedString::right(unsigned len) const
-{ return mid(length() - len, len); }
-
+{
+    return mid(length() - len, len);
+}
 
 DeprecatedString DeprecatedString::mid(unsigned start, unsigned len) const
 {
-    if( dataHandle && *dataHandle)
-    {
+    if (dataHandle && *dataHandle) {
         KWQStringData &data = **dataHandle;
         
         // clip length
@@ -1588,18 +1503,17 @@ DeprecatedString DeprecatedString::mid(unsigned start, unsigned len) const
                start + len <= data._length); // past the end
         
         // ascii case
-        if( data._isAsciiValid && data._ascii )
-            return DeprecatedString( &(data._ascii[start]) , len);
+        if (data._isAsciiValid && data._ascii)
+            return DeprecatedString(&data._ascii[start] , len);
         
         // unicode case
-        else if( data._isUnicodeValid && data._unicode )
-            return DeprecatedString( &(data._unicode[start]), len );
+        if (data._isUnicodeValid && data._unicode)
+            return DeprecatedString(&data._unicode[start], len);
     }
     
     // degenerate case
     return DeprecatedString();
 }
-
 
 DeprecatedString DeprecatedString::copy() const
 {
@@ -1638,14 +1552,14 @@ DeprecatedString DeprecatedString::lower() const
                 QChar c = *p;
                 // FIXME: Doesn't work for 0x80-0xFF.
                 if (IS_ASCII_QCHAR(c)) {
-                    if (c >= 'A' && c <= 'Z') {
+                    if (c.unicode() >= 'A' && c.unicode() <= 'Z') {
                         if (!detached) {
                             s.detach();
                             d = *s.dataHandle;
                             p = d->_unicode + d->_length - l - 1;
                             detached = true;
                         }
-                        *p = c + ('a' - 'A');
+                        *p = c.unicode() + ('a' - 'A');
                     }
                 } else {
                     QChar clower = c.lower();
@@ -2033,7 +1947,7 @@ DeprecatedString &DeprecatedString::insert(unsigned index, QChar qc)
     
     if (dataHandle[0]->_isAsciiValid && IS_ASCII_QCHAR(qc)){
         unsigned originalLength = dataHandle[0]->_length;
-        char insertChar = (char)qc;
+        char insertChar = qc.unicode();
         char *targetChars;
         
         // Ensure that we have enough space.
@@ -2250,8 +2164,8 @@ DeprecatedString &DeprecatedString::replace(QChar oldChar, QChar newChar)
         if (dataHandle[0]->_isAsciiValid && IS_ASCII_QCHAR(newChar)) {
             char *p = const_cast<char *>(ascii());
             dataHandle[0]->_isUnicodeValid = 0;
-            char oldC = oldChar;
-            char newC = newChar;
+            char oldC = oldChar.unicode();
+            char newC = newChar.unicode();
             for (unsigned i = 0; i != length; ++i) {
                 if (p[i] == oldC) {
                     p[i] = newC;
@@ -2344,7 +2258,7 @@ void DeprecatedString::fill(QChar qc, int len)
             setLength(len);
             char *nd = const_cast<char*>(ascii());
             while (len--) 
-                *nd++ = (char)qc;
+                *nd++ = qc.unicode();
             dataHandle[0]->_isUnicodeValid = 0;
         } else {
             setLength(len);
@@ -2367,7 +2281,7 @@ DeprecatedString &DeprecatedString::append(QChar qc)
         return *this;
     }
     else if (thisData->_isAsciiValid && IS_ASCII_QCHAR(qc) && thisData->_length + 2 < thisData->_maxAscii){
-        thisData->_ascii[thisData->_length] = (char)qc;
+        thisData->_ascii[thisData->_length] = qc.unicode();
         thisData->_length++;
         thisData->_ascii[thisData->_length] = 0;
         thisData->_isUnicodeValid = 0;
