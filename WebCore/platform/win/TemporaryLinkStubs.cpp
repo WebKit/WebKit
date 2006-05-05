@@ -193,7 +193,7 @@ bool FrameWin::canPaste() const { notImplemented(); return 0; }
 enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,String const&) { notImplemented(); return (ObjectContentType)0; }
 bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
-Plugin* FrameWin::createPlugin(KURL const&, const Vector<String>&, const Vector<String>&,String const&) { notImplemented(); return 0; }
+Plugin* FrameWin::createPlugin(Element*, KURL const&, const Vector<String>&, const Vector<String>&,String const&) { notImplemented(); return 0; }
 
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
 void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }

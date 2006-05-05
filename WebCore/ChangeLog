@@ -1,6 +1,13 @@
 2006-05-05  Darin Adler  <darin@apple.com>
 
-        - get the Window build a little closer to building again
+        - fix the Windows build
+
+        * bridge/win/FrameWin.h: Add Element* parameter to createPlugin.
+        * platform/win/TemporaryLinkStubs.cpp: (FrameWin::createPlugin): Ditto.
+
+2006-05-05  Darin Adler  <darin@apple.com>
+
+        - get the Windows build a little closer to building again
 
         * platform/cairo/GraphicsContextCairo.cpp:
         (WebCore::GraphicsContext::drawRect): Call alpha to check if the color is transparent.
