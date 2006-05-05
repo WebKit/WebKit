@@ -879,7 +879,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     NSView *documentView = [[self _scrollView] documentView];
     if (documentView && [documentView respondsToSelector:@selector(printDocumentView)])
-        return [(id)documentView printDocumentView];
+        [(id)documentView printDocumentView];
 }
 
 - (float)_area
