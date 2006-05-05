@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTML_HTMLKeygenElementImpl_H
 #define HTML_HTMLKeygenElementImpl_H
 
@@ -29,24 +30,17 @@
 
 namespace WebCore {
 
-class FormDataList;
-class MappedAttribute;
-
-class HTMLKeygenElement : public HTMLSelectElement
-{
+class HTMLKeygenElement : public HTMLSelectElement {
 public:
-    HTMLKeygenElement(Document *doc, HTMLFormElement *f = 0);
+    HTMLKeygenElement(Document*, HTMLFormElement* = 0);
 
     virtual int tagPriority() const { return 0; }
-
-    String type() const;
-
-    // ### this is just a rough guess
+    virtual const AtomicString& type() const;
     virtual bool isEnumeratable() const { return false; }
-
-    virtual void parseMappedAttribute(MappedAttribute *attr);
+    virtual void parseMappedAttribute(MappedAttribute*);
     virtual bool appendFormData(FormDataList&, bool);
-protected:
+
+private:
     AtomicString m_challenge;
     AtomicString m_keyType;
 };

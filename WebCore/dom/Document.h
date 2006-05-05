@@ -70,6 +70,7 @@ namespace WebCore {
     class HTMLDocument;
     class HTMLElement;
     class HTMLFormElement;
+    class HTMLGenericFormElement;
     class HTMLImageLoader;
     class HTMLInputElement;
     class HTMLMapElement;
@@ -98,8 +99,34 @@ namespace WebCore {
     class SVGDocumentExtensions;
 #endif
 
-class Document : public ContainerNode
-{
+class FormElementKey {
+public:
+    FormElementKey(AtomicStringImpl* = 0, AtomicStringImpl* = 0);
+    ~FormElementKey();
+    FormElementKey(const FormElementKey&);
+    FormElementKey& operator=(const FormElementKey&);
+    AtomicStringImpl* name() const { return m_name; }
+    AtomicStringImpl* type() const { return m_type; }
+private:
+    void ref() const;
+    void deref() const;
+    AtomicStringImpl* m_name;
+    AtomicStringImpl* m_type;
+};
+
+inline bool operator==(const FormElementKey& a, const FormElementKey& b)
+    { return a.name() == b.name() && a.type() == b.type(); }
+
+struct FormElementKeyHash {
+    static unsigned hash(const FormElementKey&);
+    static bool equal(const FormElementKey& a, const FormElementKey& b) { return a == b; }
+};
+
+struct FormElementKeyHashTraits : KXMLCore::GenericHashTraits<FormElementKey> {
+    static FormElementKey deletedValue();
+};
+
+class Document : public ContainerNode {
 public:
     Document(DOMImplementation*, FrameView*);
     ~Document();
@@ -140,12 +167,12 @@ public:
     Element* getElementById(const AtomicString&) const;
 
     Element* elementFromPoint(int x, int y) const;
-    String readyState();
-    String inputEncoding();
-    String defaultCharset();
+    String readyState() const;
+    String inputEncoding() const;
+    String defaultCharset() const;
 
-    String charset() { return inputEncoding(); }
-    String characterSet() { return inputEncoding(); }
+    String charset() const { return inputEncoding(); }
+    String characterSet() const { return inputEncoding(); }
 
     void setCharset(const String&);
 
@@ -155,8 +182,8 @@ public:
 
     // Actually part of JSHTMLDocument, but used for giving XML documents a window title as well
     String title() const { return m_title; }
-    void setTitle(const String&, Node *titleElement = 0);
-    void removeTitle(Node *titleElement);
+    void setTitle(const String&, Node* titleElement = 0);
+    void removeTitle(Node* titleElement);
 
     PassRefPtr<HTMLCollection> images();
     PassRefPtr<HTMLCollection> embeds();
@@ -180,7 +207,7 @@ public:
 
     CSSStyleSelector* styleSelector() const { return m_styleSelector; }
 
-    Element* getElementByAccessKey(const String& key);
+    Element* getElementByAccessKey(const String& key) const;
     
     /**
      * Updates the pending sheet count and then calls updateStyleSelector.
@@ -191,7 +218,7 @@ public:
      * This method returns true if all top-level stylesheets have loaded (including
      * any @imports that they may be loading).
      */
-    bool haveStylesheetsLoaded() { return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets; }
+    bool haveStylesheetsLoaded() const { return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets; }
 
     /**
      * Increments the number of pending sheets.  The <link> elements
@@ -212,21 +239,18 @@ public:
 
     void recalcStyleSelector();
 
-    bool usesDescendantRules() { return m_usesDescendantRules; }
+    bool usesDescendantRules() const { return m_usesDescendantRules; }
     void setUsesDescendantRules(bool b) { m_usesDescendantRules = b; }
-    bool usesSiblingRules() { return m_usesSiblingRules; }
-    void setUsesSiblingRules(bool b) { m_usesSiblingRules = b; }\
+    bool usesSiblingRules() const { return m_usesSiblingRules; }
+    void setUsesSiblingRules(bool b) { m_usesSiblingRules = b; }
 
-    DeprecatedString nextState();
-
-    // Query all registered elements for their state
-    DeprecatedStringList docState();
-    void registerMaintainsState(Node* e) { m_maintainsState.append(e); }
-    void deregisterMaintainsState(Node* e) { m_maintainsState.removeRef(e); }
-
-    // Set the state the document should restore to
-    void setRestoreState(const DeprecatedStringList& s) { m_state = s; }
-    DeprecatedStringList& restoreState( ) { return m_state; }
+    // Machinery for saving and restoring state when you leave and then go back to a page.
+    void registerFormElementWithState(HTMLGenericFormElement* e) { m_formElementsWithState.add(e); }
+    void deregisterFormElementWithState(HTMLGenericFormElement* e) { m_formElementsWithState.remove(e); }
+    Vector<String> formElementsState() const;
+    void setStateForNewFormElements(const Vector<String>&);
+    bool hasStateForNewFormElements() const;
+    bool takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state);
 
     FrameView* view() const { return m_view; }
     Frame* frame() const;
@@ -301,30 +325,22 @@ public:
     bool printing() const { return m_printing; }
     void setPrinting(bool p) { m_printing = p; }
 
-    enum HTMLMode {
-        Html3,
-        Html4,
-        XHtml
-    };
-
-    enum ParseMode {
-        Compat,
-        AlmostStrict,
-        Strict
-    };
+    enum ParseMode { Compat, AlmostStrict, Strict };
     
     virtual void determineParseMode( const DeprecatedString &str );
-    void setParseMode( ParseMode m ) { pMode = m; }
+    void setParseMode(ParseMode m) { pMode = m; }
     ParseMode parseMode() const { return pMode; }
 
-    bool inCompatMode() { return pMode == Compat; }
-    bool inAlmostStrictMode() { return pMode == AlmostStrict; }
-    bool inStrictMode() { return pMode == Strict; }
+    bool inCompatMode() const { return pMode == Compat; }
+    bool inAlmostStrictMode() const { return pMode == AlmostStrict; }
+    bool inStrictMode() const { return pMode == Strict; }
     
-    void setHTMLMode( HTMLMode m ) { hMode = m; }
+    enum HTMLMode { Html3, Html4, XHtml };
+
+    void setHTMLMode(HTMLMode m) { hMode = m; }
     HTMLMode htmlMode() const { return hMode; }
 
-    void setParsing(bool b);
+    void setParsing(bool);
     bool parsing() const { return m_bParsing; }
     int minimumLayoutDelay();
     bool shouldScheduleLayout();
@@ -355,8 +371,8 @@ public:
        stylesheets using the DOM. May be subject to change as
        spec matures. - dwh
     */
-    String preferredStylesheetSet();
-    String selectedStylesheetSet();
+    String preferredStylesheetSet() const;
+    String selectedStylesheetSet() const;
     void setSelectedStylesheetSet(const String&);
 
     DeprecatedStringList availableStyleSheets() const;
@@ -375,7 +391,7 @@ public:
 
     // Updates for :target (CSS3 selector).
     void setCSSTarget(Node*);
-    Node* getCSSTarget();
+    Node* getCSSTarget() const;
     
     void setDocumentChanged(bool);
 
@@ -542,12 +558,11 @@ public:
     void finishedParsing();
 
 protected:
-    CSSStyleSelector *m_styleSelector;
-    FrameView *m_view;
-    DeprecatedStringList m_state;
+    CSSStyleSelector* m_styleSelector;
+    FrameView* m_view;
 
-    DocLoader *m_docLoader;
-    Tokenizer *m_tokenizer;
+    DocLoader* m_docLoader;
+    Tokenizer* m_tokenizer;
     DeprecatedString m_url;
     DeprecatedString m_baseURL;
     String m_baseTarget;
@@ -585,25 +600,15 @@ protected:
 
     unsigned m_domtree_version;
     
-    // ### replace with something more efficient in lookup and insertion
-    StringImpl** m_elementNames;
-    unsigned short m_elementNameAlloc;
-    unsigned short m_elementNameCount;
-
-    StringImpl** m_attrNames;
-    unsigned short m_attrNameAlloc;
-    unsigned short m_attrNameCount;
-
-    StringImpl** m_namespaceURIs;
-    unsigned short m_namespaceURIAlloc;
-    unsigned short m_namespaceURICount;
-
     DeprecatedPtrList<NodeIterator> m_nodeIterators;
 
     unsigned short m_listenerTypes;
     RefPtr<StyleSheetList> m_styleSheets;
     DeprecatedPtrList<RegisteredEventListener> m_windowEventListeners;
-    DeprecatedPtrList<Node> m_maintainsState;
+
+    typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
+    HashSet<HTMLGenericFormElement*> m_formElementsWithState;
+    FormElementStateMap m_stateForNewFormElements;
 
     Color m_linkColor;
     Color m_visitedLinkColor;
@@ -658,8 +663,7 @@ protected:
 
     String m_policyBaseURL;
 
-    typedef HashSet<Node*> NodeSet;
-    NodeSet m_disconnectedNodesWithEventListeners;
+    HashSet<Node*> m_disconnectedNodesWithEventListeners;
 
     int m_docID; // A unique document identifier used for things like document-specific mapped attributes.
 
@@ -711,16 +715,16 @@ private:
     void removeAllDisconnectedNodeEventListeners();
     void imageLoadEventTimerFired(Timer<Document>*);
 
-    JSEditor *jsEditor();
+    JSEditor* jsEditor();
 
-    JSEditor *m_jsEditor;
+    JSEditor* m_jsEditor;
     bool relinquishesEditingFocus(Node*);
     bool acceptsEditingFocus(Node*);
     void didBeginEditing();
     void didEndEditing();
 
     mutable String m_domain;
-    RenderObject *m_savedRenderer;
+    RenderObject* m_savedRenderer;
     int m_passwordFields;
     int m_secureForms;
     
@@ -729,7 +733,7 @@ private:
     mutable HashMap<AtomicStringImpl*, Element*> m_elementsById;
     mutable HashCountedSet<AtomicStringImpl*> m_duplicateIds;
     
-    HashMap<StringImpl*, Element*, CaseInsensitiveHash> m_elementsByAccessKey;
+    mutable HashMap<StringImpl*, Element*, CaseInsensitiveHash> m_elementsByAccessKey;
     
     InheritedBool m_designMode;
     
@@ -748,7 +752,7 @@ private:
     bool m_dashboardRegionsDirty;
 #endif
 
-    bool m_accessKeyMapValid;
+    mutable bool m_accessKeyMapValid;
     bool m_createRenderers;
     bool m_inPageCache;
 };

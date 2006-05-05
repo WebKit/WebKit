@@ -41,36 +41,33 @@ using namespace HTMLNames;
 
 HTMLTextAreaElement::HTMLTextAreaElement(Document *doc, HTMLFormElement *f)
     : HTMLGenericFormElement(textareaTag, doc, f)
+    , m_rows(2)
+    , m_cols(20)
+    , m_wrap(ta_Virtual)
     , m_valueMatchesRenderer(true)
 {
-    // DTD requires rows & cols be specified, but we will provide reasonable defaults
-    m_rows = 2;
-    m_cols = 20;
-    m_wrap = ta_Virtual;
+    document()->registerFormElementWithState(this);
 }
 
 HTMLTextAreaElement::~HTMLTextAreaElement()
 {
-    document()->deregisterMaintainsState(this);
+    document()->deregisterFormElementWithState(this);
 }
 
-String HTMLTextAreaElement::type() const
+const AtomicString& HTMLTextAreaElement::type() const
 {
-    return "textarea";
+    static const AtomicString textarea("textarea");
+    return textarea;
 }
 
-DeprecatedString HTMLTextAreaElement::state( )
+String HTMLTextAreaElement::stateValue() const
 {
-    // Make sure the string is not empty!
-    return HTMLGenericFormElement::state() + value().deprecatedString()+'.';
+    return value();
 }
 
-void HTMLTextAreaElement::restoreState(DeprecatedStringList &states)
+void HTMLTextAreaElement::restoreState(const String& state)
 {
-    DeprecatedString state = HTMLGenericFormElement::findMatchingState(states);
-    if (state.isNull()) return;
-    setDefaultValue(state.left(state.length()-1));
-    // the close() in the rendertree will take care of transferring defaultvalue to 'value'
+    setDefaultValue(state);
 }
 
 int HTMLTextAreaElement::selectionStart()
@@ -179,7 +176,7 @@ void HTMLTextAreaElement::rendererWillBeDestroyed()
     updateValue();
 }
 
-void HTMLTextAreaElement::updateValue()
+void HTMLTextAreaElement::updateValue() const
 {
     if (!m_valueMatchesRenderer) {
         ASSERT(renderer());
@@ -188,7 +185,7 @@ void HTMLTextAreaElement::updateValue()
     }
 }
 
-String HTMLTextAreaElement::value()
+String HTMLTextAreaElement::value() const
 {
     updateValue();
     return m_value;
@@ -209,15 +206,15 @@ void HTMLTextAreaElement::setValue(const String &value)
     setChanged(true);
 }
 
-String HTMLTextAreaElement::defaultValue()
+String HTMLTextAreaElement::defaultValue() const
 {
     String val = "";
+
     // there may be comments - just grab the text nodes
-    Node *n;
-    for (n = firstChild(); n; n = n->nextSibling())
+    for (Node* n = firstChild(); n; n = n->nextSibling())
         if (n->isTextNode())
             val += static_cast<Text*>(n)->data();
-    
+
     // FIXME: We should only drop the first carriage return for the default
     // value in the original source, not defaultValues set from JS.
     if (val.length() >= 2 && val[0] == '\r' && val[1] == '\n')

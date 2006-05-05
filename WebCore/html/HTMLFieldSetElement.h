@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef KHTML_HTMLFieldSetElementImpl_H
 #define KHTML_HTMLFieldSetElementImpl_H
 
@@ -37,20 +38,17 @@ class HTMLFormElement;
 class Document;
 class Node;
 
-class HTMLFieldSetElement : public HTMLGenericFormElement
-{
+class HTMLFieldSetElement : public HTMLGenericFormElement {
 public:
-    HTMLFieldSetElement(Document *doc, HTMLFormElement *f = 0);
+    HTMLFieldSetElement(Document*, HTMLFormElement* = 0);
     virtual ~HTMLFieldSetElement();
     
     virtual int tagPriority() const { return 3; }
     virtual bool checkDTD(const Node* newChild);
 
     virtual bool isFocusable() const;
-    
-    virtual WebCore::RenderObject *createRenderer(RenderArena *, WebCore::RenderStyle *);
-
-    virtual String type() const;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual const AtomicString& type() const;
 };
 
 } //namespace

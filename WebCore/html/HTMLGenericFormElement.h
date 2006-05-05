@@ -22,43 +22,42 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTML_HTMLGenericFormElementImpl_h
 #define HTML_HTMLGenericFormElementImpl_h
 
 #include "HTMLElement.h"
 
 namespace WebCore {
-    class RenderFormElement;
-}
-
-namespace WebCore {
 
 class FormDataList;
 class HTMLFormElement;
+class RenderFormElement;
 
 class HTMLGenericFormElement : public HTMLElement
 {
     friend class HTMLFormElement;
-    friend class WebCore::RenderFormElement;
+    friend class RenderFormElement;
 
 public:
-    HTMLGenericFormElement(const QualifiedName& tagName, Document *doc, HTMLFormElement *f = 0);
+    HTMLGenericFormElement(const QualifiedName& tagName, Document*, HTMLFormElement* = 0);
     virtual ~HTMLGenericFormElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
 
-    HTMLFormElement *form() { return m_form; }
+    HTMLFormElement* form() const { return m_form; }
 
-    virtual String type() const = 0;
+    virtual const AtomicString& type() const = 0;
 
     virtual bool isControl() const { return true; }
     virtual bool isEnabled() const { return !disabled(); }
 
-    virtual void parseMappedAttribute(MappedAttribute *attr);
+    virtual void parseMappedAttribute(MappedAttribute*);
     virtual void attach();
     virtual void insertedIntoTree(bool deep);
     virtual void removedFromTree(bool deep);
+    virtual void closeRenderer();
 
     virtual void reset() {}
 
@@ -66,7 +65,7 @@ public:
     void onChange();
 
     bool disabled() const;
-    void setDisabled(bool _disabled);
+    void setDisabled(bool);
 
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable() const;
@@ -74,9 +73,9 @@ public:
     virtual bool isEnumeratable() const { return false; }
 
     virtual bool isReadOnlyControl() const { return m_readOnly; }
-    void setReadOnly(bool _readOnly);
+    void setReadOnly(bool);
 
-    virtual void recalcStyle( StyleChange );
+    virtual void recalcStyle(StyleChange);
 
     virtual const AtomicString& name() const;
     void setName(const AtomicString& name);
@@ -84,15 +83,13 @@ public:
     virtual bool isGenericFormElement() const { return true; }
     virtual bool isRadioButton() const { return false; }
 
-    /*
-     * override in derived classes to get the encoded name=value pair
-     * for submitting
-     * return true for a successful control (see HTML4-17.13.2)
+    /* Override in derived classes to get the encoded name=value pair for submitting.
+     * Return true for a successful control (see HTML4-17.13.2).
      */
     virtual bool appendFormData(FormDataList&, bool) { return false; }
 
-    virtual DeprecatedString state();
-    DeprecatedString findMatchingState(DeprecatedStringList &states);
+    virtual String stateValue() const;
+    virtual void restoreState(const String& value);
 
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }
@@ -102,12 +99,12 @@ public:
     void setTabIndex(int);
 
 protected:
-    HTMLFormElement *getForm() const;
+    HTMLFormElement* getForm() const;
 
-    HTMLFormElement *m_form;
-    bool m_disabled : 1;
-    bool m_readOnly: 1;
-    bool m_inited : 1;
+private:
+    HTMLFormElement* m_form;
+    bool m_disabled;
+    bool m_readOnly;
 };
 
 } //namespace

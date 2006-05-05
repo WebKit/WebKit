@@ -547,34 +547,35 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)saveDocumentState
 {
-    Document* doc = m_frame->document();
-    if (doc) {
-        DeprecatedStringList list = doc->docState();
-        NSMutableArray* documentState = [[NSMutableArray alloc] init];
-        DeprecatedStringList::const_iterator end = list.constEnd();
-        for (DeprecatedStringList::const_iterator i = list.constBegin(); i != end; ++i) {
-            const DeprecatedString& s = *i;
-            [documentState addObject:[NSString stringWithCharacters:(const unichar *)s.unicode() length:s.length()]];
-        }
-        [self saveDocumentState:documentState];
-        [documentState release];
+    Vector<String> stateVector;
+    if (Document* doc = m_frame->document())
+        stateVector = doc->formElementsState();
+    size_t size = stateVector.size();
+    NSMutableArray* stateArray = [[NSMutableArray alloc] initWithCapacity:size];
+    for (size_t i = 0; i < size; ++i) {
+        NSString* s = stateVector[i];
+        id o = s ? (id)s : (id)[NSNull null];
+        [stateArray addObject:o];
     }
+    [self saveDocumentState:stateArray];
+    [stateArray release];
 }
 
 - (void)restoreDocumentState
 {
-    Document *doc = m_frame->document();
-    if (doc) {
-        NSArray *documentState = [self documentState];
-        
-        DeprecatedStringList s;
-        for (unsigned i = 0; i < [documentState count]; i++) {
-            NSString *string = [documentState objectAtIndex: i];
-            s.append(DeprecatedString::fromNSString(string));
-        }
-            
-        doc->setRestoreState(s);
+    Document* doc = m_frame->document();
+    if (!doc)
+        return;
+    NSArray* stateArray = [self documentState];
+    size_t size = [stateArray count];
+    Vector<String> stateVector;
+    stateVector.reserveCapacity(size);
+    for (size_t i = 0; i < size; ++i) {
+        id o = [stateArray objectAtIndex:i];
+        NSString* s = [o isKindOfClass:[NSString class]] ? o : 0;
+        stateVector.append(s);
     }
+    doc->setStateForNewFormElements(stateVector);
 }
 
 - (void)scrollToAnchorWithURL:(NSURL *)URL

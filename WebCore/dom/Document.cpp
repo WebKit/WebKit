@@ -49,10 +49,12 @@
 #include "MouseEventWithHitTestResults.h"
 #include "NameNodeList.h"
 #include "PlatformKeyboardEvent.h"
+#include "RegularExpression.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
 #include "SegmentedString.h"
 #include "SelectionController.h"
+#include "StringHash.h"
 #include "SystemTime.h"
 #include "TextIterator.h"
 #include "css_valueimpl.h"
@@ -67,7 +69,6 @@
 #include "render_frames.h"
 #include "xml_tokenizer.h"
 #include "xmlhttprequest.h"
-#include "RegularExpression.h"
 
 #ifdef KHTML_XSLT
 #include "XSLTProcessor.h"
@@ -102,6 +103,9 @@ const int cLayoutScheduleThreshold = 250;
 
 // Use 1 to represent the document's default form.
 HTMLFormElement* const defaultForm = (HTMLFormElement*) 1;
+
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+static const unsigned PHI = 0x9e3779b9U;
 
 // DOM Level 2 says (letters added):
 //
@@ -229,12 +233,6 @@ Document::Document(DOMImplementation* impl, FrameView *v)
     pMode = Strict;
     hMode = XHtml;
     m_textColor = Color::black;
-    m_elementNames = 0;
-    m_elementNameAlloc = 0;
-    m_elementNameCount = 0;
-    m_attrNames = 0;
-    m_attrNameAlloc = 0;
-    m_attrNameCount = 0;
     m_listenerTypes = 0;
     m_inDocument = true;
     m_styleSelectorDirty = false;
@@ -307,17 +305,6 @@ Document::~Document()
     delete m_styleSelector;
     delete m_docLoader;
     
-    if (m_elementNames) {
-        for (unsigned short id = 0; id < m_elementNameCount; id++)
-            m_elementNames[id]->deref();
-        delete [] m_elementNames;
-    }
-    if (m_attrNames) {
-        for (unsigned short id = 0; id < m_attrNameCount; id++)
-            m_attrNames[id]->deref();
-        delete [] m_attrNames;
-    }
-
     if (m_renderArena) {
         delete m_renderArena;
         m_renderArena = 0;
@@ -607,30 +594,30 @@ Element *Document::getElementById(const AtomicString& elementId) const
     return 0;
 }
 
-String Document::readyState()
+String Document::readyState() const
 {
-    if (Frame *f = frame()) {
+    if (Frame* f = frame()) {
         if (f->isComplete()) 
             return "complete";
         if (parsing()) 
             return "loading";
       return "loaded";
-      // FIXME: What does the interactive value mean ?
-      // FIXME: Missing support for "uninitialized"
+      // FIXME: What does "interactive" mean?
+      // FIXME: Missing support for "uninitialized".
     }
     return String();
 }
 
-String Document::inputEncoding()
+String Document::inputEncoding() const
 {
     if (Decoder* d = decoder())
         return d->encodingName();
     return String();
 }
 
-String Document::defaultCharset()
+String Document::defaultCharset() const
 {
-    if (Frame *f = frame())
+    if (Frame* f = frame())
         return f->settings()->encoding();
     return String();
 }
@@ -674,15 +661,15 @@ void Document::removeElementById(const AtomicString& elementId, Element* element
         m_duplicateIds.remove(elementId.impl());
 }
 
-Element* Document::getElementByAccessKey(const String& key)
+Element* Document::getElementByAccessKey(const String& key) const
 {
-    if (!key.length())
+    if (key.isEmpty())
         return 0;
     if (!m_accessKeyMapValid) {
-        for (Node* n = this; n; n = n->traverseNextNode()) {
+        for (Node* n = firstChild(); n; n = n->traverseNextNode()) {
             if (!n->isElementNode())
                 continue;
-            Element* element = static_cast<Element *>(n);
+            Element* element = static_cast<Element*>(n);
             const AtomicString& accessKey = element->getAttribute(accesskeyAttr);
             if (!accessKey.isEmpty())
                 m_elementsByAccessKey.set(accessKey.impl(), element);
@@ -694,11 +681,8 @@ Element* Document::getElementByAccessKey(const String& key)
 
 void Document::updateTitle()
 {
-    Frame *p = frame();
-    if (!p)
-        return;
-
-    p->setTitle(m_title);
+    if (Frame* f = frame())
+        f->setTitle(m_title);
 }
 
 void Document::setTitle(const String& title, Node* titleElement)
@@ -721,7 +705,7 @@ void Document::setTitle(const String& title, Node* titleElement)
     updateTitle();
 }
 
-void Document::removeTitle(Node *titleElement)
+void Document::removeTitle(Node* titleElement)
 {
     if (m_titleElement != titleElement)
         return;
@@ -745,26 +729,7 @@ Node::NodeType Document::nodeType() const
     return DOCUMENT_NODE;
 }
 
-DeprecatedString Document::nextState()
-{
-   DeprecatedString state;
-   if (!m_state.isEmpty()) {
-      state = m_state.first();
-      m_state.remove(m_state.begin());
-   }
-   return state;
-}
-
-DeprecatedStringList Document::docState()
-{
-    DeprecatedStringList s;
-    for (DeprecatedPtrListIterator<Node> it(m_maintainsState); it.current(); ++it)
-        s.append(it.current()->state());
-
-    return s;
-}
-
-Frame *Document::frame() const 
+Frame* Document::frame() const 
 {
     return m_view ? m_view->frame() : 0; 
 }
@@ -1013,9 +978,9 @@ void Document::unregisterDisconnectedNodeWithEventListeners(Node* node)
 
 void Document::removeAllDisconnectedNodeEventListeners()
 {
-    NodeSet::iterator end = m_disconnectedNodesWithEventListeners.end();
-    for (NodeSet::iterator i = m_disconnectedNodesWithEventListeners.begin(); i != end; ++i)
-        EventTargetNodeCast((*i))->removeAllEventListeners();
+    HashSet<Node*>::iterator end = m_disconnectedNodesWithEventListeners.end();
+    for (HashSet<Node*>::iterator i = m_disconnectedNodesWithEventListeners.begin(); i != end; ++i)
+        EventTargetNodeCast(*i)->removeAllEventListeners();
     m_disconnectedNodesWithEventListeners.clear();
 }
 
@@ -1721,12 +1686,12 @@ StyleSheetList* Document::styleSheets()
     return m_styleSheets.get();
 }
 
-String Document::preferredStylesheetSet()
+String Document::preferredStylesheetSet() const
 {
   return m_preferredStylesheetSet;
 }
 
-String Document::selectedStylesheetSet()
+String Document::selectedStylesheetSet() const
 {
   return m_selectedStylesheetSet;
 }
@@ -2161,7 +2126,7 @@ void Document::setCSSTarget(Node* n)
         n->setChanged();
 }
 
-Node* Document::getCSSTarget()
+Node* Document::getCSSTarget() const
 {
     return m_cssTarget;
 }
@@ -3109,6 +3074,143 @@ void Document::finishedParsing()
     setParsing(false);
     if (Frame* f = frame())
         f->finishedParsing();
+}
+
+Vector<String> Document::formElementsState() const
+{
+    Vector<String> stateVector(m_formElementsWithState.size() * 3);
+    typedef HashSet<HTMLGenericFormElement*>::const_iterator Iterator;
+    Iterator end = m_formElementsWithState.end();
+    for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
+        HTMLGenericFormElement* e = *it;
+        stateVector.append(e->name().domString());
+        stateVector.append(e->type().domString());
+        stateVector.append(e->stateValue());
+    }
+    return stateVector;
+}
+
+void Document::setStateForNewFormElements(const Vector<String>& stateVector)
+{
+    // Walk the state vector backwards so that the value to use for each
+    // name/type pair first is the one at the end of each individual vector
+    // in the FormElementStateMap. We're using them like stacks.
+    typedef FormElementStateMap::iterator Iterator;
+    m_formElementsWithState.clear();
+    for (size_t i = stateVector.size() / 3 * 3; i; i -= 3) {
+        AtomicString a = stateVector[i - 3];
+        AtomicString b = stateVector[i - 2];
+        const String& c = stateVector[i - 1];
+        FormElementKey key(a.impl(), b.impl());
+        Iterator it = m_stateForNewFormElements.find(key);
+        if (it != m_stateForNewFormElements.end())
+            it->second.append(c);
+        else {
+            Vector<String> v(1);
+            v[0] = c;
+            m_stateForNewFormElements.set(key, v);
+        }
+    }
+}
+
+bool Document::hasStateForNewFormElements() const
+{
+    return !m_stateForNewFormElements.isEmpty();
+}
+
+bool Document::takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state)
+{
+    typedef FormElementStateMap::iterator Iterator;
+    Iterator it = m_stateForNewFormElements.find(FormElementKey(name, type));
+    if (it == m_stateForNewFormElements.end())
+        return false;
+    ASSERT(it->second.size());
+    state = it->second.last();
+    if (it->second.size() > 1)
+        it->second.removeLast();
+    else
+        m_stateForNewFormElements.remove(it);
+    return true;
+}
+
+FormElementKey::FormElementKey(AtomicStringImpl* name, AtomicStringImpl* type)
+    : m_name(name), m_type(type)
+{
+    ref();
+}
+
+FormElementKey::~FormElementKey()
+{
+    deref();
+}
+
+FormElementKey::FormElementKey(const FormElementKey& other)
+    : m_name(other.name()), m_type(other.type())
+{
+    ref();
+}
+
+FormElementKey& FormElementKey::operator=(const FormElementKey& other)
+{
+    other.ref();
+    deref();
+    m_name = other.name();
+    m_type = other.type();
+    return *this;
+}
+
+void FormElementKey::ref() const
+{
+    if (name() && name() != HashTraits<AtomicStringImpl*>::deletedValue())
+        name()->ref();
+    if (type())
+        type()->ref();
+}
+
+void FormElementKey::deref() const
+{
+    if (name() && name() != HashTraits<AtomicStringImpl*>::deletedValue())
+        name()->deref();
+    if (type())
+        type()->deref();
+}
+
+unsigned FormElementKeyHash::hash(const FormElementKey& k)
+{
+    ASSERT(sizeof(k) % (sizeof(uint16_t) * 2) == 0);
+
+    unsigned l = sizeof(k) / (sizeof(uint16_t) * 2);
+    const uint16_t* s = reinterpret_cast<const uint16_t*>(&k);
+    uint32_t hash = PHI;
+
+    // Main loop
+    for (; l > 0; l--) {
+        hash += s[0];
+        uint32_t tmp = (s[1] << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        s += 2;
+        hash += hash >> 11;
+    }
+        
+    // Force "avalanching" of final 127 bits
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+
+    // this avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet", using a value that is likely to be
+    // effectively the same as 0 when the low bits are masked
+    if (hash == 0)
+        hash = 0x80000000;
+
+    return hash;
+}
+
+FormElementKey FormElementKeyHashTraits::deletedValue()
+{
+    return HashTraits<AtomicStringImpl*>::deletedValue();
 }
 
 }

@@ -43,19 +43,21 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLSelectElement::HTMLSelectElement(Document *doc, HTMLFormElement *f)
+HTMLSelectElement::HTMLSelectElement(Document* doc, HTMLFormElement* f)
     : HTMLGenericFormElement(selectTag, doc, f), m_minwidth(0), m_size(0), m_multiple(false), m_recalcListItems(false)
 {
+    document()->registerFormElementWithState(this);
 }
 
-HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document *doc, HTMLFormElement *f)
-    : HTMLGenericFormElement(tagName, doc, f)
+HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
+    : HTMLGenericFormElement(tagName, doc, f), m_minwidth(0), m_size(0), m_multiple(false), m_recalcListItems(false)
 {
+    document()->registerFormElementWithState(this);
 }
 
 HTMLSelectElement::~HTMLSelectElement()
 {
-    document()->deregisterMaintainsState(this);
+    document()->deregisterFormElementWithState(this);
 }
 
 bool HTMLSelectElement::checkDTD(const Node* newChild)
@@ -73,9 +75,11 @@ void HTMLSelectElement::recalcStyle( StyleChange ch )
 }
 
 
-String HTMLSelectElement::type() const
+const AtomicString& HTMLSelectElement::type() const
 {
-    return (m_multiple ? "select-multiple" : "select-one");
+    static const AtomicString selectMultiple("select-multiple");
+    static const AtomicString selectOne("select-one");
+    return m_multiple ? selectMultiple : selectOne;
 }
 
 int HTMLSelectElement::selectedIndex() const
@@ -172,43 +176,28 @@ void HTMLSelectElement::setValue(const String &value)
         }
 }
 
-DeprecatedString HTMLSelectElement::state()
+String HTMLSelectElement::stateValue() const
 {
     DeprecatedArray<HTMLElement*> items = listItems();
-
     int l = items.count();
-    DeprecatedString state;
-    for(int i = 0; i < l; i++)
-        if(items[i]->hasLocalName(optionTag) && static_cast<HTMLOptionElement*>(items[i])->selected())
-            state += 'X';
-        else
-            state += '.';
-
-    return HTMLGenericFormElement::state() + state;
+    Vector<char, 1024> characters(l);
+    for (int i = 0; i < l; ++i) {
+        HTMLElement* e = items[i];
+        bool selected = e->hasLocalName(optionTag) && static_cast<HTMLOptionElement*>(e)->selected();
+        characters[i] = selected ? 'X' : '.';
+    }
+    return String(characters, l);
 }
 
-void HTMLSelectElement::restoreState(DeprecatedStringList &_states)
+void HTMLSelectElement::restoreState(const String& state)
 {
-    DeprecatedString _state = HTMLGenericFormElement::findMatchingState(_states);
-    if (_state.isNull()) return;
-
     recalcListItems();
 
-    DeprecatedString state = _state;
-    if(!state.isEmpty() && !state.contains('X') && !m_multiple) {
-        // KWQString doesn't support this operation. Should never get here anyway.
-        //state[0] = 'X';
-    }
-
     DeprecatedArray<HTMLElement*> items = listItems();
-
     int l = items.count();
-    for (int i = 0; i < l; i++) {
-        if (items[i]->hasLocalName(optionTag)) {
-            HTMLOptionElement* oe = static_cast<HTMLOptionElement*>(items[i]);
-            oe->setSelected(state[i] == 'X');
-        }
-    }
+    for (int i = 0; i < l; i++)
+        if (items[i]->hasLocalName(optionTag))
+            static_cast<HTMLOptionElement*>(items[i])->setSelected(state[i] == 'X');
     setChanged(true);
 }
 
@@ -438,14 +427,10 @@ void HTMLSelectElement::defaultEventHandler(Event *evt)
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
     if (evt->type() == keypressEvent) {
-    
-        if (!m_form || !renderer() || !evt->isKeyboardEvent())
+        if (!form() || !renderer() || !evt->isKeyboardEvent())
             return;
-        
-        String key = static_cast<KeyboardEvent *>(evt)->keyIdentifier();
-        
-        if (key == "Enter") {
-            m_form->submitClick();
+        if (static_cast<KeyboardEvent*>(evt)->keyIdentifier() == "Enter") {
+            form()->submitClick();
             evt->setDefaultHandled();
         }
     }

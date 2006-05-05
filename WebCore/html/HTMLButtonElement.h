@@ -35,13 +35,9 @@ public:
     HTMLButtonElement(Document *doc, HTMLFormElement *f = 0);
     virtual ~HTMLButtonElement();
 
-    enum typeEnum {
-        SUBMIT,
-        RESET,
-        BUTTON
-    };
+    enum typeEnum { SUBMIT, RESET, BUTTON };
 
-    String type() const;
+    virtual const AtomicString& type() const;
         
     virtual WebCore::RenderObject *createRenderer(RenderArena*, WebCore::RenderStyle*);
 

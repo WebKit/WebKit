@@ -22,29 +22,23 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTML_HTMLTextAreaElementImpl_H
 #define HTML_HTMLTextAreaElementImpl_H
 
 #include "HTMLGenericFormElement.h"
 
 namespace WebCore {
-    class RenderTextArea;
-}
 
-namespace WebCore {
+class RenderTextArea;
 
-class HTMLTextAreaElement : public HTMLGenericFormElement
-{
-    friend class WebCore::RenderTextArea;
+class HTMLTextAreaElement : public HTMLGenericFormElement {
+    friend class RenderTextArea;
 
 public:
-    enum WrapMethod {
-        ta_NoWrap,
-        ta_Virtual,
-        ta_Physical
-    };
+    enum WrapMethod { ta_NoWrap, ta_Virtual, ta_Physical };
 
-    HTMLTextAreaElement(Document *doc, HTMLFormElement *f = 0);
+    HTMLTextAreaElement(Document*, HTMLFormElement* = 0);
     ~HTMLTextAreaElement();
 
     virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
@@ -56,11 +50,10 @@ public:
 
     virtual bool isEnumeratable() const { return true; }
 
-    String type() const;
+    virtual const AtomicString& type() const;
 
-    virtual bool maintainsState() { return true; }
-    virtual DeprecatedString state();
-    virtual void restoreState(DeprecatedStringList &);
+    virtual String stateValue() const;
+    virtual void restoreState(const String&);
 
     bool readOnly() const { return isReadOnlyControl(); }
 
@@ -70,18 +63,18 @@ public:
     void setSelectionStart(int);
     void setSelectionEnd(int);
 
-    void select (  );
+    void select();
     void setSelectionRange(int, int);
 
     virtual void childrenChanged();
-    virtual void parseMappedAttribute(MappedAttribute *attr);
-    virtual WebCore::RenderObject *createRenderer(RenderArena *, WebCore::RenderStyle *);
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool appendFormData(FormDataList&, bool);
     virtual void reset();
-    String value();
-    void setValue(const String &value);
-    String defaultValue();
-    void setDefaultValue(const String &value);
+    String value() const;
+    void setValue(const String&);
+    String defaultValue() const;
+    void setDefaultValue(const String&);
     
     void invalidateValue() { m_valueMatchesRenderer = false; }
     void rendererWillBeDestroyed();
@@ -89,21 +82,19 @@ public:
     virtual void accessKeyAction(bool sendToAnyElement);
     
     String accessKey() const;
-    void setAccessKey(const String &);
+    void setAccessKey(const String&);
 
     void setCols(int);
-
     void setRows(int);
 
-protected:
+private:
+    void updateValue() const;
+
     int m_rows;
     int m_cols;
     WrapMethod m_wrap;
-    String m_value;
-    bool m_valueMatchesRenderer;
-    
-private:
-    void updateValue();
+    mutable String m_value;
+    mutable bool m_valueMatchesRenderer;
 };
 
 } //namespace

@@ -712,20 +712,6 @@ void Node::detach()
     m_inDetach = false;
 }
 
-bool Node::maintainsState()
-{
-    return false;
-}
-
-DeprecatedString Node::state()
-{
-    return DeprecatedString::null;
-}
-
-void Node::restoreState(DeprecatedStringList &/*states*/)
-{
-}
-
 void Node::insertedIntoDocument()
 {
     setInDocument(true);

@@ -29,55 +29,51 @@
 #include "HTMLNames.h"
 
 namespace WebCore {
-    class RenderSelect;
-}
-
-namespace WebCore {
 
 class HTMLSelectElement;
 class HTMLFormElement;
 class MappedAttribute;
+class RenderSelect;
 
 class HTMLOptionElement : public HTMLGenericFormElement
 {
-    friend class WebCore::RenderSelect;
-    friend class WebCore::HTMLSelectElement;
+    friend class RenderSelect;
+    friend class HTMLSelectElement;
 
 public:
-    HTMLOptionElement(Document *doc, HTMLFormElement *f = 0);
+    HTMLOptionElement(Document*, HTMLFormElement* = 0);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 2; }
     virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode() || newChild->hasTagName(HTMLNames::scriptTag); }
-
     virtual bool isFocusable() const;
 
-    String type() const;
+    virtual const AtomicString& type() const;
 
     String text() const;
     void setText(const String &, ExceptionCode&);
 
     int index() const;
     void setIndex(int, ExceptionCode&);
-    virtual void parseMappedAttribute(MappedAttribute *attr);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     String value() const;
-    void setValue(const String &);
+    void setValue(const String&);
 
     bool selected() const { return m_selected; }
-    void setSelected(bool _selected);
+    void setSelected(bool);
 
-    HTMLSelectElement *getSelect() const;
+    HTMLSelectElement* getSelect() const;
 
     virtual void childrenChanged();
 
     bool defaultSelected() const;
-    void setDefaultSelected( bool );
+    void setDefaultSelected(bool);
 
     String label() const;
-    void setLabel( const String & );
+    void setLabel(const String&);
 
-protected:
+private:
     String m_value;
     bool m_selected;
 };

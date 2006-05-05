@@ -1,3 +1,223 @@
+2006-05-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fixed data structure used to save/restore form element state to remove the
+          O(n^2) algorithm and remove anomalies in how it works
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8683
+          REGRESSION: imdb search button has "Submit" overload after going back
+
+        * manual-tests/form-value-restore.html: Added.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge saveDocumentState]): Rewrote to call the new formElementsState
+        function on the document and also to convert null strings to NSNull instead of empty
+        NSString objects.
+        (-[WebCoreFrameBridge restoreDocumentState]): Ditto, with the setStateForNewFormElements
+        function.
+
+        * dom/Document.h: Added FormElementKey, FormElementKeyHash, and FormElementKeyHashTraits
+        for use in the hash map. Made readyState, inputEncoding, defaultCharset, charset,
+        characterSet, getElementByAccessKey, haveStylesheetsLoaded, usesDescendantRules,
+        usesSiblingRules, inCompatMode, inAlmostStrictMode, inStrictMode, preferredStylesheetSet,
+        selectedStylesheetSet, and getCSSTarget all const member functions. Removed the unused
+        nextState function. Renamed registerMaintainsState and deregisterMaintainsState to
+        registerFormElementWithState and HTMLGenericFormElement and changed them to use form
+        elements rather than arbitrary DOM nodes. Replaced docState with formElementsState and
+        setRestoreState and restoreState with setStateForNewFormElements, hasStateForNewFormElements,
+        and takeStateForFormElement. Replaced m_maintainsState with m_formElementsWithState,
+        m_state with m_stateForNewFormElements. Made m_elementsByAccessKey and m_accessKeyMapValid
+        mutable. Removed unused m_elementNames, m_elementNameAlloc, m_elementNameCount, m_attrNames,
+        m_attrNameAlloc, m_attrNameCount, m_namespaceURIs, m_namespaceURIAlloc, m_namespaceURICount.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Remove initialization of long-obsolete m_elementNames and
+        m_attrNames.
+        (WebCore::Document::~Document): Remove destruction of same.
+        (WebCore::Document::readyState): Made const.
+        (WebCore::Document::inputEncoding): Ditto.
+        (WebCore::Document::defaultCharset): Ditto.
+        (WebCore::Document::getElementByAccessKey): Ditto.
+        (WebCore::Document::preferredStylesheetSet): Ditto.
+        (WebCore::Document::selectedStylesheetSet): Ditto.
+        (WebCore::Document::getCSSTarget): Ditto.
+        (WebCore::Document::formElementsState): Added. Replaces the old docState function.
+        Builds a vector of strings, with 3 strings for each form element containing the
+        name, type, and state value.
+        (WebCore::Document::setStateForNewFormElements): Added. Converts the state vector
+        into a hash map, considering the scheme with 3 strings for form element used above.
+        (WebCore::Document::hasStateForNewFormElements): Added.
+        (WebCore::Document::takeStateForFormElement): Added. Given a name and type, looks
+        up the values in the hash map and "peels off" the last one.
+        (WebCore::FormElementKey::FormElementKey): Added.
+        (WebCore::FormElementKey::~FormElementKey): Added.
+        (WebCore::FormElementKey::operator=): Added.
+        (WebCore::FormElementKey::ref): Added.
+        (WebCore::FormElementKey::deref): Added.
+        (WebCore::FormElementKeyHash::hash): Added.
+        (WebCore::FormElementKeyHashTraits::deletedValue): Added.
+
+        * dom/Element.h: Removed state function.
+        * dom/Node.h: Removed maintainsState, state, and restoreState functions.
+        * dom/Node.cpp: Ditto.
+
+        * dom/QualifiedName.cpp: Reformatted.
+        (WebCore::hashComponents): Removed code to handle buffers that are not multiples
+        of 4 bytes, since a QualifiedName is guaranteed to be; also asserted that fact.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::insertNode): Remove code to restore state; that's now handled
+        by closeRenderer.
+        (WebCore::HTMLParser::popOneBlock): Ditto.
+
+        * html/HTMLFormElement.cpp: Added include of HTMLInputElement.h.
+
+        * html/HTMLGenericFormElement.h: Changed form to be a const member function.
+        Changed type function to return a const AtomicString& instead of a String.
+        Added an override of closeRenderer. Removed state and findMatchingState functions.
+        Added stateValue and restoreState functions. Made m_form, m_disabled, and m_readOnly
+        be private instead of protected. Removed m_inited. Changed booleans to not use bit
+        fields since there are only two of them.
+        * html/HTMLGenericFormElement.cpp: Removed encodedElementName, state, and
+        findMatchingState functions.
+        (WebCore::HTMLGenericFormElement::stateValue): Added. No implementation. This will only be
+        called for subclasses that call registerFormElementWithState, and those will override and
+        implement it.
+        (WebCore::HTMLGenericFormElement::restoreState): Ditto.
+        (WebCore::HTMLGenericFormElement::closeRenderer): Added. Replaces code that was in the
+        HTML parser. Calls takeStateForFormElement, passing in the name and type, and if a
+        state is found, calls restoreState.
+
+        * html/HTMLButtonElement.h: Changed type to return a const AtomicString& instead
+        of a String.
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::type): Return a const AtomicString& instead of a
+        String.
+        (WebCore::HTMLButtonElement::defaultEventHandler): Use form() instead of m_form.
+        (WebCore::HTMLButtonElement::isSuccessfulSubmitButton): Use disabled() instead of
+        m_disabled.
+
+        * html/HTMLInputElement.h: Changed type to return a const AtomicString& instead
+        of a String. Removed maintainsState, state, and restoreState functions, and added
+        new stateValue and restoreState functions. Added m_inited (moved here from the generic
+        form element base class).
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::init): Call registerFormElementWithState. This was
+        formerly done by the HTML parser.
+        (WebCore::HTMLInputElement::~HTMLInputElement): Call deregisterFormElementWithState
+        by its new name.
+        (WebCore::HTMLInputElement::isKeyboardFocusable): Use form() instead of m_form.
+        (WebCore::HTMLInputElement::setType): Ditto.
+        (WebCore::HTMLInputElement::setInputType): Ditto. Also call inputType() != PASSWORD
+        instead of maintainsState(), since this is the only function that needs to know
+        the rule and it's no longer a function in the base class. Also call register and
+        deregister functions by their new names.
+        (WebCore::HTMLInputElement::type): Changed to return const AtomicString& instead
+        of String.
+        (WebCore::HTMLInputElement::stateValue): Renamed from state and changed to no
+        longer include the name and type, formerly obtained by calling the base class's
+        HTMLGenericFormElement::state, and to no longer modify the value() string by
+        adding a ".", which gets in the way of distinguishing null and empty values
+        and is slower and unnecessary.
+        (WebCore::HTMLInputElement::restoreState):  Changed because it takes a single
+        state and doesn't need to call findMatchingState, and also to no longer remove the last
+        character from the value when restoring state.
+        (WebCore::HTMLInputElement::parseMappedAttribute): Use form() instead of m_form.
+        (WebCore::HTMLInputElement::isSuccessfulSubmitButton): Use disabled() instead of
+        m_disabled.
+        (WebCore::HTMLInputElement::setChecked): Use form() instead of m_form.
+        (WebCore::HTMLInputElement::preDispatchEventHandler): Ditto.
+        (WebCore::HTMLInputElement::defaultEventHandler): Ditto.
+
+        * html/HTMLSelectElement.h: Changed type to return a const AtomicString& instead
+        of a String.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement): Call registerFormElementWithState.
+        This was formerly done by the HTML parser.
+        (WebCore::HTMLSelectElement::~HTMLSelectElement): Call deregisterFormElementWithState
+        by its new name.
+        (WebCore::HTMLSelectElement::type): Changed to return const AtomicString& instead
+        of String.
+        (WebCore::HTMLSelectElement::stateValue): Renamed from state and changed to no
+        longer include the name and type, formerly obtained by calling the base class's
+        HTMLGenericFormElement::state, and to build the string in a Vector<char> instead of
+        appending characters one at a time to a string.
+        (WebCore::HTMLSelectElement::restoreState):  Changed because it takes a single
+        state and doesn't need to call findMatchingState.
+        (WebCore::HTMLSelectElement::defaultEventHandler): Use form() instead of m_form.
+
+        * html/HTMLTextAreaElement.h: Changed type to return a const AtomicString& instead
+        of a String. Removed maintainsState, state, and restoreState functions, and added
+        new stateValue and restoreState functions.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement): Call registerFormElementWithState.
+        This was formerly done by the HTML parser. Also use member initialization instead of
+        assignment.
+        (WebCore::HTMLTextAreaElement::~HTMLTextAreaElement): Call deregisterFormElementWithState
+        by its new name.
+        (WebCore::HTMLTextAreaElement::type): Changed to return const AtomicString& instead
+        of String.
+        (WebCore::HTMLTextAreaElement::stateValue): Renamed from state and changed to no
+        longer include the name and type, formerly obtained by calling the base class's
+        HTMLGenericFormElement::state, and to no longer modify the value() string by
+        adding a ".", which is unnecessary.
+        (WebCore::HTMLTextAreaElement::restoreState): Changed because it takes a single
+        state and doesn't need to call findMatchingState, and also to no longer remove the last
+        character from the value when restoring state.
+        (WebCore::HTMLTextAreaElement::updateValue): Changed to const.
+        (WebCore::HTMLTextAreaElement::value): Ditto.
+        (WebCore::HTMLTextAreaElement::defaultValue): Ditto.
+
+        * html/HTMLFieldSetElement.h: Changed type to return a const AtomicString& instead
+        of a String.
+        * html/HTMLFieldSetElement.cpp: (WebCore::HTMLFieldSetElement::type): Ditto.
+        * html/HTMLKeygenElement.h: Ditto.
+        * html/HTMLKeygenElement.cpp: (WebCore::HTMLKeygenElement::type): Ditto.
+        * html/HTMLLegendElement.h: Ditto.
+        * html/HTMLLegendElement.cpp: (WebCore::HTMLLegendElement::type):
+        * html/HTMLOptGroupElement.h: Ditto.
+        * html/HTMLOptGroupElement.cpp: (WebCore::HTMLOptGroupElement::type): Ditto.
+        * html/HTMLOptionElement.h: Ditto.
+        * html/HTMLOptionElement.cpp: (WebCore::HTMLOptionElement::type): Ditto.
+
+        * ksvg2/svg/SVGAnimationElement.cpp: (SVGAnimationElement::closeRenderer):
+        Added missing call to base class.
+
+        * rendering/render_form.h: Removed element() functions that cast to the
+        appropriate derived element class. They do make some bits of code slightly
+        more readable, but they also require including too many headers. Removed
+        the includes of HTMLInputElement.h, HTMLSelectElement.h, HTMLTextAreaElement.h,
+        and KWQLineEdit.h, and added an include of GraphicsTypes.h.
+        * rendering/render_form.cpp:
+        (WebCore::RenderFormElement::updateFromElement): Changed use of element()
+        to instead use node() and cast.
+        (WebCore::RenderFormElement::clicked): Ditto.
+        (WebCore::RenderLineEdit::selectionChanged): Ditto.
+        (WebCore::RenderLineEdit::returnPressed): Ditto.
+        (WebCore::RenderLineEdit::performSearch): Ditto.
+        (WebCore::RenderLineEdit::addSearchResult): Ditto.
+        (WebCore::RenderLineEdit::calcMinMaxWidth): Ditto.
+        (WebCore::RenderLineEdit::setStyle): Ditto.
+        (WebCore::RenderLineEdit::updateFromElement): Ditto.
+        (WebCore::RenderLineEdit::valueChanged): Ditto.
+        (WebCore::RenderFileButton::calcMinMaxWidth): Ditto.
+        (WebCore::RenderFileButton::updateFromElement): Ditto.
+        (WebCore::RenderFileButton::returnPressed): Ditto.
+        (WebCore::RenderFileButton::valueChanged): Ditto.
+        (WebCore::RenderSelect::updateFromElement): Ditto.
+        (WebCore::RenderSelect::layout): Ditto.
+        (WebCore::RenderSelect::valueChanged): Ditto.
+        (WebCore::RenderSelect::selectionChanged): Ditto.
+        (WebCore::RenderSelect::updateSelection): Ditto.
+        (WebCore::RenderTextArea::destroy): Ditto.
+        (WebCore::RenderTextArea::calcMinMaxWidth): Ditto.
+        (WebCore::RenderTextArea::setStyle): Ditto.
+        (WebCore::RenderTextArea::updateFromElement): Ditto.
+        (WebCore::RenderTextArea::valueChanged): Ditto.
+        (WebCore::RenderTextArea::selectionChanged): Ditto.
+        (WebCore::RenderSlider::updateFromElement): Ditto.
+        (WebCore::RenderSlider::valueChanged): Ditto.
+
 2006-05-05  Matt Gough  <matt@softchaos.com>
 
         Reviewed by Darin.
@@ -18705,7 +18925,7 @@
 
         * ksvg2/css/KSVGCSSParser.cpp: Changed to compile as separate
         file instead of being included in cssparser.cpp.
-        (WebCore::CSSParser::parseSVGPaint): Take out unnnecessary check
+        (WebCore::CSSParser::parseSVGPaint): Take out unnecessary check
         of number of args. Everything works fine without that check, and
         otherwise I'd have to change it for the change in data structure.
         (WebCore::CSSParser::parseSVGColor): Ditto.

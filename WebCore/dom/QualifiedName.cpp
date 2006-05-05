@@ -1,7 +1,7 @@
 /**
  * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,14 +29,15 @@
 
 #include "QualifiedName.h"
 #include "StaticConstructors.h"
+#include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashSet.h>
 
 namespace WebCore {
 
 struct QualifiedNameComponents {
-    StringImpl *m_prefix;
-    StringImpl *m_localName;
-    StringImpl *m_namespace;
+    StringImpl* m_prefix;
+    StringImpl* m_localName;
+    StringImpl* m_namespace;
 };
 
 // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
@@ -44,28 +45,19 @@ static const unsigned PHI = 0x9e3779b9U;
     
 inline unsigned hashComponents(const QualifiedNameComponents& buf)
 {
-    unsigned l = sizeof(QualifiedNameComponents) / sizeof(uint16_t);
-    const uint16_t *s = reinterpret_cast<const uint16_t*>(&buf);
+    ASSERT(sizeof(QualifiedNameComponents) % (sizeof(uint16_t) * 2) == 0);
+
+    unsigned l = sizeof(QualifiedNameComponents) / (sizeof(uint16_t) * 2);
+    const uint16_t* s = reinterpret_cast<const uint16_t*>(&buf);
     uint32_t hash = PHI;
-    uint32_t tmp;
-        
-    int rem = l & 1;
-    l >>= 1;
-        
+
     // Main loop
     for (; l > 0; l--) {
         hash += s[0];
-        tmp = (s[1] << 11) ^ hash;
+        uint32_t tmp = (s[1] << 11) ^ hash;
         hash = (hash << 16) ^ tmp;
         s += 2;
         hash += hash >> 11;
-    }
-    
-    // Handle end case
-    if (rem) {
-        hash += s[0];
-        hash ^= hash << 11;
-        hash += hash >> 17;
     }
         
     // Force "avalanching" of final 127 bits
@@ -74,48 +66,39 @@ inline unsigned hashComponents(const QualifiedNameComponents& buf)
     hash ^= hash << 2;
     hash += hash >> 15;
     hash ^= hash << 10;
-        
+
     // this avoids ever returning a hash code of 0, since that is used to
     // signal "hash not computed yet", using a value that is likely to be
     // effectively the same as 0 when the low bits are masked
     if (hash == 0)
         hash = 0x80000000;
-        
+
     return hash;
 }
 
 struct QNameHash {
-    static unsigned hash(const QualifiedName::QualifiedNameImpl *name) {    
-        QualifiedNameComponents components = { name->m_prefix.impl(), 
-                                               name->m_localName.impl(), 
-                                               name->m_namespace.impl() };
-        return hashComponents(components);
+    static unsigned hash(const QualifiedName::QualifiedNameImpl* name) {    
+        QualifiedNameComponents c = { name->m_prefix.impl(), name->m_localName.impl(), name->m_namespace.impl() };
+        return hashComponents(c);
     }
-    static bool equal(const QualifiedName::QualifiedNameImpl *a, const QualifiedName::QualifiedNameImpl *b) { return a == b; }
+    static bool equal(const QualifiedName::QualifiedNameImpl* a, const QualifiedName::QualifiedNameImpl* b) { return a == b; }
 };
 
 typedef HashSet<QualifiedName::QualifiedNameImpl*, QNameHash> QNameSet;
 
-static QNameSet *gNameCache;
-
 struct QNameComponentsTranslator {
-    static unsigned hash(const QualifiedNameComponents& components) 
-    { 
+    static unsigned hash(const QualifiedNameComponents& components) { 
         return hashComponents(components); 
     }
-    
-    static bool equal(QualifiedName::QualifiedNameImpl *name, const QualifiedNameComponents& components)
-    {
-        return components.m_localName == name->m_localName.impl() &&
-            components.m_namespace == name->m_namespace.impl() &&
-            components.m_prefix == name->m_prefix.impl();
+    static bool equal(QualifiedName::QualifiedNameImpl* name, const QualifiedNameComponents& c) {
+        return c.m_prefix == name->m_prefix.impl() && c.m_localName == name->m_localName.impl() && c.m_namespace == name->m_namespace.impl();
     }
-    
-    static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned hash)
-    {
+    static void translate(QualifiedName::QualifiedNameImpl*& location, const QualifiedNameComponents& components, unsigned hash) {
         location = new QualifiedName::QualifiedNameImpl(components.m_prefix, components.m_localName, components.m_namespace);
     }
 };
+
+static QNameSet* gNameCache;
 
 QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n)
     : m_impl(0)
@@ -153,7 +136,6 @@ void QualifiedName::deref()
 {
     if (m_impl->hasOneRef())
         gNameCache->remove(m_impl);
-        
     m_impl->deref();
 }
 

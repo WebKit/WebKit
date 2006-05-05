@@ -267,12 +267,6 @@ bool HTMLParser::insertNode(Node *n, bool flat)
         } else {
             if (parentAttached && !n->attached() && !m_fragment)
                 n->attach();
-            if (n->maintainsState()) {
-                doc()->registerMaintainsState(n);
-                DeprecatedStringList &states = doc()->restoreState();
-                if (!states.isEmpty())
-                    n->restoreState(states);
-            }
             n->closeRenderer();
         }
 
@@ -1249,31 +1243,21 @@ void HTMLParser::popBlock(const AtomicString& _tagName)
 
 void HTMLParser::popOneBlock(bool delBlock)
 {
-    HTMLStackElem *Elem = blockStack;
+    HTMLStackElem* elem = blockStack;
 
-    // we should never get here, but some bad html might cause it.
-    if (!Elem) return;
-    
-    if (current && Elem->node != current) {
-        if (current->maintainsState() && doc()) {
-            doc()->registerMaintainsState(current);
-            DeprecatedStringList &states = doc()->restoreState();
-            if (!states.isEmpty())
-                current->restoreState(states);
-        }
-        
-        // A few elements (<applet>, <object>) need to know when all child elements (<param>s) are available:
+    // Form elements restore their state during the parsing process.
+    // Also, a few elements (<applet>, <object>) need to know when all child elements (<param>s) are available.
+    if (current && elem->node != current)
         current->closeRenderer();
-    }
 
-    blockStack = Elem->next;
-    setCurrent(Elem->node.get());
+    blockStack = elem->next;
+    setCurrent(elem->node.get());
 
-    if (Elem->strayTableContent)
+    if (elem->strayTableContent)
         inStrayTableContent--;
     
     if (delBlock)
-        delete Elem;
+        delete elem;
 }
 
 void HTMLParser::popInlineBlocks()

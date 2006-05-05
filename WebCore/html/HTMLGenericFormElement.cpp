@@ -230,63 +230,30 @@ bool HTMLGenericFormElement::isMouseFocusable() const
     return false;
 }
 
-// Special chars used to encode form state strings.
-// We pick chars that are unlikely to be used in an HTML attr, so we rarely have to really encode.
-const char stateSeparator = '&';
-const char stateEscape = '<';
-static const char stateSeparatorMarker[] = "<A";
-static const char stateEscapeMarker[] = "<<";
-
-// Encode an element name so we can put it in a state string without colliding
-// with our separator char.
-static DeprecatedString encodedElementName(DeprecatedString str)
+String HTMLGenericFormElement::stateValue() const
 {
-    int sepLoc = str.find(stateSeparator);
-    int escLoc = str.find(stateSeparator);
-    if (sepLoc >= 0 || escLoc >= 0) {
-        DeprecatedString newStr = str;
-        //   replace "<" with "<<"
-        while (escLoc >= 0) {
-            newStr.replace(escLoc, 1, stateEscapeMarker);
-            escLoc = str.find(stateSeparator, escLoc+1);
-        }
-        //   replace "&" with "<A"
-        while (sepLoc >= 0) {
-            newStr.replace(sepLoc, 1, stateSeparatorMarker);
-            sepLoc = str.find(stateSeparator, sepLoc+1);
-        }
-        return newStr;
-    } else {
-        return str;
-    }
+    // Should only reach here if object is inserted into the "form element with
+    // state" set. If so, the derived class is responsible for implementing this function.
+    ASSERT_NOT_REACHED();
+    return String();
 }
 
-DeprecatedString HTMLGenericFormElement::state( )
+void HTMLGenericFormElement::restoreState(const String&)
 {
-    // Build a string that contains ElementName&ElementType&
-    return encodedElementName(name().deprecatedString()) + stateSeparator + type().deprecatedString() + stateSeparator;
+    // Should only reach here if object of this type was once inserted into the
+    // "form element with state" set. If so, the derived class is responsible for
+    // implementing this function.
+    ASSERT_NOT_REACHED();
 }
 
-DeprecatedString HTMLGenericFormElement::findMatchingState(DeprecatedStringList &states)
+void HTMLGenericFormElement::closeRenderer()
 {
-    DeprecatedString encName = encodedElementName(name().deprecatedString());
-    DeprecatedString typeStr = type().deprecatedString();
-    for (DeprecatedStringList::Iterator it = states.begin(); it != states.end(); ++it) {
-        DeprecatedString state = *it;
-        int sep1 = state.find(stateSeparator);
-        int sep2 = state.find(stateSeparator, sep1+1);
-        assert(sep1 >= 0);
-        assert(sep2 >= 0);
-
-        String nameAndType = state.left(sep2);
-        if (encName.length() + typeStr.length() + 1 == (unsigned)sep2
-            && nameAndType.startsWith(encName)
-            && nameAndType.endsWith(typeStr)) {
-            states.remove(it);
-            return state.mid(sep2+1);
-        }
+    Document* doc = document();
+    if (doc->hasStateForNewFormElements()) {
+        String state;
+        if (doc->takeStateForFormElement(name().impl(), type().impl(), state))
+            restoreState(state);
     }
-    return DeprecatedString::null;
 }
 
 int HTMLGenericFormElement::tabIndex() const

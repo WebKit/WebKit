@@ -87,7 +87,7 @@ public:
     void setIndeterminate(bool);
     int maxLength() const { return m_maxLen; }
     int size() const { return m_size; }
-    String type() const;
+    virtual const AtomicString& type() const;
     void setType(const String&);
 
     String value() const;
@@ -99,9 +99,8 @@ public:
     bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
     void setValueMatchesRenderer() { m_valueMatchesRenderer = true; }
 
-    virtual bool maintainsState() { return m_type != PASSWORD; }
-    virtual DeprecatedString state();
-    virtual void restoreState(DeprecatedStringList&);
+    virtual String stateValue() const;
+    virtual void restoreState(const String&);
 
     bool canHaveSelection() const;
     int selectionStart() const;
@@ -209,6 +208,7 @@ private:
     bool m_autocomplete : 1;
     bool m_valueMatchesRenderer : 1;
     bool m_autofilled : 1;
+    bool m_inited : 1;
 };
 
 } //namespace

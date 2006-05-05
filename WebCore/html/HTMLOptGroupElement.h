@@ -30,14 +30,13 @@
 
 namespace WebCore {
 
-class HTMLOptGroupElement : public HTMLGenericFormElement
-{
+class HTMLOptGroupElement : public HTMLGenericFormElement {
 public:
     HTMLOptGroupElement(Document*, HTMLFormElement* = 0);
     virtual ~HTMLOptGroupElement();
 
     virtual bool checkDTD(const Node*);
-    virtual String type() const;
+    virtual const AtomicString& type() const;
     virtual bool isFocusable() const;
     virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&);
     virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&);

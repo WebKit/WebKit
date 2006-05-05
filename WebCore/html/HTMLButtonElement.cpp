@@ -58,7 +58,7 @@ RenderObject* HTMLButtonElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderButton(this);
 }
 
-String HTMLButtonElement::type() const
+const AtomicString& HTMLButtonElement::type() const
 {
     return getAttribute(typeAttr);
 }
@@ -88,13 +88,13 @@ void HTMLButtonElement::parseMappedAttribute(MappedAttribute *attr)
 void HTMLButtonElement::defaultEventHandler(Event *evt)
 {
     if (m_type != BUTTON && (evt->type() == DOMActivateEvent)) {
-
-        if(m_form && m_type == SUBMIT) {
+        if (form() && m_type == SUBMIT) {
             m_activeSubmit = true;
-            m_form->prepareSubmit();
+            form()->prepareSubmit();
             m_activeSubmit = false; // in case we were canceled
         }
-        if(m_form && m_type == RESET) m_form->reset();
+        if (form() && m_type == RESET)
+            form()->reset();
     }
     HTMLGenericFormElement::defaultEventHandler(evt);
 }
@@ -107,8 +107,8 @@ bool HTMLButtonElement::isSuccessfulSubmitButton() const
     // differently and can use different buttons than the 
     // author intended. 
     // Remove the name constraint for now.
-    // Was: m_type == SUBMIT && !m_disabled && !name().isEmpty()
-    return m_type == SUBMIT && !m_disabled;
+    // Was: m_type == SUBMIT && !disabled() && !name().isEmpty()
+    return m_type == SUBMIT && !disabled();
 }
 
 bool HTMLButtonElement::isActivatedSubmit() const

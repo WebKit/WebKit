@@ -364,35 +364,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     // -----------------------------------------------------------------------------
-    // Methods for maintaining the state of the element between history navigation
-
-    /**
-     * Indicates whether or not this type of node maintains it's state. If so, the state of the node will be stored when
-     * the user goes to a different page using the state() method, and restored using the restoreState() method if the
-     * user returns (e.g. using the back button). This is used to ensure that user-changeable elements such as form
-     * controls maintain their contents when the user returns to a previous page in the history.
-     */
-    virtual bool maintainsState();
-
-    /**
-     * Returns the state of this node represented as a string. This string will be passed to restoreState() if the user
-     * returns to the page.
-     *
-     * @return State information about the node represented as a string
-     */
-    virtual DeprecatedString state();
-
-    /**
-     * Sets the state of the element based on strings previously returned by state(). This is used to initialize form
-     * controls with their old values when the user returns to the page in their history.  The receiver
-     * should remove the string from the list that it uses for its restore.
-     *
-     * @param states The strings previously returned by nodes' state methods.
-     */
-    virtual void restoreState(DeprecatedStringList& stateList);
-
-    // -----------------------------------------------------------------------------
-    // Notification of document stucture changes
+    // Notification of document structure changes
 
     /**
      * Notifies the node that it has been inserted into the document. This is called during document parsing, and also

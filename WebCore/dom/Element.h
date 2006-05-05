@@ -130,9 +130,6 @@ public:
     void setAttributeMap(NamedAttrMap*);
 
     virtual void copyNonAttributeProperties(const Element *source) {}
-    
-    // State of the element.
-    virtual DeprecatedString state() { return DeprecatedString::null; }
 
     virtual void attach();
     virtual RenderStyle *createStyleForRenderer(RenderObject *parent);
