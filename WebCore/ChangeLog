@@ -1,3 +1,21 @@
+2006-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        - fix storage leak I introduced yesterday
+
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::setCGFillColor): Added.
+        (WebCore::setCGStrokeColor): Added.
+        (WebCore::GraphicsContext::drawRect): Use setCGFillColor to avoid allocating
+        a CGColorRef object.
+        (WebCore::GraphicsContext::drawLine): Use setCGStrokeColor and setCGFillColor
+        to avoid allocating a CGColorRef object.
+        (WebCore::GraphicsContext::drawEllipse): Ditto.
+        (WebCore::GraphicsContext::drawArc): Ditto.
+        (WebCore::GraphicsContext::drawConvexPolygon): Ditto.
+        (WebCore::GraphicsContext::fillRect): Ditto.
+
 2006-05-04  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
