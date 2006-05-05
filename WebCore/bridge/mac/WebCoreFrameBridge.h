@@ -579,11 +579,12 @@ typedef enum {
                   attributeNames:(NSArray *)attributeNames
                  attributeValues:(NSArray *)attributeValues
                         MIMEType:(NSString *)MIMEType
-                      DOMElement:(DOMElement *)DOMElement;
+                      DOMElement:(DOMElement *)element;
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame
                         attributeNames:(NSArray *)attributeNames
                        attributeValues:(NSArray *)attributeValues
-                               baseURL:(NSURL *)baseURL;
+                               baseURL:(NSURL *)baseURL
+                            DOMElement:(DOMElement *)element;
 
 - (BOOL)saveDocumentToPageCache:(id)documentInfo;
 

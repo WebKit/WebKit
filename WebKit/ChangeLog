@@ -1,5 +1,16 @@
 2006-05-04  Tim Omernick  <timo@apple.com>
 
+        Reviewed by Darin.
+
+        <rdar://problem/4537606> Give Java WebKit plugin access to its own DOM element
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge viewForJavaAppletWithFrame:attributeNames:attributeValues:baseURL:DOMElement:]):
+        Pass the DOMElement to the plugin if it's a WebKit plugin (we need to handle Netscape plugins
+        differently).
+
+2006-05-04  Tim Omernick  <timo@apple.com>
+
         Reviewed by John Sullivan.
 
         <rdar://problem/4480186> Give WebKit plugins access to their own DOM element

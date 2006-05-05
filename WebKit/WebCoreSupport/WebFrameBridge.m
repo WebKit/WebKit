@@ -1026,7 +1026,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame
                         attributeNames:(NSArray *)attributeNames
                        attributeValues:(NSArray *)attributeValues
-                               baseURL:(NSURL *)baseURL;
+                               baseURL:(NSURL *)baseURL
+                            DOMElement:(DOMElement *)element
 {
     NSString *MIMEType = @"application/x-java-applet";
     WebBasePluginPackage *pluginPackage;
@@ -1051,7 +1052,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                 attributeNames:names
                                attributeValues:values
                                        baseURL:baseURL
-                                    DOMElement:nil]; // FIXME (4537606): Pass DOM element to Java applets
+                                    DOMElement:element];
             [names release];
             [values release];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {

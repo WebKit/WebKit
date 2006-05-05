@@ -27,7 +27,9 @@
 #import "JavaAppletWidget.h"
 
 #import "Document.h"
+#import "DOMInternal.h"
 #import "BlockExceptions.h"
+#import "Element.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 
@@ -35,7 +37,7 @@ using namespace WebCore;
 
 typedef HashMap<String, String> StringMap;
 
-JavaAppletWidget::JavaAppletWidget(const IntSize& size, Frame* frame, const StringMap& args)
+JavaAppletWidget::JavaAppletWidget(const IntSize& size, Element* element, const StringMap& args)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -51,13 +53,17 @@ JavaAppletWidget::JavaAppletWidget(const IntSize& size, Frame* frame, const Stri
         [attributeValues addObject:it->second];
     }
     
+    Frame* frame = element->document()->frame();
+    ASSERT(frame);
+    
     if (baseURLString.isEmpty()) {
         baseURLString = frame->document()->baseURL();
     }
     setView([Mac(frame)->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                                         attributeNames:attributeNames
                                        attributeValues:attributeValues
-                                               baseURL:frame->completeURL(baseURLString).getNSURL()]);
+                                               baseURL:frame->completeURL(baseURLString).getNSURL()
+                                            DOMElement:[DOMElement _elementWith:element]]);
     [attributeNames release];
     [attributeValues release];
     frame->view()->addChild(this);
