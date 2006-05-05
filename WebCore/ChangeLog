@@ -1,5 +1,10 @@
 2006-05-05  Darin Adler  <darin@apple.com>
 
+        * platform/SegmentedString.h: (WebCore::SegmentedString::advance): Oops!
+        Removed an extra ! that was causing everything to fail.
+
+2006-05-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Tim Hatcher.
 
         - remove a few of the stranger features of QChar on the road to
