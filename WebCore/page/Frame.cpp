@@ -683,8 +683,14 @@ void Frame::endIfNotLoading()
 
     // make sure nothing's left in there...
     if (d->m_doc) {
-        if (d->m_decoder)
-            write(d->m_decoder->flush());
+        if (d->m_decoder) {
+            DeprecatedString decoded = d->m_decoder->flush();
+            if (d->m_bFirstData) {
+                d->m_doc->determineParseMode(decoded);
+                d->m_bFirstData = false;
+            }
+            write(decoded);
+        }
         d->m_doc->finishParsing();
     } else
         // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but

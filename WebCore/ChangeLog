@@ -1,3 +1,15 @@
+2006-05-05  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8626
+          Strict mode erroneously triggered by a broken comment
+
+        Test: fast/parser/broken-comments-vs-parsing-mode.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::endIfNotLoading): Call determineParseMode() if needed.
+
 2006-05-05  Darin Adler  <darin@apple.com>
 
         - fix the Windows build (this time for sure)

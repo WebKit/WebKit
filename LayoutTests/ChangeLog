@@ -1,3 +1,15 @@
+2006-05-05  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8626
+          Strict mode erroneously triggered by a broken comment
+
+        * fast/parser/broken-comments-vs-parsing-mode-expected.checksum: Added.
+        * fast/parser/broken-comments-vs-parsing-mode-expected.png: Added.
+        * fast/parser/broken-comments-vs-parsing-mode-expected.txt: Added.
+        * fast/parser/broken-comments-vs-parsing-mode.html: Added.
+
 2006-05-05  Darin Adler  <darin@apple.com>
 
         - test update for http://bugzilla.opendarwin.org/show_bug.cgi?id=8722
