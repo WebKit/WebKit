@@ -1,5 +1,18 @@
 2006-05-05  Darin Adler  <darin@apple.com>
 
+        - get the Window build a little closer to building again
+
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawRect): Call alpha to check if the color is transparent.
+        Call setColor directly instead of setColorFromPen.
+        (WebCore::GraphicsContext::drawLine): Ditto.
+        (WebCore::GraphicsContext::drawEllipse): Ditto.
+        (WebCore::GraphicsContext::drawArc): Ditto.
+        (WebCore::GraphicsContext::drawConvexPolygon): Ditto.
+        * platform/win/TemporaryLinkStubs.cpp: (JavaAppletWidget::JavaAppletWidget): Updated parameter types.
+
+2006-05-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fixed data structure used to save/restore form element state to remove the

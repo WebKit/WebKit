@@ -115,27 +115,17 @@ void GraphicsContext::drawRect(const IntRect& rect)
         return;
     
     cairo_t* context = m_data->context;
-    if (fillColor() & 0xFF000000)
+    if (fillColor().alpha())
         fillRectSourceOver(context, rect, fillColor());
 
     if (pen().style() != Pen::NoPen) {
-        setColorFromPen();
+        setColor(context, pen().color());
         FloatRect r(rect);
         r.inflate(-.5f);
         cairo_rectangle(context, r.x(), r.y(), r.width(), r.height());
         cairo_set_line_width(context, 1.0);
         cairo_stroke(context);
     }
-}
-
-void GraphicsContext::setColorFromFillColor()
-{
-    setColor(m_data->context, fillColor());
-}
-  
-void GraphicsContext::setColorFromPen()
-{
-    setColor(m_data->context, pen().color());
 }
 
 // FIXME: Now that this is refactored, it should be shared by all contexts.
@@ -206,7 +196,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         break;
     }
 
-    setColorFromPen();
+    setColor(context, pen().color());
     
     cairo_set_antialias(context, CAIRO_ANTIALIAS_NONE);
     
@@ -277,12 +267,12 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     cairo_arc(context, 0., 0., 1., 0., 2 * M_PI);
     cairo_restore(context);
 
-    if (fillColor() & 0xFF000000) {
-        setColorFromFillColor();
+    if (fillColor().alpha()) {
+        setColor(context, fillColor());
         cairo_fill(context);
     }
     if (pen().style() != Pen::NoPen) {
-        setColorFromPen();
+        setColor(context, pen().color());
         unsigned penWidth = pen().width();
         if (penWidth == 0) 
             penWidth++;
@@ -306,7 +296,7 @@ void GraphicsContext::drawArc(int x, int y, int w, int h, int a, int alen)
         float falen =  fa + (float)alen / 16;
         cairo_arc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180);
         
-        setColorFromPen();
+        setColor(context, pen().color());
         cairo_set_line_width(context, pen().width());
         cairo_stroke(context);
     }
@@ -330,14 +320,14 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
         cairo_line_to(context, points[i].x(), points[i].y());
     cairo_close_path(context);
 
-    if (fillColor() & 0xFF000000) {
-        setColorFromFillColor();
+    if (fillColor().alpha()) {
+        setColor(context, fillColor());
         cairo_set_fill_rule(context, CAIRO_FILL_RULE_EVEN_ODD);
         cairo_fill(context);
     }
 
     if (pen().style() != Pen::NoPen) {
-        setColorFromPen();
+        setColor(context, pen().color());
         cairo_set_line_width(context, pen().width());
         cairo_stroke(context);
     }
