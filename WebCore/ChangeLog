@@ -1,3 +1,31 @@
+2006-05-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * dom/Node.cpp:
+        (WebCore::Node::rootEditableElement):
+        Restored code to stop at the body tag.  Editing shouldn't be allowed to 
+        happen outside the body, so it needs to be the editable root even if the 
+        html element is contentEditable.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMergeEnd):
+        Now takes in more information so it can be "the decider".
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Merging two paragraphs will destroy the moved one's block styles. Perform 
+        the end merge backward (from content already in the document to just inserted
+        content) if moving forward would move the paragraph that contained the start of 
+        the selection being pasted into, since we always want to preserve that paragraph's 
+        block style.
+        Moving backward in this case is also helpful because otherwise it would be
+        difficult to remember the position where inserted content began (since merging
+        would remove m_firstNodeInserted).  That position is needed in order to select 
+        the replacement and to add smart replace whitespace.
+        (WebCore::ReplaceSelectionCommand::removeEndBRIfNeeded):
+        If [br, 0] is at the end of a block, the br is not necessarily collapsed
+        in quirks mode.  [br, 0] needs to also not be at the start of a block.
+         
+        * editing/ReplaceSelectionCommand.h:
+
 2006-05-04  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

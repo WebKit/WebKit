@@ -1,0 +1,16 @@
+<p>Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start of the selection.</p>
+<div id="test" contenteditable="true"><div style="border: 1px solid red;">This x</div><div style="border: 1px solid blue;">x it.</div></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+
+s.modify("move", "forward", "word");
+s.modify("move", "forward", "character");
+s.modify("extend", "forward", "word");
+s.modify("extend", "forward", "word");
+
+document.execCommand("InsertHTML", false, "<div><div>text should have a red border around</div></div>");
+</script>

@@ -1,23 +1,26 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of HTML > #document to 1 of HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > BODY > HTML > #document to 42 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of HTML > #document to 0 of HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-layer at (0,0) size 2008x2070
+layer at (0,0) size 2008x2088
   RenderCanvas at (0,0) size 785x585
-layer at (0,0) size 2008x2070
-  RenderBlock {HTML} at (0,0) size 785x2070
-    RenderBody {BODY} at (8,8) size 769x2054
-      RenderBlock (anonymous) at (0,0) size 769x36
+layer at (0,0) size 2008x2088
+  RenderBlock {HTML} at (0,0) size 785x2088
+    RenderBody {BODY} at (8,8) size 769x2072
+      RenderBlock (anonymous) at (0,0) size 769x54
         RenderText {#text} at (0,0) size 583x18
           text run at (0,0) width 583: "This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element. "
         RenderBR {BR} at (583,14) size 0x0
         RenderText {#text} at (0,18) size 262x18
           text run at (0,18) width 262: "If the document doesn't scroll, test passes."
-      RenderBlock {DIV} at (0,36) size 2000x2000
-      RenderBlock (anonymous) at (0,2036) size 769x18
+        RenderBR {BR} at (262,32) size 0x0
+        RenderInline {B} at (0,0) size 528x18
+          RenderText {#text} at (0,36) size 528x18
+            text run at (0,36) width 528: "This demonstrates a bug: normally, focusing an element will select its contents."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,54) size 2000x2000
+      RenderBlock (anonymous) at (0,2054) size 769x18
         RenderText {#text} at (0,0) size 237x18
           text run at (0,0) width 237: "If the document scrolls here, test fails."
         RenderText {#text} at (0,0) size 0x0
-selection start: position 1 of child 0 {#text} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 42 of child 4 {#text} of child 0 {BODY} of child 0 {HTML} of document
-scrolled to 0,8
+caret: position 0 of child 0 {HTML} of document

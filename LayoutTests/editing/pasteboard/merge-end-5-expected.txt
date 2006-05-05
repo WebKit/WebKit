@@ -1,0 +1,28 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 36 of #text > DIV > DIV > BODY > HTML > #document to 36 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 779x36
+          text run at (0,0) width 779: "Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start"
+          text run at (0,18) width 99: "of the selection."
+      RenderBlock {DIV} at (0,52) size 784x20
+        RenderBlock {DIV} at (0,0) size 784x20 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,1) size 32x18
+            text run at (1,1) width 32: "This "
+          RenderText {#text} at (33,1) size 231x18
+            text run at (33,1) width 231: "text should have a red border around"
+          RenderText {#text} at (264,1) size 16x18
+            text run at (264,1) width 16: " it."
+caret: position 36 of child 1 {#text} of child 0 {DIV} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

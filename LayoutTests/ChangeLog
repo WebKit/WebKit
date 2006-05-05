@@ -1,3 +1,37 @@
+2006-05-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        Pasted content would end up inside the block that contained the end of 
+        the selection that was pasted into and not the block that contained 
+        the start of the selection that was pasted into:
+        * editing/pasteboard/merge-end-5-expected.checksum: Added.
+        * editing/pasteboard/merge-end-5-expected.png: Added.
+        * editing/pasteboard/merge-end-5-expected.txt: Added.
+        * editing/pasteboard/merge-end-5.html: Added.
+        
+        Inserting a paragraph separator was splitting and cloning the body element
+        if the html element was editable:
+        * editing/inserting/editable-html-element-expected.checksum: Added.
+        * editing/inserting/editable-html-element-expected.png: Added.
+        * editing/inserting/editable-html-element-expected.txt: Added.
+        * editing/inserting/editable-html-element.html: Added.
+        
+        Since we now sometimes merge backward (from content already in the 
+        document to just inserted content) during the end merge, the node that 
+        contains the old caret is removed more often during paste.  The editing 
+        delegate notifications in these tests reflect this:
+        * editing/pasteboard/paste-line-endings-007-expected.txt:
+        * editing/pasteboard/paste-line-endings-008-expected.txt:
+        * editing/pasteboard/paste-line-endings-009-expected.txt:
+        
+        Now demonstrates a bug where the html element is focused, but its contents
+        aren't selected:
+        * editing/selection/focus_editable_html-expected.checksum:
+        * editing/selection/focus_editable_html-expected.png:
+        * editing/selection/focus_editable_html-expected.txt:
+        * editing/selection/focus_editable_html.html:
+
 2006-05-04  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.
