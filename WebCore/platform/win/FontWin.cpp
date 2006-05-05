@@ -78,7 +78,7 @@ FontData* getFontData(const FontDescription& fontDescription, const AtomicString
         // This is a TrueType font.  We might be able to get an accurate xHeight.
         GLYPHMETRICS gm;
         MAT2 mat = { 1, 0, 0, 1 }; // The identity matrix.
-        DWORD len = GetGlyphOutlineW(dc, QChar('x'), GGO_METRICS, &gm, 0, 0, &mat);
+        DWORD len = GetGlyphOutlineW(dc, 'x', GGO_METRICS, &gm, 0, 0, &mat);
         if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
             xHeight = int(gm.gmptGlyphOrigin.y + 0.5f);
     }

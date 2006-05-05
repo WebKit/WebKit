@@ -1,5 +1,11 @@
 2006-05-05  Darin Adler  <darin@apple.com>
 
+        - fix the Windows build
+
+        * platform/win/FontWin.cpp: (WebCore::getFontData):
+
+2006-05-05  Darin Adler  <darin@apple.com>
+
         * platform/SegmentedString.h: (WebCore::SegmentedString::advance): Oops!
         Removed an extra ! that was causing everything to fail.
 
