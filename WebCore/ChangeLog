@@ -1,3 +1,21 @@
+2006-05-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8651:
+        [DOMHTMLSelectElement multiple] returns no when the select element is multiple
+
+        Correct the logic errors, which are clearly indicated by the changeset given
+        in the bug report.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLLinkElement disabled]):
+        (-[DOMHTMLSelectElement disabled]):
+        (-[DOMHTMLSelectElement multiple]):
+        (-[DOMHTMLOptGroupElement disabled]):
+        (-[DOMHTMLOptionElement defaultSelected]):
+        (-[DOMHTMLOptionElement disabled]):
+
 2006-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Omernick.

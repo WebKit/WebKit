@@ -562,7 +562,7 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)disabled
 {
-    return ![self _linkElement]->disabled();
+    return [self _linkElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
@@ -1042,7 +1042,7 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)disabled
 {
-    return ![self _selectElement]->disabled();
+    return [self _selectElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
@@ -1052,7 +1052,7 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)multiple
 {
-    return ![self _selectElement]->multiple();
+    return [self _selectElement]->multiple();
 }
 
 - (void)setMultiple:(BOOL)multiple
@@ -1123,7 +1123,7 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)disabled
 {
-    return ![self _optGroupElement]->disabled();
+    return [self _optGroupElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
@@ -1157,7 +1157,7 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)defaultSelected
 {
-    return ![self _optionElement]->defaultSelected();
+    return [self _optionElement]->defaultSelected();
 }
 
 - (void)setDefaultSelected:(BOOL)defaultSelected
@@ -1177,7 +1177,7 @@ using namespace WebCore::HTMLNames;
 
 - (BOOL)disabled
 {
-    return ![self _optionElement]->disabled();
+    return [self _optionElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
