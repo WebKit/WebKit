@@ -282,6 +282,9 @@ void GraphicsContext::setMiterLimit(float) { }
 void GraphicsContext::setAlpha(float) { }
 void GraphicsContext::setCompositeOperation(CompositeOperator) { }
 void GraphicsContext::clip(const Path&) { }
+void GraphicsContext::translate(const FloatSize&) { }
+void GraphicsContext::rotate(float) { }
+void GraphicsContext::scale(const FloatSize&) { }
 
 Path::Path(){ }
 Path::~Path(){ }

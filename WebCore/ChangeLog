@@ -1,5 +1,14 @@
 2006-05-05  Darin Adler  <darin@apple.com>
 
+        - fix the Windows build (this time for sure)
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (GraphicsContext::translate): Added.
+        (GraphicsContext::rotate): Ditto.
+        (GraphicsContext::scale): Ditto.
+
+2006-05-05  Darin Adler  <darin@apple.com>
+
         - fix the Windows build
 
         * bridge/win/FrameWin.h: Add Element* parameter to createPlugin.
