@@ -1,3 +1,16 @@
+2006-05-04  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8594
+          REGRESSION: Exception on closing a page containing (just) an mp3
+
+        Test: plugins/pluginDocumentView-deallocated-dataSource.html
+
+        * Plugins/WebPluginDocumentView.m:
+        (-[WebPluginDocumentView dealloc]): Release the dataSource.
+        (-[WebPluginDocumentView setDataSource:]): Retain the dataSource.
+
 2006-05-04  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

@@ -60,6 +60,7 @@
     [plugin release];
     [pluginController destroyAllPlugins];
     [pluginController release];
+    [_dataSource release];
     [super dealloc];
 }
 
@@ -84,7 +85,7 @@
     if (![self superview])
         return;
         
-    _dataSource = dataSource;
+    _dataSource = [dataSource retain];
     [pluginController setDataSource:dataSource];
     dataSourceHasBeenSet = YES;
     

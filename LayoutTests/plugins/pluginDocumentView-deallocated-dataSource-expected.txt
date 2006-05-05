@@ -1,0 +1,5 @@
+Test for regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=8594 REGRESSION: Exception on closing a page containing (just) an mp3.
+
+No crash (or exception) means PASS.
+
+

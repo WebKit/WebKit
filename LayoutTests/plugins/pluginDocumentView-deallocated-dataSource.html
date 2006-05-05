@@ -1,0 +1,45 @@
+<html>
+<head>
+<script>
+function finishTest()
+{
+    document.getElementById('plugin').src = 'about:blank';
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function test()
+{
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+    }
+
+    var i = 0;
+    var found = false;
+    while (!found && i < navigator.plugins.length) {
+        if (navigator.plugins[i].filename == "QuickTime Plugin.webplugin")
+            found = true;
+        i++;
+    }
+    if (!found) {
+        document.getElementById("result").innerText = "Test cannot run: QuickTime Plugin.webplugin missing.";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        return;
+    }
+    setTimeout(finishTest, 0);
+}
+</script>
+</head>
+<body onload="test();">
+<p>
+    Test for regression against <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=8594">http://bugzilla.opendarwin.org/show_bug.cgi?id=8594</a>
+    REGRESSION: Exception on closing a page containing (just) an mp3</i>.
+</p>
+<p id="result">
+    No crash (or exception) means PASS.
+</p>
+<iframe id="plugin" src="resources/orange.mov"></iframe>
+</body>
+</html>

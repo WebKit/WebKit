@@ -1,3 +1,15 @@
+2006-05-04  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8594
+          REGRESSION: Exception on closing a page containing (just) an mp3
+
+        * plugins/pluginDocumentView-deallocated-dataSource-expected.txt: Added.
+        * plugins/pluginDocumentView-deallocated-dataSource.html: Added.
+        * plugins/resources: Added.
+        * plugins/resources/orange.mov: Added.
+
 2006-05-04  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
