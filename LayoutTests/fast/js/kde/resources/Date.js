@@ -297,5 +297,14 @@ shouldBe("(new Date('January29,2005')).getDate()", "29");
 
 shouldBeTrue("(new Date('12/25/1995 ::')).valueOf() == (new Date('12/25/1995')).valueOf()");
 
+// Tolerance for high values in xx/xx/xxxx
+shouldBe("new Date('03/30/2006').getDate()", "30");
+shouldBe("new Date('Mar 30 2006').toString()", "new Date('03/30/2006').toString()");
+shouldBe("new Date('30/03/2006').toString()", "new Date('Jun 03 2008').toString()");
+shouldBe("new Date('24/55/2006').getFullYear()", "2008");
+shouldBe("new Date('70/55/2006').getDate()", "27");
+shouldBe("new Date('00/00/2006').toString()", "new Date('Nov 30 2005').toString()");
+shouldBe("new Date('01/452/2006').toString()", "new Date('Mar 28 2007').toString()");
+
 debug("End Of Test");
 successfullyParsed = true

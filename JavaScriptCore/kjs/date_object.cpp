@@ -1019,13 +1019,13 @@ static double parseDate(const UString &date)
     if (!*dateString)
         return NaN;
 
-    if (day < 1)
+    if (day < 0)
         return NaN;
 
     long year = 0;
     if (day > 31) {
         // ### where is the boundary and what happens below?
-        if (!(*dateString == '/' && day >= 1000))
+        if (*dateString != '/')
             return NaN;
         // looks like a YYYY/MM/DD date
         if (!*++dateString)
@@ -1041,7 +1041,7 @@ static double parseDate(const UString &date)
         if (errno)
             return NaN;
         dateString = newPosStr;
-    } else if (*dateString == '/' && day <= 12 && month == -1) {
+    } else if (*dateString == '/' && month == -1) {
      	dateString++;
         // This looks like a MM/DD/YYYY date, not an RFC date.
         month = day - 1; // 0-based

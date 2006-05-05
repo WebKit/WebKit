@@ -1,3 +1,11 @@
+2006-05-05  Darin Adler  <darin@apple.com>
+
+        - test update for http://bugzilla.opendarwin.org/show_bug.cgi?id=8722
+          IE compatibility fix in date parsing
+
+        * fast/js/kde/resources/Date.js: Added test cases that George Staikos provided
+        that test dates with day values of 0, 55, and 452.
+
 2006-05-05  Matt Gough  <matt@softchaos.com>
 
         Reviewed by Darin.

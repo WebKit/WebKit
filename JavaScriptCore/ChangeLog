@@ -1,3 +1,11 @@
+2006-05-05  Darin Adler  <darin@apple.com>
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8722
+          IE compatibility fix in date parsing
+
+        * kjs/date_object.cpp: (KJS::parseDate): Merged change that George Staikos provided
+        from KDE 3.4.3 branch that allows day values of 0 and values that are > 1000.
+
 2006-05-04  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
