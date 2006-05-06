@@ -33,7 +33,7 @@
 
 #import <kxmlcore/Assertions.h>
 #import "WebTextRendererFactory.h"
-#import "WebTextRenderer.h"
+#import "FontData.h"
 
 #define STRING_BUFFER_SIZE 2048
 #define ELLIPSIS_CHARACTER 0x2026
@@ -41,7 +41,7 @@
 using namespace WebCore;
 
 static NSFont *currentFont;
-static WebTextRenderer* currentRenderer;
+static FontData* currentRenderer;
 static float currentEllipsisWidth;
 
 typedef unsigned TruncationFunction(NSString *string, unsigned length, unsigned keepCount, unichar *buffer);
@@ -81,7 +81,7 @@ static unsigned rightTruncateToBuffer(NSString *string, unsigned length, unsigne
     return keepRange.length + 1;
 }
 
-static float stringWidth(WebTextRenderer* renderer, const unichar *characters, unsigned length)
+static float stringWidth(FontData* renderer, const unichar *characters, unsigned length)
 {
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, characters, length, 0, length);
@@ -114,7 +114,7 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
     if (![currentFont isEqual:font]) {
         [currentFont release];
         currentFont = [font retain];
-        WebCoreFont f;
+        FontPlatformData f;
         WebCoreInitializeFont(&f);
         f.font = font;
         currentRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
@@ -223,7 +223,7 @@ static NSFont *defaultMenuFont(void)
     unsigned length = [string length];
     unichar *s = static_cast<unichar*>(malloc(sizeof(unichar) * length));
     [string getCharacters:s];
-    WebCoreFont f;
+    FontPlatformData f;
     WebCoreInitializeFont(&f);
     f.font = font;
     float width = stringWidth([[WebTextRendererFactory sharedFactory] rendererWithFont:f], s, length);

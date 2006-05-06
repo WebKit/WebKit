@@ -28,21 +28,18 @@
 
 namespace WebCore {
 
-#ifdef __APPLE__
-class WebTextRenderer;
-#endif
-
 class Font;
 class GraphicsContext;
 class IntRect;
-
 class FontData;
 
-class FontDataSet : public Shared<FontDataSet>, Noncopyable {
+class FontFallbackList : public Shared<FontFallbackList>, Noncopyable {
 public:
-    FontDataSet();
-    ~FontDataSet();
+    FontFallbackList();
+    ~FontFallbackList();
 
+    // FIXME: Eventually FontFallbackLists will be hashed themselves (by FontDescription), and so instead of invalidating we'll just
+    // drop our reference.
     void invalidate();
     
     bool isFixedPitch(const FontDescription& f) const { if (m_pitch == UnknownPitch) determinePitch(f); return m_pitch == FixedPitch; };
@@ -50,14 +47,18 @@ public:
 
 private:
     mutable Pitch m_pitch;
+    
+    FontData* primaryFont(const FontDescription&) const;
+
 #if __APPLE__
-    WebTextRenderer* m_renderer;
-    WebTextRenderer* getRenderer(const FontDescription&);
-    mutable WebCoreFont m_webCoreFont;
-    const WebCoreFont& getWebCoreFont(const FontDescription&) const;
+    // FIXME: FontData is still doing too much and is basically handling functionality that will be lifted up into
+    // FontFallbackList and Font.  That's why we still only have one FontData object and don't yet have the vector.
+    mutable FontData* m_font;
+    mutable FontPlatformData m_platformFont;
+
+    const FontPlatformData& platformFont(const FontDescription&) const;
 #else
-    mutable Vector<FontData*> m_fontSet;
-    FontData* primaryFont(const FontDescription& desc) const;
+    mutable Vector<FontData*> m_fontList;
 #endif
 
     friend class Font;

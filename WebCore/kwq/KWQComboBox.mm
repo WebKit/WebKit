@@ -31,7 +31,7 @@
 #import "FrameMac.h"
 #import "KWQLineEdit.h"
 #import "WebCoreFrameBridge.h"
-#import "WebTextRenderer.h"
+#import "FontData.h"
 #import "WebTextRendererFactory.h"
 #import "WebCoreWidgetHolder.h"
 #import "render_form.h"
@@ -165,12 +165,12 @@ IntSize QComboBox::sizeHint() const
         DeprecatedValueListConstIterator<KWQListBoxItem> i = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).begin();
         DeprecatedValueListConstIterator<KWQListBoxItem> e = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).end();
         if (i != e) {
-            WebCoreFont itemFont;
+            FontPlatformData itemFont;
             WebCoreInitializeFont(&itemFont);
             itemFont.font = [button font];
             itemFont.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
-            WebTextRenderer* itemRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:itemFont];
-            WebTextRenderer* labelRenderer = nil;
+            FontData* itemRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:itemFont];
+            FontData* labelRenderer = nil;
             WebCoreTextStyle style;
             WebCoreInitializeEmptyTextStyle(&style);
             style.applyRunRounding = NO;
@@ -184,10 +184,10 @@ IntSize QComboBox::sizeHint() const
                 int length = s.length();
                 WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
 
-                WebTextRenderer* renderer;
+                FontData* renderer;
                 if (isGroupLabel) {
                     if (labelRenderer == nil) {
-                        WebCoreFont labelFont;
+                        FontPlatformData labelFont;
                         WebCoreInitializeFont(&labelFont);
                         labelFont.font = this->labelFont();
                         labelFont.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];

@@ -31,25 +31,13 @@
 #include "TextDirection.h"
 
 #if __APPLE__
-
-#ifdef __OBJC__
-@class NSFont;
-#else
-class NSFont;
-#endif
-
-struct WebCoreFont {
-    NSFont *font;
-    bool syntheticBold;
-    bool syntheticOblique;
-    bool forPrinter;
-};
-
+// FIXME: Should not be necessary.
+#include "FontPlatformData.h"
 #endif
 
 namespace WebCore {
 
-class FontDataSet;
+class FontFallbackList;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
@@ -123,12 +111,13 @@ public:
     unsigned weight() const { return m_fontDescription.weight(); }
 
 #if __APPLE__
+    // FIXME: Shouldn't need to access FontPlatformData... should just need NSFont.
     NSString* getNSFamily() const { return m_fontDescription.family().getNSFamily(); }    
-    NSFont* getNSFont() const { return getWebCoreFont().font; }
-    const WebCoreFont& getWebCoreFont() const;
+    NSFont* getNSFont() const { return platformFont().font; }
+    const FontPlatformData& platformFont() const;
 #endif
 
-    // Metrics that we query the FontDataSet for.
+    // Metrics that we query the FontFallbackList for.
     int ascent() const;
     int descent() const;
     int height() const { return ascent() + descent(); }
@@ -137,7 +126,7 @@ public:
 
 private:
     FontDescription m_fontDescription;
-    mutable RefPtr<FontDataSet> m_dataSet;
+    mutable RefPtr<FontFallbackList> m_fontList;
     short m_letterSpacing;
     short m_wordSpacing;
 };

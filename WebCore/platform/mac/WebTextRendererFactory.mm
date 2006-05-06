@@ -28,7 +28,7 @@
 
 #import "config.h"
 #import "WebTextRendererFactory.h"
-#import "WebTextRenderer.h"
+#import "FontData.h"
 #import "WebCoreSystemInterface.h"
 
 #import "FoundationExtras.h"
@@ -197,7 +197,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     return sharedFactory;
 }
 
-- (BOOL)isFontFixedPitch:(WebCoreFont)font
+- (BOOL)isFontFixedPitch:(FontPlatformData)font
 {
     NSFont *f = font.font;
 
@@ -233,7 +233,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     
     int i;
     for (i = 0; i < WEB_TEXT_RENDERER_FACTORY_NUM_CACHES; ++i)
-        caches[i] = new HashMap<NSFont*, WebTextRenderer*>;
+        caches[i] = new HashMap<NSFont*, FontData*>;
     
     ASSERT(!sharedFactory);
     sharedFactory = KWQRetain(self);
@@ -250,12 +250,12 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     [super dealloc];
 }
 
-- (WebTextRenderer *)rendererWithFont:(WebCoreFont)font
+- (FontData *)rendererWithFont:(FontPlatformData)font
 {
-    HashMap<NSFont*, WebTextRenderer*>* cache = caches[(font.syntheticBold << 2) | (font.syntheticOblique << 1) | font.forPrinter];
-    WebTextRenderer *renderer = cache->get(font.font);
+    HashMap<NSFont*, FontData*>* cache = caches[(font.syntheticBold << 2) | (font.syntheticOblique << 1) | font.forPrinter];
+    FontData *renderer = cache->get(font.font);
     if (!renderer) {
-        renderer = new WebTextRenderer(font);
+        renderer = new FontData(font);
         cache->set(font.font, renderer);
     }
     return renderer;
@@ -276,7 +276,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     return font;
 }
 
-- (WebCoreFont)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
+- (FontPlatformData)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
 {
     NSFont *font = nil;
     NSString *matchedFamily = nil;
@@ -321,7 +321,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     if (traits & (NSItalicFontMask | NSBoldFontMask))
         actualTraits = [[NSFontManager sharedFontManager] traitsOfFont:font];
     
-    WebCoreFont result;
+    FontPlatformData result;
     result.font = font;
     result.syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
     result.syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);

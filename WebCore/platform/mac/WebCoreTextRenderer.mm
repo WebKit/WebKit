@@ -26,17 +26,17 @@
 #import "config.h"
 #import "WebCoreTextRenderer.h"
 
-#import "WebTextRenderer.h"
+#import "FontData.h"
 #import "WebTextRendererFactory.h"
 
 using namespace WebCore;
 
 void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint point, NSFont* font, NSColor* textColor)
 {
-    WebCoreFont f;
+    FontPlatformData f;
     WebCoreInitializeFont(&f);
     f.font = font;
-    WebTextRenderer* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
+    FontData* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
 
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, buffer, length, 0, length);
@@ -53,10 +53,10 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
 
 float WebCoreTextFloatWidth(const UniChar* buffer, unsigned length , NSFont* font)
 {
-    WebCoreFont f;
+    FontPlatformData f;
     WebCoreInitializeFont(&f);
     f.font = font;
-    WebTextRenderer* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
+    FontData* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
 
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, buffer, length, 0, length);
@@ -81,7 +81,7 @@ bool WebCoreShouldUseFontSmoothing()
 
 void WebCoreSetAlwaysUseATSU(bool useATSU)
 {
-    WebTextRenderer::setAlwaysUseATSU(useATSU);
+    FontData::setAlwaysUseATSU(useATSU);
 }
 
 NSFont* WebCoreFindFont(NSString* familyName, NSFontTraitMask traits, int size)

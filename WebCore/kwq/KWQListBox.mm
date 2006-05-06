@@ -29,7 +29,7 @@
 #import "BlockExceptions.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
-#import "WebTextRenderer.h"
+#import "FontData.h"
 #import "WebTextRendererFactory.h"
 #import "WebCoreWidgetHolder.h"
 #import <kxmlcore/Assertions.h>
@@ -66,10 +66,10 @@ const float rightMargin = 2;
 - (void)fontChanged;
 @end
 
-static WebTextRenderer* itemScreenRenderer;
-static WebTextRenderer* itemPrinterRenderer;
-static WebTextRenderer* groupLabelScreenRenderer;
-static WebTextRenderer* groupLabelPrinterRenderer;
+static FontData* itemScreenRenderer;
+static FontData* itemPrinterRenderer;
+static FontData* groupLabelScreenRenderer;
+static FontData* groupLabelPrinterRenderer;
 
 static NSFont *itemFont()
 {
@@ -77,11 +77,11 @@ static NSFont *itemFont()
     return font;
 }
 
-static WebTextRenderer* itemTextRenderer()
+static FontData* itemTextRenderer()
 {
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
         if (itemScreenRenderer == nil) {
-            WebCoreFont font;
+            FontPlatformData font;
             WebCoreInitializeFont(&font);
             font.font = itemFont();
             itemScreenRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
@@ -89,7 +89,7 @@ static WebTextRenderer* itemTextRenderer()
         return itemScreenRenderer;
     } else {
         if (itemPrinterRenderer == nil) {
-            WebCoreFont font;
+            FontPlatformData font;
             WebCoreInitializeFont(&font);
             font.font = itemFont();
             font.forPrinter = YES;
@@ -99,11 +99,11 @@ static WebTextRenderer* itemTextRenderer()
     }
 }
 
-static WebTextRenderer* groupLabelTextRenderer()
+static FontData* groupLabelTextRenderer()
 {
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
         if (groupLabelScreenRenderer == nil) {
-            WebCoreFont font;
+            FontPlatformData font;
             WebCoreInitializeFont(&font);
             font.font = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
             groupLabelScreenRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
@@ -111,7 +111,7 @@ static WebTextRenderer* groupLabelTextRenderer()
         return groupLabelScreenRenderer;
     } else {
         if (groupLabelPrinterRenderer == nil) {
-            WebCoreFont font;
+            FontPlatformData font;
             WebCoreInitializeFont(&font);
             font.font = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
             font.forPrinter = YES;
@@ -279,19 +279,19 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
             style.applyRunRounding = NO;
             style.applyWordRounding = NO;
             
-            WebTextRenderer* renderer;
-            WebTextRenderer* groupLabelRenderer;
+            FontData* renderer;
+            FontData* groupLabelRenderer;
             
             if (tableView->isSystemFont) {        
                 renderer = itemTextRenderer();
                 groupLabelRenderer = groupLabelTextRenderer();
             } else {
-                renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font().getWebCoreFont()];
+                renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font().platformFont()];
                 FontDescription boldDesc = font().fontDescription();
                 boldDesc.setWeight(cBoldWeight);
                 Font b = Font(boldDesc, font().letterSpacing(), font().wordSpacing());
                 b.update();
-                groupLabelRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:b.getWebCoreFont()];
+                groupLabelRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:b.platformFont()];
             }
             
             do {
@@ -680,7 +680,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 
     bool rtl = _direction == NSWritingDirectionRightToLeft;
 
-    WebTextRenderer* renderer;
+    FontData* renderer;
     if (isSystemFont) {
         renderer = (item.type == KWQListBoxGroupLabel) ? groupLabelTextRenderer() : itemTextRenderer();
     } else {
@@ -689,10 +689,10 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
             boldDesc.setWeight(cBoldWeight);
             Font b = Font(boldDesc, _box->font().letterSpacing(), _box->font().wordSpacing());
             b.update();
-            renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:b.getWebCoreFont()];
+            renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:b.platformFont()];
         }
         else
-            renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:_box->font().getWebCoreFont()];
+            renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:_box->font().platformFont()];
     }
    
     WebCoreTextStyle style;

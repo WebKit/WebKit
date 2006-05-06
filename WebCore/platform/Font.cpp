@@ -25,17 +25,18 @@
 
 #include "config.h"
 #include "Font.h"
+#include "FontData.h"
 
-#include "FontDataSet.h"
+#include "FontFallbackList.h"
 #include "GraphicsContext.h"
 #include "KWQKHTMLSettings.h"
 
 namespace WebCore {
 
-Font::Font() :m_dataSet(0), m_letterSpacing(0), m_wordSpacing(0) {}
+Font::Font() :m_fontList(0), m_letterSpacing(0), m_wordSpacing(0) {}
 Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing) 
 : m_fontDescription(fd),
-  m_dataSet(0),
+  m_fontList(0),
   m_letterSpacing(letterSpacing),
   m_wordSpacing(wordSpacing)
 {}
@@ -43,7 +44,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
 Font::Font(const Font& other)
 {
     m_fontDescription = other.m_fontDescription;
-    m_dataSet = other.m_dataSet;
+    m_fontList = other.m_fontList;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
 }
@@ -52,7 +53,7 @@ Font& Font::operator=(const Font& other)
 {
     if (&other != this) {
         m_fontDescription = other.m_fontDescription;
-        m_dataSet = other.m_dataSet;
+        m_fontList = other.m_fontList;
         m_letterSpacing = other.m_letterSpacing;
         m_wordSpacing = other.m_wordSpacing;
     }
@@ -70,9 +71,9 @@ void Font::update() const
     // style anyway.  Other copies are transient, e.g., the state in the GraphicsContext, and
     // won't stick around long enough to get you in trouble).  Still, this is pretty disgusting,
     // and could eventually be rectified by using RefPtrs for Fonts themselves.
-    if (!m_dataSet)
-        m_dataSet = new FontDataSet();
-    m_dataSet->invalidate();
+    if (!m_fontList)
+        m_fontList = new FontFallbackList();
+    m_fontList->invalidate();
 }
 
 int Font::width(const QChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const
@@ -83,6 +84,36 @@ int Font::width(const QChar* chs, int slen, int pos, int len, int tabWidth, int 
 #else
     return floatWidth(chs + pos, slen - pos, 0, len, tabWidth, xpos) + 0.5f;
 #endif
+}
+
+int Font::ascent() const
+{
+    assert(m_fontList);
+    return m_fontList->primaryFont(fontDescription())->ascent();
+}
+
+int Font::descent() const
+{
+    assert(m_fontList);
+    return m_fontList->primaryFont(fontDescription())->descent();
+}
+
+int Font::lineSpacing() const
+{
+    assert(m_fontList);
+    return m_fontList->primaryFont(fontDescription())->lineSpacing();
+}
+
+float Font::xHeight() const
+{
+    assert(m_fontList);
+    return m_fontList->primaryFont(fontDescription())->xHeight();
+}
+
+bool Font::isFixedPitch() const
+{
+    assert(m_fontList);
+    return m_fontList->isFixedPitch(fontDescription());
 }
 
 }

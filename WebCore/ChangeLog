@@ -1,3 +1,129 @@
+2006-05-06  David Hyatt  <hyatt@apple.com>
+
+        Rename WebCoreFont to FontPlatformData and WebTextRenderer to FontData.  Merge them into the
+        headers (uncleanly with ifdefs at the moment, so I can see what I'm working towards).
+
+        Reviewed by mjs
+
+        * ChangeLog:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreStringTruncator.mm:
+        (stringWidth):
+        (truncateString):
+        (+[WebCoreStringTruncator widthOfString:font:]):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::sizeHint):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth):
+        * kwq/KWQListBox.mm:
+        (itemTextRenderer):
+        (groupLabelTextRenderer):
+        (QListBox::sizeForNumberOfLines):
+        (-[KWQTableView drawRow:clipRect:]):
+        * platform/Font.cpp:
+        (WebCore::m_wordSpacing):
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::update):
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::isFixedPitch):
+        * platform/Font.h:
+        (WebCore::Font::getNSFont):
+        * platform/FontData.h:
+        (WebCore::FontData::ascent):
+        (WebCore::FontData::descent):
+        (WebCore::FontData::lineSpacing):
+        (WebCore::FontData::lineGap):
+        (WebCore::FontData::misspellingLineThickness):
+        (WebCore::FontData::misspellingLinePatternWidth):
+        (WebCore::FontData::misspellingLinePatternGapWidth):
+        * platform/FontDataSet.h: Removed.
+        * platform/FontFallbackList.h: Added.
+        * platform/FontPlatformData.h:
+        * platform/mac/FontData.mm: Added.
+        (WebCore::WebCoreInitializeFont):
+        (WebCore::WebCoreInitializeEmptyTextGeometry):
+        (WebCore::widthForGlyph):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::FontData::~FontData):
+        (WebCore::FontData::xHeight):
+        (WebCore::FontData::drawRun):
+        (WebCore::FontData::floatWidthForRun):
+        (WebCore::FontData::drawLineForCharacters):
+        (WebCore::FontData::selectionRectForRun):
+        (WebCore::FontData::drawHighlightForRun):
+        (WebCore::FontData::drawLineForMisspelling):
+        (WebCore::FontData::pointToOffset):
+        (WebCore::FontData::setAlwaysUseATSU):
+        (WebCore::getSmallCapsRenderer):
+        (WebCore::findSubstituteFont):
+        (WebCore::rendererForAlternateFont):
+        (WebCore::findSubstituteRenderer):
+        (WebCore::computeWidthForSpace):
+        (WebCore::setUpFont):
+        (WebCore::CG_drawHighlight):
+        (WebCore::CG_selectionRect):
+        (WebCore::CG_draw):
+        (WebCore::CG_floatWidthForRun):
+        (WebCore::updateGlyphMapEntry):
+        (WebCore::extendGlyphMap):
+        (WebCore::extendWidthMap):
+        (WebCore::initializeATSUStyle):
+        (WebCore::createATSULayoutParameters):
+        (WebCore::getTextBounds):
+        (WebCore::ATSU_floatWidthForRun):
+        (WebCore::ATSU_drawHighlight):
+        (WebCore::ATSU_selectionRect):
+        (WebCore::ATSU_draw):
+        (WebCore::ATSU_pointToOffset):
+        (WebCore::advanceWidthIteratorOneCharacter):
+        (WebCore::CG_pointToOffset):
+        (WebCore::glyphForCharacter):
+        (WebCore::initializeWidthIterator):
+        (WebCore::advanceWidthIterator):
+        * platform/mac/FontMac.mm:
+        (WebCore::m_font):
+        (WebCore::FontFallbackList::~FontFallbackList):
+        (WebCore::FontFallbackList::platformFont):
+        (WebCore::FontFallbackList::primaryFont):
+        (WebCore::FontFallbackList::determinePitch):
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::Font::platformFont):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::drawLineForText):
+        (WebCore::Font::drawLineForMisspelling):
+        (WebCore::Font::misspellingLineThickness):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::checkSelectionPoint):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        (WebCoreTextFloatWidth):
+        (WebCoreSetAlwaysUseATSU):
+        * platform/mac/WebTextRenderer.h: Removed.
+        * platform/mac/WebTextRenderer.mm: Removed.
+        * platform/mac/WebTextRendererFactory.h:
+        * platform/mac/WebTextRendererFactory.mm:
+        (-[WebTextRendererFactory isFontFixedPitch:]):
+        (-[WebTextRendererFactory init]):
+        (-[WebTextRendererFactory rendererWithFont:]):
+        (-[WebTextRendererFactory fontWithFamilies:traits:size:]):
+        * platform/win/FontWin.cpp:
+        (WebCore::FontFallbackList::~FontFallbackList):
+        (WebCore::FontFallbackList::determinePitch):
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::FontFallbackList::primaryFont):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::checkSelectionPoint):
+
 2006-05-05  Darin Adler  <darin@apple.com>
 
         - fix the Windows build

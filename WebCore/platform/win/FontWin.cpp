@@ -28,7 +28,7 @@
 
 #include <cairo-win32.h>
 #include "FontData.h"
-#include "FontDataSet.h"
+#include "FontFallbackList.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 
@@ -101,34 +101,35 @@ FontData* getFontData(const FontDescription& fontDescription, const AtomicString
     return result;
 }
 
-FontDataSet::FontDataSet()
+FontFallbackList::FontFallbackList()
 :m_pitch(UnknownPitch)
 {
     
 }
 
-FontDataSet::~FontDataSet()
+FontFallbackList::~FontFallbackList()
 {
-    deleteAllValues(m_fontSet);
+    deleteAllValues(m_fontList);
 }
 
-void FontDataSet::determinePitch(const FontDescription& fontDescription) const
+void FontFallbackList::determinePitch(const FontDescription& fontDescription) const
 {
     // FIXME: Implement this.
     m_pitch = VariablePitch;
 }
 
-void FontDataSet::invalidate()
+void FontFallbackList::invalidate()
 {
     // Delete the Cairo fonts.
     m_pitch = UnknownPitch;
-    deleteAllValues(m_fontSet);
+    deleteAllValues(m_fontList);
+    m_fontList.clear();
 }
 
-FontData* FontDataSet::primaryFont(const FontDescription& fontDescription) const
+FontData* FontFallbackList::primaryFont(const FontDescription& fontDescription) const
 {
-    if (!m_fontSet.isEmpty())
-        return m_fontSet[0];
+    if (!m_fontList.isEmpty())
+        return m_fontList[0];
 
     // We want to ensure that the primary Cairo font face exists.
     for (const FontFamily* currFamily = &fontDescription.family(); 
@@ -138,7 +139,7 @@ FontData* FontDataSet::primaryFont(const FontDescription& fontDescription) const
             // Attempt to create a FontData.
             FontData* font = getFontData(fontDescription, currFamily->family());
             if (font) {
-                m_fontSet.append(font);
+                m_fontList.append(font);
                 return font;
             }
         }
@@ -149,7 +150,7 @@ FontData* FontDataSet::primaryFont(const FontDescription& fontDescription) const
     // need this to be passed in as part of the fallback list.
     FontData* defaultFont = getFontData(fontDescription, AtomicString("Times New Roman"));
     if (defaultFont)
-        m_fontSet.append(defaultFont);
+        m_fontList.append(defaultFont);
     return defaultFont;
 }
 
@@ -178,7 +179,7 @@ static IntSize hackishExtentForString(HDC dc, FontData* font, const QChar* str, 
 float Font::floatWidth(const QChar* str, int slen, int pos, int len,
                        int tabWidth, int xpos, bool runRounding) const
 {
-    FontData* font = m_dataSet->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return 0;
 
@@ -186,43 +187,6 @@ float Font::floatWidth(const QChar* str, int slen, int pos, int len,
     IntSize runSize = hackishExtentForString(dc, font, str, slen, pos, len, tabWidth, xpos);
     ReleaseDC(0, dc);
     return runSize.width();
-}
-
-int Font::ascent() const
-{ 
-    FontData* font = m_dataSet->primaryFont(fontDescription());
-    if (font)
-        return font->ascent();
-    return 0;
-}
-
-int Font::descent() const
-{ 
-    FontData* font = m_dataSet->primaryFont(fontDescription());
-    if (font)
-        return font->descent();
-    return 0;
-}
-
-float Font::xHeight() const
-{
-    FontData* font = m_dataSet->primaryFont(fontDescription());
-    if (font)
-        return font->xHeight();
-    return 0;
-}
-
-int Font::lineSpacing() const
-{ 
-    FontData* font = m_dataSet->primaryFont(fontDescription());
-    if (font)
-        return font->lineSpacing();
-    return 0;
-}
-
-bool Font::isFixedPitch() const
-{
-    return m_dataSet->isFixedPitch(fontDescription());
 }
 
 static void convertRange(int from, int to, int len, int& offset, int& length)
@@ -241,7 +205,7 @@ void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidt
                     const QChar* str, int len, int from, int to,
                     int toAdd, TextDirection d, bool visuallyOrdered) const
 {
-    FontData* font = m_dataSet->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return;
 
@@ -274,7 +238,7 @@ void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point,
     if (!backgroundColor.isValid())
         return;
 
-    FontData* font = m_dataSet->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return;
 
@@ -292,7 +256,7 @@ void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point,
 IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, int xpos, const QChar* str, int slen,
                                    int pos, int len, int toAdd, bool rtl, bool visuallyOrdered, int from, int to) const
 {
-    FontData* font = m_dataSet->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return IntRect();
 
@@ -308,7 +272,7 @@ IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, i
 int Font::checkSelectionPoint(const QChar* str, int slen, int offset, int len, int toAdd, int tabWidth, int xpos, int x,
                               TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const
 {
-    FontData* font = m_dataSet->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return 0;
 
