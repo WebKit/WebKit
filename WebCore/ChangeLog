@@ -1,3 +1,17 @@
+2006-05-07  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8769
+          TextEncoding::fromUnicode() - support non-BMP characters and convert to NFC
+
+        Tests: 
+        * fast/forms/forms/form-data-encoding.html
+        * fast/forms/forms/form-data-encoding-2.html
+
+        * platform/mac/TextEncodingMac.cpp:
+        (WebCore::TextEncoding::fromUnicode): Normalize the string; handle surrogate pairs.
+
 2006-05-06  David Hyatt  <hyatt@apple.com>
 
         Rename WebCoreFont to FontPlatformData and WebTextRenderer to FontData.  Merge them into the

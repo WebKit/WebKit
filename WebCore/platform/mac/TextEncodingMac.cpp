@@ -53,35 +53,47 @@ DeprecatedCString TextEncoding::fromUnicode(const DeprecatedString &qcs, bool al
     DeprecatedString copy = qcs;
     copy.replace(QChar('\\'), backslashAsCurrencySymbol());
     CFStringRef cfs = copy.getCFString();
+    CFMutableStringRef cfms = CFStringCreateMutableCopy(0, 0, cfs); // in rare cases, normalization can make the string longer, thus no limit on its length
+    CFStringNormalize(cfms, kCFStringNormalizationFormC);
     
     CFIndex startPos = 0;
-    CFIndex charactersLeft = CFStringGetLength(cfs);
-    DeprecatedCString result(1); // for trailng zero
+    CFIndex charactersLeft = CFStringGetLength(cfms);
+    DeprecatedCString result(1); // for trailing zero
 
     while (charactersLeft > 0) {
         CFRange range = CFRangeMake(startPos, charactersLeft);
         CFIndex bufferLength;
-        CFStringGetBytes(cfs, range, encoding, allowEntities ? 0 : '?', false, NULL, 0x7FFFFFFF, &bufferLength);
+        CFStringGetBytes(cfms, range, encoding, allowEntities ? 0 : '?', false, NULL, 0x7FFFFFFF, &bufferLength);
         
         DeprecatedCString chunk(bufferLength + 1);
         unsigned char *buffer = reinterpret_cast<unsigned char *>(chunk.data());
-        CFIndex charactersConverted = CFStringGetBytes(cfs, range, encoding, allowEntities ? 0 : '?', false, buffer, bufferLength, &bufferLength);
+        CFIndex charactersConverted = CFStringGetBytes(cfms, range, encoding, allowEntities ? 0 : '?', false, buffer, bufferLength, &bufferLength);
         buffer[bufferLength] = 0;
         result.append(chunk);
         
         if (charactersConverted != charactersLeft) {
-            // FIXME: support surrogate pairs
-            UniChar badChar = CFStringGetCharacterAtIndex(cfs, startPos + charactersConverted);
+            unsigned int badChar = CFStringGetCharacterAtIndex(cfms, startPos + charactersConverted);
+            ++charactersConverted;
+
+            if ((badChar & 0xfc00) == 0xd800 &&     // is high surrogate
+                  charactersConverted != charactersLeft) {
+                UniChar low = CFStringGetCharacterAtIndex(cfms, startPos + charactersConverted);
+                if ((low & 0xfc00) == 0xdc00) {     // is low surrogate
+                    badChar <<= 10;
+                    badChar += low;
+                    badChar += 0x10000 - (0xd800 << 10) - 0xdc00;
+                    ++charactersConverted;
+                }
+            }
             char buf[16];
             sprintf(buf, "&#%u;", badChar);
             result.append(buf);
-            
-            ++charactersConverted;
         }
         
         startPos += charactersConverted;
         charactersLeft -= charactersConverted;
     }
+    CFRelease(cfms);
     return result;
 }
 

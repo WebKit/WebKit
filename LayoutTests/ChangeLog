@@ -1,3 +1,14 @@
+2006-05-07  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=8769
+          TextEncoding::fromUnicode() - support non-BMP characters and convert to NFC
+
+        * fast/forms/form-data-encoding.html: Cover more cases for Latin-1 encoding.
+        * fast/forms/form-data-encoding-2.html: Added. Test conversion to UTF-8.
+        * fast/forms/form-data-encoding-2-expected.txt: Added.
+
 2006-05-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
