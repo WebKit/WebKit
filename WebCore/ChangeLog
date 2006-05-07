@@ -6,8 +6,8 @@
           TextEncoding::fromUnicode() - support non-BMP characters and convert to NFC
 
         Tests: 
-        * fast/forms/forms/form-data-encoding.html
-        * fast/forms/forms/form-data-encoding-2.html
+        * fast/forms/form-data-encoding.html
+        * fast/forms/form-data-encoding-2.html
 
         * platform/mac/TextEncodingMac.cpp:
         (WebCore::TextEncoding::fromUnicode): Normalize the string; handle surrogate pairs.
