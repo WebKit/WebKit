@@ -1,3 +1,9 @@
+2006-05-08  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Anders.
+
+        * building/checkout.html: changed link to point to universal binary. Thanks to Duncan Wilcox for hinting this one.
+
 2006-04-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.
