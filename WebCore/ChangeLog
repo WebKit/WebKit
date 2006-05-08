@@ -1,3 +1,11 @@
+2006-05-06  Darin Adler  <darin@apple.com>
+        
+        Suggested by Mitz. Reviewed and landed by Maciej.
+        
+        * dom/Document.cpp: (WebCore::Document::formElementsState): Fixed mistake where the
+        vector has an initial size and instead should have an initial capacity. Harmless in
+        a way, but hurts performance.
+        
 2006-05-07  David Hyatt  <hyatt@apple.com>
 
         Fix for bugzilla bug 8060.

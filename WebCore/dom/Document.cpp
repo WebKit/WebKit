@@ -3078,7 +3078,8 @@ void Document::finishedParsing()
 
 Vector<String> Document::formElementsState() const
 {
-    Vector<String> stateVector(m_formElementsWithState.size() * 3);
+    Vector<String> stateVector;
+    stateVector.reserveCapacity(m_formElementsWithState.size() * 3);
     typedef HashSet<HTMLGenericFormElement*>::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
     for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
