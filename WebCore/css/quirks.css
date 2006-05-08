@@ -40,3 +40,8 @@ table {
     font-style: normal;
     color: -webkit-text;
 }
+
+/* This will apply only to text fields, since all other inputs already use border box sizing */
+input:not([type=image]), textarea {
+    box-sizing: border-box;
+}

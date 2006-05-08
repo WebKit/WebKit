@@ -218,7 +218,8 @@ th {
 
 caption {
     display: table-caption;
-    text-align: -webkit-center
+    text-align: -webkit-center;
+    box-sizing: border-box
 }
 
 /* lists */
@@ -306,7 +307,6 @@ input, textarea, select, button {
     text-transform: none;
     text-indent: 0;
     display: inline-block;
-    box-sizing: border-box;
 }
 
 input[type="hidden"] {
@@ -355,7 +355,8 @@ input[type="button"], input[type="submit"], input[type="reset"], button {
     color: ButtonText;
     padding: 2px 6px 3px 6px;
     border: 2px outset ButtonFace;
-    background-color: ButtonFace
+    background-color: ButtonFace;
+    box-sizing: border-box
 }
 
 input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, button:disabled {
@@ -379,11 +380,17 @@ option, optgroup, area, param {
 }
 
 input[type="checkbox"] {
-    -webkit-appearance: checkbox
+    -webkit-appearance: checkbox;
+    box-sizing: border-box;
 }
 
 input[type="radio"] {
-    -webkit-appearance: radio
+    -webkit-appearance: radio;
+    box-sizing: border-box;
+}
+
+select {
+    box-sizing: border-box;
 }
 
 /* inline elements */

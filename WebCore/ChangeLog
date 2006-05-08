@@ -1,3 +1,17 @@
+2006-05-08  David Hyatt  <hyatt@apple.com>
+
+        Comprehensive box-sizing fix.  This patch changes all form controls to
+        have the right box-sizing values (text fields and text areas actually only
+        use border-box in quirks mode now, and image buttons never use border-box).
+
+        Tables are supposed to use border-box box-sizing as well, but that's a scary
+        enough change that I'm saving it for a separate patch.
+
+        Reviewed by mjs
+
+        * css/html4.css:
+        * css/quirks.css:
+
 2006-05-06  Darin Adler  <darin@apple.com>
         
         Suggested by Mitz. Reviewed and landed by Maciej.
