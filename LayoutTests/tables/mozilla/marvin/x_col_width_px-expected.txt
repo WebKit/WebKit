@@ -12,10 +12,10 @@ layer at (0,0) size 800x104
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableSection {tbody} at (1,1) size 614x44
           RenderTableRow {tr} at (0,2) size 614x40
-            RenderTableCell {td} at (2,2) size 203x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,2) size 204x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 170x36
                 text run at (2,2) width 170: "This column should have a"
                 text run at (2,20) width 122: "width of 200 pixels"
-            RenderTableCell {td} at (207,11) size 405x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (208,11) size 404x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 296x18
                 text run at (2,2) width 296: "This column should have a width of 400 pixels"

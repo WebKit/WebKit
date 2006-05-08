@@ -11,13 +11,13 @@ layer at (0,0) size 800x600
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 208x26
           RenderTableRow {TR} at (0,2) size 208x22
-            RenderTableCell {TD} at (2,2) size 102x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 104x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 48x18
                 text run at (2,2) width 48: "col-100"
-            RenderTableCell {TD} at (106,2) size 49x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (108,2) size 48x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x18
                 text run at (2,2) width 44: "cg-200"
-            RenderTableCell {TD} at (157,2) size 49x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (158,2) size 48x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x18
                 text run at (2,2) width 44: "cg-200"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
@@ -33,13 +33,13 @@ layer at (0,0) size 800x600
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 512x26
           RenderTableRow {TR} at (0,2) size 512x22
-            RenderTableCell {TD} at (2,2) size 102x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 104x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 48x18
                 text run at (2,2) width 48: "col-100"
-            RenderTableCell {TD} at (106,2) size 201x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (108,2) size 200x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x18
                 text run at (2,2) width 44: "cg-200"
-            RenderTableCell {TD} at (309,2) size 201x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (310,2) size 200x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x18
                 text run at (2,2) width 44: "cg-200"
       RenderBlock (anonymous) at (0,92) size 784x18
