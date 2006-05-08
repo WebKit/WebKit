@@ -1,4 +1,4 @@
-2006-05-06  Darin Adler  <darin@apple.com>
+2006-05-07  Darin Adler  <darin@apple.com>
 
         Reviewed and landed by Maciej.
 
@@ -11,7 +11,7 @@
         * kxmlcore/HashMap.h: (KXMLCore::HashMap::remove): Use RefCounter::deref instead of calling
         ~ValueType, because ~ValueType often results in a double-destroy, since the HashTable also
         destroys the element based on the storage type. The RefCounter template correctly does work
-        only in cases where ValueType and ValueStorageType differe and this class is what's used
+        only in cases where ValueType and ValueStorageType differ and this class is what's used
         elsewhere for the same purpose; I somehow missed this case when optimizing HashMap.
         * kxmlcore/HashSet.h: (KXMLCore::HashSet::remove): Ditto.
         
