@@ -182,20 +182,20 @@ layer at (163,519) size 142x22 clip at (164,520) size 140x20
   RenderTableCell {TD} at (154,64) size 142x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,547) size 252x60 clip at (12,548) size 250x58
-  RenderTableCell {TD} at (2,2) size 252x60 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (11,547) size 254x60 clip at (12,548) size 252x58
+  RenderTableCell {TD} at (2,2) size 254x60 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {P} at (2,18) size 206x24 [border: (3px solid #000000)]
       RenderText {#text} at (3,3) size 27x18
         text run at (3,3) width 27: "para"
-layer at (265,547) size 40x60 clip at (266,548) size 38x58
-  RenderTableCell {TD} at (256,21) size 40x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+layer at (267,547) size 38x60 clip at (268,548) size 36x58
+  RenderTableCell {TD} at (258,21) size 38x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (11,609) size 252x22 clip at (12,610) size 250x20
-  RenderTableCell {TD} at (2,64) size 252x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+layer at (11,609) size 254x22 clip at (12,610) size 252x20
+  RenderTableCell {TD} at (2,64) size 254x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
-layer at (265,609) size 40x22 clip at (266,610) size 38x20
-  RenderTableCell {TD} at (256,64) size 40x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+layer at (267,609) size 38x22 clip at (268,610) size 36x20
+  RenderTableCell {TD} at (258,64) size 38x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "

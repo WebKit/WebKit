@@ -273,23 +273,23 @@ layer at (0,0) size 785x904
       RenderTable {TABLE} at (0,698) size 680x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 678x50
           RenderTableRow {TR} at (0,2) size 678x22
-            RenderTableCell {TD} at (2,2) size 82x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 84x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "x"
-            RenderTableCell {TD} at (86,2) size 355x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=2]
+            RenderTableCell {TD} at (88,2) size 351x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=2]
               RenderText {#text} at (2,2) size 101x18
                 text run at (2,2) width 101: "this (colspan=2)"
-            RenderTableCell {TD} at (443,2) size 31x22 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (441,2) size 31x22 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x18
                 text run at (2,2) width 27: "blue"
-            RenderTableCell {TD} at (476,2) size 200x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (474,2) size 202x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x18
                 text run at (2,2) width 23: "that"
           RenderTableRow {TR} at (0,26) size 678x22
-            RenderTableCell {TD} at (2,26) size 82x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,26) size 84x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "x"
-            RenderTableCell {TD} at (86,26) size 590x22 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=4]
+            RenderTableCell {TD} at (88,26) size 588x22 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=4]
               RenderText {#text} at (2,2) size 324x18
                 text run at (2,2) width 324: "blue (colspan=4) --- doesn't span (5.0 win95 jun17)"
       RenderBlock (anonymous) at (0,750) size 769x18
@@ -300,10 +300,10 @@ layer at (0,0) size 785x904
       RenderTable {TABLE} at (0,818) size 680x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 678x50
           RenderTableRow {TR} at (0,2) size 678x22
-            RenderTableCell {TD} at (2,2) size 76x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 77x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "x"
-            RenderTableCell {TD} at (80,2) size 375x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (81,2) size 374x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 101x18
                 text run at (2,2) width 101: "this (colspan=1)"
             RenderTableCell {TD} at (457,2) size 31x22 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
@@ -313,10 +313,10 @@ layer at (0,0) size 785x904
               RenderText {#text} at (2,2) size 23x18
                 text run at (2,2) width 23: "that"
           RenderTableRow {TR} at (0,26) size 678x22
-            RenderTableCell {TD} at (2,26) size 76x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,26) size 77x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "x"
-            RenderTableCell {TD} at (80,26) size 596x22 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=3]
+            RenderTableCell {TD} at (81,26) size 595x22 [bgcolor=#99CCCC] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=3]
               RenderText {#text} at (2,2) size 223x18
                 text run at (2,2) width 223: "blue (colspan=3) --- spans correctly"
       RenderBlock (anonymous) at (0,870) size 769x18

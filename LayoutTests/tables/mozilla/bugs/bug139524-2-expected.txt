@@ -38,12 +38,12 @@ layer at (0,0) size 800x356
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (0,0) size 420x26
           RenderTableRow {TR} at (0,2) size 420x22
-            RenderTableCell {TD} at (2,2) size 103x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 104x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x18
                 text run at (2,2) width 31: "col 1"
-            RenderTableCell {TD} at (107,2) size 103x22 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (108,2) size 104x22 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x18
                 text run at (2,2) width 31: "col 2"
-            RenderTableCell {TD} at (212,2) size 206x22 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (214,2) size 204x22 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x18
                 text run at (2,2) width 31: "col 3"
