@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,18) size 320x22
         RenderTableSection {TBODY} at (0,0) size 320x22
           RenderTableRow {TR} at (0,0) size 320x22
-            RenderTableCell {TD} at (0,0) size 69x20 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 70x20 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x18
                 text run at (1,1) width 8: "1"
-            RenderTableCell {TD} at (69,0) size 245x20 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (70,0) size 244x20 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x18
                 text run at (1,1) width 8: "2"
             RenderTableCell {TD} at (314,0) size 6x22 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
