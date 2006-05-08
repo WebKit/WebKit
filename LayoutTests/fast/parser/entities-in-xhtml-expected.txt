@@ -4788,8 +4788,8 @@ layer at (0,0) size 785x6519
               RenderText {#text} at (2,2) size 12x18
                 text run at (2,2) width 12: "\x{2329}"
             RenderTableCell {td} at (361,2810) size 60x22 [border: (1px inset #808080)] [r=117 c=5 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x18
-                text run at (2,2) width 12: "\x{2329}"
+              RenderText {#text} at (2,2) size 5x18
+                text run at (2,2) width 5: "\x{3008}"
           RenderTableRow {tr} at (0,2834) size 423x22
             RenderTableCell {td} at (2,2834) size 56x22 [border: (1px inset #808080)] [r=118 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18
@@ -4807,8 +4807,8 @@ layer at (0,0) size 785x6519
               RenderText {#text} at (2,2) size 12x18
                 text run at (2,2) width 12: "\x{232A}"
             RenderTableCell {td} at (361,2834) size 60x22 [border: (1px inset #808080)] [r=118 c=5 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x18
-                text run at (2,2) width 12: "\x{232A}"
+              RenderText {#text} at (2,2) size 5x18
+                text run at (2,2) width 5: "\x{3009}"
           RenderTableRow {tr} at (0,2858) size 423x22
             RenderTableCell {td} at (2,2858) size 56x22 [border: (1px inset #808080)] [r=119 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18

@@ -1,3 +1,13 @@
+2006-05-08  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Updated a test case affected by the previous checkin. &rang; and &lang; are
+        replaced with their canonical equivalents during normalization.
+
+        * fast/parser/entities-in-xhtml-expected.checksum:
+        * fast/parser/entities-in-xhtml-expected.txt:
+
 2006-05-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
