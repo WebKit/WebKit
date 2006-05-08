@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg [
+  <!ELEMENT test (child)+ >
+  <!ATTLIST test xmlns CDATA #IMPLIED>
+  <!ELEMENT child EMPTY>
+  <!ATTLIST child id ID #IMPLIED>
+  <!ATTLIST child check CDATA #IMPLIED>
+   <!ELEMENT svg (rect, script, test)>
+   <!ATTLIST svg 
+      xmlns CDATA #FIXED "http://www.w3.org/2000/svg"
+      name CDATA #IMPLIED>
+   <!ELEMENT rect EMPTY>
+   <!ATTLIST rect 
+      x CDATA #REQUIRED
+      y CDATA #REQUIRED
+      width CDATA #REQUIRED
+      height CDATA #REQUIRED>
+  <!ELEMENT script (#PCDATA)>
+  <!ATTLIST script type CDATA #IMPLIED>      
+  <!ENTITY svgunit SYSTEM "svgunit.js">
+  <!ENTITY svgtest SYSTEM "Conformance_ID.js">  
+]>
+<svg xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="100" height="100"/><script type="text/ecmascript">&svgtest;&svgunit;</script>
+<test xmlns="http://www.example.org">
+  <child id="child1" check="child1"/>
+  <child id="child2" check="child2"/>
+</test>
+</svg>
+
