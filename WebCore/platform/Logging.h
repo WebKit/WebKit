@@ -40,5 +40,6 @@ extern KXCLogChannel LogPopupBlocking;
 extern KXCLogChannel LogEvents;
 extern KXCLogChannel LogEditing;
 extern KXCLogChannel LogTextConversion;
+extern KXCLogChannel LogXPath;
 
 #endif

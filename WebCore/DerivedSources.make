@@ -31,6 +31,7 @@ VPATH = \
     $(WebCore)/dom \
     $(WebCore)/html \
     $(WebCore)/page \
+    $(WebCore)/xpath \
 #
 
 .PHONY : all
@@ -72,6 +73,10 @@ all : \
     JSRange.h \
     JSText.h \
     JSUIEvent.h \
+    JSXPathEvaluator.h \
+    JSXPathExpression.h \
+    JSXPathNSResolver.h \
+    JSXPathResult.h \
     JSWheelEvent.h \
     JSXMLHttpRequest.lut.h \
     JSXMLSerializer.lut.h \
@@ -79,6 +84,7 @@ all : \
     SVGNames.cpp \
     UserAgentStyleSheets.h \
     XLinkNames.cpp \
+    XPathGrammar.cpp \
     kjs_css.lut.h \
     kjs_dom.lut.h \
     kjs_events.lut.h \
@@ -129,6 +135,15 @@ CSSGrammar.cpp : css/CSSGrammar.y
 	touch CSSGrammar.hpp
 	cat CSSGrammar.cpp.h CSSGrammar.hpp > CSSGrammar.h
 	rm -f CSSGrammar.cpp.h CSSGrammar.hpp
+
+# XPath grammar
+
+XPathGrammar.cpp : xpath/impl/XPathGrammar.y
+	bison -d -p xpathyy $< -o $@
+	touch XPathGrammar.cpp.h
+	touch XPathGrammar.hpp
+	cat XPathGrammar.cpp.h XPathGrammar.hpp > XPathGrammar.h
+	rm -f XPathGrammar.cpp.h XPathGrammar.hpp
 
 # user agent style sheets
 
@@ -183,4 +198,4 @@ JS_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
-	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --outputdir . $<
+	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --include xpath --outputdir  . $<

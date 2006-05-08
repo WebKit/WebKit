@@ -162,7 +162,11 @@ sub AddIncludesForType
       $type eq "Node" or
       $type eq "NodeList" or 
       $type eq "Range" or 
-      $type eq "Text") {
+      $type eq "Text" or
+      $type eq "XPathEvaluator" or
+      $type eq "XPathExpression" or
+      $type eq "XPathNSResolver" or
+      $type eq "XPathResult") {
     $implIncludes{"${type}.h"} = 1;
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
@@ -501,7 +505,7 @@ sub GenerateImplementation
       $protoClassName = "${parentClassName}Proto";
     }
 
-    push(@implContent, constructorFor($className, $protoClassName, $interfaceName));
+    push(@implContent, constructorFor($className, $protoClassName, $interfaceName, $dataNode->extendedAttributes->{"CanBeConstructed"}));
   }
   
   # - Add functions and constants to a hashtable definition
@@ -824,7 +828,9 @@ sub GetNativeType
            $type eq "Element" or
            $type eq "Attr" or
            $type eq "DocumentType" or
-           $type eq "Range") {
+           $type eq "Range" or
+           $type eq "XPathNSResolver" or
+           $type eq "XPathResult") {
     return "${type}*";
   } elsif ($type eq "NodeFilter") {
       return "PassRefPtr<${type}>";
@@ -855,26 +861,21 @@ sub TypeCanFailConversion
     return 0; # or can it?
   } elsif ($type eq "float") {
     return 0;
-  } elsif ($type eq "AtomicString") {
-      return 0;
-  } elsif ($type eq "DOMString") {
-      return 0;
-  } elsif ($type eq "Node") {
-      return 0;
-  } elsif ($type eq "Element") {
-      return 0;
   } elsif ($type eq "Attr") {
       $implIncludes{"ExceptionCode.h"} = 1;
       return 1;
-  } elsif ($type eq "DocumentType") {
-      return 0;
-  } elsif ($type eq "EventTarget") {
-      return 0;
-  }  elsif ($type eq "Range") {
-      return 0;
-  }  elsif ($type eq "NodeFilter") {
-      return 0;
-  } elsif ($type eq "DOMWindow") {
+  } elsif ($type eq "AtomicString" or
+           $type eq "DOMString" or
+           $type eq "Node" or
+           $type eq "Element" or
+           $type eq "DocumentType" or
+           $type eq "EventTarget" or
+           $type eq "Range" or
+           $type eq "NodeFilter" or
+           $type eq "DOMWindow" or
+           $type eq "XPathEvaluator" or
+           $type eq "XPathNSResolver" or
+           $type eq "XPathResult") {
       return 0;
   } else {
     die "Don't know whether a JS value can fail conversion to type $type."
@@ -925,9 +926,6 @@ sub JSValueToNative
   } elsif ($type eq "DocumentType") {
       $implIncludes{"kjs_dom.h"} = 1;
       return "toDocumentType($value)";
-  } elsif ($type eq "Range") {
-      $implIncludes{"JSRange.h"} = 1;
-      return "toRange($value)";
   } elsif ($type eq "Element") {
     $implIncludes{"kjs_dom.h"} = 1;
     return "toElement($value)";
@@ -936,7 +934,12 @@ sub JSValueToNative
     return "toNodeFilter($value)";
   } elsif ($type eq "DOMWindow") {
     $implIncludes{"kjs_window.h"} = 1;
-    return "toDOMWindow($value)";
+    return "toDOMWindow($value)"; 
+  } elsif ($type eq "Range" or
+           $type eq "XPathNSResolver" or
+           $type eq "XPathResult") {
+    $implIncludes{"JS$type.h"} = 1;
+    return "to$type($value)";
   } else {
     die "Don't know how to convert a JS value of type $type."
   }
@@ -955,7 +958,8 @@ sub NativeToJSValue
            $type eq "unsigned long" or 
            $type eq "short" or 
            $type eq "unsigned short" or
-           $type eq "float") {
+           $type eq "float" or 
+           $type eq "double") {
     return "jsNumber($value)";
   } elsif ($type eq "DOMString") {
     my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
@@ -1029,7 +1033,12 @@ sub NativeToJSValue
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"HTMLCanvasElement.h"} = 1;
     return "toJS(exec, $value)";
-  } elsif ($type eq "CanvasGradient" or $type eq "Counter" or $type eq "Range") {
+  } elsif ($type eq "CanvasGradient" or 
+           $type eq "Counter" or 
+           $type eq "Range" or
+           $type eq "XPathExpression" or
+           $type eq "XPathNSResolver" or
+           $type eq "XPathResult") {
     $implIncludes{"JS$type.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "NodeIterator" or
@@ -1041,6 +1050,8 @@ sub NativeToJSValue
     return "toJS(exec, $value)";
   } elsif ($type eq "DOMObject") {
     $implIncludes{"JSCanvasRenderingContext2DBase.h"} = 1;
+    return "toJS(exec, $value)";
+    $implIncludes{"JS$type.h"} = 1;
     return "toJS(exec, $value)";
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";
@@ -1249,6 +1260,7 @@ sub constructorFor
     my $className = shift;
     my $protoClassName = shift;
     my $interfaceName = shift;
+    my $canConstruct = shift;
     
 my $implContent = << "EOF";
 class ${className}Constructor : public DOMObject {
@@ -1261,7 +1273,17 @@ public:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;
     virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;    
+    static const ClassInfo info;
+EOF
+
+    if ($canConstruct) {
+$implContent .= << "EOF";
+    virtual bool implementsConstruct() const { return true; }
+    virtual JSObject* construct(ExecState* exec, const List &args) { return static_cast<JSObject *>(toJS(exec, new $interfaceName)); }
+EOF
+    }
+
+$implContent .= << "EOF";
 };
 
 const ClassInfo ${className}Constructor::info = { "${interfaceName}Constructor", 0, &${className}ConstructorTable, 0 };

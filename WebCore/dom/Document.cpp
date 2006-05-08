@@ -69,6 +69,10 @@
 #include "render_frames.h"
 #include "xml_tokenizer.h"
 #include "xmlhttprequest.h"
+#include "XPathEvaluator.h"
+#include "XPathExpression.h"
+#include "XPathNSResolver.h"
+#include "XPathResult.h"
 
 #ifdef KHTML_XSLT
 #include "XSLTProcessor.h"
@@ -496,6 +500,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
         case NOTATION_NODE:
+        case XPATH_NAMESPACE_NODE:
             break;
     }
 
@@ -516,6 +521,7 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         case NOTATION_NODE:
         case DOCUMENT_NODE:
         case DOCUMENT_TYPE_NODE:
+        case XPATH_NAMESPACE_NODE:
             ec = NOT_SUPPORTED_ERR;
             return 0;            
         case ATTRIBUTE_NODE: {                   
@@ -3090,6 +3096,40 @@ Vector<String> Document::formElementsState() const
     }
     return stateVector;
 }
+
+#if XPATH_SUPPORT
+PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
+                                                       XPathNSResolver* resolver,
+                                                       ExceptionCode& ec)
+{
+    if (!m_xpathEvaluator)
+        m_xpathEvaluator = new XPathEvaluator;
+    
+    return m_xpathEvaluator->createExpression(expression, resolver, ec);
+}
+
+PassRefPtr<XPathNSResolver> Document::createNSResolver(Node *nodeResolver)
+{
+    if (!m_xpathEvaluator)
+        m_xpathEvaluator = new XPathEvaluator;
+    
+    return m_xpathEvaluator->createNSResolver(nodeResolver);
+}
+
+PassRefPtr<XPathResult> Document::evaluate(const String& expression,
+                                           Node* contextNode,
+                                           XPathNSResolver* resolver,
+                                           unsigned short type,
+                                           XPathResult* result,
+                                           ExceptionCode& ec)
+{
+    if (!m_xpathEvaluator)
+        m_xpathEvaluator = new XPathEvaluator;
+    
+    return m_xpathEvaluator->evaluate(expression, contextNode, resolver, type, result, ec);
+}
+
+#endif // XPATH_SUPPORT
 
 void Document::setStateForNewFormElements(const Vector<String>& stateVector)
 {

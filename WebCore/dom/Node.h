@@ -73,7 +73,8 @@ public:
         DOCUMENT_NODE = 9,
         DOCUMENT_TYPE_NODE = 10,
         DOCUMENT_FRAGMENT_NODE = 11,
-        NOTATION_NODE = 12
+        NOTATION_NODE = 12,
+        XPATH_NAMESPACE_NODE = 13
     };
 
     Node(Document*);

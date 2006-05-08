@@ -52,6 +52,8 @@ module window {
         attribute NodeConstructor Node;
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;
+        attribute XPathEvaluatorConstructor XPathEvaluator;
+        attribute XPathResultConstructor XPathResult;
     };
 
 }

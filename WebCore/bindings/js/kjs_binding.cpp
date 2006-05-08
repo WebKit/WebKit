@@ -31,6 +31,7 @@
 #include "PlatformString.h"
 #include "Range.h"
 #include "dom2_eventsimpl.h"
+#include "XPathEvaluator.h"
 #include "kjs_dom.h"
 #include "kjs_window.h"
 #include <kjs/collector.h>
@@ -298,6 +299,11 @@ static const char * const eventExceptionNames[] = {
     "UNSPECIFIED_EVENT_TYPE_ERR"
 };
 
+static const char * const xpathExceptionNames[] = {
+    "INVALID_EXPRESSION_ERR",
+    "TYPE_ERR"
+};
+
 void setDOMException(ExecState* exec, ExceptionCode ec)
 {
   if (ec == 0 || exec->hadException())
@@ -307,23 +313,35 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
   int code = ec;
 
   const char * const * nameTable;
+  
   int nameTableSize;
+  int nameIndex;
   if (code >= RangeExceptionOffset && code <= RangeExceptionMax) {
     type = "DOM Range";
     code -= RangeExceptionOffset;
+    nameIndex = code;
     nameTable = rangeExceptionNames;
     nameTableSize = sizeof(rangeExceptionNames) / sizeof(rangeExceptionNames[0]);
   } else if (code >= EventExceptionOffset && code <= EventExceptionMax) {
     type = "DOM Events";
     code -= EventExceptionOffset;
+    nameIndex = code;
     nameTable = eventExceptionNames;
     nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
+  } else if (code >= XPathExceptionOffset && code <= XPathExceptionMax) {
+    type = "DOM XPath";
+    // XPath exception codes start with 51 and we don't want 51 empty elements in the name array
+    nameIndex = code - INVALID_EXPRESSION_ERR;
+    code -= XPathExceptionOffset;
+    nameTable = xpathExceptionNames;
+    nameTableSize = sizeof(xpathExceptionNames) / sizeof(xpathExceptionNames[0]);
   } else {
+    nameIndex = code;
     nameTable = exceptionNames;
     nameTableSize = sizeof(exceptionNames) / sizeof(exceptionNames[0]);
   }
 
-  const char* name = code < nameTableSize ? nameTable[code] : 0;
+  const char* name = nameIndex < nameTableSize ? nameTable[nameIndex] : 0;
 
   // 100 characters is a big enough buffer, because there are:
   //   13 characters in the message

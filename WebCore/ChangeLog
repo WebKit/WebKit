@@ -1,3 +1,286 @@
+2006-05-08  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin, Eric and Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6638
+        Support Mozilla's XPathEvaluator object.
+        
+        * DerivedSources.make:
+        Generate XPath grammar, and JavaScript wrappers.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files to project
+        
+        * bindings/js/kjs_binding.cpp:
+        (KJS::):
+        (KJS::setDOMException):
+        Handle setting XPath exceptions.
+        
+        * bindings/objc/DOM.mm:
+        Just return nil for now when trying to create a wrapper for 
+        XPath namespace nodes.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Add XPath types. Also add a "CanBeConstructed" extended attribute
+        for interfaces that can be constructed directly.
+        
+        * bridge/mac/WebCorePageBridge.mm:
+        (initializeLoggingChannelsIfNecessary):
+        Initialize LogXPath channel.
+        
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::hasFeature):
+        Support "xpath" version "3.0".
+        
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        
+        (WebCore::Document::importNode):
+        Ignore XPath namespace nodes.
+        
+        (WebCore::Document::createExpression):
+        (WebCore::Document::createNSResolver):
+        (WebCore::Document::evaluate):
+        New functions which call down to a lazily created XPathEvaluator.
+
+        * dom/Document.h:
+        Add function declarations.
+        
+        * dom/Document.idl:
+        Add XPath methods.
+        
+        * dom/Node.h:
+        (WebCore::Node::):
+        Add XPATH_NAMESPACE_NODE type.
+        
+        * editing/markup.cpp:
+        (WebCore::startMarkup):
+        Ignore XPath namespace nodes.
+        
+        * page/DOMWindow.idl:
+        Add constructors for XPathEvaluator and XPathResult.
+        
+        * platform/Logging.cpp:
+        * platform/Logging.h:
+        Add XPath log channel
+
+        * xpath: Added.
+        * xpath/XPathEvaluator.cpp: Added.
+        (WebCore::XPathEvaluator::createExpression):
+        (WebCore::XPathEvaluator::createNSResolver):
+        (WebCore::XPathEvaluator::evaluate):
+        * xpath/XPathEvaluator.h: Added.
+        (WebCore::):
+        * xpath/XPathEvaluator.idl: Added.
+        * xpath/XPathExpression.cpp: Added.
+        (WebCore::XPathExpression::createExpression):
+        (WebCore::XPathExpression::~XPathExpression):
+        (WebCore::XPathExpression::evaluate):
+        * xpath/XPathExpression.h: Added.
+        * xpath/XPathExpression.idl: Added.
+        * xpath/XPathNSResolver.cpp: Added.
+        (WebCore::XPathNSResolver::XPathNSResolver):
+        (WebCore::XPathNSResolver::lookupNamespaceURI):
+        * xpath/XPathNSResolver.h: Added.
+        * xpath/XPathNSResolver.idl: Added.
+        * xpath/XPathNamespace.cpp: Added.
+        (WebCore::XPathNamespace::XPathNamespace):
+        (WebCore::XPathNamespace::~XPathNamespace):
+        (WebCore::XPathNamespace::ownerDocument):
+        (WebCore::XPathNamespace::ownerElement):
+        (WebCore::XPathNamespace::prefix):
+        (WebCore::XPathNamespace::nodeName):
+        (WebCore::XPathNamespace::nodeValue):
+        (WebCore::XPathNamespace::namespaceURI):
+        (WebCore::XPathNamespace::nodeType):
+        * xpath/XPathNamespace.h: Added.
+        * xpath/XPathResult.cpp: Added.
+        (WebCore::InvalidatingEventListener::InvalidatingEventListener):
+        (WebCore::InvalidatingEventListener::handleEvent):
+        (WebCore::XPathResult::XPathResult):
+        (WebCore::XPathResult::~XPathResult):
+        (WebCore::XPathResult::convertTo):
+        (WebCore::XPathResult::resultType):
+        (WebCore::XPathResult::numberValue):
+        (WebCore::XPathResult::stringValue):
+        (WebCore::XPathResult::booleanValue):
+        (WebCore::XPathResult::singleNodeValue):
+        (WebCore::XPathResult::invalidateIteratorState):
+        (WebCore::XPathResult::invalidIteratorState):
+        (WebCore::XPathResult::snapshotLength):
+        (WebCore::XPathResult::iterateNext):
+        (WebCore::XPathResult::snapshotItem):
+        * xpath/XPathResult.h: Added.
+        (WebCore::XPathResult::):
+        * xpath/XPathResult.idl: Added.
+        * xpath/impl: Added.
+        * xpath/impl/XPathExpressionNode.cpp: Added.
+        (WebCore::XPath::Expression::evaluationContext):
+        (WebCore::XPath::Expression::Expression):
+        (WebCore::XPath::Expression::~Expression):
+        (WebCore::XPath::Expression::evaluate):
+        (WebCore::XPath::Expression::addSubExpression):
+        (WebCore::XPath::Expression::optimize):
+        (WebCore::XPath::Expression::subExprCount):
+        (WebCore::XPath::Expression::subExpr):
+        (WebCore::XPath::Expression::isConstant):
+        * xpath/impl/XPathExpressionNode.h: Added.
+        (WebCore::XPath::EvaluationContext::EvaluationContext):
+        * xpath/impl/XPathFunctions.cpp: Added.
+        (WebCore::XPath::Interval::Interval):
+        (WebCore::XPath::Interval::contains):
+        (WebCore::XPath::Interval::asString):
+        (WebCore::XPath::Function::setArguments):
+        (WebCore::XPath::Function::setName):
+        (WebCore::XPath::Function::arg):
+        (WebCore::XPath::Function::argCount):
+        (WebCore::XPath::Function::name):
+        (WebCore::XPath::FunLast::doEvaluate):
+        (WebCore::XPath::FunLast::isConstant):
+        (WebCore::XPath::FunPosition::doEvaluate):
+        (WebCore::XPath::FunPosition::isConstant):
+        (WebCore::XPath::FunLocalName::isConstant):
+        (WebCore::XPath::FunLocalName::doEvaluate):
+        (WebCore::XPath::FunNamespaceURI::isConstant):
+        (WebCore::XPath::FunNamespaceURI::doEvaluate):
+        (WebCore::XPath::FunName::isConstant):
+        (WebCore::XPath::FunName::doEvaluate):
+        (WebCore::XPath::FunCount::doEvaluate):
+        (WebCore::XPath::FunCount::isConstant):
+        (WebCore::XPath::FunString::doEvaluate):
+        (WebCore::XPath::FunConcat::doEvaluate):
+        (WebCore::XPath::FunStartsWith::doEvaluate):
+        (WebCore::XPath::FunContains::doEvaluate):
+        (WebCore::XPath::FunSubstringBefore::doEvaluate):
+        (WebCore::XPath::FunSubstringAfter::doEvaluate):
+        (WebCore::XPath::FunSubstring::doEvaluate):
+        (WebCore::XPath::FunStringLength::doEvaluate):
+        (WebCore::XPath::FunNormalizeSpace::doEvaluate):
+        (WebCore::XPath::FunTranslate::doEvaluate):
+        (WebCore::XPath::FunBoolean::doEvaluate):
+        (WebCore::XPath::FunNot::doEvaluate):
+        (WebCore::XPath::FunTrue::doEvaluate):
+        (WebCore::XPath::FunTrue::isConstant):
+        (WebCore::XPath::FunLang::doEvaluate):
+        (WebCore::XPath::FunLang::isConstant):
+        (WebCore::XPath::FunFalse::doEvaluate):
+        (WebCore::XPath::FunFalse::isConstant):
+        (WebCore::XPath::FunNumber::doEvaluate):
+        (WebCore::XPath::FunSum::doEvaluate):
+        (WebCore::XPath::FunFloor::doEvaluate):
+        (WebCore::XPath::FunCeiling::doEvaluate):
+        (WebCore::XPath::FunRound::doEvaluate):
+        (WebCore::XPath::FunctionLibrary::self):
+        (WebCore::XPath::FunctionLibrary::FunctionLibrary):
+        (WebCore::XPath::FunctionLibrary::createFunction):
+        * xpath/impl/XPathFunctions.h: Added.
+        * xpath/impl/XPathGrammar.y: Added.
+        * xpath/impl/XPathParser.cpp: Added.
+        (WebCore::XPath::):
+        (WebCore::XPath::Parser::charCat):
+        (WebCore::XPath::Parser::isAxisName):
+        (WebCore::XPath::Parser::isNodeTypeName):
+        (WebCore::XPath::Parser::isOperatorContext):
+        (WebCore::XPath::Parser::skipWS):
+        (WebCore::XPath::Parser::makeTokenAndAdvance):
+        (WebCore::XPath::Parser::makeIntTokenAndAdvance):
+        (WebCore::XPath::Parser::peekAheadHelper):
+        (WebCore::XPath::Parser::peekCurHelper):
+        (WebCore::XPath::Parser::lexString):
+        (WebCore::XPath::Parser::lexNumber):
+        (WebCore::XPath::Parser::lexNCName):
+        (WebCore::XPath::Parser::lexQName):
+        (WebCore::XPath::Parser::nextTokenInternal):
+        (WebCore::XPath::Parser::nextToken):
+        (WebCore::XPath::Parser::Parser):
+        (WebCore::XPath::Parser::reset):
+        (WebCore::XPath::Parser::lex):
+        (WebCore::XPath::Parser::parseStatement):
+        (WebCore::XPath::Parser::registerParseNode):
+        (WebCore::XPath::Parser::unregisterParseNode):
+        (WebCore::XPath::Parser::registerPredicateVector):
+        (WebCore::XPath::Parser::unregisterPredicateVector):
+        (WebCore::XPath::Parser::registerExpressionVector):
+        (WebCore::XPath::Parser::unregisterExpressionVector):
+        (WebCore::XPath::Parser::registerString):
+        (WebCore::XPath::Parser::unregisterString):
+        * xpath/impl/XPathParser.h: Added.
+        (WebCore::XPath::Token::Token):
+        (WebCore::XPath::Parser::):
+        (WebCore::XPath::Parser::current):
+        * xpath/impl/XPathPath.cpp: Added.
+        (WebCore::XPath::Filter::Filter):
+        (WebCore::XPath::Filter::~Filter):
+        (WebCore::XPath::Filter::doEvaluate):
+        (WebCore::XPath::LocationPath::LocationPath):
+        (WebCore::XPath::LocationPath::~LocationPath):
+        (WebCore::XPath::LocationPath::optimize):
+        (WebCore::XPath::LocationPath::doEvaluate):
+        (WebCore::XPath::Path::Path):
+        (WebCore::XPath::Path::~Path):
+        (WebCore::XPath::Path::doEvaluate):
+        * xpath/impl/XPathPath.h: Added.
+        * xpath/impl/XPathPredicate.cpp: Added.
+        (WebCore::XPath::Number::Number):
+        (WebCore::XPath::Number::isConstant):
+        (WebCore::XPath::Number::doEvaluate):
+        (WebCore::XPath::StringExpression::StringExpression):
+        (WebCore::XPath::StringExpression::isConstant):
+        (WebCore::XPath::StringExpression::doEvaluate):
+        (WebCore::XPath::Negative::doEvaluate):
+        (WebCore::XPath::NumericOp::NumericOp):
+        (WebCore::XPath::NumericOp::doEvaluate):
+        (WebCore::XPath::EqTestOp::EqTestOp):
+        (WebCore::XPath::EqTestOp::doEvaluate):
+        (WebCore::XPath::LogicalOp::LogicalOp):
+        (WebCore::XPath::LogicalOp::shortCircuitOn):
+        (WebCore::XPath::LogicalOp::isConstant):
+        (WebCore::XPath::LogicalOp::doEvaluate):
+        (WebCore::XPath::Union::doEvaluate):
+        (WebCore::XPath::Predicate::Predicate):
+        (WebCore::XPath::Predicate::~Predicate):
+        (WebCore::XPath::Predicate::evaluate):
+        (WebCore::XPath::Predicate::optimize):
+        * xpath/impl/XPathPredicate.h: Added.
+        (WebCore::XPath::NumericOp::):
+        (WebCore::XPath::EqTestOp::):
+        (WebCore::XPath::LogicalOp::):
+        * xpath/impl/XPathStep.cpp: Added.
+        (WebCore::XPath::Step::axisAsString):
+        (WebCore::XPath::Step::Step):
+        (WebCore::XPath::Step::~Step):
+        (WebCore::XPath::Step::evaluate):
+        (WebCore::XPath::Step::nodesInAxis):
+        (WebCore::XPath::Step::nodeTestMatches):
+        (WebCore::XPath::Step::optimize):
+        (WebCore::XPath::Step::namespaceFromNodetest):
+        (WebCore::XPath::Step::primaryNodeType):
+        * xpath/impl/XPathStep.h: Added.
+        (WebCore::XPath::Step::):
+        * xpath/impl/XPathUtil.cpp: Added.
+        (WebCore::XPath::isRootDomNode):
+        (WebCore::XPath::stringValue):
+        (WebCore::XPath::isValidContextNode):
+        * xpath/impl/XPathUtil.h: Added.
+        * xpath/impl/XPathValue.cpp: Added.
+        (WebCore::XPath::Value::Value):
+        (WebCore::XPath::Value::type):
+        (WebCore::XPath::Value::isNodeVector):
+        (WebCore::XPath::Value::isBoolean):
+        (WebCore::XPath::Value::isNumber):
+        (WebCore::XPath::Value::isString):
+        (WebCore::XPath::Value::toNodeVector):
+        (WebCore::XPath::Value::toBoolean):
+        (WebCore::XPath::Value::toNumber):
+        (WebCore::XPath::Value::toString):
+        * xpath/impl/XPathValue.h: Added.
+        (WebCore::XPath::Value::):
+        * xpath/impl/XPathVariableReference.cpp: Added.
+        (WebCore::XPath::VariableReference::VariableReference):
+        (WebCore::XPath::VariableReference::isConstant):
+        (WebCore::XPath::VariableReference::doEvaluate):
+        * xpath/impl/XPathVariableReference.h: Added.
+
 2006-05-08  David Hyatt  <hyatt@apple.com>
 
         Comprehensive box-sizing fix.  This patch changes all form controls to
