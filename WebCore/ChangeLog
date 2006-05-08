@@ -1,3 +1,18 @@
+2006-05-07  David Hyatt  <hyatt@apple.com>
+
+        Fix for bugzilla bug 8060.
+
+        Fixed width table cells weren't having their border widths
+        included in the effective width of the column (and thus could end up being
+        too small).
+
+        Reviewed by darin
+
+        Added fast/tables/fixed-cell-growth.html
+
+        * rendering/table_layout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+
 2006-05-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
