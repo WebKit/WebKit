@@ -387,7 +387,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXPathEvaluator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXPathNSResolver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXPathResult.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSWheelEvent.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\UserAgentStyleSheetsData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\XPathGrammar.cpp"
 				>
 			</File>
 		</Filter>
@@ -2163,6 +2183,122 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="xpath"
+			>
+			<Filter
+			    Name="impl"
+			>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathExpressionNode.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathExpressionNode.h"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathFunctions.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathFunctions.h"
+			        >
+			    </File>
+			    <File
+    				RelativePath="..\..\xpath\impl\XPathGrammar.y"
+    				>
+    			</File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathParser.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathParser.h"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathPath.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathPath.h"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathStep.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathStep.h"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathUtil.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathUtil.h"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathValue.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathValue.h"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathVariableReference.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="\..\..\xpath\impl\XPathVariableReference.h"
+			        >
+			    </File>			    
+			</Filter>
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathEvaluator.cpp"
+		        >
+		    </File>
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathEvaluator.h"
+		        >
+		    </File>
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathExpression.cpp"
+		        >
+		    </File>
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathExpression.h"
+		        >
+		    </File>			    
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathNamespace.cpp"
+		        >
+		    </File>
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathNamespace.h"
+		        >
+		    </File>			    
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathNSResolver.cpp"
+		        >
+		    </File>
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathNSResolver.h"
+		        >
+		    </File>			    
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathResult.cpp"
+		        >
+		    </File>
+		    <File
+		        RelativePath="\..\..\xpath\impl\XPathResult.h"
+		        >
+		    </File>			    
+		</Filter>		
 		<Filter
 			Name="xml"
 			>

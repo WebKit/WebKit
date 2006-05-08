@@ -1,5 +1,12 @@
 2006-05-08  Anders Carlsson  <acarlsson@apple.com>
 
+        Try fixing the Win32 build
+        
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        Add XPath files to project.
+
+2006-05-08  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin, Eric and Maciej.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6638
