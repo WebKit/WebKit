@@ -218,8 +218,7 @@ th {
 
 caption {
     display: table-caption;
-    text-align: -webkit-center;
-    box-sizing: border-box
+    text-align: -webkit-center
 }
 
 /* lists */
