@@ -2259,43 +2259,43 @@
 			    </File>			    
 			</Filter>
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathEvaluator.cpp"
+		        RelativePath="\..\..\xpath\XPathEvaluator.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathEvaluator.h"
+		        RelativePath="\..\..\xpath\XPathEvaluator.h"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathExpression.cpp"
+		        RelativePath="\..\..\xpath\XPathExpression.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathExpression.h"
+		        RelativePath="\..\..\xpath\XPathExpression.h"
 		        >
 		    </File>			    
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathNamespace.cpp"
+		        RelativePath="\..\..\xpath\XPathNamespace.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathNamespace.h"
+		        RelativePath="\..\..\xpath\XPathNamespace.h"
 		        >
 		    </File>			    
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathNSResolver.cpp"
+		        RelativePath="\..\..\xpath\XPathNSResolver.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathNSResolver.h"
+		        RelativePath="\..\..\xpath\XPathNSResolver.h"
 		        >
 		    </File>			    
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathResult.cpp"
+		        RelativePath="\..\..\xpath\XPathResult.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\impl\XPathResult.h"
+		        RelativePath="\..\..\xpath\XPathResult.h"
 		        >
 		    </File>			    
 		</Filter>		
