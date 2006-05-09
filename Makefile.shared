@@ -1,4 +1,4 @@
-XCODE_OPTIONS = `perl -I../WebKitTools/Scripts -Mwebkitdirs -e 'print XcodeOptionString()'`
+XCODE_OPTIONS = `perl -I../WebKitTools/Scripts -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
 
 all:
 	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
