@@ -1,3 +1,9 @@
+2006-05-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O.
+
+        * bindings/npapi.h: do not define #pragma options align=mac68k if we are 64-bit
+
 2006-05-07  Darin Adler  <darin@apple.com>
 
         Reviewed and landed by Maciej.
