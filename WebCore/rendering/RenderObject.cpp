@@ -2362,9 +2362,9 @@ RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderSt
         return 0;
     
     if (pseudo == RenderStyle::FIRST_LINE_INHERITED)
-        result = document()->styleSelector()->createStyleForElement(static_cast<Element*>(node), parentStyle, false);
+        result = document()->styleSelector()->styleForElement(static_cast<Element*>(node), parentStyle, false);
     else
-        result = document()->styleSelector()->createPseudoStyleForElement(pseudo, static_cast<Element*>(node), parentStyle);
+        result = document()->styleSelector()->pseudoStyleForElement(pseudo, static_cast<Element*>(node), parentStyle);
     if (result) {
         style()->addPseudoStyle(result);
         result->deref(document()->renderArena());
