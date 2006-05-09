@@ -28,7 +28,7 @@
 
 #import "objc_instance.h"
 #import "runtime_object.h"
-#import <kxmlcore/UnusedParam.h>
+#import <wtf/UnusedParam.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;

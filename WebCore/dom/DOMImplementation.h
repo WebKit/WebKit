@@ -27,7 +27,7 @@
 #define DOM_DOMImplementationImpl_h
 
 #include "Shared.h"
-#include <kxmlcore/Forward.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

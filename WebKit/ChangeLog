@@ -1,3 +1,17 @@
+2006-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Anders.
+        
+        - renamed kxmlcore to wtf
+        
+        kxmlcore --> wtf
+        KXMLCore --> WTF
+        WKC --> WTF
+
+        * Misc/WebKitLogging.h:
+        * Misc/WebKitLogging.m:
+        (initializeLogChannel):
+
 2006-05-09  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.

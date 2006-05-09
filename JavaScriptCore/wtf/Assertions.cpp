@@ -62,7 +62,7 @@ static void vprintf_stderr_common(const char *format, va_list args)
         vfprintf_no_warning(stderr, format, args);
 }
 
-void KXCReportAssertionFailure(const char *file, int line, const char *function, const char *assertion)
+void WTFReportAssertionFailure(const char *file, int line, const char *function, const char *assertion)
 {
     if (assertion)
         fprintf(stderr, "=================\nASSERTION FAILED: %s (%s:%d %s)\n=================\n", assertion, file, line, function);
@@ -70,7 +70,7 @@ void KXCReportAssertionFailure(const char *file, int line, const char *function,
         fprintf(stderr, "=================\nSHOULD NEVER BE REACHED (%s:%d %s)\n=================\n", file, line, function);
 }
 
-void KXCReportAssertionFailureWithMessage(const char *file, int line, const char *function, const char *assertion, const char *format, ...)
+void WTFReportAssertionFailureWithMessage(const char *file, int line, const char *function, const char *assertion, const char *format, ...)
 {
     fprintf(stderr, "=================\nASSERTION FAILED: ");
     va_list args;
@@ -80,12 +80,12 @@ void KXCReportAssertionFailureWithMessage(const char *file, int line, const char
     fprintf(stderr, "\n%s (%s:%d %s)\n=================\n", assertion, file, line, function);
 }
 
-void KXCReportArgumentAssertionFailure(const char *file, int line, const char *function, const char *argName, const char *assertion)
+void WTFReportArgumentAssertionFailure(const char *file, int line, const char *function, const char *argName, const char *assertion)
 {
     fprintf(stderr, "=================\nARGUMENT BAD: %s, %s (%s:%d %s)\n=================\n", argName, assertion, file, line, function);
 }
 
-void KXCReportFatalError(const char *file, int line, const char *function, const char *format, ...)
+void WTFReportFatalError(const char *file, int line, const char *function, const char *format, ...)
 {
     fprintf(stderr, "=================\nFATAL ERROR: ");
     va_list args;
@@ -95,7 +95,7 @@ void KXCReportFatalError(const char *file, int line, const char *function, const
     fprintf(stderr, "\n(%s:%d %s)\n=================\n", file, line, function);
 }
 
-void KXCReportError(const char *file, int line, const char *function, const char *format, ...)
+void WTFReportError(const char *file, int line, const char *function, const char *format, ...)
 {
     fprintf(stderr, "=================\nERROR: ");
     va_list args;
@@ -105,9 +105,9 @@ void KXCReportError(const char *file, int line, const char *function, const char
     fprintf(stderr, "\n(%s:%d %s)\n=================\n", file, line, function);
 }
 
-void KXCLog(const char*, int, const char*, KXCLogChannel *channel, const char *format, ...)
+void WTFLog(const char*, int, const char*, WTFLogChannel *channel, const char *format, ...)
 {    
-    if (channel->state != KXCLogChannelOn)
+    if (channel->state != WTFLogChannelOn)
         return;
     
     va_list args;

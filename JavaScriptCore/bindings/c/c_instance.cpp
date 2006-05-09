@@ -31,7 +31,7 @@
 #include "c_utility.h"
 #include "list.h"
 #include "npruntime_impl.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 namespace KJS {
 namespace Bindings {

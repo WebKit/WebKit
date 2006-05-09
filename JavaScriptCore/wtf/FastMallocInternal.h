@@ -1,6 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  Copyright (C) 2006 Apple Computer, Inc.
+ *  This file is part of the KDE libraries
+ *  Copyright (C) 2005 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -19,24 +20,17 @@
  *
  */
 
-#ifndef KXMLCORE_NONCOPYABLE
-#define KXMLCORE_NONCOPYABLE
+#ifndef KXMLCORE_FAST_MALLOC_INTERNAL_H
+#define KXMLCORE_FAST_MALLOC_INTERNAL_H
 
-// We don't want argument-dependent lookup to pull in everything from the KXMLCore
-// namespace when you use Noncopyable, so put it in its own namespace.
+#if !PLATFORM(WIN_OS)
 
-namespace KXMLCoreNoncopyable {
+#include <pthread.h>
 
-    class Noncopyable {
-        Noncopyable(const Noncopyable&);
-        Noncopyable& operator=(const Noncopyable&);
-    protected:
-        Noncopyable() { }
-        ~Noncopyable() { }
-    };
+namespace WTF {
+    void fastMallocRegisterThread(pthread_t thread);
+}
 
-} // namespace KXMLCoreNoncopyable
+#endif
 
-using KXMLCoreNoncopyable::Noncopyable;
-
-#endif // KXMLCORE_NONCOPYABLE
+#endif //  KXMLCORE_FAST_MALLOC_INTERNAL_H

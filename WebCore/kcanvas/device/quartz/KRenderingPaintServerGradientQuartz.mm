@@ -42,7 +42,7 @@
 #import "KCanvasResourcesQuartz.h"
 #import "KCanvasImage.h"
 
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 namespace WebCore {
     

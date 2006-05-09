@@ -23,7 +23,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "Attr.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 #include "ksvg.h"
 #include "SVGNames.h"

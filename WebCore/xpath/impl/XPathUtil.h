@@ -31,7 +31,7 @@
 #include "PlatformString.h"
 #include "Node.h"
 
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

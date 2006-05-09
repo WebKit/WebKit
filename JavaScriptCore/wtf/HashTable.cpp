@@ -22,7 +22,7 @@
 #include "config.h"
 #include "HashTable.h"
 
-namespace KXMLCore {
+namespace WTF {
 
 #if DUMP_HASHTABLE_STATS
 
@@ -59,4 +59,4 @@ void HashTableStats::recordCollisionAtCount(int count)
 
 #endif
 
-} // namespace KXMLCore
+} // namespace WTF

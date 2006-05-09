@@ -35,7 +35,7 @@
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "render_replaced.h"
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 using namespace std;
 using namespace WebCore;

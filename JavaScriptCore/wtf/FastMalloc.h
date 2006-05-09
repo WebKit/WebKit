@@ -26,19 +26,19 @@
 #include <stdlib.h>
 #include <new>
 
-namespace KXMLCore {
+namespace WTF {
 
     void *fastMalloc(size_t n);
     void *fastCalloc(size_t n_elements, size_t element_size);
     void fastFree(void* p);
     void *fastRealloc(void* p, size_t n);
 
-} // namespace KXMLCore
+} // namespace WTF
 
-using KXMLCore::fastMalloc;
-using KXMLCore::fastCalloc;
-using KXMLCore::fastRealloc;
-using KXMLCore::fastFree;
+using WTF::fastMalloc;
+using WTF::fastCalloc;
+using WTF::fastRealloc;
+using WTF::fastFree;
 
 #if PLATFORM(GCC) && PLATFORM(DARWIN)
 #define KXMLCORE_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))

@@ -27,7 +27,7 @@
 #define StreamingTextDecoder_H
 
 #include "TextEncoding.h"
-#include <kxmlcore/Noncopyable.h>
+#include <wtf/Noncopyable.h>
 #include <unicode/ucnv.h>
 #include <unicode/utypes.h>
 

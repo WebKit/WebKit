@@ -27,8 +27,8 @@
 #define DOM_NodeList_h
 
 #include "Shared.h"
-#include <kxmlcore/Forward.h>
-#include <kxmlcore/RefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

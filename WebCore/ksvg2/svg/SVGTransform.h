@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "Shared.h"
-#include <kxmlcore/RefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

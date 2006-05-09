@@ -29,7 +29,7 @@
 #include "StringHash.h"
 #include "Timer.h"
 #include "TransferJobClient.h" // for PlatformResponse
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 #ifdef WIN32
 typedef unsigned long DWORD;

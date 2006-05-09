@@ -27,8 +27,8 @@
 #import "KURL.h"
 
 #import "FoundationExtras.h"
-#import <kxmlcore/Assertions.h>
-#import <kxmlcore/Vector.h>
+#import <wtf/Assertions.h>
+#import <wtf/Vector.h>
 
 // KURL
 

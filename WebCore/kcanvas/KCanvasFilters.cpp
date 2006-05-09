@@ -29,7 +29,7 @@
 
 #include "KWQTextStream.h"
 #include "KCanvasTreeDebug.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

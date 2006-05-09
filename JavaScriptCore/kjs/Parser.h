@@ -25,7 +25,7 @@
 #ifndef Parser_h
 #define Parser_h
 
-#include <kxmlcore/Forward.h>
+#include <wtf/Forward.h>
 
 namespace KJS {
 

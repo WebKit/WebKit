@@ -40,7 +40,7 @@
 #include <math.h>
 #include "dtoa.h"
 
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 using std::max;
 

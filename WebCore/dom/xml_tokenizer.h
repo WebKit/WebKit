@@ -25,7 +25,7 @@
 #define XML_Tokenizer_h_
 
 #include "StringHash.h"
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 

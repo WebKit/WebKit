@@ -27,7 +27,7 @@
 #import "SharedTimer.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

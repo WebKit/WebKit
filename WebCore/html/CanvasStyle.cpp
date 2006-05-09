@@ -30,7 +30,7 @@
 #include "CanvasPattern.h"
 #include "GraphicsContext.h"
 #include "cssparser.h"
-#include <kxmlcore/PassRefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

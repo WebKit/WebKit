@@ -27,7 +27,7 @@
 #include "HashTraits.h"
 #include <assert.h>
 
-namespace KXMLCore {
+namespace WTF {
 
 #define DUMP_HASHTABLE_STATS 0
 #define CHECK_HASHTABLE_CONSISTENCY 0
@@ -930,6 +930,6 @@ namespace KXMLCore {
         static void derefAll(HashTableType& table) { Base::derefAll(table); }
     };
 
-} // namespace KXMLCore
+} // namespace WTF
 
 #endif // KXMLCORE_HASH_TABLE_H

@@ -23,7 +23,7 @@
 #define KJS_JS_IMMEDIATE_H
 
 #include "JSType.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 #include <stdint.h>
 #include <stdlib.h>
 

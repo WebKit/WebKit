@@ -26,7 +26,7 @@
 
 #include "HashTable.h"
 
-namespace KXMLCore {
+namespace WTF {
 
     template<typename PairType> struct PairFirstExtractor;
 
@@ -320,8 +320,8 @@ namespace KXMLCore {
         deleteAllPairSeconds<typename HashMap<T, U, V, W, X>::MappedType>(collection);
     }
 
-} // namespace KXMLCore
+} // namespace WTF
 
-using KXMLCore::HashMap;
+using WTF::HashMap;
 
 #endif /* KXMLCORE_HASH_MAP_H */

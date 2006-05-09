@@ -27,8 +27,8 @@
 
 #include "lexer.h"
 #include "nodes.h"
-#include <kxmlcore/HashSet.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 extern int kjsyyparse();
 

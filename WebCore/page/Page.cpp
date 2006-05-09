@@ -26,7 +26,7 @@
 #include "StringHash.h"
 #include <kjs/collector.h>
 #include <kjs/JSLock.h>
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 using namespace KJS;
 

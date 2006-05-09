@@ -32,7 +32,7 @@
 #include "VisiblePosition.h"
 #include "visible_units.h"
 #include "Range.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

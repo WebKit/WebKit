@@ -31,7 +31,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 #import "WebTextRendererFactory.h"
 #import "FontData.h"
 

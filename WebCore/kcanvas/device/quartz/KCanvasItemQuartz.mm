@@ -28,7 +28,7 @@
 #if SVG_SUPPORT
 #import "KCanvasItemQuartz.h"
 
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 #import "kcanvas/RenderPath.h"
 #import "KCanvasRenderingStyle.h"

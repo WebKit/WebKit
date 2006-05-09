@@ -28,11 +28,11 @@
 #include "CharsetNames.h"
 
 #include "CharsetData.h"
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 #include <unicode/ucnv.h>
 #include <unicode/utypes.h>
 
-using namespace KXMLCore;
+using namespace WTF;
 using namespace WebCore;
 
 namespace WebCore {
@@ -43,7 +43,7 @@ struct TextEncodingIDHashTraits : GenericHashTraits<TextEncodingID> {
 
 }
 
-namespace KXMLCore {
+namespace WTF {
 
 template<> struct HashKeyStorageTraits<IntHash<TextEncodingID>, TextEncodingIDHashTraits> {
     typedef IntTypes<sizeof(TextEncodingID)>::SignedType IntType;

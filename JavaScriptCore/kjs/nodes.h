@@ -27,7 +27,7 @@
 
 #include "Parser.h"
 #include "internal.h"
-#include <kxmlcore/ListRefPtr.h>
+#include <wtf/ListRefPtr.h>
 
 namespace KJS {
 

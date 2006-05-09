@@ -27,7 +27,7 @@
 
 #include "StringHash.h"
 #include "XSLStyleSheet.h"
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 #include <libxml/parserInternals.h>
 #include <libxslt/documents.h>
 

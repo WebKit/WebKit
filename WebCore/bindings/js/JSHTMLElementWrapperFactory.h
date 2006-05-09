@@ -19,7 +19,7 @@
 #ifndef JSHTMLELEMENTWRAPPERFACTORY_H
 #define JSHTMLELEMENTWRAPPERFACTORY_H
 
-#include <kxmlcore/Forward.h>
+#include <wtf/Forward.h>
 
 namespace KJS {
     class DOMNode;

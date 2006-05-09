@@ -32,7 +32,7 @@
 #include "break_lines.h"
 #include "Range.h"
 #include "RenderArena.h"
-#include <kxmlcore/AlwaysInline.h>
+#include <wtf/AlwaysInline.h>
 #include <unicode/ubrk.h>
 
 using namespace std;

@@ -363,13 +363,13 @@ END
 printElementIncludes(@tags);
 
 print <<END
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 using namespace WebCore;
 using namespace ${cppNamespace}::${namespace}Names;
 
 typedef ${namespace}Element *(*ConstructorFunc)(Document *doc, bool createdByParser);
-typedef KXMLCore::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;
+typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;
 
 static FunctionMap *gFunctionMap = 0;
 

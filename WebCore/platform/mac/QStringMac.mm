@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DeprecatedString.h"
 
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 #import <Foundation/Foundation.h>
 #import "TextEncoding.h"
 

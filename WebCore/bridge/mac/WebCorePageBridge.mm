@@ -35,16 +35,16 @@ using namespace WebCore;
 
 @implementation WebCorePageBridge
 
-static inline void initializeLogChannel(KXCLogChannel &channel)
+static inline void initializeLogChannel(WTFLogChannel &channel)
 {
-    channel.state = KXCLogChannelOff;
+    channel.state = WTFLogChannelOff;
     NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:channel.defaultName]];
     if (logLevelString) {
         unsigned logLevel;
         if (![[NSScanner scannerWithString:logLevelString] scanHexInt:&logLevel])
             NSLog(@"unable to parse hex value for %s (%@), logging is off", channel.defaultName, logLevelString);
         if ((logLevel & channel.mask) == channel.mask)
-            channel.state = KXCLogChannelOn;
+            channel.state = WTFLogChannelOn;
     }
 }
 

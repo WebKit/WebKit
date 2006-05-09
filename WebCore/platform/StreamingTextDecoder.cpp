@@ -26,7 +26,7 @@
 #include "config.h"
 #include "StreamingTextDecoder.h"
 
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 using std::min;
 

@@ -31,12 +31,12 @@
 #include "Length.h"
 #include "StringHash.h"
 #include <kjs/identifier.h>
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 #include <unicode/ubrk.h>
 #include <assert.h>
 
 using namespace KJS;
-using namespace KXMLCore;
+using namespace WTF;
 
 namespace WebCore {
 

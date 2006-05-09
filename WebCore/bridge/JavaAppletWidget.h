@@ -25,7 +25,7 @@
 
 #include "StringHash.h"
 #include "Widget.h"
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
     class Element;

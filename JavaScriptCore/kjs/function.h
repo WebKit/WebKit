@@ -25,7 +25,7 @@
 #define KJS_FUNCTION_H
 
 #include "internal.h"
-#include <kxmlcore/OwnPtr.h>
+#include <wtf/OwnPtr.h>
 
 namespace KJS {
 

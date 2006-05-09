@@ -73,20 +73,20 @@
 extern "C" {
 #endif
 
-typedef enum { KXCLogChannelOff, KXCLogChannelOn } KXCLogChannelState;
+typedef enum { WTFLogChannelOff, WTFLogChannelOn } WTFLogChannelState;
 
 typedef struct {
     unsigned mask;
     const char *defaultName;
-    KXCLogChannelState state;
-} KXCLogChannel;
+    WTFLogChannelState state;
+} WTFLogChannel;
 
-void KXCReportAssertionFailure(const char *file, int line, const char *function, const char *assertion);
-void KXCReportAssertionFailureWithMessage(const char *file, int line, const char *function, const char *assertion, const char *format, ...);
-void KXCReportArgumentAssertionFailure(const char *file, int line, const char *function, const char *argName, const char *assertion);
-void KXCReportFatalError(const char *file, int line, const char *function, const char *format, ...) ;
-void KXCReportError(const char *file, int line, const char *function, const char *format, ...);
-void KXCLog(const char *file, int line, const char *function, KXCLogChannel *channel, const char *format, ...);
+void WTFReportAssertionFailure(const char *file, int line, const char *function, const char *assertion);
+void WTFReportAssertionFailureWithMessage(const char *file, int line, const char *function, const char *assertion, const char *format, ...);
+void WTFReportArgumentAssertionFailure(const char *file, int line, const char *function, const char *argName, const char *assertion);
+void WTFReportFatalError(const char *file, int line, const char *function, const char *format, ...) ;
+void WTFReportError(const char *file, int line, const char *function, const char *format, ...);
+void WTFLog(const char *file, int line, const char *function, WTFLogChannel *channel, const char *format, ...);
 
 #ifdef __cplusplus
 }
@@ -113,18 +113,18 @@ void KXCLog(const char *file, int line, const char *function, KXCLogChannel *cha
 
 #define ASSERT(assertion) do \
     if (!(assertion)) { \
-        KXCReportAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #assertion); \
+        WTFReportAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #assertion); \
         CRASH(); \
     } \
 while (0)
 #define ASSERT_WITH_MESSAGE(assertion, ...) do \
     if (!(assertion)) { \
-        KXCReportAssertionFailureWithMessage(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
         CRASH(); \
     } \
 while (0)
 #define ASSERT_NOT_REACHED() do { \
-    KXCReportAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, 0); \
+    WTFReportAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, 0); \
     CRASH(); \
 } while (0)
 
@@ -140,7 +140,7 @@ while (0)
 
 #define ASSERT_ARG(argName, assertion) do \
     if (!(assertion)) { \
-        KXCReportArgumentAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #argName, #assertion); \
+        WTFReportArgumentAssertionFailure(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, #argName, #assertion); \
         CRASH(); \
     } \
 while (0)
@@ -153,7 +153,7 @@ while (0)
 #define FATAL(...) ((void)0)
 #else
 #define FATAL(...) do { \
-    KXCReportFatalError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__); \
+    WTFReportFatalError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__); \
     CRASH(); \
 } while (0)
 #endif
@@ -163,7 +163,7 @@ while (0)
 #if ERROR_DISABLED
 #define LOG_ERROR(...) ((void)0)
 #else
-#define LOG_ERROR(...) KXCReportError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__)
+#define LOG_ERROR(...) WTFReportError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__)
 #endif
 
 // LOG
@@ -171,7 +171,7 @@ while (0)
 #if LOG_DISABLED
 #define LOG(channel, ...) ((void)0)
 #else
-#define LOG(channel, ...) KXCLog(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
+#define LOG(channel, ...) WTFLog(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX(prefix, channel) JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel)
 #define JOIN_LOG_CHANNEL_WITH_PREFIX_LEVEL_2(prefix, channel) prefix ## channel
 #endif

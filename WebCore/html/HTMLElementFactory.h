@@ -23,7 +23,7 @@
 #ifndef HTMLELEMENTFACTORY_H
 #define HTMLELEMENTFACTORY_H
 
-#include <kxmlcore/Forward.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

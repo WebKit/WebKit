@@ -26,14 +26,14 @@
 #include "config.h"
 #include "Logging.h"
 
-KXCLogChannel LogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", KXCLogChannelOff };
+WTFLogChannel LogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", WTFLogChannelOff };
 
-KXCLogChannel LogFrames =            { 0x00000010, "WebCoreLogLevel", KXCLogChannelOff };
-KXCLogChannel LogLoading =           { 0x00000020, "WebCoreLogLevel", KXCLogChannelOff };
+WTFLogChannel LogFrames =            { 0x00000010, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogLoading =           { 0x00000020, "WebCoreLogLevel", WTFLogChannelOff };
 
-KXCLogChannel LogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", KXCLogChannelOff };
+WTFLogChannel LogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", WTFLogChannelOff };
 
-KXCLogChannel LogEvents =            { 0x00000080, "WebCoreLogLevel", KXCLogChannelOff };
-KXCLogChannel LogEditing =           { 0x00000100, "WebCoreLogLevel", KXCLogChannelOff };
-KXCLogChannel LogTextConversion =    { 0x00000200, "WebCoreLogLevel", KXCLogChannelOff };
-KXCLogChannel LogXPath =             { 0x00000400, "WebCoreLogLevel", KXCLogChannelOff };
+WTFLogChannel LogEvents =            { 0x00000080, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogEditing =           { 0x00000100, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogTextConversion =    { 0x00000200, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogXPath =             { 0x00000400, "WebCoreLogLevel", WTFLogChannelOff };

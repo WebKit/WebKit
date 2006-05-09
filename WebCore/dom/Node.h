@@ -28,9 +28,9 @@
 
 #include "DocPtr.h"
 #include "PlatformString.h"
-#include <kxmlcore/Assertions.h>
-#include <kxmlcore/HashSet.h>
-#include <kxmlcore/PassRefPtr.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
 
 class DeprecatedStringList;
 class QTextStream;

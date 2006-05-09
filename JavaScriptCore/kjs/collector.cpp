@@ -22,9 +22,9 @@
 #include "config.h"
 #include "collector.h"
 
-#include <kxmlcore/FastMalloc.h>
-#include <kxmlcore/FastMallocInternal.h>
-#include <kxmlcore/HashCountedSet.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/FastMallocInternal.h>
+#include <wtf/HashCountedSet.h>
 #include "internal.h"
 #include "list.h"
 #include "value.h"
@@ -235,7 +235,7 @@ void Collector::registerThread()
 
   if (!pthread_getspecific(registeredThreadKey)) {
     pthread_t pthread = pthread_self();
-    KXMLCore::fastMallocRegisterThread(pthread);
+    WTF::fastMallocRegisterThread(pthread);
     Collector::Thread *thread = new Collector::Thread(pthread, pthread_mach_thread_np(pthread));
     thread->next = registeredThreads;
     registeredThreads = thread;

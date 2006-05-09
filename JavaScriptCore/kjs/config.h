@@ -1,4 +1,4 @@
-#include <kxmlcore/Platform.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(DARWIN)
 
@@ -43,10 +43,10 @@
 #define HAVE_STDINT_H 1
 #define HAVE_STRING_H 1
 
-#define KXC_CHANGES 1
+#define WTF_CHANGES 1
 
 #ifdef __cplusplus
 #undef new
 #undef delete
-#include <kxmlcore/FastMalloc.h>
+#include <wtf/FastMalloc.h>
 #endif

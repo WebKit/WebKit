@@ -43,7 +43,7 @@
 #include "ksvgcssproperties.h"
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

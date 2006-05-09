@@ -32,7 +32,7 @@
 #import "KWQLineEdit.h"
 #import "WebCoreTextArea.h"
 #import "WidgetClient.h"
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 using namespace WebCore;
 

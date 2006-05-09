@@ -104,7 +104,7 @@ void Widget::disableFlushDrawing() { notImplemented(); }
 GraphicsContext* Widget::lockDrawingFocus() { notImplemented(); return 0; }
 void Widget::unlockDrawingFocus(GraphicsContext*) { notImplemented(); }
 
-JavaAppletWidget::JavaAppletWidget(IntSize const&,Element*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
+JavaAppletWidget::JavaAppletWidget(IntSize const&,Element*,WTF::HashMap<String,String> const&) { notImplemented(); }
 
 void QLineEdit::selectAll() { notImplemented(); }
 void QLineEdit::addSearchResult() { notImplemented(); }

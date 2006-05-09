@@ -25,8 +25,8 @@
 #define StringImpl_h
 
 #include "DeprecatedString.h"
-#include <kxmlcore/Forward.h>
-#include <kxmlcore/Noncopyable.h>
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 #include <limits.h>
 
 #if __OBJC__
@@ -141,7 +141,7 @@ bool equalIgnoringCase(const char*, const StringImpl*);
 
 }
 
-namespace KXMLCore {
+namespace WTF {
 
     // StrHash is the default hash for StringImpl* and RefPtr<StringImpl>
     template<typename T> struct DefaultHash;

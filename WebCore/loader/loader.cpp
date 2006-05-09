@@ -38,8 +38,8 @@
 #include "HTMLDocument.h"
 #include "TransferJob.h"
 #include "TransferJob.h"
-#include <kxmlcore/Assertions.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/Assertions.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

@@ -31,7 +31,7 @@
 #include "IntRect.h"
 #include "Pen.h"
 #include "TextDirection.h"
-#include <kxmlcore/Noncopyable.h>
+#include <wtf/Noncopyable.h>
 
 #if __APPLE__
 typedef struct CGContext PlatformGraphicsContext;

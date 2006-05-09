@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Color.h"
 
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 @interface WebCoreControlTintObserver : NSObject
 + (void)controlTintDidChange;

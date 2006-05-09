@@ -27,7 +27,7 @@
 #define KHTML_EDITING_MARKUP_H
 
 #include "HTMLInterchange.h"
-#include <kxmlcore/Forward.h>
+#include <wtf/Forward.h>
 
 template <class T> class DeprecatedPtrList;
 

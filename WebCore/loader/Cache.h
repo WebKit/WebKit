@@ -30,7 +30,7 @@
 #include "PlatformString.h"
 #include "KWQKIOGlobal.h"
 #include "DeprecatedPtrList.h"
-#include <kxmlcore/HashSet.h>
+#include <wtf/HashSet.h>
 
 class KURL;
 

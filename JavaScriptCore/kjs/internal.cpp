@@ -42,9 +42,9 @@
 #include "regexp_object.h"
 #include "string_object.h"
 #include <assert.h>
-#include <kxmlcore/HashMap.h>
-#include <kxmlcore/HashSet.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 #include <math.h>
 #include <stdio.h>
 

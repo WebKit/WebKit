@@ -28,7 +28,7 @@
 
 #include "css_valueimpl.h"
 
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

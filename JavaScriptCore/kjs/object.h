@@ -30,7 +30,7 @@
 #include "property_map.h"
 #include "property_slot.h"
 #include "scope_chain.h"
-#include <kxmlcore/AlwaysInline.h>
+#include <wtf/AlwaysInline.h>
 
 namespace KJS {
 

@@ -24,7 +24,7 @@
 
 #if SVG_SUPPORT
 
-#include <kxmlcore/Forward.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

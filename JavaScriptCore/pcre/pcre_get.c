@@ -44,7 +44,7 @@ for these functions came from Scott Wimer. */
 
 
 #include "pcre_internal.h"
-#include <kxmlcore/UnusedParam.h>
+#include <wtf/UnusedParam.h>
 
 
 /*************************************************

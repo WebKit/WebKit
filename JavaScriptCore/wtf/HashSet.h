@@ -26,7 +26,7 @@
 
 #include "HashTable.h"
 
-namespace KXMLCore {
+namespace WTF {
 
     template<typename T> struct IdentityExtractor;
 
@@ -306,8 +306,8 @@ namespace KXMLCore {
         deleteAllValues<typename HashSet<T, U, V>::ValueType>(collection.m_impl);
     }
 
-} // namespace KXMLCore
+} // namespace WTF
 
-using KXMLCore::HashSet;
+using WTF::HashSet;
 
 #endif /* KXMLCORE_HASH_SET_H */

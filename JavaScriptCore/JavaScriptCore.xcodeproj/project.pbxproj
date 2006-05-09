@@ -549,7 +549,7 @@
 			children = (
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
 				65417200039E01BA0058BFEB /* kjs */,
-				65162EF108E6A21C007556CD /* kxmlcore */,
+				65162EF108E6A21C007556CD /* wtf */,
 				51856D950562EE9C008B9D83 /* bindings */,
 				65417203039E01F90058BFEB /* pcre */,
 				650FDF8D09D0FCA700769E54 /* Derived Sources */,
@@ -648,7 +648,7 @@
 			path = DerivedSources/JavaScriptCore;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		65162EF108E6A21C007556CD /* kxmlcore */ = {
+		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
 				E195678D09E7CF1200B89D13 /* unicode */,
@@ -681,7 +681,7 @@
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
 			);
-			path = kxmlcore;
+			path = wtf;
 			sourceTree = "<group>";
 		};
 		65417200039E01BA0058BFEB /* kjs */ = {

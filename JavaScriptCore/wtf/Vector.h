@@ -33,7 +33,7 @@
 // We should use NOMINMAX instead.
 #undef max
 
-namespace KXMLCore {
+namespace WTF {
 
     using std::min;
     using std::max;
@@ -586,8 +586,8 @@ namespace KXMLCore {
             delete *it;
     }
 
-} // namespace KXMLCore
+} // namespace WTF
 
-using KXMLCore::Vector;
+using WTF::Vector;
 
 #endif // KXMLCORE_VECTOR_H

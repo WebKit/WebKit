@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQFormData.h"
 
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 #import "FormData.h"
 
 using WebCore::FormData;

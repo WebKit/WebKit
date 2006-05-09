@@ -31,7 +31,7 @@
 #include "XPathExpressionNode.h"
 #include "XPathStep.h"
 
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 extern int xpathyyparse(void*);
 

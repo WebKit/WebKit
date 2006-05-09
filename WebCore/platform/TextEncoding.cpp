@@ -27,8 +27,8 @@
 #include "TextEncoding.h"
 
 #include "CharsetNames.h"
-#include <kxmlcore/Assertions.h>
-#include <kxmlcore/HashSet.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashSet.h>
 #include "StreamingTextDecoder.h"
 #include <unicode/unorm.h>
 

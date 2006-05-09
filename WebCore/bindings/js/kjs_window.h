@@ -23,7 +23,7 @@
 
 #include "DeprecatedString.h"
 #include "kjs_binding.h"
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
     class AtomicString;

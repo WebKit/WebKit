@@ -31,8 +31,8 @@
 #include "XPathValue.h"
 
 #include "StringHash.h"
-#include <kxmlcore/HashMap.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class XPathNSResolver;

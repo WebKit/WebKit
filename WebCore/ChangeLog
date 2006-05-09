@@ -1,3 +1,167 @@
+2006-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Anders.
+        
+        - renamed kxmlcore to wtf
+        
+        kxmlcore --> wtf
+        KXMLCore --> WTF
+        WKC --> WTF
+
+        * ForwardingHeaders/kxmlcore: Removed.
+        * ForwardingHeaders/kxmlcore/AlwaysInline.h: Removed.
+        * ForwardingHeaders/kxmlcore/Assertions.h: Removed.
+        * ForwardingHeaders/kxmlcore/FastMalloc.h: Removed.
+        * ForwardingHeaders/kxmlcore/Forward.h: Removed.
+        * ForwardingHeaders/kxmlcore/HashCountedSet.h: Removed.
+        * ForwardingHeaders/kxmlcore/HashMap.h: Removed.
+        * ForwardingHeaders/kxmlcore/HashSet.h: Removed.
+        * ForwardingHeaders/kxmlcore/HashTraits.h: Removed.
+        * ForwardingHeaders/kxmlcore/Noncopyable.h: Removed.
+        * ForwardingHeaders/kxmlcore/OwnArrayPtr.h: Removed.
+        * ForwardingHeaders/kxmlcore/OwnPtr.h: Removed.
+        * ForwardingHeaders/kxmlcore/PassRefPtr.h: Removed.
+        * ForwardingHeaders/kxmlcore/Platform.h: Removed.
+        * ForwardingHeaders/kxmlcore/RefPtr.h: Removed.
+        * ForwardingHeaders/kxmlcore/Vector.h: Removed.
+        * ForwardingHeaders/wtf: Added.
+        * bindings/js/JSHTMLElementWrapperFactory.h:
+        * bindings/js/kjs_binding.cpp:
+        * bindings/js/kjs_window.h:
+        * bindings/objc/DOMImplementationFront.h:
+        * bridge/JavaAppletWidget.h:
+        * bridge/mac/WebCoreFrameNamespaces.mm:
+        * bridge/mac/WebCorePageBridge.mm:
+        (initializeLogChannel):
+        * bridge/mac/WebCoreStringTruncator.mm:
+        * bridge/mac/WebCoreViewFactory.m:
+        * config.h:
+        * css/css_base.h:
+        * css/css_valueimpl.h:
+        * css/csshelper.cpp:
+        * css/cssparser.h:
+        * dom/DOMImplementation.h:
+        * dom/Document.h:
+        * dom/NamedNodeMap.h:
+        * dom/Node.h:
+        * dom/NodeList.h:
+        * dom/QualifiedName.cpp:
+        * dom/Range.h:
+        * dom/StyledElement.cpp:
+        * dom/dom2_traversalimpl.h:
+        * dom/xml_tokenizer.h:
+        * editing/RebalanceWhitespaceCommand.cpp:
+        * editing/RemoveCSSPropertyCommand.cpp:
+        * editing/RemoveNodeAttributeCommand.cpp:
+        * editing/RemoveNodeCommand.cpp:
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        * editing/ReplaceSelectionCommand.h:
+        * editing/Selection.cpp:
+        * editing/SetNodeAttributeCommand.cpp:
+        * editing/SplitElementCommand.cpp:
+        * editing/SplitTextNodeCommand.cpp:
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        * editing/TextIterator.h:
+        * editing/htmlediting.h:
+        * editing/markup.h:
+        * html/CanvasGradient.h:
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasStyle.cpp:
+        * html/HTMLCollection.h:
+        * html/HTMLElementFactory.h:
+        * kcanvas/KCanvasFilters.cpp:
+        * kcanvas/KCanvasPath.h:
+        * kcanvas/RenderPath.cpp:
+        * kcanvas/RenderSVGImage.cpp:
+        * kcanvas/RenderSVGText.cpp:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        * ksvg2/misc/KSVGTimeScheduler.h:
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/scripts/make_names.pl:
+        * ksvg2/svg/SVGDOMImplementation.cpp:
+        * ksvg2/svg/SVGExternalResourcesRequired.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * ksvg2/svg/SVGForeignObjectElement.cpp:
+        * ksvg2/svg/SVGImageElement.cpp:
+        * ksvg2/svg/SVGMaskElement.cpp:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        * ksvg2/svg/SVGTests.h:
+        * ksvg2/svg/SVGTransform.h:
+        * ksvg2/svg/SVGTransformable.cpp:
+        * kwq/AccessibilityObjectCache.h:
+        * kwq/KWQCString.cpp:
+        * kwq/KWQFormData.mm:
+        * kwq/KWQListBox.mm:
+        * kwq/KWQResourceLoader.mm:
+        * kwq/KWQTextEdit.mm:
+        * loader/Cache.h:
+        * loader/CachedObject.h:
+        * loader/CachedObjectClientWalker.h:
+        * loader/Decoder.h:
+        * loader/DocLoader.h:
+        * loader/loader.cpp:
+        * loader/loader.h:
+        * page/DOMWindow.h:
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameTree.cpp:
+        * page/Page.cpp:
+        * page/Page.h:
+        * page/Plugin.h:
+        * platform/Arena.cpp:
+        * platform/ArrayImpl.h:
+        * platform/AtomicString.cpp:
+        * platform/CharsetNames.cpp:
+        * platform/Color.cpp:
+        * platform/DeprecatedPtrListImpl.cpp:
+        * platform/DeprecatedValueListImpl.h:
+        * platform/FontFallbackList.h:
+        * platform/GraphicsContext.h:
+        * platform/GraphicsTypes.cpp:
+        * platform/Image.h:
+        * platform/KURL.cpp:
+        * platform/Logging.cpp:
+        * platform/Logging.h:
+        * platform/PlatformString.h:
+        * platform/PlugInInfoStore.h:
+        * platform/StreamingTextDecoder.cpp:
+        * platform/StreamingTextDecoder.h:
+        * platform/String.cpp:
+        * platform/StringHash.h:
+        * platform/StringImpl.cpp:
+        * platform/StringImpl.h:
+        * platform/TextEncoding.cpp:
+        * platform/Timer.cpp:
+        * platform/Timer.h:
+        * platform/TransferJob.h:
+        * platform/TransferJobInternal.h:
+        * platform/mac/BlockExceptions.mm:
+        * platform/mac/ColorMac.mm:
+        * platform/mac/FontData.mm:
+        * platform/mac/KURLMac.mm:
+        * platform/mac/QStringMac.mm:
+        * platform/mac/SharedTimerMac.cpp:
+        * platform/mac/TextEncodingMac.cpp:
+        * platform/mac/WebCoreImageRendererFactory.m:
+        * platform/mac/WebCoreKeyGenerator.m:
+        * platform/mac/WebCoreTextArea.mm:
+        * platform/mac/WebCoreTextField.mm:
+        * platform/mac/WebTextRendererFactory.h:
+        * platform/mac/WebTextRendererFactory.mm:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (JavaAppletWidget::JavaAppletWidget):
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/bidi.cpp:
+        * xml/XSLTProcessor.h:
+        * xpath/impl/XPathExpressionNode.h:
+        * xpath/impl/XPathParser.h:
+        * xpath/impl/XPathPath.h:
+        * xpath/impl/XPathUtil.h:
+
 2006-05-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

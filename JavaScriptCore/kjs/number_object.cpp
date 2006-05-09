@@ -26,7 +26,7 @@
 #include "error_object.h"
 #include "lookup.h"
 #include "operations.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 #include <math.h>
 
 #include "number_object.lut.h"

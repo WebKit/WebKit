@@ -25,8 +25,8 @@
 
 #include "AtomicString.h"
 #include "Color.h"
-#include <kxmlcore/HashSet.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

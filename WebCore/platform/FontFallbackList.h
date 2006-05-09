@@ -24,7 +24,7 @@
 // This file has no guards on purpose in order to detect redundant includes. This is a private header
 // and so this should catch anyone trying to include this file in public cpp files.
 
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

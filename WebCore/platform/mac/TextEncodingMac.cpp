@@ -26,8 +26,8 @@
 #include "config.h"
 #include "TextEncoding.h"
 
-#include <kxmlcore/Assertions.h>
-#include <kxmlcore/HashSet.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashSet.h>
 #include "StreamingTextDecoder.h"
 
 namespace WebCore {

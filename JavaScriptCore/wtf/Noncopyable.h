@@ -1,3 +1,4 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2006 Apple Computer, Inc.
  *
@@ -18,23 +19,24 @@
  *
  */
 
-#ifndef KXMLCORE_FORWARD_H
-#define KXMLCORE_FORWARD_H
+#ifndef KXMLCORE_NONCOPYABLE
+#define KXMLCORE_NONCOPYABLE
 
-#include <stddef.h>
+// We don't want argument-dependent lookup to pull in everything from the WTF
+// namespace when you use Noncopyable, so put it in its own namespace.
 
-namespace KXMLCore {
-    template<typename T> class ListRefPtr;
-    template<typename T> class OwnArrayPtr;
-    template<typename T> class OwnPtr;
-    template<typename T> class PassRefPtr;
-    template<typename T> class RefPtr;
-}
+namespace WTFNoncopyable {
 
-using KXMLCore::ListRefPtr;
-using KXMLCore::OwnArrayPtr;
-using KXMLCore::OwnPtr;
-using KXMLCore::PassRefPtr;
-using KXMLCore::RefPtr;
+    class Noncopyable {
+        Noncopyable(const Noncopyable&);
+        Noncopyable& operator=(const Noncopyable&);
+    protected:
+        Noncopyable() { }
+        ~Noncopyable() { }
+    };
 
-#endif
+} // namespace WTFNoncopyable
+
+using WTFNoncopyable::Noncopyable;
+
+#endif // KXMLCORE_NONCOPYABLE

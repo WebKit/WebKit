@@ -32,27 +32,27 @@
 #define LOG_CHANNEL_PREFIX WebKitLog
 #endif
 
-extern KXCLogChannel WebKitLogTiming;
-extern KXCLogChannel WebKitLogLoading;
-extern KXCLogChannel WebKitLogFontCache;
-extern KXCLogChannel WebKitLogFontSubstitution;
-extern KXCLogChannel WebKitLogFontSelection;
-extern KXCLogChannel WebKitLogDownload;
-extern KXCLogChannel WebKitLogDocumentLoad;
-extern KXCLogChannel WebKitLogPlugins;
-extern KXCLogChannel WebKitLogEvents;
-extern KXCLogChannel WebKitLogView;
-extern KXCLogChannel WebKitLogRedirect;
-extern KXCLogChannel WebKitLogPageCache;
-extern KXCLogChannel WebKitLogCacheSizes;
-extern KXCLogChannel WebKitLogFormDelegate;
-extern KXCLogChannel WebKitLogFileDatabaseActivity;
-extern KXCLogChannel WebKitLogHistory;
-extern KXCLogChannel WebKitLogBindings;
-extern KXCLogChannel WebKitLogEncoding;
-extern KXCLogChannel WebKitLogLiveConnect;
-extern KXCLogChannel WebKitLogBackForward;
-extern KXCLogChannel WebKitLogProgress;
-extern KXCLogChannel WebKitLogPluginEvents;
+extern WTFLogChannel WebKitLogTiming;
+extern WTFLogChannel WebKitLogLoading;
+extern WTFLogChannel WebKitLogFontCache;
+extern WTFLogChannel WebKitLogFontSubstitution;
+extern WTFLogChannel WebKitLogFontSelection;
+extern WTFLogChannel WebKitLogDownload;
+extern WTFLogChannel WebKitLogDocumentLoad;
+extern WTFLogChannel WebKitLogPlugins;
+extern WTFLogChannel WebKitLogEvents;
+extern WTFLogChannel WebKitLogView;
+extern WTFLogChannel WebKitLogRedirect;
+extern WTFLogChannel WebKitLogPageCache;
+extern WTFLogChannel WebKitLogCacheSizes;
+extern WTFLogChannel WebKitLogFormDelegate;
+extern WTFLogChannel WebKitLogFileDatabaseActivity;
+extern WTFLogChannel WebKitLogHistory;
+extern WTFLogChannel WebKitLogBindings;
+extern WTFLogChannel WebKitLogEncoding;
+extern WTFLogChannel WebKitLogLiveConnect;
+extern WTFLogChannel WebKitLogBackForward;
+extern WTFLogChannel WebKitLogProgress;
+extern WTFLogChannel WebKitLogPluginEvents;
 
 void WebKitInitializeLoggingChannelsIfNecessary(void);

@@ -23,7 +23,7 @@
 #ifndef KJS_UNICODE_CATEGORY_H
 #define KJS_UNICODE_CATEGORY_H
 
-namespace KXMLCore {
+namespace WTF {
   namespace Unicode {
     enum CharCategory {
       NoCategory = 0,

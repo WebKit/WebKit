@@ -28,7 +28,7 @@
 
 #if XPATH_SUPPORT
 
-#include <kxmlcore/Noncopyable.h>
+#include <wtf/Noncopyable.h>
 
 #include "StringHash.h"
 #include "PlatformString.h"

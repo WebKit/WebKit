@@ -27,7 +27,7 @@
 // we should consider increasing the minimum required version of gcc to build
 // WebCore, and rolling the change that introduced this file back.
 
-#include <kxmlcore/Forward.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

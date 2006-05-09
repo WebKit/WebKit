@@ -26,20 +26,20 @@
 #ifndef Logging_H
 #define Logging_H
 
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX Log
 #endif
 
-extern KXCLogChannel LogNotYetImplemented;
+extern WTFLogChannel LogNotYetImplemented;
 
-extern KXCLogChannel LogFrames;
-extern KXCLogChannel LogLoading;
-extern KXCLogChannel LogPopupBlocking;
-extern KXCLogChannel LogEvents;
-extern KXCLogChannel LogEditing;
-extern KXCLogChannel LogTextConversion;
-extern KXCLogChannel LogXPath;
+extern WTFLogChannel LogFrames;
+extern WTFLogChannel LogLoading;
+extern WTFLogChannel LogPopupBlocking;
+extern WTFLogChannel LogEvents;
+extern WTFLogChannel LogEditing;
+extern WTFLogChannel LogTextConversion;
+extern WTFLogChannel LogXPath;
 
 #endif

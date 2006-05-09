@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebCoreKeyGenerator.h"
 
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 static WebCoreKeyGenerator *sharedGenerator;
 

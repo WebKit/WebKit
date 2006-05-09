@@ -1,3 +1,123 @@
+2006-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Anders.
+        
+        - renamed kxmlcore to wtf
+        
+        kxmlcore --> wtf
+        KXMLCore --> WTF
+        WKC --> WTF
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/c/c_instance.cpp:
+        * bindings/objc/WebScriptObject.mm:
+        * kjs/JSImmediate.h:
+        * kjs/Parser.cpp:
+        * kjs/Parser.h:
+        * kjs/array_object.cpp:
+        * kjs/collector.cpp:
+        (KJS::Collector::registerThread):
+        * kjs/collector.h:
+        * kjs/config.h:
+        * kjs/function.cpp:
+        (KJS::isStrWhiteSpace):
+        * kjs/function.h:
+        * kjs/identifier.cpp:
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/lexer.cpp:
+        (Lexer::shift):
+        (Lexer::isWhiteSpace):
+        (Lexer::isIdentStart):
+        (Lexer::isIdentPart):
+        * kjs/lookup.cpp:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/number_object.cpp:
+        * kjs/object.h:
+        * kjs/property_map.cpp:
+        * kjs/property_map.h:
+        * kjs/string_object.cpp:
+        (StringProtoFunc::callAsFunction):
+        * kjs/testkjs.cpp:
+        (testIsInteger):
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+        * kxmlcore: Removed.
+        * kxmlcore/AlwaysInline.h: Removed.
+        * kxmlcore/Assertions.cpp: Removed.
+        * kxmlcore/Assertions.h: Removed.
+        * kxmlcore/FastMalloc.cpp: Removed.
+        * kxmlcore/FastMalloc.h: Removed.
+        * kxmlcore/FastMallocInternal.h: Removed.
+        * kxmlcore/Forward.h: Removed.
+        * kxmlcore/HashCountedSet.h: Removed.
+        * kxmlcore/HashFunctions.h: Removed.
+        * kxmlcore/HashMap.h: Removed.
+        * kxmlcore/HashSet.h: Removed.
+        * kxmlcore/HashTable.cpp: Removed.
+        * kxmlcore/HashTable.h: Removed.
+        * kxmlcore/HashTraits.h: Removed.
+        * kxmlcore/ListRefPtr.h: Removed.
+        * kxmlcore/Noncopyable.h: Removed.
+        * kxmlcore/OwnArrayPtr.h: Removed.
+        * kxmlcore/OwnPtr.h: Removed.
+        * kxmlcore/PassRefPtr.h: Removed.
+        * kxmlcore/Platform.h: Removed.
+        * kxmlcore/RefPtr.h: Removed.
+        * kxmlcore/TCPageMap.h: Removed.
+        * kxmlcore/TCSpinLock.h: Removed.
+        * kxmlcore/TCSystemAlloc.cpp: Removed.
+        * kxmlcore/TCSystemAlloc.h: Removed.
+        * kxmlcore/UnusedParam.h: Removed.
+        * kxmlcore/Vector.h: Removed.
+        * kxmlcore/VectorTraits.h: Removed.
+        * kxmlcore/unicode: Removed.
+        * kxmlcore/unicode/Unicode.h: Removed.
+        * kxmlcore/unicode/UnicodeCategory.h: Removed.
+        * kxmlcore/unicode/icu: Removed.
+        * kxmlcore/unicode/icu/UnicodeIcu.h: Removed.
+        * kxmlcore/unicode/posix: Removed.
+        * kxmlcore/unicode/qt3: Removed.
+        * kxmlcore/unicode/qt4: Removed.
+        * kxmlcore/unicode/qt4/UnicodeQt4.h: Removed.
+        * pcre/pcre_get.c:
+        * wtf: Added.
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::Scavenge):
+        (WTF::do_malloc):
+        (WTF::do_free):
+        (WTF::TCMallocGuard::TCMallocGuard):
+        (WTF::malloc):
+        (WTF::free):
+        (WTF::calloc):
+        (WTF::cfree):
+        (WTF::realloc):
+        * wtf/FastMalloc.h:
+        * wtf/FastMallocInternal.h:
+        * wtf/Forward.h:
+        * wtf/HashCountedSet.h:
+        * wtf/HashFunctions.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/HashTable.cpp:
+        * wtf/HashTable.h:
+        * wtf/HashTraits.h:
+        * wtf/ListRefPtr.h:
+        * wtf/Noncopyable.h:
+        * wtf/OwnArrayPtr.h:
+        * wtf/OwnPtr.h:
+        * wtf/PassRefPtr.h:
+        * wtf/RefPtr.h:
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemAlloc):
+        * wtf/Vector.h:
+        * wtf/VectorTraits.h:
+        * wtf/unicode/UnicodeCategory.h:
+        * wtf/unicode/icu/UnicodeIcu.h:
+
 2006-05-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Tim O.

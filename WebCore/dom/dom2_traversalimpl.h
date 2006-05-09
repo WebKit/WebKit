@@ -27,9 +27,9 @@
 #define dom2_traversal_h
 
 #include "Shared.h"
-#include <kxmlcore/Forward.h>
-#include <kxmlcore/Noncopyable.h>
-#include <kxmlcore/RefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

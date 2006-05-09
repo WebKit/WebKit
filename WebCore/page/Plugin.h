@@ -22,7 +22,7 @@
 #define PLUGIN_H
 
 #include "Shared.h"
-#include <kxmlcore/Noncopyable.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

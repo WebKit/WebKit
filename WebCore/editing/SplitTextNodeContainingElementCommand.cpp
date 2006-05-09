@@ -29,7 +29,7 @@
 #include "Element.h"
 #include "Text.h"
 #include "RenderObject.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

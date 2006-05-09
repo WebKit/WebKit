@@ -33,7 +33,7 @@
 #import "KRenderingFillPainter.h"
 #import "KRenderingStrokePainter.h"
 #import "KCanvasRenderingStyle.h"
-#import "kxmlcore/Assertions.h"
+#import "wtf/Assertions.h"
 
 #import <QuartzCore/CoreImage.h>
 

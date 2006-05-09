@@ -35,7 +35,7 @@
 #include "SVGImageElement.h"
 #include "SVGImageElement.h"
 #include "ksvg.h"
-#include <kxmlcore/OwnPtr.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

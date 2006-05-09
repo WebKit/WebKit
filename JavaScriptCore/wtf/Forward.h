@@ -1,7 +1,5 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005 Apple Computer, Inc.
+ *  Copyright (C) 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -20,17 +18,23 @@
  *
  */
 
-#ifndef KXMLCORE_FAST_MALLOC_INTERNAL_H
-#define KXMLCORE_FAST_MALLOC_INTERNAL_H
+#ifndef KXMLCORE_FORWARD_H
+#define KXMLCORE_FORWARD_H
 
-#if !PLATFORM(WIN_OS)
+#include <stddef.h>
 
-#include <pthread.h>
-
-namespace KXMLCore {
-    void fastMallocRegisterThread(pthread_t thread);
+namespace WTF {
+    template<typename T> class ListRefPtr;
+    template<typename T> class OwnArrayPtr;
+    template<typename T> class OwnPtr;
+    template<typename T> class PassRefPtr;
+    template<typename T> class RefPtr;
 }
 
-#endif
+using WTF::ListRefPtr;
+using WTF::OwnArrayPtr;
+using WTF::OwnPtr;
+using WTF::PassRefPtr;
+using WTF::RefPtr;
 
-#endif //  KXMLCORE_FAST_MALLOC_INTERNAL_H
+#endif

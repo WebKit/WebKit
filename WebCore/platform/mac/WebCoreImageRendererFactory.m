@@ -25,7 +25,7 @@
 
 #import "config.h"
 #import "WebCoreImageRendererFactory.h"
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 #import "RenderTreeAsText.h"
 
 @implementation WebCoreImageRendererFactory

@@ -29,8 +29,8 @@
 #include "SharedTimer.h"
 #include "SystemTime.h"
 #include <math.h>
-#include <kxmlcore/HashSet.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 using namespace std;
 

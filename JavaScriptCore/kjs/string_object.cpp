@@ -28,7 +28,7 @@
 #include "operations.h"
 #include "reference_list.h"
 #include "regexp_object.h"
-#include <kxmlcore/unicode/Unicode.h>
+#include <wtf/unicode/Unicode.h>
 
 #include "string_object.lut.h"
 
@@ -626,7 +626,7 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     uint16_t* dataPtr = reinterpret_cast<uint16_t*>(u.rep()->data());
     uint16_t* destIfNeeded;
 
-    int len = KXMLCore::Unicode::toLower(dataPtr, u.size(), destIfNeeded);
+    int len = WTF::Unicode::toLower(dataPtr, u.size(), destIfNeeded);
     if (len >= 0)
         result = jsString(UString(reinterpret_cast<UChar *>(destIfNeeded ? destIfNeeded : dataPtr), len));
     else
@@ -642,7 +642,7 @@ JSValue *StringProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
     uint16_t* dataPtr = reinterpret_cast<uint16_t*>(u.rep()->data());
     uint16_t* destIfNeeded;
 
-    int len = KXMLCore::Unicode::toUpper(dataPtr, u.size(), destIfNeeded);
+    int len = WTF::Unicode::toUpper(dataPtr, u.size(), destIfNeeded);
     if (len >= 0)
         result = jsString(UString(reinterpret_cast<UChar *>(destIfNeeded ? destIfNeeded : dataPtr), len));
     else

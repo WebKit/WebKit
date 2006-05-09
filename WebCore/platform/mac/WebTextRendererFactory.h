@@ -57,7 +57,7 @@
 class NSFont;
 #endif
 
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
     class FontData;

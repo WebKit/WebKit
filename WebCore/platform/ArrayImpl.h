@@ -26,7 +26,7 @@
 #ifndef ARRAY_IMPL_H
 #define ARRAY_IMPL_H
 
-#include <kxmlcore/RefPtr.h>
+#include <wtf/RefPtr.h>
 #include "Shared.h"
 
 namespace WebCore {

@@ -23,9 +23,9 @@
 #ifndef KXMLCORE_LIST_REF_PTR_H
 #define KXMLCORE_LIST_REF_PTR_H
 
-#include <kxmlcore/RefPtr.h>
+#include <wtf/RefPtr.h>
 
-namespace KXMLCore {
+namespace WTF {
 
     // Specialized version of RefPtr desgined for use in singly-linked lists. 
     // Derefs the list iteratively to avoid recursive derefing that can overflow the stack.
@@ -51,8 +51,8 @@ namespace KXMLCore {
         template <typename U> ListRefPtr& operator=(const PassRefPtr<U>& o) { RefPtr<T>::operator=(o); return *this; }
     };
 
-} // namespace KXMLCore
+} // namespace WTF
 
-using KXMLCore::ListRefPtr;
+using WTF::ListRefPtr;
 
 #endif // KXMLCORE_LIST_REF_PTR_H

@@ -29,7 +29,7 @@
 #include "Document.h"
 #include "htmlediting.h"
 #include "TextIterator.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

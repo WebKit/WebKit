@@ -29,7 +29,7 @@
 #include "Document.h"
 #include "Text.h"
 
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 using WebCore::Document;
 using WebCore::Text;

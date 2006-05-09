@@ -26,9 +26,9 @@
 #define HTMLCollectionImpl_H
 
 #include "Shared.h"
-#include <kxmlcore/Forward.h>
-#include <kxmlcore/HashMap.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 template <typename T> class DeprecatedValueList;
 

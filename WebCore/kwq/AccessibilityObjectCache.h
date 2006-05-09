@@ -26,8 +26,8 @@
 #ifndef AccessibilityObjectCache_h
 #define AccessibilityObjectCache_h
 
-#include <kxmlcore/HashMap.h>
-#include <kxmlcore/HashSet.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 
 #ifdef __OBJC__
 @class WebCoreAXObject;
@@ -45,7 +45,7 @@ namespace WebCore {
 
     typedef unsigned AXID;
 
-    struct AXIDHashTraits : KXMLCore::GenericHashTraits<unsigned> {
+    struct AXIDHashTraits : WTF::GenericHashTraits<unsigned> {
         static TraitType deletedValue() { return UINT_MAX; }
     };
 

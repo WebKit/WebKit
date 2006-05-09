@@ -28,7 +28,7 @@
 
 #include "PlatformString.h"
 #include "RegularExpression.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 #include <unicode/uidna.h>
 #include <assert.h>
 

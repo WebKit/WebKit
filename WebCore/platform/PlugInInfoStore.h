@@ -27,7 +27,7 @@
 #define PlugInInfoStore_H
 
 #include "PlatformString.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

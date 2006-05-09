@@ -26,7 +26,7 @@
 #ifndef htmlediting_h
 #define htmlediting_h
 
-#include <kxmlcore/Forward.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

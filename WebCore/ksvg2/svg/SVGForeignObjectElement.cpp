@@ -29,7 +29,7 @@
 #include "SVGAnimatedLength.h"
 #include "RenderForeignObject.h"
 
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 #include "CSSPropertyNames.h"
 

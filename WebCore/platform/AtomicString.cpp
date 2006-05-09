@@ -31,7 +31,7 @@
 #include "StaticConstructors.h"
 #include "StringHash.h"
 #include <kjs/identifier.h>
-#include <kxmlcore/HashSet.h>
+#include <wtf/HashSet.h>
 
 using namespace KJS;
 

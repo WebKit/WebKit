@@ -32,7 +32,7 @@
 #import "Color.h"
 #import "WebCoreTextRenderer.h"
 
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 #import <ApplicationServices/ApplicationServices.h>
 #import <Cocoa/Cocoa.h>

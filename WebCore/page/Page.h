@@ -22,7 +22,7 @@
 #define PAGE_H
 
 #include "PlatformString.h"
-#include <kxmlcore/HashSet.h>
+#include <wtf/HashSet.h>
 
 #if __APPLE__
 #ifdef __OBJC__

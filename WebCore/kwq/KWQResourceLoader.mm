@@ -29,7 +29,7 @@
 #import "TransferJob.h"
 #import "KURL.h"
 #import "loader.h"
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 using namespace WebCore;
 

@@ -37,7 +37,7 @@
 #include "css_valueimpl.h"
 #include "kjs_proxy.h"
 #include "KWQKIOGlobal.h"
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 

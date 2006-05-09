@@ -27,7 +27,7 @@
 #include "GraphicsTypes.h"
 
 #include "PlatformString.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

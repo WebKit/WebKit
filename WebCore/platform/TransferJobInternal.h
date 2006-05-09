@@ -29,7 +29,7 @@
 
 #include "KURL.h"
 #include "FormData.h"
-#include <kxmlcore/HashMap.h>
+#include <wtf/HashMap.h>
 
 #ifdef WIN32
 typedef void* HANDLE;

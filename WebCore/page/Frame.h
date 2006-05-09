@@ -38,7 +38,7 @@
 #include "TextAffinity.h"
 #include "TextGranularity.h"
 #include "TransferJobClient.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 #include "RenderObject.h"
 
 class KHTMLSettings;

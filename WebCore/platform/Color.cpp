@@ -27,7 +27,7 @@
 #include "Color.h"
 
 #include "PlatformString.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 #include "ColorData.c"
 

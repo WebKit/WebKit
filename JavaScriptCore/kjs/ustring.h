@@ -24,9 +24,9 @@
 #ifndef _KJS_USTRING_H_
 #define _KJS_USTRING_H_
 
-#include <kxmlcore/FastMalloc.h>
-#include <kxmlcore/RefPtr.h>
-#include <kxmlcore/PassRefPtr.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 #include <stdint.h>
 

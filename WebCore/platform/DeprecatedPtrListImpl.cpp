@@ -28,7 +28,7 @@
 
 #include <cstddef>
 #include <algorithm>
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 class KWQListNode
 {

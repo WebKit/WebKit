@@ -31,7 +31,7 @@
 #include "RenderArena.h"
 #include "RenderCanvas.h"
 #include "break_lines.h"
-#include <kxmlcore/AlwaysInline.h>
+#include <wtf/AlwaysInline.h>
 
 using namespace std;
 

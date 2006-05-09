@@ -26,8 +26,8 @@
 #include "protect.h"
 #include "reference_list.h"
 #include <algorithm>
-#include <kxmlcore/FastMalloc.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Vector.h>
 
 using std::max;
 

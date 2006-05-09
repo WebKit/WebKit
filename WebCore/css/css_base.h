@@ -25,7 +25,7 @@
 #define CSS_BASE_H
 
 #include "QualifiedName.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

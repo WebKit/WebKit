@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KWQCString.h"
 
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 #include <ctype.h>
 
 DeprecatedCString::DeprecatedCString()

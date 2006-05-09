@@ -1,3 +1,30 @@
+2006-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Anders.
+        
+        - renamed kxmlcore to wtf
+        
+        kxmlcore --> wtf
+        KXMLCore --> WTF
+        WKC --> WTF
+
+        * config.h:
+        * kxmlcore: Removed.
+        * kxmlcore/AlwaysInline.h: Removed.
+        * kxmlcore/Assertions.h: Removed.
+        * kxmlcore/FastMalloc.h: Removed.
+        * kxmlcore/Forward.h: Removed.
+        * kxmlcore/HashCountedSet.h: Removed.
+        * kxmlcore/HashSet.h: Removed.
+        * kxmlcore/Noncopyable.h: Removed.
+        * kxmlcore/OwnArrayPtr.h: Removed.
+        * kxmlcore/OwnPtr.h: Removed.
+        * kxmlcore/PassRefPtr.h: Removed.
+        * kxmlcore/Platform.h: Removed.
+        * kxmlcore/RefPtr.h: Removed.
+        * kxmlcore/Vector.h: Removed.
+        * wtf: Added.
+
 2006-04-11  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

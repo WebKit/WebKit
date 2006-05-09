@@ -24,7 +24,7 @@
 #define KJS_PROPERTY_MAP_H_
 
 #include "identifier.h"
-#include <kxmlcore/OwnArrayPtr.h>
+#include <wtf/OwnArrayPtr.h>
 
 namespace KJS {
 

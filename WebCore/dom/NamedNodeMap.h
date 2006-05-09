@@ -27,7 +27,7 @@
 #define DOM_NamedNodeMapImpl_h
 
 #include "Shared.h"
-#include <kxmlcore/PassRefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

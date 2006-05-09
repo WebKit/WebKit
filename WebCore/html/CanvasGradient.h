@@ -28,7 +28,7 @@
 
 #include "FloatPoint.h"
 #include "Shared.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 #if __APPLE__
 typedef struct CGShading* CGShadingRef;

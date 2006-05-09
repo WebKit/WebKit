@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "RegularExpression.h"
 #include "DeprecatedStringList.h"
-#include <kxmlcore/RefPtr.h>
+#include <wtf/RefPtr.h>
 
 #include "Attr.h"
 

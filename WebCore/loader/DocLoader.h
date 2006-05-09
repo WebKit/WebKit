@@ -31,7 +31,7 @@
 #include "KWQKIOGlobal.h"
 #include "DeprecatedPtrList.h"
 #include "DeprecatedStringList.h"
-#include "kxmlcore/HashMap.h"
+#include "wtf/HashMap.h"
 #include "StringHash.h"
 
 class KURL;

@@ -25,7 +25,7 @@
 #define KSVG_TimeScheduler_H
 #if SVG_SUPPORT
 
-#include <kxmlcore/HashSet.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
     class Document;

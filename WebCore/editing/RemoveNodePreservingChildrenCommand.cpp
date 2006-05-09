@@ -27,7 +27,7 @@
 #include "RemoveNodePreservingChildrenCommand.h"
 
 #include "Node.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

@@ -24,7 +24,7 @@
 #include "PlatformString.h"
 
 #include <kjs/identifier.h>
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 #include <stdarg.h>
 
 using namespace KJS;

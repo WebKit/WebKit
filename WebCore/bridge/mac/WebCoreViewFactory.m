@@ -24,7 +24,7 @@
  */
 #include "config.h"
 #import "WebCoreViewFactory.h"
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 @implementation WebCoreViewFactory
 

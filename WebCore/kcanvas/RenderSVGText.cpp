@@ -31,7 +31,7 @@
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLengthList.h"
 #include "SVGTextElement.h"
-#include <kxmlcore/OwnPtr.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

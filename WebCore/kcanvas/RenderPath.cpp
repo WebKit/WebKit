@@ -31,7 +31,7 @@
 #include "KRenderingFillPainter.h"
 #include "KRenderingStrokePainter.h"
 #include "SVGStyledElement.h"
-#include <kxmlcore/OwnPtr.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

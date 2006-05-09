@@ -27,7 +27,7 @@
 #include "RemoveNodeAttributeCommand.h"
 #include "Element.h"
 
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 

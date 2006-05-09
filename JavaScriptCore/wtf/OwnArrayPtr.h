@@ -23,10 +23,10 @@
 #define KXMLCORE_OWN_ARRAY_PTR_H
 
 #include <algorithm>
-#include <kxmlcore/Assertions.h>
-#include <kxmlcore/Noncopyable.h>
+#include <wtf/Assertions.h>
+#include <wtf/Noncopyable.h>
 
-namespace KXMLCore {
+namespace WTF {
 
     template <typename T> class OwnArrayPtr : Noncopyable {
     public:
@@ -60,8 +60,8 @@ namespace KXMLCore {
     
     template <typename T> inline void swap(OwnArrayPtr<T>& a, OwnArrayPtr<T>& b) { a.swap(b); }
 
-} // namespace KXMLCore
+} // namespace WTF
 
-using KXMLCore::OwnArrayPtr;
+using WTF::OwnArrayPtr;
 
 #endif // KXMLCORE_OWN_ARRAY_PTR_H

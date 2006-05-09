@@ -23,7 +23,7 @@
 
 #include "Frame.h"
 #include "Page.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 #include <stdarg.h>
 
 using std::swap;

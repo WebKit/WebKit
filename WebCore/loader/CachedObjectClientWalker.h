@@ -27,7 +27,7 @@
 #ifndef KHTML_CachedObjectClientWalker_h
 #define KHTML_CachedObjectClientWalker_h
 
-#include <kxmlcore/HashSet.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 

@@ -23,7 +23,7 @@
 #ifndef KXMLCORE_PASS_REF_PTR_H
 #define KXMLCORE_PASS_REF_PTR_H
 
-namespace KXMLCore {
+namespace WTF {
 
     template<typename T> class RefPtr;
     template<typename T> class PassRefPtr;
@@ -178,11 +178,11 @@ namespace KXMLCore {
         return adoptRef(const_cast<T *>(p.release())); 
     }
 
-} // namespace KXMLCore
+} // namespace WTF
 
-using KXMLCore::PassRefPtr;
-using KXMLCore::adoptRef;
-using KXMLCore::static_pointer_cast;
-using KXMLCore::const_pointer_cast;
+using WTF::PassRefPtr;
+using WTF::adoptRef;
+using WTF::static_pointer_cast;
+using WTF::const_pointer_cast;
 
 #endif // KXMLCORE_PASS_REF_PTR_H

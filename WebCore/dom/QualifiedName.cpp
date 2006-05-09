@@ -29,8 +29,8 @@
 
 #include "QualifiedName.h"
 #include "StaticConstructors.h"
-#include <kxmlcore/Assertions.h>
-#include <kxmlcore/HashSet.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 

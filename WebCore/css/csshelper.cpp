@@ -25,7 +25,7 @@
 #include "csshelper.h"
 
 #include "PlatformString.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

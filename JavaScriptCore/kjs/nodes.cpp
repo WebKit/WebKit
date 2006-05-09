@@ -36,8 +36,8 @@
 #include "lexer.h"
 #include "operations.h"
 #include "reference_list.h"
-#include <kxmlcore/HashSet.h>
-#include <kxmlcore/HashCountedSet.h>
+#include <wtf/HashSet.h>
+#include <wtf/HashCountedSet.h>
 
 using namespace KJS;
 

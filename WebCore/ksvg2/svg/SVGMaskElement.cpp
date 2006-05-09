@@ -37,7 +37,7 @@
 #include "cssstyleselector.h"
 #include "ksvg.h"
 #include "Attr.h"
-#include <kxmlcore/OwnPtr.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

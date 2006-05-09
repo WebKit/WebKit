@@ -22,7 +22,7 @@
 #ifndef KHTMLDECODER_H
 #define KHTMLDECODER_H
 
-#include <kxmlcore/OwnPtr.h>
+#include <wtf/OwnPtr.h>
 #include "TextEncoding.h"
 
 namespace WebCore {

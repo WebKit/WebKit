@@ -27,8 +27,8 @@
 #define DOMWindow_h
 
 #include "Shared.h"
-#include <kxmlcore/Noncopyable.h>
-#include <kxmlcore/PassRefPtr.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
     class CSSRuleList;

@@ -30,7 +30,7 @@
 #include "GraphicsTypes.h"
 #include "Path.h"
 #include "PlatformString.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>

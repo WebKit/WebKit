@@ -26,7 +26,7 @@
 #if SVG_SUPPORT
 
 #include "DeprecatedValueList.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 #include "Shared.h"
 #include "FloatRect.h"
 

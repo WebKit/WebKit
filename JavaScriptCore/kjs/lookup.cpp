@@ -25,7 +25,7 @@
 #include <string.h>
 
 #include "lookup.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 
 using namespace KJS;
 

@@ -27,7 +27,7 @@
 #include "css_base.h"
 #include "DeprecatedPtrList.h"
 #include "DeprecatedValueList.h"
-#include <kxmlcore/PassRefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 class QPaintDeviceMetrics;
 

@@ -36,7 +36,7 @@
 #import "Page.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreStringTruncator.h"
-#import <kxmlcore/Assertions.h>
+#import <wtf/Assertions.h>
 
 #import <mach-o/dyld.h>
 

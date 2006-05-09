@@ -24,7 +24,7 @@
 #define KSVG_SVGExternalResourcesRequiredImpl_H
 #if SVG_SUPPORT
 
-#include <kxmlcore/RefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
     class MappedAttribute;
