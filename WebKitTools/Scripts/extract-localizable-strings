@@ -46,7 +46,7 @@ use strict;
 
 my $exceptionsFile = "English.lproj/StringsNotToBeLocalized.txt";
 my $stringsFile = "English.lproj/Localizable.strings";
-my %isDebugMacro = ( ASSERT_WITH_MESSAGE => 1, ERROR => 1, NSURL_ERROR => 1, FATAL => 1, LOG => 1, dprintf => 1, NSException => 1, NSLog => 1, printf => 1 );
+my %isDebugMacro = ( ASSERT_WITH_MESSAGE => 1, LOG_ERROR => 1, ERROR => 1, NSURL_ERROR => 1, FATAL => 1, LOG => 1, dprintf => 1, NSException => 1, NSLog => 1, printf => 1 );
 
 die "usage: extract-localizable-strings\n" if @ARGV != 0;
 
