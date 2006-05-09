@@ -151,10 +151,11 @@ my %renames = (
     "detachQSlider" => "detachSlider",
     "initWithQSlider" => "initWithSlider",
     "qmatrix" => "matrix",
+    "render_button" => "RenderButton",
     "KCanvasContainer" => "RenderSVGContainer",
 );
 
-# rename most files with names ending in Impl
+# rename files
 
 my %newFile;
 for my $file (sort @paths) {

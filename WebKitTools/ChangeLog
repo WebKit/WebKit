@@ -1,3 +1,7 @@
+2006-05-08  Darin Adler  <darin@apple.com>
+
+        * Scripts/do-webcore-rename: Add another rename.
+
 2006-05-01  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by eric.
