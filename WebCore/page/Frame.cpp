@@ -53,6 +53,7 @@
 #include "RenderCanvas.h"
 #include "RenderTheme.h"
 #include "SegmentedString.h"
+#include "TextDocument.h"
 #include "TextIterator.h"
 #include "TransferJob.h"
 #include "TypingCommand.h"
@@ -589,6 +590,8 @@ void Frame::begin(const KURL& url)
 
   if (DOMImplementation::isXMLMIMEType(d->m_request.m_responseMIMEType))
     d->m_doc = DOMImplementation::instance()->createDocument(d->m_view.get());
+  else if (DOMImplementation::isTextMIMEType(d->m_request.m_responseMIMEType))
+    d->m_doc = DOMImplementation::instance()->createTextDocument(d->m_view.get());
   else
     d->m_doc = DOMImplementation::instance()->createHTMLDocument(d->m_view.get());
 

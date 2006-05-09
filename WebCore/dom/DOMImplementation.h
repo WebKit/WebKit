@@ -37,6 +37,7 @@ class DocumentType;
 class FrameView;
 class HTMLDocument;
 class String;
+class TextDocument;
 
 typedef int ExceptionCode;
 
@@ -58,12 +59,14 @@ public:
     // Other methods (not part of DOM)
     PassRefPtr<Document> createDocument(FrameView* = 0);
     PassRefPtr<HTMLDocument> createHTMLDocument(FrameView* = 0);
+    PassRefPtr<TextDocument> createTextDocument(FrameView* v = 0);
 
     // Returns the static instance of this class - only one instance of this class should
     // ever be present, and is used as a factory method for creating Document objects
     static DOMImplementation* instance();
 
     static bool isXMLMIMEType(const String& mimeType);
+    static bool isTextMIMEType(const String& mimeType);
 };
 
 } //namespace

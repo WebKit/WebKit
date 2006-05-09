@@ -79,8 +79,6 @@
 #import "WebPreferencesPrivate.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebScriptDebugDelegatePrivate.h"
-#import "WebTextRepresentation.h"
-#import "WebTextView.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import <CoreFoundation/CFSet.h>
@@ -512,10 +510,10 @@ static bool debugWidget = true;
     }
     
     if (viewClass && repClass) {
-        // Special-case WebTextView for text types that shouldn't be shown.
-        if (viewClass == [WebTextView class] &&
-            repClass == [WebTextRepresentation class] &&
-            [[WebTextView unsupportedTextMIMETypes] containsObject:MIMEType]) {
+        // Special-case WebHTMLView for text types that shouldn't be shown.
+        if (viewClass == [WebHTMLView class] &&
+            repClass == [WebHTMLRepresentation class] &&
+            [[WebHTMLView unsupportedTextMIMETypes] containsObject:MIMEType]) {
             return NO;
         }
         if (vClass)

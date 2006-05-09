@@ -1,3 +1,37 @@
+2006-05-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8808
+        WebCore should handle text files
+
+        * WebKit.exp:
+        Remove WebTextView.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        Get rid of WebTextView and WebTextRepresentation.
+        
+        * WebView/WebDataSource.m:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        * WebView/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        * WebView/WebHTMLView.m:
+        The text MIME types are now handled by WebHTMLView.
+        
+        (+[WebHTMLView unsupportedTextMIMETypes]):
+        New function, moved here from WebTextView.
+        
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebTextRepresentation.h: Removed.
+        * WebView/WebTextRepresentation.m: Removed.
+        * WebView/WebTextView.h: Removed.
+        * WebView/WebTextView.m: Removed.
+        
+        * WebView/WebView.m:
+        (+[WebView _viewClass:andRepresentationClass:forMIMEType:]):
+        Now special-case WebHTMLView instead of WebTextView for MIME types
+        that shouldn't be shown.
+
 2006-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Anders.

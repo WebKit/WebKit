@@ -365,6 +365,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         @"text/html",
         @"text/xml",
         @"text/xsl",
+        @"text/",
+        @"application/x-javascript",
         @"application/xml",
         @"application/xhtml+xml",
         @"application/rss+xml",

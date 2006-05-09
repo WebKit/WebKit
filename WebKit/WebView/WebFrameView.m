@@ -49,7 +49,6 @@
 #import "WebNSViewExtras.h"
 #import "WebPDFView.h"
 #import "WebSystemInterface.h"
-#import "WebTextView.h"
 #import "WebViewFactory.h"
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
@@ -258,7 +257,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if (!viewTypes) {
         viewTypes = [[NSMutableDictionary alloc] init];
         addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedMIMETypes]);
-        addTypesFromClass(viewTypes, [WebTextView class], [WebTextView supportedMIMETypes]);
 
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];

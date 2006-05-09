@@ -31,6 +31,7 @@
 #include "css_stylesheetimpl.h"
 #include "HTMLDocument.h"
 #include "RegularExpression.h"
+#include "TextDocument.h"
 
 namespace WebCore {
 
@@ -174,6 +175,11 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(FrameView* v)
     return new HTMLDocument(this, v);
 }
 
+PassRefPtr<TextDocument> DOMImplementation::createTextDocument(FrameView *v)
+{
+    return new TextDocument(this, v);
+}
+
 DOMImplementation* DOMImplementation::instance()
 {
     static RefPtr<DOMImplementation> i = new DOMImplementation;
@@ -188,6 +194,16 @@ bool DOMImplementation::isXMLMIMEType(const String& mimeType)
     static RegularExpression xmlTypeRegExp(DeprecatedString("^") + validChars + "+/" + validChars + "+\\+xml$");
     if (xmlTypeRegExp.match(mimeType.deprecatedString()) > -1)
         return true;
+    return false;
+}
+
+bool DOMImplementation::isTextMIMEType(const String& mimeType)
+{
+    if (mimeType == "application/x-javascript" ||
+        (mimeType.startsWith("text/") && mimeType != "text/html" &&
+         mimeType != "text/xml" && mimeType != "text/xsl"))
+        return true;
+    
     return false;
 }
 

@@ -40,6 +40,7 @@
 
 - (void)_reset;
 + (NSArray *)supportedMIMETypes;
++ (NSArray *)unsupportedTextMIMETypes;
 
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;

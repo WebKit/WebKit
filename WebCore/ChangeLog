@@ -1,3 +1,42 @@
+2006-05-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8808
+        WebCore should handle text files
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Add TextDocument.cpp and TextDocument.h
+        
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (+[WebCoreFrameBridge supportedMIMETypes]):
+        Add text types here.
+        
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createTextDocument):
+        (WebCore::DOMImplementation::isTextMIMEType):
+        * dom/DOMImplementation.h:
+        New functions for creating a TextDocument and determining if a 
+        mime type is a text MIME type.
+        
+        * loader/TextDocument.cpp: Added.
+        (WebCore::TextTokenizer::TextTokenizer):
+        (WebCore::TextTokenizer::write):
+        (WebCore::TextTokenizer::finish):
+        (WebCore::TextTokenizer::isWaitingForScripts):
+        Special tokenizer which will put text inside a <pre> tag
+        in a document.
+        
+        (WebCore::TextDocument::TextDocument):        
+        (WebCore::TextDocument::createTokenizer):
+        Create a TextTokenizer.
+        
+        * loader/TextDocument.h: Added.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::begin):
+        Create a TextDocument if the MIME type is of type text.
+
 2006-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Anders.

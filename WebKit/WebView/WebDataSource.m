@@ -59,7 +59,6 @@
 #import <WebKit/WebPDFRepresentation.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebUnarchivingState.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
@@ -568,7 +567,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if (!repTypes) {
         repTypes = [[NSMutableDictionary alloc] init];
         addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedMIMETypes]);
-        addTypesFromClass(repTypes, [WebTextRepresentation class], [WebTextRepresentation supportedMIMETypes]);
 
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];

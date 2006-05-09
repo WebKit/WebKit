@@ -55,6 +55,8 @@
 		1A5D938F0A0B9ACC00B1121F /* XPathParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5D938D0A0B9ACC00B1121F /* XPathParser.h */; };
 		1A6931760A0CD4FA00C127FE /* XPathValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6931740A0CD4FA00C127FE /* XPathValue.h */; };
 		1A6931770A0CD4FA00C127FE /* XPathValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6931750A0CD4FA00C127FE /* XPathValue.cpp */; };
+		1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6937FF0A11100A00C127FE /* TextDocument.cpp */; };
+		1A6938020A11100A00C127FE /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6938000A11100A00C127FE /* TextDocument.h */; };
 		1A7629830A0740A000989F5B /* XPathExpressionNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629590A0740A000989F5B /* XPathExpressionNode.cpp */; };
 		1A7629840A0740A000989F5B /* XPathExpressionNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A76295A0A0740A000989F5B /* XPathExpressionNode.h */; };
 		1A76298A0A0740A000989F5B /* XPathFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629610A0740A000989F5B /* XPathFunctions.cpp */; };
@@ -1297,6 +1299,8 @@
 		1A5D938D0A0B9ACC00B1121F /* XPathParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathParser.h; sourceTree = "<group>"; };
 		1A6931740A0CD4FA00C127FE /* XPathValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathValue.h; sourceTree = "<group>"; };
 		1A6931750A0CD4FA00C127FE /* XPathValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPathValue.cpp; sourceTree = "<group>"; };
+		1A6937FF0A11100A00C127FE /* TextDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextDocument.cpp; sourceTree = "<group>"; };
+		1A6938000A11100A00C127FE /* TextDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextDocument.h; sourceTree = "<group>"; };
 		1A7629590A0740A000989F5B /* XPathExpressionNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathExpressionNode.cpp; sourceTree = "<group>"; };
 		1A76295A0A0740A000989F5B /* XPathExpressionNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathExpressionNode.h; sourceTree = "<group>"; };
 		1A7629610A0740A000989F5B /* XPathFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathFunctions.cpp; sourceTree = "<group>"; };
@@ -3979,6 +3983,8 @@
 				BCB16C140979C3BD00467741 /* loader.h */,
 				BCB16C150979C3BD00467741 /* Request.cpp */,
 				BCB16C160979C3BD00467741 /* Request.h */,
+				1A6937FF0A11100A00C127FE /* TextDocument.cpp */,
+				1A6938000A11100A00C127FE /* TextDocument.h */,
 			);
 			path = loader;
 			sourceTree = "<group>";
@@ -5003,6 +5009,7 @@
 				1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */,
 				1A5D938F0A0B9ACC00B1121F /* XPathParser.h in Headers */,
 				1A6931760A0CD4FA00C127FE /* XPathValue.h in Headers */,
+				1A6938020A11100A00C127FE /* TextDocument.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5740,6 +5747,7 @@
 				936BDD1D0A031AEB004DF4AB /* GraphicsContextCG.cpp in Sources */,
 				BCCD13200A0C0030001AFA8B /* FontData.mm in Sources */,
 				1A6931770A0CD4FA00C127FE /* XPathValue.cpp in Sources */,
+				1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
