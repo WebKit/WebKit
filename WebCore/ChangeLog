@@ -2,6 +2,14 @@
 
         Reviewed by Darin.
 
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::write):
+        Use the correct variable to prevent crashes.
+
+2006-05-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=8808
         WebCore should handle text files
         
