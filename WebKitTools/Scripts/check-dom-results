@@ -49,7 +49,8 @@ my @suites = ( {"name" => "DOM Level 1 Core   (html)", "directory" => "dom/html/
                {"name" => "DOM Level 2 Core   (xhtml)", "directory" => "dom/xhtml/level2/core"},
                {"name" => "DOM Level 2 Events (xhtml)", "directory" => "dom/xhtml/level2/events"},
                {"name" => "DOM Level 2 HTML   (xhtml)", "directory" => "dom/xhtml/level2/html"},
-               {"name" => "DOM Level 3 Core   (xhtml)", "directory" => "dom/xhtml/level3/core"});
+               {"name" => "DOM Level 3 Core   (xhtml)", "directory" => "dom/xhtml/level3/core"},
+               {"name" => "DOM Level 3 XPath  (svg)", "directory" => "dom/svg/level3/xpath"});
 
 my $totalCount = 0;
 my $totalSuccesses = 0;
