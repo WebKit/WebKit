@@ -1,5 +1,14 @@
 2006-05-09  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Hyatt.
+        
+        * http/tests/incremental/slow-utf8-text-expected.checksum:
+        * http/tests/incremental/slow-utf8-text-expected.png:
+        * http/tests/incremental/slow-utf8-text-expected.txt:
+        Update tests now that we wrap plain text differently.
+
+2006-05-09  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Maciej.
 
         Add test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8803
