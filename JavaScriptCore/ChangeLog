@@ -1,3 +1,15 @@
+2006-05-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows build.
+        Minor fixes to WTF headers.
+        
+        Reviewed by kevin.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Fix include dirs, paths to files. 
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj: Fix include dirs.
+        * wtf/Assertions.h: include Platform.h to get definition for COMPILER()
+        * wtf/Vector.h: include FastMalloc.h for definition of fastMalloc, fastFree
+
 2006-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Anders.

@@ -24,6 +24,7 @@
 #define KXMLCORE_VECTOR_H
 
 #include "Assertions.h"
+#include "FastMalloc.h"
 #include "VectorTraits.h"
 #include <limits>
 #include <stdlib.h>

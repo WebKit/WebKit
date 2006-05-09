@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="&#x0D;&#x0A;"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../../icu/include"
 				PreprocessorDefinitions="HAVE_CONFIG_H; WIN32; __STD_C"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -120,7 +120,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="&#x0D;&#x0A;"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../kxmlcore/;../../../icu/include"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../../icu/include"
 				PreprocessorDefinitions="HAVE_CONFIG_H; WIN32; __STD_C;NDEBUG"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -490,66 +490,66 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="KXMLCore"
+			Name="WTF"
 			>
 			<File
-				RelativePath="..\..\kxmlcore\AlwaysInline.h"
+				RelativePath="..\..\wtf\AlwaysInline.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\Assertions.cpp"
+				RelativePath="..\..\wtf\Assertions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\Assertions.h"
+				RelativePath="..\..\wtf\Assertions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\FastMalloc.cpp"
+				RelativePath="..\..\wtf\FastMalloc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\FastMalloc.h"
+				RelativePath="..\..\wtf\FastMalloc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\FastMallocInternal.h"
+				RelativePath="..\..\wtf\FastMallocInternal.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\HashCountedSet.h"
+				RelativePath="..\..\wtf\HashCountedSet.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\HashFunctions.h"
+				RelativePath="..\..\wtf\HashFunctions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\HashMap.h"
+				RelativePath="..\..\wtf\HashMap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\HashSet.h"
+				RelativePath="..\..\wtf\HashSet.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\HashTable.cpp"
+				RelativePath="..\..\wtf\HashTable.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\HashTable.h"
+				RelativePath="..\..\wtf\HashTable.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\HashTraits.h"
+				RelativePath="..\..\wtf\HashTraits.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\PassRefPtr.h"
+				RelativePath="..\..\wtf\PassRefPtr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kxmlcore\RefPtr.h"
+				RelativePath="..\..\wtf\RefPtr.h"
 				>
 			</File>
 		</Filter>

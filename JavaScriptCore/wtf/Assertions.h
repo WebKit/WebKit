@@ -35,6 +35,8 @@
 // For non-debug builds, everything is disabled by default.
 // Defining any of the symbols explicitly prevents this from having any effect.
 
+#include "Platform.h"
+
 #ifdef NDEBUG
 #define ASSERTIONS_DISABLED_DEFAULT 1
 #else
