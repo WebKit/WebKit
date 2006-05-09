@@ -47,7 +47,7 @@ my @svgOptions = ();
 @svgOptions = ("GCC_PREPROCESSOR_DEFINITIONS=\$(DEBUG_DEFINES)") if (!$svgSupport);
 
 # Check that all the project directories are there.
-my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
+my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit", "WebKitWin");
 my @otherDirs = ("WebKitLibraries");
 for my $dir (@projects, @otherDirs) {
     if (! -d $dir) {
@@ -87,11 +87,11 @@ for my $dir (@projects) {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "All", @options, @ARGV;
         } elsif ($dir eq "WebCore") {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV, @svgOptions;
-        } else {
+        } elsif ($dir ne "WebKitWin") {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
         }
     } elsif (isCygwin()) {
-        if (($dir eq "JavaScriptCore") || ($dir eq "WebCore")) {
+        if ($dir eq "WebKitWin") {
             $result = buildVisualStudioProject($dir);
         }
     }

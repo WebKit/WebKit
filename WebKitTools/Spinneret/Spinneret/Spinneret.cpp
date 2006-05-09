@@ -57,6 +57,10 @@ void SpinneretWebHost::updateLocationBar(const char* URL)
     SendMessageA(hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)URL);
 }
 
+void SpinneretWebHost::loadEnd(BOOL successful, DWORD error, LPCTSTR errorString)
+{
+}
+
 static void resizeSubViews()
 {
     RECT rcClient;
@@ -110,6 +114,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
     gWebHost = new SpinneretWebHost();
     gWebView = WebView::createWebView(hInstance, hMainWnd, gWebHost);
+    gWebView->mainFrame()->loadHTMLString("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.opendarwin.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>");
+
     resizeSubViews();
     ShowWindow(gWebView->windowHandle(), nCmdShow);
     UpdateWindow(gWebView->windowHandle());

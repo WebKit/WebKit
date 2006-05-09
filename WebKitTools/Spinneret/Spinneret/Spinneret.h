@@ -34,4 +34,5 @@ class SpinneretWebHost : public WebHost
 {
 public:
     virtual void updateLocationBar(const char* URL);
+    virtual void loadEnd(BOOL successful, DWORD error, LPCTSTR errorString);
 };

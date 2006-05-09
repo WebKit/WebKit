@@ -1,3 +1,17 @@
+2006-05-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows build.
+        Add load ended callback.
+        
+        Reviewed by kevin.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj: Fix include paths
+        * Scripts/build-webkit: Build WebKitWin instead of WebCore/JavaScriptCore (WebKitWin builds those indirectly).
+        * Spinneret/Spinneret/Spinneret.cpp: 
+        (SpinneretWebHost::loadEnd): Add callback for loadEnd() to determine success/failure of page load.
+        (_tWinMain): Load built-in test content here instead of in lower-level code.
+        * Spinneret/Spinneret/Spinneret.h: Add loadEnd() callback.
+
 2006-05-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
