@@ -1,3 +1,35 @@
+2006-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Hatcher.
+        
+        - refactor things so that WebKit doesn't save a WebResource for every loaded URL,
+        but rather retrieves the data from the WebCore cache as needed.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8802
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]):
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]):
+        * loader/Cache.cpp:
+        (WebCore::Cache::updateCacheStatus):
+        (WebCore::Cache::requestImage):
+        (WebCore::Cache::requestStyleSheet):
+        (WebCore::Cache::requestScript):
+        (WebCore::Cache::requestXSLStyleSheet):
+        (WebCore::Cache::requestXBLDocument):
+        * loader/Cache.h:
+        * loader/CachedResource.cpp: Added.
+        * loader/CachedResource.h: Added.
+        * loader/CachedResourceClient.h: Added.
+        * loader/CachedResourceClientWalker.cpp: Added.
+        * loader/CachedResourceClientWalker.h: Added.
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::setAutoloadImages):
+        (WebCore::DocLoader::removeCachedObject):
+        * loader/DocLoader.h:
+        (WebCore::DocLoader::cachedObject):
+        (WebCore::DocLoader::allCachedObjects):
+
 2006-05-08  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin.

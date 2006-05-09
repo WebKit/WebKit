@@ -174,7 +174,9 @@ void DocLoader::setAutoloadImages(bool enable)
     if (!m_bautoloadImages)
         return;
 
-    for (const CachedObject* co=m_docObjects.first(); co; co=m_docObjects.next())
+    HashMap<String, CachedObject*>::iterator end = m_docObjects.end();
+    for (HashMap<String, CachedObject*>::iterator it = m_docObjects.begin(); it != end; ++it) {
+        CachedObject* co = it->second;
         if (co->type() == CachedObject::ImageResource) {
             CachedImage *img = const_cast<CachedImage*>(static_cast<const CachedImage *>(co));
 
@@ -184,6 +186,7 @@ void DocLoader::setAutoloadImages(bool enable)
 
             Cache::loader()->load(this, img, true);
         }
+    }
 }
 
 void DocLoader::setCachePolicy(KIO::CacheControl cachePolicy)
@@ -193,7 +196,7 @@ void DocLoader::setCachePolicy(KIO::CacheControl cachePolicy)
 
 void DocLoader::removeCachedObject(CachedObject* o) const
 {
-    m_docObjects.removeRef(o);
+    m_docObjects.remove(o->url());
 }
 
 void DocLoader::setLoadInProgress(bool load)

@@ -211,4 +211,7 @@
 - (void)_setupForReplaceByMIMEType:(NSString *)mimeType;
 - (BOOL)_doesProgressiveLoadWithMIMEType:(NSString *)MIMEType;
 - (void)_commitLoadWithData:(NSData *)data;
+
+- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL;
+
 @end

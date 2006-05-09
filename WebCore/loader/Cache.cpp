@@ -109,6 +109,17 @@ void Cache::clear()
     delete docloaders; docloaders = 0;
 }
 
+void Cache::updateCacheStatus(DocLoader* dl, const String& url, CachedObject* o)
+{
+    moveToHeadOfLRUList(o);
+    if (dl) {
+        if (cacheDisabled)
+            dl->m_docObjects.remove(url);
+        else
+            dl->m_docObjects.set(url, o);
+    }
+}
+
 CachedImage *Cache::requestImage(DocLoader* dl, const String& url, bool reload, time_t expireDate)
 {
     // this brings the _url to a standard form...
@@ -162,12 +173,7 @@ CachedImage *Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, ti
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << ", status " << o->status() << endl;
 #endif
 
-    moveToHeadOfLRUList(o);
-    if (dl) {
-        dl->m_docObjects.remove(o);
-        if (!cacheDisabled)
-        dl->m_docObjects.append(o);
-    }
+    updateCacheStatus(dl, o->url(), o);
     return static_cast<CachedImage *>(o);
 }
 
@@ -217,12 +223,7 @@ CachedCSSStyleSheet *Cache::requestStyleSheet(DocLoader* dl, const String& url, 
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
 
-    moveToHeadOfLRUList(o);
-    if (dl) {
-        dl->m_docObjects.remove(o);
-        if (!cacheDisabled)
-        dl->m_docObjects.append(o);
-    }
+    updateCacheStatus(dl, url, o);
     return static_cast<CachedCSSStyleSheet *>(o);
 }
 
@@ -281,12 +282,7 @@ CachedScript *Cache::requestScript(DocLoader* dl, const String& url, bool reload
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
 
-    moveToHeadOfLRUList(o);
-    if (dl) {
-        dl->m_docObjects.remove(o);
-        if (!cacheDisabled)
-            dl->m_docObjects.append(o);
-    }
+    updateCacheStatus(dl, url, o);
     return static_cast<CachedScript *>(o);
 }
 
@@ -345,12 +341,7 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& ur
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
     
-    moveToHeadOfLRUList(o);
-    if (dl) {
-        dl->m_docObjects.remove(o);
-        if (!cacheDisabled)
-            dl->m_docObjects.append(o);
-    }
+    updateCacheStatus(dl, url, o);
     return static_cast<CachedXSLStyleSheet*>(o);
 }
 #endif
@@ -402,12 +393,7 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, b
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
     
-    moveToHeadOfLRUList(o);
-    if (dl) {
-        dl->m_docObjects.remove(o);
-        if (!cacheDisabled)
-            dl->m_docObjects.append(o);
-    }
+    updateCacheStatus(dl, url, o);
     return static_cast<CachedXBLDocument*>(o);
 }
 #endif

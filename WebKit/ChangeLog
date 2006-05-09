@@ -1,3 +1,36 @@
+2006-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Hatcher.
+        
+        - refactor things so that WebKit doesn't save a WebResource for every loaded URL,
+        but rather retrieves the data from the WebCore cache as needed.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8802
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge objectLoadedFromCacheWithURL:response:data:]):
+        (-[WebFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * WebCoreSupport/WebSubresourceLoader.m:
+        (-[WebSubresourceLoader didReceiveResponse:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setupForReplaceByMIMEType:]):
+        (-[WebDataSource _archivedSubresourceForURL:]):
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource subresources]):
+        (-[WebDataSource subresourceForURL:]):
+        (-[WebDataSource addSubresource:]):
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebFrame.m:
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.m:
+        * WebView/WebLoader.h:
+        * WebView/WebLoader.m:
+        (-[NSURLProtocol loadWithRequest:]):
+        (-[NSURLProtocol didFinishLoading]):
+        * WebView/WebUnarchivingState.h:
+        * WebView/WebUnarchivingState.m:
+        (-[WebUnarchivingState addResource:]):
+
 2006-05-04  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

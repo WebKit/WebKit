@@ -479,6 +479,9 @@ typedef enum {
 
 - (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter;
 
+- (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSURL *)URL;
+- (void)getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses;
+
 @end
 
 // The WebCoreFrameBridge protocol contains methods for use by the WebCore side of the bridge.

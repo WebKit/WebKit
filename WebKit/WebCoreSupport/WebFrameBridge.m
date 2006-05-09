@@ -539,7 +539,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     id identifier;
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     [_frame _requestFromDelegateForRequest:request identifier:&identifier error:&error];    
-    [_frame _saveResourceAndSendRemainingDelegateMessagesWithRequest:request identifier:identifier response:response data:data error:error];
+    [_frame _sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[data length] error:error];
     [request release];
 }
 
@@ -605,7 +605,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         }
     }
     
-    [_frame _saveResourceAndSendRemainingDelegateMessagesWithRequest:newRequest identifier:identifier response:response data:result error:error];
+    [_frame _sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[result length] error:error];
     [request release];
     
     return result;

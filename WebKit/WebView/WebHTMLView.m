@@ -490,27 +490,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     return nil;
 }
 
-- (WebResource *)resourceForData:(NSData *)data preferredFilename:(NSString *)name
-{
-    // This method is called by [NSAttributedString _documentFromRange::::] 
-    // which uses the URL of the resource for the fragment that it returns.
-    NSString *extension = [name pathExtension];
-    NSString *MIMEType = nil;
-    if ([extension length] != 0)
-        MIMEType = WKGetMIMETypeForExtension(extension);
-    // Only support image resources.
-    if (MIMEType == nil || ![[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType])
-        return nil;
-    NSURL *URL = [NSURL _web_URLWithUserTypedString:[NSString stringWithFormat:@"/%@", name] relativeToURL:[NSURL _web_uniqueWebDataURL]];
-    WebResource *resource = [[[WebResource alloc] initWithData:data
-                                                           URL:URL
-                                                      MIMEType:MIMEType 
-                                              textEncodingName:nil
-                                                     frameName:nil] autorelease];
-    [[self _dataSource] addSubresource:resource];
-    return resource;
-}
-
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {
     BOOL chosePlainText;

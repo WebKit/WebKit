@@ -2639,23 +2639,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                   formValues:nil];
 }
 
-- (void)_saveResourceAndSendRemainingDelegateMessagesWithRequest:(NSURLRequest *)request
-                                                      identifier:(id)identifier 
-                                                        response:(NSURLResponse *)response 
-                                                            data:(NSData *)data
-                                                           error:(NSError *)error
-{
-    unsigned length = [data length];
-    if (length > 0 && error == nil) {
-        ASSERT(request != nil);
-        WebResource *resource = [[WebResource alloc] _initWithData:data URL:[request URL] response:response];
-        ASSERT(resource != nil);    
-        [[self dataSource] addSubresource:resource];
-        [resource release];
-    }
-    [self _sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:length error:error];
-}
-
 - (void)_unmarkAllMisspellings
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])

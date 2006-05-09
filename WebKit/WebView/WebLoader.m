@@ -250,7 +250,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     r = clientRequest;
     
     if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
-        resource = [dataSource subresourceForURL:originalURL];
+        resource = [dataSource _archivedSubresourceForURL:originalURL];
         if (resource != nil) {
             if ([self _canUseResourceWithResponse:[resource _response]]) {
                 [resource retain];
@@ -341,25 +341,6 @@ static BOOL NSURLConnectionSupportsBufferedData;
                 resourceData = [[NSMutableData alloc] init];
             }
             [resourceData appendData:data];
-        }
-    }
-}
-
-- (void)saveResource
-{
-    // Don't save data as a WebResource if it was loaded from a WebResource.
-    if (resource == nil) {
-        NSData *data = [self resourceData];
-        if ([data length] > 0) {
-            ASSERT(originalURL);
-            ASSERT([response MIMEType]);
-            WebResource *newResource = [[WebResource alloc] _initWithData:data URL:originalURL response:response];
-            if (newResource != nil) {
-                [dataSource addSubresource:newResource];
-                [newResource release];
-            } else {
-                ASSERT_NOT_REACHED();
-            }
         }
     }
 }
@@ -572,8 +553,6 @@ static BOOL NSURLConnectionSupportsBufferedData;
     
     ASSERT(!reachedTerminalState);
 
-    [self saveResource];
-    
     if (!signalledFinish)
         [self signalFinish];
 

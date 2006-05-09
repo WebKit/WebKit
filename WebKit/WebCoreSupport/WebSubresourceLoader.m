@@ -186,8 +186,6 @@
     if (loadingMultipartContent && [[self resourceData] length]) {
         // A subresource loader does not load multipart sections progressively, deliver the previously received data to the coreLoader all at once
         [coreLoader addData:[self resourceData]];
-        // Tells the dataSource to save the just completed section, necessary for saving/dragging multipart images
-        [self saveResource];
         // Clears the data to make way for the next multipart section
         [self clearResourceData];
         

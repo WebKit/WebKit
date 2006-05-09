@@ -92,7 +92,6 @@
     [lastCheckedRequest release];
     [responses release];
     [webFrame release];
-    [subresources release];
     [unarchivingState release];
 
     [super dealloc];
@@ -916,8 +915,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [_private->subresourceLoaders removeAllObjects];
     [_private->plugInStreamLoaders makeObjectsPerformSelector:@selector(cancel)];
     [_private->plugInStreamLoaders removeAllObjects];
-    [_private->subresources removeAllObjects];
     [_private->unarchivingState release];
+}
+
+- (WebResource *)_archivedSubresourceForURL:(NSURL *)URL
+{
+    return [_private->unarchivingState archivedResourceForURL:URL];
 }
 
 @end
@@ -934,8 +937,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private = [[WebDataSourcePrivate alloc] init];
     _private->originalRequest = [request retain];
     _private->originalRequestCopy = [request copy];
-    
-    _private->subresources = [[NSMutableDictionary alloc] init];
     
     LOG(Loading, "creating datasource for %@", [request URL]);
     _private->request = [_private->originalRequest mutableCopy];
@@ -1060,22 +1061,37 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (NSArray *)subresources
 {
-    return [_private->subresources allValues];
+    NSArray *datas;
+    NSArray *responses;
+    [[self _bridge] getAllResourceDatas:&datas andResponses:&responses];
+    ASSERT([datas count] == [responses count]);
+
+    NSMutableArray *subresources = [[NSMutableArray alloc] initWithCapacity:[datas count]];
+    for (unsigned i = 0; i < [datas count]; ++i) {
+        NSURLResponse *response = [responses objectAtIndex:i];
+        [subresources addObject:[[[WebResource alloc] _initWithData:[datas objectAtIndex:i] URL:[response URL] response:response] autorelease]];
+    }
+
+    return [subresources autorelease];
 }
 
 - (WebResource *)subresourceForURL:(NSURL *)URL
 {
-    WebResource *resource = [_private->unarchivingState archivedResourceForURL:URL];
-    if (resource)
-        return resource;
+    NSData *data;
+    NSURLResponse *response;
+    if (![[self _bridge] getData:&data andResponse:&response forURL:URL])
+        return nil;
 
-    return [_private->subresources objectForKey:[URL _web_originalDataAsString]];
+    return [[[WebResource alloc] _initWithData:data URL:URL response:response] autorelease];
 }
 
 - (void)addSubresource:(WebResource *)subresource
 {
-    if (subresource)
-        [_private->subresources setObject:subresource forKey:[[subresource URL] _web_originalDataAsString]];
+    if (subresource) {
+        if (!_private->unarchivingState)
+            _private->unarchivingState = [[WebUnarchivingState alloc] init];
+        [_private->unarchivingState addResource:subresource];
+    }
 }
 
 @end

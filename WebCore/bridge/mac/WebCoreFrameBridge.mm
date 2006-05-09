@@ -29,6 +29,7 @@
 
 #import "Cache.h"
 #import "DOMInternal.h"
+#import "DocLoader.h"
 #import "DocumentFragment.h"
 #import "DocumentType.h"
 #import "FrameTree.h"
@@ -2424,6 +2425,33 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter
 {
     return [isPreviousCharacter ? _getPreSmartSet() : _getPostSmartSet() characterIsMember:c];
+}
+
+- (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSURL *)URL
+{
+    CachedObject* o = [self impl]->document()->docLoader()->cachedObject([URL absoluteString]);
+    if (!o)
+        return NO;
+
+    *data = o->allData();
+    *response = o->response();
+    return YES;
+}
+
+- (void)getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses
+{
+    const HashMap<String, CachedObject*>& allResources =  [self impl]->document()->docLoader()->allCachedObjects();
+    NSMutableArray *d = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
+    NSMutableArray *r = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
+    
+    HashMap<String, CachedObject*>::const_iterator end = allResources.end();
+    for (HashMap<String, CachedObject*>::const_iterator it = allResources.begin(); it != end; ++it) {
+        [d addObject:it->second->allData()];
+        [r addObject:it->second->response()];
+    }
+
+    *datas = [d autorelease];
+    *responses = [r autorelease];
 }
 
 @end

@@ -69,6 +69,11 @@
     }
 }
 
+- (void)addResource:(WebResource *)subresource
+{
+    [archivedResources setObject:subresource forKey:[[subresource URL] _web_originalDataAsString]];
+}
+
 - (WebResource *)archivedResourceForURL:(NSURL *)URL
 {
     return [archivedResources objectForKey:URL];

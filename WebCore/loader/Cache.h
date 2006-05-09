@@ -177,6 +177,7 @@ namespace WebCore  {
         static Loader* m_loader;
     
         static void moveToHeadOfLRUList(CachedObject*);
+        static void updateCacheStatus(DocLoader*, const String& url, CachedObject*);
     
         static LRUList* m_LRULists;
         static int m_totalSizeOfLRULists;
