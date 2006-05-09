@@ -1,3 +1,17 @@
+2006-05-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8803
+        XPath query for empty attributes crashes in XPath::StringExpression::StringExpression
+        
+        * xpath/impl/XPathParser.cpp:
+        (WebCore::XPath::Parser::lexString):
+        Make sure an empty string is returned instead of a null string.
+        
+        (WebCore::XPath::Parser::lex):
+        Only assign the string if it isn't null.
+
 2006-05-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

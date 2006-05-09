@@ -1,3 +1,13 @@
+2006-05-09  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Add test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8803
+        XPath query for empty attributes crashes in XPath::StringExpression::StringExpression
+        
+        * fast/dom/xpath-empty-string-expected.txt: Added.
+        * fast/dom/xpath-empty-string.html: Added.
+
 2006-05-08  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin.
