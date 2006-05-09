@@ -6,7 +6,7 @@
         
         kxmlcore --> wtf
         KXMLCore --> WTF
-        WKC --> WTF
+        KXC --> WTF
 
         * ForwardingHeaders/kxmlcore: Removed.
         * ForwardingHeaders/kxmlcore/AlwaysInline.h: Removed.

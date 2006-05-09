@@ -6,7 +6,7 @@
         
         kxmlcore --> wtf
         KXMLCore --> WTF
-        WKC --> WTF
+        KXC --> WTF
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
         * bindings/c/c_instance.cpp:
