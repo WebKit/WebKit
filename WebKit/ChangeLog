@@ -1,3 +1,15 @@
+2006-05-09  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        <rdar://problem/4523432> safari crashed right after disabling "block pop up windows" (or
+        other WebPreferences changes)
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView viewWillMoveToHostWindow:]):
+        When the plugin view is removed from both its window and its hostWindow, stop observing
+        WebPreferences.
+
 2006-05-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

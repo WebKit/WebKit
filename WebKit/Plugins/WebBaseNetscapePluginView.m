@@ -1333,6 +1333,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!hostWindow && ![self window]) {
         // View will have no associated windows.
         [self stop];
+
+        // Remove WebPreferencesChangedNotification observer -- we will observe once again when we move back into the window
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:nil];
     }
 }
 
