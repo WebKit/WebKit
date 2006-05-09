@@ -45,7 +45,7 @@ struct FontPlatformData {
 
 #else
 
-#include <kxmlcore/Noncopyable.h>
+#include <wtf/Noncopyable.h>
 
 #if WIN32
 typedef struct HFONT__ *HFONT;

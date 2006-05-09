@@ -355,11 +355,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.cpp"
+				RelativePath="..\..\DerivedSources\WebCore\JSNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSNode.cpp"
+				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.cpp"
 				>
 			</File>
 			<File
@@ -386,11 +386,15 @@
 				RelativePath="..\..\DerivedSources\WebCore\JSWheelEvent.cpp"
 				>
 			</File>
-			<File
+      <File
 				RelativePath="..\..\DerivedSources\WebCore\JSXPathEvaluator.cpp"
 				>
-			</File>
-			<File
+      </File>
+      <File
+				RelativePath="..\..\DerivedSources\WebCore\JSXPathExpression.cpp"
+				>
+      </File>
+      <File
 				RelativePath="..\..\DerivedSources\WebCore\JSXPathNSResolver.cpp"
 				>
 			</File>
@@ -743,11 +747,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\GraphicsTypes.h"
+				RelativePath="..\..\platform\GraphicsTypes.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\GraphicsTypes.cpp"
+				RelativePath="..\..\platform\GraphicsTypes.h"
 				>
 			</File>
 			<File
@@ -1015,6 +1019,10 @@
 				</File>
 				<File
 					RelativePath="..\..\platform\win\TransferJobWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\TransferJobWin.h"
 					>
 				</File>
 				<File
@@ -2190,19 +2198,19 @@
 			    Name="impl"
 			>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathExpressionNode.cpp"
+			        RelativePath="..\..\xpath\impl\XPathExpressionNode.cpp"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathExpressionNode.h"
+			        RelativePath="..\..\xpath\impl\XPathExpressionNode.h"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathFunctions.cpp"
+			        RelativePath="..\..\xpath\impl\XPathFunctions.cpp"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathFunctions.h"
+			        RelativePath="..\..\xpath\impl\XPathFunctions.h"
 			        >
 			    </File>
 			    <File
@@ -2210,92 +2218,100 @@
     				>
     			</File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathParser.cpp"
+			        RelativePath="..\..\xpath\impl\XPathParser.cpp"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathParser.h"
+			        RelativePath="..\..\xpath\impl\XPathParser.h"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathPath.cpp"
+			        RelativePath="..\..\xpath\impl\XPathPath.cpp"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathPath.h"
+			        RelativePath="..\..\xpath\impl\XPathPath.h"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathStep.cpp"
+			        RelativePath="..\..\xpath\impl\XPathPredicate.cpp"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathStep.h"
+			        RelativePath="..\..\xpath\impl\XPathPredicate.h"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathUtil.cpp"
+			        RelativePath="..\..\xpath\impl\XPathStep.cpp"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathUtil.h"
+			        RelativePath="..\..\xpath\impl\XPathStep.h"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathValue.cpp"
+			        RelativePath="..\..\xpath\impl\XPathUtil.cpp"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathValue.h"
+			        RelativePath="..\..\xpath\impl\XPathUtil.h"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathVariableReference.cpp"
+			        RelativePath="..\..\xpath\impl\XPathValue.cpp"
 			        >
 			    </File>
 			    <File
-			        RelativePath="\..\..\xpath\impl\XPathVariableReference.h"
+			        RelativePath="..\..\xpath\impl\XPathValue.h"
+			        >
+			    </File>
+			    <File
+			        RelativePath="..\..\xpath\impl\XPathVariableReference.cpp"
+			        >
+			    </File>
+			    <File
+			        RelativePath="..\..\xpath\impl\XPathVariableReference.h"
 			        >
 			    </File>			    
 			</Filter>
 		    <File
-		        RelativePath="\..\..\xpath\XPathEvaluator.cpp"
+		        RelativePath="..\..\xpath\XPathEvaluator.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\XPathEvaluator.h"
+		        RelativePath="..\..\xpath\XPathEvaluator.h"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\XPathExpression.cpp"
+		        RelativePath="..\..\xpath\XPathExpression.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\XPathExpression.h"
+		        RelativePath="..\..\xpath\XPathExpression.h"
 		        >
 		    </File>			    
 		    <File
-		        RelativePath="\..\..\xpath\XPathNamespace.cpp"
+		        RelativePath="..\..\xpath\XPathNamespace.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\XPathNamespace.h"
+		        RelativePath="..\..\xpath\XPathNamespace.h"
 		        >
 		    </File>			    
 		    <File
-		        RelativePath="\..\..\xpath\XPathNSResolver.cpp"
+		        RelativePath="..\..\xpath\XPathNSResolver.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\XPathNSResolver.h"
+		        RelativePath="..\..\xpath\XPathNSResolver.h"
 		        >
 		    </File>			    
 		    <File
-		        RelativePath="\..\..\xpath\XPathResult.cpp"
+		        RelativePath="..\..\xpath\XPathResult.cpp"
 		        >
 		    </File>
 		    <File
-		        RelativePath="\..\..\xpath\XPathResult.h"
+		        RelativePath="..\..\xpath\XPathResult.h"
 		        >
 		    </File>			    
 		</Filter>		
@@ -3306,14 +3322,6 @@
 				Name="js"
 				>
 				<File
-					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DBase.cpp"
 					>
 				</File>
@@ -3327,6 +3335,14 @@
 				</File>
 				<File
 					RelativePath="..\..\bindings\js\JSDOMParser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.h"
 					>
 				</File>
 				<File

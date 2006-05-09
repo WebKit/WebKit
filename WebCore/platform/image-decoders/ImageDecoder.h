@@ -29,7 +29,7 @@
 #include "config.h"
 #include "IntRect.h"
 #include "ImageSource.h"
-#include <kxmlcore/Vector.h>
+#include <wtf/Vector.h>
 #include "DeprecatedArray.h"
 
 namespace WebCore {

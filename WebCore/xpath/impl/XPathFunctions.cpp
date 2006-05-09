@@ -35,6 +35,17 @@
 
 #include <math.h>
 
+#ifdef _MSC_VER // No round() in standard C library for Visual Studio
+static double round(double val)
+{
+    double valFloor = floor(val);
+    if (val >= 0)
+        return (val - valFloor < 0.5) ? valFloor : (valFloor+1.0);
+    else
+        return (val - valFloor <= 0.5) ? valFloor : (valFloor+1.0);
+}
+#endif
+
 namespace WebCore {
 namespace XPath {
         

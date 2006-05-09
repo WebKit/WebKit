@@ -1,3 +1,25 @@
+2006-05-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows build.
+        Add host calback so caller can determine success/failure of a page load.
+        
+        Reviewed by kevin.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Fix paths, add missing files
+        * loader/CachedResource.h: Fix include path.
+        * loader/CachedResourceClientWalker.h: Fix include path.
+        * platform/FontPlatformData.h: Fix include path.
+        * platform/TransferJobClient.h: Make PlatformData, PlatformResponse an opaque struct.
+        * platform/image-decoders/ImageDecoder.h: Fix include path.
+        * platform/win/SharedTimerWin.cpp: Fix include path.
+        * platform/win/TransferJobWin.cpp: 
+        (WebCore::TransferJobWndProc): Add host callback for success/failure of load.
+        * platform/win/TransferJobWin.h: Added. Windows version of PlatformData/PlatformResponse.
+        * xpath/impl/XPathFunctions.cpp: Work around missing math functions in MSVC.
+        (round): Work around missing math functions in MSVC.
+        * xpath/impl/XPathPredicate.cpp: Work around missing math functions in MSVC.
+        * xpath/impl/XPathValue.cpp: Work around missing math functions in MSVC.
+
 2006-05-09  David Hyatt  <hyatt@apple.com>
 
         Revert styleForElement, pseudoStyleForElement, styleForRenderer back to

@@ -28,7 +28,7 @@
 
 #include "SystemTime.h"
 #include "Widget.h"
-#include <kxmlcore/Assertions.h>
+#include <wtf/Assertions.h>
 #include <windows.h>
 
 namespace WebCore {

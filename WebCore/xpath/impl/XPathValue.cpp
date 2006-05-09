@@ -30,6 +30,13 @@
 #include "XPathValue.h"
 #include "Logging.h"
 
+#ifdef _MSC_VER // math functions missing from Microsoft Visual Studio standard C library
+#include <xmath.h>
+#define isnan(x) _isnan(x)
+#define isinf(x) !_finite(x)
+#define signbit(x) (_copysign(1.0, (x)) < 0)
+#endif
+
 namespace WebCore {
 namespace XPath {
 

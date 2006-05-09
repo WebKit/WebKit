@@ -29,7 +29,7 @@
 
 #include "PlatformString.h"
 #include "KWQKIOGlobal.h"
-#include <kxmlcore/HashSet.h>
+#include <wtf/HashSet.h>
 #include <time.h>
 
 #if __OBJC__

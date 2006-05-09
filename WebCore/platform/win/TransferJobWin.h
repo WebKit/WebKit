@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TransferJobClient_h
-#define TransferJobClient_h
+#ifndef TransferJobWin_H
+#define TransferJobWin_H
 
-class KURL;
-
-#ifdef __APPLE__
-#ifdef __OBJC__
-@class NSData;
-@class NSURLResponse;
-#else
-class NSData;
-class NSURLResponse;
-#endif
-#endif
+#include <windows.h>
 
 namespace WebCore {
 
-#ifdef __APPLE__
-    typedef NSData* PlatformData;
-    typedef NSURLResponse* PlatformResponse;
-#else
-    // Not sure what the strategy for this will be on other platforms.
-    typedef struct PlatformDataStruct *PlatformData;
-    typedef struct PlatformResponseStruct *PlatformResponse;
-#endif
+struct PlatformDataStruct
+{
+    DWORD   error;
+    BOOL    loaded;
+    LPTSTR  errorString;
+};
 
-    class TransferJob;
-
-    class TransferJobClient {
-    public:
-        virtual ~TransferJobClient() { }
-        virtual void receivedRedirect(TransferJob*, const KURL&) { }
-        virtual void receivedResponse(TransferJob*, PlatformResponse) { }
-        virtual void receivedData(TransferJob*, const char*, int) { }
-        virtual void receivedAllData(TransferJob*) { }
-        virtual void receivedAllData(TransferJob*, PlatformData) { }
-    };
+struct PlatformResponseStruct
+{
+};
 
 }
 
