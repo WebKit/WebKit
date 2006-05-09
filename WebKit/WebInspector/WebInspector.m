@@ -624,22 +624,43 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         return;
     }
 
-    BOOL matched = NO;
     unsigned count = 0;
-    DOMNode *node = [_private->webFrame DOMDocument];
-    while ((node = [node _traverseNextNodeStayingWithin:nil])) {
-        if ([[node nodeName] _webkit_hasCaseInsensitiveSubstring:query])
-            matched = YES;
-        else if ([node nodeType] == DOM_TEXT_NODE && [[node nodeValue] _webkit_hasCaseInsensitiveSubstring:query])
-            matched = YES;
-        else if ([node isKindOfClass:[DOMHTMLElement class]] && [[(DOMHTMLElement *)node idName] _webkit_hasCaseInsensitiveSubstring:query])
-            matched = YES;
-        else if ([node isKindOfClass:[DOMHTMLElement class]] && [[(DOMHTMLElement *)node className] _webkit_hasCaseInsensitiveSubstring:query])
-            matched = YES;
-        if (matched) {
-            [_private->searchResults addObject:node];
-            count++;
-            matched = NO;
+    DOMNode *node = nil;
+
+    if ([query hasPrefix:@"/"]) {
+        // search document by Xpath query
+        id nodeList = [[_private->webView windowScriptObject] callWebScriptMethod:@"resultsWithXpathQuery" withArguments:[NSArray arrayWithObject:query]];
+        if ([nodeList isKindOfClass:[WebScriptObject class]]) {
+            if ([[nodeList valueForKey:@"snapshotLength"] isKindOfClass:[NSNumber class]]) {
+                count = [[nodeList valueForKey:@"snapshotLength"] unsignedLongValue];
+                for( unsigned i = 0; i < count; i++ ) {
+                    NSNumber *index = [[NSNumber alloc] initWithUnsignedLong:i];
+                    NSArray *args = [[NSArray alloc] initWithObjects:&index count:1];
+                    node = [nodeList callWebScriptMethod:@"snapshotItem" withArguments:args];
+                    if (node)
+                        [_private->searchResults addObject:node];
+                    [args release];
+                    [index release];
+                }
+            }
+        }
+    } else {
+        // search nodes by node name, node value, id and class name
+        node = [_private->webFrame DOMDocument];
+        while ((node = [node _traverseNextNodeStayingWithin:nil])) {
+            BOOL matched = NO;
+            if ([[node nodeName] _webkit_hasCaseInsensitiveSubstring:query])
+                matched = YES;
+            else if ([node nodeType] == DOM_TEXT_NODE && [[node nodeValue] _webkit_hasCaseInsensitiveSubstring:query])
+                matched = YES;
+            else if ([node isKindOfClass:[DOMHTMLElement class]] && [[(DOMHTMLElement *)node idName] _webkit_hasCaseInsensitiveSubstring:query])
+                matched = YES;
+            else if ([node isKindOfClass:[DOMHTMLElement class]] && [[(DOMHTMLElement *)node className] _webkit_hasCaseInsensitiveSubstring:query])
+                matched = YES;
+            if (matched) {
+                [_private->searchResults addObject:node];
+                count++;
+            }
         }
     }
 

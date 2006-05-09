@@ -1,3 +1,14 @@
+2006-05-09  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Bug 8804: Inspector should support searching by Xpath query
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8804
+
+        * WebInspector/WebInspector.m:
+        (-[WebInspector _refreshSearch]):
+        * WebInspector/webInspector/inspector.js:
+
 2006-05-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Tim Hatcher.

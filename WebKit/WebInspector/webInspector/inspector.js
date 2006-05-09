@@ -188,6 +188,18 @@ function performSearch(query)
     Inspector.searchPerformed(query);
 }
 
+function resultsWithXpathQuery(query)
+{
+    var nodeList = null;
+    try {
+        var focusedNode = Inspector.focusedDOMNode();
+        nodeList = focusedNode.document.evaluate(query, focusedNode.document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+    } catch(err) {
+        // ignore any exceptions. the query might be malformed, but we allow that
+    }
+    return nodeList;
+}
+
 var tabNames = ["node","metrics","style","properties"];
 var currentPane = "node";
 var paneUpdateState = new Array();
