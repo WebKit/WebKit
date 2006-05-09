@@ -30,6 +30,7 @@
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashSet.h>
 #include "StreamingTextDecoder.h"
+#include <unicode/unorm.h>
 
 namespace WebCore {
 
@@ -143,7 +144,22 @@ DeprecatedCString TextEncoding::fromUnicode(const DeprecatedString &qcs, bool al
     const UChar* source = reinterpret_cast<const UChar*>(copy.unicode());
     const UChar* sourceLimit = source + copy.length();
 
-    DeprecatedCString result(1); // for trailng zero
+    DeprecatedString normalizedString;
+    if (UNORM_YES != unorm_quickCheck(source, copy.length(), UNORM_NFC, &err)) {
+        normalizedString.truncate(copy.length()); // normalization to NFC rarely increases the length, so this first attempt will usually succeed
+        
+        int32_t normalizedLength = unorm_normalize(source, copy.length(), UNORM_NFC, 0, reinterpret_cast<UChar*>(const_cast<QChar*>(normalizedString.unicode())), copy.length(), &err);
+        if (err == U_BUFFER_OVERFLOW_ERROR) {
+            err = U_ZERO_ERROR;
+            normalizedString.truncate(normalizedLength);
+            normalizedLength = unorm_normalize(source, copy.length(), UNORM_NFC, 0, reinterpret_cast<UChar*>(const_cast<QChar*>(normalizedString.unicode())), normalizedLength, &err);
+        }
+        
+        source = reinterpret_cast<const UChar*>(normalizedString.unicode());
+        sourceLimit = source + normalizedLength;
+    }
+
+    DeprecatedCString result(1); // for trailing zero
 
     if (allowEntities)
         ucnv_setFromUCallBack(conv, UCNV_FROM_U_CALLBACK_ESCAPE, UCNV_ESCAPE_XML_DEC, 0, 0, &err);
@@ -151,6 +167,10 @@ DeprecatedCString TextEncoding::fromUnicode(const DeprecatedString &qcs, bool al
         ucnv_setSubstChars(conv, "?", 1, &err);
         ucnv_setFromUCallBack(conv, UCNV_FROM_U_CALLBACK_SUBSTITUTE, 0, 0, 0, &err);
     }
+
+    ASSERT(U_SUCCESS(err));
+    if (U_FAILURE(err))
+        return DeprecatedCString();
 
     do {
         char* target = buffer;
