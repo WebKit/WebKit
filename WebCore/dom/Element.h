@@ -132,7 +132,7 @@ public:
     virtual void copyNonAttributeProperties(const Element *source) {}
 
     virtual void attach();
-    virtual RenderStyle *createStyleForRenderer(RenderObject *parent);
+    virtual RenderStyle *styleForRenderer(RenderObject *parent);
     virtual RenderObject *createRenderer(RenderArena *, RenderStyle *);
     virtual void recalcStyle( StyleChange = NoChange );
 

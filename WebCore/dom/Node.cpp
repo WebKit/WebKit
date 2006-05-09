@@ -873,14 +873,14 @@ void Node::createRendererIfNeeded()
         && parent->childShouldCreateRenderer(this)
 #endif
         ) {
-        RenderStyle* style = createStyleForRenderer(parentRenderer);
+        RenderStyle* style = styleForRenderer(parentRenderer);
 #ifndef KHTML_NO_XBL
         bool resolveStyle = false;
         if (document()->bindingManager()->loadBindings(this, style->bindingURIs(), true, &resolveStyle) && 
             rendererIsNeeded(style)) {
             if (resolveStyle) {
                 style->deref(document()->renderArena());
-                style = createStyleForRenderer(parentRenderer);
+                style = styleForRenderer(parentRenderer);
             }
 #else
         if (rendererIsNeeded(style)) {
@@ -899,7 +899,7 @@ void Node::createRendererIfNeeded()
     }
 }
 
-RenderStyle *Node::createStyleForRenderer(RenderObject *parent)
+RenderStyle *Node::styleForRenderer(RenderObject *parent)
 {
     RenderStyle *style = parent->style();
     style->ref();

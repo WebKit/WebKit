@@ -88,8 +88,8 @@ class StyledElement;
 
         void initElementAndPseudoState(Element* e);
         void initForStyleResolve(Element* e, RenderStyle* parentStyle);
-        RenderStyle *createStyleForElement(Element*, RenderStyle* parentStyle=0, bool allowSharing=true);
-        RenderStyle* createPseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle=0);
+        RenderStyle *styleForElement(Element*, RenderStyle* parentStyle=0, bool allowSharing=true);
+        RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle=0);
 
         RenderStyle* locateSharedStyle();
         Node* locateCousinList(Element* parent);

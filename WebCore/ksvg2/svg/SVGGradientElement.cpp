@@ -144,14 +144,14 @@ void SVGGradientElement::rebuildStops() const
     if (m_resource && !ownerDocument()->parsing()) {
         Vector<KCGradientStop> stops;
          // FIXME: Manual style resolution is a hack
-        RenderStyle* gradientStyle = const_cast<SVGGradientElement*>(this)->createStyleForRenderer(parent()->renderer());
+        RenderStyle* gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer(parent()->renderer());
         for (Node *n = firstChild(); n; n = n->nextSibling()) {
             SVGElement *element = svg_dynamic_cast(n);
             if (element && element->isGradientStop()) {
                 SVGStopElement *stop = static_cast<SVGStopElement *>(element);
                 float stopOffset = stop->offset()->baseVal();
                 
-                RenderStyle *stopStyle = document()->styleSelector()->createStyleForElement(stop, gradientStyle);
+                RenderStyle *stopStyle = document()->styleSelector()->styleForElement(stop, gradientStyle);
                 Color c = stopStyle->svgStyle()->stopColor();
                 float opacity = stopStyle->svgStyle()->stopOpacity();
                 

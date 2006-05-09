@@ -684,7 +684,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
 }
 
 
-RenderStyle* CSSStyleSelector::createStyleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing)
+RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing)
 {
     if (!e->document()->haveStylesheetsLoaded()) {
         if (!styleNotYetAvailable) {
@@ -830,7 +830,7 @@ RenderStyle* CSSStyleSelector::createStyleForElement(Element* e, RenderStyle* de
     return style;
 }
 
-RenderStyle* CSSStyleSelector::createPseudoStyleForElement(RenderStyle::PseudoId pseudo, Element* e, RenderStyle* parentStyle)
+RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseudo, Element* e, RenderStyle* parentStyle)
 {
     if (!e)
         return 0;

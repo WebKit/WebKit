@@ -1,3 +1,27 @@
+2006-05-09  David Hyatt  <hyatt@apple.com>
+
+        Revert styleForElement, pseudoStyleForElement, styleForRenderer back to
+        their old names, since the term "create" is not accurate.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        * css/cssstyleselector.h:
+        * dom/Element.cpp:
+        (WebCore::Element::styleForRenderer):
+        (WebCore::Element::recalcStyle):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        (WebCore::Node::styleForRenderer):
+        * dom/Node.h:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::rebuildStops):
+
 2006-05-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
