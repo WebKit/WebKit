@@ -40,6 +40,7 @@
 #include "cairo.h"
 #include "cairo-win32.h"
 #include "TransferJob.h"
+#include "TransferJobWin.h"
 
 #include <io.h>
 #include <fcntl.h>
@@ -92,7 +93,7 @@ void WebFramePrivate::loadFilePath(char* path)
 
     d->frame->didOpenURL(URL);
     d->frame->begin(URL);
-    HANDLE fileHandle = CreateFileA(path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE fileHandle = CreateFileA(path, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
      
     bool result = false;
     DWORD bytesRead = 0;
@@ -100,7 +101,7 @@ void WebFramePrivate::loadFilePath(char* path)
     do {
       const int bufferSize = 8193;
       char buffer[bufferSize];
-      result = ReadFile(fileHandle, &buffer, bufferSize - 1, &bytesRead, NULL); 
+      result = ReadFile(fileHandle, &buffer, bufferSize - 1, &bytesRead, 0); 
       buffer[bytesRead] = '\0';
       d->frame->write(buffer);
       // Check for end of file. 
@@ -111,7 +112,7 @@ void WebFramePrivate::loadFilePath(char* path)
     d->frame->end();
 }
 
-void WebFramePrivate::loadHTMLString(char *html, char *baseURL)
+void WebFramePrivate::loadHTMLString(char* html, char* baseURL)
 {
     d->frame->begin();
     d->frame->write(html);
@@ -176,8 +177,11 @@ void WebFramePrivate::receivedData(WebCore::TransferJob*, const char* data, int 
     d->frame->write(data, length);
 }
 
-void WebFramePrivate::receivedAllData(WebCore::TransferJob* job, WebCore::PlatformData)
+void WebFramePrivate::receivedAllData(WebCore::TransferJob* job, WebCore::PlatformData data)
 {
+    if (d->m_host)
+        (d->m_host->loadEnd)(data->loaded, data->error, data->errorString);
+
     d->frame->end();
 }
 

@@ -1,3 +1,18 @@
+2006-05-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Add host calback so caller can determine success/failure of a page load.
+        
+        Reviewed by kevin.
+
+        * WebFramePrivate.cpp:
+        (WebKit::WebFramePrivate::loadFilePath): Style fix.
+        (WebKit::WebFramePrivate::loadHTMLString): Style fix.
+        (WebKit::WebFramePrivate::receivedAllData): Call host->loadEnd() with data indicating success/failure of load.
+        * WebKitWin.vcproj/WebKitWin/WebKitWin.vcproj: Fix include paths.
+        * WebView.cpp: 
+        (WebKit::WebView::WebView): Don't load boilerplate test HTML from core code. 
+        * public/WebHost.h: Add host callback for loadEnd().
+
 2006-05-02  Darin Adler  <darin@apple.com>
 
         * ChangeLog: Added.

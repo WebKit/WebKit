@@ -108,7 +108,6 @@ WebView::WebView(HWND hWnd, WebHost* host)
     d = new WebViewPrivate();
     d->windowHandle = hWnd;
     d->mainFrame = WebFrame::createWebFrame("dummy", this, host);
-    d->mainFrame->loadHTMLString("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.opendarwin.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>");
 }
 
 WebView::~WebView()
