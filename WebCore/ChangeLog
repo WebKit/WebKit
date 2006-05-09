@@ -1,5 +1,13 @@
 2006-05-09  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix Windows build.  Added TextDocument.cpp to vcproj.
+        
+        Reviewed by adele.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
+2006-05-09  Steve Falkenburg  <sfalken@apple.com>
+
         Fix Windows build.
         Add host calback so caller can determine success/failure of a page load.
         

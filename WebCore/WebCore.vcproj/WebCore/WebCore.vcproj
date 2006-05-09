@@ -586,7 +586,15 @@
 				RelativePath="..\..\loader\Request.h"
 				>
 			</File>
-		</Filter>
+      <File
+				RelativePath="..\..\loader\TextDocument.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\loader\TextDocument.h"
+				>
+      </File>
+    </Filter>
 		<Filter
 			Name="platform"
 			>
