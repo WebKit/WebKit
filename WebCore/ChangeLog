@@ -1,3 +1,18 @@
+2006-05-08  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin.
+
+        * editing/TextIterator.cpp:
+        (WebCore::shouldEmitSpaceBeforeAndAfterNode):
+        Returns true when the node should have a leading and trailing space. Currently only
+        used for inline tables. The function shouldEmitNewlinesBeforeAndAfterNode has a
+        fallback for nodes with no RenderObject, but the inline property doesn't really
+        have a meaning without one.
+        (WebCore::TextIterator::handleNonTextNode):
+        Checks shouldEmitSpaceBeforeAndAfterNode and inserts a space if necessary.
+        (WebCore::TextIterator::exitNode):
+        Checks shouldEmitSpaceBeforeAndAfterNode and inserts a space if necessary.
+
 2006-05-08  Anders Carlsson  <acarlsson@apple.com>
 
         Try fixing the Win32 build

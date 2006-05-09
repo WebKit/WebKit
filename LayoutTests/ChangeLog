@@ -1,3 +1,15 @@
+2006-05-08  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin.
+        
+        REGRESSION: two editing layout tests show incorrect spell checking in pixel test mode
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8350
+
+        * editing/pasteboard/innerText-inline-table-expected.checksum: Added.
+        * editing/pasteboard/innerText-inline-table-expected.png: Added.
+        * editing/pasteboard/innerText-inline-table-expected.txt: Added.
+        * editing/pasteboard/innerText-inline-table.html: Added.
+
 2006-05-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

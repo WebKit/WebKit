@@ -1,0 +1,28 @@
+<div id="explanation">Checks that the text iterator is emitting a space before and after an inline table.</div>
+
+<div id="test">hello<table style="display:inline"><tr><td>1</td></tr></table>world</div>
+<div id="test2">foo <table style="display:inline"><tr><td>2</td></tr></table> bar</div>
+<ul id="console"></ul>
+<script>
+
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var pre = document.createElement("pre");
+    pre.appendChild(document.createTextNode(message));
+    li.appendChild(pre);
+    console.appendChild(li);
+}
+
+var e = document.getElementById("test");
+var e2 = document.getElementById("test2");
+var expected = "hello 1 world\nfoo  2  bar";
+var actual = e.innerText + "\n" + e2.innerText;
+if (expected == actual)
+    log("Success!");
+else {
+    log("Failure!");
+    log("Expected \n\"" + expected + "\"");
+    log("Received \n\"" + actual + "\"");
+}
+</script>
