@@ -1,3 +1,14 @@
+2006-05-09  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin.
+
+        <rdar://problem/4442395>
+        Tiny MCE: Link isn't inserted after dragging into textarea field
+        
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:chosePlainText:]):
+        Modified to create an anchor object with a title as opposed to just the URL as text.
+
 2006-05-09  Tim Omernick  <timo@apple.com>
 
         Reviewed by Dave Harrison.

@@ -1,3 +1,16 @@
+2006-05-09  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin.
+
+        <rdar:/problem/4442395>
+        Tiny MCE: Link isn't inserted after dragging into textarea field
+        Created tests to test drag-and-dropped links.
+        
+        * editing/pasteboard/drop-link-expected.checksum: Added.
+        * editing/pasteboard/drop-link-expected.png: Added.
+        * editing/pasteboard/drop-link-expected.txt: Added.
+        * editing/pasteboard/drop-link.html: Added.
+
 2006-05-09  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Hyatt.

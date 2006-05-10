@@ -1,0 +1,75 @@
+<div>This test checks that links dragged into editable regions preserve their title and URL.</div>
+
+<div contenteditable="true" id="destination">Hello</div>
+
+<div><a href="http://apple.com" id="grabme">This is a link</a></div>
+
+<ul id="console"></ul>
+
+<div>To run this test manually, drag the link into the box with 'hello' in it, and then click on the button.<br><input type="button" value="Verify" onClick="verifier()"></div>
+
+<script>
+
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var pre = document.createElement("pre");
+    pre.appendChild(document.createTextNode(message));
+    li.appendChild(pre);
+    console.appendChild(li);
+}
+
+function runTest() {
+    if (!window.layoutTestController)
+        return;
+    
+    var anchorToDrag = document.getElementById("grabme");
+    var x = anchorToDrag.offsetLeft + anchorToDrag.offsetWidth / 2;
+    var y = anchorToDrag.offsetTop + anchorToDrag.offsetHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+
+    eventSender.mouseDown();
+    // Wait a moment so that the mouseDown will kick off a drag instead of navigating to the link
+    eventSender.leapForward(400);
+    
+    var destinationObject = document.getElementById("destination");
+    var x = destinationObject.offsetLeft + destinationObject.offsetWidth / 2;
+    var y = destinationObject.offsetTop + destinationObject.offsetHeight / 2;
+
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+
+    verifier();
+}
+
+function verifier() {
+    var anchorToDrag = document.getElementById("grabme");
+
+    var originalTarget = anchorToDrag.href;
+    var originalText = anchorToDrag.innerText;
+    var anchorParent = anchorToDrag.parentNode;
+    anchorParent.removeChild(anchorToDrag);
+    
+    var anchors = document.getElementsByTagName("a");
+    if (anchors.length != 1) {
+        log("Failure, incorrect number of anchor tags present");
+    } else {
+        log("Link is " + anchors[0].href);
+        var passed = true;
+        if (anchors[0].href != originalTarget) {
+            log("Failure! Link targets differ");
+            passed = false;
+        }
+        if (anchors[0].innerText != originalText) {
+            log("Failure! Link texts differ");
+            passed = false;
+        }
+        if (passed)
+            log("Success!");
+    }
+}
+
+runTest();
+</script>

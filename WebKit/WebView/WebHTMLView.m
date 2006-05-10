@@ -439,9 +439,19 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     }    
     
     if ((URL = [NSURL URLFromPasteboard:pasteboard])) {
-        NSString *URLString = [URL _web_userVisibleString];
-        if ([URLString length] > 0) {
-            return [[self _bridge] documentFragmentWithText:URLString];
+        DOMDocument* document = [[self _bridge] DOMDocument];
+        ASSERT(document);
+        if (document) {
+            DOMHTMLAnchorElement* anchor = (DOMHTMLAnchorElement*)[document createElement:@"a"];
+            NSString *URLString = [URL _web_userVisibleString];
+            NSString *URLTitleString = [pasteboard stringForType:WebURLNamePboardType];
+            DOMText* text = [document createTextNode:URLTitleString];
+            [anchor setHref:URLString];
+            [anchor appendChild:text];
+            DOMDocumentFragment* fragment = [document createDocumentFragment];
+            [fragment appendChild:anchor];
+            if ([URLString length] > 0)
+                return fragment;
         }
     }
     
