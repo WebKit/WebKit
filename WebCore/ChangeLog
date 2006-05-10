@@ -1,3 +1,19 @@
+2006-05-10  David Carson <dacarson@gmail.com>
+
+        - Fix for bug 8833. Removed inline keyword from functions declared
+        in .mm and .cpp files. inline function code needs to reside in the
+        header file for the linker to find the code. 
+        http://www.parashift.com/c++-faq-lite/inline-functions.html#faq-9.7
+
+        Reviewed by Darin, landed by Timothy.
+
+        * platform/Font.cpp:
+        (WebCore::isSpace):
+        * platform/mac/FontData.mm:
+        (WebCore::widthForGlyph):
+        (WebCore::isRoundingHackCharacter):
+        (WebCore::glyphForCharacter):
+
 2006-05-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Anders.

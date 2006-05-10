@@ -203,7 +203,7 @@ static const uint8_t isRoundingHackCharacterTable[0x100] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-inline bool isRoundingHackCharacter(UChar c)
+bool isRoundingHackCharacter(UChar c)
 {
     return (((c & ~0xFF) == 0 && isRoundingHackCharacterTable[c]));
 }
@@ -247,7 +247,7 @@ void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry)
 
 // Map utility functions
 
-inline float FontData::widthForGlyph(Glyph glyph) const
+float FontData::widthForGlyph(Glyph glyph) const
 {
     WidthMap *map;
     for (map = m_glyphToWidthMap; 1; map = map->next) {
@@ -1737,7 +1737,7 @@ static void freeGlyphMap(GlyphMap *map)
     }
 }
 
-inline Glyph FontData::glyphForCharacter(const FontData **renderer, unsigned c) const
+Glyph FontData::glyphForCharacter(const FontData **renderer, unsigned c) const
 {
     // this loop is hot, so it is written to avoid LSU stalls
     GlyphMap *map;
