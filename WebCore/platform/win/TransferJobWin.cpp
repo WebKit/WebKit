@@ -202,8 +202,8 @@ bool TransferJob::start(DocLoader* docLoader)
     } else {
         static HINTERNET internetHandle = 0;
         if (!internetHandle) {
-            String userAgentStr = docLoader->frame()->userAgent() + QChar('\0');
-            LPCWSTR userAgent = reinterpret_cast<const WCHAR*>(userAgentStr.unicode());
+            String userAgentStr = docLoader->frame()->userAgent() + String("", 1);
+            LPCWSTR userAgent = reinterpret_cast<const WCHAR*>(userAgentStr.characters());
             // leak the Internet for now
             internetHandle = InternetOpen(userAgent, INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, INTERNET_FLAG_ASYNC);
         }

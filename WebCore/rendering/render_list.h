@@ -21,9 +21,11 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef RENDER_LIST_H
 #define RENDER_LIST_H
 
+#include "DeprecatedString.h"
 #include "RenderBlock.h"
 
 // ### list-style-position, list-style-image is still missing

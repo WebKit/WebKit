@@ -23,9 +23,11 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #ifndef RenderTable_H
 #define RenderTable_H
 
+#include "DeprecatedArray.h"
 #include "RenderBlock.h"
 
 namespace WebCore {

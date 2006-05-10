@@ -26,14 +26,15 @@
 #include "config.h"
 #include "RenderText.h"
 
+#include "DeprecatedString.h"
 #include "InlineTextBox.h"
 #include "Pen.h"
-#include "RenderBlock.h"
-#include "break_lines.h"
 #include "Range.h"
 #include "RenderArena.h"
-#include <wtf/AlwaysInline.h>
+#include "RenderBlock.h"
+#include "break_lines.h"
 #include <unicode/ubrk.h>
+#include <wtf/AlwaysInline.h>
 
 using namespace std;
 

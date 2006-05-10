@@ -156,9 +156,9 @@ PlatformMouseEvent::PlatformMouseEvent() { notImplemented(); }
 bool PlatformMouseEvent::isMouseButtonDown(MouseButton) { notImplemented(); return false; }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
 
-int WebCore::findNextSentenceFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
-void WebCore::findSentenceBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
-int WebCore::findNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
+int WebCore::findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
+void WebCore::findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
+int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
 
 DeprecatedArray<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,DeprecatedString&) { notImplemented(); return 0; }
 
@@ -216,7 +216,7 @@ String WebCore::inputElementAltText() { return DeprecatedString(); }
 String WebCore::resetButtonDefaultLabel() { return "Reset"; }
 String WebCore::defaultLanguage() { return "en"; }
 
-void WebCore::findWordBoundary(QChar const* str,int len,int position,int* start, int* end) {*start=position; *end=position; }
+void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start, int* end) {*start=position; *end=position; }
 
 void WebCore::setCookies(KURL const&,KURL const&,String const&) { }
 String WebCore::cookies(KURL const&) { return String(); }

@@ -1,5 +1,37 @@
 2006-05-09  Darin Adler  <darin@apple.com>
 
+        - fix build
+
+        * rendering/render_style.cpp: (WebCore::RenderStyle::getPseudoStyle):
+        Fix a typo.
+
+        - attempt to fix Windows build
+
+        * css/maketokenizer: Use UChar instead of unsigned short.
+        * platform/win/FontWin.cpp:
+        (WebCore::getFontData): Removed cast to QChar.
+        (WebCore::hackishExtentForString): Use UChar.
+        (WebCore::Font::floatWidth): Use UChar.
+        (WebCore::Font::drawText): Use UChar.
+        (WebCore::Font::drawHighlightForText): Use UChar.
+        (WebCore::Font::selectionRectForText): Use UChar.
+        (WebCore::Font::checkSelectionPoint): Use UChar.
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::singleCharacterString): Added.
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent): Use above function.
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::findNextSentenceFromIndex): Use UChar.
+        (WebCore::findSentenceBoundary): Use UChar.
+        (WebCore::findNextWordFromIndex): Use UChar.
+        (WebCore::findWordBoundary): Use UChar.
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJob::start): Use a different String constructor.
+        * rendering/RenderTable.h: Added an include of DeprecatedArray.h.
+        * rendering/RenderText.cpp: Added an include of DeprecatedString.h.
+        * rendering/render_list.h: Ditto.
+
+2006-05-09  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Hyatt.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=8782

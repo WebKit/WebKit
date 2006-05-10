@@ -59,7 +59,7 @@ while (<>) {
 
 print;
 while (<>) {
-    s/char/unsigned short/;
+    s/char/UChar/;
     print;
     last if /yy_act/;
 }

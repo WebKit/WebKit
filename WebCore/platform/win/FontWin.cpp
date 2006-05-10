@@ -90,7 +90,7 @@ FontData* getFontData(const FontDescription& fontDescription, const AtomicString
     RestoreDC(dc, -1);
     ReleaseDC(0, dc);
     dc = 0;
-    if (!equalIgnoringCase(fontFace, String((QChar*)name, resultLength))) {
+    if (!equalIgnoringCase(fontFace, String(name, resultLength))) {
         DeleteObject(font);
         return 0;
     }
@@ -154,7 +154,7 @@ FontData* FontFallbackList::primaryFont(const FontDescription& fontDescription) 
     return defaultFont;
 }
 
-static IntSize hackishExtentForString(HDC dc, FontData* font, const QChar* str, int slen, int pos, int len, int tabWidth, int xpos)
+static IntSize hackishExtentForString(HDC dc, FontData* font, const UChar* str, int slen, int pos, int len, int tabWidth, int xpos)
 {
     SaveDC(dc);
 
@@ -176,7 +176,7 @@ static IntSize hackishExtentForString(HDC dc, FontData* font, const QChar* str, 
     return s;
 }
 
-float Font::floatWidth(const QChar* str, int slen, int pos, int len,
+float Font::floatWidth(const UChar* str, int slen, int pos, int len,
                        int tabWidth, int xpos, bool runRounding) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
@@ -202,7 +202,7 @@ static void convertRange(int from, int to, int len, int& offset, int& length)
 }
 
 void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos,
-                    const QChar* str, int len, int from, int to,
+                    const UChar* str, int len, int from, int to,
                     int toAdd, TextDirection d, bool visuallyOrdered) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
@@ -232,7 +232,7 @@ void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidt
 }
 
 void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point, int h, int tabWidth, int xpos,
-                                const QChar* str, int len, int from, int to, int toAdd,
+                                const UChar* str, int len, int from, int to, int toAdd,
                                 TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
 {
     if (!backgroundColor.isValid())
@@ -253,7 +253,7 @@ void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point,
     const_cast<GraphicsContext*>(context)->fillRect(IntRect(point, runSize), backgroundColor);
 }
 
-IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, int xpos, const QChar* str, int slen,
+IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, int xpos, const UChar* str, int slen,
                                    int pos, int len, int toAdd, bool rtl, bool visuallyOrdered, int from, int to) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
@@ -269,7 +269,7 @@ IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, i
     return IntRect(point, runSize);
 }
 
-int Font::checkSelectionPoint(const QChar* str, int slen, int offset, int len, int toAdd, int tabWidth, int xpos, int x,
+int Font::checkSelectionPoint(const UChar* str, int slen, int offset, int len, int toAdd, int tabWidth, int xpos, int x,
                               TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());

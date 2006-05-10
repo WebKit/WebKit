@@ -134,9 +134,11 @@ static String keyIdentifierForWindowsKeyCode(short keyCode)
     }
 }
 
+static String singleCharacterString(UChar c) { return String(&c, 1); }
+
 PlatformKeyboardEvent::PlatformKeyboardEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
-    : m_text(QChar(wParam))
-    , m_unmodifiedText(QChar(wParam))
+    : m_text(singleCharacterString(wParam))
+    , m_unmodifiedText(singleCharacterString(wParam))
     , m_keyIdentifier(keyIdentifierForWindowsKeyCode(wParam))
     , m_isKeyUp((lParam & NEW_RELEASE_STATE_MASK))
     , m_autoRepeat(lParam & REPEAT_COUNT_MASK)
@@ -148,7 +150,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND hWnd, WPARAM wParam, LPARAM lP
     , m_metaKey(lParam & ALT_KEY_DOWN_MASK) // FIXME: Is this right?
 {
     if (!m_shiftKey)
-        m_text = String(QChar(tolower(wParam)));
+        m_text = String(singleCharacterString(tolower(wParam)));
 }
 
 }
