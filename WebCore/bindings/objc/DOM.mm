@@ -44,10 +44,13 @@
 #import "Range.h"
 #import "dom_xmlimpl.h"
 #import "HTMLNames.h"
+#import "QualifiedName.h"
 #import "RenderImage.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <objc/objc-class.h>
 
+using WebCore::AtomicString;
+using WebCore::AtomicStringImpl;
 using WebCore::Attr;
 using WebCore::CharacterData;
 using WebCore::Document;
@@ -69,6 +72,7 @@ using WebCore::NodeIterator;
 using WebCore::NodeList;
 using WebCore::Notation;
 using WebCore::ProcessingInstruction;
+using WebCore::QualifiedName;
 using WebCore::Range;
 using WebCore::RenderImage;
 using WebCore::RenderObject;
@@ -111,8 +115,10 @@ private:
 };
 
 typedef HashMap<id, ObjCEventListener*> ListenerMap;
+typedef HashMap<AtomicStringImpl*, Class> ObjCClassMap;
 
-static ListenerMap *listenerMap;
+static ObjCClassMap* elementClassMap;
+static ListenerMap* listenerMap;
 
 //------------------------------------------------------------------------------------------
 // DOMObject
@@ -454,6 +460,92 @@ static ListenerMap *listenerMap;
 
 @end
 
+static void addElementClass(const QualifiedName& tag, Class objCClass)
+{
+    elementClassMap->set(tag.localName().impl(), objCClass);
+}
+
+static void createHTMLElementClassMap()
+{
+    // Create the table.
+    elementClassMap = new ObjCClassMap;
+    
+    // Populate it with HTML element classes.
+    addElementClass(aTag, [DOMHTMLAnchorElement class]);
+    addElementClass(appletTag, [DOMHTMLAppletElement class]);
+    addElementClass(areaTag, [DOMHTMLAreaElement class]);
+    addElementClass(baseTag, [DOMHTMLBaseElement class]);
+    addElementClass(basefontTag, [DOMHTMLBaseFontElement class]);
+    addElementClass(bodyTag, [DOMHTMLBodyElement class]);
+    addElementClass(brTag, [DOMHTMLBRElement class]);
+    addElementClass(buttonTag, [DOMHTMLButtonElement class]);
+    addElementClass(canvasTag, [DOMHTMLImageElement class]);
+    addElementClass(captionTag, [DOMHTMLTableCaptionElement class]);
+    addElementClass(colTag, [DOMHTMLTableColElement class]);
+    addElementClass(colgroupTag, [DOMHTMLTableColElement class]);
+    addElementClass(dirTag, [DOMHTMLDirectoryElement class]);
+    addElementClass(divTag, [DOMHTMLDivElement class]);
+    addElementClass(dlTag, [DOMHTMLDListElement class]);
+    addElementClass(fieldsetTag, [DOMHTMLFieldSetElement class]);
+    addElementClass(fontTag, [DOMHTMLFontElement class]);
+    addElementClass(formTag, [DOMHTMLFormElement class]);
+    addElementClass(frameTag, [DOMHTMLFrameElement class]);
+    addElementClass(framesetTag, [DOMHTMLFrameSetElement class]);
+    addElementClass(h1Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(h2Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(h3Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(h4Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(h5Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(h6Tag, [DOMHTMLHeadingElement class]);
+    addElementClass(headTag, [DOMHTMLHeadElement class]);
+    addElementClass(hrTag, [DOMHTMLHRElement class]);
+    addElementClass(htmlTag, [DOMHTMLHtmlElement class]);
+    addElementClass(iframeTag, [DOMHTMLIFrameElement class]);
+    addElementClass(imgTag, [DOMHTMLImageElement class]);
+    addElementClass(inputTag, [DOMHTMLInputElement class]);
+    addElementClass(isindexTag, [DOMHTMLIsIndexElement class]);
+    addElementClass(labelTag, [DOMHTMLLabelElement class]);
+    addElementClass(legendTag, [DOMHTMLLegendElement class]);
+    addElementClass(liTag, [DOMHTMLLIElement class]);
+    addElementClass(linkTag, [DOMHTMLLinkElement class]);
+    addElementClass(listingTag, [DOMHTMLPreElement class]);
+    addElementClass(mapTag, [DOMHTMLMapElement class]);
+    addElementClass(menuTag, [DOMHTMLMenuElement class]);
+    addElementClass(metaTag, [DOMHTMLMetaElement class]);
+    addElementClass(objectTag, [DOMHTMLObjectElement class]);
+    addElementClass(olTag, [DOMHTMLOListElement class]);
+    addElementClass(optgroupTag, [DOMHTMLOptGroupElement class]);
+    addElementClass(optionTag, [DOMHTMLOptionElement class]);
+    addElementClass(pTag, [DOMHTMLParagraphElement class]);
+    addElementClass(paramTag, [DOMHTMLParamElement class]);
+    addElementClass(preTag, [DOMHTMLPreElement class]);
+    addElementClass(qTag, [DOMHTMLQuoteElement class]);
+    addElementClass(scriptTag, [DOMHTMLScriptElement class]);
+    addElementClass(selectTag, [DOMHTMLSelectElement class]);
+    addElementClass(styleTag, [DOMHTMLStyleElement class]);
+    addElementClass(tableTag, [DOMHTMLTableElement class]);
+    addElementClass(tbodyTag, [DOMHTMLTableSectionElement class]);
+    addElementClass(tdTag, [DOMHTMLTableCellElement class]);
+    addElementClass(textareaTag, [DOMHTMLTextAreaElement class]);
+    addElementClass(tfootTag, [DOMHTMLTableSectionElement class]);
+    addElementClass(theadTag, [DOMHTMLTableSectionElement class]);
+    addElementClass(titleTag, [DOMHTMLTitleElement class]);
+    addElementClass(trTag, [DOMHTMLTableRowElement class]);
+    addElementClass(ulTag, [DOMHTMLUListElement class]);
+
+    // FIXME: Reflect marquee once the API has been determined.
+}
+
+static Class elementClass(const AtomicString& tagName)
+{
+    if (!elementClassMap)
+        createHTMLElementClassMap();
+    Class objcClass = elementClassMap->get(tagName.impl());
+    if (!objcClass)
+        objcClass = [DOMHTMLElement class];
+    return objcClass;
+}
+
 @implementation DOMNode (WebCoreInternal)
 
 - (id)_initWithNode:(Node *)impl
@@ -480,127 +572,10 @@ static ListenerMap *listenerMap;
     Class wrapperClass = nil;
     switch (impl->nodeType()) {
         case Node::ELEMENT_NODE:
-            if (impl->isHTMLElement()) {
-                // FIXME: Reflect marquee once the API has been determined.
-                // FIXME: We could make the HTML classes hand back their class names and then use that to make
-                // the appropriate Obj-C class from the string.
-                HTMLElement* htmlElt = static_cast<HTMLElement*>(impl);
-                if (htmlElt->hasLocalName(htmlTag))
-                    wrapperClass = [DOMHTMLHtmlElement class];
-                else if (htmlElt->hasLocalName(headTag))
-                    wrapperClass = [DOMHTMLHeadElement class];
-                else if (htmlElt->hasLocalName(linkTag))
-                    wrapperClass = [DOMHTMLLinkElement class];
-                else if (htmlElt->hasLocalName(titleTag))
-                    wrapperClass = [DOMHTMLTitleElement class];
-                else if (htmlElt->hasLocalName(metaTag))
-                    wrapperClass = [DOMHTMLMetaElement class];
-                else if (htmlElt->hasLocalName(baseTag))
-                    wrapperClass = [DOMHTMLBaseElement class];
-                else if (htmlElt->hasLocalName(isindexTag))
-                    wrapperClass = [DOMHTMLIsIndexElement class];
-                else if (htmlElt->hasLocalName(styleTag))
-                    wrapperClass = [DOMHTMLStyleElement class];
-                else if (htmlElt->hasLocalName(bodyTag))
-                    wrapperClass = [DOMHTMLBodyElement class];
-                else if (htmlElt->hasLocalName(formTag))
-                    wrapperClass = [DOMHTMLFormElement class];
-                else if (htmlElt->hasLocalName(selectTag))
-                    wrapperClass = [DOMHTMLSelectElement class];
-                else if (htmlElt->hasLocalName(optgroupTag))
-                    wrapperClass = [DOMHTMLOptGroupElement class];
-                else if (htmlElt->hasLocalName(optionTag))
-                    wrapperClass = [DOMHTMLOptionElement class];
-                else if (htmlElt->hasLocalName(inputTag))
-                    wrapperClass = [DOMHTMLInputElement class];
-                else if (htmlElt->hasLocalName(textareaTag))
-                    wrapperClass = [DOMHTMLTextAreaElement class];
-                else if (htmlElt->hasLocalName(buttonTag))
-                    wrapperClass = [DOMHTMLButtonElement class];
-                else if (htmlElt->hasLocalName(labelTag))
-                    wrapperClass = [DOMHTMLLabelElement class];
-                else if (htmlElt->hasLocalName(fieldsetTag))
-                    wrapperClass = [DOMHTMLFieldSetElement class];
-                else if (htmlElt->hasLocalName(legendTag))
-                    wrapperClass = [DOMHTMLLegendElement class];
-                else if (htmlElt->hasLocalName(ulTag))
-                    wrapperClass = [DOMHTMLUListElement class];
-                else if (htmlElt->hasLocalName(olTag))                       
-                    wrapperClass = [DOMHTMLOListElement class];
-                else if (htmlElt->hasLocalName(dlTag))
-                    wrapperClass = [DOMHTMLDListElement class];
-                else if (htmlElt->hasLocalName(dirTag))
-                    wrapperClass = [DOMHTMLDirectoryElement class];
-                else if (htmlElt->hasLocalName(menuTag))
-                    wrapperClass = [DOMHTMLMenuElement class];
-                else if (htmlElt->hasLocalName(liTag))
-                    wrapperClass = [DOMHTMLLIElement class];
-                else if (htmlElt->hasLocalName(divTag))
-                    wrapperClass = [DOMHTMLDivElement class];
-                else if (htmlElt->hasLocalName(pTag))
-                    wrapperClass = [DOMHTMLParagraphElement class];
-                else if (htmlElt->hasLocalName(h1Tag) ||
-                         htmlElt->hasLocalName(h2Tag) ||
-                         htmlElt->hasLocalName(h3Tag) ||
-                         htmlElt->hasLocalName(h4Tag) ||
-                         htmlElt->hasLocalName(h5Tag) ||
-                         htmlElt->hasLocalName(h6Tag))
-                    wrapperClass = [DOMHTMLHeadingElement class];
-                else if (htmlElt->hasLocalName(qTag))
-                    wrapperClass = [DOMHTMLQuoteElement class];
-                else if (htmlElt->hasLocalName(preTag) || htmlElt->hasLocalName(listingTag))
-                    wrapperClass = [DOMHTMLPreElement class];
-                else if (htmlElt->hasLocalName(brTag))
-                    wrapperClass = [DOMHTMLBRElement class];
-                else if (htmlElt->hasLocalName(basefontTag))
-                    wrapperClass = [DOMHTMLBaseFontElement class];
-                else if (htmlElt->hasLocalName(fontTag))
-                    wrapperClass = [DOMHTMLFontElement class];
-                else if (htmlElt->hasLocalName(hrTag))
-                    wrapperClass = [DOMHTMLHRElement class];
-                else if (htmlElt->hasLocalName(aTag))
-                    wrapperClass = [DOMHTMLAnchorElement class];
-                else if (htmlElt->hasLocalName(imgTag) ||
-                         htmlElt->hasLocalName(canvasTag))
-                    wrapperClass = [DOMHTMLImageElement class];
-                else if (htmlElt->hasLocalName(objectTag))
-                    wrapperClass = [DOMHTMLObjectElement class];
-                else if (htmlElt->hasLocalName(paramTag))
-                    wrapperClass = [DOMHTMLParamElement class];
-                else if (htmlElt->hasLocalName(appletTag))
-                    wrapperClass = [DOMHTMLAppletElement class];
-                else if (htmlElt->hasLocalName(mapTag))
-                    wrapperClass = [DOMHTMLMapElement class];
-                else if (htmlElt->hasLocalName(areaTag))
-                    wrapperClass = [DOMHTMLAreaElement class];
-                else if (htmlElt->hasLocalName(scriptTag))
-                    wrapperClass = [DOMHTMLScriptElement class];
-                else if (htmlElt->hasLocalName(tableTag))
-                    wrapperClass = [DOMHTMLTableElement class];
-                else if (htmlElt->hasLocalName(theadTag) ||
-                         htmlElt->hasLocalName(tbodyTag) ||
-                         htmlElt->hasLocalName(tfootTag))
-                    wrapperClass = [DOMHTMLTableSectionElement class];
-                else if (htmlElt->hasLocalName(tdTag))
-                    wrapperClass = [DOMHTMLTableCellElement class];
-                else if (htmlElt->hasLocalName(trTag))
-                    wrapperClass = [DOMHTMLTableRowElement class];
-                else if (htmlElt->hasLocalName(colTag) ||
-                         htmlElt->hasLocalName(colgroupTag))
-                    wrapperClass = [DOMHTMLTableColElement class];
-                else if (htmlElt->hasLocalName(captionTag))
-                    wrapperClass = [DOMHTMLTableCaptionElement class];
-                else if (htmlElt->hasLocalName(framesetTag))
-                    wrapperClass = [DOMHTMLFrameSetElement class];
-                else if (htmlElt->hasLocalName(frameTag))
-                    wrapperClass = [DOMHTMLFrameElement class];
-                else if (htmlElt->hasLocalName(iframeTag))
-                    wrapperClass = [DOMHTMLIFrameElement class];
-                else
-                    wrapperClass = [DOMHTMLElement class];
-            } else {
+            if (impl->isHTMLElement())
+                wrapperClass = elementClass(static_cast<HTMLElement*>(impl)->localName());
+            else
                 wrapperClass = [DOMElement class];
-            }
             break;
         case Node::ATTRIBUTE_NODE:
             wrapperClass = [DOMAttr class];
@@ -624,11 +599,10 @@ static ListenerMap *listenerMap;
             wrapperClass = [DOMComment class];
             break;
         case Node::DOCUMENT_NODE:
-            if (static_cast<Document *>(impl)->isHTMLDocument()) {
+            if (static_cast<Document*>(impl)->isHTMLDocument())
                 wrapperClass = [DOMHTMLDocument class];
-            } else {
+            else
                 wrapperClass = [DOMDocument class];
-            }
             break;
         case Node::DOCUMENT_TYPE_NODE:
             wrapperClass = [DOMDocumentType class];
@@ -2315,9 +2289,9 @@ short ObjCNodeFilterCondition::acceptNode(Node* node) const
 
 @end
 
-ObjCEventListener *ObjCEventListener::find(id <DOMEventListener> listener)
+ObjCEventListener* ObjCEventListener::find(id <DOMEventListener> listener)
 {
-    if (ListenerMap *map = listenerMap)
+    if (ListenerMap* map = listenerMap)
         return map->get(listener);
     return NULL;
 }
@@ -2334,7 +2308,7 @@ ObjCEventListener *ObjCEventListener::create(id <DOMEventListener> listener)
 ObjCEventListener::ObjCEventListener(id <DOMEventListener> listener)
     : m_listener([listener retain])
 {
-    ListenerMap *map = listenerMap;
+    ListenerMap* map = listenerMap;
     if (!map) {
         map = new ListenerMap;
         listenerMap = map;

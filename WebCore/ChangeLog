@@ -1,3 +1,17 @@
+2006-05-10  Matt Gough  <matt@softchaos.com>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        Optimization of [DOMNode _nodeWith:] to look up the obj-c wrapperClass
+        for each HTMLElement using a HashMap instead of by repeated calls to
+        htmlElt->hasLocalName(someTag). 
+
+        * bindings/objc/DOM.mm:
+        (addElementClass): Added.
+        (createHTMLElementClassMap):
+        (elementClass):
+        (+[DOMNode _nodeWith:]): Added code to call elementClass.
+
 2006-05-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
