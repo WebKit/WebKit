@@ -2,6 +2,24 @@
 
         Reviewed by Hyatt.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8760
+          crash (hang?) on subtlegradient.com article page
+
+        * manual-tests/first-line-style-crash.html: Added.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::createStyleForElement): Changed to not return the
+        shared styleNotYetAvailable if allowSharing is off.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getPseudoStyle): In the FIRST_LINE_INHERITED case,
+        set the styleType on the style returned from createStyleForElement().
+        * rendering/render_style.h:
+        (WebCore::RenderStyle::setStyleType): Added. Called from RenderObject::getPseudoStyle().
+
+2006-05-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8789
           RenderStyle::getPseudoStyle() always returns 0
 

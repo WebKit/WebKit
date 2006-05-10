@@ -686,7 +686,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
 
 RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing)
 {
-    if (!e->document()->haveStylesheetsLoaded()) {
+    if (allowSharing && !e->document()->haveStylesheetsLoaded()) {
         if (!styleNotYetAvailable) {
             styleNotYetAvailable = ::new RenderStyle();
             styleNotYetAvailable->setDisplay(NONE);

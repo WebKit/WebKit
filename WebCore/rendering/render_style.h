@@ -1086,6 +1086,7 @@ public:
     void inheritFrom(const RenderStyle* inheritParent);
 
     PseudoId styleType() { return  static_cast<PseudoId>(noninherited_flags._styleType); }
+    void setStyleType(PseudoId styleType) { noninherited_flags._styleType = styleType; }
 
     RenderStyle* getPseudoStyle(PseudoId pi);
     void addPseudoStyle(RenderStyle* pseudo);
