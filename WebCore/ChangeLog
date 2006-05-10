@@ -1,3 +1,73 @@
+2006-05-10  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 8809, lift the Mac-specific WebTextRenderer code for
+        drawing and measuring of runs up into the Font class.  The fast code
+        path is in Font.cpp and is designed to be mostly cross-platform.  The
+        slow code path is in FontMac.cpp and is Mac-specific.
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Font.cpp:
+        (WebCore::isSpace):
+        (WebCore::):
+        (WebCore::isRoundingHackCharacter):
+        (WebCore::m_finalRoundingWidth):
+        (WebCore::WidthIterator::advance):
+        (WebCore::WidthIterator::normalizeVoicingMarks):
+        (WebCore::Font::primaryFont):
+        (WebCore::Font::setAlwaysUseComplexPath):
+        (WebCore::Font::canUseGlyphCache):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::floatWidthForSimpleText):
+        * platform/Font.h:
+        * platform/FontData.h:
+        (WebCore::FontData::platformData):
+        * platform/GlyphBuffer.h: Added.
+        (WebCore::GlyphBuffer::GlyphBuffer):
+        (WebCore::GlyphBuffer::isEmpty):
+        (WebCore::GlyphBuffer::size):
+        (WebCore::GlyphBuffer::glyphs):
+        (WebCore::GlyphBuffer::advances):
+        (WebCore::GlyphBuffer::fontDataAt):
+        (WebCore::GlyphBuffer::swap):
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/mac/FontData.mm:
+        (WebCore::isSpace):
+        (WebCore::isRoundingHackCharacter):
+        (WebCore::FontData::widthForGlyph):
+        (WebCore::m_ATSUMirrors):
+        (WebCore::FontData::xHeight):
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::findSubstituteFont):
+        (WebCore::rendererForAlternateFont):
+        (WebCore::findSubstituteRenderer):
+        (WebCore::FontData::findSubstituteFontData):
+        (WebCore::computeWidthForSpace):
+        (WebCore::FontData::updateGlyphMapEntry):
+        (WebCore::extendGlyphMap):
+        (WebCore::extendWidthMap):
+        (WebCore::createATSULayoutParameters):
+        (WebCore::FontData::glyphForCharacter):
+        (WebCore::advanceWidthIterator):
+        (WebCore::shouldUseATSU):
+        * platform/mac/FontMac.mm:
+        (WebCore::ATSULayoutParameters::m_padPerSpace):
+        (WebCore::addDirectionalOverride):
+        (WebCore::initializeATSUStyle):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+        (WebCore::disposeATSULayoutParameters):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::drawGlyphs):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreSetAlwaysUseATSU):
+
 2006-05-10  Darin Adler  <darin@apple.com>
 
         - another try at fixing the Windows build

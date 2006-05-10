@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCoreTextRenderer.h"
 
+#import "Font.h"
 #import "FontData.h"
 #import "WebTextRendererFactory.h"
 
@@ -81,7 +82,7 @@ bool WebCoreShouldUseFontSmoothing()
 
 void WebCoreSetAlwaysUseATSU(bool useATSU)
 {
-    FontData::setAlwaysUseATSU(useATSU);
+    Font::setAlwaysUseComplexPath(useATSU);
 }
 
 NSFont* WebCoreFindFont(NSString* familyName, NSFontTraitMask traits, int size)

@@ -29,6 +29,7 @@
 #include "Color.h"
 #include "FontDescription.h"
 #include "TextDirection.h"
+#include "GlyphBuffer.h"
 
 #if __APPLE__
 // FIXME: Should not be necessary.
@@ -41,6 +42,7 @@ class FontFallbackList;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
+class FloatPoint;
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
@@ -123,6 +125,35 @@ public:
     int lineSpacing() const;
     float xHeight() const;
 
+    const FontData* primaryFont() const;
+
+private:
+#if __APPLE__
+    // FIXME: This will eventually be cross-platform, but we want to keep Windows compiling for now.
+    bool canUseGlyphCache(const UChar* str, int to) const;
+    void drawSimpleText(GraphicsContext*, const IntPoint&, int tabWidth, int xpos,
+                        const UChar*, int len, int from, int to, int toAdd, 
+                        TextDirection, bool visuallyOrdered) const;
+    void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
+    void drawComplexText(GraphicsContext*, const IntPoint&, int tabWidth, int xpos,
+                         const UChar*, int len, int from, int to, int toAdd, 
+                         TextDirection, bool visuallyOrdered) const;
+    float floatWidthForSimpleText(const UChar*, int len, int from, int to, 
+                                  int tabWidth, int xpos, int toAdd, 
+                                  TextDirection, bool visuallyOrdered, 
+                                  bool applyWordRounding, bool applyRunRounding,
+                                  const FontData* substituteFont,
+                                  float* startX, GlyphBuffer*) const;
+    float floatWidthForComplexText(const UChar*, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding = true) const;
+
+    friend struct WidthIterator;
+    
+    // Useful for debugging the complex font rendering code path.
+public:
+    static void setAlwaysUseComplexPath(bool);
+    static bool gAlwaysUseComplexPath;
+#endif
+
 private:
     FontDescription m_fontDescription;
     mutable RefPtr<FontFallbackList> m_fontList;
@@ -130,6 +161,11 @@ private:
     short m_wordSpacing;
 };
 
+#if __APPLE__
+    // FIXME: This will eventually be cross-platform, but we want to keep Windows compiling for now.
+    bool isSpace(unsigned c);
+    bool isRoundingHackCharacter(UChar c);
+#endif
 }
 
 #endif

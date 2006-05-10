@@ -28,6 +28,7 @@
  */
 
 #import "config.h"
+#import "Font.h"
 #import "FontData.h"
 #import "Color.h"
 #import "WebCoreTextRenderer.h"
@@ -42,11 +43,15 @@
 #import "WebCoreSystemInterface.h"
 
 #import "FloatRect.h"
+#import "FontDescription.h"
 
 #import <float.h>
 
 #import <unicode/uchar.h>
 #import <unicode/unorm.h>
+
+// FIXME: Just temporary for the #defines of constants that we will eventually stop using.
+#import "GlyphBuffer.h"
 
 namespace WebCore
 {
@@ -98,13 +103,13 @@ struct WidthMap {
 };
 
 typedef struct GlyphEntry {
-    ATSGlyphRef glyph;
-    FontData *renderer;
+    Glyph glyph;
+    const FontData *renderer;
 } GlyphEntry;
 
 struct GlyphMap {
-    UChar32 startRange;
-    UChar32 endRange;
+    UChar startRange;
+    UChar endRange;
     GlyphMap *next;
     GlyphEntry *glyphs;
 };
@@ -133,15 +138,13 @@ typedef struct ATSULayoutParameters
     float padPerSpace;
 } ATSULayoutParameters;
 
-static FontData *rendererForAlternateFont(FontData *, FontPlatformData);
+static const FontData *rendererForAlternateFont(const FontData *, FontPlatformData);
 
-static WidthMap *extendWidthMap(FontData *, ATSGlyphRef);
-static ATSGlyphRef extendGlyphMap(FontData *, UChar32);
-static void updateGlyphMapEntry(FontData *, UChar32, ATSGlyphRef, FontData *substituteRenderer);
+static WidthMap *extendWidthMap(const FontData *, ATSGlyphRef);
+static ATSGlyphRef extendGlyphMap(const FontData *, UChar32);
 
 static void freeWidthMap(WidthMap *);
 static void freeGlyphMap(GlyphMap *);
-static inline ATSGlyphRef glyphForCharacter(FontData **, UChar32);
 
 // Measuring runs.
 static float CG_floatWidthForRun(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *,
@@ -182,12 +185,9 @@ static NSString *pathFromFont(NSFont *font);
 static void createATSULayoutParameters(ATSULayoutParameters *params, FontData *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style);
 static void disposeATSULayoutParameters(ATSULayoutParameters *params);
 
-// Globals
-static bool alwaysUseATSU = NO;
-
 // Character property functions.
 
-static inline bool isSpace(UChar32 c)
+inline bool isSpace(UChar32 c)
 {
     return c == SPACE || c == '\t' || c == '\n' || c == NO_BREAK_SPACE;
 }
@@ -203,7 +203,7 @@ static const uint8_t isRoundingHackCharacterTable[0x100] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static inline bool isRoundingHackCharacter(UChar32 c)
+inline bool isRoundingHackCharacter(UChar c)
 {
     return (((c & ~0xFF) == 0 && isRoundingHackCharacterTable[c]));
 }
@@ -247,19 +247,19 @@ void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry)
 
 // Map utility functions
 
-static inline WebGlyphWidth widthForGlyph(FontData *renderer, ATSGlyphRef glyph)
+inline float FontData::widthForGlyph(Glyph glyph) const
 {
     WidthMap *map;
-    for (map = renderer->m_glyphToWidthMap; 1; map = map->next) {
+    for (map = m_glyphToWidthMap; 1; map = map->next) {
         if (!map)
-            map = extendWidthMap(renderer, glyph);
+            map = extendWidthMap(this, glyph);
         if (glyph >= map->startRange && glyph <= map->endRange)
             break;
     }
-    WebGlyphWidth width = map->widths[glyph - map->startRange];
+    float width = map->widths[glyph - map->startRange];
     if (width >= 0)
         return width;
-    NSFont *font = renderer->m_font.font;
+    NSFont *font = m_font.font;
     float pointSize = [font pointSize];
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
@@ -267,7 +267,7 @@ static inline WebGlyphWidth widthForGlyph(FontData *renderer, ATSGlyphRef glyph)
         LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
         advance.width = 0;
     }
-    width = advance.width + renderer->m_syntheticBoldOffset;
+    width = advance.width + m_syntheticBoldOffset;
     map->widths[glyph - map->startRange] = width;
     return width;
 }
@@ -397,7 +397,7 @@ static NSString *webFallbackFontFamily(void)
 
 FontData::FontData(const FontPlatformData& f)
 :m_styleGroup(0), m_font(f), m_characterToGlyphMap(0), m_glyphToWidthMap(0), m_treatAsFixedPitch(false),
- m_smallCapsRenderer(0), m_ATSUStyleInitialized(false), m_ATSUMirrors(false)
+ m_smallCapsFontData(0), m_ATSUStyleInitialized(false), m_ATSUMirrors(false)
 {    
     m_font = f;
 
@@ -508,7 +508,7 @@ float FontData::xHeight() const
 {
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
-    FontData *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:m_font];
+    const FontData *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:m_font];
     NSGlyph xGlyph = glyphForCharacter(&renderer, 'x');
     if (xGlyph) {
         NSRect xBox = [m_font.font boundingRectForGlyph:xGlyph];
@@ -677,27 +677,20 @@ int FontData::pointToOffset(const WebCoreTextRun* run, const WebCoreTextStyle* s
     return CG_pointToOffset(this, run, style, x, includePartialGlyphs);
 }
 
-bool FontData::gAlwaysUseATSU = false;
-
-void FontData::setAlwaysUseATSU(bool alwaysUse)
+FontData* FontData::smallCapsFontData() const
 {
-    gAlwaysUseATSU = alwaysUse;
-}
-
-static FontData *getSmallCapsRenderer(FontData *renderer)
-{
-    if (!renderer->m_smallCapsRenderer) {
+    if (!m_smallCapsFontData) {
 	NS_DURING
-            float size = [renderer->m_font.font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER;
+            float size = [m_font.font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER;
             FontPlatformData smallCapsFont;
             WebCoreInitializeFont(&smallCapsFont);
-            smallCapsFont.font = [[NSFontManager sharedFontManager] convertFont:renderer->m_font.font toSize:size];
-	    renderer->m_smallCapsRenderer = rendererForAlternateFont(renderer, smallCapsFont);
+            smallCapsFont.font = [[NSFontManager sharedFontManager] convertFont:m_font.font toSize:size];
+	    m_smallCapsFontData = (FontData*)rendererForAlternateFont(this, smallCapsFont);
 	NS_HANDLER
             NSLog(@"uncaught exception selecting font for small caps: %@", localException);
 	NS_ENDHANDLER
     }
-    return renderer->m_smallCapsRenderer;
+    return m_smallCapsFontData;
 }
 
 static inline bool fontContainsString(NSFont *font, NSString *string)
@@ -706,7 +699,7 @@ static inline bool fontContainsString(NSFont *font, NSString *string)
     return set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
 }
 
-static NSFont *findSubstituteFont(FontData *renderer, NSString *string, NSString **families)
+static NSFont *findSubstituteFont(const FontData *renderer, NSString *string, NSString **families)
 {
     NSFont *substituteFont = nil;
 
@@ -752,7 +745,7 @@ static NSFont *findSubstituteFont(FontData *renderer, NSString *string, NSString
     return substituteFont;
 }
 
-static FontData *rendererForAlternateFont(FontData *renderer, FontPlatformData alternateFont)
+static const FontData *rendererForAlternateFont(const FontData *renderer, FontPlatformData alternateFont)
 {
     if (!alternateFont.font)
         return nil;
@@ -772,7 +765,7 @@ static FontData *rendererForAlternateFont(FontData *renderer, FontPlatformData a
     return [[WebTextRendererFactory sharedFactory] rendererWithFont:alternateFont];
 }
 
-static FontData *findSubstituteRenderer(FontData *renderer, const unichar *characters, int numCharacters, NSString **families)
+static const FontData *findSubstituteRenderer(const FontData *renderer, const unichar *characters, int numCharacters, NSString **families)
 {
     FontPlatformData substituteFont;
     WebCoreInitializeFont(&substituteFont);
@@ -780,6 +773,12 @@ static FontData *findSubstituteRenderer(FontData *renderer, const unichar *chara
     substituteFont.font = findSubstituteFont(renderer, string, families);
     [string release];
     return rendererForAlternateFont(renderer, substituteFont);
+}
+
+const FontData* FontData::findSubstituteFontData(const UChar* characters, unsigned numCharacters, const FontDescription& fontDescription) const
+{
+    CREATE_FAMILY_ARRAY(fontDescription, families);
+    return findSubstituteRenderer(this, (const unichar*)characters, numCharacters, families);
 }
 
 // Nasty hack to determine if we should round or ceil space widths.
@@ -791,7 +790,7 @@ static bool computeWidthForSpace(FontData *renderer)
     if (renderer->m_spaceGlyph == 0)
         return NO;
 
-    float width = widthForGlyph(renderer, renderer->m_spaceGlyph);
+    float width = renderer->widthForGlyph(renderer->m_spaceGlyph);
 
     renderer->m_spaceWidth = width;
 
@@ -1071,10 +1070,10 @@ static float CG_floatWidthForRun(FontData *renderer, const WebCoreTextRun *run, 
     return runWidth;
 }
 
-static void updateGlyphMapEntry(FontData *renderer, UChar32 c, ATSGlyphRef glyph, FontData *substituteRenderer)
+void FontData::updateGlyphMapEntry(UChar c, ATSGlyphRef glyph, const FontData *substituteRenderer) const
 {
     GlyphMap *map;
-    for (map = renderer->m_characterToGlyphMap; map; map = map->next) {
+    for (map = m_characterToGlyphMap; map; map = map->next) {
         UChar32 start = map->startRange;
         if (c >= start && c <= map->endRange) {
             int i = c - start;
@@ -1088,7 +1087,7 @@ static void updateGlyphMapEntry(FontData *renderer, UChar32 c, ATSGlyphRef glyph
     }
 }
 
-static ATSGlyphRef extendGlyphMap(FontData *renderer, UChar32 c)
+static ATSGlyphRef extendGlyphMap(const FontData *renderer, UChar32 c)
 {
     GlyphMap *map = new GlyphMap;
     ATSLayoutRecord *glyphRecord;
@@ -1184,7 +1183,7 @@ static ATSGlyphRef extendGlyphMap(FontData *renderer, UChar32 c)
     return glyph;
 }
 
-static WidthMap *extendWidthMap(FontData *renderer, ATSGlyphRef glyph)
+static WidthMap *extendWidthMap(const FontData *renderer, ATSGlyphRef glyph)
 {
     WidthMap *map = new WidthMap;
     unsigned end;
@@ -1356,7 +1355,7 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, FontData *r
         lastOffset = substituteOffset;
         status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength);
         if (status == kATSUFontsMatched || status == kATSUFontsNotMatched) {
-            substituteRenderer = findSubstituteRenderer(renderer, run->characters+substituteOffset, substituteLength, style->families);
+            substituteRenderer = (FontData*)findSubstituteRenderer(renderer, run->characters+substituteOffset, substituteLength, style->families);
             if (substituteRenderer) {
                 initializeATSUStyle(substituteRenderer);
                 if (substituteRenderer->m_ATSUStyle)
@@ -1376,8 +1375,8 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, FontData *r
             if (i == substituteOffset || i == substituteOffset + substituteLength) {
                 if (isSmallCap) {
                     isSmallCap = false;
-                    initializeATSUStyle(getSmallCapsRenderer(r));
-                    ATSUSetRunStyle(layout, getSmallCapsRenderer(r)->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
+                    initializeATSUStyle(r->smallCapsFontData());
+                    ATSUSetRunStyle(layout, r->smallCapsFontData()->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
                 }
                 if (i == substituteOffset && substituteLength > 0)
                     r = substituteRenderer;
@@ -1390,19 +1389,19 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, FontData *r
                 UniChar c = charBuffer[i];
                 UniChar newC;
                 if (U_GET_GC_MASK(c) & U_GC_M_MASK)
-                    renderers[i] = isSmallCap ? getSmallCapsRenderer(r) : r;
+                    renderers[i] = isSmallCap ? r->smallCapsFontData() : r;
                 else if (!u_isUUppercase(c) && (newC = u_toupper(c)) != c) {
                     charBuffer[i] = newC;
                     if (!isSmallCap) {
                         isSmallCap = true;
                         firstSmallCap = i;
                     }
-                    renderers[i] = getSmallCapsRenderer(r);
+                    renderers[i] = r->smallCapsFontData();
                 } else {
                     if (isSmallCap) {
                         isSmallCap = false;
-                        initializeATSUStyle(getSmallCapsRenderer(r));
-                        ATSUSetRunStyle(layout, getSmallCapsRenderer(r)->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
+                        initializeATSUStyle(r->smallCapsFontData());
+                        ATSUSetRunStyle(layout, r->smallCapsFontData()->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
                     }
                     renderers[i] = r;
                 }
@@ -1738,13 +1737,13 @@ static void freeGlyphMap(GlyphMap *map)
     }
 }
 
-static inline ATSGlyphRef glyphForCharacter(FontData **renderer, UChar32 c)
+inline Glyph FontData::glyphForCharacter(const FontData **renderer, unsigned c) const
 {
     // this loop is hot, so it is written to avoid LSU stalls
     GlyphMap *map;
     GlyphMap *nextMap;
     for (map = (*renderer)->m_characterToGlyphMap; map; map = nextMap) {
-        UChar32 start = map->startRange;
+        UChar start = map->startRange;
         nextMap = map->next;
         if (c >= start && c <= map->endRange) {
             GlyphEntry *ge = &map->glyphs[c - start];
@@ -1828,8 +1827,8 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
 
     const WebCoreTextStyle *style = iterator->style;
     bool rtl = style->rtl;
-    bool needCharTransform = rtl | style->smallCaps;
-    bool hasExtraSpacing = style->letterSpacing | style->wordSpacing | style->padding;
+    bool needCharTransform = rtl || style->smallCaps;
+    bool hasExtraSpacing = style->letterSpacing || style->wordSpacing || style->padding;
 
     float runWidthSoFar = iterator->runWidthSoFar;
     float lastRoundingWidth = iterator->finalRoundingWidth;
@@ -1865,7 +1864,7 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
             }
         }
 
-        FontData *renderer = iterator->renderer;
+        const FontData *renderer = iterator->renderer;
 
         if (needCharTransform) {
             if (rtl)
@@ -1876,19 +1875,19 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
                 UChar32 upperC = u_toupper(c);
                 if (upperC != c) {
                     c = upperC;
-                    renderer = getSmallCapsRenderer(renderer);
+                    renderer = renderer->smallCapsFontData();
                 }
             }
         }
 
-        ATSGlyphRef glyph = glyphForCharacter(&renderer, c);
+        Glyph glyph = renderer->glyphForCharacter(&renderer, c);
 
         // Now that we have glyph and font, get its width.
         WebGlyphWidth width;
         if (c == '\t' && style->tabWidth) {
             width = style->tabWidth - fmodf(style->xpos + runWidthSoFar, style->tabWidth);
         } else {
-            width = widthForGlyph(renderer, glyph);
+            width = renderer->widthForGlyph(glyph);
             // We special case spaces in two ways when applying word rounding.
             // First, we round spaces to an adjusted width in all fonts.
             // Second, in fixed-pitch fonts we ensure that all characters that
@@ -1900,7 +1899,7 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string. If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
         if (glyph == 0 && style->attemptFontSubstitution) {
-            FontData *substituteRenderer = findSubstituteRenderer(renderer, cp, clusterLength, style->families);
+            FontData *substituteRenderer = (FontData*)findSubstituteRenderer(renderer, cp, clusterLength, style->families);
             if (substituteRenderer) {
                 WebCoreTextRun clusterRun = { cp, clusterLength, 0, clusterLength };
                 WebCoreTextStyle clusterStyle = *style;
@@ -1917,7 +1916,7 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
                     assert(substituteRenderer == localRendererBuffer[0]);
                     width = localWidthBuffer[0];
                     glyph = localGlyphBuffer[0];
-                    updateGlyphMapEntry(renderer, c, glyph, substituteRenderer);
+                    renderer->updateGlyphMapEntry(c, glyph, substituteRenderer);
                     renderer = substituteRenderer;
                 }
             }
@@ -1982,7 +1981,7 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
             assert(renderersUsed);
             assert(glyphsUsed);
             *widths++ = (rtl ? oldWidth + lastRoundingWidth : width);
-            *renderersUsed++ = renderer;
+            *renderersUsed++ = (FontData*)renderer;
             *glyphsUsed++ = glyph;
         }
 
@@ -2015,7 +2014,7 @@ static bool fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 
 static bool shouldUseATSU(const WebCoreTextRun *run)
 {
-    if (alwaysUseATSU)
+    if (Font::gAlwaysUseComplexPath)
         return YES;
         
     const UniChar *characters = run->characters;
