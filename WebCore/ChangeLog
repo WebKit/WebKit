@@ -1,5 +1,15 @@
 2006-05-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8781
+          REGRESSION: image maps with "poly" areas, including one at lisp.geek.nz, don't work
+
+        * html/html_imageimpl.cpp: (WebCore::HTMLAreaElement::getRegion): Remove extra Path
+        definition that was shadowing the real one.
+
+2006-05-09  Darin Adler  <darin@apple.com>
+
         - fix build
 
         * rendering/render_style.cpp: (WebCore::RenderStyle::getPseudoStyle):

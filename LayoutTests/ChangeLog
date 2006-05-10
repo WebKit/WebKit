@@ -1,5 +1,13 @@
 2006-05-09  Darin Adler  <darin@apple.com>
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8781
+          REGRESSION: image maps with "poly" areas, including one at lisp.geek.nz, don't work
+
+        * fast/replaced/image-map.html: Added.
+        * fast/replaced/image-map-expected.txt: Added.
+
+2006-05-09  Darin Adler  <darin@apple.com>
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6310
           text-transform: uppercase/lowercase don't handle cases one character becomes two
 

@@ -597,7 +597,6 @@ Path HTMLAreaElement::getRegion(int width, int height) const
     switch (shape) {
         case Poly:
             if (m_coordsLen >= 6) {
-                Path path;
                 int numPoints = m_coordsLen / 2;
                 path.moveTo(FloatPoint(m_coords[0].calcMinValue(width), m_coords[1].calcMinValue(height)));
                 for (int i = 1; i < numPoints; ++i)
