@@ -40,18 +40,11 @@ namespace WebCore {
 #if __APPLE__
 
 // FIXME: Cross-platform eventually, but for now we compile only on OS X.
-#define SPACE 0x0020
-#define NO_BREAK_SPACE 0x00A0
 
 // According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
 #define HIRAGANA_KATAKANA_VOICING_MARKS 8
 
-bool isSpace(unsigned c)
-{
-    return c == SPACE || c == '\t' || c == '\n' || c == NO_BREAK_SPACE;
-}
-
-static const uint8_t isRoundingHackCharacterTable[0x100] = {
+const uint8_t Font::gRoundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     1 /*space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*-*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*?*/,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -61,11 +54,6 @@ static const uint8_t isRoundingHackCharacterTable[0x100] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-
-bool isRoundingHackCharacter(UChar32 c)
-{
-    return (((c & ~0xFF) == 0 && isRoundingHackCharacterTable[c]));
-}
 
 struct WidthIterator {
     WidthIterator(const Font* font, const UChar* str, int from, int to, int len,
@@ -116,7 +104,7 @@ WidthIterator::WidthIterator(const Font* font, const UChar* str, int from, int t
     } else {
         float numSpaces = 0;
         for (int i = from; i < to; i++)
-            if (isSpace(m_characters[i]))
+            if (Font::treatAsSpace(m_characters[i]))
                 numSpaces++;
 
         m_padding = toAdd;
@@ -239,7 +227,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             if (width && m_font->letterSpacing())
                 width += m_font->letterSpacing();
 
-            if (isSpace(c)) {
+            if (Font::treatAsSpace(c)) {
                 // Account for padding. WebCore uses space padding to justify text.
                 // We distribute the specified padding over the available spaces in the run.
                 if (m_padding) {
@@ -255,7 +243,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
                 // Account for word spacing.
                 // We apply additional space between "words" by adding width to the space character.
-                if (currentCharacter != 0 && !isSpace(cp[-1]) && m_font->wordSpacing())
+                if (currentCharacter != 0 && !Font::treatAsSpace(cp[-1]) && m_font->wordSpacing())
                     width += m_font->wordSpacing();
             }
         }
@@ -273,12 +261,12 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
         // Force characters that are used to determine word boundaries for the rounding hack
         // to be integer width, so following words will start on an integer boundary.
-        if (m_applyWordRounding && isRoundingHackCharacter(c))
+        if (m_applyWordRounding && Font::isRoundingHackCharacter(c))
             width = ceilf(width);
 
         // Check to see if the next character is a "rounding hack character", if so, adjust
         // width so that the total run width will be on an integer boundary.
-        if ((m_applyWordRounding && currentCharacter < m_len && isRoundingHackCharacter(*cp))
+        if ((m_applyWordRounding && currentCharacter < m_len && Font::isRoundingHackCharacter(*cp))
                 || (m_applyRunRounding && currentCharacter >= m_to)) {
             float totalWidth = m_widthToStart + runWidthSoFar + width;
             width += ceilf(totalWidth) - totalWidth;

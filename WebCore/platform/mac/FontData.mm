@@ -187,27 +187,6 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params);
 
 // Character property functions.
 
-inline bool isSpace(UChar32 c)
-{
-    return c == SPACE || c == '\t' || c == '\n' || c == NO_BREAK_SPACE;
-}
-
-static const uint8_t isRoundingHackCharacterTable[0x100] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1 /*space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*-*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*?*/,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1 /*no-break space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-
-bool isRoundingHackCharacter(UChar c)
-{
-    return (((c & ~0xFF) == 0 && isRoundingHackCharacterTable[c]));
-}
-
 void WebCoreInitializeFont(FontPlatformData *font)
 {
     font->font = nil;
@@ -332,7 +311,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             if (hasExtraSpacing) {
                 if (width && style->letterSpacing)
                     width +=style->letterSpacing;
-                if (isSpace(nextCh)) {
+                if (Font::treatAsSpace(nextCh)) {
                     if (style->padding) {
                         if (padding < params->padPerSpace) {
                             width += padding;
@@ -342,7 +321,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                             padding -= params->padPerSpace;
                         }
                     }
-                    if (offset != 0 && !isSpace(*((UniChar *)(((char *)characters)+offset) - 1)) && style->wordSpacing)
+                    if (offset != 0 && !Font::treatAsSpace(*((UniChar *)(((char *)characters)+offset) - 1)) && style->wordSpacing)
                         width += style->wordSpacing;
                 }
             }
@@ -353,13 +332,13 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             // We won't actually round unless the other conditions are satisfied.
             nextCh = isLastChar ? ' ' : *(UniChar *)(((char *)characters)+offset);
 
-            if (isRoundingHackCharacter(ch))
+            if (Font::isRoundingHackCharacter(ch))
                 width = ceilf(width);
             lastAdjustedPos = lastAdjustedPos + width;
-            if (isRoundingHackCharacter(nextCh)
+            if (Font::isRoundingHackCharacter(nextCh)
                 && (!isLastChar
                     || style->applyRunRounding
-                    || (run->to < (int)run->length && isRoundingHackCharacter(characters[run->to - run->from])))) {
+                    || (run->to < (int)run->length && Font::isRoundingHackCharacter(characters[run->to - run->from])))) {
                 if (!style->rtl)
                     lastAdjustedPos = ceilf(lastAdjustedPos);
                 else {
@@ -1416,7 +1395,7 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, FontData *r
         float numSpaces = 0;
         unsigned k;
         for (k = 0; k < totalLength; k++)
-            if (isSpace(run->characters[k]))
+            if (Font::treatAsSpace(run->characters[k]))
                 numSpaces++;
 
         params->padPerSpace = ceilf(style->padding / numSpaces);
@@ -1773,7 +1752,7 @@ static void initializeWidthIterator(WidthIterator *iterator, FontData *renderer,
         float numSpaces = 0;
         int k;
         for (k = run->from; k < run->to; k++)
-            if (isSpace(run->characters[k]))
+            if (Font::treatAsSpace(run->characters[k]))
                 numSpaces++;
 
         iterator->padding = style->padding;
@@ -1927,7 +1906,7 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
             if (width && style->letterSpacing)
                 width += style->letterSpacing;
 
-            if (isSpace(c)) {
+            if (Font::treatAsSpace(c)) {
                 // Account for padding. WebCore uses space padding to justify text.
                 // We distribute the specified padding over the available spaces in the run.
                 if (style->padding) {
@@ -1943,7 +1922,7 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
 
                 // Account for word spacing.
                 // We apply additional space between "words" by adding width to the space character.
-                if (currentCharacter != 0 && !isSpace(cp[-1]) && style->wordSpacing)
+                if (currentCharacter != 0 && !Font::treatAsSpace(cp[-1]) && style->wordSpacing)
                     width += style->wordSpacing;
             }
         }
@@ -1961,12 +1940,12 @@ static unsigned advanceWidthIterator(WidthIterator *iterator, unsigned offset, f
 
         // Force characters that are used to determine word boundaries for the rounding hack
         // to be integer width, so following words will start on an integer boundary.
-        if (style->applyWordRounding && isRoundingHackCharacter(c))
+        if (style->applyWordRounding && Font::isRoundingHackCharacter(c))
             width = ceilf(width);
 
         // Check to see if the next character is a "rounding hack character", if so, adjust
         // width so that the total run width will be on an integer boundary.
-        if ((style->applyWordRounding && currentCharacter < run->length && isRoundingHackCharacter(*cp))
+        if ((style->applyWordRounding && currentCharacter < run->length && Font::isRoundingHackCharacter(*cp))
                 || (style->applyRunRounding && currentCharacter >= (unsigned)run->to)) {
             float totalWidth = iterator->widthToStart + runWidthSoFar + width;
             width += ceilf(totalWidth) - totalWidth;

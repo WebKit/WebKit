@@ -269,7 +269,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             if (hasExtraSpacing) {
                 if (width && params->m_font->letterSpacing())
                     width +=params->m_font->letterSpacing();
-                if (isSpace(nextCh)) {
+                if (Font::treatAsSpace(nextCh)) {
                     if (params->m_padding) {
                         if (padding < params->m_padPerSpace) {
                             width += padding;
@@ -279,7 +279,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                             padding -= params->m_padPerSpace;
                         }
                     }
-                    if (offset != 0 && !isSpace(*((UniChar *)(((char *)characters)+offset) - 1)) && params->m_font->wordSpacing())
+                    if (offset != 0 && !Font::treatAsSpace(*((UniChar *)(((char *)characters)+offset) - 1)) && params->m_font->wordSpacing())
                         width += params->m_font->wordSpacing();
                 }
             }
@@ -290,13 +290,13 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             // We won't actually round unless the other conditions are satisfied.
             nextCh = isLastChar ? ' ' : *(UniChar *)(((char *)characters)+offset);
 
-            if (isRoundingHackCharacter(ch))
+            if (Font::isRoundingHackCharacter(ch))
                 width = ceilf(width);
             lastAdjustedPos = lastAdjustedPos + width;
-            if (isRoundingHackCharacter(nextCh)
+            if (Font::isRoundingHackCharacter(nextCh)
                 && (!isLastChar
                     || params->m_applyRunRounding
-                    || (params->m_to < (int)params->m_len && isRoundingHackCharacter(characters[params->m_to - params->m_from])))) {
+                    || (params->m_to < (int)params->m_len && Font::isRoundingHackCharacter(characters[params->m_to - params->m_from])))) {
                 if (!params->m_rtl)
                     lastAdjustedPos = ceilf(lastAdjustedPos);
                 else {
@@ -459,7 +459,7 @@ void ATSULayoutParameters::initialize(const Font* font)
         float numSpaces = 0;
         unsigned k;
         for (k = 0; k < totalLength; k++)
-            if (isSpace(m_characters[k]))
+            if (Font::treatAsSpace(m_characters[k]))
                 numSpaces++;
 
         m_padPerSpace = ceilf(m_padding / numSpaces);

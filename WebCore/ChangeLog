@@ -1,3 +1,28 @@
+2006-05-10  David Hyatt  <hyatt@apple.com>
+
+        Rename isSpace to treatAsSpace.  Move it and the rounding hack function into
+        Font and make them static methods (inlined in the header).  Make the rounding
+        hack character table a static member as well.  Remove the redundant space/rounding
+        functions from FontData.mm.
+
+        Reviewed by darin
+
+        * platform/Font.cpp:
+        (WebCore::):
+        (WebCore::m_finalRoundingWidth):
+        (WebCore::WidthIterator::advance):
+        * platform/Font.h:
+        (WebCore::Font::treatAsSpace):
+        (WebCore::Font::isRoundingHackCharacter):
+        * platform/mac/FontData.mm:
+        (WebCore::overrideLayoutOperation):
+        (WebCore::createATSULayoutParameters):
+        (WebCore::initializeWidthIterator):
+        (WebCore::advanceWidthIterator):
+        * platform/mac/FontMac.mm:
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+
 2006-05-10  Darin Adler  <darin@apple.com>
 
         * WebCore: Removed an extra WebCore subtree that somehow got checked in.
