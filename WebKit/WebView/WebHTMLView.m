@@ -715,6 +715,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         @"text/x-qif",
         @"text/x-csv",          // CSV (for Address Book and Microsoft Outlook)
         @"text/x-vcf",          // vCard type used in Sun affinity app
+        @"text/rtf",            // Rich Text Format
         nil];
 }
 
