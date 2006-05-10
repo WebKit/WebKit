@@ -1,3 +1,18 @@
+2006-05-10  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Anders.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6621
+          Blank page in Safari; http://www.capitalone.co.uk/web/MenuUrl?z=null&c=null% (Works in Firefox & IE)
+
+        The problem itself was fixed by Anders in bug 8808 (WebCore should handle text files).
+
+        * http/tests/misc/resources: Added.
+        * http/tests/misc/resources/200.html: Added.
+        * http/tests/misc/resources/text-refresh.pl: Added.
+        * http/tests/misc/text-refresh-expected.txt: Added.
+        * http/tests/misc/text-refresh.html: Added.
+
 2006-05-09  Darin Adler  <darin@apple.com>
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8781
