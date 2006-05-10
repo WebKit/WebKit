@@ -1,3 +1,7 @@
+2006-05-10  Darin Adler  <darin@apple.com>
+
+        * WebCore: Removed an extra WebCore subtree that somehow got checked in.
+
 2006-05-10  David Carson <dacarson@gmail.com>
 
         - Fix for bug 8833. Removed inline keyword from functions declared
