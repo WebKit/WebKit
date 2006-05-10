@@ -661,11 +661,11 @@ void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
 
 RenderStyle* RenderStyle::getPseudoStyle(PseudoId pid)
 {
-    RenderStyle* ps = 0;
-    if (noninherited_flags._styleType == NOPSEUDO)
-        for (ps = pseudoStyle; ps; ps = ps->pseudoStyle)
-            if (ps->styleType() == pid)
-                break;
+    if (!pseudoStyle || styleType() != NOPSEUDO)
+        return 0;
+    RenderStyle* ps = pseudoStyle;
+    while (ps && ps->styleType() != pid)
+        ps = ps->pseudoStyle;
     return ps;
 }
 

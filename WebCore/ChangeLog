@@ -1,3 +1,19 @@
+2006-05-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8789
+          RenderStyle::getPseudoStyle() always returns 0
+
+        No test possible (no functionality change).
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff): When checking if :before or :after has changed,
+        return NoInherit unless both pseudoStyles are known and equal.
+        * rendering/render_style.cpp:
+        (WebCore::RenderStyle::getPseudoStyle): Fixed to match the requested
+        type against the pseudoStyle's styleType instead of our own.
+
 2006-05-09  Darin Adler  <darin@apple.com>
 
         - another attempt to fix the Windows build
