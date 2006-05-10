@@ -46,7 +46,7 @@ namespace WebCore {
 // According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
 #define HIRAGANA_KATAKANA_VOICING_MARKS 8
 
- bool isSpace(unsigned c)
+bool isSpace(unsigned c)
 {
     return c == SPACE || c == '\t' || c == '\n' || c == NO_BREAK_SPACE;
 }
@@ -62,7 +62,7 @@ static const uint8_t isRoundingHackCharacterTable[0x100] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
- bool isRoundingHackCharacter(UChar32 c)
+bool isRoundingHackCharacter(UChar32 c)
 {
     return (((c & ~0xFF) == 0 && isRoundingHackCharacterTable[c]));
 }
