@@ -23,6 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 
 #if XPATH_SUPPORT
@@ -30,6 +31,7 @@
 #include "XPathVariableReference.h"
 
 #include "PlatformString.h"
+#include "XPathValue.h"
 
 namespace WebCore {
 namespace XPath {

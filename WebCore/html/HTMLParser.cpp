@@ -49,6 +49,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+const UChar nonBreakingSpace = 0xa0;
+
 /**
  * @internal
  */
@@ -473,7 +475,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                         return false;
                     StringImpl *i = t->string();
                     unsigned int pos = 0;
-                    while (pos < i->length() && ((*i)[pos] == ' ' || (*i)[pos] == QChar(0xa0)))
+                    while (pos < i->length() && ((*i)[pos] == ' ' || (*i)[pos] == nonBreakingSpace))
                         pos++;
                     if (pos == i->length())
                         possiblyMoveStrayContent = false;

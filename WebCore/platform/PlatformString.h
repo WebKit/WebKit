@@ -38,14 +38,10 @@ namespace WebCore {
  * we plan to change this to have immutable copy on write semantics.
  */
 
-// FIXME: Move to unsigned short instead of QChar.
-
 class String {
 public:
     String() { } // gives null string, distinguishable from an empty string
-    String(QChar c) : m_impl(new StringImpl(&c, 1)) { }
-    String(const QChar*, unsigned length);
-    String(const DeprecatedString&);
+    String(const UChar*, unsigned length);
     String(const KJS::Identifier&);
     String(const KJS::UString&);
     String(const char*);
@@ -55,17 +51,16 @@ public:
     operator KJS::Identifier() const;
     operator KJS::UString() const;
 
-    String& operator +=(const String&);
+    unsigned length() const;
+    const UChar* characters() const;
 
-    void insert(const String&, unsigned pos);
-
-    const QChar& operator[](unsigned i) const; // if i >= length(), returns 0
+    UChar operator[](unsigned i) const; // if i >= length(), returns 0
     
-    bool contains(QChar c) const { return find(c) != -1; }
+    bool contains(UChar c) const { return find(c) != -1; }
     bool contains(const char* str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != -1; }
     bool contains(const String& str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != -1; }
 
-    int find(QChar c, int start = 0) const
+    int find(UChar c, int start = 0) const
         { return m_impl ? m_impl->find(c, start) : -1; }
     int find(const char* str, int start = 0, bool caseSensitive = true) const
         { return m_impl ? m_impl->find(str, start, caseSensitive) : -1; }
@@ -77,11 +72,13 @@ public:
     bool endsWith(const String& s, bool caseSensitive = true) const
         { return m_impl ? m_impl->endsWith(s.impl(), caseSensitive) : s.isEmpty(); }
 
-    String& replace(QChar a, QChar b) { if (m_impl) m_impl = m_impl->replace(a, b); return *this; }
-    String& replace(QChar a, const String& b) { if (m_impl) m_impl = m_impl->replace(a, b.impl()); return *this; }
+    void append(const String&);
+    void insert(const String&, unsigned pos);
+
+    String& replace(UChar a, UChar b) { if (m_impl) m_impl = m_impl->replace(a, b); return *this; }
+    String& replace(UChar a, const String& b) { if (m_impl) m_impl = m_impl->replace(a, b.impl()); return *this; }
     String& replace(unsigned index, unsigned len, const String& b) { if (m_impl) m_impl = m_impl->replace(index, len, b.impl()); return *this; }
 
-    unsigned length() const;
     void truncate(unsigned len);
     void remove(unsigned pos, int len = 1);
 
@@ -96,9 +93,9 @@ public:
     String lower() const;
     String upper() const;
 
-    const QChar* unicode() const;
-    DeprecatedString deprecatedString() const;
-    
+    // Return the string with case folded for case insensitive comparison.
+    String foldCase() const;
+
     static String number(int);
     static String number(unsigned);
     static String number(long);
@@ -107,9 +104,9 @@ public:
     
     static String sprintf(const char *, ...)
 #if __GNUC__
-    __attribute__ ((format (printf, 1, 2)))
+        __attribute__ ((format (printf, 1, 2)))
 #endif
-    ;
+        ;
 
     int toInt(bool* ok = 0) const;
     Length* toLengthArray(int& len) const;
@@ -137,6 +134,9 @@ public:
     const char *ascii() const;
 #endif
 
+    String(const DeprecatedString&);
+    DeprecatedString deprecatedString() const;
+    
 private:
     RefPtr<StringImpl> m_impl;
 };
@@ -144,10 +144,8 @@ private:
 String operator+(const String&, const String&);
 String operator+(const String&, const char*);
 String operator+(const char*, const String&);
-String operator+(const String&, QChar);
-String operator+(QChar, const String&);
-String operator+(const String&, char);
-String operator+(char, const String&);
+
+inline String& operator+=(String& a, const String& b) { a.append(b); return a; }
 
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const String& a, const char* b) { return equal(a.impl(), b); }
@@ -162,7 +160,7 @@ inline bool equalIgnoringCase(const String& a, const char* b) { return equalIgno
 inline bool equalIgnoringCase(const char* a, const String& b) { return equalIgnoringCase(a, b.impl()); }
 
 bool operator==(const String& a, const DeprecatedString& b);
-inline bool operator==( const DeprecatedString& b, const String& a) { return a == b; }
+inline bool operator==(const DeprecatedString& b, const String& a) { return a == b; }
 inline bool operator!=(const String& a, const DeprecatedString& b) { return !(a == b); }
 inline bool operator!=(const DeprecatedString& b, const String& a ) { return !(a == b); }
 

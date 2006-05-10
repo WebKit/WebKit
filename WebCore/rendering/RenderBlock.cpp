@@ -2831,8 +2831,8 @@ static inline void stripTrailingSpace(int& inlineMax, int& inlineMin,
         // Collapse away the trailing space at the end of a block.
         RenderText* t = static_cast<RenderText *>(trailingSpaceChild);
         const Font *f = t->font(false);  // FIXME: Why are we ignoring first-line?
-        QChar space[1]; space[0] = ' ';
-        int spaceWidth = f->width(space, 1);
+        const UChar space = ' ';
+        int spaceWidth = f->width(&space, 1);
         inlineMax -= spaceWidth;
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
@@ -3397,7 +3397,7 @@ void RenderBlock::updateFirstLetter()
             unsigned int length = 0;
             
             // account for leading spaces and punctuation
-            while (length < oldText->length() && ((*oldText)[length].isSpace() || (*oldText)[length].isPunct()))
+            while (length < oldText->length() && (QChar((*oldText)[length]).isSpace() || u_ispunct((*oldText)[length])))
                 length++;
             
             // account for first letter

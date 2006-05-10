@@ -38,28 +38,28 @@ String parseURL(const String& url)
     int o = 0;
     int l = i->length();
 
-    while (o < l && (*i)[o].unicode() <= ' ') {
+    while (o < l && (*i)[o] <= ' ') {
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1].unicode() <= ' ')
+    while (l > 0 && (*i)[o+l-1] <= ' ')
         --l;
 
     if (l >= 5
-            && (*i)[o].lower() == 'u'
-            && (*i)[o + 1].lower() == 'r'
-            && (*i)[o + 2].lower() == 'l'
+            && ((*i)[o] == 'u' || (*i)[o] == 'U')
+            && ((*i)[o + 1] == 'r' || (*i)[o + 1] == 'R')
+            && ((*i)[o + 2] == 'l' || (*i)[o + 2] == 'L')
             && (*i)[o + 3] == '('
             && (*i)[o + l - 1] == ')') {
         o += 4;
         l -= 5;
     }
 
-    while (o < l && (*i)[o].unicode() <= ' ') {
+    while (o < l && (*i)[o] <= ' ') {
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1].unicode() <= ' ')
+    while (l > 0 && (*i)[o+l-1] <= ' ')
         --l;
 
     if (l >= 2 && (*i)[o] == (*i)[o+l-1] && ((*i)[o] == '\'' || (*i)[o] == '\"')) {
@@ -67,23 +67,23 @@ String parseURL(const String& url)
         l -= 2;
     }
 
-    while (o < l && (*i)[o].unicode() <= ' ') {
+    while (o < l && (*i)[o] <= ' ') {
         ++o;
         --l;
     }
-    while (l > 0 && (*i)[o+l-1].unicode() <= ' ')
+    while (l > 0 && (*i)[o+l-1] <= ' ')
         --l;
 
-    Vector<unsigned short, 2048> buffer(l);
+    Vector<UChar, 2048> buffer(l);
 
     int nl = 0;
     for (int k = o; k < o + l; k++) {
-        unsigned short c = (*i)[k].unicode();
+        UChar c = (*i)[k];
         if (c > '\r')
             buffer[nl++] = c;
     }
 
-    return new StringImpl(reinterpret_cast<QChar*>(buffer.data()), nl);
+    return new StringImpl(buffer.data(), nl);
 }
 
 }

@@ -78,13 +78,13 @@ public:
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
-    unsigned int length() const { return str->length(); }
-    const QChar* text() const { return str->unicode(); }
-    unsigned int stringLength() const { return str->length(); } // non virtual implementation of length()
+    virtual unsigned length() const { return str->length(); }
+    const UChar* text() const { return str->characters(); }
+    unsigned stringLength() const { return str->length(); } // non virtual implementation of length()
     virtual void position(InlineBox* box, int from, int len, bool reverse, bool override);
 
-    virtual unsigned int width(unsigned int from, unsigned int len, const Font *f, int xpos) const;
-    virtual unsigned int width(unsigned int from, unsigned int len, int xpos, bool firstLine = false) const;
+    virtual unsigned width(unsigned from, unsigned len, const Font*, int xpos) const;
+    virtual unsigned width(unsigned from, unsigned len, int xpos, bool firstLine = false) const;
     virtual int width() const;
     virtual int height() const;
 
@@ -104,7 +104,7 @@ public:
                                     int& beginMaxW, int& endMaxW,
                                     int& minW, int& maxW, bool& stripFrontSpaces);
     
-    bool containsOnlyWhitespace(unsigned int from, unsigned int len) const;
+    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     
     // returns the minimum x position of all runs relative to the parent.
     // defaults to 0.

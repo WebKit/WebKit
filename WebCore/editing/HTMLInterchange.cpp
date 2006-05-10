@@ -61,10 +61,10 @@ DeprecatedString convertHTMLTextToInterchangeFormat(const DeprecatedString &in)
     unsigned int consumed = 0;
     while (i < in.length()) {
         consumed = 1;
-        if (isCollapsibleWhitespace(in[i])) {
+        if (isCollapsibleWhitespace(in[i].unicode())) {
             // count number of adjoining spaces
             unsigned int j = i + 1;
-            while (j < in.length() && isCollapsibleWhitespace(in[j]))
+            while (j < in.length() && isCollapsibleWhitespace(in[j].unicode()))
                 j++;
             unsigned int count = j - i;
             consumed = count;

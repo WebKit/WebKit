@@ -51,7 +51,7 @@ DeprecatedCString TextEncoding::fromUnicode(const DeprecatedString &qcs, bool al
     // FIXME: Since there's no "force ASCII range" mode in CFString, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
     DeprecatedString copy = qcs;
-    copy.replace(QChar('\\'), backslashAsCurrencySymbol());
+    copy.replace('\\', backslashAsCurrencySymbol());
     CFStringRef cfs = copy.getCFString();
     CFMutableStringRef cfms = CFStringCreateMutableCopy(0, 0, cfs); // in rare cases, normalization can make the string longer, thus no limit on its length
     CFStringNormalize(cfms, kCFStringNormalizationFormC);

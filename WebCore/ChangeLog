@@ -1,3 +1,439 @@
+2006-05-09  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Hyatt.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8782
+          use ICU and UChar more, QChar less
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6310
+          text-transform: uppercase/lowercase don't handle cases one character becomes two
+
+        Test: fast/css/case-transform.html
+
+        By using ICU more, this fixes some bugs in a few places.
+
+        * bindings/js/JSXMLSerializer.cpp:
+        * css/css_valueimpl.h:
+        * kwq/KWQTextStream.cpp:
+        * loader/CachedObject.h:
+        * platform/Color.cpp:
+        Add includes of DeprecatedString.h as needed, now that StringImpl.h no longer
+        includes it.
+
+        * bindings/js/kjs_css.cpp: (KJS::cssPropertyName):
+        Eliminate use of QChar::latin1() in a case where it's not helpful.
+
+        * bindings/js/kjs_proxy.cpp: (WebCore::KJSProxy::evaluate):
+        Use characters() function instead of the old unicode() function.
+
+        * bindings/js/kjs_window.cpp: (KJS::isSeparator):
+        Use UChar instead of QChar.
+
+        * bindings/objc/DOMInternal.mm:
+        (StringImpl::operator NSString*): Remove typecast that's no longer needed.
+        (String::String): Ditto. Also use Vector for local buffer to make code read simpler.
+
+        * bridge/mac/FrameMac.mm:
+        (WebCore::selectorForKeyEvent): Remove call to unicode() function, no longer needed.
+        (WebCore::FrameMac::setTitle): Remove QChar cast, no longer needed.
+        (WebCore::FrameMac::setStatusBarText): Ditto.
+        (WebCore::FrameMac::advanceToNextMisspelling): Use UChar instead of QChar.
+        (WebCore::FrameMac::runJavaScriptAlert): Remove QChar cast, no longer needed.
+        (WebCore::FrameMac::runJavaScriptConfirm): Ditto.
+        (WebCore::FrameMac::runJavaScriptPrompt): Ditto.
+        (WebCore::FrameMac::attributedString): Replaces calls of QChar::direction() with
+        calls to u_charDirection and use ICU constants instead of QChar ones.
+        (WebCore::FrameMac::markMisspellings): Remove QChar cast, no longer needed. Added a
+        QChar cast so we can call isSpace -- slated to be removed later.
+        (WebCore::FrameMac::shouldClose): Remove QChar cast, no longer needed.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge selectedString]): Remove QChar cast, no longer needed.
+        (-[WebCoreFrameBridge stringForRange:]): Ditto.
+
+        * css/CSSGrammar.y: Update for field name change from string to characters.
+        Use UChar instead of unsigned short. 
+
+        * css/css_valueimpl.cpp:
+        (WebCore::propertyID): Use UChar instead of unsigned short and get rid of call to
+        unicode() function, no longer needed.
+        (WebCore::quoteStringIfNeeded): Use strings when building up a resulting string,
+        instead of depending on the feature where you can append characters to a string.
+
+        * css/csshelper.cpp: (WebCore::parseURL): Remove calls to unicode() function and
+        rewrite to obviate the need to call lower() just to check for a few constant
+        character values. Also remove a now-unneeded type cast.
+
+        * css/cssparser.h: Changed ParseString field to use UChar and to be named characters
+        instead of string. Changed many other fields to be UChar instead of unsigned short.
+        (WebCore::domString): Update for that.
+        (WebCore::atomicString): Ditto.
+        * css/cssparser.cpp:
+        (WebCore::ParseString::lower): Use u_tolower instead of QChar::lower(). Also change
+        name to characters from string.
+        (WebCore::CSSParser::setupParser): Use UChar instead of unsigned short.
+        (WebCore::CSSParser::lex): Ditto. Also update for characters name change.
+        (WebCore::CSSParser::text): Use UChar instead of unsigned short. Also tweak some
+        of the code a little bit to handle a couple of overflow cases better and reduce
+        type casting.
+        (WebCore::deprecatedString): Moved here so we don't have to include DeprecatedString.h
+        in the header file.
+
+        * css/cssstyleselector.cpp: (WebCore::checkPseudoState): Added a type cast since this
+        code now bridges the world between modern code and QChar/DeprecatedString.
+
+        * dom/CharacterData.cpp: (WebCore::CharacterData::CharacterData): Changed QChar to UChar.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::isValidName): Updated for name change from unicode to characters.
+        (WebCore::Document::parseQualifiedName): Ditto.
+        (WebCore::Document::backslashAsCurrencySymbol): Changed return type to UChar.
+
+        * dom/NamedMappedAttrMap.cpp:
+        (WebCore::isClassWhitespace): Changed parameter to UChar from QChar.
+        (WebCore::NamedMappedAttrMap::parseClassAttribute): Changed from UChar to QChar and
+        from unicode to characters.
+
+        * dom/Position.cpp:
+        (WebCore::Position::leadingWhitespacePosition): Changed from QChar to UChar.
+        (WebCore::Position::trailingWhitespacePosition): Ditto.
+
+        * dom/StyledElement.cpp:
+        (WebCore::isClassWhitespace): Changed from QChar to UChar.
+        (WebCore::StyledElement::addCSSLength): Changed from QChar to UChar, and remove one
+        case where latin1() was used and was not helpful.
+        (WebCore::StyledElement::addCSSColor): Removed unicode() function call, no longer needed.
+
+        * dom/dom2_eventsimpl.cpp: (WebCore::KeyboardEvent::charCode):
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::constrainValue):
+        Removed unicode() function call, no longer needed.
+
+        * dom/xml_tokenizer.h: Removed default parameter for xmlDocPtrForString so we don't have
+        to include the DeprecatedString.h header in this file (and since no one uses it).
+
+        * editing/HTMLInterchange.cpp: (convertHTMLTextToInterchangeFormat): Added a couple calls
+        to the unicode() function to bridge the gap from QChar/DeprecatedString back to modern
+        code.
+
+        * editing/InsertTextCommand.cpp: Removed unused function.
+
+        * editing/TextIterator.h: Changed from QChar to UChar.
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator): Initialize m_lastCharacter since it's now a UChar
+        (which is just a typedef) rather than a QChar (which was a class with a default value of 0).
+        (WebCore::TextIterator::handleTextNode): Updated to use characters() instead of unicode().
+        (WebCore::TextIterator::handleTextBox): Removed unicode() call since it's now a UChar instead
+        of a QChar.
+        (WebCore::TextIterator::emitCharacter): More of the same.
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::emitCharacter): Ditto.
+        (WebCore::CharacterIterator::string): Ditto.
+        (WebCore::WordAwareIterator::advance): Ditto.
+        (WebCore::WordAwareIterator::length): Ditto.
+        (WebCore::WordAwareIterator::characters): Ditto.
+        (WebCore::CircularSearchBuffer::CircularSearchBuffer): Changed to use UChar
+        instead of QChar, but also to use foldCase() instead of lower(), because
+        we want case folding here, not lowercasing.
+        (WebCore::CircularSearchBuffer::append): Ditto, with u_foldCase.
+        (WebCore::CircularSearchBuffer::isMatch): Ditto.
+        (WebCore::plainText): Added type cast since this bridges the gap from the modern stuff
+        to QChar/DeprecatedString.
+
+        * editing/VisiblePosition.h: Changed from QChar to UChar.
+        * editing/VisiblePosition.cpp: (WebCore::VisiblePosition::characterAfter): Ditto.
+
+        * editing/markup.cpp: (WebCore::escapeTextForMarkup): Changed code that used latin1()
+        for no good reason to use unicode() instead.
+ 
+        * html/HTMLTokenizer.h: Changed from QChar to UChar.
+        * html/HTMLTokenizer.cpp: Changed from QChar to UChar, including removing the
+        KHTML_ALLOC_QCHAR_VEC and KHTML_DELETE_QCHAR_VEC macros, which weren't being
+        used consistently anyway.
+        (WebCore::fixUpChar): More of the same.
+        (WebCore::tagMatch): Ditto.
+        (WebCore::HTMLTokenizer::reset): Ditto.
+        (WebCore::HTMLTokenizer::begin): Ditto. Also corrected anomaly where buffer
+        size was not the same as the size value -- this was only true in the initial
+        allocation, so I believe there was no value in it.
+        (WebCore::HTMLTokenizer::parseSpecial): Ditto. Also removed a use of latin1()
+        that was unnnecessary extra work.
+        (WebCore::HTMLTokenizer::scriptHandler): More of the same.
+        (WebCore::HTMLTokenizer::parseComment): Ditto.
+        (WebCore::HTMLTokenizer::parseServer): Ditto.
+        (WebCore::HTMLTokenizer::parseProcessingInstruction): Ditto. Another unnecessary
+        use of latin1() removed.
+        (WebCore::HTMLTokenizer::parseText): Ditto.
+        (WebCore::HTMLTokenizer::parseEntity): Ditto. Changed hex-parsing code to handle
+        uppercase hex a more-efficient way than calling QChar::lower() on each character.
+        Also changed surrogate code logic to fix a couple things -- reject character codes
+        > 0x10FFFF as it should and use U16_LEAD and U16_TRAIL instead of writing our
+        own versions of these.
+        (WebCore::HTMLTokenizer::parseTag): Ditto.
+        (WebCore::HTMLTokenizer::write): Ditto.
+        (WebCore::HTMLTokenizer::end): Ditto.
+        (WebCore::HTMLTokenizer::finish): Ditto.
+        (WebCore::HTMLTokenizer::enlargeBuffer): Ditto.
+        (WebCore::HTMLTokenizer::enlargeScriptBuffer): Ditto.
+        (WebCore::HTMLTokenizer::notifyFinished):
+        (WebCore::decodeNamedEntity): Ditto.
+
+        * html/html_inlineimpl.cpp: (WebCore::parseFontSizeNumber): Changed from QChar
+        to UChar, including using u_isdigit and u_charDigitValue instead of QChar::isNumber
+        and QChar::digitValue. Also removed unneeded range checking that's already done
+        by WebCore::String.
+
+        * kwq/KWQLoader.mm: (KWQIsResponseURLEqualToURL): Rewrote to use Vector and UChar,
+        removing all the type casts and making the whole function much shorter.
+
+        * kwq/WebCoreAXObject.mm:
+        (AXAttributedStringAppendText): Use UChar instead of QChar.
+        (-[WebCoreAXObject doAXAttributedStringForTextMarkerRange:]): More of the same.
+
+        * loader/Cache.h: Remove unnecessary default parameters, preventing the need to
+        include the DeprecatedString.h header in this header. Cleaned up the header
+        structure a bit, removing some obsolete and redundant comments and fixing typos.
+        * loader/Cache.cpp: Removed unused preload functions.
+
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::UserStyleSheetLoader): Added explicit arguments.
+        This was the only caller anywhere that took advantage of the default parameter
+        values in one of the Cache class request functions.
+        (WebCore::Frame::backslashAsCurrencySymbol): Changed QChar to UChar.
+
+        * platform/AtomicString.h: Changed QChar to UChar. Removed constructor that makes
+        an AtomicString from a single character. Renamed unicode() function to characters().
+        Renamed KHTML_ATOMICSTRING_HIDE_GLOBALS to ATOMICSTRING_HIDE_GLOBALS.
+        * platform/AtomicString.cpp:
+        (WebCore::CStringTranslator::equal): Changed QChar to UChar.
+        (WebCore::operator==): Changed unicode() to characters().
+        (WebCore::UCharBufferTranslator::hash): More of the same.
+        (WebCore::UCharBufferTranslator::equal): Ditto.
+        (WebCore::UCharBufferTranslator::translate): Ditto.
+        (WebCore::AtomicString::add): Ditto.
+        (WebCore::AtomicString::operator Identifier): Ditto.
+        (WebCore::AtomicString::operator UString): Ditto.
+        (WebCore::AtomicString::AtomicString): Moved here so we don't need DeprecatedString.h
+        in the header.
+        (WebCore::AtomicString::deprecatedString): Ditto.
+
+        * platform/DeprecatedString.h: Removed QChar::Direction enum and all the DirXXX values,
+        isDigit, isLetter, isNumber, isLetterOrNumber, isPunct, digitValue, and direction functions.
+        (QChar::isSpace): Changed to use u_charDirection instead of QChar::direction.
+
+        * platform/Font.h: (WebCore::Font::width): Changed QChar to UChar.
+        * platform/Font.cpp: (WebCore::Font::width): Ditto.
+
+        * platform/GraphicsContext.h:
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText): Changed QChar to UChar. Removed horizontalAlignment
+        parameter from simplified string drawing entry point, since it's not used.
+        (WebCore::GraphicsContext::drawHighlightForText): Changed QChar to UChar.
+
+        * platform/PlatformString.h: Changed QChar to UChar. Removed constructor that makes
+        a String from a single character. Renamed unicode() function to characters(). Added
+        an append function and changed += operator to just call that. Added a foldCase() function.
+        Removed the concatenation operators that add individual strings before or after.
+        * platform/String.cpp:
+        (WebCore::String::String): Changed QChar to UChar.
+        (WebCore::String::append): Renamed from operator+= and removed the return value.
+        (WebCore::String::operator[]): Changed QChar to UChar.
+        (WebCore::String::foldCase): Added.
+        (WebCore::String::percentage): More of the same.
+        (WebCore::String::characters): Renamed from unicode().
+        (WebCore::String::deprecatedString): More of the same.
+        (WebCore::String::sprintf): Fixed mistakes in the comments.
+        (WebCore::String::isEmpty): Tweaked a bit.
+        (WebCore::operator==): More of the same.
+        (WebCore::String::operator Identifier): Ditto.
+        (WebCore::String::operator UString): Ditto.
+
+        * platform/SegmentedString.h: Changed from QChar to UChar. Had to initialize
+        data members that are now UChar.
+        * platform/SegmentedString.cpp:
+        (WebCore::SegmentedString::length): Updated for change from QChar to UChar.
+        (WebCore::SegmentedString::append): Ditto.
+        (WebCore::SegmentedString::prepend): Ditto.
+        (WebCore::SegmentedString::toString): Ditto.
+
+        * platform/StringHash.h: Updated to use UChar instead of QChar and for name changes.
+        Also changed to use case folding intead of lowercasing for case insensitive hashing.
+
+        * platform/StringImpl.h:
+        * platform/StringImpl.cpp:
+        (WebCore::newUCharVector): Changed to UChar from QChar.
+        (WebCore::deleteUCharVector): Ditto.
+        (WebCore::StringImpl::StringImpl): Ditto.
+        (WebCore::StringImpl::init): Ditto. Also renamed from initWithChar and initWithQChar.
+        (WebCore::StringImpl::~StringImpl): Ditto.
+        (WebCore::StringImpl::append): Ditto.
+        (WebCore::StringImpl::insert): Ditto.
+        (WebCore::StringImpl::truncate): Ditto.
+        (WebCore::StringImpl::remove): Ditto.
+        (WebCore::StringImpl::split): Ditto.
+        (WebCore::StringImpl::containsOnlyWhitespace): Ditto. Also added comment because this
+        function seems a little broken.
+        (WebCore::parseLength): More of the same.
+        (WebCore::StringImpl::toCoordsArray): Ditto.
+        (WebCore::StringImpl::toLengthArray): Ditto.
+        (WebCore::StringImpl::isLower): Ditto.
+        (WebCore::StringImpl::lower): Rewrote to use u_strToLower.
+        (WebCore::StringImpl::upper): Rewrote to use u_strToUpper.
+        (WebCore::StringImpl::foldCase): Added. Uses u_strFoldCase.
+        (WebCore::getWordBreakIterator): Changed to use U_FAILURE instead of accepting only
+        U_ZERO_ERROR as a success code.
+        (WebCore::StringImpl::capitalize): More QChar to UChar changes.
+        (WebCore::StringImpl::toInt): Ditto.
+        (WebCore::equal): Changed from QChar to UChar and was careful to preserve the old
+        semantics where "high ASCII" is treated as U+0080-U+00FF even though I don't know
+        if this feature is important.
+        (WebCore::equalIgnoringCase): Ditto, but used case folding instead of lowercasing
+        by using the u_foldCase and u_memcasecmp functions. Also renamed from
+        equalCaseInsensitive for more-consistent naming.
+        (WebCore::StringImpl::find): Ditto. Use case folding for the case insensitive branch.
+        (WebCore::StringImpl::replace): More of the same.
+        (WebCore::StringImpl::computeHash): Ditto.
+        (WebCore::StringImpl::ascii): Ditto.
+
+        * platform/TextBoundaries.h: Changed from QChar to UChar.
+        * platform/mac/TextBoundaries.mm:
+        (WebCore::findWordBoundary): Made the change to UChar and removed some type casts.
+        (WebCore::findNextWordFromIndex): Ditto.
+        (WebCore::findSentenceBoundary): Ditto.
+        (WebCore::findNextSentenceFromIndex): Ditto.
+
+        * platform/TextEncoding.h:
+        * platform/TextEncoding.cpp:
+        (WebCore::TextEncoding::backslashAsCurrencySymbol): Changed from QChar to UChar.
+        (WebCore::TextEncoding::fromUnicode): More of the same.
+        * platform/mac/TextEncodingMac.cpp: (WebCore::TextEncoding::fromUnicode): More
+        of the same.
+
+        * platform/mac/FontFamilyMac.mm: (WebCore::FontFamily::getNSFamily): Removed a
+        now-unneeded type cast.
+
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::checkSelectionPoint):
+        Changed QChar to UChar and removed some now-unneeded type casts.
+
+        * editing/RebalanceWhitespaceCommand.cpp: (WebCore::isWhitespace):
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        (WebCore::startWordBoundary):
+        (WebCore::endWordBoundary):
+        (WebCore::previousWordPositionBoundary):
+        (WebCore::nextWordPositionBoundary):
+        (WebCore::startSentenceBoundary):
+        (WebCore::endSentenceBoundary):
+        (WebCore::previousSentencePositionBoundary):
+        (WebCore::nextSentencePositionBoundary):
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * html/HTMLParser.cpp: (WebCore::HTMLParser::handleError):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderBlock.cpp:
+        (WebCore::stripTrailingSpace):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::backslashAsCurrencySymbol):
+        * rendering/RenderTreeAsText.cpp: (quoteAndEscapeNonPrintables):
+        * rendering/break_lines.cpp: (WebCore::nextBreakablePosition):
+        * rendering/break_lines.h: (WebCore::isBreakable):
+        * rendering/render_style.h: (WebCore::RenderStyle::isCollapsibleWhiteSpace):
+        * xml/XSLStyleSheet.cpp: (WebCore::XSLStyleSheet::parseString):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::getMIMEType):
+        (WebCore::getCharset):
+        Changed QChar to UChar.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged): Changed QChar to UChar.
+        (WebCore::RenderImage::paint): Changed callers of drawText to no-longer pass 0
+        for the horizontal alignment, since I removed that parameters.
+
+        * rendering/RenderText.h: Changed QChar to UChar.
+        * rendering/RenderText.cpp:
+        (WebCore::characterBreakIterator): Update for name change.
+        (WebCore::RenderText::RenderText): Ditto.
+        (WebCore::RenderText::allAscii): Remove uneeded unicode() and allow the value
+        U+007F to count as ASCII.
+        (WebCore::RenderText::cacheWidths): Changed QChar to UChar.
+        (WebCore::RenderText::widthFromCache): Changed code that deals with direction to
+        use the ICU direction calls.
+        (WebCore::RenderText::trimmedMinMaxWidth): Changed QChar to UChar.
+        (WebCore::RenderText::calcMinMaxWidth): Ditto.
+        (WebCore::RenderText::containsOnlyWhitespace): Ditto.
+        (WebCore::RenderText::setText): Ditto.
+        (WebCore::RenderText::width): Ditto.
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::updateFromElement): Removed unneeded QChar cast.
+        (WebCore::RenderTextField::calcMinMaxWidth): Changed from QChar to UChar.
+
+        * rendering/bidi.h:
+        * rendering/bidi.cpp:
+        (WebCore::BidiIterator::BidiIterator):
+        (WebCore::BidiState::BidiState):
+        (WebCore::BidiContext::BidiContext):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+        (WebCore::BidiIterator::current):
+        (WebCore::BidiIterator::direction):
+        (WebCore::addRun):
+        (WebCore::checkMidpoints):
+        (WebCore::appendRun):
+        (WebCore::embed):
+        (WebCore::RenderBlock::tabWidth):
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::bidiReorderLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::RenderBlock::skipWhitespace):
+        (WebCore::RenderBlock::findNextLineBreak):
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        Changed from QChar to UChar and all direction from QChar constants to the
+        ones from ICU.
+
+        * rendering/render_form.cpp:
+        (WebCore::RenderLineEdit::updateFromElement):
+        (WebCore::RenderSelect::updateFromElement):
+        (WebCore::RenderTextArea::updateFromElement):
+        (WebCore::RenderTextArea::text):
+        (WebCore::RenderTextArea::textWithHardLineBreaks):
+        Got rid of now-unneeded QChar type casts.
+
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Updated for change from QChar
+        to UChar.
+        (WebCore::EllipsisBox::paint): Updated for unicode() -> characters() name change.
+
+        * rendering/render_list.cpp:
+        (WebCore::toRoman): Updated from QChar to UChar.
+        (WebCore::toLetterString): Ditto.
+        (WebCore::toHebrew): More of the same, also cleaned up the logic a bit.
+        (WebCore::RenderListMarker::paint): Removed the alignment parameters from the
+        various functions. Also removed all reliance on the width-measuring functions
+        that take a string.
+        (WebCore::RenderListMarker::calcMinMaxWidth): More of the same.
+        (WebCore::RenderListMarker::getRelativeMarkerRect): Ditto.
+
 2006-05-09  Tim Omernick  <timo@apple.com>
 
         Reviewed by/co-written by Darin.
@@ -654,7 +1090,7 @@
         * css/html4.css:
         * css/quirks.css:
 
-2006-05-06  Darin Adler  <darin@apple.com>
+2006-05-07  Darin Adler  <darin@apple.com>
         
         Suggested by Mitz. Reviewed and landed by Maciej.
         

@@ -629,7 +629,7 @@ bool RenderStyle::isStyleAvailable() const
 enum EPseudoBit { NO_BIT = 0x0, BEFORE_BIT = 0x1, AFTER_BIT = 0x2, FIRST_LINE_BIT = 0x4,
                   FIRST_LETTER_BIT = 0x8, SELECTION_BIT = 0x10, FIRST_LINE_INHERITED_BIT = 0x20 };
 
-static int pseudoBit(RenderStyle::PseudoId pseudo)
+static inline int pseudoBit(RenderStyle::PseudoId pseudo)
 {
     switch (pseudo) {
         case RenderStyle::BEFORE:
@@ -651,7 +651,7 @@ static int pseudoBit(RenderStyle::PseudoId pseudo)
 
 bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const
 {
-    return (pseudoBit(pseudo) & noninherited_flags._pseudoBits) != 0;
+    return pseudoBit(pseudo) & noninherited_flags._pseudoBits;
 }
 
 void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
@@ -661,25 +661,18 @@ void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
 
 RenderStyle* RenderStyle::getPseudoStyle(PseudoId pid)
 {
-    if (!pseudoStyle)
-        return 0;
-
-    RenderStyle *ps = 0;
-    if (noninherited_flags._styleType==NOPSEUDO) {
-        ps = pseudoStyle;
-        while (ps) {
-            if (styleType() == pid)
-                    break;
-    
-            ps = ps->pseudoStyle;
-        }
-    }
+    RenderStyle* ps = 0;
+    if (noninherited_flags._styleType == NOPSEUDO)
+        for (ps = pseudoStyle; ps; ps = ps->psuedoStyle)
+            if (ps->styleType() == pid)
+                break;
     return ps;
 }
 
 void RenderStyle::addPseudoStyle(RenderStyle* pseudo)
 {
-    if (!pseudo) return;
+    if (!pseudo)
+        return;
     pseudo->ref();
     pseudo->pseudoStyle = pseudoStyle;
     pseudoStyle = pseudo;

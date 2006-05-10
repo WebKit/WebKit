@@ -33,36 +33,34 @@
 namespace WebCore {
 namespace XPath {
     
-class Value
-{
+class Value {
 public:
-    enum Type {
-        NodeVector_, Boolean, Number, String_
-    };
+    enum Type { NodeVector_, Boolean, Number, String_ };
     
     Value();
-    Value(Node* value);
-    Value(const NodeVector& value);
-    Value(bool value);
-    Value(double value);
-    Value(const String& value);
+    Value(Node*);
+    Value(const NodeVector&);
+    Value(bool);
+    Value(unsigned);
+    Value(unsigned long);
+    Value(double);
+    Value(const String&);
     
-    Type type() const;
-    bool isNodeVector() const;
-    bool isBoolean() const;
-    bool isNumber() const;
-    bool isString() const;
-    
-    NodeVector& toNodeVector();
-    const NodeVector& toNodeVector() const;
-    
+    Type type() const { return m_type; }
+
+    bool isNodeVector() const { return m_type == NodeVector_; }
+    bool isBoolean() const { return m_type == Boolean; }
+    bool isNumber() const { return m_type == Number; }
+    bool isString() const { return m_type == String_; }
+
+    const NodeVector& toNodeVector() const;    
     bool toBoolean() const;
     double toNumber() const;
     String toString() const;
     
 private:
     Type m_type;
-    NodeVector m_nodevector;
+    NodeVector m_nodeVector;
     bool m_bool;
     double m_number;
     String m_string;

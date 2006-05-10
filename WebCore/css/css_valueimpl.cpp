@@ -46,9 +46,9 @@ WebCore::String getPropertyName(unsigned short id);
 namespace WebCore {
 
 // Defined in CSSGrammar.y, but not in any header, so just declare it here for now.
-int getPropertyID(const char *str, int len);
+int getPropertyID(const char* str, int len);
 
-static int propertyID(const String &s)
+static int propertyID(const String& s)
 {
     char buffer[maxCSSPropertyNameLength];
 
@@ -57,7 +57,7 @@ static int propertyID(const String &s)
         return 0;
 
     for (unsigned i = 0; i != len; ++i) {
-        unsigned short c = s[i].unicode();
+        UChar c = s[i];
         if (c == 0 || c >= 0x7F)
             return 0; // illegal character
         buffer[i] = c;
@@ -85,7 +85,7 @@ static String quoteStringIfNeeded(const String &string)
     String s = string;
     s.replace('\\', "\\\\");
     s.replace('\'', "\\'");
-    return '\'' + s + '\'';
+    return "'" + s + "'";
 }
 
 CSSStyleDeclaration::CSSStyleDeclaration(CSSRule *parent)

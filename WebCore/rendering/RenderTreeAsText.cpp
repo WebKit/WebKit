@@ -206,19 +206,19 @@ static String quoteAndEscapeNonPrintables(const String& s)
     DeprecatedString result;
     result += '"';
     for (unsigned i = 0; i != s.length(); ++i) {
-        QChar c = s[i];
+        UChar c = s[i];
         if (c == '\\')
             result += "\\\\";
         else if (c == '"')
             result += "\\\"";
-        else if (c == '\n' || c.unicode() == 0x00A0)
+        else if (c == '\n' || c == 0x00A0)
             result += ' ';
         else {
-            unsigned short u = c.unicode();
-            if (u >= 0x20 && u < 0x7F)
+            if (c >= 0x20 && c < 0x7F)
                 result += c;
             else {
                 DeprecatedString hex;
+                unsigned u = c;
                 hex.sprintf("\\x{%X}", u);
                 result += hex;
             }

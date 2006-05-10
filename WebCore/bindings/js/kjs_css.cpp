@@ -48,7 +48,7 @@ static String cssPropertyName(const Identifier &p, bool *hadPixelOrPosPrefix = 0
 
     int i = prop.length();
     while (--i) {
-        char c = prop[i].latin1();
+        ::UChar c = prop[i].unicode();
         if (c >= 'A' && c <= 'Z')
             prop.insert(i, '-');
     }

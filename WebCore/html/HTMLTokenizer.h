@@ -82,7 +82,7 @@ public:
     HTMLTokenizer(DocumentFragment*);
     virtual ~HTMLTokenizer();
 
-    virtual bool write(const SegmentedString &str, bool appendData);
+    virtual bool write(const SegmentedString&, bool appendData);
     virtual void finish();
     virtual void setForceSynchronous(bool force);
     virtual bool isWaitingForScripts() const;
@@ -106,11 +106,11 @@ private:
     State parseText(SegmentedString&, State);
     State parseSpecial(SegmentedString&, State);
     State parseTag(SegmentedString&, State);
-    State parseEntity(SegmentedString &, QChar*& dest, State, unsigned& _cBufferPos, bool start, bool parsingTag);
+    State parseEntity(SegmentedString&, UChar*& dest, State, unsigned& _cBufferPos, bool start, bool parsingTag);
     State parseProcessingInstruction(SegmentedString&, State);
     State scriptHandler(State);
     State scriptExecution(const DeprecatedString& script, State state, DeprecatedString scriptURL = DeprecatedString(), int baseLine = 0);
-    void setSrc(const SegmentedString &source);
+    void setSrc(const SegmentedString&);
 
     // check if we have enough space in the buffer.
     // if not enlarge it
@@ -128,7 +128,7 @@ private:
     void enlargeBuffer(int len);
     void enlargeScriptBuffer(int len);
 
-    bool continueProcessing(int& processedCount, double startTime, State &state);
+    bool continueProcessing(int& processedCount, double startTime, State&);
     void timerFired(Timer<HTMLTokenizer>*);
     void allDataProcessed();
 
@@ -137,8 +137,8 @@ private:
 
     // Internal buffers
     ///////////////////
-    QChar *buffer;
-    QChar *dest;
+    UChar* buffer;
+    UChar* dest;
 
     Token currToken;
 
@@ -148,12 +148,7 @@ private:
     // Tokenizer flags
     //////////////////
     // are we in quotes within a html tag
-    enum
-    {
-        NoQuote = 0,
-        SingleQuote,
-        DoubleQuote
-    } tquote;
+    enum { NoQuote, SingleQuote, DoubleQuote } tquote;
 
     // Are we in a &... character entity description?
     enum EntityState {
@@ -273,7 +268,7 @@ private:
     AtomicString attrName;
     
     // Used to store the code of a srcipting sequence
-    QChar *scriptCode;
+    UChar* scriptCode;
     // Size of the script sequenze stored in @ref #scriptCode
     int scriptCodeSize;
     // Maximal size that can be stored in @ref #scriptCode
@@ -282,11 +277,11 @@ private:
     int scriptCodeResync;
 
     // Stores characters if we are scanning for a string like "</script>"
-    QChar searchBuffer[ 10 ];
+    UChar searchBuffer[10];
     // Counts where we are in the string we are scanning for
     int searchCount;
     // The string we are searching for
-    const QChar *searchFor;
+    const UChar* searchFor;
     // the stopper string
     const char* searchStopper;
     // the stopper len
@@ -339,7 +334,7 @@ private:
 
 void parseHTMLDocumentFragment(const String&, DocumentFragment*);
 
-unsigned short decodeNamedEntity(const char*);
+UChar decodeNamedEntity(const char*);
 
 }
 

@@ -50,12 +50,6 @@ namespace KJS {
 
 class QChar {
 public:
-
-    enum Direction {
-        DirL = 0, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
-        DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
-    };
-    
     QChar();
     QChar(char);
     QChar(unsigned char);
@@ -67,15 +61,8 @@ public:
     unsigned short unicode() const;
     char latin1() const;
     bool isSpace() const;
-    bool isDigit() const;
-    bool isLetter() const;
-    bool isNumber() const;
-    bool isLetterOrNumber() const;
-    bool isPunct() const;
-    int digitValue() const;
     QChar lower() const;
     QChar upper() const;
-    Direction direction() const;
 
 private:
     unsigned short c;
@@ -118,42 +105,7 @@ inline bool QChar::isSpace() const
 {
     // Use isspace() for basic Latin-1.
     // This will include newlines, which aren't included in unicode DirWS.
-    return c <= 0x7F ? isspace(c) : direction() == DirWS;
-}
-
-inline bool QChar::isDigit() const
-{
-    // FIXME: If fast enough, we should just call u_isdigit directly.
-    return c <= 0x7F ? isdigit(c) : u_isdigit(c);
-}
-
-inline bool QChar::isLetter() const
-{
-    // FIXME: If fast enough, we should just call u_isalpha directly.
-    return c <= 0x7F ? isalpha(c) : u_isalpha(c);
-}
-
-inline bool QChar::isNumber() const
-{
-    // FIXME: If fast enough, we should just call u_isdigit directly.
-    return c <= 0x7F ? isdigit(c) : u_isdigit(c);
-}
-
-inline bool QChar::isLetterOrNumber() const
-{
-    // FIXME: If fast enough, we should just call u_isalnum directly.
-    return c <= 0x7F ? isalnum(c) : u_isalnum(c);
-}
-
-inline bool QChar::isPunct() const
-{
-    return u_ispunct(c);
-}
-
-inline int QChar::digitValue() const
-{
-    // FIXME: If fast enough, we should just call u_charDigitValue directly.
-    return c <= '9' ? c - '0' : u_charDigitValue(c);
+    return c <= 0x7F ? isspace(c) : (u_charDirection(c) == U_WHITE_SPACE_NEUTRAL);
 }
 
 inline QChar QChar::lower() const
@@ -166,11 +118,6 @@ inline QChar QChar::upper() const
 {
     // FIXME: If fast enough, we should just call u_toupper directly.
     return c <= 0x7F ? toupper(c) : u_toupper(c);
-}
-
-inline QChar::Direction QChar::direction() const
-{
-    return static_cast<Direction>(u_charDirection(c));
 }
 
 inline char QChar::latin1() const

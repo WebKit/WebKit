@@ -73,26 +73,25 @@ public:
     void update() const;
 
     void drawText(GraphicsContext*, const IntPoint&, int tabWidth, int xpos,
-                  const QChar*, int len, int from, int to, int toAdd, 
+                  const UChar*, int len, int from, int to, int toAdd, 
                   TextDirection, bool visuallyOrdered) const;
     void drawHighlightForText(GraphicsContext*, const IntPoint&, int h, int tabWidth, int xpos,
-                              const QChar*, int len, int from, int to, int toAdd, 
+                              const UChar*, int len, int from, int to, int toAdd, 
                               TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const;
     void drawLineForText(GraphicsContext*, const IntPoint&, int yOffset, int width) const;
     void drawLineForMisspelling(GraphicsContext*, const IntPoint&, int width) const;
     int misspellingLineThickness(GraphicsContext*) const;
 
-    float floatWidth(const QChar*, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding = true) const;
+    float floatWidth(const UChar*, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding = true) const;
     
-    int checkSelectionPoint(const QChar*, int slen, int pos, int len, int toAdd, int tabWidth, int xpos,
+    int checkSelectionPoint(const UChar*, int slen, int pos, int len, int toAdd, int tabWidth, int xpos,
         int x, TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const;
     IntRect selectionRectForText(const IntPoint&, int h, int tabWidth, int xpos, 
-        const QChar*, int slen, int pos, int len, int width,
+        const UChar*, int slen, int pos, int len, int width,
         bool rtl, bool visuallyOrdered = false, int from = -1, int to = -1) const;
     
-    int width(const QChar*, int slen, int pos, int len, int tabWidth, int xpos) const;
-    int width(const QChar* chs, int slen, int tabWidth = 0, int xpos = 0) const { return width(chs, slen, 0, slen, tabWidth, xpos); }
-    int width(const DeprecatedString& s) const { return width(s.unicode(), s.length(), 0, 0); }
+    int width(const UChar*, int slen, int pos, int len, int tabWidth, int xpos) const;
+    int width(const UChar* chs, int slen, int tabWidth = 0, int xpos = 0) const { return width(chs, slen, 0, slen, tabWidth, xpos); }
 
     bool isSmallCaps() const { return m_fontDescription.smallCaps(); }
 

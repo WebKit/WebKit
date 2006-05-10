@@ -24,65 +24,67 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
-#include "DeprecatedString.h"
+#include "Shared.h"
+#include <kjs/identifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <unicode/umachine.h>
 #include <limits.h>
 
 #if __OBJC__
 @class NSString;
 #endif
 
+class DeprecatedString;
+
 namespace WebCore {
 
 class AtomicString;
-struct QCharBufferTranslator;
+struct UCharBufferTranslator;
 struct CStringTranslator;
 struct Length;
 
-class StringImpl : public Shared<StringImpl>, Noncopyable
-{
+class StringImpl : public Shared<StringImpl>, Noncopyable {
 private:
     struct WithOneRef { };
     StringImpl(WithOneRef) : m_length(0), m_data(0), m_hash(0), m_inTable(false) { ref(); }
-    void initWithChar(const char*, unsigned len);
-    void initWithQChar(const QChar*, unsigned len);
+    void init(const char*, unsigned len);
+    void init(const UChar*, unsigned len);
 
 protected:
     StringImpl() : m_length(0), m_data(0), m_hash(0), m_inTable(false) { }
 public:
-    StringImpl(const DeprecatedString&);
+    StringImpl(const UChar*, unsigned len);
+    StringImpl(const char*, unsigned len);
+    StringImpl(const char*);
     StringImpl(const KJS::Identifier&);
     StringImpl(const KJS::UString&);
-    StringImpl(const QChar*, unsigned len);
-    StringImpl(const char*);
-    StringImpl(const char*, unsigned len);
     ~StringImpl();
 
-    const QChar* unicode() const { return m_data; }
+    const UChar* characters() const { return m_data; }
     unsigned length() const { return m_length; }
     
     unsigned hash() const { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
-    static unsigned computeHash(const QChar*, unsigned len);
+    static unsigned computeHash(const UChar*, unsigned len);
     static unsigned computeHash(const char*);
     
     void append(const StringImpl*);
     void insert(const StringImpl*, unsigned pos);
     void truncate(int len);
     void remove(unsigned pos, int len = 1);
-    
+
     StringImpl* split(unsigned pos);
     StringImpl* copy() const { return new StringImpl(m_data, m_length); }
 
     StringImpl* substring(unsigned pos, unsigned len = UINT_MAX);
 
-    const QChar& operator[] (int pos) const { return m_data[pos]; }
+    UChar operator[](int pos) const { return m_data[pos]; }
 
     Length toLength() const;
-    
+
     bool containsOnlyWhitespace() const;
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
-    
+
     // ignores trailing garbage, unlike DeprecatedString
     int toInt(bool* ok = 0) const;
 
@@ -91,18 +93,19 @@ public:
     bool isLower() const;
     StringImpl* lower() const;
     StringImpl* upper() const;
-    StringImpl* capitalize(QChar previous) const;
+    StringImpl* capitalize(UChar previousCharacter) const;
+    StringImpl* foldCase() const;
 
     int find(const char*, int index = 0, bool caseSensitive = true) const;
-    int find(QChar, int index = 0) const;
+    int find(UChar, int index = 0) const;
     int find(const StringImpl*, int index, bool caseSensitive = true) const;
 
     bool startsWith(const StringImpl* m_data, bool caseSensitive = true) const { return find(m_data, 0, caseSensitive) == 0; }
     bool endsWith(const StringImpl*, bool caseSensitive = true) const;
 
     // Does not modify the string.
-    StringImpl* replace(QChar, QChar);
-    StringImpl* replace(QChar a, const StringImpl* b);
+    StringImpl* replace(UChar, UChar);
+    StringImpl* replace(UChar, const StringImpl*);
     StringImpl* replace(unsigned index, unsigned len, const StringImpl*);
 
     static StringImpl* empty();
@@ -119,12 +122,14 @@ public:
     operator NSString*() const;
 #endif
 
+    StringImpl(const DeprecatedString&);
+
 private:
     unsigned m_length;
-    QChar* m_data;
+    UChar* m_data;
 
     friend class AtomicString;
-    friend struct QCharBufferTranslator;
+    friend struct UCharBufferTranslator;
     friend struct CStringTranslator;
     
     mutable unsigned m_hash;
@@ -133,11 +138,11 @@ private:
 
 bool equal(const StringImpl*, const StringImpl*);
 bool equal(const StringImpl*, const char*);
-bool equal(const char*, const StringImpl*);
+inline bool equal(const char* a, const StringImpl* b) { return equal(b, a); }
 
 bool equalIgnoringCase(const StringImpl*, const StringImpl*);
 bool equalIgnoringCase(const StringImpl*, const char*);
-bool equalIgnoringCase(const char*, const StringImpl*);
+inline bool equalIgnoringCase(const char* a, const StringImpl* b) { return equalIgnoringCase(b, a); }
 
 }
 

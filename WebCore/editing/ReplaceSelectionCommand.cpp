@@ -619,14 +619,14 @@ void ReplaceSelectionCommand::doApply()
         assert(visiblePos.isNotNull());
         addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(visiblePos);
         if (addLeadingSpace) {
-            QChar previousChar = visiblePos.previous().characterAfter();
-            if (previousChar.unicode())
+            UChar previousChar = visiblePos.previous().characterAfter();
+            if (previousChar)
                 addLeadingSpace = !frame->isCharacterSmartReplaceExempt(previousChar, true);
         }
         addTrailingSpace = startPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(visiblePos);
         if (addTrailingSpace) {
-            QChar thisChar = visiblePos.characterAfter();
-            if (thisChar.unicode())
+            UChar thisChar = visiblePos.characterAfter();
+            if (thisChar)
                 addTrailingSpace = !frame->isCharacterSmartReplaceExempt(thisChar, false);
         }
     }

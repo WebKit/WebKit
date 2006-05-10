@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
+#include "DeprecatedString.h"
 #include "Font.h"
 
 using namespace std;
@@ -192,21 +193,16 @@ void GraphicsContext::drawImage(Image* image, const IntRect& dest, const IntRect
 }
 
 // FIXME: We should consider removing this function and having callers just call the lower-level drawText directly.
-// FIXME: The int parameter should change to a HorizontalAlignment parameter.
-// FIXME: HorizontalAlignment should be moved into a separate header so it's not in Widget.h.
 // FIXME: We should consider changing this function to take a character pointer and length instead of a DeprecatedString.
-void GraphicsContext::drawText(const IntPoint& point, int horizontalAlignment, const DeprecatedString& str)
+void GraphicsContext::drawText(const IntPoint& point, const DeprecatedString& str)
 {
     if (paintingDisabled())
         return;
 
-    IntPoint p = point;
-    if (horizontalAlignment == AlignRight)
-        p.setX(p.x() - font().width(str.unicode(), str.length(), 0, 0));
-    drawText(p, 0, 0, str.unicode(), str.length(), 0, str.length(), 0);
+    drawText(point, 0, 0, reinterpret_cast<const UChar*>(str.unicode()), str.length(), 0, str.length(), 0);
 }
 
-void GraphicsContext::drawText(const IntPoint& point, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,
+void GraphicsContext::drawText(const IntPoint& point, int tabWidth, int xpos, const UChar* str, int slen, int pos, int len, int toAdd,
                                TextDirection d, bool visuallyOrdered, int from, int to)
 {
     if (paintingDisabled())
@@ -219,7 +215,7 @@ void GraphicsContext::drawText(const IntPoint& point, int tabWidth, int xpos, co
     font().drawText(this, point, tabWidth, xpos, str + pos, length, from, to, toAdd, d, visuallyOrdered);
 }
 
-void GraphicsContext::drawHighlightForText(const IntPoint& point, int h, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,
+void GraphicsContext::drawHighlightForText(const IntPoint& point, int h, int tabWidth, int xpos, const UChar* str, int slen, int pos, int len, int toAdd,
                                            TextDirection d, bool visuallyOrdered, int from, int to, const Color& backgroundColor)
 {
     if (paintingDisabled())

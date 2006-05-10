@@ -23,6 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathParser_H
 #define XPathParser_H
 
@@ -42,14 +43,13 @@
 namespace WebCore {
 namespace XPath {
 
-struct Token
-{
+struct Token {
     int     type;
     String value;
     int     intValue; //0 if not set
     
     Token(int t): type(t), intValue(0) {}
-    Token(int t, String v): type(t), value(v) {}
+    Token(int t, const String& v): type(t), value(v) {}
     Token(int t, int v): type(t), intValue(v) {}
 };
 
@@ -71,10 +71,10 @@ private:
         NotPartOfName
     };
     
-    XMLCat charCat(QChar aChar);
+    XMLCat charCat(UChar);
     
-    bool isAxisName(String name, Step::AxisType &type);
-    bool isNodeTypeName(String name);
+    bool isAxisName(const String& name, Step::AxisType &type);
+    bool isNodeTypeName(const String& name);
     bool isOperatorContext();
     
     void  skipWS();
@@ -97,6 +97,7 @@ private:
     HashSet<Vector<Predicate*>*> m_predicateVectors;
     HashSet<Vector<Expression*>*> m_expressionVectors;
     HashSet<String*> m_strings;
+
 public:
     Parser();
     

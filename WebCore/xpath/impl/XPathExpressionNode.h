@@ -23,24 +23,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathExpressionNode_H
 #define XPathExpressionNode_H
 
 #if XPATH_SUPPORT
-
-#include "XPathValue.h"
 
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class Node;
 class XPathNSResolver;
 
 namespace XPath {
+
+class Value;
         
-struct EvaluationContext
-{
+struct EvaluationContext {
     EvaluationContext() : node(0), size(0), position(0), resolver(0) { }
 
     RefPtr<Node> node;
@@ -54,8 +56,9 @@ struct EvaluationContext
     XPathNSResolver* resolver;
 };
 
-class ParseNode
-{
+class ParseNode {
+public:
+    virtual ~ParseNode() { }
 };
 
 class Expression : public ParseNode
@@ -65,14 +68,15 @@ public:
 
     Expression();
     virtual ~Expression();
+
     virtual Value evaluate() const;
 
-    void addSubExpression(Expression* expr);
+    void addSubExpression(Expression*);
     void optimize();
     virtual bool isConstant() const;
 
 protected:
-    unsigned int subExprCount() const;
+    unsigned subExprCount() const;
     Expression* subExpr(unsigned i);
     const Expression* subExpr(unsigned i) const;
 

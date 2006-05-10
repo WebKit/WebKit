@@ -23,15 +23,17 @@
 #include "config.h"
 #include "PlatformString.h"
 
+#include "DeprecatedString.h"
 #include <kjs/identifier.h>
 #include <wtf/Vector.h>
 #include <stdarg.h>
 
-using namespace KJS;
+using KJS::Identifier;
+using KJS::UString;
 
 namespace WebCore {
 
-String::String(const QChar* str, unsigned len)
+String::String(const UChar* str, unsigned len)
 {
     if (!str)
         return;
@@ -50,7 +52,7 @@ String::String(const DeprecatedString& str)
     if (str.isEmpty())
         m_impl = StringImpl::empty();
     else 
-        m_impl = new StringImpl(str.unicode(), str.length());
+        m_impl = new StringImpl(reinterpret_cast<const UChar*>(str.unicode()), str.length());
 }
 
 String::String(const char* str)
@@ -76,18 +78,17 @@ String::String(const char* str, unsigned length)
         m_impl = new StringImpl(str, length);
 }
 
-String& String::operator+=(const String &str)
+void String::append(const String &str)
 {
     if (str.m_impl) {
         if (!m_impl) {
             // ### FIXME!!!
             m_impl = str.m_impl;
-            return *this;
+            return;
         }
         m_impl = m_impl->copy();
         m_impl->append(str.m_impl.get());
     }
-    return *this;
 }
 
 String operator+(const String& a, const String& b)
@@ -111,26 +112,6 @@ String operator+(const char* cs, const String& s)
     return String(cs) + s;
 }
 
-String operator+(const String& s, QChar c)
-{
-    return s + String(c);
-}
-
-String operator+(QChar c, const String& s)
-{
-    return String(c) + s;
-}
-
-String operator+(const String& s, char c)
-{
-    return s + String(c);
-}
-
-String operator+(char c, const String& s)
-{
-    return String(c) + s;
-}
-
 void String::insert(const String& str, unsigned pos)
 {
     if (!m_impl)
@@ -139,12 +120,11 @@ void String::insert(const String& str, unsigned pos)
         m_impl->insert(str.m_impl.get(), pos);
 }
 
-const QChar& String::operator[](unsigned i) const
+UChar String::operator[](unsigned i) const
 {
-    static const QChar nullChar = 0;
-    if (!m_impl || i >= m_impl->length() )
-        return nullChar;
-    return *(m_impl->unicode()+i);
+    if (!m_impl || i >= m_impl->length())
+        return 0;
+    return m_impl->characters()[i];
 }
 
 unsigned String::length() const
@@ -194,32 +174,39 @@ String String::upper() const
     return m_impl->upper();
 }
 
+String String::foldCase() const
+{
+    if (!m_impl)
+        return String();
+    return m_impl->foldCase();
+}
+
 bool String::percentage(int& result) const
 {
     if (!m_impl || !m_impl->length())
         return false;
 
-    if (*(m_impl->unicode()+m_impl->length()-1) != '%')
+    if ((*m_impl)[m_impl->length() - 1] != '%')
        return false;
 
-    result = QConstString(m_impl->unicode(), m_impl->length()-1).string().toInt();
+    result = QConstString(reinterpret_cast<const QChar*>(m_impl->characters()), m_impl->length() - 1).string().toInt();
     return true;
 }
 
-const QChar* String::unicode() const
+const UChar* String::characters() const
 {
     if (!m_impl)
         return 0;
-    return m_impl->unicode();
+    return m_impl->characters();
 }
 
 DeprecatedString String::deprecatedString() const
 {
     if (!m_impl)
         return DeprecatedString::null;
-    if (!m_impl->unicode())
+    if (!m_impl->characters())
         return DeprecatedString("", 0);
-    return DeprecatedString(m_impl->unicode(), m_impl->length());
+    return DeprecatedString(reinterpret_cast<const QChar*>(m_impl->characters()), m_impl->length());
 }
 
 String String::sprintf(const char *format, ...)
@@ -229,14 +216,14 @@ String String::sprintf(const char *format, ...)
 
     Vector<char, 256> buffer;
 #if PLATFORM(WIN_OS)
-    // Windows vnsprintf does not return the expected size on overflow
+    // Windows vsnprintf does not return the expected size on overflow
     // So we just have to keep looping until our vsprintf call works!
     int result = 0;
     do {
         if (result < 0)
             buffer.resize(buffer.capacity() * 2);
         result = vsnprintf(buffer.data(), buffer.capacity(), format, args);
-        // Windows vnsprintf returns -1 both for all errors.  There is no
+        // Windows vsnprintf returns -1 for both errors. Since there is no
         // way to distinguish between "not enough room" and "invalid format"
         // we just keep trying until we hit an arbitrary size and then stop.
     } while (result < 0 && (buffer.capacity() * 2) < 2048);
@@ -308,7 +295,7 @@ String String::copy() const
 
 bool String::isEmpty() const
 {
-    return (!m_impl || m_impl->length() == 0);
+    return !m_impl || !m_impl->length();
 }
 
 Length* String::toCoordsArray(int& len) const 
@@ -333,7 +320,7 @@ bool operator==(const String& a, const DeprecatedString& b)
     unsigned l = a.length();
     if (l != b.length())
         return false;
-    if (!memcmp(a.unicode(), b.unicode(), l * sizeof(QChar)))
+    if (!memcmp(a.characters(), b.unicode(), l * sizeof(UChar)))
         return true;
     return false;
 }
@@ -346,7 +333,7 @@ String::String(const Identifier& str)
     if (str.isEmpty())
         m_impl = StringImpl::empty();
     else 
-        m_impl = new StringImpl(reinterpret_cast<const QChar*>(str.data()), str.size());
+        m_impl = new StringImpl(reinterpret_cast<const UChar*>(str.data()), str.size());
 }
 
 String::String(const UString& str)
@@ -357,21 +344,21 @@ String::String(const UString& str)
     if (str.isEmpty())
         m_impl = StringImpl::empty();
     else 
-        m_impl = new StringImpl(reinterpret_cast<const QChar*>(str.data()), str.size());
+        m_impl = new StringImpl(reinterpret_cast<const UChar*>(str.data()), str.size());
 }
 
 String::operator Identifier() const
 {
     if (!m_impl)
         return Identifier();
-    return Identifier(reinterpret_cast<const KJS::UChar*>(m_impl->unicode()), m_impl->length());
+    return Identifier(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
 }
 
 String::operator UString() const
 {
     if (!m_impl)
         return UString();
-    return UString(reinterpret_cast<const KJS::UChar*>(m_impl->unicode()), m_impl->length());
+    return UString(reinterpret_cast<const KJS::UChar*>(m_impl->characters()), m_impl->length());
 }
 
 }

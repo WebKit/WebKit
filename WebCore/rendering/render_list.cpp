@@ -40,83 +40,72 @@ using namespace HTMLNames;
 
 const int cMarkerPadding = 7;
 
-static DeprecatedString toRoman( int number, bool upper )
+static DeprecatedString toRoman(int number, bool upper)
 {
     DeprecatedString roman;
-    QChar ldigits[] = { 'i', 'v', 'x', 'l', 'c', 'd', 'm' };
-    QChar udigits[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
-    QChar *digits = upper ? udigits : ldigits;
-    int i, d = 0;
-
-    do
-    {
+    const UChar ldigits[] = { 'i', 'v', 'x', 'l', 'c', 'd', 'm' };
+    const UChar udigits[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
+    const UChar* digits = upper ? udigits : ldigits;
+    int d = 0;
+    do {
         int num = number % 10;
-
-        if ( num % 5 < 4 )
-            for ( i = num % 5; i > 0; i-- )
-                roman.insert( 0, digits[ d ] );
-
-        if ( num >= 4 && num <= 8)
-            roman.insert( 0, digits[ d+1 ] );
-
-        if ( num == 9 )
-            roman.insert( 0, digits[ d+2 ] );
-
-        if ( num % 5 == 4 )
-            roman.insert( 0, digits[ d ] );
-
+        if (num % 5 < 4)
+            for (int i = num % 5; i > 0; i--)
+                roman.insert(0, digits[d]);
+        if (num >= 4 && num <= 8)
+            roman.insert(0, digits[d + 1]);
+        if (num == 9)
+            roman.insert(0, digits[d + 2]);
+        if (num % 5 == 4)
+            roman.insert(0, digits[d]);
         number /= 10;
         d += 2;
-    }
-    while ( number );
-
+    } while (number);
     return roman;
 }
 
 static DeprecatedString toLetterString(int number, int letterA)
 {
     if (number < 2)
-        return (QChar)letterA; // match WinIE (A.) not FireFox (0.)
-    
+        return QChar(letterA); // match WinIE (A.) not FireFox (0.)
+
     DeprecatedString letterString;
     while (number > 0) {
-        int onesDigit = ((number - 1) % 26);
-        letterString = (QChar)(letterA + onesDigit) + letterString;
+        int onesDigit = (number - 1) % 26;
+        letterString = QChar(letterA + onesDigit) + letterString;
         number -= onesDigit;
         number /= 26;
     }
-    
+
     return letterString;
 }
 
-static DeprecatedString toHebrew( int number ) {
+static DeprecatedString toHebrew(int number)
+{
     const QChar tenDigit[] = {1497, 1499, 1500, 1502, 1504, 1505, 1506, 1508, 1510};
 
     DeprecatedString letter;
     if (number > 999) {
-        letter = toHebrew(number/1000) + "'";
+        letter = toHebrew(number / 1000) + "'";
         number = number % 1000;
     }
-
-    int hunderts = (number/400);
-    if (hunderts > 0) {
-        for (int i=0; i<hunderts; i++)
-            letter += QChar(1511 + 3);
-    }
-    number = number % 400;
-    if ((number / 100) != 0)
-        letter += QChar (1511 + (number / 100) -1);
-    number = number % 100;
-    int tens = number/10;
-    if (tens > 0 && !(number == 15 || number == 16))
-        letter += tenDigit[tens-1];
-    if (number == 15 || number == 16) { // special because of religious
-        letter += QChar(1487 + 9);       // reasons
+    int fourHundreds = number / 400;
+    for (int i = 0; i < fourHundreds; i++)
+        letter += QChar(1511 + 3);
+    number %= 400;
+    if (number / 100)
+        letter += QChar(1511 + (number / 100) - 1);
+    number %= 100;
+    if (number == 15 || number == 16) {
+        letter += QChar(1487 + 9);
         letter += QChar(1487 + number - 9);
     } else {
+        int tens = number / 10;
+        if (tens)
+            letter += tenDigit[tens - 1];
         number = number % 10;
-        if (number != 0)
-            letter += QChar (1487 + number);
+        if (number)
+            letter += QChar(1487 + number);
     }
     return letter;
 }
@@ -127,7 +116,7 @@ RenderListItem::RenderListItem(WebCore::Node* node)
     : RenderBlock(node), predefVal(-1), m_marker(0), _notInList(false), m_value(-1)
 {
     // init RenderObject attributes
-    setInline(false);   // our object is not Inline
+    setInline(false); // our object is not Inline
 }
 
 void RenderListItem::setStyle(RenderStyle *_style)
@@ -291,10 +280,10 @@ void RenderListItem::calcMinMaxWidth()
         RenderBlock::calcMinMaxWidth();
 }
 
-void RenderListItem::layout( )
+void RenderListItem::layout()
 {
-    KHTMLAssert( needsLayout() );
-    KHTMLAssert( minMaxKnown() );
+    KHTMLAssert(needsLayout());
+    KHTMLAssert(minMaxKnown());
     
     updateMarkerLocation();    
     RenderBlock::layout();
@@ -452,12 +441,15 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     default:
         if (!m_item.isEmpty()) {
             const Font& font = style()->font();
-            if( style()->direction() == LTR) {
-                p->drawText(marker.location(), AlignLeft, m_item);
-                p->drawText(marker.location() + IntSize(font.width(m_item), 0), AlignLeft, ". ");
+            if (style()->direction() == LTR) {
+                int width = font.width(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
+                p->drawText(marker.location(), m_item);
+                p->drawText(marker.location() + IntSize(width, 0), ". ");
             } else {
-                p->drawText(marker.location(), AlignLeft, " .");
-                p->drawText(marker.location() + IntSize(font.width(" ."), 0), AlignLeft, m_item);
+                UChar spacePeriod[2] = { '.', ' ' };
+                int width = font.width(spacePeriod, 2);
+                p->drawText(marker.location(), " .");
+                p->drawText(marker.location() + IntSize(width, 0), m_item);
             }
         }
     }
@@ -556,7 +548,12 @@ void RenderListMarker::calcMinMaxWidth()
         break;
     }
 
-    m_width = font.width(m_item) + font.width(". ");
+    {
+        int itemWidth = font.width(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
+        UChar periodSpace[2] = { '.', ' ' };
+        int periodSpaceWidth = font.width(periodSpace, 2);
+        m_width = itemWidth + periodSpaceWidth;
+    }
 
 end:
 
@@ -678,11 +675,33 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         }
         case LNONE:
             return IntRect();
-        default:
-            if (m_item.isEmpty())
-                return IntRect();
-            return IntRect(m_x, m_y + ascent, font.width(m_item) + font.width(". "), font.height());
+        case ARMENIAN:
+        case CJK_IDEOGRAPHIC:
+        case DECIMAL_LEADING_ZERO:
+        case GEORGIAN:
+        case HEBREW:
+        case HIRAGANA:
+        case HIRAGANA_IROHA:
+        case KATAKANA:
+        case KATAKANA_IROHA:
+        case LDECIMAL:
+        case LOWER_ALPHA:
+        case LOWER_GREEK:
+        case LOWER_LATIN:
+        case LOWER_ROMAN:
+        case UPPER_ALPHA:
+        case UPPER_LATIN:
+        case UPPER_ROMAN:
+            break;
     }
+
+    if (m_item.isEmpty())
+        return IntRect();
+
+    int itemWidth = font.width(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
+    UChar periodSpace[2] = { '.', ' ' };
+    int periodSpaceWidth = font.width(periodSpace, 2);
+    return IntRect(m_x, m_y + ascent, itemWidth + periodSpaceWidth, font.height());
 }
 
 void RenderListMarker::setSelectionState(SelectionState state)

@@ -85,12 +85,13 @@ static inline String getMIMEType(const String& contentTypeString)
     String mimeType;
     unsigned length = contentTypeString.length();
     for (unsigned offset = 0; offset < length; offset++) {
-        QChar c = contentTypeString[offset];
+        UChar c = contentTypeString[offset];
         if (c == ';')
             break;
-        else if (c.isSpace()) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
+        else if (QChar(c).isSpace()) // FIXME: This seems wrong, " " is an invalid MIME type character according to RFC 2045.  bug 8644
             continue;
-        mimeType += String(c);
+        // FIXME: This is a very slow way to build a string, given WebCore::String's implementation.
+        mimeType += String(&c, 1);
     }
     return mimeType;
 }
@@ -106,7 +107,7 @@ static String getCharset(const String& contentTypeString)
             return String();
         
         // is what we found a beginning of a word?
-        if (contentTypeString[pos-1].unicode() > ' ' && contentTypeString[pos-1] != ';') {
+        if (contentTypeString[pos-1] > ' ' && contentTypeString[pos-1] != ';') {
             pos += 7;
             continue;
         }
@@ -114,18 +115,18 @@ static String getCharset(const String& contentTypeString)
         pos += 7;
 
         // skip whitespace
-        while (pos != length && contentTypeString[pos].unicode() <= ' ')
+        while (pos != length && contentTypeString[pos] <= ' ')
             ++pos;
     
         if (contentTypeString[pos++] != '=') // this "charset" substring wasn't a parameter name, but there may be others
             continue;
 
-        while (pos != length && (contentTypeString[pos].unicode() <= ' ' || contentTypeString[pos] == '"' || contentTypeString[pos] == '\''))
+        while (pos != length && (contentTypeString[pos] <= ' ' || contentTypeString[pos] == '"' || contentTypeString[pos] == '\''))
             ++pos;
 
         // we don't handle spaces within quoted parameter values, because charset names cannot have any
         int endpos = pos;
-        while (pos != length && contentTypeString[endpos].unicode() > ' ' && contentTypeString[endpos] != '"' && contentTypeString[endpos] != '\'' && contentTypeString[endpos] != ';')
+        while (pos != length && contentTypeString[endpos] > ' ' && contentTypeString[endpos] != '"' && contentTypeString[endpos] != '\'' && contentTypeString[endpos] != ';')
             ++endpos;
     
         return contentTypeString.substring(pos, endpos-pos);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,9 @@ namespace WebCore {
 // FIXME: Can't really answer this question correctly without knowing the white-space mode.
 // FIXME: Move this along with the white-space position functions above
 // somewhere else in the editing directory. It doesn't belong here.
-inline bool isCollapsibleWhitespace(const QChar& c)
+inline bool isCollapsibleWhitespace(UChar c)
 {
-    switch (c.unicode()) {
+    switch (c) {
         case ' ':
         case '\n':
             return true;
@@ -65,7 +65,7 @@ public:
     void advance();
     
     int length() const { return m_textLength; }
-    const QChar *characters() const { return m_textCharacters; }
+    const UChar* characters() const { return m_textCharacters; }
     
     PassRefPtr<Range> range() const;
      
@@ -78,7 +78,7 @@ private:
     bool handleReplacedElement();
     bool handleNonTextNode();
     void handleTextBox();
-    void emitCharacter(QChar, Node *textNode, Node *offsetBaseNode, int textStartOffset, int textEndOffset);
+    void emitCharacter(UChar, Node *textNode, Node *offsetBaseNode, int textStartOffset, int textEndOffset);
     
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
@@ -97,7 +97,7 @@ private:
     mutable Node *m_positionOffsetBaseNode;
     mutable int m_positionStartOffset;
     mutable int m_positionEndOffset;
-    const QChar *m_textCharacters;
+    const UChar* m_textCharacters;
     int m_textLength;
     
     // Used when there is still some pending text from the current node; when these
@@ -108,10 +108,10 @@ private:
     // Used to do the whitespace collapsing logic.
     Node *m_lastTextNode;    
     bool m_lastTextNodeEndedWithCollapsedSpace;
-    QChar m_lastCharacter;
+    UChar m_lastCharacter;
     
     // Used for whitespace characters that aren't in the DOM, so we can point at them.
-    QChar m_singleCharacterBuffer;
+    UChar m_singleCharacterBuffer;
     
     // Used when text boxes are out of order (Hebrew/Arabic w/ embeded LTR text)
     Vector<InlineTextBox*> m_sortedTextBoxes;
@@ -131,7 +131,7 @@ public:
     void advance();
     
     int length() const { return m_textLength; }
-    const QChar *characters() const { return m_textCharacters; }
+    const UChar* characters() const { return m_textCharacters; }
     
     PassRefPtr<Range> range() const;
         
@@ -140,33 +140,33 @@ private:
     bool handleTextNode();
     bool handleReplacedElement();
     bool handleNonTextNode();
-    void emitCharacter(QChar, Node *Node, int startOffset, int endOffset);
+    void emitCharacter(UChar, Node *Node, int startOffset, int endOffset);
     void emitNewline();
     
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
-    Node *m_node;
+    Node* m_node;
     int m_offset;
     bool m_handledNode;
     bool m_handledChildren;
     
     // End of the range.
-    Node *m_startNode;
+    Node* m_startNode;
     int m_startOffset;
     
     // The current text and its position, in the form to be returned from the iterator.
-    Node *m_positionNode;
+    Node* m_positionNode;
     int m_positionStartOffset;
     int m_positionEndOffset;
-    const QChar *m_textCharacters;
+    const UChar* m_textCharacters;
     int m_textLength;
 
     // Used to do the whitespace logic.
-    Node *m_lastTextNode;    
-    QChar m_lastCharacter;
+    Node* m_lastTextNode;    
+    UChar m_lastCharacter;
     
     // Used for whitespace characters that aren't in the DOM, so we can point at them.
-    QChar m_singleCharacterBuffer;
+    UChar m_singleCharacterBuffer;
 };
 
 // Builds on the text iterator, adding a character position so we can walk one
@@ -182,7 +182,7 @@ public:
     bool atEnd() const { return m_textIterator.atEnd(); }
     
     int length() const { return m_textIterator.length() - m_runOffset; }
-    const QChar *characters() const { return m_textIterator.characters() + m_runOffset; }
+    const UChar* characters() const { return m_textIterator.characters() + m_runOffset; }
     DeprecatedString string(int numChars);
     
     int characterOffset() const { return m_offset; }
@@ -207,14 +207,14 @@ public:
     void advance();
     
     int length() const;
-    const QChar *characters() const;
+    const UChar* characters() const;
     
     // Range of the text we're currently returning
     PassRefPtr<Range> range() const { return m_range; }
 
 private:
     // text from the previous chunk from the textIterator
-    const QChar *m_previousText;
+    const UChar* m_previousText;
     int m_previousLength;
 
     // many chunks from textIterator concatenated

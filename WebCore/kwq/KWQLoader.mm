@@ -26,21 +26,19 @@
 #import "config.h"
 #import "KWQLoader.h"
 
+#import "BlockExceptions.h"
 #import "Cache.h"
 #import "CachedImage.h"
 #import "DocLoader.h"
 #import "FoundationExtras.h"
-#import "BlockExceptions.h"
-#import "KWQFormData.h"
-#import "TransferJob.h"
-#import "Logging.h"
-#import "KWQResourceLoader.h"
 #import "FrameMac.h"
+#import "KWQFormData.h"
+#import "KWQResourceLoader.h"
+#import "Logging.h"
 #import "Request.h"
+#import "TransferJob.h"
 #import "WebCoreFrameBridge.h"
 #import "loader.h"
-#import "loader.h"
-
 #import <Foundation/NSURLResponse.h>
 
 using namespace WebCore;
@@ -215,37 +213,18 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     }
 }
 
-#define LOCAL_STRING_BUFFER_SIZE 1024
-
-bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const WebCore::String &m_url)
+bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const WebCore::String& m_url)
 {
-    unichar _buffer[LOCAL_STRING_BUFFER_SIZE];
-    unichar *urlStringCharacters;
-    
     NSURL *responseURL = [(NSURLResponse *)response URL];
     NSString *urlString = [responseURL absoluteString];
 
-    if (m_url.length() != [urlString length])
+    size_t length = m_url.length();
+    if (length != [urlString length])
         return false;
-        
-    // Nasty hack to directly compare strings buffers of NSString
-    // and String.  We do this for speed.
-    if ([urlString length] > LOCAL_STRING_BUFFER_SIZE) {
-        urlStringCharacters = (unichar *)fastMalloc(sizeof(unichar)*[urlString length]);
-    }
-    else {
-        urlStringCharacters = _buffer;
-    }
-    [urlString getCharacters:urlStringCharacters];
-    
-    bool ret = false;
-    if(!memcmp(urlStringCharacters, m_url.unicode(), m_url.length()*sizeof(QChar)))
-        ret = true;
-    
-    if (urlStringCharacters != _buffer)
-        fastFree(urlStringCharacters);
-        
-    return ret;
+
+    Vector<UChar, 1024> buffer(length);
+    [urlString getCharacters:buffer.data()];    
+    return !memcmp(buffer.data(), m_url.characters(), length * sizeof(UChar));
 }
 
 DeprecatedString KWQResponseURL(NSURLResponse *response)

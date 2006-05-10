@@ -76,7 +76,7 @@ bool NamedMappedAttrMap::mapsEquivalent(const NamedMappedAttrMap* otherMap) cons
     return true;
 }
 
-inline static bool isClassWhitespace(QChar c)
+inline static bool isClassWhitespace(UChar c)
 {
     return c == ' ' || c == '\r' || c == '\n' || c == '\t';
 }
@@ -93,7 +93,7 @@ void NamedMappedAttrMap::parseClassAttribute(const String& classStr)
     
     AtomicStringList* curr = 0;
     
-    const QChar* str = classAttr.unicode();
+    const UChar* str = classAttr.characters();
     int length = classAttr.length();
     int sPos = 0;
 

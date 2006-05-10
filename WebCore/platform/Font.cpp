@@ -76,7 +76,7 @@ void Font::update() const
     m_fontList->invalidate();
 }
 
-int Font::width(const QChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const
+int Font::width(const UChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const
 {
     // FIXME: Want to define an lroundf for win32.
 #if __APPLE__

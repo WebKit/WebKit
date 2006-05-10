@@ -80,11 +80,6 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
     return pos;
 }
 
-static inline bool isNBSP(const QChar &c)
-{
-    return c.unicode() == 0xa0;
-}
-
 void InsertTextCommand::input(const String &text, bool selectInsertedText)
 {
     assert(text.find('\n') == -1);

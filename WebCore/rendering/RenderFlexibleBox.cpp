@@ -728,10 +728,12 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 
                 RenderBlock* blockChild = static_cast<RenderBlock*>(child);
                 int lineCount = blockChild->lineCount();
-                if (lineCount <= numVisibleLines) continue;
+                if (lineCount <= numVisibleLines)
+                    continue;
                 
                 int newHeight = blockChild->heightForLineCount(numVisibleLines);
-                if (newHeight == child->height()) continue;
+                if (newHeight == child->height())
+                    continue;
                 
                 child->setChildNeedsLayout(true);
                 child->setOverrideSize(newHeight);
@@ -741,25 +743,32 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 child->setOverrideSize(-1);
                 
                 // FIXME: For now don't support RTL.
-                if (style()->direction() != LTR) continue;
+                if (style()->direction() != LTR)
+                    continue;
                 
                 // Get the last line
                 RootInlineBox* lastLine = blockChild->lineAtIndex(lineCount-1);
-                if (!lastLine) continue;
+                if (!lastLine)
+                    continue;
                 
                 // See if the last item is an anchor
                 InlineBox* anchorBox = lastLine->lastChild();
-                if (!anchorBox) continue;
-                if (!anchorBox->object()->element()) continue;
-                if (!anchorBox->object()->element()->isLink()) continue;
+                if (!anchorBox)
+                    continue;
+                if (!anchorBox->object()->element())
+                    continue;
+                if (!anchorBox->object()->element()->isLink())
+                    continue;
                 
                 RootInlineBox* lastVisibleLine = blockChild->lineAtIndex(numVisibleLines-1);
-                if (!lastVisibleLine) continue;
+                if (!lastVisibleLine)
+                    continue;
 
-                const unsigned short ellipsisAndSpace[2] = { 0x2026, ' ' };
+                const UChar ellipsisAndSpace[2] = { 0x2026, ' ' };
                 static AtomicString ellipsisAndSpaceStr(ellipsisAndSpace, 2);
+
                 const Font& font = style(numVisibleLines == 1)->font();
-                int ellipsisAndSpaceWidth = font.width(const_cast<QChar*>(ellipsisAndSpaceStr.unicode()), 2, 0, 2, 0, 0);
+                int ellipsisAndSpaceWidth = font.width(ellipsisAndSpace, 2, 0, 2, 0, 0);
 
                 // Get ellipsis width + " " + anchor width
                 int totalWidth = ellipsisAndSpaceWidth + anchorBox->width();
@@ -769,8 +778,10 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 RenderBlock* srcBlock = static_cast<RenderBlock*>(lastLine->object());
                 
                 // FIXME: Directions of src/destBlock could be different from our direction and from one another.
-                if (srcBlock->style()->direction() != LTR) continue;
-                if (destBlock->style()->direction() != LTR) continue;
+                if (srcBlock->style()->direction() != LTR)
+                    continue;
+                if (destBlock->style()->direction() != LTR)
+                    continue;
 
                 int blockEdge = destBlock->rightOffset(lastVisibleLine->yPos());
                 if (!lastVisibleLine->canAccommodateEllipsis(true, blockEdge, 

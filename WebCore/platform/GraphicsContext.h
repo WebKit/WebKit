@@ -32,6 +32,7 @@
 #include "Pen.h"
 #include "TextDirection.h"
 #include <wtf/Noncopyable.h>
+#include <unicode/umachine.h>
 
 #if __APPLE__
 typedef struct CGContext PlatformGraphicsContext;
@@ -43,7 +44,6 @@ typedef void PlatformGraphicsContext;
 #endif
 
 class DeprecatedString;
-class QChar;
 
 namespace WebCore {
 
@@ -106,14 +106,14 @@ namespace WebCore {
         void setFocusRingClip(const IntRect&);
         void clearFocusRingClip();
 
-        void drawText(const IntPoint&, int alignmentFlags, const DeprecatedString&);
+        void drawText(const IntPoint&, const DeprecatedString&);
+        void drawText(const IntPoint&, int tabWidth, int xpos,
+            const UChar*, int slen, int pos, int len, int toAdd,
+            TextDirection = LTR, bool visuallyOrdered = false, int from = -1, int to = -1);
         void drawHighlightForText(const IntPoint&, int h, int tabWidth, int xpos,
-            const QChar*, int slen, int pos, int len, int toAdd,
+            const UChar*, int slen, int pos, int len, int toAdd,
             TextDirection, bool visuallyOrdered,
             int from, int to, const Color& backgroundColor);
-        void drawText(const IntPoint&, int tabWidth, int xpos,
-            const QChar*, int slen, int pos, int len, int toAdd,
-            TextDirection = LTR, bool visuallyOrdered = false, int from = -1, int to = -1);
         void drawLineForText(const IntPoint&, int yOffset, int width);
         void drawLineForMisspelling(const IntPoint&, int width);
         int misspellingLineThickness();

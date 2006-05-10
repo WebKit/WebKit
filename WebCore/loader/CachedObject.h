@@ -27,6 +27,7 @@
 #ifndef KHTML_CachedObject_h
 #define KHTML_CachedObject_h
 
+#include "DeprecatedString.h"
 #include "PlatformString.h"
 #include "KWQKIOGlobal.h"
 #include <wtf/HashSet.h>

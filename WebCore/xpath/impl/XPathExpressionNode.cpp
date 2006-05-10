@@ -23,15 +23,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 
 #if XPATH_SUPPORT
 
-#include "Logging.h"
 #include "XPathExpressionNode.h"
-#include "Node.h"
 
-#include <cmath>
+#include "Logging.h"
+#include "Node.h"
+#include "XPathValue.h"
+#include <math.h>
 
 using namespace std;
 
@@ -52,7 +54,6 @@ Expression::Expression()
 Expression::~Expression()
 {
     deleteAllValues(m_subExpressions);
-    
     delete m_constantValue;
 }
 
@@ -60,7 +61,6 @@ Value Expression::evaluate() const
 {
     if (m_constantValue)
         return *m_constantValue;
-
     return doEvaluate();
 }
 
@@ -88,7 +88,7 @@ void Expression::optimize()
     }
 }
 
-unsigned int Expression::subExprCount() const
+unsigned Expression::subExprCount() const
 {
     return m_subExpressions.size();
 }
@@ -96,24 +96,20 @@ unsigned int Expression::subExprCount() const
 Expression* Expression::subExpr(unsigned i)
 {
     ASSERT(i < subExprCount());
-
     return m_subExpressions[i];
 }
 
 const Expression* Expression::subExpr(unsigned i) const
 {
     ASSERT(i < subExprCount());
-    
     return m_subExpressions[i];
 }
 
 bool Expression::isConstant() const
 {
-    for (unsigned i = 0; i < m_subExpressions.size(); i++) {
+    for (unsigned i = 0; i < m_subExpressions.size(); i++)
         if (!m_subExpressions[i]->isConstant())
             return false;
-    }
-
     return true;
 }
 

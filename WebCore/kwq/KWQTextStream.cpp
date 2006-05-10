@@ -26,6 +26,7 @@
 #include "config.h"
 #include "KWQTextStream.h"
 
+#include "DeprecatedString.h"
 #include "PlatformString.h"
 #include "Logging.h"
 

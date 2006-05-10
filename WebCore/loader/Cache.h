@@ -48,63 +48,39 @@ namespace WebCore  {
     
     /**
      * Provides a cache/loader for objects needed for displaying the html page.
-     * At the moment these are stylesheets, scripts and images
      */
     class Cache {
         friend class DocLoader;
     public:
         /**
-         * init the cache in case it's not already. This needs to get called once
-         * before using it.
+         * Initialize the cache in case it's not already.
+         * This needs to get called once before using it.
          */
         static void init();
         
         /**
-         * Ask the cache for some url. Will return a cachedObject, and
-         * load the requested data in case it's not cahced
-         * if the DocLoader is zero, the url must be full-qualified.
-         * Otherwise, it is automatically base-url expanded
+         * Ask the cache for some URL.
+         * If the DocLoader is zero, the URL must be fully-qualified. Otherwise, it is automatically base-URL expanded
          */
         static CachedImage* requestImage(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0);
-        static CachedImage* requestImage(DocLoader*, const KURL& url, bool reload = false, time_t expireDate = 0);
-
-        /**
-         * Ask the cache for some url. Will return a cachedObject, and
-         * load the requested data in case it's not cached
-         */
-        static CachedCSSStyleSheet* requestStyleSheet(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0, const DeprecatedString& charset = DeprecatedString::null);
-
-        /**
-         * Pre-loads a stylesheet into the cache.
-         */
-        static void preloadStyleSheet(const DeprecatedString &url, const DeprecatedString& stylesheetData);
-
-        /**
-         * Ask the cache for some url. Will return a cachedObject, and
-         * load the requested data in case it's not cahced
-         */
-        static CachedScript* requestScript(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0, const DeprecatedString& charset = DeprecatedString::null);
-
-        /**
-         * Pre-loads a script into the cache.
-         */
-        static void preloadScript(const DeprecatedString &url, const DeprecatedString& scriptData);
+        static CachedImage* requestImage(DocLoader*, const KURL& URL, bool reload, time_t expireDate);
+        static CachedCSSStyleSheet* requestStyleSheet(DocLoader*, const String& URL, bool reload, time_t expireDate, const DeprecatedString& charset);
+        static CachedScript* requestScript(DocLoader*, const String& URL, bool reload, time_t expireDate, const DeprecatedString& charset);
 
 #ifdef KHTML_XSLT
-        // Ask the cache for an XSL stylesheet.
-        static CachedXSLStyleSheet* requestXSLStyleSheet(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0);
+        static CachedXSLStyleSheet* requestXSLStyleSheet(DocLoader*, const String& URL, bool reload, time_t expireDate);
 #endif
 
 #ifndef KHTML_NO_XBL
-        // Ask the cache for an XBL document.
-        static CachedXBLDocument* requestXBLDocument(DocLoader*, const String& URL, bool reload = false, time_t expireDate = 0);
+        static CachedXBLDocument* requestXBLDocument(DocLoader*, const String& URL, bool reload, time_t expireDate);
 #endif
 
         /**
-         * Sets the size of the cache. This will only hod approximately, since the size some
-         * cached objects (like stylesheets) take up in memory is not exaclty known.
+         * Sets the size of the cache. This will only hold approximately, since the size some
+         * cached objects (like stylesheets) take up in memory is not exactly known.
          */
         static void setSize(int bytes);
+
         /**
          * returns the size of the cache
          */
@@ -125,8 +101,8 @@ namespace WebCore  {
 
         /**
          * clears the cache
-         * Warning: call this only at the end of your program, to clean
-         * up memory (useful for finding memory holes)
+         * Warning: call this only at the end of your program, to clean up memory
+         * (useful for finding memory leaks).
          */
         static void clear();
 

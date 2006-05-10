@@ -54,7 +54,7 @@ static DeprecatedString escapeTextForMarkup(const DeprecatedString &in)
 
     unsigned len = in.length();
     for (unsigned i = 0; i < len; ++i) {
-        switch (in[i].latin1()) {
+        switch (in[i].unicode()) {
             case '&':
                 s += "&amp;";
                 break;

@@ -751,14 +751,14 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (NSString *)selectedString
 {
     String text = m_frame->selectedText();
-    text.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
+    text.replace('\\', m_frame->backslashAsCurrencySymbol());
     return [[(NSString*)text copy] autorelease];
 }
 
 - (NSString *)stringForRange:(DOMRange *)range
 {
     String text = plainText([range _range]);
-    text.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
+    text.replace('\\', m_frame->backslashAsCurrencySymbol());
     return [[(NSString*)text copy] autorelease];
 }
 

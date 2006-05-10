@@ -100,10 +100,10 @@ void raiseDOMException(ExceptionCode ec)
 
 StringImpl::operator NSString *() const
 {
-    return [NSString stringWithCharacters:reinterpret_cast<const unichar *>(m_data) length:m_length];
+    return [NSString stringWithCharacters:m_data length:m_length];
 }
 
-String::String(NSString *str)
+String::String(NSString* str)
 {
     if (!str)
         return;
@@ -112,16 +112,9 @@ String::String(NSString *str)
     if (size == 0)
         m_impl = StringImpl::empty();
     else {
-        UniChar fixedSizeBuffer[1024];
-        UniChar *buffer;
-        if (size > static_cast<CFIndex>(sizeof(fixedSizeBuffer) / sizeof(UniChar)))
-            buffer = static_cast<UniChar *>(fastMalloc(size * sizeof(UniChar)));
-        else
-            buffer = fixedSizeBuffer;
-        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer);
-        m_impl = new StringImpl(reinterpret_cast<const QChar *>(buffer), (unsigned)size);
-        if (buffer != fixedSizeBuffer)
-            fastFree(buffer);
+        Vector<UChar, 1024> buffer(size);
+        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer.data());
+        m_impl = new StringImpl(buffer.data(), size);
     }
 }
 

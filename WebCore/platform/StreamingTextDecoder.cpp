@@ -44,7 +44,7 @@ StreamingTextDecoder::StreamingTextDecoder(const TextEncoding& encoding)
 
 static const UChar replacementCharacter = 0xFFFD;
 static const UChar BOM = 0xFEFF;
-static const int ConversionBufferSize = 16384;
+static const size_t ConversionBufferSize = 16384;
     
 static UConverter* cachedConverterICU;
 static TextEncodingID cachedConverterEncoding = InvalidEncoding;
@@ -59,12 +59,12 @@ StreamingTextDecoder::~StreamingTextDecoder()
     }
 }
 
-DeprecatedString StreamingTextDecoder::convertUTF16(const unsigned char *s, int length)
+DeprecatedString StreamingTextDecoder::convertUTF16(const unsigned char* s, int length)
 {
     ASSERT(m_numBufferedBytes == 0 || m_numBufferedBytes == 1);
 
-    const unsigned char *p = s;
-    unsigned len = length;
+    const unsigned char* p = s;
+    size_t len = length;
     
     DeprecatedString result("");
     
@@ -79,7 +79,7 @@ DeprecatedString StreamingTextDecoder::convertUTF16(const unsigned char *s, int 
             c = (m_bufferedBytes[0] << 8) | p[0];
 
         if (c)
-            result.append(reinterpret_cast<QChar *>(&c), 1);
+            result.append(reinterpret_cast<QChar*>(&c), 1);
 
         m_numBufferedBytes = 0;
         p += 1;
@@ -88,24 +88,24 @@ DeprecatedString StreamingTextDecoder::convertUTF16(const unsigned char *s, int 
     
     while (len > 1) {
         UChar buffer[ConversionBufferSize];
-        int runLength = min(len / 2, (unsigned)(sizeof(buffer) / sizeof(buffer[0])));
+        int runLength = min(len / 2, ConversionBufferSize);
         int bufferLength = 0;
         if (m_littleEndian) {
             for (int i = 0; i < runLength; ++i) {
                 UChar c = p[0] | (p[1] << 8);
                 p += 2;
-                if (c && c != BOM)
+                if (c != BOM)
                     buffer[bufferLength++] = c;
             }
         } else {
             for (int i = 0; i < runLength; ++i) {
                 UChar c = (p[0] << 8) | p[1];
                 p += 2;
-                if (c && c != BOM)
+                if (c != BOM)
                     buffer[bufferLength++] = c;
             }
         }
-        result.append(reinterpret_cast<QChar *>(buffer), bufferLength);
+        result.append(reinterpret_cast<QChar*>(buffer), bufferLength);
         len -= runLength * 2;
     }
     
@@ -118,6 +118,35 @@ DeprecatedString StreamingTextDecoder::convertUTF16(const unsigned char *s, int 
     return result;
 }
 
+bool StreamingTextDecoder::convertIfASCII(const unsigned char* s, int length, DeprecatedString& str)
+{
+    ASSERT(m_numBufferedBytes == 0 || m_numBufferedBytes == 1);
+
+    DeprecatedString result("");
+    result.reserve(length);
+
+    const unsigned char* p = s;
+    size_t len = length;
+    unsigned char ored = 0;
+    while (len) {
+        UChar buffer[ConversionBufferSize];
+        int runLength = min(len, ConversionBufferSize);
+        int bufferLength = 0;
+        for (int i = 0; i < runLength; ++i) {
+            unsigned char c = *p++;
+            ored |= c;
+            buffer[bufferLength++] = c;
+        }
+        if (ored & 0x80)
+            return false;
+        result.append(reinterpret_cast<QChar*>(buffer), bufferLength);
+        len -= runLength;
+    }
+
+    str = result;
+    return true;
+}
+
 static inline TextEncoding effectiveEncoding(const TextEncoding& encoding)
 {
     TextEncodingID id = encoding.encodingID();
@@ -126,7 +155,7 @@ static inline TextEncoding effectiveEncoding(const TextEncoding& encoding)
     return TextEncoding(id, encoding.flags());
 }
 
-UErrorCode StreamingTextDecoder::createICUConverter()
+void StreamingTextDecoder::createICUConverter()
 {
     TextEncoding encoding = effectiveEncoding(m_encoding);
     const char* encodingName = encoding.name();
@@ -141,16 +170,13 @@ UErrorCode StreamingTextDecoder::createICUConverter()
         UErrorCode err = U_ZERO_ERROR;
         ASSERT(!m_converterICU);
         m_converterICU = ucnv_open(encodingName, &err);
+#if !LOG_DISABLED
         if (err == U_AMBIGUOUS_ALIAS_WARNING)
             LOG_ERROR("ICU ambiguous alias warning for encoding: %s", encodingName);
-
-        if (!m_converterICU) {
+        if (!m_converterICU)
             LOG_ERROR("the ICU Converter won't convert from text encoding 0x%X, error %d", encoding.encodingID(), err);
-            return err;
-        }
+#endif
     }
-    
-    return U_ZERO_ERROR;
 }
 
 // We strip replacement characters because the ICU converter for UTF-8 converts
@@ -162,7 +188,7 @@ static inline bool unwanted(UChar c)
     return c == replacementCharacter || c == BOM;
 }
 
-void StreamingTextDecoder::appendOmittingUnwanted(DeprecatedString &s, const UChar *characters, int byteCount)
+void StreamingTextDecoder::appendOmittingUnwanted(DeprecatedString& s, const UChar* characters, int byteCount)
 {
     ASSERT(byteCount % sizeof(UChar) == 0);
     int start = 0;
@@ -170,38 +196,39 @@ void StreamingTextDecoder::appendOmittingUnwanted(DeprecatedString &s, const UCh
     for (int i = 0; i != characterCount; ++i) {
         if (unwanted(characters[i])) {
             if (start != i)
-                s.append(reinterpret_cast<const QChar *>(&characters[start]), i - start);
+                s.append(reinterpret_cast<const QChar*>(&characters[start]), i - start);
             start = i + 1;
         }
     }
     if (start != characterCount)
-        s.append(reinterpret_cast<const QChar *>(&characters[start]), characterCount - start);
+        s.append(reinterpret_cast<const QChar*>(&characters[start]), characterCount - start);
 }
 
-DeprecatedString StreamingTextDecoder::convertUsingICU(const unsigned char *chs, int len, bool flush)
+DeprecatedString StreamingTextDecoder::convertUsingICU(const unsigned char* chs, int len, bool flush)
 {
     // Get a converter for the passed-in encoding.
-    if (!m_converterICU && U_FAILURE(createICUConverter()))
-        return DeprecatedString();
-
-    ASSERT(m_converterICU);
+    if (!m_converterICU) {
+        createICUConverter();
+        if (!m_converterICU)
+            return DeprecatedString();
+    }
 
     DeprecatedString result("");
     result.reserve(len);
 
     UChar buffer[ConversionBufferSize];
-    const char *source = reinterpret_cast<const char *>(chs);
-    const char *sourceLimit = source + len;
-    int32_t *offsets = NULL;
+    const char* source = reinterpret_cast<const char*>(chs);
+    const char* sourceLimit = source + len;
+    int32_t* offsets = NULL;
     UErrorCode err;
-    
+
     do {
-        UChar *target = buffer;
-        const UChar *targetLimit = target + ConversionBufferSize;
+        UChar* target = buffer;
+        const UChar* targetLimit = target + ConversionBufferSize;
         err = U_ZERO_ERROR;
         ucnv_toUnicode(m_converterICU, &target, targetLimit, &source, sourceLimit, offsets, flush, &err);
         int count = target - buffer;
-        appendOmittingUnwanted(result, reinterpret_cast<const UChar *>(buffer), count * sizeof(UChar));
+        appendOmittingUnwanted(result, reinterpret_cast<const UChar*>(buffer), count * sizeof(UChar));
     } while (err == U_BUFFER_OVERFLOW_ERROR);
 
     if (U_FAILURE(err)) {
@@ -215,39 +242,57 @@ DeprecatedString StreamingTextDecoder::convertUsingICU(const unsigned char *chs,
         LOG_ERROR("ICU conversion error");
         return DeprecatedString();
     }
-    
+
     return result;
 }
 
-DeprecatedString StreamingTextDecoder::convert(const unsigned char *chs, int len, bool flush)
+DeprecatedString StreamingTextDecoder::convert(const unsigned char* chs, int len, bool flush)
 {
-    //#define PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE 1000
-
     switch (m_encoding.encodingID()) {
-    case UTF16Encoding:
-        return convertUTF16(chs, len);
+        case UTF16Encoding:
+            return convertUTF16(chs, len);
 
-    default:
-#if PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE
-        DeprecatedString result;
-        int chunkSize;
-        for (int i = 0; i != len; i += chunkSize) {
-            chunkSize = len - i;
-            if (chunkSize > PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE) {
-                chunkSize = PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE;
-            }
-            result += convertUsingICU(chs + i, chunkSize, flush && (i + chunkSize == len));
+        case ASCIIEncoding:
+        case Latin1Encoding:
+        case WinLatin1Encoding: {
+            DeprecatedString result;
+            if (convertIfASCII(chs, len, result))
+                return result;
+            break;
         }
-        return result;
-#else
-        return convertUsingICU(chs, len, flush);
-#endif
+
+        case UTF8Encoding:
+            // If a previous run used ICU, we might have a partly converted character.
+            // If so, don't use the optimized ASCII code path.
+            if (!m_converterICU) {
+                DeprecatedString result;
+                if (convertIfASCII(chs, len, result))
+                    return result;
+            }
+            break;
+
+        default:
+            break;
     }
-    ASSERT_NOT_REACHED();
-    return DeprecatedString();
+
+    //#define PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE 1000
+#if PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE
+    DeprecatedString result;
+    int chunkSize;
+    for (int i = 0; i != len; i += chunkSize) {
+        chunkSize = len - i;
+        if (chunkSize > PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE) {
+            chunkSize = PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE;
+        }
+        result += convertUsingICU(chs + i, chunkSize, flush && (i + chunkSize == len));
+    }
+    return result;
+#else
+    return convertUsingICU(chs, len, flush);
+#endif
 }
 
-DeprecatedString StreamingTextDecoder::toUnicode(const char *chs, int len, bool flush)
+DeprecatedString StreamingTextDecoder::toUnicode(const char* chs, int len, bool flush)
 {
     ASSERT_ARG(len, len >= 0);
     
@@ -265,8 +310,8 @@ DeprecatedString StreamingTextDecoder::toUnicode(const char *chs, int len, bool 
     int numBufferedBytes = m_numBufferedBytes;
     int buf1Len = numBufferedBytes;
     int buf2Len = len;
-    const unsigned char *buf1 = m_bufferedBytes;
-    const unsigned char *buf2 = reinterpret_cast<const unsigned char *>(chs);
+    const unsigned char* buf1 = m_bufferedBytes;
+    const unsigned char* buf2 = reinterpret_cast<const unsigned char*>(chs);
     unsigned char c1 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
     unsigned char c2 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
     unsigned char c3 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;

@@ -23,16 +23,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 
 #if XPATH_SUPPORT
 
 #include "XPathPredicate.h"
-#include "XPathFunctions.h"
+
 #include "Logging.h"
-
 #include "Node.h"
-
+#include "XPathFunctions.h"
+#include "XPathValue.h"
 #include <math.h>
 
 #ifdef _MSC_VER // math functions missing from Microsoft Visual Studio standard C library

@@ -78,18 +78,20 @@
 @end
 
 using namespace std;
-
-using namespace KJS;
-using namespace Bindings;
-
+using namespace KJS::Bindings;
 using namespace KIO;
+
+using KJS::JSLock;
+using KJS::PausedTimeouts;
+using KJS::SavedBuiltins;
+using KJS::SavedProperties;
 
 namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
 
-NSEvent *FrameMac::_currentEvent = nil;
+NSEvent* FrameMac::_currentEvent = nil;
 
 static NSMutableDictionary* createNSDictionary(const HashMap<String, String>& map)
 {
@@ -114,7 +116,7 @@ static SEL selectorForKeyEvent(const PlatformKeyboardEvent* event)
         return 0;
 
     SEL selector = NULL;
-    switch (key[0U].unicode()) {
+    switch (key[0U]) {
     case NSUpArrowFunctionKey:
         selector = @selector(moveUp:); break;
     case NSDownArrowFunctionKey:
@@ -632,7 +634,7 @@ void FrameMac::setView(FrameView *view)
 void FrameMac::setTitle(const String &title)
 {
     String text = title;
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
+    text.replace('\\', backslashAsCurrencySymbol());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [_bridge setTitle:text];
@@ -642,7 +644,7 @@ void FrameMac::setTitle(const String &title)
 void FrameMac::setStatusBarText(const String& status)
 {
     String text = status;
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
+    text.replace('\\', backslashAsCurrencySymbol());
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [_bridge setStatusText:text];
@@ -730,10 +732,10 @@ String FrameMac::advanceToNextMisspelling(bool startBeforeSelection)
 
     while (1) {
         if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
-            const QChar *chars = it.characters();
+            const UChar* chars = it.characters();
             int len = it.length();
-            if (len > 1 || !chars[0].isSpace()) {
-                NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:(unichar *)chars length:len freeWhenDone:NO];
+            if (len > 1 || !QChar(chars[0]).isSpace()) {
+                NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
                 NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
                 [chunk release];
                 if (misspelling.length > 0) {
@@ -1226,7 +1228,7 @@ String FrameMac::incomingReferrer() const
 void FrameMac::runJavaScriptAlert(const String& message)
 {
     String text = message;
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
+    text.replace('\\', backslashAsCurrencySymbol());
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [_bridge runJavaScriptAlertPanelWithMessage:text];
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -1235,7 +1237,7 @@ void FrameMac::runJavaScriptAlert(const String& message)
 bool FrameMac::runJavaScriptConfirm(const String& message)
 {
     String text = message;
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
+    text.replace('\\', backslashAsCurrencySymbol());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [_bridge runJavaScriptConfirmPanelWithMessage:text];
@@ -1247,9 +1249,9 @@ bool FrameMac::runJavaScriptConfirm(const String& message)
 bool FrameMac::runJavaScriptPrompt(const String& prompt, const String& defaultValue, String& result)
 {
     String promptText = prompt;
-    promptText.replace(QChar('\\'), backslashAsCurrencySymbol());
+    promptText.replace('\\', backslashAsCurrencySymbol());
     String defaultValueText = defaultValue;
-    defaultValueText.replace(QChar('\\'), backslashAsCurrencySymbol());
+    defaultValueText.replace('\\', backslashAsCurrencySymbol());
 
     bool ok;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -1260,7 +1262,7 @@ bool FrameMac::runJavaScriptPrompt(const String& prompt, const String& defaultVa
 
     if (ok) {
         result = String(returnedText);
-        result.replace(backslashAsCurrencySymbol(), QChar('\\'));
+        result.replace(backslashAsCurrencySymbol(), '\\');
     }
 
     return ok;
@@ -2283,7 +2285,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                         text += str.mid(runStart, runEnd-runStart);
                         [pendingStyledSpace release];
                         pendingStyledSpace = nil;
-                        addedSpace = str[runEnd-1].direction() == QChar::DirWS;
+                        addedSpace = u_charDirection(str[runEnd - 1].unicode()) == U_WHITE_SPACE_NEUTRAL;
                     }
                     else {
                         RenderText* textObj = static_cast<RenderText*>(renderer);
@@ -2318,7 +2320,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                                     needSpace = nextRunStart > runEnd;
                                     [pendingStyledSpace release];
                                     pendingStyledSpace = nil;
-                                    addedSpace = str[runEnd-1].direction() == QChar::DirWS;
+                                    addedSpace = u_charDirection(str[runEnd - 1].unicode()) == U_WHITE_SPACE_NEUTRAL;
                                     start = -1;
                                 }
                                 if (end != -1 && runEnd >= end)
@@ -2328,7 +2330,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                     }
                 }
                 
-                text.replace(QChar('\\'), renderer->backslashAsCurrencySymbol());
+                text.replace('\\', renderer->backslashAsCurrencySymbol());
     
                 if (text.length() > 0 || needSpace) {
                     NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
@@ -3105,10 +3107,10 @@ void FrameMac::markMisspellings(const SelectionController &selection)
     WordAwareIterator it(searchRange.get());
     
     while (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
-        const QChar *chars = it.characters();
+        const UChar* chars = it.characters();
         int len = it.length();
-        if (len > 1 || !chars[0].isSpace()) {
-            NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:(unichar *)chars length:len freeWhenDone:NO];
+        if (len > 1 || !QChar(chars[0]).isSpace()) {
+            NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(chars) length:len freeWhenDone:NO];
             int startIndex = 0;
             // Loop over the chunk to find each misspelling in it.
             while (startIndex < len) {
@@ -3402,7 +3404,7 @@ bool FrameMac::shouldClose()
         return true;
 
     String text = event->result();
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
+    text.replace('\\', backslashAsCurrencySymbol());
 
     return [_bridge runBeforeUnloadConfirmPanelWithMessage:text];
 

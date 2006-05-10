@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-void findWordBoundary(const QChar* chars, int len, int position, int* start, int* end)
+void findWordBoundary(const UChar* chars, int len, int position, int* start, int* end)
 {
-    NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(reinterpret_cast<const unichar*>(chars))
+    NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars)
         length:len freeWhenDone:NO];
     NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
     NSRange range = [attr doubleClickAtIndex:(position >= len) ? len - 1 : position];
@@ -43,9 +43,9 @@ void findWordBoundary(const QChar* chars, int len, int position, int* start, int
     *end = range.location + range.length;
 }
 
-int findNextWordFromIndex(const QChar* chars, int len, int position, bool forward)
+int findNextWordFromIndex(const UChar* chars, int len, int position, bool forward)
 {   
-    NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(reinterpret_cast<const unichar*>(chars))
+    NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars)
         length:len freeWhenDone:NO];
     NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
     int result = [attr nextWordFromIndex:position forward:forward];
@@ -99,14 +99,13 @@ static char* currentTextBreakLocaleID()
     return localeString;
 }
 
-void findSentenceBoundary(const QChar* chars, int len, int position, int* start, int* end)
+void findSentenceBoundary(const UChar* chars, int len, int position, int* start, int* end)
 {
     int startPos = 0;
     int endPos = 0;
 
     UErrorCode status = U_ZERO_ERROR;
-    UBreakIterator* boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(),
-        const_cast<unichar*>(reinterpret_cast<const unichar*>(chars)), len, &status);
+    UBreakIterator* boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(), chars, len, &status);
     if (boundary && U_SUCCESS(status)) {
         startPos = ubrk_preceding(boundary, position);
         if (startPos == UBRK_DONE) {
@@ -123,13 +122,12 @@ void findSentenceBoundary(const QChar* chars, int len, int position, int* start,
     *end = endPos;
 }
 
-int findNextSentenceFromIndex(const QChar* chars, int len, int position, bool forward)
+int findNextSentenceFromIndex(const UChar* chars, int len, int position, bool forward)
 {
     int pos = 0;
     
     UErrorCode status = U_ZERO_ERROR;
-    UBreakIterator* boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(),
-        const_cast<unichar*>(reinterpret_cast<const unichar*>(chars)), len, &status);
+    UBreakIterator* boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(), chars, len, &status);
     if (boundary && U_SUCCESS(status)) {
         if (forward) {
             pos = ubrk_following(boundary, position);

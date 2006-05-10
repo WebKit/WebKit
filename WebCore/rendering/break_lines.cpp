@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-int nextBreakablePosition(const QChar *str, int pos, int len, bool breakNBSP)
+int nextBreakablePosition(const UChar* str, int pos, int len, bool breakNBSP)
 {
 #if __APPLE__
     OSStatus status = 0, findStatus = -1;
@@ -41,9 +41,9 @@ int nextBreakablePosition(const QChar *str, int pos, int len, bool breakNBSP)
     int i;
     unsigned short ch, lastCh;
     
-    lastCh = pos > 0 ? str[pos - 1].unicode() : 0;
+    lastCh = pos > 0 ? str[pos - 1] : 0;
     for (i = pos; i < len; i++) {
-        ch = str[i].unicode();
+        ch = str[i];
         if (ch == ' ' || ch == '\n' || ch == '\t' || (breakNBSP && ch == 0xa0))
             break;
         // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.

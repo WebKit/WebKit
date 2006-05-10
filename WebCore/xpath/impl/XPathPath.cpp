@@ -23,23 +23,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 
 #if XPATH_SUPPORT
 
-#include "Logging.h"
-
 #include "XPathPath.h"
 
 #include "Document.h"
+#include "Logging.h"
 #include "Node.h"
+#include "XPathValue.h"
 
 namespace WebCore {
 namespace XPath {
         
 Filter::Filter(Expression* expr, const Vector<Predicate*>& predicates)
-    : m_expr(expr),
-    m_predicates(predicates)
+    : m_expr(expr), m_predicates(predicates)
 {
 }
 

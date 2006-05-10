@@ -227,14 +227,6 @@ CachedCSSStyleSheet *Cache::requestStyleSheet(DocLoader* dl, const String& url, 
     return static_cast<CachedCSSStyleSheet *>(o);
 }
 
-void Cache::preloadStyleSheet(const DeprecatedString& url, const DeprecatedString& stylesheet_data)
-{
-    CachedObject *o = cache->get(String(url).impl());
-    if (o)
-        remove(o);
-    cache->set(String(url).impl(), new CachedCSSStyleSheet(url, stylesheet_data));
-}
-
 CachedScript *Cache::requestScript(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
 {
     // this brings the _url to a standard form...
@@ -284,14 +276,6 @@ CachedScript *Cache::requestScript(DocLoader* dl, const String& url, bool reload
 
     updateCacheStatus(dl, url, o);
     return static_cast<CachedScript *>(o);
-}
-
-void Cache::preloadScript(const DeprecatedString& url, const DeprecatedString& script_data)
-{
-    CachedObject *o = cache->get(String(url).impl());
-    if (o)
-        remove(o);
-    cache->set(String(url).impl(), new CachedScript(url, script_data));
 }
 
 #ifdef KHTML_XSLT

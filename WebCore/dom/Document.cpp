@@ -2392,7 +2392,7 @@ void Document::setDomain(const String &newDomain, bool force /*=false*/)
 
 bool Document::isValidName(const String &name)
 {
-    const UChar *s = reinterpret_cast<const UChar *>(name.unicode());
+    const UChar* s = reinterpret_cast<const UChar*>(name.characters());
     unsigned length = name.length();
 
     if (length == 0)
@@ -2425,7 +2425,7 @@ bool Document::parseQualifiedName(const String &qualifiedName, String &prefix, S
     bool sawColon = false;
     int colonPos = 0;
 
-    const UChar* s = reinterpret_cast<const UChar*>(qualifiedName.unicode());
+    const UChar* s = reinterpret_cast<const UChar*>(qualifiedName.characters());
     for (unsigned i = 0; i < length;) {
         UChar32 c;
         U16_NEXT(s, i, length, c)
@@ -2489,7 +2489,7 @@ void Document::setDecoder(Decoder *decoder)
     m_decoder = decoder;
 }
 
-QChar Document::backslashAsCurrencySymbol() const
+UChar Document::backslashAsCurrencySymbol() const
 {
     if (!m_decoder)
         return '\\';
@@ -3098,21 +3098,20 @@ Vector<String> Document::formElementsState() const
 }
 
 #if XPATH_SUPPORT
+
 PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
                                                        XPathNSResolver* resolver,
                                                        ExceptionCode& ec)
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = new XPathEvaluator;
-    
     return m_xpathEvaluator->createExpression(expression, resolver, ec);
 }
 
-PassRefPtr<XPathNSResolver> Document::createNSResolver(Node *nodeResolver)
+PassRefPtr<XPathNSResolver> Document::createNSResolver(Node* nodeResolver)
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = new XPathEvaluator;
-    
     return m_xpathEvaluator->createNSResolver(nodeResolver);
 }
 
@@ -3125,7 +3124,6 @@ PassRefPtr<XPathResult> Document::evaluate(const String& expression,
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = new XPathEvaluator;
-    
     return m_xpathEvaluator->evaluate(expression, contextNode, resolver, type, result, ec);
 }
 

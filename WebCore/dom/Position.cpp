@@ -40,6 +40,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+const UChar nonBreakingSpace = 0xa0;
+
 static Node *nextRenderedEditable(Node *node)
 {
     while (1) {
@@ -626,8 +628,8 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     Position prev = previousCharacterPosition(affinity);
     if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
         String string = static_cast<Text *>(prev.node())->data();
-        const QChar &c = string[prev.offset()];
-        if (considerNonCollapsibleWhitespace ? (c.isSpace() || c.unicode() == 0xa0) : isCollapsibleWhitespace(c))
+        UChar c = string[prev.offset()];
+        if (considerNonCollapsibleWhitespace ? (QChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
             return prev;
     }
 
@@ -640,11 +642,11 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
         return Position();
 
     if (node()->isTextNode()) {
-        Text *textNode = static_cast<Text *>(node());
+        Text* textNode = static_cast<Text*>(node());
         if (offset() < (int)textNode->length()) {
-            String string = static_cast<Text *>(node())->data();
-            const QChar &c = string[offset()];
-            if (considerNonCollapsibleWhitespace ? (c.isSpace() || c.unicode() == 0xa0) : isCollapsibleWhitespace(c))
+            String string = textNode->data();
+            UChar c = string[offset()];
+            if (considerNonCollapsibleWhitespace ? (QChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
                 return *this;
             return Position();
         }
@@ -655,9 +657,9 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
 
     Position next = nextCharacterPosition(affinity);
     if (next != *this && next.node()->inSameContainingBlockFlowElement(node()) && next.node()->isTextNode()) {
-        String string = static_cast<Text *>(next.node())->data();
-        const QChar &c = string[0];
-        if (considerNonCollapsibleWhitespace ? (c.isSpace() || c.unicode() == 0xa0) : isCollapsibleWhitespace(c))
+        String string = static_cast<Text*>(next.node())->data();
+        UChar c = string[0];
+        if (considerNonCollapsibleWhitespace ? (QChar(c).isSpace() || c == nonBreakingSpace) : isCollapsibleWhitespace(c))
             return next;
     }
 

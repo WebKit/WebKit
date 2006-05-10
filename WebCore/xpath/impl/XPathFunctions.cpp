@@ -23,16 +23,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 
 #if XPATH_SUPPORT
 
 #include "XPathFunctions.h"
 
+#include "DeprecatedString.h"
 #include "Logging.h"
 #include "NamedAttrMap.h"
 #include "Node.h"
-
+#include "XPathValue.h"
 #include <math.h>
 
 #ifdef _MSC_VER // No round() in standard C library for Visual Studio
@@ -324,14 +326,14 @@ String Interval::asString() const
     if (m_min == Inf)
         s += "-Infinity";
     else
-        s += DeprecatedString::number(m_min);
+        s += String::number(m_min);
 
     s += "..";
 
     if (m_max == Inf)
         s += "Infinity";
     else
-        s += DeprecatedString::number(m_max);
+        s += String::number(m_max);
 
     s += "]";
 
@@ -373,7 +375,7 @@ String Function::name() const
 
 Value FunLast::doEvaluate() const
 {
-    return double(Expression::evaluationContext().size);
+    return Expression::evaluationContext().size;
 }
 
 bool FunLast::isConstant() const
@@ -383,7 +385,7 @@ bool FunLast::isConstant() const
 
 Value FunPosition::doEvaluate() const
 {
-    return double(Expression::evaluationContext().position);
+    return Expression::evaluationContext().position;
 }
 
 bool FunPosition::isConstant() const
@@ -467,7 +469,7 @@ Value FunCount::doEvaluate() const
         return 0.0;
     }
     
-    return double(a.toNodeVector().size());
+    return a.toNodeVector().size();
 }
 
 bool FunCount::isConstant() const
@@ -477,18 +479,16 @@ bool FunCount::isConstant() const
 
 Value FunString::doEvaluate() const
 {
-    if (argCount() == 0) {
-        String s = Value(Expression::evaluationContext().node).toString();
-        return s;
-    }
+    if (argCount() == 0)
+        return Value(Expression::evaluationContext().node).toString();
     return arg(0)->evaluate().toString();
 }
 
 Value FunConcat::doEvaluate() const
 {
-    String str;
+    String str = "";
 
-    for (unsigned int i = 0; i < argCount(); ++i)
+    for (unsigned i = 0; i < argCount(); ++i)
         str += arg(i)->evaluate().toString();
 
     return str;
@@ -544,7 +544,7 @@ Value FunSubstringAfter::doEvaluate() const
     if (i == -1)
         return "";
 
-    return Value(s1.deprecatedString().mid(i + 1));
+    return s1.substring(i + 1);
 }
 
 Value FunSubstring::doEvaluate() const
@@ -566,17 +566,14 @@ Value FunSubstring::doEvaluate() const
             return "";
     }
 
-    return Value(s.deprecatedString().mid(pos - 1, len));
+    return s.substring(pos - 1, len);
 }
 
 Value FunStringLength::doEvaluate() const
 {
-    if (argCount() == 0) {
-        String s = Value(Expression::evaluationContext().node).toString();
-        return double(s.length());
-    }
-
-    return double(arg(0)->evaluate().toString().length());
+    if (argCount() == 0)
+        return Value(Expression::evaluationContext().node).toString().length();
+    return arg(0)->evaluate().toString().length();
 }
 
 Value FunNormalizeSpace::doEvaluate() const
@@ -597,14 +594,17 @@ Value FunTranslate::doEvaluate() const
     String s3 = arg(2)->evaluate().toString();
     String newString;
 
+    // FIXME: Building a String a character at a time is quite slow.
     for (unsigned i1 = 0; i1 < s1.length(); ++i1) {
-        QChar ch = s1[i1];
+        UChar ch = s1[i1];
         int i2 = s2.find(ch);
         
-        if (i2 == -1) 
-            newString += ch;
-        else if ((unsigned)i2 < s3.length())
-            newString += s3[ i2 ];
+        if (i2 == -1)
+            newString += String(&ch, 1);
+        else if ((unsigned)i2 < s3.length()) {
+            UChar c2 = s3[i2];
+            newString += String(&c2, 1);
+        }
     }
 
     return newString;
@@ -695,7 +695,7 @@ Value FunSum::doEvaluate() const
     NodeVector nodes = a.toNodeVector();
     
     for (unsigned i = 0; i < nodes.size(); i++)
-        sum += Value(stringValue(nodes[i].get()).deprecatedString()).toNumber();
+        sum += Value(stringValue(nodes[i].get())).toNumber();
     
     return sum;
 }

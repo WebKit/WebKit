@@ -66,7 +66,7 @@ public:
 
     bool isLastInBlock() const;
 
-    QChar characterAfter() const;
+    UChar characterAfter() const;
     
     void debugPosition(const char* msg = "") const;
     

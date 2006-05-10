@@ -39,6 +39,8 @@
 
 #import "IntRect.h"
 
+using namespace std;
+
 namespace WebCore {
 
 FontFallbackList::FontFallbackList()
@@ -102,11 +104,11 @@ const FontPlatformData& Font::platformFont() const
 }
 
 IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, int xpos, 
-    const QChar* str, int slen, int pos, int l, int toAdd,
+    const UChar* str, int slen, int pos, int l, int toAdd,
     bool rtl, bool visuallyOrdered, int from, int to) const
 {
     assert(m_fontList);
-    int len = std::min(slen - pos, l);
+    int len = min(slen - pos, l);
 
     CREATE_FAMILY_ARRAY(fontDescription(), families);
 
@@ -116,7 +118,7 @@ IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, i
         to = len;
 
     WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, (const UniChar *)(str+pos), len, from, to);    
+    WebCoreInitializeTextRun(&run, str + pos, len, from, to);
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.rtl = rtl;
@@ -137,7 +139,7 @@ IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, i
     return enclosingIntRect(m_fontList->primaryFont(fontDescription())->selectionRectForRun(&run, &style, &geometry));
 }
                      
-void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos, const QChar* str, int len, int from, int to,
+void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos, const UChar* str, int len, int from, int to,
                     int toAdd, TextDirection d, bool visuallyOrdered) const
 {
     // Avoid allocations, use stack array to pass font families.  Normally these
@@ -150,7 +152,7 @@ void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidt
         to = len;
         
     WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
+    WebCoreInitializeTextRun(&run, str, len, from, to);    
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.textColor = nsColor(context->pen().color());
@@ -170,7 +172,7 @@ void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidt
     m_fontList->primaryFont(fontDescription())->drawRun(&run, &style, &geometry);
 }
 
-void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point, int h, int tabWidth, int xpos, const QChar* str,
+void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point, int h, int tabWidth, int xpos, const UChar* str,
                                 int len, int from, int to, int toAdd,
                                 TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
 {
@@ -184,7 +186,7 @@ void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point,
         to = len;
         
     WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
+    WebCoreInitializeTextRun(&run, str, len, from, to);    
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.textColor = nsColor(context->pen().color());
@@ -222,13 +224,13 @@ int Font::misspellingLineThickness(GraphicsContext* context) const
     return m_fontList->primaryFont(fontDescription())->misspellingLineThickness();
 }
 
-float Font::floatWidth(const QChar* uchars, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding) const
+float Font::floatWidth(const UChar* uchars, int slen, int pos, int len, int tabWidth, int xpos, bool runRounding) const
 {
     assert(m_fontList);
     CREATE_FAMILY_ARRAY(fontDescription(), families);
 
     WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, (const UniChar *)uchars, slen, pos, pos+len);
+    WebCoreInitializeTextRun(&run, uchars, slen, pos, pos + len);
     
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
@@ -243,13 +245,13 @@ float Font::floatWidth(const QChar* uchars, int slen, int pos, int len, int tabW
     return m_fontList->primaryFont(fontDescription())->floatWidthForRun(&run, &style);
 }
 
-int Font::checkSelectionPoint(const QChar* s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
+int Font::checkSelectionPoint(const UChar* s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
 {
     assert(m_fontList);
     CREATE_FAMILY_ARRAY(fontDescription(), families);
     
     WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, (const UniChar *)(s+pos), std::min(slen - pos, len), 0, len);
+    WebCoreInitializeTextRun(&run, s + pos, min(slen - pos, len), 0, len);
     
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);

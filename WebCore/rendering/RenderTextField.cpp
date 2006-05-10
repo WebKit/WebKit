@@ -120,7 +120,7 @@ void RenderTextField::updateFromElement()
             String value = input->value().copy();
             if (value.isNull())
                 value = "";
-            value.replace(QChar('\\'), backslashAsCurrencySymbol());
+            value.replace('\\', backslashAsCurrencySymbol());
             if (value != oldText) {
                 ExceptionCode ec = 0;
                 m_div->setInnerText(value, ec);
@@ -230,9 +230,8 @@ void RenderTextField::calcMinMaxWidth()
         if (size <= 0)
             size = 20;
 
-        QChar ch[1];
-        ch[0] = '0';
-        int sizeWidth = (int)ceilf(style()->font().floatWidth(ch, 1, 0, 1, 0, 0, false) * size);
+        const UChar ch = '0';
+        int sizeWidth = (int)ceilf(style()->font().floatWidth(&ch, 1, 0, 1, 0, 0, false) * size);
         m_maxWidth = sizeWidth;
     }
     

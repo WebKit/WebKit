@@ -82,7 +82,15 @@
 #endif
 
 using namespace std;
-using namespace KJS;
+
+using KJS::JSLock;
+using KJS::JSValue;
+using KJS::Location;
+using KJS::PausedTimeouts;
+using KJS::SavedProperties;
+using KJS::SavedBuiltins;
+using KJS::UString;
+using KJS::Window;
 
 namespace WebCore {
 
@@ -96,7 +104,7 @@ class UserStyleSheetLoader : public CachedObjectClient {
 public:
     UserStyleSheetLoader(Frame* frame, const String& url, DocLoader* dl)
         : m_frame(frame)
-        , m_cachedSheet(Cache::requestStyleSheet(dl, url))
+        , m_cachedSheet(Cache::requestStyleSheet(dl, url, false, 0, ""))
     {
         m_cachedSheet->ref(this);
     }
@@ -3254,7 +3262,7 @@ void Frame::setWindowHasFocus(bool flag)
         doc->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
 }
 
-QChar Frame::backslashAsCurrencySymbol() const
+UChar Frame::backslashAsCurrencySymbol() const
 {
     Document *doc = document();
     if (!doc)

@@ -58,7 +58,7 @@ UBreakIterator* characterBreakIterator(const StringImpl* i)
         return 0;
 
     status = U_ZERO_ERROR;
-    ubrk_setText(iterator, reinterpret_cast<const UChar*>(i->unicode()), i->length(), &status);
+    ubrk_setText(iterator, reinterpret_cast<const UChar*>(i->characters()), i->length(), &status);
     if (status != U_ZERO_ERROR)
         return 0;
 
@@ -101,7 +101,7 @@ RenderText::RenderText(WebCore::Node* node, StringImpl *_str)
     setRenderText();
     if (str)
         str = str->replace('\\', backslashAsCurrencySymbol());
-    KHTMLAssert(!str || !str->length() || str->unicode());
+    KHTMLAssert(!str || !str->length() || str->characters());
 }
 
 void RenderText::setStyle(RenderStyle *_style)
@@ -436,7 +436,7 @@ bool RenderText::allAscii() const
     
     unsigned i;
     for (i = 0; i < str->length(); i++)
-        if ((*str)[i].unicode() >= 0x7f) {
+        if ((*str)[i] > 0x7f) {
             m_allAscii = false;
             return m_allAscii;
         }
@@ -456,28 +456,28 @@ bool RenderText::shouldUseMonospaceCache(const Font *f) const
 // RenderText.
 void RenderText::cacheWidths()
 {
-    const Font *f = font(false);
+    const Font* f = font(false);
     if (shouldUseMonospaceCache(f)) {
-        QChar c(' ');
+        const UChar c = ' ';
         m_monospaceCharacterWidth = (int)f->floatWidth(&c, 1, 0, 1, 0, 0);
     } else {
         m_monospaceCharacterWidth = 0;
     }
 }
 
-ALWAYS_INLINE int RenderText::widthFromCache(const Font *f, int start, int len, int tabWidth, int xpos) const
+ALWAYS_INLINE int RenderText::widthFromCache(const Font* f, int start, int len, int tabWidth, int xpos) const
 {
     if (m_monospaceCharacterWidth != 0) {
         int i, w = 0;
         for (i = start; i < start+len; i++) {
-            QChar c = (*str)[i];
-            int dir = c.direction();
-            if (dir != QChar::DirNSM && dir != QChar::DirBN) {
-                if (c == '\t' && tabWidth != 0) {
+            UChar c = (*str)[i];
+            UCharDirection dir = u_charDirection(c);
+            if (dir != U_DIR_NON_SPACING_MARK && dir != U_BOUNDARY_NEUTRAL) {
+                if (c == '\t' && tabWidth != 0)
                     w += tabWidth - ((xpos + w) % tabWidth);
-                } else
+                else
                     w += m_monospaceCharacterWidth;
-                if (c.isSpace() && i>start && !(*str)[i-1].isSpace())
+                if (QChar(c).isSpace() && i > start && !QChar((*str)[i - 1]).isSpace())
                     w += f->wordSpacing();        
             }
         }
@@ -485,7 +485,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font *f, int start, int len, 
         return w;
     }
     
-    return f->width(str->unicode(), str->length(), start, len, tabWidth, xpos);
+    return f->width(str->characters(), str->length(), start, len, tabWidth, xpos);
 }
 
 void RenderText::trimmedMinMaxWidth(int leadWidth,
@@ -523,8 +523,8 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
 
     if (stripFrontSpaces && ((*str)[0] == ' ' || ((*str)[0] == '\n' && !style()->preserveNewline()) || (*str)[0] == '\t')) {
         const Font *f = font(false); // FIXME: Why is it ok to ignore first-line here?
-        QChar space[1]; space[0] = ' ';
-        int spaceWidth = f->width(space, 1);
+        const UChar space = ' ';
+        int spaceWidth = f->width(&space, 1);
         maxW -= spaceWidth + f->wordSpacing();
     }
     
@@ -590,19 +590,18 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     m_hasBreakableChar = m_hasBreak = m_hasTab = m_hasBeginWS = m_hasEndWS = false;
     
     // FIXME: not 100% correct for first-line
-    const Font *f = font(false);
+    const Font* f = font(false);
     int wordSpacing = style()->wordSpacing();
     int len = str->length();
-    const QChar *txt = str->unicode();
+    const UChar* txt = str->characters();
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
     bool firstWord = true;
     bool firstLine = true;
     int nextBreakable = -1;
-    for(int i = 0; i < len; i++)
-    {
-        QChar c = txt[i];
+    for (int i = 0; i < len; i++) {
+        UChar c = txt[i];
         
         bool previousCharacterIsSpace = isSpace;
         
@@ -636,13 +635,13 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             ignoringSpaces = false;
         
         // Ignore spaces and soft hyphens
-        if (ignoringSpaces || c.unicode() == SOFT_HYPHEN) {
+        if (ignoringSpaces || c == SOFT_HYPHEN) {
             continue;
         }
         
         bool hasBreak = isBreakable(txt, i, len, nextBreakable);
         int j = i;
-        while (c != '\n' && c != ' ' && c != '\t' && c.unicode() != SOFT_HYPHEN) {
+        while (c != '\n' && c != ' ' && c != '\t' && c != SOFT_HYPHEN) {
             j++;
             if (j == len)
                 break;
@@ -735,7 +734,7 @@ bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
 {
     unsigned currPos;
     for (currPos = from; 
-         currPos < from+len && ((*str)[currPos] == '\n' || (*str)[currPos].unicode() == ' ' || (*str)[currPos] == '\t'); 
+         currPos < from+len && ((*str)[currPos] == '\n' || (*str)[currPos] == ' ' || (*str)[currPos] == '\t'); 
          currPos++);
     return currPos >= (from+len);
 }
@@ -882,7 +881,7 @@ void RenderText::setText(StringImpl *text, bool force)
                 {
                     // find previous text renderer if one exists
                     RenderObject* o;
-                    QChar previous = ' ';
+                    UChar previous = ' ';
                     for (o = previousInPreOrder(); o && o->isInlineFlow(); o = o->previousInPreOrder())
                         ;
                     if (o && o->isText()) {
@@ -905,7 +904,7 @@ void RenderText::setText(StringImpl *text, bool force)
     // ### what should happen if we change the text of a
     // RenderBR object ?
     KHTMLAssert(!isBR() || (str->length() == 1 && (*str)[0] == '\n'));
-    KHTMLAssert(!str->length() || str->unicode());
+    KHTMLAssert(!str->length() || str->characters());
 
     setNeedsLayoutAndMinMaxRecalc();
 }
@@ -984,7 +983,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, int xpos, bo
 
 unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *f, int xpos) const
 {
-    if (!str->unicode() || from > str->length())
+    if (!str->characters() || from > str->length())
         return 0;
     if (from + len > str->length())
         len = str->length() - from;
@@ -995,7 +994,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     else if (f == &style()->font())
         w = widthFromCache(f, from, len, tabWidth(), xpos);
     else
-        w = f->width(str->unicode(), str->length(), from, len, tabWidth(), xpos );
+        w = f->width(str->characters(), str->length(), from, len, tabWidth(), xpos );
         
     return w;
 }

@@ -119,13 +119,13 @@ WebCore::DocLoader* XSLStyleSheet::docLoader()
 bool XSLStyleSheet::parseString(const String &string, bool strict)
 {
     // Parse in a single chunk into an xmlDocPtr
-    const QChar BOM(0xFEFF);
+    const UChar BOM(0xFEFF);
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
     setLoaderForLibXMLCallbacks(docLoader());
     if (!m_stylesheetDocTaken)
         xmlFreeDoc(m_stylesheetDoc);
     m_stylesheetDocTaken = false;
-    m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char *>(string.unicode()), string.length() * sizeof(QChar),
+    m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char*>(string.characters()), string.length() * sizeof(UChar),
         m_ownerDocument->URL().ascii(),
         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
         XML_PARSE_NOENT | XML_PARSE_DTDATTR | XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NOCDATA);

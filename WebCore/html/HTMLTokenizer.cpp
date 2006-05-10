@@ -66,9 +66,6 @@ static const char styleEnd [] =  "</style";
 static const char textareaEnd [] = "</textarea";
 static const char titleEnd [] = "</title";
 
-#define KHTML_ALLOC_QCHAR_VEC( N ) (QChar*) fastMalloc( sizeof(QChar)*( N ) )
-#define KHTML_DELETE_QCHAR_VEC( P ) fastFree((char*)( P ))
-
 // Full support for MS Windows extensions to Latin-1.
 // Technically these extensions should only be activated for pages
 // marked "windows-1252" or "cp1252", but
@@ -84,38 +81,36 @@ static const char titleEnd [] = "</title";
 
 // We only need this for entities. For non-entity text, we handle this in the text encoding.
 
-static const unsigned short windowsLatin1ExtensionArray[32] = {
+static const UChar windowsLatin1ExtensionArray[32] = {
     0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
     0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F, // 88-8F
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, // 90-97
     0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178  // 98-9F
 };
 
-static inline QChar fixUpChar(QChar c)
+static inline UChar fixUpChar(UChar c)
 {
-    unsigned short code = c.unicode();
-    if ((code & ~0x1F) != 0x0080)
+    if ((c & ~0x1F) != 0x0080)
         return c;
-    return windowsLatin1ExtensionArray[code - 0x80];
+    return windowsLatin1ExtensionArray[c - 0x80];
 }
 
-inline bool tagMatch(const char *s1, const QChar *s2, unsigned length)
+static inline bool tagMatch(const char* s1, const UChar* s2, unsigned length)
 {
     for (unsigned i = 0; i != length; ++i) {
-        char c1 = s1[i];
-        char uc1 = toupper(c1);
-        QChar c2 = s2[i];
+        unsigned char c1 = s1[i];
+        unsigned char uc1 = toupper(c1);
+        UChar c2 = s2[i];
         if (c1 != c2 && uc1 != c2)
             return false;
     }
     return true;
 }
 
-void Token::addAttribute(Document* doc, const AtomicString& attrName, const AtomicString& v)
+inline void Token::addAttribute(Document* doc, const AtomicString& attrName, const AtomicString& v)
 {
-    Attribute* a = 0;
     if (!attrName.isEmpty() && attrName != "/") {
-        a = new MappedAttribute(attrName, v);
+        Attribute* a = new MappedAttribute(attrName, v);
         if (!attrs)
             attrs = new NamedMappedAttrMap(0);
         attrs->insertAttribute(a);
@@ -166,13 +161,11 @@ void HTMLTokenizer::reset()
       cs->deref(this);
     }
     
-    if (buffer)
-        KHTML_DELETE_QCHAR_VEC(buffer);
+    fastFree(buffer);
     buffer = dest = 0;
     size = 0;
 
-    if (scriptCode)
-        KHTML_DELETE_QCHAR_VEC(scriptCode);
+    fastFree(scriptCode);
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
 
@@ -189,7 +182,7 @@ void HTMLTokenizer::begin()
     m_state.setLoadingExtScript(false);
     reset();
     size = 254;
-    buffer = KHTML_ALLOC_QCHAR_VEC( 255 );
+    buffer = static_cast<UChar*>(fastMalloc(sizeof(UChar) * 254));
     dest = buffer;
     tquote = NoQuote;
     searchCount = 0;
@@ -261,13 +254,13 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
 
     while ( !src.isEmpty() ) {
         checkScriptBuffer();
-        unsigned char ch = src->latin1();
+        UChar ch = *src;
         if (!scriptCodeResync && !brokenComments && !state.inTextArea() && !state.inXmp() && !state.inTitle() && ch == '-' && scriptCodeSize >= 3 && !src.escaped() && scriptCode[scriptCodeSize-3] == '<' && scriptCode[scriptCodeSize-2] == '!' && scriptCode[scriptCodeSize-1] == '-') {
             state.setInComment(true);
             state = parseComment(src, state);
             continue;
         }
-        if ( scriptCodeResync && !tquote && ( ch == '>' ) ) {
+        if (scriptCodeResync && !tquote && ch == '>') {
             ++src;
             scriptCodeSize = scriptCodeResync-1;
             scriptCodeResync = 0;
@@ -302,29 +295,28 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
             return state;
         }
         // possible end of tagname, lets check.
-        if ( !scriptCodeResync && !state.escaped() && !src.escaped() && ( ch == '>' || ch == '/' || ch <= ' ' ) && ch &&
+        if (!scriptCodeResync && !state.escaped() && !src.escaped() && (ch == '>' || ch == '/' || ch <= ' ') && ch &&
              scriptCodeSize >= searchStopperLen &&
              tagMatch( searchStopper, scriptCode+scriptCodeSize-searchStopperLen, searchStopperLen )) {
             scriptCodeResync = scriptCodeSize-searchStopperLen+1;
             tquote = NoQuote;
             continue;
         }
-        if ( scriptCodeResync && !state.escaped() ) {
-            if(ch == '\"')
+        if (scriptCodeResync && !state.escaped()) {
+            if (ch == '\"')
                 tquote = (tquote == NoQuote) ? DoubleQuote : ((tquote == SingleQuote) ? SingleQuote : NoQuote);
-            else if(ch == '\'')
+            else if (ch == '\'')
                 tquote = (tquote == NoQuote) ? SingleQuote : (tquote == DoubleQuote) ? DoubleQuote : NoQuote;
             else if (tquote != NoQuote && (ch == '\r' || ch == '\n'))
                 tquote = NoQuote;
         }
         state.setEscaped(!state.escaped() && ch == '\\');
         if (!scriptCodeResync && (state.inTextArea() || state.inTitle()) && !src.escaped() && ch == '&') {
-            QChar *scriptCodeDest = scriptCode+scriptCodeSize;
+            UChar* scriptCodeDest = scriptCode+scriptCodeSize;
             ++src;
             state = parseEntity(src, scriptCodeDest, state, m_cBufferPos, true, false);
             scriptCodeSize = scriptCodeDest-scriptCode;
-        }
-        else {
+        } else {
             scriptCode[scriptCodeSize++] = *src;
             ++src;
         }
@@ -370,7 +362,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
         doScriptExec = true;
     }
     state = processListing(SegmentedString(scriptCode, scriptCodeSize), state);
-    DeprecatedString exScript( buffer, dest-buffer );
+    DeprecatedString exScript(reinterpret_cast<QChar*>(buffer), dest - buffer);
     processToken();
     currToken.tagName = scriptTag.localName();
     currToken.beginTag = false;
@@ -506,12 +498,8 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString &src, State sta
     checkScriptBuffer(src.length());
     while ( !src.isEmpty() ) {
         scriptCode[ scriptCodeSize++ ] = *src;
-#if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
-        qDebug("comment is now: *%s*",
-               QConstString((QChar*)src.operator->(), min(16U, src.length())).string().latin1());
-#endif
 
-        if (src->unicode() == '>') {
+        if (*src == '>') {
             bool handleBrokenComments = brokenComments && !(state.inScript() || state.inStyle());
             int endCharsCount = 1; // start off with one for the '>' character
             if (scriptCodeSize > 2 && scriptCode[scriptCodeSize-3] == '-' && scriptCode[scriptCodeSize-2] == '-') {
@@ -555,7 +543,7 @@ HTMLTokenizer::State HTMLTokenizer::parseServer(SegmentedString& src, State stat
     checkScriptBuffer(src.length());
     while (!src.isEmpty()) {
         scriptCode[scriptCodeSize++] = *src;
-        if (src->unicode() == '>' &&
+        if (*src == '>' &&
             scriptCodeSize > 1 && scriptCode[scriptCodeSize-2] == '%') {
             ++src;
             state.setInServer(false);
@@ -569,21 +557,17 @@ HTMLTokenizer::State HTMLTokenizer::parseServer(SegmentedString& src, State stat
 
 HTMLTokenizer::State HTMLTokenizer::parseProcessingInstruction(SegmentedString &src, State state)
 {
-    char oldchar = 0;
-    while ( !src.isEmpty() )
-    {
-        unsigned char chbegin = src->latin1();
-        if(chbegin == '\'') {
+    UChar oldchar = 0;
+    while (!src.isEmpty()) {
+        UChar chbegin = *src;
+        if (chbegin == '\'')
             tquote = tquote == SingleQuote ? NoQuote : SingleQuote;
-        }
-        else if(chbegin == '\"') {
+        else if (chbegin == '\"')
             tquote = tquote == DoubleQuote ? NoQuote : DoubleQuote;
-        }
         // Look for '?>'
-        // some crappy sites omit the "?" before it, so
+        // Some crappy sites omit the "?" before it, so
         // we look for an unquoted '>' instead. (IE compatible)
-        else if ( chbegin == '>' && ( !tquote || oldchar == '?' ) )
-        {
+        else if (chbegin == '>' && (!tquote || oldchar == '?')) {
             // We got a '?>' sequence
             state.setInProcessingInstruction(false);
             ++src;
@@ -600,7 +584,7 @@ HTMLTokenizer::State HTMLTokenizer::parseProcessingInstruction(SegmentedString &
 HTMLTokenizer::State HTMLTokenizer::parseText(SegmentedString &src, State state)
 {
     while (!src.isEmpty()) {
-        unsigned short cc = src->unicode();
+        UChar cc = *src;
 
         if (state.skipLF()) {
             state.setSkipLF(false);
@@ -625,7 +609,7 @@ HTMLTokenizer::State HTMLTokenizer::parseText(SegmentedString &src, State state)
 }
 
 
-HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&dest, State state, unsigned &cBufferPos, bool start, bool parsingTag)
+HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, UChar*& dest, State state, unsigned &cBufferPos, bool start, bool parsingTag)
 {
     if (start)
     {
@@ -636,7 +620,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
 
     while(!src.isEmpty())
     {
-        unsigned short cc = src->unicode();
+        UChar cc = *src;
         switch(state.entityState()) {
         case NoEntity:
             ASSERT(state.entityState() != NoEntity);
@@ -654,30 +638,30 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
             break;
 
         case NumericSearch:
-            if(cc == 'x' || cc == 'X') {
+            if (cc == 'x' || cc == 'X') {
                 cBuffer[cBufferPos++] = cc;
                 ++src;
                 state.setEntityState(Hexadecimal);
-            }
-            else if(cc >= '0' && cc <= '9')
+            } else if (cc >= '0' && cc <= '9')
                 state.setEntityState(Decimal);
             else
                 state.setEntityState(SearchSemicolon);
-
             break;
 
-        case Hexadecimal:
-        {
-            int ll = min(src.length(), 10-cBufferPos);
-            while(ll--) {
-                QChar csrc(src->lower());
-                cc = csrc.unicode();
-
-                if (!((cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f'))) {
+        case Hexadecimal: {
+            int ll = min(src.length(), 10 - cBufferPos);
+            while (ll--) {
+                cc = *src;
+                if (!((cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f') || (cc >= 'A' && cc <= 'F'))) {
                     state.setEntityState(SearchSemicolon);
                     break;
                 }
-                EntityUnicodeValue = EntityUnicodeValue*16 + (cc - ( cc < 'a' ? '0' : 'a' - 10));
+                int digit;
+                if (cc < 'A')
+                    digit = cc - '0';
+                else
+                    digit = (cc - 'A' + 10) & 0xF; // handle both upper and lower case without a branch
+                EntityUnicodeValue = EntityUnicodeValue * 16 + digit;
                 cBuffer[cBufferPos++] = cc;
                 ++src;
             }
@@ -689,7 +673,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
         {
             int ll = min(src.length(), 9-cBufferPos);
             while(ll--) {
-                cc = src->unicode();
+                cc = *src;
 
                 if (!(cc >= '0' && cc <= '9')) {
                     state.setEntityState(SearchSemicolon);
@@ -708,8 +692,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
         {
             int ll = min(src.length(), 9-cBufferPos);
             while(ll--) {
-                QChar csrc = *src;
-                cc = csrc.unicode();
+                cc = *src;
 
                 if (!((cc >= 'a' && cc <= 'z') || (cc >= '0' && cc <= '9') || (cc >= 'A' && cc <= 'Z'))) {
                     state.setEntityState(SearchSemicolon);
@@ -737,21 +720,17 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
         }
         case SearchSemicolon:
             // Don't allow values that are more than 21 bits.
-            if (EntityUnicodeValue > 0 && EntityUnicodeValue <= 0x1FFFFF) {
-            
+            if (EntityUnicodeValue > 0 && EntityUnicodeValue <= 0x10FFFF) {
                 if (*src == ';')
                     ++src;
-
                 if (EntityUnicodeValue <= 0xFFFF) {
                     checkBuffer();
                     src.push(fixUpChar(EntityUnicodeValue));
                 } else {
                     // Convert to UTF-16, using surrogate code points.
-                    QChar c1(0xD800 | (((EntityUnicodeValue >> 16) - 1) << 6) | ((EntityUnicodeValue >> 10) & 0x3F));
-                    QChar c2(0xDC00 | (EntityUnicodeValue & 0x3FF));
                     checkBuffer(2);
-                    src.push(c1);
-                    src.push(c2);
+                    src.push(U16_LEAD(EntityUnicodeValue));
+                    src.push(U16_TRAIL(EntityUnicodeValue));
                 }
             } else {
                 checkBuffer(10);
@@ -779,13 +758,6 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
     while (!src.isEmpty())
     {
         checkBuffer();
-#if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
-        unsigned l = 0;
-        while(l < src.length() && (*(src.operator->()+l)).latin1() != '>')
-            l++;
-        qDebug("src is now: *%s*, tquote: %d",
-               QConstString((QChar*)src.operator->(), l).deprecatedString().latin1(), tquote);
-#endif
         switch(state.tagState()) {
         case NoTag:
         {
@@ -821,7 +793,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                           ++src;
                           if (!src.isEmpty())
                               // cuts off high bits, which is okay
-                              cBuffer[cBufferPos++] = src->unicode();
+                              cBuffer[cBufferPos++] = *src;
                         }
                         else
                           state = parseComment(src, state);
@@ -830,7 +802,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         return state; // Finished parsing tag!
                     }
                     // cuts off high bits, which is okay
-                    cBuffer[cBufferPos++] = src->unicode();
+                    cBuffer[cBufferPos++] = *src;
                     ++src;
                     break;
                 }
@@ -841,7 +813,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             bool finish = false;
             unsigned int ll = min(src.length(), CBUFLEN-cBufferPos);
             while(ll--) {
-                unsigned short curchar = src->unicode();
+                UChar curchar = *src;
                 if(curchar <= ' ' || curchar == '>' ) {
                     finish = true;
                     break;
@@ -893,7 +865,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             qDebug("SearchAttribute");
 #endif
             while(!src.isEmpty()) {
-                unsigned short curchar = src->unicode();
+                UChar curchar = *src;
                 // In this mode just ignore any quotes we encounter and treat them like spaces.
                 if (curchar > ' ' && curchar != '\'' && curchar != '"') {
                     if (curchar == '<' || curchar == '>')
@@ -914,7 +886,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #endif
             int ll = min(src.length(), CBUFLEN-cBufferPos);
             while(ll--) {
-                unsigned short curchar = src->unicode();
+                UChar curchar = *src;
                 if (curchar <= '>' && (curchar >= '=' || curchar <= ' ')) {
                     cBuffer[cBufferPos] = '\0';
                     attrName = AtomicString(cBuffer);
@@ -952,7 +924,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             qDebug("SearchEqual");
 #endif
             while(!src.isEmpty()) {
-                unsigned short curchar = src->unicode();
+                UChar curchar = *src;
                 // In this mode just ignore any quotes we encounter and treat them like spaces.
                 if (curchar > ' ' && curchar != '\'' && curchar != '"') {
                     if(curchar == '=') {
@@ -974,7 +946,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             break;
         case SearchValue:
             while(!src.isEmpty()) {
-                unsigned short curchar = src->unicode();
+                UChar curchar = *src;
                 if(curchar > ' ') {
                     if(( curchar == '\'' || curchar == '\"' )) {
                         tquote = curchar == '\"' ? DoubleQuote : SingleQuote;
@@ -995,7 +967,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             while(!src.isEmpty()) {
                 checkBuffer();
 
-                unsigned short curchar = src->unicode();
+                UChar curchar = *src;
                 if (curchar == '>' && attrName.isEmpty()) {
                     // Handle a case like <img '>.  Just go ahead and be willing
                     // to close the whole tag.  Don't consume the character and
@@ -1051,7 +1023,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #endif
             while(!src.isEmpty()) {
                 checkBuffer();
-                unsigned short curchar = src->unicode();
+                UChar curchar = *src;
                 if(curchar <= '>' && !src.escaped()) {
                     // parse Entities
                     if ( curchar == '&' )
@@ -1340,7 +1312,7 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
         // do we need to enlarge the buffer?
         checkBuffer();
 
-        unsigned short cc = src->unicode();
+        UChar cc = *src;
 
         bool wasSkipLF = state.skipLF();
         if (wasSkipLF)
@@ -1505,12 +1477,11 @@ void HTMLTokenizer::end()
         if (!m_state.hasTagState())
             processToken();
 
-        if (scriptCode)
-            KHTML_DELETE_QCHAR_VEC(scriptCode);
+        fastFree(scriptCode);
         scriptCode = 0;
         scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
 
-        KHTML_DELETE_QCHAR_VEC(buffer);
+        fastFree(buffer);
         buffer = 0;
     }
 
@@ -1532,15 +1503,15 @@ void HTMLTokenizer::finish()
         int pos;
         DeprecatedString food;
         if (m_state.inScript() || m_state.inStyle())
-            food.setUnicode(scriptCode, scriptCodeSize);
+            food.setUnicode(reinterpret_cast<QChar*>(scriptCode), scriptCodeSize);
         else if (m_state.inServer()) {
             food = "<";
-            food += DeprecatedString(scriptCode, scriptCodeSize);
+            food += DeprecatedString(reinterpret_cast<QChar*>(scriptCode), scriptCodeSize);
         } else {
-            pos = QConstString(scriptCode, scriptCodeSize).string().find('>');
-            food.setUnicode(scriptCode+pos+1, scriptCodeSize-pos-1); // deep copy
+            pos = QConstString(reinterpret_cast<QChar*>(scriptCode), scriptCodeSize).string().find('>');
+            food.setUnicode(reinterpret_cast<QChar*>(scriptCode) + pos + 1, scriptCodeSize - pos - 1); // deep copy
         }
-        KHTML_DELETE_QCHAR_VEC(scriptCode);
+        fastFree(scriptCode);
         scriptCode = 0;
         scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
         m_state.setInComment(false);
@@ -1626,22 +1597,21 @@ HTMLTokenizer::~HTMLTokenizer()
 
 void HTMLTokenizer::enlargeBuffer(int len)
 {
-    int newsize = max(size*2, size+len);
-    int oldoffs = (dest - buffer);
-
-    buffer = (QChar*)fastRealloc(buffer, newsize*sizeof(QChar));
-    dest = buffer + oldoffs;
-    size = newsize;
+    int newSize = max(size * 2, size + len);
+    int oldOffset = dest - buffer;
+    buffer = static_cast<UChar*>(fastRealloc(buffer, newSize * sizeof(UChar)));
+    dest = buffer + oldOffset;
+    size = newSize;
 }
 
 void HTMLTokenizer::enlargeScriptBuffer(int len)
 {
-    int newsize = max(scriptCodeMaxSize*2, scriptCodeMaxSize+len);
-    scriptCode = (QChar*)fastRealloc(scriptCode, newsize*sizeof(QChar));
-    scriptCodeMaxSize = newsize;
+    int newSize = max(scriptCodeMaxSize * 2, scriptCodeMaxSize + len);
+    scriptCode = static_cast<UChar*>(fastRealloc(scriptCode, newSize * sizeof(UChar)));
+    scriptCodeMaxSize = newSize;
 }
 
-void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
+void HTMLTokenizer::notifyFinished(CachedObject*)
 {
 #if INSTRUMENT_LAYOUT_SCHEDULING
     if (!parser->doc()->ownerElement())
@@ -1728,7 +1698,7 @@ void parseHTMLDocumentFragment(const String &source, DocumentFragment *fragment)
     ASSERT(!tok.processingData());      // make sure we're done (see 3963151)
 }
 
-unsigned short decodeNamedEntity(const char* name)
+UChar decodeNamedEntity(const char* name)
 {
     const Entity* e = findEntity(name, strlen(name));
     return e ? e->code : 0;

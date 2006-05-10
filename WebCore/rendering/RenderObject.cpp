@@ -2496,7 +2496,7 @@ bool RenderObject::usesLineWidth() const
     return (avoidsFloats() && (style()->width().isAuto() || isHR() || (style()->htmlHacks() && !isTable())));
 }
 
-QChar RenderObject::backslashAsCurrencySymbol() const
+UChar RenderObject::backslashAsCurrencySymbol() const
 {
     if (Node *node = element())
         if (Decoder *decoder = node->document()->decoder())

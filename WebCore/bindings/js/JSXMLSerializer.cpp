@@ -22,6 +22,7 @@
 #include "JSXMLSerializer.h"
 #include "JSXMLSerializer.lut.h"
 
+#include "DeprecatedString.h"
 #include "PlatformString.h"
 #include "kjs_dom.h"
 #include "markup.h"

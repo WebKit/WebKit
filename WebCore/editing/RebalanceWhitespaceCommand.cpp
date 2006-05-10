@@ -38,9 +38,9 @@ RebalanceWhitespaceCommand::RebalanceWhitespaceCommand(Document *document, const
 {
 }
 
-static inline bool isWhitespace(const QChar &c)
+static inline bool isWhitespace(UChar c)
 {
-    return c.unicode() == 0xa0 || isCollapsibleWhitespace(c);
+    return c == 0xa0 || isCollapsibleWhitespace(c);
 }
 
 // FIXME: This doesn't go into adjacent text in siblings, cousins, etc.

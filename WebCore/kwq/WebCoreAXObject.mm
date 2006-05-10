@@ -1268,7 +1268,7 @@ static WebCoreAXObject *AXLinkElementForNode (Node *node)
     return anchor->renderer()->document()->getAccObjectCache()->get(anchor->renderer());
 }
 
-static void AXAttributedStringAppendText (NSMutableAttributedString *attrString, Node *nodeImpl, const QChar *chars, int length)
+static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* nodeImpl, const UChar* chars, int length)
 {
     // skip invisible text
     if (!nodeImpl->renderer())
@@ -1278,7 +1278,7 @@ static void AXAttributedStringAppendText (NSMutableAttributedString *attrString,
     NSRange attrStringRange = NSMakeRange([attrString length], length);
     
     // append the string from this node
-    [[attrString mutableString] appendString:[NSString stringWithCharacters:(const UniChar*)chars length:length]];
+    [[attrString mutableString] appendString:[NSString stringWithCharacters:chars length:length]];
 
     // add new attributes and remove irrelevant inherited ones
     // NOTE: color attributes are handled specially because -[NSMutableAttributedString addAttribute: value: range:] does not merge
@@ -1350,9 +1350,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.length() != 0) {
-            AXAttributedStringAppendText (attrString, nodeImpl, it.characters(), it.length());
+            AXAttributedStringAppendText(attrString, nodeImpl, it.characters(), it.length());
         } else {
-            AXAttributedStringAppendReplaced (attrString, nodeImpl->childNode(it.range()->startOffset(exception)));
+            AXAttributedStringAppendReplaced(attrString, nodeImpl->childNode(it.range()->startOffset(exception)));
         }
         
         it.advance();

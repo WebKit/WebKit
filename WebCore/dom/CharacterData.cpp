@@ -44,7 +44,7 @@ CharacterData::CharacterData(Document *doc)
 CharacterData::CharacterData(Document *doc, const String &_text)
     : EventTargetNode(doc)
 {
-    str = _text.impl() ? _text.impl() : new StringImpl((QChar*)0, 0);
+    str = _text.impl() ? _text.impl() : new StringImpl(static_cast<UChar*>(0), 0);
     str->ref();
 }
 

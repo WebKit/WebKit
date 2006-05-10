@@ -28,6 +28,8 @@
 #if XPATH_SUPPORT
 
 #include "XPathParser.h"
+
+#include "DeprecatedString.h"
 #include "XPathEvaluator.h"
 
 namespace WebCore {
@@ -35,8 +37,7 @@ namespace XPath {
 
 #include "XPathGrammar.h"    
 
-struct AxisNameMapping
-{
+struct AxisNameMapping {
     const char* name;
     Step::AxisType type;
 };
@@ -57,7 +58,7 @@ static AxisNameMapping axisNames[] = {
     { "self", Step::SelfAxis }
 };
 
-static unsigned int axisNamesCount = sizeof(axisNames) / sizeof(axisNames[0]);
+static unsigned axisNamesCount = sizeof(axisNames) / sizeof(axisNames[0]);
 static const char* const nodeTypeNames[] = {
     "comment",
     "text",
@@ -71,16 +72,16 @@ HashSet<String>* Parser::s_nodeTypeNamesDict = 0;
 
 Parser* Parser::currentParser = 0;
 
-Parser::XMLCat Parser::charCat(QChar aChar)
+Parser::XMLCat Parser::charCat(UChar aChar)
 {
     //### might need to add some special cases from the XML spec.
 
-    if (aChar.unicode() == '_')
+    if (aChar == '_')
         return NameStart;
 
-    if (aChar.unicode() == '.' || aChar.unicode() == '-')
+    if (aChar == '.' || aChar == '-')
         return NameCont;
-    switch (u_charType(aChar.unicode())) {
+    switch (u_charType(aChar)) {
         case U_LOWERCASE_LETTER: //Ll
         case U_UPPERCASE_LETTER: //Lu
         case U_OTHER_LETTER:     //Lo
@@ -98,25 +99,23 @@ Parser::XMLCat Parser::charCat(QChar aChar)
     }
 }
 
-bool Parser::isAxisName(String name, Step::AxisType& type)
+bool Parser::isAxisName(const String& name, Step::AxisType& type)
 {
     if (!s_axisNamesDict) {
         s_axisNamesDict = new HashMap<String, Step::AxisType>;
-        for (unsigned int p = 0; p < axisNamesCount; ++p)
-            s_axisNamesDict->set(axisNames[p].name,
-                                 axisNames[p].type);
+        for (unsigned p = 0; p < axisNamesCount; ++p)
+            s_axisNamesDict->set(axisNames[p].name, axisNames[p].type);
     }
 
     HashMap<String, Step::AxisType>::iterator it = s_axisNamesDict->find(name);
-    
-    if (it != s_axisNamesDict->end()) {
-        type = it->second;
-        return true;
-    } else    
+
+    if (it == s_axisNamesDict->end())
         return false;
+    type = it->second;
+    return true;
 }
 
-bool Parser::isNodeTypeName(String name)
+bool Parser::isNodeTypeName(const String& name)
 {
     if (!s_nodeTypeNamesDict) {
         s_nodeTypeNamesDict = new HashSet<String>;
@@ -148,7 +147,7 @@ bool Parser::isOperatorContext()
 
 void Parser::skipWS()
 {
-    while (m_nextPos < m_data.length() && m_data[m_nextPos].isSpace())
+    while (m_nextPos < m_data.length() && QChar(m_data[m_nextPos]).isSpace())
         ++m_nextPos;
 }
 
@@ -164,32 +163,30 @@ Token Parser::makeIntTokenAndAdvance(int code, int val, int advance)
     return Token(code, val);
 }
 
-//Returns next char if it's there and interesting, 0 otherwise
+// Returns next char if it's there and interesting, 0 otherwise
 char Parser::peekAheadHelper()
 {
     if (m_nextPos + 1 >= m_data.length())
         return 0;
-    QChar next = m_data[m_nextPos + 1];
-    if (next.unicode() >= 0xff)
+    UChar next = m_data[m_nextPos + 1];
+    if (next >= 0xff)
         return 0;
-
-    return next.unicode();
+    return next;
 }
 
 char Parser::peekCurHelper()
 {
     if (m_nextPos >= m_data.length())
         return 0;
-    QChar next = m_data[m_nextPos];
-    if (next.unicode() >= 0xff)
+    UChar next = m_data[m_nextPos];
+    if (next >= 0xff)
         return 0;
-
-    return next.unicode();
+    return next;
 }
 
 Token Parser::lexString()
 {
-    QChar delimiter = m_data[m_nextPos];
+    UChar delimiter = m_data[m_nextPos];
     int   startPos  = m_nextPos + 1;
 
     for (m_nextPos = startPos; m_nextPos < m_data.length(); ++m_nextPos) {
@@ -214,11 +211,11 @@ Token Parser::lexNumber()
 
     //Go until end or a non-digits character
     for (; m_nextPos < m_data.length(); ++m_nextPos) {
-        QChar aChar = m_data[m_nextPos];
-        if (aChar.unicode() >= 0xff) break;
+        UChar aChar = m_data[m_nextPos];
+        if (aChar >= 0xff) break;
 
-        if (aChar.unicode() < '0' || aChar.unicode() > '9') {
-            if (aChar.unicode() == '.' && !seenDot)
+        if (aChar < '0' || aChar > '9') {
+            if (aChar == '.' && !seenDot)
                 seenDot = true;
             else
                 break;
@@ -336,7 +333,7 @@ Token Parser::nextTokenInternal()
     if (t1.type == ERROR) return t1;
 
     skipWS();
-    //If we're in an operator context, check for any operator names
+    // If we're in an operator context, check for any operator names
     if (isOperatorContext()) {
         if (t1.value == "and") //### hash?
             return Token(AND);
@@ -348,10 +345,10 @@ Token Parser::nextTokenInternal()
             return Token(MULOP, NumericOp::OP_Div);
     }
 
-    //See whether we are at a :
+    // See whether we are at a :
     if (peekCurHelper() == ':') {
         m_nextPos++;
-        //Any chance it's an axis name?
+        // Any chance it's an axis name?
         if (peekCurHelper() == ':') {
             m_nextPos++;
             
@@ -359,22 +356,23 @@ Token Parser::nextTokenInternal()
             Step::AxisType axisType;
             if (isAxisName(t1.value, axisType))
                 return Token(AXISNAME, axisType);
-            //Ugh, :: is only valid in axis names -> error
+            // Ugh, :: is only valid in axis names -> error
             return Token(ERROR);
         }
 
-        //Seems like this is a fully qualified qname, or perhaps the * modified one from NameTest
+        // Seems like this is a fully qualified qname, or perhaps the * modified one from NameTest
         skipWS();
         if (peekCurHelper() == '*') {
             m_nextPos++;
             return Token(NAMETEST, t1.value + ":*");
         }
         
-        //Make a full qname..
+        // Make a full qname..
         Token t2 = lexNCName();
-        if (t2.type == ERROR) return t2;
+        if (t2.type == ERROR)
+            return t2;
         
-        t1.value = t1.value + ':' + t2.value;
+        t1.value = t1.value + ":" + t2.value;
     }
 
     skipWS();
@@ -432,7 +430,7 @@ int Parser::lex(void* data)
     return tok.type;
 }
 
-Expression* Parser::parseStatement(const String& statement, ExceptionCode& code)
+Expression* Parser::parseStatement(const String& statement, ExceptionCode& ec)
 {
     reset(statement);
     
@@ -448,9 +446,9 @@ Expression* Parser::parseStatement(const String& statement, ExceptionCode& code)
         deleteAllValues(m_strings);
         
         if (m_gotNamespaceError)
-            code = NAMESPACE_ERR;
+            ec = NAMESPACE_ERR;
         else
-            code = INVALID_EXPRESSION_ERR;
+            ec = INVALID_EXPRESSION_ERR;
         return 0;
     } else {
         ASSERT(m_parseNodes.size() == 1); // Top expression
@@ -549,4 +547,3 @@ void Parser::unregisterString(String* s)
 }
 
 #endif // XPATH_SUPPORT
-

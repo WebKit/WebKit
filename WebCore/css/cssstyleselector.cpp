@@ -556,7 +556,7 @@ static void checkPseudoState(Element *e, bool checkVisited = true)
         return;
     }
     
-    QConstString cu(attr.unicode(), attr.length());
+    QConstString cu(reinterpret_cast<const QChar*>(attr.characters()), attr.length());
     DeprecatedString u = cu.string();
     if (!u.contains("://")) {
         if (u[0] == '/')

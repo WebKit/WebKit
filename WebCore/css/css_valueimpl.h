@@ -26,6 +26,7 @@
 #include "CachedObjectClient.h"
 #include "css_base.h"
 #include "DeprecatedPtrList.h"
+#include "DeprecatedString.h"
 #include "DeprecatedValueList.h"
 #include <wtf/PassRefPtr.h>
 

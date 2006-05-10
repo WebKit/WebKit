@@ -34,7 +34,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-KJSProxy::KJSProxy(Frame *frame)
+KJSProxy::KJSProxy(Frame* frame)
 {
     m_script = 0;
     m_frame = frame;
@@ -48,7 +48,7 @@ KJSProxy::~KJSProxy()
     Collector::collect();
 }
 
-JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& str, Node *n) 
+JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& str, Node* n) 
 {
   // evaluate code. Returns the JS return value or 0
   // if there was none, an error occured or the type couldn't be converted.
@@ -65,7 +65,7 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
   JSLock lock;
 
   JSValue* thisNode = n ? Window::retrieve(m_frame) : toJS(m_script->globalExec(), n);
-  Completion comp = m_script->evaluate(filename, baseLine, reinterpret_cast<const KJS::UChar *>(str.unicode()), str.length(), thisNode);
+  Completion comp = m_script->evaluate(filename, baseLine, reinterpret_cast<const KJS::UChar*>(str.characters()), str.length(), thisNode);
 
   if (comp.complType() == Normal || comp.complType() == ReturnValue)
     return comp.value();
@@ -91,7 +91,7 @@ void KJSProxy::clear() {
   }
 }
 
-EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node *node)
+EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
     JSLock lock;
@@ -99,7 +99,7 @@ EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, cons
 }
 
 #if SVG_SUPPORT
-EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const String& code, Node *node)
+EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
     JSLock lock;
@@ -107,7 +107,7 @@ EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const
 }
 #endif
 
-void KJSProxy::finishedWithEvent(Event *event)
+void KJSProxy::finishedWithEvent(Event* event)
 {
   // This is called when the DOM implementation has finished with a particular event. This
   // is the case in sitations where an event has been created just for temporary usage,
@@ -116,7 +116,7 @@ void KJSProxy::finishedWithEvent(Event *event)
   m_script->forgetDOMObject(event);
 }
 
-ScriptInterpreter *KJSProxy::interpreter()
+ScriptInterpreter* KJSProxy::interpreter()
 {
   initScriptIfNeeded();
   assert(m_script);
@@ -127,12 +127,12 @@ ScriptInterpreter *KJSProxy::interpreter()
 class TestFunctionImp : public DOMObject {
 public:
   virtual bool implementsCall() const { return true; }
-  virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+  virtual JSValue* callAsFunction(ExecState*, JSObject*, const List& args);
 };
 
-JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
+JSValue *TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
-  fprintf(stderr,"--> %s\n",args[0]->toString(exec).ascii());
+  fprintf(stderr,"--> %s\n", args[0]->toString(exec).ascii());
   return jsUndefined();
 }
 

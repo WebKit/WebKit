@@ -54,7 +54,7 @@ NSString *FontFamily::getNSFamily() const
                 families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryFamilyKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
             m_CFFamily = (CFStringRef)CFDictionaryGetValue(families, m_family.impl());
             if (!m_CFFamily) {
-                m_CFFamily = CFStringCreateWithCharacters(0, (const UniChar *)m_family.unicode(), m_family.length());
+                m_CFFamily = CFStringCreateWithCharacters(0, m_family.characters(), m_family.length());
                 CFDictionarySetValue(families, m_family.impl(), m_CFFamily);
                 CFRelease(m_CFFamily);
             }

@@ -513,7 +513,7 @@ int KeyboardEvent::charCode() const
     String text = m_keyEvent->text();
     if (text.length() != 1)
         return 0;
-    return text[0].unicode();
+    return text[0];
 }
 
 bool KeyboardEvent::isKeyboardEvent() const

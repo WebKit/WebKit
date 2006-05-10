@@ -55,7 +55,7 @@ using namespace HTMLNames;
 
 namespace WebCore {
 
-int getPropertyID(const char *tagStr, int len)
+int getPropertyID(const char* tagStr, int len)
 {
     DeprecatedString prop;
 
@@ -78,8 +78,8 @@ int getPropertyID(const char *tagStr, int len)
             len = strlen(opacity);
         }
     }
-    
-    const struct props *propsPtr = findProp(tagStr, len);
+
+    const struct props* propsPtr = findProp(tagStr, len);
     if (!propsPtr)
         return 0;
 
@@ -88,7 +88,7 @@ int getPropertyID(const char *tagStr, int len)
 
 }
 
-static inline int getValueID(const char *tagStr, int len)
+static inline int getValueID(const char* tagStr, int len)
 {
     DeprecatedString prop;
     if (len && tagStr[0] == '-') {
@@ -369,7 +369,7 @@ NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
 ;
 
 maybe_ns_prefix:
-/* empty */ { $$.string = 0; }
+/* empty */ { $$.characters = 0; }
 | IDENT WHITESPACE { $$ = $1; }
 ;
 
@@ -389,12 +389,12 @@ maybe_media_list:
 media_list:
     medium {
         $$ = static_cast<CSSParser*>(parser)->createMediaList();
-        $$->appendMedium( domString($1).lower() );
+        $$->appendMedium(domString($1).lower());
     }
     | media_list ',' maybe_space medium {
         $$ = $1;
         if ($$)
-            $$->appendMedium( domString($4) );
+            $$->appendMedium(domString($4).lower());
     }
     | media_list error {
         $$ = 0;
@@ -529,8 +529,8 @@ selector:
     ;
 
 namespace_selector:
-    /* empty */ '|' { $$.string = 0; $$.length = 0; }
-    | '*' '|' { static unsigned short star = '*'; $$.string = &star; $$.length = 1; }
+    /* empty */ '|' { $$.characters = 0; $$.length = 0; }
+    | '*' '|' { static UChar star = '*'; $$.characters = &star; $$.length = 1; }
     | IDENT '|' { $$ = $1; }
 ;
 
@@ -600,8 +600,8 @@ element_name:
         $$ = str;
     }
     | '*' {
-        static unsigned short star = '*';
-        $$.string = &star;
+        static UChar star = '*';
+        $$.characters = &star;
         $$.length = 1;
     }
   ;
@@ -841,11 +841,14 @@ declaration:
 
 property:
     IDENT maybe_space {
+        $1.lower();
         DeprecatedString str = deprecatedString($1);
-        $$ = getPropertyID(str.lower().latin1(), str.length());
+        const char* s = str.ascii();
+        int l = str.length();
+        $$ = getPropertyID(s, l);
 #if SVG_SUPPORT
-      if ($$ == 0)
-          $$ = SVG::getSVGCSSPropertyID(str.lower().latin1(), str.length());
+        if ($$ == 0)
+            $$ = SVG::getSVGCSSPropertyID(s, l);
 #endif
     }
   ;

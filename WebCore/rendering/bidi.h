@@ -20,80 +20,82 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef BIDI_H
 #define BIDI_H
 
-#include "DeprecatedString.h"
+#include <unicode/uchar.h>
 
 class RenderArena;
 
 namespace WebCore {
+
     class RenderBlock;
     class RenderObject;
     class InlineBox;
 
     struct BidiStatus {
-        BidiStatus() : eor(QChar::DirON), lastStrong(QChar::DirON), last(QChar::DirON) {}
+        BidiStatus() : eor(U_OTHER_NEUTRAL), lastStrong(U_OTHER_NEUTRAL), last(U_OTHER_NEUTRAL) {}
         
-        QChar::Direction eor;
-        QChar::Direction lastStrong;
-        QChar::Direction last;
+        UCharDirection eor;
+        UCharDirection lastStrong;
+        UCharDirection last;
     };
         
     class BidiContext {
     public:
-        BidiContext(unsigned char level, QChar::Direction embedding, BidiContext *parent = 0, bool override = false);
+        BidiContext(unsigned char level, UCharDirection embedding, BidiContext* parent = 0, bool override = false);
         ~BidiContext();
 
         void ref() const;
         void deref() const;
 
-        QChar::Direction dir() const { return static_cast<QChar::Direction>(m_dir); }
-        QChar::Direction basicDir() const { return static_cast<QChar::Direction>(m_basicDir); }
+        UCharDirection dir() const { return static_cast<UCharDirection>(m_dir); }
+        UCharDirection basicDir() const { return static_cast<UCharDirection>(m_basicDir); }
 
         unsigned char level;
         bool override : 1;
-        unsigned m_dir : 5; // QChar::Direction
-        unsigned m_basicDir : 5; // QChar::Direction
-        
-        BidiContext *parent;
+        unsigned m_dir : 5; // UCharDirection
+        unsigned m_basicDir : 5; // UCharDirection
+
+        BidiContext* parent;
 
         // refcounting....
         mutable int count;
     };
 
     struct BidiRun {
-        BidiRun(int _start, int _stop, RenderObject *_obj, BidiContext *context, QChar::Direction dir)
-            :  start( _start ), stop( _stop ), obj( _obj ), box(0), override(context->override), nextRun(0)
+        BidiRun(int start_, int stop_, RenderObject* o, BidiContext* context, UCharDirection dir)
+            :  start(start_), stop(stop_), obj(o), box(0), override(context->override), nextRun(0)
         {
-            if (dir == QChar::DirON) 
+            if (dir == U_OTHER_NEUTRAL) 
                 dir = context->dir();
 
             level = context->level;
 
             // add level of run (cases I1 & I2)
-            if( level % 2 ) {
-                if(dir == QChar::DirL || dir == QChar::DirAN || dir == QChar::DirEN)
+            if (level % 2) {
+                if(dir == U_LEFT_TO_RIGHT || dir == U_ARABIC_NUMBER || dir == U_EUROPEAN_NUMBER)
                     level++;
             } else {
-                if( dir == QChar::DirR )
+                if (dir == U_RIGHT_TO_LEFT)
                     level++;
-                else if( dir == QChar::DirAN || dir == QChar::DirEN)
+                else if (dir == U_ARABIC_NUMBER || dir == U_EUROPEAN_NUMBER)
                     level += 2;
             }
         }
 
-        void destroy(RenderArena* renderArena);
+        void destroy(RenderArena*);
 
         // Overloaded new operator.
-        void* operator new(size_t sz, RenderArena* renderArena) throw();
+        void* operator new(size_t, RenderArena*) throw();
 
         // Overridden to prevent the normal delete from being called.
-        void operator delete(void* ptr, size_t sz);
+        void operator delete(void*, size_t);
 
 private:
         // The normal operator new is disallowed.
-        void* operator new(size_t sz) throw();
+        void* operator new(size_t) throw();
 
 public:
         int start;

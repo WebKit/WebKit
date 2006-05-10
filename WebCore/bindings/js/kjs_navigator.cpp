@@ -158,21 +158,12 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
   case AppCodeName:
     return jsString("Mozilla");
   case AppName:
-    // If we find "Mozilla" but not "(compatible, ...)" we are a real Netscape
-    if (userAgent.find("Mozilla") >= 0 && userAgent.find("compatible") == -1)
-      return jsString("Netscape");
-    if (userAgent.find("Microsoft") >= 0 || userAgent.find("MSIE") >= 0)
-      return jsString("Microsoft Internet Explorer");
-    return jsUndefined();
+    return jsString("Netscape");
   case AppVersion:
     // We assume the string is something like Mozilla/version (properties)
     return jsString(userAgent.substring(userAgent.find('/') + 1));
   case Product:
-    // When acting normal, we pretend to be "Gecko".
-    if (userAgent.find("Mozilla/5.0") >= 0 && userAgent.find("compatible") == -1)
-        return jsString("Gecko");
-    // When spoofing as IE, we use jsUndefined().
-    return jsUndefined();
+    return jsString("Gecko");
   case ProductSub:
     return jsString("20030107");
   case Vendor:
@@ -184,12 +175,13 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
   case UserAgent:
     return jsString(userAgent);
   case Platform:
-    if (userAgent.find("Win", 0, false) >= 0)
-      return jsString("Win32");
-    if (userAgent.find("Macintosh", 0, false) >= 0 || userAgent.find("Mac_PowerPC", 0, false) >= 0)
-      return jsString("MacPPC");
-    // FIXME: What about Macintosh Intel?
-    return jsString("X11");
+#if __APPLE__
+    return jsString("MacPPC");
+#elif WIN32
+    return jsString("Win32");
+#else
+    return jsString("");
+#endif
   case _Plugins:
     return new Plugins(exec);
   case _MimeTypes:
