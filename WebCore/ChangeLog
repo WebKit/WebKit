@@ -1,3 +1,17 @@
+2006-05-09  Tim Omernick  <timo@apple.com>
+
+        Reviewed by/co-written by Darin.
+
+        Performance improvement when drawing large numbers of animated images.
+
+        Instead of removing the "first" object from a set on each next(),
+        copy the clients into a vector once and keep track of the current index.
+
+        * loader/CachedObjectClientWalker.h:
+        * loader/CachedObjectClientWalker.cpp:
+        (WebCore::CachedObjectClientWalker::CachedObjectClientWalker):
+        (WebCore::CachedObjectClientWalker::next):
+
 2006-05-09  Steve Falkenburg  <sfalken@apple.com>
 
         Fix Windows build.  Added TextDocument.cpp to vcproj.

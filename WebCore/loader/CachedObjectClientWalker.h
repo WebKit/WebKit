@@ -28,22 +28,22 @@
 #define KHTML_CachedObjectClientWalker_h
 
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
     class CachedObjectClient;
 
-    typedef HashSet<CachedObjectClient*> CachedObjectClientSet;
-
     // Call this "walker" instead of iterator so people won't expect Qt or STL-style iterator interface.
     // Just keep calling next() on this. It's safe from deletions of items.
     class CachedObjectClientWalker {
     public:
-        CachedObjectClientWalker(const CachedObjectClientSet& clients) : m_clients(clients), m_remaining(clients) { }
+        CachedObjectClientWalker(const HashSet<CachedObjectClient*>&);
         CachedObjectClient* next();
     private:
-        const CachedObjectClientSet& m_clients;
-        CachedObjectClientSet m_remaining;
+        const HashSet<CachedObjectClient*>& m_clientSet;
+        Vector<CachedObjectClient*> m_clientVector;
+        size_t m_index;
     };
 
 }
