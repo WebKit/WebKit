@@ -1,0 +1,8 @@
+2006-05-10  Darin Adler  <darin@apple.com>
+
+        - another try at fixing the Windows build
+
+        * platform/win/FontWin.cpp: (WebCore::getFontData): Use characters()
+        instead of unicode().
+
+== Rolled over to ChangeLog-2006-05-10 ==

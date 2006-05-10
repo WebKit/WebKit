@@ -53,7 +53,7 @@ FontData* getFontData(const FontDescription& fontDescription, const AtomicString
     winfont.lfItalic = fontDescription.italic();
     winfont.lfWeight = fontDescription.weight() == cBoldWeight ? 700 : 400; // FIXME: Support weights for real.
     int len = min(fontFace.length(), LF_FACESIZE - 1);
-    memcpy(winfont.lfFaceName, fontFace.unicode(), len * sizeof(WORD));
+    memcpy(winfont.lfFaceName, fontFace.characters(), len * sizeof(WORD));
     winfont.lfFaceName[len] = '\0';
 
     HFONT font = CreateFontIndirectW(&winfont);
