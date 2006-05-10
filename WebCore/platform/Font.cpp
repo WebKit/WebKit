@@ -506,7 +506,7 @@ void Font::drawSimpleText(GraphicsContext* context, const IntPoint& point, int t
             drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
             lastFrom = nextGlyph;
             fontData = nextFontData;
-            startX = nextX;
+            startPoint.setX(nextX);
         }
         nextX += glyphBuffer.advanceAt(nextGlyph);
         nextGlyph++;

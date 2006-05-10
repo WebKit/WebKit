@@ -1,3 +1,15 @@
+2006-05-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8830
+          REGRESSION: Words render on top of each other when fallback font is used
+
+        Already covered by several pixel tests in fast/text
+
+        * platform/Font.cpp:
+        (WebCore::Font::drawSimpleText):
+
 2006-05-10  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 8809, lift the Mac-specific WebTextRenderer code for
