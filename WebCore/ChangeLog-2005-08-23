@@ -58889,4 +58889,4 @@ Added support for getting at Java object fields.
         link to the parent node, not just when following a link to the next child node.
         * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString): Ditto.
 
-== Rolled over to ChangeLog-2003-10-25 ==ite
+== Rolled over to ChangeLog-2003-10-25 ==
