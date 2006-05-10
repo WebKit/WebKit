@@ -26,6 +26,7 @@
 #ifndef KHTML_EDITING_VISIBLE_TEXT_H
 #define KHTML_EDITING_VISIBLE_TEXT_H
 
+#include "DeprecatedString.h"
 #include "InlineTextBox.h"
 #include "Range.h"
 #include <wtf/Vector.h>

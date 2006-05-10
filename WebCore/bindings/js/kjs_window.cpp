@@ -1378,7 +1378,7 @@ static void setWindowFeature(const String& keyString, const String& valueString,
 }
 
 // Though isspace() considers \t and \v to be whitespace, Win IE doesn't.
-static bool isSeparator(UChar c)
+static bool isSeparator(::UChar c)
 {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '=' || c == ',' || c == '\0';
 }

@@ -1,5 +1,15 @@
 2006-05-09  Darin Adler  <darin@apple.com>
 
+        - another attempt to fix the Windows build
+
+        * bindings/js/kjs_window.cpp: (KJS::isSeparator): Take a UChar, not a KJS::UChar.
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::runJavaScriptAlert): Use UChar instead of QChar.
+        (WebCore::FrameWin::runJavaScriptConfirm): Ditto.
+        * editing/TextIterator.h: Include DeprecatedString.h.
+
+2006-05-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8781

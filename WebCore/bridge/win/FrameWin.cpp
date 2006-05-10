@@ -89,19 +89,19 @@ String FrameWin::userAgent() const
 void FrameWin::runJavaScriptAlert(String const& message)
 {
     String text = message;
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
-    QChar nullChar('\0');
+    text.replace('\\', backslashAsCurrencySymbol());
+    UChar nullChar = 0;
     text += String(&nullChar, 1);
-    MessageBox(view()->windowHandle(), (LPCWSTR)text.unicode(), L"JavaScript Alert", MB_OK);
+    MessageBox(view()->windowHandle(), text.characters(), L"JavaScript Alert", MB_OK);
 }
 
 bool FrameWin::runJavaScriptConfirm(String const& message)
 {
     String text = message;
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
-    QChar nullChar('\0');
+    text.replace('\\', backslashAsCurrencySymbol());
+    UChar nullChar = 0;
     text += String(&nullChar, 1);
-    return (MessageBox(view()->windowHandle(), (LPCWSTR)text.unicode(), L"JavaScript Alert", MB_OKCANCEL) == IDOK);
+    return MessageBox(view()->windowHandle(), text.characters(), L"JavaScript Alert", MB_OKCANCEL) == IDOK;
 }
 
 // FIXME: This needs to be unified with the keyPress method on FrameMac
