@@ -1,3 +1,17 @@
+2006-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher (earlier version).
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8821
+          use the preprocessor for IDL files
+
+        * bindings/scripts/IDLParser.pm: Invoke the preprocessor via the "gcc"
+        driver script, passing "-E" so we only preprocess, "-P" so we don't get
+        "#line" directives, and "-x c++" so we handle both C and C++ comments.
+        Removed the code to eliminate comments since the preprocessor handles that.
+        * css/make-css-file-arrays.pl: This already invoked the preprocessor, but
+        updated it to do the same way as above.
+
 2006-05-11  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

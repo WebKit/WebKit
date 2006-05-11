@@ -39,7 +39,7 @@ for my $in (@ARGV) {
     my $name = $1;
 
     # Slurp in the CSS file.
-    open IN, "-|", "/usr/bin/cpp", "-P", $in or die;
+    open IN, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", $in or die;
     my $text; { local $/; $text = <IN>; }
     close IN;
 

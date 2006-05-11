@@ -61,15 +61,9 @@ sub Parse
   my $fileName = shift;
 
   print " | *** Starting to parse $fileName...\n |\n" if(!$beQuiet);
-  open(FILE, "<$fileName") || die "Couldn't open requested file (file: $fileName)!";
+  open FILE, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", $fileName or die "Could not open $fileName";
   my @documentContent = <FILE>;
-  close(FILE);
-
-  # Remove all comments, pleasing our parsing engine a lot...
-  my $documentData = join("#", @documentContent);
-  $documentData =~ s/\/\*(.|[\n\r])*?\*\///g;  # /* ... */ style comments
-  $documentData =~ s/\/\/[^\n\r]*//g;      # // ...... style comments
-  @documentContent = split("#", $documentData);
+  close FILE;
 
   my $dataAvailable = 0;
 
