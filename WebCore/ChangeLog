@@ -1,3 +1,27 @@
+2006-05-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8851
+          REGRESSION: RTL text shifted to the right
+
+        Already covered by several tests in fast/text
+
+        * platform/Font.h:
+        (WebCore::TextRun::TextRun): Added length parameter.
+        * rendering/InlineTextBox.cpp: Pass the length to the TextRun constructor.
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache): Pass length and from instead of from and to
+        to the TextRun constructor.
+        (WebCore::RenderText::width): Ditto.
+
 2006-05-11  David Hyatt  <hyatt@apple.com>
 
         Fix a regression from the TextRun landing.  Delete the characters in

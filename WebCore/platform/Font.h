@@ -58,8 +58,8 @@ public:
     :m_characters(c), m_len(len), m_from(from), m_to(to)
     {}
 
-    TextRun(const StringImpl* s, int offset = 0, int from = -1, int to = -1)
-    :m_characters(s->characters() + offset), m_len(s->length() - offset), m_from(adjustFrom(from)), m_to(adjustTo(to))
+    TextRun(const StringImpl* s, int offset = 0, int length = -1, int from = -1, int to = -1)
+    :m_characters(s->characters() + offset), m_len(length == -1 ? s->length() - offset : length), m_from(adjustFrom(from)), m_to(adjustTo(to))
     {}
 
     const UChar operator[](int i) const { return m_characters[i]; }

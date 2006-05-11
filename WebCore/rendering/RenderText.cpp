@@ -486,7 +486,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font* f, int start, int len, 
         return w;
     }
     
-    return f->width(TextRun(string(), start, 0, len), tabWidth, xpos);
+    return f->width(TextRun(string(), start, len, 0), tabWidth, xpos);
 }
 
 void RenderText::trimmedMinMaxWidth(int leadWidth,
@@ -995,7 +995,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     else if (f == &style()->font())
         w = widthFromCache(f, from, len, tabWidth(), xpos);
     else
-        w = f->width(TextRun(string(), from, 0, len), tabWidth(), xpos );
+        w = f->width(TextRun(string(), from, len, 0), tabWidth(), xpos );
         
     return w;
 }
