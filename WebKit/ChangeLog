@@ -1,3 +1,49 @@
+2006-05-10  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4542808> REGRESSION: benchjs test 1 has slowed by over 150% (8740)
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8740>
+
+        * Misc/WebNSWindowExtras.h:
+        * Misc/WebNSWindowExtras.m:
+        (+[NSWindow _webkit_enableWindowDisplayThrottle]):
+        Overrides certain NSWindow methods so that window autodisplay can be throttled to 60Hz.
+
+        (disableWindowDisplayThrottleApplierFunction):
+        CFDictionary applier function for when the throttle is disabled.  Cancels all pending window displays,
+        and calls -displayIfNeeded on each window with a pending display.
+
+        (+[NSWindow _webkit_disableWindowDisplayThrottle]):
+        Restores default NSWindow method implementations and clears pending window displays.
+
+        (swizzleInstanceMethod):
+        Helper function to swizzle ObjC method implementations.
+
+        (replacementPostWindowNeedsDisplay):
+        Don't call into -[NSWindow _postWindowNeedsDisplay] if requestWindowDisplay() returns NO (this is the
+        function that throttles display).
+
+        (replacementClose):
+        Clean up the WindowDisplayInfo struct for the window, since it's about to go away.
+
+        (getWindowDisplayInfo):
+        Gets the WindowDisplayInfo struct for the window, or creates it if absent.
+
+        (requestWindowDisplay):
+        Returns YES if a display is allowed right now.  Returns NO otherwise, and schedules a timer to try the
+        display again.
+
+        (cancelPendingWindowDisplay):
+        Cancels the pending display for the window, if any.
+
+        (-[NSWindow _webkit_doPendingPostWindowNeedsDisplay:]):
+        Try to call _postWindowNeedsDisplay again.
+
+        * WebView/WebFrameView.m:
+        (-[WebFrameView initWithFrame:]):
+        If the secret "WebKitThrottleWindowDisplay" default is set, then enable the NSWindow throttle.
+
 2006-05-10  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

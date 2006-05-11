@@ -47,6 +47,7 @@
 #import "WebNSObjectExtras.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSViewExtras.h"
+#import "WebNSWindowExtras.h"
 #import "WebPDFView.h"
 #import "WebSystemInterface.h"
 #import "WebViewFactory.h"
@@ -65,6 +66,8 @@
 enum {
     SpaceKey = 0x0020
 };
+
+static NSString *WebKitThrottleWindowDisplayPreferenceKey = @"WebKitThrottleWindowDisplay";
 
 @interface WebFrameView (WebFrameViewFileInternal) <WebCoreBridgeHolder>
 - (float)_verticalKeyboardScrollDistance;
@@ -309,6 +312,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         [WebViewFactory createSharedFactory];
         [WebImageRendererFactory createSharedFactory];
         [WebKeyGenerator createSharedGenerator];
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:WebKitThrottleWindowDisplayPreferenceKey])
+            [NSWindow _webkit_enableWindowDisplayThrottle];
     }
     
     _private = [[WebFrameViewPrivate alloc] init];
