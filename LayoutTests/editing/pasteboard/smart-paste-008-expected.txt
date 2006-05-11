@@ -1,0 +1,35 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 773x36
+          text run at (0,0) width 394: "There was a bug in paste's smart replace whitespace handling. "
+          text run at (394,0) width 379: "In some cases, it used information gathered at the start of the"
+          text run at (0,18) width 722: "selection being pasted into to decide whether or not a space needed to be added to the end of the incoming content."
+      RenderBlock {P} at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 765x36
+          text run at (0,0) width 548: "A smart paste is performed into a selection starting in one block and ending in another. "
+          text run at (548,0) width 217: "Spaces should surround the pasted"
+          text run at (0,18) width 37: "word."
+      RenderBlock {DIV} at (0,104) size 784x18
+        RenderBlock {DIV} at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 5x18
+            text run at (0,0) width 5: "f"
+          RenderText {#text} at (5,0) size 25x18
+            text run at (5,0) width 25: " foo"
+          RenderText {#text} at (30,0) size 24x18
+            text run at (30,0) width 24: " bar"
+caret: position 4 of child 1 {#text} of child 0 {DIV} of child 4 {DIV} of child 0 {BODY} of child 0 {HTML} of document

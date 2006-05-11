@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 10 of BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 12 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -7,7 +7,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
@@ -23,16 +24,28 @@ layer at (0,0) size 800x600
         RenderText {#text} at (252,0) size 740x36
           text run at (252,0) width 488: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost). "
           text run at (0,18) width 496: "Should see two boxes with blockquoted \"foo\" text, followed by an empty box."
-      RenderBlock {DIV} at (0,36) size 784x24
-      RenderBlock {DIV} at (0,60) size 784x104 [border: (2px solid #FF0000)]
+        RenderBR {BR} at (496,32) size 0x0
+      RenderBlock {P} at (0,52) size 784x54
+        RenderInline {B} at (0,0) size 749x36
+          RenderText {#text} at (0,0) size 749x36
+            text run at (0,0) width 416: "This demonstrates a bug: an extra line is added during paste. "
+            text run at (416,0) width 333: "Pasting a line of text plus an interchange newline "
+            text run at (0,18) width 210: "should result in one empty line."
+        RenderText {#text} at (210,18) size 779x36
+          text run at (210,18) width 4: " "
+          text run at (214,18) width 565: "We need to prune the empty end div in the same way that we would prune it if it had a br "
+          text run at (0,36) width 108: "propping it open."
+      RenderBlock {DIV} at (0,122) size 784x104 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,38) size 756x28
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
             RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
-      RenderBlock {DIV} at (0,164) size 784x104 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,38) size 756x28
+      RenderBlock {DIV} at (0,226) size 784x156 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x80
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
             RenderText {#text} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
-      RenderBlock {DIV} at (0,268) size 784x28 [border: (2px solid #FF0000)]
-caret: position 0 of child 8 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderBlock {BLOCKQUOTE} at (40,52) size 676x28
+            RenderBR {BR} at (0,0) size 0x28
+      RenderBlock {DIV} at (0,382) size 784x28 [border: (2px solid #FF0000)]
+caret: position 0 of child 0 {BR} of child 1 {BLOCKQUOTE} of child 0 {DIV} of child 9 {DIV} of child 1 {BODY} of child 0 {HTML} of document

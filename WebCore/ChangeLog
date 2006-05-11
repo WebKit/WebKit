@@ -1,3 +1,24 @@
+2006-05-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Removed the code to find out if we must later add smart replace whitespace.  We can 
+        wait until we've done the insertion to figure it out, and the position sampled (startPos)
+        to make the decision about trailing whitespace was wrong.
+        Changed the order that work is done during a paste: 1) Insert everything 2) Do one of
+        the following: a) handle a trailing interchange newline, b) uncollapse the last incoming
+        br if it has been collapsed because of quirks mode, c) do an end merge 3) Add smart replace
+        whitespace (2 and 3 were reversed because the end merge must happen before we can know
+        whether or not we need to add a trailing space).
+        Don't do an end merge if the last node inserted was a br because the end merge will 
+        clobber it.
+        
+        (WebCore::ReplaceSelectionCommand::removeEndBRIfNeeded):
+        brs that are at the end of a block and not at the start of a block are not the one brs
+        that are collapsed because of quirks mode.
+
 2006-05-10  David Hyatt  <hyatt@apple.com>
 
         Rename isSpace to treatAsSpace.  Move it and the rounding hack function into

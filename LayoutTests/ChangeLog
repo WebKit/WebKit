@@ -1,3 +1,30 @@
+2006-05-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        Fixed a select-after-replacement problem:
+        * editing/pasteboard/drag-drop-modifies-page-expected.checksum:
+        * editing/pasteboard/drag-drop-modifies-page-expected.png:
+        * editing/pasteboard/drag-drop-modifies-page-expected.txt:
+        
+        The trailing interchange newline used to be lost:
+        * editing/pasteboard/paste-text-012-expected.checksum:
+        * editing/pasteboard/paste-text-012-expected.png:
+        * editing/pasteboard/paste-text-012-expected.txt:
+        * editing/pasteboard/paste-text-012.html:
+        * editing/pasteboard/paste-text-016-expected.checksum:
+        * editing/pasteboard/paste-text-016-expected.png:
+        * editing/pasteboard/paste-text-016-expected.txt:
+        * editing/pasteboard/paste-text-017-expected.checksum:
+        * editing/pasteboard/paste-text-017-expected.png:
+        * editing/pasteboard/paste-text-017-expected.txt:
+        
+        Illustrates the bug fixed in smart replace whitespace handling:
+        * editing/pasteboard/smart-paste-008.html
+        * editing/pasteboard/smart-paste-008-expected.txt
+        * editing/pasteboard/smart-paste-008-expected.png
+        * editing/pasteboard/smart-paste-008-expected.checksum
+
 2006-05-10  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Anders.

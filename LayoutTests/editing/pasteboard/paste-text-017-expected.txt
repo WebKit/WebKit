@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (189,22) size 0x0
           RenderText {#text} at (0,28) size 490x28
             text run at (0,28) width 490: "Should see a blank line between \"two\" and \"three\""
-      RenderBlock {DIV} at (0,236) size 784x116
-        RenderBlock {DIV} at (0,0) size 784x116 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,236) size 784x144
+        RenderBlock {DIV} at (0,0) size 784x144 [border: (2px solid #FF0000)]
           RenderBlock {DIV} at (2,2) size 780x28
             RenderText {#text} at (0,0) size 35x28
               text run at (0,0) width 35: "one"
@@ -43,6 +43,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 36x28
               text run at (0,0) width 36: "two"
           RenderBlock {DIV} at (2,86) size 780x28
+            RenderBR {BR} at (0,0) size 0x28
+          RenderBlock {DIV} at (2,114) size 780x28
             RenderText {#text} at (0,0) size 49x28
               text run at (0,0) width 49: "three"
-caret: position 5 of child 0 {#text} of child 7 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {BR} of child 6 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

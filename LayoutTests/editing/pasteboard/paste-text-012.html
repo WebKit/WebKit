@@ -28,8 +28,8 @@ function editingTest() {
 <body contenteditable id="root">
 
 See this bug: <a href="rdar://problem/3918712">&lt;rdar://problem/3918712&gt;</a> "Paste as Quotation" in Mail just pastes (&lt;blockquote&gt; tag seems to be lost).
-Should see two boxes with blockquoted "foo" text, followed by an empty box.
-<div style="height: 24px"></div>
+Should see two boxes with blockquoted "foo" text, followed by an empty box.<br>
+<p><b>This demonstrates a bug: an extra line is added during paste.  Pasting a line of text plus an interchange newline should result in one empty line.</b>  We need to prune the empty end div in the same way that we would prune it if it had a br propping it open.</p>
 
 <div id="test" class="editing"><div><blockquote>foo</blockquote></div></div>
 <div class="editing"></div>

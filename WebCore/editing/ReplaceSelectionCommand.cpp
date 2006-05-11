@@ -609,36 +609,22 @@ void ReplaceSelectionCommand::doApply()
     if (!fragment.firstChild())
         return;
     
-    // check whether to "smart replace" needs to add leading and/or trailing space
-    bool addLeadingSpace = false;
-    bool addTrailingSpace = false;
-    // FIXME: We need the affinity for startPos and endPos, but Position::downstream
-    // and Position::upstream do not give it
-    if (m_smartReplace) {
-        VisiblePosition visiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
-        assert(visiblePos.isNotNull());
-        addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(visiblePos);
-        if (addLeadingSpace) {
-            UChar previousChar = visiblePos.previous().characterAfter();
-            if (previousChar)
-                addLeadingSpace = !frame->isCharacterSmartReplaceExempt(previousChar, true);
-        }
-        addTrailingSpace = startPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(visiblePos);
-        if (addTrailingSpace) {
-            UChar thisChar = visiblePos.characterAfter();
-            if (thisChar)
-                addTrailingSpace = !frame->isCharacterSmartReplaceExempt(thisChar, false);
-        }
-    }
-    
-    // There are five steps to adding the content: merge blocks at start, add remaining blocks,
-    // add "smart replace" space, handle trailing newline, clean up.
-    
+    // 1) Add the first paragraph of the incoming fragment, merging it with the paragraph that contained the 
+    // start of the selection that was pasted into.
+    // 2) Add everything else.
+    // 3) Restore the styles of inserted nodes (since styles were removed during the test insertion).
+    // 4) Do one of the following: a) if there was a br at the end of the fragment, expand it if it collapsed 
+    // because of quirks mode, b) merge the last paragraph of the incoming fragment with the paragraph that contained the 
+    // end of the selection that was pasted into, or c) handle an interchange newline at the end of the 
+    // incoming fragment.
+    // 5) Add spaces for smart replace.
+    // 6) Select the replacement if requested, and match style if requested.
+        
     // initially, we say the insertion point is the start of selection
     updateLayout();
     Position insertionPos = startPos;
 
-    // step 1: merge content into the start block
+    // Add the first paragraph.
     if (mergeStart) {
         RefPtr<Node> refNode = fragment.mergeStartNode();
         if (refNode) {
@@ -669,7 +655,7 @@ void ReplaceSelectionCommand::doApply()
         }
     }
     
-    // step 2 : merge everything remaining in the fragment
+    // Add everything else.
     if (fragment.firstChild()) {
         RefPtr<Node> refNode = fragment.firstChild();
         RefPtr<Node> node = refNode ? refNode->nextSibling() : 0;
@@ -718,89 +704,48 @@ void ReplaceSelectionCommand::doApply()
         updateLayout();
         insertionPos = Position(m_lastNodeInserted.get(), m_lastNodeInserted->caretMaxOffset());
     }
-
-    // step 3 : handle "smart replace" whitespace
-    if (addTrailingSpace && m_lastNodeInserted) {
-        updateLayout();
-        Position pos(m_lastNodeInserted.get(), m_lastNodeInserted->caretMaxOffset());
-        bool needsTrailingSpace = pos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull();
-        if (needsTrailingSpace) {
-            if (m_lastNodeInserted->isTextNode()) {
-                Text *text = static_cast<Text *>(m_lastNodeInserted.get());
-                insertTextIntoNode(text, text->length(), nonBreakingSpaceString());
-                insertionPos = Position(text, text->length());
-            }
-            else {
-                RefPtr<Node> node = document()->createEditingTextNode(nonBreakingSpaceString());
-                insertNodeAfterAndUpdateNodesInserted(node.get(), m_lastNodeInserted.get());
-                insertionPos = Position(node.get(), 1);
-            }
-        }
-    }
-
-    if (addLeadingSpace && m_firstNodeInserted) {
-        updateLayout();
-        Position pos(m_firstNodeInserted.get(), 0);
-        bool needsLeadingSpace = pos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull();
-        if (needsLeadingSpace) {
-            if (m_firstNodeInserted->isTextNode()) {
-                Text *text = static_cast<Text *>(m_firstNodeInserted.get());
-                insertTextIntoNode(text, 0, nonBreakingSpaceString());
-            } else {
-                RefPtr<Node> node = document()->createEditingTextNode(nonBreakingSpaceString());
-                insertNodeBeforeAndUpdateNodesInserted(node.get(), m_firstNodeInserted.get());
-            }
-        }
-    }
+    
+    removeEndBRIfNeeded(endBR);
+    
+    // Styles were removed during the test insertion.  Restore them.
+    if (!m_matchStyle)
+        fixupNodeStyles(fragment.nodes(), fragment.renderingInfo());
+        
+    VisiblePosition endOfInsertedContent(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
+    VisiblePosition startOfInsertedContent(Position(m_firstNodeInserted.get(), 0));    
     
     Position lastPositionToSelect;
     
-    removeEndBRIfNeeded(endBR);
-
-    // step 4 : handle trailing newline
     if (fragment.hasInterchangeNewlineAtEnd()) {
-
-        if (!m_lastNodeInserted) {
-            lastPositionToSelect = endingSelection().end().downstream();
-        }
-        else {
-            VisiblePosition pos(insertionPos);
-            VisiblePosition next = pos.next();
+        VisiblePosition pos(insertionPos);
+        VisiblePosition next = pos.next();
             
-            if (!isEndOfParagraph(pos) || next.isNull() || next.rootEditableElement() != currentRoot) {
-                setEndingSelection(insertionPos, DOWNSTREAM);
-                insertParagraphSeparator();
-                next = pos.next();
+        if (endWasEndOfParagraph || !isEndOfParagraph(pos) || next.isNull() || next.rootEditableElement() != currentRoot) {
+            setEndingSelection(insertionPos, DOWNSTREAM);
+            insertParagraphSeparator();
+            next = pos.next();
 
-                // Select up to the paragraph separator that was added.
-                lastPositionToSelect = next.deepEquivalent().downstream();
-                updateNodesInserted(lastPositionToSelect.node());
-            } else {
-                // Select up to the preexising paragraph separator.
-                VisiblePosition next = pos.next();
-                lastPositionToSelect = next.deepEquivalent().downstream();
-            }
+            // Select up to the paragraph separator that was added.
+            lastPositionToSelect = next.deepEquivalent().downstream();
+            updateNodesInserted(lastPositionToSelect.node());
+        } else {
+            // Select up to the beginning of the next paragraph.
+            VisiblePosition next = pos.next();
+            lastPositionToSelect = next.deepEquivalent().downstream();
         }
-    } else {
+        
+    } else if (m_lastNodeInserted->hasTagName(brTag)) {
         // We want to honor the last incoming line break, so, if it will collapse away because of quirks mode, 
         // add an extra one.
-        // FIXME: If <div><br></div> is pasted, the br will be expanded.  That's fine, if this code is about 
-        // interpreting incoming brs strictly, but if that's true then we should expand all incoming brs, not 
-        // just the last one. 
-        if (m_lastNodeInserted && m_lastNodeInserted->hasTagName(brTag) && 
-            !document()->inStrictMode() && isEndOfBlock(VisiblePosition(Position(m_lastNodeInserted.get(), 0)))) { 
+        // FIXME: This will expand a br inside a block: <div><br></div>
+        // FIXME: Should we expand all incoming brs that collapse because of quirks mode?
+        if (!document()->inStrictMode() && isEndOfBlock(VisiblePosition(Position(m_lastNodeInserted.get(), 0))))
             insertNodeBeforeAndUpdateNodesInserted(createBreakElement(document()).get(), m_lastNodeInserted.get());
-        }
-    }
-    
-    if (!m_matchStyle)
-        fixupNodeStyles(fragment.nodes(), fragment.renderingInfo());
-    
-    // Make sure that content after the end of the selection being pasted into is in the same paragraph as the 
-    // last bit of content that was inserted.
-    VisiblePosition endOfInsertedContent(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
-    VisiblePosition startOfInsertedContent(Position(m_firstNodeInserted.get(), 0));
-    if (shouldMergeEnd(endOfInsertedContent, fragment.hasInterchangeNewlineAtEnd(), endWasEndOfParagraph)) {
+            
+    } else if (shouldMergeEnd(endOfInsertedContent, fragment.hasInterchangeNewlineAtEnd(), endWasEndOfParagraph)) {
+        // Make sure that content after the end of the selection being pasted into is in the same paragraph as the 
+        // last bit of content that was inserted.
+        
         // Merging two paragraphs will destroy the moved one's block styles.  Always move forward to preserve
         // the block style of the paragraph already in the document, unless the paragraph to move would include the
         // what was the start of the selection that was pasted into.
@@ -810,11 +755,47 @@ void ReplaceSelectionCommand::doApply()
         VisiblePosition startOfParagraphToMove = mergeForward ? startOfParagraph(endOfInsertedContent) : endOfInsertedContent.next();
 
         moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
-        // Merging forward will remove the last node inserted from the document.
+        // Merging forward will remove m_lastNodeInserted from the document.
         // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
         // only ever used to create positions where inserted content starts/ends.
         if (mergeForward)
             m_lastNodeInserted = destination.previous().deepEquivalent().node();
+    }
+    
+    endOfInsertedContent = VisiblePosition(Position(m_lastNodeInserted.get(), maxDeepOffset(m_lastNodeInserted.get())));
+    startOfInsertedContent = VisiblePosition(Position(m_firstNodeInserted.get(), 0));    
+    
+    // Add spaces for smart replace.
+    if (m_smartReplace) {
+        bool needsTrailingSpace = !isEndOfParagraph(endOfInsertedContent) &&
+                                  !frame->isCharacterSmartReplaceExempt(endOfInsertedContent.characterAfter(), false);
+        if (needsTrailingSpace) {
+            if (m_lastNodeInserted->isTextNode()) {
+                Text *text = static_cast<Text *>(m_lastNodeInserted.get());
+                insertTextIntoNode(text, text->length(), nonBreakingSpaceString());
+                insertionPos = Position(text, text->length());
+            } else {
+                RefPtr<Node> node = document()->createEditingTextNode(nonBreakingSpaceString());
+                insertNodeAfterAndUpdateNodesInserted(node.get(), m_lastNodeInserted.get());
+                insertionPos = Position(node.get(), 1);
+            }
+        }
+    
+        bool needsLeadingSpace = !isStartOfParagraph(startOfInsertedContent) &&
+                                 !frame->isCharacterSmartReplaceExempt(startOfInsertedContent.previous().characterAfter(), true);
+        if (needsLeadingSpace) {
+            if (m_firstNodeInserted->isTextNode()) {
+                Text *text = static_cast<Text *>(m_firstNodeInserted.get());
+                insertTextIntoNode(text, 0, nonBreakingSpaceString());
+            } else {
+                RefPtr<Node> node = document()->createEditingTextNode(nonBreakingSpaceString());
+                // Don't updateNodesInserted.  Doing so would set m_lastNodeInserted to be the node containing the 
+                // leading space, but m_lastNodeInserted is supposed to mark the end of pasted content.
+                insertNodeBefore(node.get(), m_firstNodeInserted.get());
+                // FIXME: Use positions to track the start/end of inserted content.
+                m_firstNodeInserted = node;
+            }
+        }
     }
     
     completeHTMLReplacement(lastPositionToSelect);
@@ -828,7 +809,7 @@ void ReplaceSelectionCommand::removeEndBRIfNeeded(Node* endBR)
     VisiblePosition visiblePos(Position(endBR, 0));
     
     if (// The br is collapsed away and so is unnecessary.
-        !document()->inStrictMode() && isEndOfBlock(visiblePos) && !isStartOfBlock(visiblePos) ||
+        !document()->inStrictMode() && isEndOfBlock(visiblePos) && !isStartOfParagraph(visiblePos) ||
         // A br that was originally holding a line open should be displaced by inserted content.
         // A br that was originally acting as a line break should still be acting as a line break, not as a placeholder.
         isStartOfParagraph(visiblePos) && isEndOfParagraph(visiblePos))
