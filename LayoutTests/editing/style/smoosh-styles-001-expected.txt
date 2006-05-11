@@ -14,7 +14,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > FONT > SPAN > DIV > DIV > BODY > HTML > #document to 3 of #text > FONT > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > FONT > SPAN > DIV > DIV > BODY > HTML > #document to 3 of #text > FONT > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -50,9 +50,11 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 77x28 [color=#FF0000]
             RenderText {#text} at (2,2) size 23x28
               text run at (2,2) width 23: "ab"
-            RenderInline {FONT} at (0,0) size 34x28 [color=#000000]
+            RenderInline {FONT} at (0,0) size 54x28 [color=#000000]
               RenderText {#text} at (25,2) size 34x28
                 text run at (25,2) width 34: "cde"
-            RenderText {#text} at (59,2) size 20x28
-              text run at (59,2) width 20: "fg"
+              RenderInline {SPAN} at (0,0) size 20x28
+                RenderInline {FONT} at (0,0) size 20x28 [color=#FF0000]
+                  RenderText {#text} at (59,2) size 20x28
+                    text run at (59,2) width 20: "fg"
 caret: position 3 of child 0 {#text} of child 1 {FONT} of child 1 {SPAN} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

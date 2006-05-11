@@ -14,7 +14,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > B > SPAN > FONT > SPAN > DIV > DIV > BODY > HTML > #document to 3 of #text > B > SPAN > FONT > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > B > SPAN > FONT > SPAN > DIV > DIV > BODY > HTML > #document to 3 of #text > B > SPAN > FONT > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -49,11 +49,14 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 99x28 [color=#FF0000]
             RenderText {#text} at (2,8) size 29x28
               text run at (2,8) width 29: "ab"
-            RenderInline {FONT} at (0,0) size 46x37 [color=#000000]
-              RenderInline {SPAN} at (0,0) size 46x37
-                RenderInline {B} at (0,0) size 46x37
+            RenderInline {FONT} at (0,0) size 70x37 [color=#000000]
+              RenderInline {SPAN} at (0,0) size 70x37
+                RenderInline {B} at (0,0) size 70x37
                   RenderText {#text} at (31,2) size 46x37
                     text run at (31,2) width 46: "cde"
-            RenderText {#text} at (77,8) size 24x28
-              text run at (77,8) width 24: "fg"
+                  RenderInline {SPAN} at (0,0) size 24x37
+                    RenderInline {FONT} at (0,0) size 24x37 [color=#FF0000]
+                      RenderInline {SPAN} at (0,0) size 24x28
+                        RenderText {#text} at (77,8) size 24x28
+                          text run at (77,8) width 24: "fg"
 caret: position 3 of child 0 {#text} of child 0 {B} of child 0 {SPAN} of child 1 {FONT} of child 1 {SPAN} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

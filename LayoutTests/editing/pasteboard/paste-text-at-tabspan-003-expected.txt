@@ -25,10 +25,10 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 133x28
             RenderText {#text} at (25,14) size 133x28
               text run at (25,14) width 133: "\x{9}\x{9}\x{9}"
-          RenderInline {SPAN} at (0,0) size 23x28
+          RenderInline {SPAN} at (0,0) size 34x28
             RenderText {#text} at (158,14) size 23x28
               text run at (158,14) width 23: "ax"
-          RenderText {#text} at (181,14) size 11x28
-            text run at (181,14) width 11: "z"
-        RenderText {#text} at (0,0) size 0x0
+            RenderInline {SPAN} at (0,0) size 11x28
+              RenderText {#text} at (181,14) size 11x28
+                text run at (181,14) width 11: "z"
 caret: position 2 of child 0 {#text} of child 2 {SPAN} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

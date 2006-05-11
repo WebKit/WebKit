@@ -4,7 +4,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of HR > DIV > BODY > HTML > #document to 0 of HR > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of HR > DIV > BODY > HTML > #document to 0 of HR > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
@@ -15,7 +15,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of HR > DIV > BODY > HTML > #document to 0 of HR > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of HR > DIV > BODY > HTML > #document to 0 of HR > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -29,19 +29,21 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 282x18
           text run at (0,0) width 282: "This test inserts an hr between 'foo' and 'bar'."
-      RenderBlock {DIV} at (0,68) size 784x56 [border: (1px solid #0000FF)]
-        RenderBlock (anonymous) at (1,1) size 782x18
+      RenderBlock {DIV} at (0,68) size 784x54
+        RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 21x18
             text run at (0,0) width 21: "foo"
-        RenderBlock {HR} at (1,27) size 782x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (1,37) size 782x18
+        RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
+        RenderBlock {DIV} at (0,36) size 784x18
           RenderText {#text} at (0,0) size 20x18
             text run at (0,0) width 20: "bar"
-      RenderBlock {P} at (0,140) size 784x18
+      RenderBlock {P} at (0,138) size 784x18
         RenderText {#text} at (0,0) size 634x18
           text run at (0,0) width 634: "This test inserts an hr with id=\"hr\" between 'foo' and 'bar', fetches the hr using its id, then removes it."
-      RenderBlock {DIV} at (0,174) size 784x20 [border: (1px solid #0000FF)]
-        RenderText {#text} at (1,1) size 21x18
-          text run at (1,1) width 21: "foo"
-        RenderText {#text} at (22,1) size 20x18
-          text run at (22,1) width 20: "bar"
+      RenderBlock {DIV} at (0,172) size 784x36
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 21x18
+            text run at (0,0) width 21: "foo"
+        RenderBlock {DIV} at (0,18) size 784x18
+          RenderText {#text} at (0,0) size 20x18
+            text run at (0,0) width 20: "bar"

@@ -1,3 +1,13 @@
+2006-05-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher, levi
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        Removed a use fragment.hasMoreThanOneBlock to decide if the paragraph containing the
+        position pasted into must be split to avoid block nesting.  We now split unnecessarily
+        some times, but the end merge cleans up for us.
+
 2006-05-11  David Hyatt  <hyatt@apple.com>
 
         This patch makes drawHighlightForText a completely cross-platform method
@@ -228,7 +238,7 @@
         clobber it.
         
         (WebCore::ReplaceSelectionCommand::removeEndBRIfNeeded):
-        brs where [br, 0] is at the end of a block and not at the start of the paragraph
+        brs where [br, 0] is at the end of a block and not at the start of a paragraph
         are the ones that are collapsed because of quirks mode.
 
 2006-05-10  David Hyatt  <hyatt@apple.com>

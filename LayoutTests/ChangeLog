@@ -1,3 +1,32 @@
+2006-05-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher, levi
+        
+        Inserting an <hr> into <div>foo^bar</div> now produces 
+        <div>foo</div><hr><div>bar</div>, instead of <div>foo<hr>bar</div>, 
+        which means that removing an inserted <hr> programmatically from 
+        javascript produces a different visual result than before (the 
+        new result is arguably more correct):
+        * editing/execCommand/insertHorizontalRule.html:
+        * editing/execCommand/insertHorizontalRule-expected.checksum:
+        * editing/execCommand/insertHorizontalRule-expected.png:
+        * editing/execCommand/insertHorizontalRule-expected.txt:
+        
+        Equivalent render trees or changes in the editing delegate
+        notifications that reflect the fact that we are doing an end
+        merge more often:
+        * editing/pasteboard/paste-text-001-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+        * editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * editing/pasteboard/smart-paste-003-expected.txt:
+        * editing/pasteboard/smart-paste-004-expected.txt:
+        * editing/pasteboard/smart-paste-005-expected.txt:
+        * editing/pasteboard/smart-paste-006-expected.txt:
+        * editing/pasteboard/smart-paste-007-expected.txt:
+        * editing/style/smoosh-styles-001-expected.txt:
+        * editing/style/smoosh-styles-002-expected.txt:
+
 2006-05-11  Darin Adler  <darin@apple.com>
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8743
