@@ -53,6 +53,7 @@ namespace WebCore {
     class IntPoint;
     class IntPointArray;
     class Path;
+    class TextRun;
 
 #if SVG_SUPPORT
     class KRenderingDeviceContext;
@@ -106,14 +107,12 @@ namespace WebCore {
         void setFocusRingClip(const IntRect&);
         void clearFocusRingClip();
 
-        void drawText(const IntPoint&, const DeprecatedString&);
-        void drawText(const IntPoint&, int tabWidth, int xpos,
-            const UChar*, int slen, int pos, int len, int toAdd,
-            TextDirection = LTR, bool visuallyOrdered = false, int from = -1, int to = -1);
-        void drawHighlightForText(const IntPoint&, int h, int tabWidth, int xpos,
-            const UChar*, int slen, int pos, int len, int toAdd,
-            TextDirection, bool visuallyOrdered,
-            int from, int to, const Color& backgroundColor);
+        void drawText(const TextRun&, const IntPoint&, int tabWidth = 0, int xpos = 0, int toAdd = 0,
+                      TextDirection = LTR, bool visuallyOrdered = false);
+        void drawHighlightForText(const TextRun&, const IntPoint&, int h, 
+                                  int tabWidth, int xpos, int toAdd, TextDirection, bool visuallyOrdered, const Color& backgroundColor);
+                                  
+        
         void drawLineForText(const IntPoint&, int yOffset, int width);
         void drawLineForMisspelling(const IntPoint&, int width);
         int misspellingLineThickness();

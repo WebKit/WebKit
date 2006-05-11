@@ -1,3 +1,84 @@
+2006-05-11  David Hyatt  <hyatt@apple.com>
+
+        Bug 8845.  Define a TextRun (similar to the old WebCoreTextRun) and
+        make it the new API for Font and GraphicsContext when drawing/measuring
+        text.
+
+        Reviewed by andersca
+
+        * platform/Font.cpp:
+        (WebCore::m_finalRoundingWidth):
+        (WebCore::WidthIterator::advance):
+        (WebCore::WidthIterator::normalizeVoicingMarks):
+        (WebCore::Font::width):
+        (WebCore::Font::canUseGlyphCache):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::floatWidthForSimpleText):
+        * platform/Font.h:
+        (WebCore::TextRun::m_to):
+        (WebCore::TextRun::operator[]):
+        (WebCore::TextRun::data):
+        (WebCore::TextRun::adjustFrom):
+        (WebCore::TextRun::adjustTo):
+        (WebCore::TextRun::characters):
+        (WebCore::TextRun::length):
+        (WebCore::TextRun::from):
+        (WebCore::TextRun::to):
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawHighlightForText):
+        * platform/GraphicsContext.h:
+        * platform/mac/FontMac.mm:
+        (WebCore::addDirectionalOverride):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::checkSelectionPoint):
+        * platform/win/FontWin.cpp:
+        (WebCore::hackishExtentForString):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::checkSelectionPoint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderBlock.cpp:
+        (WebCore::stripTrailingSpace):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::paint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::cacheWidths):
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::trimmedMinMaxWidth):
+        (WebCore::RenderText::calcMinMaxWidth):
+        (WebCore::RenderText::width):
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::calcMinMaxWidth):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::tabWidth):
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        * rendering/render_line.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::calcMinMaxWidth):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+
 2006-05-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

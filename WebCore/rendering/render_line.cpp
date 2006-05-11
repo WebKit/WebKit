@@ -1085,8 +1085,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
     }
 
     const String& str = m_str;
-    p->drawText(IntPoint(m_x + _tx, m_y + _ty + m_baseline), 0, 0, str.characters(), str.length(),
-        0, str.length(), 0, LTR, _style->visuallyOrdered(), 0, str.length());
+    p->drawText(TextRun(str.impl()), IntPoint(m_x + _tx, m_y + _ty + m_baseline), 0, 0, 0, LTR, _style->visuallyOrdered());
 
     if (setShadow)
         p->clearShadow();

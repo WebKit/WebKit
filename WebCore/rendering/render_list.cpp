@@ -441,15 +441,18 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     default:
         if (!m_item.isEmpty()) {
             const Font& font = style()->font();
+            TextRun textRun(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
             if (style()->direction() == LTR) {
-                int width = font.width(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
-                p->drawText(marker.location(), m_item);
-                p->drawText(marker.location() + IntSize(width, 0), ". ");
+                int width = font.width(textRun);
+                p->drawText(textRun, marker.location());
+                UChar periodSpace[2] = { '.', ' ' };
+                p->drawText(TextRun(periodSpace, 2), marker.location() + IntSize(width, 0));
             } else {
-                UChar spacePeriod[2] = { '.', ' ' };
-                int width = font.width(spacePeriod, 2);
-                p->drawText(marker.location(), " .");
-                p->drawText(marker.location() + IntSize(width, 0), m_item);
+                UChar spacePeriod[2] = { ' ', '.' };
+                TextRun spacePeriodRun(spacePeriod, 2);
+                int width = font.width(spacePeriodRun);
+                p->drawText(spacePeriodRun, marker.location());
+                p->drawText(textRun, marker.location() + IntSize(width, 0));
             }
         }
     }
@@ -549,9 +552,9 @@ void RenderListMarker::calcMinMaxWidth()
     }
 
     {
-        int itemWidth = font.width(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
+        int itemWidth = font.width(TextRun(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length()));
         UChar periodSpace[2] = { '.', ' ' };
-        int periodSpaceWidth = font.width(periodSpace, 2);
+        int periodSpaceWidth = font.width(TextRun(periodSpace, 2));
         m_width = itemWidth + periodSpaceWidth;
     }
 
@@ -698,9 +701,9 @@ IntRect RenderListMarker::getRelativeMarkerRect()
     if (m_item.isEmpty())
         return IntRect();
 
-    int itemWidth = font.width(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length());
+    int itemWidth = font.width(TextRun(reinterpret_cast<const UChar*>(m_item.unicode()), m_item.length()));
     UChar periodSpace[2] = { '.', ' ' };
-    int periodSpaceWidth = font.width(periodSpace, 2);
+    int periodSpaceWidth = font.width(TextRun(periodSpace, 2));
     return IntRect(m_x, m_y + ascent, itemWidth + periodSpaceWidth, font.height());
 }
 

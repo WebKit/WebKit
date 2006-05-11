@@ -56,7 +56,7 @@ const uint8_t Font::gRoundingHackCharacterTable[256] = {
 };
 
 struct WidthIterator {
-    WidthIterator(const Font* font, const UChar* str, int from, int to, int len,
+    WidthIterator(const Font* font, const TextRun& run,
                   int tabWidth, int xpos, int toAdd, TextDirection dir, bool visuallyOrdered,
                   bool applyWordRounding, bool applyRunRounding, const FontData* substituteFontData);
 
@@ -64,10 +64,9 @@ struct WidthIterator {
 
     const Font* m_font;
 
-    const UChar* m_characters;
-    int m_from;
-    int m_to;
-    int m_len;
+    const TextRun& m_run;
+    int m_end;
+
     int m_tabWidth;
     int m_xPos;
     int m_toAdd;
@@ -88,13 +87,13 @@ private:
     UChar32 normalizeVoicingMarks();
 };
 
-WidthIterator::WidthIterator(const Font* font, const UChar* str, int from, int to, int len,
+WidthIterator::WidthIterator(const Font* font, const TextRun& run,
                              int tabWidth, int xpos, int toAdd, TextDirection dir, bool visuallyOrdered,
                              bool applyWordRounding, bool applyRunRounding, const FontData* substituteFontData)
-:m_font(font), m_characters((const UChar*)str), m_from(from), m_to(to), m_len(len),
+:m_font(font), m_run(run), m_end(dir == LTR ? run.to() : run.length()),
  m_tabWidth(tabWidth), m_xPos(xpos), m_toAdd(toAdd), m_dir(dir), m_visuallyOrdered(visuallyOrdered),
  m_applyWordRounding(applyWordRounding), m_applyRunRounding(applyRunRounding), m_substituteFontData(substituteFontData),
- m_currentCharacter(from), m_runWidthSoFar(0), m_finalRoundingWidth(0)
+ m_currentCharacter(run.from()), m_runWidthSoFar(0), m_finalRoundingWidth(0)
 {
     // If the padding is non-zero, count the number of spaces in the run
     // and divide that by the padding for per space addition.
@@ -103,8 +102,8 @@ WidthIterator::WidthIterator(const Font* font, const UChar* str, int from, int t
         m_padPerSpace = 0;
     } else {
         float numSpaces = 0;
-        for (int i = from; i < to; i++)
-            if (Font::treatAsSpace(m_characters[i]))
+        for (int i = run.from(); i < m_end; i++)
+            if (Font::treatAsSpace(m_run[i]))
                 numSpaces++;
 
         m_padding = toAdd;
@@ -114,23 +113,24 @@ WidthIterator::WidthIterator(const Font* font, const UChar* str, int from, int t
     // Calculate width up to starting position of the run.  This is
     // necessary to ensure that our rounding hacks are always consistently
     // applied.
-    if (m_from == 0)
+    if (run.from() == 0)
         m_widthToStart = 0;
     else {
-        WidthIterator startPositionIterator(font, str, 0, len, len, tabWidth, xpos, toAdd, dir, visuallyOrdered,
+        TextRun completeRun(run.characters(), run.length());
+        WidthIterator startPositionIterator(font, completeRun, tabWidth, xpos, toAdd, dir, visuallyOrdered,
                                             applyWordRounding, applyRunRounding, substituteFontData);
-        startPositionIterator.advance(from);
+        startPositionIterator.advance(run.from());
         m_widthToStart = startPositionIterator.m_runWidthSoFar;
     }
 }
 
 void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 {
-    if (offset > m_to)
-        offset = m_to;
+    if (offset > m_end)
+        offset = m_end;
 
     int currentCharacter = m_currentCharacter;
-    const UChar* cp = &m_characters[currentCharacter];
+    const UChar* cp = m_run.data(currentCharacter);
 
     bool rtl = (m_dir == RTL);
     bool needCharTransform = rtl || m_font->isSmallCaps();
@@ -161,7 +161,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
                 // Do we have a surrogate pair?  If so, determine the full Unicode (32 bit)
                 // code point before glyph lookup.
                 // Make sure we have another character and it's a low surrogate.
-                if (currentCharacter + 1 >= m_len)
+                if (currentCharacter + 1 >= m_run.length())
                     break;
                 UniChar low = cp[1];
                 if (!U16_IS_TRAIL(low))
@@ -197,7 +197,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             const FontData* substituteFontData = fontData->findSubstituteFontData(cp, clusterLength, m_font->fontDescription());
             if (substituteFontData) {
                 GlyphBuffer localGlyphBuffer;
-                m_font->floatWidthForSimpleText((UChar*)cp, clusterLength, 0, clusterLength, 0, 0, 0, m_dir, m_visuallyOrdered, 
+                m_font->floatWidthForSimpleText(TextRun((UChar*)cp, clusterLength), 0, 0, 0, m_dir, m_visuallyOrdered, 
                                                  m_applyWordRounding, false, substituteFontData, 0, &localGlyphBuffer);
                 if (localGlyphBuffer.size() == 1) {
                     assert(substituteFontData == localGlyphBuffer.fontDataAt(0));
@@ -266,8 +266,8 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
         // Check to see if the next character is a "rounding hack character", if so, adjust
         // width so that the total run width will be on an integer boundary.
-        if ((m_applyWordRounding && currentCharacter < m_len && Font::isRoundingHackCharacter(*cp))
-                || (m_applyRunRounding && currentCharacter >= m_to)) {
+        if ((m_applyWordRounding && currentCharacter < m_run.length() && Font::isRoundingHackCharacter(*cp))
+                || (m_applyRunRounding && currentCharacter >= m_end)) {
             float totalWidth = m_widthToStart + runWidthSoFar + width;
             width += ceilf(totalWidth) - totalWidth;
         }
@@ -288,12 +288,12 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 UChar32 WidthIterator::normalizeVoicingMarks()
 {
     int currentCharacter = m_currentCharacter;
-    if (currentCharacter + 1 < m_to) {
-        if (u_getCombiningClass(m_characters[currentCharacter + 1]) == HIRAGANA_KATAKANA_VOICING_MARKS) {
+    if (currentCharacter + 1 < m_end) {
+        if (u_getCombiningClass(m_run[currentCharacter + 1]) == HIRAGANA_KATAKANA_VOICING_MARKS) {
             // Normalize into composed form using 3.2 rules.
             UChar normalizedCharacters[2] = { 0, 0 };
             UErrorCode uStatus = (UErrorCode)0;  
-            int32_t resultLength = unorm_normalize(&m_characters[currentCharacter], 2,
+            int32_t resultLength = unorm_normalize(m_run.data(currentCharacter), 2,
                 UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], 2, &uStatus);
             if (resultLength == 1 && uStatus == 0)
                 return normalizedCharacters[0];
@@ -356,13 +356,13 @@ void Font::update() const
     m_fontList->invalidate();
 }
 
-int Font::width(const UChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const
+int Font::width(const TextRun& run, int tabWidth, int xpos) const
 {
     // FIXME: Want to define an lroundf for win32.
 #if __APPLE__
-    return lroundf(floatWidth(chs + pos, slen - pos, 0, len, tabWidth, xpos));
+    return lroundf(floatWidth(run, tabWidth, xpos));
 #else
-    return floatWidth(chs + pos, slen - pos, 0, len, tabWidth, xpos) + 0.5f;
+    return floatWidth(run, tabWidth, xpos) + 0.5f;
 #endif
 }
 
@@ -404,14 +404,14 @@ void Font::setAlwaysUseComplexPath(bool alwaysUse)
     gAlwaysUseComplexPath = alwaysUse;
 }
 
-bool Font::canUseGlyphCache(const UChar* str, int to) const
+bool Font::canUseGlyphCache(const TextRun& run) const
 {
     if (gAlwaysUseComplexPath)
         return false;
     
     // Start from 0 since drawing and highlighting also measure the characters before run->from
-    for (int i = 0; i < to; i++) {
-        UChar c = str[i];
+    for (int i = 0; i < run.to(); i++) {
+        const UChar c = run[i];
         if (c < 0x300)      // U+0300 through U+036F Combining diacritical marks
             continue;
         if (c <= 0x36F)
@@ -457,7 +457,7 @@ bool Font::canUseGlyphCache(const UChar* str, int to) const
 
 }
 
-void Font::drawSimpleText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos, const UChar* str, int len, int from, int to,
+void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const IntPoint& point, int tabWidth, int xpos,
                           int toAdd, TextDirection dir, bool visuallyOrdered) const
 {
     // This glyph buffer holds our glyphs+advances+font data for each glyph.
@@ -465,7 +465,7 @@ void Font::drawSimpleText(GraphicsContext* context, const IntPoint& point, int t
 
     // Our measuring code will generate glyphs and advances for us.
     float startX;
-    floatWidthForSimpleText(str, len, from, to, tabWidth, xpos, toAdd, dir, visuallyOrdered, 
+    floatWidthForSimpleText(run, tabWidth, xpos, toAdd, dir, visuallyOrdered, 
                             true, true, 0,
                             &startX, &glyphBuffer);
     
@@ -502,48 +502,40 @@ void Font::drawSimpleText(GraphicsContext* context, const IntPoint& point, int t
     drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 }
 
-void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos, const UChar* str, int len, int from, int to,
+void Font::drawText(GraphicsContext* context, const TextRun& run, const IntPoint& point, int tabWidth, int xpos,
                     int toAdd, TextDirection d, bool visuallyOrdered) const
 {
-    if (len == 0)
-        return;
-
-    if (from < 0)
-        from = 0;
-    if (to < 0)
-        to = len;
-
-    if (canUseGlyphCache(str, to))
-        drawSimpleText(context, point, tabWidth, xpos, str, len, from, to, toAdd, d, visuallyOrdered);
+    if (canUseGlyphCache(run))
+        drawSimpleText(context, run, point, tabWidth, xpos, toAdd, d, visuallyOrdered);
     else
-        drawComplexText(context, point, tabWidth, xpos, str, len, from, to, toAdd, d, visuallyOrdered);
+        drawComplexText(context, run, point, tabWidth, xpos, toAdd, d, visuallyOrdered);
 }
 
-float Font::floatWidth(const UChar* str, int slen, int from, int len, int tabWidth, int xpos, bool runRounding) const
+float Font::floatWidth(const TextRun& run, int tabWidth, int xpos, bool runRounding) const
 {
-    int to = from + len;
-    if (canUseGlyphCache(str, to))
-        return floatWidthForSimpleText(str, slen, from, to, tabWidth, xpos, 0, LTR, false, true, runRounding, 0, 0, 0);
+    if (canUseGlyphCache(run))
+        return floatWidthForSimpleText(run, tabWidth, xpos, 0, LTR, false, true, runRounding, 0, 0, 0);
     else
-        return floatWidthForComplexText(str, slen, from, to, tabWidth, xpos, runRounding);
+        return floatWidthForComplexText(run, tabWidth, xpos, runRounding);
 }
 
-float Font::floatWidthForSimpleText(const UChar* str, int len, int from, int to, int tabWidth, int xpos, int toAdd, 
+float Font::floatWidthForSimpleText(const TextRun& run, int tabWidth, int xpos, int toAdd, 
                                     TextDirection dir, bool visuallyOrdered, 
                                     bool applyWordRounding, bool applyRunRounding,
                                     const FontData* substituteFont,
                                     float* startPosition, GlyphBuffer* glyphBuffer) const
 {
-    WidthIterator it(this, str, from, dir == LTR ? to : len, len, tabWidth, xpos, toAdd, dir, visuallyOrdered, 
+    
+    WidthIterator it(this, run, tabWidth, xpos, toAdd, dir, visuallyOrdered, 
                      applyWordRounding, applyRunRounding, substituteFont);
-    it.advance(to, glyphBuffer);
+    it.advance(run.to(), glyphBuffer);
     float runWidth = it.m_runWidthSoFar;
     if (startPosition) {
         if (dir == LTR)
             *startPosition = it.m_widthToStart;
         else {
             float finalRoundingWidth = it.m_finalRoundingWidth;
-            it.advance(len);
+            it.advance(run.length());
             *startPosition = it.m_runWidthSoFar - runWidth + finalRoundingWidth;
         }
     }

@@ -460,7 +460,7 @@ void RenderText::cacheWidths()
     const Font* f = font(false);
     if (shouldUseMonospaceCache(f)) {
         const UChar c = ' ';
-        m_monospaceCharacterWidth = (int)f->floatWidth(&c, 1, 0, 1, 0, 0);
+        m_monospaceCharacterWidth = f->width(TextRun(&c, 1));
     } else {
         m_monospaceCharacterWidth = 0;
     }
@@ -486,7 +486,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font* f, int start, int len, 
         return w;
     }
     
-    return f->width(str->characters(), str->length(), start, len, tabWidth, xpos);
+    return f->width(TextRun(string(), start, 0, len), tabWidth, xpos);
 }
 
 void RenderText::trimmedMinMaxWidth(int leadWidth,
@@ -525,7 +525,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
     if (stripFrontSpaces && ((*str)[0] == ' ' || ((*str)[0] == '\n' && !style()->preserveNewline()) || (*str)[0] == '\t')) {
         const Font *f = font(false); // FIXME: Why is it ok to ignore first-line here?
         const UChar space = ' ';
-        int spaceWidth = f->width(&space, 1);
+        int spaceWidth = f->width(TextRun(&space, 1));
         maxW -= spaceWidth + f->wordSpacing();
     }
     
@@ -704,7 +704,7 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             }
             else
             {
-                currMaxWidth += f->width(txt, len, i, 1, tabWidth(), leadWidth + currMaxWidth);
+                currMaxWidth += f->width(TextRun(txt + i, 1), tabWidth(), leadWidth + currMaxWidth);
                 needsWordSpacing = isSpace && !previousCharacterIsSpace && i == len-1;
             }
         }
@@ -995,7 +995,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     else if (f == &style()->font())
         w = widthFromCache(f, from, len, tabWidth(), xpos);
     else
-        w = f->width(str->characters(), str->length(), from, len, tabWidth(), xpos );
+        w = f->width(TextRun(string(), from, 0, len), tabWidth(), xpos );
         
     return w;
 }

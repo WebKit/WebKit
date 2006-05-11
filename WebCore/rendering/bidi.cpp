@@ -846,7 +846,7 @@ int RenderBlock::tabWidth(bool isWhitespacePre)
     if (!m_tabWidth) {
         const UChar spaceChar = ' ';
         const Font& font = style()->font();
-        int spaceWidth = font.width(&spaceChar, 1);
+        int spaceWidth = font.width(TextRun(&spaceChar, 1));
         m_tabWidth = spaceWidth * 8;
         assert(m_tabWidth != 0);
     }
@@ -2559,11 +2559,12 @@ void RenderBlock::checkLinesForTextOverflow()
 {
     // Determine the width of the ellipsis using the current font.
     const UChar ellipsis = 0x2026; // FIXME: CSS3 says this is configurable, also need to use 0x002E (FULL STOP) if 0x2026 not renderable
+    TextRun ellipsisRun(&ellipsis, 1);
     static AtomicString ellipsisStr(&ellipsis, 1);
     const Font& firstLineFont = firstLineStyle()->font();
     const Font& font = style()->font();
-    int firstLineEllipsisWidth = firstLineFont.width(&ellipsis, 1);
-    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(&ellipsis, 1);
+    int firstLineEllipsisWidth = firstLineFont.width(ellipsisRun);
+    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(ellipsisRun);
 
     // For LTR text truncation, we want to get the right edge of our padding box, and then we want to see
     // if the right edge of a line box exceeds that.  For RTL, we use the left edge of the padding box and

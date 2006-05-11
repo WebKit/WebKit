@@ -154,7 +154,7 @@ FontData* FontFallbackList::primaryFont(const FontDescription& fontDescription) 
     return defaultFont;
 }
 
-static IntSize hackishExtentForString(HDC dc, FontData* font, const UChar* str, int slen, int pos, int len, int tabWidth, int xpos)
+static IntSize hackishExtentForString(HDC dc, FontData* font, const TextRun& run, int tabWidth, int xpos)
 {
     SaveDC(dc);
 
@@ -167,7 +167,7 @@ static IntSize hackishExtentForString(HDC dc, FontData* font, const UChar* str, 
     // FIXME: Handle tabs (the tabWidth and xpos parameters)
     // FIXME: Handle RTL.
     SIZE s;
-    BOOL result = GetTextExtentPoint32W(dc, (WCHAR*)(str + pos), len, &s);
+    BOOL result = GetTextExtentPoint32W(dc, (WCHAR*)(run.characters()), run.length(), &s);
 
     RestoreDC(dc, -1);
 
@@ -176,33 +176,19 @@ static IntSize hackishExtentForString(HDC dc, FontData* font, const UChar* str, 
     return s;
 }
 
-float Font::floatWidth(const UChar* str, int slen, int pos, int len,
-                       int tabWidth, int xpos, bool runRounding) const
+float Font::floatWidth(const TextRun& run, int tabWidth, int xpos, bool runRounding) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return 0;
 
     HDC dc = GetDC((HWND)0); // FIXME: Need a way to get to the real HDC.
-    IntSize runSize = hackishExtentForString(dc, font, str, slen, pos, len, tabWidth, xpos);
+    IntSize runSize = hackishExtentForString(dc, font, run, tabWidth, xpos);
     ReleaseDC(0, dc);
     return runSize.width();
 }
 
-static void convertRange(int from, int to, int len, int& offset, int& length)
-{
-    offset = 0;
-    length = len;
-    if (from > 0) {
-        offset = from;
-        length = len - from;
-    }
-    if (to > 0)
-        length = to - from;
-}
-
-void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidth, int xpos,
-                    const UChar* str, int len, int from, int to,
+void Font::drawText(GraphicsContext* context, const TextRun& run, const IntPoint& point, int tabWidth, int xpos,
                     int toAdd, TextDirection d, bool visuallyOrdered) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
@@ -215,9 +201,6 @@ void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidt
     SaveDC(dc);
     SelectObject(dc, font->platformData().hfont());
 
-    int offset, length;
-    convertRange(from, to, len, offset, length);
-
     int x = point.x();
     int y = point.y();
     y -= font->ascent();
@@ -225,14 +208,13 @@ void Font::drawText(GraphicsContext* context, const IntPoint& point, int tabWidt
     SetBkMode(dc, TRANSPARENT);
     const Color& color = context->pen().color();
     SetTextColor(dc, RGB(color.red(), color.green(), color.blue())); // FIXME: Need to support alpha in the text color.
-    TextOutW(dc, x, y, (LPCWSTR)(str+offset), length);
+    TextOutW(dc, x, y, (LPCWSTR)(run.characters()), run.length());
 
     RestoreDC(dc, -1);
     // No need to ReleaseDC the HDC borrowed from cairo
 }
 
-void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point, int h, int tabWidth, int xpos,
-                                const UChar* str, int len, int from, int to, int toAdd,
+void Font::drawHighlightForText(GraphicsContext* context, const TextRun& run, const IntPoint& point, int h, int tabWidth, int xpos,
                                 TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
 {
     if (!backgroundColor.isValid())
@@ -245,31 +227,26 @@ void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point,
     cairo_surface_t* surface = cairo_get_target(context->platformContext());
     HDC dc = cairo_win32_surface_get_dc(surface);
 
-    int offset, length;
-    convertRange(from, to, len, offset, length);
-    IntSize runSize = hackishExtentForString(dc, font, str, len, offset, length, tabWidth, xpos);
+    IntSize runSize = hackishExtentForString(dc, font, run, tabWidth, xpos);
 
     // FIXME: this const_cast should be removed when this code is made real.
     const_cast<GraphicsContext*>(context)->fillRect(IntRect(point, runSize), backgroundColor);
 }
 
-IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, int xpos, const UChar* str, int slen,
-                                   int pos, int len, int toAdd, bool rtl, bool visuallyOrdered, int from, int to) const
+IntRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, int h, int tabWidth, int xpos,
+                                   int toAdd, bool rtl, bool visuallyOrdered) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return IntRect();
 
-    int offset, length;
-    convertRange(from, to, len, offset, length);
-
     HDC dc = GetDC((HWND)0); // FIXME: Need a way to get to the real HDC.
-    IntSize runSize = hackishExtentForString(dc, font, str, slen, offset, length, tabWidth, xpos);
+    IntSize runSize = hackishExtentForString(dc, font, run, tabWidth, xpos);
     ReleaseDC(0, dc);
     return IntRect(point, runSize);
 }
 
-int Font::checkSelectionPoint(const UChar* str, int slen, int offset, int len, int toAdd, int tabWidth, int xpos, int x,
+int Font::checkSelectionPoint(const TextRun& run, int toAdd, int tabWidth, int xpos, int x,
                               TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
@@ -286,12 +263,12 @@ int Font::checkSelectionPoint(const UChar* str, int slen, int offset, int len, i
     memset(&results, 0, sizeof(GCP_RESULTS));
     results.lStructSize = sizeof(GCP_RESULTS);
     results.lpCaretPos = caretPositions;
-    results.nGlyphs = len;
+    results.nGlyphs = run.length();
     
-    GetCharacterPlacement(dc, (LPCTSTR)(str+offset), len, 0, &results, 0);
+    GetCharacterPlacement(dc, (LPCTSTR)(run.characters()), run.length(), 0, &results, 0);
 
     unsigned selectionOffset = 0;
-    while (selectionOffset < len && caretPositions[selectionOffset] < x)
+    while (selectionOffset < run.length() && caretPositions[selectionOffset] < x)
         selectionOffset++;
 
     fastFree(caretPositions);

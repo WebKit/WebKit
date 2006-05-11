@@ -768,7 +768,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 static AtomicString ellipsisAndSpaceStr(ellipsisAndSpace, 2);
 
                 const Font& font = style(numVisibleLines == 1)->font();
-                int ellipsisAndSpaceWidth = font.width(ellipsisAndSpace, 2, 0, 2, 0, 0);
+                int ellipsisAndSpaceWidth = font.width(TextRun(ellipsisAndSpace, 2));
 
                 // Get ellipsis width + " " + anchor width
                 int totalWidth = ellipsisAndSpaceWidth + anchorBox->width();

@@ -192,41 +192,22 @@ void GraphicsContext::drawImage(Image* image, const IntRect& dest, const IntRect
     drawImage(image, FloatRect(dest), srcRect, op);
 }
 
-// FIXME: We should consider removing this function and having callers just call the lower-level drawText directly.
-// FIXME: We should consider changing this function to take a character pointer and length instead of a DeprecatedString.
-void GraphicsContext::drawText(const IntPoint& point, const DeprecatedString& str)
+void GraphicsContext::drawText(const TextRun& run, const IntPoint& point, int tabWidth, int xpos, int toAdd,
+                               TextDirection d, bool visuallyOrdered)
 {
     if (paintingDisabled())
-        return;
-
-    drawText(point, 0, 0, reinterpret_cast<const UChar*>(str.unicode()), str.length(), 0, str.length(), 0);
-}
-
-void GraphicsContext::drawText(const IntPoint& point, int tabWidth, int xpos, const UChar* str, int slen, int pos, int len, int toAdd,
-                               TextDirection d, bool visuallyOrdered, int from, int to)
-{
-    if (paintingDisabled())
-        return;
-
-    int length = min(slen - pos, len);
-    if (length <= 0)
         return;
     
-    font().drawText(this, point, tabWidth, xpos, str + pos, length, from, to, toAdd, d, visuallyOrdered);
+    font().drawText(this, run, point, tabWidth, xpos, toAdd, d, visuallyOrdered);
 }
 
-void GraphicsContext::drawHighlightForText(const IntPoint& point, int h, int tabWidth, int xpos, const UChar* str, int slen, int pos, int len, int toAdd,
-                                           TextDirection d, bool visuallyOrdered, int from, int to, const Color& backgroundColor)
+void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& point, int h, int tabWidth, int xpos, int toAdd,
+                                           TextDirection d, bool visuallyOrdered, const Color& backgroundColor)
 {
     if (paintingDisabled())
         return;
-        
-    int length = min(slen - pos, len);
-    if (length <= 0)
-        return;
 
-    return font().drawHighlightForText(this, point, h, tabWidth, xpos, str + pos, length, from, to,
-                                       toAdd, d, visuallyOrdered, backgroundColor);
+    return font().drawHighlightForText(this, run, point, h, tabWidth, xpos, toAdd, d, visuallyOrdered, backgroundColor);
 }
 
 void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int width)

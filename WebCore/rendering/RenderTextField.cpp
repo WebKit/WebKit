@@ -230,8 +230,10 @@ void RenderTextField::calcMinMaxWidth()
         if (size <= 0)
             size = 20;
 
+        // FIXME: Once we have a struct that can hold rounding hack info, we will be able to just use the 
+        // normal width method (and make floatWidth properly private).
         const UChar ch = '0';
-        int sizeWidth = (int)ceilf(style()->font().floatWidth(&ch, 1, 0, 1, 0, 0, false) * size);
+        int sizeWidth = (int)ceilf(style()->font().floatWidth(TextRun(&ch, 1), 0, 0, false) * size);
         m_maxWidth = sizeWidth;
     }
     

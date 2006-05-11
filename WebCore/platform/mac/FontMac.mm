@@ -113,18 +113,16 @@ void FontFallbackList::invalidate()
 
 struct ATSULayoutParameters
 {
-    ATSULayoutParameters(UniChar* characters, int len, int from, int to, int toAdd, TextDirection dir, bool applyWordRounding, bool applyRunRounding)
-    :m_characters(characters), m_len(len), m_from(from), m_to(to), m_padding(toAdd), m_rtl(dir == RTL),
+    ATSULayoutParameters(const TextRun& run, int toAdd, TextDirection dir, bool applyWordRounding, bool applyRunRounding)
+    :m_run(run), m_padding(toAdd), m_rtl(dir == RTL),
      m_applyWordRounding(applyWordRounding), m_applyRunRounding(applyRunRounding),
      m_font(0), m_fonts(0), m_charBuffer(0), m_hasSyntheticBold(false), m_syntheticBoldPass(false), m_padPerSpace(0)
     {}
 
     void initialize(const Font* font);
 
-    UniChar* m_characters;
-    int m_len;
-    int m_from;
-    int m_to;
+    const TextRun& m_run;
+
     int m_padding;
     bool m_rtl;
     bool m_applyWordRounding;
@@ -135,26 +133,21 @@ struct ATSULayoutParameters
     ATSUTextLayout m_layout;
     const FontData **m_fonts;
     
-    UniChar *m_charBuffer;
+    UChar *m_charBuffer;
     bool m_hasSyntheticBold;
     bool m_syntheticBoldPass;
     float m_padPerSpace;
 };
 
 // Be sure to free the array allocated by this function.
-static UniChar* addDirectionalOverride(UniChar* characters, int& len, int& from, int& to, bool rtl)
+static TextRun addDirectionalOverride(const TextRun& run, bool rtl)
 {
-    UniChar *charactersWithOverride = new UniChar[len + 2];
-
+    UChar* charactersWithOverride = new UChar[run.length() + 2];
     charactersWithOverride[0] = rtl ? RIGHT_TO_LEFT_OVERRIDE : LEFT_TO_RIGHT_OVERRIDE;
-    memcpy(&charactersWithOverride[1], &characters[0], sizeof(UniChar) * len);
-    charactersWithOverride[len + 1] = POP_DIRECTIONAL_FORMATTING;
+    memcpy(&charactersWithOverride[1], run.data(0), sizeof(UChar) * run.length());
+    charactersWithOverride[run.length() + 1] = POP_DIRECTIONAL_FORMATTING;
 
-    from++;
-    to++;
-    len += 2;
-
-    return charactersWithOverride;
+    return TextRun(charactersWithOverride, run.length() + 2, run.from() + 1, run.to() + 1);
 }
 
 static void initializeATSUStyle(const FontData* fontData)
@@ -227,13 +220,13 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
-        const UniChar *characters = params->m_characters + params->m_from;
-        const FontData **renderers = params->m_fonts + params->m_from;
+        const UChar *characters = params->m_run.data(params->m_run.from());
+        const FontData **renderers = params->m_fonts + params->m_run.from();
         const FontData *renderer;
         const FontData *lastRenderer = 0;
-        UniChar ch, nextCh;
+        UChar ch, nextCh;
         ByteCount offset = layoutRecords[0].originalOffset;
-        nextCh = *(UniChar *)(((char *)characters)+offset);
+        nextCh = *(UChar *)(((char *)characters)+offset);
         bool shouldRound = false;
         bool syntheticBoldPass = params->m_syntheticBoldPass;
         Fixed syntheticBoldOffset = 0;
@@ -279,7 +272,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                             padding -= params->m_padPerSpace;
                         }
                     }
-                    if (offset != 0 && !Font::treatAsSpace(*((UniChar *)(((char *)characters)+offset) - 1)) && params->m_font->wordSpacing())
+                    if (offset != 0 && !Font::treatAsSpace(*((UChar *)(((char *)characters)+offset) - 1)) && params->m_font->wordSpacing())
                         width += params->m_font->wordSpacing();
                 }
             }
@@ -288,7 +281,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             offset = layoutRecords[i].originalOffset;
             // Use space for nextCh at the end of the loop so that we get inside the rounding hack code.
             // We won't actually round unless the other conditions are satisfied.
-            nextCh = isLastChar ? ' ' : *(UniChar *)(((char *)characters)+offset);
+            nextCh = isLastChar ? ' ' : *(UChar *)(((char *)characters)+offset);
 
             if (Font::isRoundingHackCharacter(ch))
                 width = ceilf(width);
@@ -296,7 +289,8 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             if (Font::isRoundingHackCharacter(nextCh)
                 && (!isLastChar
                     || params->m_applyRunRounding
-                    || (params->m_to < (int)params->m_len && Font::isRoundingHackCharacter(characters[params->m_to - params->m_from])))) {
+                    || (params->m_run.to() < (int)params->m_run.length() && 
+                        Font::isRoundingHackCharacter(characters[params->m_run.to() - params->m_run.from()])))) {
                 if (!params->m_rtl)
                     lastAdjustedPos = ceilf(lastAdjustedPos);
                 else {
@@ -331,8 +325,8 @@ void ATSULayoutParameters::initialize(const Font* font)
     // FIXME: It is probably best to always allocate a buffer for RTL, since even if for this
     // fontData ATSUMirrors is true, for a substitute fontData it might be false.
     const FontData* fontData = font->primaryFont();
-    m_fonts = new const FontData*[m_len];
-    m_charBuffer = (UniChar*)((font->isSmallCaps() || (m_rtl && !fontData->m_ATSUMirrors)) ? new UniChar[m_len] : 0);
+    m_fonts = new const FontData*[m_run.length()];
+    m_charBuffer = (UChar*)((font->isSmallCaps() || (m_rtl && !fontData->m_ATSUMirrors)) ? new UChar[m_run.length()] : 0);
     
     // The only Cocoa calls here are to NSGraphicsContext, which does not raise exceptions.
 
@@ -346,17 +340,17 @@ void ATSULayoutParameters::initialize(const Font* font)
     // - \n, \t, and nonbreaking space render as a space.
     // - Other control characters do not render (other code path uses zero-width spaces).
 
-    UniCharCount totalLength = m_len;
-    UniCharArrayOffset runTo = (m_to == -1 ? totalLength : (unsigned int)m_to);
-    UniCharArrayOffset runFrom = m_from;
+    UniCharCount totalLength = m_run.length();
+    UniCharArrayOffset runTo = m_run.to();
+    UniCharArrayOffset runFrom = m_run.from();
     
     if (m_charBuffer)
-        memcpy(m_charBuffer, m_characters, totalLength * sizeof(UniChar));
+        memcpy(m_charBuffer, m_run.characters(), totalLength * sizeof(UChar));
 
     UniCharCount runLength = runTo - runFrom;
     
     status = ATSUCreateTextLayoutWithTextPtr(
-            (m_charBuffer ? m_charBuffer : m_characters),
+            (m_charBuffer ? m_charBuffer : m_run.characters()),
             runFrom,        // offset
             runLength,      // length
             totalLength,    // total length
@@ -398,7 +392,7 @@ void ATSULayoutParameters::initialize(const Font* font)
         status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength);
         if (status == kATSUFontsMatched || status == kATSUFontsNotMatched) {
             // FIXME: Should go through fallback list eventually.
-            substituteFontData = fontData->findSubstituteFontData(m_characters + substituteOffset, substituteLength, m_font->fontDescription());
+            substituteFontData = fontData->findSubstituteFontData(m_run.characters() + substituteOffset, substituteLength, m_font->fontDescription());
             if (substituteFontData) {
                 initializeATSUStyle(substituteFontData);
                 if (substituteFontData->m_ATSUStyle)
@@ -429,8 +423,8 @@ void ATSULayoutParameters::initialize(const Font* font)
             if (m_rtl && m_charBuffer && !r->m_ATSUMirrors)
                 m_charBuffer[i] = u_charMirror(m_charBuffer[i]);
             if (m_font->isSmallCaps()) {
-                UniChar c = m_charBuffer[i];
-                UniChar newC;
+                UChar c = m_charBuffer[i];
+                UChar newC;
                 if (U_GET_GC_MASK(c) & U_GC_M_MASK)
                     m_fonts[i] = isSmallCap ? r->smallCapsFontData() : r;
                 else if (!u_isUUppercase(c) && (newC = u_toupper(c)) != c) {
@@ -459,7 +453,7 @@ void ATSULayoutParameters::initialize(const Font* font)
         float numSpaces = 0;
         unsigned k;
         for (k = 0; k < totalLength; k++)
-            if (Font::treatAsSpace(m_characters[k]))
+            if (Font::treatAsSpace(m_run[k]))
                 numSpaces++;
 
         m_padPerSpace = ceilf(m_padding / numSpaces);
@@ -479,22 +473,14 @@ const FontPlatformData& Font::platformFont() const
     return m_fontList->platformFont(fontDescription());
 }
 
-IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, int xpos, 
-    const UChar* str, int slen, int pos, int l, int toAdd,
-    bool rtl, bool visuallyOrdered, int from, int to) const
+IntRect Font::selectionRectForText(const TextRun& textRun, const IntPoint& point, int h, int tabWidth, int xpos, int toAdd, bool rtl, bool visuallyOrdered) const
 {
     assert(m_fontList);
-    int len = min(slen - pos, l);
 
     CREATE_FAMILY_ARRAY(fontDescription(), families);
 
-    if (from < 0)
-        from = 0;
-    if (to < 0)
-        to = len;
-
     WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, str + pos, len, from, to);
+    WebCoreInitializeTextRun(&run, textRun.characters(), textRun.length(), textRun.from(), textRun.to());
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.rtl = rtl;
@@ -514,19 +500,17 @@ IntRect Font::selectionRectForText(const IntPoint& point, int h, int tabWidth, i
     geometry.useFontMetricsForSelectionYAndHeight = false;
     return enclosingIntRect(m_fontList->primaryFont(fontDescription())->selectionRectForRun(&run, &style, &geometry));
 }
-void Font::drawComplexText(GraphicsContext* graphicsContext, const IntPoint& point, int tabWidth, int xpos, const UChar* str, int len, int from, int to,
+
+void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const IntPoint& point, int tabWidth, int xpos,
                            int toAdd, TextDirection d, bool visuallyOrdered) const
 {
-    int runLength = to - from;
-    if (runLength <= 0)
-        return;
-
     OSStatus status;
-    UniChar* characters = (UniChar*)str;
-    if (visuallyOrdered)
-        characters = addDirectionalOverride(characters, len, from, to, d == RTL);
+    
+    const UChar* characters = run.characters();
+    int runLength = run.length();
 
-    ATSULayoutParameters params(characters, len, 0, len, toAdd, d, true, true);
+    TextRun adjustedRun = visuallyOrdered ? addDirectionalOverride(run, d == RTL) : run;
+    ATSULayoutParameters params(adjustedRun, toAdd, d, true, true);
     params.initialize(this);
 
     [nsColor(graphicsContext->pen().color()) set];
@@ -539,12 +523,12 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const IntPoint& poi
     bool flipped = [gContext isFlipped];
     if (!flipped)
         CGContextScaleCTM(context, 1.0, -1.0);
-    status = ATSUDrawText(params.m_layout, from, runLength, 0, 0);
+    status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
     if (status == noErr && params.m_hasSyntheticBold) {
         // Force relayout for the bold pass
         ATSUClearLayoutCache(params.m_layout, 0);
         params.m_syntheticBoldPass = true;
-        status = ATSUDrawText(params.m_layout, from, runLength, 0, 0);
+        status = ATSUDrawText(params.m_layout, adjustedRun.from(), runLength, 0, 0);
     }
     if (!flipped)
         CGContextScaleCTM(context, 1.0, -1.0);
@@ -561,21 +545,15 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const IntPoint& poi
         delete []characters;
 }
 
-void Font::drawHighlightForText(GraphicsContext* context, const IntPoint& point, int h, int tabWidth, int xpos, const UChar* str,
-                                int len, int from, int to, int toAdd,
-                                TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
+void Font::drawHighlightForText(GraphicsContext* context, const TextRun& textRun, const IntPoint& point, int h, int tabWidth, int xpos, 
+                                int toAdd, TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
 {
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
     CREATE_FAMILY_ARRAY(*this, families);
-
-    if (from < 0)
-        from = 0;
-    if (to < 0)
-        to = len;
         
     WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, str, len, from, to);    
+    WebCoreInitializeTextRun(&run, textRun.characters(), textRun.length(), textRun.from(), textRun.to());    
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.textColor = nsColor(context->pen().color());
@@ -613,19 +591,16 @@ int Font::misspellingLineThickness(GraphicsContext* context) const
     return m_fontList->primaryFont(fontDescription())->misspellingLineThickness();
 }
 
-float Font::floatWidthForComplexText(const UChar* uchars, int len, int from, int to, int tabWidth, int xpos, bool runRounding) const
+float Font::floatWidthForComplexText(const TextRun& run, int tabWidth, int xpos, bool runRounding) const
 {
-    if (to - from <= 0)
-        return 0;
-
-    ATSULayoutParameters params((UniChar*)uchars, len, from, to, 0, LTR, true, runRounding);
+    ATSULayoutParameters params(run, 0, LTR, true, runRounding);
     params.initialize(this);
     
     OSStatus status;
     
     ATSTrapezoid firstGlyphBounds;
     ItemCount actualNumBounds;
-    status = ATSUGetGlyphBounds(params.m_layout, 0, 0, from, to - from, kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
+    status = ATSUGetGlyphBounds(params.m_layout, 0, 0, run.from(), run.to() - run.from(), kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
     if (status != noErr)
         LOG_ERROR("ATSUGetGlyphBounds() failed(%d)", status);
     if (actualNumBounds != 1)
@@ -637,13 +612,13 @@ float Font::floatWidthForComplexText(const UChar* uchars, int len, int from, int
            MIN(FixedToFloat(firstGlyphBounds.upperLeft.x), FixedToFloat(firstGlyphBounds.lowerLeft.x));
 }
 
-int Font::checkSelectionPoint(const UChar* s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
+int Font::checkSelectionPoint(const TextRun& textRun, int toAdd, int tabWidth, int xpos, int x, TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
 {
     assert(m_fontList);
     CREATE_FAMILY_ARRAY(fontDescription(), families);
     
     WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, s + pos, min(slen - pos, len), 0, len);
+    WebCoreInitializeTextRun(&run, textRun.characters(), textRun.length(), textRun.from(), textRun.to());
     
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
