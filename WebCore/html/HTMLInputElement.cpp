@@ -169,15 +169,19 @@ void HTMLInputElement::focus()
 {
     if (isNonWidgetTextField()) {
         Document* doc = document();
+        if (doc->focusNode() == this)
+            return;
         doc->updateLayout();
-        if (isFocusable()) {
-            doc->setFocusNode(this);
-            select();
-            if (doc->frame())
-                doc->frame()->revealSelection();
-        }
-    } else
-        HTMLGenericFormElement::focus();
+        // FIXME: Should isFocusable do the updateLayout?
+        if (!isFocusable())
+            return;
+        doc->setFocusNode(this);
+        select();
+        if (doc->frame())
+            doc->frame()->revealSelection();
+        return;
+    }
+    HTMLGenericFormElement::focus();
 }
 
 void HTMLInputElement::dispatchFocusEvent()
