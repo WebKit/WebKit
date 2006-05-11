@@ -506,7 +506,6 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
 {
     OSStatus status;
     
-    const UChar* characters = run.characters();
     int runLength = run.length();
 
     TextRun adjustedRun = visuallyOrdered ? addDirectionalOverride(run, d == RTL) : run;
@@ -542,7 +541,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     disposeATSULayoutParameters(&params);
     
     if (visuallyOrdered)
-        delete []characters;
+        delete []adjustedRun.characters();
 }
 
 void Font::drawLineForText(GraphicsContext* context, const IntPoint& point, int yOffset, int width) const

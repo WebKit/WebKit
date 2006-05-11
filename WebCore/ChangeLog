@@ -1,3 +1,13 @@
+2006-05-11  David Hyatt  <hyatt@apple.com>
+
+        Fix a regression from the TextRun landing.  Delete the characters in
+        the adjustedRun, not the ones in the original run!
+
+        Reviewed by beth
+
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::drawComplexText):
+
 2006-05-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher, levi
