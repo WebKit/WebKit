@@ -16,8 +16,8 @@
         clobber it.
         
         (WebCore::ReplaceSelectionCommand::removeEndBRIfNeeded):
-        brs that are at the end of a block and not at the start of a block are not the one brs
-        that are collapsed because of quirks mode.
+        brs where [br, 0] is at the end of a block and not at the start of the paragraph
+        are the ones that are collapsed because of quirks mode.
 
 2006-05-10  David Hyatt  <hyatt@apple.com>
 
