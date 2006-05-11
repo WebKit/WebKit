@@ -72,61 +72,75 @@ private:
   int id;
 };
 
-KJS_IMPLEMENT_PROTOFUNC(HTMLDocFunction)
+/* 
+@begin JSHTMLDocumentProtoTable 8
+clear                 JSHTMLDocument::Clear             DontDelete|Function 0
+open                  JSHTMLDocument::Open              DontDelete|Function 0
+close                 JSHTMLDocument::Close             DontDelete|Function 0
+write                 JSHTMLDocument::Write             DontDelete|Function 1
+writeln               JSHTMLDocument::WriteLn           DontDelete|Function 1
+getElementsByName     JSHTMLDocument::GetElementsByName DontDelete|Function 1
+captureEvents         JSHTMLDocument::CaptureEvents     DontDelete|Function 0
+releaseEvents         JSHTMLDocument::ReleaseEvents     DontDelete|Function 0
+@end
+*/
+KJS_IMPLEMENT_PROTOFUNC(JSHTMLDocumentProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("HTMLDocument", JSHTMLDocumentProto, JSHTMLDocumentProtoFunc)
 
-JSValue *HTMLDocFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *JSHTMLDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&JSHTMLDocument::info))
-    return throwError(exec, TypeError);
-  HTMLDocument &doc = *static_cast<HTMLDocument *>(static_cast<JSHTMLDocument *>(thisObj)->impl());
-
-  switch (id) {
-  case JSHTMLDocument::Clear: // even IE doesn't support that one...
-    //doc.clear(); // TODO
-    return jsUndefined();
-  case JSHTMLDocument::Open:
-    // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
-    if (args.size() > 2) {
-      Frame *frame = doc.frame();
-      if (frame) {
-        Window *window = Window::retrieveWindow(frame);
-        if (window) {
-          JSObject *functionObject = window->get(exec, "open")->getObject();
-          if (!functionObject || !functionObject->implementsCall())
-            return throwError(exec, TypeError);
-          return functionObject->call(exec, window, args);
+    if (!thisObj->inherits(&JSHTMLDocument::info))
+        return throwError(exec, TypeError);
+    HTMLDocument &doc = *static_cast<HTMLDocument *>(static_cast<JSHTMLDocument *>(thisObj)->impl());
+    
+    switch (id) {
+        case JSHTMLDocument::Clear: // even IE doesn't support that one...
+                                    //doc.clear(); // TODO
+            return jsUndefined();
+        case JSHTMLDocument::Open:
+            // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
+            if (args.size() > 2) {
+                Frame *frame = doc.frame();
+                if (frame) {
+                    Window *window = Window::retrieveWindow(frame);
+                    if (window) {
+                        JSObject *functionObject = window->get(exec, "open")->getObject();
+                        if (!functionObject || !functionObject->implementsCall())
+                            return throwError(exec, TypeError);
+                        return functionObject->call(exec, window, args);
+                    }
+                }
+                return jsUndefined();
+            }
+            // In the case of two parameters or fewer, do a normal document open.
+            doc.open();
+            return jsUndefined();
+        case JSHTMLDocument::Close:
+            doc.close();
+            return jsUndefined();
+        case JSHTMLDocument::Write:
+        case JSHTMLDocument::WriteLn: {
+            // DOM only specifies single string argument, but NS & IE allow multiple
+            // or no arguments
+            String str = "";
+            for (int i = 0; i < args.size(); i++)
+                str += args[i]->toString(exec);
+            if (id == JSHTMLDocument::WriteLn)
+                str += "\n";
+            doc.write(str);
+            return jsUndefined();
         }
-      }
-      return jsUndefined();
+        case JSHTMLDocument::GetElementsByName:
+            return toJS(exec, doc.getElementsByName(args[0]->toString(exec)).get());
+        case JSHTMLDocument::CaptureEvents:
+        case JSHTMLDocument::ReleaseEvents:
+            // Do nothing for now. These are NS-specific legacy calls.
+            break;
     }
-    // In the case of two parameters or fewer, do a normal document open.
-    doc.open();
+    
     return jsUndefined();
-  case JSHTMLDocument::Close:
-    doc.close();
-    return jsUndefined();
-  case JSHTMLDocument::Write:
-  case JSHTMLDocument::WriteLn: {
-    // DOM only specifies single string argument, but NS & IE allow multiple
-    // or no arguments
-    String str = "";
-    for (int i = 0; i < args.size(); i++)
-      str += args[i]->toString(exec);
-    if (id == JSHTMLDocument::WriteLn)
-      str += "\n";
-    doc.write(str);
-    return jsUndefined();
-  }
-  case JSHTMLDocument::GetElementsByName:
-    return toJS(exec, doc.getElementsByName(args[0]->toString(exec)).get());
-  case JSHTMLDocument::CaptureEvents:
-  case JSHTMLDocument::ReleaseEvents:
-    // Do nothing for now. These are NS-specific legacy calls.
-    break;
-  }
-
-  return jsUndefined();
 }
+
 
 // FIXME: functions should be in the prototype
 const ClassInfo JSHTMLDocument::info =
@@ -149,14 +163,6 @@ const ClassInfo JSHTMLDocument::info =
   anchors               JSHTMLDocument::Anchors           DontDelete|ReadOnly
   scripts               JSHTMLDocument::Scripts           DontDelete|ReadOnly
   all                   JSHTMLDocument::All               
-  clear                 JSHTMLDocument::Clear             DontDelete|Function 0
-  open                  JSHTMLDocument::Open              DontDelete|Function 0
-  close                 JSHTMLDocument::Close             DontDelete|Function 0
-  write                 JSHTMLDocument::Write             DontDelete|Function 1
-  writeln               JSHTMLDocument::WriteLn           DontDelete|Function 1
-  getElementsByName     JSHTMLDocument::GetElementsByName DontDelete|Function 1
-  captureEvents         JSHTMLDocument::CaptureEvents     DontDelete|Function 0
-  releaseEvents         JSHTMLDocument::ReleaseEvents     DontDelete|Function 0
   bgColor               JSHTMLDocument::BgColor           DontDelete
   fgColor               JSHTMLDocument::FgColor           DontDelete
   alinkColor            JSHTMLDocument::AlinkColor        DontDelete
@@ -180,6 +186,7 @@ const ClassInfo JSHTMLDocument::info =
 JSHTMLDocument::JSHTMLDocument(ExecState *exec, HTMLDocument *d)
   : JSDocument(exec, d)
 {
+    setPrototype(JSHTMLDocumentProto::self(exec));
 }
 
 JSValue *JSHTMLDocument::namedItemGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -301,12 +308,11 @@ bool JSHTMLDocument::getOwnPropertySlot(ExecState *exec, const Identifier& prope
     return true;
   }
 
+  return getStaticValueSlot<JSHTMLDocument, JSDocument>(exec, &HTMLDocumentTable, this, propertyName, slot);
+
   const HashEntry* entry = Lookup::findEntry(&HTMLDocumentTable, propertyName);
   if (entry) {
-    if (entry->attr & Function)
-      slot.setStaticEntry(this, entry, staticFunctionGetter<HTMLDocFunction>);
-    else 
-      slot.setStaticEntry(this, entry, staticValueGetter<JSHTMLDocument>);
+    slot.setStaticEntry(this, entry, staticValueGetter<JSHTMLDocument>);
     return true;
   }
 
@@ -695,7 +701,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 
 @begin HTMLElementTable 14
   id            KJS::JSHTMLElement::ElementId     DontDelete
-  title         KJS::JSHTMLElement::ElementTitle  DontDelete
   lang          KJS::JSHTMLElement::ElementLang   DontDelete
   dir           KJS::JSHTMLElement::ElementDir    DontDelete
 ### isn't this "class" in the HTML spec?
@@ -1187,8 +1192,9 @@ JSValue* JSHTMLElementProtoFunc::callAsFunction(ExecState*, JSObject*, const Lis
 }
 
 JSHTMLElement::JSHTMLElement(ExecState *exec, HTMLElement *e)
-    : JSElement(exec, e)
+    : WebCore::JSHTMLElement(exec, e)
 {
+    setPrototype(JSHTMLElementProto::self(exec));
 }
 
 JSValue *JSHTMLElement::formIndexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -1323,7 +1329,7 @@ bool JSHTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& proper
     }
 
     // Base JSHTMLElement stuff or parent class forward, as usual
-    return getStaticPropertySlot<HTMLElementFunction, JSHTMLElement, JSElement>(exec, &HTMLElementTable, this, propertyName, slot);
+    return getStaticPropertySlot<HTMLElementFunction, JSHTMLElement, WebCore::JSHTMLElement>(exec, &HTMLElementTable, this, propertyName, slot);
 }
 
 bool JSHTMLElement::implementsCall() const
@@ -2159,8 +2165,6 @@ JSValue *JSHTMLElement::getValueProperty(ExecState *exec, int token) const
             // iht.com relies on this value being "" when no id is present. Other browsers do this as well.
             // So we use jsString() instead of jsStringOrNull() here.
             return jsString(element.id());
-        case ElementTitle:
-            return jsString(element.title());
         case ElementLang:
             return jsString(element.lang());
         case ElementDir:
@@ -3148,9 +3152,6 @@ void JSHTMLElement::putValueProperty(ExecState *exec, int token, JSValue *value,
     switch (token) {
         case ElementId:
             element.setId(str);
-            return;
-        case ElementTitle:
-            element.setTitle(str);
             return;
         case ElementLang:
             element.setLang(str);

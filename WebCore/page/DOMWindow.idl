@@ -46,12 +46,20 @@ module window {
         attribute CSSStyleDeclarationConstructor CSSStyleDeclaration;
         attribute CSSValueConstructor CSSValue;
         attribute DocumentConstructor Document;
+        attribute DocumentFragmentConstructor DocumentFragment;
         attribute ElementConstructor Element;
         attribute EventConstructor Event;
+        attribute HTMLElementConstructor HTMLElement;
+        attribute HTMLDocumentConstructor HTMLDocument;
         attribute MutationEventConstructor MutationEvent;
         attribute NodeConstructor Node;
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;
+        
+        // Mozilla has a separate XMLDocument object for XML documents. 
+        // We just use Document for this.
+        attribute DocumentConstructor XMLDocument;
+
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
     };

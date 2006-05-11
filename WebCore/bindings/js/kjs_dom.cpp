@@ -34,8 +34,10 @@
 #include "JSElement.h"
 #include "JSCharacterData.h"
 #include "JSDOMImplementation.h"
+#include "JSDocumentFragment.h"
 #include "JSDocumentType.h"
 #include "JSEntity.h"
+#include "JSHTMLDocument.h"
 #include "JSNode.h"
 #include "JSNotation.h"
 #include "JSProcessingInstruction.h"
@@ -926,7 +928,7 @@ JSValue* toJS(ExecState *exec, Document *n)
     return ret;
 
   if (n->isHTMLDocument())
-    ret = new JSHTMLDocument(exec, static_cast<HTMLDocument *>(n));
+    ret = new WebCore::JSHTMLDocument(exec, static_cast<HTMLDocument *>(n));
   else
     ret = new JSDocument(exec, n);
 
@@ -995,6 +997,8 @@ JSValue* toJS(ExecState *exec, PassRefPtr<WebCore::Node> node)
       ret = new JSNotation(exec, static_cast<Notation *>(n));
       break;
     case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
+      ret = new JSDocumentFragment(exec, static_cast<DocumentFragment*>(n));
+      break;
     case WebCore::Node::ENTITY_REFERENCE_NODE:
     default:
       ret = new JSNode(exec, n);

@@ -39,10 +39,12 @@ function test()
         layoutTestController.dumpAsText();
         
     shouldBe("window.Document.prototype.isPrototypeOf(document)", true);
-
+    shouldBe("window.HTMLDocument.prototype.isPrototypeOf(document)", true);
+    
     element = document.body;
     shouldBe("window.Node.prototype.isPrototypeOf(element)", true);
     shouldBe("window.Element.prototype.isPrototypeOf(element)", true);
+    shouldBe("window.HTMLElement.prototype.isPrototypeOf(element)", true);
     
     range = document.createRange();
     shouldBe("window.Range.prototype.isPrototypeOf(range)", true);
@@ -61,6 +63,18 @@ function test()
     shouldBe("window.Event.prototype.isPrototypeOf(event)", true);
     shouldBe("window.MutationEvent.prototype.isPrototypeOf(event)", true);
 
+    xmldoc = document.implementation.createDocument(null, null, null);
+    shouldBe("window.XMLDocument.prototype.isPrototypeOf(xmldoc)", true);
+    
+    fragment = document.createDocumentFragment();
+    shouldBe("window.DocumentFragment.prototype.isPrototypeOf(fragment)", true);
+    
+    xpathevaluator = new XPathEvaluator();
+    shouldBe("window.XPathEvaluator.prototype.isPrototypeOf(xpathevaluator)", true);
+    
+    xpathresult = xpathevaluator.evaluate('/', document, null, 0, null);
+    shouldBe("window.XPathResult.prototype.isPrototypeOf(xpathresult)", true);
+    
     try {
       nodeFilter = document.createNodeIterator(document, NodeFilter.SHOW_ELEMENT, function () {}, false).filter;
     } catch(e) {}

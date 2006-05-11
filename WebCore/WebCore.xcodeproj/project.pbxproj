@@ -51,6 +51,15 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; };
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
+		1A494BBC0A122DCD00FDAFC1 /* HTMLElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */; };
+		1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */; };
+		1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */; };
+		1A494E2A0A12354300FDAFC1 /* HTMLDocument.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A494E290A12354300FDAFC1 /* HTMLDocument.idl */; };
+		1A494E340A12358B00FDAFC1 /* JSHTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */; };
+		1A494E350A12358B00FDAFC1 /* JSHTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A494E330A12358B00FDAFC1 /* JSHTMLDocument.h */; };
+		1A494ED60A123F1A00FDAFC1 /* DocumentFragment.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1A494ED50A123F1A00FDAFC1 /* DocumentFragment.idl */; };
+		1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494EDC0A123F4C00FDAFC1 /* JSDocumentFragment.cpp */; };
+		1A494EDF0A123F4C00FDAFC1 /* JSDocumentFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A494EDD0A123F4C00FDAFC1 /* JSDocumentFragment.h */; };
 		1A5D938E0A0B9ACC00B1121F /* XPathParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5D938C0A0B9ACC00B1121F /* XPathParser.cpp */; };
 		1A5D938F0A0B9ACC00B1121F /* XPathParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5D938D0A0B9ACC00B1121F /* XPathParser.h */; };
 		1A6931760A0CD4FA00C127FE /* XPathValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6931740A0CD4FA00C127FE /* XPathValue.h */; };
@@ -1296,6 +1305,15 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14EC267D09CA07E000E1EEEC /* EventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNode.h; sourceTree = "<group>"; };
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
+		1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLElement.idl; sourceTree = "<group>"; };
+		1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElement.cpp; sourceTree = "<group>"; };
+		1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElement.h; sourceTree = "<group>"; };
+		1A494E290A12354300FDAFC1 /* HTMLDocument.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDocument.idl; sourceTree = "<group>"; };
+		1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDocument.cpp; sourceTree = "<group>"; };
+		1A494E330A12358B00FDAFC1 /* JSHTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDocument.h; sourceTree = "<group>"; };
+		1A494ED50A123F1A00FDAFC1 /* DocumentFragment.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentFragment.idl; sourceTree = "<group>"; };
+		1A494EDC0A123F4C00FDAFC1 /* JSDocumentFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragment.cpp; sourceTree = "<group>"; };
+		1A494EDD0A123F4C00FDAFC1 /* JSDocumentFragment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDocumentFragment.h; sourceTree = "<group>"; };
 		1A5D938C0A0B9ACC00B1121F /* XPathParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathParser.cpp; sourceTree = "<group>"; };
 		1A5D938D0A0B9ACC00B1121F /* XPathParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathParser.h; sourceTree = "<group>"; };
 		1A6931740A0CD4FA00C127FE /* XPathValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathValue.h; sourceTree = "<group>"; };
@@ -2846,6 +2864,8 @@
 				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
 				659DDC8009E198BA001BF3C6 /* JSDocument.cpp */,
 				659DDC8109E198BA001BF3C6 /* JSDocument.h */,
+				1A494EDC0A123F4C00FDAFC1 /* JSDocumentFragment.cpp */,
+				1A494EDD0A123F4C00FDAFC1 /* JSDocumentFragment.h */,
 				65DF31E109D1CC60000BE325 /* JSDocumentType.cpp */,
 				65DF31E209D1CC60000BE325 /* JSDocumentType.h */,
 				65DF31E309D1CC60000BE325 /* JSDOMImplementation.cpp */,
@@ -2861,6 +2881,10 @@
 				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
 				938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */,
 				938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */,
+				1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */,
+				1A494E330A12358B00FDAFC1 /* JSHTMLDocument.h */,
+				1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */,
+				1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
 				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
 				A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */,
@@ -3214,6 +3238,7 @@
 				F523D23C02DE4396018635CA /* HTMLDocument.h */,
 				F523D23E02DE4396018635CA /* HTMLElement.cpp */,
 				F523D23F02DE4396018635CA /* HTMLElement.h */,
+				1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */,
 				BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */,
 				BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */,
 				A81369B9097374F500D74463 /* HTMLFieldSetElement.cpp */,
@@ -3254,6 +3279,7 @@
 				AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */,
 				F523D25202DE4396018635CA /* HTMLTokenizer.cpp */,
 				F523D25302DE4396018635CA /* HTMLTokenizer.h */,
+				1A494E290A12354300FDAFC1 /* HTMLDocument.idl */,
 			);
 			path = html;
 			sourceTree = "<group>";
@@ -4348,6 +4374,7 @@
 				F523D30A02DE4476018635CA /* xml_tokenizer.h */,
 				14E836D209F8512000B85AE4 /* Event.idl */,
 				14DC0D0B09FECFA4007B0235 /* Node.idl */,
+				1A494ED50A123F1A00FDAFC1 /* DocumentFragment.idl */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -5014,6 +5041,9 @@
 				1A5D938F0A0B9ACC00B1121F /* XPathParser.h in Headers */,
 				1A6931760A0CD4FA00C127FE /* XPathValue.h in Headers */,
 				1A6938020A11100A00C127FE /* TextDocument.h in Headers */,
+				1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */,
+				1A494E350A12358B00FDAFC1 /* JSHTMLDocument.h in Headers */,
+				1A494EDF0A123F4C00FDAFC1 /* JSDocumentFragment.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5164,6 +5194,9 @@
 				14E836D309F8512000B85AE4 /* Event.idl in Resources */,
 				14DC0D0C09FECFA4007B0235 /* Node.idl in Resources */,
 				142011AF0A003117008303F9 /* CSSStyleDeclaration.idl in Resources */,
+				1A494BBC0A122DCD00FDAFC1 /* HTMLElement.idl in Resources */,
+				1A494E2A0A12354300FDAFC1 /* HTMLDocument.idl in Resources */,
+				1A494ED60A123F1A00FDAFC1 /* DocumentFragment.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5752,6 +5785,9 @@
 				BCCD13200A0C0030001AFA8B /* FontData.mm in Sources */,
 				1A6931770A0CD4FA00C127FE /* XPathValue.cpp in Sources */,
 				1A6938010A11100A00C127FE /* TextDocument.cpp in Sources */,
+				1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */,
+				1A494E340A12358B00FDAFC1 /* JSHTMLDocument.cpp in Sources */,
+				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

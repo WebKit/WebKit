@@ -58,11 +58,14 @@ all : \
     JSDOMParser.lut.h \
     JSDOMWindow.h \
     JSDocument.h \
+    JSDocumentFragment.h \
     JSDocumentType.h \
     JSElement.h \
     JSEvent.h \
     JSEntity.h \
+    JSHTMLDocument.h \
     JSHTMLCanvasElement.h \
+    JSHTMLElement.h \
     JSKeyboardEvent.h \
     JSMouseEvent.h \
     JSMutationEvent.h \

@@ -1,8 +1,10 @@
 This page tests global constructor objects like window.HTMLDocument. If it passes, you'll see a series of 'PASS' messages below.
 
 PASS: window.Document.prototype.isPrototypeOf(document) should be true and is.
+PASS: window.HTMLDocument.prototype.isPrototypeOf(document) should be true and is.
 PASS: window.Node.prototype.isPrototypeOf(element) should be true and is.
 PASS: window.Element.prototype.isPrototypeOf(element) should be true and is.
+PASS: window.HTMLElement.prototype.isPrototypeOf(element) should be true and is.
 PASS: window.Range.prototype.isPrototypeOf(range) should be true and is.
 PASS: window.CSSRule.prototype.isPrototypeOf(cssRule) should be true and is.
 PASS: window.CSSValue.prototype.isPrototypeOf(cssPrimitiveValue) should be true and is.
@@ -10,6 +12,10 @@ PASS: window.CSSPrimitiveValue.prototype.isPrototypeOf(cssPrimitiveValue) should
 PASS: window.CSSStyleDeclaration.prototype.isPrototypeOf(cssStyleDeclaration) should be true and is.
 PASS: window.Event.prototype.isPrototypeOf(event) should be true and is.
 PASS: window.MutationEvent.prototype.isPrototypeOf(event) should be true and is.
+PASS: window.XMLDocument.prototype.isPrototypeOf(xmldoc) should be true and is.
+PASS: window.DocumentFragment.prototype.isPrototypeOf(fragment) should be true and is.
+PASS: window.XPathEvaluator.prototype.isPrototypeOf(xpathevaluator) should be true and is.
+PASS: window.XPathResult.prototype.isPrototypeOf(xpathresult) should be true and is.
 PASS: window.NodeFilter.prototype.isPrototypeOf(nodeFilter) should be true and is.
 [Deleted window.Node.prototype]
 PASS: window.Node.prototype should be undefined and is.

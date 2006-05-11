@@ -1,3 +1,17 @@
+2006-05-11  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7838
+        Add support for mozilla-style node constructors as properties of the window object
+
+        * fast/dom/prototype-chain-expected.txt:
+        Update prototype chains.
+
+        * fast/dom/global-constructors-expected.txt:
+        * fast/dom/global-constructors.html:
+        Test new constructor objects.
+        
 2006-05-10  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
