@@ -36,7 +36,7 @@ body {
 }
 
 * {
-    -apple-user-select: none;
+    -webkit-user-select: none;
 }
 
 a:link {
@@ -44,7 +44,7 @@ a:link {
 }
 
 button {
-    -apple-dashboard-region: dashboard-region(control rectangle);
+    -webkit-dashboard-region: dashboard-region(control rectangle);
 }
 
 .disabled {
@@ -439,7 +439,7 @@ button.square:active .right, button.square.selected .right {
     width: 16px;
     height: 16px;
     z-index: 10;
-    -apple-dashboard-region: dashboard-region(resize rectangle);
+    -webkit-dashboard-region: dashboard-region(resize rectangle);
     background-image: url( file:///System/Library/WidgetResources/resize.png );
     background-repeat: no-repeat;
 }
@@ -476,7 +476,7 @@ button.square:active .right, button.square.selected .right {
     height: 10px;
     cursor: move;
     z-index: 10;
-    -apple-dashboard-region: dashboard-region(control rectangle);
+    -webkit-dashboard-region: dashboard-region(control rectangle);
 }
 
 #splitter hr {
@@ -497,7 +497,7 @@ button.square:active .right, button.square.selected .right {
     bottom: 4px;
     left: 10px;
     right: 10px;
-    -apple-dashboard-region: dashboard-region(control rectangle);
+    -webkit-dashboard-region: dashboard-region(control rectangle);
 }
 
 #treeScrollArea {
@@ -551,13 +551,13 @@ button.toggle.right {
 }
 
 #nodePane {
-    display: -apple-box;
-    -apple-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
 }
 
 .infoRow {
-    display: -apple-box;
-    -apple-box-orient: horizontal;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
     margin-top: 2px;
 }
 
@@ -576,10 +576,10 @@ button.toggle.right {
 }
 
 .infoRow .value {
-    display: -apple-box;
-    -apple-box-flex: 1;
-    -apple-dashboard-region: dashboard-region(control rectangle);
-    -apple-user-select: text;
+    display: -webkit-box;
+    -webkit-box-flex: 1;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+    -webkit-user-select: text;
     white-space: nowrap;
 }
 
@@ -589,19 +589,19 @@ button.toggle.right {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    -apple-user-select: text;
+    -webkit-user-select: text;
 }
 
 #elementAttributes {
-    display: -apple-box;
-    -apple-box-flex: 3;
-    -apple-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-box-flex: 3;
+    -webkit-box-orient: vertical;
     min-height: 60px;
     max-height: 160px;
 }
 
 #elementAttributesList {
-    -apple-dashboard-region: dashboard-region(control rectangle);
+    -webkit-dashboard-region: dashboard-region(control rectangle);
 }
 
 .attributeList {
@@ -613,7 +613,7 @@ button.toggle.right {
 
 .attributeList ul {
     list-style-type: none;
-    -apple-padding-start: 10px;
+    -webkit-padding-start: 10px;
 }
 
 .attributeList li {
@@ -624,7 +624,7 @@ button.toggle.right {
 }
 
 .attributeList li span {
-    -apple-user-select: text;
+    -webkit-user-select: text;
 }
 
 .attributeList li .property::after {
@@ -646,31 +646,31 @@ button.toggle.right {
 }
 
 #nodeContents {
-    display: -apple-box;
-    -apple-box-flex: 12;
-    -apple-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-box-flex: 12;
+    -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
 #nodeContentsScrollview {
-    -apple-dashboard-region: dashboard-region(control rectangle);
-    -apple-user-select: text;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+    -webkit-user-select: text;
     overflow: hidden;
     font-size: 11px;
     word-wrap: break-word;
 }
 
 .scrollArea {
-    display: -apple-box;
-    -apple-box-orient: horizontal;
-    -apple-box-flex: 1;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-flex: 1;
     position: relative;
 }
 
 .scrollArea > .view {
     position: relative;
-    display: -apple-box;
-    -apple-box-flex: 1;
+    display: -webkit-box;
+    -webkit-box-flex: 1;
 }
 
 .scrollArea > .view > div {
@@ -688,13 +688,13 @@ button.toggle.right {
     bottom: 0;
     right: 0;
     width: 19px;
-    -apple-dashboard-region: dashboard-region(control rectangle);
+    -webkit-dashboard-region: dashboard-region(control rectangle);
 }
 
 #stylePane {
-    display: -apple-box;
-    -apple-box-flex: 1;
-    -apple-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-box-flex: 1;
+    -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
@@ -714,10 +714,10 @@ button.toggle.right {
 }
 
 #styleRulesScrollview {
-    display: -apple-box;
-    -apple-box-orient: vertical;
-    -apple-dashboard-region: dashboard-region(control rectangle);
-    -apple-box-flex: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+    -webkit-box-flex: 1;
 }
 
 #styleRulesScrollview hr.divider {
@@ -750,8 +750,8 @@ button.toggle.right {
 #styleProperties {
     background-color: rgba(0,0,0,0.2);
     border: 1px solid rgba(255,255,255,0.4);
-    -apple-box-flex: 1;
-    -apple-dashboard-region: dashboard-region(control rectangle);
+    -webkit-box-flex: 1;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
     padding: 3px;
 }
 
@@ -764,7 +764,7 @@ button.toggle.right {
 
 .treeList ul {
     list-style-type: none;
-    -apple-padding-start: 10px;
+    -webkit-padding-start: 10px;
 }
 
 .treeList li {
@@ -804,7 +804,7 @@ button.toggle.right {
 }
 
 .treeList li span {
-    -apple-user-select: text;
+    -webkit-user-select: text;
 }
 
 .treeList li .property::after {

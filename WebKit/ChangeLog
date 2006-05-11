@@ -1,3 +1,19 @@
+2006-05-11  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Fixes <rdar://problem/4411845> lots of SPOD trying to scroll through
+        Markup & Content inspecting body at apple.com (6614)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6614
+
+        Removed the Markup & Content pane when viewing a element.
+        This pane was not that useful and made the inspector really slow
+        when the markup was large. Only show this pane for text nodes.
+
+        * WebInspector/webInspector/inspector.css: use -webkit prefix
+        * WebInspector/webInspector/inspector.html:
+        * WebInspector/webInspector/inspector.js:
+
 2006-05-11  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Timothy.

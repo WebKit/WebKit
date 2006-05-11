@@ -324,8 +324,8 @@ function updateNodePane() {
         nodeContentsScrollArea.refresh();
     } else if (focusedNode.nodeType == Node.ELEMENT_NODE) {
         document.getElementById("elementAttributes").style.display = null;
-        document.getElementById("nodeContents").style.display = null;
-        
+        document.getElementById("nodeContents").style.display = "none";
+
         updateElementAttributes();
         
         if (focusedNode.namespaceURI.length > 0) {
@@ -335,12 +335,6 @@ function updateNodePane() {
         } else {
             document.getElementById("nodeNamespaceRow").style.display = "none";
         }
-
-        document.getElementById("nodeContentsScrollview").innerHTML = "<span class=\"disabled\">Loading...</span>";
-        nodeContentsScrollArea.refresh();
-
-        clearTimeout(nodeUpdateTimeout);
-        nodeUpdateTimeout = setTimeout("delayedNodePaneUpdate()", 250);
     } else if (focusedNode.nodeType == Node.DOCUMENT_NODE) {
         document.getElementById("nodeNamespaceRow").style.display = "none";
         document.getElementById("elementAttributes").style.display = "none";
@@ -349,15 +343,8 @@ function updateNodePane() {
 
     document.getElementById("nodeType").textContent = nodeTypeName(focusedNode);
     document.getElementById("nodeName").textContent = focusedNode.nodeName;
-}
 
-var nodeUpdateTimeout = null;
-function delayedNodePaneUpdate()
-{
-    var focusedNode = Inspector.focusedDOMNode();
-    var serializer = new XMLSerializer();
-    document.getElementById("nodeContentsScrollview").textContent = serializer.serializeToString(focusedNode);
-    nodeContentsScrollArea.refresh();
+    refreshScrollbars();
 }
 
 var styleRules = null;
