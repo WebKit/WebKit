@@ -2,6 +2,15 @@
 
         Reviewed by eric.
 
+        Fix last fix.
+
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedName):
+
+2006-05-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by eric.
+
         Fix crash on static constructors builds at exit due to qualified name default constructor not
         initializing m_impl.
 

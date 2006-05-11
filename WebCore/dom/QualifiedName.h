@@ -40,7 +40,7 @@ public:
     QualifiedName(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
     ~QualifiedName();
 #ifdef QNAME_DEFAULT_CONSTRUCTOR
-    QualifiedName() { }
+    QualifiedName() : m_impl(0) { }
 #endif
 
     QualifiedName(const QualifiedName&);
