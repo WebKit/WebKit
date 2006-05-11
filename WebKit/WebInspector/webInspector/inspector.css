@@ -664,6 +664,7 @@ button.toggle.right {
     display: -apple-box;
     -apple-box-orient: horizontal;
     -apple-box-flex: 1;
+    position: relative;
 }
 
 .scrollArea > .view {
@@ -677,13 +678,15 @@ button.toggle.right {
     top: 0;
     bottom: 0;
     left: 0;
-    right: 0;
+    right: 21px;
     overflow: hidden;
 }
 
 .scrollArea > .scrollbar {
-    position: relative;
-    margin-left: 2px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
     width: 19px;
     -apple-dashboard-region: dashboard-region(control rectangle);
 }

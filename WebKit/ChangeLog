@@ -1,3 +1,13 @@
+2006-05-11  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Timothy.
+
+        Patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8810>
+        Bug 8810: Scrollbars in WebInspector rendered incorrectly
+
+        * WebInspector/webInspector/inspector.css: 
+        Make scroll bars absolutely positioned.
+
 2006-05-10  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.
