@@ -1,3 +1,13 @@
+2006-05-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by eric.
+
+        Fix crash on static constructors builds at exit due to qualified name default constructor not
+        initializing m_impl.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::deref):
+
 2006-05-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt

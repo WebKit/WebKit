@@ -134,6 +134,11 @@ const QualifiedName& QualifiedName::operator=(const QualifiedName& other)
 
 void QualifiedName::deref()
 {
+#ifdef QNAME_DEFAULT_CONSTRUCTOR
+    if (!m_impl)
+        return;
+#endif
+
     if (m_impl->hasOneRef())
         gNameCache->remove(m_impl);
     m_impl->deref();
