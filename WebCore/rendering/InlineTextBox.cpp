@@ -117,9 +117,9 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     int selHeight = rootBox->selectionHeight();
     const Font *f = textObj->font(m_firstLine);
 
-    IntRect r = f->selectionRectForText(TextRun(textObj->string(), m_start, sPos, ePos),
+    IntRect r = enclosingIntRect(f->selectionRectForText(TextRun(textObj->string(), m_start, sPos, ePos),
                                         IntPoint(tx + m_x, ty + selTop), selHeight, textObj->tabWidth(), textPos(), 
-                                        m_toAdd, m_reversed, m_dirOverride);
+                                        m_toAdd, m_reversed, m_dirOverride));
     if (r.x() > tx + m_x + m_width)
         r.setWidth(0);
     else if (r.right() - 1 > tx + m_x + m_width)
@@ -699,7 +699,7 @@ int InlineTextBox::positionForOffset(int offset) const
     int from = m_reversed ? offset - m_start : 0;
     int to = m_reversed ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
-    return f->selectionRectForText(TextRun(text->string(), m_start, from, to), IntPoint(m_x, 0), 0, text->tabWidth(), textPos(), m_toAdd, m_reversed, m_dirOverride).right();
+    return enclosingIntRect(f->selectionRectForText(TextRun(text->string(), m_start, from, to), IntPoint(m_x, 0), 0, text->tabWidth(), textPos(), m_toAdd, m_reversed, m_dirOverride)).right();
 }
 
 }

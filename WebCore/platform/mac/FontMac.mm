@@ -473,7 +473,7 @@ const FontPlatformData& Font::platformFont() const
     return m_fontList->platformFont(fontDescription());
 }
 
-IntRect Font::selectionRectForText(const TextRun& textRun, const IntPoint& point, int h, int tabWidth, int xpos, int toAdd, bool rtl, bool visuallyOrdered) const
+FloatRect Font::selectionRectForText(const TextRun& textRun, const IntPoint& point, int h, int tabWidth, int xpos, int toAdd, bool rtl, bool visuallyOrdered) const
 {
     assert(m_fontList);
 
@@ -498,7 +498,7 @@ IntRect Font::selectionRectForText(const TextRun& textRun, const IntPoint& point
     geometry.selectionY = point.y();
     geometry.selectionHeight = h;
     geometry.useFontMetricsForSelectionYAndHeight = false;
-    return enclosingIntRect(m_fontList->primaryFont(fontDescription())->selectionRectForRun(&run, &style, &geometry));
+    return m_fontList->primaryFont(fontDescription())->selectionRectForRun(&run, &style, &geometry);
 }
 
 void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const IntPoint& point, int tabWidth, int xpos,
@@ -543,37 +543,6 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     
     if (visuallyOrdered)
         delete []characters;
-}
-
-void Font::drawHighlightForText(GraphicsContext* context, const TextRun& textRun, const IntPoint& point, int h, int tabWidth, int xpos, 
-                                int toAdd, TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
-{
-    // Avoid allocations, use stack array to pass font families.  Normally these
-    // css fallback lists are small <= 3.
-    CREATE_FAMILY_ARRAY(*this, families);
-        
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, textRun.characters(), textRun.length(), textRun.from(), textRun.to());    
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.textColor = nsColor(context->pen().color());
-    style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
-    style.rtl = d == RTL;
-    style.directionalOverride = visuallyOrdered;
-    style.letterSpacing = letterSpacing();
-    style.wordSpacing = wordSpacing();
-    style.smallCaps = isSmallCaps();
-    style.families = families;    
-    style.padding = toAdd;
-    style.tabWidth = tabWidth;
-    style.xpos = xpos;
-    WebCoreTextGeometry geometry;
-    WebCoreInitializeEmptyTextGeometry(&geometry);
-    geometry.point = point;
-    geometry.selectionY = point.y();
-    geometry.selectionHeight = h;
-    geometry.useFontMetricsForSelectionYAndHeight = false;
-    m_fontList->primaryFont(fontDescription())->drawHighlightForRun(&run, &style, &geometry);
 }
 
 void Font::drawLineForText(GraphicsContext* context, const IntPoint& point, int yOffset, int width) const

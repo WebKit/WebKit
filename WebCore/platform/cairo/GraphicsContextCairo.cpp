@@ -343,6 +343,15 @@ void GraphicsContext::fillRect(const IntRect& rect, const Color& color)
         fillRectSourceOver(m_data->context, rect, color);
 }
 
+void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
+{
+    if (paintingDisabled())
+        return;
+
+    if (color.alpha())
+        fillRectSourceOver(m_data->context, rect, color);
+}
+
 void GraphicsContext::addClip(const IntRect& rect)
 {
     if (paintingDisabled())

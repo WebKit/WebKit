@@ -165,10 +165,6 @@ static int ATSU_pointToOffset(FontData *, const WebCoreTextRun *, const WebCoreT
 static NSRect CG_selectionRect(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
 static NSRect ATSU_selectionRect(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
 
-// Drawing highlight.
-static void CG_drawHighlight(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
-static void ATSU_drawHighlight(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
-
 static bool setUpFont(FontData *);
 
 // Iterator functions
@@ -594,14 +590,6 @@ FloatRect FontData::selectionRectForRun(const WebCoreTextRun* run, const WebCore
         return CG_selectionRect(this, run, style, geometry);
 }
 
-void FontData::drawHighlightForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry)
-{
-    if (shouldUseATSU(run))
-        ATSU_drawHighlight(this, run, style, geometry);
-    else
-        CG_drawHighlight(this, run, style, geometry);
-}
-
 void FontData::drawLineForMisspelling(const FloatPoint& point, int width)
 {
     // Constants for pattern color
@@ -883,18 +871,6 @@ static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *ad
     CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 }
 
-static void CG_drawHighlight(FontData *renderer, const WebCoreTextRun * run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
-{
-    if (run->length == 0)
-        return;
-
-    if (style->backgroundColor == nil)
-        return;
-
-    [style->backgroundColor set];
-    [NSBezierPath fillRect:CG_selectionRect(renderer, run, style, geometry)];
-}
-
 static NSRect CG_selectionRect(FontData *renderer, const WebCoreTextRun * run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
 {
     float yPos = geometry->useFontMetricsForSelectionYAndHeight
@@ -963,9 +939,6 @@ static void CG_draw(FontData *renderer, const WebCoreTextRun *run, const WebCore
     // Calculate the starting point of the glyphs to be displayed by adding
     // all the advances up to the first glyph.
     startX += geometry->point.x();
-
-    if (style->backgroundColor != nil)
-        CG_drawHighlight(renderer, run, style, geometry);
     
     // Swap the order of the glyphs if right-to-left.
     if (style->rtl) {
@@ -1468,19 +1441,6 @@ static WebCoreTextRun addDirectionalOverride(const WebCoreTextRun *run, bool rtl
     return runWithOverride;
 }
 
-static void ATSU_drawHighlight(FontData *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
-{
-    // The only Cocoa calls made here are to NSColor and NSBezierPath, and they do not raise exceptions.
-
-    if (style->backgroundColor == nil)
-        return;
-    if (run->to <= run->from)
-        return;
-    
-    [style->backgroundColor set];
-    [NSBezierPath fillRect:ATSU_selectionRect(renderer, run, style, geometry)];
-}
-
 static NSRect ATSU_selectionRect(FontData *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
 {
     int from = run->from;
@@ -1563,9 +1523,6 @@ static void ATSU_draw(FontData *renderer, const WebCoreTextRun *run, const WebCo
     completeRun.to = aRun->length;
     ATSULayoutParameters params;
     createATSULayoutParameters(&params, renderer, &completeRun, style);
-
-    if (style->backgroundColor != nil)
-        ATSU_drawHighlight(renderer, run, style, geometry);
 
     [style->textColor set];
 

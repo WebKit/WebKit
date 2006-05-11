@@ -42,6 +42,7 @@ class FontFallbackList;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
+class FloatRect;
 class FloatPoint;
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
@@ -109,9 +110,6 @@ public:
 
     void drawText(GraphicsContext*, const TextRun&, const IntPoint&, int tabWidth, int xpos,
                   int toAdd, TextDirection, bool visuallyOrdered) const;
-    void drawHighlightForText(GraphicsContext*, const TextRun&, const IntPoint&, int h, 
-                              int tabWidth, int xpos, int toAdd, 
-                              TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const;
     void drawLineForText(GraphicsContext*, const IntPoint&, int yOffset, int width) const;
     void drawLineForMisspelling(GraphicsContext*, const IntPoint&, int width) const;
     int misspellingLineThickness(GraphicsContext*) const;
@@ -120,8 +118,8 @@ public:
     
     int checkSelectionPoint(const TextRun&, int toAdd, int tabWidth, int xpos,
         int x, TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const;
-    IntRect selectionRectForText(const TextRun&, const IntPoint&, int h, int tabWidth, int xpos, int width,
-                                 bool rtl, bool visuallyOrdered = false) const;
+    FloatRect selectionRectForText(const TextRun&, const IntPoint&, int h, int tabWidth, int xpos, int width,
+                                   bool rtl, bool visuallyOrdered = false) const;
     
     int width(const TextRun&, int tabWidth = 0, int xpos = 0) const;
 

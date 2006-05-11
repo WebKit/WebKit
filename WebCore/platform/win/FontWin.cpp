@@ -214,26 +214,7 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const IntPoint
     // No need to ReleaseDC the HDC borrowed from cairo
 }
 
-void Font::drawHighlightForText(GraphicsContext* context, const TextRun& run, const IntPoint& point, int h, int tabWidth, int xpos,
-                                TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
-{
-    if (!backgroundColor.isValid())
-        return;
-
-    FontData* font = m_fontList->primaryFont(fontDescription());
-    if (!font)
-        return;
-
-    cairo_surface_t* surface = cairo_get_target(context->platformContext());
-    HDC dc = cairo_win32_surface_get_dc(surface);
-
-    IntSize runSize = hackishExtentForString(dc, font, run, tabWidth, xpos);
-
-    // FIXME: this const_cast should be removed when this code is made real.
-    const_cast<GraphicsContext*>(context)->fillRect(IntRect(point, runSize), backgroundColor);
-}
-
-IntRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, int h, int tabWidth, int xpos,
+FloatRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, int h, int tabWidth, int xpos,
                                    int toAdd, bool rtl, bool visuallyOrdered) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
@@ -243,7 +224,7 @@ IntRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, in
     HDC dc = GetDC((HWND)0); // FIXME: Need a way to get to the real HDC.
     IntSize runSize = hackishExtentForString(dc, font, run, tabWidth, xpos);
     ReleaseDC(0, dc);
-    return IntRect(point, runSize);
+    return FloatRect(point, runSize);
 }
 
 int Font::checkSelectionPoint(const TextRun& run, int toAdd, int tabWidth, int xpos, int x,

@@ -1,3 +1,50 @@
+2006-05-11  David Hyatt  <hyatt@apple.com>
+
+        This patch makes drawHighlightForText a completely cross-platform method
+        implemented by the GraphicsContext.  The platform-specific implementations
+        of the method in the Font class have been eliminated.
+
+        Reviewed by andersca
+
+        * platform/Font.h:
+        * platform/FontData.h:
+        Remove the drawHighlight methods.  Change the selectionRect method in
+        Font to return a FloatRect so that the GraphicsContext can do an accurate
+        fill.
+
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawHighlightForText):
+        Implement the drawHighlightFunction in terms of the cross-platform
+        Font selectionRect functions and a new float-based fillRect graphics context
+        function.
+
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        Add the new float-based fillRect function for Cairo and CG.
+
+        * platform/mac/FontData.mm:
+        (WebCore::CG_draw):
+        (WebCore::ATSU_draw):
+        Removed the CG and ATSU drawHighlight methods.  Remove the drawing of
+        the background from the deprecated draw methods (they'll be removed
+        soon).
+
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::selectionRectForText):
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::selectionRectForText):
+        Change selectionRectForText to return a FloatRect instead of an IntRect,
+        so that the GraphicsContext can do a precise fill.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::positionForOffset):
+        Modify the callers who expect an int-based selection rect so that they call
+        enclosingIntRect.
+
 2006-05-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

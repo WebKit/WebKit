@@ -315,6 +315,17 @@ void GraphicsContext::fillRect(const IntRect& rect, const Color& color)
     }
 }
 
+void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
+{
+    if (paintingDisabled())
+        return;
+    if (color.alpha()) {
+        CGContextRef context = platformContext();
+        setCGFillColor(context, color);
+        CGContextFillRect(context, rect);
+    }
+}
+
 void GraphicsContext::addClip(const IntRect& rect)
 {
     if (paintingDisabled())
