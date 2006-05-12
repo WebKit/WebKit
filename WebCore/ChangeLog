@@ -1,3 +1,15 @@
+2006-05-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8770
+          XMLHttpRequest should strip CR/LF characters from the URL
+
+        Test: fast/loader/url-strip-cr-lf-tab.html
+
+        * platform/KURL.cpp:
+        (appendEscapingBadChars): Strip CR, LF and TAB, as Firefox and IE do.
+
 2006-05-11  David Hyatt  <hyatt@apple.com>
 
         Remove the misspelling drawing code from Font and FontData.  Implement it
@@ -157,7 +169,7 @@
 
         Reviewed by Adele.
 
-        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8743
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8743
           REGRESSION: focus() on input field selects all text within it
           (was: cannot select cities on British Rail reservation site)
 

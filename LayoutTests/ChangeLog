@@ -1,3 +1,13 @@
+2006-05-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8770
+          XMLHttpRequest should strip CR/LF characters from the URL
+
+        * fast/loader/url-strip-cr-lf-tab-expected.txt: Added.
+        * fast/loader/url-strip-cr-lf-tab.html: Added.
+
 2006-05-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher, levi
