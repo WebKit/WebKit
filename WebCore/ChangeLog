@@ -2,6 +2,18 @@
 
         Reviewed by Adele.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8521
+          crash bringing up context menu with CSS generated content
+
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::sendContextMenuEvent):
+        Added a null check.
+
+        * manual-tests/context-click-generated-content.html: Added.
+
+2006-05-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8715
           REGRESSION: Caret to the right of an image is a big black rectangle.
 
