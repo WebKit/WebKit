@@ -1,3 +1,15 @@
+2006-05-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Anders.
+        
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8866
+          REGRESSION: Incorrect caret position in RTL text
+
+        * fast/text/international/rtl-caret-expected.checksum: Added.
+        * fast/text/international/rtl-caret-expected.png: Added.
+        * fast/text/international/rtl-caret-expected.txt: Added.
+        * fast/text/international/rtl-caret.html: Added.
+
 2006-05-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

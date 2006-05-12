@@ -1,3 +1,15 @@
+2006-05-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Anders.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8866
+          REGRESSION: Incorrect caret position in RTL text
+
+        Test: fast/text/international/rtl-caret.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::positionForOffset): Added missing m_toAdd argument.
+
 2006-05-12  David Hyatt  <hyatt@apple.com>
 
         Bug 8864. Lift WebCoreTextStyle up into the API (as TextStyle).

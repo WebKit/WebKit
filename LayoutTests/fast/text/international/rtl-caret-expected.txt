@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 172x18
+          text run at (0,0) width 172: "This is a regression test for "
+        RenderInline {I} at (0,0) size 777x36
+          RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (172,0) size 348x18
+              text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8866"
+          RenderText {#text} at (520,0) size 777x36
+            text run at (520,0) width 4: " "
+            text run at (524,0) width 253: "REGRESSION: Incorrect caret position"
+            text run at (0,18) width 70: "in RTL text"
+        RenderText {#text} at (70,18) size 4x18
+          text run at (70,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 346x18
+          text run at (0,0) width 346: "The caret should be in the middle of the Hebrew word."
+      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,96) size 784x18
+        RenderText {#text} at (0,0) size 64x18
+          text run at (0,0) width 64 RTL: "\x{5D0}\x{5D5}\x{5DB}\x{5DE}\x{5E0}\x{5D9}\x{5D5}\x{5EA}"
+caret: position 5 of child 0 {#text} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document
