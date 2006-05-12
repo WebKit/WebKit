@@ -43,7 +43,7 @@
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 
 #import <WebCore/WebCoreFrameBridge.h>
 

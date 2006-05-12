@@ -35,7 +35,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>

@@ -1,3 +1,40 @@
+2006-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Brady.
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8876
+        - move most private WebDataSource methods to uninstalled header
+        
+        I put the declarations for the ones only used in WebKit in WebDataSourceInternal.h
+        and removed two entirey unused ones.
+
+        * Plugins/WebNetscapePluginRepresentation.m:
+        * Plugins/WebNetscapePluginStream.m:
+        * Plugins/WebPluginController.m:
+        * Plugins/WebPluginDocumentView.m:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge dataSource]):
+        * WebCoreSupport/WebSubresourceLoader.m:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        (-[WebDataSource _loadIcon]):
+        (-[WebDataSource _clearErrors]):
+        (-[WebDataSource _commitLoadWithData:]):
+        (-[WebDataSource _doesProgressiveLoadWithMIMEType:]):
+        (-[WebDataSource _addResponse:]):
+        * WebView/WebDataSourceInternal.h: Added.
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebFrame.m:
+        * WebView/WebHTMLRepresentation.m:
+        * WebView/WebHTMLView.m:
+        * WebView/WebImageView.m:
+        * WebView/WebLoader.m:
+        * WebView/WebMainResourceLoader.m:
+        * WebView/WebPDFView.m:
+        * WebView/WebRenderNode.m:
+        * WebView/WebView.m:
+
 2006-05-12  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

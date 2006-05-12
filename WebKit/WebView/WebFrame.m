@@ -33,7 +33,7 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocumentInternal.h>

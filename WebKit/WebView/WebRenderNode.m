@@ -31,7 +31,7 @@
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLView.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebNSViewExtras.h>
 
 @interface WebKitRenderTreeCopier : NSObject <WebCoreRenderTreeCopier>

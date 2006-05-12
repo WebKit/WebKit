@@ -30,7 +30,7 @@
 
 #import <WebKit/WebArchiver.h>
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebImageRenderer.h>

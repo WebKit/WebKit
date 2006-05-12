@@ -35,7 +35,7 @@
 
 #import <WebKit/DOMHTML.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>

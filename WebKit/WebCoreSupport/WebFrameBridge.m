@@ -32,7 +32,7 @@
 #import "WebBackForwardList.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebBasePluginPackage.h"
-#import "WebDataSourcePrivate.h"
+#import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebEditingDelegate.h"
 #import "WebFormDataStream.h"
@@ -461,7 +461,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     WebDataSource *dataSource = [_frame dataSource];
 
     ASSERT(dataSource != nil);
-    ASSERT([dataSource _isCommitted]);
 
     return dataSource;
 }

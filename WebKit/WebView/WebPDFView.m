@@ -27,7 +27,7 @@
  */
 
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFrame.h>

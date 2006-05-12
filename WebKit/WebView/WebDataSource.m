@@ -26,8 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSource.h>
 
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/DOMHTML.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebArchive.h>
@@ -65,6 +66,93 @@
 
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
+
+@interface WebDataSourcePrivate : NSObject
+{
+    @public
+    NSData *resourceData;
+    
+    id <WebDocumentRepresentation> representation;
+    
+    // A reference to actual request used to create the data source.
+    // This should only be used by the resourceLoadDelegate's
+    // identifierForInitialRequest:fromDatasource: method.  It is
+    // not guaranteed to remain unchanged, as requests are mutable.
+    NSURLRequest *originalRequest;
+    
+    // A copy of the original request used to create the data source.
+    // We have to copy the request because requests are mutable.
+    NSURLRequest *originalRequestCopy;
+    
+    // The 'working' request for this datasource.  It may be mutated
+    // several times from the original request to include additional
+    // headers, cookie information, canonicalization and redirects.
+    NSMutableURLRequest *request;
+    
+    NSURLResponse *response;
+    
+    // Client for main resource.
+    WebMainResourceLoader *mainResourceLoader;
+    
+    // Clients for other resources.
+    NSMutableArray *subresourceLoaders;
+    NSMutableArray *plugInStreamLoaders;
+    
+    // The time when the data source was told to start loading.
+    double loadingStartedTime;
+    
+    BOOL primaryLoadComplete;
+    
+    BOOL stopping;
+    
+    BOOL isClientRedirect;
+    
+    NSString *pageTitle;
+    
+    NSString *encoding;
+    NSString *overrideEncoding;
+    
+    // Error associated with main document.
+    NSError *mainDocumentError;
+    
+    BOOL loading; // self and webView are retained while loading
+    
+    BOOL gotFirstByte; // got first byte
+    BOOL committed; // This data source has been committed
+    BOOL representationFinishedLoading;
+    
+    BOOL defersCallbacks;
+    
+    NSURL *iconURL;
+    WebIconLoader *iconLoader;
+    
+    // The action that triggered loading of this data source -
+    // we keep this around for the benefit of the various policy
+    // handlers.
+    NSDictionary *triggeringAction;
+    
+    // The last request that we checked click policy for - kept around
+    // so we can avoid asking again needlessly.
+    NSURLRequest *lastCheckedRequest;
+    
+    // We retain all the received responses so we can play back the
+    // WebResourceLoadDelegate messages if the item is loaded from the
+    // page cache.
+    NSMutableArray *responses;
+    BOOL stopRecordingResponses;
+    
+    BOOL loadingFromPageCache;
+    
+    WebFrame *webFrame;
+    
+    NSMutableDictionary *subresources;
+    
+    WebUnarchivingState *unarchivingState;
+    
+    BOOL supportsMultipartContent;
+}
+
+@end
 
 @implementation WebDataSourcePrivate 
 
@@ -218,6 +306,63 @@
     _private->resourceData = data;
 }
 
+- (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
+{
+    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
+    
+    WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
+    
+    // Bind the URL of the original request and the final URL to the icon URL.
+    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[self _URL] _web_originalDataAsString]];
+    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self _originalRequest] URL] _web_originalDataAsString]];
+    
+    
+    if ([self webFrame] == [[self _webView] mainFrame])
+        [[self _webView] _willChangeValueForKey:_WebMainFrameIconKey];
+    
+    NSImage *icon = [iconDB iconForURL:[[self _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
+    [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
+                                            didReceiveIcon:icon
+                                                  forFrame:[self webFrame]];
+    
+    if ([self webFrame] == [[self _webView] mainFrame])
+        [[self _webView] _didChangeValueForKey:_WebMainFrameIconKey];
+}
+
+- (void)_loadIcon
+{
+    // Don't load an icon if 1) this is not the main frame 2) we ended in error 3) we already did 4) they aren't save by the DB.
+    if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || _private->iconLoader ||
+        ![[WebIconDatabase sharedIconDatabase] _isEnabled]) {
+        return;
+    }
+    
+    if(!_private->iconURL){
+        // No icon URL from the LINK tag so try the server's root.
+        // This is only really a feature of http or https, so don't try this with other protocols.
+        NSString *scheme = [[self _URL] scheme];
+        if([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]){
+            _private->iconURL = [[[NSURL _web_URLWithDataAsString:@"/favicon.ico"
+                                                    relativeToURL:[self _URL]] absoluteURL] retain];
+        }
+    }
+    
+    if(_private->iconURL != nil){
+        if([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL _web_originalDataAsString]]){
+            [self _updateIconDatabaseWithURL:_private->iconURL];
+        }else{
+            ASSERT(!_private->iconLoader);
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->iconURL];
+            [[self webFrame] _addExtraFieldsToRequest:request alwaysFromRequest:NO];
+            _private->iconLoader = [[WebIconLoader alloc] initWithRequest:request];
+            [request release];
+            [_private->iconLoader setDelegate:self];
+            [_private->iconLoader setDataSource:self];
+            [_private->iconLoader startLoading];
+        }
+    }
+}
+
 - (void)_setPrimaryLoadComplete: (BOOL)flag
 {
     _private->primaryLoadComplete = flag;
@@ -288,6 +433,12 @@
     _private->stopping = NO;
     
     [self release];
+}
+
+- (void)_clearErrors
+{
+    [_private->mainDocumentError release];
+    _private->mainDocumentError = nil;
 }
 
 - (void)_prepareForLoadStart
@@ -541,12 +692,6 @@
     }
 }
 
-- (void)_clearErrors
-{
-    [_private->mainDocumentError release];
-    _private->mainDocumentError = nil;
-}
-
 static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class, NSArray *supportTypes)
 {
     NSEnumerator *enumerator = [supportTypes objectEnumerator];
@@ -594,11 +739,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [[self webFrame] _bridge];
 }
 
-- (BOOL)_isCommitted
-{
-    return _private->committed;
-}
-
 - (void)_commitIfReady
 {
     if (_private->gotFirstByte && !_private->committed) {
@@ -619,6 +759,22 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
 
     [_private->representation setDataSource:self];
+}
+
+- (void)_commitLoadWithData:(NSData *)data
+{
+    // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
+    // by starting a new load, so retain temporarily.
+    [self retain];
+    [self _commitIfReady];
+    [[self representation] receivedData:data withDataSource:self];
+    [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
+    [self release];
+}
+
+- (BOOL)_doesProgressiveLoadWithMIMEType:(NSString *)MIMEType
+{
+    return [[self webFrame] _loadType] != WebFrameLoadTypeReplace || [MIMEType isEqualToString:@"text/html"];
 }
 
 -(void)_receivedData:(NSData *)data
@@ -664,66 +820,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
                                complete:isComplete];
 }
 
-- (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
-{
-    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
-    
-    WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
-
-    // Bind the URL of the original request and the final URL to the icon URL.
-    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[self _URL] _web_originalDataAsString]];
-    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self _originalRequest] URL] _web_originalDataAsString]];
-
-    
-    if ([self webFrame] == [[self _webView] mainFrame])
-        [[self _webView] _willChangeValueForKey:_WebMainFrameIconKey];
-    
-    NSImage *icon = [iconDB iconForURL:[[self _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
-    [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
-                                                      didReceiveIcon:icon
-                                                            forFrame:[self webFrame]];
-    
-    if ([self webFrame] == [[self _webView] mainFrame])
-        [[self _webView] _didChangeValueForKey:_WebMainFrameIconKey];
-}
-
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader
 {
     [self _updateIconDatabaseWithURL:[iconLoader URL]];
-}
-
-- (void)_loadIcon
-{
-    // Don't load an icon if 1) this is not the main frame 2) we ended in error 3) we already did 4) they aren't save by the DB.
-    if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || _private->iconLoader ||
-       ![[WebIconDatabase sharedIconDatabase] _isEnabled]) {
-        return;
-    }
-                
-    if(!_private->iconURL){
-        // No icon URL from the LINK tag so try the server's root.
-        // This is only really a feature of http or https, so don't try this with other protocols.
-        NSString *scheme = [[self _URL] scheme];
-        if([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]){
-            _private->iconURL = [[[NSURL _web_URLWithDataAsString:@"/favicon.ico"
-                                              relativeToURL:[self _URL]] absoluteURL] retain];
-        }
-    }
-
-    if(_private->iconURL != nil){
-        if([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL _web_originalDataAsString]]){
-            [self _updateIconDatabaseWithURL:_private->iconURL];
-        }else{
-            ASSERT(!_private->iconLoader);
-            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->iconURL];
-            [[self webFrame] _addExtraFieldsToRequest:request alwaysFromRequest:NO];
-            _private->iconLoader = [[WebIconLoader alloc] initWithRequest:request];
-            [request release];
-            [_private->iconLoader setDelegate:self];
-            [_private->iconLoader setDataSource:self];
-            [_private->iconLoader startLoading];
-        }
-    }
 }
 
 - (void)_setIconURL:(NSURL *)URL
@@ -800,7 +899,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return _private->loadingFromPageCache;
 }
 
-- (void)_addResponse: (NSURLResponse *)r
+- (void)_addResponse:(NSURLResponse *)r
 {
     if (!_private->stopRecordingResponses) {
         if (!_private->responses)
@@ -841,17 +940,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return [[self request] URL];
 }
 
-- (NSString *)_stringWithData:(NSData *)data
-{
-    NSString *textEncodingName = [self textEncodingName];
-
-    if (textEncodingName) {
-        return [WebFrameBridge stringWithData:data textEncodingName:textEncodingName];
-    } else {
-        return [WebFrameBridge stringWithData:data textEncoding:kCFStringEncodingISOLatin1];
-    }
-}
-
 - (NSError *)_mainDocumentError
 {
     return _private->mainDocumentError;
@@ -861,22 +949,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     NSString *MIMEType = [[self response] MIMEType];
     return [WebView canShowMIMETypeAsHTML:MIMEType];
-}
-
-- (BOOL)_doesProgressiveLoadWithMIMEType:(NSString *)MIMEType
-{
-    return [[self webFrame] _loadType] != WebFrameLoadTypeReplace || [MIMEType isEqualToString:@"text/html"];
-}
-
-- (void)_commitLoadWithData:(NSData *)data
-{
-    // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
-    // by starting a new load, so retain temporarily.
-    [self retain];
-    [self _commitIfReady];
-    [[self representation] receivedData:data withDataSource:self];
-    [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
-    [self release];
 }
 
 - (void)_revertToProvisionalState

@@ -29,7 +29,7 @@
 #import <WebKit/WebNetscapePluginRepresentation.h>
 
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>

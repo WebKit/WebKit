@@ -30,7 +30,7 @@
 
 #import <WebKit/WebLoader.h>
 #import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>

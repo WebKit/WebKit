@@ -32,7 +32,7 @@
 #import <WebKit/WebArchive.h>
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitNSStringExtras.h>

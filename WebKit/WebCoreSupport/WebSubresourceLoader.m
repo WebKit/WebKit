@@ -30,7 +30,7 @@
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebKitErrorsPrivate.h>

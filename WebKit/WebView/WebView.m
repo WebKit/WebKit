@@ -34,7 +34,7 @@
 #import "WebDOMOperationsPrivate.h"
 #import "WebDashboardRegion.h"
 #import "WebDataProtocol.h"
-#import "WebDataSourcePrivate.h"
+#import "WebDataSourceInternal.h"
 #import "WebDefaultEditingDelegate.h"
 #import "WebDefaultFrameLoadDelegate.h"
 #import "WebDefaultPolicyDelegate.h"
