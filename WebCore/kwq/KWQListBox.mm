@@ -35,6 +35,7 @@
 #import <wtf/Assertions.h>
 
 #import "render_form.h"
+#import "GraphicsContext.h"
 
 using namespace WebCore;
 
@@ -66,10 +67,10 @@ const float rightMargin = 2;
 - (void)fontChanged;
 @end
 
-static FontData* itemScreenRenderer;
-static FontData* itemPrinterRenderer;
-static FontData* groupLabelScreenRenderer;
-static FontData* groupLabelPrinterRenderer;
+static Font* itemScreenRenderer = 0;
+static Font* itemPrinterRenderer = 0;
+static Font* groupLabelScreenRenderer = 0;
+static Font* groupLabelPrinterRenderer = 0;
 
 static NSFont *itemFont()
 {
@@ -77,45 +78,35 @@ static NSFont *itemFont()
     return font;
 }
 
-static FontData* itemTextRenderer()
+static Font* itemTextRenderer()
 {
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
         if (itemScreenRenderer == nil) {
-            FontPlatformData font;
-            WebCoreInitializeFont(&font);
-            font.font = itemFont();
-            itemScreenRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
+            FontPlatformData font(itemFont());
+            itemScreenRenderer = new Font(font);
         }
         return itemScreenRenderer;
     } else {
         if (itemPrinterRenderer == nil) {
-            FontPlatformData font;
-            WebCoreInitializeFont(&font);
-            font.font = itemFont();
-            font.forPrinter = YES;
-            itemPrinterRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
+            FontPlatformData font(itemFont(), true);
+            itemPrinterRenderer = new Font(font);
         }
         return itemPrinterRenderer;
     }
 }
 
-static FontData* groupLabelTextRenderer()
+static Font* groupLabelTextRenderer()
 {
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
         if (groupLabelScreenRenderer == nil) {
-            FontPlatformData font;
-            WebCoreInitializeFont(&font);
-            font.font = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
-            groupLabelScreenRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
+            FontPlatformData font([NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]]);
+            groupLabelScreenRenderer = new Font(font);
         }
         return groupLabelScreenRenderer;
     } else {
         if (groupLabelPrinterRenderer == nil) {
-            FontPlatformData font;
-            WebCoreInitializeFont(&font);
-            font.font = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
-            font.forPrinter = YES;
-            groupLabelPrinterRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
+            FontPlatformData font([NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]], true);
+            groupLabelPrinterRenderer = new Font(font);
         }
         return groupLabelPrinterRenderer;
     }
@@ -273,40 +264,37 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
         DeprecatedValueListConstIterator<KWQListBoxItem> i = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).begin();
         DeprecatedValueListConstIterator<KWQListBoxItem> e = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).end();
         if (i != e) {
-            WebCoreTextStyle style;
-            WebCoreInitializeEmptyTextStyle(&style);
-            style.rtl = [tableView baseWritingDirection] == NSWritingDirectionRightToLeft;
-            style.applyRunRounding = NO;
-            style.applyWordRounding = NO;
+            WebCore::TextStyle style;
+            style.disableRoundingHacks();
+            style.setRTL([tableView baseWritingDirection] == NSWritingDirectionRightToLeft);
+
+            const Font* renderer;
+            const Font* groupLabelRenderer;
             
-            FontData* renderer;
-            FontData* groupLabelRenderer;
-            
+            bool needToDeleteLabel = false;
             if (tableView->isSystemFont) {        
                 renderer = itemTextRenderer();
                 groupLabelRenderer = groupLabelTextRenderer();
             } else {
-                renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font().platformFont()];
+                renderer = &font();
                 FontDescription boldDesc = font().fontDescription();
                 boldDesc.setWeight(cBoldWeight);
-                Font b = Font(boldDesc, font().letterSpacing(), font().wordSpacing());
-                b.update();
-                groupLabelRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:b.platformFont()];
+                groupLabelRenderer = new Font(boldDesc, font().letterSpacing(), font().wordSpacing());
+                groupLabelRenderer->update();
+                needToDeleteLabel = true;
             }
             
             do {
                 const DeprecatedString &s = (*i).string;
-
-                WebCoreTextRun run;
-                int length = s.length();
-                WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
-
-                float textWidth = (((*i).type == KWQListBoxGroupLabel) ? groupLabelRenderer : renderer)->floatWidthForRun(&run, &style);
+                TextRun run(reinterpret_cast<const UniChar *>(s.unicode()), s.length(), 0, s.length());
+                float textWidth = (((*i).type == KWQListBoxGroupLabel) ? groupLabelRenderer : renderer)->floatWidth(run, style);
                 width = max(width, textWidth);
-                
                 ++i;
             
             } while (i != e);
+            
+            if (needToDeleteLabel)
+                delete groupLabelRenderer;
         }
         _width = ceilf(width);
         _widthGood = true;
@@ -349,9 +337,16 @@ void QListBox::setWritingDirection(TextDirection d)
 
 void QListBox::clearCachedTextRenderers()
 {
+    delete itemScreenRenderer;
     itemScreenRenderer = 0;
+    
+    delete itemPrinterRenderer;
     itemPrinterRenderer = 0;
+    
+    delete groupLabelScreenRenderer;
     groupLabelScreenRenderer = 0;
+    
+    delete groupLabelPrinterRenderer;
     groupLabelPrinterRenderer = 0;
 }
 
@@ -680,46 +675,42 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 
     bool rtl = _direction == NSWritingDirectionRightToLeft;
 
-    FontData* renderer;
+    bool deleteRenderer = false;
+    const Font* renderer;
     if (isSystemFont) {
         renderer = (item.type == KWQListBoxGroupLabel) ? groupLabelTextRenderer() : itemTextRenderer();
     } else {
         if (item.type == KWQListBoxGroupLabel) {
+            deleteRenderer = true;
             FontDescription boldDesc = _box->font().fontDescription();
             boldDesc.setWeight(cBoldWeight);
-            Font b = Font(boldDesc, _box->font().letterSpacing(), _box->font().wordSpacing());
-            b.update();
-            renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:b.platformFont()];
+            renderer = new Font(boldDesc, _box->font().letterSpacing(), _box->font().wordSpacing());
+            renderer->update();
         }
         else
-            renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:_box->font().platformFont()];
+            renderer = &_box->font();
     }
    
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.rtl = rtl;
-    style.applyRunRounding = NO;
-    style.applyWordRounding = NO;
-    style.textColor = color;
+    WebCore::TextStyle style;
+    style.setRTL(rtl);
+    style.disableRoundingHacks();
 
-    WebCoreTextRun run;
-    int length = item.string.length();
-    WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(item.string.unicode()), length, 0, length);
-
+    TextRun run(reinterpret_cast<const UniChar *>(item.string.unicode()), item.string.length());
+    
     NSRect cellRect = [self frameOfCellAtColumn:0 row:row];
-    NSPoint point;
-    if (!rtl) {
-        point.x = NSMinX(cellRect) + leftMargin;
-    } else {
-        point.x = NSMaxX(cellRect) - rightMargin - renderer->floatWidthForRun(&run, &style);
-    }
-    point.y = NSMaxY(cellRect) - renderer->descent() - bottomMargin;
+    FloatPoint point;
+    if (!rtl)
+        point.setX(NSMinX(cellRect) + leftMargin);
+    else
+        point.setX(NSMaxX(cellRect) - rightMargin - renderer->floatWidth(run, style));
+    point.setY(NSMaxY(cellRect) - renderer->descent() - bottomMargin);
 
-    WebCoreTextGeometry geometry;
-    WebCoreInitializeEmptyTextGeometry(&geometry);
-    geometry.point = point;
-
-    renderer->drawRun(&run, &style, &geometry);
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    GraphicsContext graphicsContext(context);
+    float red, green, blue, alpha;
+    [[color colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
+    graphicsContext.setPen(makeRGBA((int)(red * 255), (int)(green * 255), (int)(blue * 255), (int)(alpha * 255)));
+    renderer->drawText(&graphicsContext, run, style, point);
 }
 
 - (void)_KWQ_setKeyboardFocusRingNeedsDisplay

@@ -261,26 +261,20 @@ IntSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    FontPlatformData font;
-    WebCoreInitializeFont(&font);
-    font.font = [textField font];
-    font.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
-    FontData* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font];
+    FontPlatformData font([textField font], ![NSGraphicsContext currentContextDrawingToScreen]);
+    Font renderer(font);
 
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
     size.height += [layoutManager defaultLineHeightForFont:font.font];
     [layoutManager release];
 
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.applyRunRounding = NO;
-    style.applyWordRounding = NO;
+    WebCore::TextStyle style;
+    style.disableRoundingHacks();
 
     const UniChar zero = '0';
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, &zero, 1, 0, 1);
+    TextRun run(&zero, 1);
 
-    size.width += ceilf(renderer->floatWidthForRun(&run, &style) * numCharacters);
+    size.width += ceilf(renderer.floatWidth(run, style) * numCharacters);
 
     return IntSize(size);
     END_BLOCK_OBJC_EXCEPTIONS;

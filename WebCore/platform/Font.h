@@ -99,6 +99,9 @@ public:
     bool applyWordRounding() const { return m_applyWordRounding; }
     bool attemptFontSubstitution() const { return m_attemptFontSubstitution; }
 
+    void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
+    void setRTL(bool b) { m_rtl = b; }
+    
 private:
     int m_tabWidth;
     int m_xpos;
@@ -114,6 +117,9 @@ class Font {
 public:
     Font();
     Font(const FontDescription&, short letterSpacing, short wordSpacing);
+#if __APPLE__
+    Font(const FontPlatformData& fontPlatformData); // This constructor is only used by Mac-specific code that already has a native font.
+#endif
     ~Font();
     
     Font(const Font&);
@@ -138,7 +144,7 @@ public:
     
     void update() const;
 
-    void drawText(GraphicsContext*, const TextRun&, const TextStyle&, const IntPoint&) const;
+    void drawText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
 
     int width(const TextRun&, const TextStyle& = TextStyle()) const;
     float floatWidth(const TextRun&, const TextStyle& = TextStyle()) const;
@@ -182,9 +188,9 @@ private:
 #if __APPLE__
     // FIXME: This will eventually be cross-platform, but we want to keep Windows compiling for now.
     bool canUseGlyphCache(const TextRun&) const;
-    void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const IntPoint&) const;
+    void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
-    void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const IntPoint&) const;
+    void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, const TextStyle&, const FontData* substituteFont, float* startX, GlyphBuffer*) const;
     float floatWidthForComplexText(const TextRun&, const TextStyle&) const;
 

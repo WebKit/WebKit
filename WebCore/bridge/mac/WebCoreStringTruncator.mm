@@ -33,7 +33,7 @@
 
 #import <wtf/Assertions.h>
 #import "WebTextRendererFactory.h"
-#import "FontData.h"
+#import "Font.h"
 
 #define STRING_BUFFER_SIZE 2048
 #define ELLIPSIS_CHARACTER 0x2026
@@ -41,7 +41,7 @@
 using namespace WebCore;
 
 static NSFont *currentFont;
-static FontData* currentRenderer;
+static Font* currentRenderer = 0;
 static float currentEllipsisWidth;
 
 typedef unsigned TruncationFunction(NSString *string, unsigned length, unsigned keepCount, unichar *buffer);
@@ -81,15 +81,12 @@ static unsigned rightTruncateToBuffer(NSString *string, unsigned length, unsigne
     return keepRange.length + 1;
 }
 
-static float stringWidth(FontData* renderer, const unichar *characters, unsigned length)
+static float stringWidth(Font* renderer, const unichar *characters, unsigned length)
 {
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, characters, length, 0, length);
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.applyRunRounding = NO;
-    style.applyWordRounding = NO;
-    return renderer->floatWidthForRun(&run, &style);
+    TextRun run(characters, length);
+    TextStyle style;
+    style.disableRoundingHacks();
+    return renderer->floatWidth(run, style);
 }
 
 static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, TruncationFunction truncateToBuffer)
@@ -114,10 +111,9 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
     if (![currentFont isEqual:font]) {
         [currentFont release];
         currentFont = [font retain];
-        FontPlatformData f;
-        WebCoreInitializeFont(&f);
-        f.font = font;
-        currentRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
+        FontPlatformData f(font);
+        delete currentRenderer;
+        currentRenderer = new Font(f);
         ellipsis = ELLIPSIS_CHARACTER;
         currentEllipsisWidth = stringWidth(currentRenderer, &ellipsis, 1);
     }
@@ -223,17 +219,19 @@ static NSFont *defaultMenuFont(void)
     unsigned length = [string length];
     unichar *s = static_cast<unichar*>(malloc(sizeof(unichar) * length));
     [string getCharacters:s];
-    FontPlatformData f;
-    WebCoreInitializeFont(&f);
-    f.font = font;
-    float width = stringWidth([[WebTextRendererFactory sharedFactory] rendererWithFont:f], s, length);
+    FontPlatformData f(font);
+    Font fontRenderer(f);
+    float width = stringWidth(&fontRenderer, s, length);
     free(s);
     return width;
 }
 
 + (void)clear
 {
+    delete currentRenderer;
     currentRenderer = 0;
+    [currentFont release];
+    currentFont = nil;
 }
 
 @end

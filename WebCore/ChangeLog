@@ -1,3 +1,51 @@
+2006-05-12  David Hyatt  <hyatt@apple.com>
+
+        Bug 8877.  Change form controls and the bridge entry points from the
+        Safari UI to use Font instead of FontData.
+
+        Reviewed by mjs
+
+        * bridge/mac/WebCoreStringTruncator.mm:
+        (stringWidth):
+        (truncateString):
+        (+[WebCoreStringTruncator widthOfString:font:]):
+        (+[WebCoreStringTruncator clear]):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::sizeHint):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth):
+        * kwq/KWQListBox.mm:
+        (itemTextRenderer):
+        (groupLabelTextRenderer):
+        (QListBox::sizeForNumberOfLines):
+        (QListBox::clearCachedTextRenderers):
+        (-[KWQTableView drawRow:clipRect:]):
+        * platform/Font.cpp:
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawText):
+        * platform/Font.h:
+        (WebCore::TextStyle::disableRoundingHacks):
+        (WebCore::TextStyle::setRTL):
+        * platform/FontData.h:
+        * platform/FontFallbackList.h:
+        * platform/FontPlatformData.h:
+        (WebCore::FontPlatformData::syntheticOblique):
+        * platform/Pen.h:
+        * platform/mac/FontData.mm:
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::findSubstituteRenderer):
+        * platform/mac/FontMac.mm:
+        (WebCore::FontFallbackList::setPlatformFont):
+        (WebCore::m_wordSpacing):
+        (WebCore::Font::drawComplexText):
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreDrawTextAtPoint):
+        (WebCoreTextFloatWidth):
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::drawText):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::positionForOffset):
+
 2006-05-12  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by kevin.

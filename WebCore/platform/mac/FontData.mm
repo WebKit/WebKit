@@ -149,11 +149,6 @@ static void freeGlyphMap(GlyphMap *);
 // Measuring runs.
 static float CG_floatWidthForRun(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *,
     float *widthBuffer, FontData **rendererBuffer, CGGlyph *glyphBuffer, float *startPosition, int *numGlyphsResult);
-static float ATSU_floatWidthForRun(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *);
-
-// Drawing runs.
-static void CG_draw(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
-static void ATSU_draw(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *, const WebCoreTextGeometry *);
 
 // Selection point detection in runs.
 static int CG_pointToOffset(FontData *, const WebCoreTextRun *, const WebCoreTextStyle *,
@@ -182,14 +177,6 @@ static void createATSULayoutParameters(ATSULayoutParameters *params, FontData *r
 static void disposeATSULayoutParameters(ATSULayoutParameters *params);
 
 // Character property functions.
-
-void WebCoreInitializeFont(FontPlatformData *font)
-{
-    font->font = nil;
-    font->syntheticBold = NO;
-    font->syntheticOblique = NO;
-    font->forPrinter = NO;
-}
 
 void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to)
 {
@@ -497,21 +484,6 @@ float FontData::xHeight() const
     return [m_font.font xHeight];
 }
 
-void FontData::drawRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry)
-{
-    if (shouldUseATSU(run))
-        ATSU_draw(this, run, style, geometry);
-    else
-        CG_draw(this, run, style, geometry);
-}
-
-float FontData::floatWidthForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style)
-{
-    if (shouldUseATSU(run))
-        return ATSU_floatWidthForRun(this, run, style);
-    return CG_floatWidthForRun(this, run, style, 0, 0, 0, 0, 0);
-}
-
 FloatRect FontData::selectionRectForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry)
 {
     if (shouldUseATSU(run))
@@ -532,9 +504,7 @@ FontData* FontData::smallCapsFontData() const
     if (!m_smallCapsFontData) {
 	NS_DURING
             float size = [m_font.font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER;
-            FontPlatformData smallCapsFont;
-            WebCoreInitializeFont(&smallCapsFont);
-            smallCapsFont.font = [[NSFontManager sharedFontManager] convertFont:m_font.font toSize:size];
+            FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_font.font toSize:size]);
 	    m_smallCapsFontData = (FontData*)rendererForAlternateFont(this, smallCapsFont);
 	NS_HANDLER
             NSLog(@"uncaught exception selecting font for small caps: %@", localException);
@@ -617,10 +587,8 @@ static const FontData *rendererForAlternateFont(const FontData *renderer, FontPl
 
 static const FontData *findSubstituteRenderer(const FontData *renderer, const unichar *characters, int numCharacters, NSString **families)
 {
-    FontPlatformData substituteFont;
-    WebCoreInitializeFont(&substituteFont);
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
-    substituteFont.font = findSubstituteFont(renderer, string, families);
+    FontPlatformData substituteFont(findSubstituteFont(renderer, string, families));
     [string release];
     return rendererForAlternateFont(renderer, substituteFont);
 }
@@ -703,57 +671,6 @@ static NSString *pathFromFont(NSFont *font)
 
 #endif
 
-// Useful page for testing http://home.att.net/~jameskass
-static void drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *advances, float x, float y, int numGlyphs,
-    float syntheticBoldOffset, bool syntheticOblique)
-{
-    NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
-    CGContextRef cgContext = (CGContextRef)[gContext graphicsPort];
-
-    bool originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
-    CGContextSetShouldSmoothFonts(cgContext, WebCoreShouldUseFontSmoothing());
-    
-    NSFont *drawFont;
-    if ([gContext isDrawingToScreen]) {
-        drawFont = [font screenFont];
-        if (drawFont != font)
-            // We are getting this in too many places (3406411); use ERROR so it only prints on debug versions for now. (We should debug this also, eventually).
-            LOG_ERROR("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.",
-                [[[font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
-    } else {
-        drawFont = [font printerFont];
-        if (drawFont != font)
-            NSLog(@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.",
-                [[[font fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
-    }
-    
-    CGContextSetFont(cgContext, wkGetCGFontFromNSFont(drawFont));
-
-    CGAffineTransform matrix;
-    memcpy(&matrix, [drawFont matrix], sizeof(matrix));
-    if ([gContext isFlipped]) {
-        matrix.b = -matrix.b;
-        matrix.d = -matrix.d;
-    }
-    if (syntheticOblique)
-        matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
-    CGContextSetTextMatrix(cgContext, matrix);
-
-    wkSetCGFontRenderingMode(cgContext, drawFont);
-    CGContextSetFontSize(cgContext, 1.0f);
-
-    [color set];
-
-    CGContextSetTextPosition(cgContext, x, y);
-    CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
-    if (syntheticBoldOffset) {
-        CGContextSetTextPosition(cgContext, x + syntheticBoldOffset, y);
-        CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
-    }
-
-    CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
-}
-
 static NSRect CG_selectionRect(FontData *renderer, const WebCoreTextRun * run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
 {
     float yPos = geometry->useFontMetricsForSelectionYAndHeight
@@ -779,100 +696,6 @@ static NSRect CG_selectionRect(FontData *renderer, const WebCoreTextRun * run, c
         return NSMakeRect(geometry->point.x() + floorf(totalWidth - afterWidth), yPos, roundf(totalWidth - beforeWidth) - floorf(totalWidth - afterWidth), height);
     } else {
         return NSMakeRect(geometry->point.x() + floorf(beforeWidth), yPos, roundf(afterWidth) - floorf(beforeWidth), height);
-    }
-}
-
-static void CG_draw(FontData *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
-{
-    float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
-    CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
-    FontData **rendererBuffer, *localRendererBuffer[LOCAL_BUFFER_SIZE];
-    CGSize *advances, localAdvanceBuffer[LOCAL_BUFFER_SIZE];
-    int numGlyphs = 0, i;
-    float startX;
-    unsigned length = run->length;
-    
-    if (run->length == 0)
-        return;
-
-    if (length * MAX_GLYPH_EXPANSION > LOCAL_BUFFER_SIZE) {
-        advances = new CGSize[length * MAX_GLYPH_EXPANSION];
-        widthBuffer = new float[length * MAX_GLYPH_EXPANSION];
-        glyphBuffer = new CGGlyph[length * MAX_GLYPH_EXPANSION];
-        rendererBuffer = new FontData*[length * MAX_GLYPH_EXPANSION];
-    } else {
-        advances = localAdvanceBuffer;
-        widthBuffer = localWidthBuffer;
-        glyphBuffer = localGlyphBuffer;
-        rendererBuffer = localRendererBuffer;
-    }
-
-    CG_floatWidthForRun(renderer, run, style, widthBuffer, rendererBuffer, glyphBuffer, &startX, &numGlyphs);
-        
-    // Eek.  We couldn't generate ANY glyphs for the run.
-    if (numGlyphs <= 0)
-        return;
-        
-    // Fill the advances array.
-    for (i = 0; i < numGlyphs; i++) {
-        advances[i].width = widthBuffer[i];
-        advances[i].height = 0;
-    }
-
-    // Calculate the starting point of the glyphs to be displayed by adding
-    // all the advances up to the first glyph.
-    startX += geometry->point.x();
-    
-    // Swap the order of the glyphs if right-to-left.
-    if (style->rtl) {
-        int i;
-        int mid = numGlyphs / 2;
-        int end;
-        for (i = 0, end = numGlyphs - 1; i < mid; ++i, --end) {
-            CGGlyph gswap1 = glyphBuffer[i];
-            CGGlyph gswap2 = glyphBuffer[end];
-            glyphBuffer[i] = gswap2;
-            glyphBuffer[end] = gswap1;
-
-            CGSize aswap1 = advances[i];
-            CGSize aswap2 = advances[end];
-            advances[i] = aswap2;
-            advances[end] = aswap1;
-
-            FontData *rswap1 = rendererBuffer[i];
-            FontData *rswap2 = rendererBuffer[end];
-            rendererBuffer[i] = rswap2;
-            rendererBuffer[end] = rswap1;
-        }
-    }
-
-    // Draw each contiguous run of glyphs that use the same renderer.
-    FontData *currentRenderer = rendererBuffer[0];
-    float nextX = startX;
-    int lastFrom = 0;
-    int nextGlyph = 0;
-    while (nextGlyph < numGlyphs) {
-        FontData *nextRenderer = rendererBuffer[nextGlyph];
-        if (nextRenderer != currentRenderer) {
-            drawGlyphs(currentRenderer->m_font.font, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom],
-                startX, geometry->point.y(), nextGlyph - lastFrom,
-                currentRenderer->m_syntheticBoldOffset, currentRenderer->m_font.syntheticOblique);
-            lastFrom = nextGlyph;
-            currentRenderer = nextRenderer;
-            startX = nextX;
-        }
-        nextX += advances[nextGlyph].width;
-        nextGlyph++;
-    }
-    drawGlyphs(currentRenderer->m_font.font, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom],
-        startX, geometry->point.y(), nextGlyph - lastFrom,
-        currentRenderer->m_syntheticBoldOffset, currentRenderer->m_font.syntheticOblique);
-
-    if (advances != localAdvanceBuffer) {
-        delete []advances;
-        delete []widthBuffer;
-        delete []glyphBuffer;
-        delete []rendererBuffer;
     }
 }
 
@@ -1266,38 +1089,6 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
     delete []params->renderers;
 }
 
-static ATSTrapezoid getTextBounds(FontData *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, NSPoint p)
-{
-    OSStatus status;
-    
-    if (run->to - run->from <= 0) {
-        ATSTrapezoid nilTrapezoid = { {0, 0}, {0, 0}, {0, 0}, {0, 0} };
-        return nilTrapezoid;
-    }
-
-    ATSULayoutParameters params;
-    createATSULayoutParameters(&params, renderer, run, style);
-
-    ATSTrapezoid firstGlyphBounds;
-    ItemCount actualNumBounds;
-    status = ATSUGetGlyphBounds(params.layout, FloatToFixed(p.x), FloatToFixed(p.y), run->from, run->to - run->from, kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);    
-    if (status != noErr)
-        LOG_ERROR("ATSUGetGlyphBounds() failed(%d)", status);
-    if (actualNumBounds != 1)
-        LOG_ERROR("unexpected result from ATSUGetGlyphBounds(): actualNumBounds(%d) != 1", actualNumBounds);
-
-    disposeATSULayoutParameters(&params);
-
-    return firstGlyphBounds;
-}
-
-static float ATSU_floatWidthForRun(FontData *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style)
-{
-    ATSTrapezoid oGlyphBounds = getTextBounds(renderer, run, style, NSZeroPoint);
-    return MAX(FixedToFloat(oGlyphBounds.upperRight.x), FixedToFloat(oGlyphBounds.lowerRight.x)) -
-        MIN(FixedToFloat(oGlyphBounds.upperLeft.x), FixedToFloat(oGlyphBounds.lowerLeft.x));
-}
-
 // Be sure to free the run.characters allocated by this function.
 static WebCoreTextRun addDirectionalOverride(const WebCoreTextRun *run, bool rtl)
 {
@@ -1373,69 +1164,6 @@ static NSRect ATSU_selectionRect(FontData *renderer, const WebCoreTextRun *run, 
         delete []swappedRun.characters;
 
     return rect;
-}
-
-
-static void ATSU_draw(FontData *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style, const WebCoreTextGeometry *geometry)
-{
-    // The only Cocoa calls made here are to NSColor and NSGraphicsContext, and they do not raise exceptions.
-
-    OSStatus status;
-    int from, to;
-    const WebCoreTextRun *aRun = run;
-    WebCoreTextRun swappedRun;
-    
-    if (style->directionalOverride) {
-        swappedRun = addDirectionalOverride(run, style->rtl);
-        aRun = &swappedRun;
-    }
-
-    from = aRun->from;
-    to = aRun->to;
-    if (from == -1)
-        from = 0;
-    if (to == -1)
-        to = run->length;
-
-    int runLength = to - from;
-    if (runLength <= 0)
-        return;
-
-    WebCoreTextRun completeRun = *aRun;
-    completeRun.from = 0;
-    completeRun.to = aRun->length;
-    ATSULayoutParameters params;
-    createATSULayoutParameters(&params, renderer, &completeRun, style);
-
-    [style->textColor set];
-
-    // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
-    NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
-    CGContextRef context = (CGContextRef)[gContext graphicsPort];
-    CGContextTranslateCTM(context, geometry->point.x(), geometry->point.y());
-    bool flipped = [gContext isFlipped];
-    if (!flipped)
-        CGContextScaleCTM(context, 1.0, -1.0);
-    status = ATSUDrawText(params.layout, aRun->from, runLength, 0, 0);
-    if (status == noErr && params.hasSyntheticBold) {
-        // Force relayout for the bold pass
-        ATSUClearLayoutCache(params.layout, 0);
-        params.syntheticBoldPass = true;
-        status = ATSUDrawText(params.layout, aRun->from, runLength, 0, 0);
-    }
-    if (!flipped)
-        CGContextScaleCTM(context, 1.0, -1.0);
-    CGContextTranslateCTM(context, -geometry->point.x(), -geometry->point.y());
-
-    if (status != noErr) {
-        // Nothing to do but report the error (dev build only).
-        LOG_ERROR("ATSUDrawText() failed(%d)", status);
-    }
-
-    disposeATSULayoutParameters(&params);
-    
-    if (style->directionalOverride)
-        delete []swappedRun.characters;
 }
 
 static int ATSU_pointToOffset(FontData *renderer, const WebCoreTextRun *run, const WebCoreTextStyle *style,

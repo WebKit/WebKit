@@ -57,6 +57,7 @@ private:
     mutable FontPlatformData m_platformFont;
 
     const FontPlatformData& platformFont(const FontDescription&) const;
+    void setPlatformFont(const FontPlatformData&);
 #else
     mutable Vector<FontData*> m_fontList;
 #endif

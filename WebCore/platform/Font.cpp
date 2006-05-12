@@ -446,7 +446,7 @@ bool Font::canUseGlyphCache(const TextRun& run) const
 
 }
 
-void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const IntPoint& point) const
+void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const FloatPoint& point) const
 {
     // This glyph buffer holds our glyphs+advances+font data for each glyph.
     GlyphBuffer glyphBuffer;
@@ -488,7 +488,7 @@ void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const Te
     drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 }
 
-void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const IntPoint& point) const
+void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyle& style, const FloatPoint& point) const
 {
     if (canUseGlyphCache(run))
         drawSimpleText(context, run, style, point);

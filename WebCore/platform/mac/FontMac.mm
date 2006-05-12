@@ -82,6 +82,12 @@ const FontPlatformData& FontFallbackList::platformFont(const FontDescription& fo
     return m_platformFont;
 }
 
+void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
+{
+    m_platformFont = platformData;
+    KWQRetain(m_platformFont.font);
+}
+
 FontData* FontFallbackList::primaryFont(const FontDescription& fontDescription) const
 {
     if (!m_font)
@@ -466,6 +472,13 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
     delete []params->m_fonts;
 }
 
+Font::Font(const FontPlatformData& fontData)
+:m_letterSpacing(0), m_wordSpacing(0)
+{
+    m_fontList = new FontFallbackList();
+    m_fontList->setPlatformFont(fontData);
+}
+
 const FontPlatformData& Font::platformFont() const
 {
     return m_fontList->platformFont(fontDescription());
@@ -499,7 +512,7 @@ FloatRect Font::selectionRectForText(const TextRun& textRun, const TextStyle& te
     return m_fontList->primaryFont(fontDescription())->selectionRectForRun(&run, &style, &geometry);
 }
 
-void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const TextStyle& style, const IntPoint& point) const
+void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const TextStyle& style, const FloatPoint& point) const
 {
     OSStatus status;
     

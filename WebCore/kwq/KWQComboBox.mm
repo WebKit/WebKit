@@ -35,6 +35,7 @@
 #import "WebTextRendererFactory.h"
 #import "WebCoreWidgetHolder.h"
 #import "render_form.h"
+#import "Font.h"
 
 using namespace WebCore;
 
@@ -165,39 +166,20 @@ IntSize QComboBox::sizeHint() const
         DeprecatedValueListConstIterator<KWQListBoxItem> i = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).begin();
         DeprecatedValueListConstIterator<KWQListBoxItem> e = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).end();
         if (i != e) {
-            FontPlatformData itemFont;
-            WebCoreInitializeFont(&itemFont);
-            itemFont.font = [button font];
-            itemFont.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
-            FontData* itemRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:itemFont];
-            FontData* labelRenderer = nil;
-            WebCoreTextStyle style;
-            WebCoreInitializeEmptyTextStyle(&style);
-            style.applyRunRounding = NO;
-            style.applyWordRounding = NO;
+            FontPlatformData itemFont([button font], ![NSGraphicsContext currentContextDrawingToScreen]);
+            FontPlatformData labelFont(this->labelFont(), ![NSGraphicsContext currentContextDrawingToScreen]);
+            Font itemRenderer(itemFont);
+            Font labelRenderer(labelFont);
             do {
                 const DeprecatedString &s = (*i).string;
                 bool isGroupLabel = ((*i).type == KWQListBoxGroupLabel);
                 ++i;
 
-                WebCoreTextRun run;
-                int length = s.length();
-                WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
-
-                FontData* renderer;
-                if (isGroupLabel) {
-                    if (labelRenderer == nil) {
-                        FontPlatformData labelFont;
-                        WebCoreInitializeFont(&labelFont);
-                        labelFont.font = this->labelFont();
-                        labelFont.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
-                        labelRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:labelFont];
-                    }
-                    renderer = labelRenderer;
-                } else {
-                    renderer = itemRenderer;
-                }
-                float textWidth = renderer->floatWidthForRun(&run, &style);
+                TextRun run(reinterpret_cast<const UniChar *>(s.unicode()), s.length());
+                WebCore::TextStyle style;
+                style.disableRoundingHacks();
+                Font* renderer = isGroupLabel ? &labelRenderer : &itemRenderer;
+                float textWidth = renderer->floatWidth(run, style);
                 width = max(width, textWidth);
             } while (i != e);
         }

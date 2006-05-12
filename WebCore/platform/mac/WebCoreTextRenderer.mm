@@ -29,43 +29,34 @@
 #import "Font.h"
 #import "FontData.h"
 #import "WebTextRendererFactory.h"
+#import "IntPoint.h"
+#import "GraphicsContext.h"
 
 using namespace WebCore;
 
 void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint point, NSFont* font, NSColor* textColor)
 {
-    FontPlatformData f;
-    WebCoreInitializeFont(&f);
-    f.font = font;
-    FontData* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
-
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, buffer, length, 0, length);
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.applyRunRounding = NO;
-    style.applyWordRounding = NO;
-    style.textColor = textColor;
-    WebCoreTextGeometry geometry;
-    WebCoreInitializeEmptyTextGeometry(&geometry);
-    geometry.point = point;
-    renderer->drawRun(&run, &style, &geometry);
+    FontPlatformData f(font);
+    Font renderer(f);
+    TextRun run(buffer, length);
+    TextStyle style;
+    style.disableRoundingHacks();
+    float red, green, blue, alpha;
+    [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    GraphicsContext graphicsContext(context);
+    graphicsContext.setPen(makeRGBA((int)(red * 255), (int)(green * 255), (int)(blue * 255), (int)(alpha * 255)));
+    renderer.drawText(&graphicsContext, run, style, FloatPoint(point.x, point.y));
 }
 
 float WebCoreTextFloatWidth(const UniChar* buffer, unsigned length , NSFont* font)
 {
-    FontPlatformData f;
-    WebCoreInitializeFont(&f);
-    f.font = font;
-    FontData* renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:f];
-
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, buffer, length, 0, length);
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.applyRunRounding = NO;
-    style.applyWordRounding = NO;
-    return renderer->floatWidthForRun(&run, &style);
+    FontPlatformData f(font);
+    Font renderer(f);
+    TextRun run(buffer, length);
+    TextStyle style;
+    style.disableRoundingHacks();
+    return renderer.floatWidth(run, style);
 }
 
 static bool gShouldUseFontSmoothing = true;

@@ -54,7 +54,7 @@ public:
 
 private:
     PenStyle  m_style;
-    unsigned      m_width;
+    unsigned  m_width;
     Color     m_color;
 };
 

@@ -83,7 +83,6 @@ struct WebCoreTextGeometry
 void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to);
 void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style);
 void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry);
-void WebCoreInitializeFont(FontPlatformData *font);
 
 typedef struct WidthMap WidthMap;
 typedef struct GlyphMap GlyphMap;
@@ -106,11 +105,7 @@ public:
 
     float xHeight() const;
 
-    // horizontal metrics
-    float floatWidthForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style);
-
     // drawing
-    void drawRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry);
     FloatRect selectionRectForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry);
 
     // selection point check 
