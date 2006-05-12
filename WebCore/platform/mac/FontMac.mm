@@ -544,16 +544,6 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
         delete []adjustedRun.characters();
 }
 
-void Font::drawLineForMisspelling(GraphicsContext* context, const IntPoint& point, int width) const
-{
-    m_fontList->primaryFont(fontDescription())->drawLineForMisspelling(point, width);
-}
-
-int Font::misspellingLineThickness(GraphicsContext* context) const
-{
-    return m_fontList->primaryFont(fontDescription())->misspellingLineThickness();
-}
-
 float Font::floatWidthForComplexText(const TextRun& run, int tabWidth, int xpos, bool runRounding) const
 {
     ATSULayoutParameters params(run, 0, LTR, true, runRounding);

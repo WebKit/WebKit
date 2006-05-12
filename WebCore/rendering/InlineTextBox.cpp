@@ -544,7 +544,7 @@ void InlineTextBox::paintSpellingMarker(GraphicsContext* pt, int _tx, int _ty, D
     // or decrease the underline thickness.  The overlap is actually the most useful, and matches what AppKit does.
     // So, we generally place the underline at the bottom of the text, but in larger fonts that's not so good so
     // we pin to two pixels under the baseline.
-    int lineThickness = pt->misspellingLineThickness();
+    int lineThickness = cMisspellingLineThickness;
     int descent = m_height - m_baseline;
     int underlineOffset;
     if (descent <= (2 + lineThickness)) {

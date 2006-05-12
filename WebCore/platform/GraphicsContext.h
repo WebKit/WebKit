@@ -43,6 +43,10 @@ typedef struct _cairo PlatformGraphicsContext;
 typedef void PlatformGraphicsContext;
 #endif
 
+static const int cMisspellingLineThickness = 3;
+static const int cMisspellingLinePatternWidth = 4;
+static const int cMisspellingLinePatternGapWidth = 1;
+
 class DeprecatedString;
 
 namespace WebCore {
@@ -116,7 +120,6 @@ namespace WebCore {
         
         void drawLineForText(const IntPoint&, int yOffset, int width, bool printing);
         void drawLineForMisspelling(const IntPoint&, int width);
-        int misspellingLineThickness();
 
         Color selectedTextBackgroundColor() const;
         void setUsesInactiveTextBackgroundColor(bool);

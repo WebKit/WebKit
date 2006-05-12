@@ -404,4 +404,9 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int wi
     drawLine(origin, endPoint);
 }
 
+void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
+{
+    // FIXME: Implement.
+}
+
 }

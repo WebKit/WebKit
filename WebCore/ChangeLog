@@ -1,5 +1,25 @@
 2006-05-11  David Hyatt  <hyatt@apple.com>
 
+        Remove the misspelling drawing code from Font and FontData.  Implement it
+        natively in GraphicContext instead.
+
+        Reviewed by maciej
+
+        * platform/FontData.h:
+        * platform/GraphicsContext.cpp:
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForMisspelling):
+        * platform/mac/FontData.mm:
+        * platform/mac/FontMac.mm:
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForMisspelling):
+        * platform/win/FontWin.cpp:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingMarker):
+
+2006-05-11  David Hyatt  <hyatt@apple.com>
+
         Remove drawLineForText from the Font API.  Implement it natively in
         the two GraphicsContexts (CG and Cairo) instead.
 

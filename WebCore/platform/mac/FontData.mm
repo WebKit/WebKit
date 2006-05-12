@@ -520,53 +520,6 @@ FloatRect FontData::selectionRectForRun(const WebCoreTextRun* run, const WebCore
         return CG_selectionRect(this, run, style, geometry);
 }
 
-void FontData::drawLineForMisspelling(const FloatPoint& point, int width)
-{
-    // Constants for pattern color
-    static NSColor *spellingPatternColor = nil;
-    static bool usingDot = false;
-    int patternHeight = misspellingLineThickness();
-    int patternWidth = misspellingLinePatternWidth();
- 
-    // Initialize pattern color if needed
-    if (!spellingPatternColor) {
-        NSImage *image = [NSImage imageNamed:@"SpellingDot"];
-        assert(image); // if image is not available, we want to know
-        NSColor *color = (image ? [NSColor colorWithPatternImage:image] : nil);
-        if (color)
-            usingDot = true;
-        else
-            color = [NSColor redColor];
-        spellingPatternColor = [color retain];
-    }
-
-    // Make sure to draw only complete dots.
-    // NOTE: Code here used to shift the underline to the left and increase the width
-    // to make sure everything gets underlined, but that results in drawing out of
-    // bounds (e.g. when at the edge of a view) and could make it appear that the
-    // space between adjacent misspelled words was underlined.
-    if (usingDot) {
-        // allow slightly more considering that the pattern ends with a transparent pixel
-        int widthMod = width % patternWidth;
-        if (patternWidth - widthMod > misspellingLinePatternGapWidth())
-            width -= widthMod;
-    }
-    
-    // Draw underline
-    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-    CGContextRef context = (CGContextRef)[currentContext graphicsPort];
-    CGContextSaveGState(context);
-
-    [spellingPatternColor set];
-
-    CGPoint transformedOrigin = CGPointApplyAffineTransform(point, CGContextGetCTM(context));
-    CGContextSetPatternPhase(context, CGSizeMake(transformedOrigin.x, transformedOrigin.y));
-
-    NSRectFillUsingOperation(NSMakeRect(point.x(), point.y(), width, patternHeight), NSCompositeSourceOver);
-    
-    CGContextRestoreGState(context);
-}
-
 int FontData::pointToOffset(const WebCoreTextRun* run, const WebCoreTextStyle* style, int x, bool includePartialGlyphs)
 {
     if (shouldUseATSU(run))

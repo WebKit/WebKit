@@ -210,19 +210,6 @@ void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& p
     fillRect(font().selectionRectForText(run, point, h, tabWidth, xpos, toAdd, d == RTL, visuallyOrdered), backgroundColor);
 }
 
-void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
-{
-    if (paintingDisabled())
-        return;
-
-    return font().drawLineForMisspelling(this, point, width);
-}
-
-int GraphicsContext::misspellingLineThickness()
-{
-    return font().misspellingLineThickness(this);
-}
-
 void GraphicsContext::initFocusRing(int width, int offset)
 {
     if (paintingDisabled())
