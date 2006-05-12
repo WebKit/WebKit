@@ -34,7 +34,7 @@
 #import "KWQTextEdit.h"
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
-#import "render_replaced.h"
+#import "RenderReplaced.h"
 #import <wtf/Assertions.h>
 
 using namespace std;

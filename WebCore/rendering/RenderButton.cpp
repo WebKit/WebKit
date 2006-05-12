@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "render_button.h"
+#include "RenderButton.h"
 
 #include "Document.h"
 #include "GraphicsContext.h"
@@ -34,11 +34,13 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderButton::RenderButton(Node* node)
-    : RenderFlexibleBox(node), m_buttonText(0), m_inner(0)
+    : RenderFlexibleBox(node)
+    , m_buttonText(0)
+    , m_inner(0)
 {
 }
 
-void RenderButton::addChild(RenderObject *newChild, RenderObject *beforeChild)
+void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (!m_inner) {
         // Create an anonymous block.
@@ -51,7 +53,7 @@ void RenderButton::addChild(RenderObject *newChild, RenderObject *beforeChild)
     m_inner->addChild(newChild, beforeChild);
 }
 
-void RenderButton::removeChild(RenderObject *oldChild)
+void RenderButton::removeChild(RenderObject* oldChild)
 {
     if (oldChild == m_inner || !m_inner) {
         RenderFlexibleBox::removeChild(oldChild);

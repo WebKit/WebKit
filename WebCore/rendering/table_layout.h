@@ -36,7 +36,7 @@ class RenderTableCell;
 class TableLayout
 {
 public:
-    TableLayout( RenderTable *t ) : table( t ) {}
+    TableLayout(RenderTable* t) : table(t) {}
     virtual ~TableLayout() {};
 
     virtual void calcMinMaxWidth() = 0;
@@ -51,14 +51,14 @@ protected:
 class FixedTableLayout : public TableLayout
 {
 public:
-    FixedTableLayout( RenderTable *table );
+    FixedTableLayout(RenderTable*);
     ~FixedTableLayout();
 
     void calcMinMaxWidth();
     void layout();
 
 protected:
-    int calcWidthArray( int tableWidth );
+    int calcWidthArray(int tableWidth);
 
     DeprecatedArray<Length> width;
 };
@@ -68,7 +68,7 @@ protected:
 class AutoTableLayout : public TableLayout
 {
 public:
-    AutoTableLayout( RenderTable *table );
+    AutoTableLayout(RenderTable *table);
     ~AutoTableLayout();
 
     void calcMinMaxWidth();
@@ -77,20 +77,20 @@ public:
 
 protected:
     void fullRecalc();
-    void recalcColumn( int effCol );
+    void recalcColumn(int effCol);
     int totalPercent() const {
-        if ( percentagesDirty )
+        if (percentagesDirty)
             calcPercentages();
         return total_percent;
     }
     void calcPercentages() const;
     int calcEffectiveWidth();
-    void insertSpanCell( RenderTableCell *cell );
+    void insertSpanCell(RenderTableCell*);
 
     struct Layout {
-        Layout() : minWidth( 0 ), maxWidth( 0 ),
-                   effMinWidth( 0 ), effMaxWidth( 0 ),
-                   calcWidth( 0 ) {}
+        Layout() : minWidth(0), maxWidth(0),
+                   effMinWidth(0), effMaxWidth(0),
+                   calcWidth(0) {}
         Length width;
         Length effWidth;
         int minWidth;
@@ -101,7 +101,7 @@ protected:
     };
 
     DeprecatedArray<Layout> layoutStruct;
-    DeprecatedArray<RenderTableCell *>spanCells;
+    DeprecatedArray<RenderTableCell*> spanCells;
     bool hasPercent : 1;
     mutable bool percentagesDirty : 1;
     mutable bool effWidthDirty : 1;

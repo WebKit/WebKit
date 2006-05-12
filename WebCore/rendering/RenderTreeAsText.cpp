@@ -33,8 +33,8 @@
 #include "RenderBR.h"
 #include "RenderCanvas.h"
 #include "RenderTableCell.h"
+#include "RenderWidget.h"
 #include "SelectionController.h"
-#include "render_replaced.h"
 #include <wtf/Vector.h>
 
 #if SVG_SUPPORT

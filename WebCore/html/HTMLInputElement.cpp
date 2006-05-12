@@ -41,7 +41,7 @@
 #include "RenderTheme.h"
 #include "SelectionController.h"
 #include "html_imageimpl.h"
-#include "render_button.h"
+#include "RenderButton.h"
 #include "render_form.h"
 #include <unicode/ubrk.h>
 

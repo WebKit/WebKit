@@ -1,5 +1,47 @@
 2006-05-12  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by kevin.
+
+        Move render_button to RenderButton.
+        Various small style cleanup.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLButtonElement.cpp:
+        * html/HTMLElement.cpp:
+        * html/HTMLGenericFormElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * platform/mac/WebCoreTextArea.mm:
+        * rendering/RenderApplet.h:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderButton.cpp: Added.
+        (WebCore::RenderButton::RenderButton):
+        (WebCore::RenderButton::addChild):
+        (WebCore::RenderButton::removeChild):
+        * rendering/RenderButton.h: Added.
+        * rendering/RenderEmptyApplet.h:
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/render_button.cpp: Removed.
+        * rendering/render_button.h: Removed.
+        * rendering/table_layout.cpp:
+        (WebCore::FixedTableLayout::FixedTableLayout):
+        (WebCore::FixedTableLayout::calcWidthArray):
+        (WebCore::FixedTableLayout::calcMinMaxWidth):
+        (WebCore::FixedTableLayout::layout):
+        (WebCore::AutoTableLayout::AutoTableLayout):
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::fullRecalc):
+        (WebCore::AutoTableLayout::calcMinMaxWidth):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::insertSpanCell):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/table_layout.h:
+        (WebCore::TableLayout::TableLayout):
+        (WebCore::AutoTableLayout::totalPercent):
+        (WebCore::AutoTableLayout::Layout::Layout):
+
+2006-05-12  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Split render_frames.* render_replaced.* and html_baseimpl.* into separate files (one class per file).

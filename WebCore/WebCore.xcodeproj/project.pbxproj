@@ -1200,8 +1200,8 @@
 		BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4823097D93020094C9E4 /* RenderBox.h */; };
 		BCEA4863097D93020094C9E4 /* RenderBR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4824097D93020094C9E4 /* RenderBR.cpp */; };
 		BCEA4864097D93020094C9E4 /* RenderBR.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4825097D93020094C9E4 /* RenderBR.h */; };
-		BCEA4865097D93020094C9E4 /* render_button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4826097D93020094C9E4 /* render_button.cpp */; };
-		BCEA4866097D93020094C9E4 /* render_button.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4827097D93020094C9E4 /* render_button.h */; };
+		BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4826097D93020094C9E4 /* RenderButton.cpp */; };
+		BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4827097D93020094C9E4 /* RenderButton.h */; };
 		BCEA4867097D93020094C9E4 /* RenderCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4828097D93020094C9E4 /* RenderCanvas.cpp */; };
 		BCEA4868097D93020094C9E4 /* RenderCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4829097D93020094C9E4 /* RenderCanvas.h */; };
 		BCEA4869097D93020094C9E4 /* RenderHTMLCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA482A097D93020094C9E4 /* RenderHTMLCanvas.cpp */; };
@@ -2605,8 +2605,8 @@
 		BCEA4823097D93020094C9E4 /* RenderBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderBox.h; sourceTree = "<group>"; };
 		BCEA4824097D93020094C9E4 /* RenderBR.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBR.cpp; sourceTree = "<group>"; };
 		BCEA4825097D93020094C9E4 /* RenderBR.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderBR.h; sourceTree = "<group>"; };
-		BCEA4826097D93020094C9E4 /* render_button.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = render_button.cpp; sourceTree = "<group>"; };
-		BCEA4827097D93020094C9E4 /* render_button.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = render_button.h; sourceTree = "<group>"; };
+		BCEA4826097D93020094C9E4 /* RenderButton.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderButton.cpp; sourceTree = "<group>"; };
+		BCEA4827097D93020094C9E4 /* RenderButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderButton.h; sourceTree = "<group>"; };
 		BCEA4828097D93020094C9E4 /* RenderCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderCanvas.cpp; sourceTree = "<group>"; };
 		BCEA4829097D93020094C9E4 /* RenderCanvas.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderCanvas.h; sourceTree = "<group>"; };
 		BCEA482A097D93020094C9E4 /* RenderHTMLCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderHTMLCanvas.cpp; sourceTree = "<group>"; };
@@ -4345,8 +4345,6 @@
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
 				935C476009AC4CD100A6AAB4 /* Length.h */,
-				BCEA4826097D93020094C9E4 /* render_button.cpp */,
-				BCEA4827097D93020094C9E4 /* render_button.h */,
 				BCEA4832097D93020094C9E4 /* render_form.cpp */,
 				BCEA4833097D93020094C9E4 /* render_form.h */,
 				BCEA483C097D93020094C9E4 /* render_line.cpp */,
@@ -4355,10 +4353,6 @@
 				BCEA483F097D93020094C9E4 /* render_list.h */,
 				BCEA4844097D93020094C9E4 /* render_style.cpp */,
 				BCEA4845097D93020094C9E4 /* render_style.h */,
-				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
-				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
-				A871DFE00A15376B00B12A68 /* RenderWidget.h */,
-				A871DFE10A15376B00B12A68 /* RenderWidget.cpp */,
 				BCEA481C097D93020094C9E4 /* RenderApplet.cpp */,
 				BCEA481D097D93020094C9E4 /* RenderApplet.h */,
 				BCEA481E097D93020094C9E4 /* RenderArena.cpp */,
@@ -4369,6 +4363,8 @@
 				BCEA4823097D93020094C9E4 /* RenderBox.h */,
 				BCEA4824097D93020094C9E4 /* RenderBR.cpp */,
 				BCEA4825097D93020094C9E4 /* RenderBR.h */,
+				BCEA4826097D93020094C9E4 /* RenderButton.cpp */,
+				BCEA4827097D93020094C9E4 /* RenderButton.h */,
 				BCEA4828097D93020094C9E4 /* RenderCanvas.cpp */,
 				BCEA4829097D93020094C9E4 /* RenderCanvas.h */,
 				BCEA482C097D93020094C9E4 /* RenderContainer.cpp */,
@@ -4397,6 +4393,8 @@
 				A871DECF0A1530C700B12A68 /* RenderPart.h */,
 				A871DECE0A1530C700B12A68 /* RenderPartObject.cpp */,
 				A871DECD0A1530C700B12A68 /* RenderPartObject.h */,
+				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
+				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
 				A8DF4AE10980C42C0052981B /* RenderTable.h */,
 				A8DF4AE00980C42C0052981B /* RenderTableCell.cpp */,
@@ -4419,6 +4417,8 @@
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
+				A871DFE10A15376B00B12A68 /* RenderWidget.cpp */,
+				A871DFE00A15376B00B12A68 /* RenderWidget.h */,
 				BCEA4850097D93020094C9E4 /* table_layout.cpp */,
 				BCEA4851097D93020094C9E4 /* table_layout.h */,
 			);
@@ -4924,7 +4924,7 @@
 				BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */,
 				BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */,
 				BCEA4864097D93020094C9E4 /* RenderBR.h in Headers */,
-				BCEA4866097D93020094C9E4 /* render_button.h in Headers */,
+				BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */,
 				BCEA4868097D93020094C9E4 /* RenderCanvas.h in Headers */,
 				BCEA486A097D93020094C9E4 /* RenderHTMLCanvas.h in Headers */,
 				BCEA486C097D93020094C9E4 /* RenderContainer.h in Headers */,
@@ -5715,7 +5715,7 @@
 				BCEA485F097D93020094C9E4 /* RenderBlock.cpp in Sources */,
 				BCEA4861097D93020094C9E4 /* RenderBox.cpp in Sources */,
 				BCEA4863097D93020094C9E4 /* RenderBR.cpp in Sources */,
-				BCEA4865097D93020094C9E4 /* render_button.cpp in Sources */,
+				BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */,
 				BCEA4867097D93020094C9E4 /* RenderCanvas.cpp in Sources */,
 				BCEA4869097D93020094C9E4 /* RenderHTMLCanvas.cpp in Sources */,
 				BCEA486B097D93020094C9E4 /* RenderContainer.cpp in Sources */,

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef render_button_h
-#define render_button_h
+#ifndef RenderButton_H
+#define RenderButton_H
 
 #include "RenderFlexibleBox.h"
 

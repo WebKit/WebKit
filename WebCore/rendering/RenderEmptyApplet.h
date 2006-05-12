@@ -24,7 +24,7 @@
 #ifndef RenderEmptyApplet_h
 #define RenderEmptyApplet_h
 
-#include "render_replaced.h"
+#include "RenderWidget.h"
 
 namespace WebCore {
 

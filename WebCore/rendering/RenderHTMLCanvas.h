@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RENDERHTMLCANVAS_H
-#define RENDERHTMLCANVAS_H
+#ifndef RenderHTMLCanvas_H
+#define RenderHTMLCanvas_H
 
-#include "render_replaced.h"
+#include "RenderReplaced.h"
 
 namespace WebCore {
 

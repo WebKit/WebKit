@@ -24,8 +24,8 @@
 #ifndef RenderApplet_h
 #define RenderApplet_h
 
+#include "RenderWidget.h"
 #include "StringHash.h"
-#include "render_replaced.h"
 
 namespace WebCore {
 

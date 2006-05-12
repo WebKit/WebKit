@@ -40,7 +40,6 @@
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
 #include "markup.h"
-#include "render_replaced.h"
 #include "TextIterator.h"
 
 namespace WebCore {

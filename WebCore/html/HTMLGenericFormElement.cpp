@@ -31,8 +31,8 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
-#include "render_replaced.h"
 #include "RenderTheme.h"
+#include "RenderWidget.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
