@@ -30,9 +30,11 @@
 #import "DOMWindow.h"
 #import "Document.h"
 #import "FoundationExtras.h"
+#import "HTMLLinkElement.h"
+#import "HTMLStyleElement.h"
 #import "css_ruleimpl.h"
+#import "css_stylesheetimpl.h"
 #import "dom_xmlimpl.h"
-#import "html_headimpl.h"
 #import <objc/objc-class.h>
 
 using namespace WebCore;
@@ -83,7 +85,7 @@ typedef DOMWindow AbstractView;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<StyleSheet *>(_internal)->deref();
+        DOM_cast<StyleSheet*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -91,14 +93,14 @@ typedef DOMWindow AbstractView;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<StyleSheet *>(_internal)->deref();
+        DOM_cast<StyleSheet*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (StyleSheet *)_DOMStyleSheet
 {
-    return DOM_cast<StyleSheet *>(_internal);
+    return DOM_cast<StyleSheet*>(_internal);
 }
 
 - (NSString *)type
@@ -148,7 +150,7 @@ typedef DOMWindow AbstractView;
 - (id)_initWithStyleSheet:(StyleSheet *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -182,7 +184,7 @@ typedef DOMWindow AbstractView;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<StyleSheetList *>(_internal)->deref();
+        DOM_cast<StyleSheetList*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -190,14 +192,14 @@ typedef DOMWindow AbstractView;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<StyleSheetList *>(_internal)->deref();
+        DOM_cast<StyleSheetList*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (StyleSheetList *)_styleSheetList
 {
-    return DOM_cast<StyleSheetList *>(_internal);
+    return DOM_cast<StyleSheetList*>(_internal);
 }
 
 - (unsigned)length
@@ -217,7 +219,7 @@ typedef DOMWindow AbstractView;
 - (id)_initWithStyleSheetList:(StyleSheetList *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -245,7 +247,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSStyleSheet *)_CSSStyleSheet
 {
-    return DOM_cast<CSSStyleSheet *>(_internal);
+    return DOM_cast<CSSStyleSheet*>(_internal);
 }
 
 - (DOMCSSRule *)ownerRule
@@ -292,7 +294,7 @@ typedef DOMWindow AbstractView;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<MediaList *>(_internal)->deref();
+        DOM_cast<MediaList*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -300,14 +302,14 @@ typedef DOMWindow AbstractView;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<MediaList *>(_internal)->deref();
+        DOM_cast<MediaList*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (MediaList *)_mediaList
 {
-    return DOM_cast<MediaList *>(_internal);
+    return DOM_cast<MediaList*>(_internal);
 }
 
 - (NSString *)mediaText
@@ -347,7 +349,7 @@ typedef DOMWindow AbstractView;
 - (id)_initWithMediaList:(MediaList *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -376,7 +378,7 @@ typedef DOMWindow AbstractView;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<CSSRuleList *>(_internal)->deref();
+        DOM_cast<CSSRuleList*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -384,14 +386,14 @@ typedef DOMWindow AbstractView;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<CSSRuleList *>(_internal)->deref();
+        DOM_cast<CSSRuleList*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (CSSRuleList *)_ruleList
 {
-    return DOM_cast<CSSRuleList *>(_internal);
+    return DOM_cast<CSSRuleList*>(_internal);
 }
 
 - (unsigned)length
@@ -411,7 +413,7 @@ typedef DOMWindow AbstractView;
 - (id)_initWithRuleList:(CSSRuleList *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -440,7 +442,7 @@ typedef DOMWindow AbstractView;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<CSSRule *>(_internal)->deref();
+        DOM_cast<CSSRule*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -448,14 +450,14 @@ typedef DOMWindow AbstractView;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<CSSRule *>(_internal)->deref();
+        DOM_cast<CSSRule*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (CSSRule *)_rule
 {
-    return DOM_cast<CSSRule *>(_internal);
+    return DOM_cast<CSSRule*>(_internal);
 }
 
 - (unsigned short)type
@@ -490,7 +492,7 @@ typedef DOMWindow AbstractView;
 - (id)_initWithRule:(CSSRule *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -542,7 +544,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSStyleRule *)_styleRule
 {
-    return static_cast<CSSStyleRule *>(DOM_cast<CSSRule *>(_internal));
+    return static_cast<CSSStyleRule*>(DOM_cast<CSSRule*>(_internal));
 }
 
 - (NSString *)selectorText
@@ -569,7 +571,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSMediaRule *)_mediaRule
 {
-    return static_cast<CSSMediaRule *>(DOM_cast<CSSRule *>(_internal));
+    return static_cast<CSSMediaRule*>(DOM_cast<CSSRule*>(_internal));
 }
 
 - (DOMMediaList *)media
@@ -601,7 +603,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSFontFaceRule *)_fontFaceRule
 {
-    return static_cast<CSSFontFaceRule *>(DOM_cast<CSSRule *>(_internal));
+    return static_cast<CSSFontFaceRule*>(DOM_cast<CSSRule*>(_internal));
 }
 
 - (DOMCSSStyleDeclaration *)style
@@ -618,7 +620,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSPageRule *)_pageRule
 {
-    return static_cast<CSSPageRule *>(DOM_cast<CSSRule *>(_internal));
+    return static_cast<CSSPageRule*>(DOM_cast<CSSRule*>(_internal));
 }
 
 - (NSString *)selectorText
@@ -645,7 +647,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSImportRule *)_importRule
 {
-    return static_cast<CSSImportRule *>(DOM_cast<CSSRule *>(_internal));
+    return static_cast<CSSImportRule*>(DOM_cast<CSSRule*>(_internal));
 }
 
 - (DOMMediaList *)media
@@ -672,7 +674,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSCharsetRule *)_importRule
 {
-    return static_cast<CSSCharsetRule *>(DOM_cast<CSSRule *>(_internal));
+    return static_cast<CSSCharsetRule*>(DOM_cast<CSSRule*>(_internal));
 }
 
 - (NSString *)encoding
@@ -697,7 +699,7 @@ typedef DOMWindow AbstractView;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<CSSStyleDeclaration *>(_internal)->deref();
+        DOM_cast<CSSStyleDeclaration*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -705,7 +707,7 @@ typedef DOMWindow AbstractView;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<CSSStyleDeclaration *>(_internal)->deref();
+        DOM_cast<CSSStyleDeclaration*>(_internal)->deref();
     }
     [super finalize];
 }
@@ -789,7 +791,7 @@ typedef DOMWindow AbstractView;
 - (id)_initWithStyleDeclaration:(CSSStyleDeclaration *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -810,7 +812,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSStyleDeclaration *)_styleDeclaration
 {
-    return DOM_cast<CSSStyleDeclaration *>(_internal);
+    return DOM_cast<CSSStyleDeclaration*>(_internal);
 }
 
 @end
@@ -823,7 +825,7 @@ typedef DOMWindow AbstractView;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<CSSValue *>(_internal)->deref();
+        DOM_cast<CSSValue*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -831,14 +833,14 @@ typedef DOMWindow AbstractView;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<CSSValue *>(_internal)->deref();
+        DOM_cast<CSSValue*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (CSSValue *)_value
 {
-    return DOM_cast<CSSValue *>(_internal);
+    return DOM_cast<CSSValue*>(_internal);
 }
 
 - (NSString *)cssText
@@ -863,7 +865,7 @@ typedef DOMWindow AbstractView;
 - (id)_initWithValue:(CSSValue *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -911,7 +913,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSPrimitiveValue *)_primitiveValue
 {
-    return static_cast<CSSPrimitiveValue *>(DOM_cast<CSSValue *>(_internal));
+    return static_cast<CSSPrimitiveValue*>(DOM_cast<CSSValue*>(_internal));
 }
 
 - (unsigned short)primitiveType
@@ -968,7 +970,7 @@ typedef DOMWindow AbstractView;
 
 - (CSSValueList *)_valueList
 {
-    return static_cast<CSSValueList *>(DOM_cast<CSSValue *>(_internal));
+    return static_cast<CSSValueList*>(DOM_cast<CSSValue*>(_internal));
 }
 
 - (unsigned)length
@@ -992,7 +994,7 @@ id getWrapperForRGB(RGBA32 value)
 {
     if (!wrapperCache)
         return nil;
-    return (id)CFDictionaryGetValue(wrapperCache, reinterpret_cast<const void *>(value));
+    return (id)CFDictionaryGetValue(wrapperCache, reinterpret_cast<const void*>(value));
 }
 
 void setWrapperForRGB(id wrapper, RGBA32 value)
@@ -1002,14 +1004,14 @@ void setWrapperForRGB(id wrapper, RGBA32 value)
         // from the cache in dealloc methods.
         wrapperCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     }
-    CFDictionarySetValue(wrapperCache, reinterpret_cast<const void *>(value), wrapper);
+    CFDictionarySetValue(wrapperCache, reinterpret_cast<const void*>(value), wrapper);
 }
 
 void removeWrapperForRGB(RGBA32 value)
 {
     if (!wrapperCache)
         return;
-    CFDictionaryRemoveValue(wrapperCache, reinterpret_cast<const void *>(value));
+    CFDictionaryRemoveValue(wrapperCache, reinterpret_cast<const void*>(value));
 }
 
 @implementation DOMRGBColor
@@ -1059,7 +1061,7 @@ void removeWrapperForRGB(RGBA32 value)
 - (id)_initWithRGB:(RGBA32)value
 {
     [super _init];
-    _internal = reinterpret_cast<DOMObjectInternal *>(value);
+    _internal = reinterpret_cast<DOMObjectInternal*>(value);
     setWrapperForRGB(self, value);
     return self;
 }
@@ -1107,7 +1109,7 @@ void removeWrapperForRGB(RGBA32 value)
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<RectImpl *>(_internal)->deref();
+        DOM_cast<RectImpl*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -1115,14 +1117,14 @@ void removeWrapperForRGB(RGBA32 value)
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<RectImpl *>(_internal)->deref();
+        DOM_cast<RectImpl*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (RectImpl *)_rect
 {
-    return DOM_cast<RectImpl *>(_internal);
+    return DOM_cast<RectImpl*>(_internal);
 }
 
 - (DOMCSSPrimitiveValue *)top
@@ -1157,7 +1159,7 @@ void removeWrapperForRGB(RGBA32 value)
 - (id)_initWithRect:(RectImpl *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -1186,7 +1188,7 @@ void removeWrapperForRGB(RGBA32 value)
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<Counter *>(_internal)->deref();
+        DOM_cast<Counter*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -1194,14 +1196,14 @@ void removeWrapperForRGB(RGBA32 value)
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<Counter *>(_internal)->deref();
+        DOM_cast<Counter*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (Counter *)_counter
 {
-    return DOM_cast<Counter *>(_internal);
+    return DOM_cast<Counter*>(_internal);
 }
 
 - (NSString *)identifier
@@ -1231,7 +1233,7 @@ void removeWrapperForRGB(RGBA32 value)
 - (id)_initWithCounter:(Counter *)impl
 {
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -2497,11 +2499,11 @@ void removeWrapperForRGB(RGBA32 value)
     StyleSheet *sheet;
 
     if ([self isKindOfClass:[DOMProcessingInstruction class]])
-        sheet = static_cast<ProcessingInstruction *>([(DOMProcessingInstruction *)self _node])->sheet();
+        sheet = static_cast<ProcessingInstruction*>([(DOMProcessingInstruction *)self _node])->sheet();
     else if ([self isKindOfClass:[DOMHTMLLinkElement class]])
-        sheet = static_cast<HTMLLinkElement *>([(DOMHTMLLinkElement *)self _node])->sheet();
+        sheet = static_cast<HTMLLinkElement*>([(DOMHTMLLinkElement *)self _node])->sheet();
     else if ([self isKindOfClass:[DOMHTMLStyleElement class]])
-        sheet = static_cast<HTMLStyleElement *>([(DOMHTMLStyleElement *)self _node])->sheet();
+        sheet = static_cast<HTMLStyleElement*>([(DOMHTMLStyleElement *)self _node])->sheet();
     else
         return nil;
 

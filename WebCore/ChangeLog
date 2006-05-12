@@ -2,6 +2,199 @@
 
         Reviewed by beth.
 
+        Split html_headimpl.* into separate files (one per class)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8875
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_css.cpp:
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLElement::headGetter):
+        (KJS::JSHTMLElement::linkGetter):
+        * bindings/objc/DOMCSS.mm:
+        (+[DOMCounter _counterWith:]):
+        (-[DOMCounter finalize]):
+        (-[DOMCounter _DOMStyleSheet]):
+        (-[DOMStyleSheet _initWithStyleSheet:]):
+        (-[DOMStyleSheetList dealloc]):
+        (-[DOMStyleSheetList finalize]):
+        (-[DOMStyleSheetList _styleSheetList]):
+        (-[DOMStyleSheetList _initWithStyleSheetList:]):
+        (-[DOMCSSStyleSheet _CSSStyleSheet]):
+        (-[DOMMediaList dealloc]):
+        (-[DOMMediaList finalize]):
+        (-[DOMMediaList _mediaList]):
+        (-[DOMMediaList _initWithMediaList:]):
+        (-[DOMCSSRuleList dealloc]):
+        (-[DOMCSSRuleList finalize]):
+        (-[DOMCSSRuleList _ruleList]):
+        (-[DOMCSSRuleList _initWithRuleList:]):
+        (-[DOMCSSRule dealloc]):
+        (-[DOMCSSRule finalize]):
+        (-[DOMCSSRule _rule]):
+        (-[DOMCSSRule _initWithRule:]):
+        (-[DOMCSSStyleRule _styleRule]):
+        (-[DOMCSSMediaRule _mediaRule]):
+        (-[DOMCSSFontFaceRule _fontFaceRule]):
+        (-[DOMCSSPageRule _pageRule]):
+        (-[DOMCSSImportRule _importRule]):
+        (-[DOMCSSCharsetRule _importRule]):
+        (-[DOMCSSStyleDeclaration dealloc]):
+        (-[DOMCSSStyleDeclaration finalize]):
+        (-[DOMCSSStyleDeclaration _initWithStyleDeclaration:]):
+        (-[DOMCSSStyleDeclaration _styleDeclaration]):
+        (-[DOMCSSValue dealloc]):
+        (-[DOMCSSValue finalize]):
+        (-[DOMCSSValue _value]):
+        (-[DOMCSSValue _initWithValue:]):
+        (-[DOMCSSPrimitiveValue _primitiveValue]):
+        (-[DOMCSSValueList _valueList]):
+        (getWrapperForRGB):
+        (setWrapperForRGB):
+        (removeWrapperForRGB):
+        (-[DOMRGBColor _initWithRGB:]):
+        (-[DOMRect dealloc]):
+        (-[DOMRect finalize]):
+        (-[DOMRect _rect]):
+        (-[DOMRect _initWithRect:]):
+        (-[DOMCounter dealloc]):
+        (-[DOMCounter _counter]):
+        (-[DOMCounter _initWithCounter:]):
+        (-[DOMObject sheet]):
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLCollection dealloc]):
+        (-[DOMHTMLCollection finalize]):
+        (-[DOMHTMLCollection _collection]):
+        (-[DOMHTMLCollection _initWithCollection:]):
+        (-[DOMHTMLOptionsCollection dealloc]):
+        (-[DOMHTMLOptionsCollection finalize]):
+        (-[DOMHTMLOptionsCollection _initWithOptionsCollection:]):
+        (-[DOMHTMLOptionsCollection _optionsCollection]):
+        (+[DOMHTMLElement _elementWith:]):
+        (-[DOMHTMLElement _HTMLElement]):
+        (-[DOMHTMLDocument _HTMLDocument]):
+        (-[DOMHTMLHtmlElement _HTMLHtmlElement]):
+        (-[DOMHTMLHeadElement _headElement]):
+        (-[DOMHTMLLinkElement _linkElement]):
+        (-[DOMHTMLTitleElement _titleElement]):
+        (-[DOMHTMLMetaElement _metaElement]):
+        (-[DOMHTMLBaseElement _baseElement]):
+        (-[DOMHTMLStyleElement _styleElement]):
+        (-[DOMHTMLBodyElement _bodyElement]):
+        (-[DOMHTMLFormElement _formElement]):
+        (+[DOMHTMLFormElement _formElementWith:]):
+        (-[DOMHTMLIsIndexElement _isIndexElement]):
+        (-[DOMHTMLSelectElement _selectElement]):
+        (-[DOMHTMLOptGroupElement _optGroupElement]):
+        (-[DOMHTMLOptionElement _optionElement]):
+        (-[DOMHTMLInputElement _inputElement]):
+        (-[DOMHTMLTextAreaElement _textAreaElement]):
+        (-[DOMHTMLButtonElement _buttonElement]):
+        (-[DOMHTMLLabelElement _labelElement]):
+        (-[DOMHTMLLabelElement form]):
+        (-[DOMHTMLFieldSetElement _fieldSetElement]):
+        (-[DOMHTMLLegendElement _legendElement]):
+        (-[DOMHTMLUListElement _uListElement]):
+        (-[DOMHTMLOListElement _oListElement]):
+        (-[DOMHTMLDListElement _dListElement]):
+        (-[DOMHTMLDirectoryElement _directoryListElement]):
+        (-[DOMHTMLMenuElement _menuListElement]):
+        (-[DOMHTMLLIElement _liElement]):
+        (-[DOMHTMLQuoteElement _quoteElement]):
+        (-[DOMHTMLDivElement _divElement]):
+        (-[DOMHTMLParagraphElement _paragraphElement]):
+        (-[DOMHTMLHeadingElement _headingElement]):
+        (-[DOMHTMLPreElement _preElement]):
+        (-[DOMHTMLBRElement _BRElement]):
+        (-[DOMHTMLBaseFontElement _baseFontElement]):
+        (-[DOMHTMLFontElement _fontElement]):
+        (-[DOMHTMLHRElement _HRElement]):
+        (-[DOMHTMLModElement _modElement]):
+        (-[DOMHTMLAnchorElement _anchorElement]):
+        (-[DOMHTMLImageElement _imageElement]):
+        (-[DOMHTMLObjectElement _objectElement]):
+        (-[DOMHTMLParamElement _paramElement]):
+        (-[DOMHTMLMapElement _mapElement]):
+        (-[DOMHTMLAreaElement _areaElement]):
+        (-[DOMHTMLScriptElement _scriptElement]):
+        (+[DOMHTMLTableCaptionElement _tableCaptionElementWith:]):
+        (-[DOMHTMLTableCaptionElement _tableCaptionElement]):
+        (+[DOMHTMLTableSectionElement _tableSectionElementWith:]):
+        (-[DOMHTMLTableSectionElement _tableSectionElement]):
+        (-[DOMHTMLTableElement createTHead]):
+        (-[DOMHTMLTableElement createTFoot]):
+        (-[DOMHTMLTableElement createCaption]):
+        (-[DOMHTMLTableElement insertRow:]):
+        (+[DOMHTMLTableElement _tableElementWith:]):
+        (-[DOMHTMLTableElement _tableElement]):
+        (-[DOMHTMLTableColElement _tableColElement]):
+        (-[DOMHTMLTableRowElement _tableRowElement]):
+        (-[DOMHTMLTableRowElement insertCell:]):
+        (+[DOMHTMLTableCellElement _tableCellElementWith:]):
+        (-[DOMHTMLTableCellElement _tableCellElement]):
+        (-[DOMHTMLFrameSetElement _frameSetElement]):
+        (-[DOMHTMLFrameElement _frameElement]):
+        (-[DOMHTMLIFrameElement _IFrameElement]):
+        (-[DOMHTMLEmbedElement _embedElement]):
+        (viewForElement):
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::searchForLabelsAboveCell):
+        (WebCore::FrameMac::searchForLabelsBeforeElement):
+        (WebCore::FrameMac::createFrame):
+        (WebCore::FrameMac::passMouseDownEventToWidget):
+        (WebCore::FrameMac::passSubframeEventToSubframe):
+        (WebCore::FrameMac::passWheelEventToChildWidget):
+        (WebCore::FrameMac::fileWrapperForElement):
+        (WebCore::listParent):
+        (WebCore::FrameMac::attributedString):
+        (WebCore::FrameMac::shouldBeginEditing):
+        (WebCore::FrameMac::shouldEndEditing):
+        (WebCore::FrameMac::setMarkedTextRange):
+        * dom/Document.cpp:
+        * dom/xml_tokenizer.cpp:
+        * html/HTMLBaseElement.cpp: Added.
+        (WebCore::HTMLBaseElement::removedFromDocument):
+        (WebCore::HTMLBaseElement::process):
+        * html/HTMLBaseElement.h: Added.
+        * html/HTMLDocument.cpp:
+        * html/HTMLElementFactory.cpp:
+        * html/HTMLLinkElement.cpp: Added.
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLLinkElement.h: Added.
+        * html/HTMLMetaElement.cpp: Added.
+        (WebCore::HTMLMetaElement::HTMLMetaElement):
+        (WebCore::HTMLMetaElement::parseMappedAttribute):
+        (WebCore::HTMLMetaElement::process):
+        (WebCore::HTMLMetaElement::setContent):
+        (WebCore::HTMLMetaElement::setHttpEquiv):
+        (WebCore::HTMLMetaElement::setName):
+        * html/HTMLMetaElement.h: Added.
+        * html/HTMLParser.cpp:
+        * html/HTMLScriptElement.cpp: Added.
+        (WebCore::HTMLScriptElement::HTMLScriptElement):
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::evaluateScript):
+        * html/HTMLScriptElement.h: Added.
+        * html/HTMLStyleElement.cpp: Added.
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        * html/HTMLStyleElement.h: Added.
+        * html/HTMLTitleElement.cpp: Added.
+        (WebCore::HTMLTitleElement::HTMLTitleElement):
+        (WebCore::HTMLTitleElement::text):
+        (WebCore::HTMLTitleElement::setText):
+        * html/HTMLTitleElement.h: Added.
+        * html/html_headimpl.cpp: Removed.
+        * html/html_headimpl.h: Removed.
+        * loader/CachedCSSStyleSheet.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::updateFromElement):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::updateFromElement):
+
+2006-05-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
         Split out html_tableimpl.* into multiple files (one per class)
         http://bugzilla.opendarwin.org/show_bug.cgi?id=8873
 

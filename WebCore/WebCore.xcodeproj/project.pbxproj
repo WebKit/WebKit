@@ -424,7 +424,6 @@
 		93F198E408245E59001E9ABC /* html_blockimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23A02DE4396018635CA /* html_blockimpl.h */; };
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; };
 		93F198E608245E59001E9ABC /* HTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElement.h */; };
-		93F198E808245E59001E9ABC /* html_headimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24302DE4396018635CA /* html_headimpl.h */; };
 		93F198E908245E59001E9ABC /* html_imageimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24502DE4396018635CA /* html_imageimpl.h */; };
 		93F198EA08245E59001E9ABC /* html_inlineimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24702DE4396018635CA /* html_inlineimpl.h */; };
 		93F198EB08245E59001E9ABC /* html_listimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24902DE4396018635CA /* html_listimpl.h */; };
@@ -520,7 +519,6 @@
 		93F19A9008245E59001E9ABC /* html_blockimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23902DE4396018635CA /* html_blockimpl.cpp */; };
 		93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* HTMLDocument.cpp */; };
 		93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElement.cpp */; };
-		93F19A9408245E59001E9ABC /* html_headimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24202DE4396018635CA /* html_headimpl.cpp */; };
 		93F19A9508245E59001E9ABC /* html_imageimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24402DE4396018635CA /* html_imageimpl.cpp */; };
 		93F19A9608245E59001E9ABC /* html_inlineimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24602DE4396018635CA /* html_inlineimpl.cpp */; };
 		93F19A9708245E59001E9ABC /* html_listimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24802DE4396018635CA /* html_listimpl.cpp */; };
@@ -671,6 +669,18 @@
 		A871DB300A150BD600B12A68 /* HTMLTableRowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DB220A150BD600B12A68 /* HTMLTableRowElement.cpp */; };
 		A871DB310A150BD600B12A68 /* HTMLTableRowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB230A150BD600B12A68 /* HTMLTableRowElement.h */; };
 		A871DB320A150BD600B12A68 /* HTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DB240A150BD600B12A68 /* HTMLTableCaptionElement.cpp */; };
+		A871DC1F0A15205700B12A68 /* HTMLBaseElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DC130A15205700B12A68 /* HTMLBaseElement.h */; };
+		A871DC200A15205700B12A68 /* HTMLLinkElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DC140A15205700B12A68 /* HTMLLinkElement.h */; };
+		A871DC210A15205700B12A68 /* HTMLLinkElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DC150A15205700B12A68 /* HTMLLinkElement.cpp */; };
+		A871DC220A15205700B12A68 /* HTMLScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DC160A15205700B12A68 /* HTMLScriptElement.cpp */; };
+		A871DC230A15205700B12A68 /* HTMLStyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DC170A15205700B12A68 /* HTMLStyleElement.h */; };
+		A871DC240A15205700B12A68 /* HTMLMetaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DC180A15205700B12A68 /* HTMLMetaElement.h */; };
+		A871DC250A15205700B12A68 /* HTMLScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DC190A15205700B12A68 /* HTMLScriptElement.h */; };
+		A871DC260A15205700B12A68 /* HTMLStyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DC1A0A15205700B12A68 /* HTMLStyleElement.cpp */; };
+		A871DC270A15205700B12A68 /* HTMLMetaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DC1B0A15205700B12A68 /* HTMLMetaElement.cpp */; };
+		A871DC280A15205700B12A68 /* HTMLTitleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DC1C0A15205700B12A68 /* HTMLTitleElement.h */; };
+		A871DC290A15205700B12A68 /* HTMLTitleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DC1D0A15205700B12A68 /* HTMLTitleElement.cpp */; };
+		A871DC2A0A15205700B12A68 /* HTMLBaseElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DC1E0A15205700B12A68 /* HTMLBaseElement.cpp */; };
 		A88AD3860952486D001DD196 /* KRenderingDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB54089701F700BA5114 /* KRenderingDevice.cpp */; };
 		A88AD3870952486D001DD196 /* KRenderingDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB55089701F700BA5114 /* KRenderingDevice.h */; };
 		A88AD3880952486D001DD196 /* KRenderingFillPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB59089701F700BA5114 /* KRenderingFillPainter.cpp */; };
@@ -2025,6 +2035,18 @@
 		A871DB220A150BD600B12A68 /* HTMLTableRowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTableRowElement.cpp; sourceTree = "<group>"; };
 		A871DB230A150BD600B12A68 /* HTMLTableRowElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLTableRowElement.h; sourceTree = "<group>"; };
 		A871DB240A150BD600B12A68 /* HTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
+		A871DC130A15205700B12A68 /* HTMLBaseElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLBaseElement.h; sourceTree = "<group>"; };
+		A871DC140A15205700B12A68 /* HTMLLinkElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLLinkElement.h; sourceTree = "<group>"; };
+		A871DC150A15205700B12A68 /* HTMLLinkElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLLinkElement.cpp; sourceTree = "<group>"; };
+		A871DC160A15205700B12A68 /* HTMLScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLScriptElement.cpp; sourceTree = "<group>"; };
+		A871DC170A15205700B12A68 /* HTMLStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLStyleElement.h; sourceTree = "<group>"; };
+		A871DC180A15205700B12A68 /* HTMLMetaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLMetaElement.h; sourceTree = "<group>"; };
+		A871DC190A15205700B12A68 /* HTMLScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLScriptElement.h; sourceTree = "<group>"; };
+		A871DC1A0A15205700B12A68 /* HTMLStyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLStyleElement.cpp; sourceTree = "<group>"; };
+		A871DC1B0A15205700B12A68 /* HTMLMetaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMetaElement.cpp; sourceTree = "<group>"; };
+		A871DC1C0A15205700B12A68 /* HTMLTitleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLTitleElement.h; sourceTree = "<group>"; };
+		A871DC1D0A15205700B12A68 /* HTMLTitleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTitleElement.cpp; sourceTree = "<group>"; };
+		A871DC1E0A15205700B12A68 /* HTMLBaseElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLBaseElement.cpp; sourceTree = "<group>"; };
 		A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGNamesWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElementFactoryWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283D09308C1C00B6D461 /* DOMList.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2626,8 +2648,6 @@
 		F523D23C02DE4396018635CA /* HTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23E02DE4396018635CA /* HTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23F02DE4396018635CA /* HTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D24202DE4396018635CA /* html_headimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_headimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D24302DE4396018635CA /* html_headimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_headimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24402DE4396018635CA /* html_imageimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_imageimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24502DE4396018635CA /* html_imageimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_imageimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24602DE4396018635CA /* html_inlineimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_inlineimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3253,8 +3273,6 @@
 				F523D23802DE4396018635CA /* html_baseimpl.h */,
 				F523D23902DE4396018635CA /* html_blockimpl.cpp */,
 				F523D23A02DE4396018635CA /* html_blockimpl.h */,
-				F523D24202DE4396018635CA /* html_headimpl.cpp */,
-				F523D24302DE4396018635CA /* html_headimpl.h */,
 				F523D24402DE4396018635CA /* html_imageimpl.cpp */,
 				F523D24502DE4396018635CA /* html_imageimpl.h */,
 				F523D24602DE4396018635CA /* html_inlineimpl.cpp */,
@@ -3263,6 +3281,8 @@
 				F523D24902DE4396018635CA /* html_listimpl.h */,
 				A871D4540A127CBC00B12A68 /* HTMLAppletElement.cpp */,
 				A871D4530A127CBC00B12A68 /* HTMLAppletElement.h */,
+				A871DC1E0A15205700B12A68 /* HTMLBaseElement.cpp */,
+				A871DC130A15205700B12A68 /* HTMLBaseElement.h */,
 				A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElement.cpp */,
 				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */,
 				A81369B7097374F500D74463 /* HTMLButtonElement.cpp */,
@@ -3300,6 +3320,10 @@
 				A81369C6097374F500D74463 /* HTMLLabelElement.h */,
 				A81369C5097374F500D74463 /* HTMLLegendElement.cpp */,
 				A81369C4097374F500D74463 /* HTMLLegendElement.h */,
+				A871DC150A15205700B12A68 /* HTMLLinkElement.cpp */,
+				A871DC140A15205700B12A68 /* HTMLLinkElement.h */,
+				A871DC1B0A15205700B12A68 /* HTMLMetaElement.cpp */,
+				A871DC180A15205700B12A68 /* HTMLMetaElement.h */,
 				A8DF3FCD097FA0FB0052981B /* HTMLNameCollection.cpp */,
 				A8DF3FCC097FA0FB0052981B /* HTMLNameCollection.h */,
 				550A0BCB085F604D007353D6 /* HTMLNames.cpp */,
@@ -3318,8 +3342,12 @@
 				F523D25102DE4396018635CA /* HTMLParser.h */,
 				A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */,
 				A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */,
+				A871DC160A15205700B12A68 /* HTMLScriptElement.cpp */,
+				A871DC190A15205700B12A68 /* HTMLScriptElement.h */,
 				A81369BD097374F500D74463 /* HTMLSelectElement.cpp */,
 				A81369BC097374F500D74463 /* HTMLSelectElement.h */,
+				A871DC1A0A15205700B12A68 /* HTMLStyleElement.cpp */,
+				A871DC170A15205700B12A68 /* HTMLStyleElement.h */,
 				A871DB240A150BD600B12A68 /* HTMLTableCaptionElement.cpp */,
 				A871DB1D0A150BD600B12A68 /* HTMLTableCaptionElement.h */,
 				A871DB200A150BD600B12A68 /* HTMLTableCellElement.cpp */,
@@ -3338,6 +3366,8 @@
 				A81369BA097374F500D74463 /* HTMLTextAreaElement.h */,
 				AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */,
 				AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */,
+				A871DC1D0A15205700B12A68 /* HTMLTitleElement.cpp */,
+				A871DC1C0A15205700B12A68 /* HTMLTitleElement.h */,
 				F523D25202DE4396018635CA /* HTMLTokenizer.cpp */,
 				F523D25302DE4396018635CA /* HTMLTokenizer.h */,
 			);
@@ -4504,7 +4534,6 @@
 				93F198E408245E59001E9ABC /* html_blockimpl.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
-				93F198E808245E59001E9ABC /* html_headimpl.h in Headers */,
 				93F198E908245E59001E9ABC /* html_imageimpl.h in Headers */,
 				93F198EA08245E59001E9ABC /* html_inlineimpl.h in Headers */,
 				93F198EB08245E59001E9ABC /* html_listimpl.h in Headers */,
@@ -5114,6 +5143,12 @@
 				A871DB2C0A150BD600B12A68 /* HTMLTablePartElement.h in Headers */,
 				A871DB2F0A150BD600B12A68 /* HTMLTableColElement.h in Headers */,
 				A871DB310A150BD600B12A68 /* HTMLTableRowElement.h in Headers */,
+				A871DC1F0A15205700B12A68 /* HTMLBaseElement.h in Headers */,
+				A871DC200A15205700B12A68 /* HTMLLinkElement.h in Headers */,
+				A871DC230A15205700B12A68 /* HTMLStyleElement.h in Headers */,
+				A871DC240A15205700B12A68 /* HTMLMetaElement.h in Headers */,
+				A871DC250A15205700B12A68 /* HTMLScriptElement.h in Headers */,
+				A871DC280A15205700B12A68 /* HTMLTitleElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5328,7 +5363,6 @@
 				93F19A9008245E59001E9ABC /* html_blockimpl.cpp in Sources */,
 				93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */,
 				93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */,
-				93F19A9408245E59001E9ABC /* html_headimpl.cpp in Sources */,
 				93F19A9508245E59001E9ABC /* html_imageimpl.cpp in Sources */,
 				93F19A9608245E59001E9ABC /* html_inlineimpl.cpp in Sources */,
 				93F19A9708245E59001E9ABC /* html_listimpl.cpp in Sources */,
@@ -5868,6 +5902,12 @@
 				A871DB2E0A150BD600B12A68 /* HTMLTableCellElement.cpp in Sources */,
 				A871DB300A150BD600B12A68 /* HTMLTableRowElement.cpp in Sources */,
 				A871DB320A150BD600B12A68 /* HTMLTableCaptionElement.cpp in Sources */,
+				A871DC210A15205700B12A68 /* HTMLLinkElement.cpp in Sources */,
+				A871DC220A15205700B12A68 /* HTMLScriptElement.cpp in Sources */,
+				A871DC260A15205700B12A68 /* HTMLStyleElement.cpp in Sources */,
+				A871DC270A15205700B12A68 /* HTMLMetaElement.cpp in Sources */,
+				A871DC290A15205700B12A68 /* HTMLTitleElement.cpp in Sources */,
+				A871DC2A0A15205700B12A68 /* HTMLBaseElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -32,6 +32,7 @@
 #import "DocumentFragment.h"
 #import "FoundationExtras.h"
 #import "HTMLAppletElement.h"
+#import "HTMLBaseElement.h"
 #import "HTMLBaseFontElement.h"
 #import "HTMLButtonElement.h"
 #import "HTMLDocument.h"
@@ -42,20 +43,29 @@
 #import "HTMLIsIndexElement.h"
 #import "HTMLLabelElement.h"
 #import "HTMLLegendElement.h"
+#import "HTMLLinkElement.h"
+#import "HTMLMetaElement.h"
 #import "HTMLObjectElement.h"
 #import "HTMLOptGroupElement.h"
 #import "HTMLOptionElement.h"
 #import "HTMLOptionsCollection.h"
 #import "HTMLParamElement.h"
+#import "HTMLScriptElement.h"
 #import "HTMLSelectElement.h"
+#import "HTMLStyleElement.h"
+#import "HTMLTableElement.h"
+#import "HTMLTableCaptionElement.h"
+#import "HTMLTableCellElement.h"
+#import "HTMLTableColElement.h"
+#import "HTMLTableRowElement.h"
+#import "HTMLTableSectionElement.h"
 #import "HTMLTextAreaElement.h"
+#import "HTMLTitleElement.h"
 #import "NameNodeList.h"
 #import "html_baseimpl.h"
 #import "html_blockimpl.h"
-#import "html_headimpl.h"
 #import "html_imageimpl.h"
 #import "html_listimpl.h"
-#import "html_tableimpl.h"
 #import "markup.h"
 #import "RenderTextField.h"
 #import "FrameView.h"
@@ -106,7 +116,7 @@ using namespace WebCore::HTMLNames;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<HTMLCollection *>(_internal)->deref();
+        DOM_cast<HTMLCollection*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -114,14 +124,14 @@ using namespace WebCore::HTMLNames;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<HTMLCollection *>(_internal)->deref();
+        DOM_cast<HTMLCollection*>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (HTMLCollection *)_collection
 {
-    return DOM_cast<HTMLCollection *>(_internal);
+    return DOM_cast<HTMLCollection*>(_internal);
 }
 
 - (unsigned)length
@@ -148,7 +158,7 @@ using namespace WebCore::HTMLNames;
     ASSERT(impl);
     
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -174,7 +184,7 @@ using namespace WebCore::HTMLNames;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<HTMLOptionsCollection *>(_internal)->deref();
+        DOM_cast<HTMLOptionsCollection*>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -182,7 +192,7 @@ using namespace WebCore::HTMLNames;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<HTMLOptionsCollection *>(_internal)->deref();
+        DOM_cast<HTMLOptionsCollection*>(_internal)->deref();
     }
     [super finalize];
 }
@@ -192,7 +202,7 @@ using namespace WebCore::HTMLNames;
     ASSERT(impl);
     
     [super _init];
-    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    _internal = DOM_cast<DOMObjectInternal*>(impl);
     impl->ref();
     addDOMWrapper(self, impl);
     return self;
@@ -213,7 +223,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLOptionsCollection *)_optionsCollection
 {
-    return DOM_cast<HTMLOptionsCollection *>(_internal);
+    return DOM_cast<HTMLOptionsCollection*>(_internal);
 }
 
 - (unsigned)length
@@ -303,12 +313,12 @@ using namespace WebCore::HTMLNames;
 
 + (DOMHTMLElement *)_elementWith:(HTMLElement *)impl
 {
-    return static_cast<DOMHTMLElement *>([DOMNode _nodeWith:impl]);
+    return static_cast<DOMHTMLElement*>([DOMNode _nodeWith:impl]);
 }
 
 - (HTMLElement *)_HTMLElement
 {
-    return static_cast<HTMLElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLElement*>(DOM_cast<Node*>(_internal));
 }
 
 @end
@@ -390,7 +400,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLDocument *)_HTMLDocument
 {
-    return static_cast<HTMLDocument *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLDocument*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)title
@@ -522,7 +532,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLHtmlElement *)_HTMLHtmlElement
 {
-    return static_cast<HTMLHtmlElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLHtmlElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)version
@@ -541,7 +551,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLHeadElement *)_headElement
 {
-    return static_cast<HTMLHeadElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLHeadElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)profile
@@ -560,7 +570,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLLinkElement *)_linkElement
 {
-    return static_cast<HTMLLinkElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLLinkElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (BOOL)disabled
@@ -664,7 +674,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLTitleElement *)_titleElement
 {
-    return static_cast<HTMLTitleElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLTitleElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)text
@@ -683,7 +693,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLMetaElement *)_metaElement
 {
-    return static_cast<HTMLMetaElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLMetaElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)content
@@ -732,7 +742,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLBaseElement *)_baseElement
 {
-    return static_cast<HTMLBaseElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLBaseElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)href
@@ -761,7 +771,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLStyleElement *)_styleElement
 {
-    return static_cast<HTMLStyleElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLStyleElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (BOOL)disabled
@@ -800,7 +810,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLBodyElement *)_bodyElement
 {
-    return static_cast<HTMLBodyElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLBodyElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)aLink
@@ -869,7 +879,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLFormElement *)_formElement
 {
-    return static_cast<HTMLFormElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLFormElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLCollection *)elements
@@ -959,7 +969,7 @@ using namespace WebCore::HTMLNames;
 
 + (DOMHTMLFormElement *)_formElementWith:(HTMLFormElement *)impl
 {
-    return static_cast<DOMHTMLFormElement *>([DOMNode _nodeWith:impl]);
+    return static_cast<DOMHTMLFormElement*>([DOMNode _nodeWith:impl]);
 }
 
 @end
@@ -968,7 +978,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLIsIndexElement *)_isIndexElement
 {
-    return static_cast<HTMLIsIndexElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLIsIndexElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -992,7 +1002,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLSelectElement *)_selectElement
 {
-    return static_cast<HTMLSelectElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLSelectElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)type
@@ -1121,7 +1131,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLOptGroupElement *)_optGroupElement
 {
-    return static_cast<HTMLOptGroupElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLOptGroupElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (BOOL)disabled
@@ -1150,7 +1160,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLOptionElement *)_optionElement
 {
-    return static_cast<HTMLOptionElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLOptionElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1225,7 +1235,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLInputElement *)_inputElement
 {
-    return static_cast<HTMLInputElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLInputElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)defaultValue
@@ -1441,7 +1451,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLTextAreaElement *)_textAreaElement
 {
-    return static_cast<HTMLTextAreaElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLTextAreaElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)defaultValue
@@ -1570,7 +1580,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLButtonElement *)_buttonElement
 {
-    return static_cast<HTMLButtonElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLButtonElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1639,7 +1649,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLLabelElement *)_labelElement
 {
-    return static_cast<HTMLLabelElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLLabelElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1647,7 +1657,7 @@ using namespace WebCore::HTMLNames;
     Element *formElement = [self _labelElement]->formElement();
     if (!formElement)
         return 0;
-    return [DOMHTMLFormElement _formElementWith:static_cast<HTMLGenericFormElement *>(formElement)->form()];
+    return [DOMHTMLFormElement _formElementWith:static_cast<HTMLGenericFormElement*>(formElement)->form()];
 }
 
 - (NSString *)accessKey
@@ -1676,7 +1686,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLFieldSetElement *)_fieldSetElement
 {
-    return static_cast<HTMLFieldSetElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLFieldSetElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1690,7 +1700,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLLegendElement *)_legendElement
 {
-    return static_cast<HTMLLegendElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLLegendElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -1724,7 +1734,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLUListElement *)_uListElement
 {
-    return static_cast<HTMLUListElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLUListElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (BOOL)compact
@@ -1753,7 +1763,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLOListElement *)_oListElement
 {
-    return static_cast<HTMLOListElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLOListElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (BOOL)compact
@@ -1792,7 +1802,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLDListElement *)_dListElement
 {
-    return static_cast<HTMLDListElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLDListElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (BOOL)compact
@@ -1811,7 +1821,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLDirectoryElement *)_directoryListElement
 {
-    return static_cast<HTMLDirectoryElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLDirectoryElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (BOOL)compact
@@ -1830,7 +1840,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLMenuElement *)_menuListElement
 {
-    return static_cast<HTMLMenuElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLMenuElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (BOOL)compact
@@ -1849,7 +1859,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLLIElement *)_liElement
 {
-    return static_cast<HTMLLIElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLLIElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)type
@@ -1878,7 +1888,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLElement *)_quoteElement
 {
-    return static_cast<HTMLElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)cite
@@ -1897,7 +1907,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLDivElement *)_divElement
 {
-    return static_cast<HTMLDivElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLDivElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
@@ -1916,7 +1926,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLParagraphElement *)_paragraphElement
 {
-    return static_cast<HTMLParagraphElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLParagraphElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
@@ -1935,7 +1945,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLHeadingElement *)_headingElement
 {
-    return static_cast<HTMLHeadingElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLHeadingElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
@@ -1954,7 +1964,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLPreElement *)_preElement
 {
-    return static_cast<HTMLPreElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLPreElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (int)width
@@ -1973,7 +1983,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLBRElement *)_BRElement
 {
-    return static_cast<HTMLBRElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLBRElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)clear
@@ -1992,7 +2002,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLBaseFontElement *)_baseFontElement
 {
-    return static_cast<HTMLBaseFontElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLBaseFontElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)color
@@ -2031,7 +2041,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLFontElement *)_fontElement
 {
-    return static_cast<HTMLFontElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLFontElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)color
@@ -2070,7 +2080,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLHRElement *)_HRElement
 {
-    return static_cast<HTMLHRElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLHRElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
@@ -2119,7 +2129,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLElement *)_modElement
 {
-    return static_cast<HTMLElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)cite
@@ -2148,7 +2158,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLAnchorElement *)_anchorElement
 {
-    return static_cast<HTMLAnchorElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLAnchorElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)accessKey
@@ -2295,7 +2305,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLImageElement *)_imageElement
 {
-    return static_cast<HTMLImageElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLImageElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)name
@@ -2435,7 +2445,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLObjectElement *)_objectElement
 {
-    return static_cast<HTMLObjectElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLObjectElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
@@ -2631,7 +2641,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLParamElement *)_paramElement
 {
-    return static_cast<HTMLParamElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLParamElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)name
@@ -2805,7 +2815,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLMapElement *)_mapElement
 {
-    return static_cast<HTMLMapElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLMapElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (DOMHTMLCollection *)areas
@@ -2830,7 +2840,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLAreaElement *)_areaElement
 {
-    return static_cast<HTMLAreaElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLAreaElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)accessKey
@@ -2930,7 +2940,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLScriptElement *)_scriptElement
 {
-    return static_cast<HTMLScriptElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLScriptElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)text
@@ -3025,12 +3035,12 @@ using namespace WebCore::HTMLNames;
 
 + (DOMHTMLTableCaptionElement *)_tableCaptionElementWith:(HTMLTableCaptionElement *)impl
 {
-    return static_cast<DOMHTMLTableCaptionElement *>([DOMNode _nodeWith:impl]);
+    return static_cast<DOMHTMLTableCaptionElement*>([DOMNode _nodeWith:impl]);
 }
 
 - (HTMLTableCaptionElement *)_tableCaptionElement
 {
-    return static_cast<HTMLTableCaptionElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLTableCaptionElement*>(DOM_cast<Node*>(_internal));
 }
 
 @end
@@ -3104,12 +3114,12 @@ using namespace WebCore::HTMLNames;
 
 + (DOMHTMLTableSectionElement *)_tableSectionElementWith:(HTMLTableSectionElement *)impl
 {
-    return static_cast<DOMHTMLTableSectionElement *>([DOMNode _nodeWith:impl]);
+    return static_cast<DOMHTMLTableSectionElement*>([DOMNode _nodeWith:impl]);
 }
 
 - (HTMLTableSectionElement *)_tableSectionElement
 {
-    return static_cast<HTMLTableSectionElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLTableSectionElement*>(DOM_cast<Node*>(_internal));
 }
 
 @end
@@ -3250,7 +3260,7 @@ using namespace WebCore::HTMLNames;
 
 - (DOMHTMLElement *)createTHead
 {
-    HTMLTableSectionElement *impl = static_cast<HTMLTableSectionElement *>([self _tableElement]->createTHead());
+    HTMLTableSectionElement *impl = static_cast<HTMLTableSectionElement*>([self _tableElement]->createTHead());
     return [DOMHTMLTableSectionElement _tableSectionElementWith:impl];
 }
 
@@ -3261,7 +3271,7 @@ using namespace WebCore::HTMLNames;
 
 - (DOMHTMLElement *)createTFoot
 {
-    HTMLTableSectionElement *impl = static_cast<HTMLTableSectionElement *>([self _tableElement]->createTFoot());
+    HTMLTableSectionElement *impl = static_cast<HTMLTableSectionElement*>([self _tableElement]->createTFoot());
     return [DOMHTMLTableSectionElement _tableSectionElementWith:impl];
 }
 
@@ -3272,7 +3282,7 @@ using namespace WebCore::HTMLNames;
 
 - (DOMHTMLElement *)createCaption
 {
-    HTMLTableCaptionElement *impl = static_cast<HTMLTableCaptionElement *>([self _tableElement]->createCaption());
+    HTMLTableCaptionElement *impl = static_cast<HTMLTableCaptionElement*>([self _tableElement]->createCaption());
     return [DOMHTMLTableCaptionElement _tableCaptionElementWith:impl];
 }
 
@@ -3284,7 +3294,7 @@ using namespace WebCore::HTMLNames;
 - (DOMHTMLElement *)insertRow:(int)index
 {
     ExceptionCode ec = 0;
-    HTMLTableElement *impl = static_cast<HTMLTableElement *>([self _tableElement]->insertRow(index, ec));
+    HTMLTableElement *impl = static_cast<HTMLTableElement*>([self _tableElement]->insertRow(index, ec));
     raiseOnDOMError(ec);
     return [DOMHTMLTableElement _tableElementWith:impl];
 }
@@ -3302,12 +3312,12 @@ using namespace WebCore::HTMLNames;
 
 + (DOMHTMLTableElement *)_tableElementWith:(HTMLTableElement *)impl
 {
-    return static_cast<DOMHTMLTableElement *>([DOMNode _nodeWith:impl]);
+    return static_cast<DOMHTMLTableElement*>([DOMNode _nodeWith:impl]);
 }
 
 - (HTMLTableElement *)_tableElement
 {
-    return static_cast<HTMLTableElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLTableElement*>(DOM_cast<Node*>(_internal));
 }
 
 @end
@@ -3316,7 +3326,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLTableColElement *)_tableColElement
 {
-    return static_cast<HTMLTableColElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLTableColElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
@@ -3385,7 +3395,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLTableRowElement *)_tableRowElement
 {
-    return static_cast<HTMLTableRowElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLTableRowElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (int)rowIndex
@@ -3457,7 +3467,7 @@ using namespace WebCore::HTMLNames;
 - (DOMHTMLElement *)insertCell:(int)index
 {
     ExceptionCode ec = 0;
-    HTMLTableCellElement *impl = static_cast<HTMLTableCellElement *>([self _tableRowElement]->insertCell(index, ec));
+    HTMLTableCellElement *impl = static_cast<HTMLTableCellElement*>([self _tableRowElement]->insertCell(index, ec));
     raiseOnDOMError(ec);
     return [DOMHTMLTableCellElement _tableCellElementWith:impl];
 }
@@ -3624,12 +3634,12 @@ using namespace WebCore::HTMLNames;
 
 + (DOMHTMLTableCellElement *)_tableCellElementWith:(HTMLTableCellElement *)impl
 {
-    return static_cast<DOMHTMLTableCellElement *>([DOMNode _nodeWith:impl]);
+    return static_cast<DOMHTMLTableCellElement*>([DOMNode _nodeWith:impl]);
 }
 
 - (HTMLTableCellElement *)_tableCellElement
 {
-    return static_cast<HTMLTableCellElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLTableCellElement*>(DOM_cast<Node*>(_internal));
 }
 
 @end
@@ -3638,7 +3648,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLFrameSetElement *)_frameSetElement
 {
-    return static_cast<HTMLFrameSetElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLFrameSetElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)rows
@@ -3667,7 +3677,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLFrameElement *)_frameElement
 {
-    return static_cast<HTMLFrameElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLFrameElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)frameBorder
@@ -3761,7 +3771,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLIFrameElement *)_IFrameElement
 {
-    return static_cast<HTMLIFrameElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLIFrameElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
@@ -3887,7 +3897,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLEmbedElement *)_embedElement
 {
-    return static_cast<HTMLEmbedElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLEmbedElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
@@ -3964,7 +3974,7 @@ static NSView *viewForElement(DOMElement *element)
 {
     RenderObject *renderer = [element _element]->renderer();
     if (renderer && renderer->isWidget()) {
-        Widget *widget = static_cast<const RenderWidget *>(renderer)->widget();
+        Widget *widget = static_cast<const RenderWidget*>(renderer)->widget();
         if (widget) {
             widget->populate();
             return widget->getView();

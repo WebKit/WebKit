@@ -26,6 +26,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLAppletElement.h"
+#include "HTMLBaseElement.h"
 #include "HTMLBaseFontElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLDocument.h"
@@ -35,13 +36,24 @@
 #include "HTMLIsIndexElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLLegendElement.h"
+#include "HTMLLinkElement.h"
+#include "HTMLMetaElement.h"
 #include "HTMLObjectElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLParamElement.h"
+#include "HTMLScriptElement.h"
 #include "HTMLSelectElement.h"
+#include "HTMLStyleElement.h"
+#include "HTMLTableCaptionElement.h"
+#include "HTMLTableCellElement.h"
+#include "HTMLTableColElement.h"
+#include "HTMLTableElement.h"
+#include "HTMLTableRowElement.h"
+#include "HTMLTableSectionElement.h"
 #include "HTMLTextAreaElement.h"
+#include "HTMLTitleElement.h"
 #include "NameNodeList.h"
 #include "RenderLayer.h"
 #include "Text.h"
@@ -49,11 +61,9 @@
 #include "dom2_eventsimpl.h"
 #include "html_baseimpl.h"
 #include "html_blockimpl.h"
-#include "html_headimpl.h"
 #include "html_imageimpl.h"
 #include "html_inlineimpl.h"
 #include "html_listimpl.h"
-#include "html_tableimpl.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_proxy.h"
@@ -1368,7 +1378,7 @@ JSValue *JSHTMLElement::htmlGetter(ExecState* exec, int token) const
 
 JSValue *JSHTMLElement::headGetter(ExecState* exec, int token) const
 {
-    HTMLHeadElement &head = *static_cast<HTMLHeadElement*>(impl());
+    HTMLHeadElement& head = *static_cast<HTMLHeadElement*>(impl());
     if (token == HeadProfile)
         return jsString(head.profile());
     return jsUndefined();
@@ -1376,7 +1386,7 @@ JSValue *JSHTMLElement::headGetter(ExecState* exec, int token) const
 
 JSValue *JSHTMLElement::linkGetter(ExecState* exec, int token) const
 {
-    HTMLLinkElement &link = *static_cast<HTMLLinkElement*>(impl());
+    HTMLLinkElement& link = *static_cast<HTMLLinkElement*>(impl());
     switch (token) {
         case LinkDisabled:
             return jsBoolean(link.disabled());

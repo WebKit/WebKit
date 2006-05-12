@@ -42,6 +42,8 @@
 #import "HTMLDocument.h"
 #import "HTMLFormElement.h"
 #import "HTMLGenericFormElement.h"
+#import "HTMLNames.h"
+#import "HTMLTableCellElement.h"
 #import "KWQEditCommand.h"
 #import "KWQFormData.h"
 #import "KWQPageState.h"
@@ -61,7 +63,6 @@
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
 #import "csshelper.h"
-#import "html_tableimpl.h"
 #import "kjs_window.h"
 #import "render_frames.h"
 #import "render_list.h"
@@ -292,16 +293,16 @@ RegularExpression *regExpForLabels(NSArray *labels)
     return result;
 }
 
-NSString *FrameMac::searchForLabelsAboveCell(RegularExpression *regExp, HTMLTableCellElement *cell)
+NSString* FrameMac::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell)
 {
-    RenderTableCell *cellRenderer = static_cast<RenderTableCell *>(cell->renderer());
+    RenderTableCell* cellRenderer = static_cast<RenderTableCell*>(cell->renderer());
 
     if (cellRenderer && cellRenderer->isTableCell()) {
-        RenderTableCell *cellAboveRenderer = cellRenderer->table()->cellAbove(cellRenderer);
+        RenderTableCell* cellAboveRenderer = cellRenderer->table()->cellAbove(cellRenderer);
 
         if (cellAboveRenderer) {
             HTMLTableCellElement *aboveCell =
-                static_cast<HTMLTableCellElement *>(cellAboveRenderer->element());
+                static_cast<HTMLTableCellElement*>(cellAboveRenderer->element());
 
             if (aboveCell) {
                 // search within the above cell we found for a match
@@ -342,12 +343,12 @@ NSString *FrameMac::searchForLabelsBeforeElement(NSArray *labels, Element *eleme
     {
         if (n->hasTagName(formTag)
             || (n->isHTMLElement()
-                && static_cast<HTMLElement *>(n)->isGenericFormElement()))
+                && static_cast<HTMLElement*>(n)->isGenericFormElement()))
         {
             // We hit another form element or the start of the form - bail out
             break;
         } else if (n->hasTagName(tdTag) && !startingTableCell) {
-            startingTableCell = static_cast<HTMLTableCellElement *>(n);
+            startingTableCell = static_cast<HTMLTableCellElement*>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
             NSString *result = searchForLabelsAboveCell(regExp, startingTableCell);
             if (result) {
@@ -582,7 +583,7 @@ Frame* FrameMac::createFrame(const KURL& url, const String& name, RenderPart* re
     int marginWidth = -1;
     int marginHeight = -1;
     if (renderer->element()->hasTagName(frameTag) || renderer->element()->hasTagName(iframeTag)) {
-        HTMLFrameElement *o = static_cast<HTMLFrameElement *>(renderer->element());
+        HTMLFrameElement *o = static_cast<HTMLFrameElement*>(renderer->element());
         allowsScrolling = o->scrollingMode() != ScrollBarAlwaysOff;
         marginWidth = o->getMarginWidth();
         marginHeight = o->getMarginHeight();
@@ -1435,7 +1436,7 @@ bool FrameMac::passMouseDownEventToWidget(Widget* widget)
                 superview = [superview superview];
                 ASSERT(superview);
                 if ([superview isKindOfClass:[NSControl class]]) {
-                    NSControl *control = static_cast<NSControl *>(superview);
+                    NSControl *control = static_cast<NSControl*>(superview);
                     if ([control currentEditor] == view) {
                         view = superview;
                     }
@@ -1863,10 +1864,10 @@ bool FrameMac::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, 
             if (!renderer || !renderer->isWidget()) {
                 return false;
             }
-            Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
+            Widget *widget = static_cast<RenderWidget*>(renderer)->widget();
             if (!widget || !widget->isFrameView())
                 return false;
-            if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(renderer))) {
+            if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget*>(renderer))) {
                 return false;
             }
             _mouseDownWasInSubframe = true;
@@ -1918,7 +1919,7 @@ bool FrameMac::passWheelEventToChildWidget(Node *node)
         RenderObject *renderer = node->renderer();
         if (!renderer || !renderer->isWidget())
             return false;
-        Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
+        Widget *widget = static_cast<RenderWidget*>(renderer)->widget();
         if (!widget)
             return false;
             
@@ -2174,7 +2175,7 @@ NSFileWrapper *FrameMac::fileWrapperForElement(Element *e)
         wrapper = [_bridge fileWrapperForURL:URL];
     }    
     if (!wrapper) {
-        RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
+        RenderImage *renderer = static_cast<RenderImage*>(e->renderer());
         if (renderer->cachedImage() && !renderer->cachedImage()->isErrorImage()) {
             wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData*)(renderer->cachedImage()->image()->getTIFFRepresentation())];
             [wrapper setPreferredFilename:@"image.tiff"];
@@ -2192,7 +2193,7 @@ NSFileWrapper *FrameMac::fileWrapperForElement(Element *e)
 static Element *listParent(Element *item)
 {
     while (!item->hasTagName(ulTag) && !item->hasTagName(olTag)) {
-        item = static_cast<Element *>(item->parentNode());
+        item = static_cast<Element*>(item->parentNode());
         if (!item)
             break;
     }
@@ -2369,7 +2370,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                     hasNewLine = true;
                 } else if (n->hasTagName(liTag)) {
                     DeprecatedString listText;
-                    Element *itemParent = listParent(static_cast<Element *>(n));
+                    Element *itemParent = listParent(static_cast<Element*>(n));
                     
                     if (!hasNewLine)
                         listText += '\n';
@@ -2468,7 +2469,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                         [pendingStyledSpace release];
                         pendingStyledSpace = nil;
                     }
-                    NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<Element *>(n));
+                    NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<Element*>(n));
                     NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                     NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
                     [result appendAttributedString: iString];
@@ -3202,13 +3203,13 @@ bool FrameMac::isContentEditable() const
 bool FrameMac::shouldBeginEditing(const Range *range) const
 {
     ASSERT(range);
-    return [_bridge shouldBeginEditing:[DOMRange _rangeWith:const_cast<Range *>(range)]];
+    return [_bridge shouldBeginEditing:[DOMRange _rangeWith:const_cast<Range*>(range)]];
 }
 
 bool FrameMac::shouldEndEditing(const Range *range) const
 {
     ASSERT(range);
-    return [_bridge shouldEndEditing:[DOMRange _rangeWith:const_cast<Range *>(range)]];
+    return [_bridge shouldEndEditing:[DOMRange _rangeWith:const_cast<Range*>(range)]];
 }
 
 void FrameMac::didBeginEditing() const
@@ -3313,7 +3314,7 @@ void FrameMac::setMarkedTextRange(const Range *range, NSArray *attributes, NSArr
     if (range && range->collapsed(exception))
         m_markedTextRange = 0;
     else
-        m_markedTextRange = const_cast<Range *>(range);
+        m_markedTextRange = const_cast<Range*>(range);
 
     if (m_markedTextRange.get() && document() && m_markedTextRange->startContainer(exception)->renderer())
         m_markedTextRange->startContainer(exception)->renderer()->repaint();

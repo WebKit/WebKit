@@ -35,14 +35,15 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLIsIndexElement.h"
+#include "HTMLTableCellElement.h"
+#include "HTMLTableRowElement.h"
+#include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
 #include "Text.h"
 #include "html_baseimpl.h"
 #include "html_blockimpl.h"
-#include "html_headimpl.h"
 #include "html_listimpl.h"
-#include "html_tableimpl.h"
 
 namespace WebCore {
 

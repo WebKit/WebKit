@@ -27,8 +27,8 @@
 #include "config.h"
 #include "RenderTableCol.h"
 
-#include "html_tableimpl.h"
 #include "HTMLNames.h"
+#include "HTMLTableColElement.h"
 #include "KWQTextStream.h"
 
 namespace WebCore {
@@ -48,7 +48,7 @@ void RenderTableCol::updateFromElement()
     int oldSpan = m_span;
     Node* node = element();
     if (node && (node->hasTagName(colTag) || node->hasTagName(colgroupTag))) {
-        HTMLTableColElement *tc = static_cast<HTMLTableColElement *>(node);
+        HTMLTableColElement* tc = static_cast<HTMLTableColElement*>(node);
         m_span = tc->span();
     } else
         m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);

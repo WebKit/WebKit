@@ -29,8 +29,8 @@
 
 #include "GraphicsContext.h"
 #include "RenderTableCol.h"
-#include "html_tableimpl.h"
 #include "HTMLNames.h"
+#include "HTMLTableCellElement.h"
 #include "KWQTextStream.h"
 
 using namespace std;
@@ -66,7 +66,7 @@ void RenderTableCell::updateFromElement()
     int oldCSpan = cSpan;
     Node* node = element();
     if (node && (node->hasTagName(tdTag) || node->hasTagName(thTag))) {
-        HTMLTableCellElement *tc = static_cast<HTMLTableCellElement *>(node);
+        HTMLTableCellElement* tc = static_cast<HTMLTableCellElement*>(node);
         cSpan = tc->colSpan();
         rSpan = tc->rowSpan();
     }

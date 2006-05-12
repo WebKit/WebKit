@@ -32,7 +32,7 @@
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
-#include "html_headimpl.h" // for HTMLStyleElement
+#include "HTMLStyleElement.h"
 #include "kjs_dom.h"
 
 #include "kjs_css.lut.h"

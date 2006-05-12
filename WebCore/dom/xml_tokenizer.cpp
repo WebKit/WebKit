@@ -33,10 +33,11 @@
 #include "Document.h"
 #include "DocumentType.h"
 #include "Frame.h"
+#include "HTMLNames.h"
+#include "HTMLTableSectionElement.h"
+#include "HTMLScriptElement.h"
 #include "KWQLoader.h"
 #include "dom_xmlimpl.h"
-#include "html_headimpl.h"
-#include "html_tableimpl.h"
 #include "HTMLTokenizer.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
