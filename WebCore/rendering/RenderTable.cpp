@@ -28,13 +28,14 @@
 #include "config.h"
 #include "RenderTable.h"
 
-#include "RenderTableSection.h"
-#include "RenderTableCol.h"
-#include "RenderTableCell.h"
+#include "AutoTableLayout.h"
 #include "Document.h"
-#include "table_layout.h"
+#include "FixedTableLayout.h"
 #include "HTMLNames.h"
 #include "KWQTextStream.h"
+#include "RenderTableCell.h"
+#include "RenderTableCol.h"
+#include "RenderTableSection.h"
 
 using namespace std;
 

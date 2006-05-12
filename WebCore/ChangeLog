@@ -1,3 +1,35 @@
+2006-05-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Split out table_layout.* into separate files (one per class).
+        Search replace instnace variables "foo" with "m_foo" to comply with modern style.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/AutoTableLayout.cpp: Added.
+        (WebCore::AutoTableLayout::AutoTableLayout):
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::fullRecalc):
+        (WebCore::AutoTableLayout::calcMinMaxWidth):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::insertSpanCell):
+        (WebCore::AutoTableLayout::layout):
+        (WebCore::AutoTableLayout::calcPercentages):
+        * rendering/AutoTableLayout.h: Added.
+        (WebCore::AutoTableLayout::totalPercent):
+        (WebCore::AutoTableLayout::Layout::Layout):
+        * rendering/FixedTableLayout.cpp: Added.
+        (WebCore::FixedTableLayout::FixedTableLayout):
+        (WebCore::FixedTableLayout::calcWidthArray):
+        (WebCore::FixedTableLayout::calcMinMaxWidth):
+        (WebCore::FixedTableLayout::layout):
+        * rendering/FixedTableLayout.h: Added.
+        * rendering/RenderTable.cpp:
+        * rendering/TableLayout.h: Added.
+        (WebCore::TableLayout::TableLayout):
+        * rendering/table_layout.cpp: Removed.
+        * rendering/table_layout.h: Removed.
+
 2006-05-12  David Hyatt  <hyatt@apple.com>
 
         Bug 8877.  Change form controls and the bridge entry points from the

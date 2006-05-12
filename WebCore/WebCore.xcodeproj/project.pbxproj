@@ -1056,6 +1056,11 @@
 		A8C4A80D09D563270003AC8D /* Attr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7FB09D563270003AC8D /* Attr.h */; };
 		A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7FC09D563270003AC8D /* Attr.cpp */; };
 		A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */; };
+		A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */; };
+		A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF0490A154F09000A4234 /* AutoTableLayout.h */; };
+		A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */; };
+		A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */; };
+		A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04C0A154F09000A4234 /* TableLayout.h */; };
 		A8DF3FCE097FA0FC0052981B /* HTMLFormCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */; };
 		A8DF3FCF097FA0FC0052981B /* HTMLFormCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */; };
 		A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */; };
@@ -1236,8 +1241,6 @@
 		BCEA488C097D93020094C9E4 /* RenderText.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA484D097D93020094C9E4 /* RenderText.h */; };
 		BCEA488D097D93020094C9E4 /* RenderTextFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA484E097D93020094C9E4 /* RenderTextFragment.cpp */; };
 		BCEA488E097D93020094C9E4 /* RenderTextFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA484F097D93020094C9E4 /* RenderTextFragment.h */; };
-		BCEA488F097D93020094C9E4 /* table_layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4850097D93020094C9E4 /* table_layout.cpp */; };
-		BCEA4890097D93020094C9E4 /* table_layout.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4851097D93020094C9E4 /* table_layout.h */; };
 		BCEA4944097F0F5C0094C9E4 /* BrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */; };
 		BCEA4947097F0F770094C9E4 /* BrowserExtensionMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */; };
 		BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */; };
@@ -2449,6 +2452,11 @@
 		A8C4A7FB09D563270003AC8D /* Attr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Attr.h; sourceTree = "<group>"; };
 		A8C4A7FC09D563270003AC8D /* Attr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Attr.cpp; sourceTree = "<group>"; };
 		A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MappedAttributeEntry.h; sourceTree = "<group>"; };
+		A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FixedTableLayout.cpp; sourceTree = "<group>"; };
+		A8CFF0490A154F09000A4234 /* AutoTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AutoTableLayout.h; sourceTree = "<group>"; };
+		A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FixedTableLayout.h; sourceTree = "<group>"; };
+		A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AutoTableLayout.cpp; sourceTree = "<group>"; };
+		A8CFF04C0A154F09000A4234 /* TableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TableLayout.h; sourceTree = "<group>"; };
 		A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormCollection.h; sourceTree = "<group>"; };
 		A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormCollection.cpp; sourceTree = "<group>"; };
 		A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLCollection.h; sourceTree = "<group>"; };
@@ -2641,8 +2649,6 @@
 		BCEA484D097D93020094C9E4 /* RenderText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderText.h; sourceTree = "<group>"; };
 		BCEA484E097D93020094C9E4 /* RenderTextFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextFragment.cpp; sourceTree = "<group>"; };
 		BCEA484F097D93020094C9E4 /* RenderTextFragment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextFragment.h; sourceTree = "<group>"; };
-		BCEA4850097D93020094C9E4 /* table_layout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = table_layout.cpp; sourceTree = "<group>"; };
-		BCEA4851097D93020094C9E4 /* table_layout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = table_layout.h; sourceTree = "<group>"; };
 		BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrowserExtension.h; sourceTree = "<group>"; };
 		BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrowserExtensionMac.h; sourceTree = "<group>"; };
 		BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserExtensionMac.mm; sourceTree = "<group>"; };
@@ -4336,11 +4342,15 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
+				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
 				BCEA4814097D93020094C9E4 /* bidi.h */,
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
 				BCEA4817097D93020094C9E4 /* DataRef.h */,
+				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
+				A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
@@ -4419,8 +4429,7 @@
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
 				A871DFE10A15376B00B12A68 /* RenderWidget.cpp */,
 				A871DFE00A15376B00B12A68 /* RenderWidget.h */,
-				BCEA4850097D93020094C9E4 /* table_layout.cpp */,
-				BCEA4851097D93020094C9E4 /* table_layout.h */,
+				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -4942,7 +4951,6 @@
 				BCEA488A097D93020094C9E4 /* RenderTheme.h in Headers */,
 				BCEA488C097D93020094C9E4 /* RenderText.h in Headers */,
 				BCEA488E097D93020094C9E4 /* RenderTextFragment.h in Headers */,
-				BCEA4890097D93020094C9E4 /* table_layout.h in Headers */,
 				BCEA4944097F0F5C0094C9E4 /* BrowserExtension.h in Headers */,
 				BCEA4947097F0F770094C9E4 /* BrowserExtensionMac.h in Headers */,
 				AB67D1A9097F3AE300F9392E /* RenderTextField.h in Headers */,
@@ -5212,6 +5220,9 @@
 				A871DED70A1530C700B12A68 /* RenderPart.h in Headers */,
 				A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */,
 				A871DFE40A15376B00B12A68 /* RenderWidget.h in Headers */,
+				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
+				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
+				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5733,7 +5744,6 @@
 				BCEA4889097D93020094C9E4 /* RenderTheme.cpp in Sources */,
 				BCEA488B097D93020094C9E4 /* RenderText.cpp in Sources */,
 				BCEA488D097D93020094C9E4 /* RenderTextFragment.cpp in Sources */,
-				BCEA488F097D93020094C9E4 /* table_layout.cpp in Sources */,
 				65FEA86909833ADE00BED4AB /* Page.cpp in Sources */,
 				BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */,
 				AB67D1A8097F3AE300F9392E /* RenderTextField.cpp in Sources */,
@@ -5980,6 +5990,8 @@
 				A871DED60A1530C700B12A68 /* RenderPartObject.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,
 				A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */,
+				A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */,
+				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

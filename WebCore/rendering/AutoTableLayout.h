@@ -20,8 +20,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef TABLE_LAYOUT_H
-#define TABLE_LAYOUT_H
+#ifndef AutoTableLayout_H
+#define AutoTableLayout_H
+
+#include "TableLayout.h"
 
 #include "DeprecatedArray.h"
 #include "Length.h"
@@ -31,66 +33,34 @@ namespace WebCore {
 class RenderTable;
 class RenderTableCell;
 
-// -------------------------------------------------------------------------
-
-class TableLayout
-{
-public:
-    TableLayout(RenderTable* t) : table(t) {}
-    virtual ~TableLayout() {};
-
-    virtual void calcMinMaxWidth() = 0;
-    virtual void layout() = 0;
-
-protected:
-    RenderTable *table;
-};
-
-// -------------------------------------------------------------------------
-
-class FixedTableLayout : public TableLayout
-{
-public:
-    FixedTableLayout(RenderTable*);
-    ~FixedTableLayout();
-
-    void calcMinMaxWidth();
-    void layout();
-
-protected:
-    int calcWidthArray(int tableWidth);
-
-    DeprecatedArray<Length> width;
-};
-
-// -------------------------------------------------------------------------
-
 class AutoTableLayout : public TableLayout
 {
 public:
-    AutoTableLayout(RenderTable *table);
+    AutoTableLayout(RenderTable*);
     ~AutoTableLayout();
 
     void calcMinMaxWidth();
     void layout();
 
-
 protected:
     void fullRecalc();
     void recalcColumn(int effCol);
     int totalPercent() const {
-        if (percentagesDirty)
+        if (m_percentagesDirty)
             calcPercentages();
-        return total_percent;
+        return m_totalPercent;
     }
     void calcPercentages() const;
     int calcEffectiveWidth();
     void insertSpanCell(RenderTableCell*);
 
     struct Layout {
-        Layout() : minWidth(0), maxWidth(0),
-                   effMinWidth(0), effMaxWidth(0),
-                   calcWidth(0) {}
+        Layout()
+            : minWidth(0)
+            , maxWidth(0)
+            , effMinWidth(0)
+            , effMaxWidth(0)
+            , calcWidth(0) {}
         Length width;
         Length effWidth;
         int minWidth;
@@ -100,12 +70,12 @@ protected:
         int calcWidth;
     };
 
-    DeprecatedArray<Layout> layoutStruct;
-    DeprecatedArray<RenderTableCell*> spanCells;
-    bool hasPercent : 1;
-    mutable bool percentagesDirty : 1;
-    mutable bool effWidthDirty : 1;
-    mutable unsigned short total_percent;
+    DeprecatedArray<Layout> m_layoutStruct;
+    DeprecatedArray<RenderTableCell*> m_spanCells;
+    bool m_hasPercent : 1;
+    mutable bool m_percentagesDirty : 1;
+    mutable bool m_effWidthDirty : 1;
+    mutable unsigned short m_totalPercent;
 };
 
 }
