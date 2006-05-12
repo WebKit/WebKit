@@ -1,3 +1,15 @@
+2006-05-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8715
+          REGRESSION: Caret to the right of an image is a big black rectangle.
+
+        * rendering/RenderBox.cpp: (WebCore::RenderBox::caretRect): Move caret to the
+        right side of the rect when the offset is non-zero, rather than expanding it.
+
+        * manual-tests/caret-image.html: Added.
+
 2006-05-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Anders.
