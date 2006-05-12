@@ -3,7 +3,7 @@
         Reviewed by hyatt.
 
         Split out table_layout.* into separate files (one per class).
-        Search replace instnace variables "foo" with "m_foo" to comply with modern style.
+        Search replace instance variables "foo" with "m_foo" to comply with modern style.
 
         * WebCore.xcodeproj/project.pbxproj:
         * rendering/AutoTableLayout.cpp: Added.
