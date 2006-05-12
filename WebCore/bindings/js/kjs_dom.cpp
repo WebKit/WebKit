@@ -27,9 +27,11 @@
 #include "DOMImplementation.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "Element.h"
 #include "ExceptionCode.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLPlugInElement.h"
 #include "JSAttr.h"
 #include "JSElement.h"
 #include "JSCharacterData.h"
@@ -43,13 +45,13 @@
 #include "JSProcessingInstruction.h"
 #include "JSRange.h"
 #include "JSText.h"
+#include "NamedNodeMap.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "dom2_eventsimpl.h"
 #include "Range.h"
 #include "dom_xmlimpl.h"
 #include "HTMLDocument.h"
-#include "html_objectimpl.h"
 #include "JSHTMLElementWrapperFactory.h"
 #include "HTMLNames.h"
 #include "KWQKHTMLSettings.h"
@@ -845,19 +847,19 @@ DOMNamedNodeMap::~DOMNamedNodeMap()
 
 JSValue *DOMNamedNodeMap::lengthGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
+  DOMNamedNodeMap* thisObj = static_cast<DOMNamedNodeMap*>(slot.slotBase());
   return jsNumber(thisObj->m_impl->length());
 }
 
 JSValue *DOMNamedNodeMap::indexGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
+  DOMNamedNodeMap* thisObj = static_cast<DOMNamedNodeMap*>(slot.slotBase());
   return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
 JSValue *DOMNamedNodeMap::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
+  DOMNamedNodeMap* thisObj = static_cast<DOMNamedNodeMap*>(slot.slotBase());
   return toJS(exec, thisObj->m_impl->getNamedItem(propertyName));
 }
 
@@ -894,7 +896,7 @@ JSValue *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
   if (!thisObj->inherits(&KJS::DOMNamedNodeMap::info))
     return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
-  NamedNodeMap &map = *static_cast<DOMNamedNodeMap *>(thisObj)->impl();
+  NamedNodeMap &map = *static_cast<DOMNamedNodeMap*>(thisObj)->impl();
   switch (id) {
     case DOMNamedNodeMap::GetNamedItem:
       return toJS(exec, map.getNamedItem(args[0]->toString(exec)));
@@ -1021,7 +1023,7 @@ JSValue *getRuntimeObject(ExecState* exec, WebCore::Node* n)
 
 #if __APPLE__
     if (n->hasTagName(objectTag) || n->hasTagName(embedTag) || n->hasTagName(appletTag)) {
-        HTMLPlugInElement *plugInElement = static_cast<HTMLPlugInElement *>(n);
+        HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(n);
         if (plugInElement->getInstance())
             // The instance is owned by the PlugIn element.
             return new RuntimeObjectImp(plugInElement->getInstance());

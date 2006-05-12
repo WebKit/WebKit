@@ -1,3 +1,47 @@
+2006-05-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs & adele.
+
+        Split html_objectimpl.* into multiple files (one per class)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8836
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNamedNodeMap::lengthGetter):
+        (KJS::DOMNamedNodeMap::indexGetter):
+        (KJS::DOMNamedNodeMap::nameGetter):
+        (KJS::DOMNamedNodeMapProtoFunc::callAsFunction):
+        (KJS::getRuntimeObject):
+        * bindings/js/kjs_html.cpp:
+        * html/HTMLAppletElement.cpp: Added.
+        * html/HTMLAppletElement.h: Added.
+        * html/HTMLElementFactory.cpp:
+        * html/HTMLEmbedElement.cpp: Added.
+        (WebCore::HTMLEmbedElement::HTMLEmbedElement):
+        (WebCore::HTMLEmbedElement::getInstance):
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        * html/HTMLEmbedElement.h: Added.
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::traverseNextItem):
+        * html/HTMLObjectElement.cpp: Added.
+        (WebCore::HTMLObjectElement::getInstance):
+        (WebCore::HTMLObjectElement::form):
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+        * html/HTMLObjectElement.h: Added.
+        * html/HTMLParamElement.cpp: Added.
+        * html/HTMLParamElement.h: Added.
+        * html/HTMLParser.cpp:
+        * html/HTMLPlugInElement.cpp: Added.
+        * html/HTMLPlugInElement.h: Added.
+        * html/html_objectimpl.cpp: Removed.
+        * html/html_objectimpl.h: Removed.
+        * page/Frame.cpp:
+        (WebCore::Frame::handleFallbackContent):
+        * rendering/RenderApplet.cpp:
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+
 2006-05-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

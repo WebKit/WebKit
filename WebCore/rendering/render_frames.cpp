@@ -37,8 +37,10 @@
 #include "Text.h"
 #include "dom2_eventsimpl.h"
 #include "html_baseimpl.h"
-#include "html_objectimpl.h"
+#include "HTMLEmbedElement.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
+#include "HTMLParamElement.h"
 #include "HTMLTokenizer.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
@@ -735,7 +737,7 @@ void RenderPartObject::updateWidget()
       if (!o->isComplete())
         return;
       // Check for a child EMBED tag.
-      HTMLEmbedElement *embed = 0;
+      HTMLEmbedElement* embed = 0;
       for (Node *child = o->firstChild(); child; ) {
           if (child->hasTagName(embedTag)) {
               embed = static_cast<HTMLEmbedElement *>( child );
@@ -775,7 +777,7 @@ void RenderPartObject::updateWidget()
       Node *child = o->firstChild();
       while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
           if (child->hasTagName(paramTag)) {
-              HTMLParamElement *p = static_cast<HTMLParamElement *>(child);
+              HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
               String name = p->name().lower();
               if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url"))
                   url = p->value();

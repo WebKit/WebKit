@@ -26,8 +26,9 @@
 #include "HTMLNameCollection.h"
 
 #include "Document.h"
-#include "html_objectimpl.h"
+#include "Element.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ Node* HTMLNameCollection::traverseNextItem(Node* current) const
     while (current) {
         if (current->isElementNode()) {
             bool found = false;
-            Element *e = static_cast<Element *>(current);
+            Element* e = static_cast<Element*>(current);
             switch(type) {
             case WINDOW_NAMED_ITEMS:
                 // find only images, forms, applets, embeds and objects by name, 
@@ -73,7 +74,7 @@ Node* HTMLNameCollection::traverseNextItem(Node* current) const
                         e->getAttribute(idAttr) == m_name;
                 else if (e->hasTagName(objectTag))
                     found = (e->getAttribute(nameAttr) == m_name || e->getAttribute(idAttr) == m_name) &&
-                        static_cast<HTMLObjectElement *>(e)->isDocNamedItem();
+                        static_cast<HTMLObjectElement*>(e)->isDocNamedItem();
                 break;
             default:
                 assert(0);

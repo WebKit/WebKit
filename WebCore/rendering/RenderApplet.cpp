@@ -25,9 +25,10 @@
 #include "RenderApplet.h"
 
 #include "Document.h"
+#include "HTMLAppletElement.h"
 #include "HTMLNames.h"
+#include "HTMLParamElement.h"
 #include "JavaAppletWidget.h"
-#include "html_objectimpl.h"
 
 namespace WebCore {
 

@@ -35,9 +35,9 @@
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "DOMImplementation.h"
+#include "DOMWindow.h"
 #include "DocLoader.h"
 #include "DocumentType.h"
-#include "DOMWindow.h"
 #include "EditingText.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -47,6 +47,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLGenericFormElement.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NodeList.h"
 #include "Plugin.h"
@@ -60,7 +61,6 @@
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
 #include "html_imageimpl.h"
-#include "html_objectimpl.h"
 #include "htmlediting.h"
 #include "kjs_window.h"
 #include "markup.h"
@@ -2480,7 +2480,7 @@ void Frame::handleFallbackContent()
     Element* owner = ownerElement();
     if (!owner || !owner->hasTagName(objectTag))
         return;
-    static_cast<HTMLObjectElement *>(owner)->renderFallbackContent();
+    static_cast<HTMLObjectElement*>(owner)->renderFallbackContent();
 }
 
 void Frame::setSettings(KHTMLSettings *settings)

@@ -42,7 +42,6 @@
 #include "html_blockimpl.h"
 #include "html_headimpl.h"
 #include "html_listimpl.h"
-#include "html_objectimpl.h"
 #include "html_tableimpl.h"
 
 namespace WebCore {

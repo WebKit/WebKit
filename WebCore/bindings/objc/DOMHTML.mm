@@ -31,18 +31,22 @@
 #import "DOMPrivate.h"
 #import "DocumentFragment.h"
 #import "FoundationExtras.h"
+#import "HTMLAppletElement.h"
 #import "HTMLBaseFontElement.h"
 #import "HTMLButtonElement.h"
 #import "HTMLDocument.h"
+#import "HTMLEmbedElement.h"
 #import "HTMLFieldSetElement.h"
 #import "HTMLFormCollection.h"
 #import "HTMLFormElement.h"
 #import "HTMLIsIndexElement.h"
 #import "HTMLLabelElement.h"
 #import "HTMLLegendElement.h"
+#import "HTMLObjectElement.h"
 #import "HTMLOptGroupElement.h"
 #import "HTMLOptionElement.h"
 #import "HTMLOptionsCollection.h"
+#import "HTMLParamElement.h"
 #import "HTMLSelectElement.h"
 #import "HTMLTextAreaElement.h"
 #import "NameNodeList.h"
@@ -51,7 +55,6 @@
 #import "html_headimpl.h"
 #import "html_imageimpl.h"
 #import "html_listimpl.h"
-#import "html_objectimpl.h"
 #import "html_tableimpl.h"
 #import "markup.h"
 #import "RenderTextField.h"
@@ -2677,7 +2680,7 @@ using namespace WebCore::HTMLNames;
 
 - (HTMLAppletElement *)_appletElement
 {
-    return static_cast<HTMLAppletElement *>(DOM_cast<Node *>(_internal));
+    return static_cast<HTMLAppletElement*>(DOM_cast<Node*>(_internal));
 }
 
 - (NSString *)align
