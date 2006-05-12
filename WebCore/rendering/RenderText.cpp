@@ -486,7 +486,7 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font* f, int start, int len, 
         return w;
     }
     
-    return f->width(TextRun(string(), start, len, 0), tabWidth, xpos);
+    return f->width(TextRun(string(), start, len, 0), TextStyle(tabWidth, xpos));
 }
 
 void RenderText::trimmedMinMaxWidth(int leadWidth,
@@ -704,7 +704,7 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             }
             else
             {
-                currMaxWidth += f->width(TextRun(txt + i, 1), tabWidth(), leadWidth + currMaxWidth);
+                currMaxWidth += f->width(TextRun(txt + i, 1), TextStyle(tabWidth(), leadWidth + currMaxWidth));
                 needsWordSpacing = isSpace && !previousCharacterIsSpace && i == len-1;
             }
         }
@@ -995,7 +995,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     else if (f == &style()->font())
         w = widthFromCache(f, from, len, tabWidth(), xpos);
     else
-        w = f->width(TextRun(string(), from, len, 0), tabWidth(), xpos );
+        w = f->width(TextRun(string(), from, len, 0), TextStyle(tabWidth(), xpos));
         
     return w;
 }

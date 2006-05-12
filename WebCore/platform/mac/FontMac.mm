@@ -113,20 +113,15 @@ void FontFallbackList::invalidate()
 
 struct ATSULayoutParameters
 {
-    ATSULayoutParameters(const TextRun& run, int toAdd, TextDirection dir, bool applyWordRounding, bool applyRunRounding)
-    :m_run(run), m_padding(toAdd), m_rtl(dir == RTL),
-     m_applyWordRounding(applyWordRounding), m_applyRunRounding(applyRunRounding),
+    ATSULayoutParameters(const TextRun& run, const TextStyle& style)
+    :m_run(run), m_style(style),
      m_font(0), m_fonts(0), m_charBuffer(0), m_hasSyntheticBold(false), m_syntheticBoldPass(false), m_padPerSpace(0)
     {}
 
     void initialize(const Font* font);
 
     const TextRun& m_run;
-
-    int m_padding;
-    bool m_rtl;
-    bool m_applyWordRounding;
-    bool m_applyRunRounding;
+    const TextStyle& m_style;
     
     const Font* m_font;
     
@@ -211,7 +206,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
     ItemCount count;
     ATSLayoutRecord *layoutRecords;
 
-    if (params->m_applyWordRounding) {
+    if (params->m_style.applyWordRounding()) {
         status = ATSUDirectGetLayoutDataArrayPtrFromLineRef(iLineRef, kATSUDirectDataLayoutRecordATSLayoutRecordCurrent, true, (void **)&layoutRecords, &count);
         if (status != noErr) {
             *oCallbackStatus = kATSULayoutOperationCallbackStatusContinue;
@@ -231,8 +226,8 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         bool syntheticBoldPass = params->m_syntheticBoldPass;
         Fixed syntheticBoldOffset = 0;
         ATSGlyphRef spaceGlyph = 0;
-        bool hasExtraSpacing = params->m_font->letterSpacing() || params->m_font->wordSpacing() | params->m_padding;
-        float padding = params->m_padding;
+        bool hasExtraSpacing = params->m_font->letterSpacing() || params->m_font->wordSpacing() | params->m_style.padding();
+        float padding = params->m_style.padding();
         // In the CoreGraphics code path, the rounding hack is applied in logical order.
         // Here it is applied in visual left-to-right order, which may be better.
         ItemCount lastRoundingChar = 0;
@@ -263,7 +258,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                 if (width && params->m_font->letterSpacing())
                     width +=params->m_font->letterSpacing();
                 if (Font::treatAsSpace(nextCh)) {
-                    if (params->m_padding) {
+                    if (params->m_style.padding()) {
                         if (padding < params->m_padPerSpace) {
                             width += padding;
                             padding = 0;
@@ -288,10 +283,10 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
             lastAdjustedPos = lastAdjustedPos + width;
             if (Font::isRoundingHackCharacter(nextCh)
                 && (!isLastChar
-                    || params->m_applyRunRounding
+                    || params->m_style.applyRunRounding()
                     || (params->m_run.to() < (int)params->m_run.length() && 
                         Font::isRoundingHackCharacter(characters[params->m_run.to() - params->m_run.from()])))) {
-                if (!params->m_rtl)
+                if (params->m_style.ltr())
                     lastAdjustedPos = ceilf(lastAdjustedPos);
                 else {
                     float roundingWidth = ceilf(lastAdjustedPos) - lastAdjustedPos;
@@ -326,7 +321,7 @@ void ATSULayoutParameters::initialize(const Font* font)
     // fontData ATSUMirrors is true, for a substitute fontData it might be false.
     const FontData* fontData = font->primaryFont();
     m_fonts = new const FontData*[m_run.length()];
-    m_charBuffer = (UChar*)((font->isSmallCaps() || (m_rtl && !fontData->m_ATSUMirrors)) ? new UChar[m_run.length()] : 0);
+    m_charBuffer = (UChar*)((font->isSmallCaps() || (m_style.rtl() && !fontData->m_ATSUMirrors)) ? new UChar[m_run.length()] : 0);
     
     // The only Cocoa calls here are to NSGraphicsContext, which does not raise exceptions.
 
@@ -365,14 +360,14 @@ void ATSULayoutParameters::initialize(const Font* font)
 
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     ATSLineLayoutOptions lineLayoutOptions = kATSLineKeepSpacesOutOfMargin | kATSLineHasNoHangers;
-    Boolean rtl = m_rtl;
+    Boolean rtl = m_style.rtl();
     overrideSpecifier.operationSelector = kATSULayoutOperationPostLayoutAdjustment;
     overrideSpecifier.overrideUPP = overrideLayoutOperation;
     ATSUAttributeTag tags[] = { kATSUCGContextTag, kATSULineLayoutOptionsTag, kATSULineDirectionTag, kATSULayoutOperationOverrideTag };
     ByteCount sizes[] = { sizeof(CGContextRef), sizeof(ATSLineLayoutOptions), sizeof(Boolean), sizeof(ATSULayoutOperationOverrideSpecifier) };
     ATSUAttributeValuePtr values[] = { &cgContext, &lineLayoutOptions, &rtl, &overrideSpecifier };
     
-    status = ATSUSetLayoutControls(layout, (m_applyWordRounding ? 4 : 3), tags, sizes, values);
+    status = ATSUSetLayoutControls(layout, (m_style.applyWordRounding() ? 4 : 3), tags, sizes, values);
     if (status != noErr)
         LOG_ERROR("ATSUSetLayoutControls failed(%d)", status);
 
@@ -420,7 +415,7 @@ void ATSULayoutParameters::initialize(const Font* font)
                 else
                     break;
             }
-            if (m_rtl && m_charBuffer && !r->m_ATSUMirrors)
+            if (m_style.rtl() && m_charBuffer && !r->m_ATSUMirrors)
                 m_charBuffer[i] = u_charMirror(m_charBuffer[i]);
             if (m_font->isSmallCaps()) {
                 UChar c = m_charBuffer[i];
@@ -449,14 +444,17 @@ void ATSULayoutParameters::initialize(const Font* font)
         }
         substituteOffset += substituteLength;
     }
-    if (m_padding) {
+    if (m_style.padding()) {
         float numSpaces = 0;
         unsigned k;
         for (k = 0; k < totalLength; k++)
             if (Font::treatAsSpace(m_run[k]))
                 numSpaces++;
 
-        m_padPerSpace = ceilf(m_padding / numSpaces);
+        if (numSpaces == 0)
+            m_padPerSpace = 0;
+        else
+            m_padPerSpace = ceilf(m_style.padding() / numSpaces);
     } else
         m_padPerSpace = 0;
 }
@@ -473,7 +471,7 @@ const FontPlatformData& Font::platformFont() const
     return m_fontList->platformFont(fontDescription());
 }
 
-FloatRect Font::selectionRectForText(const TextRun& textRun, const IntPoint& point, int h, int tabWidth, int xpos, int toAdd, bool rtl, bool visuallyOrdered) const
+FloatRect Font::selectionRectForText(const TextRun& textRun, const TextStyle& textStyle, const IntPoint& point, int h) const
 {
     assert(m_fontList);
 
@@ -483,15 +481,15 @@ FloatRect Font::selectionRectForText(const TextRun& textRun, const IntPoint& poi
     WebCoreInitializeTextRun(&run, textRun.characters(), textRun.length(), textRun.from(), textRun.to());
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
-    style.rtl = rtl;
-    style.directionalOverride = visuallyOrdered;
+    style.rtl = textStyle.rtl();
+    style.directionalOverride = textStyle.directionalOverride();
     style.letterSpacing = letterSpacing();
     style.wordSpacing = wordSpacing();
     style.smallCaps = fontDescription().smallCaps();
     style.families = families;    
-    style.padding = toAdd;
-    style.tabWidth = tabWidth;
-    style.xpos = xpos;
+    style.padding = textStyle.padding();
+    style.tabWidth = textStyle.tabWidth();
+    style.xpos = textStyle.xPos();
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
     geometry.point = point;
@@ -501,15 +499,14 @@ FloatRect Font::selectionRectForText(const TextRun& textRun, const IntPoint& poi
     return m_fontList->primaryFont(fontDescription())->selectionRectForRun(&run, &style, &geometry);
 }
 
-void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const IntPoint& point, int tabWidth, int xpos,
-                           int toAdd, TextDirection d, bool visuallyOrdered) const
+void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const TextStyle& style, const IntPoint& point) const
 {
     OSStatus status;
     
     int runLength = run.length();
 
-    TextRun adjustedRun = visuallyOrdered ? addDirectionalOverride(run, d == RTL) : run;
-    ATSULayoutParameters params(adjustedRun, toAdd, d, true, true);
+    TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(run, style.rtl()) : run;
+    ATSULayoutParameters params(adjustedRun, style);
     params.initialize(this);
 
     [nsColor(graphicsContext->pen().color()) set];
@@ -540,13 +537,13 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
 
     disposeATSULayoutParameters(&params);
     
-    if (visuallyOrdered)
+    if (style.directionalOverride())
         delete []adjustedRun.characters();
 }
 
-float Font::floatWidthForComplexText(const TextRun& run, int tabWidth, int xpos, bool runRounding) const
+float Font::floatWidthForComplexText(const TextRun& run, const TextStyle& style) const
 {
-    ATSULayoutParameters params(run, 0, LTR, true, runRounding);
+    ATSULayoutParameters params(run, style);
     params.initialize(this);
     
     OSStatus status;
@@ -565,7 +562,7 @@ float Font::floatWidthForComplexText(const TextRun& run, int tabWidth, int xpos,
            MIN(FixedToFloat(firstGlyphBounds.upperLeft.x), FixedToFloat(firstGlyphBounds.lowerLeft.x));
 }
 
-int Font::checkSelectionPoint(const TextRun& textRun, int toAdd, int tabWidth, int xpos, int x, TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
+int Font::offsetForPosition(const TextRun& textRun, const TextStyle& textStyle, int x, bool includePartialGlyphs) const
 {
     assert(m_fontList);
     CREATE_FAMILY_ARRAY(fontDescription(), families);
@@ -579,11 +576,11 @@ int Font::checkSelectionPoint(const TextRun& textRun, int toAdd, int tabWidth, i
     style.wordSpacing = wordSpacing();
     style.smallCaps = fontDescription().smallCaps();
     style.families = families;
-    style.padding = toAdd;
-    style.tabWidth = tabWidth;
-    style.xpos = xpos;
-    style.rtl =  d == RTL;
-    style.directionalOverride = visuallyOrdered;
+    style.padding = textStyle.padding();
+    style.tabWidth = textStyle.tabWidth();
+    style.xpos = textStyle.xPos();
+    style.rtl = textStyle.rtl();
+    style.directionalOverride = textStyle.directionalOverride();
 
     return m_fontList->primaryFont(fontDescription())->pointToOffset(&run, &style, x, includePartialGlyphs);
 }

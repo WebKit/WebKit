@@ -80,6 +80,36 @@ private:
     int m_to;
 };
 
+class TextStyle
+{
+public:
+    TextStyle(int tabWidth = 0, int xpos = 0, int padding = 0, bool rtl = false, bool directionalOverride = false,
+              bool applyRunRounding = true, bool applyWordRounding = true, bool attemptFontSubstitution = true)
+    :m_tabWidth(tabWidth), m_xpos(xpos), m_padding(padding), m_rtl(rtl), m_directionalOverride(directionalOverride),
+     m_applyRunRounding(applyRunRounding), m_applyWordRounding(applyWordRounding), m_attemptFontSubstitution(attemptFontSubstitution)
+    {}
+    
+    int tabWidth() const { return m_tabWidth; }
+    int xPos() const { return m_xpos; }
+    int padding() const { return m_padding; }
+    bool rtl() const { return m_rtl; }
+    bool ltr() const { return !m_rtl; }
+    bool directionalOverride() const { return m_directionalOverride; }
+    bool applyRunRounding() const { return m_applyRunRounding; }
+    bool applyWordRounding() const { return m_applyWordRounding; }
+    bool attemptFontSubstitution() const { return m_attemptFontSubstitution; }
+
+private:
+    int m_tabWidth;
+    int m_xpos;
+    int m_padding;
+    bool m_rtl;
+    bool m_directionalOverride;
+    bool m_applyRunRounding;
+    bool m_applyWordRounding;
+    bool m_attemptFontSubstitution;
+};
+
 class Font {
 public:
     Font();
@@ -90,7 +120,7 @@ public:
     Font& operator=(const Font&);
 
     bool operator==(const Font& other) const {
-        // The renderer pointer doesn't have to be checked, since
+        // Our FontData doesn't have to be checked, since
         // checking the font description will be fine.
         return (m_fontDescription == other.m_fontDescription &&
                 m_letterSpacing == other.m_letterSpacing &&
@@ -108,19 +138,13 @@ public:
     
     void update() const;
 
-    void drawText(GraphicsContext*, const TextRun&, const IntPoint&, int tabWidth, int xpos,
-                  int toAdd, TextDirection, bool visuallyOrdered) const;
-    void drawLineForMisspelling(GraphicsContext*, const IntPoint&, int width) const;
-    int misspellingLineThickness(GraphicsContext*) const;
+    void drawText(GraphicsContext*, const TextRun&, const TextStyle&, const IntPoint&) const;
 
-    float floatWidth(const TextRun&, int tabWidth, int xpos, bool runRounding = true) const;
+    int width(const TextRun&, const TextStyle& = TextStyle()) const;
+    float floatWidth(const TextRun&, const TextStyle& = TextStyle()) const;
     
-    int checkSelectionPoint(const TextRun&, int toAdd, int tabWidth, int xpos,
-        int x, TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const;
-    FloatRect selectionRectForText(const TextRun&, const IntPoint&, int h, int tabWidth, int xpos, int width,
-                                   bool rtl, bool visuallyOrdered = false) const;
-    
-    int width(const TextRun&, int tabWidth = 0, int xpos = 0) const;
+    int offsetForPosition(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForText(const TextRun&, const TextStyle&, const IntPoint&, int h) const;
 
     bool isSmallCaps() const { return m_fontDescription.smallCaps(); }
 
@@ -158,19 +182,11 @@ private:
 #if __APPLE__
     // FIXME: This will eventually be cross-platform, but we want to keep Windows compiling for now.
     bool canUseGlyphCache(const TextRun&) const;
-    void drawSimpleText(GraphicsContext*, const TextRun&, const IntPoint&, 
-                        int tabWidth, int xpos, int toAdd, 
-                        TextDirection, bool visuallyOrdered) const;
+    void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const IntPoint&) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
-    void drawComplexText(GraphicsContext*, const TextRun&, const IntPoint&, 
-                         int tabWidth, int xpos, int toAdd, TextDirection, bool visuallyOrdered) const;
-    float floatWidthForSimpleText(const TextRun&, 
-                                  int tabWidth, int xpos, int toAdd, 
-                                  TextDirection, bool visuallyOrdered, 
-                                  bool applyWordRounding, bool applyRunRounding,
-                                  const FontData* substituteFont,
-                                  float* startX, GlyphBuffer*) const;
-    float floatWidthForComplexText(const TextRun&, int tabWidth, int xpos, bool runRounding = true) const;
+    void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const IntPoint&) const;
+    float floatWidthForSimpleText(const TextRun&, const TextStyle&, const FontData* substituteFont, float* startX, GlyphBuffer*) const;
+    float floatWidthForComplexText(const TextRun&, const TextStyle&) const;
 
     friend struct WidthIterator;
     

@@ -1,3 +1,57 @@
+2006-05-12  David Hyatt  <hyatt@apple.com>
+
+        Bug 8864. Lift WebCoreTextStyle up into the API (as TextStyle).
+
+        Reviewed by mjs
+
+        * platform/Font.cpp:
+        (WebCore::m_finalRoundingWidth):
+        (WebCore::WidthIterator::advance):
+        (WebCore::Font::width):
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::floatWidthForSimpleText):
+        * platform/Font.h:
+        (WebCore::TextStyle::m_attemptFontSubstitution):
+        (WebCore::TextStyle::tabWidth):
+        (WebCore::TextStyle::xPos):
+        (WebCore::TextStyle::padding):
+        (WebCore::TextStyle::rtl):
+        (WebCore::TextStyle::ltr):
+        (WebCore::TextStyle::directionalOverride):
+        (WebCore::TextStyle::applyRunRounding):
+        (WebCore::TextStyle::applyWordRounding):
+        (WebCore::TextStyle::attemptFontSubstitution):
+        (WebCore::Font::operator==):
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawHighlightForText):
+        * platform/GraphicsContext.h:
+        * platform/mac/FontMac.mm:
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPosition):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::calcMinMaxWidth):
+        (WebCore::RenderText::width):
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::calcMinMaxWidth):
+        * rendering/render_line.cpp:
+        (WebCore::EllipsisBox::paint):
+
 2006-05-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

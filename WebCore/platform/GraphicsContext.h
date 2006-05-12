@@ -26,6 +26,7 @@
 #ifndef GraphicsContext_h
 #define GraphicsContext_h
 
+#include "Font.h"
 #include "FloatRect.h"
 #include "Image.h"
 #include "IntRect.h"
@@ -57,7 +58,6 @@ namespace WebCore {
     class IntPoint;
     class IntPointArray;
     class Path;
-    class TextRun;
 
 #if SVG_SUPPORT
     class KRenderingDeviceContext;
@@ -112,12 +112,9 @@ namespace WebCore {
         void setFocusRingClip(const IntRect&);
         void clearFocusRingClip();
 
-        void drawText(const TextRun&, const IntPoint&, int tabWidth = 0, int xpos = 0, int toAdd = 0,
-                      TextDirection = LTR, bool visuallyOrdered = false);
-        void drawHighlightForText(const TextRun&, const IntPoint&, int h, 
-                                  int tabWidth, int xpos, int toAdd, TextDirection, bool visuallyOrdered, const Color& backgroundColor);
-                                  
-        
+        void drawText(const TextRun&, const IntPoint&, const TextStyle& = TextStyle());
+        void drawHighlightForText(const TextRun&, const IntPoint&, int h, const TextStyle&, const Color& backgroundColor);
+
         void drawLineForText(const IntPoint&, int yOffset, int width, bool printing);
         void drawLineForMisspelling(const IntPoint&, int width);
 
