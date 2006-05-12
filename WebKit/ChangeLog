@@ -1,3 +1,29 @@
+2006-05-12  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4542808> REGRESSION: benchjs test 1 has slowed by over 150% (8740)
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8740>
+
+        Improvement to my NSWindow display throttle hack.  Remember the last flush time instead of the last display time.
+        Our goal is to never draw less than 1/60th of a second after the window is flushed in order to avoid blocking on
+        a CG coalesced update.  Using the last display time is close, but this is much more accurate.  I have verified that
+        this further improves our score on BenchJS Test 1 (by 9.8% with the status bar shown compared to the previous build),
+        as well as on our internal PLT scores by a smaller percentage.
+
+        * Misc/WebNSWindowExtras.m:
+        Renamed lastDisplayTime to lastFlushTime.
+        (+[NSWindow _webkit_enableWindowDisplayThrottle]):
+        Replace -[NSWindow flushWindow] with our own implementation.
+        (+[NSWindow _webkit_disableWindowDisplayThrottle]):
+        Restore -[NSWindow flushWindow].
+        (replacementFlushWindow):
+        Use the last flush time instead of the last display time.
+        (getWindowDisplayInfo):
+        Renamed lastDisplayTime to lastFlushTime.
+        (requestWindowDisplay):
+        Moved some code to replacementFlushWindow().
+
 2006-05-11  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

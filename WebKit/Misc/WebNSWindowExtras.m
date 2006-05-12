@@ -38,10 +38,11 @@ static BOOL throttlingWindowDisplay;
 static CFMutableDictionaryRef windowDisplayInfoDictionary;
 static IMP oldNSWindowPostWindowNeedsDisplayIMP;
 static IMP oldNSWindowCloseIMP;
+static IMP oldNSWindowFlushWindowIMP;
 
 typedef struct {
     NSWindow *window;
-    CFTimeInterval lastDisplayTime;
+    CFTimeInterval lastFlushTime;
     NSTimer *displayTimer;
 } WindowDisplayInfo;
 
@@ -49,6 +50,7 @@ typedef struct {
 static IMP swizzleInstanceMethod(Class class, SEL selector, IMP newImplementation);
 static void replacementPostWindowNeedsDisplay(id self, SEL cmd);
 static void replacementClose(id self, SEL cmd);
+static void replacementFlushWindow(id self, SEL cmd);
 static WindowDisplayInfo *getWindowDisplayInfo(NSWindow *window);
 static BOOL requestWindowDisplay(NSWindow *window);
 static void cancelPendingWindowDisplay(WindowDisplayInfo *displayInfo);
@@ -78,6 +80,11 @@ static void cancelPendingWindowDisplay(WindowDisplayInfo *displayInfo);
     ASSERT(!oldNSWindowCloseIMP);
     oldNSWindowCloseIMP = swizzleInstanceMethod(self, @selector(close), (IMP)replacementClose);
     ASSERT(oldNSWindowCloseIMP);
+
+    // Override -[NSWindow flushWindow]    
+    ASSERT(!oldNSWindowFlushWindowIMP);
+    oldNSWindowFlushWindowIMP = swizzleInstanceMethod(self, @selector(flushWindow), (IMP)replacementFlushWindow);
+    ASSERT(oldNSWindowFlushWindowIMP);
     
 //    NSLog(@"Throttling window display to %.3f times per second", 1.0 / DISPLAY_REFRESH_INTERVAL);
     
@@ -115,6 +122,11 @@ static void disableWindowDisplayThrottleApplierFunction(const void *key, const v
     ASSERT(oldNSWindowCloseIMP);
     swizzleInstanceMethod(self, @selector(close), oldNSWindowCloseIMP);
     oldNSWindowCloseIMP = NULL;
+
+    // Restore -[NSWindow flushWindow]    
+    ASSERT(oldNSWindowFlushWindowIMP);
+    swizzleInstanceMethod(self, @selector(flushWindow), oldNSWindowFlushWindowIMP);
+    oldNSWindowFlushWindowIMP = NULL;
 
     CFDictionaryApplyFunction(windowDisplayInfoDictionary, disableWindowDisplayThrottleApplierFunction, NULL);
     CFRelease(windowDisplayInfoDictionary);
@@ -186,6 +198,14 @@ static void replacementClose(id self, SEL cmd)
     oldNSWindowCloseIMP(self, cmd);
 }
 
+static void replacementFlushWindow(id self, SEL cmd)
+{
+    ASSERT(throttlingWindowDisplay);
+
+    oldNSWindowFlushWindowIMP(self, cmd);
+    getWindowDisplayInfo(self)->lastFlushTime = CFAbsoluteTimeGetCurrent();
+}
+
 static WindowDisplayInfo *getWindowDisplayInfo(NSWindow *window)
 {
     ASSERT(throttlingWindowDisplay);
@@ -196,7 +216,7 @@ static WindowDisplayInfo *getWindowDisplayInfo(NSWindow *window)
     if (!displayInfo) {
         displayInfo = (WindowDisplayInfo *)malloc(sizeof(WindowDisplayInfo));
         displayInfo->window = window;
-        displayInfo->lastDisplayTime = 0;
+        displayInfo->lastFlushTime = 0;
         displayInfo->displayTimer = nil;
         CFDictionarySetValue(windowDisplayInfoDictionary, window, displayInfo);
     }
@@ -215,7 +235,7 @@ static BOOL requestWindowDisplay(NSWindow *window)
         
     // Defer display if it hasn't been at least DISPLAY_REFRESH_INTERVAL seconds since the last display
     CFTimeInterval now = CFAbsoluteTimeGetCurrent();
-    CFTimeInterval timeSinceLastDisplay = now - displayInfo->lastDisplayTime;
+    CFTimeInterval timeSinceLastDisplay = now - displayInfo->lastFlushTime;
     if (timeSinceLastDisplay < DISPLAY_REFRESH_INTERVAL) {
         // Redisplay soon -- if we redisplay too quickly, we'll block due to pending CG coalesced updates
         displayInfo->displayTimer = [[NSTimer timerWithTimeInterval:(DISPLAY_REFRESH_INTERVAL - timeSinceLastDisplay)
@@ -233,8 +253,6 @@ static BOOL requestWindowDisplay(NSWindow *window)
         return NO;
     }
 
-    // Allow the display: there is no pending display, and it's been long enough to display again.
-    displayInfo->lastDisplayTime = now;
     return YES;
 }
 
