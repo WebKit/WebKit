@@ -1,3 +1,54 @@
+2006-05-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
+        Split out html_tableimpl.* into multiple files (one per class)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8873
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLTableCaptionElement.cpp: Added.
+        (WebCore::HTMLTableCaptionElement::HTMLTableCaptionElement):
+        * html/HTMLTableCaptionElement.h: Added.
+        * html/HTMLTableCellElement.cpp: Added.
+        (WebCore::HTMLTableCellElement::HTMLTableCellElement):
+        * html/HTMLTableCellElement.h: Added.
+        * html/HTMLTableColElement.cpp: Added.
+        (WebCore::HTMLTableColElement::HTMLTableColElement):
+        (WebCore::HTMLTableColElement::endTagRequirement):
+        (WebCore::HTMLTableColElement::tagPriority):
+        (WebCore::HTMLTableColElement::checkDTD):
+        * html/HTMLTableColElement.h: Added.
+        * html/HTMLTableElement.cpp: Added.
+        (WebCore::HTMLTableElement::HTMLTableElement):
+        (WebCore::HTMLTableElement::setCaption):
+        (WebCore::HTMLTableElement::setTHead):
+        (WebCore::HTMLTableElement::setTFoot):
+        (WebCore::HTMLTableElement::setTBody):
+        (WebCore::HTMLTableElement::createTHead):
+        (WebCore::HTMLTableElement::deleteTHead):
+        (WebCore::HTMLTableElement::createTFoot):
+        (WebCore::HTMLTableElement::deleteTFoot):
+        (WebCore::HTMLTableElement::createCaption):
+        (WebCore::HTMLTableElement::deleteCaption):
+        (WebCore::HTMLTableElement::insertRow):
+        (WebCore::HTMLTableElement::deleteRow):
+        (WebCore::HTMLTableElement::addChild):
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        (WebCore::HTMLTableElement::attach):
+        * html/HTMLTableElement.h: Added.
+        * html/HTMLTablePartElement.cpp: Added.
+        (WebCore::HTMLTablePartElement::parseMappedAttribute):
+        * html/HTMLTablePartElement.h: Added.
+        * html/HTMLTableRowElement.cpp: Added.
+        (WebCore::HTMLTableRowElement::HTMLTableRowElement):
+        (WebCore::HTMLTableRowElement::rowIndex):
+        * html/HTMLTableRowElement.h: Added.
+        * html/HTMLTableSectionElement.cpp: Added.
+        (WebCore::HTMLTableSectionElement::insertRow):
+        * html/HTMLTableSectionElement.h: Added.
+        * html/html_tableimpl.cpp: Removed.
+        * html/html_tableimpl.h: Removed.
+
 2006-05-10  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs & adele.
