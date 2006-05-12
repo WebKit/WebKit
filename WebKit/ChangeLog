@@ -1,5 +1,18 @@
 2006-05-11  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Darin.
+
+        Bug 8856: Web Inspector should show the Xpath for the selected node
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8856
+        
+        Adds an Xpath area to the Node panel.
+
+        * WebInspector/webInspector/inspector.css:
+        * WebInspector/webInspector/inspector.html:
+        * WebInspector/webInspector/inspector.js:
+
+2006-05-11  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Anders.
 
         Fixes <rdar://problem/4411845> lots of SPOD trying to scroll through

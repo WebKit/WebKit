@@ -645,6 +645,20 @@ button.toggle.right {
     color: rgba(255,255,255,0.6);
 }
 
+#nodeXpath {
+    margin-top: 4px;
+    height: 60px;
+}
+
+#nodeXpathValue {
+    -webkit-user-select: text;
+    -webkit-dashboard-region: dashboard-region(control rectangle);
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 32px;
+}
+
 #nodeContents {
     display: -webkit-box;
     -webkit-box-flex: 12;

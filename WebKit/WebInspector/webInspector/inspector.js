@@ -262,6 +262,40 @@ function nodeTypeName(node)
     return "(unknown)";
 }
 
+function xpathForNode(node)
+{
+    var path = "";
+    while (node) {
+        if (node.nodeType == Node.DOCUMENT_NODE) {
+            path = "/" + path;
+        } else {
+            if (node.nodeName == "HTML" || node.nodeName == "BODY") {
+                path = node.nodeName.toLowerCase() + (path.length ? "/" + path : "");
+            } else {
+                var index = 1;
+                var child = (node.parentNode ? node.parentNode.firstChild : null);
+                while (child) {
+                    if (node == child)
+                        break;
+                    if (child.nodeName == node.nodeName)
+                        index++;
+                    child = child.nextSibling;
+                }
+                
+                var name = node.nodeName.toLowerCase();
+                if (node.nodeType == Node.TEXT_NODE)
+                    name = "text()";
+
+                path = name + "[" + index + "]" + (path.length ? "/" + path : "");
+            }
+        }
+
+        node = node.parentNode;
+    }
+
+    return path;
+}
+
 function updatePanes()
 {
     for (var i = 0; i < tabNames.length; i++)
@@ -340,6 +374,8 @@ function updateNodePane() {
         document.getElementById("elementAttributes").style.display = "none";
         document.getElementById("nodeContents").style.display = "none";
     }
+
+    document.getElementById("nodeXpathValue").textContent = xpathForNode(focusedNode);
 
     document.getElementById("nodeType").textContent = nodeTypeName(focusedNode);
     document.getElementById("nodeName").textContent = focusedNode.nodeName;
