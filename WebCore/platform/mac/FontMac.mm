@@ -544,11 +544,6 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
         delete []adjustedRun.characters();
 }
 
-void Font::drawLineForText(GraphicsContext* context, const IntPoint& point, int yOffset, int width) const
-{
-    m_fontList->primaryFont(fontDescription())->drawLineForCharacters(point, yOffset, width, context->pen().color(), context->pen().width());
-}
-
 void Font::drawLineForMisspelling(GraphicsContext* context, const IntPoint& point, int width) const
 {
     m_fontList->primaryFont(fontDescription())->drawLineForMisspelling(point, width);

@@ -988,17 +988,18 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
         if (styleToUse->font() != p->font())
             p->setFont(styleToUse->font());
 
+        bool isPrinting = object()->document()->printing();
         if (deco & UNDERLINE && !paintedChildren) {
             p->setPen(underline);
-            p->drawLineForText(IntPoint(_tx, _ty), m_baseline, w);
+            p->drawLineForText(IntPoint(_tx, _ty), m_baseline, w, isPrinting);
         }
         if (deco & OVERLINE && !paintedChildren) {
             p->setPen(overline);
-            p->drawLineForText(IntPoint(_tx, _ty), 0, w);
+            p->drawLineForText(IntPoint(_tx, _ty), 0, w, isPrinting);
         }
         if (deco & LINE_THROUGH && paintedChildren) {
             p->setPen(linethrough);
-            p->drawLineForText(IntPoint(_tx, _ty), 2*m_baseline/3, w);
+            p->drawLineForText(IntPoint(_tx, _ty), 2*m_baseline/3, w, isPrinting);
         }
 
         if (setShadow)

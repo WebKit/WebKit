@@ -210,15 +210,6 @@ void GraphicsContext::drawHighlightForText(const TextRun& run, const IntPoint& p
     fillRect(font().selectionRectForText(run, point, h, tabWidth, xpos, toAdd, d == RTL, visuallyOrdered), backgroundColor);
 }
 
-void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int width)
-{
-    if (paintingDisabled())
-        return;
-
-    return font().drawLineForText(this, point, yOffset, width);
-}
-
-
 void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
 {
     if (paintingDisabled())

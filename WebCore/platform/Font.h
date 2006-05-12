@@ -110,7 +110,6 @@ public:
 
     void drawText(GraphicsContext*, const TextRun&, const IntPoint&, int tabWidth, int xpos,
                   int toAdd, TextDirection, bool visuallyOrdered) const;
-    void drawLineForText(GraphicsContext*, const IntPoint&, int yOffset, int width) const;
     void drawLineForMisspelling(GraphicsContext*, const IntPoint&, int width) const;
     int misspellingLineThickness(GraphicsContext*) const;
 

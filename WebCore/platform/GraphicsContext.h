@@ -114,7 +114,7 @@ namespace WebCore {
                                   int tabWidth, int xpos, int toAdd, TextDirection, bool visuallyOrdered, const Color& backgroundColor);
                                   
         
-        void drawLineForText(const IntPoint&, int yOffset, int width);
+        void drawLineForText(const IntPoint&, int yOffset, int width, bool printing);
         void drawLineForMisspelling(const IntPoint&, int width);
         int misspellingLineThickness();
 

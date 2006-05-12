@@ -112,7 +112,6 @@ public:
     // drawing
     void drawRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry);
     FloatRect selectionRectForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry);
-    void drawLineForCharacters(const FloatPoint& point, float yOffset, int width, const Color& color, float thickness);
     void drawLineForMisspelling(const FloatPoint& point, int width);
     int misspellingLineThickness() const { return 3; }
 

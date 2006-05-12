@@ -394,4 +394,14 @@ void GraphicsContext::clearFocusRingClip()
 {
 }
 
+void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int width, bool printing)
+{
+    if (paintingDisabled())
+        return;
+
+    IntPoint origin = point + IntSize(0, yOffset + 1);
+    IntPoint endPoint = origin + IntSize(width, 0);
+    drawLine(origin, endPoint);
+}
+
 }

@@ -1,3 +1,28 @@
+2006-05-11  David Hyatt  <hyatt@apple.com>
+
+        Remove drawLineForText from the Font API.  Implement it natively in
+        the two GraphicsContexts (CG and Cairo) instead.
+
+        Reviewed by maciej
+
+        * platform/Font.h:
+        * platform/FontData.h:
+        * platform/GraphicsContext.cpp:
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+        * platform/mac/FontData.mm:
+        * platform/mac/FontMac.mm:
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::drawLineForText):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintMarkedTextUnderline):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paintDecorations):
+
 2006-05-11  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by eric.

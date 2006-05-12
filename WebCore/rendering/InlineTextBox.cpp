@@ -493,17 +493,18 @@ void InlineTextBox::paintDecoration(GraphicsContext *pt, int _tx, int _ty, int d
     object()->getTextDecorationColors(deco, underline, overline, linethrough, true);
     
     // Use a special function for underlines to get the positioning exactly right.
+    bool isPrinting = textObject()->document()->printing();
     if (deco & UNDERLINE) {
         pt->setPen(underline);
-        pt->drawLineForText(IntPoint(_tx, _ty), m_baseline, width);
+        pt->drawLineForText(IntPoint(_tx, _ty), m_baseline, width, isPrinting);
     }
     if (deco & OVERLINE) {
         pt->setPen(overline);
-        pt->drawLineForText(IntPoint(_tx, _ty), 0, width);
+        pt->drawLineForText(IntPoint(_tx, _ty), 0, width, isPrinting);
     }
     if (deco & LINE_THROUGH) {
         pt->setPen(linethrough);
-        pt->drawLineForText(IntPoint(_tx, _ty), 2*m_baseline/3, width);
+        pt->drawLineForText(IntPoint(_tx, _ty), 2*m_baseline/3, width, isPrinting);
     }
 }
 
@@ -648,7 +649,7 @@ void InlineTextBox::paintMarkedTextUnderline(GraphicsContext* pt, int _tx, int _
 
     int underlineOffset = m_height - 3;
     pt->setPen(Pen(underline.color, underline.thick ? 2 : 0));
-    pt->drawLineForText(IntPoint(_tx + start, _ty), underlineOffset, width);
+    pt->drawLineForText(IntPoint(_tx + start, _ty), underlineOffset, width, textObject()->document()->printing());
 }
 
 int InlineTextBox::caretMinOffset() const
