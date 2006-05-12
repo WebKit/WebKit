@@ -29,7 +29,7 @@
 
 #include "CachedImage.h"
 #include "HTMLElement.h"
-#include "render_replaced.h"
+#include "RenderReplaced.h"
 
 namespace WebCore {
 

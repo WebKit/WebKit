@@ -22,21 +22,17 @@
  *
  */
 
-#ifndef render_frames_h__
-#define render_frames_h__
+#ifndef RenderFrameSet_H
+#define RenderFrameSet_H
 
 #include "RenderContainer.h"
-#include "render_replaced.h"
-#include "html_baseimpl.h"
+#include "HTMLFrameSetElement.h"
+
 
 namespace WebCore {
 
-class FrameView;
-class HTMLElement;
-class HTMLFrameElement;
+class HTMLFrameSetElement;
 class MouseEvent;
-
-struct ChildFrame;
 
 class RenderFrameSet : public RenderContainer
 {
@@ -64,7 +60,7 @@ public:
         { return static_cast<HTMLFrameSetElement*>(RenderContainer::element()); }
 
 #ifndef NDEBUG
-    virtual void dump(QTextStream *stream, DeprecatedString ind = "") const;
+    virtual void dump(QTextStream* stream, DeprecatedString ind = "") const;
 #endif
 
 private:
@@ -83,60 +79,6 @@ private:
 
     bool m_resizing;
     bool m_clientResizing;
-};
-
-class RenderPart : public RenderWidget {
-public:
-    RenderPart(HTMLElement*);
-    virtual ~RenderPart();
-    
-    virtual const char* renderName() const { return "RenderPart"; }
-
-    void setFrame(Frame*);
-    void setWidget(Widget*);
-
-    // FIXME: This should not be necessary.
-    // Remove this once WebKit knows to properly schedule layouts using WebCore when objects resize.
-    void updateWidgetPosition();
-
-    bool hasFallbackContent() const { return m_hasFallbackContent; }
-
-    virtual void viewCleared();
-
-protected:
-    bool m_hasFallbackContent;
-
-private:
-    virtual void deleteWidget();
-
-    Frame* m_frame;
-};
-
-class RenderFrame : public RenderPart
-{
-public:
-    RenderFrame(HTMLFrameElement*);
-
-    virtual const char* renderName() const { return "RenderFrame"; }
-
-    HTMLFrameElement* element() const
-        { return static_cast<HTMLFrameElement*>(RenderPart::element()); }
-
-    virtual void viewCleared();
-};
-
-// I can hardly call the class RenderObject ;-)
-class RenderPartObject : public RenderPart
-{
-public:
-    RenderPartObject(HTMLElement*);
-
-    virtual const char* renderName() const { return "RenderPartObject"; }
-
-    virtual void layout();
-    virtual void updateWidget();
-
-    virtual void viewCleared();
 };
 
 }

@@ -42,6 +42,7 @@
 #import "RenderCanvas.h"
 #import "RenderImage.h"
 #import "RenderTheme.h"
+#import "RenderWidget.h"
 #import "SelectionController.h"
 #import "TextIterator.h"
 #import "WebCoreFrameBridge.h"

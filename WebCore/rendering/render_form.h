@@ -26,6 +26,7 @@
 #ifndef RENDER_FORM_H
 #define RENDER_FORM_H
 
+#include "RenderWidget.h"
 #include "GraphicsTypes.h"
 #include "RenderBlock.h"
 #include "RenderImage.h"

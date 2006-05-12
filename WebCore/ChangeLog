@@ -1,5 +1,137 @@
 2006-05-12  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Split render_frames.* render_replaced.* and html_baseimpl.* into separate files (one class per file).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8878
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocumentProtoFunc::callAsFunction):
+        (KJS::JSHTMLDocument::namedItemGetter):
+        (KJS::JSHTMLDocument::getValueProperty):
+        (KJS::JSHTMLDocument::getOwnPropertySlot):
+        (KJS::JSHTMLDocument::putValueProperty):
+        (KJS::JSHTMLElement::formIndexGetter):
+        (KJS::JSHTMLElement::formNameGetter):
+        (KJS::JSHTMLElement::selectIndexGetter):
+        (KJS::JSHTMLElement::framesetNameGetter):
+        (KJS::JSHTMLElement::runtimeObjectGetter):
+        (KJS::JSHTMLElement::runtimeObjectPropertyGetter):
+        (KJS::JSHTMLElement::getOwnPropertySlot):
+        (KJS::JSHTMLElement::implementsCall):
+        (KJS::JSHTMLElement::callAsFunction):
+        (KJS::JSHTMLElement::getValueProperty):
+        (KJS::JSHTMLElement::toString):
+        (KJS::getForm):
+        (KJS::JSHTMLElement::pushEventHandlerScope):
+        (KJS::HTMLElementFunction::callAsFunction):
+        (KJS::JSHTMLElement::put):
+        (KJS::JSHTMLElement::selectSetter):
+        (KJS::JSHTMLElement::putValueProperty):
+        (KJS::toHTMLElement):
+        (KJS::toHTMLTableCaptionElement):
+        (KJS::toHTMLTableSectionElement):
+        (KJS::JSHTMLCollection::lengthGetter):
+        (KJS::JSHTMLCollection::indexGetter):
+        (KJS::JSHTMLCollection::nameGetter):
+        (KJS::JSHTMLCollection::getOwnPropertySlot):
+        (KJS::HTMLCollectionProtoFunc::callAsFunction):
+        (KJS::JSHTMLSelectCollection::selectedIndexGetter):
+        (KJS::JSHTMLSelectCollection::put):
+        (KJS::OptionConstructorImp::construct):
+        (KJS::getSelectHTMLCollection):
+        * bindings/objc/DOMHTML.mm:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::createFrame):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge copyRenderNode:copier:]):
+        * dom/Document.cpp:
+        (WebCore::widgetForNode):
+        * html/HTMLBodyElement.cpp: Added.
+        (WebCore::HTMLBodyElement::HTMLBodyElement):
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLBodyElement.h: Added.
+        * html/HTMLDocument.cpp:
+        * html/HTMLElementFactory.cpp:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLFrameElement.cpp: Added.
+        (WebCore::HTMLFrameElement::isURLAllowed):
+        (WebCore::HTMLFrameElement::parseMappedAttribute):
+        (WebCore::HTMLFrameElement::setLocation):
+        * html/HTMLFrameElement.h: Added.
+        * html/HTMLFrameSetElement.cpp: Added.
+        (WebCore::HTMLFrameSetElement::HTMLFrameSetElement):
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        (WebCore::HTMLFrameSetElement::attach):
+        (WebCore::HTMLFrameSetElement::defaultEventHandler):
+        (WebCore::HTMLFrameSetElement::recalcStyle):
+        * html/HTMLFrameSetElement.h: Added.
+        * html/HTMLHeadElement.cpp: Added.
+        (WebCore::HTMLHeadElement::HTMLHeadElement):
+        * html/HTMLHeadElement.h: Added.
+        * html/HTMLHtmlElement.cpp: Added.
+        (WebCore::HTMLHtmlElement::HTMLHtmlElement):
+        * html/HTMLHtmlElement.h: Added.
+        * html/HTMLIFrameElement.cpp: Added.
+        (WebCore::HTMLIFrameElement::HTMLIFrameElement):
+        * html/HTMLIFrameElement.h: Added.
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLParser.cpp:
+        * html/html_baseimpl.cpp: Removed.
+        * html/html_baseimpl.h: Removed.
+        * kwq/WebCoreAXObject.mm:
+        * page/Frame.cpp:
+        (WebCore::isFrameElement):
+        (WebCore::Frame::applyEditingStyleToBodyElement):
+        (WebCore::Frame::removeEditingStyleFromBodyElement):
+        (WebCore::Frame::applyEditingStyleToElement):
+        (WebCore::Frame::removeEditingStyleFromElement):
+        (WebCore::Frame::selectionRect):
+        (WebCore::Frame::isFrameSet):
+        (WebCore::scanForForm):
+        (WebCore::Frame::currentForm):
+        (WebCore::Frame::nodeInfoAtPoint):
+        (WebCore::Frame::adjustPageHeight):
+        (WebCore::Frame::frameForWidget):
+        (WebCore::Frame::forceLayoutWithPageWidthRange):
+        (WebCore::Frame::passWidgetMouseDownEventToWidget):
+        * page/FrameView.cpp:
+        * rendering/RenderFrame.cpp: Added.
+        (WebCore::RenderFrame::viewCleared):
+        * rendering/RenderFrame.h: Added.
+        * rendering/RenderFrameSet.cpp: Added.
+        (WebCore::RenderFrameSet::RenderFrameSet):
+        (WebCore::RenderFrameSet::~RenderFrameSet):
+        (WebCore::RenderFrameSet::layout):
+        (WebCore::RenderFrameSet::positionFrames):
+        (WebCore::RenderFrameSet::userResize):
+        (WebCore::RenderFrameSet::canResize):
+        (WebCore::RenderFrameSet::dump):
+        * rendering/RenderFrameSet.h: Added.
+        * rendering/RenderImage.h:
+        * rendering/RenderPart.cpp: Added.
+        (WebCore::RenderPart::RenderPart):
+        * rendering/RenderPart.h: Added.
+        * rendering/RenderPartObject.cpp: Added.
+        (WebCore::isURLAllowed):
+        (WebCore::RenderPartObject::updateWidget):
+        (WebCore::RenderPartObject::viewCleared):
+        * rendering/RenderPartObject.h: Added.
+        * rendering/RenderReplaced.cpp: Added.
+        (WebCore::RenderReplaced::selectionColor):
+        * rendering/RenderReplaced.h: Added.
+        * rendering/RenderWidget.cpp: Added.
+        (WebCore::RenderWidget::deleteWidget):
+        * rendering/RenderWidget.h: Added.
+        * rendering/render_form.h:
+        * rendering/render_frames.cpp: Removed.
+        * rendering/render_frames.h: Removed.
+        * rendering/render_replaced.cpp: Removed.
+        * rendering/render_replaced.h: Removed.
+
+2006-05-12  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by beth.
 
         Split html_headimpl.* into separate files (one per class)

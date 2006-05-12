@@ -29,11 +29,13 @@
 #include "Cursor.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLFrameSetElement.h"
 #include "HTMLInputElement.h"
 #include "Image.h"
 #include "AccessibilityObjectCache.h"
 #include "PlatformKeyboardEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "RenderPart.h"
 #include "RenderText.h"
 #include "SelectionController.h"
 #include "PlatformWheelEvent.h"
@@ -44,7 +46,6 @@
 #include "HTMLNames.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
-#include "render_frames.h"
 
 namespace WebCore {
 

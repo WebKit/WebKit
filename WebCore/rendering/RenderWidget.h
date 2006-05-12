@@ -21,57 +21,12 @@
  *
  */
 
-#ifndef render_replaced_h
-#define render_replaced_h
+#ifndef RenderWidget_H
+#define RenderWidget_H
 
-#include "RenderBox.h"
+#include "RenderReplaced.h"
 
 namespace WebCore {
-
-class FrameView;
-class Position;
-class Widget;
-
-class RenderReplaced : public RenderBox
-{
-public:
-    RenderReplaced(Node*);
-
-    virtual const char* renderName() const { return "RenderReplaced"; }
-
-    virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
-    virtual short baselinePosition(bool firstLine, bool isRootLineBox = false) const;
-
-    virtual void calcMinMaxWidth();
-
-    bool shouldPaint(PaintInfo&, int& tx, int& ty);
-    virtual void paint(PaintInfo&, int tx, int ty) = 0;
-
-    virtual int intrinsicWidth() const { return m_intrinsicWidth; }
-    virtual int intrinsicHeight() const { return m_intrinsicHeight; }
-
-    void setIntrinsicWidth(int w) { m_intrinsicWidth = w; }
-    void setIntrinsicHeight(int h) { m_intrinsicHeight = h; }
-
-    virtual int caretMinOffset() const;
-    virtual int caretMaxOffset() const;
-    virtual unsigned caretMaxRenderedOffset() const;
-    virtual VisiblePosition positionForCoordinates(int x, int y);
-    
-    virtual bool canBeSelectionLeaf() const { return true; }
-    virtual SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
-    virtual void setSelectionState(SelectionState);
-    virtual IntRect selectionRect();
-    bool isSelected();
-    virtual Color selectionColor(GraphicsContext*) const;
-
-protected:
-    int m_intrinsicWidth;
-    int m_intrinsicHeight;
-    
-    unsigned m_selectionState : 3; // SelectionState
-};
-
 
 class RenderWidget : public RenderReplaced, public WidgetClient
 {

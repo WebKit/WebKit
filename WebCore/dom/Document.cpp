@@ -39,6 +39,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLInputElement.h"
@@ -54,6 +55,7 @@
 #include "RegularExpression.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
+#include "RenderWidget.h"
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "StringHash.h"
@@ -67,7 +69,6 @@
 #include "html_imageimpl.h"
 #include "kjs_binding.h"
 #include "kjs_proxy.h"
-#include "render_frames.h"
 #include "xml_tokenizer.h"
 #include "xmlhttprequest.h"
 #include "XPathEvaluator.h"
@@ -1996,7 +1997,7 @@ static Widget *widgetForNode(Node *focusNode)
     RenderObject *renderer = focusNode->renderer();
     if (!renderer || !renderer->isWidget())
         return 0;
-    return static_cast<RenderWidget *>(renderer)->widget();
+    return static_cast<RenderWidget*>(renderer)->widget();
 }
 
 bool Document::setFocusNode(PassRefPtr<Node> newFocusNode)

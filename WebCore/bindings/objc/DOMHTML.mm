@@ -34,12 +34,17 @@
 #import "HTMLAppletElement.h"
 #import "HTMLBaseElement.h"
 #import "HTMLBaseFontElement.h"
+#import "HTMLBodyElement.h"
 #import "HTMLButtonElement.h"
 #import "HTMLDocument.h"
 #import "HTMLEmbedElement.h"
 #import "HTMLFieldSetElement.h"
 #import "HTMLFormCollection.h"
 #import "HTMLFormElement.h"
+#import "HTMLFrameSetElement.h"
+#import "HTMLHeadElement.h"
+#import "HTMLHtmlElement.h"
+#import "HTMLIFrameElement.h"
 #import "HTMLIsIndexElement.h"
 #import "HTMLLabelElement.h"
 #import "HTMLLegendElement.h"
@@ -62,7 +67,6 @@
 #import "HTMLTextAreaElement.h"
 #import "HTMLTitleElement.h"
 #import "NameNodeList.h"
-#import "html_baseimpl.h"
 #import "html_blockimpl.h"
 #import "html_imageimpl.h"
 #import "html_listimpl.h"
@@ -3964,7 +3968,7 @@ using namespace WebCore::HTMLNames;
 
 // These #imports and "usings" are used only by viewForElement and should be deleted 
 // when that function goes away.
-#import "render_replaced.h"
+#import "RenderWidget.h"
 using WebCore::RenderObject;
 using WebCore::RenderWidget;
 

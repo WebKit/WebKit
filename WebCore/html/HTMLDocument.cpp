@@ -61,7 +61,6 @@
 #include "Frame.h"
 #include "cssstyleselector.h"
 #include "CSSPropertyNames.h"
-#include "html_baseimpl.h"
 #include "html_imageimpl.h"
 #include "HTMLTokenizer.h"
 #include "HTMLElementFactory.h"

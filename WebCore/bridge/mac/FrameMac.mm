@@ -41,6 +41,7 @@
 #import "GraphicsContext.h"
 #import "HTMLDocument.h"
 #import "HTMLFormElement.h"
+#import "HTMLFrameElement.h"
 #import "HTMLGenericFormElement.h"
 #import "HTMLNames.h"
 #import "HTMLTableCellElement.h"
@@ -55,6 +56,7 @@
 #import "RegularExpression.h"
 #import "RenderCanvas.h"
 #import "RenderImage.h"
+#import "RenderPart.h"
 #import "RenderTableCell.h"
 #import "RenderTheme.h"
 #import "TextIterator.h"
@@ -64,12 +66,12 @@
 #import "WebDashboardRegion.h"
 #import "csshelper.h"
 #import "kjs_window.h"
-#import "render_frames.h"
 #import "render_list.h"
 #import "visible_units.h"
 #import <JavaScriptCore/NP_jsobject.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/npruntime_impl.h>
+
 
 #undef _KWQ_TIMING
 
@@ -583,7 +585,7 @@ Frame* FrameMac::createFrame(const KURL& url, const String& name, RenderPart* re
     int marginWidth = -1;
     int marginHeight = -1;
     if (renderer->element()->hasTagName(frameTag) || renderer->element()->hasTagName(iframeTag)) {
-        HTMLFrameElement *o = static_cast<HTMLFrameElement*>(renderer->element());
+        HTMLFrameElement* o = static_cast<HTMLFrameElement*>(renderer->element());
         allowsScrolling = o->scrollingMode() != ScrollBarAlwaysOff;
         marginWidth = o->getMarginWidth();
         marginHeight = o->getMarginHeight();

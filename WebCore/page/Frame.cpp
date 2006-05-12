@@ -45,6 +45,7 @@
 #include "GraphicsContext.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameElement.h"
 #include "HTMLGenericFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
@@ -52,6 +53,7 @@
 #include "NodeList.h"
 #include "Plugin.h"
 #include "RenderCanvas.h"
+#include "RenderPart.h"
 #include "RenderTheme.h"
 #include "SegmentedString.h"
 #include "TextDocument.h"
@@ -64,7 +66,6 @@
 #include "htmlediting.h"
 #include "kjs_window.h"
 #include "markup.h"
-#include "render_frames.h"
 #include "visible_units.h"
 #include "xml_tokenizer.h"
 #include "xmlhttprequest.h"
@@ -1199,7 +1200,7 @@ static bool isFrameElement(const Node *n)
     RenderObject *renderer = n->renderer();
     if (!renderer || !renderer->isWidget())
         return false;
-    Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
+    Widget* widget = static_cast<RenderWidget*>(renderer)->widget();
     return widget && widget->isFrameView();
 }
 
@@ -2342,7 +2343,7 @@ void Frame::applyEditingStyleToBodyElement() const
     RefPtr<NodeList> list = d->m_doc->getElementsByTagName("body");
     unsigned len = list->length();
     for (unsigned i = 0; i < len; i++) {
-        applyEditingStyleToElement(static_cast<Element *>(list->item(i)));    
+        applyEditingStyleToElement(static_cast<Element*>(list->item(i)));    
     }
 }
 
@@ -2354,7 +2355,7 @@ void Frame::removeEditingStyleFromBodyElement() const
     RefPtr<NodeList> list = d->m_doc->getElementsByTagName("body");
     unsigned len = list->length();
     for (unsigned i = 0; i < len; i++) {
-        removeEditingStyleFromElement(static_cast<Element *>(list->item(i)));    
+        removeEditingStyleFromElement(static_cast<Element*>(list->item(i)));    
     }
 }
 
@@ -2363,7 +2364,7 @@ void Frame::applyEditingStyleToElement(Element *element) const
     if (!element || !element->isHTMLElement())
         return;
     
-    static_cast<HTMLElement *>(element)->setContentEditable("true");
+    static_cast<HTMLElement*>(element)->setContentEditable("true");
 }
 
 void Frame::removeEditingStyleFromElement(Element *element) const
@@ -2371,7 +2372,7 @@ void Frame::removeEditingStyleFromElement(Element *element) const
     if (!element || !element->isHTMLElement())
         return;
         
-    static_cast<HTMLElement *>(element)->setContentEditable("false");        
+    static_cast<HTMLElement*>(element)->setContentEditable("false");        
 }
 
 
@@ -2529,7 +2530,7 @@ RenderPart* Frame::ownerRenderer()
 
 IntRect Frame::selectionRect() const
 {
-    RenderCanvas *root = static_cast<RenderCanvas *>(renderer());
+    RenderCanvas *root = static_cast<RenderCanvas*>(renderer());
     if (!root)
         return IntRect();
 
@@ -2550,7 +2551,7 @@ bool Frame::isFrameSet() const
     Document* document = d->m_doc.get();
     if (!document || !document->isHTMLDocument())
         return false;
-    Node *body = static_cast<HTMLDocument *>(document)->body();
+    Node *body = static_cast<HTMLDocument*>(document)->body();
     return body && body->renderer() && body->hasTagName(framesetTag);
 }
 
@@ -2572,11 +2573,11 @@ static HTMLFormElement *scanForForm(Node *start)
     Node *n;
     for (n = start; n; n = n->traverseNextNode()) {
         if (n->hasTagName(formTag))
-            return static_cast<HTMLFormElement *>(n);
+            return static_cast<HTMLFormElement*>(n);
         else if (n->isHTMLElement() && static_cast<HTMLElement*>(n)->isGenericFormElement())
             return static_cast<HTMLGenericFormElement*>(n)->form();
         else if (n->hasTagName(frameTag) || n->hasTagName(iframeTag)) {
-            Node *childDoc = static_cast<HTMLFrameElement *>(n)->contentDocument();
+            Node *childDoc = static_cast<HTMLFrameElement*>(n)->contentDocument();
             if (HTMLFormElement *frameResult = scanForForm(childDoc))
                 return frameResult;
         }
@@ -2596,10 +2597,10 @@ HTMLFormElement *Frame::currentForm() const
     Node *n;
     for (n = start; n; n = n->parentNode()) {
         if (n->hasTagName(formTag))
-            return static_cast<HTMLFormElement *>(n);
+            return static_cast<HTMLFormElement*>(n);
         else if (n->isHTMLElement()
-                   && static_cast<HTMLElement *>(n)->isGenericFormElement())
-            return static_cast<HTMLGenericFormElement *>(n)->form();
+                   && static_cast<HTMLElement*>(n)->isGenericFormElement())
+            return static_cast<HTMLGenericFormElement*>(n)->form();
     }
     
     // try walking forward in the node tree to find a form element
@@ -2708,15 +2709,15 @@ RenderObject::NodeInfo Frame::nodeInfoAtPoint(const IntPoint& point, bool allowS
         n = nodeInfo.innerNode();
         if (!n || !n->renderer() || !n->renderer()->isWidget())
             break;
-        widget = static_cast<RenderWidget *>(n->renderer())->widget();
+        widget = static_cast<RenderWidget*>(n->renderer())->widget();
         if (!widget || !widget->isFrameView())
             break;
-        Frame* frame = static_cast<HTMLFrameElement *>(n)->contentFrame();
+        Frame* frame = static_cast<HTMLFrameElement*>(n)->contentFrame();
         if (!frame || !frame->renderer())
             break;
         int absX, absY;
         n->renderer()->absolutePosition(absX, absY, true);
-        FrameView *view = static_cast<FrameView *>(widget);
+        FrameView *view = static_cast<FrameView*>(widget);
         widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
         widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
 
@@ -2800,7 +2801,7 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
 
 void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
 {
-    RenderCanvas *root = static_cast<RenderCanvas *>(document()->renderer());
+    RenderCanvas *root = static_cast<RenderCanvas*>(document()->renderer());
     if (root) {
         // Use a context with painting disabled.
         GraphicsContext context(0);
@@ -2918,7 +2919,7 @@ Frame *Frame::frameForWidget(const Widget *widget)
     
     // Assume all widgets are either form controls, or FrameViews.
     ASSERT(widget->isFrameView());
-    return static_cast<const FrameView *>(widget)->frame();
+    return static_cast<const FrameView*>(widget)->frame();
 }
 
 Frame *Frame::frameForNode(Node *node)
@@ -2977,7 +2978,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
 {
     // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
-    RenderCanvas *root = static_cast<RenderCanvas *>(document()->renderer());
+    RenderCanvas *root = static_cast<RenderCanvas*>(document()->renderer());
     if (root) {
         // This magic is basically copied from khtmlview::print
         int pageW = (int)ceilf(minPageWidth);
@@ -3089,7 +3090,7 @@ bool Frame::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&
     if (!widget) {
         if (!target->isWidget())
             return false;
-        widget = static_cast<RenderWidget *>(target)->widget();
+        widget = static_cast<RenderWidget*>(target)->widget();
     }
     
     // Doubleclick events don't exist in Cocoa.  Since passWidgetMouseDownEventToWidget will

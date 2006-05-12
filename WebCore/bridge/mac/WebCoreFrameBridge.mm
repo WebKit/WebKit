@@ -63,9 +63,10 @@
 #import "ModifySelectionListLevelCommand.h"
 #import "MoveSelectionCommand.h"
 #import "RenderCanvas.h"
-#import "render_frames.h"
 #import "RenderImage.h"
+#import "RenderPart.h"
 #import "ReplaceSelectionCommand.h"
+#import "RenderWidget.h"
 #import "TypingCommand.h"
 #import "TextIterator.h"
 #import "visible_units.h"
@@ -916,8 +917,8 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
           
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
-    RenderWidget *renderWidget = node->isWidget() ? static_cast<RenderWidget *>(node) : 0;
-    Widget *widget = renderWidget ? renderWidget->widget() : 0;
+    RenderWidget* renderWidget = node->isWidget() ? static_cast<RenderWidget*>(node) : 0;
+    Widget* widget = renderWidget ? renderWidget->widget() : 0;
     NSView *view = widget ? widget->getView() : nil;
     
     int nx, ny;

@@ -30,11 +30,11 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "RenderImage.h"
+#include "RenderPartObject.h"
+#include "RenderWidget.h"
 #include "Text.h"
 #include "csshelper.h"
 #include "html_imageimpl.h"
-#include "render_frames.h"
-#include "render_replaced.h"
 
 namespace WebCore {
 

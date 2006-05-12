@@ -29,8 +29,7 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "csshelper.h"
-#include "render_frames.h"
-#include "render_replaced.h"
+#include "RenderPartObject.h"
 
 namespace WebCore {
 
