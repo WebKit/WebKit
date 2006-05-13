@@ -999,6 +999,10 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
          style->display() == TABLE_ROW_GROUP || style->display() == TABLE_ROW))
         style->setOverflow(OVISIBLE);
 
+    // Links should be user selectable when content editable
+    if (e && e->isLink() && (style->userModify() == READ_WRITE || style->userModify() == READ_WRITE_PLAINTEXT_ONLY))
+        style->setUserSelect(SELECT_AUTO);
+
     // Cull out any useless layers and also repeat patterns into additional layers.
     style->adjustBackgroundLayers();
 

@@ -554,12 +554,14 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
         return style->cursorImage()->image();
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
-        case CURSOR_AUTO:
-            if (event.isOverLink() || isSubmitImage(node))
+        case CURSOR_AUTO: {
+            bool editable = (node && node->isContentEditable());
+            if ((event.isOverLink() || isSubmitImage(node)) && (!editable || event.event().shiftKey()))
                 return handCursor();
-            if ((node && node->isContentEditable()) || (renderer && renderer->isText() && renderer->canSelect()))
+            if (editable || (renderer && renderer->isText() && renderer->canSelect()))
                 return iBeamCursor();
             return pointerCursor();
+        }
         case CURSOR_CROSS:
             return crossCursor();
         case CURSOR_POINTER:

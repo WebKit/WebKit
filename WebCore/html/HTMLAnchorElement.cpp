@@ -104,7 +104,7 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
     // React on clicks and on keypresses.
     // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
     // when pressing Enter in the combo.
-    if ((evt->type() == clickEvent || (evt->type() == keydownEvent && m_focused)) && m_isLink) {
+    if (m_isLink && (evt->type() == clickEvent || (evt->type() == keydownEvent && m_focused))) {
         MouseEvent* e = 0;
         if (evt->type() == clickEvent)
             e = static_cast<MouseEvent*>(evt);
@@ -113,10 +113,12 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
         if (evt->type() == keydownEvent)
             k = static_cast<KeyboardEvent*>(evt);
 
-        DeprecatedString utarget;
-        DeprecatedString url;
-
         if (e && e->button() == 2) {
+            HTMLElement::defaultEventHandler(evt);
+            return;
+        }
+
+        if (e && !e->shiftKey() && isContentEditable()) {
             HTMLElement::defaultEventHandler(evt);
             return;
         }
@@ -133,9 +135,8 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
             }
         }
 
-        url = parseURL(getAttribute(hrefAttr)).deprecatedString();
-
-        utarget = getAttribute(targetAttr).deprecatedString();
+        DeprecatedString url = WebCore::parseURL(getAttribute(hrefAttr)).deprecatedString();
+        String utarget = getAttribute(targetAttr);
 
         if (e && e->button() == 1)
             utarget = "_blank";
@@ -143,7 +144,7 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
         if (evt->target()->hasTagName(imgTag)) {
             HTMLImageElement* img = static_cast<HTMLImageElement*>(evt->target());
             if (img && img->isServerMap()) {
-                RenderImage *r = static_cast<RenderImage*>(img->renderer());
+                RenderImage* r = static_cast<RenderImage*>(img->renderer());
                 if(r && e) {
                     int absx, absy;
                     r->absolutePosition(absx, absy);
@@ -159,15 +160,22 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
                 }
             }
         }
-        if (!evt->defaultPrevented()) {
-            if (document()->frame())
-                document()->frame()->urlSelected(url, utarget);
-        }
+
+        if (!evt->defaultPrevented() && document()->frame())
+            document()->frame()->urlSelected(url, utarget);
+
         evt->setDefaultHandled();
     }
+
     HTMLElement::defaultEventHandler(evt);
 }
 
+void HTMLAnchorElement::setActive(bool down, bool pause)
+{
+    if (isContentEditable())
+        return;
+    ContainerNode::setActive(down, pause);
+}
 
 void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
 {

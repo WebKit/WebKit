@@ -45,6 +45,7 @@ public:
     virtual bool isFocusable() const;
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual void defaultEventHandler(Event*);
+    virtual void setActive(bool active = true, bool pause = false);
     virtual void accessKeyAction(bool fullAction);
     virtual bool isURLAttribute(Attribute*) const;
 

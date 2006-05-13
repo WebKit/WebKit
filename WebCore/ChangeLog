@@ -1,3 +1,24 @@
+2006-05-12  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7156
+        Bug 7156: TinyMCE: Links are actually activated in editable area, not editable.
+        
+        Links in editable areas will not activate or perform a navigation
+        change (on par with WinIE and Firefox.) To visit the link
+        you can shift-click. Manual test added.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::setActive):
+        * html/HTMLAnchorElement.h:
+        * manual-tests/contenteditable-link.html: Added.
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+
 2006-05-12  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by timo.
@@ -1088,7 +1109,6 @@
 
         * WebCore: Removed an extra WebCore subtree that somehow got checked in.
 
->>>>>>> .r14297
 2006-05-10  David Carson <dacarson@gmail.com>
 
         - Fix for bug 8833. Removed inline keyword from functions declared
