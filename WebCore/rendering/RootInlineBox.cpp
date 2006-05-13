@@ -21,7 +21,7 @@
 #include "config.h"
 #include "RootInlineBox.h"
 
-#include "ElipseBox.h"
+#include "EllipsisBox.h"
 #include "RenderBlock.h"
 
 using namespace std;

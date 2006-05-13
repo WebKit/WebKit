@@ -23,7 +23,7 @@
 
 #include "CachedImage.h"
 #include "Document.h"
-#include "ElipseBox.h"
+#include "EllipsisBox.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "RootInlineBox.h"

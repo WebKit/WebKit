@@ -2,6 +2,15 @@
 
         Reviewed by beth.
 
+        Fix build error.
+
+        * rendering/InlineFlowBox.cpp:
+        * rendering/RootInlineBox.cpp:
+
+2006-05-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
         Split out render_line.* into separate files (one per class).
 
         * WebCore.xcodeproj/project.pbxproj:
