@@ -1558,7 +1558,7 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderObject* c
     // converted to the static postion already
     ASSERT(!(left.isAuto() && right.isAuto()));
 
-    int leftValue;
+    int leftValue = 0;
 
     bool widthIsAuto = width.isIntrinsicOrAuto();
     bool leftIsAuto = left.isAuto();

@@ -1,3 +1,21 @@
+2006-05-13  Alexey Proskuryakov  <ap@nypop.com>
+
+        Try to fix release build.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues): Initialize leftValue. 
+        This value will never be used, because 'left' and 'right' cannot both be 'auto'.
+
+2006-05-13  Alexey Proskuryakov  <ap@nypop.com>
+
+        Re-applied the fix for bug 8835 (REGRESSION: Line moves but selection
+        highlight stays behind) to a correct file; removed the stale one.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::adjustPosition): Adjust m_selectionTop
+        and m_selectionBottom.
+        * rendering/render_line.cpp: Removed.
+
 2006-05-13  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin, landed by ap.
