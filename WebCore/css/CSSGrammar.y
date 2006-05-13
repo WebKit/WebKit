@@ -198,7 +198,8 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 %token <val> KHERZ
 %token <string> DIMEN
 %token <val> PERCENTAGE
-%token <val> NUMBER
+%token <val> FLOAT
+%token <val> INTEGER
 
 %token <string> URI
 %token <string> FUNCTION
@@ -923,7 +924,8 @@ term:
   ;
 
 unary_term:
-  NUMBER maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
+  INTEGER maybe_space { $$.id = 0; $$.isInt = true; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
+  | FLOAT maybe_space { $$.id = 0; $$.isInt = false; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
   | PERCENTAGE maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PERCENTAGE; }
   | PXS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PX; }
   | CMS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_CM; }

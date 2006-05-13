@@ -325,8 +325,7 @@ bool CSSParser::validUnit(Value* value, Units unitflags, bool strict)
             value->unit = CSSPrimitiveValue::CSS_PX;
             b = true;
         }
-        if (!b && (unitflags & FInteger) &&
-             (value->fValue - (int)value->fValue) < 0.001)
+        if (!b && (unitflags & FInteger) && value->isInt)
             b = true;
         break;
     case CSSPrimitiveValue::CSS_PERCENTAGE:
@@ -2638,7 +2637,8 @@ int CSSParser::lex(void* yylvalWithoutType)
     case SECS:
     case PERCENTAGE:
         length--;
-    case NUMBER:
+    case FLOAT:
+    case INTEGER:
         yylval->val = DeprecatedString((QChar *)t, length).toDouble();
         break;
 

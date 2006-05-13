@@ -55,6 +55,7 @@ namespace WebCore {
     
     struct Value {
         int id;
+        bool isInt;
         union {
             double fValue;
             int iValue;

@@ -14,6 +14,7 @@ string2         \'([\t !#$%&(-~]|\\{nl}|\"|{nonascii}|{escape})*\'
 ident           -?{nmstart}{nmchar}*
 name            {nmchar}+
 num             [0-9]+|[0-9]*"."[0-9]+
+intnum          [0-9]+
 string          {string1}|{string2}
 url             ([!#$%&*-~]|{nonascii}|{escape})*
 w               [ \t\r\n\f]*
@@ -70,7 +71,8 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 {num}kHz                {yyTok = KHERZ; return yyTok;}
 {num}{ident}            {yyTok = DIMEN; return yyTok;}
 {num}%+                 {yyTok = PERCENTAGE; return yyTok;}
-{num}                   {yyTok = NUMBER; return yyTok;}
+{intnum}                {yyTok = INTEGER; return yyTok;}
+{num}                   {yyTok = FLOAT; return yyTok;}
 
 "url("{w}{string}{w}")" {yyTok = URI; return yyTok;}
 "url("{w}{url}{w}")"    {yyTok = URI; return yyTok;}
