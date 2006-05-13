@@ -2258,10 +2258,10 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     if (o->style()->autoWrap() || breakWords) {
                         // If we break only after white-space, consider the current character
                         // as candidate width for this line.
-                        int charWidth = o->style()->breakOnlyAfterWhiteSpace() ?
+                        int charWidth = o->style()->breakOnlyAfterWhiteSpace() && !midWordBreak ?
                                             t->width(pos, 1, f, w + tmpW) + (applyWordSpacing ? wordSpacing : 0) : 0;
                         if (w + tmpW + charWidth > width) {
-                            if (o->style()->breakOnlyAfterWhiteSpace()) {
+                            if (o->style()->breakOnlyAfterWhiteSpace() && !midWordBreak) {
                                 // Check if line is too big even without the extra space
                                 // at the end of the line. If it is not, do nothing. 
                                 // If the line needs the extra whitespace to be too long, 

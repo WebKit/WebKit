@@ -1,3 +1,15 @@
+2006-05-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8485
+          iExploder(#11705): Freeze in RenderBlock::layout()
+
+        * fast/text/midword-break-hang-expected.checksum: Added.
+        * fast/text/midword-break-hang-expected.png: Added.
+        * fast/text/midword-break-hang-expected.txt: Added.
+        * fast/text/midword-break-hang.html: Added.
+
 2006-05-13  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin, landed by ap.
