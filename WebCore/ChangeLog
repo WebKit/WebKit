@@ -1,5 +1,38 @@
 2006-05-12  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by beth.
+
+        Split out render_line.* into separate files (one per class).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp:
+        * rendering/EllipsisBox.cpp: Added.
+        * rendering/EllipsisBox.h: Added.
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/InlineBox.cpp: Added.
+        * rendering/InlineBox.h: Added.
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::~InlineBox):
+        (WebCore::InlineBox::bottomOverflow):
+        (WebCore::InlineBox::rightOverflow):
+        * rendering/InlineFlowBox.cpp: Added.
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        * rendering/InlineFlowBox.h: Added.
+        * rendering/InlineRunBox.h: Added.
+        (WebCore::InlineRunBox::InlineRunBox):
+        (WebCore::InlineRunBox::paintBackgroundAndBorder):
+        (WebCore::InlineRunBox::paintDecorations):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlow.h:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RootInlineBox.cpp: Added.
+        * rendering/RootInlineBox.h: Added.
+        (WebCore::RootInlineBox::RootInlineBox):
+        * rendering/render_line.h: Removed.
+
+2006-05-12  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         Split out table_layout.* into separate files (one per class).

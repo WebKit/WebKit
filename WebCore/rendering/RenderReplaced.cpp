@@ -24,7 +24,6 @@
 #include "config.h"
 #include "RenderReplaced.h"
 
-#include "render_line.h"
 #include "RenderBlock.h"
 
 using namespace std;

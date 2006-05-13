@@ -27,7 +27,7 @@
 
 #include "DocumentMarker.h"
 #include "RenderText.h"
-#include "render_line.h"
+#include "InlineRunBox.h"
 
 namespace WebCore {
 

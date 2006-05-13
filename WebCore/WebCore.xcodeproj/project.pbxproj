@@ -1061,6 +1061,15 @@
 		A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */; };
 		A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */; };
 		A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04C0A154F09000A4234 /* TableLayout.h */; };
+		A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF5DA0A155A05000A4234 /* RootInlineBox.h */; };
+		A8CFF5E20A155A05000A4234 /* InlineRunBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF5DB0A155A05000A4234 /* InlineRunBox.h */; };
+		A8CFF5E30A155A05000A4234 /* InlineFlowBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF5DC0A155A05000A4234 /* InlineFlowBox.h */; };
+		A8CFF5E40A155A05000A4234 /* InlineFlowBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF5DD0A155A05000A4234 /* InlineFlowBox.cpp */; };
+		A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF5DE0A155A05000A4234 /* InlineBox.h */; };
+		A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF5DF0A155A05000A4234 /* InlineBox.cpp */; };
+		A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF5E00A155A05000A4234 /* RootInlineBox.cpp */; };
+		A8CFF6BE0A156118000A4234 /* EllipsisBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF6BD0A156118000A4234 /* EllipsisBox.h */; };
+		A8CFF6CB0A1561CD000A4234 /* EllipsisBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */; };
 		A8DF3FCE097FA0FC0052981B /* HTMLFormCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */; };
 		A8DF3FCF097FA0FC0052981B /* HTMLFormCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */; };
 		A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */; };
@@ -1225,8 +1234,6 @@
 		BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4839097D93020094C9E4 /* RenderInline.h */; };
 		BCEA4879097D93020094C9E4 /* RenderLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA483A097D93020094C9E4 /* RenderLayer.cpp */; };
 		BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA483B097D93020094C9E4 /* RenderLayer.h */; };
-		BCEA487B097D93020094C9E4 /* render_line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA483C097D93020094C9E4 /* render_line.cpp */; };
-		BCEA487C097D93020094C9E4 /* render_line.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA483D097D93020094C9E4 /* render_line.h */; };
 		BCEA487D097D93020094C9E4 /* render_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA483E097D93020094C9E4 /* render_list.cpp */; };
 		BCEA487E097D93020094C9E4 /* render_list.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA483F097D93020094C9E4 /* render_list.h */; };
 		BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4840097D93020094C9E4 /* RenderObject.cpp */; };
@@ -2457,6 +2464,15 @@
 		A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FixedTableLayout.h; sourceTree = "<group>"; };
 		A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AutoTableLayout.cpp; sourceTree = "<group>"; };
 		A8CFF04C0A154F09000A4234 /* TableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TableLayout.h; sourceTree = "<group>"; };
+		A8CFF5DA0A155A05000A4234 /* RootInlineBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RootInlineBox.h; sourceTree = "<group>"; };
+		A8CFF5DB0A155A05000A4234 /* InlineRunBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineRunBox.h; sourceTree = "<group>"; };
+		A8CFF5DC0A155A05000A4234 /* InlineFlowBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineFlowBox.h; sourceTree = "<group>"; };
+		A8CFF5DD0A155A05000A4234 /* InlineFlowBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFlowBox.cpp; sourceTree = "<group>"; };
+		A8CFF5DE0A155A05000A4234 /* InlineBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineBox.h; sourceTree = "<group>"; };
+		A8CFF5DF0A155A05000A4234 /* InlineBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InlineBox.cpp; sourceTree = "<group>"; };
+		A8CFF5E00A155A05000A4234 /* RootInlineBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RootInlineBox.cpp; sourceTree = "<group>"; };
+		A8CFF6BD0A156118000A4234 /* EllipsisBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EllipsisBox.h; sourceTree = "<group>"; };
+		A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EllipsisBox.cpp; sourceTree = "<group>"; };
 		A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormCollection.h; sourceTree = "<group>"; };
 		A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormCollection.cpp; sourceTree = "<group>"; };
 		A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLCollection.h; sourceTree = "<group>"; };
@@ -2633,8 +2649,6 @@
 		BCEA4839097D93020094C9E4 /* RenderInline.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderInline.h; sourceTree = "<group>"; };
 		BCEA483A097D93020094C9E4 /* RenderLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayer.cpp; sourceTree = "<group>"; };
 		BCEA483B097D93020094C9E4 /* RenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLayer.h; sourceTree = "<group>"; };
-		BCEA483C097D93020094C9E4 /* render_line.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = render_line.cpp; sourceTree = "<group>"; };
-		BCEA483D097D93020094C9E4 /* render_line.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = render_line.h; sourceTree = "<group>"; };
 		BCEA483E097D93020094C9E4 /* render_list.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = render_list.cpp; sourceTree = "<group>"; };
 		BCEA483F097D93020094C9E4 /* render_list.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = render_list.h; sourceTree = "<group>"; };
 		BCEA4840097D93020094C9E4 /* RenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderObject.cpp; sourceTree = "<group>"; };
@@ -4349,16 +4363,21 @@
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
 				BCEA4817097D93020094C9E4 /* DataRef.h */,
+				A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */,
+				A8CFF6BD0A156118000A4234 /* EllipsisBox.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
 				A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
+				A8CFF5DF0A155A05000A4234 /* InlineBox.cpp */,
+				A8CFF5DE0A155A05000A4234 /* InlineBox.h */,
+				A8CFF5DD0A155A05000A4234 /* InlineFlowBox.cpp */,
+				A8CFF5DC0A155A05000A4234 /* InlineFlowBox.h */,
+				A8CFF5DB0A155A05000A4234 /* InlineRunBox.h */,
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
 				935C476009AC4CD100A6AAB4 /* Length.h */,
 				BCEA4832097D93020094C9E4 /* render_form.cpp */,
 				BCEA4833097D93020094C9E4 /* render_form.h */,
-				BCEA483C097D93020094C9E4 /* render_line.cpp */,
-				BCEA483D097D93020094C9E4 /* render_line.h */,
 				BCEA483E097D93020094C9E4 /* render_list.cpp */,
 				BCEA483F097D93020094C9E4 /* render_list.h */,
 				BCEA4844097D93020094C9E4 /* render_style.cpp */,
@@ -4429,6 +4448,8 @@
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
 				A871DFE10A15376B00B12A68 /* RenderWidget.cpp */,
 				A871DFE00A15376B00B12A68 /* RenderWidget.h */,
+				A8CFF5E00A155A05000A4234 /* RootInlineBox.cpp */,
+				A8CFF5DA0A155A05000A4234 /* RootInlineBox.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 			);
 			path = rendering;
@@ -4943,7 +4964,6 @@
 				BCEA4876097D93020094C9E4 /* RenderImage.h in Headers */,
 				BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */,
 				BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */,
-				BCEA487C097D93020094C9E4 /* render_line.h in Headers */,
 				BCEA487E097D93020094C9E4 /* render_list.h in Headers */,
 				BCEA4880097D93020094C9E4 /* RenderObject.h in Headers */,
 				BCEA4884097D93020094C9E4 /* render_style.h in Headers */,
@@ -5223,6 +5243,11 @@
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
 				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
+				A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */,
+				A8CFF5E20A155A05000A4234 /* InlineRunBox.h in Headers */,
+				A8CFF5E30A155A05000A4234 /* InlineFlowBox.h in Headers */,
+				A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */,
+				A8CFF6BE0A156118000A4234 /* EllipsisBox.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5736,7 +5761,6 @@
 				BCEA4875097D93020094C9E4 /* RenderImage.cpp in Sources */,
 				BCEA4877097D93020094C9E4 /* RenderInline.cpp in Sources */,
 				BCEA4879097D93020094C9E4 /* RenderLayer.cpp in Sources */,
-				BCEA487B097D93020094C9E4 /* render_line.cpp in Sources */,
 				BCEA487D097D93020094C9E4 /* render_list.cpp in Sources */,
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
 				BCEA4883097D93020094C9E4 /* render_style.cpp in Sources */,
@@ -5992,6 +6016,10 @@
 				A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */,
 				A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */,
 				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
+				A8CFF5E40A155A05000A4234 /* InlineFlowBox.cpp in Sources */,
+				A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */,
+				A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */,
+				A8CFF6CB0A1561CD000A4234 /* EllipsisBox.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

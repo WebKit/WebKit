@@ -26,10 +26,12 @@
 
 #include "GapRects.h"
 #include "RenderFlow.h"
+#include "RootInlineBox.h"
 
 namespace WebCore {
 
 class Position;
+class RootInlineBox;
 
 enum CaretType {
     CursorCaret,
@@ -102,13 +104,13 @@ public:
     }
 
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
-    virtual void removeChild(RenderObject *oldChild);
+    virtual void removeChild(RenderObject*);
 
     virtual void repaintObjectsBeforeLayout();
     virtual void repaintFloatingDescendants();
     virtual void getAbsoluteRepaintRectIncludingFloats(IntRect& bounds, IntRect& fullBounds);
 
-    virtual void setStyle(RenderStyle* _style);
+    virtual void setStyle(RenderStyle*);
 
     virtual void layout();
     virtual void layoutBlock(bool relayoutChildren);
@@ -125,16 +127,16 @@ public:
     virtual RenderObject* layoutLegend(bool relayoutChildren) { return 0; };
     
     // the implementation of the following functions is in bidi.cpp
-    void bidiReorderLine(const BidiIterator &start, const BidiIterator &end, BidiState &bidi );
-    RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator &start, BidiState &bidi);
+    void bidiReorderLine(const BidiIterator& start, const BidiIterator& end, BidiState &bidi );
+    RootInlineBox* determineStartPosition(bool fullLayout, BidiIterator& start, BidiState &bidi);
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart,
                                         BidiStatus& cleanLineBidiStatus, BidiContext*& cleanLineBidiContext,
                                         int& yPos);
     bool matchedEndLine(const BidiIterator& start, const BidiStatus& status, BidiContext* context,
                         const BidiIterator& endLineStart, const BidiStatus& endLineStatus,
                         BidiContext* endLineContext, RootInlineBox*& endLine, int& endYPos);
-    int skipWhitespace(BidiIterator &, BidiState &);
-    BidiIterator findNextLineBreak(BidiIterator &start, BidiState &info );
+    int skipWhitespace(BidiIterator& , BidiState &);
+    BidiIterator findNextLineBreak(BidiIterator& start, BidiState &info );
     RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject* obj);
     int tabWidth(bool isWhitespacePre);
