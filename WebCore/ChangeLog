@@ -5,6 +5,7 @@
         * rendering/RenderBox.cpp:
         (WebCore::RenderBox::calcAbsoluteHorizontalValues): Initialize leftValue. 
         This value will never be used, because 'left' and 'right' cannot both be 'auto'.
+        (WebCore::RenderBox::calcAbsoluteVerticalValues): Initialize topValue. 
 
 2006-05-13  Alexey Proskuryakov  <ap@nypop.com>
 

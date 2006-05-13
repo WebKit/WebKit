@@ -1831,7 +1831,7 @@ void RenderBox::calcAbsoluteVerticalValues(Length height, const RenderObject* co
 
     int contentHeight = m_height - bordersPlusPadding;    
 
-    int topValue;
+    int topValue = 0;
 
     bool heightIsAuto = height.isAuto();
     bool topIsAuto = top.isAuto();
