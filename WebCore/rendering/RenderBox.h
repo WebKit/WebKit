@@ -158,11 +158,18 @@ protected:
 
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();
-    void calcAbsoluteHorizontalValues(WidthType widthType, RenderObject* cb, int cw, int pab, int static_distance,
-                                      int l, int r, int& w, int& ml, int& mr, int& x);
-    void calcAbsoluteVerticalValues(HeightType heightType, RenderObject* cb, int ch, int pab, 
-                                    int t, int b, int& h, int& mt, int& mb, int& y); 
-    
+    void calcAbsoluteHorizontalValues(Length width, const RenderObject* cb, 
+                                      const int containerWidth, const int bordersPlusPadding, 
+                                      const Length left, const Length right, const Length marginLeft, const Length marginRight,
+                                      int& widthValue, int& marginLeftValue, int& marginRightValue, int& xPos);
+    void calcAbsoluteVerticalValues(Length height, const RenderObject* cb, 
+                                    const int containerHeight, const int bordersPlusPadding,
+                                    const Length top, const Length bottom, const Length marginTop, const Length marginBottom,
+                                    int& heightValue, int& marginTopValue, int& marginBottomValue, int& yPos);
+
+    void calcAbsoluteVerticalReplaced();
+    void calcAbsoluteHorizontalReplaced();
+
     virtual IntRect getOverflowClipRect(int tx, int ty);
     virtual IntRect getClipRect(int tx, int ty);
 

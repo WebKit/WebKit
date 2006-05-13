@@ -1,3 +1,26 @@
+2006-05-13  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt, landed by ap.
+
+        Patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=7604
+        calcAbsoluteHorizontalValues() is being getting passed arguments
+        in the wrong order in calcAbsoluteHorizontal()
+
+        Cleans up the RenderBox code for absolutely positioned elements
+        and adds new functions for replaced absolutely positioned 
+        elements. Now uses Length so that magic number -666666 for 
+        auto lengths is no longer used.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteVerticalValues): 
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced): Handle replaced
+        case separately.
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced): ditto.
+        * rendering/RenderBox.h:
+
 2006-05-12  David Hyatt  <hyatt@apple.com>
 
         Bug 8880, remove the remaining drawing/hit testing code from

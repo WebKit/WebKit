@@ -1,3 +1,15 @@
+2006-05-13  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt, landed by ap.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7604
+        
+        * fast/block/positioning/absolute-length-of-neg-666666.html: Added.
+        * fast/block/positioning/absolute-positioned-overconstrained.html: Added.
+        * fast/block/positioning/auto/006.html: Updated to reflect that the containing
+        block's direction, not the parent's is used.
+        * fast/css/absolute-poition-in-rtl-parent.html: Updated and cleaned up.
+
 2006-05-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
