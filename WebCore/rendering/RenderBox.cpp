@@ -2021,8 +2021,8 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
      *    ('rtl'), set 'margin-left' ('margin-right') to zero and solve for
      *    'margin-right' ('margin-left').
     \*-----------------------------------------------------------------------*/
-    int leftValue;
-    int rightValue;
+    int leftValue = 0;
+    int rightValue = 0;
 
     if (marginLeft.isAuto() && marginRight.isAuto()) {
         // 'left' and 'right' cannot be 'auto' due to step 3
@@ -2163,8 +2163,8 @@ void RenderBox::calcAbsoluteVerticalReplaced()
      *    'auto', solve the equation under the extra constraint that the two
      *    margins must get equal values.
     \*-----------------------------------------------------------------------*/
-    int topValue;
-    int bottomValue;
+    int topValue = 0;
+    int bottomValue = 0;
 
     if (marginTop.isAuto() && marginBottom.isAuto()) {
         // 'top' and 'bottom' cannot be 'auto' due to step 2 and 3 combinded.

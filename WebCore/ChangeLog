@@ -1,11 +1,12 @@
 2006-05-13  Alexey Proskuryakov  <ap@nypop.com>
 
-        Try to fix release build.
+        Fix release build.
 
         * rendering/RenderBox.cpp:
         (WebCore::RenderBox::calcAbsoluteHorizontalValues): Initialize leftValue. 
         This value will never be used, because 'left' and 'right' cannot both be 'auto'.
         (WebCore::RenderBox::calcAbsoluteVerticalValues): Initialize topValue. 
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced): Same changes as above. 
 
 2006-05-13  Alexey Proskuryakov  <ap@nypop.com>
 
