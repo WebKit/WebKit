@@ -1,5 +1,17 @@
 2006-05-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8835
+          REGRESSION: Line moves but selection highlight stays behind
+
+        * fast/dynamic/selection-highlight-adjust-expected.checksum: Added.
+        * fast/dynamic/selection-highlight-adjust-expected.png: Added.
+        * fast/dynamic/selection-highlight-adjust-expected.txt: Added.
+        * fast/dynamic/selection-highlight-adjust.html: Added.
+
+2006-05-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed and landed by Anders.
         
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8866
