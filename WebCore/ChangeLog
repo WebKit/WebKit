@@ -1,3 +1,27 @@
+2006-05-12  David Hyatt  <hyatt@apple.com>
+
+        Bug 8880, remove the remaining drawing/hit testing code from
+        FontData.
+
+        Reviewed by tim h
+
+        * platform/Font.cpp:
+        (WebCore::m_finalRoundingWidth):
+        (WebCore::WidthIterator::advanceOneCharacter):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::selectionRectForSimpleText):
+        (WebCore::Font::offsetForPosition):
+        (WebCore::Font::offsetForPositionForSimpleText):
+        * platform/Font.h:
+        (WebCore::TextRun::makeComplete):
+        * platform/FontData.h:
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::clear):
+        * platform/mac/FontData.mm:
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+
 2006-05-12  Kevin M. Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Maciej.

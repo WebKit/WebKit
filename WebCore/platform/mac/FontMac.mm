@@ -484,32 +484,42 @@ const FontPlatformData& Font::platformFont() const
     return m_fontList->platformFont(fontDescription());
 }
 
-FloatRect Font::selectionRectForText(const TextRun& textRun, const TextStyle& textStyle, const IntPoint& point, int h) const
+FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h) const
 {
-    assert(m_fontList);
+    int from = run.from();
+    int to = run.to();
+        
+    TextRun completeRun(run);
+    completeRun.makeComplete();
+    
+    TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(completeRun, style.rtl()) : completeRun;
+    if (style.directionalOverride()) {
+        from++;
+        to++;
+    }
 
-    CREATE_FAMILY_ARRAY(fontDescription(), families);
+    ATSULayoutParameters params(adjustedRun, style);
+    params.initialize(this);
 
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, textRun.characters(), textRun.length(), textRun.from(), textRun.to());
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.rtl = textStyle.rtl();
-    style.directionalOverride = textStyle.directionalOverride();
-    style.letterSpacing = letterSpacing();
-    style.wordSpacing = wordSpacing();
-    style.smallCaps = fontDescription().smallCaps();
-    style.families = families;    
-    style.padding = textStyle.padding();
-    style.tabWidth = textStyle.tabWidth();
-    style.xpos = textStyle.xPos();
-    WebCoreTextGeometry geometry;
-    WebCoreInitializeEmptyTextGeometry(&geometry);
-    geometry.point = point;
-    geometry.selectionY = point.y();
-    geometry.selectionHeight = h;
-    geometry.useFontMetricsForSelectionYAndHeight = false;
-    return m_fontList->primaryFont(fontDescription())->selectionRectForRun(&run, &style, &geometry);
+    ATSTrapezoid firstGlyphBounds;
+    ItemCount actualNumBounds;
+    
+    OSStatus status = ATSUGetGlyphBounds(params.m_layout, 0, 0, from, to - from, kATSUseFractionalOrigins, 1, &firstGlyphBounds, &actualNumBounds);
+    if (status != noErr || actualNumBounds != 1) {
+        static ATSTrapezoid zeroTrapezoid = { {0, 0}, {0, 0}, {0, 0}, {0, 0} };
+        firstGlyphBounds = zeroTrapezoid;
+    }
+    disposeATSULayoutParameters(&params);
+    
+    float beforeWidth = MIN(FixedToFloat(firstGlyphBounds.lowerLeft.x), FixedToFloat(firstGlyphBounds.upperLeft.x));
+    float afterWidth = MAX(FixedToFloat(firstGlyphBounds.lowerRight.x), FixedToFloat(firstGlyphBounds.upperRight.x));
+    
+    FloatRect rect(point.x() + floorf(beforeWidth), point.y(), roundf(afterWidth) - floorf(beforeWidth), h);
+
+    if (style.directionalOverride())
+        delete []adjustedRun.characters();
+
+    return rect;
 }
 
 void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run, const TextStyle& style, const FloatPoint& point) const
@@ -575,27 +585,33 @@ float Font::floatWidthForComplexText(const TextRun& run, const TextStyle& style)
            MIN(FixedToFloat(firstGlyphBounds.upperLeft.x), FixedToFloat(firstGlyphBounds.lowerLeft.x));
 }
 
-int Font::offsetForPosition(const TextRun& textRun, const TextStyle& textStyle, int x, bool includePartialGlyphs) const
+int Font::offsetForPositionForComplexText(const TextRun& run, const TextStyle& style, int x, bool includePartialGlyphs) const
 {
-    assert(m_fontList);
-    CREATE_FAMILY_ARRAY(fontDescription(), families);
+    TextRun adjustedRun = style.directionalOverride() ? addDirectionalOverride(run, style.rtl()) : run;
     
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun(&run, textRun.characters(), textRun.length(), textRun.from(), textRun.to());
-    
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    style.letterSpacing = letterSpacing();
-    style.wordSpacing = wordSpacing();
-    style.smallCaps = fontDescription().smallCaps();
-    style.families = families;
-    style.padding = textStyle.padding();
-    style.tabWidth = textStyle.tabWidth();
-    style.xpos = textStyle.xPos();
-    style.rtl = textStyle.rtl();
-    style.directionalOverride = textStyle.directionalOverride();
+    ATSULayoutParameters params(adjustedRun, style);
+    params.initialize(this);
 
-    return m_fontList->primaryFont(fontDescription())->pointToOffset(&run, &style, x, includePartialGlyphs);
+    UniCharArrayOffset primaryOffset = adjustedRun.from();
+    
+    // FIXME: No idea how to avoid including partial glyphs.
+    // Not even sure if that's the behavior this yields now.
+    Boolean isLeading;
+    UniCharArrayOffset secondaryOffset = 0;
+    OSStatus status = ATSUPositionToOffset(params.m_layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
+    unsigned offset;
+    if (status == noErr)
+        offset = (unsigned)primaryOffset;
+    else
+        // Failed to find offset!  Return 0 offset.
+        offset = 0;
+
+    disposeATSULayoutParameters(&params);
+    
+    if (style.directionalOverride())
+        delete []adjustedRun.characters();
+
+    return offset - adjustedRun.from();
 }
 
 void Font::drawGlyphs(GraphicsContext* context, const FontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const

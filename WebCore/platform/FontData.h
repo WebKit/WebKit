@@ -22,67 +22,18 @@
  */
 
 #if __APPLE__
-typedef UInt16                          ATSGlyphRef;
-typedef struct OpaqueATSUStyle*         ATSUStyle;
+// FIXME: This is going to be cross-platform eventually, but for now we just compile on OS X.
 
-#if __OBJC__
-@class NSColor;
-#else
-class NSColor;
-#endif
-
-#include "FloatPoint.h"
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
 
 // FIXME: Temporary.  Only needed to support API that's going to move.
-#include <unicode/uchar.h>
-#include <unicode/unorm.h>
+#include <unicode/umachine.h>
 
 namespace WebCore
 {
 
-class FloatRect;
-class Color;
 class FontDescription;
-
-struct WebCoreTextStyle
-{
-    NSColor *textColor;
-    NSColor *backgroundColor;
-    int letterSpacing;
-    int wordSpacing;
-    int padding;
-    int tabWidth;
-    int xpos;
-    NSString **families;
-    bool smallCaps;
-    bool rtl;
-    bool directionalOverride;
-    bool applyRunRounding;
-    bool applyWordRounding;
-    bool attemptFontSubstitution;
-};
-
-struct WebCoreTextRun
-{
-    const UniChar *characters;
-    unsigned int length;
-    int from;
-    int to;
-};
-
-struct WebCoreTextGeometry
-{
-    FloatPoint point;
-    float selectionY;
-    float selectionHeight;
-    bool useFontMetricsForSelectionYAndHeight;
-};
-
-void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to);
-void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style);
-void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry);
 
 typedef struct WidthMap WidthMap;
 typedef struct GlyphMap GlyphMap;
@@ -104,12 +55,6 @@ public:
     int lineGap() const { return m_lineGap; }
 
     float xHeight() const;
-
-    // drawing
-    FloatRect selectionRectForRun(const WebCoreTextRun* run, const WebCoreTextStyle* style, const WebCoreTextGeometry* geometry);
-
-    // selection point check 
-    int pointToOffset(const WebCoreTextRun* run, const WebCoreTextStyle* style, int x, bool includePartialGlyphs);
 
     // FIXME: These are temporary API and will eventually move to the fallback list.
     Glyph glyphForCharacter(const FontData **renderer, unsigned c) const;

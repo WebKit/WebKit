@@ -67,6 +67,7 @@ public:
 
     int adjustFrom(int from) const { return from == -1 ? 0 : from; }
     int adjustTo(int to) const { return to == -1 ? m_len : to; }
+    void makeComplete() { m_from = 0; m_to = m_len; }
 
     const UChar* characters() const { return m_characters; }
     int length() const { return m_len; }
@@ -193,6 +194,10 @@ private:
     void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, const TextStyle&, const FontData* substituteFont, float* startX, GlyphBuffer*) const;
     float floatWidthForComplexText(const TextRun&, const TextStyle&) const;
+    int offsetForPositionForSimpleText(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
+    int offsetForPositionForComplexText(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForSimpleText(const TextRun&, const TextStyle&, const IntPoint&, int h) const;
+    FloatRect selectionRectForComplexText(const TextRun&, const TextStyle&, const IntPoint&, int h) const;
 
     friend struct WidthIterator;
     

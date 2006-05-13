@@ -34,6 +34,7 @@
 #include "GlyphBuffer.h"
 
 #include <unicode/umachine.h>
+#include <unicode/unorm.h>
 
 namespace WebCore {
 
@@ -59,7 +60,8 @@ struct WidthIterator {
     WidthIterator(const Font* font, const TextRun& run, const TextStyle& style, const FontData* substituteFontData = 0);
 
     void advance(int to, GlyphBuffer* glyphBuffer = 0);
-
+    bool advanceOneCharacter(float& width, GlyphBuffer* glyphBuffer = 0);
+    
     const Font* m_font;
 
     const TextRun& m_run;
@@ -106,7 +108,8 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextSty
     if (run.from() == 0)
         m_widthToStart = 0;
     else {
-        TextRun completeRun(run.characters(), run.length());
+        TextRun completeRun(run);
+        completeRun.makeComplete();
         WidthIterator startPositionIterator(font, completeRun, style, substituteFontData);
         startPositionIterator.advance(run.from());
         m_widthToStart = startPositionIterator.m_runWidthSoFar;
@@ -272,6 +275,17 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
     m_currentCharacter = currentCharacter;
     m_runWidthSoFar = runWidthSoFar;
     m_finalRoundingWidth = lastRoundingWidth;
+}
+
+bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer* glyphBuffer)
+{
+    glyphBuffer->clear();
+    advance(m_currentCharacter + 1, glyphBuffer);
+    float w = 0;
+    for (int i = 0; i < glyphBuffer->size(); ++i)
+        w += glyphBuffer->advanceAt(i);
+    width = w;
+    return !glyphBuffer->isEmpty();
 }
 
 UChar32 WidthIterator::normalizeVoicingMarks()
@@ -522,6 +536,85 @@ float Font::floatWidthForSimpleText(const TextRun& run, const TextStyle& style,
     }
     return runWidth;
 }
+
+FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h) const
+{
+    if (canUseGlyphCache(run))
+        return selectionRectForSimpleText(run, style, point, h);
+    return selectionRectForComplexText(run, style, point, h);
+}
+
+FloatRect Font::selectionRectForSimpleText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h) const
+{
+    TextRun completeRun(run);
+    completeRun.makeComplete();
+
+    WidthIterator it(this, completeRun, style);
+    it.advance(run.from());
+    float beforeWidth = it.m_runWidthSoFar;
+    it.advance(run.to());
+    float afterWidth = it.m_runWidthSoFar;
+
+    // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning
+    if (style.rtl()) {
+        it.advance(run.length());
+        float totalWidth = it.m_runWidthSoFar;
+        return FloatRect(point.x() + floorf(totalWidth - afterWidth), point.y(), roundf(totalWidth - beforeWidth) - floorf(totalWidth - afterWidth), h);
+    } else {
+        return FloatRect(point.x() + floorf(beforeWidth), point.y(), roundf(afterWidth) - floorf(beforeWidth), h);
+    }
+}
+
+int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int x, bool includePartialGlyphs) const
+{
+    if (canUseGlyphCache(run))
+        return offsetForPositionForSimpleText(run, style, x, includePartialGlyphs);
+    return offsetForPositionForComplexText(run, style, x, includePartialGlyphs);
+}
+
+int Font::offsetForPositionForSimpleText(const TextRun& run, const TextStyle& style, int x, bool includePartialGlyphs) const
+{
+    float delta = (float)x;
+
+    WidthIterator it(this, run, style);    
+    GlyphBuffer localGlyphBuffer;
+    unsigned offset;
+    if (style.rtl()) {
+        delta -= floatWidthForSimpleText(run, style, 0, 0, 0);
+        while (1) {
+            offset = it.m_currentCharacter;
+            float w;
+            if (!it.advanceOneCharacter(w, &localGlyphBuffer))
+                break;
+            delta += w;
+            if (includePartialGlyphs) {
+                if (delta - w / 2 >= 0)
+                    break;
+            } else {
+                if (delta >= 0)
+                    break;
+            }
+        }
+    } else {
+        while (1) {
+            offset = it.m_currentCharacter;
+            float w;
+            if (!it.advanceOneCharacter(w, &localGlyphBuffer))
+                break;
+            delta -= w;
+            if (includePartialGlyphs) {
+                if (delta + w / 2 <= 0)
+                    break;
+            } else {
+                if (delta <= 0)
+                    break;
+            }
+        }
+    }
+
+    return offset - run.from();
+}
+
 #endif
 
 }

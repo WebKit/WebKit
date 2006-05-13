@@ -53,6 +53,15 @@ public:
     bool isEmpty() const { return m_fontData.isEmpty(); }
     int size() const { return m_fontData.size(); }
     
+    void clear()
+    {
+        m_fontData.clear();
+#if __APPLE__
+        m_glyphs.clear();
+        m_advances.clear();
+#endif
+    }
+
 #if __APPLE__
     Glyph* glyphs(int from) const { return ((Glyph*)m_glyphs.data()) + from; }
     CGSize* advances(int from) const { return ((CGSize*)m_advances.data()) + from; }
