@@ -1,0 +1,18 @@
+2006-05-11  Kevin M. Ollivier  <kevino@theolliviers.com>
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8528
+          Bakefiles (and generated Makefiles) for wx and gdk ports
+
+        * Readme.txt:
+        Added file introducing the Bakefile build system and detailing how it works.
+        
+        * Bakefiles.bkgen: 
+        Added Bakefile build configuration file
+        
+        * update-file-lists.py:
+        Added script to generate cross-platform sources list from Win VCProject files.
+        
+        * presets.bkl: 
+        Added Bakefile containing templates for WebCore pre-requisites, like
+        libxml/xslt, ICU, etc. This file contains the logic for determining the
+        correct build settings for those projects on each platform.

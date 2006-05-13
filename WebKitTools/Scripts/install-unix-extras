@@ -1,0 +1,112 @@
+#!/bin/sh
+
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# A script to download the extra libraries needed to build WebKit on UNIX-based OSes.
+# libxml/libxslt need to be added, but so far I've had them on all the (UNIX) machines
+# I've tested on, so I don't have a machine to test the code on.
+
+DL_CMD="curl -L"
+
+DL_DIR=/tmp/webkit-deps
+# NOTE: If you change this, make sure the dir is on the path.
+DEPS_PREFIX=/usr/local
+
+mkdir -p $DL_DIR
+mkdir -p $DEPS_PREFIX
+
+ICU_VERSION="3.4.1"
+ICU_TARBALL="icu-$ICU_VERSION.tgz"
+ICU_URL="ftp://ftp.software.ibm.com/software/globalization/icu/$ICU_VERSION/$ICU_TARBALL"
+
+GPERF_VERSION="3.0.1"
+GPERF_TARBALL="gperf-$GPERF_VERSION.tar.gz"
+GPERF_URL="ftp://mirrors.kernel.org/gnu/gperf/$GPERF_TARBALL"
+
+PKG_CONFIG_VERSION="0.20"
+PKG_CONFIG_TARBALL="pkg-config-$PKG_CONFIG_VERSION.tar.gz"
+PKG_CONFIG_URL="http://pkgconfig.freedesktop.org/releases/$PKG_CONFIG_TARBALL"
+
+ICONV_VERSION="1.9.2"
+ICONV_TARBALL="libiconv-$ICONV_VERSION.tar.gz"
+ICONV_URL="http://ftp.gnu.org/pub/gnu/libiconv/$ICONV_TARBALL"
+
+cd $DL_DIR
+# build ICU
+if [ `which icu-config >/dev/null 2>&1` ]; then
+  $DL_CMD -o $DL_DIR/$ICU_TARBALL $ICU_URL
+
+  tar xzvf $DL_DIR/$ICU_TARBALL
+  cd $DL_DIR/icu/source
+  
+  chmod +x configure install-sh
+  ./configure --prefix=$DEPS_PREFIX
+  
+  make
+  #make check
+  make install
+  
+  cd $DL_DIR
+  rm -rf icu
+fi
+
+if [ `which gperf >/dev/null 2>&1` ]; then
+  $DL_CMD -o $DL_DIR/$GPERF_TARBALL $GPERF_URL
+
+  tar xzvf $DL_DIR/$GPERF_TARBALL
+  cd $DL_DIR/gperf-$GPERF_VERSION
+  
+  ./configure --prefix=$DEPS_PREFIX
+  
+  make
+  make install
+  
+  cd $DL_DIR
+  rm -rf $DL_DIR/gperf-$GPERF_VERSION
+fi
+
+# TODO: What would be a good way to test for this?
+if [ ! -f $DEPS_PREFIX/lib/libiconv.dylib ]; then
+  $DL_CMD -o $DL_DIR/$ICONV_TARBALL $ICONV_URL
+
+  tar xzvf $DL_DIR/$ICONV_TARBALL
+  cd $DL_DIR/libiconv-$ICONV_VERSION
+  
+  ./configure --prefix=$DEPS_PREFIX
+  
+  make
+  make install
+  
+  cd $DL_DIR
+  rm -rf $DL_DIR/libiconv-$ICONV_VERSION
+fi
+
+Property changes on: install-unix-extras
+___________________________________________________________________
+Name: svn:executable
+   + *
+

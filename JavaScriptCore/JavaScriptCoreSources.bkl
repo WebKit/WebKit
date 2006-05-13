@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<makefile>
+	<set append="1" var="JSCORE_SOURCES_KJS">
+		
+		kjs/array_object.cpp
+		kjs/bool_object.cpp
+		kjs/collector.cpp
+		kjs/date_object.cpp
+		kjs/debugger.cpp
+		kjs/dtoa.cpp
+		kjs/error_object.cpp
+		kjs/fpconst.cpp
+		kjs/function.cpp
+		kjs/function_object.cpp
+		<!-- ./grammarWrapper.cpp -->
+		kjs/identifier.cpp
+		kjs/internal.cpp
+		kjs/interpreter.cpp
+		kjs/JSImmediate.cpp
+		kjs/JSLock.cpp
+		kjs/lexer.cpp
+		kjs/list.cpp
+		kjs/lookup.cpp
+		kjs/math_object.cpp
+		kjs/nodes.cpp
+		kjs/nodes2string.cpp
+		kjs/number_object.cpp
+		kjs/object.cpp
+		kjs/object_object.cpp
+		kjs/operations.cpp
+		kjs/Parser.cpp
+		kjs/property_map.cpp
+		kjs/property_slot.cpp
+		kjs/reference.cpp
+		kjs/reference_list.cpp
+		kjs/regexp.cpp
+		kjs/regexp_object.cpp
+		kjs/scope_chain.cpp
+		kjs/string_object.cpp
+		kjs/ustring.cpp
+		kjs/value.cpp
+
+	</set>
+	<set append="1" var="JSCORE_SOURCES_WTF">
+		
+		wtf/Assertions.cpp
+		wtf/FastMalloc.cpp
+		wtf/HashTable.cpp
+
+	</set>
+	<set append="1" var="JSCORE_SOURCES_PCRE">
+		
+		pcre/pcre_compile.c
+		pcre/pcre_config.c
+		pcre/pcre_exec.c
+		pcre/pcre_fullinfo.c
+		pcre/pcre_get.c
+		pcre/pcre_globals.c
+		pcre/pcre_info.c
+		pcre/pcre_maketables.c
+		pcre/pcre_ord2utf8.c
+		pcre/pcre_printint.c
+		pcre/pcre_refcount.c
+		pcre/pcre_study.c
+		pcre/pcre_tables.c
+		pcre/pcre_try_flipped.c
+		pcre/pcre_ucp_findchar.c
+		pcre/pcre_version.c
+		pcre/pcre_xclass.c
+		pcre/ucp_findchar.c
+
+	</set>
+</makefile>

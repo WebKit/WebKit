@@ -1,3 +1,28 @@
+2006-05-13  Kevin M. Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8528
+          Bakefiles (and generated Makefiles) for wx and gdk ports
+        
+        * make-generated-sources.sh: 
+        Added script to configure environment to run DerivedSources.make
+        
+        * move-js-headers.sh:
+        Added script to copy JavaScriptCore includes into one dir so that 
+        Framework-style includes will work on all OSes. (written by Mike Emmel)
+        
+        * platform/wx: New dir, home for the wxWidgets port
+        * platform/wx/wx-encodings.txt: Added temp. stub for wx encodings file.
+        
+        * Projects: New dir, for various project files for ports.
+        
+        * Projects/gdk: New dir, GDK port files.
+        * Projects/webcore-gdk.bkl: Bakefile to generate GDK port project files
+        
+        * Projects/wx: New dir, wxWidgets port files.
+        * Projects/webcore-wx.bkl: Bakefile to generate wxWidgets port project files
+
 2006-05-13  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.

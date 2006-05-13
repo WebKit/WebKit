@@ -1,0 +1,112 @@
+<?xml version="1.0" ?>
+<!-- 
+Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1.  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer. 
+2.  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution. 
+3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission. 
+
+THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+JavaScriptCore Bakefile project file. 
+-->
+
+
+
+<makefile>
+
+    <set var="SRCDIR">.</set>
+    <!-- Common definitions etc.: -->
+    <include file="../Bakefiles/presets.bkl"/>
+    <include file="JavaScriptCoreSources.bkl"/>
+
+
+    <set var="BUILDDIR">obj-$(FORMAT)</set>
+
+    <template id="jscore_base" template="icu">
+        <pic>on</pic>
+        <threading>multi</threading>
+        <dirname>$(SRCDIR)</dirname>
+        
+        <include>$(SRCDIR)</include>
+        <include>$(SRCDIR)/ForwardingHeaders</include>
+        <include>$(SRCDIR)/kjs</include>
+        <include>$(SRCDIR)/pcre</include>
+        <include>$(SRCDIR)/bindings</include>
+        <include>$(SRCDIR)/bindings/c</include>
+        <include>$(SRCDIR)/bindings/jni</include>
+        <include>$(SRCDIR)/kxmlcore</include>
+        <include>$(SRCDIR)/DerivedSources/JavaScriptCore</include>
+
+        <define>APPLE_CHANGES=1</define>
+
+        <!-- this GC version requires Mach's thread suspend/resume: -->
+        <if cond="PLATFORM_MACOSX=='1'">
+            <define>USE_CONSERVATIVE_GC=0</define>
+        </if>
+        
+        <if cond="PLATFORM_MACOSX=='1'">
+            <define>USE_CONSERVATIVE_GC=1</define>
+        </if> 
+
+        <define>KHTML_XSLT=1</define>
+
+        <if cond="FORMAT=='gnu'">
+            <!-- FIXME: we need proper configure checks -->
+            <define>HAVE_FUNC_ISNAN</define>
+            <!-- check for undefined symbols for debugging reasons -->
+            <ldflags>-Wl,--no-undefined</ldflags>
+        </if>
+
+        <if cond="PLATFORM_WIN32=='1'">
+            <include>$(SRCDIR)/os-win32</include>
+            <define>HAVE_SYS_TIMEB_H=1</define>
+            <define>HAVE_FLOAT_H=1</define>
+            <define>HAVE_FUNC__FINITE=1</define>
+        </if>
+
+    </template>   
+
+    <exe id="dftables">
+        <dirname>$(SRCDIR)</dirname>
+        <sources>$(SRCDIR)/pcre/dftables.c</sources>
+    </exe>
+
+    <action id="DerivedSources">
+        <is-phony/>
+        <command>bash make-generated-sources.sh</command>
+    </action>
+
+    <lib id="jscore" template="jscore_base">
+        <objects-depend>dftables</objects-depend>
+        <pre-build-target>DerivedSources</pre-build-target>
+        <sources>
+			$(JSCORE_SOURCES_WTF)
+            $(JSCORE_SOURCES_PCRE)
+            $(JSCORE_SOURCES_KJS)
+        </sources>
+		<install-to>$(BUILDDIR)</install-to>
+    </lib>
+
+</makefile>
+
+
+

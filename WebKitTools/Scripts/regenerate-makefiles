@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# This software regenerates the makefiles that are maintained using 
+# Bakefile.
+
+DL_CMD="curl -L"
+
+THISDIR=$PWD
+if [ ! -d $THISDIR/../../Bakefiles ]; then
+  echo "You must run this script from the WebKitTools/Scripts directory."
+  exit 1
+fi
+
+DL_DIR=/tmp/webkit-deps
+# NOTE: If you change this, make sure the dir is on the path.
+DEPS_PREFIX=/usr/local
+
+mkdir -p $DL_DIR
+mkdir -p $DEPS_PREFIX
+
+BKL_VERSION="0.2.0"
+BKL_TARBALL="bakefile-$BKL_VERSION-msvs2005.tar.gz"
+BKL_URL="http://kevino.theolliviers.com/$BKL_TARBALL"
+#BKL_URL="http://mesh.dl.sourceforge.net/sourceforge/bakefile/$BKL_TARBALL"
+
+BKFILE=`which bakefile`
+
+if [ ! -f "$BKFILE" ]; then
+  echo "Bakefile not installed. Installing now..."
+  cd $DL_DIR
+  $DL_CMD -o $DL_DIR/$BKL_TARBALL $BKL_URL
+
+  tar xzvf $DL_DIR/$BKL_TARBALL
+  cd $DL_DIR/bakefile-$BKL_VERSION
+  
+  ./configure --prefix=$DEPS_PREFIX
+  make
+  make install
+  
+  cd $THISDIR
+  rm -rf $DL_DIR/bakefile-$BKL_VERSION
+fi
+
+cd ../../Bakefiles
+bakefile_gen
+
+Property changes on: regenerate-makefiles
+___________________________________________________________________
+Name: svn:executable
+   + *
+

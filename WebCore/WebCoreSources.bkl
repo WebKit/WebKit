@@ -1,0 +1,533 @@
+<?xml version="1.0" ?>
+<makefile>
+	<set append="1" var="WEBCORE_SOURCES_KWQ">
+		
+		kwq/KWQCString.cpp
+		kwq/KWQTextStream.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
+		
+		DerivedSources/WebCore/CharsetData.cpp
+		DerivedSources/WebCore/ColorData.c
+		DerivedSources/WebCore/CSSGrammar.cpp
+		DerivedSources/WebCore/HTMLEntityNames.c
+		DerivedSources/WebCore/JSAttr.cpp
+		DerivedSources/WebCore/JSCanvasGradient.cpp
+		DerivedSources/WebCore/JSCanvasPattern.cpp
+		DerivedSources/WebCore/JSCanvasRenderingContext2D.cpp
+		DerivedSources/WebCore/JSCharacterData.cpp
+		DerivedSources/WebCore/JSCounter.cpp
+		DerivedSources/WebCore/JSCSSPrimitiveValue.cpp
+		DerivedSources/WebCore/JSCSSRule.cpp
+		DerivedSources/WebCore/JSCSSStyleDeclaration.cpp
+		DerivedSources/WebCore/JSCSSValue.cpp
+		DerivedSources/WebCore/JSDocument.cpp
+		DerivedSources/WebCore/JSDocumentType.cpp
+		DerivedSources/WebCore/JSDOMImplementation.cpp
+		DerivedSources/WebCore/JSDOMWindow.cpp
+		DerivedSources/WebCore/JSElement.cpp
+		DerivedSources/WebCore/JSEntity.cpp
+		DerivedSources/WebCore/JSEvent.cpp
+		DerivedSources/WebCore/JSHTMLCanvasElement.cpp
+		DerivedSources/WebCore/JSKeyboardEvent.cpp
+		DerivedSources/WebCore/JSMouseEvent.cpp
+		DerivedSources/WebCore/JSMutationEvent.cpp
+		DerivedSources/WebCore/JSNode.cpp
+		DerivedSources/WebCore/JSNodeFilter.cpp
+		DerivedSources/WebCore/JSNotation.cpp
+		DerivedSources/WebCore/JSProcessingInstruction.cpp
+		DerivedSources/WebCore/JSRange.cpp
+		DerivedSources/WebCore/JSText.cpp
+		DerivedSources/WebCore/JSUIEvent.cpp
+		DerivedSources/WebCore/JSWheelEvent.cpp
+		DerivedSources/WebCore/JSXPathEvaluator.cpp
+		DerivedSources/WebCore/JSXPathExpression.cpp
+		DerivedSources/WebCore/JSXPathNSResolver.cpp
+		DerivedSources/WebCore/JSXPathResult.cpp
+		DerivedSources/WebCore/JSWheelEvent.cpp
+		DerivedSources/WebCore/UserAgentStyleSheetsData.cpp
+		DerivedSources/WebCore/XPathGrammar.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_KHTML">
+		
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_MISC">
+		
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_PAGE">
+		
+		page/DOMWindow.cpp
+		page/Frame.cpp
+		page/FrameTree.cpp
+		page/FrameView.cpp
+		page/MouseEventWithHitTestResults.cpp
+		page/Page.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_LOADER">
+		
+		loader/Cache.cpp
+		loader/CachedCSSStyleSheet.cpp
+		loader/CachedImage.cpp
+		loader/CachedObject.cpp
+		loader/CachedObjectClientWalker.cpp
+		loader/CachedScript.cpp
+		loader/CachedXSLStyleSheet.cpp
+		loader/Decoder.cpp
+		loader/DocLoader.cpp
+		loader/FormData.cpp
+		loader/loader.cpp
+		loader/Request.cpp
+		loader/TextDocument.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_PLATFORM">
+		
+		platform/Arena.cpp
+		platform/ArrayImpl.cpp
+		platform/AtomicString.cpp
+		platform/CharsetNames.cpp
+		platform/Color.cpp
+		platform/DeprecatedPtrListImpl.cpp
+		platform/DeprecatedString.cpp
+		platform/DeprecatedStringList.cpp
+		platform/DeprecatedValueListImpl.cpp
+		platform/FloatPoint.cpp
+		platform/FloatRect.cpp
+		platform/FloatSize.cpp
+		platform/Font.cpp
+		platform/FontFamily.cpp
+		platform/GraphicsContext.cpp
+		platform/GraphicsTypes.cpp
+		platform/Image.cpp
+		platform/IntPointArray.cpp
+		platform/IntRect.cpp
+		platform/KURL.cpp
+		platform/Logging.cpp
+		platform/Pen.cpp
+		platform/RegularExpression.cpp
+		platform/SegmentedString.cpp
+		platform/StreamingTextDecoder.cpp
+		platform/String.cpp
+		platform/StringImpl.cpp
+		platform/TextEncoding.cpp
+		platform/Timer.cpp
+		platform/TransferJob.cpp
+		platform/Widget.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_WIN">
+		
+		platform/win/CursorWin.cpp
+		platform/win/FontPlatformDataWin.cpp
+		platform/win/FontWin.cpp
+		platform/win/IntPointWin.cpp
+		platform/win/IntRectWin.cpp
+		platform/win/IntSizeWin.cpp
+		platform/win/KeyEventWin.cpp
+		platform/win/MouseEventWin.cpp
+		platform/win/ScreenWin.cpp
+		platform/win/ScrollViewWin.cpp
+		platform/win/SharedTimerWin.cpp
+		platform/win/SystemTimeWin.cpp
+		platform/win/TemporaryLinkStubs.cpp
+		platform/win/TransferJobWin.cpp
+		platform/win/WidgetWin.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_IMAGE-DECODERS">
+		
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_GIF">
+		
+		platform/image-decoders/gif/GIFImageDecoder.cpp
+		platform/image-decoders/gif/GIFImageReader.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_PNG">
+		
+		platform/image-decoders/png/png.c
+		platform/image-decoders/png/pngerror.c
+		platform/image-decoders/png/pnggccrd.c
+		platform/image-decoders/png/pngget.c
+		platform/image-decoders/png/PNGImageDecoder.cpp
+		platform/image-decoders/png/pngmem.c
+		platform/image-decoders/png/pngpread.c
+		platform/image-decoders/png/pngread.c
+		platform/image-decoders/png/pngrio.c
+		platform/image-decoders/png/pngrtran.c
+		platform/image-decoders/png/pngrutil.c
+		platform/image-decoders/png/pngset.c
+		platform/image-decoders/png/pngtrans.c
+		platform/image-decoders/png/pngvcrd.c
+		platform/image-decoders/png/pngwio.c
+		platform/image-decoders/png/pngwrite.c
+		platform/image-decoders/png/pngwtran.c
+		platform/image-decoders/png/pngwutil.c
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_ZLIB">
+		
+		platform/image-decoders/zlib/adler32.c
+		platform/image-decoders/zlib/compress.c
+		platform/image-decoders/zlib/crc32.c
+		platform/image-decoders/zlib/deflate.c
+		platform/image-decoders/zlib/gzio.c
+		platform/image-decoders/zlib/infback.c
+		platform/image-decoders/zlib/inffast.c
+		platform/image-decoders/zlib/inflate.c
+		platform/image-decoders/zlib/inftrees.c
+		platform/image-decoders/zlib/trees.c
+		platform/image-decoders/zlib/uncompr.c
+		platform/image-decoders/zlib/zutil.c
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_JPEG">
+		
+		platform/image-decoders/jpeg/jcomapi.c
+		platform/image-decoders/jpeg/jdapimin.c
+		platform/image-decoders/jpeg/jdapistd.c
+		platform/image-decoders/jpeg/jdatadst.c
+		platform/image-decoders/jpeg/jdatasrc.c
+		platform/image-decoders/jpeg/jdcoefct.c
+		platform/image-decoders/jpeg/jdcolor.c
+		platform/image-decoders/jpeg/jddctmgr.c
+		platform/image-decoders/jpeg/jdhuff.c
+		platform/image-decoders/jpeg/jdinput.c
+		platform/image-decoders/jpeg/jdmainct.c
+		platform/image-decoders/jpeg/jdmarker.c
+		platform/image-decoders/jpeg/jdmaster.c
+		platform/image-decoders/jpeg/jdmerge.c
+		platform/image-decoders/jpeg/jdphuff.c
+		platform/image-decoders/jpeg/jdpostct.c
+		platform/image-decoders/jpeg/jdsample.c
+		platform/image-decoders/jpeg/jerror.c
+		platform/image-decoders/jpeg/jfdctflt.c
+		platform/image-decoders/jpeg/jfdctfst.c
+		platform/image-decoders/jpeg/jfdctint.c
+		platform/image-decoders/jpeg/jidctflt.c
+		platform/image-decoders/jpeg/jidctfst.c
+		platform/image-decoders/jpeg/jidctint.c
+		platform/image-decoders/jpeg/jmemmgr.c
+		platform/image-decoders/jpeg/jmemnobs.c
+		platform/image-decoders/jpeg/JPEGImageDecoder.cpp
+		platform/image-decoders/jpeg/jquant1.c
+		platform/image-decoders/jpeg/jquant2.c
+		platform/image-decoders/jpeg/jutils.c
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_CAIRO">
+		
+		platform/cairo/GraphicsContextCairo.cpp
+		platform/cairo/ImageCairo.cpp
+		platform/cairo/ImageSourceCairo.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_PIXMAN">
+		
+		platform/cairo/pixman/src/fbcompose.c
+		platform/cairo/pixman/src/fbedge.c
+		platform/cairo/pixman/src/fbpict.c
+		platform/cairo/pixman/src/fbtrap.c
+		platform/cairo/pixman/src/icblt.c
+		platform/cairo/pixman/src/icbltone.c
+		platform/cairo/pixman/src/iccolor.c
+		platform/cairo/pixman/src/icformat.c
+		platform/cairo/pixman/src/icimage.c
+		platform/cairo/pixman/src/icpixels.c
+		platform/cairo/pixman/src/icrect.c
+		platform/cairo/pixman/src/icstipple.c
+		platform/cairo/pixman/src/ictransform.c
+		platform/cairo/pixman/src/ictrap.c
+		platform/cairo/pixman/src/ictri.c
+		platform/cairo/pixman/src/icutil.c
+		platform/cairo/pixman/src/pixregion.c
+		platform/cairo/pixman/src/renderedge.c
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_CAIRO">
+		
+		platform/cairo/cairo/src/cairo-arc.c
+		platform/cairo/cairo/src/cairo-array.c
+		platform/cairo/cairo/src/cairo-cache.c
+		platform/cairo/cairo/src/cairo-clip.c
+		platform/cairo/cairo/src/cairo-color.c
+		platform/cairo/cairo/src/cairo-debug.c
+		platform/cairo/cairo/src/cairo-fixed.c
+		platform/cairo/cairo/src/cairo-font-options.c
+		platform/cairo/cairo/src/cairo-font.c
+		platform/cairo/cairo/src/cairo-gstate.c
+		platform/cairo/cairo/src/cairo-hash.c
+		platform/cairo/cairo/src/cairo-hull.c
+		platform/cairo/cairo/src/cairo-image-surface.c
+		platform/cairo/cairo/src/cairo-matrix.c
+		platform/cairo/cairo/src/cairo-meta-surface.c
+		platform/cairo/cairo/src/cairo-output-stream.c
+		platform/cairo/cairo/src/cairo-paginated-surface.c
+		platform/cairo/cairo/src/cairo-path-bounds.c
+		platform/cairo/cairo/src/cairo-path-data.c
+		platform/cairo/cairo/src/cairo-path-fill.c
+		platform/cairo/cairo/src/cairo-path-stroke.c
+		platform/cairo/cairo/src/cairo-path.c
+		platform/cairo/cairo/src/cairo-pattern.c
+		platform/cairo/cairo/src/cairo-pen.c
+		platform/cairo/cairo/src/cairo-polygon.c
+		platform/cairo/cairo/src/cairo-region.c
+		platform/cairo/cairo/src/cairo-scaled-font.c
+		platform/cairo/cairo/src/cairo-slope.c
+		platform/cairo/cairo/src/cairo-spline.c
+		platform/cairo/cairo/src/cairo-stroke-style.c
+		platform/cairo/cairo/src/cairo-surface-fallback.c
+		platform/cairo/cairo/src/cairo-surface.c
+		platform/cairo/cairo/src/cairo-traps.c
+		platform/cairo/cairo/src/cairo-unicode.c
+		platform/cairo/cairo/src/cairo-wideint.c
+		platform/cairo/cairo/src/cairo-win32-font.c
+		platform/cairo/cairo/src/cairo-win32-surface.c
+		platform/cairo/cairo/src/cairo.c
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_CSS">
+		
+		css/css_base.cpp
+		css/css_ruleimpl.cpp
+		css/css_stylesheetimpl.cpp
+		css/css_valueimpl.cpp
+		css/CSSComputedStyleDeclaration.cpp
+		css/csshelper.cpp
+		css/cssparser.cpp
+		css/cssstyleselector.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_RENDERING">
+		
+		rendering/bidi.cpp
+		rendering/break_lines.cpp
+		rendering/InlineTextBox.cpp
+		rendering/render_button.cpp
+		rendering/render_form.cpp
+		rendering/render_frames.cpp
+		rendering/render_line.cpp
+		rendering/render_list.cpp
+		rendering/render_replaced.cpp
+		rendering/render_style.cpp
+		rendering/RenderApplet.cpp
+		rendering/RenderArena.cpp
+		rendering/RenderBlock.cpp
+		rendering/RenderBox.cpp
+		rendering/RenderBR.cpp
+		rendering/RenderCanvas.cpp
+		rendering/RenderContainer.cpp
+		rendering/RenderEmptyApplet.cpp
+		rendering/RenderFlexibleBox.cpp
+		rendering/RenderFlow.cpp
+		rendering/RenderHTMLCanvas.cpp
+		rendering/RenderImage.cpp
+		rendering/RenderInline.cpp
+		rendering/RenderLayer.cpp
+		rendering/RenderObject.cpp
+		rendering/RenderTable.cpp
+		rendering/RenderTableCell.cpp
+		rendering/RenderTableCol.cpp
+		rendering/RenderTableRow.cpp
+		rendering/RenderTableSection.cpp
+		rendering/RenderText.cpp
+		rendering/RenderTextField.cpp
+		rendering/RenderTextFragment.cpp
+		rendering/RenderTheme.cpp
+		<!-- rendering/RenderThemeWin.cpp -->
+		rendering/RenderTreeAsText.cpp
+		rendering/table_layout.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_XPATH">
+		
+		xpath/XPathEvaluator.cpp
+		xpath/XPathExpression.cpp
+		xpath/XPathNamespace.cpp
+		xpath/XPathNSResolver.cpp
+		xpath/XPathResult.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_IMPL">
+		
+		xpath/impl/XPathExpressionNode.cpp
+		xpath/impl/XPathFunctions.cpp
+		xpath/impl/XPathParser.cpp
+		xpath/impl/XPathPath.cpp
+		xpath/impl/XPathPredicate.cpp
+		xpath/impl/XPathStep.cpp
+		xpath/impl/XPathUtil.cpp
+		xpath/impl/XPathValue.cpp
+		xpath/impl/XPathVariableReference.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_XML">
+		
+		xml/xmlhttprequest.cpp
+		xml/XSLStyleSheet.cpp
+		xml/XSLTProcessor.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_DOM">
+		
+		dom/Attr.cpp
+		dom/Attribute.cpp
+		dom/BeforeTextInsertedEvent.cpp
+		dom/CDATASection.cpp
+		dom/CharacterData.cpp
+		dom/ChildNodeList.cpp
+		dom/Comment.cpp
+		dom/ContainerNode.cpp
+		dom/CSSMappedAttributeDeclaration.cpp
+		dom/Document.cpp
+		dom/DocumentFragment.cpp
+		dom/DocumentType.cpp
+		dom/dom2_eventsimpl.cpp
+		dom/dom2_traversalimpl.cpp
+		dom/dom_xmlimpl.cpp
+		dom/DOMImplementation.cpp
+		dom/EditingText.cpp
+		dom/Element.cpp
+		dom/EventNames.cpp
+		dom/EventTargetNode.cpp
+		dom/MappedAttribute.cpp
+		dom/NamedAttrMap.cpp
+		dom/NamedMappedAttrMap.cpp
+		dom/NameNodeList.cpp
+		dom/Node.cpp
+		dom/NodeList.cpp
+		dom/Position.cpp
+		dom/QualifiedName.cpp
+		dom/Range.cpp
+		dom/StyledElement.cpp
+		dom/Text.cpp
+		dom/xml_tokenizer.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_BRIDGE">
+		
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_WIN">
+		
+		bridge/win/FrameWin.cpp
+		bridge/win/PageWin.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_EDITING">
+		
+		editing/AppendNodeCommand.cpp
+		editing/ApplyStyleCommand.cpp
+		editing/BreakBlockquoteCommand.cpp
+		editing/CompositeEditCommand.cpp
+		editing/CreateLinkCommand.cpp
+		editing/DeleteFromTextNodeCommand.cpp
+		editing/DeleteSelectionCommand.cpp
+		editing/EditCommand.cpp
+		editing/htmlediting.cpp
+		editing/HTMLInterchange.cpp
+		editing/InsertIntoTextNodeCommand.cpp
+		editing/InsertLineBreakCommand.cpp
+		editing/InsertNodeBeforeCommand.cpp
+		editing/InsertParagraphSeparatorCommand.cpp
+		editing/InsertTextCommand.cpp
+		editing/JoinTextNodesCommand.cpp
+		editing/JSEditor.cpp
+		editing/markup.cpp
+		editing/MergeIdenticalElementsCommand.cpp
+		editing/ModifySelectionListLevelCommand.cpp
+		editing/MoveSelectionCommand.cpp
+		editing/RebalanceWhitespaceCommand.cpp
+		editing/RemoveCSSPropertyCommand.cpp
+		editing/RemoveNodeAttributeCommand.cpp
+		editing/RemoveNodeCommand.cpp
+		editing/RemoveNodePreservingChildrenCommand.cpp
+		editing/ReplaceSelectionCommand.cpp
+		editing/Selection.cpp
+		editing/SelectionController.cpp
+		editing/SetNodeAttributeCommand.cpp
+		editing/SplitElementCommand.cpp
+		editing/SplitTextNodeCommand.cpp
+		editing/SplitTextNodeContainingElementCommand.cpp
+		editing/TextIterator.cpp
+		editing/TypingCommand.cpp
+		editing/UnlinkCommand.cpp
+		editing/visible_units.cpp
+		editing/VisiblePosition.cpp
+		editing/VisibleRange.cpp
+		editing/WrapContentsInDummySpanCommand.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_HTML">
+		
+		html/CanvasGradient.cpp
+		html/CanvasPattern.cpp
+		html/CanvasRenderingContext2D.cpp
+		html/CanvasStyle.cpp
+		html/FormDataList.cpp
+		html/html_baseimpl.cpp
+		html/html_blockimpl.cpp
+		html/html_headimpl.cpp
+		html/html_imageimpl.cpp
+		html/html_inlineimpl.cpp
+		html/html_listimpl.cpp
+		html/html_objectimpl.cpp
+		html/html_tableimpl.cpp
+		html/HTMLBaseFontElement.cpp
+		html/HTMLButtonElement.cpp
+		html/HTMLCanvasElement.cpp
+		html/HTMLCollection.cpp
+		html/HTMLDocument.cpp
+		html/HTMLElement.cpp
+		html/HTMLElementFactory.cpp
+		html/HTMLFieldSetElement.cpp
+		html/HTMLFormCollection.cpp
+		html/HTMLFormElement.cpp
+		html/HTMLGenericFormElement.cpp
+		html/HTMLInputElement.cpp
+		html/HTMLIsIndexElement.cpp
+		html/HTMLKeygenElement.cpp
+		html/HTMLLabelElement.cpp
+		html/HTMLLegendElement.cpp
+		html/HTMLNameCollection.cpp
+		html/HTMLNames.cpp
+		html/HTMLOptGroupElement.cpp
+		html/HTMLOptionElement.cpp
+		html/HTMLOptionsCollection.cpp
+		html/HTMLParser.cpp
+		html/HTMLSelectElement.cpp
+		html/HTMLTextAreaElement.cpp
+		html/HTMLTextFieldInnerElement.cpp
+		html/HTMLTokenizer.cpp
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_BINDINGS">
+		
+
+	</set>
+	<set append="1" var="WEBCORE_SOURCES_JS">
+		
+		bindings/js/JSCanvasRenderingContext2DBase.cpp
+		bindings/js/JSDOMParser.cpp
+		bindings/js/JSHTMLElementWrapperFactory.cpp
+		bindings/js/JSXMLHttpRequest.cpp
+		bindings/js/JSXMLSerializer.cpp
+		bindings/js/JSXSLTProcessor.cpp
+		bindings/js/kjs_binding.cpp
+		bindings/js/kjs_css.cpp
+		bindings/js/kjs_dom.cpp
+		bindings/js/kjs_events.cpp
+		bindings/js/kjs_html.cpp
+		bindings/js/kjs_navigator.cpp
+		bindings/js/kjs_proxy.cpp
+		bindings/js/kjs_traversal.cpp
+		bindings/js/kjs_window.cpp
+
+	</set>
+</makefile>

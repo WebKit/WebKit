@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<!-- $Id: gtkWebCore.bkl 199 2005-07-05 20:44:34Z vslavik $ -->
+<!-- generate GnuMakefile with
+	bakefile -f gnu gtkwebcore.bkl
+	consider forcing includes agian
+	CXX = g++  -I. include config.h
+-->
+
+
+<makefile>
+
+    <include file="../../webcore-base.bkl"/>
+    
+    <dll id="webcore-gdk" template="webcore_base,freetype,gtk">        
+        <dirname>.</dirname>
+        <pic>on</pic>
+        <threading>multi</threading>
+        <warnings>no</warnings>
+		<cxxflags>-w</cxxflags>
+		<cflags>-w</cflags>
+    	<define>BUILDING_GDK__</define>
+    	<define>BUILDING_CAIRO__</define>
+ 
+        <sources>		
+          platform/gdk/CursorGdk.cpp
+          platform/gdk/FontFtCairo.cpp
+          platform/gdk/FontPlatformDataFtCairo.cpp
+          platform/gdk/FrameGdk.cpp
+          platform/gdk/GtkGraphicsContext.cpp
+          platform/gdk/GtkIntPoint.cpp
+          platform/gdk/GtkIntRect.cpp
+          platform/gdk/GtkMouseEvent.cpp
+          platform/gdk/PageGdk.cpp
+          platform/gdk/RenderThemeGdk.cpp
+          platform/gdk/ScreenGdk.cpp
+          platform/gdk/ScrollViewGdk.cpp
+          platform/gdk/SharedTimerLinux.cpp
+          platform/gdk/SystemTimeLinux.cpp
+          platform/gdk/TemporaryLinkStubs.cpp
+          platform/gdk/TransferJobCurl.cpp
+          platform/gdk/WidgetGdk.cpp
+		</sources>
+        <include>$(SRCDIR)/platform/gdk</include>
+    </dll>
+</makefile>
+
