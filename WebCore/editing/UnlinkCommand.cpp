@@ -26,7 +26,7 @@
 #include "config.h"
 #include "UnlinkCommand.h"
 
-#include "html_inlineimpl.h"
+#include "HTMLAnchorElement.h"
 
 namespace WebCore {
 

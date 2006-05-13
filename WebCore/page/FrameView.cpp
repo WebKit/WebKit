@@ -42,7 +42,6 @@
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
 #include "HTMLDocument.h"
-#include "html_inlineimpl.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"

@@ -1,5 +1,39 @@
 2006-05-12  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by timo.
+
+        Split out html_inlineimpl.* into separate files (one per class).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_html.cpp:
+        * bindings/objc/DOMHTML.mm:
+        * editing/CreateLinkCommand.cpp:
+        * editing/UnlinkCommand.cpp:
+        * html/HTMLAnchorElement.cpp: Added.
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        * html/HTMLAnchorElement.h: Added.
+        * html/HTMLBRElement.cpp: Added.
+        * html/HTMLBRElement.h: Added.
+        * html/HTMLElementFactory.cpp:
+        * html/HTMLFontElement.cpp: Added.
+        (WebCore::HTMLFontElement::HTMLFontElement):
+        (WebCore::HTMLFontElement::setColor):
+        (WebCore::HTMLFontElement::setFace):
+        (WebCore::HTMLFontElement::setSize):
+        * html/HTMLFontElement.h: Added.
+        * html/HTMLModElement.cpp: Added.
+        (WebCore::HTMLModElement::setCite):
+        (WebCore::HTMLModElement::setDateTime):
+        * html/HTMLModElement.h: Added.
+        * html/HTMLQuoteElement.cpp: Added.
+        * html/HTMLQuoteElement.h: Added.
+        * html/html_imageimpl.h:
+        * html/html_inlineimpl.cpp: Removed.
+        * html/html_inlineimpl.h: Removed.
+        * page/FrameView.cpp:
+
+2006-05-12  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by beth.
 
         Fix build error.

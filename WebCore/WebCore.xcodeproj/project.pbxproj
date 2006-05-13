@@ -424,7 +424,6 @@
 		93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* HTMLDocument.h */; };
 		93F198E608245E59001E9ABC /* HTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElement.h */; };
 		93F198E908245E59001E9ABC /* html_imageimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24502DE4396018635CA /* html_imageimpl.h */; };
-		93F198EA08245E59001E9ABC /* html_inlineimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24702DE4396018635CA /* html_inlineimpl.h */; };
 		93F198EB08245E59001E9ABC /* html_listimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24902DE4396018635CA /* html_listimpl.h */; };
 		93F198EF08245E59001E9ABC /* HTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* HTMLParser.h */; };
 		93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* HTMLTokenizer.h */; };
@@ -518,7 +517,6 @@
 		93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* HTMLDocument.cpp */; };
 		93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElement.cpp */; };
 		93F19A9508245E59001E9ABC /* html_imageimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24402DE4396018635CA /* html_imageimpl.cpp */; };
-		93F19A9608245E59001E9ABC /* html_inlineimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24602DE4396018635CA /* html_inlineimpl.cpp */; };
 		93F19A9708245E59001E9ABC /* html_listimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24802DE4396018635CA /* html_listimpl.cpp */; };
 		93F19A9B08245E59001E9ABC /* HTMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* HTMLParser.cpp */; };
 		93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* HTMLTokenizer.cpp */; };
@@ -1070,6 +1068,16 @@
 		A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF5E00A155A05000A4234 /* RootInlineBox.cpp */; };
 		A8CFF6BE0A156118000A4234 /* EllipsisBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF6BD0A156118000A4234 /* EllipsisBox.h */; };
 		A8CFF6CB0A1561CD000A4234 /* EllipsisBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */; };
+		A8CFF7A20A156978000A4234 /* HTMLFontElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF7980A156978000A4234 /* HTMLFontElement.cpp */; };
+		A8CFF7A30A156978000A4234 /* HTMLQuoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF7990A156978000A4234 /* HTMLQuoteElement.h */; };
+		A8CFF7A40A156978000A4234 /* HTMLAnchorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF79A0A156978000A4234 /* HTMLAnchorElement.cpp */; };
+		A8CFF7A50A156978000A4234 /* HTMLQuoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF79B0A156978000A4234 /* HTMLQuoteElement.cpp */; };
+		A8CFF7A60A156978000A4234 /* HTMLFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF79C0A156978000A4234 /* HTMLFontElement.h */; };
+		A8CFF7A70A156978000A4234 /* HTMLModElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF79D0A156978000A4234 /* HTMLModElement.h */; };
+		A8CFF7A80A156978000A4234 /* HTMLBRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF79E0A156978000A4234 /* HTMLBRElement.cpp */; };
+		A8CFF7A90A156978000A4234 /* HTMLModElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF79F0A156978000A4234 /* HTMLModElement.cpp */; };
+		A8CFF7AA0A156978000A4234 /* HTMLBRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF7A00A156978000A4234 /* HTMLBRElement.h */; };
+		A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF7A10A156978000A4234 /* HTMLAnchorElement.h */; };
 		A8DF3FCE097FA0FC0052981B /* HTMLFormCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */; };
 		A8DF3FCF097FA0FC0052981B /* HTMLFormCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */; };
 		A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */; };
@@ -2473,6 +2481,16 @@
 		A8CFF5E00A155A05000A4234 /* RootInlineBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RootInlineBox.cpp; sourceTree = "<group>"; };
 		A8CFF6BD0A156118000A4234 /* EllipsisBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EllipsisBox.h; sourceTree = "<group>"; };
 		A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EllipsisBox.cpp; sourceTree = "<group>"; };
+		A8CFF7980A156978000A4234 /* HTMLFontElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFontElement.cpp; sourceTree = "<group>"; };
+		A8CFF7990A156978000A4234 /* HTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLQuoteElement.h; sourceTree = "<group>"; };
+		A8CFF79A0A156978000A4234 /* HTMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLAnchorElement.cpp; sourceTree = "<group>"; };
+		A8CFF79B0A156978000A4234 /* HTMLQuoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLQuoteElement.cpp; sourceTree = "<group>"; };
+		A8CFF79C0A156978000A4234 /* HTMLFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFontElement.h; sourceTree = "<group>"; };
+		A8CFF79D0A156978000A4234 /* HTMLModElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLModElement.h; sourceTree = "<group>"; };
+		A8CFF79E0A156978000A4234 /* HTMLBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLBRElement.cpp; sourceTree = "<group>"; };
+		A8CFF79F0A156978000A4234 /* HTMLModElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLModElement.cpp; sourceTree = "<group>"; };
+		A8CFF7A00A156978000A4234 /* HTMLBRElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLBRElement.h; sourceTree = "<group>"; };
+		A8CFF7A10A156978000A4234 /* HTMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLAnchorElement.h; sourceTree = "<group>"; };
 		A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormCollection.h; sourceTree = "<group>"; };
 		A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormCollection.cpp; sourceTree = "<group>"; };
 		A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLCollection.h; sourceTree = "<group>"; };
@@ -2706,8 +2724,6 @@
 		F523D23F02DE4396018635CA /* HTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24402DE4396018635CA /* html_imageimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_imageimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24502DE4396018635CA /* html_imageimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_imageimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D24602DE4396018635CA /* html_inlineimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_inlineimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D24702DE4396018635CA /* html_inlineimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_inlineimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24802DE4396018635CA /* html_listimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_listimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24902DE4396018635CA /* html_listimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_listimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D25002DE4396018635CA /* HTMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3329,10 +3345,10 @@
 				F523D23A02DE4396018635CA /* html_blockimpl.h */,
 				F523D24402DE4396018635CA /* html_imageimpl.cpp */,
 				F523D24502DE4396018635CA /* html_imageimpl.h */,
-				F523D24602DE4396018635CA /* html_inlineimpl.cpp */,
-				F523D24702DE4396018635CA /* html_inlineimpl.h */,
 				F523D24802DE4396018635CA /* html_listimpl.cpp */,
 				F523D24902DE4396018635CA /* html_listimpl.h */,
+				A8CFF79A0A156978000A4234 /* HTMLAnchorElement.cpp */,
+				A8CFF7A10A156978000A4234 /* HTMLAnchorElement.h */,
 				A871D4540A127CBC00B12A68 /* HTMLAppletElement.cpp */,
 				A871D4530A127CBC00B12A68 /* HTMLAppletElement.h */,
 				A871DC1E0A15205700B12A68 /* HTMLBaseElement.cpp */,
@@ -3341,6 +3357,8 @@
 				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */,
 				A871DE1D0A152AC800B12A68 /* HTMLBodyElement.cpp */,
 				A871DE200A152AC800B12A68 /* HTMLBodyElement.h */,
+				A8CFF79E0A156978000A4234 /* HTMLBRElement.cpp */,
+				A8CFF7A00A156978000A4234 /* HTMLBRElement.h */,
 				A81369B7097374F500D74463 /* HTMLButtonElement.cpp */,
 				A81369B6097374F500D74463 /* HTMLButtonElement.h */,
 				51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */,
@@ -3360,6 +3378,8 @@
 				A871D4520A127CBC00B12A68 /* HTMLEmbedElement.h */,
 				A81369B9097374F500D74463 /* HTMLFieldSetElement.cpp */,
 				A81369B8097374F500D74463 /* HTMLFieldSetElement.h */,
+				A8CFF7980A156978000A4234 /* HTMLFontElement.cpp */,
+				A8CFF79C0A156978000A4234 /* HTMLFontElement.h */,
 				A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */,
 				A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */,
 				A81369B5097374F500D74463 /* HTMLFormElement.cpp */,
@@ -3390,6 +3410,8 @@
 				A871DC140A15205700B12A68 /* HTMLLinkElement.h */,
 				A871DC1B0A15205700B12A68 /* HTMLMetaElement.cpp */,
 				A871DC180A15205700B12A68 /* HTMLMetaElement.h */,
+				A8CFF79F0A156978000A4234 /* HTMLModElement.cpp */,
+				A8CFF79D0A156978000A4234 /* HTMLModElement.h */,
 				A8DF3FCD097FA0FB0052981B /* HTMLNameCollection.cpp */,
 				A8DF3FCC097FA0FB0052981B /* HTMLNameCollection.h */,
 				550A0BCB085F604D007353D6 /* HTMLNames.cpp */,
@@ -3408,6 +3430,8 @@
 				F523D25102DE4396018635CA /* HTMLParser.h */,
 				A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */,
 				A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */,
+				A8CFF79B0A156978000A4234 /* HTMLQuoteElement.cpp */,
+				A8CFF7990A156978000A4234 /* HTMLQuoteElement.h */,
 				A871DC160A15205700B12A68 /* HTMLScriptElement.cpp */,
 				A871DC190A15205700B12A68 /* HTMLScriptElement.h */,
 				A81369BD097374F500D74463 /* HTMLSelectElement.cpp */,
@@ -4618,7 +4642,6 @@
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
 				93F198E908245E59001E9ABC /* html_imageimpl.h in Headers */,
-				93F198EA08245E59001E9ABC /* html_inlineimpl.h in Headers */,
 				93F198EB08245E59001E9ABC /* html_listimpl.h in Headers */,
 				93F198EF08245E59001E9ABC /* HTMLParser.h in Headers */,
 				93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */,
@@ -5248,6 +5271,11 @@
 				A8CFF5E30A155A05000A4234 /* InlineFlowBox.h in Headers */,
 				A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */,
 				A8CFF6BE0A156118000A4234 /* EllipsisBox.h in Headers */,
+				A8CFF7A30A156978000A4234 /* HTMLQuoteElement.h in Headers */,
+				A8CFF7A60A156978000A4234 /* HTMLFontElement.h in Headers */,
+				A8CFF7A70A156978000A4234 /* HTMLModElement.h in Headers */,
+				A8CFF7AA0A156978000A4234 /* HTMLBRElement.h in Headers */,
+				A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5462,7 +5490,6 @@
 				93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */,
 				93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */,
 				93F19A9508245E59001E9ABC /* html_imageimpl.cpp in Sources */,
-				93F19A9608245E59001E9ABC /* html_inlineimpl.cpp in Sources */,
 				93F19A9708245E59001E9ABC /* html_listimpl.cpp in Sources */,
 				93F19A9B08245E59001E9ABC /* HTMLParser.cpp in Sources */,
 				93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */,
@@ -6020,6 +6047,11 @@
 				A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */,
 				A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */,
 				A8CFF6CB0A1561CD000A4234 /* EllipsisBox.cpp in Sources */,
+				A8CFF7A20A156978000A4234 /* HTMLFontElement.cpp in Sources */,
+				A8CFF7A40A156978000A4234 /* HTMLAnchorElement.cpp in Sources */,
+				A8CFF7A50A156978000A4234 /* HTMLQuoteElement.cpp in Sources */,
+				A8CFF7A80A156978000A4234 /* HTMLBRElement.cpp in Sources */,
+				A8CFF7A90A156978000A4234 /* HTMLModElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
