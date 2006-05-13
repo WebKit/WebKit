@@ -28,6 +28,7 @@
 
 #include "DocPtr.h"
 #include "PlatformString.h"
+#include "DeprecatedString.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
