@@ -8,7 +8,7 @@
         Add a boolean variable per css value to catch whether values
         are specified as floats or integers.
 
-        Test: css2.1/rgb-float.html
+        Test: fast/css/rgb-float.html
 
         * css/CSSGrammar.y:
         * css/cssparser.cpp:
