@@ -121,6 +121,8 @@ void RootInlineBox::adjustPosition(int dx, int dy)
     m_topOverflow += dy;
     m_bottomOverflow += dy;
     m_blockHeight += dy;
+    m_selectionTop += dy;
+    m_selectionBottom += dy;
 }
 
 void RootInlineBox::childRemoved(InlineBox* box)
