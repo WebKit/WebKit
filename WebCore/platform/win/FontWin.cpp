@@ -225,8 +225,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& textSt
     return FloatRect(point, runSize);
 }
 
-int Font::checkSelectionPoint(const TextRun& run, int toAdd, int tabWidth, int xpos, int x,
-                              TextDirection, bool visuallyOrdered, bool includePartialGlyphs) const
+int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int x, bool includePartialGlyphs) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
@@ -237,7 +236,7 @@ int Font::checkSelectionPoint(const TextRun& run, int toAdd, int tabWidth, int x
     SaveDC(dc);
     SelectObject(dc, font->platformData().hfont());
     
-    int* caretPositions = (int*)fastMalloc(len * sizeof(int));
+    int* caretPositions = (int*)fastMalloc(run.length() * sizeof(int));
     GCP_RESULTS results;
     memset(&results, 0, sizeof(GCP_RESULTS));
     results.lStructSize = sizeof(GCP_RESULTS);

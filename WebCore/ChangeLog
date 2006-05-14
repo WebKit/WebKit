@@ -1,5 +1,13 @@
 2006-05-14  Steve Falkenburg  <sfalken@apple.com>
 
+        Get FontWin.cpp compiling.
+        WebCore and JSCore now build, but Spinneret still gets link errors.
+
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::offsetForPosition):
+
+2006-05-14  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by maciej.
 
         Fix Windows build except for fontwin.cpp.
