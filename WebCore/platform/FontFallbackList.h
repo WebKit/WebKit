@@ -24,7 +24,10 @@
 // This file has no guards on purpose in order to detect redundant includes. This is a private header
 // and so this should catch anyone trying to include this file in public cpp files.
 
+#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <Shared.h>
+#include "FontData.h"
 
 namespace WebCore {
 
@@ -32,36 +35,34 @@ class Font;
 class GraphicsContext;
 class IntRect;
 class FontData;
+class FontDescription;
+class FontPlatformData;
+
+static const int cAllFamiliesScanned = -1;
 
 class FontFallbackList : public Shared<FontFallbackList>, Noncopyable {
 public:
     FontFallbackList();
     ~FontFallbackList();
 
-    // FIXME: Eventually FontFallbackLists will be hashed themselves (by FontDescription), and so instead of invalidating we'll just
-    // drop our reference.
     void invalidate();
     
-    bool isFixedPitch(const FontDescription& f) const { if (m_pitch == UnknownPitch) determinePitch(f); return m_pitch == FixedPitch; };
-    void determinePitch(const FontDescription&) const;
+    bool isFixedPitch(const Font* f) const { if (m_pitch == UnknownPitch) determinePitch(f); return m_pitch == FixedPitch; };
+    void determinePitch(const Font*) const;
 
 private:
-    mutable Pitch m_pitch;
+    const FontData* primaryFont(const Font* f) const { return fontDataAt(f, 0); }
+    const FontData* fontDataAt(const Font*, unsigned index) const;
+    const FontData* fontDataForCharacters(const Font*, const UChar*, int length) const;
     
-    FontData* primaryFont(const FontDescription&) const;
-
 #if __APPLE__
-    // FIXME: FontData is still doing too much and is basically handling functionality that will be lifted up into
-    // FontFallbackList and Font.  That's why we still only have one FontData object and don't yet have the vector.
-    mutable FontData* m_font;
-    mutable FontPlatformData m_platformFont;
-
-    const FontPlatformData& platformFont(const FontDescription&) const;
     void setPlatformFont(const FontPlatformData&);
-#else
-    mutable Vector<FontData*> m_fontList;
 #endif
 
+    mutable Vector<const FontData*, 1> m_fontList;
+    mutable int m_familyIndex;
+    mutable Pitch m_pitch;
+   
     friend class Font;
 };
 

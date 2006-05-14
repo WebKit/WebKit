@@ -68,6 +68,7 @@ struct WidthIterator {
     int m_end;
 
     const TextStyle& m_style;
+    
     const FontData* m_substituteFontData;
 
     unsigned m_currentCharacter;
@@ -110,7 +111,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, const TextSty
     else {
         TextRun completeRun(run);
         completeRun.makeComplete();
-        WidthIterator startPositionIterator(font, completeRun, style, substituteFontData);
+        WidthIterator startPositionIterator(font, completeRun, style, m_substituteFontData);
         startPositionIterator.advance(run.from());
         m_widthToStart = startPositionIterator.m_runWidthSoFar;
     }
@@ -130,8 +131,8 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
     float runWidthSoFar = m_runWidthSoFar;
     float lastRoundingWidth = m_finalRoundingWidth;
-
-    const FontData* primaryFontData = m_font->primaryFont();
+    
+    const FontData* primaryFont = m_font->primaryFont();
     
     while (currentCharacter < offset) {
         UChar32 c = *cp;
@@ -163,7 +164,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             }
         }
 
-        const FontData* fontData = m_substituteFontData ? m_substituteFontData :primaryFontData;
+        const FontData* fontData = m_substituteFontData ? m_substituteFontData : primaryFont;
 
         if (needCharTransform) {
             if (rtl)
@@ -185,12 +186,12 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string. If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
         if (glyph == 0 && !m_substituteFontData && m_style.attemptFontSubstitution()) {
-            // FIXME: Should go through fallback list eventually.
-            const FontData* substituteFontData = fontData->findSubstituteFontData(cp, clusterLength, m_font->fontDescription());
+            const FontData* substituteFontData = m_font->fontDataForCharacters(cp, clusterLength);
             if (substituteFontData) {
                 GlyphBuffer localGlyphBuffer;
                 m_font->floatWidthForSimpleText(TextRun((UChar*)cp, clusterLength), TextStyle(0, 0, 0, m_style.rtl(), m_style.directionalOverride(), 
-                                                                                              false, m_style.applyWordRounding()), substituteFontData, 0, &localGlyphBuffer);
+                                                                                              false, m_style.applyWordRounding()), 
+                                                                                              substituteFontData, 0, &localGlyphBuffer);
                 if (localGlyphBuffer.size() == 1) {
                     assert(substituteFontData == localGlyphBuffer.fontDataAt(0));
                     glyph = localGlyphBuffer.glyphAt(0);
@@ -344,7 +345,19 @@ Font::~Font()
 const FontData* Font::primaryFont() const
 {
     assert(m_fontList);
-    return m_fontList->primaryFont(m_fontDescription);
+    return m_fontList->primaryFont(this);
+}
+
+const FontData* Font::fontDataAt(unsigned index) const
+{
+    assert(m_fontList);
+    return m_fontList->fontDataAt(this, index);
+}
+
+const FontData* Font::fontDataForCharacters(const UChar* characters, int length) const
+{
+    assert(m_fontList);
+    return m_fontList->fontDataForCharacters(this, characters, length);
 }
 
 void Font::update() const
@@ -371,32 +384,28 @@ int Font::width(const TextRun& run, const TextStyle& style) const
 
 int Font::ascent() const
 {
-    assert(m_fontList);
-    return m_fontList->primaryFont(fontDescription())->ascent();
+    return primaryFont()->ascent();
 }
 
 int Font::descent() const
 {
-    assert(m_fontList);
-    return m_fontList->primaryFont(fontDescription())->descent();
+    return primaryFont()->descent();
 }
 
 int Font::lineSpacing() const
 {
-    assert(m_fontList);
-    return m_fontList->primaryFont(fontDescription())->lineSpacing();
+    return primaryFont()->lineSpacing();
 }
 
 float Font::xHeight() const
 {
-    assert(m_fontList);
-    return m_fontList->primaryFont(fontDescription())->xHeight();
+    return primaryFont()->xHeight();
 }
 
 bool Font::isFixedPitch() const
 {
     assert(m_fontList);
-    return m_fontList->isFixedPitch(fontDescription());
+    return m_fontList->isFixedPitch(this);
 }
 
 #if __APPLE__

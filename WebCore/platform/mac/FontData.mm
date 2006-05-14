@@ -303,56 +303,13 @@ FontData* FontData::smallCapsFontData() const
     return m_smallCapsFontData;
 }
 
-static inline bool fontContainsString(NSFont *font, NSString *string)
+bool FontData::containsCharacters(const UChar* characters, int length) const
 {
-    NSCharacterSet *set = [[font coveredCharacterSet] invertedSet];
-    return set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
-}
-
-static NSFont *findSubstituteFont(const FontData *renderer, NSString *string, NSString **families)
-{
-    NSFont *substituteFont = nil;
-
-    // First search the CSS family fallback list.
-    // Start at 1 (2nd font) because we've already failed on the first lookup.
-    NSString *family = nil;
-    int i = 1;
-    while (families && families[i]) {
-        family = families[i++];
-        NSFont *f = [[WebTextRendererFactory sharedFactory] cachedFontFromFamily:family
-            traits:[[NSFontManager sharedFontManager] traitsOfFont:renderer->m_font.font]
-            size:[renderer->m_font.font pointSize]];
-        if (f && fontContainsString(f, string)) {
-            substituteFont = f; 
-            break;
-        }
-    }
-    
-    // Now do string based lookup.
-    if (substituteFont == nil)
-        substituteFont = wkGetFontInLanguageForRange(renderer->m_font.font, string, NSMakeRange(0, [string length]));
-
-    // Now do character based lookup.
-    if (substituteFont == nil && [string length] == 1)
-        substituteFont = wkGetFontInLanguageForCharacter(renderer->m_font.font, [string characterAtIndex:0]);
-
-    // Check to make sure this is a distinct font.
-    if (substituteFont && [[substituteFont screenFont] isEqual:[renderer->m_font.font screenFont]])
-        substituteFont = nil;
-
-    // Now that we have a substitute font, attempt to match it to the best variation.
-    // If we have a good match return that, otherwise return the font the AppKit has found.
-    if (substituteFont) {
-        NSFontManager *manager = [NSFontManager sharedFontManager];
-        NSFont *bestVariation = [manager fontWithFamily:[substituteFont familyName]
-            traits:[manager traitsOfFont:renderer->m_font.font]
-            weight:[manager weightOfFont:renderer->m_font.font]
-            size:[renderer->m_font.font pointSize]];
-        if (bestVariation)
-            substituteFont = bestVariation;
-    }
-
-    return substituteFont;
+    NSString *string = [[NSString alloc] initWithCharactersNoCopy:(UniChar*)characters length:length freeWhenDone:NO];
+    NSCharacterSet *set = [[m_font.font coveredCharacterSet] invertedSet];
+    bool result = set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
+    [string release];
+    return result;
 }
 
 static const FontData *rendererForAlternateFont(const FontData *renderer, FontPlatformData alternateFont)
@@ -373,20 +330,6 @@ static const FontData *rendererForAlternateFont(const FontData *renderer, FontPl
     alternateFont.forPrinter = renderer->m_font.forPrinter;
 
     return [[WebTextRendererFactory sharedFactory] rendererWithFont:alternateFont];
-}
-
-static const FontData *findSubstituteRenderer(const FontData *renderer, const unichar *characters, int numCharacters, NSString **families)
-{
-    NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
-    FontPlatformData substituteFont(findSubstituteFont(renderer, string, families));
-    [string release];
-    return rendererForAlternateFont(renderer, substituteFont);
-}
-
-const FontData* FontData::findSubstituteFontData(const UChar* characters, unsigned numCharacters, const FontDescription& fontDescription) const
-{
-    CREATE_FAMILY_ARRAY(fontDescription, families);
-    return findSubstituteRenderer(this, (const unichar*)characters, numCharacters, families);
 }
 
 // Nasty hack to determine if we should round or ceil space widths.

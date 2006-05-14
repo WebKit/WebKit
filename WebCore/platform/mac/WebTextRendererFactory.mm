@@ -29,6 +29,8 @@
 #import "config.h"
 #import "WebTextRendererFactory.h"
 #import "FontData.h"
+#import "FontDescription.h"
+#import "FontFallbackList.h"
 #import "WebCoreSystemInterface.h"
 
 #import "FoundationExtras.h"
@@ -263,11 +265,12 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 
 - (NSFont *)fallbackFontWithTraits:(NSFontTraitMask)traits size:(float)size 
 {
-    NSFont *font = [self cachedFontFromFamily:@"Helvetica" traits:traits size:size];
+    // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
+    // the default that the user would get without changing any prefs.
+    NSFont *font = [self cachedFontFromFamily:@"Times" traits:traits size:size];
     if (font == nil) {
-        // The Helvetica fallback will almost always work, since that's a basic
-        // font that we ship with all systems. But in the highly unusual case where
-        // the user removed Helvetica, we fall back on Lucida Grande because that's
+        // The Times fallback will almost always work, but in the highly unusual case where
+        // the user doesn't have it, we fall back on Lucida Grande because that's
         // guaranteed to be there, according to Nathan Taylor. This is good enough
         // to avoid a crash, at least. To reduce the possibility of failure even further,
         // we don't even bother with traits.
@@ -276,14 +279,25 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     return font;
 }
 
-- (FontPlatformData)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
+- (FontPlatformData)fontWithDescription:(WebCore::FontDescription*)fontDescription familyIndex:(int*)index
 {
     NSFont *font = nil;
     NSString *matchedFamily = nil;
+    NSFontTraitMask traits = 0;
+    if (fontDescription->italic())
+        traits |= NSItalicFontMask;
+    if (fontDescription->weight() >= WebCore::cBoldWeight)
+        traits |= NSBoldFontMask;
+    float size = fontDescription->computedPixelSize(); // We only do integral font sizes right now.
     
-    int i = 0;
-    while (families && families[i] != 0 && font == nil) {
-        NSString *family = families[i++];
+    int startIndex = *index;
+    const FontFamily* startFamily = &fontDescription->family();
+    for (int i = 0; startFamily && i < startIndex; i++)
+        startFamily = startFamily->next();
+    const FontFamily* currFamily = startFamily;
+    while (currFamily && font == nil) {
+        NSString *family = currFamily->getNSFamily();
+        *index = *index + 1;
         if ([family length] != 0) {
             font = [self cachedFontFromFamily:family traits:traits size:size];
             if (font) {
@@ -291,7 +305,11 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
                 break;
             }
         }
+        currFamily = currFamily->next();
     }
+
+    if (!currFamily)
+        *index = cAllFamiliesScanned;
 
     if (font == nil) {
         // We didn't find a font. Use a fallback font.
@@ -299,9 +317,9 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
         // First we'll attempt to find an appropriate font using a match based on 
         // the presence of keywords in the the requested names.  For example, we'll
         // match any name that contains "Arabic" to Geeza Pro.
-        i = 0;
-        while (families && families[i] != 0 && font == nil) {
-            NSString *family = families[i++];
+        const FontFamily* currFamily = startFamily;
+        while (currFamily && font == nil) {
+            NSString *family = currFamily->getNSFamily();
             if ([family length] != 0) {
                 static NSString * const matchWords[3] = { @"Arabic", @"Pashto", @"Urdu" };
                 static NSString * const matchFamilies[3] = { @"Geeza Pro", @"Geeza Pro", @"Geeza Pro" };
@@ -310,10 +328,12 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
                     if ([family rangeOfString:matchWords[j] options:NSCaseInsensitiveSearch].location != NSNotFound)
                         font = [self cachedFontFromFamily:matchFamilies[j] traits:traits size:size];
             }
+            currFamily = currFamily->next();
         }
         
-        // Still nothing found, use the final fallback.
-        if (font == nil)
+        // Still nothing found, use the final fallback.  We only do the last resort fallback
+        // when trying to find the primary font.  Otherwise our fallback will rely on the actual characters used.
+        if (font == nil && startIndex == 0)
             font = [self fallbackFontWithTraits:traits size:size];
     }
 
@@ -325,7 +345,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     result.font = font;
     result.syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
     result.syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
-    result.forPrinter = NO;
+    result.forPrinter = fontDescription->usePrinterFont();
     
     // There are some malformed fonts that will be correctly returned by -cachedFontForFamily:traits:size: as a match for a particular trait,
     // though -[NSFontManager traitsOfFont:] incorrectly claims the font does not have the specified trait. This could result in applying 

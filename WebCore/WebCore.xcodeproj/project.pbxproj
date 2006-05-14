@@ -1264,6 +1264,10 @@
 		BCEF3434087B563E00BBF833 /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */; };
 		BCF1A5F1097839600061A123 /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF1A5EF097839600061A123 /* IntSize.h */; };
+		BCF7C0780A1680C00032F75B /* FontFallbackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C0770A1680C00032F75B /* FontFallbackList.cpp */; };
+		BCF7C0990A1683580032F75B /* FontFallbackListMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C0980A1683580032F75B /* FontFallbackListMac.mm */; };
+		BCF7C0B80A1687CC0032F75B /* FontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF7C0B70A1687CC0032F75B /* FontCache.h */; };
+		BCF7C2340A16B5F80032F75B /* FontCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */; };
 		BCFB2E5E0979E46400BA703D /* CachedObjectClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */; };
 		BCFB2E840979FD4F00BA703D /* Shared.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E830979FD4F00BA703D /* Shared.h */; };
 		BCFB2F41097A24B500BA703D /* SegmentedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */; };
@@ -2689,6 +2693,10 @@
 		BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCF1A5EF097839600061A123 /* IntSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IntSize.h; sourceTree = "<group>"; };
+		BCF7C0770A1680C00032F75B /* FontFallbackList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontFallbackList.cpp; sourceTree = "<group>"; };
+		BCF7C0980A1683580032F75B /* FontFallbackListMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontFallbackListMac.mm; sourceTree = "<group>"; };
+		BCF7C0B70A1687CC0032F75B /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
+		BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontCacheMac.mm; sourceTree = "<group>"; };
 		BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedObjectClient.h; sourceTree = "<group>"; };
 		BCFB2E830979FD4F00BA703D /* Shared.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Shared.h; sourceTree = "<group>"; };
 		BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SegmentedString.cpp; sourceTree = "<group>"; };
@@ -3096,8 +3104,10 @@
 				6582A14A09999D6C00BEEB6D /* FloatPointMac.mm */,
 				6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */,
 				6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */,
+				BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */,
 				BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */,
 				BCEB377209B7BA3900CB38B1 /* FontMac.mm */,
+				BCF7C0980A1683580032F75B /* FontFallbackListMac.mm */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
 				935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */,
 				6582A14D09999D6C00BEEB6D /* ImageMac.mm */,
@@ -4237,7 +4247,9 @@
 				BC73E25C0978682700EDFF8A /* FloatSize.h */,
 				BC6D6DD009AF906600F59759 /* Font.cpp */,
 				BC6D6DD109AF906600F59759 /* Font.h */,
+				BCF7C0B70A1687CC0032F75B /* FontCache.h */,
 				BCEB377509B7BB0D00CB38B1 /* FontFallbackList.h */,
+				BCF7C0770A1680C00032F75B /* FontFallbackList.cpp */,
 				BCC47E6A09A3FE4700ADB771 /* FontDescription.h */,
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
@@ -5263,6 +5275,7 @@
 				A871DED70A1530C700B12A68 /* RenderPart.h in Headers */,
 				A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */,
 				A871DFE40A15376B00B12A68 /* RenderWidget.h in Headers */,
+				BCF7C0B80A1687CC0032F75B /* FontCache.h in Headers */,
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
 				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
@@ -6041,6 +6054,9 @@
 				A871DED60A1530C700B12A68 /* RenderPartObject.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,
 				A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */,
+				BCF7C0780A1680C00032F75B /* FontFallbackList.cpp in Sources */,
+				BCF7C0990A1683580032F75B /* FontFallbackListMac.mm in Sources */,
+				BCF7C2340A16B5F80032F75B /* FontCacheMac.mm in Sources */,
 				A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */,
 				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
 				A8CFF5E40A155A05000A4234 /* InlineFlowBox.cpp in Sources */,

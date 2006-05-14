@@ -21,6 +21,9 @@
  *
  */
 
+#ifndef FONTDATA_H
+#define FONTDATA_H
+
 #if __APPLE__
 // FIXME: This is going to be cross-platform eventually, but for now we just compile on OS X.
 
@@ -29,6 +32,8 @@
 
 // FIXME: Temporary.  Only needed to support API that's going to move.
 #include <unicode/umachine.h>
+
+enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 namespace WebCore
 {
@@ -58,11 +63,17 @@ public:
 
     // FIXME: These are temporary API and will eventually move to the fallback list.
     Glyph glyphForCharacter(const FontData **renderer, unsigned c) const;
-    const FontData* findSubstituteFontData(const UChar* characters, unsigned numCharacters, const FontDescription&) const;
     void updateGlyphMapEntry(UChar c, Glyph glyph, const FontData *substituteRenderer) const;
     // End temporary API
 
     float widthForGlyph(Glyph glyph) const;
+    bool containsCharacters(const UChar* characters, int length) const;
+
+    Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
+    
+#if __APPLE__
+    NSFont* getNSFont() const { return m_font.font; }
+#endif
 
 public:
     int m_ascent;
@@ -98,6 +109,8 @@ namespace WebCore {
 
 class FontDescription;
 
+enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
+
 class FontData
 {
 public:
@@ -130,4 +143,6 @@ private:
 };
 
 }
+#endif
+
 #endif

@@ -61,6 +61,7 @@ class NSFont;
 
 namespace WebCore {
     class FontData;
+    class FontDescription;
     struct FontPlatformData;
 }
 
@@ -74,7 +75,7 @@ namespace WebCore {
 + (void)createSharedFactory;
 + (WebTextRendererFactory *)sharedFactory;
 
-- (WebCore::FontPlatformData)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size;
+- (WebCore::FontPlatformData)fontWithDescription:(const WebCore::FontDescription*)description familyIndex:(int*)index;
 - (BOOL)isFontFixedPitch:(WebCore::FontPlatformData)font;
 
 - (void)clearCaches;

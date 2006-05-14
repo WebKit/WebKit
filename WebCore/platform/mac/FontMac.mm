@@ -52,67 +52,6 @@ using namespace std;
 
 namespace WebCore {
 
-FontFallbackList::FontFallbackList()
-:m_pitch(UnknownPitch), m_font(nil)
-{
-    m_platformFont.font = nil;
-}
-
-FontFallbackList::~FontFallbackList()
-{
-    KWQRelease(m_platformFont.font);
-}
-
-const FontPlatformData& FontFallbackList::platformFont(const FontDescription& fontDescription) const
-{
-    if (!m_platformFont.font) {
-        CREATE_FAMILY_ARRAY(fontDescription, families);
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        int traits = 0;
-        if (fontDescription.italic())
-            traits |= NSItalicFontMask;
-        if (fontDescription.weight() >= WebCore::cBoldWeight)
-            traits |= NSBoldFontMask;
-        m_platformFont = [[WebTextRendererFactory sharedFactory] 
-                                     fontWithFamilies:families traits:traits size:fontDescription.computedPixelSize()];
-        KWQRetain(m_platformFont.font);
-        m_platformFont.forPrinter = fontDescription.usePrinterFont();
-        END_BLOCK_OBJC_EXCEPTIONS;
-    }
-    return m_platformFont;
-}
-
-void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
-{
-    m_platformFont = platformData;
-    KWQRetain(m_platformFont.font);
-}
-
-FontData* FontFallbackList::primaryFont(const FontDescription& fontDescription) const
-{
-    if (!m_font)
-        m_font = [[WebTextRendererFactory sharedFactory] rendererWithFont:platformFont(fontDescription)];
-    return m_font;
-}
-
-void FontFallbackList::determinePitch(const FontDescription& fontDescription) const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if ([[WebTextRendererFactory sharedFactory] isFontFixedPitch:platformFont(fontDescription)])
-        m_pitch = FixedPitch;
-    else
-        m_pitch = VariablePitch;
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void FontFallbackList::invalidate()
-{
-    m_font = 0;
-    KWQRelease(m_platformFont.font);
-    m_platformFont.font = nil;
-    m_pitch = UnknownPitch;
-}
-
 // =================================================================
 // Font Class (Platform-Specific Portion)
 // =================================================================
@@ -392,8 +331,7 @@ void ATSULayoutParameters::initialize(const Font* font)
         lastOffset = substituteOffset;
         status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength);
         if (status == kATSUFontsMatched || status == kATSUFontsNotMatched) {
-            // FIXME: Should go through fallback list eventually.
-            substituteFontData = fontData->findSubstituteFontData(m_run.characters() + substituteOffset, substituteLength, m_font->fontDescription());
+            substituteFontData = m_font->fontDataForCharacters(m_run.characters() + substituteOffset, substituteLength);
             if (substituteFontData) {
                 initializeATSUStyle(substituteFontData);
                 if (substituteFontData->m_ATSUStyle)
@@ -477,11 +415,6 @@ Font::Font(const FontPlatformData& fontData)
 {
     m_fontList = new FontFallbackList();
     m_fontList->setPlatformFont(fontData);
-}
-
-const FontPlatformData& Font::platformFont() const
-{
-    return m_fontList->platformFont(fontDescription());
 }
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const TextStyle& style, const IntPoint& point, int h) const

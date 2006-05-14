@@ -81,38 +81,6 @@ private:
 #endif
 };
 
-#if __APPLE__
-// Macro to create a stack array containing non-retained NSString names
-// of CSS font families.  This can be used to avoid allocations in
-// performance critical code.  Create a NSSString ** name families
-// and populates with a NSString * for each family name.  Null terminates
-// the array.
-#define CREATE_FAMILY_ARRAY(fontDescription,families)\
-int __numFamilies = 0;\
-{\
-    const FontFamily *__ff = &(fontDescription).family();\
-    while (__ff)\
-    {\
-        __numFamilies++;\
-        __ff = __ff->next();\
-    }\
-}\
-NSString *families[__numFamilies+1];\
-{\
-    int __i = 0;\
-    const FontFamily *__ff = &(fontDescription).family();\
-    while (__ff)\
-    {\
-        families[__i++] = __ff->getNSFamily();\
-        __ff = __ff->next();\
-    }\
-    families[__i] = 0;\
 }
-#endif
-
-}
-
-// FIXME: Remove eventually
-using WebCore::FontFamily;
 
 #endif

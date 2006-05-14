@@ -112,7 +112,7 @@ FontFallbackList::~FontFallbackList()
     deleteAllValues(m_fontList);
 }
 
-void FontFallbackList::determinePitch(const FontDescription& fontDescription) const
+void FontFallbackList::determinePitch(const Font* font) const
 {
     // FIXME: Implement this.
     m_pitch = VariablePitch;
@@ -126,18 +126,18 @@ void FontFallbackList::invalidate()
     m_fontList.clear();
 }
 
-FontData* FontFallbackList::primaryFont(const FontDescription& fontDescription) const
+const FontData* FontFallbackList::primaryFont(const Font* font) const
 {
     if (!m_fontList.isEmpty())
         return m_fontList[0];
 
     // We want to ensure that the primary Cairo font face exists.
-    for (const FontFamily* currFamily = &fontDescription.family(); 
+    for (const FontFamily* currFamily = &font->fontDescription().family(); 
          currFamily;
          currFamily = currFamily->next()) {
         if (!currFamily->familyIsEmpty()) {
             // Attempt to create a FontData.
-            FontData* font = getFontData(fontDescription, currFamily->family());
+            FontData* font = getFontData(font->fontDescription(), currFamily->family());
             if (font) {
                 m_fontList.append(font);
                 return font;
@@ -148,10 +148,22 @@ FontData* FontFallbackList::primaryFont(const FontDescription& fontDescription) 
     // FIXME: Go ahead and use the serif default.  For now hardcode Times New Roman.
     // We'll need a way to either get to the settings without going through a frame, or we'll
     // need this to be passed in as part of the fallback list.
-    FontData* defaultFont = getFontData(fontDescription, AtomicString("Times New Roman"));
+    FontData* defaultFont = getFontData(font->fontDescription(), AtomicString("Times New Roman"));
     if (defaultFont)
         m_fontList.append(defaultFont);
     return defaultFont;
+}
+
+const FontData* FontFallbackList::fontDataAt(const Font*, unsigned index) const
+{
+    // FIXME: Not used yet on Windows.
+    return 0;
+}
+
+const FontData* FontFallbackList::fontDataForCharacters(const Font*, const UChar* characters, int length) const
+{
+    // FIXME: Not used yet on Windows.
+    return 0;
 }
 
 static IntSize hackishExtentForString(HDC dc, FontData* font, const TextRun& run, int tabWidth, int xpos)

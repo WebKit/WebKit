@@ -1,3 +1,58 @@
+2006-05-14  David Hyatt  <hyatt@apple.com>
+
+        Bug 8895.  Rework font substitution and fallback.  Lift the concept of
+        substitution and fallback out of FontData and up into the FontFallbackList.
+        See the bug for details of issues fixed in the fallback code.
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Font.cpp:
+        (WebCore::m_finalRoundingWidth):
+        (WebCore::WidthIterator::advance):
+        (WebCore::Font::primaryFont):
+        (WebCore::Font::fontDataAt):
+        (WebCore::Font::fontDataForCharacters):
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::isFixedPitch):
+        * platform/Font.h:
+        (WebCore::Font::getNSFont):
+        * platform/FontCache.h: Added.
+        * platform/FontData.h:
+        (WebCore::FontData::pitch):
+        (WebCore::FontData::getNSFont):
+        (WebCore::):
+        * platform/FontFallbackList.cpp: Added.
+        (WebCore::m_pitch):
+        (WebCore::FontFallbackList::~FontFallbackList):
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::FontFallbackList::determinePitch):
+        (WebCore::FontFallbackList::fontDataAt):
+        (WebCore::FontFallbackList::fontDataForCharacters):
+        * platform/FontFallbackList.h:
+        (WebCore::FontFallbackList::isFixedPitch):
+        (WebCore::FontFallbackList::primaryFont):
+        * platform/FontFamily.h:
+        * platform/mac/FontCacheMac.mm: Added.
+        (WebCore::FontCache::getFontData):
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/mac/FontData.mm:
+        (WebCore::FontData::containsCharacters):
+        * platform/mac/FontMac.mm:
+        (WebCore::ATSULayoutParameters::initialize):
+        * platform/mac/WebTextRendererFactory.h:
+        * platform/mac/WebTextRendererFactory.mm:
+        (-[WebTextRendererFactory fallbackFontWithTraits:size:]):
+        (-[WebTextRendererFactory fontWithDescription:WebCore::familyIndex:]):
+        * platform/win/FontWin.cpp:
+        (WebCore::FontFallbackList::determinePitch):
+        (WebCore::FontFallbackList::primaryFont):
+        (WebCore::FontFallbackList::fontDataAt):
+        (WebCore::FontFallbackList::fontDataForCharacters):
+
 2006-05-14  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Hyatt, landed by ap.

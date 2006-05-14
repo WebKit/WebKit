@@ -30,12 +30,12 @@ layer at (0,0) size 800x170
             text run at (145,0) width 37 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,120) size 784x18
-        RenderText {#text} at (0,0) size 78x18
-          text run at (0,0) width 39: "abcd "
-          text run at (39,0) width 35 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
-          text run at (74,0) width 4: " "
-        RenderInline {B} at (0,0) size 79x18
-          RenderText {#text} at (78,0) size 79x18
-            text run at (78,0) width 42: "abcd "
-            text run at (120,0) width 37 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+        RenderText {#text} at (0,0) size 73x18
+          text run at (0,0) width 34: "abcd "
+          text run at (34,0) width 35 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+          text run at (69,0) width 4: " "
+        RenderInline {B} at (0,0) size 74x18
+          RenderText {#text} at (73,0) size 74x18
+            text run at (73,0) width 37: "abcd "
+            text run at (110,0) width 37 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
         RenderText {#text} at (0,0) size 0x0

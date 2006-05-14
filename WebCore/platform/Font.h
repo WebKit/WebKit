@@ -28,13 +28,9 @@
 
 #include "Color.h"
 #include "FontDescription.h"
+#include "FontData.h"
 #include "TextDirection.h"
 #include "GlyphBuffer.h"
-
-#if __APPLE__
-// FIXME: Should not be necessary.
-#include "FontPlatformData.h"
-#endif
 
 namespace WebCore {
 
@@ -44,8 +40,6 @@ class IntPoint;
 class IntRect;
 class FloatRect;
 class FloatPoint;
-
-enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class TextRun
 {
@@ -170,10 +164,8 @@ public:
     unsigned weight() const { return m_fontDescription.weight(); }
 
 #if __APPLE__
-    // FIXME: Shouldn't need to access FontPlatformData... should just need NSFont.
     NSString* getNSFamily() const { return m_fontDescription.family().getNSFamily(); }    
-    NSFont* getNSFont() const { return platformFont().font; }
-    const FontPlatformData& platformFont() const;
+    NSFont* getNSFont() const { return primaryFont()->getNSFont(); }
 #endif
 
     // Metrics that we query the FontFallbackList for.
@@ -184,6 +176,8 @@ public:
     float xHeight() const;
 
     const FontData* primaryFont() const;
+    const FontData* fontDataAt(unsigned) const;
+    const FontData* fontDataForCharacters(const UChar*, int length) const;
 
 private:
 #if __APPLE__
@@ -192,7 +186,8 @@ private:
     void drawSimpleText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
     void drawGlyphs(GraphicsContext*, const FontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawComplexText(GraphicsContext*, const TextRun&, const TextStyle&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, const TextStyle&, const FontData* substituteFont, float* startX, GlyphBuffer*) const;
+    float floatWidthForSimpleText(const TextRun&, const TextStyle&, const FontData* substituteFontData,
+                                  float* startX, GlyphBuffer*) const;
     float floatWidthForComplexText(const TextRun&, const TextStyle&) const;
     int offsetForPositionForSimpleText(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
     int offsetForPositionForComplexText(const TextRun&, const TextStyle&, int position, bool includePartialGlyphs) const;
