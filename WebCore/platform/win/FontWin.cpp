@@ -176,20 +176,19 @@ static IntSize hackishExtentForString(HDC dc, FontData* font, const TextRun& run
     return s;
 }
 
-float Font::floatWidth(const TextRun& run, int tabWidth, int xpos, bool runRounding) const
+float Font::floatWidth(const TextRun& run, const TextStyle& textStyle) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return 0;
 
     HDC dc = GetDC((HWND)0); // FIXME: Need a way to get to the real HDC.
-    IntSize runSize = hackishExtentForString(dc, font, run, tabWidth, xpos);
+    IntSize runSize = hackishExtentForString(dc, font, run, textStyle.tabWidth(), textStyle.tabWidth());
     ReleaseDC(0, dc);
     return runSize.width();
 }
 
-void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int tabWidth, int xpos,
-                    int toAdd, TextDirection d, bool visuallyOrdered) const
+void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyle& textStyle, const FloatPoint& point) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
@@ -212,17 +211,16 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
 
     RestoreDC(dc, -1);
     // No need to ReleaseDC the HDC borrowed from cairo
-}
+} 
 
-FloatRect Font::selectionRectForText(const TextRun& run, const IntPoint& point, int h, int tabWidth, int xpos,
-                                   int toAdd, bool rtl, bool visuallyOrdered) const
+FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& textStyle, const IntPoint& point, int h) const
 {
     FontData* font = m_fontList->primaryFont(fontDescription());
     if (!font)
         return IntRect();
 
     HDC dc = GetDC((HWND)0); // FIXME: Need a way to get to the real HDC.
-    IntSize runSize = hackishExtentForString(dc, font, run, tabWidth, xpos);
+    IntSize runSize = hackishExtentForString(dc, font, run, textStyle.tabWidth(), textStyle.xPos());
     ReleaseDC(0, dc);
     return FloatRect(point, runSize);
 }

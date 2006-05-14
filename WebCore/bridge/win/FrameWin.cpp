@@ -30,7 +30,7 @@
 #include "Document.h"
 #include "PlatformKeyboardEvent.h"
 #include "KWQKHTMLSettings.h"
-#include "render_frames.h"
+#include "RenderFrame.h"
 #include "Plugin.h"
 #include "TransferJob.h"
 #include "FramePrivate.h"

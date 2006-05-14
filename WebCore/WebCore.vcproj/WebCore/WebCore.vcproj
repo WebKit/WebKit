@@ -1890,7 +1890,15 @@
 		<Filter
 			Name="rendering"
 			>
-			<File
+      <File
+				RelativePath="..\..\rendering\AutoTableLayout.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\AutoTableLayout.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\rendering\bidi.cpp"
 				>
 			</File>
@@ -1910,28 +1918,56 @@
 				RelativePath="..\..\rendering\DataRef.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\rendering\EllipsisBox.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\EllipsisBox.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\FixedTableLayout.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\FixedTableLayout.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\rendering\GapRects.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\rendering\InlineBox.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\InlineBox.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\InlineFlowBox.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\InlineFlowBox.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\InlineRunBox.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\rendering\InlineTextBox.cpp"
 				>
-			</File>
-			<File
+      </File>
+      <File
 				RelativePath="..\..\rendering\InlineTextBox.h"
 				>
-			</File>
-			<File
+      </File>
+      <File
 				RelativePath="..\..\rendering\Length.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_button.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_button.h"
 				>
 			</File>
 			<File
@@ -1943,35 +1979,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_frames.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_frames.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_line.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_line.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\render_list.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\rendering\render_list.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_replaced.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_replaced.h"
 				>
 			</File>
 			<File
@@ -2022,7 +2034,15 @@
 				RelativePath="..\..\rendering\RenderBR.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\rendering\RenderButton.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderButton.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\rendering\RenderCanvas.cpp"
 				>
 			</File>
@@ -2062,7 +2082,23 @@
 				RelativePath="..\..\rendering\RenderFlow.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\rendering\RenderFrame.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderFrame.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderFrameSet.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderFrameSet.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\rendering\RenderHTMLCanvas.cpp"
 				>
 			</File>
@@ -2102,7 +2138,31 @@
 				RelativePath="..\..\rendering\RenderObject.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\rendering\RenderPart.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderPart.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderPartObject.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderPartObject.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderReplaced.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderReplaced.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\rendering\RenderTable.cpp"
 				>
 			</File>
@@ -2190,15 +2250,27 @@
 				RelativePath="..\..\rendering\RenderTreeAsText.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\rendering\table_layout.cpp"
+      <File
+				RelativePath="..\..\rendering\RenderWidget.cpp"
 				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\table_layout.h"
+      </File>
+      <File
+				RelativePath="..\..\rendering\RenderWidget.h"
 				>
-			</File>
-		</Filter>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RootInlineBox.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\RootInlineBox.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\rendering\TableLayout.h"
+				>
+      </File>
+    </Filter>
 		<Filter
 			Name="xpath"
 			>
@@ -3051,27 +3123,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\html\html_baseimpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\html_baseimpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\html\html_blockimpl.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\html\html_blockimpl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\html_headimpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\html_headimpl.h"
 				>
 			</File>
 			<File
@@ -3083,14 +3139,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\html\html_inlineimpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\html_inlineimpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\html\html_listimpl.cpp"
 				>
 			</File>
@@ -3098,31 +3146,55 @@
 				RelativePath="..\..\html\html_listimpl.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\html\html_objectimpl.cpp"
+      <File
+				RelativePath="..\..\html\HTMLAnchorElement.cpp"
 				>
-			</File>
-			<File
-				RelativePath="..\..\html\html_objectimpl.h"
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLAnchorElement.h"
 				>
-			</File>
-			<File
-				RelativePath="..\..\html\html_tableimpl.cpp"
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLAppletElement.cpp"
 				>
-			</File>
-			<File
-				RelativePath="..\..\html\html_tableimpl.h"
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLAppletElement.h"
 				>
-			</File>
-			<File
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLBaseElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLBaseElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLBaseFontElement.cpp"
 				>
-			</File>
-			<File
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLBaseFontElement.h"
 				>
-			</File>
-			<File
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLBodyElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLBodyElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLBRElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLBRElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLButtonElement.cpp"
 				>
 			</File>
@@ -3162,7 +3234,15 @@
 				RelativePath="..\..\html\HTMLElement.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\html\HTMLEmbedElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLEmbedElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLElementFactory.cpp"
 				>
 			</File>
@@ -3178,7 +3258,15 @@
 				RelativePath="..\..\html\HTMLFieldSetElement.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\html\HTMLFontElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLFontElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLFormCollection.cpp"
 				>
 			</File>
@@ -3194,7 +3282,23 @@
 				RelativePath="..\..\html\HTMLFormElement.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\html\HTMLFrameElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLFrameElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLFrameSetElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLFrameSetElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLGenericFormElement.cpp"
 				>
 			</File>
@@ -3202,7 +3306,31 @@
 				RelativePath="..\..\html\HTMLGenericFormElement.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\html\HTMLHeadElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLHeadElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLHtmlElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLHtmlElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLIFrameElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLIFrameElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLInputElement.cpp"
 				>
 			</File>
@@ -3242,7 +3370,31 @@
 				RelativePath="..\..\html\HTMLLegendElement.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\html\HTMLLinkElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLLinkElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLMetaElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLMetaElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLModElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLModElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLNameCollection.cpp"
 				>
 			</File>
@@ -3258,15 +3410,23 @@
 				RelativePath="..\..\html\HTMLNames.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\html\HTMLObjectElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLObjectElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLOptGroupElement.cpp"
 				>
-			</File>
-			<File
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLOptGroupElement.h"
 				>
-			</File>
-			<File
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLOptionElement.cpp"
 				>
 			</File>
@@ -3282,7 +3442,15 @@
 				RelativePath="..\..\html\HTMLOptionsCollection.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\html\HTMLParamElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLParamElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLParser.cpp"
 				>
 			</File>
@@ -3290,23 +3458,111 @@
 				RelativePath="..\..\html\HTMLParser.h"
 				>
 			</File>
+      <File
+				RelativePath="..\..\html\HTMLPlugInElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLPlugInElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLQuoteElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLQuoteElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLScriptElement.cpp"
+				>
+			</File>
 			<File
+				RelativePath="..\..\html\HTMLScriptElement.h"
+				>
+			</File>
+      <File
 				RelativePath="..\..\html\HTMLSelectElement.cpp"
 				>
-			</File>
-			<File
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLSelectElement.h"
 				>
-			</File>
-			<File
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLStyleElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLStyleElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableCaptionElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableCaptionElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableCellElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableCellElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableColElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableColElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTablePartElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTablePartElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableRowElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableRowElement.h"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableSectionElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTableSectionElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLTextAreaElement.cpp"
 				>
-			</File>
-			<File
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLTextAreaElement.h"
 				>
-			</File>
-			<File
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLTextFieldInnerElement.cpp"
 				>
 			</File>
@@ -3314,7 +3570,15 @@
 				RelativePath="..\..\html\HTMLTextFieldInnerElement.h"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\html\HTMLTitleElement.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\html\HTMLTitleElement.h"
+				>
+      </File>
+      <File
 				RelativePath="..\..\html\HTMLTokenizer.cpp"
 				>
 			</File>
