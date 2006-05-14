@@ -185,7 +185,7 @@ static IntSize hackishExtentForString(HDC dc, FontData* font, const TextRun& run
 
 float Font::floatWidth(const TextRun& run, const TextStyle& textStyle) const
 {
-    FontData* font = m_fontList->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont();
     if (!font)
         return 0;
 
@@ -197,7 +197,7 @@ float Font::floatWidth(const TextRun& run, const TextStyle& textStyle) const
 
 void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyle& textStyle, const FloatPoint& point) const
 {
-    FontData* font = m_fontList->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont();
     if (!font)
         return;
 
@@ -222,7 +222,7 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const TextStyl
 
 FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& textStyle, const IntPoint& point, int h) const
 {
-    FontData* font = m_fontList->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont();
     if (!font)
         return IntRect();
 
@@ -234,7 +234,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const TextStyle& textSt
 
 int Font::offsetForPosition(const TextRun& run, const TextStyle& style, int x, bool includePartialGlyphs) const
 {
-    FontData* font = m_fontList->primaryFont(fontDescription());
+    FontData* font = m_fontList->primaryFont();
     if (!font)
         return 0;
 
