@@ -1,5 +1,11 @@
 2006-05-14  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix the Windows build the rest of the way
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
+2006-05-14  Steve Falkenburg  <sfalken@apple.com>
+
         Get FontWin.cpp compiling.
         WebCore and JSCore now build, but Spinneret still gets link errors.
 

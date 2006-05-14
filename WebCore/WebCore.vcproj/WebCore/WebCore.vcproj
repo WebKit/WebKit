@@ -310,7 +310,11 @@
 				RelativePath="..\..\DerivedSources\WebCore\JSDocument.cpp"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\DerivedSources\WebCore\JSDocumentFragment.cpp"
+				>
+      </File>
+      <File
 				RelativePath="..\..\DerivedSources\WebCore\JSDocumentType.cpp"
 				>
 			</File>
@@ -338,11 +342,19 @@
 				RelativePath="..\..\DerivedSources\WebCore\JSEvent.cpp"
 				>
 			</File>
-			<File
+      <File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLCanvasElement.cpp"
 				>
-			</File>
-			<File
+      </File>
+      <File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLDocument.cpp"
+				>
+      </File>
+      <File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLElement.cpp"
+				>
+      </File>
+      <File
 				RelativePath="..\..\DerivedSources\WebCore\JSKeyboardEvent.cpp"
 				>
 			</File>
@@ -410,11 +422,15 @@
 				RelativePath="..\..\DerivedSources\WebCore\UserAgentStyleSheetsData.cpp"
 				>
 			</File>
-			<File
+      <File
+				RelativePath="..\..\DerivedSources\WebCore\XLinkNames.cpp"
+				>
+      </File>
+      <File
 				RelativePath="..\..\DerivedSources\WebCore\XPathGrammar.cpp"
 				>
-			</File>
-		</Filter>
+      </File>
+    </Filter>
 		<Filter
 			Name="khtml"
 			>
