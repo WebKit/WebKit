@@ -36,7 +36,7 @@
 #include "FrameWin.h"
 #include "GraphicsContext.h"
 #include "Page.h"
-#include "render_frames.h"
+#include "RenderFrame.h"
 #include "cairo.h"
 #include "cairo-win32.h"
 #include "TransferJob.h"
