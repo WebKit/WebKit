@@ -1,3 +1,15 @@
+2006-05-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows build.
+
+        * platform/win/FontWin.cpp:
+        (WebCore::FontFallbackList::fontDataAt):
+        (WebCore::hackishExtentForString):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::drawText):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::offsetForPosition):
+
 2006-05-14  David Hyatt  <hyatt@apple.com>
 
         Bug 8895.  Rework font substitution and fallback.  Lift the concept of
