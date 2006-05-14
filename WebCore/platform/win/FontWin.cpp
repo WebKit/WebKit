@@ -126,8 +126,9 @@ void FontFallbackList::invalidate()
     m_fontList.clear();
 }
 
-const FontData* FontFallbackList::primaryFont(const Font* font) const
+const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned index) const
 {
+    // FIXME: Only returning the primary font on Windows right now.
     if (!m_fontList.isEmpty())
         return m_fontList[0];
 
@@ -152,12 +153,6 @@ const FontData* FontFallbackList::primaryFont(const Font* font) const
     if (defaultFont)
         m_fontList.append(defaultFont);
     return defaultFont;
-}
-
-const FontData* FontFallbackList::fontDataAt(const Font*, unsigned index) const
-{
-    // FIXME: Not used yet on Windows.
-    return 0;
 }
 
 const FontData* FontFallbackList::fontDataForCharacters(const Font*, const UChar* characters, int length) const
