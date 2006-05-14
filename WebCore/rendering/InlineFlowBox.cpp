@@ -213,14 +213,11 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
         if (!flow->lastLineBox()->isConstructed()) {
             if (ltr) {
                 if (!nextLineBox() &&
-                    ((lastLine && !object()->continuation()) || nextOnLineExists()
-                     || onEndChain(endObject)))
+                    ((lastLine && !object()->continuation()) || nextOnLineExists() || onEndChain(endObject)))
                     includeRightEdge = true;
-            }
-            else {
-                if ((!prevLineBox() || !prevLineBox()->isConstructed()) &&
-                    ((lastLine && !object()->continuation()) ||
-                     prevOnLineExists() || onEndChain(endObject)))
+            } else {
+                if ((!prevLineBox() || prevLineBox()->isConstructed()) &&
+                    ((lastLine && !object()->continuation()) || prevOnLineExists() || onEndChain(endObject)))
                     includeLeftEdge = true;
             }
         }
