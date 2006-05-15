@@ -33,10 +33,12 @@
 #include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDivElement.h"
 #include "HTMLDListElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLHeadElement.h"
+#include "HTMLHRElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLIsIndexElement.h"
 #include "HTMLNames.h"
@@ -46,7 +48,6 @@
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
 #include "Text.h"
-#include "html_blockimpl.h"
 
 namespace WebCore {
 

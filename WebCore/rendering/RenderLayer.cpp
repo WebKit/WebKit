@@ -51,7 +51,7 @@
 #include "FrameTree.h"
 #include "GraphicsContext.h"
 #include "dom2_eventsimpl.h"
-#include "html_blockimpl.h"
+#include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"

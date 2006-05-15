@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef HTML_TEXTFIELDINNERELEMENTIMPL_H
-#define HTML_TEXTFIELDINNERELEMENTIMPL_H
+#ifndef HTMLTextFieldInnerElement_H
+#define HTMLTextFieldInnerElement_H
 
-#include "html_blockimpl.h"
+#include "HTMLDivElement.h"
 
 namespace WebCore {
 

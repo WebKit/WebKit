@@ -1,8 +1,45 @@
 2006-05-15  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by beth.
+
+        Split html_blockimpl.* into separate files (one per class).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8927
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_html.cpp:
+        * bindings/objc/DOMHTML.mm:
+        * html/HTMLBlockquoteElement.cpp: Added.
+        (WebCore::HTMLBlockquoteElement::HTMLBlockquoteElement):
+        * html/HTMLBlockquoteElement.h: Added.
+        * html/HTMLDivElement.cpp: Added.
+        * html/HTMLDivElement.h: Added.
+        * html/HTMLElementFactory.cpp:
+        * html/HTMLHRElement.cpp: Added.
+        * html/HTMLHRElement.h: Added.
+        * html/HTMLHeadingElement.cpp: Added.
+        * html/HTMLHeadingElement.h: Added.
+        * html/HTMLMarqueeElement.cpp: Added.
+        (WebCore::HTMLMarqueeElement::HTMLMarqueeElement):
+        (WebCore::HTMLMarqueeElement::parseMappedAttribute):
+        * html/HTMLMarqueeElement.h: Added.
+        * html/HTMLParagraphElement.cpp: Added.
+        * html/HTMLParagraphElement.h: Added.
+        * html/HTMLParser.cpp:
+        * html/HTMLPreElement.cpp: Added.
+        (WebCore::HTMLPreElement::HTMLPreElement):
+        (WebCore::HTMLPreElement::setWrap):
+        * html/HTMLPreElement.h: Added.
+        * html/HTMLTextFieldInnerElement.h:
+        * html/html_blockimpl.cpp: Removed.
+        * html/html_blockimpl.h: Removed.
+        * rendering/RenderLayer.cpp:
+
+2006-05-15  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by ggaren.
 
         Split render_list.* and html_listimpl.* into separate files (one per class).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8925
 
         * WebCore.xcodeproj/project.pbxproj:
         * bindings/js/kjs_html.cpp:

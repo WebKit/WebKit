@@ -3228,11 +3228,59 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\html\html_blockimpl.cpp"
+				RelativePath="..\..\html\HTMLHRElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\html\html_blockimpl.h"
+				RelativePath="..\..\html\HTMLHRElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLMarqueeElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLMarqueeElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLBlockquoteElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLBlockquoteElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLPreElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLPreElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLParagraphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLParagraphElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLHeadingElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLHeadingElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLDivElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLDivElement.h"
 				>
 			</File>
 			<File
