@@ -31,7 +31,6 @@
 #include "XPathFunctions.h"
 
 #include "DeprecatedString.h"
-#include "Logging.h"
 #include "NamedAttrMap.h"
 #include "Node.h"
 #include "XPathValue.h"
@@ -463,11 +462,8 @@ Value FunCount::doEvaluate() const
 {
     Value a = arg(0)->evaluate();
     
-    if (!a.isNodeVector()) {
-        LOG(XPath, "count() expects <nodevector>");
-
+    if (!a.isNodeVector())
         return 0.0;
-    }
     
     return a.toNodeVector().size();
 }
@@ -686,10 +682,8 @@ Value FunNumber::doEvaluate() const
 Value FunSum::doEvaluate() const
 {
     Value a = arg(0)->evaluate();
-    if (!a.isNodeVector()) {
-        LOG(XPath, "sum() expects <nodevector>");
+    if (!a.isNodeVector())
         return 0.0;
-    }
 
     double sum = 0.0;
     NodeVector nodes = a.toNodeVector();
@@ -781,8 +775,6 @@ FunctionLibrary::FunctionLibrary()
 Function *FunctionLibrary::createFunction(const char *name, const Vector<Expression*> &args) const
 {
     if (!m_functionDict.contains(name)) {
-        LOG(XPath, "Function '%s' not supported by this implementation.", name);
-        
         // Return a dummy function instead of 0.
         Function *funcTrue = m_functionDict.get("true").factoryFn();
         funcTrue->setName("true");
@@ -790,10 +782,8 @@ Function *FunctionLibrary::createFunction(const char *name, const Vector<Express
     }
 
     FunctionRec functionRec = m_functionDict.get(name);
-    if (!functionRec.args.contains(args.size())) {
-        LOG(XPath, "Function '%s' requires %d arguments, but %d given.", name, functionRec.args.asString().ascii(), args.size());
+    if (!functionRec.args.contains(args.size()))
         return 0;
-    }
 
     Function *function = functionRec.factoryFn();
     function->setArguments(args);

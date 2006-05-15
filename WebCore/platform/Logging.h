@@ -40,6 +40,5 @@ extern WTFLogChannel LogPopupBlocking;
 extern WTFLogChannel LogEvents;
 extern WTFLogChannel LogEditing;
 extern WTFLogChannel LogTextConversion;
-extern WTFLogChannel LogXPath;
 
 #endif

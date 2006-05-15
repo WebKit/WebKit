@@ -1,3 +1,35 @@
+2006-05-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Eric.
+
+        Remove the XPath log calls. They were causing leaks and were never
+        really useful.
+        
+        * bridge/mac/WebCorePageBridge.mm:
+        (initializeLoggingChannelsIfNecessary):
+        * platform/Logging.cpp:
+        * platform/Logging.h:
+        * xpath/XPathResult.cpp:
+        (WebCore::XPathResult::convertTo):
+        * xpath/impl/XPathFunctions.cpp:
+        (round):
+        (WebCore::XPath::FunCount::doEvaluate):
+        (WebCore::XPath::FunSum::doEvaluate):
+        (WebCore::XPath::FunctionLibrary::createFunction):
+        * xpath/impl/XPathPath.cpp:
+        (WebCore::XPath::Filter::doEvaluate):
+        (WebCore::XPath::LocationPath::doEvaluate):
+        * xpath/impl/XPathPredicate.cpp:
+        (WebCore::XPath::Negative::doEvaluate):
+        (WebCore::XPath::NumericOp::doEvaluate):
+        (WebCore::XPath::Union::doEvaluate):
+        * xpath/impl/XPathStep.cpp:
+        (WebCore::XPath::Step::evaluate):
+        (WebCore::XPath::Step::nodesInAxis):
+        (WebCore::XPath::Step::nodeTestMatches):
+        * xpath/impl/XPathValue.cpp:
+        (WebCore::XPath::Value::toNodeVector):
+
 2006-05-15  Eric Seidel  <eseidel@apple.com>
 
         Fix linux build.

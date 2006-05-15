@@ -29,7 +29,6 @@
 
 #include "XPathStep.h"
 
-#include "Logging.h"
 #include "Document.h"
 #include "NamedAttrMap.h"
 #include "Node.h"
@@ -77,22 +76,8 @@ Step::~Step()
 
 NodeVector Step::evaluate(Node* context) const
 {
-    LOG(XPath, "Evaluating step, axis='%s', nodetest='%s', %u predicates",
-            axisAsString(m_axis).ascii(), m_nodeTest.ascii(), m_predicates.size());
-    if (context->nodeType() == Node::ELEMENT_NODE)
-        LOG(XPath, "Context node is an element called %s", context->nodeName().ascii());
-    else if (context->nodeType() == Node::ATTRIBUTE_NODE)
-        LOG(XPath, "Context node is an attribute called %s with value %s", 
-               context->nodeName().ascii(), 
-               context->nodeValue().ascii());
-    else
-        LOG(XPath, "Context node is of unknown type %d", context->nodeType());
-
     NodeVector inNodes = nodesInAxis(context), outNodes;
-    LOG(XPath, "Axis %s matches %d nodes.", axisAsString(m_axis).ascii(), inNodes.size());
-
     inNodes = nodeTestMatches(inNodes);
-    LOG(XPath, "Nodetest %s trims this number to %d", m_nodeTest.ascii(), inNodes.size());
     
     outNodes = inNodes;
     for (unsigned i = 0; i < m_predicates.size(); i++) {
@@ -112,8 +97,6 @@ NodeVector Step::evaluate(Node* context) const
             Expression::evaluationContext() = backupCtx;
             ++Expression::evaluationContext().position;
         }
-
-        LOG(XPath, "\tPredicate trims this number to %d", outNodes.size());
 
         inNodes = outNodes;
     }
@@ -178,10 +161,8 @@ NodeVector Step::nodesInAxis(Node* context) const
                 return NodeVector();
 
             NamedAttrMap* attrs = context->attributes();
-            if (!attrs) {
-                LOG(XPath, "Node::attributes() returned NULL!");
+            if (!attrs)
                 return nodes;
-            }
 
             for (unsigned long i = 0; i < attrs->length(); ++i) 
                 nodes.append (attrs->item(i));
@@ -194,11 +175,8 @@ NodeVector Step::nodesInAxis(Node* context) const
             bool foundXmlNsNode = false;
             for (Node* node = context; node; node = node->parentNode()) {
                 NamedAttrMap* attrs = node->attributes();
-                if (!attrs) {
-                    LOG(XPath, "Node::attributes() returned NULL!");
-
+                if (!attrs)
                     continue;
-                }
 
                 for (unsigned long i = 0; i < attrs->length(); ++i) {
                     Node* n = attrs->item(i).get();
@@ -313,8 +291,7 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
 
             return matches;
         } else if (m_axis == NamespaceAxis) {
-            LOG(XPath, "Node test %s on axis %s is not implemented yet.",
-                m_nodeTest.ascii(), axisAsString(m_axis).ascii());
+            // Node test on the namespace axis is not implemented yet
         } else {
             for (unsigned i = 0; i < nodes.size(); i++) {
                 Node* node = nodes[i].get();
@@ -330,9 +307,6 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
             return matches;
         }
     }
-    
-    LOG(XPath, "Node test %s on axis %s is not implemented yet.",
-        m_nodeTest.ascii(), axisAsString(m_axis).ascii());
 
     return matches;
 }

@@ -31,7 +31,6 @@
 #include "XPathPath.h"
 
 #include "Document.h"
-#include "Logging.h"
 #include "Node.h"
 #include "XPathValue.h"
 
@@ -53,12 +52,8 @@ Value Filter::doEvaluate() const
 {
     Value v = m_expr->evaluate();
     
-    if (!v.isNodeVector()) {
-        if (!m_predicates.isEmpty())
-            LOG(XPath, "Ignoring predicates for filter since expression does not evaluate to a nodevector!");
-
+    if (!v.isNodeVector()) 
         return v;
-    }
 
     NodeVector inNodes = v.toNodeVector(), outNodes;
     for (unsigned i = 0; i < m_predicates.size(); i++) {
@@ -99,12 +94,6 @@ void LocationPath::optimize()
 
 Value LocationPath::doEvaluate() const
 {
-    if (m_absolute) {
-        LOG(XPath, "Evaluating absolute path expression with %i location steps.", m_steps.size());
-    } else {
-        LOG(XPath, "Evaluating relative path expression with %i location steps.", m_steps.size());
-    }
-
     NodeVector inDomNodes, outDomNodes;
 
     /* For absolute location paths, the context node is ignored - the

@@ -111,8 +111,6 @@ void XPathResult::convertTo(unsigned short type, ExceptionCode& ec)
                 return;
             }
             m_resultType = type;
-        default:
-            LOG(XPath, "Cannot convert XPathResult to unknown type '%u'!", type);
     }
 }
 
