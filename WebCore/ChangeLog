@@ -1,3 +1,11 @@
+2006-05-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        * dom/Document.idl:
+        Remove #if XPATH_SUPPORT until we have a way to feed defines to the bindings generator
+        (see http://bugzilla.opendarwin.org/show_bug.cgi?id=8912)
+
 2006-05-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
