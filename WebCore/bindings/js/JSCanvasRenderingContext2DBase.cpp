@@ -26,6 +26,7 @@
 #include "CanvasStyle.h"
 #include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
 #include "JSCanvasGradient.h"
 #include "JSCanvasPattern.h"
 #include "JSCanvasRenderingContext2D.h"

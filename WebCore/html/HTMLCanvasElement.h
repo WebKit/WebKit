@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTML_CANVASIMPL_H
-#define HTML_CANVASIMPL_H
+#ifndef HTMLCanvasElement_H
+#define HTMLCanvasElement_H
 
-#include "html_imageimpl.h"
+#include "HTMLElement.h"
+#include "IntSize.h"
 
 #if __APPLE__
 // FIXME: Mac-specific parts need to move to the platform directory.
@@ -38,6 +39,7 @@ namespace WebCore {
 
 class CanvasRenderingContext2D;
 typedef CanvasRenderingContext2D CanvasRenderingContext;
+class FloatRect;
 
 class HTMLCanvasElement : public HTMLElement {
 public:

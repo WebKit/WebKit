@@ -32,11 +32,11 @@
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "HTMLImageElement.h"
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
 #include "TypingCommand.h"
 #include "UnlinkCommand.h"
-#include "html_imageimpl.h"
 #include "htmlediting.h"
 #include "markup.h"
 

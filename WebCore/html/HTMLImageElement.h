@@ -22,55 +22,20 @@
  *
  */
 
-#ifndef HTML_IMAGEIMPL_H
-#define HTML_IMAGEIMPL_H
+#ifndef HTMLImageElement_H
+#define HTMLImageElement_H
 
-#include "CachedImage.h"
-#include "HTMLAnchorElement.h"
-#include "Image.h"
-#include "Path.h"
-#include "RenderObject.h"
+#include "HTMLElement.h"
+#include "GraphicsTypes.h"
+#include "HTMLImageLoader.h"
 
 namespace WebCore {
-
-class HTMLCollection;
-class HTMLFormElement;
-class Image;
-class String;
-
-struct Length;
-
-class HTMLImageLoader : public CachedObjectClient {
-public:
-    HTMLImageLoader(Element*);
-    virtual ~HTMLImageLoader();
-
-    virtual void updateFromElement();
-
-    void dispatchLoadEvent();
-
-    Element* element() const { return m_element; }
-    bool imageComplete() const { return m_imageComplete; }
-    CachedImage* image() const { return m_image; }
-
-    // CachedObjectClient API
-    virtual void notifyFinished(CachedObject*);
-
-protected:
-    void setLoadingImage(CachedImage*);
-
-private:
-    Element* m_element;
-    CachedImage* m_image;
-    bool m_firedLoad : 1;
-    bool m_imageComplete : 1;
-};
 
 class HTMLImageElement : public HTMLElement {
     friend class HTMLFormElement;
 public:
     HTMLImageElement(Document*, HTMLFormElement* = 0);
-    HTMLImageElement(const QualifiedName& tagName, Document*);
+    HTMLImageElement(const QualifiedName&, Document*);
     ~HTMLImageElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
@@ -145,85 +110,6 @@ protected:
     HTMLFormElement* m_form;
     String oldNameAttr;
     CompositeOperator m_compositeOperator;
-};
-
-//------------------------------------------------------------------
-
-class HTMLAreaElement : public HTMLAnchorElement {
-public:
-    enum Shape { Default, Poly, Rect, Circle, Unknown };
-
-    HTMLAreaElement(Document*);
-    ~HTMLAreaElement();
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-
-    virtual void parseMappedAttribute(MappedAttribute*);
-
-    bool isDefault() const { return m_shape == Default; }
-
-    bool mapMouseEvent(int x, int y, int width, int height, RenderObject::NodeInfo& info);
-
-    virtual IntRect getRect(RenderObject*) const;
-
-    String accessKey() const;
-    void setAccessKey(const String&);
-
-    String alt() const;
-    void setAlt(const String&);
-
-    String coords() const;
-    void setCoords(const String&);
-
-    String href() const;
-    void setHref(const String&);
-
-    bool noHref() const;
-    void setNoHref(bool);
-
-    String shape() const;
-    void setShape(const String&);
-
-    int tabIndex() const;
-    void setTabIndex(int);
-
-    String target() const;
-    void setTarget(const String&);
-
-protected:
-    Path getRegion(int width, int height) const;
-    Path region;
-    Length* m_coords;
-    int m_coordsLen;
-    int lastw, lasth;
-    Shape m_shape;
-};
-
-// -------------------------------------------------------------------------
-
-class HTMLMapElement : public HTMLElement {
-public:
-    HTMLMapElement(Document*);
-    ~HTMLMapElement();
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
-    virtual int tagPriority() const { return 1; }
-    virtual bool checkDTD(const Node*);
-
-    const AtomicString& getName() const { return m_name; }
-
-    virtual void parseMappedAttribute(MappedAttribute*);
-
-    bool mapMouseEvent(int x, int y, int width, int height, RenderObject::NodeInfo&);
-
-    PassRefPtr<HTMLCollection> areas();
-
-    String name() const;
-    void setName(const String&);
-
-private:
-    AtomicString m_name;
 };
 
 } //namespace

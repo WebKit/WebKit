@@ -62,7 +62,6 @@
 #include "TypingCommand.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
-#include "html_imageimpl.h"
 #include "htmlediting.h"
 #include "kjs_window.h"
 #include "markup.h"

@@ -23,12 +23,12 @@
 #define KSVG_SVGImageLoader_H
 #if SVG_SUPPORT
 
-#include "html_imageimpl.h"
+#include "HTMLImageLoader.h"
 
 namespace WebCore
 {
     class SVGImageElement;
-    class SVGImageLoader : public WebCore::HTMLImageLoader {
+    class SVGImageLoader : public HTMLImageLoader {
     public:
         SVGImageLoader(SVGImageElement *node);
         virtual ~SVGImageLoader();

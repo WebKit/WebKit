@@ -34,6 +34,7 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
+#include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "RenderFileButton.h"
@@ -44,7 +45,6 @@
 #include "RenderTheme.h"
 #include "RenderSlider.h"
 #include "SelectionController.h"
-#include "html_imageimpl.h"
 #include "RenderButton.h"
 #include <unicode/ubrk.h>
 

@@ -1,5 +1,56 @@
 2006-05-15  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        Split html_imageimpl.* into separate files (one per class).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8929
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp:
+        * bindings/js/kjs_events.cpp:
+        * bindings/js/kjs_html.cpp:
+        * bindings/objc/DOMHTML.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * dom/Document.cpp:
+        * editing/JSEditor.cpp:
+        * html/CanvasRenderingContext2D.cpp:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAreaElement.cpp: Added.
+        (WebCore::HTMLAreaElement::HTMLAreaElement):
+        (WebCore::HTMLAreaElement::mapMouseEvent):
+        (WebCore::HTMLAreaElement::getRect):
+        (WebCore::HTMLAreaElement::getRegion):
+        * html/HTMLAreaElement.h: Added.
+        * html/HTMLCanvasElement.h:
+        * html/HTMLDocument.cpp:
+        * html/HTMLElementFactory.cpp:
+        * html/HTMLFormCollection.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLImageElement.cpp: Added.
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        * html/HTMLImageElement.h: Added.
+        * html/HTMLImageLoader.cpp: Added.
+        (WebCore::HTMLImageLoader::HTMLImageLoader):
+        * html/HTMLImageLoader.h: Added.
+        * html/HTMLInputElement.cpp:
+        * html/HTMLMapElement.cpp: Added.
+        (WebCore::HTMLMapElement::mapMouseEvent):
+        (WebCore::HTMLMapElement::parseMappedAttribute):
+        * html/HTMLMapElement.h: Added.
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLParser.cpp:
+        * html/html_imageimpl.cpp: Removed.
+        * html/html_imageimpl.h: Removed.
+        * ksvg2/misc/SVGImageLoader.h:
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject addChildrenToArray:]):
+        * page/Frame.cpp:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::nodeAtPoint):
+
+2006-05-15  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by beth.
 
         Split html_blockimpl.* into separate files (one per class).

@@ -28,13 +28,14 @@
 #include "Frame.h"
 #include "HTMLFormElement.h"
 #include "HTMLDocument.h"
+#include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "Image.h"
 #include "RenderImage.h"
 #include "RenderPartObject.h"
 #include "RenderWidget.h"
 #include "Text.h"
 #include "csshelper.h"
-#include "html_imageimpl.h"
 
 namespace WebCore {
 

@@ -41,6 +41,7 @@
 #include "HTMLHRElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLIsIndexElement.h"
+#include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableRowElement.h"

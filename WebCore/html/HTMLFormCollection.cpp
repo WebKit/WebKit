@@ -27,7 +27,7 @@
 
 #include "HTMLGenericFormElement.h"
 #include "HTMLFormElement.h"
-#include "html_imageimpl.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 
 namespace WebCore {

@@ -29,7 +29,7 @@
 #include "dom2_eventsimpl.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "html_imageimpl.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "RenderFlow.h"
 #include "RenderImage.h"

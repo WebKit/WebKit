@@ -55,7 +55,6 @@
 #import "csshelper.h"
 #import "DeleteSelectionCommand.h"
 #import "HTMLDocument.h"
-#import "html_imageimpl.h"
 #import "htmlediting.h"
 #import "HTMLNames.h"
 #import "kjs_proxy.h"

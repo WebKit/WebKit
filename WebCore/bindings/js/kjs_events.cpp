@@ -30,8 +30,8 @@
 #include "JSMouseEvent.h"
 #include "JSKeyboardEvent.h"
 #include "dom2_eventsimpl.h"
-#include "html_imageimpl.h"
 #include "HTMLNames.h"
+#include "HTMLImageElement.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 

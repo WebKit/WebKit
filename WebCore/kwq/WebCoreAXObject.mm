@@ -36,8 +36,10 @@
 #import "EventNames.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
+#import "HTMLAreaElement.h"
 #import "HTMLCollection.h"
 #import "HTMLInputElement.h"
+#import "HTMLMapElement.h"
 #import "HTMLNames.h"
 #import "RenderCanvas.h"
 #import "RenderImage.h"
@@ -49,7 +51,6 @@
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreViewFactory.h"
-#import "html_imageimpl.h"
 #import "kjs_html.h"
 #import "visible_units.h"
 
@@ -259,7 +260,7 @@ using namespace HTMLNames;
     if (m_renderer->isImage() && !m_areaElement) {
         HTMLMapElement* map = static_cast<RenderImage*>(m_renderer)->imageMap();
         if (map) {
-            for (Node *current = map->firstChild(); current; current = current->traverseNextNode(map)) {
+            for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
                 // add an <area> element for this child if it has a link
                 // NOTE: can't cache these because they all have the same renderer, which is the cache key, right?
                 // plus there may be little reason to since they are being added to the handy array

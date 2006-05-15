@@ -3283,12 +3283,37 @@
 				RelativePath="..\..\html\HTMLDivElement.h"
 				>
 			</File>
+
 			<File
-				RelativePath="..\..\html\html_imageimpl.cpp"
+				RelativePath="..\..\html\HTMLMapElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\html\html_imageimpl.h"
+				RelativePath="..\..\html\HTMLMapElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLImageElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLImageElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLAreaElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLAreaElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLImageLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLImageLoader.h"
 				>
 			</File>
 			<File
