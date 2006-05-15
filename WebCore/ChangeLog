@@ -1,5 +1,73 @@
 2006-05-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6838
+          Incomplete repaint of collapsed table borders
+          
+        This patch updates the implementation of collapsing borders to match
+        the current spec.
+
+        Test: fast/repaint/table-collapsed-border.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::layout): Calculate horizontal overflows.
+        (WebCore::RenderTable::calcMinMaxWidth): Added call to recalcHorizontalBorders.
+        (WebCore::RenderTable::colElement): Made const.
+        (WebCore::RenderTable::calcBorderLeft): Calculates the left border. In the collapsing
+        borders model, this is the left border of the leftmost cell of the first row.
+        (WebCore::RenderTable::calcBorderRight): Ditto for the right border.
+        (WebCore::RenderTable::recalcHorizontalBorders): Added.
+        (WebCore::RenderTable::borderTop): Changed to return outerBorderTop in the
+        collapsing case.
+        (WebCore::RenderTable::borderBottom): Changed to return outerBorderBottom in
+        the collapsing case.
+        (WebCore::RenderTable::outerBorderTop): Added. Returns the table half of the
+        top border, which is half the widest top border on the first row.
+        (WebCore::RenderTable::outerBorderBottom): Added. Returns the table half of the
+        bottom border, which is half the widest bottom border on the last row.
+        (WebCore::RenderTable::outerBorderLeft): Added. Returns the table half of the
+        left border, which is half the widest left border on the leftmost column.
+        (WebCore::RenderTable::outerBorderRight): Added. Returns the table half of the
+        right border, which is half the widest right border on the rightmost column.
+        (WebCore::RenderTable::cellAbove): Return 0 if the cell is in the first row
+        of the header.
+        (WebCore::RenderTable::cellBelow): Return 0 if the cell is in the last row
+        of the footer.
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::borderLeft):
+        (WebCore::RenderTable::borderRight):
+        (WebCore::RenderTable::overflowHeight):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::borderLeft): Removed unnecessary use of floats.
+        (WebCore::RenderTableCell::borderTop): Ditto.
+        (WebCore::RenderTableCell::paint): Account for the table half of the vertical
+        borders.
+        (WebCore::RenderTableCell::paintCollapsedBorder): Removed unnecessary use of
+        floats.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::layoutRows): Added call to recalcOuterBorder.
+        (WebCore::RenderTableSection::calcOuterBorderTop): Added. Calculates the outer half of
+        the section's top border, which is half the widest top border on the first row.
+        (WebCore::RenderTableSection::calcOuterBorderBottom): Ditto for the bottom border.
+        (WebCore::RenderTableSection::calcOuterBorderLeft): Ditto for the left border.
+        (WebCore::RenderTableSection::calcOuterBorderRight): Ditto for the right border.
+        (WebCore::RenderTableSection::recalcOuterBorder): Added.
+        (WebCore::RenderTableSection::paint): Account for the table half of the borders.
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::outerBorderTop):
+        (WebCore::RenderTableSection::outerBorderBottom):
+        (WebCore::RenderTableSection::outerBorderLeft):
+        (WebCore::RenderTableSection::outerBorderRight):
+        * rendering/render_style.cpp:
+        (WebCore::RenderStyle::diff): Changed to return Layout if a border style changed
+        from 'hidden' to 'none' or vice versa in the collapsing borders model, since
+        'hidden' suppresses other borders.
+
+2006-05-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8739

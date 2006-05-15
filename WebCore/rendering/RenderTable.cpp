@@ -59,6 +59,8 @@ RenderTable::RenderTable(Node* node)
     padding = 0;
     needSectionRecalc = false;
     padding = 0;
+    m_borderLeft = 0;
+    m_borderRight = 0;
 
     columnPos.resize(2);
     columnPos.fill(0);
@@ -252,7 +254,6 @@ void RenderTable::layout()
     
     //int oldWidth = m_width;
     calcWidth();
-    m_overflowWidth = m_width;
 
     // the optimisation below doesn't work since the internal table
     // layout could have changed.  we need to add a flag to the table
@@ -277,6 +278,9 @@ void RenderTable::layout()
         }
         child = child->nextSibling();
     }
+
+    m_overflowWidth = m_width + (collapseBorders() ? outerBorderRight() - borderRight() : 0);
+    m_overflowLeft = collapseBorders() ? borderLeft() - outerBorderLeft() : 0;
 
     // ### collapse caption margin
     if (tCaption && tCaption->style()->captionSide() != CAPBOTTOM) {
@@ -356,9 +360,6 @@ void RenderTable::layout()
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
     
-    m_overflowHeight = max(m_overflowHeight, m_height);
-    m_overflowWidth = max(m_overflowWidth, m_width);
-
     setNeedsLayout(false);
 }
 
@@ -454,6 +455,7 @@ void RenderTable::calcMinMaxWidth()
 
     if (needSectionRecalc)
         recalcSections();
+    recalcHorizontalBorders();
 
     tableLayout->calcMinMaxWidth();
 
@@ -519,7 +521,7 @@ void RenderTable::appendColumn(int span)
     setNeedsLayoutAndMinMaxRecalc();
 }
 
-RenderTableCol *RenderTable::colElement(int col)
+RenderTableCol *RenderTable::colElement(int col) const
 {
     if (!has_col_elems)
         return 0;
@@ -634,44 +636,259 @@ RenderObject* RenderTable::removeChildNode(RenderObject* child)
     return RenderContainer::removeChildNode(child);
 }
 
-int RenderTable::borderLeft() const
+int RenderTable::calcBorderLeft() const
 {
     if (collapseBorders()) {
-        // FIXME: For strict mode, returning 0 is correct, since the table border half spills into the margin,
-        // but I'm working to get this changed.  For now, follow the spec.
-        return 0;
+        // Determined by the first cell of the first row. See the CSS 2.1 spec, section 17.6.2.
+        if (numEffCols() == 0)
+            return 0;
+
+        unsigned borderWidth = 0;
+
+        const BorderValue& tb = style()->borderLeft();
+        if (tb.style() == BHIDDEN)
+            return 0;
+        if (tb.style() > BHIDDEN)
+            borderWidth = tb.width;
+
+        int leftmostColumn = style()->direction() == RTL ? numEffCols() - 1 : 0;
+        RenderTableCol *colGroup = colElement(leftmostColumn);
+        if (colGroup) {
+            const BorderValue& gb = style()->borderLeft();
+            if (gb.style() == BHIDDEN)
+                return 0;
+            if (gb.style() > BHIDDEN && gb.width > borderWidth)
+                borderWidth = gb.width;
+        }
+        
+        RenderObject *child = firstChild();
+        while (child && !child->isTableSection())
+            child = child->nextSibling();
+        if (child && child->isTableSection()) {
+            RenderTableSection* section = static_cast<RenderTableSection*>(child);
+            
+            if (section->numRows() == 0)
+                return borderWidth / 2;
+            
+            const BorderValue& sb = section->style()->borderLeft();
+            if (sb.style() == BHIDDEN)
+                return 0;
+            if (sb.style() > BHIDDEN && sb.width > borderWidth)
+                borderWidth = sb.width;
+
+            const RenderTableSection::CellStruct& cs = section->cellAt(0, leftmostColumn);
+            
+            if (cs.cell) {
+                const BorderValue& cb = cs.cell->style()->borderLeft();
+                if (cb.style() == BHIDDEN)
+                    return 0;
+                const BorderValue& rb = cs.cell->parent()->style()->borderLeft();
+                if (rb.style() == BHIDDEN)
+                    return 0;
+
+                if (cb.style() > BHIDDEN && cb.width > borderWidth)
+                    borderWidth = cb.width;
+                if (rb.style() > BHIDDEN && rb.width > borderWidth)
+                    borderWidth = rb.width;
+            }
+        }
+        return borderWidth / 2;
     }
     return RenderBlock::borderLeft();
 }
     
-int RenderTable::borderRight() const
+int RenderTable::calcBorderRight() const
 {
     if (collapseBorders()) {
-        // FIXME: For strict mode, returning 0 is correct, since the table border half spills into the margin,
-        // but I'm working to get this changed.  For now, follow the spec.
-        return 0;
+        // Determined by the last cell of the first row. See the CSS 2.1 spec, section 17.6.2.
+        if (numEffCols() == 0)
+            return 0;
+
+        unsigned borderWidth = 0;
+
+        const BorderValue& tb = style()->borderRight();
+        if (tb.style() == BHIDDEN)
+            return 0;
+        if (tb.style() > BHIDDEN)
+            borderWidth = tb.width;
+
+        int rightmostColumn = style()->direction() == RTL ? 0 : numEffCols() - 1;
+        RenderTableCol *colGroup = colElement(rightmostColumn);
+        if (colGroup) {
+            const BorderValue& gb = style()->borderRight();
+            if (gb.style() == BHIDDEN)
+                return 0;
+            if (gb.style() > BHIDDEN && gb.width > borderWidth)
+                borderWidth = gb.width;
+        }
+        
+        RenderObject *child = firstChild();
+        while (child && !child->isTableSection())
+            child = child->nextSibling();
+        if (child && child->isTableSection()) {
+            RenderTableSection* section = static_cast<RenderTableSection*>(child);
+            
+            if (section->numRows() == 0)
+                return (borderWidth + 1) / 2;
+            
+            const BorderValue& sb = section->style()->borderRight();
+            if (sb.style() == BHIDDEN)
+                return 0;
+            if (sb.style() > BHIDDEN && sb.width > borderWidth)
+                borderWidth = sb.width;
+
+            const RenderTableSection::CellStruct& cs = section->cellAt(0, rightmostColumn);
+            
+            if (cs.cell) {
+                const BorderValue& cb = cs.cell->style()->borderRight();
+                if (cb.style() == BHIDDEN)
+                    return 0;
+                const BorderValue& rb = cs.cell->parent()->style()->borderRight();
+                if (rb.style() == BHIDDEN)
+                    return 0;
+
+                if (cb.style() > BHIDDEN && cb.width > borderWidth)
+                    borderWidth = cb.width;
+                if (rb.style() > BHIDDEN && rb.width > borderWidth)
+                    borderWidth = rb.width;
+            }
+        }
+        return (borderWidth + 1) / 2;
     }
     return RenderBlock::borderRight();
 }
 
+void RenderTable::recalcHorizontalBorders()
+{
+    m_borderLeft = calcBorderLeft();
+    m_borderRight = calcBorderRight();
+}
+
 int RenderTable::borderTop() const
 {
-    if (collapseBorders()) {
-        // FIXME: For strict mode, returning 0 is correct, since the table border half spills into the margin,
-        // but I'm working to get this changed.  For now, follow the spec.
-        return 0;
-    }
+    if (collapseBorders())
+        return outerBorderTop();
     return RenderBlock::borderTop();
 }
 
 int RenderTable::borderBottom() const
 {
-    if (collapseBorders()) {
-        // FIXME: For strict mode, returning 0 is correct, since the table border half spills into the margin,
-        // but I'm working to get this changed.  For now, follow the spec.
-        return 0;
-    }
+    if (collapseBorders())
+        return outerBorderBottom();
     return RenderBlock::borderBottom();
+}
+
+int RenderTable::outerBorderTop() const
+{
+    if (!collapseBorders())
+        return 0;
+    int borderWidth = 0;
+    RenderTableSection* topSection;
+    if (head)
+        topSection = head;
+    else if (firstBody)
+        topSection = firstBody;
+    else if (foot)
+        topSection = foot;
+    else
+        topSection = 0;
+    if (topSection) {
+        borderWidth = topSection->outerBorderTop();
+        if (borderWidth == -1)
+            return 0;   // Overridden by hidden
+    }
+    const BorderValue& tb = style()->borderTop();
+    if (tb.style() == BHIDDEN)
+        return 0;
+    if (tb.style() > BHIDDEN && (int)(tb.width / 2) > borderWidth)
+        borderWidth = tb.width / 2;
+    return borderWidth;
+}
+
+int RenderTable::outerBorderBottom() const
+{
+    if (!collapseBorders())
+        return 0;
+    int borderWidth = 0;
+    RenderTableSection* bottomSection;
+    if (foot)
+        bottomSection = foot;
+    else {
+        RenderObject* child;
+        for (child = lastChild(); child && !child->isTableSection(); child = child->previousSibling());
+        bottomSection = child ? static_cast<RenderTableSection *>(child) : 0;
+    }
+    if (bottomSection) {
+        borderWidth = bottomSection->outerBorderBottom();
+        if (borderWidth == -1)
+            return 0;   // Overridden by hidden
+    }
+    const BorderValue& tb = style()->borderBottom();
+    if (tb.style() == BHIDDEN)
+        return 0;
+    if (tb.style() > BHIDDEN && (int)(tb.width + 1) / 2 > borderWidth)
+        borderWidth = (tb.width + 1) / 2;
+    return borderWidth;
+}
+
+int RenderTable::outerBorderLeft() const
+{
+    if (!collapseBorders())
+        return 0;
+
+    int borderWidth = 0;
+
+    const BorderValue& tb = style()->borderLeft();
+    if (tb.style() == BHIDDEN)
+        return 0;
+    if (tb.style() > BHIDDEN)
+        borderWidth = tb.width / 2;
+
+    bool allHidden = true;
+    for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isTableSection())
+            continue;
+        int sw = static_cast<RenderTableSection *>(child)->outerBorderLeft();
+        if (sw == -1)
+            continue;
+        else
+            allHidden = false;
+        borderWidth = max(borderWidth, sw);
+    }
+    if (allHidden)
+        return 0;
+
+    return borderWidth;
+}
+
+int RenderTable::outerBorderRight() const
+{
+    if (!collapseBorders())
+        return 0;
+
+    int borderWidth = 0;
+
+    const BorderValue& tb = style()->borderRight();
+    if (tb.style() == BHIDDEN)
+        return 0;
+    if (tb.style() > BHIDDEN)
+        borderWidth = (tb.width + 1) / 2;
+
+    bool allHidden = true;
+    for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isTableSection())
+            continue;
+        int sw = static_cast<RenderTableSection *>(child)->outerBorderRight();
+        if (sw == -1)
+            continue;
+        else
+            allHidden = false;
+        borderWidth = max(borderWidth, sw);
+    }
+    if (allHidden)
+        return 0;
+
+    return borderWidth;
 }
 
 RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
@@ -685,6 +902,8 @@ RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
         section = cell->section();
         rAbove = r-1;
     } else {
+        if (cell->section() == head)
+            return 0;
         // cell is at top of a section, use last row in previous section
         for (RenderObject *prevSection = cell->section()->previousSibling();
              prevSection && rAbove < 0;
@@ -722,6 +941,8 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
         section = cell->section();
         rBelow= r+1;
     } else {
+        if (cell->section() == foot)
+            return 0;
         // The cell is at the bottom of a section. Use the first row in the next section.
         for (RenderObject* nextSection = cell->section()->nextSibling();
              nextSection && rBelow < 0;

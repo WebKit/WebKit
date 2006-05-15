@@ -1,3 +1,15 @@
+2006-05-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6838
+          Incomplete repaint of collapsed table borders
+          
+        * fast/repaint/table-collapsed-border-expected.checksum: Added.
+        * fast/repaint/table-collapsed-border-expected.png: Added.
+        * fast/repaint/table-collapsed-border-expected.txt: Added.
+        * fast/repaint/table-collapsed-border.html: Added.
+
 2006-05-14  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

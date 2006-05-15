@@ -85,6 +85,18 @@ public:
     virtual int lowestPosition(bool includeOverflowInterior, bool includeSelf) const;
     virtual int rightmostPosition(bool includeOverflowInterior, bool includeSelf) const;
     virtual int leftmostPosition(bool includeOverflowInterior, bool includeSelf) const;
+
+    int calcOuterBorderTop() const;
+    int calcOuterBorderBottom() const;
+    int calcOuterBorderLeft(bool rtl) const;
+    int calcOuterBorderRight(bool rtl) const;
+    void recalcOuterBorder();
+
+    int outerBorderTop() const { return m_outerBorderTop; }
+    int outerBorderBottom() const { return m_outerBorderBottom; }
+    int outerBorderLeft() const { return m_outerBorderLeft; }
+    int outerBorderRight() const { return m_outerBorderRight; }
+
     virtual void paint(PaintInfo& i, int tx, int ty);
 
     int numRows() const { return gridRows; }
@@ -115,6 +127,10 @@ public:
 protected:
     bool ensureRows(int numRows);
     void clearGrid();
+    int m_outerBorderLeft;
+    int m_outerBorderRight;
+    int m_outerBorderTop;
+    int m_outerBorderBottom;
 };
 
 }

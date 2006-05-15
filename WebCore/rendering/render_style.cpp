@@ -785,7 +785,20 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
              !(inherited_flags._empty_cells == other->inherited_flags._empty_cells) ||
              !(inherited_flags._caption_side == other->inherited_flags._caption_side) ||
              !(noninherited_flags._table_layout == other->noninherited_flags._table_layout))
-        return Layout;
+            return Layout;
+        
+        // In the collapsing border model, 'hidden' suppresses other borders, while 'none'
+        // does not, so these style differences can be width differences.
+        if (inherited_flags._border_collapse &&
+            (borderTopStyle() == BHIDDEN && other->borderTopStyle() == BNONE ||
+             borderTopStyle() == BNONE && other->borderTopStyle() == BHIDDEN ||
+             borderBottomStyle() == BHIDDEN && other->borderBottomStyle() == BNONE ||
+             borderBottomStyle() == BNONE && other->borderBottomStyle() == BHIDDEN ||
+             borderLeftStyle() == BHIDDEN && other->borderLeftStyle() == BNONE ||
+             borderLeftStyle() == BNONE && other->borderLeftStyle() == BHIDDEN ||
+             borderRightStyle() == BHIDDEN && other->borderRightStyle() == BNONE ||
+             borderRightStyle() == BNONE && other->borderRightStyle() == BHIDDEN))
+            return Layout;
     }
 
 // only for lists:

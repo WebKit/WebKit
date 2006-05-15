@@ -28,6 +28,7 @@
 #include "config.h"
 #include "RenderTableSection.h"
 #include "RenderTableCell.h"
+#include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderTableCol.h"
 #include "Document.h"
@@ -49,6 +50,10 @@ RenderTableSection::RenderTableSection(Node* node)
     cCol = 0;
     cRow = -1;
     needCellRecalc = false;
+    m_outerBorderLeft = 0;
+    m_outerBorderRight = 0;
+    m_outerBorderTop = 0;
+    m_outerBorderBottom = 0;
 }
 
 RenderTableSection::~RenderTableSection()
@@ -370,6 +375,8 @@ int RenderTableSection::layoutRows(int toAdd)
     
     // Set the width of our section now.  The rows will also be this width.
     m_width = table()->contentWidth();
+    if (table()->collapseBorders())
+        recalcOuterBorder();
     
     if (toAdd && totalRows && (rowPos[totalRows] || !nextSibling())) {
 
@@ -607,6 +614,216 @@ int RenderTableSection::leftmostPosition(bool includeOverflowInterior, bool incl
     return left;
 }
 
+int RenderTableSection::calcOuterBorderTop() const
+{
+    int totalCols = table()->numEffCols();
+    if (gridRows == 0 || totalCols == 0)
+        return 0;
+
+    unsigned borderWidth = 0;
+
+    const BorderValue& sb = style()->borderTop();
+    if (sb.style() == BHIDDEN)
+        return -1;
+    if (sb.style() > BHIDDEN)
+        borderWidth = sb.width;
+
+    const BorderValue& rb = firstChild()->style()->borderTop();
+    if (rb.style() == BHIDDEN)
+        return -1;
+    if (rb.style() > BHIDDEN && rb.width > borderWidth)
+        borderWidth = rb.width;
+
+    bool allHidden = true;
+    for (int c = 0; c < totalCols; c++) {
+        const CellStruct& current = cellAt(0, c);
+        if (current.inColSpan || !current.cell)
+            continue;
+        const BorderValue& cb = current.cell->style()->borderTop();
+        // FIXME: Don't repeat for the same col group
+        RenderTableCol* colGroup = table()->colElement(c);
+        if (colGroup) {
+            const BorderValue& gb = colGroup->style()->borderTop();
+            if (gb.style() == BHIDDEN || cb.style() == BHIDDEN)
+                continue;
+            else
+                allHidden = false;
+            if (gb.style() > BHIDDEN && gb.width > borderWidth)
+                borderWidth = gb.width;
+            if (cb.style() > BHIDDEN && cb.width > borderWidth)
+                borderWidth = cb.width;
+        } else {
+            if (cb.style() == BHIDDEN)
+                continue;
+            else
+                allHidden = false;
+            if (cb.style() > BHIDDEN && cb.width > borderWidth)
+                borderWidth = cb.width;
+        }
+    }
+    if (allHidden)
+        return -1;
+
+    return borderWidth / 2;
+}
+
+int RenderTableSection::calcOuterBorderBottom() const
+{
+    int totalCols = table()->numEffCols();
+    if (gridRows == 0 || totalCols == 0)
+        return 0;
+
+    unsigned borderWidth = 0;
+
+    const BorderValue& sb = style()->borderBottom();
+    if (sb.style() == BHIDDEN)
+        return -1;
+    if (sb.style() > BHIDDEN)
+        borderWidth = sb.width;
+
+    const BorderValue& rb = lastChild()->style()->borderBottom();
+    if (rb.style() == BHIDDEN)
+        return -1;
+    if (rb.style() > BHIDDEN && rb.width > borderWidth)
+        borderWidth = rb.width;
+
+    bool allHidden = true;
+    for (int c = 0; c < totalCols; c++) {
+        const CellStruct& current = cellAt(gridRows - 1, c);
+        if (current.inColSpan || !current.cell)
+            continue;
+        const BorderValue& cb = current.cell->style()->borderBottom();
+        // FIXME: Don't repeat for the same col group
+        RenderTableCol* colGroup = table()->colElement(c);
+        if (colGroup) {
+            const BorderValue& gb = colGroup->style()->borderBottom();
+            if (gb.style() == BHIDDEN || cb.style() == BHIDDEN)
+                continue;
+            else
+                allHidden = false;
+            if (gb.style() > BHIDDEN && gb.width > borderWidth)
+                borderWidth = gb.width;
+            if (cb.style() > BHIDDEN && cb.width > borderWidth)
+                borderWidth = cb.width;
+        } else {
+            if (cb.style() == BHIDDEN)
+                continue;
+            else
+                allHidden = false;
+            if (cb.style() > BHIDDEN && cb.width > borderWidth)
+                borderWidth = cb.width;
+        }
+    }
+    if (allHidden)
+        return -1;
+
+    return (borderWidth + 1) / 2;
+}
+
+int RenderTableSection::calcOuterBorderLeft(bool rtl) const
+{
+    int totalCols = table()->numEffCols();
+    if (gridRows == 0 || totalCols == 0)
+        return 0;
+
+    unsigned borderWidth = 0;
+
+    const BorderValue& sb = style()->borderLeft();
+    if (sb.style() == BHIDDEN)
+        return -1;
+    if (sb.style() > BHIDDEN)
+        borderWidth = sb.width;
+
+    int leftmostColumn = rtl ? totalCols - 1 : 0;
+    RenderTableCol* colGroup = table()->colElement(leftmostColumn);
+    if (colGroup) {
+        const BorderValue& gb = colGroup->style()->borderLeft();
+        if (gb.style() == BHIDDEN)
+            return -1;
+        if (gb.style() > BHIDDEN && gb.width > borderWidth)
+            borderWidth = gb.width;
+    }
+
+    bool allHidden = true;
+    for (int r = 0; r < gridRows; r++) {
+        const CellStruct& current = cellAt(r, leftmostColumn);
+        if (!current.cell)
+            continue;
+        // FIXME: Don't repeat for the same cell
+        const BorderValue& cb = current.cell->style()->borderLeft();
+        const BorderValue& rb = current.cell->parent()->style()->borderLeft();
+        if (cb.style() == BHIDDEN || rb.style() == BHIDDEN)
+            continue;
+        else
+            allHidden = false;
+        if (cb.style() > BHIDDEN && cb.width > borderWidth)
+            borderWidth = cb.width;
+        if (rb.style() > BHIDDEN && rb.width > borderWidth)
+            borderWidth = rb.width;
+    }
+    if (allHidden)
+        return -1;
+
+    return borderWidth / 2;
+}
+
+int RenderTableSection::calcOuterBorderRight(bool rtl) const
+{
+    int totalCols = table()->numEffCols();
+    if (gridRows == 0 || totalCols == 0)
+        return 0;
+
+    unsigned borderWidth = 0;
+
+    const BorderValue& sb = style()->borderRight();
+    if (sb.style() == BHIDDEN)
+        return -1;
+    if (sb.style() > BHIDDEN)
+        borderWidth = sb.width;
+
+    int rightmostColumn = rtl ? 0 : totalCols - 1;
+    RenderTableCol* colGroup = table()->colElement(rightmostColumn);
+    if (colGroup) {
+        const BorderValue& gb = colGroup->style()->borderRight();
+        if (gb.style() == BHIDDEN)
+            return -1;
+        if (gb.style() > BHIDDEN && gb.width > borderWidth)
+            borderWidth = gb.width;
+    }
+
+    bool allHidden = true;
+    for (int r = 0; r < gridRows; r++) {
+        const CellStruct& current = cellAt(r, rightmostColumn);
+        if (!current.cell)
+            continue;
+        // FIXME: Don't repeat for the same cell
+        const BorderValue& cb = current.cell->style()->borderRight();
+        const BorderValue& rb = current.cell->parent()->style()->borderRight();
+        if (cb.style() == BHIDDEN || rb.style() == BHIDDEN)
+            continue;
+        else
+            allHidden = false;
+        if (cb.style() > BHIDDEN && cb.width > borderWidth)
+            borderWidth = cb.width;
+        if (rb.style() > BHIDDEN && rb.width > borderWidth)
+            borderWidth = rb.width;
+    }
+    if (allHidden)
+        return -1;
+
+    return (borderWidth + 1) / 2;
+}
+
+void RenderTableSection::recalcOuterBorder()
+{
+    bool rtl = table()->style()->direction() == RTL;
+    m_outerBorderTop = calcOuterBorderTop();
+    m_outerBorderBottom = calcOuterBorderBottom();
+    m_outerBorderLeft = calcOuterBorderLeft(rtl);
+    m_outerBorderRight = calcOuterBorderRight(rtl);
+}
+
+
 void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
 {
     unsigned int totalRows = gridRows;
@@ -629,10 +846,14 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
     for (; startrow < totalRows; startrow++)
         if (ty + rowPos[startrow+1] >= y - os)
             break;
+    if (startrow == totalRows && ty + rowPos[totalRows] + table()->outerBorderBottom() >= y - os)
+        startrow--;
 
     for (; endrow > 0; endrow--)
         if ( ty + rowPos[endrow-1] <= y + h + os)
             break;
+    if (endrow == 0 && ty + rowPos[0] - table()->outerBorderTop() <= y + h + os)
+        endrow++;
 
     unsigned int startcol = 0;
     unsigned int endcol = totalCols;
@@ -641,10 +862,15 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
             if (tx + table()->columnPos[startcol + 1] >= x - os)
                 break;
         }
+        if (startcol == totalCols && tx + table()->columnPos[totalCols] + table()->outerBorderRight() >= x - os)
+            startcol--;
+        
         for (; endcol > 0; endcol--) {
             if (tx + table()->columnPos[endcol - 1] <= x + w + os)
                 break;
         }
+        if (endcol == 0 && tx + table()->columnPos[0] - table()->outerBorderLeft() <= y + w + os)
+            endcol++;
     }
 
     if (startcol < endcol) {

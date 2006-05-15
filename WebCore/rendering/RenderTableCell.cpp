@@ -485,7 +485,7 @@ int RenderTableCell::borderLeft() const
     if (table()->collapseBorders()) {
         CollapsedBorderValue border = collapsedLeftBorder(table()->style()->direction() == RTL);
         if (border.exists())
-            return int(border.width() / 2.0 + 0.5); // Give the extra pixel to top and left.
+            return (border.width() + 1) / 2; // Give the extra pixel to top and left.
         return 0;
     }
     return RenderBlock::borderLeft();
@@ -507,7 +507,7 @@ int RenderTableCell::borderTop() const
     if (table()->collapseBorders()) {
         CollapsedBorderValue border = collapsedTopBorder();
         if (border.exists())
-            return int(border.width() / 2.0 + 0.5); // Give the extra pixel to top and left.
+            return (border.width() + 1) / 2; // Give the extra pixel to top and left.
         return 0;
     }
     return RenderBlock::borderTop();
@@ -540,15 +540,18 @@ void RenderTableCell::paint(PaintInfo& i, int _tx, int _ty)
 
     // check if we need to do anything at all...
     int os = 2*maximalOutlineSize(i.phase);
-    if (_ty >= i.r.bottom() + os || _ty + _topExtra + m_height + _bottomExtra <= i.r.y() - os)
-        return;
 
     if (i.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
+        if (_ty - table()->outerBorderTop() >= i.r.bottom() + os || _ty + _topExtra + m_height + _bottomExtra + table()->outerBorderBottom() <= i.r.y() - os)
+            return;
         int w = width();
         int h = height() + borderTopExtra() + borderBottomExtra();
         paintCollapsedBorder(i.p, _tx, _ty, w, h);
-    } else
+    } else {
+        if (_ty >= i.r.bottom() + os || _ty + _topExtra + m_height + _bottomExtra <= i.r.y() - os)
+            return;
         RenderBlock::paintObject(i, _tx, _ty + _topExtra);
+    }
 
 #ifdef BOX_DEBUG
     ::outlineBox( i.p, _tx, _ty, width(), height() + borderTopExtra() + borderBottomExtra());
@@ -660,8 +663,8 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* p, int _tx, int _ty,
     
     _tx -= leftWidth / 2;
     _ty -= topWidth / 2;
-    w += leftWidth / 2 + int(rightWidth / 2.0 + 0.5);
-    h += topWidth / 2 + int(bottomWidth / 2.0 + 0.5);
+    w += leftWidth / 2 + (rightWidth + 1) / 2;
+    h += topWidth / 2 + (bottomWidth + 1) / 2;
     
     bool tt = topVal.isTransparent();
     bool bt = bottomVal.isTransparent();
