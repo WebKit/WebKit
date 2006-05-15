@@ -1,3 +1,20 @@
+2006-05-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8913
+        REGRESSION: Can view source for text files
+
+        * WebView/WebDocumentPrivate.h:
+        Add canSaveAsWebArchive.
+        
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation canProvideDocumentSource]):
+        Call the bridge.
+        
+        (-[WebHTMLRepresentation canSaveAsWebArchive]):
+        New function. This will be used in Safari ToT to determine if a page can be saved as an archive.
+
 2006-05-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

@@ -153,7 +153,12 @@
 
 - (BOOL)canProvideDocumentSource
 {
-    return YES;
+    return [_private->bridge canProvideDocumentSource];
+}
+
+- (BOOL)canSaveAsWebArchive
+{
+    return [_private->bridge canSaveAsWebArchive];
 }
 
 - (NSString *)documentSource

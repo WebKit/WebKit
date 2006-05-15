@@ -482,6 +482,8 @@ typedef enum {
 - (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSURL *)URL;
 - (void)getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses;
 
+- (BOOL)canProvideDocumentSource;
+- (BOOL)canSaveAsWebArchive;
 @end
 
 // The WebCoreFrameBridge protocol contains methods for use by the WebCore side of the bridge.

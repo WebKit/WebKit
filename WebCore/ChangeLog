@@ -1,3 +1,15 @@
+2006-05-15  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8913
+        REGRESSION: Can view source for text files
+        
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge canProvideDocumentSource]):
+        (-[WebCoreFrameBridge canSaveAsWebArchive]):
+
 2006-05-15  David Hyatt  <hyatt@apple.com>
 
         Remove the .forPrinter boolean from FontPlatformData.  After the initial

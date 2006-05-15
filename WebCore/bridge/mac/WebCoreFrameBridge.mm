@@ -29,6 +29,7 @@
 
 #import "Cache.h"
 #import "DOMInternal.h"
+#import "DOMImplementation.h"
 #import "DocLoader.h"
 #import "DocumentFragment.h"
 #import "DocumentType.h"
@@ -2455,6 +2456,23 @@ static NSCharacterSet *_getPostSmartSet(void)
 
     *datas = [d autorelease];
     *responses = [r autorelease];
+}
+
+- (BOOL)canProvideDocumentSource
+{
+    String mimeType = m_frame->resourceRequest().m_responseMIMEType;
+    
+    if (WebCore::DOMImplementation::isTextMIMEType(mimeType))
+        return NO;
+    
+    return YES;
+}
+
+- (BOOL)canSaveAsWebArchive
+{
+    // Currently, all documents that we can view source for
+    // (HTML and XML documents) can also be saved as web archives
+    return [self canProvideDocumentSource];
 }
 
 @end

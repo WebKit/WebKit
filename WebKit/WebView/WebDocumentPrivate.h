@@ -37,6 +37,7 @@
 // This method is deprecated as it now lives on WebFrame.
 @protocol WebDocumentDOM <NSObject>
 - (DOMDocument *)DOMDocument;
+- (BOOL)canSaveAsWebArchive;
 @end
 
 @protocol WebDocumentSelection <WebDocumentText>
