@@ -1876,6 +1876,8 @@ static WebHTMLView *lastHitView = nil;
     // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private->pluginController destroyAllPlugins];
+    // remove tooltips before clearing _private so removeTrackingRect: will work correctly
+    [self removeAllToolTips];
     [_private release];
     _private = nil;
     [super dealloc];
@@ -1888,6 +1890,8 @@ static WebHTMLView *lastHitView = nil;
     // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private->pluginController destroyAllPlugins];
+    // remove tooltips before clearing _private so removeTrackingRect: will work correctly
+    [self removeAllToolTips];
     _private = nil;
     [super finalize];
 }

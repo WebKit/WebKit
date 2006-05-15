@@ -1,5 +1,18 @@
 2006-05-15  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Tim Omernick.
+        
+        - followup to previous fix; I hadn't tested quitting adequately
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView dealloc]):
+        call removeAllToolTips before clearing _private so that removeTrackingRect: override can work 
+        properly. Normally removeAllToolTips would be called by super, but that's too late.
+        (-[WebHTMLView finalize]):
+        ditto
+
+2006-05-15  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Darin.
         
         - fixed <rdar://problem/4503016> TOT assertion failure in -[WebHTMLView(WebPrivate) removeTrackingRect:]
