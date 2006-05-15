@@ -27,7 +27,7 @@
 
 #include "css_stylesheetimpl.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
+#include "cssstyleselector.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "EventNames.h"

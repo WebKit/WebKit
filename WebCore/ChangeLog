@@ -1,3 +1,9 @@
+2006-05-15  Eric Seidel  <eseidel@apple.com>
+
+        Fix linux build.
+
+        * html/HTMLBodyElement.cpp: Fix case of #include "cssstyleselector.h"
+
 2006-05-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
