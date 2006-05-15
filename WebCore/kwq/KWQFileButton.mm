@@ -78,6 +78,7 @@ using namespace WebCore;
 - (NSRect)visualFrame;
 - (NSSize)bestVisualFrameSizeForCharacterCount:(int)count;
 - (id)initWithWidget:(KWQFileButton *)widget;
+- (void)setEnabled:(BOOL)flag;
 @end
 
 @implementation WebCoreFileButton
@@ -361,6 +362,11 @@ using namespace WebCore;
     [_button performClick:nil];
 }
 
+- (void)setEnabled:(BOOL)flag
+{
+    [_button setEnabled:flag];
+}
+
 static NSString *validFilenameFromPasteboard(NSPasteboard* pBoard)
 {
     NSArray *filenames = [pBoard propertyListForType:NSFilenamesPboardType];
@@ -515,3 +521,11 @@ void KWQFileButton::filenameChanged(const DeprecatedString& filename)
     if (client())
         client()->valueChanged(this);
 }
+
+void KWQFileButton::setDisabled(bool flag)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [_buttonView setEnabled:!flag];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+

@@ -527,6 +527,9 @@ void RenderFileButton::updateFromElement()
     static_cast<KWQFileButton*>(widget())->setFilename(
         static_cast<HTMLInputElement*>(node())->value().deprecatedString());
 
+    static_cast<KWQFileButton*>(widget())->setDisabled(
+        static_cast<HTMLInputElement*>(node())->disabled());
+
     RenderFormElement::updateFromElement();
 }
 

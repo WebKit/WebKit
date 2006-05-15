@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {FORM} at (0,0) size 784x58
+        RenderBlock (anonymous) at (0,0) size 784x56
+          RenderBlock {INPUT} at (3,4) size 12x12
+          RenderInline {B} at (0,0) size 75x18
+            RenderText {#text} at (18,0) size 75x18
+              text run at (18,0) width 75: "Attach File"
+          RenderBR {BR} at (93,14) size 0x0
+          RenderBR {BR} at (0,19) size 0x18
+          RenderText {#text} at (0,37) size 86x18
+            text run at (0,37) width 86: "  Select File:  "
+          RenderFileButton {INPUT} at (86,38) size 234x18
+          RenderBR {BR} at (320,51) size 0x0
+        RenderTable {TABLE} at (0,56) size 4x2
+          RenderTableSection {TBODY} at (0,0) size 4x2

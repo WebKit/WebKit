@@ -1,3 +1,20 @@
+2006-05-14  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5882:
+        disabled type="file" element doesn't appear disabled
+
+        Be sure to call setDisabled on the file button when in
+        RenderFileButton::updateFromElement.
+
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (-[WebFileChooserButton setEnabled:]):
+        (KWQFileButton::setDisabled):
+        * rendering/render_form.cpp:
+        (WebCore::RenderFileButton::updateFromElement):
+
 2006-05-14  Steve Falkenburg  <sfalken@apple.com>
 
         Fix Windows build.
