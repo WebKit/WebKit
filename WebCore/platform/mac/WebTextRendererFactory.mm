@@ -254,7 +254,7 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 
 - (FontData *)rendererWithFont:(FontPlatformData)font
 {
-    HashMap<NSFont*, FontData*>* cache = caches[(font.syntheticBold << 2) | (font.syntheticOblique << 1) | font.forPrinter];
+    HashMap<NSFont*, FontData*>* cache = caches[(font.syntheticBold << 1) | (font.syntheticOblique)];
     FontData *renderer = cache->get(font.font);
     if (!renderer) {
         renderer = new FontData(font);
@@ -345,7 +345,6 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     result.font = font;
     result.syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
     result.syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
-    result.forPrinter = fontDescription->usePrinterFont();
     
     // There are some malformed fonts that will be correctly returned by -cachedFontForFamily:traits:size: as a match for a particular trait,
     // though -[NSFontManager traitsOfFont:] incorrectly claims the font does not have the specified trait. This could result in applying 
@@ -368,6 +367,9 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
         }
     }
     
+    // Use the correct font for print vs. screen.
+    result.font = fontDescription->usePrinterFont() ? [result.font printerFont] : [result.font screenFont];
+
     return result;
 }
 

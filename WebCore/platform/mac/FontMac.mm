@@ -351,8 +351,8 @@ void ATSULayoutParameters::initialize(const Font* font)
             if (i == substituteOffset || i == substituteOffset + substituteLength) {
                 if (isSmallCap) {
                     isSmallCap = false;
-                    initializeATSUStyle(r->smallCapsFontData());
-                    ATSUSetRunStyle(layout, r->smallCapsFontData()->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
+                    initializeATSUStyle(r->smallCapsFontData(m_font->fontDescription()));
+                    ATSUSetRunStyle(layout, r->smallCapsFontData(m_font->fontDescription())->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
                 }
                 if (i == substituteOffset && substituteLength > 0)
                     r = substituteFontData;
@@ -362,22 +362,23 @@ void ATSULayoutParameters::initialize(const Font* font)
             if (m_style.rtl() && m_charBuffer && !r->m_ATSUMirrors)
                 m_charBuffer[i] = u_charMirror(m_charBuffer[i]);
             if (m_font->isSmallCaps()) {
+                const FontData* smallCapsData = r->smallCapsFontData(m_font->fontDescription());
                 UChar c = m_charBuffer[i];
                 UChar newC;
                 if (U_GET_GC_MASK(c) & U_GC_M_MASK)
-                    m_fonts[i] = isSmallCap ? r->smallCapsFontData() : r;
+                    m_fonts[i] = isSmallCap ? smallCapsData : r;
                 else if (!u_isUUppercase(c) && (newC = u_toupper(c)) != c) {
                     m_charBuffer[i] = newC;
                     if (!isSmallCap) {
                         isSmallCap = true;
                         firstSmallCap = i;
                     }
-                    m_fonts[i] = r->smallCapsFontData();
+                    m_fonts[i] = smallCapsData;
                 } else {
                     if (isSmallCap) {
                         isSmallCap = false;
-                        initializeATSUStyle(r->smallCapsFontData());
-                        ATSUSetRunStyle(layout, r->smallCapsFontData()->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
+                        initializeATSUStyle(smallCapsData);
+                        ATSUSetRunStyle(layout, smallCapsData->m_ATSUStyle, firstSmallCap, i - firstSmallCap);
                     }
                     m_fonts[i] = r;
                 }

@@ -50,6 +50,7 @@ public:
     float specifiedSize() const { return m_specifiedSize; }
     float computedSize() const { return m_computedSize; }
     bool italic() const { return m_italic; }
+    bool bold() const { return weight() == cBoldWeight; }
     int computedPixelSize() const { return int(m_computedSize + 0.5f); }
     bool smallCaps() const { return m_smallCaps; }
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }

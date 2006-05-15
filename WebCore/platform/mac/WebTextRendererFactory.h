@@ -65,7 +65,7 @@ namespace WebCore {
     struct FontPlatformData;
 }
 
-#define WEB_TEXT_RENDERER_FACTORY_NUM_CACHES 8
+#define WEB_TEXT_RENDERER_FACTORY_NUM_CACHES 4
 
 @interface WebTextRendererFactory : NSObject
 {

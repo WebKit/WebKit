@@ -175,7 +175,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
                 UChar32 upperC = u_toupper(c);
                 if (upperC != c) {
                     c = upperC;
-                    fontData = fontData->smallCapsFontData();
+                    fontData = fontData->smallCapsFontData(m_font->fontDescription());
                 }
             }
         }

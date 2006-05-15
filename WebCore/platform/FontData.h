@@ -51,7 +51,7 @@ public:
 
 public:
     const FontPlatformData& platformData() const { return m_font; }
-    FontData* smallCapsFontData() const;
+    FontData* smallCapsFontData(const FontDescription& fontDescription) const;
 
     // vertical metrics
     int ascent() const { return m_ascent; }

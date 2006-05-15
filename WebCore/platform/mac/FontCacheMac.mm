@@ -71,8 +71,10 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
         if (bestVariation)
             substituteFont = bestVariation;
         
+        substituteFont = font.fontDescription().usePrinterFont() ? [substituteFont printerFont] : [substituteFont screenFont];
+
         NSFontTraitMask actualTraits = [manager traitsOfFont:substituteFont];
-        FontPlatformData alternateFont(substituteFont, font.fontDescription().usePrinterFont(),
+        FontPlatformData alternateFont(substituteFont, 
                                        (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask),
                                        (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask));
         return [[WebTextRendererFactory sharedFactory] rendererWithFont: alternateFont];

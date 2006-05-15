@@ -35,12 +35,11 @@ class NSFont;
 namespace WebCore {
 
 struct FontPlatformData {
-    FontPlatformData(NSFont* f = 0, bool p = false, bool b = false, bool o = false)
-    :font(f), forPrinter(p), syntheticBold(b), syntheticOblique(o)
+    FontPlatformData(NSFont* f = 0, bool b = false, bool o = false)
+    :font(f), syntheticBold(b), syntheticOblique(o)
     {}
 
     NSFont *font;
-    bool forPrinter;
     bool syntheticBold;
     bool syntheticOblique;
 };

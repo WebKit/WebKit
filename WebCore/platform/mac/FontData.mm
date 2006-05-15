@@ -111,7 +111,7 @@ struct GlyphMap {
     GlyphEntry *glyphs;
 };
 
-static const FontData *rendererForAlternateFont(const FontData *, FontPlatformData);
+static const FontData* getSmallCapsFontData(const FontData *, FontPlatformData);
 
 static WidthMap *extendWidthMap(const FontData *, ATSGlyphRef);
 static ATSGlyphRef extendGlyphMap(const FontData *, UChar32);
@@ -289,13 +289,18 @@ float FontData::xHeight() const
     return [m_font.font xHeight];
 }
 
-FontData* FontData::smallCapsFontData() const
+FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_smallCapsFontData) {
 	NS_DURING
             float size = [m_font.font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER;
             FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_font.font toSize:size]);
-	    m_smallCapsFontData = (FontData*)rendererForAlternateFont(this, smallCapsFont);
+            
+            // AppKit is buggy here and loses the type information (screen/printer) when you convert a font to a different size.
+            // We have to fix up the font that we're handed back.
+            smallCapsFont.font = fontDescription.usePrinterFont() ? [smallCapsFont.font printerFont] : [smallCapsFont.font screenFont];
+
+	    m_smallCapsFontData = (FontData*)getSmallCapsFontData(this, smallCapsFont);
 	NS_HANDLER
             NSLog(@"uncaught exception selecting font for small caps: %@", localException);
 	NS_ENDHANDLER
@@ -312,7 +317,7 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
     return result;
 }
 
-static const FontData *rendererForAlternateFont(const FontData *renderer, FontPlatformData alternateFont)
+static const FontData* getSmallCapsFontData(const FontData *renderer, FontPlatformData alternateFont)
 {
     if (!alternateFont.font)
         return nil;
@@ -327,7 +332,6 @@ static const FontData *rendererForAlternateFont(const FontData *renderer, FontPl
 
     alternateFont.syntheticBold = (fontTraits & NSBoldFontMask) && !(alternateFontTraits & NSBoldFontMask);
     alternateFont.syntheticOblique = (fontTraits & NSItalicFontMask) && !(alternateFontTraits & NSItalicFontMask);
-    alternateFont.forPrinter = renderer->m_font.forPrinter;
 
     return [[WebTextRendererFactory sharedFactory] rendererWithFont:alternateFont];
 }
@@ -353,8 +357,6 @@ static bool computeWidthForSpace(FontData *renderer)
 
 static bool setUpFont(FontData *renderer)
 {
-    renderer->m_font.font = renderer->m_font.forPrinter ? [renderer->m_font.font printerFont] : [renderer->m_font.font screenFont];
-
     ATSUStyle fontStyle;
     if (ATSUCreateStyle(&fontStyle) != noErr)
         return NO;
