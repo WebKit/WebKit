@@ -36,7 +36,7 @@
 #include "HTMLNames.h"
 #include "csshelper.h"
 #include "html_imageimpl.h"
-#include "render_form.h"
+#include "RenderLineEdit.h"
 
 namespace WebCore {
 

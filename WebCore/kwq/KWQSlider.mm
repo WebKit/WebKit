@@ -31,7 +31,7 @@
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreWidgetHolder.h"
-#import "render_form.h"
+#import "WidgetClient.h"
 
 using namespace std;
 using namespace WebCore;

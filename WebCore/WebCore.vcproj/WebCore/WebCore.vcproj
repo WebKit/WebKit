@@ -1987,11 +1987,83 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_form.cpp"
+				RelativePath="..\..\rendering\RenderFieldset.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_form.h"
+				RelativePath="..\..\rendering\RenderFieldset.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderFileButton.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderFileButton.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderFormElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderFormElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderImageButton.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderImageButton.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderLabel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderLabel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderLegend.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderLegend.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderLineEdit.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderLineEdit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderSelect.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderSelect.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderSlider.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderSlider.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTextArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTextArea.h"
 				>
 			</File>
 			<File

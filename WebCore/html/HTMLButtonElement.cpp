@@ -30,7 +30,6 @@
 #include "dom2_eventsimpl.h"
 #include "FormDataList.h"
 
-#include "rendering/render_form.h"
 #include "RenderButton.h"
 
 #include "EventNames.h"
@@ -41,12 +40,12 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLButtonElement::HTMLButtonElement(Document *doc, HTMLFormElement *f)
+HTMLButtonElement::HTMLButtonElement(Document* doc, HTMLFormElement* f)
     : HTMLGenericFormElement(buttonTag, doc, f)
+    , m_type(SUBMIT)
+    , m_dirty(true)
+    , m_activeSubmit(false)
 {
-    m_type = SUBMIT;
-    m_dirty = true;
-    m_activeSubmit = false;
 }
 
 HTMLButtonElement::~HTMLButtonElement()

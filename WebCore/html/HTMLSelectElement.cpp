@@ -33,10 +33,10 @@
 #include "HTMLFormElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
+#include "RenderSelect.h"
 #include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
-#include "render_form.h"
 
 namespace WebCore {
 

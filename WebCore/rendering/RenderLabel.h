@@ -3,9 +3,8 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
- *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,44 +23,20 @@
  *
  */
 
-#include "config.h"
-#include "HTMLFieldSetElement.h"
+#ifndef RenderLabel_h
+#define RenderLabel_h
 
-#include "HTMLNames.h"
-#include "RenderFieldset.h"
+#include "RenderFormElement.h"
 
 namespace WebCore {
 
-using namespace HTMLNames;
+    class RenderLabel : public RenderFormElement {
+    public:
+        RenderLabel(HTMLGenericFormElement*);
 
-HTMLFieldSetElement::HTMLFieldSetElement(Document *doc, HTMLFormElement *f)
-   : HTMLGenericFormElement(fieldsetTag, doc, f)
-{
-}
+        virtual const char* renderName() const { return "RenderLabel"; }
+    };
 
-HTMLFieldSetElement::~HTMLFieldSetElement()
-{
-}
+} // namespace WebCore
 
-bool HTMLFieldSetElement::checkDTD(const Node* newChild)
-{
-    return newChild->hasTagName(legendTag) || HTMLElement::checkDTD(newChild);
-}
-
-bool HTMLFieldSetElement::isFocusable() const
-{
-    return false;
-}
-
-const AtomicString& HTMLFieldSetElement::type() const
-{
-    static const AtomicString fieldset("fieldset");
-    return fieldset;
-}
-
-RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyle* style)
-{
-    return new (arena) RenderFieldset(this);
-}
-
-} // namespace
+#endif // RenderLabel_h

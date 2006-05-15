@@ -34,7 +34,7 @@
 #import "FontData.h"
 #import "WebTextRendererFactory.h"
 #import "WebCoreWidgetHolder.h"
-#import "render_form.h"
+#import "WidgetClient.h"
 #import "Font.h"
 
 using namespace WebCore;

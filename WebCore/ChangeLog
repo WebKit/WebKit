@@ -1,3 +1,135 @@
+2006-05-15  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by eseidel.
+
+        Split render_form.* into separate files (one per class).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8889
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::HTMLButtonElement):
+        * html/HTMLFieldSetElement.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLLabelElement.cpp:
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::createRenderer):
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::selectionStart):
+        (WebCore::HTMLTextAreaElement::selectionEnd):
+        (WebCore::HTMLTextAreaElement::setSelectionStart):
+        (WebCore::HTMLTextAreaElement::setSelectionEnd):
+        (WebCore::HTMLTextAreaElement::setSelectionRange):
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        (WebCore::HTMLTextAreaElement::createRenderer):
+        (WebCore::HTMLTextAreaElement::setValue):
+        (WebCore::HTMLTextAreaElement::setDefaultValue):
+        (WebCore::HTMLTextAreaElement::setAccessKey):
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQFileButton.mm:
+        * kwq/KWQListBox.mm:
+        * kwq/KWQSlider.mm:
+        * platform/mac/WebCoreTextField.mm:
+        * rendering/RenderFieldset.cpp: Added.
+        (WebCore::RenderFieldset::RenderFieldset):
+        (WebCore::RenderFieldset::findLegend):
+        (WebCore::RenderFieldset::paintBorderMinusLegend):
+        (WebCore::RenderFieldset::setStyle):
+        * rendering/RenderFieldset.h: Added.
+        (WebCore::RenderFieldset::renderName):
+        * rendering/RenderFileButton.cpp: Added.
+        (WebCore::RenderFileButton::RenderFileButton):
+        (WebCore::RenderFileButton::calcMinMaxWidth):
+        (WebCore::RenderFileButton::updateFromElement):
+        (WebCore::RenderFileButton::click):
+        * rendering/RenderFileButton.h: Added.
+        (WebCore::RenderFileButton::renderName):
+        (WebCore::RenderFileButton::calcReplacedHeight):
+        (WebCore::RenderFileButton::isEditable):
+        * rendering/RenderFormElement.cpp: Added.
+        (WebCore::RenderFormElement::RenderFormElement):
+        (WebCore::RenderFormElement::baselinePosition):
+        (WebCore::RenderFormElement::layout):
+        * rendering/RenderFormElement.h: Added.
+        (WebCore::RenderFormElement::renderName):
+        (WebCore::RenderFormElement::isFormElement):
+        (WebCore::RenderFormElement::borderTop):
+        (WebCore::RenderFormElement::borderBottom):
+        (WebCore::RenderFormElement::borderLeft):
+        (WebCore::RenderFormElement::borderRight):
+        (WebCore::RenderFormElement::paddingTop):
+        (WebCore::RenderFormElement::paddingBottom):
+        (WebCore::RenderFormElement::paddingLeft):
+        (WebCore::RenderFormElement::paddingRight):
+        (WebCore::RenderFormElement::canHaveIntrinsicMargins):
+        (WebCore::RenderFormElement::intrinsicMargin):
+        (WebCore::RenderFormElement::isEditable):
+        * rendering/RenderImageButton.cpp: Added.
+        (WebCore::RenderImageButton::RenderImageButton):
+        * rendering/RenderImageButton.h: Added.
+        (WebCore::RenderImageButton::renderName):
+        (WebCore::RenderImageButton::isImageButton):
+        * rendering/RenderLabel.cpp: Added.
+        (WebCore::RenderLabel::RenderLabel):
+        * rendering/RenderLabel.h: Added.
+        (WebCore::RenderLabel::renderName):
+        * rendering/RenderLegend.cpp: Added.
+        (WebCore::RenderLegend::RenderLegend):
+        * rendering/RenderLegend.h: Added.
+        (WebCore::RenderLegend::renderName):
+        * rendering/RenderLineEdit.cpp: Added.
+        (WebCore::RenderLineEdit::RenderLineEdit):
+        * rendering/RenderLineEdit.h: Added.
+        (WebCore::RenderLineEdit::renderName):
+        (WebCore::RenderLineEdit::calcReplacedHeight):
+        (WebCore::RenderLineEdit::canHaveIntrinsicMargins):
+        (WebCore::RenderLineEdit::isTextField):
+        (WebCore::RenderLineEdit::isEditable):
+        * rendering/RenderSelect.cpp: Added.
+        (WebCore::RenderSelect::RenderSelect):
+        (WebCore::RenderSelect::setWidgetWritingDirection):
+        (WebCore::RenderSelect::setStyle):
+        (WebCore::RenderSelect::updateFromElement):
+        (WebCore::RenderSelect::baselinePosition):
+        (WebCore::RenderSelect::calcMinMaxWidth):
+        (WebCore::RenderSelect::layout):
+        (WebCore::RenderSelect::valueChanged):
+        (WebCore::RenderSelect::selectionChanged):
+        (WebCore::RenderSelect::updateSelection):
+        * rendering/RenderSelect.h: Added.
+        (WebCore::RenderSelect::renderName):
+        (WebCore::RenderSelect::calcReplacedHeight):
+        (WebCore::RenderSelect::canHaveIntrinsicMargins):
+        (WebCore::RenderSelect::selectionChanged):
+        (WebCore::RenderSelect::setSelectionChanged):
+        * rendering/RenderSlider.cpp: Added.
+        (WebCore::RenderSlider::calcMinMaxWidth):
+        (WebCore::RenderSlider::updateFromElement):
+        * rendering/RenderSlider.h: Added.
+        (WebCore::RenderSlider::renderName):
+        (WebCore::RenderSlider::canHaveIntrinsicMargins):
+        * rendering/RenderTextArea.cpp: Added.
+        (WebCore::RenderTextArea::RenderTextArea):
+        (WebCore::RenderTextArea::calcMinMaxWidth):
+        (WebCore::RenderTextArea::setStyle):
+        (WebCore::RenderTextArea::updateFromElement):
+        (WebCore::RenderTextArea::selectionStart):
+        (WebCore::RenderTextArea::selectionEnd):
+        (WebCore::RenderTextArea::setSelectionStart):
+        (WebCore::RenderTextArea::setSelectionEnd):
+        (WebCore::RenderTextArea::select):
+        (WebCore::RenderTextArea::setSelectionRange):
+        * rendering/RenderTextArea.h: Added.
+        (WebCore::RenderTextArea::renderName):
+        (WebCore::RenderTextArea::isTextArea):
+        (WebCore::RenderTextArea::isEdited):
+        (WebCore::RenderTextArea::canHaveIntrinsicMargins):
+        (WebCore::RenderTextArea::isEditable):
+        * rendering/render_form.cpp: Removed.
+        * rendering/render_form.h: Removed.
+
 2006-05-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Eric.

@@ -32,7 +32,7 @@
 #import "WebCoreFrameBridge.h"
 #import "WebCoreStringTruncator.h"
 #import "WebCoreViewFactory.h"
-#import "render_form.h"
+#import "WidgetClient.h"
 
 using namespace WebCore;
 

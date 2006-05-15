@@ -32,9 +32,9 @@
 #import "FontData.h"
 #import "WebTextRendererFactory.h"
 #import "WebCoreWidgetHolder.h"
+#import "WidgetClient.h"
 #import <wtf/Assertions.h>
 
-#import "render_form.h"
 #import "GraphicsContext.h"
 
 using namespace WebCore;

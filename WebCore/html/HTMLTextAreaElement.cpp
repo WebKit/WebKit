@@ -26,13 +26,13 @@
 
 #include "config.h"
 #include "HTMLTextAreaElement.h"
-#include "rendering/render_form.h"
-#include "Text.h"
-#include "FormDataList.h"
-#include "Document.h"
 
+#include "Document.h"
 #include "EventNames.h"
+#include "FormDataList.h"
 #include "HTMLNames.h"
+#include "RenderTextArea.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -73,27 +73,27 @@ void HTMLTextAreaElement::restoreState(const String& state)
 int HTMLTextAreaElement::selectionStart()
 {
     if (renderer())
-        return static_cast<RenderTextArea *>(renderer())->selectionStart();
+        return static_cast<RenderTextArea*>(renderer())->selectionStart();
     return 0;
 }
 
 int HTMLTextAreaElement::selectionEnd()
 {
     if (renderer())
-        return static_cast<RenderTextArea *>(renderer())->selectionEnd();
+        return static_cast<RenderTextArea*>(renderer())->selectionEnd();
     return 0;
 }
 
 void HTMLTextAreaElement::setSelectionStart(int start)
 {
     if (renderer())
-        static_cast<RenderTextArea *>(renderer())->setSelectionStart(start);
+        static_cast<RenderTextArea*>(renderer())->setSelectionStart(start);
 }
 
 void HTMLTextAreaElement::setSelectionEnd(int end)
 {
     if (renderer())
-        static_cast<RenderTextArea *>(renderer())->setSelectionEnd(end);
+        static_cast<RenderTextArea*>(renderer())->setSelectionEnd(end);
 }
 
 void HTMLTextAreaElement::select()
@@ -105,7 +105,7 @@ void HTMLTextAreaElement::select()
 void HTMLTextAreaElement::setSelectionRange(int start, int end)
 {
     if (renderer())
-        static_cast<RenderTextArea *>(renderer())->setSelectionRange(start, end);
+        static_cast<RenderTextArea*>(renderer())->setSelectionRange(start, end);
 }
 
 void HTMLTextAreaElement::childrenChanged()
@@ -138,19 +138,19 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)
             renderer()->setNeedsLayoutAndMinMaxRecalc();
     } else if (attr->name() == accesskeyAttr) {
         // ignore for the moment
-    } else if (attr->name() == onfocusAttr) {
+    } else if (attr->name() == onfocusAttr)
         setHTMLEventListener(focusEvent, attr);
-    } else if (attr->name() == onblurAttr) {
+    else if (attr->name() == onblurAttr)
         setHTMLEventListener(blurEvent, attr);
-    } else if (attr->name() == onselectAttr) {
+    else if (attr->name() == onselectAttr)
         setHTMLEventListener(selectEvent, attr);
-    } else if (attr->name() == onchangeAttr) {
+    else if (attr->name() == onchangeAttr)
         setHTMLEventListener(changeEvent, attr);
-    } else
+    else
         HTMLGenericFormElement::parseMappedAttribute(attr);
 }
 
-RenderObject *HTMLTextAreaElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderTextArea(this);
 }
@@ -191,7 +191,7 @@ String HTMLTextAreaElement::value() const
     return m_value;
 }
 
-void HTMLTextAreaElement::setValue(const String &value)
+void HTMLTextAreaElement::setValue(const String& value)
 {
     DeprecatedString string = value.deprecatedString();
     // WebCoreTextArea normalizes line endings added by the user via the keyboard or pasting.
@@ -225,7 +225,7 @@ String HTMLTextAreaElement::defaultValue() const
     return val;
 }
 
-void HTMLTextAreaElement::setDefaultValue(const String &defaultValue)
+void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
 {
     // there may be comments - remove all the text nodes and replace them with one
     DeprecatedPtrList<Node> toRemove;
@@ -253,7 +253,7 @@ String HTMLTextAreaElement::accessKey() const
     return getAttribute(accesskeyAttr);
 }
 
-void HTMLTextAreaElement::setAccessKey(const String &value)
+void HTMLTextAreaElement::setAccessKey(const String& value)
 {
     setAttribute(accesskeyAttr, value);
 }

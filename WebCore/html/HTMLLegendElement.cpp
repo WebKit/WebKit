@@ -27,8 +27,8 @@
 #include "config.h"
 #include "HTMLLegendElement.h"
 
-#include "rendering/render_form.h"
 #include "HTMLNames.h"
+#include "RenderLegend.h"
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ bool HTMLLegendElement::isFocusable() const
     return false;
 }
 
-RenderObject* HTMLLegendElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLLegendElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderLegend(this);
 }

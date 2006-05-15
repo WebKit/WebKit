@@ -31,7 +31,7 @@
 #import "KWQKHTMLSettings.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreWidgetHolder.h"
-#import "render_form.h"
+#import "WidgetClient.h"
 #import <wtf/Assertions.h>
 
 using namespace WebCore;

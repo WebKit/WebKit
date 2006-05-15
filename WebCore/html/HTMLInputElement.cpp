@@ -36,13 +36,16 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
+#include "RenderFileButton.h"
+#include "RenderImageButton.h"
+#include "RenderLineEdit.h"
 #include "RenderText.h"
 #include "RenderTextField.h"
 #include "RenderTheme.h"
+#include "RenderSlider.h"
 #include "SelectionController.h"
 #include "html_imageimpl.h"
 #include "RenderButton.h"
-#include "render_form.h"
 #include <unicode/ubrk.h>
 
 using namespace std;
