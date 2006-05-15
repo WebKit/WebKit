@@ -111,7 +111,7 @@ static void disableWindowDisplayThrottleApplierFunction(const void *key, const v
 
     // Force all throttle timers to fire by running the runloop in WebKitDisplayThrottleRunLoopMode until there are
     // no more runloop timers/sources for that mode.
-    while (CFRunLoopRunInMode((CFStringRef)WebKitDisplayThrottleRunLoopMode, 0, true) == kCFRunLoopRunHandledSource) {}
+    while (CFRunLoopRunInMode((CFStringRef)WebKitDisplayThrottleRunLoopMode, 1.0 / DISPLAY_REFRESH_INTERVAL, true) == kCFRunLoopRunHandledSource) {}
 }
 
 + (void)_webkit_disableWindowDisplayThrottle

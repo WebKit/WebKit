@@ -1,3 +1,23 @@
+2006-05-15  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Follow-up to my previous PLT fix.  I found upon further testing (by dramatically decreasing the
+        allowed display rate) that +_webkit_displayThrottledWindows did not always force a display when
+        necessary.  The reason is that I was not giving a proper timeout to CFRunLoopRunInMode().  I was
+        passing 0, which was causing only "expired" timers to fire.  This method is actually supposed to
+        block until all currently scheduled display timers fire.
+
+        I tested this change and found that it did not affect my PLT times when the display rate was
+        capped to 60 fps.  It also behaves as expected when the display rate is set much lower (say, 1
+        display per second); my previous fix did not work well at such display rates.
+
+        * Misc/WebNSWindowExtras.m:
+        (+[NSWindow _webkit_displayThrottledWindows]):
+        Run the runloop for an amount of time equal to the minimum allowed interval between displays.
+        This ensures that we'll block until all currently scheduled display timers fire (but we won't
+        block for future display timers).
+
 2006-05-15  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
