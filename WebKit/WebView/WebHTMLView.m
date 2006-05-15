@@ -997,10 +997,21 @@ static WebHTMLView *lastHitView = nil;
 {
     if (tag == 0)
         return;
-    ASSERT(tag == TRACKING_RECT_TAG);
-    if (_private != nil) {
+    
+    if (_private && (tag == TRACKING_RECT_TAG)) {
         _private->trackingRectOwner = nil;
+        return;
     }
+    
+    if (_private && (tag == _private->lastToolTipTag)) {
+        [super removeTrackingRect:tag];
+        _private->lastToolTipTag = 0;
+        return;
+    }
+    
+    // If any other tracking rect is being removed, we don't know how it was created
+    // and it's possible there's a leak involved (see 3500217)
+    ASSERT_NOT_REACHED();
 }
 
 - (void)_removeTrackingRects:(NSTrackingRectTag *)tags count:(int)count
@@ -1060,9 +1071,10 @@ static WebHTMLView *lastHitView = nil;
     }
     _private->toolTip = [toolTip copy];
     if (toolTip) {
+        // See radar 3500217 for why we remove all tooltips rather than just the single one we created.
         [self removeAllToolTips];
         NSRect wideOpenRect = NSMakeRect(-100000, -100000, 200000, 200000);
-        [self addToolTipRect:wideOpenRect owner:self userData:NULL];
+        _private->lastToolTipTag = [self addToolTipRect:wideOpenRect owner:self userData:NULL];
         [self _sendToolTipMouseEntered];
     }
 }

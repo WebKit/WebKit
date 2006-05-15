@@ -67,6 +67,7 @@
     WebPluginController *pluginController;
     
     NSString *toolTip;
+    NSToolTipTag lastToolTipTag;
     id trackingRectOwner;
     void *trackingRectUserData;
     

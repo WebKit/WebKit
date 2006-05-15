@@ -1,3 +1,25 @@
+2006-05-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/4503016> TOT assertion failure in -[WebHTMLView(WebPrivate) removeTrackingRect:]
+        
+        We have some tricky code to deal with tracking rects, which succumbed to a fix in AppKit. Updated our
+        tricky code to work with the AppKit fix.
+
+        * WebView/WebHTMLViewInternal.h:
+        new instance variable lastToolTipTag
+        
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView removeTrackingRect:]):
+        handle removing lastToolTipTag by calling super
+        (-[WebHTMLView _setToolTip:]):
+        save tool tip tag in lastToolTipTag; this apparently used to always return 0, so we formerly had no way
+        to distinguish it from the no-tool-tips-yet case.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Xcode removed some old cruft
+
 2006-05-15  Tim Omernick  <timo@apple.com>
 
         Reviewed by Darin.

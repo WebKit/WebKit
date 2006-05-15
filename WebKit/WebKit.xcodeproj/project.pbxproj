@@ -294,46 +294,6 @@
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		014CEA440018CDF011CA2923 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				DEBUG_DEFINES = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
-			};
-			name = Development;
-		};
-		014CEA450018CDF011CA2923 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
-			};
-			name = Deployment;
-		};
-		F58C8A07025BD3BC018635CA /* OptimizedWithSymbols */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
-			};
-			name = OptimizedWithSymbols;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXFileReference section */
 		1C68F640095B5FC100C2984E /* webInspector */ = {isa = PBXFileReference; lastKnownFileType = folder; name = webInspector; path = WebInspector/webInspector; sourceTree = SOURCE_ROOT; };
 		1C68F65C095B5FC100C2984E /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1318,66 +1278,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebKit.exp;
-				FRAMEWORK_SEARCH_PATHS = (
-					/System/Library/Frameworks/WebKit.framework/Frameworks,
-					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
-					/System/Library/PrivateFrameworks,
-				);
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WebKitPrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(DEBUG_DEFINES)",
-					"FRAMEWORK_NAME=WebKit",
-				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					icu,
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks;
-				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
-				OTHER_CFLAGS = (
-					"-Wbad-function-cast",
-					"-Wmissing-declarations",
-					"-Wnested-externs",
-				);
-				OTHER_CPLUSPLUSFLAGS = "";
-				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
-				PRODUCT_NAME = WebKit;
-				SECTORDER_FLAGS = (
-					"-sectorder",
-					__TEXT,
-					__text,
-					/AppleInternal/OrderFiles/WebKit.order,
-				);
-				STYLE_LDFLAGS = "-sub_umbrella WebCore -sub_umbrella JavaScriptCore";
-				UMBRELLA_FRAMEWORKS_DIR = /System/Library/Frameworks/WebKit.Framework/Frameworks;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-				);
-				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
-			};
 			dependencies = (
 			);
 			name = WebKit;
@@ -1392,13 +1292,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				014CEA440018CDF011CA2923 /* Development */,
-				014CEA450018CDF011CA2923 /* Deployment */,
-				F58C8A07025BD3BC018635CA /* OptimizedWithSymbols */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
