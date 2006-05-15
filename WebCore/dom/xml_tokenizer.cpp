@@ -37,8 +37,8 @@
 #include "HTMLTableSectionElement.h"
 #include "HTMLScriptElement.h"
 #include "KWQLoader.h"
-#include "dom_xmlimpl.h"
 #include "HTMLTokenizer.h"
+#include "ProcessingInstruction.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 

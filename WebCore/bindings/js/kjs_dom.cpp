@@ -28,38 +28,41 @@
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Element.h"
-#include "ExceptionCode.h"
+#include "Entity.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
+#include "HTMLDocument.h"
+#include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "JSAttr.h"
-#include "JSElement.h"
 #include "JSCharacterData.h"
 #include "JSDOMImplementation.h"
 #include "JSDocumentFragment.h"
 #include "JSDocumentType.h"
+#include "JSElement.h"
 #include "JSEntity.h"
 #include "JSHTMLDocument.h"
+#include "JSHTMLElementWrapperFactory.h"
 #include "JSNode.h"
 #include "JSNotation.h"
 #include "JSProcessingInstruction.h"
 #include "JSRange.h"
 #include "JSText.h"
+#include "KWQKHTMLSettings.h"
 #include "NamedNodeMap.h"
+#include "Notation.h"
+#include "ProcessingInstruction.h"
+#include "Range.h"
+#include "RenderCanvas.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "dom2_eventsimpl.h"
-#include "Range.h"
-#include "dom_xmlimpl.h"
-#include "HTMLDocument.h"
-#include "JSHTMLElementWrapperFactory.h"
-#include "HTMLNames.h"
-#include "KWQKHTMLSettings.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_traversal.h"
 #include "kjs_window.h"
-#include "RenderCanvas.h"
+
 
 #if __APPLE__
 #include <JavaScriptCore/runtime_object.h>
@@ -334,14 +337,14 @@ EventTargetNode *toEventTargetNode(JSValue *val)
 {
     if (!val || !val->isObject(&DOMEventTargetNode::info))
         return 0;
-    return static_cast<EventTargetNode*>(static_cast<DOMEventTargetNode *>(val)->impl());
+    return static_cast<EventTargetNode*>(static_cast<DOMEventTargetNode*>(val)->impl());
 }
 
 WebCore::Node* toNode(JSValue* val)
 {
     if (!val || !val->isObject(&DOMNode::info))
         return 0;
-    return static_cast<DOMNode *>(val)->impl();
+    return static_cast<DOMNode*>(val)->impl();
 }
 
 // -------------------------------------------------------------------------
@@ -725,13 +728,13 @@ JSValue *DOMNodeList::getValueProperty(ExecState *exec, int token) const
 
 JSValue *DOMNodeList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  DOMNodeList *thisObj = static_cast<DOMNodeList *>(slot.slotBase());
+  DOMNodeList *thisObj = static_cast<DOMNodeList*>(slot.slotBase());
   return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
 JSValue *DOMNodeList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  DOMNodeList *thisObj = static_cast<DOMNodeList *>(slot.slotBase());
+  DOMNodeList *thisObj = static_cast<DOMNodeList*>(slot.slotBase());
   return toJS(exec, thisObj->m_impl->itemById(propertyName));
 }
 
@@ -781,7 +784,7 @@ JSValue *DOMNodeListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
 {
   if (!thisObj->inherits(&KJS::DOMNodeList::info))
     return throwError(exec, TypeError);
-  WebCore::NodeList &list = *static_cast<DOMNodeList *>(thisObj)->impl();
+  WebCore::NodeList &list = *static_cast<DOMNodeList*>(thisObj)->impl();
 
   if (id == DOMNodeList::Item)
     return toJS(exec, list.item(args[0]->toInt32(exec)));
@@ -797,21 +800,21 @@ Attr* toAttr(JSValue* val, bool& ok)
     }
 
     ok = true;
-    return static_cast<Attr *>(static_cast<DOMNode *>(val)->impl());
+    return static_cast<Attr*>(static_cast<DOMNode*>(val)->impl());
 }
 
 Element *toElement(JSValue *val)
 {
     if (!val || !val->isObject(&JSElement::info))
         return 0;
-    return static_cast<Element *>(static_cast<JSElement *>(val)->impl());
+    return static_cast<Element*>(static_cast<JSElement*>(val)->impl());
 }
 
 DocumentType *toDocumentType(JSValue *val)
 {
     if (!val || !val->isObject(&JSDocumentType::info))
         return 0;
-    return static_cast<DocumentType *>(static_cast<DOMNode *>(val)->impl());
+    return static_cast<DocumentType*>(static_cast<DOMNode*>(val)->impl());
 }
 
 // -------------------------------------------------------------------------
@@ -871,7 +874,7 @@ bool DOMNamedNodeMap::getOwnPropertySlot(ExecState* exec, const Identifier& prop
   } else {
     // Look in the prototype (for functions) before assuming it's an item's name
     JSValue *proto = prototype();
-    if (proto->isObject() && static_cast<JSObject *>(proto)->hasProperty(exec, propertyName))
+    if (proto->isObject() && static_cast<JSObject*>(proto)->hasProperty(exec, propertyName))
       return false;
 
     // name or index ?
@@ -924,13 +927,13 @@ JSValue* toJS(ExecState *exec, Document *n)
     return jsNull();
 
   JSDocument *ret = 0;
-  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
 
-  if ((ret = static_cast<JSDocument *>(interp->getDOMObject(n))))
+  if ((ret = static_cast<JSDocument*>(interp->getDOMObject(n))))
     return ret;
 
   if (n->isHTMLDocument())
-    ret = new WebCore::JSHTMLDocument(exec, static_cast<HTMLDocument *>(n));
+    ret = new WebCore::JSHTMLDocument(exec, static_cast<HTMLDocument*>(n));
   else
     ret = new JSDocument(exec, n);
 
@@ -960,7 +963,7 @@ JSValue* toJS(ExecState *exec, PassRefPtr<WebCore::Node> node)
   DOMNode *ret = 0;
   if (!n)
     return jsNull();
-  ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
+  ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
   Document *doc = n->document();
 
   if ((ret = interp->getDOMNodeForDocument(doc, n)))
@@ -971,32 +974,32 @@ JSValue* toJS(ExecState *exec, PassRefPtr<WebCore::Node> node)
       if (n->isHTMLElement())
         ret = createJSWrapper(exec, static_pointer_cast<WebCore::HTMLElement>(node));
       else
-        ret = new JSElement(exec, static_cast<Element *>(n));
+        ret = new JSElement(exec, static_cast<Element*>(n));
       break;
     case WebCore::Node::ATTRIBUTE_NODE:
-      ret = new JSAttr(exec, static_cast<Attr *>(n));
+      ret = new JSAttr(exec, static_cast<Attr*>(n));
       break;
     case WebCore::Node::TEXT_NODE:
     case WebCore::Node::CDATA_SECTION_NODE:
-      ret = new JSText(exec, static_cast<Text *>(n));
+      ret = new JSText(exec, static_cast<Text*>(n));
       break;
     case WebCore::Node::ENTITY_NODE:
-      ret = new JSEntity(exec, static_cast<Entity *>(n));
+      ret = new JSEntity(exec, static_cast<Entity*>(n));
       break;
     case WebCore::Node::PROCESSING_INSTRUCTION_NODE:
-      ret = new JSProcessingInstruction(exec, static_cast<ProcessingInstruction *>(n));
+      ret = new JSProcessingInstruction(exec, static_cast<ProcessingInstruction*>(n));
       break;
     case WebCore::Node::COMMENT_NODE:
-      ret = new JSCharacterData(exec, static_cast<CharacterData *>(n));
+      ret = new JSCharacterData(exec, static_cast<CharacterData*>(n));
       break;
     case WebCore::Node::DOCUMENT_NODE:
       // we don't want to cache the document itself in the per-document dictionary
-      return toJS(exec, static_cast<Document *>(n));
+      return toJS(exec, static_cast<Document*>(n));
     case WebCore::Node::DOCUMENT_TYPE_NODE:
-      ret = new JSDocumentType(exec, static_cast<DocumentType *>(n));
+      ret = new JSDocumentType(exec, static_cast<DocumentType*>(n));
       break;
     case WebCore::Node::NOTATION_NODE:
-      ret = new JSNotation(exec, static_cast<Notation *>(n));
+      ret = new JSNotation(exec, static_cast<Notation*>(n));
       break;
     case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
       ret = new JSDocumentFragment(exec, static_cast<DocumentFragment*>(n));
@@ -1091,13 +1094,13 @@ DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState *, const DeprecatedVa
 
 JSValue *DOMNamedNodesCollection::lengthGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection *>(slot.slotBase());
+  DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection*>(slot.slotBase());
   return jsNumber(thisObj->m_nodes.count());
 }
 
 JSValue *DOMNamedNodesCollection::indexGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection *>(slot.slotBase());
+  DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection*>(slot.slotBase());
   return toJS(exec, thisObj->m_nodes[slot.index()].get());
 }
 

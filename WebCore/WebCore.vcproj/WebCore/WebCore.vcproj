@@ -2650,13 +2650,37 @@
 			<File
 				RelativePath="..\..\dom\dom2_traversalimpl.h"
 				>
-			</File>
+			</File>	
 			<File
-				RelativePath="..\..\dom\dom_xmlimpl.cpp"
+				RelativePath="..\..\dom\EntityReference.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom_xmlimpl.h"
+				RelativePath="..\..\dom\EntityReference.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Entity.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Entity.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Notation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Notation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\ProcessingInstruction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\ProcessingInstruction.h"
 				>
 			</File>
 			<File
@@ -3283,7 +3307,6 @@
 				RelativePath="..\..\html\HTMLDivElement.h"
 				>
 			</File>
-
 			<File
 				RelativePath="..\..\html\HTMLMapElement.cpp"
 				>

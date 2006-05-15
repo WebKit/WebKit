@@ -19,209 +19,39 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-
 #include "config.h"
-#include "dom_xmlimpl.h"
+#include "ProcessingInstruction.h"
 
 #include "CachedCSSStyleSheet.h"
 #include "CachedXSLStyleSheet.h"
-#include "DocLoader.h"
 #include "Document.h"
+#include "DocLoader.h"
 #include "ExceptionCode.h"
-#include "xml_tokenizer.h"
-
-#if KHTML_XSLT
 #include "XSLStyleSheet.h"
-#endif
+#include "xml_tokenizer.h" // for parseAttributes()
 
 namespace WebCore {
 
-Entity::Entity(Document* doc) : ContainerNode(doc)
-{
-}
-
-Entity::Entity(Document* doc, const String& name) : ContainerNode(doc), m_name(name.impl())
-{
-}
-
-Entity::Entity(Document* doc, const String& publicId, const String& systemId, const String& notationName)
-    : ContainerNode(doc), m_publicId(publicId.impl()), m_systemId(systemId.impl()), m_notationName(notationName.impl())
-{
-}
-
-String Entity::nodeName() const
-{
-    return m_name.get();
-}
-
-Node::NodeType Entity::nodeType() const
-{
-    return ENTITY_NODE;
-}
-
-PassRefPtr<Node> Entity::cloneNode(bool /*deep*/)
-{
-    // Spec says cloning Entity nodes is "implementation dependent". We do not support it.
-    return 0;
-}
-
-// DOM Section 1.1.1
-bool Entity::childTypeAllowed(NodeType type)
-{
-    switch (type) {
-        case ELEMENT_NODE:
-        case PROCESSING_INSTRUCTION_NODE:
-        case COMMENT_NODE:
-        case TEXT_NODE:
-        case CDATA_SECTION_NODE:
-        case ENTITY_REFERENCE_NODE:
-            return true;
-            break;
-        default:
-            return false;
-    }
-}
-
-String Entity::toString() const
-{
-    String result = "<!ENTITY' ";
-
-    if (m_name && m_name->length()) {
-        result += " ";
-        result += m_name.get();
-    }
-
-    if (m_publicId && m_publicId->length()) {
-        result += " PUBLIC \"";
-        result += m_publicId.get();
-        result += "\" \"";
-        result += m_systemId.get();
-        result += "\"";
-    } else if (m_systemId && m_systemId->length()) {
-        result += " SYSTEM \"";
-        result += m_systemId.get();
-        result += "\"";
-    }
-
-    if (m_notationName && m_notationName->length()) {
-        result += " NDATA ";
-        result += m_notationName.get();
-    }
-
-    result += ">";
-
-    return result;
-}
-
-// -------------------------------------------------------------------------
-
-EntityReference::EntityReference(Document* doc) : ContainerNode(doc)
-{
-}
-
-EntityReference::EntityReference(Document* doc, StringImpl* entityName)
-    : ContainerNode(doc), m_entityName(entityName)
-{
-}
-
-String EntityReference::nodeName() const
-{
-    return m_entityName.get();
-}
-
-Node::NodeType EntityReference::nodeType() const
-{
-    return ENTITY_REFERENCE_NODE;
-}
-
-PassRefPtr<Node> EntityReference::cloneNode(bool deep)
-{
-    RefPtr<EntityReference> clone = new EntityReference(document(), m_entityName.get());
-    // ### make sure children are readonly
-    // ### since we are a reference, should we clone children anyway (even if not deep?)
-    if (deep)
-        cloneChildNodes(clone.get());
-    return clone.release();
-}
-
-// DOM Section 1.1.1
-bool EntityReference::childTypeAllowed(NodeType type)
-{
-    switch (type) {
-        case ELEMENT_NODE:
-        case PROCESSING_INSTRUCTION_NODE:
-        case COMMENT_NODE:
-        case TEXT_NODE:
-        case CDATA_SECTION_NODE:
-        case ENTITY_REFERENCE_NODE:
-            return true;
-            break;
-        default:
-            return false;
-    }
-}
-
-String EntityReference::toString() const
-{
-    String result = "&";
-    result += m_entityName.get();
-    result += ";";
-
-    return result;
-}
-
-// -------------------------------------------------------------------------
-
-Notation::Notation(Document* doc) : ContainerNode(doc)
-{
-}
-
-Notation::Notation(Document* doc, const String& name, const String& publicId, const String& systemId)
-    : ContainerNode(doc), m_name(name.impl()), m_publicId(publicId.impl()), m_systemId(systemId.impl())
-{
-}
-
-String Notation::nodeName() const
-{
-    return m_name.get();
-}
-
-Node::NodeType Notation::nodeType() const
-{
-    return NOTATION_NODE;
-}
-
-PassRefPtr<Node> Notation::cloneNode(bool /*deep*/)
-{
-    // Spec says cloning Notation nodes is "implementation dependent". We do not support it.
-    return 0;
-}
-
-// DOM Section 1.1.1
-bool Notation::childTypeAllowed(NodeType)
-{
-    return false;
-}
-
-// -------------------------------------------------------------------------
-
-// ### need a way of updating these properly whenever child nodes of the processing instruction
-// change or are added/removed
-
 ProcessingInstruction::ProcessingInstruction(Document* doc)
-    : ContainerNode(doc), m_cachedSheet(0), m_loading(false)
-{
+    : ContainerNode(doc)
+    , m_cachedSheet(0)
+    , m_loading(false)
 #if KHTML_XSLT
-    m_isXSL = false;
+    , m_isXSL(false)
 #endif
+{
 }
 
 ProcessingInstruction::ProcessingInstruction(Document* doc, const String& target, const String& data)
-    : ContainerNode(doc), m_target(target.impl()), m_data(data.impl()), m_cachedSheet(0), m_loading(false)
-{
+    : ContainerNode(doc)
+    , m_target(target.impl())
+    , m_data(data.impl())
+    , m_cachedSheet(0)
+    , m_loading(false)
 #if KHTML_XSLT
-    m_isXSL = false;
+    , m_isXSL(false)
 #endif
+{
 }
 
 ProcessingInstruction::~ProcessingInstruction()

@@ -21,85 +21,15 @@
  *
  */
 
-#ifndef DOM_XmlImpl_h_
-#define DOM_XmlImpl_h_
+#ifndef ProcessingInstruction_H
+#define ProcessingInstruction_H
 
 #include "CachedObjectClient.h"
 #include "ContainerNode.h"
 
 namespace WebCore {
-    class CachedCSSStyleSheet;
-}
 
-namespace WebCore {
-
-class Document;
-class String;
-class ProcessingInstruction;
 class StyleSheet;
-
-class Entity : public ContainerNode
-{
-public:
-    Entity(Document*);
-    Entity(Document*, const String& name);
-    Entity(Document*, const String& publicId, const String& systemId, const String& notationName);
-
-    // DOM methods & attributes for Entity
-    String publicId() const { return m_publicId.get(); }
-    String systemId() const { return m_systemId.get(); }
-    String notationName() const { return m_notationName.get(); }
-
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType);
-    virtual String toString() const;
-
-private:
-    RefPtr<StringImpl> m_publicId;
-    RefPtr<StringImpl> m_systemId;
-    RefPtr<StringImpl> m_notationName;
-    RefPtr<StringImpl> m_name;
-};
-
-class EntityReference : public ContainerNode
-{
-public:
-    EntityReference(Document*);
-    EntityReference(Document*, StringImpl* entityName);
-
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType);
-    virtual String toString() const;
-
-private:
-    RefPtr<StringImpl> m_entityName;
-};
-
-class Notation : public ContainerNode
-{
-public:
-    Notation(Document*);
-    Notation(Document*, const String& name, const String& publicId, const String& systemId);
-
-    // DOM methods & attributes for Notation
-    String publicId() const { return m_publicId.get(); }
-    String systemId() const { return m_systemId. get(); }
-
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType);
-
-private:
-    RefPtr<StringImpl> m_name;
-    RefPtr<StringImpl> m_publicId;
-    RefPtr<StringImpl> m_systemId;
-};
-
 
 class ProcessingInstruction : public ContainerNode, private CachedObjectClient
 {
@@ -111,12 +41,12 @@ public:
     // DOM methods & attributes for Notation
     String target() const { return m_target.get(); }
     String data() const { return m_data.get(); }
-    void setData(const String &data, ExceptionCode&);
+    void setData(const String&, ExceptionCode&);
 
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
     virtual String nodeValue() const;
-    virtual void setNodeValue(const String& nodeValue, ExceptionCode&);
+    virtual void setNodeValue(const String&, ExceptionCode&);
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType);
     virtual bool offsetInCharacters() const;

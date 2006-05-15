@@ -35,8 +35,8 @@
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
+#include "ProcessingInstruction.h"
 #include "Range.h"
-#include "dom_xmlimpl.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 
@@ -97,7 +97,7 @@ static DeprecatedString renderedText(const Node *node, const Range *range)
     DeprecatedString result = "";
 
     ExceptionCode ec;
-    const Text *textNode = static_cast<const Text *>(node);
+    const Text *textNode = static_cast<const Text*>(node);
     unsigned startOffset = 0;
     unsigned endOffset = textNode->length();
 
@@ -106,7 +106,7 @@ static DeprecatedString renderedText(const Node *node, const Range *range)
     if (range && node == range->endContainer(ec))
         endOffset = range->endOffset(ec);
     
-    RenderText *textRenderer = static_cast<RenderText *>(r);
+    RenderText *textRenderer = static_cast<RenderText*>(r);
     DeprecatedString str = node->nodeValue().deprecatedString();
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
         unsigned start = box->m_start;
@@ -176,7 +176,7 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
             return annotate ? convertHTMLTextToInterchangeFormat(markup) : markup;
         }
         case Node::COMMENT_NODE:
-            return static_cast<const Comment *>(node)->toString().deprecatedString();
+            return static_cast<const Comment*>(node)->toString().deprecatedString();
         case Node::DOCUMENT_NODE: {
             // Documents do not normally contain a docType as a child node, force it to print here instead.
             const DocumentType* docType = static_cast<const Document*>(node)->doctype();
@@ -189,17 +189,17 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
         case Node::DOCUMENT_TYPE_NODE:
             return static_cast<const DocumentType*>(node)->toString().deprecatedString();
         case Node::PROCESSING_INSTRUCTION_NODE:
-            return static_cast<const ProcessingInstruction *>(node)->toString().deprecatedString();
+            return static_cast<const ProcessingInstruction*>(node)->toString().deprecatedString();
         case Node::ELEMENT_NODE: {
             DeprecatedString markup = QChar('<') + node->nodeName().deprecatedString();
             const Element* el = static_cast<const Element*>(node);
             String additionalStyle;
             if (defaultStyle && el->isHTMLElement()) {
-                RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(const_cast<Element *>(el), 0).computedStyle();
+                RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(const_cast<Element*>(el), 0).computedStyle();
                 RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
                 defaultStyle->diff(style.get());
                 if (style->length() > 0) {
-                    CSSMutableStyleDeclaration *inlineStyleDecl = static_cast<const HTMLElement *>(el)->inlineStyleDecl();
+                    CSSMutableStyleDeclaration *inlineStyleDecl = static_cast<const HTMLElement*>(el)->inlineStyleDecl();
                     if (inlineStyleDecl)
                         inlineStyleDecl->diff(style.get());
                     additionalStyle = style->cssText();
@@ -306,7 +306,7 @@ static void completeURLs(Node *node, const DeprecatedString &baseURL)
     Node *end = node->traverseNextSibling();
     for (Node *n = node; n != end; n = n->traverseNextNode()) {
         if (n->isElementNode()) {
-            Element *e = static_cast<Element *>(n);
+            Element *e = static_cast<Element*>(n);
             NamedAttrMap *attrs = e->attributes();
             unsigned length = attrs->length();
             for (unsigned i = 0; i < length; i++) {
@@ -476,7 +476,7 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
 {
     ASSERT(document->documentElement()->isHTMLElement());
     // FIXME: What if the document element is not an HTML element?
-    HTMLElement *element = static_cast<HTMLElement *>(document->documentElement());
+    HTMLElement *element = static_cast<HTMLElement*>(document->documentElement());
 
     RefPtr<DocumentFragment> fragment = element->createContextualFragment(markup);
     ASSERT(fragment);

@@ -146,30 +146,7 @@ sub AddIncludesForType
   # When we're finished with the one-file-per-class 
   # reorganization, we don't need these special cases.
   
-  if ($type eq "Attr" or
-      $type eq "CDATASection" or
-      $type eq "CanvasPattern" or
-      $type eq "CharacterData" or
-      $type eq "Comment" or
-      $type eq "DOMException" or
-      $type eq "DOMImplementation" or
-      $type eq "DOMWindow" or
-      $type eq "Document" or
-      $type eq "DocumentFragment" or
-      $type eq "DocumentType" or 
-      $type eq "Element" or
-      $type eq "HTMLCanvasElement" or
-      $type eq "HTMLElement" or 
-      $type eq "Node" or
-      $type eq "NodeList" or 
-      $type eq "Range" or 
-      $type eq "Text" or
-      $type eq "XPathEvaluator" or
-      $type eq "XPathExpression" or
-      $type eq "XPathNSResolver" or
-      $type eq "XPathResult") {
-    $implIncludes{"${type}.h"} = 1;
-  } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
+  if ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
   } elsif ($type eq "CSSRuleList" or
            $type eq "CSSRule") {
@@ -195,11 +172,6 @@ sub AddIncludesForType
            $type eq "NodeFilter" or
 	   $type eq "TreeWalker") {
     $implIncludes{"dom2_traversalimpl.h"} = 1;
-  } elsif ($type eq "ProcessingInstruction" or
-           $type eq "Entity" or
-	   $type eq "EntityReference" or
-           $type eq "Notation") {
-    $implIncludes{"dom_xmlimpl.h"} = 1;
   } elsif ($type eq "CanvasRenderingContext2D") {
     $implIncludes{"CanvasGradient.h"} = 1;
     $implIncludes{"CanvasPattern.h"} = 1;
@@ -210,9 +182,9 @@ sub AddIncludesForType
     $implIncludes{"PlatformString.h"} = 1;
   } elsif ($codeGenerator->IsPrimitiveType($type) or
            $type eq "DOMString" or $type eq "DOMObject") {
-    # Do nothing
   } else {
-    die "Don't know what to include for interface $type";
+    # default, include the same named file
+    $implIncludes{"${type}.h"} = 1;
   }
 }
 

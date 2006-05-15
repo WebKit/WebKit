@@ -32,9 +32,9 @@
 #import "FoundationExtras.h"
 #import "HTMLLinkElement.h"
 #import "HTMLStyleElement.h"
+#import "ProcessingInstruction.h"
 #import "css_ruleimpl.h"
 #import "css_stylesheetimpl.h"
-#import "dom_xmlimpl.h"
 #import <objc/objc-class.h>
 
 using namespace WebCore;

@@ -1,5 +1,27 @@
 2006-05-15  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by ggaren.
+
+        Split dom_xmlimpl.* into separate files (one per class).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Entity.cpp: Added.
+        (WebCore::Entity::Entity):
+        * dom/Entity.h: Added.
+        * dom/EntityReference.cpp: Added.
+        (WebCore::EntityReference::EntityReference):
+        * dom/EntityReference.h: Added.
+        * dom/Notation.cpp: Added.
+        (WebCore::Notation::Notation):
+        * dom/Notation.h: Added.
+        * dom/ProcessingInstruction.cpp: Added.
+        (WebCore::ProcessingInstruction::ProcessingInstruction):
+        * dom/ProcessingInstruction.h: Added.
+        * dom/dom_xmlimpl.cpp: Removed.
+        * dom/dom_xmlimpl.h: Removed.
+
+2006-05-15  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by Tim Hatcher.
 
         Split html_imageimpl.* into separate files (one per class).

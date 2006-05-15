@@ -30,9 +30,9 @@
 #include "DocumentFragment.h"
 #include "ExceptionCode.h"
 #include "HTMLElement.h"
+#include "ProcessingInstruction.h"
 #include "RenderBlock.h"
 #include "TextIterator.h"
-#include "dom_xmlimpl.h"
 #include "markup.h"
 #include "visible_units.h"
 
@@ -40,8 +40,10 @@ namespace WebCore {
 
 Range::Range(Document* ownerDocument)
     : m_ownerDocument(ownerDocument)
-    , m_startContainer(ownerDocument), m_startOffset(0)
-    , m_endContainer(ownerDocument), m_endOffset(0)
+    , m_startContainer(ownerDocument)
+    , m_startOffset(0)
+    , m_endContainer(ownerDocument)
+    , m_endOffset(0)
     , m_detached(false)
 {
 }
@@ -50,8 +52,10 @@ Range::Range(Document* ownerDocument,
               Node* startContainer, int startOffset,
               Node* endContainer, int endOffset)
     : m_ownerDocument(ownerDocument)
-    , m_startContainer(startContainer), m_startOffset(startOffset)
-    , m_endContainer(endContainer), m_endOffset(endOffset)
+    , m_startContainer(startContainer)
+    , m_startOffset(startOffset)
+    , m_endContainer(endContainer)
+    , m_endOffset(endOffset)
     , m_detached(false)
 {
 }
