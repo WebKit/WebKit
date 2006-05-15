@@ -707,7 +707,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     GraphicsContext graphicsContext(context);
-    float red, green, blue, alpha;
+    CGFloat red, green, blue, alpha;
     [[color colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
     graphicsContext.setPen(makeRGBA((int)(red * 255), (int)(green * 255), (int)(blue * 255), (int)(alpha * 255)));
     renderer->drawText(&graphicsContext, run, style, point);
