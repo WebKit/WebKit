@@ -27,11 +27,11 @@
 #include "config.h"
 #include "RenderContainer.h"
 
+#include "RenderListItem.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
 #include "RenderImage.h"
 #include "RenderCanvas.h"
-#include "render_list.h"
 #include "Document.h"
 
 // For accessibility
@@ -76,15 +76,15 @@ bool RenderContainer::canHaveChildren() const
     return true;
 }
 
-static void updateListMarkerNumbers(RenderObject *child)
+static void updateListMarkerNumbers(RenderObject* child)
 {
-    for (RenderObject *r = child; r; r = r->nextSibling()) {
+    for (RenderObject* r = child; r; r = r->nextSibling()) {
         if (r->isListItem())
-            static_cast<RenderListItem *>(r)->resetValue();
+            static_cast<RenderListItem*>(r)->resetValue();
     }
 }
 
-void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild)
+void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     bool needsTable = false;
 
@@ -136,7 +136,7 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
         if(!beforeChild)
             beforeChild = lastChild();
         if(beforeChild && beforeChild->isAnonymous() && beforeChild->isTable())
-            table = static_cast<RenderTable *>(beforeChild);
+            table = static_cast<RenderTable*>(beforeChild);
         else {
             table = new (renderArena()) RenderTable(document() /* is anonymous */);
             RenderStyle *newStyle = new (renderArena()) RenderStyle();
@@ -208,7 +208,7 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     return oldChild;
 }
 
-void RenderContainer::removeChild(RenderObject *oldChild)
+void RenderContainer::removeChild(RenderObject* oldChild)
 {
     removeChildNode(oldChild);
 }
@@ -405,7 +405,7 @@ void RenderContainer::layout()
     KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
 
-    RenderObject *child = firstChild();
+    RenderObject* child = firstChild();
     while( child ) {
         child->layoutIfNeeded();
         child = child->nextSibling();
@@ -417,15 +417,15 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
 {
     // we have to go over all child nodes and remove anonymous boxes, that do _not_
     // have inline children to keep the tree flat
-    RenderObject *child = firstChild();
+    RenderObject* child = firstChild();
     while( child ) {
-        RenderObject *next = child->nextSibling();
+        RenderObject* next = child->nextSibling();
         
         if ( child->isRenderBlock() && child->isAnonymousBlock() && !child->continuation() && !child->childrenInline() && !child->isTableCell() ) {
-            RenderObject *firstAnChild = child->firstChild();
-            RenderObject *lastAnChild = child->lastChild();
+            RenderObject* firstAnChild = child->firstChild();
+            RenderObject* lastAnChild = child->lastChild();
             if ( firstAnChild ) {
-                RenderObject *o = firstAnChild;
+                RenderObject* o = firstAnChild;
                 while( o ) {
                     o->setParent( this );
                     o = o->nextSibling();
@@ -451,7 +451,7 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
             child->setPreviousSibling( 0 );
             child->setNextSibling( 0 );
             if ( !child->isText() ) {
-                RenderContainer *c = static_cast<RenderContainer *>(child);
+                RenderContainer *c = static_cast<RenderContainer*>(child);
                 c->m_first = 0;
                 c->m_next = 0;
             }
@@ -471,8 +471,8 @@ VisiblePosition RenderContainer::positionForCoordinates(int _x, int _y)
 
     // look for the geometrically-closest child and pass off to that child
     int min = INT_MAX;
-    RenderObject *closestRenderer = 0;
-    for (RenderObject *renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
+    RenderObject* closestRenderer = 0;
+    for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
         if (!renderer->firstChild() && !renderer->isInline() && !renderer->isBlockFlow())
             continue;
 
@@ -511,7 +511,7 @@ DeprecatedValueList<IntRect> RenderContainer::lineBoxRects()
         return DeprecatedValueList<IntRect>();
 
     DeprecatedValueList<IntRect> rects;
-    for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isText() || child->isInline() || child->isAnonymousBlock()) {
             int x = 0, y = 0;
             child->absolutePositionForContent(x, y);

@@ -2067,11 +2067,28 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_list.cpp"
+				RelativePath="..\..\rendering\ListMarkerBox.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_list.h"
+				RelativePath="..\..\rendering\ListMarkerBox.h"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\rendering\RenderListItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderListItem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderListMarker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderListMarker.h"
 				>
 			</File>
 			<File
@@ -3227,11 +3244,51 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\html\html_listimpl.cpp"
+				RelativePath="..\..\html\HTMLDirectoryElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\html\html_listimpl.h"
+				RelativePath="..\..\html\HTMLDirectoryElement.h"
+				>
+			</File>	
+			<File
+				RelativePath="..\..\html\HTMLOListElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLOListElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLMenuElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLMenuElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLUListElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLUListElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLDListElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLDListElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLLIElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLLIElement.h"
 				>
 			</File>
       <File

@@ -31,6 +31,7 @@
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
+#include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "RenderSelect.h"
@@ -44,7 +45,11 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLSelectElement::HTMLSelectElement(Document* doc, HTMLFormElement* f)
-    : HTMLGenericFormElement(selectTag, doc, f), m_minwidth(0), m_size(0), m_multiple(false), m_recalcListItems(false)
+    : HTMLGenericFormElement(selectTag, doc, f)
+    , m_minwidth(0)
+    , m_size(0)
+    , m_multiple(false)
+    , m_recalcListItems(false)
 {
     document()->registerFormElementWithState(this);
 }

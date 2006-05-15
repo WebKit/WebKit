@@ -56,6 +56,7 @@
 #import "RegularExpression.h"
 #import "RenderCanvas.h"
 #import "RenderImage.h"
+#import "RenderListItem.h"
 #import "RenderPart.h"
 #import "RenderTableCell.h"
 #import "RenderTheme.h"
@@ -66,7 +67,6 @@
 #import "WebDashboardRegion.h"
 #import "csshelper.h"
 #import "kjs_window.h"
-#import "render_list.h"
 #import "visible_units.h"
 #import <JavaScriptCore/NP_jsobject.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
@@ -2385,7 +2385,7 @@ NSAttributedString *FrameMac::attributedString(Node *_start, int startOffset, No
                     
                     listText += '\t';
                     if (itemParent && renderer->isListItem()) {
-                        RenderListItem *listRenderer = static_cast<RenderListItem*>(renderer);
+                        RenderListItem* listRenderer = static_cast<RenderListItem*>(renderer);
 
                         maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
                         switch(style->listStyleType()) {

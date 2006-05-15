@@ -1,3 +1,89 @@
+2006-05-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Split render_list.* and html_listimpl.* into separate files (one per class).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_html.cpp:
+        * bindings/objc/DOMHTML.mm:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::attributedString):
+        * html/HTMLDListElement.cpp: Added.
+        (WebCore::HTMLDListElement::HTMLDListElement):
+        * html/HTMLDListElement.h: Added.
+        * html/HTMLDirectoryElement.cpp: Added.
+        (WebCore::HTMLDirectoryElement::HTMLDirectoryElement):
+        * html/HTMLDirectoryElement.h: Added.
+        * html/HTMLElementFactory.cpp:
+        * html/HTMLKeygenElement.cpp:
+        * html/HTMLLIElement.cpp: Added.
+        (WebCore::HTMLLIElement::HTMLLIElement):
+        (WebCore::HTMLLIElement::parseMappedAttribute):
+        (WebCore::HTMLLIElement::attach):
+        (WebCore::HTMLLIElement::setType):
+        * html/HTMLLIElement.h: Added.
+        * html/HTMLMenuElement.cpp: Added.
+        (WebCore::HTMLMenuElement::HTMLMenuElement):
+        * html/HTMLMenuElement.h: Added.
+        * html/HTMLOListElement.cpp: Added.
+        (WebCore::HTMLOListElement::HTMLOListElement):
+        (WebCore::HTMLOListElement::parseMappedAttribute):
+        (WebCore::HTMLOListElement::setType):
+        * html/HTMLOListElement.h: Added.
+        (WebCore::HTMLOListElement::start):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::checkDTD):
+        (WebCore::HTMLOptionElement::text):
+        (WebCore::HTMLOptionElement::setText):
+        (WebCore::HTMLOptionElement::getSelect):
+        (WebCore::HTMLOptionElement::setLabel):
+        * html/HTMLOptionElement.h:
+        * html/HTMLParser.cpp:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        * html/HTMLUListElement.cpp: Added.
+        (WebCore::HTMLUListElement::HTMLUListElement):
+        * html/HTMLUListElement.h: Added.
+        * html/html_listimpl.cpp: Removed.
+        * html/html_listimpl.h: Removed.
+        * kwq/WebCoreAXObject.mm:
+        * rendering/InlineFlowBox.cpp:
+        * rendering/ListMarkerBox.cpp: Added.
+        (WebCore::ListMarkerBox::ListMarkerBox):
+        (WebCore::ListMarkerBox::isText):
+        * rendering/ListMarkerBox.h: Added.
+        * rendering/RenderContainer.cpp:
+        (WebCore::updateListMarkerNumbers):
+        (WebCore::RenderContainer::addChild):
+        (WebCore::RenderContainer::removeChild):
+        (WebCore::RenderContainer::layout):
+        (WebCore::RenderContainer::removeLeftoverAnonymousBoxes):
+        (WebCore::RenderContainer::positionForCoordinates):
+        (WebCore::RenderContainer::lineBoxRects):
+        * rendering/RenderListItem.cpp: Added.
+        (WebCore::RenderListItem::RenderListItem):
+        (WebCore::RenderListItem::setStyle):
+        (WebCore::RenderListItem::calcValue):
+        (WebCore::RenderListItem::markerStringValue):
+        * rendering/RenderListItem.h: Added.
+        (WebCore::RenderListItem::renderName):
+        (WebCore::RenderListItem::setValue):
+        (WebCore::RenderListItem::setNotInList):
+        (WebCore::RenderListItem::notInList):
+        * rendering/RenderListMarker.cpp: Added.
+        (WebCore::RenderListMarker::RenderListMarker):
+        (WebCore::RenderListMarker::setStyle):
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::layout):
+        (WebCore::RenderListMarker::calcMinMaxWidth):
+        * rendering/RenderListMarker.h: Added.
+        (WebCore::RenderListMarker::renderName):
+        * rendering/RenderObject.cpp:
+        * rendering/render_list.cpp: Removed.
+        * rendering/render_list.h: Removed.
+
 2006-05-15  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by eseidel.

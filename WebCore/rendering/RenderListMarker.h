@@ -22,13 +22,11 @@
  *
  */
 
-#ifndef RENDER_LIST_H
-#define RENDER_LIST_H
+#ifndef RenderListMarker_H
+#define RenderListMarker_H
 
 #include "DeprecatedString.h"
-#include "RenderBlock.h"
-
-// ### list-style-position, list-style-image is still missing
+#include "RenderBox.h"
 
 namespace WebCore {
 
@@ -40,17 +38,17 @@ class RenderListItem;
 class RenderListMarker : public RenderBox
 {
 public:
-    RenderListMarker(WebCore::Document* document);
+    RenderListMarker(Document*);
     ~RenderListMarker();
 
-    virtual void setStyle(RenderStyle *style);
+    virtual void setStyle(RenderStyle*);
 
-    virtual const char *renderName() const { return "RenderListMarker"; }
+    virtual const char* renderName() const { return "RenderListMarker"; }
     // so the marker gets to layout itself. Only needed for
     // list-style-position: inside
 
-    virtual void paint(PaintInfo& i, int xoff, int yoff);
-    virtual void layout( );
+    virtual void paint(PaintInfo&, int xoff, int yoff);
+    virtual void layout();
     virtual void calcMinMaxWidth();
 
     virtual void imageChanged(CachedImage*);
@@ -83,55 +81,9 @@ public:
 
 private:
     DeprecatedString m_item;
-    CachedImage *m_listImage;
+    CachedImage* m_listImage;
     RenderListItem* m_listItem;
     SelectionState m_selectionState;
-};
-
-class ListMarkerBox : public InlineBox
-{
-public:
-    ListMarkerBox(RenderObject* obj) :InlineBox(obj) {}
-    virtual bool isText() const { return !static_cast<RenderListMarker*>(object())->listImage(); }
-};
-
-class RenderListItem : public RenderBlock
-{
-public:
-    RenderListItem(WebCore::Node*);
-    
-    virtual void destroy();
-
-    virtual const char *renderName() const { return "RenderListItem"; }
-
-    virtual void setStyle(RenderStyle *style);
-
-    virtual bool isListItem() const { return true; }
-    
-    int value() const { return m_value; }
-    void setValue(int v) { predefVal = v; }
-    void calcValue();
-    void resetValue();
-
-    virtual bool isEmpty() const;
-    virtual void paint(PaintInfo& i, int xoff, int yoff);
-
-    virtual void layout( );
-    virtual void calcMinMaxWidth();
-
-    virtual void positionListMarker();
-    void updateMarkerLocation();
-    
-    void setNotInList(bool notInList) { _notInList = notInList; }
-    bool notInList() const { return _notInList; }
-
-    DeprecatedString markerStringValue() { return m_marker ? m_marker->text() : ""; }
-
-private:
-    int predefVal;
-    RenderListMarker *m_marker;
-    bool _notInList;
-    int m_value;
 };
 
 } //namespace

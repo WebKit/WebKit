@@ -41,6 +41,7 @@
 #import "HTMLNames.h"
 #import "RenderCanvas.h"
 #import "RenderImage.h"
+#import "RenderListMarker.h"
 #import "RenderTheme.h"
 #import "RenderWidget.h"
 #import "SelectionController.h"
@@ -50,7 +51,6 @@
 #import "WebCoreViewFactory.h"
 #import "html_imageimpl.h"
 #import "kjs_html.h"
-#import "render_list.h"
 #import "visible_units.h"
 
 using namespace WebCore;

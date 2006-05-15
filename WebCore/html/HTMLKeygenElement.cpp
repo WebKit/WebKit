@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "FormDataList.h"
+#include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "KWQKSSLKeyGen.h"
 #include "Text.h"

@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "Text.h"
 
@@ -36,10 +37,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLOptionElement::HTMLOptionElement(Document *doc, HTMLFormElement *f)
+HTMLOptionElement::HTMLOptionElement(Document* doc, HTMLFormElement* f)
     : HTMLGenericFormElement(optionTag, doc, f)
+    , m_selected(false)
 {
-    m_selected = false;
+}
+
+bool HTMLOptionElement::checkDTD(const Node* newChild)
+{
+    return newChild->isTextNode() || newChild->hasTagName(scriptTag);
 }
 
 bool HTMLOptionElement::isFocusable() const
@@ -64,7 +70,7 @@ String HTMLOptionElement::text() const
             return text;
     }
 
-    const Node *n = this->firstChild();
+    const Node* n = firstChild();
     while (n) {
         if (n->nodeType() == TEXT_NODE || n->nodeType() == CDATA_SECTION_NODE)
             text += n->nodeValue();
@@ -81,7 +87,7 @@ String HTMLOptionElement::text() const
 void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
 {
     // Handle the common special case where there's exactly 1 child node, and it's a text node.
-    Node *child = firstChild();
+    Node* child = firstChild();
     if (child && child->isTextNode() && !child->nextSibling()) {
         static_cast<Text *>(child)->setData(text, ec);
         return;
@@ -157,9 +163,9 @@ void HTMLOptionElement::childrenChanged()
        select->childrenChanged();
 }
 
-HTMLSelectElement *HTMLOptionElement::getSelect() const
+HTMLSelectElement* HTMLOptionElement::getSelect() const
 {
-    Node *select = parentNode();
+    Node* select = parentNode();
     while (select && !select->hasTagName(selectTag))
         select = select->parentNode();
     return static_cast<HTMLSelectElement*>(select);
@@ -180,7 +186,7 @@ String HTMLOptionElement::label() const
     return getAttribute(labelAttr);
 }
 
-void HTMLOptionElement::setLabel(const String &value)
+void HTMLOptionElement::setLabel(const String& value)
 {
     setAttribute(labelAttr, value);
 }

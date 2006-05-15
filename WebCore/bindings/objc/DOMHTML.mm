@@ -37,6 +37,8 @@
 #import "HTMLBodyElement.h"
 #import "HTMLBRElement.h"
 #import "HTMLButtonElement.h"
+#import "HTMLDirectoryElement.h"
+#import "HTMLDListElement.h"
 #import "HTMLDocument.h"
 #import "HTMLEmbedElement.h"
 #import "HTMLFieldSetElement.h"
@@ -50,9 +52,13 @@
 #import "HTMLIsIndexElement.h"
 #import "HTMLLabelElement.h"
 #import "HTMLLegendElement.h"
+#import "HTMLLIElement.h"
 #import "HTMLLinkElement.h"
+#import "HTMLMenuElement.h"
 #import "HTMLMetaElement.h"
+#import "HTMLNames.h"
 #import "HTMLObjectElement.h"
+#import "HTMLOListElement.h"
 #import "HTMLOptGroupElement.h"
 #import "HTMLOptionElement.h"
 #import "HTMLOptionsCollection.h"
@@ -68,16 +74,16 @@
 #import "HTMLTableSectionElement.h"
 #import "HTMLTextAreaElement.h"
 #import "HTMLTitleElement.h"
+#import "HTMLUListElement.h"
 #import "NameNodeList.h"
 #import "html_blockimpl.h"
 #import "html_imageimpl.h"
-#import "html_listimpl.h"
 #import "markup.h"
 #import "RenderTextField.h"
 #import "FrameView.h"
 
 using namespace WebCore;
-using namespace WebCore::HTMLNames;
+using namespace HTMLNames;
 
 // FIXME: This code should be using the impl methods instead of doing so many get/setAttribute calls.
 // FIXME: This code should be generated.
