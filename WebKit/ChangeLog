@@ -1,3 +1,26 @@
+2006-05-15  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin.
+
+        Safari's Page Load Test (PLT) saturates the runloop with so many sources that timers are not allowed to fire 
+        as frequently as they should.  This is a general problem with the PLT -- because of this, it does not measure
+        work done in timer callbacks during/after the page load process.
+
+        Unfortunately, this aspect of the PLT interferes with our window display throttle hack.  Because we throttle
+        display using timers, and the PLT starves timers, most of the pages loaded by the PLT do not actually display.
+        This makes the PLT run "too fast", yielding ridiculously fast numbers compared to when throttling is disabled.
+
+        I've added a new method that the PLT can call after each page load to force any starved display throttle timers
+        to fire.  By doing this, Safari's PLT will be guaranteed to display each page at least once.
+
+        * Misc/WebNSWindowExtras.h:
+        * Misc/WebNSWindowExtras.m:
+        Added a special internal runloop mode for the throttle timers.
+        (+[NSWindow _webkit_displayThrottledWindows]):
+        Run the runloop in our special internal mode until there are no more sources to handle.
+        (requestWindowDisplay):
+        Schedule the timer in the new mode as well as the standard modes.
+        
 2006-05-15  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

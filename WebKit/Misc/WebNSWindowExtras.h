@@ -39,6 +39,10 @@
 // immediately when window throttling is disabled.
 + (void)_webkit_disableWindowDisplayThrottle;
 
+// Force all throttle timers to fire by running the runloop in WebKitDisplayThrottleRunLoopMode until there are
+// no more runloop timers/sources for that mode.
++ (void)_webkit_displayThrottledWindows;
+
 // centers "visually", putting 1/3 of the remaining space above, and 2/3 below
 - (void)centerOverMainWindow; 
 @end

@@ -34,6 +34,8 @@
 
 #define DISPLAY_REFRESH_INTERVAL (1.0 / 60.0)
 
+static NSString *WebKitDisplayThrottleRunLoopMode = @"WebKitDisplayThrottleRunLoopMode";
+
 static BOOL throttlingWindowDisplay;
 static CFMutableDictionaryRef windowDisplayInfoDictionary;
 static IMP oldNSWindowPostWindowNeedsDisplayIMP;
@@ -100,6 +102,16 @@ static void disableWindowDisplayThrottleApplierFunction(const void *key, const v
     [displayInfo->window _postWindowNeedsDisplay];
     
     free(displayInfo);
+}
+
++ (void)_webkit_displayThrottledWindows
+{
+    if (!throttlingWindowDisplay)
+        return;
+
+    // Force all throttle timers to fire by running the runloop in WebKitDisplayThrottleRunLoopMode until there are
+    // no more runloop timers/sources for that mode.
+    while (CFRunLoopRunInMode((CFStringRef)WebKitDisplayThrottleRunLoopMode, 0, true) == kCFRunLoopRunHandledSource) {}
 }
 
 + (void)_webkit_disableWindowDisplayThrottle
@@ -249,6 +261,10 @@ static BOOL requestWindowDisplay(NSWindow *window)
         [runLoop addTimer:displayInfo->displayTimer forMode:NSDefaultRunLoopMode];
         [runLoop addTimer:displayInfo->displayTimer forMode:NSEventTrackingRunLoopMode];
         [runLoop addTimer:displayInfo->displayTimer forMode:NSModalPanelRunLoopMode];
+        
+        // Schedule the timer in WebKitDisplayThrottleRunLoopMode so that +_webkit_displayThrottledWindows can
+        // force all window throttle timers to fire by running in just that mode
+        [runLoop addTimer:displayInfo->displayTimer forMode:WebKitDisplayThrottleRunLoopMode];
         
         return NO;
     }
