@@ -70,6 +70,7 @@
 {
     // mandatory to complete or cancel before releasing this object
     ASSERT(_done);
+    [super finalize];
 }
 
 - (void)dealloc
@@ -81,8 +82,7 @@
 
 - (void)_continueWithPolicy:(WebPolicyAction)policy
 {
-    void (*callBack)(id, SEL, BOOL) = (void (*)(id, SEL, BOOL))objc_msgSend;
-    (*callBack) (_resultObject, _resultSelector, (policy == WebPolicyUse));
+    ((void (*)(id, SEL, BOOL))objc_msgSend)(_resultObject, _resultSelector, (policy == WebPolicyUse));
 
     // this will call indirectly call cancel
     [_controller _webPluginContainerCancelCheckIfAllowedToLoadRequest:self];

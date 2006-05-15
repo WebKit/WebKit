@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebPolicyDelegatePrivate.h>
+#import "WebPolicyDelegatePrivate.h"
+
+#import <objc/objc-runtime.h>
 
 NSString *WebActionNavigationTypeKey = @"WebActionNavigationTypeKey";
 NSString *WebActionElementKey = @"WebActionElementKey";
 NSString *WebActionButtonKey = @"WebActionButtonKey"; 
 NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
-
 
 @interface WebPolicyDecisionListenerPrivate : NSObject
 {
@@ -86,9 +87,8 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 
 -(void)_usePolicy:(WebPolicyAction)policy
 {
-    if (_private->target != nil) {
-        [_private->target performSelector:_private->action withObject:(id)policy];
-    }
+    if (_private->target != nil)
+        ((void (*)(id, SEL, WebPolicyAction))objc_msgSend)(_private->target, _private->action, policy);
 }
 
 -(void)_invalidate

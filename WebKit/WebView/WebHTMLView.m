@@ -521,11 +521,9 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 {
     WebView *webView = [self _webView];
     DOMNode *child = [fragment firstChild];
-    if ([fragment lastChild] == child && [child isKindOfClass:[DOMCharacterData class]]) {
+    if ([fragment lastChild] == child && [child isKindOfClass:[DOMCharacterData class]])
         return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:[(DOMCharacterData *)child data] replacingDOMRange:range givenAction:action];
-    } else {
-        return [[webView _editingDelegateForwarder] webView:webView shouldInsertNode:fragment replacingDOMRange:range givenAction:action];
-    }
+    return [[webView _editingDelegateForwarder] webView:webView shouldInsertNode:fragment replacingDOMRange:range givenAction:action];
 }
 
 - (BOOL)_shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action
@@ -1863,6 +1861,7 @@ static WebHTMLView *lastHitView = nil;
 {
     [self _clearLastHitViewIfSelf];
     [self _reset];
+    // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private->pluginController destroyAllPlugins];
     [_private release];
@@ -1874,6 +1873,7 @@ static WebHTMLView *lastHitView = nil;
 {
     [self _clearLastHitViewIfSelf];
     [self _reset];
+    // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private->pluginController destroyAllPlugins];
     _private = nil;
@@ -2414,6 +2414,8 @@ static WebHTMLView *lastHitView = nil;
         NSSize newLayoutFrameSize = [[[self superview] superview] frame].size;
         if (_private->laidOutAtLeastOnce && !NSEqualSizes(_private->lastLayoutFrameSize, newLayoutFrameSize)) {
             [[self _bridge] sendResizeEvent];
+            if ([[self _bridge] needsLayout])
+                [[self _bridge] forceLayoutAdjustingViewSize:NO];
         }
         _private->laidOutAtLeastOnce = YES;
         _private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
@@ -3089,12 +3091,10 @@ done:
 - (NSView *)previousValidKeyView
 {
     NSView *view = nil;
-    if (![self isHiddenOrHasHiddenAncestor]) {
+    if (![self isHiddenOrHasHiddenAncestor])
         view = [[self _bridge] previousKeyViewInsideWebFrameViews];
-    }
-    if (view == nil) {
+    if (view == nil)
         view = [super previousValidKeyView];
-    }
     return view;
 }
 
@@ -3103,14 +3103,14 @@ done:
     NSView *view = nil;
     if (![[self _webView] _isPerformingProgrammaticFocus] && !_private->willBecomeFirstResponderForNodeFocus) {
         switch ([[self window] keyViewSelectionDirection]) {
-        case NSDirectSelection:
-            break;
-        case NSSelectingNext:
-            view = [[self _bridge] nextKeyViewInsideWebFrameViews];
-            break;
-        case NSSelectingPrevious:
-            view = [[self _bridge] previousKeyViewInsideWebFrameViews];
-            break;
+            case NSDirectSelection:
+                break;
+            case NSSelectingNext:
+                view = [[self _bridge] nextKeyViewInsideWebFrameViews];
+                break;
+            case NSSelectingPrevious:
+                view = [[self _bridge] previousKeyViewInsideWebFrameViews];
+                break;
         }
     }
     _private->willBecomeFirstResponderForNodeFocus = NO;
@@ -3130,12 +3130,10 @@ done:
         [_private->compController endRevertingChange:NO moveLeft:NO];
         _private->resigningFirstResponder = YES;
         if (![self maintainsInactiveSelection]) { 
-            if ([[self _webView] _isPerformingProgrammaticFocus]) {
+            if ([[self _webView] _isPerformingProgrammaticFocus])
                 [self deselectText];
-            }
-            else {
+            else
                 [self deselectAll];
-            }
         }
         [self _updateFocusState];
         _private->resigningFirstResponder = NO;
@@ -3144,9 +3142,6 @@ done:
     return resign;
 }
 
-//------------------------------------------------------------------------------------
-// WebDocumentView protocol
-//------------------------------------------------------------------------------------
 - (void)setDataSource:(WebDataSource *)dataSource 
 {
     ASSERT(!_private->dataSource);
@@ -3207,15 +3202,13 @@ done:
     // This helps when we print as part of a larger print process.
     // If the WebHTMLView itself is what we're printing, then we will never have to do this.
     BOOL wasInPrintingMode = _private->printing;
-    if (!wasInPrintingMode) {
+    if (!wasInPrintingMode)
         [self _setPrinting:YES minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
-    }
-    
+
     [[self _bridge] adjustPageHeightNew:newBottom top:oldTop bottom:oldBottom limit:bottomLimit];
     
-    if (!wasInPrintingMode) {
+    if (!wasInPrintingMode)
         [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
-    }
 }
 
 - (float)_availablePaperWidthForPrintOperation:(NSPrintOperation *)printOperation
@@ -3263,7 +3256,6 @@ done:
 {
     ASSERT_ARG(initiatingOperation, initiatingOperation != nil);
     NSPrintOperation *currentOperation = [NSPrintOperation currentOperation];
-    
     if (initiatingOperation == currentOperation) {
         // The print operation is still underway. We don't expect this to ever happen, hence the assert, but we're
         // being extra paranoid here since the printing code is so fragile. Delay the cleanup
@@ -3287,7 +3279,8 @@ done:
 }
 
 // Return the number of pages available for printing
-- (BOOL)knowsPageRange:(NSRangePointer)range {
+- (BOOL)knowsPageRange:(NSRangePointer)range
+{
     // Must do this explicit display here, because otherwise the view might redisplay while the print
     // sheet was up, using printer fonts (and looking different).
     [self displayIfNeeded];
@@ -3327,9 +3320,8 @@ done:
     // hit that case we'll pass along a degenerate 1 pixel square to print. This will print
     // a blank page (with correct-looking header and footer if that option is on), which matches
     // the behavior of IE and Camino at least.
-    if ([newPageRects count] == 0) {
-        newPageRects = [NSArray arrayWithObject:[NSValue valueWithRect: NSMakeRect(0, 0, 1, 1)]];
-    }
+    if ([newPageRects count] == 0)
+        newPageRects = [NSArray arrayWithObject:[NSValue valueWithRect:NSMakeRect(0, 0, 1, 1)]];
     _private->pageRects = [newPageRects retain];
     
     range->length = [_private->pageRects count];
@@ -3338,8 +3330,9 @@ done:
 }
 
 // Return the drawing rectangle for a particular page number
-- (NSRect)rectForPage:(int)page {
-    return [[_private->pageRects objectAtIndex: (page-1)] rectValue];
+- (NSRect)rectForPage:(int)page
+{
+    return [[_private->pageRects objectAtIndex:page - 1] rectValue];
 }
 
 - (void)drawPageBorderWithSize:(NSSize)borderSize
@@ -3404,17 +3397,14 @@ done:
     } else {
         // We're going to process a key event, bail on any outstanding complete: UI
         [_private->compController endRevertingChange:YES moveLeft:NO];
-        if ([self _canEdit] && [self _interceptEditingKeyEvent:event]) {
-            // Consumed by key bindings manager.
-        } else {
+        BOOL handledKey = [self _canEdit] && [self _interceptEditingKeyEvent:event];
+        if (!handledKey)
             callSuper = YES;
-        }
     }
-    if (callSuper) {
+    if (callSuper)
         [super keyDown:event];
-    } else {
+    else
         [NSCursor setHiddenUntilMouseMoves:YES];
-    }
 
     _private->keyDownEvent = nil;
     
@@ -3424,11 +3414,8 @@ done:
 - (void)keyUp:(NSEvent *)event
 {
     [self retain];
-    
-    if (![[self _bridge] interceptKeyEvent:event toView:self]) {
-        [super keyUp:event];
-    }
-    
+    if (![[self _bridge] interceptKeyEvent:event toView:self])
+        [super keyUp:event];    
     [self release];
 }
 
@@ -3437,7 +3424,7 @@ done:
     if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {
         id accTree = [[self _bridge] accessibilityTree];
         if (accTree)
-            return [NSArray arrayWithObject: accTree];
+            return [NSArray arrayWithObject:accTree];
         return nil;
     }
     return [super accessibilityAttributeValue:attributeName];
@@ -3448,19 +3435,17 @@ done:
     id accTree = [[self _bridge] accessibilityTree];
     if (accTree)
         return [accTree accessibilityFocusedUIElement];
-    else
-        return self;
+    return self;
 }
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
     id accTree = [[self _bridge] accessibilityTree];
     if (accTree) {
-        NSPoint windowCoord = [[self window] convertScreenToBase: point];
-        return [accTree accessibilityHitTest: [self convertPoint:windowCoord fromView:nil]];
+        NSPoint windowCoord = [[self window] convertScreenToBase:point];
+        return [accTree accessibilityHitTest:[self convertPoint:windowCoord fromView:nil]];
     }
-    else
-        return self;
+    return self;
 }
 
 - (id)_accessibilityParentForSubview:(NSView *)subview
@@ -3468,11 +3453,9 @@ done:
     id accTree = [[self _bridge] accessibilityTree];
     if (!accTree)
         return self;
-        
     id parent = [accTree _accessibilityParentForSubview:subview];
-    if (parent == nil)
+    if (!parent)
         return self;
-
     return parent;
 }
 
@@ -3738,9 +3721,8 @@ done:
     DOMRange *range = [bridge rangeByExpandingSelectionWithGranularity:granularity];
     if (range && ![range collapsed]) {
         WebView *webView = [self _webView];
-        if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:range affinity:[bridge selectionAffinity] stillSelecting:NO]) {
+        if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:range affinity:[bridge selectionAffinity] stillSelecting:NO])
             [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity] closeTyping:YES];
-        }
     }
 }
 
@@ -3766,9 +3748,8 @@ done:
 
 - (void)copy:(id)sender
 {
-    if ([[self _bridge] tryDHTMLCopy]) {
-        return;     // DHTML did the whole operation
-    }
+    if ([[self _bridge] tryDHTMLCopy])
+        return; // DHTML did the whole operation
     if (![self _canCopy]) {
         NSBeep();
         return;
@@ -3788,9 +3769,8 @@ done:
 - (void)cut:(id)sender
 {
     WebFrameBridge *bridge = [self _bridge];
-    if ([bridge tryDHTMLCut]) {
-        return;     // DHTML did the whole operation
-    }
+    if ([bridge tryDHTMLCut])
+        return; // DHTML did the whole operation
     if (![self _canCut]) {
         NSBeep();
         return;
@@ -3804,12 +3784,10 @@ done:
 
 - (void)paste:(id)sender
 {
-    if ([[self _bridge] tryDHTMLPaste]) {
+    if ([[self _bridge] tryDHTMLPaste])
         return;     // DHTML did the whole operation
-    }
-    if (![self _canPaste]) {
+    if (![self _canPaste])
         return;
-    }
     if ([[self _bridge] isSelectionRichlyEditable])
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
@@ -3905,16 +3883,14 @@ done:
         // with characters like single quote or backslash in their names.
         [style setFontFamily:[NSString stringWithFormat:@"'%@'", [font familyName]]];
         [style setFontSize:[NSString stringWithFormat:@"%0.fpx", [font pointSize]]];
-        if ([fm weightOfFont:font] >= MIN_BOLD_WEIGHT) {
+        if ([fm weightOfFont:font] >= MIN_BOLD_WEIGHT)
             [style setFontWeight:@"bold"];
-        } else {
+        else
             [style setFontWeight:@"normal"];
-        }
-        if (([fm traitsOfFont:font] & NSItalicFontMask) != 0) {
+        if (([fm traitsOfFont:font] & NSItalicFontMask) != 0)
             [style setFontStyle:@"italic"];
-        } else {
+        else
             [style setFontStyle:@"normal"];
-        }
     }
 
     color = [dictionary objectForKey:NSForegroundColorAttributeName];
@@ -3961,9 +3937,8 @@ done:
         return;
     WebView *webView = [self _webView];
     WebFrameBridge *bridge = [self _bridge];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]]) {
+    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]])
         [bridge applyParagraphStyle:style withUndoAction:undoAction];
-    }
 }
 
 - (void)_toggleBold
@@ -3987,9 +3962,8 @@ done:
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
 {
     ASSERT([self _webView]);
-    if (![[[self _webView] preferences] respectStandardStyleKeyEquivalents]) {
+    if (![[[self _webView] preferences] respectStandardStyleKeyEquivalents])
         return NO;
-    }
     
     if (![self _canEdit])
         return NO;
@@ -4009,9 +3983,8 @@ done:
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
-    if ([self _handleStyleKeyEquivalent:event]) {
+    if ([self _handleStyleKeyEquivalent:event])
         return YES;
-    }
     
     BOOL ret;
     
@@ -4022,10 +3995,8 @@ done:
     // But don't do it if we have already handled the event.
     if (event != _private->keyDownEvent
             && [self _web_firstResponderIsSelfOrDescendantView]
-            && [[self _bridge] interceptKeyEvent:event toView:self]) {
-        
+            && [[self _bridge] interceptKeyEvent:event toView:self])
         ret = YES;
-    }
     else
         ret = [super performKeyEquivalent:event];
     
@@ -4129,29 +4100,18 @@ done:
     }
 
     int soa = [oa pointSize];
-    if (aPointSize == bPointSize) {
+    if (aPointSize == bPointSize)
         [style setFontSize:[NSString stringWithFormat:@"%dpx", aPointSize]];
-    } else if (aPointSize < soa) {
+    else if (aPointSize < soa)
         [style _setFontSizeDelta:@"-1px"];
-    } else if (aPointSize > soa) {
+    else if (aPointSize > soa)
         [style _setFontSizeDelta:@"1px"];
-    }
 
-    if (aWeight == bWeight) {
-        if (aIsBold) {
-            [style setFontWeight:@"bold"];
-        } else {
-            [style setFontWeight:@"normal"];
-        }
-    }
+    if (aWeight == bWeight)
+        [style setFontWeight:aIsBold ? @"bold" : @"normal"];
 
-    if (aIsItalic == bIsItalic) {
-        if (aIsItalic) {
-            [style setFontStyle:@"italic"];
-        } else {
-            [style setFontStyle:@"normal"];
-        }
-    }
+    if (aIsItalic == bIsItalic)
+        [style setFontStyle:aIsItalic ? @"italic" :  @"normal"];
 }
 
 - (DOMCSSStyleDeclaration *)_styleFromFontManagerOperation
@@ -4235,11 +4195,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 
     NSShadow *sha = [a objectForKey:NSShadowAttributeName];
-    if (sha) {
+    if (sha)
         [style setTextShadow:[self _shadowAsString:sha]];
-    } else if ([b objectForKey:NSShadowAttributeName] == nil) {
+    else if ([b objectForKey:NSShadowAttributeName] == nil)
         [style setTextShadow:@"none"];
-    }
 
     int sa = [[a objectForKey:NSStrikethroughStyleAttributeName] intValue];
     int sb = [[b objectForKey:NSStrikethroughStyleAttributeName] intValue];
@@ -4294,10 +4253,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (WebUndoAction)_undoActionFromColorPanelWithSelector:(SEL)selector
 {
-    if (selector == @selector(setBackgroundColor:)) {
-        return WebUndoActionSetBackgroundColor;
-    }
-    
+    if (selector == @selector(setBackgroundColor:))
+        return WebUndoActionSetBackgroundColor;    
     return WebUndoActionSetColor;
 }
 
@@ -4305,9 +4262,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     DOMCSSStyleDeclaration *style = [self _styleFromColorPanelWithSelector:selector];
     WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range]) {
+    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range])
         [[self _bridge] applyStyle:style withUndoAction:[self _undoActionFromColorPanelWithSelector:selector]];
-    }
 }
 
 - (void)changeDocumentBackgroundColor:(id)sender
@@ -4385,9 +4341,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
     WebFrameBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
+    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped])
         [bridge insertParagraphSeparator];
-    }
 }
 
 - (void)insertLineBreak:(id)sender
@@ -4397,9 +4352,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
     WebFrameBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
+    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped])
         [bridge insertLineBreak];
-    }
 }
 
 - (void)insertParagraphSeparator:(id)sender
@@ -4409,9 +4363,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
     WebFrameBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
+    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped])
         [bridge insertParagraphSeparator];
-    }
 }
 
 - (void)_changeWordCaseWithSelector:(SEL)selector
@@ -4423,9 +4376,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [self selectWord:nil];
     NSString *word = [[bridge selectedString] performSelector:selector];
     // FIXME: Does this need a different action context other than "typed"?
-    if ([self _shouldReplaceSelectionWithText:word givenAction:WebViewInsertActionTyped]) {
+    if ([self _shouldReplaceSelectionWithText:word givenAction:WebViewInsertActionTyped])
         [bridge replaceSelectionWithText:word selectReplacement:NO smartReplace:NO];
-    }
 }
 
 - (void)uppercaseWord:(id)sender
@@ -4539,10 +4491,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     if (![self _canEdit])
         return;
-
-    if (!_private->compController) {
+    if (!_private->compController)
         _private->compController = [[WebTextCompleteController alloc] initWithHTMLView:self];
-    }
     [_private->compController doCompletion];
 }
 
@@ -4555,9 +4505,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
     }
     NSString *badWord = [[self _bridge] advanceToNextMisspelling];
-    if (badWord) {
+    if (badWord)
         [checker updateSpellingPanelWithMisspelledWord:badWord];
-    }
 }
 
 - (void)showGuessPanel:(id)sender
@@ -4569,9 +4518,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
     }
     NSString *badWord = [[self _bridge] advanceToNextMisspellingStartingJustBeforeSelection];
-    if (badWord) {
+    if (badWord)
         [checker updateSpellingPanelWithMisspelledWord:badWord];
-    }
     [[checker spellingPanel] orderFront:sender];
 }
 
@@ -4586,13 +4534,11 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return;
     }
     
-    if ([newWord isEqualToString:@""]) {
+    if ([newWord isEqualToString:@""])
         return;
-    }
 
-    if ([self _shouldReplaceSelectionWithText:newWord givenAction:WebViewInsertActionPasted]) {
+    if ([self _shouldReplaceSelectionWithText:newWord givenAction:WebViewInsertActionPasted])
         [[self _bridge] replaceSelectionWithText:newWord selectReplacement:YES smartReplace:NO];
-    }
 }
 
 - (void)changeSpelling:(id)sender
@@ -4627,9 +4573,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *range = [self _selectedRange];
-    if (!range || [range collapsed]) {
+    if (!range || [range collapsed])
         range = [self _documentRange];
-    }
     [NSApp speakString:[bridge stringForRange:range]];
 }
 
@@ -4777,22 +4722,19 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
     WebFrameBridge *bridge = [self _bridge];
     DOMRange *r = [bridge rangeOfCharactersAroundCaret];
-    if (!r) {
+    if (!r)
         return;
-    }
     NSString *characters = [bridge stringForRange:r];
-    if ([characters length] != 2) {
+    if ([characters length] != 2)
         return;
-    }
     NSString *transposed = [[characters substringFromIndex:1] stringByAppendingString:[characters substringToIndex:1]];
     WebView *webView = [self _webView];
-    if (![[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:r affinity:NSSelectionAffinityDownstream stillSelecting:NO]) {
+    if (![[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange]
+            toDOMRange:r affinity:NSSelectionAffinityDownstream stillSelecting:NO])
         return;
-    }
     [bridge setSelectedDOMRange:r affinity:NSSelectionAffinityDownstream closeTyping:YES];
-    if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped]) {
+    if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped])
         [bridge replaceSelectionWithText:transposed selectReplacement:NO smartReplace:NO];
-    }
 }
 
 - (void)toggleBaseWritingDirection:(id)sender
@@ -4931,9 +4873,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     BOOL disabled = _private->nextResponderDisabledOnce;
     _private->nextResponderDisabledOnce = NO;
-    if (disabled && [self _arrowKeyDownEventSelectorIfPreprocessing] != NULL) {
+    if (disabled && [self _arrowKeyDownEventSelectorIfPreprocessing] != NULL)
         return nil;
-    }
     return [super nextResponder];
 }
 
@@ -4974,11 +4915,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     NSEnumerator *enumerator = [self objectEnumerator];
     WebNetscapePluginEmbeddedView *view;
-    while ((view = [enumerator nextObject]) != nil) {
-        if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]]) {
+    while ((view = [enumerator nextObject]) != nil)
+        if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]])
             [view performSelector:selector withObject:object];
-        }
-    }
 }
 
 @end
@@ -5022,22 +4961,16 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     
     NSWindow *window = [self window];
     // FIXME: is this first-responder check correct? What happens if a subframe is editable and is first responder?
-    if ([NSApp keyWindow] != window || [window firstResponder] != self) {
+    if ([NSApp keyWindow] != window || [window firstResponder] != self)
         return;
-    }
     
     BOOL multiple = NO;
     NSFont *font = [[self _bridge] fontForSelection:&multiple];
 
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
     // selection. We should be able to remove this once the rest of this code works properly.
-    if (font == nil) {
-        if (![self _hasSelection]) {
-            font = [NSFont toolTipsFontOfSize:17];
-        } else {
-            font = [NSFont menuFontOfSize:23];
-        }
-    }
+    if (font == nil)
+        font = [self _hasSelection] ? [NSFont menuFontOfSize:23] : [NSFont toolTipsFontOfSize:17];
     ASSERT(font != nil);
 
     NSFontManager *fm = [NSFontManager sharedFontManager];
@@ -5072,7 +5005,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
 {
-    if (pasteString == nil || rangeToReplace == nil || [[self _webView] smartInsertDeleteEnabled] == NO) {
+    if (!pasteString || !rangeToReplace || ![[self _webView] smartInsertDeleteEnabled]) {
         if (beforeString)
             *beforeString = nil;
         if (afterString)
@@ -5128,21 +5061,18 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 @implementation WebHTMLView (WebNSTextInputSupport)
 
-static NSArray *validAttributes = nil;
-
 - (NSArray *)validAttributesForMarkedText
 {
-    if (!validAttributes) {
-        validAttributes = [[NSArray allocWithZone:[self zone]] initWithObjects:NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName, NSMarkedClauseSegmentAttributeName, NSTextInputReplacementRangeAttributeName, nil];
-        // NSText also supports the following attributes, but it's
-        // hard to tell which are really required for text input to
-        // work well; I have not seen any input method make use of them yet.
-        //
-        // NSFontAttributeName, NSForegroundColorAttributeName,
-        // NSBackgroundColorAttributeName, NSLanguageAttributeName,
-        // NSTextInputReplacementRangeAttributeName
-    }
-
+    static NSArray *validAttributes;
+    if (!validAttributes)
+        validAttributes = [[NSArray allocWithZone:[self zone]] initWithObjects:
+            NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName,
+            NSMarkedClauseSegmentAttributeName, NSTextInputReplacementRangeAttributeName, nil];
+    // NSText also supports the following attributes, but it's
+    // hard to tell which are really required for text input to
+    // work well; I have not seen any input method make use of them yet.
+    //     NSFontAttributeName, NSForegroundColorAttributeName,
+    //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
     return validAttributes;
 }
 
@@ -5191,22 +5121,14 @@ static NSArray *validAttributes = nil;
 
 - (NSRange)selectedRange
 {
-    WebFrameBridge *bridge = [self _bridge];
-    
-    NSRange range = [bridge selectedNSRange];
-
-    return range;
+    return [[self _bridge] selectedNSRange];
 }
 
 - (NSRange)markedRange
 {
-    if (![self hasMarkedText]) {
+    if (![self hasMarkedText])
         return NSMakeRange(NSNotFound,0);
-    }
-
-    NSRange range = [[self _bridge] markedTextNSRange];
-
-    return range;
+    return [[self _bridge] markedTextNSRange];
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
@@ -5215,7 +5137,6 @@ static NSArray *validAttributes = nil;
     DOMRange *range = [bridge convertNSRangeToDOMRange:theRange];
     if (!range)
         return nil;
-    
     return [bridge attributedStringFrom:[range startContainer] startOffset:[range startOffset] to:[range endContainer] endOffset:[range endOffset]];
 }
 
@@ -5302,9 +5223,8 @@ static NSArray *validAttributes = nil;
         // The AppKit adds a 'secret' property to the string that contains the replacement
         // range.  The replacement range is the range of the the text that should be replaced
         // with the new string.
-        if (rangeString) {
+        if (rangeString)
             [[self _bridge] selectNSRange:NSRangeFromString(rangeString)];
-        }
     }
 
     _private->ignoreMarkedTextSelectionChange = YES;
@@ -5313,21 +5233,18 @@ static NSArray *validAttributes = nil;
     // that, instead of the selection/caret
     [self _selectMarkedText];
 
-    NSString *text;
+    NSString *text = string;
     NSArray *attributes = nil;
     NSArray *ranges = nil;
     if (isAttributedString) {
         text = [string string];
         [self _extractAttributes:&attributes ranges:&ranges fromAttributedString:string];
-    } else {
-        text = string;
     }
 
     [bridge replaceMarkedTextWithText:text];
     [bridge setMarkedTextDOMRange:[self _selectedRange] customAttributes:attributes ranges:ranges];
-    if ([self hasMarkedText]) {
+    if ([self hasMarkedText])
         [self _selectRangeInMarkedText:newSelRange];
-    }
 
     _private->ignoreMarkedTextSelectionChange = NO;
 }
@@ -5335,9 +5252,8 @@ static NSArray *validAttributes = nil;
 - (void)doCommandBySelector:(SEL)aSelector
 {
     WebView *webView = [self _webView];
-    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector]) {
+    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector])
         [super doCommandBySelector:aSelector];
-    }
 }
 
 - (void)_discardMarkedText
@@ -5358,9 +5274,8 @@ static NSArray *validAttributes = nil;
 
 - (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText
 {
-    if (text == nil || [text length] == 0 || (![self _isEditable] && ![self hasMarkedText])) {
+    if (text == nil || [text length] == 0 || (![self _isEditable] && ![self hasMarkedText]))
         return;
-    }
 
     if (![self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionTyped]) {
         [self _discardMarkedText];
@@ -5382,15 +5297,12 @@ static NSArray *validAttributes = nil;
 
 - (void)insertText:(id)string
 {
+    // We don't yet support inserting an attributed string but input methods don't appear to require this.
     NSString *text;
-    if ([string isKindOfClass:[NSAttributedString class]]) {
+    if ([string isKindOfClass:[NSAttributedString class]])
         text = [string string];
-        // we don't yet support inserting an attributed string but input methods
-        // don't appear to require this.
-    } else {
+    else
         text = string;
-    }
-
     [self _insertText:text selectInsertedText:NO];
 }
 
@@ -5447,6 +5359,7 @@ static NSArray *validAttributes = nil;
     more than one match.  If a completion yields one or zero matches, it is not shown, and **there is no
     state carried across to the next completion**.
  */
+
 @implementation WebTextCompleteController
 
 - (id)initWithHTMLView:(WebHTMLView *)view

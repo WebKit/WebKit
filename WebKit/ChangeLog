@@ -1,3 +1,16 @@
+2006-05-14  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8739
+          Crash in RenderTableSection::paint due to manipulating DOM on resize
+
+        Manual test: manual-tests/dom-manipulation-on-resize.html
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]): Relayout if necessary
+        after sending the resize event.
+
 2006-05-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Brady.
