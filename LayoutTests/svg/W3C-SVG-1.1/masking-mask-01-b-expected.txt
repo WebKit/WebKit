@@ -34,9 +34,9 @@ layer at (0,0) size 480x360
           KCanvasItem {rect} at (60,225) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.20]}] [data="M60.00,225.00L260.00,225.00L260.00,250.00L60.00,250.00"]
           KCanvasItem {rect} at (60,250) size 200x25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M60.00,250.00L260.00,250.00L260.00,275.00L60.00,275.00"]
           KCanvasItem {rect} at (60,275) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [data="M60.00,275.00L260.00,275.00L260.00,300.00L60.00,300.00"]
-        RenderSVGText {text} at (0,0) size 465x127
-          RenderText {#text} at (0,0) size 232x127
-            text run at (0,0) width 232: "SVG"
+        RenderSVGText {text} at (0,0) size 465x128
+          RenderText {#text} at (0,0) size 219x128
+            text run at (0,0) width 219: "SVG"
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {#text} at (0,0) size 200x14
             text run at (0,0) width 200: "Text with mask containing rectangles"

@@ -14,8 +14,8 @@ layer at (0,0) size 480x360
             RenderText {#text} at (0,0) size 43x69
               text run at (0,0) width 43: "D"
           RenderSVGText {text} at (0,0) size 465x69
-            RenderText {#text} at (0,0) size 200x69
-              text run at (0,0) width 200: "SASSY"
+            RenderText {#text} at (0,0) size 185x69
+              text run at (0,0) width 185: "SASSY"
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"

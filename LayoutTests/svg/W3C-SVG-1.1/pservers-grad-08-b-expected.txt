@@ -4,11 +4,11 @@ layer at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
         RenderSVGText {text} at (0,0) size 465x78
-          RenderText {#text} at (0,0) size 440x78
-            text run at (0,0) width 440: "Gradient on fill"
+          RenderText {#text} at (0,0) size 420x78
+            text run at (0,0) width 420: "Gradient on fill"
         RenderSVGText {text} at (0,0) size 465x63
-          RenderText {#text} at (0,0) size 455x63
-            text run at (0,0) width 455: "Gradient on stroke"
+          RenderText {#text} at (0,0) size 410x63
+            text run at (0,0) width 410: "Gradient on stroke"
       RenderSVGText {text} at (0,0) size 465x36
         RenderText {#text} at (0,0) size 342x36
           text run at (0,0) width 342: "Linear gradient on filled text"

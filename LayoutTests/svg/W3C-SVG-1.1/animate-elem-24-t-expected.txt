@@ -14,18 +14,18 @@ layer at (0,0) size 480x360
               text run at (0,0) width 80: "Text at 9s"
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x23
-            RenderText {#text} at (0,0) size 78x23
-              text run at (0,0) width 78: "It's alive!"
+            RenderText {#text} at (0,0) size 77x23
+              text run at (0,0) width 77: "It's alive!"
           RenderSVGText {text} at (0,0) size 465x46
-            RenderText {#text} at (0,0) size 154x46
-              text run at (0,0) width 154: "It's alive!"
+            RenderText {#text} at (0,0) size 148x46
+              text run at (0,0) width 148: "It's alive!"
           RenderSVGText {text} at (0,0) size 465x69
-            RenderText {#text} at (0,0) size 231x69
-              text run at (0,0) width 231: "It's alive!"
+            RenderText {#text} at (0,0) size 224x69
+              text run at (0,0) width 224: "It's alive!"
         KCanvasContainer {g} at (50,90) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,90.00)}]
           RenderSVGText {text} at (0,0) size 465x23
-            RenderText {#text} at (0,0) size 78x23
-              text run at (0,0) width 78: "It's alive!"
+            RenderText {#text} at (0,0) size 77x23
+              text run at (0,0) width 77: "It's alive!"
             RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0

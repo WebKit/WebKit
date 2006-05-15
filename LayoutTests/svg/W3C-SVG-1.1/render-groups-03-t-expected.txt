@@ -14,8 +14,8 @@ layer at (0,0) size 480x360
           KCanvasItem {line} at (436.50,18) size 27x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M250.00,10.00L250.00,175.00"]
           KCanvasItem {rect} at (35.10,17.10) size 415.80x280.80 [stroke={[type=SOLID] [color=#000000]}] [data="M20.00,10.00L250.00,10.00L250.00,165.00L20.00,165.00"]
           RenderSVGText {text} at (0,0) size 465x138
-            RenderText {#text} at (0,0) size 253x138
-              text run at (0,0) width 253: "SVG"
+            RenderText {#text} at (0,0) size 241x138
+              text run at (0,0) width 241: "SVG"
           KCanvasItem {rect} at (126,99) size 234x126 [fill={[type=SOLID] [color=#820032]}] [data="M70.00,55.00L200.00,55.00L200.00,125.00L70.00,125.00"]
           RenderImage {image} at (0,0) size 80x80
       RenderSVGText {text} at (0,0) size 465x46

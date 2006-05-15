@@ -23,8 +23,8 @@ layer at (0,0) size 480x360
               RenderText {#text} at (0,0) size 286x28
                 text run at (0,0) width 286: "A mono (iW) face \x{753B}\x{50CF}"
           RenderSVGText {text} at (0,0) size 465x28
-            RenderText {#text} at (0,0) size 243x28
-              text run at (0,0) width 243: "This must be displayed"
+            RenderText {#text} at (0,0) size 224x28
+              text run at (0,0) width 224: "This must be displayed"
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {#text} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.1 $"

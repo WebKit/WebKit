@@ -7,8 +7,8 @@ layer at (0,0) size 480x360
             text run at (0,0) width 135: "Text stroke"
         KCanvasContainer {g} at (0,0) size 0x0
           RenderSVGText {text} at (0,0) size 465x345
-            RenderText {#text} at (0,0) size 200x345
-              text run at (0,0) width 200: "A"
+            RenderText {#text} at (0,0) size 217x345
+              text run at (0,0) width 217: "A"
           RenderSVGText {text} at (0,0) size 465x345
             RenderText {#text} at (0,0) size 200x345
               text run at (0,0) width 200: "B"
