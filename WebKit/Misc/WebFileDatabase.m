@@ -194,8 +194,8 @@ static void UniqueFilePathForKey(id key, char *buffer)
     UInt32 hash2;
     CFIndex len;
     CFIndex cnt;
-
-    s = [[[[key description] lowercaseString] stringByStandardizingPath] lossyCString];
+    
+    s = [[[[key description] lowercaseString] stringByStandardizingPath] UTF8String];
     len = strlen(s);
 
     // compute first hash    

@@ -1,3 +1,12 @@
+2006-05-16  bradeeoh  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak
+
+        - Fixed an old deprecated method in Misc/WebFileDatabase.m
+
+        * Misc/WebFileDatabase.m:
+        (UniqueFilePathForKey):  changed `lossyCString` to `UTF8String`
+
 2006-05-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
