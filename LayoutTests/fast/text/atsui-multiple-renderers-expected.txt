@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 784x369
+      RenderBlock (anonymous) at (0,0) size 784x370
         RenderBlock {P} at (0,0) size 784x36
           RenderText {#text} at (0,0) size 104x18
             text run at (0,0) width 104: "This is a test for "
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,70) size 784x18
           RenderText {#text} at (0,0) size 600x18
             text run at (0,0) width 600: "The two columns should be identical except for the accent over the e and the umlaut over the u."
-        RenderTable {TABLE} at (0,104) size 263x146
+        RenderTable {TABLE} at (0,104) size 264x147 [border: none]
           RenderTableSection {TBODY} at (0,0) size 263x146
             RenderTableRow {TR} at (0,0) size 263x30
               RenderTableCell {TD} at (0,0) size 132x30 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
@@ -92,19 +92,19 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (132,120) size 131x26 [border: (1px solid #008000)] [r=4 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 100x23
                   text run at (2,2) width 100: "Lorem ipsum"
-        RenderBlock {HR} at (0,258) size 784x2 [border: (1px inset #000000)]
-        RenderBlock {P} at (0,276) size 784x18
+        RenderBlock {HR} at (0,259) size 784x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (0,277) size 784x18
           RenderText {#text} at (0,0) size 277x18
             text run at (0,0) width 277: "The following two lines should be identical."
-        RenderBlock {P} at (0,310) size 784x22
+        RenderBlock {P} at (0,311) size 784x22
           RenderInline {SPAN} at (0,0) size 357x24 [border: (1px solid #008000)]
             RenderText {#text} at (1,0) size 355x22
               text run at (1,0) width 355: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (0,348) size 784x21
+        RenderBlock {P} at (0,349) size 784x21
           RenderInline {SPAN} at (0,0) size 357x23 [border: (1px solid #008000)]
             RenderText {#text} at (1,0) size 355x21
               text run at (1,0) width 355: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,385) size 784x0
+      RenderBlock (anonymous) at (0,386) size 784x0
         RenderInline {TITLE</TITLE} at (0,0) size 0x0

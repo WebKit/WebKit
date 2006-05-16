@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x491
-  RenderBlock {HTML} at (0,0) size 800x491
-    RenderBody {BODY} at (8,16) size 784x467
+layer at (0,0) size 800x492
+  RenderBlock {HTML} at (0,0) size 800x492
+    RenderBody {BODY} at (8,16) size 784x468
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 571x18
           text run at (0,0) width 571: "The T column should match the R column. The H columns uses <br/> to force line breaks."
-      RenderTable {TABLE} at (0,34) size 174x433
+      RenderTable {TABLE} at (0,34) size 175x434 [border: none]
         RenderTableSection {TBODY} at (0,0) size 174x433
           RenderTableRow {TR} at (0,0) size 174x23
             RenderTableCell {TD} at (0,9) size 51x4 [r=0 c=0 rs=1 cs=1]
