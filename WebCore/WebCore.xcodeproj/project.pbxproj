@@ -1160,6 +1160,10 @@
 		A8EA7EC10A1945D000A8EF5F /* EntityReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */; };
 		A8EA7EC20A1945D000A8EF5F /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7EBA0A1945D000A8EF5F /* Entity.h */; };
 		A8EA7EC30A1945D000A8EF5F /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7EBB0A1945D000A8EF5F /* Entity.cpp */; };
+		A8EA7F6F0A194AFD00A8EF5F /* ProcessingInstruction.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7F670A194AFD00A8EF5F /* ProcessingInstruction.h */; };
+		A8EA7F710A194AFD00A8EF5F /* Notation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7F690A194AFD00A8EF5F /* Notation.h */; };
+		A8EA7F730A194AFD00A8EF5F /* EntityReference.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7F6B0A194AFD00A8EF5F /* EntityReference.h */; };
+		A8EA7F750A194AFD00A8EF5F /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7F6D0A194AFD00A8EF5F /* Entity.h */; };
 		A8FD8B86087CB44C00DC3707 /* KWQWMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A85D7A8C0879EC64006A9172 /* KWQWMatrix.cpp */; };
 		A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */; };
 		A8FEFB0A0979F472005839FD /* RenderForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB080979F472005839FD /* RenderForeignObject.h */; };
@@ -2641,6 +2645,13 @@
 		A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntityReference.cpp; sourceTree = "<group>"; };
 		A8EA7EBA0A1945D000A8EF5F /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		A8EA7EBB0A1945D000A8EF5F /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
+		A8EA7F670A194AFD00A8EF5F /* ProcessingInstruction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ProcessingInstruction.h; sourceTree = "<group>"; };
+		A8EA7F680A194AFD00A8EF5F /* ProcessingInstruction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessingInstruction.cpp; sourceTree = "<group>"; };
+		A8EA7F690A194AFD00A8EF5F /* Notation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Notation.h; sourceTree = "<group>"; };
+		A8EA7F6A0A194AFD00A8EF5F /* Notation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Notation.cpp; sourceTree = "<group>"; };
+		A8EA7F6B0A194AFD00A8EF5F /* EntityReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EntityReference.h; sourceTree = "<group>"; };
+		A8EA7F6C0A194AFD00A8EF5F /* EntityReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntityReference.cpp; sourceTree = "<group>"; };
+		A8EA7F6D0A194AFD00A8EF5F /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		A8FEFB080979F472005839FD /* RenderForeignObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderForeignObject.h; sourceTree = "<group>"; };
 		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElement.cpp; sourceTree = "<group>"; };
@@ -4703,7 +4714,7 @@
 				A8EA7EBB0A1945D000A8EF5F /* Entity.cpp */,
 				A8EA7EBA0A1945D000A8EF5F /* Entity.h */,
 				93EEC1EB09C2877700C515D1 /* Entity.idl */,
-				A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */,
+				A8EA7F6C0A194AFD00A8EF5F /* EntityReference.cpp */,
 				A8EA7EB80A1945D000A8EF5F /* EntityReference.h */,
 				14E836D209F8512000B85AE4 /* Event.idl */,
 				935FBC4409BA00B900E230B1 /* EventListener.h */,
@@ -4731,13 +4742,17 @@
 				14115AF909F847D600CA4FC1 /* NodeFilter.idl */,
 				A81872160977D3C0005826D9 /* NodeList.cpp */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
-				A8EA7EB70A1945D000A8EF5F /* Notation.cpp */,
+				A8EA7F6A0A194AFD00A8EF5F /* Notation.cpp */,
+				A8EA7EBB0A1945D000A8EF5F /* Entity.cpp */,
 				A8EA7EB60A1945D000A8EF5F /* Notation.h */,
+				A8EA7EBA0A1945D000A8EF5F /* Entity.h */,
 				93EEC1F409C2877700C515D1 /* Notation.idl */,
 				BE91FC8C06133666005E3790 /* Position.cpp */,
 				BE91FC8B06133666005E3790 /* Position.h */,
-				A8EA7EB50A1945D000A8EF5F /* ProcessingInstruction.cpp */,
-				A8EA7EB40A1945D000A8EF5F /* ProcessingInstruction.h */,
+				A8EA7F680A194AFD00A8EF5F /* ProcessingInstruction.cpp */,
+				A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */,
+				A8EA7F670A194AFD00A8EF5F /* ProcessingInstruction.h */,
+				A8EA7EB80A1945D000A8EF5F /* EntityReference.h */,
 				93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */,
 				550A0BC7085F6039007353D6 /* QualifiedName.cpp */,
 				550A0BC8085F6039007353D6 /* QualifiedName.h */,
@@ -4753,6 +4768,10 @@
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
 				F523D30902DE4476018635CA /* xml_tokenizer.cpp */,
 				F523D30A02DE4476018635CA /* xml_tokenizer.h */,
+				A8EA7EB70A1945D000A8EF5F /* Notation.cpp */,
+				A8EA7EB60A1945D000A8EF5F /* Notation.h */,
+				A8EA7EB50A1945D000A8EF5F /* ProcessingInstruction.cpp */,
+				A8EA7EB40A1945D000A8EF5F /* ProcessingInstruction.h */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -5485,6 +5504,10 @@
 				A8EA7EBE0A1945D000A8EF5F /* Notation.h in Headers */,
 				A8EA7EC00A1945D000A8EF5F /* EntityReference.h in Headers */,
 				A8EA7EC20A1945D000A8EF5F /* Entity.h in Headers */,
+				A8EA7F6F0A194AFD00A8EF5F /* ProcessingInstruction.h in Headers */,
+				A8EA7F710A194AFD00A8EF5F /* Notation.h in Headers */,
+				A8EA7F730A194AFD00A8EF5F /* EntityReference.h in Headers */,
+				A8EA7F750A194AFD00A8EF5F /* Entity.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

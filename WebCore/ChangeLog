@@ -1,5 +1,9 @@
 2006-05-15  Eric Seidel  <eseidel@apple.com>
 
+        * WebCore.xcodeproj/project.pbxproj: build fix.
+
+2006-05-15  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by ggaren.
 
         Split dom_xmlimpl.* into separate files (one per class).
