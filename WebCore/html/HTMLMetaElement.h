@@ -31,7 +31,7 @@ namespace WebCore {
 class HTMLMetaElement : public HTMLElement
 {
 public:
-    HTMLMetaElement(Document *doc);
+    HTMLMetaElement(Document*);
     ~HTMLMetaElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

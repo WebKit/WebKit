@@ -1,3 +1,14 @@
+2006-05-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Autogenerate JSHTMLMetaElement.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8938
+
+        * fast/dom/HTMLMetaElement: Added.
+        * fast/dom/HTMLMetaElement/meta-attributes-expected.txt: Added.
+        * fast/dom/HTMLMetaElement/meta-attributes.html: Added.
+
 2006-05-15  Geoffrey Garen  <ggaren@apple.com>
 
         - Tests for JavaScript reserved words and the 'debugger' statement

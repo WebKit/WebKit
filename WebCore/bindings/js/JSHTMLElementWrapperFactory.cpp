@@ -20,8 +20,10 @@
 #include "JSHTMLElementWrapperFactory.h"
 
 #include "HTMLCanvasElement.h"
+#include "HTMLMetaElement.h"
 #include "HTMLNames.h"
 #include "JSHTMLCanvasElement.h"
+#include "JSHTMLMetaElement.h"
 #include "JSHTMLElement.h"
 #include "kjs_html.h"
 
@@ -38,11 +40,17 @@ static DOMNode* createCanvasWrapper(ExecState* exec, PassRefPtr<HTMLElement> ele
     return new JSHTMLCanvasElement(exec, static_cast<HTMLCanvasElement*>(element.get()));
 }
 
+static DOMNode* createMetaWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLMetaElement(exec, static_cast<HTMLMetaElement*>(element.get()));
+}
+
 DOMNode* createJSWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
     static HashMap<WebCore::AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
     if (map.isEmpty()) {
         map.set(canvasTag.localName().impl(), createCanvasWrapper);
+        map.set(metaTag.localName().impl(), createMetaWrapper);
     }
     CreateHTMLElementWrapperFunction f = map.get(element->localName().impl());
     if (f)

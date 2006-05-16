@@ -1,0 +1,12 @@
+You should see 5 lines with "SUCCESS" below:
+SUCCESS (value: "[object META]")
+
+SUCCESS (value: "foo")
+
+SUCCESS (value: "bar")
+
+SUCCESS (value: "content-type")
+
+SUCCESS (value: "text/html; charset=UTF-8")
+
+

@@ -79,7 +79,7 @@ namespace KJS {
     static const ClassInfo info;
 
     static const ClassInfo html_info, head_info, link_info, title_info,
-      meta_info, base_info, isIndex_info, style_info, body_info, form_info,
+      base_info, isIndex_info, style_info, body_info, form_info,
       select_info, optGroup_info, option_info, input_info, textArea_info,
       button_info, label_info, fieldSet_info, legend_info, ul_info, ol_info,
       dl_info, dir_info, menu_info, li_info, div_info, p_info, heading_info,
@@ -95,7 +95,7 @@ namespace KJS {
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
     static const Accessors html_accessors, head_accessors, link_accessors, title_accessors,
-      meta_accessors, base_accessors, isIndex_accessors, style_accessors, body_accessors, form_accessors,
+      base_accessors, isIndex_accessors, style_accessors, body_accessors, form_accessors,
       select_accessors, optGroup_accessors, option_accessors, input_accessors, textArea_accessors,
       button_accessors, label_accessors, fieldSet_accessors, legend_accessors, ul_accessors, ol_accessors,
       dl_accessors, dir_accessors, menu_accessors, li_accessors, div_accessors, p_accessors, heading_accessors,
@@ -113,8 +113,6 @@ namespace KJS {
     void  linkSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *titleGetter(ExecState* exec, int token) const;
     void  titleSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *metaGetter(ExecState* exec, int token) const;
-    void  metaSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *baseGetter(ExecState* exec, int token) const;
     void  baseSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *isIndexGetter(ExecState* exec, int token) const;
