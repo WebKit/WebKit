@@ -28,6 +28,7 @@
 
 #import "CDATASection.h"
 #import "Comment.h"
+#import "CSSStyleSheet.h"
 #import "DOMEventsInternal.h"
 #import "DOMImplementationFront.h"
 #import "DOMInternal.h"
@@ -43,7 +44,6 @@
 #import "NodeList.h"
 #import "Notation.h"
 #import "ProcessingInstruction.h"
-#import "css_stylesheetimpl.h"
 #import "csshelper.h"
 #import "Range.h"
 #import "HTMLNames.h"

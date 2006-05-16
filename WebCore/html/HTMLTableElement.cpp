@@ -28,7 +28,7 @@
 
 #include "csshelper.h"
 #include "CSSPropertyNames.h"
-#include "css_stylesheetimpl.h"
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "ExceptionCode.h"

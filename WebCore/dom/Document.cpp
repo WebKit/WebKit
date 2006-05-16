@@ -27,6 +27,7 @@
 
 #include "AccessibilityObjectCache.h"
 #include "CDATASection.h"
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Comment.h"
 #include "DOMImplementation.h"
@@ -63,6 +64,7 @@
 #include "SegmentedString.h"
 #include "SelectionController.h"
 #include "StringHash.h"
+#include "StyleSheetList.h"
 #include "SystemTime.h"
 #include "TextIterator.h"
 #include "css_valueimpl.h"

@@ -26,15 +26,18 @@
 #import "config.h"
 #import "DOMCSS.h"
 
+#import "CSSStyleSheet.h"
 #import "DOMInternal.h"
 #import "DOMWindow.h"
 #import "Document.h"
 #import "FoundationExtras.h"
 #import "HTMLLinkElement.h"
 #import "HTMLStyleElement.h"
+#import "MediaList.h"
 #import "ProcessingInstruction.h"
+#import "StyleSheet.h"
+#import "StyleSheetList.h"
 #import "css_ruleimpl.h"
-#import "css_stylesheetimpl.h"
 #import <objc/objc-class.h>
 
 using namespace WebCore;

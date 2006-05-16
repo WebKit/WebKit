@@ -25,20 +25,20 @@
 #define HTMLStyleElement_H
 
 #include "HTMLElement.h"
-#include "css_stylesheetimpl.h"
+#include "CSSStyleSheet.h"
 
 namespace WebCore {
 
 class HTMLStyleElement : public HTMLElement
 {
 public:
-    HTMLStyleElement(Document *doc);
+    HTMLStyleElement(Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
     virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 
-    StyleSheet *sheet() const { return m_sheet.get(); }
+    StyleSheet* sheet() const;
 
     // overload from HTMLElement
     virtual void parseMappedAttribute(MappedAttribute*);

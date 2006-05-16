@@ -20,18 +20,19 @@
  *
  */
 
-#ifndef xsl_stylesheetimpl_h_
-#define xsl_stylesheetimpl_h_
+#ifndef XSLStyleSheet_H
+#define XSLStyleSheet_H
 
 #ifdef KHTML_XSLT
 
 #include "CachedObjectClient.h"
-#include "css/css_stylesheetimpl.h"
+#include "StyleSheet.h"
 #include <libxml/parser.h>
 #include <libxslt/transform.h>
 
 namespace WebCore {
 
+class DocLoader;
 class XSLImportRule;
 class CachedXSLStyleSheet;
     

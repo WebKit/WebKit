@@ -27,14 +27,15 @@
 #include "css_base.h"
 
 #include "Document.h"
-#include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
+#include "StyleSheet.h"
 
 namespace WebCore {
 
 void StyleBase::checkLoaded()
 {
-    if (parent()) parent()->checkLoaded();
+    if (parent())
+        parent()->checkLoaded();
 }
 
 StyleSheet* StyleBase::stylesheet()
@@ -51,18 +52,19 @@ String StyleBase::baseURL()
     // If it has none, look for the parentsheet, or the parentNode and
     // try to find out about their url
 
-    StyleSheet *sheet = stylesheet();
+    StyleSheet* sheet = stylesheet();
 
-    if(!sheet) return String();
+    if (!sheet)
+        return String();
 
-    if(!sheet->href().isNull())
+    if (!sheet->href().isNull())
         return sheet->href();
 
     // find parent
-    if(sheet->parent()) 
+    if (sheet->parent()) 
         return sheet->parent()->baseURL();
 
-    if(!sheet->ownerNode()) 
+    if (!sheet->ownerNode()) 
         return String();
 
     return sheet->ownerNode()->document()->baseURL();
@@ -126,7 +128,7 @@ unsigned int CSSSelector::specificity()
     case None:
         break;
     }
-    if(tagHistory)
+    if (tagHistory)
         s += tagHistory->specificity();
     // make sure it doesn't overflow
     return s & 0xffffff;
@@ -241,13 +243,13 @@ void CSSSelector::extractPseudoType() const
 }
 
 
-bool CSSSelector::operator == ( const CSSSelector &other )
+bool CSSSelector::operator == (const CSSSelector &other)
 {
     const CSSSelector *sel1 = this;
     const CSSSelector *sel2 = &other;
 
-    while ( sel1 && sel2 ) {
-        if ( sel1->tag != sel2->tag || sel1->attr != sel2->attr ||
+    while (sel1 && sel2) {
+        if (sel1->tag != sel2->tag || sel1->attr != sel2->attr ||
              sel1->relation() != sel2->relation() || sel1->match != sel2->match ||
              sel1->value != sel2->value ||
              sel1->pseudoType() != sel2->pseudoType())
@@ -255,7 +257,7 @@ bool CSSSelector::operator == ( const CSSSelector &other )
         sel1 = sel1->tagHistory;
         sel2 = sel2->tagHistory;
     }
-    if ( sel1 || sel2 )
+    if (sel1 || sel2)
         return false;
     return true;
 }

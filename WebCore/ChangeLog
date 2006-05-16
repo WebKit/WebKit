@@ -6,6 +6,45 @@
 
 2006-05-15  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Split css_stylesheetimpl.* into separate files (one per class).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8933
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSheet.cpp: Added.
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        (WebCore::CSSStyleSheet::addRule):
+        (WebCore::CSSStyleSheet::deleteRule):
+        (WebCore::CSSStyleSheet::parseString):
+        (WebCore::CSSStyleSheet::docLoader):
+        * css/CSSStyleSheet.h: Added.
+        * css/MediaList.cpp: Added.
+        (WebCore::MediaList::MediaList):
+        (WebCore::MediaList::contains):
+        (WebCore::MediaList::parentStyleSheet):
+        (WebCore::MediaList::parentRule):
+        (WebCore::MediaList::deleteMedium):
+        (WebCore::MediaList::setMediaText):
+        * css/MediaList.h: Added.
+        * css/StyleSheet.cpp: Added.
+        (WebCore::StyleSheet::StyleSheet):
+        (WebCore::StyleSheet::parentStyleSheet):
+        (WebCore::StyleSheet::setMedia):
+        * css/StyleSheet.h: Added.
+        (WebCore::StyleSheet::ownerNode):
+        * css/StyleSheetList.cpp: Added.
+        (WebCore::StyleSheetList::~StyleSheetList):
+        (WebCore::StyleSheetList::add):
+        (WebCore::StyleSheetList::remove):
+        (WebCore::StyleSheetList::item):
+        * css/StyleSheetList.h: Added.
+        * css/css_stylesheetimpl.cpp: Removed.
+        * css/css_stylesheetimpl.h: Removed.
+
+2006-05-15  Eric Seidel  <eseidel@apple.com>
+
         * WebCore.xcodeproj/project.pbxproj: build fix.
 
 2006-05-15  Eric Seidel  <eseidel@apple.com>

@@ -25,6 +25,7 @@
 #include "cssstyleselector.h"
 
 #include "CSSPropertyNames.h"
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "Frame.h"
@@ -34,9 +35,10 @@
 #include "HTMLNames.h"
 #include "History.h"
 #include "KWQKHTMLSettings.h"
+#include "MediaList.h"
 #include "RenderTheme.h"
+#include "StyleSheetList.h"
 #include "UserAgentStyleSheets.h"
-#include "css_stylesheetimpl.h"
 #include "loader.h"
 
 using namespace std;

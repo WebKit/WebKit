@@ -22,6 +22,7 @@
 #include "config.h"
 #include "ProcessingInstruction.h"
 
+#include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedXSLStyleSheet.h"
 #include "Document.h"

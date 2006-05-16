@@ -25,9 +25,10 @@
 #include "config.h"
 #include "HTMLBodyElement.h"
 
-#include "css_stylesheetimpl.h"
+#include "css_valueimpl.h" // for CSSMutableStyleDeclaration
 #include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "EventNames.h"

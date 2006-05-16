@@ -30,7 +30,6 @@
 #include "SVGDOMImplementation.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
-#include "css_stylesheetimpl.h"
 #include "HTMLNames.h"
 #include "ksvg.h"
 #include "PlatformString.h"

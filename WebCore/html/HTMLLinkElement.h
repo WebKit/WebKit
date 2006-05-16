@@ -25,7 +25,8 @@
 #define HTMLLinkElement_H
 
 #include "HTMLElement.h"
-#include "css_stylesheetimpl.h"
+#include "CachedObjectClient.h"
+#include "CSSStyleSheet.h"
 
 namespace WebCore {
 
@@ -67,7 +68,7 @@ public:
     String type() const;
     void setType(const String&);
 
-    StyleSheet* sheet() const { return m_sheet.get(); }
+    StyleSheet* sheet() const;
 
     // overload from HTMLElement
     virtual void parseMappedAttribute(MappedAttribute*);

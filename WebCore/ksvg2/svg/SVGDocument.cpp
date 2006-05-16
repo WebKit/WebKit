@@ -40,7 +40,6 @@
 #include "SVGTitleElement.h"
 #include "SVGZoomEvent.h"
 #include "Shared.h"
-#include "css_stylesheetimpl.h"
 #include "cssstyleselector.h"
 #include "ksvg.h"
 #include <assert.h>

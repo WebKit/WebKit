@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "MediaList.h"
 #include "csshelper.h"
 
 namespace WebCore {
@@ -89,6 +90,11 @@ void HTMLLinkElement::setDisabledState(bool _disabled)
         else
             document()->updateStyleSelector(); // Update the style selector.
     }
+}
+
+StyleSheet* HTMLLinkElement::sheet() const
+{
+    return m_sheet.get();
 }
 
 void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
@@ -197,12 +203,12 @@ void HTMLLinkElement::removedFromDocument()
     process();
 }
 
-void HTMLLinkElement::setStyleSheet(const String &url, const String &sheetStr)
+void HTMLLinkElement::setStyleSheet(const String& url, const String& sheetStr)
 {
     m_sheet = new CSSStyleSheet(this, url);
     m_sheet->parseString(sheetStr, !document()->inCompatMode());
 
-    MediaList *media = new MediaList(m_sheet.get(), m_media);
+    MediaList* media = new MediaList(m_sheet.get(), m_media);
     m_sheet->setMedia(media);
 
     m_loading = false;
@@ -247,7 +253,7 @@ String HTMLLinkElement::charset() const
     return getAttribute(charsetAttr);
 }
 
-void HTMLLinkElement::setCharset(const String &value)
+void HTMLLinkElement::setCharset(const String& value)
 {
     setAttribute(charsetAttr, value);
 }
@@ -257,7 +263,7 @@ String HTMLLinkElement::href() const
     return document()->completeURL(getAttribute(hrefAttr));
 }
 
-void HTMLLinkElement::setHref(const String &value)
+void HTMLLinkElement::setHref(const String& value)
 {
     setAttribute(hrefAttr, value);
 }
@@ -267,7 +273,7 @@ String HTMLLinkElement::hreflang() const
     return getAttribute(hreflangAttr);
 }
 
-void HTMLLinkElement::setHreflang(const String &value)
+void HTMLLinkElement::setHreflang(const String& value)
 {
     setAttribute(hreflangAttr, value);
 }
@@ -277,7 +283,7 @@ String HTMLLinkElement::media() const
     return getAttribute(mediaAttr);
 }
 
-void HTMLLinkElement::setMedia(const String &value)
+void HTMLLinkElement::setMedia(const String& value)
 {
     setAttribute(mediaAttr, value);
 }
@@ -287,7 +293,7 @@ String HTMLLinkElement::rel() const
     return getAttribute(relAttr);
 }
 
-void HTMLLinkElement::setRel(const String &value)
+void HTMLLinkElement::setRel(const String& value)
 {
     setAttribute(relAttr, value);
 }
@@ -297,7 +303,7 @@ String HTMLLinkElement::rev() const
     return getAttribute(revAttr);
 }
 
-void HTMLLinkElement::setRev(const String &value)
+void HTMLLinkElement::setRev(const String& value)
 {
     setAttribute(revAttr, value);
 }
@@ -307,7 +313,7 @@ String HTMLLinkElement::target() const
     return getAttribute(targetAttr);
 }
 
-void HTMLLinkElement::setTarget(const String &value)
+void HTMLLinkElement::setTarget(const String& value)
 {
     setAttribute(targetAttr, value);
 }
@@ -317,7 +323,7 @@ String HTMLLinkElement::type() const
     return getAttribute(typeAttr);
 }
 
-void HTMLLinkElement::setType(const String &value)
+void HTMLLinkElement::setType(const String& value)
 {
     setAttribute(typeAttr, value);
 }

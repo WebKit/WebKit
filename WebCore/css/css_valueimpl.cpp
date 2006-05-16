@@ -29,10 +29,10 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLElement.h"
-#include "css_stylesheetimpl.h"
 #include "cssparser.h"
 #include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "RegularExpression.h"
 

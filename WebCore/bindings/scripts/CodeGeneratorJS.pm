@@ -146,9 +146,7 @@ sub AddIncludesForType
   # When we're finished with the one-file-per-class 
   # reorganization, we don't need these special cases.
   
-  if ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
-    $implIncludes{"css_stylesheetimpl.h"} = 1;
-  } elsif ($type eq "CSSRuleList" or
+  if ($type eq "CSSRuleList" or
            $type eq "CSSRule") {
     $implIncludes{"css_ruleimpl.h"} = 1;
   } elsif ($type eq "CSSPrimitiveValue" or 
@@ -982,14 +980,15 @@ sub NativeToJSValue
     $implIncludes{"kjs_dom.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet" or $type eq "MediaList") {
-    $implIncludes{"css_stylesheetimpl.h"} = 1;
+    $implIncludes{"CSSStyleSheet.h"} = 1;
+    $implIncludes{"MediaList.h"} = 1;
     $implIncludes{"css_ruleimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
-    return "toJS(exec, $value)";    
+    return "toJS(exec, $value)";
   } elsif ($type eq "StyleSheetList") {
-    $implIncludes{"css_stylesheetimpl.h"} = 1;
-    $implIncludes{"kjs_css.h"} = 1;
-    return "toJS(exec, $value, impl)";    
+     $implIncludes{"StyleSheetList.h"} = 1;
+     $implIncludes{"kjs_css.h"} = 1;
+     return "toJS(exec, $value, impl)";
   } elsif ($type eq "CSSRuleList") {
     $implIncludes{"css_ruleimpl.h"} = 1;
     return "toJS(exec, $value)";  

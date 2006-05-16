@@ -48,7 +48,6 @@
 #include "Screen.h"
 #include "SelectionController.h"
 #include "css_ruleimpl.h"
-#include "css_stylesheetimpl.h"
 #include "dom2_eventsimpl.h"
 #include "htmlediting.h"
 #include "kjs_css.h"

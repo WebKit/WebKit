@@ -1831,11 +1831,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\css_stylesheetimpl.cpp"
+				RelativePath="..\..\css\CSSStyleSheet.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\css_stylesheetimpl.h"
+				RelativePath="..\..\css\CSSStyleSheet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\StyleSheetList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\StyleSheetList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\StyleSheet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\StyleSheet.h"
 				>
 			</File>
 			<File

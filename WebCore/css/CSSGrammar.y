@@ -24,13 +24,14 @@
 
 #include "config.h"
 
+#include "CSSStyleSheet.h"
 #include "Document.h"
+#include "HTMLNames.h"
+#include "MediaList.h"
+#include "PlatformString.h"
 #include "css_ruleimpl.h"
-#include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
 #include "cssparser.h"
-#include "PlatformString.h"
-#include "HTMLNames.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>

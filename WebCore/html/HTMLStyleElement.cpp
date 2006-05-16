@@ -26,6 +26,7 @@
 
 #include "Document.h"
 #include "HTMLNames.h"
+#include "MediaList.h"
 
 namespace WebCore {
 
@@ -35,6 +36,11 @@ HTMLStyleElement::HTMLStyleElement(Document* doc)
     : HTMLElement(styleTag, doc)
     , m_loading(false)
 {
+}
+
+StyleSheet* HTMLStyleElement::sheet() const
+{
+    return m_sheet.get();
 }
 
 // other stuff...
@@ -83,7 +89,7 @@ void HTMLStyleElement::childrenChanged()
         m_loading = true;
         m_sheet = new CSSStyleSheet(this);
         m_sheet->parseString(text, !document()->inCompatMode());
-        MediaList *media = new MediaList(m_sheet.get(), m_media);
+        MediaList* media = new MediaList(m_sheet.get(), m_media);
         m_sheet->setMedia(media);
         m_loading = false;
     }

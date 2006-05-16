@@ -26,21 +26,22 @@
 
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
+#include "CSSStyleSheet.h"
 #include "DocLoader.h"
-#include "css_stylesheetimpl.h"
+#include "MediaList.h"
 #include "cssparser.h"
 #include <KURL.h>
 
 namespace WebCore {
 
-CSSStyleSheet *CSSRule::parentStyleSheet() const
+CSSStyleSheet* CSSRule::parentStyleSheet() const
 {
-    return (parent() && parent()->isCSSStyleSheet()) ? static_cast<CSSStyleSheet *>(parent()) : 0;
+    return (parent() && parent()->isCSSStyleSheet()) ? static_cast<CSSStyleSheet*>(parent()) : 0;
 }
 
-CSSRule *CSSRule::parentRule() const
+CSSRule* CSSRule::parentRule() const
 {
-    return (parent() && parent()->isRule()) ? static_cast<CSSRule *>(parent()) : 0;
+    return (parent() && parent()->isRule()) ? static_cast<CSSRule*>(parent()) : 0;
 }
 
 String CSSRule::cssText() const
@@ -244,7 +245,7 @@ CSSRuleList::CSSRuleList(StyleList *lst)
         for (unsigned i = 0; i < len; ++i) {
             StyleBase *style = lst->item(i);
             if (style->isRule())
-                append(static_cast<CSSRule *>(style));
+                append(static_cast<CSSRule*>(style));
         }
     }
 }

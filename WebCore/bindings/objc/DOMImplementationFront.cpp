@@ -21,10 +21,10 @@
 #include "config.h"
 #include "DOMImplementationFront.h"
 
+#include "CSSStyleSheet.h"
 #include "DocumentType.h"
 #include "DOMImplementation.h"
 #include "HTMLDocument.h"
-#include "css_stylesheetimpl.h"
 
 namespace WebCore {
 

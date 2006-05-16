@@ -25,11 +25,12 @@
 #include "config.h"
 #include "DOMImplementation.h"
 
+#include "CSSStyleSheet.h"
 #include "DocumentType.h"
 #include "Element.h"
 #include "ExceptionCode.h"
-#include "css_stylesheetimpl.h"
 #include "HTMLDocument.h"
+#include "MediaList.h"
 #include "RegularExpression.h"
 #include "TextDocument.h"
 

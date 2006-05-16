@@ -25,13 +25,14 @@
 #if SVG_SUPPORT
 #include "SVGStyleElement.h"
 
+#include "CSSStyleSheet.h"
+#include "DeprecatedString.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "MediaList.h"
 #include "PlatformString.h"
-#include "DeprecatedString.h"
-#include "css_stylesheetimpl.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document *doc) : SVGElement(tagName, doc)
 {
@@ -104,7 +105,7 @@ void SVGStyleElement::childrenChanged()
         m_sheet = new CSSStyleSheet(this);
         m_sheet->parseString(textContent()); // SVG css is always parsed in strict mode
 
-        MediaList *mediaList = new MediaList(m_sheet.get(), _media);
+        MediaList* mediaList = new MediaList(m_sheet.get(), _media);
         m_sheet->setMedia(mediaList);
         m_loading = false;
     }
@@ -116,6 +117,8 @@ void SVGStyleElement::childrenChanged()
 bool SVGStyleElement::isLoading() const
 {
     return false;
+}
+
 }
 
 // vim:ts=4:noet

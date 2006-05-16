@@ -26,10 +26,11 @@
 
 #include "Document.h"
 #include "css_ruleimpl.h"
-#include "css_stylesheetimpl.h"
 #include "csshelper.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "MediaList.h"
 
 #define YYDEBUG 0
 
