@@ -1,3 +1,46 @@
+2006-05-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8940
+          remove extra copy of image code
+
+        * WebCore.xcodeproj/project.pbxproj: Removed WebCoreImageRenderer.h.
+        * platform/mac/WebCoreImageRenderer.h: Removed.
+
+        * bridge/mac/WebCoreFrameBridge.h: Added supportedImageResourceMIMETypes.
+        Like supportedImageMIMETypes, but includes PDF and PostScript.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (+[WebCoreFrameBridge supportedImageResourceMIMETypes]): Added.
+        Has code that came from -[WebImageRendererFactory supportedMIMETypes].
+        (+[WebCoreFrameBridge supportedImageMIMETypes]):
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::supportsType): Instead of calling the old
+        -[WebCoreImageRendererFactory supportedMIMETypes], call the new
+        +[WebCoreFrameBridge supportedImageResourceMIMETypes].
+        (WebCore::Image::drawTiled): Use wkSetPatternPhaseInUserSpace instead of
+        the WebCoreImageRendererFactory.
+
+        * platform/mac/ClipboardMac.mm: Removed an unneeded include of
+        WebCoreImageRenderer.h.
+
+        * platform/mac/WebCoreImageRendererFactory.h: Removed everything except
+        for the one remaining method, imageDataForName:, which gets resources
+        from the WebKit localized resources. We should figure out how to remove
+        that one too later.
+        * platform/mac/WebCoreImageRendererFactory.m: Ditto.
+
+        * platform/mac/WebCoreSystemInterface.h: Added some new calls.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * WebCore.exp: Ditto.
+
+        * platform/cairo/ImageCairo.cpp: Moved a stub to the stubs file. If it's
+        here it has to have a FIXME comment and also it contains a big commented-out
+        pile of code. Better to have it in the stubs file with all the other stubs.
+        * platform/win/TemporaryLinkStubs.cpp: (Image::drawTiled): Put stub here
+        instead of having it in ImageCairo.cpp.
+
 2006-05-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -38,7 +38,6 @@
 
 @interface WebHTMLView (WebPrivate)
 
-- (void)_reset;
 + (NSArray *)supportedMIMETypes;
 + (NSArray *)supportedImageMIMETypes;
 + (NSArray *)supportedNonImageMIMETypes;

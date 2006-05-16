@@ -26,25 +26,27 @@
 #import "config.h"
 #import "WebCoreSystemInterface.h"
 
-BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef cgContext);
+BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 void (*wkClearGlyphVector)(void* glyphs);
-OSStatus (*wkConvertCharToGlyphs)(void *styleGroup, const UniChar *characters, unsigned numCharacters, void* glyphs);
+OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
 void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
 void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
 BOOL (*wkFontSmoothingModeIsLCD)(int mode);
-OSStatus (*wkGetATSStyleGroup)(ATSUStyle fontStyle, void **styleGroup);
-CGFontRef (*wkGetCGFontFromNSFont)(NSFont *font);
-ATSGlyphRef (*wkGetDefaultGlyphForChar)(NSFont *font, UniChar c);
-NSFont* (*wkGetFontInLanguageForRange)(NSFont *font, NSString *string, NSRange range);
-NSFont* (*wkGetFontInLanguageForCharacter)(NSFont *font, UniChar ch);
-void (*wkGetFontMetrics)(NSFont *font, int *ascent, int *descent, int *lineGap, unsigned *unitsPerEm);
-BOOL (*wkGetGlyphTransformedAdvances)(NSFont *font, CGAffineTransform *m, ATSGlyphRef *glyph, CGSize *advance);
+OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
+CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
+ATSGlyphRef (*wkGetDefaultGlyphForChar)(NSFont*, UniChar);
+NSFont* (*wkGetFontInLanguageForRange)(NSFont*, NSString*, NSRange);
+NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
+void (*wkGetFontMetrics)(NSFont*, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
+BOOL (*wkGetGlyphTransformedAdvances)(NSFont*, CGAffineTransform*, ATSGlyphRef*, CGSize* advance);
 ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
 int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
 size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
-ATSUFontID (*wkGetNSFontATSUFontId)(NSFont *font);
+NSString* (*wkGetMIMETypeForExtension)(NSString*);
+ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);
-void (*wkReleaseStyleGroup)(void *group);
-void (*wkSetCGFontRenderingMode)(CGContextRef cgContext, NSFont *font);
+void (*wkReleaseStyleGroup)(void* group);
+void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
-void (*wkSetUpFontCache)(size_t s);
+void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
+void (*wkSetUpFontCache)(size_t);

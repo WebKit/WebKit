@@ -1,5 +1,70 @@
 2006-05-16  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8940
+          remove extra copy of image code
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for many recent changes.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed files.
+        * WebCoreSupport/WebImageData.h: Removed.
+        * WebCoreSupport/WebImageData.m: Removed.
+        * WebCoreSupport/WebImageDecodeItem.h: Removed.
+        * WebCoreSupport/WebImageDecodeItem.m: Removed.
+        * WebCoreSupport/WebImageDecoder.h: Removed.
+        * WebCoreSupport/WebImageDecoder.m: Removed.
+        * WebCoreSupport/WebImageRenderer.h: Removed.
+        * WebCoreSupport/WebImageRenderer.m: Removed.
+
+        * WebCoreSupport/WebImageRendererFactory.h:
+        * WebCoreSupport/WebImageRendererFactory.m: Removed everything except for
+        shouldUseThreadedDecoding, setShouldUseThreadedDecoding, and imageDataForName:.
+
+        * Misc/WebNSPasteboardExtras.h: Removed WebImageRenderer parameter from
+        _web_declareAndWriteDragImage and renamed _web_declareAndWriteDragImageElement.
+        * Misc/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:]): Changed to
+        call +[WebFrameBridge supportedImageResourceMIMETypes] instead of
+        -[WebImageRendererFactory supportedMIMETypes].
+        (-[NSPasteboard _web_declareAndWriteDragImageElement:URL:title:archive:source:]):
+        Removed WebImageRenderer parameter, and updated code since it was always nil.
+
+        * Misc/WebNSViewExtras.h: Removed WebImageRenderer parameter from
+        _web_dragImage and renamed _web_dragImageElement.
+        * Misc/WebNSViewExtras.m:
+        (-[NSView _web_dragImageElement:rect:event:pasteboard:source:offset:]):
+        Removed WebImageRenderer parameter, and updated code since it was always nil.
+
+        * WebCoreSupport/WebSystemInterface.m: (InitWebCoreSystemInterface): Added some new
+        functions now used by WebCore.
+
+        * WebView/WebDataSource.m: (-[WebDataSource _documentFragmentWithArchive:]):
+        Call +[WebFrameBridge supportedImageResourceMIMETypes] instead of
+        -[WebImageRendererFactory supportedMIMETypes].
+
+        * WebView/WebFrameView.m: Removed include of WebImageRenderer.h.
+
+        * WebView/WebHTMLRepresentation.m: (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        Removed call to +[WebImageRendererFactory createSharedFactory].
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _imageExistsAtPaths:]): Call +[WebFrameBridge supportedImageResourceMIMETypes]
+        instead of -[WebImageRendererFactory supportedMIMETypes].
+        (-[WebHTMLView _documentFragmentWithPaths:]): Ditto.
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]): Update
+        to no longer pass nil for an image to _web_declareAndWriteDragImageElement and to
+        _web_dragImageElement.
+        (-[WebHTMLView dealloc]): Remove call to now-unneeded _reset.
+        (-[WebHTMLView finalize]): Ditto.
+        (-[WebHTMLView viewDidMoveToWindow]): Remove logic for calling _reset, including the inWindow
+        boolean field.
+
+        * WebView/WebHTMLViewInternal.h: Removed inWindow boolean.
+        * WebView/WebHTMLViewPrivate.h: Removed _reset method.
+
+2006-05-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8898

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #import <Foundation/Foundation.h>
 
 @class WebArchive;
-@class WebImageRenderer;
 @class DOMElement;
 
 extern NSString *WebURLPboardType;
@@ -40,7 +39,7 @@ extern NSString *WebURLNamePboardType;
 // Returns the array of types that _web_writeURL:andTitle: handles.
 + (NSArray *)_web_writableTypesForURL;
 
-// Returns the array of types that _web_writeImage::::: handles.
+// Returns the array of types that _web_writeImage handles.
 + (NSArray *)_web_writableTypesForImageIncludingArchive:(BOOL)hasArchive;
 
 // Returns the array of drag types that _web_bestURL handles; note that the presence
@@ -69,11 +68,10 @@ extern NSString *WebURLNamePboardType;
                 archive:(WebArchive *)archive
                   types:(NSArray *)types;
 
-- (id)_web_declareAndWriteDragImage:(WebImageRenderer *)image 
-                            element:(DOMElement *)element
-                                URL:(NSURL *)URL 
-                              title:(NSString *)title
-                            archive:(WebArchive *)archive
-                             source:(id)source;
+- (id)_web_declareAndWriteDragImageElement:(DOMElement *)element
+                                       URL:(NSURL *)URL 
+                                     title:(NSString *)title
+                                   archive:(WebArchive *)archive
+                                    source:(id)source;
 
 @end

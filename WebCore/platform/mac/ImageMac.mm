@@ -31,7 +31,9 @@
 #import "GraphicsContext.h"
 #import "PDFDocumentImage.h"
 #import "PlatformString.h"
+#import "WebCoreFrameBridge.h"
 #import "WebCoreImageRendererFactory.h"
+#import "WebCoreSystemInterface.h"
 
 namespace WebCore {
 
@@ -99,7 +101,9 @@ Image* Image::loadResource(const char *name)
 
 bool Image::supportsType(const String& type)
 {
-    return [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:type];
+    // FIXME: Would be better if this was looking in a set rather than an NSArray.
+    // FIXME: Would be better not to convert to an NSString just to check if a type is supported.
+    return [[WebCoreFrameBridge supportedImageResourceMIMETypes] containsObject:type];
 }
 
 // Drawing Routines
@@ -337,8 +341,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 
         ctxt->save();
 
-        CGPoint tileOrigin = CGPointMake(oneTileRect.origin.x, oneTileRect.origin.y);
-        [[WebCoreImageRendererFactory sharedFactory] setPatternPhaseForContext:context inUserSpace:tileOrigin];
+        wkSetPatternPhaseInUserSpace(context, CGPointMake(oneTileRect.origin.x, oneTileRect.origin.y));
 
         CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
         CGContextSetFillColorSpace(context, patternSpace);
@@ -421,8 +424,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         if (vRule == Image::RepeatTile)
             vPhase -= fmodf(ir.size.height, scaleY * tileSize.height) / 2.0f;
         
-        CGPoint tileOrigin = CGPointMake(ir.origin.x - hPhase, ir.origin.y - vPhase);
-        [[WebCoreImageRendererFactory sharedFactory] setPatternPhaseForContext:context inUserSpace:tileOrigin];
+        wkSetPatternPhaseInUserSpace(context, CGPointMake(ir.origin.x - hPhase, ir.origin.y - vPhase));
 
         CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
         CGContextSetFillColorSpace(context, patternSpace);

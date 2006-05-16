@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,15 @@
 
 #import <Cocoa/Cocoa.h>
 
-@protocol WebCoreImageRenderer;
+// FIXME: The name of this class is based on its old purpose.
+// It should be renamed, and also eliminated if possible.
 
 @protocol WebCoreImageRendererFactory
-
-- (id <WebCoreImageRenderer>)imageRenderer;
-- (id <WebCoreImageRenderer>)imageRendererWithMIMEType:(NSString *)MIMEType;
-- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length;
-- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType;
-- (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)size;
-- (id <WebCoreImageRenderer>)imageRendererWithName:(NSString *)name;
-
 - (NSData *)imageDataForName:(NSString *)name;
-- (NSArray *)supportedMIMETypes;
-- (void)setPatternPhaseForContext:(CGContextRef)context inUserSpace:(CGPoint)point;
-- (int)CGCompositeOperationInContext:(CGContextRef)context;
-- (void)setCGCompositeOperation:(int)op inContext:(CGContextRef)context;
-- (void)setCGCompositeOperationFromString:(NSString *)op inContext:(CGContextRef)context;
-
 @end
 
 @interface WebCoreImageRendererFactory : NSObject
-{
-}
-
 + (WebCoreImageRendererFactory *)sharedFactory;
-
 @end
 
 @interface WebCoreImageRendererFactory (SubclassResponsibility) <WebCoreImageRendererFactory>

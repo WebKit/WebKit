@@ -26,44 +26,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebDataSource.h>
+#import "WebDataSource.h"
 
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/DOMHTML.h>
-#import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebArchive.h>
-#import <WebKit/WebArchiver.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebDocument.h>
-#import <WebKit/WebDOMOperationsPrivate.h>
-#import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebHistory.h>
-#import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebHTMLRepresentation.h>
-#import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebIconDatabasePrivate.h>
-#import <WebKit/WebIconLoader.h>
-#import <WebKit/WebImageRendererFactory.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebMainResourceLoader.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebPDFRepresentation.h>
-#import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebUnarchivingState.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebKitSystemInterface.h>
-
+#import "WebArchive.h"
+#import "WebArchiver.h"
+#import "WebDOMOperationsPrivate.h"
+#import "WebDataProtocol.h"
+#import "WebDataSourceInternal.h"
+#import "WebDefaultResourceLoadDelegate.h"
+#import "WebDocument.h"
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebFrameLoadDelegate.h"
+#import "WebFrameView.h"
+#import "WebHTMLRepresentation.h"
+#import "WebHTMLViewPrivate.h"
+#import "WebHistory.h"
+#import "WebHistoryItemPrivate.h"
+#import "WebIconDatabasePrivate.h"
+#import "WebIconLoader.h"
+#import "WebKitErrorsPrivate.h"
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebKitStatisticsPrivate.h"
+#import "WebMainResourceLoader.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebPDFRepresentation.h"
+#import "WebResourceLoadDelegate.h"
+#import "WebResourcePrivate.h"
+#import "WebUnarchivingState.h"
+#import "WebViewInternal.h"
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
+#import <JavaScriptCore/Assertions.h>
+#import <WebKit/DOMHTML.h>
+#import <WebKitSystemInterface.h>
 
 @interface WebDataSourcePrivate : NSObject
 {
@@ -259,7 +257,7 @@
             DOMDocumentFragment *fragment = [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
             return fragment;
-        } else if ([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType]) {
+        } else if ([[WebFrameBridge supportedImageResourceMIMETypes] containsObject:MIMEType]) {
             return [self _documentFragmentWithImageResource:mainResource];
 
         }

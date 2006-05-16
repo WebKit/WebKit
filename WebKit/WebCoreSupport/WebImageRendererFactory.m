@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebImageRendererFactory.h>
-#import <WebKit/WebImageRenderer.h>
+#import "WebImageRendererFactory.h"
 
 #import <JavaScriptCore/Assertions.h>
 #import <WebKitSystemInterface.h>
@@ -42,142 +41,16 @@
     ASSERT([[self sharedFactory] isKindOfClass:self]);
 }
 
-+ (WebImageRendererFactory *)sharedFactory
-{
-    return (WebImageRendererFactory *)[super sharedFactory];
-}
-
-// Have to leave these in because Safari calls them from its Debug menu.
+// Have to leave this method in because old versions of Safari call it from the Debug menu.
 + (BOOL)shouldUseThreadedDecoding
 {
     return NO;
 }
 
+// Have to leave this method in because old versions of Safari call it from the Debug menu.
 + (void)setShouldUseThreadedDecoding:(BOOL)threadedDecode
 {
     // Do nothing. We don't support this now.
-}
-
-- (void)setPatternPhaseForContext:(CGContextRef)context inUserSpace:(CGPoint)point
-{
-    WKSetPatternPhaseInUserSpace(context, point);
-}
-
-- (id <WebCoreImageRenderer>)imageRendererWithMIMEType:(NSString *)MIMEType
-{
-    return [[[WebImageRenderer alloc] initWithMIMEType:MIMEType] autorelease];
-}
-
-- (id <WebCoreImageRenderer>)imageRenderer
-{
-    return [self imageRendererWithMIMEType:nil];
-}
-
-- (id <WebCoreImageRenderer>)imageRendererWithData:(NSData*)data MIMEType:(NSString *)MIMEType
-{
-    return [[[WebImageRenderer alloc] initWithData:data MIMEType:MIMEType] autorelease];
-}
-
-- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType
-{
-    NSData *data = [[NSData alloc] initWithBytes:(void *)bytes length:length];
-    WebImageRenderer *imageRenderer = (WebImageRenderer *)[self imageRendererWithData:data MIMEType:MIMEType];
-    [data autorelease];
-    return imageRenderer;
-}
-
-- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length
-{
-    return [self imageRendererWithBytes:bytes length:length MIMEType:nil];
-}
-
-- (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)s
-{
-    return [[[WebImageRenderer alloc] initWithSize:s] autorelease];
-}
-
-- (id <WebCoreImageRenderer>)imageRendererWithName:(NSString *)name
-{
-    return [[[WebImageRenderer alloc] initWithContentsOfFile:name] autorelease];
-}
-
-struct CompositeOperator
-{
-    NSString *name;
-    NSCompositingOperation value;
-};
-
-#define NUM_COMPOSITE_OPERATORS 14
-struct CompositeOperator NSCompositingOperations[NUM_COMPOSITE_OPERATORS] = {
-    { @"clear", NSCompositeClear },
-    { @"copy", NSCompositeCopy },
-    { @"source-over", NSCompositeSourceOver },
-    { @"source-in", NSCompositeSourceIn },
-    { @"source-out", NSCompositeSourceOut },
-    { @"source-atop", NSCompositeSourceAtop },
-    { @"destination-over", NSCompositeDestinationOver },
-    { @"destination-in", NSCompositeDestinationIn },
-    { @"destination-out", NSCompositeDestinationOut },
-    { @"destination-atop", NSCompositeDestinationAtop },
-    { @"xor", NSCompositeXOR },
-    { @"darker", NSCompositePlusDarker },
-    { @"highlight", NSCompositeHighlight },
-    { @"lighter", NSCompositeHighlight }    // Per AppKit
-};
-
-- (int)CGCompositeOperationInContext:(CGContextRef)context
-{
-    return [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] compositingOperation];
-}
-
-- (void)setCGCompositeOperation:(int)op inContext:(CGContextRef)context
-{
-    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
-}
-
-- (void)setCGCompositeOperationFromString:(NSString *)operatorString inContext:(CGContextRef)context
-{
-    NSCompositingOperation op = NSCompositeSourceOver;
-    
-    if (operatorString) {
-        int i;
-        
-        for (i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
-            if ([operatorString caseInsensitiveCompare:NSCompositingOperations[i].name] == NSOrderedSame) {
-                op = NSCompositingOperations[i].value;
-                break;
-            }
-        }
-    }
-    
-    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
-}
-
-
-- (NSArray *)supportedMIMETypes
-{
-    static NSArray *imageMIMETypes = nil;
-
-    if (imageMIMETypes == nil) {
-        NSEnumerator *enumerator = [[NSImage imageFileTypes] objectEnumerator];
-        NSMutableSet *mimes = [NSMutableSet set];
-        NSString *type;
-
-        while ((type = [enumerator nextObject]) != nil) {
-            NSString *mime = WKGetMIMETypeForExtension(type);
-            if (mime != nil && ![mime isEqualToString:@"application/octet-stream"]) {
-                [mimes addObject:mime];
-            }
-        }
-
-        // image/pjpeg is the MIME type for progressive jpeg. These files have the jpg file extension.
-        // This is workaround of NSURLFileTypeMappings's limitation of only providing 1 MIME type for an extension.
-        [mimes addObject:@"image/pjpeg"];
-        
-        imageMIMETypes = [[mimes allObjects] retain];
-    }
-
-    return imageMIMETypes;
 }
 
 - (NSData *)imageDataForName:(NSString *)filename
@@ -187,6 +60,5 @@ struct CompositeOperator NSCompositingOperations[NUM_COMPOSITE_OPERATORS] = {
     NSData *data = [NSData dataWithContentsOfFile:imagePath];
     return data;
 }
-
 
 @end

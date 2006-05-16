@@ -55,11 +55,13 @@ void InitWebCoreSystemInterface(void)
     INIT(GetGlyphVectorFirstRecord);
     INIT(GetGlyphVectorNumGlyphs);
     INIT(GetGlyphVectorRecordSize);
+    INIT(GetMIMETypeForExtension);
     INIT(GetNSFontATSUFontId);
     INIT(InitializeGlyphVector);
     INIT(ReleaseStyleGroup);
     INIT(SetCGFontRenderingMode);
     INIT(SetDragImage);
+    INIT(SetPatternPhaseInUserSpace);
     INIT(SetUpFontCache);
 
     didInit = true;

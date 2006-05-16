@@ -27,50 +27,51 @@
 #import "config.h"
 #import "WebCoreFrameBridge.h"
 
+#import "AccessibilityObjectCache.h"
 #import "Cache.h"
-#import "DOMInternal.h"
+#import "CharsetNames.h"
 #import "DOMImplementation.h"
+#import "DOMInternal.h"
+#import "DeleteSelectionCommand.h"
 #import "DocLoader.h"
 #import "DocumentFragment.h"
 #import "DocumentType.h"
-#import "FrameTree.h"
-#import "GraphicsContext.h"
-#import "HTMLFormElement.h"
-#import "HTMLInputElement.h"
-#import "AccessibilityObjectCache.h"
-#import "CharsetNames.h"
-#import "KWQEditCommand.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"
-#import "KWQLoader.h"
-#import "KWQPageState.h"
-#import "RenderTreeAsText.h"
 #import "FrameMac.h"
-#import "Page.h"
-#import "SelectionController.h"
-#import "WebCoreImageRendererFactory.h"
-#import "WebCorePageBridge.h"
-#import "WebCoreSettings.h"
-#import "WebCoreViewFactory.h"
-#import "WebCoreWidgetHolder.h"
-#import "csshelper.h"
-#import "DeleteSelectionCommand.h"
+#import "FrameTree.h"
+#import "GraphicsContext.h"
 #import "HTMLDocument.h"
-#import "htmlediting.h"
+#import "HTMLFormElement.h"
+#import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "Image.h"
-#import "kjs_proxy.h"
-#import "kjs_window.h"
-#import "markup.h"
+#import "KWQEditCommand.h"
+#import "KWQLoader.h"
+#import "KWQPageState.h"
 #import "ModifySelectionListLevelCommand.h"
 #import "MoveSelectionCommand.h"
+#import "Page.h"
 #import "RenderCanvas.h"
 #import "RenderImage.h"
 #import "RenderPart.h"
-#import "ReplaceSelectionCommand.h"
+#import "RenderTreeAsText.h"
 #import "RenderWidget.h"
-#import "TypingCommand.h"
+#import "ReplaceSelectionCommand.h"
+#import "SelectionController.h"
 #import "TextIterator.h"
+#import "TypingCommand.h"
+#import "WebCoreImageRendererFactory.h"
+#import "WebCorePageBridge.h"
+#import "WebCoreSettings.h"
+#import "WebCoreSystemInterface.h"
+#import "WebCoreViewFactory.h"
+#import "WebCoreWidgetHolder.h"
+#import "csshelper.h"
+#import "htmlediting.h"
+#import "kjs_proxy.h"
+#import "kjs_window.h"
+#import "markup.h"
 #import "visible_units.h"
 #import "xml_tokenizer.h"
 #import <JavaScriptCore/date_object.h>
@@ -382,15 +383,53 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         nil];
 }
 
++ (NSArray *)supportedImageResourceMIMETypes
+{
+    static NSArray* supportedTypes = nil;
+    if (!supportedTypes) {
+        NSMutableSet* set = [[NSMutableSet alloc] init];
+
+        // FIXME: Doesn't make sense to ask NSImage for a list of file types and extensions
+        // because we aren't using NSImage to decode the images any more.
+        NSEnumerator* enumerator = [[NSImage imageFileTypes] objectEnumerator];
+        while (NSString* type = [enumerator nextObject]) {
+            NSString* mime = wkGetMIMETypeForExtension(type);
+            if (mime)
+                [set addObject:mime];
+        }
+
+        // image/pjpeg is the MIME type for progressive jpeg. These files have the jpg file extension.
+        // I believe we need this this to work around wkGetMIMETypeForExtension's limitation of only
+        // providing one MIME type for each extension.
+        [set addObject:@"image/pjpeg"];
+
+        [set removeObject:@"application/octet-stream"];
+
+        supportedTypes = [set allObjects];
+        CFRetain(supportedTypes);
+
+        [set release];
+    }
+
+    return supportedTypes;
+}
+
 + (NSArray *)supportedImageMIMETypes
 {
-    static NSMutableArray *mimeTypes = nil;
-    if (mimeTypes == nil) {
-        mimeTypes = [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] mutableCopy];
-        [mimeTypes removeObject:@"application/pdf"];
-        [mimeTypes removeObject:@"application/postscript"];
+    static NSArray* supportedTypes = nil;
+    if (!supportedTypes) {
+        NSMutableArray* types = [[self supportedImageResourceMIMETypes] mutableCopy];
+        [types removeObject:@"application/pdf"];
+        [types removeObject:@"application/postscript"];
+        NSArray* copy = [types copy];
+        [types release];
+
+        supportedTypes = copy;
+        CFRetain(supportedTypes);
+
+        [copy release];
     }
-    return mimeTypes;
+    return supportedTypes;
 }
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document

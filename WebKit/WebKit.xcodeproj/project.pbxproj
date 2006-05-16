@@ -91,7 +91,6 @@
 		939810390824BF01008DF038 /* WebPluginPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E4AF4B036659440000E506 /* WebPluginPackage.h */; };
 		9398103A0824BF01008DF038 /* WebPluginViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9398103C0824BF01008DF038 /* WebFrameBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */; };
-		939810400824BF01008DF038 /* WebImageRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CE1F8A002A5C6F30ECA2ACD /* WebImageRenderer.h */; };
 		939810410824BF01008DF038 /* WebImageRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CE1F8A202A5C6F30ECA2ACD /* WebImageRendererFactory.h */; };
 		939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810430824BF01008DF038 /* WebSubresourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E0E10802BC45F8018635CA /* WebSubresourceLoader.h */; };
@@ -168,12 +167,9 @@
 		939810A50824BF01008DF038 /* WebPDFRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E94C6806C0347500A9B09E /* WebPDFRepresentation.h */; };
 		939810A70824BF01008DF038 /* WebFormDataStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B641FA06E292BC0055F610 /* WebFormDataStream.h */; };
 		939810A80824BF01008DF038 /* WebPreferenceKeysPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810A90824BF01008DF038 /* WebImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C6513606EFCD9300969825 /* WebImageData.h */; };
 		939810AA0824BF01008DF038 /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305892A070868B300E79D96 /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810AB0824BF01008DF038 /* WebPluginDocumentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 832D7E030709D8FB00F49B61 /* WebPluginDocumentView.h */; };
 		939810AC0824BF01008DF038 /* WebPluginViewFactoryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E679780726D7CF006C7A36 /* WebPluginViewFactoryPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810AD0824BF01008DF038 /* WebImageDecodeItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C4C2A075E7DE500B89CAD /* WebImageDecodeItem.h */; };
-		939810AE0824BF01008DF038 /* WebImageDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C4C2C075E7DE500B89CAD /* WebImageDecoder.h */; };
 		939810AF0824BF01008DF038 /* WebFrameViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C6F14507920B93002449CD /* WebFrameViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810B00824BF01008DF038 /* WebPluginContainerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 65836F5E07EE425900682F95 /* WebPluginContainerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810B10824BF01008DF038 /* WebPluginContainerCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E1150307EFFEBF009B8BF7 /* WebPluginContainerCheck.h */; };
@@ -217,7 +213,6 @@
 		939810DC0824BF01008DF038 /* WebPluginPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E4AF4C036659440000E506 /* WebPluginPackage.m */; };
 		939810DD0824BF01008DF038 /* npapi.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F717230288493C018635CA /* npapi.m */; };
 		939810DE0824BF01008DF038 /* WebFrameBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AFB45F02B94DC8018635CA /* WebFrameBridge.m */; };
-		939810E20824BF01008DF038 /* WebImageRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A102A5C6F30ECA2ACD /* WebImageRenderer.m */; };
 		939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */; };
 		939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */; };
 		939810E50824BF01008DF038 /* WebSubresourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E0E10902BC45F8018635CA /* WebSubresourceLoader.m */; };
@@ -268,10 +263,7 @@
 		9398111E0824BF01008DF038 /* WebPDFView.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E94C3506C0321200A9B09E /* WebPDFView.m */; };
 		9398111F0824BF01008DF038 /* WebPDFRepresentation.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E94C6906C0347500A9B09E /* WebPDFRepresentation.m */; };
 		939811210824BF01008DF038 /* WebFormDataStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B641F906E292BC0055F610 /* WebFormDataStream.m */; };
-		939811220824BF01008DF038 /* WebImageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 51C6513706EFCD9300969825 /* WebImageData.m */; };
 		939811230824BF01008DF038 /* WebPluginDocumentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 832D7E040709D8FB00F49B61 /* WebPluginDocumentView.m */; };
-		939811240824BF01008DF038 /* WebImageDecodeItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 514C4C2B075E7DE500B89CAD /* WebImageDecodeItem.m */; };
-		939811250824BF01008DF038 /* WebImageDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 514C4C2D075E7DE500B89CAD /* WebImageDecoder.m */; };
 		939811260824BF01008DF038 /* WebPluginContainerCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E1150407EFFEBF009B8BF7 /* WebPluginContainerCheck.m */; };
 		939811280824BF01008DF038 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869302846DCD018635CA /* ApplicationServices.framework */; };
 		939811290824BF01008DF038 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
@@ -354,10 +346,6 @@
 		51443F9A0429392B00CA2D3A /* WebPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9B0429392B00CA2D3A /* WebPolicyDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPolicyDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9C0429392B00CA2D3A /* WebPolicyDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		514C4C2A075E7DE500B89CAD /* WebImageDecodeItem.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebImageDecodeItem.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		514C4C2B075E7DE500B89CAD /* WebImageDecodeItem.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebImageDecodeItem.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		514C4C2C075E7DE500B89CAD /* WebImageDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebImageDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		514C4C2D075E7DE500B89CAD /* WebImageDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebImageDecoder.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5152FADD033FC50400CA2ACD /* WebDefaultContextMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultContextMenuDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultContextMenuDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5152FADF033FC50400CA2ACD /* WebDefaultPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultPolicyDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -375,8 +363,6 @@
 		51A8B57A042834F700CA2D3A /* WebView.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebViewPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51C16E4006138EB400A1657B /* npfunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = npfunctions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		51C6513606EFCD9300969825 /* WebImageData.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebImageData.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		51C6513706EFCD9300969825 /* WebImageData.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebImageData.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51E94C3406C0321200A9B09E /* WebPDFView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPDFView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51E94C3506C0321200A9B09E /* WebPDFView.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPDFView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51E94C6806C0347500A9B09E /* WebPDFRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPDFRepresentation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -489,8 +475,6 @@
 		93EB178C09F88D460091F8FF /* WebSystemInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSystemInterface.m; sourceTree = "<group>"; };
 		93EB178E09F88D510091F8FF /* WebSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemInterface.h; sourceTree = "<group>"; };
 		9CAE9D070252A4130ECA16EA /* WebPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9CE1F8A002A5C6F30ECA2ACD /* WebImageRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebImageRenderer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9CE1F8A102A5C6F30ECA2ACD /* WebImageRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebImageRenderer.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9CE1F8A202A5C6F30ECA2ACD /* WebImageRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebImageRendererFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebImageRendererFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9CF0E249021361B00ECA16EA /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFramePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -980,14 +964,6 @@
 				F5AFB45E02B94DC8018635CA /* WebFrameBridge.h */,
 				F5AFB45F02B94DC8018635CA /* WebFrameBridge.m */,
 				9305892A070868B300E79D96 /* WebDashboardRegion.h */,
-				514C4C2A075E7DE500B89CAD /* WebImageDecodeItem.h */,
-				514C4C2B075E7DE500B89CAD /* WebImageDecodeItem.m */,
-				514C4C2C075E7DE500B89CAD /* WebImageDecoder.h */,
-				514C4C2D075E7DE500B89CAD /* WebImageDecoder.m */,
-				51C6513606EFCD9300969825 /* WebImageData.h */,
-				51C6513706EFCD9300969825 /* WebImageData.m */,
-				9CE1F8A002A5C6F30ECA2ACD /* WebImageRenderer.h */,
-				9CE1F8A102A5C6F30ECA2ACD /* WebImageRenderer.m */,
 				9CE1F8A202A5C6F30ECA2ACD /* WebImageRendererFactory.h */,
 				9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */,
 				9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */,
@@ -1125,7 +1101,6 @@
 				939810390824BF01008DF038 /* WebPluginPackage.h in Headers */,
 				9398103A0824BF01008DF038 /* WebPluginViewFactory.h in Headers */,
 				9398103C0824BF01008DF038 /* WebFrameBridge.h in Headers */,
-				939810400824BF01008DF038 /* WebImageRenderer.h in Headers */,
 				939810410824BF01008DF038 /* WebImageRendererFactory.h in Headers */,
 				939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */,
 				939810430824BF01008DF038 /* WebSubresourceLoader.h in Headers */,
@@ -1202,12 +1177,9 @@
 				939810A50824BF01008DF038 /* WebPDFRepresentation.h in Headers */,
 				939810A70824BF01008DF038 /* WebFormDataStream.h in Headers */,
 				939810A80824BF01008DF038 /* WebPreferenceKeysPrivate.h in Headers */,
-				939810A90824BF01008DF038 /* WebImageData.h in Headers */,
 				939810AA0824BF01008DF038 /* WebDashboardRegion.h in Headers */,
 				939810AB0824BF01008DF038 /* WebPluginDocumentView.h in Headers */,
 				939810AC0824BF01008DF038 /* WebPluginViewFactoryPrivate.h in Headers */,
-				939810AD0824BF01008DF038 /* WebImageDecodeItem.h in Headers */,
-				939810AE0824BF01008DF038 /* WebImageDecoder.h in Headers */,
 				939810AF0824BF01008DF038 /* WebFrameViewPrivate.h in Headers */,
 				939810B00824BF01008DF038 /* WebPluginContainerPrivate.h in Headers */,
 				939810B10824BF01008DF038 /* WebPluginContainerCheck.h in Headers */,
@@ -1641,7 +1613,6 @@
 				939810DC0824BF01008DF038 /* WebPluginPackage.m in Sources */,
 				939810DD0824BF01008DF038 /* npapi.m in Sources */,
 				939810DE0824BF01008DF038 /* WebFrameBridge.m in Sources */,
-				939810E20824BF01008DF038 /* WebImageRenderer.m in Sources */,
 				939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */,
 				939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */,
 				939810E50824BF01008DF038 /* WebSubresourceLoader.m in Sources */,
@@ -1692,10 +1663,7 @@
 				9398111E0824BF01008DF038 /* WebPDFView.m in Sources */,
 				9398111F0824BF01008DF038 /* WebPDFRepresentation.m in Sources */,
 				939811210824BF01008DF038 /* WebFormDataStream.m in Sources */,
-				939811220824BF01008DF038 /* WebImageData.m in Sources */,
 				939811230824BF01008DF038 /* WebPluginDocumentView.m in Sources */,
-				939811240824BF01008DF038 /* WebImageDecodeItem.m in Sources */,
-				939811250824BF01008DF038 /* WebImageDecoder.m in Sources */,
 				939811260824BF01008DF038 /* WebPluginContainerCheck.m in Sources */,
 				65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */,
 				65EEDE54084FFB920002DB25 /* WebNSCalendarDateExtras.m in Sources */,

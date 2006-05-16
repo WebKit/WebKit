@@ -188,6 +188,7 @@ typedef enum {
 
 + (NSArray *)supportedNonImageMIMETypes;
 + (NSArray *)supportedImageMIMETypes;
++ (NSArray *)supportedImageResourceMIMETypes; // includes types like PDF
 
 - (void)initializeSettings:(WebCoreSettings *)settings;
 

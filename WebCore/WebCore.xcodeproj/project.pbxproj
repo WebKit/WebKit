@@ -459,7 +459,6 @@
 		93F199A708245E59001E9ABC /* WebCoreEncodings.h in Headers */ = {isa = PBXBuildFile; fileRef = F56234DF03026D7301629B47 /* WebCoreEncodings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854C02DE375901EA4122 /* WebCoreFrameView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A908245E59001E9ABC /* WebCoreHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = F5517DC2031AB56301A80180 /* WebCoreHistory.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199AA08245E59001E9ABC /* WebCoreImageRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854D02DE375901EA4122 /* WebCoreImageRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AB08245E59001E9ABC /* WebCoreImageRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AC08245E59001E9ABC /* WebCoreJavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2A52B02E22573018635CB /* WebCoreJavaScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AD08245E59001E9ABC /* WebCoreResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = F587855002DE375901EA4122 /* WebCoreResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3037,7 +3036,6 @@
 		F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedValueListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854C02DE375901EA4122 /* WebCoreFrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587854D02DE375901EA4122 /* WebCoreImageRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreImageRenderer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreImageRendererFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreImageRendererFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587855002DE375901EA4122 /* WebCoreResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreResourceLoader.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3406,7 +3404,6 @@
 				6545F67509B830180013006F /* TransferJobMac.mm */,
 				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
 				F5517DC3031AB56301A80180 /* WebCoreHistory.m */,
-				F587854D02DE375901EA4122 /* WebCoreImageRenderer.h */,
 				F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */,
 				F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */,
 				84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */,
@@ -5077,7 +5074,6 @@
 				93F199A708245E59001E9ABC /* WebCoreEncodings.h in Headers */,
 				93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */,
 				93F199A908245E59001E9ABC /* WebCoreHistory.h in Headers */,
-				93F199AA08245E59001E9ABC /* WebCoreImageRenderer.h in Headers */,
 				93F199AB08245E59001E9ABC /* WebCoreImageRendererFactory.h in Headers */,
 				93F199AC08245E59001E9ABC /* WebCoreJavaScript.h in Headers */,
 				93F199AD08245E59001E9ABC /* WebCoreResourceLoader.h in Headers */,

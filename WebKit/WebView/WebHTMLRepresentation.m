@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebHTMLRepresentation.h>
+#import "WebHTMLRepresentation.h"
 
-#import <WebKit/DOM.h>
-#import <WebKit/WebArchive.h>
-#import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebDocumentPrivate.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebImageRendererFactory.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebView.h>
-
+#import "WebArchive.h"
+#import "WebDataSourceInternal.h"
+#import "WebDocumentPrivate.h"
+#import "WebFrameBridge.h"
+#import "WebFramePrivate.h"
+#import "WebKitNSStringExtras.h"
+#import "WebKitStatisticsPrivate.h"
+#import "WebNSObjectExtras.h"
+#import "WebResourcePrivate.h"
+#import "WebView.h"
 #import <Foundation/NSURLResponse.h>
+#import <JavaScriptCore/Assertions.h>
+#import <WebKit/DOM.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
 {
@@ -84,7 +82,6 @@
 
 + (NSArray *)supportedImageMIMETypes
 {
-    [WebImageRendererFactory createSharedFactory];
     return [WebCoreFrameBridge supportedImageMIMETypes];
 }
 

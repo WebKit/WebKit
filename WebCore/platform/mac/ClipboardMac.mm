@@ -29,7 +29,6 @@
 #import "CachedImage.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
-#import "WebCoreImageRenderer.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {

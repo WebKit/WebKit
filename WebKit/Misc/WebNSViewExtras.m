@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,10 @@
 
 #import <WebKit/WebNSViewExtras.h>
 
-#import <WebCore/WebCoreImageRenderer.h>
 #import <WebCore/DOMPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>
-#import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -162,19 +160,18 @@
     }
 }
 
-- (void)_web_dragImage:(WebImageRenderer *)wir
-               element:(DOMElement *)element
-                  rect:(NSRect)rect
-                 event:(NSEvent *)event
-            pasteboard:(NSPasteboard *)pasteboard 
-                source:(id)source
-                offset:(NSPoint *)dragImageOffset
+- (void)_web_dragImageElement:(DOMElement *)element
+                         rect:(NSRect)rect
+                        event:(NSEvent *)event
+                   pasteboard:(NSPasteboard *)pasteboard 
+                       source:(id)source
+                       offset:(NSPoint *)dragImageOffset
 {
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSImage *dragImage;
     NSPoint origin;
 
-    NSImage *image = (wir != nil) ? [wir image] : [element image];
+    NSImage *image = [element image];
     if (image != nil && [image size].height * [image size].width <= WebMaxOriginalImageArea) {
         NSSize originalSize = rect.size;
         origin = rect.origin;
@@ -193,10 +190,10 @@
         origin.y = origin.y + originalSize.height;
         origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
     } else {
-        NSString *extension = WKGetPreferredExtensionForMIMEType([wir MIMEType]);
-        if (extension == nil) {
-            extension = @"";
-        }
+        // FIXME: This has been broken for a while.
+        // There's no way to get the MIME type for the image from a DOM element.
+        // The old code used WKGetPreferredExtensionForMIMEType([image MIMEType]);
+        NSString *extension = @"";
         dragImage = [[NSWorkspace sharedWorkspace] iconForFileType:extension];
         NSSize offset = NSMakeSize([dragImage size].width - WebDragIconRightInset, -WebDragIconBottomInset);
         origin = NSMakePoint(mouseDownPoint.x - offset.width, mouseDownPoint.y - offset.height);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,6 @@
 
 #import <WebCore/WebCoreImageRendererFactory.h>
 
-@class WebImageRenderer;
-
 @interface WebImageRendererFactory : WebCoreImageRendererFactory <WebCoreImageRendererFactory>
-{
-}
-
 + (void)createSharedFactory;
-+ (WebImageRendererFactory *)sharedFactory;
-- (id <WebCoreImageRenderer>)imageRendererWithData:(NSData*)data MIMEType:(NSString *)MIMEType;
-
 @end

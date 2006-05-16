@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNSPasteboardExtras.h>
+#import "WebNSPasteboardExtras.h"
 
-#import <WebCore/WebCoreImageRenderer.h>
-#import <WebKit/DOMPrivate.h>
-#import <WebKit/WebArchive.h>
+#import "WebArchive.h"
+#import "WebFrameBridge.h"
+#import "WebNSURLExtras.h"
+#import "WebResourcePrivate.h"
+#import "WebURLsWithTitles.h"
+#import "WebViewPrivate.h"
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebImageRenderer.h>
-#import <WebKit/WebImageRendererFactory.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebURLsWithTitles.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebCore/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
 
 NSString *WebURLPboardType = nil;
@@ -244,7 +242,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
         if ([types containsObject:NSRTFDPboardType]) {
             // This image data is either the only subresource of an archive (HTML image case)
             // or the main resource (standalone image case).
-            NSArray *imageTypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
+            NSArray *imageTypes = [WebFrameBridge supportedImageResourceMIMETypes];
             NSArray *subresources = [archive subresources];
             WebResource *mainResource = [archive mainResource];
             WebResource *resource = ![imageTypes containsObject:[mainResource MIMEType]] && [subresources count] > 0 ? (WebResource *)[subresources objectAtIndex:0] : mainResource;
@@ -263,26 +261,25 @@ static NSArray *_writableTypesForImageWithArchive (void)
     }
 }
 
-- (id)_web_declareAndWriteDragImage:(WebImageRenderer *)image
-                            element:(DOMElement *)element
-                                URL:(NSURL *)URL 
-                              title:(NSString *)title
-                            archive:(WebArchive *)archive
-                             source:(id)source
+- (id)_web_declareAndWriteDragImageElement:(DOMElement *)element
+                                       URL:(NSURL *)URL 
+                                     title:(NSString *)title
+                                   archive:(WebArchive *)archive
+                                    source:(id)source
 {
     ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
     NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
     [self declareTypes:types owner:source];    
-    [self _web_writeImage:[image image] element:element URL:URL title:title archive:archive types:types];
+    [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types];
     [types release];
-    
-    NSString *extension = WKGetPreferredExtensionForMIMEType([image MIMEType]);
-    if (extension == nil) {
-        extension = @"";
-    }
+
+    // FIXME: This has been broken for a while.
+    // There's no way to get the MIME type for the image from a DOM element.
+    // The old code used WKGetPreferredExtensionForMIMEType([image MIMEType]);
+    NSString *extension = @"";
     NSArray *extensions = [NSArray arrayWithObject:extension];
-    
+
     [self setPropertyList:extensions forType:NSFilesPromisePboardType];
     return source;
 }

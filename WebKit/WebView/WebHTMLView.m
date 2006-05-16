@@ -49,8 +49,6 @@
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
-#import <WebKit/WebImageRenderer.h>
-#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
@@ -71,7 +69,6 @@
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
-#import <WebCore/WebCoreImageRenderer.h>
 #import <WebCore/WebCoreTextRenderer.h>
 
 #import <AppKit/NSAccessibility.h>
@@ -268,7 +265,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths
 {
-    NSArray *imageMIMETypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
+    NSArray *imageMIMETypes = [WebFrameBridge supportedImageResourceMIMETypes];
     NSEnumerator *enumerator = [paths objectEnumerator];
     NSString *path;
     
@@ -305,7 +302,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (DOMDocumentFragment *)_documentFragmentWithPaths:(NSArray *)paths
 {
     DOMDocumentFragment *fragment;
-    NSArray *imageMIMETypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
+    NSArray *imageMIMETypes = [WebFrameBridge supportedImageResourceMIMETypes];
     NSEnumerator *enumerator = [paths objectEnumerator];
     WebDataSource *dataSource = [self _dataSource];
     NSMutableArray *domNodes = [[NSMutableArray alloc] init];
@@ -687,11 +684,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 @end
 
 @implementation WebHTMLView (WebPrivate)
-
-- (void)_reset
-{
-    [WebImageRenderer stopAnimationsInView:self];
-}
 
 + (NSArray *)supportedMIMETypes
 {
@@ -1308,22 +1300,20 @@ static WebHTMLView *lastHitView = nil;
             else
                 archive = [WebArchiver archiveMainResourceForFrame:[self _frame]];
             
-            source = [pasteboard _web_declareAndWriteDragImage:nil
-                                                       element:imageElement
-                                                           URL:linkURL ? linkURL : imageURL
-                                                         title:[element objectForKey:WebElementImageAltStringKey]
-                                                       archive:archive
-                                                        source:self];
+            source = [pasteboard _web_declareAndWriteDragImageElement:imageElement
+                                                                  URL:linkURL ? linkURL : imageURL
+                                                                title:[element objectForKey:WebElementImageAltStringKey]
+                                                              archive:archive
+                                                               source:self];
         }
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:mouseDownPoint withPasteboard:pasteboard];
         if (dragImage == nil) {
-            [self _web_dragImage:nil
-                         element:[element objectForKey:WebElementDOMNodeKey]
-                            rect:[[element objectForKey:WebElementImageRectKey] rectValue]
-                           event:_private->mouseDownEvent
-                      pasteboard:pasteboard
-                          source:source
-                          offset:&_private->dragOffset];
+            [self _web_dragImageElement:[element objectForKey:WebElementDOMNodeKey]
+                                   rect:[[element objectForKey:WebElementImageRectKey] rectValue]
+                                  event:_private->mouseDownEvent
+                             pasteboard:pasteboard
+                                 source:source
+                                 offset:&_private->dragOffset];
         } else {
             [self dragImage:dragImage
                          at:dragLoc
@@ -1892,7 +1882,6 @@ static WebHTMLView *lastHitView = nil;
 - (void)dealloc
 {
     [self _clearLastHitViewIfSelf];
-    [self _reset];
     // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private->pluginController destroyAllPlugins];
@@ -1906,7 +1895,6 @@ static WebHTMLView *lastHitView = nil;
 - (void)finalize
 {
     [self _clearLastHitViewIfSelf];
-    [self _reset];
     // FIXME: This is slow; should remove individual observers instead.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private->pluginController destroyAllPlugins];
@@ -2353,17 +2341,6 @@ static WebHTMLView *lastHitView = nil;
             [[self _pluginController] startAllPlugins];
     
             _private->lastScrollPosition = NSZeroPoint;
-            
-            _private->inWindow = YES;
-        } else {
-            // Reset when we are moved out of a window after being moved into one.
-            // Without this check, we reset ourselves before we even start.
-            // This is only needed because viewDidMoveToWindow is called even when
-            // the window is not changing (bug in AppKit).
-            if (_private->inWindow) {
-                [self _reset];
-                _private->inWindow = NO;
-            }
         }
     }
 }

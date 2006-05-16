@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #import "WebFrameView.h"
 
-#import <JavaScriptCore/Assertions.h>
 #import "WebClipView.h"
 #import "WebDataSource.h"
 #import "WebDocument.h"
@@ -38,7 +37,6 @@
 #import "WebFrameViewInternal.h"
 #import "WebFrameViewPrivate.h"
 #import "WebHTMLViewPrivate.h"
-#import "WebImageRenderer.h"
 #import "WebImageRendererFactory.h"
 #import "WebKeyGenerator.h"
 #import "WebKitErrorsPrivate.h"
@@ -52,11 +50,10 @@
 #import "WebViewFactory.h"
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
-
+#import <Foundation/NSURLRequest.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
-
-#import <Foundation/NSURLRequest.h>
 
 @interface NSClipView (AppKitSecretsIKnow)
 - (BOOL)_scrollTo:(const NSPoint *)newOrigin; // need the boolean result from this method
