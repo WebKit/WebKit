@@ -1,15 +1,27 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x348
-  RenderBlock {HTML} at (0,0) size 800x348
-    RenderBody {BODY} at (8,16) size 784x300
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 541x18
-          text run at (0,0) width 442: "The black border below should cut right through the top left corner of "
-          text run at (442,0) width 99: "the blue border."
-      RenderBlock {DIV} at (32,50) size 720x250 [border: (1px solid #0000FF)]
-        RenderTable {DIV} at (1,1) size 104x200
-          RenderTableSection at (0,0) size 104x200
+layer at (0,0) size 800x386
+  RenderBlock {HTML} at (0,0) size 800x386
+    RenderBody {BODY} at (8,16) size 784x338
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 201x18
+          text run at (0,0) width 201: "The black border below should "
+        RenderInline {I} at (0,0) size 20x18
+          RenderText {#text} at (201,0) size 20x18
+            text run at (201,0) width 20: "not"
+        RenderText {#text} at (221,0) size 746x36
+          text run at (221,0) width 212: " cut through the top left corner of "
+          text run at (433,0) width 313: "the blue border. It would cut through with our old"
+          text run at (0,18) width 87: "behavior, but "
+        RenderInline {A} at (0,0) size 22x18 [color=#0000EE]
+          RenderText {#text} at (87,18) size 22x18
+            text run at (87,18) width 22: "this"
+        RenderText {#text} at (109,18) size 307x18
+          text run at (109,18) width 4: " "
+          text run at (113,18) width 303: "bug fix changed our behavior to match the spec."
+      RenderBlock {DIV} at (32,68) size 720x270 [border: (1px solid #0000FF)]
+        RenderTable {DIV} at (1,1) size 115x220 [border:]
+          RenderTableSection at (1,10) size 104x200
             RenderTableRow {P} at (0,0) size 104x100
               RenderTableCell {SPAN} at (0,-1) size 52x11 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderTableCell {SPAN} at (52,-10) size 52x68 [border: (10px solid #000000)] [r=0 c=1 rs=1 cs=1]

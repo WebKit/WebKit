@@ -11,8 +11,10 @@
   </style>
  </head>
  <body>
-  <p>The black border below should cut right through the top left corner of
-  the blue border.</p>
+  <p>The black border below should <i>not</i> cut through the top left corner of
+  the blue border. It would cut through with our old behavior, but 
+  <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6838">this</a>
+  bug fix changed our behavior to match the spec.</p>
   <div class="b">
    <div class="t">
     <p class="r a"> <span class="c a"></span> <span class="c b"></span> </p>

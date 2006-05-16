@@ -19,23 +19,23 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 368x18
           text run at (0,0) width 368: "The RTL table should be a mirror image of the LTR table."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,96) size 129x74
-        RenderTableSection {TBODY} at (0,0) size 129x74
-          RenderTableRow {TR} at (0,0) size 129x26
-            RenderTableCell {TD} at (0,0) size 65x26 [border: none (1px solid #000000) none] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (16,4) size 31x18
-                text run at (16,4) width 31: "RTL"
-            RenderTableCell {TD} at (65,0) size 64x26 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (16,4) size 31x18
-                text run at (16,4) width 31: "LTR"
-          RenderTableRow {TR} at (0,26) size 129x48
-            RenderTableCell {TD} at (0,26) size 65x48 [border: none (1px solid #000000) none] [r=1 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (4,4) size 56x40
+      RenderTable {TABLE} at (0,96) size 133x74
+        RenderTableSection {TBODY} at (0,0) size 133x74
+          RenderTableRow {TR} at (0,0) size 133x26
+            RenderTableCell {TD} at (0,0) size 67x26 [border: none (1px solid #000000) none] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (17,4) size 31x18
+                text run at (17,4) width 31: "RTL"
+            RenderTableCell {TD} at (67,0) size 66x26 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (17,4) size 31x18
+                text run at (17,4) width 31: "LTR"
+          RenderTableRow {TR} at (0,26) size 133x48
+            RenderTableCell {TD} at (0,26) size 67x48 [border: none (1px solid #000000) none] [r=1 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 58x40 [border: none (1px solid #0000FF) none (1px solid #FF0000)]
                 RenderTableCol {COL} at (0,0) size 0x0
                 RenderTableCol {COL} at (0,0) size 0x0
                 RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: (2px dotted #008000) none (1px solid #000000)]
                 RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
-                RenderTableSection {TBODY} at (0,0) size 56x40
+                RenderTableSection {TBODY} at (1,0) size 56x40
                   RenderTableRow {TR} at (0,0) size 56x20
                     RenderTableCell {TD} at (44,0) size 12x20 [border: none] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,1) size 8x18
@@ -65,13 +65,13 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,20) size 11x20 [border: none] [r=1 c=4 rs=1 cs=1]
                       RenderText {#text} at (2,1) size 8x18
                         text run at (2,1) width 8 RTL: "  "
-            RenderTableCell {TD} at (65,26) size 64x48 [r=1 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (4,4) size 56x40
+            RenderTableCell {TD} at (67,26) size 66x48 [r=1 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 58x40 [border: none (1px solid #FF0000) none (1px solid #0000FF)]
                 RenderTableCol {COL} at (0,0) size 0x0
                 RenderTableCol {COL} at (0,0) size 0x0
                 RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00] [border: (1px solid #000000) none (2px dotted #008000)]
                 RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#C0C0C0]
-                RenderTableSection {TBODY} at (0,0) size 56x40
+                RenderTableSection {TBODY} at (1,0) size 56x40
                   RenderTableRow {TR} at (0,0) size 56x20
                     RenderTableCell {TD} at (0,0) size 12x20 [border: none] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,1) size 8x18

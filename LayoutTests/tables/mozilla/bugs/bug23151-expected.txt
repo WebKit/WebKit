@@ -1,21 +1,21 @@
-layer at (0,0) size 864x600
+layer at (0,0) size 827x600
   RenderCanvas at (0,0) size 785x585
-layer at (0,0) size 864x600
+layer at (0,0) size 827x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x584
-      RenderTable {TABLE} at (0,0) size 856x30 [bgcolor=#FFFFFF]
-        RenderTableSection {TBODY} at (0,0) size 856x30
-          RenderTableRow {TR} at (0,0) size 856x30
-            RenderTableCell {TD} at (0,0) size 426x30 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (0,0) size 426x30
-                RenderInline {FONT} at (0,0) size 426x30
-                  RenderText {#text} at (0,0) size 426x30
-                    text run at (0,0) width 426: "/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-  "
-                    text run at (426,0) width 0: " "
-                    text run at (0,15) width 8: "  "
-            RenderTableCell {TD} at (426,7) size 430x15 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {PRE} at (0,0) size 430x15
-                RenderInline {FONT} at (0,0) size 430x15
-                  RenderText {#text} at (0,0) size 430x15
-                    text run at (0,0) width 430: "/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-   "
-                    text run at (430,0) width 0: " "
+      RenderTable {TABLE} at (0,0) size 819x30 [bgcolor=#FFFFFF]
+        RenderTableSection {TBODY} at (0,0) size 819x30
+          RenderTableRow {TR} at (0,0) size 819x30
+            RenderTableCell {TD} at (0,0) size 408x30 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {PRE} at (0,0) size 408x30
+                RenderInline {FONT} at (0,0) size 408x30
+                  RenderText {#text} at (0,0) size 408x30
+                    text run at (0,0) width 408: "/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-  "
+                    text run at (408,0) width 0: " "
+                    text run at (0,15) width 6: "  "
+            RenderTableCell {TD} at (408,7) size 411x15 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {PRE} at (0,0) size 411x15
+                RenderInline {FONT} at (0,0) size 411x15
+                  RenderText {#text} at (0,0) size 411x15
+                    text run at (0,0) width 411: "/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-   "
+                    text run at (411,0) width 0: " "

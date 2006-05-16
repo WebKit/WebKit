@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderTable {TABLE} at (0,0) size 88x82
-        RenderTableSection {TBODY} at (0,0) size 88x82
+      RenderTable {TABLE} at (0,0) size 91x85 [border: (1px solid #000000)]
+        RenderTableSection {TBODY} at (1,1) size 88x82
           RenderTableRow {TR} at (0,0) size 88x41
             RenderTableCell {TD} at (0,0) size 45x40 [border: (2px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 40x36
@@ -19,9 +19,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (45,41) size 43x41 [border: (2px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (3,3) size 38x36
                 text run at (3,3) width 38: "bar"
-      RenderBlock {P} at (0,98) size 784x104
-        RenderTable {TABLE} at (0,0) size 110x104
-          RenderTableSection {TBODY} at (0,0) size 110x104
+      RenderBlock {P} at (0,101) size 784x129
+        RenderTable {TABLE} at (0,0) size 135x129 [border: (12px solid #000000)]
+          RenderTableSection {TBODY} at (12,12) size 110x104
             RenderTableRow {TR} at (0,0) size 110x52
               RenderTableCell {TD} at (0,0) size 56x51 [border: (13px none #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (14,14) size 40x36
@@ -36,9 +36,9 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (56,52) size 54x52 [border: (2px solid #000000)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (3,3) size 38x36
                   text run at (3,3) width 38: "bar"
-      RenderBlock {P} at (0,218) size 784x129
-        RenderTable {TABLE} at (0,0) size 135x129
-          RenderTableSection {TBODY} at (0,0) size 135x129
+      RenderBlock {P} at (0,246) size 784x179
+        RenderTable {TABLE} at (0,0) size 185x179 [border: (25px solid #000000)]
+          RenderTableSection {TBODY} at (25,25) size 135x129
             RenderTableRow {TR} at (0,0) size 135x64
               RenderTableCell {TD} at (0,0) size 68x63 [border: (25px none #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (26,26) size 40x36
