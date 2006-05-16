@@ -4,7 +4,7 @@
 
         * DerivedSources.make:
         Conditionally generate the SVG and XPath related files based on the value of 
-        FEATURE_DEFINES. Also, pass FEATURE_DEFINES TO THE BINDINGS GENERATOR.
+        FEATURE_DEFINES. Also, pass FEATURE_DEFINES to the bindings generator.
         
         * WebCore.xcodeproj/project.pbxproj:
         Add FEATURE_DEFINES as a toplevel build setting and set it to "SVG_SUPPORT XPATH_SUPPORT"
