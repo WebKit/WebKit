@@ -49,6 +49,8 @@
 }
 
 + (NSArray *)supportedMIMETypes;
++ (NSArray *)supportedNonImageMIMETypes;
++ (NSArray *)supportedImageMIMETypes;
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 

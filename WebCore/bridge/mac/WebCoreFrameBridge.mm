@@ -48,6 +48,7 @@
 #import "FrameMac.h"
 #import "Page.h"
 #import "SelectionController.h"
+#import "WebCoreImageRendererFactory.h"
 #import "WebCorePageBridge.h"
 #import "WebCoreSettings.h"
 #import "WebCoreViewFactory.h"
@@ -57,6 +58,7 @@
 #import "HTMLDocument.h"
 #import "htmlediting.h"
 #import "HTMLNames.h"
+#import "Image.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "markup.h"
@@ -360,9 +362,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return bridge(m_frame->tree()->find(name));
 }
 
-+ (NSArray *)supportedMIMETypes
++ (NSArray *)supportedNonImageMIMETypes
 {
-    return [NSArray arrayWithObjects:
+    return [NSArray arrayWithObjects:        
         @"text/html",
         @"text/xml",
         @"text/xsl",
@@ -378,6 +380,17 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         @"image/svg+xml",
 #endif
         nil];
+}
+
++ (NSArray *)supportedImageMIMETypes
+{
+    static NSMutableArray *mimeTypes = nil;
+    if (mimeTypes == nil) {
+        mimeTypes = [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] mutableCopy];
+        [mimeTypes removeObject:@"application/pdf"];
+        [mimeTypes removeObject:@"application/postscript"];
+    }
+    return mimeTypes;
 }
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document
@@ -2461,7 +2474,8 @@ static NSCharacterSet *_getPostSmartSet(void)
 {
     String mimeType = m_frame->resourceRequest().m_responseMIMEType;
     
-    if (WebCore::DOMImplementation::isTextMIMEType(mimeType))
+    if (WebCore::DOMImplementation::isTextMIMEType(mimeType) ||
+        Image::supportsType(mimeType))
         return NO;
     
     return YES;

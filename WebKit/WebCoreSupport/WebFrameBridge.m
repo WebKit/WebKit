@@ -43,7 +43,6 @@
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemPrivate.h"
-#import "WebImageView.h"
 #import "WebJavaPlugIn.h"
 #import "WebJavaScriptTextInputPanel.h"
 #import "WebKitErrorsPrivate.h"
@@ -1133,9 +1132,6 @@ static BOOL loggedObjectCacheSize = NO;
             return ObjectElementNone;
     }
     
-    if ([viewClass isSubclassOfClass:[WebImageView class]])
-        return ObjectElementImage;
-    
     // If we're a supported type other than a plugin, we want to make a frame.
     // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
     // but for now we're burdened with making a distinction between the two.
@@ -1622,6 +1618,16 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     [_frame _willCloseURL];
     [super closeURL];
+}
+
+- (NSURLResponse*)mainResourceURLResponse
+{
+    return [[_frame dataSource] response];
+}
+
+- (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size
+{
+    return [NSString stringWithFormat:UI_STRING("%@ %.0f×%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];
 }
 
 @end

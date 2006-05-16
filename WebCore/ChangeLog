@@ -1,3 +1,72 @@
+2006-05-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8921
+        Use WebCore to render full-frame images.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add ImageDocument.
+        
+        * bridge/mac/WebCoreFrameBridge.h:
+        Add mainResourceURLResponse and imageTitleForFilename.
+        
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (+[WebCoreFrameBridge supportedNonImageMIMETypes]):
+        This used to be supportedMIMETypes but WebKit requires that we handle the
+        image MIME types separately.
+        
+        (+[WebCoreFrameBridge supportedImageMIMETypes]):
+        Add image types from WebCoreImageRendererFactory.
+        
+        (-[WebCoreFrameBridge canProvideDocumentSource]):
+        Return no for image types.
+        
+        * dom/xml_tokenizer.h:
+        (WebCore::Tokenizer::wantsRawData):
+        (WebCore::Tokenizer::writeRawData):
+        New virtual functions which tokenizers can override if they want to get
+        raw data (which isn't fed through the decoder)
+        
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::setLoadManually):
+        New function which calls HTMLImageLoader::setLoadManually
+        
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::HTMLImageLoader):
+        (WebCore::HTMLImageLoader::updateFromElement):
+        Don't request the image from the loader if the load is set to be manual.
+        
+        * html/HTMLImageLoader.h:
+        (WebCore::HTMLImageLoader::setLoadManually):
+        New function which decides if the image data should be fed manually or loaded
+        by the loader.
+        
+        * loader/DocLoader.h:
+        Add HTMLImageLoader as a friend.
+        
+        * loader/ImageDocument.cpp: Added.
+        (WebCore::ImageTokenizer::ImageTokenizer):
+        (WebCore::ImageTokenizer::wantsRawData):
+        (WebCore::ImageTokenizer::write):
+        (WebCore::ImageTokenizer::writeRawData):
+        (WebCore::ImageTokenizer::stopParsing):
+        (WebCore::ImageTokenizer::finish):
+        (WebCore::ImageTokenizer::isWaitingForScripts):
+        (WebCore::ImageDocument::ImageDocument):
+        (WebCore::ImageDocument::createTokenizer):
+        * loader/ImageDocument.h: Added.
+        Add new ImageDocument class which will feed its data to a created image element.
+
+        * loader/TextDocument.h:
+        Inherit from HTMLDocument here too, in case any broken web pages want to manipulate
+        the DOM of any plain text documents.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::begin):
+        (WebCore::Frame::write):
+        Don't create or use the decoder if the tokenizer is in "raw mode".
+        
 2006-05-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

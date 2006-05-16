@@ -53,6 +53,9 @@ public:
     virtual bool processingData() const { return false; }
     virtual int executingScript() const { return 0; }
 
+    virtual bool wantsRawData() const { return false; }
+    virtual bool writeRawData(const char* data, int len) { return false; }
+    
 protected:
     // The tokenizer has buffers, so parsing may continue even after
     // it stops receiving data. We use m_parserStopped to stop the tokenizer

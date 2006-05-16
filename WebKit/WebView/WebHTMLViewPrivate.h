@@ -40,6 +40,8 @@
 
 - (void)_reset;
 + (NSArray *)supportedMIMETypes;
++ (NSArray *)supportedImageMIMETypes;
++ (NSArray *)supportedNonImageMIMETypes;
 + (NSArray *)unsupportedTextMIMETypes;
 
 // Modifier (flagsChanged) tracking SPI

@@ -40,7 +40,6 @@
 #import "WebHTMLViewPrivate.h"
 #import "WebImageRenderer.h"
 #import "WebImageRendererFactory.h"
-#import "WebImageView.h"
 #import "WebKeyGenerator.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitStatisticsPrivate.h"
@@ -259,7 +258,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     
     if (!viewTypes) {
         viewTypes = [[NSMutableDictionary alloc] init];
-        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedMIMETypes]);
+        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedNonImageMIMETypes]);
 
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
@@ -268,7 +267,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
     
     if (!addedImageTypes && !allowImageTypeOmission) {
-        addTypesFromClass(viewTypes, [WebImageView class], [WebImageView supportedMIMETypes]);
+        addTypesFromClass(viewTypes, [WebHTMLView class], [WebHTMLView supportedImageMIMETypes]);
         addedImageTypes = YES;
     }
     

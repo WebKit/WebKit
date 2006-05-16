@@ -1,3 +1,65 @@
+2006-05-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8921
+        Use WebCore to render full-frame images
+        
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge determineObjectFromMIMEType:URL:]):
+        Remove WebImageView handling.
+        
+        (-[WebFrameBridge mainResourceURLResponse]):
+        New function which returns the URL response for the main resource. This is used by the
+        manual loading of images.
+        
+        (-[WebFrameBridge imageTitleForFilename:size:]):
+        New function which returns a correctly translated image title given a filename and a size.
+        
+        * WebCoreSupport/WebImageRenderer.m:
+        (-[WebImageRenderer _startOrContinueAnimationIfNecessary]):
+        Remove WebImageView handling.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        Remove WebImageRepresentation and WebImageView.
+        
+        * WebView/WebArchiver.h:
+        * WebView/WebArchiver.m:
+        (+[WebArchiver archiveMainResourceForFrame:]):
+        New functions which returns a WebArchive with just the main resource, ignoring any subresources.
+        
+        * WebView/WebDataSource.m:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        Use MIME types from WebHTMLRepresentation instead of WebImageRepresentation.
+        
+        * WebView/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        Use MIME types from WebHTMLRepresentation instead of WebImageRepresentation.
+        
+        (+[WebHTMLRepresentation supportedMIMETypes]):
+        Create an array of image and non-image MIME Types.
+        
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]):
+        (+[WebHTMLRepresentation supportedImageMIMETypes]):
+        New functions, separating the list of MIME types into image and non-image ones.
+        
+        * WebView/WebHTMLView.m:
+        (+[WebHTMLView supportedImageMIMETypes]):
+        (+[WebHTMLView supportedNonImageMIMETypes]):
+        New functions which call down to WebHTMLRepresentation.
+        
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        If the image element comes from an ImageDocument, just use an archive of the main resource
+        instead of the generated HTML document.
+        
+        * WebView/WebHTMLViewPrivate.h:
+        Declare new functions.
+        
+        * WebView/WebImageRepresentation.h: Removed.
+        * WebView/WebImageRepresentation.m: Removed.
+        * WebView/WebImageView.h: Removed.
+        * WebView/WebImageView.m: Removed.
+        
 2006-05-15  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

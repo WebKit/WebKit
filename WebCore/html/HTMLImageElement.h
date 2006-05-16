@@ -64,6 +64,8 @@ public:
 
     CachedImage* cachedImage() const { return m_imageLoader.image(); }
     
+    void setLoadManually (bool loadManually) { m_imageLoader.setLoadManually(loadManually); }
+
     String name() const;
     void setName(const String&);
 

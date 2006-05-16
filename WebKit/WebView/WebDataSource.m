@@ -48,8 +48,6 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRendererFactory.h>
-#import <WebKit/WebImageRepresentation.h>
-#import <WebKit/WebImageView.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
@@ -711,7 +709,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     
     if (!repTypes) {
         repTypes = [[NSMutableDictionary alloc] init];
-        addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedMIMETypes]);
+        addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedNonImageMIMETypes]);
 
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
@@ -720,7 +718,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
     
     if (!addedImageTypes && !allowImageTypeOmission) {
-        addTypesFromClass(repTypes, [WebImageRepresentation class], [WebImageRepresentation supportedMIMETypes]);
+        addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedImageMIMETypes]);
         addedImageTypes = YES;
     }
     

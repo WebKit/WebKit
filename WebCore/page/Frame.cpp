@@ -50,6 +50,7 @@
 #include "HTMLGenericFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "ImageDocument.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NodeList.h"
 #include "Plugin.h"
@@ -600,7 +601,9 @@ void Frame::begin(const KURL& url)
   if (DOMImplementation::isXMLMIMEType(d->m_request.m_responseMIMEType))
     d->m_doc = DOMImplementation::instance()->createDocument(d->m_view.get());
   else if (DOMImplementation::isTextMIMEType(d->m_request.m_responseMIMEType))
-    d->m_doc = DOMImplementation::instance()->createTextDocument(d->m_view.get());
+    d->m_doc = new TextDocument(DOMImplementation::instance(), d->m_view.get());
+ else if (Image::supportsType(d->m_request.m_responseMIMEType))
+    d->m_doc = new ImageDocument(DOMImplementation::instance(), d->m_view.get());
   else
     d->m_doc = DOMImplementation::instance()->createHTMLDocument(d->m_view.get());
 
@@ -631,6 +634,19 @@ void Frame::begin(const KURL& url)
 
 void Frame::write(const char* str, int len)
 {
+    if (len == 0)
+        return;
+    
+    if (len == -1)
+        len = strlen(str);
+
+    if (Tokenizer* t = d->m_doc->tokenizer()) {
+        if (t->wantsRawData()) {
+            t->writeRawData(str, len);
+            return;
+        }
+    }
+    
     if (!d->m_decoder) {
         d->m_decoder = new Decoder;
         if (!d->m_encoding.isNull())
@@ -642,12 +658,6 @@ void Frame::write(const char* str, int len)
         if (d->m_doc)
             d->m_doc->setDecoder(d->m_decoder.get());
     }
-  if (len == 0)
-    return;
-
-  if (len == -1)
-    len = strlen(str);
-
   DeprecatedString decoded = d->m_decoder->decode(str, len);
 
   if (decoded.isEmpty())
@@ -663,8 +673,10 @@ void Frame::write(const char* str, int len)
       d->m_doc->recalcStyle(Node::Force);
   }
 
-  if (Tokenizer* t = d->m_doc->tokenizer())
+  if (Tokenizer* t = d->m_doc->tokenizer()) {
+      ASSERT(!t->wantsRawData());
       t->write(decoded, true);
+  }
 }
 
 void Frame::write(const DeprecatedString& str)

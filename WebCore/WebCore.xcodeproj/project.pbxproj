@@ -100,6 +100,8 @@
 		1A762C780A074F2600989F5B /* JSXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A762C700A074F2600989F5B /* JSXPathNSResolver.h */; };
 		1A762C790A074F2600989F5B /* JSXPathResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A762C710A074F2600989F5B /* JSXPathResult.cpp */; };
 		1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A762C720A074F2600989F5B /* JSXPathResult.h */; };
+		1A820D910A13EBA600AF843C /* ImageDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */; settings = {COMPILER_FLAGS = "-xobjective-c++"; }; };
+		1A820D920A13EBA600AF843C /* ImageDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A820D900A13EBA600AF843C /* ImageDocument.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; };
 		550A0BCD085F604D007353D6 /* HTMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* HTMLNames.cpp */; };
@@ -1542,6 +1544,8 @@
 		1A762C700A074F2600989F5B /* JSXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXPathNSResolver.h; sourceTree = "<group>"; };
 		1A762C710A074F2600989F5B /* JSXPathResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResult.cpp; sourceTree = "<group>"; };
 		1A762C720A074F2600989F5B /* JSXPathResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXPathResult.h; sourceTree = "<group>"; };
+		1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDocument.cpp; sourceTree = "<group>"; };
+		1A820D900A13EBA600AF843C /* ImageDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageDocument.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4453,6 +4457,8 @@
 				BCB16C110979C3BD00467741 /* DocLoader.h */,
 				93ABCE5D06E1A42E0085925B /* FormData.cpp */,
 				93ABCE5E06E1A42E0085925B /* FormData.h */,
+				1A820D8F0A13EBA600AF843C /* ImageDocument.cpp */,
+				1A820D900A13EBA600AF843C /* ImageDocument.h */,
 				BCB16C130979C3BD00467741 /* loader.cpp */,
 				BCB16C140979C3BD00467741 /* loader.h */,
 				BCB16C150979C3BD00467741 /* Request.cpp */,
@@ -5578,6 +5584,7 @@
 				1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */,
 				1A494E350A12358B00FDAFC1 /* JSHTMLDocument.h in Headers */,
 				1A494EDF0A123F4C00FDAFC1 /* JSDocumentFragment.h in Headers */,
+				1A820D920A13EBA600AF843C /* ImageDocument.h in Headers */,
 				A871DB250A150BD600B12A68 /* HTMLTableSectionElement.h in Headers */,
 				A871DB270A150BD600B12A68 /* HTMLTableElement.h in Headers */,
 				A871DB2A0A150BD600B12A68 /* HTMLTableCellElement.h in Headers */,
@@ -6418,6 +6425,7 @@
 				1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */,
 				1A494E340A12358B00FDAFC1 /* JSHTMLDocument.cpp in Sources */,
 				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
+				1A820D910A13EBA600AF843C /* ImageDocument.cpp in Sources */,
 				A871DB260A150BD600B12A68 /* HTMLTableSectionElement.cpp in Sources */,
 				A871DB280A150BD600B12A68 /* HTMLTableElement.cpp in Sources */,
 				A871DB290A150BD600B12A68 /* HTMLTableColElement.cpp in Sources */,

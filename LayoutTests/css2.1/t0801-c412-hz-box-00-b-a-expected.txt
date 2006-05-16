@@ -12,4 +12,10 @@ layer at (0,0) size 800x276
             text run at (80,0) width 360: "X X X X X"
         RenderBlock {P} at (0,56) size 784x154
           RenderPartObject {OBJECT} at (0,0) size 300x150
+            layer at (0,0) size 600x135
+              RenderCanvas at (0,0) size 300x135
+            layer at (0,0) size 600x44
+              RenderBlock {HTML} at (0,0) size 300x44
+                RenderBody {BODY} at (0,0) size 300x44
+                  RenderImage {IMG} at (0,0) size 600x40
           RenderText {#text} at (0,0) size 0x0

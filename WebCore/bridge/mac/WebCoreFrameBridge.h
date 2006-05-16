@@ -186,7 +186,8 @@ typedef enum {
 - (id)initMainFrameWithPage:(WebCorePageBridge *)page;
 - (id)initSubframeWithRenderer:(WebCoreRenderPart *)renderer;
 
-+ (NSArray *)supportedMIMETypes;
++ (NSArray *)supportedNonImageMIMETypes;
++ (NSArray *)supportedImageMIMETypes;
 
 - (void)initializeSettings:(WebCoreSettings *)settings;
 
@@ -663,6 +664,9 @@ typedef enum {
 - (void)handledOnloadEvents;
 
 - (WebCoreKeyboardUIMode)keyboardUIMode;
+
+- (NSURLResponse*)mainResourceURLResponse;
+- (NSString*)imageTitleForFilename:(NSString*)filename size:(NSSize)size;
 
 @end
 

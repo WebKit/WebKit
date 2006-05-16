@@ -35,6 +35,7 @@
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -66,7 +67,25 @@
 
 + (NSArray *)supportedMIMETypes
 {
-    return [WebCoreFrameBridge supportedMIMETypes];
+    static NSMutableArray *mimeTypes = nil;
+    
+    if (!mimeTypes) {
+        mimeTypes = [[self supportedNonImageMIMETypes] mutableCopy];
+        [mimeTypes addObjectsFromArray:[self supportedImageMIMETypes]];
+    }
+    
+    return mimeTypes;
+}
+
++ (NSArray *)supportedNonImageMIMETypes
+{
+    return [WebCoreFrameBridge supportedNonImageMIMETypes];
+}
+
++ (NSArray *)supportedImageMIMETypes
+{
+    [WebImageRendererFactory createSharedFactory];
+    return [WebCoreFrameBridge supportedImageMIMETypes];
 }
 
 - init

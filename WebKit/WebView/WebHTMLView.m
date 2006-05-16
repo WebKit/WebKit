@@ -698,6 +698,16 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     return [WebHTMLRepresentation supportedMIMETypes];
 }
 
++ (NSArray *)supportedImageMIMETypes
+{
+    return [WebHTMLRepresentation supportedImageMIMETypes];
+}
+
++ (NSArray *)supportedNonImageMIMETypes
+{
+    return [WebHTMLRepresentation supportedNonImageMIMETypes];
+}
+
 + (NSArray *)unsupportedTextMIMETypes
 {
     return [NSArray arrayWithObjects:
@@ -1288,11 +1298,21 @@ static WebHTMLView *lastHitView = nil;
             ASSERT(imageElement != nil);
             [webView setSelectedDOMRange:[[[self _bridge] DOMDocument] _createRangeWithNode:imageElement] affinity:NSSelectionAffinityDownstream];
             _private->draggingImageURL = [imageURL retain];
+            
+            WebArchive *archive;
+            
+            // If the image element comes from an ImageDocument, we don't want to 
+            // create a web archive from the image element.
+            if ([[self _bridge] canSaveAsWebArchive])
+                archive = [imageElement webArchive];
+            else
+                archive = [WebArchiver archiveMainResourceForFrame:[self _frame]];
+            
             source = [pasteboard _web_declareAndWriteDragImage:nil
                                                        element:imageElement
                                                            URL:linkURL ? linkURL : imageURL
                                                          title:[element objectForKey:WebElementImageAltStringKey]
-                                                       archive:[imageElement webArchive]
+                                                       archive:archive
                                                         source:self];
         }
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:mouseDownPoint withPasteboard:pasteboard];

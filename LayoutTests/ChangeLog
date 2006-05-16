@@ -1,3 +1,20 @@
+2006-05-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8921
+        Use WebCore to render full-frame images.
+
+        * css2.1/t0801-c412-hz-box-00-b-a-expected.txt:
+        * dom/xhtml/level2/html/frame-expected.checksum:
+        * dom/xhtml/level2/html/frame-expected.png:
+        * dom/xhtml/level2/html/frame-expected.txt:
+        * dom/xhtml/level2/html/iframe-expected.checksum:
+        * dom/xhtml/level2/html/iframe-expected.png:
+        * dom/xhtml/level2/html/iframe-expected.txt:
+        * tables/mozilla/bugs/bug50695-2-expected.txt:
+        Update tests.
+
 2006-05-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

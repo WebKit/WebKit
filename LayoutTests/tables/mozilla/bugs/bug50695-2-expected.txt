@@ -5,4 +5,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {FORM} at (0,0) size 784x300
         RenderPartObject {IFRAME} at (0,0) size 300x300
+          layer at (0,0) size 300x300
+            RenderCanvas at (0,0) size 300x300
+          layer at (0,0) size 300x174
+            RenderBlock {HTML} at (0,0) size 300x174
+              RenderBody {BODY} at (0,0) size 300x174
+                RenderImage {IMG} at (0,0) size 250x170
         RenderText {#text} at (0,0) size 0x0
