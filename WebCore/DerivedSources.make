@@ -63,10 +63,15 @@ all : \
     JSElement.h \
     JSEvent.h \
     JSEntity.h \
+    JSHTMLBaseElement.h \
     JSHTMLCanvasElement.h \
     JSHTMLDocument.h \
     JSHTMLElement.h \
+    JSHTMLHeadElement.h \
+    JSHTMLLinkElement.h \
     JSHTMLMetaElement.h \
+    JSHTMLStyleElement.h \
+    JSHTMLTitleElement.h \
     JSKeyboardEvent.h \
     JSMouseEvent.h \
     JSMutationEvent.h \

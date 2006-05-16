@@ -631,6 +631,21 @@
 		A80E79FD0A19C307007FB8C5 /* HTMLMetaElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A80E79FC0A19C307007FB8C5 /* HTMLMetaElement.idl */; };
 		A80E7A170A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */; };
 		A80E7A180A19C3D6007FB8C5 /* JSHTMLMetaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */; };
+		A80E7AB30A19D1F1007FB8C5 /* HTMLTitleElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A80E7AAE0A19D1F1007FB8C5 /* HTMLTitleElement.idl */; };
+		A80E7AB40A19D1F1007FB8C5 /* HTMLBaseElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A80E7AAF0A19D1F1007FB8C5 /* HTMLBaseElement.idl */; };
+		A80E7AB50A19D1F1007FB8C5 /* HTMLLinkElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A80E7AB00A19D1F1007FB8C5 /* HTMLLinkElement.idl */; };
+		A80E7AB60A19D1F1007FB8C5 /* HTMLHeadElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A80E7AB10A19D1F1007FB8C5 /* HTMLHeadElement.idl */; };
+		A80E7AB70A19D1F1007FB8C5 /* HTMLStyleElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A80E7AB20A19D1F1007FB8C5 /* HTMLStyleElement.idl */; };
+		A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */; };
+		A80E7B0D0A19D606007FB8C5 /* JSHTMLLinkElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7B030A19D606007FB8C5 /* JSHTMLLinkElement.h */; };
+		A80E7B0E0A19D606007FB8C5 /* JSHTMLStyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7B040A19D606007FB8C5 /* JSHTMLStyleElement.h */; };
+		A80E7B0F0A19D606007FB8C5 /* JSHTMLStyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7B050A19D606007FB8C5 /* JSHTMLStyleElement.cpp */; };
+		A80E7B100A19D606007FB8C5 /* JSHTMLLinkElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7B060A19D606007FB8C5 /* JSHTMLLinkElement.cpp */; };
+		A80E7B110A19D606007FB8C5 /* JSHTMLBaseElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */; };
+		A80E7B120A19D606007FB8C5 /* JSHTMLBaseElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7B080A19D606007FB8C5 /* JSHTMLBaseElement.cpp */; };
+		A80E7B130A19D606007FB8C5 /* JSHTMLTitleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */; };
+		A80E7B140A19D606007FB8C5 /* JSHTMLHeadElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */; };
+		A80E7B150A19D606007FB8C5 /* JSHTMLHeadElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */; };
 		A81369CA097374F600D74463 /* HTMLIsIndexElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369AE097374F500D74463 /* HTMLIsIndexElement.h */; };
 		A81369CB097374F600D74463 /* HTMLIsIndexElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */; };
 		A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElement.h */; };
@@ -2038,6 +2053,21 @@
 		A80E79FC0A19C307007FB8C5 /* HTMLMetaElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLMetaElement.idl; sourceTree = "<group>"; };
 		A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMetaElement.cpp; sourceTree = "<group>"; };
 		A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLMetaElement.h; sourceTree = "<group>"; };
+		A80E7AAE0A19D1F1007FB8C5 /* HTMLTitleElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLTitleElement.idl; sourceTree = "<group>"; };
+		A80E7AAF0A19D1F1007FB8C5 /* HTMLBaseElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLBaseElement.idl; sourceTree = "<group>"; };
+		A80E7AB00A19D1F1007FB8C5 /* HTMLLinkElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLLinkElement.idl; sourceTree = "<group>"; };
+		A80E7AB10A19D1F1007FB8C5 /* HTMLHeadElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLHeadElement.idl; sourceTree = "<group>"; };
+		A80E7AB20A19D1F1007FB8C5 /* HTMLStyleElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLStyleElement.idl; sourceTree = "<group>"; };
+		A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTitleElement.h; sourceTree = "<group>"; };
+		A80E7B030A19D606007FB8C5 /* JSHTMLLinkElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLLinkElement.h; sourceTree = "<group>"; };
+		A80E7B040A19D606007FB8C5 /* JSHTMLStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLStyleElement.h; sourceTree = "<group>"; };
+		A80E7B050A19D606007FB8C5 /* JSHTMLStyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLStyleElement.cpp; sourceTree = "<group>"; };
+		A80E7B060A19D606007FB8C5 /* JSHTMLLinkElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLLinkElement.cpp; sourceTree = "<group>"; };
+		A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBaseElement.h; sourceTree = "<group>"; };
+		A80E7B080A19D606007FB8C5 /* JSHTMLBaseElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBaseElement.cpp; sourceTree = "<group>"; };
+		A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTitleElement.cpp; sourceTree = "<group>"; };
+		A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLHeadElement.cpp; sourceTree = "<group>"; };
+		A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLHeadElement.h; sourceTree = "<group>"; };
 		A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTreeDebug.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasTreeDebug.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8122C7E08D564B000844FA3 /* GetSVGDocument.idl */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = GetSVGDocument.idl; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3250,14 +3280,24 @@
 				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
 				14E8378309F85D1C00B85AE4 /* JSEvent.cpp */,
 				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
+				A80E7B080A19D606007FB8C5 /* JSHTMLBaseElement.cpp */,
+				A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */,
 				938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */,
 				938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */,
 				1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */,
 				1A494E330A12358B00FDAFC1 /* JSHTMLDocument.h */,
 				1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */,
 				1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */,
+				A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */,
+				A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */,
+				A80E7B060A19D606007FB8C5 /* JSHTMLLinkElement.cpp */,
+				A80E7B030A19D606007FB8C5 /* JSHTMLLinkElement.h */,
 				A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */,
 				A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */,
+				A80E7B050A19D606007FB8C5 /* JSHTMLStyleElement.cpp */,
+				A80E7B040A19D606007FB8C5 /* JSHTMLStyleElement.h */,
+				A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */,
+				A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
 				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
 				A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */,
@@ -3590,6 +3630,7 @@
 				A8EA7D260A19385500A8EF5F /* HTMLAreaElement.h */,
 				A871DC1E0A15205700B12A68 /* HTMLBaseElement.cpp */,
 				A871DC130A15205700B12A68 /* HTMLBaseElement.h */,
+				A80E7AAF0A19D1F1007FB8C5 /* HTMLBaseElement.idl */,
 				A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElement.cpp */,
 				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */,
 				A8EA7CA80A192B9C00A8EF5F /* HTMLBlockquoteElement.cpp */,
@@ -3637,6 +3678,7 @@
 				A81369B2097374F500D74463 /* HTMLGenericFormElement.h */,
 				A871DE190A152AC800B12A68 /* HTMLHeadElement.cpp */,
 				A871DE210A152AC800B12A68 /* HTMLHeadElement.h */,
+				A80E7AB10A19D1F1007FB8C5 /* HTMLHeadElement.idl */,
 				A8EA7CA00A192B9C00A8EF5F /* HTMLHeadingElement.cpp */,
 				A8EA7CAA0A192B9C00A8EF5F /* HTMLHeadingElement.h */,
 				A8EA7CA50A192B9C00A8EF5F /* HTMLHRElement.cpp */,
@@ -3663,6 +3705,7 @@
 				A8EA79EA0A1916DF00A8EF5F /* HTMLLIElement.h */,
 				A871DC150A15205700B12A68 /* HTMLLinkElement.cpp */,
 				A871DC140A15205700B12A68 /* HTMLLinkElement.h */,
+				A80E7AB00A19D1F1007FB8C5 /* HTMLLinkElement.idl */,
 				A8EA7D2A0A19385500A8EF5F /* HTMLMapElement.cpp */,
 				A8EA7D240A19385500A8EF5F /* HTMLMapElement.h */,
 				A8EA7C9E0A192B9C00A8EF5F /* HTMLMarqueeElement.cpp */,
@@ -3706,6 +3749,7 @@
 				A81369BC097374F500D74463 /* HTMLSelectElement.h */,
 				A871DC1A0A15205700B12A68 /* HTMLStyleElement.cpp */,
 				A871DC170A15205700B12A68 /* HTMLStyleElement.h */,
+				A80E7AB20A19D1F1007FB8C5 /* HTMLStyleElement.idl */,
 				A871DB240A150BD600B12A68 /* HTMLTableCaptionElement.cpp */,
 				A871DB1D0A150BD600B12A68 /* HTMLTableCaptionElement.h */,
 				A871DB200A150BD600B12A68 /* HTMLTableCellElement.cpp */,
@@ -3726,6 +3770,7 @@
 				AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */,
 				A871DC1D0A15205700B12A68 /* HTMLTitleElement.cpp */,
 				A871DC1C0A15205700B12A68 /* HTMLTitleElement.h */,
+				A80E7AAE0A19D1F1007FB8C5 /* HTMLTitleElement.idl */,
 				F523D25202DE4396018635CA /* HTMLTokenizer.cpp */,
 				F523D25302DE4396018635CA /* HTMLTokenizer.h */,
 				A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */,
@@ -5695,6 +5740,11 @@
 				A80E73510A199C77007FB8C5 /* StyleList.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
 				A80E7A180A19C3D6007FB8C5 /* JSHTMLMetaElement.h in Headers */,
+				A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */,
+				A80E7B0D0A19D606007FB8C5 /* JSHTMLLinkElement.h in Headers */,
+				A80E7B0E0A19D606007FB8C5 /* JSHTMLStyleElement.h in Headers */,
+				A80E7B110A19D606007FB8C5 /* JSHTMLBaseElement.h in Headers */,
+				A80E7B150A19D606007FB8C5 /* JSHTMLHeadElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5850,6 +5900,11 @@
 				1A494ED60A123F1A00FDAFC1 /* DocumentFragment.idl in Resources */,
 				A80E79970A19BD21007FB8C5 /* Rect.idl in Resources */,
 				A80E79FD0A19C307007FB8C5 /* HTMLMetaElement.idl in Resources */,
+				A80E7AB30A19D1F1007FB8C5 /* HTMLTitleElement.idl in Resources */,
+				A80E7AB40A19D1F1007FB8C5 /* HTMLBaseElement.idl in Resources */,
+				A80E7AB50A19D1F1007FB8C5 /* HTMLLinkElement.idl in Resources */,
+				A80E7AB60A19D1F1007FB8C5 /* HTMLHeadElement.idl in Resources */,
+				A80E7AB70A19D1F1007FB8C5 /* HTMLStyleElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6528,6 +6583,11 @@
 				A80E734F0A199C77007FB8C5 /* CSSSelector.cpp in Sources */,
 				A80E73530A199C77007FB8C5 /* StyleBase.cpp in Sources */,
 				A80E7A170A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp in Sources */,
+				A80E7B0F0A19D606007FB8C5 /* JSHTMLStyleElement.cpp in Sources */,
+				A80E7B100A19D606007FB8C5 /* JSHTMLLinkElement.cpp in Sources */,
+				A80E7B120A19D606007FB8C5 /* JSHTMLBaseElement.cpp in Sources */,
+				A80E7B130A19D606007FB8C5 /* JSHTMLTitleElement.cpp in Sources */,
+				A80E7B140A19D606007FB8C5 /* JSHTMLHeadElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

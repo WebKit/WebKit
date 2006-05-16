@@ -1,3 +1,31 @@
+2006-05-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Autogenerate BASE, HEAD, LINK, STYLE and TITLE JS bindings.
+
+        Already covered by existing dom tests.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createBaseWrapper):
+        (WebCore::createHeadWrapper):
+        (WebCore::createLinkWrapper):
+        (WebCore::createStyleWrapper):
+        (WebCore::createTitleWrapper):
+        (WebCore::createJSWrapper):
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        * bindings/js/kjs_html.h:
+        * html/HTMLBaseElement.idl: Added.
+        * html/HTMLHeadElement.idl: Added.
+        * html/HTMLLinkElement.idl: Added.
+        * html/HTMLStyleElement.idl: Added.
+        * html/HTMLTitleElement.idl: Added.
+
 2006-05-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

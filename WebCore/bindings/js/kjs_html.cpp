@@ -463,7 +463,6 @@ const ClassInfo JSHTMLElement::a_info = { "HTMLAnchorElement", &JSHTMLElement::i
 const ClassInfo JSHTMLElement::applet_info = { "HTMLAppletElement", &JSHTMLElement::info, &HTMLAppletElementTable, 0 };
 const ClassInfo JSHTMLElement::area_info = { "HTMLAreaElement", &JSHTMLElement::info, &HTMLAreaElementTable, 0 };
 const ClassInfo JSHTMLElement::baseFont_info = { "HTMLBaseFontElement", &JSHTMLElement::info, &HTMLBaseFontElementTable, 0 };
-const ClassInfo JSHTMLElement::base_info = { "HTMLBaseElement", &JSHTMLElement::info, &HTMLBaseElementTable, 0 };
 const ClassInfo JSHTMLElement::blockQuote_info = { "HTMLBlockQuoteElement", &JSHTMLElement::info, &HTMLBlockQuoteElementTable, 0 };
 const ClassInfo JSHTMLElement::body_info = { "HTMLBodyElement", &JSHTMLElement::info, &HTMLBodyElementTable, 0 };
 const ClassInfo JSHTMLElement::br_info = { "HTMLBRElement", &JSHTMLElement::info, &HTMLBRElementTable, 0 };
@@ -479,7 +478,6 @@ const ClassInfo JSHTMLElement::font_info = { "HTMLFontElement", &JSHTMLElement::
 const ClassInfo JSHTMLElement::form_info = { "HTMLFormElement", &JSHTMLElement::info, &HTMLFormElementTable, 0 };
 const ClassInfo JSHTMLElement::frameSet_info = { "HTMLFrameSetElement", &JSHTMLElement::info, &HTMLFrameSetElementTable, 0 };
 const ClassInfo JSHTMLElement::frame_info = { "HTMLFrameElement", &JSHTMLElement::info, &HTMLFrameElementTable, 0 };
-const ClassInfo JSHTMLElement::head_info = { "HTMLHeadElement", &JSHTMLElement::info, &HTMLHeadElementTable, 0 };
 const ClassInfo JSHTMLElement::heading_info = { "HTMLHeadingElement", &JSHTMLElement::info, &HTMLHeadingElementTable, 0 };
 const ClassInfo JSHTMLElement::hr_info = { "HTMLHRElement", &JSHTMLElement::info, &HTMLHRElementTable, 0 };
 const ClassInfo JSHTMLElement::html_info = { "HTMLHtmlElement", &JSHTMLElement::info, &HTMLHtmlElementTable, 0 };
@@ -491,7 +489,6 @@ const ClassInfo JSHTMLElement::isIndex_info = { "HTMLIsIndexElement", &JSHTMLEle
 const ClassInfo JSHTMLElement::label_info = { "HTMLLabelElement", &JSHTMLElement::info, &HTMLLabelElementTable, 0 };
 const ClassInfo JSHTMLElement::legend_info = { "HTMLLegendElement", &JSHTMLElement::info, &HTMLLegendElementTable, 0 };
 const ClassInfo JSHTMLElement::li_info = { "HTMLLIElement", &JSHTMLElement::info, &HTMLLIElementTable, 0 };
-const ClassInfo JSHTMLElement::link_info = { "HTMLLinkElement", &JSHTMLElement::info, &HTMLLinkElementTable, 0 };
 const ClassInfo JSHTMLElement::map_info = { "HTMLMapElement", &JSHTMLElement::info, &HTMLMapElementTable, 0 };
 const ClassInfo JSHTMLElement::marquee_info = { "HTMLMarqueeElement", &JSHTMLElement::info, &HTMLMarqueeElementTable, 0 };
 const ClassInfo JSHTMLElement::menu_info = { "HTMLMenuElement", &JSHTMLElement::info, &HTMLMenuElementTable, 0 };
@@ -506,12 +503,10 @@ const ClassInfo JSHTMLElement::pre_info = { "HTMLPreElement", &JSHTMLElement::in
 const ClassInfo JSHTMLElement::q_info = { "HTMLQuoteElement", &JSHTMLElement::info, &HTMLQuoteElementTable, 0 };
 const ClassInfo JSHTMLElement::script_info = { "HTMLScriptElement", &JSHTMLElement::info, &HTMLScriptElementTable, 0 };
 const ClassInfo JSHTMLElement::select_info = { "HTMLSelectElement", &JSHTMLElement::info, &HTMLSelectElementTable, 0 };
-const ClassInfo JSHTMLElement::style_info = { "HTMLStyleElement", &JSHTMLElement::info, &HTMLStyleElementTable, 0 };
 const ClassInfo JSHTMLElement::table_info = { "HTMLTableElement", &JSHTMLElement::info, &HTMLTableElementTable, 0 };
 const ClassInfo JSHTMLElement::tablecell_info = { "HTMLTableCellElement", &JSHTMLElement::info, &HTMLTableCellElementTable, 0 };
 const ClassInfo JSHTMLElement::tablesection_info = { "HTMLTableSectionElement", &JSHTMLElement::info, &HTMLTableSectionElementTable, 0 };
 const ClassInfo JSHTMLElement::textArea_info = { "HTMLTextAreaElement", &JSHTMLElement::info, &HTMLTextAreaElementTable, 0 };
-const ClassInfo JSHTMLElement::title_info = { "HTMLTitleElement", &JSHTMLElement::info, &HTMLTitleElementTable, 0 };
 const ClassInfo JSHTMLElement::tr_info = { "HTMLTableRowElement", &JSHTMLElement::info, &HTMLTableRowElementTable, 0 };
 const ClassInfo JSHTMLElement::ul_info = { "HTMLUListElement", &JSHTMLElement::info, &HTMLUListElementTable, 0 };
 
@@ -521,7 +516,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
     if (classInfoMap.isEmpty()) {
         classInfoMap.set(appletTag.localName().impl(), &applet_info);
         classInfoMap.set(areaTag.localName().impl(), &area_info);
-        classInfoMap.set(baseTag.localName().impl(), &base_info);
         classInfoMap.set(basefontTag.localName().impl(), &baseFont_info);
         classInfoMap.set(blockquoteTag.localName().impl(), &blockQuote_info);
         classInfoMap.set(bodyTag.localName().impl(), &body_info);
@@ -546,7 +540,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(h4Tag.localName().impl(), &heading_info);
         classInfoMap.set(h5Tag.localName().impl(), &heading_info);
         classInfoMap.set(h6Tag.localName().impl(), &heading_info);
-        classInfoMap.set(headTag.localName().impl(), &head_info);
         classInfoMap.set(hrTag.localName().impl(), &hr_info);
         classInfoMap.set(htmlTag.localName().impl(), &html_info);
         classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
@@ -557,7 +550,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(labelTag.localName().impl(), &label_info);
         classInfoMap.set(legendTag.localName().impl(), &legend_info);
         classInfoMap.set(liTag.localName().impl(), &li_info);
-        classInfoMap.set(linkTag.localName().impl(), &link_info);
         classInfoMap.set(listingTag.localName().impl(), &pre_info);
         classInfoMap.set(mapTag.localName().impl(), &map_info);
         classInfoMap.set(marqueeTag.localName().impl(), &marquee_info);
@@ -572,7 +564,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(qTag.localName().impl(), &q_info);
         classInfoMap.set(scriptTag.localName().impl(), &script_info);
         classInfoMap.set(selectTag.localName().impl(), &select_info);
-        classInfoMap.set(styleTag.localName().impl(), &style_info);
         classInfoMap.set(tableTag.localName().impl(), &table_info);
         classInfoMap.set(tbodyTag.localName().impl(), &tablesection_info);
         classInfoMap.set(tdTag.localName().impl(), &tablecell_info);
@@ -580,7 +571,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(tfootTag.localName().impl(), &tablesection_info);
         classInfoMap.set(thTag.localName().impl(), &tablecell_info);
         classInfoMap.set(theadTag.localName().impl(), &tablesection_info);
-        classInfoMap.set(titleTag.localName().impl(), &title_info);
         classInfoMap.set(trTag.localName().impl(), &tr_info);
         classInfoMap.set(ulTag.localName().impl(), &ul_info);
         classInfoMap.set(aTag.localName().impl(), &a_info);
@@ -594,12 +584,7 @@ const ClassInfo* JSHTMLElement::classInfo() const
 }
 
 const JSHTMLElement::Accessors JSHTMLElement::html_accessors = { &JSHTMLElement::htmlGetter, &JSHTMLElement::htmlSetter };
-const JSHTMLElement::Accessors JSHTMLElement::head_accessors = { &JSHTMLElement::headGetter, &JSHTMLElement::headSetter };
-const JSHTMLElement::Accessors JSHTMLElement::link_accessors = { &JSHTMLElement::linkGetter, &JSHTMLElement::linkSetter };
-const JSHTMLElement::Accessors JSHTMLElement::title_accessors = { &JSHTMLElement::titleGetter, &JSHTMLElement::titleSetter };
-const JSHTMLElement::Accessors JSHTMLElement::base_accessors = { &JSHTMLElement::baseGetter, &JSHTMLElement::baseSetter };
 const JSHTMLElement::Accessors JSHTMLElement::isIndex_accessors = { &JSHTMLElement::isIndexGetter, &JSHTMLElement::isIndexSetter };
-const JSHTMLElement::Accessors JSHTMLElement::style_accessors = { &JSHTMLElement::styleGetter, &JSHTMLElement::styleSetter };
 const JSHTMLElement::Accessors JSHTMLElement::body_accessors = { &JSHTMLElement::bodyGetter, &JSHTMLElement::bodySetter };
 const JSHTMLElement::Accessors JSHTMLElement::form_accessors = { &JSHTMLElement::formGetter, &JSHTMLElement::formSetter };
 const JSHTMLElement::Accessors JSHTMLElement::select_accessors = { &JSHTMLElement::selectGetter, &JSHTMLElement::selectSetter };
@@ -655,7 +640,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(aTag.localName().impl(), &a_accessors);
         accessorMap.add(appletTag.localName().impl(), &applet_accessors);
         accessorMap.add(areaTag.localName().impl(), &area_accessors);
-        accessorMap.add(baseTag.localName().impl(), &base_accessors);
         accessorMap.add(basefontTag.localName().impl(), &baseFont_accessors);
         accessorMap.add(blockquoteTag.localName().impl(), &blockQuote_accessors); 
         accessorMap.add(bodyTag.localName().impl(), &body_accessors);
@@ -680,7 +664,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(h4Tag.localName().impl(), &heading_accessors);
         accessorMap.add(h5Tag.localName().impl(), &heading_accessors);
         accessorMap.add(h6Tag.localName().impl(), &heading_accessors);
-        accessorMap.add(headTag.localName().impl(), &head_accessors);
         accessorMap.add(hrTag.localName().impl(), &hr_accessors); 
         accessorMap.add(htmlTag.localName().impl(), &html_accessors);
         accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
@@ -691,7 +674,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(labelTag.localName().impl(), &label_accessors);
         accessorMap.add(legendTag.localName().impl(), &legend_accessors);
         accessorMap.add(liTag.localName().impl(), &li_accessors);
-        accessorMap.add(linkTag.localName().impl(), &link_accessors);
         accessorMap.set(listingTag.localName().impl(), &pre_accessors);
         accessorMap.add(mapTag.localName().impl(), &map_accessors);
         accessorMap.add(marqueeTag.localName().impl(), &marquee_accessors);
@@ -706,7 +688,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(qTag.localName().impl(), &q_accessors);
         accessorMap.add(scriptTag.localName().impl(), &script_accessors);
         accessorMap.add(selectTag.localName().impl(), &select_accessors);
-        accessorMap.add(styleTag.localName().impl(), &style_accessors);
         accessorMap.add(tableTag.localName().impl(), &table_accessors);
         accessorMap.add(tbodyTag.localName().impl(), &tablesection_accessors);
         accessorMap.add(tdTag.localName().impl(), &tablecell_accessors);
@@ -714,7 +695,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(thTag.localName().impl(), &tablecell_accessors);
         accessorMap.add(theadTag.localName().impl(), &tablesection_accessors);
         accessorMap.add(tfootTag.localName().impl(), &tablesection_accessors);
-        accessorMap.add(titleTag.localName().impl(), &title_accessors);
         accessorMap.add(trTag.localName().impl(), &tr_accessors);
         accessorMap.add(ulTag.localName().impl(), &ul_accessors);
     }
@@ -1392,78 +1372,12 @@ JSValue *JSHTMLElement::htmlGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::headGetter(ExecState* exec, int token) const
-{
-    HTMLHeadElement& head = *static_cast<HTMLHeadElement*>(impl());
-    if (token == HeadProfile)
-        return jsString(head.profile());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::linkGetter(ExecState* exec, int token) const
-{
-    HTMLLinkElement& link = *static_cast<HTMLLinkElement*>(impl());
-    switch (token) {
-        case LinkDisabled:
-            return jsBoolean(link.disabled());
-        case LinkCharset:
-            return jsString(link.charset());
-        case LinkHref:
-            return jsString(link.href());
-        case LinkHrefLang:
-            return jsString(link.hreflang());
-        case LinkMedia:           
-            return jsString(link.media());
-        case LinkRel:             
-            return jsString(link.rel());
-        case LinkRev:            
-            return jsString(link.rev());
-        case LinkTarget:          
-            return jsString(link.target());
-        case LinkType:            
-            return jsString(link.type());
-        case LinkSheet:           
-            return toJS(exec, link.sheet());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::titleGetter(ExecState* exec, int token) const
-{
-    HTMLTitleElement& title = *static_cast<HTMLTitleElement*>(impl());
-    if (token == TitleText)
-        return jsString(title.text());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::baseGetter(ExecState* exec, int token) const
-{
-    HTMLBaseElement& base = *static_cast<HTMLBaseElement*>(impl());
-    switch (token) {
-        case BaseHref:            return jsString(base.href());
-        case BaseTarget:          return jsString(base.target());
-    }
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::isIndexGetter(ExecState* exec, int token) const
 {
     HTMLIsIndexElement& isindex = *static_cast<HTMLIsIndexElement*>(impl());
     switch (token) {
         case IsIndexForm:            return toJS(exec, isindex.form()); // type HTMLFormElement
         case IsIndexPrompt:          return jsString(isindex.prompt());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::styleGetter(ExecState* exec, int token) const
-{
-    HTMLStyleElement& style = *static_cast<HTMLStyleElement*>(impl());
-    switch (token) {
-        case StyleDisabled:        return jsBoolean(style.disabled());
-        case StyleMedia:           return jsString(style.media());
-        case StyleType:            return jsString(style.type());
-        case StyleSheet:           return toJS(exec, style.sheet());
     }
     return jsUndefined();
 }
@@ -2496,60 +2410,11 @@ void JSHTMLElement::htmlSetter(ExecState *exec, int token, JSValue *value, const
         head.setProfile(str);
 }
 
-void JSHTMLElement::headSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLHeadElement &head = *static_cast<HTMLHeadElement*>(impl());
-    if (token == HeadProfile) 
-        head.setProfile(str);
-}
-
-void JSHTMLElement::linkSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLLinkElement &link = *static_cast<HTMLLinkElement*>(impl());
-    switch (token) {
-        case LinkDisabled:        { link.setDisabled(value->toBoolean(exec)); return; }
-        case LinkCharset:         { link.setCharset(str); return; }
-        case LinkHref:            { link.setHref(str); return; }
-        case LinkHrefLang:        { link.setHreflang(str); return; }
-        case LinkMedia:           { link.setMedia(str); return; }
-        case LinkRel:             { link.setRel(str); return; }
-        case LinkRev:             { link.setRev(str); return; }
-        case LinkTarget:          { link.setTarget(str); return; }
-        case LinkType:            { link.setType(str); return; }
-    }
-}
-
-void JSHTMLElement::titleSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-     HTMLTitleElement& title = *static_cast<HTMLTitleElement*>(impl());
-     if (token == TitleText)
-        title.setText(str);
-}
-
-void JSHTMLElement::baseSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLBaseElement& base = *static_cast<HTMLBaseElement*>(impl());
-    switch (token) {
-        case BaseHref:            { base.setHref(str); return; }
-        case BaseTarget:          { base.setTarget(str); return; }
-    }
-}
-
 void JSHTMLElement::isIndexSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLIsIndexElement& isindex = *static_cast<HTMLIsIndexElement*>(impl());
     if (token == IsIndexPrompt)
         isindex.setPrompt(str);
-}
-
-void JSHTMLElement::styleSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLStyleElement& style = *static_cast<HTMLStyleElement*>(impl());
-    switch (token) {
-        case StyleDisabled:        { style.setDisabled(value->toBoolean(exec)); return; }
-        case StyleMedia:           { style.setMedia(str); return; }
-        case StyleType:            { style.setType(str); return; }
-    }
 }
 
 void JSHTMLElement::bodySetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
