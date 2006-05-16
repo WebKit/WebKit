@@ -47,7 +47,6 @@
 #include "RenderCanvas.h"
 #include "Screen.h"
 #include "SelectionController.h"
-#include "css_ruleimpl.h"
 #include "dom2_eventsimpl.h"
 #include "htmlediting.h"
 #include "kjs_css.h"

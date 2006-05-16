@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InsertTextCommand.h"
 
+#include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
 #include "Element.h"
 #include "EditingText.h"
@@ -137,7 +138,7 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
     // Handle the case where there is a typing style.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSMutableStyleDeclaration *typingStyle = document()->frame()->typingStyle();
+    CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
     if (typingStyle && typingStyle->length() > 0)
         applyStyle(typingStyle);
 

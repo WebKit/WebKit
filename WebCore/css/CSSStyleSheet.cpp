@@ -22,8 +22,9 @@
 #include "config.h"
 #include "CSSStyleSheet.h"
 
-#include "css_ruleimpl.h"
-#include "CSSParser.h"
+#include "CSSImportRule.h"
+#include "cssparser.h"
+#include "CSSRuleList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Node.h"
@@ -56,7 +57,7 @@ CSSStyleSheet::CSSStyleSheet(CSSRule *ownerRule, String href)
 
 CSSRule *CSSStyleSheet::ownerRule() const
 {
-    return (parent() && parent()->isRule()) ? static_cast<CSSRule *>(parent()) : 0;
+    return (parent() && parent()->isRule()) ? static_cast<CSSRule*>(parent()) : 0;
 }
 
 unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, ExceptionCode& ec)

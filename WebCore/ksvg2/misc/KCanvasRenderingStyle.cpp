@@ -24,26 +24,23 @@
 #include "config.h"
 #if SVG_SUPPORT
 
-#include <RenderObject.h>
-
-#include <kcanvas/KCanvasPath.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include <kcanvas/device/KRenderingFillPainter.h>
-#include <kcanvas/device/KRenderingStrokePainter.h>
-#include <kcanvas/device/KRenderingPaintServerSolid.h>
-#include <kcanvas/device/KRenderingPaintServerGradient.h>
-#include <kcanvas/device/KRenderingPaintServer.h>
-
+#include "CSSValueList.h"
 #include "Document.h"
-#include "PlatformString.h"
-#include "render_style.h"
-#include "css_valueimpl.h"
-
-#include "ksvg.h"
-#include "SVGLength.h"
-#include "SVGStyledElement.h"
+#include "KCanvasPath.h"
 #include "KCanvasRenderingStyle.h"
+#include "KRenderingDevice.h"
+#include "KRenderingFillPainter.h"
+#include "KRenderingPaintServer.h"
+#include "KRenderingPaintServerGradient.h"
+#include "KRenderingPaintServerSolid.h"
+#include "KRenderingStrokePainter.h"
+#include "PlatformString.h"
+#include "RenderObject.h"
+#include "SVGLength.h"
 #include "SVGRenderStyle.h"
+#include "SVGStyledElement.h"
+#include "ksvg.h"
+#include "render_style.h"
 
 namespace WebCore {
 

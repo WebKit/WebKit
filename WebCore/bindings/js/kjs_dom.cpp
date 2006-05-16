@@ -55,7 +55,6 @@
 #include "ProcessingInstruction.h"
 #include "Range.h"
 #include "RenderCanvas.h"
-#include "css_ruleimpl.h"
 #include "dom2_eventsimpl.h"
 #include "kjs_css.h"
 #include "kjs_events.h"

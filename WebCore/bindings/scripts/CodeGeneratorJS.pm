@@ -146,20 +146,7 @@ sub AddIncludesForType
   # When we're finished with the one-file-per-class 
   # reorganization, we don't need these special cases.
   
-  if ($type eq "CSSRuleList" or
-           $type eq "CSSRule") {
-    $implIncludes{"css_ruleimpl.h"} = 1;
-  } elsif ($type eq "CSSPrimitiveValue" or 
-           $type eq "CSSValue" or
-           $type eq "Counter" or 
-           $type eq "Rect" or 
-           $type eq "RGBColor") {
-    $implIncludes{"css_valueimpl.h"} = 1;
-  } elsif ($type eq "CSSStyleDeclaration") {
-    $implIncludes{"css_valueimpl.h"} = 1;
-  } elsif ($type eq "HTMLDocument") {
-    $implIncludes{"HTMLDocument.h"} = 1;
-  } elsif ($type eq "MutationEvent" or
+  if ($type eq "MutationEvent" or
            $type eq "KeyboardEvent" or
            $type eq "MouseEvent" or
            $type eq "Event" or
@@ -179,7 +166,7 @@ sub AddIncludesForType
     $implIncludes{"CanvasGradient.h"} = 1;
     $implIncludes{"PlatformString.h"} = 1;
   } elsif ($codeGenerator->IsPrimitiveType($type) or
-           $type eq "DOMString" or $type eq "DOMObject") {
+           $type eq "DOMString" or $type eq "DOMObject" or $type eq "RGBColor" or $type eq "Rect") {
   } else {
     # default, include the same named file
     $implIncludes{"${type}.h"} = 1;
@@ -982,7 +969,6 @@ sub NativeToJSValue
   } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet" or $type eq "MediaList") {
     $implIncludes{"CSSStyleSheet.h"} = 1;
     $implIncludes{"MediaList.h"} = 1;
-    $implIncludes{"css_ruleimpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "StyleSheetList") {
@@ -990,10 +976,11 @@ sub NativeToJSValue
      $implIncludes{"kjs_css.h"} = 1;
      return "toJS(exec, $value, impl)";
   } elsif ($type eq "CSSRuleList") {
-    $implIncludes{"css_ruleimpl.h"} = 1;
-    return "toJS(exec, $value)";  
-  } elsif ($type eq "CSSStyleDeclaration" or $type eq "Rect") {
-    $implIncludes{"css_valueimpl.h"} = 1;
+     $implIncludes{"CSSRuleList.h"} = 1;
+     return "toJS(exec, $value)";  
+   } elsif ($type eq "CSSStyleDeclaration" or $type eq "Rect") {
+    $implIncludes{"CSSStyleDeclaration.h"} = 1;
+    $implIncludes{"RectImpl.h"} = 1;
     $implIncludes{"kjs_css.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "RGBColor") {
@@ -1002,14 +989,6 @@ sub NativeToJSValue
   } elsif ($type eq "HTMLCanvasElement") {
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"HTMLCanvasElement.h"} = 1;
-    return "toJS(exec, $value)";
-  } elsif ($type eq "CanvasGradient" or 
-           $type eq "Counter" or 
-           $type eq "Range" or
-           $type eq "XPathExpression" or
-           $type eq "XPathNSResolver" or
-           $type eq "XPathResult") {
-    $implIncludes{"JS$type.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "NodeIterator" or
 	   $type eq "TreeWalker") {
@@ -1021,10 +1000,9 @@ sub NativeToJSValue
   } elsif ($type eq "DOMObject") {
     $implIncludes{"JSCanvasRenderingContext2DBase.h"} = 1;
     return "toJS(exec, $value)";
+  } else {
     $implIncludes{"JS$type.h"} = 1;
     return "toJS(exec, $value)";
-  } else {
-    die "Don't know how to convert a value of type $type to a JS Value";
   }
   
   die ("$value " . $signature->type);

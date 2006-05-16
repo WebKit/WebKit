@@ -24,13 +24,15 @@
 
 #include "config.h"
 
+#include "CSSMediaRule.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSRule.h"
+#include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
 #include "PlatformString.h"
-#include "css_ruleimpl.h"
-#include "css_valueimpl.h"
 #include "cssparser.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -120,12 +122,12 @@ static inline int getValueID(const char* tagStr, int len)
 %pure_parser
 
 %union {
-    CSSRule *rule;
-    CSSSelector *selector;
+    CSSRule* rule;
+    CSSSelector* selector;
     bool ok;
     MediaList *mediaList;
-    CSSMediaRule *mediaRule;
-    CSSRuleList *ruleList;
+    CSSMediaRule* mediaRule;
+    CSSRuleList* ruleList;
     ParseString string;
     float val;
     int prop_id;
@@ -135,7 +137,7 @@ static inline int getValueID(const char* tagStr, int len)
     int i;
     char tok;
     Value value;
-    ValueList *valueList;
+    ValueList* valueList;
 }
 
 %{

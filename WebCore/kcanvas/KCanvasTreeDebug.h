@@ -63,11 +63,11 @@ QTextStream &operator<<(QTextStream &ts, const WebCore::FloatPoint &);
 QTextStream &operator<<(QTextStream &ts, const DeprecatedStringList &l);
     
 template<typename Item>
-QTextStream &operator<<(QTextStream &ts, const Q3ValueList<Item*> &l)
+QTextStream &operator<<(QTextStream &ts, const DeprecatedValueList<Item*> &l)
 {
     ts << "[";
-    typename Q3ValueList<Item*>::ConstIterator it = l.begin();
-    typename Q3ValueList<Item*>::ConstIterator it_e = l.end();
+    typename DeprecatedValueList<Item*>::ConstIterator it = l.begin();
+    typename DeprecatedValueList<Item*>::ConstIterator it_e = l.end();
     while (it != it_e)
     {
         ts << *(*it);
@@ -80,11 +80,11 @@ QTextStream &operator<<(QTextStream &ts, const Q3ValueList<Item*> &l)
 }
 
 template<typename Item>
-QTextStream &operator<<(QTextStream &ts, const Q3ValueList<Item> &l)
+QTextStream &operator<<(QTextStream &ts, const DeprecatedValueList<Item> &l)
 {
     ts << "[";
-    typename Q3ValueList<Item>::ConstIterator it = l.begin();
-    typename Q3ValueList<Item>::ConstIterator it_e = l.end();
+    typename DeprecatedValueList<Item>::ConstIterator it = l.begin();
+    typename DeprecatedValueList<Item>::ConstIterator it_e = l.end();
     while (it != it_e)
     {
         ts << *it;

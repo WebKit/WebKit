@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InsertLineBreakCommand.h"
 
-#include "css_valueimpl.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
@@ -158,7 +158,7 @@ void InsertLineBreakCommand::doApply()
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     
-    CSSMutableStyleDeclaration *typingStyle = document()->frame()->typingStyle();
+    CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
     
     if (typingStyle && typingStyle->length() > 0) {
         Selection selectionBeforeStyle = endingSelection();

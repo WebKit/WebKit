@@ -26,7 +26,17 @@
 #import "config.h"
 #import "DOMCSS.h"
 
+#import "CSSCharsetRule.h"
+#import "CSSFontFaceRule.h"
+#import "CSSImportRule.h"
+#import "CSSMediaRule.h"
+#import "CSSPageRule.h"
+#import "CSSRule.h"
+#import "CSSRuleList.h"
+#import "CSSStyleRule.h"
 #import "CSSStyleSheet.h"
+#import "CSSValueList.h"
+#import "Counter.h"
 #import "DOMInternal.h"
 #import "DOMWindow.h"
 #import "Document.h"
@@ -35,9 +45,10 @@
 #import "HTMLStyleElement.h"
 #import "MediaList.h"
 #import "ProcessingInstruction.h"
+#import "RectImpl.h"
 #import "StyleSheet.h"
 #import "StyleSheetList.h"
-#import "css_ruleimpl.h"
+
 #import <objc/objc-class.h>
 
 using namespace WebCore;

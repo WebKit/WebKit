@@ -30,6 +30,8 @@
 #define KSVG_SVGRenderStyleDefs_H
 #if SVG_SUPPORT
 
+#include "DeprecatedString.h"
+
 // Helper macros for 'SVGRenderStyle'
 #define SVG_RS_DEFINE_ATTRIBUTE(Data, Type, Name, Initial) \
     void set##Type(Data val) { svg_noninherited_flags.f._##Name = val; } \
@@ -112,6 +114,8 @@ namespace WebCore
         PE_NONE, PE_STROKE, PE_FILL, PE_PAINTED, PE_VISIBLE,
         PE_VISIBLE_STROKE, PE_VISIBLE_FILL, PE_VISIBLE_PAINTED, PE_ALL
     };
+    
+    class CSSValueList;
 
     // Inherited/Non-Inherited Style Datastructures
     class StyleFillData : public Shared<StyleFillData>
@@ -148,11 +152,11 @@ namespace WebCore
         float opacity;
         unsigned int miterLimit;
 
-        CSSValue *width;
-        CSSValue *dashOffset;
+        CSSValue* width;
+        CSSValue* dashOffset;
 
-        SVGPaint *paint;
-        CSSValueList *dashArray;
+        SVGPaint* paint;
+        CSSValueList* dashArray;
 
     private:
         StyleStrokeData &operator=(const StyleStrokeData &);

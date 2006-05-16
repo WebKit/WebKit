@@ -1,3 +1,178 @@
+2006-05-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Split css_valueimpl.* and css_ruleimpl.* into separate files (one per class).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8934
+
+        * WebCore+SVG/RGBColor.cpp:
+        (WebCore::RGBColor::RGBColor):
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSRule::classInfo):
+        * bindings/js/kjs_css.h:
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_html.cpp:
+        * bindings/js/kjs_window.cpp:
+        * bindings/objc/DOMCSS.mm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSBorderImageValue.cpp: Added.
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        * css/CSSBorderImageValue.h: Added.
+        * css/CSSCharsetRule.h: Added.
+        (WebCore::CSSCharsetRule::CSSCharsetRule):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForShadow):
+        (WebCore::):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSFontFaceRule.cpp: Added.
+        (WebCore::CSSFontFaceRule::CSSFontFaceRule):
+        * css/CSSFontFaceRule.h: Added.
+        (WebCore::CSSFontFaceRule::isFontFaceRule):
+        * css/CSSGrammar.y:
+        * css/CSSImageValue.cpp: Added.
+        (WebCore::CSSImageValue::CSSImageValue):
+        * css/CSSImageValue.h: Added.
+        * css/CSSImportRule.cpp: Added.
+        * css/CSSImportRule.h: Added.
+        * css/CSSInheritedValue.cpp: Added.
+        * css/CSSInheritedValue.h: Added.
+        * css/CSSInitialValue.cpp: Added.
+        * css/CSSInitialValue.h: Added.
+        * css/CSSMediaRule.cpp: Added.
+        (WebCore::CSSMediaRule::CSSMediaRule):
+        (WebCore::CSSMediaRule::~CSSMediaRule):
+        (WebCore::CSSMediaRule::append):
+        (WebCore::CSSMediaRule::deleteRule):
+        (WebCore::CSSMediaRule::cssText):
+        * css/CSSMediaRule.h: Added.
+        (WebCore::CSSMediaRule::media):
+        (WebCore::CSSMediaRule::cssRules):
+        * css/CSSMutableStyleDeclaration.cpp: Added.
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::setChanged):
+        * css/CSSMutableStyleDeclaration.h: Added.
+        * css/CSSPageRule.cpp: Added.
+        (WebCore::CSSPageRule::CSSPageRule):
+        * css/CSSPageRule.h: Added.
+        (WebCore::CSSPageRule::isPageRule):
+        * css/CSSPrimitiveValue.cpp: Added.
+        * css/CSSPrimitiveValue.h: Added.
+        * css/CSSProperty.cpp: Added.
+        (WebCore::CSSProperty::cssText):
+        * css/CSSProperty.h: Added.
+        (WebCore::CSSProperty::CSSProperty):
+        * css/CSSQuirkPrimitiveValue.h: Added.
+        * css/CSSRule.cpp: Added.
+        * css/CSSRule.h: Added.
+        (WebCore::CSSRule::CSSRule):
+        * css/CSSRuleList.cpp: Added.
+        (WebCore::CSSRuleList::CSSRuleList):
+        (WebCore::CSSRuleList::~CSSRuleList):
+        (WebCore::CSSRuleList::deleteRule):
+        (WebCore::CSSRuleList::append):
+        (WebCore::CSSRuleList::insertRule):
+        * css/CSSRuleList.h: Added.
+        (WebCore::CSSRuleList::item):
+        * css/CSSStyleDeclaration.cpp: Added.
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+        (WebCore::CSSStyleDeclaration::diff):
+        * css/CSSStyleDeclaration.h: Added.
+        * css/CSSStyleRule.cpp: Added.
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        (WebCore::CSSStyleRule::selectorText):
+        * css/CSSStyleRule.h: Added.
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::ownerRule):
+        * css/CSSUnknownRule.h: Added.
+        (WebCore::CSSUnknownRule::CSSUnknownRule):
+        * css/CSSValue.h: Added.
+        * css/CSSValueList.cpp: Added.
+        * css/CSSValueList.h: Added.
+        * css/Counter.h: Added.
+        * css/DashboardRegion.h: Added.
+        * css/FontFamilyValue.cpp: Added.
+        * css/FontFamilyValue.h: Added.
+        (WebCore::FontFamilyValue::genericFamilyType):
+        * css/FontValue.cpp: Added.
+        (WebCore::FontValue::cssText):
+        * css/FontValue.h: Added.
+        * css/MediaList.cpp:
+        * css/Pair.h: Added.
+        (WebCore::Pair::~Pair):
+        * css/RectImpl.h: Added.
+        (WebCore::RectImpl::~RectImpl):
+        * css/ShadowValue.cpp: Added.
+        (WebCore::ShadowValue::ShadowValue):
+        * css/ShadowValue.h: Added.
+        * css/css_base.cpp:
+        * css/css_ruleimpl.cpp: Removed.
+        * css/css_ruleimpl.h: Removed.
+        * css/css_valueimpl.cpp: Removed.
+        * css/css_valueimpl.h: Removed.
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseFontFamily):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::locateCousinList):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundImage):
+        * css/cssstyleselector.h:
+        * dom/CSSMappedAttributeDeclaration.h:
+        (WebCore::CSSMappedAttributeDeclaration::CSSMappedAttributeDeclaration):
+        * dom/Document.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/CompositeEditCommand.h:
+        * editing/EditCommand.cpp:
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertLineBreakCommand.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/RemoveCSSPropertyCommand.cpp:
+        (WebCore::RemoveCSSPropertyCommand::RemoveCSSPropertyCommand):
+        (WebCore::RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand):
+        * editing/RemoveCSSPropertyCommand.h:
+        (WebCore::RemoveCSSPropertyCommand::styleDeclaration):
+        * html/HTMLBodyElement.cpp:
+        * html/HTMLElement.cpp:
+        * html/HTMLScriptElement.h:
+        * html/HTMLTokenizer.h:
+        * kcanvas/KCanvasFilters.h:
+        (WebCore::KCanvasFEColorMatrix::values):
+        (WebCore::KCanvasFEColorMatrix::setValues):
+        (WebCore::KCanvasFEConvolveMatrix::kernel):
+        (WebCore::KCanvasFEConvolveMatrix::setKernel):
+        * kcanvas/KCanvasPath.h:
+        * kcanvas/KCanvasTreeDebug.h:
+        (WebCore::operator<<):
+        * kcanvas/RenderPath.h:
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGStrokeDasharray):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/ecma/Ecma.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        * ksvg2/svg/SVGColor.cpp:
+        * ksvg2/svg/SVGColor.h:
+        * ksvg2/svg/SVGCursorElement.h:
+        * ksvg2/svg/SVGFEColorMatrixElement.cpp:
+        (SVGFEColorMatrixElement::filterEffect):
+        * page/DOMWindow.cpp:
+        * page/Frame.cpp:
+        * page/FramePrivate.h:
+        * platform/DeprecatedValueList.h:
+        * rendering/RenderTextField.cpp:
+
 2006-05-15  Darin Adler  <darin@apple.com>
 
         * WebCore.xcodeproj/project.pbxproj: Removed duplicate files that were

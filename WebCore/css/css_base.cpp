@@ -27,7 +27,6 @@
 #include "css_base.h"
 
 #include "Document.h"
-#include "css_valueimpl.h"
 #include "StyleSheet.h"
 
 namespace WebCore {

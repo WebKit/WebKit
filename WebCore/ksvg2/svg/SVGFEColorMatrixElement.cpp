@@ -103,7 +103,7 @@ KCanvasFEColorMatrix *SVGFEColorMatrixElement::filterEffect() const
         
     m_filterEffect->setIn(String(in1()->baseVal()).deprecatedString());
     setStandardAttributes(m_filterEffect);
-    Q3ValueList<float> _values;
+    DeprecatedValueList<float> _values;
     SVGNumberList *numbers = values()->baseVal();
     unsigned int nr = numbers->numberOfItems();
     for(unsigned int i = 0;i < nr;i++)

@@ -23,33 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef remove_css_property_command_h__
-#define remove_css_property_command_h__
+#ifndef RemoveCSSPropertyCommand_H
+#define RemoveCSSPropertyCommand_H
 
 #include "EditCommand.h"
 
 namespace WebCore {
-    class CSSStyleDeclaration;
-}
 
-namespace WebCore {
+class CSSStyleDeclaration;
 
 class RemoveCSSPropertyCommand : public EditCommand
 {
 public:
-    RemoveCSSPropertyCommand(WebCore::Document *, WebCore::CSSStyleDeclaration *, int property);
-    virtual ~RemoveCSSPropertyCommand() { }
+    RemoveCSSPropertyCommand(Document*, CSSStyleDeclaration*, int property);
+    virtual ~RemoveCSSPropertyCommand();
 
     virtual void doApply();
     virtual void doUnapply();
 
-    WebCore::CSSMutableStyleDeclaration *styleDeclaration() const { return m_decl.get(); }
+    CSSMutableStyleDeclaration* styleDeclaration() const { return m_decl.get(); }
     int property() const { return m_property; }
     
 private:
-    RefPtr<WebCore::CSSMutableStyleDeclaration> m_decl;
+    RefPtr<CSSMutableStyleDeclaration> m_decl;
     int m_property;
-    WebCore::String m_oldValue;
+    String m_oldValue;
     bool m_important;
 };
 

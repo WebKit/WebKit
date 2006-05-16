@@ -78,7 +78,7 @@ struct KCClipData
     RefPtr<KCanvasPath> path;
 };
 
-class KCClipDataList : public Q3ValueList<KCClipData>
+class KCClipDataList : public DeprecatedValueList<KCClipData>
 {
 public:
     KCClipDataList() { }

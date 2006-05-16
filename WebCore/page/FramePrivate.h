@@ -34,7 +34,6 @@
 #include "SelectionController.h"
 #include "StringHash.h"
 #include "Timer.h"
-#include "css_valueimpl.h"
 #include "kjs_proxy.h"
 #include "KWQKIOGlobal.h"
 #include <wtf/HashMap.h>

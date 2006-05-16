@@ -25,7 +25,7 @@
 #include "config.h"
 #include "HTMLBodyElement.h"
 
-#include "css_valueimpl.h" // for CSSMutableStyleDeclaration
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
 #include "CSSStyleSheet.h"

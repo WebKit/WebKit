@@ -31,6 +31,7 @@
 #include "SegmentedString.h"
 #include "Timer.h"
 #include "xml_tokenizer.h"
+#include "CachedObjectClient.h"
 
 namespace WebCore {
 

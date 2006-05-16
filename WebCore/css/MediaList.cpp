@@ -22,8 +22,8 @@
 #include "config.h"
 #include "MediaList.h"
 
+#include "CSSRule.h"
 #include "CSSStyleSheet.h"
-#include "css_ruleimpl.h"
 #include "DeprecatedStringList.h"
 
 namespace WebCore {

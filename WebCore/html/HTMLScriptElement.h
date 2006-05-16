@@ -25,6 +25,7 @@
 #define HTMLScriptElement_H
 
 #include "HTMLElement.h"
+#include "CachedObjectClient.h"
 
 namespace WebCore {
 

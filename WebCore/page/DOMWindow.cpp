@@ -28,6 +28,7 @@
 
 #include "cssstyleselector.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSRuleList.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"

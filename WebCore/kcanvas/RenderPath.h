@@ -85,7 +85,7 @@ private:
 };
 
 // Helper data structure
-typedef Q3ValueList<const RenderPath *> KCanvasItemList;
+typedef DeprecatedValueList<const RenderPath *> KCanvasItemList;
 
 }
 

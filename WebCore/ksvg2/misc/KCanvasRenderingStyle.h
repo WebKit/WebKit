@@ -25,8 +25,8 @@
 #define KSVG_KCanvasRenderingStyle_H
 #if SVG_SUPPORT
 
-#include "css_valueimpl.h"
 #include <kcanvas/KCanvasMatrix.h>
+#include "DeprecatedValueList.h"
 
 namespace WebCore {
 
@@ -45,8 +45,9 @@ enum KCJoinStyle {
 
 
 // Special types
-typedef Q3ValueList<float> KCDashArray;
+typedef DeprecatedValueList<float> KCDashArray;
 
+    class CSSValue;
     class KRenderingFillPainter;
     class KRenderingStrokePainter;
     class KRenderingPaintServer;

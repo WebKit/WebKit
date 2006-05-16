@@ -24,11 +24,17 @@
 #include "CSSComputedStyleDeclaration.h"
 
 #include "CachedImage.h"
+#include "DashboardRegion.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "CSSMutableStyleDeclaration.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
+#include "Pair.h"
 #include "RenderObject.h"
+#include "ShadowValue.h"
 
 extern WebCore::String getPropertyName(unsigned short id);
 
@@ -208,16 +214,16 @@ static CSSValue *valueForTextAlign(ETextAlign align)
     return 0;
 }
 
-static CSSValue* valueForShadow(const ShadowData *shadow)
+static CSSValue* valueForShadow(const ShadowData* shadow)
 {
     if (!shadow)
         return new CSSPrimitiveValue(CSS_VAL_NONE);
-    CSSValueList *list = new CSSValueList;
-    for (const ShadowData *s = shadow; s; s = s->next) {
-        CSSPrimitiveValue *x = new CSSPrimitiveValue(s->x, CSSPrimitiveValue::CSS_PX);
-        CSSPrimitiveValue *y = new CSSPrimitiveValue(s->y, CSSPrimitiveValue::CSS_PX);
-        CSSPrimitiveValue *blur = new CSSPrimitiveValue(s->blur, CSSPrimitiveValue::CSS_PX);
-        CSSPrimitiveValue *color = new CSSPrimitiveValue(s->color.rgb());
+    CSSValueList* list = new CSSValueList;
+    for (const ShadowData* s = shadow; s; s = s->next) {
+        CSSPrimitiveValue* x = new CSSPrimitiveValue(s->x, CSSPrimitiveValue::CSS_PX);
+        CSSPrimitiveValue* y = new CSSPrimitiveValue(s->y, CSSPrimitiveValue::CSS_PX);
+        CSSPrimitiveValue* blur = new CSSPrimitiveValue(s->blur, CSSPrimitiveValue::CSS_PX);
+        CSSPrimitiveValue* color = new CSSPrimitiveValue(s->color.rgb());
         list->append(new ShadowValue(x, y, blur, color));
     }
     return list;
@@ -1266,6 +1272,33 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     
     return getPropertyName(computedProperties[i]);
 }
+
+// This is the list of properties we want to copy in the copyInheritableProperties() function.
+// It is the intersection of the list of inherited CSS properties and the
+// properties for which we have a computed implementation in this file.
+const int inheritableProperties[] = {
+    CSS_PROP_BORDER_COLLAPSE,
+    CSS_PROP_BORDER_SPACING,
+    CSS_PROP_COLOR,
+    CSS_PROP_FONT_FAMILY,
+    CSS_PROP_FONT_SIZE,
+    CSS_PROP_FONT_STYLE,
+    CSS_PROP_FONT_VARIANT,
+    CSS_PROP_FONT_WEIGHT,
+    CSS_PROP_LETTER_SPACING,
+    CSS_PROP_LINE_HEIGHT,
+    CSS_PROP_TEXT_ALIGN,
+    CSS_PROP__WEBKIT_TEXT_DECORATIONS_IN_EFFECT,
+    CSS_PROP_TEXT_INDENT,
+    CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST,
+    CSS_PROP_TEXT_TRANSFORM,
+    CSS_PROP_ORPHANS,
+    CSS_PROP_WHITE_SPACE,
+    CSS_PROP_WIDOWS,
+    CSS_PROP_WORD_SPACING,
+};
+
+const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyInheritableProperties() const
 {

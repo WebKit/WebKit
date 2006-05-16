@@ -23,7 +23,6 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include <kdom/Namespace.h>
-#include "css_valueimpl.h"
 #include <kdom/events/Event.h>
 #include <kdom/core/Node.h>
 #include <kdom/events/Event.h>

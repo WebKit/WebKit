@@ -67,7 +67,6 @@
 #include "StyleSheetList.h"
 #include "SystemTime.h"
 #include "TextIterator.h"
-#include "css_valueimpl.h"
 #include "csshelper.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"

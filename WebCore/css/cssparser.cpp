@@ -24,13 +24,30 @@
 #include "config.h"
 #include "cssparser.h"
 
-#include "Document.h"
-#include "css_ruleimpl.h"
-#include "csshelper.h"
+#include "CSSBorderImageValue.h"
+#include "CSSImageValue.h"
+#include "CSSImportRule.h"
+#include "CSSInheritedValue.h"
+#include "CSSInitialValue.h"
+#include "CSSMediaRule.h"
+#include "CSSMutableStyleDeclaration.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "CSSRuleList.h"
+#include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "CSSQuirkPrimitiveValue.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
+#include "DashboardRegion.h"
+#include "Document.h"
+#include "FontFamilyValue.h"
+#include "FontValue.h"
 #include "MediaList.h"
+#include "Pair.h"
+#include "ShadowValue.h"
+#include "csshelper.h"
 
 #define YYDEBUG 0
 
@@ -220,7 +237,7 @@ RGBA32 CSSParser::parseColor(const String &string)
     
         // Now try to create a color from the rgb() or rgba() syntax.
         if (parser.parseColor(dummyStyleDeclaration.get(), string)) {
-            CSSValue *value = parser.parsedProperties[0]->value();
+            CSSValue* value = parser.parsedProperties[0]->value();
             if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
                 CSSPrimitiveValue *primitiveValue = static_cast<CSSPrimitiveValue *>(value);
                 color = primitiveValue->getRGBColorValue();
@@ -2064,10 +2081,10 @@ bool CSSParser::parseFont(bool important)
     return false;
 }
 
-CSSValueList *CSSParser::parseFontFamily()
+CSSValueList* CSSParser::parseFontFamily()
 {
-    CSSValueList *list = new CSSValueList;
-    Value *value = valueList->current();
+    CSSValueList* list = new CSSValueList;
+    Value* value = valueList->current();
     FontFamilyValue* currFamily = 0;
     while (value) {
         Value* nextValue = valueList->next();

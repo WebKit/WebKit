@@ -24,7 +24,6 @@
 #if SVG_SUPPORT
 #include "DeprecatedStringList.h"
 
-#include "css_valueimpl.h"
 
 #include "ksvg.h"
 #include "SVGColor.h"

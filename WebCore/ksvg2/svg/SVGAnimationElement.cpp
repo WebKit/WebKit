@@ -36,7 +36,6 @@
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "XLinkNames.h"
-#include "css_valueimpl.h"
 #include "ksvgcssproperties.h"
 #include <float.h>
 #include <math.h>

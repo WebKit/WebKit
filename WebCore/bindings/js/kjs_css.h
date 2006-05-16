@@ -25,6 +25,7 @@
 
 #include "Color.h"
 #include "kjs_binding.h"
+#include "RectImpl.h"
 
 namespace WebCore {
     class Counter;
@@ -37,7 +38,6 @@ namespace WebCore {
     class CSSValueList;
     class JSCSSStyleDeclaration;
     class MediaList;
-    class RectImpl;
     class StyleSheet;
     class StyleSheetList;
 }

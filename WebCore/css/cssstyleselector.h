@@ -24,7 +24,6 @@
 #ifndef CSS_cssstyleselector_h_
 #define CSS_cssstyleselector_h_
 
-#include "css_ruleimpl.h"
 #include "render_style.h"
 
 class KHTMLSettings;
@@ -32,9 +31,11 @@ class KURL;
 
 namespace WebCore {
 
+class CSSMutableStyleDeclaration;
 class CSSProperty;
 class CSSRuleData;
 class CSSRuleDataList;
+class CSSRuleList;
 class CSSRuleSet;
 class CSSSelector;
 class CSSStyleSheet;

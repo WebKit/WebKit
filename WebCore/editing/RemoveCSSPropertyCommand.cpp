@@ -26,16 +26,22 @@
 #include "config.h"
 #include "RemoveCSSPropertyCommand.h"
 
-#include "css_valueimpl.h"
-
+#include "CSSMutableStyleDeclaration.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(Document *document, CSSStyleDeclaration *decl, int property)
-    : EditCommand(document), m_decl(decl->makeMutable()), m_property(property), m_important(false)
+RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(Document* document, CSSStyleDeclaration* decl, int property)
+    : EditCommand(document)
+    , m_decl(decl->makeMutable())
+    , m_property(property)
+    , m_important(false)
 {
     ASSERT(m_decl);
+}
+
+RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand()
+{
 }
 
 void RemoveCSSPropertyCommand::doApply()

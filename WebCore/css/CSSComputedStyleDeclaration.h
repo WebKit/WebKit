@@ -23,10 +23,12 @@
 #ifndef CSS_COMPUTEDSTYLE_H
 #define CSS_COMPUTEDSTYLE_H
 
-#include "css_valueimpl.h"
+#include "CSSStyleDeclaration.h"
+#include "Node.h"
 
 namespace WebCore {
 
+class CSSMutableStyleDeclaration;
 class CSSProperty;
 class RenderObject;
 class RenderStyle;

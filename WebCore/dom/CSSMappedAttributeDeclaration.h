@@ -27,16 +27,17 @@
 #ifndef CSSMappedAttributeDeclaration_h
 #define CSSMappedAttributeDeclaration_h
 
-#include "css_valueimpl.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "MappedAttributeEntry.h"
 
 namespace WebCore {
 
 class CSSMappedAttributeDeclaration : public CSSMutableStyleDeclaration {
 public:
-    CSSMappedAttributeDeclaration(CSSRule *parentRule)
-    : CSSMutableStyleDeclaration(parentRule), m_entryType(eNone), m_attrName(anyQName())
-    {}
+    CSSMappedAttributeDeclaration(CSSRule* parentRule)
+        : CSSMutableStyleDeclaration(parentRule)
+        , m_entryType(eNone)
+        , m_attrName(anyQName()) { }
     
     virtual ~CSSMappedAttributeDeclaration();
 

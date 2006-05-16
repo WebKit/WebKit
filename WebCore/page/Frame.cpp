@@ -32,6 +32,7 @@
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
+#include "CSSProperty.h"
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "DOMImplementation.h"

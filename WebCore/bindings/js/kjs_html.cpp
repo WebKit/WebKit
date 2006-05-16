@@ -83,7 +83,6 @@
 #include "NameNodeList.h"
 #include "RenderLayer.h"
 #include "Text.h"
-#include "css_ruleimpl.h"
 #include "dom2_eventsimpl.h"
 #include "kjs_css.h"
 #include "kjs_events.h"

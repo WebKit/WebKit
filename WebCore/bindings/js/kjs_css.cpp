@@ -23,6 +23,15 @@
 #include "config.h"
 #include "kjs_css.h"
 
+#include "CSSCharsetRule.h"
+#include "CSSFontFaceRule.h"
+#include "CSSImportRule.h"
+#include "CSSMediaRule.h"
+#include "CSSPageRule.h"
+#include "CSSRule.h"
+#include "CSSRuleList.h"
+#include "CSSStyleRule.h"
+#include "CSSValueList.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
@@ -32,8 +41,6 @@
 #include "MediaList.h"
 #include "StyleSheetList.h"
 #include "css_base.h"
-#include "css_ruleimpl.h"
-#include "css_valueimpl.h"
 #include "kjs_dom.h"
 
 #include "kjs_css.lut.h"
@@ -734,7 +741,7 @@ const ClassInfo DOMCSSRule::charset_info = { "CSSCharsetRule", &DOMCSSRule::info
 
 const ClassInfo* DOMCSSRule::classInfo() const
 {
-  CSSRule &cssRule = *m_impl;
+  CSSRule& cssRule = *m_impl;
   switch (cssRule.type()) {
   case CSSRule::STYLE_RULE:
     return &style_info;

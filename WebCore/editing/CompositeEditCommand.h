@@ -27,7 +27,7 @@
 #define composite_edit_command_h__
 
 #include "EditCommand.h"
-#include "css_valueimpl.h"
+#include "DeprecatedValueList.h"
 
 namespace WebCore {
     class CSSStyleDeclaration;

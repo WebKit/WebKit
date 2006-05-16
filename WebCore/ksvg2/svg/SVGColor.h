@@ -24,33 +24,29 @@
 #define KSVG_SVGColorImpl_H
 #if SVG_SUPPORT
 
+#include "CSSValue.h"
 #include "Color.h"
-
-#include "css_valueimpl.h"
 
 namespace WebCore
 {
     class RGBColor;
-};
 
-namespace WebCore
-{
     class SVGColor : public CSSValue
     {
     public:
         SVGColor();
-        SVGColor(StringImpl *rgbColor);
+        SVGColor(StringImpl* rgbColor);
         SVGColor(unsigned short colorType);
         virtual ~SVGColor();
 
         // 'SVGColor' functions
         unsigned short colorType() const;
 
-        RGBColor *rgbColor() const;
+        RGBColor* rgbColor() const;
 
-        void setRGBColor(StringImpl *rgbColor);
-        void setRGBColorICCColor(StringImpl *rgbColor, StringImpl *iccColor);
-        void setColor(unsigned short colorType, StringImpl *rgbColor, StringImpl *iccColor);
+        void setRGBColor(StringImpl* rgbColor);
+        void setRGBColorICCColor(StringImpl* rgbColor, StringImpl* iccColor);
+        void setColor(unsigned short colorType, StringImpl* rgbColor, StringImpl* iccColor);
 
         virtual String cssText() const;
 
