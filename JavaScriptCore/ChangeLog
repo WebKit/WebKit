@@ -1,3 +1,26 @@
+2006-05-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fixed <rdar://problem/4534904> please do not treat "debugger" as
+        a reserved word while parsing JavaScript (and other ECMA reserved
+        words) 
+
+        AKA 
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6179 
+        We treat "char" as a reserved word in JavaScript and firefox/IE do
+        not
+
+        (1) I unreserved most of the spec's "future reserved words" because 
+        they're not reserved in IE or FF. (Most, but not all, because IE
+        somewhat randomly *does* reserve a few of them.)
+        (2) I made 'debugger' a legitimate statement that acts like an empty
+        statement because FF and IE support it.
+        
+        * kjs/grammar.y:
+        * kjs/keywords.table:
+
 2006-05-15  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

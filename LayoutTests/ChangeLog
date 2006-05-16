@@ -1,3 +1,17 @@
+2006-05-15  Geoffrey Garen  <ggaren@apple.com>
+
+        - Tests for JavaScript reserved words and the 'debugger' statement
+        <rdar://problem/4534904> 
+        AKA
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6179
+
+        * fast/js/debugger-expected.txt: Added.
+        * fast/js/debugger.html: Added.
+        * fast/js/reserved-words-expected.txt: Added.
+        * fast/js/reserved-words.html: Added.
+        * fast/js/resources/debugger.js: Added.
+        * fast/js/resources/reserved-words.js: Added.
+
 2006-05-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

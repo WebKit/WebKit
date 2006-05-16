@@ -1,9 +1,11 @@
 # main keywords
 @begin mainTable 41
+
 # types
 null		NULLTOKEN
 true		TRUETOKEN
 false		FALSETOKEN
+
 # keywords
 break		BREAK
 case		CASE
@@ -31,36 +33,40 @@ throw		THROW
 try		TRY
 typeof		TYPEOF
 with		WITH
+debugger	DEBUGGER
+
 # reserved for future use
-abstract	RESERVED
-boolean		RESERVED
-byte		RESERVED
-char		RESERVED
-class		RESERVED
-debugger	RESERVED
-double		RESERVED
-enum		RESERVED
-export		RESERVED
-extends		RESERVED
-final		RESERVED
-float		RESERVED
-goto		RESERVED
-implements	RESERVED
-import		RESERVED
-int		RESERVED
-interface	RESERVED
-long		RESERVED
-native		RESERVED
-package		RESERVED
-private		RESERVED
-protected	RESERVED
-public		RESERVED
-short		RESERVED
-static		RESERVED
-super		RESERVED
-synchronized	RESERVED
-throws		RESERVED
-transient	RESERVED
-volatile	RESERVED
+class           RESERVED
+enum            RESERVED
+export          RESERVED
+extends         RESERVED
+import          RESERVED
+super           RESERVED
+
+# these words are reserved for future use in the ECMA spec, but not in WinIE
+# (see http://bugzilla.opendarwin.org/show_bug.cgi?id=6179)
+# abstract      RESERVED
+# boolean       RESERVED
+# byte          RESERVED
+# char          RESERVED
+# double        RESERVED
+# final         RESERVED
+# float         RESERVED
+# goto          RESERVED
+# implements    RESERVED
+# int           RESERVED
+# interface     RESERVED
+# long          RESERVED
+# native        RESERVED
+# package       RESERVED
+# private       RESERVED
+# protected     RESERVED
+# public        RESERVED
+# short         RESERVED
+# static        RESERVED
+# synchronized  RESERVED
+# throws        RESERVED
+# transient     RESERVED
+# volatile      RESERVED
 @end
 

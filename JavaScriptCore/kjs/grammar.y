@@ -103,6 +103,7 @@ static Node *makeDeleteNode(Node *expr);
 %token IF THIS DO WHILE IN INSTANCEOF TYPEOF
 %token SWITCH WITH RESERVED
 %token THROW TRY CATCH FINALLY
+%token DEBUGGER
 
 /* give an if without an else higher precedence than an else to resolve the ambiguity */
 %nonassoc IF_WITHOUT_ELSE
@@ -163,6 +164,7 @@ static Node *makeDeleteNode(Node *expr);
 %type <stat>  BreakStatement ReturnStatement WithStatement
 %type <stat>  SwitchStatement LabelledStatement
 %type <stat>  ThrowStatement TryStatement
+%type <stat>  DebuggerStatement
 %type <stat>  SourceElement
 
 %type <slist> StatementList
@@ -627,6 +629,7 @@ Statement:
   | LabelledStatement
   | ThrowStatement
   | TryStatement
+  | DebuggerStatement
 ;
 
 Block:
@@ -806,6 +809,11 @@ TryStatement:
   | TRY Block CATCH '(' IDENT ')' Block { $$ = new TryNode($2, *$5, $7, 0); DBG($$, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block FINALLY Block
                                         { $$ = new TryNode($2, *$5, $7, $9); DBG($$, @1, @2); }
+;
+
+DebuggerStatement:
+    DEBUGGER ';'                           { $$ = new EmptyStatementNode(); DBG($$, @1, @2); }
+  | DEBUGGER error                         { $$ = new EmptyStatementNode(); DBG($$, @1, @1); AUTO_SEMICOLON; }
 ;
 
 FunctionDeclaration:
