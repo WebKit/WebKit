@@ -1,3 +1,12 @@
+2006-05-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Add Rect.idl, even though it can't be used quite yet due to generator limitations.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/Rect.idl: Added.
+
 2006-05-16  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by darin.  Landed by eseidel.
