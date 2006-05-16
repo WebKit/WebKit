@@ -1,3 +1,15 @@
+2006-05-16  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8941
+        document.cookie undefined for documents of type text/javascript
+        
+        * loader/TextDocument.cpp:
+        (WebCore::TextDocument::TextDocument):
+        * loader/TextDocument.h:
+        Inherit from HTMLDocument.
+
 2006-05-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

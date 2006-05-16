@@ -24,14 +24,14 @@
 #ifndef TextDocument_h
 #define TextDocument_h
 
-#include "Document.h"
+#include "HTMLDocument.h"
 
 namespace WebCore {
 
 class DOMImplementation;
 class FrameView;
 
-class TextDocument : public Document
+class TextDocument : public HTMLDocument
 {
 public:
     TextDocument(DOMImplementation*, FrameView* = 0);

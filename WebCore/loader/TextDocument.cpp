@@ -86,7 +86,7 @@ bool TextTokenizer::isWaitingForScripts() const
 }
 
 TextDocument::TextDocument(DOMImplementation* implementation, FrameView* v)
-    : Document(implementation, v)
+    : HTMLDocument(implementation, v)
 {
 }
 
