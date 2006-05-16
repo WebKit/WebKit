@@ -53,14 +53,14 @@ namespace KJS {
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
     JSValue* getValueProperty(ExecState*, int token);
 
-    virtual const ClassInfo *classInfo() const { return &info; }
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { CssText, Length, ParentRule };
     enum { GetPropertyValue, GetPropertyCSSValue, RemoveProperty, 
            GetPropertyPriority, GetPropertyShorthand, IsPropertyImplicit, SetProperty, Item };
     WebCore::CSSStyleDeclaration* impl() const { return m_impl.get(); }
   private:
-    static JSValue *indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue *cssPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
 
     // Don't use this class directly -- use JSCSSStyleDeclaration instead
@@ -74,7 +74,7 @@ namespace KJS {
 
   class DOMStyleSheet : public DOMObject {
   public:
-    DOMStyleSheet(ExecState*, WebCore::StyleSheet *ss);
+    DOMStyleSheet(ExecState*, WebCore::StyleShee*);
     virtual ~DOMStyleSheet();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;
@@ -101,20 +101,20 @@ namespace KJS {
     JSValue* getValueProperty(ExecState*, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
-    virtual bool toBoolean(ExecState* ) const { return true; }
+    virtual bool toBoolean(ExecState*) const { return true; }
     static const ClassInfo info;
     WebCore::StyleSheetList* impl() const { return m_impl.get(); }
     enum { Item, Length };
   private:
-    static JSValue *indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue *nameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
+    static JSValue* nameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
 
     RefPtr<WebCore::StyleSheetList> m_impl;
     RefPtr<WebCore::Document> m_doc;
   };
 
   // The document is only used for get-stylesheet-by-name (make optional if necessary)
-  JSValue *toJS(ExecState*, WebCore::StyleSheetList*, WebCore::Document*);
+  JSValue* toJS(ExecState*, WebCore::StyleSheetList*, WebCore::Document*);
 
   class DOMMediaList : public DOMObject {
   public:
@@ -124,13 +124,13 @@ namespace KJS {
     JSValue* getValueProperty(ExecState*, int token);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
     virtual const ClassInfo* classInfo() const { return &info; }
-    virtual bool toBoolean(ExecState* ) const { return true; }
+    virtual bool toBoolean(ExecState*) const { return true; }
     static const ClassInfo info;
     enum { MediaText, Length,
            Item, DeleteMedium, AppendMedium };
     WebCore::MediaList* impl() const { return m_impl.get(); }
   private:
-    static JSValue *indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
+    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     RefPtr<WebCore::MediaList> m_impl;
   };
 
@@ -160,7 +160,7 @@ namespace KJS {
     enum { Item, Length };
     WebCore::CSSRuleList* impl() const { return m_impl.get(); }
   private:
-    static JSValue *indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
+    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
 
     RefPtr<WebCore::CSSRuleList> m_impl;
   };
@@ -213,7 +213,7 @@ namespace KJS {
 
   class DOMCSSValueList : public DOMCSSValue {
   public:
-    DOMCSSValueList(ExecState*, WebCore::CSSValueList *l);
+    DOMCSSValueList(ExecState*, WebCore::CSSValueList*);
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;
     // no put - all read-only
@@ -221,7 +221,7 @@ namespace KJS {
     static const ClassInfo info;
     enum { Length, Item };
   private:
-    static JSValue *indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot);
+    static JSValue* indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
   };
 
   class DOMRGBColor : public DOMObject {
