@@ -90,6 +90,9 @@
     #include <X11/Xutil.h>
 #endif
 
+#if defined(XP_MACOSX) && defined(__LP64__)
+    #define NP_NO_QUICKDRAW
+#endif
 
 /*----------------------------------------------------------------------*/
 /*             Plugin Version Constants                                 */
@@ -332,6 +335,15 @@ typedef enum {
 
     /* Get the NPObject wrapper for the plugins DOM element. */
     NPNVPluginElementNPObject                 /* Not implemented in WebKit */
+
+#ifdef XP_MACOSX
+    , NPNVpluginDrawingModel = 1000 /* The NPDrawingModel specified by the plugin */
+
+#ifndef NP_NO_QUICKDRAW
+    , NPNVsupportsQuickDrawBool = 2000 /* TRUE if the browser supports the QuickDraw drawing model */
+#endif
+    , NPNVsupportsCoreGraphicsBool = 2001 /* TRUE if the browser supports the CoreGraphics drawing model */
+#endif /* XP_MACOSX */
 } NPNVariable;
 
 /*
@@ -342,6 +354,21 @@ typedef enum {
     NPWindowTypeWindow = 1,
     NPWindowTypeDrawable
 } NPWindowType;
+
+#ifdef XP_MACOSX
+
+/*
+ * The drawing model for a Mac OS X plugin.  These are the possible values for the NPNVpluginDrawingModel variable.
+ */
+ 
+typedef enum {
+#ifndef NP_NO_QUICKDRAW
+    NPDrawingModelQuickDraw = 0,
+#endif
+    NPDrawingModelCoreGraphics = 1
+} NPDrawingModel;
+
+#endif
 
 typedef struct _NPWindow
 {
@@ -399,8 +426,18 @@ typedef XEvent NPEvent;
 typedef void*            NPEvent;
 #endif /* XP_MAC */
 
-#if defined(XP_MAC) || defined(XP_MACOSX)
+#if defined(XP_MAC)
 typedef RgnHandle NPRegion;
+#elif defined(XP_MACOSX)
+/* 
+ * NPRegion's type depends on the drawing model specified by the plugin (see NPNVpluginDrawingModel).
+ * NPQDRegion represents a QuickDraw RgnHandle, and NPCGRegion represents a CoreGraphics CGPathRef.
+ */
+typedef void *NPRegion;
+#ifndef NP_NO_QUICKDRAW
+typedef RgnHandle NPQDRegion;
+#endif
+typedef CGPathRef NPCGRegion;
 #elif defined(XP_WIN)
 typedef HRGN NPRegion;
 #elif defined(XP_UNIX)
@@ -409,17 +446,47 @@ typedef Region NPRegion;
 typedef void *NPRegion;
 #endif /* XP_MAC */
 
+#ifdef XP_MACOSX
+
+/* 
+ * NP_CGContext is the type of the NPWindow's 'window' when the plugin specifies NPDrawingModelCoreGraphics
+ * as its drawing model.
+ */
+
+typedef struct NP_CGContext
+{
+    CGContextRef context;
+    WindowRef window;
+} NP_CGContext;
+
+#endif /* XP_MACOSX */
+
 #if defined(XP_MAC) || defined(XP_MACOSX)
+
 /*
  *  Mac-specific structures and definitions.
  */
 
+#ifndef NP_NO_QUICKDRAW
+
+/* 
+ * NP_Port is the type of the NPWindow's 'window' when the plugin specifies NPDrawingModelQuickDraw as its
+ * drawing model, or the plugin does not specify a drawing model.
+ *
+ * It is not recommended that new plugins use NPDrawingModelQuickDraw or NP_Port, as QuickDraw has been
+ * deprecated in Mac OS X 10.5.  CoreGraphics is the preferred drawing API.
+ *
+ * NP_Port is not available in 64-bit.
+ */
+ 
 typedef struct NP_Port
 {
     CGrafPtr     port;        /* Grafport */
     int32        portx;        /* position inside the topmost window */
     int32        porty;
 } NP_Port;
+
+#endif /* NP_NO_QUICKDRAW */
 
 /*
  *  Non-standard event types that can be passed to HandleEvent

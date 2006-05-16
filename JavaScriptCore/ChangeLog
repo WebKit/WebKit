@@ -1,3 +1,29 @@
+2006-05-15  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Part of <rdar://problem/4466508> Add 64-bit support to the Netscape Plugin API
+
+        Added to the Netscape Plugin API the concept of "plugin drawing models".  The drawing model
+        determines the kind of graphics context created by the browser for the plugin, as well as 
+        the Mac types of various Netscape Plugin API data structures.
+
+        There is a drawing model to represent the old QuickDraw-based API.  It is used by default
+        if QuickDraw is available on the system, unless the plugin specifies another drawing model.
+
+        The big change is the addition of the CoreGraphics drawing model.  A plugin may request this
+        drawing model to obtain access to a CGContextRef for drawing, instead of a QuickDraw CGrafPtr.
+
+        * bindings/npapi.h:
+        Define NP_NO_QUICKDRAW when compiling 64-bit; there is no 64-bit QuickDraw.
+        Added NPNVpluginDrawingModel, NPNVsupportsQuickDrawBool, and NPNVsupportsCoreGraphicsBool
+        variables.
+        Added NPDrawingModel enumeration.  Currently the only drawing models are QuickDraw and
+        CoreGraphics.
+        NPRegion's type now depends on the drawing model specified by the plugin.
+        NP_Port is now only defined when QuickDraw is available.
+        Added NP_CGContext, which is the type of the NPWindow's "window" member in CoreGraphics mode.
+
 2006-05-13  Kevin M. Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin, landed by ap.

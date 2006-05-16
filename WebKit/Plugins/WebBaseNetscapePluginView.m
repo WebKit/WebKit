@@ -69,6 +69,12 @@
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
 
+typedef struct OpaquePortState* PortState;
+
+#ifndef NP_NO_QUICKDRAW
+
+// QuickDraw is not available in 64-bit
+
 typedef struct {
     GrafPtr oldPort;
     Point oldOrigin;
@@ -76,7 +82,14 @@ typedef struct {
     RgnHandle oldVisibleRegion;
     RgnHandle clipRegion;
     BOOL forUpdate;
-} PortState;
+} PortState_QD;
+
+#endif /* NP_NO_QUICKDRAW */
+
+typedef struct {
+    CGContextRef context;
+    BOOL forUpdate;
+} PortState_CG;
 
 @interface WebPluginRequest : NSObject
 {
@@ -190,11 +203,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return NO;
 }
 
+#ifndef NP_NO_QUICKDRAW
 // The WindowRef created by -[NSWindow windowRef] has a QuickDraw GrafPort that covers 
 // the entire window frame (or structure region to use the Carbon term) rather then just the window content.
 // We can remove this when <rdar://problem/4201099> is fixed.
 - (void)fixWindowPort
 {
+    ASSERT(drawingModel == NPDrawingModelQuickDraw);
+    
     NSWindow *currentWindow = [self currentWindow];
     if ([currentWindow isKindOfClass:objc_getClass("NSCarbonWindow")])
         return;
@@ -212,19 +228,25 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     SetPort(oldPort);
 }
+#endif
 
-- (PortState)saveAndSetPortStateForUpdate:(BOOL)forUpdate
+- (PortState)saveAndSetNewPortStateForUpdate:(BOOL)forUpdate
 {
     ASSERT([self currentWindow] != nil);
- 
-    [self fixWindowPort];
-   
-    WindowRef windowRef = [[self currentWindow] windowRef];
-    CGrafPtr port = GetWindowPort(windowRef);
-        
-    Rect portBounds;
-    GetPortBounds(port, &portBounds);
 
+    // A CoreGraphics plugin's window may only be set while the plugin view is being updated
+    ASSERT(drawingModel != NPDrawingModelCoreGraphics || (forUpdate && [NSView focusView] == self));
+     
+#ifndef NP_NO_QUICKDRAW
+    // If drawing with QuickDraw, fix the window port so that it has the same bounds as the NSWindow's
+    // content view.  This makes it easier to convert between AppKit view and QuickDraw port coordinates.
+    if (drawingModel == NPDrawingModelQuickDraw)
+        [self fixWindowPort];
+#endif
+    
+    WindowRef windowRef = [[self currentWindow] windowRef];
+    ASSERT(windowRef);
+    
     // Use AppKit to convert view coordinates to NSWindow coordinates.
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
@@ -234,20 +256,20 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
     visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
     
+#ifndef NP_NO_QUICKDRAW
     // Look at the Carbon port to convert top-left-based window coordinates into top-left-based content coordinates.
-    PixMap *pix = *GetPortPixMap(port);
-    boundsInWindow.origin.x += pix->bounds.left - portBounds.left;
-    boundsInWindow.origin.y += pix->bounds.top - portBounds.top;
-    visibleRectInWindow.origin.x += pix->bounds.left - portBounds.left;
-    visibleRectInWindow.origin.y += pix->bounds.top - portBounds.top;
-    
-    // Set up NS_Port.
-    nPort.port = port;
-    nPort.portx = (int32)-boundsInWindow.origin.x;
-    nPort.porty = (int32)-boundsInWindow.origin.y;
-    
-    // Set up NPWindow.
-    window.window = &nPort;
+    if (drawingModel == NPDrawingModelQuickDraw) {
+        Rect portBounds;
+        CGrafPtr port = GetWindowPort(windowRef);
+        GetPortBounds(port, &portBounds);
+
+        PixMap *pix = *GetPortPixMap(port);
+        boundsInWindow.origin.x += pix->bounds.left - portBounds.left;
+        boundsInWindow.origin.y += pix->bounds.top - portBounds.top;
+        visibleRectInWindow.origin.x += pix->bounds.left - portBounds.left;
+        visibleRectInWindow.origin.y += pix->bounds.top - portBounds.top;
+    }
+#endif
     
     window.x = (int32)boundsInWindow.origin.x; 
     window.y = (int32)boundsInWindow.origin.y;
@@ -292,112 +314,179 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     window.type = NPWindowTypeWindow;
     
-    // Save the port state.
+    // Save the port state, set up the port for entry into the plugin
     PortState portState;
-    
-    GetPort(&portState.oldPort);    
+    switch (drawingModel) {
+#ifndef NP_NO_QUICKDRAW
+        case NPDrawingModelQuickDraw:
+        {
+            // Set up NS_Port.
+            Rect portBounds;
+            CGrafPtr port = GetWindowPort(windowRef);
+            GetPortBounds(port, &portBounds);
+            nPort.qdPort.port = port;
+            nPort.qdPort.portx = (int32)-boundsInWindow.origin.x;
+            nPort.qdPort.porty = (int32)-boundsInWindow.origin.y;
+            window.window = &nPort;
 
-    portState.oldOrigin.h = portBounds.left;
-    portState.oldOrigin.v = portBounds.top;
+            PortState_QD *qdPortState = malloc(sizeof(PortState_QD));
+            portState = (PortState)qdPortState;
+            
+            GetPort(&qdPortState->oldPort);    
 
-    portState.oldClipRegion = NewRgn();
-    GetPortClipRegion(port, portState.oldClipRegion);
-    
-    portState.oldVisibleRegion = NewRgn();
-    GetPortVisibleRegion(port, portState.oldVisibleRegion);
-    
-    RgnHandle clipRegion = NewRgn();
-    portState.clipRegion = clipRegion;
-    
-    MacSetRectRgn(clipRegion,
-        window.clipRect.left + nPort.portx, window.clipRect.top + nPort.porty,
-        window.clipRect.right + nPort.portx, window.clipRect.bottom + nPort.porty);
-    
-    // Clip to dirty region when updating in "windowless" mode (transparent)
-    if (forUpdate && isTransparent) {
-        RgnHandle viewClipRegion = NewRgn();
-        
-        // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and
-        // display to enable z-ordering for NSViews; a side-effect of this is that only the WebHTMLView
-        // knows about the true set of dirty rects.
-        NSView *opaqueAncestor = [self opaqueAncestor];
-        const NSRect *dirtyRects;
-        int dirtyRectCount, dirtyRectIndex;
-        [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&dirtyRectCount];
+            qdPortState->oldOrigin.h = portBounds.left;
+            qdPortState->oldOrigin.v = portBounds.top;
 
-        for (dirtyRectIndex = 0; dirtyRectIndex < dirtyRectCount; dirtyRectIndex++) {
-            NSRect dirtyRect = [self convertRect:dirtyRects[dirtyRectIndex] fromView:opaqueAncestor];
-            if (!NSEqualSizes(dirtyRect.size, NSZeroSize)) {
-                // Create a region for this dirty rect
-                RgnHandle dirtyRectRegion = NewRgn();
-                SetRectRgn(dirtyRectRegion, NSMinX(dirtyRect), NSMinY(dirtyRect), NSMaxX(dirtyRect), NSMaxY(dirtyRect));
+            qdPortState->oldClipRegion = NewRgn();
+            GetPortClipRegion(port, qdPortState->oldClipRegion);
+            
+            qdPortState->oldVisibleRegion = NewRgn();
+            GetPortVisibleRegion(port, qdPortState->oldVisibleRegion);
+            
+            RgnHandle clipRegion = NewRgn();
+            qdPortState->clipRegion = clipRegion;
+            
+            MacSetRectRgn(clipRegion,
+                window.clipRect.left + nPort.qdPort.portx, window.clipRect.top + nPort.qdPort.porty,
+                window.clipRect.right + nPort.qdPort.portx, window.clipRect.bottom + nPort.qdPort.porty);
+            
+            // Clip to dirty region when updating in "windowless" mode (transparent)
+            if (forUpdate && isTransparent) {
+                RgnHandle viewClipRegion = NewRgn();
                 
-                // Union this dirty rect with the rest of the dirty rects
-                UnionRgn(viewClipRegion, dirtyRectRegion, viewClipRegion);
-                DisposeRgn(dirtyRectRegion);
+                // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and
+                // display to enable z-ordering for NSViews; a side-effect of this is that only the WebHTMLView
+                // knows about the true set of dirty rects.
+                NSView *opaqueAncestor = [self opaqueAncestor];
+                const NSRect *dirtyRects;
+                int dirtyRectCount, dirtyRectIndex;
+                [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&dirtyRectCount];
+
+                for (dirtyRectIndex = 0; dirtyRectIndex < dirtyRectCount; dirtyRectIndex++) {
+                    NSRect dirtyRect = [self convertRect:dirtyRects[dirtyRectIndex] fromView:opaqueAncestor];
+                    if (!NSEqualSizes(dirtyRect.size, NSZeroSize)) {
+                        // Create a region for this dirty rect
+                        RgnHandle dirtyRectRegion = NewRgn();
+                        SetRectRgn(dirtyRectRegion, NSMinX(dirtyRect), NSMinY(dirtyRect), NSMaxX(dirtyRect), NSMaxY(dirtyRect));
+                        
+                        // Union this dirty rect with the rest of the dirty rects
+                        UnionRgn(viewClipRegion, dirtyRectRegion, viewClipRegion);
+                        DisposeRgn(dirtyRectRegion);
+                    }
+                }
+            
+                // Intersect the dirty region with the clip region, so that we only draw over dirty parts
+                SectRgn(clipRegion, viewClipRegion, clipRegion);
+                DisposeRgn(viewClipRegion);
+            }
+            
+            qdPortState->forUpdate = forUpdate;
+            
+            // Switch to the port and set it up.
+            SetPort(port);
+
+            PenNormal();
+            ForeColor(blackColor);
+            BackColor(whiteColor);
+            
+            SetOrigin(nPort.qdPort.portx, nPort.qdPort.porty);
+
+            SetPortClipRegion(nPort.qdPort.port, clipRegion);
+
+            if (forUpdate) {
+                // AppKit may have tried to help us by doing a BeginUpdate.
+                // But the invalid region at that level didn't include AppKit's notion of what was not valid.
+                // We reset the port's visible region to counteract what BeginUpdate did.
+                SetPortVisibleRegion(nPort.qdPort.port, clipRegion);
+
+                // Some plugins do their own BeginUpdate/EndUpdate.
+                // For those, we must make sure that the update region contains the area we want to draw.
+                InvalWindowRgn(windowRef, clipRegion);
             }
         }
-    
-        // Intersect the dirty region with the clip region, so that we only draw over dirty parts
-        SectRgn(clipRegion, viewClipRegion, clipRegion);
-        DisposeRgn(viewClipRegion);
-    }
-    
-    portState.forUpdate = forUpdate;
-    
-    // Switch to the port and set it up.
-    SetPort(port);
+        break;
+#endif /* NP_NO_QUICKDRAW */
+        
+        case NPDrawingModelCoreGraphics:
+        {            
+            ASSERT([NSView focusView] == self);
 
-    PenNormal();
-    ForeColor(blackColor);
-    BackColor(whiteColor);
-    
-    SetOrigin(nPort.portx, nPort.porty);
+            PortState_CG *cgPortState = (PortState_CG *)malloc(sizeof(PortState_CG));
+            portState = (PortState)cgPortState;
+            cgPortState->forUpdate = YES;
+            cgPortState->context = [[NSGraphicsContext currentContext] graphicsPort];
+            
+            // Update the plugin's window/context
+            nPort.cgPort.window = windowRef;
+            nPort.cgPort.context = cgPortState->context;
+            window.window = &nPort.cgPort;
 
-    SetPortClipRegion(nPort.port, clipRegion);
-
-    if (forUpdate) {
-        // AppKit may have tried to help us by doing a BeginUpdate.
-        // But the invalid region at that level didn't include AppKit's notion of what was not valid.
-        // We reset the port's visible region to counteract what BeginUpdate did.
-        SetPortVisibleRegion(nPort.port, clipRegion);
-
-        // Some plugins do their own BeginUpdate/EndUpdate.
-        // For those, we must make sure that the update region contains the area we want to draw.
-        InvalWindowRgn(windowRef, clipRegion);
+            // Save current graphics context's state; will be restored by -restorePortState:
+            CGContextSaveGState(nPort.cgPort.context);
+            
+            // FIXME (4544971): Clip to dirty region when updating in "windowless" mode (transparent), like in the QD case
+        }
+        break;
+        
+        default:
+            ASSERT_NOT_REACHED();
+            portState = NULL;
+        break;
     }
     
     return portState;
 }
 
-- (PortState)saveAndSetPortState
+- (PortState)saveAndSetNewPortState
 {
-    return [self saveAndSetPortStateForUpdate:NO];
+    return [self saveAndSetNewPortStateForUpdate:NO];
 }
 
 - (void)restorePortState:(PortState)portState
 {
     ASSERT([self currentWindow]);
+    ASSERT(portState);
     
-    WindowRef windowRef = [[self currentWindow] windowRef];
-    CGrafPtr port = GetWindowPort(windowRef);
+    switch (drawingModel) {
+#ifndef NP_NO_QUICKDRAW
+        case NPDrawingModelQuickDraw:
+        {
+            PortState_QD *qdPortState = (PortState_QD *)portState;
+            WindowRef windowRef = [[self currentWindow] windowRef];
+            CGrafPtr port = GetWindowPort(windowRef);
+            if (qdPortState->forUpdate)
+                ValidWindowRgn(windowRef, qdPortState->clipRegion);
+            
+            SetOrigin(qdPortState->oldOrigin.h, qdPortState->oldOrigin.v);
 
-    if (portState.forUpdate) {
-        ValidWindowRgn(windowRef, portState.clipRegion);
+            SetPortClipRegion(port, qdPortState->oldClipRegion);
+            if (qdPortState->forUpdate)
+                SetPortVisibleRegion(port, qdPortState->oldVisibleRegion);
+
+            DisposeRgn(qdPortState->oldClipRegion);
+            DisposeRgn(qdPortState->oldVisibleRegion);
+            DisposeRgn(qdPortState->clipRegion);
+
+            SetPort(qdPortState->oldPort);
+        }
+        break;
+#endif /* NP_NO_QUICKDRAW */
+        
+        case NPDrawingModelCoreGraphics:
+        {
+            PortState_CG *cgPortState = (PortState_CG *)portState;
+            if (cgPortState->forUpdate) {
+                ASSERT([NSView focusView] == self);
+                ASSERT(cgPortState->context == nPort.cgPort.context);
+                CGContextRestoreGState(nPort.cgPort.context);
+            }
+        }
+        break;
+        
+        default:
+            ASSERT_NOT_REACHED();
+        break;
     }
-    
-    SetOrigin(portState.oldOrigin.h, portState.oldOrigin.v);
-
-    SetPortClipRegion(port, portState.oldClipRegion);
-    if (portState.forUpdate) {
-        SetPortVisibleRegion(port, portState.oldVisibleRegion);
-    }
-
-    DisposeRgn(portState.oldClipRegion);
-    DisposeRgn(portState.oldVisibleRegion);
-    DisposeRgn(portState.clipRegion);
-
-    SetPort(portState.oldPort);
 }
 
 - (BOOL)sendEvent:(EventRecord *)event
@@ -408,15 +497,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // If at any point the user clicks or presses a key from within a plugin, set the 
     // currentEventIsUserGesture flag to true. This is important to differentiate legitimate 
     // window.open() calls;  we still want to allow those.  See rdar://problem/4010765
-    if(event->what == mouseDown || event->what == keyDown || event->what == mouseUp || event->what == autoKey) {
+    if (event->what == mouseDown || event->what == keyDown || event->what == mouseUp || event->what == autoKey)
         currentEventIsUserGesture = YES;
-    }
     
     suspendKeyUpEvents = NO;
     
-    if (!isStarted) {
+    if (!isStarted)
         return NO;
-    }
 
     ASSERT(NPP_HandleEvent);
     
@@ -424,48 +511,58 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // We probably don't want more general reentrancy protection; we are really
     // protecting only against this one case, which actually comes up when
     // you first install the SVG viewer plug-in.
-    if (inSetWindow) {
+    if (inSetWindow)
         return NO;
-    }
 
     BOOL defers = [[self webView] defersCallbacks];
-    if (!defers) {
+    if (!defers)
         [[self webView] setDefersCallbacks:YES];
-    }
 
-    PortState portState = [self saveAndSetPortStateForUpdate:event->what == updateEvt];
+    // Can only send updateEvt to CoreGraphics plugins when actually drawing
+    ASSERT(drawingModel != NPDrawingModelCoreGraphics || event->what != updateEvt || [NSView focusView] == self);
     
-    // We may have changed the window, so inform the plug-in.
-    [self setWindowIfNecessary];
-
+    BOOL updating = event->what == updateEvt;
+    BOOL acceptedEvent = NO;
+    PortState portState;
+    if (drawingModel != NPDrawingModelCoreGraphics || event->what == updateEvt) {
+        // Can only save/set port state when updating in CoreGraphics mode.  We can save/set the port state
+        // at any time in other modes.
+        portState = [self saveAndSetNewPortStateForUpdate:updating];
+    } else
+        portState = NULL;
+        
+    if (portState) {
+        // We may have changed the window, so inform the plug-in.
+        [self setWindowIfNecessary];
+        
 #ifndef NDEBUG
-    // Draw green to help debug.
-    // If we see any green we know something's wrong.
-    if (!isTransparent && event->what == updateEvt) {
-        ForeColor(greenColor);
-        const Rect bigRect = { -10000, -10000, 10000, 10000 };
-        PaintRect(&bigRect);
-        ForeColor(blackColor);
-    }
+        // Draw green to help debug.
+        // If we see any green we know something's wrong.
+        if (!isTransparent && event->what == updateEvt) {
+            ForeColor(greenColor);
+            const Rect bigRect = { -10000, -10000, 10000, 10000 };
+            PaintRect(&bigRect);
+            ForeColor(blackColor);
+        }
 #endif
     
-    // Temporarily retain self in case the plug-in view is released while sending an event. 
-    [self retain];
+        // Temporarily retain self in case the plug-in view is released while sending an event. 
+        [[self retain] autorelease];
 
-    BOOL acceptedEvent = NPP_HandleEvent(instance, event);
-
+        acceptedEvent = NPP_HandleEvent(instance, event);
+    }
+    
     currentEventIsUserGesture = NO;
     
-    if ([self currentWindow]) {
-        [self restorePortState:portState];
+    if (portState) {
+        if ([self currentWindow])
+            [self restorePortState:portState];
+        free(portState);
     }
 
-    if (!defers) {
+    if (!defers)
         [[self webView] setDefersCallbacks:NO];
-    }
-    
-    [self release];
-    
+            
     return acceptedEvent;
 }
 
@@ -820,51 +917,70 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (BOOL)isNewWindowEqualToOldWindow
 {
-    if (window.x != lastSetWindow.x) {
+    if (window.x != lastSetWindow.x)
         return NO;
-    }
-    if (window.y != lastSetWindow.y) {
+    if (window.y != lastSetWindow.y)
         return NO;
-    }
-    if (window.width != lastSetWindow.width) {
+    if (window.width != lastSetWindow.width)
         return NO;
-    }
-    if (window.height != lastSetWindow.height) {
+    if (window.height != lastSetWindow.height)
         return NO;
-    }
-    if (window.clipRect.top != lastSetWindow.clipRect.top) {
+    if (window.clipRect.top != lastSetWindow.clipRect.top)
         return NO;
-    }
-    if (window.clipRect.left != lastSetWindow.clipRect.left) {
+    if (window.clipRect.left != lastSetWindow.clipRect.left)
         return NO;
-    }
-    if (window.clipRect.bottom  != lastSetWindow.clipRect.bottom ) {
+    if (window.clipRect.bottom  != lastSetWindow.clipRect.bottom)
         return NO;
-    }
-    if (window.clipRect.right != lastSetWindow.clipRect.right) {
+    if (window.clipRect.right != lastSetWindow.clipRect.right)
         return NO;
-    }
-    if (window.type != lastSetWindow.type) {
+    if (window.type != lastSetWindow.type)
         return NO;
-    }
-    if (nPort.portx != lastSetPort.portx) {
-        return NO;
-    }
-    if (nPort.porty != lastSetPort.porty) {
-        return NO;
-    }
-    if (nPort.port != lastSetPort.port) {
-        return NO;
+    
+    switch (drawingModel) {
+#ifndef NP_NO_QUICKDRAW
+        case NPDrawingModelQuickDraw:
+            if (nPort.qdPort.portx != lastSetPort.qdPort.portx)
+                return NO;
+            if (nPort.qdPort.porty != lastSetPort.qdPort.porty)
+                return NO;
+            if (nPort.qdPort.port != lastSetPort.qdPort.port)
+                return NO;
+        break;
+#endif /* NP_NO_QUICKDRAW */
+            
+        case NPDrawingModelCoreGraphics:
+            if (nPort.cgPort.window != lastSetPort.cgPort.window)
+                return NO;
+            if (nPort.cgPort.context != lastSetPort.cgPort.context)
+                return NO;
+        break;
+            
+        default:
+            ASSERT_NOT_REACHED();
+        break;
     }
     
     return YES;
 }
 
 - (void)updateAndSetWindow
-{    
-    PortState portState = [self saveAndSetPortState];
-    [self setWindowIfNecessary];
-    [self restorePortState:portState];
+{
+    if (drawingModel == NPDrawingModelCoreGraphics) {
+        // Can only update CoreGraphics plugins while redrawing the plugin view
+        [self setNeedsDisplay:YES];
+        return;
+    }
+    
+    // Can't update the plugin if it has not started (or has been stopped)
+    if (!isStarted)
+        return;
+        
+    PortState portState = [self saveAndSetNewPortState];
+    if (portState) {
+        [self setWindowIfNecessary];
+        [self restorePortState:portState];
+        free(portState);
+    }
 }
 
 - (void)setWindowIfNecessary
@@ -882,11 +998,32 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         ASSERT(!inSetWindow);
         
         inSetWindow = YES;
+        
+        // A CoreGraphics plugin's window may only be set while the plugin is being updated
+        ASSERT(drawingModel != NPDrawingModelCoreGraphics || [NSView focusView] == self);
+        
         npErr = NPP_SetWindow(instance, &window);
         inSetWindow = NO;
 
-        LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
-            npErr, (int)nPort.port, (int)window.x, (int)window.y);
+#ifndef NDEBUG
+        switch (drawingModel) {
+#ifndef NP_NO_QUICKDRAW
+            case NPDrawingModelQuickDraw:
+                LOG(Plugins, "NPP_SetWindow (QuickDraw): %d, port=0x%08x, window.x:%d window.y:%d",
+                npErr, (int)nPort.qdPort.port, (int)window.x, (int)window.y);
+            break;
+#endif /* NP_NO_QUICKDRAW */
+            
+            case NPDrawingModelCoreGraphics:
+                LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d",
+                npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y);
+            break;
+            
+            default:
+                ASSERT_NOT_REACHED();
+            break;
+        }
+#endif /* !defined(NDEBUG) */
         
         lastSetWindow = window;
         lastSetPort = nPort;
@@ -1000,16 +1137,34 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     ASSERT(NPP_New);
 
+    // Initialize drawingModel to an invalid value so that we can detect when the plugin does not specify a drawingModel
+    drawingModel = -1;
+    
     [[self class] setCurrentPluginView:self];
     NPError npErr = NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];
-    
+
+    if (drawingModel == (NPDrawingModel)-1) {
+#ifndef NP_NO_QUICKDRAW
+        // Default to QuickDraw if the plugin did not specify a drawing model.
+        drawingModel = NPDrawingModelQuickDraw;
+#else
+        // QuickDraw is not available, so we can't default to it.  We could default to CoreGraphics instead, but
+        // if the plugin did not specify the CoreGraphics drawing model then it must be one of the old QuickDraw
+        // plugins.  Thus, the plugin is unsupported and should not be started.  Destroy it here and bail out.
+        LOG(Plugins, "Plugin only supports QuickDraw, but QuickDraw is unavailable: %@", plugin);
+        NPP_Destroy(instance, NULL);
+        instance->pdata = NULL;
+        return NO;
+#endif
+    }
+        
     LOG(Plugins, "NPP_New: %d", npErr);
     if (npErr != NPERR_NO_ERROR) {
         LOG_ERROR("NPP_New failed with error: %d", npErr);
         return NO;
     }
-
+    
     isStarted = YES;
         
     [self updateAndSetWindow];
@@ -1264,8 +1419,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return YES;
 }
 
+#ifndef NP_NO_QUICKDRAW
 -(void)tellQuickTimeToChill
 {
+    ASSERT(drawingModel == NPDrawingModelQuickDraw);
+    
     // Make a call to the secret QuickDraw API that makes QuickTime calm down.
     WindowRef windowRef = [[self window] windowRef];
     if (!windowRef) {
@@ -1276,10 +1434,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     GetPortBounds(port, &bounds);
 	WKCallDrawingNotification(port, &bounds);
 }
+#endif /* NP_NO_QUICKDRAW */
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
-    [self tellQuickTimeToChill];
+#ifndef NP_NO_QUICKDRAW
+    if (drawingModel == NPDrawingModelQuickDraw)
+        [self tellQuickTimeToChill];
+#endif
 
     // We must remove the tracking rect before we move to the new window.
     // Once we move to the new window, it will be too late.
@@ -1351,7 +1513,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)viewHasMoved:(NSNotification *)notification
 {
-    [self tellQuickTimeToChill];
+#ifndef NP_NO_QUICKDRAW
+    if (drawingModel == NPDrawingModelQuickDraw)
+        [self tellQuickTimeToChill];
+#endif
     [self updateAndSetWindow];
     [self resetTrackingRect];
     
@@ -1802,13 +1967,32 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         (float)invalidRect->right - invalidRect->left, (float)invalidRect->bottom - invalidRect->top)];
 }
 
--(void)invalidateRegion:(NPRegion)invalidRegion
+- (void)invalidateRegion:(NPRegion)invalidRegion
 {
     LOG(Plugins, "NPN_InvalidateRegion");
-    Rect invalidRect;
-    GetRegionBounds(invalidRegion, &invalidRect);
-    [self setNeedsDisplayInRect:NSMakeRect(invalidRect.left, invalidRect.top,
-        (float)invalidRect.right - invalidRect.left, (float)invalidRect.bottom - invalidRect.top)];
+    NSRect invalidRect;
+    switch (drawingModel) {
+#ifndef NP_NO_QUICKDRAW
+        case NPDrawingModelQuickDraw: {
+            Rect qdRect;
+            GetRegionBounds(invalidRegion, &qdRect);
+            invalidRect = NSMakeRect(qdRect.left, qdRect.top, qdRect.right - qdRect.left, qdRect.bottom - qdRect.top);
+        }
+        break;
+#endif /* NP_NO_QUICKDRAW */
+        
+        case NPDrawingModelCoreGraphics: {
+            CGRect cgRect = CGPathGetBoundingBox((NPCGRegion)invalidRegion);
+            invalidRect = *(NSRect *)&cgRect;
+        }
+        break;
+    
+        default:
+            ASSERT_NOT_REACHED();
+        break;
+    }
+    
+    [self setNeedsDisplayInRect:invalidRect];
 }
 
 -(void)forceRedraw
@@ -1820,18 +2004,44 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (NPError)getVariable:(NPNVariable)variable value:(void *)value
 {
-    if (variable == NPNVWindowNPObject) {
-        NPObject *windowScriptObject = [[[self webFrame] _bridge] windowScriptNPObject];
+    switch (variable) {
+        case NPNVWindowNPObject: {
+            NPObject *windowScriptObject = [[[self webFrame] _bridge] windowScriptNPObject];
 
-        // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
-        if (windowScriptObject)
-            _NPN_RetainObject(windowScriptObject);
+            // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
+            if (windowScriptObject)
+                _NPN_RetainObject(windowScriptObject);
+            
+            void **v = (void **)value;
+            *v = windowScriptObject;
+
+            return NPERR_NO_ERROR;
+        }
         
-        void **v = (void **)value;
-        *v = windowScriptObject;
+        case NPNVpluginDrawingModel:
+        {
+            *(NPDrawingModel *)value = drawingModel;
+            return NPERR_NO_ERROR;
+        }
+
+#ifndef NP_NO_QUICKDRAW
+        case NPNVsupportsQuickDrawBool:
+        {
+            *(NPBool *)value = TRUE;
+            return NPERR_NO_ERROR;
+        }
+#endif /* NP_NO_QUICKDRAW */
         
-        return NPERR_NO_ERROR;
+        case NPNVsupportsCoreGraphicsBool:
+        {
+            *(NPBool *)value = TRUE;
+            return NPERR_NO_ERROR;
+        }
+        
+        default:
+            break;
     }
+
     return NPERR_GENERIC_ERROR;
 }
 
@@ -1849,6 +2059,30 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             isTransparent = newTransparent;
             
             return NPERR_NO_ERROR;
+        }
+        
+        case NPNVpluginDrawingModel:
+        {
+            // Can only set drawing model inside NPP_New()
+            if (self != [[self class] currentPluginView])
+                return NPERR_GENERIC_ERROR;
+            
+            // Check for valid, supported drawing model
+            NPDrawingModel newDrawingModel = (NPDrawingModel)value;
+            switch (newDrawingModel) {
+                // Supported drawing models:
+#ifndef NP_NO_QUICKDRAW
+                case NPDrawingModelQuickDraw:
+#endif
+                case NPDrawingModelCoreGraphics:
+                    drawingModel = newDrawingModel;
+                    return NPERR_NO_ERROR;
+                
+                // Unsupported (or unknown) drawing models:
+                default:
+                    LOG(Plugins, "Plugin %@ uses unsupported drawing model: %d", plugin, drawingModel);
+                    return NPERR_GENERIC_ERROR;
+            }
         }
         
         default:

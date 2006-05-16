@@ -29,6 +29,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import <WebKit/npfunctions.h>
+#import <WebKit/npapi.h>
 
 @class WebDataSource;
 @class WebFrame;
@@ -36,6 +37,12 @@
 @class WebNetscapePluginNullEventSender;
 @class WebView;
 
+typedef union PluginPort {
+#ifndef NP_NO_QUICKDRAW
+    NP_Port qdPort;
+#endif        
+    NP_CGContext cgPort;
+} PluginPort;
 
 @interface WebBaseNetscapePluginView : NSView
 {
@@ -48,11 +55,12 @@
     char **cValues;
         
     NPP instance;
+    NPP_t instanceStruct;
     NPWindow window;
     NPWindow lastSetWindow;
-    NP_Port nPort;
-    NP_Port lastSetPort;
-    NPP_t instanceStruct;
+    PluginPort nPort;
+    PluginPort lastSetPort;
+    NPDrawingModel drawingModel;
 
     BOOL isStarted;
     BOOL inSetWindow;

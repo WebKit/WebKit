@@ -1,5 +1,74 @@
 2006-05-15  Tim Omernick  <timo@apple.com>
 
+        Reviewed by John Sullivan.
+
+        Part of <rdar://problem/4466508> Add 64-bit support to the Netscape Plugin API
+
+        Added to the Netscape Plugin API the concept of "plugin drawing models".  The drawing model
+        determines the kind of graphics context created by the browser for the plugin, as well as 
+        the Mac types of various Netscape Plugin API data structures.
+
+        There is a drawing model to represent the old QuickDraw-based API.  It is used by default
+        if QuickDraw is available on the system, unless the plugin specifies another drawing model.
+
+        The big change is the addition of the CoreGraphics drawing model.  A plugin may request this
+        drawing model to obtain access to a CGContextRef for drawing, instead of a QuickDraw CGrafPtr.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        Added PluginPort union, which wraps a NP_Port and a NP_CGContext.  This is to make access to
+        the nPort and lastSetPort ivars more convenient now that the port type differs based on the 
+        drawing model.
+        Changed types of nPort and lastSetPort to PluginPort so they can be used with any drawing model.
+        Added drawingModel ivar.
+        * Plugins/WebBaseNetscapePluginView.m:
+        Renamed PortState to PortState_QD.  PortState is now an opaque pointer.  PortState_QD cannot be
+        used if QuickDraw is unavailable.
+        (-[WebBaseNetscapePluginView fixWindowPort]):
+        Cannot be used if QuickDraw is unavailable.
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        Only fix window port if drawing model is QuickDraw.
+        Re-ordered some code so I could group QuickDraw-specific stuff into switch and if blocks (that's
+        why the diff here is so terrible).
+        Now returns a malloc()'ed PortState that the caller is responsible for freeing.  Renamed to
+        better reflect this behavior.
+        Support for the CoreGraphics drawing model -- fill PortState_CG struct, save CGContext state.
+        (-[WebBaseNetscapePluginView restorePortState:]):
+        Switch based on drawing model.
+        Support for the CoreGraphics drawing model -- restore CGContext state saved earlier.
+        (-[WebBaseNetscapePluginView sendEvent:]):
+        Formatting.
+        Don't set save/set port state or set the window in CoreGraphics mode unless the event being
+        sent is an updateEvt.  We can't provide the plugin with a CGContext outside of our view display
+        cycle.
+        Don't restore PortState if it's NULL (didn't used to be a pointer).  Free when we're done with it.
+        (-[WebBaseNetscapePluginView isNewWindowEqualToOldWindow]):
+        Formatting.
+        Switch how we compare ports based on the drawing model.
+        (-[WebBaseNetscapePluginView updateAndSetWindow]):
+        Fixed for CoreGraphics by triggering a redisplay instead of sending an update event to the plugin
+        outside of the view display cycle.
+        Don't restore PortState if it's NULL (didn't used to be a pointer).  Free when we're done with it.
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]):
+        Assert that the window is only set when updating in CoreGraphics mode.
+        Log differently depending on the drawing model.
+        (-[WebBaseNetscapePluginView start]):
+        Fall back on QuickDraw if the plugin does not specify a drawing model.
+        (-[WebBaseNetscapePluginView tellQuickTimeToChill]):
+        Cannot be used if QuickDraw is unavailable.
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]):
+        Only call -tellQuickTimeToChill in QuickDraw mode.
+        (-[WebBaseNetscapePluginView viewHasMoved:]):
+        ditto
+        (-[WebBaseNetscapePluginView invalidateRegion:]):
+        NPRegion is a CGPathRef in CoreGraphics mode.
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        Added support for retriveing the NPNVpluginDrawingModel, NPNVsupportsQuickDrawBool, and
+        NPNVsupportsCoreGraphicsBool browser variables.
+        (-[WebBaseNetscapePluginView setVariable:value:]):
+        Added support for setting the NPNVpluginDrawingModel variable.
+
+2006-05-15  Tim Omernick  <timo@apple.com>
+
         Reviewed by Kevin Decker.
 
         Follow-up to my previous PLT fix.  I found upon further testing (by dramatically decreasing the
