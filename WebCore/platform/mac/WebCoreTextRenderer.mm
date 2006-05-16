@@ -41,7 +41,7 @@ void WebCoreDrawTextAtPoint(const UniChar* buffer, unsigned length, NSPoint poin
     TextRun run(buffer, length);
     TextStyle style;
     style.disableRoundingHacks();
-    float red, green, blue, alpha;
+    CGFloat red, green, blue, alpha;
     [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     GraphicsContext graphicsContext(context);

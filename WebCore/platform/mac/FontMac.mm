@@ -48,6 +48,12 @@
 #define LEFT_TO_RIGHT_OVERRIDE 0x202D
 #define RIGHT_TO_LEFT_OVERRIDE 0x202E
 
+#if defined(__LP64__)
+#define URefCon void*
+#else
+#define URefCon UInt32
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -143,7 +149,7 @@ static void initializeATSUStyle(const FontData* fontData)
     }
 }
 
-static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOperation, ATSULineRef iLineRef, UInt32 iRefCon,
+static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOperation, ATSULineRef iLineRef, URefCon iRefCon,
                                         void *iOperationCallbackParameterPtr, ATSULayoutOperationCallbackStatus *oCallbackStatus)
 {
     ATSULayoutParameters *params = (ATSULayoutParameters *)iRefCon;
@@ -301,7 +307,7 @@ void ATSULayoutParameters::initialize(const Font* font)
     if (status != noErr)
         LOG_ERROR("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
     m_layout = layout;
-    ATSUSetTextLayoutRefCon(m_layout, (UInt32)this);
+    ATSUSetTextLayoutRefCon(m_layout, (URefCon)this);
 
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     ATSLineLayoutOptions lineLayoutOptions = kATSLineKeepSpacesOutOfMargin | kATSLineHasNoHangers;

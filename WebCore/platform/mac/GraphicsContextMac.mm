@@ -135,7 +135,11 @@ void GraphicsContext::drawFocusRing(const Color& color)
     ASSERT(view);
 
     const NSRect* drawRects;
+#if defined(__LP64__)
+    long count;
+#else
     int count;
+#endif
     [view getRectsBeingDrawn:&drawRects count:&count];
 
     // We have to pass in our own clip rectangles here because a bug in CG
