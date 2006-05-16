@@ -59,9 +59,12 @@ sub Parse
 {
   my $object = shift;
   my $fileName = shift;
-
+  my $defines = shift;
+  
   print " | *** Starting to parse $fileName...\n |\n" if(!$beQuiet);
-  open FILE, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", $fileName or die "Could not open $fileName";
+
+  open FILE, "-|", "/usr/bin/gcc", "-E", "-P", "-x", "c++", 
+      (map { "-D$_" } split(/ /, $defines)), $fileName or die "Could not open $fileName";
   my @documentContent = <FILE>;
   close FILE;
 

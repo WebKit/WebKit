@@ -299,10 +299,12 @@ static const char * const eventExceptionNames[] = {
     "UNSPECIFIED_EVENT_TYPE_ERR"
 };
 
+#if XPATH_SUPPORT
 static const char * const xpathExceptionNames[] = {
     "INVALID_EXPRESSION_ERR",
     "TYPE_ERR"
 };
+#endif
 
 void setDOMException(ExecState* exec, ExceptionCode ec)
 {
@@ -328,6 +330,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     nameIndex = code;
     nameTable = eventExceptionNames;
     nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
+#if XPATH_SUPPORT
   } else if (code >= XPathExceptionOffset && code <= XPathExceptionMax) {
     type = "DOM XPath";
     // XPath exception codes start with 51 and we don't want 51 empty elements in the name array
@@ -335,6 +338,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     code -= XPathExceptionOffset;
     nameTable = xpathExceptionNames;
     nameTableSize = sizeof(xpathExceptionNames) / sizeof(xpathExceptionNames[0]);
+#endif
   } else {
     nameIndex = code;
     nameTable = exceptionNames;

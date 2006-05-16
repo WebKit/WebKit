@@ -192,6 +192,7 @@ sub GenerateHeader
   my $hasRealParent = @{$dataNode->parents} > 0;
   my $hasParent = $hasLegacyParent || $hasRealParent;
   my $parentClassName = GetParentClassName($dataNode);
+  my $conditional = $dataNode->extendedAttributes->{"Conditional"};
   
   # - Add default header template
   @headerContent = split("\r", $headerTemplate);
@@ -199,6 +200,8 @@ sub GenerateHeader
   # - Add header protection
   push(@headerContent, "\n#ifndef $className" . "_H");
   push(@headerContent, "\n#define $className" . "_H\n\n");
+  
+  push(@headerContent, "#if ${conditional}_SUPPORT\n\n") if $conditional;
   
   if (exists $dataNode->extendedAttributes->{"LegacyParent"}) {
     push(@headerContent, GetLegacyHeaderIncludes($dataNode->extendedAttributes->{"LegacyParent"}));
@@ -359,7 +362,11 @@ sub GenerateHeader
   }
   push(@headerContent, "};\n\n");
   
-  push(@headerContent, "}\n\n#endif\n");
+  push(@headerContent, "}\n\n");
+
+  push(@headerContent, "#endif // ${conditional}_SUPPORT\n\n") if $conditional;
+  
+  push(@headerContent, "#endif\n");
 }
 
 sub GenerateImplementation
@@ -375,13 +382,16 @@ sub GenerateImplementation
   my $hasRealParent = @{$dataNode->parents} > 0;
   my $hasParent = $hasLegacyParent || $hasRealParent;
   my $parentClassName = GetParentClassName($dataNode);
+  my $conditional = $dataNode->extendedAttributes->{"Conditional"};
   
   # - Add default header template
   @implContentHeader = split("\r", $headerTemplate);
   push(@implContentHeader, "\n");
-  push(@implContentHeader,, "#include \"config.h\"\n");
+  push(@implContentHeader,, "#include \"config.h\"\n\n");
+  
+  push(@implContentHeader, "#if ${conditional}_SUPPORT\n\n") if $conditional;
+  
   push(@implContentHeader, "#include \"$className.h\"\n\n");
-
 
   AddIncludesForType($interfaceName);
 
@@ -752,6 +762,8 @@ sub GenerateImplementation
   }
 
   push(@implContent, "\n}\n");
+    
+  push(@implContent, "\n#endif // ${conditional}_SUPPORT\n") if $conditional;
 }
 
 sub GetNativeType

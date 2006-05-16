@@ -146,13 +146,18 @@ CSSGrammar.cpp : css/CSSGrammar.y
 	rm -f CSSGrammar.cpp.h CSSGrammar.hpp
 
 # XPath grammar
-
-XPathGrammar.cpp : xpath/impl/XPathGrammar.y
+ifeq ($(findstring XPATH_SUPPORT,$(FEATURE_DEFINES)), XPATH_SUPPORT)
+XPathGrammar.cpp : xpath/impl/XPathGrammar.y $(PROJECT_FILE)
 	bison -d -p xpathyy $< -o $@
 	touch XPathGrammar.cpp.h
 	touch XPathGrammar.hpp
 	cat XPathGrammar.cpp.h XPathGrammar.hpp > XPathGrammar.h
 	rm -f XPathGrammar.cpp.h XPathGrammar.hpp
+else
+XPathGrammar.cpp : $(PROJECT_FILE)
+	echo > XPathGrammar.cpp
+	echo > XPathGrammar.h
+endif
 
 # user agent style sheets
 
@@ -172,8 +177,9 @@ CharsetData.cpp : platform/make-charset-table.pl platform/character-sets.txt $(E
 %Table.cpp: %.cpp $(CREATE_HASH_TABLE)
 	$(CREATE_HASH_TABLE) $< > $@
 
-# SVG tag and attribute names
+ifeq ($(findstring SVG_SUPPORT,$(FEATURE_DEFINES)), SVG_SUPPORT)
 
+# SVG tag and attribute names
 SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgtags.in ksvg2/svg/svgattrs.in
 	$< --tags $(WebCore)/ksvg2/svg/svgtags.in --attrs $(WebCore)/ksvg2/svg/svgattrs.in \
             --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
@@ -196,6 +202,22 @@ ksvgcssvalues.h : ksvg2/scripts/cssmakevalues css/CSSValueKeywords.in ksvg2/css/
 	perl -ne 'print lc' $(WebCore)/ksvg2/css/CSSValueKeywords.in > ksvgcssvalues.in
 	$(WebCore)/ksvg2/scripts/cssmakevalues -n SVG -f ksvgcssvalues.in
 
+else
+
+SVGNames.cpp :
+	echo > SVGNames.cpp
+
+XLinkNames.cpp :
+	echo > XLinkNames.cpp
+	
+ksvgcssproperties.h :
+	echo > ksvgcssproperties.h
+
+ksvgcssvalues.h :
+	echo > ksvgcssvalues.h
+
+endif
+
 # new-style JavaScript bindings
 
 JS_BINDINGS_SCRIPTS = \
@@ -207,4 +229,4 @@ JS_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
-	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --generator JS --include dom --include html --include xpath --outputdir  . $<
+	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES)" --generator JS --include dom --include html --include xpath --outputdir  . $<

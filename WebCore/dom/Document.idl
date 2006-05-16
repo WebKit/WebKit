@@ -114,6 +114,7 @@ module core {
         Node adoptNode(in Node source)
             raises (DOMException);
 
+#if XPATH_SUPPORT
         // DOM Level 3 XPath (XPathEvaluator interface)
         XPathExpression createExpression(in DOMString expression,
                                          in XPathNSResolver resolver)
@@ -127,6 +128,7 @@ module core {
                              in unsigned short type,
                              in XPathResult inResult)
             raises(DOMException);
+#endif
 
         // Common extensions
 

@@ -18,8 +18,7 @@
  */
 
 module xpath {
-
-    interface [GenerateConstructor, CanBeConstructed] XPathEvaluator {
+    interface [GenerateConstructor, CanBeConstructed, Conditional=XPATH] XPathEvaluator {
         XPathExpression createExpression(in DOMString expression,
                                          in XPathNSResolver resolver)
             raises(core::DOMException);

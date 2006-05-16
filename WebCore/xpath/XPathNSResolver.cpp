@@ -47,7 +47,6 @@ String XPathNSResolver::lookupNamespaceURI(const String& prefix)
     return m_node ? m_node->lookupNamespaceURI(prefix) : String();
 }
 
-#endif // XPATH_SUPPORT
-
 }
 
+#endif // XPATH_SUPPORT

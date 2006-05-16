@@ -5933,7 +5933,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nexport WebCore=\"${SRCROOT}\"\n\nexport ENCODINGS_FILE=\"${WebCore}/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kCFStringEncoding\"\n\nmake -f \"$WebCore/DerivedSources.make\"\n";
+			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nexport WebCore=\"${SRCROOT}\"\n\nexport ENCODINGS_FILE=\"${WebCore}/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kCFStringEncoding\"\n\nif [ \"${ACTION}\" = \"build\" ]; then\n\tmake -f \"$WebCore/DerivedSources.make\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -6607,8 +6607,7 @@
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
-					SVG_SUPPORT,
-					XPATH_SUPPORT,
+					"$(FEATURE_DEFINES)",
 				);
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
@@ -6640,8 +6639,7 @@
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
-					SVG_SUPPORT,
-					XPATH_SUPPORT,
+					"$(FEATURE_DEFINES)",
 				);
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
@@ -6674,8 +6672,7 @@
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
-					SVG_SUPPORT,
-					XPATH_SUPPORT,
+					"$(FEATURE_DEFINES)",
 				);
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
@@ -6706,6 +6703,7 @@
 		149C284408902B11008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -6741,6 +6739,7 @@
 		149C284508902B11008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -6776,6 +6775,7 @@
 		149C284708902B11008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;

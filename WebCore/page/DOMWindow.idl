@@ -59,9 +59,11 @@ module window {
         // Mozilla has a separate XMLDocument object for XML documents. 
         // We just use Document for this.
         attribute DocumentConstructor XMLDocument;
-
+        
+#if XPATH_SUPPORT
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
+#endif
     };
 
 }

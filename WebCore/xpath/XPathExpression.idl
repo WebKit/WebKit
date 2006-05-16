@@ -19,7 +19,7 @@
 
 module xpath {
 
-    interface XPathExpression {
+    interface [Conditional=XPATH] XPathExpression {
         XPathResult evaluate(in Node contextNode, 
                              in unsigned short type, 
                              in XPathResult inResult)

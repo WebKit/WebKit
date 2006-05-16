@@ -40,10 +40,12 @@ use CodeGenerator;
 my @idlDirectories;
 my $outputDirectory;
 my $generator;
+my $defines;
 
 GetOptions('include=s@' => \@idlDirectories,
            'outputdir=s' => \$outputDirectory,
-           'generator=s' => \$generator);
+           'generator=s' => \$generator,
+		   'defines=s' => \$defines);
 
 my $idlFile = $ARGV[0];
 
@@ -52,12 +54,12 @@ die('Must specify IDL search path.') unless @idlDirectories;
 die('Must specify generator') unless defined($generator);
 die('Must specify input file.') unless defined($idlFile);
 die('Must specify output directory.') unless defined($outputDirectory);
+die('Must specify defines') unless defined($defines);
 
 
 # Parse the given IDL file.
 my $parser = IDLParser->new(1);
-	
-my $document = $parser->Parse($idlFile);
+my $document = $parser->Parse($idlFile, $defines);
 	
 # Generate desired output for given IDL file.
 my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory);

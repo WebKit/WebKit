@@ -79,7 +79,7 @@ Node::NodeType XPathNamespace::nodeType() const
     return Node::XPATH_NAMESPACE_NODE;
 }
 
-#endif // XPATH_SUPPORT
-
 }
+
+#endif // XPATH_SUPPORT
 

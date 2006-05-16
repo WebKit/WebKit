@@ -1,3 +1,46 @@
+2006-05-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        * DerivedSources.make:
+        Conditionally generate the SVG and XPath related files based on the value of 
+        FEATURE_DEFINES. Also, pass FEATURE_DEFINES TO THE BINDINGS GENERATOR.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Add FEATURE_DEFINES as a toplevel build setting and set it to "SVG_SUPPORT XPATH_SUPPORT"
+        to keep SVG and XPath support turned on. Add FEATURE_DEFINES to the CPP defines.
+        
+        * bindings/js/kjs_binding.cpp:
+        (KJS::setDOMException):
+        Add #ifdefs around the XPath code.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Add "Conditional" extended attribute for interfaces. If this is set, the generated code will be
+        surrounded by an #if.
+        
+        * bindings/scripts/IDLParser.pm:
+        Pass the define flags on to the preprocessor.
+        
+        * bindings/scripts/generate-bindings.pl:
+        Add a --defines property and pass it on to the parser.
+        
+        * css/cssstyleselector.h:
+        Add DeprecatedString.h include.
+        
+        * dom/Document.idl:
+        Put back #if around the XPath functions
+        
+        * page/DOMWindow.idl:
+        Put #if around the XPath constructors
+        
+        * xpath/XPathEvaluator.idl:
+        * xpath/XPathExpression.idl:
+        * xpath/XPathNSResolver.cpp:
+        * xpath/XPathNSResolver.idl:
+        * xpath/XPathNamespace.cpp:
+        * xpath/XPathResult.idl:
+        Add "Conditional=XPATH" to all interfaces.
+        
 2006-05-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

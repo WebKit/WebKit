@@ -19,7 +19,7 @@
 
 module xpath {
 
-    interface XPathNSResolver {
+    interface [Conditional=XPATH] XPathNSResolver {
         DOMString lookupNamespaceURI(in DOMString prefix);
     };
 }

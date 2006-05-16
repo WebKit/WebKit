@@ -24,6 +24,7 @@
 #ifndef CSS_cssstyleselector_h_
 #define CSS_cssstyleselector_h_
 
+#include "DeprecatedString.h"
 #include "render_style.h"
 
 class KHTMLSettings;
