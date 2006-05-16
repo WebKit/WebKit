@@ -1274,7 +1274,7 @@ static bool debugWidget = true;
     return cachedResponse;
 }
 
-- (void)_writeImageElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+- (void)_writeImageForElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
     DOMElement *domElement = [element objectForKey:WebElementDOMNodeKey];
@@ -2341,7 +2341,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)writeElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     if ([element objectForKey:WebElementImageURLKey] != nil) {
-        [self _writeImageElement:element withPasteboardTypes:types toPasteboard:pasteboard];
+        [self _writeImageForElement:element withPasteboardTypes:types toPasteboard:pasteboard];
     } else if ([element objectForKey:WebElementLinkURLKey] != nil) {
         [self _writeLinkElement:element withPasteboardTypes:types toPasteboard:pasteboard];
     } else if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {

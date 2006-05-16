@@ -2,6 +2,28 @@
 
         Reviewed by Anders.
 
+        - did the name change from "ImageElement" to "ImageForElement" that I said I would
+          (oops!)
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]):
+        * Misc/WebNSPasteboardExtras.h:
+        * Misc/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        * Misc/WebNSViewExtras.h:
+        * Misc/WebNSViewExtras.m:
+        (-[NSView _web_DragImageForElement:rect:event:pasteboard:source:offset:]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        * WebView/WebView.m:
+        (-[WebView _writeImageForElement:withPasteboardTypes:toPasteboard:]):
+        (-[WebView writeElement:withPasteboardTypes:toPasteboard:]):
+        * WebView/WebViewInternal.h:
+
+2006-05-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=8940
           remove extra copy of image code
 

@@ -82,7 +82,7 @@
 - (BOOL)_isPerformingProgrammaticFocus;
 - (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInt)modifierFlags;
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
-- (void)_writeImageElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
+- (void)_writeImageForElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_progressCompleted:(WebFrame *)frame;
 - (void)_didCommitLoadForFrame:(WebFrame *)frame;

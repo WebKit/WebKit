@@ -57,7 +57,7 @@
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender;
 
 // Resizes and applies alpha to image and drags it.
-- (void)_web_dragImageElement:(DOMElement *)element
+- (void)_web_DragImageForElement:(DOMElement *)element
                          rect:(NSRect)rect
                         event:(NSEvent *)event
                    pasteboard:(NSPasteboard *)pasteboard 

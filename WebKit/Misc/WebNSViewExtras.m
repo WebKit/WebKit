@@ -160,7 +160,7 @@
     }
 }
 
-- (void)_web_dragImageElement:(DOMElement *)element
+- (void)_web_DragImageForElement:(DOMElement *)element
                          rect:(NSRect)rect
                         event:(NSEvent *)event
                    pasteboard:(NSPasteboard *)pasteboard 

@@ -1300,7 +1300,7 @@ static WebHTMLView *lastHitView = nil;
             else
                 archive = [WebArchiver archiveMainResourceForFrame:[self _frame]];
             
-            source = [pasteboard _web_declareAndWriteDragImageElement:imageElement
+            source = [pasteboard _web_declareAndWriteDragImageForElement:imageElement
                                                                   URL:linkURL ? linkURL : imageURL
                                                                 title:[element objectForKey:WebElementImageAltStringKey]
                                                               archive:archive
@@ -1308,7 +1308,7 @@ static WebHTMLView *lastHitView = nil;
         }
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:mouseDownPoint withPasteboard:pasteboard];
         if (dragImage == nil) {
-            [self _web_dragImageElement:[element objectForKey:WebElementDOMNodeKey]
+            [self _web_DragImageForElement:[element objectForKey:WebElementDOMNodeKey]
                                    rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                                   event:_private->mouseDownEvent
                              pasteboard:pasteboard

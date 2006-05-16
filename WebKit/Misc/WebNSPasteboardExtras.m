@@ -261,7 +261,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     }
 }
 
-- (id)_web_declareAndWriteDragImageElement:(DOMElement *)element
+- (id)_web_declareAndWriteDragImageForElement:(DOMElement *)element
                                        URL:(NSURL *)URL 
                                      title:(NSString *)title
                                    archive:(WebArchive *)archive

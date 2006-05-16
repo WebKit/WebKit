@@ -416,7 +416,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     NSArray *types = [NSPasteboard _web_writableTypesForImageIncludingArchive:([element objectForKey:WebElementDOMNodeKey] != nil)];
     [pasteboard declareTypes:types owner:self];
-    [[[element objectForKey:WebElementFrameKey] webView] _writeImageElement:element 
+    [[[element objectForKey:WebElementFrameKey] webView] _writeImageForElement:element 
                                                         withPasteboardTypes:types 
                                                                toPasteboard:pasteboard];
 }

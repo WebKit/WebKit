@@ -68,7 +68,7 @@ extern NSString *WebURLNamePboardType;
                 archive:(WebArchive *)archive
                   types:(NSArray *)types;
 
-- (id)_web_declareAndWriteDragImageElement:(DOMElement *)element
+- (id)_web_declareAndWriteDragImageForElement:(DOMElement *)element
                                        URL:(NSURL *)URL 
                                      title:(NSString *)title
                                    archive:(WebArchive *)archive
