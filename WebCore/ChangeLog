@@ -1,3 +1,14 @@
+2006-05-16  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        Patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8924>
+        Bug 8924: re-apply the 'disabled type=file' change
+        from bug 5882 to RenderFileButton
+        
+        * rendering/RenderFileButton.cpp:
+        (WebCore::RenderFileButton::updateFromElement):
+
 2006-05-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.
