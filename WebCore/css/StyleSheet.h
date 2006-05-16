@@ -23,12 +23,14 @@
 #ifndef StyleSheet_H
 #define StyleSheet_H
 
-#include "css_base.h"
+#include "StyleList.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
 class Node;
 class CachedCSSStyleSheet;
+class MediaList;
 
 class StyleSheet : public StyleList {
 public:

@@ -31,6 +31,7 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSRuleList.h"
+#include "CSSSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -372,8 +373,7 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     }
 }
 
-void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules,
-                                         int& firstRuleIndex, int& lastRuleIndex)
+void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleIndex, int& lastRuleIndex)
 {
     if (!rules) return;
     for (CSSRuleData* d = rules->first(); d; d = d->next()) {

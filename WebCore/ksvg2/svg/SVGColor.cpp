@@ -22,22 +22,21 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include "DeprecatedStringList.h"
-
-
-#include "ksvg.h"
 #include "SVGColor.h"
-#include "SVGDOMImplementation.h"
-#include "RGBColor.h"
 
-using namespace WebCore;
+#include "DeprecatedStringList.h"
+#include "RGBColor.h"
+#include "SVGDOMImplementation.h"
+#include "ksvg.h"
+
+namespace WebCore {
 
 SVGColor::SVGColor() : CSSValue()
 {
     m_colorType = SVG_COLORTYPE_UNKNOWN;
 }
 
-SVGColor::SVGColor(StringImpl *rgbColor) : CSSValue()
+SVGColor::SVGColor(StringImpl* rgbColor) : CSSValue()
 {
     m_colorType = SVG_COLORTYPE_RGBCOLOR;
     setRGBColor(rgbColor);
@@ -216,58 +215,53 @@ static const Color cmap[] =
 };
 #endif
 
-void SVGColor::setRGBColor(StringImpl *rgbColor)
+void SVGColor::setRGBColor(StringImpl* rgbColor)
 {
     m_rgbColor = rgbColor;
 
-    if(m_rgbColor.isNull())
+    if (m_rgbColor.isNull())
         return;
 
     DeprecatedString parse = m_rgbColor.deprecatedString().stripWhiteSpace();
-    if(parse.startsWith("rgb("))
-    {
+    if (parse.startsWith("rgb(")) {
         DeprecatedStringList colors = DeprecatedStringList::split(',', parse);
         DeprecatedString r = colors[0].right((colors[0].length() - 4));
         DeprecatedString g = colors[1];
         DeprecatedString b = colors[2].left((colors[2].length() - 1));
     
-        if(r.contains("%")) {
+        if (r.contains("%")) {
             r = r.left(r.length() - 1);
             r = DeprecatedString::number(int((double(255 * r.toDouble()) / 100.0)));
         }
 
-        if(g.contains("%"))
-        {
+        if (g.contains("%")) {
             g = g.left(g.length() - 1);
             g = DeprecatedString::number(int((double(255 * g.toDouble()) / 100.0)));
         }
     
-        if(b.contains("%"))
-        {
+        if (b.contains("%")) {
             b = b.left(b.length() - 1);
             b = DeprecatedString::number(int((double(255 * b.toDouble()) / 100.0)));
         }
 
         m_qColor = Color(r.toInt(), g.toInt(), b.toInt());
-    }
-    else
-    {
+    } else {
         String colorName = m_rgbColor.lower();
         DeprecatedString name = colorName.deprecatedString();
 //        int col = WebCore::getValueID(name.ascii(), name.length());
-//        if(col == 0)
+//        if (col == 0)
             m_qColor = Color(name);
 //        else
 //            m_qColor = cmap[col - SVGCSS_VAL_ALICEBLUE];
     }
 }
 
-void SVGColor::setRGBColorICCColor(StringImpl * /* rgbColor */, StringImpl * /* iccColor */)
+void SVGColor::setRGBColorICCColor(StringImpl* /* rgbColor */, StringImpl* /* iccColor */)
 {
     // TODO: implement me!
 }
 
-void SVGColor::setColor(unsigned short colorType, StringImpl * /* rgbColor */ , StringImpl * /* iccColor */)
+void SVGColor::setColor(unsigned short colorType, StringImpl* /* rgbColor */ , StringImpl* /* iccColor */)
 {
     // TODO: implement me!
     m_colorType = colorType;
@@ -275,15 +269,17 @@ void SVGColor::setColor(unsigned short colorType, StringImpl * /* rgbColor */ , 
 
 String SVGColor::cssText() const
 {
-    if(m_colorType == SVG_COLORTYPE_RGBCOLOR)
+    if (m_colorType == SVG_COLORTYPE_RGBCOLOR)
         return m_rgbColor;
 
     return String();
 }
 
-const Color &SVGColor::color() const
+const Color& SVGColor::color() const
 {
     return m_qColor;
+}
+
 }
 
 // vim:ts=4:noet

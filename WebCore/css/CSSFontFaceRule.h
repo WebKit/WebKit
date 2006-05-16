@@ -25,6 +25,7 @@
 #define CSSFontFaceRule_H
 
 #include "CSSRule.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

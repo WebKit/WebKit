@@ -22,6 +22,8 @@
 #include "config.h"
 #include "CSSValueList.h"
 
+#include "PlatformString.h"
+
 namespace WebCore {
 
 CSSValueList::~CSSValueList()

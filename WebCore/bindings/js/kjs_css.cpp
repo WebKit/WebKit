@@ -40,7 +40,6 @@
 #include "JSCSSStyleDeclaration.h"
 #include "MediaList.h"
 #include "StyleSheetList.h"
-#include "css_base.h"
 #include "kjs_dom.h"
 
 #include "kjs_css.lut.h"

@@ -28,6 +28,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
+#include "CSSSelector.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "HTMLNames.h"

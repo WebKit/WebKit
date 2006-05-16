@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FontFamilyValue.h"
 
+#include "PlatformString.h"
 #include "RegularExpression.h"
 
 namespace WebCore {

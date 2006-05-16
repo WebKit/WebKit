@@ -21,6 +21,7 @@
  */
 #include "config.h"
 #include "CSSProperty.h"
+#include "PlatformString.h"
 
 // Not in any header, so just declare it here for now.
 WebCore::String getPropertyName(unsigned short id);

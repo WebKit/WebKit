@@ -23,6 +23,7 @@
 #include "CSSBorderImageValue.h"
 
 #include "CSSImageValue.h"
+#include "PlatformString.h"
 #include "RectImpl.h"
 
 namespace WebCore {

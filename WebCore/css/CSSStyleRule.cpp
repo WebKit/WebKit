@@ -24,6 +24,7 @@
 #include "CSSStyleRule.h"
 
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSSelector.h"
 
 namespace WebCore {
 

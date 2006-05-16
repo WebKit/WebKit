@@ -25,6 +25,7 @@
 #define CSSCharsetRule_H
 
 #include "CSSRule.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 

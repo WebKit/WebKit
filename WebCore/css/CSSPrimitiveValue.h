@@ -24,6 +24,7 @@
 #define CSSPrimitiveValue_H
 
 #include "CSSValue.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -32,6 +33,7 @@ class DashboardRegion;
 class Pair;
 class RectImpl;
 class RenderStyle;
+class StringImpl;
 
 typedef int ExceptionCode;
 

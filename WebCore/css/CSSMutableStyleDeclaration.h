@@ -26,9 +26,11 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSPrimitiveValue.h" // for CSSPrimitiveValue::UnitTypes
 #include "DeprecatedValueList.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
+class CSSProperty;
 class Node;
 
 class CSSMutableStyleDeclaration : public CSSStyleDeclaration

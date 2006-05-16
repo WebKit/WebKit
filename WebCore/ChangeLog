@@ -1,3 +1,82 @@
+2006-05-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Split css_base.* into separate files (one per class).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8935
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_css.cpp:
+        * css/CSSBorderImageValue.cpp:
+        * css/CSSBorderImageValue.h:
+        * css/CSSCharsetRule.h:
+        * css/CSSFontFaceRule.h:
+        * css/CSSGrammar.y:
+        * css/CSSImportRule.h:
+        * css/CSSInheritedValue.cpp:
+        * css/CSSInitialValue.cpp:
+        * css/CSSMediaRule.h:
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSNamespace.h: Added.
+        (WebCore::CSSNamespace::CSSNamespace):
+        (WebCore::CSSNamespace::namespaceForPrefix):
+        * css/CSSPageRule.h:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSProperty.cpp:
+        * css/CSSProperty.h:
+        * css/CSSRule.h:
+        * css/CSSRuleList.cpp:
+        * css/CSSSelector.cpp: Added.
+        * css/CSSSelector.h: Added.
+        (WebCore::CSSSelector::CSSSelector):
+        * css/CSSStyleDeclaration.h:
+        * css/CSSStyleRule.cpp:
+        * css/CSSStyleRule.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::~CSSStyleSheet):
+        * css/CSSStyleSheet.h:
+        * css/CSSValue.h:
+        * css/CSSValueList.cpp:
+        * css/CSSValueList.h:
+        * css/FontFamilyValue.cpp:
+        * css/FontValue.cpp:
+        * css/FontValue.h:
+        * css/MediaList.h:
+        * css/ShadowValue.cpp:
+        * css/ShadowValue.h:
+        * css/StyleBase.cpp: Added.
+        (WebCore::StyleBase::stylesheet):
+        * css/StyleBase.h: Added.
+        (WebCore::StyleBase::StyleBase):
+        * css/StyleList.cpp: Added.
+        * css/StyleList.h: Added.
+        * css/StyleSheet.h:
+        * css/css_base.cpp: Removed.
+        * css/css_base.h: Removed.
+        * css/cssparser.cpp:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        * css/cssstyleselector.h:
+        * dom/CSSMappedAttributeDeclaration.h:
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::SVGColor):
+        (WebCore::SVGColor::setRGBColor):
+        (WebCore::SVGColor::setRGBColorICCColor):
+        (WebCore::SVGColor::setColor):
+        (WebCore::SVGColor::cssText):
+        (WebCore::SVGColor::color):
+        * ksvg2/svg/SVGColor.h:
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::SVGStyledElement):
+        (WebCore::SVGStyledElement::className):
+        (WebCore::SVGStyledElement::createRenderer):
+        (WebCore::SVGStyledElement::parseMappedAttribute):
+        (WebCore::SVGStyledElement::notifyAttributeChange):
+        (WebCore::SVGStyledElement::attributeChanged):
+        (WebCore::SVGStyledElement::canvas):
+        (WebCore::SVGStyledElement::updateCanvasItem):
+        (WebCore::SVGStyledElement::pushAttributeContext):
+
 2006-05-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

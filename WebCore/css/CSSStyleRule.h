@@ -25,10 +25,13 @@
 #define CSSStyleRule_H
 
 #include "CSSRule.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSMutableStyleDeclaration;
+class CSSSelector;
 
 class CSSStyleRule : public CSSRule
 {

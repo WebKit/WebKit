@@ -25,6 +25,7 @@
 
 #include "CSSValue.h"
 #include "DeprecatedPtrList.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

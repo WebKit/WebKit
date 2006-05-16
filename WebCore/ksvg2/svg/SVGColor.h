@@ -26,10 +26,12 @@
 
 #include "CSSValue.h"
 #include "Color.h"
+#include "PlatformString.h"
 
 namespace WebCore
 {
     class RGBColor;
+    class StringImpl;
 
     class SVGColor : public CSSValue
     {

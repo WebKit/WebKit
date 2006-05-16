@@ -22,6 +22,8 @@
 #include "config.h"
 #include "CSSInheritedValue.h"
 
+#include "PlatformString.h"
+
 namespace WebCore {
 
 unsigned short CSSInheritedValue::cssValueType() const

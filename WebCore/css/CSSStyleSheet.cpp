@@ -23,6 +23,7 @@
 #include "CSSStyleSheet.h"
 
 #include "CSSImportRule.h"
+#include "CSSNamespace.h"
 #include "cssparser.h"
 #include "CSSRuleList.h"
 #include "Document.h"
@@ -53,6 +54,11 @@ CSSStyleSheet::CSSStyleSheet(CSSRule *ownerRule, String href)
     , m_implicit(false)
     , m_namespaces(0)
 {
+}
+
+CSSStyleSheet::~CSSStyleSheet()
+{
+    delete m_namespaces;
 }
 
 CSSRule *CSSStyleSheet::ownerRule() const

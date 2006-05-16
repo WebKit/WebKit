@@ -23,7 +23,7 @@
 #ifndef CSSValue_H
 #define CSSValue_H
 
-#include "css_base.h" // for StyleBase
+#include "StyleBase.h"
 
 namespace WebCore {
 

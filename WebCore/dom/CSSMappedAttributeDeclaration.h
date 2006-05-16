@@ -29,6 +29,7 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "MappedAttributeEntry.h"
+#include "QualifiedName.h"
 
 namespace WebCore {
 

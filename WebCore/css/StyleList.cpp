@@ -1,8 +1,10 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
+ *               1999 Waldo Bastian (bastian@kde.org)
+ *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
+ *               2001-2003 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2002, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -20,44 +22,33 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-
-#ifndef CSSRule_H
-#define CSSRule_H
-
-#include "StyleBase.h"
+#include "config.h"
+#include "StyleList.h"
 
 namespace WebCore {
 
-class CSSStyleSheet;
-
-class CSSRule : public StyleBase
+void StyleList::append(PassRefPtr<StyleBase> child)
 {
-public:
-    enum CSSRuleType { 
-        UNKNOWN_RULE, 
-        STYLE_RULE, 
-        CHARSET_RULE, 
-        IMPORT_RULE, 
-        MEDIA_RULE, 
-        FONT_FACE_RULE, 
-        PAGE_RULE 
-    };
-    
-    CSSRule(StyleBase* parent) : StyleBase(parent), m_type(UNKNOWN_RULE) { }
+    StyleBase* c = child.get();
+    m_children.append(child);
+    c->insertedIntoParent();
+}
 
-    virtual bool isRule() { return true; }
-    unsigned short type() const { return m_type; }
+void StyleList::insert(unsigned position, PassRefPtr<StyleBase> child)
+{
+    StyleBase* c = child.get();
+    if (position >= length())
+        m_children.append(child);
+    else
+        m_children.insert(position, child);
+    c->insertedIntoParent();
+}
 
-    CSSStyleSheet* parentStyleSheet() const;
-    CSSRule* parentRule() const;
+void StyleList::remove(unsigned position)
+{
+    if (position >= length())
+        return;
+    m_children.remove(position);
+}
 
-    virtual String cssText() const;
-    void setCssText(String str);
-
-protected:
-    CSSRuleType m_type;
-};
-
-} // namespace
-
-#endif
+}

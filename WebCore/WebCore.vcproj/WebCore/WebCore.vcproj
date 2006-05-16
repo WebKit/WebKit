@@ -1815,11 +1815,31 @@
 			Name="css"
 			>
 			<File
-				RelativePath="..\..\css\css_base.cpp"
+				RelativePath="..\..\css\CSSSelector.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\css_base.h"
+				RelativePath="..\..\css\CSSSelector.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\StyleBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\StyleBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\CSSNamespace.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\StyleList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\StyleList.h"
 				>
 			</File>
 			<File

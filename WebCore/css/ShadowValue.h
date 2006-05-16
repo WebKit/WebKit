@@ -24,8 +24,12 @@
 #define ShadowValue_H
 
 #include "CSSValue.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class CSSPrimitiveValue;
 
 // Used for text-shadow and box-shadow
 class ShadowValue : public CSSValue

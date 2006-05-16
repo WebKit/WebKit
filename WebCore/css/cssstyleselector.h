@@ -32,12 +32,14 @@ class KURL;
 namespace WebCore {
 
 class CSSMutableStyleDeclaration;
+class CSSPrimitiveValue;
 class CSSProperty;
 class CSSRuleData;
 class CSSRuleDataList;
 class CSSRuleList;
 class CSSRuleSet;
 class CSSSelector;
+class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
 class Document;

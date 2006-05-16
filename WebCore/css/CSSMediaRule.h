@@ -25,10 +25,12 @@
 #define CSSMediaRule_H
 
 #include "CSSRule.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSRuleList;
+class MediaList;
 
 class CSSMediaRule : public CSSRule
 {
@@ -48,7 +50,7 @@ public:
     virtual String cssText() const;
 
     /* Not part of the DOM */
-    unsigned append(CSSRule* rule);
+    unsigned append(CSSRule*);
 
 protected:
     RefPtr<MediaList> m_lstMedia;

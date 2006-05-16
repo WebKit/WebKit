@@ -23,11 +23,14 @@
 #ifndef CSSStyleDeclaration_H
 #define CSSStyleDeclaration_H
 
-#include "css_base.h" // for StyleBase
+#include "StyleBase.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class CSSMutableStyleDeclaration;
+class CSSRule;
+class CSSValue;
 
 typedef int ExceptionCode;
 
@@ -35,7 +38,7 @@ class CSSStyleDeclaration : public StyleBase {
 public:
     virtual bool isStyleDeclaration();
 
-    static bool isPropertyName(const String& propertyName);
+    static bool isPropertyName(const String&);
 
     CSSRule* parentRule() const;
 
@@ -73,8 +76,8 @@ protected:
     CSSStyleDeclaration(CSSRule* parentRule = 0);
 
 private:
-    CSSStyleDeclaration(const CSSStyleDeclaration &);
-    CSSStyleDeclaration& operator=(const CSSStyleDeclaration &);
+    CSSStyleDeclaration(const CSSStyleDeclaration&);
+    CSSStyleDeclaration& operator=(const CSSStyleDeclaration&);
 };
 
 } // namespace

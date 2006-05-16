@@ -26,7 +26,9 @@
 
 #include "Attr.h"
 #include "Document.h"
+#include "KCanvasCreator.h"
 #include "KCanvasRenderingStyle.h"
+#include "KRenderingDevice.h"
 #include "PlatformString.h"
 #include "RenderCanvas.h"
 #include "RenderPath.h"
@@ -38,33 +40,34 @@
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGSVGElement.h"
-#include "css_base.h"
 #include "ksvg.h"
 #include "ksvgcssproperties.h"
-#include <kcanvas/KCanvasCreator.h>
-#include <kcanvas/device/KRenderingDevice.h>
+
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
+// Defined in CSSGrammar.y, but not in any header, so just declare it here for now.
+int getPropertyID(const char* str, int len);
+
 using namespace SVGNames;
 
-SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document *doc)
-: SVGElement(tagName, doc)
+SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* doc)
+    : SVGElement(tagName, doc)
+    , m_updateVectorial(false)
 {
-    m_updateVectorial = false;
 }
 
 SVGStyledElement::~SVGStyledElement()
 {
 }
 
-SVGAnimatedString *SVGStyledElement::className() const
+SVGAnimatedString* SVGStyledElement::className() const
 {
-    return lazy_create(m_className, (SVGStyledElement *)0); // TODO: use notification context?
+    return lazy_create(m_className, (SVGStyledElement*)0); // TODO: use notification context?
 }
 
-RenderObject *SVGStyledElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* SVGStyledElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     RefPtr<KCanvasPath> pathData = toPathData();
     if (!pathData)
@@ -72,7 +75,7 @@ RenderObject *SVGStyledElement::createRenderer(RenderArena *arena, RenderStyle *
     return renderingDevice()->createItem(arena, style, this, pathData.get());
 }
 
-void SVGStyledElement::parseMappedAttribute(MappedAttribute *attr)
+void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const String& value = attr->value();
     // id and class are handled by StyledElement
@@ -80,7 +83,7 @@ void SVGStyledElement::parseMappedAttribute(MappedAttribute *attr)
     int propId = getPropertyID(qProp.ascii(), qProp.length());
     if (propId == 0)
         propId = SVG::getSVGCSSPropertyID(qProp.ascii(), qProp.length());
-    if(propId > 0) {
+    if (propId > 0) {
         addCSSProperty(attr, propId, value);
         setChanged();
         return;
@@ -92,15 +95,14 @@ void SVGStyledElement::parseMappedAttribute(MappedAttribute *attr)
 void SVGStyledElement::notifyAttributeChange() const
 {
     // For most cases we need to handle vectorial data changes (ie. rect x changed)
-    if(!ownerDocument()->parsing())
-    {
+    if (!ownerDocument()->parsing()) {
         // TODO: Use a more optimized way of updating, means not calling updateCanvasItem() here!
-        const_cast<SVGStyledElement *>(this)->m_updateVectorial = true;
-        const_cast<SVGStyledElement *>(this)->updateCanvasItem();
+        const_cast<SVGStyledElement*>(this)->m_updateVectorial = true;
+        const_cast<SVGStyledElement*>(this)->updateCanvasItem();
     }
 }
 
-void SVGStyledElement::attributeChanged(Attribute *attr, bool preserveDecls)
+void SVGStyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
     // FIXME: Eventually subclasses from SVGElement should implement
     // attributeChanged() instead of notifyAttributeChange()
@@ -110,36 +112,36 @@ void SVGStyledElement::attributeChanged(Attribute *attr, bool preserveDecls)
     notifyAttributeChange();
 }
 
-RenderCanvas *SVGStyledElement::canvas() const
+RenderCanvas* SVGStyledElement::canvas() const
 {
-    return static_cast<RenderCanvas *>(document()->renderer());
+    return static_cast<RenderCanvas*>(document()->renderer());
 }
 
 void SVGStyledElement::updateCanvasItem()
 {
-    if(!m_updateVectorial || !renderer() || !renderer()->isRenderPath())
+    if (!m_updateVectorial || !renderer() || !renderer()->isRenderPath())
         return;
     
-    RenderPath *renderPath = static_cast<RenderPath *>(renderer());
+    RenderPath* renderPath = static_cast<RenderPath*>(renderer());
     bool renderSection = false;
     
-    SVGElement *parentElement = svg_dynamic_cast(parentNode());
-    if(parentElement && parentElement->renderer() && parentElement->isStyled()
+    SVGElement* parentElement = svg_dynamic_cast(parentNode());
+    if (parentElement && parentElement->renderer() && parentElement->isStyled()
         && parentElement->childShouldCreateRenderer(this))
         renderSection = true;
 
     renderPath->setPath(toPathData());
 
-    if(renderSection)
+    if (renderSection)
         renderPath->setNeedsLayout(true);
 
     m_updateVectorial = false;
 }
 
-const SVGStyledElement *SVGStyledElement::pushAttributeContext(const SVGStyledElement *)
+const SVGStyledElement* SVGStyledElement::pushAttributeContext(const SVGStyledElement*)
 {
-    if(canvas())
-        static_cast<RenderPath *>(renderer())->setPath(toPathData());
+    if (canvas())
+        static_cast<RenderPath*>(renderer())->setPath(toPathData());
 
     return 0;
 }

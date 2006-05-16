@@ -22,6 +22,8 @@
 #include "config.h"
 #include "CSSInitialValue.h"
 
+#include "PlatformString.h"
+
 namespace WebCore {
 
 unsigned short CSSInitialValue::cssValueType() const

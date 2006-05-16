@@ -24,7 +24,7 @@
 #include "CSSRuleList.h"
 
 #include "CSSRule.h"
-#include "css_base.h" // for StyleList
+#include "StyleList.h"
 
 namespace WebCore {
 

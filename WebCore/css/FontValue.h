@@ -24,9 +24,11 @@
 #define FontValue_H
 
 #include "CSSValue.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class CSSPrimitiveValue;
 class CSSValueList;
 
 class FontValue : public CSSValue

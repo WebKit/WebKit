@@ -35,6 +35,7 @@
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSRuleList.h"
+#include "CSSSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSQuirkPrimitiveValue.h"

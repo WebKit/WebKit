@@ -24,6 +24,7 @@
 
 #include "CSSValueList.h"
 #include "CSSPrimitiveValue.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 

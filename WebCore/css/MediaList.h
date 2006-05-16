@@ -23,12 +23,14 @@
 #ifndef MediaList_H
 #define MediaList_H
 
-#include "css_base.h"
+#include "StyleBase.h"
 #include "DeprecatedValueList.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
 class CSSStyleSheet;
+class CSSRule;
 
 class MediaList : public StyleBase
 {

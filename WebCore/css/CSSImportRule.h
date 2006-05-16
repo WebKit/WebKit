@@ -26,10 +26,12 @@
 
 #include "CSSRule.h"
 #include "CachedObjectClient.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
 class CachedCSSStyleSheet;
+class MediaList;
 
 class CSSImportRule : public CSSRule, public CachedObjectClient
 {

@@ -22,80 +22,10 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-
 #include "config.h"
-#include "css_base.h"
-
-#include "Document.h"
-#include "StyleSheet.h"
+#include "CSSSelector.h"
 
 namespace WebCore {
-
-void StyleBase::checkLoaded()
-{
-    if (parent())
-        parent()->checkLoaded();
-}
-
-StyleSheet* StyleBase::stylesheet()
-{
-    StyleBase *b = this;
-    while (b && !b->isStyleSheet())
-        b = b->parent();
-    return static_cast<StyleSheet *>(b);
-}
-
-String StyleBase::baseURL()
-{
-    // try to find the style sheet. If found look for its url.
-    // If it has none, look for the parentsheet, or the parentNode and
-    // try to find out about their url
-
-    StyleSheet* sheet = stylesheet();
-
-    if (!sheet)
-        return String();
-
-    if (!sheet->href().isNull())
-        return sheet->href();
-
-    // find parent
-    if (sheet->parent()) 
-        return sheet->parent()->baseURL();
-
-    if (!sheet->ownerNode()) 
-        return String();
-
-    return sheet->ownerNode()->document()->baseURL();
-}
-
-// ------------------------------------------------------------------------------
-
-void StyleList::append(PassRefPtr<StyleBase> child)
-{
-    StyleBase* c = child.get();
-    m_children.append(child);
-    c->insertedIntoParent();
-}
-
-void StyleList::insert(unsigned position, PassRefPtr<StyleBase> child)
-{
-    StyleBase* c = child.get();
-    if (position >= length())
-        m_children.append(child);
-    else
-        m_children.insert(position, child);
-    c->insertedIntoParent();
-}
-
-void StyleList::remove(unsigned position)
-{
-    if (position >= length())
-        return;
-    m_children.remove(position);
-}
-
-// --------------------------------------------------------------------------------
 
 void CSSSelector::print()
 {
@@ -241,7 +171,6 @@ void CSSSelector::extractPseudoType() const
         _pseudoType = PseudoOther;
 }
 
-
 bool CSSSelector::operator == (const CSSSelector &other)
 {
     const CSSSelector *sel1 = this;
@@ -336,7 +265,5 @@ String CSSSelector::selectorText() const
     }
     return str;
 }
-
-// ----------------------------------------------------------------------------
 
 }
