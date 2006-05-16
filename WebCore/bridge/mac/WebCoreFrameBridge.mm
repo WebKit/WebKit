@@ -282,7 +282,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (NSString *)domain
 {
     Document *doc = m_frame->document();
-    if (doc && doc->isHTMLDocument())
+    if (doc)
         return doc->domain();
     return nil;
 }
@@ -2445,7 +2445,11 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (BOOL)getData:(NSData **)data andResponse:(NSURLResponse **)response forURL:(NSURL *)URL
 {
-    CachedObject* o = [self impl]->document()->docLoader()->cachedObject([URL absoluteString]);
+    Document* doc = [self impl]->document();
+    if (!doc)
+        return NO;
+
+    CachedObject* o = doc->docLoader()->cachedObject([URL absoluteString]);
     if (!o)
         return NO;
 
@@ -2456,10 +2460,19 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (void)getAllResourceDatas:(NSArray **)datas andResponses:(NSArray **)responses
 {
-    const HashMap<String, CachedObject*>& allResources =  [self impl]->document()->docLoader()->allCachedObjects();
+    Document* doc = [self impl]->document();
+    if (!doc) {
+        NSArray* emptyArray = [NSArray array];
+        *datas = emptyArray;
+        *responses = emptyArray;
+        return;
+    }
+
+    const HashMap<String, CachedObject*>& allResources = doc->docLoader()->allCachedObjects();
+
     NSMutableArray *d = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
     NSMutableArray *r = [[NSMutableArray alloc] initWithCapacity:allResources.size()];
-    
+
     HashMap<String, CachedObject*>::const_iterator end = allResources.end();
     for (HashMap<String, CachedObject*>::const_iterator it = allResources.begin(); it != end; ++it) {
         [d addObject:it->second->allData()];

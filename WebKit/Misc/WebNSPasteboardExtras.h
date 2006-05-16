@@ -62,7 +62,7 @@ extern NSString *WebURLNamePboardType;
 - (void)_web_writeFileWrapperAsRTFDAttachment:(NSFileWrapper *)wrapper;
 
 // Writes an image, URL and other optional types to the pasteboard.
-- (void)_web_writeImage:(WebImageRenderer *)image 
+- (void)_web_writeImage:(NSImage *)image 
                 element:(DOMElement*)element
                     URL:(NSURL *)URL 
                   title:(NSString *)title

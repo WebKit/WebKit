@@ -221,7 +221,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     [self setData:RTFDData forType:NSRTFDPboardType];
 }
 
-- (void)_web_writeImage:(WebImageRenderer *)image
+- (void)_web_writeImage:(NSImage *)image
                 element:(DOMElement *)element
                     URL:(NSURL *)URL 
                   title:(NSString *)title
@@ -274,7 +274,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
     [self declareTypes:types owner:source];    
-    [self _web_writeImage:image element:element URL:URL title:title archive:archive types:types];
+    [self _web_writeImage:[image image] element:element URL:URL title:title archive:archive types:types];
     [types release];
     
     NSString *extension = WKGetPreferredExtensionForMIMEType([image MIMEType]);

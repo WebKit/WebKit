@@ -1277,8 +1277,9 @@ static bool debugWidget = true;
 - (void)_writeImageElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
-    [pasteboard _web_writeImage:nil
-                        element:[element objectForKey:WebElementDOMNodeKey]
+    DOMElement *domElement = [element objectForKey:WebElementDOMNodeKey];
+    [pasteboard _web_writeImage:(NSImage *)(domElement ? nil : [element objectForKey:WebElementImageKey])
+                        element:domElement
                             URL:linkURL ? linkURL : (NSURL *)[element objectForKey:WebElementImageURLKey]
                           title:[element objectForKey:WebElementImageAltStringKey] 
                         archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]

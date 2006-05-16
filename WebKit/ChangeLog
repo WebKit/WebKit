@@ -1,3 +1,26 @@
+2006-05-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8898
+          REGRESSION: Attempting to right-click image in own tab on website causes crash
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8919
+          REGRESSION: image could not be dragged, subsequent click-drag activity caused crash
+
+        These fixes may become obsolete when Anders lands his standalone image viewer
+        patch, but in my tree they are needed to make Copy Image work after the fix
+        over on the WebCore side to avoid the crashes.
+
+        * Misc/WebNSPasteboardExtras.h: Change _web_writeImage parameter to an NSImage.
+        * Misc/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:]): Change parameter
+        to an NSImage instead of a WebImageRenderer.
+        (-[NSPasteboard _web_declareAndWriteDragImage:element:URL:title:archive:source:]):
+        Call -[WebImageRenderer image] to get an NSImage to pass to _web_writeImage.
+
+        * WebView/WebView.m: (-[WebView _writeImageElement:withPasteboardTypes:toPasteboard:]):
+        Get the image using WebElementImageKey if WebElementDOMNodeKey is nil.
+
 2006-05-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

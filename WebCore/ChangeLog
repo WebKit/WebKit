@@ -1,3 +1,17 @@
+2006-05-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8898
+          REGRESSION: Attempting to right-click image in own tab on website causes crash
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8919
+          REGRESSION: image could not be dragged, subsequent click-drag activity caused crash
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge domain]): Removed unneeded check of isHTMLDocument.
+        (-[WebCoreFrameBridge getData:andResponse:forURL:]): Handle document() of 0.
+        (-[WebCoreFrameBridge getAllResourceDatas:andResponses:]): Ditto.
+
 2006-05-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.
