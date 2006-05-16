@@ -9,10 +9,3 @@ cd DerivedSources/JavaScriptCore
 
 make -f ../../DerivedSources.make JavaScriptCore=../.. BUILT_PRODUCTS_DIR=../..
 cd ../..
-
-
-Property changes on: make-generated-sources.sh
-___________________________________________________________________
-Name: svn:executable
-   + *
-

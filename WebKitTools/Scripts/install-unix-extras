@@ -104,9 +104,3 @@ if [ ! -f $DEPS_PREFIX/lib/libiconv.dylib ]; then
   cd $DL_DIR
   rm -rf $DL_DIR/libiconv-$ICONV_VERSION
 fi
-
-Property changes on: install-unix-extras
-___________________________________________________________________
-Name: svn:executable
-   + *
-

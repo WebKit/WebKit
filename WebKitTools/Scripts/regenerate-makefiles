@@ -69,9 +69,3 @@ fi
 
 cd ../../Bakefiles
 bakefile_gen
-
-Property changes on: regenerate-makefiles
-___________________________________________________________________
-Name: svn:executable
-   + *
-
