@@ -24,6 +24,11 @@
 #ifndef FontPlatformData_H
 #define FontPlatformData_H
 
+#include "StringImpl.h"
+
+// FIXME: This file should probably be split and moved into platform-specific subdirectories.  There's nothing
+// "cross-platform" about it.
+
 #ifdef __APPLE__
 
 #ifdef __OBJC__
@@ -42,6 +47,17 @@ struct FontPlatformData {
     NSFont *font;
     bool syntheticBold;
     bool syntheticOblique;
+    
+    unsigned hash() const
+    { 
+        unsigned hashCodes[2] = { (unsigned)font, syntheticBold << 1 | syntheticOblique };
+        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 2 * sizeof(unsigned) / sizeof(UChar));
+    }
+
+    bool operator==(const FontPlatformData& other) const
+    { 
+        return font == other.font && syntheticBold == other.syntheticBold && syntheticOblique == other.syntheticOblique;
+    }
 };
 
 }

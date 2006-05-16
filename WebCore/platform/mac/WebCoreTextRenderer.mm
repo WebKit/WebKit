@@ -28,7 +28,7 @@
 
 #import "Font.h"
 #import "FontData.h"
-#import "WebTextRendererFactory.h"
+#import "WebFontCache.h"
 #import "IntPoint.h"
 #import "GraphicsContext.h"
 
@@ -78,5 +78,5 @@ void WebCoreSetAlwaysUseATSU(bool useATSU)
 
 NSFont* WebCoreFindFont(NSString* familyName, NSFontTraitMask traits, int size)
 {
-    return [[WebTextRendererFactory sharedFactory] cachedFontFromFamily:familyName traits:traits size:size];
+    return [WebFontCache fontWithFamily:familyName traits:traits size:size];
 }

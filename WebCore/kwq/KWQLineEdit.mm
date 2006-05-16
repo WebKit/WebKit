@@ -34,7 +34,6 @@
 #import "WebCoreTextField.h"
 #import "WebCoreFrameBridge.h"
 #import "FontData.h"
-#import "WebTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
 #import "WidgetClient.h"
 

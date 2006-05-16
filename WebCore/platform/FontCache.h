@@ -34,13 +34,39 @@
 namespace WebCore
 {
 
+class AtomicString;
 class FontData;
+class FontPlatformData;
 class Font;
 
 class FontCache {
 public:
-    static const FontData* getFontData(const Font&, int& familyIndex);   
+    static const FontData* getFontData(const Font&, int& familyIndex);
+    
+    // This method is implemented by the platform.
     static const FontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
+    
+    // Also implemented by the platform.
+    static void registerForFontChanges();
+
+    // For caches shared by every platform.
+    static void clearCommonCaches();
+
+    // Method to implement to clear platform-specific caches.  Should call clearCommonCaches to take care of the
+    // platform-independent data.
+    static void clearCaches();
+
+private:
+    static FontPlatformData* getCachedFontPlatformData(const Font&, const AtomicString& family);
+    static FontData* getCachedFontData(const FontPlatformData*);
+    
+    // These three methods are implemented by each platform.
+    static FontPlatformData* getSimilarFontPlatformData(const Font&);
+    static FontPlatformData* getLastResortFallbackFont(const Font&);
+    static FontPlatformData* createFontPlatformData(const Font&, const AtomicString& family);
+
+    friend class FontData;
+    friend class FontFallbackList;
 };
 
 }

@@ -35,7 +35,6 @@
 #import "KWQKHTMLSettings.h"
 
 #import "FontData.h"
-#import "WebTextRendererFactory.h"
 
 #import "IntRect.h"
 

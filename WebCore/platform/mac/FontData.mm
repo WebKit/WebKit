@@ -31,14 +31,13 @@
 #import "Font.h"
 #import "FontData.h"
 #import "Color.h"
-#import "WebCoreTextRenderer.h"
 
 #import <wtf/Assertions.h>
 
 #import <ApplicationServices/ApplicationServices.h>
 #import <Cocoa/Cocoa.h>
 
-#import <WebTextRendererFactory.h>
+#import "FontCache.h"
 
 #import "WebCoreSystemInterface.h"
 
@@ -52,6 +51,10 @@
 
 // FIXME: Just temporary for the #defines of constants that we will eventually stop using.
 #import "GlyphBuffer.h"
+
+@interface NSFont (WebAppKitSecretAPI)
+- (BOOL)_isFakeFixedPitch;
+@end
 
 namespace WebCore
 {
@@ -110,8 +113,6 @@ struct GlyphMap {
     GlyphMap *next;
     GlyphEntry *glyphs;
 };
-
-static const FontData* getSmallCapsFontData(const FontData *, FontPlatformData);
 
 static WidthMap *extendWidthMap(const FontData *, ATSGlyphRef);
 static ATSGlyphRef extendGlyphMap(const FontData *, UChar32);
@@ -275,7 +276,7 @@ float FontData::xHeight() const
 {
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
-    const FontData *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:m_font];
+    const FontData *renderer = this;
     NSGlyph xGlyph = glyphForCharacter(&renderer, 'x');
     if (xGlyph) {
         NSRect xBox = [m_font.font boundingRectForGlyph:xGlyph];
@@ -296,11 +297,25 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
             float size = [m_font.font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER;
             FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_font.font toSize:size]);
             
-            // AppKit is buggy here and loses the type information (screen/printer) when you convert a font to a different size.
+            // AppKit resets the type information (screen/printer) when you convert a font to a different size.
             // We have to fix up the font that we're handed back.
             smallCapsFont.font = fontDescription.usePrinterFont() ? [smallCapsFont.font printerFont] : [smallCapsFont.font screenFont];
 
-	    m_smallCapsFontData = (FontData*)getSmallCapsFontData(this, smallCapsFont);
+	    if (smallCapsFont.font) {
+                NSFontManager *fontManager = [NSFontManager sharedFontManager];
+                NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_font.font];
+
+                if (m_font.syntheticBold)
+                    fontTraits |= NSBoldFontMask;
+                if (m_font.syntheticOblique)
+                    fontTraits |= NSItalicFontMask;
+
+                NSFontTraitMask smallCapsFontTraits = [fontManager traitsOfFont:smallCapsFont.font];
+                smallCapsFont.syntheticBold = (fontTraits & NSBoldFontMask) && !(smallCapsFontTraits & NSBoldFontMask);
+                smallCapsFont.syntheticOblique = (fontTraits & NSItalicFontMask) && !(smallCapsFontTraits & NSItalicFontMask);
+
+                m_smallCapsFontData = FontCache::getCachedFontData(&smallCapsFont);
+            }
 	NS_HANDLER
             NSLog(@"uncaught exception selecting font for small caps: %@", localException);
 	NS_ENDHANDLER
@@ -317,25 +332,6 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
     return result;
 }
 
-static const FontData* getSmallCapsFontData(const FontData *renderer, FontPlatformData alternateFont)
-{
-    if (!alternateFont.font)
-        return nil;
-
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    NSFontTraitMask fontTraits = [fontManager traitsOfFont:renderer->m_font.font];
-    if (renderer->m_font.syntheticBold)
-        fontTraits |= NSBoldFontMask;
-    if (renderer->m_font.syntheticOblique)
-        fontTraits |= NSItalicFontMask;
-    NSFontTraitMask alternateFontTraits = [fontManager traitsOfFont:alternateFont.font];
-
-    alternateFont.syntheticBold = (fontTraits & NSBoldFontMask) && !(alternateFontTraits & NSBoldFontMask);
-    alternateFont.syntheticOblique = (fontTraits & NSItalicFontMask) && !(alternateFontTraits & NSItalicFontMask);
-
-    return [[WebTextRendererFactory sharedFactory] rendererWithFont:alternateFont];
-}
-
 // Nasty hack to determine if we should round or ceil space widths.
 // If the font is monospace or fake monospace we ceil to ensure that 
 // every character and the space are the same width.  Otherwise we round.
@@ -343,32 +339,32 @@ static bool computeWidthForSpace(FontData *renderer)
 {
     renderer->m_spaceGlyph = extendGlyphMap(renderer, SPACE);
     if (renderer->m_spaceGlyph == 0)
-        return NO;
+        return false;
 
     float width = renderer->widthForGlyph(renderer->m_spaceGlyph);
 
     renderer->m_spaceWidth = width;
 
-    renderer->m_treatAsFixedPitch = [[WebTextRendererFactory sharedFactory] isFontFixedPitch:renderer->m_font];
+    renderer->determinePitch();
     renderer->m_adjustedSpaceWidth = renderer->m_treatAsFixedPitch ? ceilf(width) : roundf(width);
     
-    return YES;
+    return true;
 }
 
 static bool setUpFont(FontData *renderer)
 {
     ATSUStyle fontStyle;
     if (ATSUCreateStyle(&fontStyle) != noErr)
-        return NO;
+        return false;
 
     if (!fillStyleWithAttributes(fontStyle, renderer->m_font.font)) {
         ATSUDisposeStyle(fontStyle);
-        return NO;
+        return false;
     }
 
     if (wkGetATSStyleGroup(fontStyle, &renderer->m_styleGroup) != noErr) {
         ATSUDisposeStyle(fontStyle);
-        return NO;
+        return false;
     }
 
     ATSUDisposeStyle(fontStyle);
@@ -378,10 +374,10 @@ static bool setUpFont(FontData *renderer)
         renderer->m_characterToGlyphMap = 0;
         wkReleaseStyleGroup(renderer->m_styleGroup);
         renderer->m_styleGroup = 0;
-        return NO;
+        return false;
     }
     
-    return YES;
+    return true;
 }
 
 #if !ERROR_DISABLED
@@ -604,17 +600,34 @@ Glyph FontData::glyphForCharacter(const FontData **renderer, unsigned c) const
 static bool fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
     if (!theFont)
-        return NO;
+        return false;
     ATSUFontID fontId = wkGetNSFontATSUFontId(theFont);
     if (!fontId)
-        return NO;
+        return false;
     ATSUAttributeTag tag = kATSUFontTag;
     ByteCount size = sizeof(ATSUFontID);
     ATSUFontID *valueArray[1] = {&fontId};
     OSStatus status = ATSUSetAttributes(style, 1, &tag, &size, (void* const*)valueArray);
     if (status != noErr)
-        return NO;
-    return YES;
+        return false;
+    return true;
+}
+
+void FontData::determinePitch()
+{
+    NSFont* f = m_font.font;
+    // Special case Osaka-Mono.
+    // According to <rdar://problem/3999467>, we should treat Osaka-Mono as fixed pitch.
+    // Note that the AppKit does not report Osaka-Mono as fixed pitch.
+
+    // Special case MS-PGothic.
+    // According to <rdar://problem/4032938, we should not treat MS-PGothic as fixed pitch.
+    // Note that AppKit does report MS-PGothic as fixed pitch.
+
+    NSString *name = [f fontName];
+    m_treatAsFixedPitch = ([f isFixedPitch] || [f _isFakeFixedPitch] || 
+           [name caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame) && 
+          ![name caseInsensitiveCompare:@"MS-PGothic"] == NSOrderedSame;
 }
 
 }

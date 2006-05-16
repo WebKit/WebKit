@@ -1234,8 +1234,6 @@
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
 		AB67D1A8097F3AE300F9392E /* RenderTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */; };
 		AB67D1A9097F3AE300F9392E /* RenderTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextField.h */; };
-		BC066F3909FEAF5300C589A7 /* WebTextRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F3509FEAF5300C589A7 /* WebTextRendererFactory.h */; };
-		BC066F3A09FEAF5300C589A7 /* WebTextRendererFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC066F3609FEAF5300C589A7 /* WebTextRendererFactory.mm */; };
 		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A3797097C715F0019F3D8 /* DOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A3798097C715F0019F3D8 /* DOM.mm */; };
@@ -1264,6 +1262,9 @@
 		BC6D6DD209AF906600F59759 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D6DD009AF906600F59759 /* Font.cpp */; };
 		BC6D6DD309AF906600F59759 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6DD109AF906600F59759 /* Font.h */; };
 		BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6E2509AF943500F59759 /* ScrollView.h */; };
+		BC6DABF30A19015700E5CD14 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DABF20A19015700E5CD14 /* FontCache.cpp */; };
+		BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */; };
+		BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */; };
 		BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
 		BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
 		BC73E2FF0978AF9C00EDFF8A /* IntPointArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */; };
@@ -1301,7 +1302,6 @@
 		BCB16C2D0979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; };
 		BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
 		BCB16C2F0979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
-		BCC47E2309A3D6B300ADB771 /* FontFamilyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */; };
 		BCC47E2609A3D6F100ADB771 /* FontFamily.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */; };
 		BCC47E2709A3D6F100ADB771 /* FontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E2509A3D6F100ADB771 /* FontFamily.h */; };
 		BCC47E6B09A3FE4700ADB771 /* FontDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E6A09A3FE4700ADB771 /* FontDescription.h */; };
@@ -2767,8 +2767,6 @@
 		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEvent.h; sourceTree = "<group>"; };
 		AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextField.cpp; sourceTree = "<group>"; };
 		AB67D1A7097F3AE300F9392E /* RenderTextField.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextField.h; sourceTree = "<group>"; };
-		BC066F3509FEAF5300C589A7 /* WebTextRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebTextRendererFactory.h; sourceTree = "<group>"; };
-		BC066F3609FEAF5300C589A7 /* WebTextRendererFactory.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextRendererFactory.mm; sourceTree = "<group>"; };
 		BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRenderer.h; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* XSLStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLStyleSheet.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24A06D18A7E004A6FA3 /* XSLStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLStyleSheet.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2802,6 +2800,9 @@
 		BC6D6DD009AF906600F59759 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
 		BC6D6DD109AF906600F59759 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
 		BC6D6E2509AF943500F59759 /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScrollView.h; sourceTree = "<group>"; };
+		BC6DABF20A19015700E5CD14 /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
+		BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFontCache.h; sourceTree = "<group>"; };
+		BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFontCache.mm; sourceTree = "<group>"; };
 		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSize.cpp; sourceTree = "<group>"; };
 		BC73E25C0978682700EDFF8A /* FloatSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatSize.h; sourceTree = "<group>"; };
 		BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntPointArray.cpp; sourceTree = "<group>"; };
@@ -2843,7 +2844,6 @@
 		BCB16C140979C3BD00467741 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		BCB16C150979C3BD00467741 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Request.cpp; sourceTree = "<group>"; };
 		BCB16C160979C3BD00467741 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
-		BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontFamilyMac.mm; sourceTree = "<group>"; };
 		BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontFamily.cpp; sourceTree = "<group>"; };
 		BCC47E2509A3D6F100ADB771 /* FontFamily.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontFamily.h; sourceTree = "<group>"; };
 		BCC47E6A09A3FE4700ADB771 /* FontDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontDescription.h; sourceTree = "<group>"; };
@@ -3325,7 +3325,6 @@
 				6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */,
 				6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */,
 				BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */,
-				BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */,
 				BCEB377209B7BA3900CB38B1 /* FontMac.mm */,
 				BCF7C0980A1683580032F75B /* FontFallbackListMac.mm */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
@@ -3372,10 +3371,10 @@
 				BCFE8E310A02A1D30009E61D /* WebCoreTextRenderer.mm */,
 				BCCD131E0A0C0030001AFA8B /* FontData.mm */,
 				BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */,
-				BC066F3509FEAF5300C589A7 /* WebTextRendererFactory.h */,
-				BC066F3609FEAF5300C589A7 /* WebTextRendererFactory.mm */,
 				935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
+				BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */,
+				BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4496,6 +4495,7 @@
 				BC6D6DD009AF906600F59759 /* Font.cpp */,
 				BC6D6DD109AF906600F59759 /* Font.h */,
 				BCF7C0B70A1687CC0032F75B /* FontCache.h */,
+				BC6DABF20A19015700E5CD14 /* FontCache.cpp */,
 				BCEB377509B7BB0D00CB38B1 /* FontFallbackList.h */,
 				BCF7C0770A1680C00032F75B /* FontFallbackList.cpp */,
 				BCC47E6A09A3FE4700ADB771 /* FontDescription.h */,
@@ -5536,7 +5536,6 @@
 				14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */,
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
 				65901A4409FC6039005BD752 /* WebCoreStringTruncator.h in Headers */,
-				BC066F3909FEAF5300C589A7 /* WebTextRendererFactory.h in Headers */,
 				BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Headers */,
 				14D0C82509FF0EF5006B36D9 /* kjs_domnode.h in Headers */,
@@ -5609,6 +5608,7 @@
 				A8CFF7A70A156978000A4234 /* HTMLModElement.h in Headers */,
 				A8CFF7AA0A156978000A4234 /* HTMLBRElement.h in Headers */,
 				A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */,
+				BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */,
 				A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */,
 				A8EA73C50A1900E300A8EF5F /* RenderLineEdit.h in Headers */,
 				A8EA73C70A1900E300A8EF5F /* RenderFileButton.h in Headers */,
@@ -6274,7 +6274,6 @@
 				9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */,
 				936B424E09A436CD00BAA820 /* SVGCSSParser.cpp in Sources */,
 				9380F68709A143B2001FDB34 /* FrameViewMac.mm in Sources */,
-				BCC47E2309A3D6B300ADB771 /* FontFamilyMac.mm in Sources */,
 				BCC47E2609A3D6F100ADB771 /* FontFamily.cpp in Sources */,
 				935C475F09AC4CAE00A6AAB4 /* HistoryMac.mm in Sources */,
 				935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */,
@@ -6375,7 +6374,6 @@
 				14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */,
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,
 				65901A4509FC6039005BD752 /* WebCoreStringTruncator.mm in Sources */,
-				BC066F3A09FEAF5300C589A7 /* WebTextRendererFactory.mm in Sources */,
 				BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */,
 				14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */,
 				142011B60A003133008303F9 /* JSCSSStyleDeclaration.cpp in Sources */,
@@ -6448,6 +6446,8 @@
 				A8CFF7A50A156978000A4234 /* HTMLQuoteElement.cpp in Sources */,
 				A8CFF7A80A156978000A4234 /* HTMLBRElement.cpp in Sources */,
 				A8CFF7A90A156978000A4234 /* HTMLModElement.cpp in Sources */,
+				BC6DABF30A19015700E5CD14 /* FontCache.cpp in Sources */,
+				BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */,
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
 				A8EA73C60A1900E300A8EF5F /* RenderFileButton.cpp in Sources */,
 				A8EA73C80A1900E300A8EF5F /* RenderTextArea.cpp in Sources */,

@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include "FontFallbackList.h"
-#include "WebTextRendererFactory.h"
+#include "FontCache.h"
 
 namespace WebCore
 {
@@ -36,7 +36,7 @@ namespace WebCore
 void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
 {
     m_familyIndex = cAllFamiliesScanned;
-    m_fontList.append([[WebTextRendererFactory sharedFactory] rendererWithFont: platformData]);
+    m_fontList.append(FontCache::getCachedFontData(&platformData));
 }
   
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FontFamily.h"
-
-namespace WebCore {
-
-FontFamily::FontFamily()
-    : m_next(0)
-    , m_refCnt(0)
-{
-}
-
-FontFamily::FontFamily(const FontFamily& other)
-    : m_family(other.m_family)
-    , m_next(other.m_next)
-    , m_refCnt(0)
-{
-    if (m_next)
-        m_next->ref();
-}
-
-FontFamily::~FontFamily()
-{ 
-    if (m_next)
-        m_next->deref();
-}
-   
-FontFamily& FontFamily::operator=(const FontFamily& other)
-{
-    if (other.m_next)
-        other.m_next->ref();
-    if (m_next)
-        m_next->deref();
-    m_family = other.m_family;
-    m_next = other.m_next;
-    return *this;
-}
-
-void FontFamily::setFamily(const AtomicString &family)
-{
-    m_family = family;
-}
-
-bool FontFamily::operator==(const FontFamily &compareFontFamily) const
-{
-    if ((!m_next && compareFontFamily.m_next) || 
-        (m_next && !compareFontFamily.m_next) ||
-        ((m_next && compareFontFamily.m_next) && (*m_next != *(compareFontFamily.m_next))))
-        return false;
-    
-    return m_family == compareFontFamily.m_family;
-}
-
-}
+// This interface exists so that third party products (like Silk) can patch in to an Obj-C method to manipulate WebKit's font caching/substitution.
+@interface WebFontCache : NSObject
++ (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size;
+@end

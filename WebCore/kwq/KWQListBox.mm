@@ -30,7 +30,6 @@
 #import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "FontData.h"
-#import "WebTextRendererFactory.h"
 #import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 #import <wtf/Assertions.h>

@@ -49,10 +49,6 @@ public:
     void setFamily(const AtomicString &);
     const AtomicString& family() const { return m_family; }
     bool familyIsEmpty() const { return m_family.isEmpty(); }
-    
-#if __APPLE__
-    NSString* getNSFamily() const;
-#endif
 
     FontFamily *next() { return m_next; }
     const FontFamily *next() const { return m_next; }
@@ -76,9 +72,6 @@ private:
     AtomicString m_family;
     FontFamily* m_next;
     int m_refCnt;
-#if __APPLE__
-    mutable CFStringRef m_CFFamily;
-#endif
 };
 
 }

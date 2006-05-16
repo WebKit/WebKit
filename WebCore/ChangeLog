@@ -1,3 +1,75 @@
+2006-05-16  David Hyatt  <hyatt@apple.com>
+
+        Bug 8936, eliminate WebTextRendererFactory and convert it over to the
+        new FontCache.
+
+        Reviewed by andersca
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreStringTruncator.mm:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQListBox.mm:
+        * platform/Font.h:
+        (WebCore::Font::bold):
+        * platform/FontCache.cpp: Added.
+        (WebCore::FontPlatformDataCacheKey::m_italic):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::computeHash):
+        (WebCore::FontPlatformDataCacheKeyHash::hash):
+        (WebCore::FontPlatformDataCacheKeyHash::equal):
+        (WebCore::FontPlatformDataCacheKeyTraits::deletedValue):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontDataCacheKeyHash::hash):
+        (WebCore::FontDataCacheKeyHash::equal):
+        (WebCore::FontDataCacheKeyTraits::deletedValue):
+        (WebCore::FontCache::getCachedFontData):
+        (WebCore::FontCache::getFontData):
+        (WebCore::FontCache::clearCommonCaches):
+        * platform/FontCache.h:
+        * platform/FontData.h:
+        * platform/FontFamily.cpp:
+        (WebCore::FontFamily::FontFamily):
+        (WebCore::FontFamily::operator=):
+        (WebCore::FontFamily::setFamily):
+        * platform/FontFamily.h:
+        (WebCore::FontFamily::familyIsEmpty):
+        * platform/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        * platform/mac/FontCacheMac.mm:
+        (WebCore::getAppDefaultValue):
+        (WebCore::getUserDefaultValue):
+        (WebCore::getLCDScaleParameters):
+        (WebCore::fontsChanged):
+        (WebCore::FontCache::registerForFontChanges):
+        (WebCore::FontCache::clearCaches):
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/mac/FontData.mm:
+        (-[NSFont WebCore]):
+        (WidthMap::FontData::xHeight):
+        (WidthMap::FontData::smallCapsFontData):
+        (WidthMap::computeWidthForSpace):
+        (WidthMap::setUpFont):
+        (WidthMap::fillStyleWithAttributes):
+        (WidthMap::FontData::determinePitch):
+        * platform/mac/FontFallbackListMac.mm:
+        (WebCore::FontFallbackList::setPlatformFont):
+        * platform/mac/FontFamilyMac.mm: Removed.
+        * platform/mac/FontMac.mm:
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreFindFont):
+        * platform/mac/WebFontCache.h: Added.
+        * platform/mac/WebFontCache.mm: Added.
+        (acceptableChoice):
+        (betterChoice):
+        (+[WebFontCache fontWithFamily:traits:size:]):
+        * platform/mac/WebTextRendererFactory.h: Removed.
+        * platform/mac/WebTextRendererFactory.mm: Removed.
+
 2006-05-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

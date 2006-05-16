@@ -30,18 +30,109 @@
 #import "FontCache.h"
 #import "FontPlatformData.h"
 #import "Font.h"
-#import "WebTextRendererFactory.h"
+#import "WebFontCache.h"
 #import "WebCoreSystemInterface.h"
+#import "KWQListBox.h"
+#import "WebCoreStringTruncator.h"
 
 namespace WebCore
 {
 
-const FontData* FontCache::getFontData(const Font& font, int& familyIndex)
+static bool getAppDefaultValue(CFStringRef key, int *v)
 {
-    FontPlatformData platformData = [[WebTextRendererFactory sharedFactory] fontWithDescription:&font.fontDescription() familyIndex:&familyIndex];
-    if (!platformData.font)
-        return 0;
-    return [[WebTextRendererFactory sharedFactory] rendererWithFont: platformData];
+    CFPropertyListRef value;
+
+    value = CFPreferencesCopyValue(key, kCFPreferencesCurrentApplication,
+                                   kCFPreferencesAnyUser,
+                                   kCFPreferencesAnyHost);
+    if (value == 0) {
+        value = CFPreferencesCopyValue(key, kCFPreferencesCurrentApplication,
+                                       kCFPreferencesCurrentUser,
+                                       kCFPreferencesAnyHost);
+        if (value == 0)
+            return false;
+    }
+
+    if (CFGetTypeID(value) == CFNumberGetTypeID()) {
+        if (v != 0)
+            CFNumberGetValue((const CFNumberRef)value, kCFNumberIntType, v);
+    } else if (CFGetTypeID(value) == CFStringGetTypeID()) {
+        if (v != 0)
+            *v = CFStringGetIntValue((const CFStringRef)value);
+    } else {
+        CFRelease(value);
+        return false;
+    }
+
+    CFRelease(value);
+    return true;
+}
+
+static bool getUserDefaultValue(CFStringRef key, int *v)
+{
+    CFPropertyListRef value;
+
+    value = CFPreferencesCopyValue(key, kCFPreferencesAnyApplication,
+                                   kCFPreferencesCurrentUser,
+                                   kCFPreferencesCurrentHost);
+    if (value == 0)
+        return false;
+
+    if (CFGetTypeID(value) == CFNumberGetTypeID()) {
+        if (v != 0)
+            CFNumberGetValue((const CFNumberRef)value, kCFNumberIntType, v);
+    } else if (CFGetTypeID(value) == CFStringGetTypeID()) {
+        if (v != 0)
+            *v = CFStringGetIntValue((const CFStringRef)value);
+    } else {
+        CFRelease(value);
+        return false;
+    }
+
+    CFRelease(value);
+    return true;
+}
+
+static int getLCDScaleParameters(void)
+{
+    int mode;
+    CFStringRef key;
+
+    key = CFSTR("AppleFontSmoothing");
+    if (!getAppDefaultValue(key, &mode)) {
+        if (!getUserDefaultValue(key, &mode))
+            return 1;
+    }
+
+    if (wkFontSmoothingModeIsLCD(mode))
+        return 4;
+    return 1;
+}
+
+static void fontsChanged(ATSFontNotificationInfoRef info, void*)
+{
+    FontCache::clearCaches();
+}
+
+#define MINIMUM_GLYPH_CACHE_SIZE 1536 * 1024
+
+void FontCache::registerForFontChanges()
+{
+    size_t s = MINIMUM_GLYPH_CACHE_SIZE*getLCDScaleParameters();
+
+    wkSetUpFontCache(s);
+
+    // Ignore errors returned from ATSFontNotificationSubscribe.  If we can't subscribe then we
+    // won't be told about changes to fonts.
+    ATSFontNotificationSubscribe(fontsChanged, kATSFontNotifyOptionDefault, 0, 0);
+}
+
+void FontCache::clearCaches()
+{
+    clearCommonCaches();
+    
+    QListBox::clearCachedTextRenderers();
+    [WebCoreStringTruncator clear];
 }
 
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
@@ -77,10 +168,75 @@ const FontData* FontCache::getFontDataForCharacters(const Font& font, const UCha
         FontPlatformData alternateFont(substituteFont, 
                                        (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask),
                                        (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask));
-        return [[WebTextRendererFactory sharedFactory] rendererWithFont: alternateFont];
+        return getCachedFontData(&alternateFont);
     }
 
     return 0;
+}
+
+FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
+{
+    // Attempt to find an appropriate font using a match based on 
+    // the presence of keywords in the the requested names.  For example, we'll
+    // match any name that contains "Arabic" to Geeza Pro.
+    FontPlatformData* platformData = 0;
+    const FontFamily* currFamily = &font.fontDescription().family();
+    while (currFamily && !platformData) {
+        if (currFamily->family().length()) {
+            static String matchWords[3] = { String("Arabic"), String("Pashto"), String("Urdu") };
+            static AtomicString geezaStr("Geeza Pro");
+            for (int j = 0; j < 3 && !platformData; ++j)
+                if (currFamily->family().contains(matchWords[j], false))
+                    platformData = getCachedFontPlatformData(font, geezaStr);
+        }
+        currFamily = currFamily->next();
+    }
+
+    return platformData;
+}
+
+FontPlatformData* FontCache::getLastResortFallbackFont(const Font& font)
+{
+    static AtomicString timesStr("Times");
+    static AtomicString lucidaGrandeStr("Lucida Grande");
+
+    // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
+    // the default that the user would get without changing any prefs.
+    FontPlatformData* platformFont = getCachedFontPlatformData(font, timesStr);
+    if (!platformFont)
+        // The Times fallback will almost always work, but in the highly unusual case where
+        // the user doesn't have it, we fall back on Lucida Grande because that's
+        // guaranteed to be there, according to Nathan Taylor. This is good enough
+        // to avoid a crash at least.
+        platformFont = getCachedFontPlatformData(font, lucidaGrandeStr);
+
+    return platformFont;
+}
+
+FontPlatformData* FontCache::createFontPlatformData(const Font& font, const AtomicString& family)
+{
+    NSFontTraitMask traits = 0;
+    if (font.italic())
+        traits |= NSItalicFontMask;
+    if (font.bold())
+        traits |= NSBoldFontMask;
+    float size = font.fontDescription().computedPixelSize();
+    
+    NSFont* nsFont = [WebFontCache fontWithFamily:family traits:traits size:size];
+    if (!nsFont)
+        return 0;
+
+    NSFontTraitMask actualTraits = 0;
+    if (font.bold() || font.italic())
+        actualTraits = [[NSFontManager sharedFontManager] traitsOfFont:nsFont];
+    
+    FontPlatformData* result = new FontPlatformData;
+    
+    // Use the correct font for print vs. screen.
+    result->font = font.fontDescription().usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont];
+    result->syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
+    result->syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
+    return result;
 }
 
 }

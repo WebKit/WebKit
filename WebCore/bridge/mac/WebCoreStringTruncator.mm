@@ -32,7 +32,6 @@
 #import <Cocoa/Cocoa.h>
 
 #import <wtf/Assertions.h>
-#import "WebTextRendererFactory.h"
 #import "Font.h"
 
 #define STRING_BUFFER_SIZE 2048
