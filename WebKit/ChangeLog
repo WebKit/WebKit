@@ -1,3 +1,16 @@
+2006-05-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+
+        First step towards making text-matching mechanism more flexible; updated for changes
+        to WebCoreFrameBridge calls.
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView highlightAllMatchesForString:caseSensitive:]):
+        updated for name change in WebCoreFrameBridge, also now calls setMarkedTextMatchesAreHighlighted:
+        (-[WebHTMLView clearHighlightedMatches]):
+        updated for name change in WebCoreFrameBridge
+
 2006-05-16  Matt Gough  <matt@softchaos.com>
 
         Reviewed by Geoff.

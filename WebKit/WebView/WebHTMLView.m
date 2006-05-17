@@ -1741,12 +1741,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
 {
-    return [[self _bridge] highlightAllMatchesForString:string caseSensitive:caseFlag];
+    [[self _bridge] setMarkedTextMatchesAreHighlighted:YES];
+    return [[self _bridge] markAllMatchesForText:string caseSensitive:caseFlag];
 }
 
 - (void)clearHighlightedMatches
 {
-    return [[self _bridge] clearHighlightedMatches];
+    return [[self _bridge] unmarkAllTextMatches];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
