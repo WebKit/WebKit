@@ -55,10 +55,8 @@ bool editingIgnoresContent(const Node *node)
         return false;
     
     if (node->renderer()) {
-        if (node->renderer()->isReplaced() && !node->renderer()->canHaveChildren())
+        if (node->renderer()->isWidget() || node->renderer()->isImage())
             return true;
-        ASSERT(!node->renderer()->isWidget());
-        ASSERT(!node->renderer()->isImage());
     } else {
         // widgets
         if (static_cast<const HTMLElement *>(node)->isGenericFormElement())

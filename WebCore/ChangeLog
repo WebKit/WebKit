@@ -1,3 +1,16 @@
+2006-05-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        * editing/htmlediting.cpp: (WebCore::editingIgnoresContent):
+        Reverting change that Darin made a few weeks ago.  He was trying
+        to make editingIgnoresContent return true for the new text fields, but the code
+        actually didn't change that result.  When the new text fields actually do return
+        true for editingIgnoresContent, other editing problems are exposed. For example,
+        moving the cursor around an editable area that contains a text field will cross the
+        text field boundary and descend into the shadow tree.  So for now, we'll revert this
+        change.
+
 2006-05-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej, tweaked by Darin.
