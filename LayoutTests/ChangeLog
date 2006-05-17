@@ -1,3 +1,23 @@
+2006-05-16  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5624
+        document.createElementNS() should not allow to insert a second <html> element
+
+        * dom/xhtml/level3/core/documentnormalizedocument10-expected.txt:
+        Updated to show a different failure.
+
+        * dom/xhtml/level3/core/nodeappendchild02-expected.txt:
+        * dom/xhtml/level3/core/nodeinsertbefore06-expected.txt:
+        * dom/xhtml/level3/core/nodereplacechild39-expected.txt:
+        Updated to reflect success.
+
+        * fast/dom/createDocumentType2.html: Added.
+        * fast/dom/createDocumentType2-expected.txt: Added.
+        * fast/dom/createElementNS.html: Added.
+        * fast/dom/createElementNS-expected.txt: Added.
+
 2006-05-16  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

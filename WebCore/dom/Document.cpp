@@ -1649,40 +1649,32 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(bool readonly, bool act
 }
 
 // DOM Section 1.1.1
-bool Document::childAllowed(Node *newChild)
-{
-    // Documents may contain a maximum of one Element child
-    if (newChild->isElementNode()) {
-        Node *c;
-        for (c = firstChild(); c; c = c->nextSibling()) {
-            if (c->isElementNode())
-                return false;
-        }
-    }
-
-    // Documents may contain a maximum of one DocumentType child
-    if (newChild->nodeType() == DOCUMENT_TYPE_NODE) {
-        Node *c;
-        for (c = firstChild(); c; c = c->nextSibling()) {
-            if (c->nodeType() == DOCUMENT_TYPE_NODE)
-                return false;
-        }
-    }
-
-    return childTypeAllowed(newChild->nodeType());
-}
-
 bool Document::childTypeAllowed(NodeType type)
 {
     switch (type) {
-        case ELEMENT_NODE:
-        case PROCESSING_INSTRUCTION_NODE:
-        case COMMENT_NODE:
-        case DOCUMENT_TYPE_NODE:
-            return true;
-        default:
+        case ATTRIBUTE_NODE:
+        case CDATA_SECTION_NODE:
+        case DOCUMENT_FRAGMENT_NODE:
+        case DOCUMENT_NODE:
+        case ENTITY_NODE:
+        case ENTITY_REFERENCE_NODE:
+        case NOTATION_NODE:
+        case TEXT_NODE:
+        case XPATH_NAMESPACE_NODE:
             return false;
+        case COMMENT_NODE:
+        case PROCESSING_INSTRUCTION_NODE:
+            return true;
+        case DOCUMENT_TYPE_NODE:
+        case ELEMENT_NODE:
+            // Documents may contain no more than one of each of these.
+            // (One Element and one DocumentType.)
+            for (Node* c = firstChild(); c; c = c->nextSibling())
+                if (c->nodeType() == type)
+                    return false;
+            return true;
     }
+    return false;
 }
 
 PassRefPtr<Node> Document::cloneNode(bool /*deep*/)
