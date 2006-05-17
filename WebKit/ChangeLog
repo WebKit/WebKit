@@ -1,3 +1,22 @@
+2006-05-16  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8945 (REGRESSION: Scrolling is very slow when dragging
+        the thumb)
+
+        Rolled out one of my tweaks to the window display throttle hack (remember the last flush time instead
+        of the last display time).  While that was technically a better approach, we discovered a problem
+        with how it interacts with NSView scroll tracking.  Rather than further complicate this already
+        crazy hack, I'm reverting back to the simple version.  This should yield similar numbers on iBench,
+        but not exhibit the nasty scrolling problem.
+        
+        * Misc/WebNSWindowExtras.m:
+        (+[NSWindow _webkit_enableWindowDisplayThrottle]):
+        (+[NSWindow _webkit_disableWindowDisplayThrottle]):
+        (getWindowDisplayInfo):
+        (requestWindowDisplay):
+
 2006-05-16  bradeeoh  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak
