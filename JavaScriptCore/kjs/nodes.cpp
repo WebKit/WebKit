@@ -87,7 +87,7 @@ struct NodeCounter {
 };
 int NodeCounter::count = 0;
 static NodeCounter nodeImplCounter;
-#endif NDEBUG
+#endif
 
 static HashSet<Node*>* newNodes;
 static HashCountedSet<Node*>* nodeExtraRefCounts;
