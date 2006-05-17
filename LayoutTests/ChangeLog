@@ -1,3 +1,13 @@
+2006-05-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8951
+          AtomicString hash corrupted by high-bit Latin-1
+
+        * fast/encoding/high-bit-latin1-expected.txt: Added.
+        * fast/encoding/high-bit-latin1.html: Added.
+
 2006-05-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Maciej.

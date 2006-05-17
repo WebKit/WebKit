@@ -96,8 +96,10 @@ void StringImpl::init(const char* str, unsigned len)
     m_data = newUCharVector(m_length);
     int i = m_length;
     UChar* ptr = m_data;
-    while (i--)
-        *ptr++ = *str++;
+    while (i--) {
+        unsigned char c = *str++;
+        *ptr++ = c;
+    }
 }
 
 void StringImpl::init(const UChar* str, unsigned len)
