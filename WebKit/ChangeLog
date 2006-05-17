@@ -1,3 +1,18 @@
+2006-05-16  Matt Gough  <matt@softchaos.com>
+
+        Reviewed by Geoff.
+        
+        Ensured all the public headers have a newline at their end.
+
+        Client code can now have 'Missing Newline at end of File' warnings enabled without emitting
+        such warnings against any WebKit includes.
+
+        * Misc/WebDownload.h:
+        * Plugins/npfunctions.h:
+        * WebView/WebResourceLoadDelegate.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebView.h:
+
 2006-05-16  Tim Omernick  <timo@apple.com>
 
         Reviewed by Tim Hatcher.
