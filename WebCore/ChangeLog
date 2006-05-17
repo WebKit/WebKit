@@ -1,3 +1,41 @@
+2006-05-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8958
+        Should be able to have custom implementations for JS methods
+        
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp: Removed.
+        * bindings/js/JSCanvasRenderingContext2DBase.h: Removed.
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp: Added.
+        Remove JSCanvasRenderingContext2DBase and add 
+        JSCanvasRenderingContext2DCustom with custom implementations.
+        
+        (WebCore::toJS):
+        (WebCore::toHTMLCanvasStyle):
+        (WebCore::JSCanvasRenderingContext2D::strokeStyle):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::JSCanvasRenderingContext2D::fillStyle):
+        (WebCore::JSCanvasRenderingContext2D::setFillStyle):
+        (WebCore::JSCanvasRenderingContext2D::setFillColor):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeColor):
+        (WebCore::JSCanvasRenderingContext2D::strokeRect):
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::setShadow):
+        (WebCore::JSCanvasRenderingContext2D::createPattern):
+        Move implementations from JSCanvasRenderingContext2DBase.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Add new "Custom" extended attribute for functions and attributes. When a function or 
+        attribute has this attribute, a custom implementation is called instead of calling down to
+        the DOM object.
+        
+        * html/CanvasRenderingContext2D.idl:
+        Add bunch of custom attributes and functions.
+
 2006-05-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

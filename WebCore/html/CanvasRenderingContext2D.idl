@@ -19,7 +19,7 @@
 
 module html {
 
-    interface [LegacyParent=JSCanvasRenderingContext2DBase] CanvasRenderingContext2D {
+    interface CanvasRenderingContext2D {
 
         // Web Applications 1.0 draft
 
@@ -81,6 +81,16 @@ module html {
 
         void clearShadow();
 
+        [Custom] void setStrokeColor(/* 1  */);
+        [Custom] void setFillColor(/* 1 */);
+        [Custom] void strokeRect(/* 4 */);
+        [Custom] void drawImage(/* 3 */);
+        [Custom] void drawImageFromRect(/* 10 */);
+        [Custom] void setShadow(/* 3 */);
+        [Custom] void createPattern(/* 2 */);
+        
+        attribute [Custom] custom strokeStyle;
+        attribute [Custom] custom fillStyle;        
     };
 
 }

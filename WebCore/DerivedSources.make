@@ -50,7 +50,6 @@ all : \
     JSCanvasGradient.h \
     JSCanvasPattern.h \
     JSCanvasRenderingContext2D.h \
-    JSCanvasRenderingContext2DBaseTable.cpp \
     JSCharacterData.h \
     JSCounter.h \
     JSCSSStyleDeclaration.h \

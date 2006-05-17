@@ -118,9 +118,7 @@ sub GetParentClassName
 sub GetLegacyHeaderIncludes
 {
   my $legacyParent = shift;
-  if ($legacyParent eq "JSCanvasRenderingContext2DBase") {
-    return "#include \"JSCanvasRenderingContext2DBase.h\"\n\n";
-  } elsif ($legacyParent eq "KJS::Window") {
+  if ($legacyParent eq "KJS::Window") {
       return "#include \"kjs_window.h\"\n\n";
   } elsif ($legacyParent eq "KJS::DOMNode") {
       return "#include \"kjs_domnode.h\"\n\n";
@@ -266,6 +264,9 @@ sub GenerateHeader
     push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n")
   }
 
+  my $numCustomFunctions = 0;
+  my $numCustomAttributes = 0;
+  
   # Attribute and function enums
   if ($numAttributes + $numFunctions > 0) {
     push(@headerContent, "    enum {\n")
@@ -277,6 +278,8 @@ sub GenerateHeader
     my $i = -1;
     foreach(@{$dataNode->attributes}) {
       my $attribute = $_;
+
+      $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"Custom"};
 
       $i++;
       if((($i % 4) eq 0) and ($i ne 0)) {
@@ -307,6 +310,8 @@ sub GenerateHeader
         push(@headerContent, "\n        ");
       }
 
+      $numCustomFunctions++ if $function->signature->extendedAttributes->{"Custom"};
+      
       my $value = ucfirst($function->signature->name) . "FuncNum";
       $value .= ", " if ($i < $numFunctions - 1);
       push(@headerContent, $value);
@@ -317,6 +322,32 @@ sub GenerateHeader
     push(@headerContent, "\n    };\n");
   }
 
+  if ($numCustomAttributes > 0) {
+    push(@headerContent, "\n    // Custom attributes\n");
+    
+    foreach(@{$dataNode->attributes}) {
+      my $attribute = $_;
+          
+      if ($attribute->signature->extendedAttributes->{"Custom"}) {
+        push(@headerContent, "    KJS::JSValue* " . $attribute->signature->name . "(KJS::ExecState*) const;\n");
+        if ($attribute->type !~ /^readonly/) {
+          push(@headerContent, "    void set" . ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");        
+        }
+      }
+    }
+  }
+  
+  if ($numCustomFunctions > 0) {      
+    push(@headerContent, "\n    // Custom functions\n");
+    foreach(@{$dataNode->functions}) {
+      my $function = $_;
+          
+      if ($function->signature->extendedAttributes->{"Custom"}) {
+        push(@headerContent, "    KJS::JSValue* " . $function->signature->name . "(KJS::ExecState*, const KJS::List&);\n");
+      }
+    }
+  }            
+  
   if (!$hasParent) {
     push(@headerContent, "    $implClassName* impl() const { return m_impl.get(); }\n");
     push(@headerContent, "private:\n");
@@ -360,6 +391,7 @@ sub GenerateHeader
           push(@headerContent, "        : KJS::JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()) { }\n");
       }
   }
+  
   push(@headerContent, "};\n\n");
   
   push(@headerContent, "}\n\n");
@@ -611,7 +643,10 @@ sub GenerateImplementation
     foreach my $attribute (@{$dataNode->attributes}) {
       my $name = $attribute->signature->name;
         
-      if ($attribute->signature->type =~ /Constructor$/) {
+      if ($attribute->signature->extendedAttributes->{"Custom"}) {
+        push(@implContent, "    case " . ucfirst($name) . "AttrNum:\n");
+        push(@implContent, "        return $name(exec);\n");
+      } elsif ($attribute->signature->type =~ /Constructor$/) {
         my $constructorType = $attribute->signature->type;
         $constructorType =~ s/Constructor$//;
 
@@ -650,7 +685,11 @@ sub GenerateImplementation
       foreach my $attribute (@{$dataNode->attributes}) {
         if ($attribute->type !~ /^readonly/) {
           my $name = $attribute->signature->name;
-          if ($attribute->signature->type =~ /Constructor$/) {
+ 
+          if ($attribute->signature->extendedAttributes->{"Custom"}) {
+              push(@implContent, "    case " . ucfirst($name) . "AttrNum: {\n");
+              push(@implContent, "        set" . ucfirst($name) . "(exec, value);\n");
+          } elsif ($attribute->signature->type =~ /Constructor$/) {
               my $constructorType = $attribute->signature->type;
               $constructorType =~ s/Constructor$//;
 
@@ -701,6 +740,11 @@ sub GenerateImplementation
     push(@implContent, "    switch (id) {\n");
     foreach my $function (@{$dataNode->functions}) {      
       push(@implContent, "    case ${className}::" . ucfirst($function->signature->name) . "FuncNum: {\n");
+      
+      if ($function->signature->extendedAttributes->{"Custom"}) {
+        push(@implContent, "        return static_cast<${className}*>(thisObj)->" . $function->signature->name . "(exec, args);\n    }\n");
+        next;
+      }
       
       AddIncludesForType($function->signature->type);
       
@@ -1010,7 +1054,7 @@ sub NativeToJSValue
     $implIncludes{"kjs_window.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "DOMObject") {
-    $implIncludes{"JSCanvasRenderingContext2DBase.h"} = 1;
+    $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
     return "toJS(exec, $value)";
   } else {
     $implIncludes{"JS$type.h"} = 1;
