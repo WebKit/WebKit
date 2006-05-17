@@ -1195,12 +1195,22 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->findString(string, forward, caseFlag, wrapFlag);
 }
 
-- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag
 {
-    return m_frame->highlightAllMatchesForString(string, caseFlag);
+    return m_frame->markAllMatchesForText(string, caseFlag);
 }
 
-- (void)clearHighlightedMatches
+- (BOOL)markedTextMatchesAreHighlighted
+{
+    return m_frame->markedTextMatchesAreHighlighted();
+}
+
+- (void)setMarkedTextMatchesAreHighlighted:(BOOL)doHighlight
+{
+    m_frame->setMarkedTextMatchesAreHighlighted(doHighlight);
+}
+
+- (void)unmarkAllTextMatches
 {
     Document *doc = m_frame->document();
     if (!doc) {

@@ -98,6 +98,7 @@ namespace WebCore {
             , m_autoscrollLayer(0)
             , m_drawSelectionOnly(false)
             , m_markedTextUsesUnderlines(false)
+            , m_highlightTextMatches(false)
             , m_windowHasFocus(false)
             , frameCount(0)
         {
@@ -221,6 +222,7 @@ namespace WebCore {
         
         bool m_markedTextUsesUnderlines;
         DeprecatedValueList<MarkedTextUnderline> m_markedTextUnderlines;
+        bool m_highlightTextMatches;
         bool m_windowHasFocus;
         
         unsigned frameCount;

@@ -1,3 +1,41 @@
+2006-05-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+        
+        First step towards making text-matching mechanism more flexible; now caller can 
+        control whether or not the matches are highlighted.
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge markAllMatchesForText:caseSensitive:]):
+        renamed from highlightAllMatchesForString:
+        (-[WebCoreFrameBridge markedTextMatchesAreHighlighted]):
+        new getter method
+        (-[WebCoreFrameBridge setMarkedTextMatchesAreHighlighted:]):
+        new setter method
+        (-[WebCoreFrameBridge unmarkAllTextMatches]):
+        renamed from clearHighlightedMatches
+        
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::markAllMatchesForText):
+        renamed from highlightAllMatchesForString
+        (WebCore::Frame::markedTextMatchesAreHighlighted):
+        new getter method, uses boolean ivar in FramePrivate
+        (WebCore::Frame::setMarkedTextMatchesAreHighlighted):
+        new setter method, uses boolean ivar in FramePrivate
+        
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        added boolean ivar m_highlightTextMatches, initialized to 0
+        
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        respect markedTextMatchesAreHighlighted
+
+        * WebCore.xcodeproj/project.pbxproj:
+        newer Xcode removed some obsolete settings
+        
 2006-05-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

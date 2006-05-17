@@ -308,8 +308,10 @@ typedef enum {
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element;
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
-- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag;
-- (void)clearHighlightedMatches;
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag;
+- (BOOL)markedTextMatchesAreHighlighted;
+- (void)setMarkedTextMatchesAreHighlighted:(BOOL)doHighlight;
+- (void)unmarkAllTextMatches;
 
 - (NSString *)advanceToNextMisspelling;
 - (NSString *)advanceToNextMisspellingStartingJustBeforeSelection;

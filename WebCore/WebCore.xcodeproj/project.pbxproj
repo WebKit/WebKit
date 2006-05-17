@@ -13,9 +13,6 @@
 			buildPhases = (
 				DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */,
 			);
-			buildSettings = {
-				PRODUCT_NAME = "Derived Sources";
-			};
 			dependencies = (
 			);
 			name = "Derived Sources";
@@ -1422,45 +1419,6 @@
 		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXBuildStyle section */
-		014CEA440018CDF011CA2923 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				DEBUG_DEFINES = "";
-				EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore-combined.exp";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-			};
-			name = Development;
-		};
-		014CEA450018CDF011CA2923 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-			};
-			name = Deployment;
-		};
-		F58C8A07025BD3BC018635CA /* OptimizedWithSymbols */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-			};
-			name = OptimizedWithSymbols;
-		};
-/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
@@ -5759,58 +5717,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebCore.exp;
-				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WebCorePrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = (
-					ForwardingHeaders,
-					icu,
-					/usr/include/libxslt,
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
-				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
-				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
-					"-lxml2-WebCore",
-				);
-				PRODUCT_NAME = WebCore;
-				SECTORDER_FLAGS = (
-					"-sectorder",
-					__TEXT,
-					__text,
-					/AppleInternal/OrderFiles/WebCore.order,
-				);
-				STYLE_LDFLAGS = "-umbrella WebKit";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-				);
-			};
 			dependencies = (
 				DD041FF109D9E3250010AF2A /* PBXTargetDependency */,
 			);
@@ -5826,13 +5732,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				014CEA440018CDF011CA2923 /* Development */,
-				014CEA450018CDF011CA2923 /* Deployment */,
-				F58C8A07025BD3BC018635CA /* OptimizedWithSymbols */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

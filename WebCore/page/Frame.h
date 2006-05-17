@@ -716,8 +716,11 @@ private:
 
   DeprecatedValueList<MarkedTextUnderline> markedTextUnderlines() const;  
   bool markedTextUsesUnderlines() const;
-  unsigned highlightAllMatchesForString(const String&, bool caseFlag);
-
+  
+  unsigned markAllMatchesForText(const String&, bool caseFlag);
+  bool markedTextMatchesAreHighlighted() const;
+  void setMarkedTextMatchesAreHighlighted(bool flag);
+  
   // Call this method before handling a new user action, like on a mouse down or key down.
   // Currently, all this does is clear the "don't submit form twice" data member.
   void prepareForUserAction();

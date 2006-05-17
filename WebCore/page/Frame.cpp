@@ -3297,7 +3297,7 @@ DeprecatedValueList<MarkedTextUnderline> Frame::markedTextUnderlines() const
     return d->m_markedTextUnderlines;
 }
 
-unsigned Frame::highlightAllMatchesForString(const String& target, bool caseFlag)
+unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag)
 {
     if (target.isEmpty())
         return 0;
@@ -3324,6 +3324,16 @@ unsigned Frame::highlightAllMatchesForString(const String& target, bool caseFlag
     } while (true);
     
     return matchCount;
+}
+
+bool Frame::markedTextMatchesAreHighlighted() const
+{
+    return d->m_highlightTextMatches;
+}
+
+void Frame::setMarkedTextMatchesAreHighlighted(bool flag)
+{
+    d->m_highlightTextMatches = flag;
 }
 
 void Frame::prepareForUserAction()

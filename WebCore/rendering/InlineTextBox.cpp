@@ -272,7 +272,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         if (haveMarkedText  && !markedTextUsesUnderlines)
             paintMarkedTextBackground(i.p, tx, ty, styleToUse, font, markedTextRange->startOffset(exception), markedTextRange->endOffset(exception));
 
-        paintAllMarkersOfType(i.p, tx, ty, DocumentMarker::TextMatch, styleToUse, font);
+        if (object()->document()->frame()->markedTextMatchesAreHighlighted())
+            paintAllMarkersOfType(i.p, tx, ty, DocumentMarker::TextMatch, styleToUse, font);
 
         if (haveSelection)
             paintSelection(i.p, tx, ty, styleToUse, font);
