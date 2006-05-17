@@ -1,3 +1,14 @@
+2006-05-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8870
+        Crash typing in Yahoo auto-complete widget.
+
+        * fast/js/regexp-stack-overflow-expected.txt: Added.
+        * fast/js/regexp-stack-overflow.html: Added.
+        * fast/js/resources/regexp-stack-overflow.js: Added.
+
 2006-05-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej.

@@ -1,0 +1,10 @@
+Test for bug 8870: Crash typing in Yahoo auto-complete widget.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result.length is 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

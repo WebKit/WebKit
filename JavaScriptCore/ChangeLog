@@ -1,3 +1,14 @@
+2006-05-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8870
+        Crash typing in Yahoo auto-complete widget.
+
+        Test: fast/js/regexp-stack-overflow.html
+
+        * pcre/pcre-config.h: Define NO_RECURSE.
+
 2006-05-16  George Staikos <staikos@kde.org>
 
         Reviewed by Maciej.
