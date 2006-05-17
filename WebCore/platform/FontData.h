@@ -28,7 +28,8 @@
 // FIXME: This is going to be cross-platform eventually, but for now we just compile on OS X.
 
 #include "FontPlatformData.h"
-#include "GlyphBuffer.h"
+#include "GlyphMap.h"
+#include <wtf/Noncopyable.h>
 
 // FIXME: Temporary.  Only needed to support API that's going to move.
 #include <unicode/umachine.h>
@@ -40,10 +41,9 @@ namespace WebCore
 
 class FontDescription;
 
-typedef struct WidthMap WidthMap;
-typedef struct GlyphMap GlyphMap;
+class WidthMap;
 
-class FontData
+class FontData : Noncopyable
 {
 public:
     FontData(const FontPlatformData& f);
@@ -61,20 +61,22 @@ public:
 
     float xHeight() const;
 
-    // FIXME: These are temporary API and will eventually move to the fallback list.
-    Glyph glyphForCharacter(const FontData **renderer, unsigned c) const;
-    void updateGlyphMapEntry(UChar c, Glyph glyph, const FontData *substituteRenderer) const;
-    // End temporary API
-
     float widthForGlyph(Glyph glyph) const;
     bool containsCharacters(const UChar* characters, int length) const;
 
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
     
+    // FIXME: Should go away when we pull the glyph map out of the FontData.
+    GlyphData glyphDataForCharacter(UChar32 c) const { return m_characterToGlyphMap.glyphDataForCharacter(c, this); }
+    void setGlyphDataForCharacter(UChar32 c, Glyph glyph, const FontData* fontData) const { m_characterToGlyphMap.setGlyphDataForCharacter(c, glyph, fontData); }
+
 #if __APPLE__
     NSFont* getNSFont() const { return m_font.font; }
 #endif
+
+private:
+    bool platformInit();
 
 public:
     int m_ascent;
@@ -85,7 +87,7 @@ public:
     void* m_styleGroup;
     
     FontPlatformData m_font;
-    mutable GlyphMap* m_characterToGlyphMap;
+    mutable GlyphMap m_characterToGlyphMap;
     mutable WidthMap* m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;

@@ -1,3 +1,37 @@
+2006-05-17  David Hyatt  <hyatt@apple.com>
+
+        Fix for 8954, separate the glyph map out into its own files and make it
+        cross-platform.
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/FontData.h:
+        (WebCore::FontData::glyphDataForCharacter):
+        (WebCore::FontData::setGlyphDataForCharacter):
+        * platform/GlyphMap.cpp: Added.
+        (WebCore::GlyphMap::glyphDataForCharacter):
+        (WebCore::GlyphMap::setGlyphDataForCharacter):
+        (WebCore::GlyphMap::locatePage):
+        * platform/GlyphMap.h: Added.
+        (WebCore::GlyphMap::GlyphMap):
+        (WebCore::GlyphMap::~GlyphMap):
+        (WebCore::GlyphMap::GlyphPage::glyphDataForCharacter):
+        (WebCore::GlyphMap::GlyphPage::setGlyphDataForCharacter):
+        (WebCore::GlyphMap::GlyphPage::setGlyphDataForIndex):
+        * platform/mac/FontData.mm:
+        (-[NSFont WebCore]):
+        (WidthMap::m_ATSUMirrors):
+        (WidthMap::FontData::~FontData):
+        (WidthMap::FontData::xHeight):
+        (WidthMap::FontData::platformInit):
+        (WidthMap::extendWidthMap):
+        * platform/mac/GlyphMapMac.cpp: Added.
+        (WebCore::GlyphMap::fillPage):
+        * platform/mac/WebCoreSystemInterface.h:
+
 2006-05-17  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

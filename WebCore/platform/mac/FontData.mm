@@ -59,37 +59,10 @@
 namespace WebCore
 {
 
-// FIXME: FATAL seems like a bad idea; lets stop using it.
-
 #define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7f
-#define SYNTHETIC_OBLIQUE_ANGLE 14
-
-// Should be more than enough for normal usage.
-#define NUM_SUBSTITUTE_FONT_MAPS 10
-
 #define SPACE 0x0020
-#define NO_BREAK_SPACE 0x00A0
-#define ZERO_WIDTH_SPACE 0x200B
-#define POP_DIRECTIONAL_FORMATTING 0x202C
-#define LEFT_TO_RIGHT_OVERRIDE 0x202D
-#define RIGHT_TO_LEFT_OVERRIDE 0x202E
-
-// MAX_GLYPH_EXPANSION is the maximum numbers of glyphs that may be
-// use to represent a single Unicode code point.
-#define MAX_GLYPH_EXPANSION 4
-#define LOCAL_BUFFER_SIZE 2048
-
-// Covers Latin-1.
-#define INITIAL_BLOCK_SIZE 0x200
-
-// Get additional blocks of glyphs and widths in bigger chunks.
-// This will typically be for other character sets.
-#define INCREMENTAL_BLOCK_SIZE 0x400
-
 #define CONTEXT_DPI (72.0)
 #define SCALE_EM_TO_UNITS(X, U_PER_EM) (X * ((1.0 * CONTEXT_DPI) / (CONTEXT_DPI * U_PER_EM)))
-
-#define WKGlyphVectorSize (50 * 32)
 
 typedef float WebGlyphWidth;
 
@@ -102,27 +75,9 @@ struct WidthMap {
     WebGlyphWidth *widths;
 };
 
-typedef struct GlyphEntry {
-    Glyph glyph;
-    const FontData *renderer;
-} GlyphEntry;
-
-struct GlyphMap {
-    UChar startRange;
-    UChar endRange;
-    GlyphMap *next;
-    GlyphEntry *glyphs;
-};
-
 static WidthMap *extendWidthMap(const FontData *, ATSGlyphRef);
-static ATSGlyphRef extendGlyphMap(const FontData *, UChar32);
 
 static void freeWidthMap(WidthMap *);
-static void freeGlyphMap(GlyphMap *);
-
-static bool setUpFont(FontData *);
-
-static bool fillStyleWithAttributes(ATSUStyle style, NSFont *theFont);
 
 #if !ERROR_DISABLED
 static NSString *pathFromFont(NSFont *font);
@@ -164,7 +119,7 @@ static NSString *webFallbackFontFamily(void)
 }
 
 FontData::FontData(const FontPlatformData& f)
-:m_styleGroup(0), m_font(f), m_characterToGlyphMap(0), m_glyphToWidthMap(0), m_treatAsFixedPitch(false),
+:m_styleGroup(0), m_font(f), m_glyphToWidthMap(0), m_treatAsFixedPitch(false),
  m_smallCapsFontData(0), m_ATSUStyleInitialized(false), m_ATSUMirrors(false)
 {    
     m_font = f;
@@ -172,7 +127,7 @@ FontData::FontData(const FontPlatformData& f)
     m_syntheticBoldOffset = f.syntheticBold ? ceilf([f.font pointSize] / 24.0f) : 0.f;
     
     bool failedSetup = false;
-    if (!setUpFont(this)) {
+    if (!platformInit()) {
         // Ack! Something very bad happened, like a corrupt font.
         // Try looking for an alternate 'base' font for this renderer.
 
@@ -197,12 +152,12 @@ FontData::FontData(const FontPlatformData& f)
         if (!filePath)
             filePath = @"not known";
 #endif
-        if (!setUpFont(this)) {
+        if (!platformInit()) {
 	    if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
 		// OK, couldn't setup Times New Roman as an alternate to Times, fallback
 		// on the system font.  If this fails we have no alternative left.
 		m_font.font = [[NSFontManager sharedFontManager] convertFont:m_font.font toFamily:webFallbackFontFamily()];
-		if (!setUpFont(this)) {
+		if (!platformInit()) {
 		    // We tried, Times, Times New Roman, and the system font. No joy. We have to give up.
 		    LOG_ERROR("unable to initialize with font %@ at %@", initialFont, filePath);
                     failedSetup = true;
@@ -224,7 +179,7 @@ FontData::FontData(const FontPlatformData& f)
     if (failedSetup) {
         m_font.font = [NSFont systemFontOfSize:[m_font.font pointSize]];
         LOG_ERROR("failed to set up font, using system font %s", m_font.font);
-        setUpFont(this);
+        platformInit();
     }
     
     int iAscent;
@@ -261,7 +216,6 @@ FontData::~FontData()
         wkReleaseStyleGroup(m_styleGroup);
 
     freeWidthMap(m_glyphToWidthMap);
-    freeGlyphMap(m_characterToGlyphMap);
 
     if (m_ATSUStyleInitialized)
         ATSUDisposeStyle(m_ATSUStyle);
@@ -276,8 +230,7 @@ float FontData::xHeight() const
 {
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
-    const FontData *renderer = this;
-    NSGlyph xGlyph = glyphForCharacter(&renderer, 'x');
+    NSGlyph xGlyph = m_characterToGlyphMap.glyphDataForCharacter('x', this).glyph;
     if (xGlyph) {
         NSRect xBox = [m_font.font boundingRectForGlyph:xGlyph];
         // Use the maximum of either width or height because "x" is nearly square
@@ -332,50 +285,50 @@ bool FontData::containsCharacters(const UChar* characters, int length) const
     return result;
 }
 
-// Nasty hack to determine if we should round or ceil space widths.
-// If the font is monospace or fake monospace we ceil to ensure that 
-// every character and the space are the same width.  Otherwise we round.
-static bool computeWidthForSpace(FontData *renderer)
-{
-    renderer->m_spaceGlyph = extendGlyphMap(renderer, SPACE);
-    if (renderer->m_spaceGlyph == 0)
-        return false;
-
-    float width = renderer->widthForGlyph(renderer->m_spaceGlyph);
-
-    renderer->m_spaceWidth = width;
-
-    renderer->determinePitch();
-    renderer->m_adjustedSpaceWidth = renderer->m_treatAsFixedPitch ? ceilf(width) : roundf(width);
-    
-    return true;
-}
-
-static bool setUpFont(FontData *renderer)
+bool FontData::platformInit()
 {
     ATSUStyle fontStyle;
     if (ATSUCreateStyle(&fontStyle) != noErr)
         return false;
-
-    if (!fillStyleWithAttributes(fontStyle, renderer->m_font.font)) {
+    
+    ATSUFontID fontId = wkGetNSFontATSUFontId(m_font.font);
+    if (!fontId) {
         ATSUDisposeStyle(fontStyle);
         return false;
     }
 
-    if (wkGetATSStyleGroup(fontStyle, &renderer->m_styleGroup) != noErr) {
+    ATSUAttributeTag tag = kATSUFontTag;
+    ByteCount size = sizeof(ATSUFontID);
+    ATSUFontID *valueArray[1] = {&fontId};
+    OSStatus status = ATSUSetAttributes(fontStyle, 1, &tag, &size, (void* const*)valueArray);
+    if (status != noErr) {
+        ATSUDisposeStyle(fontStyle);
+        return false;
+    }
+
+    if (wkGetATSStyleGroup(fontStyle, &m_styleGroup) != noErr) {
         ATSUDisposeStyle(fontStyle);
         return false;
     }
 
     ATSUDisposeStyle(fontStyle);
 
-    if (!computeWidthForSpace(renderer)) {
-        freeGlyphMap(renderer->m_characterToGlyphMap);
-        renderer->m_characterToGlyphMap = 0;
-        wkReleaseStyleGroup(renderer->m_styleGroup);
-        renderer->m_styleGroup = 0;
+    // Nasty hack to determine if we should round or ceil space widths.
+    // If the font is monospace or fake monospace we ceil to ensure that 
+    // every character and the space are the same width.  Otherwise we round.
+    m_spaceGlyph = m_characterToGlyphMap.glyphDataForCharacter(SPACE, this).glyph;
+    if (m_spaceGlyph == 0) {
+        wkReleaseStyleGroup(m_styleGroup);
+        m_styleGroup = 0;
         return false;
     }
+
+    float width = widthForGlyph(m_spaceGlyph);
+
+    m_spaceWidth = width;
+
+    determinePitch();
+    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
     
     return true;
 }
@@ -402,119 +355,6 @@ static NSString *pathFromFont(NSFont *font)
 
 #endif
 
-void FontData::updateGlyphMapEntry(UChar c, ATSGlyphRef glyph, const FontData *substituteRenderer) const
-{
-    GlyphMap *map;
-    for (map = m_characterToGlyphMap; map; map = map->next) {
-        UChar32 start = map->startRange;
-        if (c >= start && c <= map->endRange) {
-            int i = c - start;
-            map->glyphs[i].glyph = glyph;
-            // This renderer will leak.
-            // No problem though; we want it to stick around forever.
-            // Max theoretical retain counts applied here will be num_fonts_on_system * num_glyphs_in_font.
-            map->glyphs[i].renderer = substituteRenderer;
-            break;
-        }
-    }
-}
-
-static ATSGlyphRef extendGlyphMap(const FontData *renderer, UChar32 c)
-{
-    GlyphMap *map = new GlyphMap;
-    ATSLayoutRecord *glyphRecord;
-    char glyphVector[WKGlyphVectorSize];
-    UChar32 end, start;
-    unsigned blockSize;
-    
-    if (renderer->m_characterToGlyphMap == 0)
-        blockSize = INITIAL_BLOCK_SIZE;
-    else
-        blockSize = INCREMENTAL_BLOCK_SIZE;
-    start = (c / blockSize) * blockSize;
-    end = start + (blockSize - 1);
-
-    map->startRange = start;
-    map->endRange = end;
-    map->next = 0;
-    
-    unsigned i;
-    unsigned count = end - start + 1;
-    unsigned short buffer[INCREMENTAL_BLOCK_SIZE * 2 + 2];
-    unsigned bufferLength;
-
-    if (start < 0x10000) {
-        bufferLength = count;
-        for (i = 0; i < count; i++)
-            buffer[i] = i + start;
-
-        if (start == 0) {
-            // Control characters must not render at all.
-            for (i = 0; i < 0x20; ++i)
-                buffer[i] = ZERO_WIDTH_SPACE;
-            buffer[0x7F] = ZERO_WIDTH_SPACE;
-
-            // But \n, \t, and nonbreaking space must render as a space.
-            buffer[(int)'\n'] = ' ';
-            buffer[(int)'\t'] = ' ';
-            buffer[NO_BREAK_SPACE] = ' ';
-        }
-    } else {
-        bufferLength = count * 2;
-        for (i = 0; i < count; i++) {
-            int c = i + start;
-            buffer[i * 2] = U16_LEAD(c);
-            buffer[i * 2 + 1] = U16_TRAIL(c);
-        }
-    }
-
-    OSStatus status = wkInitializeGlyphVector(count, &glyphVector);
-    if (status != noErr) {
-        // This should never happen, perhaps indicates a bad font!  If it does the
-        // font substitution code will find an alternate font.
-        delete map;
-        return 0;
-    }
-
-    wkConvertCharToGlyphs(renderer->m_styleGroup, &buffer[0], bufferLength, &glyphVector);
-    unsigned numGlyphs = wkGetGlyphVectorNumGlyphs(&glyphVector);
-    if (numGlyphs != count) {
-        // This should never happen, perhaps indicates a bad font?
-        // If it does happen, the font substitution code will find an alternate font.
-        wkClearGlyphVector(&glyphVector);
-        delete map;
-        return 0;
-    }
-
-    map->glyphs = new GlyphEntry[count];
-    glyphRecord = (ATSLayoutRecord *)wkGetGlyphVectorFirstRecord(glyphVector);
-    for (i = 0; i < count; i++) {
-        map->glyphs[i].glyph = glyphRecord->glyphID;
-        map->glyphs[i].renderer = renderer;
-        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + wkGetGlyphVectorRecordSize(glyphVector));
-    }
-    wkClearGlyphVector(&glyphVector);
-    
-    if (renderer->m_characterToGlyphMap == 0)
-        renderer->m_characterToGlyphMap = map;
-    else {
-        GlyphMap *lastMap = renderer->m_characterToGlyphMap;
-        while (lastMap->next != 0)
-            lastMap = lastMap->next;
-        lastMap->next = map;
-    }
-
-    ATSGlyphRef glyph = map->glyphs[c - start].glyph;
-
-    // Special case for characters 007F-00A0.
-    if (glyph == 0 && c >= 0x7F && c <= 0xA0) {
-        glyph = wkGetDefaultGlyphForChar(renderer->m_font.font, c);
-        map->glyphs[c - start].glyph = glyph;
-    }
-
-    return glyph;
-}
-
 static WidthMap *extendWidthMap(const FontData *renderer, ATSGlyphRef glyph)
 {
     WidthMap *map = new WidthMap;
@@ -524,19 +364,16 @@ static WidthMap *extendWidthMap(const FontData *renderer, ATSGlyphRef glyph)
     unsigned i, count;
     
     NSFont *f = renderer->m_font.font;
-    if (renderer->m_glyphToWidthMap == 0) {
-        if ([f numberOfGlyphs] < INITIAL_BLOCK_SIZE)
-            blockSize = [f numberOfGlyphs];
-         else
-            blockSize = INITIAL_BLOCK_SIZE;
-    } else {
-        blockSize = INCREMENTAL_BLOCK_SIZE;
-    }
-    if (blockSize == 0) {
+    if (renderer->m_glyphToWidthMap == 0 && [f numberOfGlyphs] < cGlyphPageSize)
+        blockSize = [f numberOfGlyphs];
+    else
+        blockSize = cGlyphPageSize;
+    
+    if (blockSize == 0)
         start = 0;
-    } else {
+    else
         start = (glyph / blockSize) * blockSize;
-    }
+
     end = ((unsigned)start) + blockSize; 
 
     map->startRange = start;
@@ -567,50 +404,6 @@ static void freeWidthMap(WidthMap *map)
         delete map;
         map = next;
     }
-}
-
-static void freeGlyphMap(GlyphMap *map)
-{
-    while (map) {
-        GlyphMap *next = map->next;
-        delete []map->glyphs;
-        delete map;
-        map = next;
-    }
-}
-
-Glyph FontData::glyphForCharacter(const FontData **renderer, unsigned c) const
-{
-    // this loop is hot, so it is written to avoid LSU stalls
-    GlyphMap *map;
-    GlyphMap *nextMap;
-    for (map = (*renderer)->m_characterToGlyphMap; map; map = nextMap) {
-        UChar start = map->startRange;
-        nextMap = map->next;
-        if (c >= start && c <= map->endRange) {
-            GlyphEntry *ge = &map->glyphs[c - start];
-            *renderer = ge->renderer;
-            return ge->glyph;
-        }
-    }
-
-    return extendGlyphMap(*renderer, c);
-}
-
-static bool fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
-{
-    if (!theFont)
-        return false;
-    ATSUFontID fontId = wkGetNSFontATSUFontId(theFont);
-    if (!fontId)
-        return false;
-    ATSUAttributeTag tag = kATSUFontTag;
-    ByteCount size = sizeof(ATSUFontID);
-    ATSUFontID *valueArray[1] = {&fontId};
-    OSStatus status = ATSUSetAttributes(style, 1, &tag, &size, (void* const*)valueArray);
-    if (status != noErr)
-        return false;
-    return true;
 }
 
 void FontData::determinePitch()

@@ -27,11 +27,20 @@
 #define WebCoreSystemInterface_h
 
 typedef signed char BOOL;
+typedef struct _NSPoint NSPoint;
 typedef struct _NSRange NSRange;
+typedef struct _NSRect NSRect;
+
+#ifndef __OBJC__
+class NSImage;
+class NSString;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define GLYPH_VECTOR_SIZE (50 * 32)
 
 // In alphabetical order.
 

@@ -1280,6 +1280,9 @@
 		BC6DABF30A19015700E5CD14 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DABF20A19015700E5CD14 /* FontCache.cpp */; };
 		BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */; };
 		BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */; };
+		BC6DB3690A1A7CB700E5CD14 /* GlyphMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DB3680A1A7CB700E5CD14 /* GlyphMap.h */; };
+		BC6DB4740A1A90FB00E5CD14 /* GlyphMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4730A1A90FB00E5CD14 /* GlyphMap.cpp */; };
+		BC6DB4D40A1AFEEF00E5CD14 /* GlyphMapMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */; };
 		BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
 		BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
 		BC73E2FF0978AF9C00EDFF8A /* IntPointArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */; };
@@ -2797,6 +2800,9 @@
 		BC6DABF20A19015700E5CD14 /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebFontCache.h; sourceTree = "<group>"; };
 		BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFontCache.mm; sourceTree = "<group>"; };
+		BC6DB3680A1A7CB700E5CD14 /* GlyphMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GlyphMap.h; sourceTree = "<group>"; };
+		BC6DB4730A1A90FB00E5CD14 /* GlyphMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphMap.cpp; sourceTree = "<group>"; };
+		BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphMapMac.cpp; sourceTree = "<group>"; };
 		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSize.cpp; sourceTree = "<group>"; };
 		BC73E25C0978682700EDFF8A /* FloatSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatSize.h; sourceTree = "<group>"; };
 		BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntPointArray.cpp; sourceTree = "<group>"; };
@@ -3317,6 +3323,7 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
 				2D90660B0665D937006B6F1A /* ClipboardMac.h */,
@@ -4512,6 +4519,8 @@
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
 				BCC71A120A0FF94D0014EE6E /* GlyphBuffer.h */,
+				BC6DB3680A1A7CB700E5CD14 /* GlyphMap.h */,
+				BC6DB4730A1A90FB00E5CD14 /* GlyphMap.cpp */,
 				A823A75B09B6E53900B60641 /* GraphicsContext.cpp */,
 				935367E409AF77DD00D35CD6 /* GraphicsContext.h */,
 				938E685309F0BE04008A48EC /* GraphicsTypes.cpp */,
@@ -5687,6 +5696,7 @@
 				A80E73500A199C77007FB8C5 /* StyleBase.h in Headers */,
 				A80E73510A199C77007FB8C5 /* StyleList.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
+				BC6DB3690A1A7CB700E5CD14 /* GlyphMap.h in Headers */,
 				A80E7A180A19C3D6007FB8C5 /* JSHTMLMetaElement.h in Headers */,
 				A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */,
 				A80E7B0D0A19D606007FB8C5 /* JSHTMLLinkElement.h in Headers */,
@@ -6476,6 +6486,8 @@
 				A80E7B120A19D606007FB8C5 /* JSHTMLBaseElement.cpp in Sources */,
 				A80E7B130A19D606007FB8C5 /* JSHTMLTitleElement.cpp in Sources */,
 				A80E7B140A19D606007FB8C5 /* JSHTMLHeadElement.cpp in Sources */,
+				BC6DB4740A1A90FB00E5CD14 /* GlyphMap.cpp in Sources */,
+				BC6DB4D40A1AFEEF00E5CD14 /* GlyphMapMac.cpp in Sources */,
 				1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -181,7 +181,9 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
         }
 
         // FIXME: Should go through fallback list eventually when we rework the glyph map.
-        Glyph glyph = fontData->glyphForCharacter(&fontData, c);
+        const GlyphData& glyphData = fontData->glyphDataForCharacter(c);
+        Glyph glyph = glyphData.glyph;
+        fontData = glyphData.fontData;
 
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string. If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
@@ -195,7 +197,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
                 if (localGlyphBuffer.size() == 1) {
                     assert(substituteFontData == localGlyphBuffer.fontDataAt(0));
                     glyph = localGlyphBuffer.glyphAt(0);
-                    fontData->updateGlyphMapEntry(c, glyph, substituteFontData);
+                    fontData->setGlyphDataForCharacter(c, glyph, substituteFontData);
                     fontData = substituteFontData;
                 }
             }
