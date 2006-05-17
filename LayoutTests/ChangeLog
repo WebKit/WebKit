@@ -2,7 +2,7 @@
 
         Reviewed by Darin.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5624
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5264
         document.createElementNS() should not allow to insert a second <html> element
 
         * dom/xhtml/level3/core/documentnormalizedocument10-expected.txt:
