@@ -30,6 +30,7 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "cssstyleselector.h"
 
 using namespace std;
 
@@ -175,7 +176,10 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
     if (needToParse)
         parseMappedAttribute(mappedAttr);
-    
+
+    if (entry == eNone && ownerDocument()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
+        setChanged();
+
     if (checkDecl && mappedAttr->decl()) {
         // Add the decl to the table in the appropriate spot.
         setMappedAttributeDecl(entry, attr, mappedAttr->decl());

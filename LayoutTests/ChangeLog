@@ -1,4 +1,17 @@
-2006-05-16  Rob Buis  <buis@kde.org>
+2006-05-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Maciej.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7492
+        CSS attribute selectors fail when the setAttribute() method is used
+        to create an attribute and the attribute name is not Class or ID.
+
+        * fast/css/selector-set-attribute.html: Added.
+        * fast/css/selector-set-attribute-expected.txt: Added.
+        * fast/css/selector-set-attribute-expected.checksum: Added.
+        * fast/css/selector-set-attribute-expected.png: Added.
+
+2006-05-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
 
