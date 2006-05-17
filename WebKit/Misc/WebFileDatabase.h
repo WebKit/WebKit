@@ -28,18 +28,43 @@
 
 #import <Foundation/Foundation.h>
 
-#import "WebDatabase.h"
 
-@interface WebFileDatabase : WebDatabase 
+@interface WebFileDatabase : NSObject
 {
+    NSString *path;
+    unsigned count;
+    BOOL isOpen;
+    unsigned sizeLimit;
+    unsigned usage;
+    
     struct WebLRUFileList *lru;
     NSMutableArray *ops;
     NSMutableDictionary *setCache;
     NSMutableSet *removeCache;
+    
     NSTimer *timer;
     NSTimeInterval touch;
     NSRecursiveLock *mutex;
 }
+
+- (void)setObject:(id)object forKey:(id)key;
+- (void)removeObjectForKey:(id)key;
+- (void)removeAllObjects;
+- (id)objectForKey:(id)key;
+
+- (id)initWithPath:(NSString *)thePath;
+
+- (void)open;
+- (void)close;
+- (void)sync;
+
+- (NSString *)path;
+- (BOOL)isOpen;
+
+- (unsigned)count;
+- (unsigned)sizeLimit;
+- (void)setSizeLimit:(unsigned)limit;
+- (unsigned)usage;
 
 - (void)performSetObject:(id)object forKey:(id)key;
 - (void)performRemoveObjectForKey:(id)key;

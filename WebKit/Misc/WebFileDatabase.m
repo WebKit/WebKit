@@ -154,7 +154,6 @@ enum
 {
     [key release];
     [object release];
-    
     [super dealloc];
 }
 
@@ -312,12 +311,18 @@ static void databaseInit()
 {
     pthread_once(&databaseInitControl, databaseInit);
 
-    [super initWithPath:thePath];
-    
-    if (self == nil || thePath == nil) {
+    if (!(self = [super init])) 
+        return nil;
+        
+    path = [[thePath stringByStandardizingPath] copy];
+    if (thePath == nil) {
         [self release];
         return nil;
     }
+    
+    isOpen = NO;
+    sizeLimit = 0;
+    usage = 0;
 
     ops = [[NSMutableArray alloc] init];
     setCache = [[NSMutableDictionary alloc] init];
@@ -328,7 +333,12 @@ static void databaseInit()
     return self;
 }
 
-// WebFileDatabase objects are never released, so we need no dealloc implementation.
+-(void)dealloc
+{
+    [path release];
+    [super dealloc];
+}
+
 
 -(void)setTimer
 {
@@ -664,6 +674,21 @@ static void databaseInit()
     LOG(FileDatabaseActivity, "<<< AFTER sync\n%@", WebLRUFileListDescription(lru));
 }
 
+-(NSString *)path
+{
+    return path;
+}
+
+-(BOOL)isOpen
+{
+    return isOpen;
+}
+
+-(unsigned)sizeLimit
+{
+    return sizeLimit;
+}
+
 -(unsigned)count
 {
     if (lru)
@@ -687,5 +712,7 @@ static void databaseInit()
         [self _truncateToSizeLimit:limit];
     }
 }
+
+
 
 @end

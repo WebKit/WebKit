@@ -1,3 +1,22 @@
+2006-05-17  bradeeoh  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Consolidated WebDatabase base class into WebFileDatabase as the inheritance relationship became 
+        obsolete.  This improves readability and sets the stage for a further in-depth rewrite of the 
+        WebIcon* code.
+
+        * Misc/WebDatabase.h: Removed.
+        * Misc/WebDatabase.m: Removed.
+        * Misc/WebFileDatabase.h:
+        * Misc/WebFileDatabase.m:
+        (-[WebFileDatabaseOp dealloc]): 
+        (-[WebFileDatabase dealloc]):  
+        (-[WebFileDatabase path]):
+        (-[WebFileDatabase isOpen]):
+        (-[WebFileDatabase sizeLimit]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-05-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
