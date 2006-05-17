@@ -473,6 +473,7 @@ searchfield
 searchfield-results
 searchfield-close
 textfield
+textarea
 
 #
 # CSS_PROP_BORDER_IMAGE

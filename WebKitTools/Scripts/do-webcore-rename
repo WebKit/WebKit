@@ -153,6 +153,8 @@ my %renames = (
     "qmatrix" => "matrix",
     "render_button" => "RenderButton",
     "KCanvasContainer" => "RenderSVGContainer",
+    "RenderTextField" => "RenderTextControl",
+    "HTMLTextControlInnerElement" => "HTMLTextFieldInnerElement",
 );
 
 # rename files

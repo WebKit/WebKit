@@ -41,7 +41,7 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLGenericFormElement::HTMLGenericFormElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
-    : HTMLElement(tagName, doc), m_form(f), m_disabled(false), m_readOnly(false)
+    : HTMLElement(tagName, doc), m_form(f), m_disabled(false), m_readOnly(false), m_valueMatchesRenderer(false)
 {
     if (!m_form)
         m_form = getForm();

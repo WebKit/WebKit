@@ -4355,8 +4355,12 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
     WebFrameBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped])
-        [bridge insertParagraphSeparator];
+    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
+        if ([self _canEditRichly])
+            [bridge insertParagraphSeparator];
+        else
+            [bridge insertLineBreak];
+    }
 }
 
 - (void)insertLineBreak:(id)sender
@@ -4377,8 +4381,12 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
     WebFrameBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped])
-        [bridge insertParagraphSeparator];
+    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
+        if ([self _canEditRichly])
+            [bridge insertParagraphSeparator];
+        else
+            [bridge insertLineBreak];
+    }
 }
 
 - (void)_changeWordCaseWithSelector:(SEL)selector

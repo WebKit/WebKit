@@ -321,6 +321,17 @@ input {
     -webkit-user-select: text;
 }
 
+textarea {
+//  FIXME: Uncomment these when we flip the switch for the new textarea implementation
+//  -webkit-appearance: textarea;
+//   background-color: white;
+    border: solid #999999 1px;
+    border-top-color: #737373;
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    -webkit-box-orient: vertical;
+}
+
 input[type="password"], input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {
     -webkit-appearance: initial;
     padding: initial;
@@ -461,7 +472,7 @@ html:focus, body:focus {
     outline: none
 }
   
-input:focus {
+input:focus, textarea:focus {
     outline-offset: -2px
 }
 

@@ -1,3 +1,17 @@
+2006-05-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        WebKit part of initial checkin to prepare for http://bugzilla.opendarwin.org/show_bug.cgi?id=8948
+        Switch to use new text field implementation for <textarea>
+
+        * WebView/WebHTMLView.m:
+        (-[NSArray insertNewline:]): If we're in plain text mode, insert a line break instead of a paragraph separator.
+        (-[NSArray insertParagraphSeparator:]): ditto.
+        * WebView/WebView.m: (-[WebView _menuForElement:defaultItems:]):
+        Checks for textareas as well as textfields before allowing the delegate to control
+        the context menu.  This won't affect the old textareas because AppKit handles those context menus.
+
 2006-05-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

@@ -25,13 +25,16 @@
  */
 
 #include "config.h"
+#include "dom2_eventsimpl.h"
 #include "HTMLTextAreaElement.h"
-
 #include "Document.h"
 #include "EventNames.h"
 #include "FormDataList.h"
+#include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderTextArea.h"
+#include "RenderTextField.h"
+#include "render_style.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -44,8 +47,8 @@ HTMLTextAreaElement::HTMLTextAreaElement(Document *doc, HTMLFormElement *f)
     , m_rows(2)
     , m_cols(20)
     , m_wrap(ta_Virtual)
-    , m_valueMatchesRenderer(true)
 {
+    setValueMatchesRenderer();
     document()->registerFormElementWithState(this);
 }
 
@@ -72,40 +75,62 @@ void HTMLTextAreaElement::restoreState(const String& state)
 
 int HTMLTextAreaElement::selectionStart()
 {
-    if (renderer())
+    if (renderer()) {
+        if (renderer()->style()->appearance() == TextAreaAppearance)
+            return static_cast<RenderTextField *>(renderer())->selectionStart();
         return static_cast<RenderTextArea*>(renderer())->selectionStart();
+    }
     return 0;
 }
 
 int HTMLTextAreaElement::selectionEnd()
 {
-    if (renderer())
+    if (renderer()) {
+        if (renderer()->style()->appearance() == TextAreaAppearance)
+            return static_cast<RenderTextField *>(renderer())->selectionEnd();
         return static_cast<RenderTextArea*>(renderer())->selectionEnd();
+    }
     return 0;
 }
 
 void HTMLTextAreaElement::setSelectionStart(int start)
 {
-    if (renderer())
-        static_cast<RenderTextArea*>(renderer())->setSelectionStart(start);
+    if (renderer()) {
+        if (renderer()->style()->appearance() == TextAreaAppearance)
+            static_cast<RenderTextField*>(renderer())->setSelectionStart(start);
+        else
+            static_cast<RenderTextArea*>(renderer())->setSelectionStart(start);
+    }
 }
 
 void HTMLTextAreaElement::setSelectionEnd(int end)
 {
-    if (renderer())
-        static_cast<RenderTextArea*>(renderer())->setSelectionEnd(end);
+    if (renderer()) {
+        if (renderer()->style()->appearance() == TextAreaAppearance)
+            static_cast<RenderTextField*>(renderer())->setSelectionEnd(end);
+        else
+            static_cast<RenderTextArea*>(renderer())->setSelectionEnd(end);
+    }
 }
 
 void HTMLTextAreaElement::select()
 {
-    if (renderer())
-        static_cast<RenderTextArea*>(renderer())->select();
+    if (renderer()) {
+        if (renderer()->style()->appearance() == TextAreaAppearance)
+            static_cast<RenderTextField *>(renderer())->select();
+        else
+            static_cast<RenderTextArea *>(renderer())->select();
+    }
 }
 
 void HTMLTextAreaElement::setSelectionRange(int start, int end)
 {
-    if (renderer())
-        static_cast<RenderTextArea*>(renderer())->setSelectionRange(start, end);
+    if (renderer()) {
+        if (renderer()->style()->appearance() == TextAreaAppearance)
+            static_cast<RenderTextField*>(renderer())->setSelectionRange(start, end);
+        else
+            static_cast<RenderTextArea*>(renderer())->setSelectionRange(start, end);    
+    }
 }
 
 void HTMLTextAreaElement::childrenChanged()
@@ -150,8 +175,10 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)
         HTMLGenericFormElement::parseMappedAttribute(attr);
 }
 
-RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
+    if (style->appearance() == TextAreaAppearance)
+        return new (arena) RenderTextField(this, true);
     return new (arena) RenderTextArea(this);
 }
 
@@ -161,7 +188,11 @@ bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
         return false;
         
     bool hardWrap = renderer() && wrap() == ta_Physical;
-    String v = hardWrap ? static_cast<RenderTextArea*>(renderer())->textWithHardLineBreaks() : value();
+    String v;
+    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance)
+        v = hardWrap ? static_cast<RenderTextField*>(renderer())->textWithHardLineBreaks() : value();
+    else
+        v = hardWrap ? static_cast<RenderTextArea*>(renderer())->textWithHardLineBreaks() : value();
     encoding.appendData(name(), v);
     return true;
 }
@@ -171,6 +202,48 @@ void HTMLTextAreaElement::reset()
     setValue(defaultValue());
 }
 
+bool HTMLTextAreaElement::isKeyboardFocusable() const
+{
+    // If text areas can be focused, then they should always be keyboard focusable
+    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance)
+        return HTMLGenericFormElement::isFocusable();
+    return HTMLGenericFormElement::isKeyboardFocusable();
+}
+
+bool HTMLTextAreaElement::isMouseFocusable() const
+{
+    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance)
+        return HTMLGenericFormElement::isFocusable();
+    return HTMLGenericFormElement::isMouseFocusable();
+}
+
+void HTMLTextAreaElement::focus()
+{
+    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance) {
+        Document* doc = document();
+        if (doc->focusNode() == this)
+            return;
+        doc->updateLayout();
+        // FIXME: Should isFocusable do the updateLayout?
+        if (!isFocusable())
+            return;
+        doc->setFocusNode(this);
+        select();
+        if (doc->frame())
+            doc->frame()->revealSelection();
+        return;
+    }
+    HTMLGenericFormElement::focus();
+}
+
+void HTMLTextAreaElement::defaultEventHandler(Event *evt)
+{
+    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent))
+        static_cast<RenderTextField*>(renderer())->forwardEvent(evt);
+
+    HTMLGenericFormElement::defaultEventHandler(evt);
+}
+
 void HTMLTextAreaElement::rendererWillBeDestroyed()
 {
     updateValue();
@@ -178,10 +251,13 @@ void HTMLTextAreaElement::rendererWillBeDestroyed()
 
 void HTMLTextAreaElement::updateValue() const
 {
-    if (!m_valueMatchesRenderer) {
+    if (!valueMatchesRenderer()) {
         ASSERT(renderer());
-        m_value = static_cast<RenderTextArea*>(renderer())->text();
-        m_valueMatchesRenderer = true;
+        if (renderer()->style()->appearance() == TextAreaAppearance)
+            m_value = static_cast<RenderTextField*>(renderer())->text();
+        else
+            m_value = static_cast<RenderTextArea*>(renderer())->text();
+        setValueMatchesRenderer();
     }
 }
 
@@ -200,7 +276,7 @@ void HTMLTextAreaElement::setValue(const String& value)
     string.replace("\r", "\n");
     
     m_value = String(string);
-    m_valueMatchesRenderer = true;
+    setValueMatchesRenderer();
     if (renderer())
         renderer()->updateFromElement();
     setChanged(true);

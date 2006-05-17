@@ -96,8 +96,6 @@ public:
     String valueWithDefault() const;
 
     void setValueFromRenderer(const String&);
-    bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
-    void setValueMatchesRenderer() { m_valueMatchesRenderer = true; }
 
     virtual String stateValue() const;
     virtual void restoreState(const String&);
@@ -206,7 +204,6 @@ private:
     bool m_haveType : 1;
     bool m_activeSubmit : 1;
     bool m_autocomplete : 1;
-    bool m_valueMatchesRenderer : 1;
     bool m_autofilled : 1;
     bool m_inited : 1;
 };

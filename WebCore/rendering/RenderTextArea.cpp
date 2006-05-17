@@ -146,7 +146,7 @@ void RenderTextArea::valueChanged(Widget*)
 {
     if (m_updating)
         return;
-    static_cast<HTMLTextAreaElement*>(node())->invalidateValue();
+    static_cast<HTMLTextAreaElement*>(node())->setValueMatchesRenderer(false);
     m_dirty = true;
 }
 

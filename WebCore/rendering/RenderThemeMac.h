@@ -65,6 +65,8 @@ protected:
     virtual bool paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     virtual void adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
 
+    virtual void adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
+
 private:
     IntRect inflateRect(const IntRect& r, const IntSize& size, const int* margins) const;
 

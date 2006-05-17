@@ -409,6 +409,7 @@ public:
   virtual void textDidChangeInTextField(Element*);
   virtual bool doTextFieldCommandFromEvent(Element*, const PlatformKeyboardEvent*);
   virtual void textWillBeDeletedInTextField(Element* input);
+  virtual void textDidChangeInTextArea(Element*);
 
   /**
    * Returns the most recent edit command applied.

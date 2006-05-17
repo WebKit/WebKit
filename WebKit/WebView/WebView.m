@@ -690,8 +690,8 @@ static bool debugWidget = true;
 
     DOMNode* node = [element objectForKey:WebElementDOMNodeKey];
     BOOL elementIsTextField = [node isKindOfClass:[DOMHTMLInputElement class]] && [(DOMHTMLInputElement*)node _isTextField];
-
-    if (_private->UIDelegate && !elementIsTextField) {
+    BOOL elementIsTextArea = [node isKindOfClass:[DOMHTMLTextAreaElement class]];
+    if (_private->UIDelegate && !elementIsTextField && !elementIsTextArea) {
         id cd = _private->UIDelegate;
         
         if ([cd respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])

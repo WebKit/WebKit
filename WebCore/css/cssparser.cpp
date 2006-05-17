@@ -893,7 +893,7 @@ bool CSSParser::parseValue(int propId, bool important)
 
     /* CSS3 properties */
     case CSS_PROP__WEBKIT_APPEARANCE:
-        if ((id >= CSS_VAL_CHECKBOX && id <= CSS_VAL_TEXTFIELD) || id == CSS_VAL_NONE)
+        if ((id >= CSS_VAL_CHECKBOX && id <= CSS_VAL_TEXTAREA) || id == CSS_VAL_NONE)
             valid_primitive = true;
         break;
 

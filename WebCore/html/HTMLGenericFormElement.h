@@ -61,6 +61,9 @@ public:
 
     virtual void reset() {}
 
+    bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
+    void setValueMatchesRenderer(bool b = true) const { m_valueMatchesRenderer = b; }
+
     void onSelect();
     void onChange();
 
@@ -105,6 +108,8 @@ private:
     HTMLFormElement* m_form;
     bool m_disabled;
     bool m_readOnly;
+    mutable bool m_valueMatchesRenderer;
+
 };
 
 } //namespace

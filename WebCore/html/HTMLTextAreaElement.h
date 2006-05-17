@@ -71,12 +71,16 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool appendFormData(FormDataList&, bool);
     virtual void reset();
+    virtual void defaultEventHandler(Event*);
+    virtual bool isMouseFocusable() const;
+    virtual bool isKeyboardFocusable() const;
+    virtual void focus();
+
     String value() const;
     void setValue(const String&);
     String defaultValue() const;
     void setDefaultValue(const String&);
     
-    void invalidateValue() { m_valueMatchesRenderer = false; }
     void rendererWillBeDestroyed();
     
     virtual void accessKeyAction(bool sendToAnyElement);
@@ -94,7 +98,6 @@ private:
     int m_cols;
     WrapMethod m_wrap;
     mutable String m_value;
-    mutable bool m_valueMatchesRenderer;
 };
 
 } //namespace

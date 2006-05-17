@@ -21,28 +21,32 @@
 #ifndef RenderTextField_H
 #define RenderTextField_H
 
-#include "RenderBlock.h"
+#include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
 class HTMLTextFieldInnerElement;
 
-class RenderTextField : public RenderBlock {
+class RenderTextField : public RenderFlexibleBox {
 public:
-    RenderTextField(Node*);
+    RenderTextField(Node*, bool multiLine);
     virtual ~RenderTextField();
 
+    virtual void calcHeight();
     virtual void calcMinMaxWidth();
     virtual const char* renderName() const { return "RenderTextField"; }
     virtual void removeLeftoverAnonymousBoxes() {}
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
-    
+    virtual bool canHaveChildren() const { return false; }
+    virtual short baselinePosition( bool, bool ) const;
+
     RenderStyle* createDivStyle(RenderStyle* startStyle);
 
     bool isEdited() const { return m_dirty; };
     void setEdited(bool isEdited) { m_dirty = isEdited; };
-    bool isTextField() const { return true; }
+    bool isTextField() const { return !m_multiLine; }
+    bool isTextArea() const { return m_multiLine; }
     
     int selectionStart();
     int selectionEnd();
@@ -53,7 +57,9 @@ public:
 
     void subtreeHasChanged();
     String text();
+    String textWithHardLineBreaks();
     void forwardEvent(Event*);
+    void selectionChanged();
 
 private:
     VisiblePosition visiblePositionForIndex(int index);
@@ -61,6 +67,7 @@ private:
     
     RefPtr<HTMLTextFieldInnerElement> m_div;
     bool m_dirty;
+    bool m_multiLine;
 
 };
 

@@ -1,3 +1,103 @@
+2006-05-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        First step for http://bugzilla.opendarwin.org/show_bug.cgi?id=8948
+        Switch to use new text field implementation for <textarea>
+
+        New textareas can be turned on by setting -webkit-appearance:textarea.
+
+        Tests:
+        * LayoutTests/fast/block/float/032.html - Updated results.
+
+        * bridge/mac/FrameMac.h: Added textDidChangeinTextArea to send notification over the bridge to form delegate.
+        * bridge/mac/FrameMac.mm: (WebCore::FrameMac::textDidChangeInTextArea): ditto.
+        * page/Frame.cpp: (WebCore::Frame::textDidChangeInTextArea): ditto.
+        * page/Frame.h: ditto.
+
+        * css/CSSValueKeywords.in: Added textarea.
+        * css/cssparser.cpp: (WebCore::CSSParser::parseValue): Updates to check for textarea.
+        * css/html4.css: Added style for textarea.  Leaved background-color and appearance values commented out.
+        * rendering/render_style.h: (WebCore::): Added TextAreaAppearance.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle): Updated for textarea.
+        (WebCore::RenderTheme::paint): ditto.
+        (WebCore::RenderTheme::paintBorderOnly): ditto.
+        (WebCore::RenderTheme::isControlStyled): ditto.
+        (WebCore::RenderTheme::supportsFocusRing): ditto.
+        (WebCore::RenderTheme::adjustTextFieldStyle): ditto.
+        (WebCore::RenderTheme::adjustTextAreaStyle): ditto.
+        * rendering/RenderTheme.h: (WebCore::RenderTheme::paintTextArea): Added.
+        * rendering/RenderThemeMac.h: Added adjustTextAreaStyle.
+        Note- I didn't add a paintTextArea function for RenderThemeMac, since we can just paint the border 
+        specified in html4.css to match the NSTextView border.  Added a paintTextArea function to the Windows
+        theme can override that border.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled): Updated for textarea.
+        (WebCore::RenderThemeMac::adjustTextAreaStyle): ditto.
+
+        * html/HTMLGenericFormElement.cpp: (WebCore::HTMLGenericFormElement::HTMLGenericFormElement):
+        Moved m_valueMatchesRenderer and its setters and getters into this class so HTMLInputElement and
+        HTMLTextArea can share.
+        * html/HTMLGenericFormElement.h:
+        (WebCore::HTMLGenericFormElement::valueMatchesRenderer): Added.
+        (WebCore::HTMLGenericFormElement::setValueMatchesRenderer): Added.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::init): Remove m_valueMatchesRenderer intialization.
+        (WebCore::HTMLInputElement::isKeyboardFocusable): Updated spelling.
+        (WebCore::HTMLInputElement::createRenderer): Pass multiLine bool to RenderTextField constructor.
+        (WebCore::HTMLInputElement::parseMappedAttribute): Use setValueMatchesRenderer instead of m_valueMatchesRenderer.
+        (WebCore::HTMLInputElement::detach): ditto.
+        (WebCore::HTMLInputElement::setValue): ditto.
+        (WebCore::HTMLInputElement::setValueFromRenderer): ditto.
+        * html/HTMLInputElement.h: Remove setValueMatchesRenderer and valueMatchesRenderer and m_valueMatchesRenderer.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement): Calls setValueMatchesRenderer to intialize m_valueMatchesRenderer.
+        (WebCore::HTMLTextAreaElement::selectionStart): Uses appearance to determine which renderer to use.
+        (WebCore::HTMLTextAreaElement::selectionEnd): ditto.
+        (WebCore::HTMLTextAreaElement::setSelectionStart): ditto.
+        (WebCore::HTMLTextAreaElement::setSelectionEnd): ditto.
+        (WebCore::HTMLTextAreaElement::select): ditto.
+        (WebCore::HTMLTextAreaElement::setSelectionRange): ditto.
+        (WebCore::HTMLTextAreaElement::createRenderer): ditto.
+        (WebCore::HTMLTextAreaElement::appendFormData): ditto.
+        (WebCore::HTMLTextAreaElement::updateValue): ditto.
+        (WebCore::HTMLTextAreaElement::isKeyboardFocusable): Added.
+        (WebCore::HTMLTextAreaElement::isMouseFocusable): Added.
+        (WebCore::HTMLTextAreaElement::focus): Added.
+        (WebCore::HTMLTextAreaElement::defaultEventHandler): Added to forward events to the inner div.
+        (WebCore::HTMLTextAreaElement::setValue): Calls setValueMatchesRenderer.
+        * html/HTMLTextAreaElement.h: Added defaultEventHandler, isMouseFocusable, isKeyboardFocusable, and focus methods.
+        Removed invalidateValue and m_valueMatchesRenderer since those are now handled in the base class.
+        * html/HTMLTextFieldInnerElement.cpp: (WebCore::HTMLTextFieldInnerElement::defaultEventHandler):
+        Updated to handle textareas.
+        * rendering/RenderTextArea.cpp: (WebCore::RenderTextArea::valueChanged):
+        Calls setValueMatchesRenderer(false) instead of invalidateValue.
+
+        * rendering/RenderTextField.h: Changed to be a RenderFlexibleBox instead of a RenderBlock.
+        This was necessary to get the inner div's height to grow and shrink with the size of the textarea.
+        Added m_multiLine bool, and calcHeight, canHaveChildren, baselinePosition, isTextArea, textWithHardLineBreaks, selectionChanged.
+        (WebCore::RenderTextField::canHaveChildren): Returns false now so that no renderer gets created for
+        the textarea's child text node for its initial contents.
+        (WebCore::RenderTextField::isTextField): Returns true if m_multiLine is false.
+        (WebCore::RenderTextField::isTextArea): Returns true if m_multiLine is true.
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::RenderTextField):  Initializes m_multiLine.
+        (WebCore::RenderTextField::~RenderTextField): Notifies HTMLTextAreaElement that the renderer is being destroyed so the value gets updated.
+        (WebCore::RenderTextField::setStyle): Makes sure there's no overflow clip on the RenderTextField, since we're handling overflow on the inner div.
+        (WebCore::RenderTextField::createDivStyle): Sets white-space, box-flex, overflow, word-wrap styles needed for text area.
+        (WebCore::RenderTextField::updateFromElement): Updated for textarea elements.
+        (WebCore::RenderTextField::setSelectionRange): Optimized caret case by checking to see if start is equal to end before calculating
+        the same VisiblePosition twice.
+        (WebCore::RenderTextField::subtreeHasChanged): Updated for textarea elements.
+        (WebCore::RenderTextField::text): Use innerText so newlines are considered.
+        (WebCore::RenderTextField::textWithHardLineBreaks): Added.  Not implemented yet. Just calls text method.
+        (WebCore::RenderTextField::calcHeight): Added. Sets initial height based on specified number of rows, and then calls the base class.
+        (WebCore::RenderTextField::baselinePosition): Added. Unlike text fields, textareas align to the bottom.
+        (WebCore::RenderTextField::calcMinMaxWidth): Updated for textareas.
+        (WebCore::RenderTextField::selectionChanged): Added. Not implemented yet.
+
 2006-05-17  David Hyatt  <hyatt@apple.com>
 
         Fix for 8954, separate the glyph map out into its own files and make it
@@ -107,7 +207,7 @@
 
         * WebCore.xcodeproj/project.pbxproj:
         newer Xcode removed some obsolete settings
-        
+       
 2006-05-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Beth.

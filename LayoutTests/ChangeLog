@@ -1,3 +1,13 @@
+2006-05-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Updated test results for changes to prepare for 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8948
+        Switch to use new text field implementation for <textarea>
+
+        * fast/block/float/032-expected.txt:
+
 2006-05-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

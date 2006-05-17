@@ -57,6 +57,8 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustButtonStyle(selector, style, e);
         case TextFieldAppearance:
             return adjustTextFieldStyle(selector, style, e);
+        case TextAreaAppearance:
+            return adjustTextAreaStyle(selector, style, e);
         default:
             break;
     }
@@ -86,6 +88,7 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const
         case ButtonAppearance:
             return paintButton(o, i, r);
         case TextFieldAppearance:
+        case TextAreaAppearance:
             return true;
         default:
             break;
@@ -103,6 +106,8 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
     switch (o->style()->appearance()) {
         case TextFieldAppearance:
             return paintTextField(o, i, r);
+        case TextAreaAppearance:
+            return paintTextArea(o, i, r);
         case CheckboxAppearance:
         case RadioAppearance:
         case PushButtonAppearance:
@@ -134,7 +139,8 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
         case PushButtonAppearance:
         case SquareButtonAppearance:
         case ButtonAppearance:
-        case TextFieldAppearance: {
+        case TextFieldAppearance:
+        case TextAreaAppearance: {
             // Test the style to see if the UA border and background match.
             return (style->border() != border ||
                     *style->backgroundLayers() != background ||
@@ -149,7 +155,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
 
 bool RenderTheme::supportsFocusRing(const RenderStyle* style) const
 {
-    return (style->hasAppearance() && style->appearance() != TextFieldAppearance);
+    return (style->hasAppearance() && style->appearance() != TextFieldAppearance && style->appearance() != TextAreaAppearance);
 }
 
 bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
@@ -255,7 +261,10 @@ void RenderTheme::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* sty
 
 void RenderTheme::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
-    // FIXME: If the style has a border, then turn off the aqua appearance.
+}
+
+void RenderTheme::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
 }
 
 }

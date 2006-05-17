@@ -695,7 +695,7 @@ enum EAppearance {
     ScrollbarGripperHorizontalAppearance, ScrollbarGripperVerticalAppearance,
     SliderHorizontalAppearance, SliderVerticalAppearance, SliderThumbHorizontalAppearance,
     SliderThumbVerticalAppearance, CaretAppearance, SearchFieldAppearance, SearchFieldResultsAppearance,
-    SearchFieldCloseAppearance, TextFieldAppearance
+    SearchFieldCloseAppearance, TextFieldAppearance, TextAreaAppearance
 };
 
 // This struct is for rarely used non-inherited CSS3 properties.  By grouping them together,
@@ -729,7 +729,7 @@ public:
     unsigned marginBottomCollapse : 2; // EMarginCollapse
     unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor
 
-    unsigned m_appearance : 5; // EAppearance
+    unsigned m_appearance : 6; // EAppearance
 
 #ifndef KHTML_NO_XBL
     BindingURI* bindingURI; // The XBL binding URI list.

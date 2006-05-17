@@ -56,7 +56,7 @@ RenderThemeMac::RenderThemeMac()
 bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData& border, 
                                      const BackgroundLayer& background, const Color& backgroundColor) const
 {
-    if (style->appearance() == TextFieldAppearance)
+    if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance)
         return style->border() != border;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
@@ -531,6 +531,13 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintIn
 }
 
 void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    // Add in intrinsic margins if the font size isn't too small
+    if (style->fontSize() >= 11)
+        addIntrinsicMargins(style, NSRegularControlSize);
+}
+
+void RenderThemeMac::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     // Add in intrinsic margins if the font size isn't too small
     if (style->fontSize() >= 11)

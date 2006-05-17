@@ -3245,6 +3245,13 @@ void FrameMac::textDidChangeInTextField(Element* input)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void FrameMac::textDidChangeInTextArea(Element* textarea)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [_bridge textDidChangeInTextArea:(DOMHTMLTextAreaElement *)[DOMElement _elementWith:textarea]];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 bool FrameMac::doTextFieldCommandFromEvent(Element* input, const PlatformKeyboardEvent* event)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
