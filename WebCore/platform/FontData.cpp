@@ -104,14 +104,8 @@ static WidthMap *extendWidthMap(const FontData *renderer, ATSGlyphRef glyph)
     unsigned blockSize;
     unsigned i, count;
     
-    NSFont *f = renderer->m_font.font;
     blockSize = cGlyphPageSize;
-    
-    if (blockSize == 0)
-        start = 0;
-    else
-        start = (glyph / blockSize) * blockSize;
-
+    start = (glyph / cGlyphPageSize) * cGlyphPageSize;
     end = ((unsigned)start) + blockSize; 
 
     map->startRange = start;

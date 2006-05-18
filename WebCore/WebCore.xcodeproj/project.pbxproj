@@ -1340,6 +1340,7 @@
 		BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
 		BCB16C2F0979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
 		BCC088860A1BD78D006189A6 /* FontDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC088850A1BD78D006189A6 /* FontDataMac.mm */; };
+		BCC0891A0A1C4652006189A6 /* FontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC089190A1C4652006189A6 /* FontData.cpp */; };
 		BCC47E2609A3D6F100ADB771 /* FontFamily.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */; };
 		BCC47E2709A3D6F100ADB771 /* FontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E2509A3D6F100ADB771 /* FontFamily.h */; };
 		BCC47E6B09A3FE4700ADB771 /* FontDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E6A09A3FE4700ADB771 /* FontDescription.h */; };
@@ -1348,7 +1349,6 @@
 		BCC8CFCC0986CD2400140BF2 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8CFC90986CD2400140BF2 /* Color.h */; };
 		BCC8D1730988301200140BF2 /* Pen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8D1710988301200140BF2 /* Pen.cpp */; };
 		BCC8D1740988301200140BF2 /* Pen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8D1720988301200140BF2 /* Pen.h */; };
-		BCCD13200A0C0030001AFA8B /* FontData.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCCD131E0A0C0030001AFA8B /* FontData.mm */; };
 		BCD75ABC0989A446003E28DF /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD75ABB0989A446003E28DF /* Image.h */; };
 		BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */; };
 		BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */; };
@@ -2901,6 +2901,7 @@
 		BCB16C150979C3BD00467741 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Request.cpp; sourceTree = "<group>"; };
 		BCB16C160979C3BD00467741 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
 		BCC088850A1BD78D006189A6 /* FontDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontDataMac.mm; sourceTree = "<group>"; };
+		BCC089190A1C4652006189A6 /* FontData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontData.cpp; sourceTree = "<group>"; };
 		BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontFamily.cpp; sourceTree = "<group>"; };
 		BCC47E2509A3D6F100ADB771 /* FontFamily.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontFamily.h; sourceTree = "<group>"; };
 		BCC47E6A09A3FE4700ADB771 /* FontDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontDescription.h; sourceTree = "<group>"; };
@@ -2910,7 +2911,6 @@
 		BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ColorData.gperf; sourceTree = "<group>"; };
 		BCC8D1710988301200140BF2 /* Pen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Pen.cpp; sourceTree = "<group>"; };
 		BCC8D1720988301200140BF2 /* Pen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Pen.h; sourceTree = "<group>"; };
-		BCCD131E0A0C0030001AFA8B /* FontData.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontData.mm; sourceTree = "<group>"; };
 		BCD75ABB0989A446003E28DF /* Image.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSComputedStyleDeclaration.h; sourceTree = "<group>"; };
@@ -3447,7 +3447,6 @@
 				BE8560510701F91100239769 /* WebCoreView.m */,
 				9352071C09BD3BBB00F2038D /* WebCoreWidgetHolder.h */,
 				BCFE8E310A02A1D30009E61D /* WebCoreTextRenderer.mm */,
-				BCCD131E0A0C0030001AFA8B /* FontData.mm */,
 				BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */,
 				935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
@@ -4591,6 +4590,7 @@
 				BCF7C0B70A1687CC0032F75B /* FontCache.h */,
 				BC6DABF20A19015700E5CD14 /* FontCache.cpp */,
 				BCEB377509B7BB0D00CB38B1 /* FontFallbackList.h */,
+				BCC089190A1C4652006189A6 /* FontData.cpp */,
 				BCF7C0770A1680C00032F75B /* FontFallbackList.cpp */,
 				BCC47E6A09A3FE4700ADB771 /* FontDescription.h */,
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
@@ -6462,7 +6462,6 @@
 				1A762C770A074F2600989F5B /* JSXPathNSResolver.cpp in Sources */,
 				1A762C790A074F2600989F5B /* JSXPathResult.cpp in Sources */,
 				936BDD1D0A031AEB004DF4AB /* GraphicsContextCG.cpp in Sources */,
-				BCCD13200A0C0030001AFA8B /* FontData.mm in Sources */,
 				1A6931770A0CD4FA00C127FE /* XPathValue.cpp in Sources */,
 				A871D4570A127CBC00B12A68 /* HTMLPlugInElement.cpp in Sources */,
 				A871D4590A127CBC00B12A68 /* HTMLParamElement.cpp in Sources */,
@@ -6592,6 +6591,7 @@
 				BC6DB4D40A1AFEEF00E5CD14 /* GlyphMapMac.cpp in Sources */,
 				1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
 				BCC088860A1BD78D006189A6 /* FontDataMac.mm in Sources */,
+				BCC0891A0A1C4652006189A6 /* FontData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

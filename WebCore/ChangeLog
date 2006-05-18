@@ -1,5 +1,12 @@
 2006-05-17  David Hyatt  <hyatt@apple.com>
 
+        Rename FontData.mm to FontData.cpp, since it has no obj-c in it.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FontData.cpp: Added.
+
+2006-05-17  David Hyatt  <hyatt@apple.com>
+
         Split FontData.mm into platform-specific and cross-platform pieces.
 
         Reviewed by andersca
