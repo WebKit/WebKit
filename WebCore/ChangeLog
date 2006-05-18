@@ -1,7 +1,21 @@
+2006-05-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and tweaked (way too much) by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8937
+          EncodingMap uses 0 as its empty value but 0 is a valid TextEncodingID
+
+        * platform/CharsetNames.cpp:
+        (WebCore::TextEncodingIDHashTraits::emptyValue): Added a non-zero empty value,
+        InvalidEncoding, and used InvalidEncoding2 for the deleted value.
+        (WebCore::buildCharsetMaps): Added an assertion that the deleted and empty
+        values are not valid encodings.
+        * platform/TextEncoding.h: Defined InvalidEncoding2.
+
 2006-05-18  David Hyatt  <hyatt@apple.com>
 
-        Horrible glyph map regression fix.  The initial page of the map was
-        being rebuilt over and over again.
+        Horrible glyph map performance regression fix.
+        The initial page of the map was being rebuilt over and over again.
 
         Reviewed by andersca
 

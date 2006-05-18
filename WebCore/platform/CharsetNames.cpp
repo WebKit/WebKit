@@ -28,51 +28,42 @@
 #include "CharsetNames.h"
 
 #include "CharsetData.h"
+#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <unicode/ucnv.h>
-#include <unicode/utypes.h>
 
 using namespace WTF;
-using namespace WebCore;
 
 namespace WebCore {
 
 struct TextEncodingIDHashTraits : GenericHashTraits<TextEncodingID> {
-    static TraitType deletedValue() { return InvalidEncoding; }
+    static const bool emptyValueIsZero = false;
+    static TraitType emptyValue() { return InvalidEncoding; }
+    static TraitType deletedValue() { return InvalidEncoding2; }
 };
-
-}
-
-namespace WTF {
-
-template<> struct HashKeyStorageTraits<IntHash<TextEncodingID>, TextEncodingIDHashTraits> {
-    typedef IntTypes<sizeof(TextEncodingID)>::SignedType IntType;
-    typedef IntHash<IntType> Hash;
-    typedef HashTraits<IntType> Traits;
-};
-
-}
-
-namespace WebCore {
 
 // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
 // or anything like that.
 const unsigned PHI = 0x9e3779b9U;
 
-struct EncodingHash {
-    static bool equal(const char *s1, const char *s2)
+// Hash for all-ASCII strings that does case folding and skips any characters
+// that are not alphanumeric. If passed any non-ASCII characters, depends on
+// the behavior of isalnum -- if that returns false as it does on OS X, then
+// it will properly skip those characters too.
+struct EncodingNameHash {
+
+    static bool equal(const char* s1, const char* s2)
     {
         char c1;
         char c2;
-        
+
         do {
-            do {
+            do
                 c1 = *s1++;
-            } while (c1 && !isalnum(c1));
-            do {
+            while (c1 && !isalnum(c1));
+            do
                 c2 = *s2++;
-            } while (c2 && !isalnum(c2));
-            
+            while (c2 && !isalnum(c2));
             if (tolower(c1) != tolower(c2))
                 return false;
         } while (c1 && c2);
@@ -80,46 +71,52 @@ struct EncodingHash {
         return !c1 && !c2;
     }
 
-    // This hash algorithm comes from:
+    // This algorithm is the one-at-a-time hash from:
     // http://burtleburtle.net/bob/hash/hashfaq.html
     // http://burtleburtle.net/bob/hash/doobs.html
     static unsigned hash(const char* s)
     {
         unsigned h = PHI;
-        
+
         for (int i = 0; i != 16; ++i) {
             char c;
-            do {
+            do
                 c = *s++;
-            } while (c && !isalnum(c));
-            if (!c) {
+            while (c && !isalnum(c));
+            if (!c)
                 break;
-            }
             h += tolower(c);
             h += (h << 10); 
             h ^= (h >> 6); 
         }
-        
+
         h += (h << 3);
         h ^= (h >> 11);
         h += (h << 15);
-        
+
         return h;
     }
+
 };
 
-typedef HashMap<const char*, const CharsetEntry*, EncodingHash> NameMap;
+typedef HashMap<const char*, const CharsetEntry*, EncodingNameHash> NameMap;
 typedef HashMap<TextEncodingID, const CharsetEntry*, IntHash<TextEncodingID>, TextEncodingIDHashTraits> EncodingMap;
 
 static NameMap* nameMap;
 static EncodingMap* encodingMap;
 
-static void buildDictionaries()
+static void buildCharsetMaps()
 {
+    ASSERT(!nameMap);
+    ASSERT(!encodingMap);
+
     nameMap = new NameMap;
     encodingMap = new EncodingMap;
 
     for (int i = 0; CharsetTable[i].name; ++i) {
+        ASSERT(CharsetTable[i].encoding != TextEncodingIDHashTraits::emptyValue());
+        ASSERT(CharsetTable[i].encoding != TextEncodingIDHashTraits::deletedValue());
+
         nameMap->add(CharsetTable[i].name, &CharsetTable[i]);
         encodingMap->add(CharsetTable[i].encoding, &CharsetTable[i]);
     }
@@ -128,14 +125,13 @@ static void buildDictionaries()
 TextEncodingID textEncodingIDFromCharsetName(const char* name, TextEncodingFlags* flags)
 {
     if (!nameMap)
-        buildDictionaries();
+        buildCharsetMaps();
 
     const CharsetEntry* entry = nameMap->get(name);
     if (!entry) {
         UErrorCode err = U_ZERO_ERROR;
-        name = ucnv_getStandardName(name, "IANA", &err);
-        
-        if (!name || !(entry = nameMap->get(name))) {
+        const char* standardName = ucnv_getStandardName(name, "IANA", &err);
+        if (!standardName || !(entry = nameMap->get(standardName))) {
             if (flags)
                 *flags = NoEncodingFlags;
             return InvalidEncoding;
@@ -143,15 +139,15 @@ TextEncodingID textEncodingIDFromCharsetName(const char* name, TextEncodingFlags
     }
 
     if (flags)
-        *flags = (TextEncodingFlags)entry->flags;
+        *flags = static_cast<TextEncodingFlags>(entry->flags);
     return entry->encoding;
 }
 
 const char* charsetNameFromTextEncodingID(TextEncodingID encoding)
 {
     if (!encodingMap)
-        buildDictionaries();
-    
+        buildCharsetMaps();
+
     const CharsetEntry* entry = encodingMap->get(encoding);
     if (!entry)
         return 0;

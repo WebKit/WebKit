@@ -36,6 +36,7 @@ namespace WebCore {
     typedef CFStringEncoding TextEncodingID;
     
     const TextEncodingID InvalidEncoding = kCFStringEncodingInvalidId;
+    const TextEncodingID InvalidEncoding2 = 0xfffffffeU;
     const TextEncodingID UTF8Encoding = kCFStringEncodingUTF8;
     const TextEncodingID UTF16Encoding = kCFStringEncodingUnicode;
     const TextEncodingID Latin1Encoding = kCFStringEncodingISOLatin1;
@@ -43,6 +44,7 @@ namespace WebCore {
     const TextEncodingID WinLatin1Encoding = kCFStringEncodingWindowsLatin1;
 #else
     enum TextEncodingID {
+        InvalidEncoding2 = -2;
         InvalidEncoding = -1,
         UTF8Encoding,
         UTF16Encoding,
