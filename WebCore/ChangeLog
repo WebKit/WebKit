@@ -1,3 +1,20 @@
+2006-05-18  David Hyatt  <hyatt@apple.com>
+
+        Turn off responding to font changes while running.  It doesn't work
+        right anyway.
+
+        Reviewed by darin
+
+        * platform/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/FontCache.h:
+        * platform/GlyphMap.h:
+        (WebCore::GlyphMap::~GlyphMap):
+        * platform/GlyphWidthMap.h:
+        (WebCore::GlyphWidthMap::~GlyphWidthMap):
+        * platform/mac/FontCacheMac.mm:
+        (WebCore::FontCache::platformInit):
+
 2006-05-18  Darin Adler  <darin@apple.com>
 
         - try to fix the Windows build

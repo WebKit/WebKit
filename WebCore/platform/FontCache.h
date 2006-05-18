@@ -47,14 +47,7 @@ public:
     static const FontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
     
     // Also implemented by the platform.
-    static void registerForFontChanges();
-
-    // For caches shared by every platform.
-    static void clearCommonCaches();
-
-    // Method to implement to clear platform-specific caches.  Should call clearCommonCaches to take care of the
-    // platform-independent data.
-    static void clearCaches();
+    static void platformInit();
 
 private:
     static FontPlatformData* getCachedFontPlatformData(const Font&, const AtomicString& family);

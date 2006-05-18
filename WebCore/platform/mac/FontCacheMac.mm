@@ -109,30 +109,13 @@ static int getLCDScaleParameters(void)
     return 1;
 }
 
-static void fontsChanged(ATSFontNotificationInfoRef info, void*)
-{
-    FontCache::clearCaches();
-}
-
 #define MINIMUM_GLYPH_CACHE_SIZE 1536 * 1024
 
-void FontCache::registerForFontChanges()
+void FontCache::platformInit()
 {
     size_t s = MINIMUM_GLYPH_CACHE_SIZE*getLCDScaleParameters();
 
     wkSetUpFontCache(s);
-
-    // Ignore errors returned from ATSFontNotificationSubscribe.  If we can't subscribe then we
-    // won't be told about changes to fonts.
-    ATSFontNotificationSubscribe(fontsChanged, kATSFontNotifyOptionDefault, 0, 0);
-}
-
-void FontCache::clearCaches()
-{
-    clearCommonCaches();
-    
-    QListBox::clearCachedTextRenderers();
-    [WebCoreStringTruncator clear];
 }
 
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
