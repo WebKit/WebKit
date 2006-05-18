@@ -4154,6 +4154,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\bindings\js\JSHTMLInputElementBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLInputElementBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLOptionElementConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLOptionElementConstructor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\bindings\js\JSXMLHttpRequest.cpp"
 					>
 				</File>
@@ -4199,6 +4215,10 @@
 				</File>
 				<File
 					RelativePath="..\..\bindings\js\kjs_dom.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\kjs_domnode.h"
 					>
 				</File>
 				<File
