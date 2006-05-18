@@ -1,3 +1,20 @@
+2006-05-18  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt.
+
+        Tests for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8896>
+        Bug 8896: Absolutely positioned elements should use their parent's
+        direction when left, right and width are auto in quirks mode.
+
+        * fast/block/positioning/absolute-position-direction-quirk.html: Added.
+        * fast/block/positioning/absolute-position-direction-quirk-expected.txt: Added.
+        * fast/block/positioning/absolute-position-direction-quirk-expected.png: Added.
+        * fast/block/positioning/absolute-position-direction-quirk-expected.checksum: Added.
+        * fast/block/positioning/absolute-position-direction-strict.html: Added.
+        * fast/block/positioning/absolute-position-direction-strict-expected.txt: Added.
+        * fast/block/positioning/absolute-position-direction-strict-expected.png: Added.
+        * fast/block/positioning/absolute-position-direction-strict-expected.checksum: Added.
+
 2006-05-18  Anders Carlsson  <acarlsson@apple.com>
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=8964

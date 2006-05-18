@@ -1428,7 +1428,8 @@ void RenderBox::calcAbsoluteHorizontal()
     // was also previously done for deciding what to override when you had
     // over-constrained margins?  Also note that the container block is used
     // in similar situations in other parts of the RenderBox class (see calcWidth()
-    // and calcHorizontalMargins()).
+    // and calcHorizontalMargins()). For now we are using the parent for quirks
+    // mode and the containing block for strict mode.
 
     // FIXME 2: Should we still deal with these the cases of 'left' or 'right' having
     // the type 'static' in determining whether to calculate the static distance?
@@ -1452,7 +1453,11 @@ void RenderBox::calcAbsoluteHorizontal()
     // FIXME: This is incorrect for cases where the container block is a relatively
     // positioned inline.
     const int containerWidth = containingBlockWidth() + containerBlock->paddingLeft() + containerBlock->paddingRight();
-    
+
+    // To match WinIE, in quirks mode use the parent's 'direction' property
+    // instead of the the container block's.
+    TextDirection containerDirection = (style()->htmlHacks()) ? parent()->style()->direction() : containerBlock->style()->direction();
+
     const int bordersPlusPadding = borderLeft() + borderRight() + paddingLeft() + paddingRight();
     const Length marginLeft = style()->marginLeft();
     const Length marginRight = style()->marginRight();
@@ -1486,7 +1491,7 @@ void RenderBox::calcAbsoluteHorizontal()
     // see FIXME 2
     // Calculate the static distance if needed.
     if (left.isAuto() && right.isAuto()) {
-        if (containerBlock->style()->direction() == LTR) {
+        if (containerDirection == LTR) {
             // 'm_staticX' should already have been set through layout of the parent.
             int staticPosition = m_staticX - containerBlock->borderLeft();
             for (RenderObject* po = parent(); po && po != containerBlock; po = po->parent())
@@ -1503,7 +1508,8 @@ void RenderBox::calcAbsoluteHorizontal()
     }
 
     // Calculate constraint equation values for 'width' case.
-    calcAbsoluteHorizontalValues(style()->width(), containerBlock, containerWidth, bordersPlusPadding,
+    calcAbsoluteHorizontalValues(style()->width(), containerBlock, containerDirection,
+                                 containerWidth, bordersPlusPadding,
                                  left, right, marginLeft, marginRight,
                                  m_width, m_marginLeft, m_marginRight, m_x);
 
@@ -1514,7 +1520,8 @@ void RenderBox::calcAbsoluteHorizontal()
         int maxMarginRight;
         int maxXPos;
 
-        calcAbsoluteHorizontalValues(style()->maxWidth(), containerBlock, containerWidth, bordersPlusPadding,
+        calcAbsoluteHorizontalValues(style()->maxWidth(), containerBlock, containerDirection,
+                                     containerWidth, bordersPlusPadding,
                                      left, right, marginLeft, marginRight,
                                      maxWidth, maxMarginLeft, maxMarginRight, maxXPos);
 
@@ -1533,7 +1540,8 @@ void RenderBox::calcAbsoluteHorizontal()
         int minMarginRight;
         int minXPos;
 
-        calcAbsoluteHorizontalValues(style()->minWidth(), containerBlock, containerWidth, bordersPlusPadding,
+        calcAbsoluteHorizontalValues(style()->minWidth(), containerBlock, containerDirection, 
+                                     containerWidth, bordersPlusPadding,
                                      left, right, marginLeft, marginRight,
                                      minWidth, minMarginLeft, minMarginRight, minXPos);
 
@@ -1549,7 +1557,7 @@ void RenderBox::calcAbsoluteHorizontal()
     m_width += bordersPlusPadding;
 }
 
-void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderObject* containerBlock,
+void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderObject* containerBlock, TextDirection containerDirection,
                                              const int containerWidth, const int bordersPlusPadding,
                                              const Length left, const Length right, const Length marginLeft, const Length marginRight,
                                              int& widthValue, int& marginLeftValue, int& marginRightValue, int& xPos)
@@ -1593,7 +1601,7 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderObject* c
                 marginRightValue = availableSpace - marginLeftValue;  // account for odd valued differences
             } else {
                 // see FIXME 1
-                if (containerBlock->style()->direction() == LTR) {
+                if (containerDirection == LTR) {
                     marginLeftValue = 0;
                     marginRightValue = availableSpace; // will be negative
                 } else {
@@ -1615,7 +1623,7 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderObject* c
             marginRightValue = marginRight.calcValue(containerWidth);
 
             // see FIXME 1 -- used to be "this->style()->direction()"
-            if (containerBlock->style()->direction() == RTL)
+            if (containerDirection == RTL)
                 leftValue = (availableSpace + leftValue) - marginLeftValue - marginRightValue;
         }
     } else {
@@ -1960,6 +1968,10 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     const RenderObject* containerBlock = container();
     const int containerWidth = containingBlockWidth() + containerBlock->paddingLeft() + containerBlock->paddingRight();
+    
+    // To match WinIE, in quirks mode use the parent's 'direction' property 
+    // instead of the the container block's.
+    TextDirection containerDirection = (style()->htmlHacks()) ? parent()->style()->direction() : containerBlock->style()->direction();
 
     // Variables to solve.
     Length left = style()->left();
@@ -1986,7 +1998,7 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
     // see FIXME 2
     if (left.isAuto() && right.isAuto()) {
         // see FIXME 1
-        if (containerBlock->style()->direction() == LTR) {
+        if (containerDirection == LTR) {
             // 'm_staticX' should already have been set through layout of the parent.
             int staticPosition = m_staticX - containerBlock->borderLeft();
             for (RenderObject* po = parent(); po && po != containerBlock; po = po->parent())
@@ -2037,7 +2049,7 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
             m_marginRight = difference - m_marginLeft; // account for odd valued differences
         } else {
             // see FIXME 1
-            if (containerBlock->style()->direction() == LTR) {
+            if (containerDirection == LTR) {
                 m_marginLeft = 0;
                 m_marginRight = difference;  // will be negative
             } else {
@@ -2090,7 +2102,7 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
     // LTR because the value is not used.
     int totalWidth = m_width + leftValue + rightValue +  m_marginLeft + m_marginRight;
     // see FIXME 1
-    if (totalWidth > containerWidth && (containerBlock->style()->direction() == RTL))
+    if (totalWidth > containerWidth && (containerDirection == RTL))
         leftValue = containerWidth - (totalWidth - leftValue);
 
 

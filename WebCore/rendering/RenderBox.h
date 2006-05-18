@@ -158,7 +158,7 @@ protected:
 
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();
-    void calcAbsoluteHorizontalValues(Length width, const RenderObject* cb, 
+    void calcAbsoluteHorizontalValues(Length width, const RenderObject* cb, TextDirection containerDirection,
                                       const int containerWidth, const int bordersPlusPadding, 
                                       const Length left, const Length right, const Length marginLeft, const Length marginRight,
                                       int& widthValue, int& marginLeftValue, int& marginRightValue, int& xPos);
