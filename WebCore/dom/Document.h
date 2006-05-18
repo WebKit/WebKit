@@ -522,12 +522,13 @@ public:
     
     void addMarker(Range*, DocumentMarker::MarkerType type);
     void addMarker(Node*, DocumentMarker marker);
-    void copyMarkers(Node *srcNode, unsigned startOffset, int length, Node *dstNode, int delta, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
-    void removeMarkers(Range*, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
-    void removeMarkers(Node*, unsigned startOffset, int length, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
-    void removeMarkers(DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
+    void copyMarkers(Node *srcNode, unsigned startOffset, int length, Node *dstNode, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    void removeMarkers(Range*, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    void removeMarkers(Node*, unsigned startOffset, int length, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    void removeMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void removeMarkers(Node*);
-    void shiftMarkers(Node*, unsigned startOffset, int delta, DocumentMarker::MarkerType markerType=DocumentMarker::AllMarkers);
+    void repaintMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    void shiftMarkers(Node*, unsigned startOffset, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
 
     DeprecatedValueList<DocumentMarker> markersForNode(Node*);
     

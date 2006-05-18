@@ -3337,7 +3337,11 @@ bool Frame::markedTextMatchesAreHighlighted() const
 
 void Frame::setMarkedTextMatchesAreHighlighted(bool flag)
 {
+    if (flag == d->m_highlightTextMatches)
+        return;
+    
     d->m_highlightTextMatches = flag;
+    document()->repaintMarkers(DocumentMarker::TextMatch);
 }
 
 void Frame::prepareForUserAction()

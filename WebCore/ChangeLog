@@ -1,3 +1,20 @@
+2006-05-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler
+        
+        Improvement to my previous patch, suggested by Darin
+
+        * dom/Document.cpp:
+        (WebCore::Document::repaintMarkers):
+        new method, similar in structure to removeMarkers but just repaints each node that
+        has a marker of the specified type
+        * dom/Document.h:
+        declare new method, and tweak style in related method declarations
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::setMarkedTextMatchesAreHighlighted):
+        if the value changes, call repaintMarkers
+
 2006-05-17  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.
@@ -242,7 +259,7 @@
         * page/Frame.cpp:
         (WebCore::Frame::markAllMatchesForText):
         renamed from highlightAllMatchesForString
-        (WebCore::Frame::markedTextMatchesAreHighlighted):
+        (WebCore::Ferame::markedTextMatchesAreHighlighted):
         new getter method, uses boolean ivar in FramePrivate
         (WebCore::Frame::setMarkedTextMatchesAreHighlighted):
         new setter method, uses boolean ivar in FramePrivate

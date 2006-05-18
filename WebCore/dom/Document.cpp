@@ -2847,6 +2847,36 @@ void Document::removeMarkers(DocumentMarker::MarkerType markerType)
     }
 }
 
+void Document::repaintMarkers(DocumentMarker::MarkerType markerType)
+{
+    // outer loop: process each markered node in the document
+    MarkerMap::iterator end = m_markers.end();
+    for (MarkerMap::iterator i = m_markers.begin(); i != end; ++i) {
+        Node* node = i->first;
+        
+        // inner loop: process each marker in the current node
+        DeprecatedValueList<DocumentMarker> *markers = i->second;
+        DeprecatedValueListIterator<DocumentMarker> markerIterator;
+        bool nodeNeedsRepaint = false;
+        for (markerIterator = markers->begin(); markerIterator != markers->end(); ++markerIterator) {
+            DocumentMarker marker = *markerIterator;
+            
+            // skip nodes that are not of the specified type
+            if (marker.type == markerType || markerType == DocumentMarker::AllMarkers) {
+                nodeNeedsRepaint = true;
+                break;
+            }
+        }
+        
+        if (!nodeNeedsRepaint)
+            continue;
+        
+        // cause the node to be redrawn
+        if (RenderObject* renderer = node->renderer())
+            renderer->repaint();
+    }
+}
+
 void Document::shiftMarkers(Node *node, unsigned startOffset, int delta, DocumentMarker::MarkerType markerType)
 {
     DeprecatedValueList<DocumentMarker>* markers = m_markers.get(node);
