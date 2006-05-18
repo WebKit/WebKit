@@ -1,3 +1,10 @@
+2006-05-18  Darin Adler  <darin@apple.com>
+
+        - try to fix no-SVG, no-XPATH build
+
+        * Scripts/build-webkit: Pass FEATURE_DEFINES rather than GCC_PREPROCESSOR_DEFINITIONS,
+        since the former is what's used in the WebCore project now.
+
 2006-05-17  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Some more future renames.

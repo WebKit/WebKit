@@ -43,8 +43,9 @@ setConfiguration();
 chdirWebKit();
 my $productDir = productDir();
 my @options = XcodeOptions();
-my @svgOptions = ();
-@svgOptions = ("GCC_PREPROCESSOR_DEFINITIONS=\$(DEBUG_DEFINES)") if (!$svgSupport);
+my @additionalWebCoreOptions = ();
+
+push @additionalWebCoreOptions, "FEATURE_DEFINES=''" if !$svgSupport;
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit", "WebKitWin");
@@ -82,11 +83,10 @@ for my $dir (@projects) {
     chdir $dir or die;
     my $result = 0;
     if (isOSX()) {
-        # FIXME: Shouldn't we use "make" here nowadays?
         if ($dir eq "JavaScriptCore") {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "All", @options, @ARGV;
         } elsif ($dir eq "WebCore") {
-            $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV, @svgOptions;
+            $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @additionalWebCoreOptions, @ARGV;
         } elsif ($dir ne "WebKitWin") {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
         }
