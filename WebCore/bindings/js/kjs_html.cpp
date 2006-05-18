@@ -25,16 +25,12 @@
 #include "DocLoader.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "HTMLAnchorElement.h"
 #include "HTMLAppletElement.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBaseFontElement.h"
 #include "HTMLBlockquoteElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLBRElement.h"
-#include "HTMLDirectoryElement.h"
-#include "HTMLDivElement.h"
-#include "HTMLDListElement.h"
 #include "HTMLDocument.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLFieldSetElement.h"
@@ -55,7 +51,6 @@
 #include "HTMLModElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "HTMLOListElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLParagraphElement.h"
@@ -70,7 +65,6 @@
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "HTMLQuoteElement.h"
-#include "HTMLUListElement.h"
 #include "NameNodeList.h"
 #include "RenderLayer.h"
 #include "Text.h"
@@ -450,8 +444,6 @@ void JSHTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *value
 
 // -------------------------------------------------------------------------
 
-const ClassInfo JSHTMLElement::a_info = { "HTMLAnchorElement", &JSHTMLElement::info, &HTMLAnchorElementTable, 0 };
-const ClassInfo JSHTMLElement::applet_info = { "HTMLAppletElement", &JSHTMLElement::info, &HTMLAppletElementTable, 0 };
 const ClassInfo JSHTMLElement::area_info = { "HTMLAreaElement", &JSHTMLElement::info, &HTMLAreaElementTable, 0 };
 const ClassInfo JSHTMLElement::baseFont_info = { "HTMLBaseFontElement", &JSHTMLElement::info, &HTMLBaseFontElementTable, 0 };
 const ClassInfo JSHTMLElement::blockQuote_info = { "HTMLBlockQuoteElement", &JSHTMLElement::info, &HTMLBlockQuoteElementTable, 0 };
@@ -459,9 +451,6 @@ const ClassInfo JSHTMLElement::body_info = { "HTMLBodyElement", &JSHTMLElement::
 const ClassInfo JSHTMLElement::br_info = { "HTMLBRElement", &JSHTMLElement::info, &HTMLBRElementTable, 0 };
 const ClassInfo JSHTMLElement::caption_info = { "HTMLTableCaptionElement", &JSHTMLElement::info, &HTMLTableCaptionElementTable, 0 };
 const ClassInfo JSHTMLElement::col_info = { "HTMLTableColElement", &JSHTMLElement::info, &HTMLTableColElementTable, 0 };
-const ClassInfo JSHTMLElement::dir_info = { "HTMLDirectoryElement", &JSHTMLElement::info, &HTMLDirectoryElementTable, 0 };
-const ClassInfo JSHTMLElement::div_info = { "HTMLDivElement", &JSHTMLElement::info, &HTMLDivElementTable, 0 };
-const ClassInfo JSHTMLElement::dl_info = { "HTMLDListElement", &JSHTMLElement::info, &HTMLDListElementTable, 0 };
 const ClassInfo JSHTMLElement::embed_info = { "HTMLEmbedElement", &JSHTMLElement::info, &HTMLEmbedElementTable, 0 };
 const ClassInfo JSHTMLElement::fieldSet_info = { "HTMLFieldSetElement", &JSHTMLElement::info, &HTMLFieldSetElementTable, 0 };
 const ClassInfo JSHTMLElement::font_info = { "HTMLFontElement", &JSHTMLElement::info, &HTMLFontElementTable, 0 };
@@ -470,7 +459,6 @@ const ClassInfo JSHTMLElement::frameSet_info = { "HTMLFrameSetElement", &JSHTMLE
 const ClassInfo JSHTMLElement::frame_info = { "HTMLFrameElement", &JSHTMLElement::info, &HTMLFrameElementTable, 0 };
 const ClassInfo JSHTMLElement::heading_info = { "HTMLHeadingElement", &JSHTMLElement::info, &HTMLHeadingElementTable, 0 };
 const ClassInfo JSHTMLElement::hr_info = { "HTMLHRElement", &JSHTMLElement::info, &HTMLHRElementTable, 0 };
-const ClassInfo JSHTMLElement::html_info = { "HTMLHtmlElement", &JSHTMLElement::info, &HTMLHtmlElementTable, 0 };
 const ClassInfo JSHTMLElement::iFrame_info = { "HTMLIFrameElement", &JSHTMLElement::info, &HTMLIFrameElementTable, 0 };
 const ClassInfo JSHTMLElement::img_info = { "HTMLImageElement", &JSHTMLElement::info, &HTMLImageElementTable, 0 };
 const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
@@ -483,7 +471,6 @@ const ClassInfo JSHTMLElement::marquee_info = { "HTMLMarqueeElement", &JSHTMLEle
 const ClassInfo JSHTMLElement::menu_info = { "HTMLMenuElement", &JSHTMLElement::info, &HTMLMenuElementTable, 0 };
 const ClassInfo JSHTMLElement::mod_info = { "HTMLModElement", &JSHTMLElement::info, &HTMLModElementTable, 0 };
 const ClassInfo JSHTMLElement::object_info = { "HTMLObjectElement", &JSHTMLElement::info, &HTMLObjectElementTable, 0 };
-const ClassInfo JSHTMLElement::ol_info = { "HTMLOListElement", &JSHTMLElement::info, &HTMLOListElementTable, 0 };
 const ClassInfo JSHTMLElement::p_info = { "HTMLParagraphElement", &JSHTMLElement::info, &HTMLParagraphElementTable, 0 };
 const ClassInfo JSHTMLElement::param_info = { "HTMLParamElement", &JSHTMLElement::info, &HTMLParamElementTable, 0 };
 const ClassInfo JSHTMLElement::pre_info = { "HTMLPreElement", &JSHTMLElement::info, &HTMLPreElementTable, 0 };
@@ -494,13 +481,11 @@ const ClassInfo JSHTMLElement::table_info = { "HTMLTableElement", &JSHTMLElement
 const ClassInfo JSHTMLElement::tablecell_info = { "HTMLTableCellElement", &JSHTMLElement::info, &HTMLTableCellElementTable, 0 };
 const ClassInfo JSHTMLElement::tablesection_info = { "HTMLTableSectionElement", &JSHTMLElement::info, &HTMLTableSectionElementTable, 0 };
 const ClassInfo JSHTMLElement::tr_info = { "HTMLTableRowElement", &JSHTMLElement::info, &HTMLTableRowElementTable, 0 };
-const ClassInfo JSHTMLElement::ul_info = { "HTMLUListElement", &JSHTMLElement::info, &HTMLUListElementTable, 0 };
 
 const ClassInfo* JSHTMLElement::classInfo() const
 {
     static HashMap<WebCore::AtomicStringImpl*, const ClassInfo*> classInfoMap;
     if (classInfoMap.isEmpty()) {
-        classInfoMap.set(appletTag.localName().impl(), &applet_info);
         classInfoMap.set(areaTag.localName().impl(), &area_info);
         classInfoMap.set(basefontTag.localName().impl(), &baseFont_info);
         classInfoMap.set(blockquoteTag.localName().impl(), &blockQuote_info);
@@ -510,9 +495,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(colTag.localName().impl(), &col_info);
         classInfoMap.set(colgroupTag.localName().impl(), &col_info);
         classInfoMap.set(delTag.localName().impl(), &mod_info);
-        classInfoMap.set(dirTag.localName().impl(), &dir_info);
-        classInfoMap.set(divTag.localName().impl(), &div_info);
-        classInfoMap.set(dlTag.localName().impl(), &dl_info);
         classInfoMap.set(embedTag.localName().impl(), &embed_info);
         classInfoMap.set(fieldsetTag.localName().impl(), &fieldSet_info);
         classInfoMap.set(fontTag.localName().impl(), &font_info);
@@ -526,7 +508,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(h5Tag.localName().impl(), &heading_info);
         classInfoMap.set(h6Tag.localName().impl(), &heading_info);
         classInfoMap.set(hrTag.localName().impl(), &hr_info);
-        classInfoMap.set(htmlTag.localName().impl(), &html_info);
         classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
         classInfoMap.set(imgTag.localName().impl(), &img_info);
         classInfoMap.set(insTag.localName().impl(), &mod_info);
@@ -539,7 +520,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(marqueeTag.localName().impl(), &marquee_info);
         classInfoMap.set(menuTag.localName().impl(), &menu_info);
         classInfoMap.set(objectTag.localName().impl(), &object_info);
-        classInfoMap.set(olTag.localName().impl(), &ol_info);
         classInfoMap.set(pTag.localName().impl(), &p_info);
         classInfoMap.set(paramTag.localName().impl(), &param_info);
         classInfoMap.set(preTag.localName().impl(), &pre_info);
@@ -553,8 +533,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(thTag.localName().impl(), &tablecell_info);
         classInfoMap.set(theadTag.localName().impl(), &tablesection_info);
         classInfoMap.set(trTag.localName().impl(), &tr_info);
-        classInfoMap.set(ulTag.localName().impl(), &ul_info);
-        classInfoMap.set(aTag.localName().impl(), &a_info);
     }
     
     HTMLElement* element = static_cast<HTMLElement*>(impl());
@@ -564,7 +542,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
     return &info;
 }
 
-const JSHTMLElement::Accessors JSHTMLElement::html_accessors = { &JSHTMLElement::htmlGetter, &JSHTMLElement::htmlSetter };
 const JSHTMLElement::Accessors JSHTMLElement::isIndex_accessors = { &JSHTMLElement::isIndexGetter, &JSHTMLElement::isIndexSetter };
 const JSHTMLElement::Accessors JSHTMLElement::body_accessors = { &JSHTMLElement::bodyGetter, &JSHTMLElement::bodySetter };
 const JSHTMLElement::Accessors JSHTMLElement::form_accessors = { &JSHTMLElement::formGetter, &JSHTMLElement::formSetter };
@@ -572,13 +549,8 @@ const JSHTMLElement::Accessors JSHTMLElement::select_accessors = { &JSHTMLElemen
 const JSHTMLElement::Accessors JSHTMLElement::label_accessors = { &JSHTMLElement::labelGetter, &JSHTMLElement::labelSetter };
 const JSHTMLElement::Accessors JSHTMLElement::fieldSet_accessors = { &JSHTMLElement::fieldSetGetter, &JSHTMLElement::fieldSetSetter };
 const JSHTMLElement::Accessors JSHTMLElement::legend_accessors = { &JSHTMLElement::legendGetter, &JSHTMLElement::legendSetter };
-const JSHTMLElement::Accessors JSHTMLElement::ul_accessors = { &JSHTMLElement::uListGetter, &JSHTMLElement::uListSetter };
-const JSHTMLElement::Accessors JSHTMLElement::ol_accessors = { &JSHTMLElement::oListGetter, &JSHTMLElement::oListSetter };
-const JSHTMLElement::Accessors JSHTMLElement::dl_accessors = { &JSHTMLElement::dListGetter, &JSHTMLElement::dListSetter };
-const JSHTMLElement::Accessors JSHTMLElement::dir_accessors = { &JSHTMLElement::dirGetter, &JSHTMLElement::dirSetter };
 const JSHTMLElement::Accessors JSHTMLElement::menu_accessors = { &JSHTMLElement::menuGetter, &JSHTMLElement::menuSetter };
 const JSHTMLElement::Accessors JSHTMLElement::li_accessors = { &JSHTMLElement::liGetter, &JSHTMLElement::liSetter };
-const JSHTMLElement::Accessors JSHTMLElement::div_accessors = { &JSHTMLElement::divGetter, &JSHTMLElement::divSetter };
 const JSHTMLElement::Accessors JSHTMLElement::p_accessors = { &JSHTMLElement::paragraphGetter, &JSHTMLElement::paragraphSetter };
 const JSHTMLElement::Accessors JSHTMLElement::heading_accessors = { &JSHTMLElement::headingGetter, &JSHTMLElement::headingSetter };
 const JSHTMLElement::Accessors JSHTMLElement::blockQuote_accessors = { &JSHTMLElement::blockQuoteGetter, &JSHTMLElement::blockQuoteSetter };
@@ -589,11 +561,9 @@ const JSHTMLElement::Accessors JSHTMLElement::baseFont_accessors = { &JSHTMLElem
 const JSHTMLElement::Accessors JSHTMLElement::font_accessors = { &JSHTMLElement::fontGetter, &JSHTMLElement::fontSetter };
 const JSHTMLElement::Accessors JSHTMLElement::hr_accessors = { &JSHTMLElement::hrGetter, &JSHTMLElement::hrSetter };
 const JSHTMLElement::Accessors JSHTMLElement::mod_accessors = { &JSHTMLElement::modGetter, &JSHTMLElement::modSetter };
-const JSHTMLElement::Accessors JSHTMLElement::a_accessors = { &JSHTMLElement::anchorGetter, &JSHTMLElement::anchorSetter };
 const JSHTMLElement::Accessors JSHTMLElement::img_accessors = { &JSHTMLElement::imageGetter, &JSHTMLElement::imageSetter };
 const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::param_accessors = { &JSHTMLElement::paramGetter, &JSHTMLElement::paramSetter };
-const JSHTMLElement::Accessors JSHTMLElement::applet_accessors = { &JSHTMLElement::appletGetter, &JSHTMLElement::appletSetter };
 const JSHTMLElement::Accessors JSHTMLElement::embed_accessors = { &JSHTMLElement::embedGetter, &JSHTMLElement::embedSetter };
 const JSHTMLElement::Accessors JSHTMLElement::map_accessors = { &JSHTMLElement::mapGetter, &JSHTMLElement::mapSetter };
 const JSHTMLElement::Accessors JSHTMLElement::area_accessors = { &JSHTMLElement::areaGetter, &JSHTMLElement::areaSetter };
@@ -613,8 +583,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 {
     static HashMap<WebCore::AtomicStringImpl*, const Accessors*> accessorMap;
     if (accessorMap.isEmpty()) {
-        accessorMap.add(aTag.localName().impl(), &a_accessors);
-        accessorMap.add(appletTag.localName().impl(), &applet_accessors);
         accessorMap.add(areaTag.localName().impl(), &area_accessors);
         accessorMap.add(basefontTag.localName().impl(), &baseFont_accessors);
         accessorMap.add(blockquoteTag.localName().impl(), &blockQuote_accessors); 
@@ -624,9 +592,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(colTag.localName().impl(), &col_accessors);
         accessorMap.add(colgroupTag.localName().impl(), &col_accessors);
         accessorMap.add(delTag.localName().impl(), &mod_accessors);
-        accessorMap.add(dirTag.localName().impl(), &dir_accessors);
-        accessorMap.add(divTag.localName().impl(), &div_accessors);
-        accessorMap.add(dlTag.localName().impl(), &dl_accessors);
         accessorMap.add(embedTag.localName().impl(), &embed_accessors);
         accessorMap.add(fieldsetTag.localName().impl(), &fieldSet_accessors);
         accessorMap.add(fontTag.localName().impl(), &font_accessors);
@@ -640,7 +605,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(h5Tag.localName().impl(), &heading_accessors);
         accessorMap.add(h6Tag.localName().impl(), &heading_accessors);
         accessorMap.add(hrTag.localName().impl(), &hr_accessors); 
-        accessorMap.add(htmlTag.localName().impl(), &html_accessors);
         accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
         accessorMap.add(imgTag.localName().impl(), &img_accessors);
         accessorMap.add(insTag.localName().impl(), &mod_accessors);
@@ -653,7 +617,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(marqueeTag.localName().impl(), &marquee_accessors);
         accessorMap.add(menuTag.localName().impl(), &menu_accessors);
         accessorMap.add(objectTag.localName().impl(), &object_accessors);
-        accessorMap.add(olTag.localName().impl(), &ol_accessors);
         accessorMap.add(pTag.localName().impl(), &p_accessors);
         accessorMap.add(paramTag.localName().impl(), &param_accessors);
         accessorMap.add(preTag.localName().impl(), &pre_accessors);
@@ -667,7 +630,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(theadTag.localName().impl(), &tablesection_accessors);
         accessorMap.add(tfootTag.localName().impl(), &tablesection_accessors);
         accessorMap.add(trTag.localName().impl(), &tr_accessors);
-        accessorMap.add(ulTag.localName().impl(), &ul_accessors);
     }
     
     HTMLElement* element = static_cast<HTMLElement*>(impl());
@@ -694,9 +656,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   children      KJS::JSHTMLElement::ElementChildren  DontDelete|ReadOnly
   contentEditable   KJS::JSHTMLElement::ElementContentEditable  DontDelete
   isContentEditable KJS::JSHTMLElement::ElementIsContentEditable  DontDelete|ReadOnly
-@end
-@begin HTMLHtmlElementTable 1
-  version       KJS::JSHTMLElement::HtmlVersion   DontDelete
 @end
 @begin HTMLIsIndexElementTable 2
   form          KJS::JSHTMLElement::IsIndexForm   DontDelete|ReadOnly
@@ -760,30 +719,12 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   align         KJS::JSHTMLElement::LegendAlign           DontDelete
   focus     KJS::JSHTMLElement::LegendFocus     DontDelete|Function 0
 @end
-@begin HTMLUListElementTable 2
-  compact       KJS::JSHTMLElement::UListCompact          DontDelete
-  type          KJS::JSHTMLElement::UListType             DontDelete
-@end
-@begin HTMLOListElementTable 3
-  compact       KJS::JSHTMLElement::OListCompact          DontDelete
-  start         KJS::JSHTMLElement::OListStart            DontDelete
-  type          KJS::JSHTMLElement::OListType             DontDelete
-@end
-@begin HTMLDListElementTable 1
-  compact       KJS::JSHTMLElement::DListCompact          DontDelete
-@end
-@begin HTMLDirectoryElementTable 1
-  compact       KJS::JSHTMLElement::DirectoryCompact      DontDelete
-@end
 @begin HTMLMenuElementTable 1
   compact       KJS::JSHTMLElement::MenuCompact           DontDelete
 @end
 @begin HTMLLIElementTable 2
   type          KJS::JSHTMLElement::LIType                DontDelete
   value         KJS::JSHTMLElement::LIValue               DontDelete
-@end
-@begin HTMLDivElementTable 1
-  align         KJS::JSHTMLElement::DivAlign              DontDelete
 @end
 @begin HTMLParagraphElementTable 1
   align         KJS::JSHTMLElement::ParagraphAlign        DontDelete
@@ -822,31 +763,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 @begin HTMLModElementTable 2
   cite          KJS::JSHTMLElement::ModCite               DontDelete
   dateTime      KJS::JSHTMLElement::ModDateTime           DontDelete
-@end
-@begin HTMLAnchorElementTable 24
-  accessKey     KJS::JSHTMLElement::AnchorAccessKey       DontDelete
-  charset       KJS::JSHTMLElement::AnchorCharset         DontDelete
-  coords        KJS::JSHTMLElement::AnchorCoords          DontDelete
-  href          KJS::JSHTMLElement::AnchorHref            DontDelete
-  hreflang      KJS::JSHTMLElement::AnchorHrefLang        DontDelete
-  hash          KJS::JSHTMLElement::AnchorHash            DontDelete|ReadOnly
-  host          KJS::JSHTMLElement::AnchorHost            DontDelete|ReadOnly
-  hostname      KJS::JSHTMLElement::AnchorHostname        DontDelete|ReadOnly
-  name          KJS::JSHTMLElement::AnchorName            DontDelete
-  pathname      KJS::JSHTMLElement::AnchorPathName        DontDelete|ReadOnly
-  port          KJS::JSHTMLElement::AnchorPort            DontDelete|ReadOnly
-  protocol      KJS::JSHTMLElement::AnchorProtocol        DontDelete|ReadOnly
-  rel           KJS::JSHTMLElement::AnchorRel             DontDelete
-  rev           KJS::JSHTMLElement::AnchorRev             DontDelete
-  search        KJS::JSHTMLElement::AnchorSearch          DontDelete|ReadOnly
-  shape         KJS::JSHTMLElement::AnchorShape           DontDelete
-  tabIndex      KJS::JSHTMLElement::AnchorTabIndex        DontDelete
-  target        KJS::JSHTMLElement::AnchorTarget          DontDelete
-  text          KJS::JSHTMLElement::AnchorText            DontDelete|ReadOnly
-  type          KJS::JSHTMLElement::AnchorType            DontDelete
-  blur          KJS::JSHTMLElement::AnchorBlur            DontDelete|Function 0
-  focus         KJS::JSHTMLElement::AnchorFocus           DontDelete|Function 0
-  toString      KJS::JSHTMLElement::AnchorToString        DontDelete|Function 0
 @end
 @begin HTMLImageElementTable 14
   name          KJS::JSHTMLElement::ImageName             DontDelete
@@ -892,18 +808,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   value         KJS::JSHTMLElement::ParamValue            DontDelete
   valueType     KJS::JSHTMLElement::ParamValueType        DontDelete
 @end
-@begin HTMLAppletElementTable 11
-  align         KJS::JSHTMLElement::AppletAlign           DontDelete
-  alt           KJS::JSHTMLElement::AppletAlt             DontDelete
-  archive       KJS::JSHTMLElement::AppletArchive         DontDelete
-  code          KJS::JSHTMLElement::AppletCode            DontDelete
-  codeBase      KJS::JSHTMLElement::AppletCodeBase        DontDelete
-  height        KJS::JSHTMLElement::AppletHeight          DontDelete
-  hspace        KJS::JSHTMLElement::AppletHspace          DontDelete
-  name          KJS::JSHTMLElement::AppletName            DontDelete
-  object        KJS::JSHTMLElement::AppletObject          DontDelete
-  vspace        KJS::JSHTMLElement::AppletVspace          DontDelete
-  width         KJS::JSHTMLElement::AppletWidth           DontDelete
 @end
 @begin HTMLEmbedElementTable 6
   align         KJS::JSHTMLElement::EmbedAlign           DontDelete
@@ -1213,14 +1117,6 @@ JSValue *JSHTMLElement::callAsFunction(ExecState *exec, JSObject *thisObj, const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::htmlGetter(ExecState* exec, int token) const
-{
-    HTMLHtmlElement& html = *static_cast<HTMLHtmlElement*>(impl());
-    if (token == HtmlVersion)
-        return jsString(html.version());
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::isIndexGetter(ExecState* exec, int token) const
 {
     HTMLIsIndexElement& isindex = *static_cast<HTMLIsIndexElement*>(impl());
@@ -1326,43 +1222,6 @@ JSValue *JSHTMLElement::legendGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::uListGetter(ExecState* exec, int token) const
-{
-    HTMLUListElement& uList = *static_cast<HTMLUListElement*>(impl());
-    switch (token) {
-        case UListCompact:         return jsBoolean(uList.compact());
-        case UListType:            return jsString(uList.type());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::oListGetter(ExecState* exec, int token) const
-{
-    HTMLOListElement& oList = *static_cast<HTMLOListElement*>(impl());
-    switch (token) {
-        case OListCompact:         return jsBoolean(oList.compact());
-        case OListStart:           return jsNumber(oList.start());
-        case OListType:            return jsString(oList.type());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::dListGetter(ExecState* exec, int token) const
-{
-    HTMLDListElement& dList = *static_cast<HTMLDListElement*>(impl());
-    if (token == DListCompact)
-        return jsBoolean(dList.compact());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::dirGetter(ExecState* exec, int token) const
-{
-    HTMLDirectoryElement& dir = *static_cast<HTMLDirectoryElement*>(impl());
-    if (token == DirectoryCompact)
-        return jsBoolean(dir.compact());
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::menuGetter(ExecState* exec, int token) const
 {
     HTMLMenuElement& menu = *static_cast<HTMLMenuElement*>(impl());
@@ -1378,14 +1237,6 @@ JSValue *JSHTMLElement::liGetter(ExecState* exec, int token) const
         case LIType:            return jsString(li.type());
         case LIValue:           return jsNumber(li.value());
     }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::divGetter(ExecState* exec, int token) const
-{
-    HTMLDivElement& div = *static_cast<HTMLDivElement*>(impl());
-    if (token == DivAlign)
-        return jsString(div.align());
     return jsUndefined();
 }
 
@@ -1484,42 +1335,6 @@ JSValue *JSHTMLElement::modGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::anchorGetter(ExecState* exec, int token) const
-{
-    HTMLAnchorElement& anchor = *static_cast<HTMLAnchorElement*>(impl());
-    switch (token) {
-        case AnchorAccessKey:       return jsString(anchor.accessKey());
-        case AnchorCharset:         return jsString(anchor.charset());
-        case AnchorCoords:          return jsString(anchor.coords());
-        case AnchorHref:            return jsString(anchor.href());
-        case AnchorHrefLang:        return jsString(anchor.hreflang());
-        case AnchorHash:            return jsString('#'+KURL(anchor.href().deprecatedString()).ref());
-        case AnchorHost:            return jsString(KURL(anchor.href().deprecatedString()).host());
-        case AnchorHostname: {
-            KURL url(anchor.href().deprecatedString());
-            if (url.port()==0)
-                return jsString(url.host());
-            else
-                return jsString(url.host() + ":" + DeprecatedString::number(url.port()));
-        }
-        case AnchorPathName:        return jsString(KURL(anchor.href().deprecatedString()).path());
-        case AnchorPort:            return jsString(DeprecatedString::number(KURL(anchor.href().deprecatedString()).port()));
-        case AnchorProtocol:        return jsString(KURL(anchor.href().deprecatedString()).protocol()+":");
-        case AnchorSearch:          return jsString(KURL(anchor.href().deprecatedString()).query());
-        case AnchorName:            return jsString(anchor.name());
-        case AnchorRel:             return jsString(anchor.rel());
-        case AnchorRev:             return jsString(anchor.rev());
-        case AnchorShape:           return jsString(anchor.shape());
-        case AnchorTabIndex:        return jsNumber(anchor.tabIndex());
-        case AnchorTarget:          return jsString(anchor.target());
-        case AnchorType:            return jsString(anchor.type());
-        case AnchorText:
-            anchor.document()->updateLayoutIgnorePendingStylesheets();
-            return jsString(anchor.innerText());
-    }
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::imageGetter(ExecState* exec, int token) const
 {
     HTMLImageElement& image = *static_cast<HTMLImageElement*>(impl());
@@ -1579,25 +1394,6 @@ JSValue *JSHTMLElement::paramGetter(ExecState* exec, int token) const
         case ParamType:            return jsString(param.type());
         case ParamValue:           return jsString(param.value());
         case ParamValueType:       return jsString(param.valueType());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::appletGetter(ExecState* exec, int token) const
-{
-    HTMLAppletElement& applet = *static_cast<HTMLAppletElement*>(impl());
-    switch (token) {
-        case AppletAlign:           return jsString(applet.align());
-        case AppletAlt:             return jsString(applet.alt());
-        case AppletArchive:         return jsString(applet.archive());
-        case AppletCode:            return jsString(applet.code());
-        case AppletCodeBase:        return jsString(applet.codeBase());
-        case AppletHeight:          return jsString(applet.height());
-        case AppletHspace:          return jsString(applet.hspace());
-        case AppletName:            return jsString(applet.name());
-        case AppletObject:          return jsString(applet.object());
-        case AppletVspace:          return jsString(applet.vspace());
-        case AppletWidth:           return jsString(applet.width());
     }
     return jsUndefined();
 }
@@ -1978,19 +1774,6 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj,
             return jsUndefined();
         }
     }
-    else if (element.hasLocalName(aTag)) {
-        HTMLAnchorElement &anchor = static_cast<HTMLAnchorElement &>(element);
-        if (id == JSHTMLElement::AnchorBlur) {
-            anchor.blur();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::AnchorFocus) {
-            anchor.focus();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::AnchorToString)
-            return jsString(thisObj->toString(exec));
-    }
     else if (element.hasLocalName(tableTag)) {
         HTMLTableElement &table = static_cast<HTMLTableElement &>(element);
         if (id == JSHTMLElement::TableCreateTHead)
@@ -2093,13 +1876,6 @@ void JSHTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue
     lookupPut<JSHTMLElement, JSElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
-void JSHTMLElement::htmlSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLHtmlElement& html = *static_cast<HTMLHtmlElement*>(impl());
-    if (token == HtmlVersion)
-        html.setVersion(str);
-}
-
 void JSHTMLElement::isIndexSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLIsIndexElement& isindex = *static_cast<HTMLIsIndexElement*>(impl());
@@ -2194,39 +1970,6 @@ void JSHTMLElement::legendSetter(ExecState *exec, int token, JSValue *value, con
     }
 }
 
-void JSHTMLElement::uListSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLUListElement& uList = *static_cast<HTMLUListElement*>(impl());
-    switch (token) {
-        case UListCompact:         { uList.setCompact(value->toBoolean(exec)); return; }
-        case UListType:            { uList.setType(str); return; }
-    }
-}
-
-void JSHTMLElement::oListSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLOListElement& oList = *static_cast<HTMLOListElement*>(impl());
-    switch (token) {
-        case OListCompact:         { oList.setCompact(value->toBoolean(exec)); return; }
-        case OListStart:           { oList.setStart(value->toInt32(exec)); return; }
-        case OListType:            { oList.setType(str); return; }
-    }
-}
-
-void JSHTMLElement::dListSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLDListElement& dList = *static_cast<HTMLDListElement*>(impl());
-    if (token == DListCompact)
-        dList.setCompact(value->toBoolean(exec));
-}
-
-void JSHTMLElement::dirSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLDirectoryElement& directory = *static_cast<HTMLDirectoryElement*>(impl());
-    if (token == DirectoryCompact)
-        directory.setCompact(value->toBoolean(exec));
-}
-
 void JSHTMLElement::menuSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLMenuElement& menu = *static_cast<HTMLMenuElement*>(impl());
@@ -2241,13 +1984,6 @@ void JSHTMLElement::liSetter(ExecState *exec, int token, JSValue *value, const W
         case LIType:            { li.setType(str); return; }
         case LIValue:           { li.setValue(value->toInt32(exec)); return; }
     }
-}
-
-void JSHTMLElement::divSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLDivElement& div = *static_cast<HTMLDivElement*>(impl());
-    if (token == DivAlign)
-        div.setAlign(str);
 }
 
 void JSHTMLElement::paragraphSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
@@ -2334,25 +2070,6 @@ void JSHTMLElement::modSetter(ExecState *exec, int token, JSValue *value, const 
     }
 }
 
-void JSHTMLElement::anchorSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLAnchorElement& anchor = *static_cast<HTMLAnchorElement*>(impl());
-    switch (token) {
-        case AnchorAccessKey:       { anchor.setAccessKey(str); return; }
-        case AnchorCharset:         { anchor.setCharset(str); return; }
-        case AnchorCoords:          { anchor.setCoords(str); return; }
-        case AnchorHref:            { anchor.setHref(str); return; }
-        case AnchorHrefLang:        { anchor.setHreflang(str); return; }
-        case AnchorName:            { anchor.setName(str); return; }
-        case AnchorRel:             { anchor.setRel(str); return; }
-        case AnchorRev:             { anchor.setRev(str); return; }
-        case AnchorShape:           { anchor.setShape(str); return; }
-        case AnchorTabIndex:        { anchor.setTabIndex(value->toInt32(exec)); return; }
-        case AnchorTarget:          { anchor.setTarget(str); return; }
-        case AnchorType:            { anchor.setType(str); return; }
-    }
-}
-
 void JSHTMLElement::imageSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLImageElement& image = *static_cast<HTMLImageElement*>(impl());
@@ -2406,24 +2123,6 @@ void JSHTMLElement::paramSetter(ExecState *exec, int token, JSValue *value, cons
         case ParamType:            { param.setType(str); return; }
         case ParamValue:           { param.setValue(str); return; }
         case ParamValueType:       { param.setValueType(str); return; }
-    }
-}
-
-void JSHTMLElement::appletSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLAppletElement& applet = *static_cast<HTMLAppletElement*>(impl());
-    switch (token) {
-        case AppletAlign:           { applet.setAlign(str); return; }
-        case AppletAlt:             { applet.setAlt(str); return; }
-        case AppletArchive:         { applet.setArchive(str); return; }
-        case AppletCode:            { applet.setCode(str); return; }
-        case AppletCodeBase:        { applet.setCodeBase(str); return; }
-        case AppletHeight:          { applet.setHeight(str); return; }
-        case AppletHspace:          { applet.setHspace(str); return; }
-        case AppletName:            { applet.setName(str); return; }
-        case AppletObject:          { applet.setObject(str); return; }
-        case AppletVspace:          { applet.setVspace(str); return; }
-        case AppletWidth:           { applet.setWidth(str); return; }
     }
 }
 

@@ -88,6 +88,15 @@ public:
     void blur();
     void focus();
 
+    String hash() const;
+    String host() const;
+    String hostname() const;
+    String pathname() const;
+    String port() const;
+    String protocol() const;
+    String search() const;
+    String text() const;
+    
 protected:
     bool m_hasTarget : 1;
 };

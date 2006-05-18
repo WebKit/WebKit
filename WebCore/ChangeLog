@@ -1,3 +1,56 @@
+2006-05-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8964
+        Autogenerate more HTML classes
+        
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+        
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createAnchorWrapper):
+        (WebCore::createAppletWrapper):
+        (WebCore::createDivWrapper):
+        (WebCore::createDirectoryWrapper):
+        (WebCore::createDListWrapper):
+        (WebCore::createHtmlWrapper):
+        (WebCore::createOListWrapper):
+        (WebCore::createUListWrapper):
+        (WebCore::createJSWrapper):
+        Add wrappers.
+        
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::HTMLElementFunction::callAsFunction):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        Delete the old implementations.
+        
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::hash):
+        (WebCore::HTMLAnchorElement::host):
+        (WebCore::HTMLAnchorElement::hostname):
+        (WebCore::HTMLAnchorElement::pathname):
+        (WebCore::HTMLAnchorElement::port):
+        (WebCore::HTMLAnchorElement::protocol):
+        (WebCore::HTMLAnchorElement::search):
+        (WebCore::HTMLAnchorElement::text):
+        * html/HTMLAnchorElement.h:
+        Add some new accessor methods which used to be in kjs_html.cpp.
+        
+        * html/HTMLAnchorElement.idl: Added.
+        * html/HTMLAppletElement.idl: Added.
+        * html/HTMLDListElement.idl: Added.
+        * html/HTMLDirectoryElement.idl: Added.
+        * html/HTMLDivElement.idl: Added.
+        * html/HTMLHtmlElement.idl: Added.
+        * html/HTMLOListElement.idl: Added.
+        * html/HTMLUListElement.idl: Added.
+
 2006-05-17  David Hyatt  <hyatt@apple.com>
 
         Convert the width map for glyphs into the same new HashMap-style as the

@@ -18,7 +18,7 @@ NOTE: This test will start failing if you change the layout of a related prototy
 
 [object HTMLDocument]
 
------ [object DIV] (7 prototypes) -----
+----- [object DIV] (8 prototypes) -----
 
 [object Object]
 
@@ -33,6 +33,8 @@ NOTE: This test will start failing if you change the layout of a related prototy
 [object HTMLElement]
 
 [object HTMLElement]
+
+[object HTMLDivElement]
 
 ----- [object UIEvent] (4 prototypes) -----
 

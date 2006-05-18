@@ -19,33 +19,49 @@
 #include "config.h"
 #include "JSHTMLElementWrapperFactory.h"
 
+#include "HTMLAnchorElement.h"
+#include "HTMLAppletElement.h"
 #include "HTMLBaseElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDivElement.h"
+#include "HTMLDirectoryElement.h"
+#include "HTMLDListElement.h"
 #include "HTMLHeadElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMetaElement.h"
+#include "HTMLOListElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTitleElement.h"
+#include "HTMLUListElement.h"
 
 #include "HTMLNames.h"
 
+#include "JSHTMLAnchorElement.h"
+#include "JSHTMLAppletElement.h"
 #include "JSHTMLBaseElement.h"
 #include "JSHTMLButtonElement.h"
 #include "JSHTMLCanvasElement.h"
+#include "JSHTMLDirectoryElement.h"
+#include "JSHTMLDivElement.h"
+#include "JSHTMLDListElement.h"
 #include "JSHTMLHeadElement.h"
+#include "JSHTMLHtmlElement.h"
 #include "JSHTMLInputElement.h"
 #include "JSHTMLLinkElement.h"
 #include "JSHTMLMetaElement.h"
+#include "JSHTMLOListElement.h"
 #include "JSHTMLOptGroupElement.h"
 #include "JSHTMLOptionElement.h"
 #include "JSHTMLStyleElement.h"
 #include "JSHTMLTextAreaElement.h"
 #include "JSHTMLTitleElement.h"
+#include "JSHTMLUListElement.h"
 
 #include "kjs_html.h"
 
@@ -58,6 +74,16 @@ namespace WebCore {
 using namespace HTMLNames;
 
 typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTMLElement>);
+
+static DOMNode* createAnchorWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLAnchorElement(exec, static_cast<HTMLAnchorElement*>(element.get()));
+}
+
+static DOMNode* createAppletWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLAppletElement(exec, static_cast<HTMLAppletElement*>(element.get()));
+}
 
 static DOMNode* createBaseWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
@@ -74,9 +100,29 @@ static DOMNode* createCanvasWrapper(ExecState* exec, PassRefPtr<HTMLElement> ele
     return new JSHTMLCanvasElement(exec, static_cast<HTMLCanvasElement*>(element.get()));
 }
 
+static DOMNode* createDivWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLDivElement(exec, static_cast<HTMLDivElement*>(element.get()));
+}
+
+static DOMNode* createDirectoryWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLDirectoryElement(exec, static_cast<HTMLDirectoryElement*>(element.get()));
+}
+
+static DOMNode* createDListWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLDListElement(exec, static_cast<HTMLDListElement*>(element.get()));
+}
+
 static DOMNode* createHeadWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
     return new JSHTMLHeadElement(exec, static_cast<HTMLHeadElement*>(element.get()));
+}
+
+static DOMNode* createHtmlWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLHtmlElement(exec, static_cast<HTMLHtmlElement*>(element.get()));
 }
 
 static DOMNode* createLinkWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
@@ -92,6 +138,11 @@ static DOMNode* createInputWrapper(ExecState* exec, PassRefPtr<HTMLElement> elem
 static DOMNode* createMetaWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
     return new JSHTMLMetaElement(exec, static_cast<HTMLMetaElement*>(element.get()));
+}
+
+static DOMNode* createOListWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLOListElement(exec, static_cast<HTMLOListElement*>(element.get()));
 }
 
 static DOMNode* createOptGroupWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
@@ -119,22 +170,35 @@ static DOMNode* createTitleWrapper(ExecState* exec, PassRefPtr<HTMLElement> elem
     return new JSHTMLTitleElement(exec, static_cast<HTMLTitleElement*>(element.get()));
 }
 
+static DOMNode* createUListWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+{
+    return new JSHTMLUListElement(exec, static_cast<HTMLUListElement*>(element.get()));
+}
+
 DOMNode* createJSWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
     static HashMap<WebCore::AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
     if (map.isEmpty()) {
+        map.set(aTag.localName().impl(), createAnchorWrapper);
+        map.set(appletTag.localName().impl(), createAppletWrapper);
         map.set(baseTag.localName().impl(), createBaseWrapper);
         map.set(buttonTag.localName().impl(), createButtonWrapper);
         map.set(canvasTag.localName().impl(), createCanvasWrapper);
+        map.set(dirTag.localName().impl(), createDirectoryWrapper);
+        map.set(divTag.localName().impl(), createDivWrapper);
+        map.set(dlTag.localName().impl(), createDListWrapper);
         map.set(headTag.localName().impl(), createHeadWrapper);
+        map.set(htmlTag.localName().impl(), createHtmlWrapper);
         map.set(inputTag.localName().impl(), createInputWrapper);
         map.set(linkTag.localName().impl(), createLinkWrapper);
         map.set(metaTag.localName().impl(), createMetaWrapper);
+        map.set(olTag.localName().impl(), createOListWrapper);
         map.set(optgroupTag.localName().impl(), createOptGroupWrapper);
         map.set(optionTag.localName().impl(), createOptionWrapper);
         map.set(styleTag.localName().impl(), createStyleWrapper);
         map.set(textareaTag.localName().impl(), createTextAreaWrapper);
         map.set(titleTag.localName().impl(), createTitleWrapper);
+        map.set(ulTag.localName().impl(), createUListWrapper);
     }
     CreateHTMLElementWrapperFunction f = map.get(element->localName().impl());
     if (f)

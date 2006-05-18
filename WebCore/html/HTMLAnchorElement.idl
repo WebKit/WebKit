@@ -1,0 +1,50 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module html {
+
+    interface [LegacyParent=KJS::JSHTMLElement] HTMLAnchorElement : HTMLElement {
+        attribute DOMString accessKey;
+        attribute DOMString charset;
+        attribute DOMString coords;
+        attribute DOMString href;
+        attribute DOMString hreflang;
+        attribute DOMString name;
+        attribute DOMString rel;
+        attribute DOMString rev;
+        attribute DOMString shape;
+        attribute long tabIndex;
+        attribute DOMString target;
+        attribute DOMString type;
+        
+        void blur();
+        void focus();
+        
+        // IE Extensions
+        readonly attribute DOMString hash;
+        readonly attribute DOMString host;
+        readonly attribute DOMString hostname;
+        readonly attribute DOMString pathname;
+        readonly attribute DOMString port;
+        readonly attribute DOMString protocol;
+        readonly attribute DOMString search;
+        readonly attribute DOMString text;
+    };
+
+}

@@ -1,3 +1,11 @@
+2006-05-18  Anders Carlsson  <acarlsson@apple.com>
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8964
+        Autogenerate more HTML classes
+
+        * fast/dom/prototype-chain-expected.txt:
+        Update test result.
+
 2006-05-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

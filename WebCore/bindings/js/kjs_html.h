@@ -78,12 +78,13 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const;
     static const ClassInfo info;
 
-    static const ClassInfo html_info, isIndex_info, body_info, form_info,
-      select_info, label_info, fieldSet_info, legend_info, ul_info, ol_info,
-      dl_info, dir_info, menu_info, li_info, div_info, p_info, heading_info,
+    static const ClassInfo isIndex_info, body_info, form_info,
+      select_info, optGroup_info, option_info, input_info, textArea_info,
+      button_info, label_info, fieldSet_info, legend_info, 
+      menu_info, li_info, p_info, heading_info,
       blockQuote_info, q_info, pre_info, br_info, baseFont_info, font_info,
-      hr_info, mod_info, a_info, img_info, object_info, param_info,
-      applet_info, embed_info, map_info, area_info, script_info, table_info,
+      hr_info, mod_info, img_info, object_info, param_info,
+      embed_info, map_info, area_info, script_info, table_info,
       caption_info, col_info, tablesection_info, tr_info,
       tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
 
@@ -92,17 +93,16 @@ namespace KJS {
     typedef void (JSHTMLElement::*SetterFunction)(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
-    static const Accessors html_accessors, isIndex_accessors, body_accessors, form_accessors,
-      select_accessors, label_accessors, fieldSet_accessors, legend_accessors, ul_accessors, ol_accessors,
-      dl_accessors, dir_accessors, menu_accessors, li_accessors, div_accessors, p_accessors, heading_accessors,
+    static const Accessors isIndex_accessors, body_accessors, form_accessors,
+      select_accessors, optGroup_accessors, option_accessors, input_accessors, textArea_accessors,
+      button_accessors, label_accessors, fieldSet_accessors, legend_accessors, 
+      menu_accessors, li_accessors, p_accessors, heading_accessors,
       blockQuote_accessors, q_accessors, pre_accessors, br_accessors, baseFont_accessors, font_accessors,
-      hr_accessors, mod_accessors, a_accessors, img_accessors, object_accessors, param_accessors,
-      applet_accessors, embed_accessors, map_accessors, area_accessors, script_accessors, table_accessors,
+      hr_accessors, mod_accessors, img_accessors, object_accessors, param_accessors,
+      embed_accessors, map_accessors, area_accessors, script_accessors, table_accessors,
       caption_accessors, col_accessors, tablesection_accessors, tr_accessors,
       tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
 
-    JSValue *htmlGetter(ExecState* exec, int token) const;
-    void  htmlSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *isIndexGetter(ExecState* exec, int token) const;
     void  isIndexSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *bodyGetter(ExecState* exec, int token) const;
@@ -117,20 +117,10 @@ namespace KJS {
     void  fieldSetSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *legendGetter(ExecState* exec, int token) const;
     void  legendSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *uListGetter(ExecState* exec, int token) const;
-    void  uListSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *oListGetter(ExecState* exec, int token) const;
-    void  oListSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *dListGetter(ExecState* exec, int token) const;
-    void  dListSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *dirGetter(ExecState* exec, int token) const;
-    void  dirSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *menuGetter(ExecState* exec, int token) const;
     void  menuSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *liGetter(ExecState* exec, int token) const;
     void  liSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *divGetter(ExecState* exec, int token) const;
-    void  divSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *paragraphGetter(ExecState* exec, int token) const;
     void  paragraphSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *headingGetter(ExecState* exec, int token) const;
@@ -151,16 +141,12 @@ namespace KJS {
     void  hrSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *modGetter(ExecState* exec, int token) const;
     void  modSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *anchorGetter(ExecState* exec, int token) const;
-    void  anchorSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *imageGetter(ExecState* exec, int token) const;
     void  imageSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *objectGetter(ExecState* exec, int token) const;
     void  objectSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *paramGetter(ExecState* exec, int token) const;
     void  paramSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *appletGetter(ExecState* exec, int token) const;
-    void  appletSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *embedGetter(ExecState*, int token) const;
     void  embedSetter(ExecState*, int token, JSValue*, const WebCore::String&);
     JSValue *mapGetter(ExecState* exec, int token) const;
@@ -190,8 +176,7 @@ namespace KJS {
     JSValue *marqueeGetter(ExecState* exec, int token) const;
     void  marqueeSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
 
-    enum { HtmlVersion, IsIndexForm, IsIndexPrompt,
-           BodyBackground, BodyVLink, BodyText,
+    enum { IsIndexForm, IsIndexPrompt, BodyBackground, BodyVLink, BodyText,
            BodyLink, BodyALink, BodyBgColor, BodyScrollLeft, BodyScrollTop, BodyScrollHeight, BodyScrollWidth,
            FormAction, FormEncType, FormElements, FormLength, FormAcceptCharset,
            FormReset, FormTarget, FormName, FormMethod, FormSubmit, SelectAdd,
@@ -200,25 +185,18 @@ namespace KJS {
            SelectDisabled, SelectMultiple, SelectName, SelectSize, SelectFocus,
            LabelHtmlFor,
            LabelForm, LabelFocus, LabelAccessKey, FieldSetForm, LegendForm, LegendAccessKey,
-           LegendAlign, LegendFocus, UListType, UListCompact, OListStart, OListCompact,
-           OListType, DListCompact, DirectoryCompact, MenuCompact, LIType,
-           LIValue, DivAlign, ParagraphAlign, HeadingAlign, BlockQuoteCite,
+           LegendAlign, LegendFocus, MenuCompact, LIType,
+           LIValue, ParagraphAlign, HeadingAlign, BlockQuoteCite,
            QuoteCite, PreWidth, PreWrap, BRClear, BaseFontColor, BaseFontSize,
            BaseFontFace, FontColor, FontSize, FontFace, HRWidth, HRNoShade,
-           HRAlign, HRSize, ModCite, ModDateTime, AnchorShape, AnchorRel,
-           AnchorAccessKey, AnchorCoords, AnchorHref, AnchorProtocol, AnchorHost,
-           AnchorCharset, AnchorHrefLang, AnchorHostname, AnchorType, AnchorFocus,
-           AnchorPort, AnchorPathName, AnchorHash, AnchorSearch, AnchorName,
-           AnchorRev, AnchorTabIndex, AnchorTarget, AnchorText, AnchorBlur, AnchorToString, 
+           HRAlign, HRSize, ModCite, ModDateTime,
            ImageName, ImageAlign, ImageHspace, ImageVspace, ImageUseMap, ImageAlt,
            ImageLowSrc, ImageWidth, ImageIsMap, ImageBorder, ImageHeight, ImageComplete,
            ImageLongDesc, ImageSrc, ImageX, ImageY, ObjectHspace, ObjectHeight, ObjectAlign,
            ObjectBorder, ObjectCode, ObjectType, ObjectVspace, ObjectArchive,
            ObjectDeclare, ObjectForm, ObjectCodeBase, ObjectCodeType, ObjectData,
            ObjectName, ObjectStandby, ObjectTabIndex, ObjectUseMap, ObjectWidth, ObjectContentDocument,
-           ParamName, ParamType, ParamValueType, ParamValue, AppletArchive,
-           AppletAlt, AppletCode, AppletWidth, AppletAlign, AppletCodeBase,
-           AppletName, AppletHeight, AppletHspace, AppletObject, AppletVspace,
+           ParamName, ParamType, ParamValueType, ParamValue, 
            EmbedAlign, EmbedHeight, EmbedName, EmbedSrc, EmbedType, EmbedWidth,
            MapAreas, MapName, AreaHash, AreaHref, AreaTarget, AreaPort, AreaShape,
            AreaCoords, AreaAlt, AreaAccessKey, AreaNoHref, AreaHost, AreaProtocol,

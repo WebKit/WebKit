@@ -338,4 +338,50 @@ void HTMLAnchorElement::focus()
     document()->setFocusNode(this);
 }
 
+String HTMLAnchorElement::hash() const
+{
+    return '#' + KURL(href().deprecatedString()).ref();
+}
+
+String HTMLAnchorElement::host() const
+{
+    return KURL(href().deprecatedString()).host();
+}
+
+String HTMLAnchorElement::hostname() const
+{
+    KURL url(href().deprecatedString());
+    if (url.port()==0)
+        return url.host();
+    else
+        return url.host() + ":" + String::number(url.port());
+}
+
+String HTMLAnchorElement::pathname() const
+{
+    return KURL(href().deprecatedString()).path();
+}
+
+String HTMLAnchorElement::port() const
+{
+    return DeprecatedString::number(KURL(href().deprecatedString()).port());
+}
+
+String HTMLAnchorElement::protocol() const
+{
+    return KURL(href().deprecatedString()).protocol() + ":";
+}
+
+String HTMLAnchorElement::search() const
+{
+    return KURL(href().deprecatedString()).query();
+}
+
+String HTMLAnchorElement::text() const
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    return innerText();
+}
+
+
 }
