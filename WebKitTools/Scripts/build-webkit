@@ -45,7 +45,7 @@ my $productDir = productDir();
 my @options = XcodeOptions();
 my @additionalWebCoreOptions = ();
 
-push @additionalWebCoreOptions, "FEATURE_DEFINES=''" if !$svgSupport;
+push @additionalWebCoreOptions, "FEATURE_DEFINES=" if !$svgSupport;
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit", "WebKitWin");

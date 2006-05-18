@@ -1,5 +1,11 @@
 2006-05-18  Darin Adler  <darin@apple.com>
 
+        - try to fix no-SVG, no-XPATH build, again
+
+        * Scripts/build-webkit: Use FEATURE_DEFINES= instead of FEATURE_DEFINES=''.
+
+2006-05-18  Darin Adler  <darin@apple.com>
+
         - try to fix no-SVG, no-XPATH build
 
         * Scripts/build-webkit: Pass FEATURE_DEFINES rather than GCC_PREPROCESSOR_DEFINITIONS,
