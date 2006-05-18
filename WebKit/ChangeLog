@@ -1,3 +1,38 @@
+2006-05-18  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4551938> More options needed for window display throttle
+
+        We decided to play it safe and leave our window flushing behavior unchanged from the previous
+        public release.  By default, CoreGraphics deferred updates are once again OFF, and the window
+        display throttle is OFF.
+
+        Individual applications should set the WebKitThrottleWindowDisplayPreferenceKey and 
+        WebKitEnableDeferredUpdatesPreferenceKey defaults to suit their needs.
+
+        Old behavior (like 10.4.6): WebKitThrottleWindowDisplayPreferenceKey=0 (or unset), 
+        WebKitEnableDeferredUpdatesPreferenceKey (or unset).
+
+        Tear-free scrolling/animations: WebKitThrottleWindowDisplayPreferenceKey=0 (or unset),
+        WebKitEnableDeferredUpdatesPreferenceKey=1.  While this configuration fixes the tearing issues
+        caused by over-flushing, some applications will experience performance problems as over-flushing
+        with CG deferred updates enabled will cause the app to block.
+
+        Tear-free scrolling/animations, high performance: WebKitThrottleWindowDisplayPreferenceKey=1, 
+        WebKitEnableDeferredUpdatesPreferenceKey=1.  This is the riskiest configuration in that it
+        enables the window display throttle "feature", potentially breaking applications' assumptions
+        about when displays occur.  However, it provides the "best of both worlds", in that updates
+        are tear-free, and performance impact should me minimal.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        Declared WebKitThrottleWindowDisplayPreferenceKey and WebKitEnableDeferredUpdatesPreferenceKey.
+
+        * WebView/WebFrameView.m:
+        (-[WebFrameView initWithFrame:]):
+        Turn off CG deferred updates if WebKitEnableDeferredUpdatesPreferenceKey is NO or has no value.
+        Added some comments.
+
 2006-05-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
