@@ -1339,6 +1339,7 @@
 		BCB16C2D0979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; };
 		BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
 		BCB16C2F0979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
+		BCC088860A1BD78D006189A6 /* FontDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC088850A1BD78D006189A6 /* FontDataMac.mm */; };
 		BCC47E2609A3D6F100ADB771 /* FontFamily.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */; };
 		BCC47E2709A3D6F100ADB771 /* FontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E2509A3D6F100ADB771 /* FontFamily.h */; };
 		BCC47E6B09A3FE4700ADB771 /* FontDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E6A09A3FE4700ADB771 /* FontDescription.h */; };
@@ -2899,6 +2900,7 @@
 		BCB16C140979C3BD00467741 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		BCB16C150979C3BD00467741 /* Request.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Request.cpp; sourceTree = "<group>"; };
 		BCB16C160979C3BD00467741 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
+		BCC088850A1BD78D006189A6 /* FontDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontDataMac.mm; sourceTree = "<group>"; };
 		BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontFamily.cpp; sourceTree = "<group>"; };
 		BCC47E2509A3D6F100ADB771 /* FontFamily.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontFamily.h; sourceTree = "<group>"; };
 		BCC47E6A09A3FE4700ADB771 /* FontDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontDescription.h; sourceTree = "<group>"; };
@@ -3388,7 +3390,6 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
 				2D90660B0665D937006B6F1A /* ClipboardMac.h */,
@@ -3401,9 +3402,11 @@
 				6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */,
 				6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */,
 				BCF7C2330A16B5F80032F75B /* FontCacheMac.mm */,
+				BCC088850A1BD78D006189A6 /* FontDataMac.mm */,
 				BCEB377209B7BA3900CB38B1 /* FontMac.mm */,
 				BCF7C0980A1683580032F75B /* FontFallbackListMac.mm */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
+				BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */,
 				935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */,
 				6582A14D09999D6C00BEEB6D /* ImageMac.mm */,
 				6582A14E09999D6D00BEEB6D /* ImageSourceMac.cpp */,
@@ -6588,6 +6591,7 @@
 				BC6DB4740A1A90FB00E5CD14 /* GlyphMap.cpp in Sources */,
 				BC6DB4D40A1AFEEF00E5CD14 /* GlyphMapMac.cpp in Sources */,
 				1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
+				BCC088860A1BD78D006189A6 /* FontDataMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

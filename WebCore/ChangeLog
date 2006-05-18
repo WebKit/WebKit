@@ -1,3 +1,18 @@
+2006-05-17  David Hyatt  <hyatt@apple.com>
+
+        Split FontData.mm into platform-specific and cross-platform pieces.
+
+        Reviewed by andersca
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FontData.h:
+        (WebCore::FontData::xHeight):
+        * platform/mac/FontData.mm:
+        (WebCore::FontData::widthForGlyph):
+        (WebCore::m_smallCapsFontData):
+        (WebCore::FontData::~FontData):
+        (WebCore::extendWidthMap):
+
 2006-05-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler

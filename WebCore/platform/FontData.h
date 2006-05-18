@@ -58,10 +58,11 @@ public:
     int descent() const { return m_descent; }
     int lineSpacing() const { return m_lineSpacing; }
     int lineGap() const { return m_lineGap; }
-
-    float xHeight() const;
+    float xHeight() const { return m_xHeight; }
 
     float widthForGlyph(Glyph glyph) const;
+    float platformWidthForGlyph(Glyph glyph) const;
+
     bool containsCharacters(const UChar* characters, int length) const;
 
     void determinePitch();
@@ -76,14 +77,16 @@ public:
 #endif
 
 private:
-    bool platformInit();
+    void platformInit();
+    void platformDestroy();
 
 public:
     int m_ascent;
     int m_descent;
     int m_lineSpacing;
     int m_lineGap;
-    
+    float m_xHeight;
+
     void* m_styleGroup;
     
     FontPlatformData m_font;
