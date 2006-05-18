@@ -1,3 +1,33 @@
+2006-05-17  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Kevin Decker and John Sullivan.
+
+        <rdar://problem/4550801> REGRESSION: Window throttle code can sometimes leak NSWindows
+
+        The window display throttle depended on windows being closed before they were deallocated; this is
+        not guaranteed by AppKit.  Windows that were being released without being closed were getting stuck
+        in our NSWindow -> WindowDisplayInfo dictionary.
+        
+        * Misc/WebNSWindowExtras.m:
+        (+[NSWindow _webkit_enableWindowDisplayThrottle]):
+        Don't retain the NSWindow keys in the window display info dictionary.
+        Instead of overriding -close, override -dealloc and -finalize so that we can remove the NSWindow ->
+        WindowDisplayInfo mapping when a window deallocates.
+        (+[NSWindow _webkit_disableWindowDisplayThrottle]):
+        Restore -dealloc and -finalize.
+        (clearWindowDisplayInfo):
+        Factored the WindowDisplayInfo cleanup code out of the now-defunct replacementClose().
+        (replacementClose):
+        Removed; no longer needed.
+        (replacementDealloc):
+        Clear the WindowDisplayInfo for the window after deallocation.
+        (replacementFinalize):
+        ditto
+        (-[NSWindow _webkit_doPendingPostWindowNeedsDisplay:]):
+        Rewrote this method to be safe in the case where the firing display timer has the last reference to the
+        window.
+        Added comments.
+        
 2006-05-17  bradeeoh  <beidson@apple.com>
 
         Reviewed by Tim Hatcher
