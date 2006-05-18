@@ -4051,11 +4051,7 @@
 				Name="js"
 				>
 				<File
-					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DBase.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DBase.h"
+					RelativePath="..\..\bindings\js\JSCanvasRenderingContext2DCustom.cpp"
 					>
 				</File>
 				<File

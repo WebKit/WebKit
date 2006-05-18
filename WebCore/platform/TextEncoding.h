@@ -44,7 +44,7 @@ namespace WebCore {
     const TextEncodingID WinLatin1Encoding = kCFStringEncodingWindowsLatin1;
 #else
     enum TextEncodingID {
-        InvalidEncoding2 = -2;
+        InvalidEncoding2 = -2,
         InvalidEncoding = -1,
         UTF8Encoding,
         UTF16Encoding,
