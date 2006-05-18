@@ -1,3 +1,33 @@
+2006-05-18  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4553450> Make disabling window throttle safer
+
+        * Misc/WebNSWindowExtras.m:
+        (+[NSWindow _webkit_enableWindowDisplayThrottle]):
+        Don't assume that +_webkit_disableWindowDisplayThrottle restored the NSWindow method implementations; 
+        now we'll only swizzle them once, and our replacement IMPs will call the old IMPs when the window
+        throttle is disabled.  This is a safer approach when other components/"haxies" override the same methods
+        that we are overriding, as it allows the overrides to "chain" properly.
+        Moved the dictionary initialization code down a bit.  The order doesn't matter here.
+        (disableWindowDisplayThrottleApplierFunction):
+        Noticed that this could have been written safer with respect to the timer having the last reference to
+        the window.  I never experienced a crash here, but this code is definitely safer.
+        (+[NSWindow _webkit_disableWindowDisplayThrottle]):
+        Don't restore NSWindow method implementations; just clear the flag, flush pending displays, and destroy
+        the dictionary.
+        (replacementPostWindowNeedsDisplay):
+        If throttling is disabled, just call the original IMP.
+        (clearWindowDisplayInfo):
+        Added an assert.
+        (replacementDealloc):
+        Don't call clearWindowDisplayInfo() when throttling is disabled.
+        (replacementFinalize):
+        ditto
+        (cancelPendingWindowDisplay):
+        Removed an unnecessary assertion.
+
 2006-05-17  Tim Omernick  <timo@apple.com>
 
         Reviewed by Kevin Decker and John Sullivan.

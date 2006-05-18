@@ -69,27 +69,30 @@ static void cancelPendingWindowDisplay(WindowDisplayInfo *displayInfo);
 {
     if (throttlingWindowDisplay)
         return;
+    
+    static BOOL installedWindowThrottle = NO;
+    if (!installedWindowThrottle) {        
+        // Override -[NSWindow _postWindowNeedsDisplay]
+        ASSERT(!oldNSWindowPostWindowNeedsDisplayIMP);
+        oldNSWindowPostWindowNeedsDisplayIMP = swizzleInstanceMethod(self, @selector(_postWindowNeedsDisplay), (IMP)replacementPostWindowNeedsDisplay);
+        ASSERT(oldNSWindowPostWindowNeedsDisplayIMP);
         
+        // Override -[NSWindow dealloc]
+        ASSERT(!oldNSWindowDeallocIMP);
+        oldNSWindowDeallocIMP = swizzleInstanceMethod(self, @selector(dealloc), (IMP)replacementDealloc);
+        ASSERT(oldNSWindowDeallocIMP);
+
+        // Override -[NSWindow finalize]
+        ASSERT(!oldNSWindowFinalizeIMP);
+        oldNSWindowFinalizeIMP = swizzleInstanceMethod(self, @selector(finalize), (IMP)replacementFinalize);
+        ASSERT(oldNSWindowFinalizeIMP);
+
+        installedWindowThrottle = YES;
+    }
+
     windowDisplayInfoDictionary = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
     ASSERT(windowDisplayInfoDictionary);
 
-    // Override -[NSWindow _postWindowNeedsDisplay]
-    ASSERT(!oldNSWindowPostWindowNeedsDisplayIMP);
-    oldNSWindowPostWindowNeedsDisplayIMP = swizzleInstanceMethod(self, @selector(_postWindowNeedsDisplay), (IMP)replacementPostWindowNeedsDisplay);
-    ASSERT(oldNSWindowPostWindowNeedsDisplayIMP);
-    
-    // Override -[NSWindow dealloc]
-    ASSERT(!oldNSWindowDeallocIMP);
-    oldNSWindowDeallocIMP = swizzleInstanceMethod(self, @selector(dealloc), (IMP)replacementDealloc);
-    ASSERT(oldNSWindowDeallocIMP);
-
-    // Override -[NSWindow finalize]
-    ASSERT(!oldNSWindowFinalizeIMP);
-    oldNSWindowFinalizeIMP = swizzleInstanceMethod(self, @selector(finalize), (IMP)replacementFinalize);
-    ASSERT(oldNSWindowFinalizeIMP);
-
-//    NSLog(@"Throttling window display to %.3f times per second", 1.0 / DISPLAY_REFRESH_INTERVAL);
-    
     throttlingWindowDisplay = YES;
 }
 
@@ -98,9 +101,8 @@ static void disableWindowDisplayThrottleApplierFunction(const void *key, const v
     WindowDisplayInfo *displayInfo = (WindowDisplayInfo *)value;
     
     // Display immediately
-    cancelPendingWindowDisplay(displayInfo);
     [displayInfo->window _postWindowNeedsDisplay];
-    
+    cancelPendingWindowDisplay(displayInfo);
     free(displayInfo);
 }
 
@@ -118,33 +120,16 @@ static void disableWindowDisplayThrottleApplierFunction(const void *key, const v
 {
     if (!throttlingWindowDisplay)
         return;
-    
-    //
-    // Restore NSWindow method implementations first.  When window display throttling is disabled, we display any windows
-    // with pending displays.  If the window re-displays during our call to -_postWindowNeedsDisplay, we want those displays to
-    // not be throttled.
-    //
-    
-    // Restore -[NSWindow _postWindowNeedsDisplay]
-    ASSERT(oldNSWindowPostWindowNeedsDisplayIMP);
-    swizzleInstanceMethod(self, @selector(_postWindowNeedsDisplay), oldNSWindowPostWindowNeedsDisplayIMP);
-    oldNSWindowPostWindowNeedsDisplayIMP = NULL;
-    
-    // Restore -[NSWindow dealloc]
-    ASSERT(oldNSWindowDeallocIMP);
-    swizzleInstanceMethod(self, @selector(dealloc), oldNSWindowDeallocIMP);
-    oldNSWindowDeallocIMP = NULL;
 
-    // Restore -[NSWindow finalize]
-    ASSERT(oldNSWindowFinalizeIMP);
-    swizzleInstanceMethod(self, @selector(finalize), oldNSWindowFinalizeIMP);
-    oldNSWindowFinalizeIMP = NULL;
-
+    // Clear throttlingWindowDisplay first so that the displays triggered by disableWindowDisplayThrottleApplierFunction()
+    // go through the normal NSWindow display path
+    throttlingWindowDisplay = NO;
+    
+    // Display any windows that have pending displays
     CFDictionaryApplyFunction(windowDisplayInfoDictionary, disableWindowDisplayThrottleApplierFunction, NULL);
+    
     CFRelease(windowDisplayInfoDictionary);
     windowDisplayInfoDictionary = NULL;
-    
-    throttlingWindowDisplay = NO;
 }
 
 - (void)centerOverMainWindow
@@ -187,8 +172,12 @@ static IMP swizzleInstanceMethod(Class class, SEL selector, IMP newImplementatio
 
 static void replacementPostWindowNeedsDisplay(id self, SEL cmd)
 {
-    ASSERT(throttlingWindowDisplay);
-
+    // Call the original NSWindow method implementation if window throttling is disabled.
+    if (!throttlingWindowDisplay) {
+        oldNSWindowPostWindowNeedsDisplayIMP(self, cmd);
+        return;
+    }
+        
     // Do not call into -[NSWindow _postWindowNeedsDisplay] if requestWindowDisplay() returns NO.  In that case, requestWindowDisplay()
     // will schedule a timer to display at the appropriate time.
     if (requestWindowDisplay(self))
@@ -197,6 +186,8 @@ static void replacementPostWindowNeedsDisplay(id self, SEL cmd)
 
 static void clearWindowDisplayInfo(id self)
 {
+    ASSERT(throttlingWindowDisplay);
+    
     // Remove WindowDisplayInfo for this window
     WindowDisplayInfo *displayInfo = (WindowDisplayInfo *)CFDictionaryGetValue(windowDisplayInfoDictionary, self);
     if (displayInfo) {
@@ -208,16 +199,18 @@ static void clearWindowDisplayInfo(id self)
 
 static void replacementDealloc(id self, SEL cmd)
 {
-    ASSERT(throttlingWindowDisplay);
     oldNSWindowDeallocIMP(self, cmd);
-    clearWindowDisplayInfo(self);
+    
+    if (throttlingWindowDisplay)
+        clearWindowDisplayInfo(self);
 }
 
 static void replacementFinalize(id self, SEL cmd)
 {
-    ASSERT(throttlingWindowDisplay);
     oldNSWindowFinalizeIMP(self, cmd);
-    clearWindowDisplayInfo(self);
+    
+    if (throttlingWindowDisplay)
+        clearWindowDisplayInfo(self);
 }
 
 static WindowDisplayInfo *getWindowDisplayInfo(NSWindow *window)
@@ -278,8 +271,6 @@ static BOOL requestWindowDisplay(NSWindow *window)
 
 static void cancelPendingWindowDisplay(WindowDisplayInfo *displayInfo)
 {
-    ASSERT(throttlingWindowDisplay);
-
     if (!displayInfo->displayTimer)
         return;
 
