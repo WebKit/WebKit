@@ -1,3 +1,15 @@
+2006-05-18  David Hyatt  <hyatt@apple.com>
+
+        Horrible glyph map regression fix.  The initial page of the map was
+        being rebuilt over and over again.
+
+        Reviewed by andersca
+
+        * platform/GlyphMap.cpp:
+        (WebCore::GlyphMap::locatePage):
+        * platform/GlyphWidthMap.cpp:
+        (WebCore::GlyphWidthMap::locatePage):
+
 2006-05-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

@@ -55,7 +55,8 @@ inline GlyphWidthMap::GlyphWidthPage* GlyphWidthMap::locatePage(unsigned pageNum
     if (pageNumber == 0) {
         if (m_filledPrimaryPage)
             return &m_primaryPage;
-        page = &m_primaryPage; 
+        page = &m_primaryPage;
+        m_filledPrimaryPage = true;
     } else {
         if (m_pages) {
             GlyphWidthPage* result = m_pages->get(pageNumber);
@@ -67,7 +68,7 @@ inline GlyphWidthMap::GlyphWidthPage* GlyphWidthMap::locatePage(unsigned pageNum
             m_pages = new HashMap<int, GlyphWidthPage*>;
         m_pages->set(pageNumber, page);
     }
-    
+
     // Fill in the whole page with the unknown glyph width value.
     for (unsigned i = 0; i < cGlyphWidthPageSize; i++)
         page->setWidthForIndex(i, cGlyphWidthUnknown);

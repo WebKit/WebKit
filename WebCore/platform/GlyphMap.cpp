@@ -114,7 +114,9 @@ inline GlyphMap::GlyphPage* GlyphMap::locatePage(unsigned pageNumber, const Font
         return 0;
     }
     
-    if (pageNumber != 0) {
+    if (pageNumber == 0)
+        m_filledPrimaryPage = true;
+    else {
         if (!m_pages)
             m_pages = new HashMap<int, GlyphPage*>;
         m_pages->set(pageNumber, page);
