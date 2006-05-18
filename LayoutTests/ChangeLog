@@ -1,3 +1,14 @@
+2006-05-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6915
+        fast/js/date-constructor.html testcase is timezone-dependent
+
+        * fast/js/date-constructor-expected.txt:
+        * fast/js/resources/date-constructor.js:
+        Disable the offending tests.
+
 2006-05-17  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by andersca.

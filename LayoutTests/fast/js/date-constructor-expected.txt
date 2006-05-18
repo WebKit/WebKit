@@ -23,8 +23,6 @@ PASS new Date(new Date(1111, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -2710
 PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
 PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
 PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
-PASS new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111).getTime() - timeZoneOffset is -28085817599889
-PASS new Date(new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111)).getTime() - timeZoneOffset is -28085817599889
 PASS successfullyParsed is true
 
 TEST COMPLETE
