@@ -1341,6 +1341,8 @@
 		BCB16C2F0979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
 		BCC088860A1BD78D006189A6 /* FontDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC088850A1BD78D006189A6 /* FontDataMac.mm */; };
 		BCC0891A0A1C4652006189A6 /* FontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC089190A1C4652006189A6 /* FontData.cpp */; };
+		BCC0892A0A1C4991006189A6 /* GlyphWidthMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC089290A1C4991006189A6 /* GlyphWidthMap.h */; };
+		BCC089560A1C4CC9006189A6 /* GlyphWidthMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC089550A1C4CC9006189A6 /* GlyphWidthMap.cpp */; };
 		BCC47E2609A3D6F100ADB771 /* FontFamily.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */; };
 		BCC47E2709A3D6F100ADB771 /* FontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E2509A3D6F100ADB771 /* FontFamily.h */; };
 		BCC47E6B09A3FE4700ADB771 /* FontDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E6A09A3FE4700ADB771 /* FontDescription.h */; };
@@ -2902,6 +2904,8 @@
 		BCB16C160979C3BD00467741 /* Request.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Request.h; sourceTree = "<group>"; };
 		BCC088850A1BD78D006189A6 /* FontDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontDataMac.mm; sourceTree = "<group>"; };
 		BCC089190A1C4652006189A6 /* FontData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontData.cpp; sourceTree = "<group>"; };
+		BCC089290A1C4991006189A6 /* GlyphWidthMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GlyphWidthMap.h; sourceTree = "<group>"; };
+		BCC089550A1C4CC9006189A6 /* GlyphWidthMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphWidthMap.cpp; sourceTree = "<group>"; };
 		BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontFamily.cpp; sourceTree = "<group>"; };
 		BCC47E2509A3D6F100ADB771 /* FontFamily.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontFamily.h; sourceTree = "<group>"; };
 		BCC47E6A09A3FE4700ADB771 /* FontDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontDescription.h; sourceTree = "<group>"; };
@@ -4598,6 +4602,8 @@
 				BCC71A120A0FF94D0014EE6E /* GlyphBuffer.h */,
 				BC6DB3680A1A7CB700E5CD14 /* GlyphMap.h */,
 				BC6DB4730A1A90FB00E5CD14 /* GlyphMap.cpp */,
+				BCC089550A1C4CC9006189A6 /* GlyphWidthMap.cpp */,
+				BCC089290A1C4991006189A6 /* GlyphWidthMap.h */,
 				A823A75B09B6E53900B60641 /* GraphicsContext.cpp */,
 				935367E409AF77DD00D35CD6 /* GraphicsContext.h */,
 				938E685309F0BE04008A48EC /* GraphicsTypes.cpp */,
@@ -5787,6 +5793,7 @@
 				A80E7E9D0A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h in Headers */,
 				A80E7E9F0A1A83E3007FB8C5 /* JSHTMLButtonElement.h in Headers */,
 				A826E8AE0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h in Headers */,
+				BCC0892A0A1C4991006189A6 /* GlyphWidthMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6592,6 +6599,7 @@
 				1A9EF4570A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
 				BCC088860A1BD78D006189A6 /* FontDataMac.mm in Sources */,
 				BCC0891A0A1C4652006189A6 /* FontData.cpp in Sources */,
+				BCC089560A1C4CC9006189A6 /* GlyphWidthMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

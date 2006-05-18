@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Alexey Proskuryakov
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,47 +26,52 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "Font.h"
+#ifndef GLYPH_WIDTH_MAP_H
+#define GLYPH_WIDTH_MAP_H
 
-namespace WebCore
+#include <unicode/umachine.h>
+#include "GlyphBuffer.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/HashMap.h>
+
+namespace WebCore {
+
+// Covers Latin-1.
+const unsigned cGlyphWidthPageSize = 256;
+const float cGlyphWidthUnknown = -1;
+
+class FontData;
+
+class GlyphWidthMap : Noncopyable
 {
+public:
+    GlyphWidthMap() : m_filledPrimaryPage(false), m_pages(0) {}
+    ~GlyphWidthMap() { deleteAllValues(*m_pages); delete m_pages; }
 
-FontData::FontData(const FontPlatformData& f)
-:m_font(f), m_treatAsFixedPitch(false),
- m_smallCapsFontData(0)
- {    
-    m_font = f;
-    platformInit();
+    float widthForGlyph(Glyph g);
+    void setWidthForGlyph(Glyph g, float f);
+
+private:
+    struct GlyphWidthPage {
+        float m_widths[cGlyphWidthPageSize];
+
+        float widthForGlyph(Glyph g) const { return m_widths[g % cGlyphWidthPageSize]; }
+        void setWidthForGlyph(Glyph g, float f)
+        {
+            setWidthForIndex(g % cGlyphWidthPageSize, f);
+        }
+        
+        void setWidthForIndex(unsigned index, float f) {
+            m_widths[index] = f;
+        }
+    };
     
-    // Nasty hack to determine if we should round or ceil space widths.
-    // If the font is monospace or fake monospace we ceil to ensure that 
-    // every character and the space are the same width.  Otherwise we round.
-    m_spaceGlyph = m_characterToGlyphMap.glyphDataForCharacter(' ', this).glyph;
-    float width = widthForGlyph(m_spaceGlyph);
-    m_spaceWidth = width;
-    determinePitch();
-    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
-}
-
-FontData::~FontData()
-{
-    platformDestroy();
-
-    // We only get deleted when the cache gets cleared.  Since the smallCapsRenderer is also in that cache,
-    // it will be deleted then, so we don't need to do anything here.
-}
-
-float FontData::widthForGlyph(Glyph glyph) const
-{
-    float width = m_glyphToWidthMap.widthForGlyph(glyph);
-    if (width != cGlyphWidthUnknown)
-        return width;
+    GlyphWidthPage* locatePage(unsigned page);
     
-    width = platformWidthForGlyph(glyph);
-    m_glyphToWidthMap.setWidthForGlyph(glyph, width);
-    
-    return width;
-}
+    bool m_filledPrimaryPage;
+    GlyphWidthPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
+    HashMap<int, GlyphWidthPage*>* m_pages;
+};
 
 }
+#endif

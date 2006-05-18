@@ -29,6 +29,7 @@
 
 #include "FontPlatformData.h"
 #include "GlyphMap.h"
+#include "GlyphWidthMap.h"
 #include <wtf/Noncopyable.h>
 
 // FIXME: Temporary.  Only needed to support API that's going to move.
@@ -91,7 +92,7 @@ public:
     
     FontPlatformData m_font;
     mutable GlyphMap m_characterToGlyphMap;
-    mutable WidthMap* m_glyphToWidthMap;
+    mutable GlyphWidthMap m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
     ATSGlyphRef m_spaceGlyph;

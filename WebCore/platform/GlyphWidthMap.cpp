@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2006 Alexey Proskuryakov
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,47 +26,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "Font.h"
+#include "config.h"
+#include "GlyphWidthMap.h"
 
 namespace WebCore
 {
 
-FontData::FontData(const FontPlatformData& f)
-:m_font(f), m_treatAsFixedPitch(false),
- m_smallCapsFontData(0)
- {    
-    m_font = f;
-    platformInit();
-    
-    // Nasty hack to determine if we should round or ceil space widths.
-    // If the font is monospace or fake monospace we ceil to ensure that 
-    // every character and the space are the same width.  Otherwise we round.
-    m_spaceGlyph = m_characterToGlyphMap.glyphDataForCharacter(' ', this).glyph;
-    float width = widthForGlyph(m_spaceGlyph);
-    m_spaceWidth = width;
-    determinePitch();
-    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
+float GlyphWidthMap::widthForGlyph(Glyph g)
+{
+    unsigned pageNumber = (g / cGlyphWidthPageSize);
+    GlyphWidthPage* page = locatePage(pageNumber);
+    if (page)
+        return page->widthForGlyph(g);
+    return cGlyphWidthUnknown;
 }
 
-FontData::~FontData()
+void GlyphWidthMap::setWidthForGlyph(Glyph glyph, float width)
 {
-    platformDestroy();
-
-    // We only get deleted when the cache gets cleared.  Since the smallCapsRenderer is also in that cache,
-    // it will be deleted then, so we don't need to do anything here.
+    unsigned pageNumber = (glyph / cGlyphWidthPageSize);
+    GlyphWidthPage* page = locatePage(pageNumber);
+    if (page)
+        page->setWidthForGlyph(glyph, width);
 }
 
-float FontData::widthForGlyph(Glyph glyph) const
+inline GlyphWidthMap::GlyphWidthPage* GlyphWidthMap::locatePage(unsigned pageNumber)
 {
-    float width = m_glyphToWidthMap.widthForGlyph(glyph);
-    if (width != cGlyphWidthUnknown)
-        return width;
+    GlyphWidthPage* page;
+    if (pageNumber == 0) {
+        if (m_filledPrimaryPage)
+            return &m_primaryPage;
+        page = &m_primaryPage; 
+    } else {
+        if (m_pages) {
+            GlyphWidthPage* result = m_pages->get(pageNumber);
+            if (result)
+                return result;
+        }
+        page = new GlyphWidthPage;
+        if (!m_pages)
+            m_pages = new HashMap<int, GlyphWidthPage*>;
+        m_pages->set(pageNumber, page);
+    }
     
-    width = platformWidthForGlyph(glyph);
-    m_glyphToWidthMap.setWidthForGlyph(glyph, width);
-    
-    return width;
+    // Fill in the whole page with the unknown glyph width value.
+    for (unsigned i = 0; i < cGlyphWidthPageSize; i++)
+        page->setWidthForIndex(i, cGlyphWidthUnknown);
+
+    return page;
 }
 
 }

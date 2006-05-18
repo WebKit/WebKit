@@ -1,5 +1,26 @@
 2006-05-17  David Hyatt  <hyatt@apple.com>
 
+        Convert the width map for glyphs into the same new HashMap-style as the
+        glyph map for characters.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FontData.cpp:
+        (WebCore::FontData::~FontData):
+        (WebCore::FontData::widthForGlyph):
+        * platform/FontData.h:
+        * platform/GlyphWidthMap.cpp: Added.
+        (WebCore::GlyphWidthMap::widthForGlyph):
+        (WebCore::GlyphWidthMap::setWidthForGlyph):
+        (WebCore::GlyphWidthMap::locatePage):
+        * platform/GlyphWidthMap.h: Added.
+        (WebCore::GlyphWidthMap::GlyphWidthMap):
+        (WebCore::GlyphWidthMap::~GlyphWidthMap):
+        (WebCore::GlyphWidthMap::GlyphWidthPage::widthForGlyph):
+        (WebCore::GlyphWidthMap::GlyphWidthPage::setWidthForGlyph):
+        (WebCore::GlyphWidthMap::GlyphWidthPage::setWidthForIndex):
+
+2006-05-17  David Hyatt  <hyatt@apple.com>
+
         Rename FontData.mm to FontData.cpp, since it has no obj-c in it.
 
         * WebCore.xcodeproj/project.pbxproj:
