@@ -1,3 +1,17 @@
+2006-05-17  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+        
+        Autogenerate more HTML js bindings.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8953
+
+        * fast/dom/HTMLHtmlElement: Added.
+        * fast/dom/HTMLHtmlElement/set-version.html: Added.
+        * fast/dom/HTMLHtmlElement/set-version-expected.txt: Added.
+        * fast/dom/HTMLInputElement: Added.
+        * fast/dom/HTMLInputElement/size-as-number.html: Added.
+        * fast/dom/HTMLInputElement/size-as-number-expected.txt: Added.
+
 2006-05-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

@@ -35,18 +35,18 @@ KJS_DEFINE_PROTOTYPE(DOMNodeProto)
 class DOMNode : public DOMObject {
 public:
     virtual ~DOMNode();
-    virtual bool toBoolean(ExecState *) const;
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual bool toBoolean(ExecState*) const;
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    JSValue *getValueProperty(ExecState*, int token) const;
     virtual void mark();
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int attr);
+    virtual void put(ExecState*, const Identifier &propertyName, JSValue*, int attr = None);
+    void putValueProperty(ExecState*, int token, JSValue*, int attr);
     WebCore::Node *impl() const { return m_impl.get(); }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     
-    virtual JSValue *toPrimitive(ExecState *exec, JSType preferred = UndefinedType) const;
-    virtual UString toString(ExecState *exec) const;
+    virtual JSValue *toPrimitive(ExecState*, JSType preferred = UndefinedType) const;
+    virtual UString toString(ExecState*) const;
     
     enum { NodeName, NodeValue, NodeType, ParentNode, ParentElement,
         ChildNodes, FirstChild, LastChild, PreviousSibling, NextSibling, Item,
@@ -63,7 +63,7 @@ private:
     // Don't use this class directly -- use JSNode instead
     friend class WebCore::JSNode;
     DOMNode();
-    DOMNode(ExecState *exec, WebCore::Node *n);
+    DOMNode(ExecState*, WebCore::Node *n);
     DOMNode(WebCore::Node *n);
 };
 

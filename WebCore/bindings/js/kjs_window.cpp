@@ -34,6 +34,7 @@
 #include "JSDOMParser.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
+#include "JSHTMLOptionElementConstructor.h"
 #include "JSMutationEvent.h"
 #include "JSNode.h"
 #include "JSNodeFilter.h"
@@ -771,7 +772,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       // time
       return new ImageConstructorImp(exec, m_frame->document());
     case Option:
-      return new OptionConstructorImp(exec, m_frame->document());
+      return new JSHTMLOptionElementConstructor(exec, m_frame->document());
     case XMLHttpRequest:
       return new JSXMLHttpRequestConstructorImp(exec, m_frame->document());
     case XMLSerializer:

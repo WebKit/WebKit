@@ -1,3 +1,53 @@
+2006-05-17  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Autogenerate button, optgroup, option, input and textarea js bindings
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8953
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createButtonWrapper):
+        (WebCore::createInputWrapper):
+        (WebCore::createOptGroupWrapper):
+        (WebCore::createOptionWrapper):
+        (WebCore::createTextAreaWrapper):
+        (WebCore::createJSWrapper):
+        * bindings/js/JSHTMLInputElementBase.cpp: Added.
+        (WebCore::JSHTMLInputElementBaseProtoFunc::callAsFunction):
+        (WebCore::):
+        (WebCore::JSHTMLInputElementBase::JSHTMLInputElementBase):
+        (WebCore::JSHTMLInputElementBase::getOwnPropertySlot):
+        * bindings/js/JSHTMLInputElementBase.h: Added.
+        (WebCore::JSHTMLInputElementBase::classInfo):
+        (WebCore::JSHTMLInputElementBase::):
+        (WebCore::JSHTMLInputElementBase::impl):
+        * bindings/js/JSHTMLOptionElementConstructor.cpp: Added.
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor):
+        (WebCore::JSHTMLOptionElementConstructor::implementsConstruct):
+        (WebCore::JSHTMLOptionElementConstructor::construct):
+        * bindings/js/JSHTMLOptionElementConstructor.h: Added.
+        * bindings/js/kjs_domnode.h:
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::JSHTMLElement::getOwnPropertySlot):
+        (KJS::HTMLElementFunction::callAsFunction):
+        (KJS::JSHTMLElement::put):
+        (KJS::JSHTMLElement::htmlSetter):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * html/HTMLButtonElement.idl: Added.
+        * html/HTMLInputElement.idl: Added.
+        * html/HTMLOptGroupElement.idl: Added.
+        * html/HTMLOptionElement.idl: Added.
+        * html/HTMLTextAreaElement.idl: Added.
+
 2006-05-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

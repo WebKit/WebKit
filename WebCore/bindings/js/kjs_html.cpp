@@ -28,12 +28,10 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLAppletElement.h"
 #include "HTMLAreaElement.h"
-#include "HTMLBaseElement.h"
 #include "HTMLBaseFontElement.h"
 #include "HTMLBlockquoteElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLBRElement.h"
-#include "HTMLButtonElement.h"
 #include "HTMLDirectoryElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLDListElement.h"
@@ -43,7 +41,6 @@
 #include "HTMLFontElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameSetElement.h"
-#include "HTMLHeadElement.h"
 #include "HTMLHeadingElement.h"
 #include "HTMLHRElement.h"
 #include "HTMLHtmlElement.h"
@@ -53,15 +50,12 @@
 #include "HTMLLabelElement.h"
 #include "HTMLLegendElement.h"
 #include "HTMLLIElement.h"
-#include "HTMLLinkElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLMenuElement.h"
-#include "HTMLMetaElement.h"
 #include "HTMLModElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLOListElement.h"
-#include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLParagraphElement.h"
@@ -69,15 +63,12 @@
 #include "HTMLPreElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLSelectElement.h"
-#include "HTMLStyleElement.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableColElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
-#include "HTMLTextAreaElement.h"
-#include "HTMLTitleElement.h"
 #include "HTMLQuoteElement.h"
 #include "HTMLUListElement.h"
 #include "NameNodeList.h"
@@ -466,7 +457,6 @@ const ClassInfo JSHTMLElement::baseFont_info = { "HTMLBaseFontElement", &JSHTMLE
 const ClassInfo JSHTMLElement::blockQuote_info = { "HTMLBlockQuoteElement", &JSHTMLElement::info, &HTMLBlockQuoteElementTable, 0 };
 const ClassInfo JSHTMLElement::body_info = { "HTMLBodyElement", &JSHTMLElement::info, &HTMLBodyElementTable, 0 };
 const ClassInfo JSHTMLElement::br_info = { "HTMLBRElement", &JSHTMLElement::info, &HTMLBRElementTable, 0 };
-const ClassInfo JSHTMLElement::button_info = { "HTMLButtonElement", &JSHTMLElement::info, &HTMLButtonElementTable, 0 };
 const ClassInfo JSHTMLElement::caption_info = { "HTMLTableCaptionElement", &JSHTMLElement::info, &HTMLTableCaptionElementTable, 0 };
 const ClassInfo JSHTMLElement::col_info = { "HTMLTableColElement", &JSHTMLElement::info, &HTMLTableColElementTable, 0 };
 const ClassInfo JSHTMLElement::dir_info = { "HTMLDirectoryElement", &JSHTMLElement::info, &HTMLDirectoryElementTable, 0 };
@@ -484,7 +474,6 @@ const ClassInfo JSHTMLElement::html_info = { "HTMLHtmlElement", &JSHTMLElement::
 const ClassInfo JSHTMLElement::iFrame_info = { "HTMLIFrameElement", &JSHTMLElement::info, &HTMLIFrameElementTable, 0 };
 const ClassInfo JSHTMLElement::img_info = { "HTMLImageElement", &JSHTMLElement::info, &HTMLImageElementTable, 0 };
 const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
-const ClassInfo JSHTMLElement::input_info = { "HTMLInputElement", &JSHTMLElement::info, &HTMLInputElementTable, 0 };
 const ClassInfo JSHTMLElement::isIndex_info = { "HTMLIsIndexElement", &JSHTMLElement::info, &HTMLIsIndexElementTable, 0 };
 const ClassInfo JSHTMLElement::label_info = { "HTMLLabelElement", &JSHTMLElement::info, &HTMLLabelElementTable, 0 };
 const ClassInfo JSHTMLElement::legend_info = { "HTMLLegendElement", &JSHTMLElement::info, &HTMLLegendElementTable, 0 };
@@ -495,8 +484,6 @@ const ClassInfo JSHTMLElement::menu_info = { "HTMLMenuElement", &JSHTMLElement::
 const ClassInfo JSHTMLElement::mod_info = { "HTMLModElement", &JSHTMLElement::info, &HTMLModElementTable, 0 };
 const ClassInfo JSHTMLElement::object_info = { "HTMLObjectElement", &JSHTMLElement::info, &HTMLObjectElementTable, 0 };
 const ClassInfo JSHTMLElement::ol_info = { "HTMLOListElement", &JSHTMLElement::info, &HTMLOListElementTable, 0 };
-const ClassInfo JSHTMLElement::optGroup_info = { "HTMLOptGroupElement", &JSHTMLElement::info, &HTMLOptGroupElementTable, 0 };
-const ClassInfo JSHTMLElement::option_info = { "HTMLOptionElement", &JSHTMLElement::info, &HTMLOptionElementTable, 0 };
 const ClassInfo JSHTMLElement::p_info = { "HTMLParagraphElement", &JSHTMLElement::info, &HTMLParagraphElementTable, 0 };
 const ClassInfo JSHTMLElement::param_info = { "HTMLParamElement", &JSHTMLElement::info, &HTMLParamElementTable, 0 };
 const ClassInfo JSHTMLElement::pre_info = { "HTMLPreElement", &JSHTMLElement::info, &HTMLPreElementTable, 0 };
@@ -506,7 +493,6 @@ const ClassInfo JSHTMLElement::select_info = { "HTMLSelectElement", &JSHTMLEleme
 const ClassInfo JSHTMLElement::table_info = { "HTMLTableElement", &JSHTMLElement::info, &HTMLTableElementTable, 0 };
 const ClassInfo JSHTMLElement::tablecell_info = { "HTMLTableCellElement", &JSHTMLElement::info, &HTMLTableCellElementTable, 0 };
 const ClassInfo JSHTMLElement::tablesection_info = { "HTMLTableSectionElement", &JSHTMLElement::info, &HTMLTableSectionElementTable, 0 };
-const ClassInfo JSHTMLElement::textArea_info = { "HTMLTextAreaElement", &JSHTMLElement::info, &HTMLTextAreaElementTable, 0 };
 const ClassInfo JSHTMLElement::tr_info = { "HTMLTableRowElement", &JSHTMLElement::info, &HTMLTableRowElementTable, 0 };
 const ClassInfo JSHTMLElement::ul_info = { "HTMLUListElement", &JSHTMLElement::info, &HTMLUListElementTable, 0 };
 
@@ -520,7 +506,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(blockquoteTag.localName().impl(), &blockQuote_info);
         classInfoMap.set(bodyTag.localName().impl(), &body_info);
         classInfoMap.set(brTag.localName().impl(), &br_info);
-        classInfoMap.set(buttonTag.localName().impl(), &button_info);
         classInfoMap.set(captionTag.localName().impl(), &caption_info);
         classInfoMap.set(colTag.localName().impl(), &col_info);
         classInfoMap.set(colgroupTag.localName().impl(), &col_info);
@@ -544,7 +529,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(htmlTag.localName().impl(), &html_info);
         classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
         classInfoMap.set(imgTag.localName().impl(), &img_info);
-        classInfoMap.set(inputTag.localName().impl(), &input_info);
         classInfoMap.set(insTag.localName().impl(), &mod_info);
         classInfoMap.set(isindexTag.localName().impl(), &isIndex_info);
         classInfoMap.set(labelTag.localName().impl(), &label_info);
@@ -556,8 +540,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(menuTag.localName().impl(), &menu_info);
         classInfoMap.set(objectTag.localName().impl(), &object_info);
         classInfoMap.set(olTag.localName().impl(), &ol_info);
-        classInfoMap.set(optgroupTag.localName().impl(), &optGroup_info);
-        classInfoMap.set(optionTag.localName().impl(), &option_info);
         classInfoMap.set(pTag.localName().impl(), &p_info);
         classInfoMap.set(paramTag.localName().impl(), &param_info);
         classInfoMap.set(preTag.localName().impl(), &pre_info);
@@ -567,7 +549,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(tableTag.localName().impl(), &table_info);
         classInfoMap.set(tbodyTag.localName().impl(), &tablesection_info);
         classInfoMap.set(tdTag.localName().impl(), &tablecell_info);
-        classInfoMap.set(textareaTag.localName().impl(), &textArea_info);
         classInfoMap.set(tfootTag.localName().impl(), &tablesection_info);
         classInfoMap.set(thTag.localName().impl(), &tablecell_info);
         classInfoMap.set(theadTag.localName().impl(), &tablesection_info);
@@ -588,11 +569,6 @@ const JSHTMLElement::Accessors JSHTMLElement::isIndex_accessors = { &JSHTMLEleme
 const JSHTMLElement::Accessors JSHTMLElement::body_accessors = { &JSHTMLElement::bodyGetter, &JSHTMLElement::bodySetter };
 const JSHTMLElement::Accessors JSHTMLElement::form_accessors = { &JSHTMLElement::formGetter, &JSHTMLElement::formSetter };
 const JSHTMLElement::Accessors JSHTMLElement::select_accessors = { &JSHTMLElement::selectGetter, &JSHTMLElement::selectSetter };
-const JSHTMLElement::Accessors JSHTMLElement::optGroup_accessors = { &JSHTMLElement::optGroupGetter, &JSHTMLElement::optGroupSetter };
-const JSHTMLElement::Accessors JSHTMLElement::option_accessors = { &JSHTMLElement::optionGetter, &JSHTMLElement::optionSetter };
-const JSHTMLElement::Accessors JSHTMLElement::input_accessors = { &JSHTMLElement::inputGetter, &JSHTMLElement::inputSetter };
-const JSHTMLElement::Accessors JSHTMLElement::textArea_accessors = { &JSHTMLElement::textAreaGetter, &JSHTMLElement::textAreaSetter };
-const JSHTMLElement::Accessors JSHTMLElement::button_accessors = { &JSHTMLElement::buttonGetter, &JSHTMLElement::buttonSetter };
 const JSHTMLElement::Accessors JSHTMLElement::label_accessors = { &JSHTMLElement::labelGetter, &JSHTMLElement::labelSetter };
 const JSHTMLElement::Accessors JSHTMLElement::fieldSet_accessors = { &JSHTMLElement::fieldSetGetter, &JSHTMLElement::fieldSetSetter };
 const JSHTMLElement::Accessors JSHTMLElement::legend_accessors = { &JSHTMLElement::legendGetter, &JSHTMLElement::legendSetter };
@@ -644,7 +620,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(blockquoteTag.localName().impl(), &blockQuote_accessors); 
         accessorMap.add(bodyTag.localName().impl(), &body_accessors);
         accessorMap.add(brTag.localName().impl(), &br_accessors);
-        accessorMap.add(buttonTag.localName().impl(), &button_accessors);
         accessorMap.add(captionTag.localName().impl(), &caption_accessors);
         accessorMap.add(colTag.localName().impl(), &col_accessors);
         accessorMap.add(colgroupTag.localName().impl(), &col_accessors);
@@ -668,7 +643,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(htmlTag.localName().impl(), &html_accessors);
         accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
         accessorMap.add(imgTag.localName().impl(), &img_accessors);
-        accessorMap.add(inputTag.localName().impl(), &input_accessors);
         accessorMap.add(insTag.localName().impl(), &mod_accessors);
         accessorMap.add(isindexTag.localName().impl(), &isIndex_accessors);
         accessorMap.add(labelTag.localName().impl(), &label_accessors);
@@ -680,8 +654,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(menuTag.localName().impl(), &menu_accessors);
         accessorMap.add(objectTag.localName().impl(), &object_accessors);
         accessorMap.add(olTag.localName().impl(), &ol_accessors);
-        accessorMap.add(optionTag.localName().impl(), &option_accessors);
-        accessorMap.add(optgroupTag.localName().impl(), &optGroup_accessors);
         accessorMap.add(pTag.localName().impl(), &p_accessors);
         accessorMap.add(paramTag.localName().impl(), &param_accessors);
         accessorMap.add(preTag.localName().impl(), &pre_accessors);
@@ -691,7 +663,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(tableTag.localName().impl(), &table_accessors);
         accessorMap.add(tbodyTag.localName().impl(), &tablesection_accessors);
         accessorMap.add(tdTag.localName().impl(), &tablecell_accessors);
-        accessorMap.add(textareaTag.localName().impl(), &textArea_accessors);
         accessorMap.add(thTag.localName().impl(), &tablecell_accessors);
         accessorMap.add(theadTag.localName().impl(), &tablesection_accessors);
         accessorMap.add(tfootTag.localName().impl(), &tablesection_accessors);
@@ -727,43 +698,9 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 @begin HTMLHtmlElementTable 1
   version       KJS::JSHTMLElement::HtmlVersion   DontDelete
 @end
-@begin HTMLHeadElementTable 1
-  profile       KJS::JSHTMLElement::HeadProfile   DontDelete
-@end
-@begin HTMLLinkElementTable 11
-  disabled      KJS::JSHTMLElement::LinkDisabled  DontDelete
-  charset       KJS::JSHTMLElement::LinkCharset   DontDelete
-  href          KJS::JSHTMLElement::LinkHref      DontDelete
-  hreflang      KJS::JSHTMLElement::LinkHrefLang  DontDelete
-  media         KJS::JSHTMLElement::LinkMedia     DontDelete
-  rel           KJS::JSHTMLElement::LinkRel       DontDelete
-  rev           KJS::JSHTMLElement::LinkRev       DontDelete
-  target        KJS::JSHTMLElement::LinkTarget    DontDelete
-  type          KJS::JSHTMLElement::LinkType      DontDelete
-  sheet         KJS::JSHTMLElement::LinkSheet     DontDelete|ReadOnly
-@end
-@begin HTMLTitleElementTable 1
-  text          KJS::JSHTMLElement::TitleText     DontDelete
-@end
-@begin HTMLMetaElementTable 4
-  content       KJS::JSHTMLElement::MetaContent   DontDelete
-  httpEquiv     KJS::JSHTMLElement::MetaHttpEquiv DontDelete
-  name          KJS::JSHTMLElement::MetaName      DontDelete
-  scheme        KJS::JSHTMLElement::MetaScheme    DontDelete
-@end
-@begin HTMLBaseElementTable 2
-  href          KJS::JSHTMLElement::BaseHref      DontDelete
-  target        KJS::JSHTMLElement::BaseTarget    DontDelete
-@end
 @begin HTMLIsIndexElementTable 2
   form          KJS::JSHTMLElement::IsIndexForm   DontDelete|ReadOnly
   prompt        KJS::JSHTMLElement::IsIndexPrompt DontDelete
-@end
-@begin HTMLStyleElementTable 4
-  disabled      KJS::JSHTMLElement::StyleDisabled DontDelete
-  media         KJS::JSHTMLElement::StyleMedia    DontDelete
-  type          KJS::JSHTMLElement::StyleType     DontDelete
-  sheet         KJS::JSHTMLElement::StyleSheet    DontDelete|ReadOnly
 @end
 @begin HTMLBodyElementTable 10
   aLink         KJS::JSHTMLElement::BodyALink     DontDelete
@@ -807,78 +744,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   remove        KJS::JSHTMLElement::SelectRemove  DontDelete|Function 1
   blur          KJS::JSHTMLElement::SelectBlur    DontDelete|Function 0
   focus         KJS::JSHTMLElement::SelectFocus   DontDelete|Function 0
-@end
-@begin HTMLOptGroupElementTable 2
-  disabled      KJS::JSHTMLElement::OptGroupDisabled      DontDelete
-  label         KJS::JSHTMLElement::OptGroupLabel         DontDelete
-@end
-@begin HTMLOptionElementTable 8
-  form          KJS::JSHTMLElement::OptionForm            DontDelete|ReadOnly
-  defaultSelected KJS::JSHTMLElement::OptionDefaultSelected       DontDelete
-  text          KJS::JSHTMLElement::OptionText            DontDelete
-  index         KJS::JSHTMLElement::OptionIndex           DontDelete|ReadOnly
-  disabled      KJS::JSHTMLElement::OptionDisabled        DontDelete
-  label         KJS::JSHTMLElement::OptionLabel           DontDelete
-  selected      KJS::JSHTMLElement::OptionSelected        DontDelete
-  value         KJS::JSHTMLElement::OptionValue           DontDelete
-@end
-@begin HTMLInputElementTable 24
-  defaultValue  KJS::JSHTMLElement::InputDefaultValue     DontDelete
-  defaultChecked KJS::JSHTMLElement::InputDefaultChecked  DontDelete
-  form          KJS::JSHTMLElement::InputForm             DontDelete|ReadOnly
-  accept        KJS::JSHTMLElement::InputAccept           DontDelete
-  accessKey     KJS::JSHTMLElement::InputAccessKey        DontDelete
-  align         KJS::JSHTMLElement::InputAlign            DontDelete
-  alt           KJS::JSHTMLElement::InputAlt              DontDelete
-  checked       KJS::JSHTMLElement::InputChecked          DontDelete
-  disabled      KJS::JSHTMLElement::InputDisabled         DontDelete
-  indeterminate KJS::JSHTMLElement::InputIndeterminate    DontDelete
-  maxLength     KJS::JSHTMLElement::InputMaxLength        DontDelete
-  name          KJS::JSHTMLElement::InputName             DontDelete
-  readOnly      KJS::JSHTMLElement::InputReadOnly         DontDelete
-  selectionStart        KJS::JSHTMLElement::InputSelectionStart   DontDelete
-  selectionEnd  KJS::JSHTMLElement::InputSelectionEnd     DontDelete
-  size          KJS::JSHTMLElement::InputSize             DontDelete
-  src           KJS::JSHTMLElement::InputSrc              DontDelete
-  tabIndex      KJS::JSHTMLElement::InputTabIndex         DontDelete
-  type          KJS::JSHTMLElement::InputType             DontDelete
-  useMap        KJS::JSHTMLElement::InputUseMap           DontDelete
-  value         KJS::JSHTMLElement::InputValue            DontDelete
-  blur          KJS::JSHTMLElement::InputBlur             DontDelete|Function 0
-  focus         KJS::JSHTMLElement::InputFocus            DontDelete|Function 0
-  select        KJS::JSHTMLElement::InputSelect           DontDelete|Function 0
-  click         KJS::JSHTMLElement::InputClick            DontDelete|Function 0
-  setSelectionRange     KJS::JSHTMLElement::InputSetSelectionRange        DontDelete|Function 2
-@end
-@begin HTMLTextAreaElementTable 17
-  defaultValue  KJS::JSHTMLElement::TextAreaDefaultValue  DontDelete
-  form          KJS::JSHTMLElement::TextAreaForm          DontDelete|ReadOnly
-  accessKey     KJS::JSHTMLElement::TextAreaAccessKey     DontDelete
-  cols          KJS::JSHTMLElement::TextAreaCols          DontDelete
-  disabled      KJS::JSHTMLElement::TextAreaDisabled      DontDelete
-  name          KJS::JSHTMLElement::TextAreaName          DontDelete
-  readOnly      KJS::JSHTMLElement::TextAreaReadOnly      DontDelete
-  rows          KJS::JSHTMLElement::TextAreaRows          DontDelete
-  selectionStart        KJS::JSHTMLElement::TextAreaSelectionStart        DontDelete
-  selectionEnd  KJS::JSHTMLElement::TextAreaSelectionEnd  DontDelete
-  tabIndex      KJS::JSHTMLElement::TextAreaTabIndex      DontDelete
-  type          KJS::JSHTMLElement::TextAreaType          DontDelete|ReadOnly
-  value         KJS::JSHTMLElement::TextAreaValue         DontDelete
-  blur          KJS::JSHTMLElement::TextAreaBlur          DontDelete|Function 0
-  focus         KJS::JSHTMLElement::TextAreaFocus         DontDelete|Function 0
-  select        KJS::JSHTMLElement::TextAreaSelect        DontDelete|Function 0
-  setSelectionRange     KJS::JSHTMLElement::TextAreaSetSelectionRange     DontDelete|Function 2
-@end
-@begin HTMLButtonElementTable 7
-  form          KJS::JSHTMLElement::ButtonForm            DontDelete|ReadOnly
-  accessKey     KJS::JSHTMLElement::ButtonAccessKey       DontDelete
-  disabled      KJS::JSHTMLElement::ButtonDisabled        DontDelete
-  name          KJS::JSHTMLElement::ButtonName            DontDelete
-  tabIndex      KJS::JSHTMLElement::ButtonTabIndex        DontDelete
-  type          KJS::JSHTMLElement::ButtonType            DontDelete|ReadOnly
-  value         KJS::JSHTMLElement::ButtonValue           DontDelete
-  blur          KJS::JSHTMLElement::ButtonBlur            DontDelete|Function 0
-  focus         KJS::JSHTMLElement::ButtonFocus           DontDelete|Function 0
 @end
 @begin HTMLLabelElementTable 4
   form          KJS::JSHTMLElement::LabelForm             DontDelete|ReadOnly
@@ -1314,27 +1179,11 @@ bool JSHTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& proper
     const HashTable* table = classInfo()->propHashTable; // get the right hashtable
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
     if (entry) {
-        // don't expose selection properties for input types that can't have a selection
-        if (element.hasLocalName(inputTag) && !static_cast<HTMLInputElement*>(impl())->canHaveSelection()) {
-            switch (entry->value) {
-            case InputSetSelectionRange:
-            case InputSelectionStart:
-            case InputSelectionEnd:
-                break;
-            default:
-                if (entry->attr & Function)
-                    slot.setStaticEntry(this, entry, staticFunctionGetter<HTMLElementFunction>); 
-                else
-                    slot.setStaticEntry(this, entry, staticValueGetter<JSHTMLElement>);
-                return true;
-            }
-        } else {
-            if (entry->attr & Function)
-                slot.setStaticEntry(this, entry, staticFunctionGetter<HTMLElementFunction>); 
-            else
-                slot.setStaticEntry(this, entry, staticValueGetter<JSHTMLElement>);
-            return true;
-        }
+        if (entry->attr & Function)
+            slot.setStaticEntry(this, entry, staticFunctionGetter<HTMLElementFunction>); 
+        else
+            slot.setStaticEntry(this, entry, staticValueGetter<JSHTMLElement>);
+        return true;
     }
 
     // Base JSHTMLElement stuff or parent class forward, as usual
@@ -1443,111 +1292,6 @@ JSValue *JSHTMLElement::selectGetter(ExecState* exec, int token) const
         case SelectName:            return jsString(select.name());
         case SelectSize:            return jsNumber(select.size());
         case SelectTabIndex:        return jsNumber(select.tabIndex());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::optGroupGetter(ExecState* exec, int token) const
-{
-    HTMLOptGroupElement& optgroup = *static_cast<HTMLOptGroupElement*>(impl());
-    switch (token) {
-        case OptGroupDisabled:        return jsBoolean(optgroup.disabled());
-        case OptGroupLabel:           return jsString(optgroup.label());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::optionGetter(ExecState* exec, int token) const
-{
-    HTMLOptionElement& option = *static_cast<HTMLOptionElement*>(impl());
-    switch (token) {
-        case OptionForm:            return toJS(exec,option.form()); // type HTMLFormElement
-        case OptionDefaultSelected: return jsBoolean(option.defaultSelected());
-        case OptionText:            return jsString(option.text());
-        case OptionIndex:           return jsNumber(option.index());
-        case OptionDisabled:        return jsBoolean(option.disabled());
-        case OptionLabel:           return jsString(option.label());
-        case OptionSelected:        return jsBoolean(option.selected());
-        case OptionValue:           return jsString(option.value());
-    }
-    return jsUndefined();
-}
-
-static JSValue *getInputSelectionStart(HTMLInputElement &input)
-{
-    if (input.canHaveSelection())
-        return jsNumber(input.selectionStart());
-    return jsUndefined();
-}
-
-static JSValue *getInputSelectionEnd(HTMLInputElement &input)
-{
-    if (input.canHaveSelection())
-        return jsNumber(input.selectionEnd());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::inputGetter(ExecState* exec, int token) const
-{
-    HTMLInputElement& input = *static_cast<HTMLInputElement*>(impl());
-    switch (token) {
-        case InputDefaultValue:    return jsString(input.defaultValue());
-        case InputDefaultChecked:  return jsBoolean(input.defaultChecked());
-        case InputForm:            return toJS(exec,input.form()); // type HTMLFormElement
-        case InputAccept:          return jsString(input.accept());
-        case InputAccessKey:       return jsString(input.accessKey());
-        case InputAlign:           return jsString(input.align());
-        case InputAlt:             return jsString(input.alt());
-        case InputChecked:         return jsBoolean(input.checked());
-        case InputDisabled:        return jsBoolean(input.disabled());
-        case InputIndeterminate:   return jsBoolean(input.indeterminate());
-        case InputMaxLength:       return jsNumber(input.maxLength());
-        case InputName:            return jsString(input.name());
-        case InputReadOnly:        return jsBoolean(input.readOnly());
-        case InputSelectionStart:  return getInputSelectionStart(input);
-        case InputSelectionEnd:    return getInputSelectionEnd(input);
-        case InputSize:            return jsNumber(input.size());
-        case InputSrc:             return jsString(input.src());
-        case InputTabIndex:        return jsNumber(input.tabIndex());
-        case InputType:            return jsString(input.type());
-        case InputUseMap:          return jsString(input.useMap());
-        case InputValue:           return jsString(input.value());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::textAreaGetter(ExecState* exec, int token) const
-{
-    HTMLTextAreaElement& textarea = *static_cast<HTMLTextAreaElement*>(impl());
-    switch (token) {
-        case TextAreaDefaultValue:    return jsString(textarea.defaultValue());
-        case TextAreaForm:            return toJS(exec,textarea.form()); // type HTMLFormElement
-        case TextAreaAccessKey:       return jsString(textarea.accessKey());
-        case TextAreaCols:            return jsNumber(textarea.cols());
-        case TextAreaDisabled:        return jsBoolean(textarea.disabled());
-        case TextAreaName:            return jsString(textarea.name());
-        case TextAreaReadOnly:        return jsBoolean(textarea.readOnly());
-        case TextAreaRows:            return jsNumber(textarea.rows());
-        case TextAreaSelectionStart:  return jsNumber(textarea.selectionStart());
-        case TextAreaSelectionEnd:    return jsNumber(textarea.selectionEnd());
-        case TextAreaTabIndex:        return jsNumber(textarea.tabIndex());
-        case TextAreaType:            return jsString(textarea.type());
-        case TextAreaValue:           return jsString(textarea.value());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::buttonGetter(ExecState* exec, int token) const
-{
-    HTMLButtonElement& button = *static_cast<HTMLButtonElement*>(impl());
-    switch (token) {
-        case ButtonForm:            return toJS(exec,button.form()); // type HTMLFormElement
-        case ButtonAccessKey:       return jsString(button.accessKey());
-        case ButtonDisabled:        return jsBoolean(button.disabled());
-        case ButtonName:            return jsString(button.name());
-        case ButtonTabIndex:        return jsNumber(button.tabIndex());
-        case ButtonType:            return jsString(button.type());
-        case ButtonValue:           return jsString(button.value());
     }
     return jsUndefined();
 }
@@ -2220,40 +1964,6 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj,
             return jsUndefined();
         }
     }
-    else if (element.hasLocalName(inputTag)) {
-        HTMLInputElement &input = static_cast<HTMLInputElement &>(element);
-        if (id == JSHTMLElement::InputBlur) {
-            input.blur();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::InputFocus) {
-            input.focus();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::InputSelect) {
-            input.select();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::InputClick) {
-            input.click();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::InputSetSelectionRange) {
-            input.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
-            return jsUndefined();
-        }
-    }
-    else if (element.hasLocalName(buttonTag)) {
-        HTMLButtonElement &button = static_cast<HTMLButtonElement &>(element);
-        if (id == JSHTMLElement::ButtonBlur) {
-            button.blur();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::ButtonFocus) {
-            button.focus();
-            return jsUndefined();
-        }
-    }
     else if (element.hasLocalName(labelTag)) {
         HTMLLabelElement &label = static_cast<HTMLLabelElement &>(element);
         if (id == JSHTMLElement::LabelFocus) {
@@ -2265,25 +1975,6 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj,
         HTMLLegendElement &legend = static_cast<HTMLLegendElement &>(element);
         if (id == JSHTMLElement::LegendFocus) {
             legend.focus();
-            return jsUndefined();
-        }
-    }
-    else if (element.hasLocalName(textareaTag)) {
-        HTMLTextAreaElement &textarea = static_cast<HTMLTextAreaElement &>(element);
-        if (id == JSHTMLElement::TextAreaBlur) {
-            textarea.blur();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::TextAreaFocus) {
-            textarea.focus();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::TextAreaSelect) {
-            textarea.select();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::TextAreaSetSelectionRange) {
-            textarea.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
             return jsUndefined();
         }
     }
@@ -2393,8 +2084,7 @@ void JSHTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue
         if (entry->attr & Function) { // function: put as override property
             JSObject::put(exec, propertyName, value, attr);
             return;
-        }
-        else if (!(entry->attr & ReadOnly)) { // let lookupPut print the warning if read-only
+        } else if (!(entry->attr & ReadOnly)) { // let lookupPut print the warning if read-only
             putValueProperty(exec, entry->value, value, attr);
             return;
         }
@@ -2405,9 +2095,9 @@ void JSHTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue
 
 void JSHTMLElement::htmlSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
 {
-    HTMLHeadElement &head = *static_cast<HTMLHeadElement*>(impl());
-    if (token == HeadProfile) 
-        head.setProfile(str);
+    HTMLHtmlElement& html = *static_cast<HTMLHtmlElement*>(impl());
+    if (token == HtmlVersion)
+        html.setVersion(str);
 }
 
 void JSHTMLElement::isIndexSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
@@ -2477,93 +2167,6 @@ void JSHTMLElement::selectSetter(ExecState *exec, int token, JSValue *value, con
         case SelectName:            { select.setName(AtomicString(str)); return; }
         case SelectSize:            { select.setSize(value->toInt32(exec)); return; }
         case SelectTabIndex:        { select.setTabIndex(value->toInt32(exec)); return; }
-    }
-}
-
-void JSHTMLElement::optGroupSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLOptGroupElement& optgroup = *static_cast<HTMLOptGroupElement*>(impl());
-    switch (token) {
-        case OptGroupDisabled:        { optgroup.setDisabled(value->toBoolean(exec)); return; }
-        case OptGroupLabel:           { optgroup.setLabel(str); return; }
-    }
-}
-
-void JSHTMLElement::optionSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    DOMExceptionTranslator exception(exec);
-    HTMLOptionElement& option = *static_cast<HTMLOptionElement*>(impl());
-    switch (token) {
-        // read-only: form
-        case OptionDefaultSelected: { option.setDefaultSelected(value->toBoolean(exec)); return; }
-        case OptionText:            { option.setText(str, exception); return; }
-        // read-only: index
-        case OptionDisabled:        { option.setDisabled(value->toBoolean(exec)); return; }
-        case OptionLabel:           { option.setLabel(str); return; }
-        case OptionSelected:        { option.setSelected(value->toBoolean(exec)); return; }
-        case OptionValue:           { option.setValue(str); return; }
-    }
-}
-
-void JSHTMLElement::inputSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLInputElement& input = *static_cast<HTMLInputElement*>(impl());
-    switch (token) {
-        case InputDefaultValue:    { input.setDefaultValue(str); return; }
-        case InputDefaultChecked:  { input.setDefaultChecked(value->toBoolean(exec)); return; }
-        // read-only: form
-        case InputAccept:          { input.setAccept(str); return; }
-        case InputAccessKey:       { input.setAccessKey(str); return; }
-        case InputAlign:           { input.setAlign(str); return; }
-        case InputAlt:             { input.setAlt(str); return; }
-        case InputChecked:         { input.setChecked(value->toBoolean(exec)); return; }
-        case InputDisabled:        { input.setDisabled(value->toBoolean(exec)); return; }
-        case InputIndeterminate:   { input.setIndeterminate(value->toBoolean(exec)); return; }
-        case InputMaxLength:       { input.setMaxLength(value->toInt32(exec)); return; }
-        case InputName:            { input.setName(AtomicString(str)); return; }
-        case InputReadOnly:        { input.setReadOnly(value->toBoolean(exec)); return; }
-        case InputSize:            { input.setSize(value->toInt32(exec)); return; }
-        case InputSelectionStart:  { input.setSelectionStart(value->toInt32(exec)); return; }
-        case InputSelectionEnd:    { input.setSelectionEnd(value->toInt32(exec)); return; }
-        case InputSrc:             { input.setSrc(str); return; }
-        case InputTabIndex:        { input.setTabIndex(value->toInt32(exec)); return; }
-        case InputType:            { input.setType(str); return; }
-        case InputUseMap:          { input.setUseMap(str); return; }
-        case InputValue:           { input.setValue(str); return; }
-    }
-}
-
-void JSHTMLElement::textAreaSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLTextAreaElement& textarea = *static_cast<HTMLTextAreaElement*>(impl());
-    switch (token) {
-        case TextAreaDefaultValue:    { textarea.setDefaultValue(str); return; }
-        // read-only: form
-        case TextAreaAccessKey:       { textarea.setAccessKey(str); return; }
-        case TextAreaCols:            { textarea.setCols(value->toInt32(exec)); return; }
-        case TextAreaDisabled:        { textarea.setDisabled(value->toBoolean(exec)); return; }
-        case TextAreaName:            { textarea.setName(AtomicString(str)); return; }
-        case TextAreaReadOnly:        { textarea.setReadOnly(value->toBoolean(exec)); return; }
-        case TextAreaRows:            { textarea.setRows(value->toInt32(exec)); return; }
-        case TextAreaSelectionStart:  { textarea.setSelectionStart(value->toInt32(exec)); return; }
-        case TextAreaSelectionEnd:    { textarea.setSelectionEnd(value->toInt32(exec)); return; }
-        case TextAreaTabIndex:        { textarea.setTabIndex(value->toInt32(exec)); return; }
-        // read-only: type
-        case TextAreaValue:           { textarea.setValue(str); return; }
-    }
-}
-
-void JSHTMLElement::buttonSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLButtonElement& button = *static_cast<HTMLButtonElement*>(impl());
-    switch (token) {
-        // read-only: form
-        case ButtonAccessKey:       { button.setAccessKey(str); return; }
-        case ButtonDisabled:        { button.setDisabled(value->toBoolean(exec)); return; }
-        case ButtonName:            { button.setName(AtomicString(str)); return; }
-        case ButtonTabIndex:        { button.setTabIndex(value->toInt32(exec)); return; }
-        // read-only: type
-        case ButtonValue:           { button.setValue(str); return; }
     }
 }
 
@@ -3322,43 +2925,6 @@ void JSHTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName
     m_element->add(static_cast<HTMLOptionElement*>(option), before, exception);
 
   setDOMException(exec, exception);
-}
-
-////////////////////// Option Object ////////////////////////
-
-OptionConstructorImp::OptionConstructorImp(ExecState *exec, Document *d)
-    : m_doc(d)
-{
-  put(exec,lengthPropertyName, jsNumber(4), ReadOnly|DontDelete|DontEnum);
-}
-
-bool OptionConstructorImp::implementsConstruct() const
-{
-  return true;
-}
-
-JSObject *OptionConstructorImp::construct(ExecState *exec, const List &args)
-{
-  int exception = 0;
-  RefPtr<Element> el(m_doc->createElement("option", exception));
-  HTMLOptionElement *opt = 0;
-  if (el) {
-    opt = static_cast<HTMLOptionElement*>(el.get());
-    int sz = args.size();
-    RefPtr<Text> t = m_doc->createTextNode("");
-    opt->appendChild(t, exception);
-    if (exception == 0 && sz > 0)
-      t->setData(args[0]->toString(exec), exception); // set the text
-    if (exception == 0 && sz > 1)
-      opt->setValue(args[1]->toString(exec));
-    if (exception == 0 && sz > 2)
-      opt->setDefaultSelected(args[2]->toBoolean(exec));
-    if (exception == 0 && sz > 3)
-      opt->setSelected(args[3]->toBoolean(exec));
-  }
-
-  setDOMException(exec, exception);
-  return static_cast<JSObject*>(toJS(exec,opt));
 }
 
 ////////////////////// Image Object ////////////////////////

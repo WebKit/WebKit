@@ -79,8 +79,7 @@ namespace KJS {
     static const ClassInfo info;
 
     static const ClassInfo html_info, isIndex_info, body_info, form_info,
-      select_info, optGroup_info, option_info, input_info, textArea_info,
-      button_info, label_info, fieldSet_info, legend_info, ul_info, ol_info,
+      select_info, label_info, fieldSet_info, legend_info, ul_info, ol_info,
       dl_info, dir_info, menu_info, li_info, div_info, p_info, heading_info,
       blockQuote_info, q_info, pre_info, br_info, baseFont_info, font_info,
       hr_info, mod_info, a_info, img_info, object_info, param_info,
@@ -94,8 +93,7 @@ namespace KJS {
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
     static const Accessors html_accessors, isIndex_accessors, body_accessors, form_accessors,
-      select_accessors, optGroup_accessors, option_accessors, input_accessors, textArea_accessors,
-      button_accessors, label_accessors, fieldSet_accessors, legend_accessors, ul_accessors, ol_accessors,
+      select_accessors, label_accessors, fieldSet_accessors, legend_accessors, ul_accessors, ol_accessors,
       dl_accessors, dir_accessors, menu_accessors, li_accessors, div_accessors, p_accessors, heading_accessors,
       blockQuote_accessors, q_accessors, pre_accessors, br_accessors, baseFont_accessors, font_accessors,
       hr_accessors, mod_accessors, a_accessors, img_accessors, object_accessors, param_accessors,
@@ -113,16 +111,6 @@ namespace KJS {
     void  formSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *selectGetter(ExecState* exec, int token) const;
     void  selectSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *optGroupGetter(ExecState* exec, int token) const;
-    void  optGroupSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *optionGetter(ExecState* exec, int token) const;
-    void  optionSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *inputGetter(ExecState* exec, int token) const;
-    void  inputSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *textAreaGetter(ExecState* exec, int token) const;
-    void  textAreaSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *buttonGetter(ExecState* exec, int token) const;
-    void  buttonSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *labelGetter(ExecState* exec, int token) const;
     void  labelSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *fieldSetGetter(ExecState* exec, int token) const;
@@ -202,31 +190,15 @@ namespace KJS {
     JSValue *marqueeGetter(ExecState* exec, int token) const;
     void  marqueeSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
 
-    enum { HtmlVersion, HeadProfile, LinkHref, LinkRel, LinkMedia,
-           LinkCharset, LinkDisabled, LinkHrefLang, LinkRev, LinkTarget, LinkType,
-           LinkSheet, TitleText, MetaName, MetaHttpEquiv, MetaContent, MetaScheme,
-           BaseHref, BaseTarget, IsIndexForm, IsIndexPrompt, StyleDisabled,
-           StyleSheet, StyleType, StyleMedia, BodyBackground, BodyVLink, BodyText,
+    enum { HtmlVersion, IsIndexForm, IsIndexPrompt,
+           BodyBackground, BodyVLink, BodyText,
            BodyLink, BodyALink, BodyBgColor, BodyScrollLeft, BodyScrollTop, BodyScrollHeight, BodyScrollWidth,
            FormAction, FormEncType, FormElements, FormLength, FormAcceptCharset,
            FormReset, FormTarget, FormName, FormMethod, FormSubmit, SelectAdd,
            SelectTabIndex, SelectValue, SelectSelectedIndex, SelectLength,
            SelectRemove, SelectForm, SelectBlur, SelectType, SelectOptions,
            SelectDisabled, SelectMultiple, SelectName, SelectSize, SelectFocus,
-           OptGroupDisabled, OptGroupLabel, OptionIndex, OptionSelected,
-           OptionForm, OptionText, OptionDefaultSelected, OptionDisabled,
-           OptionLabel, OptionValue, InputBlur, InputReadOnly, InputAccept,
-           InputSize, InputDefaultValue, InputTabIndex, InputValue, InputType,
-           InputFocus, InputMaxLength, InputDefaultChecked, InputDisabled,
-           InputChecked, InputIndeterminate, InputForm, InputAccessKey, InputAlign, InputAlt,
-           InputName, InputSrc, InputUseMap, InputSelect, InputClick,
-           InputSelectionStart, InputSelectionEnd, InputSetSelectionRange,
-           TextAreaAccessKey, TextAreaName, TextAreaDefaultValue, TextAreaSelect, TextAreaSetSelectionRange,
-           TextAreaCols, TextAreaDisabled, TextAreaForm, TextAreaType,
-           TextAreaTabIndex, TextAreaReadOnly, TextAreaRows, TextAreaValue,
-           TextAreaSelectionStart, TextAreaSelectionEnd,
-           TextAreaBlur, TextAreaFocus, ButtonBlur, ButtonFocus, ButtonForm, ButtonTabIndex, ButtonName,
-           ButtonDisabled, ButtonAccessKey, ButtonType, ButtonValue, LabelHtmlFor,
+           LabelHtmlFor,
            LabelForm, LabelFocus, LabelAccessKey, FieldSetForm, LegendForm, LegendAccessKey,
            LegendAlign, LegendFocus, UListType, UListCompact, OListStart, OListCompact,
            OListType, DListCompact, DirectoryCompact, MenuCompact, LIType,
@@ -332,17 +304,6 @@ namespace KJS {
     virtual bool masqueradeAsUndefined() const { return true; }
   };
   
-  ////////////////////// Option Object ////////////////////////
-
-  class OptionConstructorImp : public DOMObject {
-  public:
-    OptionConstructorImp(ExecState *exec, WebCore::Document *d);
-    virtual bool implementsConstruct() const;
-    virtual JSObject *construct(ExecState *exec, const List &args);
-  private:
-    RefPtr<WebCore::Document> m_doc;
-  };
-
   ////////////////////// Image Object ////////////////////////
 
   class ImageConstructorImp : public DOMObject {

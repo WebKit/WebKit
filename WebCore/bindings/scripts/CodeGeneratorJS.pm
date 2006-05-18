@@ -118,7 +118,9 @@ sub GetParentClassName
 sub GetLegacyHeaderIncludes
 {
   my $legacyParent = shift;
-  if ($legacyParent eq "KJS::Window") {
+  if ($legacyParent eq "JSHTMLInputElementBase") {
+      return "#include \"JSHTMLInputElementBase.h\"\n\n";
+  } elsif ($legacyParent eq "KJS::Window") {
       return "#include \"kjs_window.h\"\n\n";
   } elsif ($legacyParent eq "KJS::DOMNode") {
       return "#include \"kjs_domnode.h\"\n\n";
@@ -636,7 +638,7 @@ sub GenerateImplementation
     push(@implContent, "    return getStaticValueSlot<$className, $parentClassName>(exec, &${className}Table, this, propertyName, slot);\n");
     push(@implContent, "}\n\n");
   
-    push(@implContent, "JSValue* ${className}::getValueProperty(ExecState *exec, int token) const\n{\n");
+    push(@implContent, "JSValue* ${className}::getValueProperty(ExecState* exec, int token) const\n{\n");
     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
     push(@implContent, "    switch (token) {\n");
 
@@ -1056,6 +1058,10 @@ sub NativeToJSValue
   } elsif ($type eq "DOMObject") {
     $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
     return "toJS(exec, $value)";
+  } elsif ($type eq "HTMLFormElement") {
+    $implIncludes{"kjs_html.h"} = 1;
+    $implIncludes{"HTMLFormElement.h"} = 1;
+    return "toJS(exec, $value)";
   } else {
     $implIncludes{"JS$type.h"} = 1;
     return "toJS(exec, $value)";
@@ -1283,7 +1289,7 @@ EOF
     if ($canConstruct) {
 $implContent .= << "EOF";
     virtual bool implementsConstruct() const { return true; }
-    virtual JSObject* construct(ExecState* exec, const List &args) { return static_cast<JSObject *>(toJS(exec, new $interfaceName)); }
+    virtual JSObject* construct(ExecState* exec, const List& args) { return static_cast<JSObject*>(toJS(exec, new $interfaceName)); }
 EOF
     }
 

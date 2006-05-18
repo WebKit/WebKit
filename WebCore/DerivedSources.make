@@ -62,14 +62,20 @@ all : \
     JSElement.h \
     JSEvent.h \
     JSEntity.h \
+    JSHTMLButtonElement.h \
     JSHTMLBaseElement.h \
     JSHTMLCanvasElement.h \
     JSHTMLDocument.h \
     JSHTMLElement.h \
     JSHTMLHeadElement.h \
+    JSHTMLInputElement.h \
+    JSHTMLInputElementBaseTable.cpp \
     JSHTMLLinkElement.h \
+    JSHTMLOptionElement.h \
+    JSHTMLOptGroupElement.h \
     JSHTMLMetaElement.h \
     JSHTMLStyleElement.h \
+    JSHTMLTextAreaElement.h \
     JSHTMLTitleElement.h \
     JSKeyboardEvent.h \
     JSMouseEvent.h \
