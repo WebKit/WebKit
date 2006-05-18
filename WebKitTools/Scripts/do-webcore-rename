@@ -123,7 +123,7 @@ my %renames = (
     "KWQStringData" => "DeprecatedStringData",
     "KWQTableView" => "WebCoreTableView",
     "KWQTextEdit" => "TextBox",
-    "KWQTextFieldController" => "TextFieldController",
+    "KWQTextFieldController" => "WebCoreTextFieldController",
     "KWQTextFieldFormatter" => "WebCoreTextFieldFormatter",
     "KWQTextStream" => "TextStream",
     "KWQValueListPrivate" => "Private",
@@ -142,6 +142,8 @@ my %renames = (
     "QSTRING_H_" => "DeprecatedString_h",
     "QScrollBar" => "ScrollBar",
     "QSlider" => "Slider",
+    "QStringListMac" => "DeprecatedStringListMac",
+    "QStringMac" => "DeprecatedStringMac",
     "QTextEdit" => "TextBox",
     "QTextStream" => "TextStream",
     "QTextStreamManipulator" => "TextStreamManipulator",
@@ -155,6 +157,12 @@ my %renames = (
     "KCanvasContainer" => "RenderSVGContainer",
     "RenderTextField" => "RenderTextControl",
     "HTMLTextControlInnerElement" => "HTMLTextFieldInnerElement",
+    "KWQTextFieldKnowsAppKitSecrets" => "WebCoreTextField",
+    "KWQTextFieldAppKitSecrets" => "WebCoreTextField",
+    "_KWQ_numComposedCharacterSequences" => "_webcore_numComposedCharacterSequences",
+    "_KWQ_truncateToNumComposedCharacterSequences" => "_webcore_truncateToNumComposedCharacterSequences",
+    "_KWQ_currentEditor" => "_webcore_currentEditor",
+    "KWQInternal" => "WebCoreInternal",
 );
 
 # rename files
