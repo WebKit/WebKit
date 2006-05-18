@@ -3181,11 +3181,15 @@ static WebFrameView *containingFrameView(NSView *view)
 - (NSResponder *)_responderForResponderOperations
 {
     NSResponder *responder = [[self window] firstResponder];
-    if (![self _web_firstResponderIsSelfOrDescendantView]) {
-        responder = [[[self mainFrame] frameView] documentView];
-        if (!responder) {
-            responder = [[self mainFrame] frameView];
-        }
+    WebFrameView *mainFrameView = [[self mainFrame] frameView];
+    
+    // If the current responder is outside of the webview, use our main frameView or its
+    // document view. We also do this for subviews of self that are siblings of the main
+    // frameView since clients might insert non-webview-related views there (see 4552713).
+    if (responder != self && ![mainFrameView _web_firstResponderIsSelfOrDescendantView]) {
+        responder = [mainFrameView documentView];
+        if (!responder)
+            responder = mainFrameView;
     }
     return responder;
 }

@@ -1,3 +1,13 @@
+2006-05-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - fixed <rdar://problem/4552713> REGRESSION: WebFrameView no longer responds to responder methods sent by Safari code
+
+        * WebView/WebView.m:
+        (-[WebView _responderForResponderOperations]):
+        Treat sibling views of the main frameView the same as views outside of the webview for the purposes of this mechanism.
+
 2006-05-18  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.
