@@ -132,8 +132,8 @@ void ImageTokenizer::finish()
             m_doc->setTitle([bridge imageTitleForFilename:[response suggestedFilename]
                                                      size:size]);
         }
-    }
 #endif
+    }
 
     m_doc->finishedParsing();    
     
