@@ -28,7 +28,7 @@
 
 #include "../UnicodeCategory.h"
 
-namespace KXMLCore {
+namespace WTF {
   namespace Unicode {
     inline int toLower(uint16_t* str, int strLength, uint16_t*& destIfNeeded)
     {
@@ -52,20 +52,20 @@ namespace KXMLCore {
 
     inline bool isFormatChar(int32_t c)
     {
-      return (c & 0xFFFF == 0) && (QChar(c).category() == QChar::Other_Format);
+      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Other_Format;
     }
 
     inline bool isSeparatorSpace(int32_t c)
     {
-      return (c & 0xFFFF == 0) && (QChar(c).category() == QChar::Separator_Space);
+      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Separator_Space;
     }
 
     inline CharCategory category(int32_t c)
     {
       // FIXME: implement support for non-BMP code points
-      if (c & 0xFFFF != 0)
+      if ((c & 0xffff0000) != 0)
         return NoCategory;
-        
+
       switch (QChar((unsigned short)c).category()) {
         case QChar::Mark_NonSpacing:
           return Mark_NonSpacing;

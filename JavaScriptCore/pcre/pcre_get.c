@@ -65,7 +65,7 @@ Returns:      the number of the named parentheses, or a negative number
 int
 pcre_get_stringnumber(const pcre *code, const pcre_char *stringname)
 {
-// FIXME: This doesn't work for UTF-16 because the name table has 8-bit characters in it!
+/* FIXME: This doesn't work for UTF-16 because the name table has 8-bit characters in it! */
 #if !PCRE_UTF16
 int rc;
 int entrysize;

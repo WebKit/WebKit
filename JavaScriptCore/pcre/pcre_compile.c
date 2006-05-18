@@ -46,7 +46,7 @@ supporting internal functions that are not used by other modules. */
 #include "pcre_internal.h"
 
 
-// WARNING: These macros evaluate their parameters more than once.
+/* WARNING: These macros evaluate their parameters more than once. */
 #if PCRE_UTF16
 #define CTYPES(cd, x) ((x) <= 255 ? (cd)->ctypes[(x)] : 0)
 #define DIGITAB(x) ((x) <= 255 ? digitab[(x)] : 0)
@@ -2928,7 +2928,7 @@ for (;; ptr++)
           while (*ptr++ != '>');
           namelen = ptr - name - 1;
 
-          // FIXME: This won't work for UTF-16.
+          /* FIXME: This won't work for UTF-16. */
           for (i = 0; i < cd->names_found; i++)
             {
             int crc = memcmp(name, slot+2, namelen);

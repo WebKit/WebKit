@@ -1951,7 +1951,7 @@ for (;;)
       length = 1;
       GETUTF8CHARLEN(fc, ecode, length);
       {
-      int utf16Length; // don't initialize on this line as workaround for Win32 compile problem
+      int utf16Length; /* don't initialize on this line as workaround for Win32 compile problem */
       utf16Length = fc > 0xFFFF ? 2 : 1;
       if (min * utf16Length > md->end_subject - eptr) RRETURN(MATCH_NOMATCH);
       ecode += length;

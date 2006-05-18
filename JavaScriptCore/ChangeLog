@@ -1,3 +1,19 @@
+2006-05-17  George Staikos <staikos@kde.org>
+
+        Reviewed by Maciej, Alexey, and Eric.
+
+        * pcre/pcre_compile.c:
+        * pcre/pcre_get.c:
+        * pcre/pcre_exec.c:
+        * wtf/UnusedParam.h:
+        Use /**/ in .c files to compile with non-C99 and non-GCC compilers.
+
+        * kjs/testkjs.cpp:
+        Change include to <wtf/HashTraits.h> from "HashTraits.h" to avoid -I
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        Use correct parentheses and correct mask for utf-32 support.
+
 2006-05-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
