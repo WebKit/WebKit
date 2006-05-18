@@ -379,9 +379,7 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [[dataSource _webView] _mainReceivedBytesSoFar:_bytesReceived
-                                       fromDataSource:dataSource
-                                             complete:NO];
+    [dataSource _mainReceivedBytesSoFar:_bytesReceived complete:NO];
     
     [super didReceiveData:data lengthReceived:lengthReceived];
     _bytesReceived += [data length];
@@ -401,9 +399,7 @@
     [self retain];
 
     [dataSource _finishedLoading];
-    [[dataSource _webView] _mainReceivedBytesSoFar:_bytesReceived
-                                    fromDataSource:dataSource
-                                            complete:YES];
+    [dataSource _mainReceivedBytesSoFar:_bytesReceived complete:YES];
     [super didFinishLoading];
 
     [self release];

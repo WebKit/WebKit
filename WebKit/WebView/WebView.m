@@ -563,56 +563,6 @@ static bool debugWidget = true;
     }
 }
 
-- (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource
-{
-    WebFrame *frame = [dataSource webFrame];
-    
-    ASSERT(dataSource != nil);
-    
-    // This resource has completed, so check if the load is complete for all frames.
-    if (frame != nil)
-        [frame _checkLoadComplete];
-}
-
-- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete: (BOOL)isComplete
-{
-    WebFrame *frame = [dataSource webFrame];
-    
-    ASSERT(dataSource != nil);
-
-    // The frame may be nil if a previously cancelled load is still making progress callbacks.
-    if (frame == nil)
-        return;
-        
-    // This resource has completed, so check if the load is complete for this frame and its ancestors
-    if (isComplete){
-        // If the load is complete, mark the primary load as done.  The primary load is the load
-        // of the main document.  Other resources may still be arriving.
-        [dataSource _setPrimaryLoadComplete:YES];
-        [frame _checkLoadComplete];
-    }
-}
-
-- (void)_receivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource
-{
-    WebFrame *frame = [dataSource webFrame];
-
-    [frame _checkLoadComplete];
-}
-
-- (void)_mainReceivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
-{
-    ASSERT(dataSource);
-    ASSERT([dataSource webFrame]);
-    
-    [dataSource _setMainDocumentError: error];
-
-    if (isComplete) {
-        [dataSource _setPrimaryLoadComplete:YES];
-        [[dataSource webFrame] _checkLoadComplete];
-    }
-}
-
 + (NSString *)_MIMETypeForFile:(NSString *)path
 {
     NSString *extension = [path pathExtension];

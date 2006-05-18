@@ -1,3 +1,32 @@
+2006-05-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - remove loading-related code from WebView
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8981
+
+        * Plugins/WebNetscapePluginStream.m:
+        (-[WebNetscapePlugInStreamLoader didFinishLoading]):
+        (-[WebNetscapePlugInStreamLoader didFailWithError:]):
+        * WebCoreSupport/WebSubresourceLoader.m:
+        (-[WebSubresourceLoader receivedError:]):
+        (-[WebSubresourceLoader signalFinish]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+        (-[WebDataSource _finishedLoadingResource]):
+        (-[WebDataSource _mainReceivedBytesSoFar:complete:]):
+        (-[WebDataSource _receivedError:]):
+        (-[WebDataSource _mainReceivedError:complete:]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader didReceiveData:lengthReceived:]):
+        (-[WebMainResourceLoader didFinishLoading]):
+        * WebView/WebView.m:
+        * WebView/WebViewInternal.h:
+
 2006-05-18  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

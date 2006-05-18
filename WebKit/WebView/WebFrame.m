@@ -2620,7 +2620,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         } else {
             [sharedDelegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
         }
-        [wv _finishedLoadingResourceFromDataSource:dataSource];
+        [self _checkLoadComplete];
     } else {
         [[wv _resourceLoadDelegateForwarder] webView:wv resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }

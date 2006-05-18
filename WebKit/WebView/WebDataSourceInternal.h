@@ -104,5 +104,9 @@
 - (void)_startLoading;
 - (void)_loadFromPageCache:(NSDictionary *)pageCache;
 - (DOMElement *)_imageElementWithImageResource:(WebResource *)resource;
+- (void)_finishedLoadingResource;
+- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete;
+- (void)_receivedError:(NSError *)error;
+- (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
 
 @end

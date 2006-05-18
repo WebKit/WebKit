@@ -187,7 +187,7 @@
     [self retain];
 
     [[self dataSource] _removePlugInStreamLoader:self];
-    [[view webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
+    [[self dataSource] _finishedLoadingResource];
     [stream finishedLoadingWithData:[self resourceData]];
     [super didFinishLoading];
 
@@ -202,7 +202,7 @@
     [self retain];
 
     [[self dataSource] _removePlugInStreamLoader:self];
-    [[view webView] _receivedError:error fromDataSource:[self dataSource]];
+    [[self dataSource] _receivedError:error];
     [stream destroyStreamWithError:error];
     [super didFailWithError:error];
 

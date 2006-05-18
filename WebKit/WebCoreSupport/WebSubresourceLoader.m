@@ -141,7 +141,7 @@
 
 - (void)receivedError:(NSError *)error
 {
-    [[dataSource _webView] _receivedError:error fromDataSource:dataSource];
+    [dataSource _receivedError:error];
 }
 
 - (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse;
@@ -210,7 +210,7 @@
 - (void)signalFinish
 {
     [dataSource _removeSubresourceLoader:self];
-    [[dataSource _webView] _finishedLoadingResourceFromDataSource:dataSource];
+    [dataSource _finishedLoadingResource];
     [super signalFinish];
 }
 

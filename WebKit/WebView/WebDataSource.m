@@ -417,9 +417,7 @@
     } else {
         // If there are no resource loaders, we need to manufacture a cancelled message.
         // (A back/forward navigation has no resource loaders because its resources are cached.)
-        [[self _webView] _mainReceivedError:[self _cancelledError]
-                             fromDataSource:self
-                                   complete:YES];
+        [self _mainReceivedError:[self _cancelledError] complete:YES];
     }
     
     NSArray *loaders = [_private->subresourceLoaders copy];
@@ -811,9 +809,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [bridge release];
 
     [[self webFrame] _receivedMainResourceError:error];
-    [[self _webView] _mainReceivedError:error
-                         fromDataSource:self
-                               complete:isComplete];
+    [self _mainReceivedError:error complete:isComplete];
 }
 
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader
@@ -1157,6 +1153,45 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         if (!_private->unarchivingState)
             _private->unarchivingState = [[WebUnarchivingState alloc] init];
         [_private->unarchivingState addResource:subresource];
+    }
+}
+
+- (void)_finishedLoadingResource
+{
+    [[self webFrame] _checkLoadComplete];
+}
+
+- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete
+{
+    WebFrame *frame = [self webFrame];
+    
+    // The frame may be nil if a previously cancelled load is still making progress callbacks.
+    if (frame == nil)
+        return;
+        
+    // This resource has completed, so check if the load is complete for this frame and its ancestors
+    if (isComplete){
+        // If the load is complete, mark the primary load as done.  The primary load is the load
+        // of the main document.  Other resources may still be arriving.
+        [self _setPrimaryLoadComplete:YES];
+        [frame _checkLoadComplete];
+    }
+}
+
+- (void)_receivedError:(NSError *)error
+{
+    [[self webFrame] _checkLoadComplete];
+}
+
+- (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete
+{
+    ASSERT([self webFrame]);
+    
+    [self _setMainDocumentError:error];
+
+    if (isComplete) {
+        [self _setPrimaryLoadComplete:YES];
+        [[self webFrame] _checkLoadComplete];
     }
 }
 
