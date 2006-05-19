@@ -152,7 +152,8 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
 
 XSLTProcessorConstructorImp::XSLTProcessorConstructorImp(ExecState *exec)
 {
-    putDirect(prototypePropertyName, XSLTProcessorProto::self(exec), DontEnum|DontDelete|ReadOnly);
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    putDirect(prototypePropertyName, XSLTProcessorProto::self(exec), None);
 }
 
 }

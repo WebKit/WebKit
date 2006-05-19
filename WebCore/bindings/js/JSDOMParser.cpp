@@ -43,7 +43,8 @@ KJS_IMPLEMENT_PROTOTYPE("DOMParser",DOMParserProto,DOMParserProtoFunc)
 DOMParserConstructorImp::DOMParserConstructorImp(ExecState *exec, WebCore::Document *d)
     : doc(d)
 {
-    putDirect(prototypePropertyName, DOMParserProto::self(exec), DontEnum|DontDelete|ReadOnly);
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    putDirect(prototypePropertyName, DOMParserProto::self(exec), None);
 }
 
 bool DOMParserConstructorImp::implementsConstruct() const

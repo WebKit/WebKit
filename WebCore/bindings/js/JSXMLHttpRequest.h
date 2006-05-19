@@ -34,7 +34,6 @@ namespace KJS {
   class JSXMLHttpRequestConstructorImp : public DOMObject {
   public:
     JSXMLHttpRequestConstructorImp(ExecState *exec, WebCore::Document *d);
-    ~JSXMLHttpRequestConstructorImp();
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *exec, const List &args);
   private:

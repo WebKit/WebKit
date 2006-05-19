@@ -251,12 +251,12 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   window        Window::Window_         DontDelete|ReadOnly
   top           Window::Top             DontDelete|ReadOnly
   screen        Window::Screen_         DontDelete|ReadOnly
-  Image         Window::Image           DontDelete|ReadOnly
-  Option        Window::Option          DontDelete|ReadOnly
-  XMLHttpRequest        Window::XMLHttpRequest  DontDelete|ReadOnly
-  XMLSerializer Window::XMLSerializer   DontDelete|ReadOnly
-  DOMParser     Window::DOMParser_      DontDelete|ReadOnly
-  XSLTProcessor Window::XSLTProcessor_  DontDelete|ReadOnly
+  Image         Window::Image           DontDelete
+  Option        Window::Option          DontDelete
+  XMLHttpRequest        Window::XMLHttpRequest  DontDelete
+  XMLSerializer Window::XMLSerializer   DontDelete
+  DOMParser     Window::DOMParser_      DontDelete
+  XSLTProcessor Window::XSLTProcessor_  DontDelete
   alert         Window::Alert           DontDelete|Function 1
   confirm       Window::Confirm         DontDelete|Function 1
   prompt        Window::Prompt          DontDelete|Function 2

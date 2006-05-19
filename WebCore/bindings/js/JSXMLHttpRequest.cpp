@@ -53,11 +53,8 @@ KJS_IMPLEMENT_PROTOTYPE("JSXMLHttpRequest", JSXMLHttpRequestProto, JSXMLHttpRequ
 JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp(ExecState *exec, Document *d)
     : doc(d)
 {
-    putDirect(prototypePropertyName, JSXMLHttpRequestProto::self(exec), DontEnum|DontDelete|ReadOnly);
-}
-
-JSXMLHttpRequestConstructorImp::~JSXMLHttpRequestConstructorImp()
-{
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+    putDirect(prototypePropertyName, JSXMLHttpRequestProto::self(exec), None);
 }
 
 bool JSXMLHttpRequestConstructorImp::implementsConstruct() const

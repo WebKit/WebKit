@@ -1914,9 +1914,10 @@ void JSHTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName
 
 ////////////////////// Image Object ////////////////////////
 
-ImageConstructorImp::ImageConstructorImp(ExecState *, Document *d)
+ImageConstructorImp::ImageConstructorImp(ExecState* exec, Document* d)
     : m_doc(d)
 {
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
 }
 
 bool ImageConstructorImp::implementsConstruct() const
