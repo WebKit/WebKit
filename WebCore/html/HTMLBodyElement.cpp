@@ -229,4 +229,64 @@ void HTMLBodyElement::setVLink(const String &value)
     setAttribute(vlinkAttr, value);
 }
 
+int HTMLBodyElement::scrollLeft() const
+{
+    // Update the document's layout.
+    Document* doc = document();
+    doc->updateLayoutIgnorePendingStylesheets();
+    FrameView* view = doc->view();
+    
+    return view ? view->contentsX() : 0;
+}
+
+void HTMLBodyElement::setScrollLeft(int scrollLeft)
+{
+    FrameView* sview = ownerDocument()->view();
+    if (sview) {
+        // Update the document's layout
+        document()->updateLayoutIgnorePendingStylesheets();
+        sview->setContentsPos(scrollLeft, sview->contentsY());
+    }    
+}
+
+int HTMLBodyElement::scrollTop() const
+{
+    // Update the document's layout.
+    Document* doc = document();
+    doc->updateLayoutIgnorePendingStylesheets();
+    FrameView* view = doc->view();
+    
+    return view ? view->contentsY() : 0;
+}
+
+void HTMLBodyElement::setScrollTop(int scrollTop)
+{
+    FrameView* sview = ownerDocument()->view();
+    if (sview) {
+        // Update the document's layout
+        document()->updateLayoutIgnorePendingStylesheets();
+        sview->setContentsPos(sview->contentsX(), scrollTop);
+    }        
+}
+
+int HTMLBodyElement::scrollHeight() const
+{
+    // Update the document's layout.
+    Document* doc = document();
+    doc->updateLayoutIgnorePendingStylesheets();
+    FrameView* view = doc->view();
+    
+    return view ? view->contentsHeight() : 0;    
+}
+
+int HTMLBodyElement::scrollWidth() const
+{
+    // Update the document's layout.
+    Document* doc = document();
+    doc->updateLayoutIgnorePendingStylesheets();
+    FrameView* view = doc->view();
+    
+    return view ? view->contentsWidth() : 0;    
+}
+
 }

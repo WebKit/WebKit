@@ -29,6 +29,7 @@
 #include "JSCanvasPattern.h"
 #include "JSCanvasRenderingContext2D.h"
 #include "JSHTMLCanvasElement.h"
+#include "JSHTMLImageElement.h"
 #include "kjs_html.h"
 
 using namespace KJS;
@@ -183,7 +184,7 @@ JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const List& args
     if (!o->isObject())
         return throwError(exec, TypeError);
     ExceptionCode ec;
-    if (o->inherits(&KJS::JSHTMLElement::img_info)) {
+    if (o->inherits(&JSHTMLImageElement::info)) {
         HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
         switch (args.size()) {
             case 3:
@@ -240,7 +241,7 @@ JSValue* JSCanvasRenderingContext2D::drawImageFromRect(ExecState* exec, const Li
     JSObject* o = static_cast<JSObject*>(args[0]);
     if (!o->isObject())
         return throwError(exec, TypeError);
-    if (!o->inherits(&KJS::JSHTMLElement::img_info))
+    if (!o->inherits(&JSHTMLImageElement::info))
         return throwError(exec, TypeError);
     context->drawImageFromRect(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
                                args[1]->toNumber(exec), args[2]->toNumber(exec),
@@ -304,7 +305,7 @@ JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const List& 
     JSObject* o = static_cast<JSObject*>(args[0]);
     if (!o->isObject())
         return throwError(exec, TypeError);
-    if (o->inherits(&KJS::JSHTMLElement::img_info)) {
+    if (o->inherits(&JSHTMLImageElement::info)) {
         ExceptionCode ec;
         JSValue* pattern = toJS(exec,
             context->createPattern(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),

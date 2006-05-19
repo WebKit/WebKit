@@ -1062,6 +1062,10 @@ sub NativeToJSValue
     $implIncludes{"kjs_html.h"} = 1;
     $implIncludes{"HTMLFormElement.h"} = 1;
     return "toJS(exec, $value)";
+  } elsif ($type eq "HTMLCollection") {
+      $implIncludes{"kjs_html.h"} = 1;
+      $implIncludes{"HTMLCollection.h"} = 1;
+      return "getHTMLCollection(exec, $value.get())";
   } else {
     $implIncludes{"JS$type.h"} = 1;
     return "toJS(exec, $value)";

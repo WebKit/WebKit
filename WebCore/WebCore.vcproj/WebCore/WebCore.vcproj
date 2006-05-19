@@ -347,11 +347,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAreaElement.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAppletElement.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBaseElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBaseFontElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBlockquoteElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBodyElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBRElement.cpp"
 				>
 			</File>
 			<File
@@ -383,15 +403,51 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLFieldSetElement.cpp"
+				>
+			</File>			
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLFontElement.cpp"
+				>
+			</File>			
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHeadElement.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHeadingElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHRElement.cpp"
+				>
+			</File>			
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHtmlElement.cpp"
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLImageElement.cpp"
+				>
+			</File>			
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLInputElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLIsIndexElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLIElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLabelElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLegendElement.cpp"
 				>
 			</File>
 			<File
@@ -399,7 +455,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLMapElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLMenuElement.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLMetaElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLModElement.cpp"
 				>
 			</File>
 			<File
@@ -412,6 +480,26 @@
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLOptionElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLParagraphElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLParamElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLPreElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLQuoteElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLScriptElement.cpp"
 				>
 			</File>
 			<File

@@ -21,20 +21,42 @@
 
 #include "HTMLAnchorElement.h"
 #include "HTMLAppletElement.h"
+#include "HTMLAreaElement.h"
 #include "HTMLBaseElement.h"
+#include "HTMLBaseFontElement.h"
+#include "HTMLBlockQuoteElement.h"
+#include "HTMLBodyElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
-#include "HTMLDivElement.h"
 #include "HTMLDirectoryElement.h"
+#include "HTMLDivElement.h"
 #include "HTMLDListElement.h"
+#include "HTMLFieldSetElement.h"
+#include "HTMLFontElement.h"
 #include "HTMLHeadElement.h"
+#include "HTMLHeadingElement.h"
+#include "HTMLHRElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLIsIndexElement.h"
+#include "HTMLLabelElement.h"
+#include "HTMLLegendElement.h"
+#include "HTMLLIElement.h"
 #include "HTMLLinkElement.h"
+#include "HTMLMapElement.h"
+#include "HTMLMenuElement.h"
 #include "HTMLMetaElement.h"
+#include "HTMLModElement.h"
 #include "HTMLOListElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
+#include "HTMLParagraphElement.h"
+#include "HTMLParamElement.h"
+#include "HTMLPreElement.h"
+#include "HTMLQuoteElement.h"
+#include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTitleElement.h"
@@ -44,20 +66,42 @@
 
 #include "JSHTMLAnchorElement.h"
 #include "JSHTMLAppletElement.h"
+#include "JSHTMLAreaElement.h"
 #include "JSHTMLBaseElement.h"
+#include "JSHTMLBaseFontElement.h"
+#include "JSHTMLBlockQuoteElement.h"
+#include "JSHTMLBodyElement.h"
+#include "JSHTMLBRElement.h"
 #include "JSHTMLButtonElement.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLDirectoryElement.h"
 #include "JSHTMLDivElement.h"
 #include "JSHTMLDListElement.h"
+#include "JSHTMLFieldSetElement.h"
+#include "JSHTMLFontElement.h"
 #include "JSHTMLHeadElement.h"
+#include "JSHTMLHeadingElement.h"
+#include "JSHTMLHRElement.h"
 #include "JSHTMLHtmlElement.h"
+#include "JSHTMLImageElement.h"
 #include "JSHTMLInputElement.h"
+#include "JSHTMLIsIndexElement.h"
+#include "JSHTMLLabelElement.h"
+#include "JSHTMLLegendElement.h"
+#include "JSHTMLLIElement.h"
 #include "JSHTMLLinkElement.h"
+#include "JSHTMLMapElement.h"
+#include "JSHTMLMenuElement.h"
 #include "JSHTMLMetaElement.h"
+#include "JSHTMLModElement.h"
 #include "JSHTMLOListElement.h"
 #include "JSHTMLOptGroupElement.h"
 #include "JSHTMLOptionElement.h"
+#include "JSHTMLParagraphElement.h"
+#include "JSHTMLParamElement.h"
+#include "JSHTMLPreElement.h"
+#include "JSHTMLQuoteElement.h"
+#include "JSHTMLScriptElement.h"
 #include "JSHTMLStyleElement.h"
 #include "JSHTMLTextAreaElement.h"
 #include "JSHTMLTitleElement.h"
@@ -75,130 +119,74 @@ using namespace HTMLNames;
 
 typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTMLElement>);
 
-static DOMNode* createAnchorWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLAnchorElement(exec, static_cast<HTMLAnchorElement*>(element.get()));
-}
+#define FOR_EACH_TAG(macro) \
+    macro(a, Anchor) \
+    macro(applet, Applet) \
+    macro(area, Area) \
+    macro(base, Base) \
+    macro(basefont, BaseFont) \
+    macro(blockquote, Blockquote) \
+    macro(body, Body) \
+    macro(br, BR) \
+    macro(button, Button) \
+    macro(canvas, Canvas) \
+    macro(del, Mod) \
+    macro(dir, Directory) \
+    macro(div, Div) \
+    macro(dl, DList) \
+    macro(fieldset, FieldSet) \
+    macro(font, Font) \
+    macro(h1, Heading) \
+    macro(head, Head) \
+    macro(hr, HR) \
+    macro(html, Html) \
+    macro(img, Image) \
+    macro(input, Input) \
+    macro(isindex, IsIndex) \
+    macro(label, Label) \
+    macro(legend, Legend) \
+    macro(li, LI) \
+    macro(link, Link) \
+    macro(map, Map) \
+    macro(menu, Menu) \
+    macro(meta, Meta) \
+    macro(ol, OList) \
+    macro(optgroup, OptGroup) \
+    macro(option, Option) \
+    macro(p, Paragraph) \
+    macro(param, Param) \
+    macro(pre, Pre) \
+    macro(q, Quote) \
+    macro(script, Script) \
+    macro(style, Style) \
+    macro(textarea, TextArea) \
+    macro(title, Title) \
+    macro(ul, UList) \
+    // end of macro
 
-static DOMNode* createAppletWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLAppletElement(exec, static_cast<HTMLAppletElement*>(element.get()));
+#define CREATE_WRAPPER_FUNCTION(tag, name) \
+static DOMNode* create##name##Wrapper(ExecState* exec, PassRefPtr<HTMLElement> element) \
+{ \
+    return new JSHTML##name##Element(exec, static_cast<HTML##name##Element*>(element.get())); \
 }
-
-static DOMNode* createBaseWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLBaseElement(exec, static_cast<HTMLBaseElement*>(element.get()));
-}
-
-static DOMNode* createButtonWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLButtonElement(exec, static_cast<HTMLButtonElement*>(element.get()));
-}
-
-static DOMNode* createCanvasWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLCanvasElement(exec, static_cast<HTMLCanvasElement*>(element.get()));
-}
-
-static DOMNode* createDivWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLDivElement(exec, static_cast<HTMLDivElement*>(element.get()));
-}
-
-static DOMNode* createDirectoryWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLDirectoryElement(exec, static_cast<HTMLDirectoryElement*>(element.get()));
-}
-
-static DOMNode* createDListWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLDListElement(exec, static_cast<HTMLDListElement*>(element.get()));
-}
-
-static DOMNode* createHeadWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLHeadElement(exec, static_cast<HTMLHeadElement*>(element.get()));
-}
-
-static DOMNode* createHtmlWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLHtmlElement(exec, static_cast<HTMLHtmlElement*>(element.get()));
-}
-
-static DOMNode* createLinkWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLLinkElement(exec, static_cast<HTMLLinkElement*>(element.get()));
-}
-
-static DOMNode* createInputWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLInputElement(exec, static_cast<HTMLInputElement*>(element.get()));
-}
-
-static DOMNode* createMetaWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLMetaElement(exec, static_cast<HTMLMetaElement*>(element.get()));
-}
-
-static DOMNode* createOListWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLOListElement(exec, static_cast<HTMLOListElement*>(element.get()));
-}
-
-static DOMNode* createOptGroupWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLOptGroupElement(exec, static_cast<HTMLOptGroupElement*>(element.get()));
-}
-
-static DOMNode* createOptionWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLOptionElement(exec, static_cast<HTMLOptionElement*>(element.get()));
-}
-
-static DOMNode* createStyleWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLStyleElement(exec, static_cast<HTMLStyleElement*>(element.get()));
-}
-
-static DOMNode* createTextAreaWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLTextAreaElement(exec, static_cast<HTMLTextAreaElement*>(element.get()));
-}
-
-static DOMNode* createTitleWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLTitleElement(exec, static_cast<HTMLTitleElement*>(element.get()));
-}
-
-static DOMNode* createUListWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
-{
-    return new JSHTMLUListElement(exec, static_cast<HTMLUListElement*>(element.get()));
-}
+FOR_EACH_TAG(CREATE_WRAPPER_FUNCTION)
+#undef CREATE_WRAPPER_FUNCTION
 
 DOMNode* createJSWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
     static HashMap<WebCore::AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
     if (map.isEmpty()) {
-        map.set(aTag.localName().impl(), createAnchorWrapper);
-        map.set(appletTag.localName().impl(), createAppletWrapper);
-        map.set(baseTag.localName().impl(), createBaseWrapper);
-        map.set(buttonTag.localName().impl(), createButtonWrapper);
-        map.set(canvasTag.localName().impl(), createCanvasWrapper);
-        map.set(dirTag.localName().impl(), createDirectoryWrapper);
-        map.set(divTag.localName().impl(), createDivWrapper);
-        map.set(dlTag.localName().impl(), createDListWrapper);
-        map.set(headTag.localName().impl(), createHeadWrapper);
-        map.set(htmlTag.localName().impl(), createHtmlWrapper);
-        map.set(inputTag.localName().impl(), createInputWrapper);
-        map.set(linkTag.localName().impl(), createLinkWrapper);
-        map.set(metaTag.localName().impl(), createMetaWrapper);
-        map.set(olTag.localName().impl(), createOListWrapper);
-        map.set(optgroupTag.localName().impl(), createOptGroupWrapper);
-        map.set(optionTag.localName().impl(), createOptionWrapper);
-        map.set(styleTag.localName().impl(), createStyleWrapper);
-        map.set(textareaTag.localName().impl(), createTextAreaWrapper);
-        map.set(titleTag.localName().impl(), createTitleWrapper);
-        map.set(ulTag.localName().impl(), createUListWrapper);
+#define ADD_TO_HASH_MAP(tag, name) map.set(tag##Tag.localName().impl(), create##name##Wrapper);
+FOR_EACH_TAG(ADD_TO_HASH_MAP)
+#undef ADD_TO_HASH_MAP
+        map.set(h2Tag.localName().impl(), createHeadingWrapper);
+        map.set(h3Tag.localName().impl(), createHeadingWrapper);
+        map.set(h4Tag.localName().impl(), createHeadingWrapper);
+        map.set(h5Tag.localName().impl(), createHeadingWrapper);
+        map.set(h6Tag.localName().impl(), createHeadingWrapper);
+        map.set(imageTag.localName().impl(), createImageWrapper);
+        map.set(insTag.localName().impl(), createModWrapper);
+        map.set(listingTag.localName().impl(), createPreWrapper);
     }
     CreateHTMLElementWrapperFunction f = map.get(element->localName().impl());
     if (f)

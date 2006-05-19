@@ -78,14 +78,9 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const;
     static const ClassInfo info;
 
-    static const ClassInfo isIndex_info, body_info, form_info,
-      select_info, optGroup_info, option_info, input_info, textArea_info,
-      button_info, label_info, fieldSet_info, legend_info, 
-      menu_info, li_info, p_info, heading_info,
-      blockQuote_info, q_info, pre_info, br_info, baseFont_info, font_info,
-      hr_info, mod_info, img_info, object_info, param_info,
-      embed_info, map_info, area_info, script_info, table_info,
-      caption_info, col_info, tablesection_info, tr_info,
+    static const ClassInfo form_info,
+      select_info, option_info, input_info, object_info, 
+      embed_info, table_info, caption_info, col_info, tablesection_info, tr_info,
       tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
 
     // FIXME: Might make sense to combine this with ClassInfo some day.
@@ -93,68 +88,19 @@ namespace KJS {
     typedef void (JSHTMLElement::*SetterFunction)(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
-    static const Accessors isIndex_accessors, body_accessors, form_accessors,
-      select_accessors, optGroup_accessors, option_accessors, input_accessors, textArea_accessors,
-      button_accessors, label_accessors, fieldSet_accessors, legend_accessors, 
-      menu_accessors, li_accessors, p_accessors, heading_accessors,
-      blockQuote_accessors, q_accessors, pre_accessors, br_accessors, baseFont_accessors, font_accessors,
-      hr_accessors, mod_accessors, img_accessors, object_accessors, param_accessors,
-      embed_accessors, map_accessors, area_accessors, script_accessors, table_accessors,
+    static const Accessors form_accessors,
+      select_accessors, option_accessors, input_accessors, object_accessors, embed_accessors, table_accessors,
       caption_accessors, col_accessors, tablesection_accessors, tr_accessors,
       tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
 
-    JSValue *isIndexGetter(ExecState* exec, int token) const;
-    void  isIndexSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *bodyGetter(ExecState* exec, int token) const;
-    void  bodySetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *formGetter(ExecState* exec, int token) const;
     void  formSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *selectGetter(ExecState* exec, int token) const;
     void  selectSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *labelGetter(ExecState* exec, int token) const;
-    void  labelSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *fieldSetGetter(ExecState* exec, int token) const;
-    void  fieldSetSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *legendGetter(ExecState* exec, int token) const;
-    void  legendSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *menuGetter(ExecState* exec, int token) const;
-    void  menuSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *liGetter(ExecState* exec, int token) const;
-    void  liSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *paragraphGetter(ExecState* exec, int token) const;
-    void  paragraphSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *headingGetter(ExecState* exec, int token) const;
-    void  headingSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *blockQuoteGetter(ExecState* exec, int token) const;
-    void  blockQuoteSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *quoteGetter(ExecState* exec, int token) const;
-    void  quoteSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *preGetter(ExecState* exec, int token) const;
-    void  preSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *brGetter(ExecState* exec, int token) const;
-    void  brSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *baseFontGetter(ExecState* exec, int token) const;
-    void  baseFontSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *fontGetter(ExecState* exec, int token) const;
-    void  fontSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *hrGetter(ExecState* exec, int token) const;
-    void  hrSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *modGetter(ExecState* exec, int token) const;
-    void  modSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *imageGetter(ExecState* exec, int token) const;
-    void  imageSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *objectGetter(ExecState* exec, int token) const;
     void  objectSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *paramGetter(ExecState* exec, int token) const;
-    void  paramSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *embedGetter(ExecState*, int token) const;
     void  embedSetter(ExecState*, int token, JSValue*, const WebCore::String&);
-    JSValue *mapGetter(ExecState* exec, int token) const;
-    void  mapSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *areaGetter(ExecState* exec, int token) const;
-    void  areaSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
-    JSValue *scriptGetter(ExecState* exec, int token) const;
-    void  scriptSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *tableGetter(ExecState* exec, int token) const;
     void  tableSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
     JSValue *tableCaptionGetter(ExecState* exec, int token) const;
@@ -176,33 +122,18 @@ namespace KJS {
     JSValue *marqueeGetter(ExecState* exec, int token) const;
     void  marqueeSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str);
 
-    enum { IsIndexForm, IsIndexPrompt, BodyBackground, BodyVLink, BodyText,
-           BodyLink, BodyALink, BodyBgColor, BodyScrollLeft, BodyScrollTop, BodyScrollHeight, BodyScrollWidth,
+    enum { 
            FormAction, FormEncType, FormElements, FormLength, FormAcceptCharset,
            FormReset, FormTarget, FormName, FormMethod, FormSubmit, SelectAdd,
            SelectTabIndex, SelectValue, SelectSelectedIndex, SelectLength,
            SelectRemove, SelectForm, SelectBlur, SelectType, SelectOptions,
            SelectDisabled, SelectMultiple, SelectName, SelectSize, SelectFocus,
-           LabelHtmlFor,
-           LabelForm, LabelFocus, LabelAccessKey, FieldSetForm, LegendForm, LegendAccessKey,
-           LegendAlign, LegendFocus, MenuCompact, LIType,
-           LIValue, ParagraphAlign, HeadingAlign, BlockQuoteCite,
-           QuoteCite, PreWidth, PreWrap, BRClear, BaseFontColor, BaseFontSize,
-           BaseFontFace, FontColor, FontSize, FontFace, HRWidth, HRNoShade,
-           HRAlign, HRSize, ModCite, ModDateTime,
-           ImageName, ImageAlign, ImageHspace, ImageVspace, ImageUseMap, ImageAlt,
-           ImageLowSrc, ImageWidth, ImageIsMap, ImageBorder, ImageHeight, ImageComplete,
-           ImageLongDesc, ImageSrc, ImageX, ImageY, ObjectHspace, ObjectHeight, ObjectAlign,
+           ObjectHspace, ObjectHeight, ObjectAlign,
            ObjectBorder, ObjectCode, ObjectType, ObjectVspace, ObjectArchive,
            ObjectDeclare, ObjectForm, ObjectCodeBase, ObjectCodeType, ObjectData,
            ObjectName, ObjectStandby, ObjectTabIndex, ObjectUseMap, ObjectWidth, ObjectContentDocument,
-           ParamName, ParamType, ParamValueType, ParamValue, 
            EmbedAlign, EmbedHeight, EmbedName, EmbedSrc, EmbedType, EmbedWidth,
-           MapAreas, MapName, AreaHash, AreaHref, AreaTarget, AreaPort, AreaShape,
-           AreaCoords, AreaAlt, AreaAccessKey, AreaNoHref, AreaHost, AreaProtocol,
-           AreaHostName, AreaPathName, AreaSearch, AreaTabIndex, ScriptEvent,
-           ScriptType, ScriptHtmlFor, ScriptText, ScriptSrc, ScriptCharset,
-           ScriptDefer, TableSummary, TableTBodies, TableTHead, TableCellPadding,
+           TableSummary, TableTBodies, TableTHead, TableCellPadding,
            TableDeleteCaption, TableCreateCaption, TableCaption, TableWidth,
            TableCreateTFoot, TableAlign, TableTFoot, TableDeleteRow,
            TableCellSpacing, TableRows, TableBgColor, TableBorder, TableFrame,

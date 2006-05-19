@@ -1,3 +1,73 @@
+2006-05-19  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Eric.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8983
+        Autogenerate another 22 HTML classes
+        
+        Already covered by existing DOM tests.
+
+        * DerivedSources.make:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new IDL files and generated sources.
+        
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::createPattern):
+        Use JSHTMLImageElement::info in inherits.
+        
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createJSWrapper):
+        Add macros for the functions and the code to populate the hash set.
+        
+        * bindings/js/kjs_html.cpp:
+        (KJS::):
+        (KJS::JSHTMLElement::classInfo):
+        (KJS::JSHTMLElement::accessors):
+        (KJS::HTMLElementFunction::callAsFunction):
+        * bindings/js/kjs_html.h:
+        (KJS::JSHTMLElement::):
+        Delete old cruft.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Add support for creating a JS object from a HTMLCollection.
+        
+        * html/HTMLAreaElement.idl: Added.
+        * html/HTMLBRElement.idl: Added.
+        * html/HTMLBaseFontElement.idl: Added.
+        * html/HTMLBlockquoteElement.idl: Added.
+        
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        (WebCore::HTMLBodyElement::setScrollTop):
+        (WebCore::HTMLBodyElement::scrollHeight):
+        (WebCore::HTMLBodyElement::scrollWidth):        
+        * html/HTMLBodyElement.h:
+        Add new functions that used to be implemented in kjs_html.cpp
+        
+        * html/HTMLBodyElement.idl: Added.
+        * html/HTMLFieldSetElement.idl: Added.
+        * html/HTMLFontElement.idl: Added.
+        * html/HTMLHRElement.idl: Added.
+        * html/HTMLHeadingElement.idl: Added.
+        * html/HTMLImageElement.idl: Added.
+        * html/HTMLIsIndexElement.idl: Added.
+        * html/HTMLLIElement.idl: Added.
+        * html/HTMLLabelElement.idl: Added.
+        * html/HTMLLegendElement.idl: Added.
+        * html/HTMLMapElement.idl: Added.
+        * html/HTMLMenuElement.idl: Added.
+        * html/HTMLModElement.idl: Added.
+        * html/HTMLParagraphElement.idl: Added.
+        * html/HTMLParamElement.idl: Added.
+        * html/HTMLPreElement.idl: Added.
+        * html/HTMLQuoteElement.idl: Added.
+        * html/HTMLScriptElement.idl: Added.
+
 2006-05-18  David Hyatt  <hyatt@apple.com>
 
         Turn off responding to font changes while running.  It doesn't work

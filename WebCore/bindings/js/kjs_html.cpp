@@ -65,6 +65,7 @@
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "HTMLQuoteElement.h"
+#include "JSHTMLImageElement.h"
 #include "NameNodeList.h"
 #include "RenderLayer.h"
 #include "Text.h"
@@ -444,38 +445,16 @@ void JSHTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *value
 
 // -------------------------------------------------------------------------
 
-const ClassInfo JSHTMLElement::area_info = { "HTMLAreaElement", &JSHTMLElement::info, &HTMLAreaElementTable, 0 };
-const ClassInfo JSHTMLElement::baseFont_info = { "HTMLBaseFontElement", &JSHTMLElement::info, &HTMLBaseFontElementTable, 0 };
-const ClassInfo JSHTMLElement::blockQuote_info = { "HTMLBlockQuoteElement", &JSHTMLElement::info, &HTMLBlockQuoteElementTable, 0 };
-const ClassInfo JSHTMLElement::body_info = { "HTMLBodyElement", &JSHTMLElement::info, &HTMLBodyElementTable, 0 };
-const ClassInfo JSHTMLElement::br_info = { "HTMLBRElement", &JSHTMLElement::info, &HTMLBRElementTable, 0 };
 const ClassInfo JSHTMLElement::caption_info = { "HTMLTableCaptionElement", &JSHTMLElement::info, &HTMLTableCaptionElementTable, 0 };
 const ClassInfo JSHTMLElement::col_info = { "HTMLTableColElement", &JSHTMLElement::info, &HTMLTableColElementTable, 0 };
 const ClassInfo JSHTMLElement::embed_info = { "HTMLEmbedElement", &JSHTMLElement::info, &HTMLEmbedElementTable, 0 };
-const ClassInfo JSHTMLElement::fieldSet_info = { "HTMLFieldSetElement", &JSHTMLElement::info, &HTMLFieldSetElementTable, 0 };
-const ClassInfo JSHTMLElement::font_info = { "HTMLFontElement", &JSHTMLElement::info, &HTMLFontElementTable, 0 };
 const ClassInfo JSHTMLElement::form_info = { "HTMLFormElement", &JSHTMLElement::info, &HTMLFormElementTable, 0 };
 const ClassInfo JSHTMLElement::frameSet_info = { "HTMLFrameSetElement", &JSHTMLElement::info, &HTMLFrameSetElementTable, 0 };
 const ClassInfo JSHTMLElement::frame_info = { "HTMLFrameElement", &JSHTMLElement::info, &HTMLFrameElementTable, 0 };
-const ClassInfo JSHTMLElement::heading_info = { "HTMLHeadingElement", &JSHTMLElement::info, &HTMLHeadingElementTable, 0 };
-const ClassInfo JSHTMLElement::hr_info = { "HTMLHRElement", &JSHTMLElement::info, &HTMLHRElementTable, 0 };
 const ClassInfo JSHTMLElement::iFrame_info = { "HTMLIFrameElement", &JSHTMLElement::info, &HTMLIFrameElementTable, 0 };
-const ClassInfo JSHTMLElement::img_info = { "HTMLImageElement", &JSHTMLElement::info, &HTMLImageElementTable, 0 };
 const ClassInfo JSHTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
-const ClassInfo JSHTMLElement::isIndex_info = { "HTMLIsIndexElement", &JSHTMLElement::info, &HTMLIsIndexElementTable, 0 };
-const ClassInfo JSHTMLElement::label_info = { "HTMLLabelElement", &JSHTMLElement::info, &HTMLLabelElementTable, 0 };
-const ClassInfo JSHTMLElement::legend_info = { "HTMLLegendElement", &JSHTMLElement::info, &HTMLLegendElementTable, 0 };
-const ClassInfo JSHTMLElement::li_info = { "HTMLLIElement", &JSHTMLElement::info, &HTMLLIElementTable, 0 };
-const ClassInfo JSHTMLElement::map_info = { "HTMLMapElement", &JSHTMLElement::info, &HTMLMapElementTable, 0 };
 const ClassInfo JSHTMLElement::marquee_info = { "HTMLMarqueeElement", &JSHTMLElement::info, &HTMLMarqueeElementTable, 0 };
-const ClassInfo JSHTMLElement::menu_info = { "HTMLMenuElement", &JSHTMLElement::info, &HTMLMenuElementTable, 0 };
-const ClassInfo JSHTMLElement::mod_info = { "HTMLModElement", &JSHTMLElement::info, &HTMLModElementTable, 0 };
 const ClassInfo JSHTMLElement::object_info = { "HTMLObjectElement", &JSHTMLElement::info, &HTMLObjectElementTable, 0 };
-const ClassInfo JSHTMLElement::p_info = { "HTMLParagraphElement", &JSHTMLElement::info, &HTMLParagraphElementTable, 0 };
-const ClassInfo JSHTMLElement::param_info = { "HTMLParamElement", &JSHTMLElement::info, &HTMLParamElementTable, 0 };
-const ClassInfo JSHTMLElement::pre_info = { "HTMLPreElement", &JSHTMLElement::info, &HTMLPreElementTable, 0 };
-const ClassInfo JSHTMLElement::q_info = { "HTMLQuoteElement", &JSHTMLElement::info, &HTMLQuoteElementTable, 0 };
-const ClassInfo JSHTMLElement::script_info = { "HTMLScriptElement", &JSHTMLElement::info, &HTMLScriptElementTable, 0 };
 const ClassInfo JSHTMLElement::select_info = { "HTMLSelectElement", &JSHTMLElement::info, &HTMLSelectElementTable, 0 };
 const ClassInfo JSHTMLElement::table_info = { "HTMLTableElement", &JSHTMLElement::info, &HTMLTableElementTable, 0 };
 const ClassInfo JSHTMLElement::tablecell_info = { "HTMLTableCellElement", &JSHTMLElement::info, &HTMLTableCellElementTable, 0 };
@@ -486,45 +465,16 @@ const ClassInfo* JSHTMLElement::classInfo() const
 {
     static HashMap<WebCore::AtomicStringImpl*, const ClassInfo*> classInfoMap;
     if (classInfoMap.isEmpty()) {
-        classInfoMap.set(areaTag.localName().impl(), &area_info);
-        classInfoMap.set(basefontTag.localName().impl(), &baseFont_info);
-        classInfoMap.set(blockquoteTag.localName().impl(), &blockQuote_info);
-        classInfoMap.set(bodyTag.localName().impl(), &body_info);
-        classInfoMap.set(brTag.localName().impl(), &br_info);
         classInfoMap.set(captionTag.localName().impl(), &caption_info);
         classInfoMap.set(colTag.localName().impl(), &col_info);
         classInfoMap.set(colgroupTag.localName().impl(), &col_info);
-        classInfoMap.set(delTag.localName().impl(), &mod_info);
         classInfoMap.set(embedTag.localName().impl(), &embed_info);
-        classInfoMap.set(fieldsetTag.localName().impl(), &fieldSet_info);
-        classInfoMap.set(fontTag.localName().impl(), &font_info);
         classInfoMap.set(formTag.localName().impl(), &form_info);
         classInfoMap.set(frameTag.localName().impl(), &frame_info);
         classInfoMap.set(framesetTag.localName().impl(), &frameSet_info);
-        classInfoMap.set(h1Tag.localName().impl(), &heading_info);
-        classInfoMap.set(h2Tag.localName().impl(), &heading_info);
-        classInfoMap.set(h3Tag.localName().impl(), &heading_info);
-        classInfoMap.set(h4Tag.localName().impl(), &heading_info);
-        classInfoMap.set(h5Tag.localName().impl(), &heading_info);
-        classInfoMap.set(h6Tag.localName().impl(), &heading_info);
-        classInfoMap.set(hrTag.localName().impl(), &hr_info);
         classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
-        classInfoMap.set(imgTag.localName().impl(), &img_info);
-        classInfoMap.set(insTag.localName().impl(), &mod_info);
-        classInfoMap.set(isindexTag.localName().impl(), &isIndex_info);
-        classInfoMap.set(labelTag.localName().impl(), &label_info);
-        classInfoMap.set(legendTag.localName().impl(), &legend_info);
-        classInfoMap.set(liTag.localName().impl(), &li_info);
-        classInfoMap.set(listingTag.localName().impl(), &pre_info);
-        classInfoMap.set(mapTag.localName().impl(), &map_info);
         classInfoMap.set(marqueeTag.localName().impl(), &marquee_info);
-        classInfoMap.set(menuTag.localName().impl(), &menu_info);
         classInfoMap.set(objectTag.localName().impl(), &object_info);
-        classInfoMap.set(pTag.localName().impl(), &p_info);
-        classInfoMap.set(paramTag.localName().impl(), &param_info);
-        classInfoMap.set(preTag.localName().impl(), &pre_info);
-        classInfoMap.set(qTag.localName().impl(), &q_info);
-        classInfoMap.set(scriptTag.localName().impl(), &script_info);
         classInfoMap.set(selectTag.localName().impl(), &select_info);
         classInfoMap.set(tableTag.localName().impl(), &table_info);
         classInfoMap.set(tbodyTag.localName().impl(), &tablesection_info);
@@ -542,32 +492,10 @@ const ClassInfo* JSHTMLElement::classInfo() const
     return &info;
 }
 
-const JSHTMLElement::Accessors JSHTMLElement::isIndex_accessors = { &JSHTMLElement::isIndexGetter, &JSHTMLElement::isIndexSetter };
-const JSHTMLElement::Accessors JSHTMLElement::body_accessors = { &JSHTMLElement::bodyGetter, &JSHTMLElement::bodySetter };
 const JSHTMLElement::Accessors JSHTMLElement::form_accessors = { &JSHTMLElement::formGetter, &JSHTMLElement::formSetter };
 const JSHTMLElement::Accessors JSHTMLElement::select_accessors = { &JSHTMLElement::selectGetter, &JSHTMLElement::selectSetter };
-const JSHTMLElement::Accessors JSHTMLElement::label_accessors = { &JSHTMLElement::labelGetter, &JSHTMLElement::labelSetter };
-const JSHTMLElement::Accessors JSHTMLElement::fieldSet_accessors = { &JSHTMLElement::fieldSetGetter, &JSHTMLElement::fieldSetSetter };
-const JSHTMLElement::Accessors JSHTMLElement::legend_accessors = { &JSHTMLElement::legendGetter, &JSHTMLElement::legendSetter };
-const JSHTMLElement::Accessors JSHTMLElement::menu_accessors = { &JSHTMLElement::menuGetter, &JSHTMLElement::menuSetter };
-const JSHTMLElement::Accessors JSHTMLElement::li_accessors = { &JSHTMLElement::liGetter, &JSHTMLElement::liSetter };
-const JSHTMLElement::Accessors JSHTMLElement::p_accessors = { &JSHTMLElement::paragraphGetter, &JSHTMLElement::paragraphSetter };
-const JSHTMLElement::Accessors JSHTMLElement::heading_accessors = { &JSHTMLElement::headingGetter, &JSHTMLElement::headingSetter };
-const JSHTMLElement::Accessors JSHTMLElement::blockQuote_accessors = { &JSHTMLElement::blockQuoteGetter, &JSHTMLElement::blockQuoteSetter };
-const JSHTMLElement::Accessors JSHTMLElement::q_accessors = { &JSHTMLElement::quoteGetter, &JSHTMLElement::quoteSetter };
-const JSHTMLElement::Accessors JSHTMLElement::pre_accessors = { &JSHTMLElement::preGetter, &JSHTMLElement::preSetter };
-const JSHTMLElement::Accessors JSHTMLElement::br_accessors = { &JSHTMLElement::brGetter, &JSHTMLElement::brSetter };
-const JSHTMLElement::Accessors JSHTMLElement::baseFont_accessors = { &JSHTMLElement::baseFontGetter, &JSHTMLElement::baseFontSetter };
-const JSHTMLElement::Accessors JSHTMLElement::font_accessors = { &JSHTMLElement::fontGetter, &JSHTMLElement::fontSetter };
-const JSHTMLElement::Accessors JSHTMLElement::hr_accessors = { &JSHTMLElement::hrGetter, &JSHTMLElement::hrSetter };
-const JSHTMLElement::Accessors JSHTMLElement::mod_accessors = { &JSHTMLElement::modGetter, &JSHTMLElement::modSetter };
-const JSHTMLElement::Accessors JSHTMLElement::img_accessors = { &JSHTMLElement::imageGetter, &JSHTMLElement::imageSetter };
 const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
-const JSHTMLElement::Accessors JSHTMLElement::param_accessors = { &JSHTMLElement::paramGetter, &JSHTMLElement::paramSetter };
 const JSHTMLElement::Accessors JSHTMLElement::embed_accessors = { &JSHTMLElement::embedGetter, &JSHTMLElement::embedSetter };
-const JSHTMLElement::Accessors JSHTMLElement::map_accessors = { &JSHTMLElement::mapGetter, &JSHTMLElement::mapSetter };
-const JSHTMLElement::Accessors JSHTMLElement::area_accessors = { &JSHTMLElement::areaGetter, &JSHTMLElement::areaSetter };
-const JSHTMLElement::Accessors JSHTMLElement::script_accessors = { &JSHTMLElement::scriptGetter, &JSHTMLElement::scriptSetter };
 const JSHTMLElement::Accessors JSHTMLElement::table_accessors = { &JSHTMLElement::tableGetter, &JSHTMLElement::tableSetter };
 const JSHTMLElement::Accessors JSHTMLElement::caption_accessors = { &JSHTMLElement::tableCaptionGetter, &JSHTMLElement::tableCaptionSetter };
 const JSHTMLElement::Accessors JSHTMLElement::col_accessors = { &JSHTMLElement::tableColGetter, &JSHTMLElement::tableColSetter };
@@ -583,45 +511,16 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
 {
     static HashMap<WebCore::AtomicStringImpl*, const Accessors*> accessorMap;
     if (accessorMap.isEmpty()) {
-        accessorMap.add(areaTag.localName().impl(), &area_accessors);
-        accessorMap.add(basefontTag.localName().impl(), &baseFont_accessors);
-        accessorMap.add(blockquoteTag.localName().impl(), &blockQuote_accessors); 
-        accessorMap.add(bodyTag.localName().impl(), &body_accessors);
-        accessorMap.add(brTag.localName().impl(), &br_accessors);
         accessorMap.add(captionTag.localName().impl(), &caption_accessors);
         accessorMap.add(colTag.localName().impl(), &col_accessors);
         accessorMap.add(colgroupTag.localName().impl(), &col_accessors);
-        accessorMap.add(delTag.localName().impl(), &mod_accessors);
         accessorMap.add(embedTag.localName().impl(), &embed_accessors);
-        accessorMap.add(fieldsetTag.localName().impl(), &fieldSet_accessors);
-        accessorMap.add(fontTag.localName().impl(), &font_accessors);
         accessorMap.add(formTag.localName().impl(), &form_accessors);
         accessorMap.add(frameTag.localName().impl(), &frame_accessors);
         accessorMap.add(framesetTag.localName().impl(), &frameSet_accessors);
-        accessorMap.add(h1Tag.localName().impl(), &heading_accessors);
-        accessorMap.add(h2Tag.localName().impl(), &heading_accessors);
-        accessorMap.add(h3Tag.localName().impl(), &heading_accessors);
-        accessorMap.add(h4Tag.localName().impl(), &heading_accessors);
-        accessorMap.add(h5Tag.localName().impl(), &heading_accessors);
-        accessorMap.add(h6Tag.localName().impl(), &heading_accessors);
-        accessorMap.add(hrTag.localName().impl(), &hr_accessors); 
         accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
-        accessorMap.add(imgTag.localName().impl(), &img_accessors);
-        accessorMap.add(insTag.localName().impl(), &mod_accessors);
-        accessorMap.add(isindexTag.localName().impl(), &isIndex_accessors);
-        accessorMap.add(labelTag.localName().impl(), &label_accessors);
-        accessorMap.add(legendTag.localName().impl(), &legend_accessors);
-        accessorMap.add(liTag.localName().impl(), &li_accessors);
-        accessorMap.set(listingTag.localName().impl(), &pre_accessors);
-        accessorMap.add(mapTag.localName().impl(), &map_accessors);
         accessorMap.add(marqueeTag.localName().impl(), &marquee_accessors);
-        accessorMap.add(menuTag.localName().impl(), &menu_accessors);
         accessorMap.add(objectTag.localName().impl(), &object_accessors);
-        accessorMap.add(pTag.localName().impl(), &p_accessors);
-        accessorMap.add(paramTag.localName().impl(), &param_accessors);
-        accessorMap.add(preTag.localName().impl(), &pre_accessors);
-        accessorMap.add(qTag.localName().impl(), &q_accessors);
-        accessorMap.add(scriptTag.localName().impl(), &script_accessors);
         accessorMap.add(selectTag.localName().impl(), &select_accessors);
         accessorMap.add(tableTag.localName().impl(), &table_accessors);
         accessorMap.add(tbodyTag.localName().impl(), &tablesection_accessors);
@@ -657,22 +556,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   contentEditable   KJS::JSHTMLElement::ElementContentEditable  DontDelete
   isContentEditable KJS::JSHTMLElement::ElementIsContentEditable  DontDelete|ReadOnly
 @end
-@begin HTMLIsIndexElementTable 2
-  form          KJS::JSHTMLElement::IsIndexForm   DontDelete|ReadOnly
-  prompt        KJS::JSHTMLElement::IsIndexPrompt DontDelete
-@end
-@begin HTMLBodyElementTable 10
-  aLink         KJS::JSHTMLElement::BodyALink     DontDelete
-  background    KJS::JSHTMLElement::BodyBackground        DontDelete
-  bgColor       KJS::JSHTMLElement::BodyBgColor   DontDelete
-  link          KJS::JSHTMLElement::BodyLink      DontDelete
-  text          KJS::JSHTMLElement::BodyText      DontDelete
-  vLink         KJS::JSHTMLElement::BodyVLink     DontDelete
-  scrollLeft    KJS::JSHTMLElement::BodyScrollLeft        DontDelete
-  scrollTop     KJS::JSHTMLElement::BodyScrollTop         DontDelete
-  scrollHeight  KJS::JSHTMLElement::BodyScrollHeight      DontDelete|ReadOnly
-  scrollWidth   KJS::JSHTMLElement::BodyScrollWidth       DontDelete|ReadOnly
-@end
 @begin HTMLFormElementTable 11
 # Also supported, by name/index
   elements      KJS::JSHTMLElement::FormElements  DontDelete|ReadOnly
@@ -704,83 +587,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   blur          KJS::JSHTMLElement::SelectBlur    DontDelete|Function 0
   focus         KJS::JSHTMLElement::SelectFocus   DontDelete|Function 0
 @end
-@begin HTMLLabelElementTable 4
-  form          KJS::JSHTMLElement::LabelForm             DontDelete|ReadOnly
-  accessKey     KJS::JSHTMLElement::LabelAccessKey        DontDelete
-  htmlFor       KJS::JSHTMLElement::LabelHtmlFor          DontDelete
-  focus     KJS::JSHTMLElement::LabelFocus        DontDelete|Function 0
-@end
-@begin HTMLFieldSetElementTable 1
-  form          KJS::JSHTMLElement::FieldSetForm          DontDelete|ReadOnly
-@end
-@begin HTMLLegendElementTable 4
-  form          KJS::JSHTMLElement::LegendForm            DontDelete|ReadOnly
-  accessKey     KJS::JSHTMLElement::LegendAccessKey       DontDelete
-  align         KJS::JSHTMLElement::LegendAlign           DontDelete
-  focus     KJS::JSHTMLElement::LegendFocus     DontDelete|Function 0
-@end
-@begin HTMLMenuElementTable 1
-  compact       KJS::JSHTMLElement::MenuCompact           DontDelete
-@end
-@begin HTMLLIElementTable 2
-  type          KJS::JSHTMLElement::LIType                DontDelete
-  value         KJS::JSHTMLElement::LIValue               DontDelete
-@end
-@begin HTMLParagraphElementTable 1
-  align         KJS::JSHTMLElement::ParagraphAlign        DontDelete
-@end
-@begin HTMLHeadingElementTable 1
-  align         KJS::JSHTMLElement::HeadingAlign          DontDelete
-@end
-@begin HTMLBlockQuoteElementTable 1
-  cite          KJS::JSHTMLElement::BlockQuoteCite        DontDelete
-@end
-@begin HTMLQuoteElementTable 1
-  cite          KJS::JSHTMLElement::QuoteCite             DontDelete
-@end
-@begin HTMLPreElementTable 1
-  width         KJS::JSHTMLElement::PreWidth              DontDelete
-@end
-@begin HTMLBRElementTable 1
-  clear         KJS::JSHTMLElement::BRClear               DontDelete
-@end
-@begin HTMLBaseFontElementTable 3
-  color         KJS::JSHTMLElement::BaseFontColor         DontDelete
-  face          KJS::JSHTMLElement::BaseFontFace          DontDelete
-  size          KJS::JSHTMLElement::BaseFontSize          DontDelete
-@end
-@begin HTMLFontElementTable 3
-  color         KJS::JSHTMLElement::FontColor             DontDelete
-  face          KJS::JSHTMLElement::FontFace              DontDelete
-  size          KJS::JSHTMLElement::FontSize              DontDelete
-@end
-@begin HTMLHRElementTable 4
-  align         KJS::JSHTMLElement::HRAlign               DontDelete
-  noShade       KJS::JSHTMLElement::HRNoShade             DontDelete
-  size          KJS::JSHTMLElement::HRSize                DontDelete
-  width         KJS::JSHTMLElement::HRWidth               DontDelete
-@end
-@begin HTMLModElementTable 2
-  cite          KJS::JSHTMLElement::ModCite               DontDelete
-  dateTime      KJS::JSHTMLElement::ModDateTime           DontDelete
-@end
-@begin HTMLImageElementTable 14
-  name          KJS::JSHTMLElement::ImageName             DontDelete
-  align         KJS::JSHTMLElement::ImageAlign            DontDelete
-  alt           KJS::JSHTMLElement::ImageAlt              DontDelete
-  border        KJS::JSHTMLElement::ImageBorder           DontDelete
-  complete      KJS::JSHTMLElement::ImageComplete         DontDelete|ReadOnly
-  height        KJS::JSHTMLElement::ImageHeight           DontDelete
-  hspace        KJS::JSHTMLElement::ImageHspace           DontDelete
-  isMap         KJS::JSHTMLElement::ImageIsMap            DontDelete
-  longDesc      KJS::JSHTMLElement::ImageLongDesc         DontDelete
-  src           KJS::JSHTMLElement::ImageSrc              DontDelete
-  useMap        KJS::JSHTMLElement::ImageUseMap           DontDelete
-  vspace        KJS::JSHTMLElement::ImageVspace           DontDelete
-  width         KJS::JSHTMLElement::ImageWidth            DontDelete
-  x         KJS::JSHTMLElement::ImageX            DontDelete|ReadOnly
-  y         KJS::JSHTMLElement::ImageY            DontDelete|ReadOnly
-@end
 @begin HTMLObjectElementTable 20
   form            KJS::JSHTMLElement::ObjectForm            DontDelete|ReadOnly
   code            KJS::JSHTMLElement::ObjectCode            DontDelete
@@ -802,13 +608,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   vspace          KJS::JSHTMLElement::ObjectVspace          DontDelete
   width           KJS::JSHTMLElement::ObjectWidth           DontDelete
 @end
-@begin HTMLParamElementTable 4
-  name          KJS::JSHTMLElement::ParamName             DontDelete
-  type          KJS::JSHTMLElement::ParamType             DontDelete
-  value         KJS::JSHTMLElement::ParamValue            DontDelete
-  valueType     KJS::JSHTMLElement::ParamValueType        DontDelete
-@end
-@end
 @begin HTMLEmbedElementTable 6
   align         KJS::JSHTMLElement::EmbedAlign           DontDelete
   height        KJS::JSHTMLElement::EmbedHeight          DontDelete
@@ -816,36 +615,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   src           KJS::JSHTMLElement::EmbedSrc             DontDelete
   type          KJS::JSHTMLElement::EmbedType            DontDelete
   width         KJS::JSHTMLElement::EmbedWidth           DontDelete
-@end
-@begin HTMLMapElementTable 2
-  areas         KJS::JSHTMLElement::MapAreas              DontDelete|ReadOnly
-  name          KJS::JSHTMLElement::MapName               DontDelete
-@end
-@begin HTMLAreaElementTable 15
-  accessKey     KJS::JSHTMLElement::AreaAccessKey         DontDelete
-  alt           KJS::JSHTMLElement::AreaAlt               DontDelete
-  coords        KJS::JSHTMLElement::AreaCoords            DontDelete
-  href          KJS::JSHTMLElement::AreaHref              DontDelete
-  hash          KJS::JSHTMLElement::AreaHash              DontDelete|ReadOnly
-  host          KJS::JSHTMLElement::AreaHost              DontDelete|ReadOnly
-  hostname      KJS::JSHTMLElement::AreaHostName          DontDelete|ReadOnly
-  pathname      KJS::JSHTMLElement::AreaPathName          DontDelete|ReadOnly
-  port          KJS::JSHTMLElement::AreaPort              DontDelete|ReadOnly
-  protocol      KJS::JSHTMLElement::AreaProtocol          DontDelete|ReadOnly
-  search        KJS::JSHTMLElement::AreaSearch            DontDelete|ReadOnly
-  noHref        KJS::JSHTMLElement::AreaNoHref            DontDelete
-  shape         KJS::JSHTMLElement::AreaShape             DontDelete
-  tabIndex      KJS::JSHTMLElement::AreaTabIndex          DontDelete
-  target        KJS::JSHTMLElement::AreaTarget            DontDelete
-@end
-@begin HTMLScriptElementTable 7
-  text          KJS::JSHTMLElement::ScriptText            DontDelete
-  htmlFor       KJS::JSHTMLElement::ScriptHtmlFor         DontDelete
-  event         KJS::JSHTMLElement::ScriptEvent           DontDelete
-  charset       KJS::JSHTMLElement::ScriptCharset         DontDelete
-  defer         KJS::JSHTMLElement::ScriptDefer           DontDelete
-  src           KJS::JSHTMLElement::ScriptSrc             DontDelete
-  type          KJS::JSHTMLElement::ScriptType            DontDelete
 @end
 @begin HTMLTableElementTable 23
   caption       KJS::JSHTMLElement::TableCaption          DontDelete
@@ -921,8 +690,8 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   width         KJS::JSHTMLElement::TableCellWidth                DontDelete
 @end
 @begin HTMLFrameSetElementTable 2
-  cols          KJS::JSHTMLElement::FrameSetCols                  DontDelete
-  rows          KJS::JSHTMLElement::FrameSetRows                  DontDelete
+cols          KJS::JSHTMLElement::FrameSetCols                  DontDelete
+rows          KJS::JSHTMLElement::FrameSetRows                  DontDelete
 @end
 @begin HTMLFrameElementTable 9
   contentDocument KJS::JSHTMLElement::FrameContentDocument        DontDelete|ReadOnly
@@ -1117,46 +886,6 @@ JSValue *JSHTMLElement::callAsFunction(ExecState *exec, JSObject *thisObj, const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::isIndexGetter(ExecState* exec, int token) const
-{
-    HTMLIsIndexElement& isindex = *static_cast<HTMLIsIndexElement*>(impl());
-    switch (token) {
-        case IsIndexForm:            return toJS(exec, isindex.form()); // type HTMLFormElement
-        case IsIndexPrompt:          return jsString(isindex.prompt());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::bodyGetter(ExecState* exec, int token) const
-{
-    HTMLBodyElement& body = *static_cast<HTMLBodyElement*>(impl());
-    switch (token) {
-        case BodyALink:           return jsString(body.aLink());
-        case BodyBackground:      return jsString(body.background());
-        case BodyBgColor:         return jsString(body.bgColor());
-        case BodyLink:            return jsString(body.link());
-        case BodyText:            return jsString(body.text());
-        case BodyVLink:           return jsString(body.vLink());
-        default: {
-            // Update the document's layout before we compute these attributes.
-            Document *doc = body.document();
-            doc->updateLayoutIgnorePendingStylesheets();
-            FrameView *view = doc->view();
-            switch (token) {
-                case BodyScrollLeft:
-                    return jsNumber(view ? view->contentsX() : 0);
-                case BodyScrollTop:
-                    return jsNumber(view ? view->contentsY() : 0);
-                case BodyScrollHeight:
-                    return jsNumber(view ? view->contentsHeight() : 0);
-                case BodyScrollWidth:
-                    return jsNumber(view ? view->contentsWidth() : 0);
-            }
-        }
-    }
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::formGetter(ExecState* exec, int token) const
 {
     HTMLFormElement& form = *static_cast<HTMLFormElement*>(impl());
@@ -1192,172 +921,6 @@ JSValue *JSHTMLElement::selectGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::labelGetter(ExecState* exec, int token) const
-{
-    HTMLLabelElement& label = *static_cast<HTMLLabelElement*>(impl());
-    switch (token) {
-        case LabelForm:            return toJS(exec,label.form()); // type HTMLFormElement
-        case LabelAccessKey:       return jsString(label.accessKey());
-        case LabelHtmlFor:         return jsString(label.htmlFor());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::fieldSetGetter(ExecState* exec, int token) const
-{
-    HTMLFieldSetElement& fieldSet = *static_cast<HTMLFieldSetElement*>(impl());
-    if (token == FieldSetForm)
-        return toJS(exec,fieldSet.form()); // type HTMLFormElement
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::legendGetter(ExecState* exec, int token) const
-{
-    HTMLLegendElement& legend = *static_cast<HTMLLegendElement*>(impl());
-    switch (token) {
-        case LegendForm:            return toJS(exec,legend.form()); // type HTMLFormElement
-        case LegendAccessKey:       return jsString(legend.accessKey());
-        case LegendAlign:           return jsString(legend.align());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::menuGetter(ExecState* exec, int token) const
-{
-    HTMLMenuElement& menu = *static_cast<HTMLMenuElement*>(impl());
-    if (token == MenuCompact)
-        return jsBoolean(menu.compact());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::liGetter(ExecState* exec, int token) const
-{
-    HTMLLIElement& li = *static_cast<HTMLLIElement*>(impl());
-    switch (token) {
-        case LIType:            return jsString(li.type());
-        case LIValue:           return jsNumber(li.value());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::paragraphGetter(ExecState* exec, int token) const
-{
-    HTMLParagraphElement& p = *static_cast<HTMLParagraphElement*>(impl());
-    if (token == ParagraphAlign)
-        return jsString(p.align());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::headingGetter(ExecState* exec, int token) const
-{
-    HTMLHeadingElement& h = *static_cast<HTMLHeadingElement*>(impl());
-    if (token == HeadingAlign)
-        return jsString(h.align());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::blockQuoteGetter(ExecState* exec, int token) const
-{
-    HTMLBlockquoteElement& blockQuote = *static_cast<HTMLBlockquoteElement*>(impl());
-    if (token == BlockQuoteCite)
-        return jsString(blockQuote.cite());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::quoteGetter(ExecState* exec, int token) const
-{
-    HTMLQuoteElement& quote = *static_cast<HTMLQuoteElement*>(impl());
-    if (token == QuoteCite)
-        return jsString(quote.cite());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::preGetter(ExecState* exec, int token) const
-{
-    // FIXME: Add support for 'wrap' when white-space: pre-wrap is implemented.
-    HTMLPreElement& pre = *static_cast<HTMLPreElement*>(impl());
-    if (token == PreWidth)
-        return jsNumber(pre.width());
-    if (token == PreWrap)
-        return jsBoolean(pre.wrap());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::brGetter(ExecState* exec, int token) const
-{
-    HTMLBRElement& br = *static_cast<HTMLBRElement*>(impl());
-    if (token == BRClear)
-        return jsString(br.clear());
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::baseFontGetter(ExecState* exec, int token) const
-{
-    HTMLBaseFontElement& baseFont = *static_cast<HTMLBaseFontElement*>(impl());
-    switch (token) {
-        case BaseFontColor:           return jsString(baseFont.color());
-        case BaseFontFace:            return jsString(baseFont.face());
-        case BaseFontSize:            return jsString(baseFont.size());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::fontGetter(ExecState* exec, int token) const
-{
-    HTMLFontElement& font = *static_cast<HTMLFontElement*>(impl());
-    switch (token) {
-        case FontColor:           return jsString(font.color());
-        case FontFace:            return jsString(font.face());
-        case FontSize:            return jsString(font.size());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::hrGetter(ExecState* exec, int token) const
-{
-    HTMLHRElement& hr = *static_cast<HTMLHRElement*>(impl());
-    switch (token) {
-        case HRAlign:           return jsString(hr.align());
-        case HRNoShade:         return jsBoolean(hr.noShade());
-        case HRSize:            return jsString(hr.size());
-        case HRWidth:           return jsString(hr.width());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::modGetter(ExecState* exec, int token) const
-{
-    HTMLModElement& mod = *static_cast<HTMLModElement*>(impl());
-    switch (token) {
-        case ModCite:            return jsString(mod.cite());
-        case ModDateTime:        return jsString(mod.dateTime());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::imageGetter(ExecState* exec, int token) const
-{
-    HTMLImageElement& image = *static_cast<HTMLImageElement*>(impl());
-    switch (token) {
-        case ImageName:            return jsString(image.name());
-        case ImageAlign:           return jsString(image.align());
-        case ImageAlt:             return jsString(image.alt());
-        case ImageBorder:          return jsNumber(image.border());
-        case ImageComplete:        return jsBoolean(image.complete());
-        case ImageHeight:          return jsNumber(image.height(true));
-        case ImageHspace:          return jsNumber(image.hspace());
-        case ImageIsMap:           return jsBoolean(image.isMap());
-        case ImageLongDesc:        return jsString(image.longDesc());
-        case ImageSrc:             return jsString(image.src());
-        case ImageUseMap:          return jsString(image.useMap());
-        case ImageVspace:          return jsNumber(image.vspace());
-        case ImageWidth:           return jsNumber(image.width(true));
-        case ImageX:               return jsNumber(image.x());
-        case ImageY:               return jsNumber(image.y());
-    }
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::objectGetter(ExecState* exec, int token) const
 {
     HTMLObjectElement& object = *static_cast<HTMLObjectElement*>(impl());
@@ -1386,18 +949,6 @@ JSValue *JSHTMLElement::objectGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::paramGetter(ExecState* exec, int token) const
-{
-    HTMLParamElement& param = *static_cast<HTMLParamElement*>(impl());
-    switch (token) {
-        case ParamName:            return jsString(param.name());
-        case ParamType:            return jsString(param.type());
-        case ParamValue:           return jsString(param.value());
-        case ParamValueType:       return jsString(param.valueType());
-    }
-    return jsUndefined();
-}
-
 JSValue *JSHTMLElement::embedGetter(ExecState* exec, int token) const
 {
     HTMLEmbedElement& embed = *static_cast<HTMLEmbedElement*>(impl());
@@ -1412,18 +963,7 @@ JSValue *JSHTMLElement::embedGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::mapGetter(ExecState* exec, int token) const
-{
-    HTMLMapElement& map = *static_cast<HTMLMapElement*>(impl());
-    switch (token) {
-        case MapAreas:           return getHTMLCollection(exec, map.areas().get()); // type JSHTMLCollection
-        case MapName:            return jsString(map.name());
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::areaGetter(ExecState* exec, int token) const
-{
+#ifdef FIXME
     HTMLAreaElement& area = *static_cast<HTMLAreaElement*>(impl());
     switch (token) {
         case AreaAccessKey:       return jsString(area.accessKey());
@@ -1448,23 +988,7 @@ JSValue *JSHTMLElement::areaGetter(ExecState* exec, int token) const
         case AreaTabIndex:        return jsNumber(area.tabIndex());
         case AreaTarget:          return jsString(area.target());
     }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::scriptGetter(ExecState* exec, int token) const
-{
-    HTMLScriptElement& script = *static_cast<HTMLScriptElement*>(impl());
-    switch (token) {
-        case ScriptText:            return jsString(script.text());
-        case ScriptHtmlFor:         return jsString(script.htmlFor());
-        case ScriptEvent:           return jsString(script.event());
-        case ScriptCharset:         return jsString(script.charset());
-        case ScriptDefer:           return jsBoolean(script.defer());
-        case ScriptSrc:             return jsString(script.src());
-        case ScriptType:            return jsString(script.type());
-    }
-    return jsUndefined();
-}
+#endif
 
 JSValue *JSHTMLElement::tableGetter(ExecState* exec, int token) const
 {
@@ -1760,20 +1284,6 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj,
             return jsUndefined();
         }
     }
-    else if (element.hasLocalName(labelTag)) {
-        HTMLLabelElement &label = static_cast<HTMLLabelElement &>(element);
-        if (id == JSHTMLElement::LabelFocus) {
-            label.focus();
-            return jsUndefined();
-        }
-    }
-    else if (element.hasLocalName(legendTag)) {
-        HTMLLegendElement &legend = static_cast<HTMLLegendElement &>(element);
-        if (id == JSHTMLElement::LegendFocus) {
-            legend.focus();
-            return jsUndefined();
-        }
-    }
     else if (element.hasLocalName(tableTag)) {
         HTMLTableElement &table = static_cast<HTMLTableElement &>(element);
         if (id == JSHTMLElement::TableCreateTHead)
@@ -1876,39 +1386,6 @@ void JSHTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue
     lookupPut<JSHTMLElement, JSElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
-void JSHTMLElement::isIndexSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLIsIndexElement& isindex = *static_cast<HTMLIsIndexElement*>(impl());
-    if (token == IsIndexPrompt)
-        isindex.setPrompt(str);
-}
-
-void JSHTMLElement::bodySetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLBodyElement& body = *static_cast<HTMLBodyElement*>(impl());
-    switch (token) {
-        case BodyALink:           { body.setALink(str); return; }
-        case BodyBackground:      { body.setBackground(str); return; }
-        case BodyBgColor:         { body.setBgColor(str); return; }
-        case BodyLink:            { body.setLink(str); return; }
-        case BodyText:            { body.setText(str); return; }
-        case BodyVLink:           { body.setVLink(str); return; }
-        case BodyScrollLeft:
-        case BodyScrollTop: {
-            FrameView* sview = body.ownerDocument()->view();
-            if (sview) {
-                // Update the document's layout before we compute these attributes.
-                body.document()->updateLayoutIgnorePendingStylesheets();
-                if (token == BodyScrollLeft)
-                    sview->setContentsPos(value->toInt32(exec), sview->contentsY());
-                else
-                    sview->setContentsPos(sview->contentsX(), value->toInt32(exec));
-            }
-            return;
-        }
-    }
-}
-
 void JSHTMLElement::formSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLFormElement& form = *static_cast<HTMLFormElement*>(impl());
@@ -1946,149 +1423,6 @@ void JSHTMLElement::selectSetter(ExecState *exec, int token, JSValue *value, con
     }
 }
 
-void JSHTMLElement::labelSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLLabelElement& label = *static_cast<HTMLLabelElement*>(impl());
-    switch (token) {
-        // read-only: form
-        case LabelAccessKey:       { label.setAccessKey(str); return; }
-        case LabelHtmlFor:         { label.setHtmlFor(str); return; }
-    }
-}
-
-void JSHTMLElement::fieldSetSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-}
-
-void JSHTMLElement::legendSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLLegendElement& legend = *static_cast<HTMLLegendElement*>(impl());
-    switch (token) {
-        // read-only: form
-        case LegendAccessKey:       { legend.setAccessKey(str); return; }
-        case LegendAlign:           { legend.setAlign(str); return; }
-    }
-}
-
-void JSHTMLElement::menuSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLMenuElement& menu = *static_cast<HTMLMenuElement*>(impl());
-    if (token == MenuCompact)
-        menu.setCompact(value->toBoolean(exec));
-}
-
-void JSHTMLElement::liSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLLIElement& li = *static_cast<HTMLLIElement*>(impl());
-    switch (token) {
-        case LIType:            { li.setType(str); return; }
-        case LIValue:           { li.setValue(value->toInt32(exec)); return; }
-    }
-}
-
-void JSHTMLElement::paragraphSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLParagraphElement& paragraph = *static_cast<HTMLParagraphElement*>(impl());
-    if (token == ParagraphAlign)
-        paragraph.setAlign(str);
-}
-
-void JSHTMLElement::headingSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLHeadingElement& heading = *static_cast<HTMLHeadingElement*>(impl());
-    if (token == HeadingAlign)
-        heading.setAlign(str);
-}
-
-void JSHTMLElement::blockQuoteSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLBlockquoteElement& blockQuote = *static_cast<HTMLBlockquoteElement*>(impl());
-    if (token == BlockQuoteCite)
-        blockQuote.setCite(str);
-}
-
-void JSHTMLElement::quoteSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLQuoteElement& quote = *static_cast<HTMLQuoteElement*>(impl());
-    if (token == QuoteCite)
-        quote.setCite(str);
-}
-
-void JSHTMLElement::preSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLPreElement& pre = *static_cast<HTMLPreElement*>(impl());
-    if (token == PreWidth)
-        pre.setWidth(value->toInt32(exec));
-    else if (token == PreWrap)
-        pre.setWrap(value->toBoolean(exec));
-}
-
-void JSHTMLElement::brSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLBRElement& br = *static_cast<HTMLBRElement*>(impl());
-    if (token == BRClear)
-        br.setClear(str);
-}
-
-void JSHTMLElement::baseFontSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLBaseFontElement& baseFont = *static_cast<HTMLBaseFontElement*>(impl());
-    switch (token) {
-        case BaseFontColor:           { baseFont.setColor(str); return; }
-        case BaseFontFace:            { baseFont.setFace(str); return; }
-        case BaseFontSize:            { baseFont.setSize(str); return; }
-    }
-}
-
-void JSHTMLElement::fontSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLFontElement& font = *static_cast<HTMLFontElement*>(impl());
-    switch (token) {
-        case FontColor:           { font.setColor(str); return; }
-        case FontFace:            { font.setFace(str); return; }
-        case FontSize:            { font.setSize(str); return; }
-    }
-}
-
-void JSHTMLElement::hrSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLHRElement& hr = *static_cast<HTMLHRElement*>(impl());
-    switch (token) {
-        case HRAlign:           { hr.setAlign(str); return; }
-        case HRNoShade:         { hr.setNoShade(value->toBoolean(exec)); return; }
-        case HRSize:            { hr.setSize(str); return; }
-        case HRWidth:           { hr.setWidth(str); return; }
-    }
-}
-
-void JSHTMLElement::modSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLModElement& mod = *static_cast<HTMLModElement*>(impl());
-    switch (token) {
-        case ModCite:            { mod.setCite(str); return; }
-        case ModDateTime:        { mod.setDateTime(str); return; }
-    }
-}
-
-void JSHTMLElement::imageSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLImageElement& image = *static_cast<HTMLImageElement*>(impl());
-    switch (token) {
-        case ImageName:            { image.setName(str); return; }
-        case ImageAlign:           { image.setAlign(str); return; }
-        case ImageAlt:             { image.setAlt(str); return; }
-        case ImageBorder:          { image.setBorder(value->toInt32(exec)); return; }
-        case ImageHeight:          { image.setHeight(value->toInt32(exec)); return; }
-        case ImageHspace:          { image.setHspace(value->toInt32(exec)); return; }
-        case ImageIsMap:           { image.setIsMap(value->toBoolean(exec)); return; }
-        case ImageLongDesc:        { image.setLongDesc(str); return; }
-        case ImageSrc:             { image.setSrc(str); return; }
-        case ImageUseMap:          { image.setUseMap(str); return; }
-        case ImageVspace:          { image.setVspace(value->toInt32(exec)); return; }
-        case ImageWidth:           { image.setWidth(value->toInt32(exec)); return; }
-    }
-}
-
 void JSHTMLElement::objectSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLObjectElement& object = *static_cast<HTMLObjectElement*>(impl());
@@ -2115,17 +1449,6 @@ void JSHTMLElement::objectSetter(ExecState *exec, int token, JSValue *value, con
     }
 }
 
-void JSHTMLElement::paramSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLParamElement& param = *static_cast<HTMLParamElement*>(impl());
-    switch (token) {
-        case ParamName:            { param.setName(str); return; }
-        case ParamType:            { param.setType(str); return; }
-        case ParamValue:           { param.setValue(str); return; }
-        case ParamValueType:       { param.setValueType(str); return; }
-    }
-}
-
 void JSHTMLElement::embedSetter(ExecState*, int token, JSValue*, const WebCore::String& str)
 {
     HTMLEmbedElement& embed = *static_cast<HTMLEmbedElement*>(impl());
@@ -2136,43 +1459,6 @@ void JSHTMLElement::embedSetter(ExecState*, int token, JSValue*, const WebCore::
         case EmbedSrc:             { embed.setSrc(str); return; }
         case EmbedType:            { embed.setType(str); return; }
         case EmbedWidth:           { embed.setWidth(str); return; }
-    }
-}
-
-void JSHTMLElement::mapSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLMapElement& map = *static_cast<HTMLMapElement*>(impl());
-    if (token == MapName)
-        // read-only: areas
-        map.setName(str);
-}
-
-void JSHTMLElement::areaSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLAreaElement& area = *static_cast<HTMLAreaElement*>(impl());
-    switch (token) {
-        case AreaAccessKey:       { area.setAccessKey(str); return; }
-        case AreaAlt:             { area.setAlt(str); return; }
-        case AreaCoords:          { area.setCoords(str); return; }
-        case AreaHref:            { area.setHref(str); return; }
-        case AreaNoHref:          { area.setNoHref(value->toBoolean(exec)); return; }
-        case AreaShape:           { area.setShape(str); return; }
-        case AreaTabIndex:        { area.setTabIndex(value->toInt32(exec)); return; }
-        case AreaTarget:          { area.setTarget(str); return; }
-    }
-}
-
-void JSHTMLElement::scriptSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLScriptElement& script = *static_cast<HTMLScriptElement*>(impl());
-    switch (token) {
-        case ScriptText:            { script.setText(str); return; }
-        case ScriptHtmlFor:         { script.setHtmlFor(str); return; }
-        case ScriptEvent:           { script.setEvent(str); return; }
-        case ScriptCharset:         { script.setCharset(str); return; }
-        case ScriptDefer:           { script.setDefer(value->toBoolean(exec)); return; }
-        case ScriptSrc:             { script.setSrc(str); return; }
-        case ScriptType:            { script.setType(str); return; }
     }
 }
 

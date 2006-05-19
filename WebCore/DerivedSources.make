@@ -62,29 +62,51 @@ all : \
     JSElement.h \
     JSEvent.h \
     JSEntity.h \
-	JSHTMLAppletElement.h \
-	JSHTMLAnchorElement.h \
-    JSHTMLButtonElement.h \
+    JSHTMLAppletElement.h \
+    JSHTMLAnchorElement.h \
+    JSHTMLAreaElement.h \
     JSHTMLBaseElement.h \
+    JSHTMLBaseFontElement.h \
+    JSHTMLBlockquoteElement.h \
+    JSHTMLBodyElement.h \
+    JSHTMLBRElement.h \
+    JSHTMLButtonElement.h \
     JSHTMLCanvasElement.h \
+    JSHTMLDirectoryElement.h \
+    JSHTMLDivElement.h \
+    JSHTMLDListElement.h \
     JSHTMLDocument.h \
-	JSHTMLDirectoryElement.h \
-	JSHTMLDivElement.h \
-	JSHTMLDListElement.h \
     JSHTMLElement.h \
+    JSHTMLFieldSetElement.h \
+	JSHTMLFontElement.h \
     JSHTMLHeadElement.h \
-	JSHTMLHtmlElement.h \
+    JSHTMLHeadingElement.h \
+    JSHTMLHRElement.h \
+    JSHTMLImageElement.h \
+    JSHTMLIsIndexElement.h \
+    JSHTMLHtmlElement.h \
     JSHTMLInputElement.h \
     JSHTMLInputElementBaseTable.cpp \
+    JSHTMLLabelElement.h \
+    JSHTMLLegendElement.h \
+    JSHTMLLIElement.h \
     JSHTMLLinkElement.h \
+    JSHTMLMenuElement.h \
     JSHTMLOptionElement.h \
     JSHTMLOptGroupElement.h \
+    JSHTMLQuoteElement.h \
+    JSHTMLMapElement.h \
     JSHTMLMetaElement.h \
-	JSHTMLOListElement.h \
+    JSHTMLModElement.h \
+    JSHTMLOListElement.h \
+    JSHTMLParagraphElement.h \
+    JSHTMLParamElement.h \
+    JSHTMLPreElement.h \
+    JSHTMLScriptElement.h \
     JSHTMLStyleElement.h \
     JSHTMLTextAreaElement.h \
     JSHTMLTitleElement.h \
-	JSHTMLUListElement.h \
+    JSHTMLUListElement.h \
     JSKeyboardEvent.h \
     JSMouseEvent.h \
     JSMutationEvent.h \

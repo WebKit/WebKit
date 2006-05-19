@@ -61,6 +61,15 @@ public:
     String vLink() const;
     void setVLink(const String&);
 
+    int scrollLeft() const;
+    void setScrollLeft(int scrollLeft);
+    
+    int scrollTop() const;
+    void setScrollTop(int scrollTop);
+    
+    int scrollHeight() const;
+    int scrollWidth() const;
+    
 protected:
     RefPtr<CSSMutableStyleDeclaration> m_linkDecl;
 };
