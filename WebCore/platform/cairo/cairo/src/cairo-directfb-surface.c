@@ -150,7 +150,7 @@ static inline int cairo_to_directfb_format(cairo_format_t format ) {
 						return DSPF_A1; 
 				default:
 				{
-						//assert(0);
+						/*assert(0);*/
 						return DSPF_UNKNOWN; 
 				}
 		}
@@ -483,9 +483,9 @@ _cairo_directfb_surface_composite (cairo_operator_t op,
 	if( _dfb_set_operator(op,surface->buffer) == DFB_UNSUPPORTED ) 
 		return CAIRO_INT_STATUS_UNSUPPORTED;
 
-    if (src_pattern->type == CAIRO_PATTERN_SOLID ) { 
+    if (src_pattern->type == CAIRO_PATTERN_TYPE_SOLID ) { 
 
-    } else if (src_pattern->type != CAIRO_PATTERN_SURFACE ||
+    } else if (src_pattern->type != CAIRO_PATTERN_TYPE_SURFACE ||
 			src_pattern->extend != CAIRO_EXTEND_NONE) {
 		return CAIRO_INT_STATUS_UNSUPPORTED;
 	}
@@ -494,7 +494,7 @@ _cairo_directfb_surface_composite (cairo_operator_t op,
 	/* FIXME: When we fully support RENDER style 4-channel
 	 * masks we need to check r/g/b != 1.0.
 	 */
-	if (mask_pattern->type != CAIRO_PATTERN_SOLID)
+	if (mask_pattern->type != CAIRO_PATTERN_TYPE_SOLID)
 	    return CAIRO_INT_STATUS_UNSUPPORTED;
 
 		alpha = ((cairo_solid_pattern_t *)mask_pattern)->color.alpha_short >> 8;
@@ -662,6 +662,7 @@ _cairo_directfb_surface_scaled_glyph_fini (cairo_scaled_glyph_t *scaled_glyph,
 
 
 static const cairo_surface_backend_t cairo_directfb_surface_backend = {
+		CAIRO_SURFACE_TYPE_DIRECTFB,    
 		_cairo_directfb_surface_create_similar,
 		_cairo_directfb_surface_finish,
 		_cairo_directfb_surface_acquire_source_image,

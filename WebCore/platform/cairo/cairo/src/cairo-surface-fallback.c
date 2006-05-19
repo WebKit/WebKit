@@ -214,21 +214,6 @@ _clip_and_composite_combine (cairo_clip_t            *clip,
      */
     _cairo_pattern_init_for_surface (&dst_pattern, dst);
 
-    /* Set a translation on dst_pattern equivalent to the surface
-     * device offset, to make sure it's in the right place when
-     * composited.
-     */
-    if (dst->device_x_offset != 0.0 ||
-        dst->device_y_offset != 0.0 ||
-        dst->device_x_scale != 1.0 ||
-        dst->device_y_scale != 1.0)
-    {
-	cairo_matrix_t txmat;
-        cairo_matrix_init_scale (&txmat, dst->device_x_scale, dst->device_y_scale);
-        cairo_matrix_translate (&txmat, dst->device_x_offset, dst->device_y_offset);
-	cairo_pattern_set_matrix ((cairo_pattern_t*) &dst_pattern, &txmat);
-    }
-
     status = _cairo_surface_composite (CAIRO_OPERATOR_SOURCE,
 				       &dst_pattern.base, NULL, intermediate,
 				       extents->x,     extents->y,
@@ -564,6 +549,9 @@ _clip_and_composite_trapezoids (cairo_pattern_t *src,
 		return status;
 	    
 	    clear_region = _cairo_region_create_from_rectangle (&extents);
+	    if (clear_region == NULL)
+		return CAIRO_STATUS_NO_MEMORY;
+
 	    status = _cairo_clip_intersect_to_region (clip, clear_region);
 	    if (status)
 		return status;
@@ -591,7 +579,7 @@ _clip_and_composite_trapezoids (cairo_pattern_t *src,
     {
 	cairo_surface_t *clip_surface = clip ? clip->surface : NULL;
 	
-	if ((src->type == CAIRO_PATTERN_SOLID || op == CAIRO_OPERATOR_CLEAR) &&
+	if ((src->type == CAIRO_PATTERN_TYPE_SOLID || op == CAIRO_OPERATOR_CLEAR) &&
 	    !clip_surface)
 	{
 	    const cairo_color_t *color;
@@ -1000,8 +988,6 @@ _cairo_surface_fallback_snapshot (cairo_surface_t *surface)
 
     snapshot->device_x_offset = surface->device_x_offset;
     snapshot->device_y_offset = surface->device_y_offset;
-    snapshot->device_x_scale = surface->device_x_scale;
-    snapshot->device_y_scale = surface->device_y_scale;
 
     snapshot->is_snapshot = TRUE;
 
@@ -1141,7 +1127,6 @@ _cairo_surface_fallback_composite_trapezoids (cairo_operator_t		op,
     fallback_state_t state;
     cairo_trapezoid_t *offset_traps = NULL;
     cairo_status_t status;
-    int i;
 
     status = _fallback_init (&state, dst, dst_x, dst_y, width, height);
     if (status) {

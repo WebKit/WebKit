@@ -37,7 +37,21 @@
 #ifndef CAIRO_PLATFORM_H
 #define CAIRO_PLATFORM_H
 
-#if defined(_MSC_VER)
+#if defined(MOZ_ENABLE_LIBXUL)
+
+#ifdef HAVE_VISIBILITY_HIDDEN_ATTRIBUTE
+#define CVISIBILITY_HIDDEN __attribute__((visibility("hidden")))
+#else
+#define CVISIBILITY_HIDDEN
+#endif
+
+// In libxul builds we don't ever want to export cairo symbols
+#define cairo_public extern CVISIBILITY_HIDDEN
+#define CCALLBACK
+#define CCALLBACK_DECL
+#define CSTATIC_CALLBACK(__x) static __x
+
+#elif defined(XP_WIN)
 
 #define cairo_public extern __declspec(dllexport)
 #define CCALLBACK
@@ -67,7 +81,7 @@
 
 #else /* Unix */
 
-#ifdef HAVE_VISIBILITY_PRAGMA
+#ifdef HAVE_VISIBILITY_ATTRIBUTE
 #define CVISIBILITY_DEFAULT __attribute__((visibility("default")))
 #else
 #define CVISIBILITY_DEFAULT
@@ -80,5 +94,8 @@
 
 #endif
 
+#ifdef MOZILLA_VERSION
+#include "cairo-rename.h"
+#endif
 
 #endif /* CAIRO_PLATFORM_H */

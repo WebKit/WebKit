@@ -234,8 +234,7 @@ _cairo_clip_intersect_path (cairo_clip_t       *clip,
 			    cairo_path_fixed_t *path,
 			    cairo_fill_rule_t   fill_rule,
 			    double              tolerance,
-			    cairo_antialias_t   antialias,
-			    cairo_surface_t    *target)
+			    cairo_antialias_t   antialias)
 {
     cairo_clip_path_t *clip_path;
     cairo_status_t status;
@@ -248,8 +247,10 @@ _cairo_clip_intersect_path (cairo_clip_t       *clip,
 	return CAIRO_STATUS_NO_MEMORY;
 
     status = _cairo_path_fixed_init_copy (&clip_path->path, path);
-    if (status)
+    if (status) {
+	free (clip_path);
 	return status;
+    }
 
     clip_path->ref_count = 1;
     clip_path->fill_rule = fill_rule;
@@ -257,7 +258,6 @@ _cairo_clip_intersect_path (cairo_clip_t       *clip,
     clip_path->antialias = antialias;
     clip_path->prev = clip->path;
     clip->path = clip_path;
-    clip->serial = _cairo_surface_allocate_clip_serial (target);
 
     return CAIRO_STATUS_SUCCESS;
 }
@@ -433,12 +433,25 @@ _cairo_clip_clip (cairo_clip_t       *clip,
 {
     cairo_status_t status;
     cairo_traps_t traps;
+    cairo_path_fixed_t path_transformed;
+
+    if (_cairo_surface_has_device_offset_or_scale (target)) {
+	_cairo_path_fixed_init_copy (&path_transformed, path);
+	_cairo_path_fixed_offset (&path_transformed,
+				  _cairo_fixed_from_double (target->device_x_offset),
+				  _cairo_fixed_from_double (target->device_y_offset));
+	path = &path_transformed;
+    }
     
     status = _cairo_clip_intersect_path (clip,
 					 path, fill_rule, tolerance,
-					 antialias, target);
+					 antialias);
+    if (status == CAIRO_STATUS_SUCCESS)
+        clip->serial = _cairo_surface_allocate_clip_serial (target);
+
     if (status != CAIRO_INT_STATUS_UNSUPPORTED)
 	return status;
+
 
     _cairo_traps_init (&traps);
     status = _cairo_path_fixed_fill_to_traps (path,
@@ -456,6 +469,8 @@ _cairo_clip_clip (cairo_clip_t       *clip,
 	
  bail:
     _cairo_traps_fini (&traps);
+    if (path == &path_transformed)
+	_cairo_path_fixed_fini (&path_transformed);
 
     return status;
 }
@@ -509,3 +524,70 @@ _cairo_clip_extract_rectangles (cairo_clip_t *clip,
     return _cairo_region_to_clip_rectangles (clip->region,
         max_rectangles, rectangles_out, num_rectangles_out);
 }
+
+void
+_cairo_clip_translate (cairo_clip_t  *clip,
+                       cairo_fixed_t  tx,
+                       cairo_fixed_t  ty)
+{
+    if (clip->region) {
+        pixman_region_translate (clip->region,
+                                 _cairo_fixed_integer_part (tx),
+                                 _cairo_fixed_integer_part (ty));
+    }
+
+    if (clip->surface) {
+        clip->surface_rect.x += _cairo_fixed_integer_part (tx);
+        clip->surface_rect.y += _cairo_fixed_integer_part (ty);
+    }
+
+    if (clip->path) {
+        cairo_clip_path_t *clip_path = clip->path;
+        while (clip_path) {
+            _cairo_path_fixed_offset (&clip_path->path, tx, ty);
+            clip_path = clip_path->prev;
+        }
+    }
+}
+
+static void
+_cairo_clip_path_reapply_clip_path (cairo_clip_t      *clip,
+                                    cairo_clip_path_t *clip_path)
+{
+    if (clip_path->prev)
+        _cairo_clip_path_reapply_clip_path (clip, clip_path->prev);
+
+    _cairo_clip_intersect_path (clip,
+                                &clip_path->path,
+                                clip_path->fill_rule,
+                                clip_path->tolerance,
+                                clip_path->antialias);
+}
+
+void
+_cairo_clip_init_deep_copy (cairo_clip_t    *clip,
+                            cairo_clip_t    *other,
+                            cairo_surface_t *target)
+{
+    _cairo_clip_init (clip, target);
+
+    if (other->mode != clip->mode) {
+        /* We should reapply the original clip path in this case, and let
+         * whatever the right handling is happen */
+    } else {
+        if (other->region) {
+            clip->region = pixman_region_create ();
+            pixman_region_copy (clip->region, other->region);
+        }
+
+        if (other->surface) {
+            _cairo_surface_clone_similar (target, clip->surface, &clip->surface);
+            clip->surface_rect = other->surface_rect;
+        }
+
+        if (other->path) {
+            _cairo_clip_path_reapply_clip_path (clip, other->path);
+        }
+    }
+}
+

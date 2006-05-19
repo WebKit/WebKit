@@ -903,6 +903,7 @@ _cairo_surface_is_image (const cairo_surface_t *surface)
 }
 
 const cairo_surface_backend_t cairo_image_surface_backend = {
+    CAIRO_SURFACE_TYPE_IMAGE,
     _cairo_image_surface_create_similar,
     _cairo_image_surface_finish,
     _cairo_image_surface_acquire_source_image,

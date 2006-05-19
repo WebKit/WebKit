@@ -252,13 +252,6 @@ _cairo_gstate_clone (cairo_gstate_t *other)
     return gstate;
 }
 
-void
-_moz_cairo_gstate_set_target (cairo_gstate_t *gstate, cairo_surface_t *target)
-{
-    cairo_surface_destroy (gstate->target);
-    gstate->target = cairo_surface_reference (target);
-}
-
 static cairo_status_t
 _cairo_gstate_recursive_apply_clip_path (cairo_gstate_t *gstate,
 					 cairo_clip_path_t *cpath)
@@ -310,30 +303,14 @@ _cairo_gstate_redirect_target (cairo_gstate_t *gstate, cairo_surface_t *child)
      * since its ref is now owned by gstate->parent_target */
     gstate->target = cairo_surface_reference (child);
 
-    /* Check that the new surface's clip mode is compatible */
-    if (gstate->clip.mode != _cairo_surface_get_clip_mode (child)) {
-	/* clip is not compatible; try to recreate it */
-	/* XXX - saving the clip path always might be useful here,
-	 * so that we could recover non-CLIP_MODE_PATH clips */
-	if (gstate->clip.mode == CAIRO_CLIP_MODE_PATH) {
-	    cairo_clip_t saved_clip = gstate->clip;
+    _cairo_clip_fini (&gstate->clip);
+    _cairo_clip_init_deep_copy (&gstate->clip, &gstate->next->clip, child);
 
-	    _cairo_clip_init (&gstate->clip, child);
-
-	    /* unwind the path and re-apply */
-	    _cairo_gstate_recursive_apply_clip_path (gstate, saved_clip.path);
-
-	    _cairo_clip_fini (&saved_clip);
-	} else {
-	    /* uh, not sure what to do here.. */
-	    _cairo_clip_fini (&gstate->clip);
-	    _cairo_clip_init (&gstate->clip, child);
-	}
-    } else {
-	/* clip is compatible; allocate a new serial for the new surface. */
-	if (gstate->clip.serial)
-	    gstate->clip.serial = _cairo_surface_allocate_clip_serial (child);
-    }
+    /* The clip is in surface backend coordinates for the previous target;
+     * translate it into the child's backend coordinates. */
+    _cairo_clip_translate (&gstate->clip,
+                           _cairo_fixed_from_double (child->device_x_offset - gstate->parent_target->device_x_offset),
+                           _cairo_fixed_from_double (child->device_y_offset - gstate->parent_target->device_y_offset));
 }
 
 /**
@@ -392,6 +369,51 @@ cairo_surface_t *
 _cairo_gstate_get_original_target (cairo_gstate_t *gstate)
 {
     return gstate->original_target;
+}
+
+/**
+ * _cairo_gstate_get_target_offsets_from_original
+ * @gstate: a #cairo_gstate_t
+ * @dx: device offset from gstate original target
+ * @dy: device offset from gstate original target
+ *
+ * Return the device offsets in dx, dy for the current group target
+ * from the original target at the top of the gstate chain.
+ **/
+void
+_cairo_gstate_get_target_offsets_from_original (cairo_gstate_t *gstate,
+                                                double *dx,
+                                                double *dy)
+{
+    /* Because the device offsets for the current group target are
+     * always relative to its parent, we have to walk up the gstate
+     * stack to figure out the actual device offsets. */
+
+    double x = 0.0, y = 0.0;
+    double prevx = 0.0, prevy = 0.0;
+    while (gstate) {
+        if (gstate->parent_target) {
+            /* The device offset on a group surface is relative to its
+             * parent; we need to recover the offset to the actual
+             * top-level surface origin.  So we increase the offsets
+             * by the difference between the previous (child) and the
+             * current (parent).  We only check for
+             * gstate->parent_target to catch the actual redirection
+             * levels; we then use the target field in the gstate,
+             * which is the actual group target at that point.*/
+            x += (prevx - gstate->target->device_x_offset);
+            y += (prevy - gstate->target->device_y_offset);
+
+            prevx = gstate->target->device_x_offset;
+            prevy = gstate->target->device_y_offset;
+        }
+        gstate = gstate->next;
+    }
+
+    if (dx)
+        *dx = x;
+    if (dy)
+        *dy = y;
 }
 
 /**
@@ -744,8 +766,24 @@ _cairo_gstate_copy_transformed_pattern (cairo_gstate_t  *gstate,
 					cairo_pattern_t *original,
 					cairo_matrix_t  *ctm_inverse)
 {
+    cairo_surface_pattern_t *surface_pattern;
+    cairo_surface_t *surface;
+    cairo_matrix_t offset_matrix;
+
     _cairo_pattern_init_copy (pattern, original);
     _cairo_pattern_transform (pattern, ctm_inverse);
+
+    if (cairo_pattern_get_type (original) == CAIRO_PATTERN_TYPE_SURFACE) {
+        surface_pattern = (cairo_surface_pattern_t *) original;
+        surface = surface_pattern->surface;
+        if (_cairo_surface_has_device_offset_or_scale (surface)) {
+            cairo_matrix_init_translate (&offset_matrix,
+                                         surface->device_x_offset,
+                                         surface->device_y_offset);
+            _cairo_pattern_transform (pattern, &offset_matrix);
+        }
+    }
+
 }
 
 static void

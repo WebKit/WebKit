@@ -50,8 +50,6 @@
  *
  * - Add document structure convention comments where appropriate.
  *
- * - Fix image compression.
- *
  * - Create a set of procs to use... specifically a trapezoid proc.
  */
 
@@ -101,11 +99,9 @@ _cairo_ps_surface_emit_header (cairo_ps_surface_t *surface)
 				 surface->width,
 				 surface->height);
 
-    /* The "/FlateDecode filter" currently used is a feature of
-     * LanguageLevel 3 */
     _cairo_output_stream_printf (surface->stream,
-				 "%%%%DocumentData: Binary\n"
-				 "%%%%LanguageLevel: 3\n"
+				 "%%%%DocumentData: Clean7Bit\n"
+				 "%%%%LanguageLevel: 2\n"
 				 "%%%%Orientation: Portrait\n"
 				 "%%%%EndComments\n");
 }
@@ -141,10 +137,6 @@ _cairo_ps_surface_create_for_stream_internal (cairo_output_stream_t *stream,
     surface->height = height;
     surface->x_dpi = PS_SURFACE_DPI_DEFAULT;
     surface->y_dpi = PS_SURFACE_DPI_DEFAULT;
-#if DONE_ADDING_DEVICE_SCALE_SUPPORT_AFTER_SWITCHING_TO_PAGINATED
-    surface->base.device_x_scale = surface->x_dpi / 72.0;
-    surface->base.device_y_scale = surface->y_dpi / 72.0;
-#endif
 
     surface->need_start_page = TRUE;
     surface->num_pages = 0;
@@ -275,11 +267,6 @@ cairo_ps_surface_set_dpi (cairo_surface_t *surface,
 
     ps_surface->x_dpi = x_dpi;    
     ps_surface->y_dpi = y_dpi;
-
-#if DONE_ADDING_DEVICE_SCALE_SUPPORT_AFTER_SWITCHING_TO_PAGINATED
-    ps_surface->base.device_x_scale = ps_surface->x_dpi / 72.0;
-    ps_surface->base.device_y_scale = ps_surface->y_dpi / 72.0;
-#endif
 }
 
 /* XXX */
@@ -318,8 +305,7 @@ _cairo_ps_surface_start_page (cairo_ps_surface_t *surface)
     _cairo_output_stream_printf (surface->stream,
 				 "gsave %f %f translate %f %f scale \n",
 				 0.0, surface->height,
-				 1.0/surface->base.device_x_scale,
-				 -1.0/surface->base.device_y_scale);
+				 1.0, -1.0);
 
     surface->need_start_page = FALSE;
 }
@@ -546,12 +532,12 @@ pattern_is_translucent (const cairo_pattern_t *abstract_pattern)
 
     pattern = (cairo_pattern_union_t *) abstract_pattern;
     switch (pattern->base.type) {
-    case CAIRO_PATTERN_SOLID:
+    case CAIRO_PATTERN_TYPE_SOLID:
 	return color_is_translucent (&pattern->solid.color);
-    case CAIRO_PATTERN_SURFACE:
+    case CAIRO_PATTERN_TYPE_SURFACE:
 	return surface_is_translucent (pattern->surface.surface);
-    case CAIRO_PATTERN_LINEAR:
-    case CAIRO_PATTERN_RADIAL:
+    case CAIRO_PATTERN_TYPE_LINEAR:
+    case CAIRO_PATTERN_TYPE_RADIAL:
 	return gradient_is_translucent (&pattern->gradient.base);
     }	
 
@@ -637,7 +623,7 @@ color_operation_needs_fallback (cairo_operator_t op,
 static cairo_bool_t
 pattern_type_supported (const cairo_pattern_t *pattern)
 {
-    if (pattern->type == CAIRO_PATTERN_SOLID)
+    if (pattern->type == CAIRO_PATTERN_TYPE_SOLID)
 	return TRUE;
     return FALSE;
 }
@@ -657,23 +643,6 @@ pattern_operation_needs_fallback (cairo_operator_t op,
 
 /* PS Output - this section handles output of the parts of the meta
  * surface we can render natively in PS. */
-
-static void *
-compress_dup (const void *data, unsigned long data_size,
-	      unsigned long *compressed_size)
-{
-    void *compressed;
-
-    /* Bound calculation taken from zlib. */
-    *compressed_size = data_size + (data_size >> 12) + (data_size >> 14) + 11;
-    compressed = malloc (*compressed_size);
-    if (compressed == NULL)
-	return NULL;
-
-    compress (compressed, compressed_size, data, data_size);
-
-    return compressed;
-}
 
 static cairo_status_t
 emit_image (cairo_ps_surface_t    *surface,
@@ -745,7 +714,7 @@ emit_image (cairo_ps_surface_t    *surface,
 	}
     }
 
-    compressed = compress_dup (rgb, rgb_size, &compressed_size);
+    compressed = _cairo_compress_lzw (rgb, rgb_size, &compressed_size);
     if (compressed == NULL) {
 	status = CAIRO_STATUS_NO_MEMORY;
 	goto bail2;
@@ -765,7 +734,7 @@ emit_image (cairo_ps_surface_t    *surface,
 				 "	/Height %d\n"
 				 "	/BitsPerComponent 8\n"
 				 "	/Decode [ 0 1 0 1 0 1 ]\n"
-				 "	/DataSource currentfile\n"
+				 "	/DataSource currentfile /ASCII85Decode filter /LZWDecode filter \n"
 				 "	/ImageMatrix [ %f %f %f %f %f %f ]\n"
 				 ">>\n"
 				 "image\n",
@@ -775,13 +744,13 @@ emit_image (cairo_ps_surface_t    *surface,
 				 d2i.xy, d2i.yy,
 				 d2i.x0, d2i.y0);
 
-    /* Compressed image data */
-    _cairo_output_stream_write (surface->stream, rgb, rgb_size);
+    /* Compressed image data (Base85 encoded) */
+    _cairo_output_stream_write_base85_string (surface->stream, (char *)compressed, compressed_size);
     status = CAIRO_STATUS_SUCCESS;
 
+    /* Mark end of base85 data */
     _cairo_output_stream_printf (surface->stream,
-				 "\n");
-
+				 "~>\n");
     free (compressed);
  bail2:
     free (rgb);
@@ -837,19 +806,19 @@ emit_pattern (cairo_ps_surface_t *surface, cairo_pattern_t *pattern)
      * different pattern. */
 
     switch (pattern->type) {
-    case CAIRO_PATTERN_SOLID:	
+    case CAIRO_PATTERN_TYPE_SOLID:	
 	emit_solid_pattern (surface, (cairo_solid_pattern_t *) pattern);
 	break;
 
-    case CAIRO_PATTERN_SURFACE:
+    case CAIRO_PATTERN_TYPE_SURFACE:
 	emit_surface_pattern (surface, (cairo_surface_pattern_t *) pattern);
 	break;
 
-    case CAIRO_PATTERN_LINEAR:
+    case CAIRO_PATTERN_TYPE_LINEAR:
 	emit_linear_pattern (surface, (cairo_linear_pattern_t *) pattern);
 	break;
 
-    case CAIRO_PATTERN_RADIAL:
+    case CAIRO_PATTERN_TYPE_RADIAL:
 	emit_radial_pattern (surface, (cairo_radial_pattern_t *) pattern);
 	break;	    
     }
@@ -890,12 +859,12 @@ _cairo_ps_surface_composite (cairo_operator_t	op,
 
     status = CAIRO_STATUS_SUCCESS;
     switch (src_pattern->type) {
-    case CAIRO_PATTERN_SOLID:
+    case CAIRO_PATTERN_TYPE_SOLID:
 	_cairo_output_stream_printf (stream,
 				     "%% _cairo_ps_surface_composite: solid\n");
 	goto bail;
 
-    case CAIRO_PATTERN_SURFACE:
+    case CAIRO_PATTERN_TYPE_SURFACE:
 	surface_pattern = (cairo_surface_pattern_t *) src_pattern;
 
 	if (src_pattern->extend != CAIRO_EXTEND_NONE) {
@@ -920,8 +889,8 @@ _cairo_ps_surface_composite (cairo_operator_t	op,
 					     image, image_extra);
 	break;
 
-    case CAIRO_PATTERN_LINEAR:
-    case CAIRO_PATTERN_RADIAL:
+    case CAIRO_PATTERN_TYPE_LINEAR:
+    case CAIRO_PATTERN_TYPE_RADIAL:
 	_cairo_output_stream_printf (stream,
 				     "%% _cairo_ps_surface_composite: gradient\n");
 	goto bail;
@@ -1322,6 +1291,7 @@ _cairo_ps_surface_fill (void			*abstract_surface,
 }
 
 static const cairo_surface_backend_t cairo_ps_surface_backend = {
+    CAIRO_SURFACE_TYPE_PS,
     NULL, /* create_similar */
     _cairo_ps_surface_finish,
     NULL, /* acquire_source_image */

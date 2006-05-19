@@ -39,6 +39,8 @@
 #include <cairo-win32.h>
 #include <cairoint.h>
 
+#define WIN32_FONT_LOGICAL_SCALE 32
+
 typedef struct _cairo_win32_surface {
     cairo_surface_t base;
 

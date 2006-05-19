@@ -1,4 +1,4 @@
-/* $Id: cairo-scaled-font.c,v 1.4 2006/02/03 04:49:23 vladimir%pobox.com Exp $
+/* $Id: cairo-scaled-font.c,v 1.8 2006/04/01 00:36:09 vladimir%pobox.com Exp $
  *
  * Copyright © 2005 Keith Packard
  *
@@ -116,6 +116,18 @@ _cairo_scaled_font_set_error (cairo_scaled_font_t *scaled_font,
 	scaled_font->status = status;
 
     _cairo_error (status);
+}
+
+/**
+ * cairo_scaled_font_get_type:
+ * @scaled_font: a #cairo_scaled_font_t
+ * 
+ * Return value: The type of @scaled_font. See #cairo_font_type_t.
+ **/
+cairo_font_type_t
+cairo_scaled_font_get_type (cairo_scaled_font_t *scaled_font)
+{
+    return scaled_font->backend->type;
 }
 
 /**

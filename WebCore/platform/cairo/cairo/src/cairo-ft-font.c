@@ -715,191 +715,184 @@ _get_bitmap_surface (FT_Bitmap		     *bitmap,
     width = bitmap->width;
     height = bitmap->rows;
     
-    if (width * height == 0) {
-	if (own_buffer && bitmap->buffer)
-	    free (bitmap->buffer);
-	
-	*surface = NULL;
-    } else {
-	switch (bitmap->pixel_mode) {
-	case FT_PIXEL_MODE_MONO:
-	    stride = (((width + 31) & ~31) >> 3);
+    switch (bitmap->pixel_mode) {
+    case FT_PIXEL_MODE_MONO:
+	stride = (((width + 31) & ~31) >> 3);
+	if (own_buffer) {
+	    data = bitmap->buffer;
+	    assert (stride == bitmap->pitch);
+	} else {
+	    data = malloc (stride * height);
+	    if (!data)
+		return CAIRO_STATUS_NO_MEMORY;
+
+	    if (stride == bitmap->pitch) {
+		memcpy (data, bitmap->buffer, stride * height);
+	    } else {
+		int i;
+		unsigned char *source, *dest;
+		
+		source = bitmap->buffer;
+		dest = data;
+		for (i = height; i; i--) {
+		    memcpy (dest, source, bitmap->pitch);
+		    memset (dest + bitmap->pitch, '\0', stride - bitmap->pitch);
+			
+		    source += bitmap->pitch;
+		    dest += stride;
+		}
+	    }
+	}
+	    
+	if (_native_byte_order_lsb())
+	{
+	    unsigned char   *d = data, c;
+	    int		count = stride * height;
+		
+	    while (count--) {
+		c = *d;
+		c = ((c << 1) & 0xaa) | ((c >> 1) & 0x55);
+		c = ((c << 2) & 0xcc) | ((c >> 2) & 0x33);
+		c = ((c << 4) & 0xf0) | ((c >> 4) & 0x0f);
+		*d++ = c;
+	    }
+	}
+	format = CAIRO_FORMAT_A1;
+	break;
+
+    case FT_PIXEL_MODE_LCD:
+    case FT_PIXEL_MODE_LCD_V:
+    case FT_PIXEL_MODE_GRAY:
+	switch (font_options->antialias) {
+	case CAIRO_ANTIALIAS_DEFAULT:
+	case CAIRO_ANTIALIAS_GRAY:
+	case CAIRO_ANTIALIAS_NONE:
+	default:
+	    stride = bitmap->pitch;
 	    if (own_buffer) {
 		data = bitmap->buffer;
-		assert (stride == bitmap->pitch);
 	    } else {
 		data = malloc (stride * height);
 		if (!data)
 		    return CAIRO_STATUS_NO_MEMORY;
-
-		if (stride == bitmap->pitch) {
-		    memcpy (data, bitmap->buffer, stride * height);
-		} else {
-		    int i;
-		    unsigned char *source, *dest;
-		
-		    source = bitmap->buffer;
-		    dest = data;
-		    for (i = height; i; i--) {
-			memcpy (dest, source, bitmap->pitch);
-			memset (dest + bitmap->pitch, '\0', stride - bitmap->pitch);
-			
-			source += bitmap->pitch;
-			dest += stride;
-		    }
-		}
+		memcpy (data, bitmap->buffer, stride * height);
 	    }
-	    
-	    if (_native_byte_order_lsb())
-	    {
-		unsigned char   *d = data, c;
-		int		count = stride * height;
-		
-		while (count--) {
-		    c = *d;
-		    c = ((c << 1) & 0xaa) | ((c >> 1) & 0x55);
-		    c = ((c << 2) & 0xcc) | ((c >> 2) & 0x33);
-		    c = ((c << 4) & 0xf0) | ((c >> 4) & 0x0f);
-		    *d++ = c;
-		}
-	    }
-	    format = CAIRO_FORMAT_A1;
+	    format = CAIRO_FORMAT_A8;
 	    break;
-
-	case FT_PIXEL_MODE_LCD:
-        case FT_PIXEL_MODE_LCD_V:
-	case FT_PIXEL_MODE_GRAY:
-	    switch (font_options->antialias) {
-	    case CAIRO_ANTIALIAS_DEFAULT:
-	    case CAIRO_ANTIALIAS_GRAY:
-	    case CAIRO_ANTIALIAS_NONE:
+	case CAIRO_ANTIALIAS_SUBPIXEL: {
+	    int		    x, y;
+	    unsigned char   *in_line, *out_line, *in;
+	    unsigned int    *out;
+	    unsigned int    red, green, blue;
+	    int		    rf, gf, bf;
+	    int		    s;
+	    int		    o, os;
+	    unsigned char   *data_rgba;
+	    unsigned int    width_rgba, stride_rgba;
+	    int		    vmul = 1;
+	    int		    hmul = 1;
+		
+	    switch (font_options->subpixel_order) {
+	    case CAIRO_SUBPIXEL_ORDER_DEFAULT:
+	    case CAIRO_SUBPIXEL_ORDER_RGB:
+	    case CAIRO_SUBPIXEL_ORDER_BGR:
 	    default:
-		stride = bitmap->pitch;
-		if (own_buffer) {
-		    data = bitmap->buffer;
-		} else {
-		    data = malloc (stride * height);
-		    if (!data)
-			return CAIRO_STATUS_NO_MEMORY;
-		    memcpy (data, bitmap->buffer, stride * height);
-		}
-		format = CAIRO_FORMAT_A8;
+		width /= 3;
+		hmul = 3;
 		break;
-	    case CAIRO_ANTIALIAS_SUBPIXEL: {
-		int		    x, y;
-		unsigned char   *in_line, *out_line, *in;
-		unsigned int    *out;
-		unsigned int    red, green, blue;
-		int		    rf, gf, bf;
-		int		    s;
-		int		    o, os;
-		unsigned char   *data_rgba;
-		unsigned int    width_rgba, stride_rgba;
-		int		    vmul = 1;
-		int		    hmul = 1;
-		
-		switch (font_options->subpixel_order) {
-		case CAIRO_SUBPIXEL_ORDER_DEFAULT:
-		case CAIRO_SUBPIXEL_ORDER_RGB:
-		case CAIRO_SUBPIXEL_ORDER_BGR:
-		default:
-		    width /= 3;
-		    hmul = 3;
-		    break;
-		case CAIRO_SUBPIXEL_ORDER_VRGB:
-		case CAIRO_SUBPIXEL_ORDER_VBGR:
-		    vmul = 3;
-		    height /= 3;
-		    break;
-		}
-		/*
-		 * Filter the glyph to soften the color fringes
-		 */
-		width_rgba = width;
-		stride = bitmap->pitch;
-		stride_rgba = (width_rgba * 4 + 3) & ~3;
-		data_rgba = calloc (1, stride_rgba * height);
+	    case CAIRO_SUBPIXEL_ORDER_VRGB:
+	    case CAIRO_SUBPIXEL_ORDER_VBGR:
+		vmul = 3;
+		height /= 3;
+		break;
+	    }
+	    /*
+	     * Filter the glyph to soften the color fringes
+	     */
+	    width_rgba = width;
+	    stride = bitmap->pitch;
+	    stride_rgba = (width_rgba * 4 + 3) & ~3;
+	    data_rgba = calloc (1, stride_rgba * height);
     
-		os = 1;
-		switch (font_options->subpixel_order) {
-		case CAIRO_SUBPIXEL_ORDER_VRGB:
-		    os = stride;
-		case CAIRO_SUBPIXEL_ORDER_DEFAULT:
-		case CAIRO_SUBPIXEL_ORDER_RGB:
-		default:
-		    rf = 0;
-		    gf = 1;
-		    bf = 2;
-		    break;
-		case CAIRO_SUBPIXEL_ORDER_VBGR:
-		    os = stride;
-		case CAIRO_SUBPIXEL_ORDER_BGR:
-		    bf = 0;
-		    gf = 1;
-		    rf = 2;
-		    break;
-		}
-		in_line = bitmap->buffer;
-		out_line = data_rgba;
-		for (y = 0; y < height; y++)
+	    os = 1;
+	    switch (font_options->subpixel_order) {
+	    case CAIRO_SUBPIXEL_ORDER_VRGB:
+		os = stride;
+	    case CAIRO_SUBPIXEL_ORDER_DEFAULT:
+	    case CAIRO_SUBPIXEL_ORDER_RGB:
+	    default:
+		rf = 0;
+		gf = 1;
+		bf = 2;
+		break;
+	    case CAIRO_SUBPIXEL_ORDER_VBGR:
+		os = stride;
+	    case CAIRO_SUBPIXEL_ORDER_BGR:
+		bf = 0;
+		gf = 1;
+		rf = 2;
+		break;
+	    }
+	    in_line = bitmap->buffer;
+	    out_line = data_rgba;
+	    for (y = 0; y < height; y++)
+	    {
+		in = in_line;
+		out = (unsigned int *) out_line;
+		in_line += stride * vmul;
+		out_line += stride_rgba;
+		for (x = 0; x < width * hmul; x += hmul)
 		{
-		    in = in_line;
-		    out = (unsigned int *) out_line;
-		    in_line += stride * vmul;
-		    out_line += stride_rgba;
-		    for (x = 0; x < width * hmul; x += hmul)
+		    red = green = blue = 0;
+		    o = 0;
+		    for (s = 0; s < 3; s++)
 		    {
-			red = green = blue = 0;
-			o = 0;
-			for (s = 0; s < 3; s++)
-			{
-			    red += filters[rf][s]*in[x+o];
-			    green += filters[gf][s]*in[x+o];
-			    blue += filters[bf][s]*in[x+o];
-			    o += os;
-			}
-			red = red / 65536;
-			green = green / 65536;
-			blue = blue / 65536;
-			*out++ = (green << 24) | (red << 16) | (green << 8) | blue;
+			red += filters[rf][s]*in[x+o];
+			green += filters[gf][s]*in[x+o];
+			blue += filters[bf][s]*in[x+o];
+			o += os;
 		    }
+		    red = red / 65536;
+		    green = green / 65536;
+		    blue = blue / 65536;
+		    *out++ = (green << 24) | (red << 16) | (green << 8) | blue;
 		}
-    
-		/* Images here are stored in native format. The
-		 * backend must convert to its own format as needed
-		 */
-    
-		if (own_buffer)
-		    free (bitmap->buffer);
-		data = data_rgba;
-		stride = stride_rgba;
-		format = CAIRO_FORMAT_ARGB32;
-		subpixel = TRUE;
-		break;
 	    }
-	    }
+    
+	    /* Images here are stored in native format. The
+	     * backend must convert to its own format as needed
+	     */
+    
+	    if (own_buffer)
+		free (bitmap->buffer);
+	    data = data_rgba;
+	    stride = stride_rgba;
+	    format = CAIRO_FORMAT_ARGB32;
+	    subpixel = TRUE;
 	    break;
-	case FT_PIXEL_MODE_GRAY2:
-	case FT_PIXEL_MODE_GRAY4:
-	    /* These could be triggered by very rare types of TrueType fonts */
-	default:
-	    return CAIRO_STATUS_NO_MEMORY;
 	}
-    
-	*surface = (cairo_image_surface_t *)
-	    cairo_image_surface_create_for_data (data,
-						 format,
-						 width, height, stride);
-	if ((*surface)->base.status) {
-	    free (data);
-	    return CAIRO_STATUS_NO_MEMORY;
 	}
-	
-	if (subpixel)
-	    pixman_image_set_component_alpha ((*surface)->pixman_image, TRUE);
-
-	_cairo_image_surface_assume_ownership_of_data ((*surface));
+	break;
+    case FT_PIXEL_MODE_GRAY2:
+    case FT_PIXEL_MODE_GRAY4:
+	/* These could be triggered by very rare types of TrueType fonts */
+    default:
+	return CAIRO_STATUS_NO_MEMORY;
     }
+    
+    *surface = (cairo_image_surface_t *)
+	cairo_image_surface_create_for_data (data,
+					     format,
+					     width, height, stride);
+    if ((*surface)->base.status) {
+	free (data);
+	return CAIRO_STATUS_NO_MEMORY;
+    }
+	
+    if (subpixel)
+	pixman_image_set_component_alpha ((*surface)->pixman_image, TRUE);
+
+    _cairo_image_surface_assume_ownership_of_data ((*surface));
 
     return CAIRO_STATUS_SUCCESS;
 }
@@ -1074,7 +1067,9 @@ _render_glyph_bitmap (FT_Face		      face,
     if (error)
 	return CAIRO_STATUS_NO_MEMORY;
 
-    _get_bitmap_surface (&glyphslot->bitmap, FALSE, font_options, surface);
+    status = _get_bitmap_surface (&glyphslot->bitmap, FALSE, font_options, surface);
+    if (status)
+	return status;
     
     /*
      * Note: the font's coordinate system is upside down from ours, so the
@@ -1906,6 +1901,7 @@ _cairo_ft_show_glyphs (void		       *abstract_font,
 }
 
 const cairo_scaled_font_backend_t cairo_ft_scaled_font_backend = {
+    CAIRO_FONT_TYPE_FT,
     _cairo_ft_scaled_font_create_toy,
     _cairo_ft_scaled_font_fini,
     _cairo_ft_scaled_glyph_init,
@@ -2009,6 +2005,7 @@ _cairo_ft_font_face_scaled_font_create (void                     *abstract_face,
 }
 
 static const cairo_font_face_backend_t _cairo_ft_font_face_backend = {
+    CAIRO_FONT_TYPE_FT,
     _cairo_ft_font_face_destroy,
     _cairo_ft_font_face_scaled_font_create
 };

@@ -273,9 +273,6 @@ cairo_public void
 cairo_restore (cairo_t *cr);
 
 cairo_public void
-moz_cairo_set_target (cairo_t *cr, cairo_surface_t *target);
-
-cairo_public void
 cairo_push_group (cairo_t *cr);
 
 cairo_public void
@@ -923,6 +920,47 @@ cairo_font_face_destroy (cairo_font_face_t *font_face);
 cairo_public cairo_status_t
 cairo_font_face_status (cairo_font_face_t *font_face);
 
+/**
+ * cairo_font_type_t
+ * @CAIRO_FONT_TYPE_FT: The font is of type ft
+ * @CAIRO_FONT_TYPE_WIN32: The font is of type win32
+ * @CAIRO_FONT_TYPE_ATSUI: The font is of type atsui
+ *
+ * @cairo_font_type_t is used to describe the type of a given font
+ * face or scaled font. The font types are also known as "font
+ * backends" within cairo.
+ *
+ * The type of a font face is determined by the function used to
+ * create it, which will generally be of the form
+ * cairo_<type>_font_face_create. The font face type can be queried
+ * with cairo_font_face_get_type()
+ *
+ * The various cairo_font_face functions can be used with a font face
+ * of any type.
+ *
+ * The type of a scaled font is determined by the type of the font
+ * face passed to cairo_scaled_font_create. The scaled font type can
+ * be queried with cairo_scaled_font_get_type()
+ *
+ * The various cairo_scaled_font functions can be used with scaled
+ * fonts of any type, but some font backends also provide
+ * type-specific functions that must only be called with a scaled font
+ * of the appropriate type. These functions have names that begin with
+ * cairo_<type>_scaled_font such as cairo_ft_scaled_font_lock_face.
+ *
+ * The behavior of calling a type-specific function with a scaled font
+ * of the wrong type is undefined.
+ */
+typedef enum _cairo_font_type {
+    CAIRO_FONT_TYPE_TOY,
+    CAIRO_FONT_TYPE_FT,
+    CAIRO_FONT_TYPE_WIN32,
+    CAIRO_FONT_TYPE_ATSUI
+} cairo_font_type_t;
+
+cairo_public cairo_font_type_t
+cairo_font_face_get_type (cairo_font_face_t *font_face);
+
 cairo_public void *
 cairo_font_face_get_user_data (cairo_font_face_t	   *font_face,
 			       const cairo_user_data_key_t *key);
@@ -949,6 +987,9 @@ cairo_scaled_font_destroy (cairo_scaled_font_t *scaled_font);
 
 cairo_public cairo_status_t
 cairo_scaled_font_status (cairo_scaled_font_t *scaled_font);
+
+cairo_public cairo_font_type_t
+cairo_scaled_font_get_type (cairo_scaled_font_t *scaled_font);
 
 cairo_public void
 cairo_scaled_font_extents (cairo_scaled_font_t  *scaled_font,
@@ -1021,7 +1062,7 @@ cairo_public cairo_surface_t *
 cairo_get_target (cairo_t *cr);
 
 cairo_public cairo_surface_t *
-cairo_get_group_target (cairo_t *cr);
+cairo_get_group_target (cairo_t *cr, double *dx, double *dy);
 
 typedef enum _cairo_path_data_type {
     CAIRO_PATH_MOVE_TO,
@@ -1144,7 +1185,7 @@ cairo_path_destroy (cairo_path_t *path);
  * A data structure for holding clip rectangles.
  */
 typedef struct _cairo_clip_rect {
-    double x, y, width, height;
+  double x, y, width, height;
 } cairo_clip_rect_t;
 
 cairo_public cairo_bool_t
@@ -1176,13 +1217,65 @@ cairo_public cairo_surface_t *
 cairo_surface_reference (cairo_surface_t *surface);
 
 cairo_public void
+cairo_surface_finish (cairo_surface_t *surface);
+
+cairo_public void
 cairo_surface_destroy (cairo_surface_t *surface);
 
 cairo_public cairo_status_t
 cairo_surface_status (cairo_surface_t *surface);
 
-cairo_public void
-cairo_surface_finish (cairo_surface_t *surface);
+/**
+ * cairo_surface_type_t
+ * @CAIRO_SURFACE_TYPE_IMAGE: The surface is of type image
+ * @CAIRO_SURFACE_TYPE_PDF: The surface is of type pdf
+ * @CAIRO_SURFACE_TYPE_PS: The surface is of type ps
+ * @CAIRO_SURFACE_TYPE_XLIB: The surface is of type xlib
+ * @CAIRO_SURFACE_TYPE_XCB: The surface is of type xcb
+ * @CAIRO_SURFACE_TYPE_GLITZ: The surface is of type glitz
+ * @CAIRO_SURFACE_TYPE_QUARTZ: The surface is of type quartz
+ * @CAIRO_SURFACE_TYPE_WIN32: The surface is of type win32
+ * @CAIRO_SURFACE_TYPE_BEOS: The surface is of type beos
+ * @CAIRO_SURFACE_TYPE_DIRECTFB: The surface is of type directfb
+ * @CAIRO_SURFACE_TYPE_SVG: The surface is of type svg
+ * @CAIRO_SURFACE_TYPE_QUARTZ2: The surface is of type quartz2
+ *
+ * @cairo_surface_type_t is used to describe the type of a given
+ * surface. The surface types are also known as "backends" or "surface
+ * backends" within cairo.
+ *
+ * The type of a surface is determined by the function used to create
+ * it, which will generally be of the form cairo_<type>_surface_create,
+ * (though see cairo_surface_create_similar as well).
+ *
+ * The surface type can be queried with cairo_surface_get_type()
+ *
+ * The various cairo_surface functions can be used with surfaces of
+ * any type, but some backends also provide type-specific functions
+ * that must only be called with a surface of the appropriate
+ * type. These functions have names that begin with
+ * cairo_<type>_surface such as cairo_image_surface_get_width().
+ *
+ * The behavior of calling a type-specific function with a surface of
+ * the wrong type is undefined.
+ */
+typedef enum _cairo_surface_type {
+    CAIRO_SURFACE_TYPE_IMAGE,
+    CAIRO_SURFACE_TYPE_PDF,
+    CAIRO_SURFACE_TYPE_PS,
+    CAIRO_SURFACE_TYPE_XLIB,
+    CAIRO_SURFACE_TYPE_XCB,
+    CAIRO_SURFACE_TYPE_GLITZ,
+    CAIRO_SURFACE_TYPE_QUARTZ,
+    CAIRO_SURFACE_TYPE_WIN32,
+    CAIRO_SURFACE_TYPE_BEOS,
+    CAIRO_SURFACE_TYPE_DIRECTFB,
+    CAIRO_SURFACE_TYPE_SVG,
+    CAIRO_SURFACE_TYPE_QUARTZ2
+} cairo_surface_type_t;
+
+cairo_public cairo_surface_type_t
+cairo_surface_get_type (cairo_surface_t *surface);
 
 #if CAIRO_HAS_PNG_FUNCTIONS
 
@@ -1322,6 +1415,43 @@ cairo_pattern_destroy (cairo_pattern_t *pattern);
   
 cairo_public cairo_status_t
 cairo_pattern_status (cairo_pattern_t *pattern);
+
+/**
+ * cairo_pattern_type_t
+
+ * @CAIRO_PATTERN_TYPE_SOLID: The pattern is a solid (uniform)
+ * color. It may be opaque or translucent.
+ * @CAIRO_PATTERN_TYPE_SURFACE: The pattern is a based on a surface (an image).
+ * @CAIRO_PATTERN_TYPE_LINEAR: The pattern is a linear gradient.
+ * @CAIRO_PATTERN_TYPE_RADIAL: The pattern is a radial gradient.
+ *
+ * @cairo_pattern_type_t us used to describe the type of a given pattern.
+ *
+ * The type of a pattern is determined by the function used to create
+ * it. The cairo_pattern_create_rgb() and cairo_pattern_create_rgba()
+ * functions create SOLID patterns. The remaining
+ * cairo_pattern_create functions map to pattern types in obvious
+ * ways.
+ *
+ * The pattern type can be queried with cairo_pattern_get_type()
+ *
+ * Most cairo_pattern functions can be called with a pattern of any
+ * type, (though trying to change the extend or filter for a solid
+ * pattern will have no effect). A notable exception is
+ * cairo_pattern_add_color_stop_rgb() and
+ * cairo_pattern_add_color_stop_rgba() which must only be called with
+ * gradient patterns (either LINEAR or RADIAL). Otherwise the pattern
+ * will be shutdown and put into an error state.
+ */
+typedef enum _cairo_pattern_type {
+    CAIRO_PATTERN_TYPE_SOLID,
+    CAIRO_PATTERN_TYPE_SURFACE,
+    CAIRO_PATTERN_TYPE_LINEAR,
+    CAIRO_PATTERN_TYPE_RADIAL
+} cairo_pattern_type_t;
+
+cairo_public cairo_pattern_type_t
+cairo_pattern_get_type (cairo_pattern_t *pattern);
 
 cairo_public void
 cairo_pattern_add_color_stop_rgb (cairo_pattern_t *pattern,

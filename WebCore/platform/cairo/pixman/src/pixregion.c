@@ -1462,7 +1462,7 @@ pixman_region_validate(badreg, pOverlap)
     } RegionInfo;
 
 	     int	numRects;   /* Original numRects for badreg	    */
-	     RegionInfo *ri;	    /* DeprecatedArray of current regions		    */
+	     RegionInfo *ri;	    /* Array of current regions		    */
     	     int	numRI;      /* Number of entries used in ri	    */
 	     int	sizeRI;	    /* Number of entries available in ri    */
 	     int	i;	    /* Index into rects			    */

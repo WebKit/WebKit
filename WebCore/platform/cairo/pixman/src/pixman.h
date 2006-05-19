@@ -54,8 +54,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Id: pixman.h,v 1.11 2006/02/03 04:49:30 vladimir%pobox.com Exp $ */
-
 /* libic.h */
 
 /*
@@ -83,7 +81,7 @@ SOFTWARE.
 
 #if defined (__SVR4) && defined (__sun)
 # include <sys/int_types.h>
-#elif defined (__OpenBSD__) || defined (_AIX)
+#elif defined (__OpenBSD__) || defined (_AIX) || defined (__osf__)
 # include <inttypes.h>
 #elif defined (_MSC_VER)
   typedef __int8 int8_t;

@@ -114,6 +114,69 @@ _cairo_output_stream_write_hex_string (cairo_output_stream_t *stream,
     }
 }
 
+static cairo_bool_t
+convert_four_tuple (const unsigned char *four_tuple, char five_tuple[5])
+{
+    cairo_bool_t all_zero;
+    uint32_t value;
+    int digit, i;
+    
+    value = four_tuple[0] << 24 | four_tuple[1] << 16 | four_tuple[2] << 8 | four_tuple[3];
+    all_zero = TRUE;
+    for (i = 0; i < 5; i++) {
+	digit = value % 85;
+	if (digit != 0)
+	    all_zero = FALSE;
+	five_tuple[4-i] = digit + 33;
+	value = value / 85;
+    }
+    return all_zero;
+}
+
+void
+_cairo_output_stream_write_base85_string (cairo_output_stream_t *stream,
+					  const char *data,
+					  size_t length)
+{
+    unsigned char *ptr;
+    unsigned char four_tuple[4];
+    char five_tuple[5];
+    int column;
+    
+    ptr = (unsigned char *)data;
+    column = 0;
+    while (length > 0) {
+	if (length >= 4) {
+	    if (convert_four_tuple (ptr, five_tuple)) {
+		column += 1;
+		_cairo_output_stream_write (stream, "z", 1);
+	    } else {
+		column += 5;
+		_cairo_output_stream_write (stream, five_tuple, 5);
+	    }
+	    length -= 4;
+	    ptr += 4;
+	} else { /* length < 4 */
+	    memset (four_tuple, 0, 4);
+	    memcpy (four_tuple, ptr, length);
+	    convert_four_tuple (four_tuple, five_tuple);
+	    column += length + 1;
+	    _cairo_output_stream_write (stream, five_tuple, length + 1);
+	    length = 0;
+	}
+	if (column >= 72) {
+	    _cairo_output_stream_write (stream, "\n", 1);
+	    column = 0;
+	}
+    }
+
+    if (column > 0) {
+	_cairo_output_stream_write (stream, "\n", 1);
+    }
+}
+
+
+
 /* Format a double in a locale independent way and trim trailing
  * zeros.  Based on code from Alex Larson <alexl@redhat.com>.
  * http://mail.gnome.org/archives/gtk-devel-list/2001-October/msg00087.html
@@ -305,9 +368,11 @@ _cairo_output_stream_create_for_file (const char *filename)
 	return NULL;
     
     stream = _cairo_output_stream_create (stdio_write, fp);
-    if (stream == NULL)
+
+    if (stream)
+	stream->owns_closure_is_file = TRUE;
+    else
 	fclose (fp);
-    stream->owns_closure_is_file = TRUE;
 
     return stream;
 }

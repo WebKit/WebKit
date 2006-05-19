@@ -325,29 +325,6 @@ cairo_restore (cairo_t *cr)
 slim_hidden_def(cairo_restore);
 
 /**
- * moz_cairo_set_target:
- * @cr: a #cairo_t
- * @target: a #cairo_surface_t
- *
- * Change the destination surface of rendering to @cr to @target.
- * @target must not be %NULL, or an error will be set on @cr.
- */
-void
-moz_cairo_set_target (cairo_t *cr, cairo_surface_t *target)
-{
-    if (cr->status)
-        return;
-
-    if (target == NULL) {
-        _cairo_set_error (cr, CAIRO_STATUS_NULL_POINTER);
-        return;
-    }
-
-    _moz_cairo_gstate_set_target (cr->gstate, target);
-}
-slim_hidden_def(moz_cairo_set_target);
-
-/**
  * cairo_push_group:
  * @cr: a cairo context
  *
@@ -402,8 +379,13 @@ cairo_push_group_with_content (cairo_t *cr, cairo_content_t content)
 	goto bail;
 
     /* Set device offsets on the new surface so that logically it appears at
-     * the same location on the parent surface. */
-    cairo_surface_set_device_offset (group_surface, -extents.x, -extents.y);
+     * the same location on the parent surface -- when we pop_group this,
+     * the source pattern will get fixed up for the appropriate target surface
+     * device offsets, so we want to set our own surface offsets from /that/,
+     * and not from the device origin. */
+    cairo_surface_set_device_offset (group_surface,
+                                     cr->gstate->target->device_x_offset - extents.x,
+                                     cr->gstate->target->device_y_offset - extents.y);
 
     /* create a new gstate for the redirect */
     cairo_save (cr);
@@ -2278,6 +2260,9 @@ cairo_show_glyphs (cairo_t *cr, cairo_glyph_t *glyphs, int num_glyphs)
     if (cr->status)
 	return;
 
+    if (num_glyphs == 0)
+	return;
+
     cr->status = _cairo_gstate_show_glyphs (cr->gstate, glyphs, num_glyphs);
     if (cr->status)
 	_cairo_set_error (cr, cr->status);
@@ -2527,10 +2512,14 @@ cairo_get_target (cairo_t *cr)
 /**
  * cairo_get_group_target:
  * @cr: a cairo context
- * 
+ * @dx: device offset x value from cr's original target
+ * @dy: device offset y value from cr's original target
+ *
  * Gets the target surface for the current transparency group
  * started by the last cairo_push_group() call on the cairo
- * context.
+ * context.  The offset between this surface and the cairo
+ * context's original target surface is also returned if
+ * dx and/or dy are not NULL.
  *
  * This function may return NULL if there is no transparency
  * group on the target.
@@ -2540,12 +2529,21 @@ cairo_get_target (cairo_t *cr)
  * cairo_surface_reference().
  **/
 cairo_surface_t *
-cairo_get_group_target (cairo_t *cr)
+cairo_get_group_target (cairo_t *cr, double *dx, double *dy)
 {
+    cairo_surface_t *gsurf;
+
     if (cr->status)
 	return (cairo_surface_t*) &_cairo_surface_nil;
 
-    return _cairo_gstate_get_target (cr->gstate);
+    gsurf = _cairo_gstate_get_target (cr->gstate);
+    if (!gsurf)
+        return NULL;
+
+    if (dx || dy)
+        _cairo_gstate_get_target_offsets_from_original (cr->gstate, dx, dy);
+
+    return gsurf;
 }
 
 /**

@@ -30,7 +30,7 @@
 #include "cairoint.h"
 
 const cairo_solid_pattern_t cairo_pattern_nil = {
-    { CAIRO_PATTERN_SOLID, 	/* type */
+    { CAIRO_PATTERN_TYPE_SOLID, 	/* type */
       (unsigned int)-1,		/* ref_count */
       CAIRO_STATUS_NO_MEMORY,	/* status */
       { 1., 0., 0., 1., 0., 0., }, /* matrix */
@@ -39,7 +39,7 @@ const cairo_solid_pattern_t cairo_pattern_nil = {
 };
 
 static const cairo_solid_pattern_t cairo_pattern_nil_null_pointer = {
-    { CAIRO_PATTERN_SOLID, 	/* type */
+    { CAIRO_PATTERN_TYPE_SOLID, 	/* type */
       (unsigned int)-1,		/* ref_count */
       CAIRO_STATUS_NULL_POINTER,/* status */
       { 1., 0., 0., 1., 0., 0., }, /* matrix */
@@ -48,7 +48,7 @@ static const cairo_solid_pattern_t cairo_pattern_nil_null_pointer = {
 };
 
 static const cairo_solid_pattern_t cairo_pattern_nil_file_not_found = {
-    { CAIRO_PATTERN_SOLID, 	/* type */
+    { CAIRO_PATTERN_TYPE_SOLID, 	/* type */
       (unsigned int)-1,		/* ref_count */
       CAIRO_STATUS_FILE_NOT_FOUND, /* status */
       { 1., 0., 0., 1., 0., 0., }, /* matrix */
@@ -57,7 +57,7 @@ static const cairo_solid_pattern_t cairo_pattern_nil_file_not_found = {
 };
 
 static const cairo_solid_pattern_t cairo_pattern_nil_read_error = {
-    { CAIRO_PATTERN_SOLID, 	/* type */
+    { CAIRO_PATTERN_TYPE_SOLID, 	/* type */
       (unsigned int)-1,		/* ref_count */
       CAIRO_STATUS_READ_ERROR,	/* status */
       { 1., 0., 0., 1., 0., 0., }, /* matrix */
@@ -117,7 +117,7 @@ _cairo_pattern_init (cairo_pattern_t *pattern, cairo_pattern_type_t type)
     pattern->ref_count = 1;
     pattern->status    = CAIRO_STATUS_SUCCESS;
 
-    if (type == CAIRO_PATTERN_SURFACE)
+    if (type == CAIRO_PATTERN_TYPE_SURFACE)
 	pattern->extend = CAIRO_EXTEND_SURFACE_DEFAULT;
     else
 	pattern->extend = CAIRO_EXTEND_GRADIENT_DEFAULT;
@@ -131,7 +131,7 @@ static void
 _cairo_gradient_pattern_init_copy (cairo_gradient_pattern_t	  *pattern,
 				   const cairo_gradient_pattern_t *other)
 {
-    if (other->base.type == CAIRO_PATTERN_LINEAR)
+    if (other->base.type == CAIRO_PATTERN_TYPE_LINEAR)
     {
 	cairo_linear_pattern_t *dst = (cairo_linear_pattern_t *) pattern;
 	cairo_linear_pattern_t *src = (cairo_linear_pattern_t *) other;
@@ -170,21 +170,21 @@ _cairo_pattern_init_copy (cairo_pattern_t	*pattern,
     }
 
     switch (other->type) {
-    case CAIRO_PATTERN_SOLID: {
+    case CAIRO_PATTERN_TYPE_SOLID: {
 	cairo_solid_pattern_t *dst = (cairo_solid_pattern_t *) pattern;
 	cairo_solid_pattern_t *src = (cairo_solid_pattern_t *) other;
 
 	*dst = *src;
     } break;
-    case CAIRO_PATTERN_SURFACE: {
+    case CAIRO_PATTERN_TYPE_SURFACE: {
 	cairo_surface_pattern_t *dst = (cairo_surface_pattern_t *) pattern;
 	cairo_surface_pattern_t *src = (cairo_surface_pattern_t *) other;
 	
 	*dst = *src;
 	cairo_surface_reference (dst->surface);
     } break;
-    case CAIRO_PATTERN_LINEAR:
-    case CAIRO_PATTERN_RADIAL: {
+    case CAIRO_PATTERN_TYPE_LINEAR:
+    case CAIRO_PATTERN_TYPE_RADIAL: {
 	cairo_gradient_pattern_t *dst = (cairo_gradient_pattern_t *) pattern;
 	cairo_gradient_pattern_t *src = (cairo_gradient_pattern_t *) other;
 	
@@ -199,16 +199,16 @@ void
 _cairo_pattern_fini (cairo_pattern_t *pattern)
 {
     switch (pattern->type) {
-    case CAIRO_PATTERN_SOLID:
+    case CAIRO_PATTERN_TYPE_SOLID:
 	break;
-    case CAIRO_PATTERN_SURFACE: {
+    case CAIRO_PATTERN_TYPE_SURFACE: {
 	cairo_surface_pattern_t *surface_pattern =
 	    (cairo_surface_pattern_t *) pattern;
 	
 	cairo_surface_destroy (surface_pattern->surface);
     } break;
-    case CAIRO_PATTERN_LINEAR:
-    case CAIRO_PATTERN_RADIAL: {
+    case CAIRO_PATTERN_TYPE_LINEAR:
+    case CAIRO_PATTERN_TYPE_RADIAL: {
 	cairo_gradient_pattern_t *gradient =
 	    (cairo_gradient_pattern_t *) pattern;
 	
@@ -222,7 +222,7 @@ void
 _cairo_pattern_init_solid (cairo_solid_pattern_t *pattern,
 			   const cairo_color_t	 *color)
 {
-    _cairo_pattern_init (&pattern->base, CAIRO_PATTERN_SOLID);
+    _cairo_pattern_init (&pattern->base, CAIRO_PATTERN_TYPE_SOLID);
     pattern->color = *color;
 }
 
@@ -232,12 +232,12 @@ _cairo_pattern_init_for_surface (cairo_surface_pattern_t *pattern,
 {
     if (surface->status) {
 	/* Force to solid to simplify the pattern_fini process. */
-	pattern->base.type = CAIRO_PATTERN_SOLID;
+	pattern->base.type = CAIRO_PATTERN_TYPE_SOLID;
 	_cairo_pattern_set_error (&pattern->base, surface->status);
 	return;
     }
 
-    _cairo_pattern_init (&pattern->base, CAIRO_PATTERN_SURFACE);
+    _cairo_pattern_init (&pattern->base, CAIRO_PATTERN_TYPE_SURFACE);
     
     pattern->surface = cairo_surface_reference (surface);
 }
@@ -256,7 +256,7 @@ void
 _cairo_pattern_init_linear (cairo_linear_pattern_t *pattern,
 			    double x0, double y0, double x1, double y1)
 {
-    _cairo_pattern_init_gradient (&pattern->base, CAIRO_PATTERN_LINEAR);
+    _cairo_pattern_init_gradient (&pattern->base, CAIRO_PATTERN_TYPE_LINEAR);
 
     pattern->gradient.p1.x = _cairo_fixed_from_double (x0);
     pattern->gradient.p1.y = _cairo_fixed_from_double (y0);
@@ -269,7 +269,7 @@ _cairo_pattern_init_radial (cairo_radial_pattern_t *pattern,
 			    double cx0, double cy0, double radius0,
 			    double cx1, double cy1, double radius1)
 {
-    _cairo_pattern_init_gradient (&pattern->base, CAIRO_PATTERN_RADIAL);
+    _cairo_pattern_init_gradient (&pattern->base, CAIRO_PATTERN_TYPE_RADIAL);
 
     pattern->gradient.inner.x	   = _cairo_fixed_from_double (cx0);
     pattern->gradient.inner.y	   = _cairo_fixed_from_double (cy0);
@@ -525,6 +525,18 @@ cairo_pattern_reference (cairo_pattern_t *pattern)
 }
 
 /**
+ * cairo_pattern_get_type:
+ * @pattern: a #cairo_pattern_t
+ * 
+ * Return value: The type of @pattern. See #cairo_pattern_type_t.
+ **/
+cairo_pattern_type_t
+cairo_pattern_get_type (cairo_pattern_t *pattern)
+{
+    return pattern->type;
+}
+
+/**
  * cairo_pattern_status:
  * @pattern: a #cairo_pattern_t
  * 
@@ -641,8 +653,8 @@ cairo_pattern_add_color_stop_rgb (cairo_pattern_t *pattern,
     if (pattern->status)
 	return;
 
-    if (pattern->type != CAIRO_PATTERN_LINEAR &&
-	pattern->type != CAIRO_PATTERN_RADIAL)
+    if (pattern->type != CAIRO_PATTERN_TYPE_LINEAR &&
+	pattern->type != CAIRO_PATTERN_TYPE_RADIAL)
     {
 	_cairo_pattern_set_error (pattern, CAIRO_STATUS_PATTERN_TYPE_MISMATCH);
 	return;
@@ -689,8 +701,8 @@ cairo_pattern_add_color_stop_rgba (cairo_pattern_t *pattern,
     if (pattern->status)
 	return;
 
-    if (pattern->type != CAIRO_PATTERN_LINEAR &&
-	pattern->type != CAIRO_PATTERN_RADIAL)
+    if (pattern->type != CAIRO_PATTERN_TYPE_LINEAR &&
+	pattern->type != CAIRO_PATTERN_TYPE_RADIAL)
     {
 	_cairo_pattern_set_error (pattern, CAIRO_STATUS_PATTERN_TYPE_MISMATCH);
 	return;
@@ -894,7 +906,7 @@ _cairo_pattern_acquire_surface_for_gradient (cairo_gradient_pattern_t *pattern,
     cairo_status_t	  status;
     cairo_bool_t	  repeat = FALSE;
 
-    if (pattern->base.type == CAIRO_PATTERN_LINEAR)
+    if (pattern->base.type == CAIRO_PATTERN_TYPE_LINEAR)
     {
 	cairo_linear_pattern_t *linear = (cairo_linear_pattern_t *) pattern;
 
@@ -936,7 +948,7 @@ _cairo_pattern_acquire_surface_for_gradient (cairo_gradient_pattern_t *pattern,
 	return CAIRO_STATUS_SUCCESS;
     }
 
-    if (pattern->base.type == CAIRO_PATTERN_LINEAR) {
+    if (pattern->base.type == CAIRO_PATTERN_TYPE_LINEAR) {
 	cairo_bool_t is_horizontal;
 	cairo_bool_t is_vertical;
 
@@ -1055,7 +1067,7 @@ _cairo_pattern_is_opaque_solid (cairo_pattern_t *pattern)
 {
     cairo_solid_pattern_t *solid;
 
-    if (pattern->type != CAIRO_PATTERN_SOLID)
+    if (pattern->type != CAIRO_PATTERN_TYPE_SOLID)
 	return FALSE;
 
     solid = (cairo_solid_pattern_t *) pattern;
@@ -1151,7 +1163,7 @@ _cairo_pattern_acquire_surface (cairo_pattern_t		   *pattern,
     }
 
     switch (pattern->type) {
-    case CAIRO_PATTERN_SOLID: {
+    case CAIRO_PATTERN_TYPE_SOLID: {
 	cairo_solid_pattern_t *src = (cairo_solid_pattern_t *) pattern;
 	
 	status = _cairo_pattern_acquire_surface_for_solid (src, dst,
@@ -1159,8 +1171,8 @@ _cairo_pattern_acquire_surface (cairo_pattern_t		   *pattern,
 							   surface_out,
 							   attributes);
 	} break;
-    case CAIRO_PATTERN_LINEAR:
-    case CAIRO_PATTERN_RADIAL: {
+    case CAIRO_PATTERN_TYPE_LINEAR:
+    case CAIRO_PATTERN_TYPE_RADIAL: {
 	cairo_gradient_pattern_t *src = (cairo_gradient_pattern_t *) pattern;
 
 	/* fast path for gradients with less than 2 color stops */
@@ -1203,7 +1215,7 @@ _cairo_pattern_acquire_surface (cairo_pattern_t		   *pattern,
 								  attributes);
 	}
     } break;
-    case CAIRO_PATTERN_SURFACE: {
+    case CAIRO_PATTERN_TYPE_SURFACE: {
 	cairo_surface_pattern_t *src = (cairo_surface_pattern_t *) pattern;
 	
 	status = _cairo_pattern_acquire_surface_for_surface (src, dst,
@@ -1235,7 +1247,7 @@ _cairo_pattern_release_surface (cairo_pattern_t		   *pattern,
     {
 	cairo_surface_pattern_t *surface_pattern;
 
-	assert (pattern->type == CAIRO_PATTERN_SURFACE);
+	assert (pattern->type == CAIRO_PATTERN_TYPE_SURFACE);
 	surface_pattern = (cairo_surface_pattern_t *) pattern;
 
 	_cairo_surface_release_source_image (surface_pattern->surface,
@@ -1277,8 +1289,8 @@ _cairo_pattern_acquire_surfaces (cairo_pattern_t	    *src,
     /* XXX: This optimization assumes that there is no color
      * information in mask, so this will need to change when we
      * support RENDER-style 4-channel masks. */
-    if (src->type == CAIRO_PATTERN_SOLID &&
-	mask && mask->type == CAIRO_PATTERN_SOLID)
+    if (src->type == CAIRO_PATTERN_TYPE_SOLID &&
+	mask && mask->type == CAIRO_PATTERN_TYPE_SOLID)
     {
 	cairo_color_t combined;
 	cairo_solid_pattern_t *src_solid = (cairo_solid_pattern_t *) src;
@@ -1346,7 +1358,7 @@ _cairo_pattern_get_extents (cairo_pattern_t	*pattern,
 			    cairo_rectangle_t	*extents)
 {
     if (pattern->extend == CAIRO_EXTEND_NONE &&
-	pattern->type == CAIRO_PATTERN_SURFACE)
+	pattern->type == CAIRO_PATTERN_TYPE_SURFACE)
     {
 	cairo_status_t status;
 	cairo_rectangle_t surface_extents;

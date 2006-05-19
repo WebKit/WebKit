@@ -73,10 +73,11 @@ _cairo_quartz_surface_acquire_source_image(void *abstract_surface,
     UInt32 imageDataSize, rowBytes;
     CGDataProviderRef dataProvider;
 
-    // We keep a cached (cairo_image_surface_t *) in the cairo_quartz_surface_t
-    // struct. If the window is ever drawn to without going through Cairo, then
-    // we would need to refetch the pixel data from the window into the cached
-    // image surface. 
+    /* We keep a cached (cairo_image_surface_t *) in the cairo_quartz_surface_t
+     * struct. If the window is ever drawn to without going through Cairo, then
+     * we would need to refetch the pixel data from the window into the cached
+     * image surface. 
+     */
     if (surface->image) {
         cairo_surface_reference(&surface->image->base);
 
@@ -216,6 +217,7 @@ _cairo_quartz_surface_get_extents (void *abstract_surface,
 }
 
 static const struct _cairo_surface_backend cairo_quartz_surface_backend = {
+    CAIRO_SURFACE_TYPE_QUARTZ,
     NULL, /* create_similar */
     _cairo_quartz_surface_finish,
     _cairo_quartz_surface_acquire_source_image,
@@ -257,7 +259,7 @@ cairo_surface_t *cairo_quartz_surface_create(CGContextRef context,
 	surface->clip_region = NULL;
     surface->flipped = flipped;
 
-    // Set up the image surface which Cairo draws into and we blit to & from.
+    /* Set up the image surface which Cairo draws into and we blit to & from. */
     void *foo;
     _cairo_quartz_surface_acquire_source_image(surface, &surface->image, &foo);
 

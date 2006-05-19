@@ -360,8 +360,8 @@ _cairo_quartzgl_cairo_gradient_pattern_to_quartz (cairo_pattern_t *abspat)
     cairo_matrix_t mat;
     double x0, y0;
 
-    if (abspat->type != CAIRO_PATTERN_LINEAR &&
-	abspat->type != CAIRO_PATTERN_RADIAL)
+    if (abspat->type != CAIRO_PATTERN_TYPE_LINEAR &&
+	abspat->type != CAIRO_PATTERN_TYPE_RADIAL)
 	return NULL;
 
     /* We can only do this if we have an identity pattern matrix;
@@ -376,7 +376,7 @@ _cairo_quartzgl_cairo_gradient_pattern_to_quartz (cairo_pattern_t *abspat)
     x0 = mat.x0;
     y0 = mat.y0;
 
-    if (abspat->type == CAIRO_PATTERN_LINEAR) {
+    if (abspat->type == CAIRO_PATTERN_TYPE_LINEAR) {
 	cairo_linear_pattern_t *lpat = (cairo_linear_pattern_t*) abspat;
 	CGShadingRef shading;
 	CGPoint start, end;
@@ -400,7 +400,7 @@ _cairo_quartzgl_cairo_gradient_pattern_to_quartz (cairo_pattern_t *abspat)
 	return shading;
     }
 
-    if (abspat->type == CAIRO_PATTERN_RADIAL) {
+    if (abspat->type == CAIRO_PATTERN_TYPE_RADIAL) {
 	cairo_radial_pattern_t *rpat = (cairo_radial_pattern_t*) abspat;
 	CGShadingRef shading;
 	CGPoint start, end;
@@ -517,7 +517,7 @@ _cairo_quartzgl_cairo_repeating_surface_pattern_to_quartz (cairo_quartzgl_surfac
     float rw, rh;
 
     /* SURFACE is the only type we'll handle here */
-    if (abspat->type != CAIRO_PATTERN_SURFACE)
+    if (abspat->type != CAIRO_PATTERN_TYPE_SURFACE)
 	return NULL;
 
     spat = (cairo_surface_pattern_t *) abspat;
@@ -596,7 +596,7 @@ _cairo_quartzgl_setup_source (cairo_quartzgl_surface_t *surface,
 {
     assert (!(surface->sourceImage || surface->sourceShading || surface->sourcePattern));
 
-    if (source->type == CAIRO_PATTERN_SOLID) {
+    if (source->type == CAIRO_PATTERN_TYPE_SOLID) {
 	cairo_solid_pattern_t *solid = (cairo_solid_pattern_t *) source;
 
 	CGContextSetRGBStrokeColor (surface->cgContext,
@@ -609,15 +609,15 @@ _cairo_quartzgl_setup_source (cairo_quartzgl_surface_t *surface,
 				  solid->color.green,
 				  solid->color.blue,
 				  solid->color.alpha);
-    } else if (source->type == CAIRO_PATTERN_LINEAR ||
-	       source->type == CAIRO_PATTERN_RADIAL)
+    } else if (source->type == CAIRO_PATTERN_TYPE_LINEAR ||
+	       source->type == CAIRO_PATTERN_TYPE_RADIAL)
     {
 	CGShadingRef shading = _cairo_quartzgl_cairo_gradient_pattern_to_quartz (source);
 	if (!shading)
 	    return CAIRO_INT_STATUS_UNSUPPORTED;
 
 	surface->sourceShading = shading;
-    } else if (source->type == CAIRO_PATTERN_SURFACE) {
+    } else if (source->type == CAIRO_PATTERN_TYPE_SURFACE) {
 	CGPatternRef pattern = _cairo_quartzgl_cairo_repeating_surface_pattern_to_quartz (surface, source);
 	if (!pattern)
 	    return CAIRO_INT_STATUS_UNSUPPORTED;
@@ -1413,6 +1413,7 @@ _cairo_quartzgl_surface_intersect_clip_path (void *abstract_surface,
 }
 
 static const struct _cairo_surface_backend cairo_quartzgl_surface_backend = {
+    CAIRO_SURFACE_TYPE_QUARTZ2,
     _cairo_quartzgl_surface_create_similar,
     _cairo_quartzgl_surface_finish,
     _cairo_quartzgl_surface_acquire_source_image,

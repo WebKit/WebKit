@@ -551,8 +551,8 @@ _cairo_glitz_pattern_acquire_surface (cairo_pattern_t	              *pattern,
     attr->acquired = FALSE;
 
     switch (pattern->type) {
-    case CAIRO_PATTERN_LINEAR:
-    case CAIRO_PATTERN_RADIAL: {
+    case CAIRO_PATTERN_TYPE_LINEAR:
+    case CAIRO_PATTERN_TYPE_RADIAL: {
 	cairo_gradient_pattern_t    *gradient =
 	    (cairo_gradient_pattern_t *) pattern;
 	char			    *data;
@@ -587,7 +587,7 @@ _cairo_glitz_pattern_acquire_surface (cairo_pattern_t	              *pattern,
 	if (!CAIRO_GLITZ_FEATURE_OK (dst->surface, FRAGMENT_PROGRAM))
 	    break;
 
-	if (pattern->type == CAIRO_PATTERN_RADIAL)
+	if (pattern->type == CAIRO_PATTERN_TYPE_RADIAL)
 	    n_base_params = 6;
 	else
 	    n_base_params = 4;
@@ -639,7 +639,7 @@ _cairo_glitz_pattern_acquire_surface (cairo_pattern_t	              *pattern,
 
 	glitz_buffer_destroy (buffer);
 
-	if (pattern->type == CAIRO_PATTERN_LINEAR)
+	if (pattern->type == CAIRO_PATTERN_TYPE_LINEAR)
 	{
 	    cairo_linear_pattern_t *grad = (cairo_linear_pattern_t *) pattern;
 
@@ -776,8 +776,8 @@ _cairo_glitz_pattern_acquire_surfaces (cairo_pattern_t	                *src,
      * information in mask, so this will need to change when we
      * support RENDER-style 4-channel masks. */
 
-    if (src->type == CAIRO_PATTERN_SOLID &&
-	mask->type == CAIRO_PATTERN_SOLID)
+    if (src->type == CAIRO_PATTERN_TYPE_SOLID &&
+	mask->type == CAIRO_PATTERN_TYPE_SOLID)
     {
 	cairo_color_t combined;
 	cairo_solid_pattern_t *src_solid = (cairo_solid_pattern_t *) src;
@@ -1018,7 +1018,7 @@ _cairo_glitz_surface_composite_trapezoids (cairo_operator_t  op,
     if (_glitz_ensure_target (dst->surface))
 	return CAIRO_INT_STATUS_UNSUPPORTED;
 
-    if (pattern->type == CAIRO_PATTERN_SURFACE)
+    if (pattern->type == CAIRO_PATTERN_TYPE_SURFACE)
     {
 	_cairo_pattern_init_copy (&tmp_src_pattern.base, pattern);
 
@@ -2121,6 +2121,7 @@ _cairo_glitz_surface_flush (void *abstract_surface)
 }
 
 static const cairo_surface_backend_t cairo_glitz_surface_backend = {
+    CAIRO_SURFACE_TYPE_GLITZ,
     _cairo_glitz_surface_create_similar,
     _cairo_glitz_surface_finish,
     _cairo_glitz_surface_acquire_source_image,

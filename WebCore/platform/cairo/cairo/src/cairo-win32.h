@@ -48,9 +48,9 @@ cairo_public cairo_surface_t *
 cairo_win32_surface_create (HDC hdc);
 
 cairo_public cairo_surface_t *
-cairo_win32_surface_create_dib (cairo_format_t format,
-				int width,
-				int height);
+cairo_win32_surface_create_with_dib (cairo_format_t format,
+                                     int width,
+                                     int height);
 
 cairo_public HDC
 cairo_win32_surface_get_dc (cairo_surface_t *surface);
@@ -70,6 +70,14 @@ cairo_win32_scaled_font_done_font (cairo_scaled_font_t *scaled_font);
 
 cairo_public double
 cairo_win32_scaled_font_get_metrics_factor (cairo_scaled_font_t *scaled_font);
+
+cairo_public void
+cairo_win32_scaled_font_get_logical_to_device (cairo_scaled_font_t *scaled_font,
+					       cairo_matrix_t *logical_to_device);
+
+cairo_public void
+cairo_win32_scaled_font_get_device_to_logical (cairo_scaled_font_t *scaled_font,
+					       cairo_matrix_t *device_to_logical);
 
 CAIRO_END_DECLS
 

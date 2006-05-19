@@ -296,6 +296,7 @@ _test_meta_surface_snapshot (void *abstract_other)
 }
 
 const cairo_surface_backend_t test_meta_surface_backend = {
+    CAIRO_INTERNAL_SURFACE_TYPE_TEST_META,
     NULL, /* create_similar */
     _test_meta_surface_finish,
     _test_meta_surface_acquire_source_image,

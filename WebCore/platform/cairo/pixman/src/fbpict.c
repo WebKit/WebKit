@@ -1,6 +1,4 @@
 /*
- * $Id: fbpict.c,v 1.5 2006/02/03 04:49:30 vladimir%pobox.com Exp $
- *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -1151,7 +1149,7 @@ fbCompositeTrans_0888xnx0888(pixman_operator_t      op,
 				setupPackedReader(ws,wt,isrc,wsrc,workingSource);
 
 				/* get to word aligned */
-				switch(!(long)dst&3)
+				switch(~(long)dst&3)
 				{
 					case 1:
 						readPackedSource(rs);
@@ -1227,7 +1225,7 @@ fbCompositeTrans_0888xnx0888(pixman_operator_t      op,
 				srcLine += srcStride;
 				w = width*3;
 				/* get to word aligned */
-				switch(!(long)src&3)
+				switch(~(long)src&3)
 				{
 					case 1:
 						rd=alphamaskCombine24(*src++, *dst)>>8;

@@ -46,21 +46,21 @@ struct _cairo_traps;
 struct _cairo_trapezoid;
 struct _cairo_clip;
 
-void
+cairo_public void
 cairo_debug_reset_static_data (void);
 
-void
+cairo_public void
 cairo_debug_dump_clip (struct _cairo_clip *clip,
                        FILE *fp);
-void
+cairo_public void
 cairo_debug_dump_path (struct _cairo_path_fixed *path,
                        FILE *fp);
 
-void
+cairo_public void
 cairo_debug_dump_traps (struct _cairo_traps *traps,
                         FILE *fp);
 
-void
+cairo_public void
 cairo_debug_dump_trapezoid_array (struct _cairo_trapezoid *traps,
                                   int num_traps,
                                   FILE *fp);
