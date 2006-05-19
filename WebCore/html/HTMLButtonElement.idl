@@ -27,6 +27,9 @@ module html {
                  attribute  long                 tabIndex;
         readonly attribute  DOMString            type;
                  attribute  DOMString            value;
+                 
+        void    click();
+
     };
 
 }
