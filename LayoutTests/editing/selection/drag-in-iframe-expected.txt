@@ -1,0 +1,24 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 3 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > BODY > HTML > #document to 1 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > BODY > HTML > #document to 1 of #text > BODY > HTML > #document toDOMRange:range from 0 of #text > BODY > HTML > #document to 4 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderPartObject {IFRAME} at (0,0) size 302x152 [border: (1px solid #000000)]
+        layer at (0,0) size 300x150
+          RenderCanvas at (0,0) size 300x150
+        layer at (0,0) size 300x150
+          RenderBlock {HTML} at (0,0) size 300x150
+            RenderBody {BODY} at (8,8) size 284x134
+              RenderText {#text} at (0,0) size 92x18
+                text run at (0,0) width 92: "Drag onto me!"
+              RenderBR {BR} at (92,14) size 0x0
+              RenderText {#text} at (0,18) size 47x18
+                text run at (0,18) width 47: "Or Me!"
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

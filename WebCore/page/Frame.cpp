@@ -53,6 +53,7 @@
 #include "ImageDocument.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NodeList.h"
+#include "Page.h"
 #include "Plugin.h"
 #include "RenderCanvas.h"
 #include "RenderPart.h"
@@ -1125,7 +1126,7 @@ void Frame::setSelectionGranularity(TextGranularity granularity) const
 
 SelectionController& Frame::dragCaret() const
 {
-    return d->m_dragCaret;
+    return d->m_page->dragCaret();
 }
 
 const Selection& Frame::mark() const
@@ -1169,11 +1170,7 @@ void Frame::setSelection(const SelectionController& s, bool closeTyping, bool ke
 
 void Frame::setDragCaret(const SelectionController& dragCaret)
 {
-    if (d->m_dragCaret != dragCaret) {
-        d->m_dragCaret.needsCaretRepaint();
-        d->m_dragCaret = dragCaret;
-        d->m_dragCaret.needsCaretRepaint();
-    }
+    d->m_page->setDragCaret(dragCaret);
 }
 
 void Frame::invalidateSelection()
@@ -1299,7 +1296,10 @@ void Frame::paintCaret(GraphicsContext* p, const IntRect& rect) const
 
 void Frame::paintDragCaret(GraphicsContext* p, const IntRect& rect) const
 {
-    d->m_dragCaret.paintCaret(p, rect);
+    SelectionController& dragCaret = d->m_page->dragCaret();
+    assert(dragCaret.selection().isCaret());
+    if (dragCaret.selection().start().node()->document()->frame() == this)
+        dragCaret.paintCaret(p, rect);
 }
 
 void Frame::urlSelected(const DeprecatedString& url, const String& target)

@@ -1,3 +1,24 @@
+2006-05-19  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin.
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8931>
+        Drag caret not painted for editable sub-frames
+        
+        Moved the drag caret out of Frame and into Page.
+        Only the Frame that contains the drag caret will paint it.
+
+        * editing/SelectionController.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::dragCaret):
+        (WebCore::Frame::setDragCaret):
+        (WebCore::Frame::paintDragCaret):
+        * page/FramePrivate.h:
+        * page/Page.cpp:
+        (WebCore::Page::dragCaret):
+        (WebCore::Page::setDragCaret):
+        * page/Page.h:
+
 2006-05-19  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adele.

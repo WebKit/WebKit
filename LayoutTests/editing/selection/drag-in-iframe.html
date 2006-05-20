@@ -1,0 +1,44 @@
+<body contenteditable="true">
+<iframe style="border: 1px solid black;" src="../resources/select-and-drag-iframe.html" id="subframe"></iframe>
+
+<script>
+
+function step2() {
+    // This is a hack because when we try to get the document 
+    // for the subframe to get elements from it, the frame fails to load.
+    eventSender.mouseMoveTo(30, 20);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    
+    eventSender.leapForward(1000);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(200, 20);
+    
+    // Dump pixel results before we drop so we can see where the drag caret is painted.
+    window.layoutTestController.notifyDone();
+    
+    // Drop outside the subframe to avoid strange bugs when dropping content inside an editable frame.
+    eventSender.mouseMoveTo(600, 400);    
+    eventSender.mouseUp();
+    
+    // Mouse down to avoid assertion about multiple frames selections.
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function runTest() {
+    if (!window.layoutTestController)
+        return;
+
+    window.layoutTestController.waitUntilDone();
+    // Give the iframe a moment to come into being.
+    window.setTimeout(step2, 100);
+}
+
+runTest();
+
+</script>
+</body>

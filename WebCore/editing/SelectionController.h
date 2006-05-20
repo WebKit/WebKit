@@ -104,8 +104,6 @@ public:
     PassRefPtr<Range> toRange() const { return m_sel.toRange(); }
 
     void debugRenderer(RenderObject*, bool selected) const;
-
-    friend class Frame;
     
     Frame* frame() const;
     
@@ -149,6 +147,9 @@ public:
     void empty();
     //void clear();
     //TextRange *createRange();
+    
+    void needsCaretRepaint();
+    void paintCaret(GraphicsContext*, const IntRect &rect);
 
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;
@@ -164,8 +165,6 @@ private:
     VisiblePosition modifyMovingLeftBackward(TextGranularity);
 
     void layout();
-    void needsCaretRepaint();
-    void paintCaret(GraphicsContext*, const IntRect &rect);
     IntRect caretRepaintRect() const;
 
     int xPosForVerticalArrowNavigation(EPositionType, bool recalc = false) const;
