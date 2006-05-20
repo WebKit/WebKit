@@ -76,7 +76,6 @@ static Node *makeDeleteNode(Node *expr);
   ProgramNode         *prog;
   AssignExprNode      *init;
   SourceElementsNode  *srcs;
-  StatListNode        *slist;
   ArgumentsNode       *args;
   ArgumentListNode    *alist;
   VarDeclNode         *decl;
@@ -167,7 +166,6 @@ static Node *makeDeleteNode(Node *expr);
 %type <stat>  DebuggerStatement
 %type <stat>  SourceElement
 
-%type <slist> StatementList
 %type <init>  Initializer InitializerNoIn
 %type <func>  FunctionDeclaration
 %type <funcExpr>  FunctionExpr
@@ -637,11 +635,6 @@ Block:
   | '{' SourceElements '}'              { $$ = new BlockNode($2); DBG($$, @3, @3); }
 ;
 
-StatementList:
-    Statement                           { $$ = new StatListNode($1); }
-  | StatementList Statement             { $$ = new StatListNode($1, $2); }
-;
-
 VariableStatement:
     VAR VariableDeclarationList ';'     { $$ = new VarStatementNode($2); DBG($$, @1, @3); }
   | VAR VariableDeclarationList error   { $$ = new VarStatementNode($2); DBG($$, @1, @2); AUTO_SEMICOLON; }
@@ -787,12 +780,12 @@ CaseClauses:
 
 CaseClause:
     CASE Expr ':'                       { $$ = new CaseClauseNode($2); }
-  | CASE Expr ':' StatementList         { $$ = new CaseClauseNode($2, $4); }
+  | CASE Expr ':' SourceElements        { $$ = new CaseClauseNode($2, $4); }
 ;
 
 DefaultClause:
     DEFAULT ':'                         { $$ = new CaseClauseNode(0); }
-  | DEFAULT ':' StatementList           { $$ = new CaseClauseNode(0, $3); }
+  | DEFAULT ':' SourceElements          { $$ = new CaseClauseNode(0, $3); }
 ;
 
 LabelledStatement:

@@ -1,0 +1,10 @@
+WARN: shouldBe() expects string arguments
+PASS 20 is 20
+WARN: shouldBe() expects string arguments
+PASS 20 is 20
+WARN: shouldBe() expects string arguments
+PASS 20 is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

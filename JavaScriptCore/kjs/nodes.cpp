@@ -1508,57 +1508,6 @@ JSValue *CommaNode::evaluate(ExecState *exec)
   return v;
 }
 
-// ------------------------------ StatListNode ---------------------------------
-
-StatListNode::StatListNode(StatementNode *s)
-  : statement(s), next(this)
-{
-    Parser::noteNodeCycle(this);
-    setLoc(s->firstLine(), s->lastLine());
-}
- 
-StatListNode::StatListNode(StatListNode *l, StatementNode *s)
-  : statement(s), next(l->next)
-{
-  l->next = this;
-  setLoc(l->firstLine(), s->lastLine());
-}
-
-// ECMA 12.1
-Completion StatListNode::execute(ExecState *exec)
-{
-  Completion c = statement->execute(exec);
-  KJS_ABORTPOINT
-  if (c.complType() != Normal)
-    return c;
-  
-  JSValue *v = c.value();
-  
-  for (StatListNode *n = next.get(); n; n = n->next.get()) {
-    Completion c2 = n->statement->execute(exec);
-    KJS_ABORTPOINT
-    if (c2.complType() != Normal)
-      return c2;
-
-    if (c2.isValueCompletion())
-      v = c2.value();
-    c = c2;
-  }
-
-  return Completion(c.complType(), v, c.target());
-}
-
-void StatListNode::processVarDecls(ExecState *exec)
-{
-  for (StatListNode *n = this; n; n = n->next.get())
-    n->statement->processVarDecls(exec);
-}
-
-void StatListNode::breakCycle() 
-{ 
-    next = 0;
-}
-
 // ------------------------------ AssignExprNode -------------------------------
 
 // ECMA 12.2
@@ -2094,16 +2043,22 @@ JSValue *CaseClauseNode::evaluate(ExecState *exec)
 // ECMA 12.11
 Completion CaseClauseNode::evalStatements(ExecState *exec)
 {
-  if (next)
-    return next->execute(exec);
+  if (source)
+    return source->execute(exec);
   else
     return Completion(Normal, jsUndefined());
 }
 
 void CaseClauseNode::processVarDecls(ExecState *exec)
 {
-  if (next)
-    next->processVarDecls(exec);
+  if (source)
+    source->processVarDecls(exec);
+}
+
+void CaseClauseNode::processFuncDecl(ExecState* exec)
+{
+  if (source)
+      source->processFuncDecl(exec);
 }
 
 // ------------------------------ ClauseListNode -------------------------------
@@ -2121,6 +2076,13 @@ void ClauseListNode::processVarDecls(ExecState *exec)
   for (ClauseListNode *n = this; n; n = n->next.get())
     if (n->clause)
       n->clause->processVarDecls(exec);
+}
+
+void ClauseListNode::processFuncDecl(ExecState* exec)
+{
+  for (ClauseListNode* n = this; n; n = n->next.get())
+    if (n->clause)
+      n->clause->processFuncDecl(exec);
 }
 
 void ClauseListNode::breakCycle() 
@@ -2230,6 +2192,16 @@ void CaseBlockNode::processVarDecls(ExecState *exec)
     list2->processVarDecls(exec);
 }
 
+void CaseBlockNode::processFuncDecl(ExecState* exec)
+{
+  if (list1)
+   list1->processFuncDecl(exec);
+  if (def)
+    def->processFuncDecl(exec);
+  if (list2)
+    list2->processFuncDecl(exec);
+}
+
 // ------------------------------ SwitchNode -----------------------------------
 
 // ECMA 12.11
@@ -2252,6 +2224,11 @@ Completion SwitchNode::execute(ExecState *exec)
 void SwitchNode::processVarDecls(ExecState *exec)
 {
   block->processVarDecls(exec);
+}
+
+void SwitchNode::processFuncDecl(ExecState* exec)
+{
+  block->processFuncDecl(exec);
 }
 
 // ------------------------------ LabelNode ------------------------------------

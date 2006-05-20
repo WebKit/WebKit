@@ -1,3 +1,11 @@
+2006-05-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        * fast/js/function-declarations-in-switch-statement-expected.txt: Added.
+        * fast/js/function-declarations-in-switch-statement.html: Added.
+        * fast/js/resources/function-declarations-in-switch-statement.js: Added.
+
 2006-05-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by ap.
