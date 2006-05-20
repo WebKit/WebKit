@@ -1,3 +1,15 @@
+2006-05-20  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8991
+          REGRESSION: missing or broken CSS custom cursors are displayed as 
+          a missing image icon
+
+        * page/FrameView.cpp:
+        (WebCore::selectCursor): Fallback to CURSOR_AUTO if the image is an error image.
+        * manual-tests/custom-cursors.html: Added.
+
 2006-05-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by ap.

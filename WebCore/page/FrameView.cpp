@@ -551,7 +551,10 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
     RenderStyle* style = renderer ? renderer->style() : 0;
 
     if (style && style->cursorImage() && !style->cursorImage()->image()->isNull())
-        return style->cursorImage()->image();
+        if (!style->cursorImage()->isErrorImage())
+            return style->cursorImage()->image();
+        else 
+            style = 0; // Fallback to CURSOR_AUTO
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
         case CURSOR_AUTO: {
