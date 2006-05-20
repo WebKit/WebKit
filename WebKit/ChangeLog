@@ -1,3 +1,16 @@
+2006-05-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Bug 9018: REGRESSION: resizing the top area of the inspector does not grow as expected
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9018
+        
+        Use clientHeight now that offsetHeight includes the border and padding.
+        clientHeight should have been used initially.
+
+        * WebInspector/WebInspector.m:
+        (-[WebInspector resizeTopArea]):
+
 2006-05-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

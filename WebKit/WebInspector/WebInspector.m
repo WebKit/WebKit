@@ -372,7 +372,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
             proposedRect.size.height = maxSize.height;
         }
 
-        NSNumber *baseValue = [topArea valueForKey:@"offsetHeight"];
+        NSNumber *baseValue = [topArea valueForKey:@"clientHeight"];
         NSString *newValue = [NSString stringWithFormat:@"%dpx", [baseValue unsignedLongValue] - delta];
         [[topArea style] setProperty:@"height" :newValue :@""];
 
