@@ -194,7 +194,8 @@ void WebFramePrivate::paint()
     cairo_surface_t* finalSurface = cairo_win32_surface_create(hdc);
     cairo_surface_t* surface = cairo_surface_create_similar(finalSurface,
                                                             CAIRO_CONTENT_COLOR_ALPHA,
-                                                            ps.rcPaint.right, ps.rcPaint.bottom);
+                                                            ps.rcPaint.right - ps.rcPaint.left,
+                                                            ps.rcPaint.bottom - ps.rcPaint.top);
 
     cairo_t* context = cairo_create(surface);
     GraphicsContext gc(context);
@@ -205,16 +206,18 @@ void WebFramePrivate::paint()
     // FIXME: We have to set the transform using both cairo and GDI until we use cairo for text.
     HDC surfaceDC = cairo_win32_surface_get_dc(surface);
     SaveDC(surfaceDC);
-    OffsetViewportOrgEx(surfaceDC, -d->frameView->contentsX(), -d->frameView->contentsY(), 0);
-    cairo_translate(context, -d->frameView->contentsX(), -d->frameView->contentsY());
+    OffsetViewportOrgEx(surfaceDC, -d->frameView->contentsX() - ps.rcPaint.left, 
+                                   -d->frameView->contentsY() - ps.rcPaint.top, 0);
+    cairo_translate(context, -d->frameView->contentsX() - ps.rcPaint.left, 
+                             -d->frameView->contentsY() - ps.rcPaint.top);
     d->frame->paint(&gc, documentDirtyRect);
     RestoreDC(surfaceDC, -1);
 
     cairo_destroy(context);
     context = cairo_create(finalSurface);
     cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_surface(context, surface, 0, 0);
-    cairo_rectangle(context, 0, 0, ps.rcPaint.right, ps.rcPaint.bottom);
+    cairo_set_source_surface(context, surface, ps.rcPaint.left, ps.rcPaint.top);
+    cairo_rectangle(context, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom);
     cairo_fill(context);
     cairo_destroy(context);
 

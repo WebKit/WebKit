@@ -1,3 +1,13 @@
+2006-05-20  Dave Hyatt <hyatt@apple.com>
+
+        Fix the Cairo double buffer so that it is only the size of
+        the dirty rect.
+
+        Reviewed by xenon
+
+        * WebFramePrivate.cpp:
+        (WebKit::WebFramePrivate::paint):
+
 2006-05-14  Steve Falkenburg  <sfalken@apple.com>
 
         Update to new file paths
