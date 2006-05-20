@@ -1,3 +1,16 @@
+2006-05-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9009
+          REGRESSION: ToT crash in WebCore at Zap2it
+
+        Test: fast/table/empty-section-crash.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint): Return immediately if the section
+        has 0 rows or 0 columns.
+
 2006-05-19  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin.

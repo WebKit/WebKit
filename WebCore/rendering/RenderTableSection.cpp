@@ -829,6 +829,9 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
     unsigned int totalRows = gridRows;
     unsigned int totalCols = table()->columns.size();
 
+    if (totalRows == 0 || totalCols == 0)
+        return;
+
     tx += m_x;
     ty += m_y;
 
