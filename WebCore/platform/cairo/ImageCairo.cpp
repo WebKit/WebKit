@@ -68,7 +68,7 @@ Image* Image::loadResource(const char *name)
 bool Image::supportsType(const String& type)
 {
     // FIXME: Implement.
-    return true;
+    return false;
 }
 
 // Drawing Routines
