@@ -226,6 +226,7 @@
 		93E26DDC08B2A4F400F85226 /* pcre_printint.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26DDB08B2A4F400F85226 /* pcre_printint.c */; };
 		93F0B3AB09BB4DC00068FCE3 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F0B3A909BB4DC00068FCE3 /* Parser.cpp */; };
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; };
+		BCF655590A2049710038A194 /* MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF6553B0A2048DE0038A194 /* MathExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E195679609E7CF1200B89D13 /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = E195678F09E7CF1200B89D13 /* UnicodeIcu.h */; };
 		E195679809E7CF1200B89D13 /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679409E7CF1200B89D13 /* Unicode.h */; };
 		E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679509E7CF1200B89D13 /* UnicodeCategory.h */; };
@@ -443,6 +444,7 @@
 		93F0B3A909BB4DC00068FCE3 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		93F0B3AA09BB4DC00068FCE3 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; tabWidth = 8; };
+		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
 		E195678F09E7CF1200B89D13 /* UnicodeIcu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeIcu.h; sourceTree = "<group>"; };
 		E195679409E7CF1200B89D13 /* Unicode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unicode.h; sourceTree = "<group>"; };
 		E195679509E7CF1200B89D13 /* UnicodeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeCategory.h; sourceTree = "<group>"; };
@@ -651,6 +653,7 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				BCF6553B0A2048DE0038A194 /* MathExtras.h */,
 				E195678D09E7CF1200B89D13 /* unicode */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
@@ -952,6 +955,7 @@
 				E195679909E7CF1200B89D13 /* UnicodeCategory.h in Headers */,
 				935AF46C09E9D9DB00ACD1D8 /* Forward.h in Headers */,
 				935AF46E09E9D9DB00ACD1D8 /* UnusedParam.h in Headers */,
+				BCF655590A2049710038A194 /* MathExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
