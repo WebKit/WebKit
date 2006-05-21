@@ -1,3 +1,15 @@
+2006-05-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Beth.
+        
+        - fix assertion failure on layout tests
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _mainReceivedError:complete:]): Don't do anything
+        if this data source is no longer connected to a frame. Used to be
+        this couldn't happen because the WebView would have been nil, but
+        we no longer go through the WebView.
+
 2006-05-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders.

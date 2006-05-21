@@ -1185,7 +1185,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete
 {
-    ASSERT([self webFrame]);
+    if (![self webFrame])
+        return;
     
     [self _setMainDocumentError:error];
 
