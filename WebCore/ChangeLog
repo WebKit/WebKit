@@ -1,3 +1,9 @@
+2006-05-21  Anders Carlsson  <acarlsson@apple.com>
+
+        Fix build.
+        
+        * ForwardingHeaders/wtf/MathExtras.h: Added.
+
 2006-05-20  Dave Hyatt <hyatt@apple.com>
 
         Switch on Cairo-based text rendering on Win32.  This is tracked
