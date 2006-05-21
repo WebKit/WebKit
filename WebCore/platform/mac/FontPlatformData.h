@@ -38,7 +38,7 @@ struct FontPlatformData {
     class Deleted {};
 
     FontPlatformData(Deleted)
-    : font((NSFont*)-1), syntheticBold(b), syntheticOblique(o)
+    : font((NSFont*)-1), syntheticBold(false), syntheticOblique(false)
     {}
 
     FontPlatformData(NSFont* f = 0, bool b = false, bool o = false)
