@@ -303,7 +303,7 @@ void FontData::determinePitch()
           ![name caseInsensitiveCompare:@"MS-PGothic"] == NSOrderedSame;
 }
 
-float FontData::platformWidthForGlyph(Glyph glyph) const
+float FontData::platformWidthForGlyph(Glyph glyph, UChar) const
 {
     NSFont *font = m_font.font;
     float pointSize = [font pointSize];

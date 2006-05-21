@@ -27,8 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "Font.h"
+#include "config.h"
+#include "Font.h"
+
+#include <wtf/MathExtras.h>
 
 namespace WebCore
 {
@@ -44,7 +46,7 @@ FontData::FontData(const FontPlatformData& f)
     // If the font is monospace or fake monospace we ceil to ensure that 
     // every character and the space are the same width.  Otherwise we round.
     m_spaceGlyph = m_characterToGlyphMap.glyphDataForCharacter(' ', this).glyph;
-    float width = widthForGlyph(m_spaceGlyph);
+    float width = widthForGlyph(m_spaceGlyph, ' ');
     m_spaceWidth = width;
     determinePitch();
     m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
@@ -58,13 +60,13 @@ FontData::~FontData()
     // it will be deleted then, so we don't need to do anything here.
 }
 
-float FontData::widthForGlyph(Glyph glyph) const
+float FontData::widthForGlyph(Glyph glyph, UChar c) const
 {
     float width = m_glyphToWidthMap.widthForGlyph(glyph);
     if (width != cGlyphWidthUnknown)
         return width;
     
-    width = platformWidthForGlyph(glyph);
+    width = platformWidthForGlyph(glyph, c);
     m_glyphToWidthMap.setWidthForGlyph(glyph, width);
     
     return width;

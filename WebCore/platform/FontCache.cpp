@@ -56,7 +56,11 @@ struct FontPlatformDataCacheKey
 
 inline unsigned computeHash(const FontPlatformDataCacheKey& fontKey)
 {
-    unsigned hashCodes[3] = { CaseInsensitiveHash::hash(fontKey.m_family.impl()), fontKey.m_size, fontKey.m_bold << 1 | fontKey.m_italic };
+    unsigned hashCodes[3] = {
+        CaseInsensitiveHash::hash(fontKey.m_family.impl()),
+        fontKey.m_size,
+        static_cast<unsigned>(fontKey.m_bold) << 1 | static_cast<unsigned>(fontKey.m_italic)
+    };
     return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 3 * sizeof(unsigned) / sizeof(UChar));
 }
 
@@ -77,7 +81,12 @@ struct FontPlatformDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformDataC
     static const bool needsDestruction = false;
     static const FontPlatformDataCacheKey& deletedValue()
     {
-        static FontPlatformDataCacheKey key(nullAtom, 0, -1, -1);
+        static FontPlatformDataCacheKey key(nullAtom, 0xFFFFFFFFU, false, false);
+        return key;
+    }
+    static const FontPlatformDataCacheKey& emptyValue()
+    {
+        static FontPlatformDataCacheKey key(nullAtom, 0, false, false);
         return key;
     }
 };
@@ -122,7 +131,12 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     static const bool needsDestruction = false;
     static const FontPlatformData& deletedValue()
     {
-        static FontPlatformData key(0, -1, -1);
+        static FontPlatformData key = FontPlatformData::Deleted();
+        return key;
+    }
+    static const FontPlatformData& emptyValue()
+    {
+        static FontPlatformData key;
         return key;
     }
 };

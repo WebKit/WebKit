@@ -23,28 +23,34 @@
 
 #include "config.h"
 #include "FontPlatformData.h"
-
-#include "FontDescription.h"
 #include <cairo-win32.h>
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(HFONT font, const FontDescription& fontDescription)
-{
-    m_font = font;  
+FontPlatformData::FontPlatformData(HFONT font, int size)
+:m_font(font), m_size(size)
+{  
     m_fontFace = cairo_win32_font_face_create_for_hfont(font);
     cairo_matrix_t sizeMatrix, ctm;
     cairo_matrix_init_identity(&ctm);
-    cairo_matrix_init_scale(&sizeMatrix, fontDescription.computedPixelSize(), fontDescription.computedPixelSize());
-    cairo_font_options_t* fontOptions = cairo_font_options_create();
+    cairo_matrix_init_scale(&sizeMatrix, size, size);
+
+    static cairo_font_options_t* fontOptions;
+    if (!fontOptions)
+        // Force ClearType-level quality.
+        fontOptions = cairo_font_options_create();
+    cairo_font_options_set_antialias(fontOptions, CAIRO_ANTIALIAS_SUBPIXEL);
+
     m_scaledFont = cairo_scaled_font_create(m_fontFace, &sizeMatrix, &ctm, fontOptions);
-    cairo_font_options_destroy(fontOptions);
 }
     
-FontPlatformData::~FontPlatformData() {
-    cairo_font_face_destroy(m_fontFace);
-    cairo_scaled_font_destroy(m_scaledFont);
-    DeleteObject(m_font);
+FontPlatformData::~FontPlatformData()
+{
+    if (m_font && m_font != (HFONT)-1) {
+        cairo_font_face_destroy(m_fontFace);
+        cairo_scaled_font_destroy(m_scaledFont);
+        DeleteObject(m_font);
+    }
 }
 
 }

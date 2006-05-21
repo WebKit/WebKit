@@ -24,9 +24,6 @@
 #ifndef FONTDATA_H
 #define FONTDATA_H
 
-#if __APPLE__
-// FIXME: This is going to be cross-platform eventually, but for now we just compile on OS X.
-
 #include "FontPlatformData.h"
 #include "GlyphMap.h"
 #include "GlyphWidthMap.h"
@@ -61,8 +58,8 @@ public:
     int lineGap() const { return m_lineGap; }
     float xHeight() const { return m_xHeight; }
 
-    float widthForGlyph(Glyph glyph) const;
-    float platformWidthForGlyph(Glyph glyph) const;
+    float widthForGlyph(Glyph glyph, UChar c) const;
+    float platformWidthForGlyph(Glyph glyph, UChar c) const;
 
     bool containsCharacters(const UChar* characters, int length) const;
 
@@ -87,69 +84,28 @@ public:
     int m_lineSpacing;
     int m_lineGap;
     float m_xHeight;
-
-    void* m_styleGroup;
     
     FontPlatformData m_font;
     mutable GlyphMap m_characterToGlyphMap;
     mutable GlyphWidthMap m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
-    ATSGlyphRef m_spaceGlyph;
+    Glyph m_spaceGlyph;
     float m_spaceWidth;
     float m_adjustedSpaceWidth;
-    float m_syntheticBoldOffset;
-    
+
     mutable FontData* m_smallCapsFontData;
+
+#if __APPLE__
+    void* m_styleGroup;
+    float m_syntheticBoldOffset;
     mutable ATSUStyle m_ATSUStyle;
     mutable bool m_ATSUStyleInitialized;
     mutable bool m_ATSUMirrors;
+#endif
+
 };
 
 }
-
-#else
-
-#include "FontPlatformData.h"
-
-namespace WebCore {
-
-class FontDescription;
-
-enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
-
-class FontData
-{
-public:
-#if WIN32
-    FontData(HFONT font, const FontDescription& fontDescription)
-        :m_platformData(font, fontDescription) {}
-#endif
-
-    const FontPlatformData& platformData() const { return m_platformData; }
-
-    void setMetrics(int ascent, int descent, int xHeight, int lineSpacing)
-    {
-        m_ascent = ascent;
-        m_descent = descent;
-        m_xHeight = xHeight;
-        m_lineSpacing = lineSpacing;
-    }
-
-    int ascent() const { return m_ascent; }
-    int descent() const { return m_descent; }
-    int xHeight() const { return m_xHeight; }
-    int lineSpacing() const { return m_lineSpacing; }
-
-private:
-    FontPlatformData m_platformData;
-    int m_ascent;
-    int m_descent;
-    int m_xHeight;
-    int m_lineSpacing;
-};
-
-}
-#endif
 
 #endif

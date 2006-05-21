@@ -73,7 +73,7 @@ inline GlyphMap::GlyphPage* GlyphMap::locatePage(unsigned pageNumber, const Font
     }
       
     unsigned start = pageNumber * cGlyphPageSize;
-    unsigned short buffer[cGlyphPageSize * 2 + 2];
+    UChar buffer[cGlyphPageSize * 2 + 2];
     unsigned bufferLength;
     unsigned i;
 

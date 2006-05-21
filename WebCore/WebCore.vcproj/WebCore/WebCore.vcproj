@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\khtml&quot;;&quot;$(ProjectDir)\..\..\kwq&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\xpath&quot;;&quot;$(ProjectDir)\..\..\xpath\impl&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\khtml&quot;;&quot;$(ProjectDir)\..\..\kwq&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\xpath&quot;;&quot;$(ProjectDir)\..\..\xpath\impl&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\platform\win&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT; XPATH_SUPPORT"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -108,7 +108,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\khtml&quot;;&quot;$(ProjectDir)\..\..\kwq&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\xpath&quot;;&quot;$(ProjectDir)\..\..\xpath\impl&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\khtml&quot;;&quot;$(ProjectDir)\..\..\kwq&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\xpath&quot;;&quot;$(ProjectDir)\..\..\xpath\impl&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\platform\win&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT; XPATH_SUPPORT; NDEBUG"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -919,7 +919,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\FontCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\FontCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\FontData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\FontData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\FontDescription.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\FontFallbackList.cpp"
 				>
 			</File>
 			<File
@@ -932,6 +952,26 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\FontFamily.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\GlyphBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\GlyphMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\GlyphMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\GlyphWidthMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\GlyphWidthMap.h"
 				>
 			</File>
 			<File
@@ -1166,11 +1206,27 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\platform\win\FontCacheWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\FontDataWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\FontPlatformData.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\win\FontPlatformDataWin.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\platform\win\FontWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\GlyphMapWin.cpp"
 					>
 				</File>
 				<File

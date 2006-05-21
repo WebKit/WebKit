@@ -1,3 +1,64 @@
+2006-05-20  Dave Hyatt <hyatt@apple.com>
+
+        Switch on Cairo-based text rendering on Win32.  This is tracked
+        by bug 9019.
+
+        Reviewed by maciej
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * config.h:
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance):
+        (WebCore::WidthIterator::normalizeVoicingMarks):
+        (WebCore::Font::width):
+        * platform/Font.h:
+        (WebCore::Font::isRoundingHackCharacter):
+        * platform/FontCache.cpp:
+        (WebCore::computeHash):
+        (WebCore::FontPlatformDataCacheKeyTraits::deletedValue):
+        (WebCore::FontPlatformDataCacheKeyTraits::emptyValue):
+        (WebCore::FontDataCacheKeyTraits::deletedValue):
+        (WebCore::FontDataCacheKeyTraits::emptyValue):
+        * platform/FontData.cpp:
+        (WebCore::m_smallCapsFontData):
+        (WebCore::FontData::widthForGlyph):
+        * platform/FontData.h:
+        * platform/FontPlatformData.h: Removed.
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::clear):
+        (WebCore::GlyphBuffer::glyphs):
+        (WebCore::GlyphBuffer::advances):
+        (WebCore::GlyphBuffer::swap):
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/GlyphMap.cpp:
+        (WebCore::GlyphMap::locatePage):
+        * platform/cairo/cairo/src/cairo-win32-font.c:
+        (cairo_win32_scaled_font_select_font):
+        * platform/cairo/font-bug-patch.txt: Added.
+        * platform/mac/FontDataMac.mm:
+        (-[NSFont WebCore]):
+        * platform/mac/FontPlatformData.h: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/win/FontDataWin.cpp: Added.
+        (WebCore::FontData::platformInit):
+        (WebCore::FontData::platformDestroy):
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::FontData::containsCharacters):
+        (WebCore::FontData::determinePitch):
+        (WebCore::FontData::platformWidthForGlyph):
+        * platform/win/FontPlatformDataWin.cpp:
+        (WebCore::m_size):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/win/FontWin.cpp:
+        (WebCore::notImplemented):
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+
 2006-05-20  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

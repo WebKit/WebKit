@@ -26,11 +26,6 @@
 
 #include "StringImpl.h"
 
-// FIXME: This file should probably be split and moved into platform-specific subdirectories.  There's nothing
-// "cross-platform" about it.
-
-#ifdef __APPLE__
-
 #ifdef __OBJC__
 @class NSFont;
 #else
@@ -40,14 +35,20 @@ class NSFont;
 namespace WebCore {
 
 struct FontPlatformData {
+    class Deleted {};
+
+    FontPlatformData(Deleted)
+    : font((NSFont*)-1), syntheticBold(b), syntheticOblique(o)
+    {}
+
     FontPlatformData(NSFont* f = 0, bool b = false, bool o = false)
-    :font(f), syntheticBold(b), syntheticOblique(o)
+    : font(f), syntheticBold(b), syntheticOblique(o)
     {}
 
     NSFont *font;
     bool syntheticBold;
     bool syntheticOblique;
-    
+
     unsigned hash() const
     { 
         uintptr_t hashCodes[2] = { (uintptr_t)font, syntheticBold << 1 | syntheticOblique };
@@ -61,44 +62,5 @@ struct FontPlatformData {
 };
 
 }
-
-#else
-
-#include <wtf/Noncopyable.h>
-
-#if WIN32
-typedef struct HFONT__ *HFONT;
-typedef struct _cairo_scaled_font cairo_scaled_font_t;
-typedef struct _cairo_font_face cairo_font_face_t;
-#endif
-
-namespace WebCore {
-
-class FontDescription;
-
-class FontPlatformData : Noncopyable
-{
-public:
-#if WIN32
-    FontPlatformData(HFONT font, const FontDescription& fontDescription);
-#endif
-    ~FontPlatformData();
-
-#if WIN32
-    HFONT hfont() const { return m_font; }
-    cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
-#endif
-
-private:
-#if WIN32
-    HFONT m_font;
-    cairo_font_face_t* m_fontFace;
-    cairo_scaled_font_t* m_scaledFont;
-#endif
-};
-
-}
-
-#endif
 
 #endif
