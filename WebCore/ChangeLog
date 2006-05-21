@@ -1,3 +1,15 @@
+2006-05-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9016
+        crash loading live.com in TreeShared::ref because accessing RenderTextField::text() can destroy the RenderTextField
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::text):
+        Reverting recent change to user innerText instead of textContent.  For textareas,
+        we need a better solution than textContent that also takes newlines into account,
+        but this should fix this crasher.
+
 2006-05-21  Anders Carlsson  <acarlsson@apple.com>
 
         Fix build.

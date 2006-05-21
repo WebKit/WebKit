@@ -32,6 +32,7 @@
 #include "TextIterator.h"
 #include "dom2_eventsimpl.h"
 #include <math.h>
+#include "RenderTheme.h"
 
 namespace WebCore {
 
@@ -244,7 +245,7 @@ void RenderTextField::subtreeHasChanged()
 String RenderTextField::text()
 {
     if (m_div)
-        return m_div->innerText().replace(backslashAsCurrencySymbol(), '\\');
+        return m_div->textContent().replace(backslashAsCurrencySymbol(), '\\');
     return String();
 }
 
