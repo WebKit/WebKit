@@ -1,3 +1,15 @@
+2006-05-22  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        Fixed and reenabled this test.
+
+        * editing/selection/drag-to-contenteditable-iframe-expected.checksum:
+        * editing/selection/drag-to-contenteditable-iframe-expected.png:
+        * editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * editing/selection/drag-to-contenteditable-iframe.html: Added.
+        * editing/selection/drag-to-contenteditable-iframe.html-disabled: Removed.
+
 2006-05-22  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by eric.

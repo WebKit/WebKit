@@ -1,0 +1,56 @@
+<html>
+<head>
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    
+    console.appendChild(li);
+    li.appendChild(text);
+}
+
+function runTest() {
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    // Let the subframe come into being.
+    window.setTimeout(step2, 100);
+}
+
+function step2() 
+{
+    if (!window.layoutTestController) {
+        log("This test uses the eventSender.  To run it manually, drag the image into the editable frame and drop it.  It should appear inside the editable frame.");
+        return;
+    }
+    
+    log("Abe should be outside the frame and inside it.");
+    
+    e = document.getElementById("dragme");
+    x = e.offsetLeft + e.offsetParent.offsetLeft + e.offsetWidth / 2;
+    y = e.offsetTop + e.offsetParent.offsetTop + e.offsetHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(1000);
+    
+    e = document.getElementById("frame");
+    x = e.offsetLeft + e.offsetParent.offsetLeft + e.offsetWidth / 2;
+    y = e.offsetTop + e.offsetParent.offsetTop + e.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+    
+    layoutTestController.notifyDone();
+}
+</script>
+</head>
+
+<body style="padding:0; margin:0">  
+
+<iframe id="frame" style="width: 200px; height: 200px; border: 4px solid black;" src="../resources/contenteditable-iframe-src.html"></iframe>
+<img id="dragme" src="../resources/abe.jpg">
+
+<ul id="console"></ul>
+<script>runTest();</script>
+</body>
