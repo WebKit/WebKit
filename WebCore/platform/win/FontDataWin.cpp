@@ -83,7 +83,7 @@ void FontData::platformDestroy()
 FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
     if (!m_smallCapsFontData)
-        return this; // FIXME: Implement.
+        return (FontData*)this; // FIXME: Implement.
     return m_smallCapsFontData;
 }
 
