@@ -1,3 +1,24 @@
+2006-05-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        - fixed Bug 9038: Rework Document::TextMarker mechanism to not use deprecated data structures
+
+        Changed Document::markersForNode and Document::MarkerMap to use Vector rather than 
+        DeprecatedValueList and DeprecatedValueListIterator.
+        
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::addMarker):
+        (WebCore::Document::copyMarkers):
+        (WebCore::Document::removeMarkers):
+        (WebCore::Document::markersForNode):
+        (WebCore::Document::repaintMarkers):
+        (WebCore::Document::shiftMarkers):
+        
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintAllMarkersOfType):
+
 2006-05-22  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by Eric.

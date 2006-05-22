@@ -575,8 +575,8 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, 
 
 void InlineTextBox::paintAllMarkersOfType(GraphicsContext* pt, int _tx, int _ty, DocumentMarker::MarkerType markerType, RenderStyle* style, const Font* f)
 {
-    DeprecatedValueList<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
-    DeprecatedValueListIterator <DocumentMarker> markerIt = markers.begin();
+    Vector<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
+    Vector<DocumentMarker>::iterator markerIt = markers.begin();
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.
