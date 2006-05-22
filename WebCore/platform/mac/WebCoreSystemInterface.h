@@ -28,7 +28,9 @@
 
 typedef signed char BOOL;
 
+#ifndef CGGEOMETRY_H_
 typedef struct CGRect CGRect;
+#endif
 
 #if NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
@@ -36,7 +38,9 @@ typedef struct CGRect NSRect;
 typedef struct _NSRect NSRect;
 #endif
 
+#ifndef CGGEOMETRY_H_
 typedef struct CGPoint CGPoint;
+#endif
 
 #if NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
