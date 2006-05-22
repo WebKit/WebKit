@@ -1,3 +1,20 @@
+2006-05-22  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4557117> TOT REGRESSION: Repro crash in cancelPendingWindowDisplay --> _timerRelease when
+        opening file from file open dialog
+
+        Note that I could not reproduce this situation at all on any of my machines; I had to debug this on Geoff's
+        machine.
+
+        * Misc/WebNSWindowExtras.m:
+        (replacementDealloc):
+        Cancel display timer before dealloc, not after.  Cancelling the timer can cause a message to be sent to the
+        window; best to do that before the window deallocates.
+        (replacementFinalize):
+        ditto
+
 2006-05-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Beth.

@@ -199,18 +199,18 @@ static void clearWindowDisplayInfo(id self)
 
 static void replacementDealloc(id self, SEL cmd)
 {
-    oldNSWindowDeallocIMP(self, cmd);
-    
     if (throttlingWindowDisplay)
         clearWindowDisplayInfo(self);
+
+    oldNSWindowDeallocIMP(self, cmd);
 }
 
 static void replacementFinalize(id self, SEL cmd)
 {
-    oldNSWindowFinalizeIMP(self, cmd);
-    
     if (throttlingWindowDisplay)
         clearWindowDisplayInfo(self);
+
+    oldNSWindowFinalizeIMP(self, cmd);
 }
 
 static WindowDisplayInfo *getWindowDisplayInfo(NSWindow *window)
