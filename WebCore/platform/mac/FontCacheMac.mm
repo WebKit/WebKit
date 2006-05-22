@@ -196,27 +196,27 @@ FontPlatformData* FontCache::getLastResortFallbackFont(const Font& font)
     return platformFont;
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const Font& font, const AtomicString& family)
+FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     NSFontTraitMask traits = 0;
-    if (font.italic())
+    if (fontDescription.italic())
         traits |= NSItalicFontMask;
-    if (font.bold())
+    if (fontDescription.bold())
         traits |= NSBoldFontMask;
-    float size = font.fontDescription().computedPixelSize();
+    float size = fontDescription.computedPixelSize();
     
     NSFont* nsFont = [WebFontCache fontWithFamily:family traits:traits size:size];
     if (!nsFont)
         return 0;
 
     NSFontTraitMask actualTraits = 0;
-    if (font.bold() || font.italic())
+    if (fontDescription.bold() || fontDescription.italic())
         actualTraits = [[NSFontManager sharedFontManager] traitsOfFont:nsFont];
     
     FontPlatformData* result = new FontPlatformData;
     
     // Use the correct font for print vs. screen.
-    result->font = font.fontDescription().usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont];
+    result->font = fontDescription.usePrinterFont() ? [nsFont printerFont] : [nsFont screenFont];
     result->syntheticBold = (traits & NSBoldFontMask) && !(actualTraits & NSBoldFontMask);
     result->syntheticOblique = (traits & NSItalicFontMask) && !(actualTraits & NSItalicFontMask);
     return result;

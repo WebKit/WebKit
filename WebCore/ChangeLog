@@ -1,3 +1,18 @@
+2006-05-21  Dave Hyatt <hyatt@apple.com>
+
+        Fix Win32 bustage.   I forgot to add a bunch of files.
+        Also tweak some existing functions a bit (just cleanup).
+
+        * platform/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::getFontData):
+        * platform/FontCache.h:
+        * platform/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::platformDestroy):
+        (WebCore::FontData::smallCapsFontData):
+
 2006-05-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

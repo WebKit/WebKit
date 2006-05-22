@@ -26,43 +26,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FONTCACHE_H
-#define FONTCACHE_H
-
-#include <unicode/umachine.h>
+#include "config.h"
+#include "GlyphMap.h"
+#include "FontData.h"
+#include <windows.h>
 
 namespace WebCore
 {
 
-class AtomicString;
-class FontData;
-class FontPlatformData;
-class Font;
-class FontDescription;
+bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, const FontData* fontData)
+{
+    HDC dc = GetDC((HWND)0);
+    SaveDC(dc);
+    SelectObject(dc, fontData->m_font.hfont());
 
-class FontCache {
-public:
-    static const FontData* getFontData(const Font&, int& familyIndex);
-    
-    // This method is implemented by the platform.
-    static const FontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
-    
-    // Also implemented by the platform.
-    static void platformInit();
+    TEXTMETRIC tm;
+    GetTextMetrics(dc, &tm);
+    if ((tm.tmPitchAndFamily & TMPF_VECTOR) == 0) {
+        // The "glyph" for a bitmap font is just the character itself.
+        // FIXME: Need to check character ranges and fill in a glyph of 0 for
+        // any characters not in range.  Otherwise bitmap fonts will never fall
+        // back.
+        // IMLangFontLink2::GetFontUnicodeRanges does what we want. 
+        for (unsigned i = 0; i < cGlyphPageSize; i++)
+            page->setGlyphDataForIndex(i, buffer[i], fontData);
+    } else {
+        WORD localGlyphBuffer[cGlyphPageSize];
+        GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
 
-private:
-    static FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family);
-    static FontData* getCachedFontData(const FontPlatformData*);
-    
-    // These three methods are implemented by each platform.
-    static FontPlatformData* getSimilarFontPlatformData(const Font&);
-    static FontPlatformData* getLastResortFallbackFont(const Font&);
-    static FontPlatformData* createFontPlatformData(const FontDescription&, const AtomicString& family);
+        for (unsigned i = 0; i < cGlyphPageSize; i++)
+            page->setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
+    }
 
-    friend class FontData;
-    friend class FontFallbackList;
-};
-
+    RestoreDC(dc, -1);
+    ReleaseDC(0, dc);
+    return true;
 }
 
-#endif
+}

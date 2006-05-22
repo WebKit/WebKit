@@ -95,19 +95,19 @@ typedef HashMap<FontPlatformDataCacheKey, FontPlatformData*, FontPlatformDataCac
 
 static FontPlatformDataCache* gFontPlatformDataCache = 0;
 
-FontPlatformData* FontCache::getCachedFontPlatformData(const Font& font, const AtomicString& familyName)
+FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, 
+                                                       const AtomicString& familyName)
 {
     if (!gFontPlatformDataCache) {
         gFontPlatformDataCache = new FontPlatformDataCache;
         platformInit();
     }
 
-    const FontDescription& desc = font.fontDescription();
-    FontPlatformDataCacheKey key(familyName, desc.computedPixelSize(), desc.bold(), desc.italic());
+    FontPlatformDataCacheKey key(familyName, fontDescription.computedPixelSize(), fontDescription.bold(), fontDescription.italic());
     FontPlatformData* result = 0;
     FontPlatformDataCache::iterator it = gFontPlatformDataCache->find(key);
     if (it == gFontPlatformDataCache->end()) {
-        result = createFontPlatformData(font, familyName);
+        result = createFontPlatformData(fontDescription, familyName);
         gFontPlatformDataCache->set(key, result);
     } else
         result = it->second;
@@ -174,7 +174,7 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex)
     while (currFamily && !result) {
         familyIndex++;
         if (currFamily->family().length())
-            result = getCachedFontPlatformData(font, currFamily->family());
+            result = getCachedFontPlatformData(font.fontDescription(), currFamily->family());
         currFamily = currFamily->next();
     }
 

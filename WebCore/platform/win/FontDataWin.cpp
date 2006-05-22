@@ -76,15 +76,14 @@ void FontData::platformInit()
 
 void FontData::platformDestroy()
 {
+    // We don't hash this on Win32, so it's effectively owned by us.
+    delete m_smallCapsFontData;
 }
 
 FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
-    if (!m_smallCapsFontData) {
-        // Need to make this cross-platform instead.
-        // FIXME: For now just return ourselves.
-        return (FontData*)this;
-    }
+    if (!m_smallCapsFontData)
+        return this; // FIXME: Implement.
     return m_smallCapsFontData;
 }
 
