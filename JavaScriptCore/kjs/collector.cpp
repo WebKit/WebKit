@@ -351,6 +351,10 @@ void Collector::markOtherThreadConservatively(Thread *thread)
   i386_thread_state_t regs;
   unsigned user_count = sizeof(regs)/sizeof(int);
   thread_state_flavor_t flavor = i386_THREAD_STATE;
+#elif PLATFORM(X86_64)
+  x86_thread_state64_t  regs;
+  unsigned user_count = x86_THREAD_STATE64_COUNT;
+  thread_state_flavor_t flavor = x86_THREAD_STATE64;
 #elif PLATFORM(PPC)
   ppc_thread_state_t  regs;
   unsigned user_count = PPC_THREAD_STATE_COUNT;
@@ -367,10 +371,16 @@ void Collector::markOtherThreadConservatively(Thread *thread)
   
   // scan the registers
   markStackObjectsConservatively((void *)&regs, (void *)((char *)&regs + (user_count * sizeof(usword_t))));
-  
+   
   // scan the stack
-#if PLATFORM(X86)
+#if PLATFORM(X86) && __DARWIN_UNIX03
+  markStackObjectsConservatively((void *)regs.__esp, pthread_get_stackaddr_np(thread->posixThread));
+#elif PLATFORM(X86)
   markStackObjectsConservatively((void *)regs.esp, pthread_get_stackaddr_np(thread->posixThread));
+#elif PLATFORM(X86_64) && __DARWIN_UNIX03
+  markStackObjectsConservatively((void *)regs.__rsp, pthread_get_stackaddr_np(thread->posixThread));
+#elif PLATFORM(X86_64)
+  markStackObjectsConservatively((void *)regs.rsp, pthread_get_stackaddr_np(thread->posixThread));
 #elif (PLATFORM(PPC) || PLATFORM(PPC64)) && __DARWIN_UNIX03
   markStackObjectsConservatively((void *)regs.__r1, pthread_get_stackaddr_np(thread->posixThread));
 #elif PLATFORM(PPC) || PLATFORM(PPC64)

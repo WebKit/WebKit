@@ -1,3 +1,13 @@
+2006-05-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric, Kevin and Geoff.
+
+        Merge open source build fixes. <rdar://problem/4555500>
+
+        * kjs/collector.cpp: look at the rsp register in x86_64 
+        (KJS::Collector::markOtherThreadConservatively):
+        * wtf/Platform.h: add x86_64 to the platform list
+
 2006-05-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

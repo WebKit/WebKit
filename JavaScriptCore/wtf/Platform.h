@@ -112,6 +112,12 @@
 #define KXMLCORE_PLATFORM_X86 1
 #endif
 
+// PLATFORM(X86_64)
+#if   defined(__x86_64__) \
+   || defined(__ia64__)
+#define KXMLCORE_PLATFORM_X86_64 1
+#endif
+
 // Compiler
 
 // COMPILER(MSVC)
