@@ -170,7 +170,7 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
             static AtomicString geezaStr("Geeza Pro");
             for (int j = 0; j < 3 && !platformData; ++j)
                 if (currFamily->family().contains(matchWords[j], false))
-                    platformData = getCachedFontPlatformData(font, geezaStr);
+                    platformData = getCachedFontPlatformData(font.fontDescription(), geezaStr);
         }
         currFamily = currFamily->next();
     }
@@ -185,13 +185,13 @@ FontPlatformData* FontCache::getLastResortFallbackFont(const Font& font)
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    FontPlatformData* platformFont = getCachedFontPlatformData(font, timesStr);
+    FontPlatformData* platformFont = getCachedFontPlatformData(font.fontDescription(), timesStr);
     if (!platformFont)
         // The Times fallback will almost always work, but in the highly unusual case where
         // the user doesn't have it, we fall back on Lucida Grande because that's
         // guaranteed to be there, according to Nathan Taylor. This is good enough
         // to avoid a crash at least.
-        platformFont = getCachedFontPlatformData(font, lucidaGrandeStr);
+        platformFont = getCachedFontPlatformData(font.fontDescription(), lucidaGrandeStr);
 
     return platformFont;
 }
