@@ -1,3 +1,11 @@
+2006-05-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by adele.
+        
+        Fix build.
+
+        * Spinneret/Spinneret.sln:
+
 2006-05-18  Darin Adler  <darin@apple.com>
 
         - try to fix no-SVG, no-XPATH build, again
