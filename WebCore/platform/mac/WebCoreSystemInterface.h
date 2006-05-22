@@ -27,9 +27,24 @@
 #define WebCoreSystemInterface_h
 
 typedef signed char BOOL;
-typedef struct _NSPoint NSPoint;
-typedef struct _NSRange NSRange;
+
+typedef struct CGRect CGRect;
+
+#if NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+typedef struct CGRect NSRect;
+#else
 typedef struct _NSRect NSRect;
+#endif
+
+typedef struct CGPoint CGPoint;
+
+#if NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+typedef struct CGPoint NSPoint;
+#else
+typedef struct _NSPoint NSPoint;
+#endif
+
+typedef struct _NSRange NSRange;
 
 #ifndef __OBJC__
 class NSImage;
