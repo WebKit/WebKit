@@ -1,3 +1,11 @@
+2006-05-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by adele.
+        
+        Fix build.
+
+        * WebKitWin.vcproj/WebKitWin.sln:
+
 2006-05-20  Dave Hyatt <hyatt@apple.com>
 
         Fix the Cairo double buffer so that it is only the size of
