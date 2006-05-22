@@ -59,7 +59,7 @@ This line contains  an image.
 The innerHTML of editable regions after the test:
 
 This paragraph should should end up unlinked.
-<A href="http://www.apple.com/">The</A> second<A href="http://www.apple.com/"> word in this paragraph should end up being unlinked, everything else should be a link.</A>
-This paragraph starts with <I><A href="http://www.google.com">a</A></I><SPAN id="test3start"> link</SPAN> in the middle. Only the 'a' in the previous sentence should be linked after the test.
-<P>This <I>editable region</I> contains lists, tables, styled text, and images. Everything in this region that is not selected should be a link, nothing that is selected should be a link.</P> <UL> <LI>Item 1</LI> <LI>Item 2</LI> </UL> <TABLE border="1"><TBODY><TR><TD>1</TD><TD>2</TD><TD><SPAN id="test4end"><A href="http://www.google.com/">3</A></SPAN></TD></TR></TBODY></TABLE> <A href="http://www.google.com/"><BR> This </A><B><A href="http://www.google.com/">line</A></B><A href="http://www.google.com/"> contains </A><A href="http://www.google.com/"><IMG src="../resources/abe.jpg"> an image. </A>
+<a href="http://www.apple.com/">The</a> second<a href="http://www.apple.com/"> word in this paragraph should end up being unlinked, everything else should be a link.</a>
+This paragraph starts with <i><a href="http://www.google.com">a</a></i><span id="test3start"> link</span> in the middle. Only the 'a' in the previous sentence should be linked after the test.
+<p>This <i>editable region</i> contains lists, tables, styled text, and images. Everything in this region that is not selected should be a link, nothing that is selected should be a link.</p> <ul> <li>Item 1</li> <li>Item 2</li> </ul> <table border="1"><tbody><tr><td>1</td><td>2</td><td><span id="test4end"><a href="http://www.google.com/">3</a></span></td></tr></tbody></table> <a href="http://www.google.com/"><br> This </a><b><a href="http://www.google.com/">line</a></b><a href="http://www.google.com/"> contains </a><a href="http://www.google.com/"><img src="../resources/abe.jpg"> an image. </a>
 

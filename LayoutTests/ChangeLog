@@ -1,3 +1,22 @@
+2006-05-22  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by eric.
+        
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8393
+          <br>s created by createMarkup aren't valid xhtml
+          Changes in case from innerHTML
+
+        * editing/execCommand/createLink-expected.txt:
+        * editing/execCommand/unlink-expected.txt:
+        * editing/input/attributed-substring-from-range-lines-expected.txt:
+        * fast/dom/Range/range-exceptions-expected.txt:
+        * fast/dom/Range/resources/range-exceptions.js:
+        * fast/innerHTML/005-expected.txt:
+        * fast/innerHTML/innerHTML-custom-tag-expected.txt:
+        * fast/innerHTML/innerHTML-cast.html: Added.
+        * fast/innerHTML/innerHTML-cast-expected.txt: Added.
+        * fast/xsl/xslt-processer-expected.txt:
+
 2006-05-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

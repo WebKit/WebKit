@@ -97,7 +97,7 @@ line two
 and three   
 
 Actual HTML:
-<pre> <DIV class="editing" id="test"></DIV> </pre>
+<pre> <div class="editing" id="test"></div> </pre>
 (0, 0):
 (0, 0) length: 0
 (0, 2): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }

@@ -1,3 +1,15 @@
+2006-05-22  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by Eric.
+        
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8393
+          <br>s created by createMarkup aren't valid xhtml
+          Fixed uppered output from innerHTML
+
+        * editing/markup.cpp:
+        (WebCore::startMarkup):
+        (WebCore::endMarkup):
+
 2006-05-21  Dave Hyatt <hyatt@apple.com>
 
         Fix Win32 bustage.   I forgot to add a bunch of files.

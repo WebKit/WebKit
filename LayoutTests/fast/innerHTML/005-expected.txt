@@ -1,18 +1,18 @@
 Content:
-<HEAD>
-<META name="description" content="This tests html output">
-<TITLE>html innerHTML test</TITLE>
-</HEAD><BODY>
-<SPAN>Content:</SPAN>
-<PRE id="content">placeholder</PRE>
-<DIV></DIV>
-<SPAN></SPAN>
-<B>test</B>
-<BR>
-<SCRIPT>
+<head>
+<meta name="description" content="This tests html output">
+<title>html innerHTML test</title>
+</head><body>
+<span>Content:</span>
+<pre id="content">placeholder</pre>
+<div></div>
+<span></span>
+<b>test</b>
+<br>
+<script>
 if (window.layoutTestController)
 	layoutTestController.dumpAsText();
 document.getElementById("content").firstChild.nodeValue = document.documentElement.innerHTML;
-</SCRIPT></BODY>
+</script></body>
 test 
 

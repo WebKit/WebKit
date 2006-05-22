@@ -191,8 +191,9 @@ static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnot
         case Node::PROCESSING_INSTRUCTION_NODE:
             return static_cast<const ProcessingInstruction*>(node)->toString().deprecatedString();
         case Node::ELEMENT_NODE: {
-            DeprecatedString markup = QChar('<') + node->nodeName().deprecatedString();
+            DeprecatedString markup = QChar('<');
             const Element* el = static_cast<const Element*>(node);
+            markup += el->Element::nodeName().deprecatedString();
             String additionalStyle;
             if (defaultStyle && el->isHTMLElement()) {
                 RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(const_cast<Element*>(el), 0).computedStyle();
@@ -274,7 +275,7 @@ static inline bool shouldSelfClose(const Node *node)
 static DeprecatedString endMarkup(const Node *node)
 {
     if (node->isElementNode() && !shouldSelfClose(node) && !doesHTMLForbidEndTag(node))
-        return "</" + node->nodeName().deprecatedString() + ">";
+        return "</" + static_cast<const Element*>(node)->Element::nodeName().deprecatedString() + ">";
     return "";
 }
 

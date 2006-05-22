@@ -1,15 +1,15 @@
 Content:
 
-<SPAN>Content:</SPAN>
-<PRE id="content">placeholder</PRE>
-<DIV></DIV>
-<SPAN></SPAN>
-<B>test</B>
-<BR>
-<EMPTYCUSTOMTAG></EMPTYCUSTOMTAG>
+<span>Content:</span>
+<pre id="content">placeholder</pre>
+<div></div>
+<span></span>
+<b>test</b>
+<br>
+<emptycustomtag></emptycustomtag>
 <anotherEmptyCustomTag></anotherEmptyCustomTag>
-<CUSTOMTAG>more test</CUSTOMTAG>
-<DIV id="testArea"></DIV>
+<customtag>more test</customtag>
+<div id="testArea"></div>
 
 
 

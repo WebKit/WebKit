@@ -3,8 +3,8 @@ This test checks a few DOM range exceptions.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS node.innerHTML is '<BAR>AB<MOO>C</MOO>DE</BAR>'
-PASS foo.outerHTML is '<FOO></FOO>'
+PASS node.innerHTML is '<bar>AB<moo>C</moo>DE</bar>'
+PASS foo.outerHTML is '<foo></foo>'
 PASS range.surroundContents(foo) threw exception Error: BAD_BOUNDARYPOINTS_ERR: DOM Range Exception 1.
 PASS successfullyParsed is true
 
