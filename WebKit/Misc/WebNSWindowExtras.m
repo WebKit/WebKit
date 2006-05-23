@@ -172,8 +172,9 @@ static IMP swizzleInstanceMethod(Class class, SEL selector, IMP newImplementatio
 
 static void replacementPostWindowNeedsDisplay(id self, SEL cmd)
 {
-    // Call the original NSWindow method implementation if window throttling is disabled.
-    if (!throttlingWindowDisplay) {
+    // Call the original NSWindow method implementation if window throttling is disabled, or the window
+    // is currently being deallocated.
+    if (!throttlingWindowDisplay || ((NSWindow *)self)->_wFlags.windowDying) {
         oldNSWindowPostWindowNeedsDisplayIMP(self, cmd);
         return;
     }

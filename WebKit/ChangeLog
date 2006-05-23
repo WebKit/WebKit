@@ -1,3 +1,19 @@
+2006-05-23  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4558301> REGRESSION (420+): After clearing history and closing bookmark view window,
+        attempting to select Safari's menu bar results in a crash
+
+        * Misc/WebNSWindowExtras.m:
+        (replacementPostWindowNeedsDisplay):
+        My fix yesterday for 4557117 was not quite good enough.  Now that we cancel the display timer for a
+        window *before* it deallocates, we need to make sure that while a window deallocates, no new display
+        timers are scheduled for that window.  This is actually possible, as 4558301 demonstrates.
+        Luckily, NSWindow sets a handy "windowDying" flag when it deallocates, so we can just check that flag
+        and bail out of the throttle hack if it is set.  This should fix the last of the crashes involving
+        display timers scheduled for deallocated or deallocating windows.
+
 2006-05-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
