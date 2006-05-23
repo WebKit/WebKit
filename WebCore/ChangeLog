@@ -1,3 +1,15 @@
+2006-05-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeMarkers):
+        Fix to my previous checkin (which broke a layout test).
+        Advance the iterator position every time through the loop; formerly it was not advanced in the 
+        case where a marker was actually removed, causing an infinite loop in certain cases. Also
+        modified a comment that was confusing the situation by falsely claiming that iterating over a 
+        just-inserted node would always be OK.
+
 2006-05-23  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.
