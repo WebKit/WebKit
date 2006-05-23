@@ -1,3 +1,12 @@
+2006-05-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
+        Remove the recent idl files from the WebCore target to prevent them
+        from being copied into the framework resources.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-05-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Justin Garcia and Levi Weintraub.
