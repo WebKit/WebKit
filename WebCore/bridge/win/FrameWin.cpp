@@ -76,7 +76,7 @@ void FrameWin::submitForm(const ResourceRequest& request)
     d->m_submittedFormURL = request.url();
 
     if (m_client)
-        m_client->submitForm(request.doPost() ? "POST" : "GET", request.url(), &d->m_submitForm->submitFormData);
+        m_client->submitForm(request.doPost() ? "POST" : "GET", request.url(), &request.postData);
 
     clearRecordedFormValues();
 }
