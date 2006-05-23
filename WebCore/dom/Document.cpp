@@ -2748,7 +2748,7 @@ void Document::removeMarkers(Node *node, unsigned startOffset, int length, Docum
     bool docDirty = false;
     unsigned endOffset = startOffset + length - 1;
     Vector<DocumentMarker>::iterator it;
-    for (it = markers->begin(); it < markers->end(); it++) {
+    for (it = markers->begin(); it < markers->end();) {
         DocumentMarker marker = *it;
 
         // markers are returned in order, so stop if we are now past the specified range
@@ -2756,8 +2756,10 @@ void Document::removeMarkers(Node *node, unsigned startOffset, int length, Docum
             break;
         
         // skip marker that is wrong type or before target
-        if (marker.endOffset < startOffset || (marker.type != markerType && markerType != DocumentMarker::AllMarkers))
+        if (marker.endOffset < startOffset || (marker.type != markerType && markerType != DocumentMarker::AllMarkers)) {
+            it++;
             continue;
+        }
 
         // at this point we know that marker and target intersect in some way
         docDirty = true;
@@ -2767,17 +2769,19 @@ void Document::removeMarkers(Node *node, unsigned startOffset, int length, Docum
         // it now points to the next node
         
         // add either of the resulting slices that are left after removing target
-        // NOTE: This adds to the list we are iterating, but that is OK because
-        // the iteration will skip over the added node.
         if (startOffset > marker.startOffset) {
             DocumentMarker newLeft = marker;
             newLeft.endOffset = startOffset;
             markers->insert(it - markers->begin(), newLeft);
+            // it now points to the newly-inserted node, but we want to skip that one
+            it++;
         }
         if (marker.endOffset > endOffset) {
             DocumentMarker newRight = marker;
             newRight.startOffset = endOffset;
             markers->insert(it - markers->begin(), newRight);
+            // it now points to the newly-inserted node, but we want to skip that one
+            it++;
         }
     }
 

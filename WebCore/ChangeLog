@@ -1,3 +1,16 @@
+2006-05-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Justin Garcia and Levi Weintraub.
+        
+        - fixed Bug 9072: REGRESSION: Misspelling marker incorrect in editing/deleting/delete-and-undo.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeMarkers):
+        One more time to get this right, ugh. There is still one case where we don't want to advance the
+        iterator, and that's when we remove a marker and do not insert a replacement marker. So I undid
+        my previous patch, and added it++ to each of the two cases that insert a replacement marker. Now
+        the layout tests pass even with the pixel tests enabled.
+
 2006-05-23  Dave Hyatt <hyatt@apple.com>
 
         Do an initial implementation of CookieJar on Win32.  No policy
