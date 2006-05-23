@@ -1,3 +1,27 @@
+2006-05-23  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9017
+        Weather2.css incorrectly treated as JavaScript file @ www.live.com
+        
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::hasAttribute):
+        Use new getAttributeItem method.
+        
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedAttrMap::getNamedItem):
+        (WebCore::NamedAttrMap::removeNamedItem):
+        Use new getAttributeItem method.
+        
+        (WebCore::NamedAttrMap::getAttributeItem):
+        * dom/NamedAttrMap.h:
+        New method which returns the attribute based on the nodeName.
+
 2006-05-22  Eric Seidel  <eric@eseidel.com>
 
         Rubber-stamped by adele.

@@ -1,3 +1,25 @@
+2006-05-23  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        Update tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=9017
+        Weather2.css incorrectly treated as JavaScript file @ www.live.com
+        
+        * dom/svg/level3/xpath/XPathNSResolver_lookupNamespaceURI_nist_dmstc-expected.txt:
+        This fails in a different way now.
+        
+        * dom/xhtml/level3/core/nodelookupnamespaceuri17-expected.txt:
+        * dom/xhtml/level3/core/nodelookupnamespaceuri20-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix17-expected.txt:
+        * dom/xhtml/level3/core/nodelookupprefix20-expected.txt:
+        * dom/xhtml/level3/core/noderemovechild28-expected.txt:
+        * dom/xhtml/level3/core/noderemovechild29-expected.txt:
+        These now pass.
+        
+        * fast/dom/attribute-namespaces-get-set-expected.txt: Added.
+        * fast/dom/attribute-namespaces-get-set.html: Added.
+        Add new tests.
+
 2006-05-22  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

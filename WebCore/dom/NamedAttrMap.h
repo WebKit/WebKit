@@ -63,6 +63,7 @@ public:
     // Other methods (not part of DOM)
     Attribute* attributeItem(unsigned index) const { return attrs ? attrs[index] : 0; }
     Attribute* getAttributeItem(const QualifiedName& name) const;
+    Attribute* getAttributeItem(const String& name) const;
     virtual bool isReadOnlyNode() { return element ? element->isReadOnlyNode() : false; }
 
     // used during parsing: only inserts if not already there

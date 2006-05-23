@@ -58,7 +58,10 @@ bool NamedAttrMap::isMappedAttributeMap() const
 PassRefPtr<Node> NamedAttrMap::getNamedItem(const String& name) const
 {
     String localName = inHTMLDocument(element) ? name.lower() : name;
-    return getNamedItem(QualifiedName(nullAtom, localName.impl(), nullAtom));
+    Attribute* a = getAttributeItem(localName);
+    if (!a) return 0;
+    
+    return a->createAttrIfNeeded(element);
 }
 
 PassRefPtr<Node> NamedAttrMap::getNamedItemNS(const String& namespaceURI, const String& localName) const
@@ -69,7 +72,13 @@ PassRefPtr<Node> NamedAttrMap::getNamedItemNS(const String& namespaceURI, const 
 PassRefPtr<Node> NamedAttrMap::removeNamedItem(const String& name, ExceptionCode& ec)
 {
     String localName = inHTMLDocument(element) ? name.lower() : name;
-    return removeNamedItem(QualifiedName(nullAtom, localName.impl(), nullAtom), ec);
+    Attribute* a = getAttributeItem(localName);
+    if (!a) {
+        ec = NOT_FOUND_ERR;
+        return 0;
+    }
+    
+    return removeNamedItem(a->name(), ec);
 }
 
 PassRefPtr<Node> NamedAttrMap::removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
@@ -170,6 +179,19 @@ PassRefPtr<Node> NamedAttrMap::item ( unsigned index ) const
         return 0;
 
     return attrs[index]->createAttrIfNeeded(element);
+}
+
+Attribute* NamedAttrMap::getAttributeItem(const String& name) const
+{
+    for (unsigned i = 0; i < len; ++i) {
+        if (!attrs[i]->name().hasPrefix() && 
+            attrs[i]->name().localName() == name)
+                return attrs[i];
+        
+        if (attrs[i]->name().toString() == name)
+            return attrs[i];
+    }
+    return 0;
 }
 
 Attribute* NamedAttrMap::getAttributeItem(const QualifiedName& name) const
