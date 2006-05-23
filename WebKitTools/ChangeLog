@@ -1,3 +1,14 @@
+2006-05-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Newer Xcode removed some obsolete cruft
+        
+        * DumpRenderTree/TextInputController.m:
+        (-[TextInputController textInput]):
+        added (id) cast to make newer compiler happy
+
 2006-05-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by adele.
