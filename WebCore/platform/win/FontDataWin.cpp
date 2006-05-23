@@ -111,7 +111,7 @@ void FontData::determinePitch()
     ReleaseDC(0, dc);
 }
 
-float FontData::platformWidthForGlyph(Glyph, UChar c) const
+float FontData::platformWidthForGlyph(Glyph glyph) const
 {
     HDC dc = GetDC(0);
     SaveDC(dc);
@@ -119,15 +119,9 @@ float FontData::platformWidthForGlyph(Glyph, UChar c) const
     cairo_scaled_font_t* scaledFont = m_font.scaledFont();
     cairo_win32_scaled_font_select_font(scaledFont, dc);
 
-    // Get the width of the character.
     int width;
-    GCP_RESULTS results;
-    memset(&results, 0, sizeof(GCP_RESULTS));
-    results.lStructSize = sizeof(GCP_RESULTS);
-    results.nGlyphs = 1;
-    results.lpDx = &width;
-    GetCharacterPlacement(dc, &c, 1, 0, &results, 0);
-    
+    GetCharWidthI(dc, glyph, 1, 0, &width);
+
     cairo_win32_scaled_font_done_font(scaledFont);
 
     RestoreDC(dc, -1);

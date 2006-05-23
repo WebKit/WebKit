@@ -75,6 +75,11 @@ sub finish
   $object->WriteData();
 }
 
+sub leftShift($$) {
+    my ($value, $distance) = @_;
+    return (($value << $distance) & 0xFFFFFFFF);
+}
+
 # Params: 'domClass' struct
 sub GenerateInterface
 {
@@ -1209,8 +1214,8 @@ sub GenerateHashValue
   # Main loop
   for (; $l > 0; $l--) {
     $hash   += ord($chars[$s]);
-    my $tmp = (ord($chars[$s+1]) << 11) ^ $hash;
-    $hash   = (($hash << 16)% $EXP2_32) ^ $tmp;
+    my $tmp = leftShift(ord($chars[$s+1]), 11) ^ $hash;
+    $hash   = (leftShift($hash, 16)% $EXP2_32) ^ $tmp;
     $s += 2;
     $hash += $hash >> 11;
   }
@@ -1218,18 +1223,18 @@ sub GenerateHashValue
   # Handle end case
   if ($rem !=0) {
     $hash += ord($chars[$s]);
-    $hash ^= (($hash << 11)% $EXP2_32);
+    $hash ^= (leftShift($hash, 11)% $EXP2_32);
     $hash += $hash >> 17;
   }
 
   # Force "avalanching" of final 127 bits
-  $hash ^= ($hash << 3);
+  $hash ^= leftShift($hash, 3);
   $hash += ($hash >> 5);
   $hash = ($hash% $EXP2_32);
-  $hash ^= (($hash << 2)% $EXP2_32);
+  $hash ^= (leftShift($hash, 2)% $EXP2_32);
   $hash += ($hash >> 15);
   $hash = $hash% $EXP2_32;
-  $hash ^= (($hash << 10)% $EXP2_32);
+  $hash ^= (leftShift($hash, 10)% $EXP2_32);
   
   # this avoids ever returning a hash code of 0, since that is used to
   # signal "hash not computed yet", using a value that is likely to be

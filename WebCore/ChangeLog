@@ -1,3 +1,25 @@
+2006-05-23  Dave Hyatt <hyatt@apple.com>
+
+        Fix the JS autogeneration for WebCore so that the hashtables
+        are correct on Win32.
+
+        Switch to using GetCharWidthI so that we can obtain widths
+        for glyphs instead of having to obtain them from UChars.
+
+        Reviewed by eric (autogeneration) and maciej (fonts)
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * platform/Font.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/FontData.cpp:
+        (WebCore::m_smallCapsFontData):
+        (WebCore::FontData::widthForGlyph):
+        * platform/FontData.h:
+        * platform/mac/FontDataMac.mm:
+        (-[NSFont WebCore]):
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::platformWidthForGlyph):
+
 2006-05-23  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by Hyatt.

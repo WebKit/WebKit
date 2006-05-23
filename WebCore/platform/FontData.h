@@ -58,8 +58,8 @@ public:
     int lineGap() const { return m_lineGap; }
     float xHeight() const { return m_xHeight; }
 
-    float widthForGlyph(Glyph glyph, UChar c) const;
-    float platformWidthForGlyph(Glyph glyph, UChar c) const;
+    float widthForGlyph(Glyph) const;
+    float platformWidthForGlyph(Glyph) const;
 
     bool containsCharacters(const UChar* characters, int length) const;
 
