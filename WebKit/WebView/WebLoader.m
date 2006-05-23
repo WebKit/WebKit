@@ -36,16 +36,11 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebPreferences.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebViewInternal.h>
 #import <WebKitSystemInterface.h>
 
 static unsigned inNSURLConnectionCallback;
@@ -136,17 +131,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [connection release];
     connection = nil;
 
-    [webView release];
-    webView = nil;
-    
     [dataSource release];
     dataSource = nil;
-    
-    [resourceLoadDelegate release];
-    resourceLoadDelegate = nil;
-
-    [downloadDelegate release];
-    downloadDelegate = nil;
     
     [resource release];
     resource = nil;
@@ -299,32 +285,12 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [dataSource release];
     dataSource = d;
 
-    [webView release];
-    webView = [[dataSource _webView] retain];
-    
-    [resourceLoadDelegate release];
-    resourceLoadDelegate = [[webView resourceLoadDelegate] retain];
-    implementations = [webView _resourceLoadDelegateImplementations];
-
-    [downloadDelegate release];
-    downloadDelegate = [[webView downloadDelegate] retain];
-
-    [self setDefersCallbacks:[webView defersCallbacks]];
+    [self setDefersCallbacks:[dataSource _defersCallbacks]];
 }
 
 - (WebDataSource *)dataSource
 {
     return dataSource;
-}
-
-- resourceLoadDelegate
-{
-    return resourceLoadDelegate;
-}
-
-- downloadDelegate
-{
-    return downloadDelegate;
 }
 
 - (void)addData:(NSData *)data
@@ -377,30 +343,19 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
 
-    [mutableRequest _web_setHTTPUserAgent:[webView userAgentForURL:[newRequest URL]]];
     newRequest = [mutableRequest autorelease];
 
     clientRequest = [newRequest _webDataRequestExternalRequest];
-    if(!clientRequest)
+    if (!clientRequest)
         clientRequest = newRequest;
     else
         haveDataSchemeRequest = YES;
     
-    if (identifier == nil) {
-        // The identifier is released after the last callback, rather than in dealloc
-        // to avoid potential cycles.
-        if (implementations.delegateImplementsIdentifierForRequest)
-            identifier = [[resourceLoadDelegate webView: webView identifierForInitialRequest:clientRequest fromDataSource:dataSource] retain];
-        else
-            identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:dataSource] retain];
-    }
+    if (identifier == nil)
+        identifier = [dataSource _identifierForInitialRequest:clientRequest];
 
-    // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
-    if (implementations.delegateImplementsWillSendRequest)
-        updatedRequest = [resourceLoadDelegate webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource];
-    else
-        updatedRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource];
-        
+    updatedRequest = [dataSource _willSendRequest:clientRequest forResource:identifier redirectResponse:redirectResponse];
+
     if (!haveDataSchemeRequest)
         newRequest = updatedRequest;
     else {
@@ -447,11 +402,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
     currentConnectionChallenge = [challenge retain];;
     currentWebChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:self];
 
-    if (implementations.delegateImplementsDidReceiveAuthenticationChallenge) {
-        [resourceLoadDelegate webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
-    } else {
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
-    }
+    [dataSource _didReceiveAuthenticationChallenge:currentWebChallenge forResource:identifier];
+
     [self release];
 }
 
@@ -465,11 +417,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    if (implementations.delegateImplementsDidCancelAuthenticationChallenge) {
-        [resourceLoadDelegate webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
-    } else {
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
-    }
+    [dataSource _didCancelAuthenticationChallenge:currentWebChallenge forResource:identifier];
     [self release];
 }
 
@@ -491,14 +439,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [response release];
     response = r;
 
-    [dataSource _addResponse: r];
+    [dataSource _didReceiveResponse:r forResource:identifier];
 
-    [webView _incrementProgressForConnectionDelegate:self response:r];
-        
-    if (implementations.delegateImplementsDidReceiveResponse)
-        [resourceLoadDelegate webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource];
     [self release];
 }
 
@@ -516,12 +458,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
     
     [self addData:data];
     
-    [webView _incrementProgressForConnectionDelegate:self data:data];
+    [dataSource _didReceiveData:data contentLength:lengthReceived forResource:identifier];
 
-    if (implementations.delegateImplementsDidReceiveContentLength)
-        [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:(WebNSUInt)lengthReceived fromDataSource:dataSource];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInt)lengthReceived fromDataSource:dataSource];
     [self release];
 }
 
@@ -534,22 +472,15 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (void)signalFinish
 {
     signalledFinish = YES;
-
-    [webView _completeProgressForConnectionDelegate:self];    
-    
-    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
-        [resourceLoadDelegate webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
+    [dataSource _didFinishLoadingForResource:identifier];
 }
 
 - (void)didFinishLoading
 {
     // If load has been cancelled after finishing (which could happen with a 
     // javascript that changes the window location), do nothing.
-    if (cancelledFlag) {
+    if (cancelledFlag)
         return;
-    }
     
     ASSERT(!reachedTerminalState);
 
@@ -570,9 +501,8 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [webView _completeProgressForConnectionDelegate:self];
 
-    [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+    [dataSource _didFailLoadingWithError:error forResource:identifier];
 
     [self releaseResources];
     [self release];
@@ -581,7 +511,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
     // When in private browsing mode, prevent caching to disk
-    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [[webView preferences] privateBrowsingEnabled]) {
+    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [dataSource _privateBrowsingEnabled]) {
         cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:[cachedResponse response]
                                                                    data:[cachedResponse data]
                                                                userInfo:[cachedResponse userInfo]
@@ -690,11 +620,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverResource) object:nil];
     [connection cancel];
 
-    [webView _completeProgressForConnectionDelegate:self];
-
-    if (error) {
-        [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
-    }
+    [dataSource _didFailLoadingWithError:error forResource:identifier];
 
     [self releaseResources];
 }

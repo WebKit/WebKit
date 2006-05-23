@@ -27,6 +27,7 @@
  */
 
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKitSystemInterface.h>
 
 @class NSURL;
 
@@ -108,5 +109,16 @@
 - (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar complete:(BOOL)isComplete;
 - (void)_receivedError:(NSError *)error;
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
+- (BOOL)_defersCallbacks;
+- (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest;
+- (NSURLRequest *)_willSendRequest:(NSURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse;
+- (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
+- (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
+- (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier;
+- (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier;
+- (void)_didFinishLoadingForResource:(id)identifier;
+- (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier;
+- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr) proxy;
+- (BOOL)_privateBrowsingEnabled;
 
 @end

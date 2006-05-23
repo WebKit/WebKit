@@ -35,6 +35,7 @@
 #import "WebDataSourceInternal.h"
 #import "WebDefaultResourceLoadDelegate.h"
 #import "WebDocument.h"
+#import "WebDownloadInternal.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
 #import "WebFrameLoadDelegate.h"
@@ -53,6 +54,7 @@
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebPDFRepresentation.h"
+#import "WebPreferences.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
 #import "WebUnarchivingState.h"
@@ -854,6 +856,118 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         [loader setDefersCallbacks:defers];
     }
 }
+
+- (BOOL)_defersCallbacks
+{
+    return _private->defersCallbacks;
+}
+
+- (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest
+{
+    WebView *webView = [self _webView];
+
+    // The identifier is released after the last callback, rather than in dealloc
+    // to avoid potential cycles.
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsIdentifierForRequest)
+        return [[[webView resourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:self] retain];
+    else
+        return [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:self] retain];
+}
+
+- (NSURLRequest *)_willSendRequest:(NSURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
+{
+    WebView *webView = [self _webView];
+
+    // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsWillSendRequest)
+        return [[webView resourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:self];
+    else
+        return [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:self];
+}        
+
+- (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
+{
+    WebView *webView = [self _webView];
+
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveAuthenticationChallenge)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:self];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:self];
+}
+
+
+- (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier
+{
+    WebView *webView = [self _webView];
+
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidCancelAuthenticationChallenge)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:self];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:self];
+}
+
+- (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier
+{
+    WebView *webView = [self _webView];
+
+    [self _addResponse:r];
+
+    [webView _incrementProgressForIdentifier:identifier response:r];
+        
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveResponse)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:self];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:self];
+}
+
+- (void)_didReceiveData:(NSData *)data contentLength:(int)lengthReceived forResource:(id)identifier
+{
+    WebView *webView = [self _webView];
+
+    [webView _incrementProgressForIdentifier:identifier data:data];
+
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveContentLength)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInt)lengthReceived fromDataSource:self];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInt)lengthReceived fromDataSource:self];
+}
+
+
+- (void)_didFinishLoadingForResource:(id)identifier
+{
+    WebView *webView = [self _webView];
+
+    [webView _completeProgressForIdentifier:identifier];    
+    
+    if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidFinishLoadingFromDataSource)
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:self];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:self];
+}
+
+- (void)_didFailLoadingWithError:(NSError *)error forResource:(id)identifier
+{
+    WebView *webView = [self _webView];
+
+    [webView _completeProgressForIdentifier:identifier];
+
+    if (error)
+        [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:self];
+}
+
+- (void)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r proxy:(WKNSURLConnectionDelegateProxyPtr) proxy
+{
+    [WebDownload _downloadWithLoadingConnection:connection
+                 request:request
+                 response:r
+                 delegate:[[self _webView] downloadDelegate]
+                 proxy:proxy];
+}
+
+- (BOOL)_privateBrowsingEnabled
+{
+    return [[[self _webView] preferences] privateBrowsingEnabled];
+}    
 
 - (NSURLRequest *)_originalRequest
 {

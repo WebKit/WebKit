@@ -38,8 +38,6 @@
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDownload.h>
-#import <WebKit/WebDownloadInternal.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebFramePrivate.h>
@@ -249,13 +247,10 @@
     }
     case WebPolicyDownload:
         [proxy setDelegate:nil];
-        [WebDownload _downloadWithLoadingConnection:connection
-                                            request:request
-                                           response:r
-                                           delegate:[self downloadDelegate]
-                                              proxy:proxy];
+        [dataSource _downloadWithLoadingConnection:connection request:request response:r proxy:proxy];
         [proxy release];
         proxy = nil;
+
         [self receivedError:[self interruptForPolicyChangeError]];
         return;
 

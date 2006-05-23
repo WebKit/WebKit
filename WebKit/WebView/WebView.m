@@ -1016,9 +1016,9 @@ static bool debugWidget = true;
     [self _didChangeValueForKey: @"estimatedProgress"];
 }
 
-- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate response:(NSURLResponse *)response;
+- (void)_incrementProgressForIdentifier:(id)identifier response:(NSURLResponse *)response;
 {
-    if (!connectionDelegate)
+    if (!identifier)
         return;
 
     LOG (Progress, "_private->numProgressTrackedFrames %d, _private->originatingProgressFrame %p", _private->numProgressTrackedFrames, _private->originatingProgressFrame);
@@ -1041,16 +1041,16 @@ static bool debugWidget = true;
     if (!_private->progressItems)
         _private->progressItems = [[NSMutableDictionary alloc] init];
         
-    [_private->progressItems _webkit_setObject:item forUncopiedKey:connectionDelegate];
+    [_private->progressItems _webkit_setObject:item forUncopiedKey:identifier];
     [item release];
 }
 
-- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate data:(NSData *)data
+- (void)_incrementProgressForIdentifier:(id)identifier data:(NSData *)data
 {
-    if (!connectionDelegate)
+    if (!identifier)
         return;
 
-    WebProgressItem *item = [_private->progressItems objectForKey:connectionDelegate];
+    WebProgressItem *item = [_private->progressItems objectForKey:identifier];
 
     if (!item)
         return;
@@ -1104,9 +1104,9 @@ static bool debugWidget = true;
     [self _didChangeValueForKey: @"estimatedProgress"];
 }
 
-- (void)_completeProgressForConnectionDelegate:(id)connectionDelegate
+- (void)_completeProgressForIdentifier:(id)identifier
 {
-    WebProgressItem *item = [_private->progressItems objectForKey:connectionDelegate];
+    WebProgressItem *item = [_private->progressItems objectForKey:identifier];
 
     if (!item)
         return;

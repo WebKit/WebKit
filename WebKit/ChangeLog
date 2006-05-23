@@ -1,3 +1,44 @@
+2006-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - remove knowledge of WebView from WebLoader in preparation for moving the code down
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _defersCallbacks]):
+        (-[WebDataSource _identifierForInitialRequest:]):
+        (-[WebDataSource _willSendRequest:forResource:redirectResponse:]):
+        (-[WebDataSource _didReceiveAuthenticationChallenge:forResource:]):
+        (-[WebDataSource _didCancelAuthenticationChallenge:forResource:]):
+        (-[WebDataSource _didReceiveResponse:forResource:]):
+        (-[WebDataSource _didReceiveData:contentLength:forResource:]):
+        (-[WebDataSource _didFinishLoadingForResource:]):
+        (-[WebDataSource _didFailLoadingWithError:forResource:]):
+        (-[WebDataSource _downloadWithLoadingConnection:request:response:proxy:]):
+        (-[WebDataSource _privateBrowsingEnabled]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebLoader.h:
+        * WebView/WebLoader.m:
+        (-[WebLoader releaseResources]):
+        (-[WebLoader setDataSource:]):
+        (-[WebLoader willSendRequest:redirectResponse:]):
+        (-[WebLoader didReceiveAuthenticationChallenge:]):
+        (-[WebLoader didCancelAuthenticationChallenge:]):
+        (-[WebLoader didReceiveResponse:]):
+        (-[WebLoader didReceiveData:lengthReceived:]):
+        (-[WebLoader signalFinish]):
+        (-[WebLoader didFinishLoading]):
+        (-[WebLoader didFailWithError:]):
+        (-[WebLoader willCacheResponse:]):
+        (-[WebLoader cancelWithError:]):
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader continueAfterContentPolicy:response:]):
+        * WebView/WebView.m:
+        (-[WebView _incrementProgressForIdentifier:response:]):
+        (-[WebView _incrementProgressForIdentifier:data:]):
+        (-[WebView _completeProgressForIdentifier:]):
+        * WebView/WebViewInternal.h:
+
 === WebKit-521.10 ===
 
 2006-05-22  Tim Omernick  <timo@apple.com>

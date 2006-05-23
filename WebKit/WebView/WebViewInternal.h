@@ -65,9 +65,9 @@
 - (WebCoreSettings *)_settings;
 - (void)_pushPerformingProgrammaticFocus;
 - (void)_popPerformingProgrammaticFocus;
-- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate response:(NSURLResponse *)response;
-- (void)_incrementProgressForConnectionDelegate:(id)connectionDelegate data:(NSData *)dataSource;
-- (void)_completeProgressForConnectionDelegate:(id)connectionDelegate;
+- (void)_incrementProgressForIdentifier:(id)identifier response:(NSURLResponse *)response;
+- (void)_incrementProgressForIdentifier:(id)identifier data:(NSData *)dataSource;
+- (void)_completeProgressForIdentifier:(id)identifer;
 - (void)_progressStarted:(WebFrame *)frame;
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
