@@ -219,10 +219,6 @@ String WebCore::defaultLanguage() { return "en"; }
 
 void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start, int* end) {*start=position; *end=position; }
 
-void WebCore::setCookies(KURL const&,KURL const&,String const&) { }
-String WebCore::cookies(KURL const&) { return String(); }
-bool WebCore::cookiesEnabled() { return false; }
-
 PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { return 0;}
 unsigned PlugInInfoStore::pluginCount() const { return 0; }
 void WebCore::refreshPlugins(bool) { }

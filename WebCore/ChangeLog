@@ -1,5 +1,19 @@
 2006-05-23  Dave Hyatt <hyatt@apple.com>
 
+        Do an initial implementation of CookieJar on Win32.  No policy
+        checking yet and the cookies are just always on.
+
+        Reviewed by mjs
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/win/CookieJarWin.cpp: Added.
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        * platform/win/TemporaryLinkStubs.cpp:
+
+2006-05-23  Dave Hyatt <hyatt@apple.com>
+
         Fix the JS autogeneration for WebCore so that the hashtables
         are correct on Win32.
 

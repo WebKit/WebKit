@@ -347,11 +347,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAreaElement.cpp"
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAppletElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAppletElement.cpp"
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAreaElement.cpp"
 				>
 			</File>
 			<File
@@ -405,11 +405,11 @@
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLFieldSetElement.cpp"
 				>
-			</File>			
+			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLFontElement.cpp"
 				>
-			</File>			
+			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHeadElement.cpp"
 				>
@@ -421,7 +421,7 @@
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHRElement.cpp"
 				>
-			</File>			
+			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHtmlElement.cpp"
 				>
@@ -429,7 +429,7 @@
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLImageElement.cpp"
 				>
-			</File>			
+			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLInputElement.cpp"
 				>
@@ -439,15 +439,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLIElement.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLabelElement.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLegendElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLIElement.cpp"
 				>
 			</File>
 			<File
@@ -1201,6 +1201,10 @@
 			<Filter
 				Name="win"
 				>
+				<File
+					RelativePath="..\..\platform\win\CookieJarWin.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\..\platform\win\CursorWin.cpp"
 					>
