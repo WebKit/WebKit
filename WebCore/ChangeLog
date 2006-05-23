@@ -1,3 +1,9 @@
+2006-05-22  Eric Seidel  <eric@eseidel.com>
+
+        Rubber-stamped by adele.
+
+        * bindings/js/kjs_html.h: simple style cleanup.
+
 === WebCore-521.10 ===
 
 2006-05-22  John Sullivan  <sullivan@apple.com>
