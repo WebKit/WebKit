@@ -412,6 +412,11 @@ String Element::nodeName() const
     return m_tagName.toString();
 }
 
+String Element::nodeNamePreservingCase() const
+{
+    return m_tagName.toString();
+}
+
 void Element::setPrefix(const AtomicString &_prefix, ExceptionCode& ec)
 {
     checkSetPrefix(_prefix, ec);

@@ -117,6 +117,8 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
+    String nodeNamePreservingCase() const;
+
     // convenience methods which ignore exceptions
     void setAttribute(const QualifiedName& name, const String& value);
 

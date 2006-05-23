@@ -1,3 +1,17 @@
+2006-05-23  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by Hyatt.
+
+        Cleaned up changes to markup by adding the non-virtual
+        nodeNamePreservingCase accessor function.
+
+        * dom/Element.cpp:
+        (WebCore::Element::nodeNamePreservingCase):
+        * dom/Element.h:
+        * editing/markup.cpp:
+        (WebCore::startMarkup):
+        (WebCore::endMarkup):
+
 2006-05-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders Carlsson.
