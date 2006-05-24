@@ -1,3 +1,24 @@
+2006-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+        
+        Added 'GCController' to DRT to support garbage collection layout tests.
+        
+        GCController.collect() and GCController.collectOnAlternateThread() do
+        what you would expect. The latter takes a boolean argument sepcifying
+        whether to wait for garbage collection to finish before continuing to
+        execute script.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:windowScriptObjectAvailable:]):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/GCController.h: Added.
+        * DumpRenderTree/GCController.mm: Added.
+        (+[GCController isSelectorExcludedFromWebScript:]):
+        (+[GCController webScriptNameForSelector:]):
+        (-[GCController collect]):
+        (-[GCController collectOnAlternateThread:]):
+
 2006-05-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

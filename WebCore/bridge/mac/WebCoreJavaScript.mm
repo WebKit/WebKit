@@ -35,20 +35,30 @@ using KJS::Collector;
 using KJS::Interpreter;
 using KJS::JSLock;
 
+void* collect(void*)
+{
+    JSLock lock;
+    Collector::collect();
+    return 0;
+}
+
 @implementation WebCoreJavaScript
 
 + (size_t)objectCount
 {
+    JSLock lock;
     return Collector::size();
 }
 
 + (size_t)interpreterCount
 {
+    JSLock lock;
     return Collector::numInterpreters();
 }
 
 + (size_t)protectedObjectCount
 {
+    JSLock lock;
     return Collector::numProtectedObjects();
 }
 
@@ -69,17 +79,29 @@ using KJS::JSLock;
 
 + (void)garbageCollect
 {
-    JSLock lock;
-    while (Collector::collect()) { }
+    collect(NULL);
+}
+
++ (void)garbageCollectOnAlternateThread:(BOOL)waitUntilDone
+{
+    pthread_t thread;
+    pthread_create(&thread, NULL, collect, NULL);
+
+    if (waitUntilDone) {
+        JSLock::DropAllLocks dropLocks; // Otherwise our lock would deadlock the collect thread we're joining
+        pthread_join(thread, NULL);
+    }
 }
 
 + (BOOL)shouldPrintExceptions
 {
+    JSLock lock;
     return Interpreter::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
+    JSLock lock;
     Interpreter::setShouldPrintExceptions(print);
 }
 

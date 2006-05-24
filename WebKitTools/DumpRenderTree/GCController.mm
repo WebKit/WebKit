@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,36 +27,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "GCController.h"
+#import <WebKit/WebCoreStatistics.h>
 
-#import <WebKit/WebFrame.h>
-
-@interface WebCoreStatistics : NSObject
+@implementation GCController
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
+    if (aSelector == @selector(collect))
+        return NO;
+    if (aSelector == @selector(collectOnAlternateThread:))
+        return NO;
+    return YES;
 }
 
-+ (NSArray *)statistics;
-+ (void)emptyCache;
-+ (void)setCacheDisabled:(BOOL)disabled;
++ (NSString *)webScriptNameForSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(collectOnAlternateThread:))
+        return @"collectOnAlternateThread";
+    
+    return nil;
+}
 
-+ (size_t)javaScriptObjectsCount;
-+ (size_t)javaScriptInterpretersCount;
-+ (size_t)javaScriptProtectedObjectsCount;
-+ (NSCountedSet *)javaScriptRootObjectTypeCounts;
-+ (void)garbageCollectJavaScriptObjects;
-+ (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
+- (void)collect
+{
+    [WebCoreStatistics garbageCollectJavaScriptObjects];
+}
 
-
-// deprecated
-+ (size_t)javaScriptNoGCAllowedObjectsCount;
-+ (size_t)javaScriptReferencedObjectsCount;
-+ (NSSet *)javaScriptRootObjectClasses;
-
-+ (BOOL)shouldPrintExceptions;
-+ (void)setShouldPrintExceptions:(BOOL)print;
-
-@end
-
-@interface WebFrame (WebKitDebug)
-- (NSString *)renderTreeAsExternalRepresentation;
+- (void)collectOnAlternateThread:(BOOL)waitUntilDone
+{
+    [WebCoreStatistics garbageCollectJavaScriptObjectsOnAlternateThread:waitUntilDone];
+}
 @end

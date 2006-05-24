@@ -300,6 +300,10 @@ bool Interpreter::collect()
   return Collector::collect();
 }
 
+void Interpreter::mark(bool)
+{
+}
+
 #ifdef KJS_DEBUG_MEM
 #include "lexer.h"
 void Interpreter::finalCheck()

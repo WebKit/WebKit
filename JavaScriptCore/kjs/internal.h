@@ -180,7 +180,7 @@ namespace KJS {
 
     void initGlobalObject();
 
-    void mark();
+    void mark(bool currentThreadIsMainThread);
 
     ExecState *globalExec() { return &globExec; }
     bool checkSyntax(const UString &code);

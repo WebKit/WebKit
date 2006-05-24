@@ -346,7 +346,7 @@ namespace KJS {
      * Called by InterpreterImp during the mark phase of the garbage collector
      * Default implementation does nothing, this exist for classes that reimplement Interpreter.
      */
-    virtual void mark() {}
+    virtual void mark(bool currentThreadIsMainThread);
 
     /**
      * Provides a way to distinguish derived classes.

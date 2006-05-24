@@ -91,6 +91,11 @@
     [WebCoreJavaScript garbageCollect];
 }
 
++ (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
+{
+    [WebCoreJavaScript garbageCollectOnAlternateThread:waitUntilDone];
+}
+
 + (BOOL)shouldPrintExceptions
 {
     return [WebCoreJavaScript shouldPrintExceptions];

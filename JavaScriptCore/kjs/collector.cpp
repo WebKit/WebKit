@@ -452,10 +452,16 @@ bool Collector::collect()
 {
   assert(JSLock::lockCount() > 0);
 
-  if (InterpreterImp::s_hook) {
+#if USE(MULTIPLE_THREADS)
+    bool currentThreadIsMainThread = !pthread_is_threaded_np() || pthread_main_np();
+#else
+    bool currentThreadIsMainThread = true;
+#endif
+    
+    if (InterpreterImp::s_hook) {
     InterpreterImp *scr = InterpreterImp::s_hook;
     do {
-      scr->mark();
+      scr->mark(currentThreadIsMainThread);
       scr = scr->next;
     } while (scr != InterpreterImp::s_hook);
   }
@@ -471,12 +477,6 @@ bool Collector::collect()
   size_t emptyBlocks = 0;
   size_t numLiveObjects = heap.numLiveObjects;
 
-#if USE(MULTIPLE_THREADS)
-  bool currentThreadIsMainThread = !pthread_is_threaded_np() || pthread_main_np();
-#else
-  bool currentThreadIsMainThread = true;
-#endif
-  
   for (size_t block = 0; block < heap.usedBlocks; block++) {
     CollectorBlock *curBlock = heap.blocks[block];
 

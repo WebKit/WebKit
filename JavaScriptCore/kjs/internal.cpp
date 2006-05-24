@@ -445,10 +445,10 @@ void InterpreterImp::clear()
   interpreterMap().remove(global);
 }
 
-void InterpreterImp::mark()
+void InterpreterImp::mark(bool currentThreadIsMainThread)
 {
   if (m_interpreter)
-    m_interpreter->mark();
+    m_interpreter->mark(currentThreadIsMainThread);
   if (_context)
     _context->mark();
   if (global)

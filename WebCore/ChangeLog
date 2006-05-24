@@ -1,3 +1,49 @@
+2006-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+
+        - WebCore half of fix for <rdar://problem/4557926> TOT REGRESSION: Crash
+        occurs when attempting to view image in slideshow mode at
+        http://d.smugmug.com/gallery/581716 ( KJS::IfNode::execute
+        (KJS::ExecState*) + 312)
+
+        On alternate threads, DOMObjects remain in the
+        ScriptInterpreter's cache because they're not collected. So, they
+        need an opportunity to mark their children.
+        
+        I'm not particularly happy with this solution because it fails to
+        resolve many outstanding issues with the DOM object cache. Since none
+        of those issues is a crasher or a serious compatibility concern,
+        and since the behavior of other browsers is not much to go on in this
+        case, I've filed <rdar://problem/4561439> about that, and I'm moving 
+        on with my life.
+
+        Also added functionality for testing garbage collection from inside
+        DumpRenderTree.
+        
+        Also removed XMLHttpRequest from the DOM object cache because XMLHttpRequest
+        objects aren't accessed through the DOM.
+        
+        Also added JS locking around access to some shared data structures in
+        WebCoreJavaScript, even though it probably doesn't matter in practice.
+
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::JSXMLHttpRequest):
+        (KJS::JSXMLHttpRequest::~JSXMLHttpRequest):
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::mark):
+        * bindings/js/kjs_binding.h:
+        * bridge/mac/WebCoreJavaScript.h:
+        * bridge/mac/WebCoreJavaScript.mm:
+        (collect):
+        (+[WebCoreJavaScript objectCount]):
+        (+[WebCoreJavaScript interpreterCount]):
+        (+[WebCoreJavaScript protectedObjectCount]):
+        (+[WebCoreJavaScript garbageCollect]):
+        (+[WebCoreJavaScript garbageCollectOnAlternateThread:]):
+        (+[WebCoreJavaScript shouldPrintExceptions]):
+        (+[WebCoreJavaScript setShouldPrintExceptions:]):
+
 2006-05-24  Dave Hyatt <hyatt@apple.com>
 
         Fix the font cache corruption problems on Win32.  Move the

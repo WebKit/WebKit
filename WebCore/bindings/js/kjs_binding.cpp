@@ -135,7 +135,7 @@ void ScriptInterpreter::forgetAllDOMNodesForDocument(WebCore::Document *document
     }
 }
 
-void ScriptInterpreter::mark()
+void ScriptInterpreter::mark(bool currentThreadIsMainThread)
 {
   NodePerDocMap::iterator dictEnd = domNodesPerDocument()->end();
   for (NodePerDocMap::iterator dictIt = domNodesPerDocument()->begin();
@@ -154,6 +154,19 @@ void ScriptInterpreter::mark()
         // otherwise reachable from JS.
         if (node->impl()->inDocument() && !node->marked())
             node->mark();
+      }
+  }
+  
+  if (!currentThreadIsMainThread) {
+      // On alternate threads, DOMObjects remain in the cache because they're not collected.
+      // So, they need an opportunity to mark their children.
+      DOMObjectMap::iterator objectEnd = domObjects()->end();
+      for (DOMObjectMap::iterator objectIt = domObjects()->begin();
+           objectIt != objectEnd;
+           ++objectIt) {
+          DOMObject* object = objectIt->second;
+          if (!object->marked())
+              object->mark();
       }
   }
 }

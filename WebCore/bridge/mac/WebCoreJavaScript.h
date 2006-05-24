@@ -35,6 +35,7 @@
 + (NSCountedSet *)rootObjectTypeCounts;
 
 + (void)garbageCollect;
++ (void)garbageCollectOnAlternateThread:(BOOL)waitUntilDone;
 
 + (BOOL)shouldPrintExceptions;
 + (void)setShouldPrintExceptions:(BOOL)print;

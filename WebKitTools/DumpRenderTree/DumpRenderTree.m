@@ -54,6 +54,7 @@
 #import "DumpRenderTreeDraggingInfo.h"
 #import "EditingDelegate.h"
 #import "EventSendingController.h"
+#import "GCController.h"
 #import "NavigationController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
@@ -535,6 +536,10 @@ static void dump(void)
     AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:sender];
     [obj setValue:asc forKey:@"appleScriptController"];
     [asc release];
+    
+    GCController *gcc = [[GCController alloc] init];
+    [obj setValue:gcc forKey:@"GCController"];
+    [gcc release];
     
     [obj setValue:navigationController forKey:@"navigationController"];
     

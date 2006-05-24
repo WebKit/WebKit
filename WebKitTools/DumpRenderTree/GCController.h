@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,36 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <WebKit/WebView.h>
 
-#import <WebKit/WebFrame.h>
-
-@interface WebCoreStatistics : NSObject
-{
+@interface GCController : NSObject {
 }
-
-+ (NSArray *)statistics;
-+ (void)emptyCache;
-+ (void)setCacheDisabled:(BOOL)disabled;
-
-+ (size_t)javaScriptObjectsCount;
-+ (size_t)javaScriptInterpretersCount;
-+ (size_t)javaScriptProtectedObjectsCount;
-+ (NSCountedSet *)javaScriptRootObjectTypeCounts;
-+ (void)garbageCollectJavaScriptObjects;
-+ (void)garbageCollectJavaScriptObjectsOnAlternateThread:(BOOL)waitUntilDone;
-
-
-// deprecated
-+ (size_t)javaScriptNoGCAllowedObjectsCount;
-+ (size_t)javaScriptReferencedObjectsCount;
-+ (NSSet *)javaScriptRootObjectClasses;
-
-+ (BOOL)shouldPrintExceptions;
-+ (void)setShouldPrintExceptions:(BOOL)print;
-
-@end
-
-@interface WebFrame (WebKitDebug)
-- (NSString *)renderTreeAsExternalRepresentation;
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector;
++ (NSString *)webScriptNameForSelector:(SEL)aSelector;
+- (void)collect;
+- (void)collectOnAlternateThread:(BOOL)waitUntilDone;
 @end

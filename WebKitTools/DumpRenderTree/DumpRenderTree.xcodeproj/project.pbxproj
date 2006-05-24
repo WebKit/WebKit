@@ -32,6 +32,8 @@
 		141BF44B096A45C800E0753C /* PluginObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 141BF446096A45C800E0753C /* PluginObject.c */; };
 		141BF44C096A45C800E0753C /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 141BF448096A45C800E0753C /* Info.plist */; };
 		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
+		14770FE20A22ADF7009342EE /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14770FE00A22ADF7009342EE /* GCController.h */; };
+		14770FE30A22ADF7009342EE /* GCController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14770FE10A22ADF7009342EE /* GCController.mm */; };
 		14A6FB8A0971CAE5008B014F /* NavigationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6FB880971CAE5008B014F /* NavigationController.h */; };
 		14A6FB8B0971CAE5008B014F /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14A6FB890971CAE5008B014F /* NavigationController.m */; };
 		22181BD109DC8C4B008342E8 /* ObjCPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 22181BCD09DC8C4B008342E8 /* ObjCPlugin.h */; };
@@ -92,6 +94,8 @@
 		141BF446096A45C800E0753C /* PluginObject.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = PluginObject.c; sourceTree = "<group>"; };
 		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
 		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		14770FE00A22ADF7009342EE /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
+		14770FE10A22ADF7009342EE /* GCController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GCController.mm; sourceTree = "<group>"; };
 		14A6FB880971CAE5008B014F /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
 		14A6FB890971CAE5008B014F /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
 		22181BCD09DC8C4B008342E8 /* ObjCPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjCPlugin.h; sourceTree = "<group>"; };
@@ -100,7 +104,7 @@
 		22181BD009DC8C4B008342E8 /* ObjCPluginFunction.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ObjCPluginFunction.m; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		93442CF408F8BA4900BFE8CA /* TextInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputController.h; sourceTree = "<group>"; };
 		93442CF508F8BA4900BFE8CA /* TextInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInputController.m; sourceTree = "<group>"; };
 		A803FCB709CAAAB0009B2A37 /* EventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EventSendingController.h; sourceTree = "<group>"; };
@@ -172,6 +176,8 @@
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				A803FCB709CAAAB0009B2A37 /* EventSendingController.h */,
 				A803FCB809CAAAB1009B2A37 /* EventSendingController.m */,
+				14770FE00A22ADF7009342EE /* GCController.h */,
+				14770FE10A22ADF7009342EE /* GCController.mm */,
 				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
 				93442CF508F8BA4900BFE8CA /* TextInputController.m */,
 				E13307FE099624DA00AC0A91 /* AppleScriptController.h */,
@@ -247,6 +253,7 @@
 				A803FFF509CAAFE0009B2A37 /* EditingDelegate.h in Headers */,
 				22181BD109DC8C4B008342E8 /* ObjCPlugin.h in Headers */,
 				22181BD309DC8C4B008342E8 /* ObjCPluginFunction.h in Headers */,
+				14770FE20A22ADF7009342EE /* GCController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +374,7 @@
 				A803FFF609CAAFE0009B2A37 /* EditingDelegate.m in Sources */,
 				22181BD209DC8C4B008342E8 /* ObjCPlugin.m in Sources */,
 				22181BD409DC8C4B008342E8 /* ObjCPluginFunction.m in Sources */,
+				14770FE30A22ADF7009342EE /* GCController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

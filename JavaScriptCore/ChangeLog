@@ -1,3 +1,33 @@
+2006-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+        
+        - JSC half of fix for <rdar://problem/4557926> TOT REGRESSSION: Crash
+        occurs when attempting to view image in slideshow mode at
+        http://d.smugmug.com/gallery/581716 ( KJS::IfNode::execute
+        (KJS::ExecState*) + 312)
+
+        On alternate threads, DOMObjects remain in the
+        ScriptInterpreter's cache because they're not collected. So, they
+        need an opportunity to mark their children.
+        
+        I'm not particularly happy with this solution because it fails to
+        resolve many outstanding issues with the DOM object cache. Since none
+        of those issues is a crasher or a serious compatibility concern,
+        and since the behavior of other browsers is not much to go on in this
+        case, I've filed <rdar://problem/4561439> about that, and I'm moving on 
+        with my life.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::mark):
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::mark):
+        * kjs/interpreter.h:
+
 === JavaScriptCore-521.10 ===
 
 2006-05-22  Timothy Hatcher  <timothy@apple.com>

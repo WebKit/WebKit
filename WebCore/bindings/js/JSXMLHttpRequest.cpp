@@ -154,14 +154,12 @@ JSXMLHttpRequest::JSXMLHttpRequest(ExecState *exec, Document *d)
   : m_impl(new XMLHttpRequest(d))
 {
   setPrototype(JSXMLHttpRequestProto::self(exec));
-  ScriptInterpreter::putDOMObject(m_impl.get(), this);
 }
 
 JSXMLHttpRequest::~JSXMLHttpRequest()
 {
   m_impl->setOnReadyStateChangeListener(0);
   m_impl->setOnLoadListener(0);
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
 JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject* thisObj, const List& args)
