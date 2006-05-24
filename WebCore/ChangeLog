@@ -1,3 +1,31 @@
+2006-05-24  Dave Hyatt <hyatt@apple.com>
+
+        Fix a bug with the computation of the Cairo glyph offsets
+        on the Win32 code path.
+
+        * ChangeLog:
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::add):
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
+2006-05-23  Dave Hyatt <hyatt@apple.com>
+
+        Disable some code in Cairo that is attempting to clip
+        runs of text to their glyph boundaries, since:
+
+        (a) Why re-measure text again when I just gave you
+        the glyph bounds anyway.
+        (b) It gets the measurements wrong.
+
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::add):
+        * platform/cairo/cairo/src/cairo-surface-fallback.c:
+        (_cairo_surface_fallback_show_glyphs):
+        * platform/cairo/clipping-cleartype-font-bug-patch.txt: Added.
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2006-05-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Eric.

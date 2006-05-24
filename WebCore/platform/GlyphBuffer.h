@@ -121,7 +121,6 @@ public:
 #elif PLATFORM(WIN)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
-        cairoGlyph.x = (m_glyphs.size() ? m_glyphs[m_glyphs.size() - 1].x + m_advances[m_glyphs.size() - 1].width() : 0);
         cairoGlyph.y = 0;
         m_glyphs.append(cairoGlyph);
         m_advances.append(FloatSize(width, 0));

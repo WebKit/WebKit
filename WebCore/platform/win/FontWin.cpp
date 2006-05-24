@@ -40,6 +40,13 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
                       int from, int numGlyphs, const FloatPoint& point) const
 {
     cairo_t* context = graphicsContext->platformContext();
+
+    // Set the text color to use for drawing.
+    float red, green, blue, alpha;
+    Color penColor = graphicsContext->pen().color();
+    penColor.getRGBA(red, green, blue, alpha);
+    cairo_set_source_rgba(context, red, green, blue, alpha);
+    
     cairo_surface_t* surface = cairo_get_target(context);
     HDC dc = cairo_win32_surface_get_dc(surface);
 
@@ -50,12 +57,6 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
     // Select our font face/size.
     cairo_set_font_face(context, font->m_font.fontFace());
     cairo_set_font_size(context, font->m_font.size());
-
-    // Set the text color to use for drawing.
-    float red, green, blue, alpha;
-    Color penColor = graphicsContext->pen().color();
-    penColor.getRGBA(red, green, blue, alpha);
-    cairo_set_source_rgba(context, red, green, blue, alpha);
 
     SaveDC(dc);
 
@@ -68,9 +69,12 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const FontData* font, co
 
     GlyphBufferGlyph* glyphs = glyphBuffer.glyphs(from);
 
+    float offset = point.x();
+
     for (unsigned i = 0; i < numGlyphs; i++) {
-        glyphs[i].x += point.x();
-        glyphs[i].y += point.y();
+        glyphs[i].x = offset;
+        glyphs[i].y = point.y();
+        offset += glyphBuffer.advanceAt(from + i);
     }
 
     cairo_show_glyphs(context, glyphs, numGlyphs);
