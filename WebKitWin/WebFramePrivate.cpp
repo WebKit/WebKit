@@ -179,7 +179,7 @@ void WebFramePrivate::receivedData(WebCore::TransferJob*, const char* data, int 
 
 void WebFramePrivate::receivedAllData(WebCore::TransferJob* job, WebCore::PlatformData data)
 {
-    if (d->m_host)
+    if (d->m_host && data)
         (d->m_host->loadEnd)(data->loaded, data->error, data->errorString);
 
     d->frame->end();
@@ -198,6 +198,12 @@ void WebFramePrivate::paint()
                                                             ps.rcPaint.bottom - ps.rcPaint.top);
 
     cairo_t* context = cairo_create(surface);
+    static cairo_font_options_t* fontOptions;
+    if (!fontOptions)
+        // Force ClearType-level quality.
+        fontOptions = cairo_font_options_create();
+    cairo_font_options_set_antialias(fontOptions, CAIRO_ANTIALIAS_SUBPIXEL);
+    cairo_set_font_options(context, fontOptions);
     GraphicsContext gc(context);
     
     IntRect documentDirtyRect = ps.rcPaint;
