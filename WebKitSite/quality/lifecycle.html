@@ -32,8 +32,10 @@ decide whether it has enough useful information to move forward. The possible ch
 <li>Resolution changed to <tt>WONTFIX</tt> in the rare case that the bug seems valid but there's a specific reason why it 
 should not be fixed in WebKit (usually this would be a cross-browser compatibility issue).</li>
 <li>Comments/questions added if the bug does not have enough information to move forward.</li>
-<li>Status changed to <tt>NEW</tt> if the bug is reproducible or otherwise has enough information to move forward. Along with changing the status,
-the component should also be set to an appropriate one more specific than <tt>New Bugs</tt> if necessary.</li>
+<li>Status changed to <tt>NEW</tt> if the bug is reproducible with the latest sources on Mac OS X or otherwise has enough information to move forward. 
+If the bug is not reproducible with the latest sources, but appears to occur only on the platform stated in the platform field,
+the <tt>PlatformOnly</tt> keyword is added as well as setting the status to <tt>NEW</tt>.
+Along with changing the status, the component should also be set to an appropriate one more specific than <tt>New Bugs</tt> if necessary.</li>
 </ul>
 
 <h3>Analyzing Bugs</h3>
@@ -88,8 +90,9 @@ mailing list, and so they will receive email when a patch is approved and thus r
 long time, the patch submitter could send email requesting status to this mailing list. As a last resort, the patch submitter could contact the
 reviewer directly. Due to everyone's busy schedules, some delays in getting patches reviewed, and then in getting them committed, are inevitable.</p>
 
-<p>If the bug report mentions that the same bug is represented in Apple's internal Radar system, and the person who commits the bug has acces to Radar, then the 
-person who commits the bug should also set the state of the Radar bug to Software Changed/Integrate.</p>
+<p>If the bug report mentions that the same bug is represented in another internal system, such as Apple's internal Radar system, and the person who commits the bug has acces to that system, then the 
+person who commits the bug should also change the state of the bug appropriately in the internal system. For a Radar bug the new appropriate state would be
+Software Changed/Integrate.</p>
 
 <h3><a name="verifying"></a>Verifying Fixes</h3>
 

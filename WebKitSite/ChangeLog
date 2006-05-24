@@ -1,3 +1,10 @@
+2006-05-24  Bradley Morrison  <bradley.morrison@nokia.com>
+
+        Reviewed by John Sullivan.
+
+        * quality/lifecycle.html: mentions case of PlatformOnly bugs
+                                  and 'other' bug databases.
+
 2006-05-25  Joost de Valk  <jdevalk@opendarwin.org>
 
         Reviewed by Timothy Hatcher.
