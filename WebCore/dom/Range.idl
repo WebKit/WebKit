@@ -24,17 +24,17 @@ module ranges {
         // DOM Level 2
 
         readonly attribute Node startContainer
-            getter raises (dom::DOMException);
+            getter raises (DOMException);
         readonly attribute long startOffset
-            getter raises (dom::DOMException);
+            getter raises (DOMException);
         readonly attribute Node endContainer
-            getter raises (dom::DOMException);
+            getter raises (DOMException);
         readonly attribute long endOffset
-            getter raises (dom::DOMException);
+            getter raises (DOMException);
         readonly attribute boolean collapsed
-            getter raises (dom::DOMException);
+            getter raises (DOMException);
         readonly attribute Node commonAncestorContainer
-            getter raises (dom::DOMException);
+            getter raises (DOMException);
 
         void setStart(in Node refNode, 
                       in long offset)

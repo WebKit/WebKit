@@ -1,5 +1,15 @@
 2006-05-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Rubber stamped by Anders.
+        
+        Removed meaningless 'dom::' prefix in IDL files.
+
+        * dom/Range.idl:
+        * html/CanvasRenderingContext2D.idl:
+        * html/HTMLOptionElement.idl:
+
+2006-05-24  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by andersca.
         
         - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=9095

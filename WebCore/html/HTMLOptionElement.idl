@@ -23,9 +23,9 @@ module html {
         readonly attribute  HTMLFormElement      form;
                  attribute  boolean              defaultSelected;
                  attribute  DOMString            text
-                        setter raises (dom::DOMException);
+                        setter raises (DOMException);
                  attribute  long                 index
-                        setter raises (dom::DOMException); // FIXME: We disallow setting in violation of DOM 1 HTML.
+                        setter raises (DOMException); // FIXME: We disallow setting in violation of DOM 1 HTML.
                  attribute  boolean              disabled;
                  attribute  DOMString            label;
                  attribute  boolean              selected;
