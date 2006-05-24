@@ -76,14 +76,24 @@ void FontData::platformInit()
 
 void FontData::platformDestroy()
 {
+    cairo_font_face_destroy(m_font.fontFace());
+    cairo_scaled_font_destroy(m_font.scaledFont());
+    DeleteObject(m_font.hfont());
+
     // We don't hash this on Win32, so it's effectively owned by us.
     delete m_smallCapsFontData;
 }
 
 FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) const
 {
-    if (!m_smallCapsFontData)
-        return (FontData*)this; // FIXME: Implement.
+    if (!m_smallCapsFontData) {
+        LOGFONT winfont;
+        GetObject(m_font.hfont(), sizeof(LOGFONT), &winfont);
+        int smallCapsHeight = lroundf(0.70f * fontDescription.computedSize());
+        winfont.lfHeight = -WIN32_FONT_LOGICAL_SCALE * smallCapsHeight;
+        HFONT hfont = CreateFontIndirect(&winfont);
+        m_smallCapsFontData = new FontData(FontPlatformData(hfont, smallCapsHeight));
+    }
     return m_smallCapsFontData;
 }
 

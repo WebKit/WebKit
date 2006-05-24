@@ -1,3 +1,15 @@
+2006-05-24  Dave Hyatt <hyatt@apple.com>
+
+        Fix the font cache corruption problems on Win32.  Move the
+        native font destruction code out of FontPlatformData and
+        into FontData.  Implement smallCaps.
+
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::platformDestroy):
+        (WebCore::FontData::smallCapsFontData):
+        * platform/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::~FontPlatformData):
+
 2006-05-24  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

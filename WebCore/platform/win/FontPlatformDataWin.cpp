@@ -46,11 +46,6 @@ FontPlatformData::FontPlatformData(HFONT font, int size)
     
 FontPlatformData::~FontPlatformData()
 {
-    if (m_font && m_font != (HFONT)-1) {
-        cairo_font_face_destroy(m_fontFace);
-        cairo_scaled_font_destroy(m_scaledFont);
-        DeleteObject(m_font);
-    }
 }
 
 }
