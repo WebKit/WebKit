@@ -1,5 +1,16 @@
 2006-05-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by andersca.
+        
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=9095
+        regression: can't select by setting option.selected to true
+        
+        'text' and 'selected' were erroneously marked read-only for option elements.
+        
+        * html/HTMLOptionElement.idl:
+
+2006-05-24  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by mjs.
 
         - WebCore half of fix for <rdar://problem/4557926> TOT REGRESSION: Crash

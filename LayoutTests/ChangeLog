@@ -1,5 +1,13 @@
 2006-05-24  Geoffrey Garen  <ggaren@apple.com>
 
+        - Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9095
+        regression: can't select by setting option.selected to true
+
+        * fast/dom/option-properties-expected.txt: Added.
+        * fast/dom/option-properties.html: Added.
+
+2006-05-24  Geoffrey Garen  <ggaren@apple.com>
+
         Layout tests for DOM object cache and garbage collection,
         <rdar://problem/4557926> TOT REGRESSION: Crash occurs when attempting 
         to view image in slideshow mode at http://d.smugmug.com/gallery/581716 

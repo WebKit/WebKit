@@ -22,12 +22,13 @@ module html {
     interface [LegacyParent=KJS::JSHTMLElement] HTMLOptionElement : HTMLElement {
         readonly attribute  HTMLFormElement      form;
                  attribute  boolean              defaultSelected;
-        readonly attribute  DOMString            text;
+                 attribute  DOMString            text
+                        setter raises (dom::DOMException);
                  attribute  long                 index
                         setter raises (dom::DOMException); // FIXME: We disallow setting in violation of DOM 1 HTML.
                  attribute  boolean              disabled;
                  attribute  DOMString            label;
-        readonly attribute  boolean              selected;
+                 attribute  boolean              selected;
                  attribute  DOMString            value;
     };
 
