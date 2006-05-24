@@ -192,10 +192,9 @@ void WebFramePrivate::paint()
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(d->webView->windowHandle(), &ps);
     cairo_surface_t* finalSurface = cairo_win32_surface_create(hdc);
-    cairo_surface_t* surface = cairo_surface_create_similar(finalSurface,
-                                                            CAIRO_CONTENT_COLOR_ALPHA,
-                                                            ps.rcPaint.right - ps.rcPaint.left,
-                                                            ps.rcPaint.bottom - ps.rcPaint.top);
+    cairo_surface_t* surface = cairo_win32_surface_create_with_dib(CAIRO_FORMAT_ARGB32,
+                                                                   ps.rcPaint.right - ps.rcPaint.left,
+                                                                   ps.rcPaint.bottom - ps.rcPaint.top);
 
     cairo_t* context = cairo_create(surface);
     static cairo_font_options_t* fontOptions;
@@ -209,11 +208,8 @@ void WebFramePrivate::paint()
     IntRect documentDirtyRect = ps.rcPaint;
     documentDirtyRect.move(d->frameView->contentsX(), d->frameView->contentsY());
 
-    // FIXME: We have to set the transform using both cairo and GDI until we use cairo for text.
     HDC surfaceDC = cairo_win32_surface_get_dc(surface);
     SaveDC(surfaceDC);
-    OffsetViewportOrgEx(surfaceDC, -d->frameView->contentsX() - ps.rcPaint.left, 
-                                   -d->frameView->contentsY() - ps.rcPaint.top, 0);
     cairo_translate(context, -d->frameView->contentsX() - ps.rcPaint.left, 
                              -d->frameView->contentsY() - ps.rcPaint.top);
     d->frame->paint(&gc, documentDirtyRect);

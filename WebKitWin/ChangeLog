@@ -1,3 +1,14 @@
+2006-05-24  Dave Hyatt <hyatt@apple.com>
+
+        Don't use create_similar, since it does fills and work on
+        initialization.  Just make a DIB instead for the offscreen
+        surface.
+
+        Reviewed by maciej.
+
+        * WebFramePrivate.cpp:
+        (WebKit::WebFramePrivate::paint):
+
 2006-05-22  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by adele.
