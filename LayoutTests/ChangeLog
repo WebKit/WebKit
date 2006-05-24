@@ -1,3 +1,13 @@
+2006-05-24  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        Add test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9092
+        innerText is empty for elements without renderers.
+        
+        * fast/dom/inner-text-with-no-renderer-expected.txt: Added.
+        * fast/dom/inner-text-with-no-renderer.html: Added.
+
 2006-05-23  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej.

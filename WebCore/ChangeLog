@@ -1,3 +1,19 @@
+2006-05-24  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9092
+        innerText is empty for elements without renderers
+
+        * dom/Node.cpp:
+        (WebCore::Node::textContent):
+        * dom/Node.h:
+        Add optional convertBRsToNewlines argument for textContent.
+        
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::innerText):
+        If the element doesn't have a renderer, return textContent.
+
 2006-05-24  Dave Hyatt <hyatt@apple.com>
 
         Fix a bug with the computation of the Cairo glyph offsets

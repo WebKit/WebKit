@@ -1319,7 +1319,7 @@ String Node::lookupNamespacePrefix(const String &_namespaceURI, const Element *o
     return String();
 }
 
-String Node::textContent() const
+String Node::textContent(bool convertBRsToNewlines) const
 {
     switch (nodeType()) {
         case TEXT_NODE:
@@ -1329,6 +1329,9 @@ String Node::textContent() const
             return nodeValue();
         
         case ELEMENT_NODE:
+            if (hasTagName(brTag) && 
+                convertBRsToNewlines)
+                return "\n";
         case ATTRIBUTE_NODE:
         case ENTITY_NODE:
         case ENTITY_REFERENCE_NODE:
@@ -1339,7 +1342,7 @@ String Node::textContent() const
                 if (child->nodeType() == COMMENT_NODE || child->nodeType() == PROCESSING_INSTRUCTION_NODE)
                     continue;
             
-                s += child->textContent();
+                s += child->textContent(convertBRsToNewlines);
             }
         
             return s;
