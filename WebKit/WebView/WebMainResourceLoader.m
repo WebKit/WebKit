@@ -55,7 +55,7 @@
 
 @implementation WebMainResourceLoader
 
-- initWithDataSource:(WebDataSource *)ds
+- (id)initWithDataSource:(WebDataSource *)ds
 {
     self = [super init];
     
@@ -330,17 +330,8 @@
         [self clearResourceData];
     }
     
-    if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
-        if (!supportsMultipartContent) {
-            [dataSource _removeSubresourceLoader:self];
-            [[dataSource webFrame] _checkLoadComplete];
-            [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                             code:NSURLErrorUnsupportedURL
-                                                              URL:[r URL]]];
-            return;
-        }
+    if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"])
         loadingMultipartContent = YES;
-    }
         
     // FIXME: This is a workaround to make web archive files work with Foundations that
     // are too old to know about web archive files. We should remove this before we ship.

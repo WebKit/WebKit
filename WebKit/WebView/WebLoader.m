@@ -657,9 +657,4 @@ static BOOL NSURLConnectionSupportsBufferedData;
     return inNSURLConnectionCallback != 0;
 }
 
-- (void)setSupportsMultipartContent:(BOOL)flag
-{
-    supportsMultipartContent = flag;
-}
-
 @end

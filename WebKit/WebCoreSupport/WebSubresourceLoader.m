@@ -29,13 +29,11 @@
 #import <WebKit/WebSubresourceLoader.h>
 
 #import <JavaScriptCore/Assertions.h>
-#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFormDataStream.h>
-#import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebViewInternal.h>
 
 #import <Foundation/NSURLResponse.h>
 
@@ -69,7 +67,6 @@
 {
     WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
     
-    [loader setSupportsMultipartContent:WKSupportsMultipartXMixedReplace(newRequest)];
     [source _addSubresourceLoader:loader];
 
     NSEnumerator *e = [customHeaders keyEnumerator];
@@ -87,9 +84,7 @@
     [newRequest setCachePolicy:[[source _originalRequest] cachePolicy]];
     [newRequest _web_setHTTPReferrer:referrer];
     
-    WebView *_webView = [source _webView];
-    [newRequest setMainDocumentURL:[[[[_webView mainFrame] dataSource] request] URL]];
-    [newRequest _web_setHTTPUserAgent:[_webView userAgentForURL:[newRequest URL]]];
+    [[source webFrame] _addExtraFieldsToRequest:newRequest mainResource:NO alwaysFromRequest:NO];
             
     if (![loader loadWithRequest:newRequest])
         loader = nil;
@@ -159,17 +154,8 @@
 {
     ASSERT(r);
 
-    if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
-        if (!supportsMultipartContent) {
-            [dataSource _removeSubresourceLoader:self];
-            [[[dataSource _webView] mainFrame] _checkLoadComplete];
-            [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                             code:NSURLErrorUnsupportedURL
-                                                              URL:[r URL]]];
-            return;
-        }   
+    if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"])
         loadingMultipartContent = YES;
-    }
 
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216

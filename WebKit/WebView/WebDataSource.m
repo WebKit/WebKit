@@ -351,7 +351,7 @@
         }else{
             ASSERT(!_private->iconLoader);
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->iconURL];
-            [[self webFrame] _addExtraFieldsToRequest:request alwaysFromRequest:NO];
+            [[self webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
             _private->iconLoader = [[WebIconLoader alloc] initWithRequest:request];
             [request release];
             [_private->iconLoader setDelegate:self];
@@ -479,10 +479,9 @@
         identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
     
     _private->mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:self];
-    [_private->mainResourceLoader setSupportsMultipartContent:_private->supportsMultipartContent];
     
     [_private->mainResourceLoader setIdentifier: identifier];
-    [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
+    [[self webFrame] _addExtraFieldsToRequest:_private->request mainResource:YES alwaysFromRequest:NO];
     if (![_private->mainResourceLoader loadWithRequest:_private->request]) {
         // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?

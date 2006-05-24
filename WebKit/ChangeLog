@@ -1,3 +1,29 @@
+2006-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Maciej.
+        
+        - more loader refactoring to simplify things and remove knowledge of WebView from WebSubresourceLoader
+
+        * WebCoreSupport/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forDataSource:]):
+        (-[WebSubresourceLoader didReceiveResponse:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _loadIcon]):
+        (-[WebDataSource _startLoading]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadRequest:archive:]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrame _addExtraFieldsToRequest:mainResource:alwaysFromRequest:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFramePrivate.h:
+        * WebView/WebLoader.h:
+        * WebView/WebLoader.m:
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader initWithDataSource:]):
+        (-[WebMainResourceLoader didReceiveResponse:]):
+
 2006-05-23  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

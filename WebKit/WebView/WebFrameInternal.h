@@ -58,6 +58,8 @@
 // This should be called when leaving a page or closing the WebView
 - (void)_willCloseURL;
 
+- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f;
+
 @end
 
 @interface NSObject (WebInternalFrameLoadDelegate)

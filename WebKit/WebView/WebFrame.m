@@ -411,7 +411,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     // note this copies request
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     NSMutableURLRequest *r = [newDataSource request];
-    [self _addExtraFieldsToRequest:r alwaysFromRequest: NO];
+    [self _addExtraFieldsToRequest:r mainResource:YES alwaysFromRequest:NO];
     if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
         loadType = WebFrameLoadTypeSame;
@@ -1381,7 +1381,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         
         if (!inPageCache) {
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemURL];
-            [self _addExtraFieldsToRequest:request alwaysFromRequest: (formData != nil)?YES:NO];
+            [self _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(formData != nil) ? YES : NO];
 
             // If this was a repost that failed the page cache, we might try to repost the form.
             NSDictionary *action;
@@ -1812,20 +1812,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
 }
 
-- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request alwaysFromRequest: (BOOL)f
-{
-    [request _web_setHTTPUserAgent:[[self webView] userAgentForURL:[request URL]]];
-    
-    // Don't set the cookie policy URL if it's already been set.
-    if ([request mainDocumentURL] == nil){
-        if (self == [[self webView] mainFrame] || f) {
-            [request setMainDocumentURL:[request URL]];
-        } else {
-            [request setMainDocumentURL:[[[[self webView] mainFrame] dataSource] _URL]];
-        }
-    }
-}
-
 - (void)_continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
 {
     if (!request) {
@@ -1858,7 +1844,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request _web_setHTTPReferrer:referrer];
-    [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission)];
+    [self _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:(event != nil || isFormSubmission)];
     if (loadType == WebFrameLoadTypeReload) {
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     }
@@ -2000,7 +1986,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // FIXME: Where's the code that implements what the comment above says?
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [self _addExtraFieldsToRequest:request alwaysFromRequest:YES];
+    [self _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:YES];
     [request _web_setHTTPReferrer:referrer];
     [request setHTTPMethod:@"POST"];
     webSetHTTPBody(request, postData);
@@ -2777,6 +2763,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_willCloseURL
 {
     [self _removeAllPlugInViews];
+}
+
+- (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f
+{
+    [request _web_setHTTPUserAgent:[[self webView] userAgentForURL:[request URL]]];
+    
+    // Don't set the cookie policy URL if it's already been set.
+    if ([request mainDocumentURL] == nil) {
+        if (mainResource && (self == [[self webView] mainFrame] || f))
+            [request setMainDocumentURL:[request URL]];
+        else
+            [request setMainDocumentURL:[[[[self webView] mainFrame] dataSource] _URL]];
+    }
 }
 
 @end
