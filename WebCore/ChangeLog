@@ -1,3 +1,14 @@
+2006-05-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4549610> REGRESSION: No initial cursor in Mail reply or Blot document
+        <rdar://problem/4560698> Mail is very crashy in Leopard9A182, WebCore::Range::compareBoundaryPoints(WebCore::Node*, int, WebCore::Node*, int)
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setSelectionFromNone): Find the body and stick a caret 
+        in it.
+
 2006-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Anders.

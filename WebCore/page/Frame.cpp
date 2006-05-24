@@ -3215,22 +3215,17 @@ void Frame::setMediaType(const String& type)
 
 void Frame::setSelectionFromNone()
 {
-    // Put the caret someplace if the selection is empty and the part is editable.
-    // This has the effect of flashing the caret in a contentEditable view automatically 
-    // without requiring the programmer to set a selection explicitly.
+    // Put a caret inside the body if the entire frame is editable (either the 
+    // entire WebView is editable or designMode is on for this document).
     Document *doc = document();
-    if (doc && selection().isNone() && isContentEditable()) {
-        Node *node = doc->documentElement();
-        while (node) {
-            // Look for a block flow, but skip over the HTML element, since we really
-            // want to get at least as far as the the BODY element in a document.
-            if (node->isBlockFlow() && node->hasTagName(htmlTag))
-                break;
-            node = node->traverseNextNode();
-        }
-        if (node)
-            setSelection(SelectionController(Position(node, 0), DOWNSTREAM));
-    }
+    if (!doc || !selection().isNone() || !isContentEditable())
+        return;
+        
+    Node* node = doc->documentElement();
+    while (node && !node->hasTagName(bodyTag))
+        node = node->traverseNextNode();
+    if (node)
+        setSelection(SelectionController(Position(node, 0), DOWNSTREAM));
 }
 
 bool Frame::displaysWithFocusAttributes() const
