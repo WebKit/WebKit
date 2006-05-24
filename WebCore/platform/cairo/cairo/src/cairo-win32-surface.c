@@ -824,8 +824,13 @@ _cairo_win32_surface_fill_rectangles (void			*abstract_surface,
      * to figure out when we can use GDI.  We don't have that checking
      * anywhere at the moment, so just bail and use the fallback
      * paths. */
-    if (surface->format != CAIRO_FORMAT_RGB24)
-	return CAIRO_INT_STATUS_UNSUPPORTED;
+    //if (surface->format != CAIRO_FORMAT_RGB24)
+    //	return CAIRO_INT_STATUS_UNSUPPORTED;
+    // FIXME: We'll go ahead and optimize this now and just assume we're ok if
+    // the color has no alpha.  Probably need to check various composite operators to
+    // get this exactly right.
+    if (color->alpha != 1.0)
+        return CAIRO_INT_STATUS_UNSUPPORTED;
 
     /* Optimize for no destination alpha (surface->pixman_image is non-NULL for all
      * surfaces with alpha.)
@@ -1016,8 +1021,9 @@ _cairo_win32_surface_show_glyphs (void			*surface,
 
     /* We can only handle operator SOURCE or OVER with the destination
      * having no alpha */
-    if ((op != CAIRO_OPERATOR_SOURCE && op != CAIRO_OPERATOR_OVER) || 
-	(dst->format != CAIRO_FORMAT_RGB24))
+    if ((op != CAIRO_OPERATOR_SOURCE && op != CAIRO_OPERATOR_OVER))
+        // FIXME: It's not clear why ExtTextOut can't be called when the
+        // destination has alpha.  Remove the RGB24 restriction. || (dst->format != CAIRO_FORMAT_RGB24))
 	return CAIRO_INT_STATUS_UNSUPPORTED;
 
     /* If we have a fallback mask clip set on the dst, we have
