@@ -3069,6 +3069,11 @@ PassRefPtr<HTMLCollection> Document::objects()
     return new HTMLCollection(this, HTMLCollection::DOC_OBJECTS);
 }
 
+PassRefPtr<HTMLCollection> Document::scripts()
+{
+    return new HTMLCollection(this, HTMLCollection::DOC_SCRIPTS);
+}
+
 PassRefPtr<HTMLCollection> Document::links()
 {
     return new HTMLCollection(this, HTMLCollection::DOC_LINKS);

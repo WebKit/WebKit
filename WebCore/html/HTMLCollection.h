@@ -51,6 +51,7 @@ public:
         DOC_FORMS,     // all FORMS
         DOC_LINKS,     // all A _and_ AREA elements with a value for href
         DOC_ANCHORS,      // all A elements with a value for name
+        DOC_SCRIPTS,   // all SCRIPT element
         // from HTMLTable, HTMLTableSection, HTMLTableRow
         TABLE_ROWS,    // all rows in this table or tablesection
         TABLE_TBODIES, // all TBODY elements in this table

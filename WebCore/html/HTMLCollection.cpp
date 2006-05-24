@@ -113,6 +113,10 @@ Node *HTMLCollection::traverseNextItem(Node *current) const
                 if (e->hasLocalName(imgTag))
                     found = true;
                 break;
+            case DOC_SCRIPTS:
+                if (e->hasLocalName(scriptTag))
+                    found = true;
+                break;
             case DOC_FORMS:
                 if(e->hasLocalName(formTag))
                     found = true;

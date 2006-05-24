@@ -266,13 +266,8 @@ JSValue *JSHTMLDocument::getValueProperty(ExecState *exec, int token) const
     return getHTMLCollection(exec, doc.forms().get());
   case Anchors:
     return getHTMLCollection(exec, doc.anchors().get());
-  case Scripts: // TODO (IE-specific)
-    {
-      // To be implemented. Meanwhile, return an object with a length property set to 0
-      JSObject *obj = new JSObject;
-      obj->put(exec, lengthPropertyName, jsNumber(0));
-      return obj;
-    }
+  case Scripts:
+    return getHTMLCollection(exec, doc.scripts().get());
   case All:
     // If "all" has been overwritten, return the overwritten value
     if (JSValue *v = getDirect("all"))

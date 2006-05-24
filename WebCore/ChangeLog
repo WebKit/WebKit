@@ -1,5 +1,27 @@
 2006-05-24  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9093
+        Implement document.scripts
+        
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::getValueProperty):
+        Return document.scripts() instead of a placeholder object.
+        
+        * dom/Document.cpp:
+        (WebCore::Document::scripts):
+        * dom/Document.h:
+        Add Document::scripts.
+        
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::traverseNextItem):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::):
+        Add scripts collection type which traverses all script elements.
+        
+2006-05-24  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Geoff.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9092

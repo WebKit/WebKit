@@ -1,0 +1,5 @@
+This tests that document.scripts works correctly.
+PASS: 2 should be 2 and is.
+FAIL: first should be first but instead is [object SCRIPT]
+FAIL: second should be second but instead is [object SCRIPT]
+
