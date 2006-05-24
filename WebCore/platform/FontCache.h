@@ -31,6 +31,10 @@
 
 #include <unicode/umachine.h>
 
+#if PLATFORM(WIN)
+#include <mlang.h>
+#endif
+
 namespace WebCore
 {
 
@@ -49,6 +53,10 @@ public:
     
     // Also implemented by the platform.
     static void platformInit();
+
+#if PLATFORM(WIN)
+    static IMLangFontLink2* getFontLinkInterface();
+#endif
 
 private:
     static FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family);

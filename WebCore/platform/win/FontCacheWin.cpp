@@ -31,6 +31,7 @@
 #include "FontPlatformData.h"
 #include "Font.h"
 #include <windows.h>
+#include <mlang.h>
 
 namespace WebCore
 {
@@ -40,16 +41,52 @@ void FontCache::platformInit()
     // Not needed on Windows.
 }
 
+IMLangFontLink2* FontCache::getFontLinkInterface()
+{
+    static IMultiLanguage *multiLanguage;
+    if (!multiLanguage) {
+        if (CoCreateInstance(CLSID_CMultiLanguage, 0, CLSCTX_ALL, IID_IMultiLanguage, (void**)&multiLanguage) != S_OK)
+            return 0;
+    }
+
+    static IMLangFontLink2* langFontLink;
+    if (!langFontLink) {
+        if (multiLanguage->QueryInterface(IID_IMLangFontLink2, (void**)&langFontLink) != S_OK)
+            return 0;
+    }
+
+    return langFontLink;
+}
+
 const FontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    // FIXME: IMLangFontLink::MapFont Method does what we want.  Font has to be released
-    // when we're done with it (using IMLangFontLink::ReleaseFont).
-    return 0;
+    // IMLangFontLink::MapFont Method does what we want.
+    IMLangFontLink2* langFontLink = getFontLinkInterface();
+    if (!langFontLink)
+        return 0;
+
+    FontData* fontData = 0;
+    HDC hdc = GetDC(0);
+    DWORD fontCodePages;
+    langFontLink->GetFontCodePages(hdc, font.primaryFont()->m_font.hfont(), &fontCodePages);
+
+    DWORD actualCodePages;
+    long cchActual;
+    langFontLink->GetStrCodePages(characters, length, fontCodePages, &actualCodePages, &cchActual);
+    if (cchActual) {
+        HFONT result;
+        if (langFontLink->MapFont(hdc, actualCodePages, characters[0], &result) == S_OK) {
+            fontData = new FontData(FontPlatformData(result, font.fontDescription().computedPixelSize()));
+            fontData->setIsMLangFont();
+        }
+    }
+
+    ReleaseDC(0, hdc);
+    return fontData;
 }
 
 FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
 {
-    // FIXME: Worth trying to map fonts like Courier to Courier New if missing?
     return 0;
 }
 
@@ -65,8 +102,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 {
     LOGFONT winfont;
 
-    // The size here looks unusual.  The negative number is intentional.  The logical size constant is 32 and
-    // is used to make a much larger font so that sub-pixel accuracy can be attained.
+    // The size here looks unusual.  The negative number is intentional.  The logical size constant is 32.
     winfont.lfHeight = WIN32_FONT_LOGICAL_SCALE * -fontDescription.computedPixelSize();
     winfont.lfWidth = 0;
     winfont.lfEscapement = 0;

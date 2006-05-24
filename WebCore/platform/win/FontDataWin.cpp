@@ -36,12 +36,15 @@
 #include <unicode/unorm.h>
 #include <cairo.h>
 #include <cairo-win32.h>
+#include <mlang.h>
 
 namespace WebCore
 {
 
 void FontData::platformInit()
 {    
+    m_isMLangFont = false;
+
     HDC dc = GetDC(0);
     SaveDC(dc);
 
@@ -78,7 +81,14 @@ void FontData::platformDestroy()
 {
     cairo_font_face_destroy(m_font.fontFace());
     cairo_scaled_font_destroy(m_font.scaledFont());
-    DeleteObject(m_font.hfont());
+
+    if (m_isMLangFont) {
+        // We have to release the font instead of just deleting it, since we didn't make it.
+        IMLangFontLink2* langFontLink = FontCache::getFontLinkInterface();
+        if (langFontLink)
+            langFontLink->ReleaseFont(m_font.hfont());
+    } else
+        DeleteObject(m_font.hfont());
 
     // We don't hash this on Win32, so it's effectively owned by us.
     delete m_smallCapsFontData;
