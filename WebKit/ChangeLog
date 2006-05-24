@@ -1,6 +1,6 @@
 2006-05-23  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Maciej.
+        Reviewed by Tim.
         
         - more loader refactoring to simplify things and remove knowledge of WebView from WebSubresourceLoader
 
