@@ -1,3 +1,21 @@
+2006-05-24  David Hyatt  <hyatt@apple.com>
+
+        Implement font aliasing of family names for Courier/Courier New,
+        Arial/Helvetica, and Times/Times New Roman.  This behavior matches
+        WinIE and Firefox.
+
+        Reviewed by maciej
+
+        Test cases not really possible, since they would have to rely on people
+        not having the fonts installed (so not having installed Office).
+
+        * platform/FontCache.cpp:
+        (WebCore::alternateFamilyName):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/FontCache.h:
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeLeftoverAnonymousBoxes):
+
 === WebCore-521.11 ===
 
 2006-05-24  Justin Garcia  <justin.garcia@apple.com>

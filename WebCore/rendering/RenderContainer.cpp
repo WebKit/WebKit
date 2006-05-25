@@ -459,7 +459,8 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
         }
         child = next;
     }
-    if ( parent() )
+
+    if (parent()) // && isAnonymousBlock() && !continuation() && !childrenInline() && !isTableCell())
         parent()->removeLeftoverAnonymousBoxes();
 }
 

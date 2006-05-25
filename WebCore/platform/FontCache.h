@@ -59,7 +59,7 @@ public:
 #endif
 
 private:
-    static FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family);
+    static FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
     static FontData* getCachedFontData(const FontPlatformData*);
     
     // These three methods are implemented by each platform.

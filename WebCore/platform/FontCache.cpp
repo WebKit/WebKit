@@ -95,8 +95,35 @@ typedef HashMap<FontPlatformDataCacheKey, FontPlatformData*, FontPlatformDataCac
 
 static FontPlatformDataCache* gFontPlatformDataCache = 0;
 
+static const AtomicString& alternateFamilyName(const AtomicString& familyName)
+{
+    // Alias Courier <-> Courier New
+    static AtomicString courier("Courier"), courierNew("Courier New");
+    if (equalIgnoringCase(familyName, courier))
+        return courierNew;
+    if (equalIgnoringCase(familyName, courierNew))
+        return courier;
+
+    // Alias Times and Times New Roman.
+    static AtomicString times("Times"), timesNewRoman("Times New Roman");
+    if (equalIgnoringCase(familyName, times))
+        return timesNewRoman;
+    if (equalIgnoringCase(familyName, timesNewRoman))
+        return times;
+    
+    // Alias Arial and Helvetica
+    static AtomicString arial("Arial"), helvetica("Helvetica");
+    if (equalIgnoringCase(familyName, arial))
+        return helvetica;
+    if (equalIgnoringCase(familyName, helvetica))
+        return arial;
+
+    return emptyAtom;
+}
+
 FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, 
-                                                       const AtomicString& familyName)
+                                                       const AtomicString& familyName,
+                                                       bool checkingAlternateName)
 {
     if (!gFontPlatformDataCache) {
         gFontPlatformDataCache = new FontPlatformDataCache;
@@ -105,12 +132,27 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 
     FontPlatformDataCacheKey key(familyName, fontDescription.computedPixelSize(), fontDescription.bold(), fontDescription.italic());
     FontPlatformData* result = 0;
+    bool foundResult;
     FontPlatformDataCache::iterator it = gFontPlatformDataCache->find(key);
     if (it == gFontPlatformDataCache->end()) {
         result = createFontPlatformData(fontDescription, familyName);
         gFontPlatformDataCache->set(key, result);
-    } else
+        foundResult = result;
+    } else {
         result = it->second;
+        foundResult = true;
+    }
+
+    if (!foundResult && !checkingAlternateName) {
+        // We were unable to find a font.  We have a small set of fonts that we alias to other names, 
+        // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
+        const AtomicString& alternateName = alternateFamilyName(familyName);
+        if (!alternateName.isEmpty())
+            result = getCachedFontPlatformData(fontDescription, alternateName, true);
+        if (result)
+            gFontPlatformDataCache->set(key, new FontPlatformData(*result)); // Cache the result under the old name.
+    }
+
     return result;
 }
 
