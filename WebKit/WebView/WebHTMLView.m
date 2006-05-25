@@ -2590,7 +2590,7 @@ static WebHTMLView *lastHitView = nil;
     LOG(View, "%@ drawing", self);
 
     const NSRect *rects;
-    int count;
+    WebNSInteger count;
     [self getRectsBeingDrawn:&rects count:&count];
 
     BOOL subviewsWereSetAside = _private->subviewsSetAside;
@@ -5098,7 +5098,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return validAttributes;
 }
 
-- (unsigned int)characterIndexForPoint:(NSPoint)thePoint
+- (WebNSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
     NSWindow *window = [self window];
     WebFrameBridge *bridge = [self _bridge];
@@ -5169,9 +5169,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return (long)self;
 }
 #else
-- (NSInt)conversationIdentifier
+- (NSInteger)conversationIdentifier
 {
-    return (NSInt)self;
+    return (NSInteger)self;
 }
 #endif
 

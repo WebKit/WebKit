@@ -756,7 +756,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     if (!_private->webViewLoaded)
         return;
 
-    float red = 0.0, green = 0.0, blue = 0.0;
+    CGFloat red = 0.0, green = 0.0, blue = 0.0;
     NSColor *color = [[NSColor alternateSelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     [color getRed:&red green:&green blue:&blue alpha:NULL];
 

@@ -95,9 +95,9 @@
 
 #import <WebCore/WebCoreTextRenderer.h>
 
-#if __ppc__
+#if __ppc__ || __ppc64__
 #define PROCESSOR "PPC"
-#elif __i386__
+#elif __i386__ || __x86_64__
 #define PROCESSOR "Intel"
 #else
 #error Unknown architecture
@@ -282,7 +282,7 @@ macro(yankAndSelect) \
     WebFrameBridge *dragCaretBridge;
     
     BOOL hasSpellCheckerDocumentTag;
-    WebNSInt spellCheckerDocumentTag;
+    WebNSInteger spellCheckerDocumentTag;
 
     BOOL continuousSpellCheckingEnabled;
     BOOL smartInsertDeleteEnabled;
@@ -683,7 +683,7 @@ static bool debugWidget = true;
     return menu;
 }
 
-- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInt)modifierFlags
+- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInteger)modifierFlags
 {
     // When the mouse isn't over this view at all, we'll get called with a dictionary of nil over
     // and over again. So it's a good idea to catch that here and not send multiple calls to the delegate
@@ -2882,7 +2882,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return _private->continuousSpellCheckingEnabled && [self _continuousCheckingAllowed];
 }
 
-- (WebNSInt)spellCheckerDocumentTag
+- (WebNSInteger)spellCheckerDocumentTag
 {
     if (!_private->hasSpellCheckerDocumentTag) {
         _private->spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];

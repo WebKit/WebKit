@@ -36,6 +36,8 @@
 
 #import <WebKitSystemInterface.h>
 
+#import "WebTypesInternal.h"
+
 #import <mach-o/arch.h>
 #import <mach-o/loader.h>
 
@@ -369,7 +371,7 @@
             [[object lastModifiedDate] isEqual:lastModifiedDate]);
 }
 
-- (unsigned)hash
+- (WebNSUInteger)hash
 {
     return [[name stringByAppendingString:[lastModifiedDate description]] hash];
 }

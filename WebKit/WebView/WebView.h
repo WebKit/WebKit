@@ -29,9 +29,9 @@
 #import <Cocoa/Cocoa.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSInt int
+#define WebNSInteger int
 #else
-#define WebNSInt NSInt
+#define WebNSInteger NSInt
 #endif
 
 @class DOMCSSStyleDeclaration;
@@ -598,7 +598,7 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 - (BOOL)smartInsertDeleteEnabled;
 - (void)setContinuousSpellCheckingEnabled:(BOOL)flag;
 - (BOOL)isContinuousSpellCheckingEnabled;
-- (WebNSInt)spellCheckerDocumentTag;
+- (WebNSInteger)spellCheckerDocumentTag;
 - (NSUndoManager *)undoManager;
 - (void)setEditingDelegate:(id)delegate;
 - (id)editingDelegate;
@@ -713,4 +713,4 @@ a custom implementation for each.
  
 @end
 
-#undef WebNSInt
+#undef WebNSInteger

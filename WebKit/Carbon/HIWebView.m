@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
+#if !__LP64__
+
 #include "HIWebView.h"
 
 #include "CarbonWindowAdapter.h"
@@ -1396,9 +1399,13 @@ HIWebViewEventHandler(
 							sizeof( OSType ), NULL, &tag );
 					GetEventParameter( inEvent, kEventParamControlDataBuffer, typePtr, NULL,
 							sizeof( Ptr ), NULL, &ptr );
-					GetEventParameter( inEvent, kEventParamControlDataBufferSize, typeLongInteger, NULL,
-							sizeof( Size ), NULL, &size );
-	
+
+#if __LP64__
+					GetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt64, NULL, sizeof(Size), NULL, &size);
+#else
+					GetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt32, NULL, sizeof(Size), NULL, &size);
+#endif
+
 					if ( tag == kControlKindTag )
 					{
 						Size		outSize;
@@ -1414,7 +1421,11 @@ HIWebViewEventHandler(
 						}
 
 						outSize = sizeof( ControlKind );
-						SetEventParameter( inEvent, kEventParamControlDataBufferSize, typeLongInteger, sizeof( Size ), &outSize );						
+#if __LP64__
+                        SetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt64, sizeof(Size), &outSize);
+#else
+                        SetEventParameter(inEvent, kEventParamControlDataBufferSize, typeSInt32, sizeof(Size), &outSize);
+#endif
 					}
 
 					break;
@@ -1638,3 +1649,5 @@ UpdateObserver( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void 
         DisposeRgn( region );
     }
 }
+
+#endif

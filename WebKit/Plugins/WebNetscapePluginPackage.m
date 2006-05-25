@@ -290,7 +290,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 {    
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;
     NP_InitializeFuncPtr NP_Initialize = NULL;
-    MainFuncPtr pluginMainFunc;
+    MainFuncPtr pluginMainFunc = NULL;
     NPError npErr;
 
 #if !LOG_DISABLED
@@ -653,8 +653,8 @@ FunctionPointer functionPointerForTVector(TransitionVector tvp)
         if (newGlue != NULL) {
             unsigned i;
             for (i = 0; i < 6; i++) newGlue[i] = temp[i];
-            newGlue[0] |= ((UInt32)tvp >> 16);
-            newGlue[1] |= ((UInt32)tvp & 0xFFFF);
+            newGlue[0] |= ((uintptr_t)tvp >> 16);
+            newGlue[1] |= ((uintptr_t)tvp & 0xFFFF);
             MakeDataExecutable(newGlue, sizeof(temp));
         }
     }

@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
+#if !__LP64__
+
 #import "HIViewAdapter.h"
 
 #import <objc/objc.h>
@@ -260,3 +263,4 @@ static void SetViewNeedsDisplay(HIViewRef inHIView, RgnHandle inRegion, Boolean 
     }
 }
 
+#endif

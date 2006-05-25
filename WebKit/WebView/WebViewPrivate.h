@@ -26,17 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Define WebNSInt and WebNSUInt to wrap around NSInt on Leopard and still build on Tiger
-// Once building on Tiger isn't needed we will drop WebNSInt and use NSInt
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-typedef int WebNSInt;
-typedef unsigned int WebNSUInt;
-#else
-typedef NSInt WebNSInt;
-typedef NSUInt WebNSUInt;
-#endif
-
 #import <WebKit/WebView.h>
 #import <WebKit/WebFramePrivate.h>
 

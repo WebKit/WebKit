@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
+#if !__LP64__
+
 #include "CarbonUtils.h"
 #import <WebKitSystemInterface.h>
 
@@ -36,7 +39,6 @@ static void				PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage
 static NSAutoreleasePool*	sPool;
 static unsigned numPools;
 static EventLoopRef poolLoop;
-
 
 void                    HIWebViewRegisterClass( void );
 
@@ -66,7 +68,6 @@ WebInitForCarbon()
         HIWebViewRegisterClass();
     }
 }
-
 
 /*
     The pool cleaner is required because Carbon applications do not have
@@ -129,3 +130,4 @@ WebConvertNSImageToCGImageRef(
 	return image;
 }
 
+#endif

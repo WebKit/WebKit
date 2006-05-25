@@ -38,7 +38,7 @@
 
 #import <Foundation/NSURLResponse.h>
 
-static const char *CarbonPathFromPOSIXPath(const char *posixPath);
+static char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 #define WEB_REASON_NONE -1
 
@@ -265,7 +265,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     if (stream.ndata != NULL) {
         if (reason == NPRES_DONE && (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)) {
             ASSERT(path != NULL);
-            const char *carbonPath = CarbonPathFromPOSIXPath(path);
+            char *carbonPath = CarbonPathFromPOSIXPath(path);
             ASSERT(carbonPath != NULL);
             NPP_StreamAsFile(instance, &stream, carbonPath);
 
@@ -277,6 +277,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             free(path);
             path = NULL;
             LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", responseURL, carbonPath);
+            free(carbonPath);
         }
         
         NPError npErr;
@@ -430,55 +431,23 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 @end
 
-static const char *CarbonPathFromPOSIXPath(const char *posixPath)
+static char *CarbonPathFromPOSIXPath(const char *posixPath)
 {
-    // Returns NULL if path is to file that does not exist.
     // Doesn't add a trailing colon for directories; this is a problem for paths to a volume,
     // so this function would need to be revised if we ever wanted to call it with that.
 
-    OSStatus error;
-    FSCatalogInfo info;
-
-    // Make an FSRef.
-    FSRef ref;
-    error = FSPathMakeRef((const UInt8 *)posixPath, &ref, NULL);
-    if (error != noErr) {
-        return NULL;
-    }
-
-    // Get volume refNum.
-    error = FSGetCatalogInfo(&ref, kFSCatInfoVolume, &info, NULL, NULL, NULL);
-    if (error != noErr) {
-        return NULL;
-    }
-
-    // Get root directory FSRef.
-    FSRef rootRef;
-    error = FSGetVolumeInfo(info.volume, 0, NULL, kFSVolInfoNone, NULL, NULL, &rootRef);
-    if (error != noErr) {
-        return NULL;
-    }
-
-    // Get the pieces of the path.
-    NSMutableData *carbonPath = [NSMutableData dataWithBytes:"" length:1];
-    BOOL needColon = NO;
-    for (;;) {
-        FSSpec spec;
-        FSRef parentRef;
-        error = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, NULL, &spec, &parentRef);
-        if (error != noErr) {
-            return NULL;
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8 *)posixPath, strlen(posixPath), false);
+    if (url) {
+        CFStringRef hfsPath = CFURLCopyFileSystemPath(url, kCFURLHFSPathStyle);
+        CFRelease(url);
+        if (hfsPath) {
+            CFIndex bufSize = CFStringGetMaximumSizeOfFileSystemRepresentation(hfsPath);
+            char *filename = malloc(bufSize);
+            CFStringGetFileSystemRepresentation(hfsPath, filename, bufSize);
+            CFRelease(hfsPath);
+            return filename;
         }
-        if (needColon) {
-            [carbonPath replaceBytesInRange:NSMakeRange(0, 0) withBytes:":" length:1];
-        }
-        [carbonPath replaceBytesInRange:NSMakeRange(0, 0) withBytes:&spec.name[1] length:spec.name[0]];
-        needColon = YES;
-        if (FSCompareFSRefs(&ref, &rootRef) == noErr) {
-            break;
-        }
-        ref = parentRef;
     }
 
-    return (const char *)[carbonPath bytes];
+    return NULL;
 }

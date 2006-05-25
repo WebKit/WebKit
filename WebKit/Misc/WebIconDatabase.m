@@ -35,6 +35,8 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
 
+#import "WebTypesInternal.h"
+
 NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";
 NSString * const WebURLToIconURLKey = 		@"WebSiteURLToIconURLKey";
 
@@ -210,7 +212,7 @@ NSSize WebIconLargeSize = {128, 128};
     if (![self _isEnabled])
         return;
     
-    int retainCount = (int)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URL);
+    WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URL);
     CFDictionarySetValue(_private->pageURLToRetainCount, URL, (void *)(retainCount + 1));
 }
 
@@ -221,14 +223,14 @@ NSSize WebIconLargeSize = {128, 128};
     if (![self _isEnabled])
         return;
     
-    int retainCount = (int)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, pageURL);
+    WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, pageURL);
     
     if (retainCount <= 0) {
         LOG_ERROR("The icon for %@ was released more times than it was retained.", pageURL);
         return;
     }
     
-    int newRetainCount = retainCount - 1;
+    WebNSUInteger newRetainCount = retainCount - 1;
 
     if (newRetainCount == 0) {
         // Forget association between this page URL and a retain count
@@ -605,7 +607,7 @@ NSSize WebIconLargeSize = {128, 128};
 {
     // Add up the retain counts for each associated page, plus the retain counts not associated
     // with any page, which are stored in _private->iconURLToExtraRetainCount
-    int result = (int)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
+    WebNSUInteger result = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
     
     id URLStrings = [_private->iconURLToPageURLs objectForKey:iconURLString];
     if (URLStrings != nil) {
@@ -614,11 +616,11 @@ NSSize WebIconLargeSize = {128, 128};
             NSString *URLString;
             while ((URLString = [e nextObject]) != nil) {
                 ASSERT([URLString isKindOfClass:[NSString class]]);
-                result += (int)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URLString);
+                result += (WebNSUInteger)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URLString);
             }
         } else {
             ASSERT([URLStrings isKindOfClass:[NSString class]]);
-            result += (int)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URLStrings);
+            result += (WebNSUInteger)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, URLStrings);
         }
     }
 
@@ -703,8 +705,8 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(iconURLString);
     
-    int retainCount = (int)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
-    int newRetainCount = retainCount + 1;
+    WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
+    WebNSUInteger newRetainCount = retainCount + 1;
 
     CFDictionarySetValue(_private->iconURLToExtraRetainCount, iconURLString, (void *)newRetainCount);
 
@@ -756,13 +758,13 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(iconURLString);
     
-    int retainCount = (int)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
+    WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->iconURLToExtraRetainCount, iconURLString);
 
     ASSERT(retainCount > 0);
     if (retainCount <= 0)
         return;
     
-    int newRetainCount = retainCount - 1;
+    WebNSUInteger newRetainCount = retainCount - 1;
     if (newRetainCount == 0) {
         CFDictionaryRemoveValue(_private->iconURLToExtraRetainCount, iconURLString);
         if ([self _totalRetainCountForIconURLString:iconURLString] == 0) {

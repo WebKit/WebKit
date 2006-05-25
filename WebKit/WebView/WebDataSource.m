@@ -926,9 +926,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [webView _incrementProgressForIdentifier:identifier data:data];
 
     if ([webView _resourceLoadDelegateImplementations].delegateImplementsDidReceiveContentLength)
-        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInt)lengthReceived fromDataSource:self];
+        [[webView resourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:self];
     else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInt)lengthReceived fromDataSource:self];
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:(WebNSUInteger)lengthReceived fromDataSource:self];
 }
 
 

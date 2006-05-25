@@ -71,12 +71,13 @@
 #import <assert.h>
 
 #import "WebNSObjectExtras.h"
+#import "WebTypesInternal.h"
 
 @interface NSWindow(HIWebFrameView)
 - _initContent:(const NSRect *)contentRect styleMask:(unsigned int)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag contentView:aView;
 - (void)_oldPlaceWindow:(NSRect)frameRect;
 - (void)_windowMovedToRect:(NSRect)actualFrame;
-- (void)_setWindowNumber:(int)nativeWindow;
+- (void)_setWindowNumber:(WebNSInteger)nativeWindow;
 - (NSGraphicsContext *)_threadContext;
 - (void)_setFrame:(NSRect)newWindowFrameRect;
 - (void)_setVisible:(BOOL)flag;
@@ -187,7 +188,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
  //   _auxiliaryStorage->_auxWFlags.hasShadow = (windowAttributes & kWindowNoShadowAttribute) ? NO : YES;
 
     // Record the window number.
-    [self _setWindowNumber:(int)nativeWindow];
+    [self _setWindowNumber:(WebNSInteger)nativeWindow];
 
     // Set up from the frame rectangle.
     // We didn't even really try to get it right at _initContent:... time, because it's more trouble that it's worth to write a real +[NSCarbonWindow frameRectForContentRect:styleMask:].  M.P. Notice - 10/10/00

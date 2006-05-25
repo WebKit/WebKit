@@ -1,3 +1,81 @@
+2006-05-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O.
+
+        <rdar://problem/4559808> WebKit fails to compile for ppc64
+        <rdar://problem/4522085> 64-bit: WebKit uses FSSpec which is not available in 64-bit
+        Gets WebKit building under 64-bit. Rename WebNSInt and WebNSUInt to WebNSInteger and WebNSUInteger.
+        Start using WebNSInteger where we need to match AppKit API usage of NSInteger.
+
+        HIWebView and a couple of helper functions are disabled until they can be moved off of QuickDraw.
+        <rdar://problem/4561772> HIWebView needs to be reworked to not use QuickDraw, needed for 64-bit
+
+        * Carbon/CarbonUtils.m: disabled this file in 64-bit <rdar://problem/4561772>
+        * Carbon/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        * Carbon/CarbonWindowFrame.m:
+        (+[CarbonWindowFrame frameRectForContentRect:styleMask:]):
+        (+[CarbonWindowFrame contentRectForFrameRect:styleMask:]):
+        (+[CarbonWindowFrame minFrameSizeForMinContentSize:styleMask:]):
+        (-[CarbonWindowFrame frameRectForContentRect:styleMask:]):
+        (-[CarbonWindowFrame contentRectForFrameRect:styleMask:]):
+        (-[CarbonWindowFrame minFrameSizeForMinContentSize:styleMask:]):
+        * Carbon/HIViewAdapter.m: disabled this file in 64-bit <rdar://problem/4561772>
+        * Carbon/HIWebView.m: disabled this file in 64-bit <rdar://problem/4561772>
+        (HIWebViewEventHandler):
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:resource:didReceiveContentLength:fromDataSource:]):
+        * History/WebBackForwardList.m:
+        (-[WebBackForwardList removeItem:]):
+        (-[WebBackForwardList goToItem:]):
+        * Misc/WebDownload.m:
+        (-[WebDownloadInternal download:didReceiveDataOfLength:]):
+        * Misc/WebFileDatabase.m:
+        (UniqueFilePathForKey):
+        * Misc/WebIconDatabase.m:
+        (-[NSMutableDictionary retainIconForURL:]):
+        (-[NSMutableDictionary releaseIconForURL:]):
+        (-[WebIconDatabase _totalRetainCountForIconURLString:]):
+        (-[WebIconDatabase _retainIconForIconURLString:]):
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+        * Misc/WebSearchableTextView.m:
+        (-[NSString selectionRect]):
+        * Misc/WebTypesInternal.h: Added.
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        (CarbonPathFromPOSIXPath):
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendActivateEvent:]):
+        (-[WebBaseNetscapePluginView sendUpdateEvent]):
+        (TSMEventHandler):
+        (-[WebBaseNetscapePluginView _postURL:target:len:buf:file:notifyData:sendNotification:allowHeaders:]):
+        (-[WebBaseNetscapePluginView _printedPluginBitmap]):
+        (-[NSData _web_locationAfterFirstBlankLine]):
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage hash]):
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        (functionPointerForTVector):
+        * WebInspector/WebInspector.m:
+        (-[WebInspector _updateSystemColors]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _didReceiveData:contentLength:forResource:]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
+        * WebView/WebHTMLView.m:
+        (-[NSArray drawRect:]):
+        (-[WebHTMLView characterIndexForPoint:]):
+        (-[WebHTMLView conversationIdentifier]):
+        * WebView/WebResourceLoadDelegate.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebView.h:
+        * WebView/WebView.m:
+        (-[WebView _mouseDidMoveOverElement:modifierFlags:]):
+        (-[WebView spellCheckerDocumentTag]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 === WebKit-521.11 ===
 
 2006-05-23  Maciej Stachowiak  <mjs@apple.com>

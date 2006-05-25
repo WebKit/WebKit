@@ -28,6 +28,7 @@
 
 #import "WebSearchableTextView.h"
 #import "WebDocumentPrivate.h"
+#import "WebTypesInternal.h"
 
 @interface NSString (_Web_StringTextFinding)
 - (NSRange)findString:(NSString *)string selectedRange:(NSRange)selectedRange options:(unsigned)mask wrap:(BOOL)wrapFlag;
@@ -91,7 +92,7 @@
     NSValue *rangeAsValue;
     while ((rangeAsValue = [rangeEnumerator nextObject]) != nil) {
         NSRange range = [rangeAsValue rangeValue];
-        unsigned rectCount;
+        WebNSUInteger rectCount;
         NSRectArray rectArray = [[self layoutManager] rectArrayForCharacterRange:range 
                                                     withinSelectedCharacterRange:range 
                                                                  inTextContainer:[self textContainer] 

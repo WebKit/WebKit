@@ -29,6 +29,7 @@
 // This header contains WebView declarations that can be used anywhere in the Web Kit, but are neither SPI nor API.
 
 #import "WebViewPrivate.h"
+#import "WebTypesInternal.h"
 
 @class WebPageBridge;
 
@@ -76,7 +77,7 @@
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
 - (BOOL)_isPerformingProgrammaticFocus;
-- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInt)modifierFlags;
+- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(WebNSUInteger)modifierFlags;
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
 - (void)_writeImageForElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;

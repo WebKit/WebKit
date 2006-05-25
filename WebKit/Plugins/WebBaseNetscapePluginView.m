@@ -112,7 +112,7 @@ typedef struct {
 
 @interface NSData (WebPluginDataExtras)
 - (BOOL)_web_startsWithBlankLine;
-- (unsigned)_web_locationAfterFirstBlankLine;
+- (WebNSInteger)_web_locationAfterFirstBlankLine;
 @end
 
 static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView);
@@ -573,7 +573,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self getCarbonEvent:&event];
     event.what = activateEvt;
     WindowRef windowRef = [[self window] windowRef];
-    event.message = (UInt32)windowRef;
+    event.message = (unsigned long)windowRef;
     if (activate) {
         event.modifiers |= activeFlag;
     }
@@ -591,7 +591,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self getCarbonEvent:&event];
     event.what = updateEvt;
     WindowRef windowRef = [[self window] windowRef];
-    event.message = (UInt32)windowRef;
+    event.message = (unsigned long)windowRef;
 
     BOOL acceptedEvent = [self sendEvent:&event];
 
@@ -838,7 +838,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
     
     // Two-pass read to allocate/extract Mac charCodes
-    UInt32 numBytes;    
+    ByteCount numBytes;    
     status = GetEventParameter(rawKeyEventRef, kEventParamKeyMacCharCodes, typeChar, NULL, 0, &numBytes, NULL);
     if (status != noErr) {
         LOG_ERROR("GetEventParameter failed with error: %d", status);
@@ -1859,7 +1859,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         if ([postData _web_startsWithBlankLine]) {
             postData = [postData subdataWithRange:NSMakeRange(1, [postData length] - 1)];
         } else {
-            unsigned location = [postData _web_locationAfterFirstBlankLine];
+            WebNSInteger location = [postData _web_locationAfterFirstBlankLine];
             if (location != NSNotFound) {
                 // If the blank line is somewhere in the middle of postData, everything before is the header.
                 NSData *headerData = [postData subdataWithRange:NSMakeRange(0, location)];
@@ -2143,6 +2143,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (NSBitmapImageRep *)_printedPluginBitmap
 {
+#ifdef NP_NO_QUICKDRAW
+    return nil;
+#else
     // Cannot print plugins that do not implement NPP_Print
     if (!NPP_Print)
         return nil;
@@ -2204,6 +2207,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     DisposeGWorld(printGWorld);
         
     return bitmap;
+#endif
 }
 
 @end
@@ -2216,7 +2220,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 }
 
 
-- (unsigned)_web_locationAfterFirstBlankLine
+- (WebNSInteger)_web_locationAfterFirstBlankLine
 {
     const char *bytes = (const char *)[self bytes];
     unsigned length = [self length];

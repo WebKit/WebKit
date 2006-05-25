@@ -273,29 +273,13 @@
 		93EB178D09F88D460091F8FF /* WebSystemInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 93EB178C09F88D460091F8FF /* WebSystemInterface.m */; };
 		93EB178F09F88D510091F8FF /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB178E09F88D510091F8FF /* WebSystemInterface.h */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
+		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.m */; };
 		ED6BE2E7088C32B50044DEDC /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */; };
 		ED6BE2E8088C32B50044DEDC /* WebNSAttributedStringExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.m */; };
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXBuildStyle section */
-		51B0D4750A1BEB2A001760A9 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		51B0D4760A1BEB2A001760A9 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
 
 /* Begin PBXFileReference section */
 		1C68F640095B5FC100C2984E /* webInspector */ = {isa = PBXFileReference; lastKnownFileType = folder; name = webInspector; path = WebInspector/webInspector; sourceTree = SOURCE_ROOT; };
@@ -494,6 +478,7 @@
 		BEE18F9A0472B73200CA289C /* WebLocalizableStrings.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebLocalizableStrings.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEE52D4A0473032500CA289C /* WebKitSystemBits.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitSystemBits.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEE52D4B0473032500CA289C /* WebKitSystemBits.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitSystemBits.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTypesInternal.h; sourceTree = "<group>"; };
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebElementDictionary.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED21B9810528F7AA003299AC /* WebDocumentInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDocumentInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -738,6 +723,7 @@
 				6578F5DF045F817400000128 /* WebDownload.m */,
 				DD89681E09AA87240097E7F0 /* WebElementDictionary.h */,
 				DD89681F09AA87240097E7F0 /* WebElementDictionary.m */,
+				DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -1204,6 +1190,7 @@
 				93EB178F09F88D510091F8FF /* WebSystemInterface.h in Headers */,
 				225F881509F97E8A00423A40 /* WebPluginPrivate.h in Headers */,
 				658A40960A14853B005E6987 /* WebDataSourceInternal.h in Headers */,
+				DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1252,12 +1239,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				51B0D4750A1BEB2A001760A9 /* Development */,
-				51B0D4760A1BEB2A001760A9 /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1757,6 +1738,7 @@
 				PRODUCT_NAME = WebKit;
 				STYLE_LDFLAGS = "";
 				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
+				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
 				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
 			};
 			name = Debug;
@@ -1792,6 +1774,7 @@
 				PRODUCT_NAME = WebKit;
 				STYLE_LDFLAGS = "";
 				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
+				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
 				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
 			};
 			name = Release;
@@ -1833,6 +1816,7 @@
 				);
 				STYLE_LDFLAGS = "-sub_umbrella WebCore -sub_umbrella JavaScriptCore";
 				UMBRELLA_FRAMEWORKS_DIR = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
+				VALID_ARCHS = "i386 ppc ppc7400 ppc970 ppc64 x86_64";
 				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
 			};
 			name = Production;

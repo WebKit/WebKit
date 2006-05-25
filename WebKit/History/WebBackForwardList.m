@@ -34,6 +34,8 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebKitSystemBits.h>
 
+#import "WebTypesInternal.h"
+
 #define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX
 
 @interface WebBackForwardListPrivate : NSObject
@@ -139,10 +141,10 @@
     if (!item)
         return;
     
-    unsigned itemIndex = [_private->entries indexOfObjectIdenticalTo:item];
+    WebNSUInteger itemIndex = [_private->entries indexOfObjectIdenticalTo:item];
     ASSERT(itemIndex != (unsigned)_private->current);
     
-    if (itemIndex != NSNotFound && itemIndex != (unsigned)_private->current) {
+    if (itemIndex != NSNotFound && itemIndex != (WebNSUInteger)_private->current) {
         [_private->entries removeObjectAtIndex:itemIndex];
     }
 }
@@ -171,7 +173,7 @@
 
 - (void)goToItem:(WebHistoryItem *)item
 {
-    int index = [_private->entries indexOfObjectIdenticalTo:item];
+    WebNSUInteger index = [_private->entries indexOfObjectIdenticalTo:item];
     if (index != NSNotFound)
         _private->current = index;
     else

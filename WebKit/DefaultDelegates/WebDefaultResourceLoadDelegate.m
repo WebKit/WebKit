@@ -26,12 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-typedef unsigned int WebNSUInt;
-#else
-typedef NSUInt WebNSUInt;
-#endif
-
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
@@ -43,6 +37,7 @@ typedef NSUInt WebNSUInt;
 #import <WebKit/WebPanelAuthenticationHandler.h>
 #import <WebKit/WebView.h>
 
+#import "WebTypesInternal.h"
 
 @implementation WebDefaultResourceLoadDelegate
 
@@ -83,7 +78,7 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
 {
 }
 
--(void)webView: (WebView *)wv resource:identifier didReceiveContentLength: (WebNSUInt)length fromDataSource:(WebDataSource *)dataSource
+-(void)webView: (WebView *)wv resource:identifier didReceiveContentLength: (WebNSUInteger)length fromDataSource:(WebDataSource *)dataSource
 {
 }
 

@@ -33,6 +33,8 @@
 #import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
+#import "WebTypesInternal.h"
+
 @class NSURLConnectionDelegateProxy;
 
 // FIXME: Remove these declarations because _initWithLoadingConnection is declared in NSURLDownloadPrivate.h
@@ -136,7 +138,7 @@
     [realDelegate download:download didReceiveResponse:response];
 }
 
-- (void)download:(NSURLDownload *)download didReceiveDataOfLength:(unsigned)length
+- (void)download:(NSURLDownload *)download didReceiveDataOfLength:(WebNSUInteger)length
 {
     [realDelegate download:download didReceiveDataOfLength:length];
 }
