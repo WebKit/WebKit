@@ -35,7 +35,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLNameCollection::HTMLNameCollection(Document* base, int type, const String& name)
-    : HTMLCollection(base, type), m_name(name)
+    : HTMLCollection(base, type)
+    , m_name(name)
 {
 }
 

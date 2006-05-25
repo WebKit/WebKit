@@ -129,6 +129,7 @@ all : \
     JSXMLSerializer.lut.h \
     JSXSLTProcessor.lut.h \
     SVGNames.cpp \
+    HTMLNames.cpp \
     UserAgentStyleSheets.h \
     XLinkNames.cpp \
     XPathGrammar.cpp \
@@ -214,6 +215,12 @@ CharsetData.cpp : platform/make-charset-table.pl platform/character-sets.txt $(E
 	$(CREATE_HASH_TABLE) $< > $@
 %Table.cpp: %.cpp $(CREATE_HASH_TABLE)
 	$(CREATE_HASH_TABLE) $< > $@
+
+# HTML tag and attribute names
+
+HTMLNames.cpp : ksvg2/scripts/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in
+	$< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
+            --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output .
 
 ifeq ($(findstring SVG_SUPPORT,$(FEATURE_DEFINES)), SVG_SUPPORT)
 

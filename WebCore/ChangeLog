@@ -1,3 +1,20 @@
+2006-05-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5889
+        HTMLNames.* should be generated using make_names.pl
+
+        Use a patched make_names.pl to autogenerate HTMLNames.*
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLNames.cpp: Removed.
+        * html/HTMLNames.h: Removed.
+        * html/HTMLTagNames.in: Added.
+        * html/HTMLAttributeNames.in: Added.
+        * ksvg2/scripts/make_names.pl:
+
 2006-05-23  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.

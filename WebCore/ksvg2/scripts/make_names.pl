@@ -33,6 +33,7 @@ use File::Path;
 my $printFactory = 0;
 my $cppNamespace = "";
 my $namespace = "";
+my $namespacePrefix = "";
 my $namespaceURI = "";
 my $tagsFile = "";
 my $attrsFile = "";
@@ -46,6 +47,7 @@ GetOptions('tags=s' => \$tagsFile,
     'attrs=s' => \$attrsFile,
     'outputDir=s' => \$outputDir,
     'namespace=s' => \$namespace,
+    'namespacePrefix=s' => \$namespacePrefix,
     'namespaceURI=s' => \$namespaceURI,
     'cppNamespace=s' => \$cppNamespace,
     'factory' => \$printFactory,
@@ -56,6 +58,8 @@ die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $nam
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $namespaceURI;
 die "You must specify a cppNamespace (e.g. DOM) used for <cppNamespace>::<namespace>Names::fooTag" unless $cppNamespace;
 die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
+
+$namespacePrefix = $namespace unless $namespacePrefix;
 
 @tags = readNames($tagsFile) if length($tagsFile);
 @attrs = readNames($attrsFile) if length($attrsFile);
@@ -209,7 +213,7 @@ sub printNamesHeaderFile
 		print "// end of macro\n\n";
 	}
 	
-	my $lowerNamespace = lc($namespace);
+	my $lowerNamespace = lc($namespacePrefix);
 	print "#if !DOM_${namespace}NAMES_HIDE_GLOBALS\n";
     print "// Namespace\n";
     print "extern const WebCore::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
@@ -242,7 +246,7 @@ sub printNamesCppFile
 	
 	printLicenseHeader();
 	
-	my $lowerNamespace = lc($namespace);
+	my $lowerNamespace = lc($namespacePrefix);
 
 print "#define DOM_${namespace}NAMES_HIDE_GLOBALS 1\n\n";
 
