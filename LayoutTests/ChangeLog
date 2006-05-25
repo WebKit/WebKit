@@ -1,3 +1,22 @@
+2006-05-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff.
+
+        This layout test is now correct, so I moved it into the expected 
+        successes directory and generated new results.
+
+        * tables/mozilla/bugs/bug222846-expected.checksum: Added.
+        * tables/mozilla/bugs/bug222846-expected.png: Added.
+        * tables/mozilla/bugs/bug222846-expected.txt: Added.
+        * tables/mozilla/bugs/bug222846.html: Added.
+        * tables/mozilla_expected_failures/bugs/bug222846-
+        expected.checksum: Removed.
+        * tables/mozilla_expected_failures/bugs/bug222846-expected.png: 
+        Removed.
+        * tables/mozilla_expected_failures/bugs/bug222846-expected.txt: 
+        Removed.
+        * tables/mozilla_expected_failures/bugs/bug222846.html: Removed.
+
 2006-05-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
