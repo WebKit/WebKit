@@ -59,7 +59,8 @@ PassRefPtr<Node> NamedAttrMap::getNamedItem(const String& name) const
 {
     String localName = inHTMLDocument(element) ? name.lower() : name;
     Attribute* a = getAttributeItem(localName);
-    if (!a) return 0;
+    if (!a)
+        return 0;
     
     return a->createAttrIfNeeded(element);
 }
@@ -89,7 +90,8 @@ PassRefPtr<Node> NamedAttrMap::removeNamedItemNS(const String& namespaceURI, con
 PassRefPtr<Node> NamedAttrMap::getNamedItem(const QualifiedName& name) const
 {
     Attribute* a = getAttributeItem(name);
-    if (!a) return 0;
+    if (!a)
+        return 0;
 
     return a->createAttrIfNeeded(element);
 }

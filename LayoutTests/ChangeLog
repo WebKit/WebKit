@@ -1,3 +1,9 @@
+2006-05-25  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+
+        * fast/dom/document-scripts-expected.txt: correct results.
+
 2006-05-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff.

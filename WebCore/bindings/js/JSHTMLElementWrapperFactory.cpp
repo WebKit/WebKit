@@ -34,6 +34,7 @@
 #include "HTMLDListElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFontElement.h"
+#include "HTMLFormElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHeadingElement.h"
 #include "HTMLHRElement.h"
@@ -79,6 +80,7 @@
 #include "JSHTMLDListElement.h"
 #include "JSHTMLFieldSetElement.h"
 #include "JSHTMLFontElement.h"
+#include "JSHTMLFormElement.h"
 #include "JSHTMLHeadElement.h"
 #include "JSHTMLHeadingElement.h"
 #include "JSHTMLHRElement.h"
@@ -135,6 +137,7 @@ typedef DOMNode* (*CreateHTMLElementWrapperFunction)(ExecState*, PassRefPtr<HTML
     macro(div, Div) \
     macro(dl, DList) \
     macro(fieldset, FieldSet) \
+    macro(form, Form) \
     macro(font, Font) \
     macro(h1, Heading) \
     macro(head, Head) \
@@ -188,9 +191,9 @@ FOR_EACH_TAG(ADD_TO_HASH_MAP)
         map.set(insTag.localName().impl(), createModWrapper);
         map.set(listingTag.localName().impl(), createPreWrapper);
     }
-    CreateHTMLElementWrapperFunction f = map.get(element->localName().impl());
-    if (f)
-        return f(exec, element);
+    CreateHTMLElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
+    if (createWrapperFunction)
+        return createWrapperFunction(exec, element);
     return new KJS::JSHTMLElement(exec, element.get());
 }
 

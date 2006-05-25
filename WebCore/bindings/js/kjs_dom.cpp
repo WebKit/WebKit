@@ -733,7 +733,7 @@ JSValue *DOMNodeList::indexGetter(ExecState *exec, JSObject *originalObject, con
 JSValue *DOMNodeList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList*>(slot.slotBase());
-  return toJS(exec, thisObj->m_impl->itemById(propertyName));
+  return toJS(exec, thisObj->m_impl->itemWithName(propertyName));
 }
 
 bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -748,15 +748,13 @@ bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& property
     return true;
   }
 
-  NodeList &list = *m_impl;
-
   // array index ?
   bool ok;
   unsigned idx = propertyName.toUInt32(&ok);
-  if (ok && idx < list.length()) {
+  if (ok && idx < m_impl->length()) {
     slot.setCustomIndex(this, idx, indexGetter);
     return true;
-  } else if (list.itemById(String(propertyName).impl())) {
+  } else if (m_impl->itemWithName(String(propertyName).impl())) {
     slot.setCustom(this, nameGetter);
     return true;
   }
@@ -871,7 +869,7 @@ bool DOMNamedNodeMap::getOwnPropertySlot(ExecState* exec, const Identifier& prop
       return true;
   } else {
     // Look in the prototype (for functions) before assuming it's an item's name
-    JSValue *proto = prototype();
+    JSValue* proto = prototype();
     if (proto->isObject() && static_cast<JSObject*>(proto)->hasProperty(exec, propertyName))
       return false;
 

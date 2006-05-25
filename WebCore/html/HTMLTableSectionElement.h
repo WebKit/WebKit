@@ -59,7 +59,7 @@ public:
     String vAlign() const;
     void setVAlign(const String&);
 
-    RefPtr<HTMLCollection> rows();
+    PassRefPtr<HTMLCollection> rows();
 };
 
 } //namespace

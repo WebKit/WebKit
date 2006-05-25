@@ -43,7 +43,7 @@ public:
     // DOM methods & attributes for NodeList
     virtual unsigned length() const = 0;
     virtual Node* item(unsigned index) const = 0;
-    Node* itemById(const AtomicString&) const;
+    Node* itemWithName(const AtomicString&) const;
 
     // Other methods (not part of DOM)
     virtual void rootNodeChildrenChanged();

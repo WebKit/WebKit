@@ -85,8 +85,8 @@ namespace KJS {
 
 class HTMLElementFunction : public InternalFunctionImp {
 public:
-  HTMLElementFunction(ExecState *exec, int i, int len, const Identifier& name);
-  virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List&args);
+  HTMLElementFunction(ExecState* exec, int i, int len, const Identifier& name);
+  virtual JSValue *callAsFunction(ExecState* exec, JSObject* thisObj, const List&args);
 private:
   int id;
 };
@@ -106,7 +106,7 @@ releaseEvents         JSHTMLDocument::ReleaseEvents     DontDelete|Function 0
 KJS_IMPLEMENT_PROTOFUNC(JSHTMLDocumentProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("HTMLDocument", JSHTMLDocumentProto, JSHTMLDocumentProtoFunc)
 
-JSValue *JSHTMLDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *JSHTMLDocumentProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
     if (!thisObj->inherits(&JSHTMLDocument::info))
         return throwError(exec, TypeError);
@@ -123,7 +123,7 @@ JSValue *JSHTMLDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *this
                 if (frame) {
                     Window *window = Window::retrieveWindow(frame);
                     if (window) {
-                        JSObject *functionObject = window->get(exec, "open")->getObject();
+                        JSObject* functionObject = window->get(exec, "open")->getObject();
                         if (!functionObject || !functionObject->implementsCall())
                             return throwError(exec, TypeError);
                         return functionObject->call(exec, window, args);
@@ -202,13 +202,13 @@ const ClassInfo JSHTMLDocument::info =
 @end
 */
 
-JSHTMLDocument::JSHTMLDocument(ExecState *exec, HTMLDocument *d)
+JSHTMLDocument::JSHTMLDocument(ExecState* exec, HTMLDocument *d)
   : JSDocument(exec, d)
 {
     setPrototype(JSHTMLDocumentProto::self(exec));
 }
 
-JSValue *JSHTMLDocument::namedItemGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLDocument::namedItemGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   JSHTMLDocument *thisObj = static_cast<JSHTMLDocument*>(slot.slotBase());
   HTMLDocument &doc = *static_cast<HTMLDocument*>(thisObj->impl());
@@ -227,7 +227,7 @@ JSValue *JSHTMLDocument::namedItemGetter(ExecState *exec, JSObject *originalObje
   return getHTMLCollection(exec, collection.get());
 }
 
-JSValue *JSHTMLDocument::getValueProperty(ExecState *exec, int token) const
+JSValue *JSHTMLDocument::getValueProperty(ExecState* exec, int token) const
 {
   HTMLDocument& doc = *static_cast<HTMLDocument*>(impl());
 
@@ -312,7 +312,7 @@ JSValue *JSHTMLDocument::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-bool JSHTMLDocument::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSHTMLDocument::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   HTMLDocument &doc = *static_cast<HTMLDocument*>(impl());
 
@@ -333,17 +333,17 @@ bool JSHTMLDocument::getOwnPropertySlot(ExecState *exec, const Identifier& prope
   return JSDocument::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void JSHTMLDocument::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+void JSHTMLDocument::put(ExecState* exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     lookupPut<JSHTMLDocument, JSDocument>(exec, propertyName, value, attr, &HTMLDocumentTable, this);
 }
 
-void JSHTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
+void JSHTMLDocument::putValueProperty(ExecState* exec, int token, JSValue *value, int /*attr*/)
 {
   DOMExceptionTranslator exception(exec);
   HTMLDocument &doc = *static_cast<HTMLDocument*>(impl());
-  HTMLElement *body = doc.body();
-  HTMLBodyElement *bodyElement = (body && body->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(body) : 0;
+  HTMLElement* body = doc.body();
+  HTMLBodyElement* bodyElement = (body && body->hasTagName(bodyTag)) ? static_cast<HTMLBodyElement*>(body) : 0;
 
   switch (token) {
   case Title:
@@ -443,7 +443,6 @@ void JSHTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *value
 const ClassInfo JSHTMLElement::caption_info = { "HTMLTableCaptionElement", &JSHTMLElement::info, &HTMLTableCaptionElementTable, 0 };
 const ClassInfo JSHTMLElement::col_info = { "HTMLTableColElement", &JSHTMLElement::info, &HTMLTableColElementTable, 0 };
 const ClassInfo JSHTMLElement::embed_info = { "HTMLEmbedElement", &JSHTMLElement::info, &HTMLEmbedElementTable, 0 };
-const ClassInfo JSHTMLElement::form_info = { "HTMLFormElement", &JSHTMLElement::info, &HTMLFormElementTable, 0 };
 const ClassInfo JSHTMLElement::frameSet_info = { "HTMLFrameSetElement", &JSHTMLElement::info, &HTMLFrameSetElementTable, 0 };
 const ClassInfo JSHTMLElement::frame_info = { "HTMLFrameElement", &JSHTMLElement::info, &HTMLFrameElementTable, 0 };
 const ClassInfo JSHTMLElement::iFrame_info = { "HTMLIFrameElement", &JSHTMLElement::info, &HTMLIFrameElementTable, 0 };
@@ -464,7 +463,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
         classInfoMap.set(colTag.localName().impl(), &col_info);
         classInfoMap.set(colgroupTag.localName().impl(), &col_info);
         classInfoMap.set(embedTag.localName().impl(), &embed_info);
-        classInfoMap.set(formTag.localName().impl(), &form_info);
         classInfoMap.set(frameTag.localName().impl(), &frame_info);
         classInfoMap.set(framesetTag.localName().impl(), &frameSet_info);
         classInfoMap.set(iframeTag.localName().impl(), &iFrame_info);
@@ -487,7 +485,6 @@ const ClassInfo* JSHTMLElement::classInfo() const
     return &info;
 }
 
-const JSHTMLElement::Accessors JSHTMLElement::form_accessors = { &JSHTMLElement::formGetter, &JSHTMLElement::formSetter };
 const JSHTMLElement::Accessors JSHTMLElement::select_accessors = { &JSHTMLElement::selectGetter, &JSHTMLElement::selectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::object_accessors = { &JSHTMLElement::objectGetter, &JSHTMLElement::objectSetter };
 const JSHTMLElement::Accessors JSHTMLElement::embed_accessors = { &JSHTMLElement::embedGetter, &JSHTMLElement::embedSetter };
@@ -510,7 +507,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
         accessorMap.add(colTag.localName().impl(), &col_accessors);
         accessorMap.add(colgroupTag.localName().impl(), &col_accessors);
         accessorMap.add(embedTag.localName().impl(), &embed_accessors);
-        accessorMap.add(formTag.localName().impl(), &form_accessors);
         accessorMap.add(frameTag.localName().impl(), &frame_accessors);
         accessorMap.add(framesetTag.localName().impl(), &frameSet_accessors);
         accessorMap.add(iframeTag.localName().impl(), &iFrame_accessors);
@@ -550,19 +546,6 @@ const JSHTMLElement::Accessors* JSHTMLElement::accessors() const
   children      KJS::JSHTMLElement::ElementChildren  DontDelete|ReadOnly
   contentEditable   KJS::JSHTMLElement::ElementContentEditable  DontDelete
   isContentEditable KJS::JSHTMLElement::ElementIsContentEditable  DontDelete|ReadOnly
-@end
-@begin HTMLFormElementTable 11
-# Also supported, by name/index
-  elements      KJS::JSHTMLElement::FormElements  DontDelete|ReadOnly
-  length        KJS::JSHTMLElement::FormLength    DontDelete|ReadOnly
-  name          KJS::JSHTMLElement::FormName      DontDelete
-  acceptCharset KJS::JSHTMLElement::FormAcceptCharset     DontDelete
-  action        KJS::JSHTMLElement::FormAction    DontDelete
-  enctype       KJS::JSHTMLElement::FormEncType   DontDelete
-  method        KJS::JSHTMLElement::FormMethod    DontDelete
-  target        KJS::JSHTMLElement::FormTarget    DontDelete
-  submit        KJS::JSHTMLElement::FormSubmit    DontDelete|Function 0
-  reset         KJS::JSHTMLElement::FormReset     DontDelete|Function 0
 @end
 @begin HTMLSelectElementTable 11
 # Also supported, by index
@@ -733,40 +716,24 @@ JSValue* JSHTMLElementProtoFunc::callAsFunction(ExecState*, JSObject*, const Lis
     return 0;
 }
 
-JSHTMLElement::JSHTMLElement(ExecState *exec, HTMLElement *e)
+JSHTMLElement::JSHTMLElement(ExecState* exec, HTMLElement* e)
     : WebCore::JSHTMLElement(exec, e)
 {
     setPrototype(JSHTMLElementProto::self(exec));
 }
 
-JSValue *JSHTMLElement::formIndexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLElement::selectIndexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-    JSHTMLElement *thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLFormElement *form = static_cast<HTMLFormElement*>(thisObj->impl());
-
-    return toJS(exec, form->elements()->item(slot.index()));
-}
-
-JSValue *JSHTMLElement::formNameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLElement *thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLFormElement *form = static_cast<HTMLFormElement*>(thisObj->impl());
-    
-    return JSHTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
-}
-
-JSValue *JSHTMLElement::selectIndexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-    JSHTMLElement *thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLSelectElement *select = static_cast<HTMLSelectElement*>(thisObj->impl());
+    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(thisObj->impl());
 
     return toJS(exec, select->options()->item(slot.index()));
 }
 
-JSValue *JSHTMLElement::framesetNameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLElement::framesetNameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-    JSHTMLElement *thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLElement *element = static_cast<HTMLElement*>(thisObj->impl());
+    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
+    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
 
     WebCore::Node *frame = element->children()->namedItem(propertyName);
     if (Document* doc = static_cast<HTMLFrameElement*>(frame)->contentDocument())
@@ -776,46 +743,30 @@ JSValue *JSHTMLElement::framesetNameGetter(ExecState *exec, JSObject *originalOb
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::runtimeObjectGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLElement::runtimeObjectGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-    JSHTMLElement *thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLElement *element = static_cast<HTMLElement*>(thisObj->impl());
+    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
+    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
 
     return getRuntimeObject(exec, element);
 }
 
-JSValue *JSHTMLElement::runtimeObjectPropertyGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLElement::runtimeObjectPropertyGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-    JSHTMLElement *thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
-    HTMLElement *element = static_cast<HTMLElement*>(thisObj->impl());
+    JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
+    HTMLElement* element = static_cast<HTMLElement*>(thisObj->impl());
 
     if (JSValue *runtimeObject = getRuntimeObject(exec, element))
         return static_cast<JSObject*>(runtimeObject)->get(exec, propertyName);
     return jsUndefined();
 }
 
-bool JSHTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSHTMLElement::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     HTMLElement &element = *static_cast<HTMLElement*>(impl());
 
     // First look at dynamic properties
-    if (element.hasLocalName(formTag)) {
-        HTMLFormElement &form = static_cast<HTMLFormElement &>(element);
-        // Check if we're retrieving an element (by index or by name)
-        bool ok;
-        unsigned u = propertyName.toUInt32(&ok);
-        if (ok) {
-            slot.setCustomIndex(this, u, formIndexGetter);
-            return true;
-        }
-
-        // FIXME: need faster way to check for a named item and/or a way to pass on the named items subcollection
-        JSValue *namedItems = JSHTMLCollection(exec, form.elements().get()).getNamedItems(exec, propertyName);
-        if (!namedItems->isUndefined()) {
-            slot.setCustom(this, formNameGetter);
-            return true;
-        }
-    } else if (element.hasLocalName(selectTag)) {
+    if (element.hasLocalName(selectTag)) {
         bool ok;
         unsigned u = propertyName.toUInt32(&ok);
         if (ok) {
@@ -836,7 +787,7 @@ bool JSHTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& proper
         }
         JSValue *runtimeObject = getRuntimeObject(exec,&element);
         if (runtimeObject) {
-            JSObject *imp = static_cast<JSObject*>(runtimeObject);
+            JSObject* imp = static_cast<JSObject*>(runtimeObject);
             if (imp->hasProperty(exec, propertyName)) {
                 slot.setCustom(this, runtimeObjectPropertyGetter);
                 return true;
@@ -860,39 +811,23 @@ bool JSHTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& proper
 
 bool JSHTMLElement::implementsCall() const
 {
-    HTMLElement *element = static_cast<HTMLElement*>(impl());
+    HTMLElement* element = static_cast<HTMLElement*>(impl());
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
         Document* doc = element->document();
         KJSProxy *proxy = doc->frame()->jScript();
-        ExecState *exec = proxy->interpreter()->globalExec();
+        ExecState* exec = proxy->interpreter()->globalExec();
         if (JSValue *runtimeObject = getRuntimeObject(exec, element))
             return static_cast<JSObject*>(runtimeObject)->implementsCall();
     }
     return false;
 }
 
-JSValue *JSHTMLElement::callAsFunction(ExecState *exec, JSObject *thisObj, const List&args)
+JSValue *JSHTMLElement::callAsFunction(ExecState* exec, JSObject* thisObj, const List&args)
 {
-    HTMLElement *element = static_cast<HTMLElement*>(impl());
+    HTMLElement* element = static_cast<HTMLElement*>(impl());
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
         if (JSValue *runtimeObject = getRuntimeObject(exec, element))
             return static_cast<JSObject*>(runtimeObject)->call(exec, thisObj, args);
-    }
-    return jsUndefined();
-}
-
-JSValue *JSHTMLElement::formGetter(ExecState* exec, int token) const
-{
-    HTMLFormElement& form = *static_cast<HTMLFormElement*>(impl());
-    switch (token) {
-        case FormElements:        return getHTMLCollection(exec, form.elements().get());
-        case FormLength:          return jsNumber(form.length());
-        case FormName:            return jsString(form.name());
-        case FormAcceptCharset:   return jsString(form.acceptCharset());
-        case FormAction:          return jsString(form.action());
-        case FormEncType:         return jsString(form.enctype());
-        case FormMethod:          return jsString(form.method());
-        case FormTarget:          return jsString(form.target());
     }
     return jsUndefined();
 }
@@ -1146,7 +1081,7 @@ JSValue *JSHTMLElement::marqueeGetter(ExecState* exec, int token) const
     return jsUndefined();
 }
 
-JSValue *JSHTMLElement::getValueProperty(ExecState *exec, int token) const
+JSValue *JSHTMLElement::getValueProperty(ExecState* exec, int token) const
 {
     // Check our set of generic properties first.
     HTMLElement &element = *static_cast<HTMLElement*>(impl());
@@ -1187,7 +1122,7 @@ JSValue *JSHTMLElement::getValueProperty(ExecState *exec, int token) const
     return jsUndefined();
 }
 
-UString JSHTMLElement::toString(ExecState *exec) const
+UString JSHTMLElement::toString(ExecState* exec) const
 {
     if (impl()->hasTagName(aTag))
         return UString(static_cast<const HTMLAnchorElement*>(impl())->href());
@@ -1195,7 +1130,7 @@ UString JSHTMLElement::toString(ExecState *exec) const
         return JSElement::toString(exec);
 }
 
-static HTMLFormElement *getForm(HTMLElement *element)
+static HTMLFormElement* getForm(HTMLElement* element)
 {
     if (element->isGenericFormElement())
         return static_cast<HTMLGenericFormElement*>(element)->form();
@@ -1207,9 +1142,9 @@ static HTMLFormElement *getForm(HTMLElement *element)
     return 0;
 }
 
-void JSHTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const
+void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain &scope) const
 {
-  HTMLElement *element = static_cast<HTMLElement*>(impl());
+  HTMLElement* element = static_cast<HTMLElement*>(impl());
 
   // The document is put on first, fall back to searching it only after the element and form.
   scope.push(static_cast<JSObject*>(toJS(exec, element->ownerDocument())));
@@ -1219,7 +1154,7 @@ void JSHTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) co
   // First try to obtain the form from the element itself.  We do this to deal with
   // the malformed case where <form>s aren't in our parent chain (e.g., when they were inside 
   // <table> or <tbody>.
-  HTMLFormElement *form = getForm(element);
+  HTMLFormElement* form = getForm(element);
   if (form)
     scope.push(static_cast<JSObject*>(toJS(exec, form)));
   else {
@@ -1235,32 +1170,21 @@ void JSHTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) co
   scope.push(static_cast<JSObject*>(toJS(exec, element)));
 }
 
-HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len, const Identifier& name)
+HTMLElementFunction::HTMLElementFunction(ExecState* exec, int i, int len, const Identifier& name)
   : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
   , id(i)
 {
   put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }
 
-JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *HTMLElementFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
     if (!thisObj->inherits(&JSHTMLElement::info))
         return throwError(exec, TypeError);
     DOMExceptionTranslator exception(exec);
     HTMLElement &element = *static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(thisObj)->impl());
 
-    if (element.hasLocalName(formTag)) {
-        HTMLFormElement &form = static_cast<HTMLFormElement &>(element);
-        if (id == JSHTMLElement::FormSubmit) {
-            form.submit();
-            return jsUndefined();
-        }
-        else if (id == JSHTMLElement::FormReset) {
-            form.reset();
-            return jsUndefined();
-        }
-    }
-    else if (element.hasLocalName(selectTag)) {
+    if (element.hasLocalName(selectTag)) {
         HTMLSelectElement &select = static_cast<HTMLSelectElement &>(element);
         if (id == JSHTMLElement::SelectAdd) {
             select.add(toHTMLElement(args[0]), toHTMLElement(args[1]), exception);
@@ -1344,7 +1268,7 @@ JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj,
     return jsUndefined();
 }
 
-void JSHTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+void JSHTMLElement::put(ExecState* exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     HTMLElement &element = *static_cast<HTMLElement*>(impl());
     // First look at dynamic properties
@@ -1353,14 +1277,14 @@ void JSHTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue
         bool ok;
         /*unsigned u =*/ propertyName.toUInt32(&ok);
         if (ok) {
-            JSObject *coll = static_cast<JSObject*>(getSelectHTMLCollection(exec, select.options().get(), &select));
+            JSObject* coll = static_cast<JSObject*>(getSelectHTMLCollection(exec, select.options().get(), &select));
             coll->put(exec,propertyName,value);
             return;
         }
     }
     else if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
         if (JSValue *runtimeObject = getRuntimeObject(exec, &element)) {
-            JSObject *imp = static_cast<JSObject*>(runtimeObject);
+            JSObject* imp = static_cast<JSObject*>(runtimeObject);
             if (imp->canPut(exec, propertyName))
                 return imp->put(exec, propertyName, value);
         }
@@ -1381,22 +1305,7 @@ void JSHTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue
     lookupPut<JSHTMLElement, JSElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
-void JSHTMLElement::formSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
-{
-    HTMLFormElement& form = *static_cast<HTMLFormElement*>(impl());
-    switch (token) {
-        // read-only: elements
-        // read-only: length
-        case FormName:            { form.setName(str); return; }
-        case FormAcceptCharset:   { form.setAcceptCharset(str); return; }
-        case FormAction:          { form.setAction(str); return; }
-        case FormEncType:         { form.setEnctype(str); return; }
-        case FormMethod:          { form.setMethod(str); return; }
-        case FormTarget:          { form.setTarget(str); return; }
-    }
-}
-
-void JSHTMLElement::selectSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::selectSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLSelectElement& select = *static_cast<HTMLSelectElement*>(impl());
     switch (token) {
@@ -1404,7 +1313,7 @@ void JSHTMLElement::selectSetter(ExecState *exec, int token, JSValue *value, con
         case SelectSelectedIndex:   { select.setSelectedIndex(value->toInt32(exec)); return; }
         case SelectValue:           { select.setValue(str); return; }
         case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
-                                        JSObject *coll = static_cast<JSObject*>(getSelectHTMLCollection(exec, select.options().get(), &select));
+                                        JSObject* coll = static_cast<JSObject*>(getSelectHTMLCollection(exec, select.options().get(), &select));
                                         coll->put(exec,lengthPropertyName,value);
                                         return;
                                     }
@@ -1418,7 +1327,7 @@ void JSHTMLElement::selectSetter(ExecState *exec, int token, JSValue *value, con
     }
 }
 
-void JSHTMLElement::objectSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::objectSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLObjectElement& object = *static_cast<HTMLObjectElement*>(impl());
     switch (token) {
@@ -1457,7 +1366,7 @@ void JSHTMLElement::embedSetter(ExecState*, int token, JSValue*, const WebCore::
     }
 }
 
-void JSHTMLElement::tableSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::tableSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLTableElement& table = *static_cast<HTMLTableElement*>(impl());
     switch (token) {
@@ -1478,14 +1387,14 @@ void JSHTMLElement::tableSetter(ExecState *exec, int token, JSValue *value, cons
     }
 }
 
-void JSHTMLElement::tableCaptionSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::tableCaptionSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLTableCaptionElement& tableCaption = *static_cast<HTMLTableCaptionElement*>(impl());
     if (token == TableCaptionAlign)
         tableCaption.setAlign(str);
 }
 
-void JSHTMLElement::tableColSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::tableColSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLTableColElement& tableCol = *static_cast<HTMLTableColElement*>(impl());
     switch (token) {
@@ -1498,7 +1407,7 @@ void JSHTMLElement::tableColSetter(ExecState *exec, int token, JSValue *value, c
     }
 }
 
-void JSHTMLElement::tableSectionSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::tableSectionSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLTableSectionElement& tableSection = *static_cast<HTMLTableSectionElement*>(impl());
     switch (token) {
@@ -1510,7 +1419,7 @@ void JSHTMLElement::tableSectionSetter(ExecState *exec, int token, JSValue *valu
     }
 }
 
-void JSHTMLElement::tableRowSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::tableRowSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLTableRowElement& tableRow = *static_cast<HTMLTableRowElement*>(impl());
     switch (token) {
@@ -1525,7 +1434,7 @@ void JSHTMLElement::tableRowSetter(ExecState *exec, int token, JSValue *value, c
     }
 }
 
-void JSHTMLElement::tableCellSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::tableCellSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLTableCellElement& tableCell = *static_cast<HTMLTableCellElement*>(impl());
     switch (token) {
@@ -1547,7 +1456,7 @@ void JSHTMLElement::tableCellSetter(ExecState *exec, int token, JSValue *value, 
     }
 }
 
-void JSHTMLElement::frameSetSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::frameSetSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLFrameSetElement& frameSet = *static_cast<HTMLFrameSetElement*>(impl());
     switch (token) {
@@ -1556,7 +1465,7 @@ void JSHTMLElement::frameSetSetter(ExecState *exec, int token, JSValue *value, c
     }
 }
 
-void JSHTMLElement::frameSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::frameSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLFrameElement& frameElement = *static_cast<HTMLFrameElement*>(impl());
     switch (token) {
@@ -1573,7 +1482,7 @@ void JSHTMLElement::frameSetter(ExecState *exec, int token, JSValue *value, cons
     }
 }
 
-void JSHTMLElement::iFrameSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::iFrameSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     HTMLIFrameElement& iFrame = *static_cast<HTMLIFrameElement*>(impl());
     switch (token) {
@@ -1591,12 +1500,12 @@ void JSHTMLElement::iFrameSetter(ExecState *exec, int token, JSValue *value, con
     }
 }
 
-void JSHTMLElement::marqueeSetter(ExecState *exec, int token, JSValue *value, const WebCore::String& str)
+void JSHTMLElement::marqueeSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
 {
     // FIXME: Find out what WinIE supports and implement it.
 }
 
-void JSHTMLElement::putValueProperty(ExecState *exec, int token, JSValue *value, int)
+void JSHTMLElement::putValueProperty(ExecState* exec, int token, JSValue *value, int)
 {
     DOMExceptionTranslator exception(exec);
     WebCore::String str = value->toString(exec);
@@ -1639,24 +1548,24 @@ void JSHTMLElement::putValueProperty(ExecState *exec, int token, JSValue *value,
         return (this->*(access->m_setter))(exec, token, value, str);  
 }
 
-HTMLElement *toHTMLElement(JSValue *val)
+HTMLElement* toHTMLElement(JSValue *val)
 {
     if (!val || !val->isObject(&JSHTMLElement::info))
         return 0;
     return static_cast<HTMLElement*>(static_cast<JSHTMLElement*>(val)->impl());
 }
 
-HTMLTableCaptionElement *toHTMLTableCaptionElement(JSValue *val)
+HTMLTableCaptionElement* toHTMLTableCaptionElement(JSValue *val)
 {
-    HTMLElement *e = toHTMLElement(val);
+    HTMLElement* e = toHTMLElement(val);
     if (e && e->hasTagName(captionTag))
         return static_cast<HTMLTableCaptionElement*>(e);
     return 0;
 }
 
-HTMLTableSectionElement *toHTMLTableSectionElement(JSValue *val)
+HTMLTableSectionElement* toHTMLTableSectionElement(JSValue *val)
 {
-    HTMLElement *e = toHTMLElement(val);
+    HTMLElement* e = toHTMLElement(val);
     if (e && (e->hasTagName(theadTag) || e->hasTagName(tbodyTag) || e->hasTagName(tfootTag)))
         return static_cast<HTMLTableSectionElement*>(e);
     return 0;
@@ -1676,7 +1585,7 @@ KJS_IMPLEMENT_PROTOTYPE("HTMLCollection",HTMLCollectionProto,HTMLCollectionProto
 
 const ClassInfo JSHTMLCollection::info = { "HTMLCollection", 0, 0, 0 };
 
-JSHTMLCollection::JSHTMLCollection(ExecState *exec, HTMLCollection *c)
+JSHTMLCollection::JSHTMLCollection(ExecState* exec, HTMLCollection *c)
   : m_impl(c) 
 {
   setPrototype(HTMLCollectionProto::self(exec));
@@ -1687,25 +1596,25 @@ JSHTMLCollection::~JSHTMLCollection()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *JSHTMLCollection::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLCollection::lengthGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLCollection *thisObj = static_cast<JSHTMLCollection*>(slot.slotBase());
     return jsNumber(thisObj->m_impl->length());
 }
 
-JSValue *JSHTMLCollection::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLCollection::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLCollection *thisObj = static_cast<JSHTMLCollection*>(slot.slotBase());
     return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
-JSValue *JSHTMLCollection::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLCollection::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLCollection *thisObj = static_cast<JSHTMLCollection*>(slot.slotBase());
     return thisObj->getNamedItems(exec, propertyName);
 }
 
-bool JSHTMLCollection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSHTMLCollection::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   if (propertyName == lengthPropertyName) {
       slot.setCustom(this, lengthGetter);
@@ -1735,7 +1644,7 @@ bool JSHTMLCollection::getOwnPropertySlot(ExecState *exec, const Identifier& pro
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-JSValue *JSHTMLCollection::callAsFunction(ExecState *exec, JSObject *, const List &args)
+JSValue *JSHTMLCollection::callAsFunction(ExecState* exec, JSObject* , const List &args)
 {
   // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
   HTMLCollection &collection = *m_impl;
@@ -1772,7 +1681,7 @@ JSValue *JSHTMLCollection::callAsFunction(ExecState *exec, JSObject *, const Lis
   return jsUndefined();
 }
 
-JSValue *JSHTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
+JSValue *JSHTMLCollection::getNamedItems(ExecState* exec, const Identifier &propertyName) const
 {
     DeprecatedValueList< RefPtr<WebCore::Node> > namedItems = m_impl->namedItems(propertyName);
 
@@ -1785,7 +1694,7 @@ JSValue *JSHTMLCollection::getNamedItems(ExecState *exec, const Identifier &prop
     return new DOMNamedNodesCollection(exec, namedItems);
 }
 
-JSValue *HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *HTMLCollectionProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
   if (!thisObj->inherits(&JSHTMLCollection::info))
     return throwError(exec, TypeError);
@@ -1805,18 +1714,18 @@ JSValue *HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, JSObject *this
 
 // -------------------------------------------------------------------------
 
-JSHTMLSelectCollection::JSHTMLSelectCollection(ExecState *exec, HTMLCollection *c, HTMLSelectElement *e)
+JSHTMLSelectCollection::JSHTMLSelectCollection(ExecState* exec, HTMLCollection *c, HTMLSelectElement* e)
   : JSHTMLCollection(exec, c), m_element(e)
 {
 }
 
-JSValue *JSHTMLSelectCollection::selectedIndexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *JSHTMLSelectCollection::selectedIndexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLSelectCollection *thisObj = static_cast<JSHTMLSelectCollection*>(slot.slotBase());
     return jsNumber(thisObj->m_element->selectedIndex());
 }
 
-bool JSHTMLSelectCollection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSHTMLSelectCollection::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   if (propertyName == "selectedIndex") {
     slot.setCustom(this, selectedIndexGetter);
@@ -1827,7 +1736,7 @@ bool JSHTMLSelectCollection::getOwnPropertySlot(ExecState *exec, const Identifie
   return JSHTMLCollection::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void JSHTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int)
+void JSHTMLSelectCollection::put(ExecState* exec, const Identifier &propertyName, JSValue *value, int)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "JSHTMLSelectCollection::put " << propertyName.deprecatedString() << endl;
@@ -1884,7 +1793,7 @@ void JSHTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName
 
   int exception = 0;
   int diff = int(u) - m_element->length();
-  HTMLElement *before = 0;
+  HTMLElement* before = 0;
   // out of array bounds ? first insert empty dummies
   if (diff > 0) {
     while (diff--) {
@@ -1920,7 +1829,7 @@ bool ImageConstructorImp::implementsConstruct() const
   return true;
 }
 
-JSObject *ImageConstructorImp::construct(ExecState * exec, const List & list)
+JSObject* ImageConstructorImp::construct(ExecState*  exec, const List & list)
 {
     bool widthSet = false, heightSet = false;
     int width = 0, height = 0;
@@ -1935,7 +1844,7 @@ JSObject *ImageConstructorImp::construct(ExecState * exec, const List & list)
         height = h->toInt32(exec);
     }
         
-    HTMLImageElement *result = new HTMLImageElement(m_doc.get());
+    HTMLImageElement* result = new HTMLImageElement(m_doc.get());
     
     if (widthSet)
         result->setWidth(width);
@@ -1947,17 +1856,17 @@ JSObject *ImageConstructorImp::construct(ExecState * exec, const List & list)
 
 ////////////////////////////////////////////////////////////////
                      
-JSValue *getAllHTMLCollection(ExecState *exec, HTMLCollection *c)
+JSValue* getAllHTMLCollection(ExecState* exec, HTMLCollection* c)
 {
     return cacheDOMObject<HTMLCollection, HTMLAllCollection>(exec, c);
 }
 
-JSValue *getHTMLCollection(ExecState *exec, HTMLCollection *c)
+JSValue* getHTMLCollection(ExecState* exec, HTMLCollection* c)
 {
-  return cacheDOMObject<HTMLCollection, JSHTMLCollection>(exec, c);
+    return cacheDOMObject<HTMLCollection, JSHTMLCollection>(exec, c);
 }
 
-JSValue *getSelectHTMLCollection(ExecState *exec, HTMLCollection *c, HTMLSelectElement *e)
+JSValue *getSelectHTMLCollection(ExecState* exec, HTMLCollection *c, HTMLSelectElement* e)
 {
   DOMObject *ret;
   if (!c)

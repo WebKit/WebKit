@@ -48,7 +48,8 @@ JSValue* JSHTMLInputElementBaseProtoFunc::callAsFunction(ExecState*, JSObject*, 
     return 0;
 }
 
-// SetSelectionRange is implemented on the class instead of on the prototype, intentionally.
+// SetSelectionRange is implemented on the class instead of on the prototype
+// to make it easier to enable/disable lookup of the function based on input type.
 class JSHTMLInputElementBaseFunction : public InternalFunctionImp {
 public:
     JSHTMLInputElementBaseFunction(ExecState*, int i, int len, const Identifier& name);

@@ -86,8 +86,8 @@ public:
     HTMLElement* insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
-    RefPtr<HTMLCollection> rows();
-    RefPtr<HTMLCollection> tBodies();
+    PassRefPtr<HTMLCollection> rows();
+    PassRefPtr<HTMLCollection> tBodies();
 
     String align() const;
     void setAlign(const String&);

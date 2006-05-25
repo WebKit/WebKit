@@ -100,7 +100,7 @@ Node* NodeList::recursiveItem(unsigned offset, Node* start) const
     return 0; // no matching node in this subtree
 }
 
-Node* NodeList::itemById(const AtomicString& elementId) const
+Node* NodeList::itemWithName(const AtomicString& elementId) const
 {
     if (rootNode->isDocumentNode() || rootNode->inDocument()) {
         Node* node = rootNode->document()->getElementById(elementId);

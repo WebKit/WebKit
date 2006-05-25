@@ -107,7 +107,7 @@ void HTMLFormElement::removedFromDocument()
     HTMLElement::removedFromDocument();
 }
 
-int HTMLFormElement::length() const
+unsigned HTMLFormElement::length() const
 {
     int len = 0;
     for (unsigned i = 0; i < formElements.size(); ++i)
@@ -117,6 +117,10 @@ int HTMLFormElement::length() const
     return len;
 }
 
+Node* HTMLFormElement::item(unsigned index)
+{
+    return elements()->item(index);
+}
 
 void HTMLFormElement::submitClick()
 {
@@ -516,9 +520,9 @@ void HTMLFormElement::removeImgElement(HTMLImageElement *e)
     removeFromVector(imgElements, e);
 }
 
-RefPtr<HTMLCollection> HTMLFormElement::elements()
+PassRefPtr<HTMLCollection> HTMLFormElement::elements()
 {
-    return RefPtr<HTMLCollection>(new HTMLFormCollection(this));
+    return new HTMLFormCollection(this);
 }
 
 String HTMLFormElement::name() const

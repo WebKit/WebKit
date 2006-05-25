@@ -511,14 +511,14 @@ bool HTMLTableElement::isURLAttribute(Attribute *attr) const
     return attr->name() == backgroundAttr;
 }
 
-RefPtr<HTMLCollection> HTMLTableElement::rows()
+PassRefPtr<HTMLCollection> HTMLTableElement::rows()
 {
-    return RefPtr<HTMLCollection>(new HTMLCollection(this, HTMLCollection::TABLE_ROWS));
+    return new HTMLCollection(this, HTMLCollection::TABLE_ROWS);
 }
 
-RefPtr<HTMLCollection> HTMLTableElement::tBodies()
+PassRefPtr<HTMLCollection> HTMLTableElement::tBodies()
 {
-    return RefPtr<HTMLCollection>(new HTMLCollection(this, HTMLCollection::TABLE_TBODIES));
+    return new HTMLCollection(this, HTMLCollection::TABLE_TBODIES);
 }
 
 String HTMLTableElement::align() const

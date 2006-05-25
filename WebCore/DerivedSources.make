@@ -46,7 +46,9 @@ all : \
     JSAttr.h \
     JSCSSPrimitiveValue.h \
     JSCSSRule.h \
+    JSCSSRuleList.h \
     JSCSSValue.h \
+    JSCSSValueList.h \
     JSCanvasGradient.h \
     JSCanvasPattern.h \
     JSCanvasRenderingContext2D.h \
@@ -79,6 +81,7 @@ all : \
     JSHTMLElement.h \
     JSHTMLFieldSetElement.h \
 	JSHTMLFontElement.h \
+	JSHTMLFormElement.h \
     JSHTMLHeadElement.h \
     JSHTMLHeadingElement.h \
     JSHTMLHRElement.h \

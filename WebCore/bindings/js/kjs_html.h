@@ -78,7 +78,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const;
     static const ClassInfo info;
 
-    static const ClassInfo form_info,
+    static const ClassInfo
       select_info, object_info, 
       embed_info, table_info, caption_info, col_info, tablesection_info, tr_info,
       tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
@@ -88,13 +88,11 @@ namespace KJS {
     typedef void (JSHTMLElement::*SetterFunction)(ExecState*, int token, JSValue*, const WebCore::String&);
     struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
     const Accessors* accessors() const;
-    static const Accessors form_accessors,
+    static const Accessors
       select_accessors, object_accessors, embed_accessors, table_accessors,
       caption_accessors, col_accessors, tablesection_accessors, tr_accessors,
       tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
 
-    JSValue* formGetter(ExecState* exec, int token) const;
-    void  formSetter(ExecState*, int token, JSValue*, const WebCore::String&);
     JSValue* selectGetter(ExecState* exec, int token) const;
     void  selectSetter(ExecState*, int token, JSValue*, const WebCore::String&);
     JSValue* objectGetter(ExecState* exec, int token) const;
@@ -123,8 +121,7 @@ namespace KJS {
     void  marqueeSetter(ExecState*, int token, JSValue*, const WebCore::String&);
 
     enum {
-           FormAction, FormEncType, FormElements, FormLength, FormAcceptCharset,
-           FormReset, FormTarget, FormName, FormMethod, FormSubmit, SelectAdd,
+           SelectAdd,
            SelectTabIndex, SelectValue, SelectSelectedIndex, SelectLength,
            SelectRemove, SelectForm, SelectBlur, SelectType, SelectOptions,
            SelectDisabled, SelectMultiple, SelectName, SelectSize, SelectFocus,
@@ -161,8 +158,6 @@ namespace KJS {
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText
   };
   private:
-    static JSValue* formIndexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
-    static JSValue* formNameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* selectIndexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* framesetNameGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);
     static JSValue* frameWindowPropertyGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&);

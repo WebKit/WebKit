@@ -1,3 +1,21 @@
+2006-05-23  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+
+        Add "HasIndexGetter" support to bindings autogen system.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9057
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        * bindings/js/kjs_css.cpp:
+        (KJS::toJS):
+        * bindings/js/kjs_css.h:
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNamedNodeMap::getOwnPropertySlot):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSValueList.idl: Added.
+
 2006-05-24  David Hyatt  <hyatt@apple.com>
 
         Implement font aliasing of family names for Courier/Courier New,

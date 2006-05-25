@@ -38,6 +38,8 @@
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSRule.h"
 #include "JSCSSStyleDeclaration.h"
+#include "JSCSSRuleList.h"
+#include "JSCSSValueList.h"
 #include "MediaList.h"
 #include "StyleSheetList.h"
 #include "kjs_dom.h"
@@ -638,86 +640,6 @@ JSValue* DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState* exec, JSObject* th
 
 // -------------------------------------------------------------------------
 
-const ClassInfo DOMCSSRuleList::info = { "CSSRuleList", 0, &DOMCSSRuleListTable, 0 };
-/*
-@begin DOMCSSRuleListTable 2
-  length                DOMCSSRuleList::Length          DontDelete|ReadOnly
-  item                  DOMCSSRuleList::Item            DontDelete|Function 1
-@end
-*/
-KJS_IMPLEMENT_PROTOFUNC(DOMCSSRuleListFunc) // not really a proto, but doesn't matter
-
-DOMCSSRuleList::DOMCSSRuleList(ExecState *, WebCore::CSSRuleList *rl) 
-  : m_impl(rl) 
-{ 
-}
-
-DOMCSSRuleList::~DOMCSSRuleList()
-{
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-JSValue* DOMCSSRuleList::getValueProperty(ExecState* exec, int token) const
-{
-  switch (token) {
-  case Length:
-    return jsNumber(m_impl->length());
-  default:
-    assert(0);
-    return jsUndefined();
-  }
-}
-
-JSValue* DOMCSSRuleList::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-  DOMCSSRuleList *thisObj = static_cast<DOMCSSRuleList*>(slot.slotBase());
-  return toJS(exec, thisObj->m_impl->item(slot.index()));
-}
-
-bool DOMCSSRuleList::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  const HashEntry* entry = Lookup::findEntry(&DOMCSSRuleListTable, propertyName);
-
-  if (entry) {
-    if (entry->attr & Function)
-      slot.setStaticEntry(this, entry, staticFunctionGetter<DOMCSSRuleListFunc>);
-    else
-      slot.setStaticEntry(this, entry, staticValueGetter<DOMCSSRuleList>);
-    return true;
-  }
-
-  CSSRuleList &cssRuleList = *m_impl;
-
-  bool ok;
-  unsigned u = propertyName.toUInt32(&ok);
-  if (ok && u < cssRuleList.length()) {
-    slot.setCustomIndex(this, u, indexGetter);
-    return true;
-  }
-
-  return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
-}
-
-JSValue* DOMCSSRuleListFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMCSSRuleList::info))
-    return throwError(exec, TypeError);
-  CSSRuleList &cssRuleList = *static_cast<DOMCSSRuleList*>(thisObj)->impl();
-  switch (id) {
-    case DOMCSSRuleList::Item:
-      return toJS(exec,cssRuleList.item(args[0]->toInt32(exec)));
-    default:
-      return jsUndefined();
-  }
-}
-
-JSValue* toJS(ExecState* exec, CSSRuleList *rl)
-{
-  return cacheDOMObject<CSSRuleList, DOMCSSRuleList>(exec, rl);
-}
-
-// -------------------------------------------------------------------------
-
 KJS_IMPLEMENT_PROTOFUNC(DOMCSSRuleFunc) // Not a proto, but doesn't matter
 
 DOMCSSRule::DOMCSSRule(ExecState*, WebCore::CSSRule* r)
@@ -982,76 +904,13 @@ JSValue* toJS(ExecState* exec, CSSValue *v)
     return ret;
   else {
     if (v->isValueList())
-      ret = new DOMCSSValueList(exec, static_cast<CSSValueList*>(v));
+      ret = new JSCSSValueList(exec, static_cast<CSSValueList*>(v));
     else if (v->isPrimitiveValue())
       ret = new JSCSSPrimitiveValue(exec, static_cast<CSSPrimitiveValue*>(v));
     else
       ret = new DOMCSSValue(exec,v);
     interp->putDOMObject(v, ret);
     return ret;
-  }
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMCSSValueList::info = { "CSSValueList", 0, &DOMCSSValueListTable, 0 };
-
-/*
-@begin DOMCSSValueListTable 3
-  length                DOMCSSValueList::Length         DontDelete|ReadOnly
-  item                  DOMCSSValueList::Item           DontDelete|Function 1
-@end
-*/
-KJS_IMPLEMENT_PROTOFUNC(DOMCSSValueListFunc) // not really a proto, but doesn't matter
-
-DOMCSSValueList::DOMCSSValueList(ExecState* exec, CSSValueList *v)
-  : DOMCSSValue(exec, v) 
-{ 
-}
-
-JSValue* DOMCSSValueList::getValueProperty(ExecState* exec, int token) const
-{
-  assert(token == Length);
-  return jsNumber(static_cast<CSSValueList*>(impl())->length());
-}
-
-JSValue* DOMCSSValueList::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
-{
-  DOMCSSValueList *thisObj = static_cast<DOMCSSValueList*>(slot.slotBase());
-  return toJS(exec, static_cast<CSSValueList*>(thisObj->impl())->item(slot.index()));
-}
-
-bool DOMCSSValueList::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  CSSValueList &valueList = *static_cast<CSSValueList*>(impl());
-  const HashEntry* entry = Lookup::findEntry(&DOMCSSValueListTable, propertyName);
-  if (entry) {
-    if (entry->attr & Function)
-      slot.setStaticEntry(this, entry, staticFunctionGetter<DOMCSSValueListFunc>);
-    else
-      slot.setStaticEntry(this, entry, staticValueGetter<DOMCSSValueList>);
-  }
-
-  bool ok;
-  unsigned u = propertyName.toUInt32(&ok);
-  if (ok && u < valueList.length()) {
-    slot.setCustomIndex(this, u, indexGetter);
-    return true;
-  }
-
-  return DOMCSSValue::getOwnPropertySlot(exec, propertyName, slot);
-}
-
-JSValue* DOMCSSValueListFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMCSSValue::info))
-    return throwError(exec, TypeError);
-  CSSValueList &valueList = *static_cast<CSSValueList*>(static_cast<DOMCSSValueList*>(thisObj)->impl());
-  switch (id) {
-    case DOMCSSValueList::Item:
-      return toJS(exec,valueList.item(args[0]->toInt32(exec)));
-    default:
-      return jsUndefined();
   }
 }
 

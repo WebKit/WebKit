@@ -42,7 +42,7 @@ class HTMLFormCollection;
 class HTMLFormElement : public HTMLElement
 {
 public:
-    HTMLFormElement(Document *doc);
+    HTMLFormElement(Document*);
     virtual ~HTMLFormElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -52,23 +52,24 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
  
-    RefPtr<HTMLCollection> elements();
-    int length() const;
+    PassRefPtr<HTMLCollection> elements();
+    unsigned length() const;
+    Node* item(unsigned index);
 
     String enctype() const { return m_enctype; }
-    void setEnctype(const String &);
+    void setEnctype(const String&);
 
     String boundary() const { return m_boundary; }
-    void setBoundary(const String &);
+    void setBoundary(const String&);
 
     bool autoComplete() const { return m_autocomplete; }
 
     virtual void parseMappedAttribute(MappedAttribute *attr);
 
-    void registerFormElement(HTMLGenericFormElement *);
-    void removeFormElement(HTMLGenericFormElement *);
-    void registerImgElement(HTMLImageElement *);
-    void removeImgElement(HTMLImageElement *);
+    void registerFormElement(HTMLGenericFormElement*);
+    void removeFormElement(HTMLGenericFormElement*);
+    void registerImgElement(HTMLImageElement*);
+    void removeImgElement(HTMLImageElement*);
 
     bool prepareSubmit();
     void submit(bool activateSubmitButton = false);
@@ -86,25 +87,23 @@ public:
     bool formWouldHaveSecureSubmission(const String &url);
 
     String name() const;
-    void setName(const String &);
+    void setName(const String&);
 
     String acceptCharset() const;
-    void setAcceptCharset(const String &);
+    void setAcceptCharset(const String&);
 
     String action() const;
-    void setAction(const String &);
+    void setAction(const String&);
 
     String method() const;
-    void setMethod(const String &);
+    void setMethod(const String&);
 
     String target() const;
-    void setTarget(const String &);
-
-    static void i18nData();
+    void setTarget(const String&);
 
     friend class HTMLFormCollection;
 
-    HTMLCollection::CollectionInfo *collectionInfo;
+    HTMLCollection::CollectionInfo* collectionInfo;
 
     Vector<HTMLGenericFormElement*> formElements;
     Vector<HTMLImageElement*> imgElements;
@@ -123,10 +122,10 @@ public:
     bool m_preserveAcrossRemove : 1;
 
 private:
-    void parseEnctype(const String &);
-    bool formData(WebCore::FormData &) const;
+    void parseEnctype(const String&);
+    bool formData(WebCore::FormData&) const;
 
-    unsigned formElementIndex(HTMLGenericFormElement *);
+    unsigned formElementIndex(HTMLGenericFormElement*);
 
     String oldNameAttr;
 };
