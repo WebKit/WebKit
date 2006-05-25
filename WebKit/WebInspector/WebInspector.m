@@ -38,6 +38,7 @@
 #import "WebFrame.h"
 #import "WebLocalizableStrings.h"
 #import "WebKitNSStringExtras.h"
+#import "WebTypesInternal.h"
 
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMHTML.h>
