@@ -1,5 +1,14 @@
 2006-05-25  Dave Hyatt <hyatt@apple.com>
 
+        Implement the fallback method containsCharacters for
+        checking if a font has the necessary glyphs to be
+        selected as a fallback choide.
+
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::containsCharacters):
+
+2006-05-25  Dave Hyatt <hyatt@apple.com>
+
         For now eliminate the logical scale factor from Cairo.
         This enables bitmap fonts like MS Sans Serif to work on
         Win32.

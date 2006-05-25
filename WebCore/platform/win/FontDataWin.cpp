@@ -109,9 +109,25 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
 
 bool FontData::containsCharacters(const UChar* characters, int length) const
 {
-    // FIXME: Need to check character ranges.
-    // IMLangFontLink2::GetFontUnicodeRanges does what we want. 
-    return false;
+    HDC dc = GetDC(0);
+    SaveDC(dc);
+    SelectObject(dc, m_font.hfont());
+
+    WORD* glyphBuffer = new WORD[length];
+    GetGlyphIndices(dc, characters, length, glyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
+    
+    RestoreDC(dc, -1);
+    ReleaseDC(0, dc);
+
+    for (unsigned i = 0; i < length; i++) {
+        if (glyphBuffer[i] == 0xFFFFFFFF) {
+            delete []glyphBuffer;
+            return false;
+        }
+    }
+
+    delete []glyphBuffer;
+    return true;
 }
 
 void FontData::determinePitch()
