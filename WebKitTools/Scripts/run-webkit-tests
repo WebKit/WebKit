@@ -86,6 +86,19 @@ my $testOnlySVGs = '';
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $verbose = 0;
 
+my $expectedTag = "expected";
+if (isCygwin()) {
+    $expectedTag = "expected-win";
+}
+my $actualTag = "actual";
+if (isCygwin()) {
+    $actualTag = "actual-win";
+}
+my $diffsTag = "diffs";
+if (isCygwin()) {
+    $actualTag = "diffs-win";
+}
+
 GetOptions(
     'guard-malloc|g' => \$guardMalloc,
     'horizontal-sweep|h' => \$repaintSweepHorizontally,
@@ -239,10 +252,11 @@ for my $test (@tests) {
     if ($test !~ /^http\//) {
         my $testPath = "$testDirectory/$test";
         if (isCygwin()) {
-            $testPath =~ s|/cygdrive/c|c:|;
-            $testPath =~ s|/|\\|g;
+            $testPath = `cygpath -m -s "$testPath"`;
         }
-        $testPath = canonpath($testPath);
+        else {
+            $testPath = canonpath($testPath);
+        }
         print OUT "$testPath\n";
     } else {
         openHTTPDIfNeeded();
@@ -261,7 +275,7 @@ for my $test (@tests) {
     $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
-    if (!$resetResults && open EXPECTED, "<", "$testDirectory/$base-expected.txt") {
+    if (!$resetResults && open EXPECTED, "<", "$testDirectory/$base-$expectedTag.txt") {
         $expected = "";
         while (<EXPECTED>) {
             $expected .= $_;
@@ -294,10 +308,10 @@ for my $test (@tests) {
             }
         }
 
-        if ($expectedHash ne $actualHash && -f "$testDirectory/$base-expected.png") {
-            my $expectedPNGSize = -s "$testDirectory/$base-expected.png";
+        if ($expectedHash ne $actualHash && -f "$testDirectory/$base-$expectedTag.png") {
+            my $expectedPNGSize = -s "$testDirectory/$base-$expectedTag.png";
             my $expectedPNG = "";
-            open EXPECTEDPNG, "$testDirectory/$base-expected.png";
+            open EXPECTEDPNG, "$testDirectory/$base-$expectedTag.png";
             read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
 
             print DIFFOUT "Content-length: $actualPNGSize\n";
@@ -319,15 +333,15 @@ for my $test (@tests) {
             }
         }
 
-        if ($actualPNGSize && ($resetResults || !-f "$testDirectory/$base-expected.png")) {
+        if ($actualPNGSize && ($resetResults || !-f "$testDirectory/$base-$expectedTag.png")) {
             open EXPECTED, ">", "$testDirectory/$base-expected.png" or die "could not create $testDirectory/$base-expected.png\n";
             print EXPECTED $actualPNG;
             close EXPECTED;
         }
 
         # update the expected hash if the image diff said that there was no difference
-        if ($actualHash ne "" && ($resetResults || !-f "$testDirectory/$base-expected.checksum")) {
-            open EXPECTED, ">", "$testDirectory/$base-expected.checksum" or die "could not create $testDirectory/$base-expected.checksum\n";
+        if ($actualHash ne "" && ($resetResults || !-f "$testDirectory/$base-$expectedTag.checksum")) {
+            open EXPECTED, ">", "$testDirectory/$base-$expectedTag.checksum" or die "could not create $testDirectory/$base-$expectedTag.checksum\n";
             print EXPECTED $actualHash;
             close EXPECTED;
         }
@@ -339,19 +353,19 @@ for my $test (@tests) {
             $atLineStart = 1;
         }
         $result = "new";
-        open EXPECTED, ">", "$testDirectory/$base-expected.txt" or die "could not create $testDirectory/$base-expected.txt\n";
+        open EXPECTED, ">", "$testDirectory/$base-$expectedTag.txt" or die "could not create $testDirectory/$base-$expectedTag.txt\n";
         print EXPECTED $actual;
         close EXPECTED;
-        unlink "$testResultsDirectory/$base-actual.txt";
-        unlink "$testResultsDirectory/$base-diffs.txt";
+        unlink "$testResultsDirectory/$base-$actualTag.txt";
+        unlink "$testResultsDirectory/$base-$diffsTag.txt";
     } elsif ($actual eq $expected && $diffResult eq "passed") {
         if ($verbose || $singly) {
             print "succeeded\n";
             $atLineStart = 1;
         }
         $result = "match";
-        unlink "$testResultsDirectory/$base-actual.txt";
-        unlink "$testResultsDirectory/$base-diffs.txt";
+        unlink "$testResultsDirectory/$base-$actualTag.txt";
+        unlink "$testResultsDirectory/$base-$diffsTag.txt";
     } else {
         unless ($verbose || $singly) {
             print "\n" unless $atLineStart;
@@ -367,33 +381,33 @@ for my $test (@tests) {
         my $testName = $1;
         mkpath $dir;
 
-        open ACTUAL, ">", "$testResultsDirectory/$base-actual.txt" or die;
+        open ACTUAL, ">", "$testResultsDirectory/$base-$actualTag.txt" or die;
         print ACTUAL $actual;
         close ACTUAL;
 
-        system "diff -u \"$testDirectory/$base-expected.txt\" \"$testResultsDirectory/$base-actual.txt\" > \"$testResultsDirectory/$base-diffs.txt\"";
+        system "diff -u \"$testDirectory/$base-$expectedTag.txt\" \"$testResultsDirectory/$base-$actualTag.txt\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
 
         if ($pixelTests && $diffPNG && $diffPNG ne "") {
             $imagesPresent{$base} = 1;
 
-            open ACTUAL, ">", "$testResultsDirectory/$base-actual.png" or die;
+            open ACTUAL, ">", "$testResultsDirectory/$base-$actualTag.png" or die;
             print ACTUAL $actualPNG;
             close ACTUAL;
 
-            open DIFF, ">", "$testResultsDirectory/$base-diffs.png" or die;
+            open DIFF, ">", "$testResultsDirectory/$base-$diffsTag.png" or die;
             print DIFF $diffPNG;
             close DIFF;
             
-            copy("$testDirectory/$base-expected.png", "$testResultsDirectory/$base-expected.png");
+            copy("$testDirectory/$base-$expectedTag.png", "$testResultsDirectory/$base-$expectedTag.png");
 
-            open DIFFHTML, ">$testResultsDirectory/$base-diffs.html" or die;
+            open DIFFHTML, ">$testResultsDirectory/$base-$diffsTag.html" or die;
             print DIFFHTML "<html>\n";
             print DIFFHTML "<head>\n";
             print DIFFHTML "<title>$base Image Compare</title>\n";
             print DIFFHTML "<script language=\"Javascript\" type=\"text/javascript\">\n";
             print DIFFHTML "var currentImage = 0;\n";
             print DIFFHTML "var imageNames = new Array(\"Actual\", \"Expected\");\n";
-            print DIFFHTML "var imagePaths = new Array(\"$testName-actual.png\", \"$testName-expected.png\");\n";
+            print DIFFHTML "var imagePaths = new Array(\"$testName-$actualTag.png\", \"$testName-$expectedTag.png\");\n";
             if (-f "$testDirectory/$base-w3c.png") {
                 copy("$testDirectory/$base-w3c.png", "$testResultsDirectory/$base-w3c.png");
                 print DIFFHTML "imageNames.push(\"W3C\");\n";
@@ -413,14 +427,14 @@ for my $test (@tests) {
             print DIFFHTML "<table>\n";
             if ($diffPercentage) {
                 print DIFFHTML "<tr>\n";
-                print DIFFHTML "<td>Difference between images: <a href=\"$testName-diffs.png\">$diffPercentage%</a></td>\n";
+                print DIFFHTML "<td>Difference between images: <a href=\"$testName-$diffsTag.png\">$diffPercentage%</a></td>\n";
                 print DIFFHTML "</tr>\n";
             }
             print DIFFHTML "<tr>\n";
             print DIFFHTML "<td id=\"imageText\" style=\"text-weight: bold;\">Actual Image</td>\n";
             print DIFFHTML "</tr>\n";
             print DIFFHTML "<tr>\n";
-            print DIFFHTML "<td><img src=\"$testName-actual.png\" id=\"animatedImage\"></td>\n";
+            print DIFFHTML "<td><img src=\"$testName-$actualTag.png\" id=\"animatedImage\"></td>\n";
             print DIFFHTML "</tr>\n";
             print DIFFHTML "</table>\n";
             print DIFFHTML "</body>\n";
@@ -526,20 +540,20 @@ if ($counts{mismatch}) {
     for my $test (@{$tests{mismatch}}) {
         my $base = $test;
         $base =~ s/\.[a-zA-Z]+$//;
-        copy("$testDirectory/$base-expected.txt", "$testResultsDirectory/$base-expected.txt");
+        copy("$testDirectory/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
         print HTML "<tr>\n";            
         print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
-        if (-s "$testResultsDirectory/$base-diffs.txt") {
-            print HTML "<td><a href=\"$base-expected.txt\">expected</a></td>\n";
-            print HTML "<td><a href=\"$base-actual.txt\">actual</a></td>\n";
-            print HTML "<td><a href=\"$base-diffs.txt\">diffs</a></td>\n";
+        if (-s "$testResultsDirectory/$base-$diffsTag.txt") {
+            print HTML "<td><a href=\"$base-$expectedTag.txt\">expected</a></td>\n";
+            print HTML "<td><a href=\"$base-$actualTag.txt\">actual</a></td>\n";
+            print HTML "<td><a href=\"$base-$diffsTag.txt\">diffs</a></td>\n";
         } else {
             print HTML "<td></td><td></td><td></td>\n";
         }
         if ($pixelTests) {
             if ($imagesPresent{$base}) {
-                print HTML "<td><a href=\"$base-expected.png\">expected image</a></td>\n";
-                print HTML "<td><a href=\"$base-diffs.html\">image diffs</a></td>\n";
+                print HTML "<td><a href=\"$base-$expectedTag.png\">expected image</a></td>\n";
+                print HTML "<td><a href=\"$base-$diffsTag.html\">image diffs</a></td>\n";
             } else {
                 print HTML "<td></td><td></td>\n";
             }            
@@ -570,9 +584,9 @@ if ($counts{new}) {
         $base =~ s/\.[a-zA-Z]+$//;
         print HTML "<tr>\n";
         print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
-        print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">results</a></td>\n";
-        if ($pixelTests && -f "$testDirectory/$base-expected.png") {
-            print HTML "<td><a href=\"$testDirectory/$base-expected.png\">image</a></td>\n";
+        print HTML "<td><a href=\"$testDirectory/$base-$expectedTag.txt\">results</a></td>\n";
+        if ($pixelTests && -f "$testDirectory/$base-$expectedTag.png") {
+            print HTML "<td><a href=\"$testDirectory/$base-$expectedTag.png\">image</a></td>\n";
         }
         print HTML "</tr>\n";
     }
