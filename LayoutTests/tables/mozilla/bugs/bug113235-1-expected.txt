@@ -1,19 +1,19 @@
-layer at (0,0) size 785x11398
+layer at (0,0) size 785x11400
   RenderCanvas at (0,0) size 785x600
-layer at (0,0) size 785x11398
-  RenderBlock {HTML} at (0,0) size 785x11398
-    RenderBody {BODY} at (8,8) size 769x11382
-      RenderTable {TABLE} at (0,0) size 739x11382 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 737x11380
-          RenderTableRow {TR} at (0,2) size 737x11376
+layer at (0,0) size 785x11400
+  RenderBlock {HTML} at (0,0) size 785x11400
+    RenderBody {BODY} at (8,8) size 769x11384
+      RenderTable {TABLE} at (0,0) size 739x11384 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 737x11382
+          RenderTableRow {TR} at (0,2) size 737x11378
             RenderTableCell {TD} at (2,2) size 12x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "x"
-            RenderTableCell {TD} at (16,2) size 719x11376 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (16,2) size 719x11378 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (2,2) size 715x0
                 RenderInline {FONT} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (2,2) size 715x11372
+              RenderBlock (anonymous) at (2,2) size 715x11374
                 RenderTable {TABLE} at (0,0) size 566x52 [border: (1px outset #808080)]
                   RenderTableSection {TBODY} at (1,1) size 564x50
                     RenderTableRow {TR} at (0,2) size 564x22
@@ -4240,15 +4240,15 @@ layer at (0,0) size 785x11398
                   RenderText {#text} at (0,0) size 0x0
                   RenderInline {A} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-                RenderTable {TABLE} at (0,11348) size 26x24
-                  RenderTableSection {TBODY} at (0,0) size 26x24
-                    RenderTableRow {TR} at (0,0) size 0x0
-                    RenderTableRow {TR} at (0,2) size 26x20
-                      RenderTableCell {TD} at (2,2) size 10x20 [r=1 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (0,11348) size 26x26
+                  RenderTableSection {TBODY} at (0,0) size 26x26
+                    RenderTableRow {TR} at (0,2) size 26x0
+                    RenderTableRow {TR} at (0,4) size 26x20
+                      RenderTableCell {TD} at (2,4) size 10x20 [r=1 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 8x17
                           text run at (1,1) width 8: "x"
-                      RenderTableCell {TD} at (14,2) size 10x20 [r=1 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (14,4) size 10x20 [r=1 c=1 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 8x17
                           text run at (1,1) width 8: "x"
-              RenderBlock (anonymous) at (2,11374) size 715x0
+              RenderBlock (anonymous) at (2,11376) size 715x0
                 RenderInline {FONT} at (0,0) size 0x0

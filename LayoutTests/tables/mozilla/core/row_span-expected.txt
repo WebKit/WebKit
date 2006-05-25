@@ -131,12 +131,12 @@ layer at (0,0) size 785x864
                 text run at (13,2) width 31: "three"
       RenderTable {TABLE} at (0,438) size 57x28 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 55x26
-          RenderTableRow {TR} at (0,2) size 55x-2
+          RenderTableRow {TR} at (0,2) size 55x0
             RenderTableCell {TD} at (2,2) size 25x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (2,2) size 21x18
                 text run at (2,2) width 21: "foo"
-          RenderTableRow {TR} at (0,2) size 55x22
-            RenderTableCell {TD} at (29,2) size 24x22 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
+          RenderTableRow {TR} at (0,4) size 55x20
+            RenderTableCell {TD} at (29,3) size 24x22 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
               RenderText {#text} at (2,2) size 20x18
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,466) size 769x18

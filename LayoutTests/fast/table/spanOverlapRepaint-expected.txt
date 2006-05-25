@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 176x49
           RenderTableRow {TR} at (0,2) size 176x2
             RenderTableCell {TD} at (2,2) size 6x2 [r=0 c=0 rs=1 cs=1]
-          RenderTableRow {TR} at (0,6) size 176x-2
+          RenderTableRow {TR} at (0,6) size 176x0
             RenderTableCell {TD} at (2,6) size 6x2 [r=1 c=0 rs=2 cs=1]
-          RenderTableRow {TR} at (0,6) size 176x2
-            RenderTableCell {TD} at (10,25) size 164x2 [r=2 c=1 rs=2 cs=1]
+          RenderTableRow {TR} at (0,8) size 176x0
+            RenderTableCell {TD} at (10,26) size 164x2 [r=2 c=1 rs=2 cs=1]
           RenderTableRow {TR} at (0,10) size 176x37
             RenderTableCell {TD} at (2,10) size 172x37 [r=3 c=0 rs=1 cs=2]
               RenderTable {TABLE} at (1,1) size 170x35 [border: (2px outset #808080)]

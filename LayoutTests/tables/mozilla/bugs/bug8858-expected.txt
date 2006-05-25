@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 412: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
       RenderTable {TABLE} at (0,52) size 776x529 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 772x525
-          RenderTableRow {TR} at (0,1) size 772x78
+          RenderTableRow {TR} at (0,1) size 772x79
             RenderTableCell {TD} at (1,1) size 770x205 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=2]
               RenderBlock {P} at (5,5) size 760x43
                 RenderInline {FONT} at (0,0) size 23x28 [color=#E91C05]
@@ -45,6 +45,6 @@ layer at (0,0) size 800x600
                     text run at (0,45) width 720: "In business for over 35 years, and the oldest real estate company on Mayne Island, Pacific Shore Properties knowledge and"
                     text run at (0,60) width 253: "expertise on the Gulf Islands is unmatched."
               RenderBlock {P} at (5,216) size 760x0
-          RenderTableRow {TR} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,81) size 772x79
+          RenderTableRow {TR} at (0,161) size 772x80
+          RenderTableRow {TR} at (0,242) size 772x282

@@ -10,9 +10,9 @@ layer at (0,0) size 800x108
               RenderBlock {P} at (0,16) size 58x18
                 RenderText {#text} at (0,0) size 58x18
                   text run at (0,0) width 58: "blah blah"
-          RenderTableRow {TR} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,0) size 58x0
+          RenderTableRow {TR} at (0,0) size 58x0
+          RenderTableRow {TR} at (0,0) size 58x50
       RenderBlock {P} at (0,66) size 784x18
         RenderText {#text} at (0,0) size 109x18
           text run at (0,0) width 109: "text at the bottom"

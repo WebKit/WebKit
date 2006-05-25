@@ -1,3 +1,47 @@
+2006-05-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Landed by eseidel.
+
+        - updated results for http://bugzilla.opendarwin.org/show_bug.cgi?id=3297
+          height property is not honored on table rows
+
+        * editing/selection/3690703-2-expected.txt:
+        * editing/selection/3690703-expected.txt:
+        * editing/selection/3690719-expected.txt:
+        * fast/encoding/utf-16-big-endian-expected.txt:
+        * fast/encoding/utf-16-little-endian-expected.txt:
+        * fast/invalid/017-expected.txt:
+        * fast/invalid/018-expected.txt:
+        * fast/table/012-expected.txt:
+        * fast/table/cell-absolute-child-expected.txt:
+        * fast/table/colspanMinWidth-expected.txt:
+        * fast/table/giantRowspan-expected.txt:
+        * fast/table/spanOverlapRepaint-expected.txt:
+        * tables/mozilla/bugs/bug10296-1-expected.txt:
+        * tables/mozilla/bugs/bug113235-1-expected.txt:
+        * tables/mozilla/bugs/bug113235-2-expected.txt:
+        * tables/mozilla/bugs/bug12384-expected.txt:
+        * tables/mozilla/bugs/bug133756-1-expected.txt:
+        * tables/mozilla/bugs/bug133756-2-expected.txt:
+        * tables/mozilla/bugs/bug220536-expected.txt:
+        * tables/mozilla/bugs/bug23072-expected.txt:
+        * tables/mozilla/bugs/bug25086-expected.txt:
+        * tables/mozilla/bugs/bug28928-expected.txt:
+        * tables/mozilla/bugs/bug44523-expected.txt:
+        * tables/mozilla/bugs/bug6184-expected.txt:
+        * tables/mozilla/bugs/bug6304-expected.txt:
+        * tables/mozilla/bugs/bug8858-expected.txt:
+        * tables/mozilla/bugs/bug97138-expected.txt:
+        * tables/mozilla/core/cell_heights-expected.txt:
+        * tables/mozilla/core/col_widths_fix_auto-expected.txt:
+        * tables/mozilla/core/row_span-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug11945-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug1262-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug23847-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug32205-1-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug65372-expected.txt:
+
 2006-05-25  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.

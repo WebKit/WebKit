@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {H3} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 200x22
           text run at (0,0) width 200: "With long hidden values"
-      RenderTable {TABLE} at (0,40) size 196x65 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 194x63
+      RenderTable {TABLE} at (0,40) size 196x67 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 194x65
           RenderTableRow {TR} at (0,2) size 194x59
             RenderTableCell {TD} at (2,2) size 190x59 [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (1,1) size 188x41
@@ -23,13 +23,13 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (152,16) size 0x0
                 RenderText {#text} at (0,23) size 188x18
                   text run at (0,23) width 188: "Enter City Name or Zip Code"
-          RenderTableRow {TR} at (0,0) size 0x0
-      RenderBlock {HR} at (0,113) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H3} at (0,133) size 784x22
+          RenderTableRow {TR} at (0,63) size 194x0
+      RenderBlock {HR} at (0,115) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {H3} at (0,135) size 784x22
         RenderText {#text} at (0,0) size 206x22
           text run at (0,0) width 206: "With short hidden values"
-      RenderTable {TABLE} at (0,173) size 196x65 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 194x63
+      RenderTable {TABLE} at (0,175) size 196x67 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 194x65
           RenderTableRow {TR} at (0,2) size 194x59
             RenderTableCell {TD} at (2,2) size 190x59 [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (1,1) size 188x41
@@ -45,8 +45,8 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (152,16) size 0x0
                 RenderText {#text} at (0,23) size 188x18
                   text run at (0,23) width 188: "Enter City Name or Zip Code"
-          RenderTableRow {TR} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,63) size 194x0
 layer at (17,57) size 93x13
   RenderBlock {DIV} at (3,3) size 93x13
-layer at (17,190) size 93x13
+layer at (17,192) size 93x13
   RenderBlock {DIV} at (3,3) size 93x13

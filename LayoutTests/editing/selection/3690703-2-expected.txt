@@ -11,22 +11,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,3) size 784x581 [bgcolor=#FFFFFF]
-      RenderBlock {CENTER} at (0,0) size 784x255
-        RenderTable {TABLE} at (0,0) size 784x16
-          RenderTableSection {TBODY} at (0,0) size 784x16
+      RenderBlock {CENTER} at (0,0) size 784x258
+        RenderTable {TABLE} at (0,0) size 784x19
+          RenderTableSection {TBODY} at (0,0) size 784x19
             RenderTableRow {TR} at (0,0) size 784x15
               RenderTableCell {TD} at (0,0) size 784x15 [r=0 c=0 rs=1 cs=1]
                 RenderInline {FONT} at (0,0) size 104x15
                   RenderInline {A} at (0,0) size 104x15 [color=#0000CC]
                     RenderText {#text} at (680,0) size 104x15
                       text run at (680,0) width 104: "Personalized Home"
-            RenderTableRow {TR} at (0,15) size 784x1
-              RenderTableCell {TD} at (0,15) size 784x1 [r=1 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,15) size 784x4
+              RenderTableCell {TD} at (0,16) size 784x1 [r=1 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 1x1
-        RenderBlock (anonymous) at (0,16) size 784x36
+        RenderBlock (anonymous) at (0,19) size 784x36
           RenderBR {BR} at (392,0) size 0x18
           RenderBR {BR} at (392,18) size 0x18
-        RenderBlock {DIV} at (0,52) size 784x105 [border: (2px solid #AAAAFF)]
+        RenderBlock {DIV} at (0,55) size 784x105 [border: (2px solid #AAAAFF)]
           RenderTable {TABLE} at (215,2) size 353x23
             RenderTableSection {TBODY} at (0,0) size 353x23
               RenderTableRow {TR} at (0,0) size 353x23
@@ -121,7 +121,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (461,18) size 3x15
                 text run at (461,18) width 3: "."
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,157) size 784x69
+        RenderBlock (anonymous) at (0,160) size 784x69
           RenderBR {BR} at (392,0) size 0x18
           RenderBR {BR} at (392,18) size 0x18
           RenderBR {BR} at (392,36) size 0x18
@@ -139,11 +139,11 @@ layer at (0,0) size 800x600
             RenderInline {A} at (0,0) size 77x15 [color=#0000CC]
               RenderText {#text} at (473,54) size 77x15
                 text run at (473,54) width 77: "About Google"
-        RenderBlock {P} at (0,242) size 784x13
+        RenderBlock {P} at (0,245) size 784x13
           RenderInline {FONT} at (0,0) size 60x13
             RenderText {#text} at (362,0) size 60x13
               text run at (362,0) width 60: "\x{A9}2005 Google"
-layer at (206,85) size 385x13
+layer at (206,88) size 385x13
   RenderBlock {DIV} at (3,3) size 385x13
 selection start: position 0 of child 0 {#text} of child 0 {B} of child 0 {FONT} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
 selection end:   position 0 of child 2 {BR} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of child 1 {BODY} of child 0 {HTML} of document

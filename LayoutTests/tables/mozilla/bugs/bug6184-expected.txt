@@ -35,6 +35,6 @@ layer at (0,0) size 800x600
                 text run at (2,20) width 114: "parents send their "
                 text run at (116,20) width 199: "children to church-run schools. "
                 text run at (315,20) width 120: "What's your stand?"
-          RenderTableRow {TR} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,40) size 598x0
       RenderBlock (anonymous) at (0,124) size 784x18
         RenderBR {BR} at (0,0) size 0x18

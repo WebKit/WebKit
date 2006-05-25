@@ -1,4 +1,19 @@
-2006-05-19  Rob Buis  <buis@kde.org>
+2006-05-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Landed by eseidel.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3297
+          height property is not honored on table rows
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild): Assign the row renderer to the
+        grid row.
+        (WebCore::RenderTableSection::calcRowHeight): Fix off-by-one index bug
+        and add vertical spacing only for grid rows that have a renderer.
+        (WebCore::RenderTableSection::recalcCells): Assign row renderers to
+        grid rows.
+
+2006-05-25  Rob Buis  <buis@kde.org>
 
         Reviewed by darin.  Landed by eseidel.
 
@@ -23,7 +38,7 @@
         * page/Frame.cpp:
         (WebCore::Frame::begin):
 
-2006-05-17  Rob Buis  <buis@kde.org>
+2006-05-25  Rob Buis  <buis@kde.org>
 
         Reviewed by darin.  Landed by eseidel.
 
@@ -40,7 +55,7 @@
         * html/HTMLAttributeNames.in: Added.
         * ksvg2/scripts/make_names.pl:
 
-2006-05-23  Eric Seidel  <eric@eseidel.com>
+2006-05-25  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.
 
