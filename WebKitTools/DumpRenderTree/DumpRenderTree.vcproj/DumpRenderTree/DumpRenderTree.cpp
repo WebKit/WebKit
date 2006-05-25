@@ -30,10 +30,9 @@
 #include "FrameWin.h"
 #include "FrameView.h"
 #include "Page.h"
-#include "render_frames.h"
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "markup.h"
-#include "KWQRenderTreeDebug.h"
+#include "RenderTreeAsText.h"
 
 #include <io.h>
 #include <fcntl.h>
@@ -71,7 +70,7 @@ static void dumpRenderTreeMain(FrameWin* frame)
             continue;
             
         localFileTest(frame, filenameBuffer);
-        QString renderDump = externalRepresentation(frame->renderer());
+        DeprecatedString renderDump = externalRepresentation(frame->renderer());
         puts(renderDump.ascii());
         puts("#EOF\n");
 
@@ -81,20 +80,20 @@ static void dumpRenderTreeMain(FrameWin* frame)
 
 static void dumpRenderTreeToStdOut(FrameWin* frame)
 {
-    QString renderDump = externalRepresentation(frame->renderer());
+    DeprecatedString renderDump = externalRepresentation(frame->renderer());
     printf("\n\nRenderTree:\n\n%s", renderDump.ascii());
 }
 
 static void serializeToStdOut(FrameWin* frame)
 {
-    QString markup = createMarkup(frame->document());
+    DeprecatedString markup = createMarkup(frame->document());
     printf("Source:\n\n%s", markup.ascii());
 }
 
 int main(int argc, char* argv[])
 {
     Page* page = new Page();
-    FrameWin* frame = new FrameWin(page, 0);
+    FrameWin* frame = new FrameWin(page, 0, 0);
     FrameView* frameView = new FrameView(frame);
     frame->setView(frameView);
     
