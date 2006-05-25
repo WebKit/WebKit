@@ -1,5 +1,15 @@
 2006-05-25  Dave Hyatt <hyatt@apple.com>
 
+        Make soft hyphens work on Win32 by special casing them
+        along with normal hyphens.
+
+        Reviewed by mjs
+
+        * rendering/break_lines.cpp:
+        (WebCore::nextBreakablePosition):
+
+2006-05-25  Dave Hyatt <hyatt@apple.com>
+
         Implement the fallback method containsCharacters for
         checking if a font has the necessary glyphs to be
         selected as a fallback choide.

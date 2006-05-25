@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "break_lines.h"
+#include "RenderText.h"
 
 #include "DeprecatedString.h"
 
@@ -47,7 +48,7 @@ int nextBreakablePosition(const UChar* str, int pos, int len, bool breakNBSP)
         if (ch == ' ' || ch == '\n' || ch == '\t' || (breakNBSP && ch == 0xa0))
             break;
         // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
-        if (lastCh == '-' || lastCh == '?')
+        if (lastCh == '-' || lastCh == '?' || lastCh == SOFT_HYPHEN)
             break;
 #if __APPLE__
         // FIXME: Rewrite break location using ICU.
