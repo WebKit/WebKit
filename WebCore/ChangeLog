@@ -1,3 +1,23 @@
+2006-05-25  Dave Hyatt <hyatt@apple.com>
+
+        For now eliminate the logical scale factor from Cairo.
+        This enables bitmap fonts like MS Sans Serif to work on
+        Win32.
+
+        * platform/cairo/cairo/src/cairo-win32-font.c:
+        (cairo_win32_scaled_font_select_font):
+        * platform/cairo/cairo/src/cairo-win32-private.h:
+        * platform/cairo/font-bug-patch.txt: Removed.
+        * platform/cairo/scale-removal.txt: Added.
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/win/FontDataWin.cpp:
+        (WebCore::FontData::smallCapsFontData):
+        (WebCore::FontData::platformWidthForGlyph):
+        * platform/win/FontPlatformData.h:
+        * platform/win/GlyphMapWin.cpp:
+        (WebCore::GlyphMap::fillPage):
+
 2006-05-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.  Landed by eseidel.

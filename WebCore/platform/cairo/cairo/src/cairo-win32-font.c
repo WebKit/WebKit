@@ -1503,10 +1503,8 @@ cairo_win32_scaled_font_select_font (cairo_scaled_font_t *scaled_font,
 	return CAIRO_STATUS_NO_MEMORY;
 
     old_hfont = SelectObject (hdc, hfont);
-    // FIXME: This error is occurring and killing all subsequent text drawing.
-    // Probably my fault, but comment it out until we're certain.
-    //if (!old_hfont)
-    //	return _cairo_win32_print_gdi_error ("cairo_win32_scaled_font_select_font:SelectObject");
+    if (!old_hfont)
+    	return _cairo_win32_print_gdi_error ("cairo_win32_scaled_font_select_font:SelectObject");
 
     old_mode = SetGraphicsMode (hdc, GM_ADVANCED);
     if (!old_mode) {

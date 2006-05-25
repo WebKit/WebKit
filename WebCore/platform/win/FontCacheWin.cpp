@@ -103,14 +103,14 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     LOGFONT winfont;
 
     // The size here looks unusual.  The negative number is intentional.  The logical size constant is 32.
-    winfont.lfHeight = WIN32_FONT_LOGICAL_SCALE * -fontDescription.computedPixelSize();
+    winfont.lfHeight = -fontDescription.computedPixelSize();
     winfont.lfWidth = 0;
     winfont.lfEscapement = 0;
     winfont.lfOrientation = 0;
     winfont.lfUnderline = false;
     winfont.lfStrikeOut = false;
     winfont.lfCharSet = DEFAULT_CHARSET;
-    winfont.lfOutPrecision = OUT_DEFAULT_PRECIS;
+    winfont.lfOutPrecision = OUT_TT_PRECIS;
     winfont.lfQuality = 5; // Force cleartype.
     winfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     winfont.lfItalic = fontDescription.italic();

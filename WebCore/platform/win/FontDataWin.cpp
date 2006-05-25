@@ -100,7 +100,7 @@ FontData* FontData::smallCapsFontData(const FontDescription& fontDescription) co
         LOGFONT winfont;
         GetObject(m_font.hfont(), sizeof(LOGFONT), &winfont);
         int smallCapsHeight = lroundf(0.70f * fontDescription.computedSize());
-        winfont.lfHeight = -WIN32_FONT_LOGICAL_SCALE * smallCapsHeight;
+        winfont.lfHeight = -smallCapsHeight;
         HFONT hfont = CreateFontIndirect(&winfont);
         m_smallCapsFontData = new FontData(FontPlatformData(hfont, smallCapsHeight));
     }
@@ -148,7 +148,6 @@ float FontData::platformWidthForGlyph(Glyph glyph) const
     ReleaseDC(0, dc);
 
     const double metricsMultiplier = cairo_win32_scaled_font_get_metrics_factor(scaledFont) * m_font.size();
-
     return width * metricsMultiplier;
 }
 

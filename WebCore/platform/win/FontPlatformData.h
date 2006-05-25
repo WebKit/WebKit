@@ -30,8 +30,6 @@ typedef struct HFONT__ *HFONT;
 typedef struct _cairo_scaled_font cairo_scaled_font_t;
 typedef struct _cairo_font_face cairo_font_face_t;
 
-#define WIN32_FONT_LOGICAL_SCALE 32
-
 namespace WebCore {
 
 class FontDescription;

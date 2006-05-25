@@ -42,22 +42,10 @@ bool GlyphMap::fillPage(GlyphPage* page, UChar* buffer, unsigned bufferLength, c
 
     TEXTMETRIC tm;
     GetTextMetrics(dc, &tm);
-    if ((tm.tmPitchAndFamily & TMPF_VECTOR) == 0) {
-        // The "glyph" for a bitmap font is just the character itself.
-        // FIXME: Need to check character ranges and fill in a glyph of 0 for
-        // any characters not in range.  Otherwise bitmap fonts will never fall
-        // back.
-        // IMLangFontLink2::GetFontUnicodeRanges does what we want. 
-        for (unsigned i = 0; i < cGlyphPageSize; i++)
-            page->setGlyphDataForIndex(i, buffer[i], fontData);
-    } else {
-        WORD localGlyphBuffer[cGlyphPageSize];
-        GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
-
-        for (unsigned i = 0; i < cGlyphPageSize; i++)
-            page->setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
-    }
-
+    WORD localGlyphBuffer[cGlyphPageSize];
+    GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
+    for (unsigned i = 0; i < cGlyphPageSize; i++)
+        page->setGlyphDataForIndex(i, localGlyphBuffer[i], fontData);
     RestoreDC(dc, -1);
     ReleaseDC(0, dc);
     return true;
