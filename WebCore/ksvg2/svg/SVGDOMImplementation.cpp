@@ -39,8 +39,6 @@
 
 using namespace WebCore;
 
-SVGDOMImplementation *SVGDOMImplementation::s_instance = 0;
-
 static const HashSet<String>& svgFeatureSet()
 {
     static HashSet<String>* svgFeatures = 0;
@@ -105,12 +103,10 @@ SVGDOMImplementation::~SVGDOMImplementation()
     //SVGRenderStyle::cleanup();
 }
 
-SVGDOMImplementation *SVGDOMImplementation::self()
+SVGDOMImplementation *SVGDOMImplementation::instance()
 {
-    if (!s_instance)
-        s_instance = new SVGDOMImplementation();
-
-    return s_instance;
+    static RefPtr<SVGDOMImplementation> i = new SVGDOMImplementation;
+    return i.get();
 }
 
 bool SVGDOMImplementation::hasFeature(StringImpl *featureImpl, StringImpl *versionImpl) const
@@ -218,6 +214,11 @@ bool SVGDOMImplementation::inAnimationContext() const
 void SVGDOMImplementation::setAnimationContext(bool value)
 {
     m_animationContext = value;
+}
+
+PassRefPtr<Document> SVGDOMImplementation::createDocument(FrameView* v)
+{
+    return new SVGDocument(this, v);
 }
 
 // vim:ts=4:noet

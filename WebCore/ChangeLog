@@ -1,3 +1,28 @@
+2006-05-19  Rob Buis  <buis@kde.org>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5978
+        WebKIt+SVG should use SVGDocumentImpl for image/svg+xml
+
+        Make sure SVGDocument is created for standalone svg
+        documents.
+
+        * ksvg2/svg/SVGDOMImplementation.cpp:
+        (SVGDOMImplementation::instance):
+        (SVGDOMImplementation::createDocument):
+        * ksvg2/svg/SVGDOMImplementation.h:
+        * ksvg2/svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument):
+        (WebCore::SVGDocument::~SVGDocument):
+        * ksvg2/svg/SVGDocument.h:
+        * ksvg2/svg/SVGTests.cpp:
+        (WebCore::SVGTests::isValid):
+        * ksvg2/svg/SVGTitleElement.cpp:
+        * ksvg2/svg/SVGTitleElement.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::begin):
+
 2006-05-17  Rob Buis  <buis@kde.org>
 
         Reviewed by darin.  Landed by eseidel.

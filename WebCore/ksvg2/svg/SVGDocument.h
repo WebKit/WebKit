@@ -24,23 +24,15 @@
 #define KSVG_SVGDocumentImpl_H
 #if SVG_SUPPORT
 
-#include "DeprecatedPtrList.h"
-
-#include "CachedObjectClient.h"
-#include <ksvg2/misc/KSVGTimeScheduler.h>
-
 #include "Document.h"
 
 namespace WebCore {
 
-    class CachedScript;
     class SVGElement;
     class SVGSVGElement;
-    class SVGScriptElement;
     class SVGDOMImplementation;
 
-    class SVGDocument : public Document,
-                            public CachedObjectClient
+    class SVGDocument : public Document
     {
     public:
         SVGDocument(SVGDOMImplementation *i, FrameView *view);
@@ -48,37 +40,8 @@ namespace WebCore {
 
         SVGSVGElement *rootElement() const;
         
-        String title() const;
-        
-        virtual PassRefPtr<Element> createElement(const String& tagName, ExceptionCode&);
-
-        // Derived from: 'CachedObjectClient'
-        virtual void notifyFinished(CachedObject *finishedObj);
-
-        FrameView *svgView() const;
-
-        // Internal
-        void finishedParsing();
-        void dispatchRecursiveEvent(Event *event, Node *obj);
         void dispatchZoomEvent(float prevScale, float newScale);
         void dispatchScrollEvent();
-
-        virtual void recalcStyle(StyleChange = NoChange);
-
-        void addForwardReference(const SVGElement *element);
-
-    protected:
-        virtual CSSStyleSelector *createStyleSelector(const DeprecatedString &);
-
-    private:
-        // <script> related
-        void executeScripts(bool needsStyleSelectorUpdate);
-        void addScripts(Node *obj);
-
-        CachedScript *m_cachedScript;
-        Q3PtrList<SVGScriptElement> m_scripts;
-        Q3PtrListIterator<SVGScriptElement> *m_scriptsIt;
-        Q3PtrList<SVGElement> m_forwardReferences;
     };
 };
 

@@ -68,7 +68,7 @@ bool SVGTests::isValid() const
     for(unsigned long i = 0;i < list->numberOfItems();i++)
     {
         String value = String(list->getItem(i));
-        if(value.isEmpty() || !SVGDOMImplementation::self()->hasFeature(value.impl(), 0))
+        if(value.isEmpty() || !SVGDOMImplementation::instance()->hasFeature(value.impl(), 0))
             return false;
     }
 
