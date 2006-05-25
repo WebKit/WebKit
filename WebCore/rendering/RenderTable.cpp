@@ -891,33 +891,54 @@ int RenderTable::outerBorderRight() const
     return borderWidth;
 }
 
+RenderTableSection* RenderTable::sectionAbove(const RenderTableSection* section, bool skipEmptySections) const
+{
+    if (section == head)
+        return 0;
+    RenderObject *prevSection = (section == foot ? lastChild() : section)->previousSibling();
+    while (prevSection) {
+        if (prevSection->isTableSection() && prevSection != head && prevSection != foot && (!skipEmptySections || static_cast<RenderTableSection*>(prevSection)->numRows()))
+            break;
+        prevSection = prevSection->previousSibling();
+    }
+    if (!prevSection && head && (!skipEmptySections || head->numRows()))
+        prevSection = head;
+    return static_cast<RenderTableSection*>(prevSection);
+}
+
+RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section, bool skipEmptySections) const
+{
+    if (section == foot)
+        return 0;
+    RenderObject *nextSection = (section == head ? firstChild() : section)->nextSibling();
+    while (nextSection) {
+        if (nextSection->isTableSection() && nextSection != head && nextSection != foot && (!skipEmptySections || static_cast<RenderTableSection*>(nextSection)->numRows()))
+            break;
+        nextSection = nextSection->nextSibling();
+    }
+    if (!nextSection && foot && (!skipEmptySections || foot->numRows()))
+        nextSection = foot;
+    return static_cast<RenderTableSection*>(nextSection);
+}
+
 RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
 {
     // Find the section and row to look in
     int r = cell->row();
     RenderTableSection* section = 0;
-    int rAbove = -1;
+    int rAbove = 0;
     if (r > 0) {
         // cell is not in the first row, so use the above row in its own section
         section = cell->section();
         rAbove = r-1;
     } else {
-        if (cell->section() == head)
-            return 0;
-        // cell is at top of a section, use last row in previous section
-        for (RenderObject *prevSection = cell->section()->previousSibling();
-             prevSection && rAbove < 0;
-             prevSection = prevSection->previousSibling()) {
-            if (prevSection->isTableSection()) {
-                section = static_cast<RenderTableSection *>(prevSection);
-                if (section->numRows() > 0)
-                    rAbove = section->numRows()-1;
-            }
-        }
+        section = sectionAbove(cell->section(), true);
+        if (section)
+            rAbove = section->numRows() - 1;
     }
 
     // Look up the cell in the section's grid, which requires effective col index
-    if (section && rAbove >= 0) {
+    if (section) {
         int effCol = colToEffCol(cell->col());
         RenderTableSection::CellStruct aboveCell;
         // If we hit a span back up to a real cell.
@@ -935,28 +956,19 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
     // Find the section and row to look in
     int r = cell->row() + cell->rowSpan() - 1;
     RenderTableSection* section = 0;
-    int rBelow = -1;
+    int rBelow = 0;
     if (r < cell->section()->numRows() - 1) {
         // The cell is not in the last row, so use the next row in the section.
         section = cell->section();
         rBelow= r+1;
     } else {
-        if (cell->section() == foot)
-            return 0;
-        // The cell is at the bottom of a section. Use the first row in the next section.
-        for (RenderObject* nextSection = cell->section()->nextSibling();
-             nextSection && rBelow < 0;
-             nextSection = nextSection->nextSibling()) {
-            if (nextSection->isTableSection()) {
-                section = static_cast<RenderTableSection *>(nextSection);
-                if (section->numRows() > 0)
-                    rBelow = 0;
-            }
-        }
+        section = sectionBelow(cell->section(), true);
+        if (section)
+            rBelow = 0;
     }
-    
+
     // Look up the cell in the section's grid, which requires effective col index
-    if (section && rBelow >= 0) {
+    if (section) {
         int effCol = colToEffCol(cell->col());
         RenderTableSection::CellStruct belowCell;
         // If we hit a colspan back up to a real cell.

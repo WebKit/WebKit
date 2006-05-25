@@ -2,6 +2,18 @@
 
         Reviewed by hyatt.  Landed by eseidel.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8848
+          TFOOT borders are copied to THEAD and TBODY
+
+        * fast/table/border-collapsing/border-collapsing-head-foot-expected.checksum: Added.
+        * fast/table/border-collapsing/border-collapsing-head-foot-expected.png: Added.
+        * fast/table/border-collapsing/border-collapsing-head-foot-expected.txt: Added.
+        * fast/table/border-collapsing/border-collapsing-head-foot.html: Added.
+
+2006-05-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Landed by eseidel.
+
         - updated results for http://bugzilla.opendarwin.org/show_bug.cgi?id=3297
           height property is not honored on table rows
 

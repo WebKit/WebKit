@@ -380,7 +380,7 @@ CollapsedBorderValue RenderTableCell::collapsedTopBorder() const
     }
     
     // Now check row groups.
-    RenderObject* currSection = parent()->parent();
+    RenderTableSection* currSection = section();
     if (row() == 0) {
         // (5) Our row group's top border.
         result = compareBorders(result, CollapsedBorderValue(&currSection->style()->borderTop(), BROWGROUP));
@@ -388,14 +388,11 @@ CollapsedBorderValue RenderTableCell::collapsedTopBorder() const
             return result;
         
         // (6) Previous row group's bottom border.
-        for (currSection = currSection->previousSibling(); currSection;
-             currSection = currSection->previousSibling()) {
-            if (currSection->isTableSection()) {
-                RenderTableSection* section = static_cast<RenderTableSection*>(currSection);
-                result = compareBorders(result, CollapsedBorderValue(&section->style()->borderBottom(), BROWGROUP));
-                if (!result.exists())
-                    return result;
-            }
+        currSection = table()->sectionAbove(currSection);
+        if (currSection) {
+            result = compareBorders(result, CollapsedBorderValue(&currSection->style()->borderBottom(), BROWGROUP));
+            if (!result.exists())
+                return result;
         }
     }
     
@@ -444,7 +441,7 @@ CollapsedBorderValue RenderTableCell::collapsedBottomBorder() const
     }
     
     // Now check row groups.
-    RenderObject* currSection = parent()->parent();
+    RenderTableSection* currSection = section();
     if (row() + rowSpan() >= static_cast<RenderTableSection*>(currSection)->numRows()) {
         // (5) Our row group's bottom border.
         result = compareBorders(result, CollapsedBorderValue(&currSection->style()->borderBottom(), BROWGROUP));
@@ -452,14 +449,11 @@ CollapsedBorderValue RenderTableCell::collapsedBottomBorder() const
             return result;
         
         // (6) Following row group's top border.
-        for (currSection = currSection->nextSibling(); currSection;
-             currSection = currSection->nextSibling()) {
-            if (currSection->isTableSection()) {
-                RenderTableSection* section = static_cast<RenderTableSection*>(currSection);
-                result = compareBorders(result, CollapsedBorderValue(&section->style()->borderTop(), BROWGROUP));
-                if (!result.exists())
-                    return result;
-            }
+        currSection = table()->sectionBelow(currSection);
+        if (currSection) {
+            result = compareBorders(result, CollapsedBorderValue(&currSection->style()->borderTop(), BROWGROUP));
+            if (!result.exists())
+                return result;
         }
     }
     

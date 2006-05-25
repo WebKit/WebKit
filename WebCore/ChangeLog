@@ -2,6 +2,25 @@
 
         Reviewed by hyatt.  Landed by eseidel.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8848
+          TFOOT borders are copied to THEAD and TBODY
+
+        Test: fast/table/border-collapsing/border-collapsing-head-foot.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::sectionAbove): Added.
+        (WebCore::RenderTable::sectionBelow): Added.
+        (WebCore::RenderTable::cellAbove): Changed to call sectionAbove.
+        (WebCore::RenderTable::cellBelow): Changed to call sectionBelow.
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::collapsedTopBorder): Changed to call sectionAbove.
+        (WebCore::RenderTableCell::collapsedBottomBorder): Changed to call sectionBelow.
+
+2006-05-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.  Landed by eseidel.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3297
           height property is not honored on table rows
 
