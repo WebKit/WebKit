@@ -39,8 +39,21 @@ typedef float CGFloat;
 
 #if WIN32
 
-#define WINVER 0x0500
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500
+#endif
+
+#ifndef WINVER
+#define WINVER 0x0500
+#endif
+
+#ifndef _HAS_EXCEPTIONS
+#define _HAS_EXCEPTIONS 0
+#endif
+
+#ifndef _SECURE_SCL_DEPRECATE
+#define _SECURE_SCL_DEPRECATE 0
+#endif
 
 // Hack to match configuration of JavaScriptCore.
 // Maybe there's a better way to do this.

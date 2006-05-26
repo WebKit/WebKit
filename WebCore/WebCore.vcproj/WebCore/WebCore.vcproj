@@ -267,6 +267,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\HTMLNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\HTMLNames.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSAttr.cpp"
 				>
 			</File>
@@ -4056,14 +4064,6 @@
 			</File>
 			<File
 				RelativePath="..\..\html\HTMLNameCollection.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\HTMLNames.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\html\HTMLNames.h"
 				>
 			</File>
 			<File
