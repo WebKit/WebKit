@@ -24,6 +24,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "htmlediting.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
@@ -278,7 +279,7 @@ String RenderTextField::textWithHardLineBreaks()
             s.append("\n");
 
             // Update range so it starts after this wrap
-            range->setEnd(m_div.get(), 1, ec);
+            range->setEnd(m_div.get(), maxDeepOffset(m_div.get()), ec);
             range->setStart(line->lineBreakObj()->node(), line->lineBreakPos(), ec);
         }
     }

@@ -1,5 +1,14 @@
 2006-05-26  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Justin.
+
+        Fixes a mistake in my last checkin.  Uses maxDeepOffset to get the end position for
+        the textarea's inner div.
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::textWithHardLineBreaks):
+
+2006-05-26  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Added support for wrap=hard for new textarea implementation.
