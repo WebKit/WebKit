@@ -30,6 +30,7 @@
 #include "DocumentFragment.h"
 #include "ExceptionCode.h"
 #include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "ProcessingInstruction.h"
 #include "RenderBlock.h"
 #include "TextIterator.h"
@@ -37,6 +38,8 @@
 #include "visible_units.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 Range::Range(Document* ownerDocument)
     : m_ownerDocument(ownerDocument)
@@ -803,6 +806,11 @@ void Range::insertNode(PassRefPtr<Node> newNode, ExceptionCode& ec)
 
 String Range::toString(ExceptionCode& ec) const
 {
+    return toString(false, ec);
+}
+
+String Range::toString(bool convertBRsToNewlines, ExceptionCode& ec) const
+{
     if (m_detached) {
         ec = INVALID_STATE_ERR;
         return String();
@@ -819,6 +827,8 @@ String Range::toString(ExceptionCode& ec) const
                 str.remove(0, m_startOffset);
             text += str;
         }
+        if (n->hasTagName(brTag) && convertBRsToNewlines)
+            text += "\n";
     }
     return text;
 }

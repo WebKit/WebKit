@@ -1,0 +1,98 @@
+<html>
+<body>
+This tests that textarea wrap attributes work correctly when submitting a form.
+<form action="?" name=f>
+ <textarea name=ta_WrapHard cols=5 style="-webkit-appearance:textarea" wrap=hard>123456789</textarea><br>
+ <textarea name=ta_WrapSoft cols=5 style="-webkit-appearance:textarea" wrap=soft>123456789</textarea><br>
+ <textarea name=ta_WrapOff cols=5 style="-webkit-appearance:textarea" wrap=off>123456789</textarea><br>
+ <textarea name=ta_WrapHardRTL cols=5 style="-webkit-appearance:textarea; direction:rtl" wrap=hard>&#1488;&#1489;&#1490;&#1488;&#1489;&#1490;&#1488;&#1489;&#1490;&#1488;&#1489;&#1490;</textarea><br>
+ <textarea name=ta_WrapHardBidi cols=5 style="-webkit-appearance:textarea; direction:ltr" wrap=hard>abc&#1488;&#1489;&#1490;&#1488;&#1489;&#1490;abc</textarea><br>
+ <textarea name=ta_WrapHardHidden cols=5 style="-webkit-appearance:textarea; visibility:hidden" wrap=hard>123456789</textarea><br>
+
+</form>
+<div id="res">
+</div>
+<script>
+function log(msg) {
+    document.getElementById('res').innerHTML = document.getElementById('res').innerHTML + msg + "<br>";
+}
+    
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+if (document.URL.substring(0, 4) == "file") {
+
+    if (document.URL.indexOf('?') == -1) {
+        document.f.submit();
+    } else {
+        var urlString = document.URL.substring(document.URL.indexOf('?')+1, document.URL.length);
+        var index1 = 0;
+        var index2 = urlString.indexOf('ta_WrapSoft');
+        var index3 = urlString.indexOf('ta_WrapOff');
+        var index4 = urlString.indexOf('ta_WrapHardRTL');
+        var index5 = urlString.indexOf('ta_WrapHardBidi');
+        var index6 = urlString.indexOf('ta_WrapHardHidden');
+        var index7 = document.URL.length;
+        var expectedResult;
+        var result;
+        
+        // wrap = hard
+        result = unescape(urlString.substring(index1, index2 - 1));
+        expectedResult = unescape("ta_WrapHard=1234567%0D%0A89");
+        if (result == expectedResult)
+            log("<p>wrap=hard : Success</p>");
+        else
+            log("<p>wrap=hard : Failure<br>" + result + " != " + expectedResult + "</p>");
+        
+        // wrap = soft
+        result = unescape(urlString.substring(index2, index3 - 1));
+        expectedResult = unescape("ta_WrapSoft=123456789");
+        if (result == expectedResult)
+            log("<p>wrap=soft : Success</p>");
+        else
+            log("<p>wrap=soft : Failure<br>" + result + " != " + expectedResult + "</p>");
+    
+        // wrap = off
+        result = unescape(urlString.substring(index3, index4 - 1));
+        expectedResult = unescape("ta_WrapOff=123456789");
+        if (result == expectedResult)
+            log("<p>wrap=off : Success</p>");
+        else
+            log("<p>wrap=off : Failure<br>" + result + " != " + expectedResult + "</p>");
+    
+        // wrap = hard - RTL text
+        result = unescape(urlString.substring(index4, index5 - 1));
+        expectedResult = unescape("ta_WrapHardRTL=&#1488;&#1489;&#1490;&#1488;&#1489;&#1490;&#1488;&#1489;%0D%0A&#1490;&#1488;&#1489;&#1490;");
+        if (result == expectedResult)
+            log("<p>wrap=hard rtl text: Success</p>");
+        else
+            log("<p>wrap=hard rtl text : Failure<br>" + result + " != " + expectedResult + "</p>");
+
+        // wrap = hard, mixed rtl and ltr text
+        result = unescape(urlString.substring(index5, index6 - 1));
+        expectedResult = unescape("ta_WrapHardBidi=abc&#1488;&#1489;&#1490;&#1488;&#1489;%0D%0A&#1490;abc");
+        if (result == expectedResult)
+            log("<p>wrap=hard mixed rtl and ltr text: Success</p>");
+        else
+            log("<p>wrap=hard mixed rtl and ltr text : Failure<br>" + result + " != " + expectedResult + "</p>");
+
+        // wrap = hard, visibility:hidden
+        result = unescape(urlString.substring(index6, index7 - 1));
+        expectedResult = unescape("ta_WrapHardHidden=1234567%0D%0A89");
+        if (result == expectedResult)
+            log("<p>wrap=hard visibility:hidden: Success</p>");
+        else
+            log("<p>wrap=hard visibility:hidden: Failure<br>" + result + " != " + expectedResult + "</p>");
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+} else {
+    document.write("<p>This test doesn't work directly from bugzilla, please save it to a local file first.</p>");
+}
+</script>
+</body>
+</html>

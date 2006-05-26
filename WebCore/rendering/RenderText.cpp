@@ -279,6 +279,11 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
         if (_y >= absy + box->root()->topOverflow() && _y < absy + box->root()->bottomOverflow()) {
             offset = box->offsetForPosition(_x - absx);
 
+            if (_x == absx + box->m_x)
+                // the x coordinate is equal to the left edge of this box
+                // the affinity must be downstream so the position doesn't jump back to the previous line
+                return VisiblePosition(element(), offset + box->m_start, DOWNSTREAM);
+
             if (_x < absx + box->m_x + box->m_width)
                 // and the x coordinate is to the left of the right edge of this box
                 // check to see if position goes in this box
@@ -352,7 +357,7 @@ static RenderObject *lastRendererOnPrevLine(InlineBox *box)
 bool RenderText::atLineWrap(InlineTextBox *box, int offset)
 {
     if (box->nextTextBox() && !box->nextOnLine() && offset == box->m_start + box->m_len) {
-        if (!style()->preserveNewline() || box->isLineBreak())
+        if (!style()->preserveNewline() || !box->isLineBreak())
             return true;
     }
     
@@ -369,7 +374,7 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     for (box = firstTextBox(); box; box = box->nextTextBox()) {
         if ((offset >= box->m_start) && (offset <= box->m_start + box->m_len)) {
             // Check if downstream affinity would make us move to the next line.
-            if (atLineWrap(box, offset)) {
+            if (atLineWrap(box, offset) && affinity == DOWNSTREAM) {
                 // Use the next text box
                 box = box->nextTextBox();
                 offset = box->m_start;
@@ -1103,7 +1108,7 @@ InlineBox *RenderText::inlineBox(int offset, EAffinity affinity)
 {
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
         if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
-            if (atLineWrap(box, offset))
+            if (atLineWrap(box, offset) && affinity == DOWNSTREAM)
                 return box->nextTextBox();
             return box;
         }

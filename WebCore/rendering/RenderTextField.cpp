@@ -33,6 +33,7 @@
 #include "dom2_eventsimpl.h"
 #include <math.h>
 #include "RenderTheme.h"
+#include "visible_units.h"
 
 namespace WebCore {
 
@@ -140,7 +141,7 @@ void RenderTextField::updateFromElement()
             value = static_cast<HTMLTextAreaElement*>(element)->value().copy();    
         else
             value = static_cast<HTMLInputElement*>(element)->value().copy();        
-        if (!element->valueMatchesRenderer()) {
+        if (!element->valueMatchesRenderer() || m_multiLine) {
             String oldText = text();
             if (value.isNull())
                 value = "";
@@ -245,15 +246,46 @@ void RenderTextField::subtreeHasChanged()
 String RenderTextField::text()
 {
     if (m_div)
-        return m_div->textContent().replace(backslashAsCurrencySymbol(), '\\');
+        return m_div->textContent(true).replace('\\', backslashAsCurrencySymbol());
     return String();
 }
 
 String RenderTextField::textWithHardLineBreaks()
 {
-    String txt = text();
-    // FIXME: add in line breaks in places where we wrap
-    return txt;
+    String s("");
+    
+    if (!m_div)
+        return s;
+
+    document()->updateLayout();
+
+    ASSERT(m_div->firstChild());
+    InlineBox* box = m_div->firstChild()->renderer()->inlineBox(0, DOWNSTREAM);
+    if (!box)
+        return s;
+    
+    ExceptionCode ec = 0;
+    RefPtr<Range> range = new Range(document());
+    range->selectNodeContents(m_div.get(), ec);
+    for (RootInlineBox* line = box->root(); line; line = line->nextRootBox()) {
+        // If we're at a soft wrap, then insert the hard line break here
+        if (!line->endsWithBreak() && line->nextRootBox()) {
+            // Update range so it ends before this wrap
+            ASSERT(line->lineBreakObj());
+            range->setEnd(line->lineBreakObj()->node(), line->lineBreakPos(), ec);
+
+            s.append(range->toString(true, ec));
+            s.append("\n");
+
+            // Update range so it starts after this wrap
+            range->setEnd(m_div.get(), 1, ec);
+            range->setStart(line->lineBreakObj()->node(), line->lineBreakPos(), ec);
+        }
+    }
+    s.append(range->toString(true, ec));
+    ASSERT(ec == 0);
+
+    return s.replace('\\', backslashAsCurrencySymbol());
 }
 
 void RenderTextField::calcHeight()

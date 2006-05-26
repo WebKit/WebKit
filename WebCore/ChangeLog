@@ -1,3 +1,33 @@
+2006-05-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Added support for wrap=hard for new textarea implementation.
+
+        Tests: fast/forms/textarea-appearance-wrap.html
+
+        * dom/Range.h: Added version of toString that will convert BRs to newlines.
+        * dom/Range.cpp: (WebCore::Range::toString):
+        * editing/ReplaceSelectionCommand.cpp: (WebCore::ReplacementFragment::ReplacementFragment): 
+          When in plain-text mode, and a white-space mode that doesn't collapse whitespace, create a fragment with one text node.
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition): Subtract scroll offset so the absolute position for the containing block is correct.
+        (WebCore::nextLinePosition): ditto.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForCoordinates): If the position is equal to the left edge of the box,
+        make the affinity downstream so the position doesn't jump back to the previous line.
+        (WebCore::RenderText::atLineWrap): The logic was reversed here in a recent change.
+        If the box is not at a line break, then its at a line wrap.
+        (WebCore::RenderText::caretRect): Only go to the next text box if its at a line wrap and the
+         affinity is also downstream.  If its upstream, then the correct box is on the current line.
+        (WebCore::RenderText::inlineBox): ditto.
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::updateFromElement): multi line controls don't need to check
+         valueMatchesRenderer before updating the renderer.  For textareas, the renderer should always try to update.
+         This matches our old textarea behavior.
+        (WebCore::RenderTextField::text): Pass true to textContent so it converts BRs to newlines.
+        (WebCore::RenderTextField::textWithHardLineBreaks): Iterate through the RootLineBoxes to find the soft wraps and replace them with newlines.
+
 2006-05-26  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

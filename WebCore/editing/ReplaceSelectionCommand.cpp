@@ -88,7 +88,14 @@ ReplacementFragment::ReplacementFragment(Document *document, DocumentFragment *f
     editableRoot->dispatchEvent(evt, ec, true);
     ASSERT(ec == 0);
     if (text != evt->text() || !editableRoot->isContentRichlyEditable()) {
-        m_fragment = createFragmentFromText(document, evt->text().deprecatedString());
+        // If the root is in plain-text mode, and white-space shouldn't be collapsed, then contruct a fragment that contains one text node
+        if (!editableRoot->isContentRichlyEditable() && editableRoot->renderer() && !editableRoot->renderer()->style()->collapseWhiteSpace()) {
+            RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
+            fragment->appendChild(document->createTextNode(evt->text()), ec);
+            ASSERT(ec == 0);
+            m_fragment = fragment;
+        } else
+            m_fragment = createFragmentFromText(document, evt->text().deprecatedString());
         firstChild = m_fragment->firstChild();
         lastChild = m_fragment->firstChild();
         

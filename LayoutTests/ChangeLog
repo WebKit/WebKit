@@ -1,3 +1,13 @@
+2006-05-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Added test for new textarea implementation.  Tests
+        wrap attributes and form submission.
+
+        * fast/forms/textarea-appearance-wrap-expected.txt: Added.
+        * fast/forms/textarea-appearance-wrap.html: Added.
+
 2006-05-26  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
