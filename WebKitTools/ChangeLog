@@ -1,3 +1,10 @@
+2006-05-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fixes/tweaks
+
+        * Spinneret/Spinneret.sln:
+        * Spinneret/Spinneret/Spinneret.vcproj:
+
 2006-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by mjs.

@@ -12,6 +12,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "..\..\Jav
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCore", "..\..\WebCore\WebCore.vcproj\WebCore\WebCore.vcproj", "{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5} = {011D10F1-B656-4A1B-A0C3-3842F02122C5}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitWin", "..\..\WebKitWin\WebKitWin.vcproj\WebKitWin\WebKitWin.vcproj", "{ACFF36C9-2C1B-4404-B6AC-0CA9F2901B4D}"
 	ProjectSection(ProjectDependencies) = postProject
