@@ -47,14 +47,6 @@ typedef float CGFloat;
 #define WINVER 0x0500
 #endif
 
-#ifndef _HAS_EXCEPTIONS
-#define _HAS_EXCEPTIONS 0
-#endif
-
-#ifndef _SECURE_SCL_DEPRECATE
-#define _SECURE_SCL_DEPRECATE 0
-#endif
-
 // Hack to match configuration of JavaScriptCore.
 // Maybe there's a better way to do this.
 #define USE_SYSTEM_MALLOC 1

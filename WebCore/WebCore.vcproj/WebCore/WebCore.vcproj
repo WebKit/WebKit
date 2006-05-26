@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\khtml&quot;;&quot;$(ProjectDir)\..\..\kwq&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\xpath&quot;;&quot;$(ProjectDir)\..\..\xpath\impl&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\platform\win&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\cairo\src&quot;"
-				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT; XPATH_SUPPORT"
+				PreprocessorDefinitions="WIN32;KHTML_NO_XBL;KHTML_XSLT;XPATH_SUPPORT"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -109,7 +109,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\..\iconv\include&quot;;&quot;$(ProjectDir)\..\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\..\libxml\include&quot;;&quot;$(ProjectDir)\..\..\..\libxslt\include&quot;;&quot;$(ProjectDir)\..\..\DerivedSources\WebCore&quot;;&quot;$(ProjectDir)\..\..\&quot;;&quot;$(ProjectDir)\..\..\css&quot;;&quot;$(ProjectDir)\..\..\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\editing&quot;;&quot;$(ProjectDir)\..\..\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\rendering&quot;;&quot;$(ProjectDir)\..\..\bindings\js&quot;;&quot;$(ProjectDir)\..\..\dom&quot;;&quot;$(ProjectDir)\..\..\html&quot;;&quot;$(ProjectDir)\..\..\khtml&quot;;&quot;$(ProjectDir)\..\..\kwq&quot;;&quot;$(ProjectDir)\..\..\bridge&quot;;&quot;$(ProjectDir)\..\..\bridge\win&quot;;&quot;$(ProjectDir)\..\..\loader&quot;;&quot;$(ProjectDir)\..\..\page&quot;;&quot;$(ProjectDir)\..\..\platform&quot;;&quot;$(ProjectDir)\..\..\platform\cairo&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\gif&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\jpeg&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\png&quot;;&quot;$(ProjectDir)\..\..\platform\image-decoders\zlib&quot;;&quot;$(ProjectDir)\..\..\xml&quot;;&quot;$(ProjectDir)\..\..\xpath&quot;;&quot;$(ProjectDir)\..\..\xpath\impl&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(ProjectDir)\..\..\..\JavaScriptCore\kjs&quot;;&quot;$(ProjectDir)\..\..\platform\win&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\pixman\src&quot;;&quot;$(ProjectDir)\..\..\platform\cairo\cairo\src&quot;"
-				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT; XPATH_SUPPORT; NDEBUG"
+				PreprocessorDefinitions="WIN32;KHTML_NO_XBL;KHTML_XSLT;XPATH_SUPPORT;NDEBUG"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="false"
@@ -263,6 +263,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\CSSGrammar.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\HTMLEntityNames.c"
 				>
 			</File>
@@ -279,7 +283,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSAttr.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCanvasGradient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCanvasGradient.h"
 				>
 			</File>
 			<File
@@ -287,7 +299,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCanvasPattern.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCanvasRenderingContext2D.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCanvasRenderingContext2D.h"
 				>
 			</File>
 			<File
@@ -295,7 +315,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCharacterData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCounter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCounter.h"
 				>
 			</File>
 			<File
@@ -303,7 +331,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSPrimitiveValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCSSRule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSRule.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSRuleList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSRuleList.h"
 				>
 			</File>
 			<File
@@ -311,7 +355,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSStyleDeclaration.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSCSSValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSValueList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSCSSValueList.h"
 				>
 			</File>
 			<File
@@ -319,7 +379,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDocument.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSDocumentFragment.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDocumentFragment.h"
 				>
 			</File>
 			<File
@@ -327,7 +395,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDocumentType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSDOMImplementation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSDOMImplementation.h"
 				>
 			</File>
 			<File
@@ -343,7 +419,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSEntity.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSEntity.h"
 				>
 			</File>
 			<File
@@ -351,7 +435,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAnchorElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAnchorElement.h"
 				>
 			</File>
 			<File
@@ -359,7 +451,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAppletElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAreaElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLAreaElement.h"
 				>
 			</File>
 			<File
@@ -367,7 +467,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBaseElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBaseFontElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBaseFontElement.h"
 				>
 			</File>
 			<File
@@ -375,7 +483,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBlockquoteElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBodyElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBodyElement.h"
 				>
 			</File>
 			<File
@@ -383,7 +499,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLBRElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLButtonElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLButtonElement.h"
 				>
 			</File>
 			<File
@@ -391,7 +515,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLCanvasElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLDirectoryElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLDirectoryElement.h"
 				>
 			</File>
 			<File
@@ -399,7 +531,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLDivElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLDListElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLDListElement.h"
 				>
 			</File>
 			<File
@@ -407,7 +547,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLDocument.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLElement.h"
 				>
 			</File>
 			<File
@@ -415,7 +563,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLFieldSetElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLFontElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\derivedsources\webcore\JSHTMLFormElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLFormElement.h"
 				>
 			</File>
 			<File
@@ -423,7 +583,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHeadElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHeadingElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHeadingElement.h"
 				>
 			</File>
 			<File
@@ -431,7 +599,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHRElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHtmlElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLHtmlElement.h"
 				>
 			</File>
 			<File
@@ -439,7 +615,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLImageElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLInputElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLInputElement.h"
 				>
 			</File>
 			<File
@@ -447,7 +631,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLIsIndexElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLabelElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLabelElement.h"
 				>
 			</File>
 			<File
@@ -455,7 +647,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLegendElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLIElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLIElement.h"
 				>
 			</File>
 			<File
@@ -463,7 +663,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLLinkElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLMapElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLMapElement.h"
 				>
 			</File>
 			<File
@@ -471,7 +679,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLMenuElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLMetaElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLMetaElement.h"
 				>
 			</File>
 			<File
@@ -479,7 +695,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLModElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLOListElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLOListElement.h"
 				>
 			</File>
 			<File
@@ -487,7 +711,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLOptGroupElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLOptionElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLOptionElement.h"
 				>
 			</File>
 			<File
@@ -495,7 +727,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLParagraphElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLParamElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLParamElement.h"
 				>
 			</File>
 			<File
@@ -503,7 +743,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLPreElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLQuoteElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLQuoteElement.h"
 				>
 			</File>
 			<File
@@ -511,7 +759,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLScriptElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLStyleElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLStyleElement.h"
 				>
 			</File>
 			<File
@@ -519,7 +775,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLTextAreaElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSHTMLTitleElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLTitleElement.h"
 				>
 			</File>
 			<File
@@ -527,7 +791,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSHTMLUListElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSKeyboardEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSKeyboardEvent.h"
 				>
 			</File>
 			<File
@@ -535,7 +807,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSMouseEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSMutationEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSMutationEvent.h"
 				>
 			</File>
 			<File
@@ -543,7 +823,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSNode.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSNodeFilter.h"
 				>
 			</File>
 			<File
@@ -551,7 +839,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSNotation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSProcessingInstruction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSProcessingInstruction.h"
 				>
 			</File>
 			<File
@@ -559,7 +855,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSRange.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSText.h"
 				>
 			</File>
 			<File
@@ -567,11 +871,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\DerivedSources\WebCore\JSWheelEvent.cpp"
+				RelativePath="..\..\DerivedSources\WebCore\JSUIEvent.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSWheelEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSWheelEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXMLHttpRequest.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXMLSerializer.lut.h"
 				>
 			</File>
 			<File
@@ -579,7 +895,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXPathEvaluator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSXPathExpression.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXPathExpression.h"
 				>
 			</File>
 			<File
@@ -587,7 +911,51 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXPathNSResolver.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DerivedSources\WebCore\JSXPathResult.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXPathResult.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\JSXSLTProcessor.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\kjs_css.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\kjs_dom.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\kjs_events.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\kjs_html.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\kjs_navigator.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\kjs_traversal.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\kjs_window.lut.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\UserAgentStyleSheets.h"
 				>
 			</File>
 			<File
@@ -600,6 +968,10 @@
 			</File>
 			<File
 				RelativePath="..\..\DerivedSources\WebCore\XPathGrammar.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DerivedSources\WebCore\XPathGrammar.h"
 				>
 			</File>
 		</Filter>
@@ -4299,6 +4671,10 @@
 				</File>
 				<File
 					RelativePath="..\..\bindings\js\JSHTMLElementWrapperFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bindings\js\JSHTMLFormElementCustom.cpp"
 					>
 				</File>
 				<File

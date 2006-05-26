@@ -248,30 +248,31 @@ sub printNamesCppFile
 	
 	my $lowerNamespace = lc($namespacePrefix);
 
-print "#define DOM_${namespace}NAMES_HIDE_GLOBALS 1\n\n";
-
 print "#include \"config.h\"\n";
+
+print "#if AVOID_STATIC_CONSTRUCTORS\n";
+print "#define DOM_${namespace}NAMES_HIDE_GLOBALS 1\n";
+print "#else\n";
+print "#define QNAME_DEFAULT_CONSTRUCTOR 1\n";
+print "#endif\n\n";
+
 print "#include \"${namespace}Names.h\"\n\n";
+print "#include \"StaticConstructors.h\"\n";
 
 print "namespace $cppNamespace { namespace ${namespace}Names {
 
 using namespace WebCore;
 
-// Define a properly-sized array of pointers to avoid static initialization.
-// Use an array of pointers instead of an array of char in case there is some alignment issue.
-
-#define DEFINE_UNINITIALIZED_GLOBAL(type, name) void *name[(sizeof(type) + sizeof(void *) - 1) / sizeof(void *)];
-
-DEFINE_UNINITIALIZED_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI)
+DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$namespaceURI\")
 ";
 
 	if (scalar(@tags)) {
-		print "#define DEFINE_TAG_GLOBAL(name) DEFINE_UNINITIALIZED_GLOBAL(QualifiedName, name##Tag)\n";
+		print "#define DEFINE_TAG_GLOBAL(name) DEFINE_GLOBAL(QualifiedName, name##Tag, nullAtom, #name, ${lowerNamespace}NamespaceURI)\n";
 		print "DOM_${namespace}NAMES_FOR_EACH_TAG(DEFINE_TAG_GLOBAL)\n\n";
 	}
 
 	if (scalar(@attrs)) {
-		print "#define DEFINE_ATTR_GLOBAL(name) DEFINE_UNINITIALIZED_GLOBAL(QualifiedName, name##Attr)\n";
+		print "#define DEFINE_ATTR_GLOBAL(name) DEFINE_GLOBAL(QualifiedName, name##Attr, nullAtom, #name, nullAtom)\n";
 		print "DOM_${namespace}NAMES_FOR_EACH_ATTR(DEFINE_ATTR_GLOBAL)\n\n";
 	}
 
@@ -290,7 +291,7 @@ print "void init()
     print("    AtomicString ${lowerNamespace}NS(\"$namespaceURI\");\n\n");
 
     print("    // Namespace\n");
-    print("    new (&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n\n");
+    print("    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n\n");
     if (scalar(@tags)) {
     	my $tagsNamespace = $tagsNullNamespace ? "nullAtom" : "${lowerNamespace}NS";
 		printDefinitions(\@tags, "tags", $tagsNamespace);
@@ -331,7 +332,7 @@ sub printDefinitions
 			print "    ${name}${shortCamelType}String = \"$realName\";\n";
 		}
 	}
-	print "\n    #define INITIALIZE_${shortUpperType}_GLOBAL(name) new (&name##${shortCamelType}) QualifiedName(nullAtom, name##${shortCamelType}String, $namespaceURI);\n";
+	print "\n    #define INITIALIZE_${shortUpperType}_GLOBAL(name) new ((void*)&name##${shortCamelType}) QualifiedName(nullAtom, name##${shortCamelType}String, $namespaceURI);\n";
 	print "    DOM_${namespace}NAMES_FOR_EACH_${shortUpperType}(INITIALIZE_${shortUpperType}_GLOBAL)\n\n";
 }
 

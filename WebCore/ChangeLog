@@ -2,6 +2,16 @@
 
         Reviewed by adele.
 
+        Build fixes/tweaks
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * config.h:
+        * ksvg2/scripts/make_names.pl:
+
+2006-05-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by adele.
+
         Fix build
 
         * WebCore.vcproj/WebCore/WebCore.vcproj:
