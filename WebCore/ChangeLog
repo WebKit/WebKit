@@ -1,3 +1,15 @@
+2006-05-26  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9127
+        Invoke capturing event listeners when AT_TARGET
+        
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::handleLocalEvents):    
+        Invoke capturing event listeners for the AT_TARGET phase. This violates the
+        DOM spec but it's what Mozilla does.
+        
 2006-05-26  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.
@@ -67,6 +79,7 @@
         (WebCore::createUnorderedListElement):
         * editing/htmlediting.h:
 
+>>>>>>> .r14614
 2006-05-26  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by adele.

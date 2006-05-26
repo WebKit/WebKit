@@ -195,6 +195,11 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, 
     if (!evt->propagationStopped()) {
         evt->setEventPhase(Event::AT_TARGET);
         evt->setCurrentTarget(it.current());
+        
+        // We do want capturing event listeners to be invoked here, even though
+        // that violates the specification since Mozilla does it.
+        EventTargetNodeCast(it.current())->handleLocalEvents(evt.get(), true);
+        
         EventTargetNodeCast(it.current())->handleLocalEvents(evt.get(), false);
     }
     --it;

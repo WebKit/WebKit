@@ -1,3 +1,17 @@
+2006-05-26  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9127
+        Invoke capturing event listeners when AT_TARGET
+
+        * dom/html/level2/events/dispatchEvent09-expected.txt:
+        * dom/xhtml/level2/events/dispatchEvent09-expected.txt:
+        These fail now.
+        
+        * fast/dom/capturing-event-listeners-expected.txt: Added.
+        * fast/dom/capturing-event-listeners.html: Added.
+
 2006-05-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.  Landed by eseidel.
