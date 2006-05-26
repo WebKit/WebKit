@@ -1690,13 +1690,31 @@ static WebHTMLView *lastHitView = nil;
     return ([self _canEditRichly] && [[self _bridge] canDecreaseSelectionListLevel]);
 }
 
-- (void)_increaseSelectionListLevel
+- (DOMNode *)_increaseSelectionListLevel
 {
     if (![self _canEditRichly])
-        return;
+        return nil;
         
     WebFrameBridge *bridge = [self _bridge];
-    [bridge increaseSelectionListLevel];
+    return [bridge increaseSelectionListLevel];
+}
+
+- (DOMNode *)_increaseSelectionListLevelOrdered
+{
+    if (![self _canEditRichly])
+        return nil;
+        
+    WebFrameBridge *bridge = [self _bridge];
+    return [bridge increaseSelectionListLevelOrdered];
+}
+
+- (DOMNode *)_increaseSelectionListLevelUnordered
+{
+    if (![self _canEditRichly])
+        return nil;
+        
+    WebFrameBridge *bridge = [self _bridge];
+    return [bridge increaseSelectionListLevelUnordered];
 }
 
 - (void)_decreaseSelectionListLevel

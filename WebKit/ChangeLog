@@ -1,3 +1,20 @@
+2006-05-26  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4514529> Add a list type parameter and a return value to _increaseSelectionListLevel
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _increaseSelectionListLevel]):
+        - Now returns DOMNode*
+
+        (-[WebHTMLView _increaseSelectionListLevelOrdered]):
+        (-[WebHTMLView _increaseSelectionListLevelUnordered]):
+        - Added.  These also return DOMNode*
+
+        * WebView/WebHTMLViewPrivate.h:
+        - Updated as above
+
 2006-05-25  Tim Omernick  <timo@apple.com>
 
         Reviewed by Anders.
