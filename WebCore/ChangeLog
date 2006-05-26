@@ -1,3 +1,72 @@
+2006-05-26  David Harrison  <harrison@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4514529> Add a list type parameter and a return value to _increaseSelectionListLevel
+        
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        - Renamed ModifySelectionListLevelCommand .cpp and .h to ModifySelectionListLevel .cpp and .h
+        
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge canIncreaseSelectionListLevel]):
+        (-[WebCoreFrameBridge canDecreaseSelectionListLevel]):
+        (-[WebCoreFrameBridge increaseSelectionListLevel]):
+        (-[WebCoreFrameBridge decreaseSelectionListLevel]):
+        - Call functions in IncreaseSelectionListLevelCommand or DecreaseSelectionListLevelCommand instead
+        of ModifySelectionListLevelCommand.
+        
+        (-[WebCoreFrameBridge increaseSelectionListLevelOrdered]):
+        (-[WebCoreFrameBridge increaseSelectionListLevelUnordered]):
+        - Added.
+        
+        * editing/ModifySelectionListLevel.cpp: Added.
+        - Renamed from ModifySelectionListLevelCommand.cpp
+        - Made ModifySelectionListLevelCommand class into a useful base class for new
+        classes IncreaseSelectionListLevelCommand and DecreaseSelectionListLevelCommand.
+        
+        (WebCore::ModifySelectionListLevelCommand::ModifySelectionListLevelCommand):
+        (WebCore::getStartEndListChildren):
+        (WebCore::ModifySelectionListLevelCommand::insertSiblingNodeRangeBefore):
+        (WebCore::ModifySelectionListLevelCommand::appendSiblingNodeRange):
+        - ModifySelectionListLevelCommand is base class for IncreaseSelectionListLevelCommand and DecreaseSelectionListLevelCommand
+        
+        (WebCore::IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand):
+        (WebCore::IncreaseSelectionListLevelCommand::listElement):
+        (WebCore::canIncreaseListLevel):
+        (WebCore::IncreaseSelectionListLevelCommand::doApply):
+        (WebCore::IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel):
+        (WebCore::increaseSelectionListLevelWithType):
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevel):
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered):
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered):
+        - Now a subclass of ModifySelectionListLevelCommand
+        - Added Ordered and Unordered increaser functions
+        - Increaser functions return the list element that the items were moved into
+        
+        (WebCore::DecreaseSelectionListLevelCommand::DecreaseSelectionListLevelCommand):
+        (WebCore::canDecreaseListLevel):
+        (WebCore::DecreaseSelectionListLevelCommand::doApply):
+        (WebCore::DecreaseSelectionListLevelCommand::canDecreaseSelectionListLevel):
+        (WebCore::DecreaseSelectionListLevelCommand::decreaseSelectionListLevel):
+        - No functional changes other than to become a subclass of ModifySelectionListLevelCommand
+
+        * editing/ModifySelectionListLevel.h: Added.
+        (WebCore::):
+         - Renamed from ModifySelectionListLevelCommand.cpp
+       
+        * editing/ModifySelectionListLevelCommand.cpp: Removed.
+        - Renamed to ModifySelectionListLevel.cpp
+        
+        * editing/ModifySelectionListLevelCommand.h: Removed.
+        - Renamed to ModifySelectionListLevel.h
+
+        * editing/htmlediting.cpp:
+        (WebCore::createOrderedListElement):
+        (WebCore::createUnorderedListElement):
+        * editing/htmlediting.h:
+
 2006-05-26  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by adele.

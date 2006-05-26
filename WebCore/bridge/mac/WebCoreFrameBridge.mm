@@ -49,7 +49,7 @@
 #import "KWQEditCommand.h"
 #import "KWQLoader.h"
 #import "KWQPageState.h"
-#import "ModifySelectionListLevelCommand.h"
+#import "ModifySelectionListLevel.h"
 #import "MoveSelectionCommand.h"
 #import "Page.h"
 #import "RenderCanvas.h"
@@ -1979,21 +1979,42 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (bool)canIncreaseSelectionListLevel
 {
-    return ModifySelectionListLevelCommand::canIncreaseSelectionListLevel(m_frame->document());
+    return IncreaseSelectionListLevelCommand::canIncreaseSelectionListLevel(m_frame->document());
 }
 
 - (bool)canDecreaseSelectionListLevel
 {
-    return ModifySelectionListLevelCommand::canDecreaseSelectionListLevel(m_frame->document());
+    return DecreaseSelectionListLevelCommand::canDecreaseSelectionListLevel(m_frame->document());
 }
 
-- (void)increaseSelectionListLevel
+- (DOMNode *)increaseSelectionListLevel;
 {
     if (!m_frame->hasSelection())
-        return;
+        return nil;
     
-    ModifySelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
+    Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
     [self ensureSelectionVisible];
+    return [DOMNode _nodeWith:newList];
+}
+
+- (DOMNode *)increaseSelectionListLevelOrdered;
+{
+    if (!m_frame->hasSelection())
+        return nil;
+    
+    Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelOrdered(m_frame->document());
+    [self ensureSelectionVisible];
+    return [DOMNode _nodeWith:newList];
+}
+
+- (DOMNode *)increaseSelectionListLevelUnordered;
+{
+    if (!m_frame->hasSelection())
+        return nil;
+    
+    Node* newList = IncreaseSelectionListLevelCommand::increaseSelectionListLevelUnordered(m_frame->document());
+    [self ensureSelectionVisible];
+    return [DOMNode _nodeWith:newList];
 }
 
 - (void)decreaseSelectionListLevel
@@ -2001,7 +2022,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     if (!m_frame->hasSelection())
         return;
     
-    ModifySelectionListLevelCommand::decreaseSelectionListLevel(m_frame->document());
+    DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(m_frame->document());
     [self ensureSelectionVisible];
 }
 

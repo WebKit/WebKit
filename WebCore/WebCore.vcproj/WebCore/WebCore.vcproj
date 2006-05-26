@@ -3859,11 +3859,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\ModifySelectionListLevelCommand.cpp"
+				RelativePath="..\..\editing\ModifySelectionListLevel.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\ModifySelectionListLevelCommand.h"
+				RelativePath="..\..\editing\ModifySelectionListLevel.h"
 				>
 			</File>
 			<File

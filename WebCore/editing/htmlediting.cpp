@@ -451,6 +451,22 @@ PassRefPtr<Element> createBreakElement(Document *document)
     return breakNode.release();
 }
 
+PassRefPtr<Element> createOrderedListElement(Document *document)
+{
+    ExceptionCode ec = 0;
+    RefPtr<Element> element = document->createElementNS(xhtmlNamespaceURI, "ol", ec);
+    ASSERT(ec == 0);
+    return element.release();
+}
+
+PassRefPtr<Element> createUnorderedListElement(Document *document)
+{
+    ExceptionCode ec = 0;
+    RefPtr<Element> element = document->createElementNS(xhtmlNamespaceURI, "ul", ec);
+    ASSERT(ec == 0);
+    return element.release();
+}
+
 bool isTabSpanNode(const Node *node)
 {
     return (node && node->isElementNode() && static_cast<const Element *>(node)->getAttribute("class") == AppleTabSpanClass);

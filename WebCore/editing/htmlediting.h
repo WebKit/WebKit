@@ -57,6 +57,8 @@ bool isSpecialElement(const Node*);
 
 PassRefPtr<Element> createDefaultParagraphElement(Document*);
 PassRefPtr<Element> createBreakElement(Document*);
+PassRefPtr<Element> createOrderedListElement(Document*);
+PassRefPtr<Element> createUnorderedListElement(Document*);
 
 bool isTabSpanNode(const Node*);
 bool isTabSpanTextNode(const Node*);
