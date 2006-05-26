@@ -1,3 +1,16 @@
+2006-05-25  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Anders.
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8347>
+        REGRESSION: Flash movie audible but not visible until window is resized
+
+        * Plugins/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView dataSourceUpdated:]):
+        Layout if needed here.  Maciej recently removed the "LayoutAcceptable" frame state, which used to
+        cause plugin document views to lay out immediately upon receiving data.  This call to -layout has
+        the same effect.
+
 === WebKit-521.11.1 ===
 
 2006-05-25  Timothy Hatcher  <timothy@apple.com>

@@ -125,6 +125,8 @@
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
+    if (needsLayout)
+        [self layout];
 }
 
 - (void)setNeedsLayout:(BOOL)flag
