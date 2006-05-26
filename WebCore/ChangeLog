@@ -1,3 +1,20 @@
+2006-05-25  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adele.
+
+        * bindings/js/kjs_html.cpp:
+        added bindings
+        (KJS::HTMLElementFunction::callAsFunction):
+        added case to handle namedItem for select elements
+        * bindings/js/kjs_html.h:
+        added enum value for bindings
+        (KJS::JSHTMLElement::):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::namedItem):
+        implemented namedItem method
+        * html/HTMLSelectElement.h:
+        added prototype for namedItem method
+
 2006-05-25  Dave Hyatt <hyatt@apple.com>
 
         Make soft hyphens work on Win32 by special casing them

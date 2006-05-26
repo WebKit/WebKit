@@ -124,7 +124,7 @@ namespace KJS {
            SelectAdd,
            SelectTabIndex, SelectValue, SelectSelectedIndex, SelectLength,
            SelectRemove, SelectForm, SelectBlur, SelectType, SelectOptions,
-           SelectDisabled, SelectMultiple, SelectName, SelectSize, SelectFocus,
+           SelectDisabled, SelectMultiple, SelectName, SelectNamedItem, SelectSize, SelectFocus,
            ObjectHspace, ObjectHeight, ObjectAlign,
            ObjectBorder, ObjectCode, ObjectType, ObjectVspace, ObjectArchive,
            ObjectDeclare, ObjectForm, ObjectCodeBase, ObjectCodeType, ObjectData,
