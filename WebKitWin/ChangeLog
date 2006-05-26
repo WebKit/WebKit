@@ -1,3 +1,9 @@
+2006-05-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fixes/tweaks
+
+        * WebKitWin.vcproj/WebKitWin/WebKitWin.vcproj:
+
 2006-05-24  Dave Hyatt <hyatt@apple.com>
 
         Don't use create_similar, since it does fills and work on
