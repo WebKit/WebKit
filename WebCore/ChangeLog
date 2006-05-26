@@ -1,3 +1,15 @@
+2006-05-25  Dave Hyatt <hyatt@apple.com>
+
+        Change default font size for fixed pitch to 13 to match Safari
+        on Mac (and every other browser on the planet too).
+
+        Reviewed by adele
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        * platform/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontLinkInterface):
+
 2006-05-25  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adele.
