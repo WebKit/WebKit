@@ -1,3 +1,18 @@
+2006-05-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        Added, test for the crash by focusing an editable html element and then
+        inserting a tab
+        * editing/selection/editable-html-element-expected.checksum: Added.
+        * editing/selection/editable-html-element-expected.png: Added.
+        * editing/selection/editable-html-element-expected.txt: Added.
+        * editing/selection/editable-html-element.html: Added.
+        Fixed:
+        * editing/selection/focus_editable_html-expected.checksum:
+        * editing/selection/focus_editable_html-expected.png:
+        * editing/selection/focus_editable_html-expected.txt:
+
 2006-05-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

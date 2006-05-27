@@ -1,0 +1,15 @@
+<html contenteditable="true" id="test">
+<script>
+function runTest() {
+    var s = window.getSelection();
+    var e = document.getElementById("test");
+
+    e.focus();
+    document.execCommand("InsertText", false, "\t");
+    document.execCommand("InsertText", false, "This tests to see where the selection is set when an html element is focused.");
+    document.execCommand("InsertHTML", false, "<br>We set it inside the body because we don't want to allow editing outside the body.  This test also does some editing to make sure it happens in the body.");
+}
+</script>
+<body onLoad="runTest();">
+</body>
+</html>

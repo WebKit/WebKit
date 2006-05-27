@@ -82,6 +82,8 @@ void InsertLineBreakCommand::doApply()
 {
     deleteSelection();
     Selection selection = endingSelection();
+    if (selection.isNone())
+        return;
 
     RefPtr<Element> breakNode = createBreakElement(document());
     Node* nodeToInsert = breakNode.get();

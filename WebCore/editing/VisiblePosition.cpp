@@ -168,6 +168,13 @@ void VisiblePosition::initDeepPosition(const Position& position, EAffinity affin
 
     // The new position must be in the same editable element. Enforce that first.
     Node* editingRoot = node->rootEditableElement();
+    // If the html element is editable, descending into its body will look like a descent 
+    // from non-editable to editable content since rootEditableElement stops at the body 
+    // even if the html element is editable.
+    if (editingRoot && editingRoot->hasTagName(htmlTag)) {
+        m_deepPosition = next.isNotNull() ? next : prev;
+        return;
+    }
     bool prevIsInSameEditableElement = prevNode && prevNode->rootEditableElement() == editingRoot;
     bool nextIsInSameEditableElement = nextNode && nextNode->rootEditableElement() == editingRoot;
     if (prevIsInSameEditableElement && !nextIsInSameEditableElement) {

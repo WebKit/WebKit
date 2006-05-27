@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of HTML > #document to 2 of HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > BODY > HTML > #document to 1 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > BODY > HTML > #document to 1 of #text > SPAN > BODY > HTML > #document toDOMRange:range from 77 of #text > BODY > HTML > #document to 77 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 77 of #text > BODY > HTML > #document to 77 of #text > BODY > HTML > #document toDOMRange:range from 153 of #text > BODY > HTML > #document to 153 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {SPAN} at (0,0) size 32x18
+        RenderText {#text} at (0,0) size 32x18
+          text run at (0,0) width 32: "\x{9}"
+      RenderText {#text} at (32,0) size 473x18
+        text run at (32,0) width 473: "This tests to see where the selection is set when an html element is focused."
+      RenderBR {BR} at (505,14) size 0x0
+      RenderText {#text} at (0,18) size 777x36
+        text run at (0,18) width 520: "We set it inside the body because we don't want to allow editing outside the body. "
+        text run at (520,18) width 257: "This test also does some editing to make "
+        text run at (0,36) width 173: "sure it happens in the body."
+caret: position 153 of child 3 {#text} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,3 +1,29 @@
+2006-05-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4564296> Mail crashes on Leopard9A184 when I attempt to compose a new message
+
+        * dom/Position.cpp:
+        (WebCore::Position::inRenderedContent):
+        Removed a candidate at [html, 0].
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply): Added early return when there is no selection.
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Ditto.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Ditto.
+        * editing/Selection.cpp:
+        (WebCore::Selection::validate): If visible positions can't be created from the endpoints, 
+        then create a null selection.  Not doing this was making editing code think there was
+        a valid, editable selection even though there wasn't.
+        * editing/UnlinkCommand.cpp:
+        (WebCore::UnlinkCommand::doApply): Early return.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::initDeepPosition): Special case the html/body element boundary.
+        It looks like a non-editable/editable boundary since rootEditableElement stops at the body
+        even if the html element is editable.
+
 2006-05-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Justin.

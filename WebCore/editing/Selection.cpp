@@ -173,29 +173,19 @@ static int comparePositions(const Position& a, const Position& b)
 void Selection::validate()
 {
     // Move the selection to rendered positions, if possible.
-    Position originalBase(m_base);
     bool baseAndExtentEqual = m_base == m_extent;
     if (m_base.isNotNull()) {
         m_base = VisiblePosition(m_base, m_affinity).deepEquivalent();
         if (baseAndExtentEqual)
             m_extent = m_base;
     }
-    if (m_extent.isNotNull() && !baseAndExtentEqual) {
+    if (m_extent.isNotNull() && !baseAndExtentEqual)
         m_extent = VisiblePosition(m_extent, m_affinity).deepEquivalent();
-    }
 
     // Make sure we do not have a dangling start or end
-    if (m_base.isNull() && m_extent.isNull()) {
-        // Move the position to the enclosingBlockFlowElement of the original base, if possible.
-        // This has the effect of flashing the caret somewhere when a rendered position for
-        // the base and extent cannot be found.
-        if (originalBase.isNotNull()) {
-            Position pos(originalBase.node()->enclosingBlockFlowElement(), 0);
-            m_base = pos;
-            m_extent = pos;
-        }
+    if (m_base.isNull() && m_extent.isNull())
         m_baseIsFirst = true;
-    } else if (m_base.isNull()) {
+    else if (m_base.isNull()) {
         m_base = m_extent;
         m_baseIsFirst = true;
     } else if (m_extent.isNull()) {

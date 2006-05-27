@@ -38,6 +38,9 @@ CreateLinkCommand::CreateLinkCommand(Document* document, const String& url)
 
 void CreateLinkCommand::doApply()
 {
+    if (!endingSelection().isRange())
+        return;
+        
     pushPartiallySelectedAnchorElementsDown();
 
     HTMLAnchorElement* anchorElement = new HTMLAnchorElement(document());

@@ -478,7 +478,7 @@ bool Position::inRenderedContent() const
     if (isTableElement(node()) || editingIgnoresContent(node()))
         return offset() == 0 || offset() == maxDeepOffset(node());
 
-    if (renderer->isBlockFlow() && !hasRenderedChildrenWithHeight(renderer) &&
+    if (!node()->hasTagName(htmlTag) && renderer->isBlockFlow() && !hasRenderedChildrenWithHeight(renderer) &&
        (renderer->height() || node()->hasTagName(bodyTag)))
         return offset() == 0;
     
