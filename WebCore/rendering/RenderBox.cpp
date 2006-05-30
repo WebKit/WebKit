@@ -1819,7 +1819,9 @@ void RenderBox::calcAbsoluteVertical()
         }
     }
 
-    // If our natural height exceeds the new height once we've set it, then we
+    height += bordersPlusPadding;
+
+    // If our natural/content height exceeds the new height once we've set it, then we
     // need to make sure to update overflow to track the spillout.
     if (m_height > height)
         setOverflowHeight(m_height);
@@ -1849,8 +1851,7 @@ void RenderBox::calcAbsoluteVerticalValues(Length height, const RenderObject* co
     if (isTable() && heightIsAuto) {
         height.setValue(Fixed, contentHeight);
         heightIsAuto = false;
-    } else if (!heightIsAuto)
-        contentHeight = min(contentHeight, calcContentBoxHeight(height.calcValue(containerHeight)));
+    }
 
     if (!topIsAuto && !heightIsAuto && !bottomIsAuto) {
         /*-----------------------------------------------------------------------*\
@@ -1936,22 +1937,13 @@ void RenderBox::calcAbsoluteVerticalValues(Length height, const RenderObject* co
         } else if (!topIsAuto && heightIsAuto && !bottomIsAuto) {
             // RULE 5: (solve of height)
             topValue = top.calcValue(containerHeight);
-            heightValue = availableSpace - (topValue + bottom.calcValue(containerHeight));
+            heightValue = max(0, availableSpace - (topValue + bottom.calcValue(containerHeight)));
         } else if (!topIsAuto && !heightIsAuto && bottomIsAuto) {
             // RULE 6: (no need solve of bottom)
             heightValue = calcContentBoxHeight(height.calcValue(containerHeight));
             topValue = top.calcValue(containerHeight);
         }
     }
-
-    // Make final adjustments to height.
-    if (!(contentHeight < heightValue) && !(hasOverflowClip() && contentHeight > heightValue))
-        heightValue = contentHeight;
-
-    // Do not allow the height to be negative.  This can happen when someone
-    // specifies both top and bottom but the containing block height is less
-    // than top, e.g., top: 20px, bottom: 0, containing block height 16.
-    heightValue = max(0, heightValue + bordersPlusPadding);
 
     // Use computed values to calculate the vertical position.
     yPos = topValue + marginTopValue + containerBlock->borderTop();
@@ -1967,6 +1959,9 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
 
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     const RenderObject* containerBlock = container();
+
+    // FIXME: This is incorrect for cases where the container block is a relatively
+    // positioned inline.
     const int containerWidth = containingBlockWidth() + containerBlock->paddingLeft() + containerBlock->paddingRight();
     
     // To match WinIE, in quirks mode use the parent's 'direction' property 
@@ -2101,12 +2096,11 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
     // NOTE:  It is not necessary to solve for 'right' when the direction is
     // LTR because the value is not used.
     int totalWidth = m_width + leftValue + rightValue +  m_marginLeft + m_marginRight;
-    // see FIXME 1
     if (totalWidth > containerWidth && (containerDirection == RTL))
         leftValue = containerWidth - (totalWidth - leftValue);
 
 
-    // Use computed values to caluculate the horizontal position.
+    // Use computed values to calculate the horizontal position.
     m_x = leftValue + m_marginLeft + containerBlock->borderLeft();
 }
 
@@ -2139,8 +2133,8 @@ void RenderBox::calcAbsoluteVerticalReplaced()
     // NOTE: This value of height is FINAL in that the min/max height calculations
     // are dealt with in calcReplacedHeight().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    int heightValue = calcReplacedHeight() + borderTop() + borderBottom() + paddingTop() + paddingBottom();
-    int availableSpace = containerHeight - heightValue;
+    m_height = calcReplacedHeight() + borderTop() + borderBottom() + paddingTop() + paddingBottom();
+    const int availableSpace = containerHeight - m_height;
 
     /*-----------------------------------------------------------------------*\
      * 2. If both 'top' and 'bottom' have the value 'auto', replace 'top'
@@ -2180,7 +2174,7 @@ void RenderBox::calcAbsoluteVerticalReplaced()
 
     if (marginTop.isAuto() && marginBottom.isAuto()) {
         // 'top' and 'bottom' cannot be 'auto' due to step 2 and 3 combinded.
-        ASSERT(!(top.isAuto() && bottom.isAuto()));
+        ASSERT(!(top.isAuto() || bottom.isAuto()));
 
         topValue = top.calcValue(containerHeight);
         bottomValue = bottom.calcValue(containerHeight);
@@ -2233,26 +2227,7 @@ void RenderBox::calcAbsoluteVerticalReplaced()
     // the value of 'bottom' regardless of whether the values are over-constrained
     // or not.
 
-
-    // Make final adjustments to height.
-    int contentHeight = m_height;
-    if ((contentHeight < heightValue) || (hasOverflowClip() && contentHeight > heightValue))
-        contentHeight = heightValue;
-
-    // Do not allow the height to be negative.  This can happen when someone
-    // specifies both top and bottom but the containing block height is less
-    // than top, e.g., top: 20px, bottom: 0, containing block height 16.
-    heightValue = max(0, contentHeight);
-
-    // If our content height exceeds the new height once we've set it, then we
-    // need to make sure to update overflow to track the spillout.
-    if (m_height > heightValue)
-        setOverflowHeight(m_height);
-
-    // Set final values.
-    m_height = heightValue;
-
-    // Use computed values to caluculate the vertical position.
+    // Use computed values to calculate the vertical position.
     m_y = topValue + m_marginTop + containerBlock->borderTop();
 }
 

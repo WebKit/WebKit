@@ -1,4 +1,16 @@
-=== WebCore-521.12 ===
+2006-05-30  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt, landed by Beth.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9085
+          Absolutely positioned objects with 'height': auto and 'top': and
+          'bottom': non-auto should not be content based
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteVerticalValues):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
 
 2006-05-30  Eric Seidel  <eric@eseidel.com>
 
