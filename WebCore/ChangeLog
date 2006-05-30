@@ -1,3 +1,5 @@
+=== WebCore-521.12 ===
+
 2006-05-30  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.
@@ -213,7 +215,6 @@
         (WebCore::createUnorderedListElement):
         * editing/htmlediting.h:
 
->>>>>>> .r14614
 2006-05-26  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by adele.
