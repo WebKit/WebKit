@@ -35,67 +35,67 @@ namespace WebCore
     public:
         SVGMatrix();
         SVGMatrix(double a, double b, double c, double d, double e, double f);
-        SVGMatrix(QMatrix mat);
+        SVGMatrix(const QMatrix& mat);
         virtual ~SVGMatrix();
 
-        void setA(double a);
+        void setA(double);
         double a() const;
 
-        void setB(double b);
+        void setB(double);
         double b() const;
 
-        void setC(double c);
+        void setC(double);
         double c() const;
 
-        void setD(double d);
+        void setD(double);
         double d() const;
 
-        void setE(double e);
+        void setE(double);
         double e() const;
 
-        void setF(double f);
+        void setF(double);
         double f() const;
 
-        void copy(const SVGMatrix *other);
+        void copy(const SVGMatrix*);
 
-        SVGMatrix *inverse();
+        SVGMatrix* inverse();
 
         // Pre-multiplied operations, as per the specs.
-        SVGMatrix *multiply(const SVGMatrix *secondMatrix);
-        SVGMatrix *translate(double x, double y);
-        SVGMatrix *scale(double scaleFactor);
-        SVGMatrix *scaleNonUniform(double scaleFactorX, double scaleFactorY);
-        SVGMatrix *rotate(double angle);
-        SVGMatrix *rotateFromVector(double x, double y);
-        SVGMatrix *flipX();
-        SVGMatrix *flipY();
-        SVGMatrix *skewX(double angle);
-        SVGMatrix *skewY(double angle);
+        SVGMatrix* multiply(const SVGMatrix*);
+        SVGMatrix* translate(double x, double y);
+        SVGMatrix* scale(double scaleFactor);
+        SVGMatrix* scaleNonUniform(double scaleFactorX, double scaleFactorY);
+        SVGMatrix* rotate(double angle);
+        SVGMatrix* rotateFromVector(double x, double y);
+        SVGMatrix* flipX();
+        SVGMatrix* flipY();
+        SVGMatrix* skewX(double angle);
+        SVGMatrix* skewY(double angle);
 
         // Post-multiplied operations
-        SVGMatrix *postMultiply(const SVGMatrix *secondMatrix);
-        SVGMatrix *postTranslate(double x, double y);
-        SVGMatrix *postScale(double scaleFactor);
-        SVGMatrix *postScaleNonUniform(double scaleFactorX, double scaleFactorY);
-        SVGMatrix *postRotate(double angle);
-        SVGMatrix *postRotateFromVector(double x, double y);
-        SVGMatrix *postFlipX();
-        SVGMatrix *postFlipY();
-        SVGMatrix *postSkewX(double angle);
-        SVGMatrix *postSkewY(double angle);
+        SVGMatrix* postMultiply(const SVGMatrix*);
+        SVGMatrix* postTranslate(double x, double y);
+        SVGMatrix* postScale(double scaleFactor);
+        SVGMatrix* postScaleNonUniform(double scaleFactorX, double scaleFactorY);
+        SVGMatrix* postRotate(double angle);
+        SVGMatrix* postRotateFromVector(double x, double y);
+        SVGMatrix* postFlipX();
+        SVGMatrix* postFlipY();
+        SVGMatrix* postSkewX(double angle);
+        SVGMatrix* postSkewY(double angle);
 
         void reset();
 
         // KSVG helper method
-        QMatrix &qmatrix();
-        const QMatrix &qmatrix() const;
+        QMatrix& qmatrix();
+        const QMatrix& qmatrix() const;
 
         // Determine the scaling component of the matrix and factor it out. After
         // this operation, the matrix has x and y scale of one.
-        void removeScale(double *xScale, double *yScale);
+        void removeScale(double* xScale, double* yScale);
 
     private:
-        void setMatrix(QMatrix mat);
+        void setMatrix(const QMatrix&);
         QMatrix m_mat;
     };
 };

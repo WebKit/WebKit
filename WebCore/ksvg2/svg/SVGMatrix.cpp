@@ -35,9 +35,10 @@ SVGMatrix::SVGMatrix() : Shared<SVGMatrix>()
 {
 }
 
-SVGMatrix::SVGMatrix(QMatrix mat) : Shared<SVGMatrix>()
+SVGMatrix::SVGMatrix(const QMatrix& mat)
+    : Shared<SVGMatrix>()
+    , m_mat(mat)
 {
-    m_mat = mat;
 }
 
 SVGMatrix::SVGMatrix(double a, double b, double c, double d, double e, double f) : Shared<SVGMatrix>()
@@ -109,25 +110,25 @@ double SVGMatrix::f() const
     return m_mat.dy();
 }
 
-void SVGMatrix::copy(const SVGMatrix *other)
+void SVGMatrix::copy(const SVGMatrix* other)
 {
     m_mat.setMatrix(other->m_mat.m11(), other->m_mat.m12(), other->m_mat.m21(), other->m_mat.m22(), other->m_mat.dx(), other->m_mat.dy());
 }
 
-SVGMatrix *SVGMatrix::postMultiply(const SVGMatrix *secondMatrix)
+SVGMatrix* SVGMatrix::postMultiply(const SVGMatrix* secondMatrix)
 {
     QMatrix temp(secondMatrix->a(), secondMatrix->b(), secondMatrix->c(), secondMatrix->d(), secondMatrix->e(), secondMatrix->f());
     m_mat *= temp;
     return this;
 }
 
-SVGMatrix *SVGMatrix::inverse()
+SVGMatrix* SVGMatrix::inverse()
 {
     m_mat = m_mat.invert();
     return this;
 }
 
-SVGMatrix *SVGMatrix::postTranslate(double x,  double y)
+SVGMatrix* SVGMatrix::postTranslate(double x,  double y)
 {
     // Could optimise these.
     QMatrix temp;
@@ -136,7 +137,7 @@ SVGMatrix *SVGMatrix::postTranslate(double x,  double y)
     return this;
 }
 
-SVGMatrix *SVGMatrix::postScale(double scaleFactor)
+SVGMatrix* SVGMatrix::postScale(double scaleFactor)
 {
     QMatrix temp;
     temp.scale(scaleFactor, scaleFactor);
@@ -144,7 +145,7 @@ SVGMatrix *SVGMatrix::postScale(double scaleFactor)
     return this;
 }
 
-SVGMatrix *SVGMatrix::postScaleNonUniform(double scaleFactorX, double scaleFactorY)
+SVGMatrix* SVGMatrix::postScaleNonUniform(double scaleFactorX, double scaleFactorY)
 {
     QMatrix temp;
     temp.scale(scaleFactorX, scaleFactorY);
@@ -152,7 +153,7 @@ SVGMatrix *SVGMatrix::postScaleNonUniform(double scaleFactorX, double scaleFacto
     return this;
 }
 
-SVGMatrix *SVGMatrix::postRotate(double angle)
+SVGMatrix* SVGMatrix::postRotate(double angle)
 {
     QMatrix temp;
     temp.rotate(angle);
@@ -160,7 +161,7 @@ SVGMatrix *SVGMatrix::postRotate(double angle)
     return this;
 }
 
-SVGMatrix *SVGMatrix::postRotateFromVector(double x, double y)
+SVGMatrix* SVGMatrix::postRotateFromVector(double x, double y)
 {
     QMatrix temp;
     temp.rotate(SVGAngle::todeg(atan2(y, x)));
@@ -168,21 +169,21 @@ SVGMatrix *SVGMatrix::postRotateFromVector(double x, double y)
     return this;
 }
 
-SVGMatrix *SVGMatrix::postFlipX()
+SVGMatrix* SVGMatrix::postFlipX()
 {
     QMatrix temp(-1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F);
     m_mat *= temp;
     return this;
 }
 
-SVGMatrix *SVGMatrix::postFlipY()
+SVGMatrix* SVGMatrix::postFlipY()
 {
     QMatrix temp(1.0F, 0.0F, 0.0F, -1.0F, 0.0F, 0.0F);
     m_mat *= temp;
     return this;
 }
 
-SVGMatrix *SVGMatrix::postSkewX(double angle)
+SVGMatrix* SVGMatrix::postSkewX(double angle)
 {
     QMatrix temp;
     temp.shear(tan(SVGAngle::torad(angle)), 0.0F);
@@ -190,7 +191,7 @@ SVGMatrix *SVGMatrix::postSkewX(double angle)
     return this;
 }
 
-SVGMatrix *SVGMatrix::postSkewY(double angle)
+SVGMatrix* SVGMatrix::postSkewY(double angle)
 {
     QMatrix temp;
     temp.shear(0.0F, tan(SVGAngle::torad(angle)));
@@ -198,7 +199,7 @@ SVGMatrix *SVGMatrix::postSkewY(double angle)
     return this;
 }
 
-SVGMatrix *SVGMatrix::multiply(const SVGMatrix *secondMatrix)
+SVGMatrix* SVGMatrix::multiply(const SVGMatrix* secondMatrix)
 {
     QMatrix temp(secondMatrix->a(), secondMatrix->b(), secondMatrix->c(), secondMatrix->d(), secondMatrix->e(), secondMatrix->f());
     temp *= m_mat;
@@ -206,71 +207,71 @@ SVGMatrix *SVGMatrix::multiply(const SVGMatrix *secondMatrix)
     return this;
 }
 
-SVGMatrix *SVGMatrix::translate(double x,  double y)
+SVGMatrix* SVGMatrix::translate(double x,  double y)
 {
     m_mat.translate(x, y);
     return this;
 }
 
-SVGMatrix *SVGMatrix::scale(double scaleFactor)
+SVGMatrix* SVGMatrix::scale(double scaleFactor)
 {
     m_mat.scale(scaleFactor, scaleFactor);
     return this;
 }
 
-SVGMatrix *SVGMatrix::scaleNonUniform(double scaleFactorX, double scaleFactorY)
+SVGMatrix* SVGMatrix::scaleNonUniform(double scaleFactorX, double scaleFactorY)
 {
     m_mat.scale(scaleFactorX, scaleFactorY);
     return this;
 }
 
-SVGMatrix *SVGMatrix::rotate(double angle)
+SVGMatrix* SVGMatrix::rotate(double angle)
 {
     m_mat.rotate(angle);
     return this;
 }
 
-SVGMatrix *SVGMatrix::rotateFromVector(double x, double y)
+SVGMatrix* SVGMatrix::rotateFromVector(double x, double y)
 {
     m_mat.rotate(SVGAngle::todeg(atan2(y, x)));
     return this;
 }
 
-SVGMatrix *SVGMatrix::flipX()
+SVGMatrix* SVGMatrix::flipX()
 {
     m_mat.scale(-1.0f, 1.0f);
     return this;
 }
 
-SVGMatrix *SVGMatrix::flipY()
+SVGMatrix* SVGMatrix::flipY()
 {
     m_mat.scale(1.0f, -1.0f);
     return this;
 }
 
-SVGMatrix *SVGMatrix::skewX(double angle)
+SVGMatrix* SVGMatrix::skewX(double angle)
 {
     m_mat.shear(tan(SVGAngle::torad(angle)), 0.0F);
     return this;
 }
 
-SVGMatrix *SVGMatrix::skewY(double angle)
+SVGMatrix* SVGMatrix::skewY(double angle)
 {
     m_mat.shear(0.0F, tan(SVGAngle::torad(angle)));
     return this;
 }
 
-void SVGMatrix::setMatrix(QMatrix mat)
+void SVGMatrix::setMatrix(const QMatrix& mat)
 {
     m_mat = mat;
 }
 
-QMatrix &SVGMatrix::qmatrix()
+QMatrix& SVGMatrix::qmatrix()
 {
     return m_mat;
 }
 
-const QMatrix &SVGMatrix::qmatrix() const
+const QMatrix& SVGMatrix::qmatrix() const
 {
     return m_mat;
 }
@@ -280,7 +281,7 @@ void SVGMatrix::reset()
     m_mat.reset();
 }
 
-void SVGMatrix::removeScale(double *xScale, double *yScale)
+void SVGMatrix::removeScale(double* xScale, double* yScale)
 {
     double sx = sqrt(a() * a() + b() * b());
     double sy = sqrt(c() * c() + d() * d());

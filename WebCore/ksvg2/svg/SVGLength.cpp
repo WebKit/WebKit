@@ -51,19 +51,17 @@ static const char* UnitText[] =
     "pc"
 };
 
-SVGLength::SVGLength(const SVGStyledElement *context, LengthMode mode, const SVGElement *viewport) : Shared<SVGLength>()
+SVGLength::SVGLength(const SVGStyledElement *context, LengthMode mode, const SVGElement *viewport)
+    : Shared<SVGLength>()
+    , m_value(0)
+    , m_valueInSpecifiedUnits(0)
+    , m_mode(mode)
+    , m_bboxRelative(false)
+    , m_unitType(SVG_LENGTHTYPE_UNKNOWN)
+    , m_requiresLayout(false)
+    , m_context(context)
+    , m_viewportElement(viewport)
 {
-    m_mode = mode;
-    m_context = context;
-    m_viewportElement = viewport;
-
-    m_value = 0;
-    m_valueInSpecifiedUnits = 0;
-
-    m_bboxRelative = false;
-    m_unitType = SVG_LENGTHTYPE_UNKNOWN;
-    
-    m_requiresLayout = false;
 }
 
 SVGLength::~SVGLength()
@@ -86,11 +84,11 @@ float SVGLength::value() const
     if (m_requiresLayout)
         const_cast<SVGLength*>(this)->updateValue(false);
 
-    if(m_unitType != SVG_LENGTHTYPE_PERCENTAGE)
+    if (m_unitType != SVG_LENGTHTYPE_PERCENTAGE)
         return m_value;
 
     float value = m_valueInSpecifiedUnits / 100.0;
-    if(m_bboxRelative)
+    if (m_bboxRelative)
         return value;
 
     // Use the manual override "m_viewportElement" when there is no context element off of which to establish the viewport.

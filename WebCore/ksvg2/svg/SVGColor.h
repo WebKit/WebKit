@@ -53,9 +53,9 @@ namespace WebCore
         virtual String cssText() const;
 
         // Helpers
-        const Color &color() const;
+        const Color& color() const;
 
-    private:    
+    private:
         Color m_qColor;
         unsigned short m_colorType;
         String m_rgbColor;

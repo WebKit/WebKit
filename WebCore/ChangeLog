@@ -2,7 +2,48 @@
 
         Reviewed by andersca.
 
-        Small ammount of bindings-related code cleanup.
+        Small amount of svg-related code cleanup.
+        No test case possible.
+
+        * ksvg2/svg/SVGColor.h:
+        * ksvg2/svg/SVGLength.cpp:
+        (SVGLength::SVGLength):
+        (SVGLength::value):
+        * ksvg2/svg/SVGMarkerElement.cpp:
+        * ksvg2/svg/SVGMatrix.cpp:
+        (SVGMatrix::SVGMatrix):
+        (SVGMatrix::copy):
+        (SVGMatrix::postMultiply):
+        (SVGMatrix::inverse):
+        (SVGMatrix::postTranslate):
+        (SVGMatrix::postScale):
+        (SVGMatrix::postScaleNonUniform):
+        (SVGMatrix::postRotate):
+        (SVGMatrix::postRotateFromVector):
+        (SVGMatrix::postFlipX):
+        (SVGMatrix::postFlipY):
+        (SVGMatrix::postSkewX):
+        (SVGMatrix::postSkewY):
+        (SVGMatrix::multiply):
+        (SVGMatrix::translate):
+        (SVGMatrix::scale):
+        (SVGMatrix::scaleNonUniform):
+        (SVGMatrix::rotate):
+        (SVGMatrix::rotateFromVector):
+        (SVGMatrix::flipX):
+        (SVGMatrix::flipY):
+        (SVGMatrix::skewX):
+        (SVGMatrix::skewY):
+        (SVGMatrix::setMatrix):
+        (SVGMatrix::qmatrix):
+        (SVGMatrix::removeScale):
+        * ksvg2/svg/SVGMatrix.h:
+
+2006-05-30  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+
+        Small amount of bindings-related code cleanup.
         No test case possible.
 
         * bindings/js/JSHTMLFormElementCustom.cpp:
