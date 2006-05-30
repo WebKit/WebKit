@@ -1,5 +1,23 @@
 2006-05-30  Sam Weinig  <sam.weinig@gmail.com>
 
+        Reviewed by Maciej, landed by Beth.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=9137
+          Children with percentage heights of absolutely positioned element 
+          with height: auto and top and bottom non-auto does not lay out 
+          correctly
+
+        * fast/block/positioning/child-of-absolute-with-auto-height-expected.checksum: Added.
+        * fast/block/positioning/child-of-absolute-with-auto-height-expected.png: Added.
+        * fast/block/positioning/child-of-absolute-with-auto-height-expected.txt: Added.
+        * fast/block/positioning/child-of-absolute-with-auto-height.html: Added.
+        * fast/replaced/replaced-child-of-absolute-with-auto-height-expected.checksum: Added.
+        * fast/replaced/replaced-child-of-absolute-with-auto-height-expected.png: Added.
+        * fast/replaced/replaced-child-of-absolute-with-auto-height-expected.txt: Added.
+        * fast/replaced/replaced-child-of-absolute-with-auto-height.html: Added.
+
+2006-05-30  Sam Weinig  <sam.weinig@gmail.com>
+
         Reviewed by Hyatt, landed by Beth.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9085

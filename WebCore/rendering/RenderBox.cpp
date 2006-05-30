@@ -1269,19 +1269,18 @@ int RenderBox::calcPercentageHeight(const Length& height)
         result = cb->calcPercentageHeight(cb->style()->height());
         if (result != -1)
             result = cb->calcContentBoxHeight(result);
-    }
-    else if (cb->isCanvas() || (cb->isBody() && style()->htmlHacks())) {
+    } else if (cb->isCanvas() || (cb->isBody() && style()->htmlHacks()) ||
+               (cb->isPositioned() && !(cb->style()->top().isAuto() || cb->style()->bottom().isAuto()))) {
         // Don't allow this to affect the block' m_height member variable, since this
         // can get called while the block is still laying out its kids.
         int oldHeight = cb->height();
         cb->calcHeight();
         result = cb->contentHeight();
         cb->setHeight(oldHeight);
-    } else if (cb->isRoot() && isPositioned()) {
+    } else if (cb->isRoot() && isPositioned())
         // Match the positioned objects behavior, which is that positioned objects will fill their viewport
         // always.  Note we could only hit this case by recurring into calcPercentageHeight on a positioned containing block.
         result = cb->calcContentBoxHeight(cb->availableHeight());
-    }
 
     if (result != -1) {
         result = height.calcValue(result);
@@ -1352,7 +1351,19 @@ int RenderBox::calcReplacedHeightUsing(HeightType heightType) const
         case Fixed:
             return calcContentBoxHeight(h.value());
         case Percent:
-            return calcContentBoxHeight(h.calcValue(containingBlock()->availableHeight()));
+        {
+            RenderBlock* cb = containingBlock();
+            if (cb->isPositioned() && cb->style()->height().isAuto() && !(cb->style()->top().isAuto() || cb->style()->bottom().isAuto())) {
+                int oldHeight = cb->height();
+                cb->calcHeight();
+                int newHeight = cb->calcContentBoxHeight(cb->contentHeight());
+                cb->setHeight(oldHeight);
+        
+                return calcContentBoxHeight(h.calcValue(newHeight));
+            }
+
+            return calcContentBoxHeight(h.calcValue(cb->availableHeight()));
+        }
         default:
             return intrinsicHeight();
     }
