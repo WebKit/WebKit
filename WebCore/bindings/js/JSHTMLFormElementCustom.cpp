@@ -40,7 +40,7 @@ bool JSHTMLFormElement::canGetItemsForName(ExecState* exec, HTMLFormElement* for
     return !namedItems->isUndefined();
 }
 
-JSValue* JSHTMLFormElement::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSHTMLFormElement::nameGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLElement* thisObj = static_cast<JSHTMLElement*>(slot.slotBase());
     HTMLFormElement* form = static_cast<HTMLFormElement*>(thisObj->impl());

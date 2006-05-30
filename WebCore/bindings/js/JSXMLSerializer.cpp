@@ -27,71 +27,65 @@
 #include "kjs_dom.h"
 #include "markup.h"
 
-using namespace WebCore;
+using namespace KJS;
 
-namespace KJS {
+namespace WebCore {
 
-////////////////////// XMLSerializer Object ////////////////////////
-
-/* Source for XMLSerializerProtoTable.
-@begin XMLSerializerProtoTable 1
-  serializeToString XMLSerializer::SerializeToString DontDelete|Function 1
+/* Source for JSXMLSerializerProtoTable.
+@begin JSXMLSerializerProtoTable 1
+  serializeToString WebCore::JSXMLSerializer::SerializeToString DontDelete|Function 1
 @end
 */
-KJS_DEFINE_PROTOTYPE(XMLSerializerProto)
-KJS_IMPLEMENT_PROTOFUNC(XMLSerializerProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("XMLSerializer",XMLSerializerProto,XMLSerializerProtoFunc)
 
-XMLSerializerConstructorImp::XMLSerializerConstructorImp(ExecState *exec)
+KJS_DEFINE_PROTOTYPE(JSXMLSerializerProto)
+KJS_IMPLEMENT_PROTOFUNC(JSXMLSerializerProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("XMLSerializer", JSXMLSerializerProto, JSXMLSerializerProtoFunc)
+
+JSXMLSerializerConstructorImp::JSXMLSerializerConstructorImp(ExecState* exec)
 {
     setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
-    putDirect(prototypePropertyName, XMLSerializerProto::self(exec), None);
+    putDirect(prototypePropertyName, JSXMLSerializerProto::self(exec), None);
 }
 
-bool XMLSerializerConstructorImp::implementsConstruct() const
+bool JSXMLSerializerConstructorImp::implementsConstruct() const
 {
-  return true;
+    return true;
 }
 
-JSObject *XMLSerializerConstructorImp::construct(ExecState *exec, const List &)
+JSObject* JSXMLSerializerConstructorImp::construct(ExecState* exec, const List&)
 {
-  return new XMLSerializer(exec);
+    return new JSXMLSerializer(exec);
 }
 
-const ClassInfo XMLSerializer::info = { "XMLSerializer", 0, &XMLSerializerTable, 0 };
+const ClassInfo JSXMLSerializer::info = { "XMLSerializer", 0, &JSXMLSerializerTable, 0 };
 
-/* Source for XMLSerializerTable.
-@begin XMLSerializerTable 0
+/* Source for JSXMLSerializerTable.
+@begin JSXMLSerializerTable 0
 @end
 */
 
-XMLSerializer::XMLSerializer(ExecState *exec)
+JSXMLSerializer::JSXMLSerializer(ExecState* exec)
 {
-  setPrototype(XMLSerializerProto::self(exec));
+    setPrototype(JSXMLSerializerProto::self(exec));
 }
 
-JSValue *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* JSXMLSerializerProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
-  if (!thisObj->inherits(&XMLSerializer::info))
-    return throwError(exec, TypeError);
+    if (!thisObj->inherits(&JSXMLSerializer::info))
+        return throwError(exec, TypeError);
 
-  switch (id) {
-  case XMLSerializer::SerializeToString:
-    {
-      if (args.size() != 1) {
-        return jsUndefined();
-      }
+    if (id == JSXMLSerializer::SerializeToString) {
+        if (args.size() != 1)
+            return jsUndefined();
 
-      if (!args[0]->toObject(exec)->inherits(&DOMNode::info)) {
-        return jsUndefined();
-      }
+        if (!args[0]->toObject(exec)->inherits(&DOMNode::info))
+            return jsUndefined();
 
-      WebCore::Node* node = static_cast<WebCore::Node*>(static_cast<DOMNode*>(args[0]->toObject(exec))->impl());
-      return jsStringOrNull(WebCore::createMarkup(node));
+        Node* node = static_cast<Node*>(static_cast<DOMNode*>(args[0]->toObject(exec))->impl());
+        return jsStringOrNull(createMarkup(node));
     }
-  }
 
-  return jsUndefined();
+    return jsUndefined();
 }
 
 } // end namespace

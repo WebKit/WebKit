@@ -18,32 +18,31 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _XMLSERIALIZER_H_
-#define _XMLSERIALIZER_H_
+#ifndef JSXMLSerializer_H
+#define JSXMLSerializer_H
 
 #include "kjs_binding.h"
 
 namespace KJS {
+    class JSEventListener;
+}
 
-  class JSEventListener;
+namespace WebCore {
 
-  class XMLSerializerConstructorImp : public DOMObject {
+  class JSXMLSerializerConstructorImp : public KJS::DOMObject {
   public:
-    XMLSerializerConstructorImp(ExecState *);
+    JSXMLSerializerConstructorImp(KJS::ExecState*);
     virtual bool implementsConstruct() const;
-    virtual JSObject *construct(ExecState *exec, const List &args);
+    virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List& args);
   };
 
-  class XMLSerializer : public DOMObject {
+  class JSXMLSerializer : public KJS::DOMObject {
   public:
-    XMLSerializer(ExecState *);
-    virtual bool toBoolean(ExecState *) const { return true; }
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
+    JSXMLSerializer(KJS::ExecState*);
+    virtual bool toBoolean(KJS::ExecState*) const { return true; }
+    virtual const KJS::ClassInfo* classInfo() const { return &info; }
+    static const KJS::ClassInfo info;
     enum { SerializeToString };
-
-  private:
-    friend class XMLSerializerProtoFunc;
   };
 
 } // namespace

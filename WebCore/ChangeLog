@@ -1,3 +1,26 @@
+2006-05-30  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+
+        Small ammount of bindings-related code cleanup.
+        No test case possible.
+
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/JSXMLSerializer.cpp:
+        (WebCore::JSXMLSerializerConstructorImp::JSXMLSerializerConstructorImp):
+        (WebCore::JSXMLSerializerConstructorImp::implementsConstruct):
+        (WebCore::JSXMLSerializerConstructorImp::construct):
+        (WebCore::):
+        (WebCore::JSXMLSerializer::JSXMLSerializer):
+        (WebCore::JSXMLSerializerProtoFunc::callAsFunction):
+        * bindings/js/JSXMLSerializer.h:
+        (WebCore::JSXMLSerializer::toBoolean):
+        (WebCore::JSXMLSerializer::classInfo):
+        (WebCore::JSXMLSerializer::):
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+
 2006-05-27  Anders Carlsson  <acarlsson@apple.com>
 
         * bindings/js/JSHTMLElementWrapperFactory.cpp:

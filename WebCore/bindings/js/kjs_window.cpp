@@ -776,7 +776,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case XMLHttpRequest:
       return new JSXMLHttpRequestConstructorImp(exec, m_frame->document());
     case XMLSerializer:
-      return new XMLSerializerConstructorImp(exec);
+      return new JSXMLSerializerConstructorImp(exec);
     case DOMParser_:
       return new DOMParserConstructorImp(exec, m_frame->document());
 #ifdef KHTML_XSLT
