@@ -39,7 +39,8 @@ namespace WebCore {
 
     class Frame;
     class FrameNamespace;
-    class IntRect;
+    class FloatRect;
+    class Widget;
     
     class Page : Noncopyable {
     public:
@@ -48,8 +49,8 @@ namespace WebCore {
         void setMainFrame(PassRefPtr<Frame>);
         Frame* mainFrame() const { return m_mainFrame.get(); }
 
-        IntRect windowRect() const;
-        void setWindowRect(const IntRect&);
+        FloatRect windowRect() const;
+        void setWindowRect(const FloatRect&);
 
         void setGroupName(const String&);
         String groupName() const { return m_groupName; }
@@ -59,6 +60,8 @@ namespace WebCore {
         void incrementFrameCount() { ++m_frameCount; }
         void decrementFrameCount() { --m_frameCount; }
         int frameCount() const { return m_frameCount; }
+        
+        Widget* widget() const;
 
         static void setNeedsReapplyStyles();
         static void setNeedsReapplyStylesForSettingsChange(KHTMLSettings*);
@@ -67,7 +70,7 @@ namespace WebCore {
         void setDragCaret(const SelectionController&);
         SelectionController& dragCaret() const; // FIXME: Change to pointer?
 
-#if __APPLE__
+#if PLATFORM(MAC)
         Page(WebCorePageBridge*);
         WebCorePageBridge* bridge() const { return m_bridge; }
 #endif
@@ -81,6 +84,7 @@ namespace WebCore {
 
         RefPtr<Frame> m_mainFrame;
         int m_frameCount;
+        mutable Widget* m_widget;
         String m_groupName;
         mutable SelectionController m_dragCaret;
 

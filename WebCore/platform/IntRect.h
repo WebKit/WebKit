@@ -109,7 +109,7 @@ public:
 
     operator CGRect() const;
 
-#if! NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
     operator NSRect() const;
 #endif
 

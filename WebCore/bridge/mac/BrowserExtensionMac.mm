@@ -26,9 +26,12 @@
 #import "config.h"
 #import "BrowserExtensionMac.h"
 
-#import "FrameTree.h"
 #import "BlockExceptions.h"
+#import "FloatRect.h"
 #import "FrameMac.h"
+#import "FrameTree.h"
+#import "Page.h"
+#import "Screen.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCorePageBridge.h"
 
@@ -67,16 +70,16 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     NSString *frameName = request.frameName.isEmpty() ? nil : (NSString*)request.frameName;
     if (frameName) {
         // FIXME: Can't we just use m_frame->findFrame?
-        if (WebCoreFrameBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
+        if (WebCoreFrameBridge *frameBridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
                 String argsReferrer = request.referrer();
                 NSString *referrer;
                 if (!argsReferrer.isEmpty())
                     referrer = argsReferrer;
                 else
-                    referrer = [m_frame->bridge() referrer];
+                    referrer = [frameBridge referrer];
 
-                [bridge loadURL:url.getNSURL() 
+                [frameBridge loadURL:url.getNSURL() 
                        referrer:referrer 
                          reload:request.reload 
                     userGesture:true 
@@ -86,70 +89,52 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
                      formValues:nil];
             }
 
-            [bridge focusWindow];
+            [frameBridge focusWindow];
 
             if (partResult)
-                *partResult = [bridge impl];
+                *partResult = [frameBridge impl];
 
             return;
         }
     }
     
-    WebCorePageBridge *page;
+    WebCorePageBridge *pageBridge;
     if (winArgs.dialog)
-        page = [m_frame->bridge() createModalDialogWithURL:url.getNSURL()];
+        pageBridge = [m_frame->bridge() createModalDialogWithURL:url.getNSURL()];
     else
-        page = [m_frame->bridge() createWindowWithURL:url.getNSURL()];
-    if (!page)
+        pageBridge = [m_frame->bridge() createWindowWithURL:url.getNSURL()];
+    if (!pageBridge)
         return;
     
-    WebCoreFrameBridge *bridge = [page mainFrame];
-    if ([bridge impl])
-        [bridge impl]->tree()->setName(AtomicString(request.frameName));
+    WebCoreFrameBridge *frameBridge = [pageBridge mainFrame];
+    if ([frameBridge impl])
+        [frameBridge impl]->tree()->setName(AtomicString(request.frameName));
     
     if (partResult)
-        *partResult = [bridge impl];
+        *partResult = [frameBridge impl];
     
-    [bridge setToolbarsVisible:winArgs.toolBarVisible || winArgs.locationBarVisible];
-    [bridge setStatusbarVisible:winArgs.statusBarVisible];
-    [bridge setScrollbarsVisible:winArgs.scrollBarsVisible];
-    [bridge setWindowIsResizable:winArgs.resizable];
+    [frameBridge setToolbarsVisible:winArgs.toolBarVisible || winArgs.locationBarVisible];
+    [frameBridge setStatusbarVisible:winArgs.statusBarVisible];
+    [frameBridge setScrollbarsVisible:winArgs.scrollBarsVisible];
+    [frameBridge setWindowIsResizable:winArgs.resizable];
     
-    NSRect windowFrame = [page windowFrame];
-
-    NSSize size = { 1, 1 }; // workaround for 4213314
-    NSSize scaleRect = [[page outerView] convertSize:size toView:nil];
-    float scaleX = scaleRect.width;
-    float scaleY = scaleRect.height;
-
-    // In JavaScript, the coordinate system of the window is the same as the coordinate system
-    // of the WebView, so we translate 'left' and 'top' from WebView coordinates to window coordinates.
-    // (If the screen resolution is scaled, window coordinates won't match WebView coordinates.)
+    NSRect windowRect = [pageBridge impl]->windowRect();
     if (winArgs.xSet)
-        windowFrame.origin.x = winArgs.x * scaleX;
-    if (winArgs.ySet) {
-        // In JavaScript, (0, 0) is the top left corner of the screen.
-        float screenTop = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
-        windowFrame.origin.y = screenTop - (winArgs.y * scaleY) - windowFrame.size.height;
-    }
-
+      windowRect.origin.x = winArgs.x;
+    if (winArgs.ySet)
+      windowRect.origin.y = winArgs.y;
+    
     // 'width' and 'height' specify the dimensions of the WebView, but we can only resize the window, 
-    // so we compute a delta, translate it to window coordinates, and use the translated delta 
-    // to resize the window.
-    NSRect webViewFrame = [[page outerView] frame];
-    if (winArgs.widthSet) {
-        float widthDelta = (winArgs.width - webViewFrame.size.width) * scaleX;
-        windowFrame.size.width += widthDelta;
-    }
-    if (winArgs.heightSet) {
-        float heightDelta = (winArgs.height - webViewFrame.size.height) * scaleY;
-        windowFrame.size.height += heightDelta;
-        windowFrame.origin.y -= heightDelta;
-    }
+    // so we compute a WebView delta and apply it to the window.
+    NSRect webViewRect = [[pageBridge outerView] frame];
+    if (winArgs.widthSet)
+      windowRect.size.width += winArgs.width - webViewRect.size.width;
+    if (winArgs.heightSet)
+      windowRect.size.height += winArgs.height - webViewRect.size.height;
     
-    [page setWindowFrame:windowFrame];
+    [pageBridge impl]->setWindowRect(windowRect);
     
-    [bridge showWindow];
+    [frameBridge showWindow];
     
     END_BLOCK_OBJC_EXCEPTIONS;
 }

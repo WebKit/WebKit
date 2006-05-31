@@ -26,6 +26,7 @@
 #include "DOMWindow.h"
 #include "Element.h"
 #include "EventNames.h"
+#include "FloatRect.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLDocument.h"
@@ -512,7 +513,7 @@ static bool boolFeature(const HashMap<String, String>& features, const char* key
     return value.isNull() || value == "1" || value == "yes" || value == "on";
 }
 
-static int intFeature(const HashMap<String, String> &features, const char *key, int min, int max, int defaultValue)
+static float floatFeature(const HashMap<String, String> &features, const char *key, float min, float max, float defaultValue)
 {
     HashMap<String, String>::const_iterator it = features.find(key);
     if (it == features.end())
@@ -614,16 +615,16 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
     // - help: boolFeature(features, "help", true), makes help icon appear in dialog (what does it do on Windows?)
     // - unadorned: trusted && boolFeature(features, "unadorned");
 
-    IntRect screenRect = usableScreenRect(openerWindow->frame()->view());
+    FloatRect screenRect = usableScreenRect(openerWindow->frame()->view());
 
-    wargs.width = intFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
+    wargs.width = floatFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
     wargs.widthSet = true;
-    wargs.height = intFeature(features, "dialogheight", 100, screenRect.height(), 450); // default here came from frame size of dialog in MacIE
+    wargs.height = floatFeature(features, "dialogheight", 100, screenRect.height(), 450); // default here came from frame size of dialog in MacIE
     wargs.heightSet = true;
 
-    wargs.x = intFeature(features, "dialogleft", screenRect.x(), screenRect.right() - wargs.width, -1);
+    wargs.x = floatFeature(features, "dialogleft", screenRect.x(), screenRect.right() - wargs.width, -1);
     wargs.xSet = wargs.x > 0;
-    wargs.y = intFeature(features, "dialogtop", screenRect.y(), screenRect.bottom() - wargs.height, -1);
+    wargs.y = floatFeature(features, "dialogtop", screenRect.y(), screenRect.bottom() - wargs.height, -1);
     wargs.ySet = wargs.y > 0;
 
     if (boolFeature(features, "center", true)) {
@@ -669,6 +670,8 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return jsUndefined(); // ###
    case DefaultStatus:
       return jsString(UString(m_frame->jsDefaultStatusBarText()));
+   case DOMException:
+      return getDOMExceptionConstructor(exec);
    case Status:
       return jsString(UString(m_frame->jsStatusBarText()));
     case Frames:
@@ -1467,7 +1470,7 @@ static void parseWindowFeatures(const String& features, WindowArgs& windowArgs)
     }
 }
 
-static void constrainToVisible(const IntRect& screen, WindowArgs& windowArgs)
+static void constrainToVisible(const FloatRect& screen, WindowArgs& windowArgs)
 {
     windowArgs.x += screen.x();
     if (windowArgs.x < screen.x() || windowArgs.x >= screen.right())
@@ -1617,8 +1620,8 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     return jsUndefined();
   case Window::MoveBy:
     if (args.size() >= 2 && widget) {
-      IntRect r = frame->page()->windowRect();
-      r.move(args[0]->toInt32(exec), args[1]->toInt32(exec));
+      FloatRect r = frame->page()->windowRect();
+      r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if (screenRect(widget).contains(r))
         frame->page()->setWindowRect(r);
@@ -1626,10 +1629,10 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     return jsUndefined();
   case Window::MoveTo:
     if (args.size() >= 2 && widget) {
-      IntRect r = frame->page()->windowRect();
-      IntRect sr = screenRect(widget);
+      FloatRect r = frame->page()->windowRect();
+      FloatRect sr = screenRect(widget);
       r.setLocation(sr.location());
-      r.move(args[0]->toInt32(exec), args[1]->toInt32(exec));
+      r.move(args[0]->toNumber(exec), args[1]->toNumber(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if (sr.contains(r))
         frame->page()->setWindowRect(r);
@@ -1637,24 +1640,24 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     return jsUndefined();
   case Window::ResizeBy:
     if (args.size() >= 2 && widget) {
-      IntRect r = frame->page()->windowRect();
-      IntSize dest = r.size() + IntSize(args[0]->toInt32(exec), args[1]->toInt32(exec));
-      IntRect sg = screenRect(widget);
+      FloatRect r = frame->page()->windowRect();
+      FloatSize dest = r.size() + FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
+      FloatRect sg = screenRect(widget);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom()
            && dest.width() >= 100 && dest.height() >= 100)
-        frame->page()->setWindowRect(IntRect(r.location(), dest));
+        frame->page()->setWindowRect(FloatRect(r.location(), dest));
     }
     return jsUndefined();
   case Window::ResizeTo:
     if (args.size() >= 2 && widget) {
-      IntRect r = frame->page()->windowRect();
-      IntSize dest = IntSize(args[0]->toInt32(exec), args[1]->toInt32(exec));
-      IntRect sg = screenRect(widget);
+      FloatRect r = frame->page()->windowRect();
+      FloatSize dest = FloatSize(args[0]->toNumber(exec), args[1]->toNumber(exec));
+      FloatRect sg = screenRect(widget);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom() &&
            dest.width() >= 100 && dest.height() >= 100)
-        frame->page()->setWindowRect(IntRect(r.location(), dest));
+        frame->page()->setWindowRect(FloatRect(r.location(), dest));
     }
     return jsUndefined();
   case Window::SetTimeout:

@@ -22,31 +22,39 @@
 #import "Page.h"
 
 #import "Frame.h"
-#import "IntRect.h"
+#import "FloatRect.h"
+#import "Screen.h"
 #import "WebCorePageBridge.h"
 
 namespace WebCore {
 
-static NSRect flipGlobalRect(NSRect rect)
-{
-    rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
-    return rect;
-}
-
 Page::Page(WebCorePageBridge* bridge)
-    : m_frameCount(0), m_bridge(bridge)
+: m_frameCount(0)
+, m_widget(0)
+, m_bridge(bridge)
+
 {
     init();
 }
 
-IntRect Page::windowRect() const
+Widget* Page::widget() const
 {
-    return enclosingIntRect(flipGlobalRect([bridge() windowFrame]));
+    if (!m_widget)
+        m_widget = new Widget([bridge() outerView]);
+    return m_widget;
 }
 
-void Page::setWindowRect(const IntRect& r)
+// These methods scale between window and WebView coordinates because JavaScript/DOM operations 
+// assume that the WebView and the window share the same coordinate system.
+
+FloatRect Page::windowRect() const
 {
-    [bridge() setWindowFrame:flipGlobalRect(r)];
+    return scaleScreenRectToWidget(flipScreenRect([bridge() windowFrame]), widget());
+}
+
+void Page::setWindowRect(const FloatRect& r)
+{
+    [bridge() setWindowFrame:flipScreenRect(scaleWidgetRectToScreen(r, widget()))];
 }
 
 }

@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "PlatformMouseEvent.h"
+#import "Screen.h"
 
 namespace WebCore {
 
@@ -85,8 +86,7 @@ static IntPoint globalPositionForEvent(NSEvent *event)
         case NSMouseMoved:
         case NSScrollWheel: {
             NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
-            point.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - point.y;
-            return IntPoint(point);
+            return IntPoint(flipScreenPoint(point));
         }
         default:
             return IntPoint();

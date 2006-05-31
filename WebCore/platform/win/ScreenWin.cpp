@@ -31,6 +31,16 @@
 
 namespace WebCore {
 
+FloatRect scaleScreenRectToWidget(FloatRect rect, Widget*)
+{
+    return rect;
+}
+
+FloatRect scaleWidgetRectToScreen(FloatRect rect, Widget*)
+{
+    return rect;
+}
+    
 static MONITORINFOEX monitorInfoForWidget(Widget* widget)
 {
     HMONITOR monitor = MonitorFromWindow(widget->windowHandle(), MONITOR_DEFAULTTOPRIMARY);

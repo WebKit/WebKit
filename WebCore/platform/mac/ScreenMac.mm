@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Screen.h"
 
-#import "IntRect.h"
+#import "FloatRect.h"
 #import "Widget.h"
 
 namespace WebCore {
@@ -39,9 +39,45 @@ static NSScreen* screen(Widget* widget)
     return [NSScreen mainScreen];
 }
 
-static NSRect flipGlobalRect(NSRect rect)
+NSRect flipScreenRect(NSRect rect)
 {
     rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
+    return rect;
+}
+
+NSPoint flipScreenPoint(NSPoint point)
+{
+  point.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - point.y;
+  return point;
+}
+
+FloatRect scaleScreenRectToWidget(FloatRect rect, Widget* widget)
+{
+    NSSize scaleSize = [widget->getOuterView() convertSize:NSMakeSize(1.0, 1.0) fromView:nil];
+    float scaleX = scaleSize.width;
+    float scaleY = scaleSize.height;
+    
+    rect.setWidth(rect.width() * scaleX);
+    rect.setX(rect.x() * scaleX);
+    
+    rect.setHeight(rect.height() * scaleY);
+    rect.setY(rect.y() * scaleY);
+    
+    return rect;
+}
+
+FloatRect scaleWidgetRectToScreen(FloatRect rect, Widget* widget)
+{
+    NSSize scaleSize = [widget->getOuterView() convertSize:NSMakeSize(1.0, 1.0) toView:nil];
+    float scaleX = scaleSize.width;
+    float scaleY = scaleSize.height;
+    
+    rect.setWidth(rect.width() * scaleX);
+    rect.setX(rect.x() * scaleX);
+    
+    rect.setHeight(rect.height() * scaleY);
+    rect.setY(rect.y() * scaleY);
+    
     return rect;
 }
 
@@ -50,14 +86,17 @@ int screenDepth(Widget* widget)
     return [screen(widget) depth];
 }
 
-IntRect screenRect(Widget* widget)
+// These methods scale between window and WebView coordinates because JavaScript/DOM operations 
+// assume that the WebView and the window share the same coordinate system.
+
+FloatRect screenRect(Widget* widget)
 {
-    return enclosingIntRect(flipGlobalRect([screen(widget) frame]));
+    return scaleScreenRectToWidget(flipScreenRect([screen(widget) frame]), widget);
 }
 
-IntRect usableScreenRect(Widget* widget)
+FloatRect usableScreenRect(Widget* widget)
 {
-    return enclosingIntRect(flipGlobalRect([screen(widget) visibleFrame]));
+    return scaleScreenRectToWidget(flipScreenRect([screen(widget) visibleFrame]), widget);
 }
 
 }

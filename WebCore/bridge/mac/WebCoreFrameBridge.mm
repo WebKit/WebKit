@@ -58,6 +58,7 @@
 #import "RenderTreeAsText.h"
 #import "RenderWidget.h"
 #import "ReplaceSelectionCommand.h"
+#import "Screen.h"
 #import "SelectionController.h"
 #import "TextIterator.h"
 #import "TypingCommand.h"
@@ -2304,7 +2305,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 static IntPoint globalPoint(NSWindow* window, NSPoint windowPoint)
 {
     NSPoint screenPoint = [window convertBaseToScreen:windowPoint];
-    return IntPoint((int)screenPoint.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - screenPoint.y));
+    return IntPoint((int)screenPoint.x, (int)(flipScreenPoint(screenPoint).y));
 }
 
 static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDraggingInfo> info)

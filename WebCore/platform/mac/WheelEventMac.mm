@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "PlatformWheelEvent.h"
+#import "Screen.h"
 
 namespace WebCore {
 
@@ -46,8 +47,7 @@ static IntPoint globalPositionForEvent(NSEvent *event)
     switch ([event type]) {
         case NSScrollWheel: {
             NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
-            point.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - point.y;
-            return IntPoint(point);
+            return IntPoint(flipScreenPoint(point));
         }
         default:
             return IntPoint();

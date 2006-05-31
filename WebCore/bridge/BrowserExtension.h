@@ -33,13 +33,13 @@ namespace WebCore {
 class Frame;
 
 struct WindowArgs {
-    int x;
+    float x;
     bool xSet;
-    int y;
+    float y;
     bool ySet;
-    int width;
+    float width;
     bool widthSet;
-    int height;
+    float height;
     bool heightSet;
 
     bool menuBarVisible;

@@ -1,3 +1,60 @@
+2006-05-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fixed <rdar://problem/4559720> window sizing: make javascript window 
+        and screen sizing methods and properties work @ HIDPI
+        
+        The general approach here is to change some ints to floats, make 
+        a few key functions that scale between WebView and window/screen 
+        coordinates, and change other functions that work with screen 
+        coordinates to use the scaling functions for their underlying 
+        implementations.
+
+        * manual-tests/window-open-features.html: Removed.
+        * manual-tests/window-sizing.html: Added. More test coverage.
+
+        * bindings/js/kjs_window.cpp: Changed ints to floats and IntRects to
+        FloatRects, because window coordinates can be fractional when scaled 
+        to WebView/DOM coordinates.
+        (KJS::floatFeature):
+        (KJS::showModalDialog):
+        (KJS::Window::getValueProperty):
+        (KJS::constrainToVisible):
+        (KJS::WindowFunc::callAsFunction):
+        * bridge/BrowserExtension.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow): Removed custom scaling
+        code and replaced with calls to Page::windowRect and 
+        Page::setWindowRect. Renamed 'page' and 'bridge' to 'pageBridge' and
+        'frameBridge,' respectively.
+        * bridge/mac/PageMac.mm:
+        (WebCore::Page::windowRect): Changed to use scaling
+        (WebCore::Page::setWindowRect): ditto
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (globalPoint):
+        * page/Page.h:
+        * platform/IntRect.h:
+        * platform/Screen.h:
+        * platform/mac/MouseEventMac.mm:
+        (WebCore::globalPositionForEvent): Changed to use flipScreenPoint
+        * platform/mac/ScreenMac.mm:
+        (WebCore::flipScreenRect): New key function
+        (WebCore::flipScreenPoint): New key function
+        (WebCore::scaleScreenRectToView): New key function
+        (WebCore::scaleViewRectToScreen): New key function
+        (WebCore::screenRect): Changed to use scaling
+        (WebCore::usableScreenRect): ditto
+
+        Feeble attempt to preserve Windows build:
+        
+        * platform/win/ScreenWin.cpp:
+        (WebCore::scaleScreenRectToWidget): stub -- doesn't actually scale
+        (WebCore::scaleWidgetRectToScreen): ditto
+        * bridge/win/PageWin.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::widget):
+
 2006-05-30  David Hyatt  <hyatt@apple.com>
 
         Rename RenderCanvas to RenderView. Rename canvas(), isCanvas()

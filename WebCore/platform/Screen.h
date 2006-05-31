@@ -28,13 +28,21 @@
 
 namespace WebCore {
 
-    class IntRect;
+    class FloatRect;
     class Widget;
 
     int screenDepth(Widget*);
-    IntRect screenRect(Widget*);
-    IntRect usableScreenRect(Widget*);
+    FloatRect screenRect(Widget*);
+    FloatRect usableScreenRect(Widget*);
 
+    FloatRect scaleScreenRectToWidget(FloatRect, Widget*);
+    FloatRect scaleWidgetRectToScreen(FloatRect, Widget*);
+
+#if PLATFORM(MAC)
+    NSRect flipScreenRect(NSRect rect);
+    NSPoint flipScreenPoint(NSPoint point);
+#endif
+    
 }
 
 #endif
