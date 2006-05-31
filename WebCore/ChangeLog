@@ -1,3 +1,27 @@
+2006-05-31  Dave Hyatt <hyatt@apple.com>
+
+        Adding stubs for BMP/ICO/XBM image decoders.  They don't
+        do anything yet though.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/cairo/ImageSourceCairo.cpp:
+        (WebCore::createDecoder):
+        * platform/image-decoders/bmp: Added.
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp: Added.
+        (WebCore::BMPImageDecoder::isSizeAvailable):
+        (WebCore::BMPImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/bmp/BMPImageDecoder.h: Added.
+        * platform/image-decoders/ico: Added.
+        * platform/image-decoders/ico/ICOImageDecoder.cpp: Added.
+        (WebCore::ICOImageDecoder::isSizeAvailable):
+        (WebCore::ICOImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/ico/ICOImageDecoder.h: Added.
+        * platform/image-decoders/xbm: Added.
+        * platform/image-decoders/xbm/XBMImageDecoder.cpp: Added.
+        (WebCore::XBMImageDecoder::isSizeAvailable):
+        (WebCore::XBMImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/xbm/XBMImageDecoder.h: Added.
+
 2006-05-31  David Hyatt  <hyatt@apple.com>
 
         Fix for the gmail tab-focus-stealing bug.

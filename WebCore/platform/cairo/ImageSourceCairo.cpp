@@ -29,6 +29,10 @@
 #include "GIFImageDecoder.h"
 #include "JPEGImageDecoder.h"
 #include "PNGImageDecoder.h"
+#include "BMPImageDecoder.h"
+#include "ICOImageDecoder.h"
+#include "XBMImageDecoder.h"
+
 #include <cairo.h>
 
 namespace WebCore {
@@ -51,9 +55,8 @@ ImageDecoder* createDecoder(const DeprecatedByteArray& data)
     if (uContents[0]==0x89 &&
         uContents[1]==0x50 &&
         uContents[2]==0x4E &&
-        uContents[3]==0x47) {
+        uContents[3]==0x47)
         return new PNGImageDecoder();
-    }
 
     // JPEG
     if (uContents[0]==0xFF &&
@@ -62,17 +65,19 @@ ImageDecoder* createDecoder(const DeprecatedByteArray& data)
         return new JPEGImageDecoder();
 
     // BMP
-    if (strncmp(contents, "BM", 2) == 0) {
-        return 0;
-    }
+    if (strncmp(contents, "BM", 2) == 0)
+        return new BMPImageDecoder();
 
     // ICOs always begin with a 2-byte 0 followed by a 2-byte 1.
     // CURs begin with 2-byte 0 followed by 2-byte 2.
     if (!memcmp(contents, "\000\000\001\000", 4) ||
-        !memcmp(contents, "\000\000\002\000", 4)) {
-        return 0;
-    }
+        !memcmp(contents, "\000\000\002\000", 4))
+        return new ICOImageDecoder();
    
+    // XBMs require 8 bytes of info.
+    if (length >= 8 && strncmp(contents, "#define ", 8) == 0)
+        return new XBMImageDecoder();
+
     // Give up. We don't know what the heck this is.
     return 0;
 }
