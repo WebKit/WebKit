@@ -646,16 +646,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     _frame = nil;
 }
 
-- (void)focusWindow
+- (void)activateWindow
 {
     [[[self webView] _UIDelegateForwarder] webViewFocus:[self webView]];
 }
 
-- (void)unfocusWindow
+- (void)deactivateWindow
 {
-    if ([[self window] isKeyWindow] || [[[self window] attachedSheet] isKeyWindow]) {
-        [NSApp _cycleWindowsReversed:FALSE];
-    }
+   [[[self webView] _UIDelegateForwarder] webViewUnfocus:[self webView]];
 }
 
 - (void)formControlIsBecomingFirstResponder:(NSView *)formControl
@@ -708,7 +706,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [_frame _loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
-        [[targetFrame _bridge] focusWindow];
+        [[targetFrame _bridge] activateWindow];
     }
 }
 
@@ -730,7 +728,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [_frame _postWithURL:URL referrer:(hideReferrer ? nil : referrer) target:target data:postData contentType:contentType triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
-        [[targetFrame _bridge] focusWindow];
+        [[targetFrame _bridge] activateWindow];
     }
 }
 

@@ -89,7 +89,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
                      formValues:nil];
             }
 
-            [frameBridge focusWindow];
+            [frameBridge activateWindow];
 
             if (partResult)
                 *partResult = [frameBridge impl];

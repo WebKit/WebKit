@@ -163,6 +163,7 @@ int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented()
 
 DeprecatedArray<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,DeprecatedString&) { notImplemented(); return 0; }
 
+void FrameWin::focusWindow() { notImplemented(); }
 void FrameWin::unfocusWindow() { notImplemented(); }
 bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueRedoCommand(void) { notImplemented(); }

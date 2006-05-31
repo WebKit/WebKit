@@ -537,6 +537,7 @@ public:
   virtual bool statusbarVisible() = 0;
   virtual bool toolbarVisible() = 0;
   virtual void scheduleClose() = 0;
+  virtual void focusWindow() = 0;
   virtual void unfocusWindow() = 0;
   virtual void createEmptyDocument() = 0;
   virtual Range* markedTextRange() const = 0;

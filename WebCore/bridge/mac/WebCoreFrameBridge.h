@@ -565,8 +565,8 @@ typedef enum {
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
 - (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
 
-- (void)focusWindow;
-- (void)unfocusWindow;
+- (void)activateWindow;
+- (void)deactivateWindow;
 
 - (void)formControlIsBecomingFirstResponder:(NSView *)formControl;
 - (void)formControlIsResigningFirstResponder:(NSView *)formControl;

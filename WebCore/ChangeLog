@@ -1,3 +1,25 @@
+2006-05-31  David Hyatt  <hyatt@apple.com>
+
+        Fix for the gmail tab-focus-stealing bug.
+
+        Reviewed by darin
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::focusWindow):
+        (WebCore::FrameMac::unfocusWindow):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * page/Frame.h:
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::focusWindow):
+        * platform/win/WidgetWin.cpp:
+
 2006-05-31  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

@@ -1,3 +1,17 @@
+2006-05-31  David Hyatt  <hyatt@apple.com>
+
+        Make programmatic focus/blur actually work on sub-frames.  Make the
+        top-level UI delegate get called for deactivation of windows.
+
+        Reviewed by darin
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge activateWindow]):
+        (-[WebFrameBridge deactivateWindow]):
+        (-[WebFrameBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        (-[WebFrameBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 === WebKit-521.12 ===
 
 2006-05-26  David Harrison  <harrison@apple.com>

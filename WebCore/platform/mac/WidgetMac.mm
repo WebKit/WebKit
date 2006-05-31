@@ -84,13 +84,6 @@ Widget::~Widget()
     delete data;
 }
 
-void Widget::setActiveWindow() 
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [FrameMac::bridgeForWidget(this) focusWindow];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void Widget::setEnabled(bool enabled)
 {
     id view = data->view;

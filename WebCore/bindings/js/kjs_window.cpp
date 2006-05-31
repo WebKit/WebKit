@@ -1709,8 +1709,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     (const_cast<Window*>(window))->clearTimeout(v->toInt32(exec));
     return jsUndefined();
   case Window::Focus:
-    if (widget)
-      widget->setActiveWindow();
+    frame->focusWindow();
     return jsUndefined();
   case Window::GetSelection:
     if (!window->isSafeScript(exec))

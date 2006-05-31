@@ -140,6 +140,7 @@ public:
 
     virtual void scheduleClose();
 
+    virtual void focusWindow();
     virtual void unfocusWindow();
     
     void openURLFromPageCache(KWQPageState*);

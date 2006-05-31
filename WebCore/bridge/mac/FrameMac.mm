@@ -663,10 +663,33 @@ void FrameMac::scheduleClose()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void FrameMac::focusWindow()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    // If we're a top level window, bring the window to the front.
+    if (!tree()->parent())
+        [_bridge activateWindow];
+    NSView *view = d->m_view->getDocumentView();
+    if ([_bridge firstResponder] != view)
+        [_bridge makeFirstResponder:view];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 void FrameMac::unfocusWindow()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_bridge unfocusWindow];
+    NSView *view = d->m_view->getDocumentView();
+    if ([_bridge firstResponder] == view) {
+        // If we're a top level window, deactivate the window.
+        if (!tree()->parent())
+            [_bridge deactivateWindow];
+        else {
+            // We want to shift focus to our parent.
+            FrameMac* parentFrame = static_cast<FrameMac*>(tree()->parent());
+            NSView* parentView = parentFrame->d->m_view->getDocumentView();
+            [parentFrame->bridge() makeFirstResponder:parentView];
+        }
+    }
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
