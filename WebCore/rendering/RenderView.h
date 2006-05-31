@@ -35,7 +35,8 @@ public:
     RenderView(WebCore::Node* node, FrameView *view);
     virtual ~RenderView();
 
-    virtual const char *renderName() const { return "RenderView"; }
+    // FIXME: Update this eventually and check in new layout tests.
+    virtual const char *renderName() const { return "RenderCanvas"; }
 
     virtual bool isRenderView() const { return true; }
 
