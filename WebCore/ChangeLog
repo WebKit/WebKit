@@ -1,3 +1,14 @@
+2006-05-30  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4567776> REGRESSION: window.open() links do not work at www.newarchery.com
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        Set the URL in the ResourceRequest; otherwise, it'll be uninitialized and createNewWindow() will
+        not be able to load the URL into a pre-existing frame.
+
 2006-05-30  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Maciej, landed by Beth.
