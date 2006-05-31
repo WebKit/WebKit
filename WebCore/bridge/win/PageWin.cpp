@@ -27,7 +27,7 @@
 #include "Page.h"
 
 #include "Frame.h"
-#include "IntRect.h"
+#include "FloatRect.h"
 #include <windows.h>
 
 namespace WebCore {
@@ -62,7 +62,7 @@ Widget* Page::widget() const
     return m_widget;
 }
 
-IntRect Page::windowRect() const
+FloatRect Page::windowRect() const
 {
     HWND windowHandle = rootWindowForFrame(mainFrame());
     if (!windowHandle)
@@ -72,7 +72,7 @@ IntRect Page::windowRect() const
     return rect;
 }
 
-void Page::setWindowRect(const IntRect& r)
+void Page::setWindowRect(const FloatRect& r)
 {
     HWND windowHandle = rootWindowForFrame(mainFrame());
     if (!windowHandle)
