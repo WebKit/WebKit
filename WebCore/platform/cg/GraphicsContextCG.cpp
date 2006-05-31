@@ -246,27 +246,107 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
 }
 
 
-void GraphicsContext::drawArc(int x, int y, int w, int h, int a, int alen)
+void GraphicsContext::drawArc(const IntRect& rect, float thickness, int startAngle, int angleSpan)
 { 
-    // Only supports arc on circles.  That's all khtml needs.
-    ASSERT(w == h);
-
     if (paintingDisabled())
         return;
     
-    if (pen().style() != Pen::NoPen) {
-        CGContextRef context = platformContext();
-        CGContextBeginPath(context);
-        
-        float r = (float)w / 2;
-        float fa = (float)a / 16;
-        float falen =  fa + (float)alen / 16;
-        CGContextAddArc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180, true);
-        
-        setCGStrokeColor(context, pen().color());
-        CGContextSetLineWidth(context, pen().width());
+    CGContextRef context = platformContext();
+    CGContextSaveGState(context);
+    CGContextBeginPath(context);
+    CGContextSetShouldAntialias(context, false);
+    
+    int x = rect.x();
+    int y = rect.y();
+    float w = (float)rect.width();
+    float h = (float)rect.height();
+    float scaleFactor = h / w;
+    float reverseScaleFactor = w / h;
+    
+    if (w != h)
+        scale(FloatSize(1, scaleFactor));
+    
+    float hRadius = w / 2;
+    float vRadius = h / 2;
+    float fa = startAngle;
+    float falen =  fa + angleSpan;
+    float start = -fa * M_PI/180;
+    float end = -falen * M_PI/180;
+    CGContextAddArc(context, x + hRadius, (y + vRadius) * reverseScaleFactor, hRadius, start, end, true);
+
+    if (w != h)
+        scale(FloatSize(1, reverseScaleFactor));
+    
+    if (pen().style() == Pen::NoPen) {
+        setCGStrokeColor(context, fillColor());
+        CGContextSetLineWidth(context, thickness);
         CGContextStrokePath(context);
+    } else {
+        Pen::PenStyle penStyle = pen().style();
+        float width = pen().width();
+        if (width < 1)
+            width = 1;
+        int patWidth = 0;
+        
+        switch (penStyle) {
+            case Pen::NoPen:
+            case Pen::SolidLine:
+                break;
+            case Pen::DotLine:
+                patWidth = (int)(width / 2);
+                break;
+            case Pen::DashLine:
+                patWidth = 3 * (int)(width / 2);
+                break;
+        }
+
+        CGContextSaveGState(context);
+        setCGStrokeColor(context, pen().color());
+
+        if (patWidth) {
+            // Example: 80 pixels with a width of 30 pixels.
+            // Remainder is 20.  The maximum pixels of line we could paint
+            // will be 50 pixels.
+            int distance;
+            if (hRadius == vRadius)
+                distance = (int)(M_PI * hRadius) / 2;
+            else // We are elliptical and will have to estimate the distance
+                distance = (int)(M_PI * sqrt((hRadius * hRadius + vRadius * vRadius) / 2)) / 2;
+            
+            int remainder = distance % patWidth;
+            int coverage = distance - remainder;
+            int numSegments = coverage / patWidth;
+
+            float patternOffset = 0;
+            // Special case 1px dotted borders for speed.
+            if (patWidth == 1)
+                patternOffset = 1.0;
+            else {
+                bool evenNumberOfSegments = numSegments % 2 == 0;
+                if (remainder)
+                    evenNumberOfSegments = !evenNumberOfSegments;
+                if (evenNumberOfSegments) {
+                    if (remainder) {
+                        patternOffset += patWidth - remainder;
+                        patternOffset += remainder / 2;
+                    } else
+                        patternOffset = patWidth / 2;
+                } else {
+                    if (remainder)
+                        patternOffset = (patWidth - remainder) / 2;
+                }
+            }
+        
+            const CGFloat dottedLine[2] = { patWidth, patWidth };
+            CGContextSetLineDash(context, patternOffset, dottedLine, 2);
+        }
+    
+        CGContextSetLineWidth(context, width);
+        CGContextStrokePath(context);
+        CGContextRestoreGState(context);
     }
+    
+    CGContextRestoreGState(context);
 }
 
 void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
@@ -385,6 +465,23 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
                                          rect.width() - max(topLeft.width(), bottomLeft.width()) - max(topRight.width(), bottomRight.width()),
                                          rect.height() - max(topLeft.height(), topRight.height()) - max(bottomLeft.height(), bottomRight.height())));
     CGContextClip(context);
+}
+
+void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
+{
+    if (paintingDisabled())
+        return;
+
+    addClip(rect);
+    CGContextRef context = platformContext();
+    
+    // Add outer ellipse
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y(), rect.width(), rect.height()));
+    // Add inner ellipse.
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x() + thickness, rect.y() + thickness,
+        rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
+    
+    CGContextEOClip(context);
 }
 
 #if SVG_SUPPORT

@@ -281,19 +281,24 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     }
 }
 
-void GraphicsContext::drawArc(int x, int y, int w, int h, int a, int alen)
+// FIXME: This function needs to be adjusted to match the functionality on the Mac side.
+void GraphicsContext::drawArc(const IntRect& rect, float thickness, int startAngle, int angleSpan)
 {
-    // Only supports arc on circles.  That's all khtml needs.
-    ASSERT(w == h);
-
     if (paintingDisabled())
         return;
     
+    int x = rect.x();
+    int y = rect.y();
+    float w = (float)rect.width();
+    float h = (float)rect.height();
+    float scaleFactor = h / w;
+    float reverseScaleFactor = w / h;
+    
     cairo_t* context = m_data->context;
     if (pen().style() != Pen::NoPen) {        
-        float r = (float)w / 2;
-        float fa = (float)a / 16;
-        float falen =  fa + (float)alen / 16;
+        float r = w / 2;
+        float fa = startAngle;
+        float falen =  fa + angleSpan;
         cairo_arc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180);
         
         setColor(context, pen().color());
@@ -360,6 +365,17 @@ void GraphicsContext::addClip(const IntRect& rect)
     cairo_t* context = m_data->context;
     cairo_rectangle(context, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_clip(context);
+}
+
+void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
+    const IntSize& bottomLeft, const IntSize& bottomRight)
+{
+    // FIXME: Implement.
+}
+
+void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
+{
+    //FIXME: Implement.
 }
 
 void GraphicsContext::drawFocusRing(const Color& color)

@@ -87,7 +87,7 @@ namespace WebCore {
         void drawRect(const IntRect&);
         void drawLine(const IntPoint&, const IntPoint&);
         void drawEllipse(const IntRect&);
-        void drawArc(int, int, int, int, int, int);
+        void drawArc(const IntRect&, float thickness, int startAngle, int angleSpan);
         void drawConvexPolygon(const IntPointArray&);
 
         void fillRect(const IntRect&, const Color&);
@@ -107,6 +107,7 @@ namespace WebCore {
 
         void addClip(const IntRect&);
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
+        void addInnerRoundedRectClip(const IntRect&, int thickness);
 
         // Functions to work around bugs in focus ring clipping on Mac.
         void setFocusRingClip(const IntRect&);

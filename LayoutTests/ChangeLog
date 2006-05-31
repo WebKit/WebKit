@@ -1,3 +1,84 @@
+2006-05-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test cases for http://bugzilla.opendarwin.org/show_bug.cgi?id=6755 
+        CSS3: Borders rounded with border-radius don't draw the roundings
+
+        * fast/borders: Added.
+        * fast/borders/borderRadiusDashed01-expected.checksum: Added.
+        * fast/borders/borderRadiusDashed01-expected.png: Added.
+        * fast/borders/borderRadiusDashed01-expected.txt: Added.
+        * fast/borders/borderRadiusDashed01.html: Added.
+        * fast/borders/borderRadiusDashed02-expected.checksum: Added.
+        * fast/borders/borderRadiusDashed02-expected.png: Added.
+        * fast/borders/borderRadiusDashed02-expected.txt: Added.
+        * fast/borders/borderRadiusDashed02.html: Added.
+        * fast/borders/borderRadiusDashed03-expected.checksum: Added.
+        * fast/borders/borderRadiusDashed03-expected.png: Added.
+        * fast/borders/borderRadiusDashed03-expected.txt: Added.
+        * fast/borders/borderRadiusDashed03.html: Added.
+        * fast/borders/borderRadiusDotted01-expected.checksum: Added.
+        * fast/borders/borderRadiusDotted01-expected.png: Added.
+        * fast/borders/borderRadiusDotted01-expected.txt: Added.
+        * fast/borders/borderRadiusDotted01.html: Added.
+        * fast/borders/borderRadiusDotted02-expected.checksum: Added.
+        * fast/borders/borderRadiusDotted02-expected.png: Added.
+        * fast/borders/borderRadiusDotted02-expected.txt: Added.
+        * fast/borders/borderRadiusDotted02.html: Added.
+        * fast/borders/borderRadiusDotted03-expected.checksum: Added.
+        * fast/borders/borderRadiusDotted03-expected.png: Added.
+        * fast/borders/borderRadiusDotted03-expected.txt: Added.
+        * fast/borders/borderRadiusDotted03.html: Added.
+        * fast/borders/borderRadiusDouble01-expected.checksum: Added.
+        * fast/borders/borderRadiusDouble01-expected.png: Added.
+        * fast/borders/borderRadiusDouble01-expected.txt: Added.
+        * fast/borders/borderRadiusDouble01.html: Added.
+        * fast/borders/borderRadiusDouble02-expected.checksum: Added.
+        * fast/borders/borderRadiusDouble02-expected.png: Added.
+        * fast/borders/borderRadiusDouble02-expected.txt: Added.
+        * fast/borders/borderRadiusDouble02.html: Added.
+        * fast/borders/borderRadiusDouble03-expected.checksum: Added.
+        * fast/borders/borderRadiusDouble03-expected.png: Added.
+        * fast/borders/borderRadiusDouble03-expected.txt: Added.
+        * fast/borders/borderRadiusDouble03.html: Added.
+        * fast/borders/borderRadiusGroove01-expected.checksum: Added.
+        * fast/borders/borderRadiusGroove01-expected.png: Added.
+        * fast/borders/borderRadiusGroove01-expected.txt: Added.
+        * fast/borders/borderRadiusGroove01.html: Added.
+        * fast/borders/borderRadiusGroove02-expected.checksum: Added.
+        * fast/borders/borderRadiusGroove02-expected.png: Added.
+        * fast/borders/borderRadiusGroove02-expected.txt: Added.
+        * fast/borders/borderRadiusGroove02.html: Added.
+        * fast/borders/borderRadiusInset01-expected.checksum: Added.
+        * fast/borders/borderRadiusInset01-expected.png: Added.
+        * fast/borders/borderRadiusInset01-expected.txt: Added.
+        * fast/borders/borderRadiusInset01.html: Added.
+        * fast/borders/borderRadiusOutset01-expected.checksum: Added.
+        * fast/borders/borderRadiusOutset01-expected.png: Added.
+        * fast/borders/borderRadiusOutset01-expected.txt: Added.
+        * fast/borders/borderRadiusOutset01.html: Added.
+        * fast/borders/borderRadiusRidge01-expected.checksum: Added.
+        * fast/borders/borderRadiusRidge01-expected.png: Added.
+        * fast/borders/borderRadiusRidge01-expected.txt: Added.
+        * fast/borders/borderRadiusRidge01.html: Added.
+        * fast/borders/borderRadiusSolid01-expected.checksum: Added.
+        * fast/borders/borderRadiusSolid01-expected.png: Added.
+        * fast/borders/borderRadiusSolid01-expected.txt: Added.
+        * fast/borders/borderRadiusSolid01.html: Added.
+        * fast/borders/borderRadiusSolid02-expected.checksum: Added.
+        * fast/borders/borderRadiusSolid02-expected.png: Added.
+        * fast/borders/borderRadiusSolid02-expected.txt: Added.
+        * fast/borders/borderRadiusSolid02.html: Added.
+        * fast/borders/borderRadiusSolid03-expected.checksum: Added.
+        * fast/borders/borderRadiusSolid03-expected.png: Added.
+        * fast/borders/borderRadiusSolid03-expected.txt: Added.
+        * fast/borders/borderRadiusSolid03.html: Added.
+        * fast/borders/borderRadiusSolid04-expected.checksum: Added.
+        * fast/borders/borderRadiusSolid04-expected.png: Added.
+        * fast/borders/borderRadiusSolid04-expected.txt: Added.
+        * fast/borders/borderRadiusSolid04.html: Added.
+
 2006-05-30  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Maciej, landed by Beth.

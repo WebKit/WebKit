@@ -798,6 +798,90 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
     return false;
 }
 
+void RenderObject::drawBorderArc(GraphicsContext* p, int x, int y, float thickness, IntSize radius, int angleStart, 
+    int angleSpan, BorderSide s, Color c, EBorderStyle style, bool firstCorner)
+{
+    if ((style == DOUBLE && ((thickness / 2) < 3)) || 
+        ((style == RIDGE || style == GROOVE) && ((thickness / 2) < 2)))
+        style = SOLID;
+    
+    switch (style) {
+        case BNONE:
+        case BHIDDEN:
+            return;
+        case DOTTED:
+            p->setPen(Pen(c, thickness == 1 ? 0 : (int)thickness, Pen::DotLine));
+        case DASHED:
+            if(style == DASHED)
+                p->setPen(Pen(c, thickness == 1 ? 0 : (int)thickness, Pen::DashLine));
+            
+            if (thickness > 0) {
+                if (s == BSBottom || s == BSTop)
+                    p->drawArc(IntRect(x, y, radius.width() * 2, radius.height() * 2), thickness, angleStart, angleSpan);
+                else //We are drawing a left or right border
+                    p->drawArc(IntRect(x, y, radius.width() * 2, radius.height() * 2), thickness, angleStart, angleSpan);
+            }
+            
+            break;
+        case DOUBLE: {
+            float third = thickness / 3;
+            float innerThird = (thickness + 1) / 6;
+            int shiftForInner = (int)(innerThird * 2.5);
+            p->setPen(Pen::NoPen);
+            
+            int outerY = y;
+            int outerHeight = radius.height() * 2;
+            int innerX = x + shiftForInner;
+            int innerY = y + shiftForInner;
+            int innerWidth = (radius.width() - shiftForInner) * 2;
+            int innerHeight = (radius.height() - shiftForInner) * 2;
+            if (innerThird > 1 && (s == BSTop || (firstCorner && (s == BSLeft || s == BSRight)))) {
+                outerHeight += 2;
+                innerHeight += 2;
+            }
+            
+            p->drawArc(IntRect(x, outerY, radius.width() * 2, outerHeight), third, angleStart, angleSpan);
+            p->drawArc(IntRect(innerX, innerY, innerWidth, innerHeight), (innerThird > 2) ? innerThird - 1 : innerThird,
+                angleStart, angleSpan);
+            break;
+        }
+        case GROOVE:
+        case RIDGE: {
+            Color c2;
+            if ((style == RIDGE && (s == BSTop || s == BSLeft)) || 
+                (style == GROOVE && (s == BSBottom || s == BSRight)))
+                c2 = c.dark();
+            else {
+                c2 = c;
+                c = c.dark();
+            }
+
+            p->setPen(Pen::NoPen);
+            p->setFillColor(c.rgb());
+            p->drawArc(IntRect(x, y, radius.width() * 2, radius.height() * 2), thickness, angleStart, angleSpan);
+            
+            float halfThickness = (thickness + 1) / 4;
+            int shiftForInner = (int)(halfThickness * 1.5);
+            p->setFillColor(c2.rgb());
+            p->drawArc(IntRect(x + shiftForInner, y + shiftForInner, (radius.width() - shiftForInner) * 2,
+                (radius.height() - shiftForInner) * 2), (halfThickness > 2) ? halfThickness - 1 : halfThickness,
+                angleStart, angleSpan);
+            break;
+        }
+        case INSET:
+            if(s == BSTop || s == BSLeft)
+                c = c.dark();
+        case OUTSET:
+            if(style == OUTSET && (s == BSBottom || s == BSRight))
+                c = c.dark();
+        case SOLID:
+            p->setPen(Pen::NoPen);
+            p->setFillColor(c.rgb());
+            p->drawArc(IntRect(x, y, radius.width() * 2, radius.height() * 2), thickness, angleStart, angleSpan);
+            break;
+    }
+}
+
 void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2,
                               BorderSide s, Color c, const Color& textcolor, EBorderStyle style,
                               int adjbw1, int adjbw2, bool invalidisInvert)
@@ -1145,15 +1229,15 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
     EBorderStyle ls = style->borderLeftStyle();
     EBorderStyle rs = style->borderRightStyle();
 
-    bool render_t = ts > BHIDDEN && !tt;
-    bool render_l = ls > BHIDDEN && begin && !lt;
-    bool render_r = rs > BHIDDEN && end && !rt;
-    bool render_b = bs > BHIDDEN && !bt;
+    bool renderTop = ts > BHIDDEN && !tt;
+    bool renderLeft = ls > BHIDDEN && begin && !lt;
+    bool renderRight = rs > BHIDDEN && end && !rt;
+    bool renderBottom = bs > BHIDDEN && !bt;
 
     // Need sufficient width and height to contain border radius curves.  Sanity check our top/bottom
     // values and our width/height values to make sure the curves can all fit. If not, then we won't paint
     // any border radii.
-    bool render_radii = false;
+    bool renderRadii = false;
     IntSize topLeft = style->borderTopLeftRadius();
     IntSize topRight = style->borderTopRightRadius();
     IntSize bottomLeft = style->borderBottomLeftRadius();
@@ -1162,29 +1246,36 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
     if (style->hasBorderRadius()) {
         int requiredWidth = max(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
         int requiredHeight = max(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
-        render_radii = (requiredWidth <= w && requiredHeight <= h);
+        renderRadii = (requiredWidth <= w && requiredHeight <= h);
     }
     
     // Clip to the rounded rectangle.
-    if (render_radii) {
+    if (renderRadii) {
         p->save();
         p->addRoundedRectClip(IntRect(_tx, _ty, w, h), topLeft, topRight, bottomLeft, bottomRight);
     }
 
-    if (render_t) {
-        bool ignore_left = (render_radii && topLeft.width() > 0) ||
+    int firstAngleStart, secondAngleStart, firstAngleSpan, secondAngleSpan;
+    float thickness;
+    bool upperLeftBorderStylesMatch = renderLeft && (ts == ls) && (tc == lc) && (ts != INSET) && (ts != GROOVE);
+    bool upperRightBorderStylesMatch = renderRight && (ts == rs) && (tc == rc) && (ts != OUTSET) && (ts != RIDGE);
+    bool lowerLeftBorderStylesMatch = renderLeft && (bs == ls) && (bc == lc) && (bs != OUTSET) && (bs != RIDGE);
+    bool lowerRightBorderStylesMatch = renderRight && (bs == rs) && (bc == rc) && (bs != INSET) && (bs != GROOVE);
+
+    if (renderTop) {
+        bool ignore_left = (renderRadii && topLeft.width() > 0) ||
             ((tc == lc) && (tt == lt) &&
             (ts >= OUTSET) &&
             (ls == DOTTED || ls == DASHED || ls == SOLID || ls == OUTSET));
 
-        bool ignore_right = (render_radii && topRight.width() > 0) ||
+        bool ignore_right = (renderRadii && topRight.width() > 0) ||
             ((tc == rc) && (tt == rt) &&
             (ts >= OUTSET) &&
             (rs == DOTTED || rs == DASHED || rs == SOLID || rs == INSET));
         
         int x = _tx;
         int x2 = _tx + w;
-        if (render_radii) {
+        if (renderRadii) {
             x += topLeft.width();
             x2 -= topRight.width();
         }
@@ -1192,22 +1283,74 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
         drawBorder(p, x, _ty, x2, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
                    ignore_left ? 0 : style->borderLeftWidth(),
                    ignore_right? 0 : style->borderRightWidth());
+        
+        if (renderRadii) {
+            int leftX = _tx;
+            int leftY = _ty;
+            int rightX = _tx + w - topRight.width() * 2;
+            firstAngleStart = 90;
+            firstAngleSpan = upperLeftBorderStylesMatch ? 90 : 45;
+            
+            // We make the arc double thick and let the clip rect take care of clipping the extra off.
+            // We're doing this because it doesn't seem possible to match the curve of the clip exactly
+            // with the arc-drawing function.
+            thickness = style->borderTopWidth() * 2;
+            
+            if (upperRightBorderStylesMatch) {
+                secondAngleStart = 0;
+                secondAngleSpan = 90;
+            } else {
+                secondAngleStart = 45;
+                secondAngleSpan = 45;
+            }
+            
+            // The inner clip clips inside the arc. This is especially important for 1px borders.
+            bool applyLeftInnerClip = (style->borderLeftWidth() < topLeft.width())
+                && (style->borderTopWidth() < topLeft.height())
+                && (ts != DOUBLE || style->borderTopWidth() > 6);
+            if (applyLeftInnerClip) {
+                p->save();
+                p->addInnerRoundedRectClip(IntRect(leftX, leftY, topLeft.width() * 2, topLeft.height() * 2), 
+                    style->borderTopWidth());
+            }
+            
+            // Draw upper left arc
+            drawBorderArc(p, leftX, leftY, thickness, topLeft, firstAngleStart, firstAngleSpan,
+                BSTop, tc, ts, true);
+            if (applyLeftInnerClip)
+                p->restore();
+            
+            bool applyRightInnerClip = (style->borderRightWidth() < topRight.width())
+                && (style->borderTopWidth() < topRight.height())
+                && (ts != DOUBLE || style->borderTopWidth() > 6);
+            if (applyRightInnerClip) {
+                p->save();
+                p->addInnerRoundedRectClip(IntRect(rightX, leftY, topRight.width() * 2, topRight.height() * 2),
+                    style->borderTopWidth());
+            }
+            
+            // Draw upper right arc
+            drawBorderArc(p, rightX, leftY, thickness, topRight, secondAngleStart, secondAngleSpan,
+                BSTop, tc, ts, false);
+            if (applyRightInnerClip)
+                p->restore();
+        }
     }
 
-    if (render_b) {
-        bool ignore_left = (render_radii && bottomLeft.width() > 0) ||
+    if (renderBottom) {
+        bool ignore_left = (renderRadii && bottomLeft.width() > 0) ||
         ((bc == lc) && (bt == lt) &&
         (bs >= OUTSET) &&
         (ls == DOTTED || ls == DASHED || ls == SOLID || ls == OUTSET));
 
-        bool ignore_right = (render_radii && bottomRight.width() > 0) ||
+        bool ignore_right = (renderRadii && bottomRight.width() > 0) ||
             ((bc == rc) && (bt == rt) &&
             (bs >= OUTSET) &&
             (rs == DOTTED || rs == DASHED || rs == SOLID || rs == INSET));
         
         int x = _tx;
         int x2 = _tx + w;
-        if (render_radii) {
+        if (renderRadii) {
             x += bottomLeft.width();
             x2 -= bottomRight.width();
         }
@@ -1215,22 +1358,69 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
         drawBorder(p, x, _ty + h - style->borderBottomWidth(), x2, _ty + h, BSBottom, bc, style->color(), bs,
                    ignore_left ? 0 :style->borderLeftWidth(),
                    ignore_right? 0 :style->borderRightWidth());
+        
+        if (renderRadii) {
+            int leftX = _tx;
+            int leftY = _ty + h  - bottomLeft.height() * 2;
+            int rightX = _tx + w - bottomRight.width() * 2;
+            secondAngleStart = 270;
+            secondAngleSpan = upperRightBorderStylesMatch ? 90 : 45;
+            thickness = style->borderBottomWidth() * 2;
+            
+            if (upperLeftBorderStylesMatch) {
+                firstAngleStart = 180;
+                firstAngleSpan = 90;
+            } else {
+                firstAngleStart = 225;
+                firstAngleSpan =  45;
+            }
+            
+            bool applyLeftInnerClip = (style->borderLeftWidth() < bottomLeft.width())
+                && (style->borderBottomWidth() < bottomLeft.height())
+                && (bs != DOUBLE || style->borderBottomWidth() > 6);
+            if (applyLeftInnerClip) {
+                p->save();
+                p->addInnerRoundedRectClip(IntRect(leftX, leftY, bottomLeft.width() * 2, bottomLeft.height() * 2), 
+                    style->borderBottomWidth());
+            }
+            
+            // Draw lower left arc
+            drawBorderArc(p, leftX, leftY, thickness, bottomLeft, firstAngleStart, firstAngleSpan,
+                BSBottom, bc, bs, true);
+            if (applyLeftInnerClip)
+                p->restore();
+                
+            bool applyRightInnerClip = (style->borderRightWidth() < bottomRight.width())
+                && (style->borderBottomWidth() < bottomRight.height())
+                && (bs != DOUBLE || style->borderBottomWidth() > 6);
+            if (applyRightInnerClip) {
+                p->save();
+                p->addInnerRoundedRectClip(IntRect(rightX, leftY, bottomRight.width() * 2, bottomRight.height() * 2),
+                    style->borderBottomWidth());
+            }
+            
+            // Draw lower right arc
+            drawBorderArc(p, rightX, leftY, thickness, bottomRight, secondAngleStart, secondAngleSpan,
+                BSBottom, bc, bs, false);
+            if (applyRightInnerClip)
+                p->restore();
+        }
     }
     
-    if (render_l) {
-        bool ignore_top = (render_radii && topLeft.height() > 0) ||
+    if (renderLeft) {
+        bool ignore_top = (renderRadii && topLeft.height() > 0) ||
           ((tc == lc) && (tt == lt) &&
           (ls >= OUTSET) &&
           (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET));
 
-        bool ignore_bottom = (render_radii && bottomLeft.height() > 0) ||
+        bool ignore_bottom = (renderRadii && bottomLeft.height() > 0) ||
           ((bc == lc) && (bt == lt) &&
           (ls >= OUTSET) &&
           (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET));
 
         int y = _ty;
         int y2 = _ty + h;
-        if (render_radii) {
+        if (renderRadii) {
             y += topLeft.height();
             y2 -= bottomLeft.height();
         }
@@ -1238,22 +1428,62 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
         drawBorder(p, _tx, y, _tx + style->borderLeftWidth(), y2, BSLeft, lc, style->color(), ls,
                    ignore_top?0:style->borderTopWidth(),
                    ignore_bottom?0:style->borderBottomWidth());
+
+        if (renderRadii && (!upperLeftBorderStylesMatch || !lowerLeftBorderStylesMatch)) {
+            int topX = _tx;
+            int topY = _ty;
+            int bottomY = _ty + h  - bottomLeft.height() * 2;
+            firstAngleStart = 135;
+            secondAngleStart = 180;
+            firstAngleSpan = secondAngleSpan = 45;
+            thickness = style->borderLeftWidth() * 2;
+            
+            bool applyTopInnerClip = (style->borderLeftWidth() < topLeft.width())
+                && (style->borderTopWidth() < topLeft.height())
+                && (ls != DOUBLE || style->borderLeftWidth() > 6);
+            if (applyTopInnerClip) {
+                p->save();
+                p->addInnerRoundedRectClip(IntRect(topX, topY, topLeft.width() * 2, topLeft.height() * 2), 
+                    style->borderLeftWidth());
+            }
+            
+            // Draw top left arc
+            drawBorderArc(p, topX, topY, thickness, topLeft, firstAngleStart, firstAngleSpan,
+                BSLeft, lc, ls, true);
+            if (applyTopInnerClip)
+                p->restore();
+            
+            bool applyBottomInnerClip = (style->borderLeftWidth() < bottomLeft.width())
+                && (style->borderBottomWidth() < bottomLeft.height())
+                && (ls != DOUBLE || style->borderLeftWidth() > 6);
+            if (applyBottomInnerClip) {
+                p->save();
+                p->addInnerRoundedRectClip(IntRect(topX, bottomY, bottomLeft.width() * 2, bottomLeft.height() * 2), 
+                    style->borderLeftWidth());
+            }
+            
+            // Draw bottom left arc
+            drawBorderArc(p, topX, bottomY, thickness, bottomLeft, secondAngleStart, secondAngleSpan,
+                BSLeft, lc, ls, false);
+            if (applyBottomInnerClip)
+                p->restore();
+        }
     }
 
-    if (render_r) {
-        bool ignore_top = (render_radii && topRight.height() > 0) ||
+    if (renderRight) {
+        bool ignore_top = (renderRadii && topRight.height() > 0) ||
           ((tc == rc) && (tt == rt) &&
           (rs >= DOTTED || rs == INSET) &&
           (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET));
 
-        bool ignore_bottom = (render_radii && bottomRight.height() > 0) ||
+        bool ignore_bottom = (renderRadii && bottomRight.height() > 0) ||
           ((bc == rc) && (bt == rt) &&
           (rs >= DOTTED || rs == INSET) &&
           (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET));
 
         int y = _ty;
         int y2 = _ty + h;
-        if (render_radii) {
+        if (renderRadii) {
             y += topRight.height();
             y2 -= bottomRight.height();
         }
@@ -1261,9 +1491,49 @@ void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int 
         drawBorder(p, _tx + w - style->borderRightWidth(), y, _tx + w, y2, BSRight, rc, style->color(), rs,
                    ignore_top?0:style->borderTopWidth(),
                    ignore_bottom?0:style->borderBottomWidth());
+
+        if (renderRadii && (!upperRightBorderStylesMatch || !lowerRightBorderStylesMatch)) {
+            int topX = _tx + w - topRight.width() * 2;
+            int topY = _ty;
+            int bottomY = _ty + h  - bottomRight.height() * 2;
+            firstAngleStart = 0; 
+            secondAngleStart = 315;
+            firstAngleSpan = secondAngleSpan = 45;
+            thickness = style->borderRightWidth() * 2;
+            
+            bool applyTopInnerClip = (style->borderRightWidth() < topRight.width())
+                && (style->borderTopWidth() < topRight.height())
+                && (rs != DOUBLE || style->borderRightWidth() > 6);
+            if (applyTopInnerClip) {
+                p->save();
+                p->addInnerRoundedRectClip(IntRect(topX, topY, topRight.width() * 2, topRight.height() * 2),
+                    style->borderRightWidth());
+            }
+            
+            // Draw top right arc
+            drawBorderArc(p, topX, topY, thickness, topRight, firstAngleStart, firstAngleSpan,
+                BSRight, rc, rs, true);
+            if (applyTopInnerClip)
+                p->restore();
+            
+            bool applyBottomInnerClip = (style->borderRightWidth() < bottomRight.width())
+                && (style->borderBottomWidth() < bottomRight.height())
+                && (rs != DOUBLE || style->borderRightWidth() > 6);
+            if (applyBottomInnerClip) {
+                p->save();
+                p->addInnerRoundedRectClip(IntRect(topX, bottomY, bottomRight.width() * 2, bottomRight.height() * 2),
+                    style->borderRightWidth());
+            }
+            
+            // Draw bottom right arc
+            drawBorderArc(p, topX, bottomY, thickness, bottomRight, secondAngleStart, secondAngleSpan,
+                BSRight, rc, rs, false);
+            if (applyBottomInnerClip)
+                p->restore();
+        }
     }
     
-    if (render_radii)
+    if (renderRadii)
         p->restore(); // Undo the clip.
 }
 

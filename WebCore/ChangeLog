@@ -1,3 +1,38 @@
+2006-05-31  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6755 CSS3: 
+        Borders rounded with border-radius don't draw the roundings
+
+        This patch does not draw all of the different border styles 
+        perfectly, so I have filed a few followup bugs that I will 
+        reference from this Bugzilla.
+
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawArc): drawArc() has different 
+        parameters now, but mostly this needs to be implemented to match 
+        the Mac side later.
+        (WebCore::GraphicsContext::addRoundedRectClip): Just a stub. 
+        Implement this later.
+        (WebCore::GraphicsContext::addInnerRoundedRectClip): Just a stub. 
+        Implement this later.
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawArc): drawArc() now handles drawing 
+        elliptical arcs as well as circular arcs, it also takes a thickness 
+        parameter to draw an arc of a given thickness and draws with the 
+        appropriate pen style.
+        (WebCore::GraphicsContext::addInnerRoundedRectClip): Adds a clip to 
+        the inside of an arc instead of to the outside which is already 
+        done by addRoundedClipRect()
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBorderArc): Draws the border arcs in 
+        the appropriate styles.
+        (WebCore::RenderObject::paintBorder): Calls drawBorderArc() when 
+        border arcs are needed.
+        * rendering/RenderObject.h:
+
 2006-05-30  Eric Seidel  <eric@eseidel.com>
 
         Reviewed by andersca.
