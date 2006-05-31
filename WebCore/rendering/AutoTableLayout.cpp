@@ -216,7 +216,7 @@ static bool shouldScaleColumns(RenderTable* table)
         Length tw = table->style()->width();
         if ((tw.isAuto() || tw.isPercent()) && !table->isPositioned()) {
             RenderBlock* cb = table->containingBlock();
-            while (cb && !cb->isCanvas() && !cb->isTableCell() &&
+            while (cb && !cb->isRenderView() && !cb->isTableCell() &&
                 cb->style()->width().isAuto() && !cb->isPositioned())
                 cb = cb->containingBlock();
 

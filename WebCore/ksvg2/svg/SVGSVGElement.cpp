@@ -203,7 +203,7 @@ void SVGSVGElement::setCurrentScale(float scale)
 
 SVGPoint *SVGSVGElement::currentTranslate() const
 {
-    //if(!canvas())
+    //if(!view())
         return 0;
 
     //return createSVGPoint(canvasView()->pan());

@@ -25,7 +25,7 @@
 #import "Document.h"
 #import "FoundationExtras.h"
 #import "FrameView.h"
-#import "RenderCanvas.h"
+#import "RenderView.h"
 #import "WebCoreSystemInterface.h"
 #import "cssstyleselector.h"
 
@@ -266,7 +266,7 @@ bool RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
     // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
     // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
     IntRect inflatedRect = inflateRect(r, checkboxSizes()[[checkbox controlSize]], checkboxMargins());
-    [checkbox drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
+    [checkbox drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->getDocumentView()];
     [checkbox setControlView: nil];
     
     return false;
@@ -326,7 +326,7 @@ bool RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo& 
     // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
     // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
     IntRect inflatedRect = inflateRect(r, radioSizes()[[radio controlSize]], radioMargins());
-    [radio drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
+    [radio drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->getDocumentView()];
     [radio setControlView: nil];
     
     return false;
@@ -516,7 +516,7 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
         inflatedRect = inflateRect(inflatedRect, size, buttonMargins());
     }
 
-    [button drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
+    [button drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->getDocumentView()];
     [button setControlView:nil];
 
     return false;

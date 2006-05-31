@@ -34,7 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "RenderFlexibleBox.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
@@ -108,7 +108,7 @@ void RenderBox::setStyle(RenderStyle *_style)
                 m_layer->updateLayerPositions();
         }
     }
-    else if (m_layer && !isRoot() && !isCanvas()) {
+    else if (m_layer && !isRoot() && !isRenderView()) {
         assert(m_layer->parent());
         RenderLayer *layer = m_layer;
         m_layer = 0;
@@ -123,7 +123,7 @@ void RenderBox::setStyle(RenderStyle *_style)
         element()->document()->setTextColor(_style->color());
     
     if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
-        static_cast<RenderCanvas*>(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());
+        static_cast<RenderView*>(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());
 }
 
 RenderBox::~RenderBox()
@@ -290,13 +290,13 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& i, int _tx, int _ty)
     int h = height();
 
     int rw, rh;
-    if (canvas()->view()) {
-        rw = canvas()->view()->contentsWidth();
-        rh = canvas()->view()->contentsHeight();
+    if (view()->frameView()) {
+        rw = view()->frameView()->contentsWidth();
+        rh = view()->frameView()->contentsHeight();
     }
     else {
-        rw = canvas()->width();
-        rh = canvas()->height();
+        rw = view()->width();
+        rh = view()->height();
     }
     
     int bx = _tx - marginLeft();
@@ -455,7 +455,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
 
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
-    if (!bgLayer->next() && isRoot() && !(bgColor.isValid() && bgColor.alpha() > 0) && canvas()->view()) {
+    if (!bgLayer->next() && isRoot() && !(bgColor.isValid() && bgColor.alpha() > 0) && view()->view()) {
         bool isTransparent;
         WebCore::Node* elt = document()->ownerElement();
         if (elt) {
@@ -470,10 +470,10 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
                 isTransparent = !body || !body->hasLocalName(framesetTag); // Can't scroll a frameset document anyway.
             }
         } else
-            isTransparent = canvas()->view()->isTransparent();
+            isTransparent = view()->view()->isTransparent();
         
         if (isTransparent)
-            canvas()->view()->useSlowRepaints(); // The parent must show behind the child.
+            view()->frameView()->useSlowRepaints(); // The parent must show behind the child.
         else
             bgColor = Color::white;
     }
@@ -482,7 +482,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
     if (!bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0) {
         IntRect rect(_tx, clipy, w, cliph);
         // If we have an alpha and we are painting the root element, go ahead and blend with white.
-        if (bgColor.alpha() < 0xFF && isRoot() && !canvas()->view()->isTransparent())
+        if (bgColor.alpha() < 0xFF && isRoot() && !view()->view()->isTransparent())
             p->fillRect(rect, Color(Color::white));
         p->fillRect(rect, bgColor);
     }
@@ -1197,7 +1197,7 @@ void RenderBox::calcHeight()
     if (style()->htmlHacks() && style()->height().isAuto() &&
         !isFloatingOrPositioned() && (isRoot() || isBody())) {
         int margins = collapsedMarginTop() + collapsedMarginBottom();
-        int visHeight = canvas()->view()->visibleHeight();
+        int visHeight = view()->frameView()->visibleHeight();
         if (isRoot())
             m_height = max(m_height, visHeight - margins);
         else
@@ -1234,7 +1234,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
         // block that may have a specified height and then use it.  In strict mode, this violates the
         // specification, which states that percentage heights just revert to auto if the containing
         // block has an auto height.
-        for ( ; !cb->isCanvas() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() &&
+        for ( ; !cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() &&
                 cb->style()->height().isAuto(); cb = cb->containingBlock());
     }
 
@@ -1269,7 +1269,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
         result = cb->calcPercentageHeight(cb->style()->height());
         if (result != -1)
             result = cb->calcContentBoxHeight(result);
-    } else if (cb->isCanvas() || (cb->isBody() && style()->htmlHacks()) ||
+    } else if (cb->isRenderView() || (cb->isBody() && style()->htmlHacks()) ||
                (cb->isPositioned() && !(cb->style()->top().isAuto() || cb->style()->bottom().isAuto()))) {
         // Don't allow this to affect the block' m_height member variable, since this
         // can get called while the block is still laying out its kids.
@@ -1379,8 +1379,8 @@ int RenderBox::availableHeightUsing(const Length& h) const
     if (h.isFixed())
         return calcContentBoxHeight(h.value());
 
-    if (isCanvas())
-        return static_cast<const RenderCanvas*>(this)->view()->visibleHeight();
+    if (isRenderView())
+        return static_cast<const RenderView*>(this)->frameView()->visibleHeight();
 
     // We need to stop here, since we don't want to increase the height of the table
     // artificially.  We're going to rely on this cell getting expanded to some new

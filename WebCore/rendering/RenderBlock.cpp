@@ -33,7 +33,7 @@
 #include "RenderTextFragment.h"
 #include "SelectionController.h"
 #include "HTMLNames.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "RenderTheme.h"
 #include "KWQTextStream.h"
 
@@ -49,7 +49,7 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
     // Whether or not we can collapse our own margins with our children.  We don't do this
     // if we had any border/padding (obviously), if we're the root or HTML elements, or if
     // we're positioned, floating, a table cell.
-    m_canCollapseWithChildren = !block->isCanvas() && !block->isRoot() && !block->isPositioned() &&
+    m_canCollapseWithChildren = !block->isRenderView() && !block->isRoot() && !block->isPositioned() &&
         !block->isFloating() && !block->isTableCell() && !block->hasOverflowClip() && !block->isInlineBlockOrInlineTable();
 
     m_canCollapseTopWithChildren = m_canCollapseWithChildren && (top == 0) && block->style()->marginTopCollapse() != MSEPARATE;
@@ -383,7 +383,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
     bool hasAutoHeight = style()->height().isAuto();
     if (style()->height().isPercent() && !style()->htmlHacks()) {
         hasAutoHeight = true;
-        for (RenderBlock* cb = containingBlock(); !cb->isCanvas(); cb = cb->containingBlock()) {
+        for (RenderBlock* cb = containingBlock(); !cb->isRenderView(); cb = cb->containingBlock()) {
             if (cb->style()->height().isFixed() || cb->isTableCell())
                 hasAutoHeight = false;
         }
@@ -552,10 +552,10 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (checkForRepaint)
         didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
     if (!didFullRepaint && !repaintRect.isEmpty()) {
-        RenderCanvas* c = canvas();
-        if (c && c->view()) {
+        RenderView* v = view();
+        if (v && v->view()) {
             repaintRect.inflate(maximalOutlineSize(PaintPhaseOutline));
-            c->view()->addRepaintInfo(this, repaintRect); // We need to do a partial repaint of our content.
+            v->frameView()->addRepaintInfo(this, repaintRect); // We need to do a partial repaint of our content.
         }
     }
     setNeedsLayout(false);
@@ -1268,7 +1268,7 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
         if (isPrinting && !childrenInline() && child->style()->pageBreakBefore() == PBALWAYS &&
             inRootBlockContext() && (_ty + child->yPos()) > i.r.y() && 
             (_ty + child->yPos()) < i.r.bottom()) {
-            canvas()->setBestTruncatedAt(_ty + child->yPos(), this, true);
+            view()->setBestTruncatedAt(_ty + child->yPos(), this, true);
             return;
         }
         
@@ -1279,7 +1279,7 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
         if (isPrinting && !childrenInline() && child->style()->pageBreakAfter() == PBALWAYS && 
             inRootBlockContext() && (_ty + child->yPos() + child->height()) > i.r.y() && 
             (_ty + child->yPos() + child->height()) < i.r.bottom()) {
-            canvas()->setBestTruncatedAt(_ty + child->yPos() + child->height() + child->collapsedMarginBottom(), this, true);
+            view()->setBestTruncatedAt(_ty + child->yPos() + child->height() + child->collapsedMarginBottom(), this, true);
             return;
         }
     }
@@ -1434,7 +1434,7 @@ void RenderBlock::setSelectionState(SelectionState s)
         m_selectionState = s;
     
     RenderBlock* cb = containingBlock();
-    if (cb && !cb->isCanvas())
+    if (cb && !cb->isRenderView())
         cb->setSelectionState(s);
 }
 
@@ -1456,8 +1456,8 @@ bool RenderBlock::isSelectionRoot() const
         isFloatingOrPositioned() || isTableCell() || isInlineBlockOrInlineTable())
         return true;
     
-    if (canvas() && canvas()->selectionStart()) {
-        Node* startElement = canvas()->selectionStart()->element();
+    if (view() && view()->selectionStart()) {
+        Node* startElement = view()->selectionStart()->element();
         if (startElement && startElement->rootEditableElement() == element())
             return true;
     }
@@ -1516,7 +1516,7 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
 {
     GapRects result;
     
-    RenderObject* selStart = canvas()->selectionStart();
+    RenderObject* selStart = view()->selectionStart();
     // If there is no selection, don't try to get the selection's containing block. 
     // If we do, we'll crash.
     bool containsStart = (selStart && (selStart == this || selStart->containingBlock() == this));
@@ -2096,7 +2096,7 @@ RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) cons
 
     // Fixed positioned objects do not scroll and thus should not constitute
     // part of the lowest position.
-    if (m_positionedObjects && !isCanvas()) {
+    if (m_positionedObjects && !isRenderView()) {
         RenderObject* r;
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
@@ -2132,7 +2132,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         }
     }
 
-    if (m_positionedObjects && !isCanvas()) {
+    if (m_positionedObjects && !isRenderView()) {
         RenderObject* r;
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
@@ -2173,7 +2173,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
         }
     }
     
-    if (m_positionedObjects && !isCanvas()) {
+    if (m_positionedObjects && !isRenderView()) {
         RenderObject* r;
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
@@ -2225,7 +2225,7 @@ RenderBlock::clearFloats()
         m_floatingObjects->clear();
 
     // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
-    if (avoidsFloats() || isRoot() || isCanvas() || isFloatingOrPositioned() || isTableCell())
+    if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrPositioned() || isTableCell())
         return;
     
     // Attempt to locate a previous sibling with overhanging floats.  We skip any elements that are
@@ -2514,9 +2514,9 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, 
     
     // Hit test floats.
     if (hitTestAction == HitTestFloat && m_floatingObjects) {
-        if (isCanvas()) {
-            scrolledX += static_cast<RenderCanvas*>(this)->view()->contentsX();
-            scrolledY += static_cast<RenderCanvas*>(this)->view()->contentsY();
+        if (isRenderView()) {
+            scrolledX += static_cast<RenderView*>(this)->frameView()->contentsX();
+            scrolledY += static_cast<RenderView*>(this)->frameView()->contentsY();
         }
         
         FloatingObject* o;
@@ -3191,7 +3191,7 @@ void RenderBlock::calcBlocminMaxWidth()
         if (style()->htmlHacks() && child->style()->width().isPercent() &&
             !isTableCell() && child->isTable() && m_maxWidth < BLOCK_MAX_WIDTH) {
             RenderBlock* cb = containingBlock();
-            while (!cb->isCanvas() && !cb->isTableCell())
+            while (!cb->isRenderView() && !cb->isTableCell())
                 cb = cb->containingBlock();
             if (!cb->isTableCell())
                 m_maxWidth = BLOCK_MAX_WIDTH;
@@ -3433,7 +3433,7 @@ bool RenderBlock::inRootBlockContext() const
     if (isTableCell() || isFloatingOrPositioned() || hasOverflowClip())
         return false;
     
-    if (isRoot() || isCanvas())
+    if (isRoot() || isRenderView())
         return true;
     
     return containingBlock()->inRootBlockContext();

@@ -30,14 +30,14 @@ namespace WebCore {
 
 class FrameView;
 
-class RenderCanvas : public RenderBlock {
+class RenderView : public RenderBlock {
 public:
-    RenderCanvas(WebCore::Node* node, FrameView *view);
-    virtual ~RenderCanvas();
+    RenderView(WebCore::Node* node, FrameView *view);
+    virtual ~RenderView();
 
-    virtual const char *renderName() const { return "RenderCanvas"; }
+    virtual const char *renderName() const { return "RenderView"; }
 
-    virtual bool isCanvas() const { return true; }
+    virtual bool isRenderView() const { return true; }
 
     virtual void layout();
     virtual void calcWidth();
@@ -48,7 +48,7 @@ public:
     int docHeight() const;
     int docWidth() const;
 
-    FrameView *view() const { return m_view; }
+    FrameView* frameView() const { return m_frameView; }
 
     virtual bool hasOverhangingFloats() { return false; }
     
@@ -98,7 +98,7 @@ public:
 
 protected:
 
-    FrameView *m_view;
+    FrameView* m_frameView;
 
     RenderObject* m_selectionStart;
     RenderObject* m_selectionEnd;

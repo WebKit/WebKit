@@ -45,7 +45,7 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PlugInInfoStore.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "Screen.h"
 #include "SelectionController.h"
 #include "dom2_eventsimpl.h"

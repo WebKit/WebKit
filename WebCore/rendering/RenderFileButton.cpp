@@ -36,7 +36,7 @@ namespace WebCore {
 RenderFileButton::RenderFileButton(HTMLInputElement* element)
     : RenderFormElement(element)
 {
-    setWidget(new KWQFileButton(view()->frame()));
+    setWidget(new KWQFileButton(m_view->frame()));
 }
 
 void RenderFileButton::calcMinMaxWidth()

@@ -38,7 +38,7 @@ namespace WebCore
     class KCanvasResource;
     class KCanvasRenderingStyle;
     class CSSStyleDeclaration;
-    class RenderCanvas;
+    class RenderView;
     class SVGStyledElement : public SVGElement
     {
     public:
@@ -58,7 +58,7 @@ namespace WebCore
         
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
-        RenderCanvas *canvas() const;
+        RenderView *view() const;
         virtual void notifyAttributeChange() const;
         virtual void attributeChanged(Attribute *attr, bool preserveDecls = false);
 

@@ -31,7 +31,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "TextIterator.h"
 #include "dom2_eventsimpl.h"
 #include "htmlediting.h"

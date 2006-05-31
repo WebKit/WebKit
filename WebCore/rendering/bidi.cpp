@@ -29,7 +29,7 @@
 #include "FrameView.h"
 #include "InlineTextBox.h"
 #include "RenderArena.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 
@@ -1547,7 +1547,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 // that the block really needed a full layout, we missed our chance to repaint the layer
                 // before layout started.  Luckily the layer has cached the repaint rect for its original
                 // position and size, and so we can use that to make a repaint happen now.
-                RenderCanvas* c = canvas();
+                RenderView* c = view();
                 if (c && !c->printingMode())
                     c->repaintViewRectangle(m_layer->repaintRect());
             }

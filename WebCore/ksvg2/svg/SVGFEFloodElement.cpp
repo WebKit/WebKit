@@ -26,7 +26,7 @@
 
 #include "Attr.h"
 #include "DeprecatedStringList.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "SVGAnimatedString.h"
 #include "SVGDOMImplementation.h"
 #include "SVGHelper.h"
@@ -75,7 +75,7 @@ KCanvasFEFlood *SVGFEFloodElement::filterEffect() const
     const SVGRenderStyle *svgStyle = filterStyle->svgStyle();
     m_filterEffect->setFloodColor(svgStyle->floodColor());
     m_filterEffect->setFloodOpacity(svgStyle->floodOpacity());
-    filterStyle->deref(canvas()->renderArena());
+    filterStyle->deref(view()->renderArena());
 
     return m_filterEffect;
 }

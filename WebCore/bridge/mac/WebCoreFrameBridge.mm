@@ -52,7 +52,7 @@
 #import "ModifySelectionListLevel.h"
 #import "MoveSelectionCommand.h"
 #import "Page.h"
-#import "RenderCanvas.h"
+#import "RenderView.h"
 #import "RenderImage.h"
 #import "RenderPart.h"
 #import "RenderTreeAsText.h"
@@ -859,7 +859,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 - (void)_setupRootForPrinting:(BOOL)onOrOff
 {
     if (nowPrinting(self)) {
-        RenderCanvas *root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
+        RenderView *root = static_cast<RenderView *>(m_frame->document()->renderer());
         if (root) {
             root->setPrintingMode(onOrOff);
         }
@@ -924,7 +924,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     }
 
     if (!m_frame || !m_frame->document() || !m_frame->view()) return pages;
-    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
+    RenderView* root = static_cast<RenderView *>(m_frame->document()->renderer());
     if (!root) return pages;
     
     FrameView* view = m_frame->view();
@@ -1527,7 +1527,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (NSColor *)selectionColor
 {
-    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
+    RenderView* root = static_cast<RenderView *>(m_frame->document()->renderer());
     if (root) {
         RenderStyle *pseudoStyle = root->getPseudoStyle(RenderStyle::SELECTION);
         if (pseudoStyle && pseudoStyle->backgroundColor().isValid()) {
@@ -1549,7 +1549,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     AccessibilityObjectCache::enableAccessibility();
     if (!m_frame || !m_frame->document())
         return nil;
-    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
+    RenderView* root = static_cast<RenderView *>(m_frame->document()->renderer());
     if (!root)
         return nil;
     return m_frame->document()->getAccObjectCache()->get(root);

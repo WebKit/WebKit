@@ -29,7 +29,7 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 
 using namespace std;
 
@@ -51,7 +51,7 @@ RenderWidget::RenderWidget(Node* node)
     ASSERT(node);
     m_view = node->document()->view();
 
-    canvas()->addWidget(this);
+    view()->addWidget(this);
 
     // this is no real reference counting, its just there
     // to make sure that we're not deleted while we're recursed
@@ -67,7 +67,7 @@ void RenderWidget::destroy()
     // both RenderBox::destroy() and RenderObject::destroy().
     // Fix originally made for <rdar://problem/4228818>.
 
-    if (RenderCanvas *c = canvas())
+    if (RenderView *c = view())
         c->removeWidget(this);
 
     remove();
@@ -252,7 +252,7 @@ void RenderWidget::updateWidgetPosition()
     if (newBounds != oldBounds) {
         // The widget changed positions.  Update the frame geometry.
         if (checkForRepaintDuringLayout()) {
-            RenderCanvas* c = canvas();
+            RenderView* c = view();
             if (!c->printingMode()) {
                 c->repaintViewRectangle(oldBounds);
                 c->repaintViewRectangle(newBounds);

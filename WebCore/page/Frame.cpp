@@ -55,7 +55,7 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "Plugin.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "RenderPart.h"
 #include "RenderTheme.h"
 #include "SegmentedString.h"
@@ -2552,7 +2552,7 @@ RenderPart* Frame::ownerRenderer()
 
 IntRect Frame::selectionRect() const
 {
-    RenderCanvas *root = static_cast<RenderCanvas*>(renderer());
+    RenderView *root = static_cast<RenderView*>(renderer());
     if (!root)
         return IntRect();
 
@@ -2813,7 +2813,7 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
 #if __APPLE__
         // Regions may have changed as a result of the visibility/z-index of element changing.
         if (renderer()->document()->dashboardRegionsDirty())
-            renderer()->canvas()->view()->updateDashboardRegions();
+            renderer()->view()->frameView()->updateDashboardRegions();
 #endif
     } else
         LOG_ERROR("called Frame::paint with nil renderer");
@@ -2823,7 +2823,7 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
 
 void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
 {
-    RenderCanvas *root = static_cast<RenderCanvas*>(document()->renderer());
+    RenderView *root = static_cast<RenderView*>(document()->renderer());
     if (root) {
         // Use a context with painting disabled.
         GraphicsContext context(0);
@@ -3000,7 +3000,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
 {
     // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
-    RenderCanvas *root = static_cast<RenderCanvas*>(document()->renderer());
+    RenderView *root = static_cast<RenderView*>(document()->renderer());
     if (root) {
         // This magic is basically copied from khtmlview::print
         int pageW = (int)ceilf(minPageWidth);

@@ -53,7 +53,7 @@ class QScrollBar;
 namespace WebCore {
 
 class CachedObject;
-class RenderCanvas;
+class RenderView;
 class RenderFrameSet;
 class RenderObject;
 class RenderStyle;
@@ -260,7 +260,7 @@ public:
     // Get the enclosing stacking context for this layer.  A stacking context is a layer
     // that has a non-auto z-index.
     RenderLayer* stackingContext() const;
-    bool isStackingContext() const { return !hasAutoZIndex() || renderer()->isCanvas(); }
+    bool isStackingContext() const { return !hasAutoZIndex() || renderer()->isRenderView(); }
 
     void dirtyZOrderLists();
     void updateZOrderLists();

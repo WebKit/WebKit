@@ -41,7 +41,7 @@
 #import "HTMLInputElement.h"
 #import "HTMLMapElement.h"
 #import "HTMLNames.h"
-#import "RenderCanvas.h"
+#import "RenderView.h"
 #import "RenderImage.h"
 #import "RenderListMarker.h"
 #import "RenderTheme.h"
@@ -83,7 +83,7 @@ using namespace HTMLNames;
 // appropriate place (e.g. dealloc) to remove these non-retained references from
 // AppKit's id mapping tables.
 - (BOOL)accessibilityShouldUseUniqueId {
-    return m_renderer && m_renderer->isCanvas();
+    return m_renderer && m_renderer->isRenderView();
 }
 
 -(void)detach
@@ -320,7 +320,7 @@ using namespace HTMLNames;
             return NSAccessibilityButtonRole;
         return NSAccessibilityImageRole;
     }
-    if (m_renderer->isCanvas())
+    if (m_renderer->isRenderView())
         return @"AXWebArea";
     
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
@@ -460,7 +460,7 @@ using namespace HTMLNames;
     if (m_renderer->isListMarker())
         return static_cast<RenderListMarker*>(m_renderer)->text().getNSString();
 
-    if (m_renderer->isCanvas()) {
+    if (m_renderer->isRenderView()) {
         if (m_renderer->document()->frame())
             return nil;
         
@@ -561,8 +561,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
     
     // The Cocoa accessibility API wants the lower-left corner.
     NSPoint point = NSMakePoint(rect.x(), rect.bottom());
-    if (m_renderer && m_renderer->canvas() && m_renderer->canvas()->view()) {
-        NSView* view = m_renderer->canvas()->view()->getDocumentView();
+    if (m_renderer && m_renderer->view() && m_renderer->view()->view()) {
+        NSView* view = m_renderer->view()->frameView()->getDocumentView();
         point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
     }
     return [NSValue valueWithPoint: point];
@@ -597,7 +597,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
         return !static_cast<RenderBlock*>(m_renderer)->firstLineBox() && ![self mouseButtonListener];
 
-    return (!m_renderer->isListMarker() && !m_renderer->isCanvas() && 
+    return (!m_renderer->isListMarker() && !m_renderer->isRenderView() && 
             !m_renderer->isImage() &&
             !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
               m_renderer->element()->hasTagName(buttonTag)));
@@ -672,7 +672,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             nil];
     }
     
-    if (m_renderer && m_renderer->isCanvas())
+    if (m_renderer && m_renderer->isRenderView())
         return webAreaAttrs;
     if (m_areaElement || (m_renderer && !m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink()))
         return anchorAttrs;
@@ -768,7 +768,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
 - (FrameView *)topView
 {
-    return m_renderer->document()->topDocument()->renderer()->canvas()->view();
+    return m_renderer->document()->topDocument()->renderer()->view()->frameView();
 }
 
 - (id)accessibilityAttributeValue:(NSString *)attributeName
@@ -786,8 +786,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return [self roleDescription];
     
     if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
-        if (m_renderer->isCanvas() && m_renderer->canvas() && m_renderer->canvas()->view())
-            return m_renderer->canvas()->view()->getView();
+        if (m_renderer->isRenderView() && m_renderer->view() && m_renderer->view()->view())
+            return m_renderer->view()->frameView()->getView();
         return [self parentObjectUnignored];
     }
 
@@ -800,7 +800,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return m_children;
     }
 
-    if (m_renderer->isCanvas()) {
+    if (m_renderer->isRenderView()) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
             NSMutableArray *links = [NSMutableArray arrayWithCapacity: 32];
             HTMLCollection *coll = new HTMLCollection(m_renderer->document(), HTMLCollection::DOC_LINKS);
@@ -822,7 +822,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         if ([attributeName isEqualToString: @"AXLoaded"])
             return [NSNumber numberWithBool: (!m_renderer->document()->tokenizer())];
         if ([attributeName isEqualToString: @"AXLayoutCount"])
-            return [NSNumber numberWithInt: (static_cast<RenderCanvas*>(m_renderer)->view()->layoutCount())];
+            return [NSNumber numberWithInt: (static_cast<RenderView*>(m_renderer)->frameView()->layoutCount())];
     }
     
     if ([attributeName isEqualToString: @"AXURL"] && 
@@ -866,8 +866,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return [self position];
 
     if ([attributeName isEqualToString: NSAccessibilityWindowAttribute]) {
-        if (m_renderer && m_renderer->canvas() && m_renderer->canvas()->view())
-            return [m_renderer->canvas()->view()->getView() window];
+        if (m_renderer && m_renderer->view() && m_renderer->view()->view())
+            return [m_renderer->view()->frameView()->getView() window];
         return nil;
     }
     
@@ -878,7 +878,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         // Trouble is we need to know which document view to ask.
         SelectionController   sel = [self topView]->frame()->selection();
         if (sel.isNone()) {
-            sel = m_renderer->document()->renderer()->canvas()->view()->frame()->selection();
+            sel = m_renderer->document()->renderer()->view()->frameView()->frame()->selection();
             if (sel.isNone())
                 return nil;
         }

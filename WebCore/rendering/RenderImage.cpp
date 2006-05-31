@@ -34,7 +34,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 
 using namespace std;
 
@@ -203,7 +203,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     int leftPad = paddingLeft();
     int topPad = paddingTop();
 
-    if (isPrinting && !canvas()->printImages())
+    if (isPrinting && !view()->printImages())
         return;
 
     if (!m_cachedImage || image()->isNull() || errorOccurred()) {

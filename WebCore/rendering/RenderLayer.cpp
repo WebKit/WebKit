@@ -54,7 +54,7 @@
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "RenderInline.h"
 #include "RenderTheme.h"
 #include "SelectionController.h"
@@ -192,7 +192,7 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
 
     // FIXME: Child object could override visibility.
     if (checkForRepaint && (m_object->style()->visibility() == VISIBLE)) {
-        RenderCanvas *c = m_object->canvas();
+        RenderView *c = m_object->view();
         if (c && !c->printingMode()) {
             int x, y;
             m_object->absolutePosition(x, y);
@@ -223,9 +223,9 @@ void RenderLayer::updateLayerPosition()
     // Clear our cached clip rect information.
     clearClipRect();
 
-    // The canvas is sized to the docWidth/Height over in RenderCanvas::layout, so we
+    // The canvas is sized to the docWidth/Height over in RenderView::layout, so we
     // don't need to ever update our layer position here.
-    if (renderer()->isCanvas())
+    if (renderer()->isRenderView())
         return;
     
     int x = m_object->xPos();
@@ -316,7 +316,7 @@ void RenderLayer::updateLayerPosition()
 RenderLayer *RenderLayer::stackingContext() const
 {
     RenderLayer* curr = parent();
-    for ( ; curr && !curr->m_object->isCanvas() && !curr->m_object->isRoot() &&
+    for ( ; curr && !curr->m_object->isRenderView() && !curr->m_object->isRoot() &&
           curr->m_object->style()->hasAutoZIndex();
           curr = curr->parent());
     return curr;
@@ -326,7 +326,7 @@ RenderLayer*
 RenderLayer::enclosingPositionedAncestor() const
 {
     RenderLayer* curr = parent();
-    for ( ; curr && !curr->m_object->isCanvas() && !curr->m_object->isRoot() &&
+    for ( ; curr && !curr->m_object->isRenderView() && !curr->m_object->isRoot() &&
          !curr->m_object->isPositioned() && !curr->m_object->isRelPositioned();
          curr = curr->parent());
          
@@ -530,7 +530,7 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
         
     if (m_object->style()->position() == FixedPosition) {
         // Add in the offset of the view.  We can obtain this by calling
-        // absolutePosition() on the RenderCanvas.
+        // absolutePosition() on the RenderView.
         int xOff, yOff;
         m_object->absolutePosition(xOff, yOff, true);
         x += xOff;
@@ -593,15 +593,15 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(false, false);
     
-    RenderCanvas *canvas = renderer()->canvas();
-    if (canvas) {
+    RenderView* view = renderer()->view();
+    if (view) {
 #if __APPLE__
         // Update dashboard regions, scrolling may change the clip of a
         // particular region.
-        canvas->view()->updateDashboardRegions();
+        view->frameView()->updateDashboardRegions();
 #endif
 
-        m_object->canvas()->updateWidgetPositions();
+        m_object->view()->updateWidgetPositions();
     }
 
     // Just schedule a full repaint of our object.
@@ -1195,7 +1195,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
 static inline bool isSubframeCanvas(RenderObject* renderer)
 {
-    return renderer->isCanvas() && renderer->node()->document()->frame()->tree()->parent();
+    return renderer->isRenderView() && renderer->node()->document()->frame()->tree()->parent();
 }
 
 static inline IntRect frameVisibleRect(RenderObject* renderer)
@@ -1433,7 +1433,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
 bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const
 {
     // Always examine the canvas and the root.
-    if (renderer()->isCanvas() || renderer()->isRoot())
+    if (renderer()->isRenderView() || renderer()->isRoot())
         return true;
 
     // If we aren't an inline flow, and our layer bounds do intersect the damage rect, then we 

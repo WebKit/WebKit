@@ -58,7 +58,7 @@ class PlatformMouseEvent;
 class MouseEventWithHitTestResults;
 class Node;
 class RenderBox;
-class RenderCanvas;
+class RenderView;
 class RenderLineEdit;
 class RenderObject;
 class RenderPart;
@@ -83,7 +83,7 @@ class FrameView : public ScrollView {
     friend class HTMLTitleElement;
     friend class FrameMac;
     friend class RenderBox;
-    friend class RenderCanvas;
+    friend class RenderView;
     friend class RenderLineEdit;
     friend class RenderObject;
     friend class RenderPart;

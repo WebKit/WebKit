@@ -44,7 +44,6 @@ public:
     virtual void layout( );
 
     Widget* widget() const { return m_widget; }
-    FrameView* view() const { return m_view; }
 
     RenderArena* ref() { ++m_refCount; return renderArena(); }
     void deref(RenderArena*);

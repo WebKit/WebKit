@@ -44,7 +44,7 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -240,7 +240,7 @@ void FrameView::adjustViewSize()
     if (m_frame->document()) {
         Document *document = m_frame->document();
 
-        RenderCanvas* root = static_cast<RenderCanvas *>(document->renderer());
+        RenderView* root = static_cast<RenderView *>(document->renderer());
         if (!root)
             return;
         
@@ -327,7 +327,7 @@ void FrameView::layout()
     if (document->hasChangedChild())
         document->recalcStyle();
 
-    RenderCanvas* root = static_cast<RenderCanvas*>(document->renderer());
+    RenderView* root = static_cast<RenderView*>(document->renderer());
     if (!root) {
         // FIXME: Do we need to set m_size here?
         d->layoutSchedulingEnabled = true;

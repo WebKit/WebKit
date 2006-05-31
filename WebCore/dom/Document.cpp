@@ -59,7 +59,7 @@
 #include "ProcessingInstruction.h"
 #include "RegularExpression.h"
 #include "RenderArena.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "RenderWidget.h"
 #include "SegmentedString.h"
 #include "SelectionController.h"
@@ -918,7 +918,7 @@ void Document::attach()
         m_renderArena = new RenderArena();
     
     // Create the rendering tree
-    setRenderer(new (m_renderArena) RenderCanvas(this, m_view));
+    setRenderer(new (m_renderArena) RenderView(this, m_view));
 
     recalcStyle(Force);
 
@@ -1036,7 +1036,7 @@ void Document::updateSelection()
     if (!renderer())
         return;
     
-    RenderCanvas *canvas = static_cast<RenderCanvas*>(renderer());
+    RenderView *canvas = static_cast<RenderView*>(renderer());
     SelectionController s = frame()->selection();
     if (!s.isRange()) {
         canvas->clearSelection();
@@ -1047,7 +1047,7 @@ void Document::updateSelection()
         if (startPos.isNotNull() && endPos.isNotNull()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
-            static_cast<RenderCanvas*>(renderer())->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
+            static_cast<RenderView*>(renderer())->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
         }
     }
     
@@ -1637,7 +1637,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(bool readonly, bool act
     if (!renderer())
         return MouseEventWithHitTestResults(event, 0, false);
 
-    assert(renderer()->isCanvas());
+    assert(renderer()->isRenderView());
     RenderObject::NodeInfo renderInfo(readonly, active, mouseMove);
     renderer()->layer()->hitTest(renderInfo, point);
 

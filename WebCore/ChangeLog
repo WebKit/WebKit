@@ -1,3 +1,178 @@
+2006-05-30  David Hyatt  <hyatt@apple.com>
+
+        Rename RenderCanvas to RenderView. Rename canvas(), isCanvas()
+        to view(), isView().  Rename the frame view accessor on the old canvas
+        from view() to frameView() (to avoid view()->view(), since that just looks
+        stupid). :)
+
+        Reviewed by andersca
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_window.cpp:
+        * bridge/mac/FrameMac.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge _setupRootForPrinting:]):
+        (-[WebCoreFrameBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+        (-[WebCoreFrameBridge selectionColor]):
+        (-[WebCoreFrameBridge accessibilityTree]):
+        * dom/Document.cpp:
+        (WebCore::Document::attach):
+        (WebCore::Document::updateSelection):
+        (WebCore::Document::prepareMouseEvent):
+        * editing/SelectionController.cpp:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        * ksvg2/svg/SVGClipPathElement.cpp:
+        (SVGClipPathElement::canvasResource):
+        * ksvg2/svg/SVGFEFloodElement.cpp:
+        (SVGFEFloodElement::filterEffect):
+        * ksvg2/svg/SVGGradientElement.cpp:
+        (SVGGradientElement::rebuildStops):
+        * ksvg2/svg/SVGHelper.cpp:
+        (SVGHelper::PercentageOfViewport):
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::getPointAtLength):
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentTranslate):
+        * ksvg2/svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::view):
+        (WebCore::SVGStyledElement::pushAttributeContext):
+        * ksvg2/svg/SVGStyledElement.h:
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityShouldUseUniqueId]):
+        (-[WebCoreAXObject role]):
+        (-[WebCoreAXObject value]):
+        (-[WebCoreAXObject position]):
+        (-[WebCoreAXObject accessibilityIsIgnored]):
+        (-[WebCoreAXObject accessibilityAttributeNames]):
+        (-[WebCoreAXObject topView]):
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionRect):
+        (WebCore::Frame::paint):
+        (WebCore::Frame::adjustPageHeight):
+        (WebCore::Frame::forceLayoutWithPageWidthRange):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::layout):
+        * page/FrameView.h:
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::shouldScaleColumns):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::setSelectionState):
+        (WebCore::RenderBlock::isSelectionRoot):
+        (WebCore::RenderBlock::fillInlineSelectionGaps):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::calcBlocminMaxWidth):
+        (WebCore::RenderBlock::inRootBlockContext):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        (WebCore::RenderBox::calcHeight):
+        (WebCore::RenderBox::calcPercentageHeight):
+        (WebCore::RenderBox::availableHeightUsing):
+        * rendering/RenderCanvas.cpp: Removed.
+        * rendering/RenderCanvas.h: Removed.
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode):
+        * rendering/RenderFileButton.cpp:
+        (WebCore::RenderFileButton::RenderFileButton):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::destroy):
+        (WebCore::RenderFlow::paintLines):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        (WebCore::RenderFrameSet::userResize):
+        (WebCore::RenderFrameSet::setResizing):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::stackingContext):
+        (WebCore::RenderLayer::enclosingPositionedAncestor):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::isSubframeCanvas):
+        (WebCore::RenderLayer::intersectsDamageRect):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isStackingContext):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::scroll):
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::repaint):
+        (WebCore::RenderObject::repaintRectangle):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::draggableNode):
+        (WebCore::RenderObject::selectionStartEnd):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::viewRect):
+        (WebCore::RenderObject::view):
+        (WebCore::RenderObject::container):
+        (WebCore::RenderObject::removeFromObjectLists):
+        (WebCore::RenderObject::scheduleRelayout):
+        (WebCore::RenderObject::imageChanged):
+        (WebCore::RenderObject::maximalOutlineSize):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderView):
+        * rendering/RenderTextArea.cpp:
+        (WebCore::RenderTextArea::RenderTextArea):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintCheckbox):
+        (WebCore::RenderThemeMac::paintRadio):
+        (WebCore::RenderThemeMac::paintButton):
+        * rendering/RenderTreeAsText.cpp:
+        (externalRepresentation):
+        * rendering/RenderView.cpp: Added.
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::~RenderView):
+        (WebCore::RenderView::calcHeight):
+        (WebCore::RenderView::calcWidth):
+        (WebCore::RenderView::calcMinMaxWidth):
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::absolutePosition):
+        (WebCore::RenderView::paint):
+        (WebCore::RenderView::paintBoxDecorations):
+        (WebCore::RenderView::repaintViewRectangle):
+        (WebCore::RenderView::getAbsoluteRepaintRect):
+        (WebCore::RenderView::computeAbsoluteRepaintRect):
+        (WebCore::RenderView::absoluteRects):
+        (WebCore::RenderView::selectionRect):
+        (WebCore::RenderView::setSelection):
+        (WebCore::RenderView::clearSelection):
+        (WebCore::RenderView::selectionStartEnd):
+        (WebCore::RenderView::updateWidgetPositions):
+        (WebCore::RenderView::addWidget):
+        (WebCore::RenderView::removeWidget):
+        (WebCore::RenderView::viewRect):
+        (WebCore::RenderView::docHeight):
+        (WebCore::RenderView::docWidth):
+        (WebCore::RenderView::setBestTruncatedAt):
+        * rendering/RenderView.h: Added.
+        (WebCore::RenderView::renderName):
+        (WebCore::RenderView::isRenderView):
+        (WebCore::RenderView::frameView):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::RenderWidget):
+        (WebCore::RenderWidget::destroy):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        * rendering/RenderWidget.h:
+        (WebCore::RenderWidget::widget):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2006-05-30  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.

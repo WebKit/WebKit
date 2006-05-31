@@ -30,7 +30,7 @@
 #include "InlineTextBox.h"
 #include "HTMLNames.h"
 #include "RenderArena.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "RenderInline.h"
 
 using namespace std;
@@ -192,7 +192,7 @@ void RenderFlow::destroy()
             // FIXME: The SelectionController should be responsible for this when it
             // is notified of DOM mutations.
             if (isSelectionBorder())
-                canvas()->clearSelection();
+                view()->clearSelection();
 
             // If line boxes are contained inside a root, that means we're an inline.
             // In that case, we need to remove all the line boxes so that the parent
@@ -384,7 +384,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
             // FIXME: This is a feeble effort to avoid splitting a line across two pages.
             // It is utterly inadequate, and this should not be done at paint time at all.
             // The whole way objects break across pages needs to be redone.
-            RenderCanvas* c = canvas();
+            RenderView* c = view();
             // Try to avoid splitting a line vertically, but only if it's less than the height
             // of the entire page.
             if (curr->root()->bottomOverflow() - curr->root()->topOverflow() <= c->printRect().height()) {

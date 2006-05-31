@@ -29,7 +29,7 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "ListMarkerBox.h"
-#include "RenderCanvas.h"
+#include "RenderView.h"
 #include "RenderListItem.h"
 
 using namespace std;
@@ -175,7 +175,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
             // This has been printed already we suppose.
             return;
         
-        RenderCanvas* c = canvas();
+        RenderView* c = view();
         if (box.y() + box.height() + paddingBottom() + borderBottom() >= c->printRect().bottom()) {
             if (box.y() < c->truncatedAt())
                 c->setBestTruncatedAt(box.y(), this);

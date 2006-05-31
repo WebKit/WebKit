@@ -54,7 +54,7 @@
 #import "PlatformWheelEvent.h"
 #import "Plugin.h"
 #import "RegularExpression.h"
-#import "RenderCanvas.h"
+#import "RenderView.h"
 #import "RenderImage.h"
 #import "RenderListItem.h"
 #import "RenderPart.h"

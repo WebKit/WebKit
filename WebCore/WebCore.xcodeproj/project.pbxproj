@@ -1425,8 +1425,8 @@
 		BCEA4864097D93020094C9E4 /* RenderBR.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4825097D93020094C9E4 /* RenderBR.h */; };
 		BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4826097D93020094C9E4 /* RenderButton.cpp */; };
 		BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4827097D93020094C9E4 /* RenderButton.h */; };
-		BCEA4867097D93020094C9E4 /* RenderCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4828097D93020094C9E4 /* RenderCanvas.cpp */; };
-		BCEA4868097D93020094C9E4 /* RenderCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4829097D93020094C9E4 /* RenderCanvas.h */; };
+		BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4828097D93020094C9E4 /* RenderView.cpp */; };
+		BCEA4868097D93020094C9E4 /* RenderView.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4829097D93020094C9E4 /* RenderView.h */; };
 		BCEA4869097D93020094C9E4 /* RenderHTMLCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA482A097D93020094C9E4 /* RenderHTMLCanvas.cpp */; };
 		BCEA486A097D93020094C9E4 /* RenderHTMLCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA482B097D93020094C9E4 /* RenderHTMLCanvas.h */; };
 		BCEA486B097D93020094C9E4 /* RenderContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA482C097D93020094C9E4 /* RenderContainer.cpp */; };
@@ -3093,8 +3093,8 @@
 		BCEA4825097D93020094C9E4 /* RenderBR.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderBR.h; sourceTree = "<group>"; };
 		BCEA4826097D93020094C9E4 /* RenderButton.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderButton.cpp; sourceTree = "<group>"; };
 		BCEA4827097D93020094C9E4 /* RenderButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderButton.h; sourceTree = "<group>"; };
-		BCEA4828097D93020094C9E4 /* RenderCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderCanvas.cpp; sourceTree = "<group>"; };
-		BCEA4829097D93020094C9E4 /* RenderCanvas.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderCanvas.h; sourceTree = "<group>"; };
+		BCEA4828097D93020094C9E4 /* RenderView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderView.cpp; sourceTree = "<group>"; };
+		BCEA4829097D93020094C9E4 /* RenderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderView.h; sourceTree = "<group>"; };
 		BCEA482A097D93020094C9E4 /* RenderHTMLCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderHTMLCanvas.cpp; sourceTree = "<group>"; };
 		BCEA482B097D93020094C9E4 /* RenderHTMLCanvas.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderHTMLCanvas.h; sourceTree = "<group>"; };
 		BCEA482C097D93020094C9E4 /* RenderContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderContainer.cpp; sourceTree = "<group>"; };
@@ -5078,8 +5078,8 @@
 				BCEA4825097D93020094C9E4 /* RenderBR.h */,
 				BCEA4826097D93020094C9E4 /* RenderButton.cpp */,
 				BCEA4827097D93020094C9E4 /* RenderButton.h */,
-				BCEA4828097D93020094C9E4 /* RenderCanvas.cpp */,
-				BCEA4829097D93020094C9E4 /* RenderCanvas.h */,
+				BCEA4828097D93020094C9E4 /* RenderView.cpp */,
+				BCEA4829097D93020094C9E4 /* RenderView.h */,
 				BCEA482C097D93020094C9E4 /* RenderContainer.cpp */,
 				BCEA482D097D93020094C9E4 /* RenderContainer.h */,
 				93B70EB009EEE5B5009D8468 /* RenderEmptyApplet.cpp */,
@@ -5658,7 +5658,7 @@
 				BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */,
 				BCEA4864097D93020094C9E4 /* RenderBR.h in Headers */,
 				BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */,
-				BCEA4868097D93020094C9E4 /* RenderCanvas.h in Headers */,
+				BCEA4868097D93020094C9E4 /* RenderView.h in Headers */,
 				BCEA486A097D93020094C9E4 /* RenderHTMLCanvas.h in Headers */,
 				BCEA486C097D93020094C9E4 /* RenderContainer.h in Headers */,
 				BCEA486E097D93020094C9E4 /* RenderFlexibleBox.h in Headers */,
@@ -6507,7 +6507,7 @@
 				BCEA4861097D93020094C9E4 /* RenderBox.cpp in Sources */,
 				BCEA4863097D93020094C9E4 /* RenderBR.cpp in Sources */,
 				BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */,
-				BCEA4867097D93020094C9E4 /* RenderCanvas.cpp in Sources */,
+				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
 				BCEA4869097D93020094C9E4 /* RenderHTMLCanvas.cpp in Sources */,
 				BCEA486B097D93020094C9E4 /* RenderContainer.cpp in Sources */,
 				BCEA486D097D93020094C9E4 /* RenderFlexibleBox.cpp in Sources */,

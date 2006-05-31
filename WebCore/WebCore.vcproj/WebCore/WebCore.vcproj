@@ -2879,11 +2879,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderCanvas.cpp"
+				RelativePath="..\..\rendering\RenderView.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderCanvas.h"
+				RelativePath="..\..\rendering\RenderView.h"
 				>
 			</File>
 			<File

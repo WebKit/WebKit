@@ -40,7 +40,7 @@
 #import "KRenderingStrokePainter.h"
 #import "Logging.h"
 #import "QuartzSupport.h"
-#import "RenderCanvas.h"
+#import "RenderView.h"
 #import <Cocoa/Cocoa.h>
 
 namespace WebCore {
