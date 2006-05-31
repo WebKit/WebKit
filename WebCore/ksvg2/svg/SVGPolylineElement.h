@@ -31,7 +31,7 @@ namespace WebCore
     class SVGPolylineElement :  public SVGPolyElement
     {
     public:
-        SVGPolylineElement(const QualifiedName& tagName, Document *doc);
+        SVGPolylineElement(const QualifiedName&, Document*);
         virtual ~SVGPolylineElement();
 
         virtual KCanvasPath* toPathData() const;

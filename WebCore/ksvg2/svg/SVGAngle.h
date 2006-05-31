@@ -35,10 +35,18 @@ namespace WebCore
     public:
         SVGAngle(const SVGStyledElement *context);
         virtual ~SVGAngle();
+        
+        enum SVGAngleType {
+            SVG_ANGLETYPE_UNKNOWN           = 0,
+            SVG_ANGLETYPE_UNSPECIFIED       = 1,
+            SVG_ANGLETYPE_DEG               = 2,
+            SVG_ANGLETYPE_RAD               = 3,
+            SVG_ANGLETYPE_GRAD              = 4
+        };
 
         unsigned short unitType() const;
 
-        void setValue(float value);
+        void setValue(float);
         float value() const; 
 
         void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
@@ -57,8 +65,8 @@ namespace WebCore
         // Returns the angle that divides the shortest arc between the two angles.
         static double shortestArcBisector(double angle1, double angle2);
 
-        const SVGStyledElement *context() const;
-        void setContext(const SVGStyledElement *context);
+        const SVGStyledElement* context() const;
+        void setContext(const SVGStyledElement*);
 
     private:
         unsigned short m_unitType;

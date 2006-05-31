@@ -98,7 +98,7 @@ SVGElement *SVGTextElement::farthestViewportElement() const
     return SVGTransformable::farthestViewportElement(this);
 }
 
-SVGRect *SVGTextElement::getBBox() const
+FloatRect SVGTextElement::getBBox() const
 {
     return SVGTransformable::getBBox(this);
 }

@@ -32,7 +32,7 @@ namespace WebCore
     class SVGTRefElement : public SVGTextPositioningElement, public SVGURIReference
     {
     public:
-        SVGTRefElement(const QualifiedName& tagName, Document *doc);
+        SVGTRefElement(const QualifiedName&, Document*);
         virtual ~SVGTRefElement();
 
         virtual void attributeChanged(Attribute* attr, bool preserveDecls);

@@ -41,7 +41,7 @@ namespace WebCore
                                 public SVGURIReference
     {
     public:
-        SVGForeignObjectElement(const QualifiedName& tagName, Document *doc);
+        SVGForeignObjectElement(const QualifiedName&, Document*);
         virtual ~SVGForeignObjectElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }

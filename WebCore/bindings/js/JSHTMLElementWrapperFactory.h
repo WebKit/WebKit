@@ -29,7 +29,7 @@ namespace KJS {
 namespace WebCore {
 
     class HTMLElement;
-    KJS::DOMNode* createJSWrapper(KJS::ExecState*, PassRefPtr<HTMLElement>);
+    KJS::DOMNode* createJSHTMLWrapper(KJS::ExecState*, PassRefPtr<HTMLElement>);
 
 }
 

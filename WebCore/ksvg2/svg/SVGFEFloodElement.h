@@ -34,7 +34,7 @@ namespace WebCore
     class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
-        SVGFEFloodElement(const QualifiedName& tagName, Document *doc);
+        SVGFEFloodElement(const QualifiedName&, Document*);
         virtual ~SVGFEFloodElement();
 
         // 'SVGFEFloodElement' functions

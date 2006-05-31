@@ -35,7 +35,7 @@ namespace WebCore
     class SVGAnimateTransformElement : public SVGAnimationElement
     {
     public:
-        SVGAnimateTransformElement(const QualifiedName& tagName, Document *doc);
+        SVGAnimateTransformElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateTransformElement();
 
         virtual void parseMappedAttribute(MappedAttribute *attr);

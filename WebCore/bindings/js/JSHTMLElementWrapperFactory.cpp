@@ -175,7 +175,7 @@ static DOMNode* create##name##Wrapper(ExecState* exec, PassRefPtr<HTMLElement> e
 FOR_EACH_TAG(CREATE_WRAPPER_FUNCTION)
 #undef CREATE_WRAPPER_FUNCTION
 
-DOMNode* createJSWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
+DOMNode* createJSHTMLWrapper(ExecState* exec, PassRefPtr<HTMLElement> element)
 {
     static HashMap<WebCore::AtomicStringImpl*, CreateHTMLElementWrapperFunction> map;
     if (map.isEmpty()) {

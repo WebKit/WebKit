@@ -40,7 +40,7 @@ namespace WebCore {
                                   public CachedObjectClient
     {
     public:
-        SVGFEImageElement(const QualifiedName& tagName, Document *doc);
+        SVGFEImageElement(const QualifiedName&, Document*);
         virtual ~SVGFEImageElement();
 
         // 'SVGFEImageElement' functions

@@ -31,7 +31,7 @@ namespace WebCore
     class SVGFEFuncAElement : public SVGComponentTransferFunctionElement
     {
     public:
-        SVGFEFuncAElement(const QualifiedName& tagName, Document *doc);
+        SVGFEFuncAElement(const QualifiedName&, Document*);
         virtual ~SVGFEFuncAElement();
     };
 };

@@ -43,7 +43,7 @@ namespace WebCore
                                  public CachedObjectClient
     {
     public:
-        SVGCursorElement(const QualifiedName& tagName, Document *doc);
+        SVGCursorElement(const QualifiedName&, Document*);
         virtual ~SVGCursorElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }

@@ -30,6 +30,8 @@
 
 namespace WebCore
 {
+    typedef int ExceptionCode;
+
     class SVGMatrix : public Shared<SVGMatrix>
     { 
     public:
@@ -58,7 +60,7 @@ namespace WebCore
 
         void copy(const SVGMatrix*);
 
-        SVGMatrix* inverse();
+        SVGMatrix* inverse(ExceptionCode&);
 
         // Pre-multiplied operations, as per the specs.
         SVGMatrix* multiply(const SVGMatrix*);
@@ -66,7 +68,7 @@ namespace WebCore
         SVGMatrix* scale(double scaleFactor);
         SVGMatrix* scaleNonUniform(double scaleFactorX, double scaleFactorY);
         SVGMatrix* rotate(double angle);
-        SVGMatrix* rotateFromVector(double x, double y);
+        SVGMatrix* rotateFromVector(double x, double y, ExceptionCode&);
         SVGMatrix* flipX();
         SVGMatrix* flipY();
         SVGMatrix* skewX(double angle);

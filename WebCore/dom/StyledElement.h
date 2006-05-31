@@ -37,7 +37,7 @@ class MappedAttribute;
 class StyledElement : public Element
 {
 public:
-    StyledElement(const QualifiedName& tagName, Document *doc);
+    StyledElement(const QualifiedName&, Document*);
     virtual ~StyledElement();
 
     virtual bool isStyledElement() const { return true; }

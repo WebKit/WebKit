@@ -44,7 +44,7 @@ namespace WebCore
     class SVGStyledTransformableElement : public SVGStyledLocatableElement, public SVGTransformable
     {
     public:
-        SVGStyledTransformableElement(const QualifiedName& tagName, Document *doc);
+        SVGStyledTransformableElement(const QualifiedName&, Document*);
         virtual ~SVGStyledTransformableElement();
         
         virtual bool isStyledTransformable() const { return true; }
@@ -59,7 +59,7 @@ namespace WebCore
         virtual SVGElement *nearestViewportElement() const;
         virtual SVGElement *farthestViewportElement() const;
 
-        virtual SVGRect *getBBox() const;
+        virtual FloatRect getBBox() const;
         virtual SVGMatrix *getTransformToElement(SVGElement *element) const;
 
         virtual void parseMappedAttribute(MappedAttribute *attr);

@@ -36,11 +36,11 @@ class RenderTableCell;
 class RenderTableSection : public RenderContainer
 {
 public:
-    RenderTableSection(WebCore::Node* node);
+    RenderTableSection(Node*);
     ~RenderTableSection();
     virtual void destroy();
 
-    virtual void setStyle(RenderStyle *style);
+    virtual void setStyle(RenderStyle*);
 
     virtual const char *renderName() const { return "RenderTableSection"; }
 

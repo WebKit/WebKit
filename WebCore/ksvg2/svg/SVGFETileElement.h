@@ -34,7 +34,7 @@ namespace WebCore
     class SVGFETileElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
-        SVGFETileElement(const QualifiedName& tagName, Document *doc);
+        SVGFETileElement(const QualifiedName&, Document*);
         virtual ~SVGFETileElement();
 
         // 'SVGFETileElement' functions

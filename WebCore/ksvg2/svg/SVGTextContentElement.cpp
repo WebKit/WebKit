@@ -67,19 +67,19 @@ float SVGTextContentElement::getSubStringLength(unsigned long charnum, unsigned 
     return 0.;
 }
 
-SVGPoint *SVGTextContentElement::getStartPositionOfChar(unsigned long charnum) const
+FloatPoint SVGTextContentElement::getStartPositionOfChar(unsigned long charnum) const
 {
-    return 0;
+    return FloatPoint();
 }
 
-SVGPoint *SVGTextContentElement::getEndPositionOfChar(unsigned long charnum) const
+FloatPoint SVGTextContentElement::getEndPositionOfChar(unsigned long charnum) const
 {
-    return 0;
+    return FloatPoint();
 }
 
-SVGRect *SVGTextContentElement::getExtentOfChar(unsigned long charnum) const
+FloatRect SVGTextContentElement::getExtentOfChar(unsigned long charnum) const
 {
-    return 0;
+    return FloatRect();
 }
 
 float SVGTextContentElement::getRotationOfChar(unsigned long charnum) const
@@ -87,7 +87,7 @@ float SVGTextContentElement::getRotationOfChar(unsigned long charnum) const
     return 0.;
 }
 
-long SVGTextContentElement::getCharNumAtPosition(SVGPoint *point) const
+long SVGTextContentElement::getCharNumAtPosition(const FloatPoint& point) const
 {
     return 0;
 }
@@ -102,9 +102,12 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute *attr)
     //    x()->baseVal()->setValueAsString(value.impl());
     //else
     {
-        if(SVGTests::parseMappedAttribute(attr)) return;
-        if(SVGLangSpace::parseMappedAttribute(attr)) return;
-        if(SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
 
         SVGStyledElement::parseMappedAttribute(attr);
     }

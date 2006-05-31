@@ -31,7 +31,7 @@ namespace WebCore
     class SVGTSpanElement : public SVGTextPositioningElement
     {
     public:
-        SVGTSpanElement(const QualifiedName& tagName, Document *doc);
+        SVGTSpanElement(const QualifiedName&, Document*);
         virtual ~SVGTSpanElement();
                 
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }

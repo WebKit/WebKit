@@ -35,7 +35,7 @@ class Position;
 class RenderContainer : public RenderBox
 {
 public:
-    RenderContainer(WebCore::Node* node);
+    RenderContainer(Node*);
     virtual ~RenderContainer();
 
     RenderObject *firstChild() const { return m_first; }

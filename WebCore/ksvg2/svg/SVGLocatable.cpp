@@ -75,21 +75,16 @@ SVGElement *SVGLocatable::farthestViewportElement(const SVGStyledElement *e)
 
 // Spec:
 // http://www.w3.org/TR/2005/WD-SVGMobile12-20050413/svgudom.html#svg::SVGLocatable
-SVGRect *SVGLocatable::getBBox(const SVGStyledElement *e)
+FloatRect SVGLocatable::getBBox(const SVGStyledElement *e)
 {
-    SVGRect *rect = 0;
-
-    if(e && e->renderer())
-    {
-        FloatRect bboxRect = e->renderer()->relativeBBox(false);
-        rect = new SVGRect(0);
-        rect->setX(bboxRect.x());
-        rect->setY(bboxRect.y());
-        rect->setWidth(bboxRect.width() - 1);
-        rect->setHeight(bboxRect.height() - 1);
+    FloatRect bboxRect;
+    
+    if (e && e->renderer()) {
+        bboxRect = e->renderer()->relativeBBox(false);
+        bboxRect.setSize(bboxRect.size() - FloatSize(1, 1)); // FIXME: Why -1 here?
     }
 
-    return rect;
+    return bboxRect;
 }
 
 SVGMatrix *SVGLocatable::getCTM(const SVGElement *element)

@@ -37,13 +37,18 @@ namespace WebCore {
     class SVGElement : public StyledElement
     {
     public:
-        SVGElement(const QualifiedName& tagName, Document *doc);
+        SVGElement(const QualifiedName&, Document*);
         virtual ~SVGElement();
         virtual bool isSVGElement() const { return true; }
-        virtual bool isSupported(StringImpl *feature, StringImpl *version) const;
+        virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
+        
+        String id() const;
+        void setId(const String&);
+        String xmlbase() const;
+        void setXmlbase(const String&);
 
-        SVGSVGElement *ownerSVGElement() const;
-        SVGElement *viewportElement() const;
+        SVGSVGElement* ownerSVGElement() const;
+        SVGElement* viewportElement() const;
 
         // Helper methods that returns the attr value if attr is set, otherwise the default value.
         // It throws NO_MODIFICATION_ALLOWED_ERR if the element is read-only.
@@ -51,7 +56,7 @@ namespace WebCore {
         AtomicString tryGetAttributeNS(const String& namespaceURI, const String& localName, AtomicString defaultValue = AtomicString()) const;
 
         // Internal
-        virtual void parseMappedAttribute(MappedAttribute *attr);
+        virtual void parseMappedAttribute(MappedAttribute*);
 
         // To be implemented by any element which can establish new viewports...
         virtual DeprecatedString adjustViewportClipping() const { return DeprecatedString::null; }

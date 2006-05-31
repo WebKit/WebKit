@@ -28,18 +28,17 @@
 #include "Frame.h"
 #include "KSVGTimeScheduler.h"
 #include "kjs_proxy.h"
+#include "SVGSVGElement.h"
 
 namespace WebCore {
 
-SVGDocumentExtensions::SVGDocumentExtensions(Document *doc)
+SVGDocumentExtensions::SVGDocumentExtensions(Document* doc)
     : m_doc(doc)
-    , m_timeScheduler(new TimeScheduler(doc))
 {
 }
 
 SVGDocumentExtensions::~SVGDocumentExtensions()
 {
-    delete m_timeScheduler;
 }
 
 PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const String& functionName, const String& code, Node *node)
@@ -50,31 +49,39 @@ PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const St
     return 0;
 }
 
+void SVGDocumentExtensions::addTimeContainer(SVGSVGElement* element)
+{
+    m_timeContainers.add(element);
+}
+
+void SVGDocumentExtensions::removeTimeContainer(SVGSVGElement* element)
+{
+    ASSERT(m_timeContainers.contains(element));
+    m_timeContainers.remove(element);
+}
+
+void SVGDocumentExtensions::startAnimations()
+{
+    // FIXME: Eventually every "Time Container" will need a way to latch on to some global timer
+    // starting animations for a document will do this "latching"
+    
+    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.begin();
+    for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
+        (*itr)->timeScheduler()->startAnimations();
+}
+    
 void SVGDocumentExtensions::pauseAnimations()
 {
-    if (!m_timeScheduler->animationsPaused())
-        m_timeScheduler->toggleAnimations();
+    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.begin();
+    for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
+        (*itr)->pauseAnimations();
 }
 
 void SVGDocumentExtensions::unpauseAnimations()
 {
-    if (m_timeScheduler->animationsPaused())
-        m_timeScheduler->toggleAnimations();
-}
-
-bool SVGDocumentExtensions::animationsPaused() const
-{
-    return m_timeScheduler->animationsPaused();
-}
-
-float SVGDocumentExtensions::getCurrentTime() const
-{
-    return m_timeScheduler->elapsed();
-}
-
-void SVGDocumentExtensions::setCurrentTime(float /* seconds */)
-{
-    // TODO
+    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.begin();
+    for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
+        (*itr)->unpauseAnimations();
 }
 
 }

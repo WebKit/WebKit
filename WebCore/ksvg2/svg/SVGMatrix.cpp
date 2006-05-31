@@ -122,8 +122,10 @@ SVGMatrix* SVGMatrix::postMultiply(const SVGMatrix* secondMatrix)
     return this;
 }
 
-SVGMatrix* SVGMatrix::inverse()
+SVGMatrix* SVGMatrix::inverse(ExceptionCode& ec)
 {
+    if (!m_mat.isInvertible())
+        ec = SVG_MATRIX_NOT_INVERTABLE;
     m_mat = m_mat.invert();
     return this;
 }
@@ -231,8 +233,12 @@ SVGMatrix* SVGMatrix::rotate(double angle)
     return this;
 }
 
-SVGMatrix* SVGMatrix::rotateFromVector(double x, double y)
+SVGMatrix* SVGMatrix::rotateFromVector(double x, double y, ExceptionCode& ec)
 {
+    if (x == 0 || y == 0) {
+        ec = SVG_INVALID_VALUE_ERR;
+        return this;
+    }
     m_mat.rotate(SVGAngle::todeg(atan2(y, x)));
     return this;
 }

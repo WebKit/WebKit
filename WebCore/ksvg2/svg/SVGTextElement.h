@@ -33,7 +33,7 @@ namespace WebCore
                                public SVGTransformable
     {
     public:
-        SVGTextElement(const QualifiedName& tagName, Document *doc);
+        SVGTextElement(const QualifiedName&, Document*);
         virtual ~SVGTextElement();
 
         virtual void parseMappedAttribute(MappedAttribute *attr);
@@ -42,7 +42,7 @@ namespace WebCore
         virtual SVGElement *nearestViewportElement() const;
         virtual SVGElement *farthestViewportElement() const;
 
-        virtual SVGRect *getBBox() const;
+        virtual FloatRect getBBox() const;
         virtual SVGMatrix *getCTM() const;
         virtual SVGMatrix *getScreenCTM() const;
         virtual SVGMatrix *getTransformToElement(SVGElement *element) const { return 0; }

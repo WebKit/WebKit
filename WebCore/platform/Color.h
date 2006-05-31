@@ -34,7 +34,7 @@
 class NSColor;
 #endif
 
-typedef struct CGColor *CGColorRef;
+typedef struct CGColor* CGColorRef;
 
 #endif
 
@@ -43,7 +43,7 @@ namespace WebCore {
 class String;
 class Color;
 
-typedef unsigned int RGBA32;                      // RGBA quadruplet
+typedef unsigned RGBA32;        // RGBA quadruplet
 
 RGBA32 makeRGB(int r, int g, int b);
 RGBA32 makeRGBA(int r, int g, int b, int a);

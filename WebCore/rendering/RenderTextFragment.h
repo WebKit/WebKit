@@ -36,8 +36,8 @@ namespace WebCore {
 class RenderTextFragment : public RenderText
 {
 public:
-    RenderTextFragment(WebCore::Node*, WebCore::StringImpl*, int startOffset, int length, RenderObject* firstLetter = 0);
-    RenderTextFragment(WebCore::Node*, WebCore::StringImpl*);
+    RenderTextFragment(Node*, StringImpl*, int startOffset, int length, RenderObject* firstLetter = 0);
+    RenderTextFragment(Node*, StringImpl*);
     
     virtual bool isTextFragment() const;
     
@@ -47,13 +47,13 @@ public:
     unsigned end() const { return m_end; }
     RenderObject* firstLetter() const { return m_firstLetter; }
     
-    WebCore::StringImpl* contentString() const { return m_generatedContentStr.get(); }
-    virtual PassRefPtr<WebCore::StringImpl> originalString() const;
+    StringImpl* contentString() const { return m_generatedContentStr.get(); }
+    virtual PassRefPtr<StringImpl> originalString() const;
     
 private:
     unsigned m_start;
     unsigned m_end;
-    RefPtr<WebCore::StringImpl> m_generatedContentStr;
+    RefPtr<StringImpl> m_generatedContentStr;
     RenderObject* m_firstLetter;
 };
 

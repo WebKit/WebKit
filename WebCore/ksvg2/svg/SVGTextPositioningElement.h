@@ -34,7 +34,7 @@ namespace WebCore
     class SVGTextPositioningElement : public SVGTextContentElement
     {
     public:
-        SVGTextPositioningElement(const QualifiedName& tagName, Document *doc);
+        SVGTextPositioningElement(const QualifiedName&, Document*);
         virtual ~SVGTextPositioningElement();
 
         // 'SVGTextPositioningElement' functions

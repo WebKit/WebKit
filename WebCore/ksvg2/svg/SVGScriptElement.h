@@ -35,7 +35,7 @@ namespace WebCore
                                  public SVGExternalResourcesRequired
     {
     public:
-        SVGScriptElement(const QualifiedName& tagName, Document *doc);
+        SVGScriptElement(const QualifiedName&, Document*);
         virtual ~SVGScriptElement();
 
         // 'SVGScriptElement' functions

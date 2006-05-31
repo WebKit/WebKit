@@ -116,7 +116,7 @@ sub GetParentClassName
     my $dataNode = shift;
     return $dataNode->extendedAttributes->{"LegacyParent"} if $dataNode->extendedAttributes->{"LegacyParent"};
     return "KJS::DOMObject" if @{$dataNode->parents} eq 0;
-    return "JS" . $dataNode->parents(0);
+    return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
 }
 
 sub GetLegacyHeaderIncludes
@@ -145,17 +145,17 @@ sub GetLegacyHeaderIncludes
 
 sub AddIncludesForType
 {
-    my $type = shift;
+    my $type = $codeGenerator->StripModule(shift);
     
     # When we're finished with the one-file-per-class 
     # reorganization, we don't need these special cases.
     
     if ($type eq "MutationEvent" or
-      $type eq "KeyboardEvent" or
-      $type eq "MouseEvent" or
-      $type eq "Event" or
-      $type eq "UIEvent" or
-      $type eq "WheelEvent") {
+        $type eq "KeyboardEvent" or
+        $type eq "MouseEvent" or
+        $type eq "Event" or
+        $type eq "UIEvent" or
+        $type eq "WheelEvent") {
         $implIncludes{"dom2_eventsimpl.h"} = 1;
     } elsif ($type eq "NodeIterator" or
            $type eq "NodeFilter" or
@@ -188,7 +188,10 @@ sub GenerateHeader
     
     # FIXME: For SVG we need to support more than one parent
     # But no more than one parent can be "concrete"
-    if (@{$dataNode->parents} > 1) {
+    # Right now concrete vs. abstract parents are not respected
+    # we just use the first parent listed and ignore all others
+    # Until we fix that, we special case SVG not to die here.
+    if (@{$dataNode->parents} > 1 && !($interfaceName =~ /SVG/)) {
         die "A class can't have more than one parent";
     }
     
@@ -358,6 +361,8 @@ sub GenerateHeader
         push(@headerContent, "    $implClassName* impl() const { return m_impl.get(); }\n");
         push(@headerContent, "private:\n");
         push(@headerContent, "    RefPtr<$implClassName> m_impl;\n");
+    } elsif ($dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+        push(@headerContent, "    $implClassName* impl() const;\n");
     }
   
     # Index getter
@@ -376,8 +381,11 @@ sub GenerateHeader
     
     if (!$hasParent) {
         push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $implClassName*);\n");
-        push(@headerContent, "$implClassName* to${interfaceName}(KJS::JSValue*);\n\n");
     }
+    if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+        push(@headerContent, "$implClassName* to${interfaceName}(KJS::JSValue*);\n");
+    }
+    push(@headerContent, "\n");
     
     # Add prototype declaration -- code adopted from the KJS_DEFINE_PROTOTYPE and KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
     push(@headerContent, "class ${className}Proto : public KJS::JSObject {\n");
@@ -701,7 +709,7 @@ sub GenerateImplementation
         push(@implContent, "    case " . ucfirst($name) . "AttrNum:\n");
         push(@implContent, "        return $name(exec);\n");
       } elsif ($attribute->signature->type =~ /Constructor$/) {
-        my $constructorType = $attribute->signature->type;
+        my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
         $constructorType =~ s/Constructor$//;
 
         push(@implContent, "    case " . $name . "ConstructorAttrNum:\n");
@@ -864,7 +872,30 @@ sub GenerateImplementation
   }
     
   if (!$hasParent) {
-    push(@implContent, toFunctionsFor($className, $implClassName, $interfaceName));
+    my $implContent = << "EOF";
+KJS::JSValue* toJS(KJS::ExecState* exec, $implClassName* obj)
+{
+    return KJS::cacheDOMObject<$implClassName, $className>(exec, obj);
+}
+EOF
+    push(@implContent, $implContent);
+   }
+
+   if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+    my $implContent = << "EOF";
+$implClassName* to${interfaceName}(KJS::JSValue* val)
+{
+    return val->isObject(&${className}::info) ? static_cast<$className*>(val)->impl() : 0;
+}
+EOF
+    push(@implContent, $implContent);
+  }
+  
+  if ($dataNode->extendedAttributes->{"GenerateNativeConverter"} && $hasParent) {
+    push(@implContent, "\n$implClassName* ${className}::impl() const\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    return static_cast<$implClassName*>(${parentClassName}::impl());\n");
+    push(@implContent, "}\n");
   }
 
   push(@implContent, "\n}\n");
@@ -874,56 +905,48 @@ sub GenerateImplementation
 
 sub GetNativeType
 {
-  my $signature = shift;
-  
-  my $type = $signature->type;
-  
-  if ($type eq "boolean") {
-    return "bool";
-  } elsif ($type eq "unsigned long") {
-    if ($signature->extendedAttributes->{"IsIndex"}) {
-      # Special-case index arguments because we need to check that
-      # they aren't < 0.        
-      return "int";
-    } else {
-      return "unsigned";
-    } 
-  } elsif ($type eq "long") {
-    return "int";
-  } elsif ($type eq "unsigned short") {
-    return "unsigned short";
-  } elsif ($type eq "float") {
-    return "float";
-  } elsif ($type eq "AtomicString") {
-    return "AtomicString";
-  } elsif ($type eq "DOMString") {
-    return "String";
-  } elsif ($type eq "Node" or
-           $type eq "Element" or
-           $type eq "Attr" or
-           $type eq "DocumentType" or
-           $type eq "Range" or
-           $type eq "XPathNSResolver" or
-           $type eq "XPathResult") {
+    my $signature = shift;
+    
+    my $type = $codeGenerator->StripModule($signature->type);
+    
+    if ($type eq "boolean") {
+        return "bool";
+    } elsif ($type eq "unsigned long") {
+        if ($signature->extendedAttributes->{"IsIndex"}) {
+            # Special-case index arguments because we need to check that
+            # they aren't < 0.        
+            return "int";
+        } else {
+            return "unsigned";
+        } 
+    } elsif ($type eq "long") {
+        return "int";
+    } elsif ($type eq "unsigned short" or $type eq "float") {
+        return $type;
+    } elsif ($type eq "AtomicString") {
+        return "AtomicString";
+    } elsif ($type eq "DOMString") {
+        return "String";
+    } elsif ($type eq "NodeFilter") {
+        return "PassRefPtr<${type}>";
+    } elsif ($type eq "CompareHow") {
+        return "Range::CompareHow";
+    } elsif ($type eq "EventTarget") {
+        return "EventTargetNode*";
+    } elsif ($type eq "SVGRect") {
+        return "FloatRect";
+    } elsif ($type eq "SVGPoint") {
+        return "FloatPoint";
+    }
+    # Default, assume native type is a pointer with same type name as idl type
     return "${type}*";
-  } elsif ($type eq "NodeFilter") {
-      return "PassRefPtr<${type}>";
-  } elsif ($type eq "CompareHow") {
-    return "Range::CompareHow";
-  } elsif ($type eq "EventTarget") {
-    return "EventTargetNode*";
-  } elsif ($type eq "DOMWindow") {
-    return "DOMWindow*";
-  } else {
-    die "Don't know the native type of $type";
-  }
 }
 
 sub TypeCanFailConversion
 {
   my $signature = shift;
   
-  my $type = $signature->type;
+  my $type = $codeGenerator->StripModule($signature->type);
 
   if ($type eq "boolean") {
     return 0;
@@ -949,7 +972,10 @@ sub TypeCanFailConversion
            $type eq "DOMWindow" or
            $type eq "XPathEvaluator" or
            $type eq "XPathNSResolver" or
-           $type eq "XPathResult") {
+           $type eq "XPathResult" or
+           $type eq "SVGMatrix" or
+           $type eq "SVGRect" or
+           $type eq "SVGElement") {
       return 0;
   } else {
     die "Don't know whether a JS value can fail conversion to type $type."
@@ -958,65 +984,67 @@ sub TypeCanFailConversion
 
 sub JSValueToNative
 {
-  my $signature = shift;
-  my $value = shift;
-  my $okParam = shift;
-  my $maybeOkParam = $okParam ? ", ${okParam}" : "";
-  
-  my $type = $signature->type;
-
-  if ($type eq "boolean") {
-    my $conv = $signature->extendedAttributes->{"ConvertUndefinedToTrue"};
-    if (defined $conv) {
-    return "valueToBooleanTreatUndefinedAsTrue(exec, $value)";
-    } else {
-    return "$value->toBoolean(exec)";
+    my $signature = shift;
+    my $value = shift;
+    my $okParam = shift;
+    my $maybeOkParam = $okParam ? ", ${okParam}" : "";
+    
+    my $type = $codeGenerator->StripModule($signature->type);
+    
+    if ($type eq "boolean") {
+        my $conv = $signature->extendedAttributes->{"ConvertUndefinedToTrue"};
+        if (defined $conv) {
+            return "valueToBooleanTreatUndefinedAsTrue(exec, $value)";
+        } else {
+            return "$value->toBoolean(exec)";
+        }
+    } elsif ($type eq "unsigned long" or
+             $type eq "long" or
+             $type eq "unsigned short") {
+        return "$value->toInt32(exec)";
+    } elsif ($type eq "CompareHow") {
+        return "static_cast<Range::CompareHow>($value->toInt32(exec))";
+    } elsif ($type eq "float") {
+        return "$value->toNumber(exec)";
+    } elsif ($type eq "AtomicString") {
+        return "$value->toString(exec)";
+    } elsif ($type eq "DOMString") {
+        if ($signature->extendedAttributes->{"ConvertNullToNullString"}) {
+            return "valueToStringWithNullCheck(exec, $value)";
+        } else {
+            return "$value->toString(exec)";
+        }
+    } elsif ($type eq "Node") {
+        $implIncludes{"kjs_dom.h"} = 1;
+        return "toNode($value)";
+    } elsif ($type eq "EventTarget") {
+        $implIncludes{"kjs_dom.h"} = 1;
+        return "toEventTargetNode($value)";
+    }  elsif ($type eq "Attr") {
+        $implIncludes{"kjs_dom.h"} = 1;
+        return "toAttr($value${maybeOkParam})";
+    } elsif ($type eq "DocumentType") {
+        $implIncludes{"kjs_dom.h"} = 1;
+        return "toDocumentType($value)";
+    } elsif ($type eq "Element") {
+        $implIncludes{"kjs_dom.h"} = 1;
+        return "toElement($value)";
+    } elsif ($type eq "NodeFilter") {
+        $implIncludes{"kjs_traversal.h"} = 1;
+        return "toNodeFilter($value)";
+    } elsif ($type eq "DOMWindow") {
+        $implIncludes{"kjs_window.h"} = 1;
+        return "toDOMWindow($value)";
+    } elsif ($type eq "SVGRect") {
+        $implIncludes{"JSSVGRect.h"} = 1;
+        return "toFloatRect($value)";
+    } elsif ($type eq "SVGPoint") {
+        $implIncludes{"JSSVGPoint.h"} = 1;
+        return "toFloatPoint($value)";
     }
-  } elsif ($type eq "unsigned long" or $type eq "long") {
-    return "$value->toInt32(exec)";
-  } elsif ($type eq "unsigned short") {
-    return "$value->toInt32(exec)";
-  } elsif ($type eq "CompareHow") {
-    return "static_cast<Range::CompareHow>($value->toInt32(exec))";
-  } elsif ($type eq "float") {
-    return "$value->toNumber(exec)";
-  } elsif ($type eq "AtomicString") {
-    return "$value->toString(exec)";
-  } elsif ($type eq "DOMString") {
-    if ($signature->extendedAttributes->{"ConvertNullToNullString"}) {
-      return "valueToStringWithNullCheck(exec, $value)";
-    } else {
-      return "$value->toString(exec)";
-    }
-  } elsif ($type eq "Node") {
-    $implIncludes{"kjs_dom.h"} = 1;
-    return "toNode($value)";
-  } elsif ($type eq "EventTarget") {
-    $implIncludes{"kjs_dom.h"} = 1;
-    return "toEventTargetNode($value)";
-  }  elsif ($type eq "Attr") {
-    $implIncludes{"kjs_dom.h"} = 1;
-    return "toAttr($value${maybeOkParam})";
-  } elsif ($type eq "DocumentType") {
-      $implIncludes{"kjs_dom.h"} = 1;
-      return "toDocumentType($value)";
-  } elsif ($type eq "Element") {
-    $implIncludes{"kjs_dom.h"} = 1;
-    return "toElement($value)";
-  } elsif ($type eq "NodeFilter") {
-    $implIncludes{"kjs_traversal.h"} = 1;
-    return "toNodeFilter($value)";
-  } elsif ($type eq "DOMWindow") {
-    $implIncludes{"kjs_window.h"} = 1;
-    return "toDOMWindow($value)"; 
-  } elsif ($type eq "Range" or
-           $type eq "XPathNSResolver" or
-           $type eq "XPathResult") {
+    # Default, assume autogenerated type conversion routines
     $implIncludes{"JS$type.h"} = 1;
     return "to$type($value)";
-  } else {
-    die "Don't know how to convert a JS value of type $type."
-  }
 }
 
 sub NativeToJSValue
@@ -1024,7 +1052,7 @@ sub NativeToJSValue
     my $signature = shift;
     my $value = shift;
     
-    my $type = $signature->type;
+    my $type = $codeGenerator->StripModule($signature->type);
     
     if ($type eq "boolean") {
         return "jsBoolean($value)";
@@ -1123,12 +1151,17 @@ sub NativeToJSValue
         $implIncludes{"kjs_html.h"} = 1;
         $implIncludes{"HTMLCollection.h"} = 1;
         return "getHTMLCollection(exec, $value.get())";
-    } else {
+    } elsif ($type eq "SVGRect" or
+             $type eq "SVGPoint" or
+             $type eq "SVGNumber") {
         $implIncludes{"JS$type.h"} = 1;
-        return "toJS(exec, $value)";
+        return "getJS$type(exec, $value)";
     }
-    
-    die ("$value " . $signature->type);
+
+    # Default, include header with same name.
+    $implIncludes{"JS$type.h"} = 1;
+    $implIncludes{"$type.h"} = 1;
+    return "toJS(exec, $value)";
 }
 
 # Internal Helper
@@ -1395,26 +1428,6 @@ private:
 
 EOF
   
-    return $implContent;
-}
-
-sub toFunctionsFor
-{
-    my $className = shift;
-    my $implClassName = shift;
-    my $interfaceName = shift;
-
-my $implContent = << "EOF";
-KJS::JSValue* toJS(KJS::ExecState* exec, $implClassName* obj)
-{
-    return KJS::cacheDOMObject<$implClassName, $className>(exec, obj);
-}
-$implClassName* to${interfaceName}(KJS::JSValue* val)
-{
-    return val->isObject(&${className}::info) ? static_cast<$className*>(val)->impl() : 0;
-}
-EOF
-
     return $implContent;
 }
 

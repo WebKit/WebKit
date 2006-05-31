@@ -32,6 +32,8 @@ VPATH = \
     $(WebCore)/html \
     $(WebCore)/page \
     $(WebCore)/xpath \
+    $(WebCore)/ksvg2/svg \
+    $(WebCore)/ksvg2/bindings/js \
 #
 
 .PHONY : all
@@ -118,6 +120,17 @@ all : \
     JSNotation.h \
     JSProcessingInstruction.h \
     JSRange.h \
+    JSSVGAngle.h \
+    JSSVGAnimatedLength.h \
+    JSSVGColor.h \
+    JSSVGDocument.h \
+    JSSVGElement.h \
+    JSSVGLength.h \
+    JSSVGMatrix.h \
+    JSSVGPointTable.cpp \
+    JSSVGRectTable.cpp \
+    JSSVGSVGElement.h \
+    JSSVGTransform.h \
     JSText.h \
     JSUIEvent.h \
     JSXPathEvaluator.h \
@@ -132,6 +145,7 @@ all : \
     HTMLNames.cpp \
     UserAgentStyleSheets.h \
     XLinkNames.cpp \
+    XMLNames.cpp \
     XPathGrammar.cpp \
     kjs_css.lut.h \
     kjs_dom.lut.h \
@@ -232,7 +246,10 @@ SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgtags.in ksvg2/svg/svgatt
 XLinkNames.cpp : ksvg2/scripts/make_names.pl ksvg2/misc/xlinkattrs.in
 	$< --attrs $(WebCore)/ksvg2/misc/xlinkattrs.in \
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
-	touch $(WebCore)/WebCore+SVG/XLinkNamesWrapper.cpp
+            
+XMLNames.cpp : ksvg2/scripts/make_names.pl xml/xmlattrs.in
+	$< --attrs $(WebCore)/xml/xmlattrs.in \
+            --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" --output .
 
 # SVG CSS property names and value keywords
 
@@ -254,6 +271,9 @@ SVGNames.cpp :
 
 XLinkNames.cpp :
 	echo > XLinkNames.cpp
+
+XMLNames.cpp :
+	echo > XMLNames.cpp
 	
 ksvgcssproperties.h :
 	echo > ksvgcssproperties.h
@@ -274,4 +294,4 @@ JS_BINDINGS_SCRIPTS = \
 #
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS)
-	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES)" --generator JS --include dom --include html --include xpath --outputdir  . $<
+	perl -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES)" --generator JS --include dom --include html --include xpath --include ksvg2/svg --outputdir  . $<

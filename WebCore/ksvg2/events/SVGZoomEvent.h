@@ -19,17 +19,16 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 */
-
-#ifndef KDOM_SVGZoomEventImpl_H
-#define KDOM_SVGZoomEventImpl_H
+ 
+#ifndef SVGZoomEvent_H
+#define SVGZoomEvent_H
 #if SVG_SUPPORT
 
 #include "dom2_eventsimpl.h"
+#include "FloatRect.h"
 
-namespace WebCore
-{
-    class SVGRect;
-    class SVGPoint;
+namespace WebCore {
+
     class SVGZoomEvent : public UIEvent
     {
     public:
@@ -37,26 +36,26 @@ namespace WebCore
         virtual ~SVGZoomEvent();
 
         // 'SVGZoomEvent' functions
-        SVGRect *zoomRectScreen() const;
+        FloatRect zoomRectScreen() const;
 
         float previousScale() const;
-        void setPreviousScale(float scale);
+        void setPreviousScale(float);
 
-        SVGPoint *previousTranslate() const;
+        FloatPoint previousTranslate() const;
 
         float newScale() const;
-        void setNewScale(float scale);
+        void setNewScale(float);
 
-        SVGPoint *newTranslate() const;
+        FloatPoint newTranslate() const;
 
     private:
         float m_newScale;
         float m_previousScale;
         
-        RefPtr<SVGRect> m_zoomRectScreen;
+        FloatRect m_zoomRectScreen;
         
-        RefPtr<SVGPoint> m_newTranslate;
-        RefPtr<SVGPoint> m_previousTranslate;
+        FloatPoint m_newTranslate;
+        FloatPoint m_previousTranslate;
     };
 };
 

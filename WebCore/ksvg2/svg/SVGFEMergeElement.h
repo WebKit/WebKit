@@ -32,7 +32,7 @@ namespace WebCore
     class SVGFEMergeElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
-        SVGFEMergeElement(const QualifiedName& tagName, Document *doc);
+        SVGFEMergeElement(const QualifiedName&, Document*);
         virtual ~SVGFEMergeElement();
 
         virtual KCanvasFEMerge *filterEffect() const;

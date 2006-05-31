@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
 
     This file is part of the KDE project
 
@@ -20,46 +21,13 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "config.h"
-#if SVG_SUPPORT
-#include "RGBColor.h"
-#include "CSSPrimitiveValue.h"
 
-namespace WebCore {
-
-RGBColor::RGBColor(const RGBA32 &color)
-    : Shared<RGBColor>()
-    , m_color(color)
-{
-}
-
-RGBColor::RGBColor(const Color &color)
-    : Shared<RGBColor>()
-    , m_color(color)
-{
-}
-
-RGBColor::~RGBColor()
-{
-}
-
-CSSPrimitiveValue *RGBColor::red() const
-{
-    return new CSSPrimitiveValue(float(m_color.alpha() ? m_color.red() : 0), CSSPrimitiveValue::CSS_DIMENSION);
-}
-
-CSSPrimitiveValue *RGBColor::green() const
-{
-    return new CSSPrimitiveValue(float(m_color.alpha() ? m_color.green() : 0), CSSPrimitiveValue::CSS_DIMENSION);
-}
-
-CSSPrimitiveValue *RGBColor::blue() const
-{
-    return new CSSPrimitiveValue(float(m_color.alpha() ? m_color.blue() : 0), CSSPrimitiveValue::CSS_DIMENSION);
-}
-
-}
-
-// vim:ts=4:noet
-#endif // SVG_SUPPORT
-
+module svg {
+    interface SVGPoint { 
+        attribute float x
+            setter raises DOMException;
+        attribute float y
+            setter raises DOMException;
+        SVGPoint matrixTransform( in SVGMatrix matrix );
+    };
+};

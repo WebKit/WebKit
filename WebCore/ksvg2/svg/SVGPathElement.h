@@ -33,7 +33,6 @@
 
 namespace WebCore
 {
-    class SVGPoint;
     class SVGPathSeg;
     class SVGPathSegArcAbs;
     class SVGPathSegArcRel;
@@ -63,14 +62,14 @@ namespace WebCore
                                public SVGPathParser
     {
     public:
-        SVGPathElement(const QualifiedName& tagName, Document *doc);
+        SVGPathElement(const QualifiedName&, Document*);
         virtual ~SVGPathElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         SVGAnimatedNumber *pathLength() const;
         double getTotalLength();
-        SVGPoint *getPointAtLength(double distance);
+        FloatPoint getPointAtLength(double distance);
         unsigned long getPathSegAtLength(double distance);
 
         SVGPathSegClosePath *createSVGPathSegClosePath();

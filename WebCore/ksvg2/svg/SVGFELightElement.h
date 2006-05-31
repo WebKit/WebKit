@@ -35,7 +35,7 @@ namespace WebCore
     class SVGFELightElement : public SVGElement
     {
     public:
-        SVGFELightElement(const QualifiedName& tagName, Document *doc);
+        SVGFELightElement(const QualifiedName&, Document*);
         virtual ~SVGFELightElement();
         
         // 'SVGComponentTransferFunctionElement' functions

@@ -33,7 +33,7 @@ namespace WebCore
                                public SVGLangSpace
     {
     public:
-        SVGDescElement(const QualifiedName& tagName, Document *doc);
+        SVGDescElement(const QualifiedName&, Document*);
         virtual ~SVGDescElement();
 
         StringImpl *description() const;

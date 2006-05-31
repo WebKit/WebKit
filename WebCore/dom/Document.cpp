@@ -1212,7 +1212,7 @@ void Document::implicitClose()
     // SVGLoad event, but we don't implement those yet.  This is close enough
     // for now.  In some cases we should have fired earlier.
     if (svgExtensions())
-        accessSVGExtensions()->timeScheduler()->startAnimations();
+        accessSVGExtensions()->startAnimations();
 #endif
 }
 

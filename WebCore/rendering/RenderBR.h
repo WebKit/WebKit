@@ -37,7 +37,7 @@ namespace WebCore {
 class RenderBR : public RenderText
 {
 public:
-    RenderBR(WebCore::Node* node);
+    RenderBR(Node*);
     virtual ~RenderBR();
 
     virtual const char *renderName() const { return "RenderBR"; }

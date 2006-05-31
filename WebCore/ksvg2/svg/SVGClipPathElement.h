@@ -40,7 +40,7 @@ namespace WebCore
                                    public SVGExternalResourcesRequired
     {
     public:
-        SVGClipPathElement(const QualifiedName& tagName, Document *doc);
+        SVGClipPathElement(const QualifiedName&, Document*);
         virtual ~SVGClipPathElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }

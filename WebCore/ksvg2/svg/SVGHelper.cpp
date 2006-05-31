@@ -34,51 +34,45 @@
 #include "ksvg.h"
 #include <math.h>
 
-using namespace WebCore;
 using namespace std;
 
-float SVGHelper::PercentageOfViewport(float value, const SVGElement *viewportElement, LengthMode mode)
+namespace WebCore {
+
+float SVGHelper::PercentageOfViewport(float value, const SVGElement* viewportElement, LengthMode mode)
 {
     float width = 0, height = 0;
-    if(!viewportElement)
+    if (!viewportElement)
         return 0.0;
  
-    if(viewportElement->isSVG())
-    {
-        const SVGSVGElement *svg = static_cast<const SVGSVGElement *>(viewportElement);
-        if(svg->hasAttribute(SVGNames::viewBoxAttr))
-        {
+    if (viewportElement->isSVG()) {
+        const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(viewportElement);
+        if (svg->hasAttribute(SVGNames::viewBoxAttr)) {
             width = svg->viewBox()->baseVal()->width();
             height = svg->viewBox()->baseVal()->height();
-        }
-        else if(svg->width()->baseVal()->unitType() == SVG_LENGTHTYPE_PERCENTAGE ||
-                svg->height()->baseVal()->unitType() == SVG_LENGTHTYPE_PERCENTAGE)
-        {
+        } else if (svg->width()->baseVal()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE ||
+                svg->height()->baseVal()->unitType() == SVGLength::SVG_LENGTHTYPE_PERCENTAGE) {
             // TODO: Shouldn't w/h be multiplied with the percentage values?!
             // AFAIK, this assumes width & height == 100%, Rob??
             Document *doc = svg->document();
-            if(doc->documentElement() == svg)
-            {
+            if (doc->documentElement() == svg) {
                 // We have to ask the canvas for the full "canvas size"...
                 RenderView* view = static_cast<RenderView *>(doc->renderer());
-                if(view) {
+                if (view) {
                     width = view->frameView()->visibleWidth(); // TODO: recheck!
                     height = view->frameView()->visibleHeight(); // TODO: recheck!
                 }
             }
-        }
-        else
-        {
+        } else {
             width = svg->width()->baseVal()->value();
             height = svg->height()->baseVal()->value();
         }
     }
 
-    if(mode == LM_WIDTH)
+    if (mode == LM_WIDTH)
         return value * width;
-    else if(mode == LM_HEIGHT)
+    else if (mode == LM_HEIGHT)
         return value * height;
-    else if(mode == LM_OTHER)
+    else if (mode == LM_OTHER)
         return value * sqrt(pow(double(width), 2) + pow(double(height), 2)) / sqrt(2.0);
     
     return 0.0;
@@ -93,13 +87,14 @@ void SVGHelper::ParseSeperatedList(SVGStringList *list, const DeprecatedString &
     
     DeprecatedStringList::ConstIterator it = substrings.begin();
     DeprecatedStringList::ConstIterator end = substrings.end();
-    for(; it != end; ++it)
-    {
-        StringImpl *string = new StringImpl(*it);
+    for (; it != end; ++it) {
+        StringImpl* string = new StringImpl(*it);
         string->ref();
 
         list->appendItem(string);
     }
+}
+
 }
 
 // vim:ts=4:noet

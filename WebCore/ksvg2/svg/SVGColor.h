@@ -31,24 +31,32 @@
 namespace WebCore
 {
     class RGBColor;
-    class StringImpl;
-
+    typedef int ExceptionCode;
+    
     class SVGColor : public CSSValue
     {
     public:
         SVGColor();
-        SVGColor(StringImpl* rgbColor);
+        SVGColor(const String& rgbColor);
         SVGColor(unsigned short colorType);
         virtual ~SVGColor();
+        
+        enum SVGColorType {
+            SVG_COLORTYPE_UNKNOWN                   = 0,
+            SVG_COLORTYPE_RGBCOLOR                  = 1,
+            SVG_COLORTYPE_RGBCOLOR_ICCCOLOR         = 2,
+            SVG_COLORTYPE_CURRENTCOLOR              = 3
+        };
 
         // 'SVGColor' functions
         unsigned short colorType() const;
 
-        RGBColor* rgbColor() const;
+        unsigned rgbColor() const;
 
-        void setRGBColor(StringImpl* rgbColor);
-        void setRGBColorICCColor(StringImpl* rgbColor, StringImpl* iccColor);
-        void setColor(unsigned short colorType, StringImpl* rgbColor, StringImpl* iccColor);
+        void setRGBColor(const String& rgbColor) { ExceptionCode ignored = 0; setRGBColor(rgbColor, ignored); }
+        void setRGBColor(const String& rgbColor, ExceptionCode&);
+        void setRGBColorICCColor(const String& rgbColor, const String& iccColor, ExceptionCode&);
+        void setColor(unsigned short colorType, const String& rgbColor, const String& iccColor, ExceptionCode&);
 
         virtual String cssText() const;
 
@@ -56,7 +64,7 @@ namespace WebCore
         const Color& color() const;
 
     private:
-        Color m_qColor;
+        Color m_color;
         unsigned short m_colorType;
         String m_rgbColor;
     };

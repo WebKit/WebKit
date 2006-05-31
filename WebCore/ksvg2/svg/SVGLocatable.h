@@ -20,13 +20,12 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGLocatableImpl_H
-#define KSVG_SVGLocatableImpl_H
+#ifndef SVGLocatable_H
+#define SVGLocatable_H
 #if SVG_SUPPORT
 
-namespace WebCore
-{
-    class SVGRect;
+namespace WebCore {
+    class FloatRect;
     class SVGMatrix;
     class SVGElement;
     class SVGStyledElement;
@@ -37,20 +36,20 @@ namespace WebCore
         virtual ~SVGLocatable();
 
         // 'SVGLocatable' functions
-        virtual SVGElement *nearestViewportElement() const = 0;
-        virtual SVGElement *farthestViewportElement() const = 0;
+        virtual SVGElement* nearestViewportElement() const = 0;
+        virtual SVGElement* farthestViewportElement() const = 0;
 
-        virtual SVGRect *getBBox() const = 0;
-        virtual SVGMatrix *getCTM() const = 0;
-        virtual SVGMatrix *getScreenCTM() const = 0;
-        virtual SVGMatrix *getTransformToElement(SVGElement *element) const = 0;
+        virtual FloatRect getBBox() const = 0;
+        virtual SVGMatrix* getCTM() const = 0;
+        virtual SVGMatrix* getScreenCTM() const = 0;
+        virtual SVGMatrix* getTransformToElement(SVGElement*) const = 0;
 
     protected:
-        static SVGElement *nearestViewportElement(const SVGStyledElement *element);
-        static SVGElement *farthestViewportElement(const SVGStyledElement *element);
-        static SVGRect *getBBox(const SVGStyledElement *element);
-        static SVGMatrix *getCTM(const SVGElement *element);
-        static SVGMatrix *getScreenCTM(const SVGElement *element);
+        static SVGElement* nearestViewportElement(const SVGStyledElement*);
+        static SVGElement* farthestViewportElement(const SVGStyledElement*);
+        static FloatRect getBBox(const SVGStyledElement*);
+        static SVGMatrix* getCTM(const SVGElement*);
+        static SVGMatrix* getScreenCTM(const SVGElement*);
     };
 };
 

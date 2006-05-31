@@ -37,7 +37,7 @@ namespace WebCore
                                  public SVGFitToViewBox
     {
     public:
-        SVGSymbolElement(const QualifiedName& tagName, Document *doc);
+        SVGSymbolElement(const QualifiedName&, Document*);
         virtual ~SVGSymbolElement();
 
         virtual void parseMappedAttribute(MappedAttribute *attr);

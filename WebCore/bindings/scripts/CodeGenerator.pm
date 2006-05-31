@@ -57,6 +57,14 @@ sub new
   return $reference;
 }
 
+sub StripModule($)
+{
+	my $object = shift;
+	my $name = shift;
+	$name =~ s/[a-zA-Z0-9]*:://;
+	return $name;
+}
+
 sub ProcessDocument
 {
   my $object = shift;
@@ -97,10 +105,7 @@ sub FindTopBaseClass
   # It gets trickier for ie. the 'PlatformMouseEvent' interface, whose parent is
   # the 'UIEvent' interface, whose parent is the 'Event' interface. Return it.
   my $object = shift;
-
-  my $interface = shift;
-  $interface =~ s/[a-zA-Z0-9]*:://; # Strip module.
-
+  my $interface = StripModule(shift);
   my $topBaseClass = "";
   
   # Loop until we found the top most base class for 'interface'
@@ -135,8 +140,7 @@ sub FindTopBaseClass
 
           # Exception: For the DOM 'Node' is our topmost baseclass, not EventTarget.
           if(($parentsMax > 0) and ($parents[0] ne "events::EventTarget")) {
-            $interface = $parents[0];
-            $interface =~ s/[a-zA-Z0-9]*:://; # Strip module;
+            $interface = StripModule($parents[0]);
           } elsif(!$class->noDPtrFlag) { # Include 'module' ...
             $topBaseClass = $document->module . "::" . $class->name;
           }
@@ -155,10 +159,7 @@ sub ClassHasWriteableAttributes
 {
   # Determine wheter a given interface has any writeable attributes...
   my $object = shift;
-
-  my $interface = shift;
-  $interface =~ s/[a-zA-Z0-9]*:://; # Strip module.
-
+  my $interface = StripModule(shift);
   my $hasWriteableAttributes = 0;
   
   # Step #1: Find the IDL file associated with 'interface'
@@ -302,8 +303,7 @@ sub RecursiveInheritanceHelper
     my $class = $_;
 
     foreach(@{$class->parents}) {
-      my $cacheHandle = $_;
-      $cacheHandle =~ s/[a-zA-Z0-9]*:://; # Strip module.
+      my $cacheHandle = StripModule($_);
 
       if($cacheHandle eq $interface) {
         my $identifier = $document->module . "::" . $class->name;

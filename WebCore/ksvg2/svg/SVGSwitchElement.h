@@ -37,7 +37,7 @@ namespace WebCore
                                  public SVGExternalResourcesRequired
     {
     public:
-        SVGSwitchElement(const QualifiedName& tagName, Document *doc);
+        SVGSwitchElement(const QualifiedName&, Document*);
         virtual ~SVGSwitchElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }

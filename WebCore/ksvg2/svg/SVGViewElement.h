@@ -38,7 +38,7 @@ namespace WebCore
                                public SVGZoomAndPan
     {
     public:
-        SVGViewElement(const QualifiedName& tagName, Document *doc);
+        SVGViewElement(const QualifiedName&, Document*);
         virtual ~SVGViewElement();
 
         virtual void parseMappedAttribute(MappedAttribute *attr);

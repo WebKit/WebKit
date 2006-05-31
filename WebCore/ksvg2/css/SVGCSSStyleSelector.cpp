@@ -669,7 +669,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 if (!c)
                     return CSSStyleSelector::applyProperty(id, value);
 
-                if (c->colorType() == SVG_COLORTYPE_CURRENTCOLOR)
+                if (c->colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR)
                     col = style->color();
                 else
                     col = c->color();
@@ -706,7 +706,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 if (!c)
                     return CSSStyleSelector::applyProperty(id, value);
 
-                if (c->colorType() == SVG_COLORTYPE_CURRENTCOLOR)
+                if (c->colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR)
                     col = style->color();
                 else
                     col = c->color();

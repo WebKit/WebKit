@@ -31,7 +31,7 @@ namespace WebCore
     class SVGAnimateColorElement : public SVGAnimationElement
     {
     public:
-        SVGAnimateColorElement(const QualifiedName& tagName, Document *doc);
+        SVGAnimateColorElement(const QualifiedName&, Document*);
         virtual ~SVGAnimateColorElement();
 
         virtual void handleTimerEvent(double timePercentage);
@@ -52,7 +52,9 @@ namespace WebCore
         RefPtr<SVGColor> m_fromColor;
 
         int m_currentItem;
-        int m_redDiff, m_greenDiff, m_blueDiff;
+        int m_redDiff;
+        int m_greenDiff;
+        int m_blueDiff;
     };
 };
 

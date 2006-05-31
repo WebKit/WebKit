@@ -1,0 +1,44 @@
+/*
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+
+    This file is part of the KDE project
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+    Boston, MA 02111-1307, USA.
+*/
+
+module svg {
+    interface SVGAngle { 
+        // Angle Unit Types
+        const unsigned short SVG_ANGLETYPE_UNKNOWN     = 0;
+        const unsigned short SVG_ANGLETYPE_UNSPECIFIED = 1;
+        const unsigned short SVG_ANGLETYPE_DEG         = 2;
+        const unsigned short SVG_ANGLETYPE_RAD         = 3;
+        const unsigned short SVG_ANGLETYPE_GRAD        = 4;
+        
+        readonly attribute unsigned short unitType;
+                 attribute float          value
+                        setter rasises DOMException;
+                 attribute float          valueInSpecifiedUnits
+                        setter rasises DOMException;
+                 attribute core::DOMString      valueAsString
+                        setter rasises DOMException;
+        
+        void newValueSpecifiedUnits( in unsigned short unitType, in float valueInSpecifiedUnits );
+        void convertToSpecifiedUnits( in unsigned short unitType );
+    };
+};

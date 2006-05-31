@@ -24,24 +24,27 @@
 #if SVG_SUPPORT
 #include "SVGElement.h"
 
+#include "Attr.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "HTMLNames.h"
+#include "PlatformString.h"
 #include "SVGDOMImplementation.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
-#include "HTMLNames.h"
+#include "XMLNames.h"
 #include "ksvg.h"
-#include "PlatformString.h"
-#include "Attr.h"
-#include "SVGDocumentExtensions.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 using namespace EventNames;
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document *doc) : StyledElement(tagName, doc), m_closed(false)
+SVGElement::SVGElement(const QualifiedName& tagName, Document* doc)
+    : StyledElement(tagName, doc)
+    , m_closed(false)
 {
 }
 
@@ -49,21 +52,40 @@ SVGElement::~SVGElement()
 {
 }
 
-bool SVGElement::isSupported(StringImpl *feature, StringImpl *version) const
+bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
 {
-    if(SVGDOMImplementation::instance()->hasFeature(feature, version))
+    if (SVGDOMImplementation::instance()->hasFeature(feature, version))
         return true;
 
     return DOMImplementation::instance()->hasFeature(feature, version);
 }
 
-SVGSVGElement *SVGElement::ownerSVGElement() const
+String SVGElement::id() const
+{
+    return getAttribute(idAttr);
+}
+
+void SVGElement::setId(const String& value)
+{
+    setAttribute(idAttr, value);
+}
+
+String SVGElement::xmlbase() const
+{
+    return getAttribute(XMLNames::baseAttr);
+}
+
+void SVGElement::setXmlbase(const String& value)
+{
+    setAttribute(XMLNames::baseAttr, value);
+}
+
+SVGSVGElement* SVGElement::ownerSVGElement() const
 {
     Node *n = parentNode();
-    while(n)
-    {
-        if(n->nodeType() == ELEMENT_NODE && n->hasTagName(SVGNames::svgTag))
-            return static_cast<SVGSVGElement *>(n);
+    while(n) {
+        if (n->nodeType() == ELEMENT_NODE && n->hasTagName(SVGNames::svgTag))
+            return static_cast<SVGSVGElement*>(n);
 
         n = n->parentNode();
     }
@@ -71,13 +93,13 @@ SVGSVGElement *SVGElement::ownerSVGElement() const
     return 0;
 }
 
-SVGElement *SVGElement::viewportElement() const
+SVGElement* SVGElement::viewportElement() const
 {
     Node *n = parentNode();
     while (n) {
         if (n->isElementNode() &&
             (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag)))
-            return static_cast<SVGElement *>(n);
+            return static_cast<SVGElement*>(n);
 
         n = n->parentNode();
     }
@@ -87,7 +109,7 @@ SVGElement *SVGElement::viewportElement() const
 
 AtomicString SVGElement::tryGetAttribute(const String& name, AtomicString defaultVal) const
 {
-    if(hasAttribute(name))
+    if (hasAttribute(name))
         return getAttribute(name);
 
     return defaultVal;
@@ -95,7 +117,7 @@ AtomicString SVGElement::tryGetAttribute(const String& name, AtomicString defaul
 
 AtomicString SVGElement::tryGetAttributeNS(const String& namespaceURI, const String& localName, AtomicString defaultVal) const
 {
-    if(hasAttributeNS(namespaceURI, localName))
+    if (hasAttributeNS(namespaceURI, localName))
         return getAttributeNS(namespaceURI, localName);
 
     return defaultVal;
@@ -133,7 +155,7 @@ void SVGElement::parseMappedAttribute(MappedAttribute *attr)
 bool SVGElement::childShouldCreateRenderer(WebCore::Node *child) const
 {
     if (child->isSVGElement())
-        return static_cast<SVGElement *>(child)->isValid();
+        return static_cast<SVGElement*>(child)->isValid();
     return false;
 }
 

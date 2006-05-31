@@ -36,7 +36,7 @@ namespace WebCore {
 class RenderInline : public RenderFlow
 {
 public:
-    RenderInline(WebCore::Node* node);
+    RenderInline(Node*);
     virtual ~RenderInline();
 
     virtual const char *renderName() const;
@@ -53,7 +53,7 @@ public:
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                    RenderObject* newChild, RenderFlow* oldCont);
     
-    virtual void setStyle(RenderStyle* _style);
+    virtual void setStyle(RenderStyle*);
 
     virtual void layout() {} // Do nothing for layout()
     

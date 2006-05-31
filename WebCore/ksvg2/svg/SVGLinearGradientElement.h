@@ -32,7 +32,7 @@ namespace WebCore
     class SVGLinearGradientElement : public SVGGradientElement
     {
     public:
-        SVGLinearGradientElement(const QualifiedName& tagName, Document *doc);
+        SVGLinearGradientElement(const QualifiedName&, Document*);
         virtual ~SVGLinearGradientElement();
 
         // 'SVGLinearGradientElement' functions

@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
 
     This file is part of the KDE project
 
@@ -20,36 +21,15 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KDOM_RGBColorImpl_H
-#define KDOM_RGBColorImpl_H
-#if SVG_SUPPORT
-
-#include "Shared.h"
-
-#include "Color.h"
-
-namespace WebCore
-{
-    class String;
-    class CSSPrimitiveValue;
-    class RGBColor : public Shared<RGBColor>
-    {
-    public:
-        RGBColor(const RGBA32 &color);
-        RGBColor(const Color &color);
-        virtual ~RGBColor();
-
-        // 'RGBColor' functions
-        CSSPrimitiveValue *red() const;
-        CSSPrimitiveValue *green() const;
-        CSSPrimitiveValue *blue() const;
-
-    protected:
-        Color m_color;
+module svg {
+    interface SVGRect { 
+        attribute float x
+            setter raises DOMException;
+        attribute float y
+            setter raises DOMException;
+        attribute float width
+            setter raises DOMException;
+        attribute float height
+            setter raises DOMException;
     };
 };
-
-#endif // SVG_SUPPORT
-#endif
-
-// vim:ts=4:noet

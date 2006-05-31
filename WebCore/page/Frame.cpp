@@ -81,6 +81,7 @@
 #if SVG_SUPPORT
 #include "SVGNames.h"
 #include "XLinkNames.h"
+#include "XMLNames.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGDOMImplementation.h"
 #endif
@@ -153,6 +154,7 @@ Frame::Frame(Page* page, RenderPart* ownerRenderer)
 #if SVG_SUPPORT
     SVGNames::init();
     XLinkNames::init();
+    XMLNames::init();
 #endif
 
     // FIXME: Frames were originally created with a refcount of 1, leave this
@@ -2847,13 +2849,13 @@ PausedTimeouts *Frame::pauseTimeouts()
 #endif
 
     if (d->m_doc && d->m_jscript) {
-        if (Window *w = Window::retrieveWindow(this))
+        if (Window* w = Window::retrieveWindow(this))
             return w->pauseTimeouts();
     }
     return 0;
 }
 
-void Frame::resumeTimeouts(PausedTimeouts *t)
+void Frame::resumeTimeouts(PausedTimeouts* t)
 {
 #if SVG_SUPPORT
     if (d->m_doc && d->m_doc->svgExtensions())
@@ -2861,7 +2863,7 @@ void Frame::resumeTimeouts(PausedTimeouts *t)
 #endif
 
     if (d->m_doc && d->m_jscript && d->m_bJScriptEnabled) {
-        if (Window *w = Window::retrieveWindow(this))
+        if (Window* w = Window::retrieveWindow(this))
             w->resumeTimeouts(t);
     }
 }

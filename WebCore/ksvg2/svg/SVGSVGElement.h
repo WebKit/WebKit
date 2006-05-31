@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGSVGElementImpl_H
-#define KSVG_SVGSVGElementImpl_H
+#ifndef SVGSVGElement_H
+#define SVGSVGElement_H
 #if SVG_SUPPORT
 
 #include "SVGTests.h"
@@ -34,14 +34,7 @@
 namespace WebCore
 {
     class DocumentPtr;
-};
-
-namespace WebCore
-{
-    class SVGRect;
     class SVGAngle;
-    class SVGPoint;
-    class SVGNumber;
     class SVGLength;
     class SVGMatrix;
     class SVGTransform;
@@ -55,7 +48,7 @@ namespace WebCore
                               public SVGZoomAndPan
     {
     public:
-        SVGSVGElement(const QualifiedName& tagName, Document *doc);
+        SVGSVGElement(const QualifiedName&, Document*);
         virtual ~SVGSVGElement();
 
         virtual bool isSVG() const { return true; }
@@ -63,10 +56,10 @@ namespace WebCore
         virtual bool isValid() const { return SVGTests::isValid(); }
 
         // 'SVGSVGElement' functions
-        SVGAnimatedLength *x() const;
-        SVGAnimatedLength *y() const;
-        SVGAnimatedLength *width() const;
-        SVGAnimatedLength *height() const;
+        SVGAnimatedLength* x() const;
+        SVGAnimatedLength* y() const;
+        SVGAnimatedLength* width() const;
+        SVGAnimatedLength* height() const;
 
         AtomicString contentScriptType() const;
         void setContentScriptType(const AtomicString& type);
@@ -74,7 +67,7 @@ namespace WebCore
         AtomicString contentStyleType() const;
         void setContentStyleType(const AtomicString& type);
 
-        SVGRect *viewport() const;
+        FloatRect viewport() const;
 
         float pixelUnitToMillimeterX() const;
         float pixelUnitToMillimeterY() const;
@@ -89,27 +82,36 @@ namespace WebCore
         float currentScale() const;
         void setCurrentScale(float scale);
 
-        SVGPoint *currentTranslate() const;
+        FloatPoint currentTranslate() const;
+        
+        TimeScheduler* timeScheduler() { return m_timeScheduler; }
+        
+        void pauseAnimations();
+        void unpauseAnimations();
+        bool animationsPaused() const;
+
+        float getCurrentTime() const;
+        void setCurrentTime(float seconds);
 
         unsigned long suspendRedraw(unsigned long max_wait_milliseconds);
-        void unsuspendRedraw(unsigned long suspend_handle_id);
+        void unsuspendRedraw(unsigned long suspend_handle_id, ExceptionCode&);
         void unsuspendRedrawAll();
         void forceRedraw();
 
-        NodeList *getIntersectionList(SVGRect *rect, SVGElement *referenceElement);
-        NodeList *getEnclosureList(SVGRect *rect, SVGElement *referenceElement);
-        bool checkIntersection(SVGElement *element, SVGRect *rect);
-        bool checkEnclosure(SVGElement *element, SVGRect *rect);
+        NodeList* getIntersectionList(const FloatRect&, SVGElement *referenceElement);
+        NodeList* getEnclosureList(const FloatRect&, SVGElement *referenceElement);
+        bool checkIntersection(SVGElement*, const FloatRect&);
+        bool checkEnclosure(SVGElement*, const FloatRect&);
         void deselectAll();
 
-        static SVGNumber *createSVGNumber();
-        static SVGLength *createSVGLength();
-        static SVGAngle *createSVGAngle();
-        static SVGPoint *createSVGPoint(const IntPoint &p = IntPoint());
-        static SVGMatrix *createSVGMatrix();
-        static SVGRect *createSVGRect();
-        static SVGTransform *createSVGTransform();
-        static SVGTransform *createSVGTransformFromMatrix(SVGMatrix *matrix);
+        static float createSVGNumber();
+        static SVGLength* createSVGLength();
+        static SVGAngle* createSVGAngle();
+        static FloatPoint createSVGPoint(const IntPoint &p = IntPoint());
+        static SVGMatrix* createSVGMatrix();
+        static FloatRect createSVGRect();
+        static SVGTransform* createSVGTransform();
+        static SVGTransform* createSVGTransformFromMatrix(SVGMatrix *matrix);
 
         virtual void parseMappedAttribute(MappedAttribute *attr);
 
@@ -118,7 +120,7 @@ namespace WebCore
         virtual SVGMatrix *getScreenCTM() const;
 
         virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElement::rendererIsNeeded(style); }
-        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
+        virtual RenderObject* createRenderer(RenderArena *arena, RenderStyle *style);
 
         // 'virtual SVGZoomAndPan functions
         virtual void setZoomAndPan(unsigned short zoomAndPan);
@@ -132,6 +134,7 @@ namespace WebCore
         mutable RefPtr<SVGAnimatedLength> m_height;
 
         bool m_useCurrentView;
+        TimeScheduler* m_timeScheduler;
     };
 };
 

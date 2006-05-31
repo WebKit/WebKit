@@ -27,20 +27,19 @@
 #include "PlatformString.h"
 #include "Document.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGSVGElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGAnimateColorElement::SVGAnimateColorElement(const QualifiedName& tagName, Document *doc)
-: SVGAnimationElement(tagName, doc)
+    : SVGAnimationElement(tagName, doc)
+    , m_toColor(new SVGColor())
+    , m_fromColor(new SVGColor())
+    , m_currentItem(-1)
+    , m_redDiff(0)
+    , m_greenDiff(0)
+    , m_blueDiff(0)
 {
-    m_toColor = new SVGColor();
-    m_fromColor = new SVGColor();
-
-    m_redDiff = 0;
-    m_greenDiff = 0;
-    m_blueDiff = 0;
-
-    m_currentItem = -1;
 }
 
 SVGAnimateColorElement::~SVGAnimateColorElement()
@@ -50,11 +49,10 @@ SVGAnimateColorElement::~SVGAnimateColorElement()
 void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
 {
     // Start condition.
-    if(!m_connected)
-    {
+    if (!m_connected) {
         // Save initial color... (needed for fill="remove" or additve="sum")
         RefPtr<SVGColor> temp = new SVGColor();
-        temp->setRGBColor(targetAttribute().impl());
+        temp->setRGBColor(targetAttribute());
 
         m_initialColor = temp->color();
 
@@ -65,15 +63,15 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
             case FROM_TO_ANIMATION:
             {
                 String toColorString(m_to);
-                m_toColor->setRGBColor(toColorString.impl());
+                m_toColor->setRGBColor(toColorString);
     
                 String fromColorString;
-                if(!m_from.isEmpty()) // from-to animation
+                if (!m_from.isEmpty()) // from-to animation
                     fromColorString = m_from;
                 else // to animation
                     fromColorString = m_initialColor.name();
     
-                m_fromColor->setRGBColor(fromColorString.impl());    
+                m_fromColor->setRGBColor(fromColorString);    
 
                 // Calculate color differences, once.
                 Color qTo = m_toColor->color();
@@ -89,16 +87,16 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
             case FROM_BY_ANIMATION:
             {
                 String byColorString(m_by);
-                m_toColor->setRGBColor(byColorString.impl());
+                m_toColor->setRGBColor(byColorString);
 
                 String fromColorString;
             
-                if(!m_from.isEmpty()) // from-by animation
+                if (!m_from.isEmpty()) // from-by animation
                     fromColorString = m_from;
                 else // by animation
                     fromColorString = m_initialColor.name();
 
-                m_fromColor->setRGBColor(fromColorString.impl());
+                m_fromColor->setRGBColor(fromColorString);
 
                 Color qBy = m_toColor->color();
                 Color qFrom = m_fromColor->color();
@@ -111,7 +109,7 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
                 Color qTo = clampColor(r, g, b);
             
                 String toColorString(qTo.name());
-                m_toColor->setRGBColor(toColorString.impl());
+                m_toColor->setRGBColor(toColorString);
             
                 m_redDiff = qTo.red() - qFrom.red();
                 m_greenDiff = qTo.green() - qFrom.green();
@@ -128,38 +126,35 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
             }
         }
 
-        document()->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
+        ownerSVGElement()->timeScheduler()->connectIntervalTimer(this);
         m_connected = true;
 
         return;
     }
 
     // Calculations...
-    if(timePercentage >= 1.0)
+    if (timePercentage >= 1.0)
         timePercentage = 1.0;
 
     int r = 0, g = 0, b = 0;
-    if((m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) && !m_values)
+    if ((m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) && !m_values)
         calculateColor(timePercentage, r, g, b);
-    else if(m_values)
-    {
+    else if (m_values) {
         int itemByPercentage = calculateCurrentValueItem(timePercentage);
 
-        if(itemByPercentage == -1)
+        if (itemByPercentage == -1)
             return;
 
-        if(m_currentItem != itemByPercentage) // Item changed...
+        if (m_currentItem != itemByPercentage) // Item changed...
         {
             // Extract current 'from' / 'to' values
             String value1 = String(m_values->getItem(itemByPercentage));
             String value2 = String(m_values->getItem(itemByPercentage + 1));
 
             // Calculate r/g/b shifting values...
-            if(!value1.isEmpty() && !value2.isEmpty())
-            {
+            if (!value1.isEmpty() && !value2.isEmpty()) {
                 bool apply = false;
-                if(m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0)
-                {
+                if (m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) {
                     r = m_toColor->color().red();
                     g = m_toColor->color().green();
                     b = m_toColor->color().blue();
@@ -168,10 +163,10 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
                 }
 
                 String toColorString(value2);
-                m_toColor->setRGBColor(toColorString.impl());
+                m_toColor->setRGBColor(toColorString);
     
                 String fromColorString(value1);
-                m_fromColor->setRGBColor(fromColorString.impl());    
+                m_fromColor->setRGBColor(fromColorString);    
 
                 Color qTo = m_toColor->color();
                 Color qFrom = m_fromColor->color();
@@ -182,25 +177,25 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
 
                 m_currentItem = itemByPercentage;
 
-                if(!apply)
+                if (!apply)
                     return;
             }
         }
-        else if(m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0)
+        else if (m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0)
         {
             double relativeTime = calculateRelativeTimePercentage(timePercentage, m_currentItem);
             calculateColor(relativeTime, r, g, b);
         }
     }
     
-    if(!isFrozen() && timePercentage == 1.0)
+    if (!isFrozen() && timePercentage == 1.0)
     {
         r = m_initialColor.red();
         g = m_initialColor.green();
         b = m_initialColor.blue();
     }
 
-    if(isAccumulated() && repeations() != 0.0)
+    if (isAccumulated() && repeations() != 0.0)
     {
         r += m_lastColor.red();
         g += m_lastColor.green();
@@ -211,16 +206,14 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
     m_currentColor = clampColor(r, g, b);
     
     // End condition.
-    if(timePercentage == 1.0)
-    {
-        if((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount))
-        {
+    if (timePercentage == 1.0) {
+        if ((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount)) {
             m_lastColor = m_currentColor;
             m_repeations++;
             return;
         }
 
-        document()->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
+        ownerSVGElement()->timeScheduler()->disconnectIntervalTimer(this);
         m_connected = false;
 
         // Reset...
@@ -234,19 +227,19 @@ void SVGAnimateColorElement::handleTimerEvent(double timePercentage)
 
 Color SVGAnimateColorElement::clampColor(int r, int g, int b) const
 {
-    if(r > 255)
+    if (r > 255)
         r = 255;
-    else if(r < 0)
+    else if (r < 0)
         r = 0;
 
-    if(g > 255)
+    if (g > 255)
         g = 255;
-    else if(g < 0)
+    else if (g < 0)
         g = 0;
 
-    if(b > 255)
+    if (b > 255)
         b = 255;
-    else if(b < 0)
+    else if (b < 0)
         b = 0;
 
     return Color(r, g, b);
@@ -267,6 +260,8 @@ Color SVGAnimateColorElement::color() const
 Color SVGAnimateColorElement::initialColor() const
 {
     return m_initialColor;
+}
+
 }
 
 // vim:ts=4:noet

@@ -32,7 +32,7 @@ namespace WebCore
     class SVGRadialGradientElement : public SVGGradientElement
     {
     public:
-        SVGRadialGradientElement(const QualifiedName& tagName, Document *doc);
+        SVGRadialGradientElement(const QualifiedName&, Document*);
         virtual ~SVGRadialGradientElement();
 
         // 'SVGRadialGradientElement' functions

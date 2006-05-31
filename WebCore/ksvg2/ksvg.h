@@ -38,39 +38,7 @@ namespace WebCore
         SVG_INVALID_VALUE_ERR        = 2,
         SVG_MATRIX_NOT_INVERTABLE    = 3
     };
-
-    enum SVGLengthType
-    {
-        SVG_LENGTHTYPE_UNKNOWN        = 0,
-        SVG_LENGTHTYPE_NUMBER        = 1,
-        SVG_LENGTHTYPE_PERCENTAGE    = 2,
-        SVG_LENGTHTYPE_EMS            = 3,
-        SVG_LENGTHTYPE_EXS            = 4,
-        SVG_LENGTHTYPE_PX            = 5,
-        SVG_LENGTHTYPE_CM            = 6,
-        SVG_LENGTHTYPE_MM            = 7,
-        SVG_LENGTHTYPE_IN            = 8,
-        SVG_LENGTHTYPE_PT            = 9,
-        SVG_LENGTHTYPE_PC            = 10
-    };
-
-    enum SVGAngleType
-    {
-        SVG_ANGLETYPE_UNKNOWN        = 0,
-        SVG_ANGLETYPE_UNSPECIFIED    = 1,
-        SVG_ANGLETYPE_DEG            = 2,
-        SVG_ANGLETYPE_RAD            = 3,
-        SVG_ANGLETYPE_GRAD            = 4
-    };
-
-    enum SVGColorType
-    {
-        SVG_COLORTYPE_UNKNOWN                = 0,
-        SVG_COLORTYPE_RGBCOLOR                = 1,
-        SVG_COLORTYPE_RGBCOLOR_ICCCOLOR        = 2,
-        SVG_COLORTYPE_CURRENTCOLOR            = 3
-    };
-
+    
     enum SVGUnitTypes
     {
         SVG_UNIT_TYPE_UNKNOWN                = 0,
@@ -87,21 +55,20 @@ namespace WebCore
         RENDERING_INTENT_SATURATION                = 4,
         RENDERING_INTENT_ABSOLUTE_COLORIMETRIC    = 5
     };
+    
+    enum SVGTransformType {
+        SVG_TRANSFORM_UNKNOWN           = 0,
+        SVG_TRANSFORM_MATRIX            = 1,
+        SVG_TRANSFORM_TRANSLATE         = 2,
+        SVG_TRANSFORM_SCALE             = 3,
+        SVG_TRANSFORM_ROTATE            = 4,
+        SVG_TRANSFORM_SKEWX             = 5,
+        SVG_TRANSFORM_SKEWY             = 6
+    };
 
     enum SVGCSSRuleType
     {
         COLOR_PROFILE_RULE = 7
-    };
-
-    enum SVGTransformType
-    {
-        SVG_TRANSFORM_UNKNOWN        = 0,
-        SVG_TRANSFORM_MATRIX        = 1,
-        SVG_TRANSFORM_TRANSLATE        = 2,
-        SVG_TRANSFORM_SCALE            = 3,
-        SVG_TRANSFORM_ROTATE        = 4,
-        SVG_TRANSFORM_SKEWX            = 5,
-        SVG_TRANSFORM_SKEWY            = 6
     };
 
     enum SVGPreserveAspectRatioType

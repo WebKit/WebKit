@@ -38,7 +38,7 @@ namespace WebCore
                                  public SVGExternalResourcesRequired
     {
     public:
-        SVGCircleElement(const QualifiedName& tagName, Document *doc);
+        SVGCircleElement(const QualifiedName&, Document*);
         virtual ~SVGCircleElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }

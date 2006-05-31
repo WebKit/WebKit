@@ -28,7 +28,7 @@ namespace WebCore
     class SVGFEDistantLightElement : public SVGFELightElement
     { 
     public:
-        SVGFEDistantLightElement(const QualifiedName& tagName, Document *doc);
+        SVGFEDistantLightElement(const QualifiedName&, Document*);
         virtual ~SVGFEDistantLightElement();
         virtual KCLightSource *lightSource() const;
     };

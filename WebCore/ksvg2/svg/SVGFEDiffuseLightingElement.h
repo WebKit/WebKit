@@ -34,7 +34,7 @@ namespace WebCore {
     class SVGFEDiffuseLightingElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
-        SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document *doc);
+        SVGFEDiffuseLightingElement(const QualifiedName&, Document*);
         virtual ~SVGFEDiffuseLightingElement();
 
         // 'SVGFEDiffuseLightingElement' functions

@@ -37,7 +37,7 @@ namespace WebCore
                                public SVGExternalResourcesRequired
     {
     public:
-        SVGDefsElement(const QualifiedName& tagName, Document *doc);
+        SVGDefsElement(const QualifiedName&, Document*);
         virtual ~SVGDefsElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }

@@ -38,7 +38,6 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGMatrix.h"
 #include "SVGNumber.h"
-#include "SVGPoint.h"
 #include "SVGTransform.h"
 #include "SVGZoomEvent.h"
 #include "ksvg.h"
@@ -53,15 +52,20 @@ using namespace HTMLNames;
 using namespace EventNames;
 
 SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document *doc)
-: SVGStyledLocatableElement(tagName, doc), SVGTests(), SVGLangSpace(),
-  SVGExternalResourcesRequired(), SVGFitToViewBox(),
-  SVGZoomAndPan()
+    : SVGStyledLocatableElement(tagName, doc)
+    , SVGTests()
+    , SVGLangSpace()
+    , SVGExternalResourcesRequired()
+    , SVGFitToViewBox()
+    , SVGZoomAndPan()
+    , m_useCurrentView(false)
+    , m_timeScheduler(new TimeScheduler(doc))
 {
-    m_useCurrentView = false;
 }
 
 SVGSVGElement::~SVGSVGElement()
 {
+    delete m_timeScheduler;
 }
 
 SVGAnimatedLength *SVGSVGElement::x() const
@@ -120,9 +124,8 @@ void SVGSVGElement::setContentStyleType(const AtomicString& type)
     setAttribute(SVGNames::contentStyleTypeAttr, type);
 }
 
-SVGRect *SVGSVGElement::viewport() const
+FloatRect SVGSVGElement::viewport() const
 {
-    SVGRect *ret = createSVGRect();
     double _x = x()->baseVal()->value();
     double _y = y()->baseVal()->value();
     double w = width()->baseVal()->value();
@@ -130,11 +133,7 @@ SVGRect *SVGSVGElement::viewport() const
     RefPtr<SVGMatrix> viewBox = viewBoxToViewTransform(w, h);
     viewBox->qmatrix().map(_x, _y, &_x, &_y);
     viewBox->qmatrix().map(w, h, &w, &h);
-    ret->setX(_x);
-    ret->setY(_y);
-    ret->setWidth(w);
-    ret->setHeight(h);
-    return ret;
+    return FloatRect(_x, _y, w, h);
 }
 
 float SVGSVGElement::pixelUnitToMillimeterX() const
@@ -201,10 +200,10 @@ void SVGSVGElement::setCurrentScale(float scale)
 //    }
 }
 
-SVGPoint *SVGSVGElement::currentTranslate() const
+FloatPoint SVGSVGElement::currentTranslate() const
 {
     //if(!view())
-        return 0;
+        return FloatPoint();
 
     //return createSVGPoint(canvasView()->pan());
 }
@@ -269,8 +268,9 @@ unsigned long SVGSVGElement::suspendRedraw(unsigned long /* max_wait_millisecond
     return 0;
 }
 
-void SVGSVGElement::unsuspendRedraw(unsigned long /* suspend_handle_id */)
+void SVGSVGElement::unsuspendRedraw(unsigned long /* suspend_handle_id */, ExceptionCode& ec)
 {
+    // if suspend_handle_id is not found, throw exception
     // TODO
 }
 
@@ -284,39 +284,31 @@ void SVGSVGElement::forceRedraw()
     // TODO
 }
 
-NodeList *SVGSVGElement::getIntersectionList(SVGRect *rect, SVGElement *)
+NodeList *SVGSVGElement::getIntersectionList(const FloatRect& rect, SVGElement*)
 {
     //NodeList *list;
     // TODO
     return 0;
 }
 
-NodeList *SVGSVGElement::getEnclosureList(SVGRect *rect, SVGElement *)
+NodeList *SVGSVGElement::getEnclosureList(const FloatRect& rect, SVGElement*)
 {
     // TODO
     return 0;
 }
 
-bool SVGSVGElement::checkIntersection(SVGElement *element, SVGRect *rect)
+bool SVGSVGElement::checkIntersection(SVGElement* element, const FloatRect& rect)
 {
     // TODO : take into account pointer-events?
-    RefPtr<SVGRect> bbox = getBBox();
-    
-    FloatRect r(rect->x(), rect->y(), rect->width(), rect->height());
-    FloatRect r2(bbox->x(), bbox->y(), bbox->width(), bbox->height());
-    
-    return r.intersects(r2);
+    // FIXME: Why is element ignored??
+    return rect.intersects(getBBox());
 }
 
-bool SVGSVGElement::checkEnclosure(SVGElement *element, SVGRect *rect)
+bool SVGSVGElement::checkEnclosure(SVGElement* element, const FloatRect& rect)
 {
     // TODO : take into account pointer-events?
-    RefPtr<SVGRect> bbox = getBBox();
-    
-    FloatRect r(rect->x(), rect->y(), rect->width(), rect->height());
-    FloatRect r2(bbox->x(), bbox->y(), bbox->width(), bbox->height());
-    
-    return r.contains(r2);
+    // FIXME: Why is element ignored??
+    return rect.contains(getBBox());
 }
 
 void SVGSVGElement::deselectAll()
@@ -324,9 +316,9 @@ void SVGSVGElement::deselectAll()
     // TODO
 }
 
-SVGNumber *SVGSVGElement::createSVGNumber()
+float SVGSVGElement::createSVGNumber()
 {
-    return new SVGNumber(0);
+    return 0;
 }
 
 SVGLength *SVGSVGElement::createSVGLength()
@@ -339,9 +331,9 @@ SVGAngle *SVGSVGElement::createSVGAngle()
     return new SVGAngle(0);
 }
 
-SVGPoint *SVGSVGElement::createSVGPoint(const IntPoint &p)
+FloatPoint SVGSVGElement::createSVGPoint(const IntPoint &p)
 {
-    return new SVGPoint(p);
+    return FloatPoint(p);
 }
 
 SVGMatrix *SVGSVGElement::createSVGMatrix()
@@ -349,9 +341,9 @@ SVGMatrix *SVGSVGElement::createSVGMatrix()
     return new SVGMatrix();
 }
 
-SVGRect *SVGSVGElement::createSVGRect()
+FloatRect SVGSVGElement::createSVGRect()
 {
-    return new SVGRect(0);
+    return FloatRect();
 }
 
 SVGTransform *SVGSVGElement::createSVGTransform()
@@ -422,6 +414,33 @@ void SVGSVGElement::setZoomAndPan(unsigned short zoomAndPan)
 {
     SVGZoomAndPan::setZoomAndPan(zoomAndPan);
     //canvasView()->enableZoomAndPan(zoomAndPan == SVG_ZOOMANDPAN_MAGNIFY);
+}
+
+void SVGSVGElement::pauseAnimations()
+{
+    if (!m_timeScheduler->animationsPaused())
+        m_timeScheduler->toggleAnimations();
+}
+
+void SVGSVGElement::unpauseAnimations()
+{
+    if (m_timeScheduler->animationsPaused())
+        m_timeScheduler->toggleAnimations();
+}
+
+bool SVGSVGElement::animationsPaused() const
+{
+    return m_timeScheduler->animationsPaused();
+}
+
+float SVGSVGElement::getCurrentTime() const
+{
+    return m_timeScheduler->elapsed();
+}
+
+void SVGSVGElement::setCurrentTime(float /* seconds */)
+{
+    // TODO
 }
 
 }

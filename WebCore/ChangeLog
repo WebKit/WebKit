@@ -1,3 +1,342 @@
+2006-05-30  Eric Seidel  <eric@eseidel.com>
+
+        Reviewed by andersca.
+
+        Add first-cut SVG JS bindings autogeneration.
+        SVGSVGElement and various other support classes are generated.
+        Various small style fixes.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4249
+
+        * DerivedSources.make:
+        * WebCore+SVG/RGBColor.cpp: Removed.
+        * WebCore+SVG/RGBColor.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLElementWrapperFactory.cpp:
+        (WebCore::createJSHTMLWrapper): renamed from createJSWrapper
+        * bindings/js/JSHTMLElementWrapperFactory.h:
+        * bindings/js/kjs_dom.cpp:
+        (KJS::DOMNode::DOMNode):
+        (KJS::DOMNode::toBoolean):
+        (KJS::DOMNode::getOwnPropertySlot):
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::put):
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMNode::toPrimitive):
+        (KJS::DOMNode::toString):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        (KJS::toEventTargetNode):
+        (KJS::DOMEventTargetNode::getOwnPropertySlot):
+        (KJS::DOMEventTargetNode::getValueProperty):
+        (KJS::DOMEventTargetNode::put):
+        (KJS::DOMEventTargetNode::putValueProperty):
+        (KJS::DOMEventTargetNode::setListener):
+        (KJS::DOMEventTargetNode::getListener):
+        (KJS::DOMEventTargetNode::pushEventHandlerScope):
+        (KJS::DOMEventTargetNodeProtoFunc::callAsFunction):
+        (KJS::DOMNodeList::toPrimitive):
+        (KJS::DOMNodeList::getValueProperty):
+        (KJS::DOMNodeList::indexGetter):
+        (KJS::DOMNodeList::nameGetter):
+        (KJS::DOMNodeList::getOwnPropertySlot):
+        (KJS::DOMNodeList::callAsFunction):
+        (KJS::DOMNodeListFunc::callAsFunction):
+        (KJS::toElement):
+        (KJS::toDocumentType):
+        (KJS::DOMNamedNodeMap::DOMNamedNodeMap):
+        (KJS::DOMNamedNodeMap::~DOMNamedNodeMap):
+        (KJS::DOMNamedNodeMap::lengthGetter):
+        (KJS::DOMNamedNodeMap::indexGetter):
+        (KJS::DOMNamedNodeMap::nameGetter):
+        (KJS::DOMNamedNodeMapProtoFunc::callAsFunction):
+        (KJS::toJS):
+        (KJS::checkNodeSecurity):
+        (KJS::getRuntimeObject):
+        (KJS::DOMExceptionConstructor::getOwnPropertySlot):
+        (KJS::DOMExceptionConstructor::getValueProperty):
+        (KJS::getDOMExceptionConstructor):
+        (KJS::DOMNamedNodesCollection::DOMNamedNodesCollection):
+        (KJS::DOMNamedNodesCollection::lengthGetter):
+        (KJS::DOMNamedNodesCollection::indexGetter):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * dom/Element.h:
+        * dom/StyledElement.h:
+        * ksvg2/bindings/idl/svg/SVGAngle.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGAnimatedLength.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGColor.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGDocument.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGElement.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGLength.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGMatrix.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGNumber.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGPoint.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGRect.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGSVGElement.idl: Removed.
+        * ksvg2/bindings/idl/svg/SVGTransform.idl: Removed.
+        * ksvg2/bindings/idl/svg/kdomdefs.idl: Removed.
+        * ksvg2/bindings/js: Added.
+        * ksvg2/bindings/js/JSSVGNumber.cpp: Added.
+        (WebCore::):
+        (WebCore::JSSVGNumber::~JSSVGNumber):
+        (WebCore::JSSVGNumber::getOwnPropertySlot):
+        (WebCore::JSSVGNumber::getValue):
+        (WebCore::getJSSVGNumber):
+        * ksvg2/bindings/js/JSSVGNumber.h: Added.
+        (WebCore::JSSVGNumber::JSSVGNumber):
+        (WebCore::JSSVGNumber::classInfo):
+        * ksvg2/bindings/js/JSSVGPoint.cpp: Added.
+        (WebCore::):
+        (WebCore::JSSVGPoint::~JSSVGPoint):
+        (WebCore::JSSVGPoint::getOwnPropertySlot):
+        (WebCore::JSSVGPoint::getValueProperty):
+        (WebCore::getJSSVGPoint):
+        (WebCore::toFloatPoint):
+        * ksvg2/bindings/js/JSSVGPoint.h: Added.
+        (WebCore::JSSVGPoint::JSSVGPoint):
+        (WebCore::JSSVGPoint::classInfo):
+        (WebCore::JSSVGPoint::):
+        (WebCore::JSSVGPoint::impl):
+        * ksvg2/bindings/js/JSSVGRect.cpp: Added.
+        (WebCore::):
+        (WebCore::JSSVGRect::~JSSVGRect):
+        (WebCore::JSSVGRect::getOwnPropertySlot):
+        (WebCore::JSSVGRect::getValueProperty):
+        (WebCore::getJSSVGRect):
+        (WebCore::toFloatRect):
+        * ksvg2/bindings/js/JSSVGRect.h: Added.
+        (WebCore::JSSVGRect::JSSVGRect):
+        (WebCore::JSSVGRect::classInfo):
+        (WebCore::JSSVGRect::):
+        (WebCore::JSSVGRect::impl):
+        * ksvg2/css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * ksvg2/events/SVGZoomEvent.cpp:
+        (SVGZoomEvent::SVGZoomEvent):
+        (SVGZoomEvent::zoomRectScreen):
+        (SVGZoomEvent::previousTranslate):
+        (SVGZoomEvent::newTranslate):
+        * ksvg2/events/SVGZoomEvent.h:
+        * ksvg2/ksvg.h:
+        (WebCore::):
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::SVGDocumentExtensions):
+        (WebCore::SVGDocumentExtensions::~SVGDocumentExtensions):
+        (WebCore::SVGDocumentExtensions::addTimeContainer):
+        (WebCore::SVGDocumentExtensions::removeTimeContainer):
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        (WebCore::SVGDocumentExtensions::pauseAnimations):
+        (WebCore::SVGDocumentExtensions::unpauseAnimations):
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/svg/SVGAElement.h:
+        * ksvg2/svg/SVGAngle.h:
+        (WebCore::SVGAngle::):
+        * ksvg2/svg/SVGAngle.idl: Added.
+        * ksvg2/svg/SVGAnimateColorElement.cpp:
+        (WebCore::SVGAnimateColorElement::SVGAnimateColorElement):
+        (WebCore::SVGAnimateColorElement::handleTimerEvent):
+        (WebCore::SVGAnimateColorElement::clampColor):
+        * ksvg2/svg/SVGAnimateColorElement.h:
+        * ksvg2/svg/SVGAnimateElement.cpp:
+        (SVGAnimateElement::SVGAnimateElement):
+        (SVGAnimateElement::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateElement.h:
+        * ksvg2/svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::SVGAnimateTransformElement):
+        (WebCore::SVGAnimateTransformElement::parseMappedAttribute):
+        (WebCore::SVGAnimateTransformElement::handleTimerEvent):
+        (WebCore::SVGAnimateTransformElement::parseTransformValue):
+        (WebCore::SVGAnimateTransformElement::calculateRotationFromMatrix):
+        (WebCore::SVGAnimateTransformElement::initialMatrix):
+        * ksvg2/svg/SVGAnimateTransformElement.h:
+        * ksvg2/svg/SVGAnimatedLength.idl: Added.
+        * ksvg2/svg/SVGAnimationElement.cpp:
+        (SVGAnimationElement::closeRenderer):
+        * ksvg2/svg/SVGAnimationElement.h:
+        * ksvg2/svg/SVGCircleElement.h:
+        * ksvg2/svg/SVGClipPathElement.h:
+        * ksvg2/svg/SVGColor.cpp:
+        (WebCore::SVGColor::SVGColor):
+        (WebCore::SVGColor::rgbColor):
+        (WebCore::SVGColor::setRGBColor):
+        (WebCore::SVGColor::setRGBColorICCColor):
+        (WebCore::SVGColor::setColor):
+        (WebCore::SVGColor::color):
+        * ksvg2/svg/SVGColor.h:
+        (WebCore::SVGColor::):
+        (WebCore::SVGColor::setRGBColor):
+        * ksvg2/svg/SVGColor.idl: Added.
+        * ksvg2/svg/SVGComponentTransferFunctionElement.h:
+        * ksvg2/svg/SVGCursorElement.h:
+        * ksvg2/svg/SVGDefsElement.h:
+        * ksvg2/svg/SVGDescElement.h:
+        * ksvg2/svg/SVGDocument.idl: Added.
+        * ksvg2/svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::isSupported):
+        (WebCore::SVGElement::id):
+        (WebCore::SVGElement::setId):
+        (WebCore::SVGElement::xmlbase):
+        (WebCore::SVGElement::setXmlbase):
+        (WebCore::SVGElement::ownerSVGElement):
+        (WebCore::SVGElement::viewportElement):
+        (WebCore::SVGElement::tryGetAttribute):
+        (WebCore::SVGElement::tryGetAttributeNS):
+        (WebCore::SVGElement::childShouldCreateRenderer):
+        * ksvg2/svg/SVGElement.h:
+        * ksvg2/svg/SVGElement.idl: Added.
+        * ksvg2/svg/SVGEllipseElement.h:
+        * ksvg2/svg/SVGEvent.idl: Added.
+        * ksvg2/svg/SVGFEBlendElement.h:
+        * ksvg2/svg/SVGFEColorMatrixElement.h:
+        * ksvg2/svg/SVGFEComponentTransferElement.h:
+        * ksvg2/svg/SVGFECompositeElement.h:
+        * ksvg2/svg/SVGFEDiffuseLightingElement.h:
+        * ksvg2/svg/SVGFEDistantLightElement.h:
+        * ksvg2/svg/SVGFEFloodElement.h:
+        * ksvg2/svg/SVGFEFuncAElement.h:
+        * ksvg2/svg/SVGFEFuncBElement.h:
+        * ksvg2/svg/SVGFEFuncGElement.h:
+        * ksvg2/svg/SVGFEFuncRElement.h:
+        * ksvg2/svg/SVGFEGaussianBlurElement.h:
+        * ksvg2/svg/SVGFEImageElement.h:
+        * ksvg2/svg/SVGFELightElement.h:
+        * ksvg2/svg/SVGFEMergeElement.h:
+        * ksvg2/svg/SVGFEMergeNodeElement.h:
+        * ksvg2/svg/SVGFEOffsetElement.h:
+        * ksvg2/svg/SVGFEPointLightElement.h:
+        * ksvg2/svg/SVGFESpecularLightingElement.h:
+        * ksvg2/svg/SVGFESpotLightElement.h:
+        * ksvg2/svg/SVGFETileElement.h:
+        * ksvg2/svg/SVGFETurbulenceElement.h:
+        * ksvg2/svg/SVGFilterElement.h:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributes.h:
+        * ksvg2/svg/SVGForeignObjectElement.h:
+        * ksvg2/svg/SVGGElement.h:
+        * ksvg2/svg/SVGGradientElement.h:
+        * ksvg2/svg/SVGHelper.cpp:
+        (WebCore::SVGHelper::PercentageOfViewport):
+        (WebCore::SVGHelper::ParseSeperatedList):
+        * ksvg2/svg/SVGImageElement.h:
+        * ksvg2/svg/SVGLength.h:
+        (WebCore::SVGLength::):
+        * ksvg2/svg/SVGLength.idl: Added.
+        * ksvg2/svg/SVGLineElement.h:
+        * ksvg2/svg/SVGLinearGradientElement.h:
+        * ksvg2/svg/SVGLocatable.cpp:
+        (SVGLocatable::getBBox):
+        * ksvg2/svg/SVGLocatable.h:
+        * ksvg2/svg/SVGMarkerElement.h:
+        * ksvg2/svg/SVGMaskElement.h:
+        * ksvg2/svg/SVGMatrix.cpp:
+        (SVGMatrix::inverse):
+        (SVGMatrix::rotateFromVector):
+        * ksvg2/svg/SVGMatrix.h:
+        * ksvg2/svg/SVGMatrix.idl: Added.
+        * ksvg2/svg/SVGNumber.idl: Added.
+        * ksvg2/svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::getPointAtLength):
+        * ksvg2/svg/SVGPathElement.h:
+        * ksvg2/svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::x):
+        (WebCore::SVGPatternElement::y):
+        (WebCore::SVGPatternElement::width):
+        (WebCore::SVGPatternElement::height):
+        (WebCore::SVGPatternElement::pushAttributeContext):
+        (WebCore::SVGPatternElement::fillAttributesFromReferencePattern):
+        (WebCore::SVGPatternElement::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElement::notifyClientsToRepaint):
+        (WebCore::SVGPatternElement::notifyAttributeChange):
+        (WebCore::SVGPatternElement::canvasResource):
+        (WebCore::SVGPatternElement::getCTM):
+        * ksvg2/svg/SVGPatternElement.h:
+        * ksvg2/svg/SVGPoint.idl: Added.
+        * ksvg2/svg/SVGPolyElement.h:
+        * ksvg2/svg/SVGPolygonElement.h:
+        * ksvg2/svg/SVGPolylineElement.h:
+        * ksvg2/svg/SVGRadialGradientElement.h:
+        * ksvg2/svg/SVGRect.idl: Added.
+        * ksvg2/svg/SVGRectElement.h:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::~SVGSVGElement):
+        (WebCore::SVGSVGElement::viewport):
+        (WebCore::SVGSVGElement::currentTranslate):
+        (WebCore::SVGSVGElement::unsuspendRedraw):
+        (WebCore::SVGSVGElement::getIntersectionList):
+        (WebCore::SVGSVGElement::getEnclosureList):
+        (WebCore::SVGSVGElement::checkIntersection):
+        (WebCore::SVGSVGElement::checkEnclosure):
+        (WebCore::SVGSVGElement::createSVGNumber):
+        (WebCore::SVGSVGElement::createSVGPoint):
+        (WebCore::SVGSVGElement::createSVGRect):
+        (WebCore::SVGSVGElement::pauseAnimations):
+        (WebCore::SVGSVGElement::unpauseAnimations):
+        (WebCore::SVGSVGElement::animationsPaused):
+        (WebCore::SVGSVGElement::getCurrentTime):
+        (WebCore::SVGSVGElement::setCurrentTime):
+        * ksvg2/svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::timeScheduler):
+        * ksvg2/svg/SVGSVGElement.idl: Added.
+        * ksvg2/svg/SVGScriptElement.h:
+        * ksvg2/svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::SVGSetElement):
+        (WebCore::SVGSetElement::handleTimerEvent):
+        * ksvg2/svg/SVGSetElement.h:
+        * ksvg2/svg/SVGStopElement.h:
+        * ksvg2/svg/SVGStyleElement.h:
+        * ksvg2/svg/SVGStyledElement.h:
+        * ksvg2/svg/SVGStyledLocatableElement.cpp:
+        (SVGStyledLocatableElement::getBBox):
+        * ksvg2/svg/SVGStyledLocatableElement.h:
+        * ksvg2/svg/SVGStyledTransformableElement.cpp:
+        (SVGStyledTransformableElement::getBBox):
+        * ksvg2/svg/SVGStyledTransformableElement.h:
+        * ksvg2/svg/SVGSwitchElement.h:
+        * ksvg2/svg/SVGSymbolElement.h:
+        * ksvg2/svg/SVGTRefElement.h:
+        * ksvg2/svg/SVGTSpanElement.h:
+        * ksvg2/svg/SVGTextContentElement.cpp:
+        (SVGTextContentElement::getStartPositionOfChar):
+        (SVGTextContentElement::getEndPositionOfChar):
+        (SVGTextContentElement::getExtentOfChar):
+        (SVGTextContentElement::getCharNumAtPosition):
+        (SVGTextContentElement::parseMappedAttribute):
+        * ksvg2/svg/SVGTextContentElement.h:
+        * ksvg2/svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::getBBox):
+        * ksvg2/svg/SVGTextElement.h:
+        * ksvg2/svg/SVGTextPositioningElement.h:
+        * ksvg2/svg/SVGTitleElement.h:
+        * ksvg2/svg/SVGTransform.h:
+        (WebCore::SVGTransform::):
+        * ksvg2/svg/SVGTransform.idl: Added.
+        * ksvg2/svg/SVGUseElement.h:
+        * ksvg2/svg/SVGViewElement.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::pauseTimeouts):
+        (WebCore::Frame::resumeTimeouts):
+        * platform/Color.h:
+        * rendering/RenderBR.h:
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::renderName):
+        * rendering/RenderCanvas.h:
+        (WebCore::RenderCanvas::view):
+        * rendering/RenderContainer.h:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFlow.h:
+        (WebCore::RenderFlow::RenderFlow):
+        * rendering/RenderInline.h:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextFragment.h:
+        (WebCore::RenderTextFragment::contentString):
+        * xml/xmlattrs.in: Added.
+
 2006-05-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

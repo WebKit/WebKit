@@ -36,7 +36,7 @@ namespace WebCore
     class SVGFECompositeElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
-        SVGFECompositeElement(const QualifiedName& tagName, Document *doc);
+        SVGFECompositeElement(const QualifiedName&, Document*);
         virtual ~SVGFECompositeElement();
 
         // 'SVGFECompositeElement' functions

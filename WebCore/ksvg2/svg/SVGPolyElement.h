@@ -41,7 +41,7 @@ namespace WebCore
                                 public SVGPolyParser
     {
     public:
-        SVGPolyElement(const QualifiedName& tagName, Document *doc);
+        SVGPolyElement(const QualifiedName&, Document*);
         virtual ~SVGPolyElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }

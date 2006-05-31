@@ -36,7 +36,7 @@ namespace WebCore
     class SVGFEColorMatrixElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
-        SVGFEColorMatrixElement(const QualifiedName& tagName, Document *doc);
+        SVGFEColorMatrixElement(const QualifiedName&, Document*);
         virtual ~SVGFEColorMatrixElement();
 
         // 'SVGFEColorMatrixElement' functions

@@ -85,7 +85,7 @@ namespace WebCore
                                     public SVGExternalResourcesRequired
     {
     public:
-        SVGAnimationElement(const QualifiedName& tagName, Document *doc);
+        SVGAnimationElement(const QualifiedName&, Document*);
         virtual ~SVGAnimationElement();
 
         // 'SVGAnimationElement' functions

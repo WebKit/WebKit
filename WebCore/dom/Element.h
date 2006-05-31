@@ -42,7 +42,7 @@ class Element : public ContainerNode {
     friend class Node;
     friend class CSSStyleSelector;
 public:
-    Element(const QualifiedName& tagName, Document *doc);
+    Element(const QualifiedName&, Document*);
     ~Element();
 
     // Used to quickly determine whether or not an element has a given CSS class.

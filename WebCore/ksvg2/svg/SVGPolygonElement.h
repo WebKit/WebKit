@@ -31,7 +31,7 @@ namespace WebCore
     class SVGPolygonElement :    public SVGPolyElement
     {
     public:
-        SVGPolygonElement(const QualifiedName& tagName, Document *doc);
+        SVGPolygonElement(const QualifiedName&, Document*);
         virtual ~SVGPolygonElement();
 
         virtual KCanvasPath* toPathData() const;

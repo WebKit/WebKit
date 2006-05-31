@@ -61,6 +61,10 @@
 #include "kjs_traversal.h"
 #include "kjs_window.h"
 
+#if SVG_SUPPORT
+#include "JSSVGElementWrapperFactory.h"
+#include "SVGElement.h"
+#endif
 
 #if __APPLE__
 #include <JavaScriptCore/runtime_object.h>
@@ -102,7 +106,7 @@ KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodeProto, DOMNodeProtoFunc)
 
 const ClassInfo DOMNode::info = { "Node", 0, &DOMNodeTable, 0 };
 
-DOMNode::DOMNode(ExecState *exec, WebCore::Node* n)
+DOMNode::DOMNode(ExecState* exec, WebCore::Node* n)
   : m_impl(n)
 {
   setPrototype(DOMNodeProto::self(exec));
@@ -170,7 +174,7 @@ void DOMNode::mark()
   assert(marked());
 }
 
-bool DOMNode::toBoolean(ExecState *) const
+bool DOMNode::toBoolean(ExecState* ) const
 {
     return m_impl;
 }
@@ -197,12 +201,12 @@ bool DOMNode::toBoolean(ExecState *) const
   textContent   DOMNode::TextContent    DontDelete
 @end
 */
-bool DOMNode::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool DOMNode::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   return getStaticValueSlot<DOMNode, DOMObject>(exec, &DOMNodeTable, this, propertyName, slot);
 }
 
-JSValue *DOMNode::getValueProperty(ExecState *exec, int token) const
+JSValue* DOMNode::getValueProperty(ExecState* exec, int token) const
 {
   WebCore::Node& node = *m_impl;
   switch (token) {
@@ -242,12 +246,12 @@ JSValue *DOMNode::getValueProperty(ExecState *exec, int token) const
   return jsUndefined();
 }
 
-void DOMNode::put(ExecState *exec, const Identifier& propertyName, JSValue *value, int attr)
+void DOMNode::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
 {
     lookupPut<DOMNode,DOMObject>(exec, propertyName, value, attr, &DOMNodeTable, this);
 }
 
-void DOMNode::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
+void DOMNode::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)
 {
   DOMExceptionTranslator exception(exec);
   WebCore::Node& node = *m_impl;
@@ -264,7 +268,7 @@ void DOMNode::putValueProperty(ExecState *exec, int token, JSValue *value, int /
   }
 }
 
-JSValue *DOMNode::toPrimitive(ExecState *exec, JSType) const
+JSValue* DOMNode::toPrimitive(ExecState* exec, JSType) const
 {
   if (!m_impl)
     return jsNull();
@@ -272,14 +276,14 @@ JSValue *DOMNode::toPrimitive(ExecState *exec, JSType) const
   return jsString(toString(exec));
 }
 
-UString DOMNode::toString(ExecState *) const
+UString DOMNode::toString(ExecState* ) const
 {
   if (!m_impl)
     return "null";
   return "[object " + (m_impl->isElementNode() ? UString(m_impl->nodeName()) : className()) + "]";
 }
 
-JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* DOMNodeProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
   if (!thisObj->inherits(&DOMNode::info))
     return throwError(exec, TypeError);
@@ -331,7 +335,7 @@ JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
   return jsUndefined();
 }
 
-EventTargetNode *toEventTargetNode(JSValue *val)
+EventTargetNode *toEventTargetNode(JSValue* val)
 {
     if (!val || !val->isObject(&DOMEventTargetNode::info))
         return 0;
@@ -400,12 +404,12 @@ DOMEventTargetNode::DOMEventTargetNode(ExecState* exec, WebCore::Node* n)
     setPrototype(DOMEventTargetNodeProto::self(exec));
 }
 
-bool DOMEventTargetNode::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool DOMEventTargetNode::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getStaticValueSlot<DOMEventTargetNode, DOMNode>(exec, &DOMEventTargetNodeTable, this, propertyName, slot);
 }
 
-JSValue *DOMEventTargetNode::getValueProperty(ExecState *exec, int token) const
+JSValue* DOMEventTargetNode::getValueProperty(ExecState* exec, int token) const
 {
     switch (token) {
         case OnAbort:
@@ -497,12 +501,12 @@ JSValue *DOMEventTargetNode::getValueProperty(ExecState *exec, int token) const
     return jsUndefined();
 }
 
-void DOMEventTargetNode::put(ExecState *exec, const Identifier& propertyName, JSValue *value, int attr)
+void DOMEventTargetNode::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)
 {
     lookupPut<DOMEventTargetNode, DOMNode>(exec, propertyName, value, attr, &DOMEventTargetNodeTable, this);
 }
 
-void DOMEventTargetNode::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
+void DOMEventTargetNode::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)
 {
     switch (token) {
         case OnAbort:
@@ -634,12 +638,12 @@ void DOMEventTargetNode::putValueProperty(ExecState *exec, int token, JSValue *v
     }
 }
 
-void DOMEventTargetNode::setListener(ExecState *exec, const AtomicString &eventType, JSValue *func) const
+void DOMEventTargetNode::setListener(ExecState* exec, const AtomicString &eventType, JSValue* func) const
 {
     EventTargetNodeCast(impl())->setHTMLEventListener(eventType, Window::retrieveActive(exec)->getJSEventListener(func, true));
 }
 
-JSValue *DOMEventTargetNode::getListener(const AtomicString &eventType) const
+JSValue* DOMEventTargetNode::getListener(const AtomicString &eventType) const
 {
     WebCore::EventListener *listener = EventTargetNodeCast(impl())->getHTMLEventListener(eventType);
     JSEventListener *jsListener = static_cast<JSEventListener*>(listener);
@@ -649,7 +653,7 @@ JSValue *DOMEventTargetNode::getListener(const AtomicString &eventType) const
         return jsNull();
 }
 
-void DOMEventTargetNode::pushEventHandlerScope(ExecState *, ScopeChain &) const
+void DOMEventTargetNode::pushEventHandlerScope(ExecState*, ScopeChain &) const
 {
 }
 
@@ -665,7 +669,7 @@ dispatchEvent           DOMEventTargetNode::DispatchEvent  DontDelete|Function 1
 KJS_IMPLEMENT_PROTOFUNC(DOMEventTargetNodeProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMEventTargetNode", DOMEventTargetNodeProto, DOMEventTargetNodeProtoFunc)
 
-JSValue *DOMEventTargetNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* DOMEventTargetNodeProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
     if (!thisObj->inherits(&DOMEventTargetNode::info))
         return throwError(exec, TypeError);
@@ -710,7 +714,7 @@ DOMNodeList::~DOMNodeList()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *DOMNodeList::toPrimitive(ExecState *exec, JSType) const
+JSValue* DOMNodeList::toPrimitive(ExecState* exec, JSType) const
 {
   if (!m_impl)
     return jsNull();
@@ -718,25 +722,25 @@ JSValue *DOMNodeList::toPrimitive(ExecState *exec, JSType) const
   return jsString(toString(exec));
 }
 
-JSValue *DOMNodeList::getValueProperty(ExecState *exec, int token) const
+JSValue* DOMNodeList::getValueProperty(ExecState* exec, int token) const
 {
   assert(token == Length);
   return jsNumber(m_impl->length());
 }
 
-JSValue *DOMNodeList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* DOMNodeList::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList*>(slot.slotBase());
   return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
-JSValue *DOMNodeList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* DOMNodeList::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList*>(slot.slotBase());
   return toJS(exec, thisObj->m_impl->itemWithName(propertyName));
 }
 
-bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool DOMNodeList::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   const HashEntry* entry = Lookup::findEntry(&DOMNodeListTable, propertyName);
 
@@ -763,20 +767,20 @@ bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& property
 }
 
 // Need to support both get and call, so that list[0] and list(0) work.
-JSValue *DOMNodeList::callAsFunction(ExecState *exec, JSObject *, const List &args)
+JSValue* DOMNodeList::callAsFunction(ExecState* exec, JSObject*, const List &args)
 {
-  // Do not use thisObj here. See JSHTMLCollection.
-  UString s = args[0]->toString(exec);
-  bool ok;
-  unsigned int u = s.toUInt32(&ok);
-  if (ok)
-    return toJS(exec, m_impl->item(u));
+    // Do not use thisObj here. See JSHTMLCollection.
+    UString s = args[0]->toString(exec);
+    bool ok;
+    unsigned int u = s.toUInt32(&ok);
+    if (ok)
+        return toJS(exec, m_impl->item(u));
 
-  return jsUndefined();
+    return jsUndefined();
 }
 
 // Not a prototype class currently, but should probably be converted to one
-JSValue *DOMNodeListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* DOMNodeListFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMNodeList::info))
     return throwError(exec, TypeError);
@@ -799,14 +803,14 @@ Attr* toAttr(JSValue* val, bool& ok)
     return static_cast<Attr*>(static_cast<DOMNode*>(val)->impl());
 }
 
-Element *toElement(JSValue *val)
+Element* toElement(JSValue* val)
 {
     if (!val || !val->isObject(&JSElement::info))
         return 0;
     return static_cast<Element*>(static_cast<JSElement*>(val)->impl());
 }
 
-DocumentType *toDocumentType(JSValue *val)
+DocumentType* toDocumentType(JSValue* val)
 {
     if (!val || !val->isObject(&JSDocumentType::info))
         return 0;
@@ -829,34 +833,34 @@ DocumentType *toDocumentType(JSValue *val)
 */
 KJS_DEFINE_PROTOTYPE(DOMNamedNodeMapProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMNamedNodeMapProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("NamedNodeMap",DOMNamedNodeMapProto,DOMNamedNodeMapProtoFunc)
+KJS_IMPLEMENT_PROTOTYPE("NamedNodeMap", DOMNamedNodeMapProto, DOMNamedNodeMapProtoFunc)
 
 const ClassInfo DOMNamedNodeMap::info = { "NamedNodeMap", 0, 0, 0 };
 
-DOMNamedNodeMap::DOMNamedNodeMap(ExecState *exec, NamedNodeMap *m)
-  : m_impl(m) 
+DOMNamedNodeMap::DOMNamedNodeMap(ExecState* exec, NamedNodeMap* m)
+    : m_impl(m) 
 { 
-  setPrototype(DOMNamedNodeMapProto::self(exec));
+    setPrototype(DOMNamedNodeMapProto::self(exec));
 }
 
 DOMNamedNodeMap::~DOMNamedNodeMap()
 {
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
+    ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *DOMNamedNodeMap::lengthGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* DOMNamedNodeMap::lengthGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodeMap* thisObj = static_cast<DOMNamedNodeMap*>(slot.slotBase());
   return jsNumber(thisObj->m_impl->length());
 }
 
-JSValue *DOMNamedNodeMap::indexGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* DOMNamedNodeMap::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodeMap* thisObj = static_cast<DOMNamedNodeMap*>(slot.slotBase());
   return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
-JSValue *DOMNamedNodeMap::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* DOMNamedNodeMap::nameGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodeMap* thisObj = static_cast<DOMNamedNodeMap*>(slot.slotBase());
   return toJS(exec, thisObj->m_impl->getNamedItem(propertyName));
@@ -890,7 +894,7 @@ bool DOMNamedNodeMap::getOwnPropertySlot(ExecState* exec, const Identifier& prop
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-JSValue *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* DOMNamedNodeMapProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMNamedNodeMap::info))
     return throwError(exec, TypeError);
@@ -917,12 +921,12 @@ JSValue *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
 
 // -------------------------------------------------------------------------
 
-JSValue* toJS(ExecState *exec, Document *n)
+JSValue* toJS(ExecState* exec, Document *n)
 {
   if (!n)
     return jsNull();
 
-  JSDocument *ret = 0;
+  JSDocument* ret = 0;
   ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
 
   if ((ret = static_cast<JSDocument*>(interp->getDOMObject(n))))
@@ -949,18 +953,18 @@ bool checkNodeSecurity(ExecState* exec, WebCore::Node* n)
     return false;
 
   // Check to see if the currently executing interpreter is allowed to access the specified node
-  Window *win = Window::retrieveWindow(n->document()->frame());
+  Window* win = Window::retrieveWindow(n->document()->frame());
   return win && win->isSafeScript(exec);
 }
 
-JSValue* toJS(ExecState *exec, PassRefPtr<WebCore::Node> node)
+JSValue* toJS(ExecState* exec, PassRefPtr<WebCore::Node> node)
 {
   WebCore::Node* n = node.get();
-  DOMNode *ret = 0;
+  DOMNode* ret = 0;
   if (!n)
     return jsNull();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter*>(exec->dynamicInterpreter());
-  Document *doc = n->document();
+  Document* doc = n->document();
 
   if ((ret = interp->getDOMNodeForDocument(doc, n)))
     return ret;
@@ -968,7 +972,11 @@ JSValue* toJS(ExecState *exec, PassRefPtr<WebCore::Node> node)
   switch (n->nodeType()) {
     case WebCore::Node::ELEMENT_NODE:
       if (n->isHTMLElement())
-        ret = createJSWrapper(exec, static_pointer_cast<WebCore::HTMLElement>(node));
+        ret = createJSHTMLWrapper(exec, static_pointer_cast<WebCore::HTMLElement>(node));
+#if SVG_SUPPORT
+      else if (n->isSVGElement())
+        ret = createJSSVGWrapper(exec, static_pointer_cast<WebCore::SVGElement>(node));
+#endif
       else
         ret = new JSElement(exec, static_cast<Element*>(n));
       break;
@@ -1010,12 +1018,12 @@ JSValue* toJS(ExecState *exec, PassRefPtr<WebCore::Node> node)
   return ret;
 }
 
-JSValue *toJS(ExecState *exec, NamedNodeMap *m)
+JSValue* toJS(ExecState* exec, NamedNodeMap* m)
 {
-  return cacheDOMObject<NamedNodeMap, DOMNamedNodeMap>(exec, m);
+    return cacheDOMObject<NamedNodeMap, DOMNamedNodeMap>(exec, m);
 }
 
-JSValue *getRuntimeObject(ExecState* exec, WebCore::Node* n)
+JSValue* getRuntimeObject(ExecState* exec, WebCore::Node* n)
 {
     if (!n)
         return 0;
@@ -1033,9 +1041,9 @@ JSValue *getRuntimeObject(ExecState* exec, WebCore::Node* n)
     return 0;
 }
 
-JSValue *toJS(ExecState *exec, PassRefPtr<NodeList> l)
+JSValue* toJS(ExecState* exec, PassRefPtr<NodeList> l)
 {
-  return cacheDOMObject<NodeList, DOMNodeList>(exec, l.get());
+    return cacheDOMObject<NodeList, DOMNodeList>(exec, l.get());
 }
 
 // -------------------------------------------------------------------------
@@ -1062,18 +1070,18 @@ const ClassInfo DOMExceptionConstructor::info = { "DOMExceptionConstructor", 0, 
 @end
 */
 
-bool DOMExceptionConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool DOMExceptionConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   return getStaticValueSlot<DOMExceptionConstructor, DOMObject>(exec, &DOMExceptionConstructorTable, this, propertyName, slot);
 }
 
-JSValue *DOMExceptionConstructor::getValueProperty(ExecState *, int token) const
+JSValue* DOMExceptionConstructor::getValueProperty(ExecState*, int token) const
 {
   // We use the token as the value to return directly
   return jsNumber(token);
 }
 
-JSObject *getDOMExceptionConstructor(ExecState *exec)
+JSObject* getDOMExceptionConstructor(ExecState* exec)
 {
   return cacheGlobalObject<DOMExceptionConstructor>(exec, "[[DOMException.constructor]]");
 }
@@ -1083,24 +1091,24 @@ JSObject *getDOMExceptionConstructor(ExecState *exec)
 // Such a collection is usually very short-lived, it only exists
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
-DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState *, const DeprecatedValueList< RefPtr<WebCore::Node> >& nodes )
-  : m_nodes(nodes)
+DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState*, const DeprecatedValueList< RefPtr<WebCore::Node> >& nodes )
+    : m_nodes(nodes)
 {
 }
 
-JSValue *DOMNamedNodesCollection::lengthGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* DOMNamedNodesCollection::lengthGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection*>(slot.slotBase());
   return jsNumber(thisObj->m_nodes.count());
 }
 
-JSValue *DOMNamedNodesCollection::indexGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* DOMNamedNodesCollection::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection*>(slot.slotBase());
   return toJS(exec, thisObj->m_nodes[slot.index()].get());
 }
 
-bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   if (propertyName == lengthPropertyName) {
     slot.setCustom(this, lengthGetter);
@@ -1131,8 +1139,5 @@ bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState *exec, const Identifi
 
   return DOMObject::getOwnPropertySlot(exec, propertyName, slot);
 }
-
-// -------------------------------------------------------------------------
-
 
 } // namespace

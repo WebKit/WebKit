@@ -1,7 +1,0 @@
-module svg
-{
-  interface SVGNumber { 
-             attribute float value;
-                         // raises DOMException on setting
-  };
-};

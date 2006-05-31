@@ -250,7 +250,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
            (id >= SVGCSS_VAL_ALICEBLUE && id <= SVGCSS_VAL_YELLOWGREEN))
             parsedValue = new SVGColor(domString(value->string).impl());
         else if (id == SVGCSS_VAL_CURRENTCOLOR)
-            parsedValue = new SVGColor(SVG_COLORTYPE_CURRENTCOLOR);
+            parsedValue = new SVGColor(SVGColor::SVG_COLORTYPE_CURRENTCOLOR);
         else // TODO : svgcolor (iccColor)
             parsedValue = parseSVGColor();
 

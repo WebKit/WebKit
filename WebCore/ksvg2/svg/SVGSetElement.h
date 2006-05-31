@@ -31,7 +31,7 @@ namespace WebCore
     class SVGSetElement : public SVGAnimationElement
     {
     public:
-        SVGSetElement(const QualifiedName& tagName, Document *doc);
+        SVGSetElement(const QualifiedName&, Document*);
         virtual ~SVGSetElement();
 
         virtual void handleTimerEvent(double timePercentage);

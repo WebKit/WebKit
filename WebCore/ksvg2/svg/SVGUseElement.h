@@ -40,7 +40,7 @@ namespace WebCore
                               public SVGURIReference
     {
     public:
-        SVGUseElement(const QualifiedName& tagName, Document *doc);
+        SVGUseElement(const QualifiedName&, Document*);
         virtual ~SVGUseElement();
         
         virtual bool isValid() const { return SVGTests::isValid(); }

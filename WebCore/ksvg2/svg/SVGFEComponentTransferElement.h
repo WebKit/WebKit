@@ -34,7 +34,7 @@ namespace WebCore
     class SVGFEComponentTransferElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
-        SVGFEComponentTransferElement(const QualifiedName& tagName, Document *doc);
+        SVGFEComponentTransferElement(const QualifiedName&, Document*);
         virtual ~SVGFEComponentTransferElement();
 
         // 'SVGFEComponentTransferElement' functions

@@ -26,11 +26,12 @@
 #include "KSVGTimeScheduler.h"
 #include "Document.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGSVGElement.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document *doc)
-: SVGAnimationElement(tagName, doc)
+    : SVGAnimationElement(tagName, doc)
 {
 }
 
@@ -42,18 +43,17 @@ void SVGSetElement::handleTimerEvent(double timePercentage)
 {
     // Start condition.
     if (!m_connected) {    
-        document()->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
+        ownerSVGElement()->timeScheduler()->connectIntervalTimer(this);
         m_connected = true;
         return;
     }
 
     // Calculations...
-    if(timePercentage >= 1.0)
+    if (timePercentage >= 1.0)
         timePercentage = 1.0;
 
     // Commit change now...
-    if(m_savedTo.isEmpty())
-    {
+    if (m_savedTo.isEmpty()) {
         String attr(targetAttribute());
         m_savedTo = attr.deprecatedString();
         setTargetAttribute(String(m_to).impl());
@@ -61,7 +61,7 @@ void SVGSetElement::handleTimerEvent(double timePercentage)
 
     // End condition.
     if (timePercentage == 1.0) {
-        document()->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
+        ownerSVGElement()->timeScheduler()->disconnectIntervalTimer(this);
         m_connected = false;
 
         if (!isFrozen())
@@ -69,6 +69,8 @@ void SVGSetElement::handleTimerEvent(double timePercentage)
 
         m_savedTo = DeprecatedString();
     }
+}
+
 }
 
 // vim:ts=4:noet

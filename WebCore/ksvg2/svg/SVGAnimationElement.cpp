@@ -396,7 +396,7 @@ double SVGAnimationElement::parseClockValue(const DeprecatedString &data) const
 
 void SVGAnimationElement::closeRenderer()
 {
-    document()->accessSVGExtensions()->timeScheduler()->addTimer(this, lround(getStartTime()));
+    ownerSVGElement()->timeScheduler()->addTimer(this, lround(getStartTime()));
     SVGElement::closeRenderer();
 }
 
