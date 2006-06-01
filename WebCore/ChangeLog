@@ -1,3 +1,20 @@
+2006-06-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Anders.
+
+        - fixed all places in the Canvas to RenderView rename patch where
+          view() should have been changed to frameView().
+
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject position]):
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/RenderTreeAsText.cpp:
+        (externalRepresentation):
+
 2006-06-01  Geoffrey Garen  <ggaren@apple.com>
 
         Fix by Mitz. Reviewed, tweaked, tested, landed by me.

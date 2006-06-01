@@ -418,7 +418,7 @@ DeprecatedString externalRepresentation(RenderObject* o)
         ts.precision(2);
         writeRenderResources(ts, o->document());
 #endif
-        o->view()->view()->layout();
+        o->view()->frameView()->layout();
         RenderLayer* l = o->layer();
         if (l) {
             writeLayers(ts, l, l, IntRect(l->xPos(), l->yPos(), l->width(), l->height()));

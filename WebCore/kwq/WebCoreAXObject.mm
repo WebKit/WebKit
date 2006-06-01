@@ -561,7 +561,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     
     // The Cocoa accessibility API wants the lower-left corner.
     NSPoint point = NSMakePoint(rect.x(), rect.bottom());
-    if (m_renderer && m_renderer->view() && m_renderer->view()->view()) {
+    if (m_renderer && m_renderer->view() && m_renderer->view()->frameView()) {
         NSView* view = m_renderer->view()->frameView()->getDocumentView();
         point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
     }
@@ -786,7 +786,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return [self roleDescription];
     
     if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
-        if (m_renderer->isRenderView() && m_renderer->view() && m_renderer->view()->view())
+        if (m_renderer->isRenderView() && m_renderer->view() && m_renderer->view()->frameView())
             return m_renderer->view()->frameView()->getView();
         return [self parentObjectUnignored];
     }
@@ -866,7 +866,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         return [self position];
 
     if ([attributeName isEqualToString: NSAccessibilityWindowAttribute]) {
-        if (m_renderer && m_renderer->view() && m_renderer->view()->view())
+        if (m_renderer && m_renderer->view() && m_renderer->view()->frameView())
             return [m_renderer->view()->frameView()->getView() window];
         return nil;
     }
