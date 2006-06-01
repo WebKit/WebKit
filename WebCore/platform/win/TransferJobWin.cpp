@@ -216,7 +216,12 @@ bool TransferJob::start(DocLoader* docLoader)
         initializeOffScreenTransferJobWindow();
         d->m_jobId = addToOutstandingJobs(this);
 
-        HINTERNET urlHandle = InternetOpenUrlA(internetHandle, d->URL.url().ascii(), NULL, -1, 0, (DWORD_PTR)d->m_jobId);
+        DeprecatedString urlStr = d->URL.url();
+        int fragmentIndex = urlStr.find('#');
+        if (fragmentIndex != -1)
+            urlStr = urlStr.left(fragmentIndex);
+
+        HINTERNET urlHandle = InternetOpenUrlA(internetHandle, urlStr.ascii(), NULL, -1, 0, (DWORD_PTR)d->m_jobId);
 
         if (urlHandle == INVALID_HANDLE_VALUE) {
             delete this;
