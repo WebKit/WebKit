@@ -335,19 +335,21 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
     ASSERT(!reachedTerminalState);
-    NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
-    NSURLRequest *clientRequest, *updatedRequest;
+    NSMutableURLRequest *mutableRequest = [[newRequest mutableCopy] autorelease];
+    NSMutableURLRequest *clientRequest;
+    NSURLRequest *updatedRequest;
     BOOL haveDataSchemeRequest = NO;
     
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
 
-    newRequest = [mutableRequest autorelease];
+    newRequest = mutableRequest;
 
-    clientRequest = [newRequest _webDataRequestExternalRequest];
+    // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
+    clientRequest = [mutableRequest _webDataRequestExternalRequest];
     if (!clientRequest)
-        clientRequest = newRequest;
+        clientRequest = mutableRequest;
     else
         haveDataSchemeRequest = YES;
     
@@ -378,13 +380,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // Store a copy of the request.
     [request autorelease];
 
-    // Client may return a nil request, indicating that the request should be aborted.
-    if (newRequest){
-        request = [newRequest copy];
-    }
-    else {
-        request = nil;
-    }
+    request = [newRequest copy];
 
     [self release];
     return request;

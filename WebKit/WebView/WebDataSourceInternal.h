@@ -111,7 +111,7 @@
 - (void)_mainReceivedError:(NSError *)error complete:(BOOL)isComplete;
 - (BOOL)_defersCallbacks;
 - (id)_identifierForInitialRequest:(NSURLRequest *)clientRequest;
-- (NSURLRequest *)_willSendRequest:(NSURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse;
+- (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse;
 - (void)_didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
 - (void)_didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)currentWebChallenge forResource:(id)identifier;
 - (void)_didReceiveResponse:(NSURLResponse *)r forResource:(id)identifier;

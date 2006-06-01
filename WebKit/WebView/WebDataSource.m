@@ -53,6 +53,7 @@
 #import "WebMainResourceLoader.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
 #import "WebPDFRepresentation.h"
 #import "WebPreferences.h"
 #import "WebResourceLoadDelegate.h"
@@ -873,11 +874,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         return [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView identifierForInitialRequest:clientRequest fromDataSource:self] retain];
 }
 
-- (NSURLRequest *)_willSendRequest:(NSURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
+- (NSURLRequest *)_willSendRequest:(NSMutableURLRequest *)clientRequest forResource:(id)identifier redirectResponse:(NSURLResponse *)redirectResponse
 {
     WebView *webView = [self _webView];
 
-    // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
+    [clientRequest _web_setHTTPUserAgent:[webView userAgentForURL:[clientRequest URL]]];
+
     if ([webView _resourceLoadDelegateImplementations].delegateImplementsWillSendRequest)
         return [[webView resourceLoadDelegate] webView:webView resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:self];
     else

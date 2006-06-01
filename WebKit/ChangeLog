@@ -1,3 +1,18 @@
+2006-06-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - fixed "REGRESSION: Can't order from Pizza Hut (ToT, 05/24/06)"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9103
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _willSendRequest:forResource:redirectResponse:]): Set up the
+        User-Agent header.
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebLoader.m:
+        (-[NSURLProtocol willSendRequest:redirectResponse:]): Pass a mutable URL request
+        so the above can work.
+
 2006-06-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
