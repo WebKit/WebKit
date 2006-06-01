@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Logging_H
-#define Logging_H
-
-#include <wtf/Assertions.h>
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
+#ifdef __cplusplus
+namespace WebCore { class IconDatabase; }
+typedef WebCore::IconDatabase WebCoreIconDatabase;
+#else
+@class WebCoreIconDatabase;
 #endif
 
-extern WTFLogChannel LogNotYetImplemented;
+@interface WebCoreIconDatabaseBridge : NSObject
+{
+    WebCoreIconDatabase *_iconDB;
+}
+- (BOOL)openSharedDatabaseWithPath:(NSString *)path;
+- (void)closeSharedDatabase;
+- (BOOL)isOpen;
+@end
 
-extern WTFLogChannel LogFrames;
-extern WTFLogChannel LogLoading;
-extern WTFLogChannel LogPopupBlocking;
-extern WTFLogChannel LogEvents;
-extern WTFLogChannel LogEditing;
-extern WTFLogChannel LogTextConversion;
-extern WTFLogChannel LogIconDatabase;
 
-#endif
+

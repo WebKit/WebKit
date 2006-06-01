@@ -150,6 +150,10 @@
 		1AE2AEC80A1D297B00B42B25 /* JSHTMLQuoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */; };
 		1AE2AEE60A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */; };
 		1AE2AEE70A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */; };
+		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
+		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5126E6BF0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BD0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5126E6C00A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6BE0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; };
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
@@ -1707,6 +1711,10 @@
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
+		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
+		5126E6BD0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreIconDatabaseBridge.h; sourceTree = "<group>"; };
+		5126E6BE0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreIconDatabaseBridge.mm; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3308,6 +3316,7 @@
 				F523D32402DE4478018635CA /* dom */,
 				93309D86099E64910056E581 /* editing */,
 				93EEC1EC09C2877700C515D1 /* html */,
+				5126E6B60A2E3AEF005C29FA /* icon */,
 				A8C0FB51089701F700BA5114 /* kcanvas */,
 				A8C0F6E9089701F100BA5114 /* ksvg2 */,
 				F58785E802DE377601EA4122 /* kwq */,
@@ -3407,6 +3416,15 @@
 				1A7629710A0740A000989F5B /* XPathVariableReference.h */,
 			);
 			path = impl;
+			sourceTree = "<group>";
+		};
+		5126E6B60A2E3AEF005C29FA /* icon */ = {
+			isa = PBXGroup;
+			children = (
+				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
+				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
+			);
+			path = icon;
 			sourceTree = "<group>";
 		};
 		55998A57052B598F0017A6C1 /* Accessibility */ = {
@@ -3779,6 +3797,8 @@
 				6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */,
 				6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
+				5126E6BD0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h */,
+				5126E6BE0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm */,
 				F5B2A52B02E22573018635CB /* WebCoreJavaScript.h */,
 				F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */,
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */,
@@ -6136,6 +6156,8 @@
 				A833C1000A2C513300D57664 /* JSSVGTransform.h in Headers */,
 				A833C6D80A2CEA7700D57664 /* JSSVGElementWrapperFactory.h in Headers */,
 				A833C80D0A2CF25600D57664 /* XMLNames.h in Headers */,
+				5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */,
+				5126E6BF0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6961,6 +6983,8 @@
 				A833C7CC0A2CF07400D57664 /* XLinkNames.cpp in Sources */,
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,
 				A833C8520A2CF52800D57664 /* SVGElementFactory.cpp in Sources */,
+				5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */,
+				5126E6C00A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6999,6 +7023,7 @@
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
+					"-lsqlite3",
 					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
 				);
 				PRODUCT_NAME = WebCore;
@@ -7031,6 +7056,7 @@
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
+					"-lsqlite3",
 					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
 				);
 				PRODUCT_NAME = WebCore;
@@ -7064,6 +7090,7 @@
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
+					"-lsqlite3",
 					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
 				);
 				PRODUCT_NAME = WebCore;

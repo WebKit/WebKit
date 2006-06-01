@@ -69,6 +69,8 @@ public:
     static unsigned computeHash(const char*);
     
     void append(const StringImpl*);
+    void append(char);
+    void append(UChar);
     void insert(const StringImpl*, unsigned pos);
     void truncate(int len);
     void remove(unsigned pos, int len = 1);

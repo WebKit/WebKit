@@ -138,6 +138,22 @@ void StringImpl::append(const StringImpl* str)
     }
 }
 
+void StringImpl::append(char c)
+{
+    append(UChar(c));
+}
+
+void StringImpl::append(UChar c)
+{
+    assert(!m_inTable);
+    UChar* nc = newUCharVector(m_length + 1);
+    memcpy(nc, m_data, m_length * sizeof(UChar));
+    nc[m_length] = c;
+    deleteUCharVector(m_data);
+    m_data = nc;
+    m_length++;
+}
+
 void StringImpl::insert(const StringImpl* str, unsigned pos)
 {
     assert(!m_inTable);

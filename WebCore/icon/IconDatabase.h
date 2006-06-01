@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,24 +22,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#ifndef ICONDATABASE_H
+#define ICONDATABASE_H
 
-#ifndef Logging_H
-#define Logging_H
+#include "config.h"
 
-#include <wtf/Assertions.h>
+#include "PlatformString.h"
+#include "sqlite3.h"
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+namespace WebCore { 
 
-extern WTFLogChannel LogNotYetImplemented;
+class IconDatabase
+{
+public:
+    static IconDatabase* sharedIconDatabase();
+    
+    void close();
+    bool open(const String& path);
+    bool isOpen() { return m_db; }
+    
+private:
+    IconDatabase();
+    ~IconDatabase();
+    
+    static IconDatabase* m_sharedInstance;
+    
+    sqlite3* m_db;
 
-extern WTFLogChannel LogFrames;
-extern WTFLogChannel LogLoading;
-extern WTFLogChannel LogPopupBlocking;
-extern WTFLogChannel LogEvents;
-extern WTFLogChannel LogEditing;
-extern WTFLogChannel LogTextConversion;
-extern WTFLogChannel LogIconDatabase;
+};
+
+} //namespace WebCore
 
 #endif

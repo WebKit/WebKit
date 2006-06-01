@@ -73,6 +73,8 @@ public:
         { return m_impl ? m_impl->endsWith(s.impl(), caseSensitive) : s.isEmpty(); }
 
     void append(const String&);
+    void append(char);
+    void append(UChar);
     void insert(const String&, unsigned pos);
 
     String& replace(UChar a, UChar b) { if (m_impl) m_impl = m_impl->replace(a, b); return *this; }

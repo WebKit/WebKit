@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Logging_H
-#define Logging_H
+#import "config.h"
+#import "WebCoreIconDatabaseBridge.h"
 
-#include <wtf/Assertions.h>
+#import "Logging.h"
+#import "IconDatabase.h"
+#import "PlatformString.h"
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+using WebCore::IconDatabase;
+using WebCore::String;
 
-extern WTFLogChannel LogNotYetImplemented;
+@implementation WebCoreIconDatabaseBridge
 
-extern WTFLogChannel LogFrames;
-extern WTFLogChannel LogLoading;
-extern WTFLogChannel LogPopupBlocking;
-extern WTFLogChannel LogEvents;
-extern WTFLogChannel LogEditing;
-extern WTFLogChannel LogTextConversion;
-extern WTFLogChannel LogIconDatabase;
+- (BOOL)openSharedDatabaseWithPath:(NSString *)path;
+{
+    assert(path);
+    
+    _iconDB = IconDatabase::sharedIconDatabase();
+    if (_iconDB) {
+        _iconDB->open((String([path stringByStandardizingPath])));
+        return _iconDB->isOpen() ? YES : NO;
+    }
+    return NO;
+}
 
-#endif
+- (void)closeSharedDatabase;
+{
+    LOG( IconDatabase, "Closing IconDatabase" );
+    if (_iconDB) {
+        _iconDB->close();
+        _iconDB = 0;
+    }
+}
+
+- (BOOL)isOpen;
+{
+    return _iconDB != 0;
+}
+@end

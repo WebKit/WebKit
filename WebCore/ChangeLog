@@ -1,3 +1,56 @@
+2006-06-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej.
+
+        Added the beginnings of sqlite-based code in a WebCore
+        based version of the Icon Database.  Right now the code
+        is very loosely hooked up through a Bridge and only
+        creates an sqlite3 database.
+
+        There are also changes to our String classes to allow appending
+        a single character to a String without creating a temporary object.
+
+        * WebCore.exp:
+        -Added a symbol export
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreIconDatabaseBridge.h: Added.
+        * bridge/mac/WebCoreIconDatabaseBridge.mm: Added.
+        (-[WebCoreIconDatabaseBridge openSharedDatabaseWithPath:]):
+        (-[WebCoreIconDatabaseBridge closeSharedDatabase]):
+        (-[WebCoreIconDatabaseBridge isOpen]):
+        -This class will eventually shadow WebIconDatabase but for now
+        is a minimal interface to make the sql code live
+
+        * icon: Added.
+        * icon/IconDatabase.cpp: Added.
+        -This class will eventually resemble WebIconDatabase but for now
+        is minimal just to make the sql code live
+        (WebCore::IconDatabase::sharedIconDatabase):
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open):
+        -This method calls a mkdir to make sure the target directory
+        exists
+        (WebCore::IconDatabase::close):
+        (WebCore::IconDatabase::~IconDatabase):
+
+        * icon/IconDatabase.h: Added.
+        (WebCore::IconDatabase::isOpen):
+        * platform/Logging.cpp:
+        * platform/Logging.h:
+        -Added an IconDatabase logging channel
+
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::append):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::append):
+        * platform/StringImpl.h:
+        -Added append(char) and append(UChar) to allow appending a
+        single character without creating a temporary object.  Required
+        to facilitate manually adding a null character to a unicode 16
+        string
+
 2006-06-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Anders.

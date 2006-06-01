@@ -35,6 +35,8 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
 
+#import <WebCore/WebCoreIconDatabaseBridge.h>
+
 #import "WebTypesInternal.h"
 
 NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";
@@ -51,6 +53,8 @@ NSString *WebIconDatabaseDidRemoveAllIconsNotification =   @"WebIconDatabaseDidR
 
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
 NSString *WebIconDatabaseEnabledDefaultsKey =   @"WebIconDatabaseEnabled";
+
+NSString *WebIconDatabasePath = @"~/Library/Safari/Icons";
 
 NSSize WebIconSmallSize = {16, 16};
 NSSize WebIconMediumSize = {32, 32};
@@ -118,6 +122,19 @@ NSSize WebIconLargeSize = {128, 128};
     [self _createFileDatabase];
     [self _loadIconDictionaries];
 
+    _private->databaseBridge = [[WebCoreIconDatabaseBridge alloc] init];
+    if (_private->databaseBridge) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+
+        if (!databaseDirectory) {
+            databaseDirectory = WebIconDatabasePath;
+            [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
+        }
+        databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
+        [_private->databaseBridge openSharedDatabaseWithPath:databaseDirectory];
+    }
+    
     _private->iconURLToIcons = [[NSMutableDictionary alloc] init];
     _private->iconURLToExtraRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
     _private->pageURLToRetainCount = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
@@ -601,6 +618,8 @@ NSSize WebIconLargeSize = {128, 128};
 {
     // Should only cause a write if user quit before 3 seconds after the last _updateFileDatabase
     [_private->fileDatabase sync];
+    
+    [_private->databaseBridge closeSharedDatabase];
 }
 
 - (int)_totalRetainCountForIconURLString:(NSString *)iconURLString
