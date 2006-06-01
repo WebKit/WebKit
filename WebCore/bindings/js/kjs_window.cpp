@@ -2107,9 +2107,16 @@ void Location::put(ExecState *exec, const Identifier &p, JSValue *v, int attr)
         url = str;
       break;
     }
-    case Hash:
+    case Hash: {
+      if (str.startsWith("#"))
+        str = str.mid(1);
+
+      if (url.ref() == str)
+          return;
+
       url.setRef(str);
       break;
+    }
     case Host: {
       DeprecatedString host = str.left(str.find(":"));
       DeprecatedString port = str.mid(str.find(":")+1);

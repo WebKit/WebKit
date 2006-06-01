@@ -1239,6 +1239,28 @@ static BOOL loggedObjectCacheSize = NO;
     }
 }
 
+- (NSURL*)historyURL:(int)distance
+{
+    WebView *webView = [self webView];
+    WebBackForwardList *list = [webView backForwardList];
+    WebHistoryItem *item = [list itemAtIndex:distance];
+    if (!item) {
+        if (distance > 0) {
+            int forwardListCount = [list forwardListCount];
+            if (forwardListCount > 0)
+                item = [list itemAtIndex:forwardListCount];
+        } else {
+            int backListCount = [list forwardListCount];
+            if (backListCount > 0)
+                item = [list itemAtIndex:-backListCount];
+        }
+    }
+    if (item)
+        return [item URL];
+    
+    return nil;
+}
+
 static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     ASSERT(self->_frame != nil);

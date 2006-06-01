@@ -1,3 +1,23 @@
+2006-06-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6309
+        multiple problems prevent bookmarking/back button technique for AJAX/DHTML applications from working
+
+        * Misc/WebNSURLExtras.m:
+        (-[NSString _webkit_URLFragment]):
+        Don't include the "#" character in the fragment.
+        
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge historyURL:]):
+        New function, returns the history URL for a given position in the back/forward list
+        
+        * WebView/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        Always call scrollToAnchorWithURL, even if there is no fragment. This way we keep the WebCore frame's
+        URL up-to-date.
+
 2006-06-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

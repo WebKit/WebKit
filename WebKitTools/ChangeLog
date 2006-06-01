@@ -2,6 +2,15 @@
 
         Reviewed by Darin.
 
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (-[LayoutTestController clearBackForwardList]):
+        Add clearBackForwardList function to layoutTestController
+        
+2006-06-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=8996
         slow-utf8-text layout test case failing (no longer deterministic?)
         

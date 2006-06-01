@@ -65,7 +65,8 @@ public:
 
     virtual int getHistoryLength() = 0;
     virtual void goBackOrForward(int distance) = 0;
-
+    virtual KURL historyURL(int distance) = 0;
+    
     virtual bool canRunModal() = 0;
     virtual bool canRunModalNow() = 0;
     virtual void runModal() = 0;

@@ -165,6 +165,14 @@ void BrowserExtensionMac::goBackOrForward(int distance)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+KURL BrowserExtensionMac::historyURL(int distance)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return KURL([m_frame->bridge() historyURL:distance]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return KURL();
+}
+
 bool BrowserExtensionMac::canRunModal()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

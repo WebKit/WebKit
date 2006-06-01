@@ -597,7 +597,8 @@ static void dump(void)
             || aSelector == @selector(dumpSelectionRect)
             || aSelector == @selector(display)
             || aSelector == @selector(testRepaint)
-            || aSelector == @selector(repaintSweepHorizontally))
+            || aSelector == @selector(repaintSweepHorizontally)
+            || aSelector == @selector(clearBackForwardList))
         return NO;
     return YES;
 }
@@ -609,6 +610,21 @@ static void dump(void)
     if (aSelector == @selector(setMainFrameIsFirstResponder:))
         return @"setMainFrameIsFirstResponder";
     return nil;
+}
+
+- (void)clearBackForwardList
+{
+    WebBackForwardList *backForwardList = [[frame webView] backForwardList];
+    WebHistoryItem *item = [[backForwardList currentItem] retain];
+
+    // We clear the history by setting the back/forward list's capacity to 0
+    // then restoring it back and adding back the current item.
+    int capacity = [backForwardList capacity];
+    [backForwardList setCapacity:0];
+    [backForwardList setCapacity:capacity];
+    [backForwardList addItem:item];
+    [backForwardList goToItem:item];
+    [item release];
 }
 
 - (void)waitUntilDone 

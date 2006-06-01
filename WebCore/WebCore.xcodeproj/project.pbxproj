@@ -1515,23 +1515,6 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		DB14676D0A237ECE00C9DD16 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		DB14676E0A237ECE00C9DD16 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6186,12 +6169,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				DB14676D0A237ECE00C9DD16 /* Development */,
-				DB14676E0A237ECE00C9DD16 /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

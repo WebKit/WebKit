@@ -1200,15 +1200,9 @@ bool operator==(const KURL &a, const KURL &b)
     return a.urlString == b.urlString;
 }
 
-bool urlcmp(const DeprecatedString &a, const DeprecatedString &b, bool ignoreTrailingSlash, bool ignoreRef)
+bool equalIgnoringRef(const KURL& a, const KURL& b) const;
 {
-    if (ignoreRef) {
-        KURL aURL(a);
-        KURL bURL(b);
-        if (aURL.m_isValid && bURL.m_isValid)
-            return aURL.urlString.left(aURL.queryEndPos) == bURL.urlString.left(bURL.queryEndPos);
-    }
-    return a == b;
+    return a.urlString.left(a.queryEndPos) == b.urlString.left(b.queryEndPos);
 }
 
 DeprecatedString KURL::encode_string(const DeprecatedString& notEncodedString)

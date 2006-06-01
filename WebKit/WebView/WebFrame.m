@@ -1334,10 +1334,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
         // FIXME: form state might want to be saved here too
 
-        // FIXME: Perhaps we can use scrollToAnchorWithURL here instead and remove the older scrollToAnchor:?
-        NSString *anchor = [[item URLString] _webkit_URLFragment];
-        if (anchor)
-            [[_private->dataSource _bridge] scrollToAnchor: anchor];
+        // We always call scrollToAnchorWithURL here, even if the URL doesn't have an
+        // anchor fragment. This is so we'll keep the WebCore Frame's URL up-to-date.
+        [[_private->dataSource _bridge] scrollToAnchorWithURL:[item URL]];
     
         // must do this maintenance here, since we don't go through a real page reload
         [_private setCurrentItem:item];

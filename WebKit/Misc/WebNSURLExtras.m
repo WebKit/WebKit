@@ -1087,7 +1087,7 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
     fragmentRange = [self rangeOfString:@"#" options:NSLiteralSearch];
     if (fragmentRange.location == NSNotFound)
         return nil;
-    return [self substringFromIndex:fragmentRange.location];
+    return [self substringFromIndex:fragmentRange.location + 1];
 }
 
 @end

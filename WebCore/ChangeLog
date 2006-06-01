@@ -1,5 +1,35 @@
 2006-06-01  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6309
+        multiple problems prevent bookmarking/back button technique for AJAX/DHTML applications from working
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::Location::put):
+        Handle the case where the hash starts with a "#". Also, don't do anything if the previous and new hashes
+        are equal.
+        
+        * bridge/BrowserExtension.h:
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/BrowserExtensionMac.mm:        
+        (WebCore::BrowserExtensionMac::historyURL):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        New function historyURL which returns the complete URL for a given item in the history.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::scheduleLocationChange):        
+        (WebCore::Frame::scheduleHistoryNavigation):
+        If the URL of the new location only differs in the hash, don't schedule the load. Instead, load it
+        directly.
+        
+        * platform/KURL.cpp:
+        * platform/KURL.h:
+        Add equalsIgnoringRef which returns whether two URLs are equal, ignoring the ref.
+
+2006-06-01  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Maciej.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9212

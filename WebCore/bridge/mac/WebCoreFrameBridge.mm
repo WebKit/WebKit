@@ -736,11 +736,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         frameView->setMarginHeight(mh);
 }
 
-- (void)scrollToAnchor:(NSString *)anchor
-{
-    m_frame->gotoAnchor(anchor);
-}
-
 - (BOOL)isSelectionEditable
 {
     return m_frame->selection().isContentEditable();
