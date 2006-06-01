@@ -151,8 +151,7 @@ void RenderBox::destroy()
 
 int RenderBox::contentWidth() const
 {
-    int w = m_width - borderLeft() - borderRight();
-    w -= paddingLeft() + paddingRight();
+    int w = m_width - (borderLeft() + borderRight() + paddingLeft() + paddingRight());
 
     if (includeScrollbarSize())
         w -= m_layer->verticalScrollbarWidth();
@@ -162,8 +161,7 @@ int RenderBox::contentWidth() const
 
 int RenderBox::contentHeight() const
 {
-    int h = m_height - borderTop() - borderBottom();
-    h -= paddingTop() + paddingBottom();
+    int h = m_height - (borderTop() + borderBottom() + paddingTop() + paddingBottom());
 
     if (includeScrollbarSize())
         h -= m_layer->horizontalScrollbarHeight();
@@ -181,12 +179,13 @@ int RenderBox::overrideHeight() const
     return m_overrideSize == -1 ? m_height : m_overrideSize;
 }
 
-void RenderBox::setPos( int xPos, int yPos )
+void RenderBox::setPos(int xPos, int yPos)
 {
     if (xPos == m_x && yPos == m_y)
         return; // Optimize for the case where we don't move at all.
     
-    m_x = xPos; m_y = yPos;
+    m_x = xPos;
+    m_y = yPos;
 }
 
 int RenderBox::width() const
@@ -936,92 +935,85 @@ void RenderBox::relativePositionOffset(int &tx, int &ty)
 
 void RenderBox::calcWidth()
 {
-    if (isPositioned())
+    if (isPositioned()) {
         calcAbsoluteHorizontal();
-    else
-    {
-        // The parent box is flexing us, so it has increased or decreased our width.  Use the width
-        // from the style context.
-        if (m_overrideSize != -1 && parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
-            && parent()->isFlexingChildren()) {
-            m_width = m_overrideSize;
-            return;
+        return;
+    }
+    
+    // The parent box is flexing us, so it has increased or decreased our
+    // width.  Use the width from the style context.
+    if (m_overrideSize != -1 && parent()->style()->boxOrient() == HORIZONTAL
+            && parent()->isFlexibleBox() && parent()->isFlexingChildren()) {
+        m_width = m_overrideSize;
+        return;
+    }
+
+    bool inVerticalBox = parent()->isFlexibleBox() && (parent()->style()->boxOrient() == VERTICAL);
+    bool stretching = (parent()->style()->boxAlign() == BSTRETCH);
+    bool treatAsReplaced = isReplaced() && !isInlineBlockOrInlineTable() && (!inVerticalBox || !stretching);
+    
+    Length width = (treatAsReplaced) ? Length(calcReplacedWidth(), Fixed) : style()->width();
+    
+    RenderBlock* cb = containingBlock();
+    int containerWidth = max(0, containingBlockWidth());
+
+    Length marginLeft = style()->marginLeft();
+    Length marginRight = style()->marginRight();
+
+    if (isInline() && !isInlineBlockOrInlineTable()) {
+        // just calculate margins
+        m_marginLeft = marginLeft.calcMinValue(containerWidth);
+        m_marginRight = marginRight.calcMinValue(containerWidth);
+        if (treatAsReplaced)
+            m_width = max(width.value() + borderLeft() + borderRight() + paddingLeft() + paddingRight(), m_minWidth);
+        
+        return;
+    }
+
+    // Width calculations
+    if (treatAsReplaced)
+        m_width = width.value() + borderLeft() + borderRight() + paddingLeft() + paddingRight();
+    else {
+        // Calculate Width
+        m_width = calcWidthUsing(Width, containerWidth);
+        
+        // Calculate MaxWidth
+        if (style()->maxWidth().value() != undefinedLength) {
+            int maxW = calcWidthUsing(MaxWidth, containerWidth);
+            if (m_width > maxW) {
+                m_width = maxW;
+                width = style()->maxWidth();
+            }
         }
 
-        bool inVerticalBox = parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL;
-        bool stretching = parent()->style()->boxAlign() == BSTRETCH;
-        bool treatAsReplaced = isReplaced() && !isInlineBlockOrInlineTable() &&
-            (!inVerticalBox || !stretching);
-        Length w;
-        if (treatAsReplaced)
-            w = Length( calcReplacedWidth(), Fixed );
-        else
-            w = style()->width();
-
-        Length ml = style()->marginLeft();
-        Length mr = style()->marginRight();
-
-        RenderBlock *cb = containingBlock();
-        int cw = containingBlockWidth();
-
-        if (cw<0) cw = 0;
-
+        // Calculate MinWidth
+        int minW = calcWidthUsing(MinWidth, containerWidth);        
+        if (m_width < minW) {
+            m_width = minW;
+            width = style()->minWidth();
+        }
+    }
+    
+    // Margin calculations
+    if (width.isAuto()) {
+        m_marginLeft = marginLeft.calcMinValue(containerWidth);
+        m_marginRight = marginRight.calcMinValue(containerWidth);
+    } else {
         m_marginLeft = 0;
         m_marginRight = 0;
-
-        if (isInline() && !isInlineBlockOrInlineTable()) {
-            // just calculate margins
-            m_marginLeft = ml.calcMinValue(cw);
-            m_marginRight = mr.calcMinValue(cw);
-            if (treatAsReplaced) {
-                m_width = w.calcValue(cw) + borderLeft() + borderRight() + paddingLeft() + paddingRight();
-                m_width = max(m_width, m_minWidth);
-            }
-            return;
-        }
-        else {
-            LengthType widthType, minWidthType, maxWidthType;
-            if (treatAsReplaced) {
-                m_width = w.calcValue(cw) + borderLeft() + borderRight() + paddingLeft() + paddingRight();
-                widthType = w.type();
-            } else {
-                m_width = calcWidthUsing(Width, cw, widthType);
-                int minW = calcWidthUsing(MinWidth, cw, minWidthType);
-                int maxW = style()->maxWidth().value() == undefinedLength
-                    ? m_width : calcWidthUsing(MaxWidth, cw, maxWidthType);
-                
-                if (m_width > maxW) {
-                    m_width = maxW;
-                    widthType = maxWidthType;
-                }
-                if (m_width < minW) {
-                    m_width = minW;
-                    widthType = minWidthType;
-                }
-            }
-            
-            if (widthType == Auto) {
-                m_marginLeft = ml.calcMinValue(cw);
-                m_marginRight = mr.calcMinValue(cw);
-            }
-            else
-            {
-                calcHorizontalMargins(ml,mr,cw);
-            }
-        }
-
-        if (cw && cw != m_width + m_marginLeft + m_marginRight && !isFloating() && !isInline() &&
-            !cb->isFlexibleBox())
-        {
-            if (cb->style()->direction()==LTR)
-                m_marginRight = cw - m_width - m_marginLeft;
-            else
-                m_marginLeft = cw - m_width - m_marginRight;
-        }
+        calcHorizontalMargins(marginLeft, marginRight, containerWidth);
+    }
+    
+    if (containerWidth && containerWidth != (m_width + m_marginLeft + m_marginRight)
+            && !isFloating() && !isInline() && !cb->isFlexibleBox()) {
+        if (cb->style()->direction() == LTR)
+            m_marginRight = containerWidth - m_width - m_marginLeft;
+        else
+            m_marginLeft = containerWidth - m_width - m_marginRight;
     }
 }
 
-int RenderBox::calcWidthUsing(WidthType widthType, int cw, LengthType& lengthType)
+int RenderBox::calcWidthUsing(WidthType widthType, int cw)
 {
     int width = m_width;
     Length w;
@@ -1031,8 +1023,6 @@ int RenderBox::calcWidthUsing(WidthType widthType, int cw, LengthType& lengthTyp
         w = style()->minWidth();
     else
         w = style()->maxWidth();
-
-    lengthType = w.type();
 
     if (w.isIntrinsicOrAuto()) {
         int marginLeft = style()->marginLeft().calcMinValue(cw);

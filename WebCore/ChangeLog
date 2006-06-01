@@ -1,5 +1,22 @@
 2006-05-31  Sam Weinig  <sam.weinig@gmail.com>
 
+        Reviewed by Darin.
+
+        patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8910>
+        Bug 8910: Various code cleanups in RenderBox
+        
+        Clean up with some slight optimizations.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::contentWidth):
+        (WebCore::RenderBox::contentHeight):
+        (WebCore::RenderBox::setPos):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcWidthUsing):
+        * rendering/RenderBox.h:
+
+2006-05-31  Sam Weinig  <sam.weinig@gmail.com>
+
         Reviewed by Hyatt.
 
         patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8899>
