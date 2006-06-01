@@ -1,5 +1,11 @@
 2006-06-01  Anders Carlsson  <acarlsson@apple.com>
 
+        * platform/KURL.cpp:
+        (equalIgnoringRef):
+        Whoops. Fix build.
+        
+2006-06-01  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Darin.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6309

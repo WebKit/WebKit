@@ -1200,7 +1200,7 @@ bool operator==(const KURL &a, const KURL &b)
     return a.urlString == b.urlString;
 }
 
-bool equalIgnoringRef(const KURL& a, const KURL& b) const;
+bool equalIgnoringRef(const KURL& a, const KURL& b)
 {
     return a.urlString.left(a.queryEndPos) == b.urlString.left(b.queryEndPos);
 }
