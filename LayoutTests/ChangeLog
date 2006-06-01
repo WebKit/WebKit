@@ -1,3 +1,13 @@
+2006-06-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8996
+        slow-utf8-text layout test case failing (no longer deterministic?)
+
+        * http/tests/incremental/slow-utf8-text-expected.txt:
+        Updated
+
 2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.

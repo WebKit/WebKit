@@ -1,3 +1,11 @@
+2006-06-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        * WebView/WebFrameView.m:
+        (+[WebFrameView _canShowMIMETypeAsHTML:]):
+        Use _webkit_objectForMIMEType here so we'll get an object back for "text/".
+
 2006-05-31  David Hyatt  <hyatt@apple.com>
 
         Make programmatic focus/blur actually work on sub-frames.  Make the

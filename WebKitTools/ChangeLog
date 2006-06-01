@@ -1,3 +1,14 @@
+2006-06-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8996
+        slow-utf8-text layout test case failing (no longer deterministic?)
+        
+        * DumpRenderTree/DumpRenderTree.m:
+        (dump):
+        Dump as text when the response MIME type is text/plain
+
 2006-05-26  Steve Falkenburg  <sfalken@apple.com>
 
         Build fixes/tweaks

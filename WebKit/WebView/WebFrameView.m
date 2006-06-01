@@ -41,6 +41,7 @@
 #import "WebKeyGenerator.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitStatisticsPrivate.h"
+#import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSViewExtras.h"
@@ -273,7 +274,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 + (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType
 {
-    return [[[self _viewTypesAllowImageTypeOmission:YES] objectForKey:MIMEType] isSubclassOfClass:[WebHTMLView class]];
+    return [[[self _viewTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType] isSubclassOfClass:[WebHTMLView class]];
 }
 
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType

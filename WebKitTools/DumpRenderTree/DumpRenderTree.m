@@ -361,6 +361,7 @@ static void dump(void)
 {
     NSString *result = nil;
     if (dumpTree) {
+        dumpAsText |= [[[[frame dataSource] response] MIMEType] isEqualToString:@"text/plain"];
         if (dumpAsText) {
             DOMElement *documentElement = [[frame DOMDocument] documentElement];
             if ([documentElement isKindOfClass:[DOMHTMLElement class]])
