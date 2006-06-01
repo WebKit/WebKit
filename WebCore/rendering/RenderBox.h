@@ -32,7 +32,6 @@ namespace WebCore {
     class CachedObject;
     
     enum WidthType { Width, MinWidth, MaxWidth };
-    enum HeightType { Height, MinHeight, MaxHeight };
     
 class RenderBox : public RenderObject
 {
@@ -120,8 +119,8 @@ public:
 
     int calcWidthUsing(WidthType widthType, int cw, LengthType& lengthType);
     int calcHeightUsing(const Length& height);
-    int calcReplacedWidthUsing(WidthType widthType) const;
-    int calcReplacedHeightUsing(HeightType heightType) const;
+    int calcReplacedWidthUsing(Length width) const;
+    int calcReplacedHeightUsing(Length height) const;
     
     virtual int calcReplacedWidth() const;
     virtual int calcReplacedHeight() const;

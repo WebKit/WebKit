@@ -1,3 +1,27 @@
+2006-05-31  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt.
+
+        patch for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8899>
+        Bug 8899: Removes some unneeded code from RenderBox
+        
+        Removes the use of WidthType where not needed to simplify
+        the code a little.
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcWidthUsing):
+        (WebCore::RenderBox::sizesToIntrinsicWidth):
+        (WebCore::RenderBox::calcReplacedWidth):
+        (WebCore::RenderBox::calcReplacedWidthUsing):
+        (WebCore::RenderBox::calcReplacedHeight):
+        (WebCore::RenderBox::calcReplacedHeightUsing):
+        * rendering/RenderBox.h:
+        (WebCore::):
+        (WebCore::RenderBox::renderName):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+
 2006-05-31  Rob Buis  <buis@kde.org>
 
         Reviewed by Geoff.
