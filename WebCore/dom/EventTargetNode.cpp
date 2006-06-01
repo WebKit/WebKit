@@ -99,10 +99,8 @@ void EventTargetNode::addEventListener(const AtomicString &eventType, PassRefPtr
     if (type)
         document()->addListenerType(type);
     
-    if (!m_regdListeners) {
-        m_regdListeners = new DeprecatedPtrList<RegisteredEventListener>;
-        m_regdListeners->setAutoDelete(true);
-    }
+    if (!m_regdListeners)
+        m_regdListeners = new RegisteredEventListenerList;
     
     // Remove existing identical listener set with identical arguments.
     // The DOM2 spec says that "duplicate instances are discarded" in this case.
@@ -122,10 +120,12 @@ void EventTargetNode::removeEventListener(const AtomicString &eventType, EventLi
     
     RegisteredEventListener rl(eventType, listener, useCapture);
     
-    DeprecatedPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
-    for (; it.current(); ++it)
-        if (*(it.current()) == rl) {
-            m_regdListeners->removeRef(it.current());
+    RegisteredEventListenerList::Iterator end = m_regdListeners->end();
+    for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it)
+        if (*(*it).get() == rl) {
+            (*it)->setRemoved(true);
+            
+            it = m_regdListeners->remove(it);
             // removed last
             if (m_regdListeners->isEmpty() && !inDocument())
                 document()->unregisterDisconnectedNodeWithEventListeners(this);
@@ -147,11 +147,12 @@ void EventTargetNode::handleLocalEvents(Event *evt, bool useCapture)
     if (disabled() && evt->isMouseEvent())
         return;
     
-    DeprecatedPtrList<RegisteredEventListener> listenersCopy = *m_regdListeners;
-    DeprecatedPtrListIterator<RegisteredEventListener> it(listenersCopy);
-    for (; it.current(); ++it)
-        if (it.current()->eventType() == evt->type() && it.current()->useCapture() == useCapture)
-            it.current()->listener()->handleEvent(evt, false);
+    RegisteredEventListenerList listenersCopy = *m_regdListeners;
+    RegisteredEventListenerList::Iterator end = listenersCopy.end();    
+    
+    for (RegisteredEventListenerList::Iterator it = listenersCopy.begin(); it != end; ++it)
+        if ((*it)->eventType() == evt->type() && (*it)->useCapture() == useCapture && !(*it)->removed())
+            (*it)->listener()->handleEvent(evt, false);
 }
 
 bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode&, bool tempEvent)
@@ -475,10 +476,10 @@ void EventTargetNode::removeHTMLEventListener(const AtomicString &eventType)
     if (!m_regdListeners) // nothing to remove
         return;
     
-    DeprecatedPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
-    for (; it.current(); ++it)
-        if (it.current()->eventType() == eventType && it.current()->listener()->isHTMLEventListener()) {
-            m_regdListeners->removeRef(it.current());
+    RegisteredEventListenerList::Iterator end = m_regdListeners->end();
+    for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it)
+        if ((*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener()) {
+            it = m_regdListeners->remove(it);
             // removed last
             if (m_regdListeners->isEmpty() && !inDocument())
                 document()->unregisterDisconnectedNodeWithEventListeners(this);
@@ -499,10 +500,10 @@ EventListener *EventTargetNode::getHTMLEventListener(const AtomicString &eventTy
     if (!m_regdListeners)
         return 0;
     
-    DeprecatedPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
-    for (; it.current(); ++it)
-        if (it.current()->eventType() == eventType && it.current()->listener()->isHTMLEventListener())
-            return it.current()->listener();
+    RegisteredEventListenerList::Iterator end = m_regdListeners->end();
+    for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it)
+        if ((*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener())
+            return (*it)->listener();
     return 0;
 }
 

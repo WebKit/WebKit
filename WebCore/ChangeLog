@@ -1,3 +1,33 @@
+2006-06-01  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9212
+        dispatchEvent13.html crashes under GuardMalloc
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::addEventListener):
+        (WebCore::EventTargetNode::removeEventListener):        
+        (WebCore::EventTargetNode::handleLocalEvents):
+        
+        (WebCore::EventTargetNode::removeHTMLEventListener):
+        (WebCore::EventTargetNode::getHTMLEventListener):
+        * dom/EventTargetNode.h:
+        Make the list of registered event listeners refcount the listeners
+        by using a value list of RefPtr objects.
+        
+        Set removed flag to true in removeEventListener
+        Only invoke event listeners if they don't have the removed flag.
+        
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::RegisteredEventListener::RegisteredEventListener):
+        * dom/dom2_eventsimpl.h:
+        Make RegisteredEventListener refcounted.
+        
+        (WebCore::RegisteredEventListener::removed):
+        (WebCore::RegisteredEventListener::setRemoved):
+        Add removed flag and getter and setter
+
 2006-06-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

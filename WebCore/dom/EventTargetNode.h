@@ -28,7 +28,7 @@
 
 #include "Node.h"
 
-template <typename T> class DeprecatedPtrList;
+template <typename T> class DeprecatedValueList;
 
 namespace WebCore {
 
@@ -92,7 +92,8 @@ public:
 #endif
 
 protected:
-    DeprecatedPtrList<RegisteredEventListener>* m_regdListeners;
+    typedef DeprecatedValueList<RefPtr<RegisteredEventListener> > RegisteredEventListenerList;
+    RegisteredEventListenerList* m_regdListeners;
 };
 
 inline EventTargetNode* EventTargetNodeCast(Node* n) 
