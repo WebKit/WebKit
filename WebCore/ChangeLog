@@ -1,3 +1,19 @@
+2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Geoff.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9109
+          Remove bogus assertion in RenderBlock::tabWidth
+
+        Changed the uninitialized value of m_tabWidth to -1 and removed the
+        assertion that it cannot be 0.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore:::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::setStyle):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::tabWidth):
+
 2006-05-31  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Hyatt.

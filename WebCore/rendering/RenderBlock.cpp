@@ -91,7 +91,7 @@ RenderBlock::RenderBlock(WebCore::Node* node)
     m_topMarginQuirk = m_bottomMarginQuirk = false;
     m_overflowHeight = m_overflowWidth = 0;
     m_overflowLeft = m_overflowTop = 0;
-    m_tabWidth = 0;
+    m_tabWidth = -1;
 }
 
 RenderBlock::~RenderBlock()
@@ -122,7 +122,7 @@ void RenderBlock::setStyle(RenderStyle* _style)
     }
 
     m_lineHeight = -1;
-    m_tabWidth = 0;
+    m_tabWidth = -1;
 
     // Update pseudos for :before and :after now.
     RenderObject* first = firstChild();

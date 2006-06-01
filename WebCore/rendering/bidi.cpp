@@ -843,12 +843,11 @@ int RenderBlock::tabWidth(bool isWhitespacePre)
     if (!isWhitespacePre)
         return 0;
 
-    if (!m_tabWidth) {
+    if (m_tabWidth == -1) {
         const UChar spaceChar = ' ';
         const Font& font = style()->font();
         int spaceWidth = font.width(TextRun(&spaceChar, 1));
         m_tabWidth = spaceWidth * 8;
-        assert(m_tabWidth != 0);
     }
 
     return m_tabWidth;
