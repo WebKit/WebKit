@@ -1,3 +1,16 @@
+2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - test and updated results for
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=9012
+          Row height not updated when cell heights change
+
+        * fast/table/row-height-recalc-expected.checksum: Added.
+        * fast/table/row-height-recalc-expected.png: Added.
+        * fast/table/row-height-recalc-expected.txt: Added.
+        * fast/table/row-height-recalc.html: Added.
+
 2006-05-31  Rob Buis  <buis@kde.org>
 
         Reviewed by Geoff.

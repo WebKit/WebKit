@@ -50,10 +50,14 @@ void RenderTableRow::destroy()
     RenderContainer::destroy();
 }
 
-void RenderTableRow::setStyle(RenderStyle* style)
+void RenderTableRow::setStyle(RenderStyle* newStyle)
 {
-    style->setDisplay(TABLE_ROW);
-    RenderContainer::setStyle(style);
+    if (section() && style() && style()->height() != newStyle->height())
+        section()->setNeedCellRecalc();
+
+    newStyle->setDisplay(TABLE_ROW);
+
+    RenderContainer::setStyle(newStyle);
 }
 
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)

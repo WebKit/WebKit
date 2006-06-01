@@ -2,6 +2,24 @@
 
         Reviewed by Hyatt.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9012
+          Row height not updated when cell heights change
+
+        Test: fast/table/row-height-recalc.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::setStyle): Mark the section as needing recalculation
+        if the height property changed.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::setStyle): Ditto.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::recalcCells): Initialize the grid row height
+        to the height of the row element (like addChild() does).
+
+2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
         - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8969
           REGRESSION: typing in textfield repaints whole web page at gamefaqs.com
 
