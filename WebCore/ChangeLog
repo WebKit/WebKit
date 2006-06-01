@@ -1,3 +1,15 @@
+2006-05-31  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt.
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9100
+          Absolutely positioned replaced elements with all non-auto
+          values are rendered incorrectly
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced): Add support for case when all values are specified.
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced): ditto
+
 2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
