@@ -1,3 +1,23 @@
+2006-06-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Fix by Mitz. Reviewed, tweaked, tested, landed by me.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=9113
+        REGRESSION (14581): XMLHttpRequest never calls onreadystatechange with 
+        a readystate == 4
+        
+        An XMLHttpRequest must be added to the DOMObject cache so that its
+        DOM implementation object can protect it, and by extension, its event
+        listeners.
+        
+        This design seems slightly backwards to me -- the bindings should know
+        about the DOM, not the other way around -- but I'm restoring it for
+        now to fix the regression.
+        
+        * bindings/js/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::JSXMLHttpRequest):
+        (KJS::JSXMLHttpRequest::~JSXMLHttpRequest):
+
 2006-06-01  Anders Carlsson  <acarlsson@apple.com>
 
         * platform/KURL.cpp:

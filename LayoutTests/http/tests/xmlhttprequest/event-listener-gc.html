@@ -1,0 +1,51 @@
+<html>
+<head>
+<script>
+function write(s)
+{
+    document.getElementById('pre').appendChild(document.createTextNode(s));
+}
+
+var didCollect = false;
+function collect()
+{
+    didCollect = true;
+    if (window.GCController)
+        GCController.collect();
+    else
+        for (var i = 0; i < 10000; i++) // >
+            new String("");
+}
+
+function processStateChange()
+{
+    if (didCollect)
+        write("PASS: event handler fired after garbage collection.\n");
+}
+
+function test() 
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+        
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = processStateChange;
+    request.open("GET", "print-content-type.cgi", true);
+    request.send(null);
+    
+    setTimeout('collect();', 0); // timeout ensures stack references to request are cleared when we collect
+}
+</script>
+</head>
+
+<body onload="test();">
+<p>This test checks whether event handlers for outstanding XMLHttpRequests survive garbage collection.</p>
+<p>See http://bugzilla.opendarwin.org/show_bug.cgi?id=9113 REGRESSION (14581): 
+XMLHttpRequest never calls onreadystatechange with a readystate == 4</p>
+<p>If the test passes, you'll see a series of 'PASS' messages below.</p>
+<hr>
+
+<pre id='pre'></pre>
+
+</body>
+</html>

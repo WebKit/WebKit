@@ -1,3 +1,12 @@
+2006-06-01  Geoffrey Garen  <ggaren@apple.com>
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9113
+        REGRESSION (14581): XMLHttpRequest never calls onreadystatechange with 
+        a readystate == 4
+
+        * http/tests/xmlhttprequest/event-listener-gc.html: Added.
+        * http/tests/xmlhttprequest/event-listener-gc-expected.txt: Added.
+
 2006-06-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
