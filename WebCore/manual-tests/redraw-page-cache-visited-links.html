@@ -1,0 +1,33 @@
+<html>
+<head>
+<script>
+// Uncomment to make this an automated test
+//if (window.layoutTestController) {
+//    layoutTestController.waitUntilDone();
+//}
+function runTest() {
+// Uncomment to make this an automated test
+//    if (!window.history[99999]) {
+//        if (window.eventSender) {
+//            eventSender.mouseMoveTo(55, 120);
+//            eventSender.mouseDown();
+//            eventSender.mouseUp();
+//        }
+//    }
+//    else {
+//        if (window.layoutTestController) {
+//            layoutTestController.notifyDone();
+//        }
+//    }
+}
+</script>
+</head>
+<body onload="runTest();">
+<div><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=8079">Bug 8079 REGRESSION: Redraw from page cache does not show visited links</a></div>
+<ol>
+<li>The link in Step 2 should be rendered in an unvisited link color first.
+<li><a href="./resources/redraw-page-cache-visited-links-2.html">Click This Link Once</a><br><br>
+<li value="4">The test passes if the link in Step 2 is rendered in a visited link color after the click.
+</ol>
+</body>
+</html>

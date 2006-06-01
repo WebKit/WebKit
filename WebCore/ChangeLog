@@ -1,3 +1,13 @@
+2006-06-01  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9144
+        Test for Bug 8079 (REGRESSION: Redraw from page cache does not show visited links)
+
+        * manual-tests/redraw-page-cache-visited-links.html: Added.
+        * manual-tests/resources/redraw-page-cache-visited-links-2.html: Added.
+
 2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
