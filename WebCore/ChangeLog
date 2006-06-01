@@ -1,3 +1,35 @@
+2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8969
+          REGRESSION: typing in textfield repaints whole web page at gamefaqs.com
+
+        No test possible (no functionality change)
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayout): Changed to ensure that pending subtree
+        layouts are performed too.
+        * page/Frame.cpp:
+        (WebCore::Frame::forceLayout): Force a full layout.
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::layout): Changed to relayout only the subtree rooted
+        at d->layoutRoot if it's non-zero and allowSubtree is true.
+        (WebCore::FrameView::scheduleRelayout): Change pending subtree relayout into
+        normal relayout by clearing d->layoutRoot and propagating needsLayout to the
+        root. 
+        (WebCore::FrameView::scheduleRelayoutOfSubtree): Added.
+        * page/FrameView.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout): Added scheduleRelayout
+        parameter. FrameView passes false to force marking all the way to the root
+        when turning a pending subtree relayout into a full relayout. Otherwise,
+        marking stops at the first textField (or at the root) and
+        relayout of the last object reached is scheduled.
+        (WebCore::RenderObject::scheduleRelayout):
+        * rendering/RenderObject.h:
+
 2006-05-31  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

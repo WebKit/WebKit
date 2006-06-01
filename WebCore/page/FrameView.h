@@ -115,7 +115,7 @@ public:
     
     void print();
 
-    void layout();
+    void layout(bool allowSubtree = true);
 
     bool inLayout() const;
     int layoutCount() const;
@@ -152,6 +152,7 @@ public:
     void setTransparent(bool isTransparent);
     
     void scheduleRelayout();
+    void scheduleRelayoutOfSubtree(Node*);
     void unscheduleRelayout();
     bool haveDelayedLayoutScheduled();
     bool layoutPending();

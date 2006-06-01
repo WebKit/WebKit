@@ -885,7 +885,7 @@ void Document::updateLayout()
     updateRendering();
 
     // Only do a layout if changes have occurred that make it necessary.      
-    if (m_view && renderer() && renderer()->needsLayout())
+    if (m_view && renderer() && (m_view->layoutPending() || renderer()->needsLayout()))
         m_view->layout();
 }
 

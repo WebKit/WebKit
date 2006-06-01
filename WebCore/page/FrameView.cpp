@@ -86,6 +86,7 @@ public:
         clickNode = 0;
         scrollingSelf = false;
         layoutTimer.stop();
+        layoutRoot = 0;
         delayedLayout = false;
         mousePressed = false;
         doFullRepaint = true;
@@ -122,6 +123,7 @@ public:
     bool scrollingSelf;
     Timer<FrameView> layoutTimer;
     bool delayedLayout;
+    RefPtr<Node> layoutRoot;
     
     bool layoutSchedulingEnabled;
     bool layoutSuppressed;
@@ -298,7 +300,7 @@ void FrameView::addRepaintInfo(RenderObject* o, const IntRect& r)
     d->repaintRects->append(new RenderObject::RepaintInfo(o, r));
 }
 
-void FrameView::layout()
+void FrameView::layout(bool allowSubtree)
 {
     if (d->layoutSuppressed)
         return;
@@ -313,6 +315,13 @@ void FrameView::layout()
         return;
     }
 
+    if (!allowSubtree && d->layoutRoot) {
+        if (d->layoutRoot->renderer())
+            d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
+        d->layoutRoot = 0;
+    }
+
+    bool subtree = d->layoutRoot;
     Document* document = m_frame->document();
     if (!document) {
         // FIXME: Should we set m_size.height here too?
@@ -320,6 +329,7 @@ void FrameView::layout()
         return;
     }
 
+    Node* rootNode = subtree ? d->layoutRoot.get() : document;
     d->layoutSchedulingEnabled = false;
 
     // Always ensure our style info is up-to-date.  This can happen in situations where
@@ -327,7 +337,7 @@ void FrameView::layout()
     if (document->hasChangedChild())
         document->recalcStyle();
 
-    RenderView* root = static_cast<RenderView*>(document->renderer());
+    RenderObject* root = rootNode->renderer();
     if (!root) {
         // FIXME: Do we need to set m_size here?
         d->layoutSchedulingEnabled = true;
@@ -337,91 +347,99 @@ void FrameView::layout()
     ScrollBarMode hMode = d->hmode;
     ScrollBarMode vMode = d->vmode;
     
-    RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
-    if (document->isHTMLDocument()) {
-        Node *body = static_cast<HTMLDocument*>(document)->body();
-        if (body && body->renderer()) {
-            if (body->hasTagName(framesetTag)) {
-                body->renderer()->setNeedsLayout(true);
-                vMode = ScrollBarAlwaysOff;
-                hMode = ScrollBarAlwaysOff;
+    if (!subtree) {
+        Document* document = static_cast<Document*>(rootNode);
+        RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
+        if (document->isHTMLDocument()) {
+            Node *body = static_cast<HTMLDocument*>(document)->body();
+            if (body && body->renderer()) {
+                if (body->hasTagName(framesetTag)) {
+                    body->renderer()->setNeedsLayout(true);
+                    vMode = ScrollBarAlwaysOff;
+                    hMode = ScrollBarAlwaysOff;
+                } else if (body->hasTagName(bodyTag)) {
+                    RenderObject* o = (rootRenderer->style()->overflow() == OVISIBLE) ? body->renderer() : rootRenderer;
+                    applyOverflowToViewport(o, hMode, vMode); // Only applies to HTML UAs, not to XML/XHTML UAs
+                }
             }
-            else if (body->hasTagName(bodyTag)) {
-                RenderObject* o = (rootRenderer->style()->overflow() == OVISIBLE) ? body->renderer() : rootRenderer;
-                applyOverflowToViewport(o, hMode, vMode); // Only applies to HTML UAs, not to XML/XHTML UAs
-            }
-        }
-    }
-    else if (rootRenderer)
-        applyOverflowToViewport(rootRenderer, hMode, vMode); // XML/XHTML UAs use the root element.
-
+        } else if (rootRenderer)
+            applyOverflowToViewport(rootRenderer, hMode, vMode); // XML/XHTML UAs use the root element.
 #if INSTRUMENT_LAYOUT_SCHEDULING
-    if (d->firstLayout && !document->ownerElement())
-        printf("Elapsed time before first layout: %d\n", document->elapsedTime());
+        if (d->firstLayout && !document->ownerElement())
+            printf("Elapsed time before first layout: %d\n", document->elapsedTime());
 #endif
+    }
 
-    d->doFullRepaint = d->firstLayout || root->printingMode();
+    d->doFullRepaint = !subtree && (d->firstLayout || static_cast<RenderView*>(root)->printingMode());
     if (d->repaintRects)
         d->repaintRects->clear();
 
-    // Now set our scrollbar state for the layout.
-    ScrollBarMode currentHMode = hScrollBarMode();
-    ScrollBarMode currentVMode = vScrollBarMode();
-
     bool didFirstLayout = false;
-    if (d->firstLayout || (hMode != currentHMode || vMode != currentVMode)) {
-        suppressScrollBars(true);
-        if (d->firstLayout) {
-            d->firstLayout = false;
-            didFirstLayout = true;
+    if (!subtree) {
+        // Now set our scrollbar state for the layout.
+        ScrollBarMode currentHMode = hScrollBarMode();
+        ScrollBarMode currentVMode = vScrollBarMode();
+
+        if (d->firstLayout || (hMode != currentHMode || vMode != currentVMode)) {
+            suppressScrollBars(true);
+            if (d->firstLayout) {
+                d->firstLayout = false;
+                didFirstLayout = true;
+                
+                // Set the initial vMode to AlwaysOn if we're auto.
+                if (vMode == ScrollBarAuto)
+                    ScrollView::setVScrollBarMode(ScrollBarAlwaysOn); // This causes a vertical scrollbar to appear.
+                // Set the initial hMode to AlwaysOff if we're auto.
+                if (hMode == ScrollBarAuto)
+                    ScrollView::setHScrollBarMode(ScrollBarAlwaysOff); // This causes a horizontal scrollbar to disappear.
+            }
             
-            // Set the initial vMode to AlwaysOn if we're auto.
-            if (vMode == ScrollBarAuto)
-                ScrollView::setVScrollBarMode(ScrollBarAlwaysOn); // This causes a vertical scrollbar to appear.
-            // Set the initial hMode to AlwaysOff if we're auto.
-            if (hMode == ScrollBarAuto)
-                ScrollView::setHScrollBarMode(ScrollBarAlwaysOff); // This causes a horizontal scrollbar to disappear.
-        }
-        
-        if (hMode == vMode)
-            ScrollView::setScrollBarsMode(hMode);
-        else {
-            ScrollView::setHScrollBarMode(hMode);
-            ScrollView::setVScrollBarMode(vMode);
+            if (hMode == vMode)
+                ScrollView::setScrollBarsMode(hMode);
+            else {
+                ScrollView::setHScrollBarMode(hMode);
+                ScrollView::setVScrollBarMode(vMode);
+            }
+
+            suppressScrollBars(false, true);
         }
 
-        suppressScrollBars(false, true);
+        IntSize oldSize = m_size;
+
+        m_size = IntSize(visibleWidth(), visibleHeight());
+
+        if (oldSize != m_size)
+            d->doFullRepaint = true;
     }
-
-    IntSize oldSize = m_size;
-
-    m_size = IntSize(visibleWidth(), visibleHeight());
-
-    if (oldSize != m_size)
-        d->doFullRepaint = true;
     
-    RenderLayer* layer = root->layer();
+    RenderLayer* layer = root->enclosingLayer();
      
     if (!d->doFullRepaint) {
         layer->computeRepaintRects();
         root->repaintObjectsBeforeLayout();
     }
 
+    if (subtree) {
+        if (root->recalcMinMax())
+            root->recalcMinMaxWidths();
+    }
     root->layout();
+    d->layoutRoot = 0;
 
     m_frame->invalidateSelection();
    
     d->layoutSchedulingEnabled=true;
     d->layoutSuppressed = false;
 
-    if (!root->printingMode())
+    if (!subtree && !static_cast<RenderView*>(root)->printingMode())
         resizeContents(layer->width(), layer->height());
 
     // Now update the positions of all layers.
     layer->updateLayerPositions(d->doFullRepaint);
 
     // We update our widget positions right after doing a layout.
-    root->updateWidgetPositions();
+    if (!subtree)
+        static_cast<RenderView*>(root)->updateWidgetPositions();
     
     if (d->repaintRects && !d->repaintRects->isEmpty()) {
         // FIXME: Could optimize this and have objects removed from this list
@@ -1065,6 +1083,11 @@ void FrameView::hoverTimerFired(Timer<FrameView>*)
 
 void FrameView::scheduleRelayout()
 {
+    if (d->layoutRoot) {
+        if (d->layoutRoot->renderer())
+            d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
+        d->layoutRoot = 0;
+    }
     if (!d->layoutSchedulingEnabled)
         return;
 
@@ -1085,6 +1108,31 @@ void FrameView::scheduleRelayout()
 #endif
 
     d->layoutTimer.startOneShot(delay * 0.001);
+}
+
+void FrameView::scheduleRelayoutOfSubtree(Node* n)
+{
+    if (!d->layoutSchedulingEnabled || m_frame->document() && m_frame->document()->renderer() && m_frame->document()->renderer()->needsLayout()) {
+        if (n->renderer())
+            n->renderer()->markContainingBlocksForLayout(false);
+        return;
+    }
+
+    if (layoutPending()) {
+        if (d->layoutRoot != n) {
+            // Just do a full relayout
+            if (d->layoutRoot && d->layoutRoot->renderer())
+                d->layoutRoot->renderer()->markContainingBlocksForLayout(false);
+            d->layoutRoot = 0;
+            if (n->renderer())
+                n->renderer()->markContainingBlocksForLayout(false);
+        }
+    } else {
+        int delay = m_frame->document()->minimumLayoutDelay();
+        d->layoutRoot = n;
+        d->delayedLayout = delay != 0;
+        d->layoutTimer.startOneShot(delay * 0.001);
+    }
 }
 
 bool FrameView::layoutPending()
