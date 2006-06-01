@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "NamedAttrMap.h"
 #include "RenderBlock.h"
+#include "SelectionController.h"
 #include "KWQTextStream.h"
 
 namespace WebCore {
@@ -820,17 +821,29 @@ CSSStyleDeclaration *Element::style()
 
 void Element::focus()
 {
+    if (!isFocusable())
+        return;
+    
     Document* doc = document();
     doc->updateLayout();
-    if (isFocusable()) {
-        doc->setFocusNode(this);
-        if (rootEditableElement() == this) {
-            // FIXME: we should restore the previous selection if there is one, instead of always selecting all.
-            if (doc->frame()->selectContentsOfNode(this))
-                doc->frame()->revealSelection();
-        } else if (renderer() && !renderer()->isWidget())
-            renderer()->enclosingLayer()->scrollRectToVisible(getRect());
-    }
+                
+    doc->setFocusNode(this);
+    
+    if (this == rootEditableElement()) {    
+        Frame* frame = doc->frame();
+        if (!frame)
+            return;
+        
+        // FIXME: We should restore the previous selection if there is one.
+        Selection s = hasTagName(htmlTag) || hasTagName(bodyTag) ? Selection(Position(this, 0), DOWNSTREAM) : Selection::selectionFromContentsOfNode(this);
+        SelectionController sc(s);
+        
+        if (frame->shouldChangeSelection(sc)) {
+            frame->setSelection(sc);
+            frame->revealSelection();
+        }
+    } else if (renderer() && !renderer()->isWidget())
+        renderer()->enclosingLayer()->scrollRectToVisible(getRect());
 }
 
 void Element::blur()

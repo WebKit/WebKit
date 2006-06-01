@@ -1,3 +1,12 @@
+2006-06-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <rdar://problem/4567752> When forwarding a message, pressing TAB key to place caret in body actually selects the entire message instead
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+
 2006-06-01  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by darin.

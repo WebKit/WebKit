@@ -1,3 +1,15 @@
+2006-06-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * editing/selection/focus-body-expected.checksum: Added.
+        * editing/selection/focus-body-expected.png: Added.
+        * editing/selection/focus-body-expected.txt: Added.
+        * editing/selection/focus-body.html: Added.
+        * editing/selection/focus_editable_html-expected.checksum:
+        * editing/selection/focus_editable_html-expected.png:
+        * editing/selection/focus_editable_html-expected.txt:
+
 2006-06-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
