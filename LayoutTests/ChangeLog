@@ -1,3 +1,55 @@
+2006-05-31  Adele Peterson  <adele@apple.com>
+
+        Updated test results for http://bugzilla.opendarwin.org/show_bug.cgi?id=8848
+        TFOOT borders are copied to THEAD and TBODY
+
+        * tables/mozilla/marvin/backgr_layers-opacity-expected.checksum:
+        * tables/mozilla/marvin/backgr_layers-opacity-expected.txt:
+        * tables/mozilla/marvin/backgr_position-table-expected.checksum:
+        * tables/mozilla/marvin/backgr_position-table-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-cell-expected.checksum:
+        * tables/mozilla/marvin/backgr_simple-table-cell-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-column-expected.checksum:
+        * tables/mozilla/marvin/backgr_simple-table-column-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-column-group-expected.checksum:
+        * tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-expected.checksum:
+        * tables/mozilla/marvin/backgr_simple-table-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-row-expected.checksum:
+        * tables/mozilla/marvin/backgr_simple-table-row-expected.txt:
+        * tables/mozilla/marvin/backgr_simple-table-row-group-expected.checksum:
+        * tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.txt:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.txt:
+
 2006-05-31  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Hyatt.
