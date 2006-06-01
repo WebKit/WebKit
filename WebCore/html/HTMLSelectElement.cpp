@@ -396,15 +396,24 @@ void HTMLSelectElement::setRecalcListItems()
 
 void HTMLSelectElement::reset()
 {
+    bool optionSelected = false;
+    HTMLOptionElement* firstOption = 0;
     DeprecatedArray<HTMLElement*> items = listItems();
     unsigned i;
     for (i = 0; i < items.size(); i++) {
         if (items[i]->hasLocalName(optionTag)) {
             HTMLOptionElement *option = static_cast<HTMLOptionElement*>(items[i]);
-            bool selected = (!option->getAttribute(selectedAttr).isNull());
-            option->setSelected(selected);
+            if (!option->getAttribute(selectedAttr).isNull()) {
+                option->setSelected(true);
+                optionSelected = true;
+            } else
+                option->setSelected(false);
+            if (!firstOption)
+                firstOption = option;
         }
     }
+    if (!optionSelected && firstOption)
+        firstOption->setSelected(true);
     if (renderer())
         static_cast<RenderSelect*>(renderer())->setSelectionChanged(true);
     setChanged(true);

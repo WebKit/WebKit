@@ -2,6 +2,14 @@
 
         Reviewed by Geoff.
 
+        Testcase for http://bugzilla.opendarwin.org/show_bug.cgi?id=8455
+
+        * fast/forms/select-reset.html: Added.
+
+2006-05-31  Rob Buis  <buis@kde.org>
+
+        Reviewed by Geoff.
+
         Add a test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8024
 
         * fast/dom/document-all-input.html: Added.
