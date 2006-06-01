@@ -489,30 +489,27 @@ RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject*
     // Error check the parent layer passed in.  If it's null, we can't find anything.
     if (!parentLayer)
         return 0;
-        
-    // Step 1: Descend into our siblings trying to find the next layer.  If we do find
-    // a layer, and if its parent layer matches our desired parent layer, then we have
-    // a match.
-    for (RenderObject* curr = startPoint ? startPoint->nextSibling() : firstChild();
-         curr; curr = curr->nextSibling()) {
-        RenderLayer* nextLayer = curr->findNextLayer(parentLayer, 0, false);
-        if (nextLayer) {
-            if (nextLayer->parent() == parentLayer)
+    
+    // Step 1: If our layer is a child of the desired parent, then return our layer.
+    RenderLayer* ourLayer = layer();
+    if (ourLayer && ourLayer->parent() == parentLayer)
+        return ourLayer;
+    
+    // Step 2: If we don't have a layer, or our layer is the desired parent, then descend
+    // into our siblings trying to find the next layer whose parent is the desired parent.
+    if (!ourLayer || ourLayer == parentLayer) {
+        for (RenderObject* curr = startPoint ? startPoint->nextSibling() : firstChild();
+             curr; curr = curr->nextSibling()) {
+            RenderLayer* nextLayer = curr->findNextLayer(parentLayer, 0, false);
+            if (nextLayer)
                 return nextLayer;
-            return 0;
         }
     }
     
-    // Step 2: If our layer is the desired parent layer, then we're finished.  We didn't
+    // Step 3: If our layer is the desired parent layer, then we're finished.  We didn't
     // find anything.
-    RenderLayer* ourLayer = layer();
     if (parentLayer == ourLayer)
         return 0;
-    
-    // Step 3: If we have a layer, then return that layer.  It will be checked against
-    // the desired parent layer in the for loop above.
-    if (ourLayer)
-        return ourLayer;
     
     // Step 4: If |checkParent| is set, climb up to our parent and check its siblings that
     // follow us to see if we can locate a layer.

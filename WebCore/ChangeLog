@@ -1,5 +1,18 @@
 2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9124
+          Drop shadow obscures "add more stuff" bubble at live.com
+
+        Test: fast/css/find-next-layer.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::findNextLayer): Fixed a bug where this function could reach
+        two levels down in the layer tree and return 0.
+
+2006-05-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Geoff.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=9109
