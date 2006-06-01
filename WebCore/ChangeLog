@@ -1,3 +1,17 @@
+2006-05-31  Rob Buis  <buis@kde.org>
+
+        Reviewed by Geoff.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8024
+        "Go" button (search) doesn't work at fifa.com (document.all.FormName)
+
+        Allow input elements with name attributes as possible named
+        items for document.all.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch):
+        (WebCore::HTMLCollection::updateNameCache):
+
 2006-05-31  Dave Hyatt <hyatt@apple.com>
 
         Adding stubs for BMP/ICO/XBM image decoders.  They don't

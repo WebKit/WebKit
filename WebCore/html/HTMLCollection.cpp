@@ -270,7 +270,7 @@ bool HTMLCollection::checkForNameMatch(Node *node, bool checkName, const String 
             if (type == DOC_ALL && 
                 !(e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                   e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
-                  e->hasLocalName(embedTag)))
+                  e->hasLocalName(embedTag) || e->hasLocalName(inputTag)))
                 return false;
 
             return e->getAttribute(nameAttr) == name && e->getAttribute(idAttr) != name;
@@ -283,7 +283,7 @@ bool HTMLCollection::checkForNameMatch(Node *node, bool checkName, const String 
             if (type == DOC_ALL && 
                 !(e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                   e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
-                  e->hasLocalName(embedTag)))
+                  e->hasLocalName(embedTag) || e->hasLocalName(inputTag)))
                 return false;
 
             return e->getAttribute(nameAttr).domString().lower() == name.lower() &&
@@ -349,7 +349,7 @@ void HTMLCollection::updateNameCache() const
             && (type != DOC_ALL || 
                 (e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                  e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
-                 e->hasLocalName(embedTag)))) {
+                 e->hasLocalName(embedTag) || e->hasLocalName(inputTag)))) {
             // add to name cache
             Vector<Node*>* nameVector = info->nameCache.get(nameAttrVal.impl());
             if (!nameVector) {
