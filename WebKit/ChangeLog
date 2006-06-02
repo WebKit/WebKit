@@ -1,3 +1,8 @@
+2006-06-02  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport/WebImageRendererFactory.m: Fix crash on Safari startup
+        by include NSObject as a superclass (oops!).
+
 2006-06-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

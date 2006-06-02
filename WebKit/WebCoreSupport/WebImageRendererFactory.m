@@ -30,7 +30,7 @@
 // Safari call the methods from the Debug menu. Once we don't need compatibility
 // with those old versions of Safari, we can remove this.
 
-@interface WebImageRendererFactory
+@interface WebImageRendererFactory : NSObject
 @end
 
 @implementation WebImageRendererFactory
