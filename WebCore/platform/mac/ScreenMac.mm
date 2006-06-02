@@ -83,7 +83,7 @@ FloatRect scaleWidgetRectToScreen(FloatRect rect, Widget* widget)
 
 int screenDepth(Widget* widget)
 {
-    return [screen(widget) depth];
+    return NSBitsPerPixelFromDepth([screen(widget) depth]);
 }
 
 // These methods scale between window and WebView coordinates because JavaScript/DOM operations 

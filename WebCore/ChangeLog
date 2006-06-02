@@ -1,3 +1,15 @@
+2006-06-01  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8646
+        Correcting the value returned for window.screen.pixelDepth and
+        window.screen.colorDepth
+        
+        * platform/mac/ScreenMac.mm
+        (screenDepth): 
+        Changed to return the BitsPerPixelFromDepth rather than the WindowDepth
+
 2006-06-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
