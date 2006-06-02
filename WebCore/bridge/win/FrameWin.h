@@ -56,6 +56,7 @@ public:
 
     virtual void scheduleClose();
 
+    virtual void focusWindow();
     virtual void unfocusWindow();
     
     virtual void saveDocumentState();

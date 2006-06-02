@@ -367,17 +367,6 @@ void GraphicsContext::addClip(const IntRect& rect)
     cairo_clip(context);
 }
 
-void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
-    const IntSize& bottomLeft, const IntSize& bottomRight)
-{
-    // FIXME: Implement.
-}
-
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
-{
-    //FIXME: Implement.
-}
-
 void GraphicsContext::drawFocusRing(const Color& color)
 {
     if (paintingDisabled())
