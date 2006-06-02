@@ -90,7 +90,9 @@ void Image::invalidateNativeData()
 
 Image* Image::loadResource(const char *name)
 {
-    NSData* namedImageData = [[WebCoreImageRendererFactory sharedFactory] imageDataForName:[NSString stringWithUTF8String:name]];
+    NSBundle *bundle = [NSBundle bundleForClass:[WebCoreFrameBridge class]];
+    NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"tiff"];
+    NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
     if (namedImageData) {
         Image* image = new Image;
         image->setNativeData((CFDataRef)namedImageData, true);

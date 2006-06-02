@@ -1152,6 +1152,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         }
         ASSERT_NOT_REACHED();
         return 0;
+    case CSS_PROP_RESIZE:
+        switch (style->resize()) {
+            case RESIZE_BOTH:
+                return new CSSPrimitiveValue(CSS_VAL_BOTH);
+            case RESIZE_HORIZONTAL:
+                return new CSSPrimitiveValue(CSS_VAL_HORIZONTAL);
+            case RESIZE_VERTICAL:
+                return new CSSPrimitiveValue(CSS_VAL_VERTICAL);
+            case RESIZE_NONE:
+            default:
+                return new CSSPrimitiveValue(CSS_VAL_NONE);
+        }
     case CSS_PROP_Z_INDEX:
         if (style->hasAutoZIndex())
             return new CSSPrimitiveValue(CSS_VAL_NORMAL);

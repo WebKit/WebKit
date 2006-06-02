@@ -422,6 +422,7 @@ StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData& o)
     nbspMode = o.nbspMode;
     khtmlLineBreak = o.khtmlLineBreak;
     textSizeAdjust = o.textSizeAdjust;
+    resize = o.resize;
 }
 
 StyleCSS3InheritedData::~StyleCSS3InheritedData()

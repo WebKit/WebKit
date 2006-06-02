@@ -141,6 +141,7 @@ text-underline-color
 text-underline-mode
 text-underline-style
 text-underline-width
+resize
 -webkit-text-size-adjust
 -webkit-dashboard-region
 top

@@ -684,6 +684,10 @@ enum EMatchNearestMailBlockquoteColor {
     BCNORMAL, MATCH
 };
 
+enum EResize {
+    RESIZE_NONE, RESIZE_BOTH, RESIZE_HORIZONTAL, RESIZE_VERTICAL
+};
+
 enum EAppearance {
     NoAppearance, CheckboxAppearance, RadioAppearance, PushButtonAppearance, SquareButtonAppearance, ButtonAppearance,
     ButtonBevelAppearance, ListboxAppearance, ListItemAppearance, MenulistAppearance,
@@ -758,6 +762,7 @@ public:
     unsigned nbspMode : 1; // ENBSPMode
     unsigned khtmlLineBreak : 1; // EKHTMLLineBreak
     bool textSizeAdjust : 1;    // An Apple extension.  Not really CSS3 but not worth making a new struct over.
+    unsigned resize : 2; // EResize
     
 private:
     StyleCSS3InheritedData &operator=(const StyleCSS3InheritedData &);
@@ -1333,6 +1338,7 @@ public:
     ENBSPMode nbspMode() const { return static_cast<ENBSPMode>(css3InheritedData->nbspMode); }
     EKHTMLLineBreak khtmlLineBreak() const { return static_cast<EKHTMLLineBreak>(css3InheritedData->khtmlLineBreak); }
     EMatchNearestMailBlockquoteColor matchNearestMailBlockquoteColor() const { return static_cast<EMatchNearestMailBlockquoteColor>(css3NonInheritedData->matchNearestMailBlockquoteColor); }
+    EResize resize() const { return static_cast<EResize>(css3InheritedData->resize); }
     // End CSS3 Getters
 
     // Apple-specific property getter methods
@@ -1550,6 +1556,7 @@ public:
     void setNBSPMode(ENBSPMode b) { SET_VAR(css3InheritedData, nbspMode, b); }
     void setKHTMLLineBreak(EKHTMLLineBreak b) { SET_VAR(css3InheritedData, khtmlLineBreak, b); }
     void setMatchNearestMailBlockquoteColor(EMatchNearestMailBlockquoteColor c)  { SET_VAR(css3NonInheritedData, matchNearestMailBlockquoteColor, c); }
+    void setResize(EResize r) { SET_VAR(css3InheritedData, resize, r); }
     // End CSS3 Setters
    
     // Apple-specific property setters
@@ -1670,6 +1677,7 @@ public:
     static ENBSPMode initialNBSPMode() { return NBNORMAL; }
     static EKHTMLLineBreak initialKHTMLLineBreak() { return LBNORMAL; }
     static EMatchNearestMailBlockquoteColor initialMatchNearestMailBlockquoteColor() { return BCNORMAL; }
+    static EResize initialResize() { return RESIZE_NONE; }
     static EAppearance initialAppearance() { return NoAppearance; }
     static bool initialVisuallyOrdered() { return false; }
 

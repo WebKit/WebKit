@@ -47,6 +47,7 @@ public:
     // whether the CSS border/background should also be painted.
     bool paint(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
     bool paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
+    virtual void paintResizeControl(GraphicsContext*, const IntRect&);
 
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // RenderThemeMac.cpp for Mac OS X.

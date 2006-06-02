@@ -57,6 +57,7 @@ public:
         : m_hasBorder(false)
         , layoutTimer(view, &FrameView::layoutTimerFired)
         , hoverTimer(view, &FrameView::hoverTimerFired)
+        , m_resizeLayer(0)
         , m_mediaType("screen")
     {
         repaintRects = 0;
@@ -98,6 +99,7 @@ public:
         if (repaintRects)
             repaintRects->clear();
         resizingFrameSet = 0;
+        m_resizeLayer = 0;
     }
 
     RefPtr<Node> underMouse;
@@ -135,6 +137,8 @@ public:
     bool isTransparent;
     
     Timer<FrameView> hoverTimer;
+    
+    RenderLayer* m_resizeLayer;
     
     // Used by objects during layout to communicate repaints that need to take place only
     // after all layout has been completed.
@@ -508,6 +512,15 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     d->clickCount = mouseEvent.clickCount();
     d->clickNode = mev.targetNode();
+    
+    RenderLayer* layer = d->clickNode->renderer()? d->clickNode->renderer()->enclosingLayer() : 0;
+    IntPoint p =  viewportToContents(mouseEvent.pos());
+    if (layer && layer->isPointInResizeControl(p)) {
+        layer->setInResizeMode(true);
+        d->m_resizeLayer = layer;
+        invalidateClick();
+        return;  
+    }
 
     bool swallowEvent = dispatchMouseEvent(mousedownEvent, mev.targetNode(), true, d->clickCount, mouseEvent, true);
 
@@ -579,8 +592,13 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
             bool editable = (node && node->isContentEditable());
             if ((event.isOverLink() || isSubmitImage(node)) && (!editable || event.event().shiftKey()))
                 return handCursor();
-            if (editable || (renderer && renderer->isText() && renderer->canSelect()))
+            RenderLayer* layer = renderer ? renderer->enclosingLayer() : 0;
+            bool inResizer = false;
+            if (frame->view() && layer && layer->isPointInResizeControl(frame->view()->viewportToContents(event.event().pos())))
+                inResizer = true;
+            if ((editable || (renderer && renderer->isText() && renderer->canSelect())) && !inResizer)
                 return iBeamCursor();
+            // FIXME: If the point is in a layer's overflow scrollbars, we should use the pointer cursor
             return pointerCursor();
         }
         case CURSOR_CROSS:
@@ -648,6 +666,10 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
         m_frame->passSubframeEventToSubframe(mev, d->oldSubframe.get());
 
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
+    
+    if (d->m_resizeLayer && d->m_resizeLayer->inResizeMode())
+        d->m_resizeLayer->resize();
+
     if (!swallowEvent)
         m_frame->handleMouseMoveEvent(mev);
     
@@ -690,6 +712,11 @@ void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     if (d->clickCount > 0 && mev.targetNode() == d->clickNode)
         dispatchMouseEvent(clickEvent, mev.targetNode(), true, d->clickCount, mouseEvent, true);
+
+    if (d->m_resizeLayer) {
+        d->m_resizeLayer->setInResizeMode(false);
+        d->m_resizeLayer = 0;
+    }
 
     if (!swallowEvent)
         m_frame->handleMouseReleaseEvent(mev);

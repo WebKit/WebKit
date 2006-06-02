@@ -330,6 +330,7 @@ textarea {
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
     -webkit-box-orient: vertical;
+    resize: both;
 }
 
 input[type="password"], input[type="search"], input[type="hidden"], input[type="image"], input[type="file"] {

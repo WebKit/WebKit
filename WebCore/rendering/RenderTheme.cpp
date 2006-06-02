@@ -120,6 +120,10 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
     return false;
 }
 
+void RenderTheme::paintResizeControl(GraphicsContext*, const IntRect&)
+{
+}
+
 short RenderTheme::baselinePosition(const RenderObject* o) const
 {
     return o->height() + o->marginTop();

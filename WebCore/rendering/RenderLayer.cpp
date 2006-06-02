@@ -45,6 +45,7 @@
 #include "RenderLayer.h"
 
 #include "Document.h"
+#include "CSSPropertyNames.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -53,6 +54,7 @@
 #include "dom2_eventsimpl.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
+#include "PlatformMouseEvent.h"
 #include "RenderArena.h"
 #include "RenderView.h"
 #include "RenderInline.h"
@@ -87,6 +89,9 @@ const RenderLayer::ScrollAlignment RenderLayer::gAlignToEdgeIfNeeded = { RenderL
 const RenderLayer::ScrollAlignment RenderLayer::gAlignCenterAlways = { RenderLayer::alignCenter, RenderLayer::alignCenter, RenderLayer::alignCenter };
 const RenderLayer::ScrollAlignment RenderLayer::gAlignTopAlways = { RenderLayer::alignTop, RenderLayer::alignTop, RenderLayer::alignTop };
 const RenderLayer::ScrollAlignment RenderLayer::gAlignBottomAlways = { RenderLayer::alignBottom, RenderLayer::alignBottom, RenderLayer::alignBottom };
+
+const int MinimumWidthWhileResizing = 100;
+const int MinimumHeightWhileResizing = 40;
 
 void* ClipRects::operator new(size_t sz, RenderArena* renderArena) throw()
 {
@@ -128,6 +133,7 @@ m_scrollWidth(0),
 m_scrollHeight(0),
 m_hBar(0),
 m_vBar(0),
+m_inResizeMode(false),
 m_posZOrderList(0),
 m_negZOrderList(0),
 m_overflowList(0),
@@ -181,6 +187,7 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
                            // we need to keep in sync, since we may have shifted relative
                            // to our parent layer.
 
+    positionResizeControl();
     if (m_hBar || m_vBar) {
         // Need to position the scrollbars.
         int x = 0;
@@ -310,7 +317,7 @@ void RenderLayer::updateLayerPosition()
             setWidth(m_object->overflowWidth());
         if (m_object->overflowHeight() > m_object->height())
             setHeight(m_object->overflowHeight());
-    }    
+    }
 }
 
 RenderLayer *RenderLayer::stackingContext() const
@@ -789,6 +796,53 @@ bool RenderLayer::shouldAutoscroll()
     return false;
 }
 
+void RenderLayer::resize()
+{
+    if (!inResizeMode() || !renderer()->hasOverflowClip() || m_object->style()->resize() == RESIZE_NONE)
+        return;
+    
+    PlatformMouseEvent* evt = new PlatformMouseEvent();
+    if (!evt->isMouseButtonDown(LeftButton))
+        return;
+
+    // FIXME Radar 4118559: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
+    // to drag the bottom-right corner to make the bottom-left corner move.
+    // FIXME Radar 4118564: ideally we'd autoscroll the window as necessary to keep the point under
+    // the cursor in view.
+
+    IntPoint currentPoint = m_object->document()->view()->viewportToContents(evt->pos());
+
+    int x;
+    int y;
+    m_object->absolutePosition(x, y);
+    int right = x + m_object->width();
+    int bottom = y + m_object->height();
+    int diffWidth =  max(currentPoint.x() - right, min(0, MinimumWidthWhileResizing - m_object->width()));
+    int diffHeight = max(currentPoint.y() - bottom, min(0, MinimumHeightWhileResizing - m_object->height()));
+    
+    ExceptionCode ec = 0;
+    // Set the width and height for the shadow ancestor node.  This is necessary for textareas since the resizable layer is on the inner div.
+    // For non-shadow content, this will set the width and height on the original node.
+    RenderObject* renderer = m_object->node()->shadowAncestorNode()->renderer();
+    if (diffWidth && (m_object->style()->resize() == RESIZE_HORIZONTAL || m_object->style()->resize() == RESIZE_BOTH))
+        static_cast<Element*>(m_object->node()->shadowAncestorNode())->style()->setProperty(CSS_PROP_WIDTH, 
+                                                                                String::number(renderer->width() + diffWidth) + "px", false, ec);
+
+    if (diffHeight && (m_object->style()->resize() == RESIZE_VERTICAL || m_object->style()->resize() == RESIZE_BOTH))
+        static_cast<Element*>(m_object->node()->shadowAncestorNode())->style()->setProperty(CSS_PROP_HEIGHT, 
+                                                                                String::number(renderer->height() + diffHeight) + "px", false, ec);
+    
+    ASSERT(ec == 0);
+
+    if (m_object->style()->resize() != RESIZE_NONE) {
+        m_object->setNeedsLayout(true);
+        m_object->node()->shadowAncestorNode()->renderer()->setNeedsLayout(true);
+        m_object->document()->updateLayout();
+    }
+        
+    delete evt;
+}
+
 void RenderLayer::valueChanged(Widget*)
 {
     // Update scroll position from scroll bars.
@@ -872,21 +926,40 @@ RenderLayer::moveScrollbarsAside()
         m_vBar->move(0, -50000);
 }
 
+bool RenderLayer::isPointInResizeControl(const IntPoint& p)
+{
+    return resizeControlRect().contains(IntRect(p, IntSize()));
+}
+
+void RenderLayer::positionResizeControl()
+{
+    if (m_object->hasOverflowClip() && m_object->style()->resize() != RESIZE_NONE) {
+        // FIXME: needs to be updated for RTL.
+        int x = 0;
+        int y = 0;
+        convertToLayerCoords(root(), x, y);
+        // FIXME: get the potential scrollbar size from the theme
+        int scrollbarSize = 15;
+        setResizeControlRect(IntRect(x + width() - scrollbarSize - m_object->style()->borderRightWidth() - 1, 
+                             y + height() - scrollbarSize - m_object->style()->borderBottomWidth() - 1, scrollbarSize, scrollbarSize));
+    }
+}
+
 void
 RenderLayer::positionScrollbars(const IntRect& absBounds)
 {
+    int resizeControlSize = max(resizeControlRect().height() - 1, 0);
     if (m_vBar) {
         m_vBar->move(absBounds.right() - m_object->borderRight() - m_vBar->width(),
             absBounds.y() + m_object->borderTop());
-        m_vBar->resize(m_vBar->width(),
-            absBounds.height() - (m_object->borderTop() + m_object->borderBottom()) - (m_hBar ? m_hBar->height() - 1 : 0));
+        m_vBar->resize(m_vBar->width(), absBounds.height() - (m_object->borderTop() + m_object->borderBottom()) - (m_hBar ? m_hBar->height() - 1 : resizeControlSize));
     }
 
+    resizeControlSize = max(resizeControlRect().width() - 1, 0);
     if (m_hBar) {
         m_hBar->move(absBounds.x() + m_object->borderLeft(),
             absBounds.bottom() - m_object->borderBottom() - m_hBar->height());
-        m_hBar->resize(absBounds.width() - (m_object->borderLeft() + m_object->borderRight()) - (m_vBar ? m_vBar->width() - 1 : 0),
-            m_hBar->height());
+        m_hBar->resize(absBounds.width() - (m_object->borderLeft() + m_object->borderRight()) - (m_vBar ? m_vBar->width() - 1 : resizeControlSize), m_hBar->height());
     }
 }
 
@@ -1025,6 +1098,7 @@ RenderLayer::paintScrollbars(GraphicsContext* p, const IntRect& damageRect)
     // Move the widgets if necessary.  We normally move and resize widgets during layout, but sometimes
     // widgets can move without layout occurring (most notably when you scroll a document that
     // contains fixed positioned elements).
+    positionResizeControl();
     if (m_hBar || m_vBar) {
         int x = 0;
         int y = 0;
@@ -1038,6 +1112,12 @@ RenderLayer::paintScrollbars(GraphicsContext* p, const IntRect& damageRect)
         m_hBar->paint(p, damageRect);
     if (m_vBar)
         m_vBar->paint(p, damageRect);
+}
+
+void RenderLayer::paintResizeControl(GraphicsContext* c)
+{
+    if (!resizeControlRect().isEmpty())
+        theme()->paintResizeControl(c, resizeControlRect());
 }
 
 bool RenderLayer::scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier)
@@ -1133,6 +1213,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // z-index.  We paint after we painted the background/border, so that the scrollbars will
         // sit above the background/border.
         paintScrollbars(p, damageRect);
+        paintResizeControl(p);
         // Restore the clip.
         restoreClip(p, paintDirtyRect, damageRect);
     }

@@ -49,6 +49,8 @@ public:
 
     virtual bool isControlStyled(const RenderStyle* style, const BorderData& border, 
                                  const BackgroundLayer& background, const Color& backgroundColor) const;
+                                
+    virtual void paintResizeControl(GraphicsContext*, const IntRect&);
 
 protected:
     // Methods for each appearance value.
@@ -102,6 +104,7 @@ private:
     NSButtonCell* checkbox;
     NSButtonCell* radio;
     NSButtonCell* button;
+    Image* resizeCornerImage;
 };
 
 }

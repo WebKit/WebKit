@@ -1,3 +1,62 @@
+2006-06-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9216
+        Implement CSS3 resize property
+
+        * css/html4.css: Sets resize:both for textareas. This won't affect old-style textareas.
+
+        * css/CSSPropertyNames.in: Added resize property.
+        * css/cssparser.cpp: (WebCore::CSSParser::parseValue): Added case for CSS_PROP_RESIZE.
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::applyProperty): ditto.
+        * css/CSSComputedStyleDeclaration.cpp: (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): ditto.
+
+        * rendering/render_style.cpp: (WebCore::StyleCSS3InheritedData): Initialize resize.
+        * rendering/render_style.h:
+        (WebCore::): Added EResize enum.
+        (WebCore::RenderStyle::resize):
+        (WebCore::RenderStyle::setResize):
+        (WebCore::RenderStyle::initialResize):
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate): Added m_resizeLayer to keep track of a layer that has begun resizing.
+        (WebCore::FrameViewPrivate::reset): Reset m_resizeLayer.
+        (WebCore::FrameView::handleMousePressEvent): If the mouse was pressed in a layer's resize control, then put the layer into resize mode.
+        (WebCore::selectCursor): Updated so we get a pointer cursor for the resize control.
+        (WebCore::FrameView::handleMouseMoveEvent): If there's a layer currently resizing, then tell the layer to continue resizing.
+        (WebCore::FrameView::handleMouseReleaseEvent): If there's a layer currently resizing, then pull it out of resize mode.
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::isPointInScrollbar): Updated so the resize control isn't considered part of the scrollbar.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer): Initialize m_inResizeMode
+        (WebCore::RenderLayer::updateLayerPositions): Calls positionResizeControl.
+        (WebCore::RenderLayer::resize): Added. Sets a new width and height based on the current mouse point.
+        (WebCore::RenderLayer::isPointInResizeControl): Added.
+        (WebCore::RenderLayer::positionResizeControl): Added.
+        (WebCore::RenderLayer::positionScrollbars): Calls positionResizeControl.
+        (WebCore::RenderLayer::paintScrollbars): Calls positionResizeControl.
+        (WebCore::RenderLayer::paintResizeControl): Added.
+        (WebCore::RenderLayer::paintLayer): Calls paintResizeControl.
+        * rendering/RenderLayer.h: Added m_inResizeMode.
+        (WebCore::RenderLayer::resizeControlRect):
+        (WebCore::RenderLayer::setResizeControlRect):
+        (WebCore::RenderLayer::inResizeMode): Added.
+        (WebCore::RenderLayer::setInResizeMode): Added. 
+
+        * platform/mac/ImageMac.mm: (WebCore::Image::loadResource): Moved code from WebImageRendererFactory.  Now loads images from WebCore's resources.
+        WebImageRendererFactory is no longer used and should be removed.
+        * Resources/missingImage.tiff: Added. Copied from WebKit.
+        * WebCore.xcodeproj/project.pbxproj: Added missingImage.tiff
+        * loader/Cache.cpp: (WebCore::Cache::init): Updated name from missing_image to missingImage.
+
+        * rendering/RenderTheme.h:
+        * rendering/RenderTheme.cpp: (WebCore::RenderTheme::paintResizeControl): Added.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac): Initialize resizeCornerImage.
+        (WebCore::RenderThemeMac::paintResizeControl): Paints resizeCornerImage.
+
 2006-06-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej.

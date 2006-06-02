@@ -25,6 +25,8 @@
 #import "Document.h"
 #import "FoundationExtras.h"
 #import "FrameView.h"
+#import "GraphicsContext.h"
+#import "Image.h"
 #import "RenderView.h"
 #import "WebCoreSystemInterface.h"
 #import "cssstyleselector.h"
@@ -50,6 +52,7 @@ RenderThemeMac::RenderThemeMac()
     : checkbox(nil)
     , radio(nil)
     , button(nil)
+    , resizeCornerImage(0)
 {
 }
 
@@ -59,6 +62,15 @@ bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData&
     if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance)
         return style->border() != border;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
+}
+
+void RenderThemeMac::paintResizeControl(GraphicsContext* c, const IntRect& r)
+{
+    if (!resizeCornerImage)
+        resizeCornerImage = Image::loadResource("textAreaResizeCorner");
+
+    IntPoint imagePoint(r.right() - resizeCornerImage->width(), r.bottom() - resizeCornerImage->height());
+    c->drawImage(resizeCornerImage, imagePoint);
 }
 
 void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)

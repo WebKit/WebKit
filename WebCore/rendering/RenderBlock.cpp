@@ -2434,7 +2434,7 @@ bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
         IntRect vertRect(_tx + width() - borderRight() - m_layer->verticalScrollbarWidth(),
                        _ty + borderTop() - borderTopExtra(),
                        m_layer->verticalScrollbarWidth(),
-                       height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom());
+                       height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom() -  m_layer->horizontalScrollbarHeight());
         if (vertRect.contains(_x, _y)) {
             RenderLayer::gScrollBar = m_layer->verticalScrollbar();
             return true;
@@ -2444,7 +2444,7 @@ bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
     if (m_layer->horizontalScrollbarHeight()) {
         IntRect horizRect(_tx + borderLeft(),
                         _ty + height() + borderBottomExtra() - m_layer->horizontalScrollbarHeight() - borderBottom(),
-                        width() - borderLeft() - borderRight(),
+                        width() - borderLeft() - borderRight() - m_layer->verticalScrollbarWidth(),
                         m_layer->horizontalScrollbarHeight());
         if (horizRect.contains(_x, _y)) {
             RenderLayer::gScrollBar = m_layer->horizontalScrollbar();
