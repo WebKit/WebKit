@@ -1,3 +1,22 @@
+2006-06-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by darin.
+
+        Platform hookup fixes
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::urlSelected):
+        (WebCore::FrameWin::setTitle):
+        (WebCore::FrameWin::setStatusBarText):
+        * bridge/win/FrameWin.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::overrideMediaType):
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJobWndProc):
+        (WebCore::TransferJob::start):
+        (WebCore::TransferJob::fileLoadTimer):
+        (WebCore::TransferJob::cancel):
+
 2006-06-02  Rémi Zara  <remi_zara@mac.com>
 
         Reviewed by Hyatt.

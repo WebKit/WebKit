@@ -33,8 +33,10 @@ namespace WebCore {
 class FrameWinClient
 {
 public:
-    virtual void openURL(const DeprecatedString&) = 0;
+    virtual void openURL(const DeprecatedString&, bool lockHistory) = 0;
     virtual void submitForm(const String& method, const KURL&, const FormData*) = 0;
+    virtual void setTitle(const String& title) = 0;
+    virtual void setStatusText(const String& statusText) = 0;
 };
 
 class FrameWin : public Frame
@@ -49,6 +51,7 @@ public:
     virtual void urlSelected(const ResourceRequest&);
 
     virtual void setTitle(const String&);
+    virtual void setStatusBarText(const String&);
 
     virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
     virtual Plugin* createPlugin(Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);

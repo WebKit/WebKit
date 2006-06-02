@@ -168,7 +168,12 @@ LRESULT CALLBACK TransferJobWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
             buffers.lpvBuffer = buffer;
             buffers.dwBufferLength = bufferSize;
 
+            bool receivedAnyData = false;
             while ((ok = InternetReadFileExA(handle, &buffers, IRF_NO_WAIT, (DWORD_PTR)job)) && buffers.dwBufferLength) {
+                if (!receivedAnyData) {
+                    receivedAnyData = true;
+                    job->client()->receivedResponse(job, 0);
+                }
                 job->client()->receivedData(job, buffer, buffers.dwBufferLength);
                 buffers.dwBufferLength = bufferSize;
             }
@@ -330,7 +335,12 @@ void TransferJob::fileLoadTimer(Timer<TransferJob>* timer)
     CloseHandle(d->m_fileHandle);
     d->m_fileHandle = 0;
 
-    d->client->receivedAllData(this, 0);
+    PlatformDataStruct platformData;
+    platformData.errorString = 0;
+    platformData.error = 0;
+    platformData.loaded = TRUE;
+
+    d->client->receivedAllData(this, &platformData);
     d->client->receivedAllData(this);
 }
 
@@ -341,7 +351,12 @@ void TransferJob::cancel()
     else
         d->m_fileLoadTimer.stop();
 
-    d->client->receivedAllData(this, 0);
+    PlatformDataStruct platformData;
+    platformData.errorString = 0;
+    platformData.error = 0;
+    platformData.loaded = FALSE;
+
+    d->client->receivedAllData(this, &platformData);
     d->client->receivedAllData(this);
 
     if (!d->m_resourceHandle)
