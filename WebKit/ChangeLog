@@ -1,3 +1,23 @@
+2006-06-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - WebCore doesn't need to load WebKit images any more; removed code for that
+
+        * Resources/missing_image.tiff: Removed.
+        * WebCoreSupport/WebImageRendererFactory.h: Removed.
+
+        * WebCoreSupport/WebImageRendererFactory.m: Moved @interface in here.
+        Removed all but the "threaded decoding" calls that older Safari calls.
+        This file can go altogether when compatibility with that older Safari
+        is no longer needed.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebImageRendererFactory.h
+        and missing_image.tiff.
+
+        * WebView/WebFrameView.m: (-[WebFrameView initWithFrame:]): Removed call
+        to [WebImageRendererFactory createSharedFactory].
+
 2006-06-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej.

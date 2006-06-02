@@ -37,7 +37,6 @@
 #import "WebFrameViewInternal.h"
 #import "WebFrameViewPrivate.h"
 #import "WebHTMLViewPrivate.h"
-#import "WebImageRendererFactory.h"
 #import "WebKeyGenerator.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitStatisticsPrivate.h"
@@ -307,7 +306,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         didFirstTimeInitialization = true;
         InitWebCoreSystemInterface();
         [WebViewFactory createSharedFactory];
-        [WebImageRendererFactory createSharedFactory];
         [WebKeyGenerator createSharedGenerator];
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

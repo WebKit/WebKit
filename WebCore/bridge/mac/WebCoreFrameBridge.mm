@@ -62,7 +62,6 @@
 #import "SelectionController.h"
 #import "TextIterator.h"
 #import "TypingCommand.h"
-#import "WebCoreImageRendererFactory.h"
 #import "WebCorePageBridge.h"
 #import "WebCoreSettings.h"
 #import "WebCoreSystemInterface.h"

@@ -109,7 +109,6 @@
 .objc_class_name_WebCoreFrameNamespaces
 .objc_class_name_WebCoreHistory
 .objc_class_name_WebCoreIconDatabaseBridge
-.objc_class_name_WebCoreImageRendererFactory
 .objc_class_name_WebCoreJavaScript
 .objc_class_name_WebCoreKeyGenerator
 .objc_class_name_WebCorePageBridge

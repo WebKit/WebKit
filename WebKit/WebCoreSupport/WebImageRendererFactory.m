@@ -26,39 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebImageRendererFactory.h"
+// Have to leave this class with these two methods in because old versions of
+// Safari call the methods from the Debug menu. Once we don't need compatibility
+// with those old versions of Safari, we can remove this.
 
-#import <JavaScriptCore/Assertions.h>
-#import <WebKitSystemInterface.h>
+@interface WebImageRendererFactory
+@end
 
 @implementation WebImageRendererFactory
 
-+ (void)createSharedFactory
-{
-    if (![self sharedFactory]) {
-        [[[self alloc] init] release];
-    }
-    ASSERT([[self sharedFactory] isKindOfClass:self]);
-}
-
-// Have to leave this method in because old versions of Safari call it from the Debug menu.
 + (BOOL)shouldUseThreadedDecoding
 {
     return NO;
 }
 
-// Have to leave this method in because old versions of Safari call it from the Debug menu.
 + (void)setShouldUseThreadedDecoding:(BOOL)threadedDecode
 {
-    // Do nothing. We don't support this now.
-}
-
-- (NSData *)imageDataForName:(NSString *)filename
-{
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
-    NSData *data = [NSData dataWithContentsOfFile:imagePath];
-    return data;
 }
 
 @end

@@ -32,7 +32,6 @@
 #import "PDFDocumentImage.h"
 #import "PlatformString.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreImageRendererFactory.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {

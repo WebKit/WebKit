@@ -1,3 +1,16 @@
+2006-06-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - WebCore doesn't need to load WebKit images any more; removed code for that
+
+        * WebCore.exp: Removed WebCoreImageRendererFactory.
+        * WebCore.xcodeproj/project.pbxproj: Removed WebCoreImageRendererFactory.h/mm.
+        * bridge/mac/WebCoreFrameBridge.mm: Removed include of WebCoreImageRendererFactory.h.
+        * platform/mac/ImageMac.mm: Removed include of WebCoreImageRendererFactory.h.
+        * platform/mac/WebCoreImageRendererFactory.h: Removed.
+        * platform/mac/WebCoreImageRendererFactory.m: Removed.
+
 2006-06-01  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Geoff, tweaked a bit by Darin.

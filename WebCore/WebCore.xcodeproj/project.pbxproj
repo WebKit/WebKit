@@ -516,7 +516,6 @@
 		93F199A708245E59001E9ABC /* WebCoreEncodings.h in Headers */ = {isa = PBXBuildFile; fileRef = F56234DF03026D7301629B47 /* WebCoreEncodings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854C02DE375901EA4122 /* WebCoreFrameView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A908245E59001E9ABC /* WebCoreHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = F5517DC2031AB56301A80180 /* WebCoreHistory.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199AB08245E59001E9ABC /* WebCoreImageRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AC08245E59001E9ABC /* WebCoreJavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2A52B02E22573018635CB /* WebCoreJavaScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AD08245E59001E9ABC /* WebCoreResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = F587855002DE375901EA4122 /* WebCoreResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AF08245E59001E9ABC /* WebCoreSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F565AE8502ECA583018635CA /* WebCoreSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -565,7 +564,6 @@
 		93F19A5308245E59001E9ABC /* KWQTextEdit.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587853802DE375901EA4122 /* KWQTextEdit.mm */; };
 		93F19A5408245E59001E9ABC /* KWQTextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853902DE375901EA4122 /* KWQTextStream.cpp */; };
 		93F19A5608245E59001E9ABC /* DeprecatedValueListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */; };
-		93F19A5D08245E59001E9ABC /* WebCoreImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */; };
 		93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587855502DE375901EA4122 /* WebCoreViewFactory.m */; };
 		93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* HTMLDocument.cpp */; };
 		93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElement.cpp */; };
@@ -3280,8 +3278,6 @@
 		F587853B02DE375901EA4122 /* DeprecatedValueListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedValueListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853C02DE375901EA4122 /* DeprecatedValueListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedValueListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854C02DE375901EA4122 /* WebCoreFrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreImageRendererFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreImageRendererFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587855002DE375901EA4122 /* WebCoreResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreResourceLoader.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587855402DE375901EA4122 /* WebCoreViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587855502DE375901EA4122 /* WebCoreViewFactory.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreViewFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3758,8 +3754,6 @@
 				6545F67509B830180013006F /* TransferJobMac.mm */,
 				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
 				F5517DC3031AB56301A80180 /* WebCoreHistory.m */,
-				F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */,
-				F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */,
 				84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */,
 				84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */,
 				93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */,
@@ -5486,7 +5480,6 @@
 				93F199A708245E59001E9ABC /* WebCoreEncodings.h in Headers */,
 				93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */,
 				93F199A908245E59001E9ABC /* WebCoreHistory.h in Headers */,
-				93F199AB08245E59001E9ABC /* WebCoreImageRendererFactory.h in Headers */,
 				93F199AC08245E59001E9ABC /* WebCoreJavaScript.h in Headers */,
 				93F199AD08245E59001E9ABC /* WebCoreResourceLoader.h in Headers */,
 				93F199AF08245E59001E9ABC /* WebCoreSettings.h in Headers */,
@@ -6360,7 +6353,6 @@
 				93F19A5308245E59001E9ABC /* KWQTextEdit.mm in Sources */,
 				93F19A5408245E59001E9ABC /* KWQTextStream.cpp in Sources */,
 				93F19A5608245E59001E9ABC /* DeprecatedValueListImpl.cpp in Sources */,
-				93F19A5D08245E59001E9ABC /* WebCoreImageRendererFactory.m in Sources */,
 				93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */,
 				93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */,
 				93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */,
