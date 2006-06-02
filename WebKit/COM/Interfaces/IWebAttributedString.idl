@@ -1,0 +1,115 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+cpp_quote("/*")
+cpp_quote(" * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.")
+cpp_quote(" *")
+cpp_quote(" * Redistribution and use in source and binary forms, with or without")
+cpp_quote(" * modification, are permitted provided that the following conditions")
+cpp_quote(" * are met:")
+cpp_quote(" * 1. Redistributions of source code must retain the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer.")
+cpp_quote(" * 2. Redistributions in binary form must reproduce the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer in the")
+cpp_quote(" *    documentation and/or other materials provided with the distribution.")
+cpp_quote(" *")
+cpp_quote(" * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY")
+cpp_quote(" * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+cpp_quote(" * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR")
+cpp_quote(" * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR")
+cpp_quote(" * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,")
+cpp_quote(" * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,")
+cpp_quote(" * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR")
+cpp_quote(" * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY")
+cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
+cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
+cpp_quote(" */")
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+typedef struct _WebRange {
+   unsigned int location;
+   unsigned int length;
+} WebRange;
+
+typedef WebRange *WebRangePointer;
+
+[
+    local,
+    object,
+    uuid(B91A5F8C-5137-41ea-BE2C-AC1417E38C4A),
+    pointer_default(unique)
+]
+interface IWebAttributedString : IUnknown
+{
+    /*
+        - (id)attribute:(NSString *)attributeName atIndex:(unsigned int)index effectiveRange:(NSRangePointer)aRange
+        - (id)attribute:(NSString *)attributeName atIndex:(unsigned int)index longestEffectiveRange:(NSRangePointer)aRange inRange:(NSRange)rangeLimit
+    */
+    HRESULT attribute([in] UINT atIndex, [in] WebRangePointer aRange, [in, optional] WebRange rangeLimit, [out, retval] BSTR* result);
+
+    /*
+        - (NSAttributedString *)attributedSubstringFromRange:(NSRange)aRange
+    */
+    HRESULT attributedSubstringFromRange([in] WebRange aRange, [out, retval] IWebAttributedString** result);
+
+    /*
+        - (NSDictionary *)attributesAtIndex:(unsigned)index effectiveRange:(NSRangePointer)aRange
+        - (NSDictionary *)attributesAtIndex:(unsigned)index longestEffectiveRange:(NSRangePointer)aRange inRange:(NSRange)rangeLimit
+    */
+    HRESULT attributesAtIndex([in] UINT index, [in] WebRangePointer aRange, [in, optional] WebRange rangeLimit, [out, retval] IPropertyBag** result);
+
+    /*
+        - (id)initWithAttributedString:(NSAttributedString *)attributedString
+    */
+    HRESULT initWithAttributedString([in] IWebAttributedString* attributedString);
+
+    /*
+        - (id)initWithString:(NSString *)aString
+    */
+    HRESULT initWithString([in] BSTR aString);
+
+    /*
+        - (id)initWithString:(NSString *)aString attributes:(NSDictionary *)attributes
+    */
+    HRESULT initWithString2([in] BSTR aString, [in] IPropertyBag* attributes);
+
+    /*
+        - (BOOL)isEqualToAttributedString:(NSAttributedString *)otherString
+    */
+    HRESULT isEqualToAttributedString([in] IWebAttributedString* otherString, [out, retval] BOOL* result);
+
+    /*
+        - (unsigned)length
+    */
+    HRESULT length([out, retval] UINT* result);
+
+    /*
+        - (NSString *)string
+    */
+    HRESULT string_([out, retval] BSTR* result);
+}

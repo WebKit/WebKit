@@ -1,0 +1,261 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+cpp_quote("/*")
+cpp_quote(" * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.")
+cpp_quote(" *")
+cpp_quote(" * Redistribution and use in source and binary forms, with or without")
+cpp_quote(" * modification, are permitted provided that the following conditions")
+cpp_quote(" * are met:")
+cpp_quote(" * 1. Redistributions of source code must retain the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer.")
+cpp_quote(" * 2. Redistributions in binary form must reproduce the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer in the")
+cpp_quote(" *    documentation and/or other materials provided with the distribution.")
+cpp_quote(" *")
+cpp_quote(" * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY")
+cpp_quote(" * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+cpp_quote(" * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR")
+cpp_quote(" * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR")
+cpp_quote(" * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,")
+cpp_quote(" * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,")
+cpp_quote(" * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR")
+cpp_quote(" * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY")
+cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
+cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
+cpp_quote(" */")
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "DOMCore.idl";
+
+interface IDOMHTMLElement;
+interface IDOMHTMLFormElement;
+interface IDOMHTMLTableCaptionElement;
+interface IDOMHTMLTableSectionElement;
+interface IDOMDocument;
+interface IDOMElement;
+
+/*
+    @interface DOMHTMLCollection : DOMObject
+*/
+[
+    local,
+    object,
+    uuid(DD8E4E33-D1D4-48e7-BB23-6DC3D7CCEC42),
+    pointer_default(unique)
+]
+interface IDOMHTMLCollection : IDOMObject
+{
+    /*
+        - (unsigned)length;
+    */
+    HRESULT length([out, retval] UINT* result);
+
+    /*
+        - (DOMNode *)item:(unsigned)index;
+    */
+    HRESULT item([in] UINT index, [out, retval] IDOMNode** node);
+
+    /*
+        - (DOMNode *)namedItem:(NSString *)name;
+    */
+    HRESULT namedItem([in] BSTR name, [out, retval] IDOMNode** node);
+}
+
+/*
+    @interface DOMHTMLDocument : DOMDocument
+*/
+[
+    local,
+    object,
+    uuid(A7DF8485-25B7-4a98-B70C-1E29CAA00597),
+    pointer_default(unique)
+]
+interface IDOMHTMLDocument : IDOMDocument
+{
+    /*
+        - (NSString *)title;
+    */
+    HRESULT title([out, retval] BSTR* result);
+
+    /*
+        - (void)setTitle:(NSString *)title;
+    */
+    HRESULT setTitle([in] BSTR title);
+
+    /*
+        - (NSString *)referrer;
+    */
+    HRESULT referrer([out, retval] BSTR* result);
+
+    /*
+        - (NSString *)domain;
+    */
+    HRESULT domain([out, retval] BSTR* result);
+
+    /*
+        - (NSString *)URL;
+    */
+    HRESULT URL([out, retval] BSTR* result);
+
+    /*
+        - (DOMHTMLElement *)body;
+    */
+    HRESULT body([out, retval] IDOMHTMLElement* bodyElement);
+
+    /*
+        - (void)setBody:(DOMHTMLElement *)body;
+    */
+    HRESULT setBody([in] IDOMHTMLElement* body);
+
+    /*
+        - (DOMHTMLCollection *)images;
+    */
+    HRESULT images([out, retval] IDOMHTMLCollection** collection);
+
+    /*
+        - (DOMHTMLCollection *)applets;
+    */
+    HRESULT applets([out, retval] IDOMHTMLCollection** collection);
+
+    /*
+        - (DOMHTMLCollection *)links;
+    */
+    HRESULT links([out, retval] IDOMHTMLCollection** collection);
+
+    /*
+        - (DOMHTMLCollection *)forms;
+    */
+    HRESULT forms([out, retval] IDOMHTMLCollection** collection);
+
+    /*
+        - (DOMHTMLCollection *)anchors;
+    */
+    HRESULT anchors([out, retval] IDOMHTMLCollection** collection);
+
+    /*
+        - (NSString *)cookie;
+    */
+    HRESULT cookie([out, retval] BSTR* result);
+
+    /*
+        - (void)setCookie:(NSString *)cookie;
+    */
+    HRESULT setCookie([in] BSTR cookie);
+
+    /*
+        - (void)open;
+    */
+    HRESULT open();
+
+    /*
+        - (void)close;
+    */
+    HRESULT close();
+
+    /*
+        - (void)write:(NSString *)text;
+    */
+    HRESULT write([in] BSTR text);
+
+    /*
+        - (void)writeln:(NSString *)text;
+    */
+    HRESULT writeln([in] BSTR text);
+
+    /*
+        - (DOMElement *)getElementById:(NSString *)elementId;
+    */
+    HRESULT getElementById([in] BSTR elementId, [out, retval] IDOMElement** element);
+
+    /*
+        - (DOMNodeList *)getElementsByName:(NSString *)elementName;
+    */
+    HRESULT getElementsByName([in] BSTR elementName, [out, retval] IDOMNodeList** nodeList);
+}
+
+/*
+    @interface DOMHTMLElement : DOMElement
+*/
+[
+    local,
+    object,
+    uuid(EBD5F41D-FF65-41d8-97C9-FCE3A3D4CC3E),
+    pointer_default(unique)
+]
+interface IDOMHTMLElement : IDOMElement
+{
+    /*
+        - (NSString *)idName;
+    */
+    HRESULT idName([out, retval] BSTR* result);
+
+    /*
+        - (void)setIdName:(NSString *)idName;
+    */
+    HRESULT setIdName([in] BSTR idName);
+
+    /*
+        - (NSString *)title;
+    */
+    HRESULT title([out, retval] BSTR* result);
+
+    /*
+        - (void)setTitle:(NSString *)title;
+    */
+    HRESULT setTitle([in] BSTR title);
+
+    /*
+        - (NSString *)lang;
+    */
+    HRESULT lang([out, retval] BSTR* result);
+
+    /*
+        - (void)setLang:(NSString *)lang;
+    */
+    HRESULT setLang([in] BSTR lang);
+
+    /*
+        - (NSString *)dir;
+    */
+    HRESULT dir([out, retval] BSTR* result);
+
+    /*
+        - (void)setDir:(NSString *)dir;
+    */
+    HRESULT setDir([in] BSTR dir);
+
+    /*
+        - (NSString *)className;
+    */
+    HRESULT className([out, retval] BSTR* result);
+
+    /*
+        - (void)setClassName:(NSString *)className;
+    */
+    HRESULT setClassName([in] BSTR className);
+}

@@ -1,0 +1,412 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+cpp_quote("/*")
+cpp_quote(" * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.")
+cpp_quote(" *")
+cpp_quote(" * Redistribution and use in source and binary forms, with or without")
+cpp_quote(" * modification, are permitted provided that the following conditions")
+cpp_quote(" * are met:")
+cpp_quote(" * 1. Redistributions of source code must retain the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer.")
+cpp_quote(" * 2. Redistributions in binary form must reproduce the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer in the")
+cpp_quote(" *    documentation and/or other materials provided with the distribution.")
+cpp_quote(" *")
+cpp_quote(" * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY")
+cpp_quote(" * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+cpp_quote(" * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR")
+cpp_quote(" * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR")
+cpp_quote(" * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,")
+cpp_quote(" * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,")
+cpp_quote(" * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR")
+cpp_quote(" * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY")
+cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
+cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
+cpp_quote(" */")
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+/*!
+    @class WebPreferences
+
+    @interface WebPreferences: NSObject <NSCoding>
+*/
+[
+    local,
+    object,
+    uuid(0930D594-A5A3-46e1-858E-AB17A13CD28E),
+    pointer_default(unique)
+]
+interface IWebPreferences : IUnknown
+{
+    /*!
+        @method standardPreferences
+        + (WebPreferences *)standardPreferences;
+    */
+    HRESULT standardPreferences([out, retval] IWebPreferences* standard);
+
+    /*!
+        @method initWithIdentifier:
+        @param anIdentifier A string used to identify the WebPreferences.
+        @discussion WebViews can share instances of WebPreferences by using an instance of WebPreferences with
+        the same identifier.  Typically, instance are not created directly.  Instead you set the preferences
+        identifier on a WebView.  The identifier is used as a prefix that is added to the user defaults keys
+        for the WebPreferences.
+        @result Returns a new instance of WebPreferences or a previously allocated instance with the same identifier.
+        - (id)initWithIdentifier:(NSString *)anIdentifier;
+    */
+    HRESULT initWithIdentifier([in] BSTR anIdentifier);
+
+    /*!
+        @method identifier
+        @result Returns the identifier for this WebPreferences.
+        - (NSString *)identifier;
+    */
+    HRESULT identifier([out, retval] BSTR* ident);
+
+    /*!
+        @method standardFontFamily
+        - (NSString *)standardFontFamily;
+    */
+    HRESULT standardFontFamily([out, retval] BSTR* family);
+
+    /*!
+        @method setStandardFontFamily:
+        @param family
+        - (void)setStandardFontFamily:(NSString *)family;
+    */
+    HRESULT setStandardFontFamily([in] BSTR family);
+
+    /*!
+        @method fixedFontFamily
+        - (NSString *)fixedFontFamily;
+    */
+    HRESULT fixedFontFamily([out, retval] BSTR* family);
+
+    /*!
+        @method setFixedFontFamily:
+        @param family
+        - (void)setFixedFontFamily:(NSString *)family;
+    */
+    HRESULT setFixedFontFamily([in] BSTR family);
+
+    /*!
+        @method serifFontFamily
+        - (NSString *)serifFontFamily;
+    */
+    HRESULT serifFontFamily([out, retval] BSTR* fontFamily);
+
+    /*!
+        @method setSerifFontFamily:
+        @param family
+        - (void)setSerifFontFamily:(NSString *)family;
+    */
+    HRESULT setSerifFontFamily([in] BSTR family);
+
+    /*!
+        @method sansSerifFontFamily
+        - (NSString *)sansSerifFontFamily;
+    */
+    HRESULT sansSerifFontFamily([out, retval] BSTR* family);
+
+    /*!
+        @method setSansSerifFontFamily:
+        @param family
+        - (void)setSansSerifFontFamily:(NSString *)family;
+    */
+    HRESULT setSansSerifFontFamily([in] BSTR family);
+
+    /*!
+        @method cursiveFontFamily
+        - (NSString *)cursiveFontFamily;
+    */
+    HRESULT cursiveFontFamily([out, retval] BSTR* family);
+
+    /*!
+        @method setCursiveFontFamily:
+        @param family
+        - (void)setCursiveFontFamily:(NSString *)family;
+    */
+    HRESULT setCursiveFontFamily([in] BSTR family);
+
+    /*!
+        @method fantasyFontFamily
+        - (NSString *)fantasyFontFamily;
+    */
+    HRESULT fantasyFontFamily([out, retval] BSTR* family);
+
+    /*!
+        @method setFantasyFontFamily:
+        @param family
+        - (void)setFantasyFontFamily:(NSString *)family;
+    */
+    HRESULT setFantasyFontFamily([in] BSTR family);
+
+    /*!
+        @method defaultFontSize
+        - (int)defaultFontSize;
+    */
+    HRESULT defaultFontSize([out, retval] int* fontSize);
+
+    /*!
+        @method setDefaultFontSize:
+        @param size
+        - (void)setDefaultFontSize:(int)size;
+    */
+    HRESULT setDefaultFontSize([in] int fontSize);
+
+    /*!
+        @method defaultFixedFontSize
+        - (int)defaultFixedFontSize;
+    */
+    HRESULT defaultFixedFontSize([out, retval] int* fontSize);
+
+    /*!
+        @method setDefaultFixedFontSize:
+        @param size
+        - (void)setDefaultFixedFontSize:(int)size;
+    */
+    HRESULT setDefaultFixedFontSize([in] int fontSize);
+
+    /*!
+        @method minimumFontSize
+        - (int)minimumFontSize;
+    */
+    HRESULT minimumFontSize([out, retval] int* fontSize);
+
+    /*!
+        @method setMinimumFontSize:
+        @param size
+        - (void)setMinimumFontSize:(int)size;
+    */
+    HRESULT setMinimumFontSize([in] int fontSize);
+
+    /*!
+        @method minimumLogicalFontSize
+        - (int)minimumLogicalFontSize;
+    */
+    HRESULT minimumLogicalFontSize([out, retval] int* fontSize);
+
+    /*!
+        @method setMinimumLogicalFontSize:
+        @param size
+        - (void)setMinimumLogicalFontSize:(int)size;
+    */
+    HRESULT setMinimumLogicalFontSize([in] int fontSize);
+
+    /*!
+        @method defaultTextEncodingName
+        - (NSString *)defaultTextEncodingName;
+    */
+    HRESULT defaultTextEncodingName([out, retval] BSTR* name);
+
+    /*!
+        @method setDefaultTextEncodingName:
+        @param encoding
+        - (void)setDefaultTextEncodingName:(NSString *)encoding;
+    */
+    HRESULT setDefaultTextEncodingName([in] BSTR name);
+
+    /*!
+        @method userStyleSheetEnabled
+        - (BOOL)userStyleSheetEnabled;
+    */
+    HRESULT userStyleSheetEnabled([out, retval] BOOL* enabled);
+
+    /*!
+        @method setUserStyleSheetEnabled:
+        @param flag
+        - (void)setUserStyleSheetEnabled:(BOOL)flag;
+    */
+    HRESULT setUserStyleSheetEnabled([in] BOOL enabled);
+
+    /*!
+        @method userStyleSheetLocation
+        @discussion The location of the user style sheet.
+        - (NSURL *)userStyleSheetLocation;
+    */
+    HRESULT userStyleSheetLocation([out, retval] BSTR* location);
+
+    /*!
+        @method setUserStyleSheetLocation:
+        @param URL The location of the user style sheet.
+        - (void)setUserStyleSheetLocation:(NSURL *)URL;
+    */
+    HRESULT setUserStyleSheetLocation([in] BSTR location);
+
+    /*!
+        @method isJavaEnabled
+        - (BOOL)isJavaEnabled;
+    */
+    HRESULT isJavaEnabled([out, retval] BOOL* enabled);
+
+    /*!
+        @method setJavaEnabled:
+        @param flag
+        - (void)setJavaEnabled:(BOOL)flag;
+    */
+    HRESULT setJavaEnabled([in] BOOL enabled);
+
+    /*!
+        @method isJavaScriptEnabled
+        - (BOOL)isJavaScriptEnabled;
+    */
+    HRESULT isJavaScriptEnabled([out, retval] BOOL* enabled);
+
+    /*!
+        @method setJavaScriptEnabled:
+        @param flag
+        - (void)setJavaScriptEnabled:(BOOL)flag;
+    */
+    HRESULT setJavaScriptEnabled([in] BOOL enabled);
+
+    /*!
+        @method JavaScriptCanOpenWindowsAutomatically
+        - (BOOL)javaScriptCanOpenWindowsAutomatically;
+    */
+    HRESULT javaScriptCanOpenWindowsAutomatically([out, retval] BOOL* enabled);
+
+    /*!
+        @method setJavaScriptCanOpenWindowsAutomatically:
+        @param flag
+        - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)flag;
+    */
+    HRESULT setJavaScriptCanOpenWindowsAutomatically([in] BOOL enabled);
+
+    /*!
+        @method arePlugInsEnabled
+        - (BOOL)arePlugInsEnabled;
+    */
+    HRESULT arePlugInsEnabled([out, retval] BOOL* enabled);
+
+    /*!
+        @method setPlugInsEnabled:
+        @param flag
+        - (void)setPlugInsEnabled:(BOOL)flag;
+    */
+    HRESULT setPlugInsEnabled([in] BOOL enabled);
+
+    /*!
+        @method allowAnimatedImages
+        - (BOOL)allowsAnimatedImages;
+    */
+    HRESULT allowsAnimatedImages([out, retval] BOOL* enabled);
+
+    /*!
+        @method setAllowAnimatedImages:
+        @param flag
+        - (void)setAllowsAnimatedImages:(BOOL)flag;
+    */
+    HRESULT setAllowsAnimatedImages([in] BOOL enabled);
+
+    /*!
+        @method allowAnimatedImageLooping
+        - (BOOL)allowsAnimatedImageLooping;
+    */
+    HRESULT allowAnimatedImageLooping([out, retval] BOOL* enabled);
+
+    /*!
+        @method setAllowAnimatedImageLooping:
+        @param flag
+        - (void)setAllowsAnimatedImageLooping: (BOOL)flag;
+    */
+    HRESULT setAllowAnimatedImageLooping([in] BOOL enabled);
+
+    /*!
+        @method setWillLoadImagesAutomatically:
+        @param flag
+        - (void)setLoadsImagesAutomatically: (BOOL)flag;
+    */
+    HRESULT setLoadsImagesAutomatically([out, retval] BOOL* enabled);
+
+    /*!
+        @method willLoadImagesAutomatically
+        - (BOOL)loadsImagesAutomatically;
+    */
+    HRESULT loadsImagesAutomatically([in] BOOL enabled);
+
+    /*!
+        @method setAutosaves:
+        @param flag 
+        @discussion If autosave preferences is YES the settings represented by
+        WebPreferences will be stored in the user defaults database.
+        - (void)setAutosaves:(BOOL)flag;
+    */
+    HRESULT setAutosaves([out, retval] BOOL* enabled);
+
+    /*!
+        @method autosaves
+        @result The value of the autosave preferences flag.
+        - (BOOL)autosaves;
+    */
+    HRESULT autosaves([in] BOOL enabled);
+
+    /*!
+        @method setShouldPrintBackgrounds:
+        @param flag
+        - (void)setShouldPrintBackgrounds:(BOOL)flag;
+    */
+    HRESULT setShouldPrintBackgrounds([out, retval] BOOL* enabled);
+
+    /*!
+        @method shouldPrintBackgrounds
+        @result The value of the shouldPrintBackgrounds preferences flag
+        - (BOOL)shouldPrintBackgrounds;
+    */
+    HRESULT shouldPrintBackgrounds([in] BOOL enabled);
+
+    /*!
+        @method setPrivateBrowsingEnabled:
+        @param flag 
+        @abstract If private browsing is enabled, WebKit will not store information
+        about sites the user visits.
+        - (void)setPrivateBrowsingEnabled:(BOOL)flag;
+     */
+    HRESULT setPrivateBrowsingEnabled([out, retval] BOOL* enabled);
+
+    /*!
+        @method privateBrowsingEnabled
+        - (BOOL)privateBrowsingEnabled;
+     */
+    HRESULT privateBrowsingEnabled([in] BOOL enabled);
+
+    /*!
+        @method setTabsToLinks:
+        @param flag 
+        @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
+        The option key temporarily reverses this preference.
+        - (void)setTabsToLinks:(BOOL)flag;
+    */
+    HRESULT setTabsToLinks([out, retval] BOOL* enabled);
+
+    /*!
+        @method tabsToLinks
+        - (BOOL)tabsToLinks;
+    */
+    HRESULT tabsToLinks([in] BOOL enabled);
+}

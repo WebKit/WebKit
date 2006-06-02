@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+cpp_quote("/*")
+cpp_quote(" * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.")
+cpp_quote(" *")
+cpp_quote(" * Redistribution and use in source and binary forms, with or without")
+cpp_quote(" * modification, are permitted provided that the following conditions")
+cpp_quote(" * are met:")
+cpp_quote(" * 1. Redistributions of source code must retain the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer.")
+cpp_quote(" * 2. Redistributions in binary form must reproduce the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer in the")
+cpp_quote(" *    documentation and/or other materials provided with the distribution.")
+cpp_quote(" *")
+cpp_quote(" * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY")
+cpp_quote(" * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+cpp_quote(" * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR")
+cpp_quote(" * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR")
+cpp_quote(" * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,")
+cpp_quote(" * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,")
+cpp_quote(" * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR")
+cpp_quote(" * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY")
+cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
+cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
+cpp_quote(" */")
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "IWebImage.idl";
+
+/*!
+    @class WebIconDatabase
+    @discussion Features:
+        - memory cache icons at different sizes
+        - disk storage
+        - icon update notification
+        
+        Uses:
+        - WebIconLoader to cache icon images
+        - UI elements to retrieve icons that represent site URLs.
+        - Save icons to disk for later use.
+ 
+    Every icon in the database has a retain count.  If an icon has a retain count greater than 0, it will be written to disk for later use. If an icon's retain count equals zero it will be removed from disk.  The retain count is not persistent across launches. If the WebKit client wishes to retain an icon it should retain the icon once for every launch.  This is best done at initialization time before the database begins removing icons.  To make sure that the database does not remove unretained icons prematurely, call delayDatabaseCleanup until all desired icons are retained.  Once all are retained, call allowDatabaseCleanup.
+    
+    Note that an icon can be retained after the database clean-up has begun. This just has to be done before the icon is removed. Icons are removed from the database whenever new icons are added to it.
+    
+    Retention methods can be called for icons that are not yet in the database.
+
+    @interface WebIconDatabase : NSObject
+*/
+[
+    local,
+    object,
+    uuid(E93F2616-2560-47d9-BD4D-6E2F1E1D3174),
+    pointer_default(unique)
+]
+interface IWebIconDatabase : IUnknown
+{
+    /*!
+        @method sharedIconDatabase
+        @abstract Returns a shared instance of the icon database
+        + (WebIconDatabase *)sharedIconDatabase;
+    */
+    HRESULT sharedIconDatabase([out, retval] IWebIconDatabase* result);
+
+    /*!
+        @method iconForURL:withSize:
+        @discussion Calls iconForURL:withSize:cache: with YES for cache.
+        @param URL
+        @param size
+        - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size;
+    */
+    /*!
+        @method iconForURL:withSize:cache:
+        @discussion Returns an icon for a web site URL from memory or disk. nil if none is found.
+        Usually called by a UI element to determine if a site URL has an associated icon.
+        Often called by the observer of WebIconChangedNotification after the notification is sent.
+        @param URL
+        @param size
+        @param cache If yes, caches the returned image in memory if not already cached
+        - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache;
+    */
+    /*!
+        @method iconURLForURL:withSize:cache:
+        @discussion Returns an icon URL for a web site URL from memory or disk. nil if none is found.
+        @param URL
+        - (NSString *)iconURLForURL:(NSString *)URL;
+    */
+    HRESULT iconForURL([in] BSTR url, [in, optional] LPSIZE size, [in, optional] BOOL cache, [out, retval] IWebImage** image);
+
+    /*!
+        @method defaultIconWithSize:
+        @param size
+        - (NSImage *)defaultIconWithSize:(NSSize)size;
+    */
+    HRESULT defaultIconWithSize([in] LPSIZE size, [out, retval] IWebImage** result);
+
+    /*!
+        @method retainIconForURL:
+        @abstract Increments the retain count of the icon.
+        @param URL
+        - (void)retainIconForURL:(NSString *)URL;
+    */
+    HRESULT retainIconForURL([in] BSTR url);
+
+    /*!
+        @method releaseIconForURL:
+        @abstract Decrements the retain count of the icon.
+        @param URL
+        - (void)releaseIconForURL:(NSString *)URL;
+    */
+    HRESULT releaseIconForURL([in] BSTR url);
+
+    /*!
+        @method delayDatabaseCleanup:
+        @discussion Only effective if called before the database begins removing icons.
+        delayDatabaseCleanUp increments an internal counter that when 0 begins the database clean-up.
+        The counter equals 0 at initialization.
+        - (void)delayDatabaseCleanup;
+    */
+    HRESULT delayDatabaseCleanup();
+
+    /*!
+        @method allowDatabaseCleanup:
+        @discussion Informs the database that it now can begin removing icons.
+        allowDatabaseCleanup decrements an internal counter that when 0 begins the database clean-up.
+        The counter equals 0 at initialization.
+        - (void)allowDatabaseCleanup;
+    */
+    HRESULT allowDatabaseCleanup();
+}

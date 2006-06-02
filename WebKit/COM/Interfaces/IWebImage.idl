@@ -1,0 +1,614 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+cpp_quote("/*")
+cpp_quote(" * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.")
+cpp_quote(" *")
+cpp_quote(" * Redistribution and use in source and binary forms, with or without")
+cpp_quote(" * modification, are permitted provided that the following conditions")
+cpp_quote(" * are met:")
+cpp_quote(" * 1. Redistributions of source code must retain the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer.")
+cpp_quote(" * 2. Redistributions in binary form must reproduce the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer in the")
+cpp_quote(" *    documentation and/or other materials provided with the distribution.")
+cpp_quote(" *")
+cpp_quote(" * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY")
+cpp_quote(" * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+cpp_quote(" * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR")
+cpp_quote(" * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR")
+cpp_quote(" * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,")
+cpp_quote(" * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,")
+cpp_quote(" * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR")
+cpp_quote(" * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY")
+cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
+cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
+cpp_quote(" */")
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+interface WebImageRep;
+interface WebImageDelegate;
+
+typedef enum {
+    WebImageCacheDefault,
+    WebImageCacheAlways,
+    WebImageCacheBySize,
+    WebImageCacheNever
+} WebImageCacheMode;
+
+typedef enum _WebCompositingOperation {
+    WebCompositeClear = 0,
+    WebCompositeCopy = 1,
+    WebCompositeSourceOver = 2,
+    WebCompositeSourceIn = 3,
+    WebCompositeSourceOut = 4,
+    WebCompositeSourceAtop = 5,
+    WebCompositeDestinationOver = 6,
+    WebCompositeDestinationIn = 7,
+    WebCompositeDestinationOut = 8,
+    WebCompositeDestinationAtop = 9,
+    WebCompositeXOR = 10,
+    WebCompositePlusDarker = 11,
+    WebCompositeHighlight = 12,
+    WebCompositePlusLighter = 13
+} WebCompositingOperation;
+
+typedef enum _WebTIFFCompression {
+    WebTIFFCompressionNone = 1,
+    WebTIFFCompressionCCITTFAX3 = 3,
+    WebTIFFCompressionCCITTFAX4 = 4,
+    WebTIFFCompressionLZW = 5,
+    WebTIFFCompressionJPEG = 6,
+    WebTIFFCompressionNEXT = 32766,
+    WebTIFFCompressionPackBits = 32773,
+    WebTIFFCompressionOldJPEG = 32865
+} WebTIFFCompression;
+
+typedef enum {
+    WebImageLoadStatusCompleted,
+    WebImageLoadStatusCancelled,
+    WebImageLoadStatusInvalidData,
+    WebImageLoadStatusUnexpectedEOF,
+    WebImageLoadStatusReadError
+} WebImageLoadStatus;
+
+[
+    local,
+    object,
+    uuid(95BA7FC9-7D12-4f5c-B8CB-8CB28D0EE47E),
+    pointer_default(unique)
+]
+interface IWebImage : IUnknown
+{
+    /*
+        + (BOOL)canInitWithPasteboard:(NSPasteboard *)pasteboard
+    */
+    HRESULT canInitWithPasteboard([in] IDataObject* pasteboard, [out, retval] BOOL* result);
+
+    /*
+        + (NSArray *)imageFileTypes
+    */
+    HRESULT imageFileTypes([out] int* cTypes, [out, retval] BSTR** types);
+
+    /*
+        + (id)imageNamed:(NSString *)name
+    */
+    HRESULT imageNamed([in] BSTR name, [out, retval] IUnknown* result);
+
+    /*
+        + (NSArray *)imagePasteboardTypes
+    */
+    HRESULT imagePasteboardTypes([out] int* cTypes, [out, retval] BSTR** types);
+
+    /*
+        + (NSArray *)imageUnfilteredFileTypes
+    */
+    HRESULT imageUnfilteredFileTypes([out] int* cTypes, [out, retval] BSTR** types);
+
+    /*
+        + (NSArray *)imageUnfilteredPasteboardTypes
+    */
+    HRESULT imageUnfilteredPasteboardTypes([out] int* cTypes, [out, retval] BSTR** types);
+
+    /*
+        - (void)addRepresentation:(NSImageRep *)imageRep
+    */
+    HRESULT addRepresentation([in] WebImageRep* imageRep);
+
+    /*
+        - (void)addRepresentations:(NSArray *)imageReps
+    */
+    HRESULT addRepresentations([in] int cImageReps, [in, size_is(cImageReps)] WebImageRep** imageReps);
+
+    /*
+        - (NSColor *)backgroundColor
+    */
+    HRESULT backgroundColor([out, retval] COLORREF* result);
+
+    /*
+        - (NSImageRep *)bestRepresentationForDevice:(NSDictionary *)deviceDescription
+    */
+    HRESULT bestRepresentationForDevice([in] IPropertyBag* deviceDescription, [out, retval] WebImageRep** result);
+
+    /*
+        - (BOOL)cacheDepthMatchesImageDepth
+    */
+    HRESULT cacheDepthMatchesImageDepth([out, retval] BOOL* result);
+
+    /*
+        -(NSImageCacheMode)cacheMode
+    */
+    HRESULT cacheMode([out, retval] WebImageCacheMode* result);
+
+    /*
+        - (void)cancelIncrementalLoad
+    */
+    HRESULT cancelIncrementalLoad();
+
+    /*
+        - (void)compositeToPoint:(NSPoint)aPoint fromRect:(NSRect)srcRect operation:(NSCompositingOperation)op
+        - (void)compositeToPoint:(NSPoint)aPoint fromRect:(NSRect)srcRect operation:(NSCompositingOperation)op fraction:(float)delta
+        - (void)compositeToPoint:(NSPoint)aPoint operation:(NSCompositingOperation)op
+        - (void)compositeToPoint:(NSPoint)aPoint operation:(NSCompositingOperation)op fraction:(float)delta
+    */
+    HRESULT compositeToPoint([in, optional] LPPOINT aPoint, [in, optional] LPRECT srcRect, [in, optional] WebCompositingOperation op, [in, optional] float delta);
+
+    /*
+        - (id)delegate
+    */
+    HRESULT delegate([in] WebImageDelegate* d);
+
+    /*
+        - (void)dissolveToPoint:(NSPoint)aPoint fraction:(float)delta
+        - (void)dissolveToPoint:(NSPoint)aPoint fromRect:(NSRect)srcRect fraction:(float)delta
+    */
+    HRESULT dissolveToPoint([in] LPPOINT aPoint, [in] float delta, [in, optional] LPRECT srcRect);
+
+    /*
+        - (void)drawAtPoint:(NSPoint)point fromRect:(NSRect)srcRect operation:(NSCompositingOperation)op fraction:(float)delta
+    */
+    HRESULT drawAtPoint([in] LPPOINT point, [in] LPRECT srcRect, [in] WebCompositingOperation op, [in] float delta);
+
+    /*
+        - (void)drawInRect:(NSRect)dstRect fromRect:(NSRect)srcRect operation:(NSCompositingOperation)op fraction:(float)delta
+    */
+    HRESULT drawInRect([in] LPRECT dstRect, [in] LPRECT srcRect, [in] WebCompositingOperation op, [in] float delta);
+
+    /*
+        - (BOOL)drawRepresentation:(NSImageRep *)imageRep inRect:(NSRect)dstRect
+    */
+    HRESULT drawRepresentation([in] WebImageRep* imageRep, [in] LPRECT dstRect, [out, retval] BOOL* result);
+
+    /*
+        - (id)initByReferencingFile:(NSString *)filename
+    */
+    HRESULT initByReferencingFile([in] BSTR fileName);
+
+    /*
+        - (id)initByReferencingURL:(NSURL *)url
+    */
+    HRESULT initByReferencingURL([in] BSTR url);
+
+    /*
+        - (id)initWithContentsOfFile:(NSString *)filename
+    */
+    HRESULT initWithContentsOfFile([in] BSTR filename);
+
+    /*
+        - (id)initWithContentsOfURL:(NSURL *)aURL
+    */
+    HRESULT initWithContentsOfURL([in] BSTR aURL);
+
+    /*
+        - (id)initWithData:(NSData *)data
+    */
+    HRESULT initWithData([in] IStream* data);
+
+    /*
+        - (id)initWithPasteboard:(NSPasteboard *)pasteboard
+    */
+    HRESULT initWithPasteboard([in] IDataObject* pasteboard);
+
+    /*
+        - (id)initWithSize:(NSSize)aSize
+    */
+    HRESULT initWithSize([in] LPPOINT aSize);
+
+    /*
+        - (BOOL)isCachedSeparately
+    */
+    HRESULT isCachedSeparately([out, retval] BOOL* result);
+
+    /*
+        - (BOOL)isDataRetained
+    */
+    HRESULT isDataRetained([out, retval] BOOL* result);
+
+    /*
+        - (BOOL)isFlipped
+    */
+    HRESULT isFlipped([out, retval] BOOL* result);
+
+    /*
+        - (BOOL)isValid
+    */
+    HRESULT isValid([out, retval] BOOL* result);
+
+    /*
+        - (void)lockFocus
+    */
+    HRESULT lockFocus();
+
+    /*
+        - (void)lockFocusOnRepresentation:(NSImageRep *)imageRepresentation
+    */
+    HRESULT lockFocusOnRepresentation([in] WebImageRep* imageRepresentation);
+
+    /*
+        - (BOOL)matchesOnMultipleResolution
+    */
+    HRESULT matchesOnMultipleResolution([out, retval] BOOL* result);
+
+    /*
+        - (NSString *)name
+    */
+    HRESULT name([out, retval] BSTR* result);
+
+    /*
+        - (BOOL)prefersColorMatch
+    */
+    HRESULT prefersColorMatch([out, retval] BOOL* result);
+
+    /*
+        - (void)recache
+    */
+    HRESULT recache();
+
+    /*
+        - (void)removeRepresentation:(NSImageRep *)imageRep
+    */
+    HRESULT removeRepresentation([in] WebImageRep* imageRep);
+
+    /*
+        - (NSArray *)representations
+    */
+    HRESULT representations([out] int* count, [out, retval] WebImageRep** result);
+
+    /*
+        - (BOOL)scalesWhenResized
+    */
+    HRESULT scalesWhenResized([out, retval] BOOL* result);
+
+    /*
+        - (void)setBackgroundColor:(NSColor *)aColor
+    */
+    HRESULT setBackgroundColor([in] COLORREF* aColor);
+
+    /*
+        - (void)setCacheDepthMatchesImageDepth:(BOOL)flag
+    */
+    HRESULT setCacheDepthMatchesImageDepth([in] BOOL flag);
+
+    /*
+        - (void)setCachedSeparately:(BOOL)flag
+    */
+    HRESULT setCachedSeparately([in] BOOL flag);
+
+    /*
+        -(void)setCacheMode:(NSImageCacheMode)mode
+    */
+    HRESULT setCacheMode([in] WebImageCacheMode mode);
+
+    /*
+        - (void)setDataRetained:(BOOL)flag
+    */
+    HRESULT setDataRetained([in] BOOL flag);
+
+    /*
+        - (void)setDelegate:(id)anObject
+    */
+    HRESULT setDelegate([in] WebImageDelegate* d);
+
+    /*
+        - (void)setFlipped:(BOOL)flag
+    */
+    HRESULT setFlipped([in] BOOL flag);
+
+    /*
+        - (void)setMatchesOnMultipleResolution:(BOOL)flag
+    */
+    HRESULT setMatchesOnMultipleResolution([in] BOOL flag);
+
+    /*
+        - (BOOL)setName:(NSString *)aString
+    */
+    HRESULT setName([in] BSTR aString, [out, retval] BOOL* result);
+
+    /*
+        - (void)setPrefersColorMatch:(BOOL)flag
+    */
+    HRESULT setPrefersColorMatch([in] BOOL flag);
+
+    /*
+        - (void)setScalesWhenResized:(BOOL)flag
+    */
+    HRESULT setScalesWhenResized([in] BOOL flag);
+
+    /*
+        - (void)setSize:(NSSize)aSize
+    */
+    HRESULT setSize([in] LPSIZE size);
+
+    /*
+        - (void)setUsesEPSOnResolutionMismatch:(BOOL)flag
+    */
+    HRESULT setUsesEPSOnResolutionMismatch([in] BOOL flag);
+
+    /*
+        - (NSSize)size
+    */
+    HRESULT size([out, retval] LPSIZE* size);
+
+    /*
+        - (NSData *)TIFFRepresentation
+    */
+    HRESULT TIFFRepresentation([out, retval] IStream** result);
+
+    /*
+        - (NSData *)TIFFRepresentationUsingCompression:(NSTIFFCompression)comp factor:(float)aFloat
+    */
+    HRESULT TIFFRepresentationUsingCompression([in] WebTIFFCompression comp, [in] float aFloat, [out, retval] IStream** result);
+
+    /*
+        - (void)unlockFocus
+    */
+    HRESULT unlockFocus();
+
+    /*
+        - (BOOL)usesEPSOnResolutionMismatch
+    */
+    HRESULT usesEPSOnResolutionMismatch([out, retval] BOOL* result);
+}
+
+[
+    local,
+    object,
+    uuid(A3FAD4F7-4D02-4285-8E78-6C20BA6134E9),
+    pointer_default(unique)
+]
+interface WebImageDelegate : IUnknown
+{
+    /*
+        - (void)image:(NSImage *)image didLoadRepresentation:(NSImageRep *)rep withStatus:(NSImageLoadStatus)status
+    */
+    HRESULT didLoadRepresentation([in] IWebImage* image, [in] WebImageRep* rep, [in] WebImageLoadStatus status);
+
+    /*
+        - (void)image:(NSImage *)image didLoadPartOfRepresentation:(NSImageRep *)rep withValidRows:(int)rows
+    */
+    HRESULT didLoadPartOfRepresentation([in] IWebImage* image, [in] WebImageRep* rep, [in] int rows);
+
+    /*
+        - (void)image:(NSImage *)image didLoadRepresentationHeader:(NSImageRep *)rep
+    */
+    HRESULT didLoadRepresentationHeader([in] IWebImage* image, [in] WebImageRep* rep);
+
+    /*
+        - (void)image:(NSImage *)image willLoadRepresentation:(NSImageRep *)rep
+    */
+    HRESULT willLoadRepresentation([in] IWebImage* image, [in] WebImageRep* rep);
+
+    /*
+        - (NSImage *)imageDidNotDraw:(id)sender inRect:(NSRect)aRect
+    */
+    HRESULT imageDidNotDraw([in] IWebImage* image, [in] LPRECT aRect);
+}
+
+[
+    local,
+    object,
+    uuid(6FF5CD5A-16C6-4f47-A7B3-0DFDFD9802B9),
+    pointer_default(unique)
+]
+interface WebImageRep : IUnknown
+{
+    /*
+        + (BOOL)canInitWithData:(NSData *)data
+    */
+    HRESULT canInitWithData([in] IStream* data, [out, retval] BOOL* result);
+
+    /*
+        + (BOOL)canInitWithPasteboard:(NSPasteboard *)pasteboard
+    */
+    HRESULT canInitWithPasteboard([in] IDataObject* pasteboard, [out, retval] BOOL* result);
+
+    /*
+        + (NSArray *)imageFileTypes
+    */
+    HRESULT imageFileTypes([out] int* cTypes, [out, retval] BSTR** types);
+
+    /*
+        + (NSArray *)imagePasteboardTypes
+    */
+    HRESULT imagePasteboardTypes([out] int* cTypes, [out, retval] BSTR** types);
+
+    /*
+        + (Class)imageRepClassForData:(NSData *)data
+    */
+    HRESULT imageRepClassForData([in] IStream* data);
+
+    /*
+        + (Class)imageRepClassForFileType:(NSString *)type
+    */
+    HRESULT imageRepClassForFileType([in] BSTR type);
+
+    /*
+        + (Class)imageRepClassForPasteboardType:(NSString *)type
+    */
+    HRESULT imageRepClassForPasteboardType([in] BSTR type);
+
+    /*
+        + (NSArray *)imageRepsWithContentsOfFile:(NSString *)filename
+    */
+    HRESULT imageRepsWithContentsOfFile([in] BSTR filename, [out] int* cReps, [out, retval] WebImageRep** reps);
+
+    /*
+        + (NSArray *)imageRepsWithContentsOfURL:(NSURL *)aURL
+    */
+    HRESULT imageRepsWithContentsOfURL([in] BSTR aURL, [out] int* cReps, [out, retval] WebImageRep** reps);
+
+    /*
+        + (NSArray *)imageRepsWithPasteboard:(NSPasteboard *)pasteboard
+    */
+    HRESULT imageRepsWithPasteboard([in] IDataObject* pasteboard, [out] int* cReps, [out, retval] WebImageRep** reps);
+
+    /*
+        + (id)imageRepWithContentsOfFile:(NSString *)filename
+    */
+    HRESULT imageRepWithContentsOfFile([in] BSTR filename);
+
+    /*
+        + (id)imageRepWithContentsOfURL:(NSURL *)aURL
+    */
+    HRESULT imageRepWithContentsOfURL([in] BSTR aURL);
+
+    /*
+        + (id)imageRepWithPasteboard:(NSPasteboard *)pasteboard
+    */
+    HRESULT imageRepWithPasteboard([in] IDataObject* pasteboard);
+
+    /*
+        + (NSArray *)imageUnfilteredFileTypes
+    */
+    HRESULT imageUnfilteredFileTypes([out] int* cTypes, [out, retval] BSTR* types);
+
+    /*
+        + (NSArray *)imageUnfilteredPasteboardTypes
+    */
+    HRESULT imageUnfilteredPasteboardTypes([out] int* cTypes, [out, retval] BSTR* types);
+
+    /*
+        + (NSArray *)registeredImageRepClasses
+    */
+    HRESULT registeredImageRepClasses([out] int* cTypes, [out, retval] WebImageRep* types);
+
+    /*
+        + (void)registerImageRepClass:(Class)imageRepClass
+    */
+    HRESULT registerImageRepClass([in] WebImageRep* repClass);
+
+    /*
+        + (void)unregisterImageRepClass:(Class)imageRepClass
+    */
+    HRESULT unregisterImageRepClass([in] WebImageRep* repClass);
+
+    /*
+        - (int)bitsPerSample
+    */
+    HRESULT bitsPerSample([out, retval] int* result);
+
+    /*
+        - (NSString *)colorSpaceName
+    */
+    HRESULT colorSpaceName([out, retval] BSTR* result);
+
+    /*
+        - (BOOL)draw
+    */
+    HRESULT draw([out, retval] BOOL* result);
+
+    /*
+        - (BOOL)drawAtPoint:(NSPoint)aPoint
+    */
+    HRESULT drawAtPoint([in] LPPOINT aPoint, [out, retval] BOOL* result);
+
+    /*
+        - (BOOL)drawInRect:(NSRect)rect
+    */
+    HRESULT drawInRect([in] LPRECT rect, [out, retval] BOOL* result);
+
+    /*
+        - (BOOL)hasAlpha
+    */
+    HRESULT hasAlpha([out, retval] BOOL* result);
+
+    /*
+        - (BOOL)isOpaque
+    */
+    HRESULT isOpaque([out, retval] BOOL* result);
+
+    /*
+        - (int)pixelsHigh
+    */
+    HRESULT pixelsHigh([out, retval] int* result);
+
+    /*
+        - (int)pixelsWide
+    */
+    HRESULT pixelsWide([out, retval] int* result);
+
+    /*
+        - (void)setAlpha:(BOOL)flag
+    */
+    HRESULT setAlpha([in] BOOL flag);
+
+    /*
+        - (void)setBitsPerSample:(int)anInt
+    */
+    HRESULT setBitsPerSample([in] int anInt);
+
+    /*
+        - (void)setColorSpaceName:(NSString *)string
+    */
+    HRESULT setColorSpaceName([in] BSTR str);
+
+    /*
+        - (void)setOpaque:(BOOL)flag
+    */
+    HRESULT setOpaque([in] BOOL flag);
+
+    /*
+        - (void)setPixelsHigh:(int)anInt
+    */
+    HRESULT setPixelsHigh([in] int anInt);
+
+    /*
+        - (void)setPixelsWide:(int)anInt
+    */
+    HRESULT setPixelsWide([in] int anInt);
+
+    /*
+        - (void)setSize:(NSSize)aSize
+    */
+    HRESULT setSize([in] LPSIZE aSize);
+
+    /*
+        - (NSSize)size
+    */
+    HRESULT size([out, retval] LPSIZE* result);
+}

@@ -1,3 +1,344 @@
+2006-06-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by darin.
+
+        New hosting for Spinneret to avoid static linking
+
+        * COM: Added.
+        * COM/Interfaces: Added.
+        * COM/Interfaces/DOMCSS.idl: Added.
+        * COM/Interfaces/DOMCore.idl: Added.
+        * COM/Interfaces/DOMHTML.idl: Added.
+        * COM/Interfaces/DOMRange.idl: Added.
+        * COM/Interfaces/IWebArchive.idl: Added.
+        * COM/Interfaces/IWebAttributedString.idl: Added.
+        * COM/Interfaces/IWebBackForwardList.idl: Added.
+        * COM/Interfaces/IWebDataSource.idl: Added.
+        * COM/Interfaces/IWebDocument.idl: Added.
+        * COM/Interfaces/IWebDownload.idl: Added.
+        * COM/Interfaces/IWebEditingDelegate.idl: Added.
+        * COM/Interfaces/IWebError.idl: Added.
+        * COM/Interfaces/IWebFrame.idl: Added.
+        * COM/Interfaces/IWebFrameLoadDelegate.idl: Added.
+        * COM/Interfaces/IWebFrameView.idl: Added.
+        * COM/Interfaces/IWebHistoryItem.idl: Added.
+        * COM/Interfaces/IWebIconDatabase.idl: Added.
+        * COM/Interfaces/IWebImage.idl: Added.
+        * COM/Interfaces/IWebMutableURLRequest.idl: Added.
+        * COM/Interfaces/IWebNotification.idl: Added.
+        * COM/Interfaces/IWebPolicyDelegate.idl: Added.
+        * COM/Interfaces/IWebPreferences.idl: Added.
+        * COM/Interfaces/IWebResource.idl: Added.
+        * COM/Interfaces/IWebResourceLoadDelegate.idl: Added.
+        * COM/Interfaces/IWebScriptObject.idl: Added.
+        * COM/Interfaces/IWebUIDelegate.idl: Added.
+        * COM/Interfaces/IWebURLAuthenticationChallenge.idl: Added.
+        * COM/Interfaces/IWebURLRequest.idl: Added.
+        * COM/Interfaces/IWebURLResponse.idl: Added.
+        * COM/Interfaces/IWebUndoManager.idl: Added.
+        * COM/Interfaces/IWebView.idl: Added.
+        * COM/Interfaces/WebKit.idl: Added.
+        * COM/WebBackForwardList.cpp: Added.
+        (WebBackForwardList::WebBackForwardList):
+        (WebBackForwardList::~WebBackForwardList):
+        (WebBackForwardList::createInstance):
+        (WebBackForwardList::QueryInterface):
+        (WebBackForwardList::AddRef):
+        (WebBackForwardList::Release):
+        (WebBackForwardList::addItem):
+        (WebBackForwardList::goBack):
+        (WebBackForwardList::goForward):
+        (WebBackForwardList::goToItem):
+        (WebBackForwardList::backItem):
+        (WebBackForwardList::currentItem):
+        (WebBackForwardList::forwardItem):
+        (WebBackForwardList::backListWithLimit):
+        (WebBackForwardList::forwardListWithLimit):
+        (WebBackForwardList::capacity):
+        (WebBackForwardList::setCapacity):
+        (WebBackForwardList::backListCount):
+        (WebBackForwardList::forwardListCount):
+        (WebBackForwardList::containsItem):
+        (WebBackForwardList::itemAtIndex):
+        (WebBackForwardList::setPageCacheSize):
+        (WebBackForwardList::pageCacheSize):
+        * COM/WebBackForwardList.h: Added.
+        * COM/WebDataSource.cpp: Added.
+        (WebDataSource::WebDataSource):
+        (WebDataSource::~WebDataSource):
+        (WebDataSource::createInstance):
+        (WebDataSource::QueryInterface):
+        (WebDataSource::AddRef):
+        (WebDataSource::Release):
+        (WebDataSource::initWithRequest):
+        (WebDataSource::data):
+        (WebDataSource::representation):
+        (WebDataSource::webFrame):
+        (WebDataSource::initialRequest):
+        (WebDataSource::request):
+        (WebDataSource::response):
+        (WebDataSource::textEncodingName):
+        (WebDataSource::isLoading):
+        (WebDataSource::pageTitle):
+        (WebDataSource::unreachableURL):
+        (WebDataSource::webArchive):
+        (WebDataSource::mainResource):
+        (WebDataSource::subresources):
+        (WebDataSource::subresourceForURL):
+        (WebDataSource::addSubresource):
+        * COM/WebDataSource.h: Added.
+        * COM/WebFrame.cpp: Added.
+        (WebFrame::WebFramePrivate::WebFramePrivate):
+        (WebFrame::WebFramePrivate::~WebFramePrivate):
+        (WebFrame::WebFrame):
+        (WebFrame::~WebFrame):
+        (WebFrame::createInstance):
+        (WebFrame::QueryInterface):
+        (WebFrame::AddRef):
+        (WebFrame::Release):
+        (WebFrame::initWithName):
+        (WebFrame::name):
+        (WebFrame::webView):
+        (WebFrame::frameView):
+        (WebFrame::DOMDocument):
+        (WebFrame::frameElement):
+        (WebFrame::loadRequest):
+        (WebFrame::loadData):
+        (WebFrame::loadHTMLString):
+        (WebFrame::loadAlternateHTMLString):
+        (WebFrame::loadArchive):
+        (WebFrame::dataSource):
+        (WebFrame::provisionalDataSource):
+        (WebFrame::stopLoading):
+        (WebFrame::reload):
+        (WebFrame::findFrameNamed):
+        (WebFrame::parentFrame):
+        (WebFrame::childFrames):
+        (WebFrame::paint):
+        (WebFrame::impl):
+        (WebFrame::loadDataSource):
+        (WebFrame::loading):
+        (WebFrame::goToItem):
+        (WebFrame::loadItem):
+        (WebSystemMainMemory):
+        (WebFrame::getObjectCacheSize):
+        (WebFrame::receivedRedirect):
+        (WebFrame::receivedResponse):
+        (WebFrame::receivedData):
+        (WebFrame::receivedAllData):
+        (WebFrame::openURL):
+        (WebFrame::submitForm):
+        (WebFrame::setTitle):
+        (WebFrame::setStatusText):
+        * COM/WebFrame.h: Added.
+        * COM/WebHistoryItem.cpp: Added.
+        (WebHistoryItem::WebHistoryItem):
+        (WebHistoryItem::~WebHistoryItem):
+        (WebHistoryItem::createInstance):
+        (WebHistoryItem::QueryInterface):
+        (WebHistoryItem::AddRef):
+        (WebHistoryItem::Release):
+        (WebHistoryItem::initWithURLString):
+        (WebHistoryItem::originalURLString):
+        (WebHistoryItem::URLString):
+        (WebHistoryItem::title):
+        (WebHistoryItem::lastVisitedTimeInterval):
+        (WebHistoryItem::setAlternateTitle):
+        (WebHistoryItem::alternateTitle):
+        (WebHistoryItem::icon):
+        * COM/WebHistoryItem.h: Added.
+        * COM/WebIconDatabase.cpp: Added.
+        (WebIconDatabase::WebIconDatabase):
+        (WebIconDatabase::~WebIconDatabase):
+        (WebIconDatabase::createInstance):
+        (WebIconDatabase::QueryInterface):
+        (WebIconDatabase::AddRef):
+        (WebIconDatabase::Release):
+        (WebIconDatabase::sharedIconDatabase):
+        (WebIconDatabase::iconForURL):
+        (WebIconDatabase::defaultIconWithSize):
+        (WebIconDatabase::retainIconForURL):
+        (WebIconDatabase::releaseIconForURL):
+        (WebIconDatabase::delayDatabaseCleanup):
+        (WebIconDatabase::allowDatabaseCleanup):
+        * COM/WebIconDatabase.h: Added.
+        * COM/WebKitClassFactory.cpp: Added.
+        (WebKitClassFactory::WebKitClassFactory):
+        (WebKitClassFactory::~WebKitClassFactory):
+        (WebKitClassFactory::QueryInterface):
+        (WebKitClassFactory::AddRef):
+        (WebKitClassFactory::Release):
+        (WebKitClassFactory::CreateInstance):
+        (WebKitClassFactory::LockServer):
+        * COM/WebKitClassFactory.h: Added.
+        * COM/WebKitDLL.cpp: Added.
+        (DllMain):
+        (DllGetClassObject):
+        (DllCanUnloadNow):
+        (DllUnregisterServer):
+        (DllRegisterServer):
+        * COM/WebKitDLL.h: Added.
+        * COM/WebMutableURLRequest.cpp: Added.
+        (WebMutableURLRequest::WebMutableURLRequest):
+        (WebMutableURLRequest::~WebMutableURLRequest):
+        (WebMutableURLRequest::createInstance):
+        (WebMutableURLRequest::QueryInterface):
+        (WebMutableURLRequest::AddRef):
+        (WebMutableURLRequest::Release):
+        (WebMutableURLRequest::requestWithURL):
+        (WebMutableURLRequest::allHTTPHeaderFields):
+        (WebMutableURLRequest::cachePolicy):
+        (WebMutableURLRequest::HTTPBody):
+        (WebMutableURLRequest::HTTPBodyStream):
+        (WebMutableURLRequest::HTTPMethod):
+        (WebMutableURLRequest::HTTPShouldHandleCookies):
+        (WebMutableURLRequest::initWithURL):
+        (WebMutableURLRequest::mainDocumentURL):
+        (WebMutableURLRequest::timeoutInterval):
+        (WebMutableURLRequest::URL):
+        (WebMutableURLRequest::valueForHTTPHeaderField):
+        (WebMutableURLRequest::addValue):
+        (WebMutableURLRequest::setAllHTTPHeaderFields):
+        (WebMutableURLRequest::setCachePolicy):
+        (WebMutableURLRequest::setHTTPBody):
+        (WebMutableURLRequest::setHTTPBodyStream):
+        (WebMutableURLRequest::setHTTPMethod):
+        (WebMutableURLRequest::setHTTPShouldHandleCookies):
+        (WebMutableURLRequest::setMainDocumentURL):
+        (WebMutableURLRequest::setTimeoutInterval):
+        (WebMutableURLRequest::setURL):
+        (WebMutableURLRequest::setValue):
+        (WebMutableURLRequest::setFormData):
+        (WebMutableURLRequest::formData):
+        * COM/WebMutableURLRequest.h: Added.
+        * COM/WebView.cpp: Added.
+        (WebView::WebView):
+        (WebView::~WebView):
+        (WebView::createInstance):
+        (WebView::mouseMoved):
+        (WebView::mouseDown):
+        (WebView::mouseUp):
+        (WebView::mouseDoubleClick):
+        (WebView::keyPress):
+        (registerWebView):
+        (WebViewWndProc):
+        (calculateScrollDelta):
+        (scrollMessageForKey):
+        (WebView::goToItem):
+        (WebView::QueryInterface):
+        (WebView::AddRef):
+        (WebView::Release):
+        (WebView::canShowMIMEType):
+        (WebView::canShowMIMETypeAsHTML):
+        (WebView::MIMETypesShownAsHTML):
+        (WebView::setMIMETypesShownAsHTML):
+        (WebView::URLFromPasteboard):
+        (WebView::URLTitleFromPasteboard):
+        (WebView::initWithFrame):
+        (WebView::setUIDelegate):
+        (WebView::uiDelegate):
+        (WebView::setResourceLoadDelegate):
+        (WebView::resourceLoadDelegate):
+        (WebView::setDownloadDelegate):
+        (WebView::downloadDelegate):
+        (WebView::setFrameLoadDelegate):
+        (WebView::frameLoadDelegate):
+        (WebView::setPolicyDelegate):
+        (WebView::policyDelegate):
+        (WebView::mainFrame):
+        (WebView::backForwardList):
+        (WebView::setMaintainsBackForwardList):
+        (WebView::goBack):
+        (WebView::goForward):
+        (WebView::goToBackForwardItem):
+        (WebView::setTextSizeMultiplier):
+        (WebView::textSizeMultiplier):
+        (WebView::setApplicationNameForUserAgent):
+        (WebView::applicationNameForUserAgent):
+        (WebView::setCustomUserAgent):
+        (WebView::customUserAgent):
+        (WebView::userAgentForURL):
+        (WebView::supportsTextEncoding):
+        (WebView::setCustomTextEncodingName):
+        (WebView::customTextEncodingName):
+        (WebView::setMediaStyle):
+        (WebView::mediaStyle):
+        (WebView::stringByEvaluatingJavaScriptFromString):
+        (WebView::windowScriptObject):
+        (WebView::setPreferences):
+        (WebView::preferences):
+        (WebView::setPreferencesIdentifier):
+        (WebView::preferencesIdentifier):
+        (WebView::setHostWindow):
+        (WebView::hostWindow):
+        (WebView::searchFor):
+        (WebView::registerViewClass):
+        (WebView::takeStringURLFrom):
+        (WebView::stopLoading):
+        (WebView::reload):
+        (WebView::canGoBack):
+        (WebView::canGoForward):
+        (WebView::canMakeTextLarger):
+        (WebView::makeTextLarger):
+        (WebView::canMakeTextSmaller):
+        (WebView::makeTextSmaller):
+        (WebView::computedStyleForElement):
+        (WebView::editableDOMRangeForPoint):
+        (WebView::setSelectedDOMRange):
+        (WebView::selectedDOMRange):
+        (WebView::selectionAffinity):
+        (WebView::setEditable):
+        (WebView::isEditable):
+        (WebView::setTypingStyle):
+        (WebView::typingStyle):
+        (WebView::setSmartInsertDeleteEnabled):
+        (WebView::smartInsertDeleteEnabled):
+        (WebView::setContinuousSpellCheckingEnabled):
+        (WebView::isContinuousSpellCheckingEnabled):
+        (WebView::spellCheckerDocumentTag):
+        (WebView::undoManager):
+        (WebView::setEditingDelegate):
+        (WebView::editingDelegate):
+        (WebView::styleDeclarationWithText):
+        (WebView::replaceSelectionWithNode):
+        (WebView::replaceSelectionWithText):
+        (WebView::replaceSelectionWithMarkupString):
+        (WebView::replaceSelectionWithArchive):
+        (WebView::deleteSelection):
+        (WebView::applyStyle):
+        (WebView::copy):
+        (WebView::cut):
+        (WebView::paste):
+        (WebView::copyFont):
+        (WebView::pasteFont):
+        (WebView::delete_):
+        (WebView::pasteAsPlainText):
+        (WebView::pasteAsRichText):
+        (WebView::changeFont):
+        (WebView::changeAttributes):
+        (WebView::changeDocumentBackgroundColor):
+        (WebView::changeColor):
+        (WebView::alignCenter):
+        (WebView::alignJustified):
+        (WebView::alignLeft):
+        (WebView::alignRight):
+        (WebView::checkSpelling):
+        (WebView::showGuessPanel):
+        (WebView::performFindPanelAction):
+        (WebView::startSpeaking):
+        (WebView::stopSpeaking):
+        (WebView::viewWindow):
+        * COM/WebView.h: Added.
+        * WebKit.vcproj: Added.
+        * WebKit.vcproj/Interfaces.vcproj: Added.
+        * WebKit.vcproj/WebKit.def: Added.
+        * WebKit.vcproj/WebKit.rc: Added.
+        * WebKit.vcproj/WebKit.sln: Added.
+        * WebKit.vcproj/WebKit.vcproj: Added.
+        * WebKit.vcproj/WebKitGUID.vcproj: Added.
+        * WebKit.vcproj/autoversion.h: Added.
+        * WebKit.vcproj/resource.h: Added.
+
 2006-06-02  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport/WebImageRendererFactory.m: Fix crash on Safari startup

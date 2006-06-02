@@ -1,0 +1,142 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+cpp_quote("/*")
+cpp_quote(" * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.")
+cpp_quote(" *")
+cpp_quote(" * Redistribution and use in source and binary forms, with or without")
+cpp_quote(" * modification, are permitted provided that the following conditions")
+cpp_quote(" * are met:")
+cpp_quote(" * 1. Redistributions of source code must retain the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer.")
+cpp_quote(" * 2. Redistributions in binary form must reproduce the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer in the")
+cpp_quote(" *    documentation and/or other materials provided with the distribution.")
+cpp_quote(" *")
+cpp_quote(" * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY")
+cpp_quote(" * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+cpp_quote(" * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR")
+cpp_quote(" * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR")
+cpp_quote(" * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,")
+cpp_quote(" * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,")
+cpp_quote(" * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR")
+cpp_quote(" * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY")
+cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
+cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
+cpp_quote(" */")
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+/*!
+    @class WebDownload
+    @discussion A WebDownload works just like an NSURLDownload, with
+    one extra feature: if you do not implement the
+    authentication-related delegate methods, it will automatically
+    prompt for authentication using the standard WebKit authentication
+    panel, as either a sheet or window. It provides no extra methods,
+    but does have one additional delegate method.
+*/
+
+[
+    local,
+    object,
+    uuid(65EFE83B-A9E4-4516-8F3B-BAA25DA90FFD),
+    pointer_default(unique)
+]
+interface IWebDownload : IUnknown
+{
+    /*
+        + (BOOL)canResumeDownloadDecodedWithEncodingMIMEType:(NSString *)MIMEType
+    */
+    HRESULT canResumeDownloadDecodedWithEncodingMIMEType([in] BSTR mimeType, [out, retval] BOOL* result);
+
+    /*
+        - (void)cancel
+    */
+    HRESULT cancel();
+
+    /*
+        - (BOOL)deletesFileUponFailure
+    */
+    HRESULT deletesFileUponFailure([out, retval] BOOL* result);
+
+    /*
+        - (id)initWithRequest:(NSURLRequest *)request delegate:(id)delegate
+    */
+    HRESULT initWithRequest([in] BSTR request, [in] IUnknown* delegate);
+
+    /*
+        - (id)initWithResumeData:(NSData *)resumeData delegate:(id)delegate path:(NSString *)path
+    */
+    HRESULT initWithResumeData([in] IStream* resumeData, [in] IUnknown* delegate, [in] BSTR path);
+
+    /*
+        - (NSURLRequest *)request
+    */
+    HRESULT request([out, retval] BSTR* request);
+
+    /*
+        - (NSData *)resumeData
+    */
+    HRESULT resumeData([out, retval] IStream** stream);
+
+    /*
+        - (void)setDeletesFileUponFailure:(BOOL)deletesFileUponFailure
+    */
+    HRESULT setDeletesFileUponFailure([in] BOOL deletesFileUponFailure);
+
+    /*
+        - (void)setDestination:(NSString *)path allowOverwrite:(BOOL)allowOverwrite
+    */
+    HRESULT setDestination([in] BSTR path, [in] BOOL allowOverwrite);
+}
+
+
+/*!
+    @protocol WebDownloadDelegate
+    @discussion The WebDownloadDelegate delegate has one extra method used to choose
+    the right window when automatically prompting with a sheet.
+    @interface NSObject (WebDownloadDelegate)
+*/
+
+[
+    local,
+    object,
+    uuid(16A32AE6-C862-40cd-9225-2CAF823F40F9),
+    pointer_default(unique)
+]
+interface IWebDownloadDelegate : IUnknown
+{
+    /*!
+        @method downloadWindowForAuthenticationSheet:
+        @abstract
+        @param
+        @result
+        - (NSWindow *)downloadWindowForAuthenticationSheet:(WebDownload *)download;
+    */
+    HRESULT downloadWindowForAuthenticationSheet([in] IWebDownload* download, [out, retval] HWND* window);
+}

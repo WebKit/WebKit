@@ -1,0 +1,208 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+cpp_quote("/*")
+cpp_quote(" * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.")
+cpp_quote(" *")
+cpp_quote(" * Redistribution and use in source and binary forms, with or without")
+cpp_quote(" * modification, are permitted provided that the following conditions")
+cpp_quote(" * are met:")
+cpp_quote(" * 1. Redistributions of source code must retain the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer.")
+cpp_quote(" * 2. Redistributions in binary form must reproduce the above copyright")
+cpp_quote(" *    notice, this list of conditions and the following disclaimer in the")
+cpp_quote(" *    documentation and/or other materials provided with the distribution.")
+cpp_quote(" *")
+cpp_quote(" * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY")
+cpp_quote(" * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+cpp_quote(" * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR")
+cpp_quote(" * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR")
+cpp_quote(" * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,")
+cpp_quote(" * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,")
+cpp_quote(" * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR")
+cpp_quote(" * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY")
+cpp_quote(" * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT")
+cpp_quote(" * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+cpp_quote(" * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. ")
+cpp_quote(" */")
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "DOMCore.idl";
+
+typedef enum _WebSelectionAffinity {
+   WebSelectionAffinityUpstream = 0,
+   WebSelectionAffinityDownstream = 1
+} WebSelectionAffinity;
+
+enum {
+    //
+    // DOM range exception codes
+    //
+    DOM_BAD_BOUNDARYPOINTS_ERR        = 1,
+    DOM_INVALID_NODE_TYPE_ERR         = 2,
+};
+
+enum {
+    //
+    // DOM Range comparison codes
+    //
+    DOM_START_TO_START                = 0,
+    DOM_START_TO_END                  = 1,
+    DOM_END_TO_END                    = 2,
+    DOM_END_TO_START                  = 3,
+};
+
+/*
+    @interface DOMRange : DOMObject
+*/
+[
+    local,
+    object,
+    uuid(2F33E42C-0B39-48b3-B7B6-E910CDB325AD),
+    pointer_default(unique)
+]
+interface IDOMRange : IDOMObject
+{
+    /*
+        - (DOMNode *)startContainer;
+    */
+    HRESULT startContainer([out, retval] IDOMNode** node);
+
+    /*
+        - (int)startOffset;
+    */
+    HRESULT startOffset([out, retval] int* offset);
+
+    /*
+        - (DOMNode *)endContainer;
+    */
+    HRESULT endContainer([out, retval] IDOMNode** node);
+
+    /*
+        - (int)endOffset;
+    */
+    HRESULT endOffset([out, retval] int* offset);
+
+    /*
+        - (BOOL)collapsed;
+    */
+    HRESULT collapsed([out, retval] BOOL* result);
+
+    /*
+        - (DOMNode *)commonAncestorContainer;
+    */
+    HRESULT commonAncestorContainer([out, retval] IDOMNode* container);
+
+    /*
+        - (void)setStart:(DOMNode *)refNode :(int)offset;
+    */
+    HRESULT setStart([in] IDOMNode* refNode, [in] int offset);
+
+    /*
+        - (void)setEnd:(DOMNode *)refNode :(int)offset;
+    */
+    HRESULT setEnd([in] IDOMNode* refNode, [in] int offset);
+
+    /*
+        - (void)setStartBefore:(DOMNode *)refNode;
+    */
+    HRESULT setStartBefore([in] IDOMNode* refNode);
+
+    /*
+        - (void)setStartAfter:(DOMNode *)refNode;
+    */
+    HRESULT setStartAfter([in] IDOMNode* refNode);
+
+    /*
+        - (void)setEndBefore:(DOMNode *)refNode;
+    */
+    HRESULT setEndBefore([in] IDOMNode* refNode);
+
+    /*
+        - (void)setEndAfter:(DOMNode *)refNode;
+    */
+    HRESULT setEndAfter([in] IDOMNode* refNode);
+
+    /*
+        - (void)collapse:(BOOL)toStart;
+    */
+    HRESULT collapse([in] BOOL toStart);
+
+    /*
+        - (void)selectNode:(DOMNode *)refNode;
+    */
+    HRESULT selectNode([in] IDOMNode* refNode);
+
+    /*
+        - (void)selectNodeContents:(DOMNode *)refNode;
+    */
+    HRESULT selectNodeContents([in] IDOMNode* refNode);
+
+    /*
+        - (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange;
+    */
+    HRESULT compareBoundaryPoints([in] unsigned short how, [in] IDOMRange* sourceRange);
+
+    /*
+        - (void)deleteContents;
+    */
+    HRESULT deleteContents();
+
+    /*
+        - (DOMDocumentFragment *)extractContents;
+    */
+    HRESULT extractContents([out, retval] IDOMDocumentFragment** fragment);
+
+    /*
+        - (DOMDocumentFragment *)cloneContents;
+    */
+    HRESULT cloneContents([out, retval] IDOMDocumentFragment** fragment);
+
+    /*
+        - (void)insertNode:(DOMNode *)newNode;
+    */
+    HRESULT insertNode([in] IDOMNode* newNode);
+
+    /*
+        - (void)surroundContents:(DOMNode *)newParent;
+    */
+    HRESULT surroundContents([in] IDOMNode* newParent);
+
+    /*
+        - (DOMRange *)cloneRange;
+    */
+    HRESULT cloneRange([out, retval] IDOMRange** range);
+
+    /*
+        - (NSString *)toString;
+    */
+    HRESULT toString([out, retval] BSTR* str);
+
+    /*
+        - (void)detach;
+    */
+    HRESULT detach();
+}
