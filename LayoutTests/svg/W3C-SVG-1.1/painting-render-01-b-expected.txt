@@ -2,7 +2,7 @@ KRenderingPaintServer {id="gradientDefault" [type=LINEAR-GRADIENT] [stops=[(0.00
 KRenderingPaintServer {id="gradientSRGB" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(100,0)]}
 KRenderingPaintServer {id="gradientLinearRGB" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(100,0)]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (36.50,66.50) size 307.00x214.00
         RenderSVGText {text} at (0,0) size 465x27

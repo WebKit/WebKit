@@ -8,7 +8,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of DIV > DIV > BODY 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,14) size 756x320
           RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px solid #0000FF)]
             layer at (0,0) size 300x150
-              RenderCanvas at (0,0) size 300x150
+              RenderView at (0,0) size 300x150
             layer at (0,0) size 300x8
               RenderBlock {HTML} at (0,0) size 300x8
                 RenderBody {BODY} at (8,8) size 284x0
@@ -43,13 +43,13 @@ layer at (0,0) size 800x600
             text run at (304,132) width 6: " "
           RenderPartObject {IFRAME} at (310,0) size 304x154 [border: (2px solid #008000)]
             layer at (0,0) size 300x150
-              RenderCanvas at (0,0) size 300x150
+              RenderView at (0,0) size 300x150
             layer at (0,0) size 300x8
               RenderBlock {HTML} at (0,0) size 300x8
                 RenderBody {BODY} at (8,8) size 284x0
           RenderPartObject {IFRAME} at (0,160) size 304x154 [border: (2px solid #0000FF)]
             layer at (0,0) size 300x150
-              RenderCanvas at (0,0) size 300x150
+              RenderView at (0,0) size 300x150
             layer at (0,0) size 300x8
               RenderBlock {HTML} at (0,0) size 300x8
                 RenderBody {BODY} at (8,8) size 284x0
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
             text run at (304,292) width 6: " "
           RenderPartObject {IFRAME} at (310,160) size 304x154 [border: (2px solid #008000)]
             layer at (0,0) size 300x150
-              RenderCanvas at (0,0) size 300x150
+              RenderView at (0,0) size 300x150
             layer at (0,0) size 300x8
               RenderBlock {HTML} at (0,0) size 300x8
                 RenderBody {BODY} at (8,8) size 284x0

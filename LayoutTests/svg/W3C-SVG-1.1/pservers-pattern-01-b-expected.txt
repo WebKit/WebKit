@@ -3,7 +3,7 @@ KRenderingPaintServer {id="pat2" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 KRenderingPaintServer {id="pat3" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 KRenderingPaintServer {id="pat4" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0,0) size 479.50x359.50
       KCanvasContainer {g} at (0,0) size 455.50x160
         KCanvasContainer {pattern} at (5,5) size 15x15

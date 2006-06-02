@@ -4,7 +4,7 @@ KCanvasResource {id="Saturate40" [type=FILTER]  [bounding box=at (-0.05,-0.05) s
 KCanvasResource {id="HueRotate90" [type=FILTER]  [bounding box=at (-0.05,-0.05) size 1.10x1.10] [effect bounding box mode=0] [effects=[[type=COLOR-MATRIX] [in="SourceGraphic"] [subregion="at (0,0) size 800x500"] [color matrix type=HUE-ROTATE] [values=[90.00]]]]}
 KCanvasResource {id="LuminanceToAlpha" [type=FILTER]  [bounding box=at (-0.05,-0.05) size 1.10x1.10] [effect bounding box mode=0] [effects=[[type=COLOR-MATRIX] [in="SourceGraphic"] [result="a"] [subregion="at (0,0) size 800x500"] [color matrix type=LUMINANCE-TO-ALPHA] [values=[]], [type=COMPOSITE] [in="SourceGraphic"] [subregion="at (0,0) size 800x500"] [in2="a"] [k1=0.00 k2=0.00 k3=0.00 k4=0.00]]]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 799x499
       KCanvasContainer {g} at (0.50,0.50) size 799x499
         KCanvasContainer {svg} at (18.29,0.29) size 463.42x289.42

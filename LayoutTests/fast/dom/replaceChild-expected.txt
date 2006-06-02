@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x152
   RenderBlock {HTML} at (0,0) size 800x152
     RenderBody {BODY} at (0,0) size 800x152 [bgcolor=#CCFFCC]
       RenderBlock {DIV} at (0,0) size 800x152
         RenderPartObject {IFRAME} at (0,0) size 152x152 [border: (1px solid #000000)]
           layer at (0,0) size 150x150
-            RenderCanvas at (0,0) size 150x150
+            RenderView at (0,0) size 150x150
           layer at (0,0) size 150x52
             RenderBlock {HTML} at (0,0) size 150x52
               RenderBody {BODY} at (8,8) size 134x36

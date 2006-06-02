@@ -5,7 +5,7 @@ KCanvasResource {id="convolve4" [type=FILTER]  [bounding box=at (0,0) size 1x1] 
 KCanvasResource {id="convolve5" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
 KCanvasResource {id="convolve6" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (20,40) size 350x156
         KCanvasContainer {g} at (20,40) size 350x156 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]

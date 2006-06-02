@@ -6,7 +6,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 30 of #text > PRE > DI
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 16 of #text > PRE > DIV > DIV > BODY > HTML > #document to 30 of #text > PRE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > PRE > DIV > DIV > BODY > HTML > #document to 30 of #text > PRE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584

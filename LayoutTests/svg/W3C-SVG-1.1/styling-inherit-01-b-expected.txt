@@ -1,7 +1,7 @@
 KRenderingPaintServer {id="ygw" [type=RADIAL-GRADIENT] [stops=[(0.00,#FFFF00), (0.50,#008000), (1.00,#FFFFFF)]] [center=(50,50)] [focal=(50,50)] [radius=50.00]}
 KRenderingPaintServer {id="yrw" [type=RADIAL-GRADIENT] [stops=[(0.00,#FFFF00), (0.50,#770000), (1.00,#FFFFFF)]] [center=(50,50)] [focal=(50,50)] [radius=50.00]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (40,20) size 380.50x260
         KCanvasContainer {g} at (239.50,79.50) size 181.00x121.00

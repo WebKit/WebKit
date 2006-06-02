@@ -2,7 +2,7 @@ KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF),
 KRenderingPaintServer {id="Grad2" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]][method=REFLECT] [start=(40,0)] [end=(60,0)]}
 KRenderingPaintServer {id="Grad3" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]][method=REPEAT] [start=(40,0)] [end=(60,0)]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (10,35) size 460x225
         RenderSVGText {text} at (0,0) size 465x17

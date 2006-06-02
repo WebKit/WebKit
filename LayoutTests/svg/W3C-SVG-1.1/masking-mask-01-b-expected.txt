@@ -3,7 +3,7 @@ KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF),
 KCanvasResource {id="mask2" [type=MASKER]}
 KCanvasResource {id="mask3" [type=MASKER]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (10,30) size 250x270
         RenderSVGText {text} at (0,0) size 465x16

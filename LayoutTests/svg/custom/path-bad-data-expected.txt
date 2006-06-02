@@ -1,4 +1,4 @@
 layer at (0,0) size 785x755
-  RenderCanvas at (0,0) size 785x600
+  RenderView at (0,0) size 785x600
     KCanvasContainer {svg} at (0,-233.40) size 677.31x494.82
       KCanvasItem {path} at (0,-233.40) size 677.31x494.82 [fill={[type=SOLID] [color=#000000]}] [data="M602.78,261.43C677.31,100.20,602.79,-89.02,436.34,-161.21C269.89,-233.40,74.53,-161.22,0.00,-0.00"]

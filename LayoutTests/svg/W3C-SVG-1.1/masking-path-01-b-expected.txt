@@ -1,7 +1,7 @@
 KCanvasResource {id="clip1" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,10.00L260.00,10.00L260.00,110.00L200.00,110.00]]]}
 KCanvasResource {id="clip2" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M90.00,150.00L165.00,150.00L165.00,225.00L90.00,225.00], [winding=NON-ZERO] [path=M225.00,160.00L290.00,160.00L290.00,225.00L225.00,225.00]]]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (17.50,17.50) size 445x265
         KCanvasItem {rect} at (17.50,17.50) size 445x65 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [clip path="#clip1"] [data="M20.00,20.00L460.00,20.00L460.00,80.00L20.00,80.00"]

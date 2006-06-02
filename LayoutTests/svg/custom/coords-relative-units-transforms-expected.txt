@@ -1,5 +1,5 @@
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 400x200
       KCanvasItem {rect} at (0,0) size 400x200 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [data="M5.00,5.00L3995.00,5.00L3995.00,1995.00L5.00,1995.00"]
       KCanvasContainer {g} at (36.16,38.08) size 327.00x125.08

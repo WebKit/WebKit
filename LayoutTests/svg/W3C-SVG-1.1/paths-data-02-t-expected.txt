@@ -1,5 +1,5 @@
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (-6.67,-0.65) size 486.17x363.95
       KCanvasContainer {g} at (-6.67,-0.65) size 483.67x363.95
         RenderSVGText {text} at (0,0) size 465x14

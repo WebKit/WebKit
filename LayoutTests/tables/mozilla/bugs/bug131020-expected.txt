@@ -1,5 +1,5 @@
 layer at (0,0) size 808x600
-  RenderCanvas at (0,0) size 785x585
+  RenderView at (0,0) size 785x585
 layer at (0,0) size 808x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x584
@@ -13,7 +13,7 @@ layer at (0,0) size 808x600
                     RenderTableCell {TD} at (2,2) size 784x574 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderPartObject {IFRAME} at (2,2) size 790x570 [border: (5px solid #0000FF)]
                         layer at (0,0) size 765x1840
-                          RenderCanvas at (0,0) size 765x560
+                          RenderView at (0,0) size 765x560
                         layer at (0,0) size 765x1840
                           RenderBlock {HTML} at (0,0) size 765x1840
                             RenderBody {BODY} at (0,0) size 765x1840 [bgcolor=#53799F]

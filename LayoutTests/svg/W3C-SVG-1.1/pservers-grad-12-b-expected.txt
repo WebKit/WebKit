@@ -2,7 +2,7 @@ KRenderingPaintServer {id="Grad1" [type=RADIAL-GRADIENT] [stops=[(0.00,#0000FF),
 KRenderingPaintServer {id="Grad2" [type=RADIAL-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#FF0000)]] [center=(20,20)] [focal=(20,20)] [radius=50.00]}
 KRenderingPaintServer {id="Grad3" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [bounding box mode=0] [center=(25,215)] [focal=(25,215)] [radius=25.00]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (10.00,35) size 460x225
         RenderSVGText {text} at (0,0) size 465x17

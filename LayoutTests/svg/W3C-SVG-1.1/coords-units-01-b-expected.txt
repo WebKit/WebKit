@@ -8,7 +8,7 @@ KRenderingPaintServer {id="patternBoundingBoxPercentage" [type=PATTERN] [bbox=at
 KRenderingPaintServer {id="patternBoundingBoxFraction" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.25,0.25) size 479.25x359.25
       KCanvasContainer {g} at (0.25,0.25) size 479.25x359.25
         RenderSVGText {text} at (0,0) size 465x18

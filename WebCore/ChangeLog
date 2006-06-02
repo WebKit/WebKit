@@ -1,3 +1,12 @@
+2006-06-02  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by mjs.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9183
+        Finish renaming of RenderCanvas to RenderView
+
+        * rendering/RenderView.h: Changed renderName from "RenderCanvas" to "RenderView".
+
 2006-06-01  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

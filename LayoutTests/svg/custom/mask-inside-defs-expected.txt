@@ -1,6 +1,6 @@
 KCanvasResource {id="mymask" [type=MASKER]}
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 590.50x390.50
       KCanvasContainer {mask} at (0,0) size 100x100
         KCanvasItem {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]

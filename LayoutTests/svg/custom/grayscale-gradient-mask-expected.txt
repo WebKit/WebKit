@@ -1,7 +1,7 @@
 KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#000000)]] [bounding box mode=0] [start=(0,0)] [end=(800,0)]}
 KCanvasResource {id="Mask" [type=MASKER]}
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0.33,0) size 301.33x113
       KCanvasContainer {mask} at (0.33,0) size 301.33x113
         KCanvasItem {rect} at (0.33,0) size 301.33x113 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#000000)]] [bounding box mode=0] [start=(0,0)] [end=(800,0)]}] [data="M0.00,0.00L800.00,0.00L800.00,300.00L0.00,300.00"]

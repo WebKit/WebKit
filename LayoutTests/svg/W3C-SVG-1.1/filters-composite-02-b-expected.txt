@@ -11,7 +11,7 @@ KCanvasResource {id="xor50" [type=FILTER]  [bounding box=at (0,0) size 1x1] [eff
 KCanvasResource {id="arithmetic" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=IMAGE]  [result="blue"] [subregion="at (0,0) size 480x360"], [type=IMAGE]  [result="red"] [subregion="at (0,0) size 480x360"], [type=COMPOSITE] [in="red"] [subregion="at (0,0) size 480x360"] [in2="blue"] [k1=0.50 k2=0.50 k3=0.50 k4=0.50]]]}
 KCanvasResource {id="arithmetic50" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=IMAGE]  [result="blue"] [subregion="at (0,0) size 480x360"], [type=IMAGE]  [result="red"] [subregion="at (0,0) size 480x360"], [type=COMPOSITE] [in="red"] [subregion="at (0,0) size 480x360"] [in2="blue"] [k1=0.50 k2=0.50 k3=0.50 k4=0.50]]]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (20.20,10.20) size 439.60x289.60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,-60.00)}]
         KCanvasContainer {g} at (20.20,10.20) size 439.60x289.60 [transform={m=((0.40,0.00)(0.00,0.40)) t=(5.00,70.00)}]

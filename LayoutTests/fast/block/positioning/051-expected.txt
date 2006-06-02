@@ -1,5 +1,5 @@
 layer at (0,0) size 785x5269
-  RenderCanvas at (0,0) size 785x600
+  RenderView at (0,0) size 785x600
 layer at (0,0) size 785x5269 layerType: background only
 layer at (84,1479) size 200x200
   RenderBlock (positioned) zI: -3000000 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]

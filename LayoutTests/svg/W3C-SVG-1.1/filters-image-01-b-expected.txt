@@ -1,6 +1,6 @@
 KCanvasResource {id="image" [type=FILTER]  [bounding box=at (-0.10,-0.10) size 1.20x1.20] [effect bounding box mode=0] [effects=[[type=IMAGE]  [subregion="at (145,50) size 190x190"]]]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0,0) size 480x360
       KCanvasContainer {g} at (0,0) size 480x360
         RenderSVGText {text} at (0,0) size 465x14

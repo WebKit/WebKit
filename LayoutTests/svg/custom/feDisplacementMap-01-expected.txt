@@ -1,6 +1,6 @@
 KCanvasResource {id="ResultImage" [type=FILTER]  [bounding box=at (-0.10,-0.10) size 1.20x1.20] [effect bounding box mode=0] [effects=[[type=IMAGE]  [result="Map"] [subregion="at (0,0) size 100x100"], [type=IMAGE]  [result="Texture"] [subregion="at (0,0) size 100x100"], [type=DISPLACEMENT-MAP] [in="Texture"] [subregion="at (0,0) size 800x600"] [in2=Map] [scale=100.00] [x channel selector=RED] [y channel selector=GREEN]]]}
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (-0.50,-0.50) size 101x101
       KCanvasContainer {g} at (-0.50,-0.50) size 101x101
         KCanvasItem {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [filter=#ResultImage] [data="M0.00,0.00L100.00,0.00L100.00,100.00L0.00,100.00"]

@@ -1,6 +1,6 @@
 KCanvasResource {id="myclip" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,100.00L300.00,100.00L300.00,200.00L200.00,200.00]]]}
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 0x0
       KCanvasContainer {g} at (0,0) size 0x0
         RenderSVGText {text} at (0,0) size 785x63

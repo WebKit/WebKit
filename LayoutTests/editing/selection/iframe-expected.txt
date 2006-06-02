@@ -213,7 +213,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
@@ -228,7 +228,7 @@ layer at (0,0) size 800x600
             text run at (0,188) width 48: "iframe: "
           RenderPartObject {IFRAME} at (48,0) size 402x202 [border: (1px solid #000000)]
             layer at (0,0) size 385x202
-              RenderCanvas at (0,0) size 385x200
+              RenderView at (0,0) size 385x200
             layer at (0,0) size 385x202
               RenderBlock {HTML} at (0,0) size 385x202
                 RenderBody {BODY} at (8,8) size 369x186

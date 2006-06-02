@@ -1,5 +1,5 @@
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,186) width 124: "Here is the iFrame: "
         RenderPartObject {IFRAME} at (124,0) size 200x200
           layer at (0,0) size 198x196
-            RenderCanvas at (0,0) size 198x196
+            RenderView at (0,0) size 198x196
           layer at (0,0) size 198x8
             RenderBlock {HTML} at (0,0) size 198x8
               RenderBody {BODY} at (8,8) size 182x0

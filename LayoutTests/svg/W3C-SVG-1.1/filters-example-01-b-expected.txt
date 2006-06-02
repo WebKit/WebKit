@@ -1,6 +1,6 @@
 KCanvasResource {id="MyFilter" [type=FILTER]  [bounding box=at (0,0) size 200x120] [bounding box mode=0] [effect bounding box mode=0] [effects=[[type=GAUSSIAN-BLUR] [in="SourceAlpha"] [result="blur"] [subregion="at (0,0) size 200x120"] [std dev. x=4.00 y=4.00], [type=OFFSET] [in="blur"] [result="offsetBlur"] [subregion="at (0,0) size 200x120"] [dx=4.00 dy=4.00], [type=COMPOSITE] [in="SourceGraphic"] [subregion="at (0,0) size 200x120"] [in2="offsetBlur"] [k1=0.00 k2=0.00 k3=0.00 k4=0.00]]]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (-6.67,0.50) size 486.17x359
       KCanvasContainer {g} at (-6.67,0.50) size 213.33x119
         KCanvasContainer {svg} at (-10,0.75) size 320x178.50

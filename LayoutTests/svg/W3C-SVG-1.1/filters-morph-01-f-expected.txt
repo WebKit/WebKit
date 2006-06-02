@@ -3,7 +3,7 @@ KCanvasResource {id="erode2" [type=FILTER]  [bounding box=at (0,0) size 1x1] [ef
 KCanvasResource {id="dilate1" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
 KCanvasResource {id="dilate2" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (35.00,19.00) size 403.93x263.29
         RenderSVGText {text} at (0,0) size 465x18

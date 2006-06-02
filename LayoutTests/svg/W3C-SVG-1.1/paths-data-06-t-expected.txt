@@ -1,5 +1,5 @@
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (68.40,97.20) size 367.20x169.20
         KCanvasContainer {g} at (68.40,97.20) size 367.20x169.20 [transform={m=((1.80,0.00)(0.00,1.80)) t=(-360.00,0.00)}]

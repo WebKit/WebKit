@@ -1,6 +1,6 @@
 KRenderingPaintServer {id="Gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FF0000)]] [bounding box mode=0] [start=(0,0)] [end=(800,0)]}
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 785x600
       KCanvasItem {rect} at (0,0) size 785x600 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00L785.00,0.00L785.00,600.00L0.00,600.00"]
       RenderSVGText {text} at (0,0) size 785x0

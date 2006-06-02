@@ -1,6 +1,6 @@
 KRenderingPaintServer {id="grad" [type=LINEAR-GRADIENT] [stops=[(0.05,#6600FF), (0.50,#FF0000), (0.95,#FFFF66)]] [start=(0,0)] [end=(100,0)]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (60,18.00) size 360x277.00
         KCanvasContainer {g} at (70,18.00) size 342.00x124.00

@@ -1,7 +1,7 @@
 KCanvasResource {id="clip1" [type=CLIPPER] [clip data=[[winding=EVEN-ODD] [path=M200.00,40.00L220.00,40.00L220.00,100.00L240.00,100.00L240.00,80.00L180.00,80.00L180.00,60.00L260.00,60.00L260.00,120.00L200.00,120.00L200.00,40.00]]]}
 KCanvasResource {id="clip2" [type=CLIPPER] [clip data=[[winding=NON-ZERO] [path=M200.00,170.00L220.00,170.00L220.00,230.00L240.00,230.00L240.00,210.00L180.00,210.00L180.00,190.00L260.00,190.00L260.00,250.00L200.00,250.00L200.00,170.00]]]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
       KCanvasContainer {g} at (50,30) size 350x230
         RenderSVGText {text} at (0,0) size 465x16

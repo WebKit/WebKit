@@ -2,7 +2,7 @@ KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF),
 KRenderingPaintServer {id="Grad2" [type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFA500)]] [bounding box mode=0] [transform={m=((1.00,0.00)(1.00,1.00)) t=(240.00,155.00)}] [center=(0,0)] [focal=(0,0)] [radius=60.00]}
 KRenderingPaintServer {id="Pat3" [type=PATTERN] [bbox=at (0,0) size 0x0]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0,0) size 479.50x359.50
       KCanvasContainer {g} at (0,0) size 460x260
         KCanvasItem {rect} at (20,20) size 440x50 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (0.50,#FF0000), (1.00,#00FF00)]] [bounding box mode=0] [transform={m=((0.50,0.00)(0.00,0.50)) t=(25.00,35.00)}] [start=(0,0)] [end=(430,0)]}] [data="M20.00,20.00L460.00,20.00L460.00,70.00L20.00,70.00"]

@@ -1,5 +1,5 @@
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [color=#FFFFFF] [bgcolor=#000000]
@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (522,14) size 0x0
       RenderPartObject {IFRAME} at (0,18) size 170x170 [border: (10px solid #FF0000)]
         layer at (0,0) size 100x100
-          RenderCanvas at (0,0) size 100x100
+          RenderView at (0,0) size 100x100
         layer at (0,0) size 100x8
           RenderBlock {HTML} at (0,0) size 100x8
             RenderBody {BODY} at (8,8) size 84x0
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         text run at (170,174) width 4: " "
       RenderPartObject {OBJECT} at (174,18) size 170x170 [border: (10px solid #FF0000)]
         layer at (0,0) size 100x100
-          RenderCanvas at (0,0) size 100x100
+          RenderView at (0,0) size 100x100
         layer at (0,0) size 100x8
           RenderBlock {HTML} at (0,0) size 100x8
             RenderBody {BODY} at (8,8) size 84x0
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
         text run at (344,174) width 4: " "
       RenderPartObject {OBJECT} at (348,18) size 170x170 [border: (10px solid #FF0000)]
         layer at (0,0) size 100x100
-          RenderCanvas at (0,0) size 100x100
+          RenderView at (0,0) size 100x100
         layer at (0,0) size 100x8
           RenderBlock {HTML} at (0,0) size 100x8
             RenderBody {BODY} at (8,8) size 84x0

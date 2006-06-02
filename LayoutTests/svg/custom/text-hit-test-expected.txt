@@ -3,7 +3,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > text > g > svg > #document to 8 of #text > text > g > svg > #document toDOMRange:range from 8 of #text > text > g > svg > #document to 0 of text > g > svg > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
     KCanvasContainer {svg} at (0,0) size 0x0
       KCanvasContainer {g} at (0,0) size 0x0 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}]
         RenderSVGText {text} at (0,0) size 785x18

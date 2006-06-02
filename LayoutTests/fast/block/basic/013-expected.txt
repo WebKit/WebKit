@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderPartObject {IFRAME} at (0,0) size 500x100
         layer at (0,0) size 500x100
-          RenderCanvas at (0,0) size 500x100
+          RenderView at (0,0) size 500x100
         layer at (0,0) size 500x100
           RenderBlock {HTML} at (0,0) size 500x100
             RenderBody {BODY} at (8,8) size 484x76
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
         text run at (500,86) width 4: " "
       RenderPartObject {OBJECT} at (0,104) size 500x100
         layer at (0,0) size 500x100
-          RenderCanvas at (0,0) size 500x100
+          RenderView at (0,0) size 500x100
         layer at (0,0) size 500x100
           RenderBlock {HTML} at (0,0) size 500x100
             RenderBody {BODY} at (8,8) size 484x76

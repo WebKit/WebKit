@@ -5,7 +5,7 @@ KCanvasResource {id="marker2" [type=MARKER] [angle=0.00] [ref x=10.00 y=10.00]}
 KCanvasResource {id="marker3" [type=MARKER] [angle=0.00] [ref x=10.00 y=10.00]}
 KCanvasResource {id="marker4" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (-4,-4) size 483.50x363.50
       KCanvasContainer {g} at (-4,-4) size 455.20x255.20
         RenderSVGText {text} at (0,0) size 465x16

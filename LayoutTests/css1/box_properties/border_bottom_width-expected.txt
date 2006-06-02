@@ -1,5 +1,5 @@
 layer at (0,0) size 785x877
-  RenderCanvas at (0,0) size 785x600
+  RenderView at (0,0) size 785x600
 layer at (0,0) size 785x877
   RenderBlock {HTML} at (0,0) size 785x877
     RenderBody {BODY} at (8,8) size 769x861 [bgcolor=#CCCCCC]

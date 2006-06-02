@@ -1,5 +1,5 @@
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (5,5) size 790x90
   RenderBlock {doc} at (5,5) size 790x90
     RenderTable at (0,0) size 53x54

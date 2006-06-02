@@ -1,5 +1,5 @@
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x276
   RenderBlock {HTML} at (0,0) size 800x276
     RenderBody {BODY} at (8,16) size 784x244
@@ -13,7 +13,7 @@ layer at (0,0) size 800x276
         RenderBlock {P} at (0,56) size 784x154
           RenderPartObject {OBJECT} at (0,0) size 300x150
             layer at (0,0) size 600x135
-              RenderCanvas at (0,0) size 300x135
+              RenderView at (0,0) size 300x135
             layer at (0,0) size 600x44
               RenderBlock {HTML} at (0,0) size 300x44
                 RenderBody {BODY} at (0,0) size 300x44

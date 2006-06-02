@@ -4,7 +4,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document toDOMRange:range from 0 of #text > P > BODY > HTML > #document to 1 of TABLE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (474,0) size 783x54
           text run at (474,0) width 8: ". "
           text run at (482,0) width 301: "Adding visible candidates after tables, at [table, "
-          text run at (0,18) width 783: "numberOfChildren], threw RenderCanvas::setSelection for a loop because it assumed the end of a selection would be inside "
+          text run at (0,18) width 771: "numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside "
           text run at (0,36) width 100: "an atomic node."
       RenderBlock {HR} at (0,70) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,80) size 161x52 [border: (1px outset #808080)]

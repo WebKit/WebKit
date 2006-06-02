@@ -1,3 +1,20 @@
+2006-06-02  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by mjs.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9183
+        Finish renaming of RenderCanvas to RenderView
+
+        * editing/selection/7152-1-expected.checksum: Layout changed due to text change in HTML file.
+        * editing/selection/7152-1-expected.png: Ditto.
+        * editing/selection/7152-1-expected.txt: Ditto.
+        * editing/selection/7152-1.html: Changed text in HTML content.
+        * editing/selection/7152-2-expected.checksum: Layout changed due to text change in HTML file.
+        * editing/selection/7152-2-expected.png: Ditto.
+        * editing/selection/7152-2-expected.txt: Ditto.
+        * editing/selection/7152-2.html: Changed text in HTML content.
+        * *-expected.txt: Replaced "RenderCanvas" with "RenderView" in 3023 more files.
+
 2006-06-01  David Carson  <dacarson@gmail.com>
 
         Reviewed by Maciej and Adele

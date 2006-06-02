@@ -25,7 +25,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 785x688
-  RenderCanvas at (0,0) size 785x600
+  RenderView at (0,0) size 785x600
 layer at (0,0) size 785x688
   RenderBlock {HTML} at (0,0) size 785x688
     RenderBody {BODY} at (8,8) size 769x656

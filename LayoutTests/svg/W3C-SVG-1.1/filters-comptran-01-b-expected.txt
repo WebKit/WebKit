@@ -4,7 +4,7 @@ KCanvasResource {id="Table" [type=FILTER]  [bounding box=at (0,0) size 1x1] [eff
 KCanvasResource {id="Linear" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 630x420"] [red func=[type=LINEAR] [slope=0.50] [intercept=0.25]] [green func=[type=LINEAR] [slope=0.50] [intercept=0.00]] [blue func=[type=LINEAR] [slope=0.50] [intercept=0.50]] [alpha func=[type=IDENTITY]]]]}
 KCanvasResource {id="Gamma" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=COMPONENT-TRANSFER]  [subregion="at (0,0) size 630x420"] [red func=[type=GAMMA] [amplitude=2.00] [exponent=5.00] [offset=0.00]] [green func=[type=GAMMA] [amplitude=2.00] [exponent=3.00] [offset=0.00]] [blue func=[type=GAMMA] [amplitude=2.00] [exponent=1.00] [offset=0.00]] [alpha func=[type=IDENTITY]]]]}
 layer at (0,0) size 480x360
-  RenderCanvas at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 629x419
       KCanvasContainer {g} at (0.50,0.50) size 629x419
         KCanvasContainer {svg} at (0.36,0.36) size 449.29x299.29
