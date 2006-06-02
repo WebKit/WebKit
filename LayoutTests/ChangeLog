@@ -1,3 +1,13 @@
+2006-06-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Anders.
+
+        Updated test so that is will once again exercise the fix for
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9009
+
+        * fast/table/empty-section-crash-expected.txt:
+        * fast/table/empty-section-crash.html:
+
 2006-06-02  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by mjs.
