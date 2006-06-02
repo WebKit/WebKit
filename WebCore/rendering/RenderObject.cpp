@@ -28,6 +28,7 @@
 
 #include "AccessibilityObjectCache.h" 
 #include "CachedImage.h"
+#include "Decoder.h"
 #include "Document.h"
 #include "Element.h"
 #include "EventNames.h"

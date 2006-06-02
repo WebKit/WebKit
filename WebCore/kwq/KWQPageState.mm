@@ -27,10 +27,9 @@
 #import "KWQPageState.h"
 
 #import "Document.h"
-#import "kjs_window.h"
-
 #import "FoundationExtras.h"
 #import "FrameMac.h"
+#import "kjs_window.h"
 
 using namespace WebCore;
 using namespace KJS;

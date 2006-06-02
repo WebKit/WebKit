@@ -45,6 +45,7 @@
 #include "Document.h"
 #include "FontFamilyValue.h"
 #include "FontValue.h"
+#include "KURL.h"
 #include "MediaList.h"
 #include "Pair.h"
 #include "ShadowValue.h"

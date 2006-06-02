@@ -23,18 +23,19 @@
 
 #include "Cache.h"
 #include "DOMImplementation.h"
+#include "Decoder.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "KWQLoader.h"
-#include "dom2_eventsimpl.h"
-#include "PlatformString.h"
 #include "FormData.h"
 #include "HTMLDocument.h"
-#include "kjs_binding.h"
-#include "TransferJob.h"
-#include <kjs/protect.h>
+#include "KWQLoader.h"
+#include "PlatformString.h"
 #include "RegularExpression.h"
 #include "TextEncoding.h"
+#include "TransferJob.h"
+#include "dom2_eventsimpl.h"
+#include "kjs_binding.h"
+#include <kjs/protect.h>
 
 using namespace KIO;
 

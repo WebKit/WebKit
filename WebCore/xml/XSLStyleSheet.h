@@ -32,9 +32,10 @@
 
 namespace WebCore {
 
-class DocLoader;
-class XSLImportRule;
 class CachedXSLStyleSheet;
+class DocLoader;
+class Document;
+class XSLImportRule;
     
 class XSLStyleSheet : public StyleSheet
 {

@@ -21,7 +21,10 @@
 #ifndef KJS_TRAVERSAL_H_
 #define KJS_TRAVERSAL_H_
 
-#include "dom2_traversalimpl.h"
+#include "NodeFilter.h"
+#include "NodeFilterCondition.h"
+#include "NodeIterator.h"
+#include "TreeWalker.h"
 #include "kjs_dom.h"
 
 namespace WebCore {

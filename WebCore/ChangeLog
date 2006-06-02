@@ -1,3 +1,34 @@
+2006-06-01  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Geoff, tweaked a bit by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9064
+          Split dom2_traversalimpl.* into separate files (one class per file).
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for new files.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+
+        * bindings/js/kjs_traversal.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/objc/DOM.mm:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        Updated includes.
+
+        * dom/NodeFilter.cpp: Added.
+        * dom/NodeFilter.h: Added.
+        * dom/NodeFilterCondition.cpp: Added.
+        * dom/NodeFilterCondition.h: Added.
+        * dom/NodeIterator.cpp: Added.
+        * dom/NodeIterator.h: Added.
+        * dom/Traversal.cpp: Added.
+        * dom/Traversal.h: Added.
+        * dom/TreeWalker.cpp: Added.
+        * dom/TreeWalker.h: Added.
+
+        * dom/dom2_traversalimpl.cpp: Removed.
+        * dom/dom2_traversalimpl.h: Removed.
+
 2006-06-01  David Carson  <dacarson@gmail.com>
 
         Reviewed by Maciej and Adele

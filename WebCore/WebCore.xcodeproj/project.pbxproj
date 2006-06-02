@@ -283,6 +283,16 @@
 		7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */; };
 		8116895F09F2A4A000772CA0 /* SVGTRefElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8116895D09F2A4A000772CA0 /* SVGTRefElement.cpp */; };
 		8116896009F2A4A000772CA0 /* SVGTRefElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 8116895E09F2A4A000772CA0 /* SVGTRefElement.h */; };
+		854FE7300A2297BE0058D7AD /* NodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE7260A2297BE0058D7AD /* NodeFilter.cpp */; };
+		854FE7310A2297BE0058D7AD /* NodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE7270A2297BE0058D7AD /* NodeFilter.h */; };
+		854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE7280A2297BE0058D7AD /* NodeFilterCondition.cpp */; };
+		854FE7330A2297BE0058D7AD /* NodeFilterCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE7290A2297BE0058D7AD /* NodeFilterCondition.h */; };
+		854FE7340A2297BE0058D7AD /* NodeIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE72A0A2297BE0058D7AD /* NodeIterator.cpp */; };
+		854FE7350A2297BE0058D7AD /* NodeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72B0A2297BE0058D7AD /* NodeIterator.h */; };
+		854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE72C0A2297BE0058D7AD /* Traversal.cpp */; };
+		854FE7370A2297BE0058D7AD /* Traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72D0A2297BE0058D7AD /* Traversal.h */; };
+		854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */; };
+		854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 854FE72F0A2297BE0058D7AD /* TreeWalker.h */; };
 		93032CC809AEC34300F82A18 /* PathCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93032CC709AEC34300F82A18 /* PathCG.cpp */; };
 		93032CCA09AEC34B00F82A18 /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 93032CC909AEC34B00F82A18 /* Path.h */; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; };
@@ -477,7 +487,6 @@
 		93F198F608245E59001E9ABC /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* Decoder.h */; };
 		93F1991708245E59001E9ABC /* dom2_eventsimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30202DE4476018635CA /* dom2_eventsimpl.h */; };
 		93F1991808245E59001E9ABC /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30402DE4476018635CA /* Range.h */; };
-		93F1991908245E59001E9ABC /* dom2_traversalimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30602DE4476018635CA /* dom2_traversalimpl.h */; };
 		93F1992108245E59001E9ABC /* xml_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30A02DE4476018635CA /* xml_tokenizer.h */; };
 		93F1992908245E59001E9ABC /* KWQCString.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868302DE3B8601EA4122 /* KWQCString.h */; };
 		93F1992E08245E59001E9ABC /* KWQComboBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868202DE3B8601EA4122 /* KWQComboBox.h */; };
@@ -565,7 +574,6 @@
 		93F19A9D08245E59001E9ABC /* Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* Decoder.cpp */; };
 		93F19AB808245E59001E9ABC /* dom2_eventsimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30102DE4476018635CA /* dom2_eventsimpl.cpp */; };
 		93F19AB908245E59001E9ABC /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30302DE4476018635CA /* Range.cpp */; };
-		93F19ABA08245E59001E9ABC /* dom2_traversalimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30502DE4476018635CA /* dom2_traversalimpl.cpp */; };
 		93F19ABC08245E59001E9ABC /* xml_tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30902DE4476018635CA /* xml_tokenizer.cpp */; };
 		93F19ABE08245E59001E9ABC /* WebCoreCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */; };
 		93F19ABF08245E59001E9ABC /* WebCoreJavaScript.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */; };
@@ -1911,6 +1919,16 @@
 		84C0FA2C052B966D000440A1 /* southWestResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = southWestResizeCursor.tiff; sourceTree = "<group>"; };
 		84C0FA2D052B966D000440A1 /* waitCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = waitCursor.tiff; sourceTree = "<group>"; };
 		84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = westResizeCursor.tiff; sourceTree = "<group>"; };
+		854FE7260A2297BE0058D7AD /* NodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeFilter.cpp; sourceTree = "<group>"; };
+		854FE7270A2297BE0058D7AD /* NodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeFilter.h; sourceTree = "<group>"; };
+		854FE7280A2297BE0058D7AD /* NodeFilterCondition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeFilterCondition.cpp; sourceTree = "<group>"; };
+		854FE7290A2297BE0058D7AD /* NodeFilterCondition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeFilterCondition.h; sourceTree = "<group>"; };
+		854FE72A0A2297BE0058D7AD /* NodeIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeIterator.cpp; sourceTree = "<group>"; };
+		854FE72B0A2297BE0058D7AD /* NodeIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeIterator.h; sourceTree = "<group>"; };
+		854FE72C0A2297BE0058D7AD /* Traversal.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Traversal.cpp; sourceTree = "<group>"; };
+		854FE72D0A2297BE0058D7AD /* Traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Traversal.h; sourceTree = "<group>"; };
+		854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TreeWalker.cpp; sourceTree = "<group>"; };
+		854FE72F0A2297BE0058D7AD /* TreeWalker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TreeWalker.h; sourceTree = "<group>"; };
 		93032CC709AEC34300F82A18 /* PathCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathCG.cpp; sourceTree = "<group>"; };
 		93032CC909AEC34B00F82A18 /* Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -2137,6 +2155,10 @@
 		93F19B1908245E59001E9ABC /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93F19B1A08245E5A001E9ABC /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F1D31A0558CC5C00821BC0 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
+		93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGenerator.pm; path = scripts/CodeGenerator.pm; sourceTree = "<group>"; };
+		93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGeneratorJS.pm; path = ../scripts/CodeGeneratorJS.pm; sourceTree = "<group>"; };
+		93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "generate-bindings.pl"; path = "scripts/generate-bindings.pl"; sourceTree = "<group>"; };
+		93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = IDLStructure.pm; path = scripts/IDLStructure.pm; sourceTree = "<group>"; };
 		A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDisplacementMapFilter.h; sourceTree = "<group>"; };
 		A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDisplacementMapFilter.m; sourceTree = "<group>"; };
 		A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKDisplacementMapFilter.cikernel; sourceTree = "<group>"; };
@@ -3229,8 +3251,6 @@
 		F523D30202DE4476018635CA /* dom2_eventsimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom2_eventsimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30302DE4476018635CA /* Range.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Range.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30402DE4476018635CA /* Range.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D30502DE4476018635CA /* dom2_traversalimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom2_traversalimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D30602DE4476018635CA /* dom2_traversalimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom2_traversalimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30902DE4476018635CA /* xml_tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xml_tokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30A02DE4476018635CA /* xml_tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xml_tokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5517DC2031AB56301A80180 /* WebCoreHistory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreHistory.h; sourceTree = "<group>"; };
@@ -4767,6 +4787,9 @@
 			isa = PBXGroup;
 			children = (
 				14813BF309EDF88E00F757E1 /* IDLParser.pm */,
+				93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */,
+				93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */,
+				93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */,
 				BC1A3793097C6FB10019F3D8 /* js */,
 				BC1A3794097C6FC40019F3D8 /* objc */,
 			);
@@ -4776,6 +4799,7 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
+				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				1A9EF4560A1B957D00332B63 /* JSCanvasRenderingContext2DCustom.cpp */,
 				93B70D3F09EB0C7C009D8468 /* JSDOMParser.cpp */,
 				93B70D4009EB0C7C009D8468 /* JSDOMParser.h */,
@@ -5290,8 +5314,6 @@
 				93EEC1E809C2877700C515D1 /* DocumentType.idl */,
 				F523D30102DE4476018635CA /* dom2_eventsimpl.cpp */,
 				F523D30202DE4476018635CA /* dom2_eventsimpl.h */,
-				F523D30502DE4476018635CA /* dom2_traversalimpl.cpp */,
-				F523D30602DE4476018635CA /* dom2_traversalimpl.h */,
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
 				A8185F3309765765005826D9 /* DOMImplementation.h */,
 				93EEC1E909C2877700C515D1 /* DOMImplementation.idl */,
@@ -5328,7 +5350,13 @@
 				A8C4A7EE09D563270003AC8D /* Node.cpp */,
 				14115B5109F84B7100CA4FC1 /* Node.h */,
 				14DC0D0B09FECFA4007B0235 /* Node.idl */,
+				854FE7260A2297BE0058D7AD /* NodeFilter.cpp */,
+				854FE7270A2297BE0058D7AD /* NodeFilter.h */,
 				14115AF909F847D600CA4FC1 /* NodeFilter.idl */,
+				854FE7280A2297BE0058D7AD /* NodeFilterCondition.cpp */,
+				854FE7290A2297BE0058D7AD /* NodeFilterCondition.h */,
+				854FE72A0A2297BE0058D7AD /* NodeIterator.cpp */,
+				854FE72B0A2297BE0058D7AD /* NodeIterator.h */,
 				A81872160977D3C0005826D9 /* NodeList.cpp */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
 				A8EA7EB70A1945D000A8EF5F /* Notation.cpp */,
@@ -5349,6 +5377,10 @@
 				6550B69B099DF0270090D781 /* Text.cpp */,
 				6550B69C099DF0270090D781 /* Text.h */,
 				93EEC1F609C2877700C515D1 /* Text.idl */,
+				854FE72C0A2297BE0058D7AD /* Traversal.cpp */,
+				854FE72D0A2297BE0058D7AD /* Traversal.h */,
+				854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */,
+				854FE72F0A2297BE0058D7AD /* TreeWalker.h */,
 				141B94EE09EC425A000E9413 /* UIEvent.idl */,
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
 				F523D30902DE4476018635CA /* xml_tokenizer.cpp */,
@@ -5425,7 +5457,6 @@
 				93F198F608245E59001E9ABC /* Decoder.h in Headers */,
 				93F1991708245E59001E9ABC /* dom2_eventsimpl.h in Headers */,
 				93F1991808245E59001E9ABC /* Range.h in Headers */,
-				93F1991908245E59001E9ABC /* dom2_traversalimpl.h in Headers */,
 				93F1992108245E59001E9ABC /* xml_tokenizer.h in Headers */,
 				93F1992908245E59001E9ABC /* KWQCString.h in Headers */,
 				93F1992E08245E59001E9ABC /* KWQComboBox.h in Headers */,
@@ -6157,6 +6188,11 @@
 				1AE2AE5C0A1D26F200B42B25 /* JSHTMLMenuElement.h in Headers */,
 				1AE2AEC80A1D297B00B42B25 /* JSHTMLQuoteElement.h in Headers */,
 				1AE2AEE70A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h in Headers */,
+				854FE7310A2297BE0058D7AD /* NodeFilter.h in Headers */,
+				854FE7330A2297BE0058D7AD /* NodeFilterCondition.h in Headers */,
+				854FE7350A2297BE0058D7AD /* NodeIterator.h in Headers */,
+				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
+				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
 				A8D05FA80A23B301005E7203 /* JSCSSRuleList.h in Headers */,
 				A8D05FAC0A23B30F005E7203 /* JSCSSValueList.h in Headers */,
 				A8D064FC0A23C0CC005E7203 /* JSHTMLFormElement.h in Headers */,
@@ -6333,7 +6369,6 @@
 				93F19A9D08245E59001E9ABC /* Decoder.cpp in Sources */,
 				93F19AB808245E59001E9ABC /* dom2_eventsimpl.cpp in Sources */,
 				93F19AB908245E59001E9ABC /* Range.cpp in Sources */,
-				93F19ABA08245E59001E9ABC /* dom2_traversalimpl.cpp in Sources */,
 				93F19ABC08245E59001E9ABC /* xml_tokenizer.cpp in Sources */,
 				93F19ABE08245E59001E9ABC /* WebCoreCache.mm in Sources */,
 				93F19ABF08245E59001E9ABC /* WebCoreJavaScript.mm in Sources */,
@@ -6988,6 +7023,11 @@
 				1AE2AE5B0A1D26F200B42B25 /* JSHTMLMenuElement.cpp in Sources */,
 				1AE2AEC70A1D297B00B42B25 /* JSHTMLQuoteElement.cpp in Sources */,
 				1AE2AEE60A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp in Sources */,
+				854FE7300A2297BE0058D7AD /* NodeFilter.cpp in Sources */,
+				854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */,
+				854FE7340A2297BE0058D7AD /* NodeIterator.cpp in Sources */,
+				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
+				854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */,
 				A8D05FA70A23B301005E7203 /* JSCSSRuleList.cpp in Sources */,
 				A8D05FAB0A23B30F005E7203 /* JSCSSValueList.cpp in Sources */,
 				A8D064FB0A23C0CC005E7203 /* JSHTMLFormElement.cpp in Sources */,

@@ -20,18 +20,17 @@
  */
 
 #include "config.h"
+#include "XSLStyleSheet.h"
 
 #ifdef KHTML_XSLT
 
-#include "HTMLDocument.h"
-#include "loader.h"
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
-#include "XSLStyleSheet.h"
+#include "HTMLDocument.h"
+#include "loader.h"
 #include "xml_tokenizer.h"
-
-#include <libxslt/xsltutils.h>
 #include <libxml/uri.h>
+#include <libxslt/xsltutils.h>
 
 #define IS_BLANK_NODE(n)                                                \
     (((n)->type == XML_TEXT_NODE) && (xsltIsBlank((n)->content)))

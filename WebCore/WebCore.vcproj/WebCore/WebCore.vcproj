@@ -3507,14 +3507,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom2_traversalimpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\dom2_traversalimpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\dom\DOMImplementation.cpp"
 				>
 			</File>
@@ -3627,6 +3619,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\NodeFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NodeFilter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NodeFilterCondition.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NodeFilterCondition.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NodeIterator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\NodeIterator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\NodeList.cpp"
 				>
 			</File>
@@ -3688,6 +3704,22 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\Text.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Traversal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Traversal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\TreeWalker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\TreeWalker.h"
 				>
 			</File>
 			<File

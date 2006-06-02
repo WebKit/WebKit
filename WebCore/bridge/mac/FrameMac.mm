@@ -34,6 +34,7 @@
 #import "Cursor.h"
 #import "DOMInternal.h"
 #import "DOMWindow.h"
+#import "Decoder.h"
 #import "EventNames.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"

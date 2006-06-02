@@ -34,6 +34,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
+#include "KURL.h"
 #include "Logging.h"
 #include "ProcessingInstruction.h"
 #include "Range.h"

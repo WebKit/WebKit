@@ -31,6 +31,7 @@
 #include "CSSValueKeywords.h"
 #include "Comment.h"
 #include "DOMImplementation.h"
+#include "Decoder.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
@@ -55,6 +56,8 @@
 #include "Logging.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NameNodeList.h"
+#include "NodeFilter.h"
+#include "NodeIterator.h"
 #include "PlatformKeyboardEvent.h"
 #include "ProcessingInstruction.h"
 #include "RegularExpression.h"
@@ -67,6 +70,7 @@
 #include "StyleSheetList.h"
 #include "SystemTime.h"
 #include "TextIterator.h"
+#include "TreeWalker.h"
 #include "csshelper.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
@@ -74,10 +78,13 @@
 #include "kjs_proxy.h"
 #include "xml_tokenizer.h"
 #include "xmlhttprequest.h"
+
+#if XPATH_SUPPORT
 #include "XPathEvaluator.h"
 #include "XPathExpression.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
+#endif
 
 #ifdef KHTML_XSLT
 #include "XSLTProcessor.h"

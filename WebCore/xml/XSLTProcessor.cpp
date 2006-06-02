@@ -25,6 +25,7 @@
 
 #include "Cache.h"
 #include "DOMImplementation.h"
+#include "Decoder.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "Frame.h"

@@ -157,10 +157,6 @@ sub AddIncludesForType
         $type eq "UIEvent" or
         $type eq "WheelEvent") {
         $implIncludes{"dom2_eventsimpl.h"} = 1;
-    } elsif ($type eq "NodeIterator" or
-           $type eq "NodeFilter" or
-           $type eq "TreeWalker") {
-        $implIncludes{"dom2_traversalimpl.h"} = 1;
     } elsif ($type eq "CanvasRenderingContext2D") {
         $implIncludes{"CanvasGradient.h"} = 1;
         $implIncludes{"CanvasPattern.h"} = 1;

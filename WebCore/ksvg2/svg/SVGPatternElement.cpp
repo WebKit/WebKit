@@ -46,6 +46,7 @@
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
 #include "ksvg.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

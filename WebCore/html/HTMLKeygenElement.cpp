@@ -31,6 +31,7 @@
 #include "FormDataList.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
+#include "KURL.h"
 #include "KWQKSSLKeyGen.h"
 #include "Text.h"
 
