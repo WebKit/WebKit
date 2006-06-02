@@ -37,10 +37,6 @@ void setCookies(const KURL& url, const KURL& policyURL, const String& value)
 {
     // FIXME: Deal with the policy URL.
     DeprecatedString str = url.url();
-    int fragmentIndex = str.find('#');
-    if (fragmentIndex != -1)
-        str = str.left(fragmentIndex);
-
     str.append((UChar)'\0');
     DeprecatedString val = value.deprecatedString();
     val.append((UChar)'\0');
@@ -50,10 +46,6 @@ void setCookies(const KURL& url, const KURL& policyURL, const String& value)
 String cookies(const KURL& url)
 {
     DeprecatedString str = url.url();
-    int fragmentIndex = str.find('#');
-    if (fragmentIndex != -1)
-        str = str.left(fragmentIndex);
-
     str.append((UChar)'\0');
 
     DWORD count;

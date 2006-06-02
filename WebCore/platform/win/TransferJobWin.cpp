@@ -30,6 +30,7 @@
 
 #include "DocLoader.h"
 #include "Frame.h"
+#include "Document.h"
 #include <windows.h>
 #include <wininet.h>
 
@@ -89,13 +90,75 @@ LRESULT CALLBACK TransferJobWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
         ASSERT(job->d->m_threadId == GetCurrentThreadId());
 
         if (internetStatus == INTERNET_STATUS_HANDLE_CREATED) {
-            job->d->m_resourceHandle = HINTERNET(dwResult);
-            if (job->d->status != 0) {
-                // We were canceled before Windows actually created a handle for us, close and delete now.
-                InternetCloseHandle(job->d->m_resourceHandle);
-                delete job;
+            if (!job->d->m_resourceHandle) {
+                job->d->m_resourceHandle = HINTERNET(dwResult);
+                if (job->d->status != 0) {
+                    // We were canceled before Windows actually created a handle for us, close and delete now.
+                    InternetCloseHandle(job->d->m_resourceHandle);
+                    delete job;
+                }
+
+                if (job->method() == "POST") {
+                    // FIXME: Too late to set referrer properly.
+                    DeprecatedString urlStr = job->d->URL.path();
+                    int fragmentIndex = urlStr.find('#');
+                    if (fragmentIndex != -1)
+                        urlStr = urlStr.left(fragmentIndex);
+                    static LPCSTR accept[2]={"*/*", NULL};
+                    HINTERNET urlHandle = HttpOpenRequestA(job->d->m_resourceHandle, 
+                                                           "POST", urlStr.ascii(), 0, 0, accept,
+                                                           INTERNET_FLAG_KEEP_CONNECTION | 
+                                                           INTERNET_FLAG_FORMS_SUBMIT |
+                                                           INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_CACHE_WRITE,
+                                                           (DWORD_PTR)job->d->m_jobId);
+                    if (urlHandle == INVALID_HANDLE_VALUE) {
+                        InternetCloseHandle(job->d->m_resourceHandle);
+                        delete job;
+                    }
+                }
+            } else if (!job->d->m_secondaryHandle) {
+                assert(job->method() == "POST");
+                job->d->m_secondaryHandle = HINTERNET(dwResult);
+                
+                // Need to actually send the request now.
+                DeprecatedString headers = "Content-Type: application/x-www-form-urlencoded\n";
+                headers += "Referer: ";
+                headers += job->d->m_postReferrer;
+                headers += "\n";
+                DeprecatedString formData = job->postData().flattenToString();
+                INTERNET_BUFFERSA buffers;
+                memset(&buffers, 0, sizeof(buffers));
+                buffers.dwStructSize = sizeof(INTERNET_BUFFERSA);
+                buffers.lpcszHeader = headers.ascii();
+                buffers.dwHeadersLength = headers.length();
+                buffers.dwBufferTotal = formData.length();
+                
+                job->d->m_bytesRemainingToWrite = formData.length();
+                job->d->m_formDataString = (char*)malloc(formData.length());
+                job->d->m_formDataLength = formData.length();
+                strncpy(job->d->m_formDataString, formData.ascii(), formData.length());
+                job->d->m_writing = true;
+                HttpSendRequestExA(job->d->m_secondaryHandle, &buffers, 0, 0, (DWORD_PTR)job->d->m_jobId);
             }
         } else if (internetStatus == INTERNET_STATUS_REQUEST_COMPLETE) {
+            if (job->d->m_writing) {
+                DWORD bytesWritten;
+                InternetWriteFile(job->d->m_secondaryHandle,
+                                  job->d->m_formDataString + (job->d->m_formDataLength - job->d->m_bytesRemainingToWrite),
+                                  job->d->m_bytesRemainingToWrite,
+                                  &bytesWritten);
+                job->d->m_bytesRemainingToWrite -= bytesWritten;
+                if (!job->d->m_bytesRemainingToWrite) {
+                    // End the request.
+                    job->d->m_writing = false;
+                    HttpEndRequest(job->d->m_secondaryHandle, 0, 0, (DWORD_PTR)job->d->m_jobId);
+                    free(job->d->m_formDataString);
+                    job->d->m_formDataString = 0;
+                }
+                return 0;
+            }
+
+            HINTERNET handle = (job->method() == "POST") ? job->d->m_secondaryHandle : job->d->m_resourceHandle;
             BOOL ok = FALSE;
 
             static const int bufferSize = 32768;
@@ -105,7 +168,7 @@ LRESULT CALLBACK TransferJobWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
             buffers.lpvBuffer = buffer;
             buffers.dwBufferLength = bufferSize;
 
-            while ((ok = InternetReadFileExA(job->d->m_resourceHandle, &buffers, IRF_NO_WAIT, (DWORD_PTR)job)) && buffers.dwBufferLength) {
+            while ((ok = InternetReadFileExA(handle, &buffers, IRF_NO_WAIT, (DWORD_PTR)job)) && buffers.dwBufferLength) {
                 job->client()->receivedData(job, buffer, buffers.dwBufferLength);
                 buffers.dwBufferLength = bufferSize;
             }
@@ -131,7 +194,10 @@ LRESULT CALLBACK TransferJobWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
                 }
             }
             
+            if (job->d->m_secondaryHandle)
+                InternetCloseHandle(job->d->m_secondaryHandle);
             InternetCloseHandle(job->d->m_resourceHandle);
+            
             job->client()->receivedAllData(job, &platformData);
             job->client()->receivedAllData(job);
             delete job;
@@ -216,12 +282,27 @@ bool TransferJob::start(DocLoader* docLoader)
         initializeOffScreenTransferJobWindow();
         d->m_jobId = addToOutstandingJobs(this);
 
-        DeprecatedString urlStr = d->URL.url();
-        int fragmentIndex = urlStr.find('#');
-        if (fragmentIndex != -1)
-            urlStr = urlStr.left(fragmentIndex);
+        // For form posting, we can't use InternetOpenURL.  We have to use InternetConnect followed by
+        // HttpSendRequest.
+        HINTERNET urlHandle;
+        if (method() == "POST") {
+            d->m_postReferrer = docLoader->frame()->referrer();
+            DeprecatedString host = d->URL.host();
+            host += "\0";
+            urlHandle = InternetConnectA(internetHandle, host.ascii(), d->URL.port(), 0, 0, 
+                                         INTERNET_SERVICE_HTTP, 0, (DWORD_PTR)d->m_jobId);
+        } else {
+            DeprecatedString urlStr = d->URL.url();
+            int fragmentIndex = urlStr.find('#');
+            if (fragmentIndex != -1)
+                urlStr = urlStr.left(fragmentIndex);
+            DeprecatedString headers("Referer: ");
+            headers += docLoader->frame()->referrer();
+            headers += "\n";
 
-        HINTERNET urlHandle = InternetOpenUrlA(internetHandle, urlStr.ascii(), NULL, -1, 0, (DWORD_PTR)d->m_jobId);
+            urlHandle = InternetOpenUrlA(internetHandle, urlStr.ascii(), headers.ascii(), headers.length(),
+                                         INTERNET_FLAG_KEEP_CONNECTION, (DWORD_PTR)d->m_jobId);
+        }
 
         if (urlHandle == INVALID_HANDLE_VALUE) {
             delete this;

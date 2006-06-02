@@ -58,8 +58,14 @@ namespace WebCore {
 #if WIN32
             , m_fileHandle(0)
             , m_fileLoadTimer(job, &TransferJob::fileLoadTimer)
+            , m_resourceHandle(0)
+            , m_secondaryHandle(0)
             , m_jobId(0)
             , m_threadId(0)
+            , m_writing(false)
+            , m_formDataString(0)
+            , m_formDataLength(0)
+            , m_bytesRemainingToWrite(0)
 #endif
         {
         }
@@ -79,8 +85,14 @@ namespace WebCore {
 #if WIN32
             , m_fileHandle(0)
             , m_fileLoadTimer(job, &TransferJob::fileLoadTimer)
+            , m_resourceHandle(0)
+            , m_secondaryHandle(0)
             , m_jobId(0)
             , m_threadId(0)
+            , m_writing(false)
+            , m_formDataString(0)
+            , m_formDataLength(0)
+            , m_bytesRemainingToWrite(0)
 #endif
         {
         }
@@ -107,8 +119,14 @@ namespace WebCore {
         HANDLE m_fileHandle;
         Timer<TransferJob> m_fileLoadTimer;
         HINTERNET m_resourceHandle;
+        HINTERNET m_secondaryHandle;
         unsigned m_jobId;
         DWORD m_threadId;
+        bool m_writing;
+        char* m_formDataString;
+        int m_formDataLength;
+        int m_bytesRemainingToWrite;
+        DeprecatedString m_postReferrer;
 #endif
         };
 

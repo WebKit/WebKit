@@ -1,3 +1,16 @@
+2006-06-01  Dave Hyatt <hyatt@apple.com>
+
+        Implement form POST using WinINet.  This code is crazy... CRAZY!
+
+        * platform/TransferJobInternal.h:
+        (WebCore::TransferJobInternal::TransferJobInternal):
+        * platform/win/CookieJarWin.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJobWndProc):
+        (WebCore::TransferJob::start):
+
 2006-06-01  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
