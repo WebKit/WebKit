@@ -1,5 +1,11 @@
 2006-06-01  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * bridge/win/FrameWin.cpp: Added include of Decoder.h.
+
+2006-06-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - WebCore doesn't need to load WebKit images any more; removed code for that

@@ -27,13 +27,14 @@
 #include "FrameWin.h"
 
 #include "BrowserExtensionWin.h"
+#include "Decoder.h"
 #include "Document.h"
-#include "PlatformKeyboardEvent.h"
-#include "KWQKHTMLSettings.h"
-#include "RenderFrame.h"
-#include "Plugin.h"
-#include "TransferJob.h"
 #include "FramePrivate.h"
+#include "KWQKHTMLSettings.h"
+#include "PlatformKeyboardEvent.h"
+#include "Plugin.h"
+#include "RenderFrame.h"
+#include "TransferJob.h"
 #include <windows.h>
 
 namespace WebCore {
