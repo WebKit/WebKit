@@ -408,7 +408,7 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
 StyleCSS3InheritedData::StyleCSS3InheritedData()
 :Shared<StyleCSS3InheritedData>(), textShadow(0), userModify(READ_ONLY), wordWrap(WBNORMAL), 
     nbspMode(NBNORMAL), khtmlLineBreak(LBNORMAL)
-, textSizeAdjust(RenderStyle::initialTextSizeAdjust())
+, textSizeAdjust(RenderStyle::initialTextSizeAdjust()), resize(RenderStyle::initialResize())
 {
 
 }

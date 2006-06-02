@@ -1,3 +1,13 @@
+2006-06-01  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Missed an initialization in my last checkin which caused too many
+        resizers to be drawn.
+
+        * rendering/render_style.cpp: (WebCore::resize):
+        Initialize resize to RESIZE_NONE.
+
 2006-06-01  Dave Hyatt <hyatt@apple.com>
 
         Implement form POST using WinINet.  This code is crazy... CRAZY!
