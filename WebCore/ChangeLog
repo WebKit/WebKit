@@ -1,3 +1,25 @@
+2006-06-02  Rémi Zara  <remi_zara@mac.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3379
+          attr(X) does not work
+
+        Test: fast/css-generated-content/016.html
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Don't share style
+        if the unique bit is set.
+        (WebCore::CSSStyleSelector::applyProperty): When applying the "attr" property,
+        set the unique bit and add to m_selectorAttrs.
+
+        * rendering/render_style.cpp: Did a lot of reformatting, and this one real change.
+        (WebCore::RenderStyle::RenderStyle): Initialize m_unique to false.
+
+        * rendering/render_style.h:
+        (WebCore::RenderStyle::unique): Added. Returns value of m_unique.
+        (WebCore::RenderStyle::setUnique): Added. Sets m_unique.
+
 2006-06-02  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by mjs.

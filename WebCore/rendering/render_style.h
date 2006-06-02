@@ -891,9 +891,8 @@ enum EDisplay {
 class RenderStyle
 {
     friend class CSSStyleSelector;
-public:
-    static void cleanup();
 
+public:
     // static pseudo styles. Dynamic ones are produced on the fly.
     enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, FIRST_LINE_INHERITED };
 
@@ -1033,7 +1032,7 @@ protected:
 
     unsigned m_pseudoState : 3; // PseudoState
     bool m_affectedByAttributeSelectors : 1;
-    
+    bool m_unique : 1;
     int m_ref;
     
 #if SVG_SUPPORT
@@ -1601,6 +1600,9 @@ public:
     // To tell if this style matched attribute selectors. This makes it impossible to share.
     bool affectedByAttributeSelectors() const { return m_affectedByAttributeSelectors; }
     void setAffectedByAttributeSelectors() { m_affectedByAttributeSelectors = true; }
+
+    bool unique() const { return m_unique; }
+    void setUnique() { m_unique = true; }
 
     // Initial values for all the properties
     static bool initialBackgroundAttachment() { return true; }

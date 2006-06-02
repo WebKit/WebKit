@@ -1,3 +1,15 @@
+2006-06-02  Rémi Zara  <remi_zara@mac.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3379
+          attr(X) does not work
+
+        * fast/css-generated-content/016-expected.checksum: Added.
+        * fast/css-generated-content/016-expected.png: Added.
+        * fast/css-generated-content/016-expected.txt: Added.
+        * fast/css-generated-content/016.html: Added.
+
 2006-06-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Anders.

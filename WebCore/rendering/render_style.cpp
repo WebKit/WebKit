@@ -32,25 +32,26 @@ namespace WebCore {
 static RenderStyle* defaultStyle;
 
 StyleSurroundData::StyleSurroundData()
-    : margin( Fixed ), padding( Auto )
+    : margin(Fixed), padding(Auto)
 {
 }
 
-StyleSurroundData::StyleSurroundData(const StyleSurroundData& o )
-    : Shared<StyleSurroundData>(),
-      offset( o.offset ), margin( o.margin ), padding( o.padding ),
-      border( o.border )
+StyleSurroundData::StyleSurroundData(const StyleSurroundData& o)
+    : Shared<StyleSurroundData>()
+    , offset(o.offset)
+    , margin(o.margin)
+    , padding(o.padding)
+    , border(o.border)
 {
 }
 
 bool StyleSurroundData::operator==(const StyleSurroundData& o) const
 {
-    return offset==o.offset && margin==o.margin &&
-        padding==o.padding && border==o.border;
+    return offset == o.offset && margin == o.margin && padding == o.padding && border == o.border;
 }
 
 StyleBoxData::StyleBoxData()
-    : z_index( 0 ), z_auto(true), boxSizing(CONTENT_BOX)
+    : z_index(0), z_auto(true), boxSizing(CONTENT_BOX)
 {
     // Initialize our min/max widths/heights.
     min_width = min_height = RenderStyle::initialMinSize();
@@ -58,11 +59,16 @@ StyleBoxData::StyleBoxData()
 }
 
 StyleBoxData::StyleBoxData(const StyleBoxData& o )
-    : Shared<StyleBoxData>(),
-      width( o.width ), height( o.height ),
-      min_width( o.min_width ), max_width( o.max_width ),
-      min_height ( o.min_height ), max_height( o.max_height ),
-      z_index( o.z_index ), z_auto( o.z_auto ), boxSizing(o.boxSizing)
+    : Shared<StyleBoxData>()
+    , width(o.width)
+    , height(o.height)
+    , min_width(o.min_width)
+    , max_width(o.max_width)
+    , min_height(o.min_height)
+    , max_height(o.max_height)
+    , z_index(o.z_index)
+    , z_auto(o.z_auto)
+    , boxSizing(o.boxSizing)
 {
 }
 
@@ -81,54 +87,67 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
 
 
 StyleVisualData::StyleVisualData()
-      : hasClip(false), 
-      textDecoration(RenderStyle::initialTextDecoration()), 
-      colspan( 1 ), counter_increment( 0 ), counter_reset( 0 )
+    : hasClip(false)
+    , textDecoration(RenderStyle::initialTextDecoration())
+    , colspan(1)
+    , counter_increment(0)
+    , counter_reset(0)
 {
 }
 
-StyleVisualData::~StyleVisualData() {
+StyleVisualData::~StyleVisualData()
+{
 }
 
-StyleVisualData::StyleVisualData(const StyleVisualData& o )
-    : Shared<StyleVisualData>(),
-      clip( o.clip ), hasClip( o.hasClip ), textDecoration(o.textDecoration), colspan( o.colspan ),
-      counter_increment( o.counter_increment ), counter_reset( o.counter_reset )
+StyleVisualData::StyleVisualData(const StyleVisualData& o)
+    : Shared<StyleVisualData>()
+    , clip(o.clip)
+    , hasClip(o.hasClip)
+    , textDecoration(o.textDecoration)
+    , colspan(o.colspan)
+    , counter_increment(o.counter_increment)
+    , counter_reset(o.counter_reset)
 {
 }
 
 BackgroundLayer::BackgroundLayer()
-:m_image(RenderStyle::initialBackgroundImage()),
- m_bgAttachment(RenderStyle::initialBackgroundAttachment()),
- m_bgClip(RenderStyle::initialBackgroundClip()),
- m_bgOrigin(RenderStyle::initialBackgroundOrigin()),
- m_bgRepeat(RenderStyle::initialBackgroundRepeat()),
- m_backgroundSize(RenderStyle::initialBackgroundSize()),
- m_next(0)
+    : m_image(RenderStyle::initialBackgroundImage())
+    , m_bgAttachment(RenderStyle::initialBackgroundAttachment())
+    , m_bgClip(RenderStyle::initialBackgroundClip())
+    , m_bgOrigin(RenderStyle::initialBackgroundOrigin())
+    , m_bgRepeat(RenderStyle::initialBackgroundRepeat())
+    , m_backgroundSize(RenderStyle::initialBackgroundSize())
+    , m_imageSet(false)
+    , m_attachmentSet(false)
+    , m_clipSet(false)
+    , m_originSet(false)
+    , m_repeatSet(false)
+    , m_xPosSet(false)
+    , m_yPosSet(false)
+    , m_backgroundSizeSet(false)
+    , m_next(0)
 {
-    m_imageSet = m_attachmentSet = m_clipSet = m_originSet = 
-            m_repeatSet = m_xPosSet = m_yPosSet = m_backgroundSizeSet = false;     
 }
 
 BackgroundLayer::BackgroundLayer(const BackgroundLayer& o)
+    : m_image(o.m_image)
+    , m_xPosition(o.m_xPosition)
+    , m_yPosition(o.m_yPosition)
+    , m_bgAttachment(o.m_bgAttachment)
+    , m_bgClip(o.m_bgClip)
+    , m_bgOrigin(o.m_bgOrigin)
+    , m_bgRepeat(o.m_bgRepeat)
+    , m_backgroundSize(o.m_backgroundSize)
+    , m_imageSet(o.m_imageSet)
+    , m_attachmentSet(o.m_attachmentSet)
+    , m_clipSet(o.m_clipSet)
+    , m_originSet(o.m_originSet)
+    , m_repeatSet(o.m_repeatSet)
+    , m_xPosSet(o.m_xPosSet)
+    , m_yPosSet(o.m_yPosSet)
+    , m_backgroundSizeSet(o.m_backgroundSizeSet)
+    , m_next(o.m_next ? new BackgroundLayer(*o.m_next) : 0)
 {
-    m_next = o.m_next ? new BackgroundLayer(*o.m_next) : 0;
-    m_image = o.m_image;
-    m_xPosition = o.m_xPosition;
-    m_yPosition = o.m_yPosition;
-    m_bgAttachment = o.m_bgAttachment;
-    m_bgClip = o.m_bgClip;
-    m_bgOrigin = o.m_bgOrigin;
-    m_bgRepeat = o.m_bgRepeat;
-    m_backgroundSize = o.m_backgroundSize;
-    m_imageSet = o.m_imageSet;
-    m_attachmentSet = o.m_attachmentSet;
-    m_clipSet = o.m_clipSet;
-    m_originSet = o.m_originSet;
-    m_repeatSet = o.m_repeatSet;
-    m_xPosSet = o.m_xPosSet;
-    m_yPosSet = o.m_yPosSet;
-    m_backgroundSizeSet = o.m_backgroundSizeSet;
 }
 
 BackgroundLayer::~BackgroundLayer()
@@ -136,12 +155,13 @@ BackgroundLayer::~BackgroundLayer()
     delete m_next;
 }
 
-BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o) {
+BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o)
+{
     if (m_next != o.m_next) {
         delete m_next;
         m_next = o.m_next ? new BackgroundLayer(*o.m_next) : 0;
     }
-    
+
     m_image = o.m_image;
     m_xPosition = o.m_xPosition;
     m_yPosition = o.m_yPosition;
@@ -150,7 +170,7 @@ BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o) {
     m_bgOrigin = o.m_bgOrigin;
     m_bgRepeat = o.m_bgRepeat;
     m_backgroundSize = o.m_backgroundSize;
-    
+
     m_imageSet = o.m_imageSet;
     m_attachmentSet = o.m_attachmentSet;
     m_clipSet = o.m_clipSet;
@@ -159,11 +179,12 @@ BackgroundLayer& BackgroundLayer::operator=(const BackgroundLayer& o) {
     m_xPosSet = o.m_xPosSet;
     m_yPosSet = o.m_yPosSet;
     m_backgroundSizeSet = o.m_backgroundSizeSet;
-    
+
     return *this;
 }
 
-bool BackgroundLayer::operator==(const BackgroundLayer& o) const {
+bool BackgroundLayer::operator==(const BackgroundLayer& o) const
+{
     return m_image == o.m_image && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
            m_bgAttachment == o.m_bgAttachment && m_bgClip == o.m_bgClip && m_bgOrigin == o.m_bgOrigin && m_bgRepeat == o.m_bgRepeat &&
            m_backgroundSize.width == o.m_backgroundSize.width && m_backgroundSize.height == o.m_backgroundSize.height && 
@@ -282,11 +303,13 @@ void BackgroundLayer::cullEmptyLayers()
 }
 
 StyleBackgroundData::StyleBackgroundData()
-{}
+{
+}
 
 StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& o)
     : Shared<StyleBackgroundData>(), m_background(o.m_background), m_outline(o.m_outline)
-{}
+{
+}
 
 bool StyleBackgroundData::operator==(const StyleBackgroundData& o) const
 {
@@ -294,47 +317,51 @@ bool StyleBackgroundData::operator==(const StyleBackgroundData& o) const
 }
 
 StyleMarqueeData::StyleMarqueeData()
+    : increment(RenderStyle::initialMarqueeIncrement())
+    , speed(RenderStyle::initialMarqueeSpeed())
+    , loops(RenderStyle::initialMarqueeLoopCount())
+    , behavior(RenderStyle::initialMarqueeBehavior())
+    , direction(RenderStyle::initialMarqueeDirection())
 {
-    increment = RenderStyle::initialMarqueeIncrement();
-    speed = RenderStyle::initialMarqueeSpeed();
-    direction = RenderStyle::initialMarqueeDirection();
-    behavior = RenderStyle::initialMarqueeBehavior();
-    loops = RenderStyle::initialMarqueeLoopCount();
 }
 
 StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
-:Shared<StyleMarqueeData>(), increment(o.increment), speed(o.speed), loops(o.loops),
- behavior(o.behavior), direction(o.direction) 
-{}
+    : Shared<StyleMarqueeData>()
+    , increment(o.increment)
+    , speed(o.speed)
+    , loops(o.loops)
+    , behavior(o.behavior)
+    , direction(o.direction) 
+{
+}
 
 bool StyleMarqueeData::operator==(const StyleMarqueeData& o) const
 {
-    return (increment == o.increment && speed == o.speed && direction == o.direction &&
-            behavior == o.behavior && loops == o.loops);
+    return increment == o.increment && speed == o.speed && direction == o.direction &&
+           behavior == o.behavior && loops == o.loops;
 }
 
 StyleFlexibleBoxData::StyleFlexibleBoxData()
-: Shared<StyleFlexibleBoxData>()
+    : flex(RenderStyle::initialBoxFlex())
+    , flex_group(RenderStyle::initialBoxFlexGroup())
+    , ordinal_group(RenderStyle::initialBoxOrdinalGroup())
+    , align(RenderStyle::initialBoxAlign())
+    , pack(RenderStyle::initialBoxPack())
+    , orient(RenderStyle::initialBoxOrient())
+    , lines(RenderStyle::initialBoxLines())
 {
-    flex = RenderStyle::initialBoxFlex();
-    flex_group = RenderStyle::initialBoxFlexGroup();
-    ordinal_group = RenderStyle::initialBoxOrdinalGroup();
-    align = RenderStyle::initialBoxAlign();
-    pack = RenderStyle::initialBoxPack();
-    orient = RenderStyle::initialBoxOrient();
-    lines = RenderStyle::initialBoxLines();
 }
 
 StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
-: Shared<StyleFlexibleBoxData>()
+    : Shared<StyleFlexibleBoxData>()
+    , flex(o.flex)
+    , flex_group(o.flex_group)
+    , ordinal_group(o.ordinal_group)
+    , align(o.align)
+    , pack(o.pack)
+    , orient(o.orient)
+    , lines(o.lines)
 {
-    flex = o.flex;
-    flex_group = o.flex_group;
-    ordinal_group = o.ordinal_group;
-    align = o.align;
-    pack = o.pack;
-    orient = o.orient;
-    lines = o.lines;
 }
 
 bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
@@ -345,32 +372,36 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 }
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
-:Shared<StyleCSS3NonInheritedData>(), 
-lineClamp(RenderStyle::initialLineClamp()),
-opacity(RenderStyle::initialOpacity()),
-userDrag(RenderStyle::initialUserDrag()),
-userSelect(RenderStyle::initialUserSelect()),
-textOverflow(RenderStyle::initialTextOverflow()),
-marginTopCollapse(MCOLLAPSE),
-marginBottomCollapse(MCOLLAPSE),
-m_appearance(RenderStyle::initialAppearance())
+    : lineClamp(RenderStyle::initialLineClamp())
+    , opacity(RenderStyle::initialOpacity())
+    , userDrag(RenderStyle::initialUserDrag())
+    , userSelect(RenderStyle::initialUserSelect())
+    , textOverflow(RenderStyle::initialTextOverflow())
+    , marginTopCollapse(MCOLLAPSE)
+    , marginBottomCollapse(MCOLLAPSE)
+    , m_appearance(RenderStyle::initialAppearance())
 #ifndef KHTML_NO_XBL
-, bindingURI(0)
+    , bindingURI(0)
 #endif
 {
 }
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData& o)
-:Shared<StyleCSS3NonInheritedData>(), 
-lineClamp(o.lineClamp),
-opacity(o.opacity), flexibleBox(o.flexibleBox), marquee(o.marquee),
-userDrag(o.userDrag), userSelect(o.userSelect), textOverflow(o.textOverflow),
-marginTopCollapse(o.marginTopCollapse), marginBottomCollapse(o.marginBottomCollapse),
-m_appearance(o.m_appearance)
-{
+    : Shared<StyleCSS3NonInheritedData>()
+    , lineClamp(o.lineClamp)
+    , opacity(o.opacity)
+    , flexibleBox(o.flexibleBox)
+    , marquee(o.marquee)
+    , userDrag(o.userDrag)
+    , userSelect(o.userSelect)
+    , textOverflow(o.textOverflow)
+    , marginTopCollapse(o.marginTopCollapse)
+    , marginBottomCollapse(o.marginBottomCollapse)
+    , m_appearance(o.m_appearance)
 #ifndef KHTML_NO_XBL
-    bindingURI = o.bindingURI ? o.bindingURI->copy() : 0;
+    , bindingURI(o.bindingURI ? o.bindingURI->copy() : 0)
 #endif
+{
 }
 
 StyleCSS3NonInheritedData::~StyleCSS3NonInheritedData()
@@ -406,23 +437,27 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) c
 }
 
 StyleCSS3InheritedData::StyleCSS3InheritedData()
-:Shared<StyleCSS3InheritedData>(), textShadow(0), userModify(READ_ONLY), wordWrap(WBNORMAL), 
-    nbspMode(NBNORMAL), khtmlLineBreak(LBNORMAL)
-, textSizeAdjust(RenderStyle::initialTextSizeAdjust()), resize(RenderStyle::initialResize())
+    : textShadow(0)
+    , userModify(READ_ONLY)
+    , wordWrap(WBNORMAL)
+    , nbspMode(NBNORMAL)
+    , khtmlLineBreak(LBNORMAL)
+    , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
+    , resize(RenderStyle::initialResize())
 {
 
 }
 
 StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData& o)
-:Shared<StyleCSS3InheritedData>()
+    : Shared<StyleCSS3InheritedData>()
+    , textShadow(o.textShadow ? new ShadowData(*o.textShadow) : 0)
+    , userModify(o.userModify)
+    , wordWrap(o.wordWrap)
+    , nbspMode(o.nbspMode)
+    , khtmlLineBreak(o.khtmlLineBreak)
+    , textSizeAdjust(o.textSizeAdjust)
+    , resize(o.resize)
 {
-    textShadow = o.textShadow ? new ShadowData(*o.textShadow) : 0;
-    userModify = o.userModify;
-    wordWrap = o.wordWrap;
-    nbspMode = o.nbspMode;
-    khtmlLineBreak = o.khtmlLineBreak;
-    textSizeAdjust = o.textSizeAdjust;
-    resize = o.resize;
 }
 
 StyleCSS3InheritedData::~StyleCSS3InheritedData()
@@ -432,10 +467,12 @@ StyleCSS3InheritedData::~StyleCSS3InheritedData()
 
 bool StyleCSS3InheritedData::operator==(const StyleCSS3InheritedData& o) const
 {
-    return (userModify == o.userModify) && shadowDataEquivalent(o) && (wordWrap == o.wordWrap) &&
-        (nbspMode == o.nbspMode) && (khtmlLineBreak == o.khtmlLineBreak)
-            && (textSizeAdjust == o.textSizeAdjust)
-    ;
+    return userModify == o.userModify
+        && shadowDataEquivalent(o)
+        && wordWrap == o.wordWrap
+        && nbspMode == o.nbspMode
+        && khtmlLineBreak == o.khtmlLineBreak
+        && textSizeAdjust == o.textSizeAdjust;
 }
 
 bool StyleCSS3InheritedData::shadowDataEquivalent(const StyleCSS3InheritedData& o) const
@@ -448,13 +485,13 @@ bool StyleCSS3InheritedData::shadowDataEquivalent(const StyleCSS3InheritedData& 
 }
 
 StyleInheritedData::StyleInheritedData()
-    : indent( RenderStyle::initialTextIndent() ), line_height( RenderStyle::initialLineHeight() ), 
-      style_image( RenderStyle::initialListStyleImage() ),
-      cursor_image( 0 ), font(), color( RenderStyle::initialColor() ), 
-      horizontal_border_spacing( RenderStyle::initialHorizontalBorderSpacing() ), 
-      vertical_border_spacing( RenderStyle::initialVerticalBorderSpacing() ),
-      widows( RenderStyle::initialWidows() ), orphans( RenderStyle::initialOrphans() ),
-      page_break_inside( RenderStyle::initialPageBreak() )
+    : indent(RenderStyle::initialTextIndent()), line_height(RenderStyle::initialLineHeight()), 
+      style_image(RenderStyle::initialListStyleImage()),
+      cursor_image(0), color(RenderStyle::initialColor()), 
+      horizontal_border_spacing(RenderStyle::initialHorizontalBorderSpacing()), 
+      vertical_border_spacing(RenderStyle::initialVerticalBorderSpacing()),
+      widows(RenderStyle::initialWidows()), orphans(RenderStyle::initialOrphans()),
+      page_break_inside(RenderStyle::initialPageBreak())
 {
 }
 
@@ -543,17 +580,22 @@ RenderStyle::RenderStyle()
     , content(0)
     , m_pseudoState(PseudoUnknown)
     , m_affectedByAttributeSelectors(false)
+    , m_unique(false)
     , m_ref(0)
 #if SVG_SUPPORT
     , m_svgStyle(defaultStyle->m_svgStyle)
 #endif
-
 {
     setBitDefaults(); // Would it be faster to copy this from the default style?
 }
 
 RenderStyle::RenderStyle(bool)
-:m_pseudoState(PseudoUnknown), m_affectedByAttributeSelectors(false)
+    : pseudoStyle(0)
+    , content(0)
+    , m_pseudoState(PseudoUnknown)
+    , m_affectedByAttributeSelectors(false)
+    , m_unique(false)
+    , m_ref(1)
 {
     setBitDefaults();
 
@@ -570,23 +612,28 @@ RenderStyle::RenderStyle(bool)
 #if SVG_SUPPORT
     m_svgStyle.init();
 #endif
-
-    pseudoStyle = 0;
-    content = 0;
-    m_ref = 1;
 }
 
 RenderStyle::RenderStyle(const RenderStyle& o)
-    : inherited_flags( o.inherited_flags ), noninherited_flags( o.noninherited_flags ),
-      box( o.box ), visual( o.visual ), background( o.background ), surround( o.surround ),
-      css3NonInheritedData( o.css3NonInheritedData ), css3InheritedData( o.css3InheritedData ),
-      inherited( o.inherited ), pseudoStyle( 0 ), content( o.content ), m_pseudoState(o.m_pseudoState),
-      m_affectedByAttributeSelectors(false)
-{
+    : inherited_flags(o.inherited_flags)
+    , noninherited_flags(o.noninherited_flags)
+    , box(o.box)
+    , visual(o.visual )
+    , background(o.background)
+    , surround(o.surround)
+    , css3NonInheritedData(o.css3NonInheritedData)
+    , css3InheritedData(o.css3InheritedData)
+    , inherited(o.inherited)
+    , pseudoStyle(0)
+    , content(o.content)
+    , m_pseudoState(o.m_pseudoState)
+    , m_affectedByAttributeSelectors(false)
+    , m_unique(false)
+    , m_ref(0)
 #if SVG_SUPPORT
-    m_svgStyle = o.m_svgStyle;
+    , m_svgStyle(o.m_svgStyle)
 #endif
-    m_ref = 0;
+{
 }
 
 void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
@@ -606,8 +653,8 @@ RenderStyle::~RenderStyle()
 
 bool RenderStyle::operator==(const RenderStyle& o) const
 {
-// compare everything except the pseudoStyle pointer
-    return (inherited_flags == o.inherited_flags &&
+    // compare everything except the pseudoStyle pointer
+    return inherited_flags == o.inherited_flags &&
             noninherited_flags == o.noninherited_flags &&
             box == o.box &&
             visual == o.visual &&
@@ -619,7 +666,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
 #if SVG_SUPPORT
             && m_svgStyle == o.m_svgStyle
 #endif
-            );
+            ;
 }
 
 bool RenderStyle::isStyleAvailable() const
@@ -888,17 +935,6 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
     return Equal;
 }
 
-
-//int RenderStyle::counter = 0;
-//int SharedData::counter = 0;
-
-void RenderStyle::cleanup()
-{
-//    counter = 0;
-//    SharedData::counter = 0;
-}
-
-
 void RenderStyle::adjustBackgroundLayers()
 {
     if (backgroundLayers()->next()) {
@@ -968,7 +1004,6 @@ void RenderStyle::setContent(CachedObject* o, bool add)
     else
         content = newContentData;
 
-    //    o->ref();
     newContentData->_content.object = o;
     newContentData->_contentType = CONTENT_OBJECT;
 }
@@ -1027,7 +1062,6 @@ void ContentData::clearContent()
     switch (_contentType)
     {
         case CONTENT_OBJECT:
-//            _content.object->deref();
             _content.object = 0;
             break;
         case CONTENT_TEXT:
