@@ -1,3 +1,15 @@
+2006-06-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by darin.
+        
+        Updated to latest hosting interface
+
+        * WebFramePrivate.cpp:
+        (WebKit::WebFramePrivate::openURL):
+        (WebKit::WebFramePrivate::setTitle):
+        (WebKit::WebFramePrivate::setStatusText):
+        * WebFramePrivate.h:
+
 2006-05-26  Steve Falkenburg  <sfalken@apple.com>
 
         Build fixes/tweaks

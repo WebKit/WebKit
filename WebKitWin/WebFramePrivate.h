@@ -57,8 +57,10 @@ class WebFramePrivate : public WebFrame, public WebCore::TransferJobClient, publ
 
     virtual WebFramePrivate* toPrivate();
 
-    virtual void openURL(const DeprecatedString&);
+    virtual void openURL(const DeprecatedString&, bool lockHistory);
     virtual void submitForm(const WebCore::String& method, const KURL&, const WebCore::FormData*);
+    virtual void setTitle(const WebCore::String& title);
+    virtual void setStatusText(const WebCore::String& statusText);
     
     virtual void receivedData(WebCore::TransferJob*, const char*, int);
     virtual void receivedAllData(WebCore::TransferJob*, WebCore::PlatformData);
