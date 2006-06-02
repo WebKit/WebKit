@@ -1,4 +1,36 @@
 2006-06-01  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Maciej and Adele
+        
+        Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=8398
+        Updated and extended select/option form tests 
+        
+        * fast/forms/HTMLOptionElement_label01.html:
+        * fast/forms/HTMLOptionElement_label01-expected.txt:
+        * fast/forms/HTMLOptionElement_label01-expected.png:
+        * fast/forms/HTMLOptionElement_label02.html:
+        * fast/forms/HTMLOptionElement_label02-expected.txt:
+        * fast/forms/HTMLOptionElement_label02-expected.png:
+        * fast/forms/HTMLOptionElement_label03.html:
+        * fast/forms/HTMLOptionElement_label03-expected.txt:
+        * fast/forms/HTMLOptionElement_label03-expected.png
+        * fast/forms/HTMLOptionElement_label04.html:
+        * fast/forms/HTMLOptionElement_label04-expected.txt:
+        * fast/forms/HTMLOptionElement_label04-expected.png
+        * fast/forms/HTMLOptionElement_label05.html:
+        * fast/forms/HTMLOptionElement_label05-expected.txt:
+        * fast/forms/HTMLOptionElement_label05-expected.png:
+        Updated to reflect success and added some description
+        
+        * fast/forms/HTMLOptionElement_label06.html:
+        * fast/forms/HTMLOptionElement_label06-expected.txt:
+        * fast/forms/HTMLOptionElement_label05-expected.png:
+        * fast/forms/HTMLOptionElement_label07.html:
+        * fast/forms/HTMLOptionElement_label07-expected.txt:
+        * fast/forms/HTMLOptionElement_label07-expected.png:
+        Added.
+
+2006-06-01  David Carson  <dacarson@gmail.com>
         
         Reviewed by Hyatt
         

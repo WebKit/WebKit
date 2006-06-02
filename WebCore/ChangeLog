@@ -1,5 +1,17 @@
 2006-06-01  David Carson  <dacarson@gmail.com>
 
+        Reviewed by Maciej and Adele
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8398
+        REGRESSION: LABEL in OPTION element is clobbering display #TEXT
+        Patch provided by Darin.
+        
+        * rendering/RenderSelect.cpp
+        (RenderSelect::updateFromElement): 
+        Changed to use the containing text by default, and not the label text
+
+2006-06-01  David Carson  <dacarson@gmail.com>
+
         Reviewed by Hyatt.
 
         Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8646

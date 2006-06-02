@@ -133,11 +133,9 @@ void RenderSelect::updateFromElement()
                     static_cast<QComboBox*>(m_widget)->appendGroupLabel(label);
             } else if (listItems[listIndex]->hasTagName(optionTag)) {
                 HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(listItems[listIndex]);
-                DeprecatedString itemText;
-                if (optionElement->hasAttribute(labelAttr))
+                DeprecatedString itemText = optionElement->text().deprecatedString();
+                if (itemText.isEmpty())
                     itemText = optionElement->getAttribute(labelAttr).deprecatedString();
-                else
-                    itemText = optionElement->text().deprecatedString();
                 
                 itemText.replace('\\', backslashAsCurrencySymbol());
 
