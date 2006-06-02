@@ -48,7 +48,7 @@ my @additionalWebCoreOptions = ();
 push @additionalWebCoreOptions, "FEATURE_DEFINES=" if !$svgSupport;
 
 # Check that all the project directories are there.
-my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit", "WebKitWin");
+my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
 my @otherDirs = ("WebKitLibraries");
 for my $dir (@projects, @otherDirs) {
     if (! -d $dir) {
@@ -87,11 +87,11 @@ for my $dir (@projects) {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "All", @options, @ARGV;
         } elsif ($dir eq "WebCore") {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @additionalWebCoreOptions, @ARGV;
-        } elsif ($dir ne "WebKitWin") {
+        } else {
             $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
         }
     } elsif (isCygwin()) {
-        if ($dir eq "WebKitWin") {
+        if ($dir eq "WebKit") {
             $result = buildVisualStudioProject($dir);
         }
     }

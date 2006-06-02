@@ -1,3 +1,11 @@
+2006-06-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by darin.
+        
+        Updated build script
+
+        * Scripts/build-webkit:
+
 2006-06-01  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
