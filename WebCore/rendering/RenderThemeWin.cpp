@@ -153,6 +153,7 @@ bool RenderThemeWin::supportsFocus(EAppearance appearance)
         case PushButtonAppearance:
         case ButtonAppearance:
         case TextFieldAppearance:
+        case TextAreaAppearance:
             return true;
         default:
             return false;
@@ -197,6 +198,7 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
             result.m_state = determineState(o);
             break;
         case TextFieldAppearance:
+        case TextAreaAppearance:
             result.m_part = TFP_TEXTFIELD;
             result.m_state = determineState(o);
             break;
@@ -205,7 +207,7 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
     return result;
 }
 
-void RenderThemeWin::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+void RenderThemeWin::adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     addIntrinsicMargins(style);
 }
@@ -292,7 +294,7 @@ void RenderThemeWin::setRadioSize(RenderStyle* style) const
     setCheckboxSize(style);
 }
 
-void RenderThemeWin::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+void RenderThemeWin::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     addIntrinsicMargins(style);
 }
@@ -320,6 +322,16 @@ bool RenderThemeWin::paintTextField(RenderObject* o, const RenderObject::PaintIn
     doneDrawing(i.p);
 
     return false;
+}
+
+void RenderThemeWin::adjustTextAreaStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    addIntrinsicMargins(style);
+}
+
+bool RenderThemeWin::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    return paintTextField(o, i, r);
 }
 
 }

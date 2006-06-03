@@ -46,30 +46,33 @@ public:
     ~RenderThemeWin();
        
     // A method asking if the theme's controls actually care about redrawing when hovered.
-    virtual bool supportsHover(const RenderStyle* style) const { return true; }
+    virtual bool supportsHover(const RenderStyle*) const { return true; }
 
     virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
     { return paintButton(o, i, r); }
-    virtual void setCheckboxSize(RenderStyle* style) const;
+    virtual void setCheckboxSize(RenderStyle*) const;
 
     virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
     { return paintButton(o, i, r); }
-    virtual void setRadioSize(RenderStyle* style) const;
+    virtual void setRadioSize(RenderStyle*) const;
 
-    virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
-    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
+    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
-    virtual void adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
-    virtual bool paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
+    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
+    virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 private:
-    void addIntrinsicMargins(RenderStyle* style) const;
+    void addIntrinsicMargins(RenderStyle*) const;
     void close();
 
-    unsigned determineState(RenderObject* o);
-    bool supportsFocus(EAppearance appearance);
+    unsigned determineState(RenderObject*);
+    bool supportsFocus(EAppearance);
 
-    ThemeData getThemeData(RenderObject* o);
+    ThemeData getThemeData(RenderObject*);
     
     HMODULE m_themeDLL;
     mutable HANDLE m_buttonTheme;

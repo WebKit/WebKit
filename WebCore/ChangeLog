@@ -1,3 +1,19 @@
+2006-06-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin. 
+
+        Windows theme for textareas.  Also made some formatting changes. 
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::supportsFocus):
+        (WebCore::RenderThemeWin::getThemeData):
+        (WebCore::RenderThemeWin::adjustButtonStyle):
+        (WebCore::RenderThemeWin::adjustTextFieldStyle):
+        (WebCore::RenderThemeWin::adjustTextAreaStyle):
+        (WebCore::RenderThemeWin::paintTextArea):
+        * rendering/RenderThemeWin.h:
+        (WebCore::RenderThemeWin::supportsHover):
+
 2006-06-02  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed by Hyatt, checked in by Tim H.
