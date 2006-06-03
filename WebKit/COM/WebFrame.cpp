@@ -219,11 +219,21 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadData(
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::loadHTMLString( 
-    /* [in] */ BSTR /*string*/,
-    /* [in] */ BSTR /*baseURL*/)
+    /* [in] */ BSTR string,
+    /* [in] */ BSTR baseURL)
 {
-    DebugBreak();
-    return E_NOTIMPL;
+    DeprecatedString htmlString((QChar*)string, SysStringLen(string));
+
+    if (baseURL) {
+        DeprecatedString baseURLString((QChar*)baseURL, SysStringLen(baseURL));
+        d->frame->begin(KURL(baseURLString));
+    }
+    else
+        d->frame->begin();
+    d->frame->write(htmlString);
+    d->frame->end();
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::loadAlternateHTMLString( 
@@ -366,7 +376,7 @@ HRESULT WebFrame::loadDataSource(WebDataSource* dataSource)
                 String methodString(method, SysStringLen(method));
                 WebCore::TransferJob* job;
                 const FormData* formData = 0;
-                if (!wcscmp(method, TEXT("GET"))) {
+                if (wcscmp(method, TEXT("GET"))) {
                     WebMutableURLRequest* requestImpl = static_cast<WebMutableURLRequest*>(request);
                     formData = requestImpl->formData();
                 }
