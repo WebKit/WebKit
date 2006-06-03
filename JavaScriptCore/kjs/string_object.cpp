@@ -232,23 +232,49 @@ static inline UString substituteBackreferences(const UString &replacement, const
 {
   UString substitutedReplacement = replacement;
 
-  bool converted;
+  int i = -1;
+  while ((i = substitutedReplacement.find(UString("$"), i + 1)) != -1) {
+    if (i+1 == substitutedReplacement.size())
+        break;
 
-  for (int i = 0; (i = substitutedReplacement.find(UString("$"), i)) != -1; i++) {
-    if (i+1 < substitutedReplacement.size() && substitutedReplacement[i+1] == '$') {  // "$$" -> "$"
-      substitutedReplacement = substitutedReplacement.substr(0,i) + "$" + substitutedReplacement.substr(i+2);
-      continue;
-    }
-    // Assume number part is one char exactly
-    unsigned backrefIndex = substitutedReplacement.substr(i+1,1).toUInt32(&converted, false /* tolerate empty string */);
-    if (converted && backrefIndex <= (unsigned)reg->subPatterns()) {
-      int backrefStart = ovector[2*backrefIndex];
-      int backrefLength = ovector[2*backrefIndex+1] - backrefStart;
-      substitutedReplacement = substitutedReplacement.substr(0,i)
-        + source.substr(backrefStart, backrefLength)
-        + substitutedReplacement.substr(i+2);
-      i += backrefLength - 1; // -1 offsets i++
-    }
+    unsigned short ref = substitutedReplacement[i+1].unicode();
+    int backrefStart = 0;
+    int backrefLength = 0;
+    int advance = 0;
+
+    if (ref == '$') {  // "$$" -> "$"
+        substitutedReplacement = substitutedReplacement.substr(0, i + 1) + substitutedReplacement.substr(i + 2);
+        continue;
+    } else if (ref == '&') {
+        backrefStart = ovector[0];
+        backrefLength = ovector[1] - backrefStart;
+    } else if (ref == '`') {
+        backrefStart = 0;
+        backrefLength = ovector[0];
+    } else if (ref == '\'') {
+        backrefStart = ovector[1];
+        backrefLength = source.size() - backrefStart;
+    } else if (ref >= '0' && ref <= '9') {
+        // 1- and 2-digit back references are allowed
+        unsigned backrefIndex = ref - '0';
+        if (substitutedReplacement.size() > i + 2) {
+            ref = substitutedReplacement[i+2].unicode();
+            if (ref >= '0' && ref <= '9') {
+                backrefIndex = 10 * backrefIndex + ref - '0';
+                advance = 1;
+            }
+        }
+        if (backrefIndex > (unsigned)reg->subPatterns()) {
+            i += advance;
+            continue;
+        }
+        backrefStart = ovector[2 * backrefIndex];
+        backrefLength = ovector[2 * backrefIndex + 1] - backrefStart;
+    } else
+        continue;
+
+    substitutedReplacement = substitutedReplacement.substr(0, i) + source.substr(backrefStart, backrefLength) + substitutedReplacement.substr(i + 2 + advance);
+    i += backrefLength - 1; // - 1 offsets 'i + 1'
   }
 
   return substitutedReplacement;

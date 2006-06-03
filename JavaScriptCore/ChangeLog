@@ -1,3 +1,17 @@
+2006-06-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by ggaren.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9234
+          Implement $&, $' and $` replacement codes in String.prototype.replace
+
+        Test: fast/js/string-replace-3.html
+
+        * kjs/string_object.cpp:
+        (substituteBackreferences): Added support for $& (matched substring),
+        $` (everything preceding matched substring), $' (everything following
+        matched substring) and 2-digit back references, and cleaned up a little.
+
 2006-06-02 Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
