@@ -1,3 +1,17 @@
+2006-06-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9252
+          REGRESSION: Very odd roll-over issues (content disappearing)
+
+        Test: fast/dom/HTMLLinkElement/pending-stylesheet-count.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::~HTMLLinkElement): If the stylesheet was being
+        loaded, call stylesheetLoaded() on the document, to keep the pending stylesheet
+        count correct.
+
 2006-06-03  Darin Adler  <darin@apple.com>
 
         - fix Windows build

@@ -50,8 +50,11 @@ HTMLLinkElement::HTMLLinkElement(Document *doc)
 
 HTMLLinkElement::~HTMLLinkElement()
 {
-    if (m_cachedSheet)
+    if (m_cachedSheet) {
         m_cachedSheet->deref(this);
+        if (m_loading && !isDisabled() && !isAlternate())
+            document()->stylesheetLoaded();
+    }
 }
 
 void HTMLLinkElement::setDisabledState(bool _disabled)
