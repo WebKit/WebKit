@@ -218,7 +218,7 @@ void DOMCSSStyleDeclaration::put(ExecState* exec, const Identifier &propertyName
         // It would be nice to fix this some day, perhaps with some kind of "quirks mode",
         // but it's likely that the Dashboard widgets are already using a strict mode DOCTYPE.
         ExceptionCode ec = 0;
-        styleDecl.setProperty(prop, propvalue, "", ec);
+        styleDecl.setProperty(prop, propvalue, ec);
       }
     } else {
       DOMObject::put(exec, propertyName, value, attr);

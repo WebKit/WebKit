@@ -1,3 +1,14 @@
+2006-06-02  Rob Buis  <buis@kde.org>
+
+        Reviewed by Hyatt, checked in by Tim H.
+
+        Adding testcase for bug 8223.
+
+        * fast/dom/css-inline-style-important-expected.checksum: Added.
+        * fast/dom/css-inline-style-important-expected.png: Added.
+        * fast/dom/css-inline-style-important-expected.txt: Added.
+        * fast/dom/css-inline-style-important.html: Added.
+
 2006-06-02  Rémi Zara  <remi_zara@mac.com>
 
         Reviewed by Hyatt.

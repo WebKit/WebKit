@@ -1,3 +1,19 @@
+2006-06-02  Rob Buis  <buis@kde.org>
+
+        Reviewed by Hyatt, checked in by Tim H.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8223
+        WebKit fails to update style on element via DOM
+
+        Handle !important by detecting it and using a different code
+        path from normal priority.
+
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::put):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::setProperty):
+        * css/CSSStyleDeclaration.h:
+
 2006-06-02  Darin Adler  <darin@apple.com>
         
         Reviewed by Geoff, checked in by Maciej.
