@@ -1,5 +1,14 @@
 2006-06-03  David Kilzer  <ddkilzer@kilzer.net>
 
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9296
+        Performance improvement for svn-create-patch
+
+        * Scripts/svn-create-patch: Undef $indexPath after all paths have been fixed for a given patch.
+
+2006-06-03  David Kilzer  <ddkilzer@kilzer.net>
+
         Reviewed by darin.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9290

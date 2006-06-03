@@ -127,7 +127,7 @@ sub diff
             # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
             s/\S+$/$indexPath/ if /^diff/;
             s/^--- \S+/--- $indexPath/;
-            s/^\+\+\+ \S+/+++ $indexPath/;
+            s/^\+\+\+ \S+/+++ $indexPath/ && undef $indexPath;
         }
         print;
     }
