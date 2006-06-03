@@ -25,24 +25,26 @@
 
 #include "stdafx.h"
 #include "Spinneret.h"
-#include "WebView.h"
-#include "WebFrame.h"
+#include "IWebView.h"
+#include "IWebFrame.h"
+#include "WebKit.h"
 
 #include <commctrl.h>
 #include <objbase.h>
+#include <shlwapi.h>
+#include <wininet.h>
 
 #define MAX_LOADSTRING 100
 #define URLBAR_HEIGHT  24
-
-using namespace WebKit;
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
 HWND hMainWnd;
 HWND hURLBarWnd;
 long DefEditProc;
-WebView* gWebView = 0;
-WebHost* gWebHost = 0;
+IWebView* gWebView = 0;
+HWND gViewWindow = 0;
+SpinneretWebHost* gWebHost = 0;
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
@@ -53,13 +55,74 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK    MyEditProc(HWND, UINT, WPARAM, LPARAM);
 
-void SpinneretWebHost::updateLocationBar(const char* URL)
+static void loadURL(BSTR urlBStr);
+
+HRESULT SpinneretWebHost::updateAddressBar(IWebView* webView)
 {
-    SendMessageA(hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)URL);
+    IWebFrame* mainFrame = 0;
+    IWebDataSource* dataSource = 0;
+    IWebMutableURLRequest* request = 0;
+    BSTR frameURL = 0;
+
+    HRESULT hr = S_OK;
+
+    hr = webView->mainFrame(&mainFrame);
+    if (FAILED(hr))
+        goto exit;
+
+    hr = mainFrame->dataSource(&dataSource);
+    if (FAILED(hr) || !dataSource)
+        hr = mainFrame->provisionalDataSource(&dataSource);
+    if (FAILED(hr) || !dataSource)
+        goto exit;
+
+    hr = dataSource->request(&request);
+    if (FAILED(hr) || !request)
+        goto exit;
+
+    hr = request->mainDocumentURL(&frameURL);
+    if (FAILED(hr))
+        goto exit;
+
+    SendMessage(hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)frameURL);
+
+exit:
+    if (mainFrame)
+        mainFrame->Release();
+    if (dataSource)
+        dataSource->Release();
+    if (request)
+        request->Release();
+    SysFreeString(frameURL);
+    return 0;
 }
 
-void SpinneretWebHost::loadEnd(BOOL successful, DWORD error, LPCTSTR errorString)
+HRESULT STDMETHODCALLTYPE SpinneretWebHost::QueryInterface(REFIID riid, void** ppvObject)
 {
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegate))
+        *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
+    else
+        return E_NOINTERFACE;
+
+    AddRef();
+    return S_OK;
+}
+
+ULONG STDMETHODCALLTYPE SpinneretWebHost::AddRef(void)
+{
+    return ++m_refCount;
+}
+
+ULONG STDMETHODCALLTYPE SpinneretWebHost::Release(void)
+{
+    ULONG newRef = --m_refCount;
+    if (!newRef)
+        delete(this);
+
+    return newRef;
 }
 
 static void resizeSubViews()
@@ -67,7 +130,7 @@ static void resizeSubViews()
     RECT rcClient;
     GetClientRect(hMainWnd, &rcClient);
     MoveWindow(hURLBarWnd, 0, 0, rcClient.right, URLBAR_HEIGHT, TRUE);
-    MoveWindow(gWebView->windowHandle(), 0, URLBAR_HEIGHT, rcClient.right, rcClient.bottom - URLBAR_HEIGHT, TRUE);
+    MoveWindow(gViewWindow, 0, URLBAR_HEIGHT, rcClient.right, rcClient.bottom - URLBAR_HEIGHT, TRUE);
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -116,26 +179,61 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     SetWindowLong(hURLBarWnd, GWL_WNDPROC,(long)MyEditProc);
     SetFocus(hURLBarWnd);
 
+    HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&gWebView);
+    if (FAILED(hr))
+        goto exit;
+
     gWebHost = new SpinneretWebHost();
-    gWebView = WebView::createWebView(hInstance, hMainWnd, gWebHost);
-    gWebView->mainFrame()->loadHTMLString("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.opendarwin.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>");
+    gWebHost->AddRef();
+    hr = gWebView->setFrameLoadDelegate(gWebHost);
+    if (FAILED(hr))
+        goto exit;
+
+    hr = gWebView->setHostWindow(hMainWnd);
+    if (FAILED(hr))
+        goto exit;
+
+    RECT clientRect;
+    GetClientRect(hMainWnd, &clientRect);
+    hr = gWebView->initWithFrame(&clientRect, 0, 0);
+    if (FAILED(hr))
+        goto exit;
+
+    IWebFrame* frame;
+    hr = gWebView->mainFrame(&frame);
+    if (FAILED(hr))
+        goto exit;
+    static BSTR defaultHTML = 0;
+    if (!defaultHTML)
+        defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.opendarwin.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
+    frame->loadHTMLString(defaultHTML, 0);
+    frame->Release();
+
+    IWebViewExt* viewExt;
+    hr = gWebView->QueryInterface(IID_IWebViewExt, (void**)&viewExt);
+    if (FAILED(hr))
+        goto exit;
+    hr = viewExt->viewWindow(&gViewWindow);
+    viewExt->Release();
+    if (FAILED(hr) || !gViewWindow)
+        goto exit;
 
     resizeSubViews();
-    ShowWindow(gWebView->windowHandle(), nCmdShow);
-    UpdateWindow(gWebView->windowHandle());
+
+    ShowWindow(gViewWindow, nCmdShow);
+    UpdateWindow(gViewWindow);
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SPINNERET));
 
     // Main message loop:
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
+    while (GetMessage(&msg, NULL, 0, 0)) {
+        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
     }
 
+exit:
     delete gWebView;
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtDumpMemoryLeaks();
@@ -190,22 +288,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     PAINTSTRUCT ps;
     HDC hdc;
 
-    switch (message)
-    {
+    switch (message) {
     case WM_COMMAND:
         wmId    = LOWORD(wParam);
         wmEvent = HIWORD(wParam);
         // Parse the menu selections:
-        switch (wmId)
-        {
-        case IDM_ABOUT:
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-            break;
-        case IDM_EXIT:
-            DestroyWindow(hWnd);
-            break;
-        default:
-            return DefWindowProc(hWnd, message, wParam, lParam);
+        switch (wmId) {
+            case IDM_ABOUT:
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                break;
+            case IDM_EXIT:
+                DestroyWindow(hWnd);
+                break;
+            default:
+                return DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
     case WM_DESTROY:
@@ -231,17 +327,12 @@ LRESULT CALLBACK MyEditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
         case WM_CHAR:
             if( wParam == 13 ) { // Enter Key
                 wchar_t strPtr[MAX_URL_LENGTH];
-                char    cstrPtr[MAX_URL_LENGTH];
                 *((LPWORD)strPtr) = MAX_URL_LENGTH; 
                 int strLen = SendMessage(hDlg, EM_GETLINE, 0, (LPARAM)strPtr);
 
-                int x;
-                for(x = 0; x < strLen; x++)
-                    cstrPtr[x] = strPtr[x];
-                cstrPtr[x] = 0;
-
-                gWebView->mainFrame()->loadURL(cstrPtr);
-                SetFocus(gWebView->windowHandle());
+                BSTR bstr = SysAllocStringLen(strPtr, strLen);
+                loadURL(bstr);
+                SysFreeString(bstr);
 
                 return 0;
             } else
@@ -259,18 +350,61 @@ LRESULT CALLBACK MyEditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
+    switch (message) {
     case WM_INITDIALOG:
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
             EndDialog(hDlg, LOWORD(wParam));
             return (INT_PTR)TRUE;
         }
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+static void loadURL(BSTR urlBStr)
+{
+    IWebFrame* frame = 0;
+    IWebMutableURLRequest* request = 0;
+    static BSTR methodBStr = 0;
+
+    if (!methodBStr)
+        methodBStr = SysAllocString(TEXT("GET"));
+
+    if (urlBStr && urlBStr[0] && (PathFileExists(urlBStr) || PathIsUNC(urlBStr))) {
+        TCHAR fileURL[INTERNET_MAX_URL_LENGTH];
+        DWORD fileURLLength = sizeof(fileURL)/sizeof(fileURL[0]);
+        if (SUCCEEDED(UrlCreateFromPath(urlBStr, fileURL, &fileURLLength, 0)))
+            urlBStr = fileURL;
+    }
+
+    HRESULT hr = gWebView->mainFrame(&frame);
+    if (FAILED(hr))
+        goto exit;
+
+    hr = CoCreateInstance(CLSID_WebMutableURLRequest, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
+    if (FAILED(hr))
+        goto exit;
+
+    hr = request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 0);
+    if (FAILED(hr))
+        goto exit;
+
+    hr = request->setHTTPMethod(methodBStr);
+    if (FAILED(hr))
+        goto exit;
+
+    hr = frame->loadRequest(request);
+    if (FAILED(hr))
+        goto exit;
+
+    SetFocus(gViewWindow);
+
+exit:
+    if (frame)
+        frame->Release();
+    if (request)
+        request->Release();
 }

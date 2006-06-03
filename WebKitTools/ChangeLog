@@ -1,3 +1,37 @@
+2006-06-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by hyatt.
+        
+        Switch Spinneret to new hosting mechanism
+
+        * Spinneret/Spinneret.sln:
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (SpinneretWebHost::updateAddressBar):
+        (SpinneretWebHost::QueryInterface):
+        (SpinneretWebHost::AddRef):
+        (SpinneretWebHost::Release):
+        (resizeSubViews):
+        (_tWinMain):
+        (WndProc):
+        (MyEditProc):
+        (About):
+        (loadURL):
+        * Spinneret/Spinneret/Spinneret.h:
+        (SpinneretWebHost::didStartProvisionalLoadForFrame):
+        (SpinneretWebHost::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (SpinneretWebHost::didFailProvisionalLoadWithError):
+        (SpinneretWebHost::didCommitLoadForFrame):
+        (SpinneretWebHost::didReceiveTitle):
+        (SpinneretWebHost::didReceiveIcon):
+        (SpinneretWebHost::didFinishLoadForFrame):
+        (SpinneretWebHost::didFailLoadWithError):
+        (SpinneretWebHost::didChangeLocationWithinPageForFrame):
+        (SpinneretWebHost::willPerformClientRedirectToURL):
+        (SpinneretWebHost::didCancelClientRedirectForFrame):
+        (SpinneretWebHost::willCloseFrame):
+        (SpinneretWebHost::windowScriptObjectAvailable):
+        * Spinneret/Spinneret/Spinneret.vcproj:
+
 2006-06-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by darin.

@@ -26,13 +26,82 @@
 #pragma once
 
 #include "resource.h"
-#include "WebHost.h"
+#include "IWebURLResponse.h"
+#include "IWebFrameLoadDelegate.h"
 
-using namespace WebKit;
-
-class SpinneretWebHost : public WebHost
+class SpinneretWebHost : public IWebFrameLoadDelegate
 {
 public:
-    virtual void updateLocationBar(const char* URL);
-    virtual void loadEnd(BOOL successful, DWORD error, LPCTSTR errorString);
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void);
+    virtual ULONG STDMETHODCALLTYPE Release(void);
+
+    // IWebFrameLoadDelegate
+    virtual HRESULT STDMETHODCALLTYPE didStartProvisionalLoadForFrame( 
+        /* [in] */ IWebView* webView,
+        /* [in] */ IWebFrame* /*frame*/) { return updateAddressBar(webView); }
+    
+    virtual HRESULT STDMETHODCALLTYPE didReceiveServerRedirectForProvisionalLoadForFrame( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE didFailProvisionalLoadWithError( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebError *error,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE didReceiveTitle( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ BSTR title,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE didReceiveIcon( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebImage *image,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame( 
+        /* [in] */ IWebView* webView,
+        /* [in] */ IWebFrame* /*frame*/) { return updateAddressBar(webView); }
+    
+    virtual HRESULT STDMETHODCALLTYPE didFailLoadWithError( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebError *error,
+        /* [in] */ IWebFrame *forFrame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE didChangeLocationWithinPageForFrame( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE willPerformClientRedirectToURL( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ BSTR url,
+        UINT delaySeconds,
+        /* [in] */ UINT fireDate,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE didCancelClientRedirectForFrame( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE willCloseFrame( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+    
+    virtual HRESULT STDMETHODCALLTYPE windowScriptObjectAvailable( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebScriptObject *windowScriptObject) { return S_OK; }
+
+    // SpinneretWebHost
+
+protected:
+    HRESULT updateAddressBar(IWebView* webView);
+
+protected:
+    ULONG                   m_refCount;
 };

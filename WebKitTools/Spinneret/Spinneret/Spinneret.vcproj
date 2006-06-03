@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\..\WebKitWin\public&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\$(ConfigurationName)\WebKitWin&quot;;&quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -63,6 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="comctl32.lib shlwapi.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -119,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\..\..\WebKitWin\public&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\$(ConfigurationName)\WebKitWin&quot;;&quot;$(WebKitOutputDir)\$(ConfigurationName)\WTF&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -141,6 +142,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="&quot;$(ProjectDir)\..\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(ProjectDir)\..\..\..\icu\lib\icuuc.lib&quot;&#x0D;&#x0A;"
+				AdditionalDependencies="comctl32.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(ProjectDir)\..\..\..\&quot;"
 				GenerateDebugInformation="true"
