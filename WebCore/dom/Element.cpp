@@ -821,12 +821,12 @@ CSSStyleDeclaration *Element::style()
 
 void Element::focus()
 {
-    if (!isFocusable())
-        return;
-    
     Document* doc = document();
     doc->updateLayout();
                 
+    if (!isFocusable())
+        return;
+    
     doc->setFocusNode(this);
     
     if (this == rootEditableElement()) {    

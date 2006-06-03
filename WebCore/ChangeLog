@@ -1,3 +1,13 @@
+2006-06-02  Darin Adler  <darin@apple.com>
+        
+        Reviewed by Geoff, checked in by Maciej.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9236
+        REGRESSION: focus method does not work on some elements before they are laid out
+        
+        * dom/Element.cpp: (WebCore::Element::focus): Do the updateLayout call before
+        calling isFocusable, since isFocusable looks at the size of the renderer.
+        
 2006-06-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by darin.
