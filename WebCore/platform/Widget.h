@@ -92,6 +92,8 @@ namespace WebCore {
 
         virtual IntPoint mapFromGlobal(const IntPoint&) const;
 
+        float scaleFactor() const;
+
         bool hasFocus() const;
         void setFocus();
         void clearFocus();
@@ -137,8 +139,6 @@ namespace WebCore {
         NSView* getOuterView() const;
         void setView(NSView*);
         
-        float scaleFactor() const;
-
         void sendConsumedMouseUp();
         
         static void beforeMouseDown(NSView*);

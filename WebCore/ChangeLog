@@ -1,3 +1,10 @@
+2006-06-03  Darin Adler  <darin@apple.com>
+
+        - fix Windows build
+
+        * platform/Widget.h: Moved scaleFactor function out of Apple-specific
+        section of the header into the common part.
+
 2006-06-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.
