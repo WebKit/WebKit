@@ -216,12 +216,12 @@ endif
 
 USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html4.css $(WebCore)/css/quirks.css $(WebCore)/css/svg.css 
 UserAgentStyleSheets.h : css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
-	$< $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
+	perl $< $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # character set name table
 
 CharsetData.cpp : platform/make-charset-table.pl platform/character-sets.txt $(ENCODINGS_FILE)
-	$^ $(ENCODINGS_PREFIX) > $@
+	perl $^ $(ENCODINGS_PREFIX) > $@
 
 # lookup tables for old-style JavaScript bindings
 
@@ -233,22 +233,22 @@ CharsetData.cpp : platform/make-charset-table.pl platform/character-sets.txt $(E
 # HTML tag and attribute names
 
 HTMLNames.cpp : ksvg2/scripts/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in
-	$< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
+	perl $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
             --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --attrsNullNamespace --output .
 
 ifeq ($(findstring SVG_SUPPORT,$(FEATURE_DEFINES)), SVG_SUPPORT)
 
 # SVG tag and attribute names
 SVGNames.cpp : ksvg2/scripts/make_names.pl ksvg2/svg/svgtags.in ksvg2/svg/svgattrs.in
-	$< --tags $(WebCore)/ksvg2/svg/svgtags.in --attrs $(WebCore)/ksvg2/svg/svgattrs.in \
+	perl $< --tags $(WebCore)/ksvg2/svg/svgtags.in --attrs $(WebCore)/ksvg2/svg/svgattrs.in \
             --namespace SVG --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --attrsNullNamespace --output .
 
 XLinkNames.cpp : ksvg2/scripts/make_names.pl ksvg2/misc/xlinkattrs.in
-	$< --attrs $(WebCore)/ksvg2/misc/xlinkattrs.in \
+	perl $< --attrs $(WebCore)/ksvg2/misc/xlinkattrs.in \
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
             
 XMLNames.cpp : ksvg2/scripts/make_names.pl xml/xmlattrs.in
-	$< --attrs $(WebCore)/xml/xmlattrs.in \
+	perl $< --attrs $(WebCore)/xml/xmlattrs.in \
             --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" --output .
 
 # SVG CSS property names and value keywords
