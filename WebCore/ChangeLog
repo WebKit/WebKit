@@ -1,3 +1,23 @@
+2006-06-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/4537274> HiDPI: <canvas> needs to apply a 
+        scale. <canvas> needs to scale itself along with whatever scale 
+        factor is set on the window.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createDrawingContext): Get the scale 
+        factor and use it to create a larger buffer and to scale the 
+        CGContext.
+        * platform/Widget.h: Provide a new function that returns the user 
+        space scale factor.
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::scaleFactor): Get the scale factor from the 
+        window and return it.
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::scaleFactor): Just return 1.0f for now.
+
 2006-06-03  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by hyatt.

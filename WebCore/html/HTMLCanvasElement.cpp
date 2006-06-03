@@ -30,6 +30,8 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
+#include "Document.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "RenderHTMLCanvas.h"
@@ -149,18 +151,28 @@ void HTMLCanvasElement::createDrawingContext() const
 
     m_createdDrawingContext = true;
 
-    if (width() <= 0 || height() <= 0)
+    float unscaledWidth = width();
+    float unscaledHeight = height();
+    float scaleFactor = document()->view() ? document()->view()->scaleFactor() : 1.0f;
+    float wf = ceilf(unscaledWidth * scaleFactor);
+    float hf = ceilf(unscaledHeight * scaleFactor);
+    
+    if (!(wf > 0 && wf < UINT_MAX && hf > 0 && hf < UINT_MAX))
         return;
-    unsigned w = width();
+        
+    unsigned w = static_cast<unsigned>(wf);
+    unsigned h = static_cast<unsigned>(hf);
+    
     size_t bytesPerRow = w * 4;
     if (bytesPerRow / 4 != w) // check for overflow
         return;
-    m_data = fastCalloc(height(), bytesPerRow);
+    m_data = fastCalloc(h, bytesPerRow);
     if (!m_data)
         return;
 #if __APPLE__
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef bitmapContext = CGBitmapContextCreate(m_data, w, height(), 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextRef bitmapContext = CGBitmapContextCreate(m_data, w, h, 8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextScaleCTM(bitmapContext, w / unscaledWidth, h / unscaledHeight);
     CGColorSpaceRelease(colorSpace);
     m_drawingContext = new GraphicsContext(bitmapContext);
     CGContextRelease(bitmapContext);

@@ -295,6 +295,11 @@ void Widget::setView(NSView* view)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+float Widget::scaleFactor() const
+{
+    return [[getView() window] userSpaceScaleFactor];
+}
+
 NSView* Widget::getOuterView() const
 {
     // If this widget's view is a WebCoreFrameView the we resize its containing view, a WebFrameView.

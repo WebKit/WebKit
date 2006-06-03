@@ -136,6 +136,8 @@ namespace WebCore {
         NSView* getView() const;
         NSView* getOuterView() const;
         void setView(NSView*);
+        
+        float scaleFactor() const;
 
         void sendConsumedMouseUp();
         
