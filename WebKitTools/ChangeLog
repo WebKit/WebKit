@@ -1,3 +1,13 @@
+2006-06-03  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9290
+        Teach svn-apply and svn-unapply to patch ChangeLogs cleanly
+
+        * Scripts/svn-apply: Fixed to apply ChangeLog patches without failing.
+        * Scripts/svn-unapply: Ditto.  Also simplified reversing a deletion.
+
 2006-06-03  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by hyatt.
