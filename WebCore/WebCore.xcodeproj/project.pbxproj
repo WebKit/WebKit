@@ -454,8 +454,6 @@
 		93B70D7209EB0C7C009D8468 /* kjs_traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5609EB0C7C009D8468 /* kjs_traversal.h */; };
 		93B70D7509EB0C7C009D8468 /* kjs_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5909EB0C7C009D8468 /* kjs_window.cpp */; };
 		93B70D7609EB0C7C009D8468 /* kjs_window.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5A09EB0C7C009D8468 /* kjs_window.h */; };
-		93B70EB209EEE5B5009D8468 /* RenderEmptyApplet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70EB009EEE5B5009D8468 /* RenderEmptyApplet.cpp */; };
-		93B70EB309EEE5B5009D8468 /* RenderEmptyApplet.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70EB109EEE5B5009D8468 /* RenderEmptyApplet.h */; };
 		93B780CA09B3B7FE00690162 /* WidgetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B780C909B3B7FE00690162 /* WidgetClient.h */; };
 		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
 		93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */; };
@@ -2103,8 +2101,6 @@
 		93B70D5609EB0C7C009D8468 /* kjs_traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_traversal.h; sourceTree = "<group>"; };
 		93B70D5909EB0C7C009D8468 /* kjs_window.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_window.cpp; sourceTree = "<group>"; };
 		93B70D5A09EB0C7C009D8468 /* kjs_window.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_window.h; sourceTree = "<group>"; };
-		93B70EB009EEE5B5009D8468 /* RenderEmptyApplet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderEmptyApplet.cpp; sourceTree = "<group>"; };
-		93B70EB109EEE5B5009D8468 /* RenderEmptyApplet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderEmptyApplet.h; sourceTree = "<group>"; };
 		93B780C909B3B7FE00690162 /* WidgetClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WidgetClient.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationFront.h; sourceTree = "<group>"; };
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationFront.cpp; sourceTree = "<group>"; };
@@ -5190,8 +5186,6 @@
 				BCEA4829097D93020094C9E4 /* RenderView.h */,
 				BCEA482C097D93020094C9E4 /* RenderContainer.cpp */,
 				BCEA482D097D93020094C9E4 /* RenderContainer.h */,
-				93B70EB009EEE5B5009D8468 /* RenderEmptyApplet.cpp */,
-				93B70EB109EEE5B5009D8468 /* RenderEmptyApplet.h */,
 				A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */,
 				A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */,
 				A8EA73B20A1900E300A8EF5F /* RenderFileButton.cpp */,
@@ -5980,7 +5974,6 @@
 				93B70D7009EB0C7C009D8468 /* kjs_proxy.h in Headers */,
 				93B70D7209EB0C7C009D8468 /* kjs_traversal.h in Headers */,
 				93B70D7609EB0C7C009D8468 /* kjs_window.h in Headers */,
-				93B70EB309EEE5B5009D8468 /* RenderEmptyApplet.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Headers */,
 				14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */,
@@ -6819,7 +6812,6 @@
 				93B70D6F09EB0C7C009D8468 /* kjs_proxy.cpp in Sources */,
 				93B70D7109EB0C7C009D8468 /* kjs_traversal.cpp in Sources */,
 				93B70D7509EB0C7C009D8468 /* kjs_window.cpp in Sources */,
-				93B70EB209EEE5B5009D8468 /* RenderEmptyApplet.cpp in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
 				1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */,
 				14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */,

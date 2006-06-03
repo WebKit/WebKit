@@ -2923,14 +2923,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderEmptyApplet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderEmptyApplet.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderFieldset.cpp"
 				>
 			</File>

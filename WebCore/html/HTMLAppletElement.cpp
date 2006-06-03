@@ -28,7 +28,7 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "RenderApplet.h"
-#include "RenderEmptyApplet.h"
+#include "RenderInline.h"
 
 namespace WebCore {
 
@@ -135,9 +135,7 @@ RenderObject *HTMLAppletElement::createRenderer(RenderArena *arena, RenderStyle 
         return new (document()->renderArena()) RenderApplet(this, args);
     }
 
-    // ### remove me. we should never show an empty applet, instead
-    // render the alternative content given by the webpage
-    return new (document()->renderArena()) RenderEmptyApplet(this);
+    return new (document()->renderArena()) RenderInline(this);
 }
 
 #if __APPLE__

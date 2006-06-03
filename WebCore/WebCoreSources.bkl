@@ -323,7 +323,6 @@
 		rendering/RenderBR.cpp
 		rendering/RenderCanvas.cpp
 		rendering/RenderContainer.cpp
-		rendering/RenderEmptyApplet.cpp
 		rendering/RenderFlexibleBox.cpp
 		rendering/RenderFlow.cpp
 		rendering/RenderHTMLCanvas.cpp

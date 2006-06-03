@@ -1,3 +1,18 @@
+2006-06-03  Rob Buis  <buis@kde.org>
+
+        Reviewed by mjs.  Tweaked and landed by ddkilzer.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7281
+        With java disabled wrong information is displayed.
+
+        * fast/replaced/applet-rendering-java-disabled.html: Added.
+        * fast/replaced/applet-rendering-java-disabled-expected.checksum: Added.
+        * fast/replaced/applet-rendering-java-disabled-expected.html: Added.
+        * fast/replaced/applet-rendering-java-disabled-expected.png: Added.
+        * tables/mozilla_expected_failures/bugs/bug8499-expected.checksum: Changed after removing RenderEmptyApplet.
+        * tables/mozilla_expected_failures/bugs/bug8499-expected.png: Ditto.
+        * tables/mozilla_expected_failures/bugs/bug8499-expected.txt: Ditto.
+
 2006-06-03  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.

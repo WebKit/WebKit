@@ -12,28 +12,30 @@ layer at (0,0) size 800x600
           text run at (298,36) width 112: "original 'flavour'.)"
       RenderBlock (anonymous) at (0,70) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,88) size 780x167 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 778x165
-          RenderTableRow {TR} at (0,2) size 778x161
-            RenderTableCell {TD} at (2,2) size 774x161 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 770x157 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 768x155
-                  RenderTableRow {TR} at (0,2) size 768x95
-                    RenderTableCell {TD} at (2,2) size 764x95 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (156,2) size 452x39 [border: (2px outset #808080)]
-                        RenderTableSection {TBODY} at (2,2) size 448x35
-                          RenderTableRow {TR} at (0,2) size 448x31
-                            RenderTableCell {TD} at (2,2) size 444x31 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                              RenderEmptyApplet {APPLET} at (2,2) size 440x27
+      RenderTable {TABLE} at (0,88) size 780x140 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 778x138
+          RenderTableRow {TR} at (0,2) size 778x134
+            RenderTableCell {TD} at (2,2) size 774x134 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 770x130 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 768x128
+                  RenderTableRow {TR} at (0,2) size 768x68
+                    RenderTableCell {TD} at (2,2) size 764x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (376,2) size 12x12 [border: (2px outset #808080)]
+                        RenderTableSection {TBODY} at (2,2) size 8x8
+                          RenderTableRow {TR} at (0,2) size 8x4
+                            RenderTableCell {TD} at (2,2) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                              RenderInline {APPLET} at (0,0) size 0x0
+                                RenderText {#text} at (0,0) size 0x0
+                                RenderText {#text} at (0,0) size 0x0
                               RenderText {#text} at (0,0) size 0x0
-                      RenderBlock {P} at (2,57) size 760x36
+                      RenderBlock {P} at (2,30) size 760x36
                         RenderText {#text} at (0,0) size 725x36
                           text run at (0,0) width 423: "The Porto Elounda Mare is built on the sea front, on a 110,000 m2 "
                           text run at (423,0) width 302: "plot of land with a 150 meter long private sandy"
                           text run at (0,18) width 143: "beach. The view from "
                           text run at (143,18) width 381: "decorated with antique and contemporary furniture and rugs."
-                  RenderTableRow {TR} at (0,99) size 768x54
-                    RenderTableCell {TD} at (2,99) size 764x54 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,72) size 768x54
+                    RenderTableCell {TD} at (2,72) size 764x54 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                       RenderTable {TABLE} at (2,2) size 760x50 [border: (1px outset #808080)]
                         RenderTableSection {TBODY} at (1,1) size 758x48
                           RenderTableRow {TR} at (0,0) size 758x48
@@ -60,15 +62,15 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (669,9) size 89x30 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
                               RenderText {#text} at (6,6) size 77x18
                                 text run at (6,6) width 77: "17/07 - 27/8"
-      RenderBlock (anonymous) at (0,255) size 784x18
+      RenderBlock (anonymous) at (0,228) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {P} at (0,289) size 784x18
+      RenderBlock {P} at (0,262) size 784x18
         RenderText {#text} at (0,0) size 537x18
           text run at (0,0) width 416: "This table repeats the previous table, but removes the 'bad applet'. "
           text run at (416,0) width 121: "Table lays out OK."
-      RenderBlock (anonymous) at (0,323) size 784x18
+      RenderBlock (anonymous) at (0,296) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,341) size 780x158 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,314) size 780x158 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 778x156
           RenderTableRow {TR} at (0,2) size 778x152
             RenderTableCell {TD} at (2,2) size 774x152 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
