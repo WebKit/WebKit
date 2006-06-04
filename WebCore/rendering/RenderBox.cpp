@@ -1398,6 +1398,46 @@ void RenderBox::setStaticY(int staticY)
     m_staticY = staticY;
 }
 
+int RenderBox::containingBlockWidthForPositioned(const RenderObject* containingBlock) const
+{
+    if (containingBlock->isInline()) {
+        ASSERT(containingBlock->isRelPositioned());
+    
+        const RenderFlow* flow = static_cast<const RenderFlow*>(containingBlock);
+        InlineFlowBox* first = flow->firstLineBox();
+        InlineFlowBox* last = flow->lastLineBox();
+        
+        // If the containing block is empty, return a width of 0.
+        if (!first || !last)
+            return 0;
+
+        int fromLeft;
+        int fromRight;
+        if (containingBlock->style()->direction() == LTR) {
+            fromLeft = first->xPos() + first->borderLeft();
+            fromRight = last->xPos() + last->width() - last->borderRight();
+        } else {
+            fromRight = first->xPos() + first->width() - first->borderRight();
+            fromLeft = last->xPos() + last->borderLeft();
+        }
+
+        return max(0, (fromRight - fromLeft));
+    }
+
+    if (usesLineWidth() && isRenderBlock())
+        return static_cast<const RenderBlock*>(containingBlock)->lineWidth(m_y) + containingBlock->paddingLeft() + containingBlock->paddingRight();
+    return containingBlock->width() - containingBlock->borderLeft() - containingBlock->borderRight();
+}
+
+int RenderBox::containingBlockHeightForPositioned(const RenderObject* containingBlock) const
+{
+    // Even in strict mode (where we don't grow the root to fill the viewport) other browsers
+    // position as though the root fills the viewport.
+    if (containingBlock->isRoot())
+        return containingBlock->availableHeight();
+    return containingBlock->height() - containingBlock->borderTop() - containingBlock->borderBottom();
+}
+
 void RenderBox::calcAbsoluteHorizontal()
 {
     if (isReplaced()) {
@@ -1434,10 +1474,8 @@ void RenderBox::calcAbsoluteHorizontal()
     // We don't use containingBlock(), since we may be positioned by an enclosing
     // relative positioned inline.
     const RenderObject* containerBlock = container();
-    
-    // FIXME: This is incorrect for cases where the container block is a relatively
-    // positioned inline.
-    const int containerWidth = containingBlockWidth() + containerBlock->paddingLeft() + containerBlock->paddingRight();
+
+    const int containerWidth = containingBlockWidthForPositioned(containerBlock);
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
@@ -1696,6 +1734,21 @@ void RenderBox::calcAbsoluteHorizontalValues(Length width, const RenderObject* c
     }
 
     // Use computed values to calculate the horizontal position.
+
+    // FIXME: This hack is needed to calculate the xPos for a 'rtl' relatively 
+    // positioned, inline containing block because right now, it is using the xPos 
+    // of the first line box when really it should use the last line box.  When 
+    // this is fixed elsewhere, this block should be removed.
+    if (containerBlock->isInline() && containerBlock->style()->direction() == RTL) {
+        const RenderFlow* flow = static_cast<const RenderFlow*>(containerBlock);
+        InlineFlowBox* firstLine = flow->firstLineBox();
+        InlineFlowBox* lastLine = flow->lastLineBox();
+        if (firstLine && lastLine && firstLine != lastLine) {
+            xPos = leftValue + marginLeftValue + lastLine->borderLeft() + (lastLine->xPos() - firstLine->xPos());
+            return;
+        }
+    }
+
     xPos = leftValue + marginLeftValue + containerBlock->borderLeft();
 }
 
@@ -1716,9 +1769,7 @@ void RenderBox::calcAbsoluteVertical()
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     const RenderObject* containerBlock = container();
 
-    // Even in strict mode (where we don't grow the root to fill the viewport) other browsers
-    // position as though the root fills the viewport.
-    const int containerHeight = containerBlock->isRoot() ? containerBlock->availableHeight() : (containerBlock->height() - containerBlock->borderTop() - containerBlock->borderBottom());
+    const int containerHeight = containingBlockHeightForPositioned(containerBlock);
     
     const int bordersPlusPadding = borderTop() + borderBottom() + paddingTop() + paddingBottom();
     const Length marginTop = style()->marginTop();
@@ -1942,12 +1993,11 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
     // (block-style-comments in this function correspond to text from the spec and
     // the numbers correspond to numbers in spec)
 
-    // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
+    // We don't use containingBlock(), since we may be positioned by an enclosing
+    // relative positioned inline.
     const RenderObject* containerBlock = container();
 
-    // FIXME: This is incorrect for cases where the container block is a relatively
-    // positioned inline.
-    const int containerWidth = containingBlockWidth() + containerBlock->paddingLeft() + containerBlock->paddingRight();
+    const int containerWidth = containingBlockWidthForPositioned(containerBlock);
     
     // To match WinIE, in quirks mode use the parent's 'direction' property 
     // instead of the the container block's.
@@ -2090,8 +2140,22 @@ void RenderBox::calcAbsoluteHorizontalReplaced()
     if (totalWidth > containerWidth && (containerDirection == RTL))
         leftValue = containerWidth - (totalWidth - leftValue);
 
-
     // Use computed values to calculate the horizontal position.
+
+    // FIXME: This hack is needed to calculate the xPos for a 'rtl' relatively 
+    // positioned, inline containing block because right now, it is using the xPos 
+    // of the first line box when really it should use the last line box.  When 
+    // this is fixed elsewhere, this block should be removed.
+    if (containerBlock->isInline() && containerBlock->style()->direction() == RTL) {
+        const RenderFlow* flow = static_cast<const RenderFlow*>(containerBlock);
+        InlineFlowBox* firstLine = flow->firstLineBox();
+        InlineFlowBox* lastLine = flow->lastLineBox();
+        if (firstLine && lastLine && firstLine != lastLine) {
+            m_x = leftValue + m_marginLeft + lastLine->borderLeft() + (lastLine->xPos() - firstLine->xPos());
+            return;
+        }
+    }
+
     m_x = leftValue + m_marginLeft + containerBlock->borderLeft();
 }
 
@@ -2106,9 +2170,7 @@ void RenderBox::calcAbsoluteVerticalReplaced()
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     const RenderObject* containerBlock = container();
 
-    // Even in strict mode (where we don't grow the root to fill the viewport)
-    // other browsers position as though the root fills the viewport.
-    const int containerHeight = containerBlock->isRoot() ? containerBlock->availableHeight() : (containerBlock->height() - containerBlock->borderTop() - containerBlock->borderBottom());
+    const int containerHeight = containingBlockHeightForPositioned(containerBlock);
 
     // Variables to solve.
     Length top = style()->top();

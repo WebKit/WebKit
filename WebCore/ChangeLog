@@ -1,3 +1,21 @@
+2006-06-04  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by hyatt.
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9213
+          Absolutely positioned objects with relatively positioned inline 
+          containing blocks are rendered incorrectly
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::containingBlockHeightForPositioned):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteHorizontalReplaced):
+        (WebCore::RenderBox::calcAbsoluteVerticalReplaced):
+        * rendering/RenderBox.h:
+
 2006-06-04  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

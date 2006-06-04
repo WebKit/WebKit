@@ -155,6 +155,9 @@ protected:
     void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph, int _tx, int _ty, int w, int h);
     void outlineBox(GraphicsContext*, int _tx, int _ty, const char *color = "red");
 
+    int containingBlockWidthForPositioned(const RenderObject* containingBlock) const;
+    int containingBlockHeightForPositioned(const RenderObject* containingBlock) const;
+
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();
     void calcAbsoluteHorizontalValues(Length width, const RenderObject* cb, TextDirection containerDirection,
