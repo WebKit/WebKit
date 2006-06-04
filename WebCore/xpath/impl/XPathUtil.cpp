@@ -23,11 +23,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
+#include "XPathUtil.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathUtil.h"
 #include "Node.h"
 
 namespace WebCore {
@@ -78,4 +79,3 @@ bool isValidContextNode(Node* node)
 }
 
 #endif // XPATH_SUPPORT
-

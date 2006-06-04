@@ -25,22 +25,21 @@
  */
 
 %{
+
 #include "config.h"
 
-#include "DeprecatedString.h"
-#include "ExceptionCode.h"
-#include "XPathEvaluator.h"
+#if XPATH_SUPPORT
+
 #include "XPathFunctions.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
 #include "XPathPath.h"
 #include "XPathPredicate.h"
-#include "XPathStep.h"
-#include "XPathUtil.h"
 #include "XPathVariableReference.h"
 
 #define YYDEBUG 0
-#define YYPARSE_PARAM parser
+#define YYPARSE_PARAM parserParameter
+#define PARSER static_cast<Parser*>(parserParameter)
 
 using namespace WebCore;
 using namespace XPath;
@@ -51,14 +50,15 @@ using namespace XPath;
 
 %union
 {
-    Step::AxisType axisType;
-    int        num;
-    String *str;
+    Step::Axis axis;
+    NumericOp::Opcode numop;
+    EqTestOp::Opcode eqop;
+    String* str;
     Expression* expr;
     Vector<Predicate*>* predList;
     Vector<Expression*>* argList;
     Step* step;
-    LocationPath *locationPath;
+    LocationPath* locationPath;
 }
 
 %{
@@ -68,20 +68,22 @@ void xpathyyerror(const char *str) { }
     
 %}
 
-%left <num> MULOP RELOP EQOP
-%left <str> PLUS MINUS
-%left <str> OR AND
-%token <axisType> AXISNAME
+%left <numop> MULOP RELOP
+%left <eqop> EQOP
+%left PLUS MINUS
+%left OR AND
+%token <axis> AXISNAME
 %token <str> NODETYPE PI FUNCTIONNAME LITERAL
 %token <str> VARIABLEREFERENCE NUMBER
-%token <str> DOTDOT SLASHSLASH NAMETEST
+%token DOTDOT SLASHSLASH
+%token <str> NAMETEST
 %token ERROR
 
 %type <locationPath> LocationPath
 %type <locationPath> AbsoluteLocationPath
 %type <locationPath> RelativeLocationPath
 %type <step> Step
-%type <axisType> AxisSpecifier
+%type <axis> AxisSpecifier
 %type <step> DescendantOrSelf
 %type <str> NodeTest
 %type <expr> Predicate
@@ -108,7 +110,7 @@ void xpathyyerror(const char *str) { }
 Expr:
     OrExpr
     {
-        static_cast<Parser*>(parser)->m_topExpr = $1;
+        PARSER->m_topExpr = $1;
     }
     ;
 
@@ -128,7 +130,7 @@ AbsoluteLocationPath:
     '/'
     {
         $$ = new LocationPath;
-        static_cast<Parser*>(parser)->registerParseNode($$);
+        PARSER->registerParseNode($$);
     }
     |
     '/' RelativeLocationPath
@@ -140,7 +142,7 @@ AbsoluteLocationPath:
     {
         $$ = $2;
         $$->m_steps.insert(0, $1);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
+        PARSER->unregisterParseNode($1);
     }
     ;
 
@@ -149,22 +151,22 @@ RelativeLocationPath:
     {
         $$ = new LocationPath;
         $$->m_steps.append($1);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
+        PARSER->unregisterParseNode($1);
+        PARSER->registerParseNode($$);
     }
     |
     RelativeLocationPath '/' Step
     {
         $$->m_steps.append($3);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($3);
     }
     |
     RelativeLocationPath DescendantOrSelf Step
     {
         $$->m_steps.append($2);
         $$->m_steps.append($3);
-        static_cast<Parser*>(parser)->unregisterParseNode($2);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($2);
+        PARSER->unregisterParseNode($3);
     }
     ;
 
@@ -172,37 +174,31 @@ Step:
     NodeTest
     {
         $$ = new Step(Step::ChildAxis, *$1);
-        delete $1;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($1);
+        PARSER->deleteString($1);
+        PARSER->registerParseNode($$);
     }
     |
     NodeTest PredicateList
     {
         $$ = new Step(Step::ChildAxis, *$1, *$2);
-        delete $1;
-        delete $2;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($1);
-        static_cast<Parser*>(parser)->unregisterPredicateVector($2);
+        PARSER->deleteString($1);
+        PARSER->deletePredicateVector($2);
+        PARSER->registerParseNode($$);
     }
     |
     AxisSpecifier NodeTest
     {
         $$ = new Step($1, *$2);
-        delete $2;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($2);
+        PARSER->deleteString($2);
+        PARSER->registerParseNode($$);
     }
     |
     AxisSpecifier NodeTest PredicateList
     {
-        $$ = new Step($1, *$2,  *$3);
-        delete $2;
-        delete $3;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($2);
-        static_cast<Parser*>(parser)->unregisterPredicateVector($3);
+        $$ = new Step($1, *$2, *$3);
+        PARSER->deleteString($2);
+        PARSER->deletePredicateVector($3);
+        PARSER->registerParseNode($$);
     }
     |
     AbbreviatedStep
@@ -220,35 +216,29 @@ AxisSpecifier:
 NodeTest:
     NAMETEST
     {
-        const int colon = $1->find(':');
-        if (colon > -1) {
-            String prefix($1->left(colon));
-            XPathNSResolver *resolver = static_cast<Parser*>(parser)->resolver();
+        int colon = $$->find(':');
+        if (colon >= 0) {
+            XPathNSResolver* resolver = PARSER->resolver();
             if (!resolver) {
-                static_cast<Parser*>(parser)->m_gotNamespaceError = true;
+                PARSER->m_gotNamespaceError = true;
                 YYABORT;
             }
-            
-            static_cast<Parser*>(parser)->m_currentNamespaceURI = resolver->lookupNamespaceURI(prefix);
-            
-            if (static_cast<Parser*>(parser)->m_currentNamespaceURI.isNull()) {
-                static_cast<Parser*>(parser)->m_gotNamespaceError = true;
+            PARSER->m_currentNamespaceURI = resolver->lookupNamespaceURI($$->left(colon));
+            if (PARSER->m_currentNamespaceURI.isNull()) {
+                PARSER->m_gotNamespaceError = true;
                 YYABORT;
             }
-            
             $$ = new String($1->substring(colon + 1));
-            delete $1;
-            static_cast<Parser*>(parser)->registerString($$);
-            static_cast<Parser*>(parser)->unregisterString($1);
+            PARSER->deleteString($1);
+            PARSER->registerString($$);
         }
     }
     |
     NODETYPE '(' ')'
     {
         $$ = new String(*$1 + "()");
-        delete $1;
-        static_cast<Parser*>(parser)->registerString($$);
-        static_cast<Parser*>(parser)->unregisterString($1);
+        PARSER->deleteString($1);
+        PARSER->registerString($$);
     }
     |
     PI '(' ')'
@@ -257,11 +247,9 @@ NodeTest:
     {
         String s = *$1 + " " + *$3;
         $$ = new String(s.deprecatedString().stripWhiteSpace());
-        delete $1;
-        delete $3;
-        static_cast<Parser*>(parser)->registerString($$);
-        static_cast<Parser*>(parser)->unregisterString($1);        
-        static_cast<Parser*>(parser)->unregisterString($3);
+        PARSER->deleteString($1);        
+        PARSER->deleteString($3);
+        PARSER->registerString($$);
     }
     ;
 
@@ -270,14 +258,14 @@ PredicateList:
     {
         $$ = new Vector<Predicate*>;
         $$->append(new Predicate($1));
-        static_cast<Parser*>(parser)->registerPredicateVector($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
+        PARSER->unregisterParseNode($1);
+        PARSER->registerPredicateVector($$);
     }
     |
     PredicateList Predicate
     {
         $$->append(new Predicate($2));
-        static_cast<Parser*>(parser)->unregisterParseNode($2);
+        PARSER->unregisterParseNode($2);
     }
     ;
 
@@ -292,7 +280,7 @@ DescendantOrSelf:
     SLASHSLASH
     {
         $$ = new Step(Step::DescendantOrSelfAxis, "node()");
-        static_cast<Parser*>(parser)->registerParseNode($$);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -300,13 +288,13 @@ AbbreviatedStep:
     '.'
     {
         $$ = new Step(Step::SelfAxis, "node()");
-        static_cast<Parser*>(parser)->registerParseNode($$);
+        PARSER->registerParseNode($$);
     }
     |
     DOTDOT
     {
         $$ = new Step(Step::ParentAxis, "node()");
-        static_cast<Parser*>(parser)->registerParseNode($$);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -314,9 +302,8 @@ PrimaryExpr:
     VARIABLEREFERENCE
     {
         $$ = new VariableReference(*$1);
-        delete $1;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($1);
+        PARSER->deleteString($1);
+        PARSER->registerParseNode($$);
     }
     |
     '(' Expr ')'
@@ -327,17 +314,15 @@ PrimaryExpr:
     LITERAL
     {
         $$ = new StringExpression(*$1);
-        delete $1;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($1);        
+        PARSER->deleteString($1);        
+        PARSER->registerParseNode($$);
     }
     |
     NUMBER
     {
         $$ = new Number($1->deprecatedString().toDouble());
-        delete $1;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($1);
+        PARSER->deleteString($1);
+        PARSER->registerParseNode($$);
     }
     |
     FunctionCall
@@ -346,20 +331,17 @@ PrimaryExpr:
 FunctionCall:
     FUNCTIONNAME '(' ')'
     {
-        $$ = FunctionLibrary::self().createFunction($1->deprecatedString().latin1());
-        delete $1;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($1);
+        $$ = createFunction(*$1);
+        PARSER->deleteString($1);
+        PARSER->registerParseNode($$);
     }
     |
     FUNCTIONNAME '(' ArgumentList ')'
     {
-        $$ = FunctionLibrary::self().createFunction($1->deprecatedString().latin1(), *$3);
-        delete $1;
-        delete $3;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterString($1);
-        static_cast<Parser*>(parser)->unregisterExpressionVector($3);
+        $$ = createFunction(*$1, *$3);
+        PARSER->deleteString($1);
+        PARSER->deleteExpressionVector($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -368,21 +350,20 @@ ArgumentList:
     {
         $$ = new Vector<Expression*>;
         $$->append($1);
-        static_cast<Parser*>(parser)->registerExpressionVector($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
+        PARSER->unregisterParseNode($1);
+        PARSER->registerExpressionVector($$);
     }
     |
     ArgumentList ',' Argument
     {
         $$->append($3);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($3);
     }
     ;
 
 Argument:
     Expr
     ;
-
 
 UnionExpr:
     PathExpr
@@ -392,9 +373,9 @@ UnionExpr:
         $$ = new Union;
         $$->addSubExpression($1);
         $$->addSubExpression($3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -405,17 +386,14 @@ PathExpr:
     }
     |
     FilterExpr
-    {
-        $$ = $1;
-    }
     |
     FilterExpr '/' RelativeLocationPath
     {
         $3->m_absolute = true;
         $$ = new Path(static_cast<Filter*>($1), $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     |
     FilterExpr DescendantOrSelf RelativeLocationPath
@@ -423,25 +401,22 @@ PathExpr:
         $3->m_steps.insert(0, $2);
         $3->m_absolute = true;
         $$ = new Path(static_cast<Filter*>($1), $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($2);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
 FilterExpr:
     PrimaryExpr
-    {
-        $$ = $1;
-    }
     |
     PrimaryExpr PredicateList
     {
         $$ = new Filter($1, *$2);
-        delete $2;
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterPredicateVector($2);
+        PARSER->unregisterParseNode($1);
+        PARSER->deletePredicateVector($2);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -451,9 +426,9 @@ OrExpr:
     OrExpr OR AndExpr
     {
         $$ = new LogicalOp(LogicalOp::OP_Or, $1, $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -463,9 +438,9 @@ AndExpr:
     AndExpr AND EqualityExpr
     {
         $$ = new LogicalOp(LogicalOp::OP_And, $1, $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -475,9 +450,9 @@ EqualityExpr:
     EqualityExpr EQOP RelationalExpr
     {
         $$ = new EqTestOp($2, $1, $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -487,9 +462,9 @@ RelationalExpr:
     RelationalExpr RELOP AdditiveExpr
     {
         $$ = new NumericOp($2, $1, $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -499,17 +474,17 @@ AdditiveExpr:
     AdditiveExpr PLUS MultiplicativeExpr
     {
         $$ = new NumericOp(NumericOp::OP_Add, $1, $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     |
     AdditiveExpr MINUS MultiplicativeExpr
     {
         $$ = new NumericOp(NumericOp::OP_Sub, $1, $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -519,9 +494,9 @@ MultiplicativeExpr:
     MultiplicativeExpr MULOP UnaryExpr
     {
         $$ = new NumericOp($2, $1, $3);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($1);
-        static_cast<Parser*>(parser)->unregisterParseNode($3);
+        PARSER->unregisterParseNode($1);
+        PARSER->unregisterParseNode($3);
+        PARSER->registerParseNode($$);
     }
     ;
 
@@ -532,9 +507,11 @@ UnaryExpr:
     {
         $$ = new Negative;
         $$->addSubExpression($2);
-        static_cast<Parser*>(parser)->registerParseNode($$);
-        static_cast<Parser*>(parser)->unregisterParseNode($2);
+        PARSER->unregisterParseNode($2);
+        PARSER->registerParseNode($$);
     }
     ;
 
+%%
 
+#endif

@@ -1,5 +1,5 @@
 /*
- * util.h - Copyright 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,53 +23,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathValue_H
 #define XPathValue_H
 
 #if XPATH_SUPPORT
 
+#include "PlatformString.h"
 #include "XPathUtil.h"
 
 namespace WebCore {
-namespace XPath {
-    
-class Value {
-public:
-    enum Type { NodeVector_, Boolean, Number, String_ };
-    
-    Value();
-    Value(Node*);
-    Value(const NodeVector&);
-    Value(bool);
-    Value(unsigned);
-    Value(unsigned long);
-    Value(double);
-    Value(const String&);
-    
-    Type type() const { return m_type; }
 
-    bool isNodeVector() const { return m_type == NodeVector_; }
-    bool isBoolean() const { return m_type == Boolean; }
-    bool isNumber() const { return m_type == Number; }
-    bool isString() const { return m_type == String_; }
-
-    const NodeVector& toNodeVector() const;    
-    bool toBoolean() const;
-    double toNumber() const;
-    String toString() const;
+    namespace XPath {
     
-private:
-    Type m_type;
-    NodeVector m_nodeVector;
-    bool m_bool;
-    double m_number;
-    String m_string;
-};
+        class Value {
+        public:
+            enum Type { NodeVectorValue, BooleanValue, NumberValue, StringValue };
+            
+            Value();
+            Value(Node*);
+            Value(const NodeVector&);
+            Value(bool);
+            Value(unsigned);
+            Value(unsigned long);
+            Value(double);
+            Value(const String&);
+            
+            Type type() const { return m_type; }
 
-}
+            bool isNodeVector() const { return m_type == NodeVectorValue; }
+            bool isBoolean() const { return m_type == BooleanValue; }
+            bool isNumber() const { return m_type == NumberValue; }
+            bool isString() const { return m_type == StringValue; }
+
+            const NodeVector& toNodeVector() const;    
+            bool toBoolean() const;
+            double toNumber() const;
+            String toString() const;
+            
+        private:
+            Type m_type;
+            NodeVector m_nodeVector;
+            bool m_bool;
+            double m_number;
+            String m_string;
+        };
+
+    }
 }
 
 #endif // XPATH_SUPPORT
 
 #endif // XPath_Value_H
-

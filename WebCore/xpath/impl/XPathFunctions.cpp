@@ -25,38 +25,22 @@
  */
 
 #include "config.h"
+#include "XPathFunctions.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathFunctions.h"
-
-#include "DeprecatedString.h"
 #include "NamedAttrMap.h"
-#include "Node.h"
 #include "XPathValue.h"
-#include <math.h>
-
-#ifdef _MSC_VER // No round() in standard C library for Visual Studio
-static double round(double val)
-{
-    double valFloor = floor(val);
-    if (val >= 0)
-        return (val - valFloor < 0.5) ? valFloor : (valFloor+1.0);
-    else
-        return (val - valFloor <= 0.5) ? valFloor : (valFloor+1.0);
-}
-#endif
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 namespace XPath {
         
-#define DEFINE_FUNCTION_CREATOR(Class) \
-static Function *create##Class() { return new Class; }
+#define DEFINE_FUNCTION_CREATOR(Class) static Function* create##Class() { return new Class; }
 
-class Interval
-{
+class Interval {
 public:
-    static const int Inf =-1;
+    static const int Inf = -1;
 
     Interval();
     Interval(int value);
@@ -64,193 +48,129 @@ public:
 
     bool contains(int value) const;
 
-    String asString() const;
-
 private:
     int m_min;
     int m_max;
 };
 
-class FunLast : public Function
-{
-public:
+struct FunctionRec {
+    typedef Function *(*FactoryFn)();
+    FactoryFn factoryFn;
+    Interval args;
+};
+
+static HashMap<String, FunctionRec>* functionMap;
+
+class FunLast : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunPosition : public Function
-{
-public:
+class FunPosition : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunCount : public Function
-{
-public:
+class FunCount : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunLocalName : public Function
-{
-public:
+class FunLocalName : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunNamespaceURI : public Function
-{
-public:
+class FunNamespaceURI : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunName : public Function
-{
-public:
+class FunName : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunString : public Function
-{
-private:
+class FunString : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunConcat : public Function
-{
-private:
+class FunConcat : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunStartsWith : public Function
-{
-private:
+class FunStartsWith : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunContains : public Function
-{
-private:
+class FunContains : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunSubstringBefore : public Function
-{
-private:
+class FunSubstringBefore : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunSubstringAfter : public Function
-{
-private:
+class FunSubstringAfter : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunSubstring : public Function
-{
-private:
+class FunSubstring : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunStringLength : public Function
-{
-private:
+class FunStringLength : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunNormalizeSpace : public Function
-{
-private:
+class FunNormalizeSpace : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunTranslate : public Function
-{
-private:
+class FunTranslate : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunBoolean : public Function
-{
-private:
+class FunBoolean : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunNot : public Function
-{
-private:
+class FunNot : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunTrue : public Function
-{
-public:
+class FunTrue : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunFalse : public Function
-{
-public:
+class FunFalse : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunLang : public Function
-{
-public:
+class FunLang : public Function {
     virtual bool isConstant() const;
-
-private:
     virtual Value doEvaluate() const;
 };
 
-class FunNumber : public Function
-{
-private:
+class FunNumber : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunSum : public Function
-{
-private:
+class FunSum : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunFloor : public Function
-{
-private:
+class FunFloor : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunCeiling : public Function
-{
-private:
+class FunCeiling : public Function {
     virtual Value doEvaluate() const;
 };
 
-class FunRound : public Function
-{
-private:
+class FunRound : public Function {
     virtual Value doEvaluate() const;
 };
 
@@ -286,25 +206,22 @@ DEFINE_FUNCTION_CREATOR(FunRound)
 
 #undef DEFINE_FUNCTION_CREATOR
 
-Interval::Interval()
-    : m_min(Inf),
-    m_max(Inf)
+inline Interval::Interval()
+    : m_min(Inf), m_max(Inf)
 {
 }
 
-Interval::Interval(int value)
-    : m_min(value),
-    m_max(value)
+inline Interval::Interval(int value)
+    : m_min(value), m_max(value)
 {
 }
 
-Interval::Interval(int min, int max)
-    : m_min(min),
-    m_max(max)
+inline Interval::Interval(int min, int max)
+    : m_min(min), m_max(max)
 {
 }
 
-bool Interval::contains(int value) const
+inline bool Interval::contains(int value) const
 {
     if (m_min == Inf && m_max == Inf)
         return true;
@@ -316,27 +233,6 @@ bool Interval::contains(int value) const
         return value >= m_min;
 
     return value >= m_min && value <= m_max;
-}
-
-String Interval::asString() const
-{
-    String s = "[";
-
-    if (m_min == Inf)
-        s += "-Infinity";
-    else
-        s += String::number(m_min);
-
-    s += "..";
-
-    if (m_max == Inf)
-        s += "Infinity";
-    else
-        s += String::number(m_max);
-
-    s += "]";
-
-    return s;
 }
 
 void Function::setArguments(const Vector<Expression*>& args)
@@ -546,11 +442,11 @@ Value FunSubstringAfter::doEvaluate() const
 Value FunSubstring::doEvaluate() const
 {
     String s = arg(0)->evaluate().toString();
-    long pos = long(round(arg(1)->evaluate().toNumber()));
+    long pos = lround(arg(1)->evaluate().toNumber());
     bool haveLength = argCount() == 3;
     long len = -1;
     if (haveLength)
-        len = long(round(arg(2)->evaluate().toNumber()));
+        len = lround(arg(2)->evaluate().toNumber());
 
     if (pos > long(s.length())) 
         return "";
@@ -632,17 +528,12 @@ Value FunLang::doEvaluate() const
 
     RefPtr<Node> langNode = 0;
     Node* node = evaluationContext().node.get();
-
-    String xms("xms");
-    String xmsnsURI = node->lookupNamespaceURI(xms);
-
+    String xmsnsURI = node->lookupNamespaceURI("xms");
     while (node) {
-        NamedAttrMap *attrs = node->attributes();
-        String l("lang");
-        langNode = attrs->getNamedItemNS(xmsnsURI, l);
+        NamedAttrMap* attrs = node->attributes();
+        langNode = attrs->getNamedItemNS(xmsnsURI, "lang");
         if (langNode)
             break;
-
         node = node->parentNode();
     }
 
@@ -655,8 +546,8 @@ Value FunLang::doEvaluate() const
     int index = langNodeValue.find('-');
     if (index != -1)
         langNodeValue = langNodeValue.left(index);
-    
-    return langNodeValue.lower() == lang.lower();
+
+    return equalIgnoringCase(langNodeValue, lang);
 }
 
 bool FunLang::isConstant() const
@@ -696,16 +587,12 @@ Value FunSum::doEvaluate() const
 
 Value FunFloor::doEvaluate() const
 {
-    double num = arg(0)->evaluate().toNumber();
-
-    return floor(num);
+    return floor(arg(0)->evaluate().toNumber());
 }
 
 Value FunCeiling::doEvaluate() const
 {
-    double num = arg(0)->evaluate().toNumber();
-
-    return ceil(num);
+    return ceil(arg(0)->evaluate().toNumber());
 }
 
 Value FunRound::doEvaluate() const
@@ -713,82 +600,70 @@ Value FunRound::doEvaluate() const
     return round(arg(0)->evaluate().toNumber());
 }
 
-struct FunctionLibrary::FunctionRec
+static void createFunctionMap()
 {
-    typedef Function *(*FactoryFn)();
-
-    FactoryFn factoryFn;
-    Interval args;
-};
-
-struct FunctionMapping
-{
-    const char *name;
-    FunctionLibrary::FunctionRec function;
-};
-
-FunctionLibrary& FunctionLibrary::self()
-{
-    static FunctionLibrary instance;
-    return instance;
-}
-
-FunctionLibrary::FunctionLibrary()
-{
-    static const FunctionMapping functions[] = {
-    { "last", { &createFunLast, 0 } },
-    { "last", { &createFunLast, 0 } },
-    { "position", { &createFunPosition, 0 } },
-    { "count", { &createFunCount, 1 } },
-    { "sum", { &createFunSum, 1 } },
-    { "local-name", { &createFunLocalName, Interval(0, 1) } },
-    { "namespace-uri", { &createFunNamespaceURI, Interval(0, 1) } },
-    { "name", { &createFunName, Interval(0, 1) } },
-    { "string", { &createFunString, Interval(0, 1) } },
-    { "concat", { &createFunConcat, Interval(2, Interval::Inf) } },
-    { "starts-with", { &createFunStartsWith, 2 } },
-    { "contains", { &createFunContains, 2 } },
-    { "substring-before", { &createFunSubstringBefore, 2 } },
-    { "substring-after", { &createFunSubstringAfter, 2 } },
-    { "substring", { &createFunSubstring, Interval(2, 3) } },
-    { "string-length", { &createFunStringLength, 1 } },
-    { "normalize-space", { &createFunNormalizeSpace, 1 } },
-    { "translate", { &createFunTranslate, 3 } },
-        
-    { "boolean", { &createFunBoolean, 1 } },
-    { "not", { &createFunNot, 1 } },
-    { "true", { &createFunTrue, 0 } },
-    { "false", { &createFunFalse, 0 } },
-    { "lang", { &createFunLang, 1 } },
-        
-    { "number", { &createFunNumber, 1 } },
-    { "floor", { &createFunFloor, 1 } },
-    { "ceiling", { &createFunCeiling, 1 } },
-    { "round", { &createFunRound, 1 } }
+    struct FunctionMapping {
+        const char *name;
+        FunctionRec function;
     };
-    const unsigned int numFunctions = sizeof(functions) / sizeof(functions[ 0 ]);
-        
+    static const FunctionMapping functions[] = {
+        { "boolean", { &createFunBoolean, 1 } },
+        { "ceiling", { &createFunCeiling, 1 } },
+        { "concat", { &createFunConcat, Interval(2, Interval::Inf) } },
+        { "contains", { &createFunContains, 2 } },
+        { "count", { &createFunCount, 1 } },
+        { "false", { &createFunFalse, 0 } },
+        { "floor", { &createFunFloor, 1 } },
+        { "lang", { &createFunLang, 1 } },
+        { "last", { &createFunLast, 0 } },
+        { "local-name", { &createFunLocalName, Interval(0, 1) } },
+        { "name", { &createFunName, Interval(0, 1) } },
+        { "namespace-uri", { &createFunNamespaceURI, Interval(0, 1) } },
+        { "normalize-space", { &createFunNormalizeSpace, 1 } },
+        { "not", { &createFunNot, 1 } },
+        { "number", { &createFunNumber, 1 } },
+        { "position", { &createFunPosition, 0 } },
+        { "round", { &createFunRound, 1 } },
+        { "starts-with", { &createFunStartsWith, 2 } },
+        { "string", { &createFunString, Interval(0, 1) } },
+        { "string-length", { &createFunStringLength, 1 } },
+        { "substring", { &createFunSubstring, Interval(2, 3) } },
+        { "substring-after", { &createFunSubstringAfter, 2 } },
+        { "substring-before", { &createFunSubstringBefore, 2 } },
+        { "sum", { &createFunSum, 1 } },
+        { "translate", { &createFunTranslate, 3 } },
+        { "true", { &createFunTrue, 0 } },
+    };
+    const unsigned int numFunctions = sizeof(functions) / sizeof(functions[0]);
+
+    functionMap = new HashMap<String, FunctionRec>;
     for (unsigned i = 0; i < numFunctions; ++i)
-        m_functionDict.set(functions[i].name, functions[i].function);
+        functionMap->set(functions[i].name, functions[i].function);
 }
 
-Function *FunctionLibrary::createFunction(const char *name, const Vector<Expression*> &args) const
+Function* createFunction(const String& name, const Vector<Expression*>& args)
 {
-    if (!m_functionDict.contains(name)) {
+    if (!functionMap)
+        createFunctionMap();
+
+    if (!functionMap->contains(name)) {
+        deleteAllValues(args);
+
         // Return a dummy function instead of 0.
-        Function *funcTrue = m_functionDict.get("true").factoryFn();
+        Function* funcTrue = functionMap->get("true").factoryFn();
         funcTrue->setName("true");
         return funcTrue;
     }
 
-    FunctionRec functionRec = m_functionDict.get(name);
-    if (!functionRec.args.contains(args.size()))
+    FunctionRec functionRec = functionMap->get(name);
+    if (!functionRec.args.contains(args.size())) {
+        deleteAllValues(args);
         return 0;
+    }
 
-    Function *function = functionRec.factoryFn();
+    Function* function = functionRec.factoryFn();
     function->setArguments(args);
     function->setName(name);
-    
     return function;
 }
 

@@ -1,5 +1,5 @@
 /*
- * step.h - Copyright 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,56 +23,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathStep_H
 #define XPathStep_H
 
 #if XPATH_SUPPORT
 
-#include "XPathPredicate.h"
+#include "Node.h"
+#include "XPathExpressionNode.h"
 #include "XPathUtil.h"
 
-#include "Node.h"
-
 namespace WebCore {
-namespace XPath {
+
+    namespace XPath {
+
+        class Predicate;
         
-class Step : public ParseNode
-{
-public:
-    enum AxisType {
-        AncestorAxis=1, AncestorOrSelfAxis, AttributeAxis,
-        ChildAxis, DescendantAxis, DescendantOrSelfAxis,
-        FollowingAxis, FollowingSiblingAxis, NamespaceAxis,
-        ParentAxis, PrecedingAxis, PrecedingSiblingAxis,
-        SelfAxis
-    };
+        class Step : public ParseNode, Noncopyable {
+        public:
+            enum Axis {
+                AncestorAxis, AncestorOrSelfAxis, AttributeAxis,
+                ChildAxis, DescendantAxis, DescendantOrSelfAxis,
+                FollowingAxis, FollowingSiblingAxis, NamespaceAxis,
+                ParentAxis, PrecedingAxis, PrecedingSiblingAxis,
+                SelfAxis
+            };
 
-    static String axisAsString(AxisType axis);
+            Step(Axis, const String& nodeTest, const Vector<Predicate*>& predicates = Vector<Predicate*>());
+            ~Step();
 
-    Step();
-    Step(AxisType axis, const String& nodeTest, const Vector<Predicate*> &predicates = Vector<Predicate*>());
-    ~Step();
+            NodeVector evaluate(Node* context) const;
 
-    NodeVector evaluate(Node* context) const;
+            void optimize();
 
-    void optimize();
+        private:
+            NodeVector nodesInAxis(Node* context) const;
+            NodeVector nodeTestMatches(const NodeVector& nodes) const;
+            String namespaceFromNodetest(const String& nodeTest) const;
+            Node::NodeType primaryNodeType(Axis) const;
 
-private:
-    NodeVector nodesInAxis(Node* context) const;
-    NodeVector nodeTestMatches(const NodeVector& nodes) const;
-    String namespaceFromNodetest(const String& nodeTest) const;
-    Node::NodeType primaryNodeType(AxisType axis) const;
+            Axis m_axis;
+            String m_nodeTest;
+            String m_namespaceURI;
+            Vector<Predicate*> m_predicates;
+        };
 
-    AxisType m_axis;
-    String m_nodeTest;
-    String m_namespaceURI;
-    Vector<Predicate*> m_predicates;
-};
+    }
 
-}
 }
 
 #endif // XPATH_SUPPORT
 
 #endif // XPath_Step_H
-

@@ -23,11 +23,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
+#include "XPathExpression.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathExpression.h"
 #include "PlatformString.h"
 #include "Document.h"
 #include "Node.h"
@@ -46,12 +47,12 @@ PassRefPtr<XPathExpression> XPathExpression::createExpression(const String& expr
 {
     RefPtr<XPathExpression> expr = new XPathExpression;
     Parser parser;
-    
+
     expr->m_topExpression = parser.parseStatement(expression, resolver, ec);
     if (!expr->m_topExpression)
         return 0;
 
-    return expr;
+    return expr.release();
 }
 
 XPathExpression::~XPathExpression()
@@ -59,28 +60,24 @@ XPathExpression::~XPathExpression()
     delete m_topExpression;
 }
 
-PassRefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode,
-                                                  unsigned short type,
-                                                  XPathResult*,
-                                                  ExceptionCode& ec)
+PassRefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode& ec)
 {
     if (!isValidContextNode(contextNode)) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
-    
-    Node* eventTarget = contextNode->ownerDocument() ? 
-        contextNode->ownerDocument() : contextNode;
-    
+
+    EventTargetNode* eventTarget = contextNode->ownerDocument()
+        ? contextNode->ownerDocument()
+        : static_cast<EventTargetNode*>(contextNode);
+
     Expression::evaluationContext().node = contextNode;    
     m_topExpression->optimize();
-    
-    RefPtr<XPathResult> result = new XPathResult(static_cast<EventTargetNode*>(eventTarget),
-                                                 m_topExpression->evaluate());
-    
-    if (type != XPathResult::ANY_TYPE) {
-        result->convertTo(type, ec);
+    RefPtr<XPathResult> result = new XPathResult(eventTarget, m_topExpression->evaluate());
 
+    if (type != XPathResult::ANY_TYPE) {
+        ec = 0;
+        result->convertTo(type, ec);
         if (ec)
             return 0;
     }

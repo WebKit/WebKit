@@ -23,41 +23,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathNamespace_H
 #define XPathNamespace_H
 
 #if XPATH_SUPPORT
 
-#include "Element.h"
 #include "AtomicString.h"
+#include "Node.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
-class Document;
+    class Document;
+    class Element;
 
-class XPathNamespace : public Node
-{
-public:
-    XPathNamespace(PassRefPtr<Element> ownerElement,
-                   const String& prefix, const String& uri);
-    virtual ~XPathNamespace();
+    class XPathNamespace : public Node {
+    public:
+        XPathNamespace(PassRefPtr<Element> ownerElement, const String& prefix, const String& uri);
+        virtual ~XPathNamespace();
 
-    virtual Document* ownerDocument() const;
-    virtual Element* ownerElement() const;
+        virtual Document* ownerDocument() const;
+        virtual Element* ownerElement() const;
 
-    virtual const AtomicString& prefix() const;
-    virtual String nodeName() const;
-    virtual String nodeValue() const;
-    virtual const AtomicString& namespaceURI() const;
+        virtual const AtomicString& prefix() const;
+        virtual String nodeName() const;
+        virtual String nodeValue() const;
+        virtual const AtomicString& namespaceURI() const;
 
-    virtual Node::NodeType nodeType() const;
+        virtual Node::NodeType nodeType() const;
 
-private:
-    RefPtr<Element> m_ownerElement;
-    AtomicString m_prefix;
-    AtomicString m_uri;
-};
+    private:
+        RefPtr<Element> m_ownerElement;
+        AtomicString m_prefix;
+        AtomicString m_uri;
+    };
 
 }
 

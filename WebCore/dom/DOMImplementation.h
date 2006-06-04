@@ -43,6 +43,8 @@ typedef int ExceptionCode;
 
 class DOMImplementation : public Shared<DOMImplementation> {
 public:
+    virtual ~DOMImplementation(); 
+
     // DOM methods & attributes for DOMImplementation
     bool hasFeature(const String& feature, const String& version) const;
     PassRefPtr<DocumentType> createDocumentType(const String& qualifiedName, const String& publicId, const String &systemId, ExceptionCode&);

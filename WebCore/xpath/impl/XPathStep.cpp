@@ -23,54 +23,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
+#include "XPathStep.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathStep.h"
-
-#include "Document.h"
 #include "NamedAttrMap.h"
-#include "Node.h"
-#include "Text.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
 
 namespace WebCore {
 namespace XPath {
 
-String Step::axisAsString(AxisType axis)
-{
-    switch (axis) {
-        case AncestorAxis: return "ancestor";
-        case AncestorOrSelfAxis: return "ancestor-or-self";
-        case AttributeAxis: return "attribute";
-        case ChildAxis: return "child";
-        case DescendantAxis: return "descendant";
-        case DescendantOrSelfAxis: return "descendant-or-self";
-        case FollowingAxis: return "following";
-        case FollowingSiblingAxis: return "following-sibling";
-        case NamespaceAxis: return "namespace";
-        case ParentAxis: return "parent";
-        case PrecedingAxis: return "preceding";
-        case PrecedingSiblingAxis: return "preceding-sibling";
-        case SelfAxis: return "self";
-    }
-    return String();
-}
-
-Step::Step()
-{
-}
-
-Step::Step(AxisType axis, const String& nodeTest, const Vector<Predicate*>& predicates)
-    : m_axis(axis)
-    , m_nodeTest(nodeTest)
-    , m_predicates(predicates)
+Step::Step(Axis axis, const String& nodeTest, const Vector<Predicate*>& predicates)
+    : m_axis(axis), m_nodeTest(nodeTest), m_predicates(predicates)
 {
     Parser* parser = Parser::current();
     ASSERT(parser);
-    
     m_namespaceURI = parser->m_currentNamespaceURI;
     parser->m_currentNamespaceURI = String();
 }
@@ -305,7 +275,7 @@ void Step::optimize()
         m_predicates[i]->optimize();
 }
 
-Node::NodeType Step::primaryNodeType(AxisType axis) const
+Node::NodeType Step::primaryNodeType(Axis axis) const
 {
     switch (axis) {
         case AttributeAxis:

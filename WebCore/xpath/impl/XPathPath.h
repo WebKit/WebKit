@@ -23,67 +23,67 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathPath_H
 #define XPathPath_H
 
 #if XPATH_SUPPORT
 
 #include "XPathExpressionNode.h"
-#include "XPathStep.h"
 
-#include <wtf/Vector.h>
-
-extern int xpathyyparse(void*);
+int xpathyyparse(void*);
 
 namespace WebCore {
-namespace XPath {
-        
-class Filter : public Expression
-{
-public:
-    Filter(Expression*, const Vector<Predicate*>& = Vector<Predicate*>());
-    virtual ~Filter();
 
-private:
-    virtual Value doEvaluate() const;
+    namespace XPath {
 
-    Expression* m_expr;
-    Vector<Predicate*> m_predicates;
-};
+        class Predicate;
+        class Step;
 
-class LocationPath : public Expression
-{
-friend int ::xpathyyparse(void*);
-public:
-    LocationPath();
-    virtual ~LocationPath();
+        class Filter : public Expression {
+        public:
+            Filter(Expression*, const Vector<Predicate*>& = Vector<Predicate*>());
+            virtual ~Filter();
 
-    void optimize();
+        private:
+            virtual Value doEvaluate() const;
 
-private:
-    virtual Value doEvaluate() const;
+            Expression* m_expr;
+            Vector<Predicate*> m_predicates;
+        };
 
-    Vector<Step*> m_steps;
-    bool m_absolute;
-};
+        class LocationPath : public Expression {
+        public:
+            LocationPath();
+            virtual ~LocationPath();
 
-class Path : public Expression
-{
-public:
-    Path(Filter*, LocationPath*);
-    virtual ~Path();
+            void optimize();
 
-private:
-    virtual Value doEvaluate() const;
+        private:
+            virtual Value doEvaluate() const;
 
-    Filter* m_filter;
-    LocationPath* m_path;
-};
+            Vector<Step*> m_steps;
+            bool m_absolute;
 
-}
+            friend int ::xpathyyparse(void*);
+        };
+
+        class Path : public Expression
+        {
+        public:
+            Path(Filter*, LocationPath*);
+            virtual ~Path();
+
+        private:
+            virtual Value doEvaluate() const;
+
+            Filter* m_filter;
+            LocationPath* m_path;
+        };
+
+    }
 }
 
 #endif // XPATH_SUPPORT
 
 #endif // XPath_Path_H
-

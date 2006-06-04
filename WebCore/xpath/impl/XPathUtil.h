@@ -1,5 +1,5 @@
 /*
- * util.h - Copyright 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,39 +23,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathUtil_H
 #define XPathUtil_H
 
 #if XPATH_SUPPORT
 
-#include "PlatformString.h"
-#include "Node.h"
-
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-namespace XPath {
+    class Node;
+    class String;
 
-typedef Vector<RefPtr<Node> > NodeVector;
-    
-/* @return whether the given node is the root node.
- */
-bool isRootDomNode(Node* node);
+    namespace XPath {
 
-/* @return the 'string-value' of the given node as specified by
-   http://www.w3.org/TR/xpath
- */
-String stringValue(Node* node);
+        typedef Vector<RefPtr<Node> > NodeVector;
+        
+        /* @return whether the given node is the root node */
+        bool isRootDomNode(Node*);
 
-/* @return whether the given node is a valid context node
- */
-bool isValidContextNode(Node* node);
+        /* @return the 'string-value' of the given node as specified by http://www.w3.org/TR/xpath */
+        String stringValue(Node*);
 
-}
+        /* @return whether the given node is a valid context node */
+        bool isValidContextNode(Node*);
+
+    }
+
 }
 
 #endif // XPATH_SUPPORT
 
 #endif // XPath_Util_H
-

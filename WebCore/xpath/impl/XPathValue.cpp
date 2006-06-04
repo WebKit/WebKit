@@ -25,61 +25,54 @@
  */
 
 #include "config.h"
+#include "XPathValue.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathValue.h"
-
-#include "DeprecatedString.h"
-
-#ifdef _MSC_VER // math functions missing from Microsoft Visual Studio standard C library
-#include <xmath.h>
-#define isnan(x) _isnan(x)
-#define isinf(x) !_finite(x)
-#define signbit(x) (_copysign(1.0, (x)) < 0)
-#endif
+#include "Node.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 namespace XPath {
 
 Value::Value()
-    : m_type(Boolean), m_bool(false)
+    : m_type(BooleanValue), m_bool(false)
 {
 }
 
 Value::Value(Node* value)
-    : m_type(NodeVector_)
+    : m_type(NodeVectorValue)
 {
     m_nodeVector.append(value);
 }
 
 Value::Value(const NodeVector& value)
-    : m_type(NodeVector_), m_nodeVector(value)
+    : m_type(NodeVectorValue), m_nodeVector(value)
 {
 }
 
 Value::Value(bool value)
-    : m_type(Boolean), m_bool(value)
+    : m_type(BooleanValue), m_bool(value)
 {
 }
 
 Value::Value(unsigned value)
-    : m_type(Number), m_number(value)
+    : m_type(NumberValue), m_number(value)
 {
 }
 
 Value::Value(unsigned long value)
-    : m_type(Number), m_number(value)
+    : m_type(NumberValue), m_number(value)
 {
 }
 
 Value::Value(double value)
-    : m_type(Number), m_number(value)
+    : m_type(NumberValue), m_number(value)
 {
 }
 
 Value::Value(const String& value)
-    : m_type(String_), m_string(value)
+    : m_type(StringValue), m_string(value)
 {
 }
 
@@ -91,48 +84,50 @@ const NodeVector &Value::toNodeVector() const
 bool Value::toBoolean() const
 {
     switch (m_type) {
-        case NodeVector_:
+        case NodeVectorValue:
             return !m_nodeVector.isEmpty();
-        case Boolean:
+        case BooleanValue:
             return m_bool;
-        case Number:
+        case NumberValue:
             return m_number != 0;
-        case String_:
+        case StringValue:
             return !m_string.isEmpty();
     }
+    ASSERT_NOT_REACHED();
     return false;
 }
 
 double Value::toNumber() const
 {
     switch (m_type) {
-        case NodeVector_:
+        case NodeVectorValue:
             return Value(toString()).toNumber();
-        case Number:
+        case NumberValue:
             return m_number;
-        case String_: {
+        case StringValue: {
             bool canConvert;
             double value = m_string.deprecatedString().simplifyWhiteSpace().toDouble(&canConvert);
             if (canConvert)
                 return value;
             return NAN;
         }
-        case Boolean:
+        case BooleanValue:
             return m_bool;
     }
+    ASSERT_NOT_REACHED();
     return 0.0;
 }
 
 String Value::toString() const
 {
     switch (m_type) {
-        case NodeVector_:
+        case NodeVectorValue:
             if (m_nodeVector.isEmpty()) 
                 return "";
             return stringValue(m_nodeVector[0].get());
-        case String_:
+        case StringValue:
             return m_string;
-        case Number:
+        case NumberValue:
             if (isnan(m_number))
                 return "NaN";
             if (m_number == 0)
@@ -140,9 +135,10 @@ String Value::toString() const
             if (isinf(m_number))
                 return signbit(m_number) ? "-Infinity" : "Infinity";
             return String::number(m_number);
-        case Boolean:
+        case BooleanValue:
             return m_bool ? "true" : "false";
     }
+    ASSERT_NOT_REACHED();
     return String();
 }
 

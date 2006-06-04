@@ -25,12 +25,11 @@
  */
 
 #include "config.h"
+#include "XPathVariableReference.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathVariableReference.h"
-
-#include "PlatformString.h"
+#include "Node.h"
 #include "XPathValue.h"
 
 namespace WebCore {
@@ -48,12 +47,11 @@ bool VariableReference::isConstant() const
 
 Value VariableReference::doEvaluate() const
 {
-    HashMap<String, String>* bindings = &evaluationContext().variableBindings;
-    if (!bindings->contains(m_name))
-        // FIXME What to do if an unknown variable is referenced?
+    HashMap<String, String>& bindings = evaluationContext().variableBindings;
+    if (!bindings.contains(m_name))
+        // FIXME: Is this the right thing to do if an unknown variable is referenced?
         return "";
-
-    return bindings->get(m_name);
+    return bindings.get(m_name);
 }
 
 }

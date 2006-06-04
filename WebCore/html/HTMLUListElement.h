@@ -39,8 +39,6 @@ public:
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(MappedAttribute*);
 
-    virtual int start() const { return 1; }
-
     bool compact() const;
     void setCompact(bool);
 

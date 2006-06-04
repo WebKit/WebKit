@@ -23,47 +23,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathEvaluator_H
 #define XPathEvaluator_H
 
 #if XPATH_SUPPORT
 
 #include "Shared.h"
+#include <wtf/Forward.h>
 
-#include "PlatformString.h"
-#include "ExceptionCode.h"
+namespace WebCore {
 
-namespace WebCore
-{
-class Node;
+    typedef int ExceptionCode;
 
-class XPathExpression;
-class XPathNSResolver;
-class XPathResult;
+    class Node;
+    class String;
+    class XPathExpression;
+    class XPathNSResolver;
+    class XPathResult;
 
-const int XPathExceptionOffset = 400;
-const int XPathExceptionMax = 499;   
+    // FIXME: Should these exception codes move to another header?
+    const int XPathExceptionOffset = 400;
+    const int XPathExceptionMax = 499;
+    enum XPathExceptionCode { INVALID_EXPRESSION_ERR = XPathExceptionOffset + 51, TYPE_ERR };
 
-enum XPathExceptionCode { INVALID_EXPRESSION_ERR = XPathExceptionOffset + 51, TYPE_ERR };
-
-class XPathEvaluator : public Shared<XPathEvaluator>
-{
-public:
-    PassRefPtr<XPathExpression> createExpression(const String& expression,
-                                                  XPathNSResolver*,
-                                                  ExceptionCode&);
-    PassRefPtr<XPathNSResolver> createNSResolver(Node* nodeResolver);
-    PassRefPtr<XPathResult> evaluate(const String& expression,
-                                     Node* contextNode,
-                                     XPathNSResolver*,
-                                     unsigned short type,
-                                     XPathResult*,
-                                     ExceptionCode&);
-};
+    class XPathEvaluator : public Shared<XPathEvaluator> {
+    public:
+        PassRefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
+        PassRefPtr<XPathNSResolver> createNSResolver(Node* nodeResolver);
+        PassRefPtr<XPathResult> evaluate(const String& expression, Node* contextNode,
+            XPathNSResolver*, unsigned short type, XPathResult*, ExceptionCode&);
+    };
 
 }
 
 #endif // XPATH_SUPPORT
 
 #endif // XPathEvaluator_H
-

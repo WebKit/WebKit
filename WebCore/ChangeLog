@@ -1,3 +1,132 @@
+2006-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8995
+          memory leak in XPath code -- seen in layout tests
+        - fixed malloc error on exit due to SVGDOMImplementation destructor
+        - attempted to fix the no-XPATH_SUPPORT build by adding an #if
+        - changed around includes and header-file formatting in XPath code
+
+        * bindings/scripts/CodeGeneratorJS.pm: Include PlatformString.h when
+        generating the bindings for XPathNSResolver.
+
+        * dom/DOMImplementation.h: Added a virtual destructor for the benefit of
+        SVGDOMImplementation.
+        * dom/DOMImplementation.cpp: (WebCore::DOMImplementation::~DOMImplementation): Added.
+
+        * ksvg2/svg/SVGDOMImplementation.h: Reformatted a bit, removed unneeded declarations.
+        * ksvg2/svg/SVGDOMImplementation.cpp:
+        (SVGDOMImplementation::~SVGDOMImplementation): Remove commented-out code.
+        (SVGDOMImplementation::createDocument): Remove a reference to KDOMView.
+
+        * xpath/XPathExpression.cpp:
+        (WebCore::XPathExpression::createExpression): Called release to avoid a tiny bit of
+        reference count churn.
+        (WebCore::XPathExpression::evaluate): Set exception code explicitly, because the code
+        relies on it being 0 when the function succeeds.
+
+        * xpath/XPathResult.cpp:
+        (WebCore::InvalidatingEventListener::InvalidatingEventListener): Removed
+        unneeded target node data member.
+        (WebCore::XPathResult::XPathResult): Updated for enum name changes and
+        InvalidatingEventListener name change. Added an assertion.
+
+        * xpath/impl/XPathFunctions.h: Removed the FunctionLibrary class. Changed the parameter
+        for createFunction to be a String instead of char*.
+        * xpath/impl/XPathFunctions.cpp: Got rid of local implementation of "round", and
+        used <wtf/MathExtras.h> instead. Also removed unused Interval::asString. Marked all
+        the Interval functions inline.
+        (WebCore::XPath::FunSubstring::doEvaluate): Use lround() instead of (long)round().
+        (WebCore::XPath::FunLang::doEvaluate): Removed some unneeded temporary String variables.
+        Use equalIgnoringCase() instead of calling lower() on two strings.
+        (WebCore::XPath::createFunctionMap): Changed how this works so that it's all local to
+        this function. Also removed a duplicate entry for the "last" function.
+        (WebCore::XPath::createFunction): Changed from a member function to a separate function.
+        Also changed so that if the args are not used in the function they are deleted.
+        This was one of the sources of the storage leaks.
+
+        * xpath/impl/XPathGrammar.y: Put XPATH_SUPPORT ifdef in. Replaced <num> with values of
+        specific types (numop, eqop). Updated for name change from AxisType to Axis. Changed
+        tokens that were declared as <str> but weren't actually using the string to be
+        declared with no type (PLUS, MINUS, OR, AND, DOTDOT, SLASHSLASH). Replaced use of
+        unregisterString, unregisterPredicateVector, and unregisterExpressionVector to
+        call delete functions instead that both unregister and delete. Change call sites for
+        createFunction to just use the String, removing the deprecatedString().latin1() call
+        that is no longer needed. Added a call to unregisterParseNode that was missing in the
+        "FilterExpr DescendantOrSelf RelativeLocationPath" production.
+
+        * xpath/impl/XPathParser.h: Changed Token to hold a String, Step::Axis, NumericOp::Opcode,
+        and EqTestOp::Opcode. The token ID number tells us which to use. Rearranged to put the private
+        part of the Parser class last. Moved a number of private things inside the cpp file.
+        * xpath/impl/XPathParser.cpp:
+        (WebCore::XPath::charCat): Made this a separate function, instead of a static member.
+        (WebCore::XPath::isAxisName): Ditto. Also put the global axis map inside the function,
+        allowing use of a map instead of a map pointer.
+        (WebCore::XPath::isNodeTypeName): Ditto.
+        (WebCore::XPath::Parser::isOperatorContext): Made this const.
+        (WebCore::XPath::Parser::makeTokenAndAdvance): Got rid of the "int" version of this.
+        By using the actual types, we can safely use overload instead.
+        (WebCore::XPath::Parser::lexString): Use substring() instead of deprecatedString().mid().
+        (WebCore::XPath::Parser::lexNumber): Ditto.
+        (WebCore::XPath::Parser::lexNCName): Changed to return a bool and a String instead of a
+        Token. This avoids the hack of using a token value of "ERROR + 1" which I found quite
+        confusing and is also a bit more explicit.
+        (WebCore::XPath::Parser::lexQName): Ditto.
+        (WebCore::XPath::Parser::nextTokenInternal): Changed to adapt to the changes above and
+        to remove some unneeded else statements.
+        (WebCore::XPath::Parser::lex): Changed the logic that sets up yylval to use the token ID
+        to decide what the type is. This matches what the grammar expects, and removes the need
+        for the token object to track which part of the value is good and the need to reserve 0
+        to have a special meaning.
+        (WebCore::XPath::Parser::parseStatement): Added code to delete the predicates and the
+        expressions in the predicate and expression vectors. Before, we were only deleting
+        the vectors. This was one of the sources of the storage leaks.
+        (WebCore::XPath::Parser::deletePredicateVector): Renamed, and changed to delete
+        the vector. However this does not delete the predicates in the vector.
+        (WebCore::XPath::Parser::deleteExpressionVector): Renamed, and changed to delete
+        the vector. However this does not delete the expressions in the vector.
+        (WebCore::XPath::Parser::deleteString): Renamed, and changed to delete the string.
+
+        * xpath/impl/XPathPredicate.h:
+        * xpath/impl/XPathPredicate.cpp:
+        (WebCore::XPath::NumericOp::NumericOp): Changed opcode from an int to an enum, and
+        renamed to "opcode" instead of "opCode".
+        (WebCore::XPath::NumericOp::doEvaluate): More of the same.
+        (WebCore::XPath::EqTestOp::EqTestOp): Ditto.
+        (WebCore::XPath::EqTestOp::doEvaluate): Ditto.
+        (WebCore::XPath::LogicalOp::LogicalOp): Ditto.
+        (WebCore::XPath::LogicalOp::shortCircuitOn): Ditto.
+        (WebCore::XPath::Predicate::evaluate): Removed an unneeded "new".
+
+        * xpath/impl/XPathStep.h:
+        * xpath/impl/XPathStep.cpp: Renamed AxisType to Axis. Removed unused axisAsString
+        function and default constructor.
+
+        * xpath/impl/XPathValue.h: Renamed the type constants to have a Value suffix,
+        instead of the underscore suffix used before on NodeVector and String.
+        * xpath/impl/XPathValue.cpp: Updated for name change. Added asserts.
+
+        * xpath/impl/XPathVariableReference.cpp: (WebCore::XPath::VariableReference::doEvaluate):
+        Use a reference instead of a pointer.
+
+        * xpath/XPathEvaluator.cpp:
+        * xpath/XPathEvaluator.h:
+        * xpath/XPathExpression.h:
+        * xpath/XPathNSResolver.cpp:
+        * xpath/XPathNSResolver.h:
+        * xpath/XPathNamespace.cpp:
+        * xpath/XPathNamespace.h:
+        * xpath/XPathResult.h:
+        * xpath/impl/XPathExpressionNode.cpp:
+        * xpath/impl/XPathExpressionNode.h:
+        * xpath/impl/XPathPath.cpp:
+        * xpath/impl/XPathPath.h:
+        * xpath/impl/XPathUtil.cpp:
+        * xpath/impl/XPathUtil.h:
+        * xpath/impl/XPathVariableReference.h:
+        Reformatted and changed includes around; no substantive changes.
+
 2006-06-04  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by hyatt.

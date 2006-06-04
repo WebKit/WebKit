@@ -25,34 +25,27 @@
 #if SVG_SUPPORT
 
 #include "DOMImplementation.h"
-#include "DeprecatedStringList.h"
 
 namespace WebCore {
-    class CSSStyleSheet;
-    class Document;
-    class DocumentType;
-    class String;
+
     class StringImpl;
 
-    typedef FrameView KDOMView;
-
-    class SVGDOMImplementation : public DOMImplementation
-    {
+    class SVGDOMImplementation : public DOMImplementation {
     public:
         SVGDOMImplementation();
         virtual ~SVGDOMImplementation();
 
-        static SVGDOMImplementation *instance();
+        static SVGDOMImplementation* instance();
 
         // 'SVGDOMImplementation' functions
-        bool hasFeature(StringImpl *feature, StringImpl *version) const;
-        PassRefPtr<DocumentType> createDocumentType(StringImpl *qualifiedName, StringImpl *publicId, StringImpl *systemId, ExceptionCode&) const;
-        PassRefPtr<Document> createDocument(StringImpl *namespaceURI, StringImpl *qualifiedName, DocumentType *doctype, ExceptionCode&) const;
-        PassRefPtr<Document> createDocument(StringImpl *namespaceURI, StringImpl *qualifiedName, DocumentType *doctype, bool createDocElement, FrameView*, ExceptionCode&) const;
+        bool hasFeature(StringImpl* feature, StringImpl* version) const;
+        PassRefPtr<DocumentType> createDocumentType(StringImpl* qualifiedName, StringImpl* publicId, StringImpl* systemId, ExceptionCode&) const;
+        PassRefPtr<Document> createDocument(StringImpl* namespaceURI, StringImpl* qualifiedName, DocumentType*, ExceptionCode&) const;
+        PassRefPtr<Document> createDocument(StringImpl* namespaceURI, StringImpl* qualifiedName, DocumentType*, bool createDocElement, FrameView*, ExceptionCode&) const;
 
-        virtual PassRefPtr<CSSStyleSheet> createCSSStyleSheet(StringImpl *title, StringImpl *media) const;
+        virtual PassRefPtr<CSSStyleSheet> createCSSStyleSheet(StringImpl* title, StringImpl* media) const;
 
-        virtual DocumentType *defaultDocumentType() const;
+        virtual DocumentType* defaultDocumentType() const;
 
         bool inAnimationContext() const;
         void setAnimationContext(bool value);
@@ -63,6 +56,7 @@ namespace WebCore {
     private:
         bool m_animationContext : 1;
     };
+
 }
 
 #endif // SVG_SUPPORT

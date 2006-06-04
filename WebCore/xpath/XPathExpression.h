@@ -23,46 +23,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathExpression_H
 #define XPathExpression_H
 
 #if XPATH_SUPPORT
 
 #include "Shared.h"
-#include "PlatformString.h"
+#include <wtf/Forward.h>
 
-#include "ExceptionCode.h"
+namespace WebCore {
 
-#include "XPathExpressionNode.h"
+    typedef int ExceptionCode;
 
-namespace WebCore
-{
-class Node;
+    class Node;
+    class String;
+    class XPathNSResolver;
+    class XPathResult;
 
-class XPathNSResolver;
-class XPathResult;
+    namespace XPath {
+        class Expression;
+    }
 
-class XPathExpression : public Shared<XPathExpression>
-{
-public:
-    ~XPathExpression();
-
-    static PassRefPtr<XPathExpression> createExpression(const String& expression,
-                                                        XPathNSResolver*,
-                                                        ExceptionCode&);
-
-    PassRefPtr<XPathResult> evaluate(Node* contextNode,
-                                     unsigned short type,
-                                     XPathResult*,
-                                     ExceptionCode&);
-        
-private:
-    XPath::Expression* m_topExpression;
-};
+    class XPathExpression : public Shared<XPathExpression> {
+    public:
+        ~XPathExpression();
+        static PassRefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
+        PassRefPtr<XPathResult> evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode&);
+            
+    private:
+        XPath::Expression* m_topExpression;
+    };
 
 }
 
 #endif // XPATH_SUPPORT
 
 #endif // XPathExpression_H
-

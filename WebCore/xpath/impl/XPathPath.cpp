@@ -25,13 +25,13 @@
  */
 
 #include "config.h"
+#include "XPathPath.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathPath.h"
-
 #include "Document.h"
-#include "Node.h"
+#include "XPathPredicate.h"
+#include "XPathStep.h"
 #include "XPathValue.h"
 
 namespace WebCore {

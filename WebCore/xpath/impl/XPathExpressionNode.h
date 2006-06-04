@@ -1,5 +1,5 @@
 /*
- * expression.h - Copyright 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,65 +29,60 @@
 
 #if XPATH_SUPPORT
 
-#include "XPathNSResolver.h"
-
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Node;
+    class Node;
 
-namespace XPath {
+    namespace XPath {
 
-class Value;
+        class Value;
         
-struct EvaluationContext {
-    EvaluationContext() : node(0), size(0), position(0) { }
+        struct EvaluationContext {
+            EvaluationContext() : node(0), size(0), position(0) { }
 
-    RefPtr<Node> node;
-    unsigned long size;
-    unsigned long position;
-    HashMap<String, String> variableBindings;
+            RefPtr<Node> node;
+            unsigned long size;
+            unsigned long position;
+            HashMap<String, String> variableBindings;
 
-    /* The function library is globally accessible through
-     * FunctionLibrary::self()
-     */
-};
+        };
 
-class ParseNode {
-public:
-    virtual ~ParseNode() { }
-};
+        class ParseNode {
+        public:
+            virtual ~ParseNode() { }
+        };
 
-class Expression : public ParseNode
-{
-public:
-    static EvaluationContext& evaluationContext();
+        class Expression : public ParseNode, Noncopyable {
+        public:
+            static EvaluationContext& evaluationContext();
 
-    Expression();
-    virtual ~Expression();
+            Expression();
+            virtual ~Expression();
 
-    virtual Value evaluate() const;
+            virtual Value evaluate() const;
 
-    void addSubExpression(Expression*);
-    void optimize();
-    virtual bool isConstant() const;
+            void addSubExpression(Expression*);
+            void optimize();
+            virtual bool isConstant() const;
 
-protected:
-    unsigned subExprCount() const;
-    Expression* subExpr(unsigned i);
-    const Expression* subExpr(unsigned i) const;
+        protected:
+            unsigned subExprCount() const;
+            Expression* subExpr(unsigned);
+            const Expression* subExpr(unsigned) const;
 
-private:
-    virtual Value doEvaluate() const = 0;
+        private:
+            virtual Value doEvaluate() const = 0;
 
-    Vector<Expression*> m_subExpressions;
-    Value* m_constantValue;
-};
+            Vector<Expression*> m_subExpressions;
+            Value* m_constantValue;
+        };
 
-}
+    }
+
 }
 
 #endif // XPATH_SUPPORT

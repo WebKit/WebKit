@@ -23,17 +23,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
+#include "XPathEvaluator.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathEvaluator.h"
+#include "ExceptionCode.h"
+#include "Node.h"
 #include "XPathExpression.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
-
-#include "ExceptionCode.h"
-
 #include "XPathUtil.h"
 
 namespace WebCore {

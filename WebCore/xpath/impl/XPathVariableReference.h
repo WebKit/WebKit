@@ -1,5 +1,5 @@
 /*
- * variablereference.h - Copyright 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright 2005 Frerich Raabe <raabe@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathVariableReference_H
 #define XPathVariableReference_H
 
@@ -30,25 +31,21 @@
 #include "XPathExpressionNode.h"
 
 namespace WebCore {
-namespace XPath {
+
+    namespace XPath {
     
-class VariableReference : public Expression
-{
-public:
-    VariableReference(const String& name);
+        class VariableReference : public Expression {
+        public:
+            VariableReference(const String& name);
+            virtual bool isConstant() const;
+        private:
+            virtual Value doEvaluate() const;
+            String m_name;
+        };
 
-    virtual bool isConstant() const;
-
-private:
-    virtual Value doEvaluate() const;
-
-    String m_name;
-};
-
-}
+    }
 }
 
 #endif // XPATH_SUPPORT
 
 #endif // XPath_VariableReference_H
-

@@ -23,30 +23,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathNSResolver_H
 #define XPathNSResolver_H
 
 #if XPATH_SUPPORT
 
 #include "Shared.h"
-#include "PlatformString.h"
-#include "Node.h"
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 
-namespace WebCore
-{
+namespace WebCore {
 
-class Node;
+    class Node;
+    class String;
 
-class XPathNSResolver : public Shared<XPathNSResolver>
-{
+    class XPathNSResolver : public Shared<XPathNSResolver> {
     public:
         XPathNSResolver(PassRefPtr<Node>);
+        ~XPathNSResolver();
 
         String lookupNamespaceURI(const String& prefix);
 
     private:
         RefPtr<Node> m_node;
-};
+    };
 
 }
 

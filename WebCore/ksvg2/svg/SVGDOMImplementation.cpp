@@ -99,8 +99,6 @@ SVGDOMImplementation::SVGDOMImplementation() : DOMImplementation()
 
 SVGDOMImplementation::~SVGDOMImplementation()
 {
-    // clean up static data
-    //SVGRenderStyle::cleanup();
 }
 
 SVGDOMImplementation *SVGDOMImplementation::instance()
@@ -155,7 +153,7 @@ PassRefPtr<Document> SVGDOMImplementation::createDocument(StringImpl *namespaceU
     return createDocument(namespaceURI, qualifiedNameImpl, doctype, true, 0, ec);
 }
 
-PassRefPtr<Document> SVGDOMImplementation::createDocument(StringImpl *namespaceURIImpl, StringImpl *qualifiedNameImpl, DocumentType *doctype, bool createDocElement, KDOMView *view, ExceptionCode& ec) const
+PassRefPtr<Document> SVGDOMImplementation::createDocument(StringImpl *namespaceURIImpl, StringImpl *qualifiedNameImpl, DocumentType *doctype, bool createDocElement, FrameView *view, ExceptionCode& ec) const
 {
     String namespaceURI(namespaceURIImpl);
     String qualifiedName(qualifiedNameImpl);

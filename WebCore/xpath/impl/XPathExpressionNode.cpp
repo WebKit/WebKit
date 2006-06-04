@@ -25,17 +25,12 @@
  */
 
 #include "config.h"
+#include "XPathExpressionNode.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathExpressionNode.h"
-
-#include "Logging.h"
 #include "Node.h"
 #include "XPathValue.h"
-#include <math.h>
-
-using namespace std;
 
 namespace WebCore {
 namespace XPath {
@@ -117,4 +112,3 @@ bool Expression::isConstant() const
 }
 
 #endif // XPATH_SUPPORT
-

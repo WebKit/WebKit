@@ -80,8 +80,8 @@ Value Negative::doEvaluate() const
     return -p.toNumber();
 }
 
-NumericOp::NumericOp(int opCode, Expression* lhs, Expression* rhs) :
-    m_opCode(opCode)
+NumericOp::NumericOp(Opcode opcode, Expression* lhs, Expression* rhs)
+    : m_opcode(opcode)
 {
     addSubExpression(lhs);
     addSubExpression(rhs);
@@ -97,7 +97,7 @@ Value NumericOp::doEvaluate() const
 
     double leftVal = lhs.toNumber(), rightVal = rhs.toNumber();
 
-    switch (m_opCode) {
+    switch (m_opcode) {
         case OP_Add:
             return leftVal + rightVal;
         case OP_Sub:
@@ -121,8 +121,8 @@ Value NumericOp::doEvaluate() const
     return Value();
 }
 
-EqTestOp::EqTestOp(int opCode, Expression* lhs, Expression* rhs) :
-    m_opCode(opCode)
+EqTestOp::EqTestOp(Opcode opcode, Expression* lhs, Expression* rhs)
+    : m_opcode(opcode)
 {
     addSubExpression(lhs);
     addSubExpression(rhs);
@@ -134,22 +134,21 @@ Value EqTestOp::doEvaluate() const
     Value rhs(subExpr(1)->evaluate());
 
     bool equal;
-    if (lhs.isBoolean() || rhs.isBoolean()) {
-        equal = (lhs.toBoolean() == rhs.toBoolean());
-    } else if (lhs.isNumber() || rhs.isNumber()) {
-        equal = (lhs.toNumber() == rhs.toNumber());
-    } else {
-        equal = (lhs.toString() == rhs.toString());
-    }
+    if (lhs.isBoolean() || rhs.isBoolean())
+        equal = lhs.toBoolean() == rhs.toBoolean();
+    else if (lhs.isNumber() || rhs.isNumber())
+        equal = lhs.toNumber() == rhs.toNumber();
+    else
+        equal = lhs.toString() == rhs.toString();
 
-    if (m_opCode == OP_EQ)
+    if (m_opcode == OP_EQ)
         return equal;
 
     return !equal;
 }
 
-LogicalOp::LogicalOp(int opCode, Expression* lhs, Expression* rhs) :
-    m_opCode(opCode)
+LogicalOp::LogicalOp(Opcode opcode, Expression* lhs, Expression* rhs)
+    : m_opcode(opcode)
 {
     addSubExpression(lhs);
     addSubExpression(rhs);
@@ -157,7 +156,7 @@ LogicalOp::LogicalOp(int opCode, Expression* lhs, Expression* rhs) :
 
 bool LogicalOp::shortCircuitOn() const
 {
-    if (m_opCode == OP_And)
+    if (m_opcode == OP_And)
         return false; //false and foo
 
     return true;  //true or bar
@@ -223,14 +222,9 @@ bool Predicate::evaluate() const
 
     Value result(m_expr->evaluate());
 
-    // foo[3] really means foo[position()=3]
-    if (result.isNumber()) {
-        Expression* realExpr = new EqTestOp(EqTestOp::OP_EQ,
-                        FunctionLibrary::self().createFunction("position"),
-                        new Number(result.toNumber()));
-        result = realExpr->evaluate();
-        delete realExpr;
-    }
+    // foo[3] means foo[position()=3]
+    if (result.isNumber())
+        return EqTestOp(EqTestOp::OP_EQ, createFunction("position"), new Number(result.toNumber())).evaluate().toBoolean();
 
     return result.toBoolean();
 }

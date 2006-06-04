@@ -23,6 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef XPathFunctions_H
 #define XPathFunctions_H
 
@@ -30,48 +31,29 @@
 
 #include "XPathExpressionNode.h"
 
-#include "StringHash.h"
-
-#include "PlatformString.h"
-
 namespace WebCore {
-namespace XPath {
-    
-class Function : public Expression
-{
-public:
-    void setArguments(const Vector<Expression*>&);
-    void setName(const String&);
 
-protected:
-    Expression* arg(int pos);
-    const Expression* arg(int pos) const;
-    unsigned int argCount() const;
-    String name() const;
+    namespace XPath {
 
-private:
-    String m_name;
-};
+        class Function : public Expression {
+        public:
+            void setArguments(const Vector<Expression*>&);
+            void setName(const String&);
 
-class FunctionLibrary
-{
-    friend struct FunctionMapping;
-public:
-    static FunctionLibrary &self();
+        protected:
+            Expression* arg(int pos);
+            const Expression* arg(int pos) const;
+            unsigned int argCount() const;
+            String name() const;
 
-    Function* createFunction(const char* name, const Vector<Expression*> &args = Vector<Expression*>()) const;
+        private:
+            String m_name;
+        };
 
-private:
-    struct FunctionRec;
+        Function* createFunction(const String& name, const Vector<Expression*>& args = Vector<Expression*>());
 
-    FunctionLibrary();
-    FunctionLibrary(const FunctionLibrary &rhs);
-    FunctionLibrary &operator=(const FunctionLibrary &rhs);
+    }
 
-    HashMap<String, FunctionRec> m_functionDict;
-};
-
-}
 }
 
 #endif // XPATH_SUPPORT

@@ -23,17 +23,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
+#include "XPathNSResolver.h"
 
 #if XPATH_SUPPORT
 
-#include "XPathNSResolver.h"
 #include "Node.h"
 
 namespace WebCore {
 
 XPathNSResolver::XPathNSResolver(PassRefPtr<Node> node)
     : m_node(node)
+{
+}
+
+XPathNSResolver::~XPathNSResolver()
 {
 }
 

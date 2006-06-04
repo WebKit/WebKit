@@ -148,8 +148,7 @@ sub AddIncludesForType
     my $type = $codeGenerator->StripModule(shift);
     
     # When we're finished with the one-file-per-class 
-    # reorganization, we don't need these special cases.
-    
+    # reorganization, we won't need these special cases.
     if ($type eq "MutationEvent" or
         $type eq "KeyboardEvent" or
         $type eq "MouseEvent" or
@@ -157,19 +156,23 @@ sub AddIncludesForType
         $type eq "UIEvent" or
         $type eq "WheelEvent") {
         $implIncludes{"dom2_eventsimpl.h"} = 1;
-    } elsif ($type eq "CanvasRenderingContext2D") {
-        $implIncludes{"CanvasGradient.h"} = 1;
-        $implIncludes{"CanvasPattern.h"} = 1;
-        $implIncludes{"CanvasRenderingContext2D.h"} = 1;
-        $implIncludes{"CanvasStyle.h"} = 1;
-    } elsif ($type eq "CanvasGradient") {
-        $implIncludes{"CanvasGradient.h"} = 1;
-        $implIncludes{"PlatformString.h"} = 1;
-    } elsif ($codeGenerator->IsPrimitiveType($type) or
-        $type eq "DOMString" or $type eq "DOMObject" or $type eq "RGBColor" or $type eq "Rect") {
+    } elsif ($codeGenerator->IsPrimitiveType($type)
+        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "RGBColor" or $type eq "Rect") {
     } else {
         # default, include the same named file
         $implIncludes{"${type}.h"} = 1;
+    }
+
+    # additional includes (things needed to compile the bindings but not the header)
+
+    if ($type eq "CanvasRenderingContext2D") {
+        $implIncludes{"CanvasGradient.h"} = 1;
+        $implIncludes{"CanvasPattern.h"} = 1;
+        $implIncludes{"CanvasStyle.h"} = 1;
+    }
+
+    if ($type eq "CanvasGradient" or $type eq "XPathNSResolver") {
+        $implIncludes{"PlatformString.h"} = 1;
     }
 }
 
