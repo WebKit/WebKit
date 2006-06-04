@@ -1,5 +1,26 @@
 2006-06-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7291
+          REGRESSION: delete key does not work in isIndex fields
+
+        * platform/mac/WebCoreTextField.mm:
+        (inputElement): Added. Helper function to get the Objective-C wrapper for an
+        input element associated with a QTextEdit. Returns nil if the element is not
+        an input element. The bug was caused by passing a non-input element to the
+        delegate methods.
+        (-[KWQTextFieldController controlTextDidBeginEditing:]): Use inputElement
+        and don't make the delegate call at all if there is none. This happens only
+        with isindex elements; it's not important to have auto-fill work with those.
+        (-[KWQTextFieldController controlTextDidEndEditing:]): Ditto.
+        (-[KWQTextFieldController controlTextDidChange:]): Ditto.
+        (-[KWQTextFieldController control:textShouldEndEditing:]): Ditto.
+        (-[KWQTextFieldController control:textView:doCommandBySelector:]): Ditto.
+        (-[KWQTextFieldController textView:shouldHandleEvent:]): Ditto.
+
+2006-06-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8995

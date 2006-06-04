@@ -26,15 +26,18 @@
 #import "config.h"
 #import "WebCoreTextField.h"
 
-#import "KWQLineEdit.h"
+#import "DOMInternal.h"
+#import "Element.h"
 #import "FrameMac.h"
+#import "HTMLNames.h"
 #import "KWQKHTMLSettings.h"
+#import "KWQLineEdit.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
+using namespace HTMLNames;
 
 @interface NSString (WebCoreTextField)
 - (int)_KWQ_numComposedCharacterSequences;
@@ -163,6 +166,19 @@ using namespace WebCore;
     edited = ed;
 }
 
+static DOMHTMLInputElement* inputElement(QLineEdit* widget)
+{
+    if (!widget)
+        return nil;
+    WidgetClient* client = widget->client();
+    if (!client)
+        return nil;
+    Element* element = client->element(widget);
+    if (!element || !element->hasTagName(inputTag))
+        return nil;
+    return (DOMHTMLInputElement*)[DOMElement _elementWith:element];
+}
+
 - (void)controlTextDidBeginEditing:(NSNotification *)notification
 {
     if (!widget)
@@ -170,8 +186,8 @@ using namespace WebCore;
     
     [[field _KWQ_currentEditor] setWantsNotificationForMarkedText:YES];
 
-    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(widget);
-    [bridge textFieldDidBeginEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
+    if (DOMHTMLInputElement* input = inputElement(widget))
+        [FrameMac::bridgeForWidget(widget) textFieldDidBeginEditing:input];
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)notification
@@ -179,8 +195,8 @@ using namespace WebCore;
     if (!widget)
         return;
     
-    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(widget);
-    [bridge textFieldDidEndEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
+    if (DOMHTMLInputElement* input = inputElement(widget))
+        [FrameMac::bridgeForWidget(widget) textFieldDidEndEditing:input];
     
     if (widget && widget->client() && [[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
         widget->client()->returnPressed(widget);
@@ -194,10 +210,9 @@ using namespace WebCore;
     if (FrameMac::handleKeyboardOptionTabInView(field))
         return;
     
-    if (![[field _KWQ_currentEditor] hasMarkedText]) {
-        WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(widget);
-        [bridge textDidChangeInTextField:(DOMHTMLInputElement *)[bridge elementForView:field]];
-    }
+    if (![[field _KWQ_currentEditor] hasMarkedText])
+        if (DOMHTMLInputElement* input = inputElement(widget))
+            [FrameMac::bridgeForWidget(widget) textDidChangeInTextField:input];
     
     edited = YES;
     [self textChanged];
@@ -227,7 +242,7 @@ using namespace WebCore;
 {
     if (!widget)
         return NO;
-    
+
     return YES;
 }
 
@@ -235,9 +250,11 @@ using namespace WebCore;
 {
     if (!widget)
         return NO;
-    
-    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(widget);
-    return [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] doCommandBySelector:commandSelector];
+
+    if (DOMHTMLInputElement* input = inputElement(widget))
+        return [FrameMac::bridgeForWidget(widget) textField:input doCommandBySelector:commandSelector];
+
+    return NO;
 }
 
 - (void)textChanged
@@ -287,7 +304,9 @@ using namespace WebCore;
 
         Widget::setDeferFirstResponderChanges(true);
 
-        BOOL intercepted = [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] shouldHandleEvent:event];
+        BOOL intercepted = NO;
+        if (DOMHTMLInputElement* input = inputElement(widget))
+            intercepted = [bridge textField:input shouldHandleEvent:event];
         if (!intercepted)
             intercepted = [bridge interceptKeyEvent:event toView:view];
 
