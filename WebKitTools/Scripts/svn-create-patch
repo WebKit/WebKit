@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,11 +32,11 @@
 #
 #   Uses the real diff, not svn's built-in diff.
 #   Always passes "-p" to diff so it will try to include function names.
+#   Handles binary files (encoded as a base64 chunk of text).
 #
 # Missing features:
 #
 #   Sort the diffs, since svn emits them in a seemingly-random order.
-#   Handle binary files (some text form of the binary file).
 #   Handle moved files.
 
 use strict;
@@ -44,8 +44,10 @@ use Cwd;
 use Getopt::Long;
 use Time::gmtime;
 use File::stat;
+use File::Spec;
 use POSIX qw(:errno_h);
 use Config;
+use MIME::Base64;
 
 my $startDir = getcwd();
 my %paths;
@@ -115,13 +117,18 @@ sub diff
     chdir $dir or die;
     open DIFF, "svn diff --diff-cmd diff -x -uNp '$base' |" or die;
     my $indexPath;
+    my $binaryPath;
     while (<DIFF>) {
         if (/^Index: (.*)/) {
+            # New patch just started
             $indexPath = $1;
             if ($dir ne ".") {
                 $indexPath = "$dir/$indexPath";
                 s/Index: .*/Index: $indexPath/;
             }
+            # Output encoded binary contents of last patch before beginning of next patch
+            outputBinaryContent(File::Spec->abs2rel($binaryPath, $dir)) if ($binaryPath);
+            undef $binaryPath;
         }
         if ($indexPath) {
             # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
@@ -129,11 +136,34 @@ sub diff
             s/^--- \S+/--- $indexPath/;
             s/^\+\+\+ \S+/+++ $indexPath/ && undef $indexPath;
         }
+        if ($binaryPath) {
+            # Fix path on "Property changes on:" line to match preceding Index: line.
+            s/^(Property changes on:) \S+/$1 $indexPath/;
+        }
+        $binaryPath = $indexPath if (/^Cannot display: file marked as a binary type\.$/);
         print;
     }
     close DIFF;
+    # Output encoded binary contents if the last patch was binary
+    outputBinaryContent(File::Spec->abs2rel($binaryPath, $dir)) if ($binaryPath);
     chdir $startDir or die;
     print STDERR $errors;
+}
+
+# Outputs binary content as encoded text
+sub outputBinaryContent
+{
+    my ($path) = @_;
+    # Deletion
+    return if (! -e $path);
+    # Addition or Modification
+    my $buffer;
+    open BINARY, $path  or die;
+    while (read(BINARY, $buffer, 60*57)) {
+        print encode_base64($buffer);
+    }
+    close BINARY;
+    print "\n";
 }
 
 # Generate the diff for each passed file or directory.

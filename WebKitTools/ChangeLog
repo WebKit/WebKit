@@ -1,3 +1,14 @@
+2006-06-04  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9299
+        Teach svn-create-patch and friends to work with binary files
+
+        * Scripts/svn-apply: Updated to use base64-encoded text for binary files when applying patches.
+        * Scripts/svn-create-patch: Updated to include binary file content as base64-encoded text in patches.
+        * Scripts/svn-unapply: Updated to recognize binary files when unapplying patches.
+
 2006-06-03  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Maciej.
