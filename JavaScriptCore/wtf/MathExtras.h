@@ -27,14 +27,14 @@
 
 #if PLATFORM(WIN)
 
-inline float roundf(float num)
-{
-    return num > 0 ? floorf(num + 0.5f) : ceilf(num - 0.5f);
-}
+#include <xmath.h>
 
-inline long lroundf(float num)
-{
-    return num > 0 ? num + 0.5f : ceilf(num - 0.5f);
-}
+inline bool isinf(double num) { return !_finite(num); }
+inline bool isnan(double num) { return _isnan(num); }
+inline long lround(double num) { return num > 0 ? num + 0.5 : ceil(num - 0.5); }
+inline long lroundf(float num) { return num > 0 ? num + 0.5f : ceilf(num - 0.5f); }
+inline double round(double num) { return num > 0 ? floor(num + 0.5) : ceil(num - 0.5); }
+inline float roundf(float num) { return num > 0 ? floorf(num + 0.5f) : ceilf(num - 0.5f); }
+inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
 
 #endif

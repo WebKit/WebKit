@@ -1,3 +1,33 @@
+2006-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - changed deleteAllValues so it can work on "const" collections
+          Deleting the values affects the values, not the pointers in the
+          collection, so it's legitimate to do it to a const collection,
+          and a case of that actually came up in the XPath code.
+
+        * wtf/HashMap.h:
+        (WTF::deleteAllPairSeconds): Use const iterators.
+        (WTF::deleteAllValues): Take const HashMap reference as a parameter.
+        * wtf/HashSet.h:
+        (WTF::deleteAllValues): Take const HashSet reference as a parameter,
+        and use const iterators.
+        * wtf/Vector.h:
+        (WTF::deleteAllValues): Take const Vector reference as a parameter.
+
+        - added more functions that are present in <math.h> on some platforms,
+          but not on others; moved here from various files in WebCore
+
+        * wtf/MathExtras.h:
+        (isinf): Added.
+        (isnan): Added.
+        (lround): Added.
+        (lroundf): Tweaked.
+        (round): Added.
+        (roundf): Tweaked.
+        (signbit): Added.
+
 2006-06-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by ggaren.

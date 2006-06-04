@@ -579,11 +579,11 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    void deleteAllValues(Vector<T, inlineCapacity>& collection)
+    void deleteAllValues(const Vector<T, inlineCapacity>& collection)
     {
-        typedef Vector<T, inlineCapacity> Vec;
-        typename Vec::iterator end = collection.end();
-        for (typename Vec::iterator it = collection.begin(); it != end; ++it)
+        typedef typename Vector<T, inlineCapacity>::const_iterator iterator;
+        iterator end = collection.end();
+        for (iterator it = collection.begin(); it != end; ++it)
             delete *it;
     }
 

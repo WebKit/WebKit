@@ -308,14 +308,14 @@ namespace WTF {
     template<typename MappedType, typename HashTableType>
     void deleteAllPairSeconds(HashTableType& collection)
     {
-        typedef typename HashTableType::iterator iterator;
+        typedef typename HashTableType::const_iterator iterator;
         iterator end = collection.end();
         for (iterator it = collection.begin(); it != end; ++it)
             delete *(MappedType*)&it->second;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
-    inline void deleteAllValues(HashMap<T, U, V, W, X>& collection)
+    inline void deleteAllValues(const HashMap<T, U, V, W, X>& collection)
     {
         deleteAllPairSeconds<typename HashMap<T, U, V, W, X>::MappedType>(collection);
     }
