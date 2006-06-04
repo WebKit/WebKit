@@ -15,6 +15,10 @@
         <li><a href="/projects/">Projects</a></li>
         <li><a href="/coding/coding-style.html">Code Style Guidelines</a></li>
 
+        <li class="subtitle">Web Developers</li>
+
+        <li><a href="/webdevelopers/">Detecting WebKit</a></li>
+        
         <li class="subtitle">Testing</li>
 
         <li><a href="/quality/testing.html">Regression Testing</a></li>
@@ -40,5 +44,3 @@
         Complete license and copyright information can be found within the code.
     </div>
 </div>
-
-<script>setCurrentLink();</script>

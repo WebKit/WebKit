@@ -1,3 +1,13 @@
+2006-06-04  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by ggaren.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9303
+        JavaScript error when loading WebKit blog page
+
+        * blog/wp-content/themes/webkit/sidebar.php: Removed unused JavaScript.  Synced with nav.inc.
+        * nav.inc: Removed evil tabs--whitespace change only.
+
 2006-05-24  Bradley Morrison  <bradley.morrison@nokia.com>
 
         Reviewed by John Sullivan.

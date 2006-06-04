@@ -19,7 +19,7 @@
 
         <li><a href="/webdevelopers/">Detecting WebKit</a></li>
         
-	<li class="subtitle">Testing</li>
+        <li class="subtitle">Testing</li>
 
         <li><a href="/quality/testing.html">Regression Testing</a></li>
         <li><a href="/quality/leakhunting.html">Leak Hunting</a></li>
@@ -34,10 +34,10 @@
         <li><a href="/quality/reduction.html">Test Case Reduction</a></li>
         <li><a href="/quality/lifecycle.html">Bug Life Cycle</a></li>
     </ul>
-	<div id="notice">
-		WebKit is open source software with portions licensed under the 
-		<a href="http://www.opensource.org/licenses/lgpl-license.php">LGPL</a> and 
-		<a href="http://www.opensource.org/licenses/bsd-license.php">BSD licenses</a>. 
-		Complete license and copyright information can be found within the code.
-	</div>
+    <div id="notice">
+        WebKit is open source software with portions licensed under the
+        <a href="http://www.opensource.org/licenses/lgpl-license.php">LGPL</a> and
+        <a href="http://www.opensource.org/licenses/bsd-license.php">BSD licenses</a>.
+        Complete license and copyright information can be found within the code.
+    </div>
 </div>
