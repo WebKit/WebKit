@@ -430,9 +430,11 @@ int Parser::lex(void* data)
     return tok.type;
 }
 
-Expression* Parser::parseStatement(const String& statement, ExceptionCode& ec)
+Expression* Parser::parseStatement(const String& statement, PassRefPtr<XPathNSResolver> resolver, ExceptionCode& ec)
 {
     reset(statement);
+    
+    m_resolver = resolver;
     
     Parser* oldParser = currentParser;
     currentParser = this;

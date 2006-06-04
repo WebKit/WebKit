@@ -206,7 +206,7 @@ Node* XPathResult::iterateNext(ExceptionCode& ec)
         return 0;
     }
     
-    if (m_nodeSetPosition + 1 >= m_nodeSet.size())
+    if (m_nodeSetPosition + 1 > m_nodeSet.size())
         return 0;
 
     Node* node = m_nodeSet[m_nodeSetPosition].get();

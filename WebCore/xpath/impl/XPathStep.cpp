@@ -34,6 +34,7 @@
 #include "Node.h"
 #include "Text.h"
 #include "XPathNSResolver.h"
+#include "XPathParser.h"
 
 namespace WebCore {
 namespace XPath {
@@ -63,10 +64,15 @@ Step::Step()
 }
 
 Step::Step(AxisType axis, const String& nodeTest, const Vector<Predicate*>& predicates)
-    : m_axis(axis),
-    m_nodeTest(nodeTest),
-    m_predicates(predicates)
+    : m_axis(axis)
+    , m_nodeTest(nodeTest)
+    , m_predicates(predicates)
 {
+    Parser* parser = Parser::current();
+    ASSERT(parser);
+    
+    m_namespaceURI = parser->m_currentNamespaceURI;
+    parser->m_currentNamespaceURI = String();
 }
 
 Step::~Step()
@@ -213,17 +219,14 @@ NodeVector Step::nodesInAxis(Node* context) const
 
 NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
 {
-    String ns = namespaceFromNodetest(m_nodeTest);
     NodeVector matches;
+
     if (m_nodeTest == "*") {
         for (unsigned i = 0; i < nodes.size(); i++) {
             Node* node = nodes[i].get();
-            if (node->nodeType() == primaryNodeType(m_axis)) {
-                if (ns.isEmpty() ||
-                     node->namespaceURI() == ns) {
-                    matches.append(node);
-                }
-            }
+            if (node->nodeType() == primaryNodeType(m_axis) &&
+                (m_namespaceURI.isEmpty() || m_namespaceURI == node->namespaceURI()))
+                matches.append(node);
         }
         return nodes;
     } else if (m_nodeTest == "text()") {
@@ -259,31 +262,16 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
     } else if (m_nodeTest == "node()")
         return nodes;
     else {
-        String prefix, localName;
-
-        const int colon = m_nodeTest.find(':');
-        if (colon > -1) {
-            prefix = m_nodeTest.left(colon);
-            localName = m_nodeTest.deprecatedString().mid(colon + 1);
-        } else {
-            localName = m_nodeTest;
-        }
-
-        if (!prefix.isEmpty() &&
-            Expression::evaluationContext().resolver->lookupNamespaceURI(prefix).isEmpty()) {
-                /* FIXME: Throw NAMESPACE_ERR exception */
-        }
-
         if (m_axis == AttributeAxis) {
             // In XPath land, namespace nodes are not accessible
             // on the attribute axis.
-            if (localName == "xmlns")
+            if (m_nodeTest == "xmlns")
                 return matches;
 
             for (unsigned i = 0; i < nodes.size(); i++) {
                 Node* node = nodes[i].get();
                 
-                if (node->nodeName() == localName) {
+                if (node->nodeName() == m_nodeTest) {
                     matches.append(node);
                     break; // There can only be one.
                 }
@@ -295,13 +283,13 @@ NodeVector Step::nodeTestMatches(const NodeVector& nodes) const
         } else {
             for (unsigned i = 0; i < nodes.size(); i++) {
                 Node* node = nodes[i].get();
- 
+
                 // We use tagQName here because we don't want the element name in uppercase 
                 // like we get with HTML elements.
                 if (node->nodeType() == Node::ELEMENT_NODE &&
-                    static_cast<Element*>(node)->tagQName().toString() == localName) {
+                    static_cast<Element*>(node)->tagQName().localName() == m_nodeTest &&
+                    (m_namespaceURI.isNull() || m_namespaceURI == node->namespaceURI()))
                     matches.append(node);
-                }
             }
 
             return matches;
@@ -315,18 +303,6 @@ void Step::optimize()
 {
     for (unsigned i = 0; i < m_predicates.size(); i++)
         m_predicates[i]->optimize();
-}
-
-String Step::namespaceFromNodetest(const String& nodeTest) const
-{
-    int i = nodeTest.find(':');
-    if (i == -1)
-        return String();
-
-    String prefix(nodeTest.left(i));
-    
-    Node* ctxNode = Expression::evaluationContext().node.get();
-    return ctxNode->lookupNamespaceURI(prefix);
 }
 
 Node::NodeType Step::primaryNodeType(AxisType axis) const

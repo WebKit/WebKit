@@ -1,3 +1,14 @@
+2006-06-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9035
+        document.evaluate and createNSResolver miss on namespaced elements
+
+        * fast/xpath: Added.
+        * fast/xpath/xpath-namespaces-expected.txt: Added.
+        * fast/xpath/xpath-namespaces.html: Added.
+
 2006-06-03  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Eric.

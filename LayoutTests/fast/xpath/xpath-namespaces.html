@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <script>
+function debug(str) {
+    var d = document.getElementById('console');
+	d.appendChild(document.createTextNode(str + "\n"));
+}
+    
+function runTests () {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+        
+    var xmlString = '<ns:foo xmlns:ns="http://www.example.org">';
+
+    var doc = (new DOMParser()).parseFromString(xmlString, "text/xml");
+    var contextNode = doc.documentElement;
+    var nsResolver = document.createNSResolver(contextNode);
+
+    var expr = doc.createExpression("/ns:foo", nsResolver);
+    var result = expr.evaluate(contextNode, XPathResult.ANY_TYPE, null)
+
+    var element = result.iterateNext();
+
+    if (element == 0) {
+        debug('FAILURE: no result node was found');
+        return;
+    }
+  
+    if (element.nodeName != 'ns:foo') {
+        debug('FAILURE: did not find the correct node');
+        return;
+    }
+  
+    debug('SUCCESS: test completed')
+}
+    </script>
+  </head>
+<body onload="runTests()">
+This tests that XPath expressions with prefixes work correctly.
+<pre id="console">
+</pre>
+</body>
+</html>

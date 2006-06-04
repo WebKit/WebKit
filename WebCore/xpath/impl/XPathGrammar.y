@@ -223,11 +223,23 @@ NodeTest:
         const int colon = $1->find(':');
         if (colon > -1) {
             String prefix($1->left(colon));
-            XPathNSResolver *resolver = Expression::evaluationContext().resolver;
-            if (!resolver || resolver->lookupNamespaceURI(prefix).isNull()) {
+            XPathNSResolver *resolver = static_cast<Parser*>(parser)->resolver();
+            if (!resolver) {
                 static_cast<Parser*>(parser)->m_gotNamespaceError = true;
                 YYABORT;
             }
+            
+            static_cast<Parser*>(parser)->m_currentNamespaceURI = resolver->lookupNamespaceURI(prefix);
+            
+            if (static_cast<Parser*>(parser)->m_currentNamespaceURI.isNull()) {
+                static_cast<Parser*>(parser)->m_gotNamespaceError = true;
+                YYABORT;
+            }
+            
+            $$ = new String($1->substring(colon + 1));
+            delete $1;
+            static_cast<Parser*>(parser)->registerString($$);
+            static_cast<Parser*>(parser)->unregisterString($1);
         }
     }
     |

@@ -1,3 +1,41 @@
+2006-06-04  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9035
+        document.evaluate and createNSResolver miss on namespaced elements
+        
+        * xpath/XPathExpression.cpp:
+        (WebCore::XPathExpression::createExpression):
+        Pass the resolver to the parser.
+        
+        * xpath/XPathResult.cpp:
+        (WebCore::XPathResult::iterateNext):
+        Fix off-by-one error.
+        
+        * xpath/impl/XPathExpressionNode.h:
+        (WebCore::XPath::EvaluationContext::EvaluationContext):
+        Get rid of the resolver in the evaluation context.
+        
+        * xpath/impl/XPathGrammar.y:
+        Fetch the resolver from the parser. Only return the local name.
+        
+        * xpath/impl/XPathParser.cpp:        
+        (WebCore::XPath::Parser::parseStatement):
+        * xpath/impl/XPathParser.h:
+        (WebCore::XPath::Parser::resolver):
+        Update to hold the resolver.
+        
+        * xpath/impl/XPathStep.cpp:
+        (WebCore::XPath::Step::Step):
+        If the parser has stored a namespace URI, set it.
+        
+        (WebCore::XPath::Step::nodeTestMatches):
+        Check namespace URIs.
+        
+        * xpath/impl/XPathStep.h:
+        Add m_namespaceURI.
+
 2006-06-03  Rob Buis  <buis@kde.org>
 
         Reviewed by mjs.  Tweaked and landed by ddkilzer.

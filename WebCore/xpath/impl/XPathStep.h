@@ -65,6 +65,7 @@ private:
 
     AxisType m_axis;
     String m_nodeTest;
+    String m_namespaceURI;
     Vector<Predicate*> m_predicates;
 };
 

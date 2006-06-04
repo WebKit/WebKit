@@ -47,8 +47,7 @@ PassRefPtr<XPathExpression> XPathExpression::createExpression(const String& expr
     RefPtr<XPathExpression> expr = new XPathExpression;
     Parser parser;
     
-    Expression::evaluationContext().resolver = resolver;
-    expr->m_topExpression = parser.parseStatement(expression, ec);
+    expr->m_topExpression = parser.parseStatement(expression, resolver, ec);
     if (!expr->m_topExpression)
         return 0;
 

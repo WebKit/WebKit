@@ -29,6 +29,8 @@
 
 #if XPATH_SUPPORT
 
+#include "XPathNSResolver.h"
+
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -36,14 +38,13 @@
 namespace WebCore {
 
 class Node;
-class XPathNSResolver;
 
 namespace XPath {
 
 class Value;
         
 struct EvaluationContext {
-    EvaluationContext() : node(0), size(0), position(0), resolver(0) { }
+    EvaluationContext() : node(0), size(0), position(0) { }
 
     RefPtr<Node> node;
     unsigned long size;
@@ -53,7 +54,6 @@ struct EvaluationContext {
     /* The function library is globally accessible through
      * FunctionLibrary::self()
      */
-    XPathNSResolver* resolver;
 };
 
 class ParseNode {
