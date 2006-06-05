@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9031
+          REGRESSION: Crash when closing tabs on newegg.com
+        - removed a no-longer-needed Win32-specific workaround (not reviewed)
+
+        * bindings/js/kjs_window.cpp: Added include of <wtf/MathExtras.h>.
+        (WebCore::floatFeature): Remove WIN32 ifdef around isnan.
+        (WebCore::toJS): Add null checks.
+
+2006-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9176
           REGRESSION: repro crash in WebCore::StringImpl::hash() const + 28 (StringImpl.h:67)
 

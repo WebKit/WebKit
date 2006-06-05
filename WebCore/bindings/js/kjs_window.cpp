@@ -56,7 +56,7 @@
 #include "kjs_navigator.h"
 #include "kjs_proxy.h"
 #include "kjs_traversal.h"
-#include <math.h>
+#include <wtf/MathExtras.h>
 
 #if KHTML_XSLT
 #include "JSXSLTProcessor.h"
@@ -524,11 +524,7 @@ static float floatFeature(const HashMap<String, String> &features, const char *k
     // "0q" should be minimum value.
     bool ok;
     double d = value.toDouble(&ok);
-    if ((d == 0 && !ok) 
-#if !WIN32
-        || isnan(d)
-#endif
-         )
+    if ((d == 0 && !ok) || isnan(d))
         return defaultValue;
     if (d < min || max <= min)
         return min;
@@ -2485,7 +2481,12 @@ namespace WebCore {
 
 JSValue* toJS(ExecState*, DOMWindow* domWindow)
 {
-    return Window::retrieve(domWindow->frame());
+    if (!domWindow)
+        return jsNull();
+    Frame* frame = domWindow->frame();
+    if (!frame)
+        return jsNull();
+    return Window::retrieve(frame);
 }
 
 DOMWindow* toDOMWindow(JSValue* val)
