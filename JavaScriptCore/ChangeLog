@@ -1,5 +1,17 @@
 2006-06-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed By Maciej.
+        Darin already reviewed this change on the branch. See <rdar://problem/4317701>.
+        
+        - Fixed <rdar://problem/4291345> PCRE overflow in Safari JavaScriptCore
+
+        No test case because there's no behavior change.
+        
+        * pcre/pcre_compile.c:
+        (read_repeat_counts): Check for integer overflow / out of bounds
+
+2006-06-05  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by aliu.
 
         - Changed CString length from int to size_t. We sould probably do this
