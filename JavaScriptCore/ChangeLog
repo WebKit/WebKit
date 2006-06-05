@@ -1,3 +1,12 @@
+2006-06-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9304
+        Minor cleanup in JavaScriptCore
+
+        * kjs/value.h: Removed redundant declarations
+
 2006-06-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
