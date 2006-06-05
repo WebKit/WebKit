@@ -1,3 +1,11 @@
+2006-06-04  Darin Adler  <darin@apple.com>
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9176
+          REGRESSION: repro crash in WebCore::StringImpl::hash() const + 28 (StringImpl.h:67)
+
+        * fast/loader/link-no-URL.html: Added.
+        * fast/loader/link-no-URL-expected.txt: Added.
+
 2006-06-04  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by hyatt.

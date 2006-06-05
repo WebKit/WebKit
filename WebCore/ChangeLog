@@ -1,5 +1,27 @@
 2006-06-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9176
+          REGRESSION: repro crash in WebCore::StringImpl::hash() const + 28 (StringImpl.h:67)
+
+        Test: fast/loader/link-no-URL.html
+
+        * loader/Cache.h:
+        * loader/Cache.cpp:
+        (WebCore::Cache::updateCacheStatus): Removed the URL parameter. Instead get the URL
+        from the cached object itself. Callers were passing in the wrong URL. When it was a
+        null string, it caused the crash mentioned above. But in other cases it may have
+        caused some other minor problems as well. Added an assert to catch cases where the
+        URL is null (should never happen).
+        (WebCore::Cache::requestImage): Changed call site to not pass URL.
+        (WebCore::Cache::requestStyleSheet): Ditto.
+        (WebCore::Cache::requestScript): Ditto.
+        (WebCore::Cache::requestXSLStyleSheet): Ditto.
+        (WebCore::Cache::requestXBLDocument): Ditto.
+
+2006-06-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7291

@@ -109,18 +109,19 @@ void Cache::clear()
     delete docloaders; docloaders = 0;
 }
 
-void Cache::updateCacheStatus(DocLoader* dl, const String& url, CachedObject* o)
+void Cache::updateCacheStatus(DocLoader* dl, CachedObject* o)
 {
     moveToHeadOfLRUList(o);
     if (dl) {
+        ASSERT(!o->url().isNull());
         if (cacheDisabled)
-            dl->m_docObjects.remove(url);
+            dl->m_docObjects.remove(o->url());
         else
-            dl->m_docObjects.set(url, o);
+            dl->m_docObjects.set(o->url(), o);
     }
 }
 
-CachedImage *Cache::requestImage(DocLoader* dl, const String& url, bool reload, time_t expireDate)
+CachedImage* Cache::requestImage(DocLoader* dl, const String& url, bool reload, time_t expireDate)
 {
     // this brings the _url to a standard form...
     KURL kurl;
@@ -131,7 +132,7 @@ CachedImage *Cache::requestImage(DocLoader* dl, const String& url, bool reload, 
     return requestImage(dl, kurl, reload, expireDate);
 }
 
-CachedImage *Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, time_t expireDate)
+CachedImage* Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, time_t expireDate)
 {
     KIO::CacheControl cachePolicy;
     if (dl)
@@ -173,11 +174,11 @@ CachedImage *Cache::requestImage(DocLoader* dl, const KURL& url, bool reload, ti
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << ", status " << o->status() << endl;
 #endif
 
-    updateCacheStatus(dl, o->url(), o);
+    updateCacheStatus(dl, o);
     return static_cast<CachedImage *>(o);
 }
 
-CachedCSSStyleSheet *Cache::requestStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
+CachedCSSStyleSheet* Cache::requestStyleSheet(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
 {
     // this brings the _url to a standard form...
     KURL kurl;
@@ -223,11 +224,11 @@ CachedCSSStyleSheet *Cache::requestStyleSheet(DocLoader* dl, const String& url, 
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
 
-    updateCacheStatus(dl, url, o);
+    updateCacheStatus(dl, o);
     return static_cast<CachedCSSStyleSheet *>(o);
 }
 
-CachedScript *Cache::requestScript(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
+CachedScript* Cache::requestScript(DocLoader* dl, const String& url, bool reload, time_t expireDate, const DeprecatedString& charset)
 {
     // this brings the _url to a standard form...
     KURL kurl;
@@ -274,7 +275,7 @@ CachedScript *Cache::requestScript(DocLoader* dl, const String& url, bool reload
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
 
-    updateCacheStatus(dl, url, o);
+    updateCacheStatus(dl, o);
     return static_cast<CachedScript *>(o);
 }
 
@@ -325,7 +326,7 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const String& ur
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
     
-    updateCacheStatus(dl, url, o);
+    updateCacheStatus(dl, o);
     return static_cast<CachedXSLStyleSheet*>(o);
 }
 #endif
@@ -377,7 +378,7 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const String& url, b
         kdDebug(6060) << "Cache: using cached: " << kurl.url() << endl;
 #endif
     
-    updateCacheStatus(dl, url, o);
+    updateCacheStatus(dl, o);
     return static_cast<CachedXBLDocument*>(o);
 }
 #endif
