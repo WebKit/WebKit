@@ -278,9 +278,10 @@ const ClassInfo DOMStyleSheet::info = { "StyleSheet", 0, &DOMStyleSheetTable, 0 
 @end
 */
 
-DOMStyleSheet::DOMStyleSheet(ExecState*, WebCore::StyleSheet* ss) 
+DOMStyleSheet::DOMStyleSheet(ExecState* exec, WebCore::StyleSheet* ss) 
   : m_impl(ss) 
 {
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
 }
 
 DOMStyleSheet::DOMStyleSheet(WebCore::StyleSheet *ss) 
@@ -359,10 +360,11 @@ const ClassInfo DOMStyleSheetList::info = { "StyleSheetList", 0, &DOMStyleSheetL
 */
 KJS_IMPLEMENT_PROTOFUNC(DOMStyleSheetListFunc) // not really a proto, but doesn't matter
 
-DOMStyleSheetList::DOMStyleSheetList(ExecState*, WebCore::StyleSheetList* ssl, WebCore::Document* doc)
+DOMStyleSheetList::DOMStyleSheetList(ExecState* exec, WebCore::StyleSheetList* ssl, WebCore::Document* doc)
   : m_impl(ssl)
   , m_doc(doc) 
 {
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
 }
 
 DOMStyleSheetList::~DOMStyleSheetList()
@@ -642,7 +644,7 @@ JSValue* DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState* exec, JSObject* th
 
 KJS_IMPLEMENT_PROTOFUNC(DOMCSSRuleFunc) // Not a proto, but doesn't matter
 
-DOMCSSRule::DOMCSSRule(ExecState*, WebCore::CSSRule* r)
+DOMCSSRule::DOMCSSRule(ExecState* exec, WebCore::CSSRule* r)
   : m_impl(r) 
 {
 }
@@ -856,6 +858,12 @@ const ClassInfo DOMCSSValue::info = { "CSSValue", 0, &DOMCSSValueTable, 0 };
 KJS_IMPLEMENT_PROTOFUNC(DOMCSSValueProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMCSSValue", DOMCSSValueProto, DOMCSSValueProtoFunc)
 
+DOMCSSValue::DOMCSSValue(ExecState* exec, WebCore::CSSValue* v) 
+: m_impl(v) 
+{ 
+    setPrototype(DOMCSSValueProto::self(exec));
+}
+
 DOMCSSValue::~DOMCSSValue()
 {
   ScriptInterpreter::forgetDOMObject(m_impl.get());
@@ -908,7 +916,7 @@ JSValue* toJS(ExecState* exec, CSSValue *v)
     else if (v->isPrimitiveValue())
       ret = new JSCSSPrimitiveValue(exec, static_cast<CSSPrimitiveValue*>(v));
     else
-      ret = new DOMCSSValue(exec,v);
+      ret = new DOMCSSValue(exec, v);
     interp->putDOMObject(v, ret);
     return ret;
   }
@@ -925,6 +933,12 @@ const ClassInfo DOMRGBColor::info = { "RGBColor", 0, &DOMRGBColorTable, 0 };
   blue  DOMRGBColor::Blue       DontDelete|ReadOnly
 @end
 */
+DOMRGBColor::DOMRGBColor(ExecState* exec, unsigned color) 
+: m_color(color) 
+{ 
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+}
+
 DOMRGBColor::~DOMRGBColor()
 {
   //rgbColors.remove(rgbColor.handle());
@@ -952,10 +966,10 @@ JSValue* DOMRGBColor::getValueProperty(ExecState* exec, int token) const
   }
 }
 
-JSValue* getDOMRGBColor(ExecState *, unsigned c)
+JSValue* getDOMRGBColor(ExecState* exec, unsigned c)
 {
   // ### implement equals for RGBColor since they're not refcounted objects
-  return new DOMRGBColor(c);
+  return new DOMRGBColor(exec, c);
 }
 
 // -------------------------------------------------------------------------
@@ -969,6 +983,12 @@ const ClassInfo DOMRect::info = { "Rect", 0, &DOMRectTable, 0 };
   left   DOMRect::Left    DontDelete|ReadOnly
 @end
 */
+DOMRect::DOMRect(ExecState* exec, WebCore::RectImpl* r) 
+: m_rect(r) 
+{ 
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+}
+
 DOMRect::~DOMRect()
 {
   ScriptInterpreter::forgetDOMObject(m_rect.get());

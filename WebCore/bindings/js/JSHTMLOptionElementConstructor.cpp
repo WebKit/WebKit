@@ -32,6 +32,7 @@ namespace WebCore {
 JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* d)
     : m_doc(d)
 {
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
     put(exec, lengthPropertyName, jsNumber(4), ReadOnly|DontDelete|DontEnum);
 }
 

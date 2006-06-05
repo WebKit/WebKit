@@ -16,9 +16,6 @@ function print(message, color)
     document.getElementById("console").appendChild(paragraph);
 }
 
-var element, range, nodeFilter, cssRule, cssPrimitiveValue, cssStyleDeclaration, event;
-var originalNodeConstructor;
-
 function shouldBe(a, b)
 {
     var evalA;
@@ -37,7 +34,19 @@ function test()
 {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
-        
+
+    domParser = new DOMParser();
+    shouldBe("DOMParser.prototype.isPrototypeOf(domParser)", true);
+    
+    xmlHttpRequest = new XMLHttpRequest();
+    shouldBe("XMLHttpRequest.prototype.isPrototypeOf(xmlHttpRequest)", true);
+    
+    xmlSerializer = new XMLSerializer();
+    shouldBe("XMLSerializer.prototype.isPrototypeOf(xmlSerializer)", true);
+    
+    xsltProcessor = new XSLTProcessor();
+    shouldBe("XSLTProcessor.prototype.isPrototypeOf(xsltProcessor)", true);
+
     shouldBe("window.Document.prototype.isPrototypeOf(document)", true);
     shouldBe("window.HTMLDocument.prototype.isPrototypeOf(document)", true);
     

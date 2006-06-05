@@ -1,3 +1,0 @@
-This checks that DOMParser, XMLHttpRequest, XMLSerializer and XSLTProcessor have their prototypes set correctly. If this test is successful, the text "SUCCESS" will be shown below.
-SUCCESS!
-

@@ -94,19 +94,6 @@ namespace KJS {
 
     JSValue* getNodeEventListener(WebCore::Node* n, const WebCore::AtomicString& eventType);
 
-    // Constructor for Event - currently only used for some global vars
-    class EventConstructor : public DOMObject {
-    public:
-        EventConstructor(ExecState*) { }
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-        // no put - all read-only
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-    };
-
-    JSValue* getEventConstructor(ExecState*);
-
     class DOMEvent : public DOMObject {
     public:
         DOMEvent(ExecState*, WebCore::Event*);

@@ -1,3 +1,17 @@
+2006-06-04  Geoffrey Garen  <ggaren@apple.com>
+
+        - Merged test-prototypes.html into global-constructors.html
+        - Added prototypes.html, which tests for some missing prototypes in DOM objects
+        
+        * fast/dom/global-constructors-expected.txt:
+        * fast/dom/global-constructors.html:
+        * fast/dom/prototypes-expected.txt: Added.
+        * fast/dom/prototypes.html: Added.
+        * fast/dom/test-prototypes-expected.txt: Removed.
+        * fast/dom/test-prototypes.html: Removed.
+        * fast/dom/undetectable-document-all-expected.txt: Updated to reflect
+        change from "HTMLCollection" to "Collection"
+
 2006-06-04  Darin Adler  <darin@apple.com>
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9176

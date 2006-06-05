@@ -1587,7 +1587,7 @@ KJS_DEFINE_PROTOTYPE(HTMLCollectionProto)
 KJS_IMPLEMENT_PROTOFUNC(HTMLCollectionProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("HTMLCollection",HTMLCollectionProto,HTMLCollectionProtoFunc)
 
-const ClassInfo JSHTMLCollection::info = { "HTMLCollection", 0, 0, 0 };
+const ClassInfo JSHTMLCollection::info = { "Collection", 0, 0, 0 };
 
 JSHTMLCollection::JSHTMLCollection(ExecState* exec, HTMLCollection *c)
   : m_impl(c) 

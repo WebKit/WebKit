@@ -36,6 +36,7 @@ namespace WebCore {
     class CSSStyleSheet;
     class CSSValue;
     class CSSValueList;
+    class JSCSSRule;
     class JSCSSStyleDeclaration;
     class MediaList;
     class StyleSheet;
@@ -150,7 +151,6 @@ namespace KJS {
 
   class DOMCSSRule : public DOMObject {
   public:
-    DOMCSSRule(ExecState*, WebCore::CSSRule*);
     virtual ~DOMCSSRule();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;
@@ -165,6 +165,8 @@ namespace KJS {
            Import_Href, Import_Media, Import_StyleSheet, Charset_Encoding };
     WebCore::CSSRule* impl() const { return m_impl.get(); }
   private:
+    friend class WebCore::JSCSSRule;
+    DOMCSSRule(ExecState*, WebCore::CSSRule*);
     RefPtr<WebCore::CSSRule> m_impl;
   };
 
@@ -172,7 +174,7 @@ namespace KJS {
 
   class DOMCSSValue : public DOMObject {
   public:
-    DOMCSSValue(ExecState*, WebCore::CSSValue* v) : m_impl(v) { }
+    DOMCSSValue(ExecState*, WebCore::CSSValue*);
     virtual ~DOMCSSValue();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;
@@ -194,7 +196,7 @@ namespace KJS {
 
   class DOMRGBColor : public DOMObject {
   public:
-    DOMRGBColor(unsigned color) : m_color(color) { }
+    DOMRGBColor(ExecState*, unsigned color);
     ~DOMRGBColor();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;
@@ -210,7 +212,7 @@ namespace KJS {
 
   class DOMRect : public DOMObject {
   public:
-    DOMRect(ExecState*, WebCore::RectImpl* r) : m_rect(r) { }
+    DOMRect(ExecState*, WebCore::RectImpl* r);
     ~DOMRect();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     JSValue* getValueProperty(ExecState*, int token) const;

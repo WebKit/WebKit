@@ -709,6 +709,12 @@ KJS_IMPLEMENT_PROTOFUNC(DOMNodeListFunc)
 
 const ClassInfo DOMNodeList::info = { "NodeList", 0, &DOMNodeListTable, 0 };
 
+DOMNodeList::DOMNodeList(ExecState* exec, WebCore::NodeList *l) 
+: m_impl(l) 
+{ 
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+}
+
 DOMNodeList::~DOMNodeList()
 {
   ScriptInterpreter::forgetDOMObject(m_impl.get());
@@ -1070,7 +1076,12 @@ const ClassInfo DOMExceptionConstructor::info = { "DOMExceptionConstructor", 0, 
 @end
 */
 
-bool DOMExceptionConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+DOMExceptionConstructor::DOMExceptionConstructor(ExecState* exec) 
+{ 
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+}
+
+bool DOMExceptionConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   return getStaticValueSlot<DOMExceptionConstructor, DOMObject>(exec, &DOMExceptionConstructorTable, this, propertyName, slot);
 }
@@ -1088,12 +1099,15 @@ JSObject* getDOMExceptionConstructor(ExecState* exec)
 
 // -------------------------------------------------------------------------
 
+const ClassInfo DOMNamedNodesCollection::info = { "Collection", 0, 0, 0 };
+
 // Such a collection is usually very short-lived, it only exists
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
-DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState*, const DeprecatedValueList< RefPtr<WebCore::Node> >& nodes )
-    : m_nodes(nodes)
+DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState* exec, const DeprecatedValueList< RefPtr<WebCore::Node> >& nodes )
+  : m_nodes(nodes)
 {
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
 }
 
 JSValue* DOMNamedNodesCollection::lengthGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
