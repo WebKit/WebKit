@@ -569,7 +569,7 @@ static JSValue *encode(ExecState *exec, const List &args, const char *do_not_esc
   UString r = "", s, str = args[0]->toString(exec);
   CString cstr = str.UTF8String();
   const char *p = cstr.c_str();
-  for (int k = 0; k < cstr.size(); k++, p++) {
+  for (size_t k = 0; k < cstr.size(); k++, p++) {
     char c = *p;
     if (c && strchr(do_not_escape, c)) {
       r.append(c);
