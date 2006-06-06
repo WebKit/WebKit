@@ -636,6 +636,23 @@ void GraphicsContext::translate(const FloatSize& size)
     CGContextTranslateCTM(platformContext(), size.width(), size.height());
 }
 
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
+{
+    CGRect deviceRect = CGContextConvertRectToDeviceSpace(platformContext(), rect);
+    deviceRect.origin.x = roundf(deviceRect.origin.x);
+    deviceRect.origin.y = roundf(deviceRect.origin.y);
+    deviceRect.size.width = roundf(deviceRect.size.width);
+    deviceRect.size.height = roundf(deviceRect.size.height);
+    
+    // Don't let the height or width round to 0 unless either was originally 0
+    if (deviceRect.size.height == 0 && rect.height() != 0)
+        deviceRect.size.height = 1;
+    if (deviceRect.size.width == 0 && rect.width() != 0)
+        deviceRect.size.width = 1;
+    
+    return CGContextConvertRectToUserSpace(platformContext(), deviceRect);
+}
+
 void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int width, bool printing)
 {
     if (paintingDisabled())
@@ -663,14 +680,7 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int wi
             thickness = 1;
 
         // On screen, round all parameters to integer boundaries in device space.
-        CGRect lineRect = CGContextConvertRectToDeviceSpace(platformContext(), CGRectMake(x, y, width, thickness));
-        lineRect.origin.x = roundf(lineRect.origin.x);
-        lineRect.origin.y = roundf(lineRect.origin.y);
-        lineRect.size.width = roundf(lineRect.size.width);
-        lineRect.size.height = roundf(lineRect.size.height);
-        if (lineRect.size.height == 0) // don't let thickness round down to 0 pixels
-            lineRect.size.height = 1;
-        lineRect = CGContextConvertRectToUserSpace(platformContext(), lineRect);
+        CGRect lineRect = roundToDevicePixels(FloatRect(x, y, width, thickness));
         x = lineRect.origin.x;
         y = lineRect.origin.y;
         width = (int)(lineRect.size.width);

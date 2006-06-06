@@ -729,34 +729,34 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
 {
     ASSERT(image);
     IntSize s = size(image);
-    drawImage(image, 0, 0, s.width(), s.height(), x, y, width, height, ec);
+    drawImage(image, FloatRect(0, 0, s.width(), s.height()), FloatRect(x, y, width, height), ec);
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
-    float sx, float sy, float sw, float sh,
-    float dx, float dy, float dw, float dh, ExceptionCode& ec)
+void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRect& srcRect, const FloatRect& dstRect,
+    ExceptionCode& ec)
 {
     ASSERT(image);
-
-    ec = 0;
-
-    FloatRect imageRect = FloatRect(FloatPoint(), size(image));
-    FloatRect sourceRect = FloatRect(sx, sy, sw, sh);
-
-    if (!(imageRect.contains(sourceRect) && sw > 0 && sh > 0 && dw > 0 && dh > 0)) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
 
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
 
+    ec = 0;
+
+    FloatRect imageRect = FloatRect(FloatPoint(), size(image));
+    FloatRect sourceRect = c->roundToDevicePixels(srcRect);
+    FloatRect destRect = c->roundToDevicePixels(dstRect);
+
+    if (!(imageRect.contains(sourceRect) && sourceRect.width() > 0 && sourceRect.height() > 0 
+        && destRect.width() > 0 && destRect.height() > 0)) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
     CachedImage* cachedImage = image->cachedImage();
     if (!cachedImage)
         return;
 
-    FloatRect destRect = FloatRect(dx, dy, dw, dh);
     willDraw(destRect);
     c->drawImage(cachedImage->image(), destRect, sourceRect, state().m_globalComposite);
 }
@@ -772,18 +772,17 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
     float x, float y, float width, float height, ExceptionCode& ec)
 {
     ASSERT(canvas);
-    drawImage(canvas, 0, 0, canvas->width(), canvas->height(), x, y, width, height, ec);
+    drawImage(canvas, FloatRect(0, 0, canvas->width(), canvas->height()), FloatRect(x, y, width, height), ec);
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
-    float sx, float sy, float sw, float sh,
-    float dx, float dy, float dw, float dh, ExceptionCode& ec)
+void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatRect& srcRect,
+    const FloatRect& dstRect, ExceptionCode& ec)
 {
     ASSERT(canvas);
 
     ec = 0;
 
-    if (!(sw > 0 && sh > 0 && dw > 0 && dh > 0)) {
+    if (srcRect.isEmpty() || dstRect.isEmpty()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -794,26 +793,29 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
+        
+    FloatRect sourceRect = c->roundToDevicePixels(srcRect);
+    FloatRect destRect = c->roundToDevicePixels(dstRect);
+        
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
     CGImageRef platformImage = canvas->createPlatformImage();
     if (!platformImage)
         return;
 
-    FloatRect destRect = FloatRect(dx, dy, dw, dh);
     willDraw(destRect);
 
     float iw = CGImageGetWidth(platformImage);
     float ih = CGImageGetHeight(platformImage);
-    if (sx == 0 && sy == 0 && iw == sw && ih == sh) {
+    if (sourceRect.x() == 0 && sourceRect.y() == 0 && iw == sourceRect.width() && ih == sourceRect.height()) {
         // Fast path, yay!
-        CGContextDrawImage(c->platformContext(), CGRectMake(dx, dy, dw, dh), platformImage);
+        CGContextDrawImage(c->platformContext(), destRect, platformImage);
     } else {
         // Slow path, boo!
         // Create a new bitmap of the appropriate size and then draw that into our context.
 
-        size_t csw = static_cast<size_t>(ceilf(sw));
-        size_t csh = static_cast<size_t>(ceilf(sh));
+        size_t csw = static_cast<size_t>(ceilf(sourceRect.width()));
+        size_t csh = static_cast<size_t>(ceilf(sourceRect.height()));
 
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         size_t bytesPerRow = csw * 4;
@@ -822,13 +824,13 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
         CGContextRef clippedSourceContext = CGBitmapContextCreate(buffer, csw, csh,
             8, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
         CGColorSpaceRelease(colorSpace);
-        CGContextTranslateCTM(clippedSourceContext, -sx, -sy);
+        CGContextTranslateCTM(clippedSourceContext, -sourceRect.x(), -sourceRect.y());
         CGContextDrawImage(clippedSourceContext, CGRectMake(0, 0, iw, ih), platformImage);
 
         CGImageRef clippedSourceImage = CGBitmapContextCreateImage(clippedSourceContext);
         CGContextRelease(clippedSourceContext);
 
-        CGContextDrawImage(c->platformContext(), CGRectMake(dx, dy, dw, dh), clippedSourceImage);
+        CGContextDrawImage(c->platformContext(), destRect, clippedSourceImage);
         CGImageRelease(clippedSourceImage);
         
         fastFree(buffer);

@@ -104,7 +104,8 @@ static void patternCallback(void* info, CGContextRef context)
 {
     CGImageRef platformImage = static_cast<CanvasPattern*>(info)->platformImage();
     if (platformImage) {
-        CGRect rect = CGRectMake(0, 0, CGImageGetWidth(platformImage), CGImageGetHeight(platformImage));
+        CGRect rect = GraphicsContext(context).roundToDevicePixels(
+            FloatRect(0, 0, CGImageGetWidth(platformImage), CGImageGetHeight(platformImage)));
         CGContextDrawImage(context, rect, platformImage);
         return;
     }
@@ -116,7 +117,7 @@ static void patternCallback(void* info, CGContextRef context)
     if (!image)
         return;
 
-    FloatRect rect = image->rect();
+    FloatRect rect = GraphicsContext(context).roundToDevicePixels(image->rect());
 
     if (image->getCGImageRef()) {
         CGContextDrawImage(context, rect, image->getCGImageRef());

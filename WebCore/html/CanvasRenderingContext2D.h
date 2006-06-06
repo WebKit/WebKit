@@ -143,12 +143,10 @@ namespace WebCore {
 
         void drawImage(HTMLImageElement*, float x, float y);
         void drawImage(HTMLImageElement*, float x, float y, float width, float height, ExceptionCode&);
-        void drawImage(HTMLImageElement*, float sx, float sy, float sw, float sh,
-            float dx, float dy, float dw, float dh, ExceptionCode&);
+        void drawImage(HTMLImageElement*, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode&);
         void drawImage(HTMLCanvasElement*, float x, float y);
         void drawImage(HTMLCanvasElement*, float x, float y, float width, float height, ExceptionCode&);
-        void drawImage(HTMLCanvasElement*, float sx, float sy, float sw, float sh,
-            float dx, float dy, float dw, float dh, ExceptionCode&);
+        void drawImage(HTMLCanvasElement*, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode&);
 
         void drawImageFromRect(HTMLImageElement*, float sx, float sy, float sw, float sh,
             float dx, float dy, float dw, float dh, const String& compositeOperation);

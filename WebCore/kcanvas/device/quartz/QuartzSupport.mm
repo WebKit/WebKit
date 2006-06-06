@@ -28,6 +28,7 @@
 #if SVG_SUPPORT
 #import "QuartzSupport.h"
 
+#import "GraphicsContext.h"
 #import "KCanvasMatrix.h"
 #import "KCanvasResourcesQuartz.h"
 #import "KRenderingFillPainter.h"
@@ -47,7 +48,8 @@ void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int
     NSImage *fileImage = [[NSImage alloc] initWithSize:NSMakeSize(width, height)];
     [fileImage lockFocus];
     CGContextRef fileImageContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextDrawImage(fileImageContext, CGRectMake(0, 0, width, height), image); 
+    CGContextDrawImage(fileImageContext, GraphicsContext(fileImageContext).roundToDevicePixels(
+        FloatRect(0, 0, width, height)), image); 
     [fileImage unlockFocus];
     NSData *tiff = [fileImage TIFFRepresentation];
     [tiff writeToFile:filename atomically:YES];

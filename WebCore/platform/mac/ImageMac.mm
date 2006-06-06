@@ -204,8 +204,8 @@ void Image::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRec
     if (!m_source.initialized())
         return;
     
-    CGRect fr = srcRect;
-    CGRect ir = dstRect;
+    CGRect fr = ctxt->roundToDevicePixels(srcRect);
+    CGRect ir = ctxt->roundToDevicePixels(dstRect);
 
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
@@ -279,7 +279,8 @@ static void drawPattern(void* info, CGContextRef context)
     CGImageRef image = data->frameAtIndex(data->currentFrame());
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
-    CGContextDrawImage(context, CGRectMake(0, data->size().height() - h, w, h), image);    
+    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect
+        (0, data->size().height() - h, w, h)), image);    
 }
 
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };

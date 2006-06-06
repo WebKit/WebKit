@@ -138,7 +138,7 @@ void HTMLCanvasElement::paint(GraphicsContext* p, const IntRect& r)
         return;
 #if __APPLE__
     if (CGImageRef image = createPlatformImage()) {
-        CGContextDrawImage(p->platformContext(), r, image);
+        CGContextDrawImage(p->platformContext(), p->roundToDevicePixels(r), image);
         CGImageRelease(image);
     }
 #endif

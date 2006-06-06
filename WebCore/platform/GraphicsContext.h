@@ -116,6 +116,8 @@ namespace WebCore {
         void drawText(const TextRun&, const IntPoint&, const TextStyle& = TextStyle());
         void drawHighlightForText(const TextRun&, const IntPoint&, int h, const TextStyle&, const Color& backgroundColor);
 
+        FloatRect roundToDevicePixels(const FloatRect&);
+        
         void drawLineForText(const IntPoint&, int yOffset, int width, bool printing);
         void drawLineForMisspelling(const IntPoint&, int width);
 

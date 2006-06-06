@@ -23,6 +23,7 @@
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
 #include "ExceptionCode.h"
+#include "FloatRect.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "JSCanvasGradient.h"
@@ -196,10 +197,10 @@ JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const List& args
                 setDOMException(exec, ec);
                 break;
             case 9:
-                context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec),
-                                   args[3]->toNumber(exec), args[4]->toNumber(exec),
-                                   args[5]->toNumber(exec), args[6]->toNumber(exec),
-                                   args[7]->toNumber(exec), args[8]->toNumber(exec), ec);
+                context->drawImage(imgElt, FloatRect(args[1]->toNumber(exec), args[2]->toNumber(exec),
+                                   args[3]->toNumber(exec), args[4]->toNumber(exec)),
+                                   FloatRect(args[5]->toNumber(exec), args[6]->toNumber(exec),
+                                   args[7]->toNumber(exec), args[8]->toNumber(exec)), ec);
                 setDOMException(exec, ec);
                 break;
             default:
@@ -217,10 +218,10 @@ JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const List& args
                 setDOMException(exec, ec);
                 break;
             case 9:
-                context->drawImage(canvas, args[1]->toNumber(exec), args[2]->toNumber(exec),
-                                   args[3]->toNumber(exec), args[4]->toNumber(exec),
-                                   args[5]->toNumber(exec), args[6]->toNumber(exec),
-                                   args[7]->toNumber(exec), args[8]->toNumber(exec), ec);
+                context->drawImage(canvas, FloatRect(args[1]->toNumber(exec), args[2]->toNumber(exec),
+                                   args[3]->toNumber(exec), args[4]->toNumber(exec)),
+                                   FloatRect(args[5]->toNumber(exec), args[6]->toNumber(exec),
+                                   args[7]->toNumber(exec), args[8]->toNumber(exec)), ec);
                 setDOMException(exec, ec);
                 break;
             default:
