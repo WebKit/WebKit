@@ -1,3 +1,10 @@
+2006-06-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Justin. 
+
+        * COM/WebView.cpp:
+        (WebView::keyPress): Added case for VK_RETURN. 
+
 2006-06-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.
