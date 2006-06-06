@@ -1,4 +1,4 @@
-This page tests constructors and prototypes that WebKit has gotten wrong in the past. If it passes, you'll see a series of 'PASS' messages below.
+This page tests global constructor objects like window.HTMLDocument. If it passes, you'll see a series of 'PASS' messages below.
 
 PASS: DOMParser.prototype.isPrototypeOf(domParser) should be true and is.
 PASS: XMLHttpRequest.prototype.isPrototypeOf(xmlHttpRequest) should be true and is.

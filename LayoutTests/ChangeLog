@@ -1,3 +1,12 @@
+2006-06-05  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by ggaren.
+
+        - Test results for http://bugzilla.opendarwin.org/show_bug.cgi?id=9310
+        Add missing DOM prototypes and other DOM cleanup
+
+        * fast/dom/global-constructors-expected.txt: Fixed test results.
+
 2006-06-04  Geoffrey Garen  <ggaren@apple.com>
 
         - Merged test-prototypes.html into global-constructors.html
