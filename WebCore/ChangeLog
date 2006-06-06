@@ -1,5 +1,17 @@
 2006-06-06  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9325
+        clientWidth/clientHeight on document element in strict mode should return visible frame size
+        
+        * dom/Element.cpp:
+        (WebCore::Element::clientWidth):
+        (WebCore::Element::clientHeight):
+        If we're the document element, and in strict mode, return the visible size of the frame.
+        
+2006-06-06  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by John.
 
         * bridge/mac/WebCoreFrameBridge.h:

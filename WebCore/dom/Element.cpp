@@ -223,6 +223,12 @@ Element* Element::offsetParent()
 int Element::clientWidth()
 {
     document()->updateLayoutIgnorePendingStylesheets();
+
+    // When in strict mode, clientWidth for the document
+    // element should return the width of the containing frame.
+    if (!document()->inCompatMode() && document()->documentElement() == this)
+        return document()->frame()->view()->visibleWidth();
+    
     if (RenderObject* rend = renderer())
         return rend->clientWidth();
     return 0;
@@ -231,6 +237,12 @@ int Element::clientWidth()
 int Element::clientHeight()
 {
     document()->updateLayoutIgnorePendingStylesheets();
+
+    // When in strict mode, clientHeight for the document
+    // element should return the height of the containing frame.
+    if (!document()->inCompatMode() && document()->documentElement() == this)
+        return document()->frame()->view()->visibleHeight();
+    
     if (RenderObject* rend = renderer())
         return rend->clientHeight();
     return 0;

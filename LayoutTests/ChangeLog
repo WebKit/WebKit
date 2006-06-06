@@ -1,3 +1,13 @@
+2006-06-06  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9325
+        clientWidth/clientHeight on document element in strict mode should return visible frame size
+
+        * fast/dom/client-width-height-expected.txt: Added.
+        * fast/dom/client-width-height.html: Added.
+
 2006-06-05  Rob Buis  <buis@kde.org>
 
         Reviewed by mjs.

@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <script>
+        function debug(str) {
+    	    pre = document.getElementById('console');
+    	    pre.appendChild(document.createTextNode(str + '\n'));
+        }
+    
+        function runTests() {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            if (document.documentElement.clientWidth == window.innerWidth &&
+                document.documentElement.clientHeight == window.innerHeight)
+                debug("SUCCESS!");
+            else
+                debug("FAILURE!");
+        }
+    </script>
+</head>
+<body onload="runTests()">
+    This tests that clientWidth/clientHeight on the document element in strict mode returns the visible size of the frame.
+    <pre id="console"></pre>
+</body>
+</html>
