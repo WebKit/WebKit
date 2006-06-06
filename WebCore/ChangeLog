@@ -1,3 +1,23 @@
+2006-06-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - fixed <rdar://problem/4566087> REGRESSION (420+): Crash occurs while completing a find again query at 
+        http://www.apple.com/ (RenderObject::repaint(bool))
+        
+        This wasn't a new problem in the code, but the recent use of DocumentMarkers for find results brought
+        it to the surface.
+
+        * dom/Document.h:
+        Use a RefPtr<Node> instead of a Node* in MarkerMap, so the node will be retained
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeMarkers):
+        Add a .get() to compensate for using RefPtr. Also, only repaint if this node actually had a marker
+        removed.
+        (WebCore::Document::repaintMarkers):
+        Add a .get() to compensate for using RefPtr.
+
 2006-06-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

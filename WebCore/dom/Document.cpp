@@ -2827,7 +2827,8 @@ void Document::removeMarkers(DocumentMarker::MarkerType markerType)
     MarkerMap markerMapCopy = m_markers;
     MarkerMap::iterator end = markerMapCopy.end();
     for (MarkerMap::iterator i = markerMapCopy.begin(); i != end; ++i) {
-        Node* node = i->first;
+        Node* node = i->first.get();
+        bool nodeNeedsRepaint = false;
 
         // inner loop: process each marker in the current node
         Vector<DocumentMarker> *markers = i->second;
@@ -2843,16 +2844,21 @@ void Document::removeMarkers(DocumentMarker::MarkerType markerType)
 
             // pitch the old marker
             markers->remove(markerIterator - markers->begin());
+            nodeNeedsRepaint = true;
             // markerIterator now points to the next node
+        }
+
+        // Redraw the node if it changed. Do this before the node is removed from m_markers, since 
+        // m_markers might contain the last reference to the node.
+        if (nodeNeedsRepaint) {
+            RenderObject* renderer = node->renderer();
+            if (renderer)
+                renderer->repaint();
         }
 
         // delete the node's list if it is now empty
         if (markers->isEmpty())
             m_markers.remove(node);
-
-        // cause the node to be redrawn
-        if (RenderObject* renderer = node->renderer())
-            renderer->repaint();
     }
 }
 
@@ -2861,7 +2867,7 @@ void Document::repaintMarkers(DocumentMarker::MarkerType markerType)
     // outer loop: process each markered node in the document
     MarkerMap::iterator end = m_markers.end();
     for (MarkerMap::iterator i = m_markers.begin(); i != end; ++i) {
-        Node* node = i->first;
+        Node* node = i->first.get();
         
         // inner loop: process each marker in the current node
         Vector<DocumentMarker> *markers = i->second;
