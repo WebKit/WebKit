@@ -257,16 +257,17 @@ static inline UString substituteBackreferences(const UString &replacement, const
     } else if (ref >= '0' && ref <= '9') {
         // 1- and 2-digit back references are allowed
         unsigned backrefIndex = ref - '0';
+        if (backrefIndex > (unsigned)reg->subPatterns())
+            continue;
         if (substitutedReplacement.size() > i + 2) {
             ref = substitutedReplacement[i+2].unicode();
             if (ref >= '0' && ref <= '9') {
                 backrefIndex = 10 * backrefIndex + ref - '0';
-                advance = 1;
+                if (backrefIndex > (unsigned)reg->subPatterns())
+                    backrefIndex = backrefIndex / 10;   // Fall back to the 1-digit reference
+                else
+                    advance = 1;
             }
-        }
-        if (backrefIndex > (unsigned)reg->subPatterns()) {
-            i += advance;
-            continue;
         }
         backrefStart = ovector[2 * backrefIndex];
         backrefLength = ovector[2 * backrefIndex + 1] - backrefStart;

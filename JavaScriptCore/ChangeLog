@@ -1,3 +1,14 @@
+2006-06-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Geoff.
+
+        - fix a regression in ecma_3/String/regress-104375.js
+
+        * kjs/string_object.cpp:
+        (substituteBackreferences): If a 2-digit back reference is out of range,
+        parse it as a 1-digit reference (followed by the other digit). This matches
+        Firefox's behavior.
+
 2006-06-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed By Maciej.
