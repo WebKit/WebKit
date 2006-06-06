@@ -286,6 +286,7 @@ void GraphicsContext::clip(const Path&) { }
 void GraphicsContext::translate(const FloatSize&) { }
 void GraphicsContext::rotate(float) { }
 void GraphicsContext::scale(const FloatSize&) { }
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect) { return rect; }
 
 Path::Path(){ }
 Path::~Path(){ }
