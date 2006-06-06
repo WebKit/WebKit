@@ -1,3 +1,16 @@
+2006-06-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by mjs.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5564
+        'font' shorthand parsing should be more tolerant in quirks mode
+
+        When not in strict mode accept font property specifications
+        lacking a font family part, like WinIE does.
+
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseFont):
+
 2006-06-05  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

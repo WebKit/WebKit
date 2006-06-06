@@ -1,3 +1,15 @@
+2006-06-05  Rob Buis  <buis@kde.org>
+
+        Reviewed by mjs.
+
+        testcases for http://bugzilla.opendarwin.org/show_bug.cgi?id=5564
+        'font' shorthand parsing should be more tolerant in quirks mode
+
+        * fast/css/font_property_compatibility-expected.txt: Added.
+        * fast/css/font_property_compatibility.html: Added.
+        * fast/css/font_property_normal-expected.txt: Added.
+        * fast/css/font_property_normal.html: Added.
+
 2006-06-05  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by ggaren.
