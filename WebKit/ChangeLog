@@ -1,3 +1,12 @@
+2006-06-06  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John.
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _reloadForPluginChanges]):
+        Don't traverse the view hierarchy looking for plugin views. Instead, just
+        ask the frame whether it contains any plugins.
+
 2006-06-03  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by hyatt.

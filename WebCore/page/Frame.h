@@ -788,6 +788,8 @@ public:
   void setResourceRequest(const ResourceRequest& request);
   const ResourceRequest& resourceRequest() const;
 
+  bool containsPlugins() const;
+  
   // split out controller objects
   FrameTree* tree() const;
   SelectionController& selection() const; // FIXME: Change to pointer?

@@ -2566,6 +2566,11 @@ static NSCharacterSet *_getPostSmartSet(void)
     return [self canProvideDocumentSource];
 }
 
+- (BOOL)containsPlugins
+{
+    return m_frame->containsPlugins();
+}
+
 @end
 
 @implementation WebCoreFrameBridge (WebCoreBridgeInternal)

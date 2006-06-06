@@ -3470,5 +3470,9 @@ String Frame::documentTypeString() const
     return String();
 }
 
+bool Frame::containsPlugins() const 
+{ 
+    return d->m_plugins.size() != 0;
+}
 
 } // namespace WebCore
