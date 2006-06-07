@@ -1,5 +1,18 @@
 2006-06-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9122
+          REGRESSION: Incorrect vertical position for text fields in a "display: table" block
+
+        Test: fast/table/text-field-baseline.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::baselinePosition): Do not descend into replaced objects, just
+        use their baseline.
+
+2006-06-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Hyatt (concept) and Darin (some coding details).
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4334

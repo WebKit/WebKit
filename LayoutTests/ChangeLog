@@ -1,3 +1,15 @@
+2006-06-07  Denis Defreyne  <amonre@amonre.org>
+
+        Reviewed by Hyatt, tweaked by Mitz.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9122
+          REGRESSION: Incorrect vertical position for text fields in a "display: table" block
+
+        * fast/table/text-field-baseline-expected.checksum: Added.
+        * fast/table/text-field-baseline-expected.png: Added.
+        * fast/table/text-field-baseline-expected.txt: Added.
+        * fast/table/text-field-baseline.html: Added.
+
 2006-06-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.

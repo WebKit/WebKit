@@ -149,7 +149,7 @@ short RenderTableCell::baselinePosition(bool) const
     
     if (!o)
         return offset + contentHeight();
-    while (o->firstChild()) {
+    while (o->firstChild() && !o->isReplaced()) {
         if (!o->isInline())
             offset += o->paddingTop() + o->borderTop();
         o = o->firstChild();
