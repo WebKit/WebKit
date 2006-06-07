@@ -757,6 +757,7 @@ public:
     bool shadowDataEquivalent(const StyleCSS3InheritedData& o) const;
 
     ShadowData* textShadow;  // Our text shadow information for shadowed text drawing.
+    AtomicString highlight; // Apple-specific extension for custom highlight rendering.
     unsigned userModify : 2; // EUserModify  (editing)
     unsigned wordWrap : 1; // EWordWrap 
     unsigned nbspMode : 1; // ENBSPMode
@@ -1337,6 +1338,7 @@ public:
     ENBSPMode nbspMode() const { return static_cast<ENBSPMode>(css3InheritedData->nbspMode); }
     EKHTMLLineBreak khtmlLineBreak() const { return static_cast<EKHTMLLineBreak>(css3InheritedData->khtmlLineBreak); }
     EMatchNearestMailBlockquoteColor matchNearestMailBlockquoteColor() const { return static_cast<EMatchNearestMailBlockquoteColor>(css3NonInheritedData->matchNearestMailBlockquoteColor); }
+    const AtomicString& highlight() const { return css3InheritedData->highlight; }
     EResize resize() const { return static_cast<EResize>(css3InheritedData->resize); }
     // End CSS3 Getters
 
@@ -1555,6 +1557,7 @@ public:
     void setNBSPMode(ENBSPMode b) { SET_VAR(css3InheritedData, nbspMode, b); }
     void setKHTMLLineBreak(EKHTMLLineBreak b) { SET_VAR(css3InheritedData, khtmlLineBreak, b); }
     void setMatchNearestMailBlockquoteColor(EMatchNearestMailBlockquoteColor c)  { SET_VAR(css3NonInheritedData, matchNearestMailBlockquoteColor, c); }
+    void setHighlight(const AtomicString& h) { SET_VAR(css3InheritedData, highlight, h); }
     void setResize(EResize r) { SET_VAR(css3InheritedData, resize, r); }
     // End CSS3 Setters
    
@@ -1679,6 +1682,7 @@ public:
     static ENBSPMode initialNBSPMode() { return NBNORMAL; }
     static EKHTMLLineBreak initialKHTMLLineBreak() { return LBNORMAL; }
     static EMatchNearestMailBlockquoteColor initialMatchNearestMailBlockquoteColor() { return BCNORMAL; }
+    static const AtomicString& initialHighlight() { return nullAtom; }
     static EResize initialResize() { return RESIZE_NONE; }
     static EAppearance initialAppearance() { return NoAppearance; }
     static bool initialVisuallyOrdered() { return false; }

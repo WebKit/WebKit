@@ -483,13 +483,6 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseShape(propId, important);
         break;
 
-#if __APPLE__
-    case CSS_PROP__WEBKIT_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
-        if (value->unit == Value::Function || id == CSS_VAL_NONE)
-            return parseDashboardRegions(propId, important);
-        break;
-#endif
-
     /* Start of supported CSS properties with validation. This is needed for parseShorthand to work
      * correctly and allows optimization in WebCore::applyRule(..)
      */
@@ -734,25 +727,6 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSS_PROP_WORD_WRAP:           // normal | break-word
         if (id == CSS_VAL_NORMAL || id == CSS_VAL_BREAK_WORD)
-            valid_primitive = true;
-        break;
-
-    case CSS_PROP__WEBKIT_FONT_SIZE_DELTA:           // <length>
-        valid_primitive = validUnit(value, FLength, strict);
-        break;
-
-    case CSS_PROP__WEBKIT_NBSP_MODE:     // normal | space
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_SPACE)
-            valid_primitive = true;
-        break;
-
-    case CSS_PROP__WEBKIT_LINE_BREAK:   // normal | after-white-space
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_AFTER_WHITE_SPACE)
-            valid_primitive = true;
-        break;
-
-    case CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:   // normal | match
-        if (id == CSS_VAL_NORMAL || id == CSS_VAL_MATCH)
             valid_primitive = true;
         break;
 
@@ -1131,6 +1105,38 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSS_VAL_LOGICAL || id == CSS_VAL_VISUAL)
             valid_primitive = true;
         break;
+    
+    case CSS_PROP__WEBKIT_FONT_SIZE_DELTA:           // <length>
+        valid_primitive = validUnit(value, FLength, strict);
+        break;
+
+    case CSS_PROP__WEBKIT_NBSP_MODE:     // normal | space
+        if (id == CSS_VAL_NORMAL || id == CSS_VAL_SPACE)
+            valid_primitive = true;
+        break;
+
+    case CSS_PROP__WEBKIT_LINE_BREAK:   // normal | after-white-space
+        if (id == CSS_VAL_NORMAL || id == CSS_VAL_AFTER_WHITE_SPACE)
+            valid_primitive = true;
+        break;
+
+    case CSS_PROP__WEBKIT_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:   // normal | match
+        if (id == CSS_VAL_NORMAL || id == CSS_VAL_MATCH)
+            valid_primitive = true;
+        break;
+
+    case CSS_PROP__WEBKIT_HIGHLIGHT:
+        if (id == CSS_VAL_NONE || value->unit == CSSPrimitiveValue::CSS_STRING)
+            valid_primitive = true;
+        break;
+
+#if __APPLE__
+    case CSS_PROP__WEBKIT_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
+        if (value->unit == Value::Function || id == CSS_VAL_NONE)
+            return parseDashboardRegions(propId, important);
+        break;
+#endif
+    // End Apple-specific properties
 
         /* shorthand properties */
     case CSS_PROP_BACKGROUND:

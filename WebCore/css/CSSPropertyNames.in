@@ -71,6 +71,7 @@ font-style
 font-variant
 font-weight
 height
+-webkit-highlight
 left
 letter-spacing
 -webkit-line-clamp

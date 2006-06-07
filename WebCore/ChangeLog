@@ -1,3 +1,27 @@
+2006-06-07  David Hyatt  <hyatt@apple.com>
+
+        Add support for a new property for custom highlighting.  This patch just
+        adds support for the parsing of the property.  It doesn't do anything yet.
+
+        Reviewed by beth
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPropertyNames.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/render_style.cpp:
+        (WebCore::StyleCSS3InheritedData::StyleCSS3InheritedData):
+        (WebCore::StyleCSS3InheritedData::operator==):
+        (WebCore::RenderStyle::diff):
+        * rendering/render_style.h:
+        (WebCore::RenderStyle::highlight):
+        (WebCore::RenderStyle::setHighlight):
+        (WebCore::RenderStyle::initialHighlight):
+
 2006-06-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Fix suggested by Rob Buis. Reviewed by Darin.

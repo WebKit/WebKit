@@ -451,6 +451,7 @@ StyleCSS3InheritedData::StyleCSS3InheritedData()
 StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData& o)
     : Shared<StyleCSS3InheritedData>()
     , textShadow(o.textShadow ? new ShadowData(*o.textShadow) : 0)
+    , highlight(o.highlight)
     , userModify(o.userModify)
     , wordWrap(o.wordWrap)
     , nbspMode(o.nbspMode)
@@ -469,6 +470,7 @@ bool StyleCSS3InheritedData::operator==(const StyleCSS3InheritedData& o) const
 {
     return userModify == o.userModify
         && shadowDataEquivalent(o)
+        && highlight == o.highlight
         && wordWrap == o.wordWrap
         && nbspMode == o.nbspMode
         && khtmlLineBreak == o.khtmlLineBreak
@@ -756,7 +758,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 #if SVG_SUPPORT
     // This is horribly inefficient.  Eventually we'll have to integrate
     // this more directly by calling: Diff svgDiff = svgStyle->diff(other)
-    // and then checking svgDiff and returning from the appropraite places below.
+    // and then checking svgDiff and returning from the appropriate places below.
     if (m_svgStyle != other->m_svgStyle)
         return Layout;
 #endif
@@ -793,6 +795,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
          css3NonInheritedData->marginBottomCollapse != other->css3NonInheritedData->marginBottomCollapse ||
          *css3NonInheritedData->flexibleBox.get() != *other->css3NonInheritedData->flexibleBox.get() ||
          (css3NonInheritedData->lineClamp != other->css3NonInheritedData->lineClamp) ||
+         (css3InheritedData->highlight != other->css3InheritedData->highlight) ||
          (css3InheritedData->textSizeAdjust != other->css3InheritedData->textSizeAdjust) ||
          (css3InheritedData->wordWrap != other->css3InheritedData->wordWrap) ||
          (css3InheritedData->nbspMode != other->css3InheritedData->nbspMode) ||

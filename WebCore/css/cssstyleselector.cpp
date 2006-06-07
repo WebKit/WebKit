@@ -3849,6 +3849,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         style->setLineClamp((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE));
         break;
     }
+    case CSS_PROP__WEBKIT_HIGHLIGHT: {
+        HANDLE_INHERIT_AND_INITIAL(highlight, Highlight);
+        if (primitiveValue->getIdent() == CSS_VAL_NONE)
+            style->setHighlight(nullAtom);
+        else
+            style->setHighlight(primitiveValue->getStringValue());
+        break;
+    }
     case CSS_PROP__WEBKIT_TEXT_SIZE_ADJUST: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
         if (!primitiveValue || !primitiveValue->getIdent()) return;

@@ -94,6 +94,7 @@ static const int computedProperties[] = {
     CSS_PROP_FONT_VARIANT,
     CSS_PROP_FONT_WEIGHT,
     CSS_PROP_HEIGHT,
+    CSS_PROP__WEBKIT_HIGHLIGHT,
     CSS_PROP_LEFT,
     CSS_PROP_LETTER_SPACING,
     CSS_PROP__WEBKIT_LINE_BREAK,
@@ -707,6 +708,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     }
     case CSS_PROP_HEIGHT:
         return new CSSPrimitiveValue(renderer->contentHeight(), CSSPrimitiveValue::CSS_PX);
+    case CSS_PROP__WEBKIT_HIGHLIGHT: {
+        if (style->highlight() == nullAtom)
+            return new CSSPrimitiveValue(CSS_VAL_NONE);
+        else
+            return new CSSPrimitiveValue(style->highlight(), CSSPrimitiveValue::CSS_STRING);
+    }
     case CSS_PROP_LEFT:
         return getPositionOffsetValue(renderer, CSS_PROP_LEFT);
     case CSS_PROP_LETTER_SPACING:
