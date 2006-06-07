@@ -1,3 +1,15 @@
+2006-06-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - repaint test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9121
+          REGRESSION: [Incremental Repaint] DHTML movement test failures
+
+        * fast/repaint/containing-block-position-change-expected.checksum: Added.
+        * fast/repaint/containing-block-position-change-expected.png: Added.
+        * fast/repaint/containing-block-position-change-expected.txt: Added.
+        * fast/repaint/containing-block-position-change.html: Added.
+
 2006-06-06  Darin Adler  <darin@apple.com>
 
         * fast/repaint/table-extra-bottom-grow.html: Removed unneeded line of code.

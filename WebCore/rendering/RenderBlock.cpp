@@ -553,7 +553,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         didFullRepaint = repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
     if (!didFullRepaint && !repaintRect.isEmpty()) {
         RenderView* v = view();
-        if (v && v->view()) {
+        if (v && v->frameView()) {
             repaintRect.inflate(maximalOutlineSize(PaintPhaseOutline));
             v->frameView()->addRepaintInfo(this, repaintRect); // We need to do a partial repaint of our content.
         }
@@ -1767,10 +1767,30 @@ void RenderBlock::removePositionedObject(RenderObject *o)
     if (m_positionedObjects) {
         DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
         while (it.current()) {
-            if (it.current() == o)
+            if (it.current() == o) {
                 m_positionedObjects->removeRef(it.current());
+                return;
+            }
             ++it;
         }
+    }
+}
+
+void RenderBlock::removePositionedObjects(RenderBlock* o)
+{
+    if (!m_positionedObjects)
+        return;
+    
+    DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
+    while (it.current()) {
+        if (!o || it.current()->hasAncestor(o)) {
+            if (o) {
+                it.current()->setChildNeedsLayout(true, false);
+                it.current()->layer()->computeRepaintRects();
+            }
+            m_positionedObjects->removeRef(it.current());
+        } else
+            ++it;
     }
 }
 

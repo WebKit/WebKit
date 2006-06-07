@@ -199,18 +199,13 @@ CSSGrammar.cpp : css/CSSGrammar.y
 	rm -f CSSGrammar.cpp.h CSSGrammar.hpp
 
 # XPath grammar
-ifeq ($(findstring XPATH_SUPPORT,$(FEATURE_DEFINES)), XPATH_SUPPORT)
+
 XPathGrammar.cpp : xpath/impl/XPathGrammar.y $(PROJECT_FILE)
 	bison -d -p xpathyy $< -o $@
 	touch XPathGrammar.cpp.h
 	touch XPathGrammar.hpp
 	cat XPathGrammar.cpp.h XPathGrammar.hpp > XPathGrammar.h
 	rm -f XPathGrammar.cpp.h XPathGrammar.hpp
-else
-XPathGrammar.cpp : $(PROJECT_FILE)
-	echo > XPathGrammar.cpp
-	echo > XPathGrammar.h
-endif
 
 # user agent style sheets
 

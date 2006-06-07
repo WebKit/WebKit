@@ -1,3 +1,28 @@
+2006-06-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9121
+          REGRESSION: [Incremental Repaint] DHTML movement test failures
+
+        Test (repaint): fast/repaint/containing-block-position-change.html
+
+        * manual-tests/containing-block-position-chage.html: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Unrelated change: fixed typo from
+        the RenderCanvas to RenderView rename.
+        (WebCore::RenderBlock::removePositionedObject): Added a return immediately
+        after removing the object.
+        (WebCore::RenderBlock::removePositionedObjects): Added.
+        * rendering/RenderBlock.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): Added code to remove absolutely positioned
+        descendants from the positioned objects list of their current containing block
+        when they are going to have a new one as a result of this block's position
+        property changing. 
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::removePositionedObjects):
+
 2006-06-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

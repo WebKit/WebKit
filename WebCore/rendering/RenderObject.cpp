@@ -2057,8 +2057,28 @@ void RenderObject::setStyle(RenderStyle *style)
 
         // When a layout hint happens and an object's position style changes, we have to do a layout
         // to dirty the render tree using the old position value now.
-        if (d == RenderStyle::Layout && m_parent && m_style->position() != style->position())
+        if (d == RenderStyle::Layout && m_parent && m_style->position() != style->position()) {
             markContainingBlocksForLayout();
+            if (isRenderBlock()) {
+                if (style->position() == StaticPosition) {
+                    // Clear our positioned objects list. Our absolutely positioned descendants will be
+                    // inserted into our containing block's positioned objects list during layout.
+                    removePositionedObjects(0);
+                } else if (m_style->position() == StaticPosition) {
+                    // Remove our absolutely positioned descendants from their current containing block.
+                    // They will be inserted into our positioned objects list during layout.
+                    RenderObject* cb = parent();
+                    while (cb && (cb->style()->position() == StaticPosition || (cb->isInline() && !cb->isReplaced())) && !cb->isRoot() && !cb->isRenderView()) {
+                        if (cb->style()->position() == RelativePosition && cb->isInline() && !cb->isReplaced()) {
+                            cb =  cb->containingBlock();
+                            break;
+                        }
+                        cb = cb->parent();
+                    }
+                    cb->removePositionedObjects(static_cast<RenderBlock*>(this));
+                }
+            }
+        }
         
         if (isFloating() && (m_style->floating() != style->floating()))
             // For changes in float styles, we need to conceivably remove ourselves
