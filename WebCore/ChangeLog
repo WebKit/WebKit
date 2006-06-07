@@ -1,5 +1,17 @@
 2006-06-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Fix suggested by Rob Buis. Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9341
+          REGRESSION: Repro crash caused by style="font:bold"
+
+        Test: fast/css/font-shorthand-weight-only.html
+
+        * css/cssparser.cpp: (WebCore::CSSParser::parseFont): Revert part of the change
+        made to fix bug 5564.
+
+2006-06-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Hyatt.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9122

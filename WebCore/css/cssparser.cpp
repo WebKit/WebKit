@@ -2032,7 +2032,7 @@ bool CSSParser::parseFont(bool important)
             break;
         value = valueList->next();
     }
-    if (strict && !value)
+    if (!value)
         goto invalid;
 
     // set undefined values to default
