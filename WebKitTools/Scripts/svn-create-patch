@@ -33,21 +33,23 @@
 #   Uses the real diff, not svn's built-in diff.
 #   Always passes "-p" to diff so it will try to include function names.
 #   Handles binary files (encoded as a base64 chunk of text).
+#   Sorts the diffs alphabetically by text files, then binary files.
 #
 # Missing features:
 #
-#   Sort the diffs, since svn emits them in a seemingly-random order.
 #   Handle moved files.
 
 use strict;
-use Cwd;
-use Getopt::Long;
-use Time::gmtime;
-use File::stat;
-use File::Spec;
-use POSIX qw(:errno_h);
+
 use Config;
+use Cwd;
+use File::Basename;
+use File::Spec;
+use File::stat;
+use Getopt::Long;
 use MIME::Base64;
+use POSIX qw(:errno_h);
+use Time::gmtime;
 
 my $startDir = getcwd();
 my %paths;
@@ -57,100 +59,124 @@ if (!@ARGV) {
     $paths{"."} = 1;
 } else {
     for my $file (@ARGV) {
-        die "can't handle absolute paths like \"$file\"\n" if $file =~ m|^/|;
+        die "can't handle absolute paths like \"$file\"\n" if File::Spec->file_name_is_absolute($file);
         die "can't handle empty string path\n" if $file eq "";
-        die "can't handle path with ' in the name like \"$file\"\n" if $file =~ /'/; # ' (keep Xcode syntax highlighting happy)
+        die "can't handle path with single quote in the name like \"$file\"\n" if $file =~ /'/; # ' (keep Xcode syntax highlighting happy)
 
         my $untouchedFile = $file;
-        
-        # Add a leading and trailing slash to simplify logic below.
-        $file = "/$file/";
 
-        # Remove repeated slashes.
-        $file =~ s|//+|/|g;
+        $file = canonicalizePath($file);
 
-        # Remove meaningless sequences involving ".".
-        $file =~ s|/\./|/|g;
-
-        # Remove meaningless sequences involving "..".
-        $file =~ s|/[^./]/\.\./|/|g;
-        $file =~ s|/[^/]+[^./]/\.\./|/|g;
-        $file =~ s|/[^./][^/]+/\.\./|/|g;
         die "can't handle paths with .. like \"$untouchedFile\"\n" if $file =~ m|/\.\./|;
-
-        # Remove the leading and trailing slash.
-        $file =~ s|^/(.*)/$|$1|;
 
         $paths{$file} = 1;
     }
-}
 
-# Remove any paths that also have a parent listed.
-for my $path (keys %paths) {
-    my $parent = $path;
-    while ($parent =~ s|/+[^/]+$||) {
-        if ($paths{$parent}) {
-            delete $paths{$path};
-            last;
-        }
-    }
-}
-
-sub getDirAndBase
-{
-    my ($path) = @_;
-    if (-d $path) {
-        $path =~ s|/+$||;
-        return ($path, ".");
-    }
-    return ($1, $2) if $path =~ m|^(.+)/([^/]+)$|;
-    $path !~ m|/| or die "Could not parse path name $path.\n";
-    return (".", $path);
-}
-
-# Function to generate a diff.
-sub diff
-{
-    my ($path) = @_;
-    my ($dir, $base) = getDirAndBase($path);
-    my $errors = "";
-    chdir $dir or die;
-    open DIFF, "svn diff --diff-cmd diff -x -uNp '$base' |" or die;
-    my $indexPath;
-    my $binaryPath;
-    while (<DIFF>) {
-        if (/^Index: (.*)/) {
-            # New patch just started
-            $indexPath = $1;
-            if ($dir ne ".") {
-                $indexPath = "$dir/$indexPath";
-                s/Index: .*/Index: $indexPath/;
+    if ($paths{"."}) {
+        %paths = ();
+        $paths{"."} = 1;
+    } else {
+        # Remove any paths that also have a parent listed.
+        for my $path (keys %paths) {
+            for (my $parent = dirname($path); $parent ne '.'; $parent = dirname($parent)) {
+                if ($paths{$parent}) {
+                    delete $paths{$path};
+                    last;
+                }
             }
-            # Output encoded binary contents of last patch before beginning of next patch
-            outputBinaryContent(File::Spec->abs2rel($binaryPath, $dir)) if ($binaryPath);
-            undef $binaryPath;
         }
-        if ($indexPath) {
-            # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
-            s/\S+$/$indexPath/ if /^diff/;
-            s/^--- \S+/--- $indexPath/;
-            s/^\+\+\+ \S+/+++ $indexPath/ && undef $indexPath;
+    }
+}
+
+# Generate a list of files requiring diffs
+my %textFiles;
+my %binaryFiles;
+for my $path (keys %paths) {
+    generateFileList($path, \%textFiles, \%binaryFiles);
+}
+
+# Generate the diff for text files, then binary files, for easy reviewing
+for my $file (sort keys %textFiles) {
+    generateDiff($file);
+}
+for my $file (sort keys %binaryFiles) {
+    generateDiff($file);
+}
+
+exit 0;
+
+
+sub canonicalizePath
+{
+    my ($file) = @_;
+
+    # Remove extra slashes and '.' directories in path
+    $file = File::Spec->canonpath($file);
+
+    # Remove '..' directories in path
+    my @dirs = ();
+    foreach my $dir (File::Spec->splitdir($file)) {
+        if ($dir eq '..' && $#dirs >= 0 && $dirs[$#dirs] ne '..') {
+            pop(@dirs);
+        } else {
+            push(@dirs, $dir);
         }
-        if ($binaryPath) {
-            # Fix path on "Property changes on:" line to match preceding Index: line.
-            s/^(Property changes on:) \S+/$1 $indexPath/;
-        }
-        $binaryPath = $indexPath if (/^Cannot display: file marked as a binary type\.$/);
+    }
+    return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
+}
+
+sub generateDiff
+{
+    my ($file) = @_;
+    my $errors = "";
+    my $isBinary;
+    my $lastLine;
+    open DIFF, "svn diff --diff-cmd diff -x -uNp '$file' |" or die;
+    while (<DIFF>) {
+        $isBinary = 1 if (/^Cannot display: file marked as a binary type\.$/);
         print;
+        $lastLine = $_;
     }
     close DIFF;
-    # Output encoded binary contents if the last patch was binary
-    outputBinaryContent(File::Spec->abs2rel($binaryPath, $dir)) if ($binaryPath);
-    chdir $startDir or die;
+    print "\n" if ($isBinary && $lastLine =~ m/\S+/);
+    outputBinaryContent($file) if ($isBinary);
     print STDERR $errors;
 }
 
-# Outputs binary content as encoded text
+sub generateFileList
+{
+    my ($path, $textFiles, $binaryFiles) = @_;
+    my $indexPath;
+    my $isBinary;
+    open DIFF, "svn diff --diff-cmd diff -x -uNp '$path' |" or die;
+    while (<DIFF>) {
+        if (/^Index: (.*)/) {
+            my $newIndexPath = $1;
+            if ($indexPath) {
+                if ($isBinary) {
+                    $binaryFiles->{$indexPath} = 1;
+                } else {
+                    $textFiles->{$indexPath} = 1;
+                }
+            }
+            $indexPath = $newIndexPath;
+            $isBinary = 0;
+        }
+        if (/^Cannot display: file marked as a binary type\.$/) {
+            $isBinary = 1;
+        }
+    }
+    close DIFF;
+    # Handle last patch
+    if ($indexPath) {
+        if ($isBinary) {
+            $binaryFiles->{$indexPath} = 1;
+        } else {
+            $textFiles->{$indexPath} = 1;
+        }
+    }
+}
+
 sub outputBinaryContent
 {
     my ($path) = @_;
@@ -166,7 +192,3 @@ sub outputBinaryContent
     print "\n";
 }
 
-# Generate the diff for each passed file or directory.
-for my $path (sort keys %paths) {
-    diff($path);
-}

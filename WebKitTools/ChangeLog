@@ -1,3 +1,13 @@
+2006-06-06  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9322
+        Teach svn-create-patch to sort its output
+
+        * Scripts/svn-create-patch: Clean up perl code.  Sort patch output alphabetically
+        by text files first, then by binary files.
+
 2006-06-04  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by darin.
