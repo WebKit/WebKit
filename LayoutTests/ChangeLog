@@ -1,3 +1,15 @@
+2006-06-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - pixel test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4334
+          REGRESSION: Flickering when css-hover should change opacity on floating elements
+
+        * fast/block/float/nopaint-after-layer-destruction-expected.checksum: Added.
+        * fast/block/float/nopaint-after-layer-destruction-expected.png: Added.
+        * fast/block/float/nopaint-after-layer-destruction-expected.txt: Added.
+        * fast/block/float/nopaint-after-layer-destruction.html: Added.
+
 2006-06-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.

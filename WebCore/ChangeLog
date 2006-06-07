@@ -1,3 +1,21 @@
+2006-06-07  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt (concept) and Darin (some coding details).
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4334
+          REGRESSION: Flickering when css-hover should change opacity on floating elements
+
+        Pixel test: fast/block/float/nopaint-after-layer-destruction.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setPaintsFloatingObject): Added. Changes the noPaint flag
+        in the block's FloatingObject for the given float and calls setChildNeedsLayout.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::blockThatPaintsFloat): Added this helper function.
+        (WebCore::RenderBox::setStyle): Added. Calls to setPaintsFloatingObject when a float
+        gains or loses its layer.
+
 2006-06-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
