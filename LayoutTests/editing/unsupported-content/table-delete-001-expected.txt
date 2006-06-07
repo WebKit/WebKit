@@ -20,7 +20,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of SPAN > FONT > DIV > DIV > BODY > HTML > #document to 1 of SPAN > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -60,10 +60,13 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,260) size 784x32 [border: (2px solid #008000)]
         RenderText {#text} at (2,2) size 107x28
           text run at (2,2) width 107: "beforeafter"
-      RenderBlock {DIV} at (0,302) size 784x32
-        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,302) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 62x28
             text run at (2,2) width 62: "before"
-          RenderText {#text} at (64,2) size 45x28
-            text run at (64,2) width 45: "after"
-caret: position 7 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderInline {FONT} at (0,0) size 0x22
+            RenderInline {SPAN} at (0,0) size 0x18
+              RenderBR {BR} at (64,24) size 0x0
+          RenderText {#text} at (2,30) size 45x28
+            text run at (2,30) width 45: "after"
+caret: position 0 of child 2 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

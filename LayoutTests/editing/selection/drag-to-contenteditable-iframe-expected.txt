@@ -1,8 +1,9 @@
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of BODY > HTML > #document to 2 of BODY > HTML > #document givenAction:WebViewInsertActionDropped
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of BODY > HTML > #document to 2 of BODY > HTML > #document toDOMRange:range from 0 of #text > BODY > HTML > #document to 5 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of IFRAME > BODY > HTML > #document to 1 of IFRAME > BODY > HTML > #document toDOMRange:range from 1 of IFRAME > BODY > HTML > #document to 1 of IFRAME > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 5 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of IFRAME > BODY > HTML > #document to 1 of IFRAME > BODY > HTML > #document toDOMRange:range from 1 of IFRAME > BODY > HTML > #document to 1 of IFRAME > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document givenAction:WebViewInsertActionDropped
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification

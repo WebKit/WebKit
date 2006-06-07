@@ -76,6 +76,15 @@ bool editingIgnoresContent(const Node *node)
     return false;
 }
 
+bool canHaveChildrenForEditing(const Node* node)
+{
+    return !node->hasTagName(hrTag) &&
+           !node->hasTagName(brTag) &&
+           !node->hasTagName(imgTag) &&
+           !node->hasTagName(buttonTag) &&
+           !node->isTextNode();
+}
+
 // antidote for maxDeepOffset()
 Position rangeCompliantEquivalent(const Position& pos)
 {
@@ -176,8 +185,11 @@ void rebalanceWhitespaceInTextNode(Node *node, unsigned int start, unsigned int 
     if (start + length == text.length() && substring[end] == ' ')
         substring.replace(end, 1, nbsp);
     
-    text.remove(start, length);
-    text.insert(String(substring), start);
+    ExceptionCode ec = 0;
+    textNode->deleteData(start, length, ec);
+    ASSERT(!ec);
+    textNode->insertData(start, String(substring), ec);
+    ASSERT(!ec);
 }
 
 bool isTableStructureNode(const Node *node)

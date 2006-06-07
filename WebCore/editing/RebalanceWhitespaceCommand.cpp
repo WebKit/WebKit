@@ -87,10 +87,13 @@ void RebalanceWhitespaceCommand::doUnapply()
         return;
     
     ASSERT(m_position.node()->isTextNode());
-    Text *textNode = static_cast<Text *>(m_position.node());
-    String text = textNode->data();
-    text.remove(m_upstreamOffset, m_afterString.length());
-    text.insert(m_beforeString, m_upstreamOffset);
+    
+    Text* node = static_cast<Text*>(m_position.node());
+    ExceptionCode ec = 0;
+    node->deleteData(m_upstreamOffset, m_afterString.length(), ec);
+    ASSERT(!ec);
+    node->insertData(m_upstreamOffset, m_beforeString, ec);
+    ASSERT(!ec);
 }
 
 bool RebalanceWhitespaceCommand::preservesTypingStyle() const

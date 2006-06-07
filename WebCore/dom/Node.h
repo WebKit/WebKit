@@ -126,7 +126,8 @@ public:
     void setTextContent(const String&, ExceptionCode&);
     
     Node* lastDescendant() const;
-
+    Node* firstDescendant() const;
+    
     // Other methods (not part of DOM)
 
     virtual bool isElementNode() const { return false; }

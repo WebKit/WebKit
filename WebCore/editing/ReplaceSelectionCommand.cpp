@@ -552,10 +552,11 @@ void ReplaceSelectionCommand::doApply()
     
     // delete the current range selection, or insert paragraph for caret selection, as needed
     if (selection.isRange()) {
-        // When the end of the selection to delete is at the end of a paragraph, and the selection
-        // to delete spans multiple blocks, not merging will leave an empty line containing the
-        // end of the selection to delete.
-        bool mergeBlocksAfterDelete = !fragment.hasInterchangeNewlineAtEnd() && !fragment.hasInterchangeNewlineAtStart() && isEndOfParagraph(visibleEnd);
+        // When the end of the selection being pasted into is at the end of a paragraph, and that selection
+        // spans multiple blocks, not merging will leave an empty line.
+        // When the start of the selection being pasted into is at the start of a paragraph, and starts at the
+        // start of a block, not merging will leave hanging block(s).
+        bool mergeBlocksAfterDelete = isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
         deleteSelection(false, mergeBlocksAfterDelete);
         updateLayout();
         visibleStart = endingSelection().visibleStart();
@@ -829,28 +830,16 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
     Position end;
 
     if (m_firstNodeInserted && m_firstNodeInserted->inDocument() && m_lastNodeInserted && m_lastNodeInserted->inDocument()) {
-        // Find the last leaf.
-        Node *lastLeaf = m_lastNodeInserted.get();
-        while (1) {
-            Node *nextChild = lastLeaf->lastChild();
-            if (!nextChild)
-                break;
-            lastLeaf = nextChild;
-        }
-    
-        // Find the first leaf.
-        Node *firstLeaf = m_firstNodeInserted.get();
-        while (1) {
-            Node *nextChild = firstLeaf->firstChild();
-            if (!nextChild)
-                break;
-            firstLeaf = nextChild;
-        }
         
-        // Call updateLayout so caretMinOffset and caretMaxOffset return correct values.
-        updateLayout();
-        start = Position(firstLeaf, firstLeaf->caretMinOffset());
-        end = Position(lastLeaf, lastLeaf->caretMaxOffset());
+        Node* lastLeaf = m_lastNodeInserted->lastDescendant();
+        Node* firstLeaf = m_firstNodeInserted->firstDescendant();
+        
+        start = Position(firstLeaf, 0);
+        end = Position(lastLeaf, maxDeepOffset(lastLeaf));
+        
+        // FIXME: Should we treat all spaces in incoming content as having been rendered?
+        rebalanceWhitespaceAt(start);
+        rebalanceWhitespaceAt(end);
 
         if (m_matchStyle) {
             assert(m_insertionStyle);
@@ -868,8 +857,8 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         setEndingSelection(Selection(start, end, SEL_DEFAULT_AFFINITY));
     else
         setEndingSelection(end, SEL_DEFAULT_AFFINITY);
-    
-    rebalanceWhitespace();
+        
+        
 }
 
 EditAction ReplaceSelectionCommand::editingAction() const

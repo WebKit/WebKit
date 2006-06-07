@@ -1,3 +1,59 @@
+2006-06-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        * dom/Node.cpp:
+        (WebCore::Node::firstDescendant): Added.
+        * dom/Node.h:
+        * dom/Range.cpp: Added a constructor that takes in Positions.
+        (WebCore::Range::Range):
+        * dom/Range.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt): 
+        Let this function insert children into empty containers.  
+        Calls canHaveChildrenForEditing.
+        (WebCore::CompositeEditCommand::appendNode): Assert that the parent canHaveChildrenForEditing.
+        (WebCore::CompositeEditCommand::moveParagraph): Tell ReplaceSelectionCommand to select the 
+        replacement so that moveParagraph's callers have a valid destination after the move.
+        * editing/CompositeEditCommand.h: Moved removeFullySelectedNode to DeleteSelectionCommand,
+        made deleteTextFromNode virtual so that DeleteSelectionCommand can update it's endingPosition.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::DeleteSelectionCommand): 
+        Removed m_startNode, used a local variable.
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): Fixed special element expansion.
+        (WebCore::DeleteSelectionCommand::initializePositionData): Compute the endingPosition up
+        front and keep track of it as nodes and text are removed.
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete): Removed use of m_startNode.
+        (WebCore::DeleteSelectionCommand::removeFullySelectedNode): Moved from CompositeEditCommand.
+        Update m_endingPosition as we remove nodes.
+        (WebCore::DeleteSelectionCommand::deleteTextFromNode): 
+        Update m_endingPosition as we delete text.
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): Retain the start block.  Cleaned up.
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Recompute m_endingPosition since moveParagraph
+        clobbers the old one.
+        (WebCore::DeleteSelectionCommand::doApply): Fixed the logic for placeholder insertion after 
+        deletion. Make the placeholder decision before we do special element expansion.
+        * editing/DeleteSelectionCommand.h:
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Fixed a bug where an extra br was inserted and cleaned 
+        up the code.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Deletion of the current selection should do
+        a merge (added a testcase).
+        * editing/RebalanceWhitespaceCommand.cpp:
+        (WebCore::RebalanceWhitespaceCommand::doUnapply): Remove/insert in a way that will trigger a layout.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Ditto.
+        Merge even when the incoming fragment has interchange newlines (added a testcase).
+        Merge when the selection being pasted into starts at the start of a block because not
+        doing so would leave one or more hanging empty blocks.
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement):
+        Rebalance whitespace using rebalanceWhitespaceAt because rebalanceWhitespace requires
+        a selection, and a selection can't be created until whitespace has been rebalanced.
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing): Added.
+        * editing/htmlediting.h:
+
 2006-06-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.

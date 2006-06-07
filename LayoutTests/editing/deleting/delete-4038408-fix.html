@@ -21,17 +21,12 @@ function editingTest() {
     moveSelectionForwardByCharacterCommand();
     deleteCommand();
     deleteCommand();
-    var string;
-    string = "This is some text";
-    for(i = 0; i < string.length; i++)
-        typeCharacterCommand(string[i]);
-    for(i = 0; i < string.length; i++)
-        extendSelectionBackwardByCharacterCommand();
     deleteCommand();
     deleteCommand();
-    string = "This text should not have the same style as the reply text";
-    for(i = 0; i < string.length; i++)
-        typeCharacterCommand(string[i]);  
+    
+    insertNewlineInQuotedContentCommand();
+    
+    document.execCommand("InsertText", false, "This text should not be quoted.");
 }
 
 </script>

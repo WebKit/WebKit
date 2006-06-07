@@ -1,3 +1,92 @@
+2006-06-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        Added to demonstrate fixes:
+        * editing/pasteboard/merge-after-delete-expected.checksum: Added.
+        * editing/pasteboard/merge-after-delete-expected.png: Added.
+        * editing/pasteboard/merge-after-delete-expected.txt: Added.
+        * editing/pasteboard/merge-after-delete.html: Added.
+        * editing/inserting/line-break-expected.checksum: Added.
+        * editing/inserting/line-break-expected.png: Added.
+        * editing/inserting/line-break-expected.txt: Added.
+        * editing/inserting/line-break.html: Added.
+        * editing/inserting/multiple-lines-selected-expected.checksum: Added.
+        * editing/inserting/multiple-lines-selected-expected.png: Added.
+        * editing/inserting/multiple-lines-selected-expected.txt: Added.
+        * editing/inserting/multiple-lines-selected.html: Added.
+        
+        Fixed:
+        * editing/deleting/collapse-whitespace-3587601-fix-expected.txt:
+        * editing/deleting/delete-3775172-fix-expected.txt:
+        * editing/deleting/delete-3928305-fix-expected.txt:
+        * editing/deleting/delete-3959464-fix-expected.checksum:
+        * editing/deleting/delete-3959464-fix-expected.png:
+        * editing/deleting/delete-3959464-fix-expected.txt:
+        * editing/deleting/delete-4038408-fix-expected.checksum:
+        * editing/deleting/delete-4038408-fix-expected.png:
+        * editing/deleting/delete-4038408-fix-expected.txt:
+        * editing/deleting/delete-4038408-fix.html:
+        * editing/deleting/delete-at-paragraph-boundaries-002-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-011-expected.checksum:
+        * editing/deleting/delete-at-paragraph-boundaries-011-expected.png:
+        * editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * editing/deleting/delete-block-contents-001-expected.txt:
+        * editing/deleting/delete-block-contents-002-expected.txt:
+        * editing/deleting/delete-block-contents-003-expected.txt:
+        * editing/deleting/delete-br-011-expected.checksum:
+        * editing/deleting/delete-br-011-expected.png:
+        * editing/deleting/delete-br-011-expected.txt:
+        * editing/deleting/delete-image-004-expected.txt:
+        * editing/deleting/delete-line-010-expected.txt:
+        * editing/deleting/delete-line-015-expected.txt:
+        * editing/deleting/delete-select-all-001-expected.checksum:
+        * editing/deleting/delete-select-all-001-expected.png:
+        * editing/deleting/delete-select-all-001-expected.txt:
+        * editing/deleting/delete-select-all-002-expected.txt:
+        * editing/deleting/delete-select-all-003-expected.checksum:
+        * editing/deleting/delete-select-all-003-expected.png:
+        * editing/deleting/delete-select-all-003-expected.txt:
+        * editing/execCommand/insertImage-expected.checksum:
+        * editing/execCommand/insertImage-expected.png:
+        * editing/input/attributed-substring-from-range-lines-expected.txt:
+        * editing/input/text-input-controller-expected.txt:
+        * editing/inserting/insert-3654864-fix-expected.txt:
+        * editing/inserting/insert-3659587-fix-expected.txt:
+        * editing/inserting/insert-3775316-fix-expected.txt:
+        * editing/inserting/insert-after-delete-001-expected.txt:
+        * editing/inserting/insert-at-end-01-expected.txt:
+        * editing/inserting/insert-at-end-02-expected.txt:
+        * editing/inserting/insert-br-001-expected.txt:
+        * editing/inserting/insert-br-005-expected.txt:
+        * editing/pasteboard/4076267-3-expected.txt:
+        * editing/pasteboard/4076267-expected.txt:
+        * editing/pasteboard/drag-drop-modifies-page-expected.txt:
+        * editing/pasteboard/paste-4035648-fix-expected.txt:
+        * editing/pasteboard/paste-4039777-fix-expected.checksum:
+        * editing/pasteboard/paste-4039777-fix-expected.png:
+        * editing/pasteboard/paste-4039777-fix-expected.txt:
+        * editing/pasteboard/paste-match-style-001-expected.txt:
+        * editing/pasteboard/paste-match-style-002-expected.txt:
+        * editing/pasteboard/smart-paste-006-expected.txt:
+        * editing/pasteboard/smart-paste-007-expected.txt:
+        * editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * editing/style/block-style-005-expected.txt:
+        * editing/style/typing-style-002-expected.txt:
+        * editing/unsupported-content/list-delete-001-expected.checksum:
+        * editing/unsupported-content/list-delete-001-expected.png:
+        * editing/unsupported-content/list-delete-001-expected.txt:
+        * editing/unsupported-content/list-delete-002-expected.checksum:
+        * editing/unsupported-content/list-delete-002-expected.png:
+        * editing/unsupported-content/list-delete-002-expected.txt:
+        * editing/unsupported-content/table-delete-001-expected.checksum:
+        * editing/unsupported-content/table-delete-001-expected.png:
+        * editing/unsupported-content/table-delete-001-expected.txt:
+        * editing/unsupported-content/table-delete-003-expected.checksum:
+        * editing/unsupported-content/table-delete-003-expected.png:
+        * editing/unsupported-content/table-delete-003-expected.txt:
+        * fast/text/attributed-substring-from-range.html:
+
 2006-06-06  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.

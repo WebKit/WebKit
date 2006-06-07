@@ -101,22 +101,16 @@ void InsertLineBreakCommand::doApply()
         // This makes the "real" BR we want to insert appear in the rendering without any 
         // significant side effects (and no real worries either since you can't arrow past 
         // this extra one.
-        if (pos.node()->hasTagName(brTag) && pos.offset() == 0) {
-            // Already placed in a trailing BR. Insert "real" BR before it and leave the selection alone.
-            insertNodeBefore(nodeToInsert, pos.node());
-        } else {
-            Node *next = pos.node()->traverseNextNode();
-            bool hasTrailingBR = next && next->hasTagName(brTag) && pos.node()->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
-            insertNodeAfterPosition(nodeToInsert, pos);
-            if (hasTrailingBR)
-                setEndingSelection(Selection(Position(next, 0), DOWNSTREAM));
-            else if (!document()->inStrictMode()) {
-                // Insert an "extra" BR at the end of the block. 
-                RefPtr<Element> extraBreakNode = createBreakElement(document());
-                insertNodeAfter(extraBreakNode.get(), nodeToInsert);
-                setEndingSelection(Position(extraBreakNode.get(), 0), DOWNSTREAM);
-            }
-        }
+        
+        Node* block = pos.node()->enclosingBlockFlowElement();
+        
+        if (!document()->inStrictMode() && !(pos.downstream().node()->hasTagName(brTag) && pos.downstream().offset() == 0)) {
+            insertNodeAt(nodeToInsert, pos.node(), pos.offset());
+            insertNodeAfter(createBreakElement(document()).get(), nodeToInsert);
+        } else
+            insertNodeAt(nodeToInsert, pos.node(), pos.offset());
+            
+        setEndingSelection(Position(block, maxDeepOffset(block)), DOWNSTREAM);
     }
     else if (pos.offset() <= pos.node()->caretMinOffset()) {
         LOG(Editing, "input newline case 2");

@@ -53,6 +53,8 @@ private:
     void calculateEndingPosition();
     void calculateTypingStyleAfterDelete(WebCore::Node *insertedPlaceholder);
     void clearTransientState();
+    void removeFullySelectedNode(Node* node);
+    virtual void deleteTextFromNode(Text *node, int offset, int count);
 
     bool m_hasSelectionToDelete;
     bool m_smartDelete;
@@ -70,7 +72,6 @@ private:
     WebCore::Position m_trailingWhitespace;
     RefPtr<WebCore::Node> m_startBlock;
     RefPtr<WebCore::Node> m_endBlock;
-    RefPtr<WebCore::Node> m_startNode;
     RefPtr<WebCore::CSSMutableStyleDeclaration> m_typingStyle;
     RefPtr<WebCore::CSSMutableStyleDeclaration> m_deleteIntoBlockquoteStyle;
 };

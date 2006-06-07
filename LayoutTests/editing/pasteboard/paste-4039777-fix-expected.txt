@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {#text} at (0,28) size 16x28
                   text run at (0,28) width 16: "C"
-      RenderBlock {DIV} at (0,364) size 784x120
+      RenderBlock {DIV} at (0,364) size 784x148
         RenderBlock {UL} at (0,0) size 784x28
           RenderBlock (anonymous) at (40,0) size 744x0
             RenderInline {FONT} at (0,0) size 0x0
@@ -87,7 +87,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 16x28
                   RenderText {#text} at (0,28) size 16x28
                     text run at (0,28) width 16: "C"
-        RenderBlock {DIV} at (0,116) size 784x4 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (2,2) size 780x0
-          RenderBlock {DIV} at (2,2) size 780x0
+        RenderBlock {DIV} at (0,116) size 784x32 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x28
+            RenderBR {BR} at (780,0) size 0x28
+          RenderBlock {DIV} at (2,30) size 780x0
 caret: position 1 of child 0 {#text} of child 0 {SPAN} of child 3 {FONT} of child 2 {LI} of child 2 {UL} of child 2 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

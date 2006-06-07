@@ -11,7 +11,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of LI > UL > DIV > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -51,10 +51,15 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,260) size 784x32 [border: (2px solid #008000)]
         RenderText {#text} at (2,2) size 107x28
           text run at (2,2) width 107: "beforeafter"
-      RenderBlock {DIV} at (0,302) size 784x32
-        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 62x28
-            text run at (2,2) width 62: "before"
-          RenderText {#text} at (64,2) size 45x28
-            text run at (64,2) width 45: "after"
-caret: position 7 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+      RenderBlock {DIV} at (0,302) size 784x108
+        RenderBlock {DIV} at (0,0) size 784x108 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x28
+            RenderText {#text} at (0,0) size 62x28
+              text run at (0,0) width 62: "before"
+          RenderBlock {UL} at (2,54) size 780x28
+            RenderListItem {LI} at (40,0) size 740x28
+              RenderListMarker at (-22,0) size 9x28
+              RenderText {#text} at (0,0) size 45x28
+                text run at (0,0) width 45: "after"
+          RenderBlock (anonymous) at (2,106) size 780x0
+caret: position 0 of child 0 {#text} of child 1 {LI} of child 1 {UL} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

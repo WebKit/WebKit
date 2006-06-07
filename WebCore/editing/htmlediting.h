@@ -44,6 +44,7 @@ Position rangeCompliantEquivalent(const VisiblePosition&);
 int maxDeepOffset(const Node*);
 bool isAtomicNode(const Node*);
 bool editingIgnoresContent(const Node*);
+bool canHaveChildrenForEditing(const Node*);
 
 void rebalanceWhitespaceInTextNode(Node*, unsigned start, unsigned length);
 const String& nonBreakingSpaceString();

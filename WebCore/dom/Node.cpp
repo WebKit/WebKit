@@ -191,6 +191,14 @@ Node *Node::lastDescendant() const
     return n;
 }
 
+Node* Node::firstDescendant() const
+{
+    Node *n = const_cast<Node *>(this);
+    while (n && n->firstChild())
+        n = n->firstChild();
+    return n;
+}
+
 bool Node::insertBefore(PassRefPtr<Node>, Node*, ExceptionCode& ec)
 {
     ec = HIERARCHY_REQUEST_ERR;
