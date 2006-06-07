@@ -1,3 +1,10 @@
+2006-06-06  Darin Adler  <darin@apple.com>
+
+        * fast/repaint/table-extra-bottom-grow.html: Removed unneeded line of code.
+
+        * fast/repaint/table-extra-bottom-grow-expected.png: Regenerated.
+        * fast/repaint/table-extra-bottom-grow-expected.checksum: Regenerated.
+
 2006-06-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
