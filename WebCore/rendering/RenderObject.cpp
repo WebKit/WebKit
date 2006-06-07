@@ -2732,6 +2732,12 @@ void RenderObject::addDashboardRegions (DeprecatedValueList<DashboardRegionValue
             region.bounds.setX(x + styleRegion.offset.left.value());
             region.bounds.setY(y + styleRegion.offset.top.value());
             
+            float scaleFactor = document()->view() ? document()->view()->scaleFactor() : 1.0f;
+            if (scaleFactor != 1.0f) {
+                region.bounds.scale(scaleFactor);
+                region.clip.scale(scaleFactor);
+            }
+            
             regions.append(region);
         }
     }

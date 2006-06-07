@@ -99,6 +99,7 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(int d) { inflateX(d); inflateY(d); }
+    void scale(float s);
 
 #if WIN32
     IntRect(const RECT&);

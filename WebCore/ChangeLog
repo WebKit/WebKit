@@ -1,3 +1,25 @@
+2006-06-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4570475> Dashboard regions do not scale for 
+        non-1.0 scale factors.
+
+        No test cases added since this only affects non-1.0 resolution 
+        scale factors.
+
+        * platform/FloatRect.cpp:
+        (WebCore::FloatRect::scale): Added new function that scales a 
+        rect's origin and size by a given factor.
+        * platform/FloatRect.h:
+        * platform/IntRect.cpp:
+        (WebCore::IntRect::scale): Same as above.
+        * platform/IntRect.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addDashboardRegions): After the bounds and 
+        clip rects on the Dashboard region have been calculated, get the 
+        user space scale factor, and if it is not 1.0, scale the rects.
+
 2006-06-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

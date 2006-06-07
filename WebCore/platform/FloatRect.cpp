@@ -95,6 +95,14 @@ void FloatRect::unite(const FloatRect& other)
     m_size.setHeight(b - t);
 }
 
+void FloatRect::scale(float s)
+{
+    m_location.setX(x() * s);
+    m_location.setY(y() * s);
+    m_size.setWidth(width() * s);
+    m_size.setHeight(height() * s);
+}
+
 IntRect enclosingIntRect(const FloatRect& rect)
 {
     int l = static_cast<int>(rect.x());

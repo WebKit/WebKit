@@ -93,6 +93,7 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(float d) { inflateX(d); inflateY(d); }
+    void scale(float s);
 
 #if __APPLE__
 
