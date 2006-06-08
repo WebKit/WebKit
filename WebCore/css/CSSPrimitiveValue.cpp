@@ -274,12 +274,15 @@ double CSSPrimitiveValue::computeLengthFloat(RenderStyle *style, bool applyZoomF
 void CSSPrimitiveValue::setFloatValue( unsigned short unitType, double floatValue, ExceptionCode& ec)
 {
     ec = 0;
-    cleanup();
+    
     // ### check if property supports this type
     if (m_type > CSS_DIMENSION) {
         ec = SYNTAX_ERR;
         return;
     }
+    
+    cleanup();
+
     //if(m_type > CSS_DIMENSION) throw DOMException(INVALID_ACCESS_ERR);
     m_value.num = floatValue;
     m_type = unitType;
@@ -336,13 +339,16 @@ double CSSPrimitiveValue::getFloatValue(unsigned short unitType)
 void CSSPrimitiveValue::setStringValue( unsigned short stringType, const String &stringValue, ExceptionCode& ec)
 {
     ec = 0;
-    cleanup();
+        
     //if(m_type < CSS_STRING) throw DOMException(INVALID_ACCESS_ERR);
     //if(m_type > CSS_ATTR) throw DOMException(INVALID_ACCESS_ERR);
     if (m_type < CSS_STRING || m_type > CSS_ATTR) {
         ec = SYNTAX_ERR;
         return;
     }
+    
+    cleanup();
+
     if (stringType != CSS_IDENT) {
         m_value.string = stringValue.impl();
         m_value.string->ref();

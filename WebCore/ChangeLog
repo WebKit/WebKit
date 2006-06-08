@@ -1,3 +1,19 @@
+2006-06-08  David Harrison  <harrison@apple.com>
+
+        Reviewed by Geoff and John.
+
+        <rdar://problem/4558879> -[DOMCSSPrimitiveValue setStringValue:] throws an exception (12)
+        
+        Problem was the primitive value was getting reset to a generic state before the parameter
+        check that relies on that state.
+
+        Test: fast/dom/setPrimitiveValue.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::setFloatValue):
+        (WebCore::CSSPrimitiveValue::setStringValue):
+        Move parameter checks ahead of call to cleanup().
+
 2006-06-08  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Justin.

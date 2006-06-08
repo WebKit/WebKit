@@ -1,3 +1,14 @@
+2006-06-08  David Harrison  <harrison@apple.com>
+
+        Reviewed by Geoff and John.
+
+        <rdar://problem/4558879> -[DOMCSSPrimitiveValue setStringValue:] throws an exception (12)
+
+        * fast/dom/setPrimitiveValue-expected.checksum: Added.
+        * fast/dom/setPrimitiveValue-expected.png: Added.
+        * fast/dom/setPrimitiveValue-expected.txt: Added.
+        * fast/dom/setPrimitiveValue.html: Added.
+
 2006-06-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
