@@ -1,3 +1,16 @@
+2006-06-07  David Hyatt  <hyatt@apple.com>
+
+        Add support for custom highlighting to WebKit.
+
+        Reviewed by justin
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge paintCustomHighlight:forBox:onLine:behindText:]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _highlighterForType:]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+
 2006-06-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt. 

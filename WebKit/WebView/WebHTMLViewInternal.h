@@ -105,6 +105,7 @@
 - (void)_pauseNullEventsForAllNetscapePlugins;
 - (void)_resumeNullEventsForAllNetscapePlugins;
 - (void)_willMakeFirstResponderForNodeFocus;
+- (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;
 @end
 

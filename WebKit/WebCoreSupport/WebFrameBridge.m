@@ -1514,6 +1514,18 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     }
 }
 
+- (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text
+{
+    ASSERT(_frame != nil);
+    NSView *documentView = [[_frame frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return;
+
+    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
+    id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
+    [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:text];
+}
+
 - (NSString *)nameForUndoAction:(WebUndoAction)undoAction
 {
     switch (undoAction) {

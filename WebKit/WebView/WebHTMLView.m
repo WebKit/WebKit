@@ -5105,6 +5105,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     _private->willBecomeFirstResponderForNodeFocus = YES;
 }
 
+- (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type
+{
+    return [_private->highlighters objectForKey:type];
+}
+
 - (WebFrame *)_frame
 {
     return [_private->dataSource webFrame];
