@@ -96,14 +96,10 @@ void InsertLineBreakCommand::doApply()
         insertNodeAtTabSpanPosition(nodeToInsert, pos);
         setEndingSelection(Position(nodeToInsert->traverseNextNode(), 0), DOWNSTREAM);
     } else if (isEndOfBlock(VisiblePosition(pos, selection.affinity()))) {
-        LOG(Editing, "input newline case 1");
-        // Check for a trailing BR. If there isn't one, we'll need to insert an "extra" one.
-        // This makes the "real" BR we want to insert appear in the rendering without any 
-        // significant side effects (and no real worries either since you can't arrow past 
-        // this extra one.
         
         Node* block = pos.node()->enclosingBlockFlowElement();
         
+        // Insert an extra br if the inserted one will collapsed because of quirks mode.
         if (!document()->inStrictMode() && !(pos.downstream().node()->hasTagName(brTag) && pos.downstream().offset() == 0)) {
             insertNodeAt(nodeToInsert, pos.node(), pos.offset());
             insertNodeAfter(createBreakElement(document()).get(), nodeToInsert);

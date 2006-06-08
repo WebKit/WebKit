@@ -108,22 +108,18 @@ void DeleteSelectionCommand::initializeStartEnd()
 
 void DeleteSelectionCommand::initializePositionData()
 {
-    //
-    // Handle setting some basic positions
-    //
     initializeStartEnd();
     
     // Usually the start and the end of the selection to delete are pulled together as a result of the deletion.
-    // When they're not, we choose one as the position to place the caret and to insert the placeholder.
+    // Sometimes they aren't (like when no merge is requested), so we must choose one position to hold the caret 
+    // and receive the placeholder after deletion.
     VisiblePosition visibleEnd(m_downstreamEnd);
     if (m_mergeBlocksAfterDelete && !isEndOfParagraph(visibleEnd))
         m_endingPosition = m_downstreamEnd;
     else
         m_endingPosition = m_downstreamStart;
         
-    //
     // Handle leading and trailing whitespace, as well as smart delete adjustments to the selection
-    //
     m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.affinity());
     m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
 
@@ -491,6 +487,7 @@ void DeleteSelectionCommand::mergeParagraphs()
         return;
     
     moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination);
+    // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).
     m_endingPosition = endingSelection().start();
 }
 
@@ -562,9 +559,9 @@ void DeleteSelectionCommand::doApply()
     EAffinity affinity = m_selectionToDelete.affinity();
     
     Position downstreamEnd = m_selectionToDelete.end().downstream();
-    bool forceBlankParagraph = isStartOfParagraph(m_selectionToDelete.visibleStart()) &&
-                               isEndOfParagraph(m_selectionToDelete.visibleEnd()) &&
-                               !(downstreamEnd.node()->hasTagName(brTag) && downstreamEnd.offset() == 0);
+    bool needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart()) &&
+                           isEndOfParagraph(m_selectionToDelete.visibleEnd()) &&
+                           !(downstreamEnd.node()->hasTagName(brTag) && downstreamEnd.offset() == 0);
     
     // set up our state
     initializePositionData();
@@ -599,9 +596,7 @@ void DeleteSelectionCommand::doApply()
     
     fixupWhitespace();
     
-    VisiblePosition visibleEndingPosition(m_endingPosition);
-    RefPtr<Node> placeholder = forceBlankParagraph  ? 
-                               createBreakElement(document()) : 0;
+    RefPtr<Node> placeholder = needPlaceholder ? createBreakElement(document()) : 0;
     if (placeholder)
         insertNodeAt(placeholder.get(), m_endingPosition.node(), m_endingPosition.offset());
 

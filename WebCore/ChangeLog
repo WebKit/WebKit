@@ -1,3 +1,24 @@
+2006-06-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        Fixed some comments and removed an unused variable.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removeBlockPlaceholder):
+        Don't remove a br if it isn't at the start of a block, since
+        it isn't really a "block placeholder".
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement):
+        * editing/htmlediting.cpp:
+
 2006-06-07  David Hyatt  <hyatt@apple.com>
 
         Add support for custom highlighting.  This is all ifdefed to be Mac-only.

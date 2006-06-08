@@ -1,3 +1,17 @@
+2006-06-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        * editing/deleting/delete-4038408-fix-expected.txt:
+        * editing/input/attributed-substring-from-range-lines-expected.txt:
+        * editing/inserting/insert-3654864-fix-expected.txt:
+        * editing/inserting/insert-3659587-fix-expected.txt:
+        * editing/inserting/insert-3775316-fix-expected.txt:
+        * editing/inserting/insert-at-end-01-expected.txt:
+        * editing/inserting/insert-at-end-02-expected.txt:
+        * editing/inserting/insert-br-001-expected.txt:
+        * editing/inserting/insert-br-005-expected.txt:
+
 2006-06-07  Denis Defreyne  <amonre@amonre.org>
 
         Reviewed by Hyatt, tweaked by Mitz.

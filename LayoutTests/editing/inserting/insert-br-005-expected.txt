@@ -9,7 +9,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of SPAN > DIV > BODY > HTML > #document to 3 of SPAN > DIV > BODY > HTML > #document toDOMRange:range from 3 of SPAN > DIV > BODY > HTML > #document to 3 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -25,5 +25,6 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (14,42) size 0x28
           RenderText {#text} at (14,70) size 12x28
             text run at (14,70) width 12: "x"
+          RenderBR {BR} at (26,92) size 0x0
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 3 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

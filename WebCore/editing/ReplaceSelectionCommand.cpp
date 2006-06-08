@@ -553,9 +553,9 @@ void ReplaceSelectionCommand::doApply()
     // delete the current range selection, or insert paragraph for caret selection, as needed
     if (selection.isRange()) {
         // When the end of the selection being pasted into is at the end of a paragraph, and that selection
-        // spans multiple blocks, not merging will leave an empty line.
-        // When the start of the selection being pasted into is at the start of a paragraph, and starts at the
-        // start of a block, not merging will leave hanging block(s).
+        // spans multiple blocks, not merging may leave an empty line.
+        // When the start of the selection being pasted into is at the start of a block, not merging 
+        // will leave hanging block(s).
         bool mergeBlocksAfterDelete = isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
         deleteSelection(false, mergeBlocksAfterDelete);
         updateLayout();
@@ -857,8 +857,6 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         setEndingSelection(Selection(start, end, SEL_DEFAULT_AFFINITY));
     else
         setEndingSelection(end, SEL_DEFAULT_AFFINITY);
-        
-        
 }
 
 EditAction ReplaceSelectionCommand::editingAction() const

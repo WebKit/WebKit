@@ -523,14 +523,13 @@ Node *CompositeEditCommand::addBlockPlaceholderIfNeeded(Node *node)
     return NULL;
 }
 
-bool CompositeEditCommand::removeBlockPlaceholder(const VisiblePosition& visiblePosition)
+void CompositeEditCommand::removeBlockPlaceholder(const VisiblePosition& visiblePosition)
 {
-    Position downstream = visiblePosition.deepEquivalent().downstream();
-    if (downstream.node()->hasTagName(brTag) && downstream.offset() == 0 && isEndOfBlock(visiblePosition)) {
-        removeNode(downstream.node());
-        return true;
-    }
-    return false;
+    Position p = visiblePosition.deepEquivalent().downstream();
+    if (p.node()->hasTagName(brTag) && p.offset() == 0 && isEndOfBlock(visiblePosition) && isStartOfBlock(visiblePosition))
+        removeNode(p.node());
+        
+    return;
 }
 
 void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position &pos)

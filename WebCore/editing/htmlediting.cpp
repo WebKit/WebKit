@@ -76,6 +76,7 @@ bool editingIgnoresContent(const Node *node)
     return false;
 }
 
+// Some nodes, like brs, will technically accept children, but we don't want that to happen while editing. 
 bool canHaveChildrenForEditing(const Node* node)
 {
     return !node->hasTagName(hrTag) &&
