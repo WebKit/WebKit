@@ -1,3 +1,21 @@
+2006-06-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8616
+          REGRESSION: TinyMCE: Crash on Undo
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getInnerNonSharedNode:innerNode:URLElement:atPoint:allowShadowContent:]):
+        Changed to call nodeInfoAtPoint directly.
+        (-[WebCoreFrameBridge _visiblePositionForPoint:]): Changed to call nodeInfoAtPoint directly.
+        Also added code to convert coordinates so it works for points that are in nodes in subframes.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setMark): Added assertions to catch if we attempt to set selection
+        endpoints in another document.
+        (WebCore::Frame::setSelection): Ditto.
+
 2006-06-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

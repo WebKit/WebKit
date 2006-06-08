@@ -1,3 +1,48 @@
+2006-06-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8616
+          REGRESSION: TinyMCE: Crash on Undo
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _topHTMLView]): Added.
+        (-[WebHTMLView _isTopHTMLView]): Added.
+        (-[WebHTMLView _insideAnotherHTMLView]): Changed to use _topHTMLView.
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        Forward to the top HTML view, so that only the top view ever starts a dragging operation.
+        Change dragging code to not assume that the dragged node is in the current view's document.
+        Added checks that the node is an element in a couple places and coordinate conversions.
+        (-[WebHTMLView _mayStartDragAtEventLocation:]): Forward to the top HTML view.
+        (-[NSArray addMouseMovedObserver]): Change to do nothing when the dataSource field is 0,
+        since we now use the dataSource field to get to the WebView.
+        (-[NSArray removeMouseMovedObserver]): Added a comment.
+        (-[NSArray dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        Forward to the top HTML view.
+        (-[NSArray draggingSourceOperationMaskForLocal:]): Assert that it's the top HTML view.
+        (-[NSArray draggedImage:movedTo:]): Ditto.
+        (-[NSArray draggedImage:endedAt:operation:]): Ditto.
+        (-[NSArray namesOfPromisedFilesDroppedAtDestination:]): Ditto.
+        (-[NSArray _canProcessDragWithDraggingInfo:]): Ditto.
+        (-[NSArray _isMoveDrag]): Ditto.
+        (-[NSArray draggingUpdatedWithDraggingInfo:actionMask:]): Ditto.
+        (-[NSArray draggingCancelledWithDraggingInfo:]): Ditto.
+        (-[NSArray concludeDragForDraggingInfo:actionMask:]): Ditto. Also added code to work
+        with the appropriate bridge when receiving a drag. This fixes the problem where the
+        top level frame got a selection intended for the inner frame; the source of the bug.
+        (-[NSArray elementAtPoint:allowShadowContent:]): Added code to convert the coordinates
+        so this works properly when returning an element from an inner frame.
+        (-[NSArray setDataSource:]): Added a call to addMouseMovedObserver, needed now that
+        addMouseMovedObserver won't do anything if called when dataSource is nil.
+        (-[WebHTMLView _delegateDragSourceActionMask]): Forward to the top HTML view.
+
+        * WebView/WebView.m:
+        (-[WebViewPrivate dealloc]): Removed code to release dragCaretBridge since that field
+        is now gone.
+        (-[WebView moveDragCaretToPoint:]): Always call the main frame's bridge, since the
+        drag caret is now a page-level item. Later we'll move it to the page bridge.
+        (-[WebView removeDragCaret]): Ditto.
+
 2006-06-07  David Hyatt  <hyatt@apple.com>
 
         Add support for custom highlighting to WebKit.

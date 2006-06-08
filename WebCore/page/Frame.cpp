@@ -1165,14 +1165,23 @@ const Selection& Frame::mark() const
 
 void Frame::setMark(const Selection& s)
 {
+    ASSERT(!s.base().node() || s.base().node()->document() == document());
+    ASSERT(!s.extent().node() || s.extent().node()->document() == document());
+    ASSERT(!s.start().node() || s.start().node()->document() == document());
+    ASSERT(!s.end().node() || s.end().node()->document() == document());
+
     d->m_mark = s;
 }
 
 void Frame::setSelection(const SelectionController& s, bool closeTyping, bool keepTypingStyle)
 {
-    if (d->m_selection == s) {
+    if (d->m_selection == s)
         return;
-    }
+
+    ASSERT(!s.base().node() || s.base().node()->document() == document());
+    ASSERT(!s.extent().node() || s.extent().node()->document() == document());
+    ASSERT(!s.start().node() || s.start().node()->document() == document());
+    ASSERT(!s.end().node() || s.end().node()->document() == document());
     
     clearCaretRectIfNeeded();
 

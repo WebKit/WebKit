@@ -111,7 +111,6 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
 @interface WebCoreFrameBridge (WebCoreBridgeInternal)
 - (RootObject *)executionContextForView:(NSView *)aView;
-- (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow;
 @end
 
 static RootObject *rootForView(void *v)
@@ -1164,7 +1163,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         return;
     }
 
-    RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point allowShadowContent:allow];
+    RenderObject::NodeInfo nodeInfo = m_frame->nodeInfoAtPoint(IntPoint(point), allow);
     *innerNonSharedNode = [DOMNode _nodeWith:nodeInfo.innerNonSharedNode()];
     *innerNode = [DOMNode _nodeWith:nodeInfo.innerNode()];
     *URLElement = [DOMElement _elementWith:nodeInfo.URLElement()];
@@ -2070,18 +2069,17 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
 {
-    RenderObject *renderer = m_frame->renderer();
-    if (!renderer) {
+    IntPoint outerPoint(point);
+    Node* node = m_frame->nodeInfoAtPoint(outerPoint, true).innerNode();
+    if (!node)
         return VisiblePosition();
-    }
-    
-    RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point allowShadowContent:YES];
-    
-    Node *node = nodeInfo.innerNode();
-    if (!node || !node->renderer())
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
         return VisiblePosition();
-    
-    return node->renderer()->positionForCoordinates((int)point.x, (int)point.y);
+    FrameView* outerView = m_frame->view();
+    FrameView* innerView = node->document()->view();
+    IntPoint innerPoint = innerView->viewportToContents(outerView->contentsToViewport(outerPoint));
+    return renderer->positionForCoordinates(innerPoint.x(), innerPoint.y());
 }
 
 - (void)moveDragCaretToPoint:(NSPoint)point
@@ -2583,11 +2581,6 @@ static NSCharacterSet *_getPostSmartSet(void)
     root->setInterpreter(frame->jScript()->interpreter());
     frame->addPluginRootObject(root);
     return root;
-}
-
-- (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point allowShadowContent:(BOOL)allow
-{
-    return m_frame->nodeInfoAtPoint(IntPoint(point), allow);
 }
 
 @end

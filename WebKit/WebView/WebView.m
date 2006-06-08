@@ -279,7 +279,6 @@ macro(yankAndSelect) \
     
     NSView <WebDocumentDragging> *draggingDocumentView;
     unsigned int dragDestinationActionMask;
-    WebFrameBridge *dragCaretBridge;
     
     BOOL hasSpellCheckerDocumentTag;
     WebNSInteger spellCheckerDocumentTag;
@@ -380,7 +379,6 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 {
     ASSERT(!_pageBridge);
     ASSERT(draggingDocumentView == nil);
-    ASSERT(dragCaretBridge == nil);
     
     [backForwardList release];
     [applicationNameForUserAgent release];
@@ -2301,19 +2299,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)moveDragCaretToPoint:(NSPoint)point
 {
-    WebFrameBridge *bridge = [self _bridgeAtPoint:point];
-    if (bridge != _private->dragCaretBridge) {
-        [_private->dragCaretBridge removeDragCaret];
-        _private->dragCaretBridge = [bridge retain];
-    }
-    [_private->dragCaretBridge moveDragCaretToPoint:[self convertPoint:point toView:[[[_private->dragCaretBridge webFrame] frameView] documentView]]];
+    [[[self mainFrame] _bridge] moveDragCaretToPoint:[self convertPoint:point toView:[[[self mainFrame] frameView] documentView]]];
 }
 
 - (void)removeDragCaret
 {
-    [_private->dragCaretBridge removeDragCaret];
-    [_private->dragCaretBridge release];
-    _private->dragCaretBridge = nil;
+    [[[self mainFrame] _bridge] removeDragCaret];
 }
 
 - (void)_inspectElement:(id)sender
@@ -2333,7 +2324,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
     node = [node parentNode];
     node = [node parentNode];
-    if (node) // set the root node to something retivally close to the focused node
+    if (node) // set the root node to something relatively close to the focused node
         [inspector setRootDOMNode:node];
 
     [inspector showWindow:nil];
