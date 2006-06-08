@@ -667,6 +667,8 @@ typedef enum {
 
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
 
+- (void)paintCustomHighlight:(NSString*)type forBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text;
+
 - (void)handledOnloadEvents;
 
 - (WebCoreKeyboardUIMode)keyboardUIMode;

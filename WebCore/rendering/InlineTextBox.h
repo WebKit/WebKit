@@ -113,6 +113,9 @@ public:
     void paintSpellingMarker(GraphicsContext*, int tx, int ty, DocumentMarker);
     void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
     void paintMarkedTextUnderline(GraphicsContext*, int tx, int ty, MarkedTextUnderline&);
+#if PLATFORM(MAC)
+    void paintCustomHighlight(int tx, int ty, const AtomicString& type);
+#endif
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;

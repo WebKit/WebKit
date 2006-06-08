@@ -1,3 +1,20 @@
+2006-06-07  David Hyatt  <hyatt@apple.com>
+
+        Add support for custom highlighting.  This is all ifdefed to be Mac-only.
+
+        Reviewed by justin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::paintCustomHighlight):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * platform/mac/ClipboardMac.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        * rendering/InlineTextBox.h:
+
 2006-06-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt 

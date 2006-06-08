@@ -309,6 +309,8 @@ public:
     virtual bool canUndo() const;
     virtual void print();
 
+    void paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text);
+
 protected:
     virtual void startRedirectionTimer();
     virtual void stopRedirectionTimer();

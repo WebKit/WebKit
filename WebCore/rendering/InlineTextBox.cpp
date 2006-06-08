@@ -34,6 +34,10 @@
 #include "RenderArena.h"
 #include <wtf/AlwaysInline.h>
 
+#if PLATFORM(MAC)
+#include "FrameMac.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -269,6 +273,12 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     // 1. Paint backgrounds behind text if needed.  Examples of such backgrounds include selection
     // and marked text.
     if (i.phase != PaintPhaseSelection && !isPrinting) {
+#if PLATFORM(MAC)
+        // Custom highlighters go behind everything else.
+        if (styleToUse->highlight() != nullAtom)
+            paintCustomHighlight(tx, ty, styleToUse->highlight());
+#endif
+
         if (haveMarkedText  && !markedTextUsesUnderlines)
             paintMarkedTextBackground(i.p, tx, ty, styleToUse, font, markedTextRange->startOffset(exception), markedTextRange->endOffset(exception));
 
@@ -473,6 +483,17 @@ void InlineTextBox::paintMarkedTextBackground(GraphicsContext* p, int tx, int ty
                             TextStyle(textObject()->tabWidth(), textPos(), m_toAdd, m_reversed, m_dirOverride || style->visuallyOrdered()), c);
     p->restore();
 }
+
+#if PLATFORM(MAC)
+void InlineTextBox::paintCustomHighlight(int tx, int ty, const AtomicString& type)
+{
+    RootInlineBox* r = root();
+    FloatRect rootRect(tx + r->xPos(), ty + r->selectionTop(), r->width(), r->selectionHeight());
+    FloatRect textRect(tx + xPos(), rootRect.y(), width(), rootRect.height());
+
+    Mac(object()->document()->frame())->paintCustomHighlight(type, textRect, rootRect, true);
+}
+#endif
 
 void InlineTextBox::paintDecoration(GraphicsContext *pt, int _tx, int _ty, int deco)
 {

@@ -3478,4 +3478,9 @@ void Frame::setNeedsReapplyStyles()
     [Mac(this)->bridge() setNeedsReapplyStyles];
 }
 
+void FrameMac::paintCustomHighlight(const AtomicString& type, const FloatRect& boxRect, const FloatRect& lineRect, bool text)
+{
+    [bridge() paintCustomHighlight:type forBox:boxRect onLine:lineRect behindText:text];
+}
+
 }
