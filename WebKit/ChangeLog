@@ -1,3 +1,37 @@
+2006-06-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin and John.
+
+        <rdar://problem/3600734> API: please add a way to turn vertical scrollbar
+        always on (for Mail, to avoid reflow when typing)
+
+        Adds new methods to lock the scrolling mode on WebDynamicScrollBarsView.
+        Locking the scroll mode prevents WebCore from changing it as needed.
+        Also adds an SPI on WebView that will lock the "always on" mode
+        for each scroller.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView setAllowsScrolling:]):
+        (-[WebDynamicScrollBarsView allowsScrolling]):
+        (-[WebDynamicScrollBarsView setAllowsHorizontalScrolling:]):
+        (-[WebDynamicScrollBarsView setAllowsVerticalScrolling:]):
+        (-[WebDynamicScrollBarsView setHorizontalScrollingMode:]):
+        (-[WebDynamicScrollBarsView setVerticalScrollingMode:]):
+        (-[WebDynamicScrollBarsView setScrollingMode:]):
+        (-[WebDynamicScrollBarsView setHorizontalScrollingModeLocked:]):
+        (-[WebDynamicScrollBarsView setVerticalScrollingModeLocked:]):
+        (-[WebDynamicScrollBarsView setScrollingModesLocked:]):
+        (-[WebDynamicScrollBarsView horizontalScrollingModeLocked]):
+        (-[WebDynamicScrollBarsView verticalScrollingModeLocked]):
+        * WebView/WebView.m:
+        (-[WebView setAlwaysShowVerticalScroller:]):
+        (-[WebView alwaysShowVerticalScroller]):
+        (-[WebView setAlwaysShowHorizontalScroller:]):
+        (-[WebView alwaysShowHorizontalScroller]):
+        * WebView/WebViewPrivate.h:
+
 2006-06-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

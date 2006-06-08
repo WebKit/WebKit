@@ -279,23 +279,6 @@
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		5139C0C70A265D25001AFADD /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		5139C0C80A265D25001AFADD /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXFileReference section */
 		1C68F640095B5FC100C2984E /* webInspector */ = {isa = PBXFileReference; lastKnownFileType = folder; name = webInspector; path = WebInspector/webInspector; sourceTree = SOURCE_ROOT; };
 		1C68F65C095B5FC100C2984E /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1249,12 +1232,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				5139C0C70A265D25001AFADD /* Development */,
-				5139C0C80A265D25001AFADD /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
