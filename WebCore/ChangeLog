@@ -1,3 +1,20 @@
+2006-06-08  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Justin.
+
+        - fixed <rdar://problem/4578115> support Range.isPointInRange
+        - fixed <rdar://problem/4578123> support Range.comparePoint
+
+        * dom/Range.cpp:
+        (WebCore::Range::isPointInRange):
+        added implementation
+        (WebCore::Range::comparePoint):
+        added implementation
+        * dom/Range.h:
+        added prototypes
+        * dom/Range.idl:
+        added bindings
+
 2006-06-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.

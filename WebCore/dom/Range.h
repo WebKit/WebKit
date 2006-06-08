@@ -64,6 +64,8 @@ public:
     void setStart(Node* container, int offset, ExceptionCode&);
     void setEnd(Node* container, int offset, ExceptionCode&);
     void collapse(bool toStart, ExceptionCode&);
+    bool isPointInRange(Node* refNode, int offset, ExceptionCode& ec);
+    short comparePoint(Node* refNode, int offset, ExceptionCode& ec);
     enum CompareHow { START_TO_START, START_TO_END, END_TO_END, END_TO_START };
     short compareBoundaryPoints(CompareHow, const Range* sourceRange, ExceptionCode&) const;
     static short compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB);

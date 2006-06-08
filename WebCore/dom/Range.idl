@@ -66,6 +66,12 @@ module ranges {
         short compareBoundaryPoints(in CompareHow how,
                                     in Range sourceRange)
             raises(dom::DOMException);
+        short comparePoint(in Node refNode, 
+                           in long offset)
+            raises(RangeException, dom::DOMException);
+        boolean isPointInRange(in Node refNode, 
+                               in long offset)
+            raises(RangeException, dom::DOMException);
         void deleteContents()
             raises(dom::DOMException);
         DocumentFragment extractContents()

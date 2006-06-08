@@ -250,6 +250,85 @@ void Range::collapse( bool toStart, ExceptionCode& ec)
     }
 }
 
+bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
+{
+    if (!refNode) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+
+    if (m_detached && refNode->attached()) {
+        ec = INVALID_STATE_ERR;
+        return false;
+    }
+
+    if (!m_detached && !refNode->attached()) {
+        // firefox doesn't throw an exception for this case; it returns false
+        return false;
+    }
+
+    if (refNode->document() != m_ownerDocument) {
+        ec = WRONG_DOCUMENT_ERR;
+        return false;
+    }
+
+    checkNodeWOffset(refNode, offset, ec);
+    if (ec)
+        return false;
+
+
+    // point is not before the start and not after the end
+    if ((compareBoundaryPoints(refNode, offset, m_startContainer.get(), m_startOffset) != -1) && 
+        (compareBoundaryPoints(refNode, offset, m_endContainer.get(), m_endOffset) != 1))
+        return true;
+    else
+        return false;
+}
+
+short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec)
+{
+    // http://developer.mozilla.org/en/docs/DOM:range.comparePoint
+    // This method returns Ð1, 0 or 1 depending on if the point described by the 
+    // refNode node and an offset within the node is before, same as, or after the range respectively.
+
+    if (!refNode) {
+        ec = NOT_FOUND_ERR;
+        return 0;
+    }
+
+    if (m_detached && refNode->attached()) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+
+    if (!m_detached && !refNode->attached()) {
+        // firefox doesn't throw an exception for this case; it returns 1
+        return -1;
+    }
+
+    if (refNode->document() != m_ownerDocument) {
+        ec = WRONG_DOCUMENT_ERR;
+        return 0;
+    }
+
+    checkNodeWOffset(refNode, offset, ec);
+    if (ec)
+        return 0;
+
+    // compare to start, and point comes before
+    if (compareBoundaryPoints(refNode, offset, m_startContainer.get(), m_startOffset) == -1)
+        return -1;
+
+    // compare to end, and point comes after
+    else if (compareBoundaryPoints(refNode, offset, m_endContainer.get(), m_endOffset) == 1)
+        return 1;
+    
+    // point is in the middle of this range, or on the boundary points
+    else
+        return 0;
+}
+
+
 short Range::compareBoundaryPoints(CompareHow how, const Range *sourceRange, ExceptionCode& ec) const
 {
     if (m_detached) {
