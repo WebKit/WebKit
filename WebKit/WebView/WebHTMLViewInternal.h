@@ -75,6 +75,8 @@
     
     NSArray* pageRects;
 
+    NSMutableDictionary* highlighters;
+
     BOOL descendantBecomingFirstResponder;
     BOOL resigningFirstResponder;
     BOOL ignoreMarkedTextSelectionChange;

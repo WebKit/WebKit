@@ -255,6 +255,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     [compController release];
     [firstResponderAtMouseDownTime release];
     [dataSource release];
+    [highlighters release];
 
     [super dealloc];
 }
@@ -1724,6 +1725,18 @@ static WebHTMLView *lastHitView = nil;
         
     WebFrameBridge *bridge = [self _bridge];
     [bridge decreaseSelectionListLevel];
+}
+
+- (void)_setHighlighter:(id<WebHTMLHighlighter>)highlighter ofType:(NSString*)type
+{
+    if (!_private->highlighters)
+        _private->highlighters = [[NSMutableDictionary alloc] init];
+    [_private->highlighters setObject:highlighter forKey:type];
+}
+
+- (void)_removeHighlighterOfType:(NSString*)type
+{
+    [_private->highlighters removeObjectForKey:type];
 }
 
 - (BOOL)_web_firstResponderCausesFocusDisplay

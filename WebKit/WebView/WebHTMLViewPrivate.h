@@ -35,6 +35,10 @@
 @class WebView;
 @class WebFrame;
 @class WebPluginController;
+ 
+@protocol WebHTMLHighlighter
+- (void)drawHighlight;
+@end
 
 @interface WebHTMLView (WebPrivate)
 
@@ -100,6 +104,8 @@
 - (DOMNode *)_increaseSelectionListLevelOrdered;
 - (DOMNode *)_increaseSelectionListLevelUnordered;
 - (void)_decreaseSelectionListLevel;
+- (void)_setHighlighter:(id<WebHTMLHighlighter>)highlighter ofType:(NSString*)type;
+- (void)_removeHighlighterOfType:(NSString*)type;
 
 // SPI for DumpRenderTree
 - (void)_updateFocusState;
