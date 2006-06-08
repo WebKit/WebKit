@@ -1361,6 +1361,41 @@ static bool debugWidget = true;
     return @"420+";
 }
 
+- (void)setAlwaysShowVerticalScroller:(BOOL)flag
+{
+    WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
+    if (flag) {
+        [scrollview setVerticalScrollingMode:WebCoreScrollBarAlwaysOn];
+        [scrollview setVerticalScrollingModeLocked:YES];
+    } else {
+        [scrollview setVerticalScrollingModeLocked:NO];
+        [scrollview setVerticalScrollingMode:WebCoreScrollBarAuto];
+    }
+}
+
+- (BOOL)alwaysShowVerticalScroller
+{
+    WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
+    return [scrollview verticalScrollingModeLocked] && [scrollview verticalScrollingMode] == WebCoreScrollBarAlwaysOn;
+}
+
+- (void)setAlwaysShowHorizontalScroller:(BOOL)flag
+{
+    WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
+    if (flag) {
+        [scrollview setHorizontalScrollingMode:WebCoreScrollBarAlwaysOn];
+        [scrollview setHorizontalScrollingModeLocked:YES];
+    } else {
+        [scrollview setHorizontalScrollingModeLocked:NO];
+        [scrollview setHorizontalScrollingMode:WebCoreScrollBarAuto];
+    }
+}
+
+- (BOOL)alwaysShowHorizontalScroller
+{
+    WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
+    return [scrollview horizontalScrollingModeLocked] && [scrollview horizontalScrollingMode] == WebCoreScrollBarAlwaysOn;
+}
 @end
 
 
@@ -2328,42 +2363,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         [inspector setRootDOMNode:node];
 
     [inspector showWindow:nil];
-}
-
-- (void)setAlwaysShowVerticalScroller:(BOOL)flag
-{
-    WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
-    if (flag) {
-        [scrollview setVerticalScrollingMode:WebCoreScrollBarAlwaysOn];
-        [scrollview setVerticalScrollingModeLocked:YES];
-    } else {
-        [scrollview setVerticalScrollingModeLocked:NO];
-        [scrollview setVerticalScrollingMode:WebCoreScrollBarAuto];
-    }
-}
-
-- (BOOL)alwaysShowVerticalScroller
-{
-    WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
-    return [scrollview verticalScrollingModeLocked] && [scrollview verticalScrollingMode] == WebCoreScrollBarAlwaysOn;
-}
-
-- (void)setAlwaysShowHorizontalScroller:(BOOL)flag
-{
-    WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
-    if (flag) {
-        [scrollview setHorizontalScrollingMode:WebCoreScrollBarAlwaysOn];
-        [scrollview setHorizontalScrollingModeLocked:YES];
-    } else {
-        [scrollview setHorizontalScrollingModeLocked:NO];
-        [scrollview setHorizontalScrollingMode:WebCoreScrollBarAuto];
-    }
-}
-
-- (BOOL)alwaysShowHorizontalScroller
-{
-    WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
-    return [scrollview horizontalScrollingModeLocked] && [scrollview horizontalScrollingMode] == WebCoreScrollBarAlwaysOn;
 }
 @end
 
