@@ -251,7 +251,7 @@ public:
     bool shouldAutoscroll();
     IntRect resizeControlRect() { return m_resizeControlRect; }
     void setResizeControlRect(const IntRect& r) { m_resizeControlRect = r; }
-    void resize();
+    void resize(const PlatformMouseEvent&);
     bool inResizeMode() const { return m_inResizeMode; }
     void setInResizeMode(bool b) { m_inResizeMode = b; }
     
@@ -388,6 +388,7 @@ protected:
     IntRect m_resizeControlRect;
     // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
     bool m_inResizeMode;
+    Image* m_resizeCornerImage;
 
     // For layers that establish stacking contexts, m_posZOrderList holds a sorted list of all the
     // descendant layers within the stacking context that have z-indices of 0 or greater

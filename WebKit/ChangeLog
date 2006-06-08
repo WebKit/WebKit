@@ -1,3 +1,17 @@
+2006-06-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt. 
+
+        Added resources for missingImage and textAreaResizeCorner.
+
+        * COM/WebKitDLL.cpp:
+        (loadResourceIntoArray): Added. Returns a DeprecatedByteArray with the resource's data.
+        * WebKit.vcproj/WebKit.rc: Added missing image and resize pngs as resources. 
+        * WebKit.vcproj/WebKit.vcproj: Added pngs.
+        * WebKit.vcproj/missingImage.png: Added.
+        * WebKit.vcproj/resource.h: Added entries for pngs.
+        * WebKit.vcproj/textAreaResizeCorner.png: Added.
+
 2006-06-07  David Hyatt  <hyatt@apple.com>
 
         Add SPI for setting and removing custom highlighters.

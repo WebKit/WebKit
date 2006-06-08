@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\COM&quot;;&quot;$(ProjectDir)\..\..\WebCore&quot;;&quot;$(ProjectDir)\..\..\WebCore\loader&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\ecma&quot;;&quot;$(ProjectDir)\..\..\WebCore\html&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml&quot;;&quot;$(ProjectDir)\..\..\WebCore\css&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform&quot;;&quot;$(ProjectDir)\..\..\WebCore\bridge\win&quot;;&quot;$(ProjectDir)\..\..\WebCore\page&quot;;&quot;$(ProjectDir)\..\..\WebCore\bridge&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform\win&quot;;&quot;$(ProjectDir)\..\..\WebCore\rendering&quot;;&quot;$(ProjectDir)\..\..\WebCore\editing&quot;;&quot;$(ProjectDir)\..\..\WebCore\dom&quot;;&quot;$(ProjectDir)\..\..\WebCore\xml&quot;;&quot;$(ProjectDir)\..\..\WebCore\kwq&quot;;&quot;$(ProjectDir)\..\..\iconv&quot;;&quot;$(ProjectDir)\..\..\libxml2&quot;;&quot;$(ProjectDir)\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore\wtf&quot;;&quot;$(ProjectDir)\..\..\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\$(ConfigurationName)\WebKitWin&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\COM&quot;;&quot;$(ProjectDir)\..\..\WebCore&quot;;&quot;$(ProjectDir)\..\..\WebCore\loader&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\ecma&quot;;&quot;$(ProjectDir)\..\..\WebCore\html&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml&quot;;&quot;$(ProjectDir)\..\..\WebCore\css&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform&quot;;&quot;$(ProjectDir)\..\..\WebCore\bridge\win&quot;;&quot;$(ProjectDir)\..\..\WebCore\page&quot;;&quot;$(ProjectDir)\..\..\WebCore\bridge&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform\win&quot;;&quot;$(ProjectDir)\..\..\WebCore\rendering&quot;;&quot;$(ProjectDir)\..\..\WebCore\editing&quot;;&quot;$(ProjectDir)\..\..\WebCore\dom&quot;;&quot;$(ProjectDir)\..\..\WebCore\xml&quot;;&quot;$(ProjectDir)\..\..\WebCore\kwq&quot;;&quot;$(ProjectDir)\..\..\iconv&quot;;&quot;$(ProjectDir)\..\..\libxml2&quot;;&quot;$(ProjectDir)\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore\wtf&quot;;&quot;$(ProjectDir)\..\..\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\$(ConfigurationName)\WebKitWin&quot;;&quot;$(ProjectDir)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;WEBKIT_EXPORTS;_WIN32_WINNT=0x500"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -126,7 +126,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\COM&quot;;&quot;$(ProjectDir)\..\..\WebCore&quot;;&quot;$(ProjectDir)\..\..\WebCore\loader&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\ecma&quot;;&quot;$(ProjectDir)\..\..\WebCore\html&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml&quot;;&quot;$(ProjectDir)\..\..\WebCore\css&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform&quot;;&quot;$(ProjectDir)\..\..\WebCore\bridge\win&quot;;&quot;$(ProjectDir)\..\..\WebCore\page&quot;;&quot;$(ProjectDir)\..\..\WebCore\bridge&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform\win&quot;;&quot;$(ProjectDir)\..\..\WebCore\rendering&quot;;&quot;$(ProjectDir)\..\..\WebCore\editing&quot;;&quot;$(ProjectDir)\..\..\WebCore\dom&quot;;&quot;$(ProjectDir)\..\..\WebCore\xml&quot;;&quot;$(ProjectDir)\..\..\WebCore\kwq&quot;;&quot;$(ProjectDir)\..\..\iconv&quot;;&quot;$(ProjectDir)\..\..\libxml2&quot;;&quot;$(ProjectDir)\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore\wtf&quot;;&quot;$(ProjectDir)\..\..\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\$(ConfigurationName)\WebKitWin&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\COM&quot;;&quot;$(ProjectDir)\..\..\WebCore&quot;;&quot;$(ProjectDir)\..\..\WebCore\loader&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\dom&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\ecma&quot;;&quot;$(ProjectDir)\..\..\WebCore\html&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml&quot;;&quot;$(ProjectDir)\..\..\WebCore\css&quot;;&quot;$(ProjectDir)\..\..\WebCore\khtml\misc&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform&quot;;&quot;$(ProjectDir)\..\..\WebCore\bridge\win&quot;;&quot;$(ProjectDir)\..\..\WebCore\page&quot;;&quot;$(ProjectDir)\..\..\WebCore\bridge&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform\cairo\cairo\src&quot;;&quot;$(ProjectDir)\..\..\WebCore\platform\win&quot;;&quot;$(ProjectDir)\..\..\WebCore\rendering&quot;;&quot;$(ProjectDir)\..\..\WebCore\editing&quot;;&quot;$(ProjectDir)\..\..\WebCore\dom&quot;;&quot;$(ProjectDir)\..\..\WebCore\xml&quot;;&quot;$(ProjectDir)\..\..\WebCore\kwq&quot;;&quot;$(ProjectDir)\..\..\iconv&quot;;&quot;$(ProjectDir)\..\..\libxml2&quot;;&quot;$(ProjectDir)\..\..\icu\include&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(ProjectDir)\..\..\JavaScriptCore\wtf&quot;;&quot;$(ProjectDir)\..\..\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\$(ConfigurationName)\WebKitWin&quot;;&quot;$(ProjectDir)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;WEBKIT_EXPORTS;_WIN32_WINNT=0x500"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -294,6 +294,14 @@
 			Name="Resources"
 			>
 			<File
+				RelativePath=".\missingImage.png"
+				>
+			</File>
+			<File
+				RelativePath=".\textAreaResizeCorner.png"
+				>
+			</File>
+			<File
 				RelativePath=".\WebKit.rc"
 				>
 			</File>
@@ -302,6 +310,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\png1.bin"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

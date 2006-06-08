@@ -25,8 +25,13 @@
 
 #include "WebKitDLL.h"
 #include "IWebURLResponse.h"
+#include "resource.h"
 #include "WebKit.h"
 #include "WebKitClassFactory.h"
+
+#pragma warning( push, 0 )
+#include "DeprecatedArray.h"
+#pragma warning(pop)
 
 #include <tchar.h>
 #include <olectl.h>
@@ -153,4 +158,32 @@ STDAPI DllRegisterServer(void)
     }
 
     return hr;
+}
+
+//FIXME: We should consider moving this to a new file for cross-project functionality
+DeprecatedByteArray loadResourceIntoArray(const char* name)
+{
+    int idr;
+    // temporary hack to get resource id
+    if (!strcmp(name, "textAreaResizeCorner"))
+        idr = IDR_RESIZE_CORNER;
+    else if (!strcmp(name, "missingImage"))
+        idr = IDR_MISSING_IMAGE;
+    else
+        return DeprecatedByteArray();
+
+    HRSRC resInfo = FindResource(gInstance, MAKEINTRESOURCE(idr), L"PNG");
+    if (!resInfo)
+        return DeprecatedByteArray();
+    HANDLE res = LoadResource(gInstance, resInfo);
+    if (!res)
+        return DeprecatedByteArray();
+    void* resource = LockResource(res);
+    if (!resource)
+        return DeprecatedByteArray();
+    int size = SizeofResource(gInstance, resInfo);
+
+    DeprecatedByteArray arr(size);
+    memcpy(arr.data(), resource, size);
+    return arr;
 }

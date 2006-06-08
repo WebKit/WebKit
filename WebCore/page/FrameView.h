@@ -137,6 +137,8 @@ public:
     void handleMouseReleaseEvent(const PlatformMouseEvent&);
     void handleWheelEvent(PlatformWheelEvent&);
 
+    bool mousePressed();
+
     void doAutoScroll();
 
     bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);

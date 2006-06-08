@@ -1,3 +1,35 @@
+2006-06-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt 
+
+        Added support for cross-platform resize property.
+
+        * platform/PlatformMouseEvent.h: Removed isMouseButtonDown, since we
+        already cache this info when we handle mouse down and mouse up.
+        * platform/mac/MouseEventMac.mm: ditto.
+        * platform/win/TemporaryLinkStubs.cpp: ditto.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::autoscrollTimerFired): Use d->m_bMousePressed instead of isMouseButtonDown.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMouseMoveEvent): Passes event to layer resize method.
+        (WebCore::FrameView::mousePressed): Added.
+        * page/FrameView.h: Added mousePressed.
+
+        * rendering/RenderTheme.h: Removed paintResizeControl.
+        Since its not dependent on the theme, the layer can just paint this.
+        * rendering/RenderTheme.cpp: ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer): Initializes m_resizeCornerImage.
+        (WebCore::RenderLayer::~RenderLayer): Deletes m_resizeCornerImage.
+        (WebCore::RenderLayer::resize): Uses passed in event instead of creating a new one.
+        (WebCore::RenderLayer::paintResizeControl): Now loads and paints the resize image.
+        * rendering/RenderLayer.h: Added m_resizeCornerImage.  Important to have one per-layer for when we allow
+        more customization.
+
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::loadResource): Loads image resources.
+
 2006-06-07  David Hyatt  <hyatt@apple.com>
 
         Add support for a new property for custom highlighting.  This patch just

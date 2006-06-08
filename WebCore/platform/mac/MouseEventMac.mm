@@ -111,24 +111,6 @@ static int clickCountForEvent(NSEvent *event)
     }
 }
 
-bool PlatformMouseEvent::isMouseButtonDown(MouseButton b)
-{
-    CGMouseButton button;
-
-    switch (b) {
-        case MiddleButton:
-            button = kCGMouseButtonCenter;
-            break;
-        case RightButton:
-            button = kCGMouseButtonRight;
-            break;
-        case LeftButton:
-        default:
-            button = kCGMouseButtonLeft; 
-    }
-    return CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState, button); 
-}
-
 PlatformMouseEvent::PlatformMouseEvent(NSEvent* event)
     : m_position(positionForEvent(event))
     , m_globalPosition(globalPositionForEvent(event))

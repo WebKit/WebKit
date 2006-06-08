@@ -1,7 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
-#include "autoversion.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,0,0,BUILD_NUMBER
+ FILEVERSION 3,0,0,1
  PRODUCTVERSION 3,0,0,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
@@ -92,6 +91,13 @@ BEGIN
 END
 
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDR_RESIZE_CORNER                PNG                     "textAreaResizeCorner.png"
+IDR_MISSING_IMAGE                PNG                     "missingImage.png"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

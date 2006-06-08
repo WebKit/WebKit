@@ -2731,8 +2731,7 @@ void Frame::handleAutoscroll(RenderLayer* layer)
 
 void Frame::autoscrollTimerFired(Timer<Frame>*)
 {
-    bool isStillDown = PlatformMouseEvent::isMouseButtonDown(LeftButton);  
-    if (!isStillDown){
+    if (!d->m_bMousePressed){
         stopAutoscrollTimer();
         return;
     }
