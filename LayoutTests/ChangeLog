@@ -1,3 +1,15 @@
+2006-06-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9341
+          REGRESSION: Repro crash caused by style="font:bold"
+
+        * fast/css/font-shorthand-weight-only-expected.checksum: Added.
+        * fast/css/font-shorthand-weight-only-expected.png: Added.
+        * fast/css/font-shorthand-weight-only-expected.txt: Added.
+        * fast/css/font-shorthand-weight-only.html: Added.
+
 2006-06-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
