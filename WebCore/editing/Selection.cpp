@@ -64,6 +64,16 @@ Selection::Selection(const Position &base, const Position &extent, EAffinity aff
     validate();
 }
 
+Selection::Selection(const Range *range, EAffinity affinity)
+    : m_base(range->startPosition()), m_extent(range->endPosition())
+    , m_affinity(affinity)
+    , m_granularity(CharacterGranularity)
+    , m_state(NONE)
+    , m_baseIsFirst(true)
+{
+    validate();
+}
+
 Selection Selection::selectionFromContentsOfNode(Node* node)
 {
     return Selection(Position(node, 0), Position(node, maxDeepOffset(node)), DOWNSTREAM);

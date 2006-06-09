@@ -1,3 +1,25 @@
+2006-06-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4549980>
+        REGRESSION: "Find Again" can get stuck when searching for string with a trailing space
+
+        * bridge/mac/FrameMac.h: Moved findString to Frame.
+        * bridge/mac/FrameMac.mm: Ditto.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge searchFor:direction:caseSensitive:wrap:]): 
+        Convert the NSString to a String.
+        * editing/JSEditor.cpp: Added execCommand(FindString, ...)
+        * editing/Selection.cpp: Added a constructor for Ranges
+        (WebCore::Selection::Selection): 
+        * editing/Selection.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::findString): Moved from FrameMac.  Compare a selection created 
+        using the found range with the current selection in case the current selection is
+        the found range minus some collapsed whitespace on the edges.
+        * page/Frame.h:
+
 2006-06-09  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build break

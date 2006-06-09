@@ -1,3 +1,15 @@
+2006-06-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4549980>
+        REGRESSION: "Find Again" can get stuck when searching for string with a trailing space
+
+        * editing/execCommand/findString-expected.checksum: Added.
+        * editing/execCommand/findString-expected.png: Added.
+        * editing/execCommand/findString-expected.txt: Added.
+        * editing/execCommand/findString.html: Added.
+
 2006-06-09  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Hyatt.

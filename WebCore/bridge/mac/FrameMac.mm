@@ -412,53 +412,6 @@ NSString *FrameMac::matchLabelsAgainstElement(NSArray *labels, Element *element)
     return nil;
 }
 
-// Searches from the beginning of the document if nothing is selected.
-bool FrameMac::findString(NSString *string, bool forward, bool caseFlag, bool wrapFlag)
-{
-    String target = string;
-    if (target.isEmpty())
-        return false;
-    
-    // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
-    RefPtr<Range> searchRange(rangeOfContents(document()));
-    if (selection().start().node()) {
-        if (forward)
-            setStart(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
-        else
-            setEnd(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
-    }
-    RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
-    
-    // If we re-found the (non-empty) selected range, then search again starting just past the selected range.
-    if (selection().start().node() && *resultRange == *selection().toRange()) {
-        searchRange = rangeOfContents(document());
-        if (forward)
-            setStart(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
-        else
-            setEnd(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
-        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
-    }
-    
-    int exception = 0;
-    
-    // if we didn't find anything and we're wrapping, search again in the entire document (this will
-    // redundantly re-search the area already searched in some cases).
-    if (resultRange->collapsed(exception) && wrapFlag) {
-        searchRange = rangeOfContents(document());
-        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
-        // We used to return false here if we ended up with the same range that we started with
-        // (e.g., the selection was already the only instance of this text). But we decided that
-        // this should be a success case instead, so we'll just fall through in that case.
-    }
-
-    if (resultRange->collapsed(exception))
-        return false;
-
-    setSelection(SelectionController(resultRange.get(), DOWNSTREAM));
-    revealSelection();
-    return true;
-}
-
 void FrameMac::submitForm(const ResourceRequest& request)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

@@ -3350,6 +3350,52 @@ DeprecatedValueList<MarkedTextUnderline> Frame::markedTextUnderlines() const
     return d->m_markedTextUnderlines;
 }
 
+// Searches from the beginning of the document if nothing is selected.
+bool Frame::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag)
+{
+    if (target.isEmpty())
+        return false;
+    
+    // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
+    RefPtr<Range> searchRange(rangeOfContents(document()));
+    if (selection().start().node()) {
+        if (forward)
+            setStart(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
+        else
+            setEnd(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
+    }
+    RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
+    Selection sel = selection().selection();
+    // If the found range is one that's already selected, find again.
+    if (!sel.isNone() && Selection(resultRange.get()) == sel) {
+        searchRange = rangeOfContents(document());
+        if (forward)
+            setStart(searchRange.get(), VisiblePosition(sel.end(), sel.affinity()));
+        else
+            setEnd(searchRange.get(), VisiblePosition(sel.start(), sel.affinity()));
+        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
+    }
+    
+    int exception = 0;
+    
+    // If we didn't find anything and we're wrapping, search again in the entire document (this will
+    // redundantly re-search the area already searched in some cases).
+    if (resultRange->collapsed(exception) && wrapFlag) {
+        searchRange = rangeOfContents(document());
+        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
+        // We used to return false here if we ended up with the same range that we started with
+        // (e.g., the selection was already the only instance of this text). But we decided that
+        // this should be a success case instead, so we'll just fall through in that case.
+    }
+
+    if (resultRange->collapsed(exception))
+        return false;
+
+    setSelection(SelectionController(resultRange.get(), DOWNSTREAM));
+    revealSelection();
+    return true;
+}
+
 unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag)
 {
     if (target.isEmpty())

@@ -44,6 +44,7 @@ public:
     Selection();
     Selection(const Position &, EAffinity);
     Selection(const Position &, const Position &, EAffinity);
+    Selection(const Range *, EAffinity = DOWNSTREAM);
     
     static Selection selectionFromContentsOfNode(Node*);
 

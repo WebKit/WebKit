@@ -1186,7 +1186,7 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
-    return m_frame->findString(string, forward, caseFlag, wrapFlag);
+    return m_frame->findString(String(string), forward, caseFlag, wrapFlag);
 }
 
 - (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag
