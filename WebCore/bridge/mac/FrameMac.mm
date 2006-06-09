@@ -2846,24 +2846,6 @@ String FrameMac::overrideMediaType() const
     return String();
 }
 
-void FrameMac::setIsActive(bool flag)
-{
-    if (d->m_isFocused == flag)
-        return;
-    
-    Frame::setIsActive(flag);
-    Document *doc = document();
-    // Mac Specific: Changing the tint of controls from clear to aqua/graphite and vice versa.  We
-    // do a "fake" paint.  When the theme gets a paint call, it can then do an invalidate.
-    if (doc && d->m_view && d->m_view->getDocumentView() && theme()->supportsControlTints() && renderer()) {
-        doc->updateLayout(); // Ensure layout is up to date.
-        IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
-        GraphicsContext context(0);
-        context.setUpdatingControlTints(true);
-        paint(&context, visibleRect);
-    }
-}
-
 NSColor *FrameMac::bodyBackgroundColor() const
 {
     if (document() && document()->body() && document()->body()->renderer()) {

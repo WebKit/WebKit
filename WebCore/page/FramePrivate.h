@@ -86,7 +86,7 @@ namespace WebCore {
             , m_caretPaint(true)
             , m_bFirstData(true)
             , m_bCleared(true)
-            , m_isFocused(false)
+            , m_isActive(false)
             , m_opener(0)
             , m_openedByJS(false)
             , m_bPendingChildRedirection(false)
@@ -190,7 +190,7 @@ namespace WebCore {
         bool m_caretPaint : 1;
         bool m_bFirstData : 1;
         bool m_bCleared : 1;
-        bool m_isFocused : 1;
+        bool m_isActive : 1;
 
         EditCommandPtr m_lastEditCommand;
         int m_xPosForVerticalArrowNavigation;

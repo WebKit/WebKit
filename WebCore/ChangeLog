@@ -1,5 +1,25 @@
 2006-06-09  David Hyatt  <hyatt@apple.com>
 
+        Rename m_isFocused on the frame to m_isActive, since it isn't really
+        about focus but is instead about whether or not the top-level window is
+        active.
+
+        Pull code that was incorrectly factored into Mac-only code out of FrameMac
+        and back up into Frame.
+
+        Reviewed by andersca
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        * page/Frame.cpp:
+        (WebCore::Frame::setFocusNodeIfNeeded):
+        (WebCore::Frame::isActive):
+        (WebCore::Frame::setIsActive):
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+
+2006-06-09  David Hyatt  <hyatt@apple.com>
+
         Rework selection coloring.  Rename displaysWithFocusAttributes
         to isActive.  Move the white-blending code onto the Color API to make
         it more convenient to mutate colors for selection blending.  Eliminate all

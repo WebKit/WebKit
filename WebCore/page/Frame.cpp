@@ -1255,7 +1255,7 @@ static bool isFrameElement(const Node *n)
 
 void Frame::setFocusNodeIfNeeded()
 {
-    if (!document() || d->m_selection.isNone() || !d->m_isFocused)
+    if (!document() || d->m_selection.isNone() || !d->m_isActive)
         return;
 
     Node *startNode = d->m_selection.start().node();
@@ -3284,15 +3284,15 @@ void Frame::setSelectionFromNone()
 
 bool Frame::isActive() const
 {
-    return d->m_isFocused;
+    return d->m_isActive;
 }
 
 void Frame::setIsActive(bool flag)
 {
-    if (d->m_isFocused == flag)
+    if (d->m_isActive == flag)
         return;
     
-    d->m_isFocused = flag;
+    d->m_isActive = flag;
 
     // This method does the job of updating the view based on whether the view is "active".
     // This involves three kinds of drawing updates:
@@ -3315,6 +3315,17 @@ void Frame::setIsActive(bool flag)
             if (node->renderer() && node->renderer()->style()->hasAppearance())
                 theme()->stateChanged(node->renderer(), FocusState);
         }
+    }
+    
+    // 4, Changing the tint of controls from clear to aqua/graphite and vice versa.  We
+    // do a "fake" paint.  When the theme gets a paint call, it can then do an invalidate.  This is only
+    // done if the theme supports control tinting.
+    if (doc && d->m_view && d->m_view->getDocumentView() && theme()->supportsControlTints() && renderer()) {
+        doc->updateLayout(); // Ensure layout is up to date.
+        IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
+        GraphicsContext context(0);
+        context.setUpdatingControlTints(true);
+        paint(&context, visibleRect);
     }
 }
 
