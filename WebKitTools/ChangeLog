@@ -1,3 +1,15 @@
+2006-06-09  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin, landed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9350
+        Use pathcmp() when sorting paths in svn-create-patch
+
+        * Scripts/run-webkit-tests: Fixed splitpath() to use File::Basename subroutines instead of regex.
+        * Scripts/svn-create-patch: Copied numericcmp(), pathcmp() and splitpath() from run-webkit-tests.
+        Changed sort() functions to use pathcmp().  Added subroutine prototypes.  Added -h command-line
+        switch and printUsage() subroutine.
+
 2006-06-06  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by darin.

@@ -40,6 +40,7 @@
 #   Handle moved files.
 
 use strict;
+use warnings;
 
 use Config;
 use Cwd;
@@ -50,6 +51,20 @@ use Getopt::Long;
 use MIME::Base64;
 use POSIX qw(:errno_h);
 use Time::gmtime;
+
+sub canonicalizePath($);
+sub generateDiff($);
+sub generateFileList($\%\%);
+sub numericcmp($$);
+sub outputBinaryContent($);
+sub pathcmp($$);
+sub splitpath($);
+
+my $showHelp;
+if (!GetOptions("help" => \$showHelp) || $showHelp) {
+    print STDERR basename($0) . " [-h|--help] svndir1 [svndir2 ...]\n";
+    exit 1;
+}
 
 my $startDir = getcwd();
 my %paths;
@@ -92,21 +107,21 @@ if (!@ARGV) {
 my %textFiles;
 my %binaryFiles;
 for my $path (keys %paths) {
-    generateFileList($path, \%textFiles, \%binaryFiles);
+    generateFileList($path, %textFiles, %binaryFiles);
 }
 
 # Generate the diff for text files, then binary files, for easy reviewing
-for my $file (sort keys %textFiles) {
+for my $file (sort pathcmp keys %textFiles) {
     generateDiff($file);
 }
-for my $file (sort keys %binaryFiles) {
+for my $file (sort pathcmp keys %binaryFiles) {
     generateDiff($file);
 }
 
 exit 0;
 
 
-sub canonicalizePath
+sub canonicalizePath($)
 {
     my ($file) = @_;
 
@@ -125,7 +140,7 @@ sub canonicalizePath
     return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
 }
 
-sub generateDiff
+sub generateDiff($)
 {
     my ($file) = @_;
     my $errors = "";
@@ -143,7 +158,7 @@ sub generateDiff
     print STDERR $errors;
 }
 
-sub generateFileList
+sub generateFileList($\%\%)
 {
     my ($path, $textFiles, $binaryFiles) = @_;
     my $indexPath;
@@ -177,7 +192,33 @@ sub generateFileList
     }
 }
 
-sub outputBinaryContent
+# Sort numeric parts of strings as numbers, other parts as strings.
+# Makes 1.33 come after 1.3, which is cool.
+sub numericcmp($$)
+{
+    my ($aa, $bb) = @_;
+
+    my @a = split /(\d+)/, $aa;
+    my @b = split /(\d+)/, $bb;
+
+    # Compare one chunk at a time.
+    # Each chunk is either all numeric digits, or all not numeric digits.
+    while (@a && @b) {
+        my $a = shift @a;
+        my $b = shift @b;
+        
+        # Use numeric comparison if chunks are non-equal numbers.
+        return $a <=> $b if $a =~ /^\d/ && $b =~ /^\d/ && $a != $b;
+
+        # Use string comparison if chunks are any other kind of non-equal string.
+        return $a cmp $b if $a ne $b;
+    }
+    
+    # One of the two is now empty; compare lengths for result in this case.
+    return @a <=> @b;
+}
+
+sub outputBinaryContent($)
 {
     my ($path) = @_;
     # Deletion
@@ -192,3 +233,28 @@ sub outputBinaryContent
     print "\n";
 }
 
+# Sort first by directory, then by file, so all paths in one directory are grouped
+# rather than being interspersed with items from subdirectories.
+# Use numericcmp to sort directory and filenames to make order logical.
+sub pathcmp($$)
+{
+    my ($patha, $pathb) = @_;
+
+    my ($dira, $namea) = splitpath($patha);
+    my ($dirb, $nameb) = splitpath($pathb);
+
+    return numericcmp($dira, $dirb) if $dira ne $dirb;
+    return numericcmp($namea, $nameb);
+}
+
+# Break up a path into the directory (with slash) and base name.
+sub splitpath($)
+{
+    my ($path) = @_;
+
+    my $pathSeparator = "/";
+    my $dirname = dirname($path) . $pathSeparator;
+    $dirname = "" if $dirname eq "." . $pathSeparator;
+
+    return ($dirname, basename($path));
+}

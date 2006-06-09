@@ -46,6 +46,7 @@ use strict;
 use warnings;
 
 use Cwd;
+use File::Basename;
 use File::Copy;
 use File::Path;
 use File::Spec;
@@ -660,8 +661,11 @@ sub splitpath($)
 {
     my ($path) = @_;
 
-    return ($1, $2) if $path =~ m|^(.*/)([^/]+)$|;
-    return ("", $path);
+    my $pathSeparator = "/";
+    my $dirname = dirname($path) . $pathSeparator;
+    $dirname = "" if $dirname eq "." . $pathSeparator;
+
+    return ($dirname, basename($path));
 }
 
 # Sort first by directory, then by file, so all paths in one directory are grouped
