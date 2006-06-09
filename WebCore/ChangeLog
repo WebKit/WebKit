@@ -1,3 +1,15 @@
+2006-06-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build break
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * css/MediaQueryEvaluator.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (GraphicsContext::addRoundedRectClip):
+        (GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+
 2006-06-09  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Hyatt. Tweaked by Maciej. Tweaks reviewed by Beth. 

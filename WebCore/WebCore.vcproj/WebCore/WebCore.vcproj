@@ -2703,11 +2703,43 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\css\MediaFeatureNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaFeatureNames.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\css\MediaList.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\css\MediaList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaQuery.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaQueryEvaluator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaQueryEvaluator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaQueryExp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\css\MediaQueryExp.h"
 				>
 			</File>
 			<File
@@ -3860,6 +3892,14 @@
 			</File>
 			<File
 				RelativePath="..\..\editing\InsertLineBreakCommand.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\InsertListCommand.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\InsertListCommand.h"
 				>
 			</File>
 			<File

@@ -30,6 +30,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
+#include "DeprecatedString.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "MediaFeatureNames.h"
