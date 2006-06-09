@@ -1,3 +1,13 @@
+2006-06-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Include our own copies of the BSD and LGPL licenses.
+
+        * coding/bsd-license.html: Added.
+        * coding/lgpl-license.html: Added.
+        * nav.inc: link to our copies of the licenses
+
 2006-06-04  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by ggaren.

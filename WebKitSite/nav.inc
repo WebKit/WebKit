@@ -36,8 +36,8 @@
     </ul>
     <div id="notice">
         WebKit is open source software with portions licensed under the
-        <a href="http://www.opensource.org/licenses/lgpl-license.php">LGPL</a> and
-        <a href="http://www.opensource.org/licenses/bsd-license.php">BSD licenses</a>.
+        <a href="/coding/lgpl-license.html">LGPL</a> and
+        <a href="/coding/bsd-license.html">BSD licenses</a>.
         Complete license and copyright information can be found within the code.
     </div>
 </div>
