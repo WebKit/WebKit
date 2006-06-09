@@ -44,6 +44,7 @@ class CSSSelector;
 class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
+class MediaQueryEvaluator;
 class Document;
 class Element;
 class Frame;
@@ -93,7 +94,7 @@ class StyledElement;
 
         void initElementAndPseudoState(Element* e);
         void initForStyleResolve(Element* e, RenderStyle* parentStyle);
-        RenderStyle *styleForElement(Element*, RenderStyle* parentStyle=0, bool allowSharing=true);
+        RenderStyle *styleForElement(Element*, RenderStyle* parentStyle=0, bool allowSharing=true, bool resolveForRootDefault=false);
         RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle=0);
 
         RenderStyle* locateSharedStyle();
@@ -177,7 +178,11 @@ public:
  
     private:
         void init();
-        
+
+        void matchUARules(int& firstUARule, int& lastUARule);
+        void updateFont();
+        void cacheBorderAndBackground();
+         
         void mapBackgroundAttachment(BackgroundLayer* layer, CSSValue* value);
         void mapBackgroundClip(BackgroundLayer* layer, CSSValue* value);
         void mapBackgroundOrigin(BackgroundLayer* layer, CSSValue* value);
@@ -203,7 +208,8 @@ public:
         CSSRuleList* m_ruleList;
         bool m_collectRulesOnly;
 
-        String m_mediaType;
+        MediaQueryEvaluator* m_medium;
+        RenderStyle* m_rootDefaultStyle;
 
         RenderStyle::PseudoId dynamicPseudo;
         

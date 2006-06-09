@@ -1,6 +1,8 @@
 %option case-insensitive
 %option noyywrap
 %option 8bit
+%option stack
+%s mediaquery
 
 h               [0-9a-fA-F]
 nonascii        [\200-\377]
@@ -34,6 +36,9 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 "^="                    {yyTok = BEGINSWITH; return yyTok;}
 "$="                    {yyTok = ENDSWITH; return yyTok;}
 "*="                    {yyTok = CONTAINS; return yyTok;}
+<mediaquery>"not"       {yyTok = MEDIA_NOT; return yyTok;}
+<mediaquery>"only"      {yyTok = MEDIA_ONLY; return yyTok;}
+<mediaquery>"and"       {yyTok = MEDIA_AND; return yyTok;}
 
 {string}                {yyTok = STRING; return yyTok;}
 
@@ -41,15 +46,16 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 
 "#"{name}               {yyTok = HASH; return yyTok;}
 
-"@import"               {yyTok = IMPORT_SYM; return yyTok;}
+"@import"               {BEGIN(mediaquery); yyTok = IMPORT_SYM; return yyTok;}
 "@page"                 {yyTok = PAGE_SYM; return yyTok;}
-"@media"                {yyTok = MEDIA_SYM; return yyTok;}
+"@media"                {BEGIN(mediaquery); yyTok = MEDIA_SYM; return yyTok;}
 "@font-face"            {yyTok = FONT_FACE_SYM; return yyTok;}
 "@charset"              {yyTok = CHARSET_SYM; return yyTok;}
 "@namespace"            {yyTok = NAMESPACE_SYM; return yyTok; }
 "@-webkit-rule"    {yyTok = WEBKIT_RULE_SYM; return yyTok; }
 "@-webkit-decls"   {yyTok = WEBKIT_DECLS_SYM; return yyTok; }
 "@-webkit-value"   {yyTok = WEBKIT_VALUE_SYM; return yyTok; }
+"@-webkit-mediaquery"   {BEGIN(mediaquery); yyTok = WEBKIT_MEDIAQUERY_SYM; return yyTok; }
 
 "!"{w}"important"         {yyTok = IMPORTANT_SYM; return yyTok;}
 
@@ -81,6 +87,8 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 U\+{range}              {yyTok = UNICODERANGE; return yyTok;}
 U\+{h}{1,6}-{h}{1,6}    {yyTok = UNICODERANGE; return yyTok;}
 
+<mediaquery>"{"         |
+<mediaquery>";"         {BEGIN(INITIAL); yyTok = *yytext; return yyTok; }
 .                       {yyTok = *yytext; return yyTok;}
 
 %%

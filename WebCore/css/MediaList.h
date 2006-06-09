@@ -24,46 +24,42 @@
 #define MediaList_H
 
 #include "StyleBase.h"
-#include "DeprecatedValueList.h"
+#include <wtf/Vector.h>
 #include "PlatformString.h"
 
 namespace WebCore {
-
+typedef int ExceptionCode;
 class CSSStyleSheet;
+class MediaQuery;
 class CSSRule;
 
 class MediaList : public StyleBase
 {
 public:
-    MediaList() : StyleBase(0) {}
-    MediaList(CSSStyleSheet* parentSheet);
-    MediaList(CSSStyleSheet* parentSheet, const String& media);
-    MediaList(CSSRule* parentRule, const String& media);
+    MediaList(bool fallbackToDescription = false) : StyleBase(0), m_fallback(fallbackToDescription) {}
+    MediaList(CSSStyleSheet* parentSheet, bool fallbackToDescription = false);
+    MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallbackToDescription = false);
+    MediaList(CSSRule* parentRule, const String& media, bool fallbackToDescription = false);
+    ~MediaList();
 
     virtual bool isMediaList() { return true; }
 
     CSSStyleSheet* parentStyleSheet() const;
     CSSRule* parentRule() const;
-    unsigned length() const { return m_lstMedia.count(); }
-    String item(unsigned index) const { return m_lstMedia[index]; }
-    void deleteMedium(const String& oldMedium);
-    void appendMedium(const String& newMedium) { m_lstMedia.append(newMedium); }
+    unsigned length() const { return (unsigned) m_queries.size(); }
+    String item(unsigned index) const;
+    void deleteMedium(const String& oldMedium, ExceptionCode&);
+    void appendMedium(const String& newMedium, ExceptionCode&);
 
     String mediaText() const;
-    void setMediaText(const String&);
+    void setMediaText(const String&, ExceptionCode&xo);
 
-    /**
-     * Check if the list contains either the requested medium, or the
-     * catch-all "all" media type. Returns true when found, false otherwise.
-     * Since not specifying media types should be treated as "all" according
-     * to DOM specs, an empty list always returns true.
-     *
-     * _NOT_ part of the DOM!
-     */
-    bool contains(const String& medium) const;
+    void appendMediaQuery(MediaQuery* mediaQuery);
+    const Vector<MediaQuery*>* mediaQueries() const { return &m_queries; }
 
 protected:
-    DeprecatedValueList<String> m_lstMedia;
+    Vector<MediaQuery*> m_queries;
+    bool m_fallback; // true if failed media query parsing should fallback to media description parsing
 };
 
 } // namespace

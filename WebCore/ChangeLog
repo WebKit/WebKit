@@ -1,3 +1,136 @@
+2006-06-09  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Hyatt. Tweaked by Maciej. Tweaks reviewed by Beth. 
+        Landed by Beth.
+
+        CSS3 Media Queries implementation.
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4127>
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_css.cpp:
+        (KJS::DOMMediaList::put):
+        (KJS::KJS::DOMMediaListProtoFunc::callAsFunction):
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMMediaList setMediaText:]):
+        (-[DOMMediaList deleteMedium:]):
+        (-[DOMMediaList appendMedium:]):
+        * css/CSSGrammar.y:
+        * css/MediaFeatureNames.cpp: Added.
+        (WebCore::MediaFeatureNames::init):
+        * css/MediaFeatureNames.h: Added.
+        * css/MediaList.cpp:
+        (WebCore::MediaList::MediaList):
+        (WebCore::MediaList::~MediaList):
+        (WebCore::parseMediaDescriptor):
+        (WebCore::MediaList::deleteMedium):
+        (WebCore::MediaList::mediaText):
+        (WebCore::MediaList::setMediaText):
+        (WebCore::MediaList::item):
+        (WebCore::MediaList::appendMedium):
+        (WebCore::MediaList::appendMediaQuery):
+        * css/MediaList.h:
+        (WebCore::MediaList::MediaList):
+        (WebCore::MediaList::length):
+        (WebCore::MediaList::mediaQueries):
+        * css/MediaQuery.cpp: Added.
+        (WebCore::MediaQuery::MediaQuery):
+        (WebCore::MediaQuery::~MediaQuery):
+        (WebCore::MediaQuery::operator==):
+        (WebCore::MediaQuery::cssText):
+        * css/MediaQuery.h: Added.
+        (WebCore::MediaQuery::):
+        (WebCore::MediaQuery::restrictor):
+        (WebCore::MediaQuery::expressions):
+        (WebCore::MediaQuery::mediaType):
+        (WebCore::MediaQuery::append):
+        * css/MediaQueryEvaluator.cpp: Added.
+        (WebCore::):
+        (WebCore::MediaQueryEvaluator):
+        (WebCore::MediaQueryEvaluator::~MediaQueryEvaluator):
+        (WebCore::MediaQueryEvaluator::mediaTypeMatch):
+        (WebCore::applyRestrictor):
+        (WebCore::MediaQueryEvaluator::eval):
+        (WebCore::parseAspectRatio):
+        (WebCore::cmpvalue):
+        (WebCore::numberValue):
+        (WebCore::colorMediaFeatureEval):
+        (WebCore::monochromeMediaFeatureEval):
+        (WebCore::device_aspect_ratioMediaFeatureEval):
+        (WebCore::gridMediaFeatureEval):
+        (WebCore::device_heightMediaFeatureEval):
+        (WebCore::device_widthMediaFeatureEval):
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+        (WebCore::min_colorMediaFeatureEval):
+        (WebCore::max_colorMediaFeatureEval):
+        (WebCore::min_monochromeMediaFeatureEval):
+        (WebCore::max_monochromeMediaFeatureEval):
+        (WebCore::min_device_aspect_ratioMediaFeatureEval):
+        (WebCore::max_device_aspect_ratioMediaFeatureEval):
+        (WebCore::min_heightMediaFeatureEval):
+        (WebCore::max_heightMediaFeatureEval):
+        (WebCore::min_widthMediaFeatureEval):
+        (WebCore::max_widthMediaFeatureEval):
+        (WebCore::min_device_heightMediaFeatureEval):
+        (WebCore::max_device_heightMediaFeatureEval):
+        (WebCore::min_device_widthMediaFeatureEval):
+        (WebCore::max_device_widthMediaFeatureEval):
+        (WebCore::createFunctionMap):
+        * css/MediaQueryEvaluator.h: Added.
+        * css/MediaQueryExp.cpp: Added.
+        (WebCore::MediaQueryExp::MediaQueryExp):
+        (WebCore::MediaQueryExp::~MediaQueryExp):
+        * css/MediaQueryExp.h: Added.
+        (WebCore::MediaQueryExp::mediaFeature):
+        (WebCore::MediaQueryExp::value):
+        (WebCore::MediaQueryExp::operator==):
+        * css/StyleSheet.cpp:
+        (WebCore::StyleSheet::setMedia):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::parseMediaQuery):
+        (WebCore::CSSParser::createFloatingMediaQueryExp):
+        (WebCore::CSSParser::sinkFloatingMediaQueryExp):
+        (WebCore::CSSParser::createFloatingMediaQueryExpList):
+        (WebCore::CSSParser::sinkFloatingMediaQueryExpList):
+        (WebCore::CSSParser::createFloatingMediaQuery):
+        (WebCore::CSSParser::sinkFloatingMediaQuery):
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::init):
+        (WebCore::CSSStyleSelector::~CSSStyleSelector):
+        (WebCore::CSSStyleSelector::loadDefaultStyle):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::updateFont):
+        (WebCore::CSSStyleSelector::cacheBorderAndBackground):
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        * css/cssstyleselector.h:
+        * css/maketokenizer:
+        * css/tokenizer.flex:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createCSSStyleSheet):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::setStyleSheet):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::childrenChanged):
+        * ksvg2/svg/SVGDOMImplementation.cpp:
+        (SVGDOMImplementation::createCSSStyleSheet):
+        * ksvg2/svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::childrenChanged):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * platform/Screen.h:
+        * platform/mac/ScreenMac.mm:
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+
 2006-06-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

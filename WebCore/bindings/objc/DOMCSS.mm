@@ -333,7 +333,9 @@ typedef DOMWindow AbstractView;
 
 - (void)setMediaText:(NSString *)mediaText
 {
-    [self _mediaList]->setMediaText(mediaText);
+    ExceptionCode ec = 0;
+    [self _mediaList]->setMediaText(mediaText, ec);
+    raiseOnDOMError(ec);
 }
 
 - (unsigned)length
@@ -348,12 +350,16 @@ typedef DOMWindow AbstractView;
 
 - (void)deleteMedium:(NSString *)oldMedium
 {
-    [self _mediaList]->deleteMedium(oldMedium);
+    ExceptionCode ec = 0;
+    [self _mediaList]->deleteMedium(oldMedium, ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)appendMedium:(NSString *)newMedium
 {
-    [self _mediaList]->appendMedium(newMedium);
+    ExceptionCode ec = 0;
+    [self _mediaList]->appendMedium(newMedium, ec);
+    raiseOnDOMError(ec);
 }
 
 @end

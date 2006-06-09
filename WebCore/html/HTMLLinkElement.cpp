@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "MediaList.h"
 #include "csshelper.h"
+#include "MediaQueryEvaluator.h"
 
 namespace WebCore {
 
@@ -168,7 +169,11 @@ void HTMLLinkElement::process()
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
         // also, don't load style sheets for standalone documents
-        if (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print")) {
+        MediaQueryEvaluator allEval(true);
+        MediaQueryEvaluator screenEval("screen", true);
+        MediaQueryEvaluator printEval("print", true);
+        RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, m_media, true);
+        if (allEval.eval(media.get()) || screenEval.eval(media.get()) || printEval.eval(media.get())) {
 
             // Add ourselves as a pending sheet, but only if we aren't an alternate 
             // stylesheet.  Alternate stylesheets don't hold up render tree construction.
@@ -211,8 +216,8 @@ void HTMLLinkElement::setStyleSheet(const String& url, const String& sheetStr)
     m_sheet = new CSSStyleSheet(this, url);
     m_sheet->parseString(sheetStr, !document()->inCompatMode());
 
-    MediaList* media = new MediaList(m_sheet.get(), m_media);
-    m_sheet->setMedia(media);
+    RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, m_media, true);
+    m_sheet->setMedia(media.get());
 
     m_loading = false;
 

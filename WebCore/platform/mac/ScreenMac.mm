@@ -86,6 +86,22 @@ int screenDepth(Widget* widget)
     return NSBitsPerPixelFromDepth([screen(widget) depth]);
 }
 
+int screenDepthPerComponent(Widget* widget)
+{
+   return NSBitsPerSampleFromDepth([screen(widget) depth]);
+}
+
+bool screenIsMonochrome(Widget* widget)
+{
+    NSScreen* s = screen(widget);
+    NSDictionary* dd = [s deviceDescription];
+    NSString* colorSpaceName = [dd objectForKey:NSDeviceColorSpaceName];
+    return colorSpaceName == NSCalibratedWhiteColorSpace
+        || colorSpaceName == NSCalibratedBlackColorSpace
+        || colorSpaceName == NSDeviceWhiteColorSpace
+        || colorSpaceName == NSDeviceBlackColorSpace;
+}
+
 // These methods scale between window and WebView coordinates because JavaScript/DOM operations 
 // assume that the WebView and the window share the same coordinate system.
 

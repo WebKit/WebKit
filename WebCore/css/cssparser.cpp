@@ -50,6 +50,7 @@
 #include "Pair.h"
 #include "ShadowValue.h"
 #include "csshelper.h"
+#include "MediaQueryExp.h"
 
 #define YYDEBUG 0
 
@@ -93,6 +94,9 @@ namespace {
 CSSParser* CSSParser::currentParser = 0;
 
 CSSParser::CSSParser(bool strictParsing)
+    : m_floatingMediaQuery(0)
+    , m_floatingMediaQueryExp(0)
+    , m_floatingMediaQueryExpList(0)
 {
 #ifdef CSS_DEBUG
     kdDebug(6080) << "CSSParser::CSSParser this=" << this << endl;
@@ -129,6 +133,12 @@ CSSParser::~CSSParser()
 
     fastFree(data);
 
+    if (m_floatingMediaQueryExpList) {
+        deleteAllValues(*m_floatingMediaQueryExpList);
+        delete m_floatingMediaQueryExpList;
+    }
+    delete m_floatingMediaQueryExp;
+    delete m_floatingMediaQuery;
     deleteAllValues(m_floatingSelectors);
     deleteAllValues(m_floatingValueLists);
     deleteAllValues(m_floatingFunctions);
@@ -151,6 +161,9 @@ void ParseString::lower()
 void CSSParser::setupParser(const char* prefix, const String& string, const char* suffix)
 {
     int length = string.length() + strlen(prefix) + strlen(suffix) + 2;
+
+    if (data)
+        fastFree(data);
     
     data = static_cast<UChar*>(fastMalloc(length * sizeof(UChar)));
     for (unsigned i = 0; i < strlen(prefix); i++)
@@ -288,6 +301,32 @@ bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration *declaration, const 
         ok = true;
         declaration->addParsedProperties(parsedProperties, numParsedProperties);
         clearProperties();
+    }
+
+    return ok;
+}
+
+bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
+{
+    if (string.isEmpty() || string.isNull()) {
+        return true;
+    }
+
+    mediaQuery = 0;
+    // can't use { because tokenizer state switches from mediaquery to initial state when it sees { token.
+    // instead insert one " " (which is WHITESPACE in CSSGrammar.y)
+    setupParser ("@-webkit-mediaquery ", string, "} ");
+
+    CSSParser* old = currentParser;
+    currentParser = this;
+    cssyyparse(this);
+    currentParser = old;
+
+    bool ok = false;
+    if (mediaQuery) {
+        ok = true;
+        queries->appendMediaQuery(mediaQuery);
+        mediaQuery = 0;
     }
 
     return ok;
@@ -2868,6 +2907,51 @@ Value& CSSParser::sinkFloatingValue(Value& value)
     return value;
 }
 
+MediaQueryExp* CSSParser::createFloatingMediaQueryExp(const AtomicString& mediaFeature, ValueList* values)
+{
+    delete m_floatingMediaQueryExp;
+    m_floatingMediaQueryExp = new MediaQueryExp(mediaFeature, values);
+    return m_floatingMediaQueryExp;
+}
+
+MediaQueryExp* CSSParser::sinkFloatingMediaQueryExp(MediaQueryExp* e)
+{
+    ASSERT(e == m_floatingMediaQueryExp);
+    m_floatingMediaQueryExp = 0;
+    return e;
+}
+
+Vector<MediaQueryExp*>* CSSParser::createFloatingMediaQueryExpList()
+{
+    if (m_floatingMediaQueryExpList) {
+        deleteAllValues(*m_floatingMediaQueryExpList);
+        delete m_floatingMediaQueryExpList;
+    }
+    m_floatingMediaQueryExpList = new Vector<MediaQueryExp*>;
+    return m_floatingMediaQueryExpList;
+}
+
+Vector<MediaQueryExp*>* CSSParser::sinkFloatingMediaQueryExpList(Vector<MediaQueryExp*>* l)
+{
+    ASSERT(l == m_floatingMediaQueryExpList);
+    m_floatingMediaQueryExpList = 0;
+    return l;
+}
+
+MediaQuery* CSSParser::createFloatingMediaQuery(MediaQuery::Restrictor r, const String& mediaType, Vector<MediaQueryExp*>* exprs)
+{
+    delete m_floatingMediaQuery;
+    m_floatingMediaQuery = new MediaQuery(r, mediaType, exprs);
+    return m_floatingMediaQuery;
+}
+
+MediaQuery* CSSParser::sinkFloatingMediaQuery(MediaQuery* mq)
+{
+    ASSERT(mq == m_floatingMediaQuery);
+    m_floatingMediaQuery = 0;
+    return mq;
+}
+
 MediaList* CSSParser::createMediaList()
 {
     MediaList* list = new MediaList;
@@ -2947,6 +3031,13 @@ typedef unsigned YY_CHAR;
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 #define yyterminate() yyTok = END_TOKEN; return yyTok
 #define YY_FATAL_ERROR(a)
+// The line below is needed to build the tokenizer with conditon stack.
+// The macro is used in the tokenizer grammar with lines containing
+// BEGIN(mediaqueries) and BEGIN(initial). yy_start acts as index to
+// tokenizer transition table, and 'mediaqueries' and 'initial' are
+// offset multipliers that specify which transitions are active
+// in the tokenizer during in each condition (tokenizer state)
+#define BEGIN yy_start = 1 + 2 *
 
 #include "tokenizer.cpp"
 

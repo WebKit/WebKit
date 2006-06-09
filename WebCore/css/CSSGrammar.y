@@ -38,6 +38,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include "MediaQuery.h"
+#include "MediaQueryExp.h"
 
 #if SVG_SUPPORT
 #include "ksvgcssproperties.h"
@@ -139,6 +141,11 @@ static inline int getValueID(const char* tagStr, int len)
     char tok;
     Value value;
     ValueList* valueList;
+
+    MediaQuery* mediaQuery;
+    MediaQueryExp* mediaQueryExp;
+    Vector<MediaQueryExp*>* mediaQueryExpList;
+    MediaQuery::Restrictor mediaQueryRestrictor;
 }
 
 %{
@@ -181,8 +188,12 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 %token WEBKIT_RULE_SYM
 %token WEBKIT_DECLS_SYM
 %token WEBKIT_VALUE_SYM
+%token WEBKIT_MEDIAQUERY_SYM
 
 %token IMPORTANT_SYM
+%token MEDIA_ONLY
+%token MEDIA_NOT
+%token MEDIA_AND
 
 %token <val> QEMS
 %token <val> EMS
@@ -231,8 +242,15 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 %type <string> medium
 %type <string> hexcolor
 
+%type <string> media_feature
 %type <mediaList> media_list
 %type <mediaList> maybe_media_list
+%type <mediaQuery> media_query
+%type <mediaQueryRestrictor> maybe_media_restrictor
+%type <valueList> maybe_media_value
+%type <mediaQueryExp> media_query_exp
+%type <mediaQueryExpList> media_query_exp_list
+%type <mediaQueryExpList> maybe_media_query_exp_list
 
 %type <ruleList> ruleset_list
 
@@ -272,6 +290,7 @@ stylesheet:
   | webkit_rule maybe_space
   | webkit_decls maybe_space
   | webkit_value maybe_space
+  | webkit_mediaquery maybe_space
   ;
 
 webkit_rule:
@@ -298,6 +317,13 @@ webkit_value:
             p->valueList = 0;
         }
     }
+;
+
+webkit_mediaquery:
+     WEBKIT_MEDIAQUERY_SYM WHITESPACE maybe_space media_query '}' {
+         CSSParser* p = static_cast<CSSParser*>(parser);
+         p->mediaQuery = p->sinkFloatingMediaQuery($4);
+     }
 ;
 
 maybe_space:
@@ -383,23 +409,84 @@ STRING
 | URI
 ;
 
+media_feature:
+    IDENT maybe_space {
+        $$ = $1;
+    }
+    ;
+
+maybe_media_value:
+    /*empty*/ {
+        $$ = 0;
+    }
+    | ':' maybe_space expr maybe_space {
+        $$ = $3;
+    }
+    ;
+
+media_query_exp:
+    MEDIA_AND maybe_space '(' maybe_space media_feature maybe_space maybe_media_value ')' maybe_space {
+        $5.lower();
+        $$ = static_cast<CSSParser*>(parser)->createFloatingMediaQueryExp(atomicString($5), $7);
+    }
+    ;
+
+media_query_exp_list:
+    media_query_exp {
+      CSSParser* p = static_cast<CSSParser*>(parser);
+      $$ = p->createFloatingMediaQueryExpList();
+      $$->append(p->sinkFloatingMediaQueryExp($1));
+    }
+    | media_query_exp_list media_query_exp {
+      $$ = $1;
+      $$->append(static_cast<CSSParser*>(parser)->sinkFloatingMediaQueryExp($2));
+    }
+    ;
+
+maybe_media_query_exp_list:
+    /*empty*/ {
+        $$ = static_cast<CSSParser*>(parser)->createFloatingMediaQueryExpList();
+    }
+    | media_query_exp_list
+    ;
+
+maybe_media_restrictor:
+    /*empty*/ {
+        $$ = MediaQuery::None;
+    }
+    | MEDIA_ONLY {
+        $$ = MediaQuery::Only;
+    }
+    | MEDIA_NOT {
+        $$ = MediaQuery::Not;
+    }
+    ;
+
+media_query:
+    maybe_media_restrictor maybe_space medium maybe_media_query_exp_list {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $3.lower();
+        $$ = p->createFloatingMediaQuery($1, domString($3), p->sinkFloatingMediaQueryExpList($4));
+    }
+    ;
+
 maybe_media_list:
      /* empty */ {
         $$ = static_cast<CSSParser*>(parser)->createMediaList();
      }
      | media_list
-;
-
+     ;
 
 media_list:
-    medium {
-        $$ = static_cast<CSSParser*>(parser)->createMediaList();
-        $$->appendMedium(domString($1).lower());
+    media_query {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = p->createMediaList();
+        $$->appendMediaQuery(p->sinkFloatingMediaQuery($1));
     }
-    | media_list ',' maybe_space medium {
+    | media_list ',' maybe_space media_query {
         $$ = $1;
         if ($$)
-            $$->appendMedium(domString($4).lower());
+            $$->appendMediaQuery(static_cast<CSSParser*>(parser)->sinkFloatingMediaQuery($4));
     }
     | media_list error {
         $$ = 0;

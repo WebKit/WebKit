@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "MediaList.h"
+#include "MediaQueryEvaluator.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -96,17 +97,18 @@ void SVGStyleElement::childrenChanged()
         m_sheet = 0;
 
     m_loading = false;
-    const AtomicString& _media = media();
-    if ((type().isEmpty() || type() == "text/css") && (_media.isNull() || _media.contains("screen") || _media.contains("all") || _media.contains("print"))) {
+    MediaQueryEvaluator screenEval("screen", true);
+    MediaQueryEvaluator printEval("print", true);   
+    RefPtr<MediaList> mediaList = new MediaList((CSSStyleSheet*)0, media());
+    if ((type().isEmpty() || type() == "text/css") && (screenEval.eval(mediaList.get()) || printEval.eval(mediaList.get()))) {
         ownerDocument()->addPendingSheet();
 
         m_loading = true;
  
         m_sheet = new CSSStyleSheet(this);
         m_sheet->parseString(textContent()); // SVG css is always parsed in strict mode
-
-        MediaList* mediaList = new MediaList(m_sheet.get(), _media);
-        m_sheet->setMedia(mediaList);
+        
+        m_sheet->setMedia(mediaList.get());
         m_loading = false;
     }
 

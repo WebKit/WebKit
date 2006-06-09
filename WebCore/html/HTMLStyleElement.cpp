@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
+#include "MediaQueryEvaluator.h"
 
 namespace WebCore {
 
@@ -83,15 +84,18 @@ void HTMLStyleElement::childrenChanged()
     }
 
     m_loading = false;
-    if ((m_type.isEmpty() || m_type == "text/css") // Type must be empty or CSS
-         && (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print"))) {
-        document()->addPendingSheet();
-        m_loading = true;
-        m_sheet = new CSSStyleSheet(this);
-        m_sheet->parseString(text, !document()->inCompatMode());
-        MediaList* media = new MediaList(m_sheet.get(), m_media);
-        m_sheet->setMedia(media);
-        m_loading = false;
+    if (m_type.isEmpty() || m_type == "text/css") { // Type must be empty or CSS
+        RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, m_media, true);
+        MediaQueryEvaluator screenEval("screen", true);
+        MediaQueryEvaluator printEval("print", true);
+        if (screenEval.eval(media.get()) || printEval.eval(media.get())) {
+            document()->addPendingSheet();
+            m_loading = true;
+            m_sheet = new CSSStyleSheet(this);
+            m_sheet->parseString(text, !document()->inCompatMode());
+            m_sheet->setMedia(media.get());
+            m_loading = false;
+        }
     }
 
     if (!isLoading() && m_sheet)

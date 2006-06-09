@@ -191,7 +191,10 @@ PassRefPtr<CSSStyleSheet> SVGDOMImplementation::createCSSStyleSheet(StringImpl *
     CSSStyleSheet *parent = 0;
     RefPtr<CSSStyleSheet> sheet = new CSSStyleSheet(parent);
     //sheet->setTitle(title);
-    sheet->setMedia(new MediaList(sheet.get(), media));
+    // http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-DOMImplementationCSS says
+    // that media descriptors should be used, even though svg:style has only
+    // css media types. Hence the third parameter (true).
+    sheet->setMedia(new MediaList(sheet.get(), media, true)); 
     return sheet.release();
 }
 

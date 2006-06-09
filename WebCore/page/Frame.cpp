@@ -50,6 +50,7 @@
 #include "HTMLFrameElement.h"
 #include "HTMLGenericFormElement.h"
 #include "HTMLNames.h"
+#include "MediaFeatureNames.h"
 #include "HTMLObjectElement.h"
 #include "ImageDocument.h"
 #include "MouseEventWithHitTestResults.h"
@@ -151,6 +152,7 @@ Frame::Frame(Page* page, RenderPart* ownerRenderer)
     EventNames::init();
     HTMLNames::init();
     QualifiedName::init();
+    MediaFeatureNames::init();
 
 #if SVG_SUPPORT
     SVGNames::init();

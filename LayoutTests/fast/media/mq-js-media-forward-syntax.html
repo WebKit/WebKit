@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>CSS3 media query test: stylesheet media.mediaText = parsing, media descriptor fallback in document.StyleSheet.media.mediaText</title>
+<link rel="help" href="http://www.w3.org/TR/css3-mediaqueries/" />
+
+<!-- the media property of stylesheet below will be manipulated, and
+ manipulation should respect html media descriptor forward-compatible syntax.
+ This means the manipulation should succeed. -->
+<style type="text/css">
+
+p#result { color: green;}
+
+@media screen and resolution > 40dpi {
+/* media query with syntax error should fail */
+/* corresponding DOM manipulation to the mediaText of the stylesheet will succeed */
+p#result { color: red;}
+
+}
+</style>
+<script language="javascript">
+function test() {
+   // this should not throw, because StyleSheet should respect Media Description forward-compatible syntax
+   document.styleSheets[0].media.mediaText = "screen and resolution > 40dpi";
+   document.getElementById("result").innerHTML = "This text should be green.";
+}
+</script>
+
+
+</head>
+<body onload="test()">
+<p id="result">Failure: test not run</p>
+</body>
+</html>
