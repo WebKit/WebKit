@@ -42,6 +42,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static Node* highestAncestor(Node* node)
+{
+    ASSERT(node);
+    Node* parent = node;
+    while ((node = node->parentNode()))
+        parent = node;
+    return parent;
+}
+
 // Atomic means that the node has no children, or has children which are ignored for the
 // purposes of editing.
 bool isAtomicNode(const Node *node)
@@ -356,8 +365,9 @@ Node* enclosingList(Node* node)
 {
     if (!node)
         return 0;
-        
-    for (Node* n = node->parentNode(); n; n = n->parentNode())
+    Node* root = (node->inDocument()) ? node->rootEditableElement() : highestAncestor(node);
+    ASSERT(root);
+    for (Node* n = node->parentNode(); n && (n == root || n->isAncestor(root)); n = n->parentNode())
         if (n->hasTagName(ulTag) || n->hasTagName(olTag))
             return n;
             
@@ -366,14 +376,23 @@ Node* enclosingList(Node* node)
 
 Node *enclosingListChild (Node *node)
 {
-    // check not just for li elements per se, but also
-    // for any node whose parent is a list element
+    // Check for a list item element, or for a node whose parent is a list element.  Such a node
+    // will appear visually as a list item (but without a list marker)
     for (Node *n = node; n && n->parentNode(); n = n->parentNode()) {
-        if (isListElement(n->parentNode()))
+        if (n->hasTagName(liTag) || isListElement(n->parentNode()))
             return n;
     }
     
     return 0;
+}
+
+Node* outermostEnclosingList(Node* node)
+{
+    Node* listNode = 0;
+    Node* nextNode = node;
+    while ((nextNode = enclosingList(nextNode)))
+        listNode = nextNode;
+    return listNode;
 }
 
 // FIXME: do not require renderer, so that this can be used within fragments, or rename to isRenderedTable()
@@ -478,6 +497,14 @@ PassRefPtr<Element> createUnorderedListElement(Document *document)
     RefPtr<Element> element = document->createElementNS(xhtmlNamespaceURI, "ul", ec);
     ASSERT(ec == 0);
     return element.release();
+}
+
+PassRefPtr<Element> createListItemElement(Document *document)
+{
+    ExceptionCode ec = 0;
+    RefPtr<Element> breakNode = document->createElementNS(xhtmlNamespaceURI, "li", ec);
+    ASSERT(ec == 0);
+    return breakNode.release();
 }
 
 bool isTabSpanNode(const Node *node)

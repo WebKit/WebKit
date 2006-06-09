@@ -1,0 +1,27 @@
+<p>This test checks to see if InsertOrderedList can switch the list type of list items.</p>
+<div contenteditable="true">
+<ol style="border: 1px solid red;">
+    <li>This should be in an ordered list.</li>
+    <span id="item1">This should be in an unordered list.</span>
+    <br><br>
+    This should be in an ordered list.
+    <li>This should be in an ordered list.</li>
+    <span id="item2">This should be in an unordered list.</span>
+    <li>This should be in an ordered list.</li>
+    <li><span id="item3">This should be in an unordered list.</span></li>
+    <li>This should be in an ordered list.</li>
+</ol>
+This should not be in a list.
+<li><span id="item4">This should be in an ordered list.</span></li>
+
+<script>
+var s = window.getSelection();
+s.setPosition(document.getElementById("item1"), 0);
+document.execCommand("InsertUnorderedList", false, "Moo");
+s.setPosition(document.getElementById("item2"), 0);
+document.execCommand("InsertUnorderedList", false, "Goo");
+s.setPosition(document.getElementById("item3"), 0);
+document.execCommand("InsertUnorderedList", false, "Gai");
+s.setPosition(document.getElementById("item4"), 0);
+document.execCommand("InsertOrderedList", false, "Noodles");
+</script>

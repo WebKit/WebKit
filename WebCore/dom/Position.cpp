@@ -445,15 +445,13 @@ Position Position::downstream() const
     return lastVisible;
 }
 
-static bool hasRenderedChildrenWithHeight(RenderObject *renderer)
+static bool hasRenderedNonAnonymousDescendantsWithHeight(RenderObject *renderer)
 {
-    if (!renderer->firstChild())
-        return false;
-
-    for (RenderObject *child = renderer->firstChild(); child; child = child->nextSibling())
-        if (child->height())
+    RenderObject* stop = renderer->nextInPreOrderAfterChildren();
+    for (RenderObject *o = renderer->firstChild(); o && o != stop; o = o->nextInPreOrder())
+        if (o->element() && o->height())
             return true;
-    
+            
     return false;
 }
 
@@ -478,7 +476,7 @@ bool Position::inRenderedContent() const
     if (isTableElement(node()) || editingIgnoresContent(node()))
         return offset() == 0 || offset() == maxDeepOffset(node());
 
-    if (!node()->hasTagName(htmlTag) && renderer->isBlockFlow() && !hasRenderedChildrenWithHeight(renderer) &&
+    if (!node()->hasTagName(htmlTag) && renderer->isBlockFlow() && !hasRenderedNonAnonymousDescendantsWithHeight(renderer) &&
        (renderer->height() || node()->hasTagName(bodyTag)))
         return offset() == 0;
     

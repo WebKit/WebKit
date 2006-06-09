@@ -1,3 +1,64 @@
+2006-06-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4468>
+        Implement execCommand(Insert{Un}OrderedList)
+
+        * WebCore.xcodeproj/project.pbxproj: Added InsertListCommand.{h,cpp} to the project.
+        * dom/Position.cpp:
+        (WebCore::hasRenderedNonAnonymousDescendantsWithHeight): 
+        Added. A block with height is only a candidate if this is false.  This should fix the problems
+        getting carets into empty blocks.
+        (WebCore::Position::inRenderedContent):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::hasARenderedDescendant):
+        (WebCore::CompositeEditCommand::prune): A node can have DOM descendants that are rendered, yet
+        have no rendered descendants.  Fixed the pruning rule to avoid removing a node like this.
+        (WebCore::CompositeEditCommand::mergeIdenticalElements): Put the two elements next to
+        each other if they aren't already, as a convenience.
+        (WebCore::CompositeEditCommand::moveParagraph): Added code to preserve the current selection.
+        (WebCore::CompositeEditCommand::moveParagraphs): Ditto. 
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd): Expansion for special elements should
+        continue to happen until it is no longer possible.
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): The code to adjust the start node
+        wouldn't always avoid removing the start block.
+        * editing/InsertListCommand.cpp: Added.
+        (WebCore::InsertListCommand::fixOrphanedListChild): Puts a list item that isn't inside a list
+        into a list.
+        (WebCore::InsertListCommand::InsertListCommand):
+        (WebCore::InsertListCommand::modifyRange):
+        (WebCore::InsertListCommand::doApply):
+        * editing/InsertListCommand.h: Added.
+        (WebCore::InsertListCommand::):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        * editing/JSEditor.cpp:
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::advance): Don't handle a node if the end of the range used to create the 
+        iterator ends at the start of that node.
+        used to create the iterator.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next):
+        (WebCore::VisiblePosition::previous):
+        * editing/VisiblePosition.h: 
+        Added a parameter to next/previous to prevent them from going outside the current editable region.
+        * editing/htmlediting.cpp:
+        (WebCore::highestAncestor):
+        (WebCore::enclosingList):
+        (WebCore::enclosingListChild):
+        (WebCore::outermostEnclosingList):
+        (WebCore::createListItemElement):
+        * editing/htmlediting.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionListState): Added.
+        * page/Frame.h:
+
 2006-06-08  David Harrison  <harrison@apple.com>
 
         Reviewed by Geoff and John.
@@ -16,7 +77,7 @@
 
 2006-06-08  Alice Liu  <alice.liu@apple.com>
 
-        Reviewed by Justin.
+        Reviewed by justin.
 
         - fixed <rdar://problem/4578115> support Range.isPointInRange
         - fixed <rdar://problem/4578123> support Range.comparePoint
@@ -33,7 +94,7 @@
 
 2006-06-08  Darin Adler  <darin@apple.com>
 
-        Reviewed by Justin.
+        Reviewed by justin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8616
           REGRESSION: TinyMCE: Crash on Undo

@@ -1,3 +1,16 @@
+2006-06-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4468>
+        Implement execCommand(Insert{Un}OrderedList)
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _findFrameWithSelection]): Removed an assertion
+        that we only have one frame with a selection.  
+        * WebView/WebView.m:
+        (-[WebView selectedFrame]): Ditto.
+
 2006-06-08  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin and John.

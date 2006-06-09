@@ -60,12 +60,14 @@ void VisiblePosition::init(const Position& position, EAffinity affinity)
         m_affinity = DOWNSTREAM;
 }
 
-VisiblePosition VisiblePosition::next() const
+VisiblePosition VisiblePosition::next(bool stayInCurrentEditableRegion) const
 {
-    return VisiblePosition(nextVisiblePosition(m_deepPosition), m_affinity);
+    VisiblePosition next(nextVisiblePosition(m_deepPosition), m_affinity);
+    Element* currentRoot = rootEditableElement();
+    return !stayInCurrentEditableRegion || next.rootEditableElement() == currentRoot ? next : VisiblePosition();
 }
 
-VisiblePosition VisiblePosition::previous() const
+VisiblePosition VisiblePosition::previous(bool stayInCurrentEditableRegion) const
 {
     // find first previous DOM position that is visible
     Position pos = previousVisiblePosition(m_deepPosition);
@@ -86,7 +88,8 @@ VisiblePosition VisiblePosition::previous() const
         ASSERT(inSameLine(temp, result));
     }
 #endif
-    return result;
+    Element* currentRoot = rootEditableElement();
+    return !stayInCurrentEditableRegion || result.rootEditableElement() == currentRoot ? result : VisiblePosition();
 }
 
 Position VisiblePosition::previousVisiblePosition(const Position& pos)

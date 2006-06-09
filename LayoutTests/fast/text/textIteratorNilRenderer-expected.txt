@@ -1,25 +1,25 @@
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV to 0 of DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document to 0 of INPUT > LABEL > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document to 0 of INPUT > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV to 0 of DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document to 0 of INPUT > LABEL > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document to 0 of INPUT > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV to 0 of DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document to 0 of INPUT > LABEL > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document to 0 of INPUT > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV to 0 of DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document to 0 of INPUT > LABEL > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document to 0 of INPUT > TD > TR > TBODY > TABLE > FORM > CENTER > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
@@ -55,4 +55,4 @@ layer at (0,0) size 800x600
 layer at (204,13) size 281x13
   RenderBlock {DIV} at (3,3) size 281x13
 selection start: position 0 of child 0 {#text} of child 0 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 0 of child 1 {INPUT} of child 3 {LABEL} of child 4 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 0 of child 1 {INPUT} of child 3 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of child 1 {BODY} of child 0 {HTML} of document

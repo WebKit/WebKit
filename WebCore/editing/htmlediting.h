@@ -60,6 +60,7 @@ PassRefPtr<Element> createDefaultParagraphElement(Document*);
 PassRefPtr<Element> createBreakElement(Document*);
 PassRefPtr<Element> createOrderedListElement(Document*);
 PassRefPtr<Element> createUnorderedListElement(Document*);
+PassRefPtr<Element> createListItemElement(Document*);
 
 bool isTabSpanNode(const Node*);
 bool isTabSpanTextNode(const Node*);
@@ -87,6 +88,7 @@ Position positionOutsideContainingSpecialElement(const Position&, Node** contain
 Node* enclosingTableCell(Node*);
 bool isListElement(Node*);
 Node* enclosingList(Node*);
+Node* outermostEnclosingList(Node*);
 Node* enclosingListChild(Node*);
 bool isTableElement(Node*);
 bool isFirstVisiblePositionAfterTableElement(const Position&);

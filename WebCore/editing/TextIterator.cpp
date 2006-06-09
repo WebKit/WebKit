@@ -149,7 +149,7 @@ void TextIterator::advance()
             return;
     }
 
-    while (m_node && m_node != m_pastEndNode) {
+    while (m_node && m_node != m_pastEndNode && !(m_node == m_endContainer && m_endOffset == 0)) {
         // handle current node according to its type
         if (!m_handledNode) {
             RenderObject *renderer = m_node->renderer();

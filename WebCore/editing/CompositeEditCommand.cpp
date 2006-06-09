@@ -215,12 +215,24 @@ void CompositeEditCommand::removeNodeAndPruneAncestors(Node* node)
     prune(parent);
 }
 
+bool hasARenderedDescendant(Node* node)
+{
+    Node* n = node->traverseNextNode(node);
+    while (n) {
+        if (n->renderer())
+            return true;
+        n = n->traverseNextNode(node);
+    }
+    
+    return false;
+}
+
 void CompositeEditCommand::prune(PassRefPtr<Node> node)
 {
     while (node) {
         // If you change this rule you may have to add an updateLayout() here.
         RenderObject* renderer = node->renderer();
-        if (renderer && (!renderer->canHaveChildren() || renderer->firstChild()))
+        if (renderer && (!renderer->canHaveChildren() || hasARenderedDescendant(node.get()) || node->rootEditableElement() == node))
             return;
             
         RefPtr<Node> next = node->parentNode();
@@ -254,6 +266,11 @@ void CompositeEditCommand::splitElement(Element *element, Node *atChild)
 
 void CompositeEditCommand::mergeIdenticalElements(WebCore::Element *first, WebCore::Element *second)
 {
+    ASSERT(!first->isAncestor(second) && second != first);
+    if (first->nextSibling() != second) {
+        removeNode(second);
+        insertNodeAfter(second, first);
+    }
     EditCommandPtr cmd(new MergeIdenticalElementsCommand(document(), first, second));
     applyCommandToComposite(cmd);
 }
@@ -632,13 +649,37 @@ void CompositeEditCommand::pushPartiallySelectedAnchorElementsDown()
 }
 
 // This moves a paragraph preserving its style.
-void CompositeEditCommand::moveParagraph(const VisiblePosition& startOfParagraphToMove, const VisiblePosition& endOfParagraphToMove, const VisiblePosition& destination)
+void CompositeEditCommand::moveParagraph(const VisiblePosition& startOfParagraphToMove, const VisiblePosition& endOfParagraphToMove, const VisiblePosition& destination, bool preserveSelection)
+{
+    ASSERT(isStartOfParagraph(startOfParagraphToMove));
+    ASSERT(isEndOfParagraph(endOfParagraphToMove));
+    moveParagraphs(startOfParagraphToMove, endOfParagraphToMove, destination, preserveSelection);
+}
+
+// FIXME: Always preserve the selection, and pass the paragraphs to operate on using an endingSelection().
+void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagraphToMove, const VisiblePosition& endOfParagraphToMove, const VisiblePosition& destination, bool preserveSelection)
 {
     if (startOfParagraphToMove == destination)
         return;
     
-    ASSERT(isStartOfParagraph(startOfParagraphToMove));
-    ASSERT(isEndOfParagraph(endOfParagraphToMove));
+    int startIndex = -1;
+    int endIndex = -1;
+    int destinationIndex = -1;
+    if (preserveSelection && !endingSelection().isNone()) {
+        VisiblePosition visibleStart = endingSelection().visibleStart();
+        VisiblePosition visibleEnd = endingSelection().visibleEnd();
+        
+        bool startAfterParagraph = Range::compareBoundaryPoints(visibleStart.deepEquivalent(), endOfParagraphToMove.deepEquivalent()) > 0;
+        bool endBeforeParagraph = Range::compareBoundaryPoints(visibleEnd.deepEquivalent(), startOfParagraphToMove.deepEquivalent()) < 0;
+        
+        if (!startAfterParagraph && !endBeforeParagraph) {
+            bool startInParagraph = Range::compareBoundaryPoints(visibleStart.deepEquivalent(), startOfParagraphToMove.deepEquivalent()) >= 0;
+            bool endInParagraph = Range::compareBoundaryPoints(visibleEnd.deepEquivalent(), endOfParagraphToMove.deepEquivalent()) <= 0;
+            
+            startIndex = startInParagraph ? TextIterator::rangeLength(new Range(document(), startOfParagraphToMove.deepEquivalent(), visibleStart.deepEquivalent())) : 0;
+            endIndex = endInParagraph ? TextIterator::rangeLength(new Range(document(), startOfParagraphToMove.deepEquivalent(), visibleEnd.deepEquivalent())) : 0;
+        }
+    }
     
     VisiblePosition beforeParagraph = startOfParagraphToMove.previous();
     
@@ -674,10 +715,18 @@ void CompositeEditCommand::moveParagraph(const VisiblePosition& startOfParagraph
     // cause 'baz' to collapse onto the line with 'foobar' unless we insert a br.
     if (beforeParagraph.isNotNull() && !isEndOfParagraph(beforeParagraph))
         insertNodeAt(createBreakElement(document()).get(), beforeParagraph.deepEquivalent().node(), beforeParagraph.deepEquivalent().offset());
+        
+    destinationIndex = TextIterator::rangeLength(new Range(document(), Position(document(), 0), destination.deepEquivalent()));
     
     setEndingSelection(destination);
     EditCommandPtr cmd(new ReplaceSelectionCommand(document(), fragment.get(), true, false, false, true));
     applyCommandToComposite(cmd);
+    
+    if (preserveSelection && startIndex != -1) {
+        setEndingSelection(Selection(TextIterator::rangeFromLocationAndLength(document(), destinationIndex + startIndex, 0)->startPosition(), 
+                                     TextIterator::rangeFromLocationAndLength(document(), destinationIndex + endIndex, 0)->startPosition(), 
+                                     DOWNSTREAM));
+    }
 }
 
 PassRefPtr<Element> createBlockPlaceholderElement(Document* document)

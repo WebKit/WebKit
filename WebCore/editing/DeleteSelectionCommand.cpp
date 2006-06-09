@@ -44,20 +44,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static Position positionBeforePossibleContainingSpecialElement(const Position &pos, Node **containingSpecialElement)
-{
-    if (isFirstVisiblePositionInSpecialElement(pos))
-        return positionBeforeContainingSpecialElement(pos, containingSpecialElement); 
-     return pos;
-}
- 
-static Position positionAfterPossibleContainingSpecialElement(const Position &pos, Node **containingSpecialElement)
-{
-    if (isLastVisiblePositionInSpecialElement(pos))
-        return positionAfterContainingSpecialElement(pos, containingSpecialElement);
-    return pos;
-}
-
 DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDelete, bool mergeBlocksAfterDelete)
     : CompositeEditCommand(document), 
       m_hasSelectionToDelete(false), 
@@ -87,23 +73,28 @@ void DeleteSelectionCommand::initializeStartEnd()
  {
     Node* startSpecialContainer = 0;
     Node* endSpecialContainer = 0;
-    
-    Position start = positionOutsideContainingSpecialElement(m_selectionToDelete.start(), &startSpecialContainer);
-    Position end = positionOutsideContainingSpecialElement(m_selectionToDelete.end(), &endSpecialContainer);
-    
-    m_upstreamStart = positionBeforePossibleContainingSpecialElement(start.upstream(), &startSpecialContainer);
-    m_downstreamStart = positionBeforePossibleContainingSpecialElement(start.downstream(), 0);
-    m_upstreamEnd = positionAfterPossibleContainingSpecialElement(end.upstream(), 0);
-    m_downstreamEnd = positionAfterPossibleContainingSpecialElement(end.downstream(), &endSpecialContainer);
  
-    if (!startSpecialContainer || !endSpecialContainer)  {
-        start = m_selectionToDelete.start();
-        end = m_selectionToDelete.end();
-        m_upstreamStart = start.upstream();
-        m_downstreamStart = start.downstream();
-        m_upstreamEnd = end.upstream();
-        m_downstreamEnd = end.downstream();
+    Position start = m_selectionToDelete.start();
+    Position end = m_selectionToDelete.end();
+ 
+    while (1) {
+        startSpecialContainer = 0;
+        endSpecialContainer = 0;
+    
+        Position s = positionOutsideContainingSpecialElement(start, &startSpecialContainer);
+        Position e = positionOutsideContainingSpecialElement(end, &endSpecialContainer);
+        
+        if (!startSpecialContainer || !endSpecialContainer)
+            break;
+        
+        start = s;
+        end = e;
     }
+ 
+    m_upstreamStart = start.upstream();
+    m_downstreamStart = start.downstream();
+    m_upstreamEnd = end.upstream();
+    m_downstreamEnd = end.downstream();
 }
 
 void DeleteSelectionCommand::initializePositionData()
@@ -249,56 +240,21 @@ void DeleteSelectionCommand::handleGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
     Node* startNode = m_upstreamStart.node();
-    // Don't remove the block containing the start of the selection being deleted even if the selection
-    // starts at the start of that block.
-    if (startNode->enclosingBlockFlowElement() && startNode->firstChild()) {
-        startOffset = 0;
-        startNode = startNode->firstChild();
-    }
     
-    VisiblePosition visibleEnd = VisiblePosition(m_downstreamEnd, m_selectionToDelete.affinity());
-    bool endAtEndOfBlock = isEndOfBlock(visibleEnd);
-
-    // Handle some special cases where the selection begins and ends on specific visible units.
-    // Sometimes a node that is actually selected needs to be retained in order to maintain
-    // user expectations for the delete operation. Here is an example:
-    //     1. Open a new Blot or Mail document
-    //     2. hit Return ten times or so
-    //     3. Type a letter (do not hit Return after it)
-    //     4. Type shift-up-arrow to select the line containing the letter and the previous blank line
-    //     5. Hit Delete
-    // You expect the insertion point to wind up at the start of the line where your selection began.
-    // Because of the nature of HTML, the editing code needs to perform a special check to get
-    // this behavior. So:
-    // If the entire start block is selected, and the selection does not extend to the end of the 
-    // end of a block other than the block containing the selection start, then do not delete the 
-    // start block, otherwise delete the start block.
-    if (startOffset == 1 && startNode && startNode->hasTagName(brTag)) {
-        startNode = startNode->traverseNextNode();
+    // Never remove the start block.
+    if (startNode == m_startBlock && startOffset == 0) {
         startOffset = 0;
-    }
-    if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart, m_selectionToDelete.affinity()))) {
-        if (!m_startBlock->isAncestor(m_endBlock.get()) && !isStartOfBlock(visibleEnd) && endAtEndOfBlock) {
-            // Delete all the children of the block, but not the block itself.
-            // Use traverseNextNode in case the block has no children (e.g. is an empty table cell)
-            startNode = m_startBlock->traverseNextNode();
-            startOffset = 0;
-        }
-    }  else if (startOffset >= startNode->caretMaxOffset() && (isAtomicNode(startNode) || startOffset == 0)) {
-        // Move the start node to the next node in the tree since the startOffset is equal to
-        // or beyond the start node's caretMaxOffset This means there is nothing visible to delete. 
-        // But don't do this if the node is not atomic - we don't want to move into the first child.
-
-        // Also, before moving on, delete any insignificant text that may be present in a text node.
-        if (startNode->isTextNode()) {
-            // Delete any insignificant text from this node.
-            Text *text = static_cast<Text *>(startNode);
-            if (text->length() > (unsigned)startNode->caretMaxOffset())
-                deleteTextFromNode(text, startNode->caretMaxOffset(), text->length() - startNode->caretMaxOffset());
-        }
-        
-        // shift the start node to the next
         startNode = startNode->traverseNextNode();
+    }
+
+    if (startOffset >= startNode->caretMaxOffset() && startNode->isTextNode()) {
+        Text *text = static_cast<Text *>(startNode);
+        if (text->length() > (unsigned)startNode->caretMaxOffset())
+            deleteTextFromNode(text, startNode->caretMaxOffset(), text->length() - startNode->caretMaxOffset());
+    }
+
+    if (startOffset >= maxDeepOffset(startNode)) {
+        startNode = startNode->traverseNextSibling();
         startOffset = 0;
     }
 

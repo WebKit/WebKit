@@ -2588,13 +2588,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     // This is faster than searching the frame hierarchy, and will give us a result even in the case
     // where the focused frame doesn't actually contain a selection.
     WebFrame *focusedFrame = [self _focusedFrame];
-    if (focusedFrame) {
-#ifndef NDEBUG
-        WebFrame *frameWithSelection = [[self mainFrame] _findFrameWithSelection];
-#endif
-        ASSERT(frameWithSelection == nil || frameWithSelection == focusedFrame);
+    if (focusedFrame)
         return focusedFrame;
-    }
     
     // If the first responder is outside of our view tree, we search for a frame containing a selection.
     // There should be at most only one of these.

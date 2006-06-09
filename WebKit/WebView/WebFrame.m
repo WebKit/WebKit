@@ -2686,8 +2686,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebFrame *)_findFrameWithSelection
 {
-    ASSERT([self _atMostOneFrameHasSelection]);
-
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
         if ([frame _hasSelection])
             return frame;

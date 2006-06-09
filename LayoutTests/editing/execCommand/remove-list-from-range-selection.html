@@ -1,0 +1,10 @@
+<p>This tests Insert{Un}OrderedList on a range selection that is entirely within one list.</p>
+<div id="test" contenteditable="true"><ol><li><span id="start">None of the</span></li><li>selected content</li><li>should be</li><li><span id="end">in a list.</span></li></ol><ol><li>This should be in a list and should not be selected.</li></ol></div>
+<script>
+var s = window.getSelection();
+var start = document.getElementById("start").firstChild;
+var end = document.getElementById("end").firstChild;
+s.setBaseAndExtent(start, 2, end, 2);
+
+document.execCommand("InsertOrderedList", false, "foo");
+</script>

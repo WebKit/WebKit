@@ -1,0 +1,85 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 7 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of SPAN > DIV > BODY > HTML > #document to 0 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of SPAN > DIV > BODY > HTML > #document to 0 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of SPAN > DIV > BODY > HTML > #document to 0 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of SPAN > DIV > BODY > HTML > #document to 0 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 15 of DIV > BODY > HTML > #document to 15 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 738x36
+          text run at (0,0) width 738: "This test checks to see that Insert{Un}OrderedList can remove items from a list, can remove empty list when they are"
+          text run at (0,18) width 368: "emptied, and can remove content from orphaned list items."
+      RenderBlock {DIV} at (0,52) size 784x318
+        RenderBlock {OL} at (0,0) size 784x20 [border: (1px solid #FF0000)]
+          RenderListItem {LI} at (41,1) size 742x18
+            RenderListMarker at (-20,0) size 16x18
+            RenderText {#text} at (0,0) size 21x18
+              text run at (0,0) width 21: "foo"
+          RenderBlock (anonymous) at (41,19) size 742x0
+        RenderBlock (anonymous) at (0,36) size 784x18
+          RenderInline {SPAN} at (0,0) size 154x18
+            RenderText {#text} at (0,0) size 154x18
+              text run at (0,0) width 154: "This should not be a list."
+          RenderText {#text} at (154,0) size 4x18
+            text run at (154,0) width 4: " "
+          RenderBR {BR} at (158,14) size 0x0
+        RenderBlock {OL} at (0,70) size 784x56 [border: (1px solid #FF0000)]
+          RenderBlock (anonymous) at (41,1) size 742x36
+            RenderBR {BR} at (0,0) size 0x18
+            RenderText {#text} at (0,18) size 20x18
+              text run at (0,18) width 20: "bar"
+          RenderListItem {LI} at (41,37) size 742x18
+            RenderListMarker at (-20,0) size 16x18
+            RenderText {#text} at (0,0) size 22x18
+              text run at (0,0) width 22: "baz"
+          RenderBlock (anonymous) at (41,55) size 742x0
+        RenderBlock (anonymous) at (0,142) size 784x18
+          RenderInline {SPAN} at (0,0) size 170x18
+            RenderText {#text} at (0,0) size 170x18
+              text run at (0,0) width 170: "This should not be in a list."
+          RenderBR {BR} at (170,14) size 0x0
+        RenderBlock {OL} at (0,176) size 784x20 [border: (1px solid #FF0000)]
+          RenderListItem {LI} at (41,1) size 742x18
+            RenderListMarker at (-20,0) size 16x18
+            RenderText {#text} at (0,0) size 21x18
+              text run at (0,0) width 21: "foo"
+        RenderBlock (anonymous) at (0,212) size 784x18
+          RenderInline {SPAN} at (0,0) size 170x18
+            RenderText {#text} at (0,0) size 170x18
+              text run at (0,0) width 170: "This should not be in a list."
+          RenderBR {BR} at (170,14) size 0x0
+        RenderBlock {OL} at (0,246) size 784x20 [border: (1px solid #FF0000)]
+          RenderBlock (anonymous) at (41,1) size 742x0
+          RenderListItem {LI} at (41,1) size 742x18
+            RenderListMarker at (-20,0) size 16x18
+            RenderText {#text} at (0,0) size 20x18
+              text run at (0,0) width 20: "bar"
+        RenderBlock (anonymous) at (0,282) size 784x36
+          RenderInline {SPAN} at (0,0) size 170x18
+            RenderText {#text} at (0,0) size 170x18
+              text run at (0,0) width 170: "This should not be in a list."
+          RenderBR {BR} at (170,14) size 0x0
+          RenderInline {SPAN} at (0,0) size 170x18
+            RenderText {#text} at (0,18) size 170x18
+              text run at (0,18) width 170: "This should not be in a list."
+caret: position 0 of child 0 {#text} of child 15 {SPAN} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document

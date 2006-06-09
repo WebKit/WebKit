@@ -22,7 +22,8 @@ layer at (0,0) size 800x600
           layer at (0,0) size 200x200
             RenderBlock {HTML} at (0,0) size 200x200
               RenderBody {BODY} at (8,8) size 184x184 [bgcolor=#FFFFE0]
-                RenderImage {IMG} at (0,0) size 76x103
+                RenderBlock (anonymous) at (0,0) size 184x103
+                  RenderImage {IMG} at (0,0) size 76x103
         RenderText {#text} at (208,194) size 4x18
           text run at (208,194) width 4: " "
         RenderImage {IMG} at (212,105) size 76x103
@@ -32,5 +33,5 @@ layer at (0,0) size 800x600
           RenderListMarker at (-17,0) size 7x18
           RenderText {#text} at (0,0) size 288x18
             text run at (0,0) width 288: "Abe should be outside the frame and inside it."
-selection start: position 0 of child 0 {IMG} of child 0 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 0 {IMG} of child 0 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 3 {IMG} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 3 {IMG} of child 1 {BODY} of child 0 {HTML} of document

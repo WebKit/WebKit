@@ -61,8 +61,8 @@ public:
     void setAffinity(EAffinity affinity) { m_affinity = affinity; }
 
     // next() and previous() will increment/decrement by a character cluster.
-    VisiblePosition next() const;
-    VisiblePosition previous() const;
+    VisiblePosition next(bool stayInCurrentEditableRegion = false) const;
+    VisiblePosition previous(bool stayInCurrentEditableRegion = false) const;
 
     bool isLastInBlock() const;
 

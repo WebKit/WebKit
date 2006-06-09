@@ -1,3 +1,50 @@
+2006-06-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4468>
+        Implement execCommand(Insert{Un}OrderedList)
+
+        Added:
+        * editing/execCommand/create-list-from-range-selection-expected.checksum: Added.
+        * editing/execCommand/create-list-from-range-selection-expected.png: Added.
+        * editing/execCommand/create-list-from-range-selection-expected.txt: Added.
+        * editing/execCommand/create-list-from-range-selection.html: Added.
+        * editing/execCommand/insert-list-and-stitch-expected.checksum: Added.
+        * editing/execCommand/insert-list-and-stitch-expected.png: Added.
+        * editing/execCommand/insert-list-and-stitch-expected.txt: Added.
+        * editing/execCommand/insert-list-and-stitch.html: Added.
+        * editing/execCommand/insert-list-with-id-expected.checksum: Added.
+        * editing/execCommand/insert-list-with-id-expected.png: Added.
+        * editing/execCommand/insert-list-with-id-expected.txt: Added.
+        * editing/execCommand/insert-list-with-id.html: Added.
+        * editing/execCommand/remove-list-from-range-selection-expected.checksum: Added.
+        * editing/execCommand/remove-list-from-range-selection-expected.png: Added.
+        * editing/execCommand/remove-list-from-range-selection-expected.txt: Added.
+        * editing/execCommand/remove-list-from-range-selection.html: Added.
+        * editing/execCommand/remove-list-items-expected.checksum: Added.
+        * editing/execCommand/remove-list-items-expected.png: Added.
+        * editing/execCommand/remove-list-items-expected.txt: Added.
+        * editing/execCommand/remove-list-items.html: Added.
+        * editing/execCommand/switch-list-type-expected.checksum: Added.
+        * editing/execCommand/switch-list-type-expected.png: Added.
+        * editing/execCommand/switch-list-type-expected.txt: Added.
+        * editing/execCommand/switch-list-type.html: Added.
+        
+        Fixes:
+        * editing/pasteboard/drag-drop-modifies-page-expected.txt:
+        * editing/pasteboard/paste-list-001-expected.txt:
+        * editing/selection/drag-to-contenteditable-iframe-expected.checksum:
+        * editing/selection/drag-to-contenteditable-iframe-expected.png:
+        * editing/selection/drag-to-contenteditable-iframe-expected.txt:
+        * editing/style/block-style-005-expected.txt:
+        * fast/text/textIteratorNilRenderer-expected.checksum:
+        * fast/text/textIteratorNilRenderer-expected.png:
+        * fast/text/textIteratorNilRenderer-expected.txt:
+        * editing/deleting/delete-line-016-expected.checksum:
+        * editing/deleting/delete-line-016-expected.png:
+        * editing/deleting/delete-line-016-expected.txt:
+
 2006-06-08  David Harrison  <harrison@apple.com>
 
         Reviewed by Geoff and John.

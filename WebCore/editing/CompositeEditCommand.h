@@ -100,7 +100,8 @@ protected:
     void pushAnchorElementDown(WebCore::Node*);
     void pushPartiallySelectedAnchorElementsDown();
     
-    void moveParagraph(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&);
+    void moveParagraph(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false);
+    void moveParagraphs(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false);
 
     DeprecatedValueList<EditCommandPtr> m_cmds;
 };
