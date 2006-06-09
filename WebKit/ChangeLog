@@ -1,5 +1,20 @@
 2006-06-09  David Hyatt  <hyatt@apple.com>
 
+        Rename updateFocusState to updateActiveState.
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateActiveState]):
+        (-[NSArray viewDidMoveToWindow]):
+        (-[NSArray windowDidBecomeKey:]):
+        (-[NSArray windowDidResignKey:]):
+        (-[NSArray becomeFirstResponder]):
+        (-[NSArray resignFirstResponder]):
+        (-[WebHTMLView _formControlIsBecomingFirstResponder:]):
+        (-[WebHTMLView _formControlIsResigningFirstResponder:]):
+        * WebView/WebHTMLViewPrivate.h:
+
+2006-06-09  David Hyatt  <hyatt@apple.com>
+
         Rename displaysWithFocusAttributes to isActive.
 
         Reviewed by sfalken

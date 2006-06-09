@@ -1759,7 +1759,7 @@ static WebHTMLView *lastHitView = nil;
     return [self _web_firstResponderIsSelfOrDescendantView] || [[self window] firstResponder] == [self _frameView];
 }
 
-- (void)_updateFocusState
+- (void)_updateActiveState
 {
     // This method does the job of updating the view based on the view's firstResponder-ness and
     // the window key-ness of the window containing this view. This involves four kinds of 
@@ -2386,7 +2386,7 @@ static WebHTMLView *lastHitView = nil;
             // at the time this code is running. However, it will be there on the next
             // crank of the run loop. Doing this helps to make a blinking caret appear 
             // in a new, empty window "automatic".
-            [self performSelector:@selector(_updateFocusState) withObject:nil afterDelay:0];
+            [self performSelector:@selector(_updateActiveState) withObject:nil afterDelay:0];
 
             [[self _pluginController] startAllPlugins];
     
@@ -2718,7 +2718,7 @@ static WebHTMLView *lastHitView = nil;
         [self addMouseMovedObserver];
 
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
-        [self _updateFocusState];
+        [self _updateActiveState];
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
@@ -2729,7 +2729,7 @@ static WebHTMLView *lastHitView = nil;
         [self removeMouseMovedObserver];
 
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
-        [self _updateFocusState];
+        [self _updateActiveState];
         [_private->compController endRevertingChange:NO moveLeft:NO];
     }
 }
@@ -3204,7 +3204,7 @@ done:
     if (view)
         [[self window] makeFirstResponder:view];
     [[self _frame] _clearSelectionInOtherFrames];
-    [self _updateFocusState];
+    [self _updateActiveState];
     [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;
     return YES;
@@ -3222,7 +3222,7 @@ done:
             else
                 [self deselectAll];
         }
-        [self _updateFocusState];
+        [self _updateActiveState];
         _private->resigningFirstResponder = NO;
         _private->willBecomeFirstResponderForNodeFocus = NO;
     }
@@ -5032,18 +5032,18 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (![formControl isDescendantOf:self])
         return;
     _private->descendantBecomingFirstResponder = YES;
-    [self _updateFocusState];
+    [self _updateActiveState];
     _private->descendantBecomingFirstResponder = NO;
 }
 
 - (void)_formControlIsResigningFirstResponder:(NSView *)formControl
 {
-    // set resigningFirstResponder so _updateFocusState behaves the same way it does when
+    // set resigningFirstResponder so _updateActiveState behaves the same way it does when
     // the WebHTMLView itself is resigningFirstResponder; don't use the primary selection feedback.
     // If the first responder is in the process of being set on the WebHTMLView itself, it will
-    // get another chance at _updateFocusState in its own becomeFirstResponder method.
+    // get another chance at _updateActiveState in its own becomeFirstResponder method.
     _private->resigningFirstResponder = YES;
-    [self _updateFocusState];
+    [self _updateActiveState];
     _private->resigningFirstResponder = NO;
 }
 
