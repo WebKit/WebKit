@@ -2846,12 +2846,12 @@ String FrameMac::overrideMediaType() const
     return String();
 }
 
-void FrameMac::setDisplaysWithFocusAttributes(bool flag)
+void FrameMac::setIsActive(bool flag)
 {
     if (d->m_isFocused == flag)
         return;
     
-    Frame::setDisplaysWithFocusAttributes(flag);
+    Frame::setIsActive(flag);
     Document *doc = document();
     // Mac Specific: Changing the tint of controls from clear to aqua/graphite and vice versa.  We
     // do a "fake" paint.  When the theme gets a paint call, it can then do an invalidate.

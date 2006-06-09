@@ -712,8 +712,8 @@ private:
   void clearTimers();
   static void clearTimers(FrameView*);
 
-  bool displaysWithFocusAttributes() const;
-  virtual void setDisplaysWithFocusAttributes(bool flag);
+  bool isActive() const;
+  virtual void setIsActive(bool flag);
   void setWindowHasFocus(bool flag);
   // Convenience, to avoid repeating the code to dig down to get this.
 

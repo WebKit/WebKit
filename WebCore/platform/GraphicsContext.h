@@ -120,10 +120,6 @@ namespace WebCore {
         
         void drawLineForText(const IntPoint&, int yOffset, int width, bool printing);
         void drawLineForMisspelling(const IntPoint&, int width);
-
-        Color selectedTextBackgroundColor() const;
-        void setUsesInactiveTextBackgroundColor(bool);
-        bool usesInactiveTextBackgroundColor() const;
         
         bool paintingDisabled() const;
         void setPaintingDisabled(bool);

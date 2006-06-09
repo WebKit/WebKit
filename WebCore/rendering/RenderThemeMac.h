@@ -52,6 +52,9 @@ public:
                                 
     virtual void paintResizeControl(GraphicsContext*, const IntRect&);
 
+    virtual Color platformActiveSelectionColor() const;
+    virtual Color platformInactiveSelectionColor() const;
+
 protected:
     // Methods for each appearance value.
     virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);

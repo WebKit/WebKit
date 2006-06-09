@@ -1,3 +1,13 @@
+2006-06-09  David Hyatt  <hyatt@apple.com>
+
+        Rename displaysWithFocusAttributes to isActive.
+
+        Reviewed by sfalken
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateFocusState]):
+
 2006-06-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

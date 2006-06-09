@@ -88,6 +88,14 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return false; }
 
+    // The selection color.
+    Color activeSelectionColor() const;
+    Color inactiveSelectionColor() const;
+    
+    // The platform selection color.
+    virtual Color platformActiveSelectionColor() const;
+    virtual Color platformInactiveSelectionColor() const;
+    
 protected:
     // Methods for state querying
     bool isChecked(const RenderObject* o) const;

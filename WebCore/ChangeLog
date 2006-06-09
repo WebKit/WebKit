@@ -1,3 +1,74 @@
+2006-06-09  David Hyatt  <hyatt@apple.com>
+
+        Rework selection coloring.  Rename displaysWithFocusAttributes
+        to isActive.  Move the white-blending code onto the Color API to make
+        it more convenient to mutate colors for selection blending.  Eliminate all
+        the selection state from the GraphicsContext and move it to the RenderTheme.
+        Implement both Win32 and Mac theme selection colors.
+
+        Reviewed by sfalken
+
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::setIsActive):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge drawRect:]):
+        (-[WebCoreFrameBridge setIsActive:]):
+        (-[WebCoreFrameBridge selectionColor]):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * page/Frame.cpp:
+        (WebCore::Frame::isActive):
+        (WebCore::Frame::setIsActive):
+        * page/Frame.h:
+        * platform/Color.cpp:
+        (WebCore::blend):
+        (WebCore::Color::blendWithWhite):
+        * platform/Color.h:
+        (WebCore::Color::hasAlpha):
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate):
+        * platform/GraphicsContext.h:
+        * platform/mac/GraphicsContextMac.mm:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (GraphicsContext::endTransparencyLayer):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSelection):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::fillHorizontalSelectionGap):
+        (WebCore::RenderBlock::fillVerticalSelectionGap):
+        (WebCore::RenderBlock::fillLeftSelectionGap):
+        (WebCore::RenderBlock::fillRightSelectionGap):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionColor):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeSelectionColor):
+        (WebCore::RenderTheme::inactiveSelectionColor):
+        (WebCore::RenderTheme::platformActiveSelectionColor):
+        (WebCore::RenderTheme::platformInactiveSelectionColor):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformActiveSelectionColor):
+        (WebCore::RenderThemeMac::platformInactiveSelectionColor):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::platformActiveSelectionColor):
+        (WebCore::RenderThemeWin::platformInactiveSelectionColor):
+        * rendering/RenderThemeWin.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2006-06-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

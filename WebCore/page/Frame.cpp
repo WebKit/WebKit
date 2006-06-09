@@ -3282,12 +3282,12 @@ void Frame::setSelectionFromNone()
         setSelection(SelectionController(Position(node, 0), DOWNSTREAM));
 }
 
-bool Frame::displaysWithFocusAttributes() const
+bool Frame::isActive() const
 {
     return d->m_isFocused;
 }
 
-void Frame::setDisplaysWithFocusAttributes(bool flag)
+void Frame::setIsActive(bool flag)
 {
     if (d->m_isFocused == flag)
         return;

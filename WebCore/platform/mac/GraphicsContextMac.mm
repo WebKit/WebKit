@@ -70,35 +70,6 @@ GraphicsContext::~GraphicsContext()
     delete m_data;
 }
 
-static int getBlendedColorComponent(int c, int a)
-{
-    // We use white.
-    float alpha = (float)(a) / 255;
-    int whiteBlend = 255 - a;
-    c -= whiteBlend;
-    return (int)(c/alpha);
-}
-
-Color GraphicsContext::selectedTextBackgroundColor() const
-{
-    NSColor *color = usesInactiveTextBackgroundColor() ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
-    // this needs to always use device colorspace so it can de-calibrate the color for
-    // Color to possibly recalibrate it
-    color = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-    
-    Color col = Color((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
-    
-    // Attempt to make the selection 60% transparent.  We do this by applying a standard blend and then
-    // seeing if the resultant color is still within the 0-255 range.
-    int alpha = 153;
-    int red = getBlendedColorComponent(col.red(), alpha);
-    int green = getBlendedColorComponent(col.green(), alpha);
-    int blue = getBlendedColorComponent(col.blue(), alpha);
-    if (red >= 0 && red <= 255 && green >= 0 && green <= 255 && blue >= 0 && blue <= 255)
-        return Color(red, green, blue, alpha);
-    return col;
-}
-
 void GraphicsContext::setFocusRingClip(const IntRect& r)
 {
     // This method only exists to work around bugs in Mac focus ring clipping.

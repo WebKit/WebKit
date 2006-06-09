@@ -440,7 +440,7 @@ void InlineTextBox::paintSelection(GraphicsContext* p, int tx, int ty, RenderSty
 
     // Macintosh-style text highlighting is to draw with a particular background color, not invert.
     Color textColor = style->color();
-    Color c = object()->selectionColor(p);
+    Color c = object()->selectionColor();
     if (!c.isValid())
         return;
 

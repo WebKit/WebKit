@@ -896,7 +896,6 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
     ASSERT(!m_frame->document() || m_frame->document()->printing() == ![NSGraphicsContext currentContextDrawingToScreen]);
     GraphicsContext context(platformContext);
-    context.setUsesInactiveTextBackgroundColor(!m_frame->displaysWithFocusAttributes());
     [self _setupRootForPrinting:YES];
     m_frame->paint(&context, enclosingIntRect(rect));
     [self _setupRootForPrinting:NO];
@@ -1469,9 +1468,9 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->setSelectionFromNone();
 }
 
-- (void)setDisplaysWithFocusAttributes:(BOOL)flag
+- (void)setIsActive:(BOOL)flag
 {
-    m_frame->setDisplaysWithFocusAttributes(flag);
+    m_frame->setIsActive(flag);
 }
 
 - (void)setWindowHasFocus:(BOOL)flag
@@ -1519,16 +1518,10 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     return m_frame->bodyBackgroundColor();
 }
 
+// FIXME: Not sure what this method is for.  It seems to only be used by plug-ins over in WebKit.
 - (NSColor *)selectionColor
 {
-    RenderView* root = static_cast<RenderView *>(m_frame->document()->renderer());
-    if (root) {
-        RenderStyle *pseudoStyle = root->getPseudoStyle(RenderStyle::SELECTION);
-        if (pseudoStyle && pseudoStyle->backgroundColor().isValid()) {
-            return nsColor(pseudoStyle->backgroundColor());
-        }
-    }
-    return m_frame->displaysWithFocusAttributes() ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];
+    return m_frame->isActive() ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];
 }
 
 - (void)adjustViewSize

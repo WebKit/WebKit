@@ -48,6 +48,9 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle*) const { return true; }
 
+    virtual Color platformActiveSelectionColor() const;
+    virtual Color platformInactiveSelectionColor() const;
+
     virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
     { return paintButton(o, i, r); }
     virtual void setCheckboxSize(RenderStyle*) const;

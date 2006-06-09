@@ -122,6 +122,18 @@ void RenderThemeWin::close()
     m_buttonTheme = m_textFieldTheme = 0;
 }
 
+Color RenderThemeWin::platformActiveSelectionColor() const
+{
+    COLORREF color = GetSysColor(COLOR_HIGHLIGHTTEXT);
+    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 255);
+}
+
+Color RenderThemeWin::platformInactiveSelectionColor() const
+{
+    COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
+    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 255);
+}
+
 void RenderThemeWin::addIntrinsicMargins(RenderStyle* style) const
 {
     // Cut out the intrinsic margins completely if we end up using a small font size

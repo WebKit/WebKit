@@ -76,7 +76,6 @@ public:
     virtual SelectionState selectionState() const { return m_selectionState; }
     virtual void setSelectionState(SelectionState);
     virtual IntRect selectionRect();
-    virtual Color selectionColor(GraphicsContext*) const;
     virtual bool canBeSelectionLeaf() const { return true; }
 
 private:

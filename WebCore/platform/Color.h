@@ -64,6 +64,8 @@ public:
 
     bool isValid() const { return valid; }
 
+    bool hasAlpha() const { return alpha() < 255; }
+
     int red() const { return (color >> 16) & 0xFF; }
     int green() const { return (color >> 8) & 0xFF; }
     int blue() const { return color & 0xFF; }
@@ -76,6 +78,8 @@ public:
 
     Color light() const;
     Color dark() const;
+
+    Color blendWithWhite(int alpha) const;
 
     static const RGBA32 black = 0xFF000000;
     static const RGBA32 white = 0xFFFFFFFF;

@@ -1894,15 +1894,15 @@ bool RenderObject::shouldSelect() const
     return false;
 }
 
-Color RenderObject::selectionColor(GraphicsContext* p) const
+Color RenderObject::selectionColor() const
 {
     Color color;
     if (style()->userSelect() != SELECT_NONE) {
         RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SELECTION);
         if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
-            color = pseudoStyle->backgroundColor();
+            color = pseudoStyle->backgroundColor().blendWithWhite(selectionColorOverlayAlpha);
         else
-            color = p->selectedTextBackgroundColor();
+            color = document()->frame()->isActive() ? theme()->activeSelectionColor() : theme()->inactiveSelectionColor();
     }
 
     return color;

@@ -63,7 +63,6 @@ public:
     virtual void setSelectionState(SelectionState);
     virtual IntRect selectionRect();
     bool isSelected();
-    virtual Color selectionColor(GraphicsContext*) const;
 
 protected:
     int m_intrinsicWidth;

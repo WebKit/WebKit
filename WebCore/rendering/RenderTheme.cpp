@@ -120,6 +120,34 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
     return false;
 }
 
+Color RenderTheme::activeSelectionColor() const
+{
+    static Color activeSelectionColor;
+    if (!activeSelectionColor.isValid())
+        activeSelectionColor = platformActiveSelectionColor().blendWithWhite(selectionColorOverlayAlpha);
+    return activeSelectionColor;
+}
+
+Color RenderTheme::inactiveSelectionColor() const
+{
+    static Color inactiveSelectionColor;
+    if (!inactiveSelectionColor.isValid())
+        inactiveSelectionColor = platformInactiveSelectionColor().blendWithWhite(selectionColorOverlayAlpha);
+    return inactiveSelectionColor;
+}
+
+Color RenderTheme::platformActiveSelectionColor() const
+{
+    // Use a blue color by default if the platform theme doesn't define anything.
+    return Color(0, 0, 255);
+}
+    
+Color RenderTheme::platformInactiveSelectionColor() const
+{
+    // Use a grey color by default if the platform theme doesn't define anything.
+    return Color(128, 128, 128);
+}
+    
 short RenderTheme::baselinePosition(const RenderObject* o) const
 {
     return o->height() + o->marginTop();

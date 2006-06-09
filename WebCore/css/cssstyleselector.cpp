@@ -1482,9 +1482,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 break;
             }
             case CSSSelector::PseudoFocus:
-                if (e && e->focused() && e->document()->frame()->displaysWithFocusAttributes()) {
+                if (e && e->focused() && e->document()->frame()->isActive())
                     return true;
-                }
                 break;
             case CSSSelector::PseudoActive:
                 // If we're in quirks mode, then :active should never match anchors with no

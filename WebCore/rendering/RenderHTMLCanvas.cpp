@@ -77,7 +77,7 @@ void RenderHTMLCanvas::paint(PaintInfo& i, int tx, int ty)
             IntRect(x + borderLeft() + paddingLeft(), y + borderTop() + paddingTop(), contentWidth(), contentHeight()));
 
     if (drawSelectionTint)
-        i.p->fillRect(selectionRect(), selectionColor(i.p));
+        i.p->fillRect(selectionRect(), selectionColor());
 }
 
 void RenderHTMLCanvas::layout()

@@ -1779,10 +1779,10 @@ static WebHTMLView *lastHitView = nil;
     BOOL windowIsKey = [window isKeyWindow];
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
-    BOOL displaysWithFocusAttributes = !_private->resigningFirstResponder && windowIsKey && (_private->descendantBecomingFirstResponder || [self _web_firstResponderCausesFocusDisplay]);
+    BOOL isActive = !_private->resigningFirstResponder && windowIsKey && (_private->descendantBecomingFirstResponder || [self _web_firstResponderCausesFocusDisplay]);
     
     [[self _bridge] setWindowHasFocus:windowOrSheetIsKey];
-    [[self _bridge] setDisplaysWithFocusAttributes:displaysWithFocusAttributes];
+    [[self _bridge] setIsActive:isActive];
 }
 
 - (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag

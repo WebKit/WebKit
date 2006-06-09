@@ -276,7 +276,6 @@ void GraphicsContext::setShadow(IntSize const&,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
 void GraphicsContext::beginTransparencyLayer(float) { }
 void GraphicsContext::endTransparencyLayer() { }
-Color GraphicsContext::selectedTextBackgroundColor() const { return Color(0,0,255); }
 void GraphicsContext::clearRect(const FloatRect&) { }
 void GraphicsContext::strokeRect(const FloatRect&, float) { }
 void GraphicsContext::setLineWidth(float) { }

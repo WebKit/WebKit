@@ -212,6 +212,27 @@ Color Color::dark() const
     return Color((int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255));
 }
 
+static int blend(int c, int a)
+{
+    // We use white.
+    float alpha = (float)(a) / 255;
+    int whiteBlend = 255 - a;
+    c -= whiteBlend;
+    c = max(0, c);
+    return min(255, (int)(c / alpha)); // Clamp to be within 0-255
+}
+
+Color Color::blendWithWhite(int alpha) const
+{
+    // If the color contains alpha already, we leave it alone.
+    if (hasAlpha())
+        return *this;
+    
+    // We have a solid color.  Convert to an equivalent color that looks the same when blended with white
+    // at the alpha specified.
+    return Color(blend(red(), alpha), blend(green(), alpha), blend(blue(), alpha), alpha);
+}
+
 void Color::getRGBA(float& r, float& g, float& b, float& a) const
 {
     r = red() / 255.0f;

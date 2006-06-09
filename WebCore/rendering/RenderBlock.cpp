@@ -1631,19 +1631,19 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
 }
 
 IntRect RenderBlock::fillHorizontalSelectionGap(RenderObject* selObj, int xPos, int yPos, int width, int height,
-                                              const PaintInfo* i)
+                                                const PaintInfo* i)
 {
     if (width <= 0 || height <= 0)
         return IntRect();
     IntRect gapRect(xPos, yPos, width, height);
     if (i)
-        i->p->fillRect(gapRect, selObj->selectionColor(i->p));
+        i->p->fillRect(gapRect, selObj->selectionColor());
     return gapRect;
 }
 
 IntRect RenderBlock::fillVerticalSelectionGap(int lastTop, int lastLeft, int lastRight,
-                                            int bottomY, RenderBlock* rootBlock, int blockX, int blockY,
-                                            const PaintInfo* i)
+                                              int bottomY, RenderBlock* rootBlock, int blockX, int blockY,
+                                              const PaintInfo* i)
 {
     int top = blockY + lastTop;
     int height = bottomY - top;
@@ -1659,7 +1659,7 @@ IntRect RenderBlock::fillVerticalSelectionGap(int lastTop, int lastLeft, int las
 
     IntRect gapRect(left, top, width, height);
     if (i)
-        i->p->fillRect(gapRect, selectionColor(i->p));
+        i->p->fillRect(gapRect, selectionColor());
     return gapRect;
 }
 
@@ -1673,7 +1673,7 @@ IntRect RenderBlock::fillLeftSelectionGap(RenderObject* selObj, int xPos, int yP
 
     IntRect gapRect(left, top, width, height);
     if (i)
-        i->p->fillRect(gapRect, selObj->selectionColor(i->p));
+        i->p->fillRect(gapRect, selObj->selectionColor());
     return gapRect;
 }
 
@@ -1688,7 +1688,7 @@ IntRect RenderBlock::fillRightSelectionGap(RenderObject* selObj, int xPos, int y
 
     IntRect gapRect(left, top, width, height);
     if (i)
-        i->p->fillRect(gapRect, selObj->selectionColor(i->p));
+        i->p->fillRect(gapRect, selObj->selectionColor());
     return gapRect;
 }
 

@@ -50,14 +50,12 @@ public:
     Vector<IntRect> m_focusRingRects;
     int m_focusRingWidth;
     int m_focusRingOffset;
-    bool m_usesInactiveTextBackgroundColor;
     bool m_updatingControlTints;
 };
 
 GraphicsContextPrivate::GraphicsContextPrivate()
     : m_focusRingWidth(0)
     , m_focusRingOffset(0)
-    , m_usesInactiveTextBackgroundColor(false)
     , m_updatingControlTints(false)
 {
 }
@@ -139,16 +137,6 @@ void GraphicsContext::setFillColor(const Color& color)
 Color GraphicsContext::fillColor() const
 {
     return m_common->state.fillColor;
-}
-
-void GraphicsContext::setUsesInactiveTextBackgroundColor(bool u)
-{
-    m_common->m_usesInactiveTextBackgroundColor = u;
-}
-
-bool GraphicsContext::usesInactiveTextBackgroundColor() const
-{
-    return m_common->m_usesInactiveTextBackgroundColor;
 }
 
 bool GraphicsContext::updatingControlTints() const
