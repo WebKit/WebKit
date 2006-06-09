@@ -293,13 +293,15 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_SETFOCUS:
             if (mainFrameImpl) {
                 mainFrameImpl->impl()->setWindowHasFocus(true);
-                mainFrameImpl->impl()->setDisplaysWithFocusAttributes(true);
+                // FIXME: This is wrong. Should listen to WM_ACTIVATE instead.
+                mainFrameImpl->impl()->setIsActive(true);
             }
             break;
         case WM_KILLFOCUS:
             if (mainFrameImpl) {
                 mainFrameImpl->impl()->setWindowHasFocus(false);
-                mainFrameImpl->impl()->setDisplaysWithFocusAttributes(false);
+                // FIXME: This is wrong.
+                mainFrameImpl->impl()->setIsActive(false);
             }
             break;
         default:
