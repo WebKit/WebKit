@@ -16,7 +16,7 @@
         * editing/CompositeEditCommand.cpp:
         (WebCore::hasARenderedDescendant):
         (WebCore::CompositeEditCommand::prune): A node can have DOM descendants that are rendered, yet
-        have no rendered descendants.  Fixed the pruning rule to avoid removing a node like this.
+        have a renderer with no descendants.  Fixed the pruning rule to avoid removing a node like this.
         (WebCore::CompositeEditCommand::mergeIdenticalElements): Put the two elements next to
         each other if they aren't already, as a convenience.
         (WebCore::CompositeEditCommand::moveParagraph): Added code to preserve the current selection.
@@ -42,12 +42,11 @@
         * editing/TextIterator.cpp:
         (WebCore::TextIterator::advance): Don't handle a node if the end of the range used to create the 
         iterator ends at the start of that node.
-        used to create the iterator.
         * editing/VisiblePosition.cpp:
         (WebCore::VisiblePosition::next):
         (WebCore::VisiblePosition::previous):
         * editing/VisiblePosition.h: 
-        Added a parameter to next/previous to prevent them from going outside the current editable region.
+        Added a parameter to next/previous that can prevent them from leaving the current editable region.
         * editing/htmlediting.cpp:
         (WebCore::highestAncestor):
         (WebCore::enclosingList):
