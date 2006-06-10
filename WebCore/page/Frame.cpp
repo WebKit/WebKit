@@ -3320,10 +3320,10 @@ void Frame::setIsActive(bool flag)
     // 4, Changing the tint of controls from clear to aqua/graphite and vice versa.  We
     // do a "fake" paint.  When the theme gets a paint call, it can then do an invalidate.  This is only
     // done if the theme supports control tinting.
-    if (doc && d->m_view && d->m_view->getDocumentView() && theme()->supportsControlTints() && renderer()) {
+    if (doc && d->m_view && theme()->supportsControlTints() && renderer()) {
         doc->updateLayout(); // Ensure layout is up to date.
         IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
-        GraphicsContext context(0);
+        GraphicsContext context((PlatformGraphicsContext*)0);
         context.setUpdatingControlTints(true);
         paint(&context, visibleRect);
     }
