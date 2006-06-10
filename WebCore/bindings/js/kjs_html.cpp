@@ -1306,7 +1306,7 @@ void JSHTMLElement::put(ExecState* exec, const Identifier &propertyName, JSValue
         }
     }
 
-    lookupPut<JSHTMLElement, JSElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
+    lookupPut<JSHTMLElement, WebCore::JSHTMLElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
 void JSHTMLElement::selectSetter(ExecState* exec, int token, JSValue *value, const WebCore::String& str)
