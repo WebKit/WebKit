@@ -1212,6 +1212,21 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     doc->removeMarkers(DocumentMarker::TextMatch);
 }
 
+- (NSArray *)rectsForTextMatches
+{
+    Document *doc = m_frame->document();
+    if (!doc)
+        return [NSArray array];
+    
+    NSMutableArray *result = [NSMutableArray array];
+    Vector<IntRect> rects = doc->renderedRectsForMarkers(DocumentMarker::TextMatch);
+    unsigned count = rects.size();
+    for (unsigned index = 0; index < count; ++index)
+        [result addObject:[NSValue valueWithRect:rects[index]]];
+    
+    return result;
+}
+
 - (NSString *)advanceToNextMisspelling
 {
     return m_frame->advanceToNextMisspelling();

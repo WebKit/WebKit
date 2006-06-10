@@ -282,8 +282,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         if (haveMarkedText  && !markedTextUsesUnderlines)
             paintMarkedTextBackground(i.p, tx, ty, styleToUse, font, markedTextRange->startOffset(exception), markedTextRange->endOffset(exception));
 
-        if (object()->document()->frame()->markedTextMatchesAreHighlighted())
-            paintAllMarkersOfType(i.p, tx, ty, DocumentMarker::TextMatch, styleToUse, font);
+        paintAllMarkersOfType(i.p, tx, ty, DocumentMarker::TextMatch, styleToUse, font);
 
         if (haveSelection)
             paintSelection(i.p, tx, ty, styleToUse, font);
@@ -577,21 +576,31 @@ void InlineTextBox::paintSpellingMarker(GraphicsContext* pt, int _tx, int _ty, D
 
 void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, DocumentMarker marker, RenderStyle* style, const Font* f)
 {
-    Color yellow = Color(255, 255, 0);
-    pt->save();
-    pt->setPen(yellow); // Don't draw text at all!
    // Use same y positioning and height as for selection, so that when the selection and this highlight are on
    // the same word there are no pieces sticking out.
     RootInlineBox* r = root();
     int y = r->selectionTop();
     int h = r->selectionHeight();
-    pt->addClip(IntRect(_tx + m_x, _ty + y, m_width, h));
-    int sPos = max(marker.startOffset - m_start, (unsigned)0);
-    int ePos = min(marker.endOffset - m_start, (unsigned)m_len);
     
-    pt->drawHighlightForText(TextRun(textObject()->string(), m_start, m_len, sPos, ePos), IntPoint(m_x + _tx, y + _ty), h,
-                             TextStyle(textObject()->tabWidth(), textPos(), m_toAdd, m_reversed, m_dirOverride || style->visuallyOrdered()), yellow);
-    pt->restore();
+    int sPos = max(marker.startOffset - m_start, (unsigned)0);
+    int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
+    TextRun run = TextRun(textObject()->string(), m_start, m_len, sPos, ePos);
+    TextStyle renderStyle = TextStyle(textObject()->tabWidth(), textPos(), m_toAdd, m_reversed, m_dirOverride || style->visuallyOrdered());
+    IntPoint startPoint = IntPoint(m_x + _tx, y + _ty);
+    
+    // Always compute and store the rect associated with this marker
+    IntRect markerRect = enclosingIntRect(f->selectionRectForText(run, renderStyle, startPoint, h));
+    object()->document()->setRenderedRectForMarker(object()->node(), marker, markerRect);
+     
+    // Optionally highlight the text
+    if (object()->document()->frame()->markedTextMatchesAreHighlighted()) {
+        Color yellow = Color(255, 255, 0);
+        pt->save();
+        pt->setPen(yellow); // Don't draw text at all!
+        pt->addClip(IntRect(_tx + m_x, _ty + y, m_width, h));
+        pt->drawHighlightForText(run, startPoint, h, renderStyle, yellow);
+        pt->restore();
+    }
 }
 
 void InlineTextBox::paintAllMarkersOfType(GraphicsContext* pt, int _tx, int _ty, DocumentMarker::MarkerType markerType, RenderStyle* style, const Font* f)

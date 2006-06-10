@@ -1,3 +1,52 @@
+2006-06-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick and Dave Hyatt.
+
+        WebCore support for computing but not highlighting rects for text matches.
+
+        * dom/Document.h:
+        added setRenderedRectForMarker() and renderedRectsForMarkers(), and redefined
+        MarkerMap to be a hashtable of node -> (pair of vectors), one vector of markers
+        and one vector of rects
+        
+        * dom/Document.cpp:
+        (placeholderRectForMarker()):
+        new function, returns a recognizable degenerate rect used until a real rect has been set
+        (WebCore::Document::addMarker):
+        Reworked for new MarkerMap data structure; now adds parallel placeholder rect
+        along with marker
+        (WebCore::Document::copyMarkers):
+        Reworked for new MarkerMap data structure
+        (WebCore::Document::removeMarkers):
+        Reworked for new MarkerMap data structure; now removed corresponding rect along
+        with marker
+        (WebCore::Document::markersForNode):
+        Reworked for new MarkerMap data structure
+        (WebCore::Document::renderedRectsForMarkers):
+        New method, returns an array of all non-placeholder rects for the given marker type
+        (WebCore::Document::repaintMarkers):
+        Reworked for new MarkerMap data structure
+        (WebCore::Document::setRenderedRectForMarker):
+        New method, sets the rendered rect for a given marker
+        (WebCore::Document::shiftMarkers):
+        Reworked for new MarkerMap data structure; resets rendered rects to placeholders.
+        
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        removed markedTextMatchesAreHighlighted guard; we always want to call paintTextMatchMarker
+        now, but sometimes we will end up only computing the rect, not actually highlighting it.
+        (Maybe some names should be improved here?)
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        Reorganized to move all the code that actually draws into a block that's guarded by
+        markedTextMatchesAreHighlighted. The rest of the code computes where the highlight will
+        go, and now we always use that computation in order to call setRenderedRectForMarker.
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge rectsForTextMatches]):
+        New method, returns an array of NSValues representing NSRects. Gets them
+        from Document::renderedRectsForMarkers
+        
 2006-06-10  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Eric.

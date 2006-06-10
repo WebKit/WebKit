@@ -311,6 +311,7 @@ typedef enum {
 - (BOOL)markedTextMatchesAreHighlighted;
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)doHighlight;
 - (void)unmarkAllTextMatches;
+- (NSArray *)rectsForTextMatches;
 
 - (NSString *)advanceToNextMisspelling;
 - (NSString *)advanceToNextMisspellingStartingJustBeforeSelection;
