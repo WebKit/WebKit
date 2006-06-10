@@ -501,7 +501,7 @@ static void dump(void)
     NSView *documentView = [[frame frameView] documentView];
     [[[frame webView] window] makeFirstResponder:documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateFocusState];
+        [(WebHTMLView *)documentView _updateActiveState];
 }
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
@@ -579,7 +579,7 @@ static void dump(void)
     windowIsKey = YES;
     NSView *documentView = [[frame frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateFocusState];
+        [(WebHTMLView *)documentView _updateActiveState];
 }
 
 @end
@@ -659,7 +659,7 @@ static void dump(void)
     windowIsKey = flag;
     NSView *documentView = [[frame frameView] documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateFocusState];
+        [(WebHTMLView *)documentView _updateActiveState];
 }
 
 - (void)setMainFrameIsFirstResponder:(BOOL)flag
@@ -670,7 +670,7 @@ static void dump(void)
     [[[frame webView] window] makeFirstResponder:firstResponder];
         
     if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateFocusState];
+        [(WebHTMLView *)documentView _updateActiveState];
 }
 
 - (void)display

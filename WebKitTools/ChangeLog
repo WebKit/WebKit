@@ -1,3 +1,15 @@
+2006-06-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by ap.
+
+        - make DumpRenderTree build
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:didCommitLoadForFrame:]): Changed _updateFocusState to _updateActiveState
+        (-[WaitUntilDoneDelegate webViewFocus:]): Ditto.
+        (-[LayoutTestController setWindowIsKey:]): Ditto.
+        (-[LayoutTestController setMainFrameIsFirstResponder:]): Ditto.
+
 2006-06-09  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin, landed by Geoff.
