@@ -45,28 +45,6 @@
 
 namespace KJS {
 
-// ------------------------------ Context --------------------------------------
-
-const ScopeChain &Context::scopeChain() const
-{
-  return rep->scopeChain();
-}
-
-JSObject *Context::variableObject() const
-{
-  return rep->variableObject();
-}
-
-JSObject *Context::thisValue() const
-{
-  return rep->thisValue();
-}
-
-const Context Context::callingContext() const
-{
-  return rep->callingContext();
-}
-
 // ------------------------------ Interpreter ----------------------------------
 
 Interpreter::Interpreter(JSObject *global) 

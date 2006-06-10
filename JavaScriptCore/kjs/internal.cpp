@@ -187,75 +187,6 @@ bool LabelStack::contains(const Identifier &id) const
   return false;
 }
 
-// ------------------------------ ContextImp -----------------------------------
-
-// ECMA 10.2
-ContextImp::ContextImp(JSObject *glob, InterpreterImp *interpreter, JSObject *thisV, FunctionBodyNode* currentBody,
-                       
-                       CodeType type, ContextImp *callingCon, FunctionImp *func, const List *args)
-    : _interpreter(interpreter)
-    , m_currentBody(currentBody)
-    , _function(func)
-    , _arguments(args)
-    , m_iterationDepth(0)
-    , m_switchDepth(0) 
-{
-  m_codeType = type;
-  _callingContext = callingCon;
-
-  // create and initialize activation object (ECMA 10.1.6)
-  if (type == FunctionCode || type == AnonymousCode ) {
-    activation = new ActivationImp(func, *args);
-    variable = activation;
-  } else {
-    activation = NULL;
-    variable = glob;
-  }
-
-  // ECMA 10.2
-  switch(type) {
-    case EvalCode:
-      if (_callingContext) {
-        scope = _callingContext->scopeChain();
-        variable = _callingContext->variableObject();
-        thisVal = _callingContext->thisValue();
-        break;
-      } // else same as GlobalCode
-    case GlobalCode:
-      scope.clear();
-      scope.push(glob);
-      thisVal = static_cast<JSObject*>(glob);
-      break;
-    case FunctionCode:
-    case AnonymousCode:
-      if (type == FunctionCode) {
-        scope = func->scope();
-        scope.push(activation);
-      } else {
-        scope.clear();
-        scope.push(glob);
-        scope.push(activation);
-      }
-      variable = activation; // TODO: DontDelete ? (ECMA 10.2.3)
-      thisVal = thisV;
-      break;
-    }
-
-  _interpreter->setContext(this);
-}
-
-ContextImp::~ContextImp()
-{
-  _interpreter->setContext(_callingContext);
-}
-
-void ContextImp::mark()
-{
-  for (ContextImp *context = this; context; context = context->_callingContext) {
-    context->scope.mark();
-  }
-}
-
 // ------------------------------ InterpreterImp -------------------------------
 
 InterpreterImp* InterpreterImp::s_hook = 0L;
@@ -508,7 +439,7 @@ Completion InterpreterImp::evaluate(const UChar* code, int codeLength, JSValue* 
     res = Completion(Throw, globExec.exception());
   else {
     // execute the code
-    ContextImp ctx(globalObj, this, thisObj, progNode.get());
+    Context ctx(globalObj, this, thisObj, progNode.get());
     ExecState newExec(m_interpreter, &ctx);
     progNode->processVarDecls(&newExec);
     res = progNode->execute(&newExec);

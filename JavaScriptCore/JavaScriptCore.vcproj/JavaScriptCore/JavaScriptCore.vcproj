@@ -205,6 +205,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\Context.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\context.h"
 				>
 			</File>

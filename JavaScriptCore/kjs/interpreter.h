@@ -29,7 +29,7 @@
 
 namespace KJS {
 
-  class ContextImp;
+  class Context;
   class InterpreterImp;
   class RuntimeMethod;
   class ScopeChain;
@@ -37,84 +37,6 @@ namespace KJS {
   namespace Bindings {
     class RootObject;
   }
-
-  /**
-   * Represents an execution context, as specified by section 10 of the ECMA
-   * spec.
-   *
-   * An execution context contains information about the current state of the
-   * script - the scope for variable lookup, the value of "this", etc. A new
-   * execution context is entered whenever global code is executed (e.g. with
-   * Interpreter::evaluate()), a function is called (see
-   * Object::call()), or the builtin "eval" function is executed.
-   *
-   * Most inheritable functions in the KJS api take a ExecState pointer as
-   * their first parameter. This can be used to obtain a handle to the current
-   * execution context.
-   *
-   * Note: Context objects are wrapper classes/smart pointers for the internal
-   * KJS ContextImp type. When one context variable is assigned to another, it
-   * is still referencing the same internal object.
-   */
-  class Context {
-  public:
-    Context(ContextImp *i) : rep(i) { }
-
-    ContextImp *imp() const { return rep; }
-
-    /**
-     * Returns the scope chain for this execution context. This is used for
-     * variable lookup, with the list being searched from start to end until a
-     * variable is found.
-     *
-     * @return The execution context's scope chain
-     */
-    const ScopeChain &scopeChain() const;
-
-    /**
-     * Returns the variable object for the execution context. This contains a
-     * property for each variable declared in the execution context.
-     *
-     * @return The execution context's variable object
-     */
-    JSObject *variableObject() const;
-
-    /**
-     * Returns the "this" value for the execution context. This is the value
-     * returned when a script references the special variable "this". It should
-     * always be an Object, unless application-specific code has passed in a
-     * different type.
-     *
-     * The object that is used as the "this" value depends on the type of
-     * execution context - for global contexts, the global object is used. For
-     * function objewcts, the value is given by the caller (e.g. in the case of
-     * obj.func(), obj would be the "this" value). For code executed by the
-     * built-in "eval" function, the this value is the same as the calling
-     * context.
-     *
-     * @return The execution context's "this" value
-     */
-    JSObject *thisValue() const;
-
-    /**
-     * Returns the context from which the current context was invoked. For
-     * global code this will be a null context (i.e. one for which
-     * isNull() returns true). You should check isNull() on the returned
-     * value before calling any of it's methods.
-     *
-     * @return The calling execution context
-     */
-    const Context callingContext() const;
-    
-    /**
-     * The line number on which the current statement begins
-     * NOTE: Only for source compatibility, JSC does not support this method.
-     */
-    int curStmtFirstLine() const { return 0; }
-
-  private:
-    ContextImp *rep;
-  };
 
   class SavedBuiltinsInternal;
 
@@ -456,7 +378,7 @@ namespace KJS {
      *
      * @return The current execution state context
      */
-    Context context() const { return m_context; }
+    Context* context() const { return m_context; }
 
     void setException(JSValue* e) { m_exception = e; }
     void clearException() { m_exception = 0; }
@@ -464,14 +386,14 @@ namespace KJS {
     bool hadException() const { return m_exception; }
 
   private:
-    ExecState(Interpreter* interp, ContextImp* con)
+    ExecState(Interpreter* interp, Context* con)
         : m_interpreter(interp)
         , m_context(con)
         , m_exception(0)
     { 
     }
     Interpreter* m_interpreter;
-    ContextImp* m_context;
+    Context* m_context;
     JSValue* m_exception;
   };
 

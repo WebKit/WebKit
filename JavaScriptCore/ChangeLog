@@ -1,3 +1,69 @@
+2006-06-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric (yay!).
+        
+        - Removed Context wrapper for ContextImp, renamed ContextImp to Context,
+        split Context into its own file -- Context.cpp -- renamed _var to m_var,
+        change ' *' to '* '.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/Context.cpp: Added.
+        (KJS::Context::Context):
+        (KJS::Context::~Context):
+        (KJS::Context::mark):
+        * kjs/context.h:
+        (KJS::Context::scopeChain):
+        (KJS::Context::variableObject):
+        (KJS::Context::setVariableObject):
+        (KJS::Context::thisValue):
+        (KJS::Context::callingContext):
+        (KJS::Context::activationObject):
+        (KJS::Context::currentBody):
+        (KJS::Context::function):
+        (KJS::Context::arguments):
+        (KJS::Context::pushScope):
+        (KJS::Context::seenLabels):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::FunctionImp::processParameters):
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::evaluate):
+        * kjs/internal.h:
+        (KJS::InterpreterImp::setContext):
+        (KJS::InterpreterImp::context):
+        * kjs/interpreter.cpp:
+        * kjs/interpreter.h:
+        (KJS::ExecState::context):
+        (KJS::ExecState::ExecState):
+        * kjs/nodes.cpp:
+        (currentSourceId):
+        (currentSourceURL):
+        (ThisNode::evaluate):
+        (ResolveNode::evaluate):
+        (FunctionCallResolveNode::evaluate):
+        (PostfixResolveNode::evaluate):
+        (DeleteResolveNode::evaluate):
+        (TypeOfResolveNode::evaluate):
+        (PrefixResolveNode::evaluate):
+        (AssignResolveNode::evaluate):
+        (VarDeclNode::evaluate):
+        (VarDeclNode::processVarDecls):
+        (DoWhileNode::execute):
+        (WhileNode::execute):
+        (ForNode::execute):
+        (ForInNode::execute):
+        (ContinueNode::execute):
+        (BreakNode::execute):
+        (ReturnNode::execute):
+        (WithNode::execute):
+        (SwitchNode::execute):
+        (LabelNode::execute):
+        (TryNode::execute):
+        (FuncDeclNode::processFuncDecl):
+        (FuncExprNode::evaluate):
+
 2006-06-07  Geoffrey Garen  <ggaren@apple.com>
 
         Removed API directory I prematurely/accidentally added.

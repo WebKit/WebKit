@@ -184,12 +184,12 @@ static void substitute(UString &string, const UString &substring)
 
 static inline int currentSourceId(ExecState* exec)
 {
-    return exec->context().imp()->currentBody()->sourceId();
+    return exec->context()->currentBody()->sourceId();
 }
 
 static inline const UString& currentSourceURL(ExecState* exec)
 {
-    return exec->context().imp()->currentBody()->sourceURL();
+    return exec->context()->currentBody()->sourceURL();
 }
 
 Completion Node::createErrorCompletion(ExecState* exec, ErrorType e, const char *msg)
@@ -346,7 +346,7 @@ JSValue *RegExpNode::evaluate(ExecState *exec)
 // ECMA 11.1.1
 JSValue *ThisNode::evaluate(ExecState *exec)
 {
-  return exec->context().imp()->thisValue();
+  return exec->context()->thisValue();
 }
 
 // ------------------------------ ResolveNode ----------------------------------
@@ -354,7 +354,7 @@ JSValue *ThisNode::evaluate(ExecState *exec)
 // ECMA 11.1.2 & 10.1.4
 JSValue *ResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  const ScopeChain& chain = exec->context()->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -624,7 +624,7 @@ JSValue *FunctionCallValueNode::evaluate(ExecState *exec)
 // ECMA 11.2.3
 JSValue *FunctionCallResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  const ScopeChain& chain = exec->context()->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -764,7 +764,7 @@ JSValue *FunctionCallDotNode::evaluate(ExecState *exec)
 
 JSValue *PostfixResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  const ScopeChain& chain = exec->context()->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -855,7 +855,7 @@ JSValue *PostfixDotNode::evaluate(ExecState *exec)
 // ------------------------------ DeleteResolveNode -----------------------------------
 JSValue *DeleteResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  const ScopeChain& chain = exec->context()->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -958,7 +958,7 @@ static JSValue *typeStringForValue(JSValue *v)
 
 JSValue *TypeOfResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  const ScopeChain& chain = exec->context()->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -996,7 +996,7 @@ JSValue *TypeOfValueNode::evaluate(ExecState *exec)
 
 JSValue *PrefixResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  const ScopeChain& chain = exec->context()->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -1382,7 +1382,7 @@ static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSV
 
 JSValue *AssignResolveNode::evaluate(ExecState *exec)
 {
-  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  const ScopeChain& chain = exec->context()->scopeChain();
   ScopeChainIterator iter = chain.begin();
   ScopeChainIterator end = chain.end();
   
@@ -1527,9 +1527,9 @@ VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in, Type t)
 // ECMA 12.2
 JSValue *VarDeclNode::evaluate(ExecState *exec)
 {
-  JSObject *variable = exec->context().imp()->variableObject();
+  JSObject* variable = exec->context()->variableObject();
 
-  JSValue *val;
+  JSValue* val;
   if (init) {
       val = init->evaluate(exec);
       KJS_CHECKEXCEPTIONVALUE
@@ -1547,7 +1547,7 @@ JSValue *VarDeclNode::evaluate(ExecState *exec)
   // We use Internal to bypass all checks in derived objects, e.g. so that
   // "var location" creates a dynamic property instead of activating window.location.
   int flags = Internal;
-  if (exec->context().imp()->codeType() != EvalCode)
+  if (exec->context()->codeType() != EvalCode)
     flags |= DontDelete;
   if (varType == VarDeclNode::Constant)
     flags |= ReadOnly;
@@ -1558,13 +1558,13 @@ JSValue *VarDeclNode::evaluate(ExecState *exec)
 
 void VarDeclNode::processVarDecls(ExecState *exec)
 {
-  JSObject *variable = exec->context().imp()->variableObject();
+  JSObject* variable = exec->context()->variableObject();
 
   // If a variable by this name already exists, don't clobber it -
   // it might be a function parameter
   if (!variable->hasProperty(exec, ident)) {
     int flags = Internal;
-    if (exec->context().imp()->codeType() != EvalCode)
+    if (exec->context()->codeType() != EvalCode)
       flags |= DontDelete;
     if (varType == VarDeclNode::Constant)
       flags |= ReadOnly;
@@ -1709,9 +1709,9 @@ Completion DoWhileNode::execute(ExecState *exec)
     // bail out on error
     KJS_CHECKEXCEPTION
 
-    exec->context().imp()->pushIteration();
+    exec->context()->pushIteration();
     c = statement->execute(exec);
-    exec->context().imp()->popIteration();
+    exec->context()->popIteration();
     if (!((c.complType() == Continue) && ls.contains(c.target()))) {
       if ((c.complType() == Break) && ls.contains(c.target()))
         return Completion(Normal, 0);
@@ -1753,9 +1753,9 @@ Completion WhileNode::execute(ExecState *exec)
     if (!b)
       return Completion(Normal, value);
 
-    exec->context().imp()->pushIteration();
+    exec->context()->pushIteration();
     c = statement->execute(exec);
-    exec->context().imp()->popIteration();
+    exec->context()->popIteration();
     if (c.isValueCompletion())
       value = c.value();
 
@@ -1796,9 +1796,9 @@ Completion ForNode::execute(ExecState *exec)
     // bail out on error
     KJS_CHECKEXCEPTION
 
-    exec->context().imp()->pushIteration();
+    exec->context()->pushIteration();
     Completion c = statement->execute(exec);
-    exec->context().imp()->popIteration();
+    exec->context()->popIteration();
     if (c.isValueCompletion())
       cval = c.value();
     if (!((c.complType() == Continue) && ls.contains(c.target()))) {
@@ -1881,7 +1881,7 @@ Completion ForInNode::execute(ExecState *exec)
     if (lexpr->isResolveNode()) {
         const Identifier &ident = static_cast<ResolveNode *>(lexpr.get())->identifier();
 
-        const ScopeChain& chain = exec->context().imp()->scopeChain();
+        const ScopeChain& chain = exec->context()->scopeChain();
         ScopeChainIterator iter = chain.begin();
         ScopeChainIterator end = chain.end();
   
@@ -1924,9 +1924,9 @@ Completion ForInNode::execute(ExecState *exec)
 
     KJS_CHECKEXCEPTION
 
-    exec->context().imp()->pushIteration();
+    exec->context()->pushIteration();
     c = statement->execute(exec);
-    exec->context().imp()->popIteration();
+    exec->context()->popIteration();
     if (c.isValueCompletion())
       retval = c.value();
 
@@ -1961,9 +1961,9 @@ Completion ContinueNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  if (ident.isEmpty() && !exec->context().imp()->inIteration())
+  if (ident.isEmpty() && !exec->context()->inIteration())
     return createErrorCompletion(exec, SyntaxError, "Invalid continue statement.");
-  else if (!ident.isEmpty() && !exec->context().imp()->seenLabels()->contains(ident))
+  else if (!ident.isEmpty() && !exec->context()->seenLabels()->contains(ident))
     return createErrorCompletion(exec, SyntaxError, "Label %s not found.", ident);
   else
     return Completion(Continue, 0, ident);
@@ -1976,10 +1976,10 @@ Completion BreakNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  if (ident.isEmpty() && !exec->context().imp()->inIteration() &&
-      !exec->context().imp()->inSwitch())
+  if (ident.isEmpty() && !exec->context()->inIteration() &&
+      !exec->context()->inSwitch())
     return createErrorCompletion(exec, SyntaxError, "Invalid break statement.");
-  else if (!ident.isEmpty() && !exec->context().imp()->seenLabels()->contains(ident))
+  else if (!ident.isEmpty() && !exec->context()->seenLabels()->contains(ident))
     return createErrorCompletion(exec, SyntaxError, "Label %s not found.");
   else
     return Completion(Break, 0, ident);
@@ -1992,7 +1992,7 @@ Completion ReturnNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  CodeType codeType = exec->context().imp()->codeType();
+  CodeType codeType = exec->context()->codeType();
   if (codeType != FunctionCode && codeType != AnonymousCode ) {
     return createErrorCompletion(exec, SyntaxError, "Invalid return statement.");
   }
@@ -2017,9 +2017,9 @@ Completion WithNode::execute(ExecState *exec)
   KJS_CHECKEXCEPTION
   JSObject *o = v->toObject(exec);
   KJS_CHECKEXCEPTION
-  exec->context().imp()->pushScope(o);
+  exec->context()->pushScope(o);
   Completion res = statement->execute(exec);
-  exec->context().imp()->popScope();
+  exec->context()->popScope();
 
   return res;
 }
@@ -2212,9 +2212,9 @@ Completion SwitchNode::execute(ExecState *exec)
   JSValue *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTION
 
-  exec->context().imp()->pushSwitch();
+  exec->context()->pushSwitch();
   Completion res = block->evalBlock(exec,v);
-  exec->context().imp()->popSwitch();
+  exec->context()->popSwitch();
 
   if ((res.complType() == Break) && ls.contains(res.target()))
     return Completion(Normal, res.value());
@@ -2236,10 +2236,10 @@ void SwitchNode::processFuncDecl(ExecState* exec)
 // ECMA 12.12
 Completion LabelNode::execute(ExecState *exec)
 {
-  if (!exec->context().imp()->seenLabels()->push(label))
+  if (!exec->context()->seenLabels()->push(label))
     return createErrorCompletion(exec, SyntaxError, "Duplicated label %s found.", label);
   Completion e = statement->execute(exec);
-  exec->context().imp()->seenLabels()->pop();
+  exec->context()->seenLabels()->pop();
 
   if ((e.complType() == Break) && (e.target() == label))
     return Completion(Normal, e.value());
@@ -2276,9 +2276,9 @@ Completion TryNode::execute(ExecState *exec)
   if (catchBlock && c.complType() == Throw) {
     JSObject *obj = new JSObject;
     obj->put(exec, exceptionIdent, c.value(), DontDelete);
-    exec->context().imp()->pushScope(obj);
+    exec->context()->pushScope(obj);
     c = catchBlock->execute(exec);
-    exec->context().imp()->popScope();
+    exec->context()->popScope();
   }
 
   if (finallyBlock) {
@@ -2334,7 +2334,7 @@ void FunctionBodyNode::processFuncDecl(ExecState *exec)
 // ECMA 13
 void FuncDeclNode::processFuncDecl(ExecState *exec)
 {
-  ContextImp *context = exec->context().imp();
+  Context *context = exec->context();
 
   // TODO: let this be an object with [[Class]] property "Function"
   FunctionImp *func = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
@@ -2374,7 +2374,7 @@ Completion FuncDeclNode::execute(ExecState *)
 // ECMA 13
 JSValue *FuncExprNode::evaluate(ExecState *exec)
 {
-  ContextImp *context = exec->context().imp();
+  Context *context = exec->context();
   bool named = !ident.isNull();
   JSObject *functionScopeObject = 0;
 
