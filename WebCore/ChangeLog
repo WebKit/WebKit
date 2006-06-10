@@ -256,9 +256,9 @@
         (WebCore::screenDepthPerComponent):
         (WebCore::screenIsMonochrome):
 
-2006-06-08  Justin Garcia  <justin.garcia@apple.com>
+2006-06-08  Levi Weintraub  <lweintraub@apple.com>
 
-        Reviewed by levi
+        Reviewed by justin
         
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=4468>
         Implement execCommand(Insert{Un}OrderedList)
