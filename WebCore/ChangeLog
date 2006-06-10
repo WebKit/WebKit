@@ -1,3 +1,12 @@
+2006-06-09  Geoffrey Garen  <ggaren@apple.com>
+
+        - Build fix after last JSC check-in (oops!)
+        
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame scopeChain]):
+        (-[WebCoreScriptCallFrame functionName]):
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+
 2006-06-09  David Hyatt  <hyatt@apple.com>
 
         Rename m_isFocused on the frame to m_isActive, since it isn't really
