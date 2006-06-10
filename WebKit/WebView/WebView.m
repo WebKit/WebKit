@@ -1638,7 +1638,7 @@ NS_DURING
         frameName = [decoder decodeObjectForKey:@"FrameName"];
         groupName = [decoder decodeObjectForKey:@"GroupName"];
         preferences = [decoder decodeObjectForKey:@"Preferences"];
-	result->_private->useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
+	useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
     } else {
         int version;
         [decoder decodeValueOfObjCType:@encode(int) at:&version];
