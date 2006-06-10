@@ -9,28 +9,72 @@
 
 <makefile>
 
-    <include file="../../webcore-base.bkl"/>
-    
-    <dll id="webcore-gdk" template="webcore_base,freetype,gtk">        
+		<option name="ENCODINGS_FILE">
+		<default-value>platform/gdk/gdk-encodings.txt</default-value>
+		<values>platform/gdk/gdk-encodings.txt</values>
+		</option>
+
+		<option name="FEATURE_DEFINES" never_empty="1" >
+		<!-- SVG_SUPPORT XPATH_SUPPORT-->
+		<default-value>XPATH_SUPPORT</default-value>
+		<values>XPATH_SUPPORT,SVG_SUPPORT</values>
+		</option>
+		<set var="FEATURE_DEFINES">XPATH_SUPPORT</set>
+		<set var="ENCODINGS_FILE">$(SRCDIR)/platform/gdk/gdk-encodings.txt</set>
+
+	<include file="../../webcore-base.bkl"/>
+
+   <action id=".DerivedSources">
+   <!-- This causes a full rebuild everytime
+     <is-phony/>
+	 -->
+        <command>bash -c "cd ../..; ./move-js-headers.sh"</command>
+        <command>
+		bash -c "cd ../..;\
+		export FEATURE_DEFINES=$(FEATURE_DEFINES);\
+		./make-generated-sources.sh $(ENCODINGS_FILE)"
+		</command>
+        <command>bash -c "touch .DerivedSources"</command>
+   </action>
+
+    <dll id="webcore-gdk" template="webcore_base,freetype,gtk,curl,cairo,sqlite3">        
+	<!-- FIXME: create a debug option and set these accordingly -->
+	<!-- check for undefined symbols for debugging reasons -->
+	<!--
+	<ldflags>W,undefined</ldflags>
+	-->
+
+		<pre-build-target>.DerivedSources</pre-build-target>
         <dirname>.</dirname>
         <pic>on</pic>
         <threading>multi</threading>
         <warnings>no</warnings>
 		<cxxflags>-w</cxxflags>
+        <include>$(SRCDIR)/platform/gdk</include>
 		<cflags>-w</cflags>
     	<define>BUILDING_GDK__</define>
     	<define>BUILDING_CAIRO__</define>
+		<include>platform/gdk</include>
+		<include>platform/cairo</include>
+	    <include>$(SRCDIR)/kcanvas/device/cairo</include>
+    	<define>XPATH_SUPPORT</define>
  
         <sources>		
+          platform/cairo/GraphicsContextCairo.cpp
+          platform/cairo/ImageCairo.cpp
+          platform/cairo/ImageSourceCairo.cpp
+          platform/gdk/CookieJarGdk.cpp
           platform/gdk/CursorGdk.cpp
-          platform/gdk/FontFtCairo.cpp
-          platform/gdk/FontPlatformDataFtCairo.cpp
+          platform/gdk/FontCacheGdk.cpp
+          platform/gdk/FontDataGdk.cpp
+          platform/gdk/FontGdk.cpp
+          platform/gdk/FontPlatformDataGdk.cpp
           platform/gdk/FrameGdk.cpp
-          platform/gdk/GtkGraphicsContext.cpp
-          platform/gdk/GtkIntPoint.cpp
-          platform/gdk/GtkIntRect.cpp
-          platform/gdk/GtkMouseEvent.cpp
+          platform/gdk/GlyphMapGdk.cpp
+          platform/gdk/KeyEventGdk.cpp
+          platform/gdk/MouseEventGdk.cpp
           platform/gdk/PageGdk.cpp
+          platform/gdk/TransferJobManager.cpp
           platform/gdk/RenderThemeGdk.cpp
           platform/gdk/ScreenGdk.cpp
           platform/gdk/ScrollViewGdk.cpp
@@ -38,9 +82,17 @@
           platform/gdk/SystemTimeLinux.cpp
           platform/gdk/TemporaryLinkStubs.cpp
           platform/gdk/TransferJobCurl.cpp
+          platform/gdk/WheelEventGdk.cpp
           platform/gdk/WidgetGdk.cpp
 		</sources>
-        <include>$(SRCDIR)/platform/gdk</include>
+
+		<clean-files>
+		.DerivedSources
+		rm -rf $(SRCDIR)/DerivedSources
+		rm -rf $(SRCDIR)/include/JavaScripCore
+		rm -rf $(SRCDIR)/Projects/gdk/obj-gnu
+		</clean-files>
+		<!--HACK block dependencies on the phony target -->
     </dll>
 </makefile>
 

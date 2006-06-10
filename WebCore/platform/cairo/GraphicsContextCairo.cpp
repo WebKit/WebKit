@@ -30,7 +30,11 @@
 #include "Font.h"
 #include "IntPointArray.h"
 #include "IntRect.h"
+#include <cairo.h>
+#include <math.h>
+#if WIN32
 #include <cairo-win32.h>
+#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -72,6 +76,7 @@ GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
     cairo_destroy(context);
 }
 
+#if WIN32
 GraphicsContext::GraphicsContext(HDC dc)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate)
@@ -79,13 +84,16 @@ GraphicsContext::GraphicsContext(HDC dc)
     cairo_surface_t* surface = cairo_win32_surface_create(dc);
     m_data->context = cairo_create(surface);
 }
+#endif
 
-GraphicsContext::GraphicsContext(cairo_t* context)
+#if PLATFORM(GDK)
+GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate)
 {
     m_data->context = cairo_reference(context);
 }
+#endif
 
 GraphicsContext::~GraphicsContext()
 {
@@ -412,6 +420,29 @@ void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int wi
 void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
 {
     // FIXME: Implement.
+}
+
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
+{
+    FloatRect result;
+    double x =frect.x();
+    double y = frect.y();
+    cairo_t* context = m_data->context;
+    cairo_user_to_device(context,&x,&y);
+    x = round(x);
+    y = round(y);
+    cairo_device_to_user(context,&x,&y);
+    result.setX((float)x);
+    result.setY((float)y);
+    x = frect.width();
+    y = frect.height();
+    cairo_user_to_device_distance(context,&x,&y);
+    x = round(x);
+    y = round(y);
+    cairo_device_to_user_distance(context,&x,&y);
+    result.setWidth((float)x);
+    result.setHeight((float)y);
+    return result; 
 }
 
 }

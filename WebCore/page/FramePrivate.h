@@ -37,6 +37,8 @@
 #include "kjs_proxy.h"
 #include "KWQKIOGlobal.h"
 #include <wtf/HashMap.h>
+#include "CSSMutableStyleDeclaration.h"
+#include "Decoder.h"
 
 namespace WebCore {
 

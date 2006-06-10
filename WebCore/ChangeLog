@@ -1,3 +1,42 @@
+2006-06-10  Geoffrey Garen  <ggaren@apple.com>
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8515
+        Linux porting compile bug
+        
+        Fix by Mike Emmel, Reviewed by Darin.
+
+        * Projects/gdk/webcore-gdk.bkl:
+        * WebCoreSources.bkl:
+        * css/maketokenizer:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLImageElement.h:
+        * icon/IconDatabase.cpp:
+        * make-generated-sources.sh:
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * platform/Cursor.h:
+        * platform/FontData.h:
+        (WebCore::FontData::getGlyphIndex):
+        * platform/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/GraphicsContext.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/ScrollView.h:
+        * platform/TransferJob.h:
+        (WebCore::TransferJob::getInternal):
+        * platform/TransferJobInternal.h:
+        (WebCore::TransferJobInternal::TransferJobInternal):
+        * platform/Widget.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        * webcore-base.bkl:
+        * xpath/impl/XPathValue.cpp:
+
 2006-06-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick and Dave Hyatt.

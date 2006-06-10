@@ -86,6 +86,20 @@ namespace WebCore {
         class ScrollViewPrivate;
         ScrollViewPrivate* m_data;
 #endif
+
+#if  PLATFORM(GDK)
+        void updateView(const IntRect&, bool now = false);
+        virtual void setDrawable(GdkDrawable* drawable);
+        virtual void setFrameGeometry(const IntRect&);
+        ScrollView();
+        ~ScrollView();
+    private:
+        void updateScrollBars();
+        IntSize maximumScroll() const;
+        int updateScrollInfo(short type, int current, int max, int pageSize);
+        class ScrollViewPrivate;
+        ScrollViewPrivate* m_data;
+#endif
     };
 
 }

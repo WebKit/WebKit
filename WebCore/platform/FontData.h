@@ -78,6 +78,11 @@ public:
     void setIsMLangFont() { m_isMLangFont = true; }
 #endif
 
+#if PLATFORM(GDK)
+    void setFont(cairo_t*) const;
+    Glyph getGlyphIndex(UChar c) const { return m_font.index(c); }
+#endif
+
 private:
     void platformInit();
     void platformDestroy();

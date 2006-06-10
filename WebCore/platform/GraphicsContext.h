@@ -40,6 +40,8 @@ typedef struct CGContext PlatformGraphicsContext;
 #elif WIN32
 typedef struct HDC__* HDC;
 typedef struct _cairo PlatformGraphicsContext;
+#elif PLATFORM(GDK)
+typedef struct _cairo PlatformGraphicsContext;
 #else
 typedef void PlatformGraphicsContext;
 #endif

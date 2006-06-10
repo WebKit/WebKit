@@ -43,6 +43,10 @@ typedef struct HWND__ *HWND;
 typedef struct HINSTANCE__ *HINSTANCE;
 #endif
 
+#if PLATFORM(GDK)
+typedef struct _GdkDrawable GdkDrawable;
+#endif
+
 namespace WebCore {
 
     class Cursor;
@@ -130,6 +134,12 @@ namespace WebCore {
         void setWindowHandle(HWND);
         // The global DLL or application instance used for all WebCore windows.
         static HINSTANCE instanceHandle;
+#endif
+
+#if PLATFORM(GDK)
+      Widget(GdkDrawable* drawable);
+      virtual void setDrawable(GdkDrawable* drawable);
+      GdkDrawable* drawable() const;
 #endif
 
 #if __APPLE__

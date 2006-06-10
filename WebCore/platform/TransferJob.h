@@ -89,6 +89,10 @@ public:
     friend LRESULT __stdcall TransferJobWndProc(HWND, unsigned message, WPARAM, LPARAM);
 #endif
 
+#if PLATFORM(GDK)
+    TransferJobInternal * getInternal() { return d;}
+#endif
+
     void cancel();
     
     TransferJobClient* client() const;

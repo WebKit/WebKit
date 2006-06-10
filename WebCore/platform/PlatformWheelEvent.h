@@ -36,6 +36,10 @@ class NSEvent;
 #endif
 #endif
 
+#if PLATFORM(GDK)
+typedef union _GdkEvent GdkEvent;
+#endif
+
 namespace WebCore {
 
     class PlatformWheelEvent {
@@ -60,6 +64,10 @@ namespace WebCore {
 
 #ifdef __APPLE__
         PlatformWheelEvent(NSEvent*);
+#endif
+
+#if PLATFORM(GDK)
+        PlatformWheelEvent(GdkEvent*);
 #endif
 
     private:

@@ -774,10 +774,13 @@ protected:
 public:
   friend class FrameMac;
   friend class FrameWin;
+#if PLATFORM(GDK)
+  friend class FrameGdk;
+#endif
 
   RenderObject::NodeInfo nodeInfoAtPoint(const IntPoint&, bool allowShadowContent);
   bool hasSelection();
-  String Frame::documentTypeString() const;
+  String documentTypeString() const;
 
   void checkEmitLoadEvent();
   bool didOpenURL(const KURL&);

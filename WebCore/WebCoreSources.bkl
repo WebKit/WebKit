@@ -7,11 +7,11 @@
 
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_DERIVEDSOURCES">
-		
 		DerivedSources/WebCore/CharsetData.cpp
 		DerivedSources/WebCore/ColorData.c
 		DerivedSources/WebCore/CSSGrammar.cpp
 		DerivedSources/WebCore/HTMLEntityNames.c
+		DerivedSources/WebCore/HTMLNames.cpp
 		DerivedSources/WebCore/JSAttr.cpp
 		DerivedSources/WebCore/JSCanvasGradient.cpp
 		DerivedSources/WebCore/JSCanvasPattern.cpp
@@ -20,16 +20,63 @@
 		DerivedSources/WebCore/JSCounter.cpp
 		DerivedSources/WebCore/JSCSSPrimitiveValue.cpp
 		DerivedSources/WebCore/JSCSSRule.cpp
+		DerivedSources/WebCore/JSCSSRuleList.cpp
 		DerivedSources/WebCore/JSCSSStyleDeclaration.cpp
 		DerivedSources/WebCore/JSCSSValue.cpp
+		DerivedSources/WebCore/JSCSSValueList.cpp
 		DerivedSources/WebCore/JSDocument.cpp
+		DerivedSources/WebCore/JSDocumentFragment.cpp
 		DerivedSources/WebCore/JSDocumentType.cpp
 		DerivedSources/WebCore/JSDOMImplementation.cpp
 		DerivedSources/WebCore/JSDOMWindow.cpp
 		DerivedSources/WebCore/JSElement.cpp
 		DerivedSources/WebCore/JSEntity.cpp
 		DerivedSources/WebCore/JSEvent.cpp
+		DerivedSources/WebCore/JSHTMLAnchorElement.cpp
+		DerivedSources/WebCore/JSHTMLAppletElement.cpp
+		DerivedSources/WebCore/JSHTMLAreaElement.cpp
+		DerivedSources/WebCore/JSHTMLBaseElement.cpp
+		DerivedSources/WebCore/JSHTMLBaseFontElement.cpp
+		DerivedSources/WebCore/JSHTMLBlockquoteElement.cpp
+		DerivedSources/WebCore/JSHTMLBodyElement.cpp
+		DerivedSources/WebCore/JSHTMLBRElement.cpp
+		DerivedSources/WebCore/JSHTMLButtonElement.cpp
 		DerivedSources/WebCore/JSHTMLCanvasElement.cpp
+		DerivedSources/WebCore/JSHTMLDirectoryElement.cpp
+		DerivedSources/WebCore/JSHTMLDivElement.cpp
+		DerivedSources/WebCore/JSHTMLDListElement.cpp
+		DerivedSources/WebCore/JSHTMLDocument.cpp
+		DerivedSources/WebCore/JSHTMLElement.cpp
+		DerivedSources/WebCore/JSHTMLFieldSetElement.cpp
+		DerivedSources/WebCore/JSHTMLFontElement.cpp
+		DerivedSources/WebCore/JSHTMLFormElement.cpp
+		DerivedSources/WebCore/JSHTMLHeadElement.cpp
+		DerivedSources/WebCore/JSHTMLHeadingElement.cpp
+		DerivedSources/WebCore/JSHTMLHRElement.cpp
+		DerivedSources/WebCore/JSHTMLHtmlElement.cpp
+		DerivedSources/WebCore/JSHTMLImageElement.cpp
+		DerivedSources/WebCore/JSHTMLInputElement.cpp
+		DerivedSources/WebCore/JSHTMLIsIndexElement.cpp
+		DerivedSources/WebCore/JSHTMLLabelElement.cpp
+		DerivedSources/WebCore/JSHTMLLegendElement.cpp
+		DerivedSources/WebCore/JSHTMLLIElement.cpp
+		DerivedSources/WebCore/JSHTMLLinkElement.cpp
+		DerivedSources/WebCore/JSHTMLMapElement.cpp
+		DerivedSources/WebCore/JSHTMLMenuElement.cpp
+		DerivedSources/WebCore/JSHTMLMetaElement.cpp
+		DerivedSources/WebCore/JSHTMLModElement.cpp
+		DerivedSources/WebCore/JSHTMLOListElement.cpp
+		DerivedSources/WebCore/JSHTMLOptGroupElement.cpp
+		DerivedSources/WebCore/JSHTMLOptionElement.cpp
+		DerivedSources/WebCore/JSHTMLParagraphElement.cpp
+		DerivedSources/WebCore/JSHTMLParamElement.cpp
+		DerivedSources/WebCore/JSHTMLPreElement.cpp
+		DerivedSources/WebCore/JSHTMLQuoteElement.cpp
+		DerivedSources/WebCore/JSHTMLScriptElement.cpp
+		DerivedSources/WebCore/JSHTMLStyleElement.cpp
+		DerivedSources/WebCore/JSHTMLTextAreaElement.cpp
+		DerivedSources/WebCore/JSHTMLTitleElement.cpp
+		DerivedSources/WebCore/JSHTMLUListElement.cpp
 		DerivedSources/WebCore/JSKeyboardEvent.cpp
 		DerivedSources/WebCore/JSMouseEvent.cpp
 		DerivedSources/WebCore/JSMutationEvent.cpp
@@ -45,19 +92,17 @@
 		DerivedSources/WebCore/JSXPathExpression.cpp
 		DerivedSources/WebCore/JSXPathNSResolver.cpp
 		DerivedSources/WebCore/JSXPathResult.cpp
-		DerivedSources/WebCore/JSWheelEvent.cpp
 		DerivedSources/WebCore/UserAgentStyleSheetsData.cpp
+		DerivedSources/WebCore/XLinkNames.cpp
 		DerivedSources/WebCore/XPathGrammar.cpp
-
 	</set>
+
 	<set append="1" var="WEBCORE_SOURCES_KHTML">
-		
-
 	</set>
+
 	<set append="1" var="WEBCORE_SOURCES_MISC">
-		
-
 	</set>
+
 	<set append="1" var="WEBCORE_SOURCES_PAGE">
 		
 		page/DOMWindow.cpp
@@ -80,6 +125,7 @@
 		loader/Decoder.cpp
 		loader/DocLoader.cpp
 		loader/FormData.cpp
+		loader/ImageDocument.cpp
 		loader/loader.cpp
 		loader/Request.cpp
 		loader/TextDocument.cpp
@@ -100,7 +146,12 @@
 		platform/FloatRect.cpp
 		platform/FloatSize.cpp
 		platform/Font.cpp
+		platform/FontCache.cpp
+		platform/FontData.cpp
+		platform/FontFallbackList.cpp
 		platform/FontFamily.cpp
+		platform/GlyphMap.cpp
+		platform/GlyphWidthMap.cpp
 		platform/GraphicsContext.cpp
 		platform/GraphicsTypes.cpp
 		platform/Image.cpp
@@ -122,9 +173,13 @@
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_WIN">
 		
+		platform/win/CookieJarWin.cpp
 		platform/win/CursorWin.cpp
+		platform/win/FontCacheWin.cpp
+		platform/win/FontDataWin.cpp
 		platform/win/FontPlatformDataWin.cpp
 		platform/win/FontWin.cpp
+		platform/win/GlyphMapWin.cpp
 		platform/win/IntPointWin.cpp
 		platform/win/IntRectWin.cpp
 		platform/win/IntSizeWin.cpp
@@ -149,6 +204,19 @@
 		platform/image-decoders/gif/GIFImageReader.cpp
 
 	</set>
+
+	<set append="1" var="WEBCORE_SOURCES_XBM">
+	 	platform/image-decoders/xbm/XBMImageDecoder.cpp
+	</set>
+
+	<set append="1" var="WEBCORE_SOURCES_ICO">
+	 	platform/image-decoders/ico/ICOImageDecoder.cpp
+	</set>
+
+	<set append="1" var="WEBCORE_SOURCES_BMP">
+	 	platform/image-decoders/bmp/BMPImageDecoder.cpp
+	</set>
+
 	<set append="1" var="WEBCORE_SOURCES_PNG">
 		
 		platform/image-decoders/png/png.c
@@ -171,6 +239,7 @@
 		platform/image-decoders/png/pngwutil.c
 
 	</set>
+
 	<set append="1" var="WEBCORE_SOURCES_ZLIB">
 		
 		platform/image-decoders/zlib/adler32.c
@@ -250,7 +319,7 @@
 		platform/cairo/pixman/src/renderedge.c
 
 	</set>
-	<set append="1" var="WEBCORE_SOURCES_CAIRO">
+	<set append="1" var="WEBCORE_SOURCES_CAIRO_CAIRO">
 		
 		platform/cairo/cairo/src/cairo-arc.c
 		platform/cairo/cairo/src/cairo-array.c
@@ -294,54 +363,94 @@
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_CSS">
 		
-		css/css_base.cpp
-		css/css_ruleimpl.cpp
-		css/css_stylesheetimpl.cpp
-		css/css_valueimpl.cpp
+		css/CSSBorderImageValue.cpp
 		css/CSSComputedStyleDeclaration.cpp
+		css/CSSFontFaceRule.cpp
 		css/csshelper.cpp
+		css/CSSImageValue.cpp
+		css/CSSImportRule.cpp
+		css/CSSInheritedValue.cpp
+		css/CSSInitialValue.cpp
+		css/CSSMediaRule.cpp
+		css/CSSMutableStyleDeclaration.cpp
+		css/CSSPageRule.cpp
 		css/cssparser.cpp
+		css/CSSPrimitiveValue.cpp
+		css/CSSProperty.cpp
+		css/CSSRule.cpp
+		css/CSSRuleList.cpp
+		css/CSSSelector.cpp
+		css/CSSStyleDeclaration.cpp
+		css/CSSStyleRule.cpp
 		css/cssstyleselector.cpp
+		css/CSSStyleSheet.cpp
+		css/CSSValueList.cpp
+		css/FontFamilyValue.cpp
+		css/FontValue.cpp
+		css/MediaList.cpp
+		css/ShadowValue.cpp
+		css/StyleBase.cpp
+		css/StyleList.cpp
+		css/StyleSheet.cpp
+		css/StyleSheetList.cpp
 
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_RENDERING">
 		
+		rendering/AutoTableLayout.cpp
 		rendering/bidi.cpp
 		rendering/break_lines.cpp
+		rendering/EllipsisBox.cpp
+		rendering/FixedTableLayout.cpp
+		rendering/InlineBox.cpp
+		rendering/InlineFlowBox.cpp
 		rendering/InlineTextBox.cpp
-		rendering/render_button.cpp
-		rendering/render_form.cpp
-		rendering/render_frames.cpp
-		rendering/render_line.cpp
-		rendering/render_list.cpp
-		rendering/render_replaced.cpp
+		rendering/ListMarkerBox.cpp
 		rendering/render_style.cpp
 		rendering/RenderApplet.cpp
 		rendering/RenderArena.cpp
 		rendering/RenderBlock.cpp
 		rendering/RenderBox.cpp
 		rendering/RenderBR.cpp
-		rendering/RenderCanvas.cpp
+		rendering/RenderButton.cpp
 		rendering/RenderContainer.cpp
+		rendering/RenderFieldset.cpp
+		rendering/RenderFileButton.cpp
 		rendering/RenderFlexibleBox.cpp
 		rendering/RenderFlow.cpp
+		rendering/RenderView.cpp
+		rendering/RenderFormElement.cpp
+		rendering/RenderFrame.cpp
+		rendering/RenderFrameSet.cpp
 		rendering/RenderHTMLCanvas.cpp
 		rendering/RenderImage.cpp
+		rendering/RenderImageButton.cpp
 		rendering/RenderInline.cpp
+		rendering/RenderLabel.cpp
 		rendering/RenderLayer.cpp
+		rendering/RenderLegend.cpp
+		rendering/RenderLineEdit.cpp
+		rendering/RenderListItem.cpp
+		rendering/RenderListMarker.cpp
 		rendering/RenderObject.cpp
+		rendering/RenderPart.cpp
+		rendering/RenderPartObject.cpp
+		rendering/RenderReplaced.cpp
+		rendering/RenderSelect.cpp
+		rendering/RenderSlider.cpp
 		rendering/RenderTable.cpp
 		rendering/RenderTableCell.cpp
 		rendering/RenderTableCol.cpp
 		rendering/RenderTableRow.cpp
 		rendering/RenderTableSection.cpp
 		rendering/RenderText.cpp
+		rendering/RenderTextArea.cpp
 		rendering/RenderTextField.cpp
 		rendering/RenderTextFragment.cpp
 		rendering/RenderTheme.cpp
-		<!-- rendering/RenderThemeWin.cpp -->
 		rendering/RenderTreeAsText.cpp
-		rendering/table_layout.cpp
+		rendering/RenderWidget.cpp
+		rendering/RootInlineBox.cpp
 
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_XPATH">
@@ -388,27 +497,40 @@
 		dom/DocumentFragment.cpp
 		dom/DocumentType.cpp
 		dom/dom2_eventsimpl.cpp
-		dom/dom2_traversalimpl.cpp
-		dom/dom_xmlimpl.cpp
 		dom/DOMImplementation.cpp
 		dom/EditingText.cpp
 		dom/Element.cpp
+		dom/Entity.cpp
+		dom/EntityReference.cpp
 		dom/EventNames.cpp
 		dom/EventTargetNode.cpp
 		dom/MappedAttribute.cpp
 		dom/NamedAttrMap.cpp
 		dom/NamedMappedAttrMap.cpp
+		dom/NodeIterator.cpp
 		dom/NameNodeList.cpp
 		dom/Node.cpp
+		dom/NodeFilter.cpp
+		dom/NodeFilterCondition.cpp
 		dom/NodeList.cpp
+		dom/Notation.cpp
 		dom/Position.cpp
+		dom/ProcessingInstruction.cpp
 		dom/QualifiedName.cpp
 		dom/Range.cpp
 		dom/StyledElement.cpp
 		dom/Text.cpp
+		dom/Traversal.cpp
+		dom/TreeWalker.cpp
 		dom/xml_tokenizer.cpp
 
 	</set>
+
+	<set append="1" var="WEBCORE_SOURCES_ICON">
+
+		icon/IconDatabase.cpp
+	</set>
+
 	<set append="1" var="WEBCORE_SOURCES_BRIDGE">
 		
 
@@ -433,6 +555,7 @@
 		editing/HTMLInterchange.cpp
 		editing/InsertIntoTextNodeCommand.cpp
 		editing/InsertLineBreakCommand.cpp
+		editing/InsertListCommand.cpp
 		editing/InsertNodeBeforeCommand.cpp
 		editing/InsertParagraphSeparatorCommand.cpp
 		editing/InsertTextCommand.cpp
@@ -440,7 +563,7 @@
 		editing/JSEditor.cpp
 		editing/markup.cpp
 		editing/MergeIdenticalElementsCommand.cpp
-		editing/ModifySelectionListLevelCommand.cpp
+		editing/ModifySelectionListLevel.cpp
 		editing/MoveSelectionCommand.cpp
 		editing/RebalanceWhitespaceCommand.cpp
 		editing/RemoveCSSPropertyCommand.cpp
@@ -470,40 +593,77 @@
 		html/CanvasRenderingContext2D.cpp
 		html/CanvasStyle.cpp
 		html/FormDataList.cpp
-		html/html_baseimpl.cpp
-		html/html_blockimpl.cpp
-		html/html_headimpl.cpp
-		html/html_imageimpl.cpp
-		html/html_inlineimpl.cpp
-		html/html_listimpl.cpp
-		html/html_objectimpl.cpp
-		html/html_tableimpl.cpp
+		html/HTMLAnchorElement.cpp
+		html/HTMLAppletElement.cpp
+		html/HTMLAreaElement.cpp
+		html/HTMLBaseElement.cpp
 		html/HTMLBaseFontElement.cpp
+		html/HTMLBlockquoteElement.cpp
+		html/HTMLBodyElement.cpp
+		html/HTMLBRElement.cpp
 		html/HTMLButtonElement.cpp
 		html/HTMLCanvasElement.cpp
 		html/HTMLCollection.cpp
+		html/HTMLDirectoryElement.cpp
+		html/HTMLDivElement.cpp
+		html/HTMLDListElement.cpp
 		html/HTMLDocument.cpp
 		html/HTMLElement.cpp
 		html/HTMLElementFactory.cpp
+		html/HTMLEmbedElement.cpp
 		html/HTMLFieldSetElement.cpp
+		html/HTMLFontElement.cpp
 		html/HTMLFormCollection.cpp
 		html/HTMLFormElement.cpp
+		html/HTMLFrameElement.cpp
+		html/HTMLFrameSetElement.cpp
 		html/HTMLGenericFormElement.cpp
+		html/HTMLHeadElement.cpp
+		html/HTMLHeadingElement.cpp
+		html/HTMLHRElement.cpp
+		html/HTMLHtmlElement.cpp
+		html/HTMLIFrameElement.cpp
+		html/HTMLImageElement.cpp
+		html/HTMLImageLoader.cpp
 		html/HTMLInputElement.cpp
 		html/HTMLIsIndexElement.cpp
 		html/HTMLKeygenElement.cpp
 		html/HTMLLabelElement.cpp
 		html/HTMLLegendElement.cpp
+		html/HTMLLIElement.cpp
+		html/HTMLLinkElement.cpp
+		html/HTMLMapElement.cpp
+		html/HTMLMarqueeElement.cpp
+		html/HTMLMenuElement.cpp
+		html/HTMLMetaElement.cpp
+		html/HTMLModElement.cpp
 		html/HTMLNameCollection.cpp
-		html/HTMLNames.cpp
+		html/HTMLObjectElement.cpp
+		html/HTMLOListElement.cpp
 		html/HTMLOptGroupElement.cpp
 		html/HTMLOptionElement.cpp
 		html/HTMLOptionsCollection.cpp
+		html/HTMLParagraphElement.cpp
+		html/HTMLParamElement.cpp
 		html/HTMLParser.cpp
+		html/HTMLPlugInElement.cpp
+		html/HTMLPreElement.cpp
+		html/HTMLQuoteElement.cpp
+		html/HTMLScriptElement.cpp
 		html/HTMLSelectElement.cpp
+		html/HTMLStyleElement.cpp
+		html/HTMLTableCaptionElement.cpp
+		html/HTMLTableCellElement.cpp
+		html/HTMLTableColElement.cpp
+		html/HTMLTableElement.cpp
+		html/HTMLTablePartElement.cpp
+		html/HTMLTableRowElement.cpp
+		html/HTMLTableSectionElement.cpp
 		html/HTMLTextAreaElement.cpp
 		html/HTMLTextFieldInnerElement.cpp
+		html/HTMLTitleElement.cpp
 		html/HTMLTokenizer.cpp
+		html/HTMLUListElement.cpp
 
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_BINDINGS">
@@ -512,9 +672,12 @@
 	</set>
 	<set append="1" var="WEBCORE_SOURCES_JS">
 		
-		bindings/js/JSCanvasRenderingContext2DBase.cpp
+		bindings/js/JSCanvasRenderingContext2DCustom.cpp
 		bindings/js/JSDOMParser.cpp
 		bindings/js/JSHTMLElementWrapperFactory.cpp
+		bindings/js/JSHTMLFormElementCustom.cpp
+		bindings/js/JSHTMLInputElementBase.cpp
+		bindings/js/JSHTMLOptionElementConstructor.cpp
 		bindings/js/JSXMLHttpRequest.cpp
 		bindings/js/JSXMLSerializer.cpp
 		bindings/js/JSXSLTProcessor.cpp
@@ -527,6 +690,6 @@
 		bindings/js/kjs_proxy.cpp
 		bindings/js/kjs_traversal.cpp
 		bindings/js/kjs_window.cpp
-
 	</set>
+
 </makefile>

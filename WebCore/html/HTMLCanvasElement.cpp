@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "RenderHTMLCanvas.h"
+#include <math.h>
 
 namespace WebCore {
 

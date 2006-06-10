@@ -30,6 +30,7 @@
 #include "HTMLImageLoader.h"
 
 namespace WebCore {
+    class HTMLFormElement;
 
 class HTMLImageElement : public HTMLElement {
     friend class HTMLFormElement;

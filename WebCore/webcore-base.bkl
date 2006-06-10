@@ -47,8 +47,12 @@ Base settings shared by all Bakefile-based ports.
 		$(WEBCORE_SOURCES_LOADER)
 		$(WEBCORE_SOURCES_PLATFORM)
 		$(WEBCORE_SOURCES_IMAGE-DECODERS)
+		$(WEBCORE_SOURCES_BMP)
 		$(WEBCORE_SOURCES_GIF)
+		$(WEBCORE_SOURCES_ICO)
+		$(WEBCORE_SOURCES_ICON)
 		$(WEBCORE_SOURCES_PNG)
+		$(WEBCORE_SOURCES_XBM)
 		$(WEBCORE_SOURCES_ZLIB)
 		$(WEBCORE_SOURCES_JPEG)
 		$(WEBCORE_SOURCES_CSS)
@@ -60,6 +64,8 @@ Base settings shared by all Bakefile-based ports.
 		$(WEBCORE_SOURCES_HTML)
 		$(WEBCORE_SOURCES_BINDINGS)
 		$(WEBCORE_SOURCES_JS)
+		$(WEBCORE_SOURCES_XPATH)
+		$(WEBCORE_SOURCES_IMPL)
 	</set>
 
     <set var="BUILDDIR">obj-$(FORMAT)</set>
@@ -88,25 +94,31 @@ Base settings shared by all Bakefile-based ports.
         <include>$(SRCDIR)/page</include>
         <include>$(SRCDIR)/platform</include>
         <include>$(SRCDIR)/platform/image-decoders</include>
+        <include>$(SRCDIR)/platform/image-decoders/bmp</include>
         <include>$(SRCDIR)/platform/image-decoders/gif</include>
+        <include>$(SRCDIR)/platform/image-decoders/ico</include>
         <include>$(SRCDIR)/platform/image-decoders/jpeg</include>
+        <include>$(SRCDIR)/platform/image-decoders/xbm</include>
         <include>$(SRCDIR)/platform/image-decoders/png</include>
         <include>$(SRCDIR)/platform/image-decoders/zlib</include>
         <include>$(SRCDIR)/rendering</include>
         <include>$(SRCDIR)/xml</include>
         <include>$(SRCDIR)/xpath</include>
         <include>$(SRCDIR)/xpath/impl</include>
+        <include>$(SRCDIR)/kcanvas</include>
+        <include>$(SRCDIR)/kcanvas/device</include>
         
         <sources>$(WEBCORE_BASE_SOURCES)</sources>
 
 
 <!-- HACK ALERT! FIX THESE LATER!! -->
+      <if cond="PLATFORM_MACOSX=='1'">
         <include>$(SRCDIR)/platform/mac</include> <!-- when building on Mac, ExtraCFEncodings.h is needed -->      
+	  </if>
 <!-- END HACKS -->
 
         <define>APPLE_CHANGES=1</define>
         <define>KHTML_XSLT=1</define>
-        <define>XPATH_SUPPORT=1</define>
 
         <!-- TODO: is there a Linux-specific platform define? -->
         <if cond="PLATFORM_UNIX=='1'">
@@ -126,9 +138,6 @@ Base settings shared by all Bakefile-based ports.
         <if cond="FORMAT=='gnu'">
             <!-- FIXME: we need proper configure checks -->
             <define>HAVE_FUNC_ISNAN</define>
-            <!-- check for undefined symbols for debugging reasons -->
-            <!-- FIXME: create a debug option and set these accordingly -->
-            <ldflags>-Wl,--no-undefined</ldflags>
         </if>
 
         <if cond="PLATFORM_WIN32=='1'">

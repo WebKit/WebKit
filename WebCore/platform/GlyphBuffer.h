@@ -36,7 +36,7 @@
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) || PLATFORM(GDK)
 #include <cairo.h>
 #include "FloatSize.h"
 #endif
@@ -51,7 +51,7 @@ class FontData;
 #if __APPLE__
 typedef Glyph GlyphBufferGlyph;
 typedef CGSize GlyphBufferAdvance;
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) || PLATFORM(GDK)
 typedef cairo_glyph_t GlyphBufferGlyph;
 typedef FloatSize GlyphBufferAdvance;
 #endif
@@ -95,7 +95,7 @@ public:
     {
 #if __APPLE__
         return m_glyphs[index];
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) || PLATFORM(GDK)
         return m_glyphs[index].index;
 #endif
     }
@@ -104,7 +104,7 @@ public:
     {
 #if __APPLE__
         return m_advances[index].width;
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) || PLATFORM(GDK)
         return m_advances[index].width();
 #endif
     }
@@ -118,7 +118,7 @@ public:
         advance.width = width;
         advance.height = 0;
         m_advances.append(advance);
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) || PLATFORM(GDK)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
         cairoGlyph.y = 0;

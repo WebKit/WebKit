@@ -42,6 +42,10 @@ typedef unsigned WPARAM;
 typedef long LPARAM;
 #endif
 
+#if PLATFORM(GDK)
+typedef union _GdkEvent GdkEvent;
+#endif
+
 namespace WebCore {
 
     // These button numbers match the one used in the DOM API.
@@ -74,6 +78,9 @@ namespace WebCore {
 #endif
 #if WIN32
         PlatformMouseEvent(HWND, WPARAM, LPARAM, int clickCount);
+#endif
+#if PLATFORM(GDK) 
+        PlatformMouseEvent(GdkEvent*);
 #endif
 
     private:

@@ -1,7 +1,8 @@
 <?xml version="1.0" ?>
 <makefile>
 	<set append="1" var="JSCORE_SOURCES_KJS">
-		
+
+		DerivedSources/JavaScriptCore/grammar.cpp	
 		kjs/array_object.cpp
 		kjs/bool_object.cpp
 		kjs/collector.cpp
@@ -12,7 +13,6 @@
 		kjs/fpconst.cpp
 		kjs/function.cpp
 		kjs/function_object.cpp
-		<!-- ./grammarWrapper.cpp -->
 		kjs/identifier.cpp
 		kjs/internal.cpp
 		kjs/interpreter.cpp

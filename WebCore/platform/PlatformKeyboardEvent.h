@@ -40,6 +40,11 @@ typedef unsigned    WPARAM;
 typedef long        LPARAM;
 #endif
 
+#if PLATFORM(GDK)
+typedef union _GdkEvent GdkEvent;
+#endif
+
+
 namespace WebCore {
 
     class PlatformKeyboardEvent {
@@ -62,6 +67,10 @@ namespace WebCore {
 
 #ifdef WIN32
         PlatformKeyboardEvent(HWND, WPARAM, LPARAM);
+#endif
+
+#if PLATFORM(GDK)
+        PlatformKeyboardEvent(GdkEvent*);
 #endif
 
     private:

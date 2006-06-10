@@ -28,6 +28,8 @@
 
 #ifdef WIN32
 #include <windows.h>
+#elif PLATFORM(GDK)
+#include <gdk/gdk.h>
 #endif
 
 #ifdef __APPLE__
@@ -46,6 +48,8 @@ namespace WebCore {
     typedef HCURSOR PlatformCursor;
 #elif defined(__APPLE__)
     typedef NSCursor* PlatformCursor;
+#elif PLATFORM(GDK)
+    typedef GdkCursor* PlatformCursor;
 #else
     typedef void* PlatformCursor;
 #endif

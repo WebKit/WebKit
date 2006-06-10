@@ -103,6 +103,9 @@ JavaScriptCore Bakefile project file.
             $(JSCORE_SOURCES_PCRE)
             $(JSCORE_SOURCES_KJS)
         </sources>
+        <if cond="PLATFORM_WIN32=='1'">
+            $(JSCORE_SOURCES_WIN)
+		</if>
 		<install-to>$(BUILDDIR)</install-to>
     </lib>
 

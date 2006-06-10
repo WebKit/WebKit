@@ -25,12 +25,13 @@
  */
 
 #include "config.h"
-#include "XPathValue.h"
 
 #if XPATH_SUPPORT
 
+#include "XPathValue.h"
 #include "Node.h"
 #include <wtf/MathExtras.h>
+#include <math.h>
 
 namespace WebCore {
 namespace XPath {

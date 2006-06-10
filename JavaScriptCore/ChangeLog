@@ -1,3 +1,14 @@
+2006-06-10  Geoffrey Garen  <ggaren@apple.com>
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8515
+        Linux porting compile bug
+        
+        Fix by Mike Emmel, Reviewed by Darin.
+
+        * JavaScriptCoreSources.bkl:
+        * jscore.bkl:
+        * wtf/Platform.h:
+
 2006-06-09  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix -- I think :).
