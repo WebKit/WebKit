@@ -125,10 +125,13 @@ typedef enum {
 */
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script;
 
+// Support for displaying multiple text matches.
 // These methods might end up moving into a protocol, so different document types can specify
 // whether or not they implement the protocol. For now we'll just deal with HTML.
-- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag;
-- (void)clearHighlightedMatches;
+// These methods are still in flux; don't rely on them yet.
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight;
+- (void)unmarkAllTextMatches;
+- (NSArray *)rectsForTextMatches;
 
 @end
 

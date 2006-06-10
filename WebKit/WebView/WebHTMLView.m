@@ -1785,15 +1785,29 @@ static WebHTMLView *lastHitView = nil;
     [[self _bridge] setIsActive:isActive];
 }
 
-- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag
 {
-    [[self _bridge] setMarkedTextMatchesAreHighlighted:YES];
     return [[self _bridge] markAllMatchesForText:string caseSensitive:caseFlag];
 }
 
-- (void)clearHighlightedMatches
+- (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
+{
+    [[self _bridge] setMarkedTextMatchesAreHighlighted:newValue];
+}
+
+- (BOOL)markedTextMatchesAreHighlighted
+{
+    return [[self _bridge] markedTextMatchesAreHighlighted];
+}
+
+- (void)unmarkAllTextMatches
 {
     return [[self _bridge] unmarkAllTextMatches];
+}
+
+- (NSArray *)rectsForTextMatches
+{
+    return [[self _bridge] rectsForTextMatches];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard

@@ -2635,7 +2635,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[[self mainFrame] _bridge] aeDescByEvaluatingJavaScriptFromString:script];
 }
 
-- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight
 {
     WebFrame *frame = [self mainFrame];
     unsigned matchCount = 0;
@@ -2643,7 +2643,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         id <WebDocumentView> view = [[frame frameView] documentView];
         // FIXME: introduce a protocol, or otherwise make this work with other types
         if ([view isKindOfClass:[WebHTMLView class]])
-            matchCount += [(WebHTMLView *)view highlightAllMatchesForString:string caseSensitive:caseFlag];
+            [(WebHTMLView *)view setMarkedTextMatchesAreHighlighted:highlight];
+            matchCount += [(WebHTMLView *)view markAllMatchesForText:string caseSensitive:caseFlag];
 
         frame = incrementFrame(frame, YES, NO);
     } while (frame);
@@ -2651,17 +2652,33 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return matchCount;
 }
 
-- (void)clearHighlightedMatches
+- (void)unmarkAllTextMatches
 {
     WebFrame *frame = [self mainFrame];
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];
         // FIXME: introduce a protocol, or otherwise make this work with other types
         if ([view isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)view clearHighlightedMatches];
-
+            [(WebHTMLView *)view unmarkAllTextMatches];
+        
         frame = incrementFrame(frame, YES, NO);
     } while (frame);
+}
+
+- (NSArray *)rectsForTextMatches
+{
+    NSMutableArray *result = [NSMutableArray array];
+    WebFrame *frame = [self mainFrame];
+    do {
+        id <WebDocumentView> view = [[frame frameView] documentView];
+        // FIXME: introduce a protocol, or otherwise make this work with other types
+        if ([view isKindOfClass:[WebHTMLView class]])
+            [result addObjectsFromArray:[(WebHTMLView *)view rectsForTextMatches]];
+        
+        frame = incrementFrame(frame, YES, NO);
+    } while (frame);
+    
+    return result;
 }
 
 @end

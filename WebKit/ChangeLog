@@ -1,3 +1,35 @@
+2006-06-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick and Dave Hyatt.
+
+        WebKit support for computing but not highlighting rects for text matches.
+
+        * WebView/WebHTMLViewPrivate.h:
+        added markedTextMatchesAreHighlighted/setMarkedTextMatchesAreHighlighted and
+        rectsForTextMatches, and renamed related methods for clarity/consistency
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView markAllMatchesForText:caseSensitive:]):
+        renamed, calls similarly-renamed method
+        (-[WebHTMLView setMarkedTextMatchesAreHighlighted:]):
+        new method, calls through to bridge
+        (-[WebHTMLView markedTextMatchesAreHighlighted]):
+        ditto
+        (-[WebHTMLView unmarkAllTextMatches]):
+        renamed
+        (-[WebHTMLView rectsForTextMatches]):
+        new method, calls through to bridge
+
+        * WebView/WebViewPrivate.h:
+        added rectsForTextMatches, renamed other methods (and added highlight: parameter)
+        * WebView/WebView.m:
+        (-[WebView markAllMatchesForText:caseSensitive:highlight:]):
+        renamed for clarity/consistency, and now has highlight: parameter, which is passed down
+        (-[WebView unmarkAllTextMatches]):
+        renamed for clarity/consistency, and calls similarly-renamed method lower down. diff got
+        confused with the end of this and the end of the next method.
+        (-[WebView rectsForTextMatches]):
+        new method, calls through to WebHTMLView as related methods currently do
+
 2006-06-10  Graham Dennis  <Graham.Dennis@gmail.com>
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=9384>

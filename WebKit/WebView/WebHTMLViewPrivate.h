@@ -110,9 +110,14 @@
 // SPI for DumpRenderTree
 - (void)_updateActiveState;
 
+// Support for displaying multiple text matches.
 // These methods might end up moving into a protocol, so different document types can specify
 // whether or not they implement the protocol.
-- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag;
-- (void)clearHighlightedMatches;
+// These methods are still in flux; don't rely on them yet.
+- (unsigned)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag;
+- (void)unmarkAllTextMatches;
+- (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue;
+- (BOOL)markedTextMatchesAreHighlighted;
+- (NSArray *)rectsForTextMatches;
 
 @end
