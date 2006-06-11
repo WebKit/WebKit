@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<script src="repaint.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	   function repaintTest()
+	   {
+           document.getElementById('a').style.position='relative';
+           document.getElementById('t').style.position='absolute';
+	   }
+	</script>
+</head>
+<body onload="runRepaintTest();">
+    <p>
+        Repaint test for <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=9334">http://bugzilla.opendarwin.org/show_bug.cgi?id=9334</a>
+        Incomplete repaint when changing block from non-positioned to positioned</i>.
+    </p>
+    <hr>
+    <div style="position: relative; height: 200px;">
+        <div id="a" style="width: 100px; height: 100px; background: blue; top: 50px; "></div>
+    </div>
+    <div style="position: relative; height: 150px; padding-top: 50px;">
+        <div style="height: 150px;">
+            <div id="t" style="width: 100px; height: 100px; background: blue; top: 0;"></div>
+        </div>
+    </div>
+</body>
+</html>

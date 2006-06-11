@@ -2,6 +2,19 @@
 
         Reviewed by hyatt.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9334
+          Incomplete repaint when changing block from non-positioned to positioned
+
+        Test: fast/repaint/static-to-positioned.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): If changing from static to positioned, repaint
+        as static.
+
+2006-06-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9193
           REGRESSION: setting an opacity on an element with an outline causes the outline to disappear completely
 
