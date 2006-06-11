@@ -33,6 +33,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -40,6 +41,7 @@
 #import <WebKit/WebPluginContainer.h>
 #import <WebKit/WebPluginContainerCheck.h>
 #import <WebKit/WebPluginPackage.h>
+#import <WebKit/WebPluginPrivate.h>
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
@@ -353,6 +355,42 @@ static NSMutableSet *pluginViews = nil;
     NSURL *responseURL = [[[[self webFrame] dataSource] response] URL];
     ASSERT(responseURL);
     return [responseURL _web_originalDataAsString];
+}
+
+- (void)pluginView:(NSView *)pluginView receivedResponse:(NSURLResponse *)response
+{    
+    if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidReceiveResponse:)])
+        [pluginView webPlugInMainResourceDidReceiveResponse:response];
+    else {
+        // Cancel the load since this plug-in does its own loading.
+
+        // FIXME: See <rdar://problem/4258008>
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
+                                                        contentURL:[response URL]
+                                                     pluginPageURL:nil
+                                                        pluginName:nil // FIXME: Get this from somewhere
+                                                          MIMEType:[response MIMEType]];
+        [_dataSource _stopLoadingWithError:error];
+        [error release];
+    }        
+}
+
+- (void)pluginView:(NSView *)pluginView receivedData:(NSData *)data
+{
+    if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidReceiveData:)])
+        [pluginView webPlugInMainResourceDidReceiveData:data];
+}
+
+- (void)pluginView:(NSView *)pluginView receivedError:(NSError *)error
+{
+    if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidFailWithError:)])
+        [pluginView webPlugInMainResourceDidFailWithError:error];
+}
+
+- (void)pluginViewFinishedLoading:(NSView *)pluginView
+{
+    if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidFinishLoading)])
+        [pluginView webPlugInMainResourceDidFinishLoading];
 }
 
 @end

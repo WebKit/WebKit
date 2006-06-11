@@ -1,3 +1,61 @@
+2006-06-11  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9390
+        Move full-frame plugins to WebCore
+        
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add PluginDocument
+        
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::redirectDataToPlugin):
+        Call the bridge.
+        
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        Add redirectDataToPlugin which is used to redirect incoming data
+        to a plugin.
+        
+        * bridge/mac/WebCoreViewFactory.h:
+        Add pluginSupportsMIMEType which returns whether any plugins support a given MIME type.
+        
+        * dom/DOMImplementation.cpp:
+        * dom/DOMImplementation.h:
+        Get rid of createTextDocument and just create a text document explicitly when needed.
+        
+        * dom/Document.h:
+        (WebCore::Document::isPluginDocument):
+        * loader/PluginDocument.cpp: Added.
+        (WebCore::PluginTokenizer::PluginTokenizer):
+        (WebCore::PluginTokenizer::wantsRawData):
+        (WebCore::PluginTokenizer::write):
+        (WebCore::PluginTokenizer::createDocumentStructure):
+        (WebCore::PluginTokenizer::writeRawData):
+        (WebCore::PluginTokenizer::stopParsing):
+        (WebCore::PluginTokenizer::finish):
+        (WebCore::PluginTokenizer::isWaitingForScripts):
+        (WebCore::PluginDocument::PluginDocument):
+        (WebCore::PluginDocument::createTokenizer):
+        * loader/PluginDocument.h: Added.
+        (WebCore::PluginDocument::isPluginDocument):
+        Add PluginDocument.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::begin):
+        Possibly create a plugin document.
+        
+        * page/Frame.h:
+        (WebCore::Frame::redirectDataToPlugin):
+        Add declaration.
+        
+        * platform/PlugInInfoStore.h:
+        * platform/mac/PlugInInfoStoreMac.mm:
+        (WebCore::PlugInInfoStore::supportsMIMEType):
+        Ask WebCoreViewFactory if the MIME type is supported.
+
 2006-06-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.

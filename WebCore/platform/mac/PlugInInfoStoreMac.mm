@@ -74,6 +74,15 @@ unsigned PlugInInfoStore::pluginCount() const
     return 0;
 }
 
+bool PlugInInfoStore::supportsMIMEType(const String& mimeType)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] pluginSupportsMIMEType:mimeType];
+    END_BLOCK_OBJC_EXCEPTIONS;    
+    
+    return NO;
+}
+
 void refreshPlugins(bool reloadOpenPages)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

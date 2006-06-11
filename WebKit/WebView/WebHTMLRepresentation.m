@@ -29,6 +29,7 @@
 #import "WebHTMLRepresentation.h"
 
 #import "WebArchive.h"
+#import "WebBasePluginPackage.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocumentPrivate.h"
 #import "WebFrameBridge.h"
@@ -48,6 +49,10 @@
     WebDataSource *dataSource;
     WebFrameBridge *bridge;
     NSData *parsedArchiveData;
+    
+    BOOL hasSentResponseToPlugin;
+    id <WebPluginManualLoader> manualLoader;
+    NSView *pluginView;
 }
 @end
 
@@ -119,6 +124,12 @@
     return _private->bridge;
 }
 
+- (void)_redirectDataToManualLoader:(id<WebPluginManualLoader>)manualLoader forPluginView:(NSView *)pluginView;
+{
+    _private->manualLoader = manualLoader;
+    _private->pluginView = pluginView;
+}
+
 - (void)setDataSource:(WebDataSource *)dataSource
 {
     _private->dataSource = dataSource;
@@ -133,12 +144,25 @@
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     if ([dataSource webFrame] && ![self _isDisplayingWebArchive]) {
-        [_private->bridge receivedData:data textEncodingName:[[_private->dataSource response] textEncodingName]];
+        if (!_private->pluginView)
+            [_private->bridge receivedData:data textEncodingName:[[_private->dataSource response] textEncodingName]];
+
+        if (_private->pluginView) {
+            if (!_private->hasSentResponseToPlugin) {
+                [_private->manualLoader pluginView:_private->pluginView receivedResponse:[dataSource response]];
+                _private->hasSentResponseToPlugin = YES;
+            }
+            
+            [_private->manualLoader pluginView:_private->pluginView receivedData:data];
+        }
     }
 }
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
+    if (_private->pluginView) {
+        [_private->manualLoader pluginView:_private->pluginView receivedError:error];
+    }
 }
 
 - (void)loadArchive
@@ -150,6 +174,12 @@
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
+
+    if (_private->pluginView) {
+        [_private->manualLoader pluginViewFinishedLoading:_private->pluginView];
+        return;
+    }
+
     if (frame) {
         if ([self _isDisplayingWebArchive]) {
             [self loadArchive];

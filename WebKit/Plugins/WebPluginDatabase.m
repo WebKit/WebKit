@@ -33,11 +33,10 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameViewInternal.h>
+#import <WebKit/WebHTMLRepresentation.h>
+#import <WebKit/WebHTMLView.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebNetscapePluginRepresentation.h>
-#import <WebKit/WebPluginDocumentView.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKitSystemInterface.h>
@@ -188,6 +187,20 @@ static NSArray *pluginLocations(void)
     
     //  Remove all uninstalled plug-ins and add the new plug-ins.
     if (plugins) {
+        // Unregister plug-in views and representations
+        NSMutableDictionary *MIMEToViewClass = [WebFrameView _viewTypesAllowImageTypeOmission:NO];        
+        NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
+        WebBasePluginPackage *pluginPackage;
+        while ((pluginPackage = [pluginEnumerator nextObject])) {
+            NSEnumerator *MIMETypeEnumerator = [pluginPackage MIMETypeEnumerator];
+            NSString *MIMEType;
+            while ((MIMEType = [MIMETypeEnumerator nextObject])) {
+                Class class = [MIMEToViewClass objectForKey:MIMEType];
+                if (class == [WebHTMLView class])
+                    [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
+            }
+        }
+        
         NSMutableSet *pluginsToUnload = [plugins mutableCopy];
         [pluginsToUnload minusSet:newPlugins];
 #if !LOG_DISABLED
@@ -211,16 +224,6 @@ static NSArray *pluginLocations(void)
         plugins = newPlugins;
     }
     
-    // Unregister netscape plug-in WebDocumentViews and WebDocumentRepresentations.
-    NSMutableDictionary *MIMEToViewClass = [WebFrameView _viewTypesAllowImageTypeOmission:NO];
-    NSEnumerator *keyEnumerator = [MIMEToViewClass keyEnumerator];
-    NSString *MIMEType;
-    while ((MIMEType = [keyEnumerator nextObject]) != nil) {
-        Class class = [MIMEToViewClass objectForKey:MIMEType];
-        if (class == [WebNetscapePluginDocumentView class] || class == [WebPluginDocumentView class])
-            [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
-    }
-    
     // Build a list of MIME types.
     NSMutableSet *MIMETypes = [[NSMutableSet alloc] init];
     NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
@@ -229,9 +232,10 @@ static NSArray *pluginLocations(void)
         [MIMETypes addObjectsFromArray:[[plugin MIMETypeEnumerator] allObjects]];
     }
     
-    // Register plug-in WebDocumentViews and WebDocumentRepresentations.
+    // Register plug-in views and representations.
     NSEnumerator *MIMEEnumerator = [[MIMETypes allObjects] objectEnumerator];
     [MIMETypes release];
+    NSString *MIMEType;
     while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
         if ([WebView canShowMIMETypeAsHTML:MIMEType])
             // Don't allow plug-ins to override our core HTML types.
@@ -243,13 +247,8 @@ static NSArray *pluginLocations(void)
         if ([plugin isQuickTimePlugIn] && [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType])
             // Don't allow the QT plug-in to override any types because it claims many that we can handle ourselves.
             continue;
-        if ([plugin isKindOfClass:[WebNetscapePluginPackage class]])
-            [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:MIMEType];
-        else {
-            ASSERT([plugin isKindOfClass:[WebPluginPackage class]]);
-            [WebView registerViewClass:[WebPluginDocumentView class] representationClass:[WebPluginDocumentView class] forMIMEType:MIMEType];
-        }
         
+        [WebView registerViewClass:[WebHTMLView class] representationClass:[WebHTMLRepresentation class] forMIMEType:MIMEType];
     }
 }
 

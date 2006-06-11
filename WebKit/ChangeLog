@@ -1,3 +1,92 @@
+2006-06-11  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9390
+        Move full-frame plugins to WebCore
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream instance]):
+        Add instance method which returns the plugin instance.
+        
+        * Plugins/WebBasePluginPackage.h:
+        Add WebPluginManualLoader protocol
+        
+        * Plugins/WebNetscapePluginDocumentView.h: Removed.
+        * Plugins/WebNetscapePluginDocumentView.m: Removed.
+
+        * Plugins/WebNetscapePluginEmbeddedView.h:
+        * Plugins/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView initWithFrame:plugin:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:]):
+        (-[WebNetscapePluginEmbeddedView dealloc]):
+        (-[WebNetscapePluginEmbeddedView didStart]):
+        (-[WebNetscapePluginEmbeddedView pluginView:receivedResponse:]):
+        (-[WebNetscapePluginEmbeddedView pluginView:receivedData:]):
+        (-[WebNetscapePluginEmbeddedView pluginView:receivedError:]):
+        (-[WebNetscapePluginEmbeddedView pluginViewFinishedLoading:]):
+        (-[WebNetscapePluginEmbeddedView redeliverStream]):
+        Make WebNetscapePluginEmbeddedView support the WebPluginManualLoader protocol. It creates a plugin stream and feeds the
+        data manually. Much of this code has been copied from WebNetscapePluginRepresentation.
+
+        * Plugins/WebNetscapePluginRepresentation.h: Removed.
+        * Plugins/WebNetscapePluginRepresentation.m: Removed.
+
+        * Plugins/WebPluginController.h:
+        * Plugins/WebPluginController.m:
+        (-[WebPluginController pluginView:receivedResponse:]):
+        (-[WebPluginController pluginView:receivedData:]):
+        (-[WebPluginController pluginView:receivedError:]):
+        (-[WebPluginController pluginViewFinishedLoading:]):
+        Make WebPluginController support the WebPluginManualLoader protocol so it can feed data manually to WebKit plugins.
+
+        * Plugins/WebPluginDatabase.m:        
+        (-[WebPluginDatabase refresh]):
+        Use WebHTMLView and WebHTMLRepresentation when registering/unregistering plug-in MIME types.
+        
+        * Plugins/WebPluginDocumentView.h: Removed.
+        * Plugins/WebPluginDocumentView.m: Removed.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge pluginViewWithPackage:attributeNames:attributeValues:baseURL:DOMElement:loadManually:]):
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        Add loadManually argument.
+        
+        (-[WebFrameBridge redirectDataToPlugin:]):
+        Call down to the HTML representation.
+        
+        (-[WebFrameBridge viewForJavaAppletWithFrame:attributeNames:attributeValues:baseURL:DOMElement:]):
+        Pass NO to loadManually.
+        
+        (-[WebFrameBridge determineObjectFromMIMEType:URL:]):
+        Explicitly check if the MIME type is supported by a plug-in instead of checking the view class.
+        
+        * WebCoreSupport/WebViewFactory.m:
+        (-[WebViewFactory pluginSupportsMIMEType:]):
+        New function which returns whether any plugins support a given MIME type.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        Update for removed files.
+        
+        * WebView/WebFrame.m:
+        (-[WebFrame _reloadForPluginChanges]):
+        Remove view type checks.
+        
+        (-[WebFrame _recursive_pauseNullEventsForAllNetscapePlugins]):
+        (-[WebFrame _recursive_resumeNullEventsForAllNetscapePlugins]):
+        Remove FIXME comments.
+        
+        * WebView/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation _redirectDataToManualLoader:forPluginView:]):        
+        New function which redirects incoming data to a manual loader.
+        
+        (-[WebHTMLRepresentation receivedData:withDataSource:]):
+        (-[WebHTMLRepresentation receivedError:withDataSource:]):
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+        Optionally redirect incoming data.
+        
+        * WebView/WebHTMLRepresentationPrivate.h:
+
 2006-06-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick and Dave Hyatt.

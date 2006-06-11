@@ -35,6 +35,7 @@
 
 - (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
 - (void)refreshPlugins:(BOOL)reloadPages;
+- (BOOL)pluginSupportsMIMEType:(NSString *)MIMEType;
 
 - (NSString *)inputElementAltText;
 - (NSString *)resetButtonDefaultLabel;

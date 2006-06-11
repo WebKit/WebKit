@@ -524,10 +524,16 @@ Plugin* FrameMac::createPlugin(Element* element, const KURL& url, const Vector<S
                                   attributeNames:nsArray(paramNames)
                                   attributeValues:nsArray(paramValues)
                                   MIMEType:mimeType
-                                  DOMElement:(element ? [DOMElement _elementWith:element] : nil)]));
+                                  DOMElement:(element ? [DOMElement _elementWith:element] : nil)
+                                loadManually:d->m_doc->isPluginDocument()]));
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return 0;
+}
+
+void FrameMac::redirectDataToPlugin(Widget* pluginWidget)
+{
+    [_bridge redirectDataToPlugin:pluginWidget->getView()];
 }
 
 

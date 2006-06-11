@@ -142,6 +142,11 @@ static char *CarbonPathFromPOSIXPath(const char *posixPath);
     return transferMode;
 }
 
+- (NPP)instance
+{
+    return instance;
+}
+
 - (void)setRequestURL:(NSURL *)theRequestURL
 {
     [theRequestURL retain];

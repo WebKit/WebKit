@@ -29,6 +29,13 @@
 #import <WebCore/WebCoreViewFactory.h>
 #import <WebKit/npfunctions.h>
 
+@protocol WebPluginManualLoader
+- (void)pluginView:(NSView *)pluginView receivedResponse:(NSURLResponse *)response;
+- (void)pluginView:(NSView *)pluginView receivedData:(NSData *)data;
+- (void)pluginView:(NSView *)pluginView receivedError:(NSError *)error;
+- (void)pluginViewFinishedLoading:(NSView *)pluginView;
+@end
+
 #define WebPluginExtensionsKey          @"WebPluginExtensions"
 #define WebPluginDescriptionKey         @"WebPluginDescription"
 #define WebPluginLocalizationNameKey    @"WebPluginLocalizationName"

@@ -56,7 +56,6 @@
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebNSViewExtras.h"
-#import "WebNetscapePluginDocumentView.h"
 #import "WebNetscapePluginEmbeddedView.h"
 #import "WebNetscapePluginPackage.h"
 #import "WebNullPluginView.h"
@@ -64,7 +63,6 @@
 #import "WebPlugin.h"
 #import "WebPluginController.h"
 #import "WebPluginDatabase.h"
-#import "WebPluginDocumentView.h"
 #import "WebPluginPackage.h"
 #import "WebPluginViewFactoryPrivate.h"
 #import "WebPreferencesPrivate.h"
@@ -874,6 +872,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                   attributeValues:(NSArray *)attributeValues
                           baseURL:(NSURL *)baseURL
                        DOMElement:(DOMElement *)element
+                     loadManually:(BOOL)loadManually
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
@@ -894,8 +893,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             baseURL, WebPlugInBaseURLKey,
             attributes, WebPlugInAttributesKey,
             pluginController, WebPlugInContainerKey,
-            [NSNumber numberWithInt:WebPlugInModeEmbed], WebPlugInModeKey,
-            [NSNumber numberWithBool:YES], WebPlugInShouldLoadMainResourceKey,
+            [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
+            [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
             element, WebPlugInContainingElementKey,
             nil];
         LOG(Plugins, "arguments:\n%@", arguments);
@@ -931,6 +930,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                  attributeValues:(NSArray *)attributeValues
                         MIMEType:(NSString *)MIMEType
                       DOMElement:(DOMElement *)element
+                    loadManually:(BOOL)loadManually
 {
     BOOL hideReferrer;
     if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
@@ -949,9 +949,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames];
         NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
             attributes, WebPlugInAttributesKey,
-            [NSNumber numberWithInt:WebPlugInModeEmbed], WebPlugInModeKey,
+            [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
             URL, WebPlugInBaseURLKey, // URL might be nil, so add it last
-            [NSNumber numberWithBool:YES], WebPlugInShouldLoadMainResourceKey,
+            [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
             element, WebPlugInContainingElementKey,
             nil];
         [attributes release];
@@ -982,7 +982,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                 attributeNames:attributeNames
                                attributeValues:attributeValues
                                        baseURL:baseURL
-                                    DOMElement:element];
+                                    DOMElement:element
+                                  loadManually:loadManually];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
             WebNetscapePluginEmbeddedView *embeddedView = [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSZeroRect
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
@@ -990,7 +991,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                                  baseURL:baseURL
                                                                 MIMEType:MIMEType
                                                            attributeKeys:attributeNames
-                                                         attributeValues:attributeValues] autorelease];
+                                                         attributeValues:attributeValues
+                                                            loadManually:loadManually] autorelease];
             view = embeddedView;
             [_frame _addPlugInView:embeddedView];
         } else
@@ -1017,6 +1019,21 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     
     ASSERT(view);
     return view;
+}
+
+- (void)redirectDataToPlugin:(NSView *)pluginView
+{
+    WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[_frame dataSource] representation];
+
+    if ([pluginView isKindOfClass:[WebNetscapePluginEmbeddedView class]])
+        [representation _redirectDataToManualLoader:(WebNetscapePluginEmbeddedView *)pluginView forPluginView:pluginView];
+    else {
+        WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
+        ASSERT([docView isKindOfClass:[WebHTMLView class]]);
+        
+        WebPluginController *pluginController = [docView _pluginController];
+        [representation _redirectDataToManualLoader:pluginController forPluginView:pluginView];
+    }
 }
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame
@@ -1048,7 +1065,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                 attributeNames:names
                                attributeValues:values
                                        baseURL:baseURL
-                                    DOMElement:element];
+                                    DOMElement:element
+                                  loadManually:NO];
             [names release];
             [values release];
         } else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
@@ -1058,7 +1076,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                                                                  baseURL:baseURL
                                                                 MIMEType:MIMEType
                                                            attributeKeys:attributeNames
-                                                         attributeValues:attributeValues] autorelease];
+                                                         attributeValues:attributeValues
+                                                            loadManually:NO] autorelease];
         } else {
             ASSERT_NOT_REACHED();
         }
@@ -1118,24 +1137,14 @@ static BOOL loggedObjectCacheSize = NO;
 
     if ([MIMEType length] == 0)
         return ObjectElementFrame; // Go ahead and hope that we can display the content.
-                
-    Class viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
-    if (!viewClass) {
-        // No view class is registered to handle this MIME type.  Check to see if there is a plugin which can handle this MIME type.
-        // This check is required because the Java plugin does not register an NSView class, so that Java files are downloaded when 
-        // not embedded.
-        if ([[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType])
-            return ObjectElementPlugin;
-        else
-            return ObjectElementNone;
-    }
-    
-    // If we're a supported type other than a plugin, we want to make a frame.
-    // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
-    // but for now we're burdened with making a distinction between the two.
-    if ([viewClass isSubclassOfClass:[WebNetscapePluginDocumentView class]] || [viewClass isSubclassOfClass:[WebPluginDocumentView class]])
+
+    if ([[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType])
         return ObjectElementPlugin;
-    return ObjectElementFrame;
+
+    if ([WebFrameView _viewClassForMIMEType:MIMEType])
+        return ObjectElementFrame;
+    
+    return ObjectElementNone;
 }
 
 - (void)loadEmptyDocumentSynchronously

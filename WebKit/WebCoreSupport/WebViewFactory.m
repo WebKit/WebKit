@@ -78,6 +78,11 @@
     }
 }
 
+- (BOOL)pluginSupportsMIMEType:(NSString *)MIMEType
+{
+    return [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType] != nil;
+}
+
 - (WebCoreFrameBridge *)bridgeForView:(NSView *)v
 {
     NSView *aView = [v superview];

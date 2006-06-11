@@ -27,6 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WebBasePluginPackage.h>
 
 @class WebHTMLView;
 @class WebPluginPackage;
@@ -34,7 +35,7 @@
 @class WebView;
 @class WebDataSource;
 
-@interface WebPluginController : NSObject
+@interface WebPluginController : NSObject <WebPluginManualLoader>
 {
     NSView *_documentView;
     WebDataSource *_dataSource;

@@ -57,6 +57,8 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "Plugin.h"
+#include "PluginDocument.h"
+#include "PlugInInfoStore.h"
 #include "RenderPart.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -614,8 +616,10 @@ void Frame::begin(const KURL& url)
     d->m_doc = DOMImplementation::instance()->createDocument(d->m_view.get());
   else if (DOMImplementation::isTextMIMEType(d->m_request.m_responseMIMEType))
     d->m_doc = new TextDocument(DOMImplementation::instance(), d->m_view.get());
- else if (Image::supportsType(d->m_request.m_responseMIMEType))
+  else if (Image::supportsType(d->m_request.m_responseMIMEType))
     d->m_doc = new ImageDocument(DOMImplementation::instance(), d->m_view.get());
+  else if (PlugInInfoStore::supportsMIMEType(d->m_request.m_responseMIMEType))
+    d->m_doc = new PluginDocument(DOMImplementation::instance(), d->m_view.get());
   else
     d->m_doc = DOMImplementation::instance()->createHTMLDocument(d->m_view.get());
 

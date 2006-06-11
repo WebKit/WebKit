@@ -49,7 +49,6 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -58,7 +57,6 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
-#import <WebKit/WebPluginDocumentView.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewInternal.h>
@@ -2430,9 +2428,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
         NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
-        if ([documentView isKindOfClass:[WebNetscapePluginDocumentView class]] ||
-            [documentView isKindOfClass:[WebPluginDocumentView class]] ||
-            ([documentView isKindOfClass:[WebHTMLView class]] && [_private->bridge containsPlugins]))
+        if (([documentView isKindOfClass:[WebHTMLView class]] && [_private->bridge containsPlugins]))
             [frame reload];
     }
 }
@@ -2448,7 +2444,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
         NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
-        // FIXME: what about plugin document view?
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
     }
@@ -2457,7 +2452,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins
 {
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self]) {
-        // FIXME: what about plugin document view?
         NSView <WebDocumentView> *documentView = [[frame frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];

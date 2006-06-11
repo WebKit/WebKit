@@ -29,13 +29,20 @@
 #import <AppKit/AppKit.h>
 
 #import <WebKit/WebBaseNetscapePluginView.h>
+#import <WebKit/WebBasePluginPackage.h>
 
 @class WebFrame;
+@class WebNetscapePluginStream;
 
-@interface WebNetscapePluginEmbeddedView : WebBaseNetscapePluginView
+@interface WebNetscapePluginEmbeddedView : WebBaseNetscapePluginView <WebPluginManualLoader>
 {
     NSURL *URL;
     WebFrame *_webFrame;
+    
+    BOOL _loadManually;
+    WebNetscapePluginStream *_manualStream;
+    unsigned _dataLengthReceived;
+    NSError *_error;
 }
 
 - (id)initWithFrame:(NSRect)r
@@ -44,8 +51,11 @@
             baseURL:(NSURL *)baseURL
            MIMEType:(NSString *)MIME
       attributeKeys:(NSArray *)keys
-    attributeValues:(NSArray *)values;
+    attributeValues:(NSArray *)values
+       loadManually:(BOOL)loadManually;
 
 - (void)setWebFrame:(WebFrame *)webFrame;
+
+- (void)redeliverStream;
 
 @end

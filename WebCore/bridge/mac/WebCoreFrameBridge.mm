@@ -52,6 +52,7 @@
 #import "ModifySelectionListLevel.h"
 #import "MoveSelectionCommand.h"
 #import "Page.h"
+#import "PlugInInfoStore.h"
 #import "RenderView.h"
 #import "RenderImage.h"
 #import "RenderPart.h"
@@ -2559,7 +2560,8 @@ static NSCharacterSet *_getPostSmartSet(void)
     String mimeType = m_frame->resourceRequest().m_responseMIMEType;
     
     if (WebCore::DOMImplementation::isTextMIMEType(mimeType) ||
-        Image::supportsType(mimeType))
+        Image::supportsType(mimeType) ||
+        PlugInInfoStore::supportsMIMEType(mimeType))
         return NO;
     
     return YES;

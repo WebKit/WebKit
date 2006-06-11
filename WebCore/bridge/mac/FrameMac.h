@@ -136,6 +136,8 @@ public:
 
     virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
     virtual Plugin* createPlugin(Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType);
+    virtual void redirectDataToPlugin(Widget* pluginWidget);
+
     virtual Frame* createFrame(const KURL& url, const String& name, RenderPart* renderer, const String& referrer);
 
     virtual void scheduleClose();

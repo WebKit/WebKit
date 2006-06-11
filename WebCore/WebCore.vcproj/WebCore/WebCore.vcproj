@@ -1147,6 +1147,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\loader\PluginDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loader\PluginDocument.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\loader\Request.cpp"
 				>
 			</File>
