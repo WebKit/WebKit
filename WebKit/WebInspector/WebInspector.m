@@ -128,7 +128,8 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
         [window setContentView:_private->webView];
 
-        NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"inspector" ofType:@"html" inDirectory:@"webInspector"];
+//        NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"inspector" ofType:@"html" inDirectory:@"webInspector"];
+        NSString *path = @"/Users/Timothy/Work/Safari-TOT/OpenSource/WebKit/WebInspector/webInspector/inspector.html";
         [[_private->webView mainFrame] loadRequest:[[[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]] autorelease]];
 
         [self setWindow:window];
@@ -145,6 +146,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:WebNodeHighlightExpiredNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSSystemColorsDidChangeNotification object:nil];
+    [self setWebFrame:nil];
 
     if (!_private->isSharedInspector)
         [self release];
@@ -172,7 +174,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
     if (_private->webFrame) {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:WebViewProgressFinishedNotification object:[_private->webFrame webView]];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[[_private->webFrame webView] window]];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[[_private->webFrame webView] hostWindow]];
     }
     
     [webFrame retain];
@@ -181,11 +183,13 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
     if (_private->webFrame) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inspectedWebViewProgressFinished:) name:WebViewProgressFinishedNotification object:[_private->webFrame webView]];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inspectedWindowWillClose:) name:NSWindowWillCloseNotification object:[[_private->webFrame webView] window]];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inspectedWindowWillClose:) name:NSWindowWillCloseNotification object:[[_private->webFrame webView] hostWindow]];
     }
 
     [_private->treeOutlineView setAllowsEmptySelection:NO];
+    _private->preventHighlight = YES;
     [self setFocusedDOMNode:[webFrame DOMDocument]];
+    _private->preventHighlight = NO;
 }
 
 - (WebFrame *)webFrame

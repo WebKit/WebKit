@@ -1,3 +1,18 @@
+2006-06-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Tim H.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=8672
+          Red outline from web inspector reappears after inspector is closed
+
+        * WebInspector/WebInspector.m:
+        (-[NSWindow windowWillClose:]): Added a call to setWebFrame to avoid further
+        load progress notifications.
+        (-[NSWindow setWebFrame:]): Changed to resign the WebView's hostWindow rather
+        than its window for close notifications, to avoid resigning from all windows' close
+        notifications (including the inspector window's) when the WebView is in a hidden tab.
+        Also changed to prevent highlighting the initial focused node.
+
 2006-06-11  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Tim.
