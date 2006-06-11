@@ -1,3 +1,23 @@
+2006-06-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9193
+          REGRESSION: setting an opacity on an element with an outline causes the outline to disappear completely
+
+        Test: fast/layers/opacity-outline.html
+
+        - fix repainting of layer children's outlines that extend beyond the layer
+
+        Test: fast/repaint/layer-child-outline.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::intersectsDamageRect): Account for outlines.
+        (WebCore::RenderLayer::absoluteBoundingBox): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::maximalOutlineSize): Changed to return the view's maximal
+        outline size rather than 0 for PaintPhaseChildOutlines.
+
 2006-06-10  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build break

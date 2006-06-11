@@ -1,3 +1,22 @@
+2006-06-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9193
+          REGRESSION: setting an opacity on an element with an outline causes the outline to disappear completely
+
+        - test repainting of layer children's outlines that extend beyond the layer
+
+        * fast/layers: Added.
+        * fast/layers/opacity-outline-expected.checksum: Added.
+        * fast/layers/opacity-outline-expected.png: Added.
+        * fast/layers/opacity-outline-expected.txt: Added.
+        * fast/layers/opacity-outline.html: Added.
+        * fast/repaint/layer-child-outline-expected.checksum: Added.
+        * fast/repaint/layer-child-outline-expected.png: Added.
+        * fast/repaint/layer-child-outline-expected.txt: Added.
+        * fast/repaint/layer-child-outline.html: Added.
+
 2006-06-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

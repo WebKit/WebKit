@@ -1528,8 +1528,12 @@ bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect
 
     // If we aren't an inline flow, and our layer bounds do intersect the damage rect, then we 
     // can go ahead and return true.
-    if (!renderer()->isInlineFlow() && layerBounds.intersects(damageRect))
-        return true;
+    if (!renderer()->isInlineFlow()) {
+        IntRect b = layerBounds;
+        b.inflate(renderer()->view()->maximalOutlineSize());
+        if (b.intersects(damageRect))
+            return true;
+    }
         
     // Otherwise we need to compute the bounding box of this single layer and see if it intersects
     // the damage rect.
@@ -1598,6 +1602,7 @@ IntRect RenderLayer::absoluteBoundingBox() const
     int absX = 0, absY = 0;
     convertToLayerCoords(root(), absX, absY);
     result.move(absX - m_x, absY - m_y);
+    result.inflate(renderer()->view()->maximalOutlineSize());
     return result;
 }
 

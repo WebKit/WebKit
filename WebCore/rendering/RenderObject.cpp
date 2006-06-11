@@ -2834,7 +2834,7 @@ bool RenderObject::willRenderImage(CachedImage*)
 
 int RenderObject::maximalOutlineSize(PaintPhase p) const
 {
-    if (p != PaintPhaseOutline && p != PaintPhaseSelfOutline)
+    if (p != PaintPhaseOutline && p != PaintPhaseSelfOutline && p != PaintPhaseChildOutlines)
         return 0;
     return static_cast<RenderView*>(document()->renderer())->maximalOutlineSize();
 }

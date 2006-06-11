@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript">
+    if (window.layoutTestController)
+        layoutTestController.testRepaint();
+    </script>
+</head>
+<body>
+    <p>
+        This tests repainting of a layer's children's outlines.
+    </p>
+    <hr>
+    <div style="position: relative; width: 100px; background: silver; outline: dashed 2px;">
+        <div style="height: 100px; outline: thick dotted red;"></div>
+    </div>
+</body>
