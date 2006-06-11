@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include <cairo.h>
 #include <math.h>
+#include <wtf/mathextras.h>
 #if WIN32
 #include <cairo-win32.h>
 #endif
@@ -86,7 +87,7 @@ GraphicsContext::GraphicsContext(HDC dc)
 }
 #endif
 
-#if PLATFORM(GDK)
+#if PLATFORM(GDK) || WIN32
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate)
