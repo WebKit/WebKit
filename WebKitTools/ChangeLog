@@ -1,3 +1,16 @@
+2006-06-11  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9395
+        Make prepare-ChangeLog faster
+
+        * Scripts/prepare-ChangeLog: Use "svn diff" instead of "svn stat" to find changed files,
+        then save the diff output for reuse.  Keep a status variable if changes are made to
+        LayoutTests so "svn diff LayoutTests" doesn't have to be run to check for changes when
+        WebCore is updated.  Added -h|--help command-line switch and help message.  Move test
+        for no changed files closer to the beginning of the program.
+
 2006-06-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by ap.

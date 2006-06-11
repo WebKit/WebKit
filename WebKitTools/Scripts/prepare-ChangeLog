@@ -51,13 +51,28 @@
 #     previous function.
 
 use strict;
+use warnings;
 
+use File::Basename;
+use File::Spec;
+use File::Temp;
 use Getopt::Long;
 
-my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
 my $openChangeLogs = 0;
-GetOptions("diff|d!" => \$spewDiff,
-           "open|o!" => \$openChangeLogs);
+my $showHelp = 0;
+my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
+my $parseOptionsResult =
+    GetOptions("diff|d!" => \$spewDiff,
+               "help|h!" => \$showHelp,
+               "open|o!" => \$openChangeLogs);
+if (!$parseOptionsResult || $showHelp)
+  {
+    print STDERR basename($0) . " [-d|--diff] [-h|--help] [-o|--open]\n";
+    print STDERR "  -d|--diff  Spew diff to stdout when running\n";
+    print STDERR "  -h|--help  Show this help message\n";
+    print STDERR "  -o|--open  Open ChangeLogs in an editor when done\n";
+    exit 1;
+  }
 
 # Find the list of modified files
 my @changed_files;
@@ -68,26 +83,67 @@ my @conflict_files;
 
 my $SVN = "svn";
 
-print STDERR "  Running 'svn status' to find changed, added, or removed files.\n";
-open UPDATE, "$SVN status 2> /dev/stdout |" or die "The svn status failed: $!.\n";
-while (<UPDATE>)
+my %statusDescription = (
+    "A" => " Added.",
+    "D" => " Removed.",
+    "M" => "",
+    "R" => " Replaced.",
+);
+
+my $changedLayoutTests = 0;
+
+my $DIFFOUT = new File::Temp(TEMPLATE => basename($0) . "-XXXXXXXX",
+                             DIR => ($ENV{'TMPDIR'} || "/tmp"),
+                             SUFFIX => ".diff");
+my $diffTempFile = $DIFFOUT->filename();
+my @diffFiles;
+
+print STDERR "  Running 'svn diff' to find changed, added, or removed files.\n";
+open SVNDIFF, "$SVN diff --diff-cmd diff -x -N |" or die "The svn diff failed: $!.\n";
+while (<SVNDIFF>)
   {
-    if (/^[MA].+\s+(.+)$/)
+    print $DIFFOUT $_;
+    if (/^Index: (.+)$/)
       {
-        my $file = $1;
-        $function_lists{$file} = "";
-        push @changed_files, $file if $file ne "ChangeLog";
+        push @diffFiles, $1;
       }
-
-    push @conflict_files, $1 if /^C.+\s+(.+)$/;
-
-    $function_lists{$1} = " Added." if /^A.+\s+(.+)$/;
-    $function_lists{$1} = " Removed." if /^D.+\s+(.+)$/;
-    $function_lists{$1} = " Replaced." if /^R.+\s+(.+)$/;
-
-    print unless /^[A-Z]/;
   }
-close UPDATE;
+close SVNDIFF;
+close $DIFFOUT;
+
+if (@diffFiles)
+  {
+    my $diffFilesString = "'" . join ("' '", @diffFiles) . "'";
+    print STDERR "  Running 'svn stat' on changed, added, or removed files.\n";
+    open SVNSTAT, "$SVN stat $diffFilesString 2> /dev/stdout |" or die "The svn stat failed: $!.\n";
+    while(<SVNSTAT>)
+      {
+        if (/^([A-Z]).+\s+(.+)$/)
+          {
+              my $status = $1;
+              my $file = $2;
+              if ($status eq "A" || $status eq "M")
+                {
+                  my @components = File::Spec->splitdir($file);
+                  $changedLayoutTests = 1 if $components[0] eq "LayoutTests";
+                  push @changed_files, $file if $components[$#components] ne "ChangeLog";
+                }
+              push @conflict_files, $file if $status eq "C";
+              $function_lists{$file} = $statusDescription{$status} if exists $statusDescription{$status};
+          }
+        else
+          {
+            print;  # error output from svn stat
+          }
+      }
+    close SVNSTAT;
+  }
+
+if (!@diffFiles || !%function_lists)
+  {
+    print STDERR "  No changes found.\n";
+    exit 1;
+  }
 
 if (@conflict_files)
   {
@@ -102,9 +158,9 @@ if (@changed_files)
 
     # For each file, build a list of modified lines.
     # Use line numbers from the "after" side of each diff.
-    print STDERR "  Running 'svn diff' to determine which lines changed.\n";
+    print STDERR "  Reviewing 'svn diff' to determine which lines changed.\n";
     my $file;
-    open DIFF, "$SVN diff --diff-cmd diff -x -N $changed_files_string |" or die "The svn diff failed: $!.\n";
+    open DIFF, "< $diffTempFile" or die "Opening $diffTempFile failed: $!.\n";
     while (<DIFF>)
       {
         $file = $1 if /^Index: (\S+)$/;
@@ -171,12 +227,6 @@ if (%changed_line_ranges)
             $function_lists{$file} .= "\n        (" . join("):\n        (", @functions) . "):";
         }
       }
-  }
-
-if (!%function_lists)
-  {
-    print STDERR "  No changes found.\n";
-    exit 1;
   }
 
 # Get some parameters for the ChangeLog we are about to write.
@@ -248,12 +298,9 @@ foreach my $prefix (sort keys %files)
     close OLD_CHANGE_LOG;
     open CHANGE_LOG, "> ${prefix}ChangeLog" or die "Could not write ${prefix}ChangeLog\n.";
     print CHANGE_LOG "$date  $name  <$email_address>\n\n";
-    print CHANGE_LOG "        Reviewed by NOBODY (OOPS!).\n\n";
+    print CHANGE_LOG "        Reviewed by NOBODY (OO" . "PS!).\n\n";
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
-        my $testsDir = "../LayoutTests";
-        $testsDir = "$prefix/$testsDir" if length($prefix);
-        my $haveNewTests = (-x "$testsDir/../LayoutTests" && `svn diff \"$testsDir/../LayoutTests\"`);
-        print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n" unless $haveNewTests;
+        print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n" unless $changedLayoutTests;
     }
 
     foreach my $file (sort @{$files{$prefix}})
