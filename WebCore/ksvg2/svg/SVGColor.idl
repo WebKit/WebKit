@@ -22,7 +22,7 @@
 */
 
 module svg {
-    interface SVGColor : css::CSSValue { 
+    interface [Conditional=SVG] SVGColor : css::CSSValue { 
         // Color Types
         const unsigned short SVG_COLORTYPE_UNKNOWN           = 0;
         const unsigned short SVG_COLORTYPE_RGBCOLOR          = 1;

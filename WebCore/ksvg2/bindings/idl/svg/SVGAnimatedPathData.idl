@@ -1,6 +1,6 @@
 module svg
 {
-  interface [nodptr] SVGAnimatedPathData { 
+  interface [nodptr, Conditional=SVG] SVGAnimatedPathData { 
     readonly attribute SVGPathSegList   pathSegList;
     readonly attribute SVGPathSegList   normalizedPathSegList;
     readonly attribute SVGPathSegList   animatedPathSegList;

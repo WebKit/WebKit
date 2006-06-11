@@ -82,8 +82,8 @@ all : \
     JSHTMLDocument.h \
     JSHTMLElement.h \
     JSHTMLFieldSetElement.h \
-	JSHTMLFontElement.h \
-	JSHTMLFormElement.h \
+    JSHTMLFontElement.h \
+    JSHTMLFormElement.h \
     JSHTMLHeadElement.h \
     JSHTMLHeadingElement.h \
     JSHTMLHRElement.h \
@@ -141,6 +141,7 @@ all : \
     JSXMLHttpRequest.lut.h \
     JSXMLSerializer.lut.h \
     JSXSLTProcessor.lut.h \
+    SVGElementFactory.cpp \
     SVGNames.cpp \
     HTMLNames.cpp \
     UserAgentStyleSheets.h \
@@ -261,6 +262,9 @@ ksvgcssvalues.h : ksvg2/scripts/cssmakevalues css/CSSValueKeywords.in ksvg2/css/
 
 else
 
+SVGElementFactory.cpp :
+	echo > SVGElementFactory.cpp
+
 SVGNames.cpp :
 	echo > SVGNames.cpp
 
@@ -269,7 +273,7 @@ XLinkNames.cpp :
 
 XMLNames.cpp :
 	echo > XMLNames.cpp
-	
+
 ksvgcssproperties.h :
 	echo > ksvgcssproperties.h
 

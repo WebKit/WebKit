@@ -23,7 +23,7 @@
 
 
 module svg {
-    interface SVGMatrix { 
+    interface [Conditional=SVG] SVGMatrix { 
         attribute float a
             setter raises DOMException;
         attribute float b

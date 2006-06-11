@@ -1,6 +1,6 @@
 module svg
 {
-  interface [nodptr] SVGURIReference { 
+  interface [nodptr, Conditional=SVG] SVGURIReference { 
     readonly attribute SVGAnimatedString href;
   };
 };

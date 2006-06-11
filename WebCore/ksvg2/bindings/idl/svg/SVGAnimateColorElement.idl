@@ -1,4 +1,4 @@
 module svg
 {
-  interface SVGAnimateColorElement : SVGAnimationElement {};
+  interface [Conditional=SVG] SVGAnimateColorElement : SVGAnimationElement {};
 };

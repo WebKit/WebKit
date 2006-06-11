@@ -1,6 +1,6 @@
 module svg
 {
-  interface SVGTextContentElement : 
+  interface [Conditional=SVG] SVGTextContentElement : 
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,

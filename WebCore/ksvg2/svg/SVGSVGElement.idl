@@ -25,7 +25,7 @@ module svg
 {
     // TODO: no css::ViewCSS available in kdom!
     // TODO: Fix SVGSVGElement inheritance(css::DocumentCSS)! 
-    interface SVGSVGElement : 
+    interface [Conditional=SVG] SVGSVGElement : 
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,

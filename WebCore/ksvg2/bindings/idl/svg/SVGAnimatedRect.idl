@@ -1,6 +1,6 @@
 module svg
 {
-  interface SVGAnimatedRect { 
+  interface [Conditional=SVG] SVGAnimatedRect { 
     readonly attribute SVGRect baseVal;
     readonly attribute SVGRect animVal;
   };

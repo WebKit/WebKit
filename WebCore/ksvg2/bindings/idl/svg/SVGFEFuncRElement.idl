@@ -1,4 +1,4 @@
 module svg
 {
-  interface SVGFEFuncRElement : SVGComponentTransferFunctionElement {};
+  interface [Conditional=SVG] SVGFEFuncRElement : SVGComponentTransferFunctionElement {};
 };

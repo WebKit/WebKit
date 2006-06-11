@@ -1,13 +1,13 @@
 module svg
 {
-  interface SVGPathSegMovetoAbs : SVGPathSeg { 
+  interface [Conditional=SVG] SVGPathSegMovetoAbs : SVGPathSeg { 
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
   };
   
-  interface SVGPathSegMovetoRel : SVGPathSeg { 
+  interface [Conditional=SVG] SVGPathSegMovetoRel : SVGPathSeg { 
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;

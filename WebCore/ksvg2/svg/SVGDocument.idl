@@ -22,7 +22,7 @@
 */
 
 module svg {
-    interface SVGDocument : core::Document {
+    interface [Conditional=SVG] SVGDocument : core::Document {
         readonly attribute core::DOMString      title;
         readonly attribute core::DOMString      referrer;
         readonly attribute core::DOMString      domain;

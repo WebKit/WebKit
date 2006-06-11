@@ -1,6 +1,6 @@
 module svg
 {
-  interface SVGTransformList { 
+  interface [Conditional=SVG] SVGTransformList { 
     readonly attribute unsigned long numberOfItems;
     void   clear (  )
                     raises( DOMException );

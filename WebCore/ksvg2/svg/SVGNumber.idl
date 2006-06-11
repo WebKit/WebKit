@@ -22,7 +22,7 @@
 */
 
 module svg {
-    interface SVGNumber { 
+    interface [Conditional=SVG] SVGNumber { 
         attribute float value
             setter raises DOMException;
     };

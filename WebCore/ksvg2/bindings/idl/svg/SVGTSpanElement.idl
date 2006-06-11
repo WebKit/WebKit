@@ -1,4 +1,4 @@
 module svg
 {
-  interface SVGTSpanElement : SVGTextPositioningElement {};
+  interface [Conditional=SVG] SVGTSpanElement : SVGTextPositioningElement {};
 };

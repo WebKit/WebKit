@@ -22,7 +22,7 @@
 */
 
 module svg {
-    interface SVGTransform { 
+    interface [Conditional=SVG] SVGTransform { 
         // Transform Types
         const unsigned short SVG_TRANSFORM_UNKNOWN   = 0;
         const unsigned short SVG_TRANSFORM_MATRIX    = 1;

@@ -17,6 +17,9 @@
  */
 
 #include "config.h"
+
+#if SVG_SUPPORT
+
 #include "JSSVGElementWrapperFactory.h"
 
 #include "JSSVGSVGElement.h"
@@ -62,3 +65,5 @@ FOR_EACH_TAG(ADD_TO_HASH_MAP)
 }
 
 }
+
+#endif // SVG_SUPPORT

@@ -1,13 +1,13 @@
 module svg
 {
-  interface SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg { 
+  interface [Conditional=SVG] SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg { 
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;
                          // raises DOMException on setting
   };
   
-  interface SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg { 
+  interface [Conditional=SVG] SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg { 
              attribute float   x;
                          // raises DOMException on setting
              attribute float   y;

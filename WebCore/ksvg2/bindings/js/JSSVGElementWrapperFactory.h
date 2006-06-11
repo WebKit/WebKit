@@ -19,6 +19,8 @@
 #ifndef JSSVGELEMENTWRAPPERFACTORY_H
 #define JSSVGELEMENTWRAPPERFACTORY_H
 
+#if SVG_SUPPORT
+
 #include <wtf/Forward.h>
 
 namespace KJS {
@@ -30,5 +32,7 @@ namespace WebCore {
     class SVGElement;
     KJS::DOMNode* createJSSVGWrapper(KJS::ExecState*, PassRefPtr<SVGElement>);
 }
+
+#endif // SVG_SUPPORT
 
 #endif

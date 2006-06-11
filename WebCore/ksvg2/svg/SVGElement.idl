@@ -22,7 +22,7 @@
 */
 
 module svg {
-    interface [GenerateNativeConverter] SVGElement : core::Element {
+    interface [GenerateNativeConverter, Conditional=SVG] SVGElement : core::Element {
         attribute core::DOMString id
             setter raises DOMException;
         attribute core::DOMString xmlbase

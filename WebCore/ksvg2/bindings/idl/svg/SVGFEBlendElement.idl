@@ -1,6 +1,6 @@
 module svg
 {
-  interface SVGFEBlendElement : 
+  interface [Conditional=SVG] SVGFEBlendElement : 
                 SVGElement,
                 SVGFilterPrimitiveStandardAttributes { 
     // Blend Mode Types

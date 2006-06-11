@@ -23,7 +23,7 @@
 
 
 module svg {
-    interface SVGPoint { 
+    interface [Conditional=SVG] SVGPoint { 
         attribute float x
             setter raises DOMException;
         attribute float y

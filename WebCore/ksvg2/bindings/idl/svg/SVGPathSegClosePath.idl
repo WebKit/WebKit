@@ -1,4 +1,4 @@
 module svg
 {
-  interface SVGPathSegClosePath : SVGPathSeg {};
+  interface [Conditional=SVG] SVGPathSegClosePath : SVGPathSeg {};
 };

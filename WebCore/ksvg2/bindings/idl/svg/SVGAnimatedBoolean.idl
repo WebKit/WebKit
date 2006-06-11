@@ -1,6 +1,6 @@
 module svg
 {
-  interface SVGAnimatedBoolean { 
+  interface [Conditional=SVG] SVGAnimatedBoolean { 
              attribute boolean baseVal;
                          // raises DOMException on setting
     readonly attribute boolean animVal;

@@ -26,5 +26,5 @@
  */
 
 module svg {
-  interface SVGEvent : events::Event {};
+  interface [Conditional=SVG] SVGEvent : events::Event {};
 };

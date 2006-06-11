@@ -1,6 +1,6 @@
 module svg
 {
-  interface [nodptr] SVGTransformable : SVGLocatable { 
+  interface [nodptr, Conditional=SVG] SVGTransformable : SVGLocatable { 
     readonly attribute SVGAnimatedTransformList transform;
   };
 };

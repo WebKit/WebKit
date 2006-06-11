@@ -1,6 +1,6 @@
 module svg
 {
-  interface [nodptr] SVGTests { 
+  interface [nodptr, Conditional=SVG] SVGTests { 
     readonly attribute SVGStringList requiredFeatures;
     readonly attribute SVGStringList requiredExtensions;
     readonly attribute SVGStringList systemLanguage;

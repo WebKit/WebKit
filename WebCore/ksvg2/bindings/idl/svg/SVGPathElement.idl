@@ -1,6 +1,6 @@
 module svg
 {
-  interface SVGPathElement : 
+  interface [Conditional=SVG] SVGPathElement : 
                 SVGElement,
                 SVGTests,
                 SVGLangSpace,
