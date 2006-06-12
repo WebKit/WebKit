@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +33,7 @@
 #include "IntRect.h"
 #include "PlatformString.h"
 #include "Timer.h"
+#include <wtf/Vector.h>
 
 #if __APPLE__
 // FIXME: Will go away when we make PDF a subclass.
@@ -126,10 +128,10 @@ IntSize Image::size() const
     return m_size;
 }
 
-bool Image::setData(const DeprecatedByteArray& bytes, bool allDataReceived)
+bool Image::setData(bool allDataReceived)
 {
-    int length = bytes.count();
-    if (length == 0)
+    int length = m_data.size();
+    if (!length)
         return true;
 
 #ifdef kImageBytesCutoff
@@ -144,15 +146,13 @@ bool Image::setData(const DeprecatedByteArray& bytes, bool allDataReceived)
     
 #if __APPLE__
     // Avoid the extra copy of bytes by just handing the byte array directly to a CFDataRef.
-    // We will keep these bytes alive in our m_data variable.
-    CFDataRef data = CFDataCreateWithBytesNoCopy(0, (const UInt8*)bytes.data(), length, kCFAllocatorNull);
+    CFDataRef data = CFDataCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(m_data.data()), length, kCFAllocatorNull);
     bool result = setNativeData(data, allDataReceived);
     CFRelease(data);
 #else
-    bool result = setNativeData(&bytes, allDataReceived);
+    bool result = setNativeData(&m_data, allDataReceived);
 #endif
 
-    m_data = bytes;
     return result;
 }
 

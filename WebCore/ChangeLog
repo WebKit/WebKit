@@ -1,3 +1,151 @@
+2006-06-11  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt, tweaked quite a bit and landed by Darin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=8039
+          Remove use of DeprecatedArray in favor of new Vector class
+
+        This removes most of the uses of DeprecatedArray and 
+        DeprecatedByteArray, with the exception of DeprecatedCString.
+
+        No test cases added because there is no change in
+        functionality.
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::bufferData):
+        (WebCore::CachedImage::data):
+        (WebCore::CachedImage::checkNotify):
+        (WebCore::CachedImage::shouldStopAnimation):
+        * loader/CachedImage.h:
+        * loader/CachedObject.cpp:
+        (WebCore::CachedObject::bufferData):
+        (WebCore::CachedObject::setExpireDate):
+        * loader/CachedObject.h:
+        (WebCore::CachedObject::setCharset):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::data):
+        * loader/CachedScript.h:
+        * loader/CachedXBLDocument.cpp:
+        (WebCore::CachedXBLDocument::data):
+        (WebCore::CachedXBLDocument::checkNotify):
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::data):
+        * loader/CachedXSLStyleSheet.h:
+        * loader/Request.cpp:
+        (WebCore::Request::Request):
+        (WebCore::Request::~Request):
+        * loader/Request.h:
+        (WebCore::Request::buffer):
+        (WebCore::Request::cachedObject):
+        (WebCore::Request::docLoader):
+        (WebCore::Request::isIncremental):
+        (WebCore::Request::setIsIncremental):
+        (WebCore::Request::isMultipart):
+        (WebCore::Request::setIsMultipart):
+        * loader/loader.cpp:
+        (WebCore::crossDomain):
+        (WebCore::Loader::Loader):
+        (WebCore::Loader::load):
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::receivedAllData):
+        (WebCore::Loader::receivedResponse):
+        (WebCore::Loader::receivedData):
+        (WebCore::Loader::numRequests):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::removeBackgroundDecodingRequest):
+        (WebCore::Loader::jobForRequest):
+        * platform/Image.cpp:
+        (WebCore::Image::setData):
+        * platform/Image.h:
+        (WebCore::Image::dataBuffer):
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::init):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::sortMatchedRules):
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::createStyleForElement):
+        (WebCore::CSSStyleSelector::createPseudoStyleForElement):
+        * css/cssstyleselector.h:
+        (WebCore::CSSStyleSelector::addMatchedRule):
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        * dom/xml_tokenizer.cpp:
+        (WebCore::OffsetBuffer::OffsetBuffer):
+        (WebCore::openFunc):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::index):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::length):
+        (WebCore::HTMLSelectElement::remove):
+        (WebCore::HTMLSelectElement::value):
+        (WebCore::HTMLSelectElement::setValue):
+        (WebCore::HTMLSelectElement::state):
+        (WebCore::HTMLSelectElement::restoreState):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        (WebCore::HTMLSelectElement::listToOptionIndex):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::notifyOptionSelected):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::listItems):
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQServeSynchronousRequest):
+        * kwq/KWQTextStream.cpp:
+        (QTextStream::operator<<):
+        * kwq/KWQTextStream.h:
+        * loader/FormData.cpp:
+        (WebCore::FormData::flatten):
+        (WebCore::FormData::flattenToString):
+        * loader/FormData.h:
+        (WebCore::FormDataElement::FormDataElement):
+        * platform/DeprecatedString.cpp:
+        * platform/DeprecatedString.h:
+        * platform/IntPointArray.cpp: Removed.
+        * platform/IntPointArray.h: Removed.
+        * platform/TextEncoding.cpp:
+        (WebCore::TextEncoding::toUnicode):
+        * platform/TextEncoding.h:
+        * platform/cairo/pixman/src/pixregion.c:
+        * platform/cg/PathCG.cpp:
+        (WebCore::Path::Path):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBorder):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::colToEffCol):
+        (WebCore::RenderTable::effColToCol):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::setCellWidths):
+        * rendering/RenderTableSection.h:
+        * rendering/bidi.cpp:
+        (WebCore::addMidpoint):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/render_form.cpp:
+        (WebCore::RenderSelect::updateFromElement):
+        (WebCore::RenderSelect::layout):
+        (WebCore::RenderSelect::valueChanged):
+        (WebCore::RenderSelect::selectionChanged):
+        (WebCore::RenderSelect::updateSelection):
+        * rendering/table_layout.cpp:
+        (WebCore::FixedTableLayout::layout):
+        * rendering/table_layout.h:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        * xml/xmlhttprequest.h:
+
 2006-06-11  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by darin.

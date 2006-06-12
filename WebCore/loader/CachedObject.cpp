@@ -4,6 +4,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -29,7 +30,9 @@
 #include "CachedObject.h"
 
 #include "Cache.h"
+#include "Request.h"
 #include <KURL.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -45,6 +48,18 @@ CachedObject::~CachedObject()
 #endif
 }
 
+Vector<char>& CachedObject::bufferData(const char* bytes, int addedSize, Request* request)
+{
+    // Add new bytes to the buffer in the Request object.
+    Vector<char>& buffer = request->buffer();
+
+    unsigned oldSize = buffer.size();
+    buffer.resize(oldSize + addedSize);
+    memcpy(buffer.data() + oldSize, bytes, addedSize);
+    
+    return buffer;
+}
+
 void CachedObject::finish()
 {
     if (m_size > Cache::maxCacheableObjectSize())
@@ -56,16 +71,15 @@ void CachedObject::finish()
         m_expireDateChanged = false;
 }
 
-void CachedObject::setExpireDate(time_t _expireDate, bool changeHttpCache)
+void CachedObject::setExpireDate(time_t expireDate, bool changeHttpCache)
 {
-    if ( _expireDate == m_expireDate)
+    if (expireDate == m_expireDate)
         return;
 
     if (m_status == Uncacheable || m_status == Cached)
-    {
         finish();
-    }
-    m_expireDate = _expireDate;
+
+    m_expireDate = expireDate;
     if (changeHttpCache && m_expireDate)
        m_expireDateChanged = true;
 }

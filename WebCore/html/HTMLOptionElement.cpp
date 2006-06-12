@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "Text.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -103,8 +104,8 @@ int HTMLOptionElement::index() const
     // we won't forget to update a member variable in some cases...
     HTMLSelectElement *select = getSelect();
     if (select) {
-        DeprecatedArray<HTMLElement*> items = select->listItems();
-        int l = items.count();
+        Vector<HTMLElement*> items = select->listItems();
+        int l = items.size();
         int optionIndex = 0;
         for(int i = 0; i < l; i++) {
             if (items[i]->hasLocalName(optionTag)) {

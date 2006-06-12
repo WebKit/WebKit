@@ -23,10 +23,9 @@
 #ifndef FixedTableLayout_H
 #define FixedTableLayout_H
 
-#include "TableLayout.h"
-
-#include "DeprecatedArray.h"
 #include "Length.h"
+#include "TableLayout.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -44,7 +43,7 @@ public:
 protected:
     int calcWidthArray(int tableWidth);
 
-    DeprecatedArray<Length> m_width;
+    Vector<Length> m_width;
 };
 
 }

@@ -4,6 +4,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -33,6 +34,7 @@
 #include "CachedObjectClientWalker.h"
 #include "KWQLoader.h"
 #include "loader.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -87,15 +89,14 @@ void CachedCSSStyleSheet::setCharset(const DeprecatedString& chs)
     }
 }
 
-void CachedCSSStyleSheet::data(DeprecatedByteArray& data, bool eof )
+void CachedCSSStyleSheet::data(Vector<char>& data, bool allDataReceived)
 {
-    if (!eof)
+    if (!allDataReceived)
         return;
 
     setSize(data.size());
     m_sheet = String(m_encoding.toUnicode(data.data(), size()));
     m_loading = false;
-
     checkNotify();
 }
 

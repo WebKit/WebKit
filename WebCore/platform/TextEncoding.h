@@ -87,7 +87,6 @@ namespace WebCore {
         DeprecatedCString fromUnicode(const DeprecatedString&, bool allowEntities = false) const;
 
         DeprecatedString toUnicode(const char*, int length) const;
-        DeprecatedString toUnicode(const DeprecatedByteArray&, int length) const;
 
         TextEncodingID encodingID() const { return m_encodingID; }
         TextEncodingFlags flags() const { return m_flags; }

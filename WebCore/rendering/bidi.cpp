@@ -32,6 +32,7 @@
 #include "RenderView.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
+#include <wtf/Vector.h>
 
 using namespace std;
 
@@ -92,7 +93,7 @@ static bool sBuildingCompactRuns;
 // Midpoint globals.  The goal is not to do any allocation when dealing with
 // these midpoints, so we just keep an array around and never clear it.  We track
 // the number of items and position using the two other variables.
-static DeprecatedArray<BidiIterator> *smidpoints;
+static Vector<BidiIterator>* smidpoints;
 static unsigned sNumMidpoints;
 static unsigned sCurrMidpoint;
 static bool betweenMidpoints;
@@ -539,7 +540,7 @@ static void addMidpoint(const BidiIterator& midpoint)
         return;
 
     if (smidpoints->size() <= sNumMidpoints)
-        smidpoints->resize(sNumMidpoints+10);
+        smidpoints->resize(sNumMidpoints + 10);
 
     BidiIterator* midpoints = smidpoints->data();
     midpoints[sNumMidpoints++] = midpoint;
@@ -1568,7 +1569,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         bidi.dir = U_OTHER_NEUTRAL;
         
         if (!smidpoints)
-            smidpoints = new DeprecatedArray<BidiIterator>;
+            smidpoints = new Vector<BidiIterator>();
         
         sNumMidpoints = 0;
         sCurrMidpoint = 0;

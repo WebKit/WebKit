@@ -29,6 +29,8 @@
 #include <wtf/Assertions.h>
 #include <ctype.h>
 
+using namespace WebCore;
+
 DeprecatedCString::DeprecatedCString()
 {
 }

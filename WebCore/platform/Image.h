@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +27,10 @@
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
-#include "DeprecatedArray.h"
 #include "GraphicsTypes.h"
 #include "ImageSource.h"
 #include "IntSize.h"
 #include "FloatSize.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 
 #if __APPLE__
 #if __OBJC__
@@ -44,7 +42,7 @@ class NSImage;
 
 namespace WebCore {
     struct FrameData;
-};
+}
 
 // This complicated-looking declaration tells the framedata Vector that it can copy without
 // having to invoke our copy constructor. This allows us to not have to worry about ref counting
@@ -60,22 +58,10 @@ class FloatRect;
 class GraphicsContext;
 class IntRect;
 class IntSize;
+class PDFDocumentImage;
 class String;
 
 template <typename T> class Timer;
-
-// FIXME: Eventually we will want to have CoreGraphics vs. Cairo ifdefs in this file rather
-// than Apple vs. non-Apple.
-
-// This pointer represents the platform-specific image data.
-#if __APPLE__
-typedef CGImageRef NativeImagePtr;
-class PDFDocumentImage;
-typedef CFDataRef NativeBytePtr;
-#else
-typedef cairo_surface_t* NativeImagePtr;
-typedef const DeprecatedByteArray* NativeBytePtr;
-#endif
 
 // This class gets notified when an image advances animation frames.
 class ImageAnimationObserver;
@@ -122,8 +108,10 @@ public:
     int width() const;
     int height() const;
 
-    bool setData(const DeprecatedByteArray& bytes, bool allDataReceived);
-    bool setNativeData(NativeBytePtr bytePtr, bool allDataReceived);
+    bool setData(bool allDataReceived);
+    bool setNativeData(NativeBytePtr, bool allDataReceived);
+    
+    Vector<char>& dataBuffer() { return m_data; }
 
     // It may look unusual that there is no start animation call as public API.  This is because
     // we start and stop animating lazily.  Animation begins whenever someone draws the image.  It will
@@ -185,7 +173,7 @@ private:
     void invalidateNativeData();
 
     // Members
-    DeprecatedByteArray m_data; // The encoded raw data for the image.
+    Vector<char> m_data; // The encoded raw data for the image.
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
     

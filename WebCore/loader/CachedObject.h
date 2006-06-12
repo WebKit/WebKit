@@ -3,6 +3,7 @@
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -31,6 +32,7 @@
 #include "PlatformString.h"
 #include "KWQKIOGlobal.h"
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 #include <time.h>
 
 #if __OBJC__
@@ -102,8 +104,9 @@ namespace WebCore
         }
         virtual ~CachedObject();
 
-        virtual void setCharset(const DeprecatedString&) {}
-        virtual void data(DeprecatedByteArray&, bool atEnd) = 0;
+        virtual void setCharset(const DeprecatedString&) { }
+        virtual Vector<char>& bufferData(const char* bytes, int addedSize, Request*);
+        virtual void data(Vector<char>&, bool allDataReceived) = 0;
         virtual void error() = 0;
 
         const String &url() const { return m_url; }

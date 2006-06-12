@@ -4,6 +4,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -32,15 +33,18 @@
 
 namespace WebCore {
 
-Request::Request(DocLoader* docLoader, CachedObject* obj, bool inc)
-    : incremental(inc), object(obj), m_docLoader(docLoader), multipart(false)
+Request::Request(DocLoader* docLoader, CachedObject* object, bool incremental)
+    : m_object(object)
+    , m_docLoader(docLoader)
+    , m_incremental(incremental)
+    , m_multipart(false)
 {
-    object->setRequest(this);
+    m_object->setRequest(this);
 }
 
 Request::~Request()
 {
-    object->setRequest(0);
+    m_object->setRequest(0);
 }
 
-}
+} //namespace WebCore

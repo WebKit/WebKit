@@ -290,7 +290,8 @@ void CSSStyleSelector::init()
 {
     element = 0;
     settings = 0;
-    m_matchedRuleCount = m_matchedDeclCount = m_tmpRuleCount = 0;
+    m_matchedRules.clear();
+    m_matchedDecls.clear();
     m_ruleList = 0;
     m_collectRulesOnly = false;
     m_rootDefaultStyle = 0;
@@ -367,48 +368,37 @@ void CSSStyleSelector::loadDefaultStyle()
     defaultQuirksStyle->addRulesFromSheet(quirksSheet, &screenEval);
 }
 
-void CSSStyleSelector::addMatchedRule(CSSRuleData* rule)
-{
-    if (m_matchedRules.size() <= m_matchedRuleCount)
-        m_matchedRules.resize(2*m_matchedRules.size()+1);
-    m_matchedRules[m_matchedRuleCount++] = rule;
-}
-
-void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
-{
-    if (m_matchedDecls.size() <= m_matchedDeclCount)
-        m_matchedDecls.resize(2*m_matchedDecls.size()+1);
-    m_matchedDecls[m_matchedDeclCount++] = decl;
-}
-
 void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex)
 {
-    m_matchedRuleCount = 0;
-    if (!rules || !element) return;
+    m_matchedRules.clear();
+
+    if (!rules || !element)
+        return;
     
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
     if (element->hasID())
         matchRulesForList(rules->getIDRules(element->getIDAttribute().impl()), firstRuleIndex, lastRuleIndex);
-    if (element->hasClass())
+    if (element->hasClass()) {
         for (const AtomicStringList* singleClass = element->getClassList(); singleClass; singleClass = singleClass->next())
             matchRulesForList(rules->getClassRules(singleClass->string().impl()), firstRuleIndex, lastRuleIndex);
-    matchRulesForList(rules->getTagRules(element->localName().impl()),
-                      firstRuleIndex, lastRuleIndex);
+    }
+    matchRulesForList(rules->getTagRules(element->localName().impl()), firstRuleIndex, lastRuleIndex);
     matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex);
     
     // If we didn't match any rules, we're done.
-    if (m_matchedRuleCount == 0) return;
+    if (m_matchedRules.isEmpty())
+        return;
     
     // Sort the set of matched rules.
-    sortMatchedRules(0, m_matchedRuleCount);
+    sortMatchedRules(0, m_matchedRules.size());
     
     // Now transfer the set of matched rules over to our list of decls.
     if (!m_collectRulesOnly) {
-        for (unsigned i = 0; i < m_matchedRuleCount; i++)
+        for (unsigned i = 0; i < m_matchedRules.size(); i++)
             addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
     } else {
-        for (unsigned i = 0; i < m_matchedRuleCount; i++) {
+        for (unsigned i = 0; i < m_matchedRules.size(); i++) {
             if (!m_ruleList)
                 m_ruleList = new CSSRuleList();
             m_ruleList->append(m_matchedRules[i]->rule());
@@ -418,7 +408,9 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
 
 void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleIndex, int& lastRuleIndex)
 {
-    if (!rules) return;
+    if (!rules)
+        return;
+
     for (CSSRuleData* d = rules->first(); d; d = d->next()) {
         CSSStyleRule* rule = d->rule();
         const AtomicString& localName = element->localName();
@@ -426,7 +418,8 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
         if ((localName == selectorLocalName || selectorLocalName == starAtom) && checkSelector(d->selector(), element)) {
             // If the rule has no properties to apply, then ignore it.
             CSSMutableStyleDeclaration* decl = rule->declaration();
-            if (!decl || !decl->length()) continue;
+            if (!decl || !decl->length())
+                continue;
             
             // If we're matching normal rules, set a pseudo bit if 
             // we really just matched a pseudo-element.
@@ -436,8 +429,9 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
                 style->setHasPseudoStyle(dynamicPseudo);
             } else {
                 // Update our first/last rule indices in the matched rules array.
-                lastRuleIndex = m_matchedDeclCount + m_matchedRuleCount;
-                if (firstRuleIndex == -1) firstRuleIndex = m_matchedDeclCount + m_matchedRuleCount;
+                lastRuleIndex = m_matchedDecls.size() + m_matchedRules.size();
+                if (firstRuleIndex == -1)
+                    firstRuleIndex = lastRuleIndex;
 
                 // Add this rule to our list of matched rules.
                 addMatchedRule(d);
@@ -459,69 +453,66 @@ bool operator <=(CSSRuleData& r1, CSSRuleData& r2)
 
 void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
 {
-    if (start >= end || (end-start == 1))
+    if (start >= end || (end - start == 1))
         return; // Sanity check.
-    
+
     if (end - start <= 6) {
         // Apply a bubble sort for smaller lists.
-        for (unsigned i = end-1; i > start; i--) {
+        for (unsigned i = end - 1; i > start; i--) {
             bool sorted = true;
             for (unsigned j = start; j < i; j++) {
                 CSSRuleData* elt = m_matchedRules[j];
-                CSSRuleData* elt2 = m_matchedRules[j+1];
+                CSSRuleData* elt2 = m_matchedRules[j + 1];
                 if (*elt > *elt2) {
                     sorted = false;
                     m_matchedRules[j] = elt2;
-                    m_matchedRules[j+1] = elt;
+                    m_matchedRules[j + 1] = elt;
                 }
             }
             if (sorted)
                 return;
         }
+        return;
     }
-    else {
-        // Peform a merge sort for larger lists.
-        unsigned mid = (start+end)/2;
-        sortMatchedRules(start, mid);
-        sortMatchedRules(mid, end);
-        
-        CSSRuleData* elt = m_matchedRules[mid-1];
-        CSSRuleData* elt2 = m_matchedRules[mid];
-        
-        // Handle the fast common case (of equal specificity).  The list may already
-        // be completely sorted.
-        if (*elt <= *elt2)
-            return;
-        
-        // We have to merge sort.  Ensure our merge buffer is big enough to hold
-        // all the items.
-        m_tmpRules.resize(end - start);
-        unsigned i1 = start;
-        unsigned i2 = mid;
-        
-        elt = m_matchedRules[i1];
-        elt2 = m_matchedRules[i2];
-        
-        while (i1 < mid || i2 < end) {
-            if (i1 < mid && (i2 == end || *elt <= *elt2)) {
-                m_tmpRules[m_tmpRuleCount++] = elt;
-                i1++;
-                if (i1 < mid)
-                    elt = m_matchedRules[i1];
-            }
-            else {
-                m_tmpRules[m_tmpRuleCount++] = elt2;
-                i2++;
-                if (i2 < end)
-                    elt2 = m_matchedRules[i2];
-            }
+
+    // Peform a merge sort for larger lists.
+    unsigned mid = (start + end) / 2;
+    sortMatchedRules(start, mid);
+    sortMatchedRules(mid, end);
+    
+    CSSRuleData* elt = m_matchedRules[mid - 1];
+    CSSRuleData* elt2 = m_matchedRules[mid];
+    
+    // Handle the fast common case (of equal specificity).  The list may already
+    // be completely sorted.
+    if (*elt <= *elt2)
+        return;
+    
+    // We have to merge sort.  Ensure our merge buffer is big enough to hold
+    // all the items.
+    Vector<CSSRuleData*> rulesMergeBuffer;
+    rulesMergeBuffer.reserveCapacity(end - start); 
+
+    unsigned i1 = start;
+    unsigned i2 = mid;
+    
+    elt = m_matchedRules[i1];
+    elt2 = m_matchedRules[i2];
+    
+    while (i1 < mid || i2 < end) {
+        if (i1 < mid && (i2 == end || *elt <= *elt2)) {
+            rulesMergeBuffer.append(elt);
+            if (++i1 < mid)
+                elt = m_matchedRules[i1];
+        } else {
+            rulesMergeBuffer.append(elt2);
+            if (++i2 < end)
+                elt2 = m_matchedRules[i2];
         }
-        
-        for (unsigned i = start; i < end; i++)
-            m_matchedRules[i] = m_tmpRules[i-start];
-        
-        m_tmpRuleCount = 0;
-    }    
+    }
+    
+    for (unsigned i = start; i < end; i++)
+        m_matchedRules[i] = rulesMergeBuffer[i - start];
 }
 
 void CSSStyleSelector::initElementAndPseudoState(Element* e)
@@ -552,9 +543,9 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParen
 
     style = 0;
     
-    m_matchedRuleCount = 0;
-    m_matchedDeclCount = 0;
-    m_tmpRuleCount = 0;
+    m_matchedRules.clear();
+    m_matchedDecls.clear();
+
     m_ruleList = 0;
 
     fontDirty = false;
@@ -818,8 +809,9 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
                 for (unsigned i = 0; i < map->length(); i++) {
                     MappedAttribute* attr = map->attributeItem(i);
                     if (attr->decl()) {
-                        if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
-                        lastAuthorRule = m_matchedDeclCount;
+                        lastAuthorRule = m_matchedDecls.size();
+                        if (firstAuthorRule == -1)
+                            firstAuthorRule = lastAuthorRule;
                         addMatchedDeclaration(attr->decl());
                     }
                 }
@@ -830,8 +822,9 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
             // after all attributes, since their mapped style depends on the values of multiple attributes.
             CSSMutableStyleDeclaration* attributeDecl = styledElement->additionalAttributeStyleDecl();
             if (attributeDecl) {
-                if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
-                lastAuthorRule = m_matchedDeclCount;
+                lastAuthorRule = m_matchedDecls.size();
+                if (firstAuthorRule == -1)
+                    firstAuthorRule = lastAuthorRule;
                 addMatchedDeclaration(attributeDecl);
             }
         }
@@ -843,8 +836,9 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
         if (styledElement) {
             CSSMutableStyleDeclaration* inlineDecl = styledElement->inlineStyleDecl();
             if (inlineDecl) {
-                if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
-                lastAuthorRule = m_matchedDeclCount;
+                lastAuthorRule = m_matchedDecls.size();
+                if (firstAuthorRule == -1)
+                    firstAuthorRule = lastAuthorRule;
                 addMatchedDeclaration(inlineDecl);
             }
         }
@@ -854,7 +848,7 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     // high-priority properties first, i.e., those properties that other properties depend on.
     // The order is (1) high-priority not important, (2) high-priority important, (3) normal not important
     // and (4) normal important.
-    applyDeclarations(true, false, 0, m_matchedDeclCount-1);
+    applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);
     if (!resolveForRootDefault) {
         applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
         applyDeclarations(true, true, firstUserRule, lastUserRule);
@@ -873,7 +867,7 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     
     // Now do the author and user normal priority properties and all the !important properties.
     if (!resolveForRootDefault) {
-        applyDeclarations(false, false, lastUARule+1, m_matchedDeclCount-1);
+        applyDeclarations(false, false, lastUARule + 1, m_matchedDecls.size() - 1);
         applyDeclarations(false, true, firstAuthorRule, lastAuthorRule);
         applyDeclarations(false, true, firstUserRule, lastUserRule);
     }
@@ -913,7 +907,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     matchRules(m_userStyle, firstUserRule, lastUserRule);
     matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
     
-    if (m_matchedDeclCount == 0)
+    if (m_matchedDecls.isEmpty())
         return 0;
     
     style = new (e->document()->renderArena()) RenderStyle();
@@ -925,7 +919,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     style->noninherited_flags._styleType = pseudoStyle;
     
     // High-priority properties.
-    applyDeclarations(true, false, 0, m_matchedDeclCount-1);
+    applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);
     applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
     applyDeclarations(true, true, firstUserRule, lastUserRule);
     applyDeclarations(true, true, firstUARule, lastUARule);
@@ -940,7 +934,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     // Cache our border and background so that we can examine them later.
     cacheBorderAndBackground();
     
-    applyDeclarations(false, false, lastUARule+1, m_matchedDeclCount-1);
+    applyDeclarations(false, false, lastUARule + 1, m_matchedDecls.size() - 1);
     applyDeclarations(false, true, firstAuthorRule, lastAuthorRule);
     applyDeclarations(false, true, firstUserRule, lastUserRule);
     applyDeclarations(false, true, firstUARule, lastUARule);

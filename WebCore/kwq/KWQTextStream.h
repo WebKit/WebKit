@@ -26,11 +26,11 @@
 #ifndef QTextStream_H
 #define QTextStream_H
 
-#include "DeprecatedArray.h"
+#include <wtf/Vector.h>
 
 class DeprecatedCString;
-class QChar;
 class DeprecatedString;
+class QChar;
 class QTextStream;
 
 namespace WebCore {
@@ -43,7 +43,6 @@ QTextStream &endl(QTextStream& stream);
 
 class QTextStream {
 public:
-    QTextStream(const DeprecatedByteArray&);
     QTextStream(DeprecatedString*);
 
     QTextStream& operator<<(char);
@@ -69,7 +68,7 @@ private:
     QTextStream& operator=(const QTextStream&);
 
     bool m_hasByteArray;
-    DeprecatedByteArray m_byteArray;
+    Vector<char> m_byteArray;
     DeprecatedString* m_string;
     int m_precision;
 };

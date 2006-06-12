@@ -4,6 +4,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -32,8 +33,10 @@
 #include "CachedObjectClient.h"
 #include "CachedObjectClientWalker.h"
 #include "DocLoader.h"
-#include "KWQLoader.h"
 #include "Image.h"
+#include "KWQLoader.h"
+#include "Request.h"
+#include <wtf/Vector.h>
 
 using std::max;
 
@@ -108,37 +111,54 @@ void CachedImage::clear()
     setSize(0);
 }
 
-void CachedImage::data(DeprecatedByteArray& data, bool eof)
+inline void CachedImage::createImage()
 {
-    bool sizeAvailable = false;
-    
-    m_dataSize = data.size();
-
     // Create the image if it doesn't yet exist.
     if (!m_image)
-        m_image = new Image(this,
 #if __APPLE__
-            KWQResponseMIMEType(m_response) == "application/pdf"
+        m_image = new Image(this, KWQResponseMIMEType(m_response) == "application/pdf");
 #else
-            false
+        m_image = new Image(this, false);
 #endif
-            );
-        
-    // Give all the data so far to the image object for processing.
-    // It will not do anything now, but will delay decoding until queried for info (like size or specific image frames).
-    sizeAvailable = m_image->setData(data, eof);
+}
+
+Vector<char>& CachedImage::bufferData(const char* bytes, int addedSize, Request* request)
+{
+    createImage();
+
+    // Add new bytes DIRECTLY to the buffer in the Image object.
+    Vector<char>& buffer = m_image->dataBuffer();
+
+    unsigned oldSize = buffer.size();
+    buffer.resize(oldSize + addedSize);
+    memcpy(buffer.data() + oldSize, bytes, addedSize);
+
+    return buffer;
+}
+
+void CachedImage::data(Vector<char>& data, bool allDataReceived)
+{
+    createImage();
+
+    bool sizeAvailable = false;
+
+    m_dataSize = data.size();
+
+    // Have the image update its data from its internal buffer.
+    // It will not do anything now, but will delay decoding until 
+    // queried for info (like size or specific image frames).
+    sizeAvailable = m_image->setData(allDataReceived);
 
     // Go ahead and tell our observers to try to draw if we have either
     // received all the data or the size is known.  Each chunk from the
     // network causes observers to repaint, which will force that chunk
     // to decode.
-    if (sizeAvailable || eof) {
+    if (sizeAvailable || allDataReceived) {
         if (m_image->isNull()) {
             m_errorOccurred = true;
             notifyObservers();
             Cache::remove(this);
-        }
-        else
+        } else
             notifyObservers();
 
         // FIXME: An animated GIF with a huge frame count can't have its size properly estimated.  The reason is that we don't
@@ -148,7 +168,8 @@ void CachedImage::data(DeprecatedByteArray& data, bool eof)
         IntSize s = imageSize();
         setSize(max(s.width() * s.height() * 4, m_dataSize));
     }
-    if (eof) {
+    
+    if (allDataReceived) {
         m_loading = false;
         checkNotify();
     }
@@ -169,7 +190,7 @@ void CachedImage::checkNotify()
         return;
 
     CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient *c = w.next())
+    while (CachedObjectClient* c = w.next())
         c->notifyFinished(this);
 }
 
@@ -179,10 +200,11 @@ bool CachedImage::shouldStopAnimation(const Image* image)
         return false;
     
     CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient *c = w.next())
+    while (CachedObjectClient* c = w.next()) {
         if (c->willRenderImage(this))
             return false;
-    
+    }
+
     return true;
 }
 
@@ -192,4 +214,4 @@ void CachedImage::animationAdvanced(const Image* image)
         notifyObservers();
 }
 
-}
+} //namespace WebCore

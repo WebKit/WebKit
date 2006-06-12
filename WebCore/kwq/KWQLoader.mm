@@ -39,6 +39,7 @@
 #import "TransferJob.h"
 #import "WebCoreFrameBridge.h"
 #import "loader.h"
+#import <wtf/Vector.h>
 #import <Foundation/NSURLResponse.h>
 
 using namespace WebCore;
@@ -118,12 +119,12 @@ NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
     return headerString;
 }
 
-DeprecatedByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, DeprecatedString &responseHeaders)
+Vector<char> KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, DeprecatedString &responseHeaders)
 {
     FrameMac *frame = static_cast<FrameMac *>(docLoader->frame());
     
     if (!frame)
-        return DeprecatedByteArray();
+        return Vector<char>();
     
     WebCoreFrameBridge *bridge = frame->bridge();
 
@@ -152,15 +153,15 @@ DeprecatedByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoa
     finalURL = finalNSURL;
     responseHeaders = DeprecatedString::fromNSString(KWQHeaderStringFromDictionary(responseHeaderDict, statusCode));
 
-    DeprecatedByteArray results([resultData length]);
+    Vector<char> results([resultData length]);
 
-    memcpy( results.data(), [resultData bytes], [resultData length] );
+    memcpy(results.data(), [resultData bytes], [resultData length]);
 
     return results;
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    return DeprecatedByteArray();
+    return Vector<char>();
 }
 
 int KWQNumberOfPendingOrLoadingRequests(WebCore::DocLoader *dl)

@@ -3,6 +3,7 @@
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -28,8 +29,9 @@
 #define KHTML_CachedImage_h
 
 #include "CachedObject.h"
-#include "IntRect.h"
 #include "ImageAnimationObserver.h"
+#include "IntRect.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -39,20 +41,21 @@ class Image;
 
 class CachedImage : public CachedObject, public ImageAnimationObserver {
 public:
-    CachedImage(DocLoader*, const String &url, KIO::CacheControl cachePolicy, time_t expireDate);
+    CachedImage(DocLoader*, const String& url, KIO::CacheControl cachePolicy, time_t expireDate);
     virtual ~CachedImage();
 
     Image* image() const;
 
     bool canRender() const { return !isErrorImage() && imageSize().width() > 0 && imageSize().height() > 0; }
 
-    IntSize imageSize() const;    // returns the size of the complete image
+    IntSize imageSize() const;  // returns the size of the complete image
     IntRect imageRect() const;  // The size of the image.
 
     virtual void ref(CachedObjectClient*);
     virtual void deref(CachedObjectClient*);
 
-    virtual void data(DeprecatedByteArray&, bool atEnd);
+    virtual Vector<char>& bufferData(const char* bytes, int addedSize, Request*);
+    virtual void data(Vector<char>&, bool allDataReceived);
     virtual void error();
 
     bool isErrorImage() const { return m_errorOccurred; }
@@ -69,6 +72,7 @@ public:
     virtual void animationAdvanced(const Image* image);
 
 private:
+    void createImage();
     void notifyObservers();
 
     Image* m_image;

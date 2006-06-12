@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QCSTRING_H_
-#define QCSTRING_H_
+#ifndef DEPRECATEDCSTRING_H_
+#define DEPRECATEDCSTRING_H_
 
 #include "DeprecatedArray.h"
 #include <string.h>
 
-class DeprecatedCString : public DeprecatedByteArray {
+class DeprecatedCString : public WebCore::DeprecatedByteArray {
 public:
     DeprecatedCString();
     DeprecatedCString(int);

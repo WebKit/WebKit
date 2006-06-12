@@ -23,10 +23,9 @@
 #ifndef AutoTableLayout_H
 #define AutoTableLayout_H
 
-#include "TableLayout.h"
-
-#include "DeprecatedArray.h"
 #include "Length.h"
+#include "TableLayout.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -70,8 +69,8 @@ protected:
         int calcWidth;
     };
 
-    DeprecatedArray<Layout> m_layoutStruct;
-    DeprecatedArray<RenderTableCell*> m_spanCells;
+    Vector<Layout> m_layoutStruct;
+    Vector<RenderTableCell*> m_spanCells;
     bool m_hasPercent : 1;
     mutable bool m_percentagesDirty : 1;
     mutable bool m_effWidthDirty : 1;

@@ -60,9 +60,8 @@ public:
 private:
     Document* m_doc;
     HTMLImageElement* m_imageElement;
-    DeprecatedByteArray m_buffer;
 };
-    
+
 bool ImageTokenizer::write(const SegmentedString& s, bool appendData)
 {
     ASSERT_NOT_REACHED();
@@ -91,16 +90,13 @@ void ImageTokenizer::createDocumentStructure()
     body->appendChild(imageElement, ec);    
 }
 
-bool ImageTokenizer::writeRawData(const char *data, int len)
+bool ImageTokenizer::writeRawData(const char* data, int len)
 {
     if (!m_imageElement)
         createDocumentStructure();
 
-    unsigned oldSize = m_buffer.size();
-    m_buffer.resize(oldSize + len);
-    memcpy(m_buffer.data() + oldSize, data, len);
-
-    m_imageElement->cachedImage()->data(m_buffer, false);
+    CachedImage* cachedImage = m_imageElement->cachedImage();
+    cachedImage->data(cachedImage->bufferData(data, len, 0), false);
 
     return false;
 }
@@ -108,35 +104,37 @@ bool ImageTokenizer::writeRawData(const char *data, int len)
 void ImageTokenizer::stopParsing()
 {
     Tokenizer::stopParsing();
-   
     m_imageElement->cachedImage()->error();
 }
 
 void ImageTokenizer::finish()
 {
     if (!m_parserStopped) {
-        m_imageElement->cachedImage()->data(m_buffer, true);
+        CachedImage* cachedImage = m_imageElement->cachedImage();
+        Vector<char>& buffer = cachedImage->bufferData(0, 0, 0);
+        cachedImage->data(buffer, true);
 
-        // FIXME: For platforms other than Mac OS X, the title needs to be set in this function
-        
+        // FIXME: Need code to set the title for platforms other than Mac OS X.
+
 #ifdef __APPLE__
-        WebCoreFrameBridge *bridge = Mac(m_doc->frame())->bridge();
-        NSURLResponse *response = [bridge mainResourceURLResponse];
-        NSData *data = [NSData dataWithBytes:m_buffer.data() length:m_buffer.size()];
-        m_imageElement->cachedImage()->setAllData([data retain]);
-        m_imageElement->cachedImage()->setResponse(response);
+        // FIXME: This is terrible! Makes an extra copy of the image data!
+        // Can't we get the NSData from NSURLConnection?
+        // Why is this different from image subresources?
+        NSData* nsData = [[NSData alloc] initWithBytes:buffer.data() length:buffer.size()];
+        cachedImage->setAllData(nsData);
+        [nsData release];
 
-        if (m_imageElement->cachedImage()->imageSize().width() > 0) {
-            NSSize size = NSMakeSize(m_imageElement->cachedImage()->imageSize().width(), 
-                                     m_imageElement->cachedImage()->imageSize().height());
+        WebCoreFrameBridge* bridge = Mac(m_doc->frame())->bridge();
+        NSURLResponse* response = [bridge mainResourceURLResponse];
+        cachedImage->setResponse(response);
+
+        if (cachedImage->imageSize().width() > 0)
             m_doc->setTitle([bridge imageTitleForFilename:[response suggestedFilename]
-                                                     size:size]);
-        }
+                                                     size:cachedImage->imageSize()]);
 #endif
     }
 
-    m_doc->finishedParsing();    
-    
+    m_doc->finishedParsing();
 }
     
 bool ImageTokenizer::isWaitingForScripts() const

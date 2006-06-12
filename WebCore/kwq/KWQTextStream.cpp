@@ -27,18 +27,14 @@
 #include "KWQTextStream.h"
 
 #include "DeprecatedString.h"
-#include "PlatformString.h"
 #include "Logging.h"
+#include "PlatformString.h"
+#include <wtf/Vector.h>
 
 const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
 const char *precisionFormats[] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f" "%.6f"}; 
 const int maxPrecision = 6; // must match to precisionFormats
 const int defaultPrecision = 6; // matches qt and sprintf(.., "%f", ...) behaviour
-
-QTextStream::QTextStream(const DeprecatedByteArray& ba)
-    : m_hasByteArray(true), m_byteArray(ba), m_string(0), m_precision(defaultPrecision)
-{
-}
 
 QTextStream::QTextStream(DeprecatedString* s)
     : m_hasByteArray(false), m_string(s), m_precision(defaultPrecision)
@@ -47,11 +43,9 @@ QTextStream::QTextStream(DeprecatedString* s)
 
 QTextStream& QTextStream::operator<<(char c)
 {
-    if (m_hasByteArray) {
-        unsigned oldSize = m_byteArray.size();
-        m_byteArray.resize(oldSize + 1);
-        m_byteArray[oldSize] = c;
-    }
+    if (m_hasByteArray)
+        m_byteArray.append(c);
+
     if (m_string)
         m_string->append(QChar(c));
     return *this;

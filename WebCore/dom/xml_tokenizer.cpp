@@ -29,20 +29,20 @@
 #include "CachedScript.h"
 #include "Comment.h"
 #include "DocLoader.h"
-#include "DocumentFragment.h"
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "HTMLTableSectionElement.h"
 #include "HTMLScriptElement.h"
-#include "KWQLoader.h"
+#include "HTMLTableSectionElement.h"
 #include "HTMLTokenizer.h"
+#include "KWQLoader.h"
 #include "ProcessingInstruction.h"
+#include "TransferJob.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
-
-#include "TransferJob.h"
+#include <wtf/Vector.h>
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
@@ -146,7 +146,7 @@ static WebCore::DocLoader *globalDocLoader = 0;
 
 class OffsetBuffer {
 public:
-    OffsetBuffer(const DeprecatedByteArray &b) : m_buffer(b), m_currentOffset(0) { }
+    OffsetBuffer(const Vector<char>& b) : m_buffer(b), m_currentOffset(0) { }
     
     int readOutBytes(char *outputBuffer, unsigned askedToRead) {
         unsigned bytesLeft = m_buffer.size() - m_currentOffset;
@@ -159,7 +159,7 @@ public:
     }
 
 private:
-    DeprecatedByteArray m_buffer;
+    Vector<char> m_buffer;
     unsigned m_currentOffset;
 };
 
@@ -181,7 +181,7 @@ static void* openFunc(const char* uri)
     KURL finalURL;
     TransferJob* job = new TransferJob(0, "GET", uri);
     DeprecatedString headers;
-    DeprecatedByteArray data = KWQServeSynchronousRequest(Cache::loader(), globalDocLoader, job, finalURL, headers);
+    Vector<char> data = KWQServeSynchronousRequest(Cache::loader(), globalDocLoader, job, finalURL, headers);
     
     return new OffsetBuffer(data);
 }

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "IntPointArray.h"
 #include "KRenderingDeviceQuartz.h"
 #include "Path.h"
 
@@ -349,12 +348,11 @@ void GraphicsContext::drawArc(const IntRect& rect, float thickness, int startAng
     CGContextRestoreGState(context);
 }
 
-void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
+void GraphicsContext::drawConvexPolygon(size_t npoints, const IntPoint* points)
 {
     if (paintingDisabled())
         return;
 
-    int npoints = points.size();
     if (npoints <= 1)
         return;
 
@@ -366,7 +364,7 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
     
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, points[0].x(), points[0].y());
-    for (int i = 1; i < npoints; i++)
+    for (size_t i = 1; i < npoints; i++)
         CGContextAddLineToPoint(context, points[i].x(), points[i].y());
     CGContextClosePath(context);
 

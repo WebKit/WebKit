@@ -23,31 +23,30 @@
 
 #include "DeprecatedString.h"
 #include "DeprecatedValueList.h"
-
-class DeprecatedCString;
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
-    FormDataElement(const DeprecatedByteArray &array) : m_type(data), m_data(array) { }
-    FormDataElement(const DeprecatedString &filename) : m_type(encodedFile), m_filename(filename) { }
+    FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
+    FormDataElement(const DeprecatedString& filename) : m_type(encodedFile), m_filename(filename) { }
 
     enum { data, encodedFile } m_type;
-    DeprecatedByteArray m_data;
+    Vector<char> m_data;
     DeprecatedString m_filename;
 };
 
 class FormData {
 public:
     FormData();
-    FormData(const DeprecatedCString &);
+    FormData(const DeprecatedCString&);
 
     void appendData(const void *data, size_t size);
-    void appendFile(const DeprecatedString &filename);
+    void appendFile(const DeprecatedString& filename);
 
-    DeprecatedByteArray flatten() const; // omits files
+    Vector<char> flatten() const; // omits files
     DeprecatedString flattenToString() const; // omits files
 
     size_t count() const { return m_elements.count(); }

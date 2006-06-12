@@ -57,8 +57,6 @@ namespace WebCore {
     class Font;
     class GraphicsContextPrivate;
     class GraphicsContextPlatformPrivate;
-    class IntPoint;
-    class IntPointArray;
     class Path;
 
 #if SVG_SUPPORT
@@ -90,7 +88,7 @@ namespace WebCore {
         void drawLine(const IntPoint&, const IntPoint&);
         void drawEllipse(const IntRect&);
         void drawArc(const IntRect&, float thickness, int startAngle, int angleSpan);
-        void drawConvexPolygon(const IntPointArray&);
+        void drawConvexPolygon(size_t numPoints, const IntPoint*);
 
         void fillRect(const IntRect&, const Color&);
         void fillRect(const FloatRect&, const Color&);

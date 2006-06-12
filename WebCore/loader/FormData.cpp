@@ -21,6 +21,8 @@
 #include "config.h"
 #include "FormData.h"
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 FormData::FormData()
@@ -48,18 +50,17 @@ void FormData::appendFile(const DeprecatedString &filename)
     m_elements.append(filename);
 }
 
-DeprecatedByteArray FormData::flatten() const
+Vector<char> FormData::flatten() const
 {
     // Concatenate all the byte arrays, but omit any files.
-    DeprecatedByteArray a;
+    Vector<char> a;
     for (DeprecatedValueListConstIterator<FormDataElement> it = m_elements.begin(); it != m_elements.end(); ++it) {
-        const FormDataElement &e = *it;
+        const FormDataElement& e = *it;
         if (e.m_type == FormDataElement::data) {
-            size_t oldSize = a.size();
-            if (oldSize == 0) {
+            if (a.isEmpty())
                 a = e.m_data;
-            } else {
-                a.detach();
+            else {
+                size_t oldSize = a.size();
                 size_t delta = e.m_data.size();
                 a.resize(oldSize + delta);
                 memcpy(a.data() + oldSize, e.m_data.data(), delta);
@@ -71,7 +72,7 @@ DeprecatedByteArray FormData::flatten() const
 
 DeprecatedString FormData::flattenToString() const
 {
-    DeprecatedByteArray bytes = flatten();
+    Vector<char> bytes = flatten();
     return DeprecatedString::fromLatin1(bytes.data(), bytes.size());
 }
 

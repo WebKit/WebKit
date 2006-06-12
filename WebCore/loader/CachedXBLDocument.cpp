@@ -4,6 +4,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -29,10 +30,13 @@
 
 #ifndef KHTML_NO_XBL
 
+#include "CachedXBLDocument.h"
+
 #include "Cache.h"
-#include "loader.h"
 #include "CachedObjectClientWalker.h"
 #include "Decoder.h"
+#include "loader.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -75,9 +79,9 @@ void CachedXBLDocument::setCharset( const DeprecatedString &chs )
         m_decoder->setEncoding(chs.latin1(), Decoder::EncodingFromHTTPHeader);
 }
 
-void CachedXBLDocument::data(DeprecatedByteArray& data, bool eof )
+void CachedXBLDocument::data(Vector<char>& data, bool )
 {
-    if (!eof)
+    if (!allDataReceived)
         return;
     
     assert(!m_document);
@@ -97,7 +101,7 @@ void CachedXBLDocument::data(DeprecatedByteArray& data, bool eof )
 
 void CachedXBLDocument::checkNotify()
 {
-    if(m_loading)
+    if (m_loading)
         return;
     
     CachedObjectClientWalker w(m_clients);

@@ -155,7 +155,6 @@
 		platform/GraphicsContext.cpp
 		platform/GraphicsTypes.cpp
 		platform/Image.cpp
-		platform/IntPointArray.cpp
 		platform/IntRect.cpp
 		platform/KURL.cpp
 		platform/Logging.cpp

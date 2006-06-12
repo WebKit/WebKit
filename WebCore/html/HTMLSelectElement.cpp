@@ -38,6 +38,7 @@
 #include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -91,7 +92,7 @@ int HTMLSelectElement::selectedIndex() const
 {
     // return the number of the first option selected
     unsigned o = 0;
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     for (unsigned int i = 0; i < items.size(); i++) {
         if (items[i]->hasLocalName(optionTag)) {
             if (static_cast<HTMLOptionElement*>(items[i])->selected())
@@ -105,7 +106,7 @@ int HTMLSelectElement::selectedIndex() const
 void HTMLSelectElement::setSelectedIndex( int  index )
 {
     // deselect all other options and select only the new one
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     int listIndex;
     for (listIndex = 0; listIndex < int(items.size()); listIndex++) {
         if (items[listIndex]->hasLocalName(optionTag))
@@ -122,7 +123,7 @@ int HTMLSelectElement::length() const
 {
     int len = 0;
     unsigned i;
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     for (i = 0; i < items.size(); i++) {
         if (items[i]->hasLocalName(optionTag))
             len++;
@@ -147,7 +148,7 @@ void HTMLSelectElement::remove(int index)
     ExceptionCode ec = 0;
     int listIndex = optionToListIndex(index);
 
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     if (listIndex < 0 || index >= int(items.size()))
         return; // ### what should we do ? remove the last item?
 
@@ -159,7 +160,7 @@ void HTMLSelectElement::remove(int index)
 String HTMLSelectElement::value()
 {
     unsigned i;
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     for (i = 0; i < items.size(); i++) {
         if (items[i]->hasLocalName(optionTag) && static_cast<HTMLOptionElement*>(items[i])->selected())
             return static_cast<HTMLOptionElement*>(items[i])->value();
@@ -173,7 +174,7 @@ void HTMLSelectElement::setValue(const String &value)
         return;
     // find the option with value() matching the given parameter
     // and make it the current selection.
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     for (unsigned i = 0; i < items.size(); i++)
         if (items[i]->hasLocalName(optionTag) && static_cast<HTMLOptionElement*>(items[i])->value() == value) {
             static_cast<HTMLOptionElement*>(items[i])->setSelected(true);
@@ -183,8 +184,8 @@ void HTMLSelectElement::setValue(const String &value)
 
 String HTMLSelectElement::stateValue() const
 {
-    DeprecatedArray<HTMLElement*> items = listItems();
-    int l = items.count();
+    Vector<HTMLElement*> items = listItems();
+    int l = items.size();
     Vector<char, 1024> characters(l);
     for (int i = 0; i < l; ++i) {
         HTMLElement* e = items[i];
@@ -198,8 +199,8 @@ void HTMLSelectElement::restoreState(const String& state)
 {
     recalcListItems();
 
-    DeprecatedArray<HTMLElement*> items = listItems();
-    int l = items.count();
+    Vector<HTMLElement*> items = listItems();
+    int l = items.size();
     for (int i = 0; i < l; i++)
         if (items[i]->hasLocalName(optionTag))
             static_cast<HTMLOptionElement*>(items[i])->setSelected(state[i] == 'X');
@@ -274,7 +275,7 @@ RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle 
 bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
 {
     bool successful = false;
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
 
     unsigned i;
     for (i = 0; i < items.size(); i++) {
@@ -305,7 +306,7 @@ bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
 
 int HTMLSelectElement::optionToListIndex(int optionIndex) const
 {
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     if (optionIndex < 0 || optionIndex >= int(items.size()))
         return -1;
 
@@ -323,7 +324,7 @@ int HTMLSelectElement::optionToListIndex(int optionIndex) const
 
 int HTMLSelectElement::listToOptionIndex(int listIndex) const
 {
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     if (listIndex < 0 || listIndex >= int(items.size()) ||
         !items[listIndex]->hasLocalName(optionTag))
         return -1;
@@ -344,32 +345,28 @@ PassRefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
 void HTMLSelectElement::recalcListItems()
 {
     Node* current = firstChild();
-    m_listItems.resize(0);
+    m_listItems.clear();
     HTMLOptionElement* foundSelected = 0;
-    while(current) {
+    while (current) {
         if (current->hasTagName(optgroupTag) && current->firstChild()) {
             // ### what if optgroup contains just comments? don't want one of no options in it...
-            m_listItems.resize(m_listItems.size()+1);
-            m_listItems[m_listItems.size()-1] = static_cast<HTMLElement*>(current);
+            m_listItems.append(static_cast<HTMLElement*>(current));
             current = current->firstChild();
         }
         if (current->hasTagName(optionTag)) {
-            m_listItems.resize(m_listItems.size()+1);
-            m_listItems[m_listItems.size()-1] = static_cast<HTMLElement*>(current);
+            m_listItems.append(static_cast<HTMLElement*>(current));
             if (!foundSelected && !m_multiple && m_size <= 1) {
                 foundSelected = static_cast<HTMLOptionElement*>(current);
                 foundSelected->m_selected = true;
-            }
-            else if (foundSelected && !m_multiple && static_cast<HTMLOptionElement*>(current)->selected()) {
+            } else if (foundSelected && !m_multiple && static_cast<HTMLOptionElement*>(current)->selected()) {
                 foundSelected->m_selected = false;
                 foundSelected = static_cast<HTMLOptionElement*>(current);
             }
         }
-        if (current->hasTagName(hrTag)) {
-            m_listItems.resize(m_listItems.size()+1);
-            m_listItems[m_listItems.size()-1] = static_cast<HTMLElement*>(current);
-        }
-        Node *parent = current->parentNode();
+        if (current->hasTagName(hrTag))
+            m_listItems.append(static_cast<HTMLElement*>(current));
+
+        Node* parent = current->parentNode();
         current = current->nextSibling();
         if (!current) {
             if (parent != this)
@@ -398,7 +395,7 @@ void HTMLSelectElement::reset()
 {
     bool optionSelected = false;
     HTMLOptionElement* firstOption = 0;
-    DeprecatedArray<HTMLElement*> items = listItems();
+    Vector<HTMLElement*> items = listItems();
     unsigned i;
     for (i = 0; i < items.size(); i++) {
         if (items[i]->hasLocalName(optionTag)) {
@@ -423,7 +420,7 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
 {
     if (selected && !m_multiple) {
         // deselect all other options
-        DeprecatedArray<HTMLElement*> items = listItems();
+        Vector<HTMLElement*> items = listItems();
         unsigned i;
         for (i = 0; i < items.size(); i++) {
             if (items[i]->hasLocalName(optionTag))

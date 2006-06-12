@@ -1393,8 +1393,6 @@
 		BC6DB4D40A1AFEEF00E5CD14 /* GlyphMapMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */; };
 		BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
 		BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
-		BC73E2FF0978AF9C00EDFF8A /* IntPointArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */; };
-		BC73E3000978AF9C00EDFF8A /* IntPointArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E2FD0978AF9C00EDFF8A /* IntPointArray.h */; };
 		BC73E3190978AFFC00EDFF8A /* IntPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3180978AFFB00EDFF8A /* IntPoint.h */; };
 		BC73E3920978CED700EDFF8A /* FloatPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E3900978CED700EDFF8A /* FloatPoint.cpp */; };
 		BC73E3930978CED700EDFF8A /* FloatPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3910978CED700EDFF8A /* FloatPoint.h */; };
@@ -1535,6 +1533,23 @@
 		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		93D39CAC0A3CDCE4001060E7 /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Development;
+		};
+		93D39CAD0A3CDCE4001060E7 /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
@@ -3086,8 +3101,6 @@
 		BC6DB4D30A1AFEEF00E5CD14 /* GlyphMapMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphMapMac.cpp; sourceTree = "<group>"; };
 		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSize.cpp; sourceTree = "<group>"; };
 		BC73E25C0978682700EDFF8A /* FloatSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatSize.h; sourceTree = "<group>"; };
-		BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntPointArray.cpp; sourceTree = "<group>"; };
-		BC73E2FD0978AF9C00EDFF8A /* IntPointArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IntPointArray.h; sourceTree = "<group>"; };
 		BC73E3180978AFFB00EDFF8A /* IntPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IntPoint.h; sourceTree = "<group>"; };
 		BC73E3900978CED700EDFF8A /* FloatPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint.cpp; sourceTree = "<group>"; };
 		BC73E3910978CED700EDFF8A /* FloatPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint.h; sourceTree = "<group>"; };
@@ -4971,8 +4984,6 @@
 				BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */,
 				BC6B7ECE0998AC7F0052867B /* ImageSource.h */,
 				BC73E3180978AFFB00EDFF8A /* IntPoint.h */,
-				BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */,
-				BC73E2FD0978AF9C00EDFF8A /* IntPointArray.h */,
 				BCB16AF70979A08500467741 /* IntRect.cpp */,
 				BCB16AF80979A08500467741 /* IntRect.h */,
 				BCF1A5EF097839600061A123 /* IntSize.h */,
@@ -5729,7 +5740,6 @@
 				654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */,
 				BCF1A5F1097839600061A123 /* IntSize.h in Headers */,
 				BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */,
-				BC73E3000978AF9C00EDFF8A /* IntPointArray.h in Headers */,
 				BC73E3190978AFFC00EDFF8A /* IntPoint.h in Headers */,
 				BC73E3930978CED700EDFF8A /* FloatPoint.h in Headers */,
 				BCB16AFA0979A08500467741 /* FloatRect.h in Headers */,
@@ -6258,6 +6268,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				93D39CAC0A3CDCE4001060E7 /* Development */,
+				93D39CAD0A3CDCE4001060E7 /* Deployment */,
+			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -6603,7 +6619,6 @@
 				A81872250977D3C0005826D9 /* ChildNodeList.cpp in Sources */,
 				654EC612097778F500DAB52C /* WebCoreFrameBridge.mm in Sources */,
 				BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */,
-				BC73E2FF0978AF9C00EDFF8A /* IntPointArray.cpp in Sources */,
 				BC73E3920978CED700EDFF8A /* FloatPoint.cpp in Sources */,
 				BCB16AF90979A08500467741 /* FloatRect.cpp in Sources */,
 				BCB16AFB0979A08500467741 /* IntRect.cpp in Sources */,

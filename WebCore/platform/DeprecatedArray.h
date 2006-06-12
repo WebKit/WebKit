@@ -68,8 +68,4 @@ typedef DeprecatedArray<char> DeprecatedByteArray;
 
 }
 
-// FIXME: Remove when everything is in the WebCore namespace.
-using WebCore::DeprecatedArray;
-using WebCore::DeprecatedByteArray;
-
 #endif

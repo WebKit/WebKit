@@ -3,6 +3,7 @@
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -24,29 +25,39 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef KHTML_Request_h
-#define KHTML_Request_h
+#ifndef Request_h_
+#define Request_h_
 
-#include "DeprecatedArray.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
     class CachedObject;
     class DocLoader;
-
-    template <class T> class DeprecatedArray;
-    typedef DeprecatedArray<char> DeprecatedByteArray;
 
     class Request {
     public:
         Request(DocLoader*, CachedObject*, bool incremental);
         ~Request();
+        
+        Vector<char>& buffer() { return m_buffer; }
+        CachedObject* cachedObject() { return m_object; }
+        DocLoader* docLoader() { return m_docLoader; }
 
-        bool incremental;
-        DeprecatedByteArray m_buffer;
-        CachedObject* object;
+        bool isIncremental() { return m_incremental; }
+        void setIsIncremental(bool b = true) { m_incremental = b; }
+
+        bool isMultipart() { return m_multipart; }
+        void setIsMultipart(bool b = true) { m_multipart = b; }
+
+    private:
+        Vector<char> m_buffer;
+        CachedObject* m_object;
         DocLoader* m_docLoader;
-        bool multipart;
+        bool m_incremental;
+        bool m_multipart;
     };
-}
 
-#endif
+} //namespace WebCore
+
+#endif // Request_h_

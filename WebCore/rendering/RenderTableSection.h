@@ -28,6 +28,7 @@
 #define RenderTableSection_H
 
 #include "RenderTable.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -67,7 +68,7 @@ public:
         RenderTableCell *cell;
         bool inColSpan; // true for columns after the first in a colspan
     };
-    typedef DeprecatedArray<CellStruct> Row;
+    typedef Vector<CellStruct> Row;
     struct RowStruct {
         Row* row;
         RenderObject* rowRenderer;
@@ -114,9 +115,9 @@ public:
 
     // this gets a cell grid data structure. changing the number of
     // columns is done by the table
-    DeprecatedArray<RowStruct> grid;
+    Vector<RowStruct> grid;
     int gridRows;
-    DeprecatedArray<int> rowPos;
+    Vector<int> rowPos;
 
     // the current insertion position
     int cCol;

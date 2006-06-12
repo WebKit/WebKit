@@ -1399,14 +1399,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\IntPointArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\IntPointArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\IntRect.cpp"
 				>
 			</File>

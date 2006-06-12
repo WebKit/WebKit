@@ -27,13 +27,15 @@
 
 #include "config.h"
 #include "RenderTableSection.h"
-#include "RenderTableCell.h"
-#include "RenderTableCol.h"
-#include "RenderTableRow.h"
-#include "RenderTableCol.h"
+
 #include "Document.h"
 #include "HTMLNames.h"
 #include "KWQTextStream.h"
+#include "RenderTableCell.h"
+#include "RenderTableCol.h"
+#include "RenderTableRow.h"
+#include <wtf/Vector.h>
+#include <limits>
 
 using namespace std;
 
@@ -142,10 +144,11 @@ bool RenderTableSection::ensureRows(int numRows)
 {
     int nRows = gridRows;
     if (numRows > nRows) {
-        if (numRows > static_cast<int>(grid.size()))
-            if (!grid.resize(numRows*2+1))
+        if (numRows > static_cast<int>(grid.size())) {
+            if (numRows > static_cast<int>(numeric_limits<size_t>::max() / sizeof(int)))
                 return false;
-
+            grid.resize(numRows);
+        }
         gridRows = numRows;
         int nCols = table()->numEffCols();
         CellStruct emptyCellStruct;
@@ -163,11 +166,11 @@ bool RenderTableSection::ensureRows(int numRows)
     return true;
 }
 
-void RenderTableSection::addCell(RenderTableCell *cell, RenderObject* row)
+void RenderTableSection::addCell(RenderTableCell* cell, RenderObject* row)
 {
     int rSpan = cell->rowSpan();
     int cSpan = cell->colSpan();
-    DeprecatedArray<RenderTable::ColumnStruct> &columns = table()->columns;
+    Vector<RenderTable::ColumnStruct>& columns = table()->columns;
     int nCols = columns.size();
 
     // ### mozilla still seems to do the old HTML way, even for strict DTD
@@ -247,7 +250,7 @@ void RenderTableSection::addCell(RenderTableCell *cell, RenderObject* row)
 
 void RenderTableSection::setCellWidths()
 {
-    DeprecatedArray<int> &columnPos = table()->columnPos;
+    Vector<int>& columnPos = table()->columnPos;
 
     int rows = gridRows;
     for (int i = 0; i < rows; i++) {

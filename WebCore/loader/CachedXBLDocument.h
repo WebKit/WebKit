@@ -3,6 +3,7 @@
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
+    Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
     Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -28,6 +29,7 @@
 #define KHTML_CachedXBLDocument_h
 
 #include "CachedObject.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
     class CachedObject;
@@ -40,23 +42,23 @@ namespace WebCore {
     class CachedXBLDocument : public CachedObject
     {
     public:
-        CachedXBLDocument(DocLoader* dl, const WebCore::String &url, KIO::CacheControl cachePolicy, time_t _expireDate);
+        CachedXBLDocument(DocLoader* dl, const String& url, KIO::CacheControl cachePolicy, time_t _expireDate);
         virtual ~CachedXBLDocument();
         
         XBL::XBLDocument* document() const { return m_document; }
         
-        virtual void ref(CachedObjectClient *consumer);
-        virtual void deref(CachedObjectClient *consumer);
+        virtual void ref(CachedObjectClient*);
+        virtual void deref(CachedObjectClient*);
         
-        virtual void setCharset( const DeprecatedString &chs );
-        virtual void data(DeprecatedByteArray&, bool eof );
+        virtual void setCharset(const DeprecatedString&);
+        virtual void data(Vector<char>&, bool allDataReceived);
         virtual void error();
         
         virtual bool schedule() const { return true; }
         
         void checkNotify();
         
-protected:
+    protected:
         XBL::XBLDocument* m_document;
         RefPtr<Decoder> m_decoder;
     };

@@ -36,6 +36,7 @@
 #include "dom2_eventsimpl.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
+#include <wtf/Vector.h>
 
 using namespace KIO;
 
@@ -329,7 +330,7 @@ void XMLHttpRequest::send(const String& body)
         m_job->addMetaData("customHTTPHeader", m_requestHeaders);
 
     if (!m_async) {
-        DeprecatedByteArray data;
+        Vector<char> data;
         KURL finalURL;
         DeprecatedString headers;
 
@@ -479,26 +480,26 @@ String XMLHttpRequest::getStatusText() const
     return firstLine.substring(codeEnd + 1, endOfLine - (codeEnd + 1)).deprecatedString().stripWhiteSpace();
 }
 
-void XMLHttpRequest::processSyncLoadResults(const DeprecatedByteArray &data, const KURL &finalURL, const DeprecatedString &headers)
+void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const KURL& finalURL, const DeprecatedString& headers)
 {
-  if (!urlMatchesDocumentDomain(finalURL)) {
-    abort();
-    return;
-  }
-  
-  m_responseHeaders = headers;
-  changeState(Loaded);
-  if (m_aborted)
-    return;
-  
-  const char *bytes = (const char *)data.data();
-  int len = (int)data.size();
+    if (!urlMatchesDocumentDomain(finalURL)) {
+        abort();
+        return;
+    }
 
-  receivedData(0, bytes, len);
-  if (m_aborted)
-    return;
+    m_responseHeaders = headers;
+    changeState(Loaded);
+    if (m_aborted)
+        return;
 
-  receivedAllData(0);
+    const char* bytes = static_cast<const char*>(data.data());
+    int len = static_cast<int>(data.size());
+
+    receivedData(0, bytes, len);
+    if (m_aborted)
+        return;
+
+    receivedAllData(0);
 }
 
 void XMLHttpRequest::receivedAllData(TransferJob*)
