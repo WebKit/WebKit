@@ -56,13 +56,13 @@ RenderThemeMac::RenderThemeMac()
 {
 }
 
-Color RenderThemeMac::platformActiveSelectionColor() const
+Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
 {
     NSColor* color = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     return Color((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
 }
 
-Color RenderThemeMac::platformInactiveSelectionColor() const
+Color RenderThemeMac::platformInactiveSelectionBackgroundColor() const
 {
     NSColor* color = [[NSColor secondarySelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     return Color((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));

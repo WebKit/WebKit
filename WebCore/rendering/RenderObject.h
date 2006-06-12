@@ -71,8 +71,6 @@ class RenderTable;
 class RenderText;
 class VisiblePosition;
 
-const int selectionColorOverlayAlpha = 60 * 255 / 100;
-
 enum PaintPhase {
     PaintPhaseBlockBackground,
     PaintPhaseChildBlockBackground,
@@ -793,9 +791,10 @@ public:
     // since it fires the selectstart DOM event.
     bool shouldSelect() const;
     
-    // Obtains the selection background color that should be used when painting a selection.
-    Color selectionColor() const;
-    
+    // Obtains the selection colors that should be used when painting a selection.
+    Color selectionBackgroundColor() const;
+    Color selectionForegroundColor() const;
+
     // Whether or not a given block needs to paint selection gaps.
     virtual bool shouldPaintSelectionGaps() const { return false; }
 

@@ -120,34 +120,44 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
     return false;
 }
 
-Color RenderTheme::activeSelectionColor() const
+Color RenderTheme::activeSelectionBackgroundColor() const
 {
     static Color activeSelectionColor;
     if (!activeSelectionColor.isValid())
-        activeSelectionColor = platformActiveSelectionColor().blendWithWhite(selectionColorOverlayAlpha);
+        activeSelectionColor = platformActiveSelectionBackgroundColor().blendWithWhite();
     return activeSelectionColor;
 }
 
-Color RenderTheme::inactiveSelectionColor() const
+Color RenderTheme::inactiveSelectionBackgroundColor() const
 {
     static Color inactiveSelectionColor;
     if (!inactiveSelectionColor.isValid())
-        inactiveSelectionColor = platformInactiveSelectionColor().blendWithWhite(selectionColorOverlayAlpha);
+        inactiveSelectionColor = platformInactiveSelectionBackgroundColor().blendWithWhite();
     return inactiveSelectionColor;
 }
 
-Color RenderTheme::platformActiveSelectionColor() const
+Color RenderTheme::platformActiveSelectionBackgroundColor() const
 {
     // Use a blue color by default if the platform theme doesn't define anything.
     return Color(0, 0, 255);
 }
     
-Color RenderTheme::platformInactiveSelectionColor() const
+Color RenderTheme::platformInactiveSelectionBackgroundColor() const
 {
     // Use a grey color by default if the platform theme doesn't define anything.
     return Color(128, 128, 128);
 }
+   
+Color RenderTheme::platformActiveSelectionForegroundColor() const
+{
+    return Color();
+}
     
+Color RenderTheme::platformInactiveSelectionForegroundColor() const
+{
+    return Color();
+}
+
 short RenderTheme::baselinePosition(const RenderObject* o) const
 {
     return o->height() + o->marginTop();

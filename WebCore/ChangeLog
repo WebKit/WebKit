@@ -1,3 +1,60 @@
+2006-06-12  Dave Hyatt <hyatt@apple.com>
+
+        Add the notion of a selection foreground color to the engine for
+        Win32.  Rename existing selectionColor methods to be
+        selectionBackgroundColor instead.
+
+        Change the 60% alpha blend rule for transparent selection to
+        instead be a range from 60-80%, with less transparency being
+        used as needed to ensure the transformed color more closely
+        approximates the original operating system color when blended
+        with a white background.
+
+        Reviewed by mjs
+
+        * platform/Color.cpp:
+        (WebCore::blend):
+        (WebCore::Color::blendWithWhite):
+        * platform/Color.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::fillHorizontalSelectionGap):
+        (WebCore::RenderBlock::fillVerticalSelectionGap):
+        (WebCore::RenderBlock::fillLeftSelectionGap):
+        (WebCore::RenderBlock::fillRightSelectionGap):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paint):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor):
+        (WebCore::RenderObject::selectionForegroundColor):
+        * rendering/RenderObject.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::activeSelectionBackgroundColor):
+        (WebCore::RenderTheme::inactiveSelectionBackgroundColor):
+        (WebCore::RenderTheme::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderTheme::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderTheme::platformActiveSelectionForegroundColor):
+        (WebCore::RenderTheme::platformInactiveSelectionForegroundColor):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeWin::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeWin::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeWin::platformInactiveSelectionForegroundColor):
+        * rendering/RenderThemeWin.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2006-06-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

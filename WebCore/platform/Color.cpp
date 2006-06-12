@@ -218,19 +218,33 @@ static int blend(int c, int a)
     float alpha = (float)(a) / 255;
     int whiteBlend = 255 - a;
     c -= whiteBlend;
-    c = max(0, c);
-    return min(255, (int)(c / alpha)); // Clamp to be within 0-255
+    return (int)(c / alpha);
 }
 
-Color Color::blendWithWhite(int alpha) const
+const int cStartAlpha = 153; // 60%
+const int cEndAlpha = 204; // 80%;
+const int cAlphaIncrement = 17; // Increments in between.
+
+Color Color::blendWithWhite() const
 {
     // If the color contains alpha already, we leave it alone.
     if (hasAlpha())
         return *this;
-    
-    // We have a solid color.  Convert to an equivalent color that looks the same when blended with white
-    // at the alpha specified.
-    return Color(blend(red(), alpha), blend(green(), alpha), blend(blue(), alpha), alpha);
+
+    Color newColor;
+    for (int alpha = cStartAlpha; alpha <= cEndAlpha; alpha += cAlphaIncrement) {
+        // We have a solid color.  Convert to an equivalent color that looks the same when blended with white
+        // at the current alpha.  Try using less transparency if the numbers end up being negative.
+        int r = blend(red(), alpha);
+        int g = blend(green(), alpha);
+        int b = blend(blue(), alpha);
+        
+        newColor = Color(r, g, b, alpha);
+
+        if (r >= 0 && g >= 0 && b >= 0)
+            break;
+    }
+    return newColor;
 }
 
 void Color::getRGBA(float& r, float& g, float& b, float& a) const

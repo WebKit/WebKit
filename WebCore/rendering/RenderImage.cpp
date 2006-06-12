@@ -266,7 +266,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         p->drawImage(image(), rect, compositeOperator);
 
         if (drawSelectionTint)
-            p->fillRect(selectionRect(), selectionColor());
+            p->fillRect(selectionRect(), selectionBackgroundColor());
     }
 }
 

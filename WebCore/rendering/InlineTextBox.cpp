@@ -322,16 +322,19 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     Color selectionColor = i.p->pen().color();
     ShadowData* selectionTextShadow = 0;
     if (haveSelection) {
+        // Check foreground color first.
+        Color foreground = object()->selectionForegroundColor();
+        if (foreground.isValid() && foreground != selectionColor) {
+            if (!paintSelectedTextOnly)
+                paintSelectedTextSeparately = true;
+            selectionColor = foreground;
+        }
         RenderStyle* pseudoStyle = object()->getPseudoStyle(RenderStyle::SELECTION);
-        if (pseudoStyle) {
-            if (pseudoStyle->color() != selectionColor || pseudoStyle->textShadow()) {
-                if (!paintSelectedTextOnly)
-                    paintSelectedTextSeparately = true;
-                if (pseudoStyle->color() != selectionColor)
-                    selectionColor = pseudoStyle->color();
-                if (pseudoStyle->textShadow())
-                    selectionTextShadow = pseudoStyle->textShadow();
-            }
+        if (pseudoStyle && pseudoStyle->textShadow()) {
+            if (!paintSelectedTextOnly)
+                paintSelectedTextSeparately = true;
+            if (pseudoStyle->textShadow())
+                selectionTextShadow = pseudoStyle->textShadow();
         }
     }
 
@@ -437,10 +440,9 @@ void InlineTextBox::paintSelection(GraphicsContext* p, int tx, int ty, RenderSty
     if (sPos >= ePos)
         return;
 
-    // Macintosh-style text highlighting is to draw with a particular background color, not invert.
     Color textColor = style->color();
-    Color c = object()->selectionColor();
-    if (!c.isValid())
+    Color c = object()->selectionBackgroundColor();
+    if (!c.isValid() || c.alpha() == 0)
         return;
 
     // If the text color ends up being the same as the selection background, invert the selection
