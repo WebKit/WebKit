@@ -230,6 +230,7 @@ void WebCore::findWordBoundary(UChar const* str,int len,int position,int* start,
 
 PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { return 0;}
 unsigned PlugInInfoStore::pluginCount() const { return 0; }
+bool WebCore::PlugInInfoStore::supportsMIMEType(const WebCore::String&) { return false; }
 void WebCore::refreshPlugins(bool) { }
 
 void WebCore::TransferJob::assembleResponseHeaders() const { }
