@@ -44,6 +44,21 @@ String::String(const UChar* str, unsigned len)
         m_impl = new StringImpl(str, len);
 }
 
+String::String(const UChar* str)
+{
+    if (!str)
+        return;
+        
+    int len = 0;
+    while (str[len] != UChar(0))
+        len++;
+    
+    if (len == 0)
+        m_impl = StringImpl::empty();
+    else
+        m_impl = new StringImpl(str, len);
+}
+
 String::String(const DeprecatedString& str)
 {
     if (str.isNull())

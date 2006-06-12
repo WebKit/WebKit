@@ -164,6 +164,9 @@
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5126E6BF0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BD0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5126E6C00A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6BE0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm */; };
+		51D3EA160A3D24D300BADA35 /* SQLDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */; };
+		51D3EA170A3D24D300BADA35 /* SQLDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D3EA140A3D24D300BADA35 /* SQLDatabase.h */; };
+		51D3EA180A3D24D300BADA35 /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; };
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
@@ -1759,6 +1762,9 @@
 		5126E6BE0A2E3B29005C29FA /* WebCoreIconDatabaseBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreIconDatabaseBridge.mm; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLDatabase.cpp; sourceTree = "<group>"; };
+		51D3EA140A3D24D300BADA35 /* SQLDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SQLDatabase.h; sourceTree = "<group>"; };
+		51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3475,6 +3481,9 @@
 			children = (
 				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
 				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
+				51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */,
+				51D3EA140A3D24D300BADA35 /* SQLDatabase.h */,
+				51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */,
 			);
 			path = icon;
 			sourceTree = "<group>";
@@ -6235,6 +6244,7 @@
 				4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */,
 				4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */,
 				1AC694C80A3B1676003F5049 /* PluginDocument.h in Headers */,
+				51D3EA170A3D24D300BADA35 /* SQLDatabase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7076,6 +7086,8 @@
 				4E19592B0A39DACC00220FE5 /* MediaQueryEvaluator.cpp in Sources */,
 				4E19592D0A39DACC00220FE5 /* MediaQueryExp.cpp in Sources */,
 				1AC694C70A3B1676003F5049 /* PluginDocument.cpp in Sources */,
+				51D3EA160A3D24D300BADA35 /* SQLDatabase.cpp in Sources */,
+				51D3EA180A3D24D300BADA35 /* SQLStatement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

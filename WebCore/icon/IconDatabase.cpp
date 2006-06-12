@@ -46,7 +46,7 @@ IconDatabase* IconDatabase::sharedIconDatabase()
     return m_sharedInstance;
 }
 
-IconDatabase::IconDatabase() : m_db(0)
+IconDatabase::IconDatabase()
 {
 
 }
@@ -54,51 +54,19 @@ IconDatabase::IconDatabase() : m_db(0)
 bool IconDatabase::open(const String& databasePath)
 {
     close();
-    
-    //Make sure directory exists
-    DeprecatedString ds = databasePath.deprecatedString();
-    const char* path = ds.ascii();
-    
-    struct stat dirInfo;
-    if (stat(path, &dirInfo)) {
-        LOG_ERROR("Unable to stat icon database path %s (%i)", path, errno);
-        return false;
-    }
-    if (dirInfo.st_mode & S_IRWXU != S_IRWXU) {
-        LOG_ERROR("Unable to access icon database path %s", path);
-        return false;
-    }
-        
     String dbFilename = databasePath + DefaultIconDatabaseFilename;
-    //specifically include the null-terminator as sqlite3 expects it on unicode-16 strings
-    dbFilename.append('\0');
-    
-    int result = sqlite3_open16(dbFilename.characters(), &m_db);
-    if (result != SQLITE_OK) {
-        LOG_ERROR("SQLite database failed to load from %s\nCause - %s", dbFilename.ascii(),
-            sqlite3_errmsg(m_db));
-        sqlite3_close(m_db);
-        m_db = 0;
-    }
-    return m_db;
+    return m_db.open(dbFilename);
 }
 
 void IconDatabase::close()
 {
-    if (m_db) {
-        sqlite3_close(m_db);
-        m_db = 0;
-    }
+    //TODO - sync any cached info before close();
+    m_db.close();
 }
 
 IconDatabase::~IconDatabase()
 {
-    if (!m_db)
-        return;
-        
-    int result = sqlite3_close(m_db);
-    if (result != SQLITE_OK)
-        LOG_ERROR("IconDatabase SQLite database failed to close\n%s", sqlite3_errmsg(m_db));
+    m_db.close();
 }
 
 } //namespace WebCore

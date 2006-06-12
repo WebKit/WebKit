@@ -49,7 +49,6 @@ using WebCore::String;
 
 - (void)closeSharedDatabase;
 {
-    LOG( IconDatabase, "Closing IconDatabase" );
     if (_iconDB) {
         _iconDB->close();
         _iconDB = 0;

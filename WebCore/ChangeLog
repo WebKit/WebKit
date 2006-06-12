@@ -1,3 +1,70 @@
+2006-06-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Levi.
+
+        -Added SQLite helper wrappers to ease use of SQLite in the IconDatabase.  
+        -Changed the base IconDatabase over to this new framework.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (-[WebCoreIconDatabaseBridge closeSharedDatabase]):
+            -By popular request, removed an annoying log message I'd accidentally left in
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::close):
+        (WebCore::IconDatabase::~IconDatabase):
+        * icon/IconDatabase.h:
+        (WebCore::IconDatabase::isOpen):
+            -Changed over IconDatabase from direct sqlite3_* calls to the new SQLDatabase calls
+
+        * icon/SQLDatabase.cpp: Added.
+        (SQLDatabase::SQLDatabase):
+        (SQLDatabase::open):
+        (SQLDatabase::close):
+        (SQLDatabase::executeCommand):
+        (SQLDatabase::tableExists):
+        * icon/SQLDatabase.h: Added.
+        (WebCore::SQLDatabase::isOpen):
+        (WebCore::SQLDatabase::getPath):
+        (WebCore::SQLDatabase::lastError):
+        (WebCore::SQLDatabase::lastErrorMsg):
+        (WebCore::SQLStatement::isPrepared):
+        (WebCore::SQLStatement::lastError):
+        (WebCore::SQLStatement::lastErrorMsg):
+        * icon/SQLStatement.cpp: Added.
+        (WebCore::SQLStatement::SQLStatement):
+        (WebCore::SQLStatement::~SQLStatement):
+        (WebCore::SQLStatement::prepare):
+        (WebCore::SQLStatement::step):
+        (WebCore::SQLStatement::finalize):
+        (WebCore::SQLStatement::reset):
+        (WebCore::SQLStatement::executeCommand):
+        (WebCore::SQLStatement::bindBlob):
+        (WebCore::SQLStatement::bindText):
+        (WebCore::SQLStatement::columnCount):
+        (WebCore::SQLStatement::getColumnName):
+        (WebCore::SQLStatement::getColumnName16):
+        (WebCore::SQLStatement::getColumnText):
+        (WebCore::SQLStatement::getColumnText16):
+        (WebCore::SQLStatement::getColumnDouble):
+        (WebCore::SQLStatement::getColumnInt):
+        (WebCore::SQLStatement::getColumnInt64):
+        (WebCore::SQLStatement::getColumnBlob):
+        (WebCore::SQLStatement::returnTextResults):
+        (WebCore::SQLStatement::returnTextResults16):
+        (WebCore::SQLStatement::returnIntResults):
+        (WebCore::SQLStatement::returnInt64Results):
+        (WebCore::SQLStatement::returnDoubleResults):
+            -Initial checking of SQLDatabase framework
+
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::String):
+            -Added an explicit UChar* constructor to our string class as much of sqlite3's UTF16 handling is based on 
+            null-terminated UTF16 which we didn't yet support.
+
 2006-06-11  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Maciej.

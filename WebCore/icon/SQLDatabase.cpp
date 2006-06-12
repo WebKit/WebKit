@@ -22,35 +22,63 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#ifndef ICONDATABASE_H
-#define ICONDATABASE_H
 
-#include "config.h"
-
-#include "PlatformString.h"
 #include "SQLDatabase.h"
 
-namespace WebCore { 
+#include "DeprecatedString.h"
 
-class IconDatabase
+using namespace WebCore;
+
+SQLDatabase::SQLDatabase()
+    : m_db(0)
 {
-public:
-    static IconDatabase* sharedIconDatabase();
-    
-    bool open(const String& path);
-    bool isOpen() { return m_db.isOpen(); }
-    void close();
-    
-private:
-    IconDatabase();
-    ~IconDatabase();
-    
-    static IconDatabase* m_sharedInstance;
-    
-    SQLDatabase m_db;
-};
 
-} //namespace WebCore
+}
 
-#endif
+bool SQLDatabase::open(const String& filename)
+{
+    close();
+    
+    //SQLite expects a null terminator on its UTF16 strings
+    m_path = filename;
+    m_path.append(UChar(0));
+    
+    m_lastError = sqlite3_open16(m_path.characters(), &m_db);
+    if (m_lastError != SQLITE_OK) {
+        LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.deprecatedString().ascii(),
+            sqlite3_errmsg(m_db));
+        sqlite3_close(m_db);
+        m_db = 0;
+    }
+    return isOpen();
+}
+
+void SQLDatabase::close()
+{
+    if (m_db) {
+        sqlite3_close(m_db);
+        m_path.truncate(0);
+        m_db = 0;
+    }
+}
+
+bool SQLDatabase::executeCommand(const String& sql)
+{
+    return SQLStatement(*this,sql).executeCommand();
+}
+
+bool SQLDatabase::tableExists(const String& tablename)
+{
+    if (!isOpen())
+        return false;
+        
+    String statement = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '" + tablename + "';";
+    
+    SQLStatement sql(*this, statement);
+    sql.prepare();
+    return sql.step() == SQLITE_ROW;
+}
+
+
+
+
