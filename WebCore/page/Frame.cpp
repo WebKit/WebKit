@@ -3437,6 +3437,17 @@ unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag)
         setStart(searchRange.get(), newStart);
     } while (true);
     
+    // Do a "fake" paint in order to execute the code that computes the rendered rect for 
+    // each text match.
+    Document* doc = document();
+    if (doc && d->m_view && renderer()) {
+        doc->updateLayout(); // Ensure layout is up to date.
+        IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
+        GraphicsContext context((PlatformGraphicsContext*)0);
+        context.setPaintingDisabled(true);
+        paint(&context, visibleRect);
+    }
+    
     return matchCount;
 }
 

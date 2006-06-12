@@ -1,3 +1,12 @@
+2006-06-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::markAllMatchesForText):
+        Do a "fake" paint here so that the rectangles for the text matches will have been
+        computed by the time this method returns.
+
 2006-06-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Levi and Tim Omernick.
