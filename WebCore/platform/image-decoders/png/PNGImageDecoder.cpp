@@ -89,7 +89,7 @@ public:
         m_readOffset = 0;
     }
 
-    void decode(const DeprecatedByteArray& data, bool sizeOnly)
+    void decode(const Vector<char>& data, bool sizeOnly)
     {
         m_decodingSizeOnly = sizeOnly;
 
@@ -140,7 +140,7 @@ PNGImageDecoder::~PNGImageDecoder()
 }
 
 // Take the data and store it.
-void PNGImageDecoder::setData(const DeprecatedByteArray& data, bool allDataReceived)
+void PNGImageDecoder::setData(const Vector<char>& data, bool allDataReceived)
 {
     if (m_failed)
         return;

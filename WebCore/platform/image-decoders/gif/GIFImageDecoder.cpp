@@ -42,7 +42,7 @@ public:
         m_reader.close();
     }
 
-    bool decode(const DeprecatedByteArray& data, 
+    bool decode(const Vector<char>& data, 
                 GIFImageDecoder::GIFQuery query = GIFImageDecoder::GIFFullQuery,
                 unsigned int haltFrame = -1)
     {
@@ -92,7 +92,7 @@ GIFImageDecoder::~GIFImageDecoder()
 }
 
 // Take the data and store it.
-void GIFImageDecoder::setData(const DeprecatedByteArray& data, bool allDataReceived)
+void GIFImageDecoder::setData(const Vector<char>& data, bool allDataReceived)
 {
     if (m_failed)
         return;

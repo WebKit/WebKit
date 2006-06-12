@@ -40,7 +40,7 @@ public:
     ~JPEGImageDecoder();
 
     // Take the data and store it.
-    virtual void setData(const DeprecatedByteArray& data, bool allDataReceived);
+    virtual void setData(const Vector<char>& data, bool allDataReceived);
 
     // Whether or not the size information has been decoded yet.
     virtual bool isSizeAvailable() const;

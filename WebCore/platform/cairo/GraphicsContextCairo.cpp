@@ -28,7 +28,6 @@
 
 #include "FloatRect.h"
 #include "Font.h"
-#include "IntPointArray.h"
 #include "IntRect.h"
 #include <cairo.h>
 #include <math.h>

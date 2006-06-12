@@ -1,5 +1,27 @@
 2006-06-11  Darin Adler  <darin@apple.com>
 
+        - another try at fixing Windows
+
+        * loader/CachedResource.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::setData):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoderPrivate::decode):
+        (WebCore::GIFImageDecoder::setData):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+        (WebCore::JPEGImageDecoder::setData):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageDecoder::setData):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        s/DeprecatedByteArray/Vector<char>/
+
+2006-06-11  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * platform/cairo/ImageCairo.cpp: (WebCore::Image::loadResource):
