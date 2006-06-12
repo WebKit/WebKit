@@ -21,15 +21,13 @@
 
 #include "config.h"
 #include "number_object.h"
+#include "number_object.lut.h"
 
 #include "dtoa.h"
 #include "error_object.h"
-#include "lookup.h"
 #include "operations.h"
 #include <wtf/Vector.h>
 #include <math.h>
-
-#include "number_object.lut.h"
 
 using namespace KJS;
 

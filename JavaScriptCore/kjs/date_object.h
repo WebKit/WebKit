@@ -56,6 +56,31 @@ namespace KJS {
     };
 
     /**
+        * @internal
+     *
+     * Class to implement all methods that are properties of the
+     * Date.prototype object
+     */
+    class DateProtoFunc : public InternalFunctionImp {
+    public:
+        DateProtoFunc(ExecState *, int i, int len, const Identifier& date);
+        
+        virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
+        
+        enum { ToString, ToDateString, ToTimeString, ToLocaleString,
+            ToLocaleDateString, ToLocaleTimeString, ValueOf, GetTime,
+            GetFullYear, GetMonth, GetDate, GetDay, GetHours, GetMinutes,
+            GetSeconds, GetMilliSeconds, GetTimezoneOffset, SetTime,
+            SetMilliSeconds, SetSeconds, SetMinutes, SetHours, SetDate,
+            SetMonth, SetFullYear, ToUTCString,
+            // non-normative properties (Appendix B)
+            GetYear, SetYear, ToGMTString };
+    private:
+        int id;
+        bool utc;
+    };
+    
+    /**
      * @internal
      *
      * The initial value of the the global variable's "Date" property

@@ -23,15 +23,14 @@
 
 #include "config.h"
 #include "array_object.h"
+#include "array_object.lut.h"
 
 #include "error_object.h"
-#include "lookup.h"
 #include "operations.h"
 #include "reference_list.h"
 #include <wtf/HashSet.h>
 #include <stdio.h>
 
-#include "array_object.lut.h"
 
 using namespace KJS;
 

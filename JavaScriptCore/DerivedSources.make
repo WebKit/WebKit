@@ -44,7 +44,7 @@ all : \
 # lookup tables for classes
 
 %.lut.h: create_hash_table %.cpp
-	$^ > $@
+	$^ -i > $@
 lexer.lut.h: create_hash_table keywords.table
 	$^ > $@
 

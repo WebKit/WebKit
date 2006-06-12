@@ -28,7 +28,6 @@
 
 #include "interpreter.h"
 #include "nodes.h"
-#include "lookup.h"
 #include <wtf/unicode/Unicode.h>
 
 static bool isDecimalDigit(unsigned short c);
@@ -42,6 +41,7 @@ static Lexer *currLexer = 0;
 #include "grammar.h"
 #endif
 
+#include "lookup.h"
 #include "lexer.lut.h"
 
 extern YYLTYPE kjsyylloc; // global bison variable holding token info

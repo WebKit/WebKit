@@ -21,13 +21,11 @@
 
 #include "config.h"
 #include "math_object.h"
+#include "math_object.lut.h"
 
-#include "lookup.h"
 #include "operations.h"
 #include <math.h>
 #include <time.h>
-
-#include "math_object.lut.h"
 
 #if PLATFORM(WIN_OS)
 
