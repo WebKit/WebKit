@@ -30,7 +30,7 @@
 #include "WebKitClassFactory.h"
 
 #pragma warning( push, 0 )
-#include "DeprecatedArray.h"
+#include "Vector.h"
 #pragma warning(pop)
 
 #include <tchar.h>
@@ -161,7 +161,7 @@ STDAPI DllRegisterServer(void)
 }
 
 //FIXME: We should consider moving this to a new file for cross-project functionality
-DeprecatedByteArray loadResourceIntoArray(const char* name)
+Vector<char> loadResourceIntoArray(const char* name)
 {
     int idr;
     // temporary hack to get resource id
@@ -170,20 +170,20 @@ DeprecatedByteArray loadResourceIntoArray(const char* name)
     else if (!strcmp(name, "missingImage"))
         idr = IDR_MISSING_IMAGE;
     else
-        return DeprecatedByteArray();
+        return Vector<char>();
 
     HRSRC resInfo = FindResource(gInstance, MAKEINTRESOURCE(idr), L"PNG");
     if (!resInfo)
-        return DeprecatedByteArray();
+        return Vector<char>();
     HANDLE res = LoadResource(gInstance, resInfo);
     if (!res)
-        return DeprecatedByteArray();
+        return Vector<char>();
     void* resource = LockResource(res);
     if (!resource)
-        return DeprecatedByteArray();
+        return Vector<char>();
     int size = SizeofResource(gInstance, resInfo);
 
-    DeprecatedByteArray arr(size);
+    Vector<char> arr(size);
     memcpy(arr.data(), resource, size);
     return arr;
 }

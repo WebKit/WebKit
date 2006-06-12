@@ -1,3 +1,13 @@
+2006-06-11  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * platform/cairo/ImageCairo.cpp: (WebCore::Image::loadResource):
+        Use Vector<char> instead of DeprecatedByteArray.
+
+        * platform/win/TemporaryLinkStubs.cpp: (KWQServeSynchronousRequest):
+        Don't try to return 0 from a function that returns a Vector<char>.
+
 2006-06-11  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Hyatt, tweaked quite a bit and landed by Darin.

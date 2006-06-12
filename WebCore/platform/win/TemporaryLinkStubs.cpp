@@ -161,7 +161,7 @@ int WebCore::findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplement
 void WebCore::findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
 int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
 
-Vector<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,DeprecatedString&) { notImplemented(); return 0; }
+Vector<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,DeprecatedString&) { notImplemented(); return Vector<char>(); }
 
 void FrameWin::focusWindow() { notImplemented(); }
 void FrameWin::unfocusWindow() { notImplemented(); }
