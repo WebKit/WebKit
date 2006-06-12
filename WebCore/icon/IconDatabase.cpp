@@ -37,6 +37,7 @@ const char* DefaultIconDatabaseFilename = "/icon.db";
 namespace WebCore {
 
 IconDatabase* IconDatabase::m_sharedInstance = 0;
+const int IconDatabase::currentDatabaseVersion = 3;
 
 IconDatabase* IconDatabase::sharedIconDatabase()
 {
@@ -55,7 +56,18 @@ bool IconDatabase::open(const String& databasePath)
 {
     close();
     String dbFilename = databasePath + DefaultIconDatabaseFilename;
-    return m_db.open(dbFilename);
+    if (!m_db.open(dbFilename)) {
+        LOG(IconDatabase, "Unable to open icon database at path %s", dbFilename.deprecatedString().ascii());
+        return false;
+    }
+    
+    if (!isValidDatabase()) {
+        LOG(IconDatabase, "%s is in an invalid state - reconstructing", dbFilename.deprecatedString().ascii());
+        clearDatabase();
+        recreateDatabase();
+    }
+    
+    return isOpen();
 }
 
 void IconDatabase::close()
@@ -63,6 +75,75 @@ void IconDatabase::close()
     //TODO - sync any cached info before close();
     m_db.close();
 }
+
+
+bool IconDatabase::isValidDatabase()
+{
+    if (!m_db.tableExists("IconDatabaseInfo")) {
+        return false;
+    }
+    
+    String query = "SELECT value FROM IconDatabaseInfo WHERE key = 'Version';";
+    SQLStatement sql(m_db, query);
+    sql.prepare();
+    sql.step();
+    if (sql.getColumnInt(0) < currentDatabaseVersion) {
+        LOG(IconDatabase, "DB version is not found or below expected valid version");
+        return false;
+    }
+    
+    if (!m_db.tableExists("Icon") || !m_db.tableExists("PageURL") || !m_db.tableExists("IconResource")) {
+        return false;
+    }
+    return true;
+}
+
+void IconDatabase::clearDatabase()
+{
+    String query = "SELECT name FROM sqlite_master WHERE type='table';";
+    Vector<String> tables;
+    if (!SQLStatement(m_db, query).returnTextResults16(0, tables)) {
+        LOG(IconDatabase, "Unable to retrieve list of tables from database");
+        return;
+    }
+    
+    for (Vector<String>::iterator table = tables.begin(); table != tables.end(); ++table ) {
+        if (!m_db.executeCommand("DROP TABLE " + *table)) {
+            LOG(IconDatabase, "Unable to drop table %s", (*table).deprecatedString().ascii());
+        }
+    }
+}
+
+void IconDatabase::recreateDatabase()
+{
+    if (!m_db.executeCommand("CREATE TABLE IconDatabaseInfo (key varchar NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value integer NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create IconDatabaseInfo table in icon.db (%i)\n%s", m_db.lastError(), m_db.lastErrorMsg());
+        m_db.close();
+        return;
+    }
+    if (!m_db.executeCommand(String("INSERT INTO IconDatabaseInfo VALUES ('Version', ") + String::number(currentDatabaseVersion) + ");")) {
+        LOG_ERROR("Could not insert icon database version into IconDatabaseInfo table (%i)\n%s", m_db.lastError(), m_db.lastErrorMsg());
+        m_db.close();
+        return;
+    }
+    if (!m_db.executeCommand("CREATE TABLE PageURL (url varchar NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID integer NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create PageURL table in icon.db (%i)\n%s", m_db.lastError(), m_db.lastErrorMsg());
+        m_db.close();
+        return;
+    }
+    if (!m_db.executeCommand("CREATE TABLE Icon (id integer PRIMARY KEY ON CONFLICT FAIL,url varchar NOT NULL UNIQUE ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create Icon table in icon.db (%i)\n%s", m_db.lastError(), m_db.lastErrorMsg());
+        m_db.close();
+        return;
+    }
+    if (!m_db.executeCommand("CREATE TABLE IconResource (iconID integer NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,data blob NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create IconResource table in icon.db (%i)\n%s", m_db.lastError(), m_db.lastErrorMsg());
+        m_db.close();
+        return;
+    }
+    
+    
+}    
 
 IconDatabase::~IconDatabase()
 {

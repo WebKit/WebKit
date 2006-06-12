@@ -1,5 +1,34 @@
 2006-06-12  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Levi and Tim Omernick.
+
+        -Added a skeleton sqlite3 icon database file to IconDatabase
+        -Added functionality to validate and recreate this icon.db file
+        -Fixed some buggys in SQLDatabase.cpp
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::isValidDatabase):
+        (WebCore::IconDatabase::clearDatabase):
+        (WebCore::IconDatabase::recreateDatabase):
+        * icon/IconDatabase.h:
+
+        * icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::columnCount):
+        (WebCore::SQLStatement::getColumnName):
+        (WebCore::SQLStatement::getColumnName16):
+        (WebCore::SQLStatement::getColumnText):
+        (WebCore::SQLStatement::getColumnText16):
+        (WebCore::SQLStatement::getColumnDouble):
+        (WebCore::SQLStatement::getColumnInt):
+        (WebCore::SQLStatement::getColumnInt64):
+        (WebCore::SQLStatement::getColumnBlob):
+        -Added checks to make sure we had a valid working sqlite3_statement as the sqlite3_*
+        function calls weren't as error-tolerant as documentation advertised
+        (maybe differences between the 3.3 docs I looked at and the 3.1.3 version installed on OSX)
+
+2006-06-12  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Levi.
 
         -Added SQLite helper wrappers to ease use of SQLite in the IconDatabase.  

@@ -121,46 +121,66 @@ int SQLStatement::bindText(int index, const char* text, bool copy)
 
 int SQLStatement::columnCount()
 {
-    return sqlite3_column_count(m_statement);
+    if (m_statement)
+        return sqlite3_column_count(m_statement);
+    return 0;
 }
 
 String SQLStatement::getColumnName(int col)
 {
-    return String(sqlite3_column_name(m_statement, col));
+    if (m_statement)
+        return String(sqlite3_column_name(m_statement, col));
+    return "";
 }
 
 String SQLStatement::getColumnName16(int col)
 {
-    return String((const UChar*)sqlite3_column_name16(m_statement, col));
+    if (m_statement)
+        return String((const UChar*)sqlite3_column_name16(m_statement, col));
+    return "";
 }
     
 String SQLStatement::getColumnText(int col)
 {
-    return String((const char*)sqlite3_column_text(m_statement, col));
+    if (m_statement)
+        return String((const char*)sqlite3_column_text(m_statement, col));
+    return "";
 }
 
 String SQLStatement::getColumnText16(int col)
 {
-    return String((const UChar*)sqlite3_column_text16(m_statement, col));
+    if (m_statement)
+        return String((const UChar*)sqlite3_column_text16(m_statement, col));
+    return "";
 }
     
 double SQLStatement::getColumnDouble(int col)
 {
-    return sqlite3_column_double(m_statement, col);
+    if (m_statement)
+        return sqlite3_column_double(m_statement, col);
+    return 0.0;
 }
 
 int SQLStatement::getColumnInt(int col)
 {
-    return sqlite3_column_int(m_statement, col);
+    if (m_statement)
+        return sqlite3_column_int(m_statement, col);
+    return 0;
 }
 
 int64_t SQLStatement::getColumnInt64(int col)
 {
-    return sqlite3_column_int64(m_statement, col);
+    if (m_statement)
+        return sqlite3_column_int64(m_statement, col);
+    return 0;
 }
     
 const void* SQLStatement::getColumnBlob(int col, int& size)
 {
+    if (!m_statement) {
+        size = 0;
+        return 0;
+    }
     const void* blob = sqlite3_column_blob(m_statement, col);
     if (blob) {
         size = sqlite3_column_bytes(m_statement, col);

@@ -42,9 +42,14 @@ public:
     bool isOpen() { return m_db.isOpen(); }
     void close();
     
+    static const int currentDatabaseVersion;
 private:
     IconDatabase();
     ~IconDatabase();
+    
+    bool isValidDatabase();
+    void clearDatabase();
+    void recreateDatabase();
     
     static IconDatabase* m_sharedInstance;
     
