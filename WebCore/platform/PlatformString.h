@@ -134,7 +134,7 @@ public:
 
 #ifndef NDEBUG
     // For debugging only, leaks memory.
-    const char *ascii() const;
+    Vector<char> ascii() const;
 #endif
 
     String(const DeprecatedString&);

@@ -1,3 +1,37 @@
+2006-06-12  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej.
+
+        Changed String::ascii() to return a Vector<char> instead of const char*
+        This allows us to use it "regularly" as the returned vector will destruct
+        and not leak memory like the previous approach.
+        We can now do a String.ascii().data() to get a char* buffer instead of 
+        String.deprecatedString().ascii().  It doesn't improve the style much but
+        dumping the memory-leak issue is a plus.
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::clearDatabase):
+        * icon/SQLDatabase.cpp:
+        (SQLDatabase::open):
+        * icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::prepare):
+        (WebCore::SQLStatement::step):
+        (WebCore::SQLStatement::returnTextResults):
+        (WebCore::SQLStatement::returnTextResults16):
+        (WebCore::SQLStatement::returnIntResults):
+        (WebCore::SQLStatement::returnInt64Results):
+        (WebCore::SQLStatement::returnDoubleResults):
+        In addition to the changes to the string classes, changed my database code over to the new
+        preferred method.
+
+        * platform/PlatformString.h:
+        * platform/String.cpp:
+        (WebCore::String::ascii):
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::ascii):
+        * platform/StringImpl.h:
+
 2006-06-12  Dave Hyatt <hyatt@apple.com>
 
         Add the notion of a selection foreground color to the engine for

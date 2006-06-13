@@ -24,7 +24,6 @@
  */
 #include "IconDatabase.h"
 
-#include "DeprecatedString.h"
 #include "Logging.h"
 #include "PlatformString.h"
 
@@ -57,12 +56,12 @@ bool IconDatabase::open(const String& databasePath)
     close();
     String dbFilename = databasePath + DefaultIconDatabaseFilename;
     if (!m_db.open(dbFilename)) {
-        LOG(IconDatabase, "Unable to open icon database at path %s", dbFilename.deprecatedString().ascii());
+        LOG(IconDatabase, "Unable to open icon database at path %s", dbFilename.ascii().data());
         return false;
     }
     
     if (!isValidDatabase()) {
-        LOG(IconDatabase, "%s is in an invalid state - reconstructing", dbFilename.deprecatedString().ascii());
+        LOG(IconDatabase, "%s is in an invalid state - reconstructing", dbFilename.ascii().data());
         clearDatabase();
         recreateDatabase();
     }
@@ -109,7 +108,7 @@ void IconDatabase::clearDatabase()
     
     for (Vector<String>::iterator table = tables.begin(); table != tables.end(); ++table ) {
         if (!m_db.executeCommand("DROP TABLE " + *table)) {
-            LOG(IconDatabase, "Unable to drop table %s", (*table).deprecatedString().ascii());
+            LOG(IconDatabase, "Unable to drop table %s", (*table).ascii().data());
         }
     }
 }

@@ -25,8 +25,6 @@
 
 #include "SQLDatabase.h"
 
-#include "DeprecatedString.h"
-
 using namespace WebCore;
 
 SQLDatabase::SQLDatabase()
@@ -45,7 +43,7 @@ bool SQLDatabase::open(const String& filename)
     
     m_lastError = sqlite3_open16(m_path.characters(), &m_db);
     if (m_lastError != SQLITE_OK) {
-        LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.deprecatedString().ascii(),
+        LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
             sqlite3_errmsg(m_db));
         sqlite3_close(m_db);
         m_db = 0;

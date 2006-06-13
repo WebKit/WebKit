@@ -340,9 +340,18 @@ Length* String::toLengthArray(int& len) const
 }
 
 #ifndef NDEBUG
-const char *String::ascii() const
+Vector<char> String::ascii() const
 {
-    return m_impl ? m_impl->ascii() : "(null impl)";
+    if (m_impl) 
+        return m_impl->ascii();
+    
+    const char* nullMsg = "(null impl)";
+    Vector<char> buffer(strlen(nullMsg) + 1);
+    for (int i = 0; nullMsg[i]; ++i) {
+        buffer.append(nullMsg[i]);
+    }
+    buffer.append('\0');
+    return buffer;
 }
 #endif
 

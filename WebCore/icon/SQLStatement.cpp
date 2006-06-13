@@ -26,7 +26,6 @@
 #include "SQLDatabase.h"
 
 #include <wtf/assertions.h>
-#include "DeprecatedString.h"
 #include "Logging.h"
 
 namespace WebCore {
@@ -48,7 +47,7 @@ int SQLStatement::prepare()
 {    
     const void* tail;
     if (sqlite3_prepare16(m_database.m_db, m_query.characters(), -1, &m_statement, &tail) != SQLITE_OK) {
-        LOG(IconDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", lastError(), m_query.deprecatedString().ascii(), sqlite3_errmsg(m_database.m_db));
+        LOG(IconDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", lastError(), m_query.ascii().data(), sqlite3_errmsg(m_database.m_db));
         m_statement = 0;
     }
     return lastError();
@@ -62,7 +61,7 @@ int SQLStatement::step()
     int error = sqlite3_step(m_statement);
     if (error != SQLITE_DONE && error != SQLITE_ROW) {
         LOG(IconDatabase, "sqlite3_step failed (%i)\nQuery - %s\nError - %s", 
-            error, m_query.deprecatedString().ascii(), sqlite3_errmsg(m_database.m_db));
+            error, m_query.ascii().data(), sqlite3_errmsg(m_database.m_db));
     }
     return error;
 }
@@ -202,7 +201,7 @@ bool SQLStatement::returnTextResults(int col, Vector<String>& v)
     }
     if (lastError() != SQLITE_DONE) {
         result = false;
-        LOG(IconDatabase, "Error reading results from database query %s", m_query.deprecatedString().ascii());
+        LOG(IconDatabase, "Error reading results from database query %s", m_query.ascii().data());
     }
     finalize();
     return result;
@@ -221,7 +220,7 @@ bool SQLStatement::returnTextResults16(int col, Vector<String>& v)
     }
     if (lastError() != SQLITE_DONE) {
         result = false;
-        LOG(IconDatabase, "Error reading results from database query %s", m_query.deprecatedString().ascii());
+        LOG(IconDatabase, "Error reading results from database query %s", m_query.ascii().data());
     }
     finalize();
     return result;
@@ -240,7 +239,7 @@ bool SQLStatement::returnIntResults(int col, Vector<int>& v)
     }
     if (lastError() != SQLITE_DONE) {
         result = false;
-        LOG(IconDatabase, "Error reading results from database query %s", m_query.deprecatedString().ascii());
+        LOG(IconDatabase, "Error reading results from database query %s", m_query.ascii().data());
     }
     finalize();
     return result;
@@ -259,7 +258,7 @@ bool SQLStatement::returnInt64Results(int col, Vector<int64_t>& v)
     }
     if (lastError() != SQLITE_DONE) {
         result = false;
-        LOG(IconDatabase, "Error reading results from database query %s", m_query.deprecatedString().ascii());
+        LOG(IconDatabase, "Error reading results from database query %s", m_query.ascii().data());
     }
     finalize();
     return result;
@@ -278,7 +277,7 @@ bool SQLStatement::returnDoubleResults(int col, Vector<double>& v)
     }
     if (lastError() != SQLITE_DONE) {
         result = false;
-        LOG(IconDatabase, "Error reading results from database query %s", m_query.deprecatedString().ascii());
+        LOG(IconDatabase, "Error reading results from database query %s", m_query.ascii().data());
     }
     finalize();
     return result;

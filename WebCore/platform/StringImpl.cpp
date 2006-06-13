@@ -898,18 +898,19 @@ unsigned StringImpl::computeHash(const char* m_data)
     return hash;
 }
 
-const char* StringImpl::ascii() const
+Vector<char> StringImpl::ascii() const
 {
-    char* buffer = new char[m_length + 1];
-    char* p = buffer;
-    for (unsigned i = 0; i != m_length; ++i) {
+    Vector<char> buffer(m_length + 1);
+    
+    unsigned i;
+    for (i = 0; i != m_length; ++i) {
         UChar c = m_data[i];
-        if (c >= 0x20 && c < 0x7F)
-            *p++ = c;
+        if ((c >= 0x20 && c < 0x7F) || c == 0x00)
+            buffer[i] = c;
         else
-            *p++ = '?';
+            buffer[i] = '?';
     }
-    *p++ = '\0';
+    buffer[i] = '\0';
     return buffer;
 }
 
