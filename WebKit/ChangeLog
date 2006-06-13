@@ -7,9 +7,9 @@
         * WebView/WebDataSource.m:
         (-[WebDataSource _handleFallbackContent]):
         Use the -[WebFrame _bridge] instead of -[WebDataSource _bridge].  The former is not valid until the data
-        source has been committed, as is the case when the resource fails to load.  The latter is safe to call at
-        any time.  This broke last night with Maciej's change to WebFrameResourceLoader.  The old code used to call
-        -[WebFrame _bridge].
+        source has been committed, which is not the case when the resource fails to load.  The latter is safe to call
+        at any time.  This broke last night with Maciej's change to WebFrameResourceLoader.  The old code used to
+        call -[WebFrame _bridge].
 
 2006-06-13  Anders Carlsson  <acarlsson@apple.com>
 
