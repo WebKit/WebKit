@@ -1,5 +1,14 @@
 2006-06-12  Maciej Stachowiak  <mjs@apple.com>
 
+        - fix for cocoa exception (whoops)
+
+        * WebView/WebView.m:
+        (+[WebView _generatedMIMETypeForURLScheme:]): put this back
+        * WebView/WebDataSource.m:
+        (+[WebDataSource _generatedMIMETypeForURLScheme:]): call WebView
+
+2006-06-12  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - remove use of WebView and related from WebMainResourceLoader

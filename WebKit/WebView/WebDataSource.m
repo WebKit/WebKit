@@ -1313,7 +1313,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
 {
-    return [@"x-apple-web-kit/" stringByAppendingString:[URLScheme lowercaseString]];
+    return [WebView _generatedMIMETypeForURLScheme:URLScheme];
 }
 
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
