@@ -1,3 +1,15 @@
+2006-06-12  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4526052> intermittent assertion failure in -[WebBasePluginPackage dealloc] running layout tests
+
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage _initWithPath:]):
+        Renamed from -initWithPath:.  Instead of releasing/deallocating self on error, return NO.
+        (-[WebNetscapePluginPackage initWithPath:]):
+        Call the new -_initWithPath:.  If it returns NO, unload the plugin package before deallocating it.
+        
 2006-06-11  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

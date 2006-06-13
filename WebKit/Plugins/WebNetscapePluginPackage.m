@@ -176,10 +176,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return YES;
 }
 
-- (id)initWithPath:(NSString *)pluginPath
+- (BOOL)_initWithPath:(NSString *)pluginPath
 {
-    [super initWithPath:pluginPath];
-
     resourceRef = -1;
     
     OSType type = 0;
@@ -196,15 +194,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         isBundle = NO;
         isCFM = YES;
 #else
-        [self release];
-        return nil;
+        return NO;
 #endif
     }
     
-    if (type != FOUR_CHAR_CODE('BRPL')) {
-        [self release];
-        return nil;
-    }
+    if (type != FOUR_CHAR_CODE('BRPL'))
+        return NO;
 
     // Check if the executable is Mach-O or CFM.
     if (bundle) {
@@ -212,29 +207,37 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NSData *data = [executableFile readDataOfLength:512];
         [executableFile closeFile];
         // Check the length of the data before calling memcmp. We think this fixes 3782543.
-        if (data == nil || [data length] < 8) {
-            [self release];
-            return nil;
-        }
+        if (data == nil || [data length] < 8)
+            return NO;
         isCFM = memcmp([data bytes], "Joy!peff", 8) == 0;
 #ifndef __ppc__
         // CFM is PPC-only.
-        if (isCFM) {
-            [self release];
-            return nil;
-        }
+        if (isCFM)
+            return NO;
 #endif
-        if (![self isNativeLibraryData:data]) {
-            [self release];
-            return nil;
-        }
+        if (![self isNativeLibraryData:data])
+            return NO;
     }
 
-    if (![self getPluginInfoFromPLists] && ![self getPluginInfoFromResources]) {
+    if (![self getPluginInfoFromPLists] && ![self getPluginInfoFromResources])
+        return NO;
+    
+    return YES;
+}
+
+- (id)initWithPath:(NSString *)pluginPath
+{
+    if (!(self = [super initWithPath:pluginPath]))
+        return nil;
+    
+    // Initializing a plugin package can cause it to be loaded.  If there was an error initializing the plugin package,
+    // ensure that it is unloaded before deallocating it (WebBasePluginPackage requires & asserts this).
+    if (![self _initWithPath:pluginPath]) {
+        [self unload];
         [self release];
         return nil;
     }
-
+        
     return self;
 }
 
