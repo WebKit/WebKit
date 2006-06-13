@@ -110,16 +110,20 @@ void String::append(char c)
 {
     if (!m_impl)
         m_impl = new StringImpl(&c, 1);
-    else 
+    else {
+        m_impl = m_impl->copy();
         m_impl->append(c);
+    }
 }
 
 void String::append(UChar c)
 {
     if (!m_impl)
         m_impl = new StringImpl(&c, 1);
-    else
+    else {
+        m_impl = m_impl->copy();
         m_impl->append(c);
+    }
 }
 
 String operator+(const String& a, const String& b)
