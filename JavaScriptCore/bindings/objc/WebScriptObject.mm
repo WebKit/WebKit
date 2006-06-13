@@ -139,6 +139,7 @@ static void _didExecute(WebScriptObject *obj)
     // good assumption for now, as we depend on that elsewhere.  However,
     // in the future we may have the ability to run multiple interpreters,
     // in which case this will have to change.
+    first = interp;
     do {
         ExecState *exec = interp->globalExec();
         // If the interpreter has a context, we set the exception.

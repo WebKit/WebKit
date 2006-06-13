@@ -1,5 +1,13 @@
 2006-06-12  Geoffrey Garen  <ggaren@apple.com>
 
+        build fix
+        
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject throwException:]): Restore assignment I accidentally
+        deleted in previous commit
+
+2006-06-12  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by TimO, Maciej.
         
         - Merged InterpreterImp code into Interpreter, which implements
