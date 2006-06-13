@@ -1,5 +1,20 @@
 2006-06-13  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9427
+        xml-stylesheet processing instructions outside of the prolog should have no effect.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        Remove todo comment.
+        
+        * dom/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::processingInstruction):
+        Only check for style sheet if the root element hasn't yet been encountered.
+
+2006-06-13  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Geoff.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9406

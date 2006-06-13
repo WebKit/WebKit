@@ -108,7 +108,6 @@ bool ProcessingInstruction::checkStyleSheet()
 {
     if (String(m_target.get()) == "xml-stylesheet") {
         // see http://www.w3.org/TR/xml-stylesheet/
-        // ### check that this occurs only in the prolog
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
         bool attrsOk;

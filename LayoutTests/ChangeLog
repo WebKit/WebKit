@@ -1,3 +1,12 @@
+2006-06-13  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9427
+        
+        * fast/css/resources/xml-stylesheet-pi-not-in-prolog.css: Added.
+        * fast/css/xml-stylesheet-pi-not-in-prolog.xml: Added.
+
 2006-06-10  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.
