@@ -642,8 +642,27 @@ static bool debugWidget = true;
     if (_private->UIDelegate && !elementIsTextField && !elementIsTextArea) {
         id cd = _private->UIDelegate;
         
-        if ([cd respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
+        if ([cd respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)]) {
             menuItems = [cd webView:self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
+
+            // Versions of Mail compiled with older WebKits will end up without three context menu items, though
+            // with the separators between them. Here we check for that problem and reinsert the three missing
+            // items. This shouldn't affect any clients other than Mail since the tags for the three items
+            // were not public API. We can remove this code when we no longer support previously-built versions
+            // of Mail on Tiger. See 4498606 for more details.
+            if (([[defaultMenuItems objectAtIndex:0] tag] == WebMenuItemTagSearchInSpotlight) && ([[menuItems objectAtIndex:0] isSeparatorItem])) {
+                ASSERT([[menuItems objectAtIndex:1] isSeparatorItem]);
+                ASSERT([[defaultMenuItems objectAtIndex:1] tag] == WebMenuItemTagSearchWeb);
+                ASSERT([[defaultMenuItems objectAtIndex:2] isSeparatorItem]);
+                ASSERT([[defaultMenuItems objectAtIndex:3] tag] == WebMenuItemTagLookUpInDictionary);
+                ASSERT([[defaultMenuItems objectAtIndex:4] isSeparatorItem]);
+                NSMutableArray *mutableMenuItems = [NSMutableArray arrayWithArray:menuItems];
+                [mutableMenuItems insertObject:[defaultMenuItems objectAtIndex:0] atIndex:0];
+                [mutableMenuItems insertObject:[defaultMenuItems objectAtIndex:1] atIndex:1];
+                [mutableMenuItems insertObject:[defaultMenuItems objectAtIndex:3] atIndex:3];
+                menuItems = mutableMenuItems;
+            }
+        }
     } 
 
     if (menuItems && [menuItems count] > 0) {

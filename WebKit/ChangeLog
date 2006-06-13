@@ -1,3 +1,14 @@
+2006-06-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim O.
+        
+        - fixed <rdar://problem/4498606> REGRESSION (417.8-420+): 3 missing items (but extra separators) in context 
+        menu in Mail message body
+
+        * WebView/WebView.m:
+        (-[WebView _menuForElement:defaultItems:]):
+        Add special-case hackery to recover from this SPI -> API mismatch.
+
 2006-06-13  Tim Omernick  <timo@apple.com>
 
         Reviewed by Anders.
