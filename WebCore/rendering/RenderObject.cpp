@@ -549,10 +549,8 @@ int RenderObject::offsetLeft() const
 {
     int x = xPos();
     if (!isPositioned()) {
-        if (isRelPositioned()) {
-            int y = 0;
-            ((RenderBox*)this)->relativePositionOffset(x, y);
-        }
+        if (isRelPositioned())
+            x += ((RenderBox*)this)->relativePositionOffsetX();
         
         RenderObject* offsetPar = offsetParent();
         RenderObject* curr = parent();
@@ -568,10 +566,8 @@ int RenderObject::offsetTop() const
 {
     int y = yPos();
     if (!isPositioned()) {
-        if (isRelPositioned()) {
-            int x = 0;
-            ((RenderBox*)this)->relativePositionOffset(x, y);
-        }
+        if (isRelPositioned())
+            y += ((RenderBox*)this)->relativePositionOffsetY();
         RenderObject* offsetPar = offsetParent();
         RenderObject* curr = parent();
         while (curr && curr != offsetPar) {

@@ -1,3 +1,32 @@
+2006-06-13  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Hyatt.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9314
+        Relative positioned block size doesnt update root layer size
+
+        - take relative positioning into account in leftmost/rightmost/lowestPosition()
+        - ignore zero width/height boxes in leftmost/rightmost/lowestPosition()
+        - split relativePositionOffset() to x and y functions
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absolutePosition):
+        (WebCore::RenderBox::relativePositionOffsetX):
+        (WebCore::RenderBox::relativePositionOffsetY):
+        (WebCore::RenderBox::lowestPosition):
+        (WebCore::RenderBox::rightmostPosition):
+        (WebCore::RenderBox::leftmostPosition):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::lowestPosition):
+        (WebCore::RenderFlow::rightmostPosition):
+        (WebCore::RenderFlow::leftmostPosition):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetLeft):
+        (WebCore::RenderObject::offsetTop):
+
 2006-06-13  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -263,7 +263,8 @@ void RenderLayer::updateLayerPosition()
 
     m_relX = m_relY = 0;
     if (m_object->isRelPositioned()) {
-        static_cast<RenderBox*>(m_object)->relativePositionOffset(m_relX, m_relY);
+        m_relX = static_cast<RenderBox*>(m_object)->relativePositionOffsetX();
+        m_relY = static_cast<RenderBox*>(m_object)->relativePositionOffsetY();
         x += m_relX; y += m_relY;
     }
     

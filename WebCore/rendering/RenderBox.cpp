@@ -762,8 +762,10 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
             yPos += m_y;
         }
 
-        if (isRelPositioned())
-            relativePositionOffset(xPos, yPos);
+        if (isRelPositioned()) {
+            xPos += relativePositionOffsetX();
+            yPos += relativePositionOffsetY();            
+        }
 
         return true;
     }
@@ -933,24 +935,32 @@ void RenderBox::repaintDuringLayoutIfMoved(int oldX, int oldY)
     }
 }
 
-void RenderBox::relativePositionOffset(int &tx, int &ty)
+int RenderBox::relativePositionOffsetX() const
 {
+    int tx = 0;
     if(!style()->left().isAuto())
-        tx += style()->left().calcValue(containingBlockWidth());
+        tx = style()->left().calcValue(containingBlockWidth());
     else if(!style()->right().isAuto())
-        tx -= style()->right().calcValue(containingBlockWidth());
+        tx = -style()->right().calcValue(containingBlockWidth());
+    return tx;
+}
+
+int RenderBox::relativePositionOffsetY() const
+{
+    int ty = 0;
     if(!style()->top().isAuto())
     {
         if (!style()->top().isPercent()
                 || containingBlock()->style()->height().isFixed())
-            ty += style()->top().calcValue(containingBlockHeight());
+            ty = style()->top().calcValue(containingBlockHeight());
     }
     else if(!style()->bottom().isAuto())
     {
         if (!style()->bottom().isPercent()
                 || containingBlock()->style()->height().isFixed())
-            ty -= style()->bottom().calcValue(containingBlockHeight());
+            ty = -style()->bottom().calcValue(containingBlockHeight());
     }
+    return ty;
 }
 
 void RenderBox::calcWidth()
@@ -2365,17 +2375,32 @@ IntRect RenderBox::caretRect(int offset, EAffinity affinity, int* extraWidthToEn
 
 int RenderBox::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    return includeSelf ? m_height : 0;
+    if (!includeSelf || !m_width)
+        return 0;
+    int bottom = m_height;
+    if (isRelPositioned())
+        bottom += relativePositionOffsetY();
+    return bottom;
 }
 
 int RenderBox::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    return includeSelf ? m_width : 0;
+    if (!includeSelf || !m_height)
+        return 0;
+    int right = m_width;
+    if (isRelPositioned())
+        right += relativePositionOffsetX();
+    return right;
 }
 
 int RenderBox::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    return includeSelf ? 0 : m_width;
+    if (!includeSelf || !m_height)
+        return m_width;
+    int left = 0;
+    if (isRelPositioned())
+        left += relativePositionOffsetX();
+    return left;
 }
 
 }
