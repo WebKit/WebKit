@@ -1,3 +1,23 @@
+2006-06-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by TimO, Maciej.
+
+        - WebCore part of merging InterpreterImp into Interpreter. No test
+        because there's no behavior change.
+        
+        A substantive change here is that ScriptInterpreter::mark must now chain to
+        Interpreter::mark, since Interpreter needs to mark the things that
+        InterpreterImp used to mark.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_binding.cpp:
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::put):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+        * kwq/KWQPageState.mm:
+
 2006-06-12  Brady Eidson <beidson@apple.com>
 
         Reviewed by Maciej.

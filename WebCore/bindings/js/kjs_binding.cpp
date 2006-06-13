@@ -35,7 +35,6 @@
 #include "kjs_dom.h"
 #include "kjs_window.h"
 #include <kjs/collector.h>
-#include <kjs/internal.h> // for InterpreterImp
 #include <wtf/HashMap.h>
 
 using namespace WebCore;
@@ -169,6 +168,8 @@ void ScriptInterpreter::mark(bool currentThreadIsMainThread)
               object->mark();
       }
   }
+  
+  Interpreter::mark(currentThreadIsMainThread);
 }
 
 ExecState *ScriptInterpreter::globalExec()

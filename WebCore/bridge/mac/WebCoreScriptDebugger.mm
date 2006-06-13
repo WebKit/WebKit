@@ -341,7 +341,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         result = eval->call(state, NULL, args);
     } else
         // no "eval", or no context (i.e. global scope) - use global fallback
-        result = interp->imp()->evaluate(code.data(), code.size(), globObj, UString(), 0).value();
+        result = interp->evaluate(UString(), 0, code.data(), code.size(), globObj).value();
 
     if (state->hadException())
         result = state->exception();    // (may be redundant depending on which eval path was used)

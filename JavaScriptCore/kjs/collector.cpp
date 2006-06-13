@@ -458,12 +458,12 @@ bool Collector::collect()
     bool currentThreadIsMainThread = true;
 #endif
     
-    if (InterpreterImp::s_hook) {
-    InterpreterImp *scr = InterpreterImp::s_hook;
+  if (Interpreter::s_hook) {
+    Interpreter* scr = Interpreter::s_hook;
     do {
       scr->mark(currentThreadIsMainThread);
       scr = scr->next;
-    } while (scr != InterpreterImp::s_hook);
+    } while (scr != Interpreter::s_hook);
   }
 
   // MARK: first mark all referenced objects recursively starting out from the set of root objects
@@ -602,12 +602,12 @@ void Collector::finalCheck()
 size_t Collector::numInterpreters()
 {
   size_t count = 0;
-  if (InterpreterImp::s_hook) {
-    InterpreterImp *scr = InterpreterImp::s_hook;
+  if (Interpreter::s_hook) {
+    Interpreter* scr = Interpreter::s_hook;
     do {
       ++count;
       scr = scr->next;
-    } while (scr != InterpreterImp::s_hook);
+    } while (scr != Interpreter::s_hook);
   }
   return count;
 }

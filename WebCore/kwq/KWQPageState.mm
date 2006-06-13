@@ -30,6 +30,7 @@
 #import "FoundationExtras.h"
 #import "FrameMac.h"
 #import "kjs_window.h"
+#import <kjs/SavedBuiltins.h>
 
 using namespace WebCore;
 using namespace KJS;

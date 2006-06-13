@@ -24,30 +24,22 @@
 #ifndef _KJS_INTERPRETER_H_
 #define _KJS_INTERPRETER_H_
 
+#include "ExecState.h"
+#include "protect.h"
 #include "value.h"
 #include "types.h"
 
 namespace KJS {
 
   class Context;
-  class InterpreterImp;
+  class Debugger;
   class RuntimeMethod;
+  class SavedBuiltins;
   class ScopeChain;
 
   namespace Bindings {
     class RootObject;
   }
-
-  class SavedBuiltinsInternal;
-
-  class SavedBuiltins {
-    friend class InterpreterImp;
-  public:
-    SavedBuiltins();
-    ~SavedBuiltins();
-  private:
-    SavedBuiltinsInternal *_internal;
-  };
 
   /**
    * Interpreter objects can be used to evaluate ECMAScript code. Each
@@ -56,6 +48,7 @@ namespace KJS {
    * " Object" and "Number".
    */
   class Interpreter {
+      friend class Collector;
   public:
     /**
      * Creates a new interpreter. The supplied object will be used as the global
@@ -73,7 +66,7 @@ namespace KJS {
      *
      * @param global The object to use as the global object for this interpreter
      */
-    Interpreter(JSObject *global);
+    Interpreter(JSObject* globalObject);
     /**
      * Creates a new interpreter. A global object will be created and
      * initialized with the standard global properties.
@@ -85,8 +78,7 @@ namespace KJS {
      * Returns the object that is used as the global object during all script
      * execution performed by this interpreter
      */
-    JSObject *globalObject() const;
-
+    JSObject* globalObject() const;
     void initGlobalObject();
 
     /**
@@ -127,14 +119,6 @@ namespace KJS {
      */
     Completion evaluate(const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength, JSValue* thisV = 0);
     Completion evaluate(const UString& sourceURL, int startingLineNumber, const UString& code, JSValue* thisV = 0);
-
-    /**
-     * @internal
-     *
-     * Returns the implementation object associated with this interpreter.
-     * Only useful for internal KJS operations.
-     */
-    InterpreterImp *imp() const { return rep; }
 
     /**
      * Returns the builtin "Object" object. This is the object that was set
@@ -255,9 +239,9 @@ namespace KJS {
      * Currently, in KJS, this only changes the behavior of Date::getYear()
      * which returns the full year under IE.
      */
-    void setCompatMode(CompatMode mode);
-    CompatMode compatMode() const;
-
+    void setCompatMode(CompatMode mode) { m_compatMode = mode; }
+    CompatMode compatMode() const { return m_compatMode; }
+    
     /**
      * Run the garbage collection. Returns true when at least one object
      * was collected; false otherwise.
@@ -265,8 +249,8 @@ namespace KJS {
     static bool collect();
 
     /**
-     * Called by InterpreterImp during the mark phase of the garbage collector
-     * Default implementation does nothing, this exist for classes that reimplement Interpreter.
+     * Called during the mark phase of the garbage collector. Subclasses 
+     * implementing custom mark methods must make sure to chain to this one.
      */
     virtual void mark(bool currentThreadIsMainThread);
 
@@ -288,8 +272,8 @@ namespace KJS {
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
 
-    void saveBuiltins (SavedBuiltins &) const;
-    void restoreBuiltins (const SavedBuiltins &);
+    void saveBuiltins (SavedBuiltins&) const;
+    void restoreBuiltins (const SavedBuiltins&);
 
     /**
      * Determine if the value is a global object (for any interpreter).  This may
@@ -326,75 +310,84 @@ namespace KJS {
     const Identifier& argumentsIdentifier() { return *m_argumentsPropertyName; }
     const Identifier& specialPrototypeIdentifier() { return *m_specialPrototypePropertyName; }
     
-  private:
-    InterpreterImp *rep;
+    // Chained list of interpreters (ring)
+    static Interpreter* firstInterpreter() { return s_hook; }
+    Interpreter* nextInterpreter() const { return next; }
+    Interpreter* prevInterpreter() const { return prev; }
 
-    const Identifier *m_argumentsPropertyName;
-    const Identifier *m_specialPrototypePropertyName;
-
+    Debugger* debugger() const { return m_debugger; }
+    void setDebugger(Debugger* d) { m_debugger = d; }
+    
+    void setContext(Context* c) { m_context = c; }
+    Context* context() const { return m_context; }
+    
+    static Interpreter* interpreterWithGlobalObject(JSObject*);
+private:
+    void init();
+    
     /**
      * This constructor is not implemented, in order to prevent
      * copy-construction of Interpreter objects. You should always pass around
      * pointers to an interpreter instance instead.
      */
     Interpreter(const Interpreter&);
-
+    
     /**
      * This constructor is not implemented, in order to prevent assignment of
      * Interpreter objects. You should always pass around pointers to an
      * interpreter instance instead.
      */
     Interpreter operator=(const Interpreter&);
-  };
+    
+    ExecState m_globalExec;
+    JSObject* m_globalObject;
 
-  /**
-   * Represents the current state of script execution. This object allows you
-   * obtain a handle the interpreter that is currently executing the script,
-   * and also the current execution state context.
-   */
-  class ExecState {
-    friend class InterpreterImp;
-    friend class FunctionImp;
-    friend class RuntimeMethodImp;
-    friend class GlobalFuncImp;
-  public:
-    /**
-     * Returns the interpreter associated with this execution state
-     *
-     * @return The interpreter executing the script
-     */
-    Interpreter *dynamicInterpreter() const { return m_interpreter; }
+    const Identifier *m_argumentsPropertyName;
+    const Identifier *m_specialPrototypePropertyName;
 
-    /**
-     * Returns the interpreter associated with the current scope's
-     * global object
-     *
-     * @return The interpreter currently in scope
-     */
-    Interpreter *lexicalInterpreter() const;
-
-    /**
-     * Returns the execution context associated with this execution state
-     *
-     * @return The current execution state context
-     */
-    Context* context() const { return m_context; }
-
-    void setException(JSValue* e) { m_exception = e; }
-    void clearException() { m_exception = 0; }
-    JSValue* exception() const { return m_exception; }
-    bool hadException() const { return m_exception; }
-
-  private:
-    ExecState(Interpreter* interp, Context* con)
-        : m_interpreter(interp)
-        , m_context(con)
-        , m_exception(0)
-    { 
-    }
-    Interpreter* m_interpreter;
+    // Chained list of interpreters (ring) - for collector
+    static Interpreter* s_hook;
+    Interpreter *next, *prev;
+    
+    int m_recursion;
+    
+    Debugger* m_debugger;
     Context* m_context;
-    JSValue* m_exception;
+    CompatMode m_compatMode;
+
+    ProtectedPtr<JSObject> m_Object;
+    ProtectedPtr<JSObject> m_Function;
+    ProtectedPtr<JSObject> m_Array;
+    ProtectedPtr<JSObject> m_Boolean;
+    ProtectedPtr<JSObject> m_String;
+    ProtectedPtr<JSObject> m_Number;
+    ProtectedPtr<JSObject> m_Date;
+    ProtectedPtr<JSObject> m_RegExp;
+    ProtectedPtr<JSObject> m_Error;
+    
+    ProtectedPtr<JSObject> m_ObjectPrototype;
+    ProtectedPtr<JSObject> m_FunctionPrototype;
+    ProtectedPtr<JSObject> m_ArrayPrototype;
+    ProtectedPtr<JSObject> m_BooleanPrototype;
+    ProtectedPtr<JSObject> m_StringPrototype;
+    ProtectedPtr<JSObject> m_NumberPrototype;
+    ProtectedPtr<JSObject> m_DatePrototype;
+    ProtectedPtr<JSObject> m_RegExpPrototype;
+    ProtectedPtr<JSObject> m_ErrorPrototype;
+    
+    ProtectedPtr<JSObject> m_EvalError;
+    ProtectedPtr<JSObject> m_RangeError;
+    ProtectedPtr<JSObject> m_ReferenceError;
+    ProtectedPtr<JSObject> m_SyntaxError;
+    ProtectedPtr<JSObject> m_TypeError;
+    ProtectedPtr<JSObject> m_UriError;
+    
+    ProtectedPtr<JSObject> m_EvalErrorPrototype;
+    ProtectedPtr<JSObject> m_RangeErrorPrototype;
+    ProtectedPtr<JSObject> m_ReferenceErrorPrototype;
+    ProtectedPtr<JSObject> m_SyntaxErrorPrototype;
+    ProtectedPtr<JSObject> m_TypeErrorPrototype;
+    ProtectedPtr<JSObject> m_UriErrorPrototype;
   };
 
 } // namespace

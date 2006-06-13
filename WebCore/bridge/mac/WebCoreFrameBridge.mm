@@ -77,6 +77,7 @@
 #import "xml_tokenizer.h"
 #import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/runtime_root.h>
+#import <kjs/SavedBuiltins.h>
 
 @class NSView;
 

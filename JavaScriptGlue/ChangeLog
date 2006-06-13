@@ -1,3 +1,33 @@
+2006-06-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by TimO, Maciej.
+        
+        - JSGlue part of merging InterpreterImp into Interpreter.
+        
+        Since there's now a kjs forwarding header, I moved all forwarding
+        headers into a "ForwardingHeaders" directory, like in WebCore.
+
+        * ForwardingHeaders: Added.
+        * ForwardingHeaders/kjs: Added.
+        * ForwardingHeaders/kjs/ExecState.h: Added.
+        * ForwardingHeaders/wtf: Added.
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+        * config.h:
+        * wtf: Removed.
+        * wtf/AlwaysInline.h: Removed.
+        * wtf/Assertions.h: Removed.
+        * wtf/FastMalloc.h: Removed.
+        * wtf/Forward.h: Removed.
+        * wtf/HashCountedSet.h: Removed.
+        * wtf/HashSet.h: Removed.
+        * wtf/Noncopyable.h: Removed.
+        * wtf/OwnArrayPtr.h: Removed.
+        * wtf/OwnPtr.h: Removed.
+        * wtf/PassRefPtr.h: Removed.
+        * wtf/Platform.h: Removed.
+        * wtf/RefPtr.h: Removed.
+        * wtf/Vector.h: Removed.
+
 === JavaScriptGlue-521.10 ===
 
 2006-05-09  Maciej Stachowiak  <mjs@apple.com>

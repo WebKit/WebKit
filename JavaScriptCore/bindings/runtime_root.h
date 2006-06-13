@@ -26,9 +26,9 @@
 #ifndef RUNTIME_ROOT_H_
 #define RUNTIME_ROOT_H_
 
-#include <JavaScriptCore/protect.h>
-#include <JavaScriptCore/jni_jsobject.h>
-#include <JavaScriptCore/protect.h>
+#include "Interpreter.h"
+#include "jni_jsobject.h"
+#include "protect.h"
 
 namespace KJS {
 

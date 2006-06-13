@@ -71,7 +71,7 @@ JSValue *FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
   JSObject *globalObj = exec->dynamicInterpreter()->globalObject();
 
   // enter a new execution context
-  Context ctx(globalObj, exec->dynamicInterpreter()->imp(), thisObj, body.get(),
+  Context ctx(globalObj, exec->dynamicInterpreter(), thisObj, body.get(),
                  codeType(), exec->context(), this, &args);
   ExecState newExec(exec->dynamicInterpreter(), &ctx);
   newExec.setException(exec->exception()); // could be null
@@ -81,7 +81,7 @@ JSValue *FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
   // add variable declarations (initialized to undefined)
   processVarDecls(&newExec);
 
-  Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
+  Debugger *dbg = exec->dynamicInterpreter()->debugger();
   int sid = -1;
   int lineno = -1;
   if (dbg) {
@@ -787,7 +787,7 @@ JSValue *GlobalFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, c
         UString errMsg;
         RefPtr<ProgramNode> progNode(Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg));
 
-        Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
+        Debugger *dbg = exec->dynamicInterpreter()->debugger();
         if (dbg) {
           bool cont = dbg->sourceParsed(exec, sid, UString(), s, errLine);
           if (!cont)
@@ -801,7 +801,7 @@ JSValue *GlobalFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, c
         // enter a new execution context
         JSObject *thisVal = static_cast<JSObject *>(exec->context()->thisValue());
         Context ctx(exec->dynamicInterpreter()->globalObject(),
-                       exec->dynamicInterpreter()->imp(),
+                       exec->dynamicInterpreter(),
                        thisVal,
                        progNode.get(),
                        EvalCode,

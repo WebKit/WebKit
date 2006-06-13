@@ -1,5 +1,107 @@
 2006-06-12  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by TimO, Maciej.
+        
+        - Merged InterpreterImp code into Interpreter, which implements
+        all interpreter functionality now. This is part of my continuing quest
+        to create an external notion of JS "execution context" that is unified and simple --
+        something to replace the mix of Context, ContextImp, ExecState, Interpreter,
+        InterpreterImp, and JSRun.
+        
+        All tests pass. Leaks test has not regressed from its baseline ~207 leaks
+        with ~3460 leaked nodes.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/NP_jsobject.cpp:
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject throwException:]):
+        * bindings/runtime_root.cpp:
+        * bindings/runtime_root.h:
+        * kjs/Context.cpp:
+        (KJS::Context::Context):
+        * kjs/ExecState.cpp: Added.
+        (KJS::ExecState::lexicalInterpreter):
+        * kjs/ExecState.h: Added.
+        (KJS::ExecState::dynamicInterpreter):
+        * kjs/SavedBuiltins.h: Added.
+        * kjs/bool_object.cpp:
+        (BooleanPrototype::BooleanPrototype):
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        (KJS::Collector::numInterpreters):
+        * kjs/context.h:
+        * kjs/debugger.cpp:
+        (Debugger::attach):
+        (Debugger::detach):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        (KJS::interpreterMap):
+        (KJS::Interpreter::Interpreter):
+        (KJS::Interpreter::init):
+        (KJS::Interpreter::~Interpreter):
+        (KJS::Interpreter::globalObject):
+        (KJS::Interpreter::initGlobalObject):
+        (KJS::Interpreter::globalExec):
+        (KJS::Interpreter::checkSyntax):
+        (KJS::Interpreter::evaluate):
+        (KJS::Interpreter::builtinObject):
+        (KJS::Interpreter::builtinFunction):
+        (KJS::Interpreter::builtinArray):
+        (KJS::Interpreter::builtinBoolean):
+        (KJS::Interpreter::builtinString):
+        (KJS::Interpreter::builtinNumber):
+        (KJS::Interpreter::builtinDate):
+        (KJS::Interpreter::builtinRegExp):
+        (KJS::Interpreter::builtinError):
+        (KJS::Interpreter::builtinObjectPrototype):
+        (KJS::Interpreter::builtinFunctionPrototype):
+        (KJS::Interpreter::builtinArrayPrototype):
+        (KJS::Interpreter::builtinBooleanPrototype):
+        (KJS::Interpreter::builtinStringPrototype):
+        (KJS::Interpreter::builtinNumberPrototype):
+        (KJS::Interpreter::builtinDatePrototype):
+        (KJS::Interpreter::builtinRegExpPrototype):
+        (KJS::Interpreter::builtinErrorPrototype):
+        (KJS::Interpreter::builtinEvalError):
+        (KJS::Interpreter::builtinRangeError):
+        (KJS::Interpreter::builtinReferenceError):
+        (KJS::Interpreter::builtinSyntaxError):
+        (KJS::Interpreter::builtinTypeError):
+        (KJS::Interpreter::builtinURIError):
+        (KJS::Interpreter::builtinEvalErrorPrototype):
+        (KJS::Interpreter::builtinRangeErrorPrototype):
+        (KJS::Interpreter::builtinReferenceErrorPrototype):
+        (KJS::Interpreter::builtinSyntaxErrorPrototype):
+        (KJS::Interpreter::builtinTypeErrorPrototype):
+        (KJS::Interpreter::builtinURIErrorPrototype):
+        (KJS::Interpreter::mark):
+        (KJS::Interpreter::interpreterWithGlobalObject):
+        (KJS::Interpreter::saveBuiltins):
+        (KJS::Interpreter::restoreBuiltins):
+        * kjs/interpreter.h:
+        (KJS::Interpreter::setCompatMode):
+        (KJS::Interpreter::compatMode):
+        (KJS::Interpreter::firstInterpreter):
+        (KJS::Interpreter::nextInterpreter):
+        (KJS::Interpreter::prevInterpreter):
+        (KJS::Interpreter::debugger):
+        (KJS::Interpreter::setDebugger):
+        (KJS::Interpreter::setContext):
+        (KJS::Interpreter::context):
+        * kjs/nodes.cpp:
+        (StatementNode::hitStatement):
+        (RegExpNode::evaluate):
+        * kjs/protect.h:
+
+2006-06-12  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej.
         
         - Have *.lut.h files #include lookup.h to eliminate surprising header

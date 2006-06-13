@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
-#include <jni_jsobject.h>
-#include <runtime_root.h>
+#include "jni_jsobject.h"
+#include "object.h"
+#include "runtime_root.h"
 
 using namespace KJS;
 using namespace KJS::Bindings;

@@ -44,7 +44,7 @@ BooleanInstance::BooleanInstance(JSObject *proto)
 BooleanPrototype::BooleanPrototype(ExecState* exec, ObjectPrototype* objectProto, FunctionPrototype* funcProto)
   : BooleanInstance(objectProto)
 {
-  // The constructor will be added later by InterpreterImp::InterpreterImp()
+  // The constructor will be added later by Interpreter::Interpreter()
 
   putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ToString, 0, toStringPropertyName), DontEnum);
   putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ValueOf, 0, valueOfPropertyName),  DontEnum);

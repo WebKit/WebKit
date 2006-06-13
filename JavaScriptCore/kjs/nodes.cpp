@@ -290,7 +290,7 @@ void StatementNode::setLoc(int firstLine, int lastLine)
 // return true if the debugger wants us to stop at this point
 bool StatementNode::hitStatement(ExecState* exec)
 {
-  Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
+  Debugger *dbg = exec->dynamicInterpreter()->debugger();
   if (dbg)
     return dbg->atStatement(exec, currentSourceId(exec), firstLine(), lastLine());
   else
@@ -337,7 +337,7 @@ JSValue *RegExpNode::evaluate(ExecState *exec)
   list.append(jsString(pattern));
   list.append(jsString(flags));
 
-  JSObject *reg = exec->lexicalInterpreter()->imp()->builtinRegExp();
+  JSObject *reg = exec->lexicalInterpreter()->builtinRegExp();
   return reg->construct(exec,list);
 }
 

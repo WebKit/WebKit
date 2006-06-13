@@ -245,6 +245,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\ExecState.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ExecState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\fpconst.cpp"
 				>
 			</File>
@@ -446,6 +454,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\regexp_object.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\SavedBuiltins.h"
 				>
 			</File>
 			<File

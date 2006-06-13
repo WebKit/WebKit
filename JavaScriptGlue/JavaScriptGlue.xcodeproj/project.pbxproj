@@ -12,9 +12,6 @@
 			buildConfigurationList = 1422E8DD09DE3EF500749B87 /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
 			);
-			buildSettings = {
-				PRODUCT_NAME = All;
-			};
 			dependencies = (
 				1422E8CA09DE3EB100749B87 /* PBXTargetDependency */,
 				1422E8C809DE3EAD00749B87 /* PBXTargetDependency */,
@@ -46,31 +43,6 @@
 		DD66F3F608F7401B00C75FD7 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		014CEA440018CDF011CA2923 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				OPTIMIZATION_CFLAGS = "-O0";
-				ZERO_LINK = YES;
-			};
-			name = Development;
-		};
-		014CEA450018CDF011CA2923 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		1422E8C709DE3EAD00749B87 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -93,7 +65,7 @@
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; indentWidth = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1422E86709DE3BCE00749B87 /* testjsglue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = testjsglue.cpp; sourceTree = "<group>"; };
-		1422E87709DE3BE800749B87 /* testjsglue */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testjsglue; sourceTree = BUILT_PRODUCTS_DIR; };
+		1422E87709DE3BE800749B87 /* testjsglue */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = testjsglue; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD66F3D508F73ED700C75FD7 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD66F3D608F73ED700C75FD7 /* JavaScriptGlue.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptGlue.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -244,14 +216,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = "$(HOME)/bin";
-				PREBINDING = NO;
-				PRODUCT_NAME = testjsglue;
-				ZERO_LINK = YES;
-			};
 			dependencies = (
 			);
 			name = testjsglue;
@@ -271,34 +235,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = JavaScriptGlue.exp;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks",
-				);
-				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
-				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = JavaScriptGlue;
-				SECTORDER_FLAGS = (
-					"-sectorder",
-					__TEXT,
-					__text,
-					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptGlue.order",
-				);
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = framework;
-			};
 			dependencies = (
 			);
 			name = JavaScriptGlue;
@@ -313,12 +249,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 14AC662B08CE7791006915A8 /* Build configuration list for PBXProject "JavaScriptGlue" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				014CEA440018CDF011CA2923 /* Development */,
-				014CEA450018CDF011CA2923 /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* JavaScriptGlue */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -589,7 +519,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = JavaScriptGlue.exp;
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = .;
+				HEADER_SEARCH_PATHS = ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				PRODUCT_NAME = JavaScriptGlue;
@@ -604,7 +534,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = JavaScriptGlue.exp;
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = .;
+				HEADER_SEARCH_PATHS = ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				PRODUCT_NAME = JavaScriptGlue;
@@ -620,7 +550,7 @@
 				EXPORTED_SYMBOLS_FILE = JavaScriptGlue.exp;
 				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = .;
+				HEADER_SEARCH_PATHS = ForwardingHeaders;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				PRODUCT_NAME = JavaScriptGlue;

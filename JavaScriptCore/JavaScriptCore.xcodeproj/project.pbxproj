@@ -36,6 +36,9 @@
 		148A1627095D16BB00666D0D /* ListRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A1626095D16BB00666D0D /* ListRefPtr.h */; };
 		14ABB36F099C076400E2A24F /* value.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB36E099C076400E2A24F /* value.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14ABB455099C2A0F00E2A24F /* JSType.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB454099C2A0F00E2A24F /* JSType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14BD534C0A3E0AEA00BAF59C /* SavedBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD534A0A3E0AEA00BAF59C /* SavedBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14BD53F50A3E12D800BAF59C /* ExecState.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD53F30A3E12D800BAF59C /* ExecState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14BD53F60A3E12D800BAF59C /* ExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD53F40A3E12D800BAF59C /* ExecState.cpp */; };
 		14F137590A3A727E00F26F90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F137580A3A727E00F26F90 /* Context.cpp */; };
 		14F137830A3A765B00F26F90 /* context.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F137820A3A765B00F26F90 /* context.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		652C107F08DA7B1E0020887D /* protected_reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 652C107E08DA7B1E0020887D /* protected_reference.h */; };
@@ -267,6 +270,9 @@
 		148A1626095D16BB00666D0D /* ListRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ListRefPtr.h; sourceTree = "<group>"; };
 		14ABB36E099C076400E2A24F /* value.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = value.h; sourceTree = "<group>"; };
 		14ABB454099C2A0F00E2A24F /* JSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSType.h; sourceTree = "<group>"; };
+		14BD534A0A3E0AEA00BAF59C /* SavedBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedBuiltins.h; sourceTree = "<group>"; };
+		14BD53F30A3E12D800BAF59C /* ExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecState.h; sourceTree = "<group>"; };
+		14BD53F40A3E12D800BAF59C /* ExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecState.cpp; sourceTree = "<group>"; };
 		14F137580A3A727E00F26F90 /* Context.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Context.cpp; sourceTree = "<group>"; };
 		14F137820A3A765B00F26F90 /* context.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* testkjs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = testkjs.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -736,6 +742,9 @@
 				F692A8860255597D01FF60F7 /* ustring.h */,
 				F692A8870255597D01FF60F7 /* value.cpp */,
 				14ABB36E099C076400E2A24F /* value.h */,
+				14BD534A0A3E0AEA00BAF59C /* SavedBuiltins.h */,
+				14BD53F30A3E12D800BAF59C /* ExecState.h */,
+				14BD53F40A3E12D800BAF59C /* ExecState.cpp */,
 			);
 			path = kjs;
 			sourceTree = "<group>";
@@ -919,6 +928,8 @@
 				935AF46E09E9D9DB00ACD1D8 /* UnusedParam.h in Headers */,
 				BCF655590A2049710038A194 /* MathExtras.h in Headers */,
 				14F137830A3A765B00F26F90 /* context.h in Headers */,
+				14BD534C0A3E0AEA00BAF59C /* SavedBuiltins.h in Headers */,
+				14BD53F50A3E12D800BAF59C /* ExecState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1111,6 +1122,7 @@
 				93F0B3AB09BB4DC00068FCE3 /* Parser.cpp in Sources */,
 				65FB3F5009D11B2400F49DEB /* grammar.cpp in Sources */,
 				14F137590A3A727E00F26F90 /* Context.cpp in Sources */,
+				14BD53F60A3E12D800BAF59C /* ExecState.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

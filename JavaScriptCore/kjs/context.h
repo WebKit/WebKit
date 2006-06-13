@@ -47,7 +47,7 @@ namespace KJS  {
    */    
   class Context {
   public:
-    Context(JSObject* global, InterpreterImp*, JSObject* thisV, 
+    Context(JSObject* global, Interpreter*, JSObject* thisV, 
             FunctionBodyNode* currentBody, CodeType type = GlobalCode, 
             Context* callingContext = 0, FunctionImp* function = 0, const List* args = 0);
     ~Context();
@@ -121,7 +121,7 @@ namespace KJS  {
     // Contexts are always stack-allocated, and the garbage collector
     // marks the stack, so we don't need to protect the objects below from GC.
 
-    InterpreterImp* m_interpreter;
+    Interpreter* m_interpreter;
     Context* m_callingContext;
     FunctionBodyNode* m_currentBody;
 

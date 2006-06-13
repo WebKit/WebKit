@@ -55,21 +55,21 @@ Debugger::~Debugger()
   delete rep;
 }
 
-void Debugger::attach(Interpreter *interp)
+void Debugger::attach(Interpreter* interp)
 {
-  Debugger *other = interp->imp()->debugger();
+  Debugger *other = interp->debugger();
   if (other == this)
     return;
   if (other)
     other->detach(interp);
-  interp->imp()->setDebugger(this);
+  interp->setDebugger(this);
   rep->interps = new AttachedInterpreter(interp, rep->interps);
 }
 
-void Debugger::detach(Interpreter *interp)
+void Debugger::detach(Interpreter* interp)
 {
-  if (interp && interp->imp()->debugger() == this)
-    interp->imp()->setDebugger(0);
+  if (interp && interp->debugger() == this)
+    interp->setDebugger(0);
 
   // iterate the addresses where AttachedInterpreter pointers are stored
   // so we can unlink items from the list

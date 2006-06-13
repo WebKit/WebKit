@@ -29,6 +29,7 @@
 #include "c_utility.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
+#include "object.h"
 #include "runtime_root.h"
 
 using namespace KJS;
