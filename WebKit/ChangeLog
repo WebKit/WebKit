@@ -1,3 +1,30 @@
+2006-06-13  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9406
+        REGRESSION: fix for bug 9390 broke two layout tests
+
+        * Plugins/WebPluginDatabase.h:
+        (-[WebPluginDatabase isMIMETypeRegistered:]):
+        Add new function isMIMETypeRegistered which returns whether a given MIME type has a 
+        plugin registered. 
+
+        * Plugins/WebPluginDatabase.m:
+        (-[WebPluginDatabase init]):        
+        Init set of registered MIME types.
+        
+        (-[WebPluginDatabase refresh]):
+        Add and remove MIME types from the set of registered MIME types when registering and unregistering
+        plugin MIME types.
+        
+        (-[WebPluginDatabase dealloc]):
+        Release set of registered MIME types.
+        
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge determineObjectFromMIMEType:URL:]):
+        Use isMIMETypeRegistered here.
+
 2006-06-12  Maciej Stachowiak  <mjs@apple.com>
 
         - fix for cocoa exception (whoops)
@@ -43,6 +70,7 @@
         (-[WebNetscapePluginPackage initWithPath:]):
         Call the new -_initWithPath:.  If it returns NO, unload the plugin package before deallocating it.
         
+>>>>>>> .r14837
 2006-06-11  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

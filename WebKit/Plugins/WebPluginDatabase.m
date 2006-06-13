@@ -155,6 +155,7 @@ static NSArray *pluginLocations(void)
 - (id)init
 {
     self = [super init];
+    registeredMIMETypes = [[NSMutableSet alloc] init];    
     [self refresh];
     return self;
 }
@@ -188,16 +189,16 @@ static NSArray *pluginLocations(void)
     //  Remove all uninstalled plug-ins and add the new plug-ins.
     if (plugins) {
         // Unregister plug-in views and representations
-        NSMutableDictionary *MIMEToViewClass = [WebFrameView _viewTypesAllowImageTypeOmission:NO];        
         NSEnumerator *pluginEnumerator = [plugins objectEnumerator];
         WebBasePluginPackage *pluginPackage;
         while ((pluginPackage = [pluginEnumerator nextObject])) {
             NSEnumerator *MIMETypeEnumerator = [pluginPackage MIMETypeEnumerator];
             NSString *MIMEType;
             while ((MIMEType = [MIMETypeEnumerator nextObject])) {
-                Class class = [MIMEToViewClass objectForKey:MIMEType];
-                if (class == [WebHTMLView class])
+                if ([registeredMIMETypes containsObject:MIMEType]) {
                     [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
+                    [registeredMIMETypes removeObject:MIMEType];
+                }
             }
         }
         
@@ -249,12 +250,19 @@ static NSArray *pluginLocations(void)
             continue;
         
         [WebView registerViewClass:[WebHTMLView class] representationClass:[WebHTMLRepresentation class] forMIMEType:MIMEType];
+        [registeredMIMETypes addObject:MIMEType];
     }
+}
+
+- (BOOL)isMIMETypeRegistered:(NSString *)MIMEType
+{
+    return [registeredMIMETypes containsObject:MIMEType];
 }
 
 - (void)dealloc
 {
     [plugins release];
+    [registeredMIMETypes release];
     [super dealloc];
 }
 

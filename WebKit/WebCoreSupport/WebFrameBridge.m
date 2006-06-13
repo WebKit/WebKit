@@ -1138,7 +1138,7 @@ static BOOL loggedObjectCacheSize = NO;
     if ([MIMEType length] == 0)
         return ObjectElementFrame; // Go ahead and hope that we can display the content.
 
-    if ([[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType])
+    if ([[WebPluginDatabase installedPlugins] isMIMETypeRegistered:MIMEType])
         return ObjectElementPlugin;
 
     if ([WebFrameView _viewClassForMIMEType:MIMEType])

@@ -1,3 +1,14 @@
+2006-06-13  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9406
+        REGRESSION: fix for bug 9390 broke two layout tests
+        
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+        Call finished() after setting up the document structure so we'll emit onload events.
+
 2006-06-12  Geoffrey Garen  <ggaren@apple.com>
 
         build fix -- forgot to svn add this file
@@ -229,6 +240,7 @@
             -Added an explicit UChar* constructor to our string class as much of sqlite3's UTF16 handling is based on 
             null-terminated UTF16 which we didn't yet support.
 
+>>>>>>> .r14837
 2006-06-11  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Maciej.
