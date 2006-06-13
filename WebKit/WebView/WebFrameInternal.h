@@ -59,6 +59,7 @@
 - (void)_willCloseURL;
 
 - (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request mainResource:(BOOL)mainResource alwaysFromRequest:(BOOL)f;
+- (BOOL)_isMainFrame;
 
 @end
 

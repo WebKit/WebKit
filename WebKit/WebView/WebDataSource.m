@@ -1311,4 +1311,33 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
 }
 
++ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
+{
+    return [@"x-apple-web-kit/" stringByAppendingString:[URLScheme lowercaseString]];
+}
+
++ (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
+{
+    return [WebView _representationExistsForURLScheme:URLScheme];
+}
+
++ (BOOL)_canShowMIMEType:(NSString *)MIMEType
+{
+    return [WebView canShowMIMEType:MIMEType];
+}
+
+- (void)_handleFallbackContent
+{
+    [[self _bridge] handleFallbackContent];
+}
+
+- (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener
+{
+    WebView *wv = [self _webView];
+    [[wv _policyDelegateForwarder] webView:wv decidePolicyForMIMEType:MIMEType
+                                                              request:[self request]
+                                                                frame:[self webFrame]
+                                                     decisionListener:listener];
+}
+
 @end

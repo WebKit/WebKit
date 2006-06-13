@@ -886,11 +886,6 @@ static bool debugWidget = true;
     [schemesWithRepresentationsSet addObject:[[[URLScheme lowercaseString] copy] autorelease]];
 }
 
-+ (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme
-{
-    return [@"x-apple-web-kit/" stringByAppendingString:[URLScheme lowercaseString]];
-}
-
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme
 {
     return [schemesWithRepresentationsSet containsObject:[URLScheme lowercaseString]];

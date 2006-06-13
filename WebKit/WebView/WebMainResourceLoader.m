@@ -36,20 +36,15 @@
 #import <WebKit/DOMHTML.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourceInternal.h>
-#import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebPolicyDelegatePrivate.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebKit/WebFrameBridge.h>
 
 // FIXME: More that is in common with WebSubresourceLoader should move up into WebLoader.
 
@@ -185,7 +180,7 @@
     NSMutableURLRequest *mutableRequest = nil;
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if ([dataSource webFrame] == [[dataSource _webView] mainFrame]) {
+    if ([[dataSource webFrame] _isMainFrame]) {
         mutableRequest = [newRequest mutableCopy];
         [mutableRequest setMainDocumentURL:URL];
     }
@@ -235,7 +230,7 @@
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         BOOL isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
 	BOOL isRemoteWebArchive = isRemote && [MIMEType _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
-        if (![WebView canShowMIMEType:MIMEType] || isRemoteWebArchive) {
+        if (![WebDataSource _canShowMIMEType:MIMEType] || isRemoteWebArchive) {
 	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState) {
@@ -269,7 +264,7 @@
         if (status < 200 || status >= 300) {
             // Handle <object> fallback for error cases.
             DOMHTMLElement *hostElement = [[[self dataSource] webFrame] frameElement];
-            [[[dataSource webFrame] _bridge] handleFallbackContent];
+            [dataSource _handleFallbackContent];
             if (hostElement && [hostElement isKindOfClass:[DOMHTMLObjectElement class]])
                 // object elements are no longer rendered after we fallback, so don't
                 // keep trying to process data from their load
@@ -308,12 +303,8 @@
     listener = l;
     policyResponse = [r retain];
 
-    WebView *wv = [dataSource _webView];
     [l retain];
-    [[wv _policyDelegateForwarder] webView:wv decidePolicyForMIMEType:[r MIMEType]
-                                                            request:[dataSource request]
-                                                              frame:[dataSource webFrame]
-                                                   decisionListener:listener];
+    [dataSource _decidePolicyForMIMEType:[r MIMEType] decisionListener:listener];
     [l release];
 }
 
@@ -418,12 +409,12 @@
         return r;
     }
 
-    if (shouldLoadEmpty || [WebView _representationExistsForURLScheme:[URL scheme]]) {
+    if (shouldLoadEmpty || [WebDataSource _representationExistsForURLScheme:[URL scheme]]) {
         NSString *MIMEType;
         if (shouldLoadEmpty) {
             MIMEType = @"text/html";
         } else {
-            MIMEType = [WebView _generatedMIMETypeForURLScheme:[URL scheme]];
+            MIMEType = [WebDataSource _generatedMIMETypeForURLScheme:[URL scheme]];
         }
 
         NSURLResponse *resp = [[NSURLResponse alloc] initWithURL:URL MIMEType:MIMEType

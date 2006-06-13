@@ -1,3 +1,27 @@
+2006-06-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - remove use of WebView and related from WebMainResourceLoader
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (+[WebDataSource _generatedMIMETypeForURLScheme:]):
+        (+[WebDataSource _representationExistsForURLScheme:]):
+        (+[WebDataSource _canShowMIMEType:]):
+        (-[WebDataSource _handleFallbackContent]):
+        (-[WebDataSource _decidePolicyForMIMEType:decisionListener:]):
+        * WebView/WebDataSourceInternal.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _isMainFrame]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader willSendRequest:redirectResponse:]):
+        (-[WebMainResourceLoader continueAfterContentPolicy:response:]):
+        (-[WebMainResourceLoader checkContentPolicyForResponse:]):
+        (-[WebMainResourceLoader loadWithRequestNow:]):
+        * WebView/WebView.m:
+
 2006-06-12  Tim Omernick  <timo@apple.com>
 
         Reviewed by Maciej.

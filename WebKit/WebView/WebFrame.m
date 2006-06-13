@@ -2756,6 +2756,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+- (BOOL)_isMainFrame
+{
+    return self == [[self webView] mainFrame];
+}
+
 @end
 
 @implementation WebFormState : NSObject
