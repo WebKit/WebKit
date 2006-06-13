@@ -1328,7 +1328,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_handleFallbackContent
 {
-    [[self _bridge] handleFallbackContent];
+    [[[self webFrame] _bridge] handleFallbackContent];
 }
 
 - (void)_decidePolicyForMIMEType:(NSString *)MIMEType decisionListener:(WebPolicyDecisionListener *)listener
