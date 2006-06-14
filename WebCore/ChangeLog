@@ -1,3 +1,14 @@
+2006-06-13  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adele.
+
+        fixed <rdar://problem/4457902> HTMLSelectElement.remove() can't handle an option obj being passed to it, results in hang on http://www.ibc-solar.de/www_ibc/fst_solarmonitoring.jsp
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::HTMLElementFunction::callAsFunction):
+        support this by converting the argument to an options object
+        before passing to remove()
+
 2006-06-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
