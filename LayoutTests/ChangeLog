@@ -1,3 +1,11 @@
+2006-06-13  Maciej Stachowiak  <mjs@apple.com>
+
+        - fixed up results of the layout test I committed for 4583892,
+        they were guaranteed to fail
+
+        * fast/events/no-window-load-expected.txt:
+        * fast/events/resources/greenbox.png: Added.
+
 2006-06-13  Geoffrey Garen  <ggaren@apple.com>
 
         RS by MacDome. Added missing results for this test.

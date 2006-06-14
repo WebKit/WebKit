@@ -1,31 +1,4 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 781x36
-          text run at (0,0) width 781: "This test ensures that \"load\" events for images do not trigger bubble or capture handlers on the window object. We need this"
-          text run at (0,18) width 314: "quirk to be compatible with a variety of web sites."
-      RenderBlock (anonymous) at (0,36) size 784x65
-        RenderText {#text} at (0,0) size 248x18
-          text run at (0,0) width 248: "Bubble for load event hit at most once: "
-        RenderInline {SPAN} at (0,0) size 39x18
-          RenderText {#text} at (248,0) size 39x18
-            text run at (248,0) width 39: "PASS"
-        RenderText {#text} at (287,0) size 4x18
-          text run at (287,0) width 4: "."
-        RenderBR {BR} at (291,14) size 0x0
-        RenderText {#text} at (0,18) size 252x18
-          text run at (0,18) width 252: "Capture for load event hit at most once: "
-        RenderInline {SPAN} at (0,0) size 39x18
-          RenderText {#text} at (252,18) size 39x18
-            text run at (252,18) width 39: "PASS"
-        RenderText {#text} at (291,18) size 4x18
-          text run at (291,18) width 4: "."
-        RenderBR {BR} at (295,32) size 0x0
-        RenderImage {IMG} at (0,36) size 25x25
-        RenderText {#text} at (25,47) size 4x18
-          text run at (25,47) width 4: " "
-        RenderImage {IMG} at (29,36) size 25x25
-        RenderText {#text} at (0,0) size 0x0
+This test ensures that "load" events for images do not trigger bubble or capture handlers on the window object. We need this quirk to be compatible with a variety of web sites.
+Bubble for load event hit at most once: PASS.
+Capture for load event hit at most once: PASS.
+ 
