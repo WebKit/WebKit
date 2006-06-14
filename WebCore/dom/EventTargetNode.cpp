@@ -309,6 +309,7 @@ void EventTargetNode::dispatchWindowEvent(const AtomicString &eventType, bool ca
     RefPtr<Event> evt = new Event(eventType, canBubbleArg, cancelableArg);
     RefPtr<Document> doc = document();
     evt->setTarget(doc.get());
+    doc->handleWindowEvent(evt.get(), true);
     doc->handleWindowEvent(evt.get(), false);
     
     if (eventType == loadEvent) {

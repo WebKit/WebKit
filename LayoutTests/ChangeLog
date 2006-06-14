@@ -1,3 +1,11 @@
+2006-06-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Test case by Anders, reviewed and tweaked by Maciej.
+        
+        - fixed <rdar://problem/4586051> 10.4.7 regression: 'Saved and recent' button on mapquest.com does not work
+        
+        * fast/events/window-load-capture.html: Added.
+
 2006-06-13  Geoffrey Garen  <ggaren@apple.com>
 
         Test for createHTMLDocument.

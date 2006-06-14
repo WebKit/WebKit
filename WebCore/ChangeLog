@@ -1,3 +1,12 @@
+2006-06-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        - fixed <rdar://problem/4586051> 10.4.7 regression: 'Saved and recent' button on mapquest.com does not work
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchWindowEvent):
+
 2006-06-14  David Hyatt  <hyatt@apple.com>
 
         Rename RenderSlider to DeprecatedSlider, so that I can start work on
