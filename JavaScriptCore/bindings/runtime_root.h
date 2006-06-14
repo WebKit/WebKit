@@ -26,7 +26,7 @@
 #ifndef RUNTIME_ROOT_H_
 #define RUNTIME_ROOT_H_
 
-#include "Interpreter.h"
+#include "interpreter.h"
 #include "jni_jsobject.h"
 #include "protect.h"
 
