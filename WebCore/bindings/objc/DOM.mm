@@ -41,6 +41,7 @@
 #import "EventListener.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"
+#import "HTMLDocument.h"
 #import "HTMLNames.h"
 #import "NodeFilter.h"
 #import "NodeFilterCondition.h"
@@ -69,6 +70,7 @@ using WebCore::Entity;
 using WebCore::Event;
 using WebCore::EventListener;
 using WebCore::ExceptionCode;
+using WebCore::HTMLDocument;
 using WebCore::HTMLElement;
 using WebCore::FrameMac;
 using WebCore::NamedNodeMap;
@@ -888,6 +890,11 @@ static Class elementClass(const AtomicString& tagName)
     return static_cast<DOMDocument *>([DOMNode _nodeWith:impl.get()]);
 }
 
+- (DOMHTMLDocument *)createHTMLDocument:(NSString *)title
+{
+    RefPtr<HTMLDocument> impl = [self _DOMImplementation]->createHTMLDocument(title);
+    return static_cast<DOMHTMLDocument *>([DOMNode _nodeWith:impl.get()]);
+}
 @end
 
 @implementation DOMImplementation (DOMImplementationCSS)

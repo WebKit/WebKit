@@ -1,3 +1,23 @@
+2006-06-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+        
+        - Fixed <rdar://problem/4562192> Creating a new DOMHTMLDocument 
+        appears challenging.
+        
+        - Added createHTMLDocument to Objc bindings, fixed up implementation
+        to comply with the DOM 2 Candidate Recommendation in which is was defined.
+        (It never made the final spec.) Also removed use of deprecatedString,
+        to avoid unnecessary killing of puppies.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMImplementation createHTMLDocument:]):
+        * bindings/objc/DOMPrivate.h:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+
 2006-06-13  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adele.

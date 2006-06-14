@@ -1,3 +1,10 @@
+2006-06-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Test for createHTMLDocument.
+
+        * fast/dom/implementation-createHTMLDocument-expected.txt: Added.
+        * fast/dom/implementation-createHTMLDocument.html: Added.
+
 2006-06-13  Maciej Stachowiak  <mjs@apple.com>
 
         - fixed up results of the layout test I committed for 4583892,

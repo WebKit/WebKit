@@ -146,7 +146,6 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         return 0;
     }
 
-    // ### this is completely broken.. without a view it will not work (Dirk)
     RefPtr<Document> doc = new Document(this, 0);
 
     // now get the interesting parts of the doctype
@@ -209,10 +208,9 @@ bool DOMImplementation::isTextMIMEType(const String& mimeType)
 
 PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    RefPtr<HTMLDocument> d = createHTMLDocument(0 /* ### create a view otherwise it doesn't work */);
+    RefPtr<HTMLDocument> d = createHTMLDocument();
     d->open();
-    // FIXME: Need to escape special characters in the title?
-    d->write("<html><head><title>" + title.deprecatedString() + "</title></head>");
+    d->write("<html><head><title>" + title + "</title></head><body></body></html>");
     return d.release();
 }
 
