@@ -1,3 +1,14 @@
+2006-06-14  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7580>
+        TinyMCE: Implement execCommand(formatBlock, ...)
+        
+        * English.lproj/Localizable.strings:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge nameForUndoAction:]):
+
 2006-06-14  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

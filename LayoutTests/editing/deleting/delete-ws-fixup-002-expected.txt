@@ -31,7 +31,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > SPAN > DIV > BODY > HTML > #document to 0 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 0 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -39,8 +39,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 741x56
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 751x36
+          text run at (0,0) width 259: "This testcase demonstrates a bug (9441). "
+          text run at (259,0) width 446: "When 'as' is deleted, there should be a space before and after the caret. "
+          text run at (705,0) width 46: "Editing"
+          text run at (0,18) width 531: "produces a tree that should result in two spaces, but for some reason it isn't rendered."
+      RenderBlock {DIV} at (0,52) size 784x84 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 735x56
           RenderText {#text} at (14,14) size 97x28
             text run at (14,14) width 97: "in Liberty"
           RenderInline {I} at (0,0) size 117x28
@@ -49,13 +55,12 @@ layer at (0,0) size 800x600
               text run at (132,14) width 96: "and seven"
           RenderText {#text} at (228,14) size 63x28
             text run at (228,14) width 63: " years "
-          RenderInline {B} at (0,0) size 6x28
-            RenderText {#text} at (291,14) size 6x28
-              text run at (291,14) width 6: " "
-          RenderText {#text} at (297,14) size 741x56
-            text run at (297,14) width 110: "our fathers "
-            text run at (407,14) width 348: "f upon this continent, a new nation, "
+          RenderInline {B} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (291,14) size 735x56
+            text run at (291,14) width 110: "our fathers "
+            text run at (401,14) width 348: "f upon this continent, a new nation, "
             text run at (14,42) width 232: "conceived    in Liberty, "
             text run at (246,42) width 386: "and dedicated to the proposition that all"
         RenderText {#text} at (0,0) size 0x0
-caret: position 7 of child 2 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 2 {#text} of child 1 {SPAN} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

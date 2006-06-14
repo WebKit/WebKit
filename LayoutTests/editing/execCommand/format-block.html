@@ -1,0 +1,23 @@
+<div id="description">This test uses FormatBlock to modify three of the paragraphs below</div>
+<br>
+<div style="border:1px solid black" contenteditable="true">
+<p id="item1">Make Pre</p>
+<br>
+<div>Foo<br><span id="item2">Make h1</span><br>baz</div>
+<br>
+<address id="item3">Attempt to apply the current formatting here</address>
+</div>
+
+<script>
+var s = window.getSelection();
+var r = document.createRange();
+var p1 = document.getElementById("item1");
+var p2 = document.getElementById("item2");
+var p3 = document.getElementById("item3");
+s.setPosition(p1, 0);
+document.execCommand("FormatBlock", false, "pre");
+s.setPosition(p2, 0);
+document.execCommand("FormatBlock", false, "h1");
+s.setPosition(p3, 0);
+document.execCommand("FormatBlock", false, "address");
+</script>

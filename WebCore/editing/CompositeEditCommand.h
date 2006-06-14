@@ -72,8 +72,8 @@ protected:
     void removeCSSProperty(WebCore::CSSStyleDeclaration *, int property);
     void removeNodeAttribute(WebCore::Element *, const WebCore::QualifiedName& attribute);
     void removeChildrenInRange(WebCore::Node *node, int from, int to);
-    void removeNode(WebCore::Node *removeChild);
-    void removeNodePreservingChildren(WebCore::Node *node);
+    virtual void removeNode(WebCore::Node*);
+    void removeNodePreservingChildren(WebCore::Node*);
     void removeNodeAndPruneAncestors(Node* node);
     void prune(PassRefPtr<Node> node);
     void replaceTextInNode(WebCore::Text *node, int offset, int count, const WebCore::String &replacementText);
@@ -100,8 +100,8 @@ protected:
     void pushAnchorElementDown(WebCore::Node*);
     void pushPartiallySelectedAnchorElementsDown();
     
-    void moveParagraph(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false);
-    void moveParagraphs(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false);
+    void moveParagraph(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);
+    void moveParagraphs(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);
 
     DeprecatedValueList<EditCommandPtr> m_cmds;
 };

@@ -257,6 +257,27 @@ bool isSpecialElement(const Node *n)
     return false;
 }
 
+// Checks if a string is a valid tag for the FormatBlockCommand function of execCommand. Expects lower case strings.
+bool validBlockTag(const String& blockTag)
+{
+    if (blockTag == "address" ||
+        blockTag == "blockquote" ||
+        blockTag == "dd" ||
+        blockTag == "div" ||
+        blockTag == "dl" ||
+        blockTag == "dt" ||
+        blockTag == "h1" ||
+        blockTag == "h2" ||
+        blockTag == "h3" ||
+        blockTag == "h4" ||
+        blockTag == "h5" ||
+        blockTag == "h6" ||
+        blockTag == "p" ||
+        blockTag == "pre")
+        return true;
+    return false;
+}
+
 static Node* firstInSpecialElement(const Position& pos)
 {
     Node* rootEditableElement = pos.node()->rootEditableElement();
@@ -503,6 +524,14 @@ PassRefPtr<Element> createListItemElement(Document *document)
 {
     ExceptionCode ec = 0;
     RefPtr<Element> breakNode = document->createElementNS(xhtmlNamespaceURI, "li", ec);
+    ASSERT(ec == 0);
+    return breakNode.release();
+}
+
+PassRefPtr<Element> createElement(Document* document, String& tagName)
+{
+    ExceptionCode ec = 0;
+    RefPtr<Element> breakNode = document->createElementNS(xhtmlNamespaceURI, tagName, ec);
     ASSERT(ec == 0);
     return breakNode.release();
 }

@@ -55,12 +55,14 @@ Position positionBeforeNode(const Node*);
 Position positionAfterNode(const Node*);
 
 bool isSpecialElement(const Node*);
+bool validBlockTag(const String&);
 
 PassRefPtr<Element> createDefaultParagraphElement(Document*);
 PassRefPtr<Element> createBreakElement(Document*);
 PassRefPtr<Element> createOrderedListElement(Document*);
 PassRefPtr<Element> createUnorderedListElement(Document*);
 PassRefPtr<Element> createListItemElement(Document*);
+PassRefPtr<Element> createElement(Document*, String&);
 
 bool isTabSpanNode(const Node*);
 bool isTabSpanTextNode(const Node*);

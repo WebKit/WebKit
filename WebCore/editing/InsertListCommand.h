@@ -36,6 +36,7 @@ public:
     enum EListType { OrderedListType, UnorderedListType };
     InsertListCommand(WebCore::Document*, EListType, const String&);
     virtual void doApply();
+    virtual EditAction editingAction() const { return EditActionInsertList; }
 private:
     Node* fixOrphanedListChild(Node*);
     bool modifyRange();

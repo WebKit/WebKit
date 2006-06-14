@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_EDITING_EDIT_ACTIONS_H
-#define KHTML_EDITING_EDIT_ACTIONS_H
+#ifndef FormatBlockCommand_h
+#define FormatBlockCommand_h
+
+#include "CompositeEditCommand.h"
 
 namespace WebCore {
-    typedef enum {
-        EditActionUnspecified,
-        EditActionSetColor,
-        EditActionSetBackgroundColor,
-        EditActionTurnOffKerning,
-        EditActionTightenKerning,
-        EditActionLoosenKerning,
-        EditActionUseStandardKerning,
-        EditActionTurnOffLigatures,
-        EditActionUseStandardLigatures,
-        EditActionUseAllLigatures,
-        EditActionRaiseBaseline,
-        EditActionLowerBaseline,
-        EditActionSetTraditionalCharacterShape,
-        EditActionSetFont,
-        EditActionChangeAttributes,
-        EditActionAlignLeft,
-        EditActionAlignRight,
-        EditActionCenter,
-        EditActionJustify,
-        EditActionSetWritingDirection,
-        EditActionSubscript,
-        EditActionSuperscript,
-        EditActionUnderline,
-        EditActionOutline,
-        EditActionUnscript,
-        EditActionDrag,
-        EditActionCut,
-        EditActionPaste,
-        EditActionPasteFont,
-        EditActionPasteRuler,
-        EditActionTyping,
-        EditActionCreateLink,
-        EditActionUnlink,
-        EditActionFormatBlock,
-        EditActionInsertList
-    } EditAction;    
-}
 
-#endif
+class FormatBlockCommand : public CompositeEditCommand
+{
+public:
+    FormatBlockCommand(WebCore::Document*, const String&);
+    virtual void doApply();
+    virtual EditAction editingAction() const { return EditActionFormatBlock; }
+private:
+    bool modifyRange();
+    String m_tagName;
+};
+
+} // namespace WebCore
+
+#endif // InsertListCommand_h

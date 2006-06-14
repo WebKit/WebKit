@@ -1,0 +1,18 @@
+<div id="description">This test uses FormatBlock to apply the dl tag to a range of paragraphs with different block tags.</div>
+<br>
+<div style="border:1px solid black" contenteditable="true">
+<pre id="start">Foo</pre>
+<div>bar<br><span>baz</span><br>raz</div>
+dar
+<br>
+<address id="end">yar</address>
+</div>
+
+<script>
+var s = window.getSelection();
+var start = document.getElementById("start").firstChild;
+var end = document.getElementById("end").firstChild;
+s.setBaseAndExtent(start, 2, end, 2);
+
+document.execCommand("FormatBlock", false, "dl");
+</script>

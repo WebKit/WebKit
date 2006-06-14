@@ -45,7 +45,7 @@ void MergeIdenticalElementsCommand::doApply()
     ASSERT(m_element1);
     ASSERT(m_element2);
     ASSERT(m_element1->nextSibling() == m_element2);
-
+    
     ExceptionCode ec = 0;
 
     if (!m_atChild)

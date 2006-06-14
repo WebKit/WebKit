@@ -30,6 +30,7 @@
 #include "CreateLinkCommand.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "FormatBlockCommand.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLImageElement.h"
@@ -257,6 +258,16 @@ bool execFontSizeDelta(Frame *frame, bool userInterface, const String &value)
 bool execForeColor(Frame *frame, bool userInterface, const String &value)
 {
     return execStyleChange(frame,  CSS_PROP_COLOR, value);
+}
+
+bool execFormatBlock(Frame *frame, bool userInterface, const String &value)
+{
+    String tagName = value.lower();
+    if (!validBlockTag(tagName))
+        return false;
+
+    EditCommandPtr(new FormatBlockCommand(frame->document(), tagName)).apply();
+    return true;
 }
 
 bool execInsertHorizontalRule(Frame* frame, bool userInterface, const String& value)
@@ -633,6 +644,7 @@ CommandMap *createCommandDictionary()
         { "FontSize", { execFontSize, enabledAnySelection, stateNone, valueFontSize } },
         { "FontSizeDelta", { execFontSizeDelta, enabledAnySelection, stateNone, valueFontSizeDelta } },
         { "ForeColor", { execForeColor, enabledAnySelection, stateNone, valueForeColor } },
+        { "FormatBlock", { execFormatBlock, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "ForwardDelete", { execForwardDelete, enabledAnyEditableSelection, stateNone, valueNull } },
         { "Indent", { execIndent, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
         { "InsertHorizontalRule", { execInsertHorizontalRule, enabledAnyRichlyEditableSelection, stateNone, valueNull } },
@@ -680,7 +692,6 @@ CommandMap *createCommandDictionary()
         // DirLTR (not supported)
         // DirRTL (not supported)
         // EditMode (not supported)
-        // FormatBlock (not supported)
         // InlineDirLTR (not supported)
         // InlineDirRTL (not supported)
         // InsertButton (not supported)

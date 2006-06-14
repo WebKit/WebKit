@@ -1,3 +1,52 @@
+2006-06-14  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7580>
+        TinyMCE: Implement execCommand(formatBlock, ...)
+
+        * WebCore.xcodeproj/project.pbxproj: Added FormatBlock.{h,cpp} to the project.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+        * bridge/mac/WebCoreFrameBridge.h: Added WebUndoActions
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraph): Added a preserveStyle bool.
+        (WebCore::CompositeEditCommand::moveParagraphs): Ditto.  downstream() the start
+        or else we'll move collapsed whitespace and uncollapse it.
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete): Don't update m_endingPosition
+        because that's removeNode's responsibility.
+        (WebCore::updatePositionForNodeRemoval): Added.
+        (WebCore::DeleteSelectionCommand::removeNode): Turned removeFullySelectedNode into a virtual
+        overload of removeNode so that we can update positions as we remove nodes.
+        (WebCore::updatePositionForTextRemoval): Added.
+        (WebCore::DeleteSelectionCommand::deleteTextFromNode):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete): 
+        (WebCore::DeleteSelectionCommand::fixupWhitespace): Got rid of m_trailingWhitespaceValid
+        since m_trailingWhitespace is always valid (we update it as we remove nodes).
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::doApply): Leading and trailing spaces should
+        be fixed if they have collapsed before merging paragraphs.
+        * editing/DeleteSelectionCommand.h:
+        * editing/EditAction.h:
+        (WebCore::):
+        * editing/FormatBlockCommand.cpp: Added.
+        (WebCore::FormatBlockCommand::FormatBlockCommand):
+        (WebCore::FormatBlockCommand::modifyRange): Similar to InsertListCommand::modifyRange().
+        (WebCore::FormatBlockCommand::doApply):
+        * editing/FormatBlockCommand.h: Added.
+        (WebCore::FormatBlockCommand::editingAction):
+        * editing/InsertListCommand.h:
+        (WebCore::InsertListCommand::editingAction):
+        * editing/JSEditor.cpp:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::validBlockTag):
+        (WebCore::createElement):
+        * editing/htmlediting.h:
+
 2006-06-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

@@ -51,15 +51,14 @@ private:
     void fixupWhitespace();
     void mergeParagraphs();
     void calculateEndingPosition();
-    void calculateTypingStyleAfterDelete(WebCore::Node *insertedPlaceholder);
+    void calculateTypingStyleAfterDelete(WebCore::Node*);
     void clearTransientState();
-    void removeFullySelectedNode(Node* node);
-    virtual void deleteTextFromNode(Text *node, int offset, int count);
+    virtual void removeNode(Node*);
+    virtual void deleteTextFromNode(Text*, int, int);
 
     bool m_hasSelectionToDelete;
     bool m_smartDelete;
     bool m_mergeBlocksAfterDelete;
-    bool m_trailingWhitespaceValid;
 
     // This data is transient and should be cleared at the end of the doApply function.
     Selection m_selectionToDelete;

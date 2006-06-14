@@ -1,3 +1,23 @@
+2006-06-14  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7580>
+        TinyMCE: Implement execCommand(formatBlock, ...)
+
+        * editing/deleting/delete-ws-fixup-002-expected.checksum:
+        * editing/deleting/delete-ws-fixup-002-expected.png:
+        * editing/deleting/delete-ws-fixup-002-expected.txt:
+        * editing/deleting/delete-ws-fixup-002.html:
+        * editing/execCommand/format-block-expected.checksum: Added.
+        * editing/execCommand/format-block-expected.png: Added.
+        * editing/execCommand/format-block-expected.txt: Added.
+        * editing/execCommand/format-block-from-range-selection-expected.checksum: Added.
+        * editing/execCommand/format-block-from-range-selection-expected.png: Added.
+        * editing/execCommand/format-block-from-range-selection-expected.txt: Added.
+        * editing/execCommand/format-block-from-range-selection.html: Added.
+        * editing/execCommand/format-block.html: Added.
+
 2006-06-14  Maciej Stachowiak  <mjs@apple.com>
 
         Test case by Anders, reviewed and tweaked by Maciej.

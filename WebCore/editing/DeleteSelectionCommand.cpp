@@ -146,8 +146,6 @@ void DeleteSelectionCommand::initializePositionData()
         }
     }
     
-    m_trailingWhitespaceValid = true;
-    
     //
     // Handle setting start and end blocks and the start node.
     //
@@ -179,7 +177,6 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     bool downstreamStartIsBR = m_downstreamStart.node()->hasTagName(brTag);
     bool isBROnLineByItself = upstreamStartIsBR && downstreamStartIsBR && m_downstreamStart.node() == m_upstreamEnd.node();
     if (isBROnLineByItself) {
-        m_endingPosition = Position(m_downstreamStart.node()->parentNode(), m_downstreamStart.node()->nodeIndex());
         removeNode(m_downstreamStart.node());
         m_mergeBlocksAfterDelete = false;
         return true;
@@ -193,7 +190,17 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     return false;
 }
 
-void DeleteSelectionCommand::removeFullySelectedNode(Node *node)
+static void updatePositionForNodeRemoval(Node* node, Position& position)
+{
+    if (position.isNull())
+        return;
+    if (node->parent() == position.node() && node->nodeIndex() < (unsigned)position.offset())
+        position = Position(position.node(), position.offset() - 1);
+    if (position.node() == node || position.node()->isAncestor(node))
+        position = positionBeforeNode(node);
+}
+
+void DeleteSelectionCommand::removeNode(Node *node)
 {
     if (isTableStructureNode(node) || node == node->rootEditableElement()) {
         // Do not remove an element of table structure; remove its contents.
@@ -202,7 +209,7 @@ void DeleteSelectionCommand::removeFullySelectedNode(Node *node)
         while (child) {
             Node *remove = child;
             child = child->nextSibling();
-            removeFullySelectedNode(remove);
+            removeNode(remove);
         }
         
         // make sure empty cell has some height
@@ -213,25 +220,31 @@ void DeleteSelectionCommand::removeFullySelectedNode(Node *node)
         return;
     }
     
-    Position p = positionBeforeNode(node);
+    // FIXME: Update the endpoints of the range being deleted.
+    updatePositionForNodeRemoval(node, m_endingPosition);
+    updatePositionForNodeRemoval(node, m_leadingWhitespace);
+    updatePositionForNodeRemoval(node, m_trailingWhitespace);
     
-    if (node->parent() == m_endingPosition.node() && node->nodeIndex() < (unsigned)m_endingPosition.offset())
-        m_endingPosition = Position(m_endingPosition.node(), m_endingPosition.offset() - 1);
-    
-    removeNode(node);
-    
-    if (!m_endingPosition.node()->inDocument())
-        m_endingPosition = p;
+    CompositeEditCommand::removeNode(node);
+}
+
+
+void updatePositionForTextRemoval(Node* node, int offset, int count, Position& position)
+{
+    if (position.node() == node) {
+        if (position.offset() > offset + count)
+            position = Position(position.node(), position.offset() - count);
+        else if (position.offset() > offset)
+            position = Position(position.node(), offset);
+    }
 }
 
 void DeleteSelectionCommand::deleteTextFromNode(Text *node, int offset, int count)
 {
-    if (m_endingPosition.node() == node) {
-        if (m_endingPosition.offset() > offset + count)
-            m_endingPosition = Position(m_endingPosition.node(), m_endingPosition.offset() - count);
-        else if (m_endingPosition.offset() > offset)
-            m_endingPosition = Position(m_endingPosition.node(), offset);
-    }
+    // FIXME: Update the endpoints of the range being deleted.
+    updatePositionForTextRemoval(node, offset, count, m_endingPosition);
+    updatePositionForTextRemoval(node, offset, count, m_leadingWhitespace);
+    updatePositionForTextRemoval(node, offset, count, m_trailingWhitespace);
     
     CompositeEditCommand::deleteTextFromNode(node, offset, count);
 }
@@ -267,13 +280,12 @@ void DeleteSelectionCommand::handleGeneralDelete()
         if (!startNode->renderer() || 
             (startOffset == 0 && m_downstreamEnd.offset() >= maxDeepOffset(startNode))) {
             // just delete
-            removeFullySelectedNode(startNode);
+            removeNode(startNode);
         } else if (m_downstreamEnd.offset() - startOffset > 0) {
             if (startNode->isTextNode()) {
                 // in a text node that needs to be trimmed
                 Text *text = static_cast<Text *>(startNode);
                 deleteTextFromNode(text, startOffset, m_downstreamEnd.offset() - startOffset);
-                m_trailingWhitespaceValid = false;
             } else {
                 removeChildrenInRange(startNode, startOffset, m_downstreamEnd.offset());
                 m_endingPosition = m_upstreamStart;
@@ -308,13 +320,12 @@ void DeleteSelectionCommand::handleGeneralDelete()
                     ASSERT(node->nodeIndex() < (unsigned)m_downstreamEnd.offset());
                     m_downstreamEnd = Position(m_downstreamEnd.node(), m_downstreamEnd.offset() - 1);
                 }
-                removeFullySelectedNode(node);
+                removeNode(node);
                 node = nextNode;
             } else {
                 Node* n = node->lastDescendant();
                 if (m_downstreamEnd.node() == n && m_downstreamEnd.offset() >= n->caretMaxOffset()) {
-                    removeFullySelectedNode(node); 
-                    m_trailingWhitespaceValid = false;
+                    removeNode(node); 
                     node = 0;
                 } else {
                     node = node->traverseNextNode();
@@ -333,8 +344,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                     m_upstreamStart = Position(m_downstreamEnd.node()->parentNode(), m_downstreamEnd.node()->nodeIndex());
                 }
                 
-                removeFullySelectedNode(m_downstreamEnd.node());
-                m_trailingWhitespaceValid = false;
+                removeNode(m_downstreamEnd.node());
             } else {
                 if (m_downstreamEnd.node()->isTextNode()) {
                     // in a text node that needs to be trimmed
@@ -342,7 +352,6 @@ void DeleteSelectionCommand::handleGeneralDelete()
                     if (m_downstreamEnd.offset() > 0) {
                         deleteTextFromNode(text, 0, m_downstreamEnd.offset());
                         m_downstreamEnd = Position(text, 0);
-                        m_trailingWhitespaceValid = false;
                     }
                 } else {
                     int offset = 0;
@@ -361,48 +370,22 @@ void DeleteSelectionCommand::handleGeneralDelete()
     }
 }
 
-// FIXME: Can't really determine this without taking white-space mode into account.
-static inline bool nextCharacterIsCollapsibleWhitespace(const Position &pos)
-{
-    if (!pos.node())
-        return false;
-    if (!pos.node()->isTextNode())
-        return false;
-    return isCollapsibleWhitespace(static_cast<Text *>(pos.node())->data()[pos.offset()]);
-}
-
 void DeleteSelectionCommand::fixupWhitespace()
 {
     updateLayout();
-    if (m_leadingWhitespace.isNotNull() && (m_trailingWhitespace.isNotNull() || !m_leadingWhitespace.isRenderedCharacter())) {
-        LOG(Editing, "replace leading");
+    // FIXME: isRenderedCharacter should be removed, and we should use VisiblePosition::characterAfter and VisiblePosition::characterBefore
+    if (m_leadingWhitespace.isNotNull() && !m_leadingWhitespace.isRenderedCharacter()) {
         Text *textNode = static_cast<Text *>(m_leadingWhitespace.node());
         replaceTextInNode(textNode, m_leadingWhitespace.offset(), 1, nonBreakingSpaceString());
     }
-    else if (m_trailingWhitespace.isNotNull()) {
-        if (m_trailingWhitespaceValid) {
-            if (!m_trailingWhitespace.isRenderedCharacter()) {
-                LOG(Editing, "replace trailing [valid]");
-                Text *textNode = static_cast<Text *>(m_trailingWhitespace.node());
-                replaceTextInNode(textNode, m_trailingWhitespace.offset(), 1, nonBreakingSpaceString());
-            }
-        }
-        else {
-            Position pos = m_endingPosition.downstream();
-            pos = Position(pos.node(), pos.offset() - 1);
-            if (nextCharacterIsCollapsibleWhitespace(pos) && !pos.isRenderedCharacter()) {
-                LOG(Editing, "replace trailing [invalid]");
-                Text *textNode = static_cast<Text *>(pos.node());
-                replaceTextInNode(textNode, pos.offset(), 1, nonBreakingSpaceString());
-                // need to adjust ending position since the trailing position is not valid.
-                m_endingPosition = pos;
-            }
-        }
+    if (m_trailingWhitespace.isNotNull() && !m_trailingWhitespace.isRenderedCharacter()) {
+        Text *textNode = static_cast<Text *>(m_trailingWhitespace.node());
+        replaceTextInNode(textNode, m_trailingWhitespace.offset(), 1, nonBreakingSpaceString());
     }
 }
 
-// If a selection ended in a different paragraph than it started in, we must merge 
-// the two paragraphs after deleting the selection.
+// If a selection starts in one block and ends in another, we have to merge to bring content before the
+// start together with content after the end.
 void DeleteSelectionCommand::mergeParagraphs()
 {
     if (!m_mergeBlocksAfterDelete)
@@ -421,7 +404,8 @@ void DeleteSelectionCommand::mergeParagraphs()
     if (m_endBlock == m_startBlock)
         return;
         
-    // Don't move content between parts of a table.
+    // Don't move content between parts of a table or between table and non-table content.
+    // FIXME: This isn't right.  A table with two rows and a single column appears as two paragraphs.
     if (isTableStructureNode(m_downstreamEnd.node()->enclosingBlockFlowElement()) || isTableStructureNode(m_upstreamStart.node()->enclosingBlockFlowElement()))
         return;
         
@@ -548,9 +532,9 @@ void DeleteSelectionCommand::doApply()
     
     handleGeneralDelete();
     
-    mergeParagraphs();
-    
     fixupWhitespace();
+    
+    mergeParagraphs();
     
     RefPtr<Node> placeholder = needPlaceholder ? createBreakElement(document()) : 0;
     if (placeholder)

@@ -28,6 +28,7 @@ function editingTest() {
 <title>Editing Test</title> 
 </head> 
 <body>
+<p>This testcase demonstrates a bug (9441).  When 'as' is deleted, there should be a space before and after the caret.  Editing produces a tree that should result in two spaces, but for some reason it isn't rendered.</p>
 <div contenteditable id="root" class="editing">
 <span id="test">in Liberty<i>F    and seven</i> years <b>  as </b>our fathers  f upon this
 continent, a new nation, conceived &nbsp;&nbsp; in Liberty,                 and dedicated to the

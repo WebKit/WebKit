@@ -3863,6 +3863,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\editing\FormatBlockCommand.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\FormatBlockCommand.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\editing\htmlediting.cpp"
 				>
 			</File>
