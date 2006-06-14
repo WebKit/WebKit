@@ -150,7 +150,9 @@ namespace KJS {
     typedef HashMap<JSObject*, JSEventListener*> ListenersMap;
     typedef HashMap<JSObject*, JSUnprotectedEventListener*> UnprotectedListenersMap;
     ListenersMap jsEventListeners;
+    ListenersMap jsHTMLEventListeners;
     UnprotectedListenersMap jsUnprotectedEventListeners;
+    UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Closed, Crypto, DefaultStatus, Status, DOMException, Frames, History_, Event_, InnerHeight,

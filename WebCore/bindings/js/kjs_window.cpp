@@ -333,15 +333,23 @@ Window::~Window()
 
     // Clear any backpointers to the window
 
-    UnprotectedListenersMap::iterator i1 = jsUnprotectedEventListeners.begin();
-    UnprotectedListenersMap::iterator e1 = jsUnprotectedEventListeners.end();
-    for (; i1 != e1; ++i1)
-        i1->second->clearWindowObj();
-
     ListenersMap::iterator i2 = jsEventListeners.begin();
     ListenersMap::iterator e2 = jsEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindowObj();
+    i2 = jsHTMLEventListeners.begin();
+    e2 = jsHTMLEventListeners.end();
+    for (; i2 != e2; ++i2)
+        i2->second->clearWindowObj();
+
+    UnprotectedListenersMap::iterator i1 = jsUnprotectedEventListeners.begin();
+    UnprotectedListenersMap::iterator e1 = jsUnprotectedEventListeners.end();
+    for (; i1 != e1; ++i1)
+        i1->second->clearWindowObj();
+    i1 = jsUnprotectedHTMLEventListeners.begin();
+    e1 = jsUnprotectedHTMLEventListeners.end();
+    for (; i1 != e1; ++i1)
+        i1->second->clearWindowObj();
 }
 
 DOMWindow* Window::impl() const
@@ -1293,7 +1301,8 @@ JSEventListener *Window::getJSEventListener(JSValue *val, bool html)
     return 0;
   JSObject *object = static_cast<JSObject *>(val);
 
-  if (JSEventListener* listener = jsEventListeners.get(object))
+  ListenersMap& listeners = html ? jsHTMLEventListeners : jsEventListeners;
+  if (JSEventListener* listener = listeners.get(object))
     return listener;
 
   // Note that the JSEventListener constructor adds it to our jsEventListeners list
@@ -1306,7 +1315,8 @@ JSUnprotectedEventListener *Window::getJSUnprotectedEventListener(JSValue *val, 
     return 0;
   JSObject* object = static_cast<JSObject *>(val);
 
-  if (JSUnprotectedEventListener* listener = jsUnprotectedEventListeners.get(object))
+  UnprotectedListenersMap& listeners = html ? jsUnprotectedHTMLEventListeners : jsUnprotectedEventListeners;
+  if (JSUnprotectedEventListener* listener = listeners.get(object))
     return listener;
 
   // The JSUnprotectedEventListener constructor adds it to our jsUnprotectedEventListeners map.

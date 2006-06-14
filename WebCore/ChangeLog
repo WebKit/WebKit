@@ -1,3 +1,36 @@
+2006-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/4585333> Changing location for weather on yahoo.com home page redirects to another page
+
+        This patch fixes a bug where the event listener cache does not distinguish
+        HTML and non-HTML listeners. Incorrect behavior where stopPropagation also
+        prevented default masked a case of this bug on the yahoo.com home page until
+        we fixed bug 5180 on 2005-10-03.
+
+        Test: fast/events/event-listener-html-non-html-confusion.html
+
+        * bindings/js/kjs_window.h: Add additional listener maps for HTML event listeners.
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::Window::~Window): Go through the additional maps when clearing the window object
+        pointer in event listeners.
+        (KJS::Window::getJSEventListener): Look in the HTML or non-HTML map depending on the
+        argument passed.
+        (KJS::Window::getJSUnprotectedEventListener): Ditto.
+
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSUnprotectedEventListener::JSUnprotectedEventListener): Add to either the HTML
+        or non-HTML map depending on the argument passed.
+        (KJS::JSUnprotectedEventListener::~JSUnprotectedEventListener): Remove from either the
+        HTML or non-HTML map depending on whether the HTML flag is set.
+        (KJS::JSEventListener::JSEventListener): More of the same.
+        (KJS::JSEventListener::~JSEventListener): Ditto.
+        (KJS::JSLazyEventListener::parseCode): Same thing here. In a lazy event listener there
+        is not a listener at construction time, thus the code here to put the listener into a
+        map needs the HTML vs. non-HTML logic.
+
 2006-06-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

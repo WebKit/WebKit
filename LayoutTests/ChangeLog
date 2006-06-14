@@ -1,3 +1,12 @@
+2006-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - test for <rdar://problem/4585333> Changing location for weather on yahoo.com home page redirects to another page
+
+        * fast/events/event-listener-html-non-html-confusion-expected.txt: Added.
+        * fast/events/event-listener-html-non-html-confusion.html: Added.
+
 2006-06-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
