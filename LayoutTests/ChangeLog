@@ -1,3 +1,13 @@
+2006-06-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - test case for <rdar://problem/4583892> 10.4.7 regression: Hang occurs when attempting to load
+        search results at mapquest.com
+
+        * fast/events/no-window-load-expected.txt: Added.
+        * fast/events/no-window-load.html: Added.
+
 2006-06-13  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Hyatt

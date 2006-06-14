@@ -1,3 +1,14 @@
+2006-06-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/4583892> 10.4.7 regression: Hang occurs when attempting to load search results at mapquest.com
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent): Don't allow
+        "load" events to propagate up to the window. We need this quirk to
+        avoid site hangs, because they depend on an old Mozilla bug.
+
 2006-06-13  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Hyatt.
