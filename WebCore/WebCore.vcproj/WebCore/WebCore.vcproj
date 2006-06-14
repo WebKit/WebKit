@@ -3131,11 +3131,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderSlider.cpp"
+				RelativePath="..\..\rendering\DeprecatedSlider.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\RenderSlider.h"
+				RelativePath="..\..\rendering\DeprecatedSlider.h"
 				>
 			</File>
 			<File

@@ -43,7 +43,7 @@
 #include "RenderText.h"
 #include "RenderTextField.h"
 #include "RenderTheme.h"
-#include "RenderSlider.h"
+#include "DeprecatedSlider.h"
 #include "SelectionController.h"
 #include "RenderButton.h"
 #include <unicode/ubrk.h>
@@ -797,7 +797,7 @@ RenderObject *HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *
         case SEARCH:
             return new (arena) RenderLineEdit(this);
         case RANGE:
-            return new (arena) RenderSlider(this);
+            return new (arena) DeprecatedSlider(this);
         case TEXT:
             return new (arena) RenderTextField(this, false);
     }

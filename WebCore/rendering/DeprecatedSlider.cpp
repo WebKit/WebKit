@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RenderSlider.h"
+#include "DeprecatedSlider.h"
 
 #include "EventNames.h"
 #include "HTMLNames.h"
@@ -38,13 +38,13 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-RenderSlider::RenderSlider(HTMLInputElement* element)
+DeprecatedSlider::DeprecatedSlider(HTMLInputElement* element)
     : RenderFormElement(element)
 {
     setWidget(new QSlider);
 }
 
-void RenderSlider::calcMinMaxWidth()
+void DeprecatedSlider::calcMinMaxWidth()
 {
     ASSERT(!minMaxKnown());
     
@@ -63,7 +63,7 @@ void RenderSlider::calcMinMaxWidth()
     RenderFormElement::calcMinMaxWidth();
 }
 
-void RenderSlider::updateFromElement()
+void DeprecatedSlider::updateFromElement()
 {
     String value = static_cast<HTMLInputElement*>(node())->value();
     const AtomicString& minStr = static_cast<HTMLInputElement*>(node())->getAttribute(minAttr);
@@ -92,7 +92,7 @@ void RenderSlider::updateFromElement()
     RenderFormElement::updateFromElement();
 }
 
-void RenderSlider::valueChanged(Widget*)
+void DeprecatedSlider::valueChanged(Widget*)
 {
     QSlider* slider = static_cast<QSlider*>(widget());
 

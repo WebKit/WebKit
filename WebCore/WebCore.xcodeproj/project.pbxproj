@@ -1280,7 +1280,6 @@
 		A8EA73C90A1900E300A8EF5F /* RenderFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */; };
 		A8EA73CA0A1900E300A8EF5F /* RenderLegend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */; };
 		A8EA73CB0A1900E300A8EF5F /* RenderLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B70A1900E300A8EF5F /* RenderLabel.h */; };
-		A8EA73CC0A1900E300A8EF5F /* RenderSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B80A1900E300A8EF5F /* RenderSlider.h */; };
 		A8EA73CD0A1900E300A8EF5F /* RenderImageButton.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73B90A1900E300A8EF5F /* RenderImageButton.h */; };
 		A8EA73CE0A1900E300A8EF5F /* RenderTextArea.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73BA0A1900E300A8EF5F /* RenderTextArea.h */; };
 		A8EA73CF0A1900E300A8EF5F /* RenderImageButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BB0A1900E300A8EF5F /* RenderImageButton.cpp */; };
@@ -1289,7 +1288,6 @@
 		A8EA73D20A1900E300A8EF5F /* RenderLineEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BE0A1900E300A8EF5F /* RenderLineEdit.cpp */; };
 		A8EA73D30A1900E300A8EF5F /* RenderFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */; };
 		A8EA73D40A1900E300A8EF5F /* RenderLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73C00A1900E300A8EF5F /* RenderLabel.cpp */; };
-		A8EA73D50A1900E300A8EF5F /* RenderSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA73C10A1900E300A8EF5F /* RenderSlider.cpp */; };
 		A8EA73D60A1900E300A8EF5F /* RenderSelect.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA73C20A1900E300A8EF5F /* RenderSelect.h */; };
 		A8EA79F10A1916DF00A8EF5F /* HTMLOListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA79E50A1916DF00A8EF5F /* HTMLOListElement.h */; };
 		A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */; };
@@ -1399,6 +1397,8 @@
 		BC73E3190978AFFC00EDFF8A /* IntPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3180978AFFB00EDFF8A /* IntPoint.h */; };
 		BC73E3920978CED700EDFF8A /* FloatPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E3900978CED700EDFF8A /* FloatPoint.cpp */; };
 		BC73E3930978CED700EDFF8A /* FloatPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3910978CED700EDFF8A /* FloatPoint.h */; };
+		BC92F1DD0A40AEA300AC0746 /* DeprecatedSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC92F1DB0A40AEA300AC0746 /* DeprecatedSlider.cpp */; };
+		BC92F1DE0A40AEA300AC0746 /* DeprecatedSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC92F1DC0A40AEA300AC0746 /* DeprecatedSlider.h */; };
 		BC9C328B09933A6E001D6924 /* ImageAnimationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */; };
 		BCB16AF90979A08500467741 /* FloatRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16AF50979A08500467741 /* FloatRect.cpp */; };
 		BCB16AFA0979A08500467741 /* FloatRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16AF60979A08500467741 /* FloatRect.h */; };
@@ -1536,6 +1536,23 @@
 		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		BC92F1D20A40ACB500AC0746 /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Development;
+		};
+		BC92F1D30A40ACB500AC0746 /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
@@ -2971,7 +2988,6 @@
 		A8EA73B50A1900E300A8EF5F /* RenderFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFormElement.h; sourceTree = "<group>"; };
 		A8EA73B60A1900E300A8EF5F /* RenderLegend.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLegend.cpp; sourceTree = "<group>"; };
 		A8EA73B70A1900E300A8EF5F /* RenderLabel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLabel.h; sourceTree = "<group>"; };
-		A8EA73B80A1900E300A8EF5F /* RenderSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSlider.h; sourceTree = "<group>"; };
 		A8EA73B90A1900E300A8EF5F /* RenderImageButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderImageButton.h; sourceTree = "<group>"; };
 		A8EA73BA0A1900E300A8EF5F /* RenderTextArea.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextArea.h; sourceTree = "<group>"; };
 		A8EA73BB0A1900E300A8EF5F /* RenderImageButton.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderImageButton.cpp; sourceTree = "<group>"; };
@@ -2980,7 +2996,6 @@
 		A8EA73BE0A1900E300A8EF5F /* RenderLineEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLineEdit.cpp; sourceTree = "<group>"; };
 		A8EA73BF0A1900E300A8EF5F /* RenderFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFormElement.cpp; sourceTree = "<group>"; };
 		A8EA73C00A1900E300A8EF5F /* RenderLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLabel.cpp; sourceTree = "<group>"; };
-		A8EA73C10A1900E300A8EF5F /* RenderSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSlider.cpp; sourceTree = "<group>"; };
 		A8EA73C20A1900E300A8EF5F /* RenderSelect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSelect.h; sourceTree = "<group>"; };
 		A8EA79E50A1916DF00A8EF5F /* HTMLOListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLOListElement.h; sourceTree = "<group>"; };
 		A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLUListElement.h; sourceTree = "<group>"; };
@@ -3097,6 +3112,8 @@
 		BC7B2AF90450824100A8000F /* KWQScrollBar.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQScrollBar.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC86FB8D061F5C23006BB822 /* KWQSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQSlider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC86FB8E061F5C23006BB822 /* KWQSlider.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQSlider.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC92F1DB0A40AEA300AC0746 /* DeprecatedSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedSlider.cpp; sourceTree = "<group>"; };
+		BC92F1DC0A40AEA300AC0746 /* DeprecatedSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DeprecatedSlider.h; sourceTree = "<group>"; };
 		BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageAnimationObserver.h; sourceTree = "<group>"; };
 		BCB16AF50979A08500467741 /* FloatRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRect.cpp; sourceTree = "<group>"; };
 		BCB16AF60979A08500467741 /* FloatRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatRect.h; sourceTree = "<group>"; };
@@ -5175,6 +5192,8 @@
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
 				BCEA4817097D93020094C9E4 /* DataRef.h */,
+				BC92F1DB0A40AEA300AC0746 /* DeprecatedSlider.cpp */,
+				BC92F1DC0A40AEA300AC0746 /* DeprecatedSlider.h */,
 				A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */,
 				A8CFF6BD0A156118000A4234 /* EllipsisBox.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
@@ -5252,8 +5271,6 @@
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				A8EA73BC0A1900E300A8EF5F /* RenderSelect.cpp */,
 				A8EA73C20A1900E300A8EF5F /* RenderSelect.h */,
-				A8EA73C10A1900E300A8EF5F /* RenderSlider.cpp */,
-				A8EA73B80A1900E300A8EF5F /* RenderSlider.h */,
 				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
 				A8DF4AE10980C42C0052981B /* RenderTable.h */,
 				A8DF4AE00980C42C0052981B /* RenderTableCell.cpp */,
@@ -6087,7 +6104,6 @@
 				A8EA73C70A1900E300A8EF5F /* RenderFileButton.h in Headers */,
 				A8EA73C90A1900E300A8EF5F /* RenderFormElement.h in Headers */,
 				A8EA73CB0A1900E300A8EF5F /* RenderLabel.h in Headers */,
-				A8EA73CC0A1900E300A8EF5F /* RenderSlider.h in Headers */,
 				A8EA73CD0A1900E300A8EF5F /* RenderImageButton.h in Headers */,
 				A8EA73CE0A1900E300A8EF5F /* RenderTextArea.h in Headers */,
 				A8EA73D10A1900E300A8EF5F /* RenderLegend.h in Headers */,
@@ -6228,6 +6244,7 @@
 				4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */,
 				1AC694C80A3B1676003F5049 /* PluginDocument.h in Headers */,
 				51D3EA170A3D24D300BADA35 /* SQLDatabase.h in Headers */,
+				BC92F1DE0A40AEA300AC0746 /* DeprecatedSlider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6261,6 +6278,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				BC92F1D20A40ACB500AC0746 /* Development */,
+				BC92F1D30A40ACB500AC0746 /* Deployment */,
+			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -6928,7 +6951,6 @@
 				A8EA73D20A1900E300A8EF5F /* RenderLineEdit.cpp in Sources */,
 				A8EA73D30A1900E300A8EF5F /* RenderFormElement.cpp in Sources */,
 				A8EA73D40A1900E300A8EF5F /* RenderLabel.cpp in Sources */,
-				A8EA73D50A1900E300A8EF5F /* RenderSlider.cpp in Sources */,
 				A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */,
 				A8EA79F50A1916DF00A8EF5F /* HTMLDListElement.cpp in Sources */,
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,
@@ -7065,6 +7087,7 @@
 				1AC694C70A3B1676003F5049 /* PluginDocument.cpp in Sources */,
 				51D3EA160A3D24D300BADA35 /* SQLDatabase.cpp in Sources */,
 				51D3EA180A3D24D300BADA35 /* SQLStatement.cpp in Sources */,
+				BC92F1DD0A40AEA300AC0746 /* DeprecatedSlider.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

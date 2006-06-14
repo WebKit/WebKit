@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef RenderSlider_h
-#define RenderSlider_h
+#ifndef DeprecatedSlider_h
+#define DeprecatedSlider_h
 
 #include "RenderFormElement.h"
 
@@ -32,11 +32,11 @@ namespace WebCore {
 
     class HTMLInputElement;
     
-    class RenderSlider : public RenderFormElement {
+    class DeprecatedSlider : public RenderFormElement {
     public:
-        RenderSlider(HTMLInputElement*);
+        DeprecatedSlider(HTMLInputElement*);
         
-        virtual const char* renderName() const { return "RenderSlider"; }
+        virtual const char* renderName() const { return "DeprecatedSlider"; }
 
         virtual bool canHaveIntrinsicMargins() const { return true; }
         virtual void calcMinMaxWidth();
@@ -49,4 +49,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // RenderSlider_h
+#endif // DeprecatedSlider_h
