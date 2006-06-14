@@ -1,3 +1,9 @@
+2006-06-13  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by MacDome. Added missing results for this test.
+
+        * fast/css/xml-stylesheet-pi-not-in-prolog-expected.txt: Added.
+
 2006-06-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
