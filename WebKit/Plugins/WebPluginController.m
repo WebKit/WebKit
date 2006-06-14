@@ -218,13 +218,14 @@ static NSMutableSet *pluginViews = nil;
     [_checksInProgress removeObject:checkIdentifier];
 }
 
+static void cancelOutstandingCheck(const void *item, void *context)
+{
+    [(id)item cancel];
+}
+
 - (void)_cancelOutstandingChecks
 {
-    NSEnumerator *e = [_checksInProgress objectEnumerator];
-    id check;
-    while ((check = [e nextObject])) {
-        [check cancel];
-    }
+    CFSetApplyFunction((CFSetRef)_checksInProgress, cancelOutstandingCheck, NULL);
     [_checksInProgress release];
     _checksInProgress = nil;
 }

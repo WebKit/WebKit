@@ -1,3 +1,14 @@
+2006-06-14  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/4577988> GC: WebPluginController uses inefficient resurrecting enumeration
+
+        * Plugins/WebPluginController.m:
+        (cancelOutstandingCheck):
+        (-[WebPluginController _cancelOutstandingChecks]):
+        Use CFSetApplyFunction() instead of an enumerator to guard against modifications to the set while enumerating.
+
 2006-06-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim O.
