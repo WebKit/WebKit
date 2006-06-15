@@ -1,3 +1,11 @@
+2006-06-15  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff and Darin.
+        
+        Prefer the DWARF debugging symbols format for use in Xcode 2.3.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-06-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

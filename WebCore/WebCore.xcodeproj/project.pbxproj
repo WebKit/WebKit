@@ -1539,23 +1539,6 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		BC92F1D20A40ACB500AC0746 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		BC92F1D30A40ACB500AC0746 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6285,12 +6268,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				BC92F1D20A40ACB500AC0746 /* Development */,
-				BC92F1D30A40ACB500AC0746 /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -7218,6 +7195,7 @@
 		149C284408902B11008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -7254,6 +7232,7 @@
 		149C284508902B11008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -7290,6 +7269,7 @@
 		149C284708902B11008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				FEATURE_DEFINES = "SVG_SUPPORT XPATH_SUPPORT";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
