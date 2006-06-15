@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x146
-  RenderBlock {HTML} at (0,0) size 800x146
-    RenderBody {BODY} at (8,16) size 784x122
+layer at (0,0) size 800x120
+  RenderBlock {HTML} at (0,0) size 800x120
+    RenderBody {BODY} at (8,16) size 784x88
       RenderBlock {UL} at (0,0) size 784x36
         RenderListItem {LI} at (40,0) size 744x18 [bgcolor=#00FF00]
           RenderListMarker at (-17,0) size 7x18
@@ -25,6 +25,3 @@ layer at (0,0) size 800x146
           RenderText {#text} at (0,0) size 418x18
             text run at (0,0) width 374: "This list item should NOT be green because its language is "
             text run at (374,0) width 44: "French"
-      RenderBlock (anonymous) at (0,104) size 784x18
-        RenderText {#text} at (0,0) size 165x18
-          text run at (0,0) width 165: "\\ No newline at end of file"
