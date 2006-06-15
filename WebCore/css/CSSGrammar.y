@@ -218,6 +218,7 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 
 %token <string> URI
 %token <string> FUNCTION
+%token <string> NOTFUNCTION
 
 %token <string> UNICODERANGE
 
@@ -835,7 +836,16 @@ pseudo:
         $3.lower();
         $$->value = atomicString($3);
     }
-    | ':' FUNCTION maybe_space simple_selector maybe_space ')' {
+    // used by :lang
+    | ':' FUNCTION IDENT ')' {
+        $$ = new CSSSelector();
+        $$->match = CSSSelector::PseudoClass;
+        $$->argument = atomicString($3);
+        $2.lower();
+        $$->value = atomicString($2);
+    }
+    // used by :not
+    | ':' NOTFUNCTION maybe_space simple_selector ')' {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->match = CSSSelector::PseudoClass;

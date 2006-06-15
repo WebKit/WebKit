@@ -36,6 +36,7 @@ namespace WebCore {
             : tagHistory(0)
             , simpleSelector(0)
             , nextSelector(0)
+            , argument(nullAtom)
             , attr(anyQName())
             , tag(anyQName())
             , m_relation(Descendant)
@@ -48,6 +49,7 @@ namespace WebCore {
             : tagHistory(0)
             , simpleSelector(0)
             , nextSelector(0)
+            , argument(nullAtom)
             , attr(anyQName())
             , tag(qName)
             , m_relation(Descendant)
@@ -158,6 +160,7 @@ namespace WebCore {
         CSSSelector* tagHistory;
         CSSSelector* simpleSelector; // Used for :not.
         CSSSelector* nextSelector; // used for ,-chained selectors
+        AtomicString argument; // Used for :contains, :lang and :nth-*
         
         QualifiedName attr;
         QualifiedName tag;

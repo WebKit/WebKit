@@ -3,6 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
+ *           (C) 2006 Nicholas Shanks (webkit@nickshanks.com)
  * Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -1520,12 +1521,19 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 if (e == e->document()->documentElement())
                     return true;
                 break;
+            case CSSSelector::PseudoLang: {
+                const AtomicString& value = e->getAttribute(langAttr);
+                if (value.isEmpty() || !value.startsWith(sel->argument, false))
+                    break;
+                if (value.length() != sel->argument.length() && value[sel->argument.length()] != '-')
+                    break;
+                return true;
+            }
             case CSSSelector::PseudoNot: {
                 // check the simple selector
-                for (CSSSelector* subSel = sel->simpleSelector; subSel;
-                     subSel = subSel->tagHistory) {
-                    // :not cannot nest.  I don't really know why this is a restriction in CSS3,
-                    // but it is, so let's honor it.
+                for (CSSSelector* subSel = sel->simpleSelector; subSel; subSel = subSel->tagHistory) {
+                    // :not cannot nest. I don't really know why this is a
+                    // restriction in CSS3, but it is, so let's honour it.
                     if (subSel->simpleSelector)
                         break;
                     if (!checkOneSelector(subSel, e))
@@ -1533,8 +1541,6 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 }
                 break;
             }
-            case CSSSelector::PseudoLang:
-                /* not supported for now */
             case CSSSelector::PseudoOther:
                 break;
             
@@ -1565,7 +1571,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSub
                 assert(false);
                 break;
         }
-            return false;
+        return false;
     }
     // ### add the rest of the checks...
     return true;

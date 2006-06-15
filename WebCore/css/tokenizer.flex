@@ -80,6 +80,7 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 {intnum}                {yyTok = INTEGER; return yyTok;}
 {num}                   {yyTok = FLOAT; return yyTok;}
 
+"not("                  {yyTok = NOTFUNCTION; return yyTok;}
 "url("{w}{string}{w}")" {yyTok = URI; return yyTok;}
 "url("{w}{url}{w}")"    {yyTok = URI; return yyTok;}
 {ident}"("              {yyTok = FUNCTION; return yyTok;}

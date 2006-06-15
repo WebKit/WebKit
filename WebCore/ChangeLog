@@ -1,3 +1,22 @@
+2006-06-15  Nicholas Shanks  <contact@nickshanks.com>
+
+        Reviewed by Hyatt, landed by Joost de Valk.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3233
+
+        Add support for the :lang pseudo-class.
+
+        * css/CSSGrammar.y:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::operator == ):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::lex):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * css/tokenizer.flex:
+
 2006-06-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
