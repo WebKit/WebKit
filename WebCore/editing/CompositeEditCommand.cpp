@@ -217,13 +217,12 @@ void CompositeEditCommand::removeNodeAndPruneAncestors(Node* node)
 
 bool hasARenderedDescendant(Node* node)
 {
-    Node* n = node->traverseNextNode(node);
+    Node* n = node->firstChild();
     while (n) {
         if (n->renderer())
             return true;
         n = n->traverseNextNode(node);
     }
-    
     return false;
 }
 
@@ -236,17 +235,6 @@ void CompositeEditCommand::prune(PassRefPtr<Node> node)
             return;
             
         RefPtr<Node> next = node->parentNode();
-        
-        if (renderer) {
-            RenderObject* p = renderer->parent();
-            while (p && !p->element())
-                p = p->parent();
-            ASSERT(p);
-            if (!p)
-                return;
-            next = p->element();        
-        }
-
         removeNode(node.get());
         node = next;
     }
@@ -699,12 +687,12 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     
     // Deleting a paragraph leaves a placeholder (it always does when a whole paragraph is deleted).
     // We remove it and prune its parents since we want to remove all traces of the paragraph we're moving.
-    Node* placeholder = endingSelection().end().node();
-    if (placeholder->hasTagName(brTag))
+    Node* placeholder = endingSelection().end().downstream().node();
+    ASSERT(placeholder->hasTagName(brTag));
+    // There are bugs in deletion when it removes a fully selected table/list.  It expands and removes the entire table/list, but will let content
+    // before and after the table/list collapse onto one line.
+    if (placeholder->hasTagName(brTag) && isStartOfParagraph(endingSelection().visibleStart()) && isEndOfParagraph(endingSelection().visibleStart()))
         removeNodeAndPruneAncestors(placeholder);
-    // FIXME: Deletion has bugs and it doesn't always add a placeholder.  If it fails, still do pruning.
-    else
-        prune(placeholder);
 
     // Add a br if pruning an empty block level element caused a collapse.  For example:
     // foo^

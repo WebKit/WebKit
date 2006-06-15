@@ -1,3 +1,12 @@
+2006-06-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+
+        * editing/deleting/pruning-after-merge-2-expected.checksum: Added.
+        * editing/deleting/pruning-after-merge-2-expected.png: Added.
+        * editing/deleting/pruning-after-merge-2-expected.txt: Added.
+        * editing/deleting/pruning-after-merge-2.html: Added.
+
 2006-06-15  Nicholas Shanks  <contact@nickshanks.com>
 
         Reviewed by Hyatt, landed by Joost de Valk.

@@ -1,3 +1,13 @@
+2006-06-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::hasARenderedDescendant):
+        (WebCore::CompositeEditCommand::prune): Ascend using the DOM
+        (WebCore::CompositeEditCommand::moveParagraphs): Placeholder insertion
+        during deletion is fixed, removing the fall back.
+
 2006-06-15  Nicholas Shanks  <contact@nickshanks.com>
 
         Reviewed by Hyatt, landed by Joost de Valk.
