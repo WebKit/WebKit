@@ -1,3 +1,15 @@
+2006-06-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9456>
+        REGRESSION (417.9.2-420+): Cmd-G doesn't work in Safari after double-click and Cmd-E
+
+        * editing/execCommand/findString-2-expected.checksum: Added.
+        * editing/execCommand/findString-2-expected.png: Added.
+        * editing/execCommand/findString-2-expected.txt: Added.
+        * editing/execCommand/findString-2.html: Added.
+
 2006-06-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

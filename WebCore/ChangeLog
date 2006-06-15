@@ -1,3 +1,17 @@
+2006-06-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9456>
+        REGRESSION (417.9.2-420+): Cmd-G doesn't work in Safari after double-click and Cmd-E
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::findString): When comparing the found range with
+        what's currently selected a) build a selection with the found
+        range to remove collapsed whitespace and b) compare ranges 
+        instead of selection objects to ignore the way that the 
+        current selection was made (to ignore the base and extent).
+
 2006-06-15  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by mjs.
