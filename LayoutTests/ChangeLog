@@ -1,3 +1,15 @@
+2006-06-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4439248>
+        REGRESSION(412-417): [RTL] Serious problem with RTL signatures in Mail.app in 10.4.4 (7766)
+
+        * editing/pasteboard/copy-paste-bidi-expected.checksum: Added.
+        * editing/pasteboard/copy-paste-bidi-expected.png: Added.
+        * editing/pasteboard/copy-paste-bidi-expected.txt: Added.
+        * editing/pasteboard/copy-paste-bidi.html: Added.
+
 2006-06-14  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin

@@ -40,6 +40,7 @@
 #include "Range.h"
 #include "htmlediting.h"
 #include "visible_units.h"
+#include "TextIterator.h"
 
 using namespace std;
 
@@ -88,17 +89,11 @@ static String stringValueForRange(const Node *node, const Range *range)
 
 static DeprecatedString renderedText(const Node *node, const Range *range)
 {
-    RenderObject *r = node->renderer();
-    if (!r)
-        return DeprecatedString();
-    
     if (!node->isTextNode())
         return DeprecatedString();
 
-    DeprecatedString result = "";
-
     ExceptionCode ec;
-    const Text *textNode = static_cast<const Text*>(node);
+    const Text* textNode = static_cast<const Text*>(node);
     unsigned startOffset = 0;
     unsigned endOffset = textNode->length();
 
@@ -107,44 +102,10 @@ static DeprecatedString renderedText(const Node *node, const Range *range)
     if (range && node == range->endContainer(ec))
         endOffset = range->endOffset(ec);
     
-    RenderText *textRenderer = static_cast<RenderText*>(r);
-    DeprecatedString str = node->nodeValue().deprecatedString();
-    for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        unsigned start = box->m_start;
-        unsigned end = box->m_start + box->m_len;
-        if (endOffset < start)
-            break;
-        if (startOffset <= end) {
-            unsigned s = max(start, startOffset);
-            unsigned e = min(end, endOffset);
-            result.append(str.mid(s, e-s));
-            if (e == end) {
-                // now add in collapsed-away spaces if at the end of the line
-                InlineTextBox *nextBox = box->nextTextBox();
-                if (nextBox && box->root() != nextBox->root()) {
-                    const char nonBreakingSpace = '\xa0';
-                    // count the number of characters between the end of the
-                    // current box and the start of the next box.
-                    int collapsedStart = e;
-                    int collapsedPastEnd = min((unsigned)nextBox->m_start, endOffset + 1);
-                    bool addNextNonNBSP = true;
-                    for (int i = collapsedStart; i < collapsedPastEnd; i++) {
-                        if (str[i] == nonBreakingSpace) {
-                            result.append(str[i]);
-                            addNextNonNBSP = true;
-                        }
-                        else if (addNextNonNBSP) {
-                            result.append(str[i]);
-                            addNextNonNBSP = false;
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-    
-    return result;
+    Position start(const_cast<Node*>(node), startOffset);
+    Position end(const_cast<Node*>(node), endOffset);
+    Range r(node->document(), start, end);
+    return plainText(&r);
 }
 
 static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclaration *defaultStyle)
