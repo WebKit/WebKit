@@ -1,3 +1,14 @@
+2006-06-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim O.
+        
+        Fixed bug in WebKit support for computing but not highlighting rects for text matches.
+
+        * WebView/WebView.m:
+        (-[WebView rectsForTextMatches]):
+        leave out empty rects, and convert rects to WebView coordinates. Since this makes a batch
+        of autoreleased NSValue objects, use a local autorelease pool
+
 2006-02-11  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by John Sullivan.
