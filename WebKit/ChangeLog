@@ -1,3 +1,11 @@
+2006-02-11  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by John Sullivan.
+
+        * Plugins/WebPluginController.m:
+        (-[WebPluginController _cancelOutstandingChecks]):
+        add nil check before calling CFSetApplyFunction
+
 2006-06-14  Levi Weintraub  <lweintraub@apple.com>
 
         Reviewed by justin
