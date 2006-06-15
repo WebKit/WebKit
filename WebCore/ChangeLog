@@ -1,3 +1,120 @@
+2006-06-15  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by mjs.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9382
+        IDL files missing copyright/license headers
+
+        Add Apple BSD license and copyright to IDL files.
+
+        * ksvg2/bindings/idl/svg/GetSVGDocument.idl:
+        * ksvg2/bindings/idl/svg/SVGAElement.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimateColorElement.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimateElement.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimateTransformElement.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedAngle.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedBoolean.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedEnumeration.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedInteger.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedLengthList.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedNumber.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedNumberList.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedPathData.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedPoints.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedPreserveAspectRatio.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedRect.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedString.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimatedTransformList.idl:
+        * ksvg2/bindings/idl/svg/SVGAnimationElement.idl:
+        * ksvg2/bindings/idl/svg/SVGCircleElement.idl:
+        * ksvg2/bindings/idl/svg/SVGClipPathElement.idl:
+        * ksvg2/bindings/idl/svg/SVGComponentTransferFunctionElement.idl:
+        * ksvg2/bindings/idl/svg/SVGCursorElement.idl:
+        * ksvg2/bindings/idl/svg/SVGDOMImplementation.idl:
+        * ksvg2/bindings/idl/svg/SVGDefsElement.idl:
+        * ksvg2/bindings/idl/svg/SVGDescElement.idl:
+        * ksvg2/bindings/idl/svg/SVGElementInstance.idl:
+        * ksvg2/bindings/idl/svg/SVGElementInstanceList.idl:
+        * ksvg2/bindings/idl/svg/SVGEllipseElement.idl:
+        * ksvg2/bindings/idl/svg/SVGEvent.idl:
+        * ksvg2/bindings/idl/svg/SVGException.idl:
+        * ksvg2/bindings/idl/svg/SVGExternalResourcesRequired.idl:
+        * ksvg2/bindings/idl/svg/SVGFEBlendElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEColorMatrixElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEComponentTransferElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFECompositeElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEFloodElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEFuncAElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEFuncBElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEFuncGElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEFuncRElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEGaussianBlurElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEImageElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEMergeElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEMergeNodeElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFEOffsetElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFETileElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFETurbulenceElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFilterElement.idl:
+        * ksvg2/bindings/idl/svg/SVGFilterPrimitiveStandardAttributes.idl:
+        * ksvg2/bindings/idl/svg/SVGFitToViewBox.idl:
+        * ksvg2/bindings/idl/svg/SVGGElement.idl:
+        * ksvg2/bindings/idl/svg/SVGGradientElement.idl:
+        * ksvg2/bindings/idl/svg/SVGICCColor.idl:
+        * ksvg2/bindings/idl/svg/SVGImageElement.idl:
+        * ksvg2/bindings/idl/svg/SVGLangSpace.idl:
+        * ksvg2/bindings/idl/svg/SVGLengthList.idl:
+        * ksvg2/bindings/idl/svg/SVGLineElement.idl:
+        * ksvg2/bindings/idl/svg/SVGLinearGradientElement.idl:
+        * ksvg2/bindings/idl/svg/SVGLocatable.idl:
+        * ksvg2/bindings/idl/svg/SVGMarkerElement.idl:
+        * ksvg2/bindings/idl/svg/SVGNumberList.idl:
+        * ksvg2/bindings/idl/svg/SVGPaint.idl:
+        * ksvg2/bindings/idl/svg/SVGPathElement.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSeg.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegArc.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegClosePath.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoCubic.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoCubicSmooth.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoQuadratic.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegCurvetoQuadraticSmooth.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegLineto.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegLinetoHorizontal.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegLinetoVertical.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegList.idl:
+        * ksvg2/bindings/idl/svg/SVGPathSegMoveto.idl:
+        * ksvg2/bindings/idl/svg/SVGPatternElement.idl:
+        * ksvg2/bindings/idl/svg/SVGPointList.idl:
+        * ksvg2/bindings/idl/svg/SVGPolygonElement.idl:
+        * ksvg2/bindings/idl/svg/SVGPolylineElement.idl:
+        * ksvg2/bindings/idl/svg/SVGPreserveAspectRatio.idl:
+        * ksvg2/bindings/idl/svg/SVGRadialGradientElement.idl:
+        * ksvg2/bindings/idl/svg/SVGRectElement.idl:
+        * ksvg2/bindings/idl/svg/SVGRenderingIntent.idl:
+        * ksvg2/bindings/idl/svg/SVGScriptElement.idl:
+        * ksvg2/bindings/idl/svg/SVGSetElement.idl:
+        * ksvg2/bindings/idl/svg/SVGStopElement.idl:
+        * ksvg2/bindings/idl/svg/SVGStringList.idl:
+        * ksvg2/bindings/idl/svg/SVGStylable.idl:
+        * ksvg2/bindings/idl/svg/SVGStyleElement.idl:
+        * ksvg2/bindings/idl/svg/SVGSwitchElement.idl:
+        * ksvg2/bindings/idl/svg/SVGSymbolElement.idl:
+        * ksvg2/bindings/idl/svg/SVGTSpanElement.idl:
+        * ksvg2/bindings/idl/svg/SVGTests.idl:
+        * ksvg2/bindings/idl/svg/SVGTextContentElement.idl:
+        * ksvg2/bindings/idl/svg/SVGTextElement.idl:
+        * ksvg2/bindings/idl/svg/SVGTextPositioningElement.idl:
+        * ksvg2/bindings/idl/svg/SVGTitleElement.idl:
+        * ksvg2/bindings/idl/svg/SVGTransformList.idl:
+        * ksvg2/bindings/idl/svg/SVGTransformable.idl:
+        * ksvg2/bindings/idl/svg/SVGURIReference.idl:
+        * ksvg2/bindings/idl/svg/SVGUnitTypes.idl:
+        * ksvg2/bindings/idl/svg/SVGUseElement.idl:
+        * ksvg2/bindings/idl/svg/SVGViewElement.idl:
+        * ksvg2/bindings/idl/svg/SVGZoomAndPan.idl:
+        * ksvg2/bindings/idl/svg/SVGZoomEvent.idl:
+        * ksvg2/svg/SVGAnimatedLength.idl:
+
 2006-06-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
