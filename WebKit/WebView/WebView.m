@@ -79,6 +79,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebScriptDebugDelegatePrivate.h"
+#import "WebScriptDebugServerPrivate.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import <CoreFoundation/CFSet.h>
@@ -467,6 +468,28 @@ static bool debugWidget = true;
 }
 #endif
 
++ (BOOL)_developerExtrasEnabled
+{
+#ifdef NDEBUG
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL enableDebugger = [defaults boolForKey:@"WebKitDeveloperExtras"];
+    if (!enableDebugger)
+        enableDebugger = [defaults boolForKey:@"IncludeDebugMenu"];
+    return enableDebugger;
+#else
+    return YES; // always enable in debug builds
+#endif
+}
+
++ (BOOL)_scriptDebuggerEnabled
+{
+#ifdef NDEBUG
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitScriptDebuggerEnabled"];
+#else
+    return YES; // always enable in debug builds
+#endif
+}
+
 + (NSArray *)_supportedMIMETypes
 {
     // Load the plug-in DB allowing plug-ins to install types.
@@ -673,19 +696,10 @@ static bool debugWidget = true;
         }
     }
 
-#ifdef NDEBUG
-    BOOL enableInspectElement = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDeveloperExtras"];
-    enableInspectElement |= [[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugMenu"];
-    // FIXME: remove the following check later, once everyone switches to the new generic default name
-    enableInspectElement |= [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitEnableInspectElementContextMenuItem"];
-#else
-    BOOL enableInspectElement = YES; // always enable in debug builds
-#endif
-
     // optionally add the Inspect Element menu item it if preference is set or in debug builds
     // and only showing the menu item if we are working with a WebHTMLView
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    if (enableInspectElement && [[[webFrame frameView] documentView] isKindOfClass:[WebHTMLView class]]) {
+    if ([WebView _developerExtrasEnabled] && [[[webFrame frameView] documentView] isKindOfClass:[WebHTMLView class]]) {
         if (!menu)
             menu = [[[NSMenu alloc] init] autorelease];
         else if ([menu numberOfItems])
@@ -1595,6 +1609,10 @@ NSMutableDictionary *countInvocations;
     ++WebViewCount;
 
     [self _registerDraggedTypes];
+
+    // initialize WebScriptDebugServer here so listeners can register before any pages are loaded.
+    if ([WebView _scriptDebuggerEnabled])
+        [WebScriptDebugServer sharedScriptDebugServer];
 
     // Update WebCore with preferences.  These values will either come from an archived WebPreferences,
     // or from the standard preferences, depending on whether this method was called from initWithCoder:

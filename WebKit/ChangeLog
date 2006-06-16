@@ -1,3 +1,50 @@
+2006-06-16  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O.
+
+        Exposes a distributed objects server for clients to register for script debugger calls.
+        For preformance concerns this is disabled by default, you will need to enable this per application.
+        To enable for Safari do this: defaults write com.apple.Safari WebKitScriptDebuggerEnabled -bool true
+
+        Clients will need to listen to the following distributed notification to discover servers:
+        WebScriptDebugServerDidLoadNotification
+
+        To discover servers that previously loaded before the client, the client needs to send the following notification:
+        WebScriptDebugServerQueryNotification
+
+        All servers will reply with the WebScriptDebugServerQueryReplyNotification notification that contains the
+        registered server connection name to use with distributed objects.
+
+        * DefaultDelegates/WebScriptDebugServer.h: Added.
+        * DefaultDelegates/WebScriptDebugServer.m: Added.
+        (+[WebScriptDebugServer sharedScriptDebugServer]):
+        (-[WebScriptDebugServer init]):
+        (-[WebScriptDebugServer dealloc]):
+        (-[WebScriptDebugServer serverQuery:]):
+        (-[WebScriptDebugServer listenerConnectionDidDie:]):
+        (-[WebScriptDebugServer addListener:]):
+        (-[WebScriptDebugServer removeListener:]):
+        (-[WebScriptDebugServer webView:didParseSource:fromURL:sourceId:forWebFrame:]):
+        (-[WebScriptDebugServer webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[WebScriptDebugServer webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[WebScriptDebugServer webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        * DefaultDelegates/WebScriptDebugServerPrivate.h: Added.
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge windowObjectCleared]):
+        * WebKit.exp:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebScriptDebugDelegate.m:
+        (-[WebScriptCallFrame parsedSource:fromURL:sourceId:]):
+        (-[WebScriptCallFrame enteredFrame:sourceId:line:]):
+        (-[WebScriptCallFrame hitStatement:sourceId:line:]):
+        (-[WebScriptCallFrame leavingFrame:sourceId:line:]):
+        * WebView/WebView.m:
+        (+[WebView _developerExtrasEnabled]):
+        (+[WebView _scriptDebuggerEnabled]):
+        (-[WebView _menuForElement:defaultItems:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        * WebView/WebViewPrivate.h:
+
 2006-06-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Alice.

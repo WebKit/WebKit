@@ -1480,9 +1480,8 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     WebView *wv = [self webView];
     [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:[self windowScriptObject]];
-    if ([wv scriptDebugDelegate]) {
+    if ([wv scriptDebugDelegate] || [WebView _scriptDebuggerEnabled])
         [_frame _attachScriptDebugger];
-    }
 }
 
 - (int)spellCheckerDocumentTag
