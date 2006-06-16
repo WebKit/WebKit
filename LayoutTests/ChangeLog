@@ -1,3 +1,15 @@
+2006-06-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9432
+          REGRESSION: crash in capitalization code due to empty-string generated content
+
+        * fast/text/capitalize-empty-generated-string-expected.checksum: Added.
+        * fast/text/capitalize-empty-generated-string-expected.png: Added.
+        * fast/text/capitalize-empty-generated-string-expected.txt: Added.
+        * fast/text/capitalize-empty-generated-string.html: Added.
+
 2006-06-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

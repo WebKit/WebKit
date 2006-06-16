@@ -888,7 +888,7 @@ void RenderText::setText(StringImpl *text, bool force)
                     // find previous text renderer if one exists
                     RenderObject* o;
                     UChar previous = ' ';
-                    for (o = previousInPreOrder(); o && o->isInlineFlow(); o = o->previousInPreOrder())
+                    for (o = previousInPreOrder(); o && (o->isInlineFlow() || o->isText() && static_cast<RenderText*>(o)->string()->length() == 0); o = o->previousInPreOrder())
                         ;
                     if (o && o->isText()) {
                         StringImpl* prevStr = static_cast<RenderText*>(o)->string();
