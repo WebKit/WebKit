@@ -1,3 +1,17 @@
+2006-06-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Alice.
+
+        Added code to draw Cocoa-like border for textareas instead of just using CSS.
+
+        * WebCore.exp:
+        * css/html4.css: Sets a 1px solid border.
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * rendering/RenderThemeMac.h: Formatting changes.
+        * rendering/RenderThemeMac.mm: (WebCore::RenderThemeMac::paintTextArea):
+        Uses new wkDrawBezeledTextArea to draw border.
+
 2006-06-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.

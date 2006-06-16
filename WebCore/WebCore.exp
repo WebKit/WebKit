@@ -129,6 +129,7 @@ _wkCGContextGetShouldSmoothFonts
 _wkClearGlyphVector
 _wkConvertCharToGlyphs
 _wkDrawBezeledTextFieldCell
+_wkDrawBezeledTextArea
 _wkDrawFocusRing
 _wkFontSmoothingModeIsLCD
 _wkGetATSStyleGroup

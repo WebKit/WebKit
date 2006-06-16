@@ -43,6 +43,7 @@ void InitWebCoreSystemInterface(void)
     INIT(ClearGlyphVector);
     INIT(ConvertCharToGlyphs);
     INIT(DrawBezeledTextFieldCell);
+    INIT(DrawBezeledTextArea);
     INIT(DrawFocusRing);
     INIT(FontSmoothingModeIsLCD);
     INIT(GetATSStyleGroup);

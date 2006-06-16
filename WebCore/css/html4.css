@@ -325,8 +325,7 @@ textarea {
 //  FIXME: Uncomment these when we flip the switch for the new textarea implementation
 //  -webkit-appearance: textarea;
 //   background-color: white;
-    border: solid #999999 1px;
-    border-top-color: #737373;
+    border: 1px solid;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
     -webkit-box-orient: vertical;

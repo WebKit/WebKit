@@ -561,6 +561,14 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyl
         addIntrinsicMargins(style, NSRegularControlSize);
 }
 
+bool RenderThemeMac::paintTextArea(RenderObject* o, const RenderObject::PaintInfo&, const IntRect& r)
+{
+    // FIXME: Ignores the GraphicsContext in the PaintInfo and always draws into the current
+    // NSGraphicsContext instead.
+    wkDrawBezeledTextArea(r, isEnabled(o) && !isReadOnlyControl(o));
+    return false;
+}
+
 void RenderThemeMac::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     // Add in intrinsic margins if the font size isn't too small

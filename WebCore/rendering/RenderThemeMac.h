@@ -37,15 +37,15 @@ public:
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
-    virtual short baselinePosition(const RenderObject* o) const;
+    virtual short baselinePosition(const RenderObject*) const;
 
     // A method asking if the control changes its tint when the window has focus or not.
-    virtual bool controlSupportsTints(const RenderObject* o) const;
+    virtual bool controlSupportsTints(const RenderObject*) const;
 
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
 
-    virtual void adjustRepaintRect(const RenderObject* o, IntRect& r);
+    virtual void adjustRepaintRect(const RenderObject*, IntRect&);
 
     virtual bool isControlStyled(const RenderStyle* style, const BorderData& border, 
                                  const BackgroundLayer& background, const Color& backgroundColor) const;
@@ -57,51 +57,52 @@ public:
 
 protected:
     // Methods for each appearance value.
-    virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
-    virtual void setCheckboxSize(RenderStyle* style) const;
+    virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void setCheckboxSize(RenderStyle*) const;
     
-    virtual bool paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
-    virtual void setRadioSize(RenderStyle* style) const;
+    virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void setRadioSize(RenderStyle*) const;
     
-    virtual void adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const;
-    virtual bool paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
-    virtual void setButtonSize(RenderStyle* style) const;
+    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
+    virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void setButtonSize(RenderStyle*) const;
     
-    virtual bool paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
-    virtual void adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
+    virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
-    virtual void adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
+    virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
 private:
-    IntRect inflateRect(const IntRect& r, const IntSize& size, const int* margins) const;
+    IntRect inflateRect(const IntRect&, const IntSize&, const int* margins) const;
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).
-    NSControlSize controlSizeForFont(RenderStyle* style) const;
-    void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minSize);
-    void setSizeFromFont(RenderStyle* style, const IntSize* sizes) const;
-    IntSize sizeForFont(RenderStyle* style, const IntSize* sizes) const;
-    void setFontFromControlSize(CSSStyleSelector* selector, RenderStyle* style, NSControlSize size) const;
+    NSControlSize controlSizeForFont(RenderStyle*) const;
+    void setControlSize(NSCell*, const IntSize* sizes, const IntSize& minSize);
+    void setSizeFromFont(RenderStyle*, const IntSize* sizes) const;
+    IntSize sizeForFont(RenderStyle*, const IntSize* sizes) const;
+    void setFontFromControlSize(CSSStyleSelector*, RenderStyle*, NSControlSize) const;
     
-    void addIntrinsicMargins(RenderStyle* style, NSControlSize size) const;
+    void addIntrinsicMargins(RenderStyle*, NSControlSize) const;
     
-    void updateCheckedState(NSCell* cell, const RenderObject* o);
-    void updateEnabledState(NSCell* cell, const RenderObject* o);
-    void updateFocusedState(NSCell* cell, const RenderObject* o);
-    void updatePressedState(NSCell* cell, const RenderObject* o);
+    void updateCheckedState(NSCell*, const RenderObject*);
+    void updateEnabledState(NSCell*, const RenderObject*);
+    void updateFocusedState(NSCell*, const RenderObject*);
+    void updatePressedState(NSCell*, const RenderObject*);
 
     // Helpers for adjusting appearance and for painting
     const IntSize* checkboxSizes() const;
     const int* checkboxMargins() const;
-    void setCheckboxCellState(const RenderObject* o, const IntRect& r);
+    void setCheckboxCellState(const RenderObject*, const IntRect&);
 
     const IntSize* radioSizes() const;
     const int* radioMargins() const;
-    void setRadioCellState(const RenderObject* o, const IntRect& r);
+    void setRadioCellState(const RenderObject*, const IntRect&);
 
-    void setButtonPaddingFromControlSize(RenderStyle* style, NSControlSize size) const;
+    void setButtonPaddingFromControlSize(RenderStyle*, NSControlSize) const;
     const IntSize* buttonSizes() const;
     const int* buttonMargins() const;
-    void setButtonCellState(const RenderObject* o, const IntRect& r);
+    void setButtonCellState(const RenderObject*, const IntRect&);
 
 private:
     NSButtonCell* checkbox;

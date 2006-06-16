@@ -67,6 +67,7 @@ extern BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 extern void (*wkClearGlyphVector)(void* glyphs);
 extern OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
 extern void (*wkDrawBezeledTextFieldCell)(NSRect, BOOL enabled);
+extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 extern void (*wkDrawFocusRing)(CGContextRef, CGRect clipRect, CGColorRef, int radius);
 extern BOOL (*wkFontSmoothingModeIsLCD)(int mode);
 extern OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
