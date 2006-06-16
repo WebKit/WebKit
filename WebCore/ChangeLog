@@ -1,3 +1,19 @@
+2006-06-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Adjust padding of inner div so text lines up with text fields.
+        Adjust height of textarea so it only leaves room for the horizontal
+        scrollbar if overflow is set to scroll, or if overflow is set to
+        auto and there's no word wrap.
+
+        These changes will be tested by current layout tests when the
+        new textarea implementation takes effect.
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::createDivStyle):
+        (WebCore::RenderTextField::calcHeight):
+
 2006-06-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin

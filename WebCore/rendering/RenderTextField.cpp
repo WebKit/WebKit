@@ -101,9 +101,15 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
         divStyle->setOverflow(OHIDDEN);
     }
 
-    // We're adding this extra pixel of padding to match WinIE.
-    divStyle->setPaddingLeft(Length(1, Fixed));
-    divStyle->setPaddingRight(Length(1, Fixed));
+    if (!m_multiLine) {
+        // We're adding one extra pixel of padding to match WinIE.
+        divStyle->setPaddingLeft(Length(1, Fixed));
+        divStyle->setPaddingRight(Length(1, Fixed));
+    } else {
+        // We're adding three extra pixels of padding to line textareas up with text fields.
+        divStyle->setPaddingLeft(Length(3, Fixed));
+        divStyle->setPaddingRight(Length(3, Fixed));
+    }
 
     if (!element->isEnabled()) {
         Color textColor = startStyle->color();
@@ -300,11 +306,12 @@ void RenderTextField::calcHeight()
     int toAdd = paddingTop() + paddingBottom() + borderTop() + borderBottom() +
                 m_div->renderer()->paddingTop() + m_div->renderer()->paddingBottom();
     
-    int scrollbarSize = 0;
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead of hard coding it here.
-    if (m_div->renderer()->style()->overflow() != OHIDDEN)
+    int scrollbarSize = 0;
+    // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
+    if (m_div->renderer()->style()->overflow() == OSCROLL ||  (m_div->renderer()->style()->overflow() == OAUTO && m_div->renderer()->style()->wordWrap() == WBNORMAL))
         scrollbarSize = 15;
-                
+
     m_height = line * rows + toAdd + scrollbarSize;
     
     RenderFlexibleBox::calcHeight();
