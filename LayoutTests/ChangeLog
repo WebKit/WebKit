@@ -1,3 +1,11 @@
+2006-06-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Adding missing expected result for test from yesterday.
+
+        * fast/events/window-load-capture-expected.txt: Added.
+
 2006-06-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by hyatt.
