@@ -1,3 +1,60 @@
+2006-06-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej and Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7080
+        Provide some way to stop a JavaScript infinite loop
+        
+        * kjs/completion.h:
+        (KJS::):
+        Add Interrupted completion type.
+        
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::GlobalFuncImp::callAsFunction):
+        Only set the exception on the new ExecState if the current one has had one.
+        
+        * kjs/interpreter.cpp:
+        (KJS::TimeoutChecker::startTimeoutCheck):
+        (KJS::TimeoutChecker::stopTimeoutCheck):
+        (KJS::TimeoutChecker::alarmHandler):
+        (KJS::TimeoutChecker::pauseTimeoutCheck):
+        (KJS::TimeoutChecker::resumeTimeoutCheck):
+        New TimeoutChecker class which handles setting Interpreter::m_timedOut flag after a given
+        period of time. This currently only works on Unix platforms where setitimer and signals are used.
+        
+        (KJS::Interpreter::Interpreter):
+        Initialize new member variables.
+        
+        (KJS::Interpreter::~Interpreter):
+        Destroy the timeout checker.
+        
+        (KJS::Interpreter::startTimeoutCheck):
+        (KJS::Interpreter::stopTimeoutCheck):
+        (KJS::Interpreter::pauseTimeoutCheck):
+        (KJS::Interpreter::resumeTimeoutCheck):
+        Call the timeout checker.
+        
+        (KJS::Interpreter::handleTimeout):
+        Called on timeout. Resets the m_timedOut flag and calls shouldInterruptScript.
+        
+        * kjs/interpreter.h:
+        (KJS::Interpreter::setTimeoutTime):
+        New function for setting the timeout time.
+        
+        (KJS::Interpreter::shouldInterruptScript):
+        New function. The idea is that this should be overridden by subclasses in order to for example
+        pop up a dialog asking the user if the script should be interrupted.
+        
+        (KJS::Interpreter::checkTimeout):
+        New function which checks the m_timedOut flag and calls handleTimeout if it's set.
+        
+        * kjs/nodes.cpp:
+        (DoWhileNode::execute):
+        (WhileNode::execute):
+        (ForNode::execute):
+        Call Interpreter::checkTimeout after each iteration of the loop.
+
 2006-06-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff and Darin.

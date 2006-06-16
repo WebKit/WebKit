@@ -74,7 +74,8 @@ JSValue *FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
   Context ctx(globalObj, exec->dynamicInterpreter(), thisObj, body.get(),
                  codeType(), exec->context(), this, &args);
   ExecState newExec(exec->dynamicInterpreter(), &ctx);
-  newExec.setException(exec->exception()); // could be null
+  if (exec->hadException())
+    newExec.setException(exec->exception());
 
   // assign user supplied arguments to parameters
   processParameters(&newExec, args);
@@ -808,7 +809,8 @@ JSValue *GlobalFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, c
                        exec->context());
         
         ExecState newExec(exec->dynamicInterpreter(), &ctx);
-        newExec.setException(exec->exception()); // could be null
+        if (exec->hadException())
+            newExec.setException(exec->exception());
         
         // execute the code
         progNode->processVarDecls(&newExec);

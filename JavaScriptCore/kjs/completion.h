@@ -33,7 +33,7 @@ namespace KJS {
   /**
    * Completion types.
    */
-  enum ComplType { Normal, Break, Continue, ReturnValue, Throw };
+  enum ComplType { Normal, Break, Continue, ReturnValue, Throw, Interrupted };
 
   /**
    * Completion objects are used to convey the return status and value

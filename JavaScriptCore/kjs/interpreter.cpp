@@ -50,11 +50,143 @@
 #include "runtime.h"
 #endif
 
+#if HAVE(SYS_TIME_H)
+#include <sys/time.h>
+#endif
+
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
 
 namespace KJS {
+
+class TimeoutChecker {
+public:
+    void startTimeoutCheck(Interpreter*);
+    void stopTimeoutCheck(Interpreter*);
+    void pauseTimeoutCheck(Interpreter*);
+    void resumeTimeoutCheck(Interpreter*);
+
+private:
+#if HAVE(SYS_TIME_H)
+    static Interpreter* s_executingInterpreter;
+    static void alarmHandler(int);
+    
+    Interpreter* m_oldInterpreter;
+    itimerval m_oldtv;
+    itimerval m_pausetv;    
+    void (*m_oldAlarmHandler)(int);
+#endif
+};
+
+#if HAVE(SYS_TIME_H)
+Interpreter* TimeoutChecker::s_executingInterpreter = 0;
+#endif
+
+void TimeoutChecker::startTimeoutCheck(Interpreter *interpreter)
+{    
+    if (!interpreter->m_timeoutTime)
+        return;
+    
+    interpreter->m_startTimeoutCheckCount++;
+    
+#if HAVE(SYS_TIME_H)
+    if (s_executingInterpreter == interpreter)
+        return;
+    
+    // Block signals
+    m_oldAlarmHandler = signal(SIGALRM, SIG_IGN);
+
+    m_oldInterpreter = s_executingInterpreter;
+    s_executingInterpreter = interpreter;
+    
+    itimerval tv = {
+      { interpreter->m_timeoutTime / 1000, (interpreter->m_timeoutTime % 1000) * 1000 },
+      { interpreter->m_timeoutTime / 1000, (interpreter->m_timeoutTime % 1000) * 1000 }
+    };
+    setitimer(ITIMER_REAL, &tv, &m_oldtv);
+    
+    // Unblock signals
+    signal(SIGALRM, alarmHandler);
+#endif
+}
+
+void TimeoutChecker::stopTimeoutCheck(Interpreter* interpreter)
+{
+    if (!interpreter->m_timeoutTime)
+        return;
+
+    ASSERT(interpreter->m_startTimeoutCheckCount > 0);
+    
+    interpreter->m_startTimeoutCheckCount--;
+    
+    if (interpreter->m_startTimeoutCheckCount != 0)
+        return;
+        
+#if HAVE(SYS_TIME_H)
+    signal(SIGALRM, SIG_IGN);
+
+    s_executingInterpreter = m_oldInterpreter;
+        
+    setitimer(ITIMER_REAL, &m_oldtv, 0L);
+    signal(SIGALRM, m_oldAlarmHandler);
+#endif    
+}
+
+#if HAVE(SYS_TIME_H)
+void TimeoutChecker::alarmHandler(int) 
+{
+    s_executingInterpreter->m_timedOut = true;
+}
+#endif
+
+void TimeoutChecker::pauseTimeoutCheck(Interpreter* interpreter)
+{
+    ASSERT(interpreter == s_executingInterpreter);
+
+#if HAVE(SYS_TIME_H)
+    void (*currentSignalHandler)(int);
+   
+    // Block signal
+    currentSignalHandler = signal(SIGALRM, SIG_IGN);
+    
+    if (currentSignalHandler != alarmHandler) {
+        signal(SIGALRM, currentSignalHandler);
+        return;
+    }
+
+    setitimer(ITIMER_REAL, &m_pausetv, 0L);
+#endif
+
+    interpreter->m_pauseTimeoutCheckCount++;
+}
+
+void TimeoutChecker::resumeTimeoutCheck(Interpreter* interpreter)
+{
+    ASSERT(interpreter == s_executingInterpreter);
+
+    interpreter->m_pauseTimeoutCheckCount--;
+
+    if (interpreter->m_pauseTimeoutCheckCount != 0)
+        return;
+
+#if HAVE(SYS_TIME_H)
+    void (*currentSignalHandler)(int);
+   
+    // Check so we have the right handler
+    currentSignalHandler = signal(SIGALRM, SIG_IGN);
+    
+    if (currentSignalHandler != SIG_IGN) {
+        signal(SIGALRM, currentSignalHandler);
+        return;
+    }
+
+    setitimer(ITIMER_REAL, 0L, &m_pausetv);    
+
+    // Unblock signal
+    currentSignalHandler = signal(SIGALRM, SIG_IGN);    
+#endif
+}
 
 Interpreter* Interpreter::s_hook = 0;
     
@@ -66,19 +198,29 @@ static inline InterpreterMap &interpreterMap()
 }
     
 Interpreter::Interpreter(JSObject* globalObject)
-    : m_globalExec(this, 0)
+    : m_timeoutTime(0)
+    , m_globalExec(this, 0)
     , m_globalObject(globalObject)
     , m_argumentsPropertyName(&argumentsPropertyName)
     , m_specialPrototypePropertyName(&specialPrototypePropertyName)
+    , m_timeoutChecker(0)
+    , m_timedOut(false)
+    , m_startTimeoutCheckCount(0)
+    , m_pauseTimeoutCheckCount(0)
 {
     init();
 }
 
 Interpreter::Interpreter()
-    : m_globalExec(this, 0)
+    : m_timeoutTime(0)
+    , m_globalExec(this, 0)
     , m_globalObject(new JSObject())
     , m_argumentsPropertyName(&argumentsPropertyName)
     , m_specialPrototypePropertyName(&specialPrototypePropertyName)
+    , m_timeoutChecker(0)
+    , m_timedOut(false)
+    , m_startTimeoutCheckCount(0)
+    , m_pauseTimeoutCheckCount(0)
 {
     init();
 }
@@ -110,6 +252,11 @@ void Interpreter::init()
 Interpreter::~Interpreter()
 {
     JSLock lock;
+    
+    ASSERT (m_startTimeoutCheckCount == 0);
+    ASSERT (m_pauseTimeoutCheckCount == 0);
+    
+    delete m_timeoutChecker;
     
     if (m_debugger)
         m_debugger->detach(this);
@@ -619,6 +766,43 @@ void Interpreter::restoreBuiltins (const SavedBuiltins& builtins)
     m_TypeErrorPrototype = builtins._internal->m_TypeErrorPrototype;
     m_UriErrorPrototype = builtins._internal->m_UriErrorPrototype;
 }
+
+void Interpreter::startTimeoutCheck()
+{
+    if (!m_timeoutChecker)
+        m_timeoutChecker = new TimeoutChecker;
+    
+    m_timeoutChecker->startTimeoutCheck(this);
+}
+
+void Interpreter::stopTimeoutCheck()
+{
+    ASSERT(m_timeoutChecker);
+    
+    m_timeoutChecker->stopTimeoutCheck(this);
+}
+
+void Interpreter::pauseTimeoutCheck()
+{
+    ASSERT(m_timeoutChecker);
+    
+    m_timeoutChecker->pauseTimeoutCheck(this);
+}
+
+void Interpreter::resumeTimeoutCheck()
+{
+    ASSERT(m_timeoutChecker);
+
+    m_timeoutChecker->resumeTimeoutCheck(this);
+}
+
+bool Interpreter::handleTimeout()
+{
+    m_timedOut = false;
+    
+    return shouldInterruptScript();
+}
+
 
 SavedBuiltins::SavedBuiltins() : 
   _internal(0)
