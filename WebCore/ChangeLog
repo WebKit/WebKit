@@ -1,3 +1,14 @@
+2006-06-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - fixed <rdar://problem/4590062> crash in marker code with particular set of steps on daringfireball.net
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMarker):
+        Store [it - markers.begin()] in a local variable before modifying markers, since modifying markers can
+        change value of [it - markers.begin()].
+
 2006-06-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Alice.

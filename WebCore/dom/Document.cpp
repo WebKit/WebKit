@@ -2697,14 +2697,16 @@ void Document::addMarker(Node *node, DocumentMarker newMarker)
                 newMarker.startOffset = min(newMarker.startOffset, marker.startOffset);
                 newMarker.endOffset = max(newMarker.endOffset, marker.endOffset);
                 // remove old one, we'll add newMarker later
-                markers.remove(it - markers.begin());
-                rects.remove(it - markers.begin());
+                unsigned removalIndex = it - markers.begin();
+                markers.remove(removalIndex);
+                rects.remove(removalIndex);
                 // it points to the next marker to consider
             }
         }
         // at this point it points to the node before which we want to insert
-        markers.insert(it - markers.begin(), newMarker);
-        rects.insert(it - markers.begin(), placeholderRectForMarker());
+        unsigned insertionIndex = it - markers.begin();
+        markers.insert(insertionIndex, newMarker);
+        rects.insert(insertionIndex, placeholderRectForMarker());
     }
     
     // repaint the affected node
