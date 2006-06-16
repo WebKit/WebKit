@@ -1,5 +1,21 @@
 2006-06-15  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by levi
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8637>
+        REGRESSION (11-16-05): Selection gaps left behind after delete
+
+        * fast/repaint/selection-after-delete-expected.checksum: Added.
+        * fast/repaint/selection-after-delete-expected.png: Added.
+        * fast/repaint/selection-after-delete-expected.txt: Added.
+        * fast/repaint/selection-after-delete.html: Added.
+        * fast/repaint/selection-after-remove-expected.checksum: Added.
+        * fast/repaint/selection-after-remove-expected.png: Added.
+        * fast/repaint/selection-after-remove-expected.txt: Added.
+        * fast/repaint/selection-after-remove.html: Added.
+
+2006-06-15  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by harrison
 
         * editing/deleting/pruning-after-merge-2-expected.checksum: Added.

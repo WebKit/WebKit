@@ -1,3 +1,14 @@
+2006-06-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8637>
+        REGRESSION (11-16-05): Selection gaps left behind after delete
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved): Invalidate the selection so that 
+        selection gaps are invalidated.
+
 2006-06-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff and Darin.
