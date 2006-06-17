@@ -838,7 +838,7 @@ pseudo:
     }
     // used by :lang
     | ':' FUNCTION IDENT ')' {
-        $$ = new CSSSelector();
+        $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
         $$->match = CSSSelector::PseudoClass;
         $$->argument = atomicString($3);
         $2.lower();
