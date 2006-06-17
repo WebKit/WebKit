@@ -1,3 +1,18 @@
+2006-06-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - test and updated results for http://bugzilla.opendarwin.org/show_bug.cgi?id=7395
+          Table not properly re-flowed when floated div removed from layout
+
+        * css2.1/t0905-c5525-fltmult-00-d-g-expected.checksum: Updated.
+        * css2.1/t0905-c5525-fltmult-00-d-g-expected.png: Updated.
+        * css2.1/t0905-c5525-fltmult-00-d-g-expected.txt: Updated.
+        * fast/block/float/table-relayout-expected.checksum: Added.
+        * fast/block/float/table-relayout-expected.png: Added.
+        * fast/block/float/table-relayout-expected.txt: Added.
+        * fast/block/float/table-relayout.html: Added.
+
 2006-06-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

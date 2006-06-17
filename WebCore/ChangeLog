@@ -1,3 +1,17 @@
+2006-06-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7395
+          Table not properly re-flowed when floated div removed from layout
+
+        Test: fast/block/float/table-relayout.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout): Added marking
+        of children that use lineWidth.
+        * rendering/RenderBlock.h: Added a FIXME.
+
 2006-06-17  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
