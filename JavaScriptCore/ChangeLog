@@ -1,3 +1,15 @@
+2006-06-17  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by ggaren.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9476
+        REGRESSION: Reproducible crash after closing window after viewing
+        css2.1/t0803-c5501-imrgn-t-00-b-ag.html
+
+        * kjs/debugger.cpp:
+        (Debugger::detach): Call setDebugger(0) for all interpreters removed from
+        the 'attached to a debugger' list.
+
 2006-06-17  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Maciej and Geoff.

@@ -68,9 +68,6 @@ void Debugger::attach(Interpreter* interp)
 
 void Debugger::detach(Interpreter* interp)
 {
-  if (interp && interp->debugger() == this)
-    interp->setDebugger(0);
-
   // iterate the addresses where AttachedInterpreter pointers are stored
   // so we can unlink items from the list
   AttachedInterpreter **p = &rep->interps;
@@ -78,10 +75,10 @@ void Debugger::detach(Interpreter* interp)
   while ((q = *p)) {
     if (!interp || q->interp == interp) {
       *p = q->next;
+      q->interp->setDebugger(0);
       delete q;
-    } else {
+    } else
       p = &q->next;
-    }
   }
 }
 
