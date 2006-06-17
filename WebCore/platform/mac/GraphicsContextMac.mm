@@ -151,6 +151,9 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
 
 void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
 {
+    if (paintingDisabled())
+        return;
+        
     // Constants for pattern color
     static NSColor *spellingPatternColor = nil;
     static bool usingDot = false;

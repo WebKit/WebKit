@@ -1,3 +1,22 @@
+2006-06-16  David Harrison  <harrison@apple.com>
+
+        Reviewed by Hatcher.
+
+        <rdar://problem/4565312> Mail has a weird drawing artifact with dotted red lines running across the window
+
+        Problem was that revision lost a check to not draw the markers
+        when paintingDisabled().   This led the markers to be drawn when
+        the window deactivated, at which time the view happens to be flipped.
+
+        It is similar but not the same as the Mail ToDo highlighting
+        issue, which is due to the custom highlight method
+        drawing when the focusView is nil.  Mail team knows this
+        and has tested the fix.
+
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForMisspelling):
+        Early return if paintingDisabled().
+
 2006-06-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
