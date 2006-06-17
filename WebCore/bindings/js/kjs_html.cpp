@@ -1750,79 +1750,44 @@ void JSHTMLSelectCollection::put(ExecState* exec, const Identifier &propertyName
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "JSHTMLSelectCollection::put " << propertyName.deprecatedString() << endl;
 #endif
-  if ( propertyName == "selectedIndex" ) {
-    m_element->setSelectedIndex( value->toInt32( exec ) );
-    return;
-  }
-  // resize ?
+  if ( propertyName == "selectedIndex" )
+    m_element->setSelectedIndex(value->toInt32(exec));
   else if (propertyName == lengthPropertyName) {
-    int exception = 0;
-
-    unsigned newLen;
-    bool converted = value->getUInt32(newLen);
-
-    if (!converted)
-      return;
-
-    int diff = m_element->length() - newLen;
-
-    if (diff < 0) { // add dummy elements
-      do {
-        RefPtr<Element> option = m_element->ownerDocument()->createElement("option", exception);
-        if (exception)
-          break;         
-        m_element->add(static_cast<HTMLElement*>(option.get()), 0, exception);
-        if (exception)
-          break;
-      } while (++diff);
+    // resize ?
+    if (value->isNumber()) {
+      double newLen;
+      if (value->getNumber(newLen)) {
+        int exception = 0;
+        if (newLen >= 0) {
+          m_element->setLength(unsigned(floor(newLen)), exception);
+          setDOMException(exec, exception);
+        }
+      }
+    } else {
+      int exception = 0;
+      m_element->setLength(0, exception);
+      setDOMException(exec, exception);
     }
-    else // remove elements
-      while (diff-- > 0)
-        m_element->remove(newLen);
+  } else {
+    // an index ?
+    bool ok;
+    unsigned i = propertyName.toUInt32(&ok);
+    if (ok) {
+      if (value->isUndefinedOrNull()) {
+        // null and undefined delete. others, too ?
+        m_element->remove(i);
+      } else {
+        WebCore::Node *option = toNode(value);
+        // is v an option element ?
+        if (!option || !option->hasTagName(optionTag))
+            return;
 
-    setDOMException(exec, exception);
-    return;
-  }
-  // an index ?
-  bool ok;
-  unsigned int u = propertyName.toUInt32(&ok);
-  if (!ok)
-    return;
-
-  if (value->isUndefinedOrNull()) {
-    // null and undefined delete. others, too ?
-    m_element->remove(u);
-    return;
-  }
-
-  // is v an option element ?
-  WebCore::Node *option = toNode(value);
-  if (!option || !option->hasTagName(optionTag))
-    return;
-
-  int exception = 0;
-  int diff = int(u) - m_element->length();
-  HTMLElement* before = 0;
-  // out of array bounds ? first insert empty dummies
-  if (diff > 0) {
-    while (diff--) {
-      RefPtr<Element> dummyOption = m_element->ownerDocument()->createElement("option", exception);
-      if (!dummyOption)
-        break;      
-      m_element->add(static_cast<HTMLElement*>(dummyOption.get()), 0, exception);
-      if (exception) 
-          break;
+        int exception = 0;
+        m_element->setOption(i, static_cast<HTMLOptionElement*>(option), exception);
+        setDOMException(exec, exception);
+      }
     }
-    // replace an existing entry ?
-  } else if (diff < 0) {
-    before = static_cast<HTMLElement*>(m_element->options()->item(u+1));
-    m_element->remove(u);
   }
-  // finally add the new element
-  if (exception == 0)
-    m_element->add(static_cast<HTMLOptionElement*>(option), before, exception);
-
-  setDOMException(exec, exception);
 }
 
 ////////////////////// Image Object ////////////////////////

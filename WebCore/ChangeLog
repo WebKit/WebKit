@@ -1,3 +1,20 @@
+2006-06-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6282:
+        Adding new Option with new Option(text, value, defaultSelected, selected) fails to update selectedIndex
+
+        Update selectedIndex when a new option is added using javascript.
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLSelectCollection::put):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::setOption):
+        (WebCore::HTMLSelectElement::setLength):
+        * html/HTMLSelectElement.h:
+
 2006-06-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

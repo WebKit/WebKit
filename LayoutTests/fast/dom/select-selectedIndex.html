@@ -1,0 +1,82 @@
+<select id="test" size="3">
+</select>
+<div id="console"></div>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+function reset(mySelect) {
+  mySelect.length = 0;
+  mySelect.options[mySelect.length] = new Option("one", "value", true, true);
+  mySelect.options[mySelect.length] = new Option("two", "value", true, true);
+}
+
+var mySelect = document.getElementById("test");
+reset(mySelect);
+
+mySelect.options.length = -1;
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedIndex", "1");
+
+// 1) setting length to a larger length
+mySelect.options.length = 5;
+shouldBe("mySelect.options.length", "5");
+shouldBe("mySelect.selectedIndex", "1");
+
+// 2) setting length to a smaller length
+mySelect.options.length = 2;
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedIndex", "1");
+
+mySelect.options.length = 1;
+shouldBe("mySelect.options.length", "1");
+shouldBe("mySelect.selectedIndex", "-1");
+reset(mySelect);
+
+// 3) setting length to the same length
+mySelect.options.length = 2;
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedIndex", "1");
+
+// 4) setting length to non-integer values (null,
+// undefined, non-numeric string, floating point number)
+mySelect.options.length = null;
+shouldBe("mySelect.options.length", "0");
+shouldBe("mySelect.selectedIndex", "-1");
+reset(mySelect);
+
+mySelect.options.length = undefined;
+shouldBe("mySelect.options.length", "0");
+shouldBe("mySelect.selectedIndex", "-1");
+reset(mySelect);
+
+mySelect.options.length = "apple";
+shouldBe("mySelect.options.length", "0");
+shouldBe("mySelect.selectedIndex", "-1");
+reset(mySelect);
+
+mySelect.options.length = 2.1;
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedIndex", "1");
+
+// 5) setting an element by index past the end of the current list
+mySelect.options[10] = new Option("ten", "value", true, true);
+shouldBe("mySelect.options.length", "11");
+shouldBe("mySelect.selectedIndex", "10");
+
+// 6) setting an existing element by index
+mySelect.options[10] = mySelect.options[10];
+shouldBe("mySelect.options.length", "11");
+shouldBe("mySelect.selectedIndex", "10");
+
+// 7) trying to set an element that's not an option
+// element (null, undefined, other kinds of objects, other kinds of elements)
+mySelect.options[10] = null;
+shouldBe("mySelect.options.length", "10");
+shouldBe("mySelect.selectedIndex", "-1");
+mySelect.options[10] = undefined;
+shouldBe("mySelect.options.length", "10");
+shouldBe("mySelect.selectedIndex", "-1");
+mySelect.options[10] = mySelect;
+shouldBe("mySelect.options.length", "10");
+shouldBe("mySelect.selectedIndex", "-1");
+
+</script>

@@ -103,14 +103,16 @@ int HTMLSelectElement::selectedIndex() const
     return -1;
 }
 
-void HTMLSelectElement::setSelectedIndex( int  index )
+void HTMLSelectElement::setSelectedIndex( int index, bool deselect )
 {
     // deselect all other options and select only the new one
     Vector<HTMLElement*> items = listItems();
     int listIndex;
-    for (listIndex = 0; listIndex < int(items.size()); listIndex++) {
-        if (items[listIndex]->hasLocalName(optionTag))
-            static_cast<HTMLOptionElement*>(items[listIndex])->setSelected(false);
+    if (deselect) {
+        for (listIndex = 0; listIndex < int(items.size()); listIndex++) {
+            if (items[listIndex]->hasLocalName(optionTag))
+                static_cast<HTMLOptionElement*>(items[listIndex])->setSelected(false);
+        }
     }
     listIndex = optionToListIndex(index);
     if (listIndex >= 0)
@@ -466,6 +468,51 @@ void HTMLSelectElement::setSize(int size)
 Node* HTMLSelectElement::namedItem(const String &name, bool caseSensitive)
 {
     return (options()->namedItem(name, caseSensitive));
+}
+
+void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, ExceptionCode& ec)
+{
+    ec = 0;
+    if (index > INT_MAX)
+        index = INT_MAX;
+    int diff = index  - length();
+    HTMLElement* before = 0;
+    // out of array bounds ? first insert empty dummies
+    if (diff > 0) {
+        setLength(index, ec);
+        // replace an existing entry ?
+    } else if (diff < 0) {
+        before = static_cast<HTMLElement*>(options()->item(index+1));
+        remove(index);
+    }
+    // finally add the new element
+    if (ec == 0) {
+        add(option, before, ec);
+        if (diff >= 0)
+            setSelectedIndex(index, !m_multiple);
+    }
+}
+
+void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
+{
+    ec = 0;
+    if (newLen > INT_MAX)
+        newLen = INT_MAX;
+    int diff = length() - newLen;
+
+    if (diff < 0) { // add dummy elements
+        do {
+            RefPtr<Element> option = ownerDocument()->createElement("option", ec);
+            if (!option)
+                break;
+            add(static_cast<HTMLElement*>(option.get()), 0, ec);
+            if (ec)
+                break;
+        } while (++diff);
+    }
+    else // remove elements
+        while (diff-- > 0)
+            remove(newLen);
 }
 
 } // namespace

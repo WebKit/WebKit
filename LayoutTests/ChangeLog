@@ -1,3 +1,13 @@
+2006-06-17  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Test cases for
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6282>
+
+        * fast/dom/select-selectedIndex-multiple.html: Added.
+        * fast/dom/select-selectedIndex.html: Added.
+
 2006-06-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
