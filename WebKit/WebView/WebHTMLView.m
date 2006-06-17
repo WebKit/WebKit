@@ -2920,7 +2920,7 @@ done:
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
-    ASSERT([self _isTopHTMLView]);
+    ASSERT(![self _webView] || [self _isTopHTMLView]);
 
     NSPoint windowImageLoc = [[self window] convertScreenToBase:aPoint];
     NSPoint windowMouseLoc = NSMakePoint(windowImageLoc.x + _private->dragOffset.x, windowImageLoc.y + _private->dragOffset.y);

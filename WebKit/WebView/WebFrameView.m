@@ -179,6 +179,7 @@ enum {
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view
 {
     WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self _scrollView];
+    [[self _webView] _setInitiatedDrag:NO];
     
     [sv setSuppressLayout:YES];
     

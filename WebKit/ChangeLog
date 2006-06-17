@@ -1,3 +1,17 @@
+2006-06-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9466
+          Assertion failure when dragging an image from the document into Safari's address bar
+
+        * WebView/WebFrameView.m:
+        (-[WebFrameView _setDocumentView:]): Reset the WebView's initiatedDrag flag
+        when the document view is changed.
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView draggedImage:endedAt:operation:]): Changed the ASSERT to allow
+        for drags that end after the view has been removed from the WebView.
+
 2006-06-16  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Tim O.
