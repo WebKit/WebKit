@@ -2,6 +2,12 @@
 
         Reviewed by ggaren.
 
+        * manual-tests/redraw-page-cache-visited-links.html: Changed to use DOM mouse event.
+
+2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by ggaren.
+
         - Update a manual test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9150
           DumpRenderTree should be able to keep URL history during runs
 

@@ -6,16 +6,15 @@ if (window.layoutTestController) {
     layoutTestController.keepWebHistory();
 }
 function runTest() {
-    if (window.eventSender) {
-        eventSender.mouseMoveTo(110, 35);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
+    var element = document.getElementById("mylink");
+    var event = document.createEvent("MouseEvent");
+    event.initEvent("click", true, true);
+    element.dispatchEvent(event);
 }
 </script>
 </head>
 <body onload="runTest();">
 <div><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=9150">Bug 9150 DumpRenderTree should be able to keep URL history during runs</a></div>
-<div>To run the test <a href="./resources/clicked-link-is-visited-2.html">click this link</a>.</div>
+<div>To run the test <a id="mylink" href="./resources/clicked-link-is-visited-2.html">click this link</a>.</div>
 </body>
 </html>
