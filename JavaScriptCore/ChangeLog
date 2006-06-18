@@ -1,5 +1,16 @@
 2006-06-17  David Kilzer  <ddkilzer@kilzer.net>
 
+        Reviewed by darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9477
+        REGRESSION: fast/dom/replaceChild.html crashes on WebKit ToT in debug build
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::callAsFunction): Refetch the debugger after executing the function
+        in case the WebFrame it was running in has since been destroyed.
+
+2006-06-17  David Kilzer  <ddkilzer@kilzer.net>
+
         Reviewed by ggaren.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9476

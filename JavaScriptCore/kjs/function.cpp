@@ -113,6 +113,11 @@ JSValue *FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
     fprintf(stderr, "returning: undefined\n");
 #endif
 
+  // The debugger may have been deallocated by now if the WebFrame
+  // we were running in has been destroyed, so refetch it.
+  // See http://bugzilla.opendarwin.org/show_bug.cgi?id=9477
+  dbg = exec->dynamicInterpreter()->debugger();
+
   if (dbg) {
     if (inherits(&DeclaredFunctionImp::info))
       lineno = static_cast<DeclaredFunctionImp*>(this)->body->lastLine();
