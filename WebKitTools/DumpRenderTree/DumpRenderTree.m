@@ -35,6 +35,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
+#import <WebKit/WebHistory.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
@@ -598,7 +599,8 @@ static void dump(void)
             || aSelector == @selector(display)
             || aSelector == @selector(testRepaint)
             || aSelector == @selector(repaintSweepHorizontally)
-            || aSelector == @selector(clearBackForwardList))
+            || aSelector == @selector(clearBackForwardList)
+            || aSelector == @selector(keepWebHistory))
         return NO;
     return YES;
 }
@@ -625,6 +627,12 @@ static void dump(void)
     [backForwardList addItem:item];
     [backForwardList goToItem:item];
     [item release];
+}
+
+- (void)keepWebHistory
+{
+    if (![WebHistory optionalSharedHistory])
+        [WebHistory setOptionalSharedHistory:[[WebHistory alloc] init]];
 }
 
 - (void)waitUntilDone 
@@ -730,6 +738,9 @@ static void dumpRenderTree(const char *pathOrURL)
     readFromWindow = NO;
     testRepaint = testRepaintDefault;
     repaintSweepHorizontally = repaintSweepHorizontallyDefault;
+    if ([WebHistory optionalSharedHistory])
+        [WebHistory setOptionalSharedHistory:nil];
+
     if (currentTest != nil)
         CFRelease(currentTest);
     currentTest = (NSString *)pathOrURLString;

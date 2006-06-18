@@ -1,3 +1,16 @@
+2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by ggaren.
+
+        - test and results for http://bugzilla.opendarwin.org/show_bug.cgi?id=9150
+          DumpRenderTree should be able to keep URL history during runs
+
+        * fast/history/clicked-link-is-visited-expected.checksum: Added.
+        * fast/history/clicked-link-is-visited-expected.png: Added.
+        * fast/history/clicked-link-is-visited-expected.txt: Added.
+        * fast/history/clicked-link-is-visited.html: Added.
+        * fast/history/resources/clicked-link-is-visited-2.html: Added.
+
 2006-06-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by ggaren.

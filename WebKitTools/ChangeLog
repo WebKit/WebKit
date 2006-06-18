@@ -1,3 +1,20 @@
+2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by ggaren.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9150
+          DumpRenderTree should be able to keep URL history during runs
+
+        Test: LayoutTests/fast/history/clicked-link-is-visited.html
+
+        * DumpRenderTree/DumpRenderTree.m: Add keepWebHistory function to layoutTestController
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]): Updated for keepWebHistory.
+        (-[LayoutTestController keepWebHistory]): Added.  We only set optional shared history if
+        it is currently nil since keepWebHistory() might be called more than once incidentally
+        for the same test.
+        (dumpRenderTree): Set optional shared history in WebHistory to nil by default.
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Xcode 2.3 clean up.
+
 2006-06-11  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by darin.

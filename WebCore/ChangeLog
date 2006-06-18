@@ -1,3 +1,15 @@
+2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by ggaren.
+
+        - Update a manual test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9150
+          DumpRenderTree should be able to keep URL history during runs
+
+        * manual-tests/redraw-page-cache-visited-links.html: Added note about window.history hack.
+        Fixed coordinates for mouse events.  Added call to keepWebHistory().
+        * manual-tests/resources/redraw-page-cache-visited-links-2.html: Added note about
+        window.history hack.
+
 2006-06-17  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
