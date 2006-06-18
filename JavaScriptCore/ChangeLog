@@ -1,3 +1,17 @@
+2006-06-16  Ben Goodger <beng@google.com>
+        
+        Reviewed by Maciej
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9491
+        Windows build breaks in interpreter.cpp 
+
+        * kjs/interpreter.cpp
+        (KJS::TimeoutChecker::pauseTimeoutCheck):
+        (KJS::TimeoutChecker::resumeTimeoutCheck):
+        Make sure to only assert equality with s_executingInterpreter when it 
+        is being used (i.e. when HAVE(SYS_TIME_H) == true)
+
+
 2006-06-17  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by darin.

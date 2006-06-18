@@ -142,9 +142,9 @@ void TimeoutChecker::alarmHandler(int)
 
 void TimeoutChecker::pauseTimeoutCheck(Interpreter* interpreter)
 {
+#if HAVE(SYS_TIME_H)
     ASSERT(interpreter == s_executingInterpreter);
 
-#if HAVE(SYS_TIME_H)
     void (*currentSignalHandler)(int);
    
     // Block signal
@@ -163,7 +163,9 @@ void TimeoutChecker::pauseTimeoutCheck(Interpreter* interpreter)
 
 void TimeoutChecker::resumeTimeoutCheck(Interpreter* interpreter)
 {
+#if HAVE(SYS_TIME_H)
     ASSERT(interpreter == s_executingInterpreter);
+#endif
 
     interpreter->m_pauseTimeoutCheckCount--;
 
