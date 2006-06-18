@@ -126,9 +126,15 @@ ScriptInterpreter* KJSProxy::interpreter()
 // Implementation of the debug() function
 class TestFunctionImp : public DOMObject {
 public:
+  TestFunctionImp(ExecState*);
   virtual bool implementsCall() const { return true; }
   virtual JSValue* callAsFunction(ExecState*, JSObject*, const List& args);
 };
+
+TestFunctionImp::TestFunctionImp(ExecState* exec)
+{
+    setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype());
+}
 
 JSValue *TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
@@ -147,7 +153,7 @@ void KJSProxy::initScriptIfNeeded()
 
   // Create a KJS interpreter for this frame
   m_script = new ScriptInterpreter(globalObject, m_frame);
-  globalObject->put(m_script->globalExec(), "debug", new TestFunctionImp(), Internal);
+  globalObject->put(m_script->globalExec(), "debug", new TestFunctionImp(m_script->globalExec()), Internal);
 
   String userAgent = m_frame->userAgent();
   if (userAgent.find("Microsoft") >= 0 || userAgent.find("MSIE") >= 0)

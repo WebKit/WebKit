@@ -1,3 +1,18 @@
+2006-06-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by ggaren.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8131
+        Some properties and methods of window and document objects cannot be converted to a string
+
+        Most of the properties were already fixed, this just adds adds a prototype to window.debug.
+
+        Test: fast/dom/everything-to-string.html
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::TestFunctionImp::TestFunctionImp): 
+        (WebCore::KJSProxy::initScriptIfNeeded):
+
 2006-06-17  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Maciej.

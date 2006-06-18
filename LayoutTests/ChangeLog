@@ -1,3 +1,13 @@
+2006-06-17  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by ggaren.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8131
+        Some properties and methods of window and document objects cannot be converted to a string
+
+        * fast/dom/everything-to-string-expected.txt: Added.
+        * fast/dom/everything-to-string.html: Added.
+
 2006-06-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
