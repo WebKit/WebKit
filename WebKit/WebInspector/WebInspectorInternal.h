@@ -73,6 +73,7 @@
 - (void)_updateTreeScrollbar;
 - (void)_updateTraversalButtons;
 - (void)_refreshSearch;
+- (void)_webFrameDetached:(WebFrame *)frame;
 @end
 
 @interface DOMNode (DOMNodeInspectorAdditions)

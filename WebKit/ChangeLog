@@ -1,3 +1,25 @@
+2006-06-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by xenon.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9479
+          Disassociate the inspector from the frame when it detaches from its parent
+
+        * WebInspector/WebInspector.m:
+        (-[NSWindow setWebFrame:]): Added code to (de)register with the WebFrame
+        the inspector is (no longer) targeting.
+        (-[WebInspector _webFrameDetached:]): Added. Moved the code that was previously
+        in -[inspectedWindowWillClose:] here. This is called by the WebFrame when it
+        is detached from its parent.
+        * WebInspector/WebInspectorInternal.h:
+        * WebView/WebFrame.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _detachFromParent]): Added code to notify all registered inspectors
+        that the WebFrame is detaching.
+        (-[WebFrame _addInspector:]): Added.
+        (-[WebFrame _removeInspector:]): Added.
+        * WebView/WebFrameInternal.h:
+
 2006-06-18  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

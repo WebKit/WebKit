@@ -206,6 +206,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     NSString *frameNamespace;
     
     NSMutableSet *plugInViews;
+    NSMutableSet *inspectors;
 }
 
 - (void)setWebFrameView:(WebFrameView *)v;
@@ -253,6 +254,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     [scriptDebugger release];
     
+    [inspectors release];
+
     ASSERT(listener == nil);
     ASSERT(policyRequest == nil);
     ASSERT(policyFrameName == nil);
@@ -562,6 +565,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
     [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
     [self _detachChildren];
+    [_private->inspectors makeObjectsPerformSelector:@selector(_webFrameDetached:) withObject:self];
 
     [_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
 
@@ -2759,6 +2763,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (BOOL)_isMainFrame
 {
     return self == [[self webView] mainFrame];
+}
+
+- (void)_addInspector:(WebInspector *)inspector
+{
+    if (!_private->inspectors)
+        _private->inspectors = [[NSMutableSet alloc] init];
+    ASSERT(![_private->inspectors containsObject:inspector]);
+    [_private->inspectors addObject:inspector];
+}
+
+- (void)_removeInspector:(WebInspector *)inspector
+{
+    ASSERT([_private->inspectors containsObject:inspector]);
+    [_private->inspectors removeObject:inspector];
 }
 
 @end

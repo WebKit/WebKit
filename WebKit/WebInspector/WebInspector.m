@@ -36,6 +36,7 @@
 #import "WebViewPrivate.h"
 #import "WebHTMLView.h"
 #import "WebFrame.h"
+#import "WebFrameInternal.h"
 #import "WebLocalizableStrings.h"
 #import "WebKitNSStringExtras.h"
 #import "WebTypesInternal.h"
@@ -173,7 +174,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
     if (_private->webFrame) {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:WebViewProgressFinishedNotification object:[_private->webFrame webView]];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[[_private->webFrame webView] hostWindow]];
+        [_private->webFrame _removeInspector:self];
     }
     
     [webFrame retain];
@@ -182,7 +183,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
     if (_private->webFrame) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inspectedWebViewProgressFinished:) name:WebViewProgressFinishedNotification object:[_private->webFrame webView]];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(inspectedWindowWillClose:) name:NSWindowWillCloseNotification object:[[_private->webFrame webView] hostWindow]];
+        [_private->webFrame _addInspector:self];
     }
 
     [_private->treeOutlineView setAllowsEmptySelection:NO];
@@ -786,6 +787,16 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     [(NSPanel *)[self window] setFloatingPanel:YES];
 }
 
+- (void)_webFrameDetached:(WebFrame *)frame
+{
+    [self setFocusedDOMNode:nil];
+    [self setWebFrame:nil];
+    [_private->treeOutlineView setAllowsEmptySelection:YES];
+    [_private->treeOutlineView deselectAll:self];
+    [self _update];
+    [self _updateRoot];
+}
+
 #pragma mark -
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
@@ -816,16 +827,6 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [self _updateRoot];
         [self _highlightNode:[self focusedDOMNode]];
     }
-}
-
-- (void)inspectedWindowWillClose:(NSNotification *)notification
-{
-    [self setFocusedDOMNode:nil];
-    [self setWebFrame:nil];
-    [_private->treeOutlineView setAllowsEmptySelection:YES];
-    [_private->treeOutlineView deselectAll:self];
-    [self _update];
-    [self _updateRoot];
 }
 
 #pragma mark -
