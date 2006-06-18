@@ -534,6 +534,7 @@ public:
   virtual void runJavaScriptAlert(const String& message) = 0;
   virtual bool runJavaScriptConfirm(const String& message) = 0;
   virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result) = 0;  
+  virtual bool shouldInterruptJavaScript() = 0;
   virtual bool locationbarVisible() = 0;
   virtual bool menubarVisible() = 0;
   virtual bool personalbarVisible() = 0;

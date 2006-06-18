@@ -1,3 +1,38 @@
+2006-06-17  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        * bindings/js/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::ScriptInterpreter):
+        Set the default script timeout.
+        
+        (KJS::ScriptInterpreter::shouldInterruptScript):
+        New function which asks the frame if the script should be interrupted.
+        
+        * bindings/js/kjs_binding.h:
+                
+        * bindings/js/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::evaluate):
+        Add calls to startTimeoutCheck/stopTimeoutCheck
+        
+        * bindings/js/kjs_window.cpp:
+        (KJS::WindowFunc::callAsFunction):
+        Add calls to pauseTimeoutCheck/unpauseTimeoutCheck 
+        
+        (KJS::ScheduledAction::execute):
+        Add calls to startTimeoutCheck/stopTimeoutCheck
+        
+        * bridge/mac/FrameMac.h:
+        * bridge/mac/FrameMac.mm:
+        (WebCore::FrameMac::shouldInterruptJavaScript):
+        New function which asks the bridge if the script should be interrupted.
+        
+        * bridge/mac/WebCoreFrameBridge.h:
+        * page/Frame.h:
+        Add function declarations.
+        
 2006-06-17  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by ggaren.

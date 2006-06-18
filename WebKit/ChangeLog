@@ -1,3 +1,14 @@
+2006-06-18  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge shouldInterruptJavaScript]):
+        Ask the UI delegate if the script should be interrupted.
+        
+        * WebView/WebUIDelegatePrivate.h:
+        Declare webViewShouldInterruptJavaScript: delegate method
+
 2006-06-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

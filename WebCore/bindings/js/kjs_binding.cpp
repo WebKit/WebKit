@@ -68,6 +68,10 @@ ScriptInterpreter::ScriptInterpreter( JSObject *global, Frame *frame )
   : Interpreter( global ), m_frame(frame),
     m_evt( 0L ), m_inlineCode(false), m_timerCallback(false)
 {
+    // Time in milliseconds before the script timeout handler kicks in
+    const unsigned ScriptTimeoutTimeMS = 5000;
+        
+    setTimeoutTime(ScriptTimeoutTimeMS);
 }
 
 ScriptInterpreter::~ScriptInterpreter()
@@ -246,7 +250,11 @@ void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, int la
     return result;
 }
 
-
+bool ScriptInterpreter::shouldInterruptScript() const
+{
+    return m_frame->shouldInterruptJavaScript();
+}
+    
 //////
 
 JSValue *jsStringOrNull(const String &s)

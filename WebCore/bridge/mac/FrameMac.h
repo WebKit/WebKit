@@ -166,6 +166,7 @@ public:
     virtual void runJavaScriptAlert(const String&);
     virtual bool runJavaScriptConfirm(const String&);
     virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result);
+    virtual bool shouldInterruptJavaScript();    
     virtual bool locationbarVisible();
     virtual bool menubarVisible();
     virtual bool personalbarVisible();

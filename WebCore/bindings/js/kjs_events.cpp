@@ -94,16 +94,19 @@ void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
         interpreter->setCurrentEvent(event);
       
         JSValue* retval;
-        if (handleEventFunc)
+        if (handleEventFunc) {
+            interpreter->startTimeoutCheck();
             retval = handleEventFunc->call(exec, listener, args);
-        else {
+        } else {
             JSObject* thisObj;
             if (isWindowEvent)
                 thisObj = window;
             else
                 thisObj = static_cast<JSObject*>(toJS(exec, event->currentTarget()));
+            interpreter->startTimeoutCheck();
             retval = listener->call(exec, thisObj, args);
         }
+        interpreter->stopTimeoutCheck();
 
         window->setCurrentEvent(0);
         interpreter->setCurrentEvent(0);

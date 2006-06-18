@@ -336,7 +336,7 @@ namespace KJS {
     bool checkTimeout();
     
 protected:
-    virtual bool shouldInterruptScript() { return true; }
+    virtual bool shouldInterruptScript() const { return true; }
     long m_timeoutTime;
 
 private:

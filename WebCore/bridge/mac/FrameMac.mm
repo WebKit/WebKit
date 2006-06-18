@@ -1257,6 +1257,15 @@ bool FrameMac::runJavaScriptPrompt(const String& prompt, const String& defaultVa
     return false;
 }
 
+bool FrameMac::shouldInterruptJavaScript()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [_bridge shouldInterruptJavaScript];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return false;
+}
+
 bool FrameMac::locationbarVisible()
 {
     return [_bridge areToolbarsVisible];

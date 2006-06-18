@@ -407,6 +407,16 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:_frame];
 }
 
+- (BOOL)shouldInterruptJavaScript
+{
+    WebView *wv = [self webView];
+    id wd = [wv UIDelegate];
+    
+    if ([wd respondsToSelector:@selector(webViewShouldInterruptJavaScript:)])
+        return [wd webViewShouldInterruptJavaScript:wv];
+    return NO;
+}
+
 - (BOOL)canRunBeforeUnloadConfirmPanel
 {
     WebView *wv = [self webView];

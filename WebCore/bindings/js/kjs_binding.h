@@ -101,6 +101,8 @@ namespace KJS {
     virtual void *createLanguageInstanceForValue (ExecState *exec, int language, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
     void *createObjcInstanceForValue (ExecState *exec, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
 
+    virtual bool shouldInterruptScript() const;
+
   private:
     WebCore::Frame* m_frame;
 

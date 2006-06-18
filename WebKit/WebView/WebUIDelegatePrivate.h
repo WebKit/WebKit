@@ -106,4 +106,6 @@
 
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view;
 
+- (BOOL)webViewShouldInterruptJavaScript:(WebView *)sender;
+
 @end
