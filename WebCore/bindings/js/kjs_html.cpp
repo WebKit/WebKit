@@ -323,14 +323,6 @@ bool JSHTMLDocument::getOwnPropertySlot(ExecState* exec, const Identifier& prope
   }
 
   return getStaticValueSlot<JSHTMLDocument, JSDocument>(exec, &HTMLDocumentTable, this, propertyName, slot);
-
-  const HashEntry* entry = Lookup::findEntry(&HTMLDocumentTable, propertyName);
-  if (entry) {
-    slot.setStaticEntry(this, entry, staticValueGetter<JSHTMLDocument>);
-    return true;
-  }
-
-  return JSDocument::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 void JSHTMLDocument::put(ExecState* exec, const Identifier &propertyName, JSValue *value, int attr)

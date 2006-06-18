@@ -1,5 +1,15 @@
 2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
 
+        Reviewed by darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9498
+        Remove dead code left in JSHTMLDocument::getOwnPropertySlot() from r14298 (Bug 7838)
+
+        * bindings/js/kjs_html.cpp:
+        (KJS::JSHTMLDocument::getOwnPropertySlot): Remove dead code.
+
+2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
+
         Reviewed by ggaren.
 
         * manual-tests/redraw-page-cache-visited-links.html: Changed to use DOM mouse event.
