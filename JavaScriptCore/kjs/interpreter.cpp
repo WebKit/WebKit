@@ -158,7 +158,7 @@ void TimeoutChecker::pauseTimeoutCheck(Interpreter* interpreter)
         return;
     }
 
-    setitimer(ITIMER_REAL, &m_pausetv, 0L);
+    setitimer(ITIMER_REAL, 0L, &m_pausetv);
 #endif
 
     interpreter->m_pauseTimeoutCheckCount++;
@@ -189,7 +189,7 @@ void TimeoutChecker::resumeTimeoutCheck(Interpreter* interpreter)
         return;
     }
 
-    setitimer(ITIMER_REAL, 0L, &m_pausetv);    
+    setitimer(ITIMER_REAL, &m_pausetv, 0L);
 
     // Unblock signal
     currentSignalHandler = signal(SIGALRM, alarmHandler);    
