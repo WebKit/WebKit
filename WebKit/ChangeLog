@@ -1,3 +1,17 @@
+2006-06-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - added mechanism to notify UIDelegate when part of the webview is redrawn. For now, it only
+          works for HTML views.
+
+        * WebView/WebUIDelegatePrivate.h:
+        Define a new UIDelegate method -webView:didDrawRect:
+        * WebView/WebHTMLView.m:
+        (-[WebView drawSingleRect:]):
+        Call through to UIDelegate if it implements that method. I tested that this does not impact PLT numbers
+        in the case where the delegate implements the method but does nothing in it.
+
 2006-06-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej.

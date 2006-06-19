@@ -2636,7 +2636,12 @@ static WebHTMLView *lastHitView = nil;
         }
         
         [[self _bridge] drawRect:rect];
-
+        
+        WebView *webView = [self _webView];
+        id UIDelegate = [webView UIDelegate];
+        if ([UIDelegate respondsToSelector:@selector(webView:didDrawRect:)])
+            [UIDelegate webView:webView didDrawRect:[webView convertRect:rect fromView:self]];
+        
         [(WebClipView *)[self superview] resetAdditionalClip];
 
         [NSGraphicsContext restoreGraphicsState];

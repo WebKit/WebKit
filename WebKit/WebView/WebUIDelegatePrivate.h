@@ -105,7 +105,7 @@
 - (BOOL)webView:(WebView *)sender runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame;
 
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view;
-
+- (void)webView:(WebView *)sender didDrawRect:(NSRect)rect;
 - (BOOL)webViewShouldInterruptJavaScript:(WebView *)sender;
 
 @end
