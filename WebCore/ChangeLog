@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9492
+        Fix or remove window.debug.
+
+        It was only available in newly created windows, and became undefined after changing the URL
+        or reloading. Let's try removing it; hopefully, no-one will notice.
+
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::initScriptIfNeeded): Don't add window.debug.
+
+2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=8972
         REGRESSION: invalid UTF-8 sequences are not displayed
 
