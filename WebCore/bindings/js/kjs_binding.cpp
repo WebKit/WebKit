@@ -26,11 +26,11 @@
 #include "config.h"
 #include "kjs_binding.h"
 
+#include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "PlatformString.h"
 #include "Range.h"
-#include "dom2_eventsimpl.h"
 #include "XPathEvaluator.h"
 #include "kjs_dom.h"
 #include "kjs_window.h"

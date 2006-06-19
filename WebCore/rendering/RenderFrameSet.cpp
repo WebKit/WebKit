@@ -29,12 +29,12 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HTMLNames.h"
 #include "HTMLFrameSetElement.h"
-#include "dom2_eventsimpl.h"
-#include "RenderView.h"
-#include "RenderFrame.h"
+#include "HTMLNames.h"
 #include "KWQTextStream.h"
+#include "MouseEvent.h"
+#include "RenderFrame.h"
+#include "RenderView.h"
 
 namespace WebCore {
 

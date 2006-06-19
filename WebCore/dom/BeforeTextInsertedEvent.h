@@ -26,12 +26,11 @@
 #ifndef BEFORETEXTINSERTEDEVENTIMPL_H
 #define BEFORETEXTINSERTEDEVENTIMPL_H
 
-#include "dom2_eventsimpl.h"
+#include "Event.h"
 
 namespace WebCore {
 
-class BeforeTextInsertedEvent : public Event
-{
+class BeforeTextInsertedEvent : public Event {
 public:
     BeforeTextInsertedEvent(const String&);
 

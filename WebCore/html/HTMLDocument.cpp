@@ -55,17 +55,16 @@
 #include "config.h"
 #include "HTMLDocument.h"
 
+#include "CSSPropertyNames.h"
 #include "CookieJar.h"
 #include "DocumentType.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "cssstyleselector.h"
-#include "CSSPropertyNames.h"
-#include "HTMLTokenizer.h"
 #include "HTMLElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
-#include "dom2_eventsimpl.h"
+#include "HTMLTokenizer.h"
+#include "cssstyleselector.h"
 
 #include "DocTypeStrings.cpp"
 

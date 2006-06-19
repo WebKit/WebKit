@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KeyEvent_H
-#define KeyEvent_H
+#ifndef PlatformKeyboardEvent_h
+#define PlatformKeyboardEvent_h
 
 #include "PlatformString.h"
 
@@ -87,6 +87,6 @@ namespace WebCore {
         bool m_metaKey;
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // PlatformKeyboardEvent_h

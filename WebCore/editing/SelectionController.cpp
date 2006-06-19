@@ -33,7 +33,6 @@
 #include "GraphicsContext.h"
 #include "RenderView.h"
 #include "TextIterator.h"
-#include "dom2_eventsimpl.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 

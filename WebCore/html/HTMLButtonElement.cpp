@@ -26,14 +26,13 @@
 
 #include "config.h"
 #include "HTMLButtonElement.h"
-#include "HTMLFormElement.h"
-#include "dom2_eventsimpl.h"
-#include "FormDataList.h"
 
-#include "RenderButton.h"
-
+#include "Event.h"
 #include "EventNames.h"
+#include "FormDataList.h"
+#include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include "RenderButton.h"
 
 namespace WebCore {
 

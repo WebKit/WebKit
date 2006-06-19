@@ -30,10 +30,10 @@
 #include "ExceptionCode.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
-#include "SystemTime.h"
-#include "dom2_eventsimpl.h"
+#include "MutationEvent.h"
 #include "RenderTheme.h"
 #include "RootInlineBox.h"
+#include "SystemTime.h"
 
 namespace WebCore {
 

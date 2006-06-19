@@ -27,6 +27,7 @@
 #import "DOMInternal.h"
 
 #import "Document.h"
+#import "Event.h"
 #import "FrameMac.h"
 #import "Range.h"
 #import "kjs_dom.h"

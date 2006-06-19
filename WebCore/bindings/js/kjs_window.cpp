@@ -25,6 +25,7 @@
 
 #include "DOMWindow.h"
 #include "Element.h"
+#include "EventListener.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -49,7 +50,6 @@
 #include "RenderView.h"
 #include "Screen.h"
 #include "SelectionController.h"
-#include "dom2_eventsimpl.h"
 #include "htmlediting.h"
 #include "kjs_css.h"
 #include "kjs_events.h"

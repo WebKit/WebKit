@@ -32,7 +32,6 @@
 #include "VisiblePosition.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
-#include "dom2_eventsimpl.h"
 #include "EventNames.h"
 #include "htmlediting.h"
 

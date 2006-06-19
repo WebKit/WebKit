@@ -25,20 +25,19 @@
 #include "config.h"
 #include "HTMLElement.h"
 
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "DocumentFragment.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
-#include "dom2_eventsimpl.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"
-#include "markup.h"
 #include "TextIterator.h"
+#include "markup.h"
 
 namespace WebCore {
 

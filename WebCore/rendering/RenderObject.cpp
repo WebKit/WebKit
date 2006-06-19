@@ -40,7 +40,6 @@
 #include "KWQWMatrix.h"
 #include "Position.h"
 #include "RenderArena.h"
-#include "RenderView.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderListItem.h"
@@ -49,10 +48,9 @@
 #include "RenderTableRow.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "cssstyleselector.h"
-#include "dom2_eventsimpl.h"
 #include <algorithm>
-
 
 using namespace std;
 

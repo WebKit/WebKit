@@ -1,3 +1,155 @@
+2006-06-19  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=9500
+          Split dom2_eventsimpl.* into separate files (one class per file).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/kjs_binding.cpp:
+        * bindings/js/kjs_dom.cpp:
+        * bindings/js/kjs_events.cpp:
+        * bindings/js/kjs_html.cpp:
+        * bindings/js/kjs_window.cpp:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMEvents.mm:
+        * bindings/objc/DOMInternal.mm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/mac/FrameMac.mm:
+        * dom/BeforeTextInsertedEvent.h:
+        * dom/BeforeUnloadEvent.cpp: Added.
+        * dom/BeforeUnloadEvent.h: Added.
+        (WebCore::BeforeUnloadEvent::result):
+        * dom/CharacterData.cpp:
+        * dom/Clipboard.h: Added.
+        (WebCore::Clipboard::~Clipboard):
+        * dom/ClipboardEvent.cpp: Added.
+        (WebCore::ClipboardEvent::ClipboardEvent):
+        * dom/ClipboardEvent.h: Added.
+        (WebCore::ClipboardEvent::clipboard):
+        * dom/ContainerNode.cpp:
+        * dom/Document.cpp:
+        * dom/Event.cpp: Added.
+        (WebCore::Event::Event):
+        (WebCore::Event::initEvent):
+        * dom/Event.h: Added.
+        (WebCore::):
+        (WebCore::Event::):
+        (WebCore::Event::type):
+        (WebCore::Event::target):
+        (WebCore::Event::currentTarget):
+        (WebCore::Event::setCurrentTarget):
+        (WebCore::Event::eventPhase):
+        (WebCore::Event::setEventPhase):
+        (WebCore::Event::bubbles):
+        (WebCore::Event::cancelable):
+        (WebCore::Event::timeStamp):
+        (WebCore::Event::stopPropagation):
+        (WebCore::Event::propagationStopped):
+        (WebCore::Event::defaultPrevented):
+        (WebCore::Event::setDefaultHandled):
+        (WebCore::Event::defaultHandled):
+        (WebCore::Event::preventDefault):
+        (WebCore::Event::setDefaultPrevented):
+        (WebCore::Event::setCancelBubble):
+        (WebCore::Event::getCancelBubble):
+        (WebCore::Event::dispatched):
+        * dom/EventTargetNode.cpp:
+        * dom/KeyboardEvent.cpp: Added.
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEvent::initKeyboardEvent):
+        * dom/KeyboardEvent.h: Added.
+        (WebCore::KeyboardEvent::):
+        (WebCore::KeyboardEvent::keyIdentifier):
+        (WebCore::KeyboardEvent::keyLocation):
+        (WebCore::KeyboardEvent::altGraphKey):
+        (WebCore::KeyboardEvent::keyEvent):
+        * dom/MouseEvent.cpp: Added.
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        (WebCore::MouseEvent::isDragEvent):
+        (WebCore::MouseEvent::toElement):
+        (WebCore::MouseEvent::fromElement):
+        * dom/MouseEvent.h: Added.
+        (WebCore::MouseEvent::button):
+        (WebCore::MouseEvent::relatedTarget):
+        (WebCore::MouseEvent::clipboard):
+        * dom/MouseRelatedEvent.cpp: Added.
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/MouseRelatedEvent.h: Added.
+        (WebCore::MouseRelatedEvent::screenX):
+        (WebCore::MouseRelatedEvent::screenY):
+        (WebCore::MouseRelatedEvent::clientX):
+        (WebCore::MouseRelatedEvent::clientY):
+        (WebCore::MouseRelatedEvent::layerX):
+        (WebCore::MouseRelatedEvent::layerY):
+        (WebCore::MouseRelatedEvent::offsetX):
+        (WebCore::MouseRelatedEvent::offsetY):
+        (WebCore::MouseRelatedEvent::isSimulated):
+        * dom/MutationEvent.cpp: Added.
+        (WebCore::MutationEvent::MutationEvent):
+        (WebCore::MutationEvent::initMutationEvent):
+        * dom/MutationEvent.h: Added.
+        (WebCore::MutationEvent::):
+        (WebCore::MutationEvent::relatedNode):
+        (WebCore::MutationEvent::prevValue):
+        (WebCore::MutationEvent::newValue):
+        (WebCore::MutationEvent::attrName):
+        (WebCore::MutationEvent::attrChange):
+        * dom/RegisteredEventListener.cpp: Added.
+        (WebCore::RegisteredEventListener::RegisteredEventListener):
+        (WebCore::operator==):
+        * dom/RegisteredEventListener.h: Added.
+        (WebCore::RegisteredEventListener::eventType):
+        (WebCore::RegisteredEventListener::listener):
+        (WebCore::RegisteredEventListener::useCapture):
+        (WebCore::RegisteredEventListener::removed):
+        (WebCore::RegisteredEventListener::setRemoved):
+        (WebCore::operator!=):
+        * dom/UIEvent.cpp: Added.
+        (WebCore::UIEvent::UIEvent):
+        (WebCore::UIEvent::initUIEvent):
+        * dom/UIEvent.h: Added.
+        (WebCore::UIEvent::view):
+        (WebCore::UIEvent::detail):
+        * dom/UIEventWithKeyState.h: Added.
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+        (WebCore::UIEventWithKeyState::ctrlKey):
+        (WebCore::UIEventWithKeyState::shiftKey):
+        (WebCore::UIEventWithKeyState::altKey):
+        (WebCore::UIEventWithKeyState::metaKey):
+        * dom/WheelEvent.cpp: Added.
+        (WebCore::WheelEvent::WheelEvent):
+        * dom/WheelEvent.h: Added.
+        (WebCore::WheelEvent::isHorizontal):
+        (WebCore::WheelEvent::wheelDelta):
+        * dom/dom2_eventsimpl.cpp: Removed.
+        * dom/dom2_eventsimpl.h: Removed.
+        * editing/EditCommand.cpp:
+        * editing/SelectionController.cpp:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLButtonElement.cpp:
+        * html/HTMLDocument.cpp:
+        * html/HTMLElement.cpp:
+        * html/HTMLFrameSetElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        * ksvg2/events/SVGZoomEvent.h:
+        * ksvg2/svg/SVGAElement.cpp:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/PlatformWheelEvent.h:
+        * platform/mac/ClipboardMac.h:
+        * rendering/RenderFrameSet.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderTextField.cpp:
+        * xml/xmlhttprequest.cpp:
+
 2006-06-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady.

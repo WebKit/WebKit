@@ -38,6 +38,7 @@
 #import "DocumentType.h"
 #import "Entity.h"
 #import "EntityReference.h"
+#import "Event.h"
 #import "EventListener.h"
 #import "FoundationExtras.h"
 #import "FrameMac.h"

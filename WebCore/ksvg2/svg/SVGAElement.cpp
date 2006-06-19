@@ -26,13 +26,15 @@
 
 #include "Attr.h"
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "MouseEvent.h"
+#include "MouseEvent.h"
 #include "SVGAnimatedString.h"
 #include "SVGHelper.h"
 #include "SVGNames.h"
 #include "csshelper.h"
-#include "dom2_eventsimpl.h"
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>

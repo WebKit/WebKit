@@ -29,23 +29,26 @@
 
 #include "BeforeTextInsertedEvent.h"
 #include "CSSPropertyNames.h"
+#include "DeprecatedSlider.h"
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
+#include "MouseEvent.h"
+#include "RenderButton.h"
 #include "RenderFileButton.h"
 #include "RenderImageButton.h"
 #include "RenderLineEdit.h"
 #include "RenderText.h"
 #include "RenderTextField.h"
 #include "RenderTheme.h"
-#include "DeprecatedSlider.h"
 #include "SelectionController.h"
-#include "RenderButton.h"
 #include <unicode/ubrk.h>
 
 using namespace std;

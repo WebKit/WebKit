@@ -30,7 +30,7 @@
 
 #include "Image.h"
 #include "IntPoint.h"
-#include "dom2_eventsimpl.h"
+#include "Clipboard.h"
 #include "CachedObjectClient.h"
 
 #ifdef __OBJC__

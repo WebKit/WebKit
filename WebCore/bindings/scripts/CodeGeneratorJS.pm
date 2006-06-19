@@ -149,14 +149,7 @@ sub AddIncludesForType
     
     # When we're finished with the one-file-per-class 
     # reorganization, we won't need these special cases.
-    if ($type eq "MutationEvent" or
-        $type eq "KeyboardEvent" or
-        $type eq "MouseEvent" or
-        $type eq "Event" or
-        $type eq "UIEvent" or
-        $type eq "WheelEvent") {
-        $implIncludes{"dom2_eventsimpl.h"} = 1;
-    } elsif ($codeGenerator->IsPrimitiveType($type)
+    if ($codeGenerator->IsPrimitiveType($type)
         or $type eq "DOMString" or $type eq "DOMObject" or $type eq "RGBColor" or $type eq "Rect") {
     } else {
         # default, include the same named file
@@ -1106,7 +1099,7 @@ sub NativeToJSValue
         return "toJS(exec, $value)";
     } elsif ($type eq "Event") {
         $implIncludes{"kjs_events.h"} = 1;
-        $implIncludes{"dom2_eventsimpl.h"} = 1;
+        $implIncludes{"Event.h"} = 1;
         return "toJS(exec, $value)";
     } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
         $implIncludes{"kjs_dom.h"} = 1;

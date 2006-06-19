@@ -44,21 +44,20 @@
 #include "config.h"
 #include "RenderLayer.h"
 
-#include "Document.h"
 #include "CSSPropertyNames.h"
+#include "Document.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "GraphicsContext.h"
-#include "dom2_eventsimpl.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "PlatformMouseEvent.h"
 #include "RenderArena.h"
-#include "RenderView.h"
 #include "RenderInline.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "SelectionController.h"
 
 #if SVG_SUPPORT

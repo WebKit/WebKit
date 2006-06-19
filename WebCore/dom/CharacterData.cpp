@@ -27,9 +27,9 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "RenderText.h"
-#include "dom2_eventsimpl.h"
 #include "KWQTextStream.h"
+#include "MutationEvent.h"
+#include "RenderText.h"
 
 namespace WebCore {
 

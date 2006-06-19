@@ -24,6 +24,7 @@
 #include "Cache.h"
 #include "DOMImplementation.h"
 #include "Decoder.h"
+#include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "FormData.h"
@@ -33,7 +34,6 @@
 #include "RegularExpression.h"
 #include "TextEncoding.h"
 #include "TransferJob.h"
-#include "dom2_eventsimpl.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
 #include <wtf/Vector.h>

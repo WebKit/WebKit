@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MouseEvent_h
-#define MouseEvent_h
+#ifndef PlatformMouseEvent_h
+#define PlatformMouseEvent_h
 
 #include "IntPoint.h"
 
@@ -55,11 +55,15 @@ namespace WebCore {
     public:
         PlatformMouseEvent(); // "current event"
         PlatformMouseEvent(const IntPoint& pos, const IntPoint& globalPos, MouseButton button,
-                int clickCount, bool shift, bool ctrl, bool alt, bool meta)
+                           int clickCount, bool shift, bool ctrl, bool alt, bool meta)
             : m_position(pos), m_globalPosition(globalPos), m_button(button)
             , m_clickCount(clickCount)
-            , m_shiftKey(shift), m_ctrlKey(ctrl), m_altKey(alt), m_metaKey(meta)
-            { }
+            , m_shiftKey(shift)
+            , m_ctrlKey(ctrl)
+            , m_altKey(alt)
+            , m_metaKey(meta)
+        {
+        }
 
         const IntPoint& pos() const { return m_position; }
         int x() const { return m_position.x(); }
@@ -94,6 +98,6 @@ namespace WebCore {
         bool m_metaKey;
     };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // PlatformMouseEvent_h

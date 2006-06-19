@@ -30,7 +30,10 @@
 #import "DOMInternal.h"
 #import "DOMViewsInternal.h"
 #import "Document.h"
-#import "dom2_eventsimpl.h"
+#import "Event.h"
+#import "MouseEvent.h"
+#import "MutationEvent.h"
+#import "UIEvent.h"
 
 using namespace WebCore;
 

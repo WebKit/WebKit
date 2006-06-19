@@ -24,15 +24,19 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
-#include "csshelper.h"
 #include "Document.h"
-#include "dom2_eventsimpl.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "KeyboardEvent.h"
+#include "MouseEvent.h"
+#include "MutationEvent.h"
 #include "RenderFlow.h"
 #include "RenderImage.h"
+#include "UIEvent.h"
+#include "csshelper.h"
 
 namespace WebCore {
 

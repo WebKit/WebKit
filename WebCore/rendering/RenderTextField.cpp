@@ -22,19 +22,19 @@
 #include "RenderTextField.h"
 
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "htmlediting.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFieldInnerElement.h"
+#include "RenderTheme.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
-#include "dom2_eventsimpl.h"
-#include <math.h>
-#include "RenderTheme.h"
+#include "htmlediting.h"
 #include "visible_units.h"
+#include <math.h>
 
 namespace WebCore {
 

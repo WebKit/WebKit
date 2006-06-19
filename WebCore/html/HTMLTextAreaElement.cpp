@@ -25,17 +25,18 @@
  */
 
 #include "config.h"
-#include "dom2_eventsimpl.h"
 #include "HTMLTextAreaElement.h"
+
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderTextArea.h"
 #include "RenderTextField.h"
-#include "render_style.h"
 #include "Text.h"
+#include "render_style.h"
 
 namespace WebCore {
 

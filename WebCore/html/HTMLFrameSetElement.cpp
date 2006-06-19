@@ -22,14 +22,16 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "HTMLFrameSetElement.h"
 
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "Length.h"
-#include "dom2_eventsimpl.h"
+#include "MouseEvent.h"
 #include "RenderFrameSet.h"
 
 namespace WebCore {

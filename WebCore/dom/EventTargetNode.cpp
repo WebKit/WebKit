@@ -28,15 +28,21 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "PlatformMouseEvent.h"
-#include "PlatformWheelEvent.h"
-#include "dom2_eventsimpl.h"
-#include "kjs_proxy.h"
 #include "HTMLNames.h"
 #include "KWQTextStream.h"
+#include "KeyboardEvent.h"
+#include "MouseEvent.h"
+#include "MutationEvent.h"
+#include "PlatformMouseEvent.h"
+#include "PlatformWheelEvent.h"
+#include "RegisteredEventListener.h"
+#include "UIEvent.h"
+#include "WheelEvent.h"
+#include "kjs_proxy.h"
 
 namespace WebCore {
 

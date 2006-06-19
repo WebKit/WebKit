@@ -27,17 +27,18 @@
 #include "config.h"
 #include "HTMLSelectElement.h"
 
+#include "CSSPropertyNames.h"
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
+#include "KeyboardEvent.h"
 #include "RenderSelect.h"
-#include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
-#include "dom2_eventsimpl.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
