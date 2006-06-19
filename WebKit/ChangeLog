@@ -1,3 +1,14 @@
+2006-06-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9452
+          Assertion failure in -[WebFramePrivate setProvisionalDataSource:]
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _checkLoadCompleteForThisFrame]): Avoid re-entering the delegate's
+        -[webView:didFailProvisionalLoadWithError:forFrame].
+
 2006-06-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by xenon.

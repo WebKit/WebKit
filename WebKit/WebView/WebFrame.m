@@ -1085,6 +1085,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     switch ([self _state]) {
         case WebFrameStateProvisional:
         {
+            if (_private->delegateIsHandlingProvisionalLoadError)
+                return;
+
             WebDataSource *pd = [self provisionalDataSource];
             
             LOG(Loading, "%@:  checking complete in WebFrameStateProvisional", [self name]);
