@@ -31,7 +31,7 @@
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 #define WebNSInteger int
 #else
-#define WebNSInteger NSInt
+#define WebNSInteger NSInteger
 #endif
 
 @class DOMCSSStyleDeclaration;
