@@ -4127,14 +4127,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\VisibleRange.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\editing\VisibleRange.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\editing\WrapContentsInDummySpanCommand.cpp"
 				>
 			</File>

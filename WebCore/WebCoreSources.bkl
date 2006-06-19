@@ -581,7 +581,6 @@
 		editing/UnlinkCommand.cpp
 		editing/visible_units.cpp
 		editing/VisiblePosition.cpp
-		editing/VisibleRange.cpp
 		editing/WrapContentsInDummySpanCommand.cpp
 
 	</set>

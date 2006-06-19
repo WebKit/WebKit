@@ -1,3 +1,17 @@
+2006-06-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady.
+
+        - removed a few empty/unused files Brady found by tracking down the nm error message
+
+        * editing/VisibleRange.cpp: Removed.
+        * editing/VisibleRange.h: Removed.
+        * kcanvas/KCanvasImage.cpp: Removed.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Removed VisibleRange.cpp/h.
+        * WebCore.xcodeproj/project.pbxproj: Removed VisibleRange.cpp/h and KCanvasImage.cpp.
+        * WebCoreSources.bkl: Removed VisibleRange.cpp.
+
 2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

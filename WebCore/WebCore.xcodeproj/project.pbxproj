@@ -391,8 +391,6 @@
 		93309E1E099E64920056E581 /* visible_units.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DCF099E64910056E581 /* visible_units.h */; };
 		93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DD0099E64910056E581 /* VisiblePosition.cpp */; };
 		93309E20099E64920056E581 /* VisiblePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DD1099E64910056E581 /* VisiblePosition.h */; };
-		93309E21099E64920056E581 /* VisibleRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DD2099E64910056E581 /* VisibleRange.cpp */; };
-		93309E22099E64920056E581 /* VisibleRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DD3099E64910056E581 /* VisibleRange.h */; };
 		93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */; };
 		93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */; };
 		93309EA2099EB78C0056E581 /* SharedTimerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */; };
@@ -923,7 +921,6 @@
 		A88AD3BC0952486E001DD196 /* KCanvasCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7D089701F800BA5114 /* KCanvasCreator.h */; };
 		A88AD3BD0952486E001DD196 /* KCanvasFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB7E089701F800BA5114 /* KCanvasFilters.cpp */; };
 		A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */; };
-		A88AD3BF0952486E001DD196 /* KCanvasImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB80089701F800BA5114 /* KCanvasImage.cpp */; };
 		A88AD3C00952486E001DD196 /* KCanvasImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB81089701F800BA5114 /* KCanvasImage.h */; };
 		A88AD3C10952486E001DD196 /* RenderPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB82089701F800BA5114 /* RenderPath.cpp */; };
 		A88AD3C20952486E001DD196 /* RenderPath.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB83089701F800BA5114 /* RenderPath.h */; };
@@ -2025,8 +2022,6 @@
 		93309DCF099E64910056E581 /* visible_units.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = visible_units.h; sourceTree = "<group>"; };
 		93309DD0099E64910056E581 /* VisiblePosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisiblePosition.cpp; sourceTree = "<group>"; };
 		93309DD1099E64910056E581 /* VisiblePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisiblePosition.h; sourceTree = "<group>"; };
-		93309DD2099E64910056E581 /* VisibleRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleRange.cpp; sourceTree = "<group>"; };
-		93309DD3099E64910056E581 /* VisibleRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleRange.h; sourceTree = "<group>"; };
 		93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WrapContentsInDummySpanCommand.cpp; sourceTree = "<group>"; };
 		93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapContentsInDummySpanCommand.h; sourceTree = "<group>"; };
 		93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedTimerMac.cpp; sourceTree = "<group>"; };
@@ -2842,7 +2837,6 @@
 		A8C0FB7D089701F800BA5114 /* KCanvasCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasCreator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB7E089701F800BA5114 /* KCanvasFilters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasFilters.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasFilters.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB80089701F800BA5114 /* KCanvasImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasImage.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB81089701F800BA5114 /* KCanvasImage.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasImage.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB82089701F800BA5114 /* RenderPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB83089701F800BA5114 /* RenderPath.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RenderPath.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3960,8 +3954,6 @@
 				93309DCF099E64910056E581 /* visible_units.h */,
 				93309DD0099E64910056E581 /* VisiblePosition.cpp */,
 				93309DD1099E64910056E581 /* VisiblePosition.h */,
-				93309DD2099E64910056E581 /* VisibleRange.cpp */,
-				93309DD3099E64910056E581 /* VisibleRange.h */,
 				93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */,
 				93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */,
 			);
@@ -4676,7 +4668,6 @@
 				A8C0FB7D089701F800BA5114 /* KCanvasCreator.h */,
 				A8C0FB7E089701F800BA5114 /* KCanvasFilters.cpp */,
 				A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */,
-				A8C0FB80089701F800BA5114 /* KCanvasImage.cpp */,
 				A8C0FB81089701F800BA5114 /* KCanvasImage.h */,
 				A8C0FB84089701F800BA5114 /* KCanvasMatrix.cpp */,
 				A8C0FB85089701F800BA5114 /* KCanvasMatrix.h */,
@@ -5876,7 +5867,6 @@
 				93309E1C099E64920056E581 /* TextIterator.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
-				93309E22099E64920056E581 /* VisibleRange.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
@@ -6440,7 +6430,6 @@
 				A88AD3B90952486E001DD196 /* KCanvasContainer.cpp in Sources */,
 				A88AD3BB0952486E001DD196 /* KCanvasCreator.cpp in Sources */,
 				A88AD3BD0952486E001DD196 /* KCanvasFilters.cpp in Sources */,
-				A88AD3BF0952486E001DD196 /* KCanvasImage.cpp in Sources */,
 				A88AD3C10952486E001DD196 /* RenderPath.cpp in Sources */,
 				A88AD3C30952486E001DD196 /* KCanvasMatrix.cpp in Sources */,
 				A88AD3C60952486E001DD196 /* KCanvasPath.cpp in Sources */,
@@ -6741,7 +6730,6 @@
 				93309E1B099E64920056E581 /* TextIterator.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
-				93309E21099E64920056E581 /* VisibleRange.cpp in Sources */,
 				93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */,
 				93309EA2099EB78C0056E581 /* SharedTimerMac.cpp in Sources */,
 				93309EA4099EB78C0056E581 /* Timer.cpp in Sources */,
