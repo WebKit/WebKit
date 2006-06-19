@@ -1,3 +1,25 @@
+2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8972
+        REGRESSION: invalid UTF-8 sequences are not displayed
+
+        Test: LayoutTests/fast/encoding/invalid-UTF-8.html
+
+        * dom/xml_tokenizer.cpp:
+        (WebCore::getXHTMLEntity): Properly null-terminate the result. This didn't matter
+        before, because the garbage at the end was guaranteed to be invalid UTF-8, and was 
+        omitted in appendOmittingUnwanted();
+
+        * platform/StreamingTextDecoder.cpp:
+        (WebCore::StreamingTextDecoder::appendOmittingBOM): Only omit BOM characters.
+        Renamed back from appendOmittingUnwanted();
+
+        (WebCore::StreamingTextDecoder::convertUsingICU):
+        * platform/StreamingTextDecoder.h:
+        Update for the above function renaming.
+
 2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by darin.

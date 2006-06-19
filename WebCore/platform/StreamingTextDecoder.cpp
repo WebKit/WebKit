@@ -42,7 +42,6 @@ StreamingTextDecoder::StreamingTextDecoder(const TextEncoding& encoding)
 {
 }
 
-static const UChar replacementCharacter = 0xFFFD;
 static const UChar BOM = 0xFEFF;
 static const size_t ConversionBufferSize = 16384;
     
@@ -179,22 +178,15 @@ void StreamingTextDecoder::createICUConverter()
     }
 }
 
-// We strip replacement characters because the ICU converter for UTF-8 converts
-// invalid sequences into replacement characters, but other browsers discard them.
 // We strip BOM characters because they can show up both at the start of content
 // and inside content, and we never want them to end up in the decoded text.
-static inline bool unwanted(UChar c)
-{
-    return c == replacementCharacter || c == BOM;
-}
-
-void StreamingTextDecoder::appendOmittingUnwanted(DeprecatedString& s, const UChar* characters, int byteCount)
+void StreamingTextDecoder::appendOmittingBOM(DeprecatedString& s, const UChar* characters, int byteCount)
 {
     ASSERT(byteCount % sizeof(UChar) == 0);
     int start = 0;
     int characterCount = byteCount / sizeof(UChar);
     for (int i = 0; i != characterCount; ++i) {
-        if (unwanted(characters[i])) {
+        if (BOM == characters[i]) {
             if (start != i)
                 s.append(reinterpret_cast<const QChar*>(&characters[start]), i - start);
             start = i + 1;
@@ -228,7 +220,7 @@ DeprecatedString StreamingTextDecoder::convertUsingICU(const unsigned char* chs,
         err = U_ZERO_ERROR;
         ucnv_toUnicode(m_converterICU, &target, targetLimit, &source, sourceLimit, offsets, flush, &err);
         int count = target - buffer;
-        appendOmittingUnwanted(result, reinterpret_cast<const UChar*>(buffer), count * sizeof(UChar));
+        appendOmittingBOM(result, reinterpret_cast<const UChar*>(buffer), count * sizeof(UChar));
     } while (err == U_BUFFER_OVERFLOW_ERROR);
 
     if (U_FAILURE(err)) {

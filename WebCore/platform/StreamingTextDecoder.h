@@ -51,7 +51,7 @@ namespace WebCore {
 
         void createICUConverter();
 
-        static void appendOmittingUnwanted(DeprecatedString&, const UChar* characters, int byteCount);
+        static void appendOmittingBOM(DeprecatedString&, const UChar* characters, int byteCount);
 
         TextEncoding m_encoding;
         bool m_littleEndian;
