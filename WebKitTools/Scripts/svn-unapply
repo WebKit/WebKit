@@ -47,9 +47,23 @@
 #   Notice a patch that's being unapplied at the "wrong level" and make it work anyway.
 #   Do a dry run on the whole patch and don't do anything if part of the patch is
 #       going to fail (probably too strict unless we do the ChangeLog thing).
+#   Remove new directories that were previously added by svn-apply.
 
 use strict;
+use warnings;
+
 use Cwd;
+use File::Basename;
+use Getopt::Long;
+
+sub patch($);
+sub unapplyPatch($$;$);
+
+my $showHelp = 0;
+if (!GetOptions("help!" => \$showHelp) || $showHelp) {
+    print STDERR basename($0) . " [-h|--help] patch1 [patch2 ...]\n";
+    exit 1;
+}
 
 my $startDir = getcwd();
 
@@ -77,23 +91,25 @@ while (<>) {
 }
 patch($patch);
 
-sub unapplyPatch
+exit 0;
+
+sub unapplyPatch($$;$)
 {
-    my ($patch, $fullpath, $options) = @_;
+    my ($patch, $fullPath, $options) = @_;
     $options = [] if (! $options);
     my $command = "patch " . join(" ", "-p0", "-R", @{$options});
-    open PATCH, "| $command" or die "Failed to patch $fullpath\n";
+    open PATCH, "| $command" or die "Failed to patch $fullPath\n";
     print PATCH $patch;
     close PATCH;
 }
 
-sub patch
+sub patch($)
 {
     my ($patch) = @_;
     return if !$patch;
 
-    $patch =~ m|^Index: ((([^/\n]*/)*)([^/\n]+))| or die "Failed to find Index: in \"$patch\"\n";
-    my ($fullpath, $prefix, $base) = ($1, $2, $4);
+    $patch =~ m|^Index: ([^\n]+)| or die "Failed to find Index: in \"$patch\"\n";
+    my $fullPath = $1;
 
     my $deletion = 0;
     my $addition = 0;
@@ -105,27 +121,20 @@ sub patch
 
     if (!$addition && !$deletion && !$isBinary) {
         # Standard patch, patch tool can handle this.
-        if ($base eq "ChangeLog") {
-            my $changeLogDotOrigExisted = -f "${fullpath}.orig";
-            unapplyPatch($patch, $fullpath, ["--fuzz=3"]);
-            unlink("${fullpath}.orig") if (! $changeLogDotOrigExisted);
+        if (basename($fullPath) eq "ChangeLog") {
+            my $changeLogDotOrigExisted = -f "${fullPath}.orig";
+            unapplyPatch($patch, $fullPath, ["--fuzz=3"]);
+            unlink("${fullPath}.orig") if (! $changeLogDotOrigExisted);
         } else {
-            unapplyPatch($patch, $fullpath);
+            unapplyPatch($patch, $fullPath);
         }
     } else {
         # Either a deletion, an addition or a binary change.
 
-        # Change directory down into the directory in question.
-        if ($prefix) {
-            chdir $prefix or die "Failed to chdir to $prefix";
-        }
-
         # Reverse change by deleting current copy if it exists first
-        unlink($base) if (-e $base);
+        unlink($fullPath) if (-e $fullPath);
 
         # Then run svn revert
-        system "svn", "revert", "$base";
-
-        chdir $startDir or die;
+        system "svn", "revert", $fullPath;
     }
 }

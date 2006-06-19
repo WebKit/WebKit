@@ -50,12 +50,25 @@
 #       going to fail (probably too strict unless we do the ChangeLog thing).
 
 use strict;
+use warnings;
+
 use Cwd;
+use File::Basename;
+use File::Spec;
 use Getopt::Long;
 use MIME::Base64;
 
+sub addDirectoriesIfNeeded($);
+sub applyPatch($$;$);
+sub handleBinaryChange($$);
+sub patch($);
+
 my $merge = 0;
-GetOptions("merge" => \$merge); 
+my $showHelp = 0;
+if (!GetOptions("merge!" => \$merge, "help!" => \$showHelp) || $showHelp) {
+    print STDERR basename($0) . " [-h|--help] [-m|--merge] patch1 [patch2 ...]\n";
+    exit 1;
+}
 
 my $startDir = getcwd();
 
@@ -94,13 +107,7 @@ push @patches, $patch if $patch;
 if ($merge) {
     for my $file (sort keys %versions) {
         print "Getting version $versions{$file} of $file\n";
-        $file =~ m|^(([^/\n]*/)*)([^/\n]+)$| or die;
-        my ($prefix, $base) = ($1, $3);
-        if ($prefix) {
-            chdir $prefix or die;
-        }
-        system "svn update -r $versions{$file} $base";
-        chdir $startDir;
+        system "svn", "update", "-r", $versions{$file}, $file;
     }
 }
 
@@ -108,23 +115,25 @@ for $patch (@patches) {
     patch($patch);
 }
 
-sub applyPatch
+exit 0;
+
+sub applyPatch($$;$)
 {
-    my ($patch, $fullpath, $options) = @_;
+    my ($patch, $fullPath, $options) = @_;
     $options = [] if (! $options);
     my $command = "patch " . join(" ", "-p0", @{$options});
-    open PATCH, "| $command" or die "Failed to patch $fullpath\n";
+    open PATCH, "| $command" or die "Failed to patch $fullPath\n";
     print PATCH $patch;
     close PATCH;
 }
 
-sub patch
+sub patch($)
 {
     my ($patch) = @_;
     return if !$patch;
 
-    $patch =~ m|^Index: ((([^/\n]*/)*)([^/\n]+))| or die "Failed to find Index: in \"$patch\"\n";
-    my ($fullpath, $prefix, $base) = ($1, $2, $4);
+    $patch =~ m|^Index: ([^\n]+)| or die "Failed to find Index: in \"$patch\"\n";
+    my $fullPath = $1;
 
     my $deletion = 0;
     my $addition = 0;
@@ -136,25 +145,24 @@ sub patch
 
     if (!$addition && !$deletion && !$isBinary) {
         # Standard patch, patch tool can handle this.
-        if ($base eq "ChangeLog") {
-            my $changeLogDotOrigExisted = -f "${fullpath}.orig";
-            applyPatch($patch, $fullpath, ["--fuzz=3"]);
-            unlink("${fullpath}.orig") if (! $changeLogDotOrigExisted);
+        if (basename($fullPath) eq "ChangeLog") {
+            my $changeLogDotOrigExisted = -f "${fullPath}.orig";
+            applyPatch($patch, $fullPath, ["--fuzz=3"]);
+            unlink("${fullPath}.orig") if (! $changeLogDotOrigExisted);
         } else {
-            applyPatch($patch, $fullpath);
+            applyPatch($patch, $fullPath);
         }
     } else {
         # Either a deletion, an addition or a binary change.
 
-        # Change directory down into the directory in question.
-        chdirAddingDirectoriesIfNeeded($prefix);
+        addDirectoriesIfNeeded(dirname($fullPath));
 
         if ($isBinary) {
             # Binary change
-            handleBinaryChange($base, $patch);
+            handleBinaryChange($fullPath, $patch);
         } elsif ($deletion) {
             # Deletion.
-            system "svn", "rm", $base;
+            system "svn", "rm", $fullPath;
         } else {
             # Addition.
             my $contents = $patch;
@@ -166,49 +174,48 @@ sub patch
                 $contents =~ s/^\+//;
                 $contents =~ s/\n\+/\n/g;
             }
-            open FILE, ">", $base or die;
+            open FILE, ">", $fullPath or die;
             print FILE $contents;
             close FILE;
-            system "svn", "add", "$base";
+            system "svn", "add", $fullPath;
         }
-
-        chdir $startDir if $prefix;
     }
 }
 
-sub handleBinaryChange
+sub handleBinaryChange($$)
 {
-    my ($base, $contents) = @_;
+    my ($fullPath, $contents) = @_;
     if ($contents =~ m#((\n[A-Za-z0-9+/]{76})+\n[A-Za-z0-9+/=]{4,76}\n)\n#) {
         # Addition or Modification
-        open FILE, ">", $base or die;
+        open FILE, ">", $fullPath or die;
         print FILE decode_base64($1);
         close FILE;
-        open SVN, "svn stat '$base' |" or die;
+        open SVN, "svn stat '$fullPath' |" or die;
         my $svnStatus = <SVN>;
         close SVN;
         if (substr($svnStatus, 0 ,1) eq "?") {
             # Addition
-            system "svn", "add", "$base";
+            system "svn", "add", $fullPath;
         } else {
             # Modification
             print $svnStatus;
         }
     } else {
         # Deletion
-        system "svn", "rm", "$base";
+        system "svn", "rm", $fullPath;
     }
 }
 
-sub chdirAddingDirectoriesIfNeeded
+sub addDirectoriesIfNeeded($)
 {
-    my $path = shift;
-    my @dirs = split('/', $path);
+    my ($path) = @_;
+    my @dirs = File::Spec->splitdir($path);
     while (my $dir = shift @dirs) {
-        if (!-x $dir) {
+        if (! -x $dir) {
             mkdir $dir or die "Failed create required directory: $dir for path: $path\n";
-            system "svn", "add", "$dir";
+            system "svn", "add", $dir;
         }
         chdir $dir or die "Failed to chdir to $dir\n";
     }
+    chdir $startDir or die "Failed to chdir to $startDir\n";
 }

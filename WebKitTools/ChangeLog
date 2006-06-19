@@ -1,5 +1,15 @@
 2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
 
+        Reviewed by darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9485
+        Teach svn-apply and svn-unapply to use full path names
+
+        * Scripts/svn-apply: Changed to use full path names.  Cleaned up code.
+        * Scripts/svn-unapply: Ditto.
+
+2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
+
         Reviewed by ggaren.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=9150
