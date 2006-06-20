@@ -47,9 +47,19 @@ namespace WebCore
         virtual void imageChanged(CachedImage*);
         void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio *aspectRatio);
         virtual void paint(PaintInfo& paintInfo, int parentX, int parentY);
+        virtual void layout();
+
+        bool requiresLayer();
+
+        virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);
+
+        virtual bool RenderSVGImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction);
+
     private:
         void translateForAttributes();
+        QMatrix translationForAttributes();
         QMatrix m_transform;
+        IntRect m_absoluteBounds;
     };
 }
 

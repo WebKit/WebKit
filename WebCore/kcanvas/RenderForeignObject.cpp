@@ -56,20 +56,66 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
         context = paintInfo.p->createRenderingDeviceContext();
         device->pushContext(context);
         shouldPopContext = true;
-    } else
-        paintInfo.p->save();
+    }
+
+    paintInfo.p->save();
 
     context->concatCTM(QMatrix().translate(parentX, parentY));
     context->concatCTM(localTransform());
     context->concatCTM(translationForAttributes());
-    
-    RenderBlock::paint(paintInfo, 0, 0);
 
+    paintInfo.p->addClip(getClipRect(parentX, parentY));
+
+    float opacity = style()->opacity();
+    if (opacity < 1.0f)
+        paintInfo.p->beginTransparencyLayer(opacity);
+
+    PaintInfo pi(paintInfo);
+    pi.r = absoluteTransform().invert().mapRect(paintInfo.r);
+    RenderBlock::paint(pi, 0, 0);
+
+    if (opacity < 1.0f)
+        paintInfo.p->endTransparencyLayer();
+    
     if (shouldPopContext) {
         device->popContext();
         delete context;
-    } else
-        paintInfo.p->restore();
+    }
+
+    paintInfo.p->restore();
+}
+
+void RenderForeignObject::computeAbsoluteRepaintRect(IntRect& r, bool f)
+{
+    QMatrix transform = translationForAttributes() * localTransform();
+    r = transform.mapRect(r);
+    
+    RenderBlock::computeAbsoluteRepaintRect(r, f);
+}
+
+bool RenderForeignObject::requiresLayer()
+{
+    return false;
+}
+
+void RenderForeignObject::layout()
+{
+    KHTMLAssert(needsLayout());
+    KHTMLAssert(minMaxKnown());
+
+    IntRect oldBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint)
+        oldBounds = m_absoluteBounds;
+
+    RenderBlock::layout();
+
+    m_absoluteBounds = getAbsoluteRepaintRect();
+
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+    
+    setNeedsLayout(false);
 }
 
 bool RenderForeignObject::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction hitTestAction)

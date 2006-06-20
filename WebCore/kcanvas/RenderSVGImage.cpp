@@ -158,8 +158,14 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
         filter->prepareFilter(boundingBox);
     
     OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
-    PaintInfo pi = paintInfo;
+
+    float opacity = style()->opacity();
+    if (opacity < 1.0f)
+        c->beginTransparencyLayer(opacity);
+
+    PaintInfo pi(paintInfo);
     pi.p = c.get();
+    pi.r = absoluteTransform().invert().mapRect(paintInfo.r);
 
     int x = 0, y = 0;
     if (!shouldPaint(pi, x, y))
@@ -179,6 +185,9 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->applyFilter(boundingBox);
     
+    if (opacity < 1.0f)
+        c->endTransparencyLayer();
+
     // restore drawing state
     if (!shouldPopContext)
         paintInfo.p->restore();
@@ -188,9 +197,58 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     }
 }
 
+void RenderSVGImage::computeAbsoluteRepaintRect(IntRect& r, bool f)
+{
+    QMatrix transform = translationForAttributes() * localTransform();
+    r = transform.mapRect(r);
+    
+    RenderImage::computeAbsoluteRepaintRect(r, f);
+}
+
+bool RenderSVGImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+{
+    QMatrix totalTransform = absoluteTransform();
+    totalTransform *= translationForAttributes();
+    double localX, localY;
+    totalTransform.invert().map(_x + _tx, _y + _ty, &localX, &localY);
+    return RenderImage::nodeAtPoint(info, (int)localX, (int)localY, 0, 0, hitTestAction);
+}
+
+bool RenderSVGImage::requiresLayer()
+{
+    return false;
+}
+
+void RenderSVGImage::layout()
+{
+    KHTMLAssert(needsLayout());
+    KHTMLAssert(minMaxKnown());
+
+    IntRect oldBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint)
+        oldBounds = m_absoluteBounds;
+
+    // minimum height
+    m_height = cachedImage() && cachedImage() ? intrinsicHeight() : 0;
+
+    calcWidth();
+    calcHeight();
+
+    m_absoluteBounds = getAbsoluteRepaintRect();
+
+    if (checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+    
+    setNeedsLayout(false);
+}
+
 FloatRect RenderSVGImage::relativeBBox(bool includeStroke) const
 {
-    return FloatRect(0, 0, width(), height());
+    SVGImageElement *image = static_cast<SVGImageElement *>(node());
+    float xOffset = image->x()->baseVal() ? image->x()->baseVal()->value() : 0;
+    float yOffset = image->y()->baseVal() ? image->y()->baseVal()->value() : 0;
+    return FloatRect(xOffset, yOffset, width(), height());
 }
 
 void RenderSVGImage::imageChanged(CachedImage* image)
@@ -220,13 +278,19 @@ void RenderSVGImage::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx,
     rects.append(getAbsoluteRepaintRect());
 }
 
-void RenderSVGImage::translateForAttributes()
+
+QMatrix RenderSVGImage::translationForAttributes()
 {
-    KRenderingDeviceContext *context = renderingDevice()->currentContext();
     SVGImageElement *image = static_cast<SVGImageElement *>(node());
     float xOffset = image->x()->baseVal() ? image->x()->baseVal()->value() : 0;
     float yOffset = image->y()->baseVal() ? image->y()->baseVal()->value() : 0;
-    context->concatCTM(QMatrix().translate(xOffset, yOffset));
+    return QMatrix().translate(xOffset, yOffset);
+}
+
+void RenderSVGImage::translateForAttributes()
+{
+    KRenderingDeviceContext *context = renderingDevice()->currentContext();
+    context->concatCTM(translationForAttributes());
 }
 
 }

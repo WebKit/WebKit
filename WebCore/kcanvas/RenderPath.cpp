@@ -39,8 +39,10 @@ class RenderPath::Private {
 public:
     RefPtr<KCanvasPath> path;
 
-    FloatRect fillBBox, strokeBbox;
+    FloatRect fillBBox;
+    FloatRect strokeBbox;
     QMatrix matrix;
+    IntRect absoluteBounds;
 };        
 
 // RenderPath
@@ -143,10 +145,21 @@ void RenderPath::layout()
     // pretend that one of the attributes of the element has changed on the DOM
     // to force the DOM object to update this render object with new aboslute position values.
 
+    IntRect oldBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (selfNeedsLayout() && checkForRepaint)
+        oldBounds = d->absoluteBounds;
+
     static_cast<SVGStyledElement*>(element())->notifyAttributeChange();
-    IntRect layoutRect = getAbsoluteRepaintRect();
-    setWidth(layoutRect.width());
-    setHeight(layoutRect.height());
+
+    d->absoluteBounds = getAbsoluteRepaintRect();
+
+    setWidth(d->absoluteBounds.width());
+    setHeight(d->absoluteBounds.height());
+
+    if (selfNeedsLayout() && checkForRepaint)
+        repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+        
     setNeedsLayout(false);
 }
 
@@ -230,8 +243,7 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
         strokePaintServer->draw(context, this, APPLY_TO_STROKE);
     }
 
-    OwnPtr<GraphicsContext> c(context->createGraphicsContext());
-    drawMarkersIfNeeded(c.get(), paintInfo.r, path());
+    drawMarkersIfNeeded(paintInfo.p, paintInfo.r, path());
 
     // actually apply the filter
     if (filter)

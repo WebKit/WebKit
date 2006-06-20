@@ -36,20 +36,25 @@ class RenderSVGText : public RenderBlock
 public:
     RenderSVGText(SVGTextElement *node);
 
-    const char *renderName() const { return "RenderSVGText"; }
-    void paint(PaintInfo&, int parentX, int parentY);
+    virtual const char *renderName() const { return "RenderSVGText"; }
+    virtual void paint(PaintInfo&, int parentX, int parentY);
     
     virtual QMatrix localTransform() const { return m_transform; }
     virtual void setLocalTransform(const QMatrix& transform) { m_transform = transform; }
     
-    bool nodeAtPoint(NodeInfo&, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction);
+    virtual bool nodeAtPoint(NodeInfo&, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction);
 
     virtual void absoluteRects(DeprecatedValueList<IntRect>& rects, int tx, int ty);
 
+    virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);
+    virtual bool requiresLayer();
+    virtual void layout();
+    
  private:
     QMatrix translationTopToBaseline();
     QMatrix translationForAttributes();
     QMatrix m_transform;
+    IntRect m_absoluteBounds;
 };
 
 }

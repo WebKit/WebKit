@@ -42,7 +42,7 @@ svg {
     height: 100%;
 }
 
-svg, symbol, marker, pattern, foreignObject {
+svg, symbol, marker, pattern {
     overflow: hidden
 }
 

@@ -70,6 +70,9 @@ public:
     virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
     
     virtual IntRect getAbsoluteRepaintRect();
+
+    virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);
+
     virtual QMatrix absoluteTransform() const;
 
     bool fillContains(const FloatPoint&) const;

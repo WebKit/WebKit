@@ -91,9 +91,14 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->prepareFilter(boundingBox);
         
+    float opacity = style()->opacity();
+    if (opacity < 1.0f)
+        paintInfo.p->beginTransparencyLayer(opacity);
+
     OwnPtr<GraphicsContext> c(device->currentContext()->createGraphicsContext());
     PaintInfo pi = paintInfo;
     pi.p = c.get();
+    pi.r = (translationTopToBaseline() * translationForAttributes() * absoluteTransform()).invert().mapRect(paintInfo.r);
 
     KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
@@ -120,6 +125,9 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->applyFilter(boundingBox);
 
+    if (opacity < 1.0f)
+        paintInfo.p->endTransparencyLayer();
+
     // restore drawing state
     if (!shouldPopContext)
         paintInfo.p->restore();
@@ -127,6 +135,40 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
         device->popContext();
         delete context;
     }
+}
+
+void RenderSVGText::computeAbsoluteRepaintRect(IntRect& r, bool f)
+{
+    QMatrix transform = translationTopToBaseline() * translationForAttributes() * absoluteTransform();
+    r = transform.mapRect(r);
+    
+    RenderContainer::computeAbsoluteRepaintRect(r, f);
+}
+
+bool RenderSVGText::requiresLayer()
+{
+    return false;
+}
+
+void RenderSVGText::layout()
+{
+    KHTMLAssert(needsLayout());
+    KHTMLAssert(minMaxKnown());
+
+    IntRect oldBounds;
+    bool checkForRepaint = checkForRepaintDuringLayout();
+    if (checkForRepaint)
+        oldBounds = m_absoluteBounds;
+
+    RenderBlock::layout();
+
+    m_absoluteBounds = getAbsoluteRepaintRect();
+
+    bool repainted = false;
+    if (checkForRepaint)
+        repainted = repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
+    
+    setNeedsLayout(false);
 }
 
 bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)

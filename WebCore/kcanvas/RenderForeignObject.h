@@ -36,17 +36,22 @@ class RenderForeignObject : public RenderBlock
 public:
     RenderForeignObject(SVGForeignObjectElement *node);
     
-    const char *renderName() const { return "RenderForeignObject"; }
-    void paint(PaintInfo& paintInfo, int parentX, int parentY);
+    virtual const char *renderName() const { return "RenderForeignObject"; }
+    virtual void paint(PaintInfo& paintInfo, int parentX, int parentY);
     
     virtual QMatrix localTransform() const { return m_transform; }
     virtual void setLocalTransform(const QMatrix& transform) { m_transform = transform; }
     
-    bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
+    virtual void computeAbsoluteRepaintRect(IntRect& r, bool f);
+    virtual bool requiresLayer();
+    virtual void layout();
+
+    virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
 
  private:
     QMatrix translationForAttributes();
     QMatrix m_transform;
+    IntRect m_absoluteBounds;
 };
 
 }

@@ -636,19 +636,27 @@ void GraphicsContext::translate(const FloatSize& size)
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
 {
-    CGRect deviceRect = CGContextConvertRectToDeviceSpace(platformContext(), rect);
-    deviceRect.origin.x = roundf(deviceRect.origin.x);
-    deviceRect.origin.y = roundf(deviceRect.origin.y);
-    deviceRect.size.width = roundf(deviceRect.size.width);
-    deviceRect.size.height = roundf(deviceRect.size.height);
+    // It's important to separately transform the two corners, as transforming the whole rect
+    // will grab bounding boxes, and so will enlarge the rect when there is any rotation or skew
+    // in the current transform
+    CGPoint deviceOrigin = CGContextConvertPointToDeviceSpace(platformContext(), rect.location());
+    CGPoint deviceLowerRight = CGContextConvertPointToDeviceSpace(platformContext(), rect.location() + rect.size());
+
+    deviceOrigin.x = roundf(deviceOrigin.x);
+    deviceOrigin.y = roundf(deviceOrigin.y);
+    deviceLowerRight.x = roundf(deviceLowerRight.x);
+    deviceLowerRight.y = roundf(deviceLowerRight.y);
     
     // Don't let the height or width round to 0 unless either was originally 0
-    if (deviceRect.size.height == 0 && rect.height() != 0)
-        deviceRect.size.height = 1;
-    if (deviceRect.size.width == 0 && rect.width() != 0)
-        deviceRect.size.width = 1;
+    if (deviceOrigin.y == deviceLowerRight.y && rect.height() != 0)
+        deviceLowerRight.y += 1;
+    if (deviceOrigin.x == deviceLowerRight.x && rect.width() != 0)
+        deviceLowerRight.x += 1;
     
-    return CGContextConvertRectToUserSpace(platformContext(), deviceRect);
+    FloatPoint roundedOrigin = CGContextConvertPointToUserSpace(platformContext(), deviceOrigin);
+    FloatPoint roundedLowerRight = CGContextConvertPointToUserSpace(platformContext(), deviceLowerRight);
+
+    return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
 void GraphicsContext::drawLineForText(const IntPoint& point, int yOffset, int width, bool printing)

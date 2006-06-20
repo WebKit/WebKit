@@ -1,3 +1,73 @@
+2006-06-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=9488
+        "Animated GIFs do not respect transforms in SVG"
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6946
+        "SVG shows invalidation issues in WebKit"
+        
+        http://www.treebuilder.de/default.asp?file=441875.xml
+        "Invalidation issues with "SVG 3d" demo"
+        
+        http://code.google.com/webstats/2005-12/pages.html
+        "SVG text doesn't repaint correctly"
+
+        * kcanvas/KCanvasContainer.cpp:
+        (WebCore::KCanvasContainer::computeAbsoluteRepaintRect): Override base class, and apply
+        appropriate transforms, so damage rects in transformed SVG content get propagated up properly.
+        (WebCore::KCanvasContainer::getAbsoluteRepaintRect): note a FIXME; this method
+        seems wrong.
+        * kcanvas/KCanvasContainer.h: Prototype new method.
+
+        * css/svg.css: Don't apply overflow:hidden to foreignObject, since that makes it a RenderLayer
+        so it paints twice.
+        * kcanvas/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::paint): Transform the damage rect before passing it down to HTML content,
+        so everything paints that is supposed to. Also handle opacity here since we won't get layers.
+        (WebCore::RenderForeignObject::computeAbsoluteRepaintRect): Override base class, and apply
+        appropriate transforms, so damage rects in HTML embedded in SVG get propagated up properly.
+        (WebCore::RenderForeignObject::requiresLayer): Never use a RenderLayer.
+        (WebCore::RenderForeignObject::layout): Make sure to dirty our previous bounds when layout
+        changes, as by transform.
+        * kcanvas/RenderForeignObject.h:
+
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint): Transform the damage rect when painting. Also handle opacity 
+        here since we won't get layers.
+        (WebCore::RenderForeignObject::computeAbsoluteRepaintRect): Override base class, and apply
+        appropriate transforms, so damage rects in SVG images  get propagated up properly.
+        (WebCore::RenderSVGImage::translationForAttributes): New helper method, factored out of below.
+        (WebCore::RenderSVGImage::translateForAttributes): Use above.
+        (WebCore::RenderSVGImage::requiresLayer): Never use a RenderLayer.
+        (WebCore::RenderSVGImage::layout): Make sure to properly dirty the old bounds, accounting
+        for transforms.
+        (WebCore::RenderSVGImage::relativeBBox): Correct bbox computation.
+        * kcanvas/RenderSVGImage.h:
+
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint): Transform incoming damage rect. Handle opacity here since we
+        won't get a layer.
+        (WebCore::RenderSVGText::computeAbsoluteRepaintRect): Apply transforms.
+        (WebCore::RenderSVGText::requiresLayer): Never use a RenderLayer.
+        (WebCore::RenderSVGText::layout): Make sure to dirty the old bounds.
+
+        * platform/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::roundToDevicePixels): Instead of transforming rect to device space
+        and back to user space, do this for the origin and lower right corner of the rect. Otherwise the
+        rect will get inflated if user space is rotated or skewed.
+
+        * kcanvas/RenderPath.cpp:
+        (WebCore::RenderPath::layout): Make sure to dirty the old bounds.
+        (WebCore::RenderPath::paint): Hhandle opacity here.
+        
+        Bonus fix:
+        
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtPoint): Fix hit testing. Wasn't applying the x/y
+        attribute transform.
+
 2006-06-19  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.
