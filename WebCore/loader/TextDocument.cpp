@@ -32,27 +32,85 @@
 #include "Text.h"
 #include "xml_tokenizer.h"
 
+using namespace std;
+
 namespace WebCore {
 
 using namespace HTMLNames;
     
 class TextTokenizer : public Tokenizer {
 public:
-    TextTokenizer(Document* doc) : m_doc(doc), m_preElement(0) { }
+    TextTokenizer(Document* doc);
 
     virtual bool write(const SegmentedString&, bool appendData);
     virtual void finish();
     virtual bool isWaitingForScripts() const;
     
+    inline void checkBuffer(int len = 10)
+    {
+        if ((m_dest - m_buffer) > m_size - len) {
+            // Enlarge buffer
+            int newSize = max(m_size * 2, m_size + len);
+            int oldOffset = m_dest - m_buffer;
+            m_buffer = static_cast<UChar*>(fastRealloc(m_buffer, newSize * sizeof(UChar)));
+            m_dest = m_buffer + oldOffset;
+            m_size = newSize;
+        }
+    }
+        
 private:
     Document* m_doc;
     Element* m_preElement;
+
+    bool m_skipLF;
+    
+    int m_size;
+    UChar* m_buffer;
+    UChar* m_dest;
 };
+
+TextTokenizer::TextTokenizer(Document* doc)
+    : m_doc(doc)
+    , m_preElement(0)
+    , m_skipLF(false)
+{    
+    // Allocate buffer
+    m_size = 254;
+    m_buffer = static_cast<UChar*>(fastMalloc(sizeof(UChar) * m_size));
+    m_dest = m_buffer;
+}    
 
 bool TextTokenizer::write(const SegmentedString& s, bool appendData)
 {
     ExceptionCode ec;
+
+    m_dest = m_buffer;
     
+    SegmentedString str = s;
+    while (!str.isEmpty()) {
+        UChar c = *str;
+        
+        if (c == '\r') {
+            *m_dest++ = '\n';
+            
+            // possibly skip an LF in the case of an CRLF sequence
+            m_skipLF = true;
+        } else if (c == '\n') {
+            if (!m_skipLF)
+                *m_dest++ = c;
+            else
+                m_skipLF = false;
+        } else {
+            *m_dest++ = c;
+            m_skipLF = false;
+        }
+        
+        ++str;
+        
+        // Maybe enlarge the buffer
+        checkBuffer();
+    }
+
     if (!m_preElement) {
         RefPtr<Element> rootElement = m_doc->createElementNS(xhtmlNamespaceURI, "html", ec);
         m_doc->appendChild(rootElement, ec);
@@ -66,7 +124,9 @@ bool TextTokenizer::write(const SegmentedString& s, bool appendData)
         m_preElement = preElement.get();
     } 
     
-    RefPtr<Text> text = m_doc->createTextNode(s.toString());
+    String string = String(m_buffer, m_dest - m_buffer);
+    
+    RefPtr<Text> text = m_doc->createTextNode(string);
     m_preElement->appendChild(text, ec);
 
     return false;
@@ -75,7 +135,8 @@ bool TextTokenizer::write(const SegmentedString& s, bool appendData)
 void TextTokenizer::finish()
 {
     m_preElement = 0;
-    
+    fastFree(m_buffer);
+        
     m_doc->finishedParsing();
 }
 

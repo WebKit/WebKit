@@ -1,3 +1,17 @@
+2006-06-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4592244> REGRESSION (417.9.3 - 420+): (some?) plain text files have all lines concatenated into one line
+
+        * fast/text/plain-text-line-breaks-expected.checksum: Added.
+        * fast/text/plain-text-line-breaks-expected.png: Added.
+        * fast/text/plain-text-line-breaks-expected.txt: Added.
+        * fast/text/plain-text-line-breaks.html: Added.
+        * fast/text/resources/line-breaks-cr.txt: Added.
+        * fast/text/resources/line-breaks-crlf.txt: Added.
+        * fast/text/resources/line-breaks-lf.txt: Added.
+
 2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

@@ -1,3 +1,17 @@
+2006-06-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John
+
+        <rdar://problem/4592244> REGRESSION (417.9.3 - 420+): (some?) plain text files have all lines concatenated into one line
+        
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::checkBuffer):
+        (WebCore::TextTokenizer::TextTokenizer):
+        (WebCore::TextTokenizer::write):        
+        (WebCore::TextTokenizer::finish):
+        Add a text buffer which is used for translation of CR and CRLF to plain LF, 
+        like the HTML tokenizer does.
+
 2006-06-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
