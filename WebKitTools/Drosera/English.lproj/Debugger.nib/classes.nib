@@ -1,0 +1,12 @@
+{
+    IBClasses = (
+        {
+            CLASS = DebuggerDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {server = id; webView = WebView; }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,122 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer. 
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution. 
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission. 
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+img { padding: 0; margin: 0; }
+body { margin: 0; padding: 0; }
+
+#toolbar { background-image: url(toolbarBackground.png); background-repeat: repeat-x; background-position: bottom; height: 32px; padding: 2px 5px 2px 5px; border-bottom: 1px solid #939393 }
+#toolbar * { vertical-align: middle }
+
+#main { position: absolute; top: 37px; bottom: 0; left: 0; right: 0; }
+#info { position: absolute; top: 0; height: 150px; left: 0; right: 0; }
+#divider { cursor: move; position: absolute; bottom: 0; left: 0; right: 0; background: url(splitterDimple.tif) 50% no-repeat, url(splitterBar.tif) repeat-x; height: 10px }
+#body { position: absolute; top: 150px; left: 0; right: 0; bottom: 0; }
+#sourcesContainer { position: absolute; top: 16px; left: 0; right: 0; bottom: 21px; background-color: white; }
+#sources { width: 100%; height: 100% }
+#header { vertical-align: top; height: 16px; box-sizing: border-box; border-bottom: 1px solid #aaa; background: url(glossyHeader.png) repeat-x; position: absolute; top: 0; left: 0; right: 0; }
+#header > * { vertical-align: top; }
+#footer { height: 21px; box-sizing: border-box; border-top: 1px solid #aaa; background: url(glossyFooterFill.tif) repeat-x; position: absolute; bottom: 0; left: 0; right: 0; }
+
+#files {
+    opacity: 0;
+    position: absolute;
+    top: -2px;
+    left: -3px;
+    right: 0;
+    z-index: 10;
+    margin: 0;
+    padding: 0;
+}
+
+button.popup {
+    background: url(popUpArrows.png) right no-repeat;
+    border: none;
+    height: 15px;
+    font-size: 10px;
+    line-height: 10px;
+    padding: 0 20px 0 5px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+    min-width: 100px;
+    max-width: 350px;
+}
+
+#filesPopupButtonContent {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    height: 100%;
+    line-height: 12px;
+    text-align: left;
+}
+
+.placeholder { color: rgba(0, 0, 0, 0.6) }
+
+button.nav {
+    position: relative;
+    width: 32px;
+    height: 15px;
+    border: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid transparent;
+    border-right: 1px solid #aaa;
+}
+
+button.nav.right {
+    background: url(navRightNormal.png) no-repeat;
+}
+
+button.nav.right:disabled, button.nav.right:disabled:active {
+    border-left: 1px solid transparent;
+    background: url(navRightDisabled.png) no-repeat;
+}
+
+button.nav.right:active {
+    border-left: 1px solid rgba(0, 0, 0, 0.3);
+    background: url(navRightPressed.png) no-repeat;
+}
+
+button.nav.left {
+    background: url(navLeftNormal.png) no-repeat;
+}
+
+button.nav.left:disabled, button.nav.left:disabled:active {
+    border-left: 1px solid transparent;
+    background: url(navLeftDisabled.png) no-repeat;
+}
+
+button.nav.left:active {
+    margin-left: 0;
+    border-left: 1px solid rgba(0, 0, 0, 0.3);
+    background: url(navLeftPressed.png) no-repeat;
+}

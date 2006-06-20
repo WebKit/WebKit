@@ -1,3 +1,89 @@
+2006-06-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+        
+        Adds a JavaScript debugger, called Drosera. Named after
+        a genus of bug eating plants.
+
+        * Drosera/DebuggerApplication.h: Added.
+        * Drosera/DebuggerApplication.m: Added.
+        (-[DebuggerApplication applicationDidFinishLaunching:]):
+        (-[DebuggerApplication serverLoaded:]):
+        (-[DebuggerApplication serverUnloaded:]):
+        (-[DebuggerApplication awakeFromNib]):
+        (-[DebuggerApplication showAttachPanel:]):
+        (-[DebuggerApplication attach:]):
+        (-[DebuggerApplication numberOfRowsInTableView:]):
+        (-[DebuggerApplication tableView:objectValueForTableColumn:row:]):
+        (-[DebuggerApplication tableView:willDisplayCell:forTableColumn:row:]):
+        (-[DebuggerApplication tableViewSelectionDidChange:]):
+        * Drosera/DebuggerDocument.h: Added.
+        * Drosera/DebuggerDocument.m: Added.
+        (+[WebScriptCallFrame isSelectorExcludedFromWebScript:]):
+        (+[WebScriptCallFrame isKeyExcludedFromWebScript:]):
+        (+[DebuggerDocument isSelectorExcludedFromWebScript:]):
+        (+[DebuggerDocument isKeyExcludedFromWebScript:]):
+        (-[DebuggerDocument initWithServerName:]):
+        (-[DebuggerDocument windowWillClose:]):
+        (-[DebuggerDocument dealloc]):
+        (-[DebuggerDocument isPaused]):
+        (-[DebuggerDocument pause]):
+        (-[DebuggerDocument resume]):
+        (-[DebuggerDocument step]):
+        (-[DebuggerDocument windowNibName]):
+        (-[DebuggerDocument windowDidLoad]):
+        (-[DebuggerDocument switchToServerNamed:]):
+        (-[DebuggerDocument applicationTerminating:]):
+        (-[DebuggerDocument serverConnectionDidDie:]):
+        (-[DebuggerDocument webView:windowScriptObjectAvailable:]):
+        (-[DebuggerDocument webView:didFinishLoadForFrame:]):
+        (-[DebuggerDocument webView:didParseSource:fromURL:sourceId:forWebFrame:]):
+        (-[DebuggerDocument webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[DebuggerDocument webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[DebuggerDocument webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        * Drosera/Drosera.pch: Added.
+        * Drosera/Drosera.xcodeproj/project.pbxproj: Added.
+        * Drosera/English.lproj/Debugger.nib/classes.nib: Added.
+        * Drosera/English.lproj/Debugger.nib/info.nib: Added.
+        * Drosera/English.lproj/Debugger.nib/keyedobjects.nib: Added.
+        * Drosera/English.lproj/MainMenu.nib/classes.nib: Added.
+        * Drosera/English.lproj/MainMenu.nib/info.nib: Added.
+        * Drosera/English.lproj/MainMenu.nib/keyedobjects.nib: Added.
+        * Drosera/Images/breakPoint.tif: Added.
+        * Drosera/Images/breakPointDisabled.tif: Added.
+        * Drosera/Images/continue.tif: Added.
+        * Drosera/Images/finishFunction.tif: Added.
+        * Drosera/Images/glossyFooterFill.tif: Added.
+        * Drosera/Images/glossyHeader.png: Added.
+        * Drosera/Images/gradientBackground.png: Added.
+        * Drosera/Images/gutter.png: Added.
+        * Drosera/Images/navLeftDisabled.png: Added.
+        * Drosera/Images/navLeftNormal.png: Added.
+        * Drosera/Images/navLeftPressed.png: Added.
+        * Drosera/Images/navRightDisabled.png: Added.
+        * Drosera/Images/navRightNormal.png: Added.
+        * Drosera/Images/navRightPressed.png: Added.
+        * Drosera/Images/pause.tif: Added.
+        * Drosera/Images/popUpArrows.png: Added.
+        * Drosera/Images/programCounter.tif: Added.
+        * Drosera/Images/programCounterBreakPoint.tif: Added.
+        * Drosera/Images/programCounterBreakPointDisabled.tif: Added.
+        * Drosera/Images/run.tif: Added.
+        * Drosera/Images/splitterBar.tif: Added.
+        * Drosera/Images/splitterDimple.tif: Added.
+        * Drosera/Images/step.tif: Added.
+        * Drosera/Images/stepOver.tif: Added.
+        * Drosera/Images/stop.tif: Added.
+        * Drosera/Images/toolbarBackground.png: Added.
+        * Drosera/Info.plist: Added.
+        * Drosera/debugger.css: Added.
+        * Drosera/debugger.html: Added.
+        * Drosera/debugger.js: Added.
+        * Drosera/main.m: Added.
+        (main):
+        * Drosera/viewer.css: Added.
+        * Drosera/viewer.html: Added.
+
 2006-06-18  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by darin.

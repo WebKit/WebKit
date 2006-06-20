@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {attach = id; showAttachPanel = id; }; 
+            CLASS = DebuggerApplication; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {attachButton = NSButton; attachTable = NSTableView; attachWindow = NSPanel; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
