@@ -30,6 +30,7 @@
 #import "WebScriptDebugServerPrivate.h"
 
 NSString *WebScriptDebugServerProcessNameKey = @"WebScriptDebugServerProcessNameKey";
+NSString *WebScriptDebugServerProcessBundleIdentifierKey = @"WebScriptDebugServerProcessBundleIdentifierKey";
 NSString *WebScriptDebugServerProcessIdentifierKey = @"WebScriptDebugServerProcessIdentifierKey";
 
 NSString *WebScriptDebugServerQueryNotification = @"WebScriptDebugServerQueryNotification";
@@ -59,7 +60,11 @@ static WebScriptDebugServer *sharedServer = nil;
     serverConnection = [[NSConnection alloc] init];
     if ([serverConnection registerName:serverName]) {
         [serverConnection setRootObject:self];
-        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:WebScriptDebugServerDidLoadNotification object:serverName];
+        NSProcessInfo *processInfo = [NSProcessInfo processInfo];
+        NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:[processInfo processName], WebScriptDebugServerProcessNameKey,
+            [[NSBundle mainBundle] bundleIdentifier], WebScriptDebugServerProcessBundleIdentifierKey,
+            [NSNumber numberWithInt:[processInfo processIdentifier]], WebScriptDebugServerProcessIdentifierKey, nil];
+        [[NSDistributedNotificationCenter defaultCenter] postNotificationName:WebScriptDebugServerDidLoadNotification object:serverName userInfo:info];
     } else {
         [serverConnection release];
         serverConnection = nil;
@@ -87,7 +92,9 @@ static WebScriptDebugServer *sharedServer = nil;
 - (void)serverQuery:(NSNotification *)notification
 {
     NSProcessInfo *processInfo = [NSProcessInfo processInfo];
-    NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:[processInfo processName], WebScriptDebugServerProcessNameKey, [NSNumber numberWithInt:[processInfo processIdentifier]], WebScriptDebugServerProcessIdentifierKey, nil];
+    NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:[processInfo processName], WebScriptDebugServerProcessNameKey,
+        [[NSBundle mainBundle] bundleIdentifier], WebScriptDebugServerProcessBundleIdentifierKey,
+        [NSNumber numberWithInt:[processInfo processIdentifier]], WebScriptDebugServerProcessIdentifierKey, nil];
     [[NSDistributedNotificationCenter defaultCenter] postNotificationName:WebScriptDebugServerQueryReplyNotification object:serverName userInfo:info];
     [info release];
 }
@@ -111,18 +118,54 @@ static WebScriptDebugServer *sharedServer = nil;
 
 - (oneway void)addListener:(id<WebScriptDebugListener>)listener
 {
-    if (![listener conformsToProtocol:@protocol(WebScriptDebugListener)])
+    // can't use isKindOfClass: here because that will send over the wire and not check the proxy object
+    if ([listener class] != [NSDistantObject class] || ![listener conformsToProtocol:@protocol(WebScriptDebugListener)])
         return;
     [listeners addObject:listener];
-    if ([listener isKindOfClass:[NSDistantObject class]])
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(listenerConnectionDidDie:) name:NSConnectionDidDieNotification object:[(NSDistantObject *)listener connectionForProxy]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(listenerConnectionDidDie:) name:NSConnectionDidDieNotification object:[(NSDistantObject *)listener connectionForProxy]];
 }
 
 - (oneway void)removeListener:(id<WebScriptDebugListener>)listener
 {
-    if ([listener isKindOfClass:[NSDistantObject class]])
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:[(NSDistantObject *)listener connectionForProxy]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:[(NSDistantObject *)listener connectionForProxy]];
     [listeners removeObject:listener];
+}
+
+- (oneway void)step
+{
+    step = YES;
+    paused = NO;
+}
+
+- (oneway void)pause
+{
+    paused = YES;
+    step = NO;
+}
+
+- (oneway void)resume
+{
+    paused = NO;
+    step = NO;
+}
+
+- (oneway BOOL)isPaused
+{
+    return paused;
+}
+
+- (void)suspendProcessIfPaused
+{
+    // this method will suspend this process when called during the dubugging callbacks
+    // we need to do this to implement breakpoints and pausing of JavaScript
+
+    while (paused)
+        [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantFuture]];
+
+    if (step) {
+        step = NO;
+        paused = YES;
+    }
 }
 
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
@@ -134,14 +177,11 @@ static WebScriptDebugServer *sharedServer = nil;
         return;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
-    id listener = nil;
+    NSDistantObject <WebScriptDebugListener> *listener = nil;
 
     while ((listener = [enumerator nextObject])) {
-        @try {
+        if ([[listener connectionForProxy] isValid])
             [listener webView:webView didParseSource:source fromURL:url sourceId:sid forWebFrame:webFrame];
-        } @catch (NSException *exception) {
-            // FIXME: should the listener be removed?
-        }
     }
 }
 
@@ -154,15 +194,17 @@ static WebScriptDebugServer *sharedServer = nil;
         return;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
-    id listener = nil;
+    NSDistantObject <WebScriptDebugListener> *listener = nil;
 
     while ((listener = [enumerator nextObject])) {
-        @try {
+        if ([[listener connectionForProxy] isValid])
             [listener webView:webView didEnterCallFrame:frame sourceId:sid line:lineno forWebFrame:webFrame];
-        } @catch (NSException *exception) {
-            // FIXME: should the listener be removed?
-        }
     }
+
+    // check for messages from the listeners, so they can pause immediately
+    [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantPast]];
+
+    [self suspendProcessIfPaused];
 }
 
 - (void)webView:(WebView *)webView willExecuteStatement:(WebScriptCallFrame *)frame
@@ -174,15 +216,17 @@ static WebScriptDebugServer *sharedServer = nil;
         return;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
-    id listener = nil;
+    NSDistantObject <WebScriptDebugListener> *listener = nil;
 
     while ((listener = [enumerator nextObject])) {
-        @try {
+        if ([[listener connectionForProxy] isValid])
             [listener webView:webView willExecuteStatement:frame sourceId:sid line:lineno forWebFrame:webFrame];
-        } @catch (NSException *exception) {
-            // FIXME: should the listener be removed?
-        }
     }
+
+    // check for messages from the listeners, so they can pause immediately
+    [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantPast]];
+
+    [self suspendProcessIfPaused];
 }
 
 - (void)webView:(WebView *)webView   willLeaveCallFrame:(WebScriptCallFrame *)frame
@@ -194,15 +238,17 @@ static WebScriptDebugServer *sharedServer = nil;
         return;
 
     NSEnumerator *enumerator = [listeners objectEnumerator];
-    id listener = nil;
+    NSDistantObject <WebScriptDebugListener> *listener = nil;
 
     while ((listener = [enumerator nextObject])) {
-        @try {
+        if ([[listener connectionForProxy] isValid])
             [listener webView:webView willLeaveCallFrame:frame sourceId:sid line:lineno forWebFrame:webFrame];
-        } @catch (NSException *exception) {
-            // FIXME: should the listener be removed?
-        }
     }
+
+    // check for messages from the listeners, so they can pause immediately
+    [[NSRunLoop currentRunLoop] runMode:NSConnectionReplyMode beforeDate:[NSDate distantPast]];
+
+    [self suspendProcessIfPaused];
 }
 
 @end

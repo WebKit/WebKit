@@ -1,3 +1,34 @@
+2006-06-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Removes the @try/@catch from the callbacks to improve performance,
+        simply check if the proxy object's connection is still valid first.
+        Listener objects are now required to be NSDistantObjects.
+
+        Adds pause, resume and step support. The debugger process use to handle this,
+        but it caused problems when there were multiple listeners.
+
+        Sends the bundle identifier in the notification userInfo dictionary along with
+        process name and process ID.
+
+        * DefaultDelegates/WebScriptDebugServer.h:
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer serverQuery:]):
+        (-[WebScriptDebugServer addListener:]):
+        (-[WebScriptDebugServer removeListener:]):
+        (-[WebScriptDebugServer step]):
+        (-[WebScriptDebugServer pause]):
+        (-[WebScriptDebugServer resume]):
+        (-[WebScriptDebugServer isPaused]):
+        (-[WebScriptDebugServer suspendProcessIfPaused]):
+        (-[WebScriptDebugServer webView:didParseSource:fromURL:sourceId:forWebFrame:]):
+        (-[WebScriptDebugServer webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[WebScriptDebugServer webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[WebScriptDebugServer webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        * DefaultDelegates/WebScriptDebugServerPrivate.h:
+        * WebKit.exp:
+
 2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

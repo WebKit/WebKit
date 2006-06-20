@@ -33,6 +33,8 @@
     NSConnection *serverConnection;
     NSString *serverName;
     NSMutableSet *listeners;
+    BOOL paused;
+    BOOL step;
 }
 + (WebScriptDebugServer *)sharedScriptDebugServer;
 

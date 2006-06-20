@@ -27,9 +27,9 @@
  */
 
 #import "WebScriptDebugDelegate.h"
-#import "WebDefaultScriptDebugDelegate.h"
 
 extern NSString *WebScriptDebugServerProcessNameKey;
+extern NSString *WebScriptDebugServerProcessBundleIdentifierKey;
 extern NSString *WebScriptDebugServerProcessIdentifierKey;
 
 extern NSString *WebScriptDebugServerQueryNotification;
@@ -63,4 +63,8 @@ extern NSString *WebScriptDebugServerWillUnloadNotification;
 @protocol WebScriptDebugServer <NSObject>
 - (oneway void)addListener:(id<WebScriptDebugListener>)listener;
 - (oneway void)removeListener:(id<WebScriptDebugListener>)listener;
+- (oneway void)step;
+- (oneway void)pause;
+- (oneway void)resume;
+- (oneway BOOL)isPaused;
 @end
