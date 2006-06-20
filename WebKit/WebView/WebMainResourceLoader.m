@@ -45,6 +45,7 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebViewInternal.h>
 
 // FIXME: More that is in common with WebSubresourceLoader should move up into WebLoader.
 
