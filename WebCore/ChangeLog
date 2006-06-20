@@ -1,3 +1,69 @@
+2006-06-20  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9509
+        Would like a way to pause/resume XML parsing
+
+        * dom/xml_tokenizer.cpp:
+        (WebCore::PendingCallbacks::PendingCallbacks):
+        (WebCore::PendingCallbacks::appendStartElementNSCallback):
+        (WebCore::PendingCallbacks::appendEndElementNSCallback):
+        (WebCore::PendingCallbacks::appendCharactersCallback):
+        (WebCore::PendingCallbacks::appendProcessingInstructionCallback):
+        (WebCore::PendingCallbacks::appendCDATABlockCallback):
+        (WebCore::PendingCallbacks::appendCommentCallback):
+        (WebCore::PendingCallbacks::appendInternalSubsetCallback):
+        (WebCore::PendingCallbacks::appendErrorCallback):
+        (WebCore::PendingCallbacks::callAndRemoveFirstCallback):
+        (WebCore::PendingCallbacks::isEmpty):
+        (WebCore::PendingCallbacks::PendingCallback::~PendingCallback):
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::~PendingStartElementNSCallback):
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::call):
+        (WebCore::PendingCallbacks::PendingEndElementNSCallback::call):
+        (WebCore::PendingCallbacks::PendingCharactersCallback::~PendingCharactersCallback):
+        (WebCore::PendingCallbacks::PendingCharactersCallback::call):
+        (WebCore::PendingCallbacks::PendingProcessingInstructionCallback::~PendingProcessingInstructionCallback):
+        (WebCore::PendingCallbacks::PendingProcessingInstructionCallback::call):
+        (WebCore::PendingCallbacks::PendingCDATABlockCallback::~PendingCDATABlockCallback):
+        (WebCore::PendingCallbacks::PendingCDATABlockCallback::call):
+        (WebCore::PendingCallbacks::PendingCommentCallback::~PendingCommentCallback):
+        (WebCore::PendingCallbacks::PendingCommentCallback::call):
+        (WebCore::PendingCallbacks::PendingInternalSubsetCallback::~PendingInternalSubsetCallback):
+        (WebCore::PendingCallbacks::PendingInternalSubsetCallback::call):
+        (WebCore::PendingCallbacks::):
+        New classes which manage a list of pending SAX callbacks that have not yet
+        been sent to the tokenizer.
+        
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        Initialize new member variables.
+        
+        (WebCore::XMLTokenizer::~XMLTokenizer):
+        Delete PendingCallbacks object.
+        
+        (WebCore::XMLTokenizer::write):
+        If the parser is paused, queue the data to be written.
+        
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::XMLTokenizer::characters):
+        (WebCore::XMLTokenizer::error):
+        (WebCore::XMLTokenizer::processingInstruction):
+        (WebCore::XMLTokenizer::cdataBlock):
+        (WebCore::XMLTokenizer::comment):
+        (WebCore::XMLTokenizer::internalSubset):
+        If the parser has been paused, queue the callbacks instead.
+
+        (WebCore::XMLTokenizer::handleError):
+        New function, called by both ::error and :PendingCallbacks::callAndRemoveFirstCallback
+        
+        (WebCore::XMLTokenizer::finish):
+        (WebCore::XMLTokenizer::pauseParsing):
+         Set m_parserPaused to true.
+        
+        (WebCore::XMLTokenizer::resumeParsing):
+        Call the pending callbacks and then parse the pending source.
+        
 2006-06-20  David Hyatt  <hyatt@apple.com>
 
         Don't send the custom highlighter callback when painting is disabled.

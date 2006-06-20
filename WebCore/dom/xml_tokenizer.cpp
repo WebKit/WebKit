@@ -805,7 +805,7 @@ void XMLTokenizer::finish()
         m_doc->setParsing(true);
         m_parserStopped = true;
     }
-    
+        
     if (m_context) {
         // Tell libxml we're done.
         xmlParseChunk(m_context, 0, 0, 1);
@@ -826,7 +826,7 @@ void XMLTokenizer::finish()
         m_scriptsIt = new DeprecatedPtrListIterator<Element>(m_scripts);
         executeScripts();
     }
-
+    
     setCurrentNode(0);
     m_doc->finishedParsing();
 }
