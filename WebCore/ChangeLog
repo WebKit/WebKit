@@ -1,3 +1,36 @@
+2006-06-20  Adele Peterson  <adele@apple.com>
+
+        RS by Tim Hatcher.
+
+        Renamed RenderSelect to DeprecatedRenderSelect to prepare for new popup menu and list menu implementations.
+       
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::createRenderer):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::notifyOptionSelected):
+        * html/HTMLSelectElement.h:
+        * rendering/DeprecatedRenderSelect.cpp: Added.
+        (WebCore::DeprecatedRenderSelect::DeprecatedRenderSelect):
+        (WebCore::DeprecatedRenderSelect::setWidgetWritingDirection):
+        (WebCore::DeprecatedRenderSelect::setStyle):
+        (WebCore::DeprecatedRenderSelect::updateFromElement):
+        (WebCore::DeprecatedRenderSelect::baselinePosition):
+        (WebCore::DeprecatedRenderSelect::calcMinMaxWidth):
+        (WebCore::DeprecatedRenderSelect::layout):
+        (WebCore::DeprecatedRenderSelect::valueChanged):
+        (WebCore::DeprecatedRenderSelect::selectionChanged):
+        (WebCore::DeprecatedRenderSelect::setOptionsChanged):
+        (WebCore::DeprecatedRenderSelect::createListBox):
+        (WebCore::DeprecatedRenderSelect::updateSelection):
+        * rendering/DeprecatedRenderSelect.h: Added.
+        (WebCore::DeprecatedRenderSelect::renderName):
+        * rendering/RenderSelect.cpp: Removed.
+        * rendering/RenderSelect.h: Removed.
+
 2006-06-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

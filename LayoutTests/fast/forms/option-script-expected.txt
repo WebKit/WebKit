@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
         text run at (0,18) width 109: "TEST FAILED: "
         text run at (109,18) width 316: "If the popup menu says \"document.write('Text')\". "
       RenderBR {BR} at (425,32) size 0x0
-      RenderSelect {SELECT} at (2,38) size 55x18
+      DeprecatedRenderSelect {SELECT} at (2,38) size 55x18
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

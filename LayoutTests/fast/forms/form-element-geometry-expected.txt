@@ -25,7 +25,7 @@ layer at (0,0) size 785x625
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 62x18
-                  RenderSelect {SELECT} at (2,2) size 62x18
+                  DeprecatedRenderSelect {SELECT} at (2,2) size 62x18
               RenderBlock (anonymous) at (1,23) size 66x0
                 RenderInline {FONT} at (0,0) size 0x0
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
@@ -51,7 +51,7 @@ layer at (0,0) size 785x625
                       text run at (0,0) width 36: "button"
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
-                RenderSelect {SELECT} at (2,2) size 62x18
+                DeprecatedRenderSelect {SELECT} at (2,2) size 62x18
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x17 [border: (2px solid #0000FF)]
                 RenderBlock {INPUT} at (2,2) size 12x13
@@ -71,7 +71,7 @@ layer at (0,0) size 785x625
             RenderTableCell {TD} at (62,2) size 68x24 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 66x22 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 62x13
-                  RenderSelect {SELECT} at (2,2) size 62x18
+                  DeprecatedRenderSelect {SELECT} at (2,2) size 62x18
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x17 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x12
@@ -88,7 +88,7 @@ layer at (0,0) size 785x625
                 RenderTextField {INPUT} at (2,2) size 78x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderTableCell {TD} at (88,2) size 40x64 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 38x62 [border: (2px solid #0000FF)]
-                RenderSelect {SELECT} at (2,2) size 34x58
+                DeprecatedRenderSelect {SELECT} at (2,2) size 34x58
             RenderTableCell {TD} at (130,2) size 240x24 [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 238x22 [border: (2px solid #0000FF)]
                 RenderFileButton {INPUT} at (2,2) size 234x18
@@ -108,7 +108,7 @@ layer at (0,0) size 785x625
                 text run at (0,0) width 36: "button"
           RenderText {#text} at (99,0) size 6x28
             text run at (99,0) width 6: " "
-          RenderSelect {SELECT} at (107,9) size 62x18
+          DeprecatedRenderSelect {SELECT} at (107,9) size 62x18
           RenderText {#text} at (171,0) size 6x28
             text run at (171,0) width 6: " "
           RenderBlock {INPUT} at (180,11) size 12x13
@@ -125,7 +125,7 @@ layer at (0,0) size 785x625
               text run at (0,0) width 36: "button"
         RenderText {#text} at (83,1) size 4x18
           text run at (83,1) width 4: " "
-        RenderSelect {SELECT} at (89,2) size 62x18
+        DeprecatedRenderSelect {SELECT} at (89,2) size 62x18
         RenderText {#text} at (153,1) size 4x18
           text run at (153,1) width 4: " "
         RenderBlock {INPUT} at (160,4) size 12x13
@@ -143,7 +143,7 @@ layer at (0,0) size 785x625
                 text run at (0,0) width 36: "button"
           RenderText {#text} at (74,5) size 3x13
             text run at (74,5) width 3: " "
-          RenderSelect {SELECT} at (79,2) size 62x18
+          DeprecatedRenderSelect {SELECT} at (79,2) size 62x18
           RenderText {#text} at (143,5) size 3x13
             text run at (143,5) width 3: " "
           RenderBlock {INPUT} at (149,4) size 12x13
@@ -168,33 +168,33 @@ layer at (0,0) size 785x625
       RenderBlock {DIV} at (0,536) size 769x29
         RenderInline {FONT} at (0,0) size 181x28
           RenderText {#text} at (0,0) size 0x0
-          RenderSelect {SELECT} at (2,9) size 36x18
+          DeprecatedRenderSelect {SELECT} at (2,9) size 36x18
           RenderText {#text} at (40,0) size 6x28
             text run at (40,0) width 6: " "
-          RenderSelect {SELECT} at (48,9) size 36x18
+          DeprecatedRenderSelect {SELECT} at (48,9) size 36x18
           RenderText {#text} at (86,0) size 6x28
             text run at (86,0) width 6: " "
-          RenderSelect {SELECT} at (94,9) size 85x18
+          DeprecatedRenderSelect {SELECT} at (94,9) size 85x18
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,565) size 769x22
-        RenderSelect {SELECT} at (2,2) size 36x18
+        DeprecatedRenderSelect {SELECT} at (2,2) size 36x18
         RenderText {#text} at (40,1) size 4x18
           text run at (40,1) width 4: " "
-        RenderSelect {SELECT} at (46,2) size 36x18
+        DeprecatedRenderSelect {SELECT} at (46,2) size 36x18
         RenderText {#text} at (84,1) size 4x18
           text run at (84,1) width 4: " "
-        RenderSelect {SELECT} at (90,2) size 85x18
+        DeprecatedRenderSelect {SELECT} at (90,2) size 85x18
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,587) size 769x22
         RenderInline {FONT} at (0,0) size 175x13
           RenderText {#text} at (0,0) size 0x0
-          RenderSelect {SELECT} at (2,2) size 36x18
+          DeprecatedRenderSelect {SELECT} at (2,2) size 36x18
           RenderText {#text} at (40,5) size 3x13
             text run at (40,5) width 3: " "
-          RenderSelect {SELECT} at (45,2) size 36x18
+          DeprecatedRenderSelect {SELECT} at (45,2) size 36x18
           RenderText {#text} at (83,5) size 3x13
             text run at (83,5) width 3: " "
-          RenderSelect {SELECT} at (88,2) size 85x18
+          DeprecatedRenderSelect {SELECT} at (88,2) size 85x18
           RenderText {#text} at (0,0) size 0x0
 layer at (16,242) size 72x13
   RenderBlock {DIV} at (3,3) size 72x13

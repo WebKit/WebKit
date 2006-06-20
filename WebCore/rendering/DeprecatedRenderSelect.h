@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef RenderSelect_h
-#define RenderSelect_h
+#ifndef DeprecatedRenderSelect_h
+#define DeprecatedRenderSelect_h
 
 #include "RenderFormElement.h"
 
@@ -34,11 +34,11 @@ namespace WebCore {
     
     class HTMLSelectElement;
 
-    class RenderSelect : public RenderFormElement {
+    class DeprecatedRenderSelect : public RenderFormElement {
     public:
-        RenderSelect(HTMLSelectElement*);
+        DeprecatedRenderSelect(HTMLSelectElement*);
 
-        virtual const char* renderName() const { return "RenderSelect"; }
+        virtual const char* renderName() const { return "DeprecatedRenderSelect"; }
 
         short baselinePosition(bool f, bool b) const;
         int calcReplacedHeight() const { if (!m_useListBox) return intrinsicHeight(); return RenderFormElement::calcReplacedHeight(); }
@@ -74,4 +74,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // RenderSelect_h
+#endif // DeprecatedRenderSelect_h

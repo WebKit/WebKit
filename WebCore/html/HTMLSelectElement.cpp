@@ -37,7 +37,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "KeyboardEvent.h"
-#include "RenderSelect.h"
+#include "DeprecatedRenderSelect.h"
 #include "cssstyleselector.h"
 #include <wtf/Vector.h>
 
@@ -76,7 +76,7 @@ bool HTMLSelectElement::checkDTD(const Node* newChild)
 void HTMLSelectElement::recalcStyle( StyleChange ch )
 {
     if (hasChangedChild() && renderer())
-        static_cast<RenderSelect*>(renderer())->setOptionsChanged(true);
+        static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
 
     HTMLGenericFormElement::recalcStyle( ch );
 }
@@ -272,7 +272,7 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
 
 RenderObject *HTMLSelectElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    return new (arena) RenderSelect(this);
+    return new (arena) DeprecatedRenderSelect(this);
 }
 
 bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
@@ -390,7 +390,7 @@ void HTMLSelectElement::setRecalcListItems()
 {
     m_recalcListItems = true;
     if (renderer())
-        static_cast<RenderSelect*>(renderer())->setOptionsChanged(true);
+        static_cast<DeprecatedRenderSelect*>(renderer())->setOptionsChanged(true);
     setChanged();
 }
 
@@ -415,7 +415,7 @@ void HTMLSelectElement::reset()
     if (!optionSelected && firstOption)
         firstOption->setSelected(true);
     if (renderer())
-        static_cast<RenderSelect*>(renderer())->setSelectionChanged(true);
+        static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
     setChanged(true);
 }
 
@@ -431,7 +431,7 @@ void HTMLSelectElement::notifyOptionSelected(HTMLOptionElement *selectedOption, 
         }
     }
     if (renderer())
-        static_cast<RenderSelect*>(renderer())->setSelectionChanged(true);
+        static_cast<DeprecatedRenderSelect*>(renderer())->setSelectionChanged(true);
 
     setChanged(true);
 }

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RenderSelect.h"
+#include "DeprecatedRenderSelect.h"
 
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderSelect::RenderSelect(HTMLSelectElement* element)
+DeprecatedRenderSelect::DeprecatedRenderSelect(HTMLSelectElement* element)
     : RenderFormElement(element)
     , m_size(element->size())
     , m_multiple(element->multiple())
@@ -53,7 +53,7 @@ RenderSelect::RenderSelect(HTMLSelectElement* element)
         setWidget(new QComboBox);
 }
 
-void RenderSelect::setWidgetWritingDirection()
+void DeprecatedRenderSelect::setWidgetWritingDirection()
 {
     TextDirection d = style()->direction() == RTL ? RTL : LTR;
     if (m_useListBox)
@@ -62,13 +62,13 @@ void RenderSelect::setWidgetWritingDirection()
         static_cast<QComboBox*>(m_widget)->setWritingDirection(d);
 }
 
-void RenderSelect::setStyle(RenderStyle* s)
+void DeprecatedRenderSelect::setStyle(RenderStyle* s)
 {
     RenderFormElement::setStyle(s);
     setWidgetWritingDirection();
 }
 
-void RenderSelect::updateFromElement()
+void DeprecatedRenderSelect::updateFromElement()
 {
     m_ignoreSelectEvents = true;
 
@@ -173,7 +173,7 @@ void RenderSelect::updateFromElement()
     RenderFormElement::updateFromElement();
 }
 
-short RenderSelect::baselinePosition(bool f, bool isRootLineBox) const
+short DeprecatedRenderSelect::baselinePosition(bool f, bool isRootLineBox) const
 {
     if (m_useListBox) {
         // FIXME: Should get the hardcoded constant of 7 by calling a QListBox function,
@@ -183,7 +183,7 @@ short RenderSelect::baselinePosition(bool f, bool isRootLineBox) const
     return RenderFormElement::baselinePosition(f, isRootLineBox);
 }
 
-void RenderSelect::calcMinMaxWidth()
+void DeprecatedRenderSelect::calcMinMaxWidth()
 {
     ASSERT(!minMaxKnown());
 
@@ -199,7 +199,7 @@ void RenderSelect::calcMinMaxWidth()
     RenderFormElement::calcMinMaxWidth();
 }
 
-void RenderSelect::layout()
+void DeprecatedRenderSelect::layout()
 {
     ASSERT(needsLayout());
     ASSERT(minMaxKnown());
@@ -244,7 +244,7 @@ void RenderSelect::layout()
     m_widget->setEnabled(foundOption && ! static_cast<HTMLSelectElement*>(node())->disabled());
 }
 
-void RenderSelect::valueChanged(Widget*)
+void DeprecatedRenderSelect::valueChanged(Widget*)
 {
     if (m_ignoreSelectEvents)
         return;
@@ -292,7 +292,7 @@ void RenderSelect::valueChanged(Widget*)
     static_cast<HTMLSelectElement*>(node())->onChange();
 }
 
-void RenderSelect::selectionChanged(Widget*)
+void DeprecatedRenderSelect::selectionChanged(Widget*)
 {
     if (m_ignoreSelectEvents)
         return;
@@ -314,12 +314,12 @@ void RenderSelect::selectionChanged(Widget*)
     static_cast<HTMLSelectElement*>(node())->onChange();
 }
 
-void RenderSelect::setOptionsChanged(bool _optionsChanged)
+void DeprecatedRenderSelect::setOptionsChanged(bool _optionsChanged)
 {
     m_optionsChanged = _optionsChanged;
 }
 
-QListBox* RenderSelect::createListBox()
+QListBox* DeprecatedRenderSelect::createListBox()
 {
     QListBox *lb = new QListBox();
     lb->setSelectionMode(m_multiple ? QListBox::Extended : QListBox::Single);
@@ -327,7 +327,7 @@ QListBox* RenderSelect::createListBox()
     return lb;
 }
 
-void RenderSelect::updateSelection()
+void DeprecatedRenderSelect::updateSelection()
 {
     Vector<HTMLElement*> listItems = static_cast<HTMLSelectElement*>(node())->listItems();
     int i;
