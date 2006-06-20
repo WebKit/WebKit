@@ -1,3 +1,10 @@
+2006-06-21  Anders Carlsson  <acarlsson@apple.com>
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::shouldInterruptJavaScript):
+        * bridge/win/FrameWin.h:
+        Try fixing the Windows build.
+
 2006-06-20  Adele Peterson  <adele@apple.com>
 
         RS by Tim Hatcher.
