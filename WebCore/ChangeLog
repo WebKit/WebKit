@@ -1,3 +1,12 @@
+2006-06-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - fix crasher on one of the layout tests caused by my recent checkin
+
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+
 2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
