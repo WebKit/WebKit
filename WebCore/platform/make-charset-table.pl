@@ -171,27 +171,29 @@ sub process_iana_charsets
     
     while (<CHARSETS>) {
         chomp;
-	if ((my $new_canonical_name) = /Name: ([^ \t]*).*/) {
+        if ((my $new_canonical_name) = /Name: ([^ \t]*).*/) {
             $new_canonical_name = lc $new_canonical_name;
             $new_canonical_name =~ tr/a-z0-9//cd;
             
             error "saw $new_canonical_name twice in character-sets.txt", if $seen{$new_canonical_name};
             $seen{$new_canonical_name} = $new_canonical_name;
             
-	    process_iana_charset $canonical_name, @aliases;
+            process_iana_charset $canonical_name, @aliases;
 	    
-	    $canonical_name = $new_canonical_name;
-	    @aliases = ();
-	} elsif ((my $new_alias) = /Alias: ([^ \t]*).*/) {
-            next if $new_alias eq "None";
-            
+	          $canonical_name = $new_canonical_name;
+	          @aliases = ();
+        } elsif ((my $new_alias) = /Alias: ([^ \t]*).*/) {
             $new_alias = lc $new_alias;
             $new_alias =~ tr/a-z0-9//cd;
             
+            # do this after normalizing the alias, sometimes character-sets.txt
+            # has weird escape characters, e.g. \b after None
+            next if $new_alias eq "none";
+
             error "saw $new_alias twice in character-sets.txt $seen{$new_alias}, $canonical_name", if $seen{$new_alias} && $seen{$new_alias} ne $canonical_name && !$exceptions{$new_alias};
             push @aliases, $new_alias if !$seen{$new_alias};
             $seen{$new_alias} = $canonical_name;            
-	}
+        }
     }
     
     process_iana_charset $canonical_name, @aliases;

@@ -1,3 +1,15 @@
+2006-06-19  Ben Goodger  <bengoodger@gmail.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9501
+        Windows build fails with link error CharsetTable not defined
+
+        * platform/make-charset-table.pl:
+        (process_iana_charsets): Move test for equality to alias "None" until after
+        normalization steps to ensure escape characters in the input data don't
+        interfere with processing.  Convert nearby tabs to 4 spaces in this function.
+
 2006-06-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
