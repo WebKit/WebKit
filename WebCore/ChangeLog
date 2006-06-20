@@ -1,3 +1,13 @@
+2006-06-20  David Hyatt  <hyatt@apple.com>
+
+        Don't send the custom highlighter callback when painting is disabled.
+
+        Reviewed by harrison
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+
 2006-06-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John

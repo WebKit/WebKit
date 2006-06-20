@@ -275,7 +275,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     if (i.phase != PaintPhaseSelection && !isPrinting) {
 #if PLATFORM(MAC)
         // Custom highlighters go behind everything else.
-        if (styleToUse->highlight() != nullAtom)
+        if (styleToUse->highlight() != nullAtom && !i.p->paintingDisabled())
             paintCustomHighlight(tx, ty, styleToUse->highlight());
 #endif
 
