@@ -2754,6 +2754,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     [request _web_setHTTPUserAgent:[[self webView] userAgentForURL:[request URL]]];
     
+    if (_private->loadType == WebFrameLoadTypeReload)
+        [request setValue:@"max-age=0" forHTTPHeaderField:@"Cache-Control"];
+    
     // Don't set the cookie policy URL if it's already been set.
     if ([request mainDocumentURL] == nil) {
         if (mainResource && (self == [[self webView] mainFrame] || f))
@@ -2892,6 +2895,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)loadRequest:(NSURLRequest *)request
 {
+    // FIXME: is this the right place to reset loadType? Perhaps, this should be done
+    // after loading is finished or aborted.
+    _private->loadType = WebFrameLoadTypeStandard;
+    
     [self _loadRequest:request archive:nil];
 }
 

@@ -1,3 +1,16 @@
+2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5499
+        Page reload does not send any cache control headers
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _addExtraFieldsToRequest:mainResource:alwaysFromRequest:]): Set a proper Cache-Control header for 
+        reload requests.
+        (-[WebFrame loadRequest:]): Reset loadType to WebFrameLoadTypeStandard (after a reload, it stayed at 
+        WebFrameLoadTypeReload, so _addExtraFieldsToRequest erroneously added a Cache-Control header to them).
+
 2006-06-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

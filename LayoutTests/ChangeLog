@@ -2,6 +2,16 @@
 
         Reviewed by Darin.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5499
+        Page reload does not send any cache control headers
+
+        * http/tests/misc/refresh-headers-expected.txt: Added.
+        * http/tests/misc/refresh-headers.php: Added.
+
+2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=8972
         REGRESSION: invalid UTF-8 sequences are not displayed
 

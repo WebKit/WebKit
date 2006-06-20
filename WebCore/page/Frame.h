@@ -37,7 +37,6 @@
 #include "Node.h"
 #include "TextAffinity.h"
 #include "TextGranularity.h"
-#include "TransferJobClient.h"
 #include <wtf/Vector.h>
 #include "RenderObject.h"
 
@@ -92,7 +91,7 @@ enum ObjectContentType {
     ObjectContentPlugin,
 };
 
-class Frame : public Shared<Frame>, Noncopyable, TransferJobClient {
+class Frame : public Shared<Frame>, Noncopyable {
 
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
@@ -178,6 +177,7 @@ public:
    */
   void changeLocation(const DeprecatedString& URL, const DeprecatedString& referrer, bool lockHistory = true, bool userGesture = false);
   void scheduleLocationChange(const DeprecatedString& url, const DeprecatedString& referrer, bool lockHistory = true, bool userGesture = false);
+  void scheduleRefresh(bool userGesture = false);
   bool isScheduledLocationChangePending() const;
 
   /**
@@ -587,8 +587,6 @@ public:
   void reparseConfiguration();
 
 private:
-    virtual void receivedRedirect(TransferJob*, const KURL&);
-    virtual void receivedAllData(TransferJob*);
 
   void childBegin();
 

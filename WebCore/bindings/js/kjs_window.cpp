@@ -2214,10 +2214,9 @@ JSValue *LocationFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const 
     case Location::Reload:
     {
       const Window* window = Window::retrieveWindow(frame);
-      Frame* activePart = Window::retrieveActive(exec)->frame();
       if (!frame->url().url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
         bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-        frame->scheduleLocationChange(frame->url().url(), activePart->referrer(), true/*lock history*/, userGesture);
+        frame->scheduleRefresh(userGesture);
       }
       break;
     }

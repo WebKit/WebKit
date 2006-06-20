@@ -1,3 +1,29 @@
+2006-06-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5499
+        Page reload does not send any cache control headers
+
+        Test: http/tests/misc/refresh-headers.php
+
+        * bindings/js/kjs_window.cpp:
+        (KJS::LocationFunc::callAsFunction): Call scheduleRefresh() for Location::Reload.
+
+        * page/Frame.h: Add scheduleRefresh(). Don't derive from TransferJob or implement its methods - that was
+        used only for storing response HTTP headers, which was an overkill.
+
+        * page/FramePrivate.h: Replace TransferJob with a HashMap for storing response headers.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL): Don't needlessly change d->m_cachePolicy. Don't create a TransferJob.
+        (WebCore::Frame::stopLoading): Directly access the metadata map, instead of going through a TransferJob.
+        (WebCore::Frame::receivedFirstData): Ditto.
+        (WebCore::Frame::addMetaData): Ditto.
+        (WebCore::Frame::scheduleRefresh): A new function that schedules a refresh, similarly to what
+        scheduleRedirection() does.
+        (WebCore::Frame::changeLocation): Set request.reload attribute based on the current cache policy.
+
 2006-06-19  Ben Goodger  <bengoodger@gmail.com>
 
         Reviewed by Darin.
