@@ -52,12 +52,14 @@
 using namespace std;
 
 namespace WebCore {
-
+    
 using namespace HTMLNames;
 
 const int maxErrors = 25;
 
 typedef HashMap<StringImpl *, StringImpl *> PrefixForNamespaceMap;
+
+class PendingCallbacks;
 
 class XMLTokenizer : public Tokenizer, public CachedObjectClient
 {
@@ -74,6 +76,9 @@ public:
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
 
+    void pauseParsing();
+    void resumeParsing();
+    
     void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
     bool isXHTMLDocument() const { return m_isXHTMLDocument; }
 
@@ -90,6 +95,8 @@ public:
     void comment(const xmlChar *s);
     void internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID);
 
+    void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
+    
 private:
     void initializeParserContext();
     void setCurrentNode(Node*);
@@ -119,6 +126,8 @@ private:
     bool m_sawFirstElement;
     bool m_isXHTMLDocument;
     
+    bool m_parserPaused;
+    
     int m_errorCount;
     int m_lastErrorLine;
     int m_lastErrorColumn;
@@ -131,6 +140,269 @@ private:
     bool m_parsingFragment;
     String m_defaultNamespaceURI;
     PrefixForNamespaceMap m_prefixToNamespaceMap;
+    
+    PendingCallbacks* m_pendingCallbacks;
+    SegmentedString m_pendingSrc;
+};
+
+class PendingCallbacks {
+public:
+    PendingCallbacks()
+    {
+        m_callbacks.setAutoDelete(true);
+    }
+    
+    void appendStartElementNSCallback(const xmlChar *xmlLocalName, const xmlChar *xmlPrefix, const xmlChar *xmlURI, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **attributes)
+    {
+        PendingStartElementNSCallback* callback = new PendingStartElementNSCallback;
+        
+        callback->xmlLocalName = xmlStrdup(xmlLocalName);
+        callback->xmlPrefix = xmlStrdup(xmlPrefix);
+        callback->xmlURI = xmlStrdup(xmlURI);
+        callback->nb_namespaces = nb_namespaces;
+        callback->namespaces = reinterpret_cast<xmlChar**>(xmlMalloc(sizeof (xmlChar*) * nb_namespaces * 2));
+        for (int i = 0; i < nb_namespaces * 2 ; i++)
+            callback->namespaces[i] = xmlStrdup(namespaces[i]);
+        callback->nb_attributes = nb_attributes;
+        callback->nb_defaulted = nb_defaulted;
+        callback->attributes =  reinterpret_cast<xmlChar**>(xmlMalloc(sizeof (xmlChar*) * nb_attributes * 5));
+        for (int i = 0; i < nb_attributes; i++) {
+            // Each attribute has 5 elements in the array:
+            // name, prefix, uri, value and an end pointer.
+            
+            for (int j = 0; j < 3; j++)
+                callback->attributes[i * 5 + j] = xmlStrdup(attributes[i * 5 + j]);
+            
+            int len = attributes[i * 5 + 4] - attributes[i * 5 + 3];
+
+            callback->attributes[i * 5 + 3] = xmlStrndup(attributes[i * 5 + 3], len);
+            callback->attributes[i * 5 + 4] = callback->attributes[i * 5 + 3] + len;
+        }
+        
+        m_callbacks.append(callback);
+    }
+
+    void appendEndElementNSCallback()
+    {
+        PendingEndElementNSCallback* callback = new PendingEndElementNSCallback;
+        
+        m_callbacks.append(callback);
+    }
+    
+    void appendCharactersCallback(const xmlChar *s, int len)
+    {
+        PendingCharactersCallback* callback = new PendingCharactersCallback;
+        
+        callback->s = xmlStrndup(s, len);
+        callback->len = len;
+        
+        m_callbacks.append(callback);        
+    }
+    
+    void appendProcessingInstructionCallback(const xmlChar *target, const xmlChar *data)
+    {
+        PendingProcessingInstructionCallback* callback = new PendingProcessingInstructionCallback;
+        
+        callback->target = xmlStrdup(target);
+        callback->data = xmlStrdup(data);
+        
+        m_callbacks.append(callback);
+    }
+    
+    void appendCDATABlockCallback(const xmlChar *s, int len)
+    {
+        PendingCDATABlockCallback* callback = new PendingCDATABlockCallback;
+        
+        callback->s = xmlStrndup(s, len);
+        callback->len = len;
+        
+        m_callbacks.append(callback);        
+    }
+
+    void appendCommentCallback(const xmlChar *s)
+    {
+        PendingCommentCallback* callback = new PendingCommentCallback;
+        
+        callback->s = xmlStrdup(s);
+        
+        m_callbacks.append(callback);        
+    }
+
+    void appendInternalSubsetCallback(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID)
+    {
+        PendingInternalSubsetCallback* callback = new PendingInternalSubsetCallback;
+        
+        callback->name = xmlStrdup(name);
+        callback->externalID = xmlStrdup(externalID);
+        callback->systemID = xmlStrdup(systemID);
+        
+        m_callbacks.append(callback);        
+    }
+    
+    void appendErrorCallback(XMLTokenizer::ErrorType type, const char* message, int lineNumber, int columnNumber)
+    {
+        PendingErrorCallback* callback = new PendingErrorCallback;
+        
+        callback->message = strdup(message);
+        callback->type = type;
+        callback->lineNumber = lineNumber;
+        callback->columnNumber = columnNumber;
+        
+        m_callbacks.append(callback);
+    }
+
+    void callAndRemoveFirstCallback(XMLTokenizer* tokenizer)
+    {
+        PendingCallback *cb = m_callbacks.getFirst();
+            
+        cb->call(tokenizer);
+        m_callbacks.removeFirst();
+    }
+    
+    bool isEmpty() const { return m_callbacks.isEmpty(); }
+    
+private:    
+    struct PendingCallback {        
+        
+        virtual ~PendingCallback() { } 
+
+        virtual void call(XMLTokenizer* tokenizer) = 0;
+    };  
+    
+    struct PendingStartElementNSCallback : public PendingCallback {        
+        virtual ~PendingStartElementNSCallback() {
+            xmlFree(xmlLocalName);
+            xmlFree(xmlPrefix);
+            xmlFree(xmlURI);
+            for (int i = 0; i < nb_namespaces * 2; i++)
+                xmlFree(namespaces[i]);
+            xmlFree(namespaces);
+            for (int i = 0; i < nb_attributes; i++)
+                for (int j = 0; j < 4; j++) 
+                    xmlFree(attributes[i * 5 + j]);
+            xmlFree(attributes);
+        }
+        
+        virtual void call(XMLTokenizer* tokenizer) {
+            tokenizer->startElementNs(xmlLocalName, xmlPrefix, xmlURI, 
+                                      nb_namespaces, (const xmlChar**)namespaces,
+                                      nb_attributes, nb_defaulted, (const xmlChar**)(attributes));
+        }
+
+        xmlChar* xmlLocalName;
+        xmlChar* xmlPrefix;
+        xmlChar* xmlURI;
+        int nb_namespaces;
+        xmlChar** namespaces;
+        int nb_attributes;
+        int nb_defaulted;
+        xmlChar** attributes;
+    };
+    
+    struct PendingEndElementNSCallback : public PendingCallback {
+        virtual void call(XMLTokenizer* tokenizer) 
+        {
+            tokenizer->endElementNs();
+        }
+    };
+    
+    struct PendingCharactersCallback : public PendingCallback {
+        virtual ~PendingCharactersCallback() 
+        {
+            xmlFree(s);
+        }
+    
+        virtual void call(XMLTokenizer* tokenizer) 
+        {
+            tokenizer->characters(s, len);
+        }
+        
+        xmlChar* s;
+        int len;
+    };
+
+    struct PendingProcessingInstructionCallback : public PendingCallback {
+        virtual ~PendingProcessingInstructionCallback() 
+        {
+            xmlFree(target);
+            xmlFree(data);
+        }
+        
+        virtual void call(XMLTokenizer* tokenizer) 
+        {
+            tokenizer->processingInstruction(target, data);
+        }
+        
+        xmlChar* target;
+        xmlChar* data;
+    };
+    
+    struct PendingCDATABlockCallback : public PendingCallback {
+        virtual ~PendingCDATABlockCallback() 
+        {
+            xmlFree(s);
+        }
+        
+        virtual void call(XMLTokenizer* tokenizer) 
+        {
+            tokenizer->cdataBlock(s, len);
+        }
+        
+        xmlChar* s;
+        int len;
+    };
+
+    struct PendingCommentCallback : public PendingCallback {
+        virtual ~PendingCommentCallback() 
+        {
+            xmlFree(s);
+        }
+        
+        virtual void call(XMLTokenizer* tokenizer) 
+        {
+            tokenizer->comment(s);
+        }
+
+        xmlChar* s;
+    };
+    
+    struct PendingInternalSubsetCallback : public PendingCallback {
+        virtual ~PendingInternalSubsetCallback() 
+        {
+            xmlFree(name);
+            xmlFree(externalID);
+            xmlFree(systemID);
+        }
+        
+        virtual void call(XMLTokenizer* tokenizer)
+        {
+            tokenizer->internalSubset(name, externalID, systemID);
+        }
+        
+        xmlChar* name;
+        xmlChar* externalID;
+        xmlChar* systemID;        
+    };
+    
+    struct PendingErrorCallback: public PendingCallback {
+        virtual ~PendingErrorCallback() 
+        {
+            free (message);
+        }
+        
+        virtual void call(XMLTokenizer* tokenizer) 
+        {
+            tokenizer->handleError(type, message, lineNumber, columnNumber);
+        }
+        
+        XMLTokenizer::ErrorType type;
+        char* message;
+        int lineNumber;
+        int columnNumber;
+    };
+    
+public:
+    DeprecatedPtrList<PendingCallback> m_callbacks;
 };
 
 // --------------------------------
@@ -247,12 +519,14 @@ XMLTokenizer::XMLTokenizer(Document *_doc, FrameView *_view)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
+    , m_parserPaused(false)
     , m_errorCount(0)
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
     , m_scriptsIt(0)
     , m_cachedScript(0)
     , m_parsingFragment(false)
+    , m_pendingCallbacks(new PendingCallbacks)
 {
 }
 
@@ -266,12 +540,14 @@ XMLTokenizer::XMLTokenizer(DocumentFragment *fragment, Element *parentElement)
     , m_sawXSLTransform(false)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
+    , m_parserPaused(false)
     , m_errorCount(0)
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
     , m_scriptsIt(0)
     , m_cachedScript(0)
     , m_parsingFragment(true)
+    , m_pendingCallbacks(new PendingCallbacks)
 {
     if (fragment)
         fragment->ref();
@@ -306,6 +582,7 @@ XMLTokenizer::~XMLTokenizer()
     setCurrentNode(0);
     if (m_parsingFragment && m_doc)
         m_doc->deref();
+    delete m_pendingCallbacks;
     delete m_scriptsIt;
     if (m_cachedScript)
         m_cachedScript->deref(this);
@@ -325,11 +602,18 @@ void XMLTokenizer::setCurrentNode(Node* n)
 bool XMLTokenizer::write(const SegmentedString &s, bool /*appendData*/ )
 {
     DeprecatedString parseString = s.toString();
+    
     if (m_sawXSLTransform || !m_sawFirstElement)
         m_originalSourceForTransform += parseString;
 
     if (m_parserStopped || m_sawXSLTransform)
         return false;
+    
+    if (0 && m_parserPaused) {
+        m_pendingSrc.append(s);
+        return false;
+    }
+    
     if (!m_context)
         initializeParserContext();
     
@@ -417,6 +701,11 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
     if (m_parserStopped)
         return;
     
+    if (m_parserPaused) {        
+        m_pendingCallbacks->appendStartElementNSCallback(xmlLocalName, xmlPrefix, xmlURI, nb_namespaces, libxmlNamespaces, nb_attributes, nb_defaulted, libxmlAttributes);
+        return;
+    }
+    
     m_sawFirstElement = true;
 
     exitText();
@@ -481,6 +770,11 @@ void XMLTokenizer::endElementNs()
     if (m_parserStopped)
         return;
 
+    if (m_parserPaused) {
+        m_pendingCallbacks->appendEndElementNSCallback();
+        return;
+    }
+    
     exitText();
 
     Node *n = m_currentNode;
@@ -495,6 +789,11 @@ void XMLTokenizer::characters(const xmlChar *s, int len)
 {
     if (m_parserStopped)
         return;
+    
+    if (m_parserPaused) {
+        m_pendingCallbacks->appendCharactersCallback(s, len);
+        return;
+    }
     
     if (m_currentNode->isTextNode() || enterText()) {
         ExceptionCode ec = 0;
@@ -528,41 +827,51 @@ void XMLTokenizer::exitText()
         setCurrentNode(par);
 }
 
+void XMLTokenizer::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
+{
+    if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber && m_lastErrorColumn != columnNumber)) {
+        switch (type) {
+            case warning:
+                m_errorMessages += String::sprintf("warning on line %d at column %d: %s", lineNumber, columnNumber, m);
+                break;
+            case fatal:
+            case nonFatal:
+                m_errorMessages += String::sprintf("error on line %d at column %d: %s", lineNumber, columnNumber, m);
+        }
+        
+        m_lastErrorLine = lineNumber;
+        m_lastErrorColumn = columnNumber;
+        ++m_errorCount;
+    }
+    
+    if (type != warning)
+        m_sawError = true;
+    
+    if (type == fatal)
+        stopParsing();    
+}
+
 void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
 {
     if (m_parserStopped)
         return;
 
-    if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber() && m_lastErrorColumn != columnNumber())) {
 #if WIN32
-        char m[1024];
-        vsnprintf(m, sizeof(m) - 1, message, args);
+    char m[1024];
+    vsnprintf(m, sizeof(m) - 1, message, args);
 #else
-        char *m;
-        vasprintf(&m, message, args);
+    char *m;
+    vasprintf(&m, message, args);
 #endif
-        switch (type) {
-            case warning:
-                m_errorMessages += String::sprintf("warning on line %d at column %d: %s", lineNumber(), columnNumber(), m);
-                break;
-            case fatal:
-            case nonFatal:
-                m_errorMessages += String::sprintf("error on line %d at column %d: %s", lineNumber(), columnNumber(), m);
-        }
+    
+    if (m_parserPaused)
+        m_pendingCallbacks->appendErrorCallback(type, m, lineNumber(), columnNumber());
+    else
+        handleError(type, m, lineNumber(), columnNumber());
+
 #if !WIN32
-        free(m);
+    free(m);
 #endif
-
-        m_lastErrorLine = lineNumber();
-        m_lastErrorColumn = columnNumber();
-        ++m_errorCount;
-    }
-
-    if (type != warning)
-        m_sawError = true;
-
-    if (type == fatal)
-        stopParsing();
 }
 
 void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *data)
@@ -570,6 +879,11 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
     if (m_parserStopped)
         return;
 
+    if (m_parserPaused) {
+        m_pendingCallbacks->appendProcessingInstructionCallback(target, data);
+        return;
+    }
+    
     exitText();
 
     // ### handle exceptions
@@ -603,6 +917,11 @@ void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
     if (m_parserStopped)
         return;
 
+    if (m_parserPaused) {
+        m_pendingCallbacks->appendCDATABlockCallback(s, len);
+        return;
+    }
+    
     exitText();
 
     RefPtr<Node> newNode = new CDATASection(m_doc, toQString(s, len));
@@ -617,6 +936,11 @@ void XMLTokenizer::comment(const xmlChar *s)
     if (m_parserStopped)
         return;
 
+    if (m_parserPaused) {
+        m_pendingCallbacks->appendCommentCallback(s);
+        return;
+    }
+    
     exitText();
 
     RefPtr<Node> newNode = new Comment(m_doc, toQString(s));
@@ -630,6 +954,11 @@ void XMLTokenizer::internalSubset(const xmlChar *name, const xmlChar *externalID
     if (m_parserStopped)
         return;
 
+    if (m_parserPaused) {
+        m_pendingCallbacks->appendInternalSubsetCallback(name, externalID, systemID);
+        return;
+    }
+    
     Document *doc = m_doc;
     if (!doc)
         return;
@@ -1011,6 +1340,35 @@ void XMLTokenizer::stopParsing()
 {
     Tokenizer::stopParsing();
     xmlStopParser(m_context);
+}
+
+void XMLTokenizer::pauseParsing()
+{
+    if (m_parsingFragment)
+        return;
+    
+    m_parserPaused = true;
+}
+
+void XMLTokenizer::resumeParsing()
+{
+    ASSERT(m_parserPaused);
+    
+    m_parserPaused = false;
+    
+    // First, execute any pending callbacks
+    while (!m_pendingCallbacks->isEmpty()) {
+        m_pendingCallbacks->callAndRemoveFirstCallback(this);
+        
+        // A callback paused the parser
+        if (m_parserPaused)
+            return;
+    }
+    
+    // Then, write any pending data
+    SegmentedString rest = m_pendingSrc;
+    m_pendingSrc.clear();
+    write(rest, false);
 }
 
 static void balancedStartElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
