@@ -1,3 +1,10 @@
+2006-06-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build break
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::shouldInterruptJavaScript):
+
 2006-06-21  Anders Carlsson  <acarlsson@apple.com>
 
         Move FrameWin::shouldInterruptJavaScript to TemporaryLinkStubs.cpp
