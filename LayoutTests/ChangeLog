@@ -1,5 +1,122 @@
 2006-06-20  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Anders.
+
+        Updated results for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8948
+        Switch to use new text field implementation for <textarea>
+
+        Changes include some size differences since the new textareas have 4 pixels less horizontal padding,
+        and the renderer name for textareas has changed from RenderTextArea to RenderTextField.
+
+        * dom/html/level2/html/HTMLTextAreaElement14-expected.txt:
+        * dom/html/level2/html/HTMLTextAreaElement15-expected.txt:
+        * dom/xhtml/level2/html/HTMLTextAreaElement14-expected.txt:
+        * dom/xhtml/level2/html/HTMLTextAreaElement15-expected.txt:
+        * fast/block/margin-collapse/103-expected.checksum:
+        * fast/block/margin-collapse/103-expected.png:
+        * fast/block/margin-collapse/103-expected.txt:
+        * fast/dynamic/008-expected.checksum:
+        * fast/dynamic/008-expected.png:
+        * fast/dynamic/008-expected.txt:
+        * fast/forms/001-expected.checksum:
+        * fast/forms/002-expected.checksum:
+        * fast/forms/003-expected.checksum:
+        * fast/forms/004-expected.checksum:
+        * fast/forms/005-expected.checksum:
+        * fast/forms/006-expected.checksum:
+        * fast/forms/007-expected.checksum:
+        * fast/forms/8250-expected.checksum:
+        * fast/forms/blankbuttons-expected.checksum:
+        * fast/forms/button-cannot-be-nested-expected.checksum:
+        * fast/forms/button-default-title-expected.checksum:
+        * fast/forms/button-inner-block-reuse-expected.checksum:
+        * fast/forms/button-positioned-expected.checksum:
+        * fast/forms/button-sizes-expected.checksum:
+        * fast/forms/button-table-styles-expected.checksum:
+        * fast/forms/button-white-space-expected.checksum:
+        * fast/forms/checkbox-radio-onchange-expected.checksum:
+        * fast/forms/cursor-position-expected.txt:
+        * fast/forms/double-focus-expected.txt:
+        * fast/forms/file-input-disabled-expected.checksum:
+        * fast/forms/form-element-geometry-expected.checksum:
+        * fast/forms/form-element-geometry-expected.png:
+        * fast/forms/form-element-geometry-expected.txt:
+        * fast/forms/form-hides-table-expected.checksum:
+        * fast/forms/formmove-expected.checksum:
+        * fast/forms/formmove2-expected.checksum:
+        * fast/forms/formmove3-expected.checksum:
+        * fast/forms/indeterminate-expected.checksum:
+        * fast/forms/input-appearance-bkcolor-expected.checksum:
+        * fast/forms/input-appearance-default-bkcolor-expected.checksum:
+        * fast/forms/input-appearance-disabled-expected.checksum:
+        * fast/forms/input-appearance-focus-expected.checksum:
+        * fast/forms/input-appearance-minWidth-expected.checksum:
+        * fast/forms/input-appearance-preventDefault-expected.checksum:
+        * fast/forms/input-appearance-readonly-expected.checksum:
+        * fast/forms/input-appearance-selection-expected.checksum:
+        * fast/forms/input-appearance-visibility-expected.checksum:
+        * fast/forms/input-appearance-width-expected.checksum:
+        * fast/forms/input-baseline-expected.checksum:
+        * fast/forms/input-disabled-color-expected.checksum:
+        * fast/forms/input-double-click-selection-gap-bug-expected.checksum:
+        * fast/forms/input-maxlength-2-expected.checksum:
+        * fast/forms/input-no-renderer-expected.checksum:
+        * fast/forms/input-paste-undo-expected.checksum:
+        * fast/forms/input-readonly-dimmed-expected.checksum:
+        * fast/forms/input-readonly-empty-expected.checksum:
+        * fast/forms/input-spaces-expected.checksum:
+        * fast/forms/input-table-expected.checksum:
+        * fast/forms/input-text-click-inside-expected.checksum:
+        * fast/forms/input-text-click-outside-expected.checksum:
+        * fast/forms/input-text-double-click-expected.checksum:
+        * fast/forms/input-text-drag-down-expected.checksum:
+        * fast/forms/input-text-maxlength-expected.checksum:
+        * fast/forms/input-text-option-delete-expected.checksum:
+        * fast/forms/input-text-paste-maxlength-expected.checksum:
+        * fast/forms/input-text-scroll-left-on-blur-expected.checksum:
+        * fast/forms/input-text-self-emptying-click-expected.checksum:
+        * fast/forms/input-value-expected.checksum:
+        * fast/forms/input-width-expected.checksum:
+        * fast/forms/minWidthPercent-expected.checksum:
+        * fast/forms/negativeLineHeight-expected.checksum:
+        * fast/forms/negativeLineHeight-expected.png:
+        * fast/forms/negativeLineHeight-expected.txt:
+        * fast/forms/option-index-expected.checksum:
+        * fast/forms/option-script-expected.checksum:
+        * fast/forms/option-strip-whitespace-expected.checksum:
+        * fast/forms/plaintext-mode-2-expected.checksum:
+        * fast/forms/radio-attr-order-expected.checksum:
+        * fast/forms/radio_checked-expected.checksum:
+        * fast/forms/radio_checked_dynamic-expected.checksum:
+        * fast/forms/selection-functions-expected.txt:
+        * fast/forms/tabbing-input-iframe-expected.checksum:
+        * fast/forms/textAreaLineHeight-expected.checksum:
+        * fast/forms/textAreaLineHeight-expected.png:
+        * fast/forms/textAreaLineHeight-expected.txt:
+        * fast/forms/textarea-crlf-expected.txt:
+        * fast/forms/textarea-setinnerhtml-expected.checksum:
+        * fast/forms/textarea-setinnerhtml-expected.png:
+        * fast/forms/textarea-setinnerhtml-expected.txt:
+        * fast/forms/textarea-setvalue-submit-expected.txt:
+        * fast/forms/visual-hebrew-text-field-expected.checksum:
+        * fast/replaced/width100percent-expected.checksum:
+        * fast/replaced/width100percent-expected.png:
+        * fast/replaced/width100percent-expected.txt:
+        * fast/table/003-expected.checksum:
+        * fast/table/003-expected.png:
+        * fast/table/003-expected.txt:
+        * tables/mozilla/bugs/bug194024-expected.checksum:
+        * tables/mozilla/bugs/bug194024-expected.png:
+        * tables/mozilla/bugs/bug194024-expected.txt:
+        * tables/mozilla/bugs/bug30559-expected.checksum:
+        * tables/mozilla/bugs/bug30559-expected.png:
+        * tables/mozilla/bugs/bug30559-expected.txt:
+        * tables/mozilla/bugs/bug30692-expected.checksum:
+        * tables/mozilla/bugs/bug30692-expected.png:
+        * tables/mozilla/bugs/bug30692-expected.txt:
+
+2006-06-20  Adele Peterson  <adele@apple.com>
+
         Reviewed by Maciej.
 
         Tests for:
