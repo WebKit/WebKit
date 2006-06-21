@@ -36,8 +36,8 @@
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		141211340A48795800480255 /* minidom.c in Sources */ = {isa = PBXBuildFile; fileRef = 141211020A48780900480255 /* minidom.c */; };
 		142711390A460BBB0080EEEA /* JSBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 142711380A460BBB0080EEEA /* JSBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		143A97E60A4A06E200456B66 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		14760864099C633800437128 /* JSImmediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14760863099C633800437128 /* JSImmediate.cpp */; };
-		147FE3B80A3F637E00A1F3F4 /* testapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2D0A3E91F600BAF59C /* testapi.c */; };
 		1482B6EB0A4300B300517CFC /* JSValueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B6EA0A4300B300517CFC /* JSValueRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1482B74D0A43032800517CFC /* JSCharBufferRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B74B0A43032800517CFC /* JSCharBufferRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1482B74E0A43032800517CFC /* JSCharBufferRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSCharBufferRef.cpp */; };
@@ -561,6 +561,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				143A97E60A4A06E200456B66 /* CoreFoundation.framework in Frameworks */,
 				14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1238,7 +1239,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				147FE3B80A3F637E00A1F3F4 /* testapi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

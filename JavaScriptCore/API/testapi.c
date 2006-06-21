@@ -38,13 +38,15 @@ static JSContextRef context = 0;
 
 static void assertEqualsAsBoolean(JSValueRef value, bool expectedValue)
 {
-    assert(JSValueToBoolean(context, value) == expectedValue);
+    if (JSValueToBoolean(context, value) != expectedValue)
+        fprintf(stderr, "assertEqualsAsBoolean failed: %p, %d\n", value, expectedValue);
 }
 
 static void assertEqualsAsNumber(JSValueRef value, double expectedValue)
 {
     double number = JSValueToNumber(context, value);
-    assert(number == expectedValue || (isnan(number) && isnan(expectedValue)));
+    if (number != expectedValue && !(isnan(number) && isnan(expectedValue)))
+        fprintf(stderr, "assertEqualsAsNumber failed: %p, %lf\n", value, expectedValue);
 }
 
 static void assertEqualsAsUTF8String(JSValueRef value, const char* expectedValue)
@@ -55,8 +57,11 @@ static void assertEqualsAsUTF8String(JSValueRef value, const char* expectedValue
     char jsBuffer[jsSize];
     JSCharBufferGetCharactersUTF8(valueAsString, jsBuffer, jsSize);
     
-    assert(strcmp(jsBuffer, expectedValue) == 0);
-    assert(jsSize >= strlen(jsBuffer) + 1);
+    if (strcmp(jsBuffer, expectedValue) != 0)
+        fprintf(stderr, "assertEqualsAsUTF8String strcmp failed: %s != %s\n", jsBuffer, expectedValue);
+        
+    if (jsSize < strlen(jsBuffer) + 1)
+        fprintf(stderr, "assertEqualsAsUTF8String failed: jsSize was too small\n");
 
     JSCharBufferRelease(valueAsString);
 }
@@ -77,8 +82,11 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
     CFStringGetCharacters(expectedValueAsCFString, CFRangeMake(0, cfLength), cfBuffer);
     CFRelease(expectedValueAsCFString);
 
-    assert(memcmp(jsBuffer, cfBuffer, cfLength * sizeof(UniChar)) == 0);
-    assert(jsLength == (size_t)cfLength);
+    if (memcmp(jsBuffer, cfBuffer, cfLength * sizeof(UniChar)) != 0)
+        fprintf(stderr, "assertEqualsAsCharactersPtr failed: jsBuffer != cfBuffer\n");
+    
+    if (jsLength != (size_t)cfLength)
+        fprintf(stderr, "assertEqualsAsCharactersPtr failed: jsLength(%ld) != cfLength(%ld)\n", jsLength, cfLength);
     
     JSCharBufferRelease(valueAsString);
 }

@@ -1,5 +1,19 @@
 2006-06-21  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed release build, fixed accidental infinite recursion due to
+        last minute global replace gone awry.
+        
+        * API/APICast.h:
+        (toRef):
+        * API/testapi.c:
+        (assertEqualsAsBoolean):
+        (assertEqualsAsNumber):
+        (assertEqualsAsUTF8String):
+        (assertEqualsAsCharactersPtr):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2006-06-21  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Anders.
         
         - First cut at C API to JavaScript. Includes a unit test, 'testapi.c', 

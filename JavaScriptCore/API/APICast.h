@@ -66,7 +66,7 @@ inline KJS::ReferenceList* toJS(JSPropertyListRef l)
 
 inline JSValueRef toRef(KJS::JSValue* v)
 {
-    return toRef(v);
+    return reinterpret_cast<JSValueRef>(v);
 }
 
 inline JSCharBufferRef toRef(KJS::UString::Rep* s)
@@ -76,12 +76,12 @@ inline JSCharBufferRef toRef(KJS::UString::Rep* s)
 
 inline JSObjectRef toRef(KJS::JSObject* o)
 {
-    return toRef(o);
+    return reinterpret_cast<JSObjectRef>(o);
 }
 
 inline JSObjectRef toRef(const KJS::JSObject* o)
 {
-    return toRef(const_cast<KJS::JSObject*>(o));
+    return reinterpret_cast<JSObjectRef>(const_cast<KJS::JSObject*>(o));
 }
 
 inline JSPropertyListRef toRef(KJS::ReferenceList* l)
