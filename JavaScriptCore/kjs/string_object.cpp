@@ -94,15 +94,13 @@ bool StringInstance::deleteProperty(ExecState *exec, const Identifier &propertyN
   return JSObject::deleteProperty(exec, propertyName);
 }
 
-ReferenceList StringInstance::propList(ExecState *exec, bool recursive)
+void StringInstance::getPropertyList(ExecState *exec, ReferenceList& propertyList, bool recursive)
 {
-  ReferenceList properties = JSObject::propList(exec,recursive);
-
   //### FIXME: should avoid duplicates with prototype
   UString str = internalValue()->toString(exec);
   for (int i = 0; i < str.size(); i++)
-    properties.append(Reference(this, i));
-  return properties;
+    propertyList.append(Reference(this, i));
+  return JSObject::getPropertyList(exec, propertyList, recursive);
 }
 
 // ------------------------------ StringPrototype ---------------------------

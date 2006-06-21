@@ -117,10 +117,11 @@ CFArrayRef JSValueWrapper::JSObjectCopyPropertyNames(void *data)
     {
         ExecState* exec = getThreadGlobalExecState();
         JSObject *object = ptr->GetValue()->toObject(exec);
-        ReferenceList list = object->propList(exec);
-        ReferenceListIterator iterator = list.begin();
+        ReferenceList propList;
+        object->getPropertyList(exec, propList);
+        ReferenceListIterator iterator = propList.begin();
 
-        while (iterator != list.end()) {
+        while (iterator != propList.end()) {
             Identifier name = iterator->getPropertyName(exec);
             CFStringRef nameStr = IdentifierToCFString(name);
 

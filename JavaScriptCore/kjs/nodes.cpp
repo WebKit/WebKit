@@ -1858,7 +1858,7 @@ Completion ForInNode::execute(ExecState *exec)
   JSValue *retval = 0;
   JSObject *v;
   Completion c;
-  ReferenceList propList;
+  ReferenceList propertyList;
 
   if (varDecl) {
     varDecl->evaluate(exec);
@@ -1877,11 +1877,11 @@ Completion ForInNode::execute(ExecState *exec)
 
   KJS_CHECKEXCEPTION
   v = e->toObject(exec);
-  propList = v->propList(exec);
+  v->getPropertyList(exec, propertyList);
 
-  ReferenceListIterator propIt = propList.begin();
+  ReferenceListIterator propIt = propertyList.begin();
 
-  while (propIt != propList.end()) {
+  while (propIt != propertyList.end()) {
     Identifier name = propIt->getPropertyName(exec);
     if (!v->hasProperty(exec, name)) {
       propIt++;

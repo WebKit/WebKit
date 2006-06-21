@@ -192,7 +192,7 @@ namespace KJS {
       static unsigned computeHash(const UChar *, int length);
       static unsigned computeHash(const char *);
 
-      void ref() { ++rc; }
+      Rep* ref() { ++rc; return this; }
       void deref() { if (--rc == 0) destroy(); }
 
       // unshared data

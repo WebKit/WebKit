@@ -420,9 +420,9 @@ bool Interpreter::checkSyntax(const UString &code)
     return progNode;
 }
 
-Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumber, const UString& code, JSValue*)
+Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumber, const UString& code, JSValue* thisV)
 {
-    return evaluate(sourceURL, startingLineNumber, code.data(), code.size());
+    return evaluate(sourceURL, startingLineNumber, code.data(), code.size(), thisV);
 }
 
 Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumber, const UChar* code, int codeLength, JSValue* thisV)

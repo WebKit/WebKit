@@ -1,3 +1,170 @@
+2006-06-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders.
+        
+        - First cut at C API to JavaScript. Includes a unit test, 'testapi.c', 
+        and the outline of a test app, 'minidom.c'.
+        
+        Includes one change to JSC internals: Rename propList to getPropertyList and have it
+        take its target property list by reference so that subclasses can
+        add properties to the list before calling through to their superclasses.
+        
+        Also, I just ran prepare-ChangeLog in about 10 seconds, and I would like
+        to give a shout-out to that.
+        
+        * API/APICast.h: Added.
+        (toJS):
+        (toRef):
+        * API/JSBase.h: Added.
+        * API/JSCallbackObject.cpp: Added.
+        (KJS::):
+        (KJS::JSCallbackObject::JSCallbackObject):
+        (KJS::JSCallbackObject::~JSCallbackObject):
+        (KJS::JSCallbackObject::className):
+        (KJS::JSCallbackObject::getOwnPropertySlot):
+        (KJS::JSCallbackObject::put):
+        (KJS::JSCallbackObject::deleteProperty):
+        (KJS::JSCallbackObject::implementsConstruct):
+        (KJS::JSCallbackObject::construct):
+        (KJS::JSCallbackObject::implementsCall):
+        (KJS::JSCallbackObject::callAsFunction):
+        (KJS::JSCallbackObject::getPropertyList):
+        (KJS::JSCallbackObject::toBoolean):
+        (KJS::JSCallbackObject::toNumber):
+        (KJS::JSCallbackObject::toString):
+        (KJS::JSCallbackObject::setPrivate):
+        (KJS::JSCallbackObject::getPrivate):
+        (KJS::JSCallbackObject::cachedValueGetter):
+        (KJS::JSCallbackObject::callbackGetter):
+        * API/JSCallbackObject.h: Added.
+        (KJS::JSCallbackObject::classInfo):
+        * API/JSCharBufferRef.cpp: Added.
+        (JSStringMake):
+        (JSCharBufferCreate):
+        (JSCharBufferCreateUTF8):
+        (JSCharBufferRetain):
+        (JSCharBufferRelease):
+        (JSValueCopyStringValue):
+        (JSCharBufferGetLength):
+        (JSCharBufferGetCharactersPtr):
+        (JSCharBufferGetCharacters):
+        (JSCharBufferGetMaxLengthUTF8):
+        (JSCharBufferGetCharactersUTF8):
+        (JSCharBufferIsEqual):
+        (JSCharBufferIsEqualUTF8):
+        (JSCharBufferCreateWithCFString):
+        (CFStringCreateWithJSCharBuffer):
+        * API/JSCharBufferRef.h: Added.
+        * API/JSContextRef.cpp: Added.
+        (JSContextCreate):
+        (JSContextDestroy):
+        (JSContextGetGlobalObject):
+        (JSEvaluate):
+        (JSCheckSyntax):
+        (JSContextHasException):
+        (JSContextGetException):
+        (JSContextClearException):
+        (JSContextSetException):
+        * API/JSContextRef.h: Added.
+        * API/JSObjectRef.cpp: Added.
+        (JSValueToObject):
+        (JSObjectMake):
+        (JSFunctionMake):
+        (JSObjectGetDescription):
+        (JSObjectGetPrototype):
+        (JSObjectSetPrototype):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectDeleteProperty):
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (JSObjectIsFunction):
+        (JSObjectCallAsFunction):
+        (JSObjectIsConstructor):
+        (JSObjectCallAsConstructor):
+        (__JSPropertyListEnumerator::__JSPropertyListEnumerator):
+        (JSObjectCreatePropertyEnumerator):
+        (JSPropertyEnumeratorGetNext):
+        (JSPropertyEnumeratorRetain):
+        (JSPropertyEnumeratorRelease):
+        (JSPropertyListAdd):
+        * API/JSObjectRef.h: Added.
+        * API/JSValueRef.cpp: Added.
+        (JSValueGetType):
+        (JSValueIsUndefined):
+        (JSValueIsNull):
+        (JSValueIsBoolean):
+        (JSValueIsNumber):
+        (JSValueIsString):
+        (JSValueIsObject):
+        (JSValueIsEqual):
+        (JSValueIsStrictEqual):
+        (JSUndefinedMake):
+        (JSNullMake):
+        (JSBooleanMake):
+        (JSNumberMake):
+        (JSValueToBoolean):
+        (JSValueToNumber):
+        (JSGCProtect):
+        (JSGCUnprotect):
+        (JSGCCollect):
+        * API/JSValueRef.h: Added.
+        * API/JavaScriptCore.h: Added.
+        * API/minidom.c: Added.
+        (main):
+        * API/minidom.html: Added.
+        * API/minidom.js: Added.
+        * API/testapi.c: Added.
+        (assertEqualsAsBoolean):
+        (assertEqualsAsNumber):
+        (assertEqualsAsUTF8String):
+        (assertEqualsAsCharactersPtr):
+        (assertEqualsAsCharacters):
+        (MyObject_initialize):
+        (MyObject_copyDescription):
+        (MyObject_hasProperty):
+        (MyObject_getProperty):
+        (MyObject_setProperty):
+        (MyObject_deleteProperty):
+        (MyObject_getPropertyList):
+        (MyObject_callAsFunction):
+        (MyObject_callAsConstructor):
+        (MyObject_convertToType):
+        (MyObject_finalize):
+        (print_callAsFunction):
+        (main):
+        (createStringWithContentsOfFile):
+        * API/testapi.js: Added.
+        * ChangeLog:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/npruntime_impl.h:
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstance::getPropertyList):
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate):
+        * kjs/nodes.cpp:
+        (ForInNode::execute):
+        * kjs/object.cpp:
+        (KJS::JSObject::put):
+        (KJS::JSObject::canPut):
+        (KJS::JSObject::deleteProperty):
+        (KJS::JSObject::propertyIsEnumerable):
+        (KJS::JSObject::getPropertyAttributes):
+        (KJS::JSObject::getPropertyList):
+        * kjs/object.h:
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::get):
+        * kjs/property_map.h:
+        * kjs/scope_chain.cpp:
+        (KJS::ScopeChain::print):
+        * kjs/string_object.cpp:
+        (StringInstance::getPropertyList):
+        * kjs/string_object.h:
+        * kjs/ustring.h:
+        (KJS::UString::Rep::ref):
+
 2006-06-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.

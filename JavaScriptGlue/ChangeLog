@@ -1,3 +1,19 @@
+2006-06-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders.
+        
+        - Required for JS API: Rename propList to getPropertyList and have it
+        take its target property list by reference so that subclasses can
+        add properties to the list before calling through to their superclasses.
+
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal):
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        * UserObjectImp.cpp:
+        (UserObjectImp::getPropertyList):
+        * UserObjectImp.h:
+
 2006-06-15  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff and Darin.

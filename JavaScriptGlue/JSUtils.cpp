@@ -34,7 +34,7 @@
 #include "UserObjectImp.h"
 #include "JSValueWrapper.h"
 #include "JSObject.h"
-#include "JavaScriptCore/reference_list.h"
+#include <JavaScriptCore/reference_list.h>
 
 struct ObjectImpList {
     JSObject* imp;
@@ -294,7 +294,8 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                         isArray = true;
                         JSInterpreter* intrepreter = (JSInterpreter*)exec->dynamicInterpreter();
                         if (intrepreter && (intrepreter->Flags() & kJSFlagConvertAssociativeArray)) {
-                            ReferenceList propList = object->propList(exec);
+                            ReferenceList propList;
+                            object->getPropertyList(exec, propList);
                             ReferenceListIterator iter = propList.begin();
                             ReferenceListIterator end = propList.end();
                             while(iter != end && isArray)
@@ -332,7 +333,8 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                     else
                     {
                         // Not an array, just treat it like a dictionary which contains (property name, property value) pairs
-                        ReferenceList propList = object->propList(exec);
+                        ReferenceList propList;
+                        object->getPropertyList(exec, propList);
                         {
                             result = CFDictionaryCreateMutable(0,
                                                                0,

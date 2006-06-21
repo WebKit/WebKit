@@ -42,11 +42,12 @@ void ScopeChain::print(ExecState* exec)
     ScopeChainIterator scopeEnd = end();
     for (ScopeChainIterator scopeIter = begin(); scopeIter != scopeEnd; ++scopeIter) {
         JSObject* o = *scopeIter;
-        ReferenceList propList = o->propList(exec, false);
-        ReferenceListIterator propEnd = propList.end();
+        ReferenceList propertyList;
+        o->getPropertyList(exec, propertyList, false);
+        ReferenceListIterator propEnd = propertyList.end();
 
         fprintf(stderr, "----- [scope %p] -----\n", o);
-        for (ReferenceListIterator propIter = propList.begin(); propIter != propEnd; propIter++) {
+        for (ReferenceListIterator propIter = propertyList.begin(); propIter != propEnd; propIter++) {
             Identifier name = propIter->getPropertyName(exec);
             fprintf(stderr, "%s, ", name.ascii());
         }
