@@ -1,3 +1,29 @@
+2006-06-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Tests for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8724
+        REGRESSION: onSelect handler doesn't work for text fields
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7676
+        REGRESSION: Selection methods on new text fields don't work if text field is hidden
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8867
+        REGRESSION: selectionStart/End return 0 for input element once it no longer has focus
+
+        * fast/forms/double-focus-expected.txt:
+        * fast/forms/input-selection-hidden-expected.txt: Added.
+        * fast/forms/input-selection-hidden.html: Added.
+        * fast/forms/input-selection-restore-expected.txt: Added.
+        * fast/forms/input-selection-restore.html: Added.
+        * fast/forms/input-text-paste-maxlength-expected.txt:
+        * fast/forms/onselect-textarea-expected.txt: Added.
+        * fast/forms/onselect-textarea.html: Added.
+        * fast/forms/onselect-textfield-expected.txt: Added.
+        * fast/forms/onselect-textfield.html: Added.
+        * fast/forms/selection-functions-expected.txt:
+
 2006-06-20  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.

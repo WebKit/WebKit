@@ -111,6 +111,9 @@ void HTMLInputElement::init()
 
     xPos = 0;
     yPos = 0;
+    
+    cachedSelStart = -1;
+    cachedSelEnd = -1;
 
     m_maxResults = -1;
 
@@ -443,6 +446,8 @@ int HTMLInputElement::selectionStart() const
         case SEARCH:
             return static_cast<RenderLineEdit*>(renderer())->selectionStart();
         case TEXT:
+            if (document()->focusNode() != this && cachedSelStart >= 0)
+                return cachedSelStart;
             return static_cast<RenderTextField*>(renderer())->selectionStart();
     }
     return 0;
@@ -469,6 +474,8 @@ int HTMLInputElement::selectionEnd() const
         case SEARCH:
             return static_cast<RenderLineEdit*>(renderer())->selectionEnd();
         case TEXT:
+            if (document()->focusNode() != this && cachedSelEnd >= 0)
+                return cachedSelEnd;
             return static_cast<RenderTextField*>(renderer())->selectionEnd();
     }
     return 0;
@@ -1063,6 +1070,13 @@ void HTMLInputElement::setValue(const String& value)
         setChanged();
     } else
         setAttribute(valueAttr, constrainValue(value));
+    
+    // Restore a caret at the starting point of the old selection.
+    // This matches Safari 2.0 behavior.
+    if (isNonWidgetTextField() && document()->focusNode() == this && cachedSelStart >= 0) {
+        ASSERT(cachedSelEnd >= 0);
+        setSelectionRange(cachedSelStart, cachedSelStart);
+    }
 }
 
 void HTMLInputElement::setValueFromRenderer(const String& value)

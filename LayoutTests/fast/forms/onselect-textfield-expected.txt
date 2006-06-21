@@ -1,0 +1,27 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV to 5 of #text > DIV toDOMRange:range from 8 of #text > DIV to 8 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > DIV to 8 of #text > DIV toDOMRange:range from 6 of #text > DIV to 10 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+
+This tests onSelect for text fields. 
+
+Calling focus on text field
+After focus: text field selection start: 0 end: 10
+
+Calling setSelectionRange on text field
+After setSelectionRange(3, 5): text field selection start: 3 end: 5
+
+Double clicking to make selection for text field
+onselect fired for text field
+After double clicking: text field selection start: 6 end: 10
+
+Calling blur on text field
+After blur: text field selection start: 6 end: 10
+
+Calling focus on text field
+After focus: text field selection start: 0 end: 10
+

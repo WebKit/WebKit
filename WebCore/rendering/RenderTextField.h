@@ -59,7 +59,7 @@ public:
     String text();
     String textWithHardLineBreaks();
     void forwardEvent(Event*);
-    void selectionChanged();
+    void selectionChanged(bool userTriggered);
 
 private:
     VisiblePosition visiblePositionForIndex(int index);

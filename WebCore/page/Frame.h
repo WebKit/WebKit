@@ -326,6 +326,8 @@ public:
   // FIXME: Replace these with functions on the selection controller.
   void setSelection(const SelectionController&, bool closeTyping = true, bool keepTypingStyle = false);
   bool shouldChangeSelection(const SelectionController&) const;
+  
+  void notifyRendererOfSelectionChange(bool userTriggered);
 
   /**
    * Returns a mark, to be used as emacs uses it.

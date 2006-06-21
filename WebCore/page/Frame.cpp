@@ -62,6 +62,7 @@
 #include "PluginDocument.h"
 #include "RenderPart.h"
 #include "RenderTheme.h"
+#include "RenderTextField.h"
 #include "RenderView.h"
 #include "SegmentedString.h"
 #include "TextDocument.h"
@@ -1198,7 +1199,20 @@ void Frame::setSelection(const SelectionController& s, bool closeTyping, bool ke
     if (!keepTypingStyle)
         clearTypingStyle();
     
+    notifyRendererOfSelectionChange(false);
+
     respondToChangedSelection(oldSelection, closeTyping);
+}
+
+void Frame::notifyRendererOfSelectionChange(bool userTriggered)
+{
+    RenderObject* renderer = 0;
+    if (d->m_selection.rootEditableElement())
+        renderer = d->m_selection.rootEditableElement()->shadowAncestorNode()->renderer();
+
+    // If the current selection is in a textfield or textarea, notify the renderer that the selection has changed
+    if (renderer && (renderer->isTextArea() || renderer->isTextField()))
+        static_cast<RenderTextField*>(renderer)->selectionChanged(userTriggered);
 }
 
 void Frame::setDragCaret(const SelectionController& dragCaret)
@@ -1928,6 +1942,9 @@ void Frame::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
         if (shouldChangeSelection(selection))
             setSelection(selection);
     }
+
+    notifyRendererOfSelectionChange(true);
+
     selectFrameElementInParentIfFullySelected();
 }
 

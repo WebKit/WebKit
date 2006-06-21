@@ -1,3 +1,62 @@
+2006-06-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        Fixes for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8724
+        REGRESSION: onSelect handler doesn't work for text fields
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7676
+        REGRESSION: Selection methods on new text fields don't work if text field is hidden
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8867
+        REGRESSION: selectionStart/End return 0 for input element once it no longer has focus
+
+        Implemented onSelect for new text fields and textareas.  Also fixed selection restore
+        behavior to better match other browsers and Safari 2.0 behavior.
+
+        Tests:
+        * fast/forms/input-selection-restore.html
+        * fast/forms/input-selection-hidden.html
+        * fast/forms/onselect-textarea.html
+        * fast/forms/onselect-textfield.html
+
+        * html/HTMLInputElement.h: (WebCore::HTMLInputElement::cacheSelection): Added.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::init): Initializes cached selection.
+        (WebCore::HTMLInputElement::selectionStart): If this element doesn't have focus, return the cached selection value.
+        (WebCore::HTMLInputElement::selectionEnd): ditto.
+        (WebCore::HTMLInputElement::setValue): Restore a caret at the starting point of the old selection.  Matches Safari 2.0 behavior.
+
+        * html/HTMLTextAreaElement.h: (WebCore::HTMLTextAreaElement::cacheSelection): Added.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement): Initializes cached selection.
+        (WebCore::HTMLTextAreaElement::selectionStart): If this element doesn't have focus, return the cached selection value.
+        (WebCore::HTMLTextAreaElement::selectionEnd): ditto.
+        (WebCore::HTMLTextAreaElement::focus): If this is the first focus, set a caret at the end of the text.  Otherwise,
+        restore the cached selection.  This matches other browsers' behavior.
+        (WebCore::HTMLTextAreaElement::setValue): Restore a caret at the starting point of the old selection.  Matches Safari 2.0 behavior.
+
+        * page/Frame.h: Added notifyRendererOfSelectionChange method. 
+        * page/Frame.cpp:
+        (WebCore::Frame::notifyRendererOfSelectionChange): Added.  Calls selectionChanged for text fields and textareas.  Forwards a userTriggered
+        argument so selectionChanged knows whether or not to fire onSelect.
+        (WebCore::Frame::setSelection): Calls notifyRendererOfSelectionChange(false).  This gets called for all selection changes, so the renderer
+        can always update its cached selection values.
+        (WebCore::Frame::handleMouseReleaseEvent): Calls notifyRendererOfSelectionChange(true) so onSelect will get fired when the user is done
+        making a selection with the mouse.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge alterCurrentSelection:direction:granularity:]): Calls notifyRendererOfSelectionChange(true) so onSelect gets
+        fired when the user makes a selection with the keyboard.
+        (-[WebCoreFrameBridge alterCurrentSelection:verticalDistance:]): ditto.
+
+        * rendering/RenderTextField.h: Add userTriggered parameter to selectionChanged.
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::setSelectionRange): For visibility:hidden, cache the selection and 
+        return early since we won't be able to actually set the selection.
+        (WebCore::RenderTextField::selectionChanged): Caches the selection.  
+        If the selection is a range, and its triggered by user action, then fire the onSelect event.
+
 2006-06-21  Anders Carlsson  <acarlsson@apple.com>
 
         * bridge/win/FrameWin.cpp:

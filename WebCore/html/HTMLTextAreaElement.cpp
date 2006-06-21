@@ -48,6 +48,8 @@ HTMLTextAreaElement::HTMLTextAreaElement(Document *doc, HTMLFormElement *f)
     , m_rows(2)
     , m_cols(20)
     , m_wrap(ta_Virtual)
+    , cachedSelStart(-1)
+    , cachedSelEnd(-1)
 {
     setValueMatchesRenderer();
     document()->registerFormElementWithState(this);
@@ -77,8 +79,11 @@ void HTMLTextAreaElement::restoreState(const String& state)
 int HTMLTextAreaElement::selectionStart()
 {
     if (renderer()) {
-        if (renderer()->style()->appearance() == TextAreaAppearance)
+        if (renderer()->style()->appearance() == TextAreaAppearance) {
+            if (document()->focusNode() != this && cachedSelStart >= 0)
+                return cachedSelStart;
             return static_cast<RenderTextField *>(renderer())->selectionStart();
+        }
         return static_cast<RenderTextArea*>(renderer())->selectionStart();
     }
     return 0;
@@ -87,8 +92,11 @@ int HTMLTextAreaElement::selectionStart()
 int HTMLTextAreaElement::selectionEnd()
 {
     if (renderer()) {
-        if (renderer()->style()->appearance() == TextAreaAppearance)
+        if (renderer()->style()->appearance() == TextAreaAppearance) {
+            if (document()->focusNode() != this && cachedSelEnd >= 0)
+                return cachedSelEnd;
             return static_cast<RenderTextField *>(renderer())->selectionEnd();
+        }
         return static_cast<RenderTextArea*>(renderer())->selectionEnd();
     }
     return 0;
@@ -229,7 +237,21 @@ void HTMLTextAreaElement::focus()
         if (!isFocusable())
             return;
         doc->setFocusNode(this);
-        select();
+
+        if (cachedSelStart == -1) {
+            ASSERT(cachedSelEnd == -1);
+            // If this is the first focus, set a caret at the end of the text.  
+            // This matches other browsers' behavior.
+            int max;
+            if (renderer()->style()->appearance() == TextAreaAppearance)
+                max = static_cast<RenderTextField*>(renderer())->text().length();
+            else
+                max = static_cast<RenderTextArea*>(renderer())->text().length();
+            setSelectionRange(max, max);
+        } else
+            // Restore the cached selection.  This matches other browsers' behavior.
+            setSelectionRange(cachedSelStart, cachedSelEnd);
+
         if (doc->frame())
             doc->frame()->revealSelection();
         return;
@@ -280,6 +302,13 @@ void HTMLTextAreaElement::setValue(const String& value)
     setValueMatchesRenderer();
     if (renderer())
         renderer()->updateFromElement();
+        
+    // Restore a caret at the starting point of the old selection.
+    // This matches Safari 2.0 behavior.
+    if (document()->focusNode() == this && cachedSelStart >= 0 && renderer() && renderer()->style()->appearance() == TextAreaAppearance) {
+        ASSERT(cachedSelEnd >= 0);
+        setSelectionRange(cachedSelStart, cachedSelStart);
+    }
     setChanged(true);
 }
 

@@ -1,0 +1,28 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV to 10 of #text > DIV toDOMRange:range from 11 of #text > DIV to 11 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV to 11 of #text > DIV toDOMRange:range from 9 of #text > DIV to 13 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+
+This tests onSelect for textareas. 
+This also makes sure that the correct selection is restored when the element regains focus.
+
+Calling focus on textarea
+After focus: textarea selection start: 34 end: 34
+
+Calling setSelectionRange on textarea
+After setSelectionRange(5, 10): textarea selection start: 5 end: 10
+
+Double clicking to make selection for textarea
+onselect fired for textarea
+After double clicking: textarea selection start: 9 end: 13
+
+Calling blur on textarea
+After blur: textarea selection start: 9 end: 13
+
+Calling focus on textarea
+After focus: textarea selection start: 9 end: 13
+

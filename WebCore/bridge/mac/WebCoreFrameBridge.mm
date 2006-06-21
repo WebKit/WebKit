@@ -1646,6 +1646,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
         m_frame->setXPosForVerticalArrowNavigation(xPos);
 
     m_frame->selectFrameElementInParentIfFullySelected();
+    
+    m_frame->notifyRendererOfSelectionChange(true);
 
     [self ensureSelectionVisible];
 }
@@ -1675,6 +1677,8 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
     m_frame->setXPosForVerticalArrowNavigation(xPos);
 
     m_frame->selectFrameElementInParentIfFullySelected();
+
+    m_frame->notifyRendererOfSelectionChange(true);
 
     [self ensureSelectionVisible];
 }
