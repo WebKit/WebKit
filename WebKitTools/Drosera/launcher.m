@@ -42,52 +42,7 @@ void checkMacOSXVersion()
     long versionNumber = 0;
     OSErr error = Gestalt(gestaltSystemVersion, &versionNumber);
     if (error != noErr || versionNumber < 0x1040)
-        displayErrorAndQuit(@"Mac OS X 10.4 is Required", @"Nightly builds of WebKit require Mac OS X 10.4 or newer.");
-}
-
-int getLastVersionShown()
-{
-    [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:@"-1" forKey:@"StartPageShownInVersion"]];
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"StartPageShownInVersion"];
-}
-
-void saveLastVersionShown(int lastVersion)
-{
-    [[NSUserDefaults standardUserDefaults] setInteger:lastVersion forKey:@"StartPageShownInVersion"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-NSString *getPathForStartPage()
-{
-    return [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"start.html"];
-}
-
-int getShowStartPageVersion()
-{
-    return getCurrentVersion() + 1;
-}
-
-int getCurrentVersion()
-{
-    return [[[[NSBundle mainBundle] infoDictionary] valueForKey:(NSString *)kCFBundleVersionKey] intValue];
-}
-
-BOOL startPageDisabled()
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"StartPageDisabled"];
-}
-
-void addStartPageToArgumentsIfNeeded(NSMutableArray *arguments)
-{
-    if (startPageDisabled())
-        return;
-
-    if (getLastVersionShown() < getShowStartPageVersion()) {
-        saveLastVersionShown(getCurrentVersion());
-        NSString *startPagePath = getPathForStartPage();
-        if (startPagePath)
-            [arguments addObject:startPagePath];
-    }
+        displayErrorAndQuit(@"Mac OS X 10.4 is Required", @"Nightly builds of Drosera require Mac OS X 10.4 or newer.");
 }
 
 static void myExecve(NSString *executable, NSArray *args, NSDictionary *environment)
@@ -114,32 +69,31 @@ int main(int argc, char *argv[])
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     checkMacOSXVersion();
 
-    CFURLRef safariURL = nil;
-    OSStatus err = LSFindApplicationForInfo(kLSUnknownCreator, CFSTR("com.apple.Safari"), nil, nil, &safariURL);
+    CFURLRef webkitURL = nil;
+    OSStatus err = LSFindApplicationForInfo(kLSUnknownCreator, CFSTR("org.webkit.nightly.WebKit"), nil, nil, &webkitURL);
     if (err != noErr)
-        displayErrorAndQuit(@"Unable to locate Safari", @"Nightly builds of WebKit require Safari to run.  Please check that it is available and then try again.");
+        displayErrorAndQuit(@"Unable to locate WebKit.app", @"Drosera nightly builds require WebKit.app to run. Please check that it is available and then try again.");
 
-    NSString *frameworkPath = [[NSBundle mainBundle] resourcePath];
-    NSString *executablePath = [[NSBundle bundleWithPath:[(NSURL *)safariURL path]] executablePath];
-    NSString *pathToEnablerLib = [[NSBundle mainBundle] pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
-    
-    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:executablePath, @"-WebKitDeveloperExtras", @"YES", @"-WebKitScriptDebuggerEnabled", @"YES", nil];
-    addStartPageToArgumentsIfNeeded(arguments);
+    NSBundle *webKitAppBundle = [NSBundle bundleWithPath:[(NSURL *)webkitURL path]];
+    NSString *frameworkPath = [webKitAppBundle resourcePath];
+    NSBundle *droseraBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"Drosera" ofType:@"app"]];
+    NSString *executablePath = [droseraBundle executablePath];
+    NSString *pathToEnablerLib = [webKitAppBundle pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
+
+    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:executablePath, @"-WebKitDeveloperExtras", @"YES", nil];
 
     while (*++argv)
         [arguments addObject:[NSString stringWithUTF8String:*argv]];
 
-    myExecve(executablePath,
-             arguments,
-             [NSDictionary dictionaryWithObjectsAndKeys:frameworkPath, @"DYLD_FRAMEWORK_PATH", 
-             @"YES", @"WEBKIT_UNSET_DYLD_FRAMEWORK_PATH", 
-             pathToEnablerLib, @"DYLD_INSERT_LIBRARIES", 
-             [[NSBundle mainBundle] executablePath], @"CFProcessPath",
-              nil]);
+    NSDictionary *environment = [NSDictionary dictionaryWithObjectsAndKeys:frameworkPath, @"DYLD_FRAMEWORK_PATH",
+        @"YES", @"WEBKIT_UNSET_DYLD_FRAMEWORK_PATH", pathToEnablerLib, @"DYLD_INSERT_LIBRARIES",
+        [[NSBundle mainBundle] executablePath], @"CFProcessPath", nil];
 
-     char *error = strerror(errno);
-     NSString *errorMessage = [NSString stringWithFormat:@"Launching Safari at %@ failed with the error '%s' (%d)", [(NSURL *)safariURL  path], error, errno];
-     displayErrorAndQuit(@"Unable to launch Safari", errorMessage);
+    myExecve(executablePath, arguments, environment);
+
+    char *error = strerror(errno);
+    NSString *errorMessage = [NSString stringWithFormat:@"Launching Drosera at %@ failed with the error '%s' (%d)", [(NSURL *)webkitURL path], error, errno];
+    displayErrorAndQuit(@"Unable to launch Drosera", errorMessage);
 
     [pool release];
     return 0;

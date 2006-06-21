@@ -38,6 +38,7 @@ use lib "$FindBin::Bin/../Scripts";
 use webkitdirs;
 
 my $nightlyLauncherStagingPath = productDir() . "/WebKit.app";
+my $droseraStagingPath = productDir() . "/DroseraLauncher.app";
 my $nightlyLauncherDiskImagePath;
 
 my $nightlyRemoteHost = 'webkit-nightlies@nightly.webkit.org';
@@ -50,15 +51,35 @@ sub buildDiskImage
     my $productDir = productDir();
     $nightlyLauncherDiskImagePath = productDir() . "/WebKit-SVN-r$revision.dmg";
     
+    print "Removing previous temp source directory (if any)...\n";
+    `rm -rf /tmp/WebKitNightly`;
+    die "Removing previous temp source directory failed" if $?;
+
+    print "Making a new temp source directory...\n";
+    `mkdir /tmp/WebKitNightly`;
+    die "Making a new temp source directory failed" if $?;
+
+    print "Copying WebKit.app to temp source directory...\n";
+    `cp -R \"$nightlyLauncherStagingPath\" /tmp/WebKitNightly/WebKit.app`;
+    die "Copying WebKit.app to temp source directory failed" if $?;
+
+    print "Copying Drosera.app to temp source directory...\n";
+    `cp -R \"$droseraStagingPath\" /tmp/WebKitNightly/Drosera.app`;
+    die "Copying Drosera.app to temp source directory failed" if $?;
+
     print "Creating disk image...\n";
-    my $output = `hdiutil create \"$nightlyLauncherDiskImagePath\" -ov -srcfolder $nightlyLauncherStagingPath -fs HFS+ -volname \"WebKit\"`;
+    `hdiutil create \"$nightlyLauncherDiskImagePath\" -ov -srcfolder /tmp/WebKitNightly -fs HFS+ -volname \"WebKit\"`;
     die "Creating disk image failed" if $?;
+
+    print "Removing temp source directory...\n";
+    `rm -rf /tmp/WebKitNightly`;
+    die "Removing temp source directory failed" if $?;
 
     print "Compressing disk image...\n";
     system("mv", "-f", $nightlyLauncherDiskImagePath, "$nightlyLauncherDiskImagePath.uncompressed.dmg") == 0 or die "Renaming disk image failed";
     system("hdiutil", "convert", "-quiet", "$nightlyLauncherDiskImagePath.uncompressed.dmg", "-format", "UDZO", "-imagekey", "zlib-level=9", "-o", "$nightlyLauncherDiskImagePath");
     die "Compressing disk image failed" if $?;
-    
+
     unlink "$nightlyLauncherDiskImagePath.uncompressed.dmg";
 }
 

@@ -39,12 +39,25 @@
 		1CC059200A44A210006FE533 /* stepOver.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058EA0A44A210006FE533 /* stepOver.tif */; };
 		1CC059210A44A210006FE533 /* stop.tif in Resources */ = {isa = PBXBuildFile; fileRef = 1CC058EB0A44A210006FE533 /* stop.tif */; };
 		1CC059700A44A485006FE533 /* toolbarBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CC0596F0A44A485006FE533 /* toolbarBackground.png */; };
+		1CD8D5690A49041C00E5677B /* launcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CD8D5680A49041C00E5677B /* launcher.m */; };
+		1CD8D56C0A49043E00E5677B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+		1CD8D5A60A49102900E5677B /* Drosera.app in Resources */ = {isa = PBXBuildFile; fileRef = 8D15AC370486D014006FF6A4 /* Drosera.app */; };
 		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
 		8D15AC2E0486D014006FF6A4 /* Debugger.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B4FDCFA73011CA2CEA /* Debugger.nib */; };
 		8D15AC310486D014006FF6A4 /* DebuggerDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4ACFDCFA73011CA2CEA /* DebuggerDocument.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1CD8D5A90A49104E00E5677B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D15AC270486D014006FF6A4 /* Drosera */;
+			remoteInfo = Drosera;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -82,6 +95,9 @@
 		1CC058EA0A44A210006FE533 /* stepOver.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = stepOver.tif; sourceTree = "<group>"; };
 		1CC058EB0A44A210006FE533 /* stop.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = stop.tif; sourceTree = "<group>"; };
 		1CC0596F0A44A485006FE533 /* toolbarBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolbarBackground.png; sourceTree = "<group>"; };
+		1CD8D54D0A4902B000E5677B /* DroseraLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DroseraLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CD8D54F0A4902B000E5677B /* LauncherInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LauncherInfo.plist; sourceTree = "<group>"; };
+		1CD8D5680A49041C00E5677B /* launcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = launcher.m; sourceTree = "<group>"; };
 		2A37F4ACFDCFA73011CA2CEA /* DebuggerDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebuggerDocument.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2A37F4AEFDCFA73011CA2CEA /* DebuggerDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -95,6 +111,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1CD8D54B0A4902B000E5677B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CD8D56C0A49043E00E5677B /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D15AC330486D014006FF6A4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -130,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				8D15AC370486D014006FF6A4 /* Drosera.app */,
+				1CD8D54D0A4902B000E5677B /* DroseraLauncher.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -166,12 +191,22 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
+		1CD8D53C0A49025D00E5677B /* Nightly Support */ = {
+			isa = PBXGroup;
+			children = (
+				1CD8D54F0A4902B000E5677B /* LauncherInfo.plist */,
+				1CD8D5680A49041C00E5677B /* launcher.m */,
+			);
+			name = "Nightly Support";
+			sourceTree = "<group>";
+		};
 		2A37F4AAFDCFA73011CA2CEA /* SafariBug */ = {
 			isa = PBXGroup;
 			children = (
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
+				1CD8D53C0A49025D00E5677B /* Nightly Support */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
 			);
@@ -232,6 +267,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1CD8D54C0A4902B000E5677B /* Drosera (Nightly Launcher) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1CD8D5500A4902B000E5677B /* Build configuration list for PBXNativeTarget "Drosera (Nightly Launcher)" */;
+			buildPhases = (
+				1CD8D5490A4902B000E5677B /* Resources */,
+				1CD8D54A0A4902B000E5677B /* Sources */,
+				1CD8D54B0A4902B000E5677B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1CD8D5AA0A49104E00E5677B /* PBXTargetDependency */,
+			);
+			name = "Drosera (Nightly Launcher)";
+			productName = "Drosera (Nightly Launcher)";
+			productReference = 1CD8D54D0A4902B000E5677B /* DroseraLauncher.app */;
+			productType = "com.apple.product-type.application";
+		};
 		8D15AC270486D014006FF6A4 /* Drosera */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Drosera" */;
@@ -261,11 +314,20 @@
 			projectDirPath = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* Drosera */,
+				1CD8D54C0A4902B000E5677B /* Drosera (Nightly Launcher) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1CD8D5490A4902B000E5677B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CD8D5A60A49102900E5677B /* Drosera.app in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D15AC2B0486D014006FF6A4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -308,6 +370,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1CD8D54A0A4902B000E5677B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CD8D5690A49041C00E5677B /* launcher.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D15AC300486D014006FF6A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -319,6 +389,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1CD8D5AA0A49104E00E5677B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D15AC270486D014006FF6A4 /* Drosera */;
+			targetProxy = 1CD8D5A90A49104E00E5677B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		2A37F4B4FDCFA73011CA2CEA /* Debugger.nib */ = {
@@ -340,6 +418,35 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1CD8D5510A4902B000E5677B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = LauncherInfo.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = DroseraLauncher;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		1CD8D5520A4902B000E5677B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				INFOPLIST_FILE = LauncherInfo.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = DroseraLauncher;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -392,6 +499,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1CD8D5500A4902B000E5677B /* Build configuration list for PBXNativeTarget "Drosera (Nightly Launcher)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CD8D5510A4902B000E5677B /* Debug */,
+				1CD8D5520A4902B000E5677B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Drosera" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -38,11 +38,13 @@ use webkitdirs;
 my @xcodeBuildArguments = XcodeOptions();
 my $nightlyLauncherTemplatePath = "$FindBin::Bin/../WebKitLauncher";
 my $nightlyLauncherStagingPath = productDir() . "/WebKit.app";
+my $droseraProjectPath = "$FindBin::Bin/../Drosera";
+my $droseraStagingPath = productDir() . "/DroseraLauncher.app";
 
 sub buildNightlyLauncher
 {
     chdir($nightlyLauncherTemplatePath);
-    system("xcodebuild", "clean", @xcodeBuildArguments) == 0 or die "Failed cleaning WebKitLauncher project";
+    system("xcodebuild", "clean", "-alltargets", @xcodeBuildArguments) == 0 or die "Failed cleaning WebKitLauncher project";
     system("xcodebuild", @xcodeBuildArguments) == 0 or die "Failed building WebKitLauncher project";
     chdirWebKit();
 }
@@ -69,6 +71,35 @@ sub copyNightlyLauncher
     }
 }
 
+sub buildDroseraLauncher
+{
+    chdir($droseraProjectPath);
+    system("xcodebuild", "clean", "-alltargets", @xcodeBuildArguments) == 0 or die "Failed cleaning Drosera project";
+    # build PPC only right now, building universal with the 10.4u SDK cause Xcode to look for the wrong WebCore & JavaScriptCore in the SDK
+    # universal fails because these frameworks are part of the WebKit umbrella, not in /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks
+    system("xcodebuild", "-alltargets", "ARCHS=ppc", @xcodeBuildArguments) == 0 or die "Failed building Drosera project";
+    chdirWebKit();
+}
+
+sub setDroseraLauncherVersion
+{
+    my $revision = currentSVNRevision();
+    my $infoPlist = "$droseraStagingPath/Contents/Info.plist";
+    my $data;
+    open(IN, $infoPlist) or die "Couldn't open Info.plist in built application for reading";
+    {
+        undef $/;
+        $data = <IN>;
+    }
+    close(IN);
+    open(OUT, ">$infoPlist") or die "Couldn't open Info.plist in built application for writing";
+    $data =~ s/VERSION/$revision/g;
+    print OUT $data;
+    close(OUT);
+}
+
 chdirWebKit();
 buildNightlyLauncher();
 copyNightlyLauncher();
+buildDroseraLauncher();
+setDroseraLauncherVersion();

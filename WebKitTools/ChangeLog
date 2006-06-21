@@ -1,5 +1,26 @@
 2006-06-20  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Eric.
+
+        Builds Drosera and a launcher to include with the nightly.
+
+        * BuildSlaveSupport/build-launcher-app:
+        * BuildSlaveSupport/build-launcher-dmg:
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/Info.plist:
+        * Drosera/LauncherInfo.plist: Added.
+        * Drosera/launcher.m: Added.
+        (displayErrorAndQuit):
+        (checkMacOSXVersion):
+        (myExecve):
+        (main):
+        * Scripts/build-drosera
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        * WebKitLauncher/main.m:
+        (main):
+
+2006-06-20  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
         
         Adds a JavaScript debugger, called Drosera. Named after
