@@ -253,7 +253,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
     Node* startNode = m_upstreamStart.node();
-    
+
     // Never remove the start block.
     if (startNode == m_startBlock && startOffset == 0) {
         startOffset = 0;
@@ -325,11 +325,10 @@ void DeleteSelectionCommand::handleGeneralDelete()
             } else {
                 Node* n = node->lastDescendant();
                 if (m_downstreamEnd.node() == n && m_downstreamEnd.offset() >= n->caretMaxOffset()) {
-                    removeNode(node); 
+                    removeNode(node);
                     node = 0;
-                } else {
+                } else
                     node = node->traverseNextNode();
-                }
             }
         }
         
@@ -405,7 +404,7 @@ void DeleteSelectionCommand::mergeParagraphs()
         return;
         
     // Don't move content between parts of a table or between table and non-table content.
-    // FIXME: This isn't right.  A table with two rows and a single column appears as two paragraphs.
+    // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
     if (isTableStructureNode(m_downstreamEnd.node()->enclosingBlockFlowElement()) || isTableStructureNode(m_upstreamStart.node()->enclosingBlockFlowElement()))
         return;
         

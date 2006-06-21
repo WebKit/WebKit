@@ -565,6 +565,7 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
         // FIXME: isBlockFlow should not exclude non-inline tables
         if (r->isBR() || r->isBlockFlow() || (r->isTable() && !r->isInline()))
             break;
+            
         if (r->isText()) {
             if (style->preserveNewline()) {
                 const UChar* text = static_cast<RenderText*>(r)->text();

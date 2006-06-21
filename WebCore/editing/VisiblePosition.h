@@ -67,6 +67,7 @@ public:
     bool isLastInBlock() const;
 
     UChar characterAfter() const;
+    UChar characterBefore() const { return previous().characterAfter(); }
     
     void debugPosition(const char* msg = "") const;
     
@@ -79,7 +80,7 @@ public:
     
 private:
     void init(const Position&, EAffinity);
-    void initDeepPosition(const Position&, EAffinity affinity);
+    Position canonicalPosition(const Position&);
 
     static int maxOffset(const Node*);
     

@@ -1,3 +1,46 @@
+2006-06-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4590366>
+        REGRESSION: Selection incorrectly paints gaps on TOT
+        
+        Added:
+        * editing/selection/line-wrap-1-expected.checksum: Added.
+        * editing/selection/line-wrap-1-expected.png: Added.
+        * editing/selection/line-wrap-1-expected.txt: Added.
+        * editing/selection/line-wrap-1.html: Added.
+        * editing/selection/line-wrap-2-expected.checksum: Added.
+        * editing/selection/line-wrap-2-expected.png: Added.
+        * editing/selection/line-wrap-2-expected.txt: Added.
+        * editing/selection/line-wrap-2.html: Added.
+        Fixes:
+        * editing/execCommand/findString-expected.checksum:
+        * editing/execCommand/findString-expected.png:
+        * editing/execCommand/findString-expected.txt:
+        * editing/inserting/editing-empty-divs-expected.checksum:
+        * editing/inserting/editing-empty-divs-expected.png:
+        * editing/inserting/editing-empty-divs-expected.txt:
+        * editing/inserting/insert-3659587-fix-expected.txt:
+        * editing/inserting/insert-tab-002-expected.txt:
+        * editing/inserting/insert-text-with-newlines-expected.txt:
+        * editing/inserting/typing-001-expected.txt:
+        * editing/inserting/typing-003-expected.txt:
+        * editing/inserting/typing-around-br-001-expected.txt:
+        * editing/style/remove-underline-across-paragraph-expected.txt:
+        * editing/style/remove-underline-across-paragraph-in-bold-expected.txt:
+        * editing/style/remove-underline-after-paragraph-expected.txt:
+        * editing/style/remove-underline-after-paragraph-in-bold-expected.txt:
+        * editing/style/remove-underline-expected.txt:
+        * editing/style/remove-underline-from-stylesheet-expected.txt:
+        * editing/style/remove-underline-in-bold-expected.txt:
+        * editing/style/typing-style-002-expected.txt:
+        * editing/style/typing-style-003-expected.txt:
+        * editing/style/unbold-in-bold-expected.txt:
+        * editing/style/underline-expected.txt:
+        Disabled (9337):
+        * editing/input/attributed-substring-from-range-lines.html
+
 2006-06-21  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

@@ -123,20 +123,25 @@ static Node* enclosingEmptyListItem(const VisiblePosition& visiblePos)
 void InsertParagraphSeparatorCommand::doApply()
 {
     bool splitText = false;
-    Selection selection = endingSelection();
-    if (selection.isNone())
+    if (endingSelection().isNone())
         return;
     
-    Position pos = selection.start();
-    EAffinity affinity = selection.affinity();
+    Position pos = endingSelection().start();
+        
+    EAffinity affinity = endingSelection().affinity();
         
     // Delete the current selection.
-    if (selection.isRange()) {
+    if (endingSelection().isRange()) {
         calculateStyleBeforeInsertion(pos);
         deleteSelection(false, true);
         pos = endingSelection().start();
         affinity = endingSelection().affinity();
     }
+    
+    // Use the leftmost candidate.
+    pos = pos.upstream();
+    if (!pos.inRenderedContent())
+        pos = pos.downstream();
 
     // Adjust the insertion position after the delete
     pos = positionAvoidingSpecialElementBoundary(pos);
@@ -233,12 +238,11 @@ void InsertParagraphSeparatorCommand::doApply()
     //---------------------------------------------------------------------
     // Handle the (more complicated) general case,
 
-    // If pos.node() is a <br> and the document is in quirks mode, this <br>
-    // will collapse away when we add a block after it. Add an extra <br>.
-    if (!document()->inStrictMode()) {
-        Position upstreamPos = pos.upstream();
-        if (upstreamPos.node()->hasTagName(brTag))
-            insertNodeAfter(createBreakElement(document()).get(), upstreamPos.node());
+    Position upstreamPos = pos.upstream();
+    if (upstreamPos.node()->hasTagName(brTag)) {
+        RefPtr<Element> br = createBreakElement(document());
+        insertNodeAfter(br.get(), upstreamPos.node());
+        pos = positionAfterNode(br.get());
     }
     
     // Move downstream. Typing style code will take care of carrying along the 

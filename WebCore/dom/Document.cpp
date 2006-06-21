@@ -1050,12 +1050,23 @@ void Document::updateSelection()
     
     RenderView *canvas = static_cast<RenderView*>(renderer());
     SelectionController s = frame()->selection();
-    if (!s.isRange()) {
+    if (s.isNone())
+        return;
+        
+    if (!s.isRange())
         canvas->clearSelection();
-    }
     else {
-        Position startPos = VisiblePosition(s.start(), s.affinity()).deepEquivalent();
-        Position endPos = VisiblePosition(s.end(), s.affinity()).deepEquivalent();
+        // Use the rightmost candidate for the start of the selection, and the leftmost candidate for the end of the selection.
+        // Example: foo <a>bar</a>.  Imagine that a line wrap occurs after 'foo', and that 'bar' is selected.   If we pass [foo, 3]
+        // as the start of the selection, the selection painting code will think that content on the line containing 'foo' is selected
+        // and will fill the gap before 'bar'.
+        Position startPos = s.selection().visibleStart().deepEquivalent();
+        if (startPos.downstream().inRenderedContent())
+            startPos = startPos.downstream();
+        Position endPos = s.selection().visibleEnd().deepEquivalent();
+        if (endPos.upstream().inRenderedContent())
+            endPos = endPos.upstream();
+            
         if (startPos.isNotNull() && endPos.isNotNull()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();

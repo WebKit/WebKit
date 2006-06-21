@@ -64,7 +64,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > B > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > B > DIV > BODY > HTML > #document to 0 of SPAN > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -82,6 +82,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (164,14) size 78x28
             text run at (164,14) width 78: " xxxxxx"
         RenderInline {SPAN} at (0,0) size 0x28
-        RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 1 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
 selection end:   position 6 of child 1 {#text} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

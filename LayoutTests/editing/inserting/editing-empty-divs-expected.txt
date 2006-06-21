@@ -1,8 +1,7 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
@@ -50,8 +49,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 176x18
           text run at (0,0) width 176: "This div contains some text."
       RenderBlock {DIV} at (0,86) size 707x22 [border: (1px dotted #0000FF)]
-        RenderText {#text} at (1,1) size 42x18
-          text run at (1,1) width 42: " chello"
+        RenderText {#text} at (1,1) size 38x18
+          text run at (1,1) width 38: "chello"
       RenderBlock {P} at (0,124) size 784x18
         RenderText {#text} at (0,0) size 186x18
           text run at (0,0) width 186: "This div is completely empty."

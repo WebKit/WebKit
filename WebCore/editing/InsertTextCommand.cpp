@@ -27,6 +27,7 @@
 #include "InsertTextCommand.h"
 
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSComputedStyleDeclaration.h"
 #include "Document.h"
 #include "Element.h"
 #include "EditingText.h"
@@ -85,32 +86,22 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
 {
     assert(text.find('\n') == -1);
 
-    Selection selection = endingSelection();
     if (endingSelection().isNone())
         return;
     
-    // FIXME: I don't see how "start of line" could possibly be the right check here.
-    // It depends on line breaks which depends on the way things are current laid out,
-    // window width, etc. This needs to be rethought.
-    bool adjustDownstream = isStartOfLine(VisiblePosition(selection.start().downstream(), DOWNSTREAM));
-
-    // Delete the current selection, or collapse whitespace, as needed
-    if (selection.isRange())
+    // Delete the current selection.
+    if (endingSelection().isRange())
         deleteSelection();
     
-    // Delete any insignificant text that could get in the way of whitespace turning
-    // out correctly after the insertion.
-    selection = endingSelection();
-    deleteInsignificantTextDownstream(selection.end().trailingWhitespacePosition(selection.affinity()));
-
-    // Figure out the startPosition
-    Position startPosition = selection.start();
-    Position endPosition;
-    if (adjustDownstream)
+    // Insert the character at the leftmost candidate.
+    Position startPosition = endingSelection().start().upstream();
+    deleteInsignificantText(startPosition.upstream(), startPosition.downstream());
+    if (!startPosition.inRenderedContent())
         startPosition = startPosition.downstream();
-    else
-        startPosition = startPosition.upstream();
+        
     startPosition = positionAvoidingSpecialElementBoundary(startPosition);
+    
+    Position endPosition;
     
     if (text == "\t") {
         endPosition = insertTab(startPosition);
@@ -142,6 +133,8 @@ void InsertTextCommand::input(const String &text, bool selectInsertedText)
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
+    RefPtr<CSSComputedStyleDeclaration> endingStyle = endPosition.computedStyle();
+    endingStyle->diff(typingStyle);
     if (typingStyle && typingStyle->length() > 0)
         applyStyle(typingStyle);
 

@@ -1,3 +1,43 @@
+2006-06-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4590366>
+        REGRESSION: Selection incorrectly paints gaps on TOT
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateSelection): Use the leftmost candidate for the end of the
+        selection and the rightmost candidate for the start of the selection.
+        * dom/Position.cpp:
+        (WebCore::Position::upstream): Cross line wraps so that we can use upstream/downstream
+        to get to candidates before/after linewraps.
+        (WebCore::Position::downstream):
+        (WebCore::Position::inRenderedContent):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): 
+        Ensure that the leftmost candidate is used.  We should sample the style from that one.
+        When the block to insert is after a br, a br should be inserted even in strict mode.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): 
+        Insert at the leftmost candidate, get rid of a use of trailingWhitespacePosition.
+        Don't apply a style if its unnecessary.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): "pos" can be invalidated, don't use it.
+        * editing/VisiblePosition.cpp:
+        Renamed initDeepPosition and made it return the canonical position.
+        (WebCore::VisiblePosition::init):
+        (WebCore::VisiblePosition::canonicalPosition):
+        * editing/VisiblePosition.h: 
+        (WebCore::VisiblePosition::characterBefore): Added.
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionState): When a selection ends at a line wrap, it shouldn't extend
+        onto the next line.
+
 2006-06-21  David Hyatt  <hyatt@apple.com>
 
         Reviewed and committed by Beth.
