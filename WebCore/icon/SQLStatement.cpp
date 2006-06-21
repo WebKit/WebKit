@@ -25,7 +25,7 @@
 
 #include "SQLDatabase.h"
 
-#include <wtf/assertions.h>
+#include <wtf/Assertions.h>
 #include "Logging.h"
 
 namespace WebCore {

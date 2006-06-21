@@ -1,5 +1,13 @@
 2006-06-20  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Maciej
+
+        Fixed capitalization mistake that I made, someone else fixed, then I accidentally made it go back to the old way
+
+        * icon/SQLStatement.cpp:
+
+2006-06-20  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Maciej.
 
         More changes/additions setting the stage for the major IconDatabase hookup.
