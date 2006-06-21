@@ -1,0 +1,91 @@
+#!/usr/bin/perl
+
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Script to run Apache with the same configuration as used in http layout tests.
+
+use strict;
+use warnings;
+
+use Cwd;
+use Getopt::Long;
+use webkitdirs;
+
+# Argument handling
+my $httpdPort = 8000;
+
+GetOptions(
+    'port=i' => \$httpdPort,
+);
+
+setConfiguration();
+my $productDir = productDir();
+chdirWebKit();
+checkFrameworks();
+
+print "Starting httpd on <http://127.0.0.1:$httpdPort/>...\n";
+print "Press Ctrl+C to stop it.\n\n";
+
+mkdir "/tmp/WebKit";
+
+if (-f "/tmp/WebKit/httpd.pid") {
+	my $oldPid = `cat /tmp/WebKit/httpd.pid`;
+	chomp $oldPid;
+	if (0 != kill 0, $oldPid) {
+		print "\nhttpd is already running: pid $oldPid, killing...\n";
+		kill 15, $oldPid;
+		
+		my $retryCount = 20;
+		while ((0 != kill 0, $oldPid) && $retryCount) {
+			sleep 1;
+			--$retryCount;
+		}
+		
+		die "Timed out waiting for httpd to quit" unless $retryCount;
+	}
+}
+
+my $testDirectory = getcwd() . "/LayoutTests";
+my $httpdPath = "/usr/sbin/httpd";
+my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
+$httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
+my $documentRoot = "$testDirectory/http/tests";
+my $typesConfig = "$testDirectory/http/conf/mime.types";
+my $listen = "127.0.0.1:$httpdPort";
+
+system($httpdPath, 
+	"-f", "$httpdConfig",
+	"-C", "DocumentRoot \"$documentRoot\"",
+	"-C", "Listen $listen",
+	"-c", "TypesConfig \"$typesConfig\"",
+	"-c", "CustomLog |/usr/bin/tee common",
+	"-c", "ErrorLog |/usr/bin/tee",
+	# Apache wouldn't run CGIs with permissions==700 otherwise.
+	"-c", "User \"#$<\"",
+	# Run in single-process mode, do not detach from the controlling terminal.
+	"-X");

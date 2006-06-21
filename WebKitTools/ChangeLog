@@ -1,3 +1,12 @@
+2006-06-21  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Anders.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9516
+          Would like a script to run a httpd server with the same configuration as run-webkit-tests http
+
+        * Scripts/run-webkit-httpd: Added.
+
 2006-06-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Eric.
