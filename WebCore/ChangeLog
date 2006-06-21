@@ -1,3 +1,15 @@
+2006-06-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed and committed by Beth.
+
+        Fix for <rdar://problem/4595337> Resizing a containing block 
+        strictly vertically does not cause contained height:100% element to 
+        also be resized.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren): Also layout if the 
+        child's min or max height is a percent.
+
 2006-06-21  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
