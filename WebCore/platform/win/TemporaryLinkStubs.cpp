@@ -173,6 +173,7 @@ bool FrameWin::canRedo() const { notImplemented(); return 0; }
 bool FrameWin::canUndo() const { notImplemented(); return 0; }
 void FrameWin::registerCommandForRedo(WebCore::EditCommandPtr const&) { notImplemented(); }
 bool FrameWin::runJavaScriptPrompt(String const&,String const&,String &) { notImplemented(); return 0; }
+bool FrameWin::shouldInterruptJavaScript() const { notImplemented(); return false; }
 bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameWin::print() { notImplemented(); }
 KJS::Bindings::Instance* FrameWin::getAppletInstanceForWidget(Widget*) { notImplemented(); return 0; }

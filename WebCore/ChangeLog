@@ -1,3 +1,11 @@
+2006-06-21  Anders Carlsson  <acarlsson@apple.com>
+
+        Move FrameWin::shouldInterruptJavaScript to TemporaryLinkStubs.cpp
+        
+        * bridge/win/FrameWin.cpp:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::shouldInterruptJavaScript):
+
 2006-06-21  Ben Goodger <bengoodger@gmail.com>
 
         Reviewed by Maciej. 

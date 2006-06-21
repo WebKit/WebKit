@@ -105,12 +105,6 @@ bool FrameWin::runJavaScriptConfirm(String const& message)
     return MessageBox(view()->windowHandle(), text.characters(), L"JavaScript Alert", MB_OKCANCEL) == IDOK;
 }
 
-bool FrameWin::shouldInterruptJavaScript()
-{
-    // FIXME: This should be implemented
-    return false;
-}
-
 // FIXME: This needs to be unified with the keyPress method on FrameMac
 bool FrameWin::keyPress(const PlatformKeyboardEvent& keyEvent)
 {
