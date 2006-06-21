@@ -1,3 +1,14 @@
+2006-06-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        The WebCoreIconDatabaseBridge was getting messages sent to it after it had been closed, resulting in a crash
+        on an ASSERT().  After closing the databaseBridge, we simply set it to nil so this can't happen.
+        anymore.
+
+        * Misc/WebIconDatabase.m:
+        (-[WebIconDatabase _applicationWillTerminate:]):
+
 2006-06-21  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff Garen.

@@ -667,6 +667,8 @@ NSSize WebIconLargeSize = {128, 128};
     [_private->fileDatabase sync];
     
     [_private->databaseBridge closeSharedDatabase];
+    [_private->databaseBridge release];
+    _private->databaseBridge = nil;
 }
 
 - (int)_totalRetainCountForIconURLString:(NSString *)iconURLString
