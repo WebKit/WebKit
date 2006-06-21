@@ -17,9 +17,12 @@ Content:
   <circle cx="150" cy="100" r="50" xlink:title="test"/>
 </svg>
 <script>
-if (window.layoutTestController)
-	layoutTestController.dumpAsText();
-document.getElementById("content").firstChild.nodeValue = document.documentElement.innerHTML;
+window.addEventListener ("load", function() {
+    if (window.layoutTestController)
+	    layoutTestController.dumpAsText();
+    document.getElementById("content").firstChild.nodeValue = document.documentElement.innerHTML;
+}, false);
+
 </script>
 </body>
 test 

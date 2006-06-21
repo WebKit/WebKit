@@ -44,30 +44,31 @@
 			}
 
 			////////////////////
+            
+            function runTest() {
+			    // setup canvas and context
+			    var canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
+			    canvas.setAttribute('width', 480);
+			    canvas.setAttribute('height', 360);
+			    document.documentElement.appendChild(canvas);
+			    ctx = canvas.getContext('2d');
 
-			// setup canvas and context
-			var canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
-			canvas.setAttribute('width', 480);
-			canvas.setAttribute('height', 360);
-			document.documentElement.appendChild(canvas);
-			ctx = canvas.getContext('2d');
+			    // draw shapes equivalent to SVG path data "M 240 296 q 25 -100 47 0 t 47 0 t 47 0 t 47 0 t 47 0 z"
+			    M(10,60);
+			    q(25,-100,47,0);
+			    t(47,0);
+			    t(47,0);
+			    t(47,0);
+			    t(47,0);
+			    z();
 
-			// draw shapes equivalent to SVG path data "M 240 296 q 25 -100 47 0 t 47 0 t 47 0 t 47 0 t 47 0 z"
-			M(10,60);
-			q(25,-100,47,0);
-			t(47,0);
-			t(47,0);
-			t(47,0);
-			t(47,0);
-			z();
-
-			// stroke it
-			ctx.stroke();
-
+			    // stroke it
+			    ctx.stroke();
+            }
 		</script>
 	</head>
 
-	<body>
+	<body onload="runTest()">
 
 		<p>
 			This test case should produce a sine-wave stroked with 1px black.   

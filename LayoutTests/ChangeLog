@@ -1,3 +1,32 @@
+2006-06-21  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6058
+        XMLTokenizer runs all <script> tags at once instead of as they're encountered
+
+        * dom/svg/level3/xpath/svgunit.js:
+        The XPath tests depend on the document being loaded before running the tests.
+        Add a "load" event listener and run the test in the handler.
+        
+        * fast/canvas/quadraticCurveTo.xml:
+        Add onload handler and run tests there.
+        
+        * fast/innerHTML/004-expected.txt:
+        * fast/innerHTML/004.xhtml:
+        Add load event listener and run test there.
+        
+        * fast/parser/external-entities-expected.txt:
+        This now dumps as text because the script is ran before the parse error is encountered.
+        
+        * fast/parser/resources/xhtml-scripts.js: Added.
+        * fast/parser/xhtml-scripts-expected.txt: Added.
+        * fast/parser/xhtml-scripts.xhtml: Added.
+        Add new tests.
+        
+        * svg/custom/text-hit-test.svg:
+        Run test in onload handler.
+        
 2006-06-20  Maciej Stachowiak  <mjs@apple.com>
 
         No review - updated results for earlier patch.

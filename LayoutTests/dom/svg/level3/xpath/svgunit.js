@@ -674,22 +674,26 @@ function getResourceURI(name, scheme, contentType) {
     return base + name + getSuffix(contentType);
 }
 
+function onloadHandler() {
+	//
+	//   invoke test setup
+	//
+	setUpPage();
 
-//
-//   invoke test setup
-//
-setUpPage();
-
-try {
-	runTest();
-	if (builder.initializationError == null) {
-	   changeColor("green");
-	   addMessage("0", "120", exposeTestFunctionNames()[0] + ": Success");
-	} else {
+	try {
+		runTest();
+		if (builder.initializationError == null) {
+	   		changeColor("green");
+	   		addMessage("0", "120", exposeTestFunctionNames()[0] + ": Success");
+		} else {
+			addMessage("0", "120", exposeTestFunctionNames()[0]);
+		}
+	} catch(ex) {
 		addMessage("0", "120", exposeTestFunctionNames()[0]);
-	}
-} catch(ex) {
-	addMessage("0", "120", exposeTestFunctionNames()[0]);
-    changeColor("red");
-    addMessage("0", "140", ex);    
+    	changeColor("red");
+    	addMessage("0", "140", ex);    
+	}	
 }
+// Add loader
+window.addEventListener('load', onloadHandler, false)
+

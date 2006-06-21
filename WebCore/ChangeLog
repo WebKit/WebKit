@@ -1,3 +1,30 @@
+2006-06-21  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6058
+        XMLTokenizer runs all <script> tags at once instead of as they're encountered
+        
+        * dom/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        Initialize new members.
+        
+        (WebCore::XMLTokenizer::endElementNs):
+        If we've encountered a script tag, execute the script here. If the script
+        tag refers to an external resource, pause the parser while loading it.
+        
+        (WebCore::XMLTokenizer::end):
+        Move code from finish() to here
+        
+        (WebCore::XMLTokenizer::finish):
+        Only call end() if the parser isn't paused.
+        
+        (WebCore::XMLTokenizer::notifyFinished):
+        Evaluate the script here and resume the parser.
+        
+        (WebCore::XMLTokenizer::resumeParsing):
+        If finish() was called, call end() after writing all data.
+
 2006-06-21  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build break

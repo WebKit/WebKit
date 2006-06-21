@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
@@ -52,7 +53,8 @@
 using namespace std;
 
 namespace WebCore {
-    
+
+using namespace EventNames;
 using namespace HTMLNames;
 
 const int maxErrors = 25;
@@ -75,6 +77,8 @@ public:
     virtual void finish();
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
+
+    void end();
 
     void pauseParsing();
     void resumeParsing();
@@ -106,9 +110,6 @@ private:
 
     void insertErrorMessageBlock();
 
-    void executeScripts();
-    void addScripts(Node *n);
-
     bool enterText();
     void exitText();
 
@@ -127,15 +128,16 @@ private:
     bool m_isXHTMLDocument;
     
     bool m_parserPaused;
+    bool m_requestingScript;
+    bool m_finishCalled;
     
     int m_errorCount;
     int m_lastErrorLine;
     int m_lastErrorColumn;
     String m_errorMessages;
 
-    DeprecatedPtrList<Element> m_scripts;
-    DeprecatedPtrListIterator<Element> *m_scriptsIt;
-    CachedScript *m_cachedScript;
+    CachedScript *m_pendingScript;
+    RefPtr<Element> m_scriptElement;
     
     bool m_parsingFragment;
     String m_defaultNamespaceURI;
@@ -520,11 +522,12 @@ XMLTokenizer::XMLTokenizer(Document *_doc, FrameView *_view)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
     , m_parserPaused(false)
+    , m_requestingScript(false)
+    , m_finishCalled(false)
     , m_errorCount(0)
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
-    , m_scriptsIt(0)
-    , m_cachedScript(0)
+    , m_pendingScript(0)
     , m_parsingFragment(false)
     , m_pendingCallbacks(new PendingCallbacks)
 {
@@ -541,11 +544,12 @@ XMLTokenizer::XMLTokenizer(DocumentFragment *fragment, Element *parentElement)
     , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
     , m_parserPaused(false)
+    , m_requestingScript(false)
+    , m_finishCalled(false)
     , m_errorCount(0)
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
-    , m_scriptsIt(0)
-    , m_cachedScript(0)
+    , m_pendingScript(0)
     , m_parsingFragment(true)
     , m_pendingCallbacks(new PendingCallbacks)
 {
@@ -583,9 +587,8 @@ XMLTokenizer::~XMLTokenizer()
     if (m_parsingFragment && m_doc)
         m_doc->deref();
     delete m_pendingCallbacks;
-    delete m_scriptsIt;
-    if (m_cachedScript)
-        m_cachedScript->deref(this);
+    if (m_pendingScript)
+        m_pendingScript->deref(this);
 }
 
 void XMLTokenizer::setCurrentNode(Node* n)
@@ -782,6 +785,56 @@ void XMLTokenizer::endElementNs()
         n = n->parentNode();
     RefPtr<Node> parent = n->parentNode();
     n->closeRenderer();
+    
+    // don't load external scripts for standalone documents (for now)
+    if (n->isElementNode() && m_view && (static_cast<Element*>(n)->hasTagName(scriptTag) 
+#if SVG_SUPPORT
+                                         || static_cast<Element*>(n)->hasTagName(SVGNames::scriptTag)
+#endif
+                                         )) {
+
+                                         
+        ASSERT(!m_pendingScript);
+        
+        m_requestingScript = true;
+        
+        Element* scriptElement = static_cast<Element*>(n);        
+        String scriptHref;
+        
+        if (static_cast<Element*>(n)->hasTagName(scriptTag))
+            scriptHref = scriptElement->getAttribute(srcAttr);
+#if SVG_SUPPORT
+        else if (static_cast<Element*>(n)->hasTagName(SVGNames::scriptTag))
+            scriptHref = scriptElement->getAttribute(XLinkNames::hrefAttr);
+#endif
+        
+        if (!scriptHref.isEmpty()) {
+            // we have a src attribute 
+            DeprecatedString charset = scriptElement->getAttribute(charsetAttr).deprecatedString();
+            
+            if ((m_pendingScript = m_doc->docLoader()->requestScript(scriptHref, charset))) {
+                m_scriptElement = scriptElement;
+                m_pendingScript->ref(this);
+                    
+                // m_pendingScript will be 0 if script was already loaded and ref() executed it
+                if (m_pendingScript)
+                    pauseParsing();
+            } else 
+                m_scriptElement = 0;
+
+        } else {
+            DeprecatedString scriptCode = "";
+            for (Node *child = scriptElement->firstChild(); child; child = child->nextSibling()) {
+                if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
+                    scriptCode += static_cast<CharacterData*>(child)->data().deprecatedString();
+            }
+                
+            m_view->frame()->executeScript(0, scriptCode);
+        }
+        
+        m_requestingScript = false;
+    }
+
     setCurrentNode(parent.get());
 }
 
@@ -1124,7 +1177,7 @@ void XMLTokenizer::initializeParserContext()
     m_context = createQStringParser(&sax, this);
 }
 
-void XMLTokenizer::finish()
+void XMLTokenizer::end()
 {
     if (m_sawXSLTransform) {
         m_doc->setTransformSource(xmlDocPtrForString(m_originalSourceForTransform, m_doc->URL()));
@@ -1134,7 +1187,7 @@ void XMLTokenizer::finish()
         m_doc->setParsing(true);
         m_parserStopped = true;
     }
-        
+    
     if (m_context) {
         // Tell libxml we're done.
         xmlParseChunk(m_context, 0, 0, 1);
@@ -1148,16 +1201,20 @@ void XMLTokenizer::finish()
     if (m_sawError)
         insertErrorMessageBlock();
     else {
-        // Parsing was successful. Now locate all html <script> tags in the document and execute them
-        // one by one.
         exitText();
-        addScripts(m_doc);
-        m_scriptsIt = new DeprecatedPtrListIterator<Element>(m_scripts);
-        executeScripts();
+        m_doc->updateStyleSelector();
     }
     
     setCurrentNode(0);
-    m_doc->finishedParsing();
+    m_doc->finishedParsing();    
+}
+
+void XMLTokenizer::finish()
+{
+    if (m_parserPaused)
+        m_finishCalled = true;
+    else
+        end();
 }
 
 static inline RefPtr<Element> createXHTMLParserErrorHeader(Document* doc, const String& errorMessages) 
@@ -1226,80 +1283,36 @@ void XMLTokenizer::insertErrorMessageBlock()
     doc->updateRendering();
 }
 
-void XMLTokenizer::addScripts(Node *n)
-{
-    // Recursively go through the entire document tree, looking for html <script> tags. For each of these
-    // that is found, add it to the m_scripts list from which they will be executed
-    if (n->hasTagName(scriptTag)
-#if SVG_SUPPORT
-        || n->hasTagName(WebCore::SVGNames::scriptTag)
-#endif
-        )
-        m_scripts.append(static_cast<Element*>(n));
-
-    Node *child;
-    for (child = n->firstChild(); child; child = child->nextSibling())
-        addScripts(child);
-}
-
-void XMLTokenizer::executeScripts()
-{
-    // Iterate through all of the html <script> tags in the document. For those that have a src attribute,
-    // start loading the script and return (executeScripts() will be called again once the script is loaded
-    // and continue where it left off). For scripts that don't have a src attribute, execute the code
-    // inside the tag
-    while (Element *scriptElement = m_scriptsIt->current()) {
-        ++(*m_scriptsIt);
-        String scriptHref = scriptElement->getAttribute(srcAttr);
-#if SVG_SUPPORT
-        if (scriptElement->hasTagName(WebCore::SVGNames::scriptTag))
-            scriptHref = scriptElement->getAttribute(XLinkNames::hrefAttr);
-#endif
-        // don't load external scripts for standalone documents (for now)
-        if (!scriptHref.isEmpty() && m_doc->frame()) {
-            // we have a src attribute
-            DeprecatedString charset = scriptElement->getAttribute(charsetAttr).deprecatedString();
-            m_cachedScript = m_doc->docLoader()->requestScript(scriptHref, charset);
-            m_cachedScript->ref(this); // will call executeScripts() again if already cached
-            return;
-        } else {
-            // no src attribute - execute from contents of tag
-            DeprecatedString scriptCode = "";
-            for (Node *child = scriptElement->firstChild(); child; child = child->nextSibling()) {
-                if (child->isTextNode() || child->nodeType() == Node::CDATA_SECTION_NODE)
-                    scriptCode += static_cast<CharacterData*>(child)->data().deprecatedString();
-            }
-            // the script cannot do document.write until we support incremental parsing
-            // ### handle the case where the script deletes the node or redirects to
-            // another page, etc. (also in notifyFinished())
-            // ### the script may add another script node after this one which should be executed
-            if (m_view)
-                m_view->frame()->executeScript(0, scriptCode);
-        }
-    }
-
-    // All scripts have finished executing, so calculate the style for the document and close
-    // the last element
-    m_doc->updateStyleSelector();
-}
-
 void XMLTokenizer::notifyFinished(CachedObject *finishedObj)
 {
-    // This is called when a script has finished loading that was requested from executeScripts(). We execute
-    // the script, and then call executeScripts() again to continue iterating through the list of scripts in
-    // the document
-    if (finishedObj == m_cachedScript) {
-        String scriptSource = m_cachedScript->script();
-        m_cachedScript->deref(this);
-        m_cachedScript = 0;
-        m_view->frame()->executeScript(0, scriptSource.deprecatedString());
-        executeScripts();
+    ASSERT(m_pendingScript == finishedObj);
+    ASSERT(m_pendingScript->accessCount() > 0);
+        
+    String cachedScriptUrl = m_pendingScript->url();
+    String scriptSource = m_pendingScript->script();
+    bool errorOccurred = m_pendingScript->errorOccurred();
+    m_pendingScript->deref(this);
+    m_pendingScript = 0;
+    
+    RefPtr<Element> e = m_scriptElement;
+    m_scriptElement = 0;
+    
+    if (errorOccurred) 
+        EventTargetNodeCast(e.get())->dispatchHTMLEvent(errorEvent, true, false);
+    else {
+        m_view->frame()->executeScript(cachedScriptUrl, 0, 0, scriptSource.deprecatedString());
+        EventTargetNodeCast(e.get())->dispatchHTMLEvent(loadEvent, false, false);
     }
+    
+    m_scriptElement = 0;
+    
+    if (!m_requestingScript)
+        resumeParsing();
 }
 
 bool XMLTokenizer::isWaitingForScripts() const
 {
-    return m_cachedScript != 0;
+    return m_pendingScript != 0;
 }
 
 #ifdef KHTML_XSLT
@@ -1369,6 +1382,10 @@ void XMLTokenizer::resumeParsing()
     SegmentedString rest = m_pendingSrc;
     m_pendingSrc.clear();
     write(rest, false);
+    
+    // Finally, if finish() has been called, call end()
+    if (m_finishCalled)
+        end();
 }
 
 static void balancedStartElementNsHandler(void *closure, const xmlChar *localname, const xmlChar *prefix, const xmlChar *uri, int nb_namespaces, const xmlChar **namespaces, int nb_attributes, int nb_defaulted, const xmlChar **libxmlAttributes)
