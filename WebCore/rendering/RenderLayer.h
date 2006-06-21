@@ -238,7 +238,6 @@ public:
     QScrollBar* verticalScrollbar() { return m_vBar; }
     int verticalScrollbarWidth();
     int horizontalScrollbarHeight();
-    void moveScrollbarsAside();
     void positionScrollbars(const IntRect& absBounds);
     void positionResizeControl();
     bool isPointInResizeControl(const IntPoint&);

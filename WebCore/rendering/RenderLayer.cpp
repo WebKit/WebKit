@@ -577,7 +577,7 @@ RenderLayer::subtractScrollOffset(int& x, int& y)
 
 void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
 {
-    if (renderer()->style()->overflow() != OMARQUEE) {
+    if (renderer()->style()->overflowX() != OMARQUEE) {
         if (x < 0) x = 0;
         if (y < 0) y = 0;
     
@@ -793,7 +793,7 @@ void RenderLayer::autoscroll()
 
 bool RenderLayer::shouldAutoscroll()
 {
-    if (renderer()->hasOverflowClip() && (m_object->style()->overflow() != OHIDDEN || renderer()->node()->isContentEditable()))
+    if (renderer()->hasOverflowClip() && (m_object->scrollsOverflow() || renderer()->node()->isContentEditable()))
         return true;
     return false;
 }
@@ -916,15 +916,6 @@ RenderLayer::horizontalScrollbarHeight()
     return m_hBar->height();
 }
 
-void
-RenderLayer::moveScrollbarsAside()
-{
-    if (m_hBar)
-        m_hBar->move(0, -50000);
-    if (m_vBar)
-        m_vBar->move(0, -50000);
-}
-
 bool RenderLayer::isPointInResizeControl(const IntPoint& p)
 {
     return resizeControlRect().contains(IntRect(p, IntSize()));
@@ -1007,13 +998,13 @@ void
 RenderLayer::updateScrollInfoAfterLayout()
 {
     m_scrollDimensionsDirty = true;
-    if (m_object->style()->overflow() == OHIDDEN)
+    if (m_object->style()->overflowX() == OHIDDEN && m_object->style()->overflowY() == OHIDDEN)
         return; // All we had to do was dirty.
 
     bool needHorizontalBar, needVerticalBar;
     computeScrollDimensions(&needHorizontalBar, &needVerticalBar);
 
-    if (m_object->style()->overflow() != OMARQUEE) {
+    if (m_object->style()->overflowX() != OMARQUEE) {
         // Layout may cause us to be in an invalid scroll position.  In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
         int newX = max(0, min(scrollXOffset(), scrollWidth() - m_object->clientWidth()));
@@ -1028,18 +1019,20 @@ RenderLayer::updateScrollInfoAfterLayout()
     bool haveVerticalBar = m_vBar;
 
     // overflow:scroll should just enable/disable.
-    if (m_object->style()->overflow() == OSCROLL) {
+    if (m_object->style()->overflowX() == OSCROLL)
         m_hBar->setEnabled(needHorizontalBar);
+    if (m_object->style()->overflowY() == OSCROLL)
         m_vBar->setEnabled(needVerticalBar);
-    }
 
     // overflow:auto may need to lay out again if scrollbars got added/removed.
-    bool scrollbarsChanged = (m_object->hasAutoScrollbars()) &&
-        (haveHorizontalBar != needHorizontalBar || haveVerticalBar != needVerticalBar);    
+    bool scrollbarsChanged = (m_object->hasAutoHorizontalScrollbar() && haveHorizontalBar != needHorizontalBar) || 
+                             (m_object->hasAutoVerticalScrollbar() && haveVerticalBar != needVerticalBar);    
     if (scrollbarsChanged) {
-        setHasHorizontalScrollbar(needHorizontalBar);
-        setHasVerticalScrollbar(needVerticalBar);
-    
+        if (m_object->hasAutoHorizontalScrollbar())
+            setHasHorizontalScrollbar(needHorizontalBar);
+        if (m_object->hasAutoVerticalScrollbar())
+            setHasVerticalScrollbar(needVerticalBar);
+
 #if __APPLE__
         // Force an update since we know the scrollbars have changed things.
         if (m_object->document()->hasDashboardRegions())
@@ -1048,7 +1041,7 @@ RenderLayer::updateScrollInfoAfterLayout()
 
         m_object->repaint();
 
-        if (m_object->style()->overflow() == OAUTO) {
+        if (m_object->style()->overflowX() == OAUTO || m_object->style()->overflowY() == OAUTO) {
             if (!m_inOverflowRelayout) {
                 // Our proprietary overflow: overlay value doesn't trigger a layout.
                 m_inOverflowRelayout = true;
@@ -1819,7 +1812,7 @@ void RenderLayer::styleChanged()
             sc->dirtyZOrderLists();
     }
 
-    if (m_object->style()->overflow() == OMARQUEE && m_object->style()->marqueeBehavior() != MNONE) {
+    if (m_object->style()->overflowX() == OMARQUEE && m_object->style()->marqueeBehavior() != MNONE) {
         if (!m_marquee)
             m_marquee = new Marquee(this);
         m_marquee->updateMarqueeStyle();

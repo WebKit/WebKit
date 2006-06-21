@@ -1485,7 +1485,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     
     m_height = borderTop() + paddingTop();
     int toAdd = borderBottom() + paddingBottom();
-    if (includeScrollbarSize())
+    if (includeHorizontalScrollbarSize())
         toAdd += m_layer->horizontalScrollbarHeight();
     
     // Figure out if we should clear out our line boxes.

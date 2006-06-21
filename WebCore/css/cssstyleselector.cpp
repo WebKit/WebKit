@@ -1038,12 +1038,25 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
     else
         style->addToTextDecorationsInEffect(style->textDecoration());
     
+    // If either overflow value is not visible, change to auto.
+    if (style->overflowX() == OMARQUEE && style->overflowY() != OMARQUEE)
+        style->setOverflowY(OMARQUEE);
+    else if (style->overflowY() == OMARQUEE && style->overflowX() != OMARQUEE)
+        style->setOverflowX(OMARQUEE);
+    else if (style->overflowX() == OVISIBLE && style->overflowY() != OVISIBLE)
+        style->setOverflowX(OAUTO);
+    else if (style->overflowY() == OVISIBLE && style->overflowX() != OVISIBLE)
+        style->setOverflowY(OAUTO);
+
     // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
     // FIXME: Eventually table sections will support auto and scroll.
-    if (style->overflow() != OVISIBLE && style->overflow() != OHIDDEN && 
-        (style->display() == TABLE || style->display() == INLINE_TABLE ||
-         style->display() == TABLE_ROW_GROUP || style->display() == TABLE_ROW))
-        style->setOverflow(OVISIBLE);
+    if (style->display() == TABLE || style->display() == INLINE_TABLE ||
+        style->display() == TABLE_ROW_GROUP || style->display() == TABLE_ROW) {
+        if (style->overflowX() != OVISIBLE && style->overflowX() != OHIDDEN) 
+            style->setOverflowX(OVISIBLE);
+        if (style->overflowY() != OVISIBLE && style->overflowY() != OHIDDEN) 
+            style->setOverflowY(OVISIBLE);
+    }
 
     // Links should be user selectable when content editable
     if (e && e->isLink() && (style->userModify() == READ_WRITE || style->userModify() == READ_WRITE_PLAINTEXT_ONLY))
@@ -2044,8 +2057,43 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
     case CSS_PROP_OVERFLOW:
     {
-        HANDLE_INHERIT_AND_INITIAL(overflow, Overflow)
-        if (!primitiveValue) return;
+        if (isInherit) {
+            style->setOverflowX(parentStyle->overflowX());
+            style->setOverflowY(parentStyle->overflowY());
+            return;
+        }
+        
+        if (isInitial) {
+            style->setOverflowX(RenderStyle::initialOverflowX());
+            style->setOverflowY(RenderStyle::initialOverflowY());
+            return;
+        }
+            
+        EOverflow o;
+        switch(primitiveValue->getIdent()) {
+            case CSS_VAL_VISIBLE:
+                o = OVISIBLE; break;
+            case CSS_VAL_HIDDEN:
+                o = OHIDDEN; break;
+            case CSS_VAL_SCROLL:
+                o = OSCROLL; break;
+            case CSS_VAL_AUTO:
+                o = OAUTO; break;
+            case CSS_VAL__WEBKIT_MARQUEE:
+                o = OMARQUEE; break;
+            case CSS_VAL__WEBKIT_OVERLAY:
+                o = OOVERLAY; break;
+            default:
+                return;
+        }
+        style->setOverflowX(o);
+        style->setOverflowY(o);
+        return;
+    }
+
+    case CSS_PROP_OVERFLOW_X:
+    {
+        HANDLE_INHERIT_AND_INITIAL(overflowX, OverflowX)
         EOverflow o;
         switch(primitiveValue->getIdent())
         {
@@ -2057,14 +2105,35 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             o = OSCROLL; break;
         case CSS_VAL_AUTO:
             o = OAUTO; break;
-        case CSS_VAL__WEBKIT_MARQUEE:
-            o = OMARQUEE; break;
         case CSS_VAL__WEBKIT_OVERLAY:
             o = OOVERLAY; break;
         default:
             return;
         }
-        style->setOverflow(o);
+        style->setOverflowX(o);
+        return;
+    }
+
+    case CSS_PROP_OVERFLOW_Y:
+    {
+        HANDLE_INHERIT_AND_INITIAL(overflowY, OverflowY)
+        EOverflow o;
+        switch(primitiveValue->getIdent())
+        {
+        case CSS_VAL_VISIBLE:
+            o = OVISIBLE; break;
+        case CSS_VAL_HIDDEN:
+            o = OHIDDEN; break;
+        case CSS_VAL_SCROLL:
+            o = OSCROLL; break;
+        case CSS_VAL_AUTO:
+            o = OAUTO; break;
+        case CSS_VAL__WEBKIT_OVERLAY:
+            o = OOVERLAY; break;
+        default:
+            return;
+        }
+        style->setOverflowY(o);
         return;
     }
 

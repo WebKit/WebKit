@@ -1,3 +1,76 @@
+2006-06-21  David Hyatt  <hyatt@apple.com>
+
+        Fix for 7362, implement the CSS3 overflow-x and overflow-y properties.
+
+        Reviewed by adele
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPropertyNames.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyOverflowToViewport):
+        (WebCore::FrameView::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::rightOffset):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::calcMinMaxWidth):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::contentWidth):
+        (WebCore::RenderBox::contentHeight):
+        (WebCore::RenderBox::sizesToIntrinsicWidth):
+        (WebCore::RenderBox::calcHeight):
+        (WebCore::RenderBox::calcPercentageHeight):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::shouldAutoscroll):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::clientWidth):
+        (WebCore::RenderObject::clientHeight):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasAutoVerticalScrollbar):
+        (WebCore::RenderObject::hasAutoHorizontalScrollbar):
+        (WebCore::RenderObject::scrollsOverflow):
+        (WebCore::RenderObject::scrollsOverflowX):
+        (WebCore::RenderObject::scrollsOverflowY):
+        (WebCore::RenderObject::includeVerticalScrollbarSize):
+        (WebCore::RenderObject::includeHorizontalScrollbarSize):
+        * rendering/RenderTextArea.cpp:
+        (WebCore::RenderTextArea::setStyle):
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::createDivStyle):
+        (WebCore::RenderTextField::calcHeight):
+        (WebCore::RenderTextField::calcMinMaxWidth):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/render_style.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/render_style.h:
+        (WebCore::):
+        (WebCore::RenderStyle::NonInheritedFlags::operator==):
+        (WebCore::RenderStyle::setBitDefaults):
+        (WebCore::RenderStyle::overflowX):
+        (WebCore::RenderStyle::overflowY):
+        (WebCore::RenderStyle::setOverflowX):
+        (WebCore::RenderStyle::setOverflowY):
+        (WebCore::RenderStyle::initialOverflowX):
+        (WebCore::RenderStyle::initialOverflowY):
+
 2006-06-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

@@ -109,9 +109,12 @@ void RenderBox::setStyle(RenderStyle *_style)
     }
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
-    if (_style->overflow() != OVISIBLE && !isRoot() && (!isBody() || !document()->isHTMLDocument()) &&
-        (isRenderBlock() || isTableRow() || isTableSection()))
-        setHasOverflowClip();
+    if (!isRoot() && (!isBody() || !document()->isHTMLDocument()) && (isRenderBlock() || isTableRow() || isTableSection())) {
+        // Check for overflow clip.
+        // It's sufficient to just check one direction, since it's illegal to have visible on only one overflow value.
+        if (_style->overflowX() != OVISIBLE)
+            setHasOverflowClip();
+    }
 
     if (requiresLayer()) {
         if (!m_layer) {
@@ -173,7 +176,7 @@ int RenderBox::contentWidth() const
 {
     int w = m_width - (borderLeft() + borderRight() + paddingLeft() + paddingRight());
 
-    if (includeScrollbarSize())
+    if (includeVerticalScrollbarSize())
         w -= m_layer->verticalScrollbarWidth();
     
     return w;
@@ -183,7 +186,7 @@ int RenderBox::contentHeight() const
 {
     int h = m_height - (borderTop() + borderBottom() + paddingTop() + paddingBottom());
 
-    if (includeScrollbarSize())
+    if (includeHorizontalScrollbarSize())
         h -= m_layer->horizontalScrollbarHeight();
 
     return h;
@@ -1086,7 +1089,7 @@ bool RenderBox::sizesToIntrinsicWidth(WidthType widthType) const
     
     // Children of a horizontal marquee do not fill the container by default.
     // FIXME: Need to deal with MAUTO value properly.  It could be vertical.
-    if (parent()->style()->overflow() == OMARQUEE) {
+    if (parent()->style()->overflowX() == OMARQUEE) {
         EMarqueeDirection dir = parent()->style()->marqueeDirection();
         if (dir == MAUTO || dir == MFORWARD || dir == MBACKWARD || dir == MLEFT || dir == MRIGHT)
             return true;
@@ -1205,7 +1208,7 @@ void RenderBox::calcHeight()
     }
     
     // Unfurling marquees override with the furled height.
-    if (style()->overflow() == OMARQUEE && m_layer && m_layer->marquee() && 
+    if (style()->overflowX() == OMARQUEE && m_layer && m_layer->marquee() && 
         m_layer->marquee()->isUnfurlMarquee() && !m_layer->marquee()->isHorizontal()) {
         m_layer->marquee()->setEnd(m_height);
         m_height = min(m_height, m_layer->marquee()->unfurlPos());
@@ -1272,8 +1275,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
             // to grow to fill the space.  This could end up being wrong in some cases, but it is
             // preferable to the alternative (sizing intrinsically and making the row end up too big).
             RenderTableCell* cell = static_cast<RenderTableCell*>(cb);
-            if (scrollsOverflow() && 
-                (!cell->style()->height().isAuto() || !cell->table()->style()->height().isAuto()))
+            if (scrollsOverflowY() && (!cell->style()->height().isAuto() || !cell->table()->style()->height().isAuto()))
                 return 0;
             return -1;
         }

@@ -82,11 +82,10 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->setUserModify(element->isReadOnlyControl() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
 
     if (m_multiLine) {
-        // Forward overflow property
-        if (startStyle->overflow() == OHIDDEN || startStyle->overflow() == OSCROLL) 
-            divStyle->setOverflow(startStyle->overflow());
-        else
-            divStyle->setOverflow(OAUTO);
+        // Forward overflow properties.
+        divStyle->setOverflowX(startStyle->overflowX() == OVISIBLE ? OAUTO : startStyle->overflowX());
+        divStyle->setOverflowY(startStyle->overflowY() == OVISIBLE ? OAUTO : startStyle->overflowY());
+
         // Set word wrap property based on wrap attribute
         if (static_cast<HTMLTextAreaElement*>(element)->wrap() == HTMLTextAreaElement::ta_NoWrap) {
             divStyle->setWhiteSpace(PRE);
@@ -98,7 +97,8 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
 
     } else {
         divStyle->setWhiteSpace(PRE);
-        divStyle->setOverflow(OHIDDEN);
+        divStyle->setOverflowX(OHIDDEN);
+        divStyle->setOverflowY(OHIDDEN);
     }
 
     if (!m_multiLine) {
@@ -316,7 +316,7 @@ void RenderTextField::calcHeight()
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead of hard coding it here.
     int scrollbarSize = 0;
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
-    if (m_div->renderer()->style()->overflow() == OSCROLL ||  (m_div->renderer()->style()->overflow() == OAUTO && m_div->renderer()->style()->wordWrap() == WBNORMAL))
+    if (m_div->renderer()->style()->overflowX() == OSCROLL ||  (m_div->renderer()->style()->overflowX() == OAUTO && m_div->renderer()->style()->wordWrap() == WBNORMAL))
         scrollbarSize = 15;
 
     m_height = line * rows + toAdd + scrollbarSize;
@@ -348,7 +348,7 @@ void RenderTextField::calcMinMaxWidth()
         if (m_multiLine) {
             factor = static_cast<HTMLTextAreaElement*>(node())->cols();
             // FIXME: We should get the size of the scrollbar from the RenderTheme instead of hard coding it here.
-            if (m_div->renderer()->style()->overflow() != OHIDDEN)
+            if (m_div->renderer()->style()->overflowY() != OHIDDEN)
                 scrollbarSize = 15;
         }
         else {

@@ -270,16 +270,12 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
     initMaxMarginValues();
 
+    // For overflow:scroll blocks, ensure we have both scrollbars in place always.
     if (scrollsOverflow()) {
-        // For overflow:scroll blocks, ensure we have both scrollbars in place always.
-        if (style()->overflow() == OSCROLL) {
+        if (style()->overflowX() == OSCROLL)
             m_layer->setHasHorizontalScrollbar(true);
+        if (style()->overflowY() == OSCROLL)
             m_layer->setHasVerticalScrollbar(true);
-        }
-
-        // Move the scrollbars aside during layout.  The layer will move them back when it
-        // does painting or event handling.
-        m_layer->moveScrollbarsAside();
     }
 
     if (isHorizontal())

@@ -263,15 +263,30 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, S
     // overflow:hidden and overflow:scroll on <body> as applying to the document's
     // scrollbars.  The CSS2.1 draft states that HTML UAs should use the <html> or <body> element and XML/XHTML UAs should
     // use the root element.
-    switch(o->style()->overflow()) {
+    switch (o->style()->overflowX()) {
         case OHIDDEN:
-            hMode = vMode = ScrollBarAlwaysOff;
+            hMode = ScrollBarAlwaysOff;
             break;
         case OSCROLL:
-            hMode = vMode = ScrollBarAlwaysOn;
+            hMode = ScrollBarAlwaysOn;
             break;
         case OAUTO:
-            hMode = vMode = ScrollBarAuto;
+            hMode = ScrollBarAuto;
+            break;
+        default:
+            // Don't set it at all.
+            ;
+    }
+    
+     switch (o->style()->overflowY()) {
+        case OHIDDEN:
+            vMode = ScrollBarAlwaysOff;
+            break;
+        case OSCROLL:
+            vMode = ScrollBarAlwaysOn;
+            break;
+        case OAUTO:
+            vMode = ScrollBarAuto;
             break;
         default:
             // Don't set it at all.
@@ -362,7 +377,8 @@ void FrameView::layout(bool allowSubtree)
                     vMode = ScrollBarAlwaysOff;
                     hMode = ScrollBarAlwaysOff;
                 } else if (body->hasTagName(bodyTag)) {
-                    RenderObject* o = (rootRenderer->style()->overflow() == OVISIBLE) ? body->renderer() : rootRenderer;
+                    // It's sufficient to just check one overflow direction, since it's illegal to have visible in only one direction.
+                    RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE ? body->renderer() : rootRenderer;
                     applyOverflowToViewport(o, hMode, vMode); // Only applies to HTML UAs, not to XML/XHTML UAs
                 }
             }

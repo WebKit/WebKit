@@ -375,7 +375,7 @@ struct StyleDashboardRegion
 // Random visual rendering model attributes. Not inherited.
 
 enum EOverflow {
-    OVISIBLE, OHIDDEN, OSCROLL, OAUTO, OMARQUEE, OOVERLAY
+    OVISIBLE, OHIDDEN, OSCROLL, OAUTO, OOVERLAY, OMARQUEE
 };
 
 enum EVerticalAlign {
@@ -972,7 +972,8 @@ protected:
             return (_effectiveDisplay == other._effectiveDisplay) &&
             (_originalDisplay == other._originalDisplay) &&
             (_bg_repeat == other._bg_repeat) &&
-            (_overflow == other._overflow) &&
+            (_overflowX == other._overflowX) &&
+            (_overflowY == other._overflowY) &&
             (_vertical_align == other._vertical_align) &&
             (_clear == other._clear) &&
             (_position == other._position) &&
@@ -995,7 +996,8 @@ protected:
         unsigned _effectiveDisplay : 5; // EDisplay
         unsigned _originalDisplay : 5; // EDisplay
         unsigned _bg_repeat : 2; // EBackgroundRepeat
-        unsigned _overflow : 4; // EOverflow
+        unsigned _overflowX : 4; // EOverflow
+        unsigned _overflowY : 4; // EOverflow
         unsigned _vertical_align : 4; // EVerticalAlign
         unsigned _clear : 2; // EClear
         unsigned _position : 2; // EPosition
@@ -1063,7 +1065,8 @@ protected:
         inherited_flags._force_backgrounds_to_white = false;
         
         noninherited_flags._effectiveDisplay = noninherited_flags._originalDisplay = initialDisplay();
-        noninherited_flags._overflow = initialOverflow();
+        noninherited_flags._overflowX = initialOverflowX();
+        noninherited_flags._overflowY = initialOverflowY();
         noninherited_flags._vertical_align = initialVerticalAlign();
         noninherited_flags._clear = initialClear();
         noninherited_flags._position = initialPosition();
@@ -1185,7 +1188,9 @@ public:
     bool outlineStyleIsAuto() const { return background->m_outline._auto; }
     const Color &  outlineColor() const {  return background->m_outline.color; }
 
-    EOverflow overflow() const { return  static_cast<EOverflow>(noninherited_flags._overflow); }
+    EOverflow overflowX() const { return static_cast<EOverflow>(noninherited_flags._overflowX); }
+    EOverflow overflowY() const { return static_cast<EOverflow>(noninherited_flags._overflowY); }
+
     EVisibility visibility() const { return static_cast<EVisibility>(inherited_flags._visibility); }
     EVerticalAlign verticalAlign() const { return  static_cast<EVerticalAlign>(noninherited_flags._vertical_align); }
     Length verticalAlignLength() const { return box->vertical_align; }
@@ -1427,7 +1432,8 @@ public:
     }
     void setOutlineColor(const Color & v) {  SET_VAR(background,m_outline.color,v) }
 
-    void setOverflow(EOverflow v) {  noninherited_flags._overflow = v; }
+    void setOverflowX(EOverflow v) { noninherited_flags._overflowX = v; }
+    void setOverflowY(EOverflow v) { noninherited_flags._overflowY = v; }
     void setVisibility(EVisibility v) { inherited_flags._visibility = v; }
     void setVerticalAlign(EVerticalAlign v) { noninherited_flags._vertical_align = v; }
     void setVerticalAlignLength(Length l) { SET_VAR(box, vertical_align, l ) }
@@ -1625,7 +1631,8 @@ public:
     static EFloat initialFloating() { return FNONE; }
     static EListStylePosition initialListStylePosition() { return OUTSIDE; }
     static EListStyleType initialListStyleType() { return DISC; }
-    static EOverflow initialOverflow() { return OVISIBLE; }
+    static EOverflow initialOverflowX() { return OVISIBLE; }
+    static EOverflow initialOverflowY() { return OVISIBLE; }
     static EPageBreak initialPageBreak() { return PBAUTO; }
     static EPosition initialPosition() { return StaticPosition; }
     static ETableLayout initialTableLayout() { return TAUTO; }

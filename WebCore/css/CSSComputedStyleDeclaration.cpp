@@ -120,6 +120,8 @@ static const int computedProperties[] = {
     CSS_PROP_ORPHANS,
     CSS_PROP_OUTLINE_STYLE,
     CSS_PROP_OVERFLOW,
+    CSS_PROP_OVERFLOW_X,
+    CSS_PROP_OVERFLOW_Y,
     CSS_PROP_PADDING_TOP,
     CSS_PROP_PADDING_RIGHT,
     CSS_PROP_PADDING_BOTTOM,
@@ -889,7 +891,20 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         // FIXME: unimplemented
         break;
     case CSS_PROP_OVERFLOW:
-        switch (style->overflow()) {
+    case CSS_PROP_OVERFLOW_X:
+    case CSS_PROP_OVERFLOW_Y:
+        EOverflow overflow;
+        switch (propertyID) {
+            case CSS_PROP_OVERFLOW_X:
+                overflow = style->overflowX();
+                break;
+            case CSS_PROP_OVERFLOW_Y:
+                overflow = style->overflowY();
+                break;
+            default:
+                overflow = max(style->overflowX(), style->overflowY());
+        }
+        switch (overflow) {
             case OVISIBLE:
                 return new CSSPrimitiveValue(CSS_VAL_VISIBLE);
             case OHIDDEN:

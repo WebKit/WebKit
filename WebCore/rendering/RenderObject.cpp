@@ -598,14 +598,14 @@ int
 RenderObject::clientWidth() const
 {
     return width() - borderLeft() - borderRight() -
-        (includeScrollbarSize() ? layer()->verticalScrollbarWidth() : 0);
+        (includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0);
 }
 
 int
 RenderObject::clientHeight() const
 {
     return height() - borderTop() - borderBottom() -
-      (includeScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0);
+      (includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0);
 }
 
 // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the

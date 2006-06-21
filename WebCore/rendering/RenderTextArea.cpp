@@ -78,25 +78,39 @@ void RenderTextArea::setStyle(RenderStyle* s)
 
     w->setWritingDirection(style()->direction() == RTL ? RTL : LTR);
 
-    ScrollBarMode scrollMode = ScrollBarAuto;
-    switch (style()->overflow()) {
+    ScrollBarMode verticalScrollMode = ScrollBarAuto;
+    switch (style()->overflowY()) {
         case OAUTO:
         case OMARQUEE: // makes no sense, map to auto
         case OOVERLAY: // not implemented for text, map to auto
         case OVISIBLE:
             break;
         case OHIDDEN:
-            scrollMode = ScrollBarAlwaysOff;
+            verticalScrollMode = ScrollBarAlwaysOff;
             break;
         case OSCROLL:
-            scrollMode = ScrollBarAlwaysOn;
+            verticalScrollMode = ScrollBarAlwaysOn;
             break;
     }
-    ScrollBarMode horizontalScrollMode = scrollMode;
+    ScrollBarMode horizontalScrollMode = ScrollBarAuto;
+    switch (style()->overflowX()) {
+        case OAUTO:
+        case OMARQUEE: // makes no sense, map to auto
+        case OOVERLAY: // not implemented for text, map to auto
+        case OVISIBLE:
+            break;
+        case OHIDDEN:
+            horizontalScrollMode = ScrollBarAlwaysOff;
+            break;
+        case OSCROLL:
+            horizontalScrollMode = ScrollBarAlwaysOn;
+            break;
+    }
+
     if (static_cast<HTMLTextAreaElement*>(node())->wrap() != HTMLTextAreaElement::ta_NoWrap)
         horizontalScrollMode = ScrollBarAlwaysOff;
 
-    w->setScrollBarModes(horizontalScrollMode, scrollMode);
+    w->setScrollBarModes(horizontalScrollMode, verticalScrollMode);
 }
 
 void RenderTextArea::setEdited(bool x)

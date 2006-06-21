@@ -476,18 +476,14 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
             m_maxBottomPosMargin = m_maxBottomNegMargin = 0;
     }
 
+    // For overflow:scroll blocks, ensure we have both scrollbars in place always.
     if (scrollsOverflow()) {
-        // For overflow:scroll blocks, ensure we have both scrollbars in place always.
-        if (style()->overflow() == OSCROLL) {
+        if (style()->overflowX() == OSCROLL)
             m_layer->setHasHorizontalScrollbar(true);
+        if (style()->overflowY() == OSCROLL)
             m_layer->setHasVerticalScrollbar(true);
-        }
-        
-        // Move the scrollbars aside during layout.  The layer will move them back when it
-        // does painting or event handling.
-        m_layer->moveScrollbarsAside();
     }
-   
+
     IntRect repaintRect;
     if (childrenInline())
         repaintRect = layoutInlineChildren(relayoutChildren);
@@ -496,7 +492,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     // Expand our intrinsic height to encompass floats.
     int toAdd = borderBottom() + paddingBottom();
-    if (includeScrollbarSize())
+    if (includeHorizontalScrollbarSize())
         toAdd += m_layer->horizontalScrollbarHeight();
     if (floatBottom() > (m_height - toAdd) && (isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() ||
                                     (parent() && parent()->isFlexibleBox())))
@@ -936,7 +932,7 @@ void RenderBlock::determineHorizontalPosition(RenderObject* child)
         }
         child->setPos(chPos, child->yPos());
     } else {
-        int xPos = m_width - borderRight() - paddingRight() - (includeScrollbarSize() ? m_layer->verticalScrollbarWidth() : 0);
+        int xPos = m_width - borderRight() - paddingRight() - (includeVerticalScrollbarSize() ? m_layer->verticalScrollbarWidth() : 0);
         int chPos = xPos - (child->width() + child->marginRight());
         if (child->avoidsFloats()) {
             int rightOff = rightOffset(m_height);
@@ -1006,7 +1002,7 @@ void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInf
 void RenderBlock::layoutBlockChildren(bool relayoutChildren)
 {
     int top = borderTop() + paddingTop();
-    int bottom = borderBottom() + paddingBottom() + (includeScrollbarSize() ? m_layer->horizontalScrollbarHeight() : 0);
+    int bottom = borderBottom() + paddingBottom() + (includeHorizontalScrollbarSize() ? m_layer->horizontalScrollbarHeight() : 0);
 
     m_height = m_overflowHeight = top;
 
@@ -2020,7 +2016,7 @@ int
 RenderBlock::rightOffset() const
 {
     int right = m_width - borderRight() - paddingRight();
-    if (includeScrollbarSize())
+    if (includeVerticalScrollbarSize())
         right -= m_layer->verticalScrollbarWidth();
     return right;
 }
@@ -2180,11 +2176,12 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
     if (!includeSelf && firstLineBox()) {
         for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
             int rp = currBox->xPos() + currBox->width();
+            // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
+            // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
+            if (node()->isContentEditable() && node() == node()->rootEditableElement() && style()->direction() == LTR)
+                rp += 1;
             right = max(right, rp);
         }
-        // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
-        if (node()->isContentEditable() && node() == node()->rootEditableElement() && style()->direction() == LTR)
-            right += 1;
     }
     
     return right;
@@ -2737,8 +2734,7 @@ void RenderBlock::calcMinMaxWidth()
         m_minWidth = m_maxWidth;
         
         // A horizontal marquee with inline children has no minimum width.
-        if (style()->overflow() == OMARQUEE && m_layer && m_layer->marquee() && 
-            m_layer->marquee()->isHorizontal() && !m_layer->marquee()->isUnfurlMarquee())
+        if (m_layer && m_layer->marquee() && m_layer->marquee()->isHorizontal() && !m_layer->marquee()->isUnfurlMarquee())
             m_minWidth = 0;
     }
 

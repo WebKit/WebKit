@@ -107,6 +107,8 @@ outline-offset
 outline-style
 outline-width
 overflow
+overflow-x
+overflow-y
 padding-top
 padding-right
 padding-bottom
