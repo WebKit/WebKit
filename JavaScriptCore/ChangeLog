@@ -1,3 +1,24 @@
+2006-06-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        Make sure we clear the exception before returning so
+        that future calls will not fail because of an earlier
+        exception state. Assert on entry that the WebScriptObject
+        is working with an ExecState that dose not have an exception. 
+        Document that evaluateWebScript and callWebScriptMethod return
+        WebUndefined when an exception is thrown.
+
+        * bindings/objc/WebScriptObject.h:
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+
 2006-06-19  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.

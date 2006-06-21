@@ -187,6 +187,7 @@
     @discussion Calls the specified method in the script environment using the
     specified arguments.
     @result Returns the result of calling the script method.
+    Returns WebUndefined when an exception is thrown in the script environment.
 */
 - (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)args;
 
@@ -196,6 +197,7 @@
     @discussion The script will be executed in the target script environment.  The format
     of the script is dependent of the target script environment.
     @result Returns the result of evaluating the script in the script environment.
+    Returns WebUndefined when an exception is thrown in the script environment.
 */
 - (id)evaluateWebScript:(NSString *)script;
 
@@ -218,7 +220,8 @@
     @method propertyAtIndex:
     @param index The index of the property to return.  Index based access is dependent 
     @discussion Gets the value of the property at the specified index.
-    @result The value of the property.
+    @result The value of the property. Returns WebUndefined when an exception is
+    thrown in the script environment.
 */
 - (id)webScriptValueAtIndex:(unsigned int)index;
 

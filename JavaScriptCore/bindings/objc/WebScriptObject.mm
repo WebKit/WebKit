@@ -175,6 +175,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     // Lookup the function object.
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+    ASSERT(!exec->hadException());
 
     JSLock lock;
     
@@ -196,6 +197,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
         result = jsUndefined();
+        exec->clearException();
     }
 
     // Convert and return the result of the function call.
@@ -215,8 +217,9 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return nil;
     
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+    ASSERT(!exec->hadException());
+
     JSValue *result;
-    
     JSLock lock;
     
     JSValue *v = convertObjcValueToValue(exec, &script, ObjcObjectType);
@@ -233,6 +236,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
         result = jsUndefined();
+        exec->clearException();
     }
     
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
@@ -251,6 +255,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+    ASSERT(!exec->hadException());
 
     JSLock lock;
     JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
@@ -258,6 +263,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
+        exec->clearException();
     }
 
     _didExecute(self);
@@ -272,6 +278,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return nil;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+    ASSERT(!exec->hadException());
 
     JSLock lock;
     JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
@@ -280,6 +287,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
         result = jsUndefined();
+        exec->clearException();
     }
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
@@ -300,6 +308,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+    ASSERT(!exec->hadException());
 
     JSLock lock;
     JSValue *v = convertObjcValueToValue(exec, &key, ObjcObjectType);
@@ -307,6 +316,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
+        exec->clearException();
     }
 
     _didExecute(self);
@@ -340,12 +350,15 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return nil;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+    ASSERT(!exec->hadException());
+
     JSLock lock;
     JSValue *result = [self _imp]->get (exec, (unsigned)index);
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
         result = jsUndefined();
+        exec->clearException();
     }
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:result originExecutionContext:[self _originExecutionContext] executionContext:[self _executionContext]];
@@ -364,11 +377,14 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	return;
 
     ExecState *exec = [self _executionContext]->interpreter()->globalExec();
+    ASSERT(!exec->hadException());
+
     JSLock lock;
     [self _imp]->put (exec, (unsigned)index, (convertObjcValueToValue(exec, &value, ObjcObjectType)));
 
     if (exec->hadException()) {
         LOG_EXCEPTION (exec);
+        exec->clearException();
     }
 
     _didExecute(self);
