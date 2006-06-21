@@ -14,7 +14,8 @@
 
         <li><a href="/projects/">Projects</a></li>
         <li><a href="/coding/coding-style.html">Code Style Guidelines</a></li>
-
+        <li><a href="http://www.opendarwin.org/wiki/index.php/WebKit">Wiki</a></li>
+        
         <li class="subtitle">Web Developers</li>
 
         <li><a href="/webdevelopers/">Detecting WebKit</a></li>

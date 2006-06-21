@@ -1,3 +1,9 @@
+2006-06-21  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed and landed by Anders.
+
+        * nav.inc: Add link to Wiki in the navigation menu.
+
 2006-06-15  Joost de Valk  <jdevalk@opendarwin.org>
 
         Patch by David Kilzer, reviewed by Geoffrey Garen, landed by Joost de Valk.
