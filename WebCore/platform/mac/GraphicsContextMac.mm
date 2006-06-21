@@ -191,8 +191,7 @@ void GraphicsContext::drawLineForMisspelling(const IntPoint& point, int width)
 
     [spellingPatternColor set];
 
-    CGPoint transformedOrigin = CGPointApplyAffineTransform(point, CGContextGetCTM(context));
-    CGContextSetPatternPhase(context, CGSizeMake(transformedOrigin.x, transformedOrigin.y));
+    wkSetPatternPhaseInUserSpace(context, point);
 
     NSRectFillUsingOperation(NSMakeRect(point.x(), point.y(), width, patternHeight), NSCompositeSourceOver);
     

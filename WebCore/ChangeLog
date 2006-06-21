@@ -1,3 +1,15 @@
+2006-06-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John.
+
+        Fix for <rdar://problem/3914965> Misspelled text underline doesn't 
+        look right at non-standard scale factors
+
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForMisspelling): We need to call  
+        into our previously-created SPI for pattern-drawing so that the 
+        phase is right at all scale factors.
+
 2006-06-21  David Hyatt  <hyatt@apple.com>
 
         Fix for 7362, implement the CSS3 overflow-x and overflow-y properties.
