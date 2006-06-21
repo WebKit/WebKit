@@ -1,3 +1,28 @@
+2006-06-20  Maciej Stachowiak  <mjs@apple.com>
+
+        No review - updated results for earlier patch.
+        
+        - updated SVG test results where my recent fix affected bounding boxes
+        
+        I think the new results are more accurate bounding boxes and in
+        any case there is no actual difference in rendered output.
+
+        * svg/W3C-SVG-1.1/color-prof-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.txt:
+        * svg/custom/foreign-object-skew-expected.txt:
+        * svg/custom/image-with-transform-clip-filter-expected.txt:
+        * svg/custom/text-image-opacity-expected.txt:
+
 2006-06-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.

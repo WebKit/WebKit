@@ -12,12 +12,12 @@ KCanvasResource {id="spotLightC" [type=FILTER]  [bounding box=at (0,0) size 1x1]
 KCanvasResource {id="spotLightD" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0.50) size 479.50x359
-      KCanvasContainer {g} at (0,40) size 405x235
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (70,70) size 335x205
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {#text} at (0,0) size 253x14
             text run at (0,0) width 253: "Filters: feDistantLight, fePointLight, feSpotLight"
-        KCanvasContainer {g} at (0,40) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
+        KCanvasContainer {g} at (70,70) size 335x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {#text} at (0,0) size 353x18
               text run at (0,0) width 353: "Various values for feDistantLight azimuth and elevation"

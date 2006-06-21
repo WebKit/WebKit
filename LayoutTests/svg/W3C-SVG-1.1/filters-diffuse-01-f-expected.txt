@@ -9,26 +9,26 @@ KCanvasResource {id="lightingColorB" [type=FILTER]  [bounding box=at (0,0) size 
 KCanvasResource {id="lightingColorC" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
-    KCanvasContainer {svg} at (0,0.50) size 479.50x359
-      KCanvasContainer {g} at (0,50) size 50x170
+    KCanvasContainer {svg} at (0.50,0.50) size 479x359
+      KCanvasContainer {g} at (90,80) size 190x170
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {#text} at (0,0) size 140x14
             text run at (0,0) width 140: "Filters: feDiffuseLighting"
-        KCanvasContainer {g} at (0,50) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+        KCanvasContainer {g} at (90,80) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {#text} at (0,0) size 291x18
               text run at (0,0) width 291: "Various values for surfaceScale: 1, 10 and -10"
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
-        KCanvasContainer {g} at (0,120) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+        KCanvasContainer {g} at (90,150) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {#text} at (0,0) size 296x18
               text run at (0,0) width 296: "Various values for diffuseConstants: 0, 1 and 2"
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
-        KCanvasContainer {g} at (0,190) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,190.00)}]
+        KCanvasContainer {g} at (90,220) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,190.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {#text} at (0,0) size 341x18
               text run at (0,0) width 341: "Various values for lighting color: red, yellow and blue"
