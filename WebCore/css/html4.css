@@ -322,9 +322,8 @@ input {
 }
 
 textarea {
-//  FIXME: Uncomment these when we flip the switch for the new textarea implementation
-//  -webkit-appearance: textarea;
-//   background-color: white;
+    -webkit-appearance: textarea;
+    background-color: white;
     border: 1px solid;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;

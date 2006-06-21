@@ -79,12 +79,9 @@ void HTMLTextAreaElement::restoreState(const String& state)
 int HTMLTextAreaElement::selectionStart()
 {
     if (renderer()) {
-        if (renderer()->style()->appearance() == TextAreaAppearance) {
-            if (document()->focusNode() != this && cachedSelStart >= 0)
-                return cachedSelStart;
-            return static_cast<RenderTextField *>(renderer())->selectionStart();
-        }
-        return static_cast<RenderTextArea*>(renderer())->selectionStart();
+        if (document()->focusNode() != this && cachedSelStart >= 0)
+            return cachedSelStart;
+        return static_cast<RenderTextField *>(renderer())->selectionStart();
     }
     return 0;
 }
@@ -92,54 +89,35 @@ int HTMLTextAreaElement::selectionStart()
 int HTMLTextAreaElement::selectionEnd()
 {
     if (renderer()) {
-        if (renderer()->style()->appearance() == TextAreaAppearance) {
-            if (document()->focusNode() != this && cachedSelEnd >= 0)
-                return cachedSelEnd;
-            return static_cast<RenderTextField *>(renderer())->selectionEnd();
-        }
-        return static_cast<RenderTextArea*>(renderer())->selectionEnd();
+        if (document()->focusNode() != this && cachedSelEnd >= 0)
+            return cachedSelEnd;
+        return static_cast<RenderTextField *>(renderer())->selectionEnd();
     }
     return 0;
 }
 
 void HTMLTextAreaElement::setSelectionStart(int start)
 {
-    if (renderer()) {
-        if (renderer()->style()->appearance() == TextAreaAppearance)
-            static_cast<RenderTextField*>(renderer())->setSelectionStart(start);
-        else
-            static_cast<RenderTextArea*>(renderer())->setSelectionStart(start);
-    }
+    if (renderer())
+        static_cast<RenderTextField*>(renderer())->setSelectionStart(start);
 }
 
 void HTMLTextAreaElement::setSelectionEnd(int end)
 {
-    if (renderer()) {
-        if (renderer()->style()->appearance() == TextAreaAppearance)
-            static_cast<RenderTextField*>(renderer())->setSelectionEnd(end);
-        else
-            static_cast<RenderTextArea*>(renderer())->setSelectionEnd(end);
-    }
+    if (renderer())
+        static_cast<RenderTextField*>(renderer())->setSelectionEnd(end);
 }
 
 void HTMLTextAreaElement::select()
 {
-    if (renderer()) {
-        if (renderer()->style()->appearance() == TextAreaAppearance)
-            static_cast<RenderTextField *>(renderer())->select();
-        else
-            static_cast<RenderTextArea *>(renderer())->select();
-    }
+    if (renderer())
+        static_cast<RenderTextField *>(renderer())->select();
 }
 
 void HTMLTextAreaElement::setSelectionRange(int start, int end)
 {
-    if (renderer()) {
-        if (renderer()->style()->appearance() == TextAreaAppearance)
-            static_cast<RenderTextField*>(renderer())->setSelectionRange(start, end);
-        else
-            static_cast<RenderTextArea*>(renderer())->setSelectionRange(start, end);    
-    }
+    if (renderer())
+        static_cast<RenderTextField*>(renderer())->setSelectionRange(start, end);
 }
 
 void HTMLTextAreaElement::childrenChanged()
@@ -186,9 +164,7 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute *attr)
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    if (style->appearance() == TextAreaAppearance)
-        return new (arena) RenderTextField(this, true);
-    return new (arena) RenderTextArea(this);
+    return new (arena) RenderTextField(this, true);
 }
 
 bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
@@ -197,11 +173,7 @@ bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
         return false;
         
     bool hardWrap = renderer() && wrap() == ta_Physical;
-    String v;
-    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance)
-        v = hardWrap ? static_cast<RenderTextField*>(renderer())->textWithHardLineBreaks() : value();
-    else
-        v = hardWrap ? static_cast<RenderTextArea*>(renderer())->textWithHardLineBreaks() : value();
+    String v = hardWrap ? static_cast<RenderTextField*>(renderer())->textWithHardLineBreaks() : value();
     encoding.appendData(name(), v);
     return true;
 }
@@ -214,21 +186,17 @@ void HTMLTextAreaElement::reset()
 bool HTMLTextAreaElement::isKeyboardFocusable() const
 {
     // If text areas can be focused, then they should always be keyboard focusable
-    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance)
-        return HTMLGenericFormElement::isFocusable();
-    return HTMLGenericFormElement::isKeyboardFocusable();
+    return HTMLGenericFormElement::isFocusable();
 }
 
 bool HTMLTextAreaElement::isMouseFocusable() const
 {
-    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance)
-        return HTMLGenericFormElement::isFocusable();
-    return HTMLGenericFormElement::isMouseFocusable();
+    return HTMLGenericFormElement::isFocusable();
 }
 
 void HTMLTextAreaElement::focus()
 {
-    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance) {
+    if (renderer()) {
         Document* doc = document();
         if (doc->focusNode() == this)
             return;
@@ -242,11 +210,7 @@ void HTMLTextAreaElement::focus()
             ASSERT(cachedSelEnd == -1);
             // If this is the first focus, set a caret at the end of the text.  
             // This matches other browsers' behavior.
-            int max;
-            if (renderer()->style()->appearance() == TextAreaAppearance)
-                max = static_cast<RenderTextField*>(renderer())->text().length();
-            else
-                max = static_cast<RenderTextArea*>(renderer())->text().length();
+            int max = static_cast<RenderTextField*>(renderer())->text().length();
             setSelectionRange(max, max);
         } else
             // Restore the cached selection.  This matches other browsers' behavior.
@@ -261,7 +225,7 @@ void HTMLTextAreaElement::focus()
 
 void HTMLTextAreaElement::defaultEventHandler(Event *evt)
 {
-    if (renderer() && renderer()->style()->appearance() == TextAreaAppearance && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent))
+    if (renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent))
         static_cast<RenderTextField*>(renderer())->forwardEvent(evt);
 
     HTMLGenericFormElement::defaultEventHandler(evt);
@@ -276,10 +240,7 @@ void HTMLTextAreaElement::updateValue() const
 {
     if (!valueMatchesRenderer()) {
         ASSERT(renderer());
-        if (renderer()->style()->appearance() == TextAreaAppearance)
-            m_value = static_cast<RenderTextField*>(renderer())->text();
-        else
-            m_value = static_cast<RenderTextArea*>(renderer())->text();
+        m_value = static_cast<RenderTextField*>(renderer())->text();
         setValueMatchesRenderer();
     }
 }
@@ -305,7 +266,7 @@ void HTMLTextAreaElement::setValue(const String& value)
         
     // Restore a caret at the starting point of the old selection.
     // This matches Safari 2.0 behavior.
-    if (document()->focusNode() == this && cachedSelStart >= 0 && renderer() && renderer()->style()->appearance() == TextAreaAppearance) {
+    if (document()->focusNode() == this && cachedSelStart >= 0) {
         ASSERT(cachedSelEnd >= 0);
         setSelectionRange(cachedSelStart, cachedSelStart);
     }

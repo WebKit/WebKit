@@ -1,3 +1,27 @@
+2006-06-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders.
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=8948
+        Switch to use new text field implementation for <textarea>
+
+        * css/html4.css:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::selectionStart):
+        (WebCore::HTMLTextAreaElement::selectionEnd):
+        (WebCore::HTMLTextAreaElement::setSelectionStart):
+        (WebCore::HTMLTextAreaElement::setSelectionEnd):
+        (WebCore::HTMLTextAreaElement::select):
+        (WebCore::HTMLTextAreaElement::setSelectionRange):
+        (WebCore::HTMLTextAreaElement::createRenderer):
+        (WebCore::HTMLTextAreaElement::appendFormData):
+        (WebCore::HTMLTextAreaElement::isKeyboardFocusable):
+        (WebCore::HTMLTextAreaElement::isMouseFocusable):
+        (WebCore::HTMLTextAreaElement::focus):
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        (WebCore::HTMLTextAreaElement::updateValue):
+        (WebCore::HTMLTextAreaElement::setValue):
+
 2006-06-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
