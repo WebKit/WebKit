@@ -1,3 +1,15 @@
+2006-06-21  Ben Goodger <bengoodger@gmail.com>
+
+        Reviewed by Maciej. 
+
+        Fix for: http://bugzilla.opendarwin.org/show_bug.cgi?id=9523
+        More Win32 build bustage.
+ 
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::shouldInterruptJavaScript):
+        * bridge/win/FrameWin.h:
+
 2006-06-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.

@@ -2831,6 +2831,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\rendering\DeprecatedRenderSelect.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\DeprecatedRenderSelect.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\DeprecatedSlider.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\DeprecatedSlider.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\rendering\EllipsisBox.cpp"
 				>
 			</File>
@@ -3120,22 +3136,6 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderReplaced.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderSelect.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\RenderSelect.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\DeprecatedSlider.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\DeprecatedSlider.h"
 				>
 			</File>
 			<File
@@ -3447,6 +3447,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\BeforeUnloadEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\BeforeUnloadEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\CDATASection.cpp"
 				>
 			</File>
@@ -3468,6 +3476,18 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\ChildNodeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Clipboard.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\ClipboardEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\ClipboardEvent.h"
 				>
 			</File>
 			<File
@@ -3523,14 +3543,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom2_eventsimpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\dom2_eventsimpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\dom\DOMImplementation.cpp"
 				>
 			</File>
@@ -3571,6 +3583,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\Event.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\Event.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\EventListener.h"
 				>
 			</File>
@@ -3595,6 +3615,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\KeyboardEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\KeyboardEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\MappedAttribute.cpp"
 				>
 			</File>
@@ -3604,6 +3632,30 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\MappedAttributeEntry.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MouseEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MouseEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MouseRelatedEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MouseRelatedEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MutationEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\MutationEvent.h"
 				>
 			</File>
 			<File
@@ -3715,6 +3767,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\RegisteredEventListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\RegisteredEventListener.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\StyledElement.cpp"
 				>
 			</File>
@@ -3744,6 +3804,26 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\TreeWalker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\UIEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\UIEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\UIEventWithKeyState.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\WheelEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\WheelEvent.h"
 				>
 			</File>
 			<File
