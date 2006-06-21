@@ -28,12 +28,25 @@
 
 #import "Logging.h"
 #import "IconDatabase.h"
+#import "Image.h"
 #import "PlatformString.h"
 
 using WebCore::IconDatabase;
 using WebCore::String;
+using WebCore::Image;
+
+static WebCoreIconDatabaseBridge *_sharedBridgeInstance = nil;
 
 @implementation WebCoreIconDatabaseBridge
+
+
++ (WebCoreIconDatabaseBridge *)sharedBridgeInstance;
+{
+    if (_sharedBridgeInstance) 
+        return _sharedBridgeInstance;
+        
+    return _sharedBridgeInstance = [[WebCoreIconDatabaseBridge alloc] init];
+}
 
 - (BOOL)openSharedDatabaseWithPath:(NSString *)path;
 {
@@ -59,4 +72,95 @@ using WebCore::String;
 {
     return _iconDB != 0;
 }
+
+- (void)setPrivateBrowsingEnabled:(BOOL)flag;
+{
+    if (_iconDB)
+        _iconDB->setPrivateBrowsingEnabled(flag);
+}
+
+- (NSImage *)iconForURL:(NSString *)url withSize:(NSSize)size;
+{
+    ASSERT(_iconDB);
+    ASSERT(url);
+    ASSERT(size.width);
+    ASSERT(size.height);
+    
+    Image* image = _iconDB->iconForURL(String(url), IntSize(size));
+    if (image) 
+        return image->getNSImage();
+    return nil;
+}
+
+- (NSString *)iconURLForURL:(NSString *)url;
+{
+    ASSERT(_iconDB);
+    ASSERT(url);
+    
+    String iconURL = _iconDB->iconURLForURL(String(url));
+    return (NSString*)iconURL;
+}
+
+- (NSImage *)defaultIconWithSize:(NSSize)size;
+{
+    ASSERT(_iconDB);
+    ASSERT(size.width);
+    ASSERT(size.height);
+    
+    Image* image = _iconDB->defaultIcon(IntSize(size));
+    if (image)
+        return image->getNSImage();
+    return nil;
+}
+
+- (void)retainIconForURL:(NSString *)url;
+{
+    ASSERT(_iconDB);
+    ASSERT(url);
+    _iconDB->retainIconForURL(String(url));
+}
+
+- (void)releaseIconForURL:(NSString *)url;
+{
+    ASSERT(_iconDB);
+    ASSERT(url);
+    _iconDB->releaseIconForURL(String(url));
+}
+
+- (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL;
+{
+    ASSERT(_iconDB);
+    ASSERT(data);
+    ASSERT(iconURL);
+    
+    Image* image = new Image();
+    image->setNativeData((CFDataRef)data, true);
+    _iconDB->setIconForIconURL(image, String(iconURL));
+}
+
+- (void)_setHaveNoIconForIconURL:(NSString *)iconURL;
+{
+    ASSERT(_iconDB);
+    ASSERT(iconURL);
+    
+    _iconDB->setHaveNoIconForIconURL(String(iconURL));
+}
+
+- (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)url;
+{
+    ASSERT(_iconDB);
+    ASSERT(iconURL);
+    ASSERT(url);
+    
+    _iconDB->setIconURLForPageURL(String(iconURL), String(url));
+}
+
+- (BOOL)_hasIconForIconURL:(NSString *)iconURL;
+{
+    ASSERT(_iconDB);
+    ASSERT(iconURL);
+    
+    return _iconDB->hasIconForIconURL(String(iconURL));
+}
+
 @end

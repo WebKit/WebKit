@@ -50,8 +50,12 @@ public:
 
     bool executeCommand(const String&);
     bool tableExists(const String&);
+
+    void setBusyTimeout(int ms);
+    void setBusyHandler(int(*)(void*, int));
     
     //TODO - add pragma and sqlite_master accessors here
+    void setFullsync(bool);
     
     int lastError() { return m_db ? sqlite3_errcode(m_db) : SQLITE_ERROR; }
     const char* lastErrorMsg() { return sqlite3_errmsg(m_db); }
@@ -63,6 +67,21 @@ private:
     
 }; //class SQLDatabase
 
+class SQLTransaction : public Noncopyable
+{
+public:
+    SQLTransaction(SQLDatabase& db, bool start = false);
+    ~SQLTransaction();
+    
+    void begin();
+    void commit();
+    void rollback();
+    
+private:
+    SQLDatabase& m_db;
+    bool m_began;
+
+};
 
 class SQLStatement : public Noncopyable
 {
@@ -80,9 +99,14 @@ public:
     int reset();
     
     //prepares, steps, and finalizes the query.
-    //returns true if all 3 steps succeed with step() returnsing SQLITE_DONE
+    //returns true if all 3 steps succeed with step() returning SQLITE_DONE
     //returns false otherwise  
     bool executeCommand();
+    
+    //prepares, steps, and finalizes.  
+    //returns true is step() returns SQLITE_ROW
+    //returns false otherwise
+    bool returnsAtLeastOneResult();
     
     //Returns -1 on last-step failing.  Otherwise, returns number of rows
     //returned in the last step()

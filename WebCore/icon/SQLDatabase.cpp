@@ -24,6 +24,7 @@
  */
 
 #include "SQLDatabase.h"
+#include "Logging.h"
 
 using namespace WebCore;
 
@@ -58,6 +59,30 @@ void SQLDatabase::close()
         m_path.truncate(0);
         m_db = 0;
     }
+}
+
+void SQLDatabase::setFullsync(bool fsync) 
+{
+    if (fsync) 
+        SQLStatement(*this,"PRAGMA fullfsync = 1;").executeCommand();
+    else
+        SQLStatement(*this,"PRAGMA fullfsync = 0;").executeCommand();
+}
+
+void SQLDatabase::setBusyTimeout(int ms)
+{
+    if (m_db)
+        sqlite3_busy_timeout(m_db, ms);
+    else
+        LOG(IconDatabase, "BusyTimeout set on non-open database");
+}
+
+void SQLDatabase::setBusyHandler(int(*handler)(void*, int))
+{
+    if (m_db)
+        sqlite3_busy_handler(m_db, handler, NULL);
+    else
+        LOG(IconDatabase, "Busy handler set on non-open database");
 }
 
 bool SQLDatabase::executeCommand(const String& sql)

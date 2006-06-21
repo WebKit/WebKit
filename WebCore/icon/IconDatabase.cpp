@@ -47,8 +47,9 @@ IconDatabase* IconDatabase::sharedIconDatabase()
 }
 
 IconDatabase::IconDatabase()
+    : m_privateBrowsingEnabled(false)
 {
-
+    close();
 }
 
 bool IconDatabase::open(const String& databasePath)
@@ -61,28 +62,30 @@ bool IconDatabase::open(const String& databasePath)
     }
     
     if (!isValidDatabase()) {
-        LOG(IconDatabase, "%s is in an invalid state - reconstructing", dbFilename.ascii().data());
+        LOG(IconDatabase, "%s is missing or in an invalid state - reconstructing", dbFilename.ascii().data());
         clearDatabase();
         recreateDatabase();
     }
     
+    m_db.setFullsync(false);
     return isOpen();
 }
 
 void IconDatabase::close()
 {
-    //TODO - sync any cached info before close();
+    //TODO - sync any cached info before m_db.close();
     m_db.close();
 }
 
 
 bool IconDatabase::isValidDatabase()
 {
-    if (!m_db.tableExists("IconDatabaseInfo")) {
+    if (!m_db.tableExists("Icon") || !m_db.tableExists("PageURL") || !m_db.tableExists("IconResource") || !m_db.tableExists("IconDatabaseInfo")) {
         return false;
     }
     
     String query = "SELECT value FROM IconDatabaseInfo WHERE key = 'Version';";
+    
     SQLStatement sql(m_db, query);
     sql.prepare();
     sql.step();
@@ -90,10 +93,7 @@ bool IconDatabase::isValidDatabase()
         LOG(IconDatabase, "DB version is not found or below expected valid version");
         return false;
     }
-    
-    if (!m_db.tableExists("Icon") || !m_db.tableExists("PageURL") || !m_db.tableExists("IconResource")) {
-        return false;
-    }
+
     return true;
 }
 
@@ -115,7 +115,7 @@ void IconDatabase::clearDatabase()
 
 void IconDatabase::recreateDatabase()
 {
-    if (!m_db.executeCommand("CREATE TABLE IconDatabaseInfo (key varchar NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value integer NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_db.executeCommand("CREATE TABLE IconDatabaseInfo (key varchar NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value NOT NULL ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create IconDatabaseInfo table in icon.db (%i)\n%s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return;
@@ -130,7 +130,7 @@ void IconDatabase::recreateDatabase()
         m_db.close();
         return;
     }
-    if (!m_db.executeCommand("CREATE TABLE Icon (id integer PRIMARY KEY ON CONFLICT FAIL,url varchar NOT NULL UNIQUE ON CONFLICT FAIL);")) {
+    if (!m_db.executeCommand("CREATE TABLE Icon (iconid INTEGER PRIMARY KEY AUTOINCREMENT, url varchar NOT NULL UNIQUE ON CONFLICT FAIL);")) {
         LOG_ERROR("Could not create Icon table in icon.db (%i)\n%s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return;
@@ -140,9 +140,58 @@ void IconDatabase::recreateDatabase()
         m_db.close();
         return;
     }
-    
-    
 }    
+
+void IconDatabase::setPrivateBrowsingEnabled(bool flag)
+{
+    //FIXME - set/clear private browsing caches
+    m_privateBrowsingEnabled = flag;   
+}
+
+Image* IconDatabase::iconForURL(const String& url, const IntSize& size, bool cache)
+{
+    return 0;
+}
+
+String IconDatabase::iconURLForURL(const String& url)
+{
+    return "(null)";
+}
+
+Image* IconDatabase::defaultIcon(const IntSize& size)
+{
+    return 0;
+}
+
+void IconDatabase::retainIconForURL(const String& url)
+{
+
+}
+
+void IconDatabase::releaseIconForURL(const String& url)
+{
+
+}
+
+void IconDatabase::setIconForIconURL(Image* icon, const String& url)
+{
+
+}
+
+void IconDatabase::setHaveNoIconForIconURL(const String& iconURL)
+{
+
+}
+
+void IconDatabase::setIconURLForPageURL(const String& iconURL, const String& pageURL)
+{
+
+}
+
+bool IconDatabase::hasIconForIconURL(const String& url)
+{
+    return false;
+}
 
 IconDatabase::~IconDatabase()
 {
@@ -150,4 +199,3 @@ IconDatabase::~IconDatabase()
 }
 
 } //namespace WebCore
-

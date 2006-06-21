@@ -50,6 +50,7 @@ WTFLogChannel WebKitLogLiveConnect =            { 0x08000000, "WebKitLogLevel", 
 WTFLogChannel WebKitLogBackForward =            { 0x10000000, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogProgress =               { 0x20000000, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogPluginEvents =           { 0x40000000, "WebKitLogLevel", WTFLogChannelOff };
+WTFLogChannel WebKitLogIconDatabase =           { 0x80000000, "WebKitLogLevel", WTFLogChannelOff };
 
 static void initializeLogChannel(WTFLogChannel *channel)
 {
@@ -93,5 +94,6 @@ void WebKitInitializeLoggingChannelsIfNecessary()
     initializeLogChannel(&WebKitLogBackForward);
     initializeLogChannel(&WebKitLogProgress);
     initializeLogChannel(&WebKitLogPluginEvents);
+    initializeLogChannel(&WebKitLogIconDatabase);
 }
 

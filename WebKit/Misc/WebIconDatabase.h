@@ -138,3 +138,5 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 - (void)allowDatabaseCleanup;
 
 @end
+
+

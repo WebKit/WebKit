@@ -25,7 +25,7 @@
 
 #include "SQLDatabase.h"
 
-#include <wtf/Assertions.h>
+#include <wtf/assertions.h>
 #include "Logging.h"
 
 namespace WebCore {
@@ -95,6 +95,20 @@ bool SQLStatement::executeCommand()
     }
     finalize();
     return true;
+}
+
+bool SQLStatement::returnsAtLeastOneResult()
+{
+    if (!isPrepared())
+        if (prepare() != SQLITE_OK)
+            return false;
+    if (step() != SQLITE_ROW) {
+        finalize();
+        return false;
+    }
+    finalize();
+    return true;
+
 }
 
 int SQLStatement::bindBlob(int index, const void* blob, int size, bool copy)

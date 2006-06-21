@@ -23,41 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifdef __cplusplus
-namespace WebCore { 
-class IconDatabase; 
-class Image;
-} 
-typedef WebCore::IconDatabase WebCoreIconDatabase;
-#else
-@class WebCoreIconDatabase;
-#endif
+#include "SQLDatabase.h"
 
-@interface WebCoreIconDatabaseBridge : NSObject
+using namespace WebCore;
+
+
+SQLTransaction::SQLTransaction(SQLDatabase& db, bool start)
+    : m_db(db)
+    , m_began(false)
 {
-    WebCoreIconDatabase *_iconDB;
+    if (start)
+        begin();
 }
-+ (WebCoreIconDatabaseBridge *)sharedBridgeInstance;
 
-- (BOOL)openSharedDatabaseWithPath:(NSString *)path;
-- (void)closeSharedDatabase;
-- (BOOL)isOpen;
+SQLTransaction::~SQLTransaction()
+{
+    if (m_began) 
+        rollback();
+}
+    
+void SQLTransaction::begin()
+{
+    if (!m_began)
+        m_began = m_db.executeCommand("BEGIN;");
+}
 
-- (NSImage *)iconForURL:(NSString *)url withSize:(NSSize)size;
-- (NSString *)iconURLForURL:(NSString *)url;
-- (NSImage *)defaultIconWithSize:(NSSize)size;
-- (void)retainIconForURL:(NSString *)url;
-- (void)releaseIconForURL:(NSString *)url;
-- (void)setPrivateBrowsingEnabled:(BOOL)flag;
+void SQLTransaction::commit()
+{
+    if (m_began) {
+        if (m_db.executeCommand("COMMIT;"))
+            m_began = false;
+    }
+}
 
-
-- (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL;
-- (void)_setHaveNoIconForIconURL:(NSString *)iconURL;
-- (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)url;
-- (BOOL)_hasIconForIconURL:(NSString *)iconURL;
-
-
-@end
+void SQLTransaction::rollback()
+{
+    if (m_began)
+        m_db.executeCommand("ROLLBACK;");
+}
+    
 
 
 

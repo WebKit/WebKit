@@ -167,6 +167,7 @@
 		51D3EA160A3D24D300BADA35 /* SQLDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */; };
 		51D3EA170A3D24D300BADA35 /* SQLDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D3EA140A3D24D300BADA35 /* SQLDatabase.h */; };
 		51D3EA180A3D24D300BADA35 /* SQLStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */; };
+		51F11E150A48C2920034A24E /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F11E140A48C2920034A24E /* SQLTransaction.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; };
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
@@ -1556,23 +1557,6 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		BCC3C56B0A44C45A00370EAD /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		BCC3C56C0A44C45A00370EAD /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1784,6 +1768,7 @@
 		51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLDatabase.cpp; sourceTree = "<group>"; };
 		51D3EA140A3D24D300BADA35 /* SQLDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SQLDatabase.h; sourceTree = "<group>"; };
 		51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
+		51F11E140A48C2920034A24E /* SQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransaction.cpp; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3522,6 +3507,7 @@
 				51D3EA130A3D24D300BADA35 /* SQLDatabase.cpp */,
 				51D3EA140A3D24D300BADA35 /* SQLDatabase.h */,
 				51D3EA150A3D24D300BADA35 /* SQLStatement.cpp */,
+				51F11E140A48C2920034A24E /* SQLTransaction.cpp */,
 			);
 			path = icon;
 			sourceTree = "<group>";
@@ -6346,12 +6332,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				BCC3C56B0A44C45A00370EAD /* Development */,
-				BCC3C56C0A44C45A00370EAD /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -7164,6 +7144,7 @@
 				85031B4D0A44EFC700F992E0 /* UIEvent.cpp in Sources */,
 				85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */,
 				ABE7B5230A489F830031881C /* DeprecatedRenderSelect.cpp in Sources */,
+				51F11E150A48C2920034A24E /* SQLTransaction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

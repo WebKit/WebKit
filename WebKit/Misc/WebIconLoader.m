@@ -25,12 +25,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #import <WebKit/WebIconLoader.h>
 
 #import <JavaScriptCore/Assertions.h>
+#import <WebCore/WebCoreIconDatabaseBridge.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
+#import <WebKit/WebKitLogging.h>
+
 #import <WebKit/WebNSURLExtras.h>
 
 @interface WebIconLoaderPrivate : NSObject
@@ -97,6 +99,15 @@
 - (void)didFinishLoading
 {
     NSImage *icon;
+    
+    #ifdef ICONDEBUG
+    NSData *_data = [self resourceData];
+    if (_data) {
+        [[WebCoreIconDatabaseBridge sharedBridgeInstance] _setIconData:_data forIconURL:[[self URL] _web_originalDataAsString]];
+        LOG(IconDatabase, "NewDB - Icon data set for URL %@", [[self URL] _web_originalDataAsString]);
+    }
+    #endif
+    
     NS_DURING
         NSData *data = [self resourceData];
         icon = [data length] > 0 ? [[NSImage alloc] initWithData:data] : nil;

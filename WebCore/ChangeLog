@@ -1,3 +1,64 @@
+2006-06-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej.
+
+        More changes/additions setting the stage for the major IconDatabase hookup.
+
+        * WebCore.xcodeproj/project.pbxproj:  Added SQLTransaction.cpp
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h: Added call-throughs and translations to pass WebKit DB to WebCore DB
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (+[WebCoreIconDatabaseBridge sharedBridgeInstance]):
+        (-[WebCoreIconDatabaseBridge setPrivateBrowsingEnabled:]):
+        (-[WebCoreIconDatabaseBridge iconForURL:withSize:]):
+        (-[WebCoreIconDatabaseBridge iconURLForURL:]):
+        (-[WebCoreIconDatabaseBridge defaultIconWithSize:]):
+        (-[WebCoreIconDatabaseBridge retainIconForURL:]):
+        (-[WebCoreIconDatabaseBridge releaseIconForURL:]):
+        (-[WebCoreIconDatabaseBridge _setIconData:forIconURL:]):
+        (-[WebCoreIconDatabaseBridge _setHaveNoIconForIconURL:]):
+        (-[WebCoreIconDatabaseBridge _setIconURL:forURL:]):
+        (-[WebCoreIconDatabaseBridge _hasIconForIconURL:]):
+
+        * bridge/mac/WebCorePageBridge.mm: Added WebCore's IconDatabase logging channel to the user-prefs check
+        (initializeLoggingChannelsIfNecessary):
+
+        * icon/IconDatabase.cpp:  Added stubs and basic SQL usage to create the sqlite DB and respond to WebKit calls
+        (WebCore::IconDatabase::IconDatabase):
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::close):
+        (WebCore::IconDatabase::isValidDatabase):
+        (WebCore::IconDatabase::recreateDatabase):
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled):
+        (WebCore::IconDatabase::iconForURL):
+        (WebCore::IconDatabase::iconURLForURL):
+        (WebCore::IconDatabase::defaultIcon):
+        (WebCore::IconDatabase::retainIconForURL):
+        (WebCore::IconDatabase::releaseIconForURL):
+        (WebCore::IconDatabase::setIconForIconURL):
+        (WebCore::IconDatabase::setHaveNoIconForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::hasIconForIconURL):
+
+        * icon/IconDatabase.h:  WebIcon will be an internal class used in IconDatabase but is not complete yet
+        (WebCore::WebIcon::getExpiration):
+        (WebCore::WebIcon::getTouch):
+
+        * icon/SQLDatabase.cpp:  Added more SQLite convenience methods
+        (SQLDatabase::setFullsync):
+        (SQLDatabase::setBusyTimeout):
+        (SQLDatabase::setBusyHandler):
+        * icon/SQLDatabase.h:
+        * icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::returnsAtLeastOneResult):
+
+        * icon/SQLTransaction.cpp: Added basic commit/rollback support with this simple class
+        (SQLTransaction::SQLTransaction):
+        (SQLTransaction::~SQLTransaction):
+        (SQLTransaction::begin):
+        (SQLTransaction::commit):
+        (SQLTransaction::rollback):
+
 2006-06-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

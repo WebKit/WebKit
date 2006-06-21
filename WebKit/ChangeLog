@@ -1,3 +1,28 @@
+2006-06-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Added calls through to the WebCoreIconDatabaseBridge for all the major WebIconDatabase API.  For now these calls
+        are wrapped with #ifdef's and are for debugging only.
+
+        * Misc/WebIconDatabase.h:
+        * Misc/WebIconDatabase.m:
+        (-[NSMutableDictionary _scaleIcon:toSize:]):
+        (-[NSMutableDictionary init]):
+        (-[NSMutableDictionary iconForURL:withSize:cache:]):
+        (-[NSMutableDictionary iconURLForURL:]):
+        (-[NSMutableDictionary retainIconForURL:]):
+        (-[NSMutableDictionary releaseIconForURL:]):
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]):
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        (-[WebIconDatabase _hasIconForIconURL:]):
+        * Misc/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]):
+
+        * Misc/WebKitLogging.h:  Added a logging channel for WebIconDatabase debugging
+        * Misc/WebKitLogging.m:
+        (WebKitInitializeLoggingChannelsIfNecessary):
+
 2006-06-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim Hatcher.
