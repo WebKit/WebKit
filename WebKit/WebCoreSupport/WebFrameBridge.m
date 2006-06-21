@@ -971,13 +971,13 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 
     if ([MIMEType length] != 0)
-        pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
+        pluginPackage = [[self webView] _pluginForMIMEType:MIMEType];
     else
         MIMEType = nil;
     
     NSString *extension = [[URL path] pathExtension];
     if (!pluginPackage && [extension length] != 0) {
-        pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
+        pluginPackage = [[self webView] _pluginForExtension:extension];
         if (pluginPackage) {
             NSString *newMIMEType = [pluginPackage MIMETypeForExtension:extension];
             if ([newMIMEType length] != 0)
@@ -1056,7 +1056,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     WebBasePluginPackage *pluginPackage;
     NSView *view = nil;
     
-    pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
+    pluginPackage = [[self webView] _pluginForMIMEType:MIMEType];
 
     if (pluginPackage) {
         if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
@@ -1139,7 +1139,7 @@ static BOOL loggedObjectCacheSize = NO;
         NSString *extension = [[URL path] pathExtension];
         if ([extension length] > 0) {
             MIMEType = WKGetMIMETypeForExtension(extension);
-            if ([MIMEType length] == 0 && [[WebPluginDatabase installedPlugins] pluginForExtension:extension])
+            if ([MIMEType length] == 0 && [[self webView] _pluginForExtension:extension])
                 // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
                 return ObjectElementPlugin;
         }
@@ -1148,7 +1148,7 @@ static BOOL loggedObjectCacheSize = NO;
     if ([MIMEType length] == 0)
         return ObjectElementFrame; // Go ahead and hope that we can display the content.
 
-    if ([[WebPluginDatabase installedPlugins] isMIMETypeRegistered:MIMEType])
+    if ([[self webView] _isMIMETypeRegisteredAsPlugin:MIMEType])
         return ObjectElementPlugin;
 
     if ([WebFrameView _viewClassForMIMEType:MIMEType])

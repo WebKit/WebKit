@@ -229,6 +229,9 @@
 {
     ASSERT(!isLoaded);
     
+    ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
+    [pluginDatabases release];
+    
     [name release];
     [path release];
     [pluginDescription release];
@@ -249,6 +252,9 @@
 - (void)finalize
 {
     ASSERT(!isLoaded);
+
+    ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
+    [pluginDatabases release];
 
     if (cfBundle)
         CFRelease(cfBundle);
@@ -407,6 +413,26 @@
         }
     }
     return YES;
+}
+
+- (void)wasAddedToPluginDatabase:(WebPluginDatabase *)database
+{    
+    if (!pluginDatabases)
+        pluginDatabases = [[NSMutableSet alloc] init];
+        
+    ASSERT(![pluginDatabases containsObject:database]);
+    [pluginDatabases addObject:database];
+}
+
+- (void)wasRemovedFromPluginDatabase:(WebPluginDatabase *)database
+{
+    ASSERT(pluginDatabases);
+    ASSERT([pluginDatabases containsObject:database]);
+
+    [pluginDatabases removeObject:database];
+
+    if ([pluginDatabases count] == 0)
+        [self unload];
 }
 
 @end

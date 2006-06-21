@@ -41,14 +41,22 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKitSystemInterface.h>
 
+@interface WebPluginDatabase (Internal)
++ (NSArray *)_defaultPlugInPaths;
+@end
+
 @implementation WebPluginDatabase
 
 static WebPluginDatabase *database = nil;
 
 + (WebPluginDatabase *)installedPlugins 
 {
-    if (!database)
+    if (!database) {
         database = [[WebPluginDatabase alloc] init];
+        [database setPlugInPaths:[self _defaultPlugInPaths]];
+        [database refresh];
+    }
+    
     return database;
 }
 
@@ -123,46 +131,52 @@ static WebPluginDatabase *database = nil;
     return [plugins allObjects];
 }
 
-static NSArray *extensionPlugInPaths;
-
-+ (void)setAdditionalWebPlugInPaths:(NSArray *)a
++ (void)setAdditionalWebPlugInPaths:(NSArray *)additionalPaths
 {
-    if (a != extensionPlugInPaths) {
-        [extensionPlugInPaths release];
-        extensionPlugInPaths = [a copyWithZone:nil];
-    }
+    NSMutableArray *newPlugInPaths = [[self _defaultPlugInPaths] mutableCopy];
+    [newPlugInPaths addObjectsFromArray:additionalPaths];
+    [[WebPluginDatabase installedPlugins] setPlugInPaths:newPlugInPaths];
+    [newPlugInPaths release];
 }
 
-static NSArray *pluginLocations(void)
+- (void)setPlugInPaths:(NSArray *)newPaths
 {
-    // Plug-ins are found in order of precedence.
-    // If there are duplicates, the first found plug-in is used.
-    // For example, if there is a QuickTime.plugin in the users's home directory
-    // that is used instead of the /Library/Internet Plug-ins version.
-    // The purpose is to allow non-admin users to update their plug-ins.
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:[extensionPlugInPaths count] + 3];
-    
-    if (extensionPlugInPaths)
-        [array addObjectsFromArray:extensionPlugInPaths];
-    
-    [array addObject:[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"]];
-    [array addObject:@"/Library/Internet Plug-Ins"];
-    [array addObject:[[NSBundle mainBundle] builtInPlugInsPath]];
+    if (plugInPaths == newPaths)
+        return;
         
-    return array;
+    [plugInPaths release];
+    plugInPaths = [newPaths copy];
+}
+
+- (void)close
+{
+    [plugins makeObjectsPerformSelector:@selector(wasRemovedFromPluginDatabase:) withObject:self];
+    [plugins release];
+    plugins = nil;
 }
 
 - (id)init
 {
-    self = [super init];
-    registeredMIMETypes = [[NSMutableSet alloc] init];    
-    [self refresh];
+    if (!(self = [super init]))
+        return nil;
+        
+    registeredMIMETypes = [[NSMutableSet alloc] init];
+    
     return self;
 }
+
+- (void)dealloc
+{
+    [plugInPaths release];
+    [plugins release];
+    [registeredMIMETypes release];
     
+    [super dealloc];
+}
+
 - (void)refresh
 {
-    NSEnumerator *directoryEnumerator = [pluginLocations() objectEnumerator];
+    NSEnumerator *directoryEnumerator = [plugInPaths objectEnumerator];
     NSMutableSet *uniqueFilenames = [[NSMutableArray alloc] init];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSMutableSet *newPlugins = [[NSMutableSet alloc] init];
@@ -196,7 +210,8 @@ static NSArray *pluginLocations(void)
             NSString *MIMEType;
             while ((MIMEType = [MIMETypeEnumerator nextObject])) {
                 if ([registeredMIMETypes containsObject:MIMEType]) {
-                    [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
+                    if (self == database)
+                        [WebView _unregisterViewClassAndRepresentationClassForMIMEType:MIMEType];
                     [registeredMIMETypes removeObject:MIMEType];
                 }
             }
@@ -204,25 +219,28 @@ static NSArray *pluginLocations(void)
         
         NSMutableSet *pluginsToUnload = [plugins mutableCopy];
         [pluginsToUnload minusSet:newPlugins];
+        [newPlugins minusSet:plugins];
 #if !LOG_DISABLED
-        NSMutableSet *reallyNewPlugins = [newPlugins mutableCopy];
-        [reallyNewPlugins minusSet:plugins];
-        if ([reallyNewPlugins count] > 0) {
-            LOG(Plugins, "New plugins:\n%@", reallyNewPlugins);
+        if ([newPlugins count] > 0) {
+            LOG(Plugins, "New plugins:\n%@", newPlugins);
         }
         if ([pluginsToUnload count] > 0) {
             LOG(Plugins, "Removed plugins:\n%@", pluginsToUnload);
         }
-        [reallyNewPlugins release];
 #endif
-        [pluginsToUnload makeObjectsPerformSelector:@selector(unload)];
+        // Unload plugins
+        [pluginsToUnload makeObjectsPerformSelector:@selector(wasRemovedFromPluginDatabase:) withObject:self];
         [plugins minusSet:pluginsToUnload];
-        [plugins unionSet:newPlugins];   
         [pluginsToUnload release];
+
+        // Add new plugins
+        [plugins unionSet:newPlugins];
+        [newPlugins makeObjectsPerformSelector:@selector(wasAddedToPluginDatabase:) withObject:self];
         [newPlugins release];
     } else {
         LOG(Plugins, "Plugin database initialization:\n%@", newPlugins);
         plugins = newPlugins;
+        [newPlugins makeObjectsPerformSelector:@selector(wasAddedToPluginDatabase:) withObject:self];
     }
     
     // Build a list of MIME types.
@@ -249,7 +267,8 @@ static NSArray *pluginLocations(void)
             // Don't allow the QT plug-in to override any types because it claims many that we can handle ourselves.
             continue;
         
-        [WebView registerViewClass:[WebHTMLView class] representationClass:[WebHTMLRepresentation class] forMIMEType:MIMEType];
+        if (self == database)
+            [WebView registerViewClass:[WebHTMLView class] representationClass:[WebHTMLRepresentation class] forMIMEType:MIMEType];
         [registeredMIMETypes addObject:MIMEType];
     }
 }
@@ -259,11 +278,22 @@ static NSArray *pluginLocations(void)
     return [registeredMIMETypes containsObject:MIMEType];
 }
 
-- (void)dealloc
+@end
+
+@implementation WebPluginDatabase (Internal)
+
++ (NSArray *)_defaultPlugInPaths
 {
-    [plugins release];
-    [registeredMIMETypes release];
-    [super dealloc];
+    // Plug-ins are found in order of precedence.
+    // If there are duplicates, the first found plug-in is used.
+    // For example, if there is a QuickTime.plugin in the users's home directory
+    // that is used instead of the /Library/Internet Plug-ins version.
+    // The purpose is to allow non-admin users to update their plug-ins.
+    return [NSArray arrayWithObjects:
+        [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"],
+        @"/Library/Internet Plug-Ins",
+        [[NSBundle mainBundle] builtInPlugInsPath],
+        nil];
 }
 
 @end

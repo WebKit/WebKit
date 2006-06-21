@@ -32,6 +32,7 @@
 #import "WebTypesInternal.h"
 
 @class WebPageBridge;
+@class WebBasePluginPackage;
 
 @interface WebView (WebViewEditingExtras)
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event;
@@ -72,6 +73,7 @@
 - (void)_progressStarted:(WebFrame *)frame;
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
+- (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
 + (NSString *)_MIMETypeForFile:(NSString *)path;
 - (void)_downloadURL:(NSURL *)URL;
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
@@ -88,4 +90,7 @@
 - (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
 - (void)_willChangeValueForKey:(NSString *)key;
 - (void)_didChangeValueForKey:(NSString *)key;
+- (WebBasePluginPackage *)_pluginForMIMEType:(NSString *)MIMEType;
+- (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension;
+- (BOOL)_isMIMETypeRegisteredAsPlugin:(NSString *)MIMEType;
 @end

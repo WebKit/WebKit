@@ -293,6 +293,8 @@ macro(yankAndSelect) \
     BOOL dashboardBehaviorAllowWheelScrolling;
     
     BOOL selectWordBeforeMenuEvent;
+    
+    WebPluginDatabase *pluginDatabase;
 }
 @end
 
@@ -547,6 +549,25 @@ static bool debugWidget = true;
     return NO;
 }
 
+- (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
+{
+    if ([[self class] _viewClass:vClass andRepresentationClass:rClass forMIMEType:MIMEType])
+        return YES;
+
+    if (_private->pluginDatabase) {
+        WebBasePluginPackage *pluginPackage = [_private->pluginDatabase pluginForMIMEType:MIMEType];
+        if (pluginPackage) {
+            if (vClass)
+                *vClass = [WebHTMLView class];
+            if (rClass)
+                *rClass = [WebHTMLRepresentation class];
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 + (void)_setAlwaysUseATSU:(BOOL)f
 {
     WebCoreSetAlwaysUseATSU(f);
@@ -581,6 +602,12 @@ static bool debugWidget = true;
     if (_private->hasSpellCheckerDocumentTag) {
         [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:_private->spellCheckerDocumentTag];
         _private->hasSpellCheckerDocumentTag = NO;
+    }
+    
+    if (_private->pluginDatabase) {
+        [_private->pluginDatabase close];
+        [_private->pluginDatabase release];
+        _private->pluginDatabase = nil;
     }
 }
 
@@ -1429,6 +1456,16 @@ static bool debugWidget = true;
     WebDynamicScrollBarsView *scrollview = (WebDynamicScrollBarsView *)[[[self mainFrame] frameView] _scrollView];
     return [scrollview horizontalScrollingModeLocked] && [scrollview horizontalScrollingMode] == WebCoreScrollBarAlwaysOn;
 }
+
+- (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths
+{
+    if (!_private->pluginDatabase)
+        _private->pluginDatabase = [[WebPluginDatabase alloc] init];
+        
+    [_private->pluginDatabase setPlugInPaths:newPaths];
+    [_private->pluginDatabase refresh];
+}
+
 @end
 
 
@@ -1518,6 +1555,41 @@ NSMutableDictionary *countInvocations;
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
     return [self _viewClass:nil andRepresentationClass:nil forMIMEType:MIMEType];
+}
+
+- (WebBasePluginPackage *)_pluginForMIMEType:(NSString *)MIMEType
+{
+    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
+    if (pluginPackage)
+        return pluginPackage;
+    
+    if (_private->pluginDatabase)
+        return [_private->pluginDatabase pluginForMIMEType:MIMEType];
+    
+    return nil;
+}
+
+- (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension
+{
+    WebBasePluginPackage *pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
+    if (pluginPackage)
+        return pluginPackage;
+    
+    if (_private->pluginDatabase)
+        return [_private->pluginDatabase pluginForExtension:extension];
+    
+    return nil;
+}
+
+- (BOOL)_isMIMETypeRegisteredAsPlugin:(NSString *)MIMEType
+{
+    if ([[WebPluginDatabase installedPlugins] isMIMETypeRegistered:MIMEType])
+        return YES;
+        
+    if (_private->pluginDatabase && [_private->pluginDatabase isMIMETypeRegistered:MIMEType])
+        return YES;
+    
+    return nil;
 }
 
 + (BOOL)canShowMIMETypeAsHTML:(NSString *)MIMEType

@@ -1,3 +1,81 @@
+2006-06-21  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/4564131> WebPluginDatabase setAdditionalWebPlugInPaths needs to be per WebView
+
+        Added some WebView SPI so that individual WebViews may have different plugin search paths.  There are some 
+        limitations with the approach taken here:
+
+        - JavaScript may only access the global plugin DB.
+        - When this SPI is in use, certain WebView methods may not give accurate results, such as +canShowMIMEType:.
+        - This only works for plugins referenced using the <object> or <embed> tags; plugins that reside in non-standard
+        file system locations may not be loaded directly into frames.
+        
+        None of these issues are important to the client that needs this SPI.  Rather than re-architect our entire
+        plugin database, I think it is better to simply accept these limitations for now.
+
+        * Plugins/WebPluginDatabase.h:
+        Added "plugInPaths" ivar, so different plugin databases can have different search paths.
+        * Plugins/WebPluginDatabase.m:
+        (+[WebPluginDatabase installedPlugins]):
+        Give the global plugin database the default plugin search paths.
+        (+[WebPluginDatabase setAdditionalWebPlugInPaths:]):
+        Removed static global; this method now sets the plugin paths on the global plugin database.
+        (-[WebPluginDatabase setPlugInPaths:]):
+        Setter method for plugin paths.
+        (-[WebPluginDatabase close]):
+        New method; called when the plugin database is no longer needed (when its WebView is being destroyed).
+        (-[WebPluginDatabase init]):
+        Don't refresh in -init, so that callers can set the DB's plugin path array before it refreshes.
+        (-[WebPluginDatabase dealloc]):
+        Moved here from near the bottom of the file.  Release new ivar.
+        (-[WebPluginDatabase refresh]):
+        Use the plugInPaths ivar instead of calling pluginLocations().
+        Notify plugin packages when they are added to and removed from a plugin database.  A plugin package will
+        unload itself when it is removed from all of its plugin databases.
+        The only really tricky thing here is that the global MIME <-> view class registrations are only modified
+        by the shared plugin DB.
+        (+[WebPluginDatabase _defaultPlugInPaths]):
+        Refactored from the old pluginLocations() function; returns the default set of plugin search paths.
+
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage dealloc]):
+        Assert that this package has been removed from all of its containing plugin databases.
+        (-[WebBasePluginPackage finalize]):
+        ditto
+        (-[WebBasePluginPackage wasAddedToPluginDatabase:]):
+        Add plugin database to set.
+        (-[WebBasePluginPackage wasRemovedFromPluginDatabase:]):
+        Remove plugin database from set.  If it was the last DB, then unload the plugin package.
+
+        * WebView/WebViewInternal.h:
+        Added instance methods to find the view class or plugin package, given a MIME type or file extension.
+        * WebView/WebViewPrivate.h:
+        Added SPI to set plugin search paths per WebView.
+        * WebView/WebView.m:
+        (-[WebView _viewClass:andRepresentationClass:forMIMEType:]):
+        New method; tries the global MIME <-> view map first; failing that, it checks the WebView's plugin DB.
+        (-[WebView _close]):
+        Close the plugin DB.
+        (-[WebView _setAdditionalWebPlugInPaths:]):
+        Create the plugin DB if necessary, and set its plugin paths.
+        (-[WebView _pluginForMIMEType:]):
+        Checks global plugin DB, falls back on WebView DB.
+        (-[WebView _pluginForExtension:]):
+        ditto
+        (-[WebView _isMIMETypeRegisteredAsPlugin:]):
+        ditto
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:DOMElement:loadManually:]):
+        Use new WebView instance methods to look for plugins.
+        (-[WebFrameBridge viewForJavaAppletWithFrame:attributeNames:attributeValues:baseURL:DOMElement:]):
+        ditto
+        (-[WebFrameBridge determineObjectFromMIMEType:URL:]):
+        ditto
+
 2006-06-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
