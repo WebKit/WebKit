@@ -1,6 +1,23 @@
 2006-06-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
+
+        * editing/deleting/table-cells-expected.checksum: Added.
+        * editing/deleting/table-cells-expected.png: Added.
+        * editing/deleting/table-cells-expected.txt: Added.
+        * editing/deleting/table-cells.html: Added.
+        * editing/inserting/paragraph-separator-in-table-1-expected.checksum: Added.
+        * editing/inserting/paragraph-separator-in-table-1-expected.png: Added.
+        * editing/inserting/paragraph-separator-in-table-1-expected.txt: Added.
+        * editing/inserting/paragraph-separator-in-table-1.html: Added.
+        * editing/inserting/paragraph-separator-in-table-2-expected.checksum: Added.
+        * editing/inserting/paragraph-separator-in-table-2-expected.png: Added.
+        * editing/inserting/paragraph-separator-in-table-2-expected.txt: Added.
+        * editing/inserting/paragraph-separator-in-table-2.html: Added.
+
+2006-06-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
         
         <rdar://problem/4590366>
         REGRESSION: Selection incorrectly paints gaps on TOT

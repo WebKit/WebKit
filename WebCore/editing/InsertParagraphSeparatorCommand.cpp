@@ -34,6 +34,7 @@
 #include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "InsertLineBreakCommand.h"
 #include "RenderObject.h"
 #include "visible_units.h"
 
@@ -136,6 +137,15 @@ void InsertParagraphSeparatorCommand::doApply()
         deleteSelection(false, true);
         pos = endingSelection().start();
         affinity = endingSelection().affinity();
+    }
+    
+    // FIXME: Turn into an InsertLineBreak in other cases where we don't want to do the splitting/cloning that
+    // InsertParagraphSeparator does.
+    Node* block = pos.node()->enclosingBlockFlowElement();
+    if (block->renderer() && block->renderer()->isTableCell()) {
+        EditCommandPtr cmd(new InsertLineBreakCommand(document())); 
+        applyCommandToComposite(cmd);
+        return;
     }
     
     // Use the leftmost candidate.

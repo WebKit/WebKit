@@ -1,3 +1,17 @@
+2006-06-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData): Fix a bug in the code
+        to stop merges across table cells.
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Move the code to stop merges
+        across table cells to initializePositionData so that its changes to 
+        m_mergeBlocksAfterDelete can take effect on the endingPosition.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Turn into an InsertLineBreak
+        instead of splitting/cloning a table cell.
+
 2006-06-21  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.

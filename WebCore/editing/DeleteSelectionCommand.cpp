@@ -101,6 +101,13 @@ void DeleteSelectionCommand::initializePositionData()
 {
     initializeStartEnd();
     
+    Node* startCell = enclosingTableCell(m_upstreamStart.node());
+    Node* endCell = enclosingTableCell(m_downstreamEnd.node());
+    // Don't move content between parts of a table or between table and non-table content.
+    // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
+    if ((startCell || endCell) && endCell != startCell)
+        m_mergeBlocksAfterDelete = false;
+    
     // Usually the start and the end of the selection to delete are pulled together as a result of the deletion.
     // Sometimes they aren't (like when no merge is requested), so we must choose one position to hold the caret 
     // and receive the placeholder after deletion.
@@ -109,7 +116,7 @@ void DeleteSelectionCommand::initializePositionData()
         m_endingPosition = m_downstreamEnd;
     else
         m_endingPosition = m_downstreamStart;
-        
+
     // Handle leading and trailing whitespace, as well as smart delete adjustments to the selection
     m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.affinity());
     m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
@@ -401,11 +408,6 @@ void DeleteSelectionCommand::mergeParagraphs()
     // FIXME: Merging will always be unnecessary in this case, but we really bail here because this is a case where
     // deletion commonly fails to adjust its endpoints, which would cause the visible position comparison below to false negative.
     if (m_endBlock == m_startBlock)
-        return;
-        
-    // Don't move content between parts of a table or between table and non-table content.
-    // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
-    if (isTableStructureNode(m_downstreamEnd.node()->enclosingBlockFlowElement()) || isTableStructureNode(m_upstreamStart.node()->enclosingBlockFlowElement()))
         return;
         
     VisiblePosition startOfParagraphToMove(m_downstreamEnd);
