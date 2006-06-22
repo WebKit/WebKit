@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        <rdar://problem/4499675> Package Tracker widget always crashes in WebCore::Frame::jScriptEnabled() const + 0
+        
+        * fast/dom/noscript-canvas-in-created-html-document-expected.txt: Added.
+        * fast/dom/noscript-canvas-in-created-html-document.html: Added.
+
+2006-06-22  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
         <rdar://problem/4524840> Entities contained in DOCTYPE referenced DTD in XSLT source document are unknown
 
         * fast/xsl/dtd-in-source-document-expected.txt: Added.

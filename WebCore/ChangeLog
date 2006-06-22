@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        <rdar://problem/4499675> Package Tracker widget always crashes in WebCore::Frame::jScriptEnabled() const + 0
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::noscriptCreateErrorCheck):
+        (WebCore::HTMLParser::canvasCreateErrorCheck):
+        (WebCore::HTMLParser::isInline):
+        Add null-checks for document->frame() since it can be 0 for documents created using createHTMLDocument.
+
+2006-06-22  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
         <rdar://problem/4524840> Entities contained in DOCTYPE referenced DTD in XSLT source document are unknown
         
         * dom/xml_tokenizer.cpp:
