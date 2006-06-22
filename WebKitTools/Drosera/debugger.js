@@ -48,13 +48,54 @@ function keyPressed(event) {
     else if (event.charCode == 115) step();
 }
 
-function dividerDragStart(event) {
-    var element = document.getElementById("divider");
+function dividerDragStart(element, dividerDrag, dividerDragEnd, event) {
     element.dragging = true;
-    element.dragLastY = event.clientY + window.scrollY;
+    element.dragLastX = event.clientX + window.scrollX;
     document.addEventListener("mousemove", dividerDrag, true);
     document.addEventListener("mouseup", dividerDragEnd, true);
     event.preventDefault();
+}
+
+function sourceDividerDragStart(event) {
+    dividerDragStart(document.getElementById("divider"), dividerDrag, sourceDividerDragEnd, event);
+}
+
+function infoDividerDragStart(event) {
+    dividerDragStart(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd, event);
+}
+
+function infoDividerDragEnd(event) {
+    dividerDragEnd(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd);
+}
+
+function sourceDividerDragEnd(event) {
+    dividerDragEnd(document.getElementById("divider"), dividerDrag, sourceDividerDragEnd);
+}
+
+function dividerDragEnd(element, dividerDrag, dividerDragEnd, event) {
+    element.dragging = false;
+    document.removeEventListener("mousemove", dividerDrag, true);
+    document.removeEventListener("mouseup", dividerDragEnd, true);
+}
+
+function infoDividerDrag(event) {
+    var element = document.getElementById("infoDivider");
+    if (document.getElementById("infoDivider").dragging == true) {
+      var main = document.getElementById("main");
+      var leftPane = document.getElementById("leftPane");
+      var rightPane = document.getElementById("rightPane");
+      var x = event.clientX + window.scrollX;
+       
+      if (x < main.clientWidth * 0.25)
+        x = main.clientWidth * 0.25;
+        else if (x > main.clientWidth * 0.75)
+         x = main.clientWidth * 0.75;
+
+        leftPane.style.width = x + "px";
+        rightPane.style.left = x + "px";
+        element.dragLastX = x;
+        event.preventDefault();
+    }
 }
 
 function dividerDrag(event) {
@@ -80,16 +121,10 @@ function dividerDrag(event) {
     }
 }
 
-function dividerDragEnd(event) {
-    var element = document.getElementById("divider");
-    element.dragging = false;
-    document.removeEventListener("mousemove", dividerDrag, true);
-    document.removeEventListener("mouseup", dividerDragEnd, true);
-}
-
 function loaded() {
     window.addEventListener("keypress", keyPressed, false);
-    document.getElementById("divider").addEventListener("mousedown", dividerDragStart, false);
+    document.getElementById("divider").addEventListener("mousedown", sourceDividerDragStart, false);
+    document.getElementById("infoDivider").addEventListener("mousedown", infoDividerDragStart, false);
 }
 
 function isPaused() {

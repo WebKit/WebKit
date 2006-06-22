@@ -54,7 +54,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D15AC270486D014006FF6A4 /* Drosera */;
+			remoteGlobalIDString = 8D15AC270486D014006FF6A4;
 			remoteInfo = Drosera;
 		};
 /* End PBXContainerItemProxy section */
