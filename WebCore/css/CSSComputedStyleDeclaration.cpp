@@ -916,7 +916,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             case OMARQUEE:
                 return new CSSPrimitiveValue(CSS_VAL__WEBKIT_MARQUEE);
             case OOVERLAY:
-                return new CSSPrimitiveValue(CSS_VAL__WEBKIT_OVERLAY);
+                return new CSSPrimitiveValue(CSS_VAL_OVERLAY);
         }
         ASSERT_NOT_REACHED();
         return 0;

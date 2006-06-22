@@ -1,3 +1,17 @@
+2006-06-21  David Hyatt  <hyatt@apple.com>
+
+        Back out -webkit-overlay and just rename it back to overlay.
+
+        Reviewed by darin
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2006-06-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

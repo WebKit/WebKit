@@ -305,7 +305,7 @@ no-close-quote
 no-open-quote
 nowrap
 open-quote
--webkit-overlay
+overlay
 overline
 portrait
 pre
