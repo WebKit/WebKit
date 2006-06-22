@@ -29,6 +29,7 @@
 var sourceFiles = new Array();
 var currentSourceId = -1;
 var currentRow = null;
+var currentStack = null;
 var previousFiles = new Array();
 var nextFiles = new Array();
 
@@ -140,6 +141,12 @@ function resume()
     if (currentRow) {
         removeStyleClass(currentRow, "current");
         currentRow = null;
+    }
+
+    if (currentStack) {
+        var stackframeTable = document.getElementById("stackframeTable");
+        stackframeTable.innerHTML = ""; // clear the content
+        currentStack = null;
     }
 
     DebuggerDocument.resume();
@@ -365,6 +372,39 @@ function navFileNext(element)
     loadSource(lastSource, false);
 }
 
+function updateFunctionStack()
+{
+    var stackframeTable = document.getElementById("stackframeTable");
+    stackframeTable.innerHTML = ""; // clear the content
+
+    currentStack = DebuggerDocument.currentFunctionStack();
+    for(var i = 0; i < currentStack.length; i++) {
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        td.className = "stackNumber";
+        td.innerText = i;
+        tr.appendChild(td);
+
+        td = document.createElement("td");
+        td.innerText = currentStack[i];
+        tr.appendChild(td);
+
+        stackframeTable.appendChild(tr);
+    }
+
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+    td.className = "stackNumber";
+    td.innerText = i;
+    tr.appendChild(td);
+
+    td = document.createElement("td");
+    td.innerText = "Global";
+    tr.appendChild(td);
+
+    stackframeTable.appendChild(tr);
+}
+
 function loadSource(sourceId,manageNavLists)
 {
     if (!sourceFiles[sourceId])
@@ -466,6 +506,8 @@ function willExecuteStatement(sourceId,line)
             return;
         if (sourceFiles[sourceId].element.firstChild.childNodes.length < line)
             return;
+
+        updateFunctionStack();
 
         currentRow = sourceFiles[sourceId].element.firstChild.childNodes.item(line - 1);
         addStyleClass(currentRow, "current");

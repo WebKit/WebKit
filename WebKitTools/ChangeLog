@@ -1,3 +1,30 @@
+2006-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Code clean up. Adds the stackframe and makes only the body
+        of the tables scrollable keeping the header visible.
+        Shows the current function stack when paused or stepping.
+
+        * Drosera/DebuggerApplication.m:
+        (-[DebuggerApplication awakeFromNib]):
+        (-[DebuggerApplication numberOfRowsInTableView:]):
+        (-[DebuggerApplication tableView:objectValueForTableColumn:row:]):
+        * Drosera/DebuggerDocument.h:
+        * Drosera/DebuggerDocument.m:
+        (-[DebuggerDocument dealloc]):
+        (-[DebuggerDocument currentFrame]):
+        (-[DebuggerDocument currentFrameFunctionName]):
+        (-[DebuggerDocument currentFunctionStack]):
+        (-[DebuggerDocument log:]):
+        (-[DebuggerDocument windowWillClose:]):
+        (-[DebuggerDocument webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[DebuggerDocument webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        * Drosera/Drosera.xcodeproj/project.pbxproj:
+        * Drosera/debugger.css:
+        * Drosera/debugger.html:
+        * Drosera/debugger.js:
+
 2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Anders.

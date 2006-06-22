@@ -41,17 +41,26 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </div>
 <div id="main">
 <div id="info">
-<div id="console">
 <div id="leftPane">
+<div id="stackframe">
+<table id="stackframeTableHeader">
+<tr class="column"><th class="stackNumber">#</th><th>Function</th><th class="scrollCorner"></th></tr>
+</table>
+<div id="stackframeBody">
 <div class="infoBackground"></div>
+<table id="stackframeTable"></table>
+</div>
+</div>
 </div>
 <div id="rightPane">
 <div id="infoDivider"></div>
 <div id="variables">
-<div class="infoBackground"></div>
-<table id="variablesTable">
-<tr class="column"><th>Variable</th><th>Value</th></tr>
+<table id="variablesTableHeader">
+<tr class="column"><th class="variable">Variable</th><th>Value</th><th class="scrollCorner"></th></tr>
 </table>
+<div id="variablesBody">
+<div class="infoBackground"></div>
+<table id="variablesTable"></table>
 </div>
 </div>
 </div>

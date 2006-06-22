@@ -28,18 +28,6 @@
 
 #import "DebuggerDocument.h"
 
-@implementation WebScriptCallFrame (WebScriptCallFrameScripting)
-+ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
-{
-    return NO;
-}
-
-+ (BOOL)isKeyExcludedFromWebScript:(const char *)name
-{
-    return NO;
-}
-@end
-
 @implementation DebuggerDocument
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
@@ -51,24 +39,13 @@
     return NO;
 }
 
+#pragma mark -
+
 - (id)initWithServerName:(NSString *)serverName
 {
     if ((self = [super init]))
         [self switchToServerNamed:serverName];
     return self;
-}
-
-- (void)windowWillClose:(NSNotification *)notification
-{
-    [[webView windowScriptObject] removeWebScriptKey:@"DebuggerDocument"];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:nil];
-    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:WebScriptDebugServerQueryReplyNotification object:nil];
-    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:WebScriptDebugServerWillUnloadNotification object:nil];
-
-    [self switchToServerNamed:nil];
-
-    [self autorelease]; // DebuggerApplication expects us to release on close
 }
 
 - (void)dealloc
@@ -77,6 +54,34 @@
     [currentServerName release];
     [super dealloc];
 }
+
+#pragma mark -
+#pragma mark Stack & Variables
+
+- (WebScriptCallFrame *)currentFrame
+{
+    return currentFrame;
+}
+
+- (NSString *)currentFrameFunctionName
+{
+    return [currentFrame functionName];
+}
+
+- (NSArray *)currentFunctionStack
+{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    WebScriptCallFrame *frame = currentFrame;
+    while (frame) {
+        if ([frame functionName])
+            [result addObject:[frame functionName]];
+        frame = [frame caller];
+    }
+    return [result autorelease];
+}
+
+#pragma mark -
+#pragma mark Pause & Step
 
 - (BOOL)isPaused
 {
@@ -103,6 +108,14 @@
         [server step];
 }
 
+- (void)log:(NSString *)msg
+{
+    NSLog(@"%@", msg);
+}
+
+#pragma mark -
+#pragma mark Window Controller Overrides
+
 - (NSString *)windowNibName
 {
     return @"Debugger";
@@ -117,6 +130,23 @@
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"debugger" ofType:@"html" inDirectory:nil];
     [[webView mainFrame] loadRequest:[[[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]] autorelease]];
 }
+
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+    [[webView windowScriptObject] removeWebScriptKey:@"DebuggerDocument"];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:nil];
+    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:WebScriptDebugServerQueryReplyNotification object:nil];
+    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:WebScriptDebugServerWillUnloadNotification object:nil];
+
+    [self switchToServerNamed:nil];
+
+    [self autorelease]; // DebuggerApplication expects us to release on close
+}
+
+#pragma mark -
+#pragma mark Connection Handling
 
 - (void)switchToServerNamed:(NSString *)name
 {
@@ -167,6 +197,9 @@
     [self switchToServerNamed:nil];
 }
 
+#pragma mark -
+#pragma mark WebView Frame Load Delegate
+
 - (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject
 {
     // note: this is the Debuggers's own WebView, not the one being debugged
@@ -178,6 +211,9 @@
     // note: this is the Debuggers's own WebView, not the one being debugged
     webViewLoaded = YES;
 }
+
+#pragma mark -
+#pragma mark Debug Listener Callbacks
 
 - (void)webView:(WebView *)view didParseSource:(NSString *)source fromURL:(NSString *)url sourceId:(int)sid forWebFrame:(WebFrame *)webFrame
 {
@@ -199,6 +235,10 @@
     if (!webViewLoaded)
         return;
 
+    id old = currentFrame;
+    currentFrame = [frame retain];
+    [old release];
+
     NSArray *args = [NSArray arrayWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"didEnterCallFrame" withArguments:args];
 }
@@ -219,5 +259,9 @@
 
     NSArray *args = [NSArray arrayWithObjects:[NSNumber numberWithInt:sid], [NSNumber numberWithInt:lineno], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"willLeaveCallFrame" withArguments:args];
+
+    id old = currentFrame;
+    currentFrame = [[frame caller] retain];
+    [old release];
 }
 @end

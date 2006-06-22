@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C2632D30A4AF0A800EA7CD8 /* verticalSplitterBar.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C2632D10A4AF0A800EA7CD8 /* verticalSplitterBar.tiff */; };
+		1C2632D40A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C2632D20A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff */; };
+		1C2632D70A4AF0B800EA7CD8 /* SourceArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C2632D50A4AF0B800EA7CD8 /* SourceArrow.png */; };
+		1C2632D80A4AF0B800EA7CD8 /* SourceArrowBlank.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C2632D60A4AF0B800EA7CD8 /* SourceArrowBlank.png */; };
+		1C2632DA0A4AF0D200EA7CD8 /* background_stripe.png in Resources */ = {isa = PBXBuildFile; fileRef = 1C2632D90A4AF0D200EA7CD8 /* background_stripe.png */; };
 		1C27ABC60A413B720016ECF4 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C27ABC50A413B720016ECF4 /* WebKit.framework */; };
 		1C27AC200A413D2D0016ECF4 /* debugger.html in Resources */ = {isa = PBXBuildFile; fileRef = 1C27AC1F0A413D2D0016ECF4 /* debugger.html */; };
 		1C27B1260A421D870016ECF4 /* debugger.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C27AC230A413D660016ECF4 /* debugger.js */; };
@@ -62,6 +67,11 @@
 /* Begin PBXFileReference section */
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FBA07B3F13500E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		1C2632D10A4AF0A800EA7CD8 /* verticalSplitterBar.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = verticalSplitterBar.tiff; sourceTree = "<group>"; };
+		1C2632D20A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = verticalSplitterDimple.tiff; sourceTree = "<group>"; };
+		1C2632D50A4AF0B800EA7CD8 /* SourceArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SourceArrow.png; sourceTree = "<group>"; };
+		1C2632D60A4AF0B800EA7CD8 /* SourceArrowBlank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SourceArrowBlank.png; sourceTree = "<group>"; };
+		1C2632D90A4AF0D200EA7CD8 /* background_stripe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_stripe.png; sourceTree = "<group>"; };
 		1C27ABC50A413B720016ECF4 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
 		1C27AC1F0A413D2D0016ECF4 /* debugger.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = debugger.html; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C27AC230A413D660016ECF4 /* debugger.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = debugger.js; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -187,6 +197,11 @@
 				1CC058EA0A44A210006FE533 /* stepOver.tif */,
 				1CC058EB0A44A210006FE533 /* stop.tif */,
 				1CC0596F0A44A485006FE533 /* toolbarBackground.png */,
+				1C2632D10A4AF0A800EA7CD8 /* verticalSplitterBar.tiff */,
+				1C2632D20A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff */,
+				1C2632D50A4AF0B800EA7CD8 /* SourceArrow.png */,
+				1C2632D60A4AF0B800EA7CD8 /* SourceArrowBlank.png */,
+				1C2632D90A4AF0D200EA7CD8 /* background_stripe.png */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -364,6 +379,11 @@
 				1C4FFE5F0A466F5D0000D05D /* programCounterBreakPointDisabled.tif in Resources */,
 				1C74F0350A47BF8300FEC632 /* viewer.html in Resources */,
 				1C74F04B0A47BFE800FEC632 /* viewer.css in Resources */,
+				1C2632D30A4AF0A800EA7CD8 /* verticalSplitterBar.tiff in Resources */,
+				1C2632D40A4AF0A800EA7CD8 /* verticalSplitterDimple.tiff in Resources */,
+				1C2632D70A4AF0B800EA7CD8 /* SourceArrow.png in Resources */,
+				1C2632D80A4AF0B800EA7CD8 /* SourceArrowBlank.png in Resources */,
+				1C2632DA0A4AF0D200EA7CD8 /* background_stripe.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

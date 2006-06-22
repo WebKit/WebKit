@@ -30,6 +30,7 @@
 {
     IBOutlet WebView *webView;
     id<WebScriptDebugServer> server;
+    WebScriptCallFrame *currentFrame;
     NSString *currentServerName;
     BOOL webViewLoaded;
     BOOL paused;
