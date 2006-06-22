@@ -1,3 +1,11 @@
+2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Anders.
+
+        Teach run-webkit-httpd to properly look for webkitdirs.pm.
+
+        * Scripts/run-webkit-httpd:
+
 2006-06-22  Kevin Decker         <kdecker@apple.com>
 
         Reviewed by Tim Hatcher.

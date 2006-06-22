@@ -34,6 +34,9 @@ use warnings;
 
 use Cwd;
 use Getopt::Long;
+use FindBin;
+
+use lib $FindBin::Bin;
 use webkitdirs;
 
 # Argument handling
