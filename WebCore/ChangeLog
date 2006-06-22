@@ -1,3 +1,30 @@
+2006-06-22  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4524840> Entities contained in DOCTYPE referenced DTD in XSLT source document are unknown
+        
+        * dom/xml_tokenizer.cpp:
+        (WebCore::shouldAllowExternalLoad):
+        Use correct path for the catalog.
+        
+        (WebCore::errorFunc):
+        Add error function to keep parser errors from going to the console.
+        
+        (WebCore::XMLTokenizer::write):
+        Remove if (0 &&)
+        
+        (WebCore::XMLTokenizer::end):
+        Pass DocLoader to xmlDocPtrForString.
+        
+        (WebCore::xmlDocPtrForString):        
+        * dom/xml_tokenizer.h:
+        Add DocLoader argument to xmlDocPtrForString so external DTDs and entities can be loaded.
+        
+        * xml/XSLTProcessor.cpp:
+        (WebCore::xmlDocPtrFromNode):
+        Pass DocLoader to xmlDocPtrForString
+        
 2006-06-21  David Hyatt  <hyatt@apple.com>
 
         Back out -webkit-overlay and just rename it back to overlay.

@@ -1,3 +1,14 @@
+2006-06-22  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4524840> Entities contained in DOCTYPE referenced DTD in XSLT source document are unknown
+
+        * fast/xsl/dtd-in-source-document-expected.txt: Added.
+        * fast/xsl/dtd-in-source-document.xml: Added.
+        * fast/xsl/resources/dtd-in-source-document.dtd: Added.
+        * fast/xsl/resources/dtd-in-source-document.xsl: Added.
+
 2006-06-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

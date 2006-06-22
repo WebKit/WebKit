@@ -65,7 +65,7 @@ protected:
 
 Tokenizer* newXMLTokenizer(Document*, FrameView* = 0);
 #if KHTML_XSLT
-void* xmlDocPtrForString(const DeprecatedString& source, const DeprecatedString& URL);
+void* xmlDocPtrForString(DocLoader*, const DeprecatedString& source, const DeprecatedString& URL);
 void setLoaderForLibXMLCallbacks(DocLoader*);
 #endif
 HashMap<String, String> parseAttributes(const String&, bool& attrsOK);
