@@ -28,7 +28,7 @@
 
 #import <WebKit/WebFrameLoader.h>
 
-#import <WebKit/WebAssertions.h>
+#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebIconLoader.h>
