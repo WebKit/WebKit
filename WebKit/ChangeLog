@@ -1,3 +1,56 @@
+2006-06-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+        
+        - start moving loading logic to new WebFrameLoader class; move management of WebLoaders there
+
+        * Misc/WebIconLoader.h:
+        * Misc/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _updateLoading]):
+        (-[WebDataSource _loadIcon]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _addSubresourceLoader:]):
+        (-[WebDataSource _removeSubresourceLoader:]):
+        (-[WebDataSource _addPlugInStreamLoader:]):
+        (-[WebDataSource _removePlugInStreamLoader:]):
+        (-[WebDataSource _iconLoaderReceivedPageIcon:]):
+        (-[WebDataSource _defersCallbacksChanged]):
+        (-[WebDataSource _stopLoadingWithError:]):
+        (-[WebDataSource _setupForReplaceByMIMEType:]):
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource dealloc]):
+        (-[WebDataSource finalize]):
+        (-[WebDataSource data]):
+        (-[WebDataSource isLoading]):
+        * WebView/WebFrameLoader.h: Added.
+        * WebView/WebFrameLoader.m: Added.
+        (-[WebFrameLoader initWithDataSource:]):
+        (-[WebFrameLoader dealloc]):
+        (-[WebFrameLoader hasIconLoader]):
+        (-[WebFrameLoader loadIconWithRequest:]):
+        (-[WebFrameLoader stopLoadingIcon]):
+        (-[WebFrameLoader addPlugInStreamLoader:]):
+        (-[WebFrameLoader removePlugInStreamLoader:]):
+        (-[WebFrameLoader setDefersCallbacks:]):
+        (-[WebFrameLoader stopLoadingPlugIns]):
+        (-[WebFrameLoader isLoadingMainResource]):
+        (-[WebFrameLoader isLoadingSubresources]):
+        (-[WebFrameLoader isLoading]):
+        (-[WebFrameLoader stopLoadingSubresources]):
+        (-[WebFrameLoader addSubresourceLoader:]):
+        (-[WebFrameLoader removeSubresourceLoader:]):
+        (-[WebFrameLoader mainResourceData]):
+        (-[WebFrameLoader releaseMainResourceLoader]):
+        (-[WebFrameLoader cancelMainResourceLoad]):
+        (-[WebFrameLoader startLoadingMainResourceWithRequest:identifier:]):
+        (-[WebFrameLoader stopLoadingWithError:]):
+
 2006-06-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

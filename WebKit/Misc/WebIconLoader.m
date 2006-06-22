@@ -38,7 +38,6 @@
 @interface WebIconLoaderPrivate : NSObject
 {
 @public
-    id delegate;
     NSURLRequest *initialRequest;
 }
 
@@ -76,16 +75,6 @@
     return [_private->initialRequest URL];
 }
 
-- (id)delegate
-{
-    return _private->delegate;
-}
-
-- (void)setDelegate:(id)delegate
-{
-    _private->delegate = delegate;
-}
-
 - (void)startLoading
 {
     [self loadWithRequest:_private->initialRequest];
@@ -119,7 +108,7 @@
     } else {
         [[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
     }
-    [_private->delegate _iconLoaderReceivedPageIcon:self];    
+    [dataSource _iconLoaderReceivedPageIcon:self];    
     [icon release];
     
     [super didFinishLoading];

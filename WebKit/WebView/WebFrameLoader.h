@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,40 +26,46 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebLoader.h>
+#import <Cocoa/Cocoa.h>
 
-@class WebIconLoaderPrivate;
+@class WebDataSource;
+@class WebMainResourceLoader;
+@class WebIconLoader;
+@class WebLoader;
 
-/*!
-    @class WebIconLoader
-*/
-@interface WebIconLoader : WebLoader
+@interface WebFrameLoader : NSObject
 {
-    WebIconLoaderPrivate *_private;
+@public
+    // Client for main resource.
+    WebMainResourceLoader *mainResourceLoader;
+    
+    // Clients for other resources.
+    NSMutableArray *subresourceLoaders;
+    NSMutableArray *plugInStreamLoaders;
+    WebIconLoader *iconLoader;
+    
+    WebDataSource *dataSource;
 }
 
-/*!
-    @method initWithRequest:
-    @param request
-*/
-- (id)initWithRequest:(NSURLRequest *)request;
+- (id)initWithDataSource:(WebDataSource *)ds;
+// FIXME: should really split isLoadingIcon from hasLoadedIcon, no?
+- (BOOL)hasIconLoader;
+- (void)loadIconWithRequest:(NSURLRequest *)request;
+- (void)stopLoadingIcon;
+- (void)addPlugInStreamLoader:(WebLoader *)loader;
+- (void)removePlugInStreamLoader:(WebLoader *)loader;
+- (void)setDefersCallbacks:(BOOL)defers;
+- (void)stopLoadingPlugIns;
+- (BOOL)isLoadingMainResource;
+- (BOOL)isLoadingSubresources;
+- (BOOL)isLoading;
+- (void)stopLoadingSubresources;
+- (void)addSubresourceLoader:(WebLoader *)loader;
+- (void)removeSubresourceLoader:(WebLoader *)loader;
+- (NSData *)mainResourceData;
+- (void)releaseMainResourceLoader;
+- (void)cancelMainResourceLoad;
+- (BOOL)startLoadingMainResourceWithRequest:(NSMutableURLRequest *)request identifier:(id)identifier;
+- (void)stopLoadingWithError:(NSError *)error;
 
-/*!
-    @method URL
-*/
-- (NSURL *)URL;
-
-/*!
-    @method startLoading
-*/
-- (void)startLoading;
-
-/*!
-    @method stopLoading
-*/
-- (void)stopLoading;
 @end
-
-@interface NSObject(WebIconLoaderDelegate)
-- (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader;
-@end;

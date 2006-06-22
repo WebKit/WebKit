@@ -38,6 +38,7 @@
 #import "WebDownloadInternal.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
+#import "WebFrameLoader.h"
 #import "WebFrameLoadDelegate.h"
 #import "WebFrameView.h"
 #import "WebHTMLRepresentation.h"
@@ -45,12 +46,10 @@
 #import "WebHistory.h"
 #import "WebHistoryItemPrivate.h"
 #import "WebIconDatabasePrivate.h"
-#import "WebIconLoader.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
-#import "WebMainResourceLoader.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
@@ -90,13 +89,6 @@
     
     NSURLResponse *response;
     
-    // Client for main resource.
-    WebMainResourceLoader *mainResourceLoader;
-    
-    // Clients for other resources.
-    NSMutableArray *subresourceLoaders;
-    NSMutableArray *plugInStreamLoaders;
-    
     // The time when the data source was told to start loading.
     double loadingStartedTime;
     
@@ -123,7 +115,6 @@
     BOOL defersCallbacks;
     
     NSURL *iconURL;
-    WebIconLoader *iconLoader;
     
     // The action that triggered loading of this data source -
     // we keep this around for the benefit of the various policy
@@ -149,6 +140,8 @@
     WebUnarchivingState *unarchivingState;
     
     BOOL supportsMultipartContent;
+
+    WebFrameLoader *frameLoader;
 }
 
 @end
@@ -166,19 +159,16 @@
     [request release];
     [originalRequest release];
     [originalRequestCopy release];
-    [mainResourceLoader release];
-    [subresourceLoaders release];
-    [plugInStreamLoaders release];
     [pageTitle release];
     [response release];
     [mainDocumentError release];
-    [iconLoader release];
     [iconURL release];
     [triggeringAction release];
     [lastCheckedRequest release];
     [responses release];
     [webFrame release];
     [unarchivingState release];
+    [frameLoader release];
 
     [super dealloc];
 }
@@ -295,7 +285,7 @@
 
 - (void)_updateLoading
 {
-    [self _setLoading:_private->mainResourceLoader || [_private->subresourceLoaders count]];
+    [self _setLoading:[_private->frameLoader isLoading]];
 }
 
 - (void)_setData:(NSData *)data
@@ -330,13 +320,14 @@
 
 - (void)_loadIcon
 {
-    // Don't load an icon if 1) this is not the main frame 2) we ended in error 3) we already did 4) they aren't save by the DB.
-    if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || _private->iconLoader ||
+    // Don't load an icon if 1) this is not the main frame 2) we ended in error
+    // 3) we already did 4) they aren't saved by the DB.
+    if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || [_private->frameLoader hasIconLoader] ||
         ![[WebIconDatabase sharedIconDatabase] _isEnabled]) {
         return;
     }
     
-    if(!_private->iconURL){
+    if (!_private->iconURL) {
         // No icon URL from the LINK tag so try the server's root.
         // This is only really a feature of http or https, so don't try this with other protocols.
         NSString *scheme = [[self _URL] scheme];
@@ -346,18 +337,14 @@
         }
     }
     
-    if(_private->iconURL != nil){
-        if([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL _web_originalDataAsString]]){
+    if (_private->iconURL != nil) {
+        if ([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL _web_originalDataAsString]]) {
             [self _updateIconDatabaseWithURL:_private->iconURL];
-        }else{
-            ASSERT(!_private->iconLoader);
+        } else {
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->iconURL];
             [[self webFrame] _addExtraFieldsToRequest:request mainResource:YES alwaysFromRequest:NO];
-            _private->iconLoader = [[WebIconLoader alloc] initWithRequest:request];
+            [_private->frameLoader loadIconWithRequest:request];
             [request release];
-            [_private->iconLoader setDelegate:self];
-            [_private->iconLoader setDataSource:self];
-            [_private->iconLoader startLoading];
         }
     }
 }
@@ -372,11 +359,8 @@
         // there's no callback for that.
         [self _loadIcon];
 
-        if (_private->mainResourceLoader != nil) {
-            [self _setData:[_private->mainResourceLoader resourceData]];
-            [_private->mainResourceLoader release];
-            _private->mainResourceLoader = nil;
-        }
+        [self _setData:[_private->frameLoader mainResourceData]];
+        [_private->frameLoader releaseMainResourceLoader];
         
         [self _updateLoading];
     }
@@ -397,8 +381,8 @@
 {
     // Always attempt to stop the icon loader because it may still be loading after the data source
     // is done loading and not stopping it can cause a world leak.
-    [_private->iconLoader stopLoading];
-
+    [_private->frameLoader stopLoadingIcon];
+    
     // The same goes for the bridge/part, which may still be parsing.
     if (_private->committed)
         [[self _bridge] stopLoading];
@@ -410,10 +394,10 @@
 
     _private->stopping = YES;
     
-    if (_private->mainResourceLoader) {
+    if ([_private->frameLoader isLoadingMainResource]) {
         // Stop the main resource loader and let it send the cancelled message.
-        [_private->mainResourceLoader cancel];
-    } else if ([_private->subresourceLoaders count] > 0) {
+        [_private->frameLoader cancelMainResourceLoad];
+    } else if ([_private->frameLoader isLoadingSubresources]) {
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
         [self _setMainDocumentError:[self _cancelledError]];
@@ -423,10 +407,9 @@
         [self _mainReceivedError:[self _cancelledError] complete:YES];
     }
     
-    NSArray *loaders = [_private->subresourceLoaders copy];
-    [loaders makeObjectsPerformSelector:@selector(cancel)];
-    [loaders release];
-
+    [_private->frameLoader stopLoadingSubresources];
+    // FIXME: why not stop loading plugins here?
+    
     _private->stopping = NO;
     
     [self release];
@@ -467,7 +450,7 @@
 {
     [self _prepareForLoadStart];
 
-    if (_private->mainResourceLoader)
+    if ([_private->frameLoader isLoadingMainResource])
         return;
 
     _private->loadingFromPageCache = NO;
@@ -479,47 +462,31 @@
     else
         identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
     
-    _private->mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:self];
-    
-    [_private->mainResourceLoader setIdentifier: identifier];
-    [[self webFrame] _addExtraFieldsToRequest:_private->request mainResource:YES alwaysFromRequest:NO];
-    if (![_private->mainResourceLoader loadWithRequest:_private->request]) {
-        // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
-        // should it be caught by other parts of WebKit or other parts of the app?
-        LOG_ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", [_private->request URL]);
-        [_private->mainResourceLoader release];
-        _private->mainResourceLoader = nil;
+    if (![_private->frameLoader startLoadingMainResourceWithRequest:_private->request identifier:identifier])
         [self _updateLoading];
-    }
 }
 
 - (void)_addSubresourceLoader:(WebLoader *)loader
 {
-    if (_private->subresourceLoaders == nil) {
-        _private->subresourceLoaders = [[NSMutableArray alloc] init];
-    }
-    [_private->subresourceLoaders addObject:loader];
+    [_private->frameLoader addSubresourceLoader:loader];
     [self _setLoading:YES];
 }
 
 - (void)_removeSubresourceLoader:(WebLoader *)loader
 {
-    [_private->subresourceLoaders removeObject:loader];
+    [_private->frameLoader removeSubresourceLoader:loader];
     [self _updateLoading];
 }
 
 - (void)_addPlugInStreamLoader:(WebLoader *)loader
 {
-    if (_private->plugInStreamLoaders == nil) {
-        _private->plugInStreamLoaders = [[NSMutableArray alloc] init];
-    }
-    [_private->plugInStreamLoaders addObject:loader];
+    [_private->frameLoader addPlugInStreamLoader:loader];
     [self _setLoading:YES];
 }
 
 - (void)_removePlugInStreamLoader:(WebLoader *)loader
 {
-    [_private->plugInStreamLoaders removeObject:loader];
+    [_private->frameLoader removePlugInStreamLoader:loader];
     [self _updateLoading];
 }
 
@@ -816,7 +783,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader
 {
-    [self _updateIconDatabaseWithURL:[iconLoader URL]];
+    [self _updateIconDatabaseWithURL:_private->iconURL];
 }
 
 - (void)_setIconURL:(NSURL *)URL
@@ -844,17 +811,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
 
     _private->defersCallbacks = defers;
-    [_private->mainResourceLoader setDefersCallbacks:defers];
-
-    NSEnumerator *e = [_private->subresourceLoaders objectEnumerator];
-    WebLoader *loader;
-    while ((loader = [e nextObject])) {
-        [loader setDefersCallbacks:defers];
-    }
-    e = [_private->plugInStreamLoaders objectEnumerator];
-    while ((loader = [e nextObject])) {
-        [loader setDefersCallbacks:defers];
-    }
+    [_private->frameLoader setDefersCallbacks:defers];
 }
 
 - (BOOL)_defersCallbacks
@@ -1027,7 +984,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_stopLoadingWithError:(NSError *)error
 {
-    [_private->mainResourceLoader cancelWithError:error];
+    [_private->frameLoader stopLoadingWithError:error];
 }
 
 - (void)_setWebFrame:(WebFrame *)frame
@@ -1088,10 +1045,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if ([self _doesProgressiveLoadWithMIMEType:newMIMEType])
         [self _revertToProvisionalState];
 
-    [_private->subresourceLoaders makeObjectsPerformSelector:@selector(cancel)];
-    [_private->subresourceLoaders removeAllObjects];
-    [_private->plugInStreamLoaders makeObjectsPerformSelector:@selector(cancel)];
-    [_private->plugInStreamLoaders removeAllObjects];
+    [_private->frameLoader stopLoadingSubresources];
+    [_private->frameLoader stopLoadingPlugIns];
     [_private->unarchivingState release];
 }
 
@@ -1119,6 +1074,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private->request = [_private->originalRequest mutableCopy];
     _private->supportsMultipartContent = WKSupportsMultipartXMixedReplace(_private->request);
 
+    _private->frameLoader = [[WebFrameLoader alloc] initWithDataSource:self];
+    
     ++WebDataSourceCount;
     
     return self;
@@ -1128,7 +1085,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     --WebDataSourceCount;
     
-    [_private->iconLoader setDelegate:nil];
     [_private release];
     
     [super dealloc];
@@ -1138,14 +1094,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 {
     --WebDataSourceCount;
 
-    [_private->iconLoader setDelegate:nil];
-
     [super finalize];
 }
 
 - (NSData *)data
 {
-    return _private->resourceData != nil ? _private->resourceData : [_private->mainResourceLoader resourceData];
+    return _private->resourceData != nil ? _private->resourceData : [_private->frameLoader mainResourceData];
 }
 
 - (id <WebDocumentRepresentation>)representation
@@ -1197,7 +1151,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if ([[self webFrame] _state] != WebFrameStateComplete) {
         if (!_private->primaryLoadComplete && _private->loading)
             return YES;
-        if ([_private->subresourceLoaders count])
+        if ([_private->frameLoader isLoadingSubresources])
             return YES;
         if (![[[self webFrame] _bridge] doneProcessingData])
             return YES;
