@@ -1,5 +1,14 @@
 2006-06-22  Anders Carlsson  <acarlsson@apple.com>
 
+        Reviewed by John.
+
+        <rdar://problem/4529334> REGRESSION: Can't configure RadarInMotion widget for U.S. locations on Leopard (Javascript errors)
+        
+        * fast/dom/resource-locations-in-created-html-document-expected.txt: Added.
+        * fast/dom/resource-locations-in-created-html-document.html: Added.
+
+2006-06-22  Anders Carlsson  <acarlsson@apple.com>
+
         Reviewed by Maciej.
 
         <rdar://problem/4499675> Package Tracker widget always crashes in WebCore::Frame::jScriptEnabled() const + 0

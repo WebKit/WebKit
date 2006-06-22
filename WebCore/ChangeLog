@@ -1,3 +1,13 @@
+2006-06-22  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4529334> REGRESSION: Can't configure RadarInMotion widget for U.S. locations on Leopard (Javascript errors)
+        
+        * dom/Document.cpp:
+        (WebCore::Document::completeURL):
+        Check if both the URL and base URL are empty instead of using URL() which returns "about:blank" if the URL is empty.
+
 === WebCore-521.13 ===
         
 2006-06-22  Anders Carlsson  <acarlsson@apple.com>
