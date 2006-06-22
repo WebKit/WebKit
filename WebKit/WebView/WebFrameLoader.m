@@ -32,6 +32,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebIconLoader.h>
+#import <WebKit/WebMainResourceLoader.h>
 
 @implementation WebFrameLoader
 

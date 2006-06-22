@@ -1,3 +1,11 @@
+2006-06-22  Tim Omernick  <timo@apple.com>
+
+        Reviewed by NOBODY (build fix)
+
+        * WebView/WebFrameLoader.m:
+        Import WebMainResourceLoader instead of using @class so that we can call WebMainResourceLoader
+        methods.
+
 === WebKit-521.13 ===
         
 2006-06-22  Tim Omernick  <timo@apple.com>
