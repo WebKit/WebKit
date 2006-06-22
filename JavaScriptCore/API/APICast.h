@@ -28,7 +28,7 @@
 #define APICast_h
 
 #include "JSValueRef.h"
-#include "UString.h"
+#include "ustring.h"
 
 namespace KJS {
     class ExecState;

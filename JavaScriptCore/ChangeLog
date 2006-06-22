@@ -1,3 +1,12 @@
+2006-06-22  David Kilzer  <ddkilzer@kilzer.net>
+
+        Build fix.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9539
+        Another case error preventing build
+
+        * API/APICast.h: Changed "UString.h" to "ustring.h".
+
 2006-06-21  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed release build, fixed accidental infinite recursion due to
