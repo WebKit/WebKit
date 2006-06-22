@@ -1,3 +1,10 @@
+2006-06-22  Kevin Decker         <kdecker@apple.com>
+
+        Reviewed by Anders.
+
+        - Added pressed column header image.
+        - Made column headers behave more like Xcode.
+
 2006-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Kevin Decker.

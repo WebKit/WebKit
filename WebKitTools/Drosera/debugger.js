@@ -49,6 +49,19 @@ function keyPressed(event) {
     else if (event.charCode == 115) step();
 }
 
+
+function headerMouseDown(element) {
+    element.style.background = "url(glossyHeaderPressed.png) repeat-x";
+}
+
+function headerMouseUp(element) {
+    element.style.background = "url(glossyHeader.png) repeat-x";
+}
+
+function headerMouseOut(element) {
+    element.style.background = "url(glossyHeader.png) repeat-x";
+}
+
 function dividerDragStart(element, dividerDrag, dividerDragEnd, event) {
     element.dragging = true;
     element.dragLastX = event.clientX + window.scrollX;
