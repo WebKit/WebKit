@@ -1,3 +1,24 @@
+2006-06-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick
+        
+        - fixed <rdar://problem/4597685> stale rects for document markers can be left behind in certain cases
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setRenderedRectForMarker):
+        changed parameter from IntRect to const IntRect& at Darin's request
+        (WebCore::Document::invalidateRenderedRectsForMarkersInRect):
+        new method, tests whether the rendered rect for each marker intersects the
+        passed rect. If so, sets the rendered rect back to the placeholder rect that
+        means that the rect for this marker isn't known.
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::paint):
+        call invalidateRenderedRectsForMarkersInRect on the rect we're about to paint.
+        This ensures that old stale rects won't be preserved if the associated marker
+        has moved such that it is out of the painted area.
+
 2006-06-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
@@ -48,6 +69,7 @@
         * platform/String.cpp:
         (WebCore::String::number):
 
+>>>>>>> .r14995
 2006-06-22  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
