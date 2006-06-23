@@ -1466,6 +1466,24 @@ static bool debugWidget = true;
     [_private->pluginDatabase refresh];
 }
 
+- (void)_attachScriptDebuggerToAllFrames
+{
+    WebFrame *frame = [self mainFrame];
+    do {
+        [frame _attachScriptDebugger];
+        frame = [frame _nextFrameWithWrap:NO];
+    } while (frame);
+}
+
+- (void)_detachScriptDebuggerFromAllFrames
+{
+    WebFrame *frame = [self mainFrame];
+    do {
+        [frame _detachScriptDebugger];
+        frame = [frame _nextFrameWithWrap:NO];
+    } while (frame);
+}
+
 @end
 
 
@@ -2724,6 +2742,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     _private->scriptDebugDelegate = delegate;
     [_private->scriptDebugDelegateForwarder release];
     _private->scriptDebugDelegateForwarder = nil;
+    if (delegate)
+        [self _attachScriptDebuggerToAllFrames];
+    else
+        [self _detachScriptDebuggerFromAllFrames];
 }
 
 - scriptDebugDelegate

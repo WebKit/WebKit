@@ -74,28 +74,28 @@
 - (void)parsedSource:(NSString *)source fromURL:(NSString *)url sourceId:(int)sid
 {
     [[_webView _scriptDebugDelegateForwarder] webView:_webView didParseSource:source fromURL:url sourceId:sid forWebFrame:_webFrame];
-    if ([WebView _scriptDebuggerEnabled])
+    if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:_webView didParseSource:source fromURL:url sourceId:sid forWebFrame:_webFrame];
 }
 
 - (void)enteredFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
 {
     [[_webView _scriptDebugDelegateForwarder] webView:_webView didEnterCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
-    if ([WebView _scriptDebuggerEnabled])
+    if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:_webView didEnterCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 
 - (void)hitStatement:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
 {
     [[_webView _scriptDebugDelegateForwarder] webView:_webView willExecuteStatement:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
-    if ([WebView _scriptDebuggerEnabled])
+    if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:_webView willExecuteStatement:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 
 - (void)leavingFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno
 {
     [[_webView _scriptDebugDelegateForwarder] webView:_webView willLeaveCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
-    if ([WebView _scriptDebuggerEnabled])
+    if ([WebScriptDebugServer listenerCount])
         [[WebScriptDebugServer sharedScriptDebugServer] webView:_webView willLeaveCallFrame:[frame wrapper] sourceId:sid line:lineno forWebFrame:_webFrame];
 }
 

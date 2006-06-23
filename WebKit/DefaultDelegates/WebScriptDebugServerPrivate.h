@@ -37,6 +37,10 @@
     BOOL step;
 }
 + (WebScriptDebugServer *)sharedScriptDebugServer;
++ (unsigned)listenerCount;
+
+- (void)attachScriptDebuggerToAllWebViews;
+- (void)detachScriptDebuggerFromAllWebViews;
 
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
                                                 fromURL:(NSString *)url

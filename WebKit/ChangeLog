@@ -1,3 +1,40 @@
+2006-06-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Geoff.
+
+        script debugger should only attach to JavaScriptCore when there are listeners
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9552
+
+        Attaches the debugger to all WebFrames when the first listener
+        is added. Detaches when the last listener is removed.
+        Also detach when the script debug delegate is set to nil.
+
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (+[WebScriptDebugServer listenerCount]):
+        (-[WebScriptDebugServer dealloc]):
+        (-[WebScriptDebugServer attachScriptDebuggerToAllWebViews]):
+        (-[WebScriptDebugServer detachScriptDebuggerFromAllWebViews]):
+        (-[WebScriptDebugServer listenerConnectionDidDie:]):
+        (-[WebScriptDebugServer addListener:]):
+        (-[WebScriptDebugServer removeListener:]):
+        * DefaultDelegates/WebScriptDebugServerPrivate.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge windowObjectCleared]):
+        * WebView/WebFrame.m:
+        (-[WebFrame _attachScriptDebugger]):
+        (-[WebFrame _detachScriptDebugger]):
+        * WebView/WebFramePrivate.h:
+        * WebView/WebScriptDebugDelegate.m:
+        (-[WebScriptCallFrame parsedSource:fromURL:sourceId:]):
+        (-[WebScriptCallFrame enteredFrame:sourceId:line:]):
+        (-[WebScriptCallFrame hitStatement:sourceId:line:]):
+        (-[WebScriptCallFrame leavingFrame:sourceId:line:]):
+        * WebView/WebView.m:
+        (-[WebView _attachScriptDebuggerToAllFrames]):
+        (-[WebView _detachScriptDebuggerFromAllFrames]):
+        (-[WebView setScriptDebugDelegate:]):
+        * WebView/WebViewPrivate.h:
+
 2006-06-22  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick

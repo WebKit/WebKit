@@ -160,6 +160,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (BOOL)_isFrameSet;
 
 - (void)_attachScriptDebugger;
+- (void)_detachScriptDebugger;
 
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;

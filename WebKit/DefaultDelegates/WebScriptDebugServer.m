@@ -28,6 +28,9 @@
 
 #import "WebScriptDebugServer.h"
 #import "WebScriptDebugServerPrivate.h"
+#import "WebViewInternal.h"
+
+#import <JavaScriptCore/Assertions.h>
 
 NSString *WebScriptDebugServerProcessNameKey = @"WebScriptDebugServerProcessNameKey";
 NSString *WebScriptDebugServerProcessBundleIdentifierKey = @"WebScriptDebugServerProcessBundleIdentifierKey";
@@ -42,12 +45,18 @@ NSString *WebScriptDebugServerWillUnloadNotification = @"WebScriptDebugServerWil
 @implementation WebScriptDebugServer
 
 static WebScriptDebugServer *sharedServer = nil;
+static unsigned listenerCount = 0;
 
 + (WebScriptDebugServer *)sharedScriptDebugServer
 {
     if (!sharedServer)
         sharedServer = [[WebScriptDebugServer alloc] init];
     return sharedServer;
+}
+
++ (unsigned)listenerCount
+{
+    return listenerCount;
 }
 
 - (id)init
@@ -79,6 +88,10 @@ static WebScriptDebugServer *sharedServer = nil;
 
 - (void)dealloc
 {
+    ASSERT(listenerCount >= [listeners count]);
+    listenerCount -= [listeners count];
+    if (!listenerCount)
+        [self detachScriptDebuggerFromAllWebViews];
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self name:WebScriptDebugServerQueryNotification object:nil];
     [[NSDistributedNotificationCenter defaultCenter] postNotificationName:WebScriptDebugServerWillUnloadNotification object:serverName];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:nil];
@@ -87,6 +100,16 @@ static WebScriptDebugServer *sharedServer = nil;
     [serverName release];
     [listeners release];
     [super dealloc];
+}
+
+- (void)attachScriptDebuggerToAllWebViews
+{
+    [WebView _makeAllWebViewsPerformSelector:@selector(_attachScriptDebuggerToAllFrames)];
+}
+
+- (void)detachScriptDebuggerFromAllWebViews
+{
+    [WebView _makeAllWebViewsPerformSelector:@selector(_detachScriptDebuggerFromAllFrames)];
 }
 
 - (void)serverQuery:(NSNotification *)notification
@@ -112,8 +135,13 @@ static WebScriptDebugServer *sharedServer = nil;
         if ([[listener connectionForProxy] isEqualTo:connection])
             [listenersToRemove addObject:listener];
 
+    ASSERT(listenerCount >= [listenersToRemove count]);
+    listenerCount -= [listenersToRemove count];
     [listeners minusSet:listenersToRemove];
     [listenersToRemove release];
+
+    if (!listenerCount)
+        [self detachScriptDebuggerFromAllWebViews];
 }
 
 - (oneway void)addListener:(id<WebScriptDebugListener>)listener
@@ -121,14 +149,21 @@ static WebScriptDebugServer *sharedServer = nil;
     // can't use isKindOfClass: here because that will send over the wire and not check the proxy object
     if ([listener class] != [NSDistantObject class] || ![listener conformsToProtocol:@protocol(WebScriptDebugListener)])
         return;
+    listenerCount++;
     [listeners addObject:listener];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(listenerConnectionDidDie:) name:NSConnectionDidDieNotification object:[(NSDistantObject *)listener connectionForProxy]];
+    if (listenerCount == 1)
+        [self attachScriptDebuggerToAllWebViews];
 }
 
 - (oneway void)removeListener:(id<WebScriptDebugListener>)listener
 {
+    ASSERT(listenerCount >= 1);
+    listenerCount--;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSConnectionDidDieNotification object:[(NSDistantObject *)listener connectionForProxy]];
     [listeners removeObject:listener];
+    if (!listenerCount)
+        [self detachScriptDebuggerFromAllWebViews];
 }
 
 - (oneway void)step

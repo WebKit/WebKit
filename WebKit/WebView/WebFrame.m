@@ -2442,8 +2442,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_attachScriptDebugger
 {
-    if (!_private->scriptDebugger) {
+    if (!_private->scriptDebugger)
         _private->scriptDebugger = [[WebScriptDebugger alloc] initWithWebFrame:self];
+}
+
+- (void)_detachScriptDebugger
+{
+    if (_private->scriptDebugger) {
+        id old = _private->scriptDebugger;
+        _private->scriptDebugger = nil;
+        [old release];
     }
 }
 

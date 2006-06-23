@@ -67,6 +67,7 @@
 #import "WebPluginViewFactoryPrivate.h"
 #import "WebPreferencesPrivate.h"
 #import "WebResourcePrivate.h"
+#import "WebScriptDebugServerPrivate.h"
 #import "WebSubresourceLoader.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
@@ -1490,7 +1491,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 {
     WebView *wv = [self webView];
     [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:[self windowScriptObject]];
-    if ([wv scriptDebugDelegate] || [WebView _scriptDebuggerEnabled])
+    if ([wv scriptDebugDelegate] || [WebScriptDebugServer listenerCount])
         [_frame _attachScriptDebugger];
 }
 
