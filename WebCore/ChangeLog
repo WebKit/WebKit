@@ -1,3 +1,17 @@
+2006-06-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej.
+
+        Fix for <rdar://problem/4599015> REGRESSION: Hand on clock widget 
+        don't appear at all
+
+        This regression was caused by <rdar://problem/4567520> HIDPI: pixel 
+        cracks in weather widget at 1.83 scaling
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage): Do the contains 
+        check before rounding to integral device pixels.
+
 2006-06-22  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.

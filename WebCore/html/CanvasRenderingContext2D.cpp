@@ -744,11 +744,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     ec = 0;
 
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
-    FloatRect sourceRect = c->roundToDevicePixels(srcRect);
-    FloatRect destRect = c->roundToDevicePixels(dstRect);
-
-    if (!(imageRect.contains(sourceRect) && sourceRect.width() > 0 && sourceRect.height() > 0 
-        && destRect.width() > 0 && destRect.height() > 0)) {
+    if (!(imageRect.contains(srcRect) && srcRect.width() > 0 && srcRect.height() > 0 
+        && dstRect.width() > 0 && dstRect.height() > 0)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
@@ -757,6 +754,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     if (!cachedImage)
         return;
 
+    FloatRect sourceRect = c->roundToDevicePixels(srcRect);
+    FloatRect destRect = c->roundToDevicePixels(dstRect);
     willDraw(destRect);
     c->drawImage(cachedImage->image(), destRect, sourceRect, state().m_globalComposite);
 }
