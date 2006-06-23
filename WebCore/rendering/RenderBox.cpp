@@ -2325,19 +2325,11 @@ void RenderBox::calcAbsoluteVerticalReplaced()
 
 IntRect RenderBox::caretRect(int offset, EAffinity affinity, int* extraWidthToEndOfLine)
 {
-    // FIXME: Is it OK to check only first child instead of picking
-    // right child based on offset? Is it OK to pass the same offset
-    // along to the child instead of offset 0 or whatever?
-
-    // propagate it downwards to its children, someone will feel responsible
-    if (RenderObject* child = firstChild()) {
-        IntRect result = child->caretRect(offset, affinity, extraWidthToEndOfLine);
-        if (!result.isEmpty())
-            return result;
-    }
-
-    // if not, use the extents of this box 
-    // offset 0 means left, offset 1 means right
+    // VisiblePositions at offsets inside containers either a) refer to the positions before/after
+    // those containers (tables and select elements) or b) refer to the position inside an empty block.
+    // They never refer to children.
+    // FIXME: Paint the carets inside empty blocks differently than the carets before/after elements.
+    
     // FIXME: What about border and padding?
     const int caretWidth = 1;
     IntRect rect(xPos(), yPos(), caretWidth, m_height);
@@ -2359,7 +2351,7 @@ IntRect RenderBox::caretRect(int offset, EAffinity affinity, int* extraWidthToEn
     //
     // FIXME: ignoring :first-line, missing good reason to take care of
     int fontHeight = style()->font().height();
-    if (fontHeight > rect.height() || !isReplaced())
+    if (fontHeight > rect.height() || !isReplaced() && !isTable())
         rect.setHeight(fontHeight);
 
     RenderObject* cb = containingBlock();

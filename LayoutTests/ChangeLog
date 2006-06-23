@@ -1,3 +1,28 @@
+2006-06-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8074>
+        Caret before/after block tables is too small
+        <rdar://problem/4598331>
+        right arrow out of a table shows cursor in a weird place
+
+        Demonstrates 9557:
+        * editing/input/range-for-empty-document-expected.txt:
+        Added:
+        * editing/selection/table-caret-1-expected.checksum: Added.
+        * editing/selection/table-caret-1-expected.png: Added.
+        * editing/selection/table-caret-1-expected.txt: Added.
+        * editing/selection/table-caret-1.html: Added.
+        * editing/selection/table-caret-2-expected.checksum: Added.
+        * editing/selection/table-caret-2-expected.png: Added.
+        * editing/selection/table-caret-2-expected.txt: Added.
+        * editing/selection/table-caret-2.html: Added.
+        * editing/selection/table-caret-3-expected.checksum: Added.
+        * editing/selection/table-caret-3-expected.png: Added.
+        * editing/selection/table-caret-3-expected.txt: Added.
+        * editing/selection/table-caret-3.html: Added.
+
 2006-06-22  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.

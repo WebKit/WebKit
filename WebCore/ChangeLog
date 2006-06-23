@@ -1,3 +1,17 @@
+2006-06-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=8074>
+        Caret before/after block tables is too small
+        <rdar://problem/4598331>
+        right arrow out of a table shows cursor in a weird place
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::caretRect): Don't propagate to children, 
+        VisiblePositions inside containers don't refer to children.
+        Don't use the font height for tables.
+
 2006-06-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Kevin.
