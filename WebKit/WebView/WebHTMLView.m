@@ -761,6 +761,9 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     if (!NSEqualPoints(_private->lastScrollPosition, origin)) {
         [[self _bridge] sendScrollEvent];
         [_private->compController endRevertingChange:NO moveLeft:NO];
+        
+        WebView *webView = [self _webView];
+        [[webView _UIDelegateForwarder] webView:webView didScrollDocumentInFrameView:[self _frameView]];
     }
     _private->lastScrollPosition = origin;
 
@@ -2635,13 +2638,9 @@ static WebHTMLView *lastHitView = nil;
             NSRectFill (rect);
         }
         
-        [[self _bridge] drawRect:rect];
-        
+        [[self _bridge] drawRect:rect];        
         WebView *webView = [self _webView];
-        id UIDelegate = [webView UIDelegate];
-        if ([UIDelegate respondsToSelector:@selector(webView:didDrawRect:)])
-            [UIDelegate webView:webView didDrawRect:[webView convertRect:rect fromView:self]];
-        
+        [[webView _UIDelegateForwarder] webView:webView didDrawRect:[webView convertRect:rect fromView:self]];
         [(WebClipView *)[self superview] resetAdditionalClip];
 
         [NSGraphicsContext restoreGraphicsState];

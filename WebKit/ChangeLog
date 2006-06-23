@@ -1,3 +1,27 @@
+2006-06-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick
+        
+        - added support for UIDelegate to be notified of scrolling in any WebHTMLView
+        - cleaned up recently-added UIDelegate code
+
+        * WebView/WebUIDelegatePrivate.h:
+        declared webView:didScrollDocumentInFrameView: method
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        (-[NSApplication webView:didDrawRect:]):
+        provide default (empty) implementation of this recently-added method, so the
+        DelegateForwarder mechanism will work for it
+        (-[NSApplication webView:didScrollDocumentInFrameView:]):
+        same thing for the new method
+        
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        use _UIDelegateForwarder mechanism to notify delegate that scrolling occurred
+        (-[NSArray drawSingleRect:]):
+        use _UIDelegateForwarder mechanism instead of checking respondsToSelector stuff
+        here (that's packaged up nicely by the forwarder mechanism)
+        
 2006-06-22  Tim Omernick  <timo@apple.com>
 
         Reviewed by NOBODY (build fix)
