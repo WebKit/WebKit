@@ -2,6 +2,9 @@
 
         Reviewed by levi
 
+        <rdar://problem/4527702>
+        REGRESSION: Quote bars go away on first paragraph when I delete reply text
+
         * editing/DeleteSelectionCommand.cpp:
         (WebCore::DeleteSelectionCommand::mergeParagraphs):
         Add a rule for when to merge into empty blocks.
