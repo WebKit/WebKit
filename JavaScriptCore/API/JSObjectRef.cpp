@@ -29,7 +29,7 @@
 #include "JSObjectRef.h"
 #include "JSCallbackObject.h"
 
-#include "Identifier.h"
+#include "identifier.h"
 #include "internal.h"
 #include "object.h"
 #include "reference_list.h"

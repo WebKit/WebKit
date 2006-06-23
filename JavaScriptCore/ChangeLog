@@ -1,3 +1,12 @@
+2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Build fix.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9539
+        Another case error preventing build
+
+        * API/JSObjectRef.cpp: Changed "identifier.h" to "Identifier.h"
+
 === JavaScriptCore-521.13 ===
         
 2006-06-22  David Kilzer  <ddkilzer@kilzer.net>
