@@ -103,6 +103,8 @@ public:
     static String number(unsigned);
     static String number(long);
     static String number(unsigned long);
+    static String number(long long);
+    static String number(unsigned long long);
     static String number(double);
     
     static String sprintf(const char *, ...)

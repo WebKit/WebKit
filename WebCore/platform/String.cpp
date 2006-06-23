@@ -306,6 +306,24 @@ String String::number(unsigned long n)
     return String::sprintf("%lu", n);
 }
 
+String String::number(long long n)
+{
+#if PLATFORM(WIN_OS)
+    return String::sprintf("%I64i", n);
+#else
+    return String::sprintf("%lli", n);
+#endif
+}
+
+String String::number(unsigned long long n)
+{
+#if PLATFORM(WIN_OS)
+    return String::sprintf("%I64u", n);
+#else
+    return String::sprintf("%llu", n);
+#endif
+}
+    
 String String::number(double n)
 {
     return String::sprintf("%.6lg", n);
