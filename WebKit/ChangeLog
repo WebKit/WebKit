@@ -1,3 +1,13 @@
+2006-06-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O.
+
+        Adds back SPI that Mail is still depending on.
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _addSubframeArchives:]):
+        * WebView/WebDataSourcePrivate.h:
+
 === WebKit-521.13 ===
 
 2006-06-23  Timothy Hatcher  <timothy@apple.com>

@@ -32,8 +32,7 @@
 
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
 
-// Need to add this back, Mail uses it
-// - (void)_addSubframeArchives:(NSArray *) archives;
+- (void)_addSubframeArchives:(NSArray *) archives;
 
 - (NSError *)_mainDocumentError;
 @end

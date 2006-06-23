@@ -199,6 +199,14 @@
     return nil;
 }
 
+- (void)_addSubframeArchives:(NSArray *)subframeArchives
+{
+    NSEnumerator *enumerator = [subframeArchives objectEnumerator];
+    WebArchive *archive;
+    while ((archive = [enumerator nextObject]) != nil)
+        [self _addToUnarchiveState:archive];
+}
+
 - (void)_addToUnarchiveState:(WebArchive *)archive
 {
     if (!_private->unarchivingState)
