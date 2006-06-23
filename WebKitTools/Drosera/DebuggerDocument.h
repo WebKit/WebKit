@@ -37,4 +37,8 @@
 }
 - (id)initWithServerName:(NSString *)serverName;
 - (void)switchToServerNamed:(NSString *)name;
+
+- (IBAction)pause:(id)sender;
+- (IBAction)resume:(id)sender;
+- (IBAction)stepInto:(id)sender;
 @end

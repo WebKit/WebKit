@@ -28,6 +28,10 @@
 
 #import "DebuggerDocument.h"
 
+static NSString *DebuggerContinueToolbarItem = @"DebuggerContinueToolbarItem";
+static NSString *DebuggerPauseToolbarItem = @"DebuggerPauseToolbarItem";
+static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
+
 @implementation DebuggerDocument
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
@@ -102,7 +106,7 @@
         [server resume];
 }
 
-- (void)step
+- (void)stepInto
 {
     if ([[(NSDistantObject *)server connectionForProxy] isValid])
         [server step];
@@ -111,6 +115,24 @@
 - (void)log:(NSString *)msg
 {
     NSLog(@"%@", msg);
+}
+
+#pragma mark -
+#pragma mark Interface Actions
+
+- (IBAction)pause:(id)sender
+{
+    [[webView windowScriptObject] callWebScriptMethod:@"pause" withArguments:nil];
+}
+
+- (IBAction)resume:(id)sender
+{
+    [[webView windowScriptObject] callWebScriptMethod:@"resume" withArguments:nil];
+}
+
+- (IBAction)stepInto:(id)sender
+{
+    [[webView windowScriptObject] callWebScriptMethod:@"stepInto" withArguments:nil];
 }
 
 #pragma mark -
@@ -129,8 +151,14 @@
 
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"debugger" ofType:@"html" inDirectory:nil];
     [[webView mainFrame] loadRequest:[[[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]] autorelease]];
-}
 
+    NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"debugger"];
+    [toolbar setDelegate:self];
+    [toolbar setAllowsUserCustomization:YES];
+    [toolbar setAutosavesConfiguration:YES];
+    [[self window] setToolbar:toolbar];
+    [toolbar release];
+}
 
 - (void)windowWillClose:(NSNotification *)notification
 {
@@ -195,6 +223,79 @@
 - (void)serverConnectionDidDie:(NSNotification *)notifiction
 {
     [self switchToServerNamed:nil];
+}
+
+#pragma mark -
+#pragma mark Toolbar Delegate
+
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag
+{
+    if ([itemIdentifier isEqualToString:DebuggerContinueToolbarItem]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+
+        [item setLabel:@"Continue"];
+        [item setPaletteLabel:@"Continue"];
+
+        [item setToolTip:@"Continue script execution"];
+        [item setImage:[NSImage imageNamed:@"continue"]];
+
+        [item setTarget:self];
+        [item setAction:@selector(resume:)];
+
+        return [item autorelease];
+    } else if ([itemIdentifier isEqualToString:DebuggerPauseToolbarItem]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+
+        [item setLabel:@"Pause"];
+        [item setPaletteLabel:@"Pause"];
+
+        [item setToolTip:@"Pause script execution"];
+        [item setImage:[NSImage imageNamed:@"pause"]];
+
+        [item setTarget:self];
+        [item setAction:@selector(pause:)];
+
+        return [item autorelease];
+    } else if ([itemIdentifier isEqualToString:DebuggerStepIntoToolbarItem]) {
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+
+        [item setLabel:@"Step Into"];
+        [item setPaletteLabel:@"Step Into"];
+
+        [item setToolTip:@"Step into function call"];
+        [item setImage:[NSImage imageNamed:@"step"]];
+
+        [item setTarget:self];
+        [item setAction:@selector(stepInto:)];
+
+        return [item autorelease];
+    }
+
+    return nil;
+}
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar
+{
+    return [NSArray arrayWithObjects:DebuggerContinueToolbarItem, DebuggerPauseToolbarItem,
+        NSToolbarSeparatorItemIdentifier, DebuggerStepIntoToolbarItem, nil];
+}
+
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
+{
+    return [NSArray arrayWithObjects:DebuggerContinueToolbarItem, DebuggerPauseToolbarItem, DebuggerStepIntoToolbarItem,
+        NSToolbarCustomizeToolbarItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier,
+        NSToolbarSpaceItemIdentifier, NSToolbarSeparatorItemIdentifier, nil];
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)interfaceItem
+{
+    if ([interfaceItem action] == @selector(pause:))
+        return ![self isPaused];
+    if ([interfaceItem action] == @selector(resume:))
+        return [self isPaused];
+    if ([interfaceItem action] == @selector(stepInto:))
+        return [self isPaused];
+    return YES;
 }
 
 #pragma mark -

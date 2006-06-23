@@ -7,7 +7,12 @@
             OUTLETS = {attachButton = NSButton; attachTable = NSTableView; attachWindow = NSPanel; }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+        {
+            ACTIONS = {myAction = id; stepInto = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }
     ); 
     IBVersion = 1; 
 }

@@ -29,13 +29,10 @@
 img { padding: 0; margin: 0; }
 body { margin: 0; padding: 0; }
 
-#toolbar { background-image: url(toolbarBackground.png); background-repeat: repeat-x; background-position: bottom; height: 32px; padding: 2px 5px 2px 5px; border-bottom: 1px solid #939393 }
-#toolbar * { vertical-align: middle }
-
-#main { position: absolute; top: 37px; bottom: 0; left: 0; right: 0; }
-#info { position: absolute; top: 0; height: 150px; left: 0; right: 0; }
+#main { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
+#info { position: absolute; top: 0; height: 175px; left: 0; right: 0; }
 #divider { cursor: move; position: absolute; bottom: 0; left: 0; right: 0; background: url(splitterDimple.tif) 50% no-repeat, url(splitterBar.tif) repeat-x; height: 10px }
-#body { position: absolute; top: 150px; left: 0; right: 0; bottom: 0; }
+#body { position: absolute; top: 175px; left: 0; right: 0; bottom: 0; }
 #sourcesContainer { position: absolute; top: 16px; left: 0; right: 0; bottom: 21px; background-color: white; }
 #sources { width: 100%; height: 100% }
 #header { vertical-align: top; height: 16px; box-sizing: border-box; border-bottom: 1px solid #aaa; background: url(glossyHeader.png) repeat-x; position: absolute; top: 0; left: 0; right: 0; }

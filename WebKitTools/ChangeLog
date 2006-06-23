@@ -1,3 +1,31 @@
+2006-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
+        Adds a native toolbar to Drosera to be a good citizen.
+        Adds a Debug menu with key-commands for Continue, Pause and Step Into.
+        Fixes a dragging bug from an earlier fix to the divider code.
+        Fixes some poor indenting in debugger.js.
+
+        * Drosera/DebuggerDocument.h:
+        * Drosera/DebuggerDocument.m:
+        (-[DebuggerDocument stepInto]):
+        (-[DebuggerDocument pause:]):
+        (-[DebuggerDocument resume:]):
+        (-[DebuggerDocument stepInto:]):
+        (-[DebuggerDocument windowDidLoad]):
+        (-[DebuggerDocument toolbar:itemForItemIdentifier:willBeInsertedIntoToolbar:]):
+        (-[DebuggerDocument toolbarDefaultItemIdentifiers:]):
+        (-[DebuggerDocument toolbarAllowedItemIdentifiers:]):
+        (-[DebuggerDocument validateUserInterfaceItem:]):
+        * Drosera/English.lproj/MainMenu.nib/classes.nib:
+        * Drosera/English.lproj/MainMenu.nib/info.nib:
+        * Drosera/English.lproj/MainMenu.nib/keyedobjects.nib:
+        * Drosera/debugger.css:
+        * Drosera/debugger.html:
+        * Drosera/debugger.js:
+        * Drosera/viewer.html:
+
 2006-06-22  Kevin Decker         <kdecker@apple.com>
 
         Reviewed by Anders.

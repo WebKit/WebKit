@@ -43,13 +43,6 @@ function sleep(numberMillis) {
     }
 }
 
-function keyPressed(event) {
-    if (event.charCode == 112) pause();
-    else if (event.charCode == 99) resume();
-    else if (event.charCode == 115) step();
-}
-
-
 function headerMouseDown(element) {
     element.style.background = "url(glossyHeaderPressed.png) repeat-x";
 }
@@ -64,6 +57,7 @@ function headerMouseOut(element) {
 
 function dividerDragStart(element, dividerDrag, dividerDragEnd, event) {
     element.dragging = true;
+    element.dragLastY = event.clientY + window.scrollY;
     element.dragLastX = event.clientX + window.scrollX;
     document.addEventListener("mousemove", dividerDrag, true);
     document.addEventListener("mouseup", dividerDragEnd, true);
@@ -95,18 +89,20 @@ function dividerDragEnd(element, dividerDrag, dividerDragEnd, event) {
 function infoDividerDrag(event) {
     var element = document.getElementById("infoDivider");
     if (document.getElementById("infoDivider").dragging == true) {
-      var main = document.getElementById("main");
-      var leftPane = document.getElementById("leftPane");
-      var rightPane = document.getElementById("rightPane");
-      var x = event.clientX + window.scrollX;
-       
-      if (x < main.clientWidth * 0.25)
-        x = main.clientWidth * 0.25;
-        else if (x > main.clientWidth * 0.75)
-         x = main.clientWidth * 0.75;
+        var main = document.getElementById("main");
+        var leftPane = document.getElementById("leftPane");
+        var rightPane = document.getElementById("rightPane");
+        var x = event.clientX + window.scrollX;
+        var delta = element.dragLastX - x;
 
-        leftPane.style.width = x + "px";
-        rightPane.style.left = x + "px";
+        var newWidth = leftPane.clientWidth - delta;
+        if (newWidth < main.clientWidth * 0.25)
+            newWidth = main.clientWidth * 0.25;
+        else if (newWidth > main.clientWidth * 0.75)
+            newWidth = main.clientWidth * 0.75;
+
+        leftPane.style.width = newWidth + "px";
+        rightPane.style.left = newWidth + "px";
         element.dragLastX = x;
         event.preventDefault();
     }
@@ -136,7 +132,6 @@ function dividerDrag(event) {
 }
 
 function loaded() {
-    window.addEventListener("keypress", keyPressed, false);
     document.getElementById("divider").addEventListener("mousedown", sourceDividerDragStart, false);
     document.getElementById("infoDivider").addEventListener("mousedown", infoDividerDragStart, false);
 }
@@ -165,9 +160,9 @@ function resume()
     DebuggerDocument.resume();
 }
 
-function step()
+function stepInto()
 {
-    DebuggerDocument.step();
+    DebuggerDocument.stepInto();
 }
 
 function hasStyleClass(element,className)
