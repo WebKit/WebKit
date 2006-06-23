@@ -1,3 +1,16 @@
+2006-06-23  Patrick Beard  <beard@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4223619> Safari crashed in -[NSFont __isSystemFont]
+        CFRetain and CFRelease NSFont's when FontPlatformData has a reference.
+        We only do this when GC is enabled for performance reasons.
+        No tests possible.
+
+        * platform/mac/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+
 2006-06-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
