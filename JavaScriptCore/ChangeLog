@@ -1,3 +1,20 @@
+2006-06-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Adele.
+        
+        - Added JSConstructorMake to match JSFunctionMake, along with test code.
+
+        * API/JSObjectRef.cpp:
+        (JSConstructorMake):
+        * API/JSObjectRef.h:
+        * API/testapi.c:
+        (myConstructor_callAsConstructor):
+        (main):
+        * API/testapi.js:
+        * ChangeLog:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Moved testapi.c to the testapi
+        target -- this was an oversight in my earlier check-in.
+
 === JavaScriptCore-521.13 ===
 
 2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
