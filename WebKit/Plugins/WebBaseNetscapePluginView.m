@@ -522,35 +522,33 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     ASSERT(drawingModel != NPDrawingModelCoreGraphics || event->what != updateEvt || [NSView focusView] == self);
     
     BOOL updating = event->what == updateEvt;
-    BOOL acceptedEvent = NO;
     PortState portState;
     if (drawingModel != NPDrawingModelCoreGraphics || event->what == updateEvt) {
         // Can only save/set port state when updating in CoreGraphics mode.  We can save/set the port state
         // at any time in other modes.
         portState = [self saveAndSetNewPortStateForUpdate:updating];
-    } else
-        portState = NULL;
         
-    if (portState) {
         // We may have changed the window, so inform the plug-in.
         [self setWindowIfNecessary];
-        
-#ifndef NDEBUG
-        // Draw green to help debug.
-        // If we see any green we know something's wrong.
-        if (!isTransparent && event->what == updateEvt) {
-            ForeColor(greenColor);
-            const Rect bigRect = { -10000, -10000, 10000, 10000 };
-            PaintRect(&bigRect);
-            ForeColor(blackColor);
-        }
+    } else
+        portState = NULL;
+    
+#if !defined(NDEBUG) && !defined(NP_NO_QUICKDRAW)
+    // Draw green to help debug.
+    // If we see any green we know something's wrong.
+    // Note that PaintRect() only works for QuickDraw plugins; otherwise the current QD port is undefined.
+    if (drawingModel == NPDrawingModelQuickDraw && !isTransparent && event->what == updateEvt) {
+        ForeColor(greenColor);
+        const Rect bigRect = { -10000, -10000, 10000, 10000 };
+        PaintRect(&bigRect);
+        ForeColor(blackColor);
+    }
 #endif
     
-        // Temporarily retain self in case the plug-in view is released while sending an event. 
-        [[self retain] autorelease];
-
-        acceptedEvent = NPP_HandleEvent(instance, event);
-    }
+    // Temporarily retain self in case the plug-in view is released while sending an event. 
+    [[self retain] autorelease];
+    
+    BOOL acceptedEvent = NPP_HandleEvent(instance, event);
     
     currentEventIsUserGesture = NO;
     
@@ -1009,14 +1007,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         switch (drawingModel) {
 #ifndef NP_NO_QUICKDRAW
             case NPDrawingModelQuickDraw:
-                LOG(Plugins, "NPP_SetWindow (QuickDraw): %d, port=0x%08x, window.x:%d window.y:%d",
-                npErr, (int)nPort.qdPort.port, (int)window.x, (int)window.y);
+                LOG(Plugins, "NPP_SetWindow (QuickDraw): %d, port=0x%08x, window.x:%d window.y:%d window.width:%d window.height:%d",
+                npErr, (int)nPort.qdPort.port, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
             break;
 #endif /* NP_NO_QUICKDRAW */
             
             case NPDrawingModelCoreGraphics:
-                LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d",
-                npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y);
+                LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d",
+                npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
             break;
             
             default:

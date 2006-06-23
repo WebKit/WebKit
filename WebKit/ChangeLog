@@ -1,3 +1,19 @@
+2006-06-23  Tim Omernick  <timo@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]):
+        Fixed a bug I found in the CoreGraphics drawing model that was preventing certain types of
+        events from being dispatched to the plugin, unless the plugin was being updated.  The check
+        for portState was only required to call -setWindowIfNecessary, not required for the entire
+        event dispatch.
+        Also, don't paint the green debug rect unless this is a QuickDraw plugin.  Otherwise the
+        current QD port is not set, and the green rect fills the entire screen.  Pretty awesome
+        looking, but not intended behavior.
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]):
+        Improved the logging here to include the NPWindow's width and height.
+
 2006-06-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Tim O.
