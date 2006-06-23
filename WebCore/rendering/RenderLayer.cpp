@@ -165,16 +165,11 @@ RenderLayer::~RenderLayer()
     assert(!m_clipRects);
 }
 
-void RenderLayer::computeRepaintRects()
+void RenderLayer::checkForRepaintOnResize()
 {
-    // FIXME: Child object could override visibility.
-    if (m_object->style()->visibility() == VISIBLE) {
-        m_repaintOverflowOnResize = m_object->selfNeedsLayout() || m_object->hasOverflowClip() && m_object->normalChildNeedsLayout();
-        m_object->getAbsoluteRepaintRectIncludingFloats(m_repaintRect, m_fullRepaintRect);
-        m_object->absolutePosition(m_repaintX, m_repaintY);
-    }
+    m_repaintOverflowOnResize = m_object->selfNeedsLayout() || m_object->hasOverflowClip() && m_object->normalChildNeedsLayout();
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->computeRepaintRects();
+        child->checkForRepaintOnResize();
 }
 
 void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
@@ -199,23 +194,30 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     }
 
     // FIXME: Child object could override visibility.
-    if (checkForRepaint && (m_object->style()->visibility() == VISIBLE)) {
-        RenderView *c = m_object->view();
-        if (c && !c->printingMode()) {
-            int x, y;
-            m_object->absolutePosition(x, y);
-            IntRect newRect, newFullRect;
-            bool didMove = x != m_repaintX || y != m_repaintY;
-            if (!didMove && !m_repaintOverflowOnResize)
-                m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
-            else {
-                m_object->getAbsoluteRepaintRectIncludingFloats(newRect, newFullRect);
-                if (didMove || newRect != m_repaintRect) {
+    if (m_object->style()->visibility() == VISIBLE) {
+        int x, y;
+        m_object->absolutePosition(x, y);
+        IntRect newRect, newFullRect;
+        m_object->getAbsoluteRepaintRectIncludingFloats(newRect, newFullRect);
+        if (checkForRepaint) {
+            RenderView *c = m_object->view();
+            if (c && !c->printingMode()) {
+                bool didMove = x != m_repaintX || y != m_repaintY;
+                if (!didMove && !m_repaintOverflowOnResize)
+                    m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
+                else if (didMove || newRect != m_repaintRect) {
                     c->repaintViewRectangle(m_fullRepaintRect);
                     c->repaintViewRectangle(newFullRect);
                 }
             }
         }
+        m_repaintRect = newRect;
+        m_fullRepaintRect = newFullRect;
+        m_repaintX = x;
+        m_repaintY = y;
+    } else {
+        m_repaintRect = IntRect();
+        m_fullRepaintRect = IntRect();
     }
     
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())

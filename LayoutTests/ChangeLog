@@ -1,3 +1,17 @@
+2006-06-22  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - test and updated results for http://bugzilla.opendarwin.org/show_bug.cgi?id=9497
+          REGRESSION: Incomplete repainting when scrolling thumbnails on Flickr
+
+        * fast/repaint/clipped-relative-expected.checksum: Added.
+        * fast/repaint/clipped-relative-expected.png: Added.
+        * fast/repaint/clipped-relative-expected.txt: Added.
+        * fast/repaint/clipped-relative.html: Added.
+        * fast/repaint/containing-block-position-change-expected.checksum: Updated.
+        * fast/repaint/containing-block-position-change-expected.png: Updated.
+
 2006-06-22  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by John.

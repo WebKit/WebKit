@@ -124,7 +124,7 @@ void RenderBox::setStyle(RenderStyle *_style)
             }
             m_layer = new (renderArena()) RenderLayer(this);
             m_layer->insertOnlyThisLayer();
-            if (parent() && containingBlock())
+            if (parent() && !needsLayout() && containingBlock())
                 m_layer->updateLayerPositions();
         }
     } else if (m_layer && !isRoot() && !isRenderView()) {

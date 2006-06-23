@@ -1780,10 +1780,8 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
     DeprecatedPtrListIterator<RenderObject> it(*m_positionedObjects);
     while (it.current()) {
         if (!o || it.current()->hasAncestor(o)) {
-            if (o) {
+            if (o)
                 it.current()->setChildNeedsLayout(true, false);
-                it.current()->layer()->computeRepaintRects();
-            }
             m_positionedObjects->removeRef(it.current());
         } else
             ++it;

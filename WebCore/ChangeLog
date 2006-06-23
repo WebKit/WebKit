@@ -1,3 +1,29 @@
+2006-06-22  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9497
+          REGRESSION: Incomplete repainting when scrolling thumbnails on Flickr
+
+        Test: fast/repaint/clipped-relative.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removePositionedObjects): Removed call to computeRepaintRects().
+        Previously, it was needed to update the cached rects before RenderBox::setStyle()
+        called updateLayerPositions().
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle): Changed to call updateLayerPositions() for a newly-
+        created layer only if it does not need layout. Otherwise,  updateLayerPositions() will
+        be called after layout. This saves a repaint in some cases.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::checkForRepaintOnResize): Renamed computeRepaintRects() to
+        this and deleted the code that cached the absolute position and repaint rects.
+        (WebCore::RenderLayer::updateLayerPositions): Added code to cache the absolute
+        position and repaint rects right after updating the layer's position.
+        * rendering/RenderLayer.h:
+
 2006-06-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej.
