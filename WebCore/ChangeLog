@@ -1,3 +1,5 @@
+=== WebCore-521.13 ===
+
 2006-06-23  Patrick Beard  <beard@apple.com>
 
         Reviewed by Tim Hatcher.
@@ -84,8 +86,6 @@
         * dom/Document.cpp:
         (WebCore::Document::completeURL):
         Check if both the URL and base URL are empty instead of using URL() which returns "about:blank" if the URL is empty.
-
-=== WebCore-521.13 ===
         
 2006-06-22  Anders Carlsson  <acarlsson@apple.com>
 
