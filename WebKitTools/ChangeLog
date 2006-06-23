@@ -1,3 +1,12 @@
+2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by ggaren.
+
+        - see http://bugzilla.opendarwin.org/show_bug.cgi?id=9539
+        Another case error preventing build
+
+        * Scripts/webkitdirs.pm: Building WebKit now requires Xcode 2.3.
+
 2006-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Eric.

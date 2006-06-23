@@ -1,3 +1,12 @@
+2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - see http://bugzilla.opendarwin.org/show_bug.cgi?id=9539
+        Another case error preventing build
+
+        * building/build.html: Building WebKit now requires Xcode 2.3.
+
 2006-06-21  Joost de Valk  <jdevalk@opendarwin.org>
 
         Reviewed and landed by Anders.
