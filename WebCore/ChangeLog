@@ -1,3 +1,11 @@
+2006-06-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        Add a rule for when to merge into empty blocks.
+
 === WebCore-521.13 ===
 
 2006-06-23  Patrick Beard  <beard@apple.com>

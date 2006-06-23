@@ -427,6 +427,18 @@ void DeleteSelectionCommand::mergeParagraphs()
     if (mergeDestination == endOfParagraphToMove)
         return;
     
+    // The rule for merging into an empty block is: only do so if its farther to the right.
+    // FIXME: Consider RTL.
+    // FIXME: handleSpecialCaseBRDelete prevents us from getting here in a case like <ul><li>foo<br><br></li></ul>^foo
+    if (isStartOfParagraph(mergeDestination) && 
+        startOfParagraphToMove.deepEquivalent().node()->renderer()->caretRect(startOfParagraphToMove.deepEquivalent().offset()).location().x() >
+        mergeDestination.deepEquivalent().node()->renderer()->caretRect(startOfParagraphToMove.deepEquivalent().offset()).location().x()) {
+        ASSERT(mergeDestination.deepEquivalent().downstream().node()->hasTagName(brTag));
+        removeNodeAndPruneAncestors(mergeDestination.deepEquivalent().downstream().node());
+        m_endingPosition = startOfParagraphToMove.deepEquivalent();
+        return;
+    }
+    
     moveParagraph(startOfParagraphToMove, endOfParagraphToMove, mergeDestination);
     // The endingPosition was likely clobbered by the move, so recompute it (moveParagraph selects the moved paragraph).
     m_endingPosition = endingSelection().start();

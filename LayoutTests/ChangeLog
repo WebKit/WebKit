@@ -1,6 +1,19 @@
 2006-06-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
+
+        * editing/deleting/merge-into-empty-block-1-expected.checksum: Added.
+        * editing/deleting/merge-into-empty-block-1-expected.png: Added.
+        * editing/deleting/merge-into-empty-block-1-expected.txt: Added.
+        * editing/deleting/merge-into-empty-block-1.html: Added.
+        * editing/deleting/merge-into-empty-block-2-expected.checksum: Added.
+        * editing/deleting/merge-into-empty-block-2-expected.png: Added.
+        * editing/deleting/merge-into-empty-block-2-expected.txt: Added.
+        * editing/deleting/merge-into-empty-block-2.html: Added.
+
+2006-06-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
         
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=8074>
         Caret before/after block tables is too small

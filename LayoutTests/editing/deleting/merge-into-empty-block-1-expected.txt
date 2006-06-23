@@ -1,0 +1,20 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BLOCKQUOTE > DIV > BODY > HTML > #document to 0 of BLOCKQUOTE > DIV > BODY > HTML > #document toDOMRange:range from 0 of BLOCKQUOTE > DIV > BODY > HTML > #document to 0 of BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 749x36
+          text run at (0,0) width 749: "When a user puts the caret at the very beginning of a blockquote and hits backspace, if the line before the blockquote is"
+          text run at (0,18) width 275: "empty, the blockquote should just move up."
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x18 [color=#0000FF] [border: (3px solid #0000FF)]
+          RenderInline {SPAN} at (0,0) size 21x18
+            RenderText {#text} at (28,0) size 21x18
+              text run at (28,0) width 21: "foo"
+caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 0 {BODY} of child 0 {HTML} of document
