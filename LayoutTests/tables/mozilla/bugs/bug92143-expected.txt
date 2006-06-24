@@ -1,9 +1,9 @@
-layer at (0,0) size 2410x600
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 2410x600
-  RenderBlock {HTML} at (0,0) size 785x600
-    RenderBody {BODY} at (8,8) size 769x584
-      RenderBlock (anonymous) at (0,0) size 769x18
+layer at (0,0) size 2410x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 2410x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,8) size 784x569
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,18) size 324x58 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 322x56
@@ -14,7 +14,7 @@ layer at (0,0) size 2410x600
                 text run at (1,19) width 44: "better! "
                 text run at (45,19) width 269: "Now you can choose from 3 levels of junk"
                 text run at (1,37) width 32: "mail!"
-      RenderBlock (anonymous) at (0,76) size 769x72
+      RenderBlock (anonymous) at (0,76) size 784x72
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
         RenderText {#text} at (0,36) size 437x18

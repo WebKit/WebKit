@@ -1,3 +1,21 @@
+2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9531
+          Pages that need only a horizontal scroll bar get a vertical one as well
+
+        The change affects many existing tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Mark the body renderer as needing layout if
+        the view's height has changed and the body stretches to the view's height.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::stretchesToViewHeight): Added. Moved the logic for when
+        the HTML block needs to stretch to the view's height from calcHeight() here.
+
 2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
@@ -325,7 +343,6 @@
         * platform/String.cpp:
         (WebCore::String::number):
 
->>>>>>> .r14995
 2006-06-22  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.

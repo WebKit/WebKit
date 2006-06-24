@@ -367,6 +367,8 @@ void FrameView::layout(bool allowSubtree)
                     vMode = ScrollBarAlwaysOff;
                     hMode = ScrollBarAlwaysOff;
                 } else if (body->hasTagName(bodyTag)) {
+                    if (!d->firstLayout && m_size.height() != visibleHeight() && static_cast<RenderBox*>(body->renderer())->stretchesToViewHeight())
+                        body->renderer()->setChildNeedsLayout(true);
                     // It's sufficient to just check one overflow direction, since it's illegal to have visible in only one direction.
                     RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE ? body->renderer() : rootRenderer;
                     applyOverflowToViewport(o, hMode, vMode); // Only applies to HTML UAs, not to XML/XHTML UAs

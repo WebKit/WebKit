@@ -1,13 +1,13 @@
-layer at (0,0) size 941x600
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 941x600
-  RenderBlock {HTML} at (0,0) size 785x600
-    RenderBody {BODY} at (0,0) size 785x600 [color=#FFFF00] [bgcolor=#000000]
-      RenderBlock {P} at (39,39) size 707x18
+layer at (0,0) size 942x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 942x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (0,0) size 800x585 [color=#FFFF00] [bgcolor=#000000]
+      RenderBlock {P} at (40,40) size 720x18
         RenderInline {B} at (0,0) size 285x18
           RenderText {#text} at (0,0) size 285x18
             text run at (0,0) width 285: "All cell borders should look the same."
-      RenderTable {TABLE} at (39,73) size 902x186 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (40,74) size 902x186 [border: (1px outset #808080)]
         RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 900x184
           RenderTableRow {TR} at (0,0) size 900x20

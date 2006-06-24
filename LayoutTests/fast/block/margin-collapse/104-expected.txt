@@ -1,10 +1,10 @@
-layer at (0,0) size 976x600
-  RenderView at (0,0) size 785x585
-layer at (0,0) size 976x600
-  RenderBlock {HTML} at (0,0) size 785x600
-    RenderBody {BODY} at (8,8) size 769x584
-      RenderBlock {DIV} at (0,0) size 769x108 [border: (2px solid #0000FF)]
-        RenderBlock (anonymous) at (2,2) size 765x54
+layer at (0,0) size 976x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 976x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,8) size 784x569
+      RenderBlock {DIV} at (0,0) size 784x108 [border: (2px solid #0000FF)]
+        RenderBlock (anonymous) at (2,2) size 780x54
           RenderText {#text} at (0,0) size 747x36
             text run at (0,0) width 584: "Resize the window. Red boxes below must not overflow the blue box (or window) from the "
             text run at (584,0) width 163: "left side, though they may"

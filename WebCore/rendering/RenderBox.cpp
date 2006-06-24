@@ -1217,8 +1217,7 @@ void RenderBox::calcHeight()
     // WinIE quirk: The <html> block always fills the entire canvas in quirks mode.  The <body> always fills the
     // <html> block in quirks mode.  Only apply this quirk if the block is normal flow and no height
     // is specified.
-    if (style()->htmlHacks() && style()->height().isAuto() &&
-        !isFloatingOrPositioned() && (isRoot() || isBody())) {
+    if (stretchesToViewHeight()) {
         int margins = collapsedMarginTop() + collapsedMarginBottom();
         int visHeight = view()->frameView()->visibleHeight();
         if (isRoot())
