@@ -1,3 +1,21 @@
+2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9564
+          A bunch of fixes to run-webkit-httpd
+
+        - Add an -all-interfaces (-a) flag to bind to all interfaces, not just
+          127.0.0.1. Useful for testing with WinIE running on another machine;
+        - don't call checkFrameworks() - we do not need a built WebKit here;
+        - changed tabs to spaces;
+        - disable HTTP keepalive (since Apache doesn't spawn sub-processes in
+          interactive mode, they were a hassle when testing with several browsers, as one
+          had to wait for connection to expire);
+        - remove httpd.pid when done, so that Apache doesn't complain next time.
+
+        * Scripts/run-webkit-httpd:
+
 2006-06-24  Jonas Witt <jonas.witt@gmail.com>
 
         Reviewed by ggaren, landed by ap.
