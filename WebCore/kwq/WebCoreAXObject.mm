@@ -803,8 +803,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     if (m_renderer->isRenderView()) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
             NSMutableArray *links = [NSMutableArray arrayWithCapacity: 32];
-            HTMLCollection *coll = new HTMLCollection(m_renderer->document(), HTMLCollection::DOC_LINKS);
-            coll->ref();
+            RefPtr<HTMLCollection> coll = m_renderer->document()->links();
             Node *curr = coll->firstItem();
             while (curr) {
                 RenderObject *obj = curr->renderer();
@@ -816,7 +815,6 @@ static IntRect boundingBoxRect(RenderObject* obj)
                 }
                 curr = coll->nextItem();
             }
-            coll->deref();
             return links;
         }
         if ([attributeName isEqualToString: @"AXLoaded"])

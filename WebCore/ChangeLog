@@ -2,6 +2,79 @@
 
         Reviewed by Darin.
 
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8177
+        Javascript search incredibly slow
+
+        No change in functionality, thus no test.
+
+        Use info sharing for named collections, too. Moved shared HTMLCollection infos from HTMLDocument 
+        to Document.  Renamed collection types to use the preferred WebKit style. Replaced direct
+        HTMLCollection creation with using accessors from Document in a few places.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLElement children]):
+        (-[DOMHTMLDocument images]):
+        (-[DOMHTMLDocument applets]):
+        (-[DOMHTMLDocument links]):
+        (-[DOMHTMLDocument forms]):
+        (-[DOMHTMLDocument anchors]):
+        (-[DOMHTMLMapElement areas]):
+        (-[DOMHTMLTableSectionElement rows]):
+        (-[DOMHTMLTableElement rows]):
+        (-[DOMHTMLTableElement tBodies]):
+        (-[DOMHTMLTableRowElement cells]):
+        * dom/Document.cpp:
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::objects):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        (WebCore::Document::all):
+        (WebCore::Document::windowNamedItems):
+        (WebCore::Document::documentNamedItems):
+        (WebCore::Document::nameCollectionInfo):
+        * dom/Document.h:
+        (WebCore::Document::collectionInfo):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::traverseNextItem):
+        (WebCore::HTMLCollection::checkForNameMatch):
+        (WebCore::HTMLCollection::updateNameCache):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::):
+        * html/HTMLDocument.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::children):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::areas):
+        * html/HTMLNameCollection.h:
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection):
+        (WebCore::HTMLNameCollection::traverseNextItem):
+        * html/HTMLFormCollection.cpp:
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::collectionInfo):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rows):
+        (WebCore::HTMLTableElement::tBodies):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::cells):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::rows):
+        * kwq/WebCoreAXObject.mm:
+        (-[WebCoreAXObject accessibilityAttributeValue:]):
+        * page/Frame.cpp:
+        (WebCore::Frame::gotoAnchor):
+
+2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=9418
         WebKit will not build when Space exists in path
 

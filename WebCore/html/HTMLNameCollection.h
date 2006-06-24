@@ -35,7 +35,7 @@ class Document;
 class HTMLNameCollection : public HTMLCollection
 {
 public:
-    HTMLNameCollection(Document*, int type, const String &name);
+    HTMLNameCollection(Document*, HTMLCollection::Type type, const String &name);
     
     virtual Node* traverseNextItem(Node*) const;
 

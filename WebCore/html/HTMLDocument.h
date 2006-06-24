@@ -67,13 +67,6 @@ public:
     void removeDocExtraNamedItem(const String& name);
     bool hasDocExtraNamedItem(const String& name);
 
-    HTMLCollection::CollectionInfo* collectionInfo(int type)
-    { 
-        if (type < HTMLCollection::NUM_CACHEABLE_TYPES) 
-            return m_collection_info + type; 
-        return 0;
-    }
-
     typedef HashMap<StringImpl*, int> NameCountMap;
 
 protected:
@@ -81,8 +74,6 @@ protected:
     HTMLElement* htmlElement;
 
 private:
-    HTMLCollection::CollectionInfo m_collection_info[HTMLCollection::NUM_CACHEABLE_TYPES];
-
     NameCountMap namedItemCounts;
     NameCountMap docExtraNamedItemCounts;
 };

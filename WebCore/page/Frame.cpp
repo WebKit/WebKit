@@ -1070,13 +1070,8 @@ bool Frame::gotoAnchor(const String& name)
     return false;
 
   Node *n = d->m_doc->getElementById(AtomicString(name));
-  if (!n) {
-    HTMLCollection *anchors =
-        new HTMLCollection(d->m_doc.get(), HTMLCollection::DOC_ANCHORS);
-    anchors->ref();
-    n = anchors->namedItem(name, !d->m_doc->inCompatMode());
-    anchors->deref();
-  }
+  if (!n)
+      n = d->m_doc->anchors()->namedItem(name, !d->m_doc->inCompatMode());
 
   d->m_doc->setCSSTarget(n); // Setting to null will clear the current target.
   

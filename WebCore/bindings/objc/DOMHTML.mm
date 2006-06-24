@@ -393,7 +393,7 @@ using namespace HTMLNames;
 
 - (DOMHTMLCollection *)children
 {
-    HTMLCollection *collection = new HTMLCollection([self _HTMLElement], HTMLCollection::NODE_CHILDREN);
+    HTMLCollection *collection = new HTMLCollection([self _HTMLElement], HTMLCollection::NodeChildren);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
@@ -453,31 +453,31 @@ using namespace HTMLNames;
 
 - (DOMHTMLCollection *)images
 {
-    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_IMAGES);
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DocImages);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)applets
 {
-    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_APPLETS);
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DocApplets);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)links
 {
-    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_LINKS);
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DocLinks);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)forms
 {
-    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_FORMS);
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DocForms);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)anchors
 {
-    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_ANCHORS);
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DocAnchors);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
@@ -2838,7 +2838,7 @@ using namespace HTMLNames;
 
 - (DOMHTMLCollection *)areas
 {
-    HTMLCollection *collection = new HTMLCollection([self _mapElement], HTMLCollection::MAP_AREAS);
+    HTMLCollection *collection = new HTMLCollection([self _mapElement], HTMLCollection::MapAreas);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
@@ -3107,7 +3107,7 @@ using namespace HTMLNames;
 
 - (DOMHTMLCollection *)rows
 {
-    HTMLCollection *collection = new HTMLCollection([self _tableSectionElement], HTMLCollection::TABLE_ROWS);
+    HTMLCollection *collection = new HTMLCollection([self _tableSectionElement], HTMLCollection::TableRows);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
@@ -3176,13 +3176,13 @@ using namespace HTMLNames;
 
 - (DOMHTMLCollection *)rows
 {
-    HTMLCollection *collection = new HTMLCollection([self _tableElement], HTMLCollection::TABLE_ROWS);
+    HTMLCollection *collection = new HTMLCollection([self _tableElement], HTMLCollection::TableRows);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)tBodies
 {
-    HTMLCollection *collection = new HTMLCollection([self _tableElement], HTMLCollection::TABLE_TBODIES);
+    HTMLCollection *collection = new HTMLCollection([self _tableElement], HTMLCollection::TableTBodies);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 
@@ -3428,7 +3428,7 @@ using namespace HTMLNames;
 
 - (DOMHTMLCollection *)cells
 {
-    HTMLCollection *collection = new HTMLCollection([self _tableRowElement], HTMLCollection::TR_CELLS);
+    HTMLCollection *collection = new HTMLCollection([self _tableRowElement], HTMLCollection::TRCells);
     return [DOMHTMLCollection _collectionWith:collection];
 }
 

@@ -33,15 +33,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLCollection::HTMLCollection(Node *_base, int _type)
+HTMLCollection::HTMLCollection(Node *_base, HTMLCollection::Type _type)
     : m_base(_base),
       type(_type),
       info(0),
       idsDone(false),
       m_ownsInfo(false)
 {
-    if (_base->isDocumentNode() && _base->document()->isHTMLDocument())
-        info = static_cast<HTMLDocument*>(_base->document())->collectionInfo(type);
+    if (_base->isDocumentNode())
+        info = _base->document()->collectionInfo(type);
 }
 
 HTMLCollection::~HTMLCollection()
@@ -98,7 +98,7 @@ Node *HTMLCollection::traverseNextItem(Node *current) const
 {
     assert(current);
 
-    if (type == NODE_CHILDREN && m_base.get() != current)
+    if (type == NodeChildren && m_base.get() != current)
         current = current->nextSibling();
     else
         current = current->traverseNextNode(m_base.get());
@@ -109,71 +109,71 @@ Node *HTMLCollection::traverseNextItem(Node *current) const
             bool deep = true;
             HTMLElement *e = static_cast<HTMLElement *>(current);
             switch(type) {
-            case DOC_IMAGES:
+            case DocImages:
                 if (e->hasLocalName(imgTag))
                     found = true;
                 break;
-            case DOC_SCRIPTS:
+            case DocScripts:
                 if (e->hasLocalName(scriptTag))
                     found = true;
                 break;
-            case DOC_FORMS:
+            case DocForms:
                 if(e->hasLocalName(formTag))
                     found = true;
                 break;
-            case TABLE_TBODIES:
+            case TableTBodies:
                 if (e->hasLocalName(tbodyTag))
                     found = true;
                 else if (e->hasLocalName(tableTag))
                     deep = false;
                 break;
-            case TR_CELLS:
+            case TRCells:
                 if (e->hasLocalName(tdTag) || e->hasLocalName(thTag))
                     found = true;
                 else if (e->hasLocalName(tableTag))
                     deep = false;
                 break;
-            case TABLE_ROWS:
-            case TSECTION_ROWS:
+            case TableRows:
+            case TSectionRows:
                 if (e->hasLocalName(trTag))
                     found = true;
                 else if (e->hasLocalName(tableTag))
                     deep = false;
                 break;
-            case SELECT_OPTIONS:
+            case SelectOptions:
                 if (e->hasLocalName(optionTag))
                     found = true;
                 break;
-            case MAP_AREAS:
+            case MapAreas:
                 if (e->hasLocalName(areaTag))
                     found = true;
                 break;
-            case DOC_APPLETS:   // all OBJECT and APPLET elements
+            case DocApplets:   // all OBJECT and APPLET elements
                 if (e->hasLocalName(objectTag) || e->hasLocalName(appletTag))
                     found = true;
                 break;
-            case DOC_EMBEDS:   // all EMBED elements
+            case DocEmbeds:   // all EMBED elements
                 if (e->hasLocalName(embedTag))
                     found = true;
                 break;
-            case DOC_OBJECTS:   // all OBJECT elements
+            case DocObjects:   // all OBJECT elements
                 if (e->hasLocalName(objectTag))
                     found = true;
                 break;
-            case DOC_LINKS:     // all A _and_ AREA elements with a value for href
+            case DocLinks:     // all A _and_ AREA elements with a value for href
                 if (e->hasLocalName(aTag) || e->hasLocalName(areaTag))
                     if (!e->getAttribute(hrefAttr).isNull())
                         found = true;
                 break;
-            case DOC_ANCHORS:      // all A elements with a value for name or an id attribute
+            case DocAnchors:      // all A elements with a value for name or an id attribute
                 if (e->hasLocalName(aTag))
                     if (!e->getAttribute(nameAttr).isNull())
                         found = true;
                 break;
-            case DOC_ALL:
+            case DocAll:
                 found = true;
                 break;
-            case NODE_CHILDREN:
+            case NodeChildren:
                 found = true;
                 deep = false;
                 break;
@@ -267,7 +267,7 @@ bool HTMLCollection::checkForNameMatch(Node *node, bool checkName, const String 
         if (checkName) {
             // document.all returns only images, forms, applets, objects and embeds
             // by name (though everything by id)
-            if (type == DOC_ALL && 
+            if (type == DocAll && 
                 !(e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                   e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
                   e->hasLocalName(embedTag) || e->hasLocalName(inputTag)))
@@ -280,7 +280,7 @@ bool HTMLCollection::checkForNameMatch(Node *node, bool checkName, const String 
         if (checkName) {
             // document.all returns only images, forms, applets, objects and embeds
             // by name (though everything by id)
-            if (type == DOC_ALL && 
+            if (type == DocAll && 
                 !(e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                   e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
                   e->hasLocalName(embedTag) || e->hasLocalName(inputTag)))
@@ -346,7 +346,7 @@ void HTMLCollection::updateNameCache() const
             idVector->append(n);
         }
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal
-            && (type != DOC_ALL || 
+            && (type != DocAll || 
                 (e->hasLocalName(imgTag) || e->hasLocalName(formTag) ||
                  e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
                  e->hasLocalName(embedTag) || e->hasLocalName(inputTag)))) {

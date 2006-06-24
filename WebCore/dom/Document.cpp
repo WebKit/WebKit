@@ -3196,57 +3196,70 @@ void Document::removeRadioButtonGroup(AtomicStringImpl* name, HTMLFormElement *f
 
 PassRefPtr<HTMLCollection> Document::images()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_IMAGES);
+    return new HTMLCollection(this, HTMLCollection::DocImages);
 }
 
 PassRefPtr<HTMLCollection> Document::applets()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_APPLETS);
+    return new HTMLCollection(this, HTMLCollection::DocApplets);
 }
 
 PassRefPtr<HTMLCollection> Document::embeds()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_EMBEDS);
+    return new HTMLCollection(this, HTMLCollection::DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::objects()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_OBJECTS);
+    return new HTMLCollection(this, HTMLCollection::DocObjects);
 }
 
 PassRefPtr<HTMLCollection> Document::scripts()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_SCRIPTS);
+    return new HTMLCollection(this, HTMLCollection::DocScripts);
 }
 
 PassRefPtr<HTMLCollection> Document::links()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_LINKS);
+    return new HTMLCollection(this, HTMLCollection::DocLinks);
 }
 
 PassRefPtr<HTMLCollection> Document::forms()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_FORMS);
+    return new HTMLCollection(this, HTMLCollection::DocForms);
 }
 
 PassRefPtr<HTMLCollection> Document::anchors()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_ANCHORS);
+    return new HTMLCollection(this, HTMLCollection::DocAnchors);
 }
 
 PassRefPtr<HTMLCollection> Document::all()
 {
-    return new HTMLCollection(this, HTMLCollection::DOC_ALL);
+    return new HTMLCollection(this, HTMLCollection::DocAll);
 }
 
 PassRefPtr<HTMLCollection> Document::windowNamedItems(const String &name)
 {
-    return new HTMLNameCollection(this, HTMLCollection::WINDOW_NAMED_ITEMS, name);
+    return new HTMLNameCollection(this, HTMLCollection::WindowNamedItems, name);
 }
 
 PassRefPtr<HTMLCollection> Document::documentNamedItems(const String &name)
 {
-    return new HTMLNameCollection(this, HTMLCollection::DOCUMENT_NAMED_ITEMS, name);
+    return new HTMLNameCollection(this, HTMLCollection::DocumentNamedItems, name);
+}
+
+HTMLCollection::CollectionInfo* Document::nameCollectionInfo(HTMLCollection::Type type, const String& name)
+{
+    HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo>& map = m_nameCollectionInfo[type - HTMLCollection::UnnamedCollectionTypes];
+    
+    AtomicString atomicName(name);
+    
+    HashMap<AtomicStringImpl*, HTMLCollection::CollectionInfo>::iterator iter = map.find(atomicName.impl());
+    if (iter == map.end())
+        iter = map.add(atomicName.impl(), HTMLCollection::CollectionInfo()).first;
+    
+    return &iter->second;
 }
 
 PassRefPtr<NameNodeList> Document::getElementsByName(const String &elementName)

@@ -513,12 +513,12 @@ bool HTMLTableElement::isURLAttribute(Attribute *attr) const
 
 PassRefPtr<HTMLCollection> HTMLTableElement::rows()
 {
-    return new HTMLCollection(this, HTMLCollection::TABLE_ROWS);
+    return new HTMLCollection(this, HTMLCollection::TableRows);
 }
 
 PassRefPtr<HTMLCollection> HTMLTableElement::tBodies()
 {
-    return new HTMLCollection(this, HTMLCollection::TABLE_TBODIES);
+    return new HTMLCollection(this, HTMLCollection::TableTBodies);
 }
 
 String HTMLTableElement::align() const

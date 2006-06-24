@@ -44,34 +44,35 @@ class HTMLCollection : public Shared<HTMLCollection>
 public:
     enum Type {
         // from JSHTMLDocument
-        DOC_IMAGES = 0, // all IMG elements in the document
-        DOC_APPLETS,   // all OBJECT and APPLET elements
-        DOC_EMBEDS,    // all EMBED elements
-        DOC_OBJECTS,   // all OBJECT elements
-        DOC_FORMS,     // all FORMS
-        DOC_LINKS,     // all A _and_ AREA elements with a value for href
-        DOC_ANCHORS,      // all A elements with a value for name
-        DOC_SCRIPTS,   // all SCRIPT element
+        DocImages = 0, // all IMG elements in the document
+        DocApplets,   // all OBJECT and APPLET elements
+        DocEmbeds,    // all EMBED elements
+        DocObjects,   // all OBJECT elements
+        DocForms,     // all FORMS
+        DocLinks,     // all A _and_ AREA elements with a value for href
+        DocAnchors,      // all A elements with a value for name
+        DocScripts,   // all SCRIPT element
         // from HTMLTable, HTMLTableSection, HTMLTableRow
-        TABLE_ROWS,    // all rows in this table or tablesection
-        TABLE_TBODIES, // all TBODY elements in this table
-        TSECTION_ROWS, // all rows elements in this table section
-        TR_CELLS,      // all CELLS in this row
+        TableRows,    // all rows in this table or tablesection
+        TableTBodies, // all TBODY elements in this table
+        TSectionRows, // all rows elements in this table section
+        TRCells,      // all CELLS in this row
         // from SELECT
-        SELECT_OPTIONS,
+        SelectOptions,
         // from HTMLMap
-        MAP_AREAS,
-        DOC_ALL,        // "all" elements (IE)
-        NODE_CHILDREN,   // first-level children (IE)
-        WINDOW_NAMED_ITEMS,
-        DOCUMENT_NAMED_ITEMS
+        MapAreas,
+        DocAll,        // "all" elements (IE)
+        NodeChildren,   // first-level children (IE)
+        WindowNamedItems,
+        DocumentNamedItems
     };
 
     enum {
-        NUM_CACHEABLE_TYPES = NODE_CHILDREN + 1
+        UnnamedCollectionTypes = NodeChildren + 1,
+        CollectionTypes = DocumentNamedItems + 1
     };
 
-    HTMLCollection(Node *_base, int _type);
+    HTMLCollection(Node *_base, HTMLCollection::Type _type);
     virtual ~HTMLCollection();
     
     unsigned length() const;
@@ -113,7 +114,7 @@ protected:
     // the base node, the collection refers to
     RefPtr<Node> m_base;
     // The collection list the following elements
-    int type;
+    Type type;
     mutable CollectionInfo *info;
 
     // For nextNamedItem()

@@ -607,7 +607,7 @@ void HTMLElement::setClassName(const String &value)
 
 PassRefPtr<HTMLCollection> HTMLElement::children()
 {
-    return new HTMLCollection(this, HTMLCollection::NODE_CHILDREN);
+    return new HTMLCollection(this, HTMLCollection::NodeChildren);
 }
 
 // DOM Section 1.1.1
