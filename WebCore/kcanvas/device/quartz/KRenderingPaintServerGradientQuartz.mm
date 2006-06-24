@@ -238,20 +238,6 @@ bool KRenderingPaintServerGradientQuartz::setup(const KRenderingPaintServerGradi
     ASSERT(context != NULL);
     
     CGContextSaveGState(context);
-    // make the gradient fit in the bbox if necessary.
-    if (server->boundingBoxMode() && renderObject->isRenderPath()) { // no support for bounding boxes around text yet!
-        // get the object bbox
-        CGRect objectBBox = CGContextGetPathBoundingBox(context);
-        CGRect gradientBBox = CGRectMake(0,0,100,100); // FIXME - this is arbitrary no?
-        // generate a transform to map between the two.
-        CGAffineTransform gradientIntoObjectBBox = CGAffineTransformMakeMapBetweenRects(gradientBBox, objectBBox);
-        CGContextConcatCTM(context, gradientIntoObjectBBox);
-    }
-    
-    // apply the gradient's own transform
-    CGAffineTransform gradientTransform = CGAffineTransform(server->gradientTransform().qmatrix());
-    CGContextConcatCTM(context, gradientTransform);
-    
     CGContextSetAlpha(context, renderStyle->opacity());
     
     if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
@@ -286,10 +272,25 @@ void KRenderingPaintServerGradientQuartz::renderPath(const KRenderingPaintServer
     RenderStyle* renderStyle = path->style();
     ASSERT(context != NULL);
     
+    CGRect objectBBox;
+    if (server->boundingBoxMode())
+        objectBBox = CGContextGetPathBoundingBox(context);
     if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle))
         KRenderingPaintServerQuartzHelper::clipToFillPath(context, path);
     if ((type & APPLY_TO_STROKE) && KSVGPainterFactory::isStroked(renderStyle))
         KRenderingPaintServerQuartzHelper::clipToStrokePath(context, path);
+    // make the gradient fit in the bbox if necessary.
+    if (server->boundingBoxMode()) { // no support for bounding boxes around text yet!
+        // get the object bbox
+        CGRect gradientBBox = CGRectMake(0,0,100,100); // FIXME - this is arbitrary no?
+        // generate a transform to map between the two.
+        CGAffineTransform gradientIntoObjectBBox = CGAffineTransformMakeMapBetweenRects(gradientBBox, objectBBox);
+        CGContextConcatCTM(context, gradientIntoObjectBBox);
+    }
+    
+    // apply the gradient's own transform
+    CGAffineTransform gradientTransform = CGAffineTransform(server->gradientTransform().qmatrix());
+    CGContextConcatCTM(context, gradientTransform);
 }
 
 void KRenderingPaintServerGradientQuartz::teardown(const KRenderingPaintServerGradient *server, KRenderingDeviceContext* renderingContext, const RenderObject* renderObject, KCPaintTargetType type) const

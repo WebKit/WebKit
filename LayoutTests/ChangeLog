@@ -1,3 +1,16 @@
+2006-06-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Test cases for
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=9352>
+        Webkit doesn't respect stroke-width in SVG for smaller <circle>s
+
+        * svg/custom/gradient-stroke-width-expected.checksum: Added.
+        * svg/custom/gradient-stroke-width-expected.png: Added.
+        * svg/custom/gradient-stroke-width-expected.txt: Added.
+        * svg/custom/gradient-stroke-width.svg: Added.
+
 2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.
