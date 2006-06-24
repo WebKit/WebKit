@@ -28,13 +28,19 @@
  
 #import <Cocoa/Cocoa.h>
 
-@interface EventSendingController : NSObject {
+#import <WebKit/WebKit.h>
+
+@interface EventSendingController : NSObject <DOMEventListener> {
     BOOL down;
     int clickCount;
     NSTimeInterval lastClick;
     int eventNumber;
     double timeOffset;
 }
+
+- (void)enableDOMUIEventLogging:(WebScriptObject *)node;
+
+- (void)handleEvent:(DOMEvent *)event;
 
 @end
 

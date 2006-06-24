@@ -1,0 +1,272 @@
+event type:      mouseover
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9900
+  screenY:       10268
+  clientX:       100
+  clientY:       100
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousedown
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9900
+  screenY:       10268
+  clientX:       100
+  clientY:       100
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      selectstart
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+event type:      mouseup
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9900
+  screenY:       10268
+  clientX:       100
+  clientY:       100
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      click
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9900
+  screenY:       10268
+  clientX:       100
+  clientY:       100
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      keydown
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+000041
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:0 m:0
+  keyCode:       65
+  charCode:      97
+event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+000041
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:0 m:0
+  keyCode:       97
+  charCode:      97
+event type:      keydown
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+000042
+  keyLocation:   0
+  modifier keys: c:1 s:0 a:0 m:0
+  keyCode:       66
+  charCode:      98
+event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+000042
+  keyLocation:   0
+  modifier keys: c:1 s:0 a:0 m:0
+  keyCode:       98
+  charCode:      98
+event type:      keydown
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+000044
+  keyLocation:   0
+  modifier keys: c:0 s:1 a:0 m:0
+  keyCode:       68
+  charCode:      100
+event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+000044
+  keyLocation:   0
+  modifier keys: c:0 s:1 a:0 m:0
+  keyCode:       100
+  charCode:      100
+event type:      keydown
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+000045
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:1 m:1
+  keyCode:       69
+  charCode:      101
+event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+000045
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:1 m:1
+  keyCode:       101
+  charCode:      101
+event type:      mousemove
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9600
+  screenY:       10318
+  clientX:       400
+  clientY:       150
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousedown
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        2
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9600
+  screenY:       10318
+  clientX:       400
+  clientY:       150
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      selectstart
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+event type:      mousedown
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        3
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9600
+  screenY:       10318
+  clientX:       400
+  clientY:       150
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      selectstart
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+event type:      mouseout
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9999
+  screenY:       10169
+  clientX:       1
+  clientY:       1
+  modifier keys: c:0 s:0 a:0 m:0
+  relatedTarget: DOMHTMLHtmlElement (nodeName: HTML)
+event type:      mouseover
+  target:        <html>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9999
+  screenY:       10169
+  clientX:       1
+  clientY:       1
+  modifier keys: c:0 s:0 a:0 m:0
+  relatedTarget: DOMHTMLDivElement (nodeName: DIV)
+event type:      mousemove
+  target:        <html>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9999
+  screenY:       10169
+  clientX:       1
+  clientY:       1
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      selectstart
+  target:        <html>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+event type:      mouseup
+  target:        <html>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  screenX:       -9999
+  screenY:       10169
+  clientX:       1
+  clientY:       1
+  modifier keys: c:0 s:0 a:0 m:0
+Test
+This tests that DOMEvents are correctly handed to the ObjC API. See bug 9181.
+
+

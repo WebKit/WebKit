@@ -26,6 +26,7 @@
 #import <WebCore/DOMCSS.h>
 #import <WebCore/DOMHTML.h>
 #import <WebCore/DOMRange.h>
+#import <WebCore/DOMEvents.h>
 
 @interface DOMRange (WebPrivate)
 // uses same algorithm as innerText
@@ -143,6 +144,41 @@
 
 @interface DOMImplementation (DOMImplementationPendingPublic)
 - (DOMHTMLDocument *)createHTMLDocument:(NSString *)title;
+@end
+
+enum {
+    DOM_KEY_LOCATION_STANDARD      = 0x00,
+    DOM_KEY_LOCATION_LEFT          = 0x01,
+    DOM_KEY_LOCATION_RIGHT         = 0x02,
+    DOM_KEY_LOCATION_NUMPAD        = 0x03,
+};
+
+@interface DOMKeyboardEvent : DOMUIEvent
+- (NSString*)keyIdentifier;
+- (unsigned)keyLocation;
+- (BOOL)ctrlKey;
+- (BOOL)shiftKey;
+- (BOOL)altKey;
+- (BOOL)metaKey;
+- (BOOL)getModifierState:(NSString *)keyIdentifierArg;
+@end
+
+@interface DOMKeyboardEvent (NonStandardAdditions)
+- (int)keyCode;
+- (int)charCode;
+@end
+
+@interface DOMWheelEvent : DOMUIEvent
+- (int)screenX;
+- (int)screenY;
+- (int)clientX;
+- (int)clientY;
+- (BOOL)ctrlKey;
+- (BOOL)shiftKey;
+- (BOOL)altKey;
+- (BOOL)metaKey;
+- (BOOL)isHorizontal;
+- (int)wheelDelta;
 @end
 
 // END

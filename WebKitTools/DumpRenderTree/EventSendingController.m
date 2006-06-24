@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +34,67 @@
 
 #import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
 #import <WebKit/WebKit.h>
+#import <WebKit/DOMPrivate.h>
 
 NSPoint lastMousePosition;
+NSArray *webkitDomEventNames;
+NSArray *webkitDomEventProperties;
 
 @implementation EventSendingController
+
++ (void)initialize {
+    webkitDomEventNames = [[NSArray alloc] initWithObjects:
+        @"abort",
+        @"beforecopy",
+        @"beforecut",
+        @"beforepaste",
+        @"blur",
+        @"change",
+        @"click",
+        @"contextmenu",
+        @"copy",
+        @"cut",
+        @"dblclick",
+        @"drag",
+        @"dragend",
+        @"dragenter",
+        @"dragleave",
+        @"dragover",
+        @"dragstart",
+        @"drop",
+        @"error",
+        @"focus",
+        @"input",
+        @"keydown",
+        @"keypress",
+        @"keyup",
+        @"load",
+        @"mousedown",
+        @"mousemove",
+        @"mouseout",
+        @"mouseover",
+        @"mouseup",
+        @"mousewheel",
+        @"beforeunload",
+        @"paste",
+        @"readystatechange",
+        @"reset",
+        @"resize", 
+        @"scroll", 
+        @"search",
+        @"select",
+        @"selectstart",
+        @"submit", 
+        @"textInput", 
+        @"unload",
+        @"zoom",
+        nil];
+    
+    webkitDomEventProperties = [[NSArray alloc] initWithObjects:
+        @"clientX",
+        @"clientY",
+        nil];
+}
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
@@ -45,7 +103,8 @@ NSPoint lastMousePosition;
             || aSelector == @selector(mouseClick)
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(leapForward:)
-            || aSelector == @selector(keyDown:withModifiers:))
+            || aSelector == @selector(keyDown:withModifiers:)
+            || aSelector == @selector(enableDOMUIEventLogging:))
         return NO;
     return YES;
 }
@@ -58,6 +117,8 @@ NSPoint lastMousePosition;
         return @"leapForward";
     if (aSelector == @selector(keyDown:withModifiers:))
         return @"keyDown";
+    if (aSelector == @selector(enableDOMUIEventLogging:))
+        return @"enableDOMUIEventLogging";
     return nil;
 }
 
@@ -234,6 +295,100 @@ NSPoint lastMousePosition;
     if (subView) {
         [subView keyDown:event];
         down = YES;
+    }
+}
+
+- (void)enableDOMUIEventLogging:(WebScriptObject *)node
+{
+    NSEnumerator *eventEnumerator = [webkitDomEventNames objectEnumerator];
+    id eventName;
+    while ((eventName = [eventEnumerator nextObject])) {
+        [(id<DOMEventTarget>)node addEventListener:eventName :self :NO];
+    }
+}
+
+- (void)handleEvent:(DOMEvent *)event
+{
+    DOMNode *target = [event target];
+
+    printf("event type:      %s\n", [[event type] UTF8String]);
+    printf("  target:        <%s>\n", [[[target nodeName] lowercaseString] UTF8String]);
+    
+    if ([event isKindOfClass:[DOMEvent class]]) {
+        printf("  eventPhase:    %d\n", [event eventPhase]);
+        printf("  bubbles:       %d\n", [event bubbles] ? 1 : 0);
+        printf("  cancelable:    %d\n", [event cancelable] ? 1 : 0);
+    }
+    
+    if ([event isKindOfClass:[DOMUIEvent class]]) {
+        printf("  detail:        %d\n", [(DOMUIEvent*)event detail]);
+        
+        DOMAbstractView *view = [(DOMUIEvent*)event view];
+        if (view) {
+            printf("  view:          OK");            
+            if ([view document])
+                printf(" (document: OK)");
+            printf("\n");
+        }
+    }
+    
+    if ([event isKindOfClass:[DOMKeyboardEvent class]]) {
+        printf("  keyIdentifier: %s\n", [[(DOMKeyboardEvent*)event keyIdentifier] UTF8String]);
+        printf("  keyLocation:   %d\n", [(DOMKeyboardEvent*)event keyLocation]);
+        printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 
+               [(DOMKeyboardEvent*)event ctrlKey] ? 1 : 0, 
+               [(DOMKeyboardEvent*)event shiftKey] ? 1 : 0, 
+               [(DOMKeyboardEvent*)event altKey] ? 1 : 0, 
+               [(DOMKeyboardEvent*)event metaKey] ? 1 : 0);
+        printf("  keyCode:       %d\n", [(DOMKeyboardEvent*)event keyCode]);
+        printf("  charCode:      %d\n", [(DOMKeyboardEvent*)event charCode]);
+    }
+    
+    if ([event isKindOfClass:[DOMMouseEvent class]]) {
+        printf("  button:        %d\n", [(DOMMouseEvent*)event button]);
+        printf("  screenX:       %d\n", [(DOMMouseEvent*)event screenX]);
+        printf("  screenY:       %d\n", [(DOMMouseEvent*)event screenY]);
+        printf("  clientX:       %d\n", [(DOMMouseEvent*)event clientX]);
+        printf("  clientY:       %d\n", [(DOMMouseEvent*)event clientY]);
+        printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 
+               [(DOMMouseEvent*)event ctrlKey] ? 1 : 0, 
+               [(DOMMouseEvent*)event shiftKey] ? 1 : 0, 
+               [(DOMMouseEvent*)event altKey] ? 1 : 0, 
+               [(DOMMouseEvent*)event metaKey] ? 1 : 0);
+        id relatedTarget = [(DOMMouseEvent*)event relatedTarget];
+        if (relatedTarget) {
+            printf("  relatedTarget: %s", [[[relatedTarget class] description] UTF8String]);
+            if ([relatedTarget isKindOfClass:[DOMNode class]])
+                printf(" (nodeName: %s)", [[(DOMNode*)relatedTarget nodeName] UTF8String]);
+            printf("\n");
+        }
+    }
+    
+    if ([event isKindOfClass:[DOMMutationEvent class]]) {
+        printf("  prevValue:     %s\n", [[(DOMMutationEvent*)event prevValue] UTF8String]);
+        printf("  newValue:      %s\n", [[(DOMMutationEvent*)event newValue] UTF8String]);
+        printf("  attrName:      %s\n", [[(DOMMutationEvent*)event attrName] UTF8String]);
+        printf("  attrChange:    %d\n", [(DOMMutationEvent*)event attrChange]);
+        DOMNode *relatedNode = [(DOMMutationEvent*)event relatedNode];
+        if (relatedNode) {
+            printf("  relatedNode:   %s (nodeName: %s)\n", 
+                   [[[relatedNode class] description] UTF8String],
+                   [[relatedNode nodeName] UTF8String]);
+        }
+    }
+    
+    if ([event isKindOfClass:[DOMWheelEvent class]]) {
+        printf("  screenX:       %d\n", [(DOMWheelEvent*)event screenX]);
+        printf("  screenY:       %d\n", [(DOMWheelEvent*)event screenY]);
+        printf("  clientX:       %d\n", [(DOMWheelEvent*)event clientX]);
+        printf("  clientY:       %d\n", [(DOMWheelEvent*)event clientY]);
+        printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 
+               [(DOMWheelEvent*)event ctrlKey] ? 1 : 0, 
+               [(DOMWheelEvent*)event shiftKey] ? 1 : 0, 
+               [(DOMWheelEvent*)event altKey] ? 1 : 0, 
+               [(DOMWheelEvent*)event metaKey] ? 1 : 0);
+        printf("  isHorizontal:  %d\n", [(DOMWheelEvent*)event isHorizontal] ? 1 : 0);
+        printf("  wheelDelta:    %d\n", [(DOMWheelEvent*)event wheelDelta]);
     }
 }
 

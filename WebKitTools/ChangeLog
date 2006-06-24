@@ -1,3 +1,20 @@
+2006-06-24  Jonas Witt <jonas.witt@gmail.com>
+
+        Reviewed by ggaren, landed by ap.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9181
+          Complete DOMUIEvent Obj-C API to reflect UIEvent
+
+        Add function to enable logging of all events of one DOM node to stdout.
+
+        * DumpRenderTree/EventSendingController.h:
+        * DumpRenderTree/EventSendingController.m:
+        (+[EventSendingController initialize]):
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (-[EventSendingController enableDOMUIEventLogging:]):
+        (-[EventSendingController handleEvent:]):
+
 2006-06-23  Kevin Decker         <kdecker@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -1,3 +1,54 @@
+2006-06-24  Jonas Witt <jonas.witt@gmail.com>
+
+        Reviewed by ggaren, landed by ap.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9181
+          Complete DOMUIEvent Obj-C API to reflect UIEvent
+
+        * WebCore.exp: add new classes DOMKeyboardEvent and DOMWheelEvent to the exported 
+          symbols list of WebCore.framework
+
+        Updated DOMUIEvent to include all DOM Level 2 properties
+        Added DOMKeyboardEvent (DOM Level 3)
+        Added two non-W3C accessors (keyCode, charCode) of DOMKeyboardEvent to a separate file (DOMEventsNonstandard)
+        Added DOMWheelEvent (non-W3C) in separate file (DOMEventsNonstandard)
+        Added this file (DOMEventsNonstandard) to the build process
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.h:
+        * bindings/objc/DOMEvents.h:
+        * bindings/objc/DOMEvents.mm:
+        (+[DOMEvent _eventWith:]):
+        (-[DOMUIEvent _UIEvent]):
+        (-[DOMUIEvent view]):
+        (-[DOMUIEvent detail]):
+        (-[DOMUIEvent initUIEvent:::::]):
+        (-[DOMKeyboardEvent _keyboardEvent]):
+        (-[DOMKeyboardEvent keyIdentifier]):
+        (-[DOMKeyboardEvent keyLocation]):
+        (-[DOMKeyboardEvent ctrlKey]):
+        (-[DOMKeyboardEvent shiftKey]):
+        (-[DOMKeyboardEvent altKey]):
+        (-[DOMKeyboardEvent metaKey]):
+        (-[DOMKeyboardEvent getModifierState:]):
+        (-[DOMMouseEvent button]):
+        * bindings/objc/DOMEventsNonstandard.mm: Added.
+        (-[DOMWheelEvent _wheelEvent]):
+        (-[DOMWheelEvent screenX]):
+        (-[DOMWheelEvent screenY]):
+        (-[DOMWheelEvent clientX]):
+        (-[DOMWheelEvent clientY]):
+        (-[DOMWheelEvent ctrlKey]):
+        (-[DOMWheelEvent shiftKey]):
+        (-[DOMWheelEvent altKey]):
+        (-[DOMWheelEvent metaKey]):
+        (-[DOMWheelEvent isHorizontal]):
+        (-[DOMWheelEvent wheelDelta]):
+        (-[DOMKeyboardEvent _keyboardEvent]):
+        (-[DOMKeyboardEvent keyCode]):
+        (-[DOMKeyboardEvent charCode]):
+        * bindings/objc/DOMPrivate.h:
+
 2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by ap.

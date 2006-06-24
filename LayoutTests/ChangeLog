@@ -1,3 +1,13 @@
+2006-06-24  Jonas Witt <jonas.witt@gmail.com>
+
+        Reviewed by ggaren, landed by ap.
+
+        - test that DOMEvents are correctly handed to the ObjC API
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=9181
+
+        * fast/events/objc-event-api-expected.txt: Added.
+        * fast/events/objc-event-api.html: Added.
+
 2006-06-23  Tim Omernick  <timo@apple.com>
 
         Reviewed by Tim Hatcher.

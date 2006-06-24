@@ -1549,6 +1549,7 @@
 		D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */; };
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
+		E1052C320A4D70010072D99B /* DOMEventsNonstandard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1052C310A4D70010072D99B /* DOMEventsNonstandard.mm */; };
 		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
 		E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F0424409839389006694EA /* xmlhttprequest.cpp */; };
@@ -3284,6 +3285,7 @@
 		D0B0556609C6700100307E43 /* CreateLinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateLinkCommand.h; sourceTree = "<group>"; };
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
+		E1052C310A4D70010072D99B /* DOMEventsNonstandard.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMEventsNonstandard.mm; sourceTree = "<group>"; };
 		E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextDecoder.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		E1F0424409839389006694EA /* xmlhttprequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlhttprequest.cpp; sourceTree = "<group>"; };
@@ -4905,6 +4907,7 @@
 				BC1A379B097C715F0019F3D8 /* DOMCSS.mm */,
 				BC1A379C097C715F0019F3D8 /* DOMEvents.h */,
 				BC1A379D097C715F0019F3D8 /* DOMEvents.mm */,
+				E1052C310A4D70010072D99B /* DOMEventsNonstandard.mm */,
 				BC1A379E097C715F0019F3D8 /* DOMEventsInternal.h */,
 				BC1A379F097C715F0019F3D8 /* DOMExtensions.h */,
 				BC1A37A0097C715F0019F3D8 /* DOMHTML.h */,
@@ -7161,6 +7164,7 @@
 				85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */,
 				ABE7B5230A489F830031881C /* DeprecatedRenderSelect.cpp in Sources */,
 				51F11E150A48C2920034A24E /* SQLTransaction.cpp in Sources */,
+				E1052C320A4D70010072D99B /* DOMEventsNonstandard.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +29,20 @@
 
 #import "DOMEventsInternal.h"
 #import "DOMInternal.h"
+#import "DOMPrivate.h"
 #import "DOMViewsInternal.h"
 #import "Document.h"
 #import "Event.h"
 #import "MouseEvent.h"
+#import "KeyboardEvent.h"
 #import "MutationEvent.h"
 #import "UIEvent.h"
 
 using namespace WebCore;
 
 ALLOW_DOM_CAST(Event)
+
+@class DOMWheelEvent;
 
 @implementation DOMEvent
 
@@ -122,16 +127,72 @@ ALLOW_DOM_CAST(Event)
         return [[cachedInstance retain] autorelease];
     
     Class wrapperClass = nil;
-    if (impl->isMouseEvent()) {
+    if (impl->isWheelEvent()) {
+        wrapperClass = [DOMWheelEvent class];        
+    } else if (impl->isMouseEvent()) {
         wrapperClass = [DOMMouseEvent class];
     } else if (impl->isMutationEvent()) {
         wrapperClass = [DOMMutationEvent class];
+    } else if (impl->isKeyboardEvent()) {
+        wrapperClass = [DOMKeyboardEvent class];
     } else if (impl->isUIEvent()) {
         wrapperClass = [DOMUIEvent class];
     } else {
         wrapperClass = [DOMEvent class];
     }
     return [[[wrapperClass alloc] _initWithEvent:impl] autorelease];
+}
+
+@end
+
+@implementation DOMKeyboardEvent
+
+- (KeyboardEvent *)_keyboardEvent
+{
+    return static_cast<KeyboardEvent *>(DOM_cast<Event *>(_internal));
+}
+
+- (NSString*)keyIdentifier
+{
+    return (NSString *) [self _keyboardEvent]->keyIdentifier();
+}
+
+- (unsigned)keyLocation
+{
+    return [self _keyboardEvent]->keyLocation();
+}
+
+- (BOOL)ctrlKey
+{
+    return [self _keyboardEvent]->ctrlKey();
+}
+
+- (BOOL)shiftKey
+{
+    return [self _keyboardEvent]->shiftKey();
+}
+
+- (BOOL)altKey
+{
+    return [self _keyboardEvent]->altKey();
+}
+
+- (BOOL)metaKey
+{
+    return [self _keyboardEvent]->metaKey();
+}
+
+- (BOOL)getModifierState:(NSString *)keyIdentifierArg
+{
+    if ([keyIdentifierArg isEqualToString:@"Control"] && [self ctrlKey])
+        return YES;
+    if ([keyIdentifierArg isEqualToString:@"Shift"] && [self shiftKey])
+        return YES;
+    if ([keyIdentifierArg isEqualToString:@"Alt"] && [self altKey])
+        return YES;
+    if ([keyIdentifierArg isEqualToString:@"Meta"] && [self metaKey])
+        return YES;
+    return NO;
 }
 
 @end
