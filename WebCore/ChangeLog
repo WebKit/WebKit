@@ -2,6 +2,32 @@
 
         Reviewed by Darin, landed by ap.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9547
+          Resize corner does not track the mouse accurately
+
+        Test: fast/css/resize-corner-tracking.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleMousePressEvent): Store the offset from the layer's
+        resizing corner where dragging has started.
+        (WebCore::FrameView::handleMouseMoveEvent): Pass the stored offset to the
+        layer's resize method.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize): Added an offset parameter, which is added to
+        the mouse location.
+        For objects that may have intrinsic margins applied to them,
+        added code to lift the margins into the object's style in order to keep them
+        constant.
+        Changed to take the content size as the base size if the box-sizing property
+        is content-box.
+        (WebCore::RenderLayer::offsetFromResizeCorner): Added. Returns the offset of the
+        given point from the corner that tracks the mouse when resizing.
+        * rendering/RenderLayer.h:
+
+2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9316
           REGRESSION: text field width shrinks on first keystroke
 

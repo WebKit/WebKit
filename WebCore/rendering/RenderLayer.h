@@ -241,6 +241,7 @@ public:
     void positionScrollbars(const IntRect& absBounds);
     void positionResizeControl();
     bool isPointInResizeControl(const IntPoint&);
+    IntSize offsetFromResizeCorner(const IntPoint&) const;
     void paintScrollbars(GraphicsContext*, const IntRect& damageRect);
     void paintResizeControl(GraphicsContext*);
     void updateScrollInfoAfterLayout();
@@ -250,7 +251,7 @@ public:
     bool shouldAutoscroll();
     IntRect resizeControlRect() { return m_resizeControlRect; }
     void setResizeControlRect(const IntRect& r) { m_resizeControlRect = r; }
-    void resize(const PlatformMouseEvent&);
+    void resize(const PlatformMouseEvent&, const IntSize&);
     bool inResizeMode() const { return m_inResizeMode; }
     void setInResizeMode(bool b) { m_inResizeMode = b; }
     

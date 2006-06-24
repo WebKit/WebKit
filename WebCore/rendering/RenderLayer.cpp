@@ -55,6 +55,7 @@
 #include "HTMLNames.h"
 #include "PlatformMouseEvent.h"
 #include "RenderArena.h"
+#include "RenderFormElement.h"
 #include "RenderInline.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -800,7 +801,7 @@ bool RenderLayer::shouldAutoscroll()
     return false;
 }
 
-void RenderLayer::resize(const PlatformMouseEvent& evt)
+void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& offsetFromResizeCorner)
 {
     if (!inResizeMode() || !renderer()->hasOverflowClip() || m_object->style()->resize() == RESIZE_NONE)
         return;
@@ -814,6 +815,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt)
     // the cursor in view.
 
     IntPoint currentPoint = m_object->document()->view()->viewportToContents(evt.pos());
+    currentPoint += offsetFromResizeCorner;
 
     int x;
     int y;
@@ -827,13 +829,25 @@ void RenderLayer::resize(const PlatformMouseEvent& evt)
     // Set the width and height for the shadow ancestor node.  This is necessary for textareas since the resizable layer is on the inner div.
     // For non-shadow content, this will set the width and height on the original node.
     RenderObject* renderer = m_object->node()->shadowAncestorNode()->renderer();
-    if (diffWidth && (m_object->style()->resize() == RESIZE_HORIZONTAL || m_object->style()->resize() == RESIZE_BOTH))
-        static_cast<Element*>(m_object->node()->shadowAncestorNode())->style()->setProperty(CSS_PROP_WIDTH, 
-                                                                                String::number(renderer->width() + diffWidth) + "px", false, ec);
+    if (diffWidth && (m_object->style()->resize() == RESIZE_HORIZONTAL || m_object->style()->resize() == RESIZE_BOTH)) {
+        CSSStyleDeclaration* style = static_cast<Element*>(m_object->node()->shadowAncestorNode())->style();
+        if (renderer->style()->hasAppearance() || renderer->isFormElement() && static_cast<RenderFormElement*>(renderer)->canHaveIntrinsicMargins()) {
+            style->setProperty(CSS_PROP_MARGIN_LEFT, String::number(renderer->marginLeft()) + "px", false, ec);
+            style->setProperty(CSS_PROP_MARGIN_RIGHT, String::number(renderer->marginRight()) + "px", false, ec);
+        }
+        int baseWidth = renderer->width() - (renderer->style()->boxSizing() == BORDER_BOX ? 0 : renderer->borderLeft() + renderer->paddingLeft() + renderer->borderRight() + renderer->paddingRight());
+        style->setProperty(CSS_PROP_WIDTH, String::number(baseWidth + diffWidth) + "px", false, ec);
+    }
 
-    if (diffHeight && (m_object->style()->resize() == RESIZE_VERTICAL || m_object->style()->resize() == RESIZE_BOTH))
-        static_cast<Element*>(m_object->node()->shadowAncestorNode())->style()->setProperty(CSS_PROP_HEIGHT, 
-                                                                                String::number(renderer->height() + diffHeight) + "px", false, ec);
+    if (diffHeight && (m_object->style()->resize() == RESIZE_VERTICAL || m_object->style()->resize() == RESIZE_BOTH)) {
+        CSSStyleDeclaration* style = static_cast<Element*>(m_object->node()->shadowAncestorNode())->style();
+        if (renderer->style()->hasAppearance() || renderer->isFormElement() && static_cast<RenderFormElement*>(renderer)->canHaveIntrinsicMargins()) {
+            style->setProperty(CSS_PROP_MARGIN_TOP, String::number(renderer->marginTop()) + "px", false, ec);
+            style->setProperty(CSS_PROP_MARGIN_BOTTOM, String::number(renderer->marginBottom()) + "px", false, ec);
+        }
+        int baseHeight = renderer->height() - (renderer->style()->boxSizing() == BORDER_BOX ? 0 : renderer->borderTop() + renderer->paddingTop() + renderer->borderBottom() + renderer->paddingBottom());
+        style->setProperty(CSS_PROP_HEIGHT, String::number(baseHeight + diffHeight) + "px", false, ec);
+    }
     
     ASSERT(ec == 0);
 
@@ -921,6 +935,15 @@ RenderLayer::horizontalScrollbarHeight()
 bool RenderLayer::isPointInResizeControl(const IntPoint& p)
 {
     return resizeControlRect().contains(IntRect(p, IntSize()));
+}
+
+IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& p) const
+{
+    // Currently the resize corner is always the bottom right corner
+    int x = width();
+    int y = height();
+    convertToLayerCoords(root(), x, y);
+    return IntSize(x - p.x(), y - p.y());
 }
 
 void RenderLayer::positionResizeControl()

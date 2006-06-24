@@ -1,5 +1,17 @@
 2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin, landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9547
+          Resize corner does not track the mouse accurately
+
+        * fast/css/resize-corner-tracking-expected.checksum: Added.
+        * fast/css/resize-corner-tracking-expected.png: Added.
+        * fast/css/resize-corner-tracking-expected.txt: Added.
+        * fast/css/resize-corner-tracking.html: Added.
+
+2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Darin. landed by ap.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9316

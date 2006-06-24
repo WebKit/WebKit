@@ -137,6 +137,7 @@ public:
     Timer<FrameView> hoverTimer;
     
     RenderLayer* m_resizeLayer;
+    IntSize offsetFromResizeCorner;
     
     // Used by objects during layout to communicate repaints that need to take place only
     // after all layout has been completed.
@@ -530,6 +531,7 @@ void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     if (layer && layer->isPointInResizeControl(p)) {
         layer->setInResizeMode(true);
         d->m_resizeLayer = layer;
+        d->offsetFromResizeCorner = layer->offsetFromResizeCorner(p);
         invalidateClick();
         return;  
     }
@@ -692,7 +694,7 @@ void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
     
     if (d->m_resizeLayer && d->m_resizeLayer->inResizeMode())
-        d->m_resizeLayer->resize(mouseEvent);
+        d->m_resizeLayer->resize(mouseEvent, d->offsetFromResizeCorner);
 
     if (!swallowEvent)
         m_frame->handleMouseMoveEvent(mev);
