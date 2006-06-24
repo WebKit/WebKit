@@ -1,5 +1,14 @@
 2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
 
+        Reviewed by Timothy.
+
+        * DrawTest/Info.plist: Added copyright statement.
+        * Drosera/Info.plist: Ditto.
+        * DumpRenderTree/TestNetscapePlugIn.subproj/Info.plist: Ditto.
+        * WebKitLauncher/Info.plist: Ditto.
+
+2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
+
         Build fix. Reviewed by NOBODY.
 
         - Backed out http://bugzilla.opendarwin.org/show_bug.cgi?id=7802

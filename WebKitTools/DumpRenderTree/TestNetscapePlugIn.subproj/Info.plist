@@ -6,6 +6,8 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>TestNetscapePlugIn</string>
+	<key>CFBundleGetInfoString</key>
+	<string>420+, Copyright 2006 Apple Computer, Inc.</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>

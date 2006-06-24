@@ -29,6 +29,8 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>DrawTest</string>
+	<key>CFBundleGetInfoString</key>
+	<string>420+, Copyright 2005, 2006 Apple Computer, Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.DrawTest</string>
 	<key>CFBundleInfoDictionaryVersion</key>

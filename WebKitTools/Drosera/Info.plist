@@ -10,6 +10,8 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleGetInfoString</key>
+	<string>420+, Copyright 2006 Apple Computer, Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.webkit.drosera</string>
 	<key>CFBundleVersion</key>

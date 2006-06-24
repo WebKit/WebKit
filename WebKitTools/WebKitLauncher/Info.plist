@@ -406,6 +406,8 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleGetInfoString</key>
+	<string>420+, Copyright 2005, 2006 Apple Computer, Inc.; Copyright 2005, 2006 Mark Rowe &lt;opendarwin.org@bdash.net.nz&gt;</string>
 	<key>CFBundleIconFile</key>
 	<string>webkit.icns</string>
 	<key>CFBundleIdentifier</key>
