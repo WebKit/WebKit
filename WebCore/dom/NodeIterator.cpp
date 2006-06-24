@@ -51,7 +51,7 @@ NodeIterator::~NodeIterator()
 
 Node* NodeIterator::findNextNode(Node* node) const
 {
-    while ((node = node->traverseNextNode())) {
+    while ((node = node->traverseNextNode(root()))) {
         // NodeIterators treat the DOM tree as a flat list of nodes.
         // In other words, FILTER_REJECT does not pass over descendants
         // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.
@@ -79,7 +79,7 @@ Node* NodeIterator::nextNode(ExceptionCode& ec)
 
 Node* NodeIterator::findPreviousNode(Node* node) const
 {
-    while ((node = node->traversePreviousNode())) {
+    while ((node = node->traversePreviousNode(root()))) {
         // NodeIterators treat the DOM tree as a flat list of nodes.
         // In other words, FILTER_REJECT does not pass over descendants
         // of the rejected node. Hence, FILTER_REJECT is the same as FILTER_SKIP.

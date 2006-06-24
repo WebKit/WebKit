@@ -479,15 +479,16 @@ Node *Node::traverseNextSibling(const Node *stayWithin) const
     return 0;
 }
 
-Node *Node::traversePreviousNode() const
+Node *Node::traversePreviousNode(const Node *stayWithin) const
 {
+    if (this == stayWithin)
+        return 0;
     if (previousSibling()) {
         Node *n = previousSibling();
         while (n->lastChild())
             n = n->lastChild();
         return n;
     }
-    
     return parentNode();
 }
 

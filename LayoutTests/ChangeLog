@@ -1,3 +1,27 @@
+2006-06-24  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - test and updated results for http://bugzilla.opendarwin.org/show_bug.cgi?id=9467
+          TreeWalker/NodeIterator do not restrict the traversal
+
+        * traversal/node-iterator-001.html:
+        * traversal/node-iterator-002.html:
+        * traversal/node-iterator-003.html:
+        * traversal/node-iterator-004.html:
+        * traversal/node-iterator-005.html:
+        * traversal/node-iterator-006.html:
+        * traversal/node-iterator-007.html:
+        * traversal/stay-within-root-expected.checksum: Added.
+        * traversal/stay-within-root-expected.png: Added.
+        * traversal/stay-within-root-expected.txt: Added.
+        * traversal/stay-within-root.html: Added.
+        * traversal/tree-walker-001.html:
+        * traversal/tree-walker-002.html:
+        * traversal/tree-walker-003.html:
+        * traversal/tree-walker-004.html:
+        * traversal/tree-walker-005.html:
+
 2006-06-24  Jonas Witt <jonas.witt@gmail.com>
 
         Reviewed by ggaren, landed by ap.

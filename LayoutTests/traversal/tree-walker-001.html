@@ -40,7 +40,8 @@
 </div>
 <div style="font-family: Courier; font-size: 14; white-space: pre">
 <script>
-var root = document.getElementById('A');
+var root = document.getElementById('test');
+var start = document.getElementById('A');
 
 function testNodeFiter(n)
 {
@@ -49,7 +50,7 @@ function testNodeFiter(n)
 }
 
 var tw = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, testNodeFiter, false);
-document.write(dumpTreeWalker(tw, root));
+document.write(dumpTreeWalker(tw, start));
 </script>
 </div>
 </body>

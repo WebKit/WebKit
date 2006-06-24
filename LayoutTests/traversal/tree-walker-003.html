@@ -46,7 +46,8 @@
 </div>
 <div style="font-family: Courier; font-size: 14; white-space: pre">
 <script>
-var root = document.getElementById('A');
+var root = document.getElementById('test');
+var start = document.getElementById('A');
 
 function testNodeFiter(n)
 {
@@ -59,10 +60,10 @@ function testNodeFiter(n)
 }
 
 var tw1 = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, testNodeFiter, false);
-document.write(dumpTreeWalker(tw1, root));
+document.write(dumpTreeWalker(tw1, start));
 
 var tw2 = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, testNodeFiter, false);
-document.write(dumpTreeWalker(tw2, root, document.getElementById('D'), true));
+document.write(dumpTreeWalker(tw2, start, document.getElementById('D'), true));
 
 </script>
 </div>

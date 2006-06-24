@@ -1,3 +1,28 @@
+2006-06-24  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by Darin, landed by ap.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9467
+          TreeWalker/NodeIterator do not restrict the traversal
+        
+        Test: traversal/stay-within-root.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::traversePreviousNode):
+        * dom/Node.h:
+        Add a stayWithin argument to traversePreviousNode just like the other
+        traversal functions
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::findNextNode):
+        (WebCore::NodeIterator::findPreviousNode):
+        Ensure that when moving forward or backward that the root node is not
+        exited
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::previousNode):
+        (WebCore::TreeWalker::nextNode):
+        Ditto
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+
 2006-06-24  Jonas Witt <jonas.witt@gmail.com>
 
         Reviewed by ggaren, landed by ap.

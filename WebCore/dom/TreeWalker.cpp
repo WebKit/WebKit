@@ -124,7 +124,7 @@ Node* TreeWalker::nextSibling()
 Node* TreeWalker::previousNode()
 {
     Node* result = 0;
-    for (Node* node = currentNode()->traversePreviousNode(); node; node = node->traversePreviousNode()) {
+    for (Node* node = currentNode()->traversePreviousNode(root()); node; node = node->traversePreviousNode(root())) {
         if (acceptNode(node) == NodeFilter::FILTER_ACCEPT && !ancestorRejected(node)) {
             setCurrentNode(node);
             result = node;
@@ -137,7 +137,7 @@ Node* TreeWalker::previousNode()
 Node* TreeWalker::nextNode()
 {
     Node* result = 0;
-    for (Node* node = currentNode()->traverseNextNode(); node; node = node->traverseNextNode()) {
+    for (Node* node = currentNode()->traverseNextNode(root()); node; node = node->traverseNextNode(root())) {
         if (acceptNode(node) == NodeFilter::FILTER_ACCEPT && !ancestorRejected(node)) {
             setCurrentNode(node);
             result = node;
