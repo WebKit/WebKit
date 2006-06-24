@@ -1,3 +1,12 @@
+2006-06-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Adding more operator[] overloads for long and short types.
+
+        * wtf/Vector.h:
+        (WTF::Vector::operator[]):
+
 2006-06-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Adele.
