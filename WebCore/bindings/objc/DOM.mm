@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 James G. Speth (speth@end.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,10 +105,6 @@ using namespace WebCore::HTMLNames;
 @interface DOMImplementation (WebCoreInternal)
 + (DOMImplementation *)_DOMImplementationWith:(DOMImplementationFront *)impl;
 - (DOMImplementationFront *)_DOMImplementation;
-@end
-
-@interface DOMNamedNodeMap (WebCoreInternal)
-+ (DOMNamedNodeMap *)_namedNodeMapWith:(NamedNodeMap *)impl;
 @end
 
 class ObjCEventListener : public EventListener {

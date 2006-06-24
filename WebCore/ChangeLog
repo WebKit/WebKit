@@ -1,3 +1,25 @@
+2006-06-24  James G. Speth  <speth@end.com>
+
+        Reviewed by Darin.  Copyrights tweaked by ddkilzer.
+        
+        Bug 8331: DOMNodeLists returned to Objective-C are not properly wrapped
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8331
+        
+        DOMNodes were the only objects handled by createObjcInstanceForValue.
+        now it handles all of these: DOMNode, DOMNodeList, DOMNamedNodeMap, DOMStyleSheetList,
+        DOMStyleSheet, DOMMediaList, DOMCSSRuleList, DOMCSSRule, DOMCSSStyleDeclaration, and DOMCSSValue
+        
+        * WebCore.xcodeproj/project.pbxproj: added file DOMCSSInternal.h to project
+        * bindings/js/kjs_css.cpp:
+        (KJS::): changed ClassInfo for DOMCSSStyleSheet to have DOMStyleSheet as its parent class
+        * bindings/objc/DOM.mm:
+        (-[DOMDocumentType :]):  moved DOMNamedNodeMap (WebCoreInternal) interface to DOMInternal.h
+        * bindings/objc/DOMCSS.mm: moved WebCoreInternal interfaces to DOMCSSInternal.h
+        * bindings/objc/DOMCSSInternal.h: Added file, contains WebCoreInternal interface for CSS classes
+        * bindings/objc/DOMInternal.h: added DOMNamedNodeMap (WebCoreInternal) interface
+        * bindings/objc/DOMUtility.mm:
+        (KJS::ScriptInterpreter::createObjcInstanceForValue): support for more classes
+
 2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Timothy.

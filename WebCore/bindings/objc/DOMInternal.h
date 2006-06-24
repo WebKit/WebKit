@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 James G. Speth (speth@end.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +36,7 @@ namespace WebCore {
     class NodeFilter;
     class Node;
     class NodeIterator;
+    class NamedNodeMap;
     class NodeList;
     class Range;
     class StyleSheetList;
@@ -46,6 +48,10 @@ namespace WebCore {
 @interface DOMNode (WebCoreInternal)
 + (DOMNode *)_nodeWith:(WebCore::Node *)impl;
 - (WebCore::Node *)_node;
+@end
+
+@interface DOMNamedNodeMap (WebCoreInternal)
++ (DOMNamedNodeMap *)_namedNodeMapWith:(WebCore::NamedNodeMap *)impl;
 @end
 
 @interface DOMNodeList (WebCoreInternal)

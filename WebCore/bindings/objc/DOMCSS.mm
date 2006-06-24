@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 James G. Speth (speth@end.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +27,7 @@
 #import "config.h"
 #import "DOMCSS.h"
 
+#import "DOMCSSInternal.h"
 #import "CSSCharsetRule.h"
 #import "CSSFontFaceRule.h"
 #import "CSSImportRule.h"
@@ -54,42 +56,6 @@
 using namespace WebCore;
 
 typedef DOMWindow AbstractView;
-
-@interface DOMStyleSheet (WebCoreInternal)
-+ (DOMStyleSheet *)_DOMStyleSheetWith:(StyleSheet *)impl;
-@end
-
-@interface DOMMediaList (WebCoreInternal)
-+ (DOMMediaList *)_mediaListWith:(MediaList *)impl;
-@end
-
-@interface DOMCSSRuleList (WebCoreInternal)
-+ (DOMCSSRuleList *)_ruleListWith:(CSSRuleList *)impl;
-@end
-
-@interface DOMCSSRule (WebCoreInternal)
-+ (DOMCSSRule *)_ruleWith:(CSSRule *)impl;
-@end
-
-@interface DOMCSSValue (WebCoreInternal)
-+ (DOMCSSValue *)_valueWith:(CSSValue *)impl;
-@end
-
-@interface DOMCSSPrimitiveValue (WebCoreInternal)
-+ (DOMCSSPrimitiveValue *)_valueWith:(CSSValue *)impl;
-@end
-
-@interface DOMRGBColor (WebCoreInternal)
-+ (DOMRGBColor *)_RGBColorWithRGB:(RGBA32)value;
-@end
-
-@interface DOMRect (WebCoreInternal)
-+ (DOMRect *)_rectWith:(RectImpl *)impl;
-@end
-
-@interface DOMCounter (WebCoreInternal)
-+ (DOMCounter *)_counterWith:(Counter *)impl;
-@end
 
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
