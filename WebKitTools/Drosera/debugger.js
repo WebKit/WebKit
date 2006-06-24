@@ -32,6 +32,7 @@ var currentRow = null;
 var currentStack = null;
 var previousFiles = new Array();
 var nextFiles = new Array();
+var isResizingColumn = false;
 
 function sleep(numberMillis) {
     var now = new Date();
@@ -43,8 +44,18 @@ function sleep(numberMillis) {
     }
 }
 
+function columnResizerMouseOver(element) {
+    element.style.cursor = "move";
+}
+
+function columnResizerMouseOut(element) {
+
+    element.style.cursor = "arrow";
+}
+
 function headerMouseDown(element) {
-    element.style.background = "url(glossyHeaderPressed.png) repeat-x";
+    if (!isResizingColumn) 
+        element.style.background = "url(glossyHeaderPressed.png) repeat-x";
 }
 
 function headerMouseUp(element) {
@@ -72,6 +83,16 @@ function infoDividerDragStart(event) {
     dividerDragStart(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd, event);
 }
 
+function columnResizerDragStart(event) {
+    isResizingColumn = true;
+    dividerDragStart(document.getElementById("variableColumnResizer"), columnResizerDrag, columnResizerDragEnd, event);
+}
+
+function columnResizerDragEnd(event) {
+    isResizingColumn = false;
+    dividerDragEnd(document.getElementById("variableColumnResizer"), columnResizerDrag, columnResizerDragEnd, event);
+}
+
 function infoDividerDragEnd(event) {
     dividerDragEnd(document.getElementById("infoDivider"), infoDividerDrag, infoDividerDragEnd);
 }
@@ -86,6 +107,39 @@ function dividerDragEnd(element, dividerDrag, dividerDragEnd, event) {
     document.removeEventListener("mouseup", dividerDragEnd, true);
 }
 
+function columnResizerDrag(event) {
+    var element = document.getElementById("variableColumnResizer");
+    if (element.dragging == true) {
+        var main = document.getElementById("rightPane");
+        var variableColumn = document.getElementById("variable");
+        var x = event.clientX + window.scrollX;
+        var delta = element.dragLastX - x;
+        var newWidth = constrainedWidthFromElement(variableColumn.clientWidth - delta, main);
+        variableColumn.style.width = newWidth + "px";
+        element.style.left = newWidth + "px";
+        element.dragLastX = x;
+        event.preventDefault();
+    }
+}
+
+function constrainedWidthFromElement(width, element) {
+    if (width < element.clientWidth * 0.25)
+        width = element.clientWidth * 0.25;
+    else if (width > element.clientWidth * 0.75)
+        width = element.clientWidth * 0.75;
+
+    return width;
+}
+
+function constrainedHeightFromElement(height, element) {
+    if (height < element.clientHeight * 0.25)
+        height = element.clientHeight * 0.25;
+    else if (height > element.clientHeight * 0.75)
+        height = element.clientHeight * 0.75;
+
+    return height;
+}
+
 function infoDividerDrag(event) {
     var element = document.getElementById("infoDivider");
     if (document.getElementById("infoDivider").dragging == true) {
@@ -94,13 +148,7 @@ function infoDividerDrag(event) {
         var rightPane = document.getElementById("rightPane");
         var x = event.clientX + window.scrollX;
         var delta = element.dragLastX - x;
-
-        var newWidth = leftPane.clientWidth - delta;
-        if (newWidth < main.clientWidth * 0.25)
-            newWidth = main.clientWidth * 0.25;
-        else if (newWidth > main.clientWidth * 0.75)
-            newWidth = main.clientWidth * 0.75;
-
+        var newWidth = constrainedWidthFromElement(leftPane.clientWidth - delta, main);
         leftPane.style.width = newWidth + "px";
         rightPane.style.left = newWidth + "px";
         element.dragLastX = x;
@@ -116,16 +164,9 @@ function dividerDrag(event) {
         var bottom = document.getElementById("body");
         var y = event.clientY + window.scrollY;
         var delta = element.dragLastY - y;
-
-        var newHeight = top.clientHeight - delta;
-        if (newHeight < main.clientHeight * 0.25)
-            newHeight = main.clientHeight * 0.25;
-        else if (newHeight > main.clientHeight * 0.75)
-            newHeight = main.clientHeight * 0.75;
-
+        var newHeight = constrainedHeightFromElement(top.clientHeight - delta, main);
         top.style.height = newHeight + "px";
         bottom.style.top = newHeight + "px";
-
         element.dragLastY = y;
         event.preventDefault();
     }
@@ -134,6 +175,7 @@ function dividerDrag(event) {
 function loaded() {
     document.getElementById("divider").addEventListener("mousedown", sourceDividerDragStart, false);
     document.getElementById("infoDivider").addEventListener("mousedown", infoDividerDragStart, false);
+    document.getElementById("variableColumnResizer").addEventListener("mousedown", columnResizerDragStart, false);
 }
 
 function isPaused() {

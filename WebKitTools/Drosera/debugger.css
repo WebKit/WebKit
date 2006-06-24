@@ -205,13 +205,22 @@ td { padding: 3px 7px 3px 9px; height: 15px; box-sizing: border-box; }
 }
 
 .variable {
-    width: 12em;
+    width: 170px;
 }
 
 .column th.scrollCorner {
     width: 15px;
     padding: 0;
     border-right: none;
+}
+
+#variableColumnResizer { 
+    position: absolute;
+    top: 0;
+    left: 168px;
+    width: 4px;
+    height: 16px;
+    cursor: move;
 }
 
 .column th {

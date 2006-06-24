@@ -1,3 +1,9 @@
+2006-06-23  Kevin Decker         <kdecker@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - Made column headers in Drosera resizable.
+
 2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by ggaren.
