@@ -1,3 +1,12 @@
+2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Rubber-stamped by Eric.
+
+        Add a -h (do not follow symlinks) option to ln in derived sources build script (without it,
+        a symlink was created inside the source directory on second build).
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-06-24  James G. Speth  <speth@end.com>
 
         Reviewed by Darin.  Copyrights tweaked by ddkilzer.
