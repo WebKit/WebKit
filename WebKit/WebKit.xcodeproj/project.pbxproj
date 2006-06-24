@@ -1716,9 +1716,10 @@
 					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
+					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
 					icu,
 				);
+				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
@@ -1751,9 +1752,10 @@
 					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
+					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
 					icu,
 				);
+				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
@@ -1788,9 +1790,10 @@
 					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
+					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
 					icu,
 				);
+				HEADER_SEARCH_PATHS_QUOTED_1 = "\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";

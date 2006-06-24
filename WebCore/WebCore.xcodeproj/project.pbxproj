@@ -6432,7 +6432,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nexport WebCore=\"${SRCROOT}\"\n\nexport ENCODINGS_FILE=\"${WebCore}/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kCFStringEncoding\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" ]; then\n\tmake -f \"${WebCore}/DerivedSources.make\"\nfi\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\nif [ \"${BUILD_STYLE}\" = \"Release\" -o \"${BUILD_STYLE}\" = \"Debug\" ] ; then\n    export CREATE_HASH_TABLE=\"../../JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nelse\n    export CREATE_HASH_TABLE=\"${NEXT_ROOT}${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table\"\nfi\n\nln -sf \"${SRCROOT}\" WebCore\nexport WebCore=\"WebCore\"\n\nexport ENCODINGS_FILE=\"WebCore/platform/mac/mac-encodings.txt\"\nexport ENCODINGS_PREFIX=\"kCFStringEncoding\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" ]; then\n    make -f \"WebCore/DerivedSources.make\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -7193,8 +7193,9 @@
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
-					"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore",
+					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
 				);
+				HEADER_SEARCH_PATHS_QUOTED_1 = "\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
@@ -7226,8 +7227,9 @@
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
-					"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore",
+					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
 				);
+				HEADER_SEARCH_PATHS_QUOTED_1 = "\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
@@ -7260,8 +7262,9 @@
 					icu,
 					/usr/include/libxslt,
 					/usr/include/libxml2,
-					"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore",
+					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
 				);
+				HEADER_SEARCH_PATHS_QUOTED_1 = "\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_LDFLAGS = (

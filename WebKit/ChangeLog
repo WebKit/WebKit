@@ -1,3 +1,12 @@
+2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9418
+        WebKit will not build when Space exists in path
+
+        * WebKit.xcodeproj/project.pbxproj: Enclose search paths in quotes.
+
 2006-06-23  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.
