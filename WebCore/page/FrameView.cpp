@@ -312,6 +312,11 @@ void FrameView::addRepaintInfo(RenderObject* o, const IntRect& r)
     d->repaintRects->append(new RenderObject::RepaintInfo(o, r));
 }
 
+Node* FrameView::layoutRoot() const
+{
+    return layoutPending() ? 0 : d->layoutRoot.get();
+}
+
 void FrameView::layout(bool allowSubtree)
 {
     d->layoutTimer.stop();
@@ -1186,7 +1191,7 @@ void FrameView::scheduleRelayoutOfSubtree(Node* n)
     }
 }
 
-bool FrameView::layoutPending()
+bool FrameView::layoutPending() const
 {
     return d->layoutTimer.isActive();
 }

@@ -117,6 +117,7 @@ public:
 
     void layout(bool allowSubtree = true);
 
+    Node* layoutRoot() const;
     int layoutCount() const;
 
     bool needsFullRepaint() const;
@@ -156,7 +157,7 @@ public:
     void scheduleRelayoutOfSubtree(Node*);
     void unscheduleRelayout();
     bool haveDelayedLayoutScheduled();
-    bool layoutPending();
+    bool layoutPending() const;
 
     void scheduleHoverStateUpdate();
 

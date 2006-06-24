@@ -1,5 +1,17 @@
 2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin. landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9316
+          REGRESSION: text field width shrinks on first keystroke
+
+        * fast/forms/floating-textfield-relayout-expected.checksum: Added.
+        * fast/forms/floating-textfield-relayout-expected.png: Added.
+        * fast/forms/floating-textfield-relayout-expected.txt: Added.
+        * fast/forms/floating-textfield-relayout.html: Added.
+
+2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Hyatt.
 
         - updated test results for http://bugzilla.opendarwin.org/show_bug.cgi?id=9531

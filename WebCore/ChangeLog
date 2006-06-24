@@ -1,5 +1,23 @@
 2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9316
+          REGRESSION: text field width shrinks on first keystroke
+
+        Test: fast/forms/floating-textfield-relayout.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutRoot): Added. During subtree relayout, returns
+        the subtree root. Otherwise returns 0.
+        (WebCore::FrameView::layoutPending): Made const.
+        * page/FrameView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcWidth): Added early return if this is the root
+        of a subtree being laid out. 
+
+2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Hyatt.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9531
