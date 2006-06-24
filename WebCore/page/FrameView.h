@@ -117,7 +117,6 @@ public:
 
     void layout(bool allowSubtree = true);
 
-    bool inLayout() const;
     int layoutCount() const;
 
     bool needsFullRepaint() const;

@@ -1,3 +1,19 @@
+2006-06-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by ap.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9563
+          Remove unused layoutSuppressed field and inLayout() method
+
+        No test added because there is no change in functionality.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::layout):
+        * page/FrameView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+
 2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
