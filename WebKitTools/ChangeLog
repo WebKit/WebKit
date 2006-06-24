@@ -1,3 +1,12 @@
+2006-06-24  Bjoern Graf  <bjoern.graf@gmail.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7802
+          devenv.com not available in VC++ Express installations
+
+        * Scripts/webkitdirs.pm: Make Windows build work with Visual C++ Express.
+
 2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
