@@ -1,3 +1,15 @@
+2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7461
+          Always encode the path part of an URI as UTF-8
+
+        Test: http/tests/uri/utf8-path.html
+
+        * platform/KURL.cpp:
+        (encodeRelativeString): Always set pathEncoding to UTF-8.
+
 2006-06-24  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by Darin, landed by ap.

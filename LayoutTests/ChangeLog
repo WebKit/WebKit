@@ -1,3 +1,15 @@
+2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7461
+          Always encode the path part of an URI as UTF-8
+
+        * http/tests/uri/intercept/.htaccess: Added.
+        * http/tests/uri/resources/print-uri.php: Added.
+        * http/tests/uri/utf8-path-expected.txt: Added.
+        * http/tests/uri/utf8-path.html: Added.
+
 2006-06-24  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by Darin, landed by ap.

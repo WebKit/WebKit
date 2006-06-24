@@ -1396,40 +1396,8 @@ static char *encodeRelativeString(const KURL &base, const DeprecatedString &rel,
 
     char *strBuffer;
 
-    static const WebCore::TextEncoding utf8Encoding(UTF8Encoding);
-
-    WebCore::TextEncoding pathEncoding = encoding.isValid() ? encoding : utf8Encoding;
-    WebCore::TextEncoding otherEncoding = pathEncoding;
-    
-    // Always use UTF-8 for mailto URLs because that's what mail applications expect.
-    // Always use UTF-8 for paths in file and help URLs, since they are local filesystem paths,
-    // and help content is often defined with this in mind, but use native encoding for the
-    // non-path parts of the URL.
-    if (pathEncoding != utf8Encoding) {
-        DeprecatedString protocol;
-        if (rel.length() > 0 && isSchemeFirstChar(rel.at(0).latin1())) {
-            for (unsigned i = 1; i < rel.length(); i++) {
-                char p = rel.at(i).latin1();
-                if (p == ':') {
-                    protocol = rel.left(i);
-                    break;
-                }
-                if (!isSchemeChar(p)) {
-                    break;
-                }
-            }
-        }
-        if (!protocol) {
-            protocol = base.protocol();
-        }
-        protocol = protocol.lower();
-        if (protocol == "file" || protocol == "help") {
-            pathEncoding = utf8Encoding;
-        } else if (protocol == "mailto") {
-            pathEncoding = utf8Encoding;
-            otherEncoding = utf8Encoding;
-        }
-    }
+    WebCore::TextEncoding pathEncoding(UTF8Encoding);
+    WebCore::TextEncoding otherEncoding = encoding.isValid() ? encoding : WebCore::TextEncoding(UTF8Encoding);
     
     int pathEnd = -1;
     if (pathEncoding != otherEncoding) {
