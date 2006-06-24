@@ -1,3 +1,15 @@
+2006-06-23  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4560947> Leopard REGRESSION: Dragging to TileGame Widget is broken
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateDragAndDrop):
+        Use the passed mouse event, instead of the "current" event.  There is no such thing as
+        a "drag event".  Asking for the current event during a drag returns a weird system-
+        internal event with an invalid mouse location.
+
 2006-06-23  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Eric.

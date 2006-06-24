@@ -1,0 +1,33 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 2 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > BODY > HTML > #document to 1 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > BODY > HTML > #document to 1 of #text > SPAN > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > BODY > HTML > #document to 4 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 8 of #text > DIV > SPAN > BODY > HTML > #document to 8 of #text > DIV > SPAN > BODY > HTML > #document givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > SPAN > DIV > SPAN > BODY > HTML > #document to 4 of #text > SPAN > DIV > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderInline {SPAN} at (0,0) size 0x18
+          RenderBR {BR} at (0,0) size 0x18
+      RenderBlock (anonymous) at (0,34) size 784x336
+        RenderBlock {P} at (0,0) size 784x0
+        RenderBlock {DIV} at (0,0) size 302x302 [border: (1px solid #808080)]
+          RenderText {#text} at (1,1) size 58x18
+            text run at (1,1) width 58: "Success: "
+          RenderInline {SPAN} at (0,0) size 29x18
+            RenderText {#text} at (59,1) size 29x18
+              text run at (59,1) width 29: "Text"
+        RenderBlock {P} at (0,318) size 784x18
+          RenderText {#text} at (0,0) size 497x18
+            text run at (0,0) width 497: "This automated layout test checks to see that ondragenter events are being sent."
+      RenderBlock (anonymous) at (0,386) size 784x0
+        RenderInline {SPAN} at (0,0) size 0x0
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 3 {DIV} of child 0 {SPAN} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 4 of child 0 {#text} of child 1 {SPAN} of child 3 {DIV} of child 0 {SPAN} of child 1 {BODY} of child 0 {HTML} of document

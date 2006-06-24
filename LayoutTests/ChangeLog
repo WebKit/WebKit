@@ -1,3 +1,14 @@
+2006-06-23  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4560947> Leopard REGRESSION: Dragging to TileGame Widget is broken
+        
+        * fast/events/ondragenter-expected.checksum: Added.
+        * fast/events/ondragenter-expected.png: Added.
+        * fast/events/ondragenter-expected.txt: Added.
+        * fast/events/ondragenter.html: Added.
+
 2006-06-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
