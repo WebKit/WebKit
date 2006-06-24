@@ -695,8 +695,8 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSS_PROP_CURSOR:
         //  [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
-        // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | text |
-        // wait | help ] ] | inherit
+        // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | ew-resize | 
+        // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help ] ] | inherit
         if (!strict && id == CSS_VAL_HAND) { // MSIE 5 compatibility :/
             id = CSS_VAL_POINTER;
             valid_primitive = true;

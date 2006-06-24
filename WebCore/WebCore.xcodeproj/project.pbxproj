@@ -152,6 +152,10 @@
 		1AE2AEC80A1D297B00B42B25 /* JSHTMLQuoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */; };
 		1AE2AEE60A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */; };
 		1AE2AEE70A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */; };
+		1CD4418D0A4CE76F00A007AB /* eastWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD441890A4CE76F00A007AB /* eastWestResizeCursor.tiff */; };
+		1CD4418E0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */; };
+		1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */; };
+		1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4418C0A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff */; };
 		4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */; };
 		4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */; };
 		4E1959290A39DACC00220FE5 /* MediaQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1959230A39DACC00220FE5 /* MediaQuery.cpp */; };
@@ -1557,23 +1561,6 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		D0DAA27B0A4C8EF100703DCF /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		D0DAA27C0A4C8EF100703DCF /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1765,6 +1752,10 @@
 		1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLQuoteElement.h; sourceTree = "<group>"; };
 		1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBlockquoteElement.cpp; sourceTree = "<group>"; };
 		1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBlockquoteElement.h; sourceTree = "<group>"; };
+		1CD441890A4CE76F00A007AB /* eastWestResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = eastWestResizeCursor.tiff; sourceTree = "<group>"; };
+		1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northEastSouthWestResizeCursor.tiff; sourceTree = "<group>"; };
+		1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northSouthResizeCursor.tiff; sourceTree = "<group>"; };
+		1CD4418C0A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = northWestSouthEastResizeCursor.tiff; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* ClipboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3461,6 +3452,10 @@
 				84C0FA2A052B966D000440A1 /* southEastResizeCursor.tiff */,
 				84C0FA2B052B966D000440A1 /* southResizeCursor.tiff */,
 				84C0FA2C052B966D000440A1 /* southWestResizeCursor.tiff */,
+				1CD441890A4CE76F00A007AB /* eastWestResizeCursor.tiff */,
+				1CD4418A0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff */,
+				1CD4418B0A4CE76F00A007AB /* northSouthResizeCursor.tiff */,
+				1CD4418C0A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff */,
 				ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */,
 				84C0FA2D052B966D000440A1 /* waitCursor.tiff */,
 				84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */,
@@ -6349,12 +6344,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				D0DAA27B0A4C8EF100703DCF /* Development */,
-				D0DAA27C0A4C8EF100703DCF /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -6407,6 +6396,10 @@
 				A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */,
 				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
 				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
+				1CD4418D0A4CE76F00A007AB /* eastWestResizeCursor.tiff in Resources */,
+				1CD4418E0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff in Resources */,
+				1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */,
+				1CD441900A4CE76F00A007AB /* northWestSouthEastResizeCursor.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

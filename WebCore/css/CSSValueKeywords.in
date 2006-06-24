@@ -253,6 +253,12 @@ se-resize
 sw-resize
 s-resize
 w-resize
+ew-resize
+ns-resize
+nesw-resize
+nwse-resize
+col-resize
+row-resize
 text
 wait
 help

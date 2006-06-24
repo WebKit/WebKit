@@ -1,3 +1,60 @@
+2006-06-23  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Eric.
+
+        Manual test added: cursor.html
+
+        Bug 9560: should support new CSS3 cursor types to get more resizing directions
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9560
+
+        Adds support for ew-resize, ns-resize, nesw-resize, nwse-resize,
+        col-resize and row-resize CSS3 cursor values.
+
+        Also converted some of the cursor images to grayscale tiffs,
+        some were RGB but had no color data.
+
+        * Resources/eastResizeCursor.tiff:
+        * Resources/eastWestResizeCursor.tiff: Added.
+        * Resources/helpCursor.tiff:
+        * Resources/moveCursor.tiff:
+        * Resources/northEastResizeCursor.tiff:
+        * Resources/northEastSouthWestResizeCursor.tiff: Added.
+        * Resources/northResizeCursor.tiff:
+        * Resources/northSouthResizeCursor.tiff: Added.
+        * Resources/northWestResizeCursor.tiff:
+        * Resources/northWestSouthEastResizeCursor.tiff: Added.
+        * Resources/southEastResizeCursor.tiff:
+        * Resources/southResizeCursor.tiff:
+        * Resources/southWestResizeCursor.tiff:
+        * Resources/textAreaResizeCorner.tiff:
+        * Resources/waitCursor.tiff:
+        * Resources/westResizeCursor.tiff:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSValueKeywords.in:
+        * css/cssparser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * manual-tests/cursor.html: Added.
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        * platform/Cursor.h:
+        * platform/mac/CursorMac.mm:
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        * platform/win/CursorWin.cpp:
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        * rendering/render_style.h: cursor needs 5 bits now
+
 2006-06-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick

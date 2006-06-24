@@ -126,4 +126,42 @@ const Cursor& westResizeCursor()
     return c;
 }
 
+const Cursor& northSouthResizeCursor()
+{
+    static Cursor c = LoadCursor(0, IDC_SIZENS);
+    return c;
+}
+
+const Cursor& eastWestResizeCursor()
+{
+    static Cursor c = LoadCursor(0, IDC_SIZEWE);
+    return c;
+}
+
+const Cursor& northEastSouthWestResizeCursor()
+{
+    static Cursor c = LoadCursor(0, IDC_SIZENESW);
+    return c;
+}
+
+const Cursor& northWestSouthEastResizeCursor()
+{
+    static Cursor c = LoadCursor(0, IDC_SIZENWSE);
+    return c;
+}
+
+const Cursor& columnResizeCursor()
+{
+    // FIXME: Windows does not have a standard column resize cursor
+    static Cursor c = LoadCursor(0, IDC_SIZEWE);
+    return c;
+}
+
+const Cursor& rowResizeCursor()
+{
+    // FIXME: Windows does not have a standard row resize cursor
+    static Cursor c = LoadCursor(0, IDC_SIZENS);
+    return c;
+}
+
 }

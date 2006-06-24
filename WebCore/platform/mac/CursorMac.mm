@@ -187,4 +187,40 @@ const Cursor& westResizeCursor()
     return c;
 }
 
+const Cursor& northSouthResizeCursor()
+{
+    static Cursor c = leakNamedCursor("northSouthResizeCursor", 7, 7);
+    return c;
+}
+
+const Cursor& eastWestResizeCursor()
+{
+    static Cursor c = leakNamedCursor("eastWestResizeCursor", 7, 7);
+    return c;
+}
+
+const Cursor& northEastSouthWestResizeCursor()
+{
+    static Cursor c = leakNamedCursor("northEastSouthWestResizeCursor", 7, 7);
+    return c;
+}
+
+const Cursor& northWestSouthEastResizeCursor()
+{
+    static Cursor c = leakNamedCursor("northWestSouthEastResizeCursor", 7, 7);
+    return c;
+}
+
+const Cursor& columnResizeCursor()
+{
+    static Cursor c = [NSCursor resizeLeftRightCursor];
+    return c;
+}
+
+const Cursor& rowResizeCursor()
+{
+    static Cursor c = [NSCursor resizeUpDownCursor];
+    return c;
+}
+
 }

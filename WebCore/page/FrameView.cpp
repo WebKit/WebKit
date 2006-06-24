@@ -639,6 +639,18 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
             return northWestResizeCursor();
         case CURSOR_SE_RESIZE:
             return southEastResizeCursor();
+        case CURSOR_NS_RESIZE:
+            return northSouthResizeCursor();
+        case CURSOR_EW_RESIZE:
+            return eastWestResizeCursor();
+        case CURSOR_NESW_RESIZE:
+            return northEastSouthWestResizeCursor();
+        case CURSOR_NWSE_RESIZE:
+            return northWestSouthEastResizeCursor();
+        case CURSOR_COL_RESIZE:
+            return columnResizeCursor();
+        case CURSOR_ROW_RESIZE:
+            return rowResizeCursor();
         case CURSOR_TEXT:
             return iBeamCursor();
         case CURSOR_WAIT:

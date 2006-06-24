@@ -586,6 +586,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return new CSSPrimitiveValue(CSS_VAL_S_RESIZE);
             case CURSOR_W_RESIZE:
                 return new CSSPrimitiveValue(CSS_VAL_W_RESIZE);
+            case CURSOR_EW_RESIZE:
+                return new CSSPrimitiveValue(CSS_VAL_EW_RESIZE);
+            case CURSOR_NS_RESIZE:
+                return new CSSPrimitiveValue(CSS_VAL_NS_RESIZE);
+            case CURSOR_NESW_RESIZE:
+                return new CSSPrimitiveValue(CSS_VAL_NESW_RESIZE);
+            case CURSOR_NWSE_RESIZE:
+                return new CSSPrimitiveValue(CSS_VAL_NWSE_RESIZE);
+            case CURSOR_COL_RESIZE:
+                return new CSSPrimitiveValue(CSS_VAL_COL_RESIZE);
+            case CURSOR_ROW_RESIZE:
+                return new CSSPrimitiveValue(CSS_VAL_ROW_RESIZE);
             case CURSOR_TEXT:
                 return new CSSPrimitiveValue(CSS_VAL_TEXT);
             case CURSOR_WAIT:
