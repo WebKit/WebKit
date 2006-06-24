@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 James G. Speth (speth@end.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +25,131 @@
 */
 
 #import "ObjCPlugin.h"
+#import <objc/objc-runtime.h>
 
+
+// === NSObject category to expose almost everything to JavaScript ===
+
+// Warning: this class introduces huge security weaknesses, and should only be used
+// for testing inside of DumpRenderTree, and only with trusted code.  By default, it has
+// the same restrictive behavior as the standard WebKit setup.  However, scripts can use the
+// plugin's removeBridgeRestrictions: method to open up almost total access to the Cocoa
+// frameworks.
+
+static BOOL _allowsScriptsFullAccess = NO;
+
+@interface NSObject (ObjCScriptAccess)
+
++ (void)setAllowsScriptsFullAccess:(BOOL)value;
++ (BOOL)allowsScriptsFullAccess;
+
+@end
+
+@implementation NSObject (ObjCScriptAccess)
+
++ (void)setAllowsScriptsFullAccess:(BOOL)value
+{
+    _allowsScriptsFullAccess = value;
+}
+
++ (BOOL)allowsScriptsFullAccess
+{
+    return _allowsScriptsFullAccess;
+}
+
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)selector
+{
+    return !_allowsScriptsFullAccess;
+}
+
++ (NSString *)webScriptNameForSelector:(SEL)selector
+{
+    return nil;
+}
+
+@end
+
+@interface JSObjC : NSObject {
+}
+
+// expose some useful objc functions to the scripting environment
+- (id)lookUpClass:(NSString *)name;
+- (void)log:(NSString *)message;
+- (id)retainObject:(id)obj;
+- (id)classOfObject:(id)obj;
+- (NSString *)classNameOfObject:(id)obj;
+
+@end
+
+@implementation JSObjC
+
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)selector
+{
+    return NO;
+}
+
++ (NSString *)webScriptNameForSelector:(SEL)selector
+{
+    return nil;
+}
+
+- (id)invokeDefaultMethodWithArguments:(NSArray *)args
+{
+    // this is a useful shortcut for accessing objective-c classes from the scripting
+    // environment, e.g. 'var myObject = objc("NSObject").alloc().init();'
+    if ([args count] == 1)
+        return [self lookUpClass:[args objectAtIndex:0]];
+    return nil;
+}
+
+- (id)lookUpClass:(NSString *)name
+{
+    return NSClassFromString(name);
+}
+
+- (void)log:(NSString *)message
+{
+    NSLog(message);
+}
+
+- (id)retainObject:(id)obj
+{
+    return [obj retain];
+}
+
+- (id)classOfObject:(id)obj
+{
+    return (id)[obj class];
+}
+
+- (NSString *)classNameOfObject:(id)obj
+{
+    return [obj className];
+}
+
+@end
 
 @implementation ObjCPlugin
+
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
+{
+    if (aSelector == @selector(removeBridgeRestrictions:))
+        return NO;
+    return YES;
+}
+
++ (NSString *)webScriptNameForSelector:(SEL)aSelector
+{
+    return nil;
+}
+
+- (void)removeBridgeRestrictions:(id)container
+{
+    // let scripts invoke any selector
+    [NSObject setAllowsScriptsFullAccess:YES];
+    
+    // store a JSObjC instance into the provided container
+    [container setValue:[[JSObjC alloc] init] forKey:@"objc"];
+}
 
 @end

@@ -1,3 +1,33 @@
+2006-06-24  James G. Speth  <speth@end.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=8843
+          add a way to build Objective-C test cases in HTML
+
+        Tests running in DumpRenderTree can choose to relax some restrictions of the JavaScript/Objective-C bridge
+        allowing more extensive testing of the Obj-C API.  (and by more extensive, I mean this lets scripts do 
+        pretty much whatever they want, including acting as delegates, generating events, instantiating obj-c
+        objects, etc... )
+
+        * DumpRenderTree/ObjCPlugin.h:
+        * DumpRenderTree/ObjCPlugin.m: this ability is only exposed to scripts running in DumpRenderTree
+        (+[ObjCPlugin isSelectorExcludedFromWebScript:]):
+        (+[ObjCPlugin webScriptNameForSelector:]):
+        (-[ObjCPlugin removeBridgeRestrictions:]): scripts call this to open up obj-c for extensive testing
+        (+[NSObject setAllowsScriptsFullAccess:]): makes NSObject allow all selectors to be invoked from script
+        (+[NSObject allowsScriptsFullAccess]):
+        (+[NSObject isSelectorExcludedFromWebScript:]): when full access is enabled, no selector is excluded
+        (+[NSObject webScriptNameForSelector:]): always return nil for the default selector mutation
+        (-[JSObjC classNameOfObject:isSelectorExcludedFromWebScript:]):
+        (+[JSObjC webScriptNameForSelector:]):
+        (-[JSObjC invokeDefaultMethodWithArguments:]): shortcut for accessing classes
+        (-[JSObjC lookUpClass:]): allow scripts to retrieve obj-c classes by name
+        (-[JSObjC log:]): access to NSLog function
+        (-[JSObjC retainObject:]): useful obj-c functions that are otherwise hard to reach from javascript
+        (-[JSObjC classOfObject:]):
+        (-[JSObjC classNameOfObject:]):
+
 2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Timothy.

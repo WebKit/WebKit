@@ -30,4 +30,6 @@
 {
 }
 
+- (void)removeBridgeRestrictions:(id)container;
+
 @end
