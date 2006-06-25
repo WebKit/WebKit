@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Simplified and improved "svn diff" script for WebKit Open Source Project, used to make patches.
+# Extended "svn diff" script for WebKit Open Source Project, used to make patches.
 
 # Differences from standard "svn diff":
 #

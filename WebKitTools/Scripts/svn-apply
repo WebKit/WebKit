@@ -46,11 +46,11 @@
 # Missing features:
 #
 #   Handle property changes.
-#   Handle file moves (requires patches made by svn-create-patch).
+#   Handle file moves (would require patches made by svn-create-patch).
 #   When doing a removal, check that old file matches what's being removed.
 #   Notice a patch that's being applied at the "wrong level" and make it work anyway.
 #   Do a dry run on the whole patch and don't do anything if part of the patch is
-#       going to fail (probably too strict unless we do the ChangeLog thing).
+#       going to fail (probably too strict unless we exclude ChangeLog).
 
 use strict;
 use warnings;

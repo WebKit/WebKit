@@ -1,3 +1,9 @@
+2006-06-25  Darin Adler  <darin@apple.com>
+
+        * Scripts/svn-apply: Tweak comments.
+        * Scripts/svn-create-patch: Ditto.
+        * Scripts/svn-unapply: Ditto.
+
 2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
 
         Formatting fix per Bug 9571 Comment #2.  Reviewed by NOBODY.
