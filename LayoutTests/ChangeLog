@@ -1,3 +1,15 @@
+2006-06-24  James G. Speth  <speth@end.com>
+
+        Reviewed by Darin.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=8843
+          add a way to build Objective-C test cases in HTML
+
+        * plugins/jsobjc-dom-wrappers-expected.txt: Added.
+        * plugins/jsobjc-dom-wrappers.html: Added.
+        * plugins/jsobjc-simple-expected.txt: Added.
+        * plugins/jsobjc-simple.html: Added.
+
 2006-06-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
