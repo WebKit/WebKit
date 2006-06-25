@@ -58,6 +58,13 @@ use File::Spec;
 use File::Temp;
 use Getopt::Long;
 
+sub canonicalizePath($);
+sub get_function_line_ranges($$);
+sub get_function_line_ranges_for_c($$);
+sub get_function_line_ranges_for_java($$);
+sub method_decl_to_selector($);
+sub processPaths(\@);
+
 my $openChangeLogs = 0;
 my $showHelp = 0;
 my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
@@ -67,12 +74,14 @@ my $parseOptionsResult =
                "open|o!" => \$openChangeLogs);
 if (!$parseOptionsResult || $showHelp)
   {
-    print STDERR basename($0) . " [-d|--diff] [-h|--help] [-o|--open]\n";
+    print STDERR basename($0) . " [-d|--diff] [-h|--help] [-o|--open] [svndir1 [svndir2 ...]]\n";
     print STDERR "  -d|--diff  Spew diff to stdout when running\n";
     print STDERR "  -h|--help  Show this help message\n";
     print STDERR "  -o|--open  Open ChangeLogs in an editor when done\n";
     exit 1;
   }
+
+my %paths = processPaths(@ARGV);
 
 # Find the list of modified files
 my @changed_files;
@@ -99,7 +108,8 @@ my $diffTempFile = $DIFFOUT->filename();
 my @diffFiles;
 
 print STDERR "  Running 'svn diff' to find changed, added, or removed files.\n";
-open SVNDIFF, "$SVN diff --diff-cmd diff -x -N |" or die "The svn diff failed: $!.\n";
+open SVNDIFF, "$SVN diff --diff-cmd diff -x -N '" . join("' '", keys %paths) . "'|"
+    or die "The svn diff failed: $!.\n";
 while (<SVNDIFF>)
   {
     print $DIFFOUT $_;
@@ -336,7 +346,30 @@ if ($openChangeLogs && $logs)
 # Done.
 exit;
 
-sub get_function_line_ranges
+sub canonicalizePath($)
+  {
+    my ($file) = @_;
+
+    # Remove extra slashes and '.' directories in path
+    $file = File::Spec->canonpath($file);
+
+    # Remove '..' directories in path
+    my @dirs = ();
+    foreach my $dir (File::Spec->splitdir($file))
+      {
+        if ($dir eq '..' && $#dirs >= 0 && $dirs[$#dirs] ne '..')
+          {
+            pop(@dirs);
+          }
+        else
+          {
+            push(@dirs, $dir);
+          }
+      }
+    return ($#dirs >= 0) ? File::Spec->catdir(@dirs) : ".";
+  }
+
+sub get_function_line_ranges($$)
   {
     my ($file_handle, $file_name) = @_;
 
@@ -349,7 +382,7 @@ sub get_function_line_ranges
   }
 
 
-sub method_decl_to_selector
+sub method_decl_to_selector($)
   {
     (my $method_decl) = @_;
 
@@ -385,7 +418,7 @@ sub method_decl_to_selector
 #
 # Result is a list of triples: [ start_line, end_line, function_name ].
 
-sub get_function_line_ranges_for_c
+sub get_function_line_ranges_for_c($$)
   {
     my ($file_handle, $file_name) = @_;
 
@@ -691,7 +724,7 @@ sub get_function_line_ranges_for_c
 #
 # Result is a list of triples: [ start_line, end_line, function_name ].
 
-sub get_function_line_ranges_for_java
+sub get_function_line_ranges_for_java($$)
   {
     my ($file_handle, $file_name) = @_;
 
@@ -899,4 +932,44 @@ sub get_function_line_ranges_for_java
     warn "mismatched parentheses in $file_name\n" if $in_parentheses;
 
     return @ranges;
+  }
+
+sub processPaths(\@)
+  {
+    my ($paths) = @_;
+    return ("." => 1) if (!@{$paths});
+
+    my %result = ();
+
+    for my $file (@{$paths})
+      {
+        die "can't handle absolute paths like \"$file\"\n" if File::Spec->file_name_is_absolute($file);
+        die "can't handle empty string path\n" if $file eq "";
+        die "can't handle path with single quote in the name like \"$file\"\n" if $file =~ /'/; # ' (keep Xcode syntax highlighting happy)
+
+        my $untouchedFile = $file;
+
+        $file = canonicalizePath($file);
+
+        die "can't handle paths with .. like \"$untouchedFile\"\n" if $file =~ m|/\.\./|;
+
+        $result{$file} = 1;
+      }
+
+    return ("." => 1) if ($result{"."});
+
+    # Remove any paths that also have a parent listed.
+    for my $path (keys %result)
+      {
+        for (my $parent = dirname($path); $parent ne '.'; $parent = dirname($parent))
+         {
+            if ($result{$parent})
+              {
+                delete $result{$path};
+                last;
+              }
+          }
+      }
+
+    return %result;
   }

@@ -1,3 +1,13 @@
+2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9570
+        Teach prepare-ChangeLog to operate on a list of files or directories
+
+        * Scripts/prepare-ChangeLog: Accept a list of files and/or directories when running.
+        * Scripts/svn-create-patch: Code refactoring.
+
 2006-06-24  James G. Speth  <speth@end.com>
 
         Reviewed by Darin.
