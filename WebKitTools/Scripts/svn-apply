@@ -31,7 +31,10 @@
 # Differences from invoking "patch -p0":
 #
 #   Handles added files (does a svn add).
+#   Handles added directories (does a svn add).
 #   Handles removed files (does a svn rm).
+#   Handles removed directories--those with no more files or directories left in them
+#       (does a svn rm).
 #   Has mode where it will roll back to svn version numbers in the patch file so svn
 #       can do a 3-way merge.
 #   Paths from Index: lines are used rather than the paths on the patch lines, which
@@ -61,7 +64,10 @@ use MIME::Base64;
 sub addDirectoriesIfNeeded($);
 sub applyPatch($$;$);
 sub handleBinaryChange($$);
+sub isDirectoryEmptyForRemoval($);
 sub patch($);
+sub removeDirectoriesIfNeeded();
+sub svnStatus($);
 
 my $merge = 0;
 my $showHelp = 0;
@@ -70,8 +76,14 @@ if (!GetOptions("merge!" => \$merge, "help!" => \$showHelp) || $showHelp) {
     exit 1;
 }
 
-my $startDir = getcwd();
+my %removeDirectoryIgnoreList = (
+    '.' => 1,
+    '..' => 1,
+    '.svn' => 1,
+    '_svn' => 1,
+);
 
+my %checkedDirectories;
 my @patches;
 my %versions;
 
@@ -115,7 +127,35 @@ for $patch (@patches) {
     patch($patch);
 }
 
+removeDirectoriesIfNeeded();
+
 exit 0;
+
+sub addDirectoriesIfNeeded($)
+{
+    my ($path) = @_;
+    my @dirs = File::Spec->splitdir($path);
+    my $dir = ".";
+    while (scalar @dirs) {
+        $dir = File::Spec->catdir($dir, shift @dirs);
+        next if (exists $checkedDirectories{$dir});
+        if (! -e $dir) {
+            mkdir $dir or die "Failed to create required directory '$dir' for path '$path'\n";
+            system "svn", "add", $dir;
+            $checkedDirectories{$dir} = 1;
+        }
+        elsif (-d $dir) {
+            my $svnOutput = svnStatus($dir);
+            if ($svnOutput && substr($svnOutput, 0, 1) eq "?") {
+                system "svn", "add", $dir;
+            }
+            $checkedDirectories{$dir} = 1;
+        }
+        else {
+            die "'$dir' is not a directory";
+        }
+    }
+}
 
 sub applyPatch($$;$)
 {
@@ -127,12 +167,59 @@ sub applyPatch($$;$)
     close PATCH;
 }
 
+sub handleBinaryChange($$)
+{
+    my ($fullPath, $contents) = @_;
+    if ($contents =~ m#((\n[A-Za-z0-9+/]{76})+\n[A-Za-z0-9+/=]{4,76}\n)\n#) {
+        # Addition or Modification
+        open FILE, ">", $fullPath or die;
+        print FILE decode_base64($1);
+        close FILE;
+        my $svnOutput = svnStatus($fullPath);
+        if ($svnOutput && substr($svnOutput, 0, 1) eq "?") {
+            # Addition
+            system "svn", "add", $fullPath;
+        } else {
+            # Modification
+            print $svnOutput if $svnOutput;
+        }
+    } else {
+        # Deletion
+        system "svn", "rm", $fullPath;
+    }
+}
+
+sub isDirectoryEmptyForRemoval($)
+{
+    my ($dir) = @_;
+    opendir DIR, $dir or die "Could not open '$dir' to list files: $?";
+    my @files = grep {
+        if (exists $removeDirectoryIgnoreList{$_}) {
+            0;
+        }
+        elsif (! -d File::Spec->catdir($dir, $_)) {
+            1;
+        }
+        else {
+            my $svnOutput = svnStatus(File::Spec->catdir($dir, $_));
+            if ($svnOutput && substr($svnOutput, 0, 1) eq "D") {
+                0;
+            }
+            else {
+                1;
+            }
+        }
+    } readdir DIR;
+    closedir DIR;
+    return scalar(@files) == 0;
+}
+
 sub patch($)
 {
     my ($patch) = @_;
     return if !$patch;
 
-    $patch =~ m|^Index: ([^\n]+)| or die "Failed to find Index: in \"$patch\"\n";
+    $patch =~ m|^Index: ([^\n]+)| or die "Failed to find 'Index:' in \"$patch\"\n";
     my $fullPath = $1;
 
     my $deletion = 0;
@@ -182,40 +269,27 @@ sub patch($)
     }
 }
 
-sub handleBinaryChange($$)
+sub removeDirectoriesIfNeeded()
 {
-    my ($fullPath, $contents) = @_;
-    if ($contents =~ m#((\n[A-Za-z0-9+/]{76})+\n[A-Za-z0-9+/=]{4,76}\n)\n#) {
-        # Addition or Modification
-        open FILE, ">", $fullPath or die;
-        print FILE decode_base64($1);
-        close FILE;
-        open SVN, "svn stat '$fullPath' |" or die;
-        my $svnStatus = <SVN>;
-        close SVN;
-        if (substr($svnStatus, 0 ,1) eq "?") {
-            # Addition
-            system "svn", "add", $fullPath;
-        } else {
-            # Modification
-            print $svnStatus;
+    foreach my $dir (reverse sort keys %checkedDirectories) {
+        if (isDirectoryEmptyForRemoval($dir)) {
+            my $svnOutput;
+            open SVN, "svn rm '$dir' |" or die;
+            # Only save the last line since Subversion lists all changed statuses below $dir
+            while (<SVN>) {
+                $svnOutput = $_;
+            }
+            close SVN;
+            print $svnOutput;
         }
-    } else {
-        # Deletion
-        system "svn", "rm", $fullPath;
     }
 }
 
-sub addDirectoriesIfNeeded($)
+sub svnStatus($)
 {
-    my ($path) = @_;
-    my @dirs = File::Spec->splitdir($path);
-    while (my $dir = shift @dirs) {
-        if (! -x $dir) {
-            mkdir $dir or die "Failed create required directory: $dir for path: $path\n";
-            system "svn", "add", $dir;
-        }
-        chdir $dir or die "Failed to chdir to $dir\n";
-    }
-    chdir $startDir or die "Failed to chdir to $startDir\n";
+    my ($fullPath) = @_;
+    open SVN, "svn status --non-interactive --non-recursive '$fullPath' |" or die;
+    my $svnStatus = <SVN>;
+    close SVN;
+    return $svnStatus;
 }

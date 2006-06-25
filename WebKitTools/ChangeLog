@@ -1,3 +1,13 @@
+2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9571
+        Teach svn-apply and svn-unapply to handle directory adds and removes better
+
+        * Scripts/svn-apply: Handle directory adds more intelligently.  Handle directory removes.
+        * Scripts/svn-unapply: Handle undoing both directory adds and removes.
+
 2006-06-25  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
