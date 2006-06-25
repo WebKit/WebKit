@@ -38,10 +38,21 @@ extern NSString *WebScriptDebugServerQueryReplyNotification;
 extern NSString *WebScriptDebugServerDidLoadNotification;
 extern NSString *WebScriptDebugServerWillUnloadNotification;
 
+@class WebDataSource;
+
 @protocol WebScriptDebugListener <NSObject>
+- (void)webView:(WebView *)webView didLoadMainResourceForDataSource:(WebDataSource *)dataSource;
+
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
-                                                fromURL:(NSString *)url
+                                         baseLineNumber:(unsigned)lineNumber
+                                                fromURL:(NSURL *)url
                                                sourceId:(int)sid
+                                            forWebFrame:(WebFrame *)webFrame;
+
+- (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
+                                         baseLineNumber:(unsigned)lineNumber
+                                                fromURL:(NSURL *)url
+                                              withError:(NSError *)error
                                             forWebFrame:(WebFrame *)webFrame;
 
 - (void)webView:(WebView *)webView    didEnterCallFrame:(WebScriptCallFrame *)frame

@@ -203,8 +203,23 @@ static unsigned listenerCount = 0;
     }
 }
 
+- (void)webView:(WebView *)webView didLoadMainResourceForDataSource:(WebDataSource *)dataSource
+{
+    if (![listeners count])
+        return;
+
+    NSEnumerator *enumerator = [listeners objectEnumerator];
+    NSDistantObject <WebScriptDebugListener> *listener = nil;
+
+    while ((listener = [enumerator nextObject])) {
+        if ([[listener connectionForProxy] isValid])
+            [listener webView:webView didLoadMainResourceForDataSource:dataSource];
+    }
+}
+
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
-                                                fromURL:(NSString *)url
+                                         baseLineNumber:(unsigned)lineNumber
+                                                fromURL:(NSURL *)url
                                                sourceId:(int)sid
                                             forWebFrame:(WebFrame *)webFrame
 {
@@ -216,7 +231,25 @@ static unsigned listenerCount = 0;
 
     while ((listener = [enumerator nextObject])) {
         if ([[listener connectionForProxy] isValid])
-            [listener webView:webView didParseSource:source fromURL:url sourceId:sid forWebFrame:webFrame];
+            [listener webView:webView didParseSource:source baseLineNumber:lineNumber fromURL:url sourceId:sid forWebFrame:webFrame];
+    }
+}
+
+- (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
+                                         baseLineNumber:(unsigned)lineNumber
+                                                fromURL:(NSURL *)url
+                                              withError:(NSError *)error
+                                            forWebFrame:(WebFrame *)webFrame
+{
+    if (![listeners count])
+        return;
+
+    NSEnumerator *enumerator = [listeners objectEnumerator];
+    NSDistantObject <WebScriptDebugListener> *listener = nil;
+
+    while ((listener = [enumerator nextObject])) {
+        if ([[listener connectionForProxy] isValid])
+            [listener webView:webView failedToParseSource:source baseLineNumber:lineNumber fromURL:url withError:error forWebFrame:webFrame];
     }
 }
 

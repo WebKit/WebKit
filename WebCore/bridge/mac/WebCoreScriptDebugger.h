@@ -50,7 +50,7 @@ using KJS::ExecState;
 - (id)newWrapperForFrame:(WebCoreScriptCallFrame *)frame;   // return a (retained) stack-frame object
 
 // debugger callbacks
-- (void)parsedSource:(NSString *)source fromURL:(NSString *)url sourceId:(int)sid;
+- (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage;
 - (void)enteredFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
 - (void)hitStatement:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;
 - (void)leavingFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno;

@@ -28,12 +28,17 @@
 
 #import "WebScriptDebugDelegatePrivate.h"
 #import "WebScriptDebugServerPrivate.h"
+#import "WebDataSource.h"
+#import "WebDataSourceInternal.h"
 
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebCore/WebCoreScriptDebugger.h>
 
-
+// FIXME: these error strings should be public for future use by WebScriptObject and in WebScriptObject.h
+NSString * const WebScriptErrorDomain = @"WebScriptErrorDomain";
+NSString * const WebScriptErrorDescriptionKey = @"WebScriptErrorDescription";
+NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
@@ -71,11 +76,22 @@
     return [[WebScriptCallFrame alloc] _initWithFrame:frame];
 }
 
-- (void)parsedSource:(NSString *)source fromURL:(NSString *)url sourceId:(int)sid
+- (void)parsedSource:(NSString *)source fromURL:(NSURL *)url sourceId:(int)sid startLine:(int)startLine errorLine:(int)errorLine errorMessage:(NSString *)errorMessage
 {
-    [[_webView _scriptDebugDelegateForwarder] webView:_webView didParseSource:source fromURL:url sourceId:sid forWebFrame:_webFrame];
-    if ([WebScriptDebugServer listenerCount])
-        [[WebScriptDebugServer sharedScriptDebugServer] webView:_webView didParseSource:source fromURL:url sourceId:sid forWebFrame:_webFrame];
+    if (errorLine == -1) {
+        [[_webView _scriptDebugDelegateForwarder] webView:_webView didParseSource:source baseLineNumber:startLine fromURL:url sourceId:sid forWebFrame:_webFrame];
+        [[_webView _scriptDebugDelegateForwarder] webView:_webView didParseSource:source fromURL:[url absoluteString] sourceId:sid forWebFrame:_webFrame]; // deprecated delegate method
+        if ([WebScriptDebugServer listenerCount])
+            [[WebScriptDebugServer sharedScriptDebugServer] webView:_webView didParseSource:source baseLineNumber:startLine fromURL:url sourceId:sid forWebFrame:_webFrame];
+    } else {
+        NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:errorMessage, WebScriptErrorDescriptionKey, [NSNumber numberWithUnsignedInt:errorLine], WebScriptErrorLineNumberKey, nil];
+        NSError *error = [[NSError alloc] initWithDomain:WebScriptErrorDomain code:WebScriptGeneralErrorCode userInfo:info];
+        [[_webView _scriptDebugDelegateForwarder] webView:_webView failedToParseSource:source baseLineNumber:startLine fromURL:url withError:error forWebFrame:_webFrame];
+        if ([WebScriptDebugServer listenerCount])
+            [[WebScriptDebugServer sharedScriptDebugServer] webView:_webView failedToParseSource:source baseLineNumber:startLine fromURL:url withError:error forWebFrame:_webFrame];
+        [error release];
+        [info release];
+    }
 }
 
 - (void)enteredFrame:(WebCoreScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno

@@ -441,7 +441,7 @@ Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumbe
     
     // notify debugger that source has been parsed
     if (m_debugger) {
-        bool cont = m_debugger->sourceParsed(&m_globalExec, sid, sourceURL, UString(code, codeLength), errLine);
+        bool cont = m_debugger->sourceParsed(&m_globalExec, sid, sourceURL, UString(code, codeLength), startingLineNumber, errLine, errMsg);
         if (!cont)
             return Completion(Break);
     }

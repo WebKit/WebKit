@@ -1,3 +1,20 @@
+2006-06-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 9574: Drosera should show inline scripts within the original HTML
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9574
+
+        * Pass the starting line number and error message to the debugger.
+        * Call parsedSource even if there was a script parse error so the
+          debugger can show the parse error.
+        * Pass NSURL objects to the ObjC delegate for the script URLs.
+
+        * bridge/mac/WebCoreScriptDebugger.h:
+        * bridge/mac/WebCoreScriptDebugger.mm:
+        (toNSURL):
+        (WebCoreScriptDebuggerImp::sourceParsed):
+
 2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
 
         Build fix.  Reviewed by NOBODY.

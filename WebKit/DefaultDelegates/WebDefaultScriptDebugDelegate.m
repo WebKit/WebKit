@@ -49,6 +49,22 @@ static WebDefaultScriptDebugDelegate *sharedDelegate = nil;
 {
 }
 
+- (void)webView:(WebView *)webView       didParseSource:(NSString *)source
+                                         baseLineNumber:(unsigned)lineNumber
+                                                fromURL:(NSURL *)url
+                                               sourceId:(int)sid
+                                            forWebFrame:(WebFrame *)webFrame
+{
+}
+
+- (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
+                                         baseLineNumber:(unsigned)lineNumber
+                                                fromURL:(NSURL *)url
+                                              withError:(NSError *)error
+                                            forWebFrame:(WebFrame *)webFrame
+{
+}
+
 - (void)webView:(WebView *)webView    didEnterCallFrame:(WebScriptCallFrame *)frame
                                                sourceId:(int)sid
                                                    line:(int)lineno

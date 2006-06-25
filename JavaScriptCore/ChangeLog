@@ -1,3 +1,22 @@
+2006-06-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 9574: Drosera should show inline scripts within the original HTML
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9574
+
+        Pass the starting line number and error message to the debugger.
+
+        * kjs/debugger.cpp:
+        (Debugger::sourceParsed):
+        * kjs/debugger.h:
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate):
+
 2006-06-24  Alexey Proskuryakov  <ap@nypop.com>
 
         Rubber-stamped by Eric.

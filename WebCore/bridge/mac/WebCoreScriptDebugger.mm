@@ -34,6 +34,7 @@
 #import <JavaScriptCore/context.h>
 
 #import "DeprecatedString.h"
+#import "KURL.h"
 
 using namespace KJS;
 
@@ -63,6 +64,12 @@ static NSString *toNSString(const UString &s)
     return [NSString stringWithCharacters:(const unichar *)s.data() length:s.size()];
 }
 
+// convert UString to NSURL
+static NSURL *toNSURL(const UString &s)
+{
+    if (s.isEmpty()) return nil;
+    return KURL(DeprecatedString(s)).getNSURL();
+}
 
 
 // C++ interface to KJS debugger callbacks
@@ -85,10 +92,10 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     }
 
     // callbacks - relay to delegate
-    virtual bool sourceParsed(ExecState *state, int sid, const UString &url, const UString &source, int errorLine) {
-        if (!_nested && errorLine == -1) {
+    virtual bool sourceParsed(ExecState *state, int sid, const UString &url, const UString &source, int lineNumber, int errorLine, const UString &errorMsg) {
+        if (!_nested) {
             _nested = true;
-            [[_objc delegate] parsedSource:toNSString(source) fromURL:toNSString(url) sourceId:sid];
+            [[_objc delegate] parsedSource:toNSString(source) fromURL:toNSURL(url) sourceId:sid startLine:lineNumber errorLine:errorLine errorMessage:toNSString(errorMsg)];
             _nested = false;
         }
         return true;

@@ -33,16 +33,37 @@
 @class WebScriptCallFrame;
 @class WebCoreScriptCallFrame;
 
+extern NSString * const WebScriptErrorDomain;
+extern NSString * const WebScriptErrorDescriptionKey;
+extern NSString * const WebScriptErrorLineNumberKey;
 
+enum {
+    WebScriptGeneralErrorCode = -100
+};
 
 // WebScriptDebugDelegate messages
 
 @interface NSObject (WebScriptDebugDelegate)
 
 // some source was parsed, establishing a "source ID" (>= 0) for future reference
+// this delegate method is deprecated, please switch to the new version below
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
                                                 fromURL:(NSString *)url
                                                sourceId:(int)sid
+                                            forWebFrame:(WebFrame *)webFrame;
+
+// some source was parsed, establishing a "source ID" (>= 0) for future reference
+- (void)webView:(WebView *)webView       didParseSource:(NSString *)source
+                                         baseLineNumber:(unsigned)lineNumber
+                                                fromURL:(NSURL *)url
+                                               sourceId:(int)sid
+                                            forWebFrame:(WebFrame *)webFrame;
+
+// some source failed to parse
+- (void)webView:(WebView *)webView  failedToParseSource:(NSString *)source
+                                         baseLineNumber:(unsigned)lineNumber
+                                                fromURL:(NSURL *)url
+                                              withError:(NSError *)error
                                             forWebFrame:(WebFrame *)webFrame;
 
 // just entered a stack frame (i.e. called a function, or started global scope)

@@ -57,6 +57,7 @@
 #import "WebPreferences.h"
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
+#import "WebScriptDebugServerPrivate.h"
 #import "WebUnarchivingState.h"
 #import "WebViewInternal.h"
 #import <Foundation/NSURLConnection.h>
@@ -371,6 +372,9 @@
         [_private->frameLoader releaseMainResourceLoader];
         
         [self _updateLoading];
+
+        if ([WebScriptDebugServer listenerCount])
+            [[WebScriptDebugServer sharedScriptDebugServer] webView:[[self webFrame] webView] didLoadMainResourceForDataSource:self];
     }
 }
 

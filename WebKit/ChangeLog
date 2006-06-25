@@ -1,3 +1,32 @@
+2006-06-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 9574: Drosera should show inline scripts within the original HTML
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9574
+
+        * Adds a new version of the didParseSource delegate callback with base line number.
+        * Adds a new delegate callback for when a script fails to parse.
+        * These new callbacks use NSURLs for the url parameter.
+        * Adds a new script listener callback to notify when the main resource loads.
+        * Adds a WebScriptErrorDomian and other keys for use with NSError.
+
+        * DefaultDelegates/WebDefaultScriptDebugDelegate.m:
+        (-[WebDefaultScriptDebugDelegate webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:]):
+        * DefaultDelegates/WebScriptDebugServer.h:
+        * DefaultDelegates/WebScriptDebugServer.m:
+        (-[WebScriptDebugServer webView:didLoadMainResourceForDataSource:]):
+        (-[WebScriptDebugServer webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (-[WebScriptDebugServer webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:]):
+        * DefaultDelegates/WebScriptDebugServerPrivate.h:
+        * WebKit.exp:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        * WebView/WebScriptDebugDelegate.h:
+        * WebView/WebScriptDebugDelegate.m:
+        (-[WebScriptCallFrame parsedSource:fromURL:sourceId:startLine:errorLine:errorMessage:]):
+
 2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Timothy.

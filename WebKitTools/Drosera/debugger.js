@@ -26,8 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var sourceFiles = new Array();
-var currentSourceId = -1;
+var files = new Array();
+var filesLookup = new Object();
+var scripts = new Array();
+var currentFile = -1;
 var currentRow = null;
 var currentStack = null;
 var previousFiles = new Array();
@@ -207,20 +209,20 @@ function stepInto()
     DebuggerDocument.stepInto();
 }
 
-function hasStyleClass(element,className)
+function hasStyleClass(element, className)
 {
     return ( element.className.indexOf(className) != -1 );
 }
 
-function addStyleClass(element,className)
+function addStyleClass(element, className)
 {
-    if (!hasStyleClass(element,className))
-        element.className += ( element.className.length ? " " + className : className );
+    if (!hasStyleClass(element, className))
+        element.className += (element.className.length ? " " + className : className);
 }
 
-function removeStyleClass(element,className)
+function removeStyleClass(element, className)
 {
-    if (hasStyleClass(element,className))
+    if (hasStyleClass(element, className))
         element.className = element.className.replace(className, "");
 }
 
@@ -230,19 +232,19 @@ function addBreakPoint(event)
     if (hasStyleClass(row, "breakpoint")) {
         if (hasStyleClass(row, "disabled")) {
             removeStyleClass(row, "disabled");
-            sourceFiles[currentSourceId].breakpoints[parseInt(event.target.title)] = 1;
+            files[currentFile].breakpoints[parseInt(event.target.title)] = 1;
         } else {
             addStyleClass(row, "disabled");
-            sourceFiles[currentSourceId].breakpoints[parseInt(event.target.title)] = -1;
+            files[currentFile].breakpoints[parseInt(event.target.title)] = -1;
         }
     } else {
         addStyleClass(row, "breakpoint");
         removeStyleClass(row, "disabled");
-        sourceFiles[currentSourceId].breakpoints[parseInt(event.target.title)] = 1;
+        files[currentFile].breakpoints[parseInt(event.target.title)] = 1;
     }
 }
 
-function totalOffsetTop(element,stop)
+function totalOffsetTop(element, stop)
 {
     var currentTop = 0;
     if (element.offsetParent) {
@@ -258,8 +260,8 @@ function totalOffsetTop(element,stop)
 
 function switchFile()
 {
-    var files = document.getElementById("files");
-    loadSource(files.options[files.selectedIndex].value,true);
+    var filesSelect = document.getElementById("files");
+    loadFile(filesSelect.options[filesSelect.selectedIndex].value, true);
 }
 
 function syntaxHighlight(code)
@@ -315,10 +317,10 @@ function syntaxHighlight(code)
             echoChar(cNext);
             for (i += 2; i < code.length; i++) {
                 c = code.charAt(i);
-                if (c == "\n")
+                if (c == "\n" || c == "\r")
                     result += "</span>";
                 echoChar(c);
-                if (c == "\n")
+                if (c == "\n" || c == "\r")
                     result += "<span class=\"comment\">";
                 if (cPrev == "*" && c == "/")
                     break;
@@ -332,7 +334,7 @@ function syntaxHighlight(code)
             echoChar(cNext);
             for (i += 2; i < code.length; i++) {
                 c = code.charAt(i);
-                if (c == "\n")
+                if (c == "\n" || c == "\r")
                     break;
                 echoChar(c);
             }
@@ -406,20 +408,20 @@ function navFilePrevious(element)
 {
     if (element.disabled)
         return;
-    var lastSource = previousFiles.pop();
-    if (currentSourceId != -1)
-        nextFiles.unshift(currentSourceId);
-    loadSource(lastSource, false);
+    var lastFile = previousFiles.pop();
+    if (currentFile != -1)
+        nextFiles.unshift(currentFile);
+    loadFile(lastFile, false);
 }
 
 function navFileNext(element)
 {
     if (element.disabled)
         return;
-    var lastSource = nextFiles.shift();
-    if (currentSourceId != -1)
-        previousFiles.push(currentSourceId);
-    loadSource(lastSource, false);
+    var lastFile = nextFiles.shift();
+    if (currentFile != -1)
+        previousFiles.push(currentFile);
+    loadFile(lastFile, false);
 }
 
 function updateFunctionStack()
@@ -455,28 +457,29 @@ function updateFunctionStack()
     stackframeTable.appendChild(tr);
 }
 
-function loadSource(sourceId,manageNavLists)
+function loadFile(fileIndex, manageNavLists)
 {
-    if (!sourceFiles[sourceId])
+    var file = files[fileIndex];
+    if (!file)
         return;
 
-    if (currentSourceId != -1 && sourceFiles[currentSourceId] && sourceFiles[currentSourceId].element)
-        sourceFiles[currentSourceId].element.style.display = "none";
+    if (currentFile != -1 && files[currentFile] && files[currentFile].element)
+        files[currentFile].element.style.display = "none";
 
-    if (!sourceFiles[sourceId].loaded) {
-        sourceFiles[sourceId].lines = sourceFiles[sourceId].source.split("\n");
+    if (!file.loaded) {
+        file.lines = file.source.split(/[\n\r]/);
 
         var sourcesDocument = document.getElementById("sources").contentDocument;
         var sourcesDiv = sourcesDocument.body;
         var sourceDiv = sourcesDocument.createElement("div");
-        sourceDiv.id = "source" + sourceId;
+        sourceDiv.id = "file" + fileIndex;
         sourcesDiv.appendChild(sourceDiv);
-        sourceFiles[sourceId].element = sourceDiv;
+        file.element = sourceDiv;
 
         var table = sourcesDocument.createElement("table");
         sourceDiv.appendChild(table);
 
-        var lines = syntaxHighlight(sourceFiles[sourceId].source).split("\n");
+        var lines = syntaxHighlight(file.source).split(/[\n\r]/);
         for( var i = 0; i < lines.length; i++ ) {
             var tr = sourcesDocument.createElement("tr");
             var td = sourcesDocument.createElement("td");
@@ -492,74 +495,123 @@ function loadSource(sourceId,manageNavLists)
             table.appendChild(tr);
         }
 
-        sourceFiles[sourceId].loaded = true;
+        file.loaded = true;
     }
 
-    sourceFiles[sourceId].element.style.display = null;
+    file.element.style.display = null;
 
-    document.getElementById("filesPopupButtonContent").innerText = sourceFiles[sourceId].url;
+    document.getElementById("filesPopupButtonContent").innerText = (file.url ? file.url : "(unknown script)");
     
-    var files = document.getElementById("files");
-    for (var i = 0; i < files.childNodes.length; i++) {
-        if (files.childNodes[i].value == sourceId) {
-            files.selectedIndex = i;
+    var filesSelect = document.getElementById("files");
+    for (var i = 0; i < filesSelect.childNodes.length; i++) {
+        if (filesSelect.childNodes[i].value == fileIndex) {
+            filesSelect.selectedIndex = i;
             break;
         }
     }
 
     if (manageNavLists) {
         nextFiles = new Array();
-        if (currentSourceId != -1)
-            previousFiles.push(currentSourceId);
+        if (currentFile != -1)
+            previousFiles.push(currentFile);
     }
 
     document.getElementById("navFileLeftButton").disabled = (previousFiles.length == 0);
     document.getElementById("navFileRightButton").disabled = (nextFiles.length == 0);
 
-    currentSourceId = sourceId;
+    currentFile = fileIndex;
 }
 
-function didParseScript(source,url,sourceId)
+function updateFileSource(source, url, force)
 {
-    sourceFiles[sourceId] = new Object();
-    sourceFiles[sourceId].source = source;
-    sourceFiles[sourceId].url = url;
-    sourceFiles[sourceId].loaded = false;
-    sourceFiles[sourceId].breakpoints = new Array();
-
-    var files = document.getElementById("files");
-    var option = document.createElement("option");
-    sourceFiles[sourceId].menuOption = option;
-    option.value = sourceId;
-    option.text = url;
-    files.appendChild(option);
-
-    if (currentSourceId == -1)
-        loadSource(sourceId,true);
-    return true;
-}
-
-function willExecuteStatement(sourceId,line)
-{
-    if (line <= 0 || !sourceFiles[sourceId])
+    var fileIndex = filesLookup[url];
+    if (!fileIndex || !source.length)
         return;
 
-    if (sourceFiles[sourceId].breakpoints[line] == 1)
+    var file = files[fileIndex];
+    if (force || file.source.length != source.length || file.source != source) {
+        file.source = source;
+        file.loaded = false;
+        file.lines = null;
+
+        if (file.element) {
+            file.element.parentNode.removeChild(file.element);
+            file.element = null;
+        }
+
+        if (currentFile == fileIndex)
+            loadFile(fileIndex, false);
+    }
+}
+
+function didParseScript(source, fileSource, url, sourceId, baseLineNumber)
+{
+    var fileIndex = filesLookup[url];
+    var file = files[fileIndex];
+    var firstLoad = false;
+    if (!fileIndex || !file) {
+        fileIndex = files.length + 1;
+        if (url.length)
+            filesLookup[url] = fileIndex;
+
+        file = new Object();
+        file.scripts = new Array();
+        file.breakpoints = new Array();
+        file.source = (fileSource.length ? fileSource : source);
+        file.url = (url.length ? url : null);
+        file.loaded = false;
+
+        files[fileIndex] = file;
+
+        var filesSelect = document.getElementById("files");
+        var option = document.createElement("option");
+        files[fileIndex].menuOption = option;
+        option.value = fileIndex;
+        option.text = (file.url ? file.url : "(unknown script)");
+        filesSelect.appendChild(option);
+        firstLoad = true;
+    }
+
+    var sourceObj = new Object();
+    sourceObj.source = source;
+    sourceObj.file = fileIndex;
+    sourceObj.baseLineNumber = baseLineNumber;
+    file.scripts.push(sourceId);
+    scripts[sourceId] = sourceObj;
+
+    if (!firstLoad)
+        updateFileSource((fileSource.length ? fileSource : source), url, false);
+
+    if (currentFile == -1)
+        loadFile(fileIndex, true);
+}
+
+function willExecuteStatement(sourceId, line)
+{
+    var script = scripts[sourceId];
+    if (line <= 0 || !script)
+        return;
+
+    var file = files[script.file];
+    if (!file)
+        return;
+
+    if (file.breakpoints[line] == 1)
         pause();
 
     if (isPaused()) {
-        if (currentSourceId != sourceId)
-            loadSource(sourceId,true);
+        if (currentFile != script.file)
+            loadFile(script.file, true);
         if (currentRow)
             removeStyleClass(currentRow, "current");
-        if (!sourceFiles[sourceId].element)
+        if (!file.element)
             return;
-        if (sourceFiles[sourceId].element.firstChild.childNodes.length < line)
+        if (file.element.firstChild.childNodes.length < line)
             return;
 
         updateFunctionStack();
 
-        currentRow = sourceFiles[sourceId].element.firstChild.childNodes.item(line - 1);
+        currentRow = file.element.firstChild.childNodes.item(line - 1);
         addStyleClass(currentRow, "current");
 
         var sourcesDiv = document.getElementById("sources");
@@ -571,12 +623,12 @@ function willExecuteStatement(sourceId,line)
     }
 }
 
-function didEnterCallFrame(sourceId,line)
+function didEnterCallFrame(sourceId, line)
 {
-    willExecuteStatement(sourceId,line);
+    willExecuteStatement(sourceId, line);
 }
 
-function willLeaveCallFrame(sourceId,line)
+function willLeaveCallFrame(sourceId, line)
 {
-    willExecuteStatement(sourceId,line);
+    willExecuteStatement(sourceId, line);
 }

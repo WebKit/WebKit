@@ -795,7 +795,7 @@ JSValue *GlobalFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, c
 
         Debugger *dbg = exec->dynamicInterpreter()->debugger();
         if (dbg) {
-          bool cont = dbg->sourceParsed(exec, sid, UString(), s, errLine);
+          bool cont = dbg->sourceParsed(exec, sid, UString(), s, 0, errLine, errMsg);
           if (!cont)
             return jsUndefined();
         }

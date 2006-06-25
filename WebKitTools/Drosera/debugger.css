@@ -31,14 +31,14 @@ body { margin: 0; padding: 0; }
 
 #main { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
 #info { position: absolute; top: 0; height: 175px; left: 0; right: 0; }
-#divider { cursor: move; position: absolute; bottom: 0; left: 0; right: 0; background: url(splitterDimple.tif) 50% no-repeat, url(splitterBar.tif) repeat-x; height: 10px }
+#divider { cursor: row-resize; position: absolute; bottom: 0; left: 0; right: 0; background: url(splitterDimple.tif) 50% no-repeat, url(splitterBar.tif) repeat-x; height: 10px }
 #body { position: absolute; top: 175px; left: 0; right: 0; bottom: 0; }
 #sourcesContainer { position: absolute; top: 16px; left: 0; right: 0; bottom: 21px; background-color: white; }
 #sources { width: 100%; height: 100% }
 #header { vertical-align: top; height: 16px; box-sizing: border-box; border-bottom: 1px solid #aaa; background: url(glossyHeader.png) repeat-x; position: absolute; top: 0; left: 0; right: 0; }
 #header > * { vertical-align: top; }
 #footer { height: 21px; box-sizing: border-box; border-top: 1px solid #aaa; background: url(glossyFooterFill.tif) repeat-x; position: absolute; bottom: 0; left: 0; right: 0; }
-#infoDivider { position: absolute; z-index: 10; right: 0; left: 0; top: 0; bottom: 9px; width: 10px; cursor: move; background: url(verticalSplitterDimple.tiff) 50% no-repeat, url(verticalSplitterBar.tiff) repeat-y; width: 10px; }
+#infoDivider { position: absolute; z-index: 10; right: 0; left: 0; top: 0; bottom: 9px; width: 10px; cursor: col-resize; background: url(verticalSplitterDimple.tiff) 50% no-repeat, url(verticalSplitterBar.tiff) repeat-y; width: 10px; }
 
 #files {
     opacity: 0;
@@ -220,7 +220,7 @@ td { padding: 3px 7px 3px 9px; height: 15px; box-sizing: border-box; }
     left: 168px;
     width: 4px;
     height: 16px;
-    cursor: move;
+    cursor: col-resize;
 }
 
 .column th {

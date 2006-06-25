@@ -92,6 +92,9 @@ _WebScriptDebugServerQueryNotification
 _WebScriptDebugServerQueryReplyNotification
 _WebScriptDebugServerDidLoadNotification
 _WebScriptDebugServerWillUnloadNotification
+_WebScriptErrorDomain
+_WebScriptErrorDescriptionKey
+_WebScriptErrorLineNumberKey
 
 ##
 ## Carbon Support

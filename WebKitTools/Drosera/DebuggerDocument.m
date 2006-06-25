@@ -97,6 +97,7 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
     paused = YES;
     if ([[(NSDistantObject *)server connectionForProxy] isValid])
         [server pause];
+    [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 }
 
 - (void)resume
@@ -316,19 +317,55 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 #pragma mark -
 #pragma mark Debug Listener Callbacks
 
-- (void)webView:(WebView *)view didParseSource:(NSString *)source fromURL:(NSString *)url sourceId:(int)sid forWebFrame:(WebFrame *)webFrame
+- (void)webView:(WebView *)view didLoadMainResourceForDataSource:(WebDataSource *)dataSource
+{
+    NSString *documentSourceCopy = nil;
+    id <WebDocumentRepresentation> rep = [dataSource representation];
+    if ([rep canProvideDocumentSource])
+        documentSourceCopy = [[rep documentSource] copy];
+
+    if (!documentSourceCopy)
+        return;
+
+    NSString *urlCopy = [[[[dataSource response] URL] absoluteString] copy];
+    NSArray *args = [NSArray arrayWithObjects:(documentSourceCopy ? documentSourceCopy : @""), (urlCopy ? urlCopy : @""), [NSNumber numberWithBool:NO], nil];
+    [[webView windowScriptObject] callWebScriptMethod:@"updateFileSource" withArguments:args];
+
+    [documentSourceCopy release];
+    [urlCopy release];
+}
+
+- (void)webView:(WebView *)view didParseSource:(NSString *)source baseLineNumber:(unsigned)baseLine fromURL:(NSURL *)url sourceId:(int)sid forWebFrame:(WebFrame *)webFrame
 {
     if (!webViewLoaded)
         return;
 
     NSString *sourceCopy = [source copy];
-    NSString *urlCopy = [url copy];
+    if (!sourceCopy)
+        return;
 
-    NSArray *args = [NSArray arrayWithObjects:sourceCopy, (urlCopy ? urlCopy : @""), [NSNumber numberWithInt:sid], nil];
+    NSString *documentSourceCopy = nil;
+    NSString *urlCopy = [[url absoluteString] copy];
+
+    WebDataSource *dataSource = [webFrame dataSource];
+    if (!url || [[[dataSource response] URL] isEqual:url]) {
+        id <WebDocumentRepresentation> rep = [dataSource representation];
+        if ([rep canProvideDocumentSource])
+            documentSourceCopy = [[rep documentSource] copy];
+        if (!urlCopy)
+            urlCopy = [[[[dataSource response] URL] absoluteString] copy];
+    }
+
+    NSArray *args = [NSArray arrayWithObjects:sourceCopy, (documentSourceCopy ? documentSourceCopy : @""), (urlCopy ? urlCopy : @""), [NSNumber numberWithInt:sid], [NSNumber numberWithUnsignedInt:baseLine], nil];
     [[webView windowScriptObject] callWebScriptMethod:@"didParseScript" withArguments:args];
 
     [sourceCopy release];
+    [documentSourceCopy release];
     [urlCopy release];
+}
+
+- (void)webView:(WebView *)view failedToParseSource:(NSString *)source baseLineNumber:(unsigned)baseLine fromURL:(NSURL *)url withError:(NSError *)error forWebFrame:(WebFrame *)webFrame
+{
 }
 
 - (void)webView:(WebView *)view didEnterCallFrame:(WebScriptCallFrame *)frame sourceId:(int)sid line:(int)lineno forWebFrame:(WebFrame *)webFrame
