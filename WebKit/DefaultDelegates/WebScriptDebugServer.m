@@ -74,6 +74,7 @@ static unsigned listenerCount = 0;
             [[NSBundle mainBundle] bundleIdentifier], WebScriptDebugServerProcessBundleIdentifierKey,
             [NSNumber numberWithInt:[processInfo processIdentifier]], WebScriptDebugServerProcessIdentifierKey, nil];
         [[NSDistributedNotificationCenter defaultCenter] postNotificationName:WebScriptDebugServerDidLoadNotification object:serverName userInfo:info];
+        [info release];
     } else {
         [serverConnection release];
         serverConnection = nil;
