@@ -196,16 +196,13 @@ sub isDirectoryEmptyForRemoval($)
     my @files = grep {
         if (exists $removeDirectoryIgnoreList{$_}) {
             0;
-        }
-        elsif (! -d File::Spec->catdir($dir, $_)) {
+        } elsif (! -d File::Spec->catdir($dir, $_)) {
             1;
-        }
-        else {
+        } else {
             my $svnOutput = svnStatus(File::Spec->catdir($dir, $_));
             if ($svnOutput && substr($svnOutput, 0, 1) eq "D") {
                 0;
-            }
-            else {
+            } else {
                 1;
             }
         }

@@ -1,5 +1,13 @@
 2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
 
+        Formatting fix per Bug 9571 Comment #2.  Reviewed by NOBODY.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9571#c2
+
+        * Scripts/svn-apply: Formatting fix.
+
+2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
+
         Reviewed by Darin.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=9571
