@@ -1,3 +1,15 @@
+2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9537
+          REGRESSION: Reproducible crash in WebCore::RenderTextField::textWithHardLineBreaks()
+
+        * fast/forms/textarea-hard-linewrap-empty-expected.txt: Added.
+        * fast/forms/textarea-hard-linewrap-empty.html: Added.
+        * fast/forms/textarea-hard-linewrap.html: Reduced timeout from 200ms to 0ms and
+        renamed function from foo() to submitForm().
+
 2006-06-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

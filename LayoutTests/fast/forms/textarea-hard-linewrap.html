@@ -12,7 +12,7 @@
 </form>
 <script>
 
-function foo() {
+function submitForm() {
     document.f.submit();
 }
 
@@ -23,7 +23,7 @@ if (document.URL.indexOf('?') == -1) {
         window.layoutTestController.waitUntilDone();
     }
     
-    window.setTimeout(foo, 200);
+    window.setTimeout(submitForm, 0);
         
 } else {
     var formData = document.URL.substring(document.URL.indexOf('?') + 1, document.URL.length);

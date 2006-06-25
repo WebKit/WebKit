@@ -274,10 +274,14 @@ String RenderTextField::textWithHardLineBreaks()
     document()->updateLayout();
 
     ASSERT(m_div->firstChild());
-    InlineBox* box = m_div->firstChild()->renderer()->inlineBox(0, DOWNSTREAM);
+    RenderObject* renderer = m_div->firstChild()->renderer();
+    if (!renderer)
+        return s;
+
+    InlineBox* box = renderer->inlineBox(0, DOWNSTREAM);
     if (!box)
         return s;
-    
+
     ExceptionCode ec = 0;
     RefPtr<Range> range = new Range(document());
     range->selectNodeContents(m_div.get(), ec);
