@@ -1,3 +1,31 @@
+2006-06-25  Timothy Hatcher  <timothy@apple.com>
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9560
+        
+        This fix converted the resize corner image to a B/W tiff.
+        The pixel tests showed 0.0% changes but still said it had differences.
+        Updating the tests that use CSS3 resize or textarea.
+
+        * fast/forms/floating-textfield-relayout-expected.checksum:
+        * fast/forms/form-element-geometry-expected.checksum:
+        * fast/forms/form-element-geometry-expected.png:
+        * fast/forms/negativeLineHeight-expected.checksum:
+        * fast/forms/negativeLineHeight-expected.png:
+        * fast/forms/textAreaLineHeight-expected.checksum:
+        * fast/forms/textAreaLineHeight-expected.png:
+        * fast/forms/textarea-setinnerhtml-expected.checksum:
+        * fast/forms/textarea-setinnerhtml-expected.png:
+        * fast/overflow/overflow-x-y-expected.checksum:
+        * fast/overflow/overflow-x-y-expected.png:
+        * fast/table/003-expected.checksum:
+        * fast/table/003-expected.png:
+        * tables/mozilla/bugs/bug194024-expected.checksum:
+        * tables/mozilla/bugs/bug194024-expected.png:
+        * tables/mozilla/bugs/bug30559-expected.checksum:
+        * tables/mozilla/bugs/bug30559-expected.png:
+        * tables/mozilla/bugs/bug30692-expected.checksum:
+        * tables/mozilla/bugs/bug30692-expected.png:
+
 2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
 
         Build fix.  Reviewed by NOBODY.
