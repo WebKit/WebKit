@@ -138,7 +138,7 @@ sub addDirectoriesIfNeeded($)
     my $dir = ".";
     while (scalar @dirs) {
         $dir = File::Spec->catdir($dir, shift @dirs);
-        next if (exists $checkedDirectories{$dir});
+        next if exists $checkedDirectories{$dir};
         if (! -e $dir) {
             mkdir $dir or die "Failed to create required directory '$dir' for path '$path'\n";
             system "svn", "add", $dir;
@@ -192,23 +192,20 @@ sub handleBinaryChange($$)
 sub isDirectoryEmptyForRemoval($)
 {
     my ($dir) = @_;
+    my $directoryIsEmpty = 1;
     opendir DIR, $dir or die "Could not open '$dir' to list files: $?";
-    my @files = grep {
-        if (exists $removeDirectoryIgnoreList{$_}) {
-            0;
-        } elsif (! -d File::Spec->catdir($dir, $_)) {
-            1;
+    for (my $item = readdir DIR; $item && $directoryIsEmpty; $item = readdir DIR) {
+        next if exists $removeDirectoryIgnoreList{$item};
+        if (! -d File::Spec->catdir($dir, $item)) {
+            $directoryIsEmpty = 0;
         } else {
-            my $svnOutput = svnStatus(File::Spec->catdir($dir, $_));
-            if ($svnOutput && substr($svnOutput, 0, 1) eq "D") {
-                0;
-            } else {
-                1;
-            }
+            my $svnOutput = svnStatus(File::Spec->catdir($dir, $item));
+            next if $svnOutput && substr($svnOutput, 0, 1) eq "D";
+            $directoryIsEmpty = 0;
         }
-    } readdir DIR;
+    }
     closedir DIR;
-    return scalar(@files) == 0;
+    return $directoryIsEmpty;
 }
 
 sub patch($)
@@ -277,7 +274,7 @@ sub removeDirectoriesIfNeeded()
                 $svnOutput = $_;
             }
             close SVN;
-            print $svnOutput;
+            print $svnOutput if $svnOutput;
         }
     }
 }

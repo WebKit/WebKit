@@ -1,3 +1,12 @@
+2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        * Scripts/svn-apply: Speed up isDirectoryEmptyForRemoval() by returning as soon as we find
+        that the directory is not empty instead of reading in every single file and directory first,
+        then checking the count.  Avoid warning in removeDirectoriesIfNeeded() if $svnOutput is not
+        defined.
+
 2006-06-25  Darin Adler  <darin@apple.com>
 
         * Scripts/svn-apply: Tweak comments.
