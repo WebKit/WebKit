@@ -28,13 +28,11 @@
 
 #include "Cache.h"
 
-using WebCore::Cache;
-
 @implementation WebCoreCache
 
 + (NSArray *)statistics
 {
-    Cache::Statistics s = Cache::getStatistics();
+    WebCore::Cache::Statistics s = WebCore::Cache::getStatistics();
 
     return [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:
@@ -56,12 +54,12 @@ using WebCore::Cache;
 
 + (void)empty
 {
-    Cache::flushAll();
+    WebCore::Cache::flushAll();
 }
 
 + (void)setDisabled:(BOOL)disabled
 {
-    Cache::setCacheDisabled(disabled);
+    WebCore::Cache::setCacheDisabled(disabled);
 }
 
 @end

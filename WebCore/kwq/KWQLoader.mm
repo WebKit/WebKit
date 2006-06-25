@@ -166,7 +166,7 @@ Vector<char> KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Tr
 
 int KWQNumberOfPendingOrLoadingRequests(WebCore::DocLoader *dl)
 {
-    return Cache::loader()->numRequests(dl);
+    return WebCore::Cache::loader()->numRequests(dl);
 }
 
 bool KWQCheckIfReloading(DocLoader *loader)

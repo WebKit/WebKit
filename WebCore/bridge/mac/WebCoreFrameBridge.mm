@@ -457,7 +457,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // FIXME: This is one-time initialization, but it gets the value of the setting from the
     // current WebView. That's a mismatch and not good!
     if (!initializedObjectCacheSize) {
-        Cache::setSize([self getObjectCacheSize]);
+        WebCore::Cache::setSize([self getObjectCacheSize]);
         initializedObjectCacheSize = true;
     }
     
