@@ -1,3 +1,15 @@
+2006-06-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - repaint test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9388
+          REGRESSION: outlines don't get erased when removed in some cases
+
+        * fast/repaint/outline-shrinking-expected.checksum: Added.
+        * fast/repaint/outline-shrinking-expected.png: Added.
+        * fast/repaint/outline-shrinking-expected.txt: Added.
+        * fast/repaint/outline-shrinking.html: Added.
+
 2006-06-25  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

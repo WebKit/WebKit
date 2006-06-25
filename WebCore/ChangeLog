@@ -1,3 +1,16 @@
+2006-06-25  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9388
+          REGRESSION: outlines don't get erased when removed in some cases
+
+        Test: fast/repaint/outline-shrinking.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): Always repaint with the old style if the outline is
+        becoming narrower, even if we are going to relayout.
+
 2006-06-25  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
