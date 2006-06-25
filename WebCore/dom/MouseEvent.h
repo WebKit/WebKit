@@ -38,7 +38,8 @@ namespace WebCore {
         MouseEvent();
         MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view,
                    int detail, int screenX, int screenY, int clientX, int clientY,
-                   bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
+                   int pageX, int pageY, bool ctrlKey, bool altKey,
+                   bool shiftKey, bool metaKey, unsigned short button,
                    EventTargetNode* relatedTarget, Clipboard* clipboard = 0, bool isSimulated = false);
         virtual ~MouseEvent();
 

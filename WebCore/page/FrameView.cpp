@@ -759,9 +759,17 @@ bool FrameView::dispatchDragEvent(const AtomicString& eventType, Node *dragTarge
 {
     IntPoint clientPos = viewportToContents(event.pos());
     
+    int clientX = clientPos.x(); 
+    int clientY = clientPos.y(); 
+    int pageX = clientX; 
+    int pageY = clientY; 
+    if (FrameView* view = m_frame->document()->view()) {
+        pageX -= view->contentsX();
+        pageY -= view->contentsY();
+    }
     RefPtr<MouseEvent> me = new MouseEvent(eventType,
         true, true, m_frame->document()->defaultView(),
-        0, event.globalX(), event.globalY(), clientPos.x(), clientPos.y(),
+        0, event.globalX(), event.globalY(), pageX, pageY, clientX, clientY,
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
         0, 0, clipboard);
 
