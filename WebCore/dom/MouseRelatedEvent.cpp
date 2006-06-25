@@ -50,15 +50,12 @@ MouseRelatedEvent::MouseRelatedEvent()
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, AbstractView* view,
                                      int detail, int screenX, int screenY, int clientX, int clientY,
-                                     int pageX, int pageY, bool ctrlKey, bool altKey,
-                                     bool shiftKey, bool metaKey, bool isSimulated)
+                                     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
     : UIEventWithKeyState(eventType, canBubble, cancelable, view, detail, ctrlKey, altKey, shiftKey, metaKey)
     , m_screenX(screenX)
     , m_screenY(screenY)
     , m_clientX(clientX)
     , m_clientY(clientY)
-    , m_pageX(pageX)
-    , m_pageY(pageY)
     , m_isSimulated(isSimulated)
 {
     initCoordinates();
@@ -69,6 +66,8 @@ void MouseRelatedEvent::initCoordinates()
     // Set up initial values for coordinates.
     // Correct values can't be computed until we have at target, so receivedTarget
     // does the "real" computation.
+    m_pageX = m_clientX;
+    m_pageY = m_clientY;
     m_layerX = m_pageX;
     m_layerY = m_pageY;
     m_offsetX = m_pageX;

@@ -40,8 +40,7 @@ namespace WebCore {
         MouseRelatedEvent();
         MouseRelatedEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view,
                           int detail, int screenX, int screenY, int clientX, int clientY,
-                          int pageX, int pageY, bool ctrlKey, bool altKey,
-                          bool shiftKey, bool metaKey, bool isSimulated = false);
+                          bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated = false);
 
         int screenX() const { return m_screenX; }
         int screenY() const { return m_screenY; }

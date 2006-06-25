@@ -1,3 +1,13 @@
+2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
+
+        Build fix.  Reviewed by NOBODY.
+
+        - Backed out patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=8707
+          event.clientX and event.clientY should be relative to the viewport, not the canvas
+
+        * fast/dom/window-xy-properties-expected.txt: Removed.
+        * fast/dom/window-xy-properties.html: Removed.
+
 2006-06-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

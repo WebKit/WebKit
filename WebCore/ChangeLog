@@ -1,3 +1,22 @@
+2006-06-24  David Kilzer  <ddkilzer@kilzer.net>
+
+        Build fix.  Reviewed by NOBODY.
+
+        - Backed out patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=8707
+          event.clientX and event.clientY should be relative to the viewport, not the canvas
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::MouseEvent):
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::MouseRelatedEvent::initCoordinates):
+        * dom/MouseRelatedEvent.h:
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+
 2006-06-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

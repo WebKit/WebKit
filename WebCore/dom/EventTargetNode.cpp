@@ -407,16 +407,9 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     
     // Attempting to dispatch with a non-EventTarget relatedTarget causes the relatedTarget to be silently ignored.
     EventTargetNode *relatedTarget = (relatedTargetArg && relatedTargetArg->isEventTargetNode()) ? static_cast<EventTargetNode*>(relatedTargetArg) : 0;
-
-    int pageX = clientX; 
-    int pageY = clientY; 
-    if (FrameView* view = document()->view()) {
-        pageX -= view->contentsX();
-        pageY -= view->contentsY();
-    }
+    
     RefPtr<Event> me = new MouseEvent(eventType, true, cancelable, document()->defaultView(),
-                                              detail, screenX, screenY,
-                                              pageX, pageY, clientX, clientY,
+                                              detail, screenX, screenY, clientX, clientY,
                                               ctrlKey, altKey, shiftKey, metaKey, button,
                                               relatedTarget, 0, isSimulated);
     
@@ -431,8 +424,7 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == clickEvent && detail == 2) {
         me = new MouseEvent(dblclickEvent, true, cancelable, document()->defaultView(),
-                                detail, screenX, screenY,
-                                pageX, pageY, clientX, clientY,
+                                detail, screenX, screenY, clientX, clientY,
                                 ctrlKey, altKey, shiftKey, metaKey, button,
                                 relatedTarget, 0, isSimulated);
         if (defaultHandled)

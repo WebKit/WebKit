@@ -37,11 +37,10 @@ MouseEvent::MouseEvent()
 
 MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, AbstractView* view,
                        int detail, int screenX, int screenY, int clientX, int clientY,
-                       int pageX, int pageY, bool ctrlKey, bool altKey,
-                       bool shiftKey, bool metaKey, unsigned short button,
+                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
                        EventTargetNode* relatedTarget, Clipboard* clipboard, bool isSimulated)
     : MouseRelatedEvent(eventType, canBubble, cancelable, view, detail, screenX, screenY,
-                        clientX, clientY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, isSimulated)
+                        clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, isSimulated)
     , m_button(button)
     , m_relatedTarget(relatedTarget)
     , m_clipboard(clipboard)
