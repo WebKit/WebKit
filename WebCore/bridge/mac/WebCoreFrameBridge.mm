@@ -2584,6 +2584,16 @@ static NSCharacterSet *_getPostSmartSet(void)
     return m_frame->containsPlugins();
 }
 
+- (void)setInViewSourceMode:(BOOL)flag
+{
+    m_frame->setInViewSourceMode(flag);
+}
+
+- (BOOL)inViewSourceMode
+{
+    return m_frame->inViewSourceMode();
+}
+
 @end
 
 @implementation WebCoreFrameBridge (WebCoreBridgeInternal)

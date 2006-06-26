@@ -194,12 +194,16 @@ public:
     unsigned m_ruleCount;
 };
 
-CSSRuleSet *CSSStyleSelector::defaultStyle = 0;
-CSSRuleSet *CSSStyleSelector::defaultQuirksStyle = 0;
-CSSRuleSet *CSSStyleSelector::defaultPrintStyle = 0;
-CSSStyleSheet *CSSStyleSelector::defaultSheet = 0;
+CSSRuleSet* CSSStyleSelector::defaultStyle = 0;
+CSSRuleSet* CSSStyleSelector::defaultQuirksStyle = 0;
+CSSRuleSet* CSSStyleSelector::defaultPrintStyle = 0;
+CSSRuleSet* CSSStyleSelector::defaultViewSourceStyle = 0;
+
+CSSStyleSheet* CSSStyleSelector::defaultSheet = 0;
 RenderStyle* CSSStyleSelector::styleNotYetAvailable = 0;
-CSSStyleSheet *CSSStyleSelector::quirksSheet = 0;
+CSSStyleSheet* CSSStyleSelector::quirksSheet = 0;
+CSSStyleSheet* CSSStyleSelector::viewSourceSheet = 0;
+
 #if SVG_SUPPORT
 CSSStyleSheet *CSSStyleSelector::svgSheet = 0;
 #endif
@@ -348,6 +352,7 @@ void CSSStyleSelector::loadDefaultStyle()
     defaultStyle = new CSSRuleSet;
     defaultPrintStyle = new CSSRuleSet;
     defaultQuirksStyle = new CSSRuleSet;
+    defaultViewSourceStyle = new CSSRuleSet;
 
     MediaQueryEvaluator screenEval("screen");
     MediaQueryEvaluator printEval("print");
@@ -367,6 +372,10 @@ void CSSStyleSelector::loadDefaultStyle()
     // Quirks-mode rules.
     quirksSheet = parseUASheet(quirksUserAgentStyleSheet);
     defaultQuirksStyle->addRulesFromSheet(quirksSheet, &screenEval);
+    
+    // View source rules.
+    viewSourceSheet = parseUASheet(sourceUserAgentStyleSheet);
+    defaultViewSourceStyle->addRulesFromSheet(viewSourceSheet, &screenEval);
 }
 
 void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex)
@@ -747,6 +756,10 @@ void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
     // 3. If our medium is print, then we match rules from the print sheet.
     if (m_medium->mediaTypeMatch("print"))
         matchRules(defaultPrintStyle, firstUARule, lastUARule);
+        
+    // 4. If we're in view source mode, then we match rules from the view source style sheet.
+    if (view && view->frame() && view->frame()->inViewSourceMode())
+        matchRules(defaultViewSourceStyle, firstUARule, lastUARule);
 }
 
 // If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where

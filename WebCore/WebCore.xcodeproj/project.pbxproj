@@ -1404,6 +1404,7 @@
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37C1097C715F0019F3D8 /* DOMViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37AB097C715F0019F3D8 /* DOMViews.mm */; };
 		BC1A37C2097C715F0019F3D8 /* DOMViewsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */; };
+		BC5EC1770A507E3E006007F5 /* view-source.css in Resources */ = {isa = PBXBuildFile; fileRef = BC5EC1760A507E3E006007F5 /* view-source.css */; };
 		BC6B7BAF0993603C0052867B /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7BAE0993603C0052867B /* Image.cpp */; };
 		BC6B7ECF0998AC7F0052867B /* ImageSource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6B7ECE0998AC7F0052867B /* ImageSource.h */; };
 		BC6D6DD209AF906600F59759 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D6DD009AF906600F59759 /* Font.cpp */; };
@@ -1464,6 +1465,8 @@
 		BCC8CFCC0986CD2400140BF2 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8CFC90986CD2400140BF2 /* Color.h */; };
 		BCC8D1730988301200140BF2 /* Pen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8D1710988301200140BF2 /* Pen.cpp */; };
 		BCC8D1740988301200140BF2 /* Pen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8D1720988301200140BF2 /* Pen.h */; };
+		BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */; };
+		BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */; };
 		BCD75ABC0989A446003E28DF /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD75ABB0989A446003E28DF /* Image.h */; };
 		BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */; };
 		BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */; };
@@ -3126,6 +3129,7 @@
 		BC1A37AB097C715F0019F3D8 /* DOMViews.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMViews.mm; sourceTree = "<group>"; };
 		BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMViewsInternal.h; sourceTree = "<group>"; };
 		BC3B364705C9D5E200E42902 /* AtomicStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC5EC1760A507E3E006007F5 /* view-source.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "view-source.css"; sourceTree = "<group>"; };
 		BC6B7BAE0993603C0052867B /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
 		BC6B7ECE0998AC7F0052867B /* ImageSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageSource.h; sourceTree = "<group>"; };
 		BC6D6DD009AF906600F59759 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
@@ -3191,6 +3195,8 @@
 		BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ColorData.gperf; sourceTree = "<group>"; };
 		BCC8D1710988301200140BF2 /* Pen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Pen.cpp; sourceTree = "<group>"; };
 		BCC8D1720988301200140BF2 /* Pen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Pen.h; sourceTree = "<group>"; };
+		BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLViewSourceDocument.h; sourceTree = "<group>"; };
+		BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLViewSourceDocument.cpp; sourceTree = "<group>"; };
 		BCD75ABB0989A446003E28DF /* Image.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSComputedStyleDeclaration.h; sourceTree = "<group>"; };
@@ -4022,6 +4028,7 @@
 		93EEC1EC09C2877700C515D1 /* html */ = {
 			isa = PBXGroup;
 			children = (
+				BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */,
 				93EEC1F009C2877700C515D1 /* CanvasGradient.cpp */,
 				93EEC1F109C2877700C515D1 /* CanvasGradient.h */,
 				930CAB8809C49EFA00229C04 /* CanvasGradient.idl */,
@@ -4222,6 +4229,7 @@
 				A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */,
 				A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */,
 				1A85B1D50A1B236C00D8C87C /* HTMLUListElement.idl */,
+				BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */,
 			);
 			path = html;
 			sourceTree = "<group>";
@@ -5219,6 +5227,7 @@
 				A8EA80020A19516E00A8EF5F /* StyleSheetList.h */,
 				93CA4CA209DF93FA00DF8677 /* svg.css */,
 				93CA4CA309DF93FA00DF8677 /* tokenizer.flex */,
+				BC5EC1760A507E3E006007F5 /* view-source.css */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -6317,6 +6326,7 @@
 				85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */,
 				85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */,
 				ABE7B5240A489F830031881C /* DeprecatedRenderSelect.h in Headers */,
+				BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */,
 				1A8086CC0A4D097600DFB6A7 /* DOMCSSInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6403,6 +6413,7 @@
 				A7B97B850979C3A1000E8EB1 /* WKTableTransferFilter.cikernel in Resources */,
 				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
 				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
+				BC5EC1770A507E3E006007F5 /* view-source.css in Resources */,
 				1CD4418D0A4CE76F00A007AB /* eastWestResizeCursor.tiff in Resources */,
 				1CD4418E0A4CE76F00A007AB /* northEastSouthWestResizeCursor.tiff in Resources */,
 				1CD4418F0A4CE76F00A007AB /* northSouthResizeCursor.tiff in Resources */,
@@ -7168,6 +7179,7 @@
 				85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */,
 				ABE7B5230A489F830031881C /* DeprecatedRenderSelect.cpp in Sources */,
 				51F11E150A48C2920034A24E /* SQLTransaction.cpp in Sources */,
+				BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */,
 				E1052C320A4D70010072D99B /* DOMEventsNonstandard.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

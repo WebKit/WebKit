@@ -34,6 +34,7 @@
 #include "DocumentFragment.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLViewSourceDocument.h"
 #include "HTMLElement.h"
 #include "SystemTime.h"
 #include "csshelper.h"
@@ -119,8 +120,9 @@ inline void Token::addAttribute(Document* doc, const AtomicString& attrName, con
 
 // ----------------------------------------------------------------------------
 
-HTMLTokenizer::HTMLTokenizer(Document* doc)
-    : buffer(0)
+HTMLTokenizer::HTMLTokenizer(HTMLDocument* doc)
+    : Tokenizer()
+    , buffer(0)
     , scriptCode(0)
     , scriptCodeSize(0)
     , scriptCodeMaxSize(0)
@@ -128,10 +130,27 @@ HTMLTokenizer::HTMLTokenizer(Document* doc)
     , m_executingScript(0)
     , m_timer(this, &HTMLTokenizer::timerFired)
     , m_doc(doc)
+    , parser(new HTMLParser(doc))
     , inWrite(false)
     , m_fragment(false)
 {
-    parser = new HTMLParser(doc);
+    begin();
+}
+
+HTMLTokenizer::HTMLTokenizer(HTMLViewSourceDocument* doc)
+    : Tokenizer(true)
+    , buffer(0)
+    , scriptCode(0)
+    , scriptCodeSize(0)
+    , scriptCodeMaxSize(0)
+    , scriptCodeResync(0)
+    , m_executingScript(0)
+    , m_timer(this, &HTMLTokenizer::timerFired)
+    , m_doc(doc)
+    , parser(0)
+    , inWrite(false)
+    , m_fragment(false)
+{
     begin();
 }
 
@@ -332,18 +351,18 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
 
     // (Bugzilla 3837) Scripts following a frameset element should not execute or, 
     // in the case of extern scripts, even load.
-    bool followingFrameset = (parser->doc()->body() && parser->doc()->body()->hasTagName(framesetTag));
+    bool followingFrameset = (m_doc->body() && m_doc->body()->hasTagName(framesetTag));
   
     CachedScript* cs = 0;
     // don't load external scripts for standalone documents (for now)
-    if (!scriptSrc.isEmpty() && parser->doc()->frame()) {
+    if (!scriptSrc.isEmpty() && m_doc->frame()) {
         // forget what we just got; load from src url instead
         if (!parser->skipMode() && !followingFrameset) {
 #if INSTRUMENT_LAYOUT_SCHEDULING
-            if (!parser->doc()->ownerElement())
-                printf("Requesting script at time %d\n", parser->doc()->elapsedTime());
+            if (!m_doc->ownerElement())
+                printf("Requesting script at time %d\n", m_doc->elapsedTime());
 #endif
-            if ( (cs = parser->doc()->docLoader()->requestScript(scriptSrc, scriptSrcCharset) ))
+            if ( (cs = m_doc->docLoader()->requestScript(scriptSrc, scriptSrcCharset) ))
                 pendingScripts.enqueue(cs);
             else
                 scriptNode = 0;
@@ -446,8 +465,8 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const DeprecatedString& str,
     currentPrependingSrc = &prependingSrc;
 
 #if INSTRUMENT_LAYOUT_SCHEDULING
-    if (!parser->doc()->ownerElement())
-        printf("beginning script execution at %d\n", parser->doc()->elapsedTime());
+    if (!m_doc->ownerElement())
+        printf("beginning script execution at %d\n", m_doc->elapsedTime());
 #endif
 
     m_state = state;
@@ -457,8 +476,8 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const DeprecatedString& str,
     state.setAllowYield(true);
 
 #if INSTRUMENT_LAYOUT_SCHEDULING
-    if (!parser->doc()->ownerElement())
-        printf("ending script execution at %d\n", parser->doc()->elapsedTime());
+    if (!m_doc->ownerElement())
+        printf("ending script execution at %d\n", m_doc->elapsedTime());
 #endif
     
     m_executingScript--;
@@ -788,7 +807,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         // Fix bug 34302 at kde.bugs.org.  Go ahead and treat
                         // <!--> as a valid comment, since both mozilla and IE on windows
                         // can handle this case.  Only do this in quirks mode. -dwh
-                        if (!src.isEmpty() && *src == '>' && parser->doc()->inCompatMode()) {
+                        if (!src.isEmpty() && *src == '>' && m_doc->inCompatMode()) {
                           state.setInComment(false);
                           ++src;
                           if (!src.isEmpty())
@@ -820,7 +839,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 }
                 
                 // tolower() shows up on profiles. This is faster!
-                if (curchar >= 'A' && curchar <= 'Z')
+                if (curchar >= 'A' && curchar <= 'Z' && !inViewSourceMode())
                     cBuffer[cBufferPos++] = curchar + ('a' - 'A');
                 else
                     cBuffer[cBufferPos++] = curchar;
@@ -845,7 +864,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     beginTag = true;
 
                 // Ignore the / in fake xml tags like <br/>.  We trim off the "/" so that we'll get "br" as the tag name and not "br/".
-                if (len > 1 && ptr[len-1] == '/')
+                if (len > 1 && ptr[len-1] == '/' && !inViewSourceMode())
                     ptr[--len] = '\0';
 
                 // Now that we've shaved off any invalid / that might have followed the name), make the tag.
@@ -935,7 +954,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         ++src;
                     }
                     else {
-                        currToken.addAttribute(parser->doc(), attrName, emptyAtom);
+                        currToken.addAttribute(m_doc, attrName, emptyAtom);
                         dest = buffer;
                         state.setTagState(SearchAttribute);
                     }
@@ -980,7 +999,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         dest--; // remove trailing newlines
                     AtomicString v(buffer+1, dest-buffer-1);
                     attrName = v; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
-                    currToken.addAttribute(parser->doc(), attrName, v);
+                    currToken.addAttribute(m_doc, attrName, v);
                     state.setTagState(SearchAttribute);
                     dest = buffer;
                     tquote = NoQuote;
@@ -1004,7 +1023,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         AtomicString v(buffer+1, dest-buffer-1);
                         if (attrName.isEmpty())
                             attrName = v; // Make the name match the value. (FIXME: Is this a WinIE quirk?)
-                        currToken.addAttribute(parser->doc(), attrName, v);
+                        currToken.addAttribute(m_doc, attrName, v);
 
                         dest = buffer;
                         state.setTagState(SearchAttribute);
@@ -1037,7 +1056,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     if ( curchar <= ' ' || curchar == '>' )
                     {
                         AtomicString v(buffer+1, dest-buffer-1);
-                        currToken.addAttribute(parser->doc(), attrName, v);
+                        currToken.addAttribute(m_doc, attrName, v);
                         dest = buffer;
                         state.setTagState(SearchAttribute);
                         break;
@@ -1091,16 +1110,16 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 scriptSrc = DeprecatedString::null;
                 scriptSrcCharset = DeprecatedString::null;
                 if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
-                     parser->doc()->frame() &&
-                     parser->doc()->frame()->jScriptEnabled() && /* jscript allowed at all? */
+                     m_doc->frame() &&
+                     m_doc->frame()->jScriptEnabled() && /* jscript allowed at all? */
                      !m_fragment /* are we a regular tokenizer or just for innerHTML ? */
                     ) {
                     if ((a = currToken.attrs->getAttributeItem(srcAttr)))
-                        scriptSrc = parser->doc()->completeURL(parseURL(a->value()).deprecatedString());
+                        scriptSrc = m_doc->completeURL(parseURL(a->value()).deprecatedString());
                     if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
                         scriptSrcCharset = a->value().deprecatedString().stripWhiteSpace();
                     if ( scriptSrcCharset.isEmpty() )
-                        scriptSrcCharset = parser->doc()->frame()->encoding();
+                        scriptSrcCharset = m_doc->frame()->encoding();
                     /* Check type before language, since language is deprecated */
                     if ((a = currToken.attrs->getAttributeItem(typeAttr)) != 0 && !a->value().isEmpty())
                         foundTypeAttribute = true;
@@ -1159,7 +1178,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 
             RefPtr<Node> n = processToken();
 
-            if (tagName == preTag || tagName == listingTag) {
+            if ((tagName == preTag || tagName == listingTag) && !inViewSourceMode()) {
                 if (beginTag)
                     state.setDiscardLF(true); // Discard the first LF after we open a pre.
             } else if (tagName == scriptTag) {
@@ -1243,8 +1262,8 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
             /* FIXME: We'd like to yield aggressively to give stylesheets the opportunity to
                load, but this hurts overall performance on slower machines.  For now turn this
                off.
-            || (!parser->doc()->haveStylesheetsLoaded() && 
-                (parser->doc()->documentElement()->id() != ID_HTML || parser->doc()->body()))) {*/
+            || (!m_doc->haveStylesheetsLoaded() && 
+                (m_doc->documentElement()->id() != ID_HTML || m_doc->body()))) {*/
             // Schedule the timer to keep processing as soon as possible.
             m_timer.startOneShot(0);
 #if INSTRUMENT_LAYOUT_SCHEDULING
@@ -1294,14 +1313,14 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
     inWrite = true;
     
 #if INSTRUMENT_LAYOUT_SCHEDULING
-    if (!parser->doc()->ownerElement())
-        printf("Beginning write at time %d\n", parser->doc()->elapsedTime());
+    if (!m_doc->ownerElement())
+        printf("Beginning write at time %d\n", m_doc->elapsedTime());
 #endif
     
     int processedCount = 0;
     double startTime = currentTime();
 
-    Frame *frame = parser->doc()->frame();
+    Frame *frame = m_doc->frame();
 
     State state = m_state;
 
@@ -1412,8 +1431,8 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
     }
     
 #if INSTRUMENT_LAYOUT_SCHEDULING
-    if (!parser->doc()->ownerElement())
-        printf("Ending write at time %d\n", parser->doc()->elapsedTime());
+    if (!m_doc->ownerElement())
+        printf("Ending write at time %d\n", m_doc->elapsedTime());
 #endif
     
     inWrite = wasInWrite;
@@ -1446,11 +1465,11 @@ bool HTMLTokenizer::processingData() const
 void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
 {
 #if INSTRUMENT_LAYOUT_SCHEDULING
-    if (!parser->doc()->ownerElement())
-        printf("Beginning timer write at time %d\n", parser->doc()->elapsedTime());
+    if (!m_doc->ownerElement())
+        printf("Beginning timer write at time %d\n", m_doc->elapsedTime());
 #endif
 
-    if (parser->doc()->view() && parser->doc()->view()->layoutPending() && !parser->doc()->minimumLayoutDelay()) {
+    if (m_doc->view() && m_doc->view()->layoutPending() && !m_doc->minimumLayoutDelay()) {
         // Restart the timer and let layout win.  This is basically a way of ensuring that the layout
         // timer has higher priority than our timer.
         m_timer.startOneShot(0);
@@ -1485,7 +1504,10 @@ void HTMLTokenizer::end()
         buffer = 0;
     }
 
-    parser->finished();
+    if (!inViewSourceMode())
+        parser->finished();
+    else
+        m_doc->finishedParsing();
 }
 
 void HTMLTokenizer::finish()
@@ -1576,10 +1598,13 @@ PassRefPtr<Node> HTMLTokenizer::processToken()
 
     RefPtr<Node> n;
     
-    if (!m_parserStopped)
-        // pass the token over to the parser, the parser DOES NOT delete the token
-        n = parser->parseToken(&currToken);
-    
+    if (!m_parserStopped) {
+        if (inViewSourceMode())
+            static_cast<HTMLViewSourceDocument*>(m_doc)->addViewSourceToken(&currToken);
+        else
+            // pass the token over to the parser, the parser DOES NOT delete the token
+            n = parser->parseToken(&currToken);
+    }
     currToken.reset();
     if (jsProxy)
         jsProxy->setEventHandlerLineno(0);
@@ -1614,8 +1639,8 @@ void HTMLTokenizer::enlargeScriptBuffer(int len)
 void HTMLTokenizer::notifyFinished(CachedObject*)
 {
 #if INSTRUMENT_LAYOUT_SCHEDULING
-    if (!parser->doc()->ownerElement())
-        printf("script loaded at %d\n", parser->doc()->elapsedTime());
+    if (!m_doc->ownerElement())
+        printf("script loaded at %d\n", m_doc->elapsedTime());
 #endif
 
     ASSERT(!pendingScripts.isEmpty());
@@ -1642,8 +1667,8 @@ void HTMLTokenizer::notifyFinished(CachedObject*)
         scriptNode = 0;
 
 #if INSTRUMENT_LAYOUT_SCHEDULING
-        if (!parser->doc()->ownerElement())
-            printf("external script beginning execution at %d\n", parser->doc()->elapsedTime());
+        if (!m_doc->ownerElement())
+            printf("external script beginning execution at %d\n", m_doc->elapsedTime());
 #endif
 
         if (errorOccurred)
@@ -1659,8 +1684,8 @@ void HTMLTokenizer::notifyFinished(CachedObject*)
         if (finished) {
             m_state.setLoadingExtScript(false);
 #if INSTRUMENT_LAYOUT_SCHEDULING
-            if (!parser->doc()->ownerElement())
-                printf("external script finished execution at %d\n", parser->doc()->elapsedTime());
+            if (!m_doc->ownerElement())
+                printf("external script finished execution at %d\n", m_doc->elapsedTime());
 #endif
         }
 

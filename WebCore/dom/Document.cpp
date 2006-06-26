@@ -1231,7 +1231,7 @@ void Document::implicitClose()
 #endif
 
 #if SVG_SUPPORT
-    // FIXME: Officially, time 0 is when the outermost <svg> recieves its
+    // FIXME: Officially, time 0 is when the outermost <svg> receives its
     // SVGLoad event, but we don't implement those yet.  This is close enough
     // for now.  In some cases we should have fired earlier.
     if (svgExtensions())

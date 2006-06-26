@@ -38,6 +38,8 @@ namespace WebCore {
 class CachedScript;
 class DocumentFragment;
 class Document;
+class HTMLDocument;
+class HTMLViewSourceDocument;
 class FrameView;
 class HTMLParser;
 class Node;
@@ -79,7 +81,8 @@ public:
 class HTMLTokenizer : public Tokenizer, public CachedObjectClient
 {
 public:
-    HTMLTokenizer(Document*);
+    HTMLTokenizer(HTMLDocument*);
+    HTMLTokenizer(HTMLViewSourceDocument*);
     HTMLTokenizer(DocumentFragment*);
     virtual ~HTMLTokenizer();
 

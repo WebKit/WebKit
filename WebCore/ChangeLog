@@ -1,3 +1,64 @@
+2006-06-26  David Hyatt  <hyatt@apple.com>
+
+        Fix for 9538, support syntax highlighted HTML source.  Lots of loose
+        ends still (script/style/comments/doctype/entities/accurate whitespace).
+
+        Reviewed by darin
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setInViewSourceMode:]):
+        (-[WebCoreFrameBridge inViewSourceMode]):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::loadDefaultStyle):
+        (WebCore::CSSStyleSelector::matchUARules):
+        * css/cssstyleselector.h:
+        * css/view-source.css: Added.
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * dom/xml_tokenizer.h:
+        (WebCore::Tokenizer::Tokenizer):
+        (WebCore::Tokenizer::~Tokenizer):
+        (WebCore::Tokenizer::inViewSourceMode):
+        (WebCore::Tokenizer::setInViewSourceMode):
+        * html/HTMLAttributeNames.in:
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::init):
+        (WebCore::HTMLFrameElement::parseMappedAttribute):
+        (WebCore::HTMLFrameElement::attach):
+        * html/HTMLFrameElement.h:
+        (WebCore::HTMLFrameElement::viewSourceMode):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::continueProcessing):
+        (WebCore::HTMLTokenizer::write):
+        (WebCore::HTMLTokenizer::timerFired):
+        (WebCore::HTMLTokenizer::end):
+        (WebCore::HTMLTokenizer::processToken):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * html/HTMLTokenizer.h:
+        * html/HTMLViewSourceDocument.cpp: Added.
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        (WebCore::HTMLViewSourceDocument::createTokenizer):
+        (WebCore::HTMLViewSourceDocument::addViewSourceToken):
+        (WebCore::HTMLViewSourceDocument::addViewSourceAttribute):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        * html/HTMLViewSourceDocument.h: Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::begin):
+        (WebCore::Frame::inViewSourceMode):
+        (WebCore::Frame::setInViewSourceMode):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+
 2006-06-26  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
@@ -718,6 +779,7 @@
         (WebCore::xmlDocPtrFromNode):
         Pass DocLoader to xmlDocPtrForString
         
+>>>>>>> .r15049
 2006-06-21  David Hyatt  <hyatt@apple.com>
 
         Back out -webkit-overlay and just rename it back to overlay.

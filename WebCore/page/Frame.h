@@ -453,6 +453,9 @@ public:
 
   virtual void tokenizerProcessedData() {}
 
+  bool inViewSourceMode() const;
+  void setInViewSourceMode(bool = true) const;
+
   const KHTMLSettings* settings() const;
 
   void setJSStatusBarText(const String&);

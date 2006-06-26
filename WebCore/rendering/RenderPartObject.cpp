@@ -245,6 +245,8 @@ void RenderPartObject::updateWidget()
           url = "about:blank";
       FrameView* v = static_cast<FrameView*>(m_view);
       v->frame()->requestFrame(this, url, o->m_name);
+      if (o->contentFrame())
+          o->contentFrame()->setInViewSourceMode(o->viewSourceMode());
   }
 }
 

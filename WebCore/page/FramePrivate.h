@@ -101,6 +101,7 @@ namespace WebCore {
             , m_markedTextUsesUnderlines(false)
             , m_highlightTextMatches(false)
             , m_windowHasFocus(false)
+            , m_inViewSourceMode(false)
             , frameCount(0)
         {
         }
@@ -225,6 +226,8 @@ namespace WebCore {
         bool m_highlightTextMatches;
         bool m_windowHasFocus;
         
+        bool m_inViewSourceMode;
+
         unsigned frameCount;
     };
 }

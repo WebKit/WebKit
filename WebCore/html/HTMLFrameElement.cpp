@@ -61,6 +61,7 @@ void HTMLFrameElement::init()
     m_marginHeight = -1;
     m_scrolling = ScrollBarAuto;
     m_noResize = false;
+    m_viewSource = false;
 }
 
 HTMLFrameElement::~HTMLFrameElement()
@@ -157,6 +158,10 @@ void HTMLFrameElement::parseMappedAttribute(MappedAttribute *attr)
         else if (equalIgnoringCase(attr->value(), "no"))
             m_scrolling = ScrollBarAlwaysOff;
         // FIXME: If we are already attached, this has no effect.
+    } else if (attr->name() == viewsourceAttr) {
+        m_viewSource = !attr->isNull();
+        if (contentFrame())
+            contentFrame()->setInViewSourceMode(viewSourceMode());
     } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
@@ -216,6 +221,9 @@ void HTMLFrameElement::attach()
 
     // load the frame contents
     frame->requestFrame(static_cast<RenderFrame*>(renderer()), relativeURL, m_name);
+    
+    if (contentFrame())
+        contentFrame()->setInViewSourceMode(viewSourceMode());
 }
 
 void HTMLFrameElement::close()

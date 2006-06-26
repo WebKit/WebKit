@@ -39,8 +39,12 @@ class SegmentedString;
 class Tokenizer
 {
 public:
-    Tokenizer() : m_parserStopped(false) { }
-    virtual ~Tokenizer() { }
+    Tokenizer(bool viewSourceMode = false) 
+    : m_parserStopped(false)
+    , m_inViewSourceMode(viewSourceMode)
+    {}
+    
+    virtual ~Tokenizer() {}
 
     // Script output must be prepended, while new data
     // received during executing a script must be appended, hence the
@@ -56,11 +60,16 @@ public:
     virtual bool wantsRawData() const { return false; }
     virtual bool writeRawData(const char* data, int len) { return false; }
     
+    bool inViewSourceMode() const { return m_inViewSourceMode; }
+    void setInViewSourceMode(bool mode) { m_inViewSourceMode = mode; }
+
 protected:
     // The tokenizer has buffers, so parsing may continue even after
     // it stops receiving data. We use m_parserStopped to stop the tokenizer
     // even when it has buffered data.
     bool m_parserStopped;
+    
+    bool m_inViewSourceMode;
 };
 
 Tokenizer* newXMLTokenizer(Document*, FrameView* = 0);
