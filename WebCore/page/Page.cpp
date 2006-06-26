@@ -52,6 +52,10 @@ Page::~Page()
     delete m_widget;
     setGroupName(String());
     allPages->remove(this);
+    
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->pageDestroyed();
+    
     if (allPages->isEmpty()) {
         Frame::endAllLifeSupport();
 #ifndef NDEBUG

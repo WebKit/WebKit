@@ -3537,6 +3537,16 @@ Page* Frame::page() const
     return d->m_page;
 }
 
+void Frame::pageDestroyed()
+{
+    d->m_page = 0;
+
+    // This will stop any JS timers
+    if (d->m_jscript && d->m_jscript->haveInterpreter())
+        if (Window* w = Window::retrieveWindow(this))
+            w->disconnectFrame();
+}
+
 void Frame::completed(bool complete)
 {
     ref();

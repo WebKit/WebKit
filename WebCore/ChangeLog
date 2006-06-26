@@ -1,3 +1,21 @@
+2006-06-26  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9031
+        REGRESSION: Crash when closing tabs on newegg.com
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::pageDestroyed):        
+        * page/Frame.h:
+        Add new method which is invoked when the frame's page has been destroyed.
+        Currently this function disassociates the JS Window object with the frame, 
+        stopping any running JS timers.
+        
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        Call pageDestroyed on all frames.
+
 2006-06-26  Rob Buis  <buis@kde.org>
 
         Reviewed and reworked by Darin.
