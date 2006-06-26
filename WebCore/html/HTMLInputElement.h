@@ -128,6 +128,9 @@ public:
 
     InputType inputType() const { return static_cast<InputType>(m_type); }
     void setInputType(const String&);
+    
+    // Report if this input type uses height & width attributes
+    bool respectHeightAndWidthAttrs() const { return inputType() == IMAGE || inputType() == HIDDEN; }
 
     virtual void reset();
 

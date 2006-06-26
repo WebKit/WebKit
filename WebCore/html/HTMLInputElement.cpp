@@ -250,23 +250,27 @@ void HTMLInputElement::setInputType(const String& t)
     // type change, otherwise a JavaScript programmer would be able to set a text
     // field's value to something like /etc/passwd and then change it to a file field.
     if (inputType() != newType) {
-        if (newType == FILE && m_haveType) {
+        if (newType == FILE && m_haveType)
             // Set the attribute back to the old value.
             // Useful in case we were called from inside parseMappedAttribute.
             setAttribute(typeAttr, type());
-        } else {
-            if (inputType() == RADIO && !name().isEmpty()) {
+        else {
+            if (inputType() == RADIO && !name().isEmpty())
                 if (document()->checkedRadioButtonForGroup(name().impl(), form()) == this)
                     document()->removeRadioButtonGroup(name().impl(), form());
-            }
+
             bool wasAttached = m_attached;
             if (wasAttached)
                 detach();
+
             bool didStoreValue = storesValueSeparateFromAttribute();
             bool didMaintainState = inputType() != PASSWORD;
+            bool didRespectHeightAndWidth = respectHeightAndWidthAttrs();
             m_type = newType;
             bool willStoreValue = storesValueSeparateFromAttribute();
             bool willMaintainState = inputType() != PASSWORD;
+            bool willRespectHeightAndWidth = respectHeightAndWidthAttrs();
+
             if (didStoreValue && !willStoreValue && !m_value.isNull()) {
                 setAttribute(valueAttr, m_value);
                 m_value = String();
@@ -275,13 +279,23 @@ void HTMLInputElement::setInputType(const String& t)
                 m_value = constrainValue(getAttribute(valueAttr));
             else
                 recheckValue();
+
             if (willMaintainState && !didMaintainState)
                 document()->registerFormElementWithState(this);
             else if (!willMaintainState && didMaintainState)
                 document()->deregisterFormElementWithState(this);
+
+            if (didRespectHeightAndWidth != willRespectHeightAndWidth) {
+                NamedMappedAttrMap* map = mappedAttributes();
+                if (MappedAttribute* height = map->getAttributeItem(heightAttr))
+                    attributeChanged(height, false);
+                if (MappedAttribute* width = map->getAttributeItem(widthAttr))
+                    attributeChanged(width, false);
+            }
+
             if (wasAttached)
                 attach();
-                
+
             // If our type morphs into a radio button and we are checked, then go ahead
             // and signal this to the form.
             if (inputType() == RADIO && checked())
@@ -289,7 +303,7 @@ void HTMLInputElement::setInputType(const String& t)
         }
     }
     m_haveType = true;
-    
+
     if (inputType() != IMAGE && m_imageLoader) {
         delete m_imageLoader;
         m_imageLoader = 0;
@@ -649,8 +663,7 @@ void HTMLInputElement::accessKeyAction(bool sendToAnyElement)
 
 bool HTMLInputElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == widthAttr ||
-        attrName == heightAttr ||
+    if (((attrName == heightAttr || attrName == widthAttr) && respectHeightAndWidthAttrs()) ||
         attrName == vspaceAttr ||
         attrName == hspaceAttr) {
         result = eUniversal;
@@ -731,9 +744,11 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == alignAttr) {
         addHTMLAlignment(attr);
     } else if (attr->name() == widthAttr) {
-        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+        if (respectHeightAndWidthAttrs())
+            addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
     } else if (attr->name() == heightAttr) {
-        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+        if (respectHeightAndWidthAttrs())
+            addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
     } else if (attr->name() == onfocusAttr) {
         setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
@@ -821,14 +836,6 @@ void HTMLInputElement::attach()
         if (!m_haveType)
             setInputType(getAttribute(typeAttr));
         m_inited = true;
-    }
-
-    // Disallow the width attribute on inputs other than HIDDEN and IMAGE.
-    // Dumb Web sites will try to set the width as an attribute on form controls that aren't
-    // images or hidden.
-    if (hasMappedAttributes() && inputType() != HIDDEN && inputType() != IMAGE && !getAttribute(widthAttr).isEmpty()) {
-        int excCode;
-        removeAttribute(widthAttr, excCode);
     }
 
     HTMLGenericFormElement::attach();

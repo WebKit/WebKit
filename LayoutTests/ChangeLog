@@ -1,3 +1,28 @@
+2006-06-25  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Darin.
+
+        Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=9185
+
+        * fast/forms/input-appearance-height-expected.png: Added.
+        * fast/forms/input-appearance-height-expected.txt: Added.
+        * fast/forms/input-appearance-height.html: Added.
+        Tests the height attribute on all input types
+
+        * fast/forms/input-type-change-expected.checksum: Added.
+        * fast/forms/input-type-change-expected.png: Added.
+        * fast/forms/input-type-change-expected.txt: Added.
+        * fast/forms/input-type-change.html: Added.
+        Tests changing an input type=TEXT to type=IMAGE with
+        a height and width specified on the element.
+
+        * fast/forms/input-type-change2-expected.checksum: Added.
+        * fast/forms/input-type-change2-expected.png: Added.
+        * fast/forms/input-type-change2-expected.txt: Added.
+        * fast/forms/input-type-change2.html: Added.
+        Tests changing an input type=IMAGE to type=TEXT with
+        a height and width specified on the element.
+
 2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

@@ -1,3 +1,31 @@
+2006-06-25  David Carson  <dacarson@gmail.com>
+
+        Reviewed and tweaked by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=9185
+        REGRESSION: UserID field appears with an incorrect height 
+        on americanexpresslogin page
+        - Height and Width attribute only applies to IMAGE and HIDDEN
+        types.
+
+        * dom/NamedMappedAttrMap.h:
+        (WebCore::NamedMappedAttrMap::getAttributeItem):
+        Added to static_cast method.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        Update the style decl if input type has changed.
+        (WebCore::HTMLInputElement::mapToEntry):
+        Only Cache height and width if it is an IMAGE or HIDDEN
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        Check type before adding height and width style.
+        (WebCore::HTMLInputElement::attach):
+        Remove code for discarding width.
+
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::respectHeightAndWidthAttrs):
+        New method added to report if this input type uses height & width.
+
 2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.
