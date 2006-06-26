@@ -7,7 +7,7 @@ event type:      mouseover
   view:          OK (document: OK)
   button:        0
   screenX:       -9900
-  screenY:       10268
+  screenY:       -9500 (flipped)
   clientX:       100
   clientY:       100
   modifier keys: c:0 s:0 a:0 m:0
@@ -20,7 +20,7 @@ event type:      mousedown
   view:          OK (document: OK)
   button:        0
   screenX:       -9900
-  screenY:       10268
+  screenY:       -9500 (flipped)
   clientX:       100
   clientY:       100
   modifier keys: c:0 s:0 a:0 m:0
@@ -40,7 +40,7 @@ event type:      mouseup
   view:          OK (document: OK)
   button:        0
   screenX:       -9900
-  screenY:       10268
+  screenY:       -9500 (flipped)
   clientX:       100
   clientY:       100
   modifier keys: c:0 s:0 a:0 m:0
@@ -53,7 +53,7 @@ event type:      click
   view:          OK (document: OK)
   button:        0
   screenX:       -9900
-  screenY:       10268
+  screenY:       -9500 (flipped)
   clientX:       100
   clientY:       100
   modifier keys: c:0 s:0 a:0 m:0
@@ -162,7 +162,7 @@ event type:      mousemove
   view:          OK (document: OK)
   button:        0
   screenX:       -9600
-  screenY:       10318
+  screenY:       -9550 (flipped)
   clientX:       400
   clientY:       150
   modifier keys: c:0 s:0 a:0 m:0
@@ -175,7 +175,7 @@ event type:      mousedown
   view:          OK (document: OK)
   button:        0
   screenX:       -9600
-  screenY:       10318
+  screenY:       -9550 (flipped)
   clientX:       400
   clientY:       150
   modifier keys: c:0 s:0 a:0 m:0
@@ -195,7 +195,7 @@ event type:      mousedown
   view:          OK (document: OK)
   button:        0
   screenX:       -9600
-  screenY:       10318
+  screenY:       -9550 (flipped)
   clientX:       400
   clientY:       150
   modifier keys: c:0 s:0 a:0 m:0
@@ -215,7 +215,7 @@ event type:      mouseout
   view:          OK (document: OK)
   button:        0
   screenX:       -9999
-  screenY:       10169
+  screenY:       -9401 (flipped)
   clientX:       1
   clientY:       1
   modifier keys: c:0 s:0 a:0 m:0
@@ -229,7 +229,7 @@ event type:      mouseover
   view:          OK (document: OK)
   button:        0
   screenX:       -9999
-  screenY:       10169
+  screenY:       -9401 (flipped)
   clientX:       1
   clientY:       1
   modifier keys: c:0 s:0 a:0 m:0
@@ -243,7 +243,7 @@ event type:      mousemove
   view:          OK (document: OK)
   button:        0
   screenX:       -9999
-  screenY:       10169
+  screenY:       -9401 (flipped)
   clientX:       1
   clientY:       1
   modifier keys: c:0 s:0 a:0 m:0
@@ -262,7 +262,7 @@ event type:      mouseup
   view:          OK (document: OK)
   button:        0
   screenX:       -9999
-  screenY:       10169
+  screenY:       -9401 (flipped)
   clientX:       1
   clientY:       1
   modifier keys: c:0 s:0 a:0 m:0

@@ -347,7 +347,7 @@ NSArray *webkitDomEventProperties;
     if ([event isKindOfClass:[DOMMouseEvent class]]) {
         printf("  button:        %d\n", [(DOMMouseEvent*)event button]);
         printf("  screenX:       %d\n", [(DOMMouseEvent*)event screenX]);
-        printf("  screenY:       %d\n", [(DOMMouseEvent*)event screenY]);
+        printf("  screenY:       %d (flipped)\n", (int) [[[NSScreen screens] objectAtIndex:0] frame].size.height - [(DOMMouseEvent*)event screenY]);
         printf("  clientX:       %d\n", [(DOMMouseEvent*)event clientX]);
         printf("  clientY:       %d\n", [(DOMMouseEvent*)event clientY]);
         printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 
@@ -379,7 +379,7 @@ NSArray *webkitDomEventProperties;
     
     if ([event isKindOfClass:[DOMWheelEvent class]]) {
         printf("  screenX:       %d\n", [(DOMWheelEvent*)event screenX]);
-        printf("  screenY:       %d\n", [(DOMWheelEvent*)event screenY]);
+        printf("  screenY:       %d (flipped)\n", (int) [[[NSScreen screens] objectAtIndex:0] frame].size.height - [(DOMWheelEvent*)event screenY]);
         printf("  clientX:       %d\n", [(DOMWheelEvent*)event clientX]);
         printf("  clientY:       %d\n", [(DOMWheelEvent*)event clientY]);
         printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 

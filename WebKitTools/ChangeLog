@@ -1,3 +1,14 @@
+2006-06-26  Jonas Witt  <jonas.witt@gmail.com>
+
+        Reviewed by Darin.
+
+        Bug 9579: LayoutTests/fast/events/objc-event-api.html failing due to screenY output
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9579
+
+        Report screenY values as (height of zero screen - screenY)
+
+        * DumpRenderTree/EventSendingController.m: (-[EventSendingController handleEvent:]):
+
 2006-06-25  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Geoff.

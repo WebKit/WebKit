@@ -1,3 +1,10 @@
+2006-06-26  Jonas Witt  <jonas.witt@gmail.com>
+
+        Reviewed by Darin.
+
+        * LayoutTests/fast/events/objc-event-api-expected.txt: Updated to
+        reflect flipped coordinates dumped by the layout tests.
+
 2006-06-25  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin.
