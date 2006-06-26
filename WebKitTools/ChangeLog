@@ -1,3 +1,16 @@
+2006-06-25  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+        
+        Bug 9568: assertion failure in Safari after quitting Drosera
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9568
+
+        Call switchToServerNamed:nil and not removeLister to make sure
+        the server object is set to nil to prevent further removeListener calls.
+
+        * Drosera/DebuggerDocument.m:
+        (-[DebuggerDocument applicationTerminating:]):
+
 2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

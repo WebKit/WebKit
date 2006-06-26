@@ -214,8 +214,7 @@ static NSString *DebuggerStepIntoToolbarItem = @"DebuggerStepIntoToolbarItem";
 - (void)applicationTerminating:(NSNotification *)notifiction
 {
     if (server && [[(NSDistantObject *)server connectionForProxy] isValid]) {
-        if ([[(NSDistantObject *)server connectionForProxy] isValid])
-            [server removeListener:self];
+        [self switchToServerNamed:nil];
         // call the runloop for a while to make sure our removeListener: is sent to the server
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
     }
