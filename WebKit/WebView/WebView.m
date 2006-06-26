@@ -1457,6 +1457,16 @@ static bool debugWidget = true;
     return [scrollview horizontalScrollingModeLocked] && [scrollview horizontalScrollingMode] == WebCoreScrollBarAlwaysOn;
 }
 
+- (void)_setInViewSourceMode:(BOOL)flag
+{
+    [[[self mainFrame] _bridge] setInViewSourceMode:flag];
+}
+
+- (BOOL)_inViewSourceMode
+{
+    return [[[self mainFrame] _bridge] inViewSourceMode];
+}
+
 - (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths
 {
     if (!_private->pluginDatabase)
