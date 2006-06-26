@@ -37,6 +37,7 @@
 		141211340A48795800480255 /* minidom.c in Sources */ = {isa = PBXBuildFile; fileRef = 141211020A48780900480255 /* minidom.c */; };
 		142711390A460BBB0080EEEA /* JSBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 142711380A460BBB0080EEEA /* JSBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		143A97E60A4A06E200456B66 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
+		1440F6100A4F85670005F061 /* testapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2D0A3E91F600BAF59C /* testapi.c */; };
 		14760864099C633800437128 /* JSImmediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14760863099C633800437128 /* JSImmediate.cpp */; };
 		1482B6EB0A4300B300517CFC /* JSValueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B6EA0A4300B300517CFC /* JSValueRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1482B74D0A43032800517CFC /* JSCharBufferRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B74B0A43032800517CFC /* JSCharBufferRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -57,7 +58,6 @@
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
 		14BD5A310A3E91F600BAF59C /* JSContextRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
-		14BD5A340A3E91F600BAF59C /* testapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2D0A3E91F600BAF59C /* testapi.c */; };
 		14BD5A360A3E91F600BAF59C /* JavaScriptCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD5A2F0A3E91F600BAF59C /* JavaScriptCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14F137590A3A727E00F26F90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F137580A3A727E00F26F90 /* Context.cpp */; };
 		14F137830A3A765B00F26F90 /* context.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F137820A3A765B00F26F90 /* context.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1239,6 +1239,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1440F6100A4F85670005F061 /* testapi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1324,7 +1325,6 @@
 				14F137590A3A727E00F26F90 /* Context.cpp in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
-				14BD5A340A3E91F600BAF59C /* testapi.c in Sources */,
 				14BD53F60A3E12D800BAF59C /* ExecState.cpp in Sources */,
 				1482B74E0A43032800517CFC /* JSCharBufferRef.cpp in Sources */,
 				1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */,

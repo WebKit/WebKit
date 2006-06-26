@@ -76,3 +76,8 @@ shouldBe("MyObject ? 1 : 0", 0); // toBoolean
 shouldBe("+MyObject", 1); // toNumber
 shouldBe("(MyObject + '').indexOf('MyObject') != -1", true); // toString
 shouldBe("MyObject - 0", NaN); // toPrimitive
+
+shouldBe("typeof MyConstructor", "object");
+constructedObject = new MyConstructor(1);
+shouldBe("typeof constructedObject", "object");
+shouldBe("constructedObject.value", 1);

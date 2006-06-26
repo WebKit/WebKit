@@ -284,6 +284,20 @@ static JSValueRef print_callAsFunction(JSContextRef context, JSObjectRef functio
     return JSUndefinedMake();
 }
 
+static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argc, JSValueRef argv[])
+{
+    UNUSED_PARAM(constructorObject);
+    
+    JSObjectRef result = JSObjectMake(context, &kJSObjectCallbacksNone, 0);
+    if (argc > 0) {
+        JSCharBufferRef valueBuffer = JSCharBufferCreateUTF8("value");
+        JSObjectSetProperty(context, result, valueBuffer, argv[0], kJSPropertyAttributeNone);
+        JSCharBufferRelease(valueBuffer);
+    }
+    
+    return result;
+}
+
 static char* createStringWithContentsOfFile(const char* fileName);
 
 int main(int argc, char* argv[])
@@ -501,6 +515,10 @@ int main(int argc, char* argv[])
     JSCharBufferRef printBuf = JSCharBufferCreateUTF8("print");
     JSObjectSetProperty(context, globalObject, printBuf, JSFunctionMake(context, print_callAsFunction), kJSPropertyAttributeNone); 
     JSCharBufferRelease(printBuf);
+
+    JSCharBufferRef myConstructorBuf = JSCharBufferCreateUTF8("MyConstructor");
+    JSObjectSetProperty(context, globalObject, myConstructorBuf, JSConstructorMake(context, myConstructor_callAsConstructor), kJSPropertyAttributeNone); 
+    JSCharBufferRelease(myConstructorBuf);
 
     char* script = createStringWithContentsOfFile("testapi.js");
     JSCharBufferRef scriptBuf = JSCharBufferCreateUTF8(script);
