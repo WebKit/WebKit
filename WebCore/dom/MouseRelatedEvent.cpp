@@ -27,6 +27,7 @@
 
 #include "AtomicString.h"
 #include "Document.h"
+#include "Frame.h"
 #include "Node.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
@@ -48,15 +49,40 @@ MouseRelatedEvent::MouseRelatedEvent()
 {
 }
 
+static int contentsX(AbstractView* abstractView)
+{
+    if (!abstractView)
+        return 0;
+    Frame* frame = abstractView->frame();
+    if (!frame)
+        return 0;
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return 0;
+    return frameView->contentsX();
+}
+
+static int contentsY(AbstractView* abstractView)
+{
+    if (!abstractView)
+        return 0;
+    Frame* frame = abstractView->frame();
+    if (!frame)
+        return 0;
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return 0;
+    return frameView->contentsY();
+}
+
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, AbstractView* view,
-                                     int detail, int screenX, int screenY, int clientX, int clientY,
-                                     int pageX, int pageY, bool ctrlKey, bool altKey,
-                                     bool shiftKey, bool metaKey, bool isSimulated)
+                                     int detail, int screenX, int screenY, int pageX, int pageY,
+                                     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
     : UIEventWithKeyState(eventType, canBubble, cancelable, view, detail, ctrlKey, altKey, shiftKey, metaKey)
     , m_screenX(screenX)
     , m_screenY(screenY)
-    , m_clientX(clientX)
-    , m_clientY(clientY)
+    , m_clientX(pageX - contentsX(view))
+    , m_clientY(pageY - contentsY(view))
     , m_pageX(pageX)
     , m_pageY(pageY)
     , m_isSimulated(isSimulated)
@@ -78,22 +104,16 @@ void MouseRelatedEvent::initCoordinates()
 void MouseRelatedEvent::receivedTarget()
 {
     // Compute coordinates that are based on the target.
+    m_layerX = m_pageX;
+    m_layerY = m_pageY;
     m_offsetX = m_pageX;
     m_offsetY = m_pageY;
-    m_layerX = m_pageX;    
-    m_layerY = m_pageY;    
 
     Node* targ = target();
     ASSERT(targ);
 
     // Must have an updated render tree for this math to work correctly.
     targ->document()->updateRendering();
-
-    // FIXME: clientX/Y should not be the same as pageX/Y!
-    // Currently the passed-in clientX and clientY are incorrectly actually
-    // pageX and pageY values, so we don't have any work to do here, but if
-    // we started passing in correct clientX and clientY, we'd want to compute
-    // pageX and pageY here.
 
     // Adjust offsetX/Y to be relative to the target's position.
     if (!isSimulated()) {
@@ -109,7 +129,8 @@ void MouseRelatedEvent::receivedTarget()
     // Adjust layerX/Y to be relative to the layer.
     // FIXME: We're pretty sure this is the wrong defintion of "layer."
     // Our RenderLayer is a more modern concept, and layerX/Y is some
-    // other notion about groups of elements; we should test and fix this.
+    // other notion about groups of elements (left over from the Netscape 4 days?);
+    // we should test and fix this.
     Node* n = targ;
     while (n && !n->renderer())
         n = n->parent();

@@ -58,7 +58,7 @@ public:
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType,
         int clickCount = 0, Node* relatedTarget = 0);
     bool dispatchMouseEvent(const AtomicString& eventType, int button, int clickCount,
-        int clientX, int clientY, int screenX, int screenY,
+        int pageX, int pageY, int screenX, int screenY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         bool isSimulated = false, Node* relatedTarget = 0);
     bool dispatchSimulatedMouseEvent(const AtomicString& eventType);

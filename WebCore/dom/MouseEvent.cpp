@@ -21,6 +21,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "MouseEvent.h"
 
@@ -36,12 +37,12 @@ MouseEvent::MouseEvent()
 }
 
 MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, AbstractView* view,
-                       int detail, int screenX, int screenY, int clientX, int clientY,
-                       int pageX, int pageY, bool ctrlKey, bool altKey,
-                       bool shiftKey, bool metaKey, unsigned short button,
-                       EventTargetNode* relatedTarget, Clipboard* clipboard, bool isSimulated)
+                       int detail, int screenX, int screenY, int pageX, int pageY,
+                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+                       unsigned short button, EventTargetNode* relatedTarget,
+                       Clipboard* clipboard, bool isSimulated)
     : MouseRelatedEvent(eventType, canBubble, cancelable, view, detail, screenX, screenY,
-                        clientX, clientY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, isSimulated)
+                        pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, isSimulated)
     , m_button(button)
     , m_relatedTarget(relatedTarget)
     , m_clipboard(clipboard)
@@ -74,6 +75,12 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
     m_relatedTarget = relatedTarget;
 
     initCoordinates();
+
+    // FIXME: m_isSimulated is not set to false here.
+    // FIXME: m_clipboard is not set to 0 here.
+
+    // FIXME: m_pageX and m_pageY are not set here.
+    // Regression caused by the fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8707>.
 }
 
 bool MouseEvent::isMouseEvent() const
@@ -90,7 +97,7 @@ bool MouseEvent::isDragEvent() const
 
 int MouseEvent::which() const
 {
-    // For KHTML, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
+    // For the DOM, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
     // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively. 
     // So we must add 1.
     return m_button + 1;

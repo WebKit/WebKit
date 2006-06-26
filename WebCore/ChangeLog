@@ -1,3 +1,38 @@
+2006-06-26  Rob Buis  <buis@kde.org>
+
+        Reviewed and reworked by Darin.
+
+        Code cleanup, calculate clientX/clientY in one central place.
+
+        * dom/EventTargetNode.h:
+        * dom/EventTargetNode.cpp: (WebCore::EventTargetNode::dispatchMouseEvent):
+        Renamed parameters to pageX/Y since they aren't clientX/Y values.
+        Removed code to compute clientX/Y (was a bit confused in naming before),
+        because that's now done inside MouseEvent.
+
+        * dom/MouseEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::MouseEvent): Removed clientX/Y parameters.
+        (WebCore::MouseEvent::initMouseEvent): Added comments about problems I noticed.
+        (WebCore::MouseEvent::which): Fixed comment that confusingly mentioned KHTML,
+        when it was talking about the DOM standard.
+
+        * dom/MouseRelatedEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::contentsX): Added helper function.
+        (WebCore::contentsY): Ditto.
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent): Removed clientX/Y parameter,
+        and added code to compute clientX/Y based on pageX/Y.
+        (WebCore::MouseRelatedEvent::receivedTarget): Fixed comments.
+
+        * dom/WheelEvent.h:
+        * dom/WheelEvent.cpp: (WebCore::WheelEvent::WheelEvent): Removed clientX/Y
+        parameter.
+
+        * page/FrameView.cpp: (WebCore::FrameView::dispatchDragEvent): Removed the code
+        to compute coordinates, and renamed the confusingly named clientPos (which was
+        a page-relative position) to contentsPos.
+
 2006-06-25  David Carson  <dacarson@gmail.com>
 
         Reviewed and tweaked by Darin.

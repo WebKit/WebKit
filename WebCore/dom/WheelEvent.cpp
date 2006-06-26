@@ -24,7 +24,6 @@
 
 #include "config.h"
 #include "WheelEvent.h"
-#include "Frame.h"
 
 #include "EventNames.h"
 
@@ -39,12 +38,10 @@ WheelEvent::WheelEvent()
 }
 
 WheelEvent::WheelEvent(bool horizontal, int wheelDelta, AbstractView* view,
-                       int screenX, int screenY, int clientX, int clientY,
+                       int screenX, int screenY, int pageX, int pageY,
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
     : MouseRelatedEvent(horizontal ? khtmlHorizontalmousewheelEvent : mousewheelEvent,
-                        true, true, view, 0, screenX, screenY, clientX, clientY, 
-                        clientX - (view && view->frame() && view->frame()->view()) ? view->frame()->view()->contentsX() : 0,
-                        clientY - (view && view->frame() && view->frame()->view()) ? view->frame()->view()->contentsY() : 0,
+                        true, true, view, 0, screenX, screenY, pageX, pageY, 
                         ctrlKey, altKey, shiftKey, metaKey)
     , m_horizontal(horizontal)
     , m_wheelDelta(wheelDelta)

@@ -364,12 +364,12 @@ bool EventTargetNode::dispatchMouseEvent(const PlatformMouseEvent& _mouse, const
 {
     assert(!eventDispatchForbidden());
     
-    IntPoint clientPos;
-    if (FrameView *view = document()->view())
-        clientPos = view->viewportToContents(_mouse.pos());
+    IntPoint contentsPos;
+    if (FrameView* view = document()->view())
+        contentsPos = view->viewportToContents(_mouse.pos());
     
     return dispatchMouseEvent(eventType, _mouse.button(), detail,
-                              clientPos.x(), clientPos.y(), _mouse.globalX(), _mouse.globalY(),
+                              contentsPos.x(), contentsPos.y(), _mouse.globalX(), _mouse.globalY(),
                               _mouse.ctrlKey(), _mouse.altKey(), _mouse.shiftKey(), _mouse.metaKey(),
                               false, relatedTarget);
 }
@@ -383,7 +383,7 @@ bool EventTargetNode::dispatchSimulatedMouseEvent(const AtomicString &eventType)
 }
 
 bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
-                                             int clientX, int clientY, int screenX, int screenY,
+                                             int pageX, int pageY, int screenX, int screenY,
                                              bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, 
                                              bool isSimulated, Node* relatedTargetArg)
 {
@@ -408,15 +408,8 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     // Attempting to dispatch with a non-EventTarget relatedTarget causes the relatedTarget to be silently ignored.
     EventTargetNode *relatedTarget = (relatedTargetArg && relatedTargetArg->isEventTargetNode()) ? static_cast<EventTargetNode*>(relatedTargetArg) : 0;
 
-    int pageX = clientX; 
-    int pageY = clientY; 
-    if (FrameView* view = document()->view()) {
-        pageX -= view->contentsX();
-        pageY -= view->contentsY();
-    }
     RefPtr<Event> me = new MouseEvent(eventType, true, cancelable, document()->defaultView(),
-                                              detail, screenX, screenY,
-                                              pageX, pageY, clientX, clientY,
+                                              detail, screenX, screenY, pageX, pageY,
                                               ctrlKey, altKey, shiftKey, metaKey, button,
                                               relatedTarget, 0, isSimulated);
     
@@ -431,8 +424,7 @@ bool EventTargetNode::dispatchMouseEvent(const AtomicString& eventType, int butt
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == clickEvent && detail == 2) {
         me = new MouseEvent(dblclickEvent, true, cancelable, document()->defaultView(),
-                                detail, screenX, screenY,
-                                pageX, pageY, clientX, clientY,
+                                detail, screenX, screenY, pageX, pageY,
                                 ctrlKey, altKey, shiftKey, metaKey, button,
                                 relatedTarget, 0, isSimulated);
         if (defaultHandled)
@@ -455,16 +447,15 @@ void EventTargetNode::dispatchWheelEvent(PlatformWheelEvent& e)
     if (e.delta() == 0)
         return;
     
-    FrameView *view = document()->view();
+    FrameView* view = document()->view();
     if (!view)
         return;
     
     IntPoint pos = view->viewportToContents(e.pos());
     
     RefPtr<WheelEvent> we = new WheelEvent(e.isHorizontal(), e.delta(),
-                                                   document()->defaultView(), e.globalX(), e.globalY(), pos.x(), pos.y(),
-                                                   e.ctrlKey(), e.altKey(), e.shiftKey(), e.metaKey());
-    
+                                           document()->defaultView(), e.globalX(), e.globalY(), pos.x(), pos.y(),
+                                           e.ctrlKey(), e.altKey(), e.shiftKey(), e.metaKey());
     ExceptionCode ec = 0;
     if (!dispatchEvent(we, ec, true))
         e.accept();
