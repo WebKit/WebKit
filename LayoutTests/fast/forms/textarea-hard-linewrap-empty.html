@@ -10,17 +10,13 @@ Bug 9537 REGRESSION: Reproducible crash in WebCore::RenderTextField::textWithHar
 <input type="submit">
 </form>
 <script>
-function submitForm() {
-    document.f.submit();
-}
-
 if (window.layoutTestController) {
     window.layoutTestController.dumpAsText();
     window.layoutTestController.waitUntilDone();
 }
 
 if (document.URL.indexOf('?') == -1) {
-    window.setTimeout(submitForm, 0);
+    document.f.submit();
 } else {
     var formData = document.URL.substring(document.URL.indexOf('?') + 1, document.URL.length);
     if (formData == "textarea=")

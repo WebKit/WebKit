@@ -11,11 +11,6 @@
 <input type="submit">
 </form>
 <script>
-
-function submitForm() {
-    document.f.submit();
-}
-
 if (document.URL.indexOf('?') == -1) {
 
     if (window.layoutTestController) {
@@ -23,7 +18,7 @@ if (document.URL.indexOf('?') == -1) {
         window.layoutTestController.waitUntilDone();
     }
     
-    window.setTimeout(submitForm, 0);
+    document.f.submit();
         
 } else {
     var formData = document.URL.substring(document.URL.indexOf('?') + 1, document.URL.length);

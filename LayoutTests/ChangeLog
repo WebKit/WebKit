@@ -2,6 +2,13 @@
 
         Reviewed by Darin.
 
+        * fast/forms/textarea-hard-linewrap-empty.html: Submit form without setTimeout().
+        * fast/forms/textarea-hard-linewrap.html: Ditto.
+
+2006-06-25  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=9537
           REGRESSION: Reproducible crash in WebCore::RenderTextField::textWithHardLineBreaks()
 
