@@ -35,6 +35,7 @@ var currentStack = null;
 var previousFiles = new Array();
 var nextFiles = new Array();
 var isResizingColumn = false;
+var draggingBreakpoint = null;
 
 function sleep(numberMillis) {
     var now = new Date();
@@ -242,6 +243,109 @@ function addBreakPoint(event)
         removeStyleClass(row, "disabled");
         files[currentFile].breakpoints[parseInt(event.target.title)] = 1;
     }
+}
+
+function moveBreakPoint(event)
+{
+    if (hasStyleClass(event.target.parentNode, "breakpoint")) {
+        files[currentFile].breakpoints[parseInt(event.target.title)] = 0;
+        draggingBreakpoint = event.target;
+        draggingBreakpoint.started = false;
+        draggingBreakpoint.dragLastY = event.clientY + window.scrollY;
+        draggingBreakpoint.dragLastX = event.clientX + window.scrollX;
+        var sourcesDocument = document.getElementById("sources").contentDocument;
+        sourcesDocument.addEventListener("mousemove", breakpointDrag, true);
+        sourcesDocument.addEventListener("mouseup", breakpointDragEnd, true);
+    }
+}
+
+function breakpointDrag(event)
+{
+    if (!draggingBreakpoint) {
+        sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
+        sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
+        return;
+    }
+
+    var x = event.clientX + window.scrollX;
+    var y = event.clientY + window.scrollY;
+    var deltaX = draggingBreakpoint.dragLastX - x;
+    var deltaY = draggingBreakpoint.dragLastY - y;
+    if (draggingBreakpoint.started || deltaX > 4 || deltaY > 4 || deltaX < -4 || deltaY < -4) {
+        if (!draggingBreakpoint.started) {
+            draggingBreakpoint.isDisabled = hasStyleClass(draggingBreakpoint.parentNode, "disabled");
+            removeStyleClass(draggingBreakpoint.parentNode, "breakpoint");
+            removeStyleClass(draggingBreakpoint.parentNode, "disabled");
+            draggingBreakpoint.started = true;
+
+            var sourcesDocument = document.getElementById("sources").contentDocument;
+            var dragImage = sourcesDocument.createElement("img");
+            if (draggingBreakpoint.isDisabled)
+                dragImage.src = "breakPointDisabled.tif";
+            else
+                dragImage.src = "breakPoint.tif";
+            dragImage.id = "breakpointDrag";
+            dragImage.style.top = y - 8 + "px";
+            dragImage.style.left = x - 12 + "px";
+            sourcesDocument.body.appendChild(dragImage);
+        } else {
+            var sourcesDocument = document.getElementById("sources").contentDocument;
+            var dragImage = sourcesDocument.getElementById("breakpointDrag");
+            if (!dragImage) {
+                sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
+                sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
+                return;
+            }
+
+            dragImage.style.top = y - 8 + "px";
+            dragImage.style.left = x - 12 + "px";
+            if (x > 40)
+                dragImage.style.opacity = "0";
+            else
+                dragImage.style.opacity = null;
+        }
+
+        draggingBreakpoint.dragLastX = x;
+        draggingBreakpoint.dragLastY = y;
+    }
+}
+
+function breakpointDragEnd(event)
+{
+    var y = event.clientY + window.scrollY;
+    var x = event.clientX + window.scrollX;
+    var sourcesDocument = document.getElementById("sources").contentDocument;
+    sourcesDocument.removeEventListener("mousemove", breakpointDrag, true);
+    sourcesDocument.removeEventListener("mouseup", breakpointDragEnd, true);
+
+    var sourcesDocument = document.getElementById("sources").contentDocument;
+    var dragImage = sourcesDocument.getElementById("breakpointDrag");
+    if (!dragImage)
+        return;
+
+    dragImage.parentNode.removeChild(dragImage);
+
+    if (x > 40 || !draggingBreakpoint)
+        return;
+
+    var rowHeight = draggingBreakpoint.parentNode.offsetHeight;
+    var row = Math.ceil(y / rowHeight);
+    if (!row)
+        row = 1;
+
+    var file = files[currentFile];
+    var table = file.element.firstChild;
+    if (row > table.childNodes.length)
+        return;
+
+    var tr = table.childNodes.item(row - 1);
+
+    if (draggingBreakpoint.isDisabled)
+        addStyleClass(tr, "disabled");
+    addStyleClass(tr, "breakpoint");
+    file.breakpoints[row] = (draggingBreakpoint.isDisabled ? -1 : 1);
+
+    draggingBreakpoint = null;
 }
 
 function totalOffsetTop(element, stop)
@@ -486,6 +590,7 @@ function loadFile(fileIndex, manageNavLists)
             td.className = "gutter";
             td.title = (i + 1);
             td.addEventListener("click", addBreakPoint, true);
+            td.addEventListener("mousedown", moveBreakPoint, true);
             tr.appendChild(td);
 
             td = sourcesDocument.createElement("td");

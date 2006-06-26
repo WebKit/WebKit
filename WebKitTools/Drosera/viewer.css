@@ -38,7 +38,7 @@ table { border-spacing: 0; padding: 0; margin: 0; }
 .number { color: #2900ff }
 .comment { color: #007215 }
 
-td.gutter:after { content: attr(title) }
+td.gutter:after { content: attr(title); -webkit-user-select: none; }
 
 .breakpoint td.gutter, .current td.gutter { padding-right: 1px; vertical-align: middle; }
 .breakpoint td.gutter:after { content: url(breakPoint.tif); -webkit-user-select: none; vertical-align: middle; }
@@ -48,3 +48,12 @@ td.gutter:after { content: attr(title) }
 .current.breakpoint td.gutter:after { content: url(programCounterBreakPoint.tif); }
 .current.breakpoint.disabled td.gutter:after { content: url(programCounterBreakPointDisabled.tif); }
 .current td.source { background-color: #abbffe; outline: 1px solid #406ffd; }
+
+#breakpointDrag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    -webkit-user-select: none;
+    cursor: default;
+}

@@ -1,5 +1,17 @@
 2006-06-25  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Geoff.
+
+        Bug 9591: [Drosera] breakpoints should be dragable and deletable by dragging off the gutter
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9591
+        
+        Makes breakpoints dragable. If dragged off the gutter they are deleted.
+
+        * Drosera/debugger.js:
+        * Drosera/viewer.css:
+
+2006-06-25  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
         
         Bug 9568: assertion failure in Safari after quitting Drosera
