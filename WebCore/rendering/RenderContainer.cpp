@@ -25,8 +25,9 @@
  */
 
 #include "config.h"
-#include "htmlediting.h"
 #include "RenderContainer.h"
+
+#include "htmlediting.h"
 #include "RenderListItem.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
