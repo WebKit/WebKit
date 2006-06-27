@@ -226,3 +226,8 @@ _kjs_pcre_free
 _kjs_pcre_free_substring
 _kjs_pcre_get_substring
 _kjs_strtod
+_WTFReportError
+_WTFReportAssertionFailureWithMessage
+_WTFLog
+_WTFReportArgumentAssertionFailure
+_WTFReportFatalError
