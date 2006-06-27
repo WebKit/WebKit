@@ -1,3 +1,19 @@
+2006-06-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        <rdar://problem/4599735> Clicking out of a table at the extremes of an editable document doesn't appear to work
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForCoordinates): In the fall through case,
+        where we can't find a child block that contains (x, y), pass to RenderFlow
+        instead of the last visible child block.
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::positionForCoordinates): Don't pass to the closest 
+        child renderer if this is a table and (x, y) is outside the table.  Return
+        a VisiblePosition before or after the table.
+        Fixed the code that finds the closest child renderer.
+
 2006-06-27  David Hyatt  <hyatt@apple.com>
 
         Preserve entity text in view source mode.  This patch doesn't highlight the

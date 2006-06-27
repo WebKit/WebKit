@@ -2701,13 +2701,8 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
             return renderer->positionForCoordinates(x, y);
         lastVisibleChild = renderer;
     }
-
-    // pass along to the last child we saw that had a height and is visible.
-    if (lastVisibleChild)
-        return lastVisibleChild->positionForCoordinates(x, y);
     
-    // still no luck...return this render object's element and offset 0
-    return VisiblePosition(n, 0, DOWNSTREAM);
+    return RenderFlow::positionForCoordinates(x, y);
 }
 
 void RenderBlock::calcMinMaxWidth()

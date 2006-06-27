@@ -25,8 +25,8 @@
  */
 
 #include "config.h"
+#include "htmlediting.h"
 #include "RenderContainer.h"
-
 #include "RenderListItem.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
@@ -464,17 +464,35 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
         parent()->removeLeftoverAnonymousBoxes();
 }
 
-VisiblePosition RenderContainer::positionForCoordinates(int _x, int _y)
+VisiblePosition RenderContainer::positionForCoordinates(int x, int y)
 {
     // no children...return this render object's element, if there is one, and offset 0
     if (!firstChild())
         return VisiblePosition(element(), 0, DOWNSTREAM);
+        
+    if (isTable()) {
+        int absx, absy;
+        absolutePositionForContent(absx, absy);
+        
+        int left = absx;
+        int right = left + contentWidth() + borderRight() + paddingRight() + borderLeft() + paddingLeft();
+        int top = absy;
+        int bottom = top + contentHeight() + borderTop() + paddingTop() + borderBottom() + paddingBottom();
+        
+        if (x < left || x > right || y < top || y > bottom) {
+            if (x <= (left + right) / 2)
+                return VisiblePosition(Position(element(), 0));
+            else
+                return VisiblePosition(Position(element(), maxDeepOffset(element())));
+        }
+    }
 
-    // look for the geometrically-closest child and pass off to that child
-    int min = INT_MAX;
+    // Pass off to the closest child.
+    int minDist = INT_MAX;
     RenderObject* closestRenderer = 0;
     for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
-        if (!renderer->firstChild() && !renderer->isInline() && !renderer->isBlockFlow())
+        if (!renderer->firstChild() && !renderer->isInline() && !renderer->isBlockFlow() 
+            || renderer->height() == 0 || renderer->style()->visibility() != VISIBLE)
             continue;
 
         int absx, absy;
@@ -485,15 +503,45 @@ VisiblePosition RenderContainer::positionForCoordinates(int _x, int _y)
         int left = absx + borderLeft() + paddingLeft();
         int right = left + renderer->contentWidth();
         
-        int cmp;
-        cmp = abs(_y - top);    if (cmp < min) { closestRenderer = renderer; min = cmp; }
-        cmp = abs(_y - bottom); if (cmp < min) { closestRenderer = renderer; min = cmp; }
-        cmp = abs(_x - left);   if (cmp < min) { closestRenderer = renderer; min = cmp; }
-        cmp = abs(_x - right);  if (cmp < min) { closestRenderer = renderer; min = cmp; }
+        if (x <= right && x >= left && y <= top && y >= bottom)
+            return renderer->positionForCoordinates(x, y);
+        
+        // Find the distance from (x, y) to the box.  Split the space around the box into 8 pieces
+        // and use a different compare depending on which piece (x, y) is in.
+        IntPoint cmp;
+        if (x > right) {
+            if (y < top)
+                cmp = IntPoint(right, top);
+            else if (y > bottom)
+                cmp = IntPoint(right, bottom);
+            else
+                cmp = IntPoint(right, y);
+        } else if (x < left) {
+            if (y < top)
+                cmp = IntPoint(left, top);
+            else if (y > bottom)
+                cmp = IntPoint(left, bottom);
+            else
+                cmp = IntPoint(left, y);
+        } else {
+            if (y < top)
+                cmp = IntPoint(x, top);
+            else
+                cmp = IntPoint(x, bottom);
+        }
+        
+        int x1minusx2 = cmp.x() - x;
+        int y1minusy2 = cmp.y() - y;
+        
+        int dist = x1minusx2 * x1minusx2 + y1minusy2 * y1minusy2;
+        if (dist < minDist) {
+            closestRenderer = renderer;
+            minDist = dist;
+        }
     }
     
     if (closestRenderer)
-        return closestRenderer->positionForCoordinates(_x, _y);
+        return closestRenderer->positionForCoordinates(x, y);
     
     return VisiblePosition(element(), 0, DOWNSTREAM);
 }
