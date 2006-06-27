@@ -1,3 +1,15 @@
+2006-06-28  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=8636
+        REGRESSION: JavaScript access to Java applet causes hang (_webViewURL not implemented)
+        
+        * bindings/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+        Just pass nil as the calling URL. This will cause the Java plugin to use the URL of the page
+        containing the applet (which is what we used to do).
+
 2006-06-27  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

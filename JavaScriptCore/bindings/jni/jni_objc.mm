@@ -40,10 +40,6 @@ using namespace KJS::Bindings;
        exceptionDescription:(NSString **)exceptionString;
 @end
 
-@interface NSObject (WebPrivate)
-- (NSURL *)_webViewURL;
-@end
-
 bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char*, JSValue *&exceptionDescription)
 {
     id view = (id)targetAppletView;
@@ -51,11 +47,11 @@ bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, 
     if ([view respondsToSelector:@selector(webPlugInCallJava:isStatic:returnType:method:arguments:callingURL:exceptionDescription:)]) {
         NSString *_exceptionDescription = 0;
 
-        // Always just pass the URL of the page that contains the applet.  The
-        // execution restrictions implemented in WebCore will guarantee
-        // that only appropriate JavaScript can reference the applet.
-        NSURL *_callingURL = [view _webViewURL];
-        result = [view webPlugInCallJava:obj isStatic:isStatic returnType:returnType method:methodID arguments:args callingURL:_callingURL exceptionDescription:&_exceptionDescription];
+        // Passing nil as the calling URL will cause the Java plugin to use the URL
+        // of the page that contains the applet. The execution restrictions 
+        // implemented in WebCore will guarantee that only appropriate JavaScript
+        // can reference the applet.
+        result = [view webPlugInCallJava:obj isStatic:isStatic returnType:returnType method:methodID arguments:args callingURL:nil exceptionDescription:&_exceptionDescription];
         if (_exceptionDescription != 0) {
             exceptionDescription = convertNSStringToString(_exceptionDescription);
         }
