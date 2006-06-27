@@ -152,7 +152,8 @@ void HTMLAnchorElement::defaultEventHandler(Event *evt)
                 if(r && e) {
                     int absx, absy;
                     r->absolutePosition(absx, absy);
-                    int x(e->clientX() - absx), y(e->clientY() - absy);
+                    int x = e->pageX() - absx;
+                    int y = e->pageY() - absy;
                     url += "?";
                     url += DeprecatedString::number(x);
                     url += ",";

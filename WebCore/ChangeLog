@@ -1,3 +1,16 @@
+2006-06-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix 2/3 of http://bugzilla.opendarwin.org/show_bug.cgi?id=9606
+          REGRESSION: some callers are still using clientX/Y to get pageX/Y
+
+        Test: fast/events/anchor-image-scrolled-x-y.html
+        Test: fast/events/input-image-scrolled-x-y.html
+
+        * html/HTMLAnchorElement.cpp: (WebCore::HTMLAnchorElement::defaultEventHandler): Use pageX/Y.
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::defaultEventHandler): Ditto.
+
 2006-06-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

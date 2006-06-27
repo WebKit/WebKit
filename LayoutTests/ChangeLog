@@ -1,3 +1,13 @@
+2006-06-27  Darin Adler  <darin@apple.com>
+
+        Tests for fix for 2/3 of http://bugzilla.opendarwin.org/show_bug.cgi?id=9606
+        REGRESSION: some callers are still using clientX/Y to get pageX/Y
+
+        * fast/events/anchor-image-scrolled-x-y-expected.txt: Added.
+        * fast/events/anchor-image-scrolled-x-y.html: Added.
+        * fast/events/input-image-scrolled-x-y-expected.txt: Added.
+        * fast/events/input-image-scrolled-x-y.html: Added.
+
 2006-06-26  Jonas Witt  <jonas.witt@gmail.com>
 
         Reviewed by Darin.
