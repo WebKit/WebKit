@@ -49,12 +49,16 @@ public:
     void close();
 
     bool executeCommand(const String&);
+    bool returnsAtLeastOneResult(const String&);
+    
     bool tableExists(const String&);
+    
+    int64_t lastInsertRowID();
 
     void setBusyTimeout(int ms);
     void setBusyHandler(int(*)(void*, int));
     
-    //TODO - add pragma and sqlite_master accessors here
+    // TODO - add pragma and sqlite_master accessors here
     void setFullsync(bool);
     
     int lastError() { return m_db ? sqlite3_errcode(m_db) : SQLITE_ERROR; }
@@ -65,7 +69,7 @@ private:
     sqlite3* m_db;
     int m_lastError;
     
-}; //class SQLDatabase
+}; // class SQLDatabase
 
 class SQLTransaction : public Noncopyable
 {
@@ -93,33 +97,37 @@ public:
     bool isPrepared() { return m_statement; }
     int bindBlob(int index, const void* blob, int size, bool copy = true);
     int bindText(int index, const char* text, bool copy = true);
+    int bindInt64(int index, int64_t integer);
 
     int step();
     int finalize();
     int reset();
     
-    //prepares, steps, and finalizes the query.
-    //returns true if all 3 steps succeed with step() returning SQLITE_DONE
-    //returns false otherwise  
+    int prepareAndStep() { prepare();  return step(); }
+    
+    // prepares, steps, and finalizes the query.
+    // returns true if all 3 steps succeed with step() returning SQLITE_DONE
+    // returns false otherwise  
     bool executeCommand();
     
-    //prepares, steps, and finalizes.  
-    //returns true is step() returns SQLITE_ROW
-    //returns false otherwise
+    // prepares, steps, and finalizes.  
+    // returns true is step() returns SQLITE_ROW
+    // returns false otherwise
     bool returnsAtLeastOneResult();
     
-    //Returns -1 on last-step failing.  Otherwise, returns number of rows
-    //returned in the last step()
+    // Returns -1 on last-step failing.  Otherwise, returns number of rows
+    // returned in the last step()
     int columnCount();
     
     String getColumnName(int col);
     String getColumnName16(int col);
     String getColumnText(int col);
     String getColumnText16(int col);
-    double  getColumnDouble(int col);
-    int     getColumnInt(int col);
+    double getColumnDouble(int col);
+    int getColumnInt(int col);
     int64_t getColumnInt64(int col);
     const void* getColumnBlob(int col, int& size);
+    Vector<char> getColumnBlobAsVector(int col);
 
     bool returnTextResults(int col, Vector<String>& v);
     bool returnTextResults16(int col, Vector<String>& v);
@@ -137,7 +145,7 @@ private:
     sqlite3_stmt* m_statement;
 };
 
-} //namespace WebCore
+} // namespace WebCore
 
 
 

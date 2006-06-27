@@ -49,6 +49,9 @@ bool SQLDatabase::open(const String& filename)
         sqlite3_close(m_db);
         m_db = 0;
     }
+    if (!SQLStatement(*this, "PRAGMA temp_store = MEMORY;").executeCommand())
+        LOG_ERROR("SQLite database could not set temp_store to memory");
+
     return isOpen();
 }
 
@@ -87,7 +90,12 @@ void SQLDatabase::setBusyHandler(int(*handler)(void*, int))
 
 bool SQLDatabase::executeCommand(const String& sql)
 {
-    return SQLStatement(*this,sql).executeCommand();
+    return SQLStatement(*this, sql).executeCommand();
+}
+
+bool SQLDatabase::returnsAtLeastOneResult(const String& sql)
+{
+    return SQLStatement(*this, sql).returnsAtLeastOneResult();
 }
 
 bool SQLDatabase::tableExists(const String& tablename)
@@ -102,6 +110,12 @@ bool SQLDatabase::tableExists(const String& tablename)
     return sql.step() == SQLITE_ROW;
 }
 
+int64_t SQLDatabase::lastInsertRowID()
+{
+    if (!m_db)
+        return 0;
+    return sqlite3_last_insert_rowid(m_db);
+}
 
 
 

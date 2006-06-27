@@ -132,6 +132,11 @@ int SQLStatement::bindText(int index, const char* text, bool copy)
     return lastError();
 }
 
+int SQLStatement::bindInt64(int index, int64_t integer)
+{
+    return sqlite3_bind_int64(m_statement, index, integer);
+}
+
 int SQLStatement::columnCount()
 {
     if (m_statement)
@@ -141,65 +146,113 @@ int SQLStatement::columnCount()
 
 String SQLStatement::getColumnName(int col)
 {
-    if (m_statement)
-        return String(sqlite3_column_name(m_statement, col));
-    return "";
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return "";
+    if (columnCount() <= col)
+        return "";
+        
+    return String(sqlite3_column_name(m_statement, col));
 }
 
 String SQLStatement::getColumnName16(int col)
 {
-    if (m_statement)
-        return String((const UChar*)sqlite3_column_name16(m_statement, col));
-    return "";
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return "";
+    if (columnCount() <= col)
+        return "";
+    return String((const UChar*)sqlite3_column_name16(m_statement, col));
 }
     
 String SQLStatement::getColumnText(int col)
 {
-    if (m_statement)
-        return String((const char*)sqlite3_column_text(m_statement, col));
-    return "";
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return "";
+    if (columnCount() <= col)
+        return "";
+    return String((const char*)sqlite3_column_text(m_statement, col));
 }
 
 String SQLStatement::getColumnText16(int col)
 {
-    if (m_statement)
-        return String((const UChar*)sqlite3_column_text16(m_statement, col));
-    return "";
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return "";
+    if (columnCount() <= col)
+        return "";
+    return String((const UChar*)sqlite3_column_text16(m_statement, col));
 }
     
 double SQLStatement::getColumnDouble(int col)
 {
-    if (m_statement)
-        return sqlite3_column_double(m_statement, col);
-    return 0.0;
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return 0.0;
+    if (columnCount() <= col)
+        return 0.0;
+    return sqlite3_column_double(m_statement, col);
 }
 
 int SQLStatement::getColumnInt(int col)
 {
-    if (m_statement)
-        return sqlite3_column_int(m_statement, col);
-    return 0;
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return 0;
+    if (columnCount() <= col)
+        return 0;
+    return sqlite3_column_int(m_statement, col);
 }
 
 int64_t SQLStatement::getColumnInt64(int col)
 {
-    if (m_statement)
-        return sqlite3_column_int64(m_statement, col);
-    return 0;
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return 0;
+    if (columnCount() <= col)
+        return 0;
+    return sqlite3_column_int64(m_statement, col);
 }
     
+Vector<char> SQLStatement::getColumnBlobAsVector(int col)
+{
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW)
+            return Vector<char>();
+    if (columnCount() <= col)
+        return Vector<char>();
+ 
+    const void* blob = sqlite3_column_blob(m_statement, col);
+    if (blob) {
+        int size = sqlite3_column_bytes(m_statement, col);
+        Vector<char> result((size_t)size);
+        for (int i = 0; i < size; ++i)
+            result[i] = ((const char*)blob)[i];
+        return result;
+    } 
+    return Vector<char>();
+}
+
 const void* SQLStatement::getColumnBlob(int col, int& size)
 {
-    if (!m_statement) {
+    if (!m_statement)
+        if (prepareAndStep() != SQLITE_ROW) {
+            size = 0;
+            return 0;
+        }
+    if (columnCount() <= col) {
         size = 0;
         return 0;
     }
+        
     const void* blob = sqlite3_column_blob(m_statement, col);
     if (blob) {
         size = sqlite3_column_bytes(m_statement, col);
-    } else
-        size = 0;
-    return blob;
+        return blob;
+    } 
+    size = 0;
+    return 0;
 }
 
 bool SQLStatement::returnTextResults(int col, Vector<String>& v)
@@ -297,5 +350,5 @@ bool SQLStatement::returnDoubleResults(int col, Vector<double>& v)
     return result;
 }
 
-}; //namespace WebCore
+}; // namespace WebCore
 

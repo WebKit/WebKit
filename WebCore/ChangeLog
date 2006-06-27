@@ -1,3 +1,31 @@
+2006-06-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Levi
+
+        Some SQLDatabase cleanup (style stuff) and enhancements
+
+        * icon/SQLDatabase.cpp:
+        (SQLDatabase::open):
+        (SQLDatabase::executeCommand):
+        (SQLDatabase::returnsAtLeastOneResult):  Accessor to see if this query returns results
+        (SQLDatabase::lastInsertRowID):  Accessor for the rowid of the last insert
+        * icon/SQLDatabase.h:
+        (WebCore::SQLStatement::prepareAndStep):
+        * icon/SQLStatement.cpp:
+        (WebCore::SQLStatement::bindInt64):
+        -All of the following used to require the user to manually prepare and step a statement
+        before asking for the result.  Now it will prepare and step itself so you can use a temporary
+        object to get a quick result
+        (WebCore::SQLStatement::getColumnName):
+        (WebCore::SQLStatement::getColumnName16):
+        (WebCore::SQLStatement::getColumnText):
+        (WebCore::SQLStatement::getColumnText16):
+        (WebCore::SQLStatement::getColumnDouble):
+        (WebCore::SQLStatement::getColumnInt):
+        (WebCore::SQLStatement::getColumnInt64):
+        (WebCore::SQLStatement::getColumnBlobAsVector):
+        (WebCore::SQLStatement::getColumnBlob):
+
 2006-06-27  Ada Chan <adachan@apple.com>
 
         Reviewed by sfalken.
