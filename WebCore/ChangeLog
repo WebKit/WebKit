@@ -1,3 +1,14 @@
+2006-06-27  David Hyatt  <hyatt@apple.com>
+
+        Preserve entity text in view source mode.  This patch doesn't highlight the
+        the entities yet, but it at least prevents their resolution and removal.
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseEntity):
+
 2006-06-27  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.

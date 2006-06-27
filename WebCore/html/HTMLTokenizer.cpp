@@ -740,22 +740,35 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, UChar*& de
         case SearchSemicolon:
             // Don't allow values that are more than 21 bits.
             if (EntityUnicodeValue > 0 && EntityUnicodeValue <= 0x10FFFF) {
-                if (*src == ';')
-                    ++src;
-                if (EntityUnicodeValue <= 0xFFFF) {
-                    checkBuffer();
-                    src.push(fixUpChar(EntityUnicodeValue));
+                if (!inViewSourceMode()) {
+                    if (*src == ';')
+                        ++src;
+                    if (EntityUnicodeValue <= 0xFFFF) {
+                        checkBuffer();
+                        src.push(fixUpChar(EntityUnicodeValue));
+                    } else {
+                        // Convert to UTF-16, using surrogate code points.
+                        checkBuffer(2);
+                        src.push(U16_LEAD(EntityUnicodeValue));
+                        src.push(U16_TRAIL(EntityUnicodeValue));
+                    }
                 } else {
-                    // Convert to UTF-16, using surrogate code points.
-                    checkBuffer(2);
-                    src.push(U16_LEAD(EntityUnicodeValue));
-                    src.push(U16_TRAIL(EntityUnicodeValue));
+                    // FIXME: We should eventually colorize entities by sending them as a special token.
+                    checkBuffer(11);
+                    *dest++ = '&';
+                    for (unsigned i = 0; i < cBufferPos; i++)
+                        dest[i] = cBuffer[i];
+                    dest += cBufferPos;
+                    if (*src == ';') {
+                        *dest++ = ';';
+                        ++src;
+                    }
                 }
             } else {
                 checkBuffer(10);
                 // ignore the sequence, add it to the buffer as plaintext
                 *dest++ = '&';
-                for(unsigned int i = 0; i < cBufferPos; i++)
+                for (unsigned i = 0; i < cBufferPos; i++)
                     dest[i] = cBuffer[i];
                 dest += cBufferPos;
             }
