@@ -1,3 +1,12 @@
+2006-06-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Added functionality to WebCore::Image to get multiple representations/sizes into TIFF data
+
+        * platform/mac/ImageMac.mm:
+        (WebCore::Image::getTIFFRepresentation):
+
 2006-06-26  David Hyatt  <hyatt@apple.com>
 
         Fix for 9538, support syntax highlighted HTML source.  Lots of loose

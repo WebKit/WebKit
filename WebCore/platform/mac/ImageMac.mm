@@ -157,19 +157,24 @@ CFDataRef Image::getTIFFRepresentation()
 {
     if (m_tiffRep)
         return m_tiffRep;
-
-    CGImageRef cgImage = frameAtIndex(0);
-    if (!cgImage)
-        return 0;
-   
+    
+    unsigned numFrames = frameCount();
     CFMutableDataRef data = CFDataCreateMutable(0, 0);
     // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
-    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), 1, 0);
-    if (destination) {
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), numFrames, 0);
+    if (!destination)
+        return 0;
+
+    for (unsigned i = 0; i < numFrames; ++i ) {
+        CGImageRef cgImage = frameAtIndex(i);
+        if (!cgImage) {
+            CFRelease(destination);
+            return 0;    
+        }
         CGImageDestinationAddImage(destination, cgImage, 0);
-        CGImageDestinationFinalize(destination);
-        CFRelease(destination);
     }
+    CGImageDestinationFinalize(destination);
+    CFRelease(destination);
 
     m_tiffRep = data;
     return m_tiffRep;
