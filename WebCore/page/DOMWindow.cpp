@@ -69,14 +69,7 @@ PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const 
     if (!elt)
         return 0;
     
-    if (elt->inDocument())
-        elt->document()->updateLayoutIgnorePendingStylesheets();
-    
-    // FIXME: This should work even if we do not have a renderer.
-    // FIXME: This needs to work with pseudo elements.
-    if (!elt->renderer())
-        return 0;
- 
+    // FIXME: This needs to work with pseudo elements. 
     return new CSSComputedStyleDeclaration(elt);
 }
 

@@ -1,3 +1,16 @@
+2006-06-28  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Darin.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Move FIXME comment here.
+        
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getComputedStyle):
+        Don't do a null check on the renderer here. Everything's handled by 
+        CSSComputedStyleDeclaration anyway.
+
 2006-06-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

@@ -336,6 +336,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     if (updateLayout)
         node->document()->updateLayout();
 
+    // FIXME: This should work even if we do not have a renderer.
     RenderObject* renderer = node->renderer();
     if (!renderer)
         return 0;
