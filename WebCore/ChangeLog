@@ -1,3 +1,11 @@
+2006-06-27  Ada Chan <adachan@apple.com>
+
+        Reviewed by sfalken.
+
+        Fixed build.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
 2006-06-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

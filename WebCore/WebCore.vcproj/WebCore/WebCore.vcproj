@@ -4826,6 +4826,14 @@
 				RelativePath="..\..\html\HTMLUListElement.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\html\HTMLViewSourceDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\html\HTMLViewSourceDocument.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="bindings"
