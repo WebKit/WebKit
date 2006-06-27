@@ -68,20 +68,9 @@ unsigned NodeList::recursiveLength(Node* start) const
     return len;
 }
 
-Node* NodeList::recursiveItem(unsigned offset, Node* start) const
+Node* NodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
-    int remainingOffset = offset;
-    if (!start) {
-        start = rootNode->firstChild();
-        if (isItemCacheValid) {
-            if (offset == lastItemOffset) {
-                return lastItem;
-            } else if (offset > lastItemOffset) {
-                start = lastItem;
-                remainingOffset -= lastItemOffset;
-            }
-        }
-    }
+    ASSERT(remainingOffset >= 0);
 
     for (Node *n = start; n; n = n->traverseNextNode(rootNode.get())) {
         if (n->isElementNode()) {
@@ -98,6 +87,47 @@ Node* NodeList::recursiveItem(unsigned offset, Node* start) const
     }
 
     return 0; // no matching node in this subtree
+}
+
+Node* NodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
+{
+    ASSERT(remainingOffset < 0);
+    for (Node *n = start; n; n = n->traversePreviousNode(rootNode.get())) {
+        if (n->isElementNode()) {
+            if (nodeMatches(n)) {
+                if (!remainingOffset) {
+                    lastItem = n;
+                    lastItemOffset = offset;
+                    isItemCacheValid = true;
+                    return n;
+                }
+                remainingOffset++;
+            }
+        }
+    }
+
+    return 0; // no matching node in this subtree
+}
+
+Node* NodeList::recursiveItem(unsigned offset, Node* start) const
+{
+    int remainingOffset = offset;
+    if (!start) {
+        start = rootNode->firstChild();
+        if (isItemCacheValid) {
+            if (offset == lastItemOffset) {
+                return lastItem;
+            } else if (offset > lastItemOffset || lastItemOffset - offset < offset) {
+                start = lastItem;
+                remainingOffset -= lastItemOffset;
+            }
+        }
+    }
+
+    if (remainingOffset < 0)
+        return itemBackwardsFromCurrent(start, offset, remainingOffset);
+    else
+        return itemForwardsFromCurrent(start, offset, remainingOffset);
 }
 
 Node* NodeList::itemWithName(const AtomicString& elementId) const

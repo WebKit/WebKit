@@ -1,3 +1,20 @@
+2006-06-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele
+
+        - fixed <rdar://problem/4550473> Reproducible hang on www.digg.com
+        
+        * dom/NodeList.cpp:
+        (WebCore::NodeList::recursiveItem): Make NodeList caching also
+        work for backwards iteration - if the requested index is before
+        the last cached, but closer to it than to the start of the list,
+        then search backwards from there.
+        (WebCore::NodeList::itemForwardsFromCurrent): Split this out as a
+        helper method.
+        (WebCore::NodeList::itemBackwardsFromCurrent): New helper, similar
+        to the above.
+        * dom/NodeList.h:
+
 2006-06-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Levi
