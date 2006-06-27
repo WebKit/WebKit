@@ -2,6 +2,18 @@
 
         Reviewed by Geoff.
 
+        - finish with http://bugzilla.opendarwin.org/show_bug.cgi?id=9606
+          REGRESSION: some callers are still using clientX/Y to get pageX/Y
+
+        * rendering/RenderFrameSet.cpp: (WebCore::RenderFrameSet::userResize):
+        Change to use pageX/Y, but this really doesn't matter since framesets
+        can't be scrolled -- it's the frames that are scrolled. So this change
+        has no user-visible effect, but it's still better this way.
+
+2006-06-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
         - fix 2/3 of http://bugzilla.opendarwin.org/show_bug.cgi?id=9606
           REGRESSION: some callers are still using clientX/Y to get pageX/Y
 

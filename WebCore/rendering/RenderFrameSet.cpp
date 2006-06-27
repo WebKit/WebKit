@@ -416,8 +416,8 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
         return false;
     
     bool res = false;
-    int _x = evt->clientX();
-    int _y = evt->clientY();
+    int _x = evt->pageX();
+    int _y = evt->pageY();
     
     if (!m_resizing && evt->type() == mousemoveEvent || evt->type() == mousedownEvent) {
         m_hSplit = -1;
