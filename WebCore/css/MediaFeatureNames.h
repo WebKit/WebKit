@@ -33,10 +33,12 @@ namespace WebCore { namespace MediaFeatureNames {
     macro(height, "height") \
     macro(width, "width") \
     macro(device_aspect_ratio, "device-aspect-ratio") \
+    macro(device_pixel_ratio, "-webkit-device-pixel-ratio") \
     macro(device_height, "device-height") \
     macro(device_width, "device-width") \
     macro(max_color, "max-color") \
     macro(max_device_aspect_ratio, "max-device-aspect-ratio") \
+    macro(max_device_pixel_ratio, "-webkit-max-device-pixel-ratio") \
     macro(max_device_height, "max-device-height") \
     macro(max_device_width, "max-device-width") \
     macro(max_height, "max-height") \
@@ -44,6 +46,7 @@ namespace WebCore { namespace MediaFeatureNames {
     macro(max_width, "max-width") \
     macro(min_color, "min-color") \
     macro(min_device_aspect_ratio, "min-device-aspect-ratio") \
+    macro(min_device_pixel_ratio, "-webkit-min-device-pixel-ratio") \
     macro(min_device_height, "min-device-height") \
     macro(min_device_width, "min-device-width") \
     macro(min_height, "min-height") \

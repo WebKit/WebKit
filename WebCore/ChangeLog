@@ -1,3 +1,20 @@
+2006-06-27  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4602635> Media queries must be extended to 
+        address CSS pixel scaling factor
+
+        * css/MediaFeatureNames.h: Add -webkit-device-pixel-ratio, -webkit-
+        min-device-pixel-ratio, and -webkit-max-device-pixel-ratio to the 
+        list of feature names.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::cmpvalue): Added a version of cmpvalue that compares 
+        floats.
+        (WebCore::device_pixel_ratioMediaFeatureEval):
+        (WebCore::min_device_pixel_ratioMediaFeatureEval):
+        (WebCore::max_device_pixel_ratioMediaFeatureEval):
+
 2006-06-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
