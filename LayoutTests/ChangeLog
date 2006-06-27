@@ -1,3 +1,13 @@
+2006-06-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9623
+        REGRESSION: getComputedStyle should do a relayout
+
+        * fast/css/getComputedStyle-relayout-expected.txt: Added.
+        * fast/css/getComputedStyle-relayout.html: Added.
+
 2006-06-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt.

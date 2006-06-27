@@ -1,3 +1,14 @@
+2006-06-27  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Geoff.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9623
+        REGRESSION: getComputedStyle should do a relayout
+        
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getComputedStyle):
+        Do a relayout.
+
 2006-06-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele
