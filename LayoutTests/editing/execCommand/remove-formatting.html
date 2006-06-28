@@ -18,13 +18,13 @@ var e = document.getElementById("test");
 var s = window.getSelection();
 
 if (document.queryCommandEnabled("RemoveFormat"))
-    log("Failure: RemoveFormat enabled with no selection");
+    log("Failure: RemoveFormat enabled with no selection.");
 s.setPosition(e, 0);
 if (document.queryCommandEnabled("RemoveFormat"))
-    log("Failure: RemoveFormat enabled with a caret selection");
+    log("Failure: RemoveFormat enabled with a caret selection.");
 document.execCommand("SelectAll");
 if (!document.queryCommandEnabled("RemoveFormat"))
-    log("Failure: RemoveFormat disabled with a selection");
+    log("Failure: RemoveFormat disabled with an editable selection.");
 if (!document.execCommand("RemoveFormat"))
-    log("Failure: execCommand('RemoveFormat') returned");
+    log("Failure: execCommand('RemoveFormat') returned false.");
 </script>
