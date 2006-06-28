@@ -1,3 +1,15 @@
+2006-06-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        Fixed EditActions for InsertHorizontalRule and RemoveFormat.
+        
+        * editing/JSEditor.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (WebCore::ReplaceSelectionCommand::editingAction):
+        * editing/ReplaceSelectionCommand.h:
+
 2006-06-28  Levi Weintraub  <lweintraub@apple.com>
 
          Build Fix. Reviewed by NOBODY

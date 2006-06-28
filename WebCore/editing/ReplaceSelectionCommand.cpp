@@ -460,13 +460,14 @@ RenderingInfo::RenderingInfo(PassRefPtr<CSSMutableStyleDeclaration> style, bool 
 {
 }
 
-ReplaceSelectionCommand::ReplaceSelectionCommand(Document *document, DocumentFragment *fragment, bool selectReplacement, bool smartReplace, bool matchStyle, bool forceMergeStart) 
+ReplaceSelectionCommand::ReplaceSelectionCommand(Document *document, DocumentFragment *fragment, bool selectReplacement, bool smartReplace, bool matchStyle, bool forceMergeStart, EditAction editAction) 
     : CompositeEditCommand(document),
       m_selectReplacement(selectReplacement), 
       m_smartReplace(smartReplace),
       m_matchStyle(matchStyle),
       m_documentFragment(fragment),
-      m_forceMergeStart(forceMergeStart)
+      m_forceMergeStart(forceMergeStart),
+      m_editAction(editAction)
 {
 }
 
@@ -860,7 +861,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
 
 EditAction ReplaceSelectionCommand::editingAction() const
 {
-    return EditActionPaste;
+    return m_editAction;
 }
 
 void ReplaceSelectionCommand::insertNodeAfterAndUpdateNodesInserted(Node *insertChild, Node *refChild)
