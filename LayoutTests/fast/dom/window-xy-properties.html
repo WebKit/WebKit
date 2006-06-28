@@ -24,7 +24,7 @@ function mouseev(event) {
         shouldBe("event.offsetX", "42");
         shouldBe("event.offsetY", "542");
         nrmouseclicks++;
-    } else {
+    } else if (nrmouseclicks == 2) {
         shouldBe("event.clientX", "50");
         shouldBe("event.clientY", "50");
         shouldBe("event.pageX", "550");
@@ -33,19 +33,23 @@ function mouseev(event) {
         shouldBe("event.layerY", "50");
         shouldBe("event.offsetX", "542");
         shouldBe("event.offsetY", "42");
+        nrmouseclicks++;
 
         // test initMouseEvent
         window.scrollTo(500, 500);
         ev = document.createEvent("MouseEvent");
-        ev.initMouseEvent("click", true, true, document.defaultView, 1, 50, 50, 50, 50, false, false, false, false, 0, document);
+        ev.initMouseEvent("mousedown", true, true, document.defaultView, 1, 50, 50, 50, 50, false, false, false, false, 0, document);
+        var child = document.getElementById('target');
+        child.dispatchEvent(ev);
+    } else {
         shouldBe("ev.clientX", "50");
         shouldBe("ev.clientY", "50");
         shouldBe("ev.pageX", "550");
         shouldBe("ev.pageY", "550");
         shouldBe("ev.layerX", "550");
         shouldBe("ev.layerY", "550");
-        shouldBe("ev.offsetX", "550");
-        shouldBe("ev.offsetY", "550");
+        shouldBe("ev.offsetX", "542");
+        shouldBe("ev.offsetY", "542");
     }
 }
 function test() {
@@ -70,7 +74,7 @@ function test() {
 </script>
 </head>
 <body onload="test()">
-<div style="background: red; width:2000px; height: 2000px" onmousedown="mouseev(event)">
+<div id="target" style="background: red; width:2000px; height: 2000px" onmousedown="mouseev(event)">
 </div>
 <div id="console"></div>
 </body>
