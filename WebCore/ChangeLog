@@ -1,3 +1,16 @@
+2006-06-28  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        <rdar://problem/4592005> FormatBlock inserts in the wrong place, disregarding editable content
+        <rdar://problem/4590763> FormatBlock for paragraph style doesn't work
+
+        * dom/Node.cpp:
+        (WebCore::Node::rootEditableElement): Return inline nodes
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::doApply): Keep from inserting before editable content
+        * editing/JSEditor.cpp: Support html braces (<>) around tag names
+
 2006-06-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

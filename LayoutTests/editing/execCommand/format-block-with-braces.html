@@ -1,0 +1,13 @@
+<div id="description">This test uses FormatBlock with html brackets in the tag string passed to execCommand.</div>
+<br>
+<div style="display:inline" contenteditable="true" id="item1">
+Format Me
+</div>
+
+<script>
+var s = window.getSelection();
+var r = document.createRange();
+var p1 = document.getElementById("item1");
+s.setPosition(p1, 0);
+document.execCommand("FormatBlock", false, "<h1>");
+</script>

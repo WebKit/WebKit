@@ -85,8 +85,8 @@ void FormatBlockCommand::doApply()
         return;
     QualifiedName qTypeOfBlock = QualifiedName(AtomicString(prefix), AtomicString(localName), xhtmlNamespaceURI);
     
-    Node* enclosingBlock = enclosingBlockFlowElement(endingSelection().visibleStart());
-    if (enclosingBlock->hasTagName(qTypeOfBlock))
+    Node* refNode = enclosingBlockFlowElement(endingSelection().visibleStart());
+    if (refNode->hasTagName(qTypeOfBlock))
         // We're already in a block with the format we want, so we don't have to do anything
         return;
     
@@ -97,11 +97,16 @@ void FormatBlockCommand::doApply()
     RefPtr<Node> blockNode = createElement(document(), m_tagName);
     RefPtr<Node> placeholder = createBreakElement(document());
     
-    if (validBlockTag(enclosingBlock->nodeName().lower()) && paragraphStart == blockStart && paragraphEnd == blockEnd)
+    Node* root = endingSelection().start().node()->rootEditableElement();
+    if (refNode == root || root->isAncestor(refNode))
+        refNode = paragraphStart.deepEquivalent().node();
+    
+    Position upstreamStart = paragraphStart.deepEquivalent().upstream();
+    if ((validBlockTag(refNode->nodeName().lower()) && paragraphStart == blockStart && paragraphEnd == blockEnd) ||
+        !upstreamStart.node()->isAncestor(root))
         // Already in a valid block tag that only contains the current paragraph, so we can swap with the new tag
-        insertNodeBefore(blockNode.get(), enclosingBlock);
+        insertNodeBefore(blockNode.get(), refNode);
     else {
-        Position upstreamStart = paragraphStart.deepEquivalent().upstream();
         insertNodeAt(blockNode.get(), upstreamStart.node(), upstreamStart.offset());
     }
     appendNode(placeholder.get(), blockNode.get());

@@ -2,6 +2,36 @@
 
         Reviewed by justin
 
+        <rdar://problem/4592005> FormatBlock inserts in the wrong place, disregarding editable content
+        <rdar://problem/4590763> FormatBlock for paragraph style doesn't work
+
+        * editing/execCommand/format-block-with-braces-expected.checksum: Added.
+        * editing/execCommand/format-block-with-braces-expected.png: Added.
+        * editing/execCommand/format-block-with-braces-expected.txt: Added.
+        * editing/execCommand/format-block-with-braces.html: Added.
+        * editing/execCommand/indent-list-item-expected.checksum: Added.
+        * editing/execCommand/indent-list-item-expected.png: Added.
+        * editing/execCommand/indent-list-item-expected.txt: Added.
+        * editing/execCommand/indent-list-item.html: Added.
+        * editing/execCommand/indent-selection-expected.checksum: Added.
+        * editing/execCommand/indent-selection-expected.png: Added.
+        * editing/execCommand/indent-selection-expected.txt: Added.
+        * editing/execCommand/indent-selection.html: Added.
+        * editing/execCommand/outdent-selection-expected.checksum: Added.
+        * editing/execCommand/outdent-selection-expected.png: Added.
+        * editing/execCommand/outdent-selection-expected.txt: Added.
+        * editing/execCommand/outdent-selection.html: Added.
+
+2006-06-28  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        Missed the layout tests themselves in the first checkin! Whoops!
+
+2006-06-28  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7568
         Bug 7568: Implement Indent/Outdent
 
