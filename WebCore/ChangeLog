@@ -1,3 +1,16 @@
+2006-06-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+        
+        svg/custom/text-hit-test.svg was failing
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::positionForCoordinates): Don't skip child
+        renderers that have a height of 0 when looking for the closest child
+        renderer, they may contain content that overflows.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForCoordinates): Fixed typos.
+
 2006-06-28  David Hyatt  <hyatt@apple.com>
 
         Make the view source document properly handle <script>.  We don't syntax

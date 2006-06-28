@@ -264,13 +264,13 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
     // FIXME: We should be able to roll these special cases into the general cases in the loop below.
     if (firstTextBox() && _y < absy + firstTextBox()->root()->bottomOverflow() && _x < absx + firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
-        // and the x coordinate is to the left than the first text box left edge
+        // and the x coordinate is to the left of the first text box left edge
         offset = firstTextBox()->offsetForPosition(_x - absx);
         return VisiblePosition(element(), offset + firstTextBox()->m_start, DOWNSTREAM);
     }
     if (lastTextBox() && _y >= absy + lastTextBox()->root()->topOverflow() && _x >= absx + lastTextBox()->m_x + lastTextBox()->m_width) {
         // at the y coordinate of the last line or below
-        // and the x coordinate is to the right than the last text box right edge
+        // and the x coordinate is to the right of the last text box right edge
         offset = lastTextBox()->offsetForPosition(_x - absx);
         return VisiblePosition(element(), offset + lastTextBox()->m_start, DOWNSTREAM);
     }
