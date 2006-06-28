@@ -1,5 +1,12 @@
 2006-06-28  Levi Weintraub  <lweintraub@apple.com>
 
+         Build Fix. Reviewed by NOBODY
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion):
+
+2006-06-28  Levi Weintraub  <lweintraub@apple.com>
+
         Reviewed by justin
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7568

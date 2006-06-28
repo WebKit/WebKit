@@ -115,7 +115,7 @@ void IndentOutdentCommand::indentRegion()
     ASSERT(!endOfSelection.isNull());
     
     Node* previousListNode = 0;
-    Node* newListNode;
+    Node* newListNode = 0;
     Node* newBlockquote = 0;
     VisiblePosition endOfCurrentParagraph = endOfParagraph(startOfSelection);
     VisiblePosition endAfterSelection = endOfParagraph(endOfParagraph(endOfSelection).next());
