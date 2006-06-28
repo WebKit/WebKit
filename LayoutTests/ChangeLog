@@ -1,3 +1,12 @@
+2006-06-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Updated test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9605
+
+        * fast/dom/window-xy-properties.html:
+        * fast/dom/window-xy-properties-expected.txt:
+
 2006-06-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

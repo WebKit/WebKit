@@ -1,3 +1,18 @@
+2006-06-27  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=9605
+        REGRESSION: pageX and pageY are both 0 for events created with initMouseEvent
+
+        Calculate pageX/pageY and clientX/clientY values when using initMouseEvent.
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::initMouseEvent):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::initCoordinates):
+        * dom/MouseRelatedEvent.h:
+
 2006-06-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej and Darin.

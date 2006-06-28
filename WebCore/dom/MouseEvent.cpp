@@ -65,8 +65,6 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
 
     m_screenX = screenX;
     m_screenY = screenY;
-    m_clientX = clientX;
-    m_clientY = clientY;
     m_ctrlKey = ctrlKey;
     m_altKey = altKey;
     m_shiftKey = shiftKey;
@@ -74,13 +72,10 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
     m_button = button;
     m_relatedTarget = relatedTarget;
 
-    initCoordinates();
+    initCoordinates(clientX, clientY);
 
     // FIXME: m_isSimulated is not set to false here.
     // FIXME: m_clipboard is not set to 0 here.
-
-    // FIXME: m_pageX and m_pageY are not set here.
-    // Regression caused by the fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=8707>.
 }
 
 bool MouseEvent::isMouseEvent() const

@@ -2,6 +2,7 @@
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
 var nrmouseclicks = 0; // small hack to distinguish between clicks
+var ev;
 function mouseev(event) {
     if (nrmouseclicks == 0) {
         shouldBe("event.clientX", "50");
@@ -32,6 +33,19 @@ function mouseev(event) {
         shouldBe("event.layerY", "50");
         shouldBe("event.offsetX", "542");
         shouldBe("event.offsetY", "42");
+
+        // test initMouseEvent
+        window.scrollTo(500, 500);
+        ev = document.createEvent("MouseEvent");
+        ev.initMouseEvent("click", true, true, document.defaultView, 1, 50, 50, 50, 50, false, false, false, false, 0, document);
+        shouldBe("ev.clientX", "50");
+        shouldBe("ev.clientY", "50");
+        shouldBe("ev.pageX", "550");
+        shouldBe("ev.pageY", "550");
+        shouldBe("ev.layerX", "550");
+        shouldBe("ev.layerY", "550");
+        shouldBe("ev.offsetX", "550");
+        shouldBe("ev.offsetY", "550");
     }
 }
 function test() {

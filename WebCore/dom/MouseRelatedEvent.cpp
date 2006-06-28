@@ -101,6 +101,21 @@ void MouseRelatedEvent::initCoordinates()
     m_offsetY = m_pageY;
 }
 
+void MouseRelatedEvent::initCoordinates(int clientX, int clientY)
+{
+    // Set up initial values for coordinates.
+    // Correct values can't be computed until we have at target, so receivedTarget
+    // does the "real" computation.
+    m_clientX = clientX;
+    m_clientY = clientY;
+    m_pageX = clientX + contentsX(view());
+    m_pageY = clientY + contentsY(view());
+    m_layerX = m_pageX;
+    m_layerY = m_pageY;
+    m_offsetX = m_pageX;
+    m_offsetY = m_pageY;
+}
+
 void MouseRelatedEvent::receivedTarget()
 {
     // Compute coordinates that are based on the target.
