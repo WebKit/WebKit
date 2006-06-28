@@ -1,4 +1,13 @@
 2006-06-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by levi
+
+        * editing/execCommand/remove-formatting-expected.checksum: Added.
+        * editing/execCommand/remove-formatting-expected.png: Added.
+        * editing/execCommand/remove-formatting-expected.txt: Added.
+        * editing/execCommand/remove-formatting.html: Added.
+
+2006-06-27  Justin Garcia  <justin.garcia@apple.com>
         
         Reviewed by levi
         

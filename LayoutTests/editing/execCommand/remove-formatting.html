@@ -1,0 +1,30 @@
+<p>This is a test for execCommand("RemoveFormat")</p>
+<div id="test" contenteditable="true">
+<b>foo</b><a href="http://www.google.com/">bar</a><i>baz</i><br>
+<table border="1"><tr><td>foo</td><td>bar</td><td>baz</td></tr></table>
+<u>foo</u>bar<span style="text-decoration:line-through">baz</span><br>
+</div>
+<ul id="console"></ul>
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    
+    console.appendChild(li);
+    li.appendChild(text);
+}
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+if (document.queryCommandEnabled("RemoveFormat"))
+    log("Failure: RemoveFormat enabled with no selection");
+s.setPosition(e, 0);
+if (document.queryCommandEnabled("RemoveFormat"))
+    log("Failure: RemoveFormat enabled with a caret selection");
+document.execCommand("SelectAll");
+if (!document.queryCommandEnabled("RemoveFormat"))
+    log("Failure: RemoveFormat disabled with a selection");
+if (!document.execCommand("RemoveFormat"))
+    log("Failure: execCommand('RemoveFormat') returned");
+</script>
