@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLImageElement.h"
+#include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "SelectionController.h"
@@ -314,8 +315,8 @@ bool execInsertImage(Frame* frame, bool userInterface, const String& value)
 
 bool execIndent(Frame *frame, bool userInterface, const String &value)
 {
-    // FIXME: Implement.
-    return false;
+    EditCommandPtr(new IndentOutdentCommand(frame->document(), IndentOutdentCommand::Indent)).apply();
+    return true;
 }
 
 bool execInsertLineBreak(Frame *frame, bool userInterface, const String &value)
@@ -382,8 +383,8 @@ bool execJustifyRight(Frame *frame, bool userInterface, const String &value)
 
 bool execOutdent(Frame *frame, bool userInterface, const String &value)
 {
-    // FIXME: Implement.
-    return false;
+    EditCommandPtr(new IndentOutdentCommand(frame->document(), IndentOutdentCommand::Outdent)).apply();
+    return true;
 }
 
 bool execPaste(Frame *frame, bool userInterface, const String &value)

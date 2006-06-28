@@ -1583,6 +1583,8 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
         case WebUndoActionUnlink: return UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
         case WebUndoActionInsertList: return UI_STRING_KEY("Insert List", "Insert List (Undo action name)", "Undo action name");
         case WebUndoActionFormatBlock: return UI_STRING_KEY("Formatting", "Format Block (Undo action name)", "Undo action name");
+        case WebUndoActionIndent: return UI_STRING_KEY("Indent", "Indent (Undo action name)", "Undo action name");
+        case WebUndoActionOutdent: return UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
     }
     return nil;
 }

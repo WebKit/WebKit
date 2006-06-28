@@ -42,15 +42,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static Node* highestAncestor(Node* node)
-{
-    ASSERT(node);
-    Node* parent = node;
-    while ((node = node->parentNode()))
-        parent = node;
-    return parent;
-}
-
 // Atomic means that the node has no children, or has children which are ignored for the
 // purposes of editing.
 bool isAtomicNode(const Node *node)
@@ -370,6 +361,19 @@ bool isListElement(Node *n)
     return (n && (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(dlTag)));
 }
 
+Node* enclosingNodeWithTag(Node* node, const QualifiedName& tagName)
+{
+    if (!node)
+        return 0;
+    Node* root = (node->inDocument()) ? node->rootEditableElement() : highestAncestor(node);
+    ASSERT(root);
+    for (Node* n = node->parentNode(); n && (n == root || n->isAncestor(root)); n = n->parentNode())
+        if (n->hasTagName(tagName))
+            return n;
+            
+    return 0;
+}
+
 Node* enclosingTableCell(Node* node)
 {
     if (!node)
@@ -395,16 +399,29 @@ Node* enclosingList(Node* node)
     return 0;
 }
 
-Node *enclosingListChild (Node *node)
+Node* enclosingListChild (Node *node)
 {
+    if (!node)
+        return 0;
     // Check for a list item element, or for a node whose parent is a list element.  Such a node
     // will appear visually as a list item (but without a list marker)
-    for (Node *n = node; n && n->parentNode(); n = n->parentNode()) {
+    Node* root = (node->inDocument()) ? node->rootEditableElement() : highestAncestor(node);
+    ASSERT(root);
+    for (Node *n = node; n && n->parentNode() && (n == root || n->isAncestor(root)); n = n->parentNode()) {
         if (n->hasTagName(liTag) || isListElement(n->parentNode()))
             return n;
     }
     
     return 0;
+}
+
+Node* outermostEnclosingListChild(Node* node)
+{
+    Node* listNode = 0;
+    Node* nextNode = node;
+    while ((nextNode = enclosingListChild(nextNode)))
+        listNode = nextNode;
+    return listNode;
 }
 
 Node* outermostEnclosingList(Node* node)
@@ -414,6 +431,15 @@ Node* outermostEnclosingList(Node* node)
     while ((nextNode = enclosingList(nextNode)))
         listNode = nextNode;
     return listNode;
+}
+
+Node* highestAncestor(Node* node)
+{
+    ASSERT(node);
+    Node* parent = node;
+    while ((node = node->parentNode()))
+        parent = node;
+    return parent;
 }
 
 // FIXME: do not require renderer, so that this can be used within fragments, or rename to isRenderedTable()
@@ -528,7 +554,7 @@ PassRefPtr<Element> createListItemElement(Document *document)
     return breakNode.release();
 }
 
-PassRefPtr<Element> createElement(Document* document, String& tagName)
+PassRefPtr<Element> createElement(Document* document, const String& tagName)
 {
     ExceptionCode ec = 0;
     RefPtr<Element> breakNode = document->createElementNS(xhtmlNamespaceURI, tagName, ec);

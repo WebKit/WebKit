@@ -1,3 +1,33 @@
+2006-06-28  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7568
+        Bug 7568: Implement Indent/Outdent
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added IndentOutdentCommand.h/cpp
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * editing/IndentOutdentCommand.cpp: Added.
+        (WebCore::IndentOutdentCommand::IndentOutdentCommand):
+        (WebCore::enclosingListOrBlockquote):
+        (WebCore::IndentOutdentCommand::splitTreeToNode): Splits the DOM tree from a
+        descendent node to an ending ancestor, duplicating nodes when necessary. Returns
+        the last node split. Used to insert blockquotes at the topmost level.
+        (WebCore::IndentOutdentCommand::indentRegion):
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        (WebCore::IndentOutdentCommand::outdentRegion):
+        (WebCore::IndentOutdentCommand::doApply):
+        * editing/IndentOutdentCommand.h: Added.
+        (WebCore::IndentOutdentCommand::):
+        * editing/JSEditor.cpp: Added the execCommands Indent and Outdent
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingNodeWithTag): Finds the enclosing node with any specified tag.
+        (WebCore::enclosingListChild): Added checks for nill and editable boundaries.
+        (WebCore::outermostEnclosingListChild): Returns the highest ancestor list child.
+        (WebCore::highestAncestor): Added.
+        (WebCore::createElement): Changed the passed in string to a const reference.
+        * editing/htmlediting.h:
+
 2006-06-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin and Hyatt.
@@ -243,6 +273,7 @@
         (WebCore::SQLStatement::getColumnBlobAsVector):
         (WebCore::SQLStatement::getColumnBlob):
 
+>>>>>>> .r15079
 2006-06-27  Ada Chan <adachan@apple.com>
 
         Reviewed by sfalken.

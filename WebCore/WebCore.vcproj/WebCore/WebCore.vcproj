@@ -3991,6 +3991,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\editing\IndentOutdentCommand.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\editing\IndentOutdentCommand.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\editing\InsertNodeBeforeCommand.cpp"
 				>
 			</File>

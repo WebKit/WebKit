@@ -1552,6 +1552,8 @@
 		D086FE9909D53AAB005BC74D /* UnlinkCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */; };
 		D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B0556609C6700100307E43 /* CreateLinkCommand.h */; };
 		D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */; };
+		DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */; };
+		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
 		E1052C320A4D70010072D99B /* DOMEventsNonstandard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1052C310A4D70010072D99B /* DOMEventsNonstandard.mm */; };
@@ -3294,6 +3296,8 @@
 		D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkCommand.cpp; sourceTree = "<group>"; };
 		D0B0556609C6700100307E43 /* CreateLinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateLinkCommand.h; sourceTree = "<group>"; };
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
+		DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IndentOutdentCommand.cpp; sourceTree = "<group>"; };
+		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
 		E1052C310A4D70010072D99B /* DOMEventsNonstandard.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMEventsNonstandard.mm; sourceTree = "<group>"; };
 		E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3939,6 +3943,8 @@
 		93309D86099E64910056E581 /* editing */ = {
 			isa = PBXGroup;
 			children = (
+				DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */,
+				DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */,
 				D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */,
 				D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */,
 				93309D87099E64910056E581 /* AppendNodeCommand.cpp */,
@@ -6329,6 +6335,7 @@
 				85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */,
 				85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */,
 				ABE7B5240A489F830031881C /* DeprecatedRenderSelect.h in Headers */,
+				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
 				BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */,
 				1A8086CC0A4D097600DFB6A7 /* DOMCSSInternal.h in Headers */,
 			);
@@ -7182,6 +7189,7 @@
 				85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */,
 				ABE7B5230A489F830031881C /* DeprecatedRenderSelect.cpp in Sources */,
 				51F11E150A48C2920034A24E /* SQLTransaction.cpp in Sources */,
+				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,
 				BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */,
 				E1052C320A4D70010072D99B /* DOMEventsNonstandard.mm in Sources */,
 				516149ED0A525E3A003DFC7A /* SiteIcon.cpp in Sources */,

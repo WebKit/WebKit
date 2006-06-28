@@ -27,6 +27,7 @@
 #define htmlediting_h
 
 #include <wtf/Forward.h>
+#include "HTMLNames.h"
 
 namespace WebCore {
 
@@ -62,7 +63,7 @@ PassRefPtr<Element> createBreakElement(Document*);
 PassRefPtr<Element> createOrderedListElement(Document*);
 PassRefPtr<Element> createUnorderedListElement(Document*);
 PassRefPtr<Element> createListItemElement(Document*);
-PassRefPtr<Element> createElement(Document*, String&);
+PassRefPtr<Element> createElement(Document*, const String&);
 
 bool isTabSpanNode(const Node*);
 bool isTabSpanTextNode(const Node*);
@@ -87,11 +88,13 @@ bool isLastVisiblePositionInSpecialElement(const Position&);
 Position positionAfterContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 Position positionOutsideContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 
+Node* enclosingNodeWithTag(Node*, const QualifiedName&);
 Node* enclosingTableCell(Node*);
 bool isListElement(Node*);
 Node* enclosingList(Node*);
 Node* outermostEnclosingList(Node*);
 Node* enclosingListChild(Node*);
+Node* highestAncestor(Node*);
 bool isTableElement(Node*);
 bool isFirstVisiblePositionAfterTableElement(const Position&);
 Position positionBeforePrecedingTableElement(const Position&);

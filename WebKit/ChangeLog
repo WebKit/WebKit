@@ -1,3 +1,15 @@
+2006-06-28  Levi Weintraub  <lweintraub@apple.com>
+
+        Reviewed by justin
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7568
+        Bug 7568: Implement Indent/Outdent
+        Added undo action strings and enum values
+
+        * English.lproj/Localizable.strings:
+        * WebCoreSupport/WebFrameBridge.m: 
+        (-[WebFrameBridge nameForUndoAction:]):
+
 2006-06-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej
@@ -670,8 +682,7 @@
         Renamed from -initWithPath:.  Instead of releasing/deallocating self on error, return NO.
         (-[WebNetscapePluginPackage initWithPath:]):
         Call the new -_initWithPath:.  If it returns NO, unload the plugin package before deallocating it.
-        
->>>>>>> .r14837
+
 2006-06-11  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build
