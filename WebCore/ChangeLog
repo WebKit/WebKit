@@ -1,3 +1,9 @@
+2006-06-28  Timothy Hatcher  <timothy@apple.com>
+
+        Prefer the Stabs debugging symbols format until DWARF bugs are fixed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-06-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
