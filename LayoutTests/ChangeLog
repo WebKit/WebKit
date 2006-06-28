@@ -1,3 +1,15 @@
+2006-06-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin and Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9561
+          REGRESSION: Content property on :before of button causes hang on click or hover
+
+        * fast/forms/button-generated-content-expected.checksum: Added.
+        * fast/forms/button-generated-content-expected.png: Added.
+        * fast/forms/button-generated-content-expected.txt: Added.
+        * fast/forms/button-generated-content.html: Added.
+
 2006-06-28  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

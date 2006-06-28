@@ -125,10 +125,8 @@ void RenderBlock::setStyle(RenderStyle* _style)
     m_tabWidth = -1;
 
     // Update pseudos for :before and :after now.
-    RenderObject* first = firstChild();
-    while (first && first->isListMarker()) first = first->nextSibling();
-    updatePseudoChild(RenderStyle::BEFORE, first);
-    updatePseudoChild(RenderStyle::AFTER, lastChild());
+    updatePseudoChild(RenderStyle::BEFORE);
+    updatePseudoChild(RenderStyle::AFTER);
 }
 
 void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)

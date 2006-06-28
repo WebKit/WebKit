@@ -64,10 +64,8 @@ void RenderInline::setStyle(RenderStyle* _style)
     m_lineHeight = -1;
     
     // Update pseudos for :before and :after now.
-    RenderObject* first = firstChild();
-    while (first && first->isListMarker()) first = first->nextSibling();
-    updatePseudoChild(RenderStyle::BEFORE, first);
-    updatePseudoChild(RenderStyle::AFTER, lastChild());
+    updatePseudoChild(RenderStyle::BEFORE);
+    updatePseudoChild(RenderStyle::AFTER);
 }
 
 bool RenderInline::isInlineContinuation() const
@@ -99,7 +97,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
         // has to move into the inline continuation.  Call updatePseudoChild to ensure that our :after
         // content gets properly destroyed.
         bool isLastChild = (beforeChild == lastChild());
-        updatePseudoChild(RenderStyle::AFTER, lastChild());
+        updatePseudoChild(RenderStyle::AFTER);
         if (isLastChild && beforeChild != lastChild())
             beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
                              // point to be 0.  It's just a straight append now.
@@ -163,7 +161,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
         // has to move into the inline continuation.  Call updatePseudoChild to ensure that the inline's :after
         // content gets properly destroyed.
-        curr->updatePseudoChild(RenderStyle::AFTER, curr->lastChild());
+        curr->updatePseudoChild(RenderStyle::AFTER);
         
         // Now we need to take all of the children starting from the first child
         // *after* currChild and append them all to the clone.
@@ -199,7 +197,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     RenderBlock* pre = 0;
     RenderBlock* block = containingBlock();
     bool madeNewBeforeBlock = false;
-    if (block->isAnonymousBlock() && (!block->parent() || block->parent()->allowsReusingAnonymousChild())) {
+    if (block->isAnonymousBlock() && (!block->parent() || !block->parent()->createsAnonymousWrapper())) {
         // We can reuse this block and make it the preBlock of the next continuation.
         pre = block;
         block = block->containingBlock();

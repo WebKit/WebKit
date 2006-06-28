@@ -38,10 +38,12 @@ public:
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
     virtual void removeChild(RenderObject* oldChild);
     virtual void removeLeftoverAnonymousBoxes() {}
-    virtual bool allowsReusingAnonymousChild() const { return false; }
+    virtual bool createsAnonymousWrapper() const { return true; }
 
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
+
+    virtual void updatePseudoChild(RenderStyle::PseudoId);
 
     virtual void paintObject(PaintInfo&, int tx, int ty);
 

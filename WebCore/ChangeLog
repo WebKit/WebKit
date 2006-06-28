@@ -1,3 +1,41 @@
+2006-06-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin and Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9561
+          REGRESSION: Content property on :before of button causes hang on click or hover
+
+        Test: fast/forms/button-generated-content.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setStyle):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updatePseudoChild): Added. Calls updatePseudoChildForObject()
+        on the button itself or on its inner div, if it has one.
+        * rendering/RenderButton.h:
+        (WebCore::RenderButton::createsAnonymousWrapper): Added. Returns true.
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::pseudoChild): Added. Returns the child containing
+        generated content of the requested type if there is one, or otherwise the
+        child before/after which such generated content should come.
+        (WebCore::RenderContainer::updatePseudoChild): Removed the child parameter and moved the guts
+        of this method into updatePseudoChildForObject, which this method calls unless the object
+        is an anonymous wrapper.
+        (WebCore::RenderContainer::updatePseudoChildForObject): Added. Does the what
+        updatePseudoChildForObject did previously, but fetches the pseudo style from
+        the styledObject parameter.
+        * rendering/RenderContainer.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::setStyle):
+        (WebCore::RenderInline::addChildToFlow):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::createsAnonymousWrapper): Added. This method replaces
+        allowsReusingAnonymousChild and returns the opposite of what that method used to
+        return. Returns true if the object creates an anonymous child to contain all its
+        other children.
+
 2006-06-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej

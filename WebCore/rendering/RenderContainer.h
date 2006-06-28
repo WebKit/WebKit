@@ -57,7 +57,9 @@ public:
 
     virtual void removeLeftoverAnonymousBoxes();
 
-    void updatePseudoChild(RenderStyle::PseudoId type, RenderObject* child);
+    RenderObject* pseudoChild(RenderStyle::PseudoId) const;
+    virtual void updatePseudoChild(RenderStyle::PseudoId);
+    void updatePseudoChildForObject(RenderStyle::PseudoId, RenderObject*);
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     

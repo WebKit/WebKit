@@ -214,13 +214,37 @@ void RenderContainer::removeChild(RenderObject* oldChild)
     removeChildNode(oldChild);
 }
 
-void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject* child)
+RenderObject* RenderContainer::pseudoChild(RenderStyle::PseudoId type) const
+{
+    if (type == RenderStyle::BEFORE) {
+        RenderObject* first = firstChild();
+        while (first && first->isListMarker())
+            first = first->nextSibling();
+        return first;
+    }
+    if (type == RenderStyle::AFTER)
+        return lastChild();
+
+    assert(false);
+    return 0;
+}
+
+void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type)
+{
+    // If this is an anonymous wrapper, then parent applies its own pseudo style to it.
+    if (parent() && parent()->createsAnonymousWrapper())
+        return;
+    updatePseudoChildForObject(type, this);
+}
+
+void RenderContainer::updatePseudoChildForObject(RenderStyle::PseudoId type, RenderObject* styledObject)
 {
     // In CSS2, before/after pseudo-content cannot nest.  Check this first.
     if (style()->styleType() == RenderStyle::BEFORE || style()->styleType() == RenderStyle::AFTER)
         return;
     
-    RenderStyle* pseudo = getPseudoStyle(type);
+    RenderStyle* pseudo = styledObject->getPseudoStyle(type);
+    RenderObject* child = pseudoChild(type);
 
     // Whether or not we currently have generated content attached.
     bool oldContentPresent = child && (child->style()->styleType() == type);
