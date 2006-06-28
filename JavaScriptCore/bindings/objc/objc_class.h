@@ -59,8 +59,8 @@ private:
     ObjcClass &operator=(const ObjcClass &other); // ditto
     
     ClassStructPtr _isa;
-    CFDictionaryRef _methods;
-    CFDictionaryRef _fields;
+    CFMutableDictionaryRef _methods;
+    CFMutableDictionaryRef _fields;
 };
 
 } // namespace Bindings

@@ -38,13 +38,13 @@ class ObjcClass;
 class ObjcInstance : public Instance
 {
 public:
-    ObjcInstance (ObjectStructPtr instance);
+    ObjcInstance(ObjectStructPtr instance);
         
-    ~ObjcInstance ();
+    ~ObjcInstance();
     
     virtual Class *getClass() const;
     
-    ObjcInstance (const ObjcInstance &other);
+    ObjcInstance(const ObjcInstance &other);
 
     ObjcInstance &operator=(const ObjcInstance &other);
     
@@ -52,19 +52,19 @@ public:
     virtual void end();
     
     virtual JSValue *valueOf() const;
-    virtual JSValue *defaultValue (JSType hint) const;
+    virtual JSValue *defaultValue(JSType hint) const;
 
     virtual bool implementsCall() const;
     
-    virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
-    virtual JSValue *invokeDefaultMethod (ExecState *exec, const List &args);
+    virtual JSValue *invokeMethod(ExecState *exec, const MethodList &method, const List &args);
+    virtual JSValue *invokeDefaultMethod(ExecState *exec, const List &args);
 
-    virtual void setValueOfField (ExecState *exec, const Field *aField, JSValue *aValue) const;
-    virtual bool supportsSetValueOfUndefinedField ();
-    virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, JSValue *aValue);
+    virtual void setValueOfField(ExecState *exec, const Field *aField, JSValue *aValue) const;
+    virtual bool supportsSetValueOfUndefinedField();
+    virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, JSValue *aValue);
     
-    virtual JSValue *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const;
-    virtual JSValue *getValueOfUndefinedField (ExecState *exec, const Identifier &property, JSType hint) const;
+    virtual JSValue *ObjcInstance::getValueOfField(ExecState *exec, const Field *aField) const;
+    virtual JSValue *getValueOfUndefinedField(ExecState *exec, const Identifier &property, JSType hint) const;
 
     ObjectStructPtr getObject() const { return _instance; }
     

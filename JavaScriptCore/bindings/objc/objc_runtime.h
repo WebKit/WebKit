@@ -41,7 +41,7 @@ class ObjcInstance;
 class ObjcField : public Field
 {
 public:
-    ObjcField(Ivar ivar);
+    ObjcField(IvarStructPtr ivar);
     ObjcField(CFStringRef name);
     
     ~ObjcField()
@@ -86,7 +86,7 @@ public:
     virtual RuntimeType type() const;
         
 private:
-    Ivar _ivar;
+    IvarStructPtr _ivar;
     CFStringRef _name;
 };
 
@@ -94,7 +94,7 @@ class ObjcMethod : public Method
 {
 public:
     ObjcMethod() : _objcClass(0), _selector(0), _javaScriptName(0) {}
-    ObjcMethod(struct objc_class *aClass, const char *_selector);
+    ObjcMethod(ClassStructPtr aClass, const char *_selector);
     ~ObjcMethod ()
     {
         if (_javaScriptName)
@@ -127,7 +127,7 @@ public:
     CFStringRef javaScriptName() const { return _javaScriptName; }
     
 private:
-    struct objc_class *_objcClass;
+    ClassStructPtr _objcClass;
     const char *_selector;
     CFStringRef _javaScriptName;
 };

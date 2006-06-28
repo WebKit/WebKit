@@ -36,16 +36,16 @@ using namespace KJS::Bindings;
 
 // ---------------------- ObjcMethod ----------------------
 
-ObjcMethod::ObjcMethod(ClassStructPtr aClass, const char *name)
+ObjcMethod::ObjcMethod(ClassStructPtr aClass, const char* name)
 {
     _objcClass = aClass;
     _selector = name;   // Assume ObjC runtime keeps these around forever.
     _javaScriptName = 0;
 }
 
-const char *ObjcMethod::name() const
+const char* ObjcMethod::name() const
 {
-    return (const char *)_selector;
+    return _selector;
 }
 
 int ObjcMethod::numParameters() const
@@ -53,23 +53,25 @@ int ObjcMethod::numParameters() const
     return [getMethodSignature() numberOfArguments] - 2;
 }
 
-
-NSMethodSignature *ObjcMethod::getMethodSignature() const
+NSMethodSignature* ObjcMethod::getMethodSignature() const
 {
-    return [(id)_objcClass instanceMethodSignatureForSelector:(SEL)_selector];
+#if OBJC_API_VERSION >= 2
+    return [_objcClass instanceMethodSignatureForSelector:sel_registerName(_selector)];
+#else
+    return [_objcClass instanceMethodSignatureForSelector:(SEL)_selector];
+#endif
 }
 
 void ObjcMethod::setJavaScriptName (CFStringRef n)
 {
     if (n != _javaScriptName) {
-        if (_javaScriptName != 0)
+        if (_javaScriptName)
             CFRelease (_javaScriptName);
         _javaScriptName = (CFStringRef)CFRetain (n);
     }
 }
 
 // ---------------------- ObjcField ----------------------
-
 
 ObjcField::ObjcField(Ivar ivar) 
 {
@@ -83,68 +85,69 @@ ObjcField::ObjcField(CFStringRef name)
     _name = (CFStringRef)CFRetain(name);
 }
 
-const char *ObjcField::name() const 
+const char* ObjcField::name() const 
 {
+#if OBJC_API_VERSION >= 2
+    if (_ivar)
+        return ivar_getName(_ivar);
+#else
     if (_ivar)
         return _ivar->ivar_name;
-    return [(NSString *)_name UTF8String];
+#endif
+    return [(NSString*)_name UTF8String];
 }
 
 RuntimeType ObjcField::type() const 
 { 
+#if OBJC_API_VERSION >= 2
+    if (_ivar)
+        return ivar_getTypeEncoding(_ivar);
+#else
     if (_ivar)
         return _ivar->ivar_type;
-    
+#endif
+
     // Type is irrelevant if we use KV to set/get the value.
     return "";
 }
 
-JSValue *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance) const
+JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) const
 {
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
 
     @try {
-    
-        NSString *key = [NSString stringWithCString:name()];
+        NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
         id objcValue = [targetObject valueForKey:key];
         if (objcValue)
-            return convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
-
-    } @catch(NSException *localException) {
-        
+            return convertObjcValueToValue(exec, &objcValue, ObjcObjectType);
+    } @catch(NSException* localException) {
         throwError(exec, GeneralError, [localException reason]);
-        
     }
 
     return jsUndefined();
 }
 
-static id convertValueToObjcObject (ExecState *exec, JSValue *value)
+static id convertValueToObjcObject (ExecState* exec, JSValue* value)
 {
-    const Bindings::RootObject *root = rootForInterpreter(exec->dynamicInterpreter());
+    const Bindings::RootObject* root = rootForInterpreter(exec->dynamicInterpreter());
     if (!root) {
-        Bindings::RootObject *newRoot = new Bindings::RootObject(0);
-        newRoot->setInterpreter (exec->dynamicInterpreter());
+        Bindings::RootObject* newRoot = new Bindings::RootObject(0);
+        newRoot->setInterpreter(exec->dynamicInterpreter());
         root = newRoot;
     }
     return [WebScriptObject _convertValueToObjcValue:value originExecutionContext:root executionContext:root ];
 }
 
-
-void ObjcField::setValueToInstance(ExecState *exec, const Instance *instance, JSValue *aValue) const
+void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JSValue* aValue) const
 {
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id value = convertValueToObjcObject(exec, aValue);
-    
-    @try {
-    
-        NSString *key = [NSString stringWithCString:name()];
-        [targetObject setValue:value forKey:key];
 
-    } @catch(NSException *localException) {
-        
+    @try {
+        NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
+        [targetObject setValue:value forKey:key];
+    } @catch(NSException* localException) {
         throwError(exec, GeneralError, [localException reason]);
-        
     }
 }
 
@@ -160,7 +163,6 @@ ObjcArray::~ObjcArray ()
     CFRelease(_array);
 }
 
-
 ObjcArray::ObjcArray (const ObjcArray &other) : Array() 
 {
     _array = other._array;
@@ -173,10 +175,10 @@ ObjcArray &ObjcArray::operator=(const ObjcArray &other)
     _array = other._array;
     CFRetain(_array);
     CFRelease(_oldArray);
-    return *this;
+    return* this;
 }
 
-void ObjcArray::setValueAt(ExecState *exec, unsigned int index, JSValue *aValue) const
+void ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue* aValue) const
 {
     if (![_array respondsToSelector:@selector(insertObject:atIndex:)]) {
         throwError(exec, TypeError, "Array is not mutable.");
@@ -193,34 +195,23 @@ void ObjcArray::setValueAt(ExecState *exec, unsigned int index, JSValue *aValue)
     ObjcValue oValue = convertValueToObjcValue (exec, aValue, ObjcObjectType);
 
     @try {
-
         [_array insertObject:oValue.objectValue atIndex:index];
-
-    } @catch(NSException *localException) {
-
+    } @catch(NSException* localException) {
         throwError(exec, GeneralError, "Objective-C exception.");
-
     }
 }
 
-
-JSValue *ObjcArray::valueAt(ExecState *exec, unsigned int index) const
+JSValue* ObjcArray::valueAt(ExecState* exec, unsigned int index) const
 {
     if (index > [_array count])
         return throwError(exec, RangeError, "Index exceeds array size.");
-
     @try {
-
         id obj = [_array objectAtIndex:index];
         if (obj)
             return convertObjcValueToValue (exec, &obj, ObjcObjectType);
-
-    } @catch(NSException *localException) {
-
+    } @catch(NSException* localException) {
         return throwError(exec, GeneralError, "Objective-C exception.");
-
     }
-
     return jsUndefined();
 }
 
@@ -229,10 +220,9 @@ unsigned int ObjcArray::getLength() const
     return [_array count];
 }
 
-
 const ClassInfo ObjcFallbackObjectImp::info = {"ObjcFallbackObject", 0, 0, 0};
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance *i, const KJS::Identifier propertyName)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance* i, const KJS::Identifier propertyName)
 : _instance(i)
 , _item(propertyName)
 {
@@ -275,25 +265,25 @@ bool ObjcFallbackObjectImp::implementsCall() const
     return false;
 }
 
-JSValue *ObjcFallbackObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
 {
-    JSValue *result = jsUndefined();
+    JSValue* result = jsUndefined();
     
-    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj);
+    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(thisObj);
     if (imp) {
-        Instance *instance = imp->getInternalInstance();
+        Instance* instance = imp->getInternalInstance();
         
         instance->begin();
 
-        ObjcInstance *objcInstance = static_cast<ObjcInstance*>(instance);
+        ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);
         id targetObject = objcInstance->getObject();
         
         if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
             MethodList methodList;
-            ObjcClass *objcClass = static_cast<ObjcClass*>(instance->getClass());
-            ObjcMethod *fallbackMethod = new ObjcMethod (objcClass->isa(), (const char *)@selector(invokeUndefinedMethodFromWebScript:withArguments:));
-            fallbackMethod->setJavaScriptName((CFStringRef)[NSString stringWithCString:_item.ascii()]);
-            methodList.addMethod ((Method *)fallbackMethod);
+            ObjcClass* objcClass = static_cast<ObjcClass*>(instance->getClass());
+            ObjcMethod* fallbackMethod = new ObjcMethod (objcClass->isa(), (const char*)@selector(invokeUndefinedMethodFromWebScript:withArguments:));
+            fallbackMethod->setJavaScriptName((CFStringRef)[NSString stringWithCString:_item.ascii() encoding:NSASCIIStringEncoding]);
+            methodList.addMethod ((Method*)fallbackMethod);
             result = instance->invokeMethod(exec, methodList, args);
             delete fallbackMethod;
         }
@@ -309,7 +299,7 @@ bool ObjcFallbackObjectImp::deleteProperty(ExecState*, const Identifier&)
     return false;
 }
 
-JSValue *ObjcFallbackObjectImp::defaultValue(ExecState *exec, JSType hint) const
+JSValue* ObjcFallbackObjectImp::defaultValue(ExecState* exec, JSType hint) const
 {
     return _instance->getValueOfUndefinedField(exec, _item, hint);
 }

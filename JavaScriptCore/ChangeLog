@@ -1,10 +1,69 @@
+2006-06-27  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Tim O.
+
+        <rdar://problem/4448350> Deprecated ObjC language API used in JavaScriptCore, WebCore, WebKit and WebBrowser
+
+        Switch to the new ObjC 2 API, ifdefed the old code around OBJC_API_VERSION so it still works on Tiger.
+        Removed the use of the old stringWithCString, switched to the new Tiger version that accepts an encoding.
+        Lots of code style cleanup.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/objc/objc_class.h:
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::~ObjcClass):
+        (KJS::Bindings::_createClassesByIsAIfNecessary):
+        (KJS::Bindings::ObjcClass::classForIsA):
+        (KJS::Bindings::ObjcClass::name):
+        (KJS::Bindings::ObjcClass::methodsNamed):
+        (KJS::Bindings::ObjcClass::fieldNamed):
+        (KJS::Bindings::ObjcClass::fallbackObject):
+        * bindings/objc/objc_header.h:
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::ObjcInstance):
+        (ObjcInstance::~ObjcInstance):
+        (ObjcInstance::operator=):
+        (ObjcInstance::begin):
+        (ObjcInstance::end):
+        (ObjcInstance::getClass):
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::setValueOfField):
+        (ObjcInstance::supportsSetValueOfUndefinedField):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfField):
+        (ObjcInstance::getValueOfUndefinedField):
+        (ObjcInstance::defaultValue):
+        (ObjcInstance::stringValue):
+        (ObjcInstance::numberValue):
+        (ObjcInstance::booleanValue):
+        (ObjcInstance::valueOf):
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcMethod::ObjcMethod):
+        (ObjcMethod::name):
+        (ObjcMethod::getMethodSignature):
+        (ObjcMethod::setJavaScriptName):
+        (ObjcField::name):
+        (ObjcField::type):
+        (ObjcField::valueFromInstance):
+        (convertValueToObjcObject):
+        (ObjcField::setValueToInstance):
+        (ObjcArray::operator=):
+        (ObjcArray::setValueAt):
+        (ObjcArray::valueAt):
+        (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        (ObjcFallbackObjectImp::callAsFunction):
+        (ObjcFallbackObjectImp::defaultValue):
+
 2006-06-28  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Geoff.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=8636
         REGRESSION: JavaScript access to Java applet causes hang (_webViewURL not implemented)
-        
+
         * bindings/jni/jni_objc.mm:
         (KJS::Bindings::dispatchJNICall):
         Just pass nil as the calling URL. This will cause the Java plugin to use the URL of the page
