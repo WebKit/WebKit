@@ -1,3 +1,16 @@
+2006-06-27  Kevin Decker    <kdecker@apple.com>
+
+        Reviewed by brady.
+
+        Fixed: <rdar://problem/4597679> TOT REGRESSION: popup blocker DOA
+        
+        Need to add window.open() support to DumpRenderTree before landing an actual layout test.
+
+        * bindings/js/kjs_window.cpp: 
+        (KJS::WindowFunc::callAsFunction): Because FrameTree::find() returns true for empty strings, 
+        we must check for empty framenames. Otherwise, illegitimate window.open() calls with no name
+        will pass right through the popup blocker.
+
 2006-06-28  Anders Carlsson  <acarlsson@apple.com>
 
         Reviewed by Darin.
