@@ -171,24 +171,24 @@ NSSize WebIconLargeSize = {128, 128};
 
     if ([URL _webkit_isFileURL])
         return [self _iconForFileURL:URL withSize:size];
-    
+
+#ifdef ICONDEBUG        
+    NSImage* image = [_private->databaseBridge iconForPageURL:URL withSize:size];
+    if (image)
+        LOG(IconDatabase, "NewDB has image for %@", URL);
+    else
+        LOG(IconDatabase, "NewDB has no image for %@", URL);
+        
+    // FIXME - We currently don't embed the default icon in the new WebCore IconDB, so we'll return the old version of it;
+    return image ? image : [self defaultIconWithSize:size];
+#endif
+
     NSString *iconURLString = [_private->pageURLToIconURL objectForKey:URL];
     if (!iconURLString)
         // Don't have it
         return [self defaultIconWithSize:size];
 
     NSMutableDictionary *icons = [self _iconsForIconURLString:iconURLString];
-#ifdef ICONDEBUG
-    NSImage* image = [_private->databaseBridge iconForURL:URL withSize:size];
-    if (image)
-        LOG(IconDatabase, "NewDB has image for %@", URL);
-    else
-        LOG(IconDatabase, "NewDB has no image for %@", URL);
-    if (icons)
-        LOG(IconDatabase, "OldDB has at least 1 image for %@", URL);
-    else
-        LOG(IconDatabase, "OldDB has no image for %@", URL);
-#endif
 
     if (!icons) {
 	if (![_private->iconURLsWithNoIcons containsObject:iconURLString]) {
@@ -213,9 +213,12 @@ NSSize WebIconLargeSize = {128, 128};
     if (![self _isEnabled])
         return nil;
 #ifdef ICONDEBUG
-    NSString* iconurl = [_private->databaseBridge iconURLForURL:URL];
-    LOG(IconDatabase, "NewDB has IconURL %@ for PageURL %@", iconurl, URL);
-    LOG(IconDatabase, "OldDB has IconURL %@ for PageURL %@", [_private->pageURLToIconURL objectForKey:URL], URL);
+    NSString* iconurl = [_private->databaseBridge iconURLForPageURL:URL];
+    NSString* oldURL = [_private->pageURLToIconURL objectForKey:URL];
+    if ([oldURL isEqualToString:iconurl]) 
+        LOG(IconDatabase,"iconURLForURL - Old and New icon databases agree on %@ for PageURL %@", iconurl, URL);
+    else
+        LOG(IconDatabase,"iconURLForURL - Old (%@) and New (%@) disagree on PageURL %@", oldURL, iconurl, URL );
 #endif
     return URL ? [_private->pageURLToIconURL objectForKey:URL] : nil;
 }
@@ -248,7 +251,6 @@ NSSize WebIconLargeSize = {128, 128};
     CFDictionarySetValue(_private->pageURLToRetainCount, URL, (void *)(retainCount + 1));
 #ifdef ICONDEBUG
     [_private->databaseBridge retainIconForURL:URL];
-    LOG(IconDatabase, "NewDB - Icon retained for URL %@", URL);
 #endif
 }
 
@@ -259,7 +261,6 @@ NSSize WebIconLargeSize = {128, 128};
         return;
 #ifdef ICONDEBUG
     [_private->databaseBridge releaseIconForURL:pageURL];
-    LOG(IconDatabase, "NewDB - Icon released for URL %@", pageURL);
 #endif
 
     WebNSUInteger retainCount = (WebNSUInteger)(void *)CFDictionaryGetValue(_private->pageURLToRetainCount, pageURL);
@@ -413,7 +414,6 @@ NSSize WebIconLargeSize = {128, 128};
 
 #ifdef ICONDEBUG
     [_private->databaseBridge _setHaveNoIconForIconURL:iconURL];
-    LOG(IconDatabase, "NewDB - Set haveNoIcon for IconURL %@", iconURL);
 #endif
 
     [_private->iconURLsWithNoIcons addObject:iconURL];
@@ -437,12 +437,10 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(iconURL);
     ASSERT(URL);
     ASSERT([self _isEnabled]);
-    ASSERT([self _hasIconForIconURL:iconURL]);
     ASSERT(_private->pageURLToIconURL);
     
 #ifdef ICONDEBUG
     [_private->databaseBridge _setIconURL:iconURL forURL:URL];
-    LOG(IconDatabase, "NewDB - Icon URL %@ set for URL %@", iconURL, URL);
 #endif
 
     if ([[_private->pageURLToIconURL objectForKey:URL] isEqualToString:iconURL]) {
@@ -476,16 +474,10 @@ NSSize WebIconLargeSize = {128, 128};
 #ifdef ICONDEBUG
     BOOL result = [_private->databaseBridge _hasIconForIconURL:iconURL];
     if (result)
-        LOG(IconDatabase, "NewDB - Has icon for IconURL %@", iconURL);
+        LOG(IconDatabase, "NewDB has icon for IconURL %@", iconURL);
     else
-        LOG(IconDatabase, "NewDB - Does NOT have icon for IconURL %@", iconURL);
-    if (([_private->iconURLToIcons objectForKey:iconURL] ||
-         [_private->iconURLsWithNoIcons containsObject:iconURL] ||
-         [_private->iconsOnDiskWithURLs containsObject:iconURL]) &&
-         [self _totalRetainCountForIconURLString:iconURL] > 0)
-        LOG(IconDatabase, "OldDB - Has icon for IconURL %@", iconURL);
-    else
-        LOG(IconDatabase, "NewDB - Does NOT have icon for IconURL %@", iconURL);
+        LOG(IconDatabase, "NewDB has NO icon for IconURL %@", iconURL);
+    return result;
 #endif
 
     return (([_private->iconURLToIcons objectForKey:iconURL] ||
@@ -878,6 +870,9 @@ NSSize WebIconLargeSize = {128, 128};
         return;
     
     _private->privateBrowsingEnabled = privateBrowsingEnabledNow;
+#ifdef ICONDEBUG
+    [_private->databaseBridge setPrivateBrowsingEnabled:privateBrowsingEnabledNow];
+#endif
     
     // When private browsing is turned off, forget everything we learned while it was on 
     if (!_private->privateBrowsingEnabled) {

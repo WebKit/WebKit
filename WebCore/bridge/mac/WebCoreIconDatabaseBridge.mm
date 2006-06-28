@@ -79,20 +79,40 @@ static WebCoreIconDatabaseBridge *_sharedBridgeInstance = nil;
         _iconDB->setPrivateBrowsingEnabled(flag);
 }
 
-- (NSImage *)iconForURL:(NSString *)url withSize:(NSSize)size;
+- (BOOL)privateBrowsingEnabled;
+{
+    if (_iconDB)
+        return _iconDB->getPrivateBrowsingEnabled();
+    return false;
+}
+
+- (NSImage *)iconForPageURL:(NSString *)url withSize:(NSSize)size;
 {
     ASSERT(_iconDB);
     ASSERT(url);
     ASSERT(size.width);
     ASSERT(size.height);
-    
-    Image* image = _iconDB->iconForURL(String(url), IntSize(size));
-    if (image) 
-        return image->getNSImage();
+
+    // FIXME - We're doing the resize here for now because WebCore::Image doesn't yet support resizing/multiple representations
+    // This makes it so there's effectively only one size of a particular icon in the system at a time.  We really need to move this
+    // to WebCore::Image and WebCore::IconDatabase asap
+    Image* image = _iconDB->iconForPageURL(String(url), IntSize(size));
+    if (image) {
+        NSImage* nsImage = image->getNSImage();
+        ASSERT(nsImage);
+        
+        LOG(IconDatabase, "Found %i representations in the NSImage", [[nsImage representations] count]);
+        
+        if (!NSEqualSizes([nsImage size], size)) {
+            [nsImage setScalesWhenResized:YES];
+            [nsImage setSize:size];
+        }
+        return nsImage;
+    }
     return nil;
 }
 
-- (NSString *)iconURLForURL:(NSString *)url;
+- (NSString *)iconURLForPageURL:(NSString *)url;
 {
     ASSERT(_iconDB);
     ASSERT(url);
@@ -133,9 +153,7 @@ static WebCoreIconDatabaseBridge *_sharedBridgeInstance = nil;
     ASSERT(data);
     ASSERT(iconURL);
     
-    Image* image = new Image();
-    image->setNativeData((CFDataRef)data, true);
-    _iconDB->setIconForIconURL(image, String(iconURL));
+    _iconDB->setIconDataForIconURL([data bytes], [data length], String(iconURL));
 }
 
 - (void)_setHaveNoIconForIconURL:(NSString *)iconURL;

@@ -1,3 +1,26 @@
+2006-06-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Hookup the new semi-functional SQLite icon database.
+        For now, it is living side-by-side with the old DB so one can compare the
+        two for debugging purposes.  Also, it is disabled (in WebKit) by default unless you
+        compile with ICONDEBUG #defined.
+        Note:  To repeat that, if you want to try the new DB, #define ICONDEBUG (WebKitPrefix.h is a good place to do it)
+
+        * Misc/WebIconDatabase.m:
+        (-[NSMutableDictionary iconForURL:withSize:cache:]):
+        (-[NSMutableDictionary iconURLForURL:]):
+        (-[NSMutableDictionary retainIconForURL:]):
+        (-[NSMutableDictionary releaseIconForURL:]):
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]):
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        (-[WebIconDatabase _hasIconForIconURL:]):
+        (-[WebIconDatabase _resetCachedWebPreferences:]):
+        * Misc/WebIconLoader.m:
+        (-[WebIconLoader didFinishLoading]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-06-26  David Hyatt  <hyatt@apple.com>
 
         Fix for 9538, support syntax highlighting for HTML source.

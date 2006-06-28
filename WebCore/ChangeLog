@@ -1,3 +1,48 @@
+2006-06-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        Hookup the new semi-functional SQLite icon database.
+        For now, it is living side-by-side with the old DB so one can compare the
+        two for debugging purposes.  Also, it is disabled (in WebKit) by default unless you
+        compile with ICONDEBUG #defined.
+
+        * WebCore.xcodeproj/project.pbxproj:  Added file SiteIcon.cpp
+
+        * bridge/mac/WebCoreIconDatabaseBridge.h:
+        * bridge/mac/WebCoreIconDatabaseBridge.mm:
+        (-[WebCoreIconDatabaseBridge privateBrowsingEnabled]):
+        (-[WebCoreIconDatabaseBridge iconForPageURL:withSize:]):
+        (-[WebCoreIconDatabaseBridge iconURLForPageURL:]):
+        (-[WebCoreIconDatabaseBridge _setIconData:forIconURL:]):
+
+        * icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::isValidDatabase):
+        (WebCore::IconDatabase::recreateDatabase):
+        (WebCore::IconDatabase::createPrivateTables):
+        (WebCore::IconDatabase::deletePrivateTables):
+        (WebCore::IconDatabase::imageDataForIconID):
+        (WebCore::IconDatabase::imageDataForIconURL):
+        (WebCore::IconDatabase::imageDataForPageURL):
+        (WebCore::IconDatabase::setPrivateBrowsingEnabled):
+        (WebCore::IconDatabase::iconForPageURL):
+        (WebCore::IconDatabase::iconURLForURL):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::establishIconIDForEscapedIconURL):
+        (WebCore::IconDatabase::setHaveNoIconForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::hasIconForIconURL):
+        * icon/IconDatabase.h:
+        (WebCore::SiteIcon::getIconURL):
+        (WebCore::IconDatabase::getPrivateBrowsingEnabled):
+        
+        * icon/SiteIcon.cpp: Added.
+        (SiteIcon::SiteIcon):
+        (SiteIcon::~SiteIcon):
+        (SiteIcon::getImage):
+        (SiteIcon::resetExpiration):
+        (SiteIcon::getExpiration):
+
 2006-06-27  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

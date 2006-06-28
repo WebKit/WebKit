@@ -43,13 +43,14 @@ typedef WebCore::IconDatabase WebCoreIconDatabase;
 - (void)closeSharedDatabase;
 - (BOOL)isOpen;
 
-- (NSImage *)iconForURL:(NSString *)url withSize:(NSSize)size;
-- (NSString *)iconURLForURL:(NSString *)url;
+- (NSImage *)iconForPageURL:(NSString *)url withSize:(NSSize)size;
+- (NSString *)iconURLForPageURL:(NSString *)url;
 - (NSImage *)defaultIconWithSize:(NSSize)size;
 - (void)retainIconForURL:(NSString *)url;
 - (void)releaseIconForURL:(NSString *)url;
-- (void)setPrivateBrowsingEnabled:(BOOL)flag;
 
+- (void)setPrivateBrowsingEnabled:(BOOL)flag;
+- (BOOL)privateBrowsingEnabled;
 
 - (void)_setIconData:(NSData *)data forIconURL:(NSString *)iconURL;
 - (void)_setHaveNoIconForIconURL:(NSString *)iconURL;

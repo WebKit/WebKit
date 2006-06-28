@@ -31,39 +31,59 @@
 #include "IntSize.h"
 #include "PlatformString.h"
 #include "SQLDatabase.h"
+#include "StringHash.h"
 
 #include <wtf/HashMap.h>
+
+namespace WTF {
+
+template<> struct IntHash<IntSize> {
+    static unsigned hash(const IntSize& key) { return intHash(((uint64_t)(key.width()) << 32 | key.height())); }
+    static bool equal(const IntSize& a, const IntSize& b) { return a.width() == b.width() && a.height() == b.height(); }
+};
+template<> struct DefaultHash<IntSize> { typedef IntHash<IntSize> Hash; };
+
+} //namespace WTF
 
 namespace WebCore { 
 
 class Image;
-
-class WebIcon {
+    
+class SiteIcon {
 public:
-    WebIcon();
-    ~WebIcon();
+    SiteIcon(const String& url); 
+    ~SiteIcon();
     
     void resetExpiration(time_t newExpiration = 0);
-    time_t getExpiration() { return m_expire; }
-    
+    time_t getExpiration();
+        
     //getImage() inherently touch()es the icon
-    Image* getImage();
+    Image* getImage(const IntSize&);
     
     //incase a user wants to manually touch() the icon
     void touch();
     time_t getTouch() { return m_touch; }
+    
+    String getIconURL() { return m_iconURL; }
         
 private:
+    String m_iconURL;
     time_t m_touch;
     time_t m_expire;
     Image* m_image;
+    
+    // FIXME - Right now WebCore::Image doesn't have a very good API for accessing multiple representations
+    // Even the NSImage way of doing things that we do in WebKit isn't very clean...  once we come up with a 
+    // better way of handling that, we'll likely have a map of size-to-images similar to below
+    // typedef HashMap<IntSize, Image*> SizeImageMap;
+    // SizeImageMap m_images;
 };
 
 
 class IconDatabase
 {
-//TODO - WebIcon is never to be used outside of IconDatabase
-friend class WebIcon;
+//TODO - SiteIcon is never to be used outside of IconDatabase, so make it an internal and remove the friendness
+friend class SiteIcon;
 public:
     static IconDatabase* sharedIconDatabase();
     
@@ -71,7 +91,8 @@ public:
     bool isOpen() { return m_db.isOpen(); }
     void close();
 
-    Image* iconForURL(const String&, const IntSize&, bool cache = true);
+    Image* iconForPageURL(const String&, const IntSize&, bool cache = true);
+    Image* iconForIconURL(const String&, const IntSize&, bool cache = true);
     String iconURLForURL(const String&);
     Image* defaultIcon(const IntSize&);
 
@@ -79,13 +100,14 @@ public:
     void releaseIconForURL(const String&);
     
     void setPrivateBrowsingEnabled(bool flag);
+    bool getPrivateBrowsingEnabled() { return m_privateBrowsingEnabled; }
 
     bool hasIconForIconURL(const String&);
     
-    //TODO - The following 3 methods were considered private in WebKit - analyze the impact of making them
-    //public here in WebCore - I don't see any real badness with doing that...  afterall if Chuck Norris wants to muck
-    //around with the icons in his database, he's going to anyway
-    void setIconForIconURL(Image*, const String&);
+    // TODO - The following 3 methods were considered private in WebKit - analyze the impact of making them
+    // public here in WebCore - I don't see any real badness with doing that...  after all if Chuck Norris wants to muck
+    // around with the icons in his database, he's going to anyway
+    void setIconDataForIconURL(const void* data, int size, const String&);
     void setHaveNoIconForIconURL(const String&);
     void setIconURLForPageURL(const String& iconURL, const String& pageURL);
 
@@ -100,6 +122,18 @@ private:
     bool isValidDatabase();
     void clearDatabase();
     void recreateDatabase();
+
+    void createPrivateTables();
+    void deletePrivateTables();
+    
+    int establishIconIDForEscapedIconURL(const String&);
+    
+    // The following three methods follow the sqlite convention for blob data
+    // They return a const void* which is a pointer to the data buffer, and store
+    // the size of the data buffer in the int& parameter
+    const void* imageDataForIconID(int, int&);
+    const void* imageDataForIconURL(const String&, int&);
+    const void* imageDataForPageURL(const String&, int&);
     
     static IconDatabase* m_sharedInstance;
     static const int DefaultCachedPageCount;
@@ -107,8 +141,9 @@ private:
     SQLDatabase m_db;
     bool m_privateBrowsingEnabled;
     
-    typedef WTF::HashMap<String, WebIcon*> WebIconMap;
-    WebIconMap m_webIcons;
+    typedef HashMap<String, SiteIcon*> SiteIconMap;
+    SiteIconMap m_pageURLToSiteIcons;
+    SiteIconMap m_iconURLToSiteIcons;
 };
 
 } //namespace WebCore

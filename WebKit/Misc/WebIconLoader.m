@@ -88,17 +88,18 @@
 - (void)didFinishLoading
 {
     NSImage *icon;
-    
-    #ifdef ICONDEBUG
-    NSData *_data = [self resourceData];
-    if (_data) {
-        [[WebCoreIconDatabaseBridge sharedBridgeInstance] _setIconData:_data forIconURL:[[self URL] _web_originalDataAsString]];
-        LOG(IconDatabase, "NewDB - Icon data set for URL %@", [[self URL] _web_originalDataAsString]);
-    }
-    #endif
-    
+
+
     NS_DURING
         NSData *data = [self resourceData];
+            
+        #ifdef ICONDEBUG
+        if (data) {
+            [[WebCoreIconDatabaseBridge sharedBridgeInstance] _setIconData:data forIconURL:[[self URL] _web_originalDataAsString]];
+            LOG(IconDatabase, "NewDB - Icon data set for URL %@", [[self URL] _web_originalDataAsString]);
+        }
+        #endif
+
         icon = [data length] > 0 ? [[NSImage alloc] initWithData:data] : nil;
     NS_HANDLER
         icon = nil;
