@@ -1,3 +1,13 @@
+2006-06-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=9317
+          REGRESSION: crash in HTML tokenizer at Japanese Apple support page
+
+        * fast/tokenizer/write-unclosed-script-expected.txt: Added.
+        * fast/tokenizer/write-unclosed-script.html: Added.
+
 2006-06-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi

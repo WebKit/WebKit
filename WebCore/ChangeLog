@@ -1,3 +1,29 @@
+2006-06-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej and Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=9317
+          REGRESSION: crash in HTML tokenizer at Japanese Apple support page
+
+        Test: fast/tokenizer/write-unclosed-script.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler): Changed to reset the inScript flag
+        and scriptCodeSize before possible script execution, but not afterwards.
+        This way, if script execution write()s a <script> tag without closing it,
+        the tokenizer is left in inScript state. Added code to set the requestingScript
+        flag around the request for the cached script, to let notifiyFinished() know
+        that it's being called under scriptHandler().
+        (WebCore::HTMLTokenizer::scriptExecution): Removed code that saved and restored
+        the inScript flag. This function is always entered now with inScript being false.
+        (WebCore::HTMLTokenizer::notifyFinished): Changed to use the new requestingScript
+        state flag instead of the inScript flag, which is always false now when entering
+        this function.
+        * html/HTMLTokenizer.h:
+        Added the requestingScript state bit, used to tell notifyFinished() that it
+        is being called under scriptHandler() (which happens when the script is already
+        in cache).
+
 2006-06-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by levi
