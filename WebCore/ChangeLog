@@ -1,3 +1,14 @@
+2006-06-28  David Hyatt  <hyatt@apple.com>
+
+        Make the view source document properly handle <script>.  We don't syntax
+        highlight the JS yet, but it shows up properly now.
+
+        Reviewed by john
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+
 2006-06-28  Timothy Hatcher  <timothy@apple.com>
 
         Prefer the Stabs debugging symbols format until DWARF bugs are fixed.

@@ -355,31 +355,34 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
   
     CachedScript* cs = 0;
     // don't load external scripts for standalone documents (for now)
-    if (!scriptSrc.isEmpty() && m_doc->frame()) {
-        // forget what we just got; load from src url instead
-        if (!parser->skipMode() && !followingFrameset) {
-#if INSTRUMENT_LAYOUT_SCHEDULING
-            if (!m_doc->ownerElement())
-                printf("Requesting script at time %d\n", m_doc->elapsedTime());
-#endif
-            if ( (cs = m_doc->docLoader()->requestScript(scriptSrc, scriptSrcCharset) ))
-                pendingScripts.enqueue(cs);
-            else
+    if (!inViewSourceMode()) {
+        if (!scriptSrc.isEmpty() && m_doc->frame()) {
+            // forget what we just got; load from src url instead
+            if (!parser->skipMode() && !followingFrameset) {
+    #if INSTRUMENT_LAYOUT_SCHEDULING
+                if (!m_doc->ownerElement())
+                    printf("Requesting script at time %d\n", m_doc->elapsedTime());
+    #endif
+                if ( (cs = m_doc->docLoader()->requestScript(scriptSrc, scriptSrcCharset) ))
+                    pendingScripts.enqueue(cs);
+                else
+                    scriptNode = 0;
+            } else
                 scriptNode = 0;
-        } else
+            scriptSrc=DeprecatedString::null;
+        }
+        else {
+    #ifdef TOKEN_DEBUG
+            kdDebug( 6036 ) << "---START SCRIPT---" << endl;
+            kdDebug( 6036 ) << DeprecatedString(scriptCode, scriptCodeSize) << endl;
+            kdDebug( 6036 ) << "---END SCRIPT---" << endl;
+    #endif
             scriptNode = 0;
-        scriptSrc=DeprecatedString::null;
+            // Parse scriptCode containing <script> info
+            doScriptExec = true;
+        }
     }
-    else {
-#ifdef TOKEN_DEBUG
-        kdDebug( 6036 ) << "---START SCRIPT---" << endl;
-        kdDebug( 6036 ) << DeprecatedString(scriptCode, scriptCodeSize) << endl;
-        kdDebug( 6036 ) << "---END SCRIPT---" << endl;
-#endif
-        scriptNode = 0;
-        // Parse scriptCode containing <script> info
-        doScriptExec = true;
-    }
+
     state = processListing(SegmentedString(scriptCode, scriptCodeSize), state);
     DeprecatedString exScript(reinterpret_cast<QChar*>(buffer), dest - buffer);
     processToken();
@@ -387,10 +390,15 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     currToken.beginTag = false;
     processToken();
 
+    state.setInScript(false);
+    
+    // FIXME: The script should be syntax highlighted.
+    if (inViewSourceMode())
+        return state;
+
     SegmentedString *savedPrependingSrc = currentPrependingSrc;
     SegmentedString prependingSrc;
     currentPrependingSrc = &prependingSrc;
-    state.setInScript(false);
     scriptCodeSize = scriptCodeResync = 0;
 
     if (!parser->skipMode() && !followingFrameset) {
