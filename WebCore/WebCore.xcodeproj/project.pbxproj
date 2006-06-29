@@ -41,6 +41,9 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14EC267F09CA07E000E1EEEC /* EventTargetNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNode.h */; };
 		14EC268009CA07E000E1EEEC /* EventTargetNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */; };
+		1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D137E0A5325520064BF5F /* DOMXPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D137F0A5325520064BF5F /* DOMXPath.mm */; };
+		1A1D13CA0A5329090064BF5F /* DOMXPathInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D13C90A5329090064BF5F /* DOMXPathInternal.h */; };
 		1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */; };
 		1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */; };
 		1A494E340A12358B00FDAFC1 /* JSHTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494E320A12358A00FDAFC1 /* JSHTMLDocument.cpp */; };
@@ -1569,23 +1572,6 @@
 		FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418E097596C9000540BE /* SVGImageLoader.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		BCEED0480A530A0A00443D9A /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		BCEED0490A530A0A00443D9A /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		DD041FF009D9E3250010AF2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1628,6 +1614,9 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14EC267D09CA07E000E1EEEC /* EventTargetNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNode.h; sourceTree = "<group>"; };
 		14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNode.cpp; sourceTree = "<group>"; };
+		1A1D137E0A5325520064BF5F /* DOMXPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPath.h; sourceTree = "<group>"; };
+		1A1D137F0A5325520064BF5F /* DOMXPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMXPath.mm; sourceTree = "<group>"; };
+		1A1D13C90A5329090064BF5F /* DOMXPathInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPathInternal.h; sourceTree = "<group>"; };
 		1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLElement.idl; sourceTree = "<group>"; };
 		1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElement.cpp; sourceTree = "<group>"; };
 		1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElement.h; sourceTree = "<group>"; };
@@ -4962,6 +4951,9 @@
 				BC1A37AA097C715F0019F3D8 /* DOMViews.h */,
 				BC1A37AB097C715F0019F3D8 /* DOMViews.mm */,
 				BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */,
+				1A1D137E0A5325520064BF5F /* DOMXPath.h */,
+				1A1D137F0A5325520064BF5F /* DOMXPath.mm */,
+				1A1D13C90A5329090064BF5F /* DOMXPathInternal.h */,
 			);
 			path = objc;
 			sourceTree = "<group>";
@@ -6355,6 +6347,8 @@
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
 				BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */,
 				1A8086CC0A4D097600DFB6A7 /* DOMCSSInternal.h in Headers */,
+				1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */,
+				1A1D13CA0A5329090064BF5F /* DOMXPathInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6388,12 +6382,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				BCEED0480A530A0A00443D9A /* Development */,
-				BCEED0490A530A0A00443D9A /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -7216,6 +7204,7 @@
 				BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */,
 				E1052C320A4D70010072D99B /* DOMEventsNonstandard.mm in Sources */,
 				516149ED0A525E3A003DFC7A /* SiteIcon.cpp in Sources */,
+				1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

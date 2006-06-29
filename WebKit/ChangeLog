@@ -1,3 +1,10 @@
+2006-06-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim O.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add DOMXPath.h header.
+
 2006-06-28  David Hyatt  <hyatt@apple.com>
 
         Fix custom highlighting so that you can paint the entire line (and go

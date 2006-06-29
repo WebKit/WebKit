@@ -1,3 +1,50 @@
+2006-06-29  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Tim O.
+
+        <rdar://problem/4599760> Objective-C XPath support
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        Add files.
+        
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMInternal.mm:
+        (raiseDOMException):
+        Handle XPath exceptions
+        
+        * bindings/objc/DOMXPath.h: Added.
+        (-[DOMXPathNSResolver lookupNamespaceURI:]):
+        * bindings/objc/DOMXPath.mm: Added.
+        (-[DOMNativeXPathNSResolver dealloc]):
+        (-[DOMNativeXPathNSResolver finalize]):
+        (-[DOMNativeXPathNSResolver _xpathNSResolver]):
+        (-[DOMNativeXPathNSResolver _initWithXPathNSResolver:]):
+        (+[DOMNativeXPathNSResolver _xpathNSResolverWith:]):
+        (-[DOMNativeXPathNSResolver lookupNamespaceURI:]):
+        (-[DOMXPathResult dealloc]):
+        (-[DOMXPathResult finalize]):
+        (-[DOMXPathResult resultType]):
+        (-[DOMXPathResult numberValue]):
+        (-[DOMXPathResult stringValue]):
+        (-[DOMXPathResult booleanValue]):
+        (-[DOMXPathResult singleNodeValue]):
+        (-[DOMXPathResult invalidIteratorState]):
+        (-[DOMXPathResult snapshotLength]):
+        (-[DOMXPathResult iterateNext]):
+        (-[DOMXPathResult snapshotItem:]):
+        (-[DOMXPathResult _xpathResult]):
+        (-[DOMXPathResult _initWithXPathResult:]):
+        (+[DOMXPathResult _xpathResultWith:]):
+        (-[DOMXPathExpression evaluate:::]):
+        (-[DOMXPathExpression _xpathExpression]):
+        (-[DOMXPathExpression _initWithXPathExpression:]):
+        (+[DOMXPathExpression _xpathExpressionWith:]):
+        (-[DOMDocument createExpression::]):
+        (-[DOMDocument createNSResolver:]):
+        (-[DOMDocument evaluate:::::]):
+        * bindings/objc/DOMXPathInternal.h: Added.
+        Add Objective-C XPath API.
+
 2006-06-28  David Hyatt  <hyatt@apple.com>
 
         Add support for custom highlighting to paint at the root line box level

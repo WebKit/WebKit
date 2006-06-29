@@ -1219,6 +1219,7 @@
 				93AF529B08254D62005D0156 /* DOMStylesheets.h */,
 				93AF52CE08254E18005D0156 /* DOMTraversal.h */,
 				93AF52D808254E31005D0156 /* DOMViews.h */,
+				1A1D16590A5351520064BF5F /* DOMXPath.h */,
 				939811300824BF01008DF038 /* Frameworks (symlink) */,
 				933932420825A64800AADA6B /* npapi.h */,
 				9339323E0825A64200AADA6B /* npruntime.h */,
@@ -1290,6 +1291,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1A1D16590A5351520064BF5F /* DOMXPath.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(WEBCORE_PRIVATE_HEADERS_DIR)/DOMXPath.h",
+			);
+			name = DOMXPath.h;
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/DOMXPath.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH\"\nsed -e s/WebCore/WebKit/ \"$WEBCORE_PRIVATE_HEADERS_DIR/DOMXpath.h\" > \"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH/DOMXPath.h\"";
+		};
 		9339323E0825A64200AADA6B /* npruntime.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

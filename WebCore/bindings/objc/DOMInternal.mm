@@ -32,6 +32,7 @@
 #import "Range.h"
 #import "kjs_dom.h"
 #import "kjs_proxy.h"
+#import "XPathEvaluator.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
 using namespace WebCore;
@@ -74,6 +75,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
 NSString * const DOMEventException = @"DOMEventException";
+NSString * const DOMXPathException = @"DOMXPathException";
 
 void raiseDOMException(ExceptionCode ec)
 {
@@ -88,6 +90,9 @@ void raiseDOMException(ExceptionCode ec)
     } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
         name = DOMEventException;
         code -= EventExceptionOffset;
+    } else if (ec >= XPathExceptionOffset && ec <= XPathExceptionMax) {
+        name = DOMXPathException;
+        code -= XPathExceptionOffset;
     }
 
     NSString *reason = [NSString stringWithFormat:@"*** Exception received from DOM API: %d", code];
